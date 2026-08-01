@@ -20,7 +20,9 @@ Create an assistant
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.assistants.create({});
+await corsair.openai.api.assistants.create({
+  model: 'gpt-4o-mini'
+});
 ```
 
 **Input**
@@ -33,7 +35,7 @@ await corsair.openai.api.assistants.create({});
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | No | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
 
@@ -43,9 +45,9 @@ await corsair.openai.api.assistants.create({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -54,12 +56,11 @@ await corsair.openai.api.assistants.create({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
@@ -80,14 +81,6 @@ await corsair.openai.api.assistants.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -97,14 +90,14 @@ await corsair.openai.api.assistants.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `assistant` | Yes | — |
+| `object` | `'assistant'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `model` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `temperature` | `number` | No | — |
 | `top_p` | `number` | No | — |
 
@@ -114,9 +107,9 @@ await corsair.openai.api.assistants.create({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -125,24 +118,15 @@ await corsair.openai.api.assistants.create({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -160,7 +144,9 @@ Delete an assistant
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.assistants.delete({});
+await corsair.openai.api.assistants.delete({
+  assistantId: 'asst_123'
+});
 ```
 
 **Input**
@@ -176,7 +162,7 @@ await corsair.openai.api.assistants.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `assistant.deleted` | Yes | — |
+| `object` | `'assistant.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -200,7 +186,7 @@ await corsair.openai.api.assistants.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
@@ -210,7 +196,7 @@ await corsair.openai.api.assistants.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -222,7 +208,7 @@ await corsair.openai.api.assistants.list({});
 ```ts
 {
   id: string,
-  object: assistant,
+  object: 'assistant',
   created_at: number,
   name?: string | null,
   description?: string | null,
@@ -230,9 +216,9 @@ await corsair.openai.api.assistants.list({});
   instructions?: string | null,
   tools: (
     {
-      type: code_interpreter
+      type: 'code_interpreter'
     } | {
-      type: file_search,
+      type: 'file_search',
       file_search?: {
         max_num_results?: number,
         ranking_options?: {
@@ -241,18 +227,16 @@ await corsair.openai.api.assistants.list({});
         }
       }
     } | {
-      type: function,
+      type: 'function',
       function: {
         name: string,
         description?: string,
-        parameters?: {
-        },
+        parameters?: Record<string, unknown>,
         strict?: boolean | null
       }
     }
   )[],
-  metadata?: {
-  } | null,
+  metadata?: Record<string, string> | null,
   temperature?: number | null,
   top_p?: number | null
 }[]
@@ -273,7 +257,9 @@ Modify an assistant
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.assistants.modify({});
+await corsair.openai.api.assistants.modify({
+  assistantId: 'asst_123'
+});
 ```
 
 **Input**
@@ -287,7 +273,7 @@ await corsair.openai.api.assistants.modify({});
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | No | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
 
@@ -297,9 +283,9 @@ await corsair.openai.api.assistants.modify({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -308,12 +294,11 @@ await corsair.openai.api.assistants.modify({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
@@ -334,14 +319,6 @@ await corsair.openai.api.assistants.modify({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -351,14 +328,14 @@ await corsair.openai.api.assistants.modify({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `assistant` | Yes | — |
+| `object` | `'assistant'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `model` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `temperature` | `number` | No | — |
 | `top_p` | `number` | No | — |
 
@@ -368,9 +345,9 @@ await corsair.openai.api.assistants.modify({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -379,24 +356,15 @@ await corsair.openai.api.assistants.modify({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -414,7 +382,9 @@ Retrieve an assistant by id
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.assistants.retrieve({});
+await corsair.openai.api.assistants.retrieve({
+  assistantId: 'asst_123'
+});
 ```
 
 **Input**
@@ -430,14 +400,14 @@ await corsair.openai.api.assistants.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `assistant` | Yes | — |
+| `object` | `'assistant'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `description` | `string` | No | — |
 | `model` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `temperature` | `number` | No | — |
 | `top_p` | `number` | No | — |
 
@@ -447,9 +417,9 @@ await corsair.openai.api.assistants.retrieve({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -458,24 +428,15 @@ await corsair.openai.api.assistants.retrieve({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -495,7 +456,11 @@ Generate spoken audio from text
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.audio.createSpeech({});
+await corsair.openai.api.audio.createSpeech({
+  model: 'tts-1',
+  input: 'hi',
+  voice: 'alloy'
+});
 ```
 
 **Input**
@@ -505,7 +470,7 @@ await corsair.openai.api.audio.createSpeech({});
 | `model` | `string` | Yes | — |
 | `input` | `string` | Yes | — |
 | `voice` | `string` | Yes | — |
-| `responseFormat` | `mp3 \| opus \| aac \| flac \| wav \| pcm` | No | — |
+| `responseFormat` | `'mp3' \| 'opus' \| 'aac' \| 'flac' \| 'wav' \| 'pcm'` | No | — |
 | `speed` | `number` | No | — |
 | `instructions` | `string` | No | — |
 
@@ -531,7 +496,11 @@ Transcribe audio into text
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.audio.createTranscription({});
+await corsair.openai.api.audio.createTranscription({
+  file: 'file contents',
+  fileName: 'file.txt',
+  model: 'whisper-1'
+});
 ```
 
 **Input**
@@ -543,9 +512,9 @@ await corsair.openai.api.audio.createTranscription({});
 | `model` | `string` | Yes | — |
 | `language` | `string` | No | — |
 | `prompt` | `string` | No | — |
-| `responseFormat` | `json \| text \| srt \| verbose_json \| vtt` | No | — |
+| `responseFormat` | `'json' \| 'text' \| 'srt' \| 'verbose_json' \| 'vtt'` | No | — |
 | `temperature` | `number` | No | — |
-| `timestampGranularities` | `word \| segment[]` | No | — |
+| `timestampGranularities` | `('word' \| 'segment')[]` | No | — |
 
 
 
@@ -568,7 +537,11 @@ Translate audio into English text
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.audio.createTranslation({});
+await corsair.openai.api.audio.createTranslation({
+  file: 'file contents',
+  fileName: 'file.txt',
+  model: 'whisper-1'
+});
 ```
 
 **Input**
@@ -579,7 +552,7 @@ await corsair.openai.api.audio.createTranslation({});
 | `fileName` | `string` | Yes | — |
 | `model` | `string` | Yes | — |
 | `prompt` | `string` | No | — |
-| `responseFormat` | `json \| text \| srt \| verbose_json \| vtt` | No | — |
+| `responseFormat` | `'json' \| 'text' \| 'srt' \| 'verbose_json' \| 'vtt'` | No | — |
 | `temperature` | `number` | No | — |
 
 
@@ -605,7 +578,9 @@ Cancel an in-progress batch job
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.batches.cancel({});
+await corsair.openai.api.batches.cancel({
+  batchId: 'batch_123'
+});
 ```
 
 **Input**
@@ -621,11 +596,11 @@ await corsair.openai.api.batches.cancel({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `batch` | Yes | — |
+| `object` | `'batch'` | Yes | — |
 | `endpoint` | `string` | Yes | — |
 | `input_file_id` | `string` | Yes | — |
 | `completion_window` | `string` | Yes | — |
-| `status` | `validating \| failed \| in_progress \| finalizing \| completed \| expired \| cancelling \| cancelled` | Yes | — |
+| `status` | `'validating' \| 'failed' \| 'in_progress' \| 'finalizing' \| 'completed' \| 'expired' \| 'cancelling' \| 'cancelled'` | Yes | — |
 | `output_file_id` | `string` | No | — |
 | `error_file_id` | `string` | No | — |
 | `created_at` | `number` | Yes | — |
@@ -639,7 +614,7 @@ await corsair.openai.api.batches.cancel({});
 | `cancelled_at` | `number` | No | — |
 | `request_counts` | `object` | No | — |
 | `errors` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="request_counts full type">
@@ -663,14 +638,6 @@ await corsair.openai.api.batches.cancel({});
     param?: string | null,
     line?: number | null
   }[]
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -689,7 +656,11 @@ Create a batch job
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.batches.create({});
+await corsair.openai.api.batches.create({
+  inputFileId: 'file_123',
+  endpoint: '/v1/chat/completions',
+  completionWindow: '24h'
+});
 ```
 
 **Input**
@@ -697,19 +668,9 @@ await corsair.openai.api.batches.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `inputFileId` | `string` | Yes | — |
-| `endpoint` | `/v1/chat/completions \| /v1/completions \| /v1/embeddings \| /v1/responses` | Yes | — |
-| `completionWindow` | `24h` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `endpoint` | `'/v1/chat/completions' \| '/v1/completions' \| '/v1/embeddings' \| '/v1/responses'` | Yes | — |
+| `completionWindow` | `'24h'` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -718,11 +679,11 @@ await corsair.openai.api.batches.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `batch` | Yes | — |
+| `object` | `'batch'` | Yes | — |
 | `endpoint` | `string` | Yes | — |
 | `input_file_id` | `string` | Yes | — |
 | `completion_window` | `string` | Yes | — |
-| `status` | `validating \| failed \| in_progress \| finalizing \| completed \| expired \| cancelling \| cancelled` | Yes | — |
+| `status` | `'validating' \| 'failed' \| 'in_progress' \| 'finalizing' \| 'completed' \| 'expired' \| 'cancelling' \| 'cancelled'` | Yes | — |
 | `output_file_id` | `string` | No | — |
 | `error_file_id` | `string` | No | — |
 | `created_at` | `number` | Yes | — |
@@ -736,7 +697,7 @@ await corsair.openai.api.batches.create({});
 | `cancelled_at` | `number` | No | — |
 | `request_counts` | `object` | No | — |
 | `errors` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="request_counts full type">
@@ -760,14 +721,6 @@ await corsair.openai.api.batches.create({});
     param?: string | null,
     line?: number | null
   }[]
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -802,7 +755,7 @@ await corsair.openai.api.batches.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -814,11 +767,11 @@ await corsair.openai.api.batches.list({});
 ```ts
 {
   id: string,
-  object: batch,
+  object: 'batch',
   endpoint: string,
   input_file_id: string,
   completion_window: string,
-  status: validating | failed | in_progress | finalizing | completed | expired | cancelling | cancelled,
+  status: 'validating' | 'failed' | 'in_progress' | 'finalizing' | 'completed' | 'expired' | 'cancelling' | 'cancelled',
   output_file_id?: string,
   error_file_id?: string,
   created_at: number,
@@ -843,8 +796,7 @@ await corsair.openai.api.batches.list({});
       line?: number | null
     }[]
   },
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -863,7 +815,9 @@ Retrieve a batch job
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.batches.retrieve({});
+await corsair.openai.api.batches.retrieve({
+  batchId: 'batch_123'
+});
 ```
 
 **Input**
@@ -879,11 +833,11 @@ await corsair.openai.api.batches.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `batch` | Yes | — |
+| `object` | `'batch'` | Yes | — |
 | `endpoint` | `string` | Yes | — |
 | `input_file_id` | `string` | Yes | — |
 | `completion_window` | `string` | Yes | — |
-| `status` | `validating \| failed \| in_progress \| finalizing \| completed \| expired \| cancelling \| cancelled` | Yes | — |
+| `status` | `'validating' \| 'failed' \| 'in_progress' \| 'finalizing' \| 'completed' \| 'expired' \| 'cancelling' \| 'cancelled'` | Yes | — |
 | `output_file_id` | `string` | No | — |
 | `error_file_id` | `string` | No | — |
 | `created_at` | `number` | Yes | — |
@@ -897,7 +851,7 @@ await corsair.openai.api.batches.retrieve({});
 | `cancelled_at` | `number` | No | — |
 | `request_counts` | `object` | No | — |
 | `errors` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="request_counts full type">
@@ -924,14 +878,6 @@ await corsair.openai.api.batches.retrieve({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -949,7 +895,10 @@ Create a chat completion for the given messages
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.chat.createCompletion({});
+await corsair.openai.api.chat.createCompletion({
+  model: 'gpt-4o-mini',
+  messages: [{ role: 'user', content: 'hello' }]
+});
 ```
 
 **Input**
@@ -959,7 +908,7 @@ await corsair.openai.api.chat.createCompletion({});
 | `model` | `string` | Yes | — |
 | `messages` | `object[]` | Yes | — |
 | `frequencyPenalty` | `number` | No | — |
-| `logitBias` | `object` | No | — |
+| `logitBias` | `Record<string, number>` | No | — |
 | `logprobs` | `boolean` | No | — |
 | `topLogprobs` | `number` | No | — |
 | `maxCompletionTokens` | `number` | No | — |
@@ -967,16 +916,16 @@ await corsair.openai.api.chat.createCompletion({});
 | `presencePenalty` | `number` | No | — |
 | `responseFormat` | `object` | No | — |
 | `seed` | `number` | No | — |
-| `serviceTier` | `auto \| default \| flex \| priority` | No | — |
+| `serviceTier` | `'auto' \| 'default' \| 'flex' \| 'priority'` | No | — |
 | `stop` | `string \| string[]` | No | — |
 | `store` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
 | `tools` | `object[]` | No | — |
-| `toolChoice` | `none \| auto \| required \| object` | No | — |
+| `toolChoice` | `'none' \| 'auto' \| 'required' \| object` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
-| `reasoningEffort` | `minimal \| low \| medium \| high` | No | — |
+| `reasoningEffort` | `'minimal' \| 'low' \| 'medium' \| 'high'` | No | — |
 | `user` | `string` | No | — |
 
 <AccordionGroup>
@@ -984,25 +933,25 @@ await corsair.openai.api.chat.createCompletion({});
 
 ```ts
 {
-  role: system | developer | user | assistant | tool,
+  role: 'system' | 'developer' | 'user' | 'assistant' | 'tool',
   content?: string | (
     {
-      type: text,
+      type: 'text',
       text: string
     } | {
-      type: image_url,
+      type: 'image_url',
       image_url: {
         url: string,
-        detail?: auto | low | high
+        detail?: 'auto' | 'low' | 'high'
       }
     } | {
-      type: input_audio,
+      type: 'input_audio',
       input_audio: {
         data: string,
-        format: wav | mp3
+        format: 'wav' | 'mp3'
       }
     } | {
-      type: file,
+      type: 'file',
       file: {
         file_id?: string,
         filename?: string,
@@ -1013,7 +962,7 @@ await corsair.openai.api.chat.createCompletion({});
   name?: string,
   tool_calls?: {
     id: string,
-    type: function,
+    type: 'function',
     function: {
       name: string,
       arguments: string
@@ -1025,38 +974,21 @@ await corsair.openai.api.chat.createCompletion({});
 ```
 </Accordion>
 
-<Accordion title="logitBias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="responseFormat full type">
 
 ```ts
 {
-  type: text
+  type: 'text'
 } | {
-  type: json_object
+  type: 'json_object'
 } | {
-  type: json_schema,
+  type: 'json_schema',
   json_schema: {
     name: string,
     description?: string,
-    schema?: {
-    },
+    schema?: Record<string, unknown>,
     strict?: boolean | null
   }
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -1065,12 +997,11 @@ await corsair.openai.api.chat.createCompletion({});
 
 ```ts
 {
-  type: function,
+  type: 'function',
   function: {
     name: string,
     description?: string,
-    parameters?: {
-    },
+    parameters?: Record<string, unknown>,
     strict?: boolean | null
   }
 }[]
@@ -1080,8 +1011,8 @@ await corsair.openai.api.chat.createCompletion({});
 <Accordion title="toolChoice full type">
 
 ```ts
-none | auto | required | {
-  type: function,
+'none' | 'auto' | 'required' | {
+  type: 'function',
   function: {
     name: string
   }
@@ -1097,7 +1028,7 @@ none | auto | required | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `chat.completion` | Yes | — |
+| `object` | `'chat.completion'` | Yes | — |
 | `created` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
 | `choices` | `object[]` | Yes | — |
@@ -1112,21 +1043,20 @@ none | auto | required | {
 {
   index: number,
   message: {
-    role: assistant,
+    role: 'assistant',
     content?: string | null,
     refusal?: string | null,
     tool_calls?: {
       id: string,
-      type: function,
+      type: 'function',
       function: {
         name: string,
         arguments: string
       }
     }[]
   },
-  logprobs?: {
-  } | null,
-  finish_reason: stop | length | tool_calls | content_filter | function_call
+  logprobs?: Record<string, unknown> | null,
+  finish_reason: 'stop' | 'length' | 'tool_calls' | 'content_filter' | 'function_call'
 }[]
 ```
 </Accordion>
@@ -1158,7 +1088,9 @@ Delete a stored chat completion
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.chatCompletions.delete({});
+await corsair.openai.api.chatCompletions.delete({
+  completionId: 'chatcmpl_123'
+});
 ```
 
 **Input**
@@ -1174,7 +1106,7 @@ await corsair.openai.api.chatCompletions.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `chat.completion.deleted` | Yes | — |
+| `object` | `'chat.completion.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -1198,20 +1130,10 @@ await corsair.openai.api.chatCompletions.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `order` | `'asc' \| 'desc'` | No | — |
 
 
 
@@ -1219,21 +1141,11 @@ await corsair.openai.api.chatCompletions.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `object` | `'list'` | Yes | — |
+| `data` | `Record<string, unknown>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1248,7 +1160,9 @@ List messages of a stored chat completion
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatCompletions.listMessages({});
+await corsair.openai.api.chatCompletions.listMessages({
+  completionId: 'chatcmpl_123'
+});
 ```
 
 **Input**
@@ -1258,7 +1172,7 @@ await corsair.openai.api.chatCompletions.listMessages({});
 | `completionId` | `string` | Yes | — |
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 
 
 
@@ -1266,21 +1180,11 @@ await corsair.openai.api.chatCompletions.listMessages({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `object` | `'list'` | Yes | — |
+| `data` | `Record<string, unknown>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1295,7 +1199,9 @@ Retrieve a stored chat completion
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatCompletions.retrieve({});
+await corsair.openai.api.chatCompletions.retrieve({
+  completionId: 'chatcmpl_123'
+});
 ```
 
 **Input**
@@ -1311,7 +1217,7 @@ await corsair.openai.api.chatCompletions.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `chat.completion` | Yes | — |
+| `object` | `'chat.completion'` | Yes | — |
 | `created` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
 
@@ -1328,7 +1234,9 @@ Update a stored chat completion's metadata
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.chatCompletions.update({});
+await corsair.openai.api.chatCompletions.update({
+  completionId: 'chatcmpl_123'
+});
 ```
 
 **Input**
@@ -1336,17 +1244,7 @@ await corsair.openai.api.chatCompletions.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `completionId` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -1355,7 +1253,7 @@ await corsair.openai.api.chatCompletions.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `chat.completion` | Yes | — |
+| `object` | `'chat.completion'` | Yes | — |
 | `created` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
 
@@ -1374,7 +1272,9 @@ Retrieve a ChatKit thread
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatkit.getThread({});
+await corsair.openai.api.chatkit.getThread({
+  threadId: 'thread_123'
+});
 ```
 
 **Input**
@@ -1390,19 +1290,9 @@ await corsair.openai.api.chatkit.getThread({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `chatkit.thread` | Yes | — |
+| `object` | `'chatkit.thread'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="status full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `status` | `Record<string, unknown>` | No | — |
 
 
 
@@ -1417,7 +1307,9 @@ List items in a ChatKit thread
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.chatkit.listThreadItems({});
+await corsair.openai.api.chatkit.listThreadItems({
+  threadId: 'thread_123'
+});
 ```
 
 **Input**
@@ -1426,7 +1318,7 @@ await corsair.openai.api.chatkit.listThreadItems({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
@@ -1436,21 +1328,11 @@ await corsair.openai.api.chatkit.listThreadItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `object` | `'list'` | Yes | — |
+| `data` | `Record<string, unknown>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1473,7 +1355,7 @@ await corsair.openai.api.chatkit.listThreads({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 | `user` | `string` | No | — |
@@ -1484,7 +1366,7 @@ await corsair.openai.api.chatkit.listThreads({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -1496,10 +1378,9 @@ await corsair.openai.api.chatkit.listThreads({});
 ```ts
 {
   id: string,
-  object: chatkit.thread,
+  object: 'chatkit.thread',
   created_at: number,
-  status?: {
-  }
+  status?: Record<string, unknown>
 }[]
 ```
 </Accordion>
@@ -1520,7 +1401,10 @@ Create a legacy text completion
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.completions.create({});
+await corsair.openai.api.completions.create({
+  model: 'gpt-3.5-turbo-instruct',
+  prompt: 'hello'
+});
 ```
 
 **Input**
@@ -1539,19 +1423,9 @@ await corsair.openai.api.completions.create({});
 | `logprobs` | `number` | No | — |
 | `echo` | `boolean` | No | — |
 | `bestOf` | `number` | No | — |
-| `logitBias` | `object` | No | — |
+| `logitBias` | `Record<string, number>` | No | — |
 | `user` | `string` | No | — |
 | `suffix` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="logitBias full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -1560,7 +1434,7 @@ await corsair.openai.api.completions.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `text_completion` | Yes | — |
+| `object` | `'text_completion'` | Yes | — |
 | `created` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
 | `choices` | `object[]` | Yes | — |
@@ -1573,8 +1447,7 @@ await corsair.openai.api.completions.create({});
 {
   text: string,
   index: number,
-  logprobs?: {
-  } | null,
+  logprobs?: Record<string, unknown> | null,
   finish_reason: string
 }[]
 ```
@@ -1607,7 +1480,10 @@ Add a file to a container
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.containerFiles.create({});
+await corsair.openai.api.containerFiles.create({
+  containerId: 'ctr_123',
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -1626,7 +1502,7 @@ await corsair.openai.api.containerFiles.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `container.file` | Yes | — |
+| `object` | `'container.file'` | Yes | — |
 | `container_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `bytes` | `number` | No | — |
@@ -1646,7 +1522,10 @@ Delete a container file
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.containerFiles.delete({});
+await corsair.openai.api.containerFiles.delete({
+  containerId: 'ctr_123',
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -1663,7 +1542,7 @@ await corsair.openai.api.containerFiles.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `container.file.deleted` | Yes | — |
+| `object` | `'container.file.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -1679,7 +1558,9 @@ List files in a container
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.containerFiles.list({});
+await corsair.openai.api.containerFiles.list({
+  containerId: 'ctr_123'
+});
 ```
 
 **Input**
@@ -1688,7 +1569,7 @@ await corsair.openai.api.containerFiles.list({});
 |------|------|----------|-------------|
 | `containerId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 
 
@@ -1697,7 +1578,7 @@ await corsair.openai.api.containerFiles.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -1709,7 +1590,7 @@ await corsair.openai.api.containerFiles.list({});
 ```ts
 {
   id: string,
-  object: container.file,
+  object: 'container.file',
   container_id: string,
   created_at: number,
   bytes?: number,
@@ -1733,7 +1614,10 @@ Retrieve a container file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.containerFiles.retrieve({});
+await corsair.openai.api.containerFiles.retrieve({
+  containerId: 'ctr_123',
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -1750,7 +1634,7 @@ await corsair.openai.api.containerFiles.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `container.file` | Yes | — |
+| `object` | `'container.file'` | Yes | — |
 | `container_id` | `string` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `bytes` | `number` | No | — |
@@ -1770,7 +1654,10 @@ Download the contents of a container file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.containerFiles.retrieveContent({});
+await corsair.openai.api.containerFiles.retrieveContent({
+  containerId: 'ctr_123',
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -1835,7 +1722,7 @@ await corsair.openai.api.containers.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `container` | Yes | — |
+| `object` | `'container'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -1866,7 +1753,9 @@ Delete a container
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.containers.delete({});
+await corsair.openai.api.containers.delete({
+  containerId: 'ctr_123'
+});
 ```
 
 **Input**
@@ -1882,7 +1771,7 @@ await corsair.openai.api.containers.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `container.deleted` | Yes | — |
+| `object` | `'container.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -1906,7 +1795,7 @@ await corsair.openai.api.containers.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 
 
@@ -1915,7 +1804,7 @@ await corsair.openai.api.containers.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -1927,7 +1816,7 @@ await corsair.openai.api.containers.list({});
 ```ts
 {
   id: string,
-  object: container,
+  object: 'container',
   created_at: number,
   name?: string,
   status?: string,
@@ -1953,7 +1842,9 @@ Retrieve a container
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.containers.retrieve({});
+await corsair.openai.api.containers.retrieve({
+  containerId: 'ctr_123'
+});
 ```
 
 **Input**
@@ -1969,7 +1860,7 @@ await corsair.openai.api.containers.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `container` | Yes | — |
+| `object` | `'container'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `status` | `string` | No | — |
@@ -2009,26 +1900,8 @@ await corsair.openai.api.conversations.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `items` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `items` | `Record<string, unknown>[]` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2037,19 +1910,9 @@ await corsair.openai.api.conversations.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `conversation` | Yes | — |
+| `object` | `'conversation'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2064,7 +1927,10 @@ Add items to a conversation
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.conversations.createItems({});
+await corsair.openai.api.conversations.createItems({
+  conversationId: 'conv_123',
+  items: [{ type: 'message', role: 'user', content: 'hi' }]
+});
 ```
 
 **Input**
@@ -2072,18 +1938,8 @@ await corsair.openai.api.conversations.createItems({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `conversationId` | `string` | Yes | — |
-| `items` | `object[]` | Yes | — |
+| `items` | `Record<string, unknown>[]` | Yes | — |
 | `include` | `string[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="items full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2091,21 +1947,11 @@ await corsair.openai.api.conversations.createItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `object` | `'list'` | Yes | — |
+| `data` | `Record<string, unknown>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2120,7 +1966,9 @@ Delete a conversation
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.conversations.delete({});
+await corsair.openai.api.conversations.delete({
+  conversationId: 'conv_123'
+});
 ```
 
 **Input**
@@ -2136,7 +1984,7 @@ await corsair.openai.api.conversations.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `conversation.deleted` | Yes | — |
+| `object` | `'conversation.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -2152,7 +2000,10 @@ Delete a conversation item
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.conversations.deleteItem({});
+await corsair.openai.api.conversations.deleteItem({
+  conversationId: 'conv_123',
+  itemId: 'item_123'
+});
 ```
 
 **Input**
@@ -2169,19 +2020,9 @@ await corsair.openai.api.conversations.deleteItem({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `conversation` | Yes | — |
+| `object` | `'conversation'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2196,7 +2037,10 @@ Retrieve a conversation item
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.conversations.getItem({});
+await corsair.openai.api.conversations.getItem({
+  conversationId: 'conv_123',
+  itemId: 'item_123'
+});
 ```
 
 **Input**
@@ -2228,7 +2072,9 @@ List items in a conversation
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.conversations.listItems({});
+await corsair.openai.api.conversations.listItems({
+  conversationId: 'conv_123'
+});
 ```
 
 **Input**
@@ -2237,7 +2083,7 @@ await corsair.openai.api.conversations.listItems({});
 |------|------|----------|-------------|
 | `conversationId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `include` | `string[]` | No | — |
 
@@ -2247,21 +2093,11 @@ await corsair.openai.api.conversations.listItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `object` | `'list'` | Yes | — |
+| `data` | `Record<string, unknown>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -2276,7 +2112,10 @@ Update a conversation's metadata
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.conversations.update({});
+await corsair.openai.api.conversations.update({
+  conversationId: 'conv_123',
+  metadata: { key: 'value' }
+});
 ```
 
 **Input**
@@ -2284,17 +2123,7 @@ await corsair.openai.api.conversations.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `conversationId` | `string` | Yes | — |
-| `metadata` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | Yes | — |
 
 
 
@@ -2303,19 +2132,9 @@ await corsair.openai.api.conversations.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `conversation` | Yes | — |
+| `object` | `'conversation'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2332,7 +2151,10 @@ Create embeddings for the given input
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.embeddings.create({});
+await corsair.openai.api.embeddings.create({
+  model: 'text-embedding-3-small',
+  input: 'test'
+});
 ```
 
 **Input**
@@ -2341,7 +2163,7 @@ await corsair.openai.api.embeddings.create({});
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
 | `input` | `string \| string[] \| number[] \| number[][]` | Yes | — |
-| `encodingFormat` | `float \| base64` | No | — |
+| `encodingFormat` | `'float' \| 'base64'` | No | — |
 | `dimensions` | `number` | No | — |
 | `user` | `string` | No | — |
 
@@ -2351,7 +2173,7 @@ await corsair.openai.api.embeddings.create({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `model` | `string` | Yes | — |
 | `usage` | `object` | Yes | — |
@@ -2361,7 +2183,7 @@ await corsair.openai.api.embeddings.create({});
 
 ```ts
 {
-  object: embedding,
+  object: 'embedding',
   embedding: number[] | string,
   index: number
 }[]
@@ -2404,7 +2226,7 @@ await corsair.openai.api.engines.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -2413,7 +2235,7 @@ await corsair.openai.api.engines.list({});
 ```ts
 {
   id: string,
-  object: engine,
+  object: 'engine',
   owner?: string,
   ready?: boolean
 }[]
@@ -2434,7 +2256,9 @@ Retrieve an engine by id (legacy, deprecated)
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.engines.retrieve({});
+await corsair.openai.api.engines.retrieve({
+  engineId: 'davinci'
+});
 ```
 
 **Input**
@@ -2450,7 +2274,7 @@ await corsair.openai.api.engines.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `engine` | Yes | — |
+| `object` | `'engine'` | Yes | — |
 | `owner` | `string` | No | — |
 | `ready` | `boolean` | No | — |
 
@@ -2469,7 +2293,10 @@ Cancel an in-progress eval run
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.evalRuns.cancel({});
+await corsair.openai.api.evalRuns.cancel({
+  evalId: 'eval_123',
+  runId: 'run_123'
+});
 ```
 
 **Input**
@@ -2486,41 +2313,15 @@ await corsair.openai.api.evalRuns.cancel({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `eval.run` | Yes | — |
+| `object` | `'eval.run'` | Yes | — |
 | `eval_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `created_at` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `model` | `string` | No | — |
-| `data_source` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `result_counts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="result_counts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source` | `Record<string, unknown>` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `result_counts` | `Record<string, number>` | No | — |
 
 
 
@@ -2535,7 +2336,10 @@ Create an eval run
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.evalRuns.create({});
+await corsair.openai.api.evalRuns.create({
+  evalId: 'eval_123',
+  dataSource: { type: 'completions' }
+});
 ```
 
 **Input**
@@ -2544,26 +2348,8 @@ await corsair.openai.api.evalRuns.create({});
 |------|------|----------|-------------|
 | `evalId` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `dataSource` | `object` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="dataSource full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `dataSource` | `Record<string, unknown>` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2572,41 +2358,15 @@ await corsair.openai.api.evalRuns.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `eval.run` | Yes | — |
+| `object` | `'eval.run'` | Yes | — |
 | `eval_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `created_at` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `model` | `string` | No | — |
-| `data_source` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `result_counts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="result_counts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source` | `Record<string, unknown>` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `result_counts` | `Record<string, number>` | No | — |
 
 
 
@@ -2621,7 +2381,10 @@ Delete an eval run
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.evalRuns.delete({});
+await corsair.openai.api.evalRuns.delete({
+  evalId: 'eval_123',
+  runId: 'run_123'
+});
 ```
 
 **Input**
@@ -2637,7 +2400,7 @@ await corsair.openai.api.evalRuns.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `eval.run.deleted` | Yes | — |
+| `object` | `'eval.run.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 | `run_id` | `string` | Yes | — |
 
@@ -2654,7 +2417,10 @@ Retrieve an eval run
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evalRuns.get({});
+await corsair.openai.api.evalRuns.get({
+  evalId: 'eval_123',
+  runId: 'run_123'
+});
 ```
 
 **Input**
@@ -2671,41 +2437,15 @@ await corsair.openai.api.evalRuns.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `eval.run` | Yes | — |
+| `object` | `'eval.run'` | Yes | — |
 | `eval_id` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `created_at` | `number` | Yes | — |
 | `status` | `string` | Yes | — |
 | `model` | `string` | No | — |
-| `data_source` | `object` | No | — |
-| `metadata` | `object` | No | — |
-| `result_counts` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="result_counts full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source` | `Record<string, unknown>` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `result_counts` | `Record<string, number>` | No | — |
 
 
 
@@ -2720,7 +2460,11 @@ Retrieve an eval run output item
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evalRuns.getOutputItem({});
+await corsair.openai.api.evalRuns.getOutputItem({
+  evalId: 'eval_123',
+  runId: 'run_123',
+  outputItemId: 'out_123'
+});
 ```
 
 **Input**
@@ -2738,7 +2482,7 @@ await corsair.openai.api.evalRuns.getOutputItem({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `eval.run.output_item` | Yes | — |
+| `object` | `'eval.run.output_item'` | Yes | — |
 
 
 
@@ -2753,7 +2497,9 @@ List eval runs
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evalRuns.list({});
+await corsair.openai.api.evalRuns.list({
+  evalId: 'eval_123'
+});
 ```
 
 **Input**
@@ -2763,7 +2509,7 @@ await corsair.openai.api.evalRuns.list({});
 | `evalId` | `string` | Yes | — |
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `status` | `string` | No | — |
 
 
@@ -2772,7 +2518,7 @@ await corsair.openai.api.evalRuns.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 
@@ -2782,18 +2528,15 @@ await corsair.openai.api.evalRuns.list({});
 ```ts
 {
   id: string,
-  object: eval.run,
+  object: 'eval.run',
   eval_id: string,
   name?: string | null,
   created_at: number,
   status: string,
   model?: string,
-  data_source?: {
-  },
-  metadata?: {
-  } | null,
-  result_counts?: {
-  }
+  data_source?: Record<string, unknown>,
+  metadata?: Record<string, string> | null,
+  result_counts?: Record<string, number>
 }[]
 ```
 </Accordion>
@@ -2812,7 +2555,10 @@ List output items for an eval run
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evalRuns.listOutputItems({});
+await corsair.openai.api.evalRuns.listOutputItems({
+  evalId: 'eval_123',
+  runId: 'run_123'
+});
 ```
 
 **Input**
@@ -2831,7 +2577,7 @@ await corsair.openai.api.evalRuns.listOutputItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 
@@ -2861,7 +2607,10 @@ Create an eval
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.evals.create({});
+await corsair.openai.api.evals.create({
+  dataSourceConfig: { type: 'custom' },
+  testingCriteria: [{ type: 'string_check' }]
+});
 ```
 
 **Input**
@@ -2869,35 +2618,9 @@ await corsair.openai.api.evals.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `name` | `string` | No | — |
-| `dataSourceConfig` | `object` | Yes | — |
-| `testingCriteria` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="dataSourceConfig full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="testingCriteria full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `dataSourceConfig` | `Record<string, unknown>` | Yes | — |
+| `testingCriteria` | `Record<string, unknown>[]` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2906,38 +2629,12 @@ await corsair.openai.api.evals.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `eval` | Yes | — |
+| `object` | `'eval'` | Yes | — |
 | `name` | `string` | No | — |
 | `created_at` | `number` | Yes | — |
-| `data_source_config` | `object` | Yes | — |
-| `testing_criteria` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="testing_criteria full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source_config` | `Record<string, unknown>` | Yes | — |
+| `testing_criteria` | `Record<string, unknown>[]` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -2952,7 +2649,9 @@ Delete an eval
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.evals.delete({});
+await corsair.openai.api.evals.delete({
+  evalId: 'eval_123'
+});
 ```
 
 **Input**
@@ -2967,7 +2666,7 @@ await corsair.openai.api.evals.delete({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `eval.deleted` | Yes | — |
+| `object` | `'eval.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 | `eval_id` | `string` | Yes | — |
 
@@ -2984,7 +2683,9 @@ Retrieve an eval
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.evals.get({});
+await corsair.openai.api.evals.get({
+  evalId: 'eval_123'
+});
 ```
 
 **Input**
@@ -3000,38 +2701,12 @@ await corsair.openai.api.evals.get({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `eval` | Yes | — |
+| `object` | `'eval'` | Yes | — |
 | `name` | `string` | No | — |
 | `created_at` | `number` | Yes | — |
-| `data_source_config` | `object` | Yes | — |
-| `testing_criteria` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="testing_criteria full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source_config` | `Record<string, unknown>` | Yes | — |
+| `testing_criteria` | `Record<string, unknown>[]` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -3055,7 +2730,7 @@ await corsair.openai.api.evals.list({});
 |------|------|----------|-------------|
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `orderBy` | `string` | No | — |
 
 
@@ -3064,7 +2739,7 @@ await corsair.openai.api.evals.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 
@@ -3074,15 +2749,12 @@ await corsair.openai.api.evals.list({});
 ```ts
 {
   id: string,
-  object: eval,
+  object: 'eval',
   name?: string | null,
   created_at: number,
-  data_source_config: {
-  },
-  testing_criteria: {
-  }[],
-  metadata?: {
-  } | null
+  data_source_config: Record<string, unknown>,
+  testing_criteria: Record<string, unknown>[],
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -3101,7 +2773,9 @@ Update an eval
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.evals.update({});
+await corsair.openai.api.evals.update({
+  evalId: 'eval_123'
+});
 ```
 
 **Input**
@@ -3110,17 +2784,7 @@ await corsair.openai.api.evals.update({});
 |------|------|----------|-------------|
 | `evalId` | `string` | Yes | — |
 | `name` | `string` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -3129,38 +2793,12 @@ await corsair.openai.api.evals.update({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `eval` | Yes | — |
+| `object` | `'eval'` | Yes | — |
 | `name` | `string` | No | — |
 | `created_at` | `number` | Yes | — |
-| `data_source_config` | `object` | Yes | — |
-| `testing_criteria` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="data_source_config full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="testing_criteria full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `data_source_config` | `Record<string, unknown>` | Yes | — |
+| `testing_criteria` | `Record<string, unknown>[]` | Yes | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -3177,7 +2815,9 @@ Delete a file
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.files.delete({});
+await corsair.openai.api.files.delete({
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -3193,7 +2833,7 @@ await corsair.openai.api.files.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `file` | Yes | — |
+| `object` | `'file'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -3209,7 +2849,9 @@ Download the contents of a file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.files.downloadContent({});
+await corsair.openai.api.files.downloadContent({
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -3247,9 +2889,9 @@ await corsair.openai.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `purpose` | `assistants \| assistants_output \| batch \| batch_output \| fine-tune \| fine-tune-results \| vision \| user_data \| evals` | No | — |
+| `purpose` | `'assistants' \| 'assistants_output' \| 'batch' \| 'batch_output' \| 'fine-tune' \| 'fine-tune-results' \| 'vision' \| 'user_data' \| 'evals'` | No | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 
 
@@ -3258,7 +2900,7 @@ await corsair.openai.api.files.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | No | — |
 | `first_id` | `string` | No | — |
@@ -3270,12 +2912,12 @@ await corsair.openai.api.files.list({});
 ```ts
 {
   id: string,
-  object: file,
+  object: 'file',
   bytes: number,
   created_at: number,
   expires_at?: number,
   filename: string,
-  purpose: assistants | assistants_output | batch | batch_output | fine-tune | fine-tune-results | vision | user_data | evals
+  purpose: 'assistants' | 'assistants_output' | 'batch' | 'batch_output' | 'fine-tune' | 'fine-tune-results' | 'vision' | 'user_data' | 'evals'
 }[]
 ```
 </Accordion>
@@ -3294,7 +2936,9 @@ Retrieve file metadata
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.files.retrieve({});
+await corsair.openai.api.files.retrieve({
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -3310,12 +2954,12 @@ await corsair.openai.api.files.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `file` | Yes | — |
+| `object` | `'file'` | Yes | — |
 | `bytes` | `number` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `expires_at` | `number` | No | — |
 | `filename` | `string` | Yes | — |
-| `purpose` | `assistants \| assistants_output \| batch \| batch_output \| fine-tune \| fine-tune-results \| vision \| user_data \| evals` | Yes | — |
+| `purpose` | `'assistants' \| 'assistants_output' \| 'batch' \| 'batch_output' \| 'fine-tune' \| 'fine-tune-results' \| 'vision' \| 'user_data' \| 'evals'` | Yes | — |
 
 
 
@@ -3330,7 +2974,11 @@ Upload a file to OpenAI
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.files.upload({});
+await corsair.openai.api.files.upload({
+  file: 'file contents',
+  fileName: 'file.txt',
+  purpose: 'assistants'
+});
 ```
 
 **Input**
@@ -3339,7 +2987,7 @@ await corsair.openai.api.files.upload({});
 |------|------|----------|-------------|
 | `file` | `custom \| string` | Yes | — |
 | `fileName` | `string` | Yes | — |
-| `purpose` | `assistants \| assistants_output \| batch \| batch_output \| fine-tune \| fine-tune-results \| vision \| user_data \| evals` | Yes | — |
+| `purpose` | `'assistants' \| 'assistants_output' \| 'batch' \| 'batch_output' \| 'fine-tune' \| 'fine-tune-results' \| 'vision' \| 'user_data' \| 'evals'` | Yes | — |
 
 
 
@@ -3348,12 +2996,12 @@ await corsair.openai.api.files.upload({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `file` | Yes | — |
+| `object` | `'file'` | Yes | — |
 | `bytes` | `number` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `expires_at` | `number` | No | — |
 | `filename` | `string` | Yes | — |
-| `purpose` | `assistants \| assistants_output \| batch \| batch_output \| fine-tune \| fine-tune-results \| vision \| user_data \| evals` | Yes | — |
+| `purpose` | `'assistants' \| 'assistants_output' \| 'batch' \| 'batch_output' \| 'fine-tune' \| 'fine-tune-results' \| 'vision' \| 'user_data' \| 'evals'` | Yes | — |
 
 
 
@@ -3370,7 +3018,9 @@ Cancel an in-progress fine-tuning job
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.fineTuning.cancelJob({});
+await corsair.openai.api.fineTuning.cancelJob({
+  jobId: 'job_123'
+});
 ```
 
 **Input**
@@ -3386,42 +3036,26 @@ await corsair.openai.api.fineTuning.cancelJob({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `fine_tuning.job` | Yes | — |
+| `object` | `'fine_tuning.job'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
 | `fine_tuned_model` | `string` | No | — |
-| `status` | `validating_files \| queued \| running \| succeeded \| failed \| cancelled` | Yes | — |
+| `status` | `'validating_files' \| 'queued' \| 'running' \| 'succeeded' \| 'failed' \| 'cancelled'` | Yes | — |
 | `training_file` | `string` | Yes | — |
 | `validation_file` | `string` | No | — |
-| `hyperparameters` | `object` | No | — |
+| `hyperparameters` | `Record<string, unknown>` | No | — |
 | `result_files` | `string[]` | No | — |
 | `trained_tokens` | `number` | No | — |
 | `error` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
-<Accordion title="hyperparameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3440,7 +3074,10 @@ Create a fine-tuning job
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.fineTuning.createJob({});
+await corsair.openai.api.fineTuning.createJob({
+  model: 'gpt-4o-mini-2024-07-18',
+  trainingFile: 'file_123'
+});
 ```
 
 **Input**
@@ -3450,46 +3087,12 @@ await corsair.openai.api.fineTuning.createJob({});
 | `model` | `string` | Yes | — |
 | `trainingFile` | `string` | Yes | — |
 | `validationFile` | `string` | No | — |
-| `hyperparameters` | `object` | No | — |
+| `hyperparameters` | `Record<string, unknown>` | No | — |
 | `suffix` | `string` | No | — |
-| `integrations` | `object[]` | No | — |
+| `integrations` | `Record<string, unknown>[]` | No | — |
 | `seed` | `number` | No | — |
-| `method` | `object` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="hyperparameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="integrations full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="method full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `method` | `Record<string, unknown>` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -3498,42 +3101,26 @@ await corsair.openai.api.fineTuning.createJob({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `fine_tuning.job` | Yes | — |
+| `object` | `'fine_tuning.job'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
 | `fine_tuned_model` | `string` | No | — |
-| `status` | `validating_files \| queued \| running \| succeeded \| failed \| cancelled` | Yes | — |
+| `status` | `'validating_files' \| 'queued' \| 'running' \| 'succeeded' \| 'failed' \| 'cancelled'` | Yes | — |
 | `training_file` | `string` | Yes | — |
 | `validation_file` | `string` | No | — |
-| `hyperparameters` | `object` | No | — |
+| `hyperparameters` | `Record<string, unknown>` | No | — |
 | `result_files` | `string[]` | No | — |
 | `trained_tokens` | `number` | No | — |
 | `error` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
-<Accordion title="hyperparameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3552,7 +3139,9 @@ List checkpoints for a fine-tuning job
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.fineTuning.listCheckpoints({});
+await corsair.openai.api.fineTuning.listCheckpoints({
+  jobId: 'job_123'
+});
 ```
 
 **Input**
@@ -3569,7 +3158,7 @@ await corsair.openai.api.fineTuning.listCheckpoints({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -3581,12 +3170,11 @@ await corsair.openai.api.fineTuning.listCheckpoints({});
 ```ts
 {
   id: string,
-  object: fine_tuning.job.checkpoint,
+  object: 'fine_tuning.job.checkpoint',
   created_at: number,
   fine_tuned_model_checkpoint: string,
   step_number: number,
-  metrics?: {
-  }
+  metrics?: Record<string, number>
 }[]
 ```
 </Accordion>
@@ -3605,7 +3193,9 @@ List events for a fine-tuning job
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.fineTuning.listEvents({});
+await corsair.openai.api.fineTuning.listEvents({
+  jobId: 'job_123'
+});
 ```
 
 **Input**
@@ -3622,7 +3212,7 @@ await corsair.openai.api.fineTuning.listEvents({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 
@@ -3632,12 +3222,11 @@ await corsair.openai.api.fineTuning.listEvents({});
 ```ts
 {
   id: string,
-  object: fine_tuning.job.event,
+  object: 'fine_tuning.job.event',
   created_at: number,
   level: string,
   message: string,
-  data?: {
-  }
+  data?: Record<string, unknown>
 }[]
 ```
 </Accordion>
@@ -3665,17 +3254,7 @@ await corsair.openai.api.fineTuning.listJobs({});
 |------|------|----------|-------------|
 | `after` | `string` | No | — |
 | `limit` | `number` | No | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -3683,7 +3262,7 @@ await corsair.openai.api.fineTuning.listJobs({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 
@@ -3693,23 +3272,21 @@ await corsair.openai.api.fineTuning.listJobs({});
 ```ts
 {
   id: string,
-  object: fine_tuning.job,
+  object: 'fine_tuning.job',
   created_at: number,
   model: string,
   fine_tuned_model?: string | null,
-  status: validating_files | queued | running | succeeded | failed | cancelled,
+  status: 'validating_files' | 'queued' | 'running' | 'succeeded' | 'failed' | 'cancelled',
   training_file: string,
   validation_file?: string | null,
-  hyperparameters?: {
-  },
+  hyperparameters?: Record<string, unknown>,
   result_files?: string[],
   trained_tokens?: number | null,
   error?: {
     code: string,
     message: string
   } | null,
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -3728,7 +3305,9 @@ Retrieve a fine-tuning job
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.fineTuning.retrieveJob({});
+await corsair.openai.api.fineTuning.retrieveJob({
+  jobId: 'job_123'
+});
 ```
 
 **Input**
@@ -3744,42 +3323,26 @@ await corsair.openai.api.fineTuning.retrieveJob({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `fine_tuning.job` | Yes | — |
+| `object` | `'fine_tuning.job'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `model` | `string` | Yes | — |
 | `fine_tuned_model` | `string` | No | — |
-| `status` | `validating_files \| queued \| running \| succeeded \| failed \| cancelled` | Yes | — |
+| `status` | `'validating_files' \| 'queued' \| 'running' \| 'succeeded' \| 'failed' \| 'cancelled'` | Yes | — |
 | `training_file` | `string` | Yes | — |
 | `validation_file` | `string` | No | — |
-| `hyperparameters` | `object` | No | — |
+| `hyperparameters` | `Record<string, unknown>` | No | — |
 | `result_files` | `string[]` | No | — |
 | `trained_tokens` | `number` | No | — |
 | `error` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
-<Accordion title="hyperparameters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="error full type">
 
 ```ts
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -3800,34 +3363,19 @@ Run a grader against a model sample
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.graders.run({});
+await corsair.openai.api.graders.run({
+  grader: { type: 'string_check' },
+  modelSample: 'hello'
+});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `grader` | `object` | Yes | — |
-| `item` | `object` | No | — |
+| `grader` | `Record<string, unknown>` | Yes | — |
+| `item` | `Record<string, unknown>` | No | — |
 | `modelSample` | `string` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="grader full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
-<Accordion title="item full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -3850,24 +3398,16 @@ Validate a grader configuration
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.graders.validate({});
+await corsair.openai.api.graders.validate({
+  grader: { type: 'string_check' }
+});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `grader` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="grader full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `grader` | `Record<string, unknown>` | Yes | — |
 
 
 
@@ -3875,17 +3415,7 @@ await corsair.openai.api.graders.validate({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `grader` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="grader full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `grader` | `Record<string, unknown>` | No | — |
 
 
 
@@ -3902,7 +3432,9 @@ Generate images from a prompt
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.images.create({});
+await corsair.openai.api.images.create({
+  prompt: 'a cat'
+});
 ```
 
 **Input**
@@ -3915,7 +3447,7 @@ await corsair.openai.api.images.create({});
 | `size` | `string` | No | — |
 | `quality` | `string` | No | — |
 | `style` | `string` | No | — |
-| `responseFormat` | `url \| b64_json` | No | — |
+| `responseFormat` | `'url' \| 'b64_json'` | No | — |
 | `background` | `string` | No | — |
 | `user` | `string` | No | — |
 
@@ -3954,7 +3486,11 @@ Edit an image given a prompt and mask
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.images.createEdit({});
+await corsair.openai.api.images.createEdit({
+  image: 'image bytes',
+  imageFileName: 'image.png',
+  prompt: 'make it blue'
+});
 ```
 
 **Input**
@@ -3969,7 +3505,7 @@ await corsair.openai.api.images.createEdit({});
 | `model` | `string` | No | — |
 | `n` | `number` | No | — |
 | `size` | `string` | No | — |
-| `responseFormat` | `url \| b64_json` | No | — |
+| `responseFormat` | `'url' \| 'b64_json'` | No | — |
 
 
 
@@ -4006,7 +3542,10 @@ Create variations of an image
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.images.createVariation({});
+await corsair.openai.api.images.createVariation({
+  image: 'image bytes',
+  imageFileName: 'image.png'
+});
 ```
 
 **Input**
@@ -4018,7 +3557,7 @@ await corsair.openai.api.images.createVariation({});
 | `model` | `string` | No | — |
 | `n` | `number` | No | — |
 | `size` | `string` | No | — |
-| `responseFormat` | `url \| b64_json` | No | — |
+| `responseFormat` | `'url' \| 'b64_json'` | No | — |
 
 
 
@@ -4057,7 +3596,11 @@ Create a message on a thread
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.messages.create({});
+await corsair.openai.api.messages.create({
+  threadId: 'thread_123',
+  role: 'user',
+  content: 'hello'
+});
 ```
 
 **Input**
@@ -4065,10 +3608,10 @@ await corsair.openai.api.messages.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
-| `role` | `user \| assistant` | Yes | — |
+| `role` | `'user' \| 'assistant'` | Yes | — |
 | `content` | `string \| object[]` | Yes | — |
 | `attachments` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -4076,23 +3619,22 @@ await corsair.openai.api.messages.create({});
 ```ts
 string | (
   {
-    type: text,
+    type: 'text',
     text: {
       value: string,
-      annotations: {
-      }[]
+      annotations: Record<string, unknown>[]
     }
   } | {
-    type: image_file,
+    type: 'image_file',
     image_file: {
       file_id: string,
-      detail?: auto | low | high
+      detail?: 'auto' | 'low' | 'high'
     }
   } | {
-    type: image_url,
+    type: 'image_url',
     image_url: {
       url: string,
-      detail?: auto | low | high
+      detail?: 'auto' | 'low' | 'high'
     }
   }
 )[]
@@ -4106,20 +3648,12 @@ string | (
   file_id?: string,
   tools?: (
     {
-      type: code_interpreter
+      type: 'code_interpreter'
     } | {
-      type: file_search
+      type: 'file_search'
     }
   )[]
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4131,16 +3665,16 @@ string | (
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.message` | Yes | — |
+| `object` | `'thread.message'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `thread_id` | `string` | Yes | — |
-| `status` | `in_progress \| incomplete \| completed` | No | — |
-| `role` | `user \| assistant` | Yes | — |
+| `status` | `'in_progress' \| 'incomplete' \| 'completed'` | No | — |
+| `role` | `'user' \| 'assistant'` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `assistant_id` | `string` | No | — |
 | `run_id` | `string` | No | — |
 | `attachments` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -4148,23 +3682,22 @@ string | (
 ```ts
 (
   {
-    type: text,
+    type: 'text',
     text: {
       value: string,
-      annotations: {
-      }[]
+      annotations: Record<string, unknown>[]
     }
   } | {
-    type: image_file,
+    type: 'image_file',
     image_file: {
       file_id: string,
-      detail?: auto | low | high
+      detail?: 'auto' | 'low' | 'high'
     }
   } | {
-    type: image_url,
+    type: 'image_url',
     image_url: {
       url: string,
-      detail?: auto | low | high
+      detail?: 'auto' | 'low' | 'high'
     }
   }
 )[]
@@ -4178,20 +3711,12 @@ string | (
   file_id?: string,
   tools?: (
     {
-      type: code_interpreter
+      type: 'code_interpreter'
     } | {
-      type: file_search
+      type: 'file_search'
     }
   )[]
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4209,7 +3734,10 @@ Delete a message
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.messages.delete({});
+await corsair.openai.api.messages.delete({
+  threadId: 'thread_123',
+  messageId: 'msg_123'
+});
 ```
 
 **Input**
@@ -4226,7 +3754,7 @@ await corsair.openai.api.messages.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.message.deleted` | Yes | — |
+| `object` | `'thread.message.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -4242,7 +3770,9 @@ List messages on a thread
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.messages.list({});
+await corsair.openai.api.messages.list({
+  threadId: 'thread_123'
+});
 ```
 
 **Input**
@@ -4251,7 +3781,7 @@ await corsair.openai.api.messages.list({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 | `runId` | `string` | No | — |
@@ -4262,7 +3792,7 @@ await corsair.openai.api.messages.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -4274,30 +3804,29 @@ await corsair.openai.api.messages.list({});
 ```ts
 {
   id: string,
-  object: thread.message,
+  object: 'thread.message',
   created_at: number,
   thread_id: string,
-  status?: in_progress | incomplete | completed,
-  role: user | assistant,
+  status?: 'in_progress' | 'incomplete' | 'completed',
+  role: 'user' | 'assistant',
   content: (
     {
-      type: text,
+      type: 'text',
       text: {
         value: string,
-        annotations: {
-        }[]
+        annotations: Record<string, unknown>[]
       }
     } | {
-      type: image_file,
+      type: 'image_file',
       image_file: {
         file_id: string,
-        detail?: auto | low | high
+        detail?: 'auto' | 'low' | 'high'
       }
     } | {
-      type: image_url,
+      type: 'image_url',
       image_url: {
         url: string,
-        detail?: auto | low | high
+        detail?: 'auto' | 'low' | 'high'
       }
     }
   )[],
@@ -4307,14 +3836,13 @@ await corsair.openai.api.messages.list({});
     file_id?: string,
     tools?: (
       {
-        type: code_interpreter
+        type: 'code_interpreter'
       } | {
-        type: file_search
+        type: 'file_search'
       }
     )[]
   }[] | null,
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -4333,7 +3861,10 @@ Modify a message
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.messages.modify({});
+await corsair.openai.api.messages.modify({
+  threadId: 'thread_123',
+  messageId: 'msg_123'
+});
 ```
 
 **Input**
@@ -4342,17 +3873,7 @@ await corsair.openai.api.messages.modify({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `messageId` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -4361,16 +3882,16 @@ await corsair.openai.api.messages.modify({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.message` | Yes | — |
+| `object` | `'thread.message'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `thread_id` | `string` | Yes | — |
-| `status` | `in_progress \| incomplete \| completed` | No | — |
-| `role` | `user \| assistant` | Yes | — |
+| `status` | `'in_progress' \| 'incomplete' \| 'completed'` | No | — |
+| `role` | `'user' \| 'assistant'` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `assistant_id` | `string` | No | — |
 | `run_id` | `string` | No | — |
 | `attachments` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -4378,23 +3899,22 @@ await corsair.openai.api.messages.modify({});
 ```ts
 (
   {
-    type: text,
+    type: 'text',
     text: {
       value: string,
-      annotations: {
-      }[]
+      annotations: Record<string, unknown>[]
     }
   } | {
-    type: image_file,
+    type: 'image_file',
     image_file: {
       file_id: string,
-      detail?: auto | low | high
+      detail?: 'auto' | 'low' | 'high'
     }
   } | {
-    type: image_url,
+    type: 'image_url',
     image_url: {
       url: string,
-      detail?: auto | low | high
+      detail?: 'auto' | 'low' | 'high'
     }
   }
 )[]
@@ -4408,20 +3928,12 @@ await corsair.openai.api.messages.modify({});
   file_id?: string,
   tools?: (
     {
-      type: code_interpreter
+      type: 'code_interpreter'
     } | {
-      type: file_search
+      type: 'file_search'
     }
   )[]
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4439,7 +3951,10 @@ Retrieve a message
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.messages.retrieve({});
+await corsair.openai.api.messages.retrieve({
+  threadId: 'thread_123',
+  messageId: 'msg_123'
+});
 ```
 
 **Input**
@@ -4456,16 +3971,16 @@ await corsair.openai.api.messages.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.message` | Yes | — |
+| `object` | `'thread.message'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `thread_id` | `string` | Yes | — |
-| `status` | `in_progress \| incomplete \| completed` | No | — |
-| `role` | `user \| assistant` | Yes | — |
+| `status` | `'in_progress' \| 'incomplete' \| 'completed'` | No | — |
+| `role` | `'user' \| 'assistant'` | Yes | — |
 | `content` | `object[]` | Yes | — |
 | `assistant_id` | `string` | No | — |
 | `run_id` | `string` | No | — |
 | `attachments` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="content full type">
@@ -4473,23 +3988,22 @@ await corsair.openai.api.messages.retrieve({});
 ```ts
 (
   {
-    type: text,
+    type: 'text',
     text: {
       value: string,
-      annotations: {
-      }[]
+      annotations: Record<string, unknown>[]
     }
   } | {
-    type: image_file,
+    type: 'image_file',
     image_file: {
       file_id: string,
-      detail?: auto | low | high
+      detail?: 'auto' | 'low' | 'high'
     }
   } | {
-    type: image_url,
+    type: 'image_url',
     image_url: {
       url: string,
-      detail?: auto | low | high
+      detail?: 'auto' | 'low' | 'high'
     }
   }
 )[]
@@ -4503,20 +4017,12 @@ await corsair.openai.api.messages.retrieve({});
   file_id?: string,
   tools?: (
     {
-      type: code_interpreter
+      type: 'code_interpreter'
     } | {
-      type: file_search
+      type: 'file_search'
     }
   )[]
 }[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 </AccordionGroup>
@@ -4546,7 +4052,7 @@ await corsair.openai.api.models.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 
 <AccordionGroup>
@@ -4555,7 +4061,7 @@ await corsair.openai.api.models.list({});
 ```ts
 {
   id: string,
-  object: model,
+  object: 'model',
   created: number,
   owned_by: string
 }[]
@@ -4576,7 +4082,9 @@ Retrieve a model by id
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.models.retrieve({});
+await corsair.openai.api.models.retrieve({
+  model: 'gpt-4o-mini'
+});
 ```
 
 **Input**
@@ -4592,7 +4100,7 @@ await corsair.openai.api.models.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `model` | Yes | — |
+| `object` | `'model'` | Yes | — |
 | `created` | `number` | Yes | — |
 | `owned_by` | `string` | Yes | — |
 
@@ -4611,25 +4119,17 @@ Classify text/image input against usage policies
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.moderation.create({});
+await corsair.openai.api.moderation.create({
+  input: 'hi'
+});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `input` | `string \| string[] \| object[]` | Yes | — |
+| `input` | `string \| string[] \| Record<string, unknown>[]` | Yes | — |
 | `model` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-string | string[] | {
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -4647,12 +4147,9 @@ string | string[] | {
 ```ts
 {
   flagged: boolean,
-  categories: {
-  },
-  category_scores: {
-  },
-  category_applied_input_types?: {
-  }
+  categories: Record<string, boolean>,
+  category_scores: Record<string, number>,
+  category_applied_input_types?: Record<string, string[]>
 }[]
 ```
 </Accordion>
@@ -4673,7 +4170,9 @@ Create a realtime call
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.realtime.createCall({});
+await corsair.openai.api.realtime.createCall({
+  session: { type: 'realtime' }
+});
 ```
 
 **Input**
@@ -4681,17 +4180,7 @@ await corsair.openai.api.realtime.createCall({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `sdp` | `string` | No | — |
-| `session` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="session full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `session` | `Record<string, unknown>` | Yes | — |
 
 
 
@@ -4722,18 +4211,10 @@ await corsair.openai.api.realtime.createClientSecret({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `session` | `object` | No | — |
+| `session` | `Record<string, unknown>` | No | — |
 | `expiresAfter` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="session full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="expiresAfter full type">
 
 ```ts
@@ -4808,17 +4289,7 @@ await corsair.openai.api.realtime.createTranscriptionSession({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `inputAudioFormat` | `string` | No | — |
-| `inputAudioTranscription` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="inputAudioTranscription full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `inputAudioTranscription` | `Record<string, unknown>` | No | — |
 
 
 
@@ -4843,7 +4314,9 @@ Cancel an in-progress background response
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.responses.cancel({});
+await corsair.openai.api.responses.cancel({
+  responseId: 'resp_123'
+});
 ```
 
 **Input**
@@ -4859,23 +4332,15 @@ await corsair.openai.api.responses.cancel({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `response` | Yes | — |
+| `object` | `'response'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `completed \| failed \| in_progress \| cancelled \| queued \| incomplete` | Yes | — |
+| `status` | `'completed' \| 'failed' \| 'in_progress' \| 'cancelled' \| 'queued' \| 'incomplete'` | Yes | — |
 | `model` | `string` | Yes | — |
-| `output` | `object[]` | Yes | — |
+| `output` | `Record<string, unknown>[]` | Yes | — |
 | `previous_response_id` | `string` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="usage full type">
 
 ```ts
@@ -4901,7 +4366,14 @@ Compact response input to reduce token usage
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.responses.compact({});
+await corsair.openai.api.responses.compact({
+  model: 'gpt-4o-mini',
+  input: [
+    {
+      key: 'value'
+    }
+  ]
+});
 ```
 
 **Input**
@@ -4909,17 +4381,7 @@ await corsair.openai.api.responses.compact({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `object[]` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `input` | `Record<string, unknown>[]` | Yes | — |
 
 
 
@@ -4928,20 +4390,12 @@ await corsair.openai.api.responses.compact({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `response.compaction` | Yes | — |
+| `object` | `'response.compaction'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `output` | `object[]` | Yes | — |
+| `output` | `Record<string, unknown>[]` | Yes | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="usage full type">
 
 ```ts
@@ -4967,7 +4421,10 @@ Create a model response via the Responses API
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.responses.create({});
+await corsair.openai.api.responses.create({
+  model: 'gpt-4o-mini',
+  input: 'hi'
+});
 ```
 
 **Input**
@@ -4975,59 +4432,27 @@ await corsair.openai.api.responses.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `string \| object[]` | Yes | — |
+| `input` | `string \| Record<string, unknown>[]` | Yes | — |
 | `instructions` | `string` | No | — |
-| `tools` | `object[]` | No | — |
-| `toolChoice` | `none \| auto \| required \| object` | No | — |
+| `tools` | `Record<string, unknown>[]` | No | — |
+| `toolChoice` | `'none' \| 'auto' \| 'required' \| Record<string, unknown>` | No | — |
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
 | `maxOutputTokens` | `number` | No | — |
 | `previousResponseId` | `string` | No | — |
 | `store` | `boolean` | No | — |
-| `metadata` | `object` | No | — |
-| `truncation` | `auto \| disabled` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
+| `truncation` | `'auto' \| 'disabled'` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 | `background` | `boolean` | No | — |
 | `reasoning` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-string | {
-}[]
-```
-</Accordion>
-
-<Accordion title="tools full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
-<Accordion title="toolChoice full type">
-
-```ts
-none | auto | required | {
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="reasoning full type">
 
 ```ts
 {
-  effort?: minimal | low | medium | high
+  effort?: 'minimal' | 'low' | 'medium' | 'high'
 }
 ```
 </Accordion>
@@ -5040,23 +4465,15 @@ none | auto | required | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `response` | Yes | — |
+| `object` | `'response'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `completed \| failed \| in_progress \| cancelled \| queued \| incomplete` | Yes | — |
+| `status` | `'completed' \| 'failed' \| 'in_progress' \| 'cancelled' \| 'queued' \| 'incomplete'` | Yes | — |
 | `model` | `string` | Yes | — |
-| `output` | `object[]` | Yes | — |
+| `output` | `Record<string, unknown>[]` | Yes | — |
 | `previous_response_id` | `string` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="usage full type">
 
 ```ts
@@ -5082,7 +4499,9 @@ Delete a stored model response
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.responses.delete({});
+await corsair.openai.api.responses.delete({
+  responseId: 'resp_123'
+});
 ```
 
 **Input**
@@ -5098,7 +4517,7 @@ await corsair.openai.api.responses.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `response.deleted` | Yes | — |
+| `object` | `'response.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -5114,7 +4533,9 @@ List input items for a response
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.responses.listInputItems({});
+await corsair.openai.api.responses.listInputItems({
+  responseId: 'resp_123'
+});
 ```
 
 **Input**
@@ -5123,7 +4544,7 @@ await corsair.openai.api.responses.listInputItems({});
 |------|------|----------|-------------|
 | `responseId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
@@ -5133,21 +4554,11 @@ await corsair.openai.api.responses.listInputItems({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
-| `data` | `object[]` | Yes | — |
+| `object` | `'list'` | Yes | — |
+| `data` | `Record<string, unknown>[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
 | `has_more` | `boolean` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="data full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
 
 
 
@@ -5162,7 +4573,9 @@ Retrieve a model response
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.responses.retrieve({});
+await corsair.openai.api.responses.retrieve({
+  responseId: 'resp_123'
+});
 ```
 
 **Input**
@@ -5178,23 +4591,15 @@ await corsair.openai.api.responses.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `response` | Yes | — |
+| `object` | `'response'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `completed \| failed \| in_progress \| cancelled \| queued \| incomplete` | Yes | — |
+| `status` | `'completed' \| 'failed' \| 'in_progress' \| 'cancelled' \| 'queued' \| 'incomplete'` | Yes | — |
 | `model` | `string` | Yes | — |
-| `output` | `object[]` | Yes | — |
+| `output` | `Record<string, unknown>[]` | Yes | — |
 | `previous_response_id` | `string` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="output full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-
 <Accordion title="usage full type">
 
 ```ts
@@ -5222,7 +4627,10 @@ Cancel an in-progress run
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.runs.cancel({});
+await corsair.openai.api.runs.cancel({
+  threadId: 'thread_123',
+  runId: 'run_123'
+});
 ```
 
 **Input**
@@ -5239,28 +4647,20 @@ await corsair.openai.api.runs.cancel({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.run` | Yes | — |
+| `object` | `'thread.run'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
-| `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
+| `status` | `'queued' \| 'in_progress' \| 'requires_action' \| 'cancelling' \| 'cancelled' \| 'failed' \| 'completed' \| 'incomplete' \| 'expired'` | Yes | — |
+| `required_action` | `Record<string, unknown>` | No | — |
 | `last_error` | `object` | No | — |
 | `model` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
@@ -5276,9 +4676,9 @@ await corsair.openai.api.runs.cancel({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -5287,24 +4687,15 @@ await corsair.openai.api.runs.cancel({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5333,7 +4724,10 @@ Create a run on a thread
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.runs.create({});
+await corsair.openai.api.runs.create({
+  threadId: 'thread_123',
+  assistantId: 'asst_123'
+});
 ```
 
 **Input**
@@ -5346,13 +4740,13 @@ await corsair.openai.api.runs.create({});
 | `instructions` | `string` | No | — |
 | `additionalInstructions` | `string` | No | — |
 | `tools` | `object[]` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
 | `maxPromptTokens` | `number` | No | — |
 | `maxCompletionTokens` | `number` | No | — |
 | `truncationStrategy` | `object` | No | — |
-| `toolChoice` | `none \| auto \| required \| object` | No | — |
+| `toolChoice` | `'none' \| 'auto' \| 'required' \| object` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -5361,9 +4755,9 @@ await corsair.openai.api.runs.create({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -5372,12 +4766,11 @@ await corsair.openai.api.runs.create({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
@@ -5385,19 +4778,11 @@ await corsair.openai.api.runs.create({});
 ```
 </Accordion>
 
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="truncationStrategy full type">
 
 ```ts
 {
-  type: auto | last_messages,
+  type: 'auto' | 'last_messages',
   last_messages?: number | null
 }
 ```
@@ -5406,8 +4791,8 @@ await corsair.openai.api.runs.create({});
 <Accordion title="toolChoice full type">
 
 ```ts
-none | auto | required | {
-  type: function | code_interpreter | file_search,
+'none' | 'auto' | 'required' | {
+  type: 'function' | 'code_interpreter' | 'file_search',
   function?: {
     name: string
   }
@@ -5423,28 +4808,20 @@ none | auto | required | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.run` | Yes | — |
+| `object` | `'thread.run'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
-| `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
+| `status` | `'queued' \| 'in_progress' \| 'requires_action' \| 'cancelling' \| 'cancelled' \| 'failed' \| 'completed' \| 'incomplete' \| 'expired'` | Yes | — |
+| `required_action` | `Record<string, unknown>` | No | — |
 | `last_error` | `object` | No | — |
 | `model` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
@@ -5460,9 +4837,9 @@ none | auto | required | {
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -5471,24 +4848,15 @@ none | auto | required | {
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5517,7 +4885,9 @@ List runs on a thread
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.runs.list({});
+await corsair.openai.api.runs.list({
+  threadId: 'thread_123'
+});
 ```
 
 **Input**
@@ -5526,7 +4896,7 @@ await corsair.openai.api.runs.list({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
@@ -5536,7 +4906,7 @@ await corsair.openai.api.runs.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -5548,13 +4918,12 @@ await corsair.openai.api.runs.list({});
 ```ts
 {
   id: string,
-  object: thread.run,
+  object: 'thread.run',
   created_at: number,
   thread_id: string,
   assistant_id: string,
-  status: queued | in_progress | requires_action | cancelling | cancelled | failed | completed | incomplete | expired,
-  required_action?: {
-  } | null,
+  status: 'queued' | 'in_progress' | 'requires_action' | 'cancelling' | 'cancelled' | 'failed' | 'completed' | 'incomplete' | 'expired',
+  required_action?: Record<string, unknown> | null,
   last_error?: {
     code: string,
     message: string
@@ -5563,9 +4932,9 @@ await corsair.openai.api.runs.list({});
   instructions?: string | null,
   tools: (
     {
-      type: code_interpreter
+      type: 'code_interpreter'
     } | {
-      type: file_search,
+      type: 'file_search',
       file_search?: {
         max_num_results?: number,
         ranking_options?: {
@@ -5574,18 +4943,16 @@ await corsair.openai.api.runs.list({});
         }
       }
     } | {
-      type: function,
+      type: 'function',
       function: {
         name: string,
         description?: string,
-        parameters?: {
-        },
+        parameters?: Record<string, unknown>,
         strict?: boolean | null
       }
     }
   )[],
-  metadata?: {
-  } | null,
+  metadata?: Record<string, string> | null,
   usage?: {
     prompt_tokens: number,
     completion_tokens: number,
@@ -5609,7 +4976,10 @@ Modify a run
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.runs.modify({});
+await corsair.openai.api.runs.modify({
+  threadId: 'thread_123',
+  runId: 'run_123'
+});
 ```
 
 **Input**
@@ -5618,17 +4988,7 @@ await corsair.openai.api.runs.modify({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -5637,28 +4997,20 @@ await corsair.openai.api.runs.modify({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.run` | Yes | — |
+| `object` | `'thread.run'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
-| `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
+| `status` | `'queued' \| 'in_progress' \| 'requires_action' \| 'cancelling' \| 'cancelled' \| 'failed' \| 'completed' \| 'incomplete' \| 'expired'` | Yes | — |
+| `required_action` | `Record<string, unknown>` | No | — |
 | `last_error` | `object` | No | — |
 | `model` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
@@ -5674,9 +5026,9 @@ await corsair.openai.api.runs.modify({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -5685,24 +5037,15 @@ await corsair.openai.api.runs.modify({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5731,7 +5074,10 @@ Retrieve a run
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.runs.retrieve({});
+await corsair.openai.api.runs.retrieve({
+  threadId: 'thread_123',
+  runId: 'run_123'
+});
 ```
 
 **Input**
@@ -5748,28 +5094,20 @@ await corsair.openai.api.runs.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.run` | Yes | — |
+| `object` | `'thread.run'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
-| `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
+| `status` | `'queued' \| 'in_progress' \| 'requires_action' \| 'cancelling' \| 'cancelled' \| 'failed' \| 'completed' \| 'incomplete' \| 'expired'` | Yes | — |
+| `required_action` | `Record<string, unknown>` | No | — |
 | `last_error` | `object` | No | — |
 | `model` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
@@ -5785,9 +5123,9 @@ await corsair.openai.api.runs.retrieve({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -5796,24 +5134,15 @@ await corsair.openai.api.runs.retrieve({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5842,7 +5171,11 @@ Submit tool outputs to a run awaiting action
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.runs.submitToolOutputs({});
+await corsair.openai.api.runs.submitToolOutputs({
+  threadId: 'thread_123',
+  runId: 'run_123',
+  toolOutputs: [{ toolCallId: 'call_1', output: 'ok' }]
+});
 ```
 
 **Input**
@@ -5872,28 +5205,20 @@ await corsair.openai.api.runs.submitToolOutputs({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.run` | Yes | — |
+| `object` | `'thread.run'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
-| `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
+| `status` | `'queued' \| 'in_progress' \| 'requires_action' \| 'cancelling' \| 'cancelled' \| 'failed' \| 'completed' \| 'incomplete' \| 'expired'` | Yes | — |
+| `required_action` | `Record<string, unknown>` | No | — |
 | `last_error` | `object` | No | — |
 | `model` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
@@ -5909,9 +5234,9 @@ await corsair.openai.api.runs.submitToolOutputs({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -5920,24 +5245,15 @@ await corsair.openai.api.runs.submitToolOutputs({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -5968,7 +5284,10 @@ List steps of a run
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.runSteps.list({});
+await corsair.openai.api.runSteps.list({
+  threadId: 'thread_123',
+  runId: 'run_123'
+});
 ```
 
 **Input**
@@ -5978,7 +5297,7 @@ await corsair.openai.api.runSteps.list({});
 | `threadId` | `string` | Yes | — |
 | `runId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
@@ -5988,7 +5307,7 @@ await corsair.openai.api.runSteps.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -6000,15 +5319,14 @@ await corsair.openai.api.runSteps.list({});
 ```ts
 {
   id: string,
-  object: thread.run.step,
+  object: 'thread.run.step',
   created_at: number,
   run_id: string,
   assistant_id: string,
   thread_id: string,
-  type: message_creation | tool_calls,
-  status: in_progress | cancelled | failed | completed | expired,
-  step_details: {
-  },
+  type: 'message_creation' | 'tool_calls',
+  status: 'in_progress' | 'cancelled' | 'failed' | 'completed' | 'expired',
+  step_details: Record<string, unknown>,
   last_error?: {
     code: string,
     message: string
@@ -6036,7 +5354,11 @@ Retrieve a run step
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.runSteps.retrieve({});
+await corsair.openai.api.runSteps.retrieve({
+  threadId: 'thread_123',
+  runId: 'run_123',
+  stepId: 'step_123'
+});
 ```
 
 **Input**
@@ -6054,26 +5376,18 @@ await corsair.openai.api.runSteps.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.run.step` | Yes | — |
+| `object` | `'thread.run.step'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `run_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
 | `thread_id` | `string` | Yes | — |
-| `type` | `message_creation \| tool_calls` | Yes | — |
-| `status` | `in_progress \| cancelled \| failed \| completed \| expired` | Yes | — |
-| `step_details` | `object` | Yes | — |
+| `type` | `'message_creation' \| 'tool_calls'` | Yes | — |
+| `status` | `'in_progress' \| 'cancelled' \| 'failed' \| 'completed' \| 'expired'` | Yes | — |
+| `step_details` | `Record<string, unknown>` | Yes | — |
 | `last_error` | `object` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="step_details full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
@@ -6111,7 +5425,10 @@ Upload a skill
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.skills.create({});
+await corsair.openai.api.skills.create({
+  file: 'file contents',
+  fileName: 'file.txt'
+});
 ```
 
 **Input**
@@ -6128,7 +5445,7 @@ await corsair.openai.api.skills.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `skill` | No | — |
+| `object` | `'skill'` | No | — |
 | `created_at` | `number` | No | — |
 | `default_version` | `number` | No | — |
 | `latest_version` | `number` | No | — |
@@ -6148,7 +5465,9 @@ Delete a skill
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.skills.delete({});
+await corsair.openai.api.skills.delete({
+  skillId: 'skill_123'
+});
 ```
 
 **Input**
@@ -6164,7 +5483,7 @@ await corsair.openai.api.skills.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `skill.deleted` | Yes | — |
+| `object` | `'skill.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -6196,7 +5515,7 @@ await corsair.openai.api.skills.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -6237,17 +5556,16 @@ await corsair.openai.api.threads.create({});
 |------|------|----------|-------------|
 | `messages` | `object[]` | No | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="messages full type">
 
 ```ts
 {
-  role: user | assistant,
+  role: 'user' | 'assistant',
   content: string,
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -6265,14 +5583,6 @@ await corsair.openai.api.threads.create({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -6282,19 +5592,9 @@ await corsair.openai.api.threads.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread` | Yes | — |
+| `object` | `'thread'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -6309,7 +5609,9 @@ Create a thread and run it in one call
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.threads.createAndRun({});
+await corsair.openai.api.threads.createAndRun({
+  assistantId: 'asst_123'
+});
 ```
 
 **Input**
@@ -6322,11 +5624,11 @@ await corsair.openai.api.threads.createAndRun({});
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | No | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `temperature` | `number` | No | — |
 | `topP` | `number` | No | — |
 | `truncationStrategy` | `object` | No | — |
-| `toolChoice` | `none \| auto \| required \| object` | No | — |
+| `toolChoice` | `'none' \| 'auto' \| 'required' \| object` | No | — |
 | `parallelToolCalls` | `boolean` | No | — |
 
 <AccordionGroup>
@@ -6335,10 +5637,9 @@ await corsair.openai.api.threads.createAndRun({});
 ```ts
 {
   messages?: {
-    role: user | assistant,
+    role: 'user' | 'assistant',
     content: string,
-    metadata?: {
-    } | null
+    metadata?: Record<string, string> | null
   }[],
   toolResources?: {
     code_interpreter?: {
@@ -6348,8 +5649,7 @@ await corsair.openai.api.threads.createAndRun({});
       vector_store_ids: string[]
     }
   },
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }
 ```
 </Accordion>
@@ -6359,9 +5659,9 @@ await corsair.openai.api.threads.createAndRun({});
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -6370,12 +5670,11 @@ await corsair.openai.api.threads.createAndRun({});
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
@@ -6397,19 +5696,11 @@ await corsair.openai.api.threads.createAndRun({});
 ```
 </Accordion>
 
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="truncationStrategy full type">
 
 ```ts
 {
-  type: auto | last_messages,
+  type: 'auto' | 'last_messages',
   last_messages?: number | null
 }
 ```
@@ -6418,8 +5709,8 @@ await corsair.openai.api.threads.createAndRun({});
 <Accordion title="toolChoice full type">
 
 ```ts
-none | auto | required | {
-  type: function | code_interpreter | file_search,
+'none' | 'auto' | 'required' | {
+  type: 'function' | 'code_interpreter' | 'file_search',
   function?: {
     name: string
   }
@@ -6435,28 +5726,20 @@ none | auto | required | {
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.run` | Yes | — |
+| `object` | `'thread.run'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `thread_id` | `string` | Yes | — |
 | `assistant_id` | `string` | Yes | — |
-| `status` | `queued \| in_progress \| requires_action \| cancelling \| cancelled \| failed \| completed \| incomplete \| expired` | Yes | — |
-| `required_action` | `object` | No | — |
+| `status` | `'queued' \| 'in_progress' \| 'requires_action' \| 'cancelling' \| 'cancelled' \| 'failed' \| 'completed' \| 'incomplete' \| 'expired'` | Yes | — |
+| `required_action` | `Record<string, unknown>` | No | — |
 | `last_error` | `object` | No | — |
 | `model` | `string` | Yes | — |
 | `instructions` | `string` | No | — |
 | `tools` | `object[]` | Yes | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 | `usage` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="required_action full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="last_error full type">
 
 ```ts
@@ -6472,9 +5755,9 @@ none | auto | required | {
 ```ts
 (
   {
-    type: code_interpreter
+    type: 'code_interpreter'
   } | {
-    type: file_search,
+    type: 'file_search',
     file_search?: {
       max_num_results?: number,
       ranking_options?: {
@@ -6483,24 +5766,15 @@ none | auto | required | {
       }
     }
   } | {
-    type: function,
+    type: 'function',
     function: {
       name: string,
       description?: string,
-      parameters?: {
-      },
+      parameters?: Record<string, unknown>,
       strict?: boolean | null
     }
   }
 )[]
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
 ```
 </Accordion>
 
@@ -6529,7 +5803,9 @@ Delete a thread
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.threads.delete({});
+await corsair.openai.api.threads.delete({
+  threadId: 'thread_123'
+});
 ```
 
 **Input**
@@ -6545,7 +5821,7 @@ await corsair.openai.api.threads.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread.deleted` | Yes | — |
+| `object` | `'thread.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -6561,7 +5837,9 @@ Modify a thread
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.threads.modify({});
+await corsair.openai.api.threads.modify({
+  threadId: 'thread_123'
+});
 ```
 
 **Input**
@@ -6570,7 +5848,7 @@ await corsair.openai.api.threads.modify({});
 |------|------|----------|-------------|
 | `threadId` | `string` | Yes | — |
 | `toolResources` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="toolResources full type">
@@ -6586,14 +5864,6 @@ await corsair.openai.api.threads.modify({});
 }
 ```
 </Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
 </AccordionGroup>
 
 
@@ -6603,19 +5873,9 @@ await corsair.openai.api.threads.modify({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread` | Yes | — |
+| `object` | `'thread'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -6630,7 +5890,9 @@ Retrieve a thread by id
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.threads.retrieve({});
+await corsair.openai.api.threads.retrieve({
+  threadId: 'thread_123'
+});
 ```
 
 **Input**
@@ -6646,19 +5908,9 @@ await corsair.openai.api.threads.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `thread` | Yes | — |
+| `object` | `'thread'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `metadata` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="metadata full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `metadata` | `Record<string, string>` | No | — |
 
 
 
@@ -6675,7 +5927,10 @@ Count input tokens for a prospective request
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.tokens.countInput({});
+await corsair.openai.api.tokens.countInput({
+  model: 'gpt-4o-mini',
+  input: 'hi'
+});
 ```
 
 **Input**
@@ -6683,26 +5938,8 @@ await corsair.openai.api.tokens.countInput({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `model` | `string` | Yes | — |
-| `input` | `string \| object[]` | Yes | — |
-| `tools` | `object[]` | No | — |
-
-<AccordionGroup>
-<Accordion title="input full type">
-
-```ts
-string | {
-}[]
-```
-</Accordion>
-
-<Accordion title="tools full type">
-
-```ts
-{
-}[]
-```
-</Accordion>
-</AccordionGroup>
+| `input` | `string \| Record<string, unknown>[]` | Yes | — |
+| `tools` | `Record<string, unknown>[]` | No | — |
 
 
 
@@ -6727,7 +5964,11 @@ Add a part of file data to an upload
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.uploads.addPart({});
+await corsair.openai.api.uploads.addPart({
+  uploadId: 'upload_123',
+  data: 'chunk',
+  fileName: 'file.txt'
+});
 ```
 
 **Input**
@@ -6745,7 +5986,7 @@ await corsair.openai.api.uploads.addPart({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `upload.part` | Yes | — |
+| `object` | `'upload.part'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `upload_id` | `string` | Yes | — |
 
@@ -6762,7 +6003,9 @@ Cancel an in-progress upload session
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.uploads.cancel({});
+await corsair.openai.api.uploads.cancel({
+  uploadId: 'upload_123'
+});
 ```
 
 **Input**
@@ -6778,12 +6021,12 @@ await corsair.openai.api.uploads.cancel({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `upload` | Yes | — |
+| `object` | `'upload'` | Yes | — |
 | `bytes` | `number` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `filename` | `string` | Yes | — |
 | `purpose` | `string` | Yes | — |
-| `status` | `pending \| completed \| cancelled \| expired` | Yes | — |
+| `status` | `'pending' \| 'completed' \| 'cancelled' \| 'expired'` | Yes | — |
 | `expires_at` | `number` | Yes | — |
 | `file` | `object` | No | — |
 
@@ -6793,7 +6036,7 @@ await corsair.openai.api.uploads.cancel({});
 ```ts
 {
   id: string,
-  object: file,
+  object: 'file',
   bytes: number,
   created_at: number,
   filename: string,
@@ -6816,7 +6059,10 @@ Complete a multipart upload session
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.uploads.complete({});
+await corsair.openai.api.uploads.complete({
+  uploadId: 'upload_123',
+  partIds: ['part_1']
+});
 ```
 
 **Input**
@@ -6834,12 +6080,12 @@ await corsair.openai.api.uploads.complete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `upload` | Yes | — |
+| `object` | `'upload'` | Yes | — |
 | `bytes` | `number` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `filename` | `string` | Yes | — |
 | `purpose` | `string` | Yes | — |
-| `status` | `pending \| completed \| cancelled \| expired` | Yes | — |
+| `status` | `'pending' \| 'completed' \| 'cancelled' \| 'expired'` | Yes | — |
 | `expires_at` | `number` | Yes | — |
 | `file` | `object` | No | — |
 
@@ -6849,7 +6095,7 @@ await corsair.openai.api.uploads.complete({});
 ```ts
 {
   id: string,
-  object: file,
+  object: 'file',
   bytes: number,
   created_at: number,
   filename: string,
@@ -6872,7 +6118,12 @@ Create a multipart upload session
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.uploads.create({});
+await corsair.openai.api.uploads.create({
+  filename: 'big.bin',
+  purpose: 'assistants',
+  bytes: 1024,
+  mimeType: 'application/octet-stream'
+});
 ```
 
 **Input**
@@ -6880,7 +6131,7 @@ await corsair.openai.api.uploads.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `filename` | `string` | Yes | — |
-| `purpose` | `assistants \| assistants_output \| batch \| batch_output \| fine-tune \| fine-tune-results \| vision \| user_data \| evals` | Yes | — |
+| `purpose` | `'assistants' \| 'assistants_output' \| 'batch' \| 'batch_output' \| 'fine-tune' \| 'fine-tune-results' \| 'vision' \| 'user_data' \| 'evals'` | Yes | — |
 | `bytes` | `number` | Yes | — |
 | `mimeType` | `string` | Yes | — |
 
@@ -6891,12 +6142,12 @@ await corsair.openai.api.uploads.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `upload` | Yes | — |
+| `object` | `'upload'` | Yes | — |
 | `bytes` | `number` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `filename` | `string` | Yes | — |
 | `purpose` | `string` | Yes | — |
-| `status` | `pending \| completed \| cancelled \| expired` | Yes | — |
+| `status` | `'pending' \| 'completed' \| 'cancelled' \| 'expired'` | Yes | — |
 | `expires_at` | `number` | Yes | — |
 | `file` | `object` | No | — |
 
@@ -6906,7 +6157,7 @@ await corsair.openai.api.uploads.create({});
 ```ts
 {
   id: string,
-  object: file,
+  object: 'file',
   bytes: number,
   created_at: number,
   filename: string,
@@ -6931,7 +6182,10 @@ Attach a batch of files to a vector store
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.vectorStoreFileBatches.create({});
+await corsair.openai.api.vectorStoreFileBatches.create({
+  vectorStoreId: 'vs_123',
+  fileIds: ['file_123']
+});
 ```
 
 **Input**
@@ -6941,28 +6195,20 @@ await corsair.openai.api.vectorStoreFileBatches.create({});
 | `vectorStoreId` | `string` | Yes | — |
 | `fileIds` | `string[]` | Yes | — |
 | `chunkingStrategy` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, unknown>` | No | — |
 
 <AccordionGroup>
 <Accordion title="chunkingStrategy full type">
 
 ```ts
 {
-  type: auto
+  type: 'auto'
 } | {
-  type: static,
+  type: 'static',
   static: {
     max_chunk_size_tokens: number,
     chunk_overlap_tokens: number
   }
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -6975,10 +6221,10 @@ await corsair.openai.api.vectorStoreFileBatches.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store.file_batch` | Yes | — |
+| `object` | `'vector_store.file_batch'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `vector_store_id` | `string` | Yes | — |
-| `status` | `in_progress \| completed \| cancelled \| failed` | Yes | — |
+| `status` | `'in_progress' \| 'completed' \| 'cancelled' \| 'failed'` | Yes | — |
 | `file_counts` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7009,7 +6255,10 @@ List files in a vector store file batch
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFileBatches.listFiles({});
+await corsair.openai.api.vectorStoreFileBatches.listFiles({
+  vectorStoreId: 'vs_123',
+  batchId: 'batch_123'
+});
 ```
 
 **Input**
@@ -7019,10 +6268,10 @@ await corsair.openai.api.vectorStoreFileBatches.listFiles({});
 | `vectorStoreId` | `string` | Yes | — |
 | `batchId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
-| `filter` | `in_progress \| completed \| cancelled \| failed` | No | — |
+| `filter` | `'in_progress' \| 'completed' \| 'cancelled' \| 'failed'` | No | — |
 
 
 
@@ -7030,7 +6279,7 @@ await corsair.openai.api.vectorStoreFileBatches.listFiles({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -7042,17 +6291,16 @@ await corsair.openai.api.vectorStoreFileBatches.listFiles({});
 ```ts
 {
   id: string,
-  object: vector_store.file,
+  object: 'vector_store.file',
   usage_bytes: number,
   created_at: number,
   vector_store_id: string,
-  status: in_progress | completed | cancelled | failed,
+  status: 'in_progress' | 'completed' | 'cancelled' | 'failed',
   last_error?: {
     code: string,
     message: string
   } | null,
-  attributes?: {
-  } | null
+  attributes?: Record<string, unknown> | null
 }[]
 ```
 </Accordion>
@@ -7071,7 +6319,10 @@ Retrieve a vector store file batch
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFileBatches.retrieve({});
+await corsair.openai.api.vectorStoreFileBatches.retrieve({
+  vectorStoreId: 'vs_123',
+  batchId: 'batch_123'
+});
 ```
 
 **Input**
@@ -7088,10 +6339,10 @@ await corsair.openai.api.vectorStoreFileBatches.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store.file_batch` | Yes | — |
+| `object` | `'vector_store.file_batch'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `vector_store_id` | `string` | Yes | — |
-| `status` | `in_progress \| completed \| cancelled \| failed` | Yes | — |
+| `status` | `'in_progress' \| 'completed' \| 'cancelled' \| 'failed'` | Yes | — |
 | `file_counts` | `object` | Yes | — |
 
 <AccordionGroup>
@@ -7124,7 +6375,10 @@ Attach a file to a vector store
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.create({});
+await corsair.openai.api.vectorStoreFiles.create({
+  vectorStoreId: 'vs_123',
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -7134,28 +6388,20 @@ await corsair.openai.api.vectorStoreFiles.create({});
 | `vectorStoreId` | `string` | Yes | — |
 | `fileId` | `string` | Yes | — |
 | `chunkingStrategy` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, unknown>` | No | — |
 
 <AccordionGroup>
 <Accordion title="chunkingStrategy full type">
 
 ```ts
 {
-  type: auto
+  type: 'auto'
 } | {
-  type: static,
+  type: 'static',
   static: {
     max_chunk_size_tokens: number,
     chunk_overlap_tokens: number
   }
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7168,13 +6414,13 @@ await corsair.openai.api.vectorStoreFiles.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store.file` | Yes | — |
+| `object` | `'vector_store.file'` | Yes | — |
 | `usage_bytes` | `number` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `vector_store_id` | `string` | Yes | — |
-| `status` | `in_progress \| completed \| cancelled \| failed` | Yes | — |
+| `status` | `'in_progress' \| 'completed' \| 'cancelled' \| 'failed'` | Yes | — |
 | `last_error` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, unknown>` | No | — |
 
 <AccordionGroup>
 <Accordion title="last_error full type">
@@ -7183,14 +6429,6 @@ await corsair.openai.api.vectorStoreFiles.create({});
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7209,7 +6447,10 @@ Detach a file from a vector store
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.delete({});
+await corsair.openai.api.vectorStoreFiles.delete({
+  vectorStoreId: 'vs_123',
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -7226,7 +6467,7 @@ await corsair.openai.api.vectorStoreFiles.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store.file.deleted` | Yes | — |
+| `object` | `'vector_store.file.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -7242,7 +6483,9 @@ List files attached to a vector store
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.list({});
+await corsair.openai.api.vectorStoreFiles.list({
+  vectorStoreId: 'vs_123'
+});
 ```
 
 **Input**
@@ -7251,10 +6494,10 @@ await corsair.openai.api.vectorStoreFiles.list({});
 |------|------|----------|-------------|
 | `vectorStoreId` | `string` | Yes | — |
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
-| `filter` | `in_progress \| completed \| cancelled \| failed` | No | — |
+| `filter` | `'in_progress' \| 'completed' \| 'cancelled' \| 'failed'` | No | — |
 
 
 
@@ -7262,7 +6505,7 @@ await corsair.openai.api.vectorStoreFiles.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -7274,17 +6517,16 @@ await corsair.openai.api.vectorStoreFiles.list({});
 ```ts
 {
   id: string,
-  object: vector_store.file,
+  object: 'vector_store.file',
   usage_bytes: number,
   created_at: number,
   vector_store_id: string,
-  status: in_progress | completed | cancelled | failed,
+  status: 'in_progress' | 'completed' | 'cancelled' | 'failed',
   last_error?: {
     code: string,
     message: string
   } | null,
-  attributes?: {
-  } | null
+  attributes?: Record<string, unknown> | null
 }[]
 ```
 </Accordion>
@@ -7303,7 +6545,10 @@ Retrieve a vector store file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.retrieve({});
+await corsair.openai.api.vectorStoreFiles.retrieve({
+  vectorStoreId: 'vs_123',
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -7320,13 +6565,13 @@ await corsair.openai.api.vectorStoreFiles.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store.file` | Yes | — |
+| `object` | `'vector_store.file'` | Yes | — |
 | `usage_bytes` | `number` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `vector_store_id` | `string` | Yes | — |
-| `status` | `in_progress \| completed \| cancelled \| failed` | Yes | — |
+| `status` | `'in_progress' \| 'completed' \| 'cancelled' \| 'failed'` | Yes | — |
 | `last_error` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, unknown>` | No | — |
 
 <AccordionGroup>
 <Accordion title="last_error full type">
@@ -7335,14 +6580,6 @@ await corsair.openai.api.vectorStoreFiles.retrieve({});
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7361,7 +6598,10 @@ Retrieve the parsed content of a vector store file
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.retrieveContent({});
+await corsair.openai.api.vectorStoreFiles.retrieveContent({
+  vectorStoreId: 'vs_123',
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -7377,7 +6617,7 @@ await corsair.openai.api.vectorStoreFiles.retrieveContent({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `vector_store.file_content.page` | Yes | — |
+| `object` | `'vector_store.file_content.page'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
 | `next_page` | `string` | No | — |
@@ -7387,7 +6627,7 @@ await corsair.openai.api.vectorStoreFiles.retrieveContent({});
 
 ```ts
 {
-  type: text,
+  type: 'text',
   text: string
 }[]
 ```
@@ -7407,7 +6647,10 @@ Update attributes on a vector store file
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.vectorStoreFiles.updateAttributes({});
+await corsair.openai.api.vectorStoreFiles.updateAttributes({
+  vectorStoreId: 'vs_123',
+  fileId: 'file_123'
+});
 ```
 
 **Input**
@@ -7416,17 +6659,7 @@ await corsair.openai.api.vectorStoreFiles.updateAttributes({});
 |------|------|----------|-------------|
 | `vectorStoreId` | `string` | Yes | — |
 | `fileId` | `string` | Yes | — |
-| `attributes` | `object` | No | — |
-
-<AccordionGroup>
-<Accordion title="attributes full type">
-
-```ts
-{
-}
-```
-</Accordion>
-</AccordionGroup>
+| `attributes` | `Record<string, unknown>` | No | — |
 
 
 
@@ -7435,13 +6668,13 @@ await corsair.openai.api.vectorStoreFiles.updateAttributes({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store.file` | Yes | — |
+| `object` | `'vector_store.file'` | Yes | — |
 | `usage_bytes` | `number` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `vector_store_id` | `string` | Yes | — |
-| `status` | `in_progress \| completed \| cancelled \| failed` | Yes | — |
+| `status` | `'in_progress' \| 'completed' \| 'cancelled' \| 'failed'` | Yes | — |
 | `last_error` | `object` | No | — |
-| `attributes` | `object` | No | — |
+| `attributes` | `Record<string, unknown>` | No | — |
 
 <AccordionGroup>
 <Accordion title="last_error full type">
@@ -7450,14 +6683,6 @@ await corsair.openai.api.vectorStoreFiles.updateAttributes({});
 {
   code: string,
   message: string
-}
-```
-</Accordion>
-
-<Accordion title="attributes full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7489,14 +6714,14 @@ await corsair.openai.api.vectorStores.create({});
 | `fileIds` | `string[]` | No | — |
 | `expiresAfter` | `object` | No | — |
 | `chunkingStrategy` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="expiresAfter full type">
 
 ```ts
 {
-  anchor: last_active_at,
+  anchor: 'last_active_at',
   days: number
 }
 ```
@@ -7506,21 +6731,13 @@ await corsair.openai.api.vectorStores.create({});
 
 ```ts
 {
-  type: auto
+  type: 'auto'
 } | {
-  type: static,
+  type: 'static',
   static: {
     max_chunk_size_tokens: number,
     chunk_overlap_tokens: number
   }
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7533,16 +6750,16 @@ await corsair.openai.api.vectorStores.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store` | Yes | — |
+| `object` | `'vector_store'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `usage_bytes` | `number` | Yes | — |
 | `file_counts` | `object` | Yes | — |
-| `status` | `expired \| in_progress \| completed` | Yes | — |
+| `status` | `'expired' \| 'in_progress' \| 'completed'` | Yes | — |
 | `expires_after` | `object` | No | — |
 | `expires_at` | `number` | No | — |
 | `last_active_at` | `number` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="file_counts full type">
@@ -7562,16 +6779,8 @@ await corsair.openai.api.vectorStores.create({});
 
 ```ts
 {
-  anchor: last_active_at,
+  anchor: 'last_active_at',
   days: number
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7590,7 +6799,9 @@ Delete a vector store
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.vectorStores.delete({});
+await corsair.openai.api.vectorStores.delete({
+  vectorStoreId: 'vs_123'
+});
 ```
 
 **Input**
@@ -7606,7 +6817,7 @@ await corsair.openai.api.vectorStores.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store.deleted` | Yes | — |
+| `object` | `'vector_store.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -7630,7 +6841,7 @@ await corsair.openai.api.vectorStores.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 | `before` | `string` | No | — |
 
@@ -7640,7 +6851,7 @@ await corsair.openai.api.vectorStores.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -7652,7 +6863,7 @@ await corsair.openai.api.vectorStores.list({});
 ```ts
 {
   id: string,
-  object: vector_store,
+  object: 'vector_store',
   created_at: number,
   name?: string | null,
   usage_bytes: number,
@@ -7663,15 +6874,14 @@ await corsair.openai.api.vectorStores.list({});
     cancelled: number,
     total: number
   },
-  status: expired | in_progress | completed,
+  status: 'expired' | 'in_progress' | 'completed',
   expires_after?: {
-    anchor: last_active_at,
+    anchor: 'last_active_at',
     days: number
   },
   expires_at?: number | null,
   last_active_at?: number | null,
-  metadata?: {
-  } | null
+  metadata?: Record<string, string> | null
 }[]
 ```
 </Accordion>
@@ -7690,7 +6900,9 @@ Modify a vector store
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.vectorStores.modify({});
+await corsair.openai.api.vectorStores.modify({
+  vectorStoreId: 'vs_123'
+});
 ```
 
 **Input**
@@ -7700,23 +6912,15 @@ await corsair.openai.api.vectorStores.modify({});
 | `vectorStoreId` | `string` | Yes | — |
 | `name` | `string` | No | — |
 | `expiresAfter` | `object` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="expiresAfter full type">
 
 ```ts
 {
-  anchor: last_active_at,
+  anchor: 'last_active_at',
   days: number
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7729,16 +6933,16 @@ await corsair.openai.api.vectorStores.modify({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store` | Yes | — |
+| `object` | `'vector_store'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `usage_bytes` | `number` | Yes | — |
 | `file_counts` | `object` | Yes | — |
-| `status` | `expired \| in_progress \| completed` | Yes | — |
+| `status` | `'expired' \| 'in_progress' \| 'completed'` | Yes | — |
 | `expires_after` | `object` | No | — |
 | `expires_at` | `number` | No | — |
 | `last_active_at` | `number` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="file_counts full type">
@@ -7758,16 +6962,8 @@ await corsair.openai.api.vectorStores.modify({});
 
 ```ts
 {
-  anchor: last_active_at,
+  anchor: 'last_active_at',
   days: number
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7786,7 +6982,9 @@ Retrieve a vector store
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStores.retrieve({});
+await corsair.openai.api.vectorStores.retrieve({
+  vectorStoreId: 'vs_123'
+});
 ```
 
 **Input**
@@ -7802,16 +7000,16 @@ await corsair.openai.api.vectorStores.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `vector_store` | Yes | — |
+| `object` | `'vector_store'` | Yes | — |
 | `created_at` | `number` | Yes | — |
 | `name` | `string` | No | — |
 | `usage_bytes` | `number` | Yes | — |
 | `file_counts` | `object` | Yes | — |
-| `status` | `expired \| in_progress \| completed` | Yes | — |
+| `status` | `'expired' \| 'in_progress' \| 'completed'` | Yes | — |
 | `expires_after` | `object` | No | — |
 | `expires_at` | `number` | No | — |
 | `last_active_at` | `number` | No | — |
-| `metadata` | `object` | No | — |
+| `metadata` | `Record<string, string>` | No | — |
 
 <AccordionGroup>
 <Accordion title="file_counts full type">
@@ -7831,16 +7029,8 @@ await corsair.openai.api.vectorStores.retrieve({});
 
 ```ts
 {
-  anchor: last_active_at,
+  anchor: 'last_active_at',
   days: number
-}
-```
-</Accordion>
-
-<Accordion title="metadata full type">
-
-```ts
-{
 }
 ```
 </Accordion>
@@ -7859,7 +7049,10 @@ Search a vector store for relevant chunks
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.vectorStores.search({});
+await corsair.openai.api.vectorStores.search({
+  vectorStoreId: 'vs_123',
+  query: 'hello'
+});
 ```
 
 **Input**
@@ -7868,20 +7061,12 @@ await corsair.openai.api.vectorStores.search({});
 |------|------|----------|-------------|
 | `vectorStoreId` | `string` | Yes | — |
 | `query` | `string \| string[]` | Yes | — |
-| `filters` | `object` | No | — |
+| `filters` | `Record<string, unknown>` | No | — |
 | `maxNumResults` | `number` | No | — |
 | `rankingOptions` | `object` | No | — |
 | `rewriteQuery` | `boolean` | No | — |
 
 <AccordionGroup>
-<Accordion title="filters full type">
-
-```ts
-{
-}
-```
-</Accordion>
-
 <Accordion title="rankingOptions full type">
 
 ```ts
@@ -7899,7 +7084,7 @@ await corsair.openai.api.vectorStores.search({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `vector_store.search_results.page` | Yes | — |
+| `object` | `'vector_store.search_results.page'` | Yes | — |
 | `search_query` | `string[]` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `has_more` | `boolean` | Yes | — |
@@ -7913,10 +7098,9 @@ await corsair.openai.api.vectorStores.search({});
   file_id: string,
   filename: string,
   score: number,
-  attributes?: {
-  } | null,
+  attributes?: Record<string, unknown> | null,
   content: {
-    type: text,
+    type: 'text',
     text: string
   }[]
 }[]
@@ -7939,7 +7123,9 @@ Generate a video from a prompt
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.videos.create({});
+await corsair.openai.api.videos.create({
+  prompt: 'a cat'
+});
 ```
 
 **Input**
@@ -7960,9 +7146,9 @@ await corsair.openai.api.videos.create({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `video` | Yes | — |
+| `object` | `'video'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `queued \| in_progress \| completed \| failed` | Yes | — |
+| `status` | `'queued' \| 'in_progress' \| 'completed' \| 'failed'` | Yes | — |
 | `model` | `string` | No | — |
 | `progress` | `number` | No | — |
 | `seconds` | `string` | No | — |
@@ -7995,7 +7181,10 @@ Create a remix of an existing video
 **Risk:** `write`
 
 ```ts
-await corsair.openai.api.videos.createRemix({});
+await corsair.openai.api.videos.createRemix({
+  videoId: 'video_123',
+  prompt: 'make it night'
+});
 ```
 
 **Input**
@@ -8012,9 +7201,9 @@ await corsair.openai.api.videos.createRemix({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `video` | Yes | — |
+| `object` | `'video'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `queued \| in_progress \| completed \| failed` | Yes | — |
+| `status` | `'queued' \| 'in_progress' \| 'completed' \| 'failed'` | Yes | — |
 | `model` | `string` | No | — |
 | `progress` | `number` | No | — |
 | `seconds` | `string` | No | — |
@@ -8047,7 +7236,9 @@ Delete a video
 **Risk:** `destructive`
 
 ```ts
-await corsair.openai.api.videos.delete({});
+await corsair.openai.api.videos.delete({
+  videoId: 'video_123'
+});
 ```
 
 **Input**
@@ -8063,7 +7254,7 @@ await corsair.openai.api.videos.delete({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `video.deleted` | Yes | — |
+| `object` | `'video.deleted'` | Yes | — |
 | `deleted` | `boolean` | Yes | — |
 
 
@@ -8079,7 +7270,9 @@ Download the rendered content of a video
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.videos.download({});
+await corsair.openai.api.videos.download({
+  videoId: 'video_123'
+});
 ```
 
 **Input**
@@ -8118,7 +7311,7 @@ await corsair.openai.api.videos.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `limit` | `number` | No | — |
-| `order` | `asc \| desc` | No | — |
+| `order` | `'asc' \| 'desc'` | No | — |
 | `after` | `string` | No | — |
 
 
@@ -8127,7 +7320,7 @@ await corsair.openai.api.videos.list({});
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `object` | `list` | Yes | — |
+| `object` | `'list'` | Yes | — |
 | `data` | `object[]` | Yes | — |
 | `first_id` | `string` | No | — |
 | `last_id` | `string` | No | — |
@@ -8139,9 +7332,9 @@ await corsair.openai.api.videos.list({});
 ```ts
 {
   id: string,
-  object: video,
+  object: 'video',
   created_at: number,
-  status: queued | in_progress | completed | failed,
+  status: 'queued' | 'in_progress' | 'completed' | 'failed',
   model?: string,
   progress?: number,
   seconds?: string,
@@ -8169,7 +7362,9 @@ Retrieve a video
 **Risk:** `read`
 
 ```ts
-await corsair.openai.api.videos.retrieve({});
+await corsair.openai.api.videos.retrieve({
+  videoId: 'video_123'
+});
 ```
 
 **Input**
@@ -8185,9 +7380,9 @@ await corsair.openai.api.videos.retrieve({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `object` | `video` | Yes | — |
+| `object` | `'video'` | Yes | — |
 | `created_at` | `number` | Yes | — |
-| `status` | `queued \| in_progress \| completed \| failed` | Yes | — |
+| `status` | `'queued' \| 'in_progress' \| 'completed' \| 'failed'` | Yes | — |
 | `model` | `string` | No | — |
 | `progress` | `number` | No | — |
 | `seconds` | `string` | No | — |
