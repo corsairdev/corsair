@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'abstract',
 	'activetrail',
 	'agentql',
 	'ahrefs',
@@ -30,6 +31,7 @@ export const BaseProviders = [
 	'cloudinary',
 	'confluence',
 	'cursor',
+	'databricks',
 	'datadog',
 	'deepseek',
 	'digitalocean',
@@ -49,6 +51,7 @@ export const BaseProviders = [
 	'googlecalendar',
 	'googledocs',
 	'googledrive',
+	'googlemaps',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
@@ -98,8 +101,8 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
-	'whatsapp',
 	'vercel',
+	'whatsapp',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -108,6 +111,7 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	abstract: 'Abstract',
 	activetrail: 'Active Trail',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
@@ -125,6 +129,7 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
+	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
 	digitalocean: 'DigitalOcean',
@@ -144,6 +149,7 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
+	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
@@ -193,8 +199,8 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
-	whatsapp: 'WhatsApp',
 	vercel: 'Vercel',
+	whatsapp: 'WhatsApp',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -210,6 +216,7 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'abstract'
 	| 'activetrail'
 	| 'agentql'
 	| 'ahrefs'
@@ -227,6 +234,7 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'confluence'
 	| 'cursor'
+	| 'databricks'
 	| 'datadog'
 	| 'deepseek'
 	| 'digitalocean'
@@ -246,6 +254,7 @@ export type AllProviders =
 	| 'googlecalendar'
 	| 'googledocs'
 	| 'googledrive'
+	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
@@ -295,8 +304,8 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
-	| 'whatsapp'
 	| 'vercel'
+	| 'whatsapp'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
