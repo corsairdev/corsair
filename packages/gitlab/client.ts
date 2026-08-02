@@ -17,6 +17,20 @@ export function normalizeGitlabBaseUrl(baseUrl?: string): string {
 	return withoutSlash || 'https://gitlab.com';
 }
 
+// Managed auth uses Corsair's gitlab.com OAuth app, so its token is only valid
+// against gitlab.com. Compare on hostname (port-agnostic, case-insensitive,
+// trailing-dot tolerant) rather than the raw string so equivalent origins pass.
+export function isManagedGitlabHost(baseUrl: string): boolean {
+	try {
+		return (
+			new URL(baseUrl).hostname.replace(/\.$/, '').toLowerCase() ===
+			'gitlab.com'
+		);
+	} catch {
+		return false;
+	}
+}
+
 export function gitlabApiBase(baseUrl?: string): string {
 	return `${normalizeGitlabBaseUrl(baseUrl)}/api/v4`;
 }
