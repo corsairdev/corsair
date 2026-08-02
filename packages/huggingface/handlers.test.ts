@@ -885,4 +885,3 @@ describe('summarize redaction', () => {
 		expect(summarize(undefined)).toEqual({});
 	});
 });
-

@@ -34,4 +34,3 @@ describe('Hugging Face raw request handling', () => {
 		},
 	);
 });
-

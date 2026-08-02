@@ -298,4 +298,3 @@ export function encodePath(segment: string): string {
 		.map((s) => encodeURIComponent(s))
 		.join('/');
 }
-
