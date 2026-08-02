@@ -23,7 +23,7 @@ import type { HuggingFaceEndpoints } from './index';
 
 const mockReq = jest.spyOn(Client, 'makeHuggingFaceRequest');
 
-// Unit tests only assert HTTP path construction — skip real event logging.
+// Unit tests only assert HTTP path construction â€” skip real event logging.
 const logSpy = jest.spyOn(CorsairCore, 'logEventFromContext');
 logSpy.mockImplementation(async () => null);
 
@@ -62,7 +62,7 @@ beforeEach(() => {
 });
 
 describe('handler path construction', () => {
-	it('account.getWhoami → /api/whoami-v2', async () => {
+	it('account.getWhoami â†’ /api/whoami-v2', async () => {
 		await AccountEndpoints.getWhoami(ctx(), {});
 		expect(mockReq).toHaveBeenCalledWith(
 			'/api/whoami-v2',
@@ -88,7 +88,7 @@ describe('handler path construction', () => {
 		});
 	});
 
-	it('models.list → /api/models', async () => {
+	it('models.list â†’ /api/models', async () => {
 		await ModelsEndpoints.list(ctx(), { limit: 5 });
 		expect(mockReq).toHaveBeenCalledWith(
 			'/api/models',
@@ -100,7 +100,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('models.get → /api/models/ns/repo', async () => {
+	it('models.get â†’ /api/models/ns/repo', async () => {
 		await ModelsEndpoints.get(ctx(), { repoId: 'gpt2/small' });
 		expectPath('/api/models/gpt2/small');
 	});
@@ -125,11 +125,11 @@ describe('handler path construction', () => {
 	it('models.createBranch puts branch name in URL, starting point in body', async () => {
 		await ModelsEndpoints.createBranch(ctx(), {
 			repoId: 'gpt2/small',
-			branch: 'dev',
+			branch: 'feature/fix',
 			revision: 'main',
 		});
 		expect(mockReq).toHaveBeenCalledWith(
-			'/api/models/gpt2/small/branch/dev',
+			'/api/models/gpt2/small/branch/feature%2Ffix',
 			'hf_test',
 			expect.objectContaining({
 				method: 'POST',
@@ -141,12 +141,12 @@ describe('handler path construction', () => {
 	it('datasets.createBranch puts branch name in URL, starting point in body', async () => {
 		await DatasetsEndpoints.createBranch(ctx(), {
 			repoId: 'org/data',
-			branch: 'experiment',
+			branch: 'feature/fix',
 			revision: 'v2',
 			startingPoint: 'v2',
 		});
 		expect(mockReq).toHaveBeenCalledWith(
-			'/api/datasets/org/data/branch/experiment',
+			'/api/datasets/org/data/branch/feature%2Ffix',
 			'hf_test',
 			expect.objectContaining({
 				method: 'POST',
@@ -158,11 +158,11 @@ describe('handler path construction', () => {
 	it('spaces.createBranch puts branch name in URL, starting point in body', async () => {
 		await SpacesEndpoints.createBranch(ctx(), {
 			repoId: 'user/space',
-			branch: 'preview',
+			branch: 'feature/fix',
 			revision: 'main',
 		});
 		expect(mockReq).toHaveBeenCalledWith(
-			'/api/spaces/user/space/branch/preview',
+			'/api/spaces/user/space/branch/feature%2Ffix',
 			'hf_test',
 			expect.objectContaining({
 				method: 'POST',
@@ -184,17 +184,17 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('trending.get → /api/trending', async () => {
+	it('trending.get â†’ /api/trending', async () => {
 		await TrendingEndpoints.get(ctx(), { type: 'model' });
 		expectPath('/api/trending');
 	});
 
-	it('docs.search → /api/docs/search', async () => {
+	it('docs.search â†’ /api/docs/search', async () => {
 		await DocsEndpoints.search(ctx(), { q: 'hub' });
 		expectPath('/api/docs/search');
 	});
 
-	it('collections.list → /api/collections', async () => {
+	it('collections.list â†’ /api/collections', async () => {
 		await CollectionsEndpoints.list(ctx(), { limit: 3 });
 		expectPath('/api/collections');
 	});
@@ -209,7 +209,7 @@ describe('handler path construction', () => {
 		expect(call[2]?.baseUrl).toBe(Client.LLM_GATEWAY_BASE);
 	});
 
-	it('repos.create → /api/repos/create', async () => {
+	it('repos.create â†’ /api/repos/create', async () => {
 		await ReposEndpoints.create(ctx(), {
 			name: 'x',
 			type: 'model',
@@ -219,22 +219,22 @@ describe('handler path construction', () => {
 
 	// --- previously untested groups (Greptile / review-bot P1) ---
 
-	it('settings.listWebhooks → /api/settings/webhooks', async () => {
+	it('settings.listWebhooks â†’ /api/settings/webhooks', async () => {
 		await SettingsEndpoints.listWebhooks(ctx(), {});
 		expectPath('/api/settings/webhooks');
 	});
 
-	it('settings.getBillingUsageV2 → /api/settings/billing/usage-v2', async () => {
+	it('settings.getBillingUsageV2 â†’ /api/settings/billing/usage-v2', async () => {
 		await SettingsEndpoints.getBillingUsageV2(ctx(), {});
 		expectPath('/api/settings/billing/usage-v2');
 	});
 
-	it('settings.getMcp → /api/settings/mcp', async () => {
+	it('settings.getMcp â†’ /api/settings/mcp', async () => {
 		await SettingsEndpoints.getMcp(ctx(), {});
 		expectPath('/api/settings/mcp');
 	});
 
-	it('discussions.list → /api/models/ns/repo/discussions', async () => {
+	it('discussions.list â†’ /api/models/ns/repo/discussions', async () => {
 		await DiscussionsEndpoints.list(ctx(), {
 			repoType: 'model',
 			repoId: 'org/model',
@@ -242,7 +242,7 @@ describe('handler path construction', () => {
 		expectPath('/api/models/org/model/discussions');
 	});
 
-	it('discussions.get → /api/models/ns/repo/discussions/1', async () => {
+	it('discussions.get â†’ /api/models/ns/repo/discussions/1', async () => {
 		await DiscussionsEndpoints.get(ctx(), {
 			repoType: 'model',
 			repoId: 'org/model',
@@ -273,22 +273,22 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('papers.getDaily → /api/daily_papers', async () => {
+	it('papers.getDaily â†’ /api/daily_papers', async () => {
 		await PapersEndpoints.getDaily(ctx(), {});
 		expectPath('/api/daily_papers');
 	});
 
-	it('papers.search → /api/papers/search', async () => {
+	it('papers.search â†’ /api/papers/search', async () => {
 		await PapersEndpoints.search(ctx(), { q: 'llm' });
 		expectPath('/api/papers/search');
 	});
 
-	it('spaces.listHardware → /api/spaces/hardware', async () => {
+	it('spaces.listHardware â†’ /api/spaces/hardware', async () => {
 		await SpacesEndpoints.listHardware(ctx(), {});
 		expectPath('/api/spaces/hardware');
 	});
 
-	it('spaces.createSecret → /api/spaces/ns/repo/secrets', async () => {
+	it('spaces.createSecret â†’ /api/spaces/ns/repo/secrets', async () => {
 		await SpacesEndpoints.createSecret(ctx(), {
 			repoId: 'user/space',
 			key: 'FOO',
@@ -298,7 +298,7 @@ describe('handler path construction', () => {
 		expect(lastCall()[2]).toEqual(expect.objectContaining({ method: 'POST' }));
 	});
 
-	it('spaces.getMetrics → /api/spaces/ns/repo/metrics (SSE)', async () => {
+	it('spaces.getMetrics â†’ /api/spaces/ns/repo/metrics (SSE)', async () => {
 		await SpacesEndpoints.getMetrics(ctx(), { repoId: 'user/space' });
 		const call = lastCall();
 		expect(call[0]).toBe('/api/spaces/user/space/metrics');
@@ -307,7 +307,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('spaces.getEvents → /api/spaces/ns/repo/events (SSE)', async () => {
+	it('spaces.getEvents â†’ /api/spaces/ns/repo/events (SSE)', async () => {
 		await SpacesEndpoints.getEvents(ctx(), { repoId: 'user/space' });
 		const call = lastCall();
 		expect(call[0]).toBe('/api/spaces/user/space/events');
@@ -316,17 +316,17 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('users.getOverview → /api/users/u/overview', async () => {
+	it('users.getOverview â†’ /api/users/u/overview', async () => {
 		await UsersEndpoints.getOverview(ctx(), { username: 'huggingface' });
 		expectPath('/api/users/huggingface/overview');
 	});
 
-	it('organizations.getMembers → /api/organizations/n/members', async () => {
+	it('organizations.getMembers â†’ /api/organizations/n/members', async () => {
 		await OrganizationsEndpoints.getMembers(ctx(), { name: 'huggingface' });
 		expectPath('/api/organizations/huggingface/members');
 	});
 
-	it('jobs.getHardware → /api/jobs/hardware', async () => {
+	it('jobs.getHardware â†’ /api/jobs/hardware', async () => {
 		await JobsEndpoints.getHardware(ctx(), {});
 		expectPath('/api/jobs/hardware');
 	});
@@ -338,13 +338,13 @@ describe('handler path construction', () => {
 		expect(call[2]?.baseUrl).toBe(Client.HF_ENDPOINTS_BASE);
 	});
 
-	it('endpoints.listVendors → /v2/provider', async () => {
+	it('endpoints.listVendors â†’ /v2/provider', async () => {
 		await EndpointsEndpoints.listVendors(ctx(), {});
 		expect(lastCall()[0]).toBe('/v2/provider');
 		expect(lastCall()[2]?.baseUrl).toBe(Client.HF_ENDPOINTS_BASE);
 	});
 
-	it('settings.getLiveBillingUsage → /api/settings/billing/usage/live (SSE)', async () => {
+	it('settings.getLiveBillingUsage â†’ /api/settings/billing/usage/live (SSE)', async () => {
 		await SettingsEndpoints.getLiveBillingUsage(ctx(), {});
 		const call = lastCall();
 		expect(call[0]).toBe('/api/settings/billing/usage/live');
@@ -353,7 +353,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('settings.getBillingUsageV2 → /api/settings/billing/usage-v2', async () => {
+	it('settings.getBillingUsageV2 â†’ /api/settings/billing/usage-v2', async () => {
 		await SettingsEndpoints.getBillingUsageV2(ctx(), {
 			from: 1700000000,
 			to: 1700003600,
@@ -367,13 +367,13 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('settings.getWebhook → GET /api/settings/webhooks/{id}', async () => {
+	it('settings.getWebhook â†’ GET /api/settings/webhooks/{id}', async () => {
 		await SettingsEndpoints.getWebhook(ctx(), { webhookId: 'wh_1' });
 		expect(lastCall()[0]).toBe('/api/settings/webhooks/wh_1');
 		expect(lastCall()[2]).toEqual(expect.objectContaining({ method: 'GET' }));
 	});
 
-	it('settings.listWebhooks → GET /api/settings/webhooks', async () => {
+	it('settings.listWebhooks â†’ GET /api/settings/webhooks', async () => {
 		await SettingsEndpoints.listWebhooks(ctx(), {});
 		expectPath('/api/settings/webhooks');
 	});
@@ -412,7 +412,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('datasets.getRows → datasets-server /rows', async () => {
+	it('datasets.getRows â†’ datasets-server /rows', async () => {
 		await DatasetsEndpoints.getRows(ctx(), {
 			dataset: 'org/data',
 			config: 'default',
@@ -480,7 +480,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('settings.updateNotifications → PATCH /api/settings/notifications', async () => {
+	it('settings.updateNotifications â†’ PATCH /api/settings/notifications', async () => {
 		await SettingsEndpoints.updateNotifications(ctx(), {
 			settings: { email: true },
 		});
@@ -493,7 +493,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('settings.updateWatch → PATCH /api/settings/watch', async () => {
+	it('settings.updateWatch â†’ PATCH /api/settings/watch', async () => {
 		await SettingsEndpoints.updateWatch(ctx(), {
 			add: [{ repo: 'org/repo' }],
 			remove: [{ repo: 'other/repo' }],
@@ -510,7 +510,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('settings.createWebhook → POST /api/settings/webhooks with body', async () => {
+	it('settings.createWebhook â†’ POST /api/settings/webhooks with body', async () => {
 		await SettingsEndpoints.createWebhook(ctx(), {
 			url: 'https://example.com/hook',
 			domains: ['example.com'],
@@ -529,7 +529,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('settings.updateWebhook → POST /api/settings/webhooks/{id}', async () => {
+	it('settings.updateWebhook â†’ POST /api/settings/webhooks/{id}', async () => {
 		await SettingsEndpoints.updateWebhook(ctx(), {
 			webhookId: 'wh_1',
 			url: 'https://example.com/new',
@@ -547,7 +547,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('settings.deleteWebhook → DELETE /api/settings/webhooks/{id}', async () => {
+	it('settings.deleteWebhook â†’ DELETE /api/settings/webhooks/{id}', async () => {
 		await SettingsEndpoints.deleteWebhook(ctx(), { webhookId: 'wh_1' });
 		expect(lastCall()[0]).toBe('/api/settings/webhooks/wh_1');
 		expect(lastCall()[2]).toEqual(
@@ -555,7 +555,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('settings.updateWebhookStatus → POST /api/settings/webhooks/{id}/disable', async () => {
+	it('settings.updateWebhookStatus â†’ POST /api/settings/webhooks/{id}/disable', async () => {
 		await SettingsEndpoints.updateWebhookStatus(ctx(), {
 			webhookId: 'wh_1',
 			action: 'disable',
@@ -564,7 +564,7 @@ describe('handler path construction', () => {
 		expect(lastCall()[2]).toEqual(expect.objectContaining({ method: 'POST' }));
 	});
 
-	it('discussions.createComment → POST .../discussions/1/comment', async () => {
+	it('discussions.createComment â†’ POST .../discussions/1/comment', async () => {
 		await DiscussionsEndpoints.createComment(ctx(), {
 			repoType: 'model',
 			repoId: 'org/model',
@@ -580,7 +580,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('discussions.changeStatus → POST .../discussions/1/status', async () => {
+	it('discussions.changeStatus â†’ POST .../discussions/1/status', async () => {
 		await DiscussionsEndpoints.changeStatus(ctx(), {
 			repoType: 'dataset',
 			repoId: 'org/data',
@@ -596,7 +596,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('discussions.updateTitle → POST .../discussions/1/title', async () => {
+	it('discussions.updateTitle â†’ POST .../discussions/1/title', async () => {
 		await DiscussionsEndpoints.updateTitle(ctx(), {
 			repoType: 'space',
 			repoId: 'org/space',
@@ -612,7 +612,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('discussions.pin → POST .../discussions/1/pin', async () => {
+	it('discussions.pin â†’ POST .../discussions/1/pin', async () => {
 		await DiscussionsEndpoints.pin(ctx(), {
 			repoType: 'model',
 			repoId: 'org/model',
@@ -628,7 +628,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('discussions.delete → DELETE .../discussions/1', async () => {
+	it('discussions.delete â†’ DELETE .../discussions/1', async () => {
 		await DiscussionsEndpoints.delete(ctx(), {
 			repoType: 'model',
 			repoId: 'org/model',
@@ -640,7 +640,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('papers.createIndex → POST /api/papers/index with arxivId body', async () => {
+	it('papers.createIndex â†’ POST /api/papers/index with arxivId body', async () => {
 		await PapersEndpoints.createIndex(ctx(), { paperId: '2301.12345' });
 		expect(lastCall()[0]).toBe('/api/papers/index');
 		expect(lastCall()[2]).toEqual(
@@ -651,7 +651,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('papers.claimAuthorship → POST /api/settings/papers/claim', async () => {
+	it('papers.claimAuthorship â†’ POST /api/settings/papers/claim', async () => {
 		await PapersEndpoints.claimAuthorship(ctx(), {
 			paperId: '2301.12345',
 			extra: { method: 'email' },
@@ -665,7 +665,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('papers.createComment → POST /api/papers/{id}/comment', async () => {
+	it('papers.createComment â†’ POST /api/papers/{id}/comment', async () => {
 		await PapersEndpoints.createComment(ctx(), {
 			paperId: '2301.12345',
 			comment: 'Nice paper',
@@ -679,7 +679,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('papers.createCommentReply → POST /api/papers/{id}/comment/{cid}/reply', async () => {
+	it('papers.createCommentReply â†’ POST /api/papers/{id}/comment/{cid}/reply', async () => {
 		await PapersEndpoints.createCommentReply(ctx(), {
 			paperId: '2301.12345',
 			commentId: 'c1',
@@ -694,7 +694,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('inference.embeddings → LLM gateway /v1/embeddings', async () => {
+	it('inference.embeddings â†’ LLM gateway /v1/embeddings', async () => {
 		await InferenceEndpoints.embeddings(ctx(), {
 			model: 'text-embedding',
 			input: 'hello',
@@ -713,7 +713,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('repos.listFiles → /api/models/ns/repo/tree/main', async () => {
+	it('repos.listFiles â†’ /api/models/ns/repo/tree/main', async () => {
 		await ReposEndpoints.listFiles(ctx(), {
 			repoType: 'model',
 			repoId: 'org/model',
@@ -730,7 +730,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('repos.getResolve → raw resolve path', async () => {
+	it('repos.getResolve â†’ raw resolve path', async () => {
 		await ReposEndpoints.getResolve(ctx(), {
 			repoType: 'dataset',
 			repoId: 'org/data',
@@ -741,7 +741,7 @@ describe('handler path construction', () => {
 		expect(lastCall()[2]).toEqual(expect.objectContaining({ rawText: true }));
 	});
 
-	it('repos.requestAccess → POST ask-access with fields body', async () => {
+	it('repos.requestAccess â†’ POST ask-access with fields body', async () => {
 		await ReposEndpoints.requestAccess(ctx(), {
 			repoType: 'model',
 			repoId: 'org/model',
@@ -756,7 +756,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('datasets.get → /api/datasets/ns/repo', async () => {
+	it('datasets.get â†’ /api/datasets/ns/repo', async () => {
 		await DatasetsEndpoints.get(ctx(), { repoId: 'org/data', full: true });
 		expect(lastCall()[0]).toBe('/api/datasets/org/data');
 		expect(lastCall()[2]).toEqual(
@@ -767,7 +767,7 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('datasets.getScan → /api/datasets/ns/repo/scan', async () => {
+	it('datasets.getScan â†’ /api/datasets/ns/repo/scan', async () => {
 		await DatasetsEndpoints.getScan(ctx(), { repoId: 'org/data' });
 		expectPath('/api/datasets/org/data/scan');
 	});
@@ -782,7 +782,7 @@ describe('handler path construction', () => {
 		expect(lastCall()[2]).toEqual(expect.objectContaining({ rawText: true }));
 	});
 
-	it('datasets.deleteBranch → DELETE /api/datasets/.../branch/{name}', async () => {
+	it('datasets.deleteBranch â†’ DELETE /api/datasets/.../branch/{name}', async () => {
 		await DatasetsEndpoints.deleteBranch(ctx(), {
 			repoId: 'org/data',
 			branch: 'tmp',
@@ -793,27 +793,27 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('users.getAvatar → /api/users/{username}/avatar', async () => {
+	it('users.getAvatar â†’ /api/users/{username}/avatar', async () => {
 		await UsersEndpoints.getAvatar(ctx(), { username: 'alice' });
 		expectPath('/api/users/alice/avatar');
 	});
 
-	it('users.getSocials → /api/users/{username}/socials', async () => {
+	it('users.getSocials â†’ /api/users/{username}/socials', async () => {
 		await UsersEndpoints.getSocials(ctx(), { username: 'alice' });
 		expectPath('/api/users/alice/socials');
 	});
 
-	it('organizations.getAvatar → /api/organizations/{name}/avatar', async () => {
+	it('organizations.getAvatar â†’ /api/organizations/{name}/avatar', async () => {
 		await OrganizationsEndpoints.getAvatar(ctx(), { name: 'acme' });
 		expectPath('/api/organizations/acme/avatar');
 	});
 
-	it('organizations.getSocials → /api/organizations/{name}/socials', async () => {
+	it('organizations.getSocials â†’ /api/organizations/{name}/socials', async () => {
 		await OrganizationsEndpoints.getSocials(ctx(), { name: 'acme' });
 		expectPath('/api/organizations/acme/socials');
 	});
 
-	it('endpoints.deleteNetworkCidr → DELETE /v2/endpoint/.../cidr', async () => {
+	it('endpoints.deleteNetworkCidr â†’ DELETE /v2/endpoint/.../cidr', async () => {
 		await EndpointsEndpoints.deleteNetworkCidr(ctx(), {
 			namespace: 'org',
 			cidr: '10.0.0.0/8',
@@ -885,3 +885,4 @@ describe('summarize redaction', () => {
 		expect(summarize(undefined)).toEqual({});
 	});
 });
+

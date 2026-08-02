@@ -182,6 +182,20 @@ async function rawFetch<T>(
 		redirect: 'manual',
 		signal: AbortSignal.timeout(timeoutMs),
 	});
+	if (res.status >= 400) {
+		const errorBody = await res.text();
+		throw new ApiError(
+			{ method, url: endpoint },
+			{
+				url: url.toString(),
+				ok: false,
+				status: res.status,
+				statusText: res.statusText,
+				body: errorBody,
+			},
+			`Hugging Face request failed: ${res.status}`,
+		);
+	}
 	if (sse) {
 		// SSE streams stay open indefinitely; `res.text()` would block until the
 		// abort signal fires. Collect `data:` payloads instead, bounded by the
@@ -209,19 +223,7 @@ async function rawFetch<T>(
 			};
 		}
 	}
-	if (res.status >= 400) {
-		throw new ApiError(
-			{ method, url: endpoint },
-			{
-				url: url.toString(),
-				ok: false,
-				status: res.status,
-				statusText: res.statusText,
-				body: text,
-			},
-			`Hugging Face request failed: ${res.status}`,
-		);
-	}
+
 	// cast: resolve/SSE/raw responses are validated by endpoint Zod output schemas
 	return parsed as T;
 }
@@ -296,3 +298,4 @@ export function encodePath(segment: string): string {
 		.map((s) => encodeURIComponent(s))
 		.join('/');
 }
+
