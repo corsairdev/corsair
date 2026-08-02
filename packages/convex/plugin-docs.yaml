@@ -1,0 +1,11 @@
+displayName: Convex
+description: Convex plugin for Corsair
+overviewNote: |
+  Convex is a reactive backend platform for TypeScript apps. This plugin wraps the
+  Convex Management API (https://api.convex.dev/v1) for teams, projects,
+  deployments, deploy keys, and custom domains, plus the deployment-scoped REST
+  API for executing query batches, reading query timestamps, and listing log
+  streams. Authenticate with a Convex personal/team access token (Bearer) or a
+  deployment admin deploy key (Convex <key>) together with the deployment name
+  (subdomain). Use Corsair permissions for destructive actions such as deleting
+  projects, deployments, or custom domains.
