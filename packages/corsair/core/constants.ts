@@ -66,6 +66,7 @@ export const BaseProviders = [
 	'linear',
 	'linkedin',
 	'mailchimp',
+	'minimax',
 	'monday',
 	'neon',
 	'notion',
@@ -164,6 +165,7 @@ export const ProviderDisplayNames = {
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	mailchimp: 'Mailchimp',
+	minimax: 'MiniMax',
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
@@ -269,6 +271,7 @@ export type AllProviders =
 	| 'linear'
 	| 'linkedin'
 	| 'mailchimp'
+	| 'minimax'
 	| 'monday'
 	| 'neon'
 	| 'notion'
