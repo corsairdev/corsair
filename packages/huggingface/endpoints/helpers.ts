@@ -28,7 +28,8 @@ export function hubRepoTypeSegment(
 
 /**
  * Redact sensitive fields before logEventFromContext (secrets, chat, commit ops).
- * `input` is unknown because handlers receive Zod-inferred objects of many shapes.
+ * Keys are matched case-insensitively at every nesting level so a secret under
+ * an arbitrary parent (e.g. `{ metadata: { apiKey: 'hf_…' } }`) never reaches logs.
  */
 const REDACTED_KEYS = new Set([
 	'value',
@@ -43,21 +44,42 @@ const REDACTED_KEYS = new Set([
 	'content',
 	'comment',
 	'input',
+	// nested credential-like keys
+	'apikey',
+	'api_key',
+	'token',
+	'accesstoken',
+	'access_token',
+	'authorization',
+	'password',
+	'passwd',
+	'credential',
+	'credentials',
 ]);
+
+function redactValue(value: unknown): unknown {
+	if (Array.isArray(value)) {
+		return value.map((item) => redactValue(item));
+	}
+	if (value && typeof value === 'object') {
+		const out: Record<string, unknown> = {};
+		for (const [k, v] of Object.entries(value as Record<string, unknown>)) {
+			if (REDACTED_KEYS.has(k.toLowerCase())) {
+				out[k] = '[redacted]';
+			} else {
+				out[k] = redactValue(v);
+			}
+		}
+		return out;
+	}
+	return value;
+}
 
 export function summarize(
 	// endpoint inputs vary per op; accept unknown and narrow for redaction
 	input: unknown,
 ): Record<string, unknown> {
-	if (!input || typeof input !== 'object') return {};
+	if (!input || typeof input !== 'object' || Array.isArray(input)) return {};
 	// cast: object branch after typeof check — entries need a string-key record
-	const out: Record<string, unknown> = {};
-	for (const [k, v] of Object.entries(input as Record<string, unknown>)) {
-		if (REDACTED_KEYS.has(k)) {
-			out[k] = '[redacted]';
-		} else {
-			out[k] = v;
-		}
-	}
-	return out;
+	return redactValue(input) as Record<string, unknown>;
 }

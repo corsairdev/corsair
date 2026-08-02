@@ -344,6 +344,142 @@ describe('handler path construction', () => {
 		expect(lastCall()[2]?.baseUrl).toBe(Client.HF_ENDPOINTS_BASE);
 	});
 
+	it('settings.getLiveBillingUsage → /api/settings/billing/usage/live (SSE)', async () => {
+		await SettingsEndpoints.getLiveBillingUsage(ctx(), {});
+		const call = lastCall();
+		expect(call[0]).toBe('/api/settings/billing/usage/live');
+		expect(call[2]).toEqual(
+			expect.objectContaining({ method: 'GET', sse: true, timeoutMs: 10_000 }),
+		);
+	});
+
+	it('settings.getBillingUsageV2 → /api/settings/billing/usage-v2', async () => {
+		await SettingsEndpoints.getBillingUsageV2(ctx(), {
+			from: 1700000000,
+			to: 1700003600,
+		});
+		expect(lastCall()[0]).toBe('/api/settings/billing/usage-v2');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'GET',
+				query: { from: 1700000000, to: 1700003600 },
+			}),
+		);
+	});
+
+	it('settings.getWebhook → GET /api/settings/webhooks/{id}', async () => {
+		await SettingsEndpoints.getWebhook(ctx(), { webhookId: 'wh_1' });
+		expect(lastCall()[0]).toBe('/api/settings/webhooks/wh_1');
+		expect(lastCall()[2]).toEqual(expect.objectContaining({ method: 'GET' }));
+	});
+
+	it('settings.listWebhooks → GET /api/settings/webhooks', async () => {
+		await SettingsEndpoints.listWebhooks(ctx(), {});
+		expectPath('/api/settings/webhooks');
+	});
+
+	it('datasets.createTag sends tag body field', async () => {
+		await DatasetsEndpoints.createTag(ctx(), {
+			repoId: 'org/data',
+			tag: 'v1.0',
+			revision: 'main',
+		});
+		const call = lastCall();
+		expect(call[0]).toBe('/api/datasets/org/data/tag/main');
+		expect(call[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({ tag: 'v1.0' }),
+			}),
+		);
+	});
+
+	it('datasets.createCommit sends parentCommit camelCase', async () => {
+		await DatasetsEndpoints.createCommit(ctx(), {
+			repoId: 'org/data',
+			revision: 'main',
+			summary: 'Update',
+			operations: [{ key: 'file', value: { path: 'a.txt', content: 'x' } }],
+			parentCommit: 'abc123',
+		});
+		const call = lastCall();
+		expect(call[0]).toBe('/api/datasets/org/data/commit/main');
+		expect(call[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({ parentCommit: 'abc123' }),
+			}),
+		);
+	});
+
+	it('datasets.getRows → datasets-server /rows', async () => {
+		await DatasetsEndpoints.getRows(ctx(), {
+			dataset: 'org/data',
+			config: 'default',
+			split: 'train',
+			offset: 0,
+			length: 10,
+		});
+		const call = lastCall();
+		expect(call[0]).toBe('/rows');
+		expect(call[2]).toEqual(
+			expect.objectContaining({
+				method: 'GET',
+				baseUrl: Client.HF_DATASETS_SERVER_BASE,
+				query: expect.objectContaining({
+					dataset: 'org/data',
+					config: 'default',
+					split: 'train',
+				}),
+			}),
+		);
+	});
+
+	it('models.createCommit sends parentCommit camelCase', async () => {
+		await ModelsEndpoints.createCommit(ctx(), {
+			repoId: 'org/model',
+			revision: 'main',
+			summary: 'Update',
+			operations: [{ key: 'file', value: { path: 'a.txt', content: 'x' } }],
+			parentCommit: 'abc123',
+		});
+		const call = lastCall();
+		expect(call[0]).toBe('/api/models/org/model/commit/main');
+		expect(call[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({ parentCommit: 'abc123' }),
+			}),
+		);
+	});
+
+	it('models.getResolve uses raw fetch path', async () => {
+		await ModelsEndpoints.getResolve(ctx(), {
+			repoId: 'org/model',
+			revision: 'main',
+			path: 'config.json',
+		});
+		const call = lastCall();
+		expect(call[0]).toBe('/org/model/resolve/main/config.json');
+		expect(call[2]).toEqual(expect.objectContaining({ rawText: true }));
+	});
+
+	it('models.createTag sends tag body field', async () => {
+		await ModelsEndpoints.createTag(ctx(), {
+			repoId: 'org/model',
+			tag: 'v1.0',
+			revision: 'main',
+		});
+		const call = lastCall();
+		expect(call[0]).toBe('/api/models/org/model/tag/main');
+		expect(call[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({ tag: 'v1.0' }),
+			}),
+		);
+	});
+
 	it('settings.updateNotifications → PATCH /api/settings/notifications', async () => {
 		await SettingsEndpoints.updateNotifications(ctx(), {
 			settings: { email: true },
@@ -619,6 +755,79 @@ describe('handler path construction', () => {
 			}),
 		);
 	});
+
+	it('datasets.get → /api/datasets/ns/repo', async () => {
+		await DatasetsEndpoints.get(ctx(), { repoId: 'org/data', full: true });
+		expect(lastCall()[0]).toBe('/api/datasets/org/data');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'GET',
+				query: { full: true },
+			}),
+		);
+	});
+
+	it('datasets.getScan → /api/datasets/ns/repo/scan', async () => {
+		await DatasetsEndpoints.getScan(ctx(), { repoId: 'org/data' });
+		expectPath('/api/datasets/org/data/scan');
+	});
+
+	it('datasets.getResolve uses rawText path', async () => {
+		await DatasetsEndpoints.getResolve(ctx(), {
+			repoId: 'org/data',
+			revision: 'main',
+			path: 'data.csv',
+		});
+		expect(lastCall()[0]).toBe('/datasets/org/data/resolve/main/data.csv');
+		expect(lastCall()[2]).toEqual(expect.objectContaining({ rawText: true }));
+	});
+
+	it('datasets.deleteBranch → DELETE /api/datasets/.../branch/{name}', async () => {
+		await DatasetsEndpoints.deleteBranch(ctx(), {
+			repoId: 'org/data',
+			branch: 'tmp',
+		});
+		expect(lastCall()[0]).toBe('/api/datasets/org/data/branch/tmp');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({ method: 'DELETE' }),
+		);
+	});
+
+	it('users.getAvatar → /api/users/{username}/avatar', async () => {
+		await UsersEndpoints.getAvatar(ctx(), { username: 'alice' });
+		expectPath('/api/users/alice/avatar');
+	});
+
+	it('users.getSocials → /api/users/{username}/socials', async () => {
+		await UsersEndpoints.getSocials(ctx(), { username: 'alice' });
+		expectPath('/api/users/alice/socials');
+	});
+
+	it('organizations.getAvatar → /api/organizations/{name}/avatar', async () => {
+		await OrganizationsEndpoints.getAvatar(ctx(), { name: 'acme' });
+		expectPath('/api/organizations/acme/avatar');
+	});
+
+	it('organizations.getSocials → /api/organizations/{name}/socials', async () => {
+		await OrganizationsEndpoints.getSocials(ctx(), { name: 'acme' });
+		expectPath('/api/organizations/acme/socials');
+	});
+
+	it('endpoints.deleteNetworkCidr → DELETE /v2/endpoint/.../cidr', async () => {
+		await EndpointsEndpoints.deleteNetworkCidr(ctx(), {
+			namespace: 'org',
+			cidr: '10.0.0.0/8',
+		});
+		expect(lastCall()[0]).toBe(
+			'/v2/endpoint/org/network-security/cidr/10.0.0.0%2F8',
+		);
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'DELETE',
+				baseUrl: Client.HF_ENDPOINTS_BASE,
+			}),
+		);
+	});
 });
 
 describe('summarize redaction', () => {
@@ -648,6 +857,25 @@ describe('summarize redaction', () => {
 			fields: '[redacted]',
 			messages: '[redacted]',
 			limit: 10,
+		});
+	});
+
+	it('redacts nested credential keys under non-sensitive parents', () => {
+		const out = summarize({
+			repoId: 'org/model',
+			metadata: {
+				apiKey: 'hf_secret_token',
+				nested: { access_token: 'tok_abc', safe: 'ok' },
+			},
+			items: [{ token: 'leak', name: 'keep' }],
+		});
+		expect(out).toEqual({
+			repoId: 'org/model',
+			metadata: {
+				apiKey: '[redacted]',
+				nested: { access_token: '[redacted]', safe: 'ok' },
+			},
+			items: [{ token: '[redacted]', name: 'keep' }],
 		});
 	});
 

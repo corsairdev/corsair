@@ -84,9 +84,13 @@ export const getJobsUsage: HuggingFaceEndpoints['getJobsUsage'] = async (
 
 export const getLiveBillingUsage: HuggingFaceEndpoints['getLiveBillingUsage'] =
 	async (ctx, input) => {
+		// Hub OpenAPI labels this "Stream usage" — same SSE pattern as spaces
+		// events/metrics. Collect payloads for a bounded window instead of
+		// blocking forever on res.text().
 		const response = await req(ctx, '/api/settings/billing/usage/live', {
 			method: 'GET',
-			rawText: true,
+			sse: true,
+			timeoutMs: 10_000,
 		});
 		await logEventFromContext(
 			ctx,
