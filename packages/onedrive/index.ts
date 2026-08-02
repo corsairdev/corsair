@@ -820,11 +820,6 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			}
 
 			if (source === 'webhook') {
-				if (ctx.authType === 'managed') {
-					throw new Error(
-						'[auth-missing:onedrive:managed]: webhook signature is not available in managed mode',
-					);
-				}
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
 					throw new Error(

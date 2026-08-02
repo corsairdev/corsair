@@ -629,11 +629,6 @@ export function outlook<const T extends OutlookPluginOptions>(
 			}
 
 			if (source === 'webhook') {
-				if (ctx.authType === 'managed') {
-					throw new Error(
-						'[auth-missing:outlook:managed]: webhook signature is not available in managed mode',
-					);
-				}
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
 					throw new Error(

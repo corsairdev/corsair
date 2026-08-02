@@ -1377,8 +1377,17 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 		keyBuilder: async (ctx: SharepointKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 
-			if (source === 'webhook' && options.webhookClientState) {
-				return options.webhookClientState;
+			if (source === 'webhook') {
+				if (options.webhookClientState) {
+					return options.webhookClientState;
+				}
+				const res = await ctx.keys.get_webhook_signature();
+				if (!res) {
+					throw new Error(
+						'[auth-missing:sharepoint:webhook_signature]: SharePoint webhook client state is missing',
+					);
+				}
+				return res;
 			}
 
 			// Hub-managed subscriptions: msGraphSubscribe persists the clientState
@@ -1473,10 +1482,8 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				return result.accessToken;
 			}
 
-			// Unlike the other Graph plugins, sharepoint's webhook path above is
-			// not terminal (it returns only when webhookClientState is set), so a
-			// webhook could otherwise fall through here. Scope managed to endpoint
-			// calls — a webhook must never trigger a Hub token fetch.
+			// The webhook path above is terminal, so source is 'endpoint' here; this
+			// stays scoped as a defensive guard — a webhook must never fetch a Hub token.
 			if (source === 'endpoint' && ctx.authType === 'managed') {
 				if (!ctx.hub) {
 					throw new Error(
