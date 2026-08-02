@@ -343,6 +343,282 @@ describe('handler path construction', () => {
 		expect(lastCall()[0]).toBe('/v2/provider');
 		expect(lastCall()[2]?.baseUrl).toBe(Client.HF_ENDPOINTS_BASE);
 	});
+
+	it('settings.updateNotifications → PATCH /api/settings/notifications', async () => {
+		await SettingsEndpoints.updateNotifications(ctx(), {
+			settings: { email: true },
+		});
+		expect(lastCall()[0]).toBe('/api/settings/notifications');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'PATCH',
+				body: { email: true },
+			}),
+		);
+	});
+
+	it('settings.updateWatch → PATCH /api/settings/watch', async () => {
+		await SettingsEndpoints.updateWatch(ctx(), {
+			add: [{ repo: 'org/repo' }],
+			remove: [{ repo: 'other/repo' }],
+		});
+		expect(lastCall()[0]).toBe('/api/settings/watch');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'PATCH',
+				body: {
+					add: [{ repo: 'org/repo' }],
+					remove: [{ repo: 'other/repo' }],
+				},
+			}),
+		);
+	});
+
+	it('settings.createWebhook → POST /api/settings/webhooks with body', async () => {
+		await SettingsEndpoints.createWebhook(ctx(), {
+			url: 'https://example.com/hook',
+			domains: ['example.com'],
+			extra: { enabled: true },
+		});
+		expect(lastCall()[0]).toBe('/api/settings/webhooks');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({
+					url: 'https://example.com/hook',
+					domains: ['example.com'],
+					enabled: true,
+				}),
+			}),
+		);
+	});
+
+	it('settings.updateWebhook → POST /api/settings/webhooks/{id}', async () => {
+		await SettingsEndpoints.updateWebhook(ctx(), {
+			webhookId: 'wh_1',
+			url: 'https://example.com/new',
+			extra: { enabled: false },
+		});
+		expect(lastCall()[0]).toBe('/api/settings/webhooks/wh_1');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({
+					url: 'https://example.com/new',
+					enabled: false,
+				}),
+			}),
+		);
+	});
+
+	it('settings.deleteWebhook → DELETE /api/settings/webhooks/{id}', async () => {
+		await SettingsEndpoints.deleteWebhook(ctx(), { webhookId: 'wh_1' });
+		expect(lastCall()[0]).toBe('/api/settings/webhooks/wh_1');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({ method: 'DELETE' }),
+		);
+	});
+
+	it('settings.updateWebhookStatus → POST /api/settings/webhooks/{id}/disable', async () => {
+		await SettingsEndpoints.updateWebhookStatus(ctx(), {
+			webhookId: 'wh_1',
+			action: 'disable',
+		});
+		expect(lastCall()[0]).toBe('/api/settings/webhooks/wh_1/disable');
+		expect(lastCall()[2]).toEqual(expect.objectContaining({ method: 'POST' }));
+	});
+
+	it('discussions.createComment → POST .../discussions/1/comment', async () => {
+		await DiscussionsEndpoints.createComment(ctx(), {
+			repoType: 'model',
+			repoId: 'org/model',
+			discussionNum: 1,
+			comment: 'Nice work',
+		});
+		expect(lastCall()[0]).toBe('/api/models/org/model/discussions/1/comment');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: { comment: 'Nice work' },
+			}),
+		);
+	});
+
+	it('discussions.changeStatus → POST .../discussions/1/status', async () => {
+		await DiscussionsEndpoints.changeStatus(ctx(), {
+			repoType: 'dataset',
+			repoId: 'org/data',
+			discussionNum: 1,
+			status: 'closed',
+		});
+		expect(lastCall()[0]).toBe('/api/datasets/org/data/discussions/1/status');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: { status: 'closed' },
+			}),
+		);
+	});
+
+	it('discussions.updateTitle → POST .../discussions/1/title', async () => {
+		await DiscussionsEndpoints.updateTitle(ctx(), {
+			repoType: 'space',
+			repoId: 'org/space',
+			discussionNum: 1,
+			title: 'New title',
+		});
+		expect(lastCall()[0]).toBe('/api/spaces/org/space/discussions/1/title');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: { title: 'New title' },
+			}),
+		);
+	});
+
+	it('discussions.pin → POST .../discussions/1/pin', async () => {
+		await DiscussionsEndpoints.pin(ctx(), {
+			repoType: 'model',
+			repoId: 'org/model',
+			discussionNum: 1,
+			pinned: true,
+		});
+		expect(lastCall()[0]).toBe('/api/models/org/model/discussions/1/pin');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: { pinned: true },
+			}),
+		);
+	});
+
+	it('discussions.delete → DELETE .../discussions/1', async () => {
+		await DiscussionsEndpoints.delete(ctx(), {
+			repoType: 'model',
+			repoId: 'org/model',
+			discussionNum: 1,
+		});
+		expect(lastCall()[0]).toBe('/api/models/org/model/discussions/1');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({ method: 'DELETE' }),
+		);
+	});
+
+	it('papers.createIndex → POST /api/papers/index with arxivId body', async () => {
+		await PapersEndpoints.createIndex(ctx(), { paperId: '2301.12345' });
+		expect(lastCall()[0]).toBe('/api/papers/index');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: { arxivId: '2301.12345' },
+			}),
+		);
+	});
+
+	it('papers.claimAuthorship → POST /api/settings/papers/claim', async () => {
+		await PapersEndpoints.claimAuthorship(ctx(), {
+			paperId: '2301.12345',
+			extra: { method: 'email' },
+		});
+		expect(lastCall()[0]).toBe('/api/settings/papers/claim');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: { paperId: '2301.12345', method: 'email' },
+			}),
+		);
+	});
+
+	it('papers.createComment → POST /api/papers/{id}/comment', async () => {
+		await PapersEndpoints.createComment(ctx(), {
+			paperId: '2301.12345',
+			comment: 'Nice paper',
+		});
+		expect(lastCall()[0]).toBe('/api/papers/2301.12345/comment');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: { comment: 'Nice paper' },
+			}),
+		);
+	});
+
+	it('papers.createCommentReply → POST /api/papers/{id}/comment/{cid}/reply', async () => {
+		await PapersEndpoints.createCommentReply(ctx(), {
+			paperId: '2301.12345',
+			commentId: 'c1',
+			comment: 'Agreed',
+		});
+		expect(lastCall()[0]).toBe('/api/papers/2301.12345/comment/c1/reply');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: { comment: 'Agreed' },
+			}),
+		);
+	});
+
+	it('inference.embeddings → LLM gateway /v1/embeddings', async () => {
+		await InferenceEndpoints.embeddings(ctx(), {
+			model: 'text-embedding',
+			input: 'hello',
+		});
+		const call = lastCall();
+		expect(call[0]).toBe('/v1/embeddings');
+		expect(call[2]?.baseUrl).toBe(Client.LLM_GATEWAY_BASE);
+		expect(call[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({
+					model: 'text-embedding',
+					input: 'hello',
+				}),
+			}),
+		);
+	});
+
+	it('repos.listFiles → /api/models/ns/repo/tree/main', async () => {
+		await ReposEndpoints.listFiles(ctx(), {
+			repoType: 'model',
+			repoId: 'org/model',
+			revision: 'main',
+			path: '',
+			recursive: true,
+		});
+		expect(lastCall()[0]).toBe('/api/models/org/model/tree/main/');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'GET',
+				query: expect.objectContaining({ recursive: true }),
+			}),
+		);
+	});
+
+	it('repos.getResolve → raw resolve path', async () => {
+		await ReposEndpoints.getResolve(ctx(), {
+			repoType: 'dataset',
+			repoId: 'org/data',
+			revision: 'main',
+			path: 'file.csv',
+		});
+		expect(lastCall()[0]).toBe('/datasets/org/data/resolve/main/file.csv');
+		expect(lastCall()[2]).toEqual(expect.objectContaining({ rawText: true }));
+	});
+
+	it('repos.requestAccess → POST ask-access with fields body', async () => {
+		await ReposEndpoints.requestAccess(ctx(), {
+			repoType: 'model',
+			repoId: 'org/model',
+			fields: { name: 'Ada' },
+		});
+		expect(lastCall()[0]).toBe('/org/model/ask-access');
+		expect(lastCall()[2]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				body: { name: 'Ada' },
+			}),
+		);
+	});
 });
 
 describe('summarize redaction', () => {
