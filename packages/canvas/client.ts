@@ -10,7 +10,11 @@ import { request } from 'corsair/http';
  * own host. Callers must pass `baseUrl` (plugin option or account `base_url`).
  */
 export function normalizeCanvasBaseUrl(baseUrl: string): string {
-	const trimmed = baseUrl.trim().replace(/\/+$/, '');
+	let trimmed = baseUrl.trim();
+	// ponytail: avoid /\/+$/ — CodeQL flags it as ReDoS on long slash runs
+	while (trimmed.endsWith('/')) {
+		trimmed = trimmed.slice(0, -1);
+	}
 	if (!trimmed) {
 		throw new Error('[canvas] baseUrl is required');
 	}
