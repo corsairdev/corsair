@@ -56,12 +56,12 @@ function getEndpoint(
 	}
 	return handler;
 }
-
 const mockCtx = {
 	key: 'test-token',
 	options: {},
 	keys: {
 		get_subdomain: async () => 'acoustic-panther-728',
+		get_deploy_key: async () => null,
 	},
 	$getAccountId: () => 'test-account-id',
 	logEvent: jest.fn(),
@@ -90,13 +90,13 @@ describe('Convex plugin shape', () => {
 		);
 	});
 
-	it('uses api key auth by default with subdomain account field', () => {
+	it('uses api key auth by default with subdomain and deploy key account fields', () => {
 		const plugin = convex();
 
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.authConfig).toEqual({
-			api_key: { account: ['subdomain'] },
-			oauth_2: { account: ['subdomain'] },
+			api_key: { account: ['subdomain', 'deploy_key'] },
+			oauth_2: { account: ['subdomain', 'deploy_key'] },
 		});
 	});
 
@@ -143,6 +143,13 @@ describe('Convex request client', () => {
 				url: '/teams/123/projects',
 			}),
 		);
+	});
+
+	it('rejects requests without a configured credential', async () => {
+		await expect(
+			makeConvexRequest('/teams/123/projects', undefined),
+		).rejects.toThrow('No Convex access token');
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('sends Convex-style auth and deployment base URL for deployment-scoped calls', async () => {
@@ -582,7 +589,7 @@ describe('Convex endpoints', () => {
 		).toBe(true);
 	});
 
-	it('requires a deploy key for deployment-scoped operations', async () => {
+	it('rejects deployment-scoped operations without any deploy key', async () => {
 		const plugin = convex({ key: 'test-token' });
 		const endpoints = plugin.endpoints as unknown as TestEndpoints;
 
@@ -591,12 +598,79 @@ describe('Convex endpoints', () => {
 		).rejects.toThrow('deploy key');
 		expect(mockRequest).not.toHaveBeenCalled();
 
-		// The input schema also requires the deploy key.
+		// The input schema accepts an omitted deployKey (the handler resolves it
+		// from the connection), but never a non-string value.
 		expect(
 			ConvexEndpointInputSchemas.executeQueryBatch.safeParse({
 				queries: [{ path: 'messages:list', args: {} }],
 			}).success,
-		).toBe(false);
+		).toBe(true);
+	});
+
+	it('falls back to the stored connection deploy key', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+		const ctxWithStoredDeployKey = {
+			...mockCtx,
+			keys: {
+				get_subdomain: async () => 'acoustic-panther-728',
+				get_deploy_key: async () => 'prod:stored-deploy-key',
+			},
+		} as unknown as ConvexContext;
+
+		await getEndpoint(
+			endpoints,
+			'deployment',
+			'getQueryTimestamp',
+		)(ctxWithStoredDeployKey, {});
+
+		expect(mockRequest.mock.calls[0]?.[0].HEADERS.Authorization).toBe(
+			'Convex prod:stored-deploy-key',
+		);
+	});
+
+	it('lets deploy-key-only connections reach deployment-scoped endpoints', async () => {
+		const plugin = convex();
+		const keyBuilder = plugin.keyBuilder as (
+			ctx: unknown,
+			source: string,
+		) => Promise<string | undefined>;
+		const deployKeyOnlyCtx = {
+			authType: 'api_key',
+			keys: {
+				get_api_key: async () => null,
+				get_deploy_key: async () => 'prod:deploy-key',
+			},
+		} as never;
+
+		await expect(keyBuilder(deployKeyOnlyCtx, 'endpoint')).resolves.toBe('');
+
+		// A completely empty connection is still an auth-missing error.
+		const emptyCtx = {
+			authType: 'api_key',
+			keys: {
+				get_api_key: async () => null,
+				get_deploy_key: async () => null,
+			},
+		} as never;
+		await expect(keyBuilder(emptyCtx, 'endpoint')).rejects.toThrow();
+	});
+
+	it('returns the access token for Management-capable connections', async () => {
+		const plugin = convex();
+		const keyBuilder = plugin.keyBuilder as (
+			ctx: unknown,
+			source: string,
+		) => Promise<string | undefined>;
+		const ctx = {
+			authType: 'api_key',
+			keys: {
+				get_api_key: async () => 'access-token',
+				get_deploy_key: async () => null,
+			},
+		} as never;
+
+		await expect(keyBuilder(ctx, 'endpoint')).resolves.toBe('access-token');
 	});
 
 	it('accepts a per-call deploy key for deployment-scoped operations', async () => {
