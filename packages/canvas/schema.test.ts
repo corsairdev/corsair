@@ -100,6 +100,55 @@ describe('Canvas endpoint behavior', () => {
 		expect(response).toEqual({ success: true });
 	});
 
+	it('allows bodyless mutating actions without a body field', async () => {
+		const addFavorite = createCanvasEndpoint(
+			'addCourseToFavorites',
+			'canvas.courses.addCourseToFavorites',
+		);
+
+		await addFavorite(
+			{
+				key: 'test_token',
+				options: { baseUrl: 'https://test.canvas.com' },
+				logEvent: jest.fn(),
+			} as never,
+			{ pathParams: { course_id: '42' } },
+		);
+
+		expect(makeCanvasRequest).toHaveBeenCalledWith(
+			'/api/v1/users/self/favorites/courses/{course_id}',
+			'test_token',
+			expect.objectContaining({
+				method: 'POST',
+				path: { course_id: '42' },
+				body: {},
+			}),
+		);
+	});
+
+	it('accepts array responses from list endpoints', async () => {
+		(makeCanvasRequest as jest.Mock).mockResolvedValueOnce([
+			{ id: 1 },
+			{ id: 2 },
+		]);
+
+		const getAllUsers = createCanvasEndpoint(
+			'getAllUsers',
+			'canvas.users.getAllUsers',
+		);
+
+		const response = await getAllUsers(
+			{
+				key: 'test_token',
+				options: { baseUrl: 'https://test.canvas.com' },
+				logEvent: jest.fn(),
+			} as never,
+			{ pathParams: { account_id: '1' } },
+		);
+
+		expect(response).toEqual([{ id: 1 }, { id: 2 }]);
+	});
+
 	it('resolves baseUrl from account keys when options.baseUrl is unset', async () => {
 		const getCurrentUser = createCanvasEndpoint(
 			'getCurrentUser',
