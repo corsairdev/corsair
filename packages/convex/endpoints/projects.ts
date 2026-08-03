@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest } from '../client';
+import { makeConvexRequest, tryCacheWrite } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 
 export const list: ConvexEndpoints['projectsList'] = async (ctx, input) => {
@@ -16,10 +16,13 @@ export const list: ConvexEndpoints['projectsList'] = async (ctx, input) => {
 		query,
 	});
 
-	if (response.items && ctx.db.projects) {
-		for (const project of response.items) {
-			await ctx.db.projects.upsertByEntityId(project.id, { ...project });
-		}
+	const projects = ctx.db.projects;
+	if (response.items && projects) {
+		await tryCacheWrite(async () => {
+			for (const project of response.items) {
+				await projects.upsertByEntityId(project.id, { ...project });
+			}
+		});
 	}
 
 	await logEventFromContext(
@@ -39,8 +42,11 @@ export const getById: ConvexEndpoints['projectGetById'] = async (
 		ConvexEndpointOutputs['projectGetById']
 	>(`/projects/${input.project_id}`, ctx.key, { method: 'GET' });
 
-	if (response && ctx.db.projects) {
-		await ctx.db.projects.upsertByEntityId(response.id, { ...response });
+	const projects = ctx.db.projects;
+	if (response && projects) {
+		await tryCacheWrite(() =>
+			projects.upsertByEntityId(response.id, { ...response }),
+		);
 	}
 
 	await logEventFromContext(
@@ -62,8 +68,11 @@ export const getBySlug: ConvexEndpoints['projectGetBySlug'] = async (
 		method: 'GET',
 	});
 
-	if (response && ctx.db.projects) {
-		await ctx.db.projects.upsertByEntityId(response.id, { ...response });
+	const projects = ctx.db.projects;
+	if (response && projects) {
+		await tryCacheWrite(() =>
+			projects.upsertByEntityId(response.id, { ...response }),
+		);
 	}
 
 	await logEventFromContext(
@@ -94,8 +103,14 @@ export const create: ConvexEndpoints['projectCreate'] = async (ctx, input) => {
 		body,
 	});
 
-	if (response.id && ctx.db.projects) {
-		await ctx.db.projects.upsertByEntityId(response.id, { ...response });
+	// The project was created upstream — a cache failure must not turn this
+	// successful non-idempotent call into an endpoint error (which could prompt
+	// a duplicate create on retry).
+	const projects = ctx.db.projects;
+	if (response.id && projects) {
+		await tryCacheWrite(() =>
+			projects.upsertByEntityId(response.id, { ...response }),
+		);
 	}
 
 	await logEventFromContext(
@@ -115,8 +130,22 @@ export const deleteProject: ConvexEndpoints['projectDelete'] = async (
 		ConvexEndpointOutputs['projectDelete']
 	>(`/projects/${input.project_id}/delete`, ctx.key, { method: 'POST' });
 
-	if (ctx.db.projects) {
-		await ctx.db.projects.deleteByEntityId(input.project_id);
+	// The project was deleted upstream — best-effort cache cleanup only. Also
+	// remove cached deployments that belonged to this project, since deleting a
+	// project deletes all of its deployments.
+	const { projects, deployments } = ctx.db;
+	if (projects) {
+		await tryCacheWrite(() => projects.deleteByEntityId(input.project_id));
+	}
+	if (deployments) {
+		await tryCacheWrite(async () => {
+			const cached = await deployments.list();
+			for (const deployment of cached) {
+				if (deployment.data.projectId === input.project_id) {
+					await deployments.deleteByEntityId(deployment.entity_id);
+				}
+			}
+		});
 	}
 
 	await logEventFromContext(

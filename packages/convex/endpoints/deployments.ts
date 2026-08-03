@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest } from '../client';
+import { makeConvexRequest, tryCacheWrite } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 
 export const list: ConvexEndpoints['deploymentsList'] = async (ctx, input) => {
@@ -20,12 +20,15 @@ export const list: ConvexEndpoints['deploymentsList'] = async (ctx, input) => {
 		query,
 	});
 
-	if (response && ctx.db.deployments) {
-		for (const deployment of response) {
-			await ctx.db.deployments.upsertByEntityId(deployment.name, {
-				...deployment,
-			});
-		}
+	const deployments = ctx.db.deployments;
+	if (response && deployments) {
+		await tryCacheWrite(async () => {
+			for (const deployment of response) {
+				await deployments.upsertByEntityId(deployment.name, {
+					...deployment,
+				});
+			}
+		});
 	}
 
 	await logEventFromContext(
@@ -42,8 +45,11 @@ export const get: ConvexEndpoints['deploymentGet'] = async (ctx, input) => {
 		ConvexEndpointOutputs['deploymentGet']
 	>(`/deployments/${input.deployment_name}`, ctx.key, { method: 'GET' });
 
-	if (response && ctx.db.deployments) {
-		await ctx.db.deployments.upsertByEntityId(response.name, { ...response });
+	const deployments = ctx.db.deployments;
+	if (response && deployments) {
+		await tryCacheWrite(() =>
+			deployments.upsertByEntityId(response.name, { ...response }),
+		);
 	}
 
 	await logEventFromContext(
@@ -72,8 +78,13 @@ export const create: ConvexEndpoints['deploymentCreate'] = async (
 		body,
 	});
 
-	if (response && ctx.db.deployments) {
-		await ctx.db.deployments.upsertByEntityId(response.name, { ...response });
+	// The deployment was created upstream — a cache failure must not turn this
+	// successful non-idempotent call into an endpoint error.
+	const deployments = ctx.db.deployments;
+	if (response && deployments) {
+		await tryCacheWrite(() =>
+			deployments.upsertByEntityId(response.name, { ...response }),
+		);
 	}
 
 	await logEventFromContext(
@@ -103,6 +114,25 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 		body,
 	});
 
+	// The PATCH response does not include the updated deployment record, so
+	// fetch it to keep the local cache fresh. Best-effort — the update itself
+	// already succeeded.
+	const deployments = ctx.db.deployments;
+	if (deployments) {
+		await tryCacheWrite(async () => {
+			const refreshed = await makeConvexRequest<
+				ConvexEndpointOutputs['deploymentGet']
+			>(`/deployments/${input.deployment_name}`, ctx.key, {
+				method: 'GET',
+			});
+			if (refreshed.name) {
+				await deployments.upsertByEntityId(refreshed.name, {
+					...refreshed,
+				});
+			}
+		});
+	}
+
 	await logEventFromContext(
 		ctx,
 		'convex.deployments.update',
@@ -122,8 +152,24 @@ export const deleteDeployment: ConvexEndpoints['deploymentDelete'] = async (
 		method: 'POST',
 	});
 
-	if (ctx.db.deployments) {
-		await ctx.db.deployments.deleteByEntityId(input.deployment_name);
+	// The deployment was deleted upstream — best-effort cache cleanup only. Also
+	// remove cached deploy keys for this deployment, since deleting a deployment
+	// invalidates its deploy keys.
+	const { deployments, deployKeys } = ctx.db;
+	if (deployments) {
+		await tryCacheWrite(() =>
+			deployments.deleteByEntityId(input.deployment_name),
+		);
+	}
+	if (deployKeys) {
+		await tryCacheWrite(async () => {
+			const cached = await deployKeys.list();
+			for (const key of cached) {
+				if (key.data.deploymentName === input.deployment_name) {
+					await deployKeys.deleteByEntityId(key.entity_id);
+				}
+			}
+		});
 	}
 
 	await logEventFromContext(

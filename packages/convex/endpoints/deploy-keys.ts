@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest } from '../client';
+import { makeConvexRequest, tryCacheWrite } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 
 export const create: ConvexEndpoints['deployKeyCreate'] = async (
@@ -20,20 +20,12 @@ export const create: ConvexEndpoints['deployKeyCreate'] = async (
 		body,
 	});
 
-	// The deploy key secret is shown once at creation and never returned
-	// again — do NOT cache the plaintext `deployKey` secret, only non-secret
-	// metadata (name, expiry, allowed actions). The create response contains
-	// only `{ deployKey }`, so we cache the request-provided metadata keyed by
-	// deployment name (matching what the list operation upserts by `id`).
-	if (ctx.db.deployKeys) {
-		await ctx.db.deployKeys.upsertByEntityId(input.deployment_name, {
-			id: input.deployment_name,
-			deploymentName: input.deployment_name,
-			name: input.name,
-			expiresAt: input.expiresAt ?? null,
-			allowedActions: input.allowedActions ?? [],
-		});
-	}
+	// The deploy key secret is shown once at creation and never returned again
+	// — do NOT cache the plaintext `deployKey` secret. The create response only
+	// contains `{ deployKey }` with no durable ID, so we intentionally do not
+	// write a cache row here: `list` populates the cache under each key's real
+	// `id`, and caching under the deployment name (or a fabricated composite ID)
+	// would collide across keys and never reconcile with `list`.
 
 	await logEventFromContext(
 		ctx,
@@ -51,13 +43,16 @@ export const list: ConvexEndpoints['deployKeysList'] = async (ctx, input) => {
 		method: 'GET',
 	});
 
-	if (response && ctx.db.deployKeys) {
-		for (const deployKey of response) {
-			await ctx.db.deployKeys.upsertByEntityId(deployKey.id, {
-				deploymentName: input.deployment_name,
-				...deployKey,
-			});
-		}
+	const deployKeys = ctx.db.deployKeys;
+	if (response && deployKeys) {
+		await tryCacheWrite(async () => {
+			for (const deployKey of response) {
+				await deployKeys.upsertByEntityId(deployKey.id, {
+					deploymentName: input.deployment_name,
+					...deployKey,
+				});
+			}
+		});
 	}
 
 	await logEventFromContext(

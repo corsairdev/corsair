@@ -11,7 +11,7 @@ export const errorHandlers = {
 			}
 			const msg = error.message.toLowerCase();
 			return (
-				msg.includes('429') ||
+				/\b429\b/.test(msg) ||
 				msg.includes('rate_limit') ||
 				msg.includes('too many requests')
 			);
@@ -39,7 +39,7 @@ export const errorHandlers = {
 			return (
 				msg.includes('unauthorized') ||
 				msg.includes('invalid_auth') ||
-				msg.includes('401')
+				/\b401\b/.test(msg)
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
@@ -51,7 +51,7 @@ export const errorHandlers = {
 				return true;
 			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('forbidden') || msg.includes('403');
+			return msg.includes('forbidden') || /\b403\b/.test(msg);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
@@ -62,7 +62,7 @@ export const errorHandlers = {
 				return true;
 			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('not found') || msg.includes('404');
+			return msg.includes('not found') || /\b404\b/.test(msg);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
