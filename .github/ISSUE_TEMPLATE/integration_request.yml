@@ -1,5 +1,6 @@
 name: Integration request
 description: Request a new integration to be added to Corsair
+labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
