@@ -329,30 +329,31 @@ describe('Convex endpoints', () => {
 				group: 'deployment',
 				name: 'executeQueryBatch',
 				input: {
+					deployKey: 'prod:deploy-key',
 					queries: [{ path: 'messages:list', args: {} }],
 				},
 				method: 'POST',
 				url: '/query_batch',
 				baseUrl: 'https://acoustic-panther-728.convex.cloud/api',
-				auth: 'Convex test-token',
+				auth: 'Convex prod:deploy-key',
 			},
 			{
 				group: 'deployment',
 				name: 'getQueryTimestamp',
-				input: {},
+				input: { deployKey: 'prod:deploy-key' },
 				method: 'GET',
 				url: '/query_timestamp',
 				baseUrl: 'https://acoustic-panther-728.convex.cloud/api',
-				auth: 'Convex test-token',
+				auth: 'Convex prod:deploy-key',
 			},
 			{
 				group: 'deployment',
 				name: 'listLogStreams',
-				input: {},
+				input: { deployKey: 'prod:deploy-key' },
 				method: 'GET',
 				url: '/list_log_streams',
 				baseUrl: 'https://acoustic-panther-728.convex.cloud/api',
-				auth: 'Convex test-token',
+				auth: 'Convex prod:deploy-key',
 			},
 		];
 
@@ -415,6 +416,7 @@ describe('Convex endpoints', () => {
 			'getQueryTimestamp',
 		)(mockCtx, {
 			subdomain: 'custom-deploy-1',
+			deployKey: 'prod:deploy-key',
 		});
 
 		expect(mockRequest.mock.calls[0]?.[0].BASE).toBe(
@@ -555,6 +557,7 @@ describe('Convex endpoints', () => {
 				'executeQueryBatch',
 			)(mockCtx, {
 				subdomain: 'attacker.example:443/',
+				deployKey: 'prod:deploy-key',
 				queries: [{ path: 'messages:list', args: {} }],
 			}),
 		).rejects.toThrow('Invalid Convex deployment name');
@@ -564,6 +567,33 @@ describe('Convex endpoints', () => {
 		expect(
 			ConvexEndpointInputSchemas.executeQueryBatch.safeParse({
 				subdomain: 'attacker.example:443/',
+				deployKey: 'prod:deploy-key',
+				queries: [{ path: 'messages:list', args: {} }],
+			}).success,
+		).toBe(false);
+
+		// A valid subdomain with a deploy key passes schema validation.
+		expect(
+			ConvexEndpointInputSchemas.executeQueryBatch.safeParse({
+				subdomain: 'acoustic-panther-728',
+				deployKey: 'prod:deploy-key',
+				queries: [{ path: 'messages:list', args: {} }],
+			}).success,
+		).toBe(true);
+	});
+
+	it('requires a deploy key for deployment-scoped operations', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+
+		await expect(
+			getEndpoint(endpoints, 'deployment', 'getQueryTimestamp')(mockCtx, {}),
+		).rejects.toThrow('deploy key');
+		expect(mockRequest).not.toHaveBeenCalled();
+
+		// The input schema also requires the deploy key.
+		expect(
+			ConvexEndpointInputSchemas.executeQueryBatch.safeParse({
 				queries: [{ path: 'messages:list', args: {} }],
 			}).success,
 		).toBe(false);
