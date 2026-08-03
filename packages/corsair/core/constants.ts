@@ -20,6 +20,7 @@ export const BaseProviders = [
 	'airtable',
 	'algolia',
 	'amplitude',
+	'apilabz',
 	'asana',
 	'bitwarden',
 	'bluesky',
@@ -118,6 +119,7 @@ export const ProviderDisplayNames = {
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	amplitude: 'Amplitude',
+	apilabz: 'API Labz',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
@@ -223,6 +225,7 @@ export type AllProviders =
 	| 'airtable'
 	| 'algolia'
 	| 'amplitude'
+	| 'apilabz'
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
