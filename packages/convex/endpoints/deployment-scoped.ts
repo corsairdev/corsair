@@ -101,10 +101,12 @@ export const getQueryTimestamp: ConvexEndpoints['queryTimestamp'] = async (
 		authScheme: 'convex',
 	});
 
+	// Never spread the full input here: it contains the plaintext `deployKey`,
+	// which must not be persisted into event records.
 	await logEventFromContext(
 		ctx,
 		'convex.deployment.queryTimestamp',
-		{ ...input },
+		{ subdomain: input.subdomain },
 		'completed',
 	);
 	return response;
@@ -125,10 +127,12 @@ export const listLogStreams: ConvexEndpoints['logStreamsList'] = async (
 		authScheme: 'convex',
 	});
 
+	// Never spread the full input here: it contains the plaintext `deployKey`,
+	// which must not be persisted into event records.
 	await logEventFromContext(
 		ctx,
 		'convex.deployment.logStreams',
-		{ ...input },
+		{ subdomain: input.subdomain },
 		'completed',
 	);
 	return response;
