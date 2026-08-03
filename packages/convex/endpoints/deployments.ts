@@ -115,22 +115,30 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 	});
 
 	// The PATCH response does not include the updated deployment record, so
-	// fetch it to keep the local cache fresh. Best-effort — the update itself
-	// already succeeded.
+	// fetch it to keep the local cache fresh. A refresh failure is diagnosed but
+	// never fails the already-succeeded update; only the cache write itself is
+	// best-effort.
 	const deployments = ctx.db.deployments;
 	if (deployments) {
-		await tryCacheWrite(async () => {
+		try {
 			const refreshed = await makeConvexRequest<
 				ConvexEndpointOutputs['deploymentGet']
 			>(`/deployments/${input.deployment_name}`, ctx.key, {
 				method: 'GET',
 			});
 			if (refreshed.name) {
-				await deployments.upsertByEntityId(refreshed.name, {
-					...refreshed,
-				});
+				await tryCacheWrite(() =>
+					deployments.upsertByEntityId(refreshed.name, {
+						...refreshed,
+					}),
+				);
 			}
-		});
+		} catch (error) {
+			console.warn(
+				'[corsair:convex] Failed to refresh deployment cache after update:',
+				error,
+			);
+		}
 	}
 
 	await logEventFromContext(
