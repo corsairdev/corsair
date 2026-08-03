@@ -42,16 +42,20 @@ async function resolveDeploymentUrl(
  * Resolves the deploy key for a deployment-scoped operation. Deployment-scoped
  * endpoints authenticate as `Authorization: Convex <key>` and require a
  * deployment admin deploy key — the plugin credential (a Management API access
- * token) is never a valid deploy key, so one must be supplied per call via
- * `deployKey`.
+ * token) is never a valid deploy key. One may be supplied per call via
+ * `deployKey` or stored on the connection as `deploy_key`.
  */
-function resolveDeployKey(inputDeployKey: string | undefined): string {
-	if (!inputDeployKey) {
+async function resolveDeployKey(
+	ctx: ConvexContext,
+	inputDeployKey: string | undefined,
+): Promise<string> {
+	const deployKey = inputDeployKey ?? (await ctx.keys.get_deploy_key()) ?? '';
+	if (!deployKey) {
 		throw new ConvexAPIError(
-			'Deployment-scoped operations require a deployment admin deploy key; provide one via the deployKey input',
+			'Deployment-scoped operations require a deployment admin deploy key; provide one via the deployKey input or store it as the connection deploy key',
 		);
 	}
-	return inputDeployKey;
+	return deployKey;
 }
 
 export const executeQueryBatch: ConvexEndpoints['executeQueryBatch'] = async (
@@ -59,7 +63,7 @@ export const executeQueryBatch: ConvexEndpoints['executeQueryBatch'] = async (
 	input,
 ) => {
 	const baseUrl = await resolveDeploymentUrl(ctx, input.subdomain);
-	const deployKey = resolveDeployKey(input.deployKey);
+	const deployKey = await resolveDeployKey(ctx, input.deployKey);
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['executeQueryBatch']
@@ -91,7 +95,7 @@ export const getQueryTimestamp: ConvexEndpoints['queryTimestamp'] = async (
 	input,
 ) => {
 	const baseUrl = await resolveDeploymentUrl(ctx, input.subdomain);
-	const deployKey = resolveDeployKey(input.deployKey);
+	const deployKey = await resolveDeployKey(ctx, input.deployKey);
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['queryTimestamp']
@@ -117,7 +121,7 @@ export const listLogStreams: ConvexEndpoints['logStreamsList'] = async (
 	input,
 ) => {
 	const baseUrl = await resolveDeploymentUrl(ctx, input.subdomain);
-	const deployKey = resolveDeployKey(input.deployKey);
+	const deployKey = await resolveDeployKey(ctx, input.deployKey);
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['logStreamsList']

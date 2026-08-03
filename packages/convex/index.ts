@@ -33,9 +33,9 @@ export type ConvexPluginOptions = {
 	 * does not accept deploy keys as bearer credentials for the Management API,
 	 * so an `api_key` connection should store an access token.
 	 * Deployment-scoped operations authenticate as `Authorization: Convex
-	 * <key>` and require a deployment admin deploy key supplied per call via
-	 * each operation's `deployKey` input (the plugin credential is never a
-	 * valid deploy key).
+	 * <key>` with a deployment admin deploy key — supplied per call via each
+	 * operation's `deployKey` input or stored on the connection as
+	 * `deploy_key`.
 	 */
 	key?: string;
 	/**
@@ -53,10 +53,10 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const convexAuthConfig = {
 	api_key: {
-		account: ['subdomain'] as const,
+		account: ['subdomain', 'deploy_key'] as const,
 	},
 	oauth_2: {
-		account: ['subdomain'] as const,
+		account: ['subdomain', 'deploy_key'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -148,30 +148,41 @@ export function convex<const T extends ConvexPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		// NOTE: `ctx.key` is a single plugin-wide credential. Management API
-		// operations send it as `Bearer <key>`; deployment-scoped operations send
-		// it as `Convex <key>` and accept a dedicated deploy key per call via the
-		// `deployKey` input (required for OAuth connections, whose access tokens
-		// cannot authenticate deployment-scoped endpoints).
+		// NOTE: `ctx.key` is the Management API credential (`Bearer <key>`).
+		// Deployment-scoped operations authenticate with their own deploy key
+		// (`Convex <key>`) supplied per call via `deployKey` or stored on the
+		// connection as `deploy_key` — never with the access token. A connection
+		// that only has a deploy key (no access token) resolves to an empty
+		// placeholder so the binding succeeds and deployment-scoped operations
+		// can run; Management operations then fail with a clear error in the
+		// request client instead of sending the deploy key as a bearer token.
 		keyBuilder: async (ctx: ConvexKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
-					throw new AuthMissingError('convex', 'api_key');
+				const apiKey = await ctx.keys.get_api_key();
+				if (apiKey) {
+					return apiKey;
 				}
-				return res;
+				if (await ctx.keys.get_deploy_key()) {
+					// Deploy-key-only connection: no bearer credential.
+					return '';
+				}
+				throw new AuthMissingError('convex', 'api_key');
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				if (!res) {
-					throw new AuthMissingError('convex', 'oauth_2');
+				const token = await ctx.keys.get_access_token();
+				if (token) {
+					return token;
 				}
-				return res;
+				if (await ctx.keys.get_deploy_key()) {
+					// Deploy-key-only connection: no bearer credential.
+					return '';
+				}
+				throw new AuthMissingError('convex', 'oauth_2');
 			}
 
 			throw new AuthMissingError('convex', ctx.authType);

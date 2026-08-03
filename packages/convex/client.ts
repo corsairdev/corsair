@@ -54,12 +54,16 @@ export async function tryCacheWrite(
 		// Intentionally swallowed — the provider operation already completed.
 	}
 }
-
 export async function makeConvexRequest<T>(
 	endpoint: string,
-	apiKey: string,
+	apiKey: string | undefined,
 	options: ConvexRequestOptions = {},
 ): Promise<T> {
+	if (!apiKey) {
+		throw new ConvexAPIError(
+			'No Convex access token is configured on this connection. Management API operations require a personal/team access token; deployment-scoped operations require a deployment admin deploy key (via the deployKey input or the stored connection deploy key).',
+		);
+	}
 	const {
 		method = 'GET',
 		body,
