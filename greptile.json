@@ -2,7 +2,7 @@
   "strictness": 2,
   "commentTypes": ["logic", "syntax"],
   "statusCheck": true,
-  "triggerOnUpdates": true,
+  "triggerOnUpdates": false,
   "triggerOnDrafts": false,
   "ignorePatterns": "pnpm-lock.yaml\n**/dist/**",
   "customContext": {
