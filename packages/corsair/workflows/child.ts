@@ -1,5 +1,7 @@
 import { buildCorsairClient } from '../core/client';
 import type { CorsairPlugin } from '../core/plugins';
+import type { CorsairDatabaseInput } from '../db/kysely/database';
+import { createCorsairDatabase } from '../db/kysely/database';
 import type { RunResultPayload } from '../hub/contracts/tunnel';
 import { executeWorkflowRun } from './execute';
 
@@ -19,17 +21,27 @@ export type ChildResultMessage =
 	| { type: 'error'; message: string };
 
 /**
- * Child-process entry: builds a KEK-less, DB-less client from the injected
- * credential map and runs the workflow. The app forks a module that imports its
- * plugin array (NOT its configured createCorsair instance, which holds the KEK)
- * and calls this. One `run` message in, one `done`/`error` message out, then exit.
+ * Child-process entry: builds a KEK-less client from the injected credential map
+ * and runs the workflow. The app forks a module that imports its plugin array
+ * (NOT its configured createCorsair instance, which holds the KEK) and calls this.
+ *
+ * Pass `database` (the same raw driver you give createCorsair) to give the child
+ * its own DB handle so caching, event logging, and approval records work. The KEK
+ * stays absent, so the child still can't decrypt credentials — the DB holds only
+ * encrypted data. One `run` message in, one `done`/`error` message out, then exit.
  */
-export function runWorkflowChild(plugins: readonly CorsairPlugin[]): void {
+export function runWorkflowChild(
+	plugins: readonly CorsairPlugin[],
+	options: { database?: CorsairDatabaseInput } = {},
+): void {
+	const database = options.database
+		? createCorsairDatabase(options.database)
+		: undefined;
 	process.on('message', async (msg: ChildRunMessage) => {
 		let outgoing: ChildResultMessage;
 		try {
 			const corsair = buildCorsairClient(plugins, {
-				database: undefined,
+				database,
 				kek: undefined,
 				tenantId: msg.tenantId,
 				credentialMap: msg.credentialMap,
