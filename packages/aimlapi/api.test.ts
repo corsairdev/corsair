@@ -144,6 +144,24 @@ describe('AimlApi endpoint output schemas', () => {
 				.success,
 		).toBe(false);
 	});
+
+	it('rejects empty objects for typed outputs', () => {
+		expect(
+			AimlApiEndpointOutputSchemas.assistantsCreate.safeParse({}).success,
+		).toBe(false);
+		expect(
+			AimlApiEndpointOutputSchemas.assistantsList.safeParse({}).success,
+		).toBe(false);
+		expect(
+			AimlApiEndpointOutputSchemas.chatCreateCompletion.safeParse({}).success,
+		).toBe(false);
+		expect(
+			AimlApiEndpointOutputSchemas.billingGetBalance.safeParse({}).success,
+		).toBe(false);
+		expect(
+			AimlApiEndpointOutputSchemas.lumaGetGeneration.safeParse({}).success,
+		).toBe(false);
+	});
 });
 
 describe('AimlApi error handlers', () => {
@@ -196,9 +214,11 @@ describe('AimlApi mocked endpoint handlers', () => {
 	it('Models.list', async () => {
 		mockRequest.mockResolvedValue({ data: [{ id: 'gpt-4o' }] });
 		await Models.list(ctx, {});
-		expect(mockRequest).toHaveBeenCalledWith('/models', 'test_key', {
-			method: 'GET',
-		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/models',
+			'test_key',
+			expect.objectContaining({ method: 'GET' }),
+		);
 	});
 
 	it('Models.listWithDetails', async () => {
@@ -223,13 +243,13 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/v1/chat/completions',
 			'test_key',
-			{
+			expect.objectContaining({
 				method: 'POST',
 				body: expect.objectContaining({
 					model: 'gpt-4o',
 					messages: [{ role: 'user', content: 'Hello' }],
 				}),
-			},
+			}),
 		);
 	});
 
@@ -246,11 +266,15 @@ describe('AimlApi mocked endpoint handlers', () => {
 	it('Assistants.create', async () => {
 		mockRequest.mockResolvedValue({ id: 'asst_123' });
 		await Assistants.create(ctx, { model: 'gpt-4o', name: 'Test' });
-		expect(mockRequest).toHaveBeenCalledWith('/assistants', 'test_key', {
-			method: 'POST',
-			...beta,
-			body: expect.objectContaining({ model: 'gpt-4o' }),
-		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/assistants',
+			'test_key',
+			expect.objectContaining({
+				method: 'POST',
+				headers: ASSISTANTS_BETA_HEADERS,
+				body: expect.objectContaining({ model: 'gpt-4o' }),
+			}),
+		);
 	});
 
 	it('Assistants.list', async () => {
@@ -273,7 +297,10 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/assistants/asst_123',
 			'test_key',
-			{ method: 'GET', ...beta },
+			expect.objectContaining({
+				method: 'GET',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
 		);
 	});
 
@@ -283,11 +310,11 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/assistants/asst_123',
 			'test_key',
-			{
+			expect.objectContaining({
 				method: 'POST',
-				...beta,
+				headers: ASSISTANTS_BETA_HEADERS,
 				body: expect.objectContaining({ name: 'N' }),
-			},
+			}),
 		);
 	});
 
@@ -297,7 +324,10 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/assistants/asst_123',
 			'test_key',
-			{ method: 'DELETE', ...beta },
+			expect.objectContaining({
+				method: 'DELETE',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
 		);
 	});
 
@@ -316,7 +346,10 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123',
 			'test_key',
-			{ method: 'GET', ...beta },
+			expect.objectContaining({
+				method: 'GET',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
 		);
 		await Threads.update(ctx, {
 			threadId: 'thread_123',
@@ -325,17 +358,20 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123',
 			'test_key',
-			{
+			expect.objectContaining({
 				method: 'POST',
-				...beta,
+				headers: ASSISTANTS_BETA_HEADERS,
 				body: expect.objectContaining({ metadata: { a: '1' } }),
-			},
+			}),
 		);
 		await Threads.delete(ctx, { threadId: 'thread_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123',
 			'test_key',
-			{ method: 'DELETE', ...beta },
+			expect.objectContaining({
+				method: 'DELETE',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
 		);
 	});
 
@@ -349,11 +385,11 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/messages',
 			'test_key',
-			{
+			expect.objectContaining({
 				method: 'POST',
-				...beta,
+				headers: ASSISTANTS_BETA_HEADERS,
 				body: expect.objectContaining({ role: 'user' }),
-			},
+			}),
 		);
 		await Messages.list(ctx, { threadId: 'thread_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
@@ -368,7 +404,10 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/messages/msg_123',
 			'test_key',
-			{ method: 'GET', ...beta },
+			expect.objectContaining({
+				method: 'GET',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
 		);
 		await Messages.update(ctx, {
 			threadId: 'thread_123',
@@ -378,11 +417,11 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/messages/msg_123',
 			'test_key',
-			{
+			expect.objectContaining({
 				method: 'POST',
-				...beta,
+				headers: ASSISTANTS_BETA_HEADERS,
 				body: { metadata: { t: '1' } },
-			},
+			}),
 		);
 		await Messages.delete(ctx, {
 			threadId: 'thread_123',
@@ -391,7 +430,10 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/messages/msg_123',
 			'test_key',
-			{ method: 'DELETE', ...beta },
+			expect.objectContaining({
+				method: 'DELETE',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
 		);
 	});
 
@@ -404,11 +446,11 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/runs',
 			'test_key',
-			{
+			expect.objectContaining({
 				method: 'POST',
-				...beta,
+				headers: ASSISTANTS_BETA_HEADERS,
 				body: expect.objectContaining({ assistant_id: 'asst_123' }),
-			},
+			}),
 		);
 		await Runs.list(ctx, { threadId: 'thread_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
@@ -423,7 +465,10 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/runs/run_123',
 			'test_key',
-			{ method: 'GET', ...beta },
+			expect.objectContaining({
+				method: 'GET',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
 		);
 		await Runs.update(ctx, {
 			threadId: 'thread_123',
@@ -433,17 +478,20 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/runs/run_123',
 			'test_key',
-			{
+			expect.objectContaining({
 				method: 'POST',
-				...beta,
+				headers: ASSISTANTS_BETA_HEADERS,
 				body: expect.objectContaining({ metadata: { x: '1' } }),
-			},
+			}),
 		);
 		await Runs.cancel(ctx, { threadId: 'thread_123', runId: 'run_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/runs/run_123/cancel',
 			'test_key',
-			{ method: 'POST', ...beta },
+			expect.objectContaining({
+				method: 'POST',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
 		);
 		await Runs.submitToolOutputs(ctx, {
 			threadId: 'thread_123',
@@ -453,11 +501,11 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/runs/run_123/submit_tool_outputs',
 			'test_key',
-			{
+			expect.objectContaining({
 				method: 'POST',
-				...beta,
+				headers: ASSISTANTS_BETA_HEADERS,
 				body: { tool_outputs: [] },
-			},
+			}),
 		);
 	});
 
@@ -480,25 +528,34 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/runs/run_123/steps/step_123',
 			'test_key',
-			{ method: 'GET', ...beta },
+			expect.objectContaining({
+				method: 'GET',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
 		);
 	});
 
 	it('Billing.getBalance', async () => {
 		mockRequest.mockResolvedValue({ current_balance: 100 });
 		await Billing.getBalance(ctx, {});
-		expect(mockRequest).toHaveBeenCalledWith('/v2/billing', 'test_key', {
-			method: 'GET',
-		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/v2/billing',
+			'test_key',
+			expect.objectContaining({ method: 'GET' }),
+		);
 	});
 
 	it('Batches.list requires batchId', async () => {
 		mockRequest.mockResolvedValue({ id: 'msgbatch_123' });
 		await Batches.list(ctx, { batchId: 'msgbatch_123' });
-		expect(mockRequest).toHaveBeenCalledWith('/v1/batches', 'test_key', {
-			method: 'GET',
-			query: { batch_id: 'msgbatch_123' },
-		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/v1/batches',
+			'test_key',
+			expect.objectContaining({
+				method: 'GET',
+				query: { batch_id: 'msgbatch_123' },
+			}),
+		);
 	});
 
 	it('Luma.getGeneration accepts generationId or ids', async () => {
@@ -507,13 +564,19 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/v2/video/generations',
 			'test_key',
-			{ method: 'GET', query: { generation_id: 'gen_123' } },
+			expect.objectContaining({
+				method: 'GET',
+				query: { generation_id: 'gen_123' },
+			}),
 		);
 		await Luma.getGeneration(ctx, { ids: 'gen_a,gen_b' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/v2/video/generations',
 			'test_key',
-			{ method: 'GET', query: { generation_id: 'gen_a' } },
+			expect.objectContaining({
+				method: 'GET',
+				query: { generation_id: 'gen_a' },
+			}),
 		);
 	});
 
@@ -523,7 +586,10 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/v2/video/generations',
 			'test_key',
-			{ method: 'GET', query: { limit: 10, offset: 0 } },
+			expect.objectContaining({
+				method: 'GET',
+				query: { limit: 10, offset: 0 },
+			}),
 		);
 	});
 });

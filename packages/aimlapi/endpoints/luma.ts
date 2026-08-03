@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
+import { AimlApiEndpointOutputSchemas } from './types';
 
 function resolveGenerationId(input: {
 	generationId?: string;
@@ -20,6 +21,7 @@ export const getGeneration: AimlApiEndpoints['lumaGetGeneration'] = async (
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['lumaGetGeneration']
 	>(`/v2/video/generations`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.lumaGetGeneration,
 		method: 'GET',
 		query: {
 			generation_id: generationId,
@@ -44,6 +46,7 @@ export const listGenerations: AimlApiEndpoints['lumaListGenerations'] = async (
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['lumaListGenerations']
 	>(`/v2/video/generations`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.lumaListGenerations,
 		method: 'GET',
 		query: {
 			limit: input.limit,

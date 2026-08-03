@@ -19,7 +19,7 @@ const ModelMessageSchema = z
 /** Loose provider payload — AIMLAPI returns OpenAI-shaped objects with extra fields. */
 const ObjectResponseSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string(),
 		object: z.string().optional(),
 		created: z.number().optional(),
 		created_at: z.number().optional(),
@@ -32,7 +32,7 @@ const ObjectResponseSchema = z
 const ListResponseSchema = z
 	.object({
 		object: z.string().optional(),
-		data: z.array(z.unknown()).optional(),
+		data: z.array(z.unknown()),
 		has_more: z.boolean().optional(),
 		first_id: z.string().optional(),
 		last_id: z.string().optional(),
@@ -40,7 +40,7 @@ const ListResponseSchema = z
 	.loose();
 
 const ModelsListResponseSchema = z.union([
-	z.array(z.unknown()),
+	z.array(z.unknown()).min(1),
 	ListResponseSchema,
 ]);
 
@@ -50,7 +50,7 @@ const ChatCompletionResponseSchema = z
 		object: z.string().optional(),
 		created: z.number().optional(),
 		model: z.string().optional(),
-		choices: z.array(z.unknown()).optional(),
+		choices: z.array(z.unknown()),
 		usage: z.record(z.string(), z.unknown()).optional(),
 	})
 	.loose();
@@ -61,25 +61,42 @@ const BillingBalanceResponseSchema = z
 		balance: z.number().optional(),
 		currency: z.string().optional(),
 	})
-	.loose();
+	.loose()
+	.refine(
+		(v) =>
+			typeof v.current_balance === 'number' || typeof v.balance === 'number',
+		{ message: 'current_balance or balance is required' },
+	);
 
 const DeleteResponseSchema = z
 	.object({
 		id: z.string().optional(),
 		object: z.string().optional(),
-		deleted: z.boolean().optional(),
+		deleted: z.boolean(),
 	})
 	.loose();
 
 const LumaGenerationResponseSchema = z
 	.object({
-		id: z.string().optional(),
-		status: z.string().optional(),
+		id: z.string(),
+		status: z.string(),
 		video: z.unknown().optional(),
 		error: z.unknown().optional(),
 		meta: z.unknown().optional(),
 	})
 	.loose();
+
+const LumaListResponseSchema = z
+	.object({
+		data: z.array(z.unknown()).optional(),
+		generations: z.array(z.unknown()).optional(),
+		count: z.number().optional(),
+		has_more: z.boolean().optional(),
+	})
+	.loose()
+	.refine((v) => v.data !== undefined || v.generations !== undefined, {
+		message: 'data or generations is required',
+	});
 
 const ModelsListInputSchema = z.object({}).loose();
 const ModelsListWithDetailsInputSchema = PaginationInputSchema.extend({
@@ -353,7 +370,7 @@ export type AimlApiEndpointOutputs = {
 	billingGetBalance: z.infer<typeof BillingBalanceResponseSchema>;
 	batchesList: z.infer<typeof ObjectResponseSchema>;
 	lumaGetGeneration: z.infer<typeof LumaGenerationResponseSchema>;
-	lumaListGenerations: z.infer<typeof ObjectResponseSchema>;
+	lumaListGenerations: z.infer<typeof LumaListResponseSchema>;
 };
 
 export const AimlApiEndpointInputSchemas = {
@@ -419,5 +436,5 @@ export const AimlApiEndpointOutputSchemas = {
 	billingGetBalance: BillingBalanceResponseSchema,
 	batchesList: ObjectResponseSchema,
 	lumaGetGeneration: LumaGenerationResponseSchema,
-	lumaListGenerations: ObjectResponseSchema,
+	lumaListGenerations: LumaListResponseSchema,
 } as const;

@@ -2,11 +2,15 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
+import { AimlApiEndpointOutputSchemas } from './types';
 
 export const list: AimlApiEndpoints['modelsList'] = async (ctx) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['modelsList']
-	>(`/models`, ctx.key, { method: 'GET' });
+	>(`/models`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.modelsList,
+		method: 'GET',
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -30,6 +34,7 @@ export const listWithDetails: AimlApiEndpoints['modelsListWithDetails'] =
 		const response = await makeAimlApiRequest<
 			AimlApiEndpointOutputs['modelsListWithDetails']
 		>(`/models`, ctx.key, {
+			schema: AimlApiEndpointOutputSchemas.modelsListWithDetails,
 			method: 'GET',
 			query: {
 				limit: input.limit,

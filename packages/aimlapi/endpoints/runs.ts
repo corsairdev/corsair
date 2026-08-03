@@ -2,11 +2,13 @@ import { logEventFromContext } from 'corsair/core';
 import { ASSISTANTS_BETA_HEADERS, makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
+import { AimlApiEndpointOutputSchemas } from './types';
 
 export const create: AimlApiEndpoints['runsCreate'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['runsCreate']
 	>(`/threads/${input.threadId}/runs`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.runsCreate,
 		method: 'POST',
 		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
@@ -31,6 +33,7 @@ export const list: AimlApiEndpoints['runsList'] = async (ctx, input) => {
 		`/threads/${input.threadId}/runs`,
 		ctx.key,
 		{
+			schema: AimlApiEndpointOutputSchemas.runsList,
 			method: 'GET',
 			headers: ASSISTANTS_BETA_HEADERS,
 			query: {
@@ -55,6 +58,7 @@ export const get: AimlApiEndpoints['runsGet'] = async (ctx, input) => {
 		`/threads/${input.threadId}/runs/${input.runId}`,
 		ctx.key,
 		{
+			schema: AimlApiEndpointOutputSchemas.runsGet,
 			method: 'GET',
 			headers: ASSISTANTS_BETA_HEADERS,
 		},
@@ -72,6 +76,7 @@ export const update: AimlApiEndpoints['runsUpdate'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['runsUpdate']
 	>(`/threads/${input.threadId}/runs/${input.runId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.runsUpdate,
 		method: 'POST',
 		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
@@ -92,6 +97,7 @@ export const cancel: AimlApiEndpoints['runsCancel'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['runsCancel']
 	>(`/threads/${input.threadId}/runs/${input.runId}/cancel`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.runsCancel,
 		method: 'POST',
 		headers: ASSISTANTS_BETA_HEADERS,
 	});
@@ -112,6 +118,7 @@ export const submitToolOutputs: AimlApiEndpoints['runsSubmitToolOutputs'] =
 			`/threads/${input.threadId}/runs/${input.runId}/submit_tool_outputs`,
 			ctx.key,
 			{
+				schema: AimlApiEndpointOutputSchemas.runsSubmitToolOutputs,
 				method: 'POST',
 				headers: ASSISTANTS_BETA_HEADERS,
 				body: {

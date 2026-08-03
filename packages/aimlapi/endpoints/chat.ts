@@ -2,12 +2,14 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
+import { AimlApiEndpointOutputSchemas } from './types';
 
 export const createCompletion: AimlApiEndpoints['chatCreateCompletion'] =
 	async (ctx, input) => {
 		const response = await makeAimlApiRequest<
 			AimlApiEndpointOutputs['chatCreateCompletion']
 		>(`/v1/chat/completions`, ctx.key, {
+			schema: AimlApiEndpointOutputSchemas.chatCreateCompletion,
 			method: 'POST',
 			body: {
 				model: input.model,

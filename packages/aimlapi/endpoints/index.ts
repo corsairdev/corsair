@@ -6,7 +6,7 @@ import * as Luma from './luma';
 import * as Messages from './messages';
 import * as Models from './models';
 import * as Responses from './responses';
-import * as RunSteps from './runSteps';
+import * as RunSteps from './run-steps';
 import * as Runs from './runs';
 import * as Threads from './threads';
 

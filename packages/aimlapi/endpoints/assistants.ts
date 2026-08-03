@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { ASSISTANTS_BETA_HEADERS, makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
+import { AimlApiEndpointOutputSchemas } from './types';
 
 export const create: AimlApiEndpoints['assistantsCreate'] = async (
 	ctx,
@@ -10,6 +11,7 @@ export const create: AimlApiEndpoints['assistantsCreate'] = async (
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['assistantsCreate']
 	>(`/assistants`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.assistantsCreate,
 		method: 'POST',
 		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
@@ -39,6 +41,7 @@ export const get: AimlApiEndpoints['assistantsGet'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['assistantsGet']
 	>(`/assistants/${input.assistantId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.assistantsGet,
 		method: 'GET',
 		headers: ASSISTANTS_BETA_HEADERS,
 	});
@@ -57,6 +60,7 @@ export const list: AimlApiEndpoints['assistantsList'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['assistantsList']
 	>(`/assistants`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.assistantsList,
 		method: 'GET',
 		headers: ASSISTANTS_BETA_HEADERS,
 		query: {
@@ -86,6 +90,7 @@ export const update: AimlApiEndpoints['assistantsUpdate'] = async (
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['assistantsUpdate']
 	>(`/assistants/${input.assistantId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.assistantsUpdate,
 		method: 'POST',
 		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
@@ -118,6 +123,7 @@ export const delete_: AimlApiEndpoints['assistantsDelete'] = async (
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['assistantsDelete']
 	>(`/assistants/${input.assistantId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.assistantsDelete,
 		method: 'DELETE',
 		headers: ASSISTANTS_BETA_HEADERS,
 	});

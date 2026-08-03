@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { ASSISTANTS_BETA_HEADERS, makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
+import { AimlApiEndpointOutputSchemas } from './types';
 
 export const create: AimlApiEndpoints['messagesCreate'] = async (
 	ctx,
@@ -10,6 +11,7 @@ export const create: AimlApiEndpoints['messagesCreate'] = async (
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['messagesCreate']
 	>(`/threads/${input.threadId}/messages`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.messagesCreate,
 		method: 'POST',
 		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
@@ -32,6 +34,7 @@ export const list: AimlApiEndpoints['messagesList'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['messagesList']
 	>(`/threads/${input.threadId}/messages`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.messagesList,
 		method: 'GET',
 		headers: ASSISTANTS_BETA_HEADERS,
 		query: {
@@ -55,6 +58,7 @@ export const get: AimlApiEndpoints['messagesGet'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['messagesGet']
 	>(`/threads/${input.threadId}/messages/${input.messageId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.messagesGet,
 		method: 'GET',
 		headers: ASSISTANTS_BETA_HEADERS,
 	});
@@ -74,6 +78,7 @@ export const update: AimlApiEndpoints['messagesUpdate'] = async (
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['messagesUpdate']
 	>(`/threads/${input.threadId}/messages/${input.messageId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.messagesUpdate,
 		method: 'POST',
 		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
@@ -96,6 +101,7 @@ export const delete_: AimlApiEndpoints['messagesDelete'] = async (
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['messagesDelete']
 	>(`/threads/${input.threadId}/messages/${input.messageId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.messagesDelete,
 		method: 'DELETE',
 		headers: ASSISTANTS_BETA_HEADERS,
 	});

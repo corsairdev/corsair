@@ -2,11 +2,13 @@ import { logEventFromContext } from 'corsair/core';
 import { ASSISTANTS_BETA_HEADERS, makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
+import { AimlApiEndpointOutputSchemas } from './types';
 
 export const create: AimlApiEndpoints['threadsCreate'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['threadsCreate']
 	>(`/threads`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.threadsCreate,
 		method: 'POST',
 		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
@@ -30,6 +32,7 @@ export const get: AimlApiEndpoints['threadsGet'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['threadsGet']
 	>(`/threads/${input.threadId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.threadsGet,
 		method: 'GET',
 		headers: ASSISTANTS_BETA_HEADERS,
 	});
@@ -48,6 +51,7 @@ export const update: AimlApiEndpoints['threadsUpdate'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['threadsUpdate']
 	>(`/threads/${input.threadId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.threadsUpdate,
 		method: 'POST',
 		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
@@ -73,6 +77,7 @@ export const delete_: AimlApiEndpoints['threadsDelete'] = async (
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['threadsDelete']
 	>(`/threads/${input.threadId}`, ctx.key, {
+		schema: AimlApiEndpointOutputSchemas.threadsDelete,
 		method: 'DELETE',
 		headers: ASSISTANTS_BETA_HEADERS,
 	});

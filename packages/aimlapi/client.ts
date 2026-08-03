@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { ZodType } from 'zod';
 
 export class AimlApiAPIError extends Error {
 	constructor(
@@ -28,9 +29,11 @@ export async function makeAimlApiRequest<T>(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 		headers?: Record<string, string>;
+		/** When set, provider JSON is validated before return. */
+		schema?: ZodType<T>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, headers } = options;
+	const { method = 'GET', body, query, headers, schema } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: AIMLAPI_API_BASE,
@@ -58,7 +61,8 @@ export async function makeAimlApiRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		const data = await request<unknown>(config, requestOptions);
+		return schema ? schema.parse(data) : (data as T);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw error;
