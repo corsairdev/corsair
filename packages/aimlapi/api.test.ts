@@ -81,7 +81,7 @@ describe('AimlApi endpoint input schemas', () => {
 		).toBe(true);
 	});
 
-	it('accepts luma.getGeneration via generationId or ids', () => {
+	it('accepts luma.getGeneration via single generationId or ids', () => {
 		expect(
 			AimlApiEndpointInputSchemas.lumaGetGeneration.safeParse({
 				generationId: 'gen_1',
@@ -89,9 +89,14 @@ describe('AimlApi endpoint input schemas', () => {
 		).toBe(true);
 		expect(
 			AimlApiEndpointInputSchemas.lumaGetGeneration.safeParse({
-				ids: 'gen_1,gen_2',
+				ids: 'gen_1',
 			}).success,
 		).toBe(true);
+		expect(
+			AimlApiEndpointInputSchemas.lumaGetGeneration.safeParse({
+				ids: 'gen_1,gen_2',
+			}).success,
+		).toBe(false);
 		expect(
 			AimlApiEndpointInputSchemas.lumaGetGeneration.safeParse({}).success,
 		).toBe(false);
@@ -569,26 +574,13 @@ describe('AimlApi mocked endpoint handlers', () => {
 				query: { generation_id: 'gen_123' },
 			}),
 		);
-		await Luma.getGeneration(ctx, { ids: 'gen_a,gen_b' });
+		await Luma.getGeneration(ctx, { ids: 'gen_a' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/v2/video/generations',
 			'test_key',
 			expect.objectContaining({
 				method: 'GET',
 				query: { generation_id: 'gen_a' },
-			}),
-		);
-	});
-
-	it('Luma.listGenerations', async () => {
-		mockRequest.mockResolvedValue({ data: [] });
-		await Luma.listGenerations(ctx, { limit: 10, offset: 0 });
-		expect(mockRequest).toHaveBeenCalledWith(
-			'/v2/video/generations',
-			'test_key',
-			expect.objectContaining({
-				method: 'GET',
-				query: { limit: 10, offset: 0 },
 			}),
 		);
 	});

@@ -92,7 +92,6 @@ export type AimlApiEndpoints = {
 	billingGetBalance: AimlApiEndpoint<'billingGetBalance'>;
 	batchesList: AimlApiEndpoint<'batchesList'>;
 	lumaGetGeneration: AimlApiEndpoint<'lumaGetGeneration'>;
-	lumaListGenerations: AimlApiEndpoint<'lumaListGenerations'>;
 };
 
 const aimlApiEndpointsNested = {
@@ -146,7 +145,6 @@ const aimlApiEndpointsNested = {
 	},
 	luma: {
 		getGeneration: Luma.getGeneration,
-		listGenerations: Luma.listGenerations,
 	},
 } as const;
 
@@ -266,10 +264,6 @@ export const aimlApiEndpointSchemas = {
 	'luma.getGeneration': {
 		input: AimlApiEndpointInputSchemas.lumaGetGeneration,
 		output: AimlApiEndpointOutputSchemas.lumaGetGeneration,
-	},
-	'luma.listGenerations': {
-		input: AimlApiEndpointInputSchemas.lumaListGenerations,
-		output: AimlApiEndpointOutputSchemas.lumaListGenerations,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof aimlApiEndpointsNested
@@ -394,10 +388,6 @@ const aimlApiEndpointMeta = {
 	'luma.getGeneration': {
 		riskLevel: 'read',
 		description: 'Retrieve a Luma video generation by ID.',
-	},
-	'luma.listGenerations': {
-		riskLevel: 'read',
-		description: 'List Luma video generations for the authenticated user.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof aimlApiEndpointsNested>;
 
