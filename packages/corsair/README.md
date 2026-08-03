@@ -12,7 +12,7 @@ Integrations make products capable. Integrations are also frustrating to write. 
 
 Install Corsair:
 ```bash
-npm install corsair @corsair-dev/mcp
+npm install corsair @corsair-dev/mcp @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear @corsair-dev/googlecalendar
 ```
 
 Declare your integrations in a file you can track and commit to git:
