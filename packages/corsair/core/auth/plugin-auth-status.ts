@@ -39,6 +39,8 @@ const OPTIONAL_AUTH_FIELDS = new Set([
 	'expires_at',
 	'scope',
 	'redirect_url',
+	// Optional — non-rotating providers never issue one; it's for renewal, not connectivity.
+	'refresh_token',
 ]);
 
 export function isOptionalAuthField(field: string): boolean {
@@ -68,7 +70,9 @@ function getConnectionCredentialFields(authType: AuthTypes): readonly string[] {
 	switch (authType) {
 		case 'oauth_2':
 		case 'managed':
-			return ['access_token', 'refresh_token'];
+			// access_token alone means connected; requiring refresh_token would
+			// falsely report non-rotating providers (e.g. Slack bot tokens) as never-connected.
+			return ['access_token'];
 		case 'api_key':
 			return ['api_key'];
 		case 'bot_token':

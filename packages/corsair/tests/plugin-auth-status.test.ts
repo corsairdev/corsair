@@ -32,6 +32,16 @@ const githubManaged = {
 	},
 } as unknown as CorsairPlugin;
 
+const slackOauth = {
+	id: 'slack',
+	options: { authType: 'oauth_2' as const },
+	authConfig: {
+		oauth_2: {
+			account: [] as const,
+		},
+	},
+} as unknown as CorsairPlugin;
+
 describe('getPluginAuthStatus', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	afterEach(() => env?.cleanup?.());
@@ -106,6 +116,28 @@ describe('getPluginAuthStatus', () => {
 		expect(status?.status).toBe('partial');
 		expect(status?.connected).toBe(true);
 		expect(status?.missingRequiredFields).toEqual(['installation_id']);
+	});
+
+	it('treats oauth_2 as connected with an access_token but no refresh_token (bot tokens do not rotate)', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [slackOauth],
+			database: env.db,
+			kek: KEK,
+		} as any);
+
+		await setupCorsair(corsair);
+		await (corsair as any).slack.keys.set_access_token('xoxb-test');
+		// deliberately no refresh_token — Slack bot tokens never issue one
+
+		const status = await getPluginAuthStatus(
+			getCorsairInternal(corsair),
+			slackOauth,
+			'default',
+		);
+
+		expect(status?.connected).toBe(true);
+		expect(status?.missingRequiredFields).not.toContain('refresh_token');
 	});
 
 	it('does not treat provisioned DEKs alone as connected', async () => {
