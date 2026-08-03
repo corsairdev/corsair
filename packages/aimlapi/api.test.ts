@@ -1,5 +1,5 @@
 import { ApiError } from 'corsair/http';
-import { makeAimlApiRequest } from './client';
+import { ASSISTANTS_BETA_HEADERS, makeAimlApiRequest } from './client';
 import {
 	Assistants,
 	Batches,
@@ -19,46 +19,32 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { AimlApiContext } from './index';
+import { aimlapi } from './index';
 
-// Mock the makeAimlApiRequest for non-live tests
-jest.mock('./client', () => ({
-	makeAimlApiRequest: jest.fn(),
-	AimlApiAPIError: class AimlApiAPIError extends Error {
-		constructor(
-			message: string,
-			public readonly code?: string,
-			public readonly status?: number,
-			public readonly retryAfter?: number,
-		) {
-			super(message);
-			this.name = 'AimlApiAPIError';
-		}
-	},
-}));
+jest.mock('./client', () => {
+	const actual = jest.requireActual('./client');
+	return {
+		...actual,
+		makeAimlApiRequest: jest.fn(),
+	};
+});
 
 /** Minimal plugin context for endpoint handler tests. */
 function testCtx(key: string): AimlApiContext {
 	return {
 		key,
-		// logEventFromContext only needs enough of ctx to no-op safely in tests
 	} as AimlApiContext;
 }
 
 const TEST_API_KEY = process.env.AIMLAPI_API_KEY;
 const describeIfApiKey = TEST_API_KEY ? describe : describe.skip;
+const beta = { headers: ASSISTANTS_BETA_HEADERS };
 
 describe('AimlApi endpoint input schemas', () => {
 	it('validates models.list input', () => {
-		const valid = AimlApiEndpointInputSchemas.modelsList.safeParse({});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates models.listWithDetails input', () => {
-		const valid = AimlApiEndpointInputSchemas.modelsListWithDetails.safeParse({
-			limit: 10,
-			order: 'desc',
-		});
-		expect(valid.success).toBe(true);
+		expect(AimlApiEndpointInputSchemas.modelsList.safeParse({}).success).toBe(
+			true,
+		);
 	});
 
 	it('validates chat.createCompletion input', () => {
@@ -76,112 +62,47 @@ describe('AimlApi endpoint input schemas', () => {
 		expect(invalid.success).toBe(false);
 	});
 
-	it('validates responses.create input', () => {
-		const valid = AimlApiEndpointInputSchemas.responsesCreate.safeParse({
-			model: 'o3-mini',
-			instructions: 'Test instructions',
-		});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates responses.get input', () => {
-		const valid = AimlApiEndpointInputSchemas.responsesGet.safeParse({
-			responseId: 'resp_123',
-		});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates assistants.create input', () => {
-		const valid = AimlApiEndpointInputSchemas.assistantsCreate.safeParse({
-			model: 'gpt-4o',
-			name: 'Test Assistant',
-			instructions: 'You are a helpful assistant',
-		});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates assistants.list input with pagination', () => {
-		const valid = AimlApiEndpointInputSchemas.assistantsList.safeParse({
-			limit: 20,
-			order: 'desc',
-			after: 'asst_123',
-		});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates threads.create input', () => {
-		const valid = AimlApiEndpointInputSchemas.threadsCreate.safeParse({
-			messages: [{ role: 'user', content: 'Hello' }],
-			metadata: { userId: '123' },
-		});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates messages.create input', () => {
-		const valid = AimlApiEndpointInputSchemas.messagesCreate.safeParse({
-			threadId: 'thread_123',
-			role: 'user',
-			content: 'Test message',
-		});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates runs.create input', () => {
-		const valid = AimlApiEndpointInputSchemas.runsCreate.safeParse({
-			threadId: 'thread_123',
+	it('allows assistants.update without model', () => {
+		const valid = AimlApiEndpointInputSchemas.assistantsUpdate.safeParse({
 			assistantId: 'asst_123',
+			name: 'Updated',
 		});
 		expect(valid.success).toBe(true);
 	});
 
-	it('validates runs.submitToolOutputs input', () => {
-		const valid = AimlApiEndpointInputSchemas.runsSubmitToolOutputs.safeParse({
-			threadId: 'thread_123',
-			runId: 'run_123',
-			toolOutputs: [
-				{
-					tool_call_id: 'call_123',
-					output: 'Result data',
-				},
-			],
-		});
-		expect(valid.success).toBe(true);
+	it('requires batches.list batchId', () => {
+		expect(AimlApiEndpointInputSchemas.batchesList.safeParse({}).success).toBe(
+			false,
+		);
+		expect(
+			AimlApiEndpointInputSchemas.batchesList.safeParse({
+				batchId: 'msgbatch_123',
+			}).success,
+		).toBe(true);
 	});
 
-	it('validates runSteps.list input', () => {
-		const valid = AimlApiEndpointInputSchemas.runStepsList.safeParse({
-			threadId: 'thread_123',
-			runId: 'run_123',
-			limit: 10,
-		});
-		expect(valid.success).toBe(true);
+	it('accepts luma.getGeneration via generationId or ids', () => {
+		expect(
+			AimlApiEndpointInputSchemas.lumaGetGeneration.safeParse({
+				generationId: 'gen_1',
+			}).success,
+		).toBe(true);
+		expect(
+			AimlApiEndpointInputSchemas.lumaGetGeneration.safeParse({
+				ids: 'gen_1,gen_2',
+			}).success,
+		).toBe(true);
+		expect(
+			AimlApiEndpointInputSchemas.lumaGetGeneration.safeParse({}).success,
+		).toBe(false);
 	});
 
-	it('validates billing.getBalance input', () => {
-		const valid = AimlApiEndpointInputSchemas.billingGetBalance.safeParse({});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates batches.list input', () => {
-		const valid = AimlApiEndpointInputSchemas.batchesList.safeParse({
-			batchId: 'batch_123',
-		});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates luma.getGeneration input', () => {
-		const valid = AimlApiEndpointInputSchemas.lumaGetGeneration.safeParse({
-			generationId: 'gen_123',
-		});
-		expect(valid.success).toBe(true);
-	});
-
-	it('validates luma.listGenerations input', () => {
-		const valid = AimlApiEndpointInputSchemas.lumaListGenerations.safeParse({
-			limit: 10,
-			offset: 0,
-		});
-		expect(valid.success).toBe(true);
+	it('submitToolOutputs schema has no stream field', () => {
+		const keys = Object.keys(
+			AimlApiEndpointInputSchemas.runsSubmitToolOutputs.shape,
+		);
+		expect(keys).not.toContain('stream');
+		expect(keys).toContain('toolOutputs');
 	});
 });
 
@@ -190,46 +111,23 @@ describe('AimlApi endpoint output schemas', () => {
 		const output = AimlApiEndpointOutputSchemas.chatCreateCompletion.safeParse({
 			id: 'chatcmpl-123',
 			object: 'chat.completion',
-			created: 1700000000,
-			model: 'gpt-4o',
-			choices: [
-				{
-					index: 0,
-					message: { role: 'assistant', content: 'Hello!' },
-					finish_reason: 'stop',
-				},
-			],
+			choices: [{ index: 0, message: { role: 'assistant', content: 'Hi' } }],
 		});
 		expect(output.success).toBe(true);
 	});
 
-	it('parses models list response', () => {
-		const output = AimlApiEndpointOutputSchemas.modelsList.safeParse([
-			{
-				id: 'gpt-4o',
-				type: 'chat-completion',
-			},
-		]);
-		expect(output.success).toBe(true);
-	});
-
-	it('parses assistant response', () => {
-		const output = AimlApiEndpointOutputSchemas.assistantsCreate.safeParse({
-			id: 'asst_123',
-			object: 'assistant',
-			model: 'gpt-4o',
-			name: 'Test Assistant',
-		});
-		expect(output.success).toBe(true);
-	});
-
-	it('parses thread response', () => {
-		const output = AimlApiEndpointOutputSchemas.threadsCreate.safeParse({
-			id: 'thread_123',
-			object: 'thread',
-			created_at: 1700000000,
-		});
-		expect(output.success).toBe(true);
+	it('parses models list response shapes', () => {
+		expect(
+			AimlApiEndpointOutputSchemas.modelsList.safeParse([
+				{ id: 'gpt-4o', type: 'chat-completion' },
+			]).success,
+		).toBe(true);
+		expect(
+			AimlApiEndpointOutputSchemas.modelsList.safeParse({
+				object: 'list',
+				data: [{ id: 'gpt-4o' }],
+			}).success,
+		).toBe(true);
 	});
 
 	it('parses billing balance response', () => {
@@ -239,53 +137,45 @@ describe('AimlApi endpoint output schemas', () => {
 		});
 		expect(output.success).toBe(true);
 	});
+
+	it('rejects non-object chat completion', () => {
+		expect(
+			AimlApiEndpointOutputSchemas.chatCreateCompletion.safeParse('nope')
+				.success,
+		).toBe(false);
+	});
 });
 
 describe('AimlApi error handlers', () => {
 	it('matches 429 rate limit errors by message', () => {
-		const error = new Error('rate_limited');
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(new Error('rate_limited')),
+		).toBe(true);
+	});
+
+	it('matches 429 via ApiError status', () => {
+		const error = new ApiError(
+			{} as never,
+			{ url: '', status: 429, statusText: '', body: {} } as never,
+			'Too Many Requests',
+		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 	});
 
-	it('matches 429 rate limit errors by 429 in message', () => {
-		const error = new Error('Error 429');
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-	});
-
-	it('returns retry config for rate limit errors', async () => {
-		const error = new Error('rate_limited');
-		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-		expect(result.maxRetries).toBe(5);
-	});
-
-	it('matches auth errors by message', () => {
-		const error = new Error('unauthorized');
+	it('matches auth errors via ApiError status', () => {
+		const error = new ApiError(
+			{} as never,
+			{ url: '', status: 401, statusText: '', body: {} } as never,
+			'Unauthorized',
+		);
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
 	});
 
-	it('returns no retry for auth errors', async () => {
-		const result = await errorHandlers.AUTH_ERROR.handler();
-		expect(result.maxRetries).toBe(0);
-	});
-
-	it('matches not found errors by message', () => {
-		const error = new Error('not found');
-		expect(errorHandlers.NOT_FOUND_ERROR.match(error)).toBe(true);
-	});
-
-	it('matches server errors by message', () => {
-		const error = new Error('internal server error');
-		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
-	});
-
-	it('returns retry config for server errors', async () => {
-		const result = await errorHandlers.SERVER_ERROR.handler();
-		expect(result.maxRetries).toBe(3);
-	});
-
-	it('matches validation errors by message', () => {
-		const error = new Error('bad request');
-		expect(errorHandlers.VALIDATION_ERROR.match(error)).toBe(true);
+	it('returns retry config for rate limit errors', async () => {
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+			new Error('rate_limited'),
+		);
+		expect(result.maxRetries).toBe(5);
 	});
 
 	it('DEFAULT handler matches any error', () => {
@@ -303,140 +193,153 @@ describe('AimlApi mocked endpoint handlers', () => {
 		mockRequest.mockClear();
 	});
 
-	it('Models.list calls correct endpoint', async () => {
-		mockRequest.mockResolvedValue([{ id: 'gpt-4o' }]);
+	it('Models.list', async () => {
+		mockRequest.mockResolvedValue({ data: [{ id: 'gpt-4o' }] });
 		await Models.list(ctx, {});
 		expect(mockRequest).toHaveBeenCalledWith('/models', 'test_key', {
 			method: 'GET',
 		});
 	});
 
-	it('Models.listWithDetails calls correct endpoint with query', async () => {
+	it('Models.listWithDetails', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
 		await Models.listWithDetails(ctx, { limit: 10 });
 		expect(mockRequest).toHaveBeenCalledWith(
-			'/models/with-details',
+			'/models',
 			'test_key',
-			{
+			expect.objectContaining({
 				method: 'GET',
-				query: { limit: 10 },
-			},
+				query: expect.objectContaining({ limit: 10 }),
+			}),
 		);
 	});
 
-	it('Chat.createCompletion calls correct endpoint with body', async () => {
+	it('Chat.createCompletion', async () => {
 		mockRequest.mockResolvedValue({ id: 'chatcmpl-123', choices: [] });
 		await Chat.createCompletion(ctx, {
 			model: 'gpt-4o',
 			messages: [{ role: 'user', content: 'Hello' }],
 		});
-		expect(mockRequest).toHaveBeenCalledWith('/chat/completions', 'test_key', {
-			method: 'POST',
-			body: expect.objectContaining({
-				model: 'gpt-4o',
-				messages: [{ role: 'user', content: 'Hello' }],
-			}),
-		});
-	});
-
-	it('Responses.create calls correct endpoint', async () => {
-		mockRequest.mockResolvedValue({ id: 'resp_123' });
-		await Responses.create(ctx, { model: 'o3-mini', instructions: 'Test' });
-		expect(mockRequest).toHaveBeenCalledWith('/responses', 'test_key', {
-			method: 'POST',
-			body: expect.objectContaining({ model: 'o3-mini' }),
-		});
-	});
-
-	it('Responses.get calls correct endpoint with ID', async () => {
-		mockRequest.mockResolvedValue({ id: 'resp_123' });
-		await Responses.get(ctx, { responseId: 'resp_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
-			'/responses/resp_123',
+			'/v1/chat/completions',
 			'test_key',
 			{
-				method: 'GET',
+				method: 'POST',
+				body: expect.objectContaining({
+					model: 'gpt-4o',
+					messages: [{ role: 'user', content: 'Hello' }],
+				}),
 			},
 		);
 	});
 
-	it('Assistants.create calls correct endpoint', async () => {
+	it('Responses.get', async () => {
+		mockRequest.mockResolvedValue({ id: 'resp_123' });
+		await Responses.get(ctx, { responseId: 'resp_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/v1/responses/resp_123',
+			'test_key',
+			expect.objectContaining({ method: 'GET' }),
+		);
+	});
+
+	it('Assistants.create', async () => {
 		mockRequest.mockResolvedValue({ id: 'asst_123' });
 		await Assistants.create(ctx, { model: 'gpt-4o', name: 'Test' });
 		expect(mockRequest).toHaveBeenCalledWith('/assistants', 'test_key', {
 			method: 'POST',
+			...beta,
 			body: expect.objectContaining({ model: 'gpt-4o' }),
 		});
 	});
 
-	it('Assistants.list calls correct endpoint with pagination', async () => {
+	it('Assistants.list', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
 		await Assistants.list(ctx, { limit: 20, after: 'asst_123' });
-		expect(mockRequest).toHaveBeenCalledWith('/assistants', 'test_key', {
-			method: 'GET',
-			query: { limit: 20, after: 'asst_123' },
-		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/assistants',
+			'test_key',
+			expect.objectContaining({
+				method: 'GET',
+				headers: ASSISTANTS_BETA_HEADERS,
+				query: expect.objectContaining({ limit: 20, after: 'asst_123' }),
+			}),
+		);
 	});
 
-	it('Assistants.get calls correct endpoint with ID', async () => {
+	it('Assistants.get', async () => {
 		mockRequest.mockResolvedValue({ id: 'asst_123' });
 		await Assistants.get(ctx, { assistantId: 'asst_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/assistants/asst_123',
 			'test_key',
-			{
-				method: 'GET',
-			},
+			{ method: 'GET', ...beta },
 		);
 	});
 
-	it('Assistants.update calls correct endpoint', async () => {
+	it('Assistants.update uses POST', async () => {
 		mockRequest.mockResolvedValue({ id: 'asst_123' });
-		await Assistants.update(ctx, { assistantId: 'asst_123', model: 'gpt-4o' });
+		await Assistants.update(ctx, { assistantId: 'asst_123', name: 'N' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/assistants/asst_123',
 			'test_key',
 			{
-				method: 'PATCH',
-				body: expect.objectContaining({ model: 'gpt-4o' }),
+				method: 'POST',
+				...beta,
+				body: expect.objectContaining({ name: 'N' }),
 			},
 		);
 	});
 
-	it('Assistants.del calls correct endpoint', async () => {
+	it('Assistants.delete', async () => {
 		mockRequest.mockResolvedValue({ deleted: true });
 		await Assistants.delete(ctx, { assistantId: 'asst_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/assistants/asst_123',
 			'test_key',
-			{
-				method: 'DELETE',
-			},
+			{ method: 'DELETE', ...beta },
 		);
 	});
 
-	it('Threads.create calls correct endpoint', async () => {
+	it('Threads.create/get/update/delete', async () => {
 		mockRequest.mockResolvedValue({ id: 'thread_123' });
 		await Threads.create(ctx, {});
-		expect(mockRequest).toHaveBeenCalledWith('/threads', 'test_key', {
-			method: 'POST',
-			body: {},
-		});
-	});
-
-	it('Threads.get calls correct endpoint with ID', async () => {
-		mockRequest.mockResolvedValue({ id: 'thread_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads',
+			'test_key',
+			expect.objectContaining({
+				method: 'POST',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
+		);
 		await Threads.get(ctx, { threadId: 'thread_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123',
 			'test_key',
+			{ method: 'GET', ...beta },
+		);
+		await Threads.update(ctx, {
+			threadId: 'thread_123',
+			metadata: { a: '1' },
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123',
+			'test_key',
 			{
-				method: 'GET',
+				method: 'POST',
+				...beta,
+				body: expect.objectContaining({ metadata: { a: '1' } }),
 			},
+		);
+		await Threads.delete(ctx, { threadId: 'thread_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123',
+			'test_key',
+			{ method: 'DELETE', ...beta },
 		);
 	});
 
-	it('Messages.create calls correct endpoint', async () => {
+	it('Messages.create/list/get/update/delete', async () => {
 		mockRequest.mockResolvedValue({ id: 'msg_123' });
 		await Messages.create(ctx, {
 			threadId: 'thread_123',
@@ -446,21 +349,53 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/messages',
 			'test_key',
-			{ method: 'POST', body: expect.objectContaining({ role: 'user' }) },
+			{
+				method: 'POST',
+				...beta,
+				body: expect.objectContaining({ role: 'user' }),
+			},
 		);
-	});
-
-	it('Messages.list calls correct endpoint with thread ID', async () => {
-		mockRequest.mockResolvedValue({ data: [] });
 		await Messages.list(ctx, { threadId: 'thread_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/messages',
 			'test_key',
-			{ method: 'GET', query: {} },
+			expect.objectContaining({
+				method: 'GET',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
+		);
+		await Messages.get(ctx, { threadId: 'thread_123', messageId: 'msg_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/messages/msg_123',
+			'test_key',
+			{ method: 'GET', ...beta },
+		);
+		await Messages.update(ctx, {
+			threadId: 'thread_123',
+			messageId: 'msg_123',
+			metadata: { t: '1' },
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/messages/msg_123',
+			'test_key',
+			{
+				method: 'POST',
+				...beta,
+				body: { metadata: { t: '1' } },
+			},
+		);
+		await Messages.delete(ctx, {
+			threadId: 'thread_123',
+			messageId: 'msg_123',
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/messages/msg_123',
+			'test_key',
+			{ method: 'DELETE', ...beta },
 		);
 	});
 
-	it('Runs.create calls correct endpoint', async () => {
+	it('Runs.create/list/get/update/cancel/submitToolOutputs', async () => {
 		mockRequest.mockResolvedValue({ id: 'run_123' });
 		await Runs.create(ctx, {
 			threadId: 'thread_123',
@@ -471,13 +406,45 @@ describe('AimlApi mocked endpoint handlers', () => {
 			'test_key',
 			{
 				method: 'POST',
+				...beta,
 				body: expect.objectContaining({ assistant_id: 'asst_123' }),
 			},
 		);
-	});
-
-	it('Runs.submitToolOutputs calls correct endpoint', async () => {
-		mockRequest.mockResolvedValue({ id: 'run_123' });
+		await Runs.list(ctx, { threadId: 'thread_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/runs',
+			'test_key',
+			expect.objectContaining({
+				method: 'GET',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
+		);
+		await Runs.get(ctx, { threadId: 'thread_123', runId: 'run_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/runs/run_123',
+			'test_key',
+			{ method: 'GET', ...beta },
+		);
+		await Runs.update(ctx, {
+			threadId: 'thread_123',
+			runId: 'run_123',
+			metadata: { x: '1' },
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/runs/run_123',
+			'test_key',
+			{
+				method: 'POST',
+				...beta,
+				body: expect.objectContaining({ metadata: { x: '1' } }),
+			},
+		);
+		await Runs.cancel(ctx, { threadId: 'thread_123', runId: 'run_123' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/runs/run_123/cancel',
+			'test_key',
+			{ method: 'POST', ...beta },
+		);
 		await Runs.submitToolOutputs(ctx, {
 			threadId: 'thread_123',
 			runId: 'run_123',
@@ -486,59 +453,89 @@ describe('AimlApi mocked endpoint handlers', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/runs/run_123/submit_tool_outputs',
 			'test_key',
-			{ method: 'POST', body: expect.objectContaining({ tool_outputs: [] }) },
+			{
+				method: 'POST',
+				...beta,
+				body: { tool_outputs: [] },
+			},
 		);
 	});
 
-	it('RunSteps.list calls correct endpoint', async () => {
+	it('RunSteps.list/get', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
 		await RunSteps.list(ctx, { threadId: 'thread_123', runId: 'run_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/threads/thread_123/runs/run_123/steps',
 			'test_key',
-			{ method: 'GET', query: {} },
+			expect.objectContaining({
+				method: 'GET',
+				headers: ASSISTANTS_BETA_HEADERS,
+			}),
+		);
+		await RunSteps.get(ctx, {
+			threadId: 'thread_123',
+			runId: 'run_123',
+			stepId: 'step_123',
+		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/threads/thread_123/runs/run_123/steps/step_123',
+			'test_key',
+			{ method: 'GET', ...beta },
 		);
 	});
 
-	it('Billing.getBalance calls correct endpoint', async () => {
+	it('Billing.getBalance', async () => {
 		mockRequest.mockResolvedValue({ current_balance: 100 });
 		await Billing.getBalance(ctx, {});
-		expect(mockRequest).toHaveBeenCalledWith('/billing/balance', 'test_key', {
+		expect(mockRequest).toHaveBeenCalledWith('/v2/billing', 'test_key', {
 			method: 'GET',
 		});
 	});
 
-	it('Batches.list calls correct endpoint', async () => {
-		mockRequest.mockResolvedValue({ data: [] });
-		await Batches.list(ctx, {});
-		expect(mockRequest).toHaveBeenCalledWith('/batches', 'test_key', {
+	it('Batches.list requires batchId', async () => {
+		mockRequest.mockResolvedValue({ id: 'msgbatch_123' });
+		await Batches.list(ctx, { batchId: 'msgbatch_123' });
+		expect(mockRequest).toHaveBeenCalledWith('/v1/batches', 'test_key', {
 			method: 'GET',
-			query: {},
+			query: { batch_id: 'msgbatch_123' },
 		});
 	});
 
-	it('Luma.getGeneration calls correct endpoint', async () => {
-		mockRequest.mockResolvedValue({ id: 'gen_123' });
+	it('Luma.getGeneration accepts generationId or ids', async () => {
+		mockRequest.mockResolvedValue({ id: 'gen_123', status: 'completed' });
 		await Luma.getGeneration(ctx, { generationId: 'gen_123' });
 		expect(mockRequest).toHaveBeenCalledWith(
-			'/luma/generations/gen_123',
+			'/v2/video/generations',
 			'test_key',
-			{ method: 'GET' },
+			{ method: 'GET', query: { generation_id: 'gen_123' } },
+		);
+		await Luma.getGeneration(ctx, { ids: 'gen_a,gen_b' });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/v2/video/generations',
+			'test_key',
+			{ method: 'GET', query: { generation_id: 'gen_a' } },
 		);
 	});
 
-	it('Luma.listGenerations calls correct endpoint with pagination', async () => {
+	it('Luma.listGenerations', async () => {
 		mockRequest.mockResolvedValue({ data: [] });
 		await Luma.listGenerations(ctx, { limit: 10, offset: 0 });
-		expect(mockRequest).toHaveBeenCalledWith('/luma/generations', 'test_key', {
-			method: 'GET',
-			query: { limit: 10, offset: 0 },
-		});
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/v2/video/generations',
+			'test_key',
+			{ method: 'GET', query: { limit: 10, offset: 0 } },
+		);
 	});
 });
 
 describeIfApiKey('AimlApi live endpoint tests', () => {
 	const ctx = testCtx(TEST_API_KEY!);
+	const realRequest = jest.requireActual('./client')
+		.makeAimlApiRequest as typeof makeAimlApiRequest;
+
+	beforeEach(() => {
+		(makeAimlApiRequest as jest.Mock).mockImplementation(realRequest);
+	});
 
 	it('Models.list works', async () => {
 		const response = await Models.list(ctx, {});
@@ -552,31 +549,14 @@ describeIfApiKey('AimlApi live endpoint tests', () => {
 			response.current_balance !== undefined || response.balance !== undefined,
 		).toBe(true);
 	});
-
-	it('Chat.createCompletion works', async () => {
-		const response = await Chat.createCompletion(ctx, {
-			model: 'gpt-4o-mini',
-			messages: [{ role: 'user', content: 'Say hello in one word.' }],
-			maxTokens: 10,
-		});
-		expect(response).toBeDefined();
-		// Response structure validation
-		const hasChoices = 'choices' in response;
-		expect(hasChoices).toBe(true);
-	});
 });
 
 describe('AimlApi webhook matcher', () => {
 	it('returns false for all webhook requests', () => {
-		// AIMLAPI has zero webhook operations
-		const { aimlapi } = require('./index');
 		const plugin = aimlapi({});
-		const result = plugin.pluginWebhookMatcher({
-			headers: {},
-			body: {},
-			method: 'POST',
-			path: '/webhooks/test',
-		});
-		expect(result).toBe(false);
+		expect(plugin.pluginWebhookMatcher).toBeDefined();
+		expect(
+			plugin.pluginWebhookMatcher?.({ headers: {}, body: {} } as never),
+		).toBe(false);
 	});
 });

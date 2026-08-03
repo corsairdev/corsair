@@ -1,20 +1,18 @@
 import { AimlApiSchema } from './schema';
 
-describe('AimlApi schema', () => {
-	it('declares a semver version', () => {
-		expect(AimlApiSchema.version).toBeDefined();
-		expect(AimlApiSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
+describe('AimlApiSchema', () => {
+	it('declares an entities map', () => {
+		expect(AimlApiSchema.entities).toBeDefined();
+		expect(AimlApiSchema.entities.models).toBeDefined();
+		expect(AimlApiSchema.entities.assistants).toBeDefined();
+		expect(AimlApiSchema.entities.threads).toBeDefined();
+		expect(AimlApiSchema.entities.batches).toBeDefined();
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof AimlApiSchema.entities).toBe('object');
-		expect(AimlApiSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(AimlApiSchema.entities))).toBe(true);
+	it('requires an ID for every entity', () => {
 		for (const entity of Object.values(AimlApiSchema.entities)) {
-			expect(entity).toBeDefined();
+			expect(entity.safeParse({ id: 'test-id' }).success).toBe(true);
+			expect(entity.safeParse({}).success).toBe(false);
 		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

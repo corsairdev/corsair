@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAimlApiRequest } from '../client';
+import { ASSISTANTS_BETA_HEADERS, makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
 
@@ -11,6 +11,7 @@ export const create: AimlApiEndpoints['messagesCreate'] = async (
 		AimlApiEndpointOutputs['messagesCreate']
 	>(`/threads/${input.threadId}/messages`, ctx.key, {
 		method: 'POST',
+		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
 			role: input.role,
 			content: input.content,
@@ -32,11 +33,13 @@ export const list: AimlApiEndpoints['messagesList'] = async (ctx, input) => {
 		AimlApiEndpointOutputs['messagesList']
 	>(`/threads/${input.threadId}/messages`, ctx.key, {
 		method: 'GET',
+		headers: ASSISTANTS_BETA_HEADERS,
 		query: {
 			limit: input.limit,
 			order: input.order,
 			before: input.before,
 			after: input.after,
+			run_id: input.runId,
 		},
 	});
 	await logEventFromContext(
@@ -53,6 +56,7 @@ export const get: AimlApiEndpoints['messagesGet'] = async (ctx, input) => {
 		AimlApiEndpointOutputs['messagesGet']
 	>(`/threads/${input.threadId}/messages/${input.messageId}`, ctx.key, {
 		method: 'GET',
+		headers: ASSISTANTS_BETA_HEADERS,
 	});
 	await logEventFromContext(
 		ctx,
@@ -71,6 +75,7 @@ export const update: AimlApiEndpoints['messagesUpdate'] = async (
 		AimlApiEndpointOutputs['messagesUpdate']
 	>(`/threads/${input.threadId}/messages/${input.messageId}`, ctx.key, {
 		method: 'POST',
+		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
 			metadata: input.metadata,
 		},
@@ -92,6 +97,7 @@ export const delete_: AimlApiEndpoints['messagesDelete'] = async (
 		AimlApiEndpointOutputs['messagesDelete']
 	>(`/threads/${input.threadId}/messages/${input.messageId}`, ctx.key, {
 		method: 'DELETE',
+		headers: ASSISTANTS_BETA_HEADERS,
 	});
 	await logEventFromContext(
 		ctx,

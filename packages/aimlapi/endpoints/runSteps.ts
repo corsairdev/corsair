@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAimlApiRequest } from '../client';
+import { ASSISTANTS_BETA_HEADERS, makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
 
@@ -8,6 +8,7 @@ export const list: AimlApiEndpoints['runStepsList'] = async (ctx, input) => {
 		AimlApiEndpointOutputs['runStepsList']
 	>(`/threads/${input.threadId}/runs/${input.runId}/steps`, ctx.key, {
 		method: 'GET',
+		headers: ASSISTANTS_BETA_HEADERS,
 		query: {
 			limit: input.limit,
 			order: input.order,
@@ -32,6 +33,7 @@ export const get: AimlApiEndpoints['runStepsGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
+			headers: ASSISTANTS_BETA_HEADERS,
 		},
 	);
 	await logEventFromContext(

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAimlApiRequest } from '../client';
+import { ASSISTANTS_BETA_HEADERS, makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
 
@@ -11,6 +11,7 @@ export const create: AimlApiEndpoints['assistantsCreate'] = async (
 		AimlApiEndpointOutputs['assistantsCreate']
 	>(`/assistants`, ctx.key, {
 		method: 'POST',
+		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
 			model: input.model,
 			name: input.name,
@@ -37,7 +38,10 @@ export const create: AimlApiEndpoints['assistantsCreate'] = async (
 export const get: AimlApiEndpoints['assistantsGet'] = async (ctx, input) => {
 	const response = await makeAimlApiRequest<
 		AimlApiEndpointOutputs['assistantsGet']
-	>(`/assistants/${input.assistantId}`, ctx.key, { method: 'GET' });
+	>(`/assistants/${input.assistantId}`, ctx.key, {
+		method: 'GET',
+		headers: ASSISTANTS_BETA_HEADERS,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -54,6 +58,7 @@ export const list: AimlApiEndpoints['assistantsList'] = async (ctx, input) => {
 		AimlApiEndpointOutputs['assistantsList']
 	>(`/assistants`, ctx.key, {
 		method: 'GET',
+		headers: ASSISTANTS_BETA_HEADERS,
 		query: {
 			limit: input.limit,
 			order: input.order,
@@ -82,6 +87,7 @@ export const update: AimlApiEndpoints['assistantsUpdate'] = async (
 		AimlApiEndpointOutputs['assistantsUpdate']
 	>(`/assistants/${input.assistantId}`, ctx.key, {
 		method: 'POST',
+		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
 			model: input.model,
 			name: input.name,
@@ -113,6 +119,7 @@ export const delete_: AimlApiEndpoints['assistantsDelete'] = async (
 		AimlApiEndpointOutputs['assistantsDelete']
 	>(`/assistants/${input.assistantId}`, ctx.key, {
 		method: 'DELETE',
+		headers: ASSISTANTS_BETA_HEADERS,
 	});
 
 	await logEventFromContext(

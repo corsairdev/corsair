@@ -15,6 +15,11 @@ export class AimlApiAPIError extends Error {
 
 const AIMLAPI_API_BASE = 'https://api.aimlapi.com';
 
+/** OpenAI Assistants beta header required by AIMLAPI assistants/threads docs. */
+export const ASSISTANTS_BETA_HEADERS: Record<string, string> = {
+	'OpenAI-Beta': 'assistants=v2',
+};
+
 export async function makeAimlApiRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -22,9 +27,10 @@ export async function makeAimlApiRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		headers?: Record<string, string>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, headers } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: AIMLAPI_API_BASE,
@@ -36,17 +42,13 @@ export async function makeAimlApiRequest<T>(
 			Authorization: `Bearer ${apiKey}`,
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
+			...headers,
 		},
 	};
 
-	// Normalize endpoint: add /v1 prefix if not already versioned
-	const normalizedEndpoint = /^\/v\d+\//.test(endpoint)
-		? endpoint
-		: `/v1${endpoint.startsWith('/') ? '' : '/'}${endpoint}`;
-
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: normalizedEndpoint,
+		url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body

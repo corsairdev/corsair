@@ -7,7 +7,7 @@ export const AimlApiModelEntity = z
 		provider: z.string().optional(),
 		metadata: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const AimlApiAssistantEntity = z
 	.object({
@@ -16,14 +16,14 @@ export const AimlApiAssistantEntity = z
 		name: z.string().optional(),
 		metadata: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const AimlApiThreadEntity = z
 	.object({
 		id: z.string(),
 		metadata: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export const AimlApiBatchEntity = z
 	.object({
@@ -31,7 +31,7 @@ export const AimlApiBatchEntity = z
 		status: z.string().optional(),
 		metadata: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type AimlApiModelEntity = z.infer<typeof AimlApiModelEntity>;
 export type AimlApiAssistantEntity = z.infer<typeof AimlApiAssistantEntity>;

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAimlApiRequest } from '../client';
+import { ASSISTANTS_BETA_HEADERS, makeAimlApiRequest } from '../client';
 import type { AimlApiEndpoints } from '../index';
 import type { AimlApiEndpointOutputs } from './types';
 
@@ -8,6 +8,7 @@ export const create: AimlApiEndpoints['runsCreate'] = async (ctx, input) => {
 		AimlApiEndpointOutputs['runsCreate']
 	>(`/threads/${input.threadId}/runs`, ctx.key, {
 		method: 'POST',
+		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
 			assistant_id: input.assistantId,
 			instructions: input.instructions,
@@ -31,6 +32,7 @@ export const list: AimlApiEndpoints['runsList'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
+			headers: ASSISTANTS_BETA_HEADERS,
 			query: {
 				limit: input.limit,
 				order: input.order,
@@ -54,6 +56,7 @@ export const get: AimlApiEndpoints['runsGet'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'GET',
+			headers: ASSISTANTS_BETA_HEADERS,
 		},
 	);
 	await logEventFromContext(
@@ -70,6 +73,7 @@ export const update: AimlApiEndpoints['runsUpdate'] = async (ctx, input) => {
 		AimlApiEndpointOutputs['runsUpdate']
 	>(`/threads/${input.threadId}/runs/${input.runId}`, ctx.key, {
 		method: 'POST',
+		headers: ASSISTANTS_BETA_HEADERS,
 		body: {
 			metadata: input.metadata,
 			instructions: input.instructions,
@@ -89,6 +93,7 @@ export const cancel: AimlApiEndpoints['runsCancel'] = async (ctx, input) => {
 		AimlApiEndpointOutputs['runsCancel']
 	>(`/threads/${input.threadId}/runs/${input.runId}/cancel`, ctx.key, {
 		method: 'POST',
+		headers: ASSISTANTS_BETA_HEADERS,
 	});
 	await logEventFromContext(
 		ctx,
@@ -108,9 +113,9 @@ export const submitToolOutputs: AimlApiEndpoints['runsSubmitToolOutputs'] =
 			ctx.key,
 			{
 				method: 'POST',
+				headers: ASSISTANTS_BETA_HEADERS,
 				body: {
 					tool_outputs: input.toolOutputs,
-					stream: input.stream,
 				},
 			},
 		);

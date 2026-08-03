@@ -11,7 +11,13 @@ export const list: AimlApiEndpoints['modelsList'] = async (ctx) => {
 	await logEventFromContext(
 		ctx,
 		'aimlapi.api.models.list',
-		{ resultCount: Array.isArray(response) ? response.length : 0 },
+		{
+			resultCount: Array.isArray(response)
+				? response.length
+				: Array.isArray(response?.data)
+					? response.data.length
+					: 0,
+		},
 		'completed',
 	);
 
@@ -20,22 +26,30 @@ export const list: AimlApiEndpoints['modelsList'] = async (ctx) => {
 
 export const listWithDetails: AimlApiEndpoints['modelsListWithDetails'] =
 	async (ctx, input) => {
+		// AIMLAPI has no /models/with-details; /models already returns detailed info.
 		const response = await makeAimlApiRequest<
 			AimlApiEndpointOutputs['modelsListWithDetails']
-		>(`/v1/models`, ctx.key, {
+		>(`/models`, ctx.key, {
 			method: 'GET',
 			query: {
 				limit: input.limit,
 				order: input.order,
 				before: input.before,
 				after: input.after,
+				model: input.model,
 			},
 		});
 
 		await logEventFromContext(
 			ctx,
 			'aimlapi.api.models.listWithDetails',
-			{ resultCount: Array.isArray(response) ? response.length : 0 },
+			{
+				resultCount: Array.isArray(response)
+					? response.length
+					: Array.isArray(response?.data)
+						? response.data.length
+						: 0,
+			},
 			'completed',
 		);
 

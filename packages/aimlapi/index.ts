@@ -66,10 +66,7 @@ export type AimlApiEndpoints = {
 	modelsList: AimlApiEndpoint<'modelsList'>;
 	modelsListWithDetails: AimlApiEndpoint<'modelsListWithDetails'>;
 	chatCreateCompletion: AimlApiEndpoint<'chatCreateCompletion'>;
-	responsesCreate: AimlApiEndpoint<'responsesCreate'>;
 	responsesGet: AimlApiEndpoint<'responsesGet'>;
-	responsesDelete: AimlApiEndpoint<'responsesDelete'>;
-	responsesCancel: AimlApiEndpoint<'responsesCancel'>;
 	assistantsCreate: AimlApiEndpoint<'assistantsCreate'>;
 	assistantsList: AimlApiEndpoint<'assistantsList'>;
 	assistantsGet: AimlApiEndpoint<'assistantsGet'>;
@@ -107,10 +104,7 @@ const aimlApiEndpointsNested = {
 		createCompletion: Chat.createCompletion,
 	},
 	responses: {
-		create: Responses.create,
 		get: Responses.get,
-		delete: Responses.delete_,
-		cancel: Responses.cancel,
 	},
 	assistants: {
 		create: Assistants.create,
@@ -169,21 +163,9 @@ export const aimlApiEndpointSchemas = {
 		input: AimlApiEndpointInputSchemas.chatCreateCompletion,
 		output: AimlApiEndpointOutputSchemas.chatCreateCompletion,
 	},
-	'responses.create': {
-		input: AimlApiEndpointInputSchemas.responsesCreate,
-		output: AimlApiEndpointOutputSchemas.responsesCreate,
-	},
 	'responses.get': {
 		input: AimlApiEndpointInputSchemas.responsesGet,
 		output: AimlApiEndpointOutputSchemas.responsesGet,
-	},
-	'responses.delete': {
-		input: AimlApiEndpointInputSchemas.responsesDelete,
-		output: AimlApiEndpointOutputSchemas.responsesDelete,
-	},
-	'responses.cancel': {
-		input: AimlApiEndpointInputSchemas.responsesCancel,
-		output: AimlApiEndpointOutputSchemas.responsesCancel,
 	},
 	'assistants.create': {
 		input: AimlApiEndpointInputSchemas.assistantsCreate,
@@ -309,21 +291,9 @@ const aimlApiEndpointMeta = {
 		description:
 			'Generate a chat completion using an AIMLAPI-compatible model.',
 	},
-	'responses.create': {
-		riskLevel: 'write',
-		description: 'Create a new response object.',
-	},
 	'responses.get': {
 		riskLevel: 'read',
 		description: 'Retrieve a response by ID.',
-	},
-	'responses.delete': {
-		riskLevel: 'write',
-		description: 'Delete a response by ID.',
-	},
-	'responses.cancel': {
-		riskLevel: 'write',
-		description: 'Cancel an in-progress response.',
 	},
 	'assistants.create': {
 		riskLevel: 'write',
