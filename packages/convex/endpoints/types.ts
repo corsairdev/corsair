@@ -187,20 +187,19 @@ const ExecuteQueryBatchInputSchema = z.object({
 		.optional(),
 	/**
 	 * Deployment admin deploy key for the deployment-scoped API
-	 * (`Authorization: Convex <key>`). Defaults to the plugin credential; an
-	 * OAuth/access-token connection must supply one explicitly.
+	 * (`Authorization: Convex <key>`). Required — Management API access tokens
+	 * (the plugin credential) are not valid deploy keys.
 	 */
-	deployKey: z.string().min(1).optional(),
+	deployKey: z.string().min(1),
 	format: z.enum(['json']).optional(),
 	queries: z.array(QueryBatchItemSchema).min(1),
 });
-
 const QueryTimestampInputSchema = z.object({
 	subdomain: z
 		.string()
 		.regex(CONVEX_SUBDOMAIN_PATTERN, 'Invalid Convex deployment name')
 		.optional(),
-	deployKey: z.string().min(1).optional(),
+	deployKey: z.string().min(1),
 });
 
 const LogStreamsListInputSchema = z.object({
@@ -208,7 +207,7 @@ const LogStreamsListInputSchema = z.object({
 		.string()
 		.regex(CONVEX_SUBDOMAIN_PATTERN, 'Invalid Convex deployment name')
 		.optional(),
-	deployKey: z.string().min(1).optional(),
+	deployKey: z.string().min(1),
 });
 
 // ── Output schemas ───────────────────────────────────────────────────────────

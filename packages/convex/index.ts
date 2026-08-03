@@ -33,9 +33,9 @@ export type ConvexPluginOptions = {
 	 * does not accept deploy keys as bearer credentials for the Management API,
 	 * so an `api_key` connection should store an access token.
 	 * Deployment-scoped operations authenticate as `Authorization: Convex
-	 * <key>` and should receive a deployment admin deploy key via each
-	 * operation's `deployKey` input; they fall back to this key only when it is
-	 * itself a deploy key.
+	 * <key>` and require a deployment admin deploy key supplied per call via
+	 * each operation's `deployKey` input (the plugin credential is never a
+	 * valid deploy key).
 	 */
 	key?: string;
 	/**
