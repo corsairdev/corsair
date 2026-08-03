@@ -18,6 +18,13 @@ npm install corsair @corsair-dev/mcp
 Declare your integrations in a file you can track and commit to git:
 ```typescript
 // corsair.ts
+import { createCorsair } from 'corsair';
+import { slack } from '@corsair-dev/slack';
+import { github } from '@corsair-dev/github';
+import { gmail } from '@corsair-dev/gmail';
+import { linear } from '@corsair-dev/linear';
+import { googlecalendar } from '@corsair-dev/googlecalendar';
+
 export const corsair = createCorsair({
   plugins: [slack(), github(), gmail(), linear(), googlecalendar()],
 });
@@ -25,6 +32,8 @@ export const corsair = createCorsair({
 
 Connect it to your agent and start prompting:
 ```typescript
+import { runStdioMcpServer } from '@corsair-dev/mcp';
+
 const corsairMcpServer = runStdioMcpServer({ corsair })
 
 query({
