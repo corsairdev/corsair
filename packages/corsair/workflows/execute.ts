@@ -1,5 +1,6 @@
 import { createHash } from 'node:crypto';
 import * as vm from 'node:vm';
+import { PermissionRequiredError } from '../core/permissions/errors/permission-required';
 import type { RunResultPayload, RunStepResult } from '../hub/contracts/tunnel';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -42,6 +43,27 @@ export interface WorkflowStep {
 }
 
 const FAILED_STEP_MARKER = '__corsairFailedStep';
+const APPROVAL_MARKER = '__corsairApprovalRequired';
+
+/**
+ * True when a thrown error means "paused for approval" rather than "failed".
+ * The membrane hardens errors crossing the vm boundary into null-prototype
+ * Proxies, so `instanceof` only catches direct throws; we also match the SDK's
+ * "Approval required." message prefix — the signal that survives the boundary,
+ * and the only one for a rare URL-less approval error that must still pause.
+ */
+function isApprovalRequired(err: unknown): boolean {
+	return (
+		err instanceof PermissionRequiredError ||
+		/^Approval required\./.test(toMessage(err))
+	);
+}
+
+/** Pulls the approval URL out of the SDK's approval message (trailing punctuation stripped). */
+function extractApprovalUrl(message: string): string | undefined {
+	const match = message.match(/Approval required\. Visit (\S+) to approve/);
+	return match ? match[1]!.replace(/[.,;:]+$/, '') : undefined;
+}
 
 // One 30s cap covers both guards below; the deploy targets short, gated
 // workflows. Promote to a per-run config knob if long workflows land.
@@ -362,6 +384,12 @@ export async function executeWorkflowRun(
 			const wrapped = new Error(message);
 			(wrapped as unknown as Record<string, unknown>)[FAILED_STEP_MARKER] =
 				name;
+			// The membrane strips the error's prototype crossing the vm boundary, so
+			// tag the pause here (where the original `err` is still inspectable) for
+			// the run-level catch to route as awaiting_approval instead of failed.
+			if (isApprovalRequired(err)) {
+				(wrapped as unknown as Record<string, unknown>)[APPROVAL_MARKER] = true;
+			}
 			throw wrapped;
 		}
 	}) as WorkflowStep;
@@ -417,6 +445,21 @@ export async function executeWorkflowRun(
 			};
 		}
 		const message = toMessage(err);
+		// Approval pause: a step hit a permission gate. Route as awaiting_approval so
+		// Hub holds the run for a human instead of retrying/auto-healing it. The marker
+		// is set by the step catch; re-check err itself for a throw straight from main.
+		const tagged =
+			err !== null &&
+			typeof err === 'object' &&
+			(err as Record<string, unknown>)[APPROVAL_MARKER] === true;
+		if (tagged || isApprovalRequired(err)) {
+			const approvalUrl = extractApprovalUrl(message);
+			return {
+				status: 'awaiting_approval',
+				steps,
+				...(approvalUrl ? { approvalUrl } : { approvalMessage: message }),
+			};
+		}
 		const failedStep =
 			err !== null && typeof err === 'object'
 				? ((err as Record<string, unknown>)[FAILED_STEP_MARKER] as

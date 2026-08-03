@@ -214,6 +214,83 @@ describe('executeWorkflowRun — sleep', () => {
 	});
 });
 
+describe('executeWorkflowRun — approval pause', () => {
+	// A step that throws the SDK's approval error must PAUSE the run
+	// (awaiting_approval), not fail it — otherwise Hub retries + auto-heals a run
+	// that is merely waiting for a human.
+	const approvalMessage =
+		'Approval required. Visit https://hub.example/approve/tok_123 to approve or deny, then retry.';
+
+	it('returns awaiting_approval with the extracted approvalUrl', async () => {
+		const result = await run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step('post', async () => {
+					throw new Error(${JSON.stringify(approvalMessage)});
+				});
+			};
+		`);
+		expect(result.status).toBe('awaiting_approval');
+		expect(result.approvalUrl).toBe('https://hub.example/approve/tok_123');
+		// The blocked step is still reported (Hub persists it as failed for replay).
+		expect(result.steps.map((s) => s.name)).toEqual(['post']);
+	});
+
+	it('detects a real PermissionRequiredError instance thrown by the client', async () => {
+		const { PermissionRequiredError } = await import(
+			'../core/permissions/errors/permission-required'
+		);
+		const corsair = {
+			messages: {
+				post: async () => {
+					throw new PermissionRequiredError(approvalMessage);
+				},
+			},
+		};
+		const result = await executeWorkflowRun({
+			corsair,
+			code: `
+				module.exports.main = async (corsair, payload, step) => {
+					await step('post', async () => corsair.messages.post());
+				};
+			`,
+			payload: null,
+			timeoutMs: 200,
+		});
+		expect(result.status).toBe('awaiting_approval');
+		expect(result.approvalUrl).toBe('https://hub.example/approve/tok_123');
+	});
+
+	it('still pauses (with the raw message) when no URL is parseable', async () => {
+		// A PermissionRequiredError whose message carries no approval URL (e.g. manual
+		// config without an approvalBaseUrl) must still pause, not fail.
+		const { PermissionRequiredError } = await import(
+			'../core/permissions/errors/permission-required'
+		);
+		const corsair = {
+			messages: {
+				post: async () => {
+					throw new PermissionRequiredError(
+						'Approval required. No link available.',
+					);
+				},
+			},
+		};
+		const result = await executeWorkflowRun({
+			corsair,
+			code: `
+				module.exports.main = async (corsair, payload, step) => {
+					await step('post', async () => corsair.messages.post());
+				};
+			`,
+			payload: null,
+			timeoutMs: 200,
+		});
+		expect(result.status).toBe('awaiting_approval');
+		expect(result.approvalUrl).toBeUndefined();
+		expect(result.approvalMessage).toMatch(/Approval required/);
+	});
+});
+
 describe('executeWorkflowRun — resource limits (B1)', () => {
 	it('aborts a synchronous runaway via the vm timeout', async () => {
 		const result = await run(
