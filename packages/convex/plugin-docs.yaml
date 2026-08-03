@@ -5,7 +5,18 @@ overviewNote: |
   Convex Management API (https://api.convex.dev/v1) for teams, projects,
   deployments, deploy keys, and custom domains, plus the deployment-scoped REST
   API for executing query batches, reading query timestamps, and listing log
-  streams. Authenticate with a Convex personal/team access token (Bearer) or a
-  deployment admin deploy key (Convex <key>) together with the deployment name
-  (subdomain). Use Corsair permissions for destructive actions such as deleting
-  projects, deployments, or custom domains.
+  streams.
+
+  Authentication follows the Convex authorization model:
+  - Management API operations authenticate with `Authorization: Bearer <token>`
+    using a Convex personal/team access token. An `api_key` or `oauth_2`
+    connection must therefore store an access token — deploy keys are not
+    accepted as bearer credentials by the Management API.
+  - Deployment-scoped operations require a deployment admin deploy key and
+    authenticate with `Authorization: Convex <key>`. Supply one per call via the
+    `deployKey` input; the plugin `key` is used as a fallback when it is itself
+    a deploy key. The deployment name (subdomain) is resolved from the
+    connection or the `subdomain` option.
+
+  Use Corsair permissions for destructive actions such as deleting projects,
+  deployments, or custom domains.

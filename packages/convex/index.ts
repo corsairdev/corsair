@@ -27,6 +27,16 @@ import { ConvexSchema } from './schema';
 
 export type ConvexPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	/**
+	 * Plugin-wide credential sent as `Authorization: Bearer <key>` for Management
+	 * API operations. This must be a Convex personal/team access token — Convex
+	 * does not accept deploy keys as bearer credentials for the Management API,
+	 * so an `api_key` connection should store an access token.
+	 * Deployment-scoped operations authenticate as `Authorization: Convex
+	 * <key>` and should receive a deployment admin deploy key via each
+	 * operation's `deployKey` input; they fall back to this key only when it is
+	 * itself a deploy key.
+	 */
 	key?: string;
 	/**
 	 * Deployment name (e.g. `acoustic-panther-728`) used to build the
@@ -138,6 +148,11 @@ export function convex<const T extends ConvexPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		// NOTE: `ctx.key` is a single plugin-wide credential. Management API
+		// operations send it as `Bearer <key>`; deployment-scoped operations send
+		// it as `Convex <key>` and accept a dedicated deploy key per call via the
+		// `deployKey` input (required for OAuth connections, whose access tokens
+		// cannot authenticate deployment-scoped endpoints).
 		keyBuilder: async (ctx: ConvexKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;

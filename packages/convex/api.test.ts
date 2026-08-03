@@ -543,6 +543,237 @@ describe('Convex endpoints', () => {
 			'happy-otter-123',
 		);
 	});
+
+	it('rejects subdomains that could escape the deployment host', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+
+		await expect(
+			getEndpoint(
+				endpoints,
+				'deployment',
+				'executeQueryBatch',
+			)(mockCtx, {
+				subdomain: 'attacker.example:443/',
+				queries: [{ path: 'messages:list', args: {} }],
+			}),
+		).rejects.toThrow('Invalid Convex deployment name');
+		expect(mockRequest).not.toHaveBeenCalled();
+
+		// The input schema rejects malicious subdomains before the handler runs.
+		expect(
+			ConvexEndpointInputSchemas.executeQueryBatch.safeParse({
+				subdomain: 'attacker.example:443/',
+				queries: [{ path: 'messages:list', args: {} }],
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts a per-call deploy key for deployment-scoped operations', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+
+		await getEndpoint(
+			endpoints,
+			'deployment',
+			'getQueryTimestamp',
+		)(mockCtx, {
+			deployKey: 'prod:deploy-key',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[0].HEADERS.Authorization).toBe(
+			'Convex prod:deploy-key',
+		);
+	});
+
+	it('does not let cache failures mask a successful create', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+		const ctxWithDb = {
+			...mockCtx,
+			db: {
+				projects: {
+					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
+				},
+				deployments: {
+					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
+				},
+				deployKeys: {
+					upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
+				},
+			},
+		} as unknown as ConvexContext;
+
+		mockRequest.mockResolvedValue({
+			ok: true,
+			id: 'proj-1',
+			name: 'happy-otter-123',
+			deployKey: 'secret',
+		});
+
+		await expect(
+			getEndpoint(
+				endpoints,
+				'projects',
+				'create',
+			)(ctxWithDb, {
+				team_id: 'team-1',
+				projectName: 'My App',
+			}),
+		).resolves.toMatchObject({ ok: true });
+
+		await expect(
+			getEndpoint(
+				endpoints,
+				'deployments',
+				'create',
+			)(ctxWithDb, {
+				project_id: 'proj-1',
+				type: 'prod',
+			}),
+		).resolves.toMatchObject({ ok: true });
+
+		await expect(
+			getEndpoint(
+				endpoints,
+				'deployKeys',
+				'create',
+			)(ctxWithDb, {
+				deployment_name: 'happy-otter-123',
+				name: 'ci',
+			}),
+		).resolves.toMatchObject({ ok: true });
+	});
+
+	it('does not cache deploy key metadata at create time', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+		const upsert = jest.fn();
+		const ctxWithDb = {
+			...mockCtx,
+			db: { deployKeys: { upsertByEntityId: upsert } },
+		} as unknown as ConvexContext;
+
+		await getEndpoint(
+			endpoints,
+			'deployKeys',
+			'create',
+		)(ctxWithDb, {
+			deployment_name: 'happy-otter-123',
+			name: 'ci',
+		});
+
+		expect(upsert).not.toHaveBeenCalled();
+	});
+
+	it('refreshes the cached deployment record after an update', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+		const upsert = jest.fn();
+		const ctxWithDb = {
+			...mockCtx,
+			db: { deployments: { upsertByEntityId: upsert } },
+		} as unknown as ConvexContext;
+
+		mockRequest.mockResolvedValueOnce({}).mockResolvedValueOnce({
+			name: 'happy-otter-123',
+			deploymentType: 'prod',
+			id: 'dep-1',
+			projectId: 'proj-1',
+		});
+
+		await getEndpoint(
+			endpoints,
+			'deployments',
+			'update',
+		)(ctxWithDb, {
+			deployment_name: 'happy-otter-123',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({ method: 'PATCH' });
+		expect(mockRequest.mock.calls[1]?.[1]).toMatchObject({ method: 'GET' });
+		expect(upsert).toHaveBeenCalledWith(
+			'happy-otter-123',
+			expect.objectContaining({ deploymentType: 'prod' }),
+		);
+	});
+
+	it('cleans up cached deployments when a project is deleted', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+		const deleteDeployment = jest.fn();
+		const ctxWithDb = {
+			...mockCtx,
+			db: {
+				projects: { deleteByEntityId: jest.fn() },
+				deployments: {
+					deleteByEntityId: deleteDeployment,
+					list: jest.fn().mockResolvedValue([
+						{
+							entity_id: 'happy-otter-123',
+							data: { projectId: 'proj-1' },
+						},
+						{
+							entity_id: 'brave-bear-456',
+							data: { projectId: 'proj-1' },
+						},
+						{
+							entity_id: 'other-project-dep',
+							data: { projectId: 'proj-2' },
+						},
+					]),
+				},
+			},
+		} as unknown as ConvexContext;
+
+		await getEndpoint(
+			endpoints,
+			'projects',
+			'delete',
+		)(ctxWithDb, {
+			project_id: 'proj-1',
+		});
+
+		expect(deleteDeployment).toHaveBeenCalledWith('happy-otter-123');
+		expect(deleteDeployment).toHaveBeenCalledWith('brave-bear-456');
+		expect(deleteDeployment).not.toHaveBeenCalledWith('other-project-dep');
+	});
+
+	it('cleans up cached deploy keys when a deployment is deleted', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+		const deleteKey = jest.fn();
+		const ctxWithDb = {
+			...mockCtx,
+			db: {
+				deployments: { deleteByEntityId: jest.fn() },
+				deployKeys: {
+					deleteByEntityId: deleteKey,
+					list: jest.fn().mockResolvedValue([
+						{
+							entity_id: 'key-1',
+							data: { deploymentName: 'happy-otter-123' },
+						},
+						{
+							entity_id: 'key-2',
+							data: { deploymentName: 'other-dep' },
+						},
+					]),
+				},
+			},
+		} as unknown as ConvexContext;
+
+		await getEndpoint(
+			endpoints,
+			'deployments',
+			'delete',
+		)(ctxWithDb, {
+			deployment_name: 'happy-otter-123',
+		});
+
+		expect(deleteKey).toHaveBeenCalledWith('key-1');
+		expect(deleteKey).not.toHaveBeenCalledWith('key-2');
+	});
 });
 
 describe('Convex error handlers', () => {

@@ -1,5 +1,17 @@
 import { z } from 'zod';
 
+// ── Common validation ────────────────────────────────────────────────────────
+
+/**
+ * Valid Convex deployment name (subdomain) used to build the deployment-scoped
+ * REST base URL (`https://<deployment>.convex.cloud/api`). Convex deployment
+ * names are DNS labels — lowercase letters, digits, and hyphens only. Restricting
+ * input to this shape prevents crafted values (e.g. `attacker.example:443/`)
+ * from redirecting an authenticated request to another host.
+ */
+export const CONVEX_SUBDOMAIN_PATTERN =
+	/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+
 // ── Common resource schemas ──────────────────────────────────────────────────
 
 export const ProjectSchema = z
@@ -169,17 +181,34 @@ const QueryBatchItemSchema = z.object({
 });
 
 const ExecuteQueryBatchInputSchema = z.object({
-	subdomain: z.string().min(1).optional(),
+	subdomain: z
+		.string()
+		.regex(CONVEX_SUBDOMAIN_PATTERN, 'Invalid Convex deployment name')
+		.optional(),
+	/**
+	 * Deployment admin deploy key for the deployment-scoped API
+	 * (`Authorization: Convex <key>`). Defaults to the plugin credential; an
+	 * OAuth/access-token connection must supply one explicitly.
+	 */
+	deployKey: z.string().min(1).optional(),
 	format: z.enum(['json']).optional(),
 	queries: z.array(QueryBatchItemSchema).min(1),
 });
 
 const QueryTimestampInputSchema = z.object({
-	subdomain: z.string().min(1).optional(),
+	subdomain: z
+		.string()
+		.regex(CONVEX_SUBDOMAIN_PATTERN, 'Invalid Convex deployment name')
+		.optional(),
+	deployKey: z.string().min(1).optional(),
 });
 
 const LogStreamsListInputSchema = z.object({
-	subdomain: z.string().min(1).optional(),
+	subdomain: z
+		.string()
+		.regex(CONVEX_SUBDOMAIN_PATTERN, 'Invalid Convex deployment name')
+		.optional(),
+	deployKey: z.string().min(1).optional(),
 });
 
 // ── Output schemas ───────────────────────────────────────────────────────────

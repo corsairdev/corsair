@@ -35,6 +35,26 @@ export interface ConvexRequestOptions {
 	authScheme?: 'bearer' | 'convex';
 }
 
+/**
+ * Best-effort local cache write. The remote Convex call has already succeeded;
+ * a failure here must not turn a completed operation into an endpoint error
+ * (which could prompt duplicate retries of non-idempotent calls) or leave a
+ * successful create/delete reported as failed.
+ *
+ * Note: every thrown error is intentionally swallowed — including unexpected
+ * ones from the cache layer — since the provider operation has already
+ * completed and must be reported as such.
+ */
+export async function tryCacheWrite(
+	write: () => Promise<unknown>,
+): Promise<void> {
+	try {
+		await write();
+	} catch {
+		// Intentionally swallowed — the provider operation already completed.
+	}
+}
+
 export async function makeConvexRequest<T>(
 	endpoint: string,
 	apiKey: string,
