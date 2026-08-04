@@ -40,7 +40,7 @@ export const get: InstagramEndpoints['GetMessage'] = async (ctx, input) => {
 				message: result.message,
 			});
 		} catch (err) {
-			console.warn('faild to save messages into database', err);
+			console.warn('failed to save messages into database', err);
 		}
 	}
 

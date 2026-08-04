@@ -1,3 +1,4 @@
+import * as crypto from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -102,7 +103,7 @@ export function verifySpotifyWebhookSignature(
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const signatureHeader = request.headers['x-spotify-signature'];
@@ -124,7 +125,6 @@ export function verifySpotifyWebhookSignature(
 			: JSON.stringify(request.payload));
 
 	try {
-		const crypto = require('crypto');
 		const expectedSignature = crypto
 			.createHmac('sha256', secret)
 			.update(payloadString)
