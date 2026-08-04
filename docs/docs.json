@@ -540,6 +540,15 @@
                 ]
               },
               {
+                "group": "Openai",
+                "pages": [
+                  "plugins/openai/overview",
+                  "plugins/openai/get-credentials",
+                  "plugins/openai/api",
+                  "plugins/openai/database"
+                ]
+              },
+              {
                 "group": "Oura",
                 "pages": [
                   "plugins/oura/overview",
