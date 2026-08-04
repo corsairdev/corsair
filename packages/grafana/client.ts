@@ -92,6 +92,11 @@ export async function makeGrafanaRawRequest(
 	const { method = 'GET', body, contentType = 'application/json' } = options;
 
 	const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+	if (!cleanBaseUrl.startsWith('https://')) {
+		throw new GrafanaAPIError(
+			`Refusing to send Grafana bearer token to non-HTTPS baseUrl: ${baseUrl}`,
+		);
+	}
 	const url = `${cleanBaseUrl}${endpoint}`;
 
 	const headers: Record<string, string> = {

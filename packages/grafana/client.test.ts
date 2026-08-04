@@ -1,4 +1,4 @@
-import { makeGrafanaRawRequest } from './client';
+import { GrafanaAPIError, makeGrafanaRawRequest } from './client';
 
 describe('makeGrafanaRawRequest', () => {
 	const originalFetch = global.fetch;
@@ -44,5 +44,19 @@ describe('makeGrafanaRawRequest', () => {
 		);
 
 		expect(requestedUrl).toBe('https://grafana.example.com/ruler/ring');
+	});
+
+	it('refuses to send the bearer token to a non-HTTPS baseUrl', async () => {
+		global.fetch = (async () => {
+			throw new Error('fetch should not be called for a rejected baseUrl');
+		}) as unknown as typeof fetch;
+
+		await expect(
+			makeGrafanaRawRequest(
+				'/ruler/ring',
+				'token',
+				'http://grafana.example.com',
+			),
+		).rejects.toThrow(GrafanaAPIError);
 	});
 });
