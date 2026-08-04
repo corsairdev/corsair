@@ -77,6 +77,8 @@ export async function makeGrafanaRequest<T>(
  * Makes a raw (text/HTML) request to the Grafana API.
  * Used for endpoints that return HTML pages (ring status, HA tracker, etc.).
  * Returns an object with content and content_type.
+ * A trailing slash on baseUrl is stripped automatically. baseUrl must be
+ * https:// — non-HTTPS URLs are rejected before the bearer token is sent.
  */
 export async function makeGrafanaRawRequest(
 	endpoint: string,
