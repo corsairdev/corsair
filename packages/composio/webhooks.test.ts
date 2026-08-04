@@ -76,6 +76,24 @@ describe('Composio webhook verification', () => {
 		expect(result.error).toMatch(/original raw body/i);
 	});
 
+	it('rejects when rawBodyPreserved is missing', () => {
+		const signature = sign(secret, id, ts, body);
+		const result = verifyComposioWebhookSignature(
+			{
+				rawBody: body,
+				headers: {
+					'webhook-id': id,
+					'webhook-timestamp': ts,
+					'webhook-signature': signature,
+				},
+				payload: JSON.parse(body),
+			} as never,
+			secret,
+		);
+		expect(result.valid).toBe(false);
+		expect(result.error).toMatch(/original raw body/i);
+	});
+
 	it('verifies from raw string body before parse', () => {
 		const signature = sign(secret, id, ts, body);
 		const result = verifyComposioWebhookSignatureFromRaw(

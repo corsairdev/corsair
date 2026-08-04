@@ -193,8 +193,25 @@ export async function processWebhook(
 	},
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
-	let parsedBody =
-		typeof body === 'string' ? (JSON.parse(body) satisfies WebhookBody) : body;
+	const rawBodyPreserved = typeof body === 'string';
+	let parsedBody: WebhookBody;
+	if (typeof body === 'string') {
+		try {
+			parsedBody = JSON.parse(body) satisfies WebhookBody;
+		} catch {
+			return {
+				plugin: null,
+				action: null,
+				body: {},
+				response: {
+					success: false,
+					error: 'Malformed JSON body',
+				},
+			};
+		}
+	} else {
+		parsedBody = body;
+	}
 
 	const isEmptyBody =
 		!parsedBody ||
@@ -253,7 +270,10 @@ export async function processWebhook(
 		const webhookRequest = {
 			payload: parsedBody,
 			headers: normalizedHeaders,
-			rawBody: typeof body === 'string' ? body : JSON.stringify(body),
+			rawBody: rawBodyPreserved ? body : JSON.stringify(body),
+			// Plugins that HMAC the body (Composio, Databricks, …) must only
+			// verify when these bytes are the original inbound payload.
+			rawBodyPreserved,
 			...(query ? { query } : {}),
 		};
 

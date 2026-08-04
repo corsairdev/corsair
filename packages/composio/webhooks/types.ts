@@ -43,15 +43,8 @@ export type ComposioWebhookOutputs = {
 	projectEvent: ProjectEvent;
 };
 
-/**
- * Webhook request with explicit raw-body provenance.
- * Set `rawBodyPreserved` only when `rawBody` is the original inbound bytes
- * (not JSON.stringify of a parsed object). `processWebhook` preserves the
- * original when callers pass a string body.
- */
-export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload> & {
-	rawBodyPreserved?: boolean;
-};
+/** Webhook request; HMAC verify requires `rawBodyPreserved === true`. */
+export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload>;
 
 /**
  * Core `processWebhook` parses JSON before matchers run, so matchers usually
@@ -120,7 +113,7 @@ function hmacKeyFromSecret(secret: string): Buffer {
  * HMAC-SHA256 over `{webhook-id}.{webhook-timestamp}.{rawBody}`, digest base64.
  * Header `webhook-signature` looks like `v1,<base64>` (space-separated if multiple).
  *
- * Refuses when `rawBodyPreserved === false` (reconstructed body). Callers of
+ * Requires `rawBodyPreserved === true` (same as Databricks). Callers of
  * `processWebhook` must pass the raw request string so `rawBody` is original.
  */
 export function verifyComposioWebhookSignature(
@@ -129,7 +122,12 @@ export function verifyComposioWebhookSignature(
 ): { valid: boolean; error?: string } {
 	if (!secret) return { valid: false, error: 'Missing webhook secret' };
 
-	if (request.rawBodyPreserved === false) {
+	// Do not infer provenance from JSON.stringify equality.
+	if (
+		request.rawBodyPreserved !== true ||
+		typeof request.rawBody !== 'string' ||
+		request.rawBody.length === 0
+	) {
 		return {
 			valid: false,
 			error: 'Missing original raw body for signature verification',
@@ -137,9 +135,6 @@ export function verifyComposioWebhookSignature(
 	}
 
 	const rawBody = request.rawBody;
-	if (typeof rawBody !== 'string' || rawBody.length === 0) {
-		return { valid: false, error: 'Missing raw body' };
-	}
 
 	const webhookId = headerValue(request.headers, 'webhook-id');
 	const webhookTimestamp = headerValue(request.headers, 'webhook-timestamp');
