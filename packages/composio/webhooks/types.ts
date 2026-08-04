@@ -43,14 +43,8 @@ export type ComposioWebhookOutputs = {
 	projectEvent: ProjectEvent;
 };
 
-/**
- * Webhook request with optional raw-body provenance.
- * Core sets `rawBodyPreserved` once the shared processWebhook fix lands;
- * until then the field may be absent when adapters pass a string body.
- */
-export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload> & {
-	rawBodyPreserved?: boolean;
-};
+/** HMAC verify requires `rawBodyPreserved === true` (set by processWebhook). */
+export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload>;
 
 /**
  * Core `processWebhook` parses JSON before matchers run, so matchers usually
@@ -123,39 +117,39 @@ function hmacKeyFromSecret(secret: string): Buffer {
 	return Buffer.from(secret, 'utf8');
 }
 
+/** Generic error returned to callers — never leak which verification gate failed. */
+const SIGNATURE_FAILED = 'Signature verification failed';
+
 /**
  * Composio signs with Standard Webhooks:
  * HMAC-SHA256 over `{webhook-id}.{webhook-timestamp}.{rawBody}`, digest base64.
  * Header `webhook-signature` looks like `v1,<base64>` (space-separated if multiple).
  *
- * Refuses when `rawBodyPreserved === false` (reconstructed body). Callers of
- * `processWebhook` must pass the raw request string so `rawBody` is original.
- * When the flag is absent (older core), still verify against `rawBody` if present.
+ * Requires `rawBodyPreserved === true`. Callers of `processWebhook` must pass
+ * the raw request string so `rawBody` is original.
  */
 export function verifyComposioWebhookSignature(
 	request: ComposioWebhookRequest,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	if (!secret) return { valid: false, error: 'Missing webhook secret' };
+	if (!secret) return { valid: false, error: SIGNATURE_FAILED };
 
-	if (request.rawBodyPreserved === false) {
-		return {
-			valid: false,
-			error: 'Missing original raw body for signature verification',
-		};
+	// Do not infer provenance from JSON.stringify equality.
+	if (
+		request.rawBodyPreserved !== true ||
+		typeof request.rawBody !== 'string' ||
+		request.rawBody.length === 0
+	) {
+		return { valid: false, error: SIGNATURE_FAILED };
 	}
 
 	const rawBody = request.rawBody;
-	if (typeof rawBody !== 'string' || rawBody.length === 0) {
-		return { valid: false, error: 'Missing raw body' };
-	}
-
 	const webhookId = headerValue(request.headers, 'webhook-id');
 	const webhookTimestamp = headerValue(request.headers, 'webhook-timestamp');
 	const sigHeader = headerValue(request.headers, 'webhook-signature');
 
 	if (!webhookId || !webhookTimestamp || !sigHeader) {
-		return { valid: false, error: 'Missing required webhook headers' };
+		return { valid: false, error: SIGNATURE_FAILED };
 	}
 
 	const WEBHOOK_TOLERANCE_MS = 5 * 60 * 1000;
@@ -164,7 +158,7 @@ export function verifyComposioWebhookSignature(
 		Number.isNaN(timestampMs) ||
 		Math.abs(Date.now() - timestampMs) > WEBHOOK_TOLERANCE_MS
 	) {
-		return { valid: false, error: 'Webhook timestamp out of tolerance window' };
+		return { valid: false, error: SIGNATURE_FAILED };
 	}
 
 	const signedContent = `${webhookId}.${webhookTimestamp}.${rawBody}`;
@@ -183,7 +177,7 @@ export function verifyComposioWebhookSignature(
 		}
 	});
 
-	if (!isValid) return { valid: false, error: 'Invalid signature' };
+	if (!isValid) return { valid: false, error: SIGNATURE_FAILED };
 	return { valid: true };
 }
 
@@ -196,10 +190,7 @@ export function verifyComposioWebhookSignatureFromRaw(
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (typeof request.body !== 'string') {
-		return {
-			valid: false,
-			error: 'Missing original raw body for signature verification',
-		};
+		return { valid: false, error: SIGNATURE_FAILED };
 	}
 	return verifyComposioWebhookSignature(
 		{

@@ -29,6 +29,8 @@ export type WebhookRequest<TPayload = unknown> = {
 	headers: Record<string, string | string[] | undefined>;
 	/** Raw request body string (for signature verification) */
 	rawBody?: string;
+	/** True when `rawBody` is the original inbound bytes, not a re-serialize. */
+	rawBodyPreserved?: boolean;
 	/** Query string parameters when available. */
 	query?: Record<string, string | string[] | undefined>;
 };

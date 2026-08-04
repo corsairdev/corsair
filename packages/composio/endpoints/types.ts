@@ -3,6 +3,12 @@ import { z } from 'zod';
 // Loose passthrough — Composio response shapes evolve; don't invent fields.
 const JsonObject = z.record(z.string(), z.unknown());
 
+/** Path / id segments sent upstream — block traversal / injection. */
+const PathId = z
+	.string()
+	.min(1)
+	.regex(/^[a-zA-Z0-9_-]+$/);
+
 // ── Tools (v3: executable actions) ─────────────────────────────────────
 
 const ToolsListInputSchema = z.object({
@@ -57,7 +63,7 @@ const PaginatedToolsSchema = z
 export type ToolsListResponse = z.infer<typeof PaginatedToolsSchema>;
 
 const ToolGetInputSchema = z.object({
-	tool_slug: z.string(),
+	tool_slug: PathId,
 	version: z.string().optional(),
 	toolkit_versions: z.string().optional(),
 });
@@ -83,9 +89,9 @@ export type ActionsListInput = z.infer<typeof ActionsListInputSchema>;
 export type ActionsListResponse = ToolsListResponse;
 
 const ActionGetInputSchema = z.object({
-	tool_slug: z.string().optional(),
+	tool_slug: PathId.optional(),
 	/** @deprecated use tool_slug */
-	actionId: z.string().optional(),
+	actionId: PathId.optional(),
 });
 
 export type ActionGetInput = z.infer<typeof ActionGetInputSchema>;
@@ -93,16 +99,16 @@ export type ActionGetInput = z.infer<typeof ActionGetInputSchema>;
 export type ActionGetResponse = Tool;
 
 const ActionExecuteInputSchema = z.object({
-	tool_slug: z.string().optional(),
+	tool_slug: PathId.optional(),
 	/** @deprecated use tool_slug */
-	actionId: z.string().optional(),
+	actionId: PathId.optional(),
 	arguments: JsonObject.optional(),
 	/** @deprecated use arguments */
 	input: JsonObject.optional(),
 	text: z.string().optional(),
-	connected_account_id: z.string().optional(),
+	connected_account_id: PathId.optional(),
 	/** @deprecated use connected_account_id */
-	connectionId: z.string().optional(),
+	connectionId: PathId.optional(),
 	user_id: z.string().optional(),
 	version: z.string().optional(),
 	toolkit_versions: z.string().optional(),
@@ -201,9 +207,9 @@ export type ConnectionCreateResponse = z.infer<
 >;
 
 const ConnectionDeleteInputSchema = z.object({
-	connected_account_id: z.string().optional(),
+	connected_account_id: PathId.optional(),
 	/** @deprecated use connected_account_id */
-	connectionId: z.string().optional(),
+	connectionId: PathId.optional(),
 	revoke_on_delete: z.boolean().optional(),
 });
 

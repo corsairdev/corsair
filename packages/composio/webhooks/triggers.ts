@@ -15,7 +15,8 @@ export const triggerMessage: ComposioWebhooks['triggerMessage'] = {
 			return {
 				success: false,
 				statusCode: 401,
-				error: verification.error || 'Signature verification failed',
+				// Hardcode — never forward verification.error (probing).
+				error: 'Signature verification failed',
 			};
 		}
 
@@ -47,7 +48,8 @@ export const projectEvent: ComposioWebhooks['projectEvent'] = {
 			return {
 				success: false,
 				statusCode: 401,
-				error: verification.error || 'Signature verification failed',
+				// Hardcode — never forward verification.error (probing).
+				error: 'Signature verification failed',
 			};
 		}
 
