@@ -17,14 +17,18 @@ export function normalizeGitlabBaseUrl(baseUrl?: string): string {
 	return withoutSlash || 'https://gitlab.com';
 }
 
-// Managed auth uses Corsair's gitlab.com OAuth app, so its token is only valid
-// against gitlab.com. Compare on hostname (port-agnostic, case-insensitive,
-// trailing-dot tolerant) rather than the raw string so equivalent origins pass.
+// Managed auth uses Corsair's gitlab.com OAuth app, so its token is valid only
+// against canonical gitlab.com. Match the hostname (case-insensitive,
+// trailing-dot tolerant) but also require https on the default port — a custom
+// port or scheme is a different service and must not receive the managed token.
 export function isManagedGitlabHost(baseUrl: string): boolean {
 	try {
+		const url = new URL(baseUrl);
+		const hostname = url.hostname.replace(/\.$/, '').toLowerCase();
 		return (
-			new URL(baseUrl).hostname.replace(/\.$/, '').toLowerCase() ===
-			'gitlab.com'
+			hostname === 'gitlab.com' &&
+			url.protocol === 'https:' &&
+			(url.port === '' || url.port === '443')
 		);
 	} catch {
 		return false;
