@@ -77,7 +77,7 @@ describe('Composio webhook verification', () => {
 		expect(result.error).toBe('Signature verification failed');
 	});
 
-	it('rejects when rawBodyPreserved is missing', () => {
+	it('accepts when rawBodyPreserved is absent (older core)', () => {
 		const signature = sign(secret, id, ts, body);
 		const result = verifyComposioWebhookSignature(
 			{
@@ -91,8 +91,7 @@ describe('Composio webhook verification', () => {
 			} as never,
 			secret,
 		);
-		expect(result.valid).toBe(false);
-		expect(result.error).toBe('Signature verification failed');
+		expect(result.valid).toBe(true);
 	});
 
 	it('verifies from raw string body before parse', () => {
