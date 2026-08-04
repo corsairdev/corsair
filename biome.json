@@ -15,7 +15,13 @@
       "tailwindDirectives": true
     }
   },
-  "assist": { "actions": { "source": { "organizeImports": "on" } } },
+  "assist": {
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
   "linter": {
     "enabled": true,
     "rules": {
@@ -89,7 +95,8 @@
       "!**/.tmp",
       "!**/packages/create/template/**",
       "!**/.pnpm-store/**",
-      "!**/demo/sdk/**"
+      "!**/demo/sdk/**",
+      "!**/.claude/**"
     ]
   }
 }

@@ -4,8 +4,8 @@ import { z } from 'zod';
 
 import { user } from '@/db/auth-schema';
 import {
-	getLatestStatusForIntegration,
 	getLatestStatusesForIntegrations,
+	getLatestStatusForIntegration,
 	insertIntegrationStatus,
 	isIntegrationActivelyClaimed,
 } from '@/db/integration-status';
@@ -54,7 +54,9 @@ export const adminRouter = createTRPCRouter({
 				status.phase !== 'finished',
 		);
 
-		const claimerIds = [...new Set(activeStatuses.map((status) => status.userId))];
+		const claimerIds = [
+			...new Set(activeStatuses.map((status) => status.userId)),
+		];
 		const claimers =
 			claimerIds.length > 0
 				? await ctx.db
@@ -67,7 +69,9 @@ export const adminRouter = createTRPCRouter({
 						.where(inArray(user.id, claimerIds))
 				: [];
 
-		const claimersById = new Map(claimers.map((claimer) => [claimer.id, claimer]));
+		const claimersById = new Map(
+			claimers.map((claimer) => [claimer.id, claimer]),
+		);
 		const urlsByIntegration = await fetchIntegrationUrlsByIntegrationIds(
 			ctx.db,
 			activeStatuses.map((status) => status.integrationId),
@@ -99,8 +103,7 @@ export const adminRouter = createTRPCRouter({
 					claimerAvatarUrl: githubUsername
 						? (avatars.get(githubUsername) ?? null)
 						: null,
-					urls:
-						urlsByIntegration.get(integration.id) ?? emptyIntegrationUrls(),
+					urls: urlsByIntegration.get(integration.id) ?? emptyIntegrationUrls(),
 				};
 			})
 			.filter((item): item is NonNullable<typeof item> => item !== null)

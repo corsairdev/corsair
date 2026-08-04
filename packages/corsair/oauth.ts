@@ -14,3 +14,7 @@ export {
 	OAuthCallbackError,
 	processOAuthCallback,
 } from './oauth/index';
+export {
+	renewSubscriptions,
+	startSubscriptionRenewal,
+} from './oauth/renewal';

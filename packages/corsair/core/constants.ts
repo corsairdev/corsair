@@ -13,9 +13,12 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'abstract',
+	'activetrail',
 	'agentql',
 	'ahrefs',
 	'airtable',
+	'algolia',
 	'amplitude',
 	'api_sports',
 	'asana',
@@ -24,39 +27,63 @@ export const BaseProviders = [
 	'box',
 	'cal',
 	'calendly',
+	'canva',
 	'cloudflare',
+	'cloudinary',
+	'confluence',
 	'cursor',
+	'databricks',
+	'datadog',
+	'deepseek',
+	'digitalocean',
 	'discord',
 	'dodopayments',
 	'dropbox',
 	'exa',
+	'facebook',
 	'figma',
 	'firecrawl',
 	'fireflies',
+	'gemini',
 	'github',
 	'gitlab',
 	'gmail',
+	'googlebigquery',
 	'googlecalendar',
+	'googledocs',
 	'googledrive',
+	'googlemaps',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'hashnode',
+	'heygen',
 	'hubspot',
+	'insightoai',
+	'instagram',
 	'intercom',
 	'jira',
 	'linear',
+	'linkedin',
+	'mailchimp',
 	'monday',
+	'neon',
 	'notion',
+	'ollama',
 	'onedrive',
+	'onepassword',
+	'openai',
 	'openweathermap',
 	'oura',
 	'outlook',
 	'pagerduty',
+	'perplexityai',
 	'posthog',
 	'razorpay',
 	'reddit',
 	'resend',
+	'retailed',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -75,18 +102,22 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'vercel',
+	'whatsapp',
 	'xquik',
 	'youtube',
 	'zendesk',
 	'zohomail',
 	'zoom',
-	'instagram',
 ] as const;
 
 export const ProviderDisplayNames = {
+	abstract: 'Abstract',
+	activetrail: 'Active Trail',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
+	algolia: 'Algolia',
 	amplitude: 'Amplitude',
 	api_sports: 'API-Sports',
 	asana: 'Asana',
@@ -95,39 +126,63 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	canva: 'Canva',
 	cloudflare: 'Cloudflare',
+	cloudinary: 'Cloudinary',
+	confluence: 'Confluence',
 	cursor: 'Cursor',
+	databricks: 'Databricks',
+	datadog: 'Datadog',
+	deepseek: 'DeepSeek',
+	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
 	exa: 'Exa',
+	facebook: 'Facebook',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
+	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
-	googlesheets: 'Google Sheets',
+	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
+	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	hashnode: 'Hashnode',
+	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
+	insightoai: 'Insighto.ai',
+	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
 	linear: 'Linear',
+	linkedin: 'LinkedIn',
+	mailchimp: 'Mailchimp',
 	monday: 'Monday',
+	neon: 'Neon',
 	notion: 'Notion',
+	ollama: 'Ollama',
 	onedrive: 'OneDrive',
+	onepassword: '1Password',
+	openai: 'OpenAI',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	resend: 'Resend',
+	retailed: 'Retailed',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -146,12 +201,13 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	vercel: 'Vercel',
+	whatsapp: 'WhatsApp',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	instagram: 'Instagram',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -162,9 +218,12 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'abstract'
+	| 'activetrail'
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
+	| 'algolia'
 	| 'amplitude'
 	| 'api_sports'
 	| 'asana'
@@ -173,39 +232,63 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canva'
 	| 'cloudflare'
+	| 'cloudinary'
+	| 'confluence'
 	| 'cursor'
+	| 'databricks'
+	| 'datadog'
+	| 'deepseek'
+	| 'digitalocean'
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
+	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'gemini'
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
+	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googledocs'
 	| 'googledrive'
+	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'hashnode'
+	| 'heygen'
 	| 'hubspot'
+	| 'insightoai'
+	| 'instagram'
 	| 'intercom'
 	| 'jira'
 	| 'linear'
+	| 'linkedin'
+	| 'mailchimp'
 	| 'monday'
+	| 'neon'
 	| 'notion'
+	| 'ollama'
 	| 'onedrive'
+	| 'onepassword'
+	| 'openai'
 	| 'openweathermap'
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'perplexityai'
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
 	| 'resend'
+	| 'retailed'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
@@ -224,12 +307,13 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'vercel'
+	| 'whatsapp'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'
 	| 'zoom'
-	| 'instagram'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';

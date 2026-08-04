@@ -1,6 +1,6 @@
 import Link from 'next/link';
-
 import type { IntegrationPhase } from '@/db/schema';
+import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 import { cn } from '@/lib/utils';
 import { ClaimIntegrationButton } from './claim-integration-button';
 import { ContributorLink } from './contributor-link';
@@ -38,6 +38,7 @@ type IntegrationCardProps = {
 	index?: number;
 	activeSlug?: string;
 	wipIntegrationName?: string | null;
+	claimBlockReason?: ClaimBlockReason | null;
 };
 
 function StatusLabel({
@@ -74,6 +75,7 @@ export function IntegrationCard({
 	index,
 	activeSlug,
 	wipIntegrationName,
+	claimBlockReason,
 }: IntegrationCardProps) {
 	const isActive = activeSlug === integration.slug;
 
@@ -162,6 +164,7 @@ export function IntegrationCard({
 						integrationSlug={integration.slug}
 						disabled={integration.userCanClaim === false}
 						wipIntegrationName={wipIntegrationName}
+						claimBlockReason={claimBlockReason}
 					/>
 				) : null}
 			</div>

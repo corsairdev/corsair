@@ -108,11 +108,7 @@ export function OssHero({ signedIn, stats }: OssHeroProps) {
 
 				<FramedPanel>
 					<div className="grid grid-cols-1 gap-px bg-[#1c1c1c1a] sm:grid-cols-2">
-						<HeroStatBlock
-							accent
-							value="$30,000+"
-							label="AI credits to earn"
-						/>
+						<HeroStatBlock accent value="$30,000+" label="AI credits to earn" />
 						<HeroStatBlock
 							value={numberFormatter.format(stats.unclaimed)}
 							label="Integrations available"
