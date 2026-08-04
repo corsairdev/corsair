@@ -11,7 +11,7 @@ export class ApiSportsAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: number,
-		options?: { cause?: Error },
+		options?: { cause?: Error; body?: unknown },
 	) {
 		super(message, options);
 		this.name = 'ApiSportsAPIError';
@@ -21,6 +21,8 @@ export class ApiSportsAPIError extends Error {
 			this.statusText = options.cause.statusText;
 			this.body = options.cause.body;
 			this.retryAfter = options.cause.retryAfter;
+		} else if (options?.body !== undefined) {
+			this.body = options.body;
 		}
 	}
 }
@@ -52,6 +54,44 @@ export type ApiSportsQueryValue =
 	| boolean
 	| Array<string | number>
 	| undefined;
+
+/** API-Sports multi-id filters expect `ids=1-2-3`, not repeated keys. */
+function normalizeQuery(
+	query: Record<string, ApiSportsQueryValue>,
+): Record<string, string | number | boolean> {
+	const out: Record<string, string | number | boolean> = {};
+	for (const [key, value] of Object.entries(query)) {
+		if (value === undefined) continue;
+		if (Array.isArray(value)) {
+			out[key] = value.join('-');
+		} else {
+			out[key] = value;
+		}
+	}
+	return out;
+}
+
+function formatApiSportsErrors(errors: unknown): string {
+	if (Array.isArray(errors)) {
+		return errors
+			.map((e) => (typeof e === 'string' ? e : JSON.stringify(e)))
+			.join(', ');
+	}
+	if (errors && typeof errors === 'object') {
+		return Object.entries(errors as Record<string, unknown>)
+			.map(([k, v]) => `${k}: ${String(v)}`)
+			.join(', ');
+	}
+	return 'API-Sports request failed';
+}
+
+function hasApiSportsErrors(errors: unknown): boolean {
+	if (errors == null) return false;
+	if (Array.isArray(errors)) return errors.length > 0;
+	if (typeof errors === 'object')
+		return Object.keys(errors as object).length > 0;
+	return true;
+}
 
 // Catch values are untyped at runtime; narrow to ApiError/Error before rethrowing.
 async function handleRequestError(error: unknown): Promise<never> {
@@ -96,12 +136,30 @@ export async function makeApiSportsRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method: 'GET',
 		url: path,
-		query,
+		query: normalizeQuery(query),
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		const response = await request<T>(config, requestOptions);
+		// API-Sports returns HTTP 200 with a non-empty `errors` object/array on failures.
+		if (
+			response &&
+			typeof response === 'object' &&
+			'errors' in response &&
+			hasApiSportsErrors((response as { errors?: unknown }).errors)
+		) {
+			const body = response as { errors?: unknown };
+			throw new ApiSportsAPIError(
+				formatApiSportsErrors(body.errors),
+				undefined,
+				{
+					body,
+				},
+			);
+		}
+		return response;
 	} catch (error) {
+		if (error instanceof ApiSportsAPIError) throw error;
 		return handleRequestError(error);
 	}
 }

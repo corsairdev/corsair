@@ -32,11 +32,15 @@ export const errorHandlers = {
 				msg.includes('unauthorized') ||
 				msg.includes('invalid api key') ||
 				msg.includes('invalid key') ||
+				msg.includes('application key') ||
+				msg.includes('token:') ||
 				msg.includes('401')
 			);
 		},
 		handler: async () => {
-			console.error('[API_SPORTS] Authentication failed — check your x-apisports-key.');
+			console.error(
+				'[API_SPORTS] Authentication failed — check your x-apisports-key.',
+			);
 			return { maxRetries: 0 };
 		},
 	},

@@ -21,7 +21,10 @@ export const ApiSportsResponseSchema = z
 		parameters: z
 			.union([z.record(z.string(), z.unknown()), z.array(z.unknown())])
 			.optional(),
-		errors: z.array(z.unknown()).optional(),
+		// Live API returns [] on success and `{ token|endpoint: string }` on failure.
+		errors: z
+			.union([z.array(z.unknown()), z.record(z.string(), z.unknown())])
+			.optional(),
 		results: z.number().optional(),
 		paging: z
 			.object({
