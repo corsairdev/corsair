@@ -1,7 +1,7 @@
-import * as tools from './tools';
 import * as actions from './actions';
-import * as connections from './connections';
 import * as apps from './apps';
+import * as connections from './connections';
+import * as tools from './tools';
 
 export const ToolsEndpoints = {
 	list: tools.list,
