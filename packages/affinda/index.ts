@@ -12,9 +12,9 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
-	affindaEndpointMeta as generatedAffindaEndpointMeta,
 	affindaEndpointSchemas,
 	affindaEndpointsNested,
+	affindaEndpointMeta as generatedAffindaEndpointMeta,
 } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { AffindaSchema } from './schema';
@@ -39,7 +39,9 @@ export type AffindaContext = CorsairPluginContext<
 
 export type AffindaKeyBuilderContext = KeyBuilderContext<AffindaPluginOptions>;
 
-export type AffindaBoundEndpoints = BindEndpoints<typeof affindaEndpointsNested>;
+export type AffindaBoundEndpoints = BindEndpoints<
+	typeof affindaEndpointsNested
+>;
 
 export type AffindaEndpoints = typeof affindaEndpointsNested;
 

@@ -31,5 +31,5 @@ export const OrganizationsEndpoints = {
 	deleteOrganization,
 	getOrganization,
 	getOrganizations,
-	updateOrganization
+	updateOrganization,
 } as const;

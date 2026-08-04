@@ -7,27 +7,54 @@ export const createResumeSearch: AffindaEndpoint = async (ctx, input = {}) => {
 };
 
 const createResumeSearchEmbedUrlRoute = getRoute('createResumeSearchEmbedUrl');
-export const createResumeSearchEmbedUrl: AffindaEndpoint = async (ctx, input = {}) => {
+export const createResumeSearchEmbedUrl: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, createResumeSearchEmbedUrlRoute);
 };
 
 const listResumeSearchConfigRoute = getRoute('listResumeSearchConfig');
-export const listResumeSearchConfig: AffindaEndpoint = async (ctx, input = {}) => {
+export const listResumeSearchConfig: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, listResumeSearchConfigRoute);
 };
 
-const listResumeSearchJobTitleSuggestionsRoute = getRoute('listResumeSearchJobTitleSuggestions');
-export const listResumeSearchJobTitleSuggestions: AffindaEndpoint = async (ctx, input = {}) => {
-	return executeAffindaOperation(ctx, input, listResumeSearchJobTitleSuggestionsRoute);
+const listResumeSearchJobTitleSuggestionsRoute = getRoute(
+	'listResumeSearchJobTitleSuggestions',
+);
+export const listResumeSearchJobTitleSuggestions: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAffindaOperation(
+		ctx,
+		input,
+		listResumeSearchJobTitleSuggestionsRoute,
+	);
 };
 
-const listResumeSearchSkillSuggestionsRoute = getRoute('listResumeSearchSkillSuggestions');
-export const listResumeSearchSkillSuggestions: AffindaEndpoint = async (ctx, input = {}) => {
-	return executeAffindaOperation(ctx, input, listResumeSearchSkillSuggestionsRoute);
+const listResumeSearchSkillSuggestionsRoute = getRoute(
+	'listResumeSearchSkillSuggestions',
+);
+export const listResumeSearchSkillSuggestions: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAffindaOperation(
+		ctx,
+		input,
+		listResumeSearchSkillSuggestionsRoute,
+	);
 };
 
 const updateResumeSearchConfigRoute = getRoute('updateResumeSearchConfig');
-export const updateResumeSearchConfig: AffindaEndpoint = async (ctx, input = {}) => {
+export const updateResumeSearchConfig: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, updateResumeSearchConfigRoute);
 };
 
@@ -37,5 +64,5 @@ export const ResumeSearchEndpoints = {
 	listResumeSearchConfig,
 	listResumeSearchJobTitleSuggestions,
 	listResumeSearchSkillSuggestions,
-	updateResumeSearchConfig
+	updateResumeSearchConfig,
 } as const;

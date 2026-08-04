@@ -37,5 +37,5 @@ export const WorkspacesEndpoints = {
 	getUsageByWorkspace,
 	getWorkspace,
 	getWorkspaces,
-	updateWorkspace
+	updateWorkspace,
 } as const;

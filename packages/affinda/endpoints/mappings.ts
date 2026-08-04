@@ -31,5 +31,5 @@ export const MappingsEndpoints = {
 	deleteMapping,
 	getMapping,
 	listMappings,
-	updateMapping
+	updateMapping,
 } as const;

@@ -7,5 +7,5 @@ export const splitDocumentPages: AffindaEndpoint = async (ctx, input = {}) => {
 };
 
 export const ValidationEndpoints = {
-	splitDocumentPages
+	splitDocumentPages,
 } as const;

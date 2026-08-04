@@ -2,7 +2,10 @@ import type { AffindaEndpoint } from './factory';
 import { executeAffindaOperation, getRoute } from './factory';
 
 const getAllDocumentSplittersRoute = getRoute('getAllDocumentSplitters');
-export const getAllDocumentSplitters: AffindaEndpoint = async (ctx, input = {}) => {
+export const getAllDocumentSplitters: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, getAllDocumentSplittersRoute);
 };
 
@@ -13,5 +16,5 @@ export const getDocumentSplitter: AffindaEndpoint = async (ctx, input = {}) => {
 
 export const DocumentSplittersEndpoints = {
 	getAllDocumentSplitters,
-	getDocumentSplitter
+	getDocumentSplitter,
 } as const;

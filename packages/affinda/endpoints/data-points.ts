@@ -31,5 +31,5 @@ export const DataPointsEndpoints = {
 	deleteDataPoint,
 	getDataPoint,
 	listDataPoints,
-	updateDataPoint
+	updateDataPoint,
 } as const;

@@ -6,8 +6,13 @@ export const createCollection: AffindaEndpoint = async (ctx, input = {}) => {
 	return executeAffindaOperation(ctx, input, createCollectionRoute);
 };
 
-const createDataFieldForCollectionRoute = getRoute('createDataFieldForCollection');
-export const createDataFieldForCollection: AffindaEndpoint = async (ctx, input = {}) => {
+const createDataFieldForCollectionRoute = getRoute(
+	'createDataFieldForCollection',
+);
+export const createDataFieldForCollection: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, createDataFieldForCollectionRoute);
 };
 
@@ -41,8 +46,13 @@ export const updateCollection: AffindaEndpoint = async (ctx, input = {}) => {
 	return executeAffindaOperation(ctx, input, updateCollectionRoute);
 };
 
-const updateDataFieldForCollectionRoute = getRoute('updateDataFieldForCollection');
-export const updateDataFieldForCollection: AffindaEndpoint = async (ctx, input = {}) => {
+const updateDataFieldForCollectionRoute = getRoute(
+	'updateDataFieldForCollection',
+);
+export const updateDataFieldForCollection: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, updateDataFieldForCollectionRoute);
 };
 
@@ -55,5 +65,5 @@ export const CollectionsEndpoints = {
 	getCollections,
 	getCollectionUsage,
 	updateCollection,
-	updateDataFieldForCollection
+	updateDataFieldForCollection,
 } as const;

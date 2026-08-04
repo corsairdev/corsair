@@ -1,3 +1,4 @@
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import { AnnotationsEndpoints } from './annotations';
 import { ApiUsersEndpoints } from './api-users';
 import { CollectionsEndpoints } from './collections';
@@ -17,14 +18,16 @@ import { OrganizationMembershipsEndpoints } from './organization-memberships';
 import { OrganizationsEndpoints } from './organizations';
 import { ResthooksEndpoints } from './resthooks';
 import { ResumeSearchEndpoints } from './resume-search';
+import { affindaRoutes } from './routes';
 import { TagsEndpoints } from './tags';
+import {
+	AffindaEndpointInputSchemas,
+	AffindaEndpointOutputSchemas,
+} from './types';
 import { ValidationEndpoints } from './validation';
 import { ValidationResultsEndpoints } from './validation-results';
 import { WorkspaceMembershipsEndpoints } from './workspace-memberships';
 import { WorkspacesEndpoints } from './workspaces';
-import type { RequiredPluginEndpointMeta } from 'corsair/core';
-import { affindaRoutes } from './routes';
-import { AffindaEndpointInputSchemas, AffindaEndpointOutputSchemas } from './types';
 
 export const affindaEndpointsNested = {
 	annotations: AnnotationsEndpoints,
@@ -50,7 +53,7 @@ export const affindaEndpointsNested = {
 	validation: ValidationEndpoints,
 	validationResults: ValidationResultsEndpoints,
 	workspaceMemberships: WorkspaceMembershipsEndpoints,
-	workspaces: WorkspacesEndpoints
+	workspaces: WorkspacesEndpoints,
 } as const;
 
 export const affindaEndpointMeta = Object.fromEntries(

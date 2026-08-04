@@ -104,9 +104,14 @@ describe('Affinda endpoints', () => {
 	it('maps representative operations to API routes', async () => {
 		const plugin = affinda({ key: 'test-api-key' });
 		// Test-only: narrow to representative document endpoints for route-mapping assertions.
-		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
 			documents: {
-				getDocuments: (ctx: AffindaContext, input: { workspace?: string }) => Promise<unknown>;
+				getDocuments: (
+					ctx: AffindaContext,
+					input: { workspace?: string },
+				) => Promise<unknown>;
 				createDocument: (
 					ctx: AffindaContext,
 					input: { url?: string; workspace?: string },

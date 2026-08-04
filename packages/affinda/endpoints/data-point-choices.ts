@@ -2,7 +2,10 @@ import type { AffindaEndpoint } from './factory';
 import { executeAffindaOperation, getRoute } from './factory';
 
 const createDataPointChoiceRoute = getRoute('createDataPointChoice');
-export const createDataPointChoice: AffindaEndpoint = async (ctx, input = {}) => {
+export const createDataPointChoice: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, createDataPointChoiceRoute);
 };
 
@@ -12,17 +15,26 @@ export const getDataPointChoice: AffindaEndpoint = async (ctx, input = {}) => {
 };
 
 const listDataPointChoicesRoute = getRoute('listDataPointChoices');
-export const listDataPointChoices: AffindaEndpoint = async (ctx, input = {}) => {
+export const listDataPointChoices: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, listDataPointChoicesRoute);
 };
 
 const replaceDataPointChoicesRoute = getRoute('replaceDataPointChoices');
-export const replaceDataPointChoices: AffindaEndpoint = async (ctx, input = {}) => {
+export const replaceDataPointChoices: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, replaceDataPointChoicesRoute);
 };
 
 const updateDataPointChoiceRoute = getRoute('updateDataPointChoice');
-export const updateDataPointChoice: AffindaEndpoint = async (ctx, input = {}) => {
+export const updateDataPointChoice: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, updateDataPointChoiceRoute);
 };
 
@@ -31,5 +43,5 @@ export const DataPointChoicesEndpoints = {
 	getDataPointChoice,
 	listDataPointChoices,
 	replaceDataPointChoices,
-	updateDataPointChoice
+	updateDataPointChoice,
 } as const;

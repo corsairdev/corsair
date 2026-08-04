@@ -31,5 +31,5 @@ export const ExtractorsEndpoints = {
 	deleteExtractor,
 	getExtractor,
 	getExtractors,
-	updateExtractor
+	updateExtractor,
 } as const;

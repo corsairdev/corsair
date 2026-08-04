@@ -31,5 +31,5 @@ export const TagsEndpoints = {
 	deleteTag,
 	getAllTags,
 	getTag,
-	updateTag
+	updateTag,
 } as const;

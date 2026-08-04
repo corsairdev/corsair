@@ -12,7 +12,10 @@ export const createDocument: AffindaEndpoint = async (ctx, input = {}) => {
 };
 
 const createFromDataDocumentsRoute = getRoute('createFromDataDocuments');
-export const createFromDataDocuments: AffindaEndpoint = async (ctx, input = {}) => {
+export const createFromDataDocuments: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, createFromDataDocumentsRoute);
 };
 
@@ -37,7 +40,10 @@ export const getDocuments: AffindaEndpoint = async (ctx, input = {}) => {
 };
 
 const removeTagFromDocumentsRoute = getRoute('removeTagFromDocuments');
-export const removeTagFromDocuments: AffindaEndpoint = async (ctx, input = {}) => {
+export const removeTagFromDocuments: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, removeTagFromDocumentsRoute);
 };
 
@@ -61,5 +67,5 @@ export const DocumentsEndpoints = {
 	getDocuments,
 	removeTagFromDocuments,
 	updateDocument,
-	updateDocumentData
+	updateDocumentData,
 } as const;

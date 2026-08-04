@@ -31,5 +31,5 @@ export const IndexesEndpoints = {
 	deleteIndex,
 	getIndexDocuments,
 	listIndexes,
-	updateIndex
+	updateIndex,
 } as const;

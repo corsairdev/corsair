@@ -31,5 +31,5 @@ export const InvitationsEndpoints = {
 	deleteInvitation,
 	getAllInvitations,
 	getInvitation,
-	updateInvitation
+	updateInvitation,
 } as const;

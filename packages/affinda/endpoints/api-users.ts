@@ -13,5 +13,5 @@ export const getAllApiUsers: AffindaEndpoint = async (ctx, input = {}) => {
 
 export const ApiUsersEndpoints = {
 	createApiUser,
-	getAllApiUsers
+	getAllApiUsers,
 } as const;

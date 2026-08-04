@@ -2,17 +2,26 @@ import type { AffindaEndpoint } from './factory';
 import { executeAffindaOperation, getRoute } from './factory';
 
 const batchUpdateAnnotationsRoute = getRoute('batchUpdateAnnotations');
-export const batchUpdateAnnotations: AffindaEndpoint = async (ctx, input = {}) => {
+export const batchUpdateAnnotations: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, batchUpdateAnnotationsRoute);
 };
 
 const createBatchAnnotationsRoute = getRoute('createBatchAnnotations');
-export const createBatchAnnotations: AffindaEndpoint = async (ctx, input = {}) => {
+export const createBatchAnnotations: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, createBatchAnnotationsRoute);
 };
 
 const deleteAnnotationsBatchRoute = getRoute('deleteAnnotationsBatch');
-export const deleteAnnotationsBatch: AffindaEndpoint = async (ctx, input = {}) => {
+export const deleteAnnotationsBatch: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, deleteAnnotationsBatchRoute);
 };
 
@@ -31,5 +40,5 @@ export const AnnotationsEndpoints = {
 	createBatchAnnotations,
 	deleteAnnotationsBatch,
 	getAnnotations,
-	updateAnnotation
+	updateAnnotation,
 } as const;

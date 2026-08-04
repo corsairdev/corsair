@@ -17,13 +17,25 @@ export const getDocumentType: AffindaEndpoint = async (ctx, input = {}) => {
 };
 
 const getDocumentTypeJsonSchemaRoute = getRoute('getDocumentTypeJsonSchema');
-export const getDocumentTypeJsonSchema: AffindaEndpoint = async (ctx, input = {}) => {
+export const getDocumentTypeJsonSchema: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, getDocumentTypeJsonSchemaRoute);
 };
 
-const getDocumentTypePydanticModelsRoute = getRoute('getDocumentTypePydanticModels');
-export const getDocumentTypePydanticModels: AffindaEndpoint = async (ctx, input = {}) => {
-	return executeAffindaOperation(ctx, input, getDocumentTypePydanticModelsRoute);
+const getDocumentTypePydanticModelsRoute = getRoute(
+	'getDocumentTypePydanticModels',
+);
+export const getDocumentTypePydanticModels: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAffindaOperation(
+		ctx,
+		input,
+		getDocumentTypePydanticModelsRoute,
+	);
 };
 
 const getDocumentTypesRoute = getRoute('getDocumentTypes');
@@ -43,5 +55,5 @@ export const DocumentTypesEndpoints = {
 	getDocumentTypeJsonSchema,
 	getDocumentTypePydanticModels,
 	getDocumentTypes,
-	updateDocumentType
+	updateDocumentType,
 } as const;

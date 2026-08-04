@@ -7,7 +7,10 @@ export const createDataSource: AffindaEndpoint = async (ctx, input = {}) => {
 };
 
 const createDataSourceValueRoute = getRoute('createDataSourceValue');
-export const createDataSourceValue: AffindaEndpoint = async (ctx, input = {}) => {
+export const createDataSourceValue: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, createDataSourceValueRoute);
 };
 
@@ -17,7 +20,10 @@ export const deleteDataSource: AffindaEndpoint = async (ctx, input = {}) => {
 };
 
 const deleteDataSourceValueRoute = getRoute('deleteDataSourceValue');
-export const deleteDataSourceValue: AffindaEndpoint = async (ctx, input = {}) => {
+export const deleteDataSourceValue: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, deleteDataSourceValueRoute);
 };
 
@@ -42,12 +48,18 @@ export const listDataSources: AffindaEndpoint = async (ctx, input = {}) => {
 };
 
 const replaceDataSourceValuesRoute = getRoute('replaceDataSourceValues');
-export const replaceDataSourceValues: AffindaEndpoint = async (ctx, input = {}) => {
+export const replaceDataSourceValues: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, replaceDataSourceValuesRoute);
 };
 
 const updateDataSourceValueRoute = getRoute('updateDataSourceValue');
-export const updateDataSourceValue: AffindaEndpoint = async (ctx, input = {}) => {
+export const updateDataSourceValue: AffindaEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAffindaOperation(ctx, input, updateDataSourceValueRoute);
 };
 
@@ -61,5 +73,5 @@ export const DataSourcesEndpoints = {
 	getDataSourceValues,
 	listDataSources,
 	replaceDataSourceValues,
-	updateDataSourceValue
+	updateDataSourceValue,
 } as const;
