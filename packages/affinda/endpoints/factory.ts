@@ -3,14 +3,25 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAffindaRequest } from '../client';
 import type { AffindaContext } from '../index';
 import { syncAffindaOperationCache } from './cache-sync';
-import { affindaRoutes, type AffindaRoute } from './routes';
+import type { AffindaRoute } from './routes';
+import { affindaRoutes } from './routes';
 import type { AffindaEndpointInput } from './types';
 
 const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
-	identifier: ['identifier', 'collection_id', 'collectionId', 'document_id', 'documentId'],
+	identifier: [
+		'identifier',
+		'collection_id',
+		'collectionId',
+		'document_id',
+		'documentId',
+	],
 	id: ['id'],
 	name: ['name', 'index_name', 'indexName'],
-	datapoint_identifier: ['datapoint_identifier', 'datapointIdentifier', 'data_point_id'],
+	datapoint_identifier: [
+		'datapoint_identifier',
+		'datapointIdentifier',
+		'data_point_id',
+	],
 	value: ['value'],
 	token: ['token'],
 };
@@ -24,7 +35,10 @@ export type AffindaEndpoint = CorsairEndpoint<
 >;
 
 function camelToSnake(value: string): string {
-	return value.replace(/([A-Z])/g, '_$1').replace(/^_/, '').toLowerCase();
+	return value
+		.replace(/([A-Z])/g, '_$1')
+		.replace(/^_/, '')
+		.toLowerCase();
 }
 
 function encodePathPart(value: unknown): string {
@@ -34,7 +48,10 @@ function encodePathPart(value: unknown): string {
 	return encodeURIComponent(String(value));
 }
 
-function resolvePathParam(input: AffindaEndpointInput, pathKey: string): unknown {
+function resolvePathParam(
+	input: AffindaEndpointInput,
+	pathKey: string,
+): unknown {
 	const snake = camelToSnake(pathKey);
 	const candidates = [pathKey, snake, ...(PATH_PARAM_ALIASES[pathKey] ?? [])];
 	for (const candidate of candidates) {
@@ -67,28 +84,58 @@ function buildQuery(route: AffindaRoute, input: AffindaEndpointInput) {
 	const query: Record<string, unknown> = { ...(input.query ?? {}) };
 	for (const key of route.queryParams ?? []) {
 		const snake = camelToSnake(key);
-		const value =
-			input[snake] ?? input[key] ?? resolvePathParam(input, key);
+		const value = input[snake] ?? input[key] ?? resolvePathParam(input, key);
 		if (value !== undefined) query[key] = value;
 	}
 	return Object.keys(query).length > 0 ? query : undefined;
 }
 
+// Affinda batch endpoints expect a raw JSON array body, not `{ items: [...] }`.
+// Confirmed live against api.affinda.com/v3 — object wrappers return 400/500.
+const ARRAY_BODY_FIELD_BY_ROUTE: Record<string, string> = {
+	batchUpdateAnnotations: 'annotations',
+	createBatchAnnotations: 'annotations',
+	deleteAnnotationsBatch: 'annotation_ids',
+	createValidationResultsBatch: 'validation_results',
+	// Confirmed live: PUT /mapping_data_sources/{id}/values expects a raw array.
+	replaceDataSourceValues: 'values',
+};
+
+function snakeCaseKeys(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map(snakeCaseKeys);
+	if (!value || typeof value !== 'object') return value;
+	return Object.fromEntries(
+		Object.entries(value as Record<string, unknown>).map(([key, nested]) => [
+			camelToSnake(key),
+			snakeCaseKeys(nested),
+		]),
+	);
+}
+
 function requestBody(route: AffindaRoute, input: AffindaEndpointInput) {
 	if ('body' in input && input.body !== undefined) return input.body;
+
+	const arrayField = ARRAY_BODY_FIELD_BY_ROUTE[route.name];
+	if (arrayField !== undefined && input[arrayField] !== undefined) {
+		return snakeCaseKeys(input[arrayField]);
+	}
+
 	const pathParams = new Set(route.pathParams ?? []);
 	const queryParams = new Set(
 		(route.queryParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
 	);
 	const body = Object.fromEntries(
-		Object.entries(input).filter(([key, value]) => {
-			return (
-				!pathParams.has(key) &&
-				!queryParams.has(key) &&
-				!BODY_CONTROL_KEYS.has(key) &&
-				value !== undefined
-			);
-		}),
+		Object.entries(input)
+			.filter(([key, value]) => {
+				return (
+					!pathParams.has(key) &&
+					!queryParams.has(key) &&
+					!BODY_CONTROL_KEYS.has(key) &&
+					value !== undefined
+				);
+			})
+			// Affinda OpenAPI bodies use snake_case field names.
+			.map(([key, value]) => [camelToSnake(key), snakeCaseKeys(value)]),
 	);
 	return Object.keys(body).length > 0 ? body : undefined;
 }

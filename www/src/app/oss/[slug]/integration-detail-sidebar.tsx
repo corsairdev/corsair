@@ -1,9 +1,8 @@
 import type { ReactNode } from 'react';
 import type { IntegrationPhase } from '@/db/schema';
-
-import { IntegrationStatusBadge } from '../integration-status-badge';
 import { ContributorLink } from '../contributor-link';
 import { IntegrationRewardDisplay } from '../integration-reward-display';
+import { IntegrationStatusBadge } from '../integration-status-badge';
 import { UnclaimIntegrationButton } from '../unclaim-integration-button';
 import { ClaimTimeline } from './claim-timeline';
 import { IntegrationUrlsSection } from './integration-urls-section';

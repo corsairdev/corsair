@@ -11,7 +11,9 @@ const AffindaBatchItemsSchema = z.array(z.unknown());
 const AffindaBatchItemsOptionalSchema = z.array(z.unknown()).optional();
 // Config/metadata objects are loosely typed in Affinda API docs.
 const AffindaLooseRecordSchema = z.record(z.string(), z.unknown());
-const AffindaLooseRecordOptionalSchema = z.record(z.string(), z.unknown()).optional();
+const AffindaLooseRecordOptionalSchema = z
+	.record(z.string(), z.unknown())
+	.optional();
 
 // addTagToDocuments
 const AddTagToDocumentsInputSchema = z.object({
@@ -21,9 +23,13 @@ const AddTagToDocumentsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type AddTagToDocumentsInput = z.infer<typeof AddTagToDocumentsInputSchema>;
+export type AddTagToDocumentsInput = z.infer<
+	typeof AddTagToDocumentsInputSchema
+>;
 const AddTagToDocumentsResponseSchema = AffindaResponseSchema;
-export type AddTagToDocumentsResponse = z.infer<typeof AddTagToDocumentsResponseSchema>;
+export type AddTagToDocumentsResponse = z.infer<
+	typeof AddTagToDocumentsResponseSchema
+>;
 
 // batchUpdateAnnotations
 const BatchUpdateAnnotationsInputSchema = z.object({
@@ -32,9 +38,13 @@ const BatchUpdateAnnotationsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type BatchUpdateAnnotationsInput = z.infer<typeof BatchUpdateAnnotationsInputSchema>;
+export type BatchUpdateAnnotationsInput = z.infer<
+	typeof BatchUpdateAnnotationsInputSchema
+>;
 const BatchUpdateAnnotationsResponseSchema = AffindaResponseSchema;
-export type BatchUpdateAnnotationsResponse = z.infer<typeof BatchUpdateAnnotationsResponseSchema>;
+export type BatchUpdateAnnotationsResponse = z.infer<
+	typeof BatchUpdateAnnotationsResponseSchema
+>;
 
 // createApiUser
 const CreateApiUserInputSchema = z.object({
@@ -58,9 +68,13 @@ const CreateBatchAnnotationsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateBatchAnnotationsInput = z.infer<typeof CreateBatchAnnotationsInputSchema>;
+export type CreateBatchAnnotationsInput = z.infer<
+	typeof CreateBatchAnnotationsInputSchema
+>;
 const CreateBatchAnnotationsResponseSchema = AffindaResponseSchema;
-export type CreateBatchAnnotationsResponse = z.infer<typeof CreateBatchAnnotationsResponseSchema>;
+export type CreateBatchAnnotationsResponse = z.infer<
+	typeof CreateBatchAnnotationsResponseSchema
+>;
 
 // createCollection
 const CreateCollectionInputSchema = z.object({
@@ -73,7 +87,9 @@ const CreateCollectionInputSchema = z.object({
 });
 export type CreateCollectionInput = z.infer<typeof CreateCollectionInputSchema>;
 const CreateCollectionResponseSchema = AffindaResponseSchema;
-export type CreateCollectionResponse = z.infer<typeof CreateCollectionResponseSchema>;
+export type CreateCollectionResponse = z.infer<
+	typeof CreateCollectionResponseSchema
+>;
 
 // createDataFieldForCollection
 const CreateDataFieldForCollectionInputSchema = z.object({
@@ -85,9 +101,13 @@ const CreateDataFieldForCollectionInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateDataFieldForCollectionInput = z.infer<typeof CreateDataFieldForCollectionInputSchema>;
+export type CreateDataFieldForCollectionInput = z.infer<
+	typeof CreateDataFieldForCollectionInputSchema
+>;
 const CreateDataFieldForCollectionResponseSchema = AffindaResponseSchema;
-export type CreateDataFieldForCollectionResponse = z.infer<typeof CreateDataFieldForCollectionResponseSchema>;
+export type CreateDataFieldForCollectionResponse = z.infer<
+	typeof CreateDataFieldForCollectionResponseSchema
+>;
 
 // createDataPoint
 const CreateDataPointInputSchema = z.object({
@@ -108,7 +128,9 @@ const CreateDataPointInputSchema = z.object({
 });
 export type CreateDataPointInput = z.infer<typeof CreateDataPointInputSchema>;
 const CreateDataPointResponseSchema = AffindaResponseSchema;
-export type CreateDataPointResponse = z.infer<typeof CreateDataPointResponseSchema>;
+export type CreateDataPointResponse = z.infer<
+	typeof CreateDataPointResponseSchema
+>;
 
 // createDataPointChoice
 const CreateDataPointChoiceInputSchema = z.object({
@@ -123,9 +145,13 @@ const CreateDataPointChoiceInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateDataPointChoiceInput = z.infer<typeof CreateDataPointChoiceInputSchema>;
+export type CreateDataPointChoiceInput = z.infer<
+	typeof CreateDataPointChoiceInputSchema
+>;
 const CreateDataPointChoiceResponseSchema = AffindaResponseSchema;
-export type CreateDataPointChoiceResponse = z.infer<typeof CreateDataPointChoiceResponseSchema>;
+export type CreateDataPointChoiceResponse = z.infer<
+	typeof CreateDataPointChoiceResponseSchema
+>;
 
 // createDataSource
 const CreateDataSourceInputSchema = z.object({
@@ -143,7 +169,9 @@ const CreateDataSourceInputSchema = z.object({
 });
 export type CreateDataSourceInput = z.infer<typeof CreateDataSourceInputSchema>;
 const CreateDataSourceResponseSchema = AffindaResponseSchema;
-export type CreateDataSourceResponse = z.infer<typeof CreateDataSourceResponseSchema>;
+export type CreateDataSourceResponse = z.infer<
+	typeof CreateDataSourceResponseSchema
+>;
 
 // createDataSourceValue
 const CreateDataSourceValueInputSchema = z.object({
@@ -155,9 +183,13 @@ const CreateDataSourceValueInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateDataSourceValueInput = z.infer<typeof CreateDataSourceValueInputSchema>;
+export type CreateDataSourceValueInput = z.infer<
+	typeof CreateDataSourceValueInputSchema
+>;
 const CreateDataSourceValueResponseSchema = AffindaResponseSchema;
-export type CreateDataSourceValueResponse = z.infer<typeof CreateDataSourceValueResponseSchema>;
+export type CreateDataSourceValueResponse = z.infer<
+	typeof CreateDataSourceValueResponseSchema
+>;
 
 // createDocument
 const CreateDocumentInputSchema = z.object({
@@ -178,7 +210,9 @@ const CreateDocumentInputSchema = z.object({
 });
 export type CreateDocumentInput = z.infer<typeof CreateDocumentInputSchema>;
 const CreateDocumentResponseSchema = AffindaResponseSchema;
-export type CreateDocumentResponse = z.infer<typeof CreateDocumentResponseSchema>;
+export type CreateDocumentResponse = z.infer<
+	typeof CreateDocumentResponseSchema
+>;
 
 // createDocumentType
 const CreateDocumentTypeInputSchema = z.object({
@@ -189,9 +223,13 @@ const CreateDocumentTypeInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateDocumentTypeInput = z.infer<typeof CreateDocumentTypeInputSchema>;
+export type CreateDocumentTypeInput = z.infer<
+	typeof CreateDocumentTypeInputSchema
+>;
 const CreateDocumentTypeResponseSchema = AffindaResponseSchema;
-export type CreateDocumentTypeResponse = z.infer<typeof CreateDocumentTypeResponseSchema>;
+export type CreateDocumentTypeResponse = z.infer<
+	typeof CreateDocumentTypeResponseSchema
+>;
 
 // createExtractor
 const CreateExtractorInputSchema = z.object({
@@ -208,7 +246,9 @@ const CreateExtractorInputSchema = z.object({
 });
 export type CreateExtractorInput = z.infer<typeof CreateExtractorInputSchema>;
 const CreateExtractorResponseSchema = AffindaResponseSchema;
-export type CreateExtractorResponse = z.infer<typeof CreateExtractorResponseSchema>;
+export type CreateExtractorResponse = z.infer<
+	typeof CreateExtractorResponseSchema
+>;
 
 // createFromDataDocuments
 const CreateFromDataDocumentsInputSchema = z.object({
@@ -226,9 +266,13 @@ const CreateFromDataDocumentsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateFromDataDocumentsInput = z.infer<typeof CreateFromDataDocumentsInputSchema>;
+export type CreateFromDataDocumentsInput = z.infer<
+	typeof CreateFromDataDocumentsInputSchema
+>;
 const CreateFromDataDocumentsResponseSchema = AffindaResponseSchema;
-export type CreateFromDataDocumentsResponse = z.infer<typeof CreateFromDataDocumentsResponseSchema>;
+export type CreateFromDataDocumentsResponse = z.infer<
+	typeof CreateFromDataDocumentsResponseSchema
+>;
 
 // createIndex
 const CreateIndexInputSchema = z.object({
@@ -253,7 +297,9 @@ const CreateInvitationInputSchema = z.object({
 });
 export type CreateInvitationInput = z.infer<typeof CreateInvitationInputSchema>;
 const CreateInvitationResponseSchema = AffindaResponseSchema;
-export type CreateInvitationResponse = z.infer<typeof CreateInvitationResponseSchema>;
+export type CreateInvitationResponse = z.infer<
+	typeof CreateInvitationResponseSchema
+>;
 
 // createJobDescriptionSearch
 const CreateJobDescriptionSearchInputSchema = z.object({
@@ -293,9 +339,13 @@ const CreateJobDescriptionSearchInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateJobDescriptionSearchInput = z.infer<typeof CreateJobDescriptionSearchInputSchema>;
+export type CreateJobDescriptionSearchInput = z.infer<
+	typeof CreateJobDescriptionSearchInputSchema
+>;
 const CreateJobDescriptionSearchResponseSchema = AffindaResponseSchema;
-export type CreateJobDescriptionSearchResponse = z.infer<typeof CreateJobDescriptionSearchResponseSchema>;
+export type CreateJobDescriptionSearchResponse = z.infer<
+	typeof CreateJobDescriptionSearchResponseSchema
+>;
 
 // createJobDescriptionSearchEmbedUrl
 const CreateJobDescriptionSearchEmbedUrlInputSchema = z.object({
@@ -304,9 +354,13 @@ const CreateJobDescriptionSearchEmbedUrlInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateJobDescriptionSearchEmbedUrlInput = z.infer<typeof CreateJobDescriptionSearchEmbedUrlInputSchema>;
+export type CreateJobDescriptionSearchEmbedUrlInput = z.infer<
+	typeof CreateJobDescriptionSearchEmbedUrlInputSchema
+>;
 const CreateJobDescriptionSearchEmbedUrlResponseSchema = AffindaResponseSchema;
-export type CreateJobDescriptionSearchEmbedUrlResponse = z.infer<typeof CreateJobDescriptionSearchEmbedUrlResponseSchema>;
+export type CreateJobDescriptionSearchEmbedUrlResponse = z.infer<
+	typeof CreateJobDescriptionSearchEmbedUrlResponseSchema
+>;
 
 // createMapping
 const CreateMappingInputSchema = z.object({
@@ -329,9 +383,13 @@ const CreateOrganizationInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateOrganizationInput = z.infer<typeof CreateOrganizationInputSchema>;
+export type CreateOrganizationInput = z.infer<
+	typeof CreateOrganizationInputSchema
+>;
 const CreateOrganizationResponseSchema = AffindaResponseSchema;
-export type CreateOrganizationResponse = z.infer<typeof CreateOrganizationResponseSchema>;
+export type CreateOrganizationResponse = z.infer<
+	typeof CreateOrganizationResponseSchema
+>;
 
 // createResthookSubscription
 const CreateResthookSubscriptionInputSchema = z.object({
@@ -342,9 +400,13 @@ const CreateResthookSubscriptionInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateResthookSubscriptionInput = z.infer<typeof CreateResthookSubscriptionInputSchema>;
+export type CreateResthookSubscriptionInput = z.infer<
+	typeof CreateResthookSubscriptionInputSchema
+>;
 const CreateResthookSubscriptionResponseSchema = AffindaResponseSchema;
-export type CreateResthookSubscriptionResponse = z.infer<typeof CreateResthookSubscriptionResponseSchema>;
+export type CreateResthookSubscriptionResponse = z.infer<
+	typeof CreateResthookSubscriptionResponseSchema
+>;
 
 // createResumeSearch
 const CreateResumeSearchInputSchema = z.object({
@@ -393,9 +455,13 @@ const CreateResumeSearchInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateResumeSearchInput = z.infer<typeof CreateResumeSearchInputSchema>;
+export type CreateResumeSearchInput = z.infer<
+	typeof CreateResumeSearchInputSchema
+>;
 const CreateResumeSearchResponseSchema = AffindaResponseSchema;
-export type CreateResumeSearchResponse = z.infer<typeof CreateResumeSearchResponseSchema>;
+export type CreateResumeSearchResponse = z.infer<
+	typeof CreateResumeSearchResponseSchema
+>;
 
 // createResumeSearchEmbedUrl
 const CreateResumeSearchEmbedUrlInputSchema = z.object({
@@ -404,9 +470,13 @@ const CreateResumeSearchEmbedUrlInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateResumeSearchEmbedUrlInput = z.infer<typeof CreateResumeSearchEmbedUrlInputSchema>;
+export type CreateResumeSearchEmbedUrlInput = z.infer<
+	typeof CreateResumeSearchEmbedUrlInputSchema
+>;
 const CreateResumeSearchEmbedUrlResponseSchema = AffindaResponseSchema;
-export type CreateResumeSearchEmbedUrlResponse = z.infer<typeof CreateResumeSearchEmbedUrlResponseSchema>;
+export type CreateResumeSearchEmbedUrlResponse = z.infer<
+	typeof CreateResumeSearchEmbedUrlResponseSchema
+>;
 
 // createTag
 const CreateTagInputSchema = z.object({
@@ -431,9 +501,13 @@ const CreateValidationResultInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateValidationResultInput = z.infer<typeof CreateValidationResultInputSchema>;
+export type CreateValidationResultInput = z.infer<
+	typeof CreateValidationResultInputSchema
+>;
 const CreateValidationResultResponseSchema = AffindaResponseSchema;
-export type CreateValidationResultResponse = z.infer<typeof CreateValidationResultResponseSchema>;
+export type CreateValidationResultResponse = z.infer<
+	typeof CreateValidationResultResponseSchema
+>;
 
 // createValidationResultsBatch
 const CreateValidationResultsBatchInputSchema = z.object({
@@ -442,9 +516,13 @@ const CreateValidationResultsBatchInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateValidationResultsBatchInput = z.infer<typeof CreateValidationResultsBatchInputSchema>;
+export type CreateValidationResultsBatchInput = z.infer<
+	typeof CreateValidationResultsBatchInputSchema
+>;
 const CreateValidationResultsBatchResponseSchema = AffindaResponseSchema;
-export type CreateValidationResultsBatchResponse = z.infer<typeof CreateValidationResultsBatchResponseSchema>;
+export type CreateValidationResultsBatchResponse = z.infer<
+	typeof CreateValidationResultsBatchResponseSchema
+>;
 
 // createWorkspace
 const CreateWorkspaceInputSchema = z.object({
@@ -458,7 +536,9 @@ const CreateWorkspaceInputSchema = z.object({
 });
 export type CreateWorkspaceInput = z.infer<typeof CreateWorkspaceInputSchema>;
 const CreateWorkspaceResponseSchema = AffindaResponseSchema;
-export type CreateWorkspaceResponse = z.infer<typeof CreateWorkspaceResponseSchema>;
+export type CreateWorkspaceResponse = z.infer<
+	typeof CreateWorkspaceResponseSchema
+>;
 
 // createWorkspaceMembership
 const CreateWorkspaceMembershipInputSchema = z.object({
@@ -468,9 +548,13 @@ const CreateWorkspaceMembershipInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateWorkspaceMembershipInput = z.infer<typeof CreateWorkspaceMembershipInputSchema>;
+export type CreateWorkspaceMembershipInput = z.infer<
+	typeof CreateWorkspaceMembershipInputSchema
+>;
 const CreateWorkspaceMembershipResponseSchema = AffindaResponseSchema;
-export type CreateWorkspaceMembershipResponse = z.infer<typeof CreateWorkspaceMembershipResponseSchema>;
+export type CreateWorkspaceMembershipResponse = z.infer<
+	typeof CreateWorkspaceMembershipResponseSchema
+>;
 
 // deleteAnnotationsBatch
 const DeleteAnnotationsBatchInputSchema = z.object({
@@ -479,9 +563,13 @@ const DeleteAnnotationsBatchInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteAnnotationsBatchInput = z.infer<typeof DeleteAnnotationsBatchInputSchema>;
+export type DeleteAnnotationsBatchInput = z.infer<
+	typeof DeleteAnnotationsBatchInputSchema
+>;
 const DeleteAnnotationsBatchResponseSchema = AffindaResponseSchema;
-export type DeleteAnnotationsBatchResponse = z.infer<typeof DeleteAnnotationsBatchResponseSchema>;
+export type DeleteAnnotationsBatchResponse = z.infer<
+	typeof DeleteAnnotationsBatchResponseSchema
+>;
 
 // deleteCollection
 const DeleteCollectionInputSchema = z.object({
@@ -492,7 +580,9 @@ const DeleteCollectionInputSchema = z.object({
 });
 export type DeleteCollectionInput = z.infer<typeof DeleteCollectionInputSchema>;
 const DeleteCollectionResponseSchema = AffindaResponseSchema;
-export type DeleteCollectionResponse = z.infer<typeof DeleteCollectionResponseSchema>;
+export type DeleteCollectionResponse = z.infer<
+	typeof DeleteCollectionResponseSchema
+>;
 
 // deleteDataPoint
 const DeleteDataPointInputSchema = z.object({
@@ -503,7 +593,9 @@ const DeleteDataPointInputSchema = z.object({
 });
 export type DeleteDataPointInput = z.infer<typeof DeleteDataPointInputSchema>;
 const DeleteDataPointResponseSchema = AffindaResponseSchema;
-export type DeleteDataPointResponse = z.infer<typeof DeleteDataPointResponseSchema>;
+export type DeleteDataPointResponse = z.infer<
+	typeof DeleteDataPointResponseSchema
+>;
 
 // deleteDataSource
 const DeleteDataSourceInputSchema = z.object({
@@ -514,7 +606,9 @@ const DeleteDataSourceInputSchema = z.object({
 });
 export type DeleteDataSourceInput = z.infer<typeof DeleteDataSourceInputSchema>;
 const DeleteDataSourceResponseSchema = AffindaResponseSchema;
-export type DeleteDataSourceResponse = z.infer<typeof DeleteDataSourceResponseSchema>;
+export type DeleteDataSourceResponse = z.infer<
+	typeof DeleteDataSourceResponseSchema
+>;
 
 // deleteDataSourceValue
 const DeleteDataSourceValueInputSchema = z.object({
@@ -524,9 +618,13 @@ const DeleteDataSourceValueInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteDataSourceValueInput = z.infer<typeof DeleteDataSourceValueInputSchema>;
+export type DeleteDataSourceValueInput = z.infer<
+	typeof DeleteDataSourceValueInputSchema
+>;
 const DeleteDataSourceValueResponseSchema = AffindaResponseSchema;
-export type DeleteDataSourceValueResponse = z.infer<typeof DeleteDataSourceValueResponseSchema>;
+export type DeleteDataSourceValueResponse = z.infer<
+	typeof DeleteDataSourceValueResponseSchema
+>;
 
 // deleteDocument
 const DeleteDocumentInputSchema = z.object({
@@ -537,7 +635,9 @@ const DeleteDocumentInputSchema = z.object({
 });
 export type DeleteDocumentInput = z.infer<typeof DeleteDocumentInputSchema>;
 const DeleteDocumentResponseSchema = AffindaResponseSchema;
-export type DeleteDocumentResponse = z.infer<typeof DeleteDocumentResponseSchema>;
+export type DeleteDocumentResponse = z.infer<
+	typeof DeleteDocumentResponseSchema
+>;
 
 // deleteDocumentType
 const DeleteDocumentTypeInputSchema = z.object({
@@ -546,9 +646,13 @@ const DeleteDocumentTypeInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteDocumentTypeInput = z.infer<typeof DeleteDocumentTypeInputSchema>;
+export type DeleteDocumentTypeInput = z.infer<
+	typeof DeleteDocumentTypeInputSchema
+>;
 const DeleteDocumentTypeResponseSchema = AffindaResponseSchema;
-export type DeleteDocumentTypeResponse = z.infer<typeof DeleteDocumentTypeResponseSchema>;
+export type DeleteDocumentTypeResponse = z.infer<
+	typeof DeleteDocumentTypeResponseSchema
+>;
 
 // deleteExtractor
 const DeleteExtractorInputSchema = z.object({
@@ -559,7 +663,9 @@ const DeleteExtractorInputSchema = z.object({
 });
 export type DeleteExtractorInput = z.infer<typeof DeleteExtractorInputSchema>;
 const DeleteExtractorResponseSchema = AffindaResponseSchema;
-export type DeleteExtractorResponse = z.infer<typeof DeleteExtractorResponseSchema>;
+export type DeleteExtractorResponse = z.infer<
+	typeof DeleteExtractorResponseSchema
+>;
 
 // deleteIndex
 const DeleteIndexInputSchema = z.object({
@@ -581,7 +687,9 @@ const DeleteInvitationInputSchema = z.object({
 });
 export type DeleteInvitationInput = z.infer<typeof DeleteInvitationInputSchema>;
 const DeleteInvitationResponseSchema = AffindaResponseSchema;
-export type DeleteInvitationResponse = z.infer<typeof DeleteInvitationResponseSchema>;
+export type DeleteInvitationResponse = z.infer<
+	typeof DeleteInvitationResponseSchema
+>;
 
 // deleteMapping
 const DeleteMappingInputSchema = z.object({
@@ -601,9 +709,13 @@ const DeleteOrganizationInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteOrganizationInput = z.infer<typeof DeleteOrganizationInputSchema>;
+export type DeleteOrganizationInput = z.infer<
+	typeof DeleteOrganizationInputSchema
+>;
 const DeleteOrganizationResponseSchema = AffindaResponseSchema;
-export type DeleteOrganizationResponse = z.infer<typeof DeleteOrganizationResponseSchema>;
+export type DeleteOrganizationResponse = z.infer<
+	typeof DeleteOrganizationResponseSchema
+>;
 
 // deleteResthookSubscription
 const DeleteResthookSubscriptionInputSchema = z.object({
@@ -613,9 +725,13 @@ const DeleteResthookSubscriptionInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteResthookSubscriptionInput = z.infer<typeof DeleteResthookSubscriptionInputSchema>;
+export type DeleteResthookSubscriptionInput = z.infer<
+	typeof DeleteResthookSubscriptionInputSchema
+>;
 const DeleteResthookSubscriptionResponseSchema = AffindaResponseSchema;
-export type DeleteResthookSubscriptionResponse = z.infer<typeof DeleteResthookSubscriptionResponseSchema>;
+export type DeleteResthookSubscriptionResponse = z.infer<
+	typeof DeleteResthookSubscriptionResponseSchema
+>;
 
 // deleteTag
 const DeleteTagInputSchema = z.object({
@@ -635,9 +751,13 @@ const DeleteValidationResultsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteValidationResultsInput = z.infer<typeof DeleteValidationResultsInputSchema>;
+export type DeleteValidationResultsInput = z.infer<
+	typeof DeleteValidationResultsInputSchema
+>;
 const DeleteValidationResultsResponseSchema = AffindaResponseSchema;
-export type DeleteValidationResultsResponse = z.infer<typeof DeleteValidationResultsResponseSchema>;
+export type DeleteValidationResultsResponse = z.infer<
+	typeof DeleteValidationResultsResponseSchema
+>;
 
 // deleteWorkspace
 const DeleteWorkspaceInputSchema = z.object({
@@ -649,7 +769,9 @@ const DeleteWorkspaceInputSchema = z.object({
 });
 export type DeleteWorkspaceInput = z.infer<typeof DeleteWorkspaceInputSchema>;
 const DeleteWorkspaceResponseSchema = AffindaResponseSchema;
-export type DeleteWorkspaceResponse = z.infer<typeof DeleteWorkspaceResponseSchema>;
+export type DeleteWorkspaceResponse = z.infer<
+	typeof DeleteWorkspaceResponseSchema
+>;
 
 // deleteWorkspaceMembership
 const DeleteWorkspaceMembershipInputSchema = z.object({
@@ -658,9 +780,13 @@ const DeleteWorkspaceMembershipInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteWorkspaceMembershipInput = z.infer<typeof DeleteWorkspaceMembershipInputSchema>;
+export type DeleteWorkspaceMembershipInput = z.infer<
+	typeof DeleteWorkspaceMembershipInputSchema
+>;
 const DeleteWorkspaceMembershipResponseSchema = AffindaResponseSchema;
-export type DeleteWorkspaceMembershipResponse = z.infer<typeof DeleteWorkspaceMembershipResponseSchema>;
+export type DeleteWorkspaceMembershipResponse = z.infer<
+	typeof DeleteWorkspaceMembershipResponseSchema
+>;
 
 // getAllApiUsers
 const GetAllApiUsersInputSchema = z.object({
@@ -673,7 +799,9 @@ const GetAllApiUsersInputSchema = z.object({
 });
 export type GetAllApiUsersInput = z.infer<typeof GetAllApiUsersInputSchema>;
 const GetAllApiUsersResponseSchema = AffindaResponseSchema;
-export type GetAllApiUsersResponse = z.infer<typeof GetAllApiUsersResponseSchema>;
+export type GetAllApiUsersResponse = z.infer<
+	typeof GetAllApiUsersResponseSchema
+>;
 
 // getAllDocumentSplitters
 const GetAllDocumentSplittersInputSchema = z.object({
@@ -685,9 +813,13 @@ const GetAllDocumentSplittersInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAllDocumentSplittersInput = z.infer<typeof GetAllDocumentSplittersInputSchema>;
+export type GetAllDocumentSplittersInput = z.infer<
+	typeof GetAllDocumentSplittersInputSchema
+>;
 const GetAllDocumentSplittersResponseSchema = AffindaResponseSchema;
-export type GetAllDocumentSplittersResponse = z.infer<typeof GetAllDocumentSplittersResponseSchema>;
+export type GetAllDocumentSplittersResponse = z.infer<
+	typeof GetAllDocumentSplittersResponseSchema
+>;
 
 // getAllInvitations
 const GetAllInvitationsInputSchema = z.object({
@@ -700,9 +832,13 @@ const GetAllInvitationsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAllInvitationsInput = z.infer<typeof GetAllInvitationsInputSchema>;
+export type GetAllInvitationsInput = z.infer<
+	typeof GetAllInvitationsInputSchema
+>;
 const GetAllInvitationsResponseSchema = AffindaResponseSchema;
-export type GetAllInvitationsResponse = z.infer<typeof GetAllInvitationsResponseSchema>;
+export type GetAllInvitationsResponse = z.infer<
+	typeof GetAllInvitationsResponseSchema
+>;
 
 // getAllOrganizationMemberships
 const GetAllOrganizationMembershipsInputSchema = z.object({
@@ -714,9 +850,13 @@ const GetAllOrganizationMembershipsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAllOrganizationMembershipsInput = z.infer<typeof GetAllOrganizationMembershipsInputSchema>;
+export type GetAllOrganizationMembershipsInput = z.infer<
+	typeof GetAllOrganizationMembershipsInputSchema
+>;
 const GetAllOrganizationMembershipsResponseSchema = AffindaResponseSchema;
-export type GetAllOrganizationMembershipsResponse = z.infer<typeof GetAllOrganizationMembershipsResponseSchema>;
+export type GetAllOrganizationMembershipsResponse = z.infer<
+	typeof GetAllOrganizationMembershipsResponseSchema
+>;
 
 // getAllTags
 const GetAllTagsInputSchema = z.object({
@@ -741,9 +881,13 @@ const GetAllValidationResultsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAllValidationResultsInput = z.infer<typeof GetAllValidationResultsInputSchema>;
+export type GetAllValidationResultsInput = z.infer<
+	typeof GetAllValidationResultsInputSchema
+>;
 const GetAllValidationResultsResponseSchema = AffindaResponseSchema;
-export type GetAllValidationResultsResponse = z.infer<typeof GetAllValidationResultsResponseSchema>;
+export type GetAllValidationResultsResponse = z.infer<
+	typeof GetAllValidationResultsResponseSchema
+>;
 
 // getAllWorkspaceMemberships
 const GetAllWorkspaceMembershipsInputSchema = z.object({
@@ -755,9 +899,13 @@ const GetAllWorkspaceMembershipsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAllWorkspaceMembershipsInput = z.infer<typeof GetAllWorkspaceMembershipsInputSchema>;
+export type GetAllWorkspaceMembershipsInput = z.infer<
+	typeof GetAllWorkspaceMembershipsInputSchema
+>;
 const GetAllWorkspaceMembershipsResponseSchema = AffindaResponseSchema;
-export type GetAllWorkspaceMembershipsResponse = z.infer<typeof GetAllWorkspaceMembershipsResponseSchema>;
+export type GetAllWorkspaceMembershipsResponse = z.infer<
+	typeof GetAllWorkspaceMembershipsResponseSchema
+>;
 
 // getAnnotations
 const GetAnnotationsInputSchema = z.object({
@@ -768,7 +916,9 @@ const GetAnnotationsInputSchema = z.object({
 });
 export type GetAnnotationsInput = z.infer<typeof GetAnnotationsInputSchema>;
 const GetAnnotationsResponseSchema = AffindaResponseSchema;
-export type GetAnnotationsResponse = z.infer<typeof GetAnnotationsResponseSchema>;
+export type GetAnnotationsResponse = z.infer<
+	typeof GetAnnotationsResponseSchema
+>;
 
 // getCollection
 const GetCollectionInputSchema = z.object({
@@ -789,9 +939,13 @@ const GetCollectionFieldsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetCollectionFieldsInput = z.infer<typeof GetCollectionFieldsInputSchema>;
+export type GetCollectionFieldsInput = z.infer<
+	typeof GetCollectionFieldsInputSchema
+>;
 const GetCollectionFieldsResponseSchema = AffindaResponseSchema;
-export type GetCollectionFieldsResponse = z.infer<typeof GetCollectionFieldsResponseSchema>;
+export type GetCollectionFieldsResponse = z.infer<
+	typeof GetCollectionFieldsResponseSchema
+>;
 
 // getCollections
 const GetCollectionsInputSchema = z.object({
@@ -804,7 +958,9 @@ const GetCollectionsInputSchema = z.object({
 });
 export type GetCollectionsInput = z.infer<typeof GetCollectionsInputSchema>;
 const GetCollectionsResponseSchema = AffindaResponseSchema;
-export type GetCollectionsResponse = z.infer<typeof GetCollectionsResponseSchema>;
+export type GetCollectionsResponse = z.infer<
+	typeof GetCollectionsResponseSchema
+>;
 
 // getCollectionUsage
 const GetCollectionUsageInputSchema = z.object({
@@ -815,9 +971,13 @@ const GetCollectionUsageInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetCollectionUsageInput = z.infer<typeof GetCollectionUsageInputSchema>;
+export type GetCollectionUsageInput = z.infer<
+	typeof GetCollectionUsageInputSchema
+>;
 const GetCollectionUsageResponseSchema = AffindaResponseSchema;
-export type GetCollectionUsageResponse = z.infer<typeof GetCollectionUsageResponseSchema>;
+export type GetCollectionUsageResponse = z.infer<
+	typeof GetCollectionUsageResponseSchema
+>;
 
 // getDataPoint
 const GetDataPointInputSchema = z.object({
@@ -837,9 +997,13 @@ const GetDataPointChoiceInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetDataPointChoiceInput = z.infer<typeof GetDataPointChoiceInputSchema>;
+export type GetDataPointChoiceInput = z.infer<
+	typeof GetDataPointChoiceInputSchema
+>;
 const GetDataPointChoiceResponseSchema = AffindaResponseSchema;
-export type GetDataPointChoiceResponse = z.infer<typeof GetDataPointChoiceResponseSchema>;
+export type GetDataPointChoiceResponse = z.infer<
+	typeof GetDataPointChoiceResponseSchema
+>;
 
 // getDataSource
 const GetDataSourceInputSchema = z.object({
@@ -860,9 +1024,13 @@ const GetDataSourceValueInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetDataSourceValueInput = z.infer<typeof GetDataSourceValueInputSchema>;
+export type GetDataSourceValueInput = z.infer<
+	typeof GetDataSourceValueInputSchema
+>;
 const GetDataSourceValueResponseSchema = AffindaResponseSchema;
-export type GetDataSourceValueResponse = z.infer<typeof GetDataSourceValueResponseSchema>;
+export type GetDataSourceValueResponse = z.infer<
+	typeof GetDataSourceValueResponseSchema
+>;
 
 // getDataSourceValues
 const GetDataSourceValuesInputSchema = z.object({
@@ -876,9 +1044,13 @@ const GetDataSourceValuesInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetDataSourceValuesInput = z.infer<typeof GetDataSourceValuesInputSchema>;
+export type GetDataSourceValuesInput = z.infer<
+	typeof GetDataSourceValuesInputSchema
+>;
 const GetDataSourceValuesResponseSchema = AffindaResponseSchema;
-export type GetDataSourceValuesResponse = z.infer<typeof GetDataSourceValuesResponseSchema>;
+export type GetDataSourceValuesResponse = z.infer<
+	typeof GetDataSourceValuesResponseSchema
+>;
 
 // getDocument
 const GetDocumentInputSchema = z.object({
@@ -898,9 +1070,13 @@ const GetDocumentRedactedInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetDocumentRedactedInput = z.infer<typeof GetDocumentRedactedInputSchema>;
+export type GetDocumentRedactedInput = z.infer<
+	typeof GetDocumentRedactedInputSchema
+>;
 const GetDocumentRedactedResponseSchema = AffindaResponseSchema;
-export type GetDocumentRedactedResponse = z.infer<typeof GetDocumentRedactedResponseSchema>;
+export type GetDocumentRedactedResponse = z.infer<
+	typeof GetDocumentRedactedResponseSchema
+>;
 
 // getDocuments
 const GetDocumentsInputSchema = z.object({
@@ -931,9 +1107,13 @@ const GetDocumentSplitterInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetDocumentSplitterInput = z.infer<typeof GetDocumentSplitterInputSchema>;
+export type GetDocumentSplitterInput = z.infer<
+	typeof GetDocumentSplitterInputSchema
+>;
 const GetDocumentSplitterResponseSchema = AffindaResponseSchema;
-export type GetDocumentSplitterResponse = z.infer<typeof GetDocumentSplitterResponseSchema>;
+export type GetDocumentSplitterResponse = z.infer<
+	typeof GetDocumentSplitterResponseSchema
+>;
 
 // getDocumentType
 const GetDocumentTypeInputSchema = z.object({
@@ -944,7 +1124,9 @@ const GetDocumentTypeInputSchema = z.object({
 });
 export type GetDocumentTypeInput = z.infer<typeof GetDocumentTypeInputSchema>;
 const GetDocumentTypeResponseSchema = AffindaResponseSchema;
-export type GetDocumentTypeResponse = z.infer<typeof GetDocumentTypeResponseSchema>;
+export type GetDocumentTypeResponse = z.infer<
+	typeof GetDocumentTypeResponseSchema
+>;
 
 // getDocumentTypeJsonSchema
 const GetDocumentTypeJsonSchemaInputSchema = z.object({
@@ -954,9 +1136,13 @@ const GetDocumentTypeJsonSchemaInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetDocumentTypeJsonSchemaInput = z.infer<typeof GetDocumentTypeJsonSchemaInputSchema>;
+export type GetDocumentTypeJsonSchemaInput = z.infer<
+	typeof GetDocumentTypeJsonSchemaInputSchema
+>;
 const GetDocumentTypeJsonSchemaResponseSchema = AffindaResponseSchema;
-export type GetDocumentTypeJsonSchemaResponse = z.infer<typeof GetDocumentTypeJsonSchemaResponseSchema>;
+export type GetDocumentTypeJsonSchemaResponse = z.infer<
+	typeof GetDocumentTypeJsonSchemaResponseSchema
+>;
 
 // getDocumentTypePydanticModels
 const GetDocumentTypePydanticModelsInputSchema = z.object({
@@ -966,9 +1152,13 @@ const GetDocumentTypePydanticModelsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetDocumentTypePydanticModelsInput = z.infer<typeof GetDocumentTypePydanticModelsInputSchema>;
+export type GetDocumentTypePydanticModelsInput = z.infer<
+	typeof GetDocumentTypePydanticModelsInputSchema
+>;
 const GetDocumentTypePydanticModelsResponseSchema = AffindaResponseSchema;
-export type GetDocumentTypePydanticModelsResponse = z.infer<typeof GetDocumentTypePydanticModelsResponseSchema>;
+export type GetDocumentTypePydanticModelsResponse = z.infer<
+	typeof GetDocumentTypePydanticModelsResponseSchema
+>;
 
 // getDocumentTypes
 const GetDocumentTypesInputSchema = z.object({
@@ -978,7 +1168,9 @@ const GetDocumentTypesInputSchema = z.object({
 });
 export type GetDocumentTypesInput = z.infer<typeof GetDocumentTypesInputSchema>;
 const GetDocumentTypesResponseSchema = AffindaResponseSchema;
-export type GetDocumentTypesResponse = z.infer<typeof GetDocumentTypesResponseSchema>;
+export type GetDocumentTypesResponse = z.infer<
+	typeof GetDocumentTypesResponseSchema
+>;
 
 // getExtractor
 const GetExtractorInputSchema = z.object({
@@ -994,6 +1186,9 @@ export type GetExtractorResponse = z.infer<typeof GetExtractorResponseSchema>;
 // getExtractors
 const GetExtractorsInputSchema = z.object({
 	organization: z.string(),
+	include_public_extractors: z.boolean().optional(),
+	name: z.string().optional(),
+	validatable: z.boolean().optional(),
 	body: AffindaOptionalBodySchema,
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1011,9 +1206,13 @@ const GetIndexDocumentsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetIndexDocumentsInput = z.infer<typeof GetIndexDocumentsInputSchema>;
+export type GetIndexDocumentsInput = z.infer<
+	typeof GetIndexDocumentsInputSchema
+>;
 const GetIndexDocumentsResponseSchema = AffindaResponseSchema;
-export type GetIndexDocumentsResponse = z.infer<typeof GetIndexDocumentsResponseSchema>;
+export type GetIndexDocumentsResponse = z.infer<
+	typeof GetIndexDocumentsResponseSchema
+>;
 
 // getInvitation
 const GetInvitationInputSchema = z.object({
@@ -1032,9 +1231,13 @@ const GetJobDescriptionSearchConfigInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetJobDescriptionSearchConfigInput = z.infer<typeof GetJobDescriptionSearchConfigInputSchema>;
+export type GetJobDescriptionSearchConfigInput = z.infer<
+	typeof GetJobDescriptionSearchConfigInputSchema
+>;
 const GetJobDescriptionSearchConfigResponseSchema = AffindaResponseSchema;
-export type GetJobDescriptionSearchConfigResponse = z.infer<typeof GetJobDescriptionSearchConfigResponseSchema>;
+export type GetJobDescriptionSearchConfigResponse = z.infer<
+	typeof GetJobDescriptionSearchConfigResponseSchema
+>;
 
 // getMapping
 const GetMappingInputSchema = z.object({
@@ -1056,7 +1259,9 @@ const GetOrganizationInputSchema = z.object({
 });
 export type GetOrganizationInput = z.infer<typeof GetOrganizationInputSchema>;
 const GetOrganizationResponseSchema = AffindaResponseSchema;
-export type GetOrganizationResponse = z.infer<typeof GetOrganizationResponseSchema>;
+export type GetOrganizationResponse = z.infer<
+	typeof GetOrganizationResponseSchema
+>;
 
 // getOrganizationMembership
 const GetOrganizationMembershipInputSchema = z.object({
@@ -1065,9 +1270,13 @@ const GetOrganizationMembershipInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetOrganizationMembershipInput = z.infer<typeof GetOrganizationMembershipInputSchema>;
+export type GetOrganizationMembershipInput = z.infer<
+	typeof GetOrganizationMembershipInputSchema
+>;
 const GetOrganizationMembershipResponseSchema = AffindaResponseSchema;
-export type GetOrganizationMembershipResponse = z.infer<typeof GetOrganizationMembershipResponseSchema>;
+export type GetOrganizationMembershipResponse = z.infer<
+	typeof GetOrganizationMembershipResponseSchema
+>;
 
 // getOrganizations
 const GetOrganizationsInputSchema = z.object({
@@ -1077,7 +1286,9 @@ const GetOrganizationsInputSchema = z.object({
 });
 export type GetOrganizationsInput = z.infer<typeof GetOrganizationsInputSchema>;
 const GetOrganizationsResponseSchema = AffindaResponseSchema;
-export type GetOrganizationsResponse = z.infer<typeof GetOrganizationsResponseSchema>;
+export type GetOrganizationsResponse = z.infer<
+	typeof GetOrganizationsResponseSchema
+>;
 
 // getResthookSubscription
 const GetResthookSubscriptionInputSchema = z.object({
@@ -1087,9 +1298,13 @@ const GetResthookSubscriptionInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetResthookSubscriptionInput = z.infer<typeof GetResthookSubscriptionInputSchema>;
+export type GetResthookSubscriptionInput = z.infer<
+	typeof GetResthookSubscriptionInputSchema
+>;
 const GetResthookSubscriptionResponseSchema = AffindaResponseSchema;
-export type GetResthookSubscriptionResponse = z.infer<typeof GetResthookSubscriptionResponseSchema>;
+export type GetResthookSubscriptionResponse = z.infer<
+	typeof GetResthookSubscriptionResponseSchema
+>;
 
 // getResthookSubscriptions
 const GetResthookSubscriptionsInputSchema = z.object({
@@ -1099,9 +1314,13 @@ const GetResthookSubscriptionsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetResthookSubscriptionsInput = z.infer<typeof GetResthookSubscriptionsInputSchema>;
+export type GetResthookSubscriptionsInput = z.infer<
+	typeof GetResthookSubscriptionsInputSchema
+>;
 const GetResthookSubscriptionsResponseSchema = AffindaResponseSchema;
-export type GetResthookSubscriptionsResponse = z.infer<typeof GetResthookSubscriptionsResponseSchema>;
+export type GetResthookSubscriptionsResponse = z.infer<
+	typeof GetResthookSubscriptionsResponseSchema
+>;
 
 // getTag
 const GetTagInputSchema = z.object({
@@ -1125,9 +1344,13 @@ const GetUsageByWorkspaceInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetUsageByWorkspaceInput = z.infer<typeof GetUsageByWorkspaceInputSchema>;
+export type GetUsageByWorkspaceInput = z.infer<
+	typeof GetUsageByWorkspaceInputSchema
+>;
 const GetUsageByWorkspaceResponseSchema = AffindaResponseSchema;
-export type GetUsageByWorkspaceResponse = z.infer<typeof GetUsageByWorkspaceResponseSchema>;
+export type GetUsageByWorkspaceResponse = z.infer<
+	typeof GetUsageByWorkspaceResponseSchema
+>;
 
 // getWorkspace
 const GetWorkspaceInputSchema = z.object({
@@ -1147,9 +1370,13 @@ const GetWorkspaceMembershipInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetWorkspaceMembershipInput = z.infer<typeof GetWorkspaceMembershipInputSchema>;
+export type GetWorkspaceMembershipInput = z.infer<
+	typeof GetWorkspaceMembershipInputSchema
+>;
 const GetWorkspaceMembershipResponseSchema = AffindaResponseSchema;
-export type GetWorkspaceMembershipResponse = z.infer<typeof GetWorkspaceMembershipResponseSchema>;
+export type GetWorkspaceMembershipResponse = z.infer<
+	typeof GetWorkspaceMembershipResponseSchema
+>;
 
 // getWorkspaces
 const GetWorkspacesInputSchema = z.object({
@@ -1174,9 +1401,13 @@ const ListDataPointChoicesInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListDataPointChoicesInput = z.infer<typeof ListDataPointChoicesInputSchema>;
+export type ListDataPointChoicesInput = z.infer<
+	typeof ListDataPointChoicesInputSchema
+>;
 const ListDataPointChoicesResponseSchema = AffindaResponseSchema;
-export type ListDataPointChoicesResponse = z.infer<typeof ListDataPointChoicesResponseSchema>;
+export type ListDataPointChoicesResponse = z.infer<
+	typeof ListDataPointChoicesResponseSchema
+>;
 
 // listDataPoints
 const ListDataPointsInputSchema = z.object({
@@ -1195,7 +1426,9 @@ const ListDataPointsInputSchema = z.object({
 });
 export type ListDataPointsInput = z.infer<typeof ListDataPointsInputSchema>;
 const ListDataPointsResponseSchema = AffindaResponseSchema;
-export type ListDataPointsResponse = z.infer<typeof ListDataPointsResponseSchema>;
+export type ListDataPointsResponse = z.infer<
+	typeof ListDataPointsResponseSchema
+>;
 
 // listDataSources
 const ListDataSourcesInputSchema = z.object({
@@ -1211,7 +1444,9 @@ const ListDataSourcesInputSchema = z.object({
 });
 export type ListDataSourcesInput = z.infer<typeof ListDataSourcesInputSchema>;
 const ListDataSourcesResponseSchema = AffindaResponseSchema;
-export type ListDataSourcesResponse = z.infer<typeof ListDataSourcesResponseSchema>;
+export type ListDataSourcesResponse = z.infer<
+	typeof ListDataSourcesResponseSchema
+>;
 
 // listIndexes
 const ListIndexesInputSchema = z.object({
@@ -1246,9 +1481,13 @@ const ListOccupationGroupsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListOccupationGroupsInput = z.infer<typeof ListOccupationGroupsInputSchema>;
+export type ListOccupationGroupsInput = z.infer<
+	typeof ListOccupationGroupsInputSchema
+>;
 const ListOccupationGroupsResponseSchema = AffindaResponseSchema;
-export type ListOccupationGroupsResponse = z.infer<typeof ListOccupationGroupsResponseSchema>;
+export type ListOccupationGroupsResponse = z.infer<
+	typeof ListOccupationGroupsResponseSchema
+>;
 
 // listResumeSearchConfig
 const ListResumeSearchConfigInputSchema = z.object({
@@ -1256,9 +1495,13 @@ const ListResumeSearchConfigInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListResumeSearchConfigInput = z.infer<typeof ListResumeSearchConfigInputSchema>;
+export type ListResumeSearchConfigInput = z.infer<
+	typeof ListResumeSearchConfigInputSchema
+>;
 const ListResumeSearchConfigResponseSchema = AffindaResponseSchema;
-export type ListResumeSearchConfigResponse = z.infer<typeof ListResumeSearchConfigResponseSchema>;
+export type ListResumeSearchConfigResponse = z.infer<
+	typeof ListResumeSearchConfigResponseSchema
+>;
 
 // listResumeSearchJobTitleSuggestions
 const ListResumeSearchJobTitleSuggestionsInputSchema = z.object({
@@ -1267,9 +1510,13 @@ const ListResumeSearchJobTitleSuggestionsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListResumeSearchJobTitleSuggestionsInput = z.infer<typeof ListResumeSearchJobTitleSuggestionsInputSchema>;
+export type ListResumeSearchJobTitleSuggestionsInput = z.infer<
+	typeof ListResumeSearchJobTitleSuggestionsInputSchema
+>;
 const ListResumeSearchJobTitleSuggestionsResponseSchema = AffindaResponseSchema;
-export type ListResumeSearchJobTitleSuggestionsResponse = z.infer<typeof ListResumeSearchJobTitleSuggestionsResponseSchema>;
+export type ListResumeSearchJobTitleSuggestionsResponse = z.infer<
+	typeof ListResumeSearchJobTitleSuggestionsResponseSchema
+>;
 
 // listResumeSearchSkillSuggestions
 const ListResumeSearchSkillSuggestionsInputSchema = z.object({
@@ -1278,9 +1525,13 @@ const ListResumeSearchSkillSuggestionsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListResumeSearchSkillSuggestionsInput = z.infer<typeof ListResumeSearchSkillSuggestionsInputSchema>;
+export type ListResumeSearchSkillSuggestionsInput = z.infer<
+	typeof ListResumeSearchSkillSuggestionsInputSchema
+>;
 const ListResumeSearchSkillSuggestionsResponseSchema = AffindaResponseSchema;
-export type ListResumeSearchSkillSuggestionsResponse = z.infer<typeof ListResumeSearchSkillSuggestionsResponseSchema>;
+export type ListResumeSearchSkillSuggestionsResponse = z.infer<
+	typeof ListResumeSearchSkillSuggestionsResponseSchema
+>;
 
 // removeTagFromDocuments
 const RemoveTagFromDocumentsInputSchema = z.object({
@@ -1290,9 +1541,13 @@ const RemoveTagFromDocumentsInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type RemoveTagFromDocumentsInput = z.infer<typeof RemoveTagFromDocumentsInputSchema>;
+export type RemoveTagFromDocumentsInput = z.infer<
+	typeof RemoveTagFromDocumentsInputSchema
+>;
 const RemoveTagFromDocumentsResponseSchema = AffindaResponseSchema;
-export type RemoveTagFromDocumentsResponse = z.infer<typeof RemoveTagFromDocumentsResponseSchema>;
+export type RemoveTagFromDocumentsResponse = z.infer<
+	typeof RemoveTagFromDocumentsResponseSchema
+>;
 
 // replaceDataPointChoices
 const ReplaceDataPointChoicesInputSchema = z.object({
@@ -1304,9 +1559,13 @@ const ReplaceDataPointChoicesInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ReplaceDataPointChoicesInput = z.infer<typeof ReplaceDataPointChoicesInputSchema>;
+export type ReplaceDataPointChoicesInput = z.infer<
+	typeof ReplaceDataPointChoicesInputSchema
+>;
 const ReplaceDataPointChoicesResponseSchema = AffindaResponseSchema;
-export type ReplaceDataPointChoicesResponse = z.infer<typeof ReplaceDataPointChoicesResponseSchema>;
+export type ReplaceDataPointChoicesResponse = z.infer<
+	typeof ReplaceDataPointChoicesResponseSchema
+>;
 
 // replaceDataSourceValues
 const ReplaceDataSourceValuesInputSchema = z.object({
@@ -1316,9 +1575,13 @@ const ReplaceDataSourceValuesInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ReplaceDataSourceValuesInput = z.infer<typeof ReplaceDataSourceValuesInputSchema>;
+export type ReplaceDataSourceValuesInput = z.infer<
+	typeof ReplaceDataSourceValuesInputSchema
+>;
 const ReplaceDataSourceValuesResponseSchema = AffindaResponseSchema;
-export type ReplaceDataSourceValuesResponse = z.infer<typeof ReplaceDataSourceValuesResponseSchema>;
+export type ReplaceDataSourceValuesResponse = z.infer<
+	typeof ReplaceDataSourceValuesResponseSchema
+>;
 
 // splitDocumentPages
 const SplitDocumentPagesInputSchema = z.object({
@@ -1328,9 +1591,13 @@ const SplitDocumentPagesInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type SplitDocumentPagesInput = z.infer<typeof SplitDocumentPagesInputSchema>;
+export type SplitDocumentPagesInput = z.infer<
+	typeof SplitDocumentPagesInputSchema
+>;
 const SplitDocumentPagesResponseSchema = AffindaResponseSchema;
-export type SplitDocumentPagesResponse = z.infer<typeof SplitDocumentPagesResponseSchema>;
+export type SplitDocumentPagesResponse = z.infer<
+	typeof SplitDocumentPagesResponseSchema
+>;
 
 // updateAnnotation
 const UpdateAnnotationInputSchema = z.object({
@@ -1351,7 +1618,9 @@ const UpdateAnnotationInputSchema = z.object({
 });
 export type UpdateAnnotationInput = z.infer<typeof UpdateAnnotationInputSchema>;
 const UpdateAnnotationResponseSchema = AffindaResponseSchema;
-export type UpdateAnnotationResponse = z.infer<typeof UpdateAnnotationResponseSchema>;
+export type UpdateAnnotationResponse = z.infer<
+	typeof UpdateAnnotationResponseSchema
+>;
 
 // updateCollection
 const UpdateCollectionInputSchema = z.object({
@@ -1363,7 +1632,9 @@ const UpdateCollectionInputSchema = z.object({
 });
 export type UpdateCollectionInput = z.infer<typeof UpdateCollectionInputSchema>;
 const UpdateCollectionResponseSchema = AffindaResponseSchema;
-export type UpdateCollectionResponse = z.infer<typeof UpdateCollectionResponseSchema>;
+export type UpdateCollectionResponse = z.infer<
+	typeof UpdateCollectionResponseSchema
+>;
 
 // updateDataFieldForCollection
 const UpdateDataFieldForCollectionInputSchema = z.object({
@@ -1383,9 +1654,13 @@ const UpdateDataFieldForCollectionInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateDataFieldForCollectionInput = z.infer<typeof UpdateDataFieldForCollectionInputSchema>;
+export type UpdateDataFieldForCollectionInput = z.infer<
+	typeof UpdateDataFieldForCollectionInputSchema
+>;
 const UpdateDataFieldForCollectionResponseSchema = AffindaResponseSchema;
-export type UpdateDataFieldForCollectionResponse = z.infer<typeof UpdateDataFieldForCollectionResponseSchema>;
+export type UpdateDataFieldForCollectionResponse = z.infer<
+	typeof UpdateDataFieldForCollectionResponseSchema
+>;
 
 // updateDataPoint
 const UpdateDataPointInputSchema = z.object({
@@ -1401,7 +1676,9 @@ const UpdateDataPointInputSchema = z.object({
 });
 export type UpdateDataPointInput = z.infer<typeof UpdateDataPointInputSchema>;
 const UpdateDataPointResponseSchema = AffindaResponseSchema;
-export type UpdateDataPointResponse = z.infer<typeof UpdateDataPointResponseSchema>;
+export type UpdateDataPointResponse = z.infer<
+	typeof UpdateDataPointResponseSchema
+>;
 
 // updateDataPointChoice
 const UpdateDataPointChoiceInputSchema = z.object({
@@ -1417,9 +1694,13 @@ const UpdateDataPointChoiceInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateDataPointChoiceInput = z.infer<typeof UpdateDataPointChoiceInputSchema>;
+export type UpdateDataPointChoiceInput = z.infer<
+	typeof UpdateDataPointChoiceInputSchema
+>;
 const UpdateDataPointChoiceResponseSchema = AffindaResponseSchema;
-export type UpdateDataPointChoiceResponse = z.infer<typeof UpdateDataPointChoiceResponseSchema>;
+export type UpdateDataPointChoiceResponse = z.infer<
+	typeof UpdateDataPointChoiceResponseSchema
+>;
 
 // updateDataSourceValue
 const UpdateDataSourceValueInputSchema = z.object({
@@ -1431,9 +1712,13 @@ const UpdateDataSourceValueInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateDataSourceValueInput = z.infer<typeof UpdateDataSourceValueInputSchema>;
+export type UpdateDataSourceValueInput = z.infer<
+	typeof UpdateDataSourceValueInputSchema
+>;
 const UpdateDataSourceValueResponseSchema = AffindaResponseSchema;
-export type UpdateDataSourceValueResponse = z.infer<typeof UpdateDataSourceValueResponseSchema>;
+export type UpdateDataSourceValueResponse = z.infer<
+	typeof UpdateDataSourceValueResponseSchema
+>;
 
 // updateDocument
 const UpdateDocumentInputSchema = z.object({
@@ -1453,7 +1738,9 @@ const UpdateDocumentInputSchema = z.object({
 });
 export type UpdateDocumentInput = z.infer<typeof UpdateDocumentInputSchema>;
 const UpdateDocumentResponseSchema = AffindaResponseSchema;
-export type UpdateDocumentResponse = z.infer<typeof UpdateDocumentResponseSchema>;
+export type UpdateDocumentResponse = z.infer<
+	typeof UpdateDocumentResponseSchema
+>;
 
 // updateDocumentData
 const UpdateDocumentDataInputSchema = z.object({
@@ -1463,9 +1750,13 @@ const UpdateDocumentDataInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateDocumentDataInput = z.infer<typeof UpdateDocumentDataInputSchema>;
+export type UpdateDocumentDataInput = z.infer<
+	typeof UpdateDocumentDataInputSchema
+>;
 const UpdateDocumentDataResponseSchema = AffindaResponseSchema;
-export type UpdateDocumentDataResponse = z.infer<typeof UpdateDocumentDataResponseSchema>;
+export type UpdateDocumentDataResponse = z.infer<
+	typeof UpdateDocumentDataResponseSchema
+>;
 
 // updateDocumentType
 const UpdateDocumentTypeInputSchema = z.object({
@@ -1476,9 +1767,13 @@ const UpdateDocumentTypeInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateDocumentTypeInput = z.infer<typeof UpdateDocumentTypeInputSchema>;
+export type UpdateDocumentTypeInput = z.infer<
+	typeof UpdateDocumentTypeInputSchema
+>;
 const UpdateDocumentTypeResponseSchema = AffindaResponseSchema;
-export type UpdateDocumentTypeResponse = z.infer<typeof UpdateDocumentTypeResponseSchema>;
+export type UpdateDocumentTypeResponse = z.infer<
+	typeof UpdateDocumentTypeResponseSchema
+>;
 
 // updateExtractor
 const UpdateExtractorInputSchema = z.object({
@@ -1495,7 +1790,9 @@ const UpdateExtractorInputSchema = z.object({
 });
 export type UpdateExtractorInput = z.infer<typeof UpdateExtractorInputSchema>;
 const UpdateExtractorResponseSchema = AffindaResponseSchema;
-export type UpdateExtractorResponse = z.infer<typeof UpdateExtractorResponseSchema>;
+export type UpdateExtractorResponse = z.infer<
+	typeof UpdateExtractorResponseSchema
+>;
 
 // updateIndex
 const UpdateIndexInputSchema = z.object({
@@ -1519,7 +1816,9 @@ const UpdateInvitationInputSchema = z.object({
 });
 export type UpdateInvitationInput = z.infer<typeof UpdateInvitationInputSchema>;
 const UpdateInvitationResponseSchema = AffindaResponseSchema;
-export type UpdateInvitationResponse = z.infer<typeof UpdateInvitationResponseSchema>;
+export type UpdateInvitationResponse = z.infer<
+	typeof UpdateInvitationResponseSchema
+>;
 
 // updateJobDescriptionSearchConfig
 const UpdateJobDescriptionSearchConfigInputSchema = z.object({
@@ -1557,9 +1856,13 @@ const UpdateJobDescriptionSearchConfigInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateJobDescriptionSearchConfigInput = z.infer<typeof UpdateJobDescriptionSearchConfigInputSchema>;
+export type UpdateJobDescriptionSearchConfigInput = z.infer<
+	typeof UpdateJobDescriptionSearchConfigInputSchema
+>;
 const UpdateJobDescriptionSearchConfigResponseSchema = AffindaResponseSchema;
-export type UpdateJobDescriptionSearchConfigResponse = z.infer<typeof UpdateJobDescriptionSearchConfigResponseSchema>;
+export type UpdateJobDescriptionSearchConfigResponse = z.infer<
+	typeof UpdateJobDescriptionSearchConfigResponseSchema
+>;
 
 // updateMapping
 const UpdateMappingInputSchema = z.object({
@@ -1585,9 +1888,13 @@ const UpdateOrganizationInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateOrganizationInput = z.infer<typeof UpdateOrganizationInputSchema>;
+export type UpdateOrganizationInput = z.infer<
+	typeof UpdateOrganizationInputSchema
+>;
 const UpdateOrganizationResponseSchema = AffindaResponseSchema;
-export type UpdateOrganizationResponse = z.infer<typeof UpdateOrganizationResponseSchema>;
+export type UpdateOrganizationResponse = z.infer<
+	typeof UpdateOrganizationResponseSchema
+>;
 
 // updateOrganizationMembership
 const UpdateOrganizationMembershipInputSchema = z.object({
@@ -1597,9 +1904,13 @@ const UpdateOrganizationMembershipInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateOrganizationMembershipInput = z.infer<typeof UpdateOrganizationMembershipInputSchema>;
+export type UpdateOrganizationMembershipInput = z.infer<
+	typeof UpdateOrganizationMembershipInputSchema
+>;
 const UpdateOrganizationMembershipResponseSchema = AffindaResponseSchema;
-export type UpdateOrganizationMembershipResponse = z.infer<typeof UpdateOrganizationMembershipResponseSchema>;
+export type UpdateOrganizationMembershipResponse = z.infer<
+	typeof UpdateOrganizationMembershipResponseSchema
+>;
 
 // updateResthookSubscription
 const UpdateResthookSubscriptionInputSchema = z.object({
@@ -1612,9 +1923,13 @@ const UpdateResthookSubscriptionInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateResthookSubscriptionInput = z.infer<typeof UpdateResthookSubscriptionInputSchema>;
+export type UpdateResthookSubscriptionInput = z.infer<
+	typeof UpdateResthookSubscriptionInputSchema
+>;
 const UpdateResthookSubscriptionResponseSchema = AffindaResponseSchema;
-export type UpdateResthookSubscriptionResponse = z.infer<typeof UpdateResthookSubscriptionResponseSchema>;
+export type UpdateResthookSubscriptionResponse = z.infer<
+	typeof UpdateResthookSubscriptionResponseSchema
+>;
 
 // updateResumeSearchConfig
 const UpdateResumeSearchConfigInputSchema = z.object({
@@ -1652,9 +1967,13 @@ const UpdateResumeSearchConfigInputSchema = z.object({
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateResumeSearchConfigInput = z.infer<typeof UpdateResumeSearchConfigInputSchema>;
+export type UpdateResumeSearchConfigInput = z.infer<
+	typeof UpdateResumeSearchConfigInputSchema
+>;
 const UpdateResumeSearchConfigResponseSchema = AffindaResponseSchema;
-export type UpdateResumeSearchConfigResponse = z.infer<typeof UpdateResumeSearchConfigResponseSchema>;
+export type UpdateResumeSearchConfigResponse = z.infer<
+	typeof UpdateResumeSearchConfigResponseSchema
+>;
 
 // updateTag
 const UpdateTagInputSchema = z.object({
@@ -1686,7 +2005,9 @@ const UpdateWorkspaceInputSchema = z.object({
 });
 export type UpdateWorkspaceInput = z.infer<typeof UpdateWorkspaceInputSchema>;
 const UpdateWorkspaceResponseSchema = AffindaResponseSchema;
-export type UpdateWorkspaceResponse = z.infer<typeof UpdateWorkspaceResponseSchema>;
+export type UpdateWorkspaceResponse = z.infer<
+	typeof UpdateWorkspaceResponseSchema
+>;
 
 export const AffindaEndpointInputSchemas = {
 	addTagToDocuments: AddTagToDocumentsInputSchema,
@@ -1706,7 +2027,8 @@ export const AffindaEndpointInputSchemas = {
 	createIndex: CreateIndexInputSchema,
 	createInvitation: CreateInvitationInputSchema,
 	createJobDescriptionSearch: CreateJobDescriptionSearchInputSchema,
-	createJobDescriptionSearchEmbedUrl: CreateJobDescriptionSearchEmbedUrlInputSchema,
+	createJobDescriptionSearchEmbedUrl:
+		CreateJobDescriptionSearchEmbedUrlInputSchema,
 	createMapping: CreateMappingInputSchema,
 	createOrganization: CreateOrganizationInputSchema,
 	createResthookSubscription: CreateResthookSubscriptionInputSchema,
@@ -1782,7 +2104,8 @@ export const AffindaEndpointInputSchemas = {
 	listMappings: ListMappingsInputSchema,
 	listOccupationGroups: ListOccupationGroupsInputSchema,
 	listResumeSearchConfig: ListResumeSearchConfigInputSchema,
-	listResumeSearchJobTitleSuggestions: ListResumeSearchJobTitleSuggestionsInputSchema,
+	listResumeSearchJobTitleSuggestions:
+		ListResumeSearchJobTitleSuggestionsInputSchema,
 	listResumeSearchSkillSuggestions: ListResumeSearchSkillSuggestionsInputSchema,
 	removeTagFromDocuments: RemoveTagFromDocumentsInputSchema,
 	replaceDataPointChoices: ReplaceDataPointChoicesInputSchema,
@@ -1811,7 +2134,9 @@ export const AffindaEndpointInputSchemas = {
 } as const;
 
 export type AffindaEndpointInputs = {
-	[K in keyof typeof AffindaEndpointInputSchemas]: z.infer<(typeof AffindaEndpointInputSchemas)[K]>;
+	[K in keyof typeof AffindaEndpointInputSchemas]: z.infer<
+		(typeof AffindaEndpointInputSchemas)[K]
+	>;
 };
 
 export const AffindaEndpointOutputSchemas = {
@@ -1832,7 +2157,8 @@ export const AffindaEndpointOutputSchemas = {
 	createIndex: CreateIndexResponseSchema,
 	createInvitation: CreateInvitationResponseSchema,
 	createJobDescriptionSearch: CreateJobDescriptionSearchResponseSchema,
-	createJobDescriptionSearchEmbedUrl: CreateJobDescriptionSearchEmbedUrlResponseSchema,
+	createJobDescriptionSearchEmbedUrl:
+		CreateJobDescriptionSearchEmbedUrlResponseSchema,
 	createMapping: CreateMappingResponseSchema,
 	createOrganization: CreateOrganizationResponseSchema,
 	createResthookSubscription: CreateResthookSubscriptionResponseSchema,
@@ -1908,8 +2234,10 @@ export const AffindaEndpointOutputSchemas = {
 	listMappings: ListMappingsResponseSchema,
 	listOccupationGroups: ListOccupationGroupsResponseSchema,
 	listResumeSearchConfig: ListResumeSearchConfigResponseSchema,
-	listResumeSearchJobTitleSuggestions: ListResumeSearchJobTitleSuggestionsResponseSchema,
-	listResumeSearchSkillSuggestions: ListResumeSearchSkillSuggestionsResponseSchema,
+	listResumeSearchJobTitleSuggestions:
+		ListResumeSearchJobTitleSuggestionsResponseSchema,
+	listResumeSearchSkillSuggestions:
+		ListResumeSearchSkillSuggestionsResponseSchema,
 	removeTagFromDocuments: RemoveTagFromDocumentsResponseSchema,
 	replaceDataPointChoices: ReplaceDataPointChoicesResponseSchema,
 	replaceDataSourceValues: ReplaceDataSourceValuesResponseSchema,
@@ -1926,7 +2254,8 @@ export const AffindaEndpointOutputSchemas = {
 	updateExtractor: UpdateExtractorResponseSchema,
 	updateIndex: UpdateIndexResponseSchema,
 	updateInvitation: UpdateInvitationResponseSchema,
-	updateJobDescriptionSearchConfig: UpdateJobDescriptionSearchConfigResponseSchema,
+	updateJobDescriptionSearchConfig:
+		UpdateJobDescriptionSearchConfigResponseSchema,
 	updateMapping: UpdateMappingResponseSchema,
 	updateOrganization: UpdateOrganizationResponseSchema,
 	updateOrganizationMembership: UpdateOrganizationMembershipResponseSchema,
@@ -1937,10 +2266,13 @@ export const AffindaEndpointOutputSchemas = {
 } as const;
 
 export type AffindaEndpointOutputs = {
-	[K in keyof typeof AffindaEndpointOutputSchemas]: z.infer<(typeof AffindaEndpointOutputSchemas)[K]>;
+	[K in keyof typeof AffindaEndpointOutputSchemas]: z.infer<
+		(typeof AffindaEndpointOutputSchemas)[K]
+	>;
 };
 
-export type AffindaEndpointInput = AffindaEndpointInputs[keyof AffindaEndpointInputs] & {
-	// Passthrough for extra fields not yet mapped from Affinda OpenAPI definitions.
-	[key: string]: unknown;
-};
+export type AffindaEndpointInput =
+	AffindaEndpointInputs[keyof AffindaEndpointInputs] & {
+		// Passthrough for extra fields not yet mapped from Affinda OpenAPI definitions.
+		[key: string]: unknown;
+	};

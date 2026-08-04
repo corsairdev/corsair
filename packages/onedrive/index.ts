@@ -34,6 +34,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { OnedriveSchema } from './schema';
+import { onedriveSubscribe } from './subscribe';
 import { DriveWebhooks } from './webhooks';
 import { matchOnedriveTenantWebhook } from './webhooks/tenant-matcher';
 import type {
@@ -802,6 +803,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			return createOnedriveMatch()(request);
 		},
 		pluginTenantWebhookMatcher: matchOnedriveTenantWebhook,
+		subscribe: onedriveSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

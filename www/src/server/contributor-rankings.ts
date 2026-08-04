@@ -94,9 +94,9 @@ export async function buildContributorRankings(
 
 	return users
 		.map((row) => {
-			const contributorIntegrations = (
-				userClaims.get(row.id) ?? []
-			).sort((left, right) => left.name.localeCompare(right.name));
+			const contributorIntegrations = (userClaims.get(row.id) ?? []).sort(
+				(left, right) => left.name.localeCompare(right.name),
+			);
 			const totals = summarizeIntegrations(contributorIntegrations);
 
 			return {

@@ -7,7 +7,8 @@ Corsair supports hundreds of integrations through its SDK. Add as many as you ne
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
-import { slack, linear } from "corsair/plugins";
+import { slack } from "@corsair-dev/slack";
+import { linear } from "@corsair-dev/linear";
 
 export const corsair = createCorsair({
     plugins: [
@@ -99,7 +100,7 @@ See the [Creating Custom Integrations](/guides/create-your-own-plugin) guide for
 
 ## Missing an Endpoint?
 
-If an existing integration is missing an endpoint you need, [create an issue](https://github.com/corsair/corsair/issues) and we'll add it ASAP.
+If an existing integration is missing an endpoint you need, [create an issue](https://github.com/corsairdev/corsair/issues) and we'll add it ASAP.
 
 ## Available Integrations
 
