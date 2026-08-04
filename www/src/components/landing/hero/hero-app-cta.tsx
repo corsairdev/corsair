@@ -96,7 +96,11 @@ export function HeroAppCta() {
 					<span className="landing-send-cta-ring absolute inline-flex size-full rounded-full bg-white/70" />
 					<span className="relative inline-flex size-1.5 rounded-full bg-white/90" />
 				</span>
-				<Sparkle className="sparkle-icon-glow size-[15px]" weight="fill" aria-hidden />
+				<Sparkle
+					className="sparkle-icon-glow size-[15px]"
+					weight="fill"
+					aria-hidden
+				/>
 			</button>
 
 			{open ? (

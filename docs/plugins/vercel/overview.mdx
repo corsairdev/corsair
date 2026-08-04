@@ -19,6 +19,7 @@ Use **Vercel** through Corsair: one client, typed API calls, optional local DB s
 ```bash
 pnpm install @corsair-dev/vercel
 ```
+
 </Step>
 
 <Step title="Add the plugin">
@@ -51,10 +52,12 @@ See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Tab>
 </Tabs>
+
 </Step>
 
 <Step title="Get credentials">
 Follow [Get Credentials](/plugins/vercel/get-credentials) if you need help getting keys.
+
 </Step>
 
 <Step title="Store credentials">
@@ -64,7 +67,7 @@ Follow [Get Credentials](/plugins/vercel/get-credentials) if you need help getti
 pnpm corsair setup --plugin=vercel
 ```
 
-Use the key names documented in [Get Credentials](/plugins/vercel/get-credentials) (for example `api_key=your_token`).
+Use the key names documented in [Get Credentials](/plugins/vercel/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
 </Tab>
 <Tab title="Multi-Tenant">
 ```bash
@@ -74,11 +77,14 @@ pnpm corsair setup --plugin=vercel --tenant=<tenantId>
 Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
 </Tab>
 </Tabs>
+
 </Step>
 
 </Steps>
 
 ## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
 
 <Tabs>
 <Tab title="API Key (Default)">
@@ -87,7 +93,7 @@ Store per-tenant secrets after you create the tenant record. See [Multi-tenancy]
 vercel()
 ```
 
-Store credentials with `pnpm corsair setup --plugin=vercel` (see [Get Credentials](/plugins/vercel/get-credentials) for field names).
+Store credentials with `pnpm corsair setup --plugin=vercel` (see [Get Credentials](/plugins/vercel/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [API Key](/concepts/api-key)
 
@@ -100,29 +106,27 @@ This plugin registers **4** webhook handler(s). Configure your provider to POST 
 
 See [Webhooks](/plugins/vercel/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
 
+
 ## Query synced data
 
 Synced entities support `corsair.vercel.db.<entity>.search()` and `.list()`. See [Database](/plugins/vercel/database) for filters and operators.
 
+
 ## Example API calls
 
-**Read-style (read):** `projects.getProjects`
+**Read-style (read):** `aliases.getAliases`
 
 ```ts
-await corsair.vercel.api.projects.getProjects({});
+await corsair.vercel.api.aliases.getAliases({});
 ```
 
-**Write-style (destructive):** `envs.createEnvVariable`
+
+**Write-style (write):** `aliases.assignAlias`
 
 ```ts
-await corsair.vercel.api.envs.createEnvVariable({
-    idOrName: 'my-project',
-    key: 'MY_VAR',
-    value: 'secret_value',
-    type: 'secret',
-    target: ['production']
-});
+await corsair.vercel.api.aliases.assignAlias({});
 ```
+
 
 See the full list on the [API](/plugins/vercel/api) page. Use `pnpm corsair list --plugin=vercel` and `pnpm corsair schema <path>` locally to inspect schemas.
 
@@ -142,3 +146,4 @@ Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, a
 | Database | [Database](/plugins/vercel/database) |
 | Webhooks | [Webhooks](/plugins/vercel/webhooks) |
 | Credentials | [Get credentials](/plugins/vercel/get-credentials) |
+
