@@ -720,7 +720,6 @@ export type DeleteOrganizationResponse = z.infer<
 // deleteResthookSubscription
 const DeleteResthookSubscriptionInputSchema = z.object({
 	identifier: z.number().int(),
-	id: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -762,7 +761,6 @@ export type DeleteValidationResultsResponse = z.infer<
 // deleteWorkspace
 const DeleteWorkspaceInputSchema = z.object({
 	workspace_id: z.string(),
-	identifier: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1293,7 +1291,6 @@ export type GetOrganizationsResponse = z.infer<
 // getResthookSubscription
 const GetResthookSubscriptionInputSchema = z.object({
 	identifier: z.number().int(),
-	id: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1325,7 +1322,6 @@ export type GetResthookSubscriptionsResponse = z.infer<
 // getTag
 const GetTagInputSchema = z.object({
 	tag_id: z.number().int(),
-	id: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1339,7 +1335,6 @@ const GetUsageByWorkspaceInputSchema = z.object({
 	end: z.string().optional(),
 	start: z.string().optional(),
 	workspace_id: z.string(),
-	identifier: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1918,7 +1913,6 @@ const UpdateResthookSubscriptionInputSchema = z.object({
 	active: z.boolean().optional(),
 	targetUrl: z.string().optional(),
 	identifier: z.number().int(),
-	id: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1998,7 +1992,6 @@ const UpdateWorkspaceInputSchema = z.object({
 	rejectDuplicates: z.boolean().optional(),
 	rejectInvalidDocuments: z.boolean().optional(),
 	whitelistIngestAddresses: AffindaBatchItemsOptionalSchema,
-	identifier: z.union([z.string(), z.number()]).optional(),
 	body: AffindaOptionalBodySchema,
 	query: AffindaQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),

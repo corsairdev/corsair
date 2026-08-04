@@ -41,10 +41,11 @@ export async function makeAffindaRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// Caller headers first; plugin-owned Authorization/Content-Type always win.
 		HEADERS: {
+			...headers,
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,
-			...headers,
 		},
 	};
 
@@ -60,10 +61,7 @@ export async function makeAffindaRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new AffindaAPIError(error.message, { cause: error });
-		}
-		if (error instanceof Error) {
+		if (error instanceof ApiError || error instanceof Error) {
 			throw new AffindaAPIError(error.message, { cause: error });
 		}
 		throw new AffindaAPIError('Unknown error');

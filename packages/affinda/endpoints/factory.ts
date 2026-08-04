@@ -14,14 +14,18 @@ const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
 		'collectionId',
 		'document_id',
 		'documentId',
+		'workspace_id',
+		'tag_id',
 	],
-	id: ['id'],
+	id: ['id', 'identifier', 'tag_id'],
 	name: ['name', 'index_name', 'indexName'],
 	datapoint_identifier: [
 		'datapoint_identifier',
 		'datapointIdentifier',
 		'data_point_id',
 	],
+	workspace_id: ['workspace_id', 'identifier', 'workspaceId'],
+	tag_id: ['tag_id', 'id', 'tagId'],
 	value: ['value'],
 	token: ['token'],
 };
@@ -71,7 +75,10 @@ export function resolvePath(
 		const mappedKey = route?.pathParams?.[index];
 		index += 1;
 		if (mappedKey !== undefined) {
-			const direct = input[mappedKey] ?? input[camelToSnake(mappedKey)];
+			const direct =
+				input[mappedKey] ??
+				input[camelToSnake(mappedKey)] ??
+				resolvePathParam(input, mappedKey);
 			if (direct !== undefined) {
 				return encodePathPart(direct);
 			}
@@ -101,23 +108,13 @@ const ARRAY_BODY_FIELD_BY_ROUTE: Record<string, string> = {
 	replaceDataSourceValues: 'values',
 };
 
-function snakeCaseKeys(value: unknown): unknown {
-	if (Array.isArray(value)) return value.map(snakeCaseKeys);
-	if (!value || typeof value !== 'object') return value;
-	return Object.fromEntries(
-		Object.entries(value as Record<string, unknown>).map(([key, nested]) => [
-			camelToSnake(key),
-			snakeCaseKeys(nested),
-		]),
-	);
-}
-
 function requestBody(route: AffindaRoute, input: AffindaEndpointInput) {
 	if ('body' in input && input.body !== undefined) return input.body;
 
 	const arrayField = ARRAY_BODY_FIELD_BY_ROUTE[route.name];
 	if (arrayField !== undefined && input[arrayField] !== undefined) {
-		return snakeCaseKeys(input[arrayField]);
+		// Preserve schema/wire field names (Affinda uses camelCase on some ops, e.g. targetUrl).
+		return input[arrayField];
 	}
 
 	const pathParams = new Set(route.pathParams ?? []);
@@ -125,17 +122,14 @@ function requestBody(route: AffindaRoute, input: AffindaEndpointInput) {
 		(route.queryParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
 	);
 	const body = Object.fromEntries(
-		Object.entries(input)
-			.filter(([key, value]) => {
-				return (
-					!pathParams.has(key) &&
-					!queryParams.has(key) &&
-					!BODY_CONTROL_KEYS.has(key) &&
-					value !== undefined
-				);
-			})
-			// Affinda OpenAPI bodies use snake_case field names.
-			.map(([key, value]) => [camelToSnake(key), snakeCaseKeys(value)]),
+		Object.entries(input).filter(([key, value]) => {
+			return (
+				!pathParams.has(key) &&
+				!queryParams.has(key) &&
+				!BODY_CONTROL_KEYS.has(key) &&
+				value !== undefined
+			);
+		}),
 	);
 	return Object.keys(body).length > 0 ? body : undefined;
 }
@@ -154,12 +148,16 @@ export async function logAffindaOperation(
 	route: AffindaRoute,
 	status: 'completed' | 'failed',
 ) {
-	await logEventFromContext(
-		ctx,
-		`affinda.${route.group}.${route.name}`,
-		{ method: route.method, path: route.path },
-		status,
-	);
+	try {
+		await logEventFromContext(
+			ctx,
+			`affinda.${route.group}.${route.name}`,
+			{ method: route.method, path: route.path },
+			status,
+		);
+	} catch (error) {
+		console.warn('[affinda] Failed to log operation event:', error);
+	}
 }
 
 export async function requestAffindaOperation(
@@ -189,6 +187,7 @@ export async function executeAffindaOperation(
 		status = 'failed';
 		throw error;
 	} finally {
+		// Logging must not replace the AffindaAPIError thrown above.
 		await logAffindaOperation(ctx, input, route, status);
 	}
 }

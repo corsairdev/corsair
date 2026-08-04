@@ -516,7 +516,7 @@ export const affindaRoutes = [
 		path: '/resthook_subscriptions/{id}',
 		description:
 			'Tool to delete a specific resthook subscription by ID. Use after confirming the subscription identifier when the webhook is no longer needed.',
-		pathParams: ['id'],
+		pathParams: ['identifier'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
@@ -555,7 +555,7 @@ export const affindaRoutes = [
 		path: '/workspaces/{identifier}',
 		description:
 			'Tool to delete a specific workspace by its ID. Use when you need to remove an unused workspace after confirming the workspace ID.',
-		pathParams: ['identifier'],
+		pathParams: ['workspace_id'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
@@ -1007,8 +1007,8 @@ export const affindaRoutes = [
 		path: '/resthook_subscriptions/{id}',
 		description:
 			'Tool to retrieve details of a specific resthook subscription by its ID. Use after confirming its creation to verify its settings.',
-		pathParams: ['id'],
-		queryParams: ['identifier'],
+		pathParams: ['identifier'],
+		queryParams: [],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1031,8 +1031,8 @@ export const affindaRoutes = [
 		path: '/tags/{id}',
 		description:
 			'Tool to retrieve details of a specific tag by its ID. Use when you need to fetch information about a particular tag.',
-		pathParams: ['id'],
-		queryParams: ['tag_id'],
+		pathParams: ['tag_id'],
+		queryParams: [],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1043,8 +1043,8 @@ export const affindaRoutes = [
 		path: '/workspaces/{identifier}/usage',
 		description:
 			'Retrieves monthly document processing usage statistics for a specific workspace. Returns a list of usage records showing how many documents were processed each month. Use this to track workspace activity, monitor consumption trends, or generate usage reports.',
-		pathParams: ['identifier'],
-		queryParams: ['end', 'start', 'workspace_id'],
+		pathParams: ['workspace_id'],
+		queryParams: ['end', 'start'],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1218,8 +1218,7 @@ export const affindaRoutes = [
 			"Remove a tag from multiple documents in a single batch operation. Use this action to efficiently untag many documents at once rather than making individual remove requests. The operation is idempotent - removing a tag that isn't present on a document will not cause an error.",
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'destructive' as const,
-		irreversible: true,
+		riskLevel: 'write' as const,
 	},
 	{
 		key: 'replaceDataPointChoices',
@@ -1457,7 +1456,7 @@ export const affindaRoutes = [
 		path: '/resthook_subscriptions/{id}',
 		description:
 			'Tool to update an existing RESTHook subscription. Use after confirming the subscription identifier to modify its URL, event, or activation status.',
-		pathParams: ['id'],
+		pathParams: ['identifier'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -1493,7 +1492,7 @@ export const affindaRoutes = [
 		path: '/workspaces/{identifier}',
 		description:
 			"Tool to update specific fields of a workspace. Use when you need to modify a workspace's name, visibility, document rejection policy, or other settings. Only provide the fields you want to change; other fields will remain unchanged.",
-		pathParams: ['identifier'],
+		pathParams: ['workspace_id'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},

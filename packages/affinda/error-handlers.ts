@@ -39,10 +39,8 @@ export const errorHandlers = {
 			const status = getStatus(error);
 			return status !== undefined && status >= 500;
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// No retries: Affinda 5xx can arrive after a mutation committed (e.g. resthooks).
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
 		match: () => true,
