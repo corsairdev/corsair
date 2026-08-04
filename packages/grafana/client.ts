@@ -91,7 +91,8 @@ export async function makeGrafanaRawRequest(
 ): Promise<{ content: string; content_type: string; status_code: number }> {
 	const { method = 'GET', body, contentType = 'application/json' } = options;
 
-	const url = `${baseUrl}${endpoint}`;
+	const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+	const url = `${cleanBaseUrl}${endpoint}`;
 
 	const headers: Record<string, string> = {
 		Authorization: `Bearer ${bearerToken}`,
