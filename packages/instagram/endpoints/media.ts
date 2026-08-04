@@ -28,7 +28,7 @@ export const list: InstagramEndpoints['GetInstagramMediaList'] = async (
 					createdAt: media.createdAt || new Date(),
 				});
 			} catch (err) {
-				console.warn('faild to save media into database', err);
+				console.warn('failed to save media into database', err);
 			}
 		}
 	}
@@ -66,7 +66,7 @@ export const get: InstagramEndpoints['GetInstagramMedia'] = async (
 				createdAt: result.createdAt || new Date(),
 			});
 		} catch (err) {
-			console.warn('faild to save media into database', err);
+			console.warn('failed to save media into database', err);
 		}
 	}
 
