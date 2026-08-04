@@ -140,6 +140,73 @@ describe('getPluginAuthStatus', () => {
 		expect(status?.missingRequiredFields).not.toContain('refresh_token');
 	});
 
+	it('requires refresh_token for a rotating oauth_2 provider (access token expires)', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [slackOauth],
+			database: env.db,
+			kek: KEK,
+		} as any);
+
+		await setupCorsair(corsair);
+		await (corsair as any).slack.keys.set_access_token('access-test');
+		await (corsair as any).slack.keys.set_expires_at('4102444800');
+
+		const status = await getPluginAuthStatus(
+			getCorsairInternal(corsair),
+			slackOauth,
+			'default',
+		);
+
+		expect(status?.connected).toBe(false);
+		expect(status?.missingRequiredFields).toContain('refresh_token');
+	});
+
+	it('requires refresh_token for a rotating managed provider', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [githubManaged],
+			database: env.db,
+			kek: KEK,
+		} as any);
+
+		await setupCorsair(corsair);
+		await (corsair as any).github.keys.set_access_token('gho_test');
+		await (corsair as any).github.keys.set_expires_at('4102444800');
+
+		const status = await getPluginAuthStatus(
+			getCorsairInternal(corsair),
+			githubManaged,
+			'default',
+		);
+
+		expect(status?.connected).toBe(false);
+		expect(status?.missingRequiredFields).toContain('refresh_token');
+	});
+
+	it('is connected when a rotating oauth_2 provider also has a refresh_token', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [slackOauth],
+			database: env.db,
+			kek: KEK,
+		} as any);
+
+		await setupCorsair(corsair);
+		await (corsair as any).slack.keys.set_access_token('access-test');
+		await (corsair as any).slack.keys.set_expires_at('4102444800');
+		await (corsair as any).slack.keys.set_refresh_token('refresh-test');
+
+		const status = await getPluginAuthStatus(
+			getCorsairInternal(corsair),
+			slackOauth,
+			'default',
+		);
+
+		expect(status?.connected).toBe(true);
+		expect(status?.missingRequiredFields).not.toContain('refresh_token');
+	});
+
 	it('does not treat provisioned DEKs alone as connected', async () => {
 		env = createTestDatabase();
 		const corsair = createCorsair({
