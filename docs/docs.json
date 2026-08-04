@@ -428,6 +428,15 @@
                 ]
               },
               {
+                "group": "Hashnode",
+                "pages": [
+                  "plugins/hashnode/overview",
+                  "plugins/hashnode/get-credentials",
+                  "plugins/hashnode/api",
+                  "plugins/hashnode/database"
+                ]
+              },
+              {
                 "group": "Hubspot",
                 "pages": [
                   "plugins/hubspot/overview",
