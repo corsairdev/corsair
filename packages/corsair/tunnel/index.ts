@@ -113,6 +113,8 @@ export type OAuthCallbackTunnelPayload = {
 	 */
 	plugin?: string;
 	tenantId?: string;
+	// Provider callback params (e.g. GitHub's installation_id) Hub forwards; absent from the token body.
+	callbackParams?: Record<string, string>;
 };
 
 export type OAuthTokensTunnelPayload = {
@@ -315,6 +317,7 @@ async function handleOAuthCallbackTunnel(
 		code: payload.code,
 		state: payload.state,
 		redirectUri: payload.redirectUri,
+		callbackParams: payload.callbackParams,
 		...(payload.plugin && payload.tenantId
 			? { trusted: true, plugin: payload.plugin, tenantId: payload.tenantId }
 			: {}),
