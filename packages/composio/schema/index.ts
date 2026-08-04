@@ -1,10 +1,10 @@
-import { ComposioTool, ComposioConnection, ComposioAction } from './database';
+import { ComposioConnection, ComposioTool, ComposioToolkit } from './database';
 
 export const ComposioSchema = {
 	version: '1.0.0',
 	entities: {
 		tools: ComposioTool,
 		connections: ComposioConnection,
-		actions: ComposioAction,
+		toolkits: ComposioToolkit,
 	},
 } as const;

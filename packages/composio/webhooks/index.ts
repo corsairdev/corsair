@@ -1,9 +1,8 @@
-import { triggerFired, connectionStatus, actionCompleted } from './triggers';
+import * as triggers from './triggers';
 
 export const TriggerWebhooks = {
-	triggerFired,
-	connectionStatus,
-	actionCompleted,
+	triggerMessage: triggers.triggerMessage,
+	projectEvent: triggers.projectEvent,
 };
 
 export * from './types';

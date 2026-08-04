@@ -1,192 +1,262 @@
 import { z } from 'zod';
 
-// ── Tools ─────────────────────────────────────────────────────────────
+// Loose passthrough — Composio response shapes evolve; don't invent fields.
+const JsonObject = z.record(z.string(), z.unknown());
+
+// ── Tools (v3: executable actions) ─────────────────────────────────────
 
 const ToolsListInputSchema = z.object({
-	page: z.number().optional(),
-	pageSize: z.number().optional(),
-	category: z.string().optional(),
+	toolkit_slug: z.string().optional(),
+	tool_slugs: z.string().optional(),
+	query: z.string().optional(),
+	/** @deprecated use query */
 	search: z.string().optional(),
+	important: z.enum(['true', 'false']).optional(),
+	include_deprecated: z.boolean().optional(),
+	toolkit_versions: z.string().optional(),
+	limit: z.number().optional(),
+	cursor: z.string().optional(),
 });
 
 export type ToolsListInput = z.infer<typeof ToolsListInputSchema>;
 
-const ToolSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	description: z.string().optional(),
-	category: z.string().optional(),
-	image: z.string().optional(),
-	appId: z.string().optional(),
-	enabled: z.boolean().optional(),
-});
+const ToolSchema = z
+	.object({
+		slug: z.string(),
+		name: z.string(),
+		description: z.string().optional(),
+		toolkit: z
+			.object({
+				slug: z.string(),
+				name: z.string().optional(),
+				logo: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+		input_parameters: JsonObject.optional(),
+		output_parameters: JsonObject.optional(),
+		no_auth: z.boolean().optional(),
+		version: z.string().optional(),
+		tags: z.array(z.string()).optional(),
+		is_deprecated: z.boolean().optional(),
+	})
+	.passthrough();
 
 export type Tool = z.infer<typeof ToolSchema>;
 
-const ToolsListResponseSchema = z.object({
-	items: z.array(ToolSchema),
-	total: z.number().optional(),
-	page: z.number().optional(),
-	pageSize: z.number().optional(),
-});
+const PaginatedToolsSchema = z
+	.object({
+		items: z.array(ToolSchema),
+		next_cursor: z.string().nullable().optional(),
+		total_pages: z.number().optional(),
+		current_page: z.number().optional(),
+		total_items: z.number().optional(),
+	})
+	.passthrough();
 
-export type ToolsListResponse = z.infer<typeof ToolsListResponseSchema>;
+export type ToolsListResponse = z.infer<typeof PaginatedToolsSchema>;
 
 const ToolGetInputSchema = z.object({
-	toolId: z.string(),
+	tool_slug: z.string(),
+	version: z.string().optional(),
+	toolkit_versions: z.string().optional(),
 });
 
 export type ToolGetInput = z.infer<typeof ToolGetInputSchema>;
 
-const ToolGetResponseSchema = ToolSchema;
+export type ToolGetResponse = Tool;
 
-export type ToolGetResponse = z.infer<typeof ToolGetResponseSchema>;
-
-// ── Actions ────────────────────────────────────────────────────────────
+// ── Actions (aliases over tools — kept for PR surface) ─────────────────
 
 const ActionsListInputSchema = z.object({
+	toolkit_slug: z.string().optional(),
+	/** @deprecated use toolkit_slug */
 	appName: z.string().optional(),
-	page: z.number().optional(),
-	pageSize: z.number().optional(),
+	query: z.string().optional(),
+	limit: z.number().optional(),
+	cursor: z.string().optional(),
+	toolkit_versions: z.string().optional(),
 });
 
 export type ActionsListInput = z.infer<typeof ActionsListInputSchema>;
 
-const ActionSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	displayName: z.string().optional(),
-	description: z.string().optional(),
-	appName: z.string(),
-	inputSchema: z.record(z.unknown()).optional(),
-	outputSchema: z.record(z.unknown()).optional(),
-	enabled: z.boolean().optional(),
-});
-
-export type Action = z.infer<typeof ActionSchema>;
-
-const ActionsListResponseSchema = z.object({
-	items: z.array(ActionSchema),
-	total: z.number().optional(),
-});
-
-export type ActionsListResponse = z.infer<typeof ActionsListResponseSchema>;
+export type ActionsListResponse = ToolsListResponse;
 
 const ActionGetInputSchema = z.object({
-	actionId: z.string(),
+	tool_slug: z.string().optional(),
+	/** @deprecated use tool_slug */
+	actionId: z.string().optional(),
 });
 
 export type ActionGetInput = z.infer<typeof ActionGetInputSchema>;
 
-const ActionGetResponseSchema = ActionSchema;
-
-export type ActionGetResponse = z.infer<typeof ActionGetResponseSchema>;
+export type ActionGetResponse = Tool;
 
 const ActionExecuteInputSchema = z.object({
-	actionId: z.string(),
-	appName: z.string(),
-	input: z.record(z.unknown()),
+	tool_slug: z.string().optional(),
+	/** @deprecated use tool_slug */
+	actionId: z.string().optional(),
+	arguments: JsonObject.optional(),
+	/** @deprecated use arguments */
+	input: JsonObject.optional(),
+	text: z.string().optional(),
+	connected_account_id: z.string().optional(),
+	/** @deprecated use connected_account_id */
 	connectionId: z.string().optional(),
+	user_id: z.string().optional(),
+	version: z.string().optional(),
+	toolkit_versions: z.string().optional(),
 });
 
 export type ActionExecuteInput = z.infer<typeof ActionExecuteInputSchema>;
 
-const ActionExecuteResponseSchema = z.object({
-	executionId: z.string(),
-	status: z.string(),
-	output: z.record(z.unknown()).optional(),
-	error: z.string().optional(),
-});
+const ActionExecuteResponseSchema = z
+	.object({
+		data: JsonObject.optional(),
+		error: z.string().nullable().optional(),
+		successful: z.boolean().optional(),
+		log_id: z.string().optional(),
+		session_info: z.unknown().optional(),
+	})
+	.passthrough();
 
 export type ActionExecuteResponse = z.infer<typeof ActionExecuteResponseSchema>;
 
-// ── Connections ────────────────────────────────────────────────────────
+// ── Connections → connected_accounts ───────────────────────────────────
 
 const ConnectionsListInputSchema = z.object({
-	page: z.number().optional(),
-	pageSize: z.number().optional(),
+	toolkit_slugs: z.string().optional(),
+	/** @deprecated use toolkit_slugs */
 	appName: z.string().optional(),
+	statuses: z.string().optional(),
+	user_ids: z.string().optional(),
+	auth_config_ids: z.string().optional(),
+	limit: z.number().optional(),
+	cursor: z.string().optional(),
+	account_type: z.enum(['PRIVATE', 'SHARED', 'ALL']).optional(),
 });
 
 export type ConnectionsListInput = z.infer<typeof ConnectionsListInputSchema>;
 
-const ConnectionSchema = z.object({
-	id: z.string(),
-	appName: z.string(),
-	integrationId: z.string().optional(),
-	status: z.string(),
-	createdAt: z.string().optional(),
-	updatedAt: z.string().optional(),
-	meta: z.record(z.unknown()).optional(),
-});
+const ConnectionSchema = z
+	.object({
+		id: z.string(),
+		status: z.string(),
+		user_id: z.string().optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+		toolkit: z
+			.object({
+				slug: z.string(),
+			})
+			.passthrough()
+			.optional(),
+		auth_config: z
+			.object({
+				id: z.string(),
+			})
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
 
 export type Connection = z.infer<typeof ConnectionSchema>;
 
-const ConnectionsListResponseSchema = z.object({
-	items: z.array(ConnectionSchema),
-	total: z.number().optional(),
-});
+const ConnectionsListResponseSchema = z
+	.object({
+		items: z.array(ConnectionSchema),
+		next_cursor: z.string().nullable().optional(),
+		total_pages: z.number().optional(),
+		current_page: z.number().optional(),
+		total_items: z.number().optional(),
+	})
+	.passthrough();
 
 export type ConnectionsListResponse = z.infer<
 	typeof ConnectionsListResponseSchema
 >;
 
 const ConnectionCreateInputSchema = z.object({
-	appName: z.string(),
-	integrationId: z.string().optional(),
-	authConfig: z.record(z.unknown()).optional(),
+	auth_config_id: z.string(),
+	user_id: z.string(),
+	alias: z.string().optional(),
+	callback_url: z.string().optional(),
+	/** @deprecated use callback_url */
 	redirectUri: z.string().optional(),
 });
 
 export type ConnectionCreateInput = z.infer<typeof ConnectionCreateInputSchema>;
 
-const ConnectionCreateResponseSchema = ConnectionSchema;
+const ConnectionCreateResponseSchema = z
+	.object({
+		link_token: z.string().optional(),
+		redirect_url: z.string().optional(),
+		expires_at: z.string().optional(),
+		connected_account_id: z.string().optional(),
+	})
+	.passthrough();
 
 export type ConnectionCreateResponse = z.infer<
 	typeof ConnectionCreateResponseSchema
 >;
 
 const ConnectionDeleteInputSchema = z.object({
-	connectionId: z.string(),
+	connected_account_id: z.string().optional(),
+	/** @deprecated use connected_account_id */
+	connectionId: z.string().optional(),
+	revoke_on_delete: z.boolean().optional(),
 });
 
 export type ConnectionDeleteInput = z.infer<typeof ConnectionDeleteInputSchema>;
 
-const ConnectionDeleteResponseSchema = z.object({
-	success: z.boolean(),
-});
+const ConnectionDeleteResponseSchema = z
+	.object({
+		success: z.boolean(),
+		revoke_job_id: z.string().optional(),
+	})
+	.passthrough();
 
 export type ConnectionDeleteResponse = z.infer<
 	typeof ConnectionDeleteResponseSchema
 >;
 
-// ── Apps ───────────────────────────────────────────────────────────────
+// ── Apps → toolkits ────────────────────────────────────────────────────
 
 const AppsListInputSchema = z.object({
-	page: z.number().optional(),
-	pageSize: z.number().optional(),
 	category: z.string().optional(),
+	managed_by: z.enum(['composio', 'all', 'project']).optional(),
+	type: z.enum(['native', 'custom', 'all']).optional(),
+	sort_by: z.enum(['usage', 'alphabetically']).optional(),
+	search: z.string().optional(),
+	include_deprecated: z.boolean().optional(),
+	limit: z.number().optional(),
+	cursor: z.string().optional(),
 });
 
 export type AppsListInput = z.infer<typeof AppsListInputSchema>;
 
-const AppSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	displayName: z.string().optional(),
-	description: z.string().optional(),
-	category: z.string().optional(),
-	image: z.string().optional(),
-	authSchemes: z.array(z.string()).optional(),
-	enabled: z.boolean().optional(),
-});
+const AppSchema = z
+	.object({
+		slug: z.string(),
+		name: z.string(),
+		type: z.string().optional(),
+		auth_schemes: z.array(z.string()).optional(),
+		no_auth: z.boolean().optional(),
+		meta: JsonObject.optional(),
+	})
+	.passthrough();
 
 export type App = z.infer<typeof AppSchema>;
 
-const AppsListResponseSchema = z.object({
-	items: z.array(AppSchema),
-	total: z.number().optional(),
-});
+const AppsListResponseSchema = z
+	.object({
+		items: z.array(AppSchema),
+		next_cursor: z.string().nullable().optional(),
+		total_pages: z.number().optional(),
+		current_page: z.number().optional(),
+		total_items: z.number().optional(),
+	})
+	.passthrough();
 
 export type AppsListResponse = z.infer<typeof AppsListResponseSchema>;
 
@@ -229,10 +299,10 @@ export const ComposioEndpointInputSchemas = {
 } as const;
 
 export const ComposioEndpointOutputSchemas = {
-	toolsList: ToolsListResponseSchema,
-	toolGet: ToolGetResponseSchema,
-	actionsList: ActionsListResponseSchema,
-	actionGet: ActionGetResponseSchema,
+	toolsList: PaginatedToolsSchema,
+	toolGet: ToolSchema,
+	actionsList: PaginatedToolsSchema,
+	actionGet: ToolSchema,
 	actionExecute: ActionExecuteResponseSchema,
 	connectionsList: ConnectionsListResponseSchema,
 	connectionCreate: ConnectionCreateResponseSchema,

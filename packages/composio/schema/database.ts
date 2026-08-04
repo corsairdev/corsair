@@ -2,10 +2,11 @@ import { z } from 'zod';
 
 export const ComposioTool = z.object({
 	id: z.string(),
+	slug: z.string(),
 	name: z.string(),
+	toolkit_slug: z.string().nullable().optional(),
 	description: z.string().nullable().optional(),
-	category: z.string().nullable().optional(),
-	enabled: z.boolean().nullable().optional(),
+	version: z.string().nullable().optional(),
 	created_at: z.coerce.date().nullable().optional(),
 	updated_at: z.coerce.date().nullable().optional(),
 });
@@ -13,21 +14,21 @@ export type ComposioTool = z.infer<typeof ComposioTool>;
 
 export const ComposioConnection = z.object({
 	id: z.string(),
-	app_name: z.string(),
+	toolkit_slug: z.string(),
 	status: z.string(),
-	integration_id: z.string().nullable().optional(),
+	auth_config_id: z.string().nullable().optional(),
+	user_id: z.string().nullable().optional(),
 	created_at: z.coerce.date().nullable().optional(),
 	updated_at: z.coerce.date().nullable().optional(),
 	deleted_at: z.coerce.date().nullable().optional(),
 });
 export type ComposioConnection = z.infer<typeof ComposioConnection>;
 
-export const ComposioAction = z.object({
+export const ComposioToolkit = z.object({
 	id: z.string(),
+	slug: z.string(),
 	name: z.string(),
-	app_name: z.string(),
-	display_name: z.string().nullable().optional(),
-	enabled: z.boolean().nullable().optional(),
+	description: z.string().nullable().optional(),
 	created_at: z.coerce.date().nullable().optional(),
 });
-export type ComposioAction = z.infer<typeof ComposioAction>;
+export type ComposioToolkit = z.infer<typeof ComposioToolkit>;

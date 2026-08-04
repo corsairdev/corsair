@@ -11,7 +11,8 @@ export class ComposioAPIError extends Error {
 	}
 }
 
-const COMPOSIO_API_BASE = 'https://backend.composio.dev/api';
+/** Composio v3 API root. v1/v2 return 410. */
+export const COMPOSIO_API_BASE = 'https://backend.composio.dev/api';
 
 export async function makeComposioRequest<T>(
 	endpoint: string,
@@ -26,7 +27,7 @@ export async function makeComposioRequest<T>(
 
 	const config: OpenAPIConfig = {
 		BASE: COMPOSIO_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: '3.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		HEADERS: {
@@ -43,7 +44,7 @@ export async function makeComposioRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {

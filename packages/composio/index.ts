@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -13,19 +14,28 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { ComposioEndpointInputs, ComposioEndpointOutputs } from './endpoints/types';
-import { ComposioEndpointInputSchemas, ComposioEndpointOutputSchemas } from './endpoints/types';
+import {
+	ActionsEndpoints,
+	AppsEndpoints,
+	ConnectionsEndpoints,
+	ToolsEndpoints,
+} from './endpoints';
 import type {
-	ActionCompletedEvent,
-	ComposioWebhookOutputs,
-	ConnectionStatusEvent,
-	TriggerFiredEvent,
-} from './webhooks/types';
-import { ActionsEndpoints, AppsEndpoints, ConnectionsEndpoints, ToolsEndpoints } from './endpoints';
+	ComposioEndpointInputs,
+	ComposioEndpointOutputs,
+} from './endpoints/types';
+import {
+	ComposioEndpointInputSchemas,
+	ComposioEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { ComposioSchema } from './schema';
 import { TriggerWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
+import type {
+	ComposioWebhookOutputs,
+	ProjectEvent,
+	TriggerMessageEvent,
+} from './webhooks/types';
 
 export type ComposioPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -42,9 +52,12 @@ export type ComposioContext = CorsairPluginContext<
 	ComposioPluginOptions
 >;
 
-export type ComposioKeyBuilderContext = KeyBuilderContext<ComposioPluginOptions>;
+export type ComposioKeyBuilderContext =
+	KeyBuilderContext<ComposioPluginOptions>;
 
-export type ComposioBoundEndpoints = BindEndpoints<typeof composioEndpointsNested>;
+export type ComposioBoundEndpoints = BindEndpoints<
+	typeof composioEndpointsNested
+>;
 
 type ComposioEndpoint<
 	K extends keyof ComposioEndpointOutputs,
@@ -54,12 +67,27 @@ type ComposioEndpoint<
 export type ComposioEndpoints = {
 	toolsList: ComposioEndpoint<'toolsList', ComposioEndpointInputs['toolsList']>;
 	toolGet: ComposioEndpoint<'toolGet', ComposioEndpointInputs['toolGet']>;
-	actionsList: ComposioEndpoint<'actionsList', ComposioEndpointInputs['actionsList']>;
+	actionsList: ComposioEndpoint<
+		'actionsList',
+		ComposioEndpointInputs['actionsList']
+	>;
 	actionGet: ComposioEndpoint<'actionGet', ComposioEndpointInputs['actionGet']>;
-	actionExecute: ComposioEndpoint<'actionExecute', ComposioEndpointInputs['actionExecute']>;
-	connectionsList: ComposioEndpoint<'connectionsList', ComposioEndpointInputs['connectionsList']>;
-	connectionCreate: ComposioEndpoint<'connectionCreate', ComposioEndpointInputs['connectionCreate']>;
-	connectionDelete: ComposioEndpoint<'connectionDelete', ComposioEndpointInputs['connectionDelete']>;
+	actionExecute: ComposioEndpoint<
+		'actionExecute',
+		ComposioEndpointInputs['actionExecute']
+	>;
+	connectionsList: ComposioEndpoint<
+		'connectionsList',
+		ComposioEndpointInputs['connectionsList']
+	>;
+	connectionCreate: ComposioEndpoint<
+		'connectionCreate',
+		ComposioEndpointInputs['connectionCreate']
+	>;
+	connectionDelete: ComposioEndpoint<
+		'connectionDelete',
+		ComposioEndpointInputs['connectionDelete']
+	>;
 	appsList: ComposioEndpoint<'appsList', ComposioEndpointInputs['appsList']>;
 };
 
@@ -69,9 +97,8 @@ type ComposioWebhook<
 > = CorsairWebhook<ComposioContext, TEvent, ComposioWebhookOutputs[K]>;
 
 export type ComposioWebhooks = {
-	triggerFired: ComposioWebhook<'triggerFired', TriggerFiredEvent>;
-	connectionStatus: ComposioWebhook<'connectionStatus', ConnectionStatusEvent>;
-	actionCompleted: ComposioWebhook<'actionCompleted', ActionCompletedEvent>;
+	triggerMessage: ComposioWebhook<'triggerMessage', TriggerMessageEvent>;
+	projectEvent: ComposioWebhook<'projectEvent', ProjectEvent>;
 };
 
 export type ComposioBoundWebhooks = BindWebhooks<ComposioWebhooks>;
@@ -98,9 +125,8 @@ const composioEndpointsNested = {
 
 const composioWebhooksNested = {
 	triggers: {
-		fired: TriggerWebhooks.triggerFired,
-		connectionStatus: TriggerWebhooks.connectionStatus,
-		actionCompleted: TriggerWebhooks.actionCompleted,
+		message: TriggerWebhooks.triggerMessage,
+		projectEvent: TriggerWebhooks.projectEvent,
 	},
 } as const;
 
@@ -141,46 +167,48 @@ export const composioEndpointSchemas = {
 		input: ComposioEndpointInputSchemas.appsList,
 		output: ComposioEndpointOutputSchemas.appsList,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof composioEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof composioEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const composioEndpointMeta = {
 	'tools.list': {
 		riskLevel: 'read',
-		description: 'List available tools/integrations',
+		description: 'List executable Composio tools (v3)',
 	},
 	'tools.get': {
 		riskLevel: 'read',
-		description: 'Get tool details by ID',
+		description: 'Get a tool by slug',
 	},
 	'actions.list': {
 		riskLevel: 'read',
-		description: 'List available actions for an app',
+		description: 'List tools for a toolkit (alias of tools.list)',
 	},
 	'actions.get': {
 		riskLevel: 'read',
-		description: 'Get action details by ID',
+		description: 'Get a tool by slug (alias of tools.get)',
 	},
 	'actions.execute': {
 		riskLevel: 'write',
-		description: 'Execute an action on a connected app',
+		description: 'Execute a tool by slug',
 	},
 	'connections.list': {
 		riskLevel: 'read',
-		description: 'List authenticated connections',
+		description: 'List connected accounts',
 	},
 	'connections.create': {
 		riskLevel: 'write',
-		description: 'Create a new connection',
+		description: 'Create a connected-account auth link',
 	},
 	'connections.delete': {
 		riskLevel: 'write',
-		description: 'Delete a connection',
+		description: 'Delete a connected account',
 	},
 	'apps.list': {
 		riskLevel: 'read',
-		description: 'List available apps',
+		description: 'List toolkits (apps)',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof composioEndpointsNested>;
 
@@ -223,7 +251,12 @@ export function composio<const T extends ComposioPluginOptions>(
 		endpointSchemas: composioEndpointSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return 'x-composio-signature' in headers;
+			// Standard Webhooks headers used by Composio
+			return (
+				'webhook-signature' in headers &&
+				'webhook-id' in headers &&
+				'webhook-timestamp' in headers
+			);
 		},
 		errorHandlers: {
 			...errorHandlers,
@@ -254,13 +287,11 @@ export function composio<const T extends ComposioPluginOptions>(
 }
 
 export type {
-	TriggerFiredEvent,
-	ConnectionStatusEvent,
-	ActionCompletedEvent,
-	ComposioWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	ComposioEndpointInputs,
 	ComposioEndpointOutputs,
 } from './endpoints/types';
+export type {
+	ComposioWebhookOutputs,
+	ProjectEvent,
+	TriggerMessageEvent,
+} from './webhooks/types';
