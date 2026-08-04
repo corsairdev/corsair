@@ -13,16 +13,16 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import * as Core from './endpoints/core';
-import * as Fixtures from './endpoints/fixtures';
-import * as Standings from './endpoints/standings';
-import * as Players from './endpoints/players';
-import * as Odds from './endpoints/odds';
-import * as Basketball from './endpoints/basketball';
 import * as Afl from './endpoints/afl';
 import * as Baseball from './endpoints/baseball';
+import * as Basketball from './endpoints/basketball';
+import * as Core from './endpoints/core';
+import * as Fixtures from './endpoints/fixtures';
 import * as Formula1 from './endpoints/formula1';
 import * as Mma from './endpoints/mma';
+import * as Odds from './endpoints/odds';
+import * as Players from './endpoints/players';
+import * as Standings from './endpoints/standings';
 import type {
 	ApiSportsEndpointInputs,
 	ApiSportsEndpointOutputs,
@@ -47,15 +47,19 @@ export type ApiSportsContext = CorsairPluginContext<
 	ApiSportsPluginOptions
 >;
 
-export type ApiSportsKeyBuilderContext = KeyBuilderContext<ApiSportsPluginOptions>;
+export type ApiSportsKeyBuilderContext =
+	KeyBuilderContext<ApiSportsPluginOptions>;
 
-export type ApiSportsBoundEndpoints = BindEndpoints<typeof apiSportsEndpointsNested>;
-
-type ApiSportsEndpoint<K extends keyof ApiSportsEndpointOutputs> = CorsairEndpoint<
-	ApiSportsContext,
-	ApiSportsEndpointInputs[K],
-	ApiSportsEndpointOutputs[K]
+export type ApiSportsBoundEndpoints = BindEndpoints<
+	typeof apiSportsEndpointsNested
 >;
+
+type ApiSportsEndpoint<K extends keyof ApiSportsEndpointOutputs> =
+	CorsairEndpoint<
+		ApiSportsContext,
+		ApiSportsEndpointInputs[K],
+		ApiSportsEndpointOutputs[K]
+	>;
 
 export type ApiSportsEndpoints = {
 	getCountries: ApiSportsEndpoint<'getCountries'>;
@@ -492,273 +496,273 @@ export const apiSportsEndpointSchemas = {
 
 const apiSportsEndpointMeta = {
 	'core.getCountries': {
-			riskLevel: 'read',
-			description: 'Get Countries',
-		},
+		riskLevel: 'read',
+		description: 'Get Countries',
+	},
 	'core.getTimezone': {
-			riskLevel: 'read',
-			description: 'Get Timezone',
-		},
+		riskLevel: 'read',
+		description: 'Get Timezone',
+	},
 	'core.getLeagues': {
-			riskLevel: 'read',
-			description: 'Get Leagues',
-		},
+		riskLevel: 'read',
+		description: 'Get Leagues',
+	},
 	'core.getLeagueSeasons': {
-			riskLevel: 'read',
-			description: 'Get League Seasons',
-		},
+		riskLevel: 'read',
+		description: 'Get League Seasons',
+	},
 	'core.getTeams': {
-			riskLevel: 'read',
-			description: 'Get Teams',
-		},
+		riskLevel: 'read',
+		description: 'Get Teams',
+	},
 	'core.getTeamSeasons': {
-			riskLevel: 'read',
-			description: 'Get Team Seasons',
-		},
+		riskLevel: 'read',
+		description: 'Get Team Seasons',
+	},
 	'core.getTeamStatistics': {
-			riskLevel: 'read',
-			description: 'Get Team Statistics',
-		},
+		riskLevel: 'read',
+		description: 'Get Team Statistics',
+	},
 	'core.getVenues': {
-			riskLevel: 'read',
-			description: 'Get Venues',
-		},
+		riskLevel: 'read',
+		description: 'Get Venues',
+	},
 	'core.getCoaches': {
-			riskLevel: 'read',
-			description: 'Get Coaches',
-		},
+		riskLevel: 'read',
+		description: 'Get Coaches',
+	},
 	'core.getInjuries': {
-			riskLevel: 'read',
-			description: 'Get Injuries',
-		},
+		riskLevel: 'read',
+		description: 'Get Injuries',
+	},
 	'core.getSidelined': {
-			riskLevel: 'read',
-			description: 'Get Sidelined',
-		},
+		riskLevel: 'read',
+		description: 'Get Sidelined',
+	},
 	'core.getTransfers': {
-			riskLevel: 'read',
-			description: 'Get Transfers',
-		},
+		riskLevel: 'read',
+		description: 'Get Transfers',
+	},
 	'core.getTrophies': {
-			riskLevel: 'read',
-			description: 'Get Trophies',
-		},
+		riskLevel: 'read',
+		description: 'Get Trophies',
+	},
 	'core.getPredictions': {
-			riskLevel: 'read',
-			description: 'Get Predictions',
-		},
+		riskLevel: 'read',
+		description: 'Get Predictions',
+	},
 	'fixtures.getFixtures': {
-			riskLevel: 'read',
-			description: 'Get Fixtures',
-		},
+		riskLevel: 'read',
+		description: 'Get Fixtures',
+	},
 	'fixtures.getFixturesRounds': {
-			riskLevel: 'read',
-			description: 'Get Fixtures Rounds',
-		},
+		riskLevel: 'read',
+		description: 'Get Fixtures Rounds',
+	},
 	'fixtures.getHeadToHeadFixtures': {
-			riskLevel: 'read',
-			description: 'Get Head-to-Head Fixtures',
-		},
+		riskLevel: 'read',
+		description: 'Get Head-to-Head Fixtures',
+	},
 	'fixtures.getFixtureLineups': {
-			riskLevel: 'read',
-			description: 'Get Fixture Lineups',
-		},
+		riskLevel: 'read',
+		description: 'Get Fixture Lineups',
+	},
 	'fixtures.getFixtureStatistics': {
-			riskLevel: 'read',
-			description: 'Get Fixture Statistics',
-		},
+		riskLevel: 'read',
+		description: 'Get Fixture Statistics',
+	},
 	'fixtures.getFixturesEvents': {
-			riskLevel: 'read',
-			description: 'Get Fixtures Events',
-		},
+		riskLevel: 'read',
+		description: 'Get Fixtures Events',
+	},
 	'fixtures.getFixturesPlayers': {
-			riskLevel: 'read',
-			description: 'Get Fixtures Players',
-		},
+		riskLevel: 'read',
+		description: 'Get Fixtures Players',
+	},
 	'standings.getStandingsStages': {
-			riskLevel: 'read',
-			description: 'Get Standings Stages',
-		},
+		riskLevel: 'read',
+		description: 'Get Standings Stages',
+	},
 	'standings.getStandingsGroups': {
-			riskLevel: 'read',
-			description: 'Get Standings Groups',
-		},
+		riskLevel: 'read',
+		description: 'Get Standings Groups',
+	},
 	'standings.getStandingsDivisions': {
-			riskLevel: 'read',
-			description: 'Get Standings Divisions',
-		},
+		riskLevel: 'read',
+		description: 'Get Standings Divisions',
+	},
 	'standings.getNflStandingsConferences': {
-			riskLevel: 'read',
-			description: 'Get NFL Standings Conferences',
-		},
+		riskLevel: 'read',
+		description: 'Get NFL Standings Conferences',
+	},
 	'players.getPlayers': {
-			riskLevel: 'read',
-			description: 'Get Players',
-		},
+		riskLevel: 'read',
+		description: 'Get Players',
+	},
 	'players.getPlayersProfiles': {
-			riskLevel: 'read',
-			description: 'Get Players Profiles',
-		},
+		riskLevel: 'read',
+		description: 'Get Players Profiles',
+	},
 	'players.getPlayersSeasons': {
-			riskLevel: 'read',
-			description: 'Get Players Seasons',
-		},
+		riskLevel: 'read',
+		description: 'Get Players Seasons',
+	},
 	'players.getPlayersSquads': {
-			riskLevel: 'read',
-			description: 'Get Players Squads',
-		},
+		riskLevel: 'read',
+		description: 'Get Players Squads',
+	},
 	'players.getPlayersTeams': {
-			riskLevel: 'read',
-			description: 'Get Players Teams',
-		},
+		riskLevel: 'read',
+		description: 'Get Players Teams',
+	},
 	'players.getPlayersTopScorers': {
-			riskLevel: 'read',
-			description: 'Get Players Top Scorers',
-		},
+		riskLevel: 'read',
+		description: 'Get Players Top Scorers',
+	},
 	'players.getPlayersTopAssists': {
-			riskLevel: 'read',
-			description: 'Get Players Top Assists',
-		},
+		riskLevel: 'read',
+		description: 'Get Players Top Assists',
+	},
 	'players.getPlayersTopYellowCards': {
-			riskLevel: 'read',
-			description: 'Get Players Top Yellow Cards',
-		},
+		riskLevel: 'read',
+		description: 'Get Players Top Yellow Cards',
+	},
 	'players.getPlayersTopRedCards': {
-			riskLevel: 'read',
-			description: 'Get Players Top Red Cards',
-		},
+		riskLevel: 'read',
+		description: 'Get Players Top Red Cards',
+	},
 	'odds.getOdds': {
-			riskLevel: 'read',
-			description: 'Get Odds',
-		},
+		riskLevel: 'read',
+		description: 'Get Odds',
+	},
 	'odds.getOddsBets': {
-			riskLevel: 'read',
-			description: 'Get Odds Bets',
-		},
+		riskLevel: 'read',
+		description: 'Get Odds Bets',
+	},
 	'odds.getOddsBookmakers': {
-			riskLevel: 'read',
-			description: 'Get Odds Bookmakers',
-		},
+		riskLevel: 'read',
+		description: 'Get Odds Bookmakers',
+	},
 	'odds.getOddsMapping': {
-			riskLevel: 'read',
-			description: 'Get Odds Mapping',
-		},
+		riskLevel: 'read',
+		description: 'Get Odds Mapping',
+	},
 	'odds.getInPlayOdds': {
-			riskLevel: 'read',
-			description: 'Get In-Play Odds',
-		},
+		riskLevel: 'read',
+		description: 'Get In-Play Odds',
+	},
 	'odds.getLiveOddsBets': {
-			riskLevel: 'read',
-			description: 'Get Live Odds Bets',
-		},
+		riskLevel: 'read',
+		description: 'Get Live Odds Bets',
+	},
 	'basketball.getBasketballStatistics': {
-			riskLevel: 'read',
-			description: 'Get Basketball Statistics',
-		},
+		riskLevel: 'read',
+		description: 'Get Basketball Statistics',
+	},
 	'basketball.getBasketballBets': {
-			riskLevel: 'read',
-			description: 'Get Basketball Bets',
-		},
+		riskLevel: 'read',
+		description: 'Get Basketball Bets',
+	},
 	'basketball.getBasketballBookmakers': {
-			riskLevel: 'read',
-			description: 'Get Basketball Bookmakers',
-		},
+		riskLevel: 'read',
+		description: 'Get Basketball Bookmakers',
+	},
 	'basketball.getNbaGameStatistics': {
-			riskLevel: 'read',
-			description: 'Get NBA Game Statistics',
-		},
+		riskLevel: 'read',
+		description: 'Get NBA Game Statistics',
+	},
 	'basketball.getPlayerStatistics': {
-			riskLevel: 'read',
-			description: 'Get Player Statistics',
-		},
+		riskLevel: 'read',
+		description: 'Get Player Statistics',
+	},
 	'basketball.getGameStatisticsByTeams': {
-			riskLevel: 'read',
-			description: 'Get Game Statistics by Teams',
-		},
+		riskLevel: 'read',
+		description: 'Get Game Statistics by Teams',
+	},
 	'basketball.getGamesEvents': {
-			riskLevel: 'read',
-			description: 'Get Games Events',
-		},
+		riskLevel: 'read',
+		description: 'Get Games Events',
+	},
 	'afl.getAflSeasons': {
-			riskLevel: 'read',
-			description: 'Get AFL Seasons',
-		},
+		riskLevel: 'read',
+		description: 'Get AFL Seasons',
+	},
 	'afl.getAflGames': {
-			riskLevel: 'read',
-			description: 'Get AFL Games',
-		},
+		riskLevel: 'read',
+		description: 'Get AFL Games',
+	},
 	'afl.getAflGamesQuarters': {
-			riskLevel: 'read',
-			description: 'Get AFL Games Quarters',
-		},
+		riskLevel: 'read',
+		description: 'Get AFL Games Quarters',
+	},
 	'afl.getAflGamePlayerStatistics': {
-			riskLevel: 'read',
-			description: 'Get AFL Game Player Statistics',
-		},
+		riskLevel: 'read',
+		description: 'Get AFL Game Player Statistics',
+	},
 	'afl.getAflStandings': {
-			riskLevel: 'read',
-			description: 'Get AFL Standings',
-		},
+		riskLevel: 'read',
+		description: 'Get AFL Standings',
+	},
 	'baseball.getBaseballGamesHeadToHead': {
-			riskLevel: 'read',
-			description: 'Get Baseball Games Head-to-Head',
-		},
+		riskLevel: 'read',
+		description: 'Get Baseball Games Head-to-Head',
+	},
 	'formula1.getFormula1Circuits': {
-			riskLevel: 'read',
-			description: 'Get Formula 1 Circuits',
-		},
+		riskLevel: 'read',
+		description: 'Get Formula 1 Circuits',
+	},
 	'formula1.getFormula1Competitions': {
-			riskLevel: 'read',
-			description: 'Get Formula 1 Competitions',
-		},
+		riskLevel: 'read',
+		description: 'Get Formula 1 Competitions',
+	},
 	'formula1.getFormula1Races': {
-			riskLevel: 'read',
-			description: 'Get Formula 1 Races',
-		},
+		riskLevel: 'read',
+		description: 'Get Formula 1 Races',
+	},
 	'formula1.getFormula1DriverRankings': {
-			riskLevel: 'read',
-			description: 'Get Formula 1 Driver Rankings',
-		},
+		riskLevel: 'read',
+		description: 'Get Formula 1 Driver Rankings',
+	},
 	'formula1.getFormula1TeamRankings': {
-			riskLevel: 'read',
-			description: 'Get Formula 1 Team Rankings',
-		},
+		riskLevel: 'read',
+		description: 'Get Formula 1 Team Rankings',
+	},
 	'formula1.getFormula1StartingGrid': {
-			riskLevel: 'read',
-			description: 'Get Formula 1 Starting Grid',
-		},
+		riskLevel: 'read',
+		description: 'Get Formula 1 Starting Grid',
+	},
 	'formula1.getFastestLapsRankings': {
-			riskLevel: 'read',
-			description: 'Get Fastest Laps Rankings',
-		},
+		riskLevel: 'read',
+		description: 'Get Fastest Laps Rankings',
+	},
 	'formula1.getRaceRankings': {
-			riskLevel: 'read',
-			description: 'Get Race Rankings',
-		},
+		riskLevel: 'read',
+		description: 'Get Race Rankings',
+	},
 	'mma.getMmaCategories': {
-			riskLevel: 'read',
-			description: 'Get MMA Categories',
-		},
+		riskLevel: 'read',
+		description: 'Get MMA Categories',
+	},
 	'mma.getMmaFighters': {
-			riskLevel: 'read',
-			description: 'Get MMA Fighters',
-		},
+		riskLevel: 'read',
+		description: 'Get MMA Fighters',
+	},
 	'mma.getMmaFights': {
-			riskLevel: 'read',
-			description: 'Get MMA Fights',
-		},
+		riskLevel: 'read',
+		description: 'Get MMA Fights',
+	},
 	'mma.getMmaFightResults': {
-			riskLevel: 'read',
-			description: 'Get MMA Fight Results',
-		},
+		riskLevel: 'read',
+		description: 'Get MMA Fight Results',
+	},
 	'mma.getMmaFighterStatistics': {
-			riskLevel: 'read',
-			description: 'Get MMA Fighter Statistics',
-		},
+		riskLevel: 'read',
+		description: 'Get MMA Fighter Statistics',
+	},
 	'mma.getFightersRecords': {
-			riskLevel: 'read',
-			description: 'Get Fighters Records',
-		},
+		riskLevel: 'read',
+		description: 'Get Fighters Records',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof apiSportsEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -767,23 +771,25 @@ export const apiSportsAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
-export type BaseApiSportsPlugin<T extends ApiSportsPluginOptions> = CorsairPlugin<
-	'api_sports',
-	typeof ApiSportsSchema,
-	typeof apiSportsEndpointsNested,
-	typeof apiSportsWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseApiSportsPlugin<T extends ApiSportsPluginOptions> =
+	CorsairPlugin<
+		'api_sports',
+		typeof ApiSportsSchema,
+		typeof apiSportsEndpointsNested,
+		typeof apiSportsWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalApiSportsPlugin = BaseApiSportsPlugin<ApiSportsPluginOptions>;
+export type InternalApiSportsPlugin =
+	BaseApiSportsPlugin<ApiSportsPluginOptions>;
 
 export type ExternalApiSportsPlugin<T extends ApiSportsPluginOptions> =
 	BaseApiSportsPlugin<T>;
 
 export function apiSports<const T extends ApiSportsPluginOptions>(
-	incomingOptions: ApiSportsPluginOptions &
-		T = {} as ApiSportsPluginOptions & T,
+	incomingOptions: ApiSportsPluginOptions & T = {} as ApiSportsPluginOptions &
+		T,
 ): ExternalApiSportsPlugin<T> {
 	const options = {
 		...incomingOptions,

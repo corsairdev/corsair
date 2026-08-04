@@ -1,7 +1,10 @@
-import { makeApiSportsRequest, type ApiSport, type ApiSportsQueryValue } from '../client';
+import type { ApiSport, ApiSportsQueryValue } from '../client';
+import { makeApiSportsRequest } from '../client';
 import type { ApiSportsContext } from '../index';
 
-function stableQueryKey(query: Record<string, ApiSportsQueryValue> | undefined) {
+function stableQueryKey(
+	query: Record<string, ApiSportsQueryValue> | undefined,
+) {
 	if (!query) return '';
 	return JSON.stringify(
 		Object.keys(query)
@@ -30,11 +33,14 @@ export async function cacheApiSportsQuery(
 	if (!ctx.db.queries) return;
 
 	try {
-		await ctx.db.queries.upsertByEntityId(buildQueryEntityId(sport, path, query), {
-			sport,
-			path,
-			queriedAt: new Date(),
-		});
+		await ctx.db.queries.upsertByEntityId(
+			buildQueryEntityId(sport, path, query),
+			{
+				sport,
+				path,
+				queriedAt: new Date(),
+			},
+		);
 	} catch (error) {
 		console.warn('[api_sports] Failed to save query to database:', error);
 	}

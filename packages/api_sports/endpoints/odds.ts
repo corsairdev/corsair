@@ -1,83 +1,108 @@
 import { logEventFromContext } from 'corsair/core';
-import { executeApiSportsRequest } from './shared';
 import type { ApiSportsEndpoints } from '../index';
-import type { ApiSportsEndpointOutputs } from './types';
 import { API_SPORTS_ROUTES } from './routes';
+import { executeApiSportsRequest } from './shared';
+import type { ApiSportsEndpointOutputs } from './types';
 
 /** Get Odds */
 export const getOdds: ApiSportsEndpoints['getOdds'] = async (ctx, input) => {
 	const route = API_SPORTS_ROUTES.getOdds;
-	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getOdds']>(
+	const response = await executeApiSportsRequest<
+		ApiSportsEndpointOutputs['getOdds']
+	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
+	await logEventFromContext(
 		ctx,
-		route.sport,
-		route.path,
-		{ apiKey: ctx.key, query: input },
+		'api_sports.odds.getOdds',
+		input ?? {},
+		'completed',
 	);
-	await logEventFromContext(ctx, 'api_sports.odds.getOdds', input ?? {}, 'completed');
 	return response;
 };
 
 /** Get Odds Bets */
-export const getOddsBets: ApiSportsEndpoints['getOddsBets'] = async (ctx, input) => {
+export const getOddsBets: ApiSportsEndpoints['getOddsBets'] = async (
+	ctx,
+	input,
+) => {
 	const route = API_SPORTS_ROUTES.getOddsBets;
-	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getOddsBets']>(
+	const response = await executeApiSportsRequest<
+		ApiSportsEndpointOutputs['getOddsBets']
+	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
+	await logEventFromContext(
 		ctx,
-		route.sport,
-		route.path,
-		{ apiKey: ctx.key, query: input },
+		'api_sports.odds.getOddsBets',
+		input ?? {},
+		'completed',
 	);
-	await logEventFromContext(ctx, 'api_sports.odds.getOddsBets', input ?? {}, 'completed');
 	return response;
 };
 
 /** Get Odds Bookmakers */
-export const getOddsBookmakers: ApiSportsEndpoints['getOddsBookmakers'] = async (ctx, input) => {
-	const route = API_SPORTS_ROUTES.getOddsBookmakers;
-	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getOddsBookmakers']>(
-		ctx,
-		route.sport,
-		route.path,
-		{ apiKey: ctx.key, query: input },
-	);
-	await logEventFromContext(ctx, 'api_sports.odds.getOddsBookmakers', input ?? {}, 'completed');
-	return response;
-};
+export const getOddsBookmakers: ApiSportsEndpoints['getOddsBookmakers'] =
+	async (ctx, input) => {
+		const route = API_SPORTS_ROUTES.getOddsBookmakers;
+		const response = await executeApiSportsRequest<
+			ApiSportsEndpointOutputs['getOddsBookmakers']
+		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
+		await logEventFromContext(
+			ctx,
+			'api_sports.odds.getOddsBookmakers',
+			input ?? {},
+			'completed',
+		);
+		return response;
+	};
 
 /** Get Odds Mapping */
-export const getOddsMapping: ApiSportsEndpoints['getOddsMapping'] = async (ctx, input) => {
+export const getOddsMapping: ApiSportsEndpoints['getOddsMapping'] = async (
+	ctx,
+	input,
+) => {
 	const route = API_SPORTS_ROUTES.getOddsMapping;
-	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getOddsMapping']>(
+	const response = await executeApiSportsRequest<
+		ApiSportsEndpointOutputs['getOddsMapping']
+	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
+	await logEventFromContext(
 		ctx,
-		route.sport,
-		route.path,
-		{ apiKey: ctx.key, query: input },
+		'api_sports.odds.getOddsMapping',
+		input ?? {},
+		'completed',
 	);
-	await logEventFromContext(ctx, 'api_sports.odds.getOddsMapping', input ?? {}, 'completed');
 	return response;
 };
 
 /** Get In-Play Odds */
-export const getInPlayOdds: ApiSportsEndpoints['getInPlayOdds'] = async (ctx, input) => {
+export const getInPlayOdds: ApiSportsEndpoints['getInPlayOdds'] = async (
+	ctx,
+	input,
+) => {
 	const route = API_SPORTS_ROUTES.getInPlayOdds;
-	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getInPlayOdds']>(
+	const response = await executeApiSportsRequest<
+		ApiSportsEndpointOutputs['getInPlayOdds']
+	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
+	await logEventFromContext(
 		ctx,
-		route.sport,
-		route.path,
-		{ apiKey: ctx.key, query: input },
+		'api_sports.odds.getInPlayOdds',
+		input ?? {},
+		'completed',
 	);
-	await logEventFromContext(ctx, 'api_sports.odds.getInPlayOdds', input ?? {}, 'completed');
 	return response;
 };
 
 /** Get Live Odds Bets */
-export const getLiveOddsBets: ApiSportsEndpoints['getLiveOddsBets'] = async (ctx, input) => {
+export const getLiveOddsBets: ApiSportsEndpoints['getLiveOddsBets'] = async (
+	ctx,
+	input,
+) => {
 	const route = API_SPORTS_ROUTES.getLiveOddsBets;
-	const response = await executeApiSportsRequest<ApiSportsEndpointOutputs['getLiveOddsBets']>(
+	const response = await executeApiSportsRequest<
+		ApiSportsEndpointOutputs['getLiveOddsBets']
+	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
+	await logEventFromContext(
 		ctx,
-		route.sport,
-		route.path,
-		{ apiKey: ctx.key, query: input },
+		'api_sports.odds.getLiveOddsBets',
+		input ?? {},
+		'completed',
 	);
-	await logEventFromContext(ctx, 'api_sports.odds.getLiveOddsBets', input ?? {}, 'completed');
 	return response;
 };

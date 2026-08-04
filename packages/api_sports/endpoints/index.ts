@@ -7,6 +7,6 @@ export * as Formula1 from './formula1';
 export * as Mma from './mma';
 export * as Odds from './odds';
 export * as Players from './players';
+export * from './routes';
 export * as Standings from './standings';
 export * from './types';
-export * from './routes';
