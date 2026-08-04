@@ -43,8 +43,14 @@ export type ComposioWebhookOutputs = {
 	projectEvent: ProjectEvent;
 };
 
-/** Webhook request; HMAC verify requires `rawBodyPreserved === true`. */
-export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload>;
+/**
+ * Webhook request with optional raw-body provenance.
+ * Core sets `rawBodyPreserved` once the shared processWebhook fix lands;
+ * until then the field may be absent when adapters pass a string body.
+ */
+export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload> & {
+	rawBodyPreserved?: boolean;
+};
 
 /**
  * Core `processWebhook` parses JSON before matchers run, so matchers usually
@@ -71,7 +77,7 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 
 export function createComposioMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		if (!('webhook-signature' in request.headers)) return false;
+		if (!headerValue(request.headers, 'webhook-signature')) return false;
 		const parsedBody = parseBody(request.body);
 		if (!parsedBody) return false;
 		return typeof parsedBody.type === 'string' && parsedBody.type === eventType;
@@ -81,7 +87,7 @@ export function createComposioMatch(eventType: string): CorsairWebhookMatcher {
 /** Match any non-trigger project event that still carries Standard Webhooks headers. */
 export function createComposioProjectEventMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		if (!('webhook-signature' in request.headers)) return false;
+		if (!headerValue(request.headers, 'webhook-signature')) return false;
 		const parsedBody = parseBody(request.body);
 		if (!parsedBody || typeof parsedBody.type !== 'string') return false;
 		return parsedBody.type !== 'composio.trigger.message';
@@ -89,11 +95,20 @@ export function createComposioProjectEventMatch(): CorsairWebhookMatcher {
 }
 
 function headerValue(
-	headers: WebhookRequest<unknown>['headers'],
+	headers: WebhookRequest<unknown>['headers'] | RawWebhookRequest['headers'],
 	name: string,
 ): string | undefined {
-	const value = headers[name];
-	return Array.isArray(value) ? value[0] : value;
+	const lower = name.toLowerCase();
+	const exact = headers[name] ?? headers[lower];
+	if (exact !== undefined) {
+		return Array.isArray(exact) ? exact[0] : exact;
+	}
+	for (const [key, value] of Object.entries(headers)) {
+		if (key.toLowerCase() === lower) {
+			return Array.isArray(value) ? value[0] : value;
+		}
+	}
+	return undefined;
 }
 
 function hmacKeyFromSecret(secret: string): Buffer {
@@ -113,8 +128,9 @@ function hmacKeyFromSecret(secret: string): Buffer {
  * HMAC-SHA256 over `{webhook-id}.{webhook-timestamp}.{rawBody}`, digest base64.
  * Header `webhook-signature` looks like `v1,<base64>` (space-separated if multiple).
  *
- * Requires `rawBodyPreserved === true` (same as Databricks). Callers of
+ * Refuses when `rawBodyPreserved === false` (reconstructed body). Callers of
  * `processWebhook` must pass the raw request string so `rawBody` is original.
+ * When the flag is absent (older core), still verify against `rawBody` if present.
  */
 export function verifyComposioWebhookSignature(
 	request: ComposioWebhookRequest,
@@ -122,12 +138,7 @@ export function verifyComposioWebhookSignature(
 ): { valid: boolean; error?: string } {
 	if (!secret) return { valid: false, error: 'Missing webhook secret' };
 
-	// Do not infer provenance from JSON.stringify equality.
-	if (
-		request.rawBodyPreserved !== true ||
-		typeof request.rawBody !== 'string' ||
-		request.rawBody.length === 0
-	) {
+	if (request.rawBodyPreserved === false) {
 		return {
 			valid: false,
 			error: 'Missing original raw body for signature verification',
@@ -135,6 +146,9 @@ export function verifyComposioWebhookSignature(
 	}
 
 	const rawBody = request.rawBody;
+	if (typeof rawBody !== 'string' || rawBody.length === 0) {
+		return { valid: false, error: 'Missing raw body' };
+	}
 
 	const webhookId = headerValue(request.headers, 'webhook-id');
 	const webhookTimestamp = headerValue(request.headers, 'webhook-timestamp');

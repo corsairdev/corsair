@@ -76,7 +76,7 @@ describe('Composio webhook verification', () => {
 		expect(result.error).toMatch(/original raw body/i);
 	});
 
-	it('rejects when rawBodyPreserved is missing', () => {
+	it('accepts when rawBodyPreserved is absent (older core)', () => {
 		const signature = sign(secret, id, ts, body);
 		const result = verifyComposioWebhookSignature(
 			{
@@ -90,8 +90,7 @@ describe('Composio webhook verification', () => {
 			} as never,
 			secret,
 		);
-		expect(result.valid).toBe(false);
-		expect(result.error).toMatch(/original raw body/i);
+		expect(result.valid).toBe(true);
 	});
 
 	it('verifies from raw string body before parse', () => {
@@ -130,5 +129,15 @@ describe('Composio webhook verification', () => {
 				headers: { 'webhook-signature': 'v1,x' },
 			} as never),
 		).toBe(false);
+	});
+
+	it('matches when webhook-signature header is mixed-case', () => {
+		const match = createComposioMatch('composio.trigger.message');
+		expect(
+			match({
+				body: JSON.parse(body),
+				headers: { 'Webhook-Signature': 'v1,x' },
+			} as never),
+		).toBe(true);
 	});
 });
