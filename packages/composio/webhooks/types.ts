@@ -43,8 +43,13 @@ export type ComposioWebhookOutputs = {
 	projectEvent: ProjectEvent;
 };
 
-/** HMAC verify requires `rawBodyPreserved === true` (set by processWebhook). */
-export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload>;
+/**
+ * Optional provenance until core processWebhook sets the flag (separate PR).
+ * Rejects only when explicitly `false` (reconstructed body).
+ */
+export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload> & {
+	rawBodyPreserved?: boolean;
+};
 
 /**
  * Core `processWebhook` parses JSON before matchers run, so matchers usually
@@ -125,8 +130,8 @@ const SIGNATURE_FAILED = 'Signature verification failed';
  * HMAC-SHA256 over `{webhook-id}.{webhook-timestamp}.{rawBody}`, digest base64.
  * Header `webhook-signature` looks like `v1,<base64>` (space-separated if multiple).
  *
- * Requires `rawBodyPreserved === true`. Callers of `processWebhook` must pass
- * the raw request string so `rawBody` is original.
+ * Refuses when `rawBodyPreserved === false`. Until core sets the flag, a
+ * string `rawBody` from adapters that pass the original request body is OK.
  */
 export function verifyComposioWebhookSignature(
 	request: ComposioWebhookRequest,
@@ -134,16 +139,14 @@ export function verifyComposioWebhookSignature(
 ): { valid: boolean; error?: string } {
 	if (!secret) return { valid: false, error: SIGNATURE_FAILED };
 
-	// Do not infer provenance from JSON.stringify equality.
-	if (
-		request.rawBodyPreserved !== true ||
-		typeof request.rawBody !== 'string' ||
-		request.rawBody.length === 0
-	) {
+	if (request.rawBodyPreserved === false) {
 		return { valid: false, error: SIGNATURE_FAILED };
 	}
 
 	const rawBody = request.rawBody;
+	if (typeof rawBody !== 'string' || rawBody.length === 0) {
+		return { valid: false, error: SIGNATURE_FAILED };
+	}
 	const webhookId = headerValue(request.headers, 'webhook-id');
 	const webhookTimestamp = headerValue(request.headers, 'webhook-timestamp');
 	const sigHeader = headerValue(request.headers, 'webhook-signature');
