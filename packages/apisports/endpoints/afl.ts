@@ -15,7 +15,7 @@ export const getAflSeasons: ApiSportsEndpoints['getAflSeasons'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.afl.getAflSeasons',
+		'apisports.afl.getAflSeasons',
 		input ?? {},
 		'completed',
 	);
@@ -33,7 +33,7 @@ export const getAflGames: ApiSportsEndpoints['getAflGames'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.afl.getAflGames',
+		'apisports.afl.getAflGames',
 		input ?? {},
 		'completed',
 	);
@@ -49,7 +49,7 @@ export const getAflGamesQuarters: ApiSportsEndpoints['getAflGamesQuarters'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.afl.getAflGamesQuarters',
+			'apisports.afl.getAflGamesQuarters',
 			input ?? {},
 			'completed',
 		);
@@ -65,7 +65,7 @@ export const getAflGamePlayerStatistics: ApiSportsEndpoints['getAflGamePlayerSta
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.afl.getAflGamePlayerStatistics',
+			'apisports.afl.getAflGamePlayerStatistics',
 			input ?? {},
 			'completed',
 		);
@@ -83,7 +83,7 @@ export const getAflStandings: ApiSportsEndpoints['getAflStandings'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.afl.getAflStandings',
+		'apisports.afl.getAflStandings',
 		input ?? {},
 		'completed',
 	);

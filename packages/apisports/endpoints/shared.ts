@@ -42,7 +42,7 @@ export async function cacheApiSportsQuery(
 			},
 		);
 	} catch (error) {
-		console.warn('[api_sports] Failed to save query to database:', error);
+		console.warn('[apisports] Failed to save query to database:', error);
 	}
 }
 

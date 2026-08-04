@@ -467,7 +467,7 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/api_sports:
+  packages/apisports:
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14

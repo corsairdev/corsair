@@ -13,7 +13,7 @@ export const getFormula1Circuits: ApiSportsEndpoints['getFormula1Circuits'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.formula1.getFormula1Circuits',
+			'apisports.formula1.getFormula1Circuits',
 			input ?? {},
 			'completed',
 		);
@@ -29,7 +29,7 @@ export const getFormula1Competitions: ApiSportsEndpoints['getFormula1Competition
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.formula1.getFormula1Competitions',
+			'apisports.formula1.getFormula1Competitions',
 			input ?? {},
 			'completed',
 		);
@@ -47,7 +47,7 @@ export const getFormula1Races: ApiSportsEndpoints['getFormula1Races'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.formula1.getFormula1Races',
+		'apisports.formula1.getFormula1Races',
 		input ?? {},
 		'completed',
 	);
@@ -63,7 +63,7 @@ export const getFormula1DriverRankings: ApiSportsEndpoints['getFormula1DriverRan
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.formula1.getFormula1DriverRankings',
+			'apisports.formula1.getFormula1DriverRankings',
 			input ?? {},
 			'completed',
 		);
@@ -79,7 +79,7 @@ export const getFormula1TeamRankings: ApiSportsEndpoints['getFormula1TeamRanking
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.formula1.getFormula1TeamRankings',
+			'apisports.formula1.getFormula1TeamRankings',
 			input ?? {},
 			'completed',
 		);
@@ -95,7 +95,7 @@ export const getFormula1StartingGrid: ApiSportsEndpoints['getFormula1StartingGri
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.formula1.getFormula1StartingGrid',
+			'apisports.formula1.getFormula1StartingGrid',
 			input ?? {},
 			'completed',
 		);
@@ -111,7 +111,7 @@ export const getFastestLapsRankings: ApiSportsEndpoints['getFastestLapsRankings'
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.formula1.getFastestLapsRankings',
+			'apisports.formula1.getFastestLapsRankings',
 			input ?? {},
 			'completed',
 		);
@@ -129,7 +129,7 @@ export const getRaceRankings: ApiSportsEndpoints['getRaceRankings'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.formula1.getRaceRankings',
+		'apisports.formula1.getRaceRankings',
 		input ?? {},
 		'completed',
 	);

@@ -12,7 +12,7 @@ export const getOdds: ApiSportsEndpoints['getOdds'] = async (ctx, input) => {
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.odds.getOdds',
+		'apisports.odds.getOdds',
 		input ?? {},
 		'completed',
 	);
@@ -30,7 +30,7 @@ export const getOddsBets: ApiSportsEndpoints['getOddsBets'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.odds.getOddsBets',
+		'apisports.odds.getOddsBets',
 		input ?? {},
 		'completed',
 	);
@@ -46,7 +46,7 @@ export const getOddsBookmakers: ApiSportsEndpoints['getOddsBookmakers'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.odds.getOddsBookmakers',
+			'apisports.odds.getOddsBookmakers',
 			input ?? {},
 			'completed',
 		);
@@ -64,7 +64,7 @@ export const getOddsMapping: ApiSportsEndpoints['getOddsMapping'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.odds.getOddsMapping',
+		'apisports.odds.getOddsMapping',
 		input ?? {},
 		'completed',
 	);
@@ -82,7 +82,7 @@ export const getInPlayOdds: ApiSportsEndpoints['getInPlayOdds'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.odds.getInPlayOdds',
+		'apisports.odds.getInPlayOdds',
 		input ?? {},
 		'completed',
 	);
@@ -100,7 +100,7 @@ export const getLiveOddsBets: ApiSportsEndpoints['getLiveOddsBets'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.odds.getLiveOddsBets',
+		'apisports.odds.getLiveOddsBets',
 		input ?? {},
 		'completed',
 	);

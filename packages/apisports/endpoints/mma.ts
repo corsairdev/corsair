@@ -15,7 +15,7 @@ export const getMmaCategories: ApiSportsEndpoints['getMmaCategories'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.mma.getMmaCategories',
+		'apisports.mma.getMmaCategories',
 		input ?? {},
 		'completed',
 	);
@@ -33,7 +33,7 @@ export const getMmaFighters: ApiSportsEndpoints['getMmaFighters'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.mma.getMmaFighters',
+		'apisports.mma.getMmaFighters',
 		input ?? {},
 		'completed',
 	);
@@ -51,7 +51,7 @@ export const getMmaFights: ApiSportsEndpoints['getMmaFights'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.mma.getMmaFights',
+		'apisports.mma.getMmaFights',
 		input ?? {},
 		'completed',
 	);
@@ -67,7 +67,7 @@ export const getMmaFightResults: ApiSportsEndpoints['getMmaFightResults'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.mma.getMmaFightResults',
+			'apisports.mma.getMmaFightResults',
 			input ?? {},
 			'completed',
 		);
@@ -83,7 +83,7 @@ export const getMmaFighterStatistics: ApiSportsEndpoints['getMmaFighterStatistic
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.mma.getMmaFighterStatistics',
+			'apisports.mma.getMmaFighterStatistics',
 			input ?? {},
 			'completed',
 		);
@@ -99,7 +99,7 @@ export const getFightersRecords: ApiSportsEndpoints['getFightersRecords'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.mma.getFightersRecords',
+			'apisports.mma.getFightersRecords',
 			input ?? {},
 			'completed',
 		);

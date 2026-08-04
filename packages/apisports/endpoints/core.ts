@@ -15,7 +15,7 @@ export const getCountries: ApiSportsEndpoints['getCountries'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getCountries',
+		'apisports.core.getCountries',
 		input ?? {},
 		'completed',
 	);
@@ -33,7 +33,7 @@ export const getTimezone: ApiSportsEndpoints['getTimezone'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getTimezone',
+		'apisports.core.getTimezone',
 		input ?? {},
 		'completed',
 	);
@@ -51,7 +51,7 @@ export const getLeagues: ApiSportsEndpoints['getLeagues'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getLeagues',
+		'apisports.core.getLeagues',
 		input ?? {},
 		'completed',
 	);
@@ -69,7 +69,7 @@ export const getLeagueSeasons: ApiSportsEndpoints['getLeagueSeasons'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getLeagueSeasons',
+		'apisports.core.getLeagueSeasons',
 		input ?? {},
 		'completed',
 	);
@@ -84,7 +84,7 @@ export const getTeams: ApiSportsEndpoints['getTeams'] = async (ctx, input) => {
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getTeams',
+		'apisports.core.getTeams',
 		input ?? {},
 		'completed',
 	);
@@ -102,7 +102,7 @@ export const getTeamSeasons: ApiSportsEndpoints['getTeamSeasons'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getTeamSeasons',
+		'apisports.core.getTeamSeasons',
 		input ?? {},
 		'completed',
 	);
@@ -118,7 +118,7 @@ export const getTeamStatistics: ApiSportsEndpoints['getTeamStatistics'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.core.getTeamStatistics',
+			'apisports.core.getTeamStatistics',
 			input ?? {},
 			'completed',
 		);
@@ -136,7 +136,7 @@ export const getVenues: ApiSportsEndpoints['getVenues'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getVenues',
+		'apisports.core.getVenues',
 		input ?? {},
 		'completed',
 	);
@@ -154,7 +154,7 @@ export const getCoaches: ApiSportsEndpoints['getCoaches'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getCoaches',
+		'apisports.core.getCoaches',
 		input ?? {},
 		'completed',
 	);
@@ -172,7 +172,7 @@ export const getInjuries: ApiSportsEndpoints['getInjuries'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getInjuries',
+		'apisports.core.getInjuries',
 		input ?? {},
 		'completed',
 	);
@@ -190,7 +190,7 @@ export const getSidelined: ApiSportsEndpoints['getSidelined'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getSidelined',
+		'apisports.core.getSidelined',
 		input ?? {},
 		'completed',
 	);
@@ -208,7 +208,7 @@ export const getTransfers: ApiSportsEndpoints['getTransfers'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getTransfers',
+		'apisports.core.getTransfers',
 		input ?? {},
 		'completed',
 	);
@@ -226,7 +226,7 @@ export const getTrophies: ApiSportsEndpoints['getTrophies'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getTrophies',
+		'apisports.core.getTrophies',
 		input ?? {},
 		'completed',
 	);
@@ -244,7 +244,7 @@ export const getPredictions: ApiSportsEndpoints['getPredictions'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.core.getPredictions',
+		'apisports.core.getPredictions',
 		input ?? {},
 		'completed',
 	);

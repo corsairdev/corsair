@@ -13,7 +13,7 @@ export const getStandingsStages: ApiSportsEndpoints['getStandingsStages'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.standings.getStandingsStages',
+			'apisports.standings.getStandingsStages',
 			input ?? {},
 			'completed',
 		);
@@ -29,7 +29,7 @@ export const getStandingsGroups: ApiSportsEndpoints['getStandingsGroups'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.standings.getStandingsGroups',
+			'apisports.standings.getStandingsGroups',
 			input ?? {},
 			'completed',
 		);
@@ -45,7 +45,7 @@ export const getStandingsDivisions: ApiSportsEndpoints['getStandingsDivisions'] 
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.standings.getStandingsDivisions',
+			'apisports.standings.getStandingsDivisions',
 			input ?? {},
 			'completed',
 		);
@@ -61,7 +61,7 @@ export const getNflStandingsConferences: ApiSportsEndpoints['getNflStandingsConf
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.standings.getNflStandingsConferences',
+			'apisports.standings.getNflStandingsConferences',
 			input ?? {},
 			'completed',
 		);

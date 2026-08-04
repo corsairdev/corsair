@@ -773,7 +773,7 @@ export const apiSportsAuthConfig = {
 
 export type BaseApiSportsPlugin<T extends ApiSportsPluginOptions> =
 	CorsairPlugin<
-		'api_sports',
+		'apisports',
 		typeof ApiSportsSchema,
 		typeof apiSportsEndpointsNested,
 		typeof apiSportsWebhooksNested,
@@ -787,7 +787,7 @@ export type InternalApiSportsPlugin =
 export type ExternalApiSportsPlugin<T extends ApiSportsPluginOptions> =
 	BaseApiSportsPlugin<T>;
 
-export function apiSports<const T extends ApiSportsPluginOptions>(
+export function apisports<const T extends ApiSportsPluginOptions>(
 	incomingOptions: ApiSportsPluginOptions & T = {} as ApiSportsPluginOptions &
 		T,
 ): ExternalApiSportsPlugin<T> {
@@ -796,7 +796,7 @@ export function apiSports<const T extends ApiSportsPluginOptions>(
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	return {
-		id: 'api_sports',
+		id: 'apisports',
 		authConfig: apiSportsAuthConfig,
 		schema: ApiSportsSchema,
 		options,
@@ -818,11 +818,11 @@ export function apiSports<const T extends ApiSportsPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new AuthMissingError('api_sports', 'api_key');
+					throw new AuthMissingError('apisports', 'api_key');
 				}
 				return res;
 			}
-			throw new AuthMissingError('api_sports', 'api_key');
+			throw new AuthMissingError('apisports', 'api_key');
 		},
 	} satisfies InternalApiSportsPlugin;
 }

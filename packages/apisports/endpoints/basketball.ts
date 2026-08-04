@@ -13,7 +13,7 @@ export const getBasketballStatistics: ApiSportsEndpoints['getBasketballStatistic
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.basketball.getBasketballStatistics',
+			'apisports.basketball.getBasketballStatistics',
 			input ?? {},
 			'completed',
 		);
@@ -29,7 +29,7 @@ export const getBasketballBets: ApiSportsEndpoints['getBasketballBets'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.basketball.getBasketballBets',
+			'apisports.basketball.getBasketballBets',
 			input ?? {},
 			'completed',
 		);
@@ -45,7 +45,7 @@ export const getBasketballBookmakers: ApiSportsEndpoints['getBasketballBookmaker
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.basketball.getBasketballBookmakers',
+			'apisports.basketball.getBasketballBookmakers',
 			input ?? {},
 			'completed',
 		);
@@ -61,7 +61,7 @@ export const getNbaGameStatistics: ApiSportsEndpoints['getNbaGameStatistics'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.basketball.getNbaGameStatistics',
+			'apisports.basketball.getNbaGameStatistics',
 			input ?? {},
 			'completed',
 		);
@@ -77,7 +77,7 @@ export const getPlayerStatistics: ApiSportsEndpoints['getPlayerStatistics'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.basketball.getPlayerStatistics',
+			'apisports.basketball.getPlayerStatistics',
 			input ?? {},
 			'completed',
 		);
@@ -93,7 +93,7 @@ export const getGameStatisticsByTeams: ApiSportsEndpoints['getGameStatisticsByTe
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.basketball.getGameStatisticsByTeams',
+			'apisports.basketball.getGameStatisticsByTeams',
 			input ?? {},
 			'completed',
 		);
@@ -111,7 +111,7 @@ export const getGamesEvents: ApiSportsEndpoints['getGamesEvents'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.basketball.getGamesEvents',
+		'apisports.basketball.getGamesEvents',
 		input ?? {},
 		'completed',
 	);

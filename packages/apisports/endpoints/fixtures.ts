@@ -15,7 +15,7 @@ export const getFixtures: ApiSportsEndpoints['getFixtures'] = async (
 	>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 	await logEventFromContext(
 		ctx,
-		'api_sports.fixtures.getFixtures',
+		'apisports.fixtures.getFixtures',
 		input ?? {},
 		'completed',
 	);
@@ -31,7 +31,7 @@ export const getFixturesRounds: ApiSportsEndpoints['getFixturesRounds'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.fixtures.getFixturesRounds',
+			'apisports.fixtures.getFixturesRounds',
 			input ?? {},
 			'completed',
 		);
@@ -47,7 +47,7 @@ export const getHeadToHeadFixtures: ApiSportsEndpoints['getHeadToHeadFixtures'] 
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.fixtures.getHeadToHeadFixtures',
+			'apisports.fixtures.getHeadToHeadFixtures',
 			input ?? {},
 			'completed',
 		);
@@ -63,7 +63,7 @@ export const getFixtureLineups: ApiSportsEndpoints['getFixtureLineups'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.fixtures.getFixtureLineups',
+			'apisports.fixtures.getFixtureLineups',
 			input ?? {},
 			'completed',
 		);
@@ -79,7 +79,7 @@ export const getFixtureStatistics: ApiSportsEndpoints['getFixtureStatistics'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.fixtures.getFixtureStatistics',
+			'apisports.fixtures.getFixtureStatistics',
 			input ?? {},
 			'completed',
 		);
@@ -95,7 +95,7 @@ export const getFixturesEvents: ApiSportsEndpoints['getFixturesEvents'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.fixtures.getFixturesEvents',
+			'apisports.fixtures.getFixturesEvents',
 			input ?? {},
 			'completed',
 		);
@@ -111,7 +111,7 @@ export const getFixturesPlayers: ApiSportsEndpoints['getFixturesPlayers'] =
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.fixtures.getFixturesPlayers',
+			'apisports.fixtures.getFixturesPlayers',
 			input ?? {},
 			'completed',
 		);

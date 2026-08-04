@@ -13,7 +13,7 @@ export const getBaseballGamesHeadToHead: ApiSportsEndpoints['getBaseballGamesHea
 		>(ctx, route.sport, route.path, { apiKey: ctx.key, query: input });
 		await logEventFromContext(
 			ctx,
-			'api_sports.baseball.getBaseballGamesHeadToHead',
+			'apisports.baseball.getBaseballGamesHeadToHead',
 			input ?? {},
 			'completed',
 		);
