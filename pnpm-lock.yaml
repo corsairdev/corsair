@@ -165,9 +165,6 @@ importers:
       '@corsair-dev/agentql':
         specifier: workspace:*
         version: link:../../packages/agentql
-      '@corsair-dev/api_sports':
-        specifier: workspace:*
-        version: link:../../packages/api_sports
       '@corsair-dev/bitwarden':
         specifier: workspace:*
         version: link:../../packages/bitwarden
