@@ -43,16 +43,37 @@ export type ComposioWebhookOutputs = {
 	projectEvent: ProjectEvent;
 };
 
-/** request.body may be a pre-parsed object or a raw JSON string from the framework. */
+/**
+ * Webhook request with explicit raw-body provenance.
+ * Set `rawBodyPreserved` only when `rawBody` is the original inbound bytes
+ * (not JSON.stringify of a parsed object). `processWebhook` preserves the
+ * original when callers pass a string body.
+ */
+export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload> & {
+	rawBodyPreserved?: boolean;
+};
+
+/**
+ * Core `processWebhook` parses JSON before matchers run, so matchers usually
+ * see an object. String + try/catch covers direct/unit-test calls only —
+ * malformed JSON at the HTTP edge must be caught by the adapter / processWebhook.
+ */
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
-			return JSON.parse(body) as Record<string, unknown>;
+			const parsed = JSON.parse(body);
+			return parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
+				? (parsed as Record<string, unknown>)
+				: null;
 		} catch {
 			return null;
 		}
 	}
-	return (body ?? {}) as Record<string, unknown>;
+	return body !== null && typeof body === 'object' && !Array.isArray(body)
+		? (body as Record<string, unknown>)
+		: null;
 }
 
 export function createComposioMatch(eventType: string): CorsairWebhookMatcher {
@@ -98,15 +119,27 @@ function hmacKeyFromSecret(secret: string): Buffer {
  * Composio signs with Standard Webhooks:
  * HMAC-SHA256 over `{webhook-id}.{webhook-timestamp}.{rawBody}`, digest base64.
  * Header `webhook-signature` looks like `v1,<base64>` (space-separated if multiple).
+ *
+ * Refuses when `rawBodyPreserved === false` (reconstructed body). Callers of
+ * `processWebhook` must pass the raw request string so `rawBody` is original.
  */
 export function verifyComposioWebhookSignature(
-	request: WebhookRequest<ComposioWebhookPayload>,
+	request: ComposioWebhookRequest,
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) return { valid: false, error: 'Missing webhook secret' };
 
+	if (request.rawBodyPreserved === false) {
+		return {
+			valid: false,
+			error: 'Missing original raw body for signature verification',
+		};
+	}
+
 	const rawBody = request.rawBody;
-	if (!rawBody) return { valid: false, error: 'Missing raw body' };
+	if (typeof rawBody !== 'string' || rawBody.length === 0) {
+		return { valid: false, error: 'Missing raw body' };
+	}
 
 	const webhookId = headerValue(request.headers, 'webhook-id');
 	const webhookTimestamp = headerValue(request.headers, 'webhook-timestamp');
@@ -143,4 +176,29 @@ export function verifyComposioWebhookSignature(
 
 	if (!isValid) return { valid: false, error: 'Invalid signature' };
 	return { valid: true };
+}
+
+/**
+ * Verify against the inbound string body before JSON parsing.
+ * Use this from adapters that still have the original bytes.
+ */
+export function verifyComposioWebhookSignatureFromRaw(
+	request: Pick<RawWebhookRequest, 'body' | 'headers'>,
+	secret: string,
+): { valid: boolean; error?: string } {
+	if (typeof request.body !== 'string') {
+		return {
+			valid: false,
+			error: 'Missing original raw body for signature verification',
+		};
+	}
+	return verifyComposioWebhookSignature(
+		{
+			payload: {} as ComposioWebhookPayload,
+			headers: request.headers,
+			rawBody: request.body,
+			rawBodyPreserved: true,
+		},
+		secret,
+	);
 }

@@ -34,7 +34,12 @@ export const list: ComposioEndpoints['connectionsList'] = async (
 	await logEventFromContext(
 		ctx,
 		'composio.connections.list',
-		{ ...input },
+		{
+			toolkit_slugs: toolkitSlugs,
+			statuses: input.statuses,
+			limit: input.limit,
+			// omit user_ids / auth_config_ids — PII / sensitive identifiers
+		},
 		'completed',
 	);
 	return response;
@@ -61,7 +66,7 @@ export const create: ComposioEndpoints['connectionCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'composio.connections.create',
-		{ auth_config_id: input.auth_config_id, user_id: input.user_id },
+		{ auth_config_id: input.auth_config_id },
 		'completed',
 	);
 	return response;

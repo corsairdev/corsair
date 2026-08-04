@@ -2,6 +2,7 @@ import { createHmac } from 'node:crypto';
 import {
 	createComposioMatch,
 	verifyComposioWebhookSignature,
+	verifyComposioWebhookSignatureFromRaw,
 } from './webhooks/types';
 
 function sign(secret: string, id: string, ts: string, body: string) {
@@ -21,11 +22,12 @@ describe('Composio webhook verification', () => {
 	const id = 'msg_123';
 	const ts = String(Math.floor(Date.now() / 1000));
 
-	it('accepts a valid Standard Webhooks signature', () => {
+	it('accepts a valid Standard Webhooks signature with preserved raw body', () => {
 		const signature = sign(secret, id, ts, body);
 		const result = verifyComposioWebhookSignature(
 			{
 				rawBody: body,
+				rawBodyPreserved: true,
 				headers: {
 					'webhook-id': id,
 					'webhook-timestamp': ts,
@@ -42,6 +44,7 @@ describe('Composio webhook verification', () => {
 		const result = verifyComposioWebhookSignature(
 			{
 				rawBody: body,
+				rawBodyPreserved: true,
 				headers: {
 					'webhook-id': id,
 					'webhook-timestamp': ts,
@@ -54,17 +57,58 @@ describe('Composio webhook verification', () => {
 		expect(result.valid).toBe(false);
 	});
 
+	it('rejects when rawBodyPreserved is false (reconstructed body)', () => {
+		const signature = sign(secret, id, ts, body);
+		const result = verifyComposioWebhookSignature(
+			{
+				rawBody: JSON.stringify(JSON.parse(body)),
+				rawBodyPreserved: false,
+				headers: {
+					'webhook-id': id,
+					'webhook-timestamp': ts,
+					'webhook-signature': signature,
+				},
+				payload: JSON.parse(body),
+			} as never,
+			secret,
+		);
+		expect(result.valid).toBe(false);
+		expect(result.error).toMatch(/original raw body/i);
+	});
+
+	it('verifies from raw string body before parse', () => {
+		const signature = sign(secret, id, ts, body);
+		const result = verifyComposioWebhookSignatureFromRaw(
+			{
+				body,
+				headers: {
+					'webhook-id': id,
+					'webhook-timestamp': ts,
+					'webhook-signature': signature,
+				},
+			},
+			secret,
+		);
+		expect(result.valid).toBe(true);
+	});
+
 	it('matches composio.trigger.message bodies', () => {
 		const match = createComposioMatch('composio.trigger.message');
 		expect(
 			match({
-				body,
+				body: JSON.parse(body),
 				headers: { 'webhook-signature': 'v1,x' },
 			} as never),
 		).toBe(true);
 		expect(
 			match({
-				body: JSON.stringify({ type: 'other' }),
+				body: { type: 'other' },
+				headers: { 'webhook-signature': 'v1,x' },
+			} as never),
+		).toBe(false);
+		expect(
+			match({
+				body: 'not-json{',
 				headers: { 'webhook-signature': 'v1,x' },
 			} as never),
 		).toBe(false);
