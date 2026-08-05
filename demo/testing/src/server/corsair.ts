@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
-import { addresszen } from '@corsair-dev/addresszen';
 import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
@@ -58,9 +57,6 @@ export const corsair = createCorsair({
 		hubspot(),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
-		}),
-		addresszen({
-			key: process.env.ADDRESSZEN_API_KEY,
 		}),
 		twilio(),
 		vapi({

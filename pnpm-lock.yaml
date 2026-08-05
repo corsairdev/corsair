@@ -162,9 +162,6 @@ importers:
       '@anthropic-ai/claude-agent-sdk':
         specifier: ^0.2.0
         version: 0.2.71(zod@4.4.3)
-      '@corsair-dev/addresszen':
-        specifier: workspace:*
-        version: link:../../packages/addresszen
       '@corsair-dev/agentql':
         specifier: workspace:*
         version: link:../../packages/agentql
