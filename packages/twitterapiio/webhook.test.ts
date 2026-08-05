@@ -54,5 +54,36 @@ describe('TwitterApiIO Webhooks', () => {
 
 			expect(result.valid).toBe(false);
 		});
+
+		it('Should reject when webhook secret is missing', () => {
+			mockedVerify.mockReturnValue(false);
+
+			const mockRequest: any = {
+				rawBody: 'mock-body-string',
+				headers: {},
+			};
+
+			const result = verifyTwitterApiIOWebhookSignature(mockRequest, '');
+
+			expect(result.valid).toBe(false);
+			expect(result.error).toMatch('Missing webhook secret');
+		});
+
+		it('Should reject when signature is missing with configured secret', () => {
+			mockedVerify.mockReturnValue(false);
+
+			const mockRequest: any = {
+				rawBody: 'mock-body-string',
+				headers: {},
+			};
+
+			const result = verifyTwitterApiIOWebhookSignature(
+				mockRequest,
+				'my-app-secret',
+			);
+
+			expect(result.valid).toBe(false);
+			expect(result.error).toMatch('Missing x-twitterapiio-signature header');
+		});
 	});
 });
