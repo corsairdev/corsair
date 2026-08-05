@@ -1,3 +1,4 @@
+import type { WebhookRequest } from 'corsair/core';
 import { verifyHmacSignature } from 'corsair/http';
 import { verifyTwitterApiIOWebhookSignature } from './webhooks/types';
 
@@ -16,7 +17,8 @@ describe('TwitterApiIO Webhooks', () => {
 		it('Should verify correct signature via HMAC SHA256', async () => {
 			mockedVerify.mockReturnValue(true);
 
-			const mockRequest: any = {
+			const mockRequest: WebhookRequest<unknown> = {
+				payload: {},
 				rawBody: 'mock-body-string',
 				headers: {
 					'x-twitterapiio-signature': 'sha256=valid-signature',
@@ -40,7 +42,8 @@ describe('TwitterApiIO Webhooks', () => {
 		it('should reject when verification fails', async () => {
 			mockedVerify.mockReturnValue(false);
 
-			const mockRequest: any = {
+			const mockRequest: WebhookRequest<unknown> = {
+				payload: {},
 				rawBody: 'mock-body-string',
 				headers: {
 					'x-twitterapiio-signature': 'sha256=invalid-signature',
@@ -58,7 +61,8 @@ describe('TwitterApiIO Webhooks', () => {
 		it('Should reject when webhook secret is missing', () => {
 			mockedVerify.mockReturnValue(false);
 
-			const mockRequest: any = {
+			const mockRequest: WebhookRequest<unknown> = {
+				payload: {},
 				rawBody: 'mock-body-string',
 				headers: {},
 			};
@@ -72,7 +76,8 @@ describe('TwitterApiIO Webhooks', () => {
 		it('Should reject when signature is missing with configured secret', () => {
 			mockedVerify.mockReturnValue(false);
 
-			const mockRequest: any = {
+			const mockRequest: WebhookRequest<unknown> = {
+				payload: {},
 				rawBody: 'mock-body-string',
 				headers: {},
 			};
