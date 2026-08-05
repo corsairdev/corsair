@@ -9,7 +9,7 @@ const config: OpenAPIConfig = {
 	VERSION: '1',
 	WITH_CREDENTIALS: false,
 	CREDENTIALS: 'same-origin',
-	TIMEOUT: 5,
+	TIMEOUT: 2_000,
 };
 
 const options: ApiRequestOptions = {
