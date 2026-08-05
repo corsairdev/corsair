@@ -35,6 +35,8 @@ export const deleteWebhook: AsanaEndpoints['webhooksDelete'] = async (
 		{ method: 'DELETE', query: { opt_pretty } },
 	);
 
+	await ctx.keys.set_webhook_signature(null);
+
 	await logEventFromContext(
 		ctx,
 		'asana.webhooks.delete',
