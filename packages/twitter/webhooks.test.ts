@@ -94,5 +94,22 @@ describe('Twitter Webhooks Tests', () => {
 				'Missing x-twitter-webhooks-signature header',
 			);
 		});
+
+		it('should reject when both signature and secret missing', () => {
+			mockedVerify.mockReturnValue(false);
+
+			const mockRequest: WebhookRequest<unknown> = {
+				payload: {},
+				rawBody: 'mock-body-string',
+				headers: {},
+			};
+
+			const result = verifyTwitterWebhookSignature(mockRequest, '');
+
+			expect(result.valid).toBe(false);
+			expect(result.error).toMatch(
+				'Missing x-twitter-webhooks-signature header',
+			);
+		});
 	});
 });
