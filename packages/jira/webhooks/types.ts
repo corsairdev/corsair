@@ -184,6 +184,10 @@ export function verifyJiraWebhookSignature(
 	request: WebhookRequest<unknown>,
 	secret: string,
 ): { valid: boolean; error?: string } {
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
 	const headers = request.headers;
 	// Type assertion: headers value is string | string[] | undefined; we only want the string value
 	const signatureHeader = Array.isArray(headers['x-hub-signature'])
@@ -191,10 +195,6 @@ export function verifyJiraWebhookSignature(
 		: (headers['x-hub-signature'] as string | undefined);
 
 	if (!signatureHeader) {
-		// Only allow unsigned requests when no secret has been configured
-		if (!secret) {
-			return { valid: true };
-		}
 		return { valid: false, error: 'Missing x-hub-signature header' };
 	}
 
