@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAuthenticatedInstagramRequest } from '../client';
 import type { InstagramEndpoints } from '../index';
 import type { FacebookPageSchema } from '../schema/database';
-import { GetFacebookPages } from './metaDataEndpoints';
+import { GetFacebookPages } from './meta-data-endpoints';
 import type { InstagramEndpointOutputs } from './types';
 
 export const list: InstagramEndpoints['GetInstagramConversations'] = async (
@@ -43,7 +43,7 @@ export const list: InstagramEndpoints['GetInstagramConversations'] = async (
 					pageId: input.page_id,
 				});
 			} catch (err) {
-				console.warn('faild to save conversations into database', err);
+				console.warn('failed to save conversations into database', err);
 			}
 		}
 	}
@@ -98,7 +98,7 @@ export const get: InstagramEndpoints['GetConversationMessages'] = async (
 					message: msg.message,
 				});
 			} catch (err) {
-				console.warn('faild to save conversations into database', err);
+				console.warn('failed to save conversations into database', err);
 			}
 		}
 	}
