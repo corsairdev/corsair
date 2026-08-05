@@ -21,7 +21,7 @@ export const list: InstagramEndpoints['GetComments'] = async (ctx, input) => {
 				});
 			}
 		} catch (err) {
-			console.warn('faild to save comments into database', err);
+			console.warn('failed to save comments into database', err);
 		}
 	}
 
@@ -100,7 +100,7 @@ export const get: InstagramEndpoints['GetCommentsDetails'] = async (
 				username: result.username,
 			});
 		} catch (err) {
-			console.warn('faild to save comments into database', err);
+			console.warn('failed to save comments into database', err);
 		}
 	}
 

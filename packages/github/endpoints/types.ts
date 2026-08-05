@@ -1019,20 +1019,16 @@ const DiscussionEndpointSchema = z.object({
 const SearchPullRequestMarkerSchema = z
 	.object({
 		url: z.string().optional(),
-		html_url: z.string().optional(),
-		diff_url: z.string().optional(),
-		patch_url: z.string().optional(),
-		merged_at: z.coerce.date().nullable().optional(),
+		htmlUrl: z.string().optional(),
+		diffUrl: z.string().optional(),
+		patchUrl: z.string().optional(),
+		mergedAt: z.coerce.date().nullable().optional(),
 	})
 	.loose();
 
-// Search-specific fields use the wire shape (snake_case) because the github
-// client returns raw JSON with no key transformation. The inherited entity
-// fields (nodeId, htmlUrl, etc.) stay optional + .loose() so they tolerate
-// the camelCase/snake_case mismatch the rest of the plugin already lives with.
 const SearchIssueSchema = IssueSchema.extend({
 	score: z.number(),
-	pull_request: SearchPullRequestMarkerSchema.optional(),
+	pullRequest: SearchPullRequestMarkerSchema.optional(),
 	repository: RepositorySchema.optional(),
 }).loose();
 
@@ -1045,29 +1041,26 @@ const SearchUserSchema = SimpleUserSchema.extend({
 	score: z.number(),
 }).loose();
 
-// GitHub's Search API returns these fields as total_count / incomplete_results.
-// The github client returns raw JSON with no key transformation, so response
-// schemas must match the wire shape (snake_case) or .parse() throws on every call.
 const SearchIssuesResponseSchema = z
 	.object({
-		total_count: z.number(),
-		incomplete_results: z.boolean(),
+		totalCount: z.number(),
+		incompleteResults: z.boolean(),
 		items: z.array(SearchIssueSchema),
 	})
 	.loose();
 
 const SearchRepositoriesResponseSchema = z
 	.object({
-		total_count: z.number(),
-		incomplete_results: z.boolean(),
+		totalCount: z.number(),
+		incompleteResults: z.boolean(),
 		items: z.array(SearchRepositorySchema),
 	})
 	.loose();
 
 const SearchUsersResponseSchema = z
 	.object({
-		total_count: z.number(),
-		incomplete_results: z.boolean(),
+		totalCount: z.number(),
+		incompleteResults: z.boolean(),
 		items: z.array(SearchUserSchema),
 	})
 	.loose();
@@ -1120,7 +1113,6 @@ export const GithubEndpointOutputSchemas = {
 	workflowsList: z
 		.object({
 			totalCount: z.number().optional(),
-			total_count: z.number().optional(),
 			workflows: z.array(WorkflowSchema).optional(),
 		})
 		.loose(),
@@ -1128,9 +1120,7 @@ export const GithubEndpointOutputSchemas = {
 	workflowsListRuns: z
 		.object({
 			totalCount: z.number().optional(),
-			total_count: z.number().optional(),
 			workflowRuns: z.array(WorkflowRunSchema).optional(),
-			workflow_runs: z.array(WorkflowRunSchema).optional(),
 		})
 		.loose(),
 	discussionsList: z.array(DiscussionEndpointSchema),
