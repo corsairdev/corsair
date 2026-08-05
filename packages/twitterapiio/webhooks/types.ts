@@ -85,8 +85,8 @@ export function verifyTwitterApiIOWebhookSignature(
 		| undefined;
 
 	if (!signature) {
-		// If no secret is configured, treat as valid
-		if (!secret) return { valid: true };
+		// If no secret is configured, treat as invalid
+		if (!secret) return { valid: false, error: 'Missing webhook secret' };
 		return { valid: false, error: 'Missing x-twitterapiio-signature header' };
 	}
 
