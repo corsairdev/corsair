@@ -59,4 +59,34 @@ describe('makeGrafanaRawRequest', () => {
 			),
 		).rejects.toThrow(GrafanaAPIError);
 	});
+
+	it('accepts an uppercase HTTPS scheme', async () => {
+		let requestedUrl = '';
+		global.fetch = (async (url: unknown) => {
+			requestedUrl = String(url);
+			return {
+				text: async () => '',
+				headers: { get: () => 'text/html' },
+				status: 200,
+			};
+		}) as unknown as typeof fetch;
+
+		await makeGrafanaRawRequest(
+			'/ruler/ring',
+			'token',
+			'HTTPS://grafana.example.com',
+		);
+
+		expect(requestedUrl).toBe('HTTPS://grafana.example.com/ruler/ring');
+	});
+
+	it('rejects a malformed baseUrl', async () => {
+		global.fetch = (async () => {
+			throw new Error('fetch should not be called for a malformed baseUrl');
+		}) as unknown as typeof fetch;
+
+		await expect(
+			makeGrafanaRawRequest('/ruler/ring', 'token', 'not-a-url'),
+		).rejects.toThrow(GrafanaAPIError);
+	});
 });
