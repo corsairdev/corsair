@@ -39,11 +39,9 @@ export const issues: GithubEndpoints['searchIssues'] = async (ctx, input) => {
 		try {
 			for (const issue of result.items) {
 				// Strip search-specific enrichment before persisting so the row
-				// matches the canonical Issue entity shape. GitHub sends these
-				// as snake_case at runtime (pull_request, not pullRequest),
-				// so destructure from the raw shape.
+				// matches the canonical Issue entity shape.
 				const raw = issue as Record<string, unknown>;
-				const { score, pull_request, repository, ...issueData } = raw;
+				const { score, pullRequest, repository, ...issueData } = raw;
 				await ctx.db.issues.upsertByEntityId(
 					String(issue.id),
 					issueData as Parameters<typeof ctx.db.issues.upsertByEntityId>[1],
