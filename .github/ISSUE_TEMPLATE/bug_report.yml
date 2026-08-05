@@ -45,8 +45,8 @@ body:
       render: bash
       placeholder: |
         OS: macOS 14.0
-        Node: v20.x.x
-        Package manager: pnpm 8.x.x
+        Node: v22.x.x
+        Package manager: pnpm 10.x.x
     validations:
       required: true
   - type: dropdown
