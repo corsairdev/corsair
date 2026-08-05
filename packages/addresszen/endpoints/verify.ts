@@ -25,9 +25,13 @@ export const address: AddresszenEndpoints['verifyAddress'] = async (
 
 	if (ctx.db.verifiedAddresses) {
 		try {
-			const entityId = [input.query, input.city, input.state, input.zip_code]
-				.filter(Boolean)
-				.join('|');
+			// ponytail: JSON key avoids `|` collisions in free-form address inputs
+			const entityId = JSON.stringify([
+				input.query,
+				input.city ?? null,
+				input.state ?? null,
+				input.zip_code ?? null,
+			]);
 
 			await ctx.db.verifiedAddresses.upsertByEntityId(entityId, {
 				...response,

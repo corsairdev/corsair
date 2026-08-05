@@ -1,5 +1,7 @@
 import {
 	AddresszenAutocompleteResult,
+	AddresszenKeyAvailability,
+	AddresszenResolvedAddress,
 	AddresszenVerifiedAddress,
 } from './database';
 
@@ -8,5 +10,7 @@ export const AddresszenSchema = {
 	entities: {
 		autocompleteResults: AddresszenAutocompleteResult,
 		verifiedAddresses: AddresszenVerifiedAddress,
+		keyAvailability: AddresszenKeyAvailability,
+		resolvedAddresses: AddresszenResolvedAddress,
 	},
 } as const;

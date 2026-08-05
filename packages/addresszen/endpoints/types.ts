@@ -86,22 +86,86 @@ export const VerifyAddressResponseSchema = z.object({
 
 export type VerifyAddressResponse = z.infer<typeof VerifyAddressResponseSchema>;
 
+export const KeyAvailabilityInputSchema = z.object({});
+
+export type KeyAvailabilityInput = z.infer<typeof KeyAvailabilityInputSchema>;
+
+export const KeyAvailabilityResponseSchema = z.object({
+	code: z.number(),
+	message: z.string(),
+	result: z
+		.object({
+			available: z.boolean(),
+			context: z.string().optional(),
+			// Country/context catalog; large and varies by key entitlements.
+			contexts: z.array(z.record(z.string(), z.unknown())).optional(),
+		})
+		.loose(),
+});
+
+export type KeyAvailabilityResponse = z.infer<
+	typeof KeyAvailabilityResponseSchema
+>;
+
+export const ResolveAddressUsaInputSchema = z.object({
+	addressId: z
+		.string()
+		.min(1)
+		.describe(
+			'Address suggestion ID from autocomplete (e.g. usps_X130125796|1600||1933)',
+		),
+});
+
+export type ResolveAddressUsaInput = z.infer<
+	typeof ResolveAddressUsaInputSchema
+>;
+
+export const ResolveAddressUsaResponseSchema = z.object({
+	code: z.number(),
+	message: z.string(),
+	// US-format resolved address fields vary across datasets; keep loose.
+	result: z
+		.object({
+			id: z.string().optional(),
+			line_1: z.string().optional(),
+			line_2: z.string().optional(),
+			city: z.string().optional(),
+			state: z.string().optional(),
+			state_abbreviation: z.string().optional(),
+			zip_code: z.string().optional(),
+			country_iso_2: z.string().optional(),
+		})
+		.loose(),
+});
+
+export type ResolveAddressUsaResponse = z.infer<
+	typeof ResolveAddressUsaResponseSchema
+>;
+
 export type AddresszenEndpointInputs = {
 	autocompleteAddresses: AutocompleteAddressesInput;
 	verifyAddress: VerifyAddressInput;
+	keyAvailability: KeyAvailabilityInput;
+	resolveAddressUsa: ResolveAddressUsaInput;
 };
 
 export type AddresszenEndpointOutputs = {
 	autocompleteAddresses: AutocompleteAddressesResponse;
 	verifyAddress: VerifyAddressResponse;
+	keyAvailability: KeyAvailabilityResponse;
+	resolveAddressUsa: ResolveAddressUsaResponse;
 };
 
 export const AddresszenEndpointInputSchemas = {
 	autocompleteAddresses: AutocompleteAddressesInputSchema,
 	verifyAddress: VerifyAddressInputSchema,
+	keyAvailability: KeyAvailabilityInputSchema,
+	resolveAddressUsa: ResolveAddressUsaInputSchema,
 } as const;
 
 export const AddresszenEndpointOutputSchemas = {
 	autocompleteAddresses: AutocompleteAddressesResponseSchema,
 	verifyAddress: VerifyAddressResponseSchema,
+	keyAvailability: KeyAvailabilityResponseSchema,
+	resolveAddressUsa: ResolveAddressUsaResponseSchema,
 } as const;

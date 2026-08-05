@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Autocomplete, Verify } from './endpoints';
+import { Autocomplete, Key, Resolve, Verify } from './endpoints';
 import type {
 	AddresszenEndpointInputs,
 	AddresszenEndpointOutputs,
@@ -55,6 +55,8 @@ type AddresszenEndpoint<K extends keyof AddresszenEndpointOutputs> =
 export type AddresszenEndpoints = {
 	autocompleteAddresses: AddresszenEndpoint<'autocompleteAddresses'>;
 	verifyAddress: AddresszenEndpoint<'verifyAddress'>;
+	keyAvailability: AddresszenEndpoint<'keyAvailability'>;
+	resolveAddressUsa: AddresszenEndpoint<'resolveAddressUsa'>;
 };
 
 const addresszenEndpointsNested = {
@@ -63,6 +65,12 @@ const addresszenEndpointsNested = {
 	},
 	verify: {
 		address: Verify.address,
+	},
+	key: {
+		availability: Key.availability,
+	},
+	resolve: {
+		addressUsa: Resolve.addressUsa,
 	},
 } as const;
 
@@ -76,6 +84,14 @@ export const addresszenEndpointSchemas = {
 	'verify.address': {
 		input: AddresszenEndpointInputSchemas.verifyAddress,
 		output: AddresszenEndpointOutputSchemas.verifyAddress,
+	},
+	'key.availability': {
+		input: AddresszenEndpointInputSchemas.keyAvailability,
+		output: AddresszenEndpointOutputSchemas.keyAvailability,
+	},
+	'resolve.addressUsa': {
+		input: AddresszenEndpointInputSchemas.resolveAddressUsa,
+		output: AddresszenEndpointOutputSchemas.resolveAddressUsa,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof addresszenEndpointsNested
@@ -93,6 +109,16 @@ const addresszenEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Verify and standardize a US address using USPS CASS validation',
+	},
+	'key.availability': {
+		riskLevel: 'read',
+		description:
+			'Get public information on an API key, including whether it is currently usable',
+	},
+	'resolve.addressUsa': {
+		riskLevel: 'read',
+		description:
+			'Resolve an address autocompletion by its address ID and return the full address in US format',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof addresszenEndpointsNested
@@ -166,6 +192,10 @@ export type {
 	AddresszenEndpointOutputs,
 	AutocompleteAddressesInput,
 	AutocompleteAddressesResponse,
+	KeyAvailabilityInput,
+	KeyAvailabilityResponse,
+	ResolveAddressUsaInput,
+	ResolveAddressUsaResponse,
 	VerifyAddressInput,
 	VerifyAddressResponse,
 } from './endpoints/types';
@@ -175,6 +205,10 @@ export {
 	AddresszenEndpointOutputSchemas,
 	AutocompleteAddressesInputSchema,
 	AutocompleteAddressesResponseSchema,
+	KeyAvailabilityInputSchema,
+	KeyAvailabilityResponseSchema,
+	ResolveAddressUsaInputSchema,
+	ResolveAddressUsaResponseSchema,
 	VerifyAddressInputSchema,
 	VerifyAddressResponseSchema,
 } from './endpoints/types';

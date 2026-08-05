@@ -2,6 +2,8 @@ import 'dotenv/config';
 import { makeAddresszenRequest } from './client';
 import type {
 	AutocompleteAddressesResponse,
+	KeyAvailabilityResponse,
+	ResolveAddressUsaResponse,
 	VerifyAddressResponse,
 } from './endpoints/types';
 import { AddresszenEndpointOutputSchemas } from './endpoints/types';
@@ -9,6 +11,20 @@ import { AddresszenEndpointOutputSchemas } from './endpoints/types';
 const TEST_API_KEY = process.env.ADDRESSZEN_API_KEY!;
 
 describe('Addresszen API Type Tests', () => {
+	describe('key', () => {
+		it('keyAvailability returns correct type', async () => {
+			const response = await makeAddresszenRequest<KeyAvailabilityResponse>(
+				`keys/${encodeURIComponent(TEST_API_KEY)}`,
+				TEST_API_KEY,
+				{ method: 'GET' },
+			);
+
+			AddresszenEndpointOutputSchemas.keyAvailability.parse(response);
+			expect(response.code).toBe(2000);
+			expect(typeof response.result.available).toBe('boolean');
+		});
+	});
+
 	describe('autocomplete', () => {
 		it('autocompleteAddresses returns correct type', async () => {
 			const response =
@@ -25,6 +41,33 @@ describe('Addresszen API Type Tests', () => {
 
 			AddresszenEndpointOutputSchemas.autocompleteAddresses.parse(response);
 			expect(response.code).toBe(2000);
+		});
+	});
+
+	describe('resolve', () => {
+		it('resolveAddressUsa returns correct type', async () => {
+			const suggestions =
+				await makeAddresszenRequest<AutocompleteAddressesResponse>(
+					'autocomplete/addresses',
+					TEST_API_KEY,
+					{
+						method: 'GET',
+						query: { query: '1600 Garfield Aliquippa' },
+					},
+				);
+
+			const addressId = suggestions.result.hits[0]?.id;
+			expect(addressId).toBeTruthy();
+
+			const response = await makeAddresszenRequest<ResolveAddressUsaResponse>(
+				`autocomplete/addresses/${encodeURIComponent(addressId!)}/usa`,
+				TEST_API_KEY,
+				{ method: 'GET' },
+			);
+
+			AddresszenEndpointOutputSchemas.resolveAddressUsa.parse(response);
+			expect(response.code).toBe(2000);
+			expect(response.result.line_1).toBeTruthy();
 		});
 	});
 
