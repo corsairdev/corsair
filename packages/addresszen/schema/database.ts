@@ -14,6 +14,7 @@ export const AddresszenVerifiedAddress = z.object({
 	city: z.string().nullable().optional(),
 	state: z.string().nullable().optional(),
 	zipCode: z.string().nullable().optional(),
+	context: z.string().nullable().optional(),
 	// Stored verify payload mirrors the API result object, which varies by match type.
 	result: z.record(z.string(), z.unknown()),
 	code: z.number().optional(),

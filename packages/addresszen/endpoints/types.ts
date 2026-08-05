@@ -18,6 +18,8 @@ export const AutocompleteAddressesInputSchema = z.object({
 		.min(1)
 		.max(150)
 		.describe('Partial address string to autocomplete'),
+	limit: z.number().int().positive().optional(),
+	page: z.number().int().nonnegative().optional(),
 });
 
 export type AutocompleteAddressesInput = z.infer<

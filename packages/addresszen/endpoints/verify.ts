@@ -31,6 +31,7 @@ export const address: AddresszenEndpoints['verifyAddress'] = async (
 				input.city ?? null,
 				input.state ?? null,
 				input.zip_code ?? null,
+				input.context ?? null,
 			]);
 
 			await ctx.db.verifiedAddresses.upsertByEntityId(entityId, {
@@ -39,6 +40,7 @@ export const address: AddresszenEndpoints['verifyAddress'] = async (
 				city: input.city ?? null,
 				state: input.state ?? null,
 				zipCode: input.zip_code ?? null,
+				context: input.context ?? null,
 				updatedAt: new Date(),
 			});
 		} catch (error) {

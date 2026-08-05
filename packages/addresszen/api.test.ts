@@ -8,14 +8,15 @@ import type {
 } from './endpoints/types';
 import { AddresszenEndpointOutputSchemas } from './endpoints/types';
 
-const TEST_API_KEY = process.env.ADDRESSZEN_API_KEY!;
+const TEST_API_KEY = process.env.ADDRESSZEN_API_KEY;
+const describeIfApiKey = TEST_API_KEY ? describe : describe.skip;
 
-describe('Addresszen API Type Tests', () => {
+describeIfApiKey('Addresszen API Type Tests', () => {
 	describe('key', () => {
 		it('keyAvailability returns correct type', async () => {
 			const response = await makeAddresszenRequest<KeyAvailabilityResponse>(
-				`keys/${encodeURIComponent(TEST_API_KEY)}`,
-				TEST_API_KEY,
+				`keys/${encodeURIComponent(TEST_API_KEY!)}`,
+				TEST_API_KEY!,
 				{ method: 'GET' },
 			);
 
@@ -30,11 +31,11 @@ describe('Addresszen API Type Tests', () => {
 			const response =
 				await makeAddresszenRequest<AutocompleteAddressesResponse>(
 					'autocomplete/addresses',
-					TEST_API_KEY,
+					TEST_API_KEY!,
 					{
 						method: 'GET',
 						query: {
-							query: '10 downing',
+							q: '10 downing',
 						},
 					},
 				);
@@ -49,10 +50,10 @@ describe('Addresszen API Type Tests', () => {
 			const suggestions =
 				await makeAddresszenRequest<AutocompleteAddressesResponse>(
 					'autocomplete/addresses',
-					TEST_API_KEY,
+					TEST_API_KEY!,
 					{
 						method: 'GET',
-						query: { query: '1600 Garfield Aliquippa' },
+						query: { q: '1600 Garfield Aliquippa' },
 					},
 				);
 
@@ -61,7 +62,7 @@ describe('Addresszen API Type Tests', () => {
 
 			const response = await makeAddresszenRequest<ResolveAddressUsaResponse>(
 				`autocomplete/addresses/${encodeURIComponent(addressId!)}/usa`,
-				TEST_API_KEY,
+				TEST_API_KEY!,
 				{ method: 'GET' },
 			);
 
@@ -75,7 +76,7 @@ describe('Addresszen API Type Tests', () => {
 		it('verifyAddress returns correct type', async () => {
 			const response = await makeAddresszenRequest<VerifyAddressResponse>(
 				'verify/addresses',
-				TEST_API_KEY,
+				TEST_API_KEY!,
 				{
 					method: 'POST',
 					body: {
@@ -91,7 +92,7 @@ describe('Addresszen API Type Tests', () => {
 		it('verifyAddress with split components returns correct type', async () => {
 			const response = await makeAddresszenRequest<VerifyAddressResponse>(
 				'verify/addresses',
-				TEST_API_KEY,
+				TEST_API_KEY!,
 				{
 					method: 'POST',
 					body: {

@@ -18,7 +18,9 @@ export const addresses: AddresszenEndpoints['autocompleteAddresses'] = async (
 	>('autocomplete/addresses', ctx.key, {
 		method: 'GET',
 		query: {
-			query: input.query,
+			q: input.query,
+			limit: input.limit,
+			page: input.page,
 		},
 	});
 

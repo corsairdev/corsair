@@ -21,7 +21,8 @@ export const availability: AddresszenEndpoints['keyAvailability'] = async (
 
 	if (ctx.db.keyAvailability) {
 		try {
-			await ctx.db.keyAvailability.upsertByEntityId(ctx.key, {
+			const accountId = await ctx.$getAccountId();
+			await ctx.db.keyAvailability.upsertByEntityId(accountId, {
 				available: response.result.available,
 				context: response.result.context ?? null,
 				code: response.code,
