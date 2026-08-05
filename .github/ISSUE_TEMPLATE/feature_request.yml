@@ -1,5 +1,6 @@
 name: Feature request
 description: Share your ideas to improve Corsair
+labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
