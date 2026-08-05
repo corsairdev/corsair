@@ -42,9 +42,11 @@ export async function makeAddresszenRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		/** When false, skip Authorization (public endpoints that identify the key in the path). */
+		auth?: boolean;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query = {} } = options;
+	const { method = 'GET', body, query = {}, auth = true } = options;
 	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
 	const config: OpenAPIConfig = {
@@ -54,7 +56,7 @@ export async function makeAddresszenRequest<T>(
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
 		HEADERS: {
-			Authorization: `api_key="${apiKey}"`,
+			...(auth ? { Authorization: `api_key="${apiKey}"` } : {}),
 			...(isWrite ? { 'Content-Type': 'application/json' } : {}),
 		},
 	};

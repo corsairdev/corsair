@@ -8,6 +8,10 @@ import type { AddresszenEndpointOutputs } from './types';
  *
  * API: GET /keys/:key
  * Docs: https://docs.addresszen.com/docs/api/key-availability
+ *
+ * Addresszen requires the key as the path resource id for this public endpoint;
+ * there is no header-only variant. Auth header is omitted so the credential is
+ * not also sent in Authorization.
  */
 export const availability: AddresszenEndpoints['keyAvailability'] = async (
 	ctx,
@@ -17,6 +21,7 @@ export const availability: AddresszenEndpoints['keyAvailability'] = async (
 		AddresszenEndpointOutputs['keyAvailability']
 	>(`keys/${encodeURIComponent(ctx.key)}`, ctx.key, {
 		method: 'GET',
+		auth: false,
 	});
 
 	if (ctx.db.keyAvailability) {

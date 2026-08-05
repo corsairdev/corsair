@@ -17,7 +17,7 @@ describeIfApiKey('Addresszen API Type Tests', () => {
 			const response = await makeAddresszenRequest<KeyAvailabilityResponse>(
 				`keys/${encodeURIComponent(TEST_API_KEY!)}`,
 				TEST_API_KEY!,
-				{ method: 'GET' },
+				{ method: 'GET', auth: false },
 			);
 
 			AddresszenEndpointOutputSchemas.keyAvailability.parse(response);
