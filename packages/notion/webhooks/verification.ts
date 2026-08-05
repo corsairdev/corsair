@@ -14,10 +14,20 @@ export const verification: NotionWebhooks['verification'] = {
 			};
 		}
 
-		ctx.keys.set_webhook_signature(request.payload.verification_token);
-		console.log(
-			`Enter this key in your Notion webhook verification modal: ${ctx.key}`,
-		);
+		const existingSecret = await ctx.keys.get_webhook_signature();
+		if (existingSecret) {
+			if (existingSecret !== request.payload.verification_token) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Invalid verification token',
+				};
+			}
+		} else {
+			await ctx.keys.set_webhook_signature(request.payload.verification_token);
+		}
+
+		console.log('Notion webhook verification request received');
 
 		return {
 			success: true,
