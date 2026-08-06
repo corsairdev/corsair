@@ -181,7 +181,7 @@ export function createJiraMatch(webhookEvent: string): CorsairWebhookMatcher {
  */
 
 export function verifyJiraWebhookSignature(
-	request: WebhookRequest<unknown>,
+	request: WebhookRequest,
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
@@ -189,10 +189,9 @@ export function verifyJiraWebhookSignature(
 	}
 
 	const headers = request.headers;
-	// Type assertion: headers value is string | string[] | undefined; we only want the string value
 	const signatureHeader = Array.isArray(headers['x-hub-signature'])
 		? headers['x-hub-signature'][0]
-		: (headers['x-hub-signature'] as string | undefined);
+		: headers['x-hub-signature'];
 
 	if (!signatureHeader) {
 		return { valid: false, error: 'Missing x-hub-signature header' };
