@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidSharepointAccessToken } from './client';
 import {
 	ContentTypes,
@@ -65,10 +66,13 @@ export const sharepointAuthConfig = {
 		// site_id is the Graph API site identifier e.g. "tenant.sharepoint.com:/sites/MySite"
 		account: ['site_id', 'subscription_id', 'client_state'] as const,
 	},
+	managed: {
+		account: ['site_id', 'subscription_id', 'client_state'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type SharepointPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	siteId?: string;
 	key?: string;
 	webhookClientState?: string;
@@ -1466,6 +1470,29 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return result.accessToken;
+			}
+
+			// Unlike the other Graph plugins, sharepoint's webhook path above is
+			// not terminal (it returns only when webhookClientState is set), so a
+			// webhook could otherwise fall through here. Scope managed to endpoint
+			// calls — a webhook must never trigger a Hub token fetch.
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:sharepoint:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'sharepoint',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 
