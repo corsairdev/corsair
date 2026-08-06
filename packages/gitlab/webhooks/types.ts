@@ -34,7 +34,7 @@ export function verifyGitlabWebhookSignature(
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const token = request.headers['x-gitlab-token'];
