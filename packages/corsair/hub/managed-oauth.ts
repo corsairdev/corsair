@@ -3,6 +3,7 @@ import {
 	getCorsairInternal,
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
+import { subscribeAndReport } from '../oauth/subscribe-report';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
@@ -161,6 +162,15 @@ export async function processManagedOAuthDelivery(
 			error,
 		);
 	}
+
+	await subscribeAndReport(corsair, plugin, tenantId, accountKm).catch(
+		(error) => {
+			console.warn(
+				`[corsair:managed-oauth] subscribe failed for '${pluginId}' tenant '${tenantId}':`,
+				error,
+			);
+		},
+	);
 
 	return { plugin: pluginId, tenantId };
 }
