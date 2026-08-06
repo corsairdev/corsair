@@ -100,8 +100,7 @@ export function verifySharepointWebhookSignature(
 	clientState?: string,
 ): { valid: boolean; error?: string } {
 	if (!clientState) {
-		// No secret configured; skip verification
-		return { valid: true };
+		return { valid: false, error: 'Missing client state' };
 	}
 
 	const notifications = request.payload?.value;
@@ -109,8 +108,13 @@ export function verifySharepointWebhookSignature(
 		return { valid: false, error: 'Invalid payload: missing value array' };
 	}
 
-	const first = notifications[0];
-	if (first?.clientState !== clientState) {
+	// Every notification must carry the expected clientState, not just the first:
+	// Graph batches notifications into one request, so checking only value[0]
+	// would let unverified entries ride along behind a valid one.
+	const allMatch = notifications.every(
+		(n) => typeof n?.clientState === 'string' && n.clientState === clientState,
+	);
+	if (!allMatch) {
 		return { valid: false, error: 'Client state mismatch' };
 	}
 
