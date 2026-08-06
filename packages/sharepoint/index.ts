@@ -1381,6 +1381,23 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 				return options.webhookClientState;
 			}
 
+			// Hub-managed subscriptions: msGraphSubscribe persists the clientState
+			// through set_webhook_signature, so read it back rather than falling
+			// through to the OAuth branch below (which would hand the webhook an
+			// access token and make every clientState comparison fail).
+			//
+			// Deliberately returns '' rather than throwing when absent, which is where
+			// this differs from the outlook/onedrive key builders: SharePoint answers
+			// the Graph validation handshake inside the webhook handler, and the key
+			// is resolved eagerly before that handler runs, so throwing here would
+			// make subscription creation impossible — the handshake arrives before
+			// set_webhook_signature has been called. An empty key lets the handshake
+			// through and still fails closed on a real notification, because the
+			// verifier now rejects an absent clientState.
+			if (source === 'webhook') {
+				return (await ctx.keys.get_webhook_signature()) ?? '';
+			}
+
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
