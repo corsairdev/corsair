@@ -19,62 +19,10 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
-	const inboxId = process.env.AGENTMAIL_INBOX_ID;
-
-	if (process.env.AGENTMAIL_API_KEY && inboxId) {
-		const listResult = await corsair.agentmail.api.messages.list({
-			inbox_id: inboxId,
-			limit: 5,
-		});
-
-		console.log('AgentMail list messages:', {
-			count: listResult.count,
-			returned: listResult.messages.length,
-			next_page_token: listResult.next_page_token,
-		});
-
-		const messageId =
-			process.env.AGENTMAIL_MESSAGE_ID || listResult.messages[0]?.message_id;
-
-		if (messageId) {
-			const message = await corsair.agentmail.api.messages.get({
-				inbox_id: inboxId,
-				message_id: messageId,
-			});
-
-			console.log('AgentMail get message:', {
-				message_id: message.message_id,
-				timestamp: message.timestamp,
-				subject: message.subject,
-			});
-		}
-
-		const sendTestTo = process.env.AGENTMAIL_SEND_TEST_TO;
-		if (sendTestTo) {
-			const sendResult = await corsair.agentmail.api.messages.send({
-				inbox_id: inboxId,
-				to: sendTestTo,
-				subject: 'Corsair AgentMail smoke test',
-				text: 'This is a manual smoke test from demo/testing.',
-			});
-
-			console.log('AgentMail send message:', {
-				message_id: sendResult.message_id,
-				thread_id: sendResult.thread_id,
-			});
-		}
-
-		return;
-	}
-
-	await setInstagramCredentials();
-
 	const res = await corsair.slack.api.messages.post({
 		channel: 'general',
 		text: 'hello',
 	});
-
-	console.log(res);
 };
 
 main().catch((err) => {
