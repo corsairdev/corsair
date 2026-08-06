@@ -310,22 +310,7 @@ export function resend<const T extends ResendPluginOptions>(
 			const headers = request.headers;
 			const hasResendSignature =
 				'svix-signature' in headers || 'x-resend-signature' in headers;
-			if (!hasResendSignature) return false;
-
-			const body = request.body;
-			// AgentMail (and other Svix providers) also send `svix-signature`. Resend
-			// payloads use `type` (email.*/domain.*); AgentMail uses `event_type`.
-			if (
-				body !== null &&
-				typeof body === 'object' &&
-				!Array.isArray(body) &&
-				// Externally-sourced webhook body; narrowed by object checks above.
-				'event_type' in (body as Record<string, unknown>)
-			) {
-				return false;
-			}
-
-			return true;
+			return hasResendSignature;
 		},
 		pluginTenantWebhookMatcher: matchResendTenantWebhook,
 		errorHandlers: options.errorHandlers,
