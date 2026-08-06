@@ -14,17 +14,19 @@ describe('sharepoint managed webhook verification', () => {
 		expect(key).toBe('cs');
 	});
 
-	it('fails closed when no clientState is stored', async () => {
+	it('returns an empty key when no clientState is stored, to let the Graph validation handshake through (the handler fails closed on real notifications)', async () => {
 		const plugin = sharepoint({ authType: 'managed' });
-		await expect(
-			(plugin.keyBuilder as any)(
-				{
-					authType: 'managed',
-					keys: { get_webhook_signature: async () => null },
-				},
-				'webhook',
-			),
-		).rejects.toThrow();
+		const key = await (plugin.keyBuilder as any)(
+			{
+				authType: 'managed',
+				keys: { get_webhook_signature: async () => null },
+			},
+			'webhook',
+		);
+		// Throwing here would break subscription creation — the handshake arrives
+		// before the clientState is persisted. Fail-closed is enforced downstream:
+		// the verifier rejects an empty/absent clientState (see the listChanged tests).
+		expect(key).toBe('');
 	});
 
 	it('honors the static webhookClientState override', async () => {
