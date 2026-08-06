@@ -15,6 +15,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import {
 	Drive,
@@ -51,7 +52,7 @@ import {
 } from './webhooks/types';
 
 export type OnedrivePluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalOnedrivePlugin['hooks'];
 	webhookHooks?: InternalOnedrivePlugin['webhookHooks'];
@@ -746,6 +747,9 @@ export const onedriveAuthConfig = {
 	oauth_2: {
 		account: ['subscription_id', 'client_state'] as const,
 	},
+	managed: {
+		account: ['subscription_id', 'client_state'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseOnedrivePlugin<PluginOptions extends OnedrivePluginOptions> =
@@ -816,6 +820,11 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			}
 
 			if (source === 'webhook') {
+				if (ctx.authType === 'managed') {
+					throw new Error(
+						'[auth-missing:onedrive:managed]: webhook signature is not available in managed mode',
+					);
+				}
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
 					throw new Error(
@@ -902,6 +911,25 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return result.accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:onedrive:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'onedrive',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 
