@@ -1,4 +1,22 @@
-import { GrafanaAPIError, makeGrafanaRawRequest } from './client';
+import {
+	GrafanaAPIError,
+	makeGrafanaRawRequest,
+	makeGrafanaRequest,
+} from './client';
+
+describe('makeGrafanaRequest', () => {
+	it('refuses to send the bearer token to a non-HTTPS baseUrl', async () => {
+		await expect(
+			makeGrafanaRequest('/api/health', 'token', 'http://grafana.example.com'),
+		).rejects.toThrow(GrafanaAPIError);
+	});
+
+	it('rejects a malformed baseUrl', async () => {
+		await expect(
+			makeGrafanaRequest('/api/health', 'token', 'not-a-url'),
+		).rejects.toThrow(GrafanaAPIError);
+	});
+});
 
 describe('makeGrafanaRawRequest', () => {
 	afterEach(() => {
