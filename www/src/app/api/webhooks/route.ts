@@ -43,15 +43,11 @@ export async function POST(request: NextRequest) {
 		);
 	}
 
-	const status =
-		result.response.success === false
-			? (result.response.statusCode ?? 500)
-			: (result.response.statusCode ?? 200);
+	if (result.response !== undefined) {
+		return NextResponse.json(result.response, { headers: nextHeaders });
+	}
 
-	return NextResponse.json(result.response, {
-		status,
-		headers: nextHeaders,
-	});
+	return new NextResponse(null, { status: 200, headers: nextHeaders });
 }
 
 export async function GET() {

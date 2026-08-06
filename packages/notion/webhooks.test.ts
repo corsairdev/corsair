@@ -78,20 +78,16 @@ describe('Notion Webhook Verification', () => {
 		expect(mockCtx.keys.set_webhook_signature).not.toHaveBeenCalled();
 	});
 
-	it('should return 401 if incoming token does not match the existing secret', async () => {
+	it('should throw an error if incoming token does not match the existing secret', async () => {
 		webhookSignature = 'existing-secret-456';
 
-		const result = await verification.handler(mockCtx, {
+		const promise = verification.handler(mockCtx, {
 			payload: {
 				verification_token: 'attacker-token-789',
 			},
 		} as any);
 
-		expect(result).toEqual({
-			success: false,
-			statusCode: 401,
-			error: 'Invalid verification token',
-		});
+		await expect(promise).rejects.toThrow('Invalid verification token');
 		expect(webhookSignature).toBe('existing-secret-456');
 		expect(mockCtx.keys.set_webhook_signature).not.toHaveBeenCalled();
 	});
@@ -105,11 +101,7 @@ describe('Notion Webhook Verification', () => {
 		} as any);
 
 		await expect(first).resolves.toMatchObject({ success: true });
-		await expect(second).resolves.toEqual({
-			success: false,
-			statusCode: 401,
-			error: 'Invalid verification token',
-		});
+		await expect(second).rejects.toThrow('Invalid verification token');
 		expect(webhookSignature).toBe('first-token');
 		expect(mockCtx.keys.set_webhook_signature).toHaveBeenCalledTimes(1);
 	});
@@ -126,10 +118,6 @@ describe('Notion Webhook Verification', () => {
 			verification.handler(mockCtx, {
 				payload: { verification_token: 'our-token' },
 			} as any),
-		).resolves.toEqual({
-			success: false,
-			statusCode: 401,
-			error: 'Invalid verification token',
-		});
+		).rejects.toThrow('Invalid verification token');
 	});
 });

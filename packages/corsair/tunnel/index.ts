@@ -273,22 +273,13 @@ async function handleWebhookTunnel(
 	}
 
 	if (result.response && result.response.success === false) {
-		// Deliver the handler's HTTP status to the original sender (e.g. 401 on
-		// a rejected Notion/Asana handshake). Marking the tunnel envelope as
-		// failed would surface as a transport error instead of that status.
 		return {
-			status: 'ok',
-			webhookResponse: {
-				status: result.response.statusCode ?? 401,
-				body: {
-					success: false,
-					error:
-						typeof result.response.error === 'string'
-							? result.response.error
-							: 'Webhook handler failed',
-				},
-				headers: result.responseHeaders,
-			},
+			status: 'failed',
+			retryable: false,
+			error:
+				typeof result.response.error === 'string'
+					? result.response.error
+					: 'Webhook handler failed',
 		};
 	}
 

@@ -13,17 +13,14 @@ let registrationChain: Promise<void> = Promise.resolve();
 async function ensureWebhookSignature(
 	keys: WebhookKeys,
 	token: string,
-): Promise<{ ok: true } | { ok: false; error: string }> {
+): Promise<void> {
 	const run = registrationChain.then(async () => {
 		const existing = await keys.get_webhook_signature();
 		if (existing) {
 			if (existing !== token) {
-				return {
-					ok: false as const,
-					error: 'Invalid verification token',
-				};
+				throw new Error('Invalid verification token');
 			}
-			return { ok: true as const };
+			return;
 		}
 
 		await keys.set_webhook_signature(token);
@@ -32,18 +29,11 @@ async function ensureWebhookSignature(
 		// rather than treat a foreign token as a successful handshake.
 		const stored = await keys.get_webhook_signature();
 		if (stored !== token) {
-			return {
-				ok: false as const,
-				error: 'Invalid verification token',
-			};
+			throw new Error('Invalid verification token');
 		}
-		return { ok: true as const };
 	});
-	registrationChain = run.then(
-		() => undefined,
-		() => undefined,
-	);
-	return run;
+	registrationChain = run.catch(() => {});
+	await run;
 }
 
 export const verification: NotionWebhooks['verification'] = {
@@ -60,14 +50,7 @@ export const verification: NotionWebhooks['verification'] = {
 		}
 
 		const token = request.payload.verification_token;
-		const ensured = await ensureWebhookSignature(ctx.keys, token);
-		if (!ensured.ok) {
-			return {
-				success: false,
-				statusCode: 401,
-				error: ensured.error,
-			};
-		}
+		await ensureWebhookSignature(ctx.keys, token);
 
 		console.log('Notion webhook verification request received');
 
