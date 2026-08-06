@@ -55,6 +55,7 @@ describe('asana challenge webhook', () => {
 	describe('overwrite protection', () => {
 		it('rejects a different secret when one is already configured', async () => {
 			const { ctx, keys } = createContext('real-asana-secret');
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
 			const result = await challenge.handler(
 				ctx,
@@ -67,10 +68,15 @@ describe('asana challenge webhook', () => {
 			// The sender's value must not be echoed back.
 			expect(result.responseHeaders).toBeUndefined();
 			expect(result.data).toBeUndefined();
+			// Operators need a signal; the rejection is otherwise invisible.
+			expect(warn).toHaveBeenCalledTimes(1);
+
+			warn.mockRestore();
 		});
 
 		it('rejects an attacker secret that is the same length as the stored one', async () => {
 			const { ctx, keys } = createContext('aaaaaaaa');
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 
 			const result = await challenge.handler(
 				ctx,
@@ -80,6 +86,8 @@ describe('asana challenge webhook', () => {
 			expect(keys.set_webhook_signature).not.toHaveBeenCalled();
 			expect(result.success).toBe(false);
 			expect(result.statusCode).toBe(401);
+
+			warn.mockRestore();
 		});
 
 		it('accepts a retried handshake carrying the stored secret without rewriting it', async () => {

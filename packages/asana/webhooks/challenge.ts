@@ -9,7 +9,18 @@ import type { AsanaWebhooks } from '../index';
 // This handler places the secret in returnToSender['X-Hook-Secret'].
 // The consuming application MUST read this value and set it as the
 // X-Hook-Secret HTTP response header (not in the body).
+//
+// This endpoint is unauthenticated — anything that can reach the webhook URL can
+// send an X-Hook-Secret header. A secret is therefore only persisted when the
+// account has none stored yet; otherwise an attacker could install a signing key
+// they control and forge events the other Asana handlers would accept.
+//
+// Once configured, a secret is never replaced, including for a legitimate
+// re-registration: Corsair stores one webhook_signature per account while Asana
+// issues one per webhook, so there is no safe way to rotate here. Rotation needs
+// per-webhook secret storage in core.
 
+/** Constant-time compare. Length may short-circuit; length is not sensitive. */
 function secretsMatch(a: string, b: string): boolean {
 	const aBuf = Buffer.from(a);
 	const bBuf = Buffer.from(b);
@@ -40,9 +51,16 @@ export const challenge: AsanaWebhooks['challenge'] = {
 		const storedSecret = await ctx.keys.get_webhook_signature();
 
 		if (storedSecret) {
-			// A different value belongs to no handshake Corsair
+			// Asana retries the handshake if it does not get a timely 200, so the
+			// same secret arriving again is legitimate — echo it back without
+			// rewriting storage. A different value belongs to no handshake Corsair
 			// started, so refuse it and do not echo the sender's value back.
 			if (!secretsMatch(storedSecret, hookSecret)) {
+				// Logged so operators can tell an attack from a blocked
+				// re-registration; both land here.
+				console.warn(
+					'[corsair:asana] Rejected X-Hook-Secret for an account that already has one configured',
+				);
 				return {
 					success: false,
 					statusCode: 401,
