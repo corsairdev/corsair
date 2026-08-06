@@ -154,6 +154,23 @@ describe('verifyMondayWebhookSignature', () => {
 		);
 		expect(result).toEqual({ valid: true });
 	});
+
+	it('should accept lowercase bearer-prefixed Authorization JWTs', () => {
+		const token = signMondayJwt(
+			{
+				accountId: 1,
+				exp: Math.floor(Date.now() / 1000) + 60,
+			},
+			WEBHOOK_SECRET,
+		);
+		const result = verifyMondayWebhookSignature(
+			makeWebhookRequest(createPulseEvent, {
+				authorization: `bearer ${token}`,
+			}),
+			WEBHOOK_SECRET,
+		);
+		expect(result).toEqual({ valid: true });
+	});
 });
 
 describe('monday webhook handlers verify signatures', () => {

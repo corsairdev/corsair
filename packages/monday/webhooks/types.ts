@@ -218,9 +218,8 @@ export function verifyMondayWebhookSignature(
 		return { valid: false, error: 'Missing Authorization header' };
 	}
 
-	const token = authHeader.startsWith('Bearer ')
-		? authHeader.slice('Bearer '.length)
-		: authHeader;
+	// RFC 9110: auth scheme token is case-insensitive ("Bearer" / "bearer" / …).
+	const token = authHeader.replace(/^Bearer\s+/i, '');
 
 	return verifyMondayJwt(token, secret);
 }
