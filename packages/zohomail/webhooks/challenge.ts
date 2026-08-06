@@ -27,6 +27,66 @@ export const handshake: ZohoMailWebhooks['handshake'] = {
 			};
 		}
 
+		let existingSecret: string | undefined;
+		try {
+			existingSecret = (await ctx.keys.get_webhook_signature()) ?? undefined;
+		} catch (error) {
+			console.warn(
+				'[corsair:zohomail] Failed to retrieve existing webhook secret:',
+				error,
+			);
+			return {
+				success: false,
+				statusCode: 500,
+				error: 'Failed to retrieve existing webhook secret',
+			};
+		}
+
+		const signature = getZohoWebhookSignature(headers);
+
+		if (existingSecret) {
+			if (!signature) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Cannot overwrite existing secret without a valid signature',
+				};
+			}
+			const rawBody = request.rawBody;
+			if (!rawBody) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Missing raw body for signature verification',
+				};
+			}
+			if (!verifyZohoWebhookSignature(rawBody, existingSecret, signature)) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Invalid signature',
+				};
+			}
+		} else {
+			if (signature) {
+				const rawBody = request.rawBody;
+				if (!rawBody) {
+					return {
+						success: false,
+						statusCode: 401,
+						error: 'Missing raw body for signature verification',
+					};
+				}
+				if (!verifyZohoWebhookSignature(rawBody, hookSecret, signature)) {
+					return {
+						success: false,
+						statusCode: 401,
+						error: 'Invalid signature',
+					};
+				}
+			}
+		}
+
 		try {
 			await ctx.keys.set_webhook_signature(hookSecret);
 		} catch (error) {
@@ -39,25 +99,6 @@ export const handshake: ZohoMailWebhooks['handshake'] = {
 				statusCode: 500,
 				error: 'Failed to persist webhook secret',
 			};
-		}
-
-		const signature = getZohoWebhookSignature(headers);
-		if (signature) {
-			const rawBody = request.rawBody;
-			if (!rawBody) {
-				return {
-					success: false,
-					statusCode: 401,
-					error: 'Missing raw body for signature verification',
-				};
-			}
-			if (!verifyZohoWebhookSignature(rawBody, hookSecret, signature)) {
-				return {
-					success: false,
-					statusCode: 401,
-					error: 'Invalid signature',
-				};
-			}
 		}
 
 		return {
