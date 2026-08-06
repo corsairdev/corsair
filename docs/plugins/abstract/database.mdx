@@ -1,0 +1,128 @@
+---
+title: Database
+description: "Abstract local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Abstract plugin syncs data locally. Use `corsair.abstract.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Email Reputations
+
+Path: `abstract.db.emailReputations.search`
+
+```ts
+const rows = await corsair.abstract.db.emailReputations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `emailAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `deliverabilityStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `qualityScore` | `number` | equals, gt, gte, lt, lte, in |
+| `isFreeEmail` | `boolean` | equals |
+| `isDisposable` | `boolean` | equals |
+| `isCatchall` | `boolean` | equals |
+| `addressRiskStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `domainRiskStatus` | `string` | equals, contains, startsWith, endsWith, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Email Validations
+
+Path: `abstract.db.emailValidations.search`
+
+```ts
+const rows = await corsair.abstract.db.emailValidations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `email` | `string` | equals, contains, startsWith, endsWith, in |
+| `autocorrect` | `string` | equals, contains, startsWith, endsWith, in |
+| `deliverability` | `string` | equals, contains, startsWith, endsWith, in |
+| `qualityScore` | `number` | equals, gt, gte, lt, lte, in |
+| `isValidFormat` | `boolean` | equals |
+| `isFreeEmail` | `boolean` | equals |
+| `isDisposableEmail` | `boolean` | equals |
+| `isRoleEmail` | `boolean` | equals |
+| `isCatchallEmail` | `boolean` | equals |
+| `isMxFound` | `boolean` | equals |
+| `isSmtpValid` | `boolean` | equals |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Iban Validations
+
+Path: `abstract.db.ibanValidations.search`
+
+```ts
+const rows = await corsair.abstract.db.ibanValidations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `iban` | `string` | equals, contains, startsWith, endsWith, in |
+| `isValid` | `boolean` | equals |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Vat Categories
+
+Path: `abstract.db.vatCategories.search`
+
+```ts
+const rows = await corsair.abstract.db.vatCategories.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `countryCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `rate` | `string` | equals, contains, startsWith, endsWith, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

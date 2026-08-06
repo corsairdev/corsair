@@ -1,0 +1,215 @@
+---
+title: Webhooks
+description: "AgentMail incoming webhooks: event paths, payloads, and response data."
+---
+
+The AgentMail plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/agentmail/overview) for setup context and the exact URL shape).
+
+<Info>
+**New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
+</Info>
+
+## Webhook map
+
+- `message`
+  - `received` (`message.received`)
+
+## HTTP handler setup
+
+```ts app/api/webhook/route.ts
+import { processWebhook } from "corsair";
+import { corsair } from "@/server/corsair";
+
+export async function POST(request: Request) {
+    const headers = Object.fromEntries(request.headers);
+    const body = await request.json();
+    const result = await processWebhook(corsair, headers, body);
+    return result.response;
+}
+```
+
+## Events
+
+## Message
+
+### Received
+
+`message.received`
+
+A new email was received in an AgentMail inbox
+
+**Payload**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `event` | Yes | — |
+| `event_type` | `message.received` | Yes | — |
+| `event_id` | `string` | Yes | — |
+| `message` | `object` | Yes | — |
+| `thread` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="message full type">
+
+```ts
+{
+  inbox_id: string,
+  thread_id: string,
+  message_id: string,
+  labels: string[],
+  timestamp: string,
+  from: string,
+  to: string[],
+  size: number,
+  updated_at: string,
+  created_at: string,
+  reply_to?: string[],
+  cc?: string[],
+  bcc?: string[],
+  subject?: string,
+  preview?: string,
+  text?: string,
+  html?: string,
+  extracted_text?: string,
+  extracted_html?: string,
+  attachments?: {
+    attachment_id: string,
+    size: number,
+    filename?: string,
+    content_type?: string,
+    content_disposition?: string,
+    content_id?: string
+  }[],
+  in_reply_to?: string,
+  references?: string[],
+  headers?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="thread full type">
+
+```ts
+{
+  inbox_id: string,
+  thread_id: string,
+  labels: string[],
+  timestamp: string,
+  senders: string[],
+  recipients: string[],
+  last_message_id: string,
+  message_count: number,
+  size: number,
+  updated_at: string,
+  created_at: string,
+  received_timestamp?: string,
+  sent_timestamp?: string,
+  subject?: string,
+  preview?: string,
+  attachments?: {
+    attachment_id: string,
+    size: number,
+    filename?: string,
+    content_type?: string,
+    content_disposition?: string,
+    content_id?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+<AccordionGroup>
+<Accordion title="Response data full type">
+
+```ts
+{
+  type: event,
+  event_type: message.received,
+  event_id: string,
+  message: {
+    inbox_id: string,
+    thread_id: string,
+    message_id: string,
+    labels: string[],
+    timestamp: string,
+    from: string,
+    to: string[],
+    size: number,
+    updated_at: string,
+    created_at: string,
+    reply_to?: string[],
+    cc?: string[],
+    bcc?: string[],
+    subject?: string,
+    preview?: string,
+    text?: string,
+    html?: string,
+    extracted_text?: string,
+    extracted_html?: string,
+    attachments?: {
+      attachment_id: string,
+      size: number,
+      filename?: string,
+      content_type?: string,
+      content_disposition?: string,
+      content_id?: string
+    }[],
+    in_reply_to?: string,
+    references?: string[],
+    headers?: {
+    }
+  },
+  thread: {
+    inbox_id: string,
+    thread_id: string,
+    labels: string[],
+    timestamp: string,
+    senders: string[],
+    recipients: string[],
+    last_message_id: string,
+    message_count: number,
+    size: number,
+    updated_at: string,
+    created_at: string,
+    received_timestamp?: string,
+    sent_timestamp?: string,
+    subject?: string,
+    preview?: string,
+    attachments?: {
+      attachment_id: string,
+      size: number,
+      filename?: string,
+      content_type?: string,
+      content_disposition?: string,
+      content_id?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+**`webhookHooks` example**
+
+```ts
+agentmail({
+    webhookHooks: {
+        message: {
+            received: {
+                before(ctx, args) {
+                    return { ctx, args };
+                },
+                after(ctx, response) {
+                },
+            },
+        },
+    },
+})
+```
+
+---
+
