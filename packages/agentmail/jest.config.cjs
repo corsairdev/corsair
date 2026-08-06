@@ -13,7 +13,7 @@ module.exports = {
 		'!**/*.d.ts',
 		'!**/node_modules/**',
 		'!**/dist/**',
-		'!jest.config.ts',
+		'!jest.config.cjs',
 		'!tests/**',
 	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
@@ -23,6 +23,7 @@ module.exports = {
 			'ts-jest',
 			{
 				useESM: true,
+				isolatedModules: true,
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
@@ -44,8 +45,8 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
-		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
