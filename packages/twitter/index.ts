@@ -172,7 +172,12 @@ export function twitter<const T extends TwitterPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:twitter:webhook_signature]: Twitter webhook signature is missing',
+					);
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && options.key) {
