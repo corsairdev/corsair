@@ -60,6 +60,22 @@ describe('resolveGithubOAuthWebhookTenantLink', () => {
 		expect(link).toBeNull();
 	});
 
+	it('returns null when the token can see multiple installations (ambiguous)', async () => {
+		global.fetch = (async () => ({
+			ok: true,
+			json: async () => ({ installations: [{ id: 456 }, { id: 789 }] }),
+		})) as unknown as typeof fetch;
+
+		const link = await resolveGithubOAuthWebhookTenantLink({
+			access_token: 'tok',
+		} as unknown as TokenResponse);
+
+		// Can't tell which installation belongs to this connection without a
+		// forwarded installation_id — linking installations[0] would route
+		// webhooks to the wrong tenant, so fail closed.
+		expect(link).toBeNull();
+	});
+
 	it('returns null with no access token and never calls the API', async () => {
 		const fetchSpy = jest.fn();
 		global.fetch = fetchSpy as unknown as typeof fetch;

@@ -30,7 +30,13 @@ async function fetchInstallationId(
 		const body = (await res.json()) as {
 			installations?: Array<{ id?: unknown }>;
 		};
-		return toExternalId(body.installations?.[0]?.id) ?? null;
+		const installations = body.installations ?? [];
+		// Only safe to infer when the token sees exactly one installation. With
+		// several, we can't tell which belongs to this connection without a
+		// forwarded installation_id, and linking installations[0] would route
+		// that installation's webhooks to the wrong tenant — so fail closed.
+		if (installations.length !== 1) return null;
+		return toExternalId(installations[0]?.id) ?? null;
 	} catch {
 		return null;
 	}
