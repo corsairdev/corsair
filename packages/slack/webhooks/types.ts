@@ -906,11 +906,11 @@ function parseBody(body: unknown): unknown {
 }
 
 export function verifySlackWebhookSignature(
-	request: WebhookRequest<unknown>,
+	request: WebhookRequest,
 	signingSecret?: string,
 ): { valid: boolean; error?: string } {
 	if (!signingSecret) {
-		return { valid: false };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const rawBody = request.rawBody;
