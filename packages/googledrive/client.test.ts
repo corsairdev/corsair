@@ -1,5 +1,6 @@
 import { request } from 'corsair/http';
 import { makeGoogleDriveRequest } from './client';
+import { move } from './endpoints/files';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -35,5 +36,40 @@ describe('Google Drive API client', () => {
 			expect.anything(),
 			expect.objectContaining({ method: 'POST', query }),
 		);
+	});
+
+	it('files.move keeps parents in query but not path-only fileId', async () => {
+		mockRequest.mockResolvedValue({ id: 'file-id' });
+
+		const ctx = {
+			key: 'test-token',
+			endpoints: {
+				files: {
+					get: jest.fn().mockResolvedValue({ id: 'file-id' }),
+				},
+			},
+			db: {},
+		};
+
+		await move(ctx as never, {
+			fileId: 'file-id',
+			addParents: 'new-folder',
+			removeParents: 'old-folder',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'PATCH',
+				url: '/files/file-id',
+				query: {
+					addParents: 'new-folder',
+					removeParents: 'old-folder',
+					supportsAllDrives: undefined,
+					supportsTeamDrives: undefined,
+				},
+			}),
+		);
+		expect(mockRequest.mock.calls[0]?.[1]?.query).not.toHaveProperty('fileId');
 	});
 });
