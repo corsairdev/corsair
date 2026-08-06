@@ -90,22 +90,30 @@ export type AgentMailWebhookOutputs = {
 	messageReceived: MessageReceivedEvent;
 };
 
+// `body` is unknown because webhook transport may deliver a raw JSON string or
+// an already-parsed object; neither shape is knowable at the type boundary.
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
-			return parsed !== null &&
-				typeof parsed === 'object' &&
-				!Array.isArray(parsed)
-				? (parsed as Record<string, unknown>)
-				: null;
+			if (
+				parsed === null ||
+				typeof parsed !== 'object' ||
+				Array.isArray(parsed)
+			) {
+				return null;
+			}
+			// JSON.parse returns mixed types; narrowed by typeof/Array checks above.
+			return parsed as Record<string, unknown>;
 		} catch {
 			return null;
 		}
 	}
-	return body !== null && typeof body === 'object' && !Array.isArray(body)
-		? (body as Record<string, unknown>)
-		: null;
+	if (body === null || typeof body !== 'object' || Array.isArray(body)) {
+		return null;
+	}
+	// Already-parsed webhook body; narrowed by typeof/Array checks above.
+	return body as Record<string, unknown>;
 }
 
 export function createAgentMailMatch(eventType: string): CorsairWebhookMatcher {
@@ -116,6 +124,8 @@ export function createAgentMailMatch(eventType: string): CorsairWebhookMatcher {
 }
 
 function getHeader(
+	// Header map values are string | string[] | undefined depending on the HTTP
+	// adapter; payload typing stays unknown until schema parse in the handler.
 	headers: WebhookRequest<unknown>['headers'],
 	name: string,
 ): string | undefined {
@@ -135,6 +145,8 @@ function extractSvixSignatures(signatureHeader: string): string[] {
 }
 
 export function verifyAgentMailWebhookSignature(
+	// Request payload remains unknown until MessageReceivedEventSchema.parse;
+	// signature verification only needs headers + rawBody.
 	request: WebhookRequest<unknown>,
 	secret?: string,
 ): { valid: boolean; error?: string } {

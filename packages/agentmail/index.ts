@@ -182,12 +182,20 @@ export function agentmail<const T extends AgentMailPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			const hasSvixSignature = 'svix-signature' in request.headers;
 			const body = request.body;
+			if (
+				!hasSvixSignature ||
+				body === null ||
+				typeof body !== 'object' ||
+				Array.isArray(body)
+			) {
+				return false;
+			}
+			// Externally-sourced webhook body; structure is not statically knowable here.
+			// Assert after null/object/array guards. Discriminate from Resend Svix payloads
+			// which use `type: 'email.*'` / `domain.*` and never set AgentMail's `event_type`.
+			const payload = body as Record<string, unknown>;
 			return (
-				hasSvixSignature &&
-				body !== null &&
-				typeof body === 'object' &&
-				!Array.isArray(body) &&
-				(body as Record<string, unknown>).event_type === 'message.received'
+				payload.type === 'event' && payload.event_type === 'message.received'
 			);
 		},
 		errorHandlers: {

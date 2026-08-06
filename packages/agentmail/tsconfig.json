@@ -5,7 +5,8 @@
       "esnext"
     ],
     "types": [
-      "node"
+      "node",
+      "jest"
     ],
     "module": "ESNext",
     "moduleResolution": "Bundler",
