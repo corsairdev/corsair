@@ -94,10 +94,12 @@ const MessagesListResponseSchema = z.object({
 	next_page_token: z.string().nullable().optional(),
 });
 
-const MessagesSendResponseSchema = z.object({
-	message_id: z.string(),
-	thread_id: z.string(),
-});
+const MessagesSendResponseSchema = z
+	.object({
+		message_id: z.string(),
+		thread_id: z.string(),
+	})
+	.loose();
 
 export type MessagesListResponse = z.infer<typeof MessagesListResponseSchema>;
 export type MessagesGetResponse = z.infer<typeof MessageSchema>;

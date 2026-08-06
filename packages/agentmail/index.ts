@@ -180,7 +180,9 @@ export function agentmail<const T extends AgentMailPluginOptions>(
 		endpointSchemas: agentMailEndpointSchemas,
 		webhookSchemas: agentMailWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
-			const hasSvixSignature = 'svix-signature' in request.headers;
+			const hasSvixSignature = Object.keys(request.headers).some(
+				(key) => key.toLowerCase() === 'svix-signature',
+			);
 			const body = request.body;
 			if (
 				!hasSvixSignature ||

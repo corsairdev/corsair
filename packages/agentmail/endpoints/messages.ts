@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { cacheAgentMailMessage } from '../cache-message';
 import { makeAgentMailRequest } from '../client';
 import type { AgentMailEndpoints } from '../index';
 import type { AgentMailEndpointOutputs } from './types';
@@ -19,7 +20,11 @@ export const send: AgentMailEndpoints['messagesSend'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'agentmail.messages.send',
-		{ ...input },
+		{
+			inbox_id,
+			message_id: response.message_id,
+			thread_id: response.thread_id,
+		},
 		'completed',
 	);
 
@@ -37,10 +42,15 @@ export const get: AgentMailEndpoints['messagesGet'] = async (ctx, input) => {
 		},
 	);
 
+	await cacheAgentMailMessage(ctx, response);
+
 	await logEventFromContext(
 		ctx,
 		'agentmail.messages.get',
-		{ ...input },
+		{
+			inbox_id: input.inbox_id,
+			message_id: input.message_id,
+		},
 		'completed',
 	);
 
@@ -57,10 +67,18 @@ export const list: AgentMailEndpoints['messagesList'] = async (ctx, input) => {
 		query,
 	});
 
+	for (const message of response.messages) {
+		await cacheAgentMailMessage(ctx, message);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'agentmail.messages.list',
-		{ ...input },
+		{
+			inbox_id,
+			count: response.count,
+			returned: response.messages.length,
+		},
 		'completed',
 	);
 

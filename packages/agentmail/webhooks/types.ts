@@ -129,8 +129,12 @@ function getHeader(
 	headers: WebhookRequest<unknown>['headers'],
 	name: string,
 ): string | undefined {
-	const value = headers[name];
-	return Array.isArray(value) ? value[0] : value;
+	const lower = name.toLowerCase();
+	for (const [key, value] of Object.entries(headers)) {
+		if (key.toLowerCase() !== lower) continue;
+		return Array.isArray(value) ? value[0] : value;
+	}
+	return undefined;
 }
 
 function extractSvixSignatures(signatureHeader: string): string[] {

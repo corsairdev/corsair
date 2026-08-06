@@ -8,14 +8,13 @@ import type {
 import { AgentMailEndpointOutputSchemas } from './endpoints/types';
 
 const LIVE_API_KEY = process.env.AGENTMAIL_API_KEY;
-const LIVE_INBOX_ID =
-	process.env.AGENTMAIL_INBOX_ID || 'dhirender-9880@agentmail.to';
-const describeLive = LIVE_API_KEY ? describe : describe.skip;
+const LIVE_INBOX_ID = process.env.AGENTMAIL_INBOX_ID;
+const describeLive = LIVE_API_KEY && LIVE_INBOX_ID ? describe : describe.skip;
 
 describeLive('AgentMail live API', () => {
 	it('lists messages with the messages array shape', async () => {
 		const response = await makeAgentMailRequest<MessagesListResponse>(
-			`inboxes/${encodeURIComponent(LIVE_INBOX_ID)}/messages`,
+			`inboxes/${encodeURIComponent(LIVE_INBOX_ID!)}/messages`,
 			LIVE_API_KEY!,
 			{ method: 'GET', query: { limit: 5 } },
 		);
@@ -29,7 +28,7 @@ describeLive('AgentMail live API', () => {
 
 	it('gets a message by message_id from list', async () => {
 		const list = await makeAgentMailRequest<MessagesListResponse>(
-			`inboxes/${encodeURIComponent(LIVE_INBOX_ID)}/messages`,
+			`inboxes/${encodeURIComponent(LIVE_INBOX_ID!)}/messages`,
 			LIVE_API_KEY!,
 			{ method: 'GET', query: { limit: 1 } },
 		);
@@ -37,7 +36,7 @@ describeLive('AgentMail live API', () => {
 		expect(messageId).toBeTruthy();
 
 		const message = await makeAgentMailRequest<MessagesGetResponse>(
-			`inboxes/${encodeURIComponent(LIVE_INBOX_ID)}/messages/${encodeURIComponent(messageId!)}`,
+			`inboxes/${encodeURIComponent(LIVE_INBOX_ID!)}/messages/${encodeURIComponent(messageId!)}`,
 			LIVE_API_KEY!,
 			{ method: 'GET' },
 		);
@@ -54,7 +53,7 @@ describeLive('AgentMail live API', () => {
 		}
 
 		const response = await makeAgentMailRequest<MessagesSendResponse>(
-			`inboxes/${encodeURIComponent(LIVE_INBOX_ID)}/messages/send`,
+			`inboxes/${encodeURIComponent(LIVE_INBOX_ID!)}/messages/send`,
 			LIVE_API_KEY!,
 			{
 				method: 'POST',
