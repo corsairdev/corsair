@@ -87,8 +87,11 @@ export async function makeAgentMailRequest<T>(
 	};
 
 	try {
+		// No rate-limit retries on writes — send is not idempotent without a key.
 		return await request<T>(config, requestOptions, {
-			rateLimitConfig: AGENTMAIL_RATE_LIMIT_CONFIG,
+			rateLimitConfig: isWriteMethod
+				? { ...AGENTMAIL_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 }
+				: AGENTMAIL_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {

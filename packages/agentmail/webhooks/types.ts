@@ -92,7 +92,7 @@ export type AgentMailWebhookOutputs = {
 
 // `body` is unknown because webhook transport may deliver a raw JSON string or
 // an already-parsed object; neither shape is knowable at the type boundary.
-function parseBody(body: unknown): Record<string, unknown> | null {
+export function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
@@ -121,6 +121,23 @@ export function createAgentMailMatch(eventType: string): CorsairWebhookMatcher {
 		const parsedBody = parseBody(request.body);
 		return parsedBody !== null && parsedBody.event_type === eventType;
 	};
+}
+
+/** Plugin-level matcher: Svix header + AgentMail event shape (string or object body). */
+export function matchAgentMailPluginWebhook(
+	request: RawWebhookRequest,
+): boolean {
+	const hasSvixSignature = Object.keys(request.headers).some(
+		(key) => key.toLowerCase() === 'svix-signature',
+	);
+	if (!hasSvixSignature) return false;
+
+	const payload = parseBody(request.body);
+	return (
+		payload !== null &&
+		payload.type === 'event' &&
+		payload.event_type === 'message.received'
+	);
 }
 
 function getHeader(

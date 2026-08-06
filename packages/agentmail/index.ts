@@ -28,7 +28,11 @@ import {
 import { errorHandlers } from './error-handlers';
 import { AgentMailSchema } from './schema';
 import type { AgentMailWebhookOutputs, MessageReceivedEvent } from './webhooks';
-import { MessageReceivedEventSchema, MessageWebhooks } from './webhooks';
+import {
+	MessageReceivedEventSchema,
+	MessageWebhooks,
+	matchAgentMailPluginWebhook,
+} from './webhooks';
 
 export type AgentMailPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -179,27 +183,7 @@ export function agentmail<const T extends AgentMailPluginOptions>(
 		endpointMeta: agentMailEndpointMeta,
 		endpointSchemas: agentMailEndpointSchemas,
 		webhookSchemas: agentMailWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const hasSvixSignature = Object.keys(request.headers).some(
-				(key) => key.toLowerCase() === 'svix-signature',
-			);
-			const body = request.body;
-			if (
-				!hasSvixSignature ||
-				body === null ||
-				typeof body !== 'object' ||
-				Array.isArray(body)
-			) {
-				return false;
-			}
-			// Externally-sourced webhook body; structure is not statically knowable here.
-			// Assert after null/object/array guards. Discriminate from Resend Svix payloads
-			// which use `type: 'email.*'` / `domain.*` and never set AgentMail's `event_type`.
-			const payload = body as Record<string, unknown>;
-			return (
-				payload.type === 'event' && payload.event_type === 'message.received'
-			);
-		},
+		pluginWebhookMatcher: matchAgentMailPluginWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
