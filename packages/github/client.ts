@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
+import { convertKeysToCamelCase } from './utils';
 
 export class GithubAPIError extends Error {
 	constructor(
@@ -65,7 +66,8 @@ async function makeGithubRequestWithToken<T>(
 
 	try {
 		const response = await request<T>(config, requestOptions);
-		return response;
+		// GitHub REST returns snake_case; the plugin is camelCase throughout.
+		return convertKeysToCamelCase(response) as T;
 	} catch (error) {
 		if (
 			error &&
