@@ -545,6 +545,7 @@ export async function completeOAuthCallback(
 			code: code!,
 			state: state!,
 			redirectUri: manual.redirectUri,
+			callbackParams: input.callbackParams,
 		});
 	} catch (err) {
 		// Class identity check via `name` so we don't have to import the class
