@@ -184,8 +184,12 @@ export function verifyAgentMailWebhookSignature(
 		return { valid: false, error: 'Webhook timestamp is too old or invalid' };
 	}
 
-	const [, secretBase64] = secret.split('_', 2);
-	if (!secret.startsWith('whsec_') || !secretBase64) {
+	if (!secret.startsWith('whsec_')) {
+		return { valid: false, error: 'Malformed webhook secret' };
+	}
+	// slice, not split: base64url secrets can contain underscores
+	const secretBase64 = secret.slice('whsec_'.length);
+	if (!secretBase64) {
 		return { valid: false, error: 'Malformed webhook secret' };
 	}
 
