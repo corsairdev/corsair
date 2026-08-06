@@ -906,7 +906,7 @@ function parseBody(body: unknown): unknown {
 }
 
 export function verifySlackWebhookSignature(
-	request: WebhookRequest<unknown>,
+	request: WebhookRequest,
 	signingSecret?: string,
 ): { valid: boolean; error?: string } {
 	if (!signingSecret) {
