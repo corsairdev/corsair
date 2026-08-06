@@ -15,6 +15,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import { Channels, Chats, Members, Messages, Teams } from './endpoints';
 import type {
@@ -49,7 +50,7 @@ import {
 } from './webhooks/types';
 
 export type TeamsPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	clientState?: string;
 	hooks?: InternalTeamsPlugin['hooks'];
@@ -395,6 +396,9 @@ export const teamsAuthConfig = {
 	oauth_2: {
 		account: ['subscription_id', 'client_state'] as const,
 	},
+	managed: {
+		account: ['subscription_id', 'client_state'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseTeamsPlugin<T extends TeamsPluginOptions> = CorsairPlugin<
@@ -468,6 +472,11 @@ export function teams<const T extends TeamsPluginOptions>(
 			}
 
 			if (source === 'webhook') {
+				if (ctx.authType === 'managed') {
+					throw new Error(
+						'[auth-missing:teams:managed]: webhook signature is not available in managed mode',
+					);
+				}
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
 					throw new Error(
@@ -511,6 +520,25 @@ export function teams<const T extends TeamsPluginOptions>(
 						ctx.keys.set_expires_at(String(result.expiresAt)),
 					]);
 				}
+				return result.accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:teams:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'teams',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 
