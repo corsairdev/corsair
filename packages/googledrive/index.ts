@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
@@ -28,12 +29,14 @@ import {
 	GoogleDriveEndpointOutputSchemas,
 } from './endpoints/types';
 import { GoogleDriveSchema } from './schema';
+import { googledriveSubscribe } from './subscribe';
 import type {
 	GoogleDriveWebhookEvent,
 	GoogleDriveWebhookOutputs,
 	GoogleDriveWebhookPayload,
 } from './webhooks';
 import { ChangeWebhooks } from './webhooks';
+import { matchGoogleDriveTenantWebhook } from './webhooks/tenant-matcher';
 import type { PubSubNotification } from './webhooks/types';
 import {
 	DriveChangedEventSchema,
@@ -338,6 +341,12 @@ const googleDriveEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleDriveEndpointsNested>;
 
+export const googledriveAuthConfig = {
+	oauth_2: {
+		account: ['channel_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseGoogleDrivePlugin<T extends GoogleDrivePluginOptions> =
 	CorsairPlugin<
 		'googledrive',
@@ -364,6 +373,7 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 	};
 	return {
 		id: 'googledrive',
+		authConfig: googledriveAuthConfig,
 		schema: GoogleDriveSchema,
 		options: options,
 		oauthConfig: {
@@ -466,6 +476,8 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchGoogleDriveTenantWebhook,
+		subscribe: googledriveSubscribe,
 	} satisfies InternalGoogleDrivePlugin;
 }
 

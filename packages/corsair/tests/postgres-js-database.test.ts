@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { slack } from '@corsair-dev/slack';
+import { SlackSchema } from '@corsair-dev/slack/schema';
 import { Kysely, sql } from 'kysely';
 import postgres from 'postgres';
 import { createCorsair } from '../core';
@@ -8,7 +9,7 @@ import type {
 	CorsairKyselyDatabase,
 } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
-import { createCorsairOrm } from '../db/orm';
+import { createCorsairOrm, createPluginOrm } from '../db/orm';
 import { createIntegrationAndAccount } from './plugins-test-utils';
 
 const TEST_SCHEMA = 'corsair_pgjs_test';
@@ -718,6 +719,33 @@ describe('postgres-js database integration', () => {
 
 				const countAfter = await orm.entities.count();
 				expect(countAfter).toBe(countBefore - 1);
+			},
+		);
+
+		gated()(
+			'plugin entity client existsByEntityId and findIdByEntityId',
+			async () => {
+				await createIntegrationAndAccount(kdb, 'slack');
+				const pluginOrm = createPluginOrm({
+					database: { db: kdb },
+					integrationName: 'slack',
+					schema: SlackSchema,
+					tenantId: 'default',
+				});
+
+				const channels = pluginOrm.channels!;
+
+				expect(await channels.existsByEntityId('C-missing')).toBe(false);
+				expect(await channels.findIdByEntityId('C-missing')).toBe(null);
+
+				const entity = await channels.upsertByEntityId('C-exists', {
+					id: 'C-exists',
+					name: 'exists-channel',
+					is_private: false,
+				});
+
+				expect(await channels.existsByEntityId('C-exists')).toBe(true);
+				expect(await channels.findIdByEntityId('C-exists')).toBe(entity.id);
 			},
 		);
 

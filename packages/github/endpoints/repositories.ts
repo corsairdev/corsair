@@ -3,6 +3,7 @@ import { GithubAPIError, makeGithubRequest } from '../client';
 import type { GithubBoundEndpoints, GithubEndpoints } from '../index';
 import type {
 	RepositoriesListResponse,
+	RepositoriesListStargazersResponse,
 	RepositoryBranchesListResponse,
 	RepositoryCommitsListResponse,
 	RepositoryContentGetResponse,
@@ -14,13 +15,9 @@ export const list: GithubEndpoints['repositoriesList'] = async (ctx, input) => {
 	let endpoint = owner ? `/users/${owner}/repos` : '/user/repos';
 	let result: RepositoriesListResponse;
 
-	result = await makeGithubRequest<RepositoriesListResponse>(
-		endpoint,
-		ctx.key,
-		{
-			query: { ...queryParams, type },
-		},
-	);
+	result = await makeGithubRequest<RepositoriesListResponse>(endpoint, ctx, {
+		query: { ...queryParams, type },
+	});
 
 	if (result && ctx.db.repositories) {
 		try {
@@ -44,10 +41,7 @@ export const list: GithubEndpoints['repositoriesList'] = async (ctx, input) => {
 export const get: GithubEndpoints['repositoriesGet'] = async (ctx, input) => {
 	const { owner, repo } = input;
 	const endpoint = `/repos/${owner}/${repo}`;
-	const result = await makeGithubRequest<RepositoryGetResponse>(
-		endpoint,
-		ctx.key,
-	);
+	const result = await makeGithubRequest<RepositoryGetResponse>(endpoint, ctx);
 
 	if (result && ctx.db.repositories) {
 		try {
@@ -74,7 +68,7 @@ export const listBranches: GithubEndpoints['repositoriesListBranches'] = async (
 	const endpoint = `/repos/${owner}/${repo}/branches`;
 	const result = await makeGithubRequest<RepositoryBranchesListResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ query: queryParams },
 	);
 
@@ -115,7 +109,7 @@ export const listCommits: GithubEndpoints['repositoriesListCommits'] = async (
 	const endpoint = `/repos/${owner}/${repo}/commits`;
 	const result = await makeGithubRequest<RepositoryCommitsListResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ query: queryParams },
 	);
 
@@ -142,7 +136,7 @@ export const getContent: GithubEndpoints['repositoriesGetContent'] = async (
 	const endpoint = `/repos/${owner}/${repo}/contents/${path}`;
 	const result = await makeGithubRequest<RepositoryContentGetResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ query: queryParams },
 	);
 
@@ -165,7 +159,7 @@ export const getContent: GithubEndpoints['repositoriesGetContent'] = async (
 export const star: GithubEndpoints['repositoriesStar'] = async (ctx, input) => {
 	const { owner, repo } = input;
 	const endpoint = `/user/starred/${owner}/${repo}`;
-	await makeGithubRequest<void>(endpoint, ctx.key, { method: 'PUT' });
+	await makeGithubRequest<void>(endpoint, ctx, { method: 'PUT' });
 
 	await logEventFromContext(
 		ctx,
@@ -183,7 +177,7 @@ export const unstar: GithubEndpoints['repositoriesUnstar'] = async (
 ) => {
 	const { owner, repo } = input;
 	const endpoint = `/user/starred/${owner}/${repo}`;
-	await makeGithubRequest<void>(endpoint, ctx.key, { method: 'DELETE' });
+	await makeGithubRequest<void>(endpoint, ctx, { method: 'DELETE' });
 
 	await logEventFromContext(
 		ctx,
@@ -205,7 +199,7 @@ export const checkStarred: GithubEndpoints['repositoriesCheckStarred'] = async (
 	const { owner, repo } = input;
 	const endpoint = `/user/starred/${owner}/${repo}`;
 	try {
-		await makeGithubRequest<void>(endpoint, ctx.key);
+		await makeGithubRequest<void>(endpoint, ctx);
 		await logEventFromContext(
 			ctx,
 			'github.repositories.checkStarred',
@@ -235,7 +229,7 @@ export const listStarred: GithubEndpoints['repositoriesListStarred'] = async (
 	const { sort, direction, perPage, page } = input;
 	const result = await makeGithubRequest<RepositoriesListResponse>(
 		'/user/starred',
-		ctx.key,
+		ctx,
 		{
 			query: {
 				sort,
@@ -264,3 +258,29 @@ export const listStarred: GithubEndpoints['repositoriesListStarred'] = async (
 	);
 	return result;
 };
+
+/** List users who have starred a repository (GET /repos/{owner}/{repo}/stargazers). */
+export const listStargazers: GithubEndpoints['repositoriesListStargazers'] =
+	async (ctx, input) => {
+		const { owner, repo, perPage, page } = input;
+		const endpoint = `/repos/${owner}/${repo}/stargazers`;
+		const result = await makeGithubRequest<RepositoriesListStargazersResponse>(
+			endpoint,
+			ctx,
+			{
+				query: {
+					per_page: perPage,
+					page,
+				},
+				accept: 'application/vnd.github.v3.star+json',
+			},
+		);
+
+		await logEventFromContext(
+			ctx,
+			'github.repositories.listStargazers',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};

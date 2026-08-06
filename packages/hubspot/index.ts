@@ -8,6 +8,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
@@ -55,6 +56,8 @@ import {
 	DealWebhooks,
 	TicketWebhooks,
 } from './webhooks';
+import { resolveHubspotOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchHubspotTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	CompanyCreatedEventSchema,
 	CompanyDeletedEventSchema,
@@ -424,6 +427,11 @@ const hubspotWebhookSchemas = {
 
 const defaultAuthType = 'api_key' as const;
 
+export const hubspotAuthConfig = {
+	api_key: { account: ['portal_id'] as const },
+	oauth_2: { account: ['portal_id'] as const },
+} as const satisfies PluginAuthConfig;
+
 /**
  * Risk-level metadata for each HubSpot endpoint.
  * Used by the MCP server permission system to decide allow / deny / require_approval.
@@ -595,6 +603,7 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 	};
 	return {
 		id: 'hubspot',
+		authConfig: hubspotAuthConfig,
 		oauthConfig: {
 			providerName: 'HubSpot',
 			authUrl: 'https://app.hubspot.com/oauth/authorize',
@@ -631,6 +640,8 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 			);
 			return hasHubSpotSignature || hasHubSpotPayload;
 		},
+		pluginTenantWebhookMatcher: matchHubspotTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveHubspotOAuthWebhookTenantLink,
 		errorHandlers: options.errorHandlers || errorHandlers,
 		keyBuilder: async (ctx: HubSpotKeyBuilderContext, source) => {
 			const authType = ctx.authType;

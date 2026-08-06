@@ -7,7 +7,8 @@ Corsair handles authentication for production-grade applications. Whether you ne
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
-import { slack, linear } from "corsair/plugins";
+import { slack } from "@corsair-dev/slack";
+import { linear } from "@corsair-dev/linear";
 
 export const corsair = createCorsair({
     multiTenancy: true,
@@ -80,6 +81,10 @@ CORSAIR_KEK=your-key-encryption-key
 ```
 
 Each connection has a different DEK, so compromising one connection's key doesn't expose others.
+
+<Note>
+This holds whether you self-host or use [Hub](/hub/overview). Hub is a relay for connect, approval, and webhook surfaces — it stores none of your credentials. Encrypted tokens are persisted only in your database in both modes.
+</Note>
 
 ## Bring Your Own KMS
 

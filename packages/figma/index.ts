@@ -47,6 +47,7 @@ import {
 	LibraryPublishWebhooks,
 	PingWebhooks,
 } from './webhooks';
+import { matchFigmaTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	FigmaFileCommentEvent,
 	FigmaFileDeleteEvent,
@@ -705,8 +706,8 @@ const figmaWebhookSchemas = {
 } as const;
 
 export const figmaAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
+	oauth_2: {
+		account: ['webhook_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -734,6 +735,7 @@ export function figma<const T extends FigmaPluginOptions>(
 	};
 	return {
 		id: 'figma',
+		authConfig: figmaAuthConfig,
 		schema: FigmaSchema,
 		options: options,
 		hooks: options.hooks,
@@ -747,6 +749,7 @@ export function figma<const T extends FigmaPluginOptions>(
 			const hasSignature = 'x-figma-signature' in headers;
 			return hasSignature;
 		},
+		pluginTenantWebhookMatcher: matchFigmaTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

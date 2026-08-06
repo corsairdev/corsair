@@ -1,6 +1,6 @@
 import Link from 'next/link';
-
-import { formatPostDate, type BlogPostMeta } from '@/lib/blog';
+import type { BlogPostMeta } from '@/lib/blog';
+import { formatPostDate } from '@/lib/blog';
 
 export function ArticleCard({ post }: { post: BlogPostMeta }) {
 	return (

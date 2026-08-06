@@ -120,7 +120,13 @@ export type Event = {
 		iconLink?: string;
 		fileId?: string;
 	}>;
-	eventType?: 'default' | 'outOfOffice' | 'focusTime' | 'workingLocation';
+	eventType?:
+		| 'default'
+		| 'outOfOffice'
+		| 'focusTime'
+		| 'workingLocation'
+		| 'birthday'
+		| 'fromGmail';
 };
 
 export type EventListResponse = {

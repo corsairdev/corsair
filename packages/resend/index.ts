@@ -36,6 +36,7 @@ import type {
 	ResendWebhookOutputs,
 } from './webhooks';
 import { DomainWebhooks, EmailWebhooks } from './webhooks';
+import { matchResendTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	DomainCreatedEventSchema,
 	DomainUpdatedEventSchema,
@@ -326,6 +327,7 @@ export function resend<const T extends ResendPluginOptions>(
 
 			return true;
 		},
+		pluginTenantWebhookMatcher: matchResendTenantWebhook,
 		errorHandlers: options.errorHandlers,
 		keyBuilder: async (ctx: ResendKeyBuilderContext, source) => {
 			const authType = ctx.authType;

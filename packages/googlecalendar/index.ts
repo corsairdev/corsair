@@ -7,6 +7,7 @@ import type {
 	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
+	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
@@ -23,6 +24,7 @@ import {
 	GoogleCalendarEndpointOutputSchemas,
 } from './endpoints/types';
 import { GoogleCalendarSchema } from './schema';
+import { googlecalendarSubscribe } from './subscribe';
 import type {
 	EventCreatedEvent,
 	EventDeletedEvent,
@@ -31,6 +33,7 @@ import type {
 	GoogleCalendarWebhookPayload,
 } from './webhooks';
 import { EventWebhooks } from './webhooks';
+import { matchGoogleCalendarTenantWebhook } from './webhooks/tenant-matcher';
 import type { PubSubNotification } from './webhooks/types';
 import {
 	decodePubSubMessage,
@@ -181,6 +184,12 @@ const googleCalendarEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleCalendarEndpointsNested>;
 
+export const googleCalendarAuthConfig = {
+	oauth_2: {
+		account: ['channel_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
+
 export type BaseGoogleCalendarPlugin<T extends GoogleCalendarPluginOptions> =
 	CorsairPlugin<
 		'googlecalendar',
@@ -208,6 +217,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 	};
 	return {
 		id: 'googlecalendar',
+		authConfig: googleCalendarAuthConfig,
 		schema: GoogleCalendarSchema,
 		options: options,
 		oauthConfig: {
@@ -314,6 +324,8 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchGoogleCalendarTenantWebhook,
+		subscribe: googlecalendarSubscribe,
 	} satisfies InternalGoogleCalendarPlugin;
 }
 

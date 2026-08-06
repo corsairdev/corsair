@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/app",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Client adapters for the Corsair hosted MCP service — connect your Corsair instance to Vercel AI SDK, Claude Agents SDK, and OpenAI Agents SDK",
   "type": "module",
   "main": "./dist/index.js",
@@ -21,15 +21,14 @@
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit"
   },
+  "dependencies": {
+    "@ai-sdk/mcp": "^1.0.0"
+  },
   "peerDependencies": {
-    "@ai-sdk/mcp": ">=0.0.1",
     "@anthropic-ai/claude-agent-sdk": ">=0.2.0",
     "@openai/agents": ">=0.5.0"
   },
   "peerDependenciesMeta": {
-    "@ai-sdk/mcp": {
-      "optional": true
-    },
     "@anthropic-ai/claude-agent-sdk": {
       "optional": true
     },
@@ -38,7 +37,6 @@
     }
   },
   "devDependencies": {
-    "@ai-sdk/mcp": "^0.0.1",
     "@anthropic-ai/claude-agent-sdk": "^0.2.52",
     "@openai/agents": "^0.6.0",
     "@types/node": "^22.0.0",

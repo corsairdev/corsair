@@ -6,6 +6,8 @@ import type {
 	PluginEntityClient,
 	PluginEntityClients,
 } from '../../db/orm';
+import type { HubConfig } from '../../hub';
+import { resolveIntegrationAccountIds } from '../account-lookup';
 import {
 	createAccountKeyManager,
 	createIntegrationKeyManager,
@@ -19,18 +21,33 @@ import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
 import type { CorsairErrorHandler } from '../errors';
+import type { CorsairInternalConfig } from '../index';
 import type { CorsairManageNamespace } from '../management';
 import type { CorsairPermissionsNamespace } from '../permissions';
 import type {
 	CorsairKeyBuilderBase,
+	CorsairManualConfig,
+	CorsairPermissionsOptions,
 	CorsairPlugin,
 	EndpointMetaEntry,
 	OAuthConfig,
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
-import type { BindWebhooks, RawWebhookRequest, WebhookTree } from '../webhooks';
+import type { CorsairRunsNamespace } from '../runs';
+import { buildRunsNamespace } from '../runs';
+import { ensureTenantProvisioned } from '../tenant-provision';
+import type { CorsairThreadsNamespace } from '../threads';
+import { buildThreadsNamespace } from '../threads';
+import type {
+	BindWebhooks,
+	CorsairWebhookTenantMatcher,
+	RawWebhookRequest,
+	WebhookTree,
+} from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
+import type { CorsairWorkflowsNamespace } from '../workflows';
+import { buildWorkflowsNamespace } from '../workflows';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Entity Client Types
@@ -139,6 +156,11 @@ type InferPluginNamespace<P extends CorsairPlugin> = P extends CorsairPlugin<
 							 * Use this as a first-level filter before checking individual webhook matchers.
 							 */
 							pluginWebhookMatcher?: (request: RawWebhookRequest) => boolean;
+							/**
+							 * Extracts the external tenant lookup key for this plugin's webhook.
+							 * Only present if the plugin defines `pluginTenantWebhookMatcher`.
+							 */
+							pluginTenantWebhookMatcher?: CorsairWebhookTenantMatcher;
 						}
 					: {}) &
 				// Account-level keys (per-tenant secrets like bot_token, api_key, access_token)
@@ -191,7 +213,24 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
  * The main Corsair client type that provides access to all plugin APIs, entities, webhooks, and keys.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
-	InferPluginNamespaces<Plugins>;
+	InferPluginNamespaces<Plugins> & {
+		/**
+		 * Chat interface over the Hub-hosted workflow agent, scoped to this
+		 * client's tenant. Create/list threads and send messages that author or
+		 * edit workflows. Requires `hub` to be configured on `createCorsair`.
+		 */
+		threads: CorsairThreadsNamespace;
+		/**
+		 * Read and act on this tenant's workflow runs — list/get history and
+		 * approve/deny/cancel a run. Requires `hub` to be configured.
+		 */
+		runs: CorsairRunsNamespace;
+		/**
+		 * List this tenant's workflows and trigger manual runs. Requires `hub`
+		 * to be configured.
+		 */
+		workflows: CorsairWorkflowsNamespace;
+	};
 
 /**
  * Multi-tenant wrapper that provides a `withTenant` method to scope operations to a specific tenant.
@@ -253,6 +292,7 @@ function createAccountIdResolver(
 	database: CorsairDatabase | undefined,
 	integrationName: string,
 	tenantId: string,
+	ensureProvisioned?: () => Promise<void>,
 ): () => Promise<string> {
 	let cachedAccountId: string | null = null;
 
@@ -263,34 +303,14 @@ function createAccountIdResolver(
 			throw new Error('Database not configured');
 		}
 
-		// Find the integration by name
-		const integration = await database.db
-			.selectFrom('corsair_integrations')
-			.selectAll()
-			.where('name', '=', integrationName)
-			.executeTakeFirst();
+		const { accountId } = await resolveIntegrationAccountIds({
+			database,
+			integrationName,
+			tenantId,
+			ensureProvisioned,
+		});
 
-		if (!integration) {
-			throw new Error(
-				`Integration "${integrationName}" not found. Make sure to create the integration first.`,
-			);
-		}
-
-		// Find the account for this tenant and integration
-		const account = await database.db
-			.selectFrom('corsair_accounts')
-			.selectAll()
-			.where('tenant_id', '=', tenantId)
-			.where('integration_id', '=', integration.id)
-			.executeTakeFirst();
-
-		if (!account) {
-			throw new Error(
-				`Account not found for tenant "${tenantId}" and integration "${integrationName}". Make sure to create the account first.`,
-			);
-		}
-
-		cachedAccountId = account.id;
+		cachedAccountId = accountId;
 		return cachedAccountId;
 	};
 }
@@ -324,6 +344,8 @@ function createEntityClient(
 
 	return {
 		findByEntityId: async () => null,
+		existsByEntityId: async () => false,
+		findIdByEntityId: async () => null,
 		findById: async () => null,
 		findManyByEntityIds: async () => [],
 		list: async () => [],
@@ -346,32 +368,14 @@ export type BuildCorsairClientOptions = {
 	tenantId: string | undefined;
 	kek: string | undefined;
 	rootErrorHandlers?: CorsairErrorHandler;
-	/** Approval timeout from createCorsair({ approval: ... }). Forwarded to the permission guard. */
-	approvalConfig?: {
-		timeout: string;
-		onTimeout: 'deny' | 'approve';
-		mode?:
-			| 'synchronous'
-			| 'asynchronous'
-			| (() => 'synchronous' | 'asynchronous');
-		formatAsyncMessage?: (opts: {
-			token: string;
-			id: string;
-			plugin: string;
-			endpoint: string;
-			args: unknown;
-		}) => string;
-	};
-	/** Connect link config from createCorsair({ connect: ... }). Forwarded to endpoint binding. */
-	connectConfig?: {
-		baseUrl: string;
-		redirectUri: string;
-		onAuthMissing?: (opts: {
-			plugin: string;
-			connectUrl: string;
-			state: string;
-		}) => string;
-	};
+	/** Global permissions config from createCorsair({ permissions: ... }). */
+	permissionsOptions?: CorsairPermissionsOptions;
+	/** Manual config from createCorsair({ manual: ... }). Forwarded to endpoint binding. */
+	manualConfig?: CorsairManualConfig;
+	/** Hub config from createCorsair({ hub: ... }). Forwarded to keyBuilder context. */
+	hubConfig?: HubConfig;
+	/** Internal config for lazy tenant provisioning on first use. */
+	internalConfig?: CorsairInternalConfig;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -395,9 +399,22 @@ export function buildCorsairClient<
 		tenantId,
 		kek,
 		rootErrorHandlers,
-		approvalConfig,
-		connectConfig,
+		permissionsOptions,
+		manualConfig,
+		hubConfig,
+		internalConfig,
 	} = options;
+
+	// Canonical tenant scope for this client. Single-tenant clients pass no
+	// tenantId → 'default', which is Hub's own single-tenant convention. Used
+	// identically for provisioning, plugin operations, and the threads API so a
+	// client's scope is the same everywhere.
+	const effectiveTenantId = tenantId ?? 'default';
+
+	const ensureProvisioned =
+		internalConfig && database
+			? () => ensureTenantProvisioned(internalConfig, effectiveTenantId)
+			: undefined;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
 	const pluginEntitiesUnsafe: Record<string, Record<string, unknown>> = {};
@@ -409,13 +426,13 @@ export function buildCorsairClient<
 
 	for (const plugin of plugins) {
 		const schema = plugin.schema;
-		const effectiveTenantId = tenantId ?? 'default';
 
 		// Create a shared account ID resolver for this plugin
 		const getAccountId = createAccountIdResolver(
 			database,
 			plugin.id,
 			effectiveTenantId,
+			ensureProvisioned,
 		);
 
 		// Create typed entity clients from plugin schema, nested under `db`
@@ -463,6 +480,7 @@ export function buildCorsairClient<
 				kek,
 				database,
 				extraAccountFields,
+				ensureProvisioned,
 			});
 			apiUnsafe[plugin.id]!.keys = accountKeyManager;
 		}
@@ -477,8 +495,9 @@ export function buildCorsairClient<
 			...(accountKeyManager
 				? { keys: accountKeyManager, authType: pluginOptions?.authType }
 				: {}),
-			// Include tenantId in context so it's available in webhook hooks
-			...(tenantId ? { tenantId } : {}),
+			// Include tenantId in context for keyBuilder and webhook hooks
+			tenantId: effectiveTenantId,
+			...(hubConfig ? { hub: hubConfig } : {}),
 		};
 
 		const endpoints = plugin.endpoints ?? {};
@@ -516,16 +535,21 @@ export function buildCorsairClient<
 				| Record<string, EndpointMetaEntry>
 				| undefined,
 			database,
-			approvalConfig,
+			permissionsOptions,
 			tenantId,
-			connectConfig: connectConfig
+			manualConfig: manualConfig
 				? {
-						...connectConfig,
+						...manualConfig,
 						oauthConfig: (plugin as { oauthConfig?: OAuthConfig }).oauthConfig,
 						kek,
 						tenantId: effectiveTenantId,
 					}
 				: undefined,
+			hubConfig,
+			plugin,
+			kek,
+			allPlugins: plugins,
+			multiTenancy: internalConfig?.multiTenancy,
 		});
 
 		if (Object.keys(boundTree).length > 0) {
@@ -557,8 +581,27 @@ export function buildCorsairClient<
 				apiUnsafe[plugin.id]!.pluginWebhookMatcher =
 					plugin.pluginWebhookMatcher;
 			}
+			if (plugin.pluginTenantWebhookMatcher) {
+				apiUnsafe[plugin.id]!.pluginTenantWebhookMatcher =
+					plugin.pluginTenantWebhookMatcher;
+			}
 		}
 	}
+
+	// Tenant-scoped chat interface to the Hub workflow agent. Attached to every
+	// client (single- and multi-tenant); throws on use if `hub` isn't configured.
+	(apiUnsafe as Record<string, unknown>).threads = buildThreadsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
+	(apiUnsafe as Record<string, unknown>).runs = buildRunsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
+	(apiUnsafe as Record<string, unknown>).workflows = buildWorkflowsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
 
 	return apiUnsafe as CorsairClient<Plugins>;
 }

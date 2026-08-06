@@ -1,5 +1,12 @@
+import { execSync } from 'child_process';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
+import {
+	buildAuthConfigTs,
+	buildOAuthTenantLinkTs,
+	buildTenantMatcherTs,
+	formatTenantRoutingPluginFields,
+} from './plugin-tenant-routing-scaffold.ts';
 
 function validatePascalCase(name: string): void {
 	if (name.includes('-')) {
@@ -56,6 +63,9 @@ function generatePlugin(pluginName: string) {
 	mkdirSync(join(pluginDir, 'webhooks'), { recursive: true });
 	mkdirSync(join(pluginDir, 'schema'), { recursive: true });
 
+	const tenantRoutingPluginFields = formatTenantRoutingPluginFields(pascalName);
+	const authConfigBlock = buildAuthConfigTs(camelName, ['api_key', 'oauth_2']);
+
 	// ── package.json ──────────────────────────────────────────────────────────
 	const packageJson = {
 		name: `@corsair-dev/${lowerName}`,
@@ -75,13 +85,17 @@ function generatePlugin(pluginName: string) {
 		scripts: {
 			build: 'rm -rf dist && tsc --build --force && tsup',
 			typecheck: 'tsc --noEmit',
+			test: 'jest',
 		},
 		peerDependencies: {
 			corsair: '>=0.1.0',
 			zod: '^4.1.13',
 		},
 		devDependencies: {
+			'@types/jest': '^29.5.14',
 			corsair: 'workspace:*',
+			jest: '^29.7.0',
+			'ts-jest': '^29.4.9',
 			tsup: '^8.0.1',
 			typescript: 'catalog:',
 			zod: '^4.1.13',
@@ -101,7 +115,7 @@ function generatePlugin(pluginName: string) {
 		extends: '../../tsconfig.base.json',
 		compilerOptions: {
 			lib: ['esnext'],
-			types: ['node'],
+			types: ['node', 'jest'],
 			module: 'ESNext',
 			moduleResolution: 'Bundler',
 			outDir: './dist',
@@ -143,6 +157,16 @@ export default defineConfig({
 `,
 	);
 
+	// ── webhooks/tenant-matcher.ts + oauth-tenant-link.ts ─────────────────────
+	writeFileSync(
+		join(pluginDir, 'webhooks', 'tenant-matcher.ts'),
+		buildTenantMatcherTs(pascalName, lowerName),
+	);
+	writeFileSync(
+		join(pluginDir, 'webhooks', 'oauth-tenant-link.ts'),
+		buildOAuthTenantLinkTs(pascalName),
+	);
+
 	// ── index.ts ──────────────────────────────────────────────────────────────
 	writeFileSync(
 		join(pluginDir, 'index.ts'),
@@ -174,9 +198,11 @@ import { Example } from './endpoints';
 import { ${pascalName}Schema } from './schema';
 import { ExampleWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
+import { match${pascalName}TenantWebhook } from './webhooks/tenant-matcher';
+import { resolve${pascalName}OAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type ${pascalName}PluginOptions = {
-\tauthType?: PickAuth<'api_key'>;
+\tauthType?: PickAuth<'api_key' | 'oauth_2'>;
 \tkey?: string;
 \twebhookSecret?: string;
 \thooks?: Internal${pascalName}Plugin['hooks'];
@@ -253,11 +279,7 @@ const ${camelName}EndpointMeta = {
 \t},
 } as const satisfies RequiredPluginEndpointMeta<typeof ${camelName}EndpointsNested>;
 
-export const ${camelName}AuthConfig = {
-\tapi_key: {
-\t\taccount: ['one'] as const,
-\t},
-} as const satisfies PluginAuthConfig;
+${authConfigBlock}
 
 export type Base${pascalName}Plugin<T extends ${pascalName}PluginOptions> = CorsairPlugin<
 \t'${lowerName}',
@@ -282,6 +304,7 @@ export function ${lowerName}<const T extends ${pascalName}PluginOptions>(
 \t};
 \treturn {
 \t\tid: '${lowerName}',
+\t\tauthConfig: ${camelName}AuthConfig,
 \t\tschema: ${pascalName}Schema,
 \t\toptions: options,
 \t\thooks: options.hooks,
@@ -296,6 +319,7 @@ export function ${lowerName}<const T extends ${pascalName}PluginOptions>(
 \t\t\t// TODO: Update to match your webhook signature headers
 \t\t\treturn 'x-${lowerName}-signature' in headers;
 \t\t},
+${tenantRoutingPluginFields}
 \t\terrorHandlers: {
 \t\t\t...errorHandlers,
 \t\t\t...options.errorHandlers,
@@ -316,6 +340,11 @@ export function ${lowerName}<const T extends ${pascalName}PluginOptions>(
 
 \t\t\tif (source === 'endpoint' && ctx.authType === 'api_key') {
 \t\t\t\tconst res = await ctx.keys.get_api_key();
+\t\t\t\treturn res ?? '';
+\t\t\t}
+
+\t\t\tif (source === 'endpoint' && ctx.authType === 'oauth_2') {
+\t\t\t\tconst res = await ctx.keys.get_access_token();
 \t\t\t\treturn res ?? '';
 \t\t\t}
 
@@ -618,6 +647,8 @@ export const ExampleWebhooks = {
 };
 
 export * from './types';
+export * from './tenant-matcher';
+export * from './oauth-tenant-link';
 `,
 	);
 
@@ -643,6 +674,93 @@ export * from './types';
 \tversion: '1.0.0',
 \tentities: {},
 } as const;
+`,
+	);
+
+	// ── jest.config.cjs + starter test ────────────────────────────────────────
+	// Verbatim copy of packages/tavily/jest.config.cjs (a known-working plugin
+	// config) so scaffolds inherit every alias and transform real tests need.
+	writeFileSync(
+		join(pluginDir, 'jest.config.cjs'),
+		`module.exports = {
+	preset: 'ts-jest',
+	testEnvironment: 'node',
+	roots: ['<rootDir>'],
+	testMatch: [
+		'**/*.test.ts',
+		'**/tests/**/*.test.ts',
+		'**/plugins/**/*.test.ts',
+		'**/setup/**/*.test.ts',
+	],
+	collectCoverageFrom: [
+		'**/*.ts',
+		'!**/*.d.ts',
+		'!**/node_modules/**',
+		'!**/dist/**',
+		'!jest.config.ts',
+		'!tests/**',
+	],
+	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+	transform: {
+		'^.+\\\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',
+		'^.+\\\\.ts$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+					verbatimModuleSyntax: false,
+					module: 'ESNext',
+					moduleResolution: 'Bundler',
+				},
+			},
+		],
+		'.*\\\\.js$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+				},
+			},
+		],
+	},
+	moduleNameMapper: {
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
+		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^(\\\\.\\\\.?/.*)\\\\.js$': '$1',
+	},
+	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	extensionsToTreatAsEsm: ['.ts'],
+	testTimeout: 30000,
+	verbose: true,
+};
+`,
+	);
+	writeFileSync(
+		join(pluginDir, 'schema.test.ts'),
+		`import { ${pascalName}Schema } from './schema';
+
+describe('${pascalName} schema', () => {
+\tit('declares a semver version', () => {
+\t\texpect(${pascalName}Schema.version).toBeDefined();
+\t\texpect(${pascalName}Schema.version).toMatch(/^\\d+\\.\\d+\\.\\d+$/);
+\t});
+
+\tit('declares an entities map', () => {
+\t\texpect(typeof ${pascalName}Schema.entities).toBe('object');
+\t\texpect(${pascalName}Schema.entities).not.toBeNull();
+\t\texpect(Array.isArray(Object.keys(${pascalName}Schema.entities))).toBe(true);
+\t\tfor (const entity of Object.values(${pascalName}Schema.entities)) {
+\t\t\texpect(entity).toBeDefined();
+\t\t}
+\t});
+});
+
+// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
+// needs a corresponding test.
 `,
 	);
 
@@ -694,18 +812,44 @@ export * from './types';
 					}
 				}
 
+				const displayMatch = updated.match(
+					/export const ProviderDisplayNames = \{([\s\S]*?)\} as const satisfies/,
+				);
+				if (displayMatch?.[1]) {
+					const entries = displayMatch[1]
+						.split('\n')
+						.map((line) => line.trim())
+						.filter((line) => /^[a-z0-9]+: '/.test(line))
+						.map((line) => line.replace(/,$/, ''));
+					entries.push(`${lowerName}: '${pascalName}'`);
+					entries.sort();
+					const newMap = entries.map((e) => `\t${e},`).join('\n');
+					updated = updated.replace(
+						/export const ProviderDisplayNames = \{[\s\S]*?\} as const satisfies/,
+						`export const ProviderDisplayNames = {\n${newMap}\n} as const satisfies`,
+					);
+				}
+
 				writeFileSync(constantsPath, updated);
 				console.log('✅ Updated packages/corsair/core/constants.ts');
 			}
 		}
 	}
 
+	execSync('node scripts/generate-labeler-config.mjs', {
+		cwd: join(import.meta.dirname, '..'),
+		stdio: 'inherit',
+	});
+
 	console.log(`✅ Created plugin at packages/${lowerName}/`);
 	console.log(`\n📝 Next steps:`);
 	console.log(`   1. Run: pnpm install`);
 	console.log(`   2. Update the API base URL and auth in client.ts`);
-	console.log(`   3. Replace the example endpoints/webhooks with real ones`);
-	console.log(`   4. Run: cd packages/${lowerName} && pnpm typecheck`);
+	console.log(
+		`   3. Configure webhook tenant routing (tenant-matcher, oauth-tenant-link, authConfig)`,
+	);
+	console.log(`   4. Replace the example endpoints/webhooks with real ones`);
+	console.log(`   5. Run: cd packages/${lowerName} && pnpm typecheck`);
 }
 
 const pluginName = process.argv[2];

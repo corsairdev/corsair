@@ -10,8 +10,8 @@ import type {
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
-	PluginEndpointMeta,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -30,6 +30,7 @@ import { todoistEndpointSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TodoistSchema } from './schema';
 import { ItemWebhooks, NoteWebhooks, ProjectWebhooks } from './webhooks';
+import { matchTodoistTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ItemAddedEvent,
 	ItemCompletedEvent,
@@ -369,7 +370,7 @@ const todoistEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update a Todoist reminder',
 	},
-} satisfies PluginEndpointMeta<typeof todoistEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof todoistEndpointsNested>;
 
 const todoistWebhookSchemas = {
 	'items.added': {
@@ -415,7 +416,7 @@ const todoistWebhookSchemas = {
 
 export const todoistAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -447,6 +448,7 @@ export function todoist<const T extends TodoistPluginOptions>(
 	};
 	return {
 		id: 'todoist',
+		authConfig: todoistAuthConfig,
 		schema: TodoistSchema,
 		options: options,
 		hooks: options.hooks,
@@ -461,6 +463,7 @@ export function todoist<const T extends TodoistPluginOptions>(
 			const hasDeliveryId = 'x-todoist-delivery-id' in headers;
 			return hasDeliveryId;
 		},
+		pluginTenantWebhookMatcher: matchTodoistTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

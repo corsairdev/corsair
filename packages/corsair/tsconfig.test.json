@@ -1,0 +1,19 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "composite": false,
+    "declaration": false,
+    "declarationMap": false,
+    "emitDeclarationOnly": false,
+    "verbatimModuleSyntax": false,
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "rootDir": "../",
+    "paths": {
+      "@corsair-dev/slack": ["../slack/index.ts"],
+      "@corsair-dev/linear": ["../linear/index.ts"]
+    }
+  },
+  "include": ["./tests/**/*.ts", "./setup/**/*.ts", "./yaml.d.ts"],
+  "exclude": ["node_modules", "dist"]
+}

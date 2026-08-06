@@ -625,6 +625,42 @@ export {
 	SendPhotoOutputSchema,
 };
 
+export const TelegramEndpointInputSchemas = {
+	getChat: GetChatInputSchema,
+	getChatAdministrators: GetChatAdministratorsInputSchema,
+	getChatMember: GetChatMemberInputSchema,
+	answerCallbackQuery: AnswerCallbackQueryInputSchema,
+	answerInlineQuery: AnswerInlineQueryInputSchema,
+	getFile: GetFileInputSchema,
+	sendMessage: SendMessageInputSchema,
+	editMessageText: EditMessageTextInputSchema,
+	deleteMessage: DeleteMessageInputSchema,
+	pinChatMessage: PinChatMessageInputSchema,
+	unpinChatMessage: UnpinChatMessageInputSchema,
+	sendPhoto: SendPhotoInputSchema,
+	sendVideo: SendVideoInputSchema,
+	sendAudio: SendAudioInputSchema,
+	sendDocument: SendDocumentInputSchema,
+	sendSticker: SendStickerInputSchema,
+	sendAnimation: SendAnimationInputSchema,
+	sendLocation: SendLocationInputSchema,
+	sendMediaGroup: SendMediaGroupInputSchema,
+	sendChatAction: SendChatActionInputSchema,
+	setWebhook: SetWebhookInputSchema,
+	deleteWebhook: DeleteWebhookInputSchema,
+	getUpdates: GetUpdatesInputSchema,
+	getMe: GetMeInputSchema,
+} as const;
+
+export const TelegramEndpointOutputSchemas = {
+	getMe: GetMeOutputSchema,
+	getChat: GetChatOutputSchema,
+	sendMessage: SendMessageOutputSchema,
+	getUpdates: GetUpdatesOutputSchema,
+	getFile: GetFileOutputSchema,
+	sendPhoto: SendPhotoOutputSchema,
+} as const;
+
 export type TelegramEndpointInputs = {
 	getChat: z.infer<typeof GetChatInputSchema>;
 	getChatAdministrators: z.infer<typeof GetChatAdministratorsInputSchema>;

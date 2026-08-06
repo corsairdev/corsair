@@ -1,10 +1,12 @@
 import * as Comments from './comments';
 import * as Discussions from './discussions';
+import * as Events from './events';
 import * as Forks from './forks';
 import * as Issues from './issues';
 import * as PullRequests from './pull-requests';
 import * as Releases from './releases';
 import * as Repositories from './repositories';
+import * as Search from './search';
 import * as Users from './users';
 import * as Workflows from './workflows';
 
@@ -33,6 +35,7 @@ export const RepositoriesEndpoints = {
 	unstar: Repositories.unstar,
 	checkStarred: Repositories.checkStarred,
 	listStarred: Repositories.listStarred,
+	listStargazers: Repositories.listStargazers,
 };
 
 export const ReleasesEndpoints = {
@@ -65,6 +68,18 @@ export const CommentsEndpoints = {
 	delete: Comments.deleteComment,
 };
 
+export const EventsEndpoints = {
+	list: Events.list,
+	listForNetwork: Events.listForNetwork,
+	listForOrg: Events.listForOrg,
+	listForRepository: Events.listForRepository,
+	listForUser: Events.listForUser,
+	listForUserOrg: Events.listForUserOrg,
+	listPublicForUser: Events.listPublicForUser,
+	listReceivedForUser: Events.listReceivedForUser,
+	listPublicReceivedForUser: Events.listPublicReceivedForUser,
+};
+
 export const UsersEndpoints = {
 	list: Users.list,
 	get: Users.get,
@@ -72,6 +87,12 @@ export const UsersEndpoints = {
 	getAuthenticated: Users.getAuthenticated,
 	update: Users.update,
 	getHovercard: Users.getHovercard,
+};
+
+export const SearchEndpoints = {
+	issues: Search.issues,
+	repositories: Search.repositories,
+	users: Search.users,
 };
 
 export * from './types';

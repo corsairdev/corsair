@@ -27,6 +27,7 @@ import {
 } from './endpoints/types';
 import type { GmailCredentials } from './schema';
 import { GmailSchema } from './schema';
+import { gmailSubscribe } from './subscribe';
 import type {
 	GmailWebhookOutputs,
 	GmailWebhookPayload,
@@ -35,7 +36,12 @@ import type {
 	MessageReceivedEvent,
 } from './webhooks';
 import { MessageWebhooks } from './webhooks';
-import type { PubSubNotification } from './webhooks/types';
+import { resolveGmailOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchGmailTenantWebhook } from './webhooks/tenant-matcher';
+import type {
+	GmailWebhookEventType,
+	PubSubNotification,
+} from './webhooks/types';
 import {
 	decodePubSubMessage,
 	GmailWebhookEventSchema,
@@ -44,11 +50,16 @@ import {
 
 /**
  * Auth config extending the base OAuth2 fields with Gmail-specific fields.
- * - integration: topic_id (Google Cloud Pub/Sub topic for push notifications)
+ * - integration: topic_id (Google Cloud Pub/Sub topic for push notifications),
+ *   pubsub_audience (push subscription's OIDC identity — SA email or audience —
+ *   reported to Hub as the webhook verification secret for verifyPubsub)
+ * - account: email_address (mailbox identity), last_history_id (cursor of the
+ *   last processed history record, used as startHistoryId for webhook syncs)
  */
 export const gmailAuthConfig = {
 	oauth_2: {
-		integration: ['topic_id'] as const,
+		integration: ['topic_id', 'pubsub_audience'] as const,
+		account: ['email_address', 'last_history_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -260,6 +271,16 @@ export type GmailPluginOptions = {
 	credentials?: GmailCredentials;
 	hooks?: InternalGmailPlugin['hooks'];
 	webhookHooks?: InternalGmailPlugin['webhookHooks'];
+	/**
+	 * Which Gmail webhook event types to process and store.
+	 * When omitted, all event types are processed (default).
+	 *
+	 * @example
+	 * gmail({
+	 *   webhookEvents: ['messageReceived', 'messageDeleted'],
+	 * })
+	 */
+	webhookEvents?: GmailWebhookEventType[];
 	/**
 	 * Permission configuration for the Gmail plugin.
 	 * Controls what the AI agent is allowed to do.
@@ -518,6 +539,9 @@ export function gmail<const T extends GmailPluginOptions>(
 				return false;
 			}
 		},
+		pluginTenantWebhookMatcher: matchGmailTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveGmailOAuthWebhookTenantLink,
+		subscribe: gmailSubscribe,
 	} satisfies InternalGmailPlugin;
 }
 
@@ -529,6 +553,7 @@ export type {
 	GmailEventName,
 	GmailPushNotification,
 	GmailWebhookEvent,
+	GmailWebhookEventType,
 	GmailWebhookOutputs,
 	GmailWebhookPayload,
 	MessageDeletedEvent,

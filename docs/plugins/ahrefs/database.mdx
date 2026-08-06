@@ -1,92 +1,232 @@
 ---
 title: Database
-description: Database entities and querying synced Ahrefs data.
+description: "Ahrefs local sync: searchable entities, `.search()` filters, and operators."
 ---
 
-The Ahrefs plugin syncs SEO metrics and keyword data to your local database.
+The Ahrefs plugin syncs data locally. Use `corsair.ahrefs.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
 
-## Synced Entities
-
-- **domainMetrics** - Domain-level SEO metrics
-- **keywords** - Keyword rankings and data
-
-## Database API
-
-```ts
-const metrics = await corsair.ahrefs.db.domainMetrics.search({
-    data: {},
-});
-```
-
----
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
 
 ## Domain Metrics
 
-### Schema
+Path: `ahrefs.db.domainMetrics.search`
 
 ```ts
-{
-    id: string;
-    target?: string;
-    domain_rating?: number;
-    ahrefs_rank?: number;
-    backlinks?: number;
-    referring_domains?: number;
-    organic_traffic?: number;
-    organic_keywords?: number;
-    date?: string;
-}
-```
-
-### Querying Domain Metrics
-
-```ts
-// Get metrics for a domain
-const metrics = await corsair.ahrefs.db.domainMetrics.search({
-    data: { target: "example.com" },
+const rows = await corsair.ahrefs.db.domainMetrics.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
 });
 ```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `target` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `ahrefs_rank` | `number` | equals, gt, gte, lt, lte, in |
+| `domain_rating` | `number` | equals, gt, gte, lt, lte, in |
+| `backlinks` | `number` | equals, gt, gte, lt, lte, in |
+| `referring_domains` | `number` | equals, gt, gte, lt, lte, in |
+| `all_time_backlinks` | `number` | equals, gt, gte, lt, lte, in |
+| `all_time_referring_domains` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
 
 ---
 
 ## Keywords
 
-### Schema
+Path: `ahrefs.db.keywords.search`
 
 ```ts
-{
-    id: string;
-    keyword?: string;
-    country?: string;
-    volume?: number;
-    difficulty?: number;
-    cpc?: number;
-    position?: number;
-    url?: string;
-    date?: string;
-}
-```
-
-### Querying Keywords
-
-```ts
-// Get all tracked keywords
-const keywords = await corsair.ahrefs.db.keywords.search({ data: {} });
-
-// Filter by country
-const usKeywords = await corsair.ahrefs.db.keywords.search({
-    data: { country: "us" },
+const rows = await corsair.ahrefs.db.keywords.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
 });
 ```
 
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `target` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `keyword` | `string` | equals, contains, startsWith, endsWith, in |
+| `volume` | `number` | equals, gt, gte, lt, lte, in |
+| `keyword_difficulty` | `number` | equals, gt, gte, lt, lte, in |
+| `difficulty` | `number` | equals, gt, gte, lt, lte, in |
+| `cpc` | `number` | equals, gt, gte, lt, lte, in |
+| `best_position` | `number` | equals, gt, gte, lt, lte, in |
+| `best_position_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `sum_traffic` | `number` | equals, gt, gte, lt, lte, in |
+| `traffic_potential` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
 ---
 
-## Multi-Tenancy
+## Pages
+
+Path: `ahrefs.db.pages.search`
 
 ```ts
-const tenant = corsair.withTenant("workspace-123");
-
-const metrics = await tenant.ahrefs.db.domainMetrics.search({ data: {} });
+const rows = await corsair.ahrefs.db.pages.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
 ```
 
-See [Database](/concepts/database) for more information about querying patterns.
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `target` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `raw_url` | `string` | equals, contains, startsWith, endsWith, in |
+| `keywords` | `number` | equals, gt, gte, lt, lte, in |
+| `referring_domains` | `number` | equals, gt, gte, lt, lte, in |
+| `sum_traffic` | `number` | equals, gt, gte, lt, lte, in |
+| `value` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Rankings
+
+Path: `ahrefs.db.rankings.search`
+
+```ts
+const rows = await corsair.ahrefs.db.rankings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `project_id` | `number` | equals, gt, gte, lt, lte, in |
+| `device` | `string` | equals, contains, startsWith, endsWith, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `keyword` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `position` | `number` | equals, gt, gte, lt, lte, in |
+| `previous_position` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Refdomains
+
+Path: `ahrefs.db.refdomains.search`
+
+```ts
+const rows = await corsair.ahrefs.db.refdomains.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `target` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain_rating` | `number` | equals, gt, gte, lt, lte, in |
+| `dofollow_links` | `number` | equals, gt, gte, lt, lte, in |
+| `dofollow_refdomains` | `number` | equals, gt, gte, lt, lte, in |
+| `links` | `number` | equals, gt, gte, lt, lte, in |
+| `refdomains` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Serp Positions
+
+Path: `ahrefs.db.serpPositions.search`
+
+```ts
+const rows = await corsair.ahrefs.db.serpPositions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `country` | `string` | equals, contains, startsWith, endsWith, in |
+| `keyword` | `string` | equals, contains, startsWith, endsWith, in |
+| `requestedDate` | `string` | equals, contains, startsWith, endsWith, in |
+| `position` | `number` | equals, gt, gte, lt, lte, in |
+| `url` | `string` | equals, contains, startsWith, endsWith, in |
+| `title` | `string` | equals, contains, startsWith, endsWith, in |
+| `domain_rating` | `number` | equals, gt, gte, lt, lte, in |
+| `backlinks` | `number` | equals, gt, gte, lt, lte, in |
+| `refdomains` | `number` | equals, gt, gte, lt, lte, in |
+| `traffic` | `number` | equals, gt, gte, lt, lte, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Subscription Usage
+
+Path: `ahrefs.db.subscriptionUsage.search`
+
+```ts
+const rows = await corsair.ahrefs.db.subscriptionUsage.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `api_key_expiration_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `subscription` | `string` | equals, contains, startsWith, endsWith, in |
+| `units_limit_api_key` | `number` | equals, gt, gte, lt, lte, in |
+| `units_limit_workspace` | `number` | equals, gt, gte, lt, lte, in |
+| `units_usage_api_key` | `number` | equals, gt, gte, lt, lte, in |
+| `units_usage_workspace` | `number` | equals, gt, gte, lt, lte, in |
+| `usage_reset_date` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

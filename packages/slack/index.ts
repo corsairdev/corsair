@@ -43,6 +43,8 @@ import {
 	ReactionWebhooks,
 	UserWebhooks,
 } from './webhooks';
+import { resolveSlackOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchSlackTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ChallengeEvent,
 	ChannelCreatedEvent,
@@ -636,7 +638,10 @@ type SlackEndpoint<K extends keyof SlackEndpointOutputs> = CorsairEndpoint<
 >;
 export const slackAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['team_id'] as const,
+	},
+	oauth_2: {
+		account: ['team_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -705,6 +710,7 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 	};
 	return {
 		id: 'slack',
+		authConfig: slackAuthConfig,
 		oauthConfig: {
 			providerName: 'Slack',
 			authUrl: 'https://slack.com/oauth/v2/authorize',
@@ -712,11 +718,25 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 			scopes: [
 				'channels:read',
 				'channels:history',
-				'chat:write',
-				'users:read',
+				'channels:join',
+				'channels:manage',
 				'groups:read',
+				'groups:history',
+				'groups:write',
 				'im:read',
+				'im:history',
+				'im:write',
 				'mpim:read',
+				'mpim:history',
+				'mpim:write',
+				'chat:write',
+				'chat:write.public',
+				'reactions:read',
+				'reactions:write',
+				'files:read',
+				'files:write',
+				'users:read',
+				'users:read.email',
 			],
 		},
 		schema: SlackSchema,
@@ -735,6 +755,8 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 
 			return hasSlackSignature && hasSlackTimestamp;
 		},
+		pluginTenantWebhookMatcher: matchSlackTenantWebhook,
+		oauthWebhookTenantLinkResolver: resolveSlackOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -885,3 +907,4 @@ export type {
 	UsersProfileGetResponse,
 	UsersProfileSetResponse,
 } from './endpoints/types';
+export * from './error-handlers';

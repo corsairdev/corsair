@@ -98,7 +98,9 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 	});
 
 	it('rejects signed deliveries when no webhook secret is configured', async () => {
-		const { corsair, testDb } = await buildCorsair({ webhookSecret: undefined });
+		const { corsair, testDb } = await buildCorsair({
+			webhookSecret: undefined,
+		});
 		const wh = corsair.zohomail.webhooks.messages.received;
 
 		const rawBody = eventBody();
@@ -140,7 +142,9 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 	});
 
 	it('handles first request with secret, signature, and email body', async () => {
-		const { corsair, testDb } = await buildCorsair({ webhookSecret: undefined });
+		const { corsair, testDb } = await buildCorsair({
+			webhookSecret: undefined,
+		});
 		const handshake = corsair.zohomail.webhooks.challenge.handshake;
 		const received = corsair.zohomail.webhooks.messages.received;
 		const hookSecret = 'first-request-hook-secret';
@@ -168,7 +172,9 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 	});
 
 	it('rejects handshake when signature does not match the secret', async () => {
-		const { corsair, testDb } = await buildCorsair({ webhookSecret: undefined });
+		const { corsair, testDb } = await buildCorsair({
+			webhookSecret: undefined,
+		});
 		const handshake = corsair.zohomail.webhooks.challenge.handshake;
 		const hookSecret = 'first-request-hook-secret';
 		const rawBody = eventBody();

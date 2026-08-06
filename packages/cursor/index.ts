@@ -29,6 +29,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CursorSchema } from './schema';
+import { matchCursorTenantWebhook } from './webhooks/tenant-matcher';
 
 export type CursorPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -149,9 +150,7 @@ const cursorEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof cursorEndpointsNested>;
 
 export const cursorAuthConfig = {
-	api_key: {
-		account: ['one'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseCursorPlugin<T extends CursorPluginOptions> = CorsairPlugin<
@@ -177,6 +176,7 @@ export function cursor<const T extends CursorPluginOptions>(
 	};
 	return {
 		id: 'cursor',
+		authConfig: cursorAuthConfig,
 		schema: CursorSchema,
 		options: options,
 		hooks: options.hooks,
@@ -187,6 +187,7 @@ export function cursor<const T extends CursorPluginOptions>(
 		endpointSchemas: cursorEndpointSchemas,
 		// Cursor defines no webhook triggers; always returns false.
 		pluginWebhookMatcher: (_request) => false,
+		pluginTenantWebhookMatcher: matchCursorTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

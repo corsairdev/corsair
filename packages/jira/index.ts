@@ -33,6 +33,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { JiraSchema } from './schema';
 import { IssueWebhooks, ProjectWebhooks } from './webhooks';
+import { matchJiraTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	JiraWebhookOutputs,
 	NewIssueEvent,
@@ -521,6 +522,7 @@ export function jira<const T extends JiraPluginOptions>(
 			const headers = request.headers;
 			return 'x-atlassian-webhook-identifier' in headers;
 		},
+		pluginTenantWebhookMatcher: matchJiraTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

@@ -23,6 +23,7 @@ import type {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TwitterSchema } from './schema';
+import { matchTwitterTenantWebhook } from './webhooks/tenant-matcher';
 
 // ── Context & Key Builder ─────────────────────────────────────────────────────
 
@@ -110,7 +111,7 @@ const twitterEndpointMeta = {
 
 export const twitterAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['for_user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -144,6 +145,7 @@ export function twitter<const T extends TwitterPluginOptions>(
 
 	return {
 		id: 'twitter',
+		authConfig: twitterAuthConfig,
 		schema: TwitterSchema,
 		options,
 		hooks: options.hooks,
@@ -160,6 +162,7 @@ export function twitter<const T extends TwitterPluginOptions>(
 			// Webhooks not implemented yet
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchTwitterTenantWebhook,
 		keyBuilder: async (ctx: TwitterKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 

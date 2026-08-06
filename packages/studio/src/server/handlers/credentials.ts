@@ -21,6 +21,10 @@ const BASE: Record<AuthTypes, { integration: string[]; account: string[] }> = {
 	},
 	api_key: { integration: [], account: ['api_key', 'webhook_signature'] },
 	bot_token: { integration: [], account: ['bot_token', 'webhook_signature'] },
+	managed: {
+		integration: [],
+		account: ['access_token', 'refresh_token', 'expires_at'],
+	},
 };
 
 export const getCredentials: HandlerFn = async (ctx) => {

@@ -6,7 +6,7 @@ const DRIVE_API_BASE = 'https://www.googleapis.com/drive/v3';
 export async function setupDriveWatch(
 	accessToken: string,
 	webhookUrl: string,
-): Promise<void> {
+): Promise<{ channelId: string }> {
 	const watchSpin = p.spinner();
 	watchSpin.start('Getting start page token...');
 
@@ -69,4 +69,6 @@ export async function setupDriveWatch(
 		`Channel ID: ${channelId}\nResource ID: ${data.resourceId}\nStart Page Token: ${startPageTokenData.startPageToken}\nExpiration: ${new Date(Number(data.expiration)).toISOString()}`,
 		'Watch Response',
 	);
+
+	return { channelId };
 }

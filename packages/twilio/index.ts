@@ -26,6 +26,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { TwilioSchema } from './schema';
 import { CallWebhooks, MessageWebhooks } from './webhooks';
+import { matchTwilioTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	CallStatusEvent,
 	MessageReceivedEvent,
@@ -266,6 +267,7 @@ export function twilio<const T extends TwilioPluginOptions>(
 		pluginWebhookMatcher: (request) => {
 			return 'x-twilio-signature' in request.headers;
 		},
+		pluginTenantWebhookMatcher: matchTwilioTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

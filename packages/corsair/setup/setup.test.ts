@@ -1,12 +1,13 @@
 // @ts-expect-error - better-sqlite3 types may not be available
+
+import { linear } from '@corsair-dev/linear';
+import { slack } from '@corsair-dev/slack';
 import Database from 'better-sqlite3';
 import { Kysely, SqliteDialect } from 'kysely';
 import type { CorsairPlugin } from '../core';
 import { createCorsair } from '../core';
 import type { CorsairKyselyDatabase } from '../db/kysely/database';
 import { SqliteDatePlugin } from '../db/kysely/sqlite-date-plugin';
-import { linear } from '../plugins/linear';
-import { slack } from '../plugins/slack';
 import { setupCorsair } from './index';
 
 function createTestDb() {
@@ -229,6 +230,25 @@ describe('setupCorsair', () => {
 
 		expect(accounts).toHaveLength(1);
 		expect(accounts[0]?.tenant_id).toBe('acme');
+	});
+
+	it('auto-provisions account rows when accessing a new tenant without setupCorsair', async () => {
+		const corsair = createCorsair({
+			kek: 'test-kek-32-chars-long-padding-x',
+			plugins: [slack({ authType: 'api_key' })],
+			database: testDb.db,
+			multiTenancy: true,
+		});
+
+		await corsair.withTenant('lazy-tenant').slack.keys.get_api_key();
+
+		const accounts = await testDb.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('tenant_id', '=', 'lazy-tenant')
+			.execute();
+
+		expect(accounts).toHaveLength(1);
 	});
 
 	it('rejects tenant-scoped writes to integration-level credentials', async () => {

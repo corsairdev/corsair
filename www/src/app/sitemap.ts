@@ -2,8 +2,8 @@ import type { MetadataRoute } from 'next';
 
 import { getAllPosts } from '@/lib/blog';
 
-export default function sitemap(): MetadataRoute.Sitemap {
-	const posts = getAllPosts();
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
+	const posts = await getAllPosts();
 
 	return [
 		{
@@ -15,6 +15,11 @@ export default function sitemap(): MetadataRoute.Sitemap {
 			url: 'https://corsair.dev/blog',
 			changeFrequency: 'weekly',
 			priority: 0.8,
+		},
+		{
+			url: 'https://corsair.dev/privacy-policy',
+			changeFrequency: 'yearly',
+			priority: 0.3,
 		},
 		...posts.map((post) => ({
 			url: `https://corsair.dev/blog/${post.slug}`,

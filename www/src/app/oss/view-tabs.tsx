@@ -34,16 +34,16 @@ export function ViewTabs({ activeView }: { activeView: OssIntegrationsView }) {
 	const searchParams = useSearchParams();
 
 	return (
-		<div className="inline-flex rounded-lg border border-border/70 bg-muted/40 p-1">
+		<div className="flex gap-6 border-b border-[#1c1c1c1a]">
 			{tabs.map((tab) => (
 				<Link
 					key={tab.id}
 					href={buildViewHref(tab.id, searchParams)}
 					className={cn(
-						'rounded-md px-4 py-1.5 text-sm font-medium transition-all',
+						'-mb-px border-b-2 pb-2.5 text-sm font-medium transition-colors',
 						activeView === tab.id
-							? 'bg-card text-foreground shadow-sm'
-							: 'text-muted-foreground hover:text-foreground',
+							? 'border-[#1c1c1c] text-[#1c1c1c]'
+							: 'border-transparent text-[#1c1c1c66] hover:text-[#1c1c1c]',
 					)}
 				>
 					{tab.label}

@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { isMicrosoftGraphValidationHandshake } from 'corsair/core';
 import { z } from 'zod';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -68,10 +69,7 @@ export function createSharepointMatch(
 	eventType: string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		// Subscription validation handshake — SharePoint sends a GET/POST with validationtoken
-		// RawWebhookRequest does not include url; cast through unknown to access the framework-extended url field
-		const url = (request as unknown as { url?: string }).url ?? '';
-		if (url.includes('validationtoken')) {
+		if (isMicrosoftGraphValidationHandshake(request)) {
 			return true;
 		}
 

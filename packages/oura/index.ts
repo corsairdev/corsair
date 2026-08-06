@@ -26,6 +26,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { OuraSchema } from './schema';
 import { SummaryWebhooks } from './webhooks';
+import { matchOuraTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	DailyActivityWebhookEvent,
 	DailyReadinessWebhookEvent,
@@ -154,7 +155,7 @@ const ouraEndpointMeta = {
 
 export const ouraAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -180,6 +181,7 @@ export function oura<const T extends OuraPluginOptions>(
 	};
 	return {
 		id: 'oura',
+		authConfig: ouraAuthConfig,
 		schema: OuraSchema,
 		options: options,
 		hooks: options.hooks,
@@ -192,6 +194,7 @@ export function oura<const T extends OuraPluginOptions>(
 			const headers = request.headers;
 			return 'x-oura-signature' in headers;
 		},
+		pluginTenantWebhookMatcher: matchOuraTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

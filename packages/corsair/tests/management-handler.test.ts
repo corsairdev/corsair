@@ -5,8 +5,20 @@ import { setupCorsair } from '../setup';
 import { createTestDatabase } from './setup-db';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Test fixtures — minimal plugin stand-ins. 
-// The management handler reads .id, .options.authType, and .oauthConfig; 
+// Test fixtures and casts.
+//
+// The `as unknown as CorsairPlugin` cast on each fixture is intentional. The
+// full CorsairPlugin interface is generic over a runtime endpoint/schema
+// context that's only meaningful inside createCorsair, and constructing a
+// fully-typed instance here would re-implement half the library. The
+// management handler only reads .id, .options.authType, and .oauthConfig,
+// which these stubs supply.
+//
+// The `as any` on every createCorsair(...) call sidesteps the strict generic
+// inference of `createCorsair<const Plugins extends ...>`, which can't infer
+// a stable shape from the cast-down plugin array. Using `any` at the call
+// site is local and only used to build a corsair instance — runtime behavior
+// is the same.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const slackOAuth = {
@@ -43,7 +55,9 @@ function makeEnv() {
 	return createTestDatabase();
 }
 
-async function ensurePermissionsTable(db: ReturnType<typeof createTestDatabase>['db']) {
+async function ensurePermissionsTable(
+	db: ReturnType<typeof createTestDatabase>['db'],
+) {
 	// SqliteDialect underlying connection — execute raw SQL via Kysely's schema
 	await db.schema
 		.createTable('corsair_permissions')
@@ -136,15 +150,16 @@ describe('managementHandler — /plugins', () => {
 			new Request('http://x/api/corsair/plugins', { method: 'GET' }),
 		);
 		expect(res.status).toBe(200);
-		const body = await readJson<
-			Array<{
-				id: string;
-				authType: string | null;
-				configured: boolean;
-				missingFields: string[];
-				oauth: unknown;
-			}>
-		>(res);
+		const body =
+			await readJson<
+				Array<{
+					id: string;
+					authType: string | null;
+					configured: boolean;
+					missingFields: string[];
+					oauth: unknown;
+				}>
+			>(res);
 
 		expect(body).toHaveLength(2);
 		const slack = body.find((p) => p.id === 'slack')!;
@@ -179,7 +194,10 @@ describe('managementHandler — /plugins', () => {
 		const res = await handler(
 			new Request('http://x/api/corsair/plugins/slack', { method: 'GET' }),
 		);
-		const body = await readJson<{ configured: boolean; missingFields: string[] }>(res);
+		const body = await readJson<{
+			configured: boolean;
+			missingFields: string[];
+		}>(res);
 		expect(body.configured).toBe(true);
 		expect(body.missingFields).toEqual(['redirect_url']);
 	});
@@ -256,9 +274,8 @@ describe('managementHandler — /tenants', () => {
 		const res = await handler(
 			new Request('http://x/api/corsair/tenants', { method: 'GET' }),
 		);
-		const body = await readJson<
-			Array<{ id: string; connectedPlugins: string[] }>
-		>(res);
+		const body =
+			await readJson<Array<{ id: string; connectedPlugins: string[] }>>(res);
 		const ids = body.map((t) => t.id).sort();
 		expect(ids).toEqual(['acme', 'default']);
 		const acme = body.find((t) => t.id === 'acme')!;
@@ -294,7 +311,9 @@ describe('managementHandler — /tenants', () => {
 			}),
 		);
 		expect(bad.status).toBe(400);
-		const badBody = await readJson<{ error: string; missingFields?: string[] }>(bad);
+		const badBody = await readJson<{ error: string; missingFields?: string[] }>(
+			bad,
+		);
 		expect(badBody.error).toBe('bad_request');
 		expect(badBody.missingFields).toEqual(['id']);
 	});
@@ -415,9 +434,14 @@ describe('managementHandler — /permissions', () => {
 			new Request('http://x/api/corsair/permissions/perm-1', { method: 'GET' }),
 		);
 		expect(byId.status).toBe(200);
-		const idBody = await readJson<{ id: string; token: string }>(byId);
+		const idBody = await readJson<{
+			id: string;
+			token: string;
+			approvalUrl: string | null;
+		}>(byId);
 		expect(idBody.id).toBe('perm-1');
 		expect(idBody.token).toBe('tok-abc');
+		expect(idBody.approvalUrl).toBeNull();
 
 		const byTok = await handler(
 			new Request('http://x/api/corsair/permissions/lookup-by-token', {

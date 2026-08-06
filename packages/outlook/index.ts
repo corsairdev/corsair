@@ -29,12 +29,14 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { OutlookSchema } from './schema';
+import { outlookSubscribe } from './subscribe';
 import {
 	ContactWebhooks,
 	EventWebhooks,
 	MessageWebhooks,
 	ValidationWebhooks,
 } from './webhooks';
+import { matchOutlookTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	ContactCreatedEvent,
 	EventChangedEvent,
@@ -529,7 +531,7 @@ const outlookWebhookSchemas = {
 
 export const outlookAuthConfig = {
 	oauth_2: {
-		account: ['one'] as const,
+		account: ['subscription_id', 'client_state'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -609,6 +611,8 @@ export function outlook<const T extends OutlookPluginOptions>(
 			}
 			return false;
 		},
+		pluginTenantWebhookMatcher: matchOutlookTenantWebhook,
+		subscribe: outlookSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

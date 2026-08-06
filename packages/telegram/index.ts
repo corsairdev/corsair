@@ -10,6 +10,7 @@ import type {
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -38,6 +39,7 @@ import {
 	PreCheckoutQueryWebhooks,
 	ShippingQueryWebhooks,
 } from './webhooks';
+import { matchTelegramTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	CallbackQueryEvent,
 	ChannelPostEvent,
@@ -213,11 +215,74 @@ const telegramWebhooksNested = {
 	},
 } as const;
 
+const telegramEndpointMeta = {
+	'chat.getChat': { riskLevel: 'read', description: 'Get chat information' },
+	'chat.getChatAdministrators': {
+		riskLevel: 'read',
+		description: 'Get chat administrators',
+	},
+	'chat.getChatMember': {
+		riskLevel: 'read',
+		description: 'Get chat member information',
+	},
+	'callback.answerCallbackQuery': {
+		riskLevel: 'write',
+		description: 'Answer callback query',
+	},
+	'callback.answerInlineQuery': {
+		riskLevel: 'write',
+		description: 'Answer inline query',
+	},
+	'file.getFile': { riskLevel: 'read', description: 'Get a file' },
+	'messages.sendMessage': { riskLevel: 'write', description: 'Send a message' },
+	'messages.editMessageText': {
+		riskLevel: 'write',
+		description: 'Edit message text',
+	},
+	'messages.deleteMessage': {
+		riskLevel: 'destructive',
+		description: 'Delete a message',
+	},
+	'messages.pinChatMessage': {
+		riskLevel: 'write',
+		description: 'Pin a chat message',
+	},
+	'messages.unpinChatMessage': {
+		riskLevel: 'write',
+		description: 'Unpin a chat message',
+	},
+	'messages.sendPhoto': { riskLevel: 'write', description: 'Send photo' },
+	'messages.sendVideo': { riskLevel: 'write', description: 'Send video' },
+	'messages.sendAudio': { riskLevel: 'write', description: 'Send audio' },
+	'messages.sendDocument': { riskLevel: 'write', description: 'Send document' },
+	'messages.sendSticker': { riskLevel: 'write', description: 'Send sticker' },
+	'messages.sendAnimation': {
+		riskLevel: 'write',
+		description: 'Send animation',
+	},
+	'messages.sendLocation': { riskLevel: 'write', description: 'Send location' },
+	'messages.sendMediaGroup': {
+		riskLevel: 'write',
+		description: 'Send media group',
+	},
+	'messages.sendChatAction': {
+		riskLevel: 'write',
+		description: 'Send a chat action',
+	},
+	'webhook.setWebhook': { riskLevel: 'write', description: 'Set webhook' },
+	'webhook.deleteWebhook': {
+		riskLevel: 'destructive',
+		description: 'Delete webhook',
+	},
+	'updates.getUpdates': { riskLevel: 'read', description: 'Get updates' },
+	'me.getMe': { riskLevel: 'read', description: 'Get bot info' },
+} as const satisfies RequiredPluginEndpointMeta<typeof telegramEndpointsNested>;
+
 const defaultAuthType: AuthTypes = 'bot_token';
 
 export const telegramAuthConfig = {
 	bot_token: {
-		account: ['one'] as const,
+		account: ['bot_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -256,6 +321,7 @@ export function telegram<const T extends TelegramPluginOptions>(
 		webhookHooks: options.webhookHooks,
 		endpoints: telegramEndpointsNested,
 		webhooks: telegramWebhooksNested,
+		endpointMeta: telegramEndpointMeta,
 		pluginWebhookMatcher: (request) => {
 			const body =
 				typeof request.body === 'string'
@@ -270,6 +336,7 @@ export function telegram<const T extends TelegramPluginOptions>(
 
 			return hasSignature && 'update_id' in body;
 		},
+		pluginTenantWebhookMatcher: matchTelegramTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
