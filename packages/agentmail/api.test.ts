@@ -1,11 +1,11 @@
 import 'dotenv/config';
 import { makeAgentMailRequest } from './client';
-import {
-	AgentMailEndpointOutputSchemas,
-	type MessagesGetResponse,
-	type MessagesListResponse,
-	type MessagesSendResponse,
+import type {
+	MessagesGetResponse,
+	MessagesListResponse,
+	MessagesSendResponse,
 } from './endpoints/types';
+import { AgentMailEndpointOutputSchemas } from './endpoints/types';
 
 const LIVE_API_KEY = process.env.AGENTMAIL_API_KEY;
 const LIVE_INBOX_ID =
