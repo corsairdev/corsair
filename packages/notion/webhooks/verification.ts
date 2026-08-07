@@ -21,6 +21,8 @@ export const verification: NotionWebhooks['verification'] = {
 		) {
 			return {
 				success: false,
+				statusCode: 400,
+				error: 'Missing verification_token',
 				data: undefined,
 			};
 		}

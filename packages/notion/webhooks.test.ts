@@ -42,6 +42,8 @@ describe('Notion Webhook Verification', () => {
 
 		expect(result).toEqual({
 			success: false,
+			statusCode: 400,
+			error: 'Missing verification_token',
 			data: undefined,
 		});
 		expect(mockCtx.keys.set_webhook_signature_if_absent).not.toHaveBeenCalled();
