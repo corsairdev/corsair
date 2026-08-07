@@ -71,13 +71,7 @@ export async function makeAltTextAiRequest<T>(
 	endpoint: string,
 	options: AltTextAiRequestOptions = {},
 ): Promise<T> {
-	const {
-		apiKey,
-		method = 'GET',
-		body,
-		formData,
-		query = {},
-	} = options;
+	const { apiKey, method = 'GET', body, formData, query = {} } = options;
 	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 	const isJsonWrite = isWrite && !formData;
 
