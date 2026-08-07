@@ -184,4 +184,168 @@ describe('AgencyZoom endpoints', () => {
 			'/leads/42',
 		);
 	});
+
+	it('maps destructive and multi-path-param routes correctly', async () => {
+		const plugin = agencyzoom({ key: 'test-jwt-token' });
+		// Test-only: exercise deletes Greptile flagged + multi-segment path params.
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			customers: {
+				deleteACustomer: (
+					ctx: AgencyZoomContext,
+					input: { customerId: number },
+				) => Promise<unknown>;
+				deleteACustomerFile: (
+					ctx: AgencyZoomContext,
+					input: { customerId: number; fileId: number },
+				) => Promise<unknown>;
+				deleteACustomerPolicy: (
+					ctx: AgencyZoomContext,
+					input: { customerId: number; policyId: number },
+				) => Promise<unknown>;
+			};
+			tasks: {
+				batchDeleteTask: (
+					ctx: AgencyZoomContext,
+					input: { taskIds: number[] },
+				) => Promise<unknown>;
+				deleteATask: (
+					ctx: AgencyZoomContext,
+					input: { taskId: number },
+				) => Promise<unknown>;
+			};
+			leads: {
+				deleteALeadFile: (
+					ctx: AgencyZoomContext,
+					input: { leadId: number; fileId: number },
+				) => Promise<unknown>;
+				deleteALeadOpportunity: (
+					ctx: AgencyZoomContext,
+					input: { leadId: number; opportunityId: number },
+				) => Promise<unknown>;
+				deleteALeadQuote: (
+					ctx: AgencyZoomContext,
+					input: { leadId: number; quoteId: number },
+				) => Promise<unknown>;
+			};
+			opportunities: {
+				deleteAnOpportunity: (
+					ctx: AgencyZoomContext,
+					input: { opportunityId: number },
+				) => Promise<unknown>;
+				deleteADriver: (
+					ctx: AgencyZoomContext,
+					input: { driverId: number },
+				) => Promise<unknown>;
+			};
+			emailThreads: {
+				deleteThread: (
+					ctx: AgencyZoomContext,
+					input: { threadId: string },
+				) => Promise<unknown>;
+			};
+			textThreads: {
+				removeTextThreadEndpoint: (
+					ctx: AgencyZoomContext,
+					input: { threadId: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.customers.deleteACustomer(mockCtx, { customerId: 11 });
+		await endpoints.tasks.batchDeleteTask(mockCtx, { taskIds: [1, 2] });
+		await endpoints.customers.deleteACustomerFile(mockCtx, {
+			customerId: 11,
+			fileId: 22,
+		});
+		await endpoints.customers.deleteACustomerPolicy(mockCtx, {
+			customerId: 11,
+			policyId: 33,
+		});
+		await endpoints.leads.deleteALeadFile(mockCtx, {
+			leadId: 44,
+			fileId: 55,
+		});
+		await endpoints.leads.deleteALeadOpportunity(mockCtx, {
+			leadId: 44,
+			opportunityId: 66,
+		});
+		await endpoints.leads.deleteALeadQuote(mockCtx, {
+			leadId: 44,
+			quoteId: 77,
+		});
+		await endpoints.tasks.deleteATask(mockCtx, { taskId: 88 });
+		await endpoints.opportunities.deleteAnOpportunity(mockCtx, {
+			opportunityId: 99,
+		});
+		await endpoints.opportunities.deleteADriver(mockCtx, { driverId: 101 });
+		await endpoints.emailThreads.deleteThread(mockCtx, {
+			threadId: 'email-1',
+		});
+		await endpoints.textThreads.removeTextThreadEndpoint(mockCtx, {
+			threadId: 'sms-1',
+		});
+
+		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/customers/11',
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/tasks/batch-delete',
+					body: { taskIds: [1, 2] },
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/customers/11/files/22',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/customers/11/policies/33',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/leads/44/files/55',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/leads/44/opportunities/66',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/leads/44/quotes/77',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/tasks/88',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/opportunities/99',
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/opportunities/drivers/101',
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/email-thread/delete-thread',
+					body: { threadId: 'email-1' },
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/text-thread/delete-thread',
+					body: { threadId: 'sms-1' },
+				}),
+			]),
+		);
+
+		const customerDelete = mockRequest.mock.calls.find(
+			(call) => call[1].method === 'DELETE' && call[1].url === '/customers/11',
+		);
+		expect(customerDelete?.[1].body).toBeUndefined();
+	});
 });
