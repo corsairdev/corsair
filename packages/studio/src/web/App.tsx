@@ -3,6 +3,7 @@ import type { StatusResp } from './api';
 import { api } from './api';
 import { Sidebar } from './components/Sidebar';
 import { ChatPage } from './pages/ChatPage';
+import { ConnectPage } from './pages/ConnectPage';
 import { DatabasePage } from './pages/DatabasePage';
 import { OperationsPage } from './pages/OperationsPage';
 import { PermissionsPage } from './pages/PermissionsPage';
@@ -15,7 +16,8 @@ export type Route =
 	| 'database'
 	| 'permissions'
 	| 'script'
-	| 'chat';
+	| 'chat'
+	| 'connect';
 
 const TITLES: Record<Route, string> = {
 	plugins: 'Plugins',
@@ -24,6 +26,7 @@ const TITLES: Record<Route, string> = {
 	permissions: 'Permissions',
 	script: 'Script',
 	chat: 'Chat',
+	connect: 'Connect',
 };
 
 type AppLocation = {
@@ -38,6 +41,7 @@ const ROUTES = new Set<Route>([
 	'permissions',
 	'script',
 	'chat',
+	'connect',
 ]);
 
 function parseLocation(pathname: string): AppLocation {
@@ -130,6 +134,10 @@ export function App() {
 				</div>
 			</div>
 		);
+	}
+
+	if (route === 'connect') {
+		return <ConnectPage />;
 	}
 
 	return (
