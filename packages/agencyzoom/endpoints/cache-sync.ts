@@ -30,6 +30,14 @@ const GROUP_CACHE_RULES: Record<string, CacheRule> = {
 	},
 };
 
+// Batch delete bodies use plural id arrays (e.g. taskIds on POST /tasks/batch-delete).
+const BATCH_DELETE_ID_KEYS = [
+	'taskIds',
+	'leadIds',
+	'customerIds',
+	'ids',
+] as const;
+
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -55,18 +63,31 @@ function cacheEntityId(item: Record<string, unknown>, rule: CacheRule) {
 	return undefined;
 }
 
-function cacheDeleteEntityId(input: Record<string, unknown>, rule: CacheRule) {
+function cacheDeleteEntityIds(
+	input: Record<string, unknown>,
+	rule: CacheRule,
+): string[] {
+	for (const key of BATCH_DELETE_ID_KEYS) {
+		const value = input[key];
+		if (!Array.isArray(value)) continue;
+		return value.flatMap((entry) => {
+			if (typeof entry === 'string' && entry.length > 0) return [entry];
+			if (typeof entry === 'number') return [String(entry)];
+			return [];
+		});
+	}
+
 	for (const key of rule.deleteInputKeys ?? rule.idKeys) {
 		const value = input[key];
-		if (typeof value === 'string' && value.length > 0) return value;
-		if (typeof value === 'number') return String(value);
+		if (typeof value === 'string' && value.length > 0) return [value];
+		if (typeof value === 'number') return [String(value)];
 	}
-	return undefined;
+	return [];
 }
 
 export async function syncAgencyZoomOperationCache(
 	ctx: AgencyZoomContext,
-	route: Pick<AgencyZoomRoute, 'method' | 'group'>,
+	route: Pick<AgencyZoomRoute, 'method' | 'group' | 'riskLevel'>,
 	input: AgencyZoomEndpointInput,
 	// response is unknown: AgencyZoom payloads vary by endpoint; items narrowed via isRecord.
 	response: unknown,
@@ -92,9 +113,12 @@ export async function syncAgencyZoomOperationCache(
 	if (!client) return;
 
 	try {
-		if (route.method === 'DELETE') {
-			const entityId = cacheDeleteEntityId(input, rule);
-			if (entityId && client.deleteByEntityId) {
+		// AgencyZoom batch deletes are POST + destructive (e.g. batchDeleteTask).
+		const isDelete =
+			route.method === 'DELETE' || route.riskLevel === 'destructive';
+		if (isDelete) {
+			if (!client.deleteByEntityId) return;
+			for (const entityId of cacheDeleteEntityIds(input, rule)) {
 				await client.deleteByEntityId(entityId);
 			}
 			return;

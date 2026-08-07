@@ -1,5 +1,6 @@
 import { request } from 'corsair/http';
 import { makeAgencyZoomRequest } from './client';
+import { syncAgencyZoomOperationCache } from './endpoints/cache-sync';
 import { resolvePath } from './endpoints/factory';
 import { agencyZoomRoutes } from './endpoints/routes';
 import type { AgencyZoomContext } from './index';
@@ -183,6 +184,56 @@ describe('AgencyZoom endpoints', () => {
 		expect(resolvePath(route!.path, { lead_id: 42 } as never, route)).toBe(
 			'/leads/42',
 		);
+	});
+
+	it('maps getAListOfRecycleEvents under /leads/{leadId}', async () => {
+		const plugin = agencyzoom({ key: 'test-jwt-token' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			referenceData: {
+				getAListOfRecycleEvents: (
+					ctx: AgencyZoomContext,
+					input: { leadId: number },
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.referenceData.getAListOfRecycleEvents(mockCtx, {
+			leadId: 42,
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]).toEqual(
+			expect.objectContaining({
+				method: 'GET',
+				url: '/leads/42/recycle-events',
+			}),
+		);
+	});
+
+	it('evicts task cache on POST batchDeleteTask', async () => {
+		const deleteByEntityId = jest.fn().mockResolvedValue(true);
+		const upsertByEntityId = jest.fn();
+		const route = agencyZoomRoutes.find(
+			(candidate) => candidate.name === 'batchDeleteTask',
+		);
+		expect(route).toBeDefined();
+
+		await syncAgencyZoomOperationCache(
+			{
+				...mockCtx,
+				db: {
+					tasks: { deleteByEntityId, upsertByEntityId },
+				},
+			} as unknown as AgencyZoomContext,
+			route!,
+			{ taskIds: [1, 2] },
+			{ ok: true },
+		);
+
+		expect(deleteByEntityId).toHaveBeenCalledWith('1');
+		expect(deleteByEntityId).toHaveBeenCalledWith('2');
+		expect(upsertByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('maps destructive and multi-path-param routes correctly', async () => {

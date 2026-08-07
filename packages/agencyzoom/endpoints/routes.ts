@@ -538,7 +538,7 @@ export const agencyZoomRoutes = [
 		group: 'referenceData',
 		name: 'getAListOfRecycleEvents',
 		method: 'GET',
-		path: '/{leadId}/recycle-events',
+		path: '/leads/{leadId}/recycle-events',
 		description:
 			"Retrieves the available recycle event types and any existing X-Date information for a specified lead in AgencyZoom. Returns a list of recycle event categories that can be used to trigger follow-ups (e.g., 'X-Date', 'Accident Falls Off', 'Prior Insurance Fulfilled').",
 		pathParams: ['leadId'],
