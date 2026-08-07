@@ -9,6 +9,7 @@ export const AltTextAiImageSchema = z
 		tags: z.array(z.string()).optional(),
 		metadata: z.record(z.string(), z.unknown()).optional(),
 		created_at: z.number().optional(),
+		credits_used: z.number().optional(),
 		errors: z.record(z.string(), z.unknown()).optional(),
 		error_code: z.string().nullable().optional(),
 	})
@@ -17,7 +18,12 @@ export const AltTextAiImageSchema = z
 export type AltTextAiImage = z.infer<typeof AltTextAiImageSchema>;
 
 export const ListImagesInputSchema = z.object({
-	page: z.number().int().min(1).optional().describe('Page number (starts at 1)'),
+	page: z
+		.number()
+		.int()
+		.min(1)
+		.optional()
+		.describe('Page number (starts at 1)'),
 	limit: z
 		.number()
 		.int()
@@ -25,10 +31,7 @@ export const ListImagesInputSchema = z.object({
 		.max(100)
 		.optional()
 		.describe('Results per page (max 100)'),
-	url: z
-		.string()
-		.optional()
-		.describe('Exact image URL filter (no wildcards)'),
+	url: z.string().optional().describe('Exact image URL filter (no wildcards)'),
 });
 
 export type ListImagesInput = z.infer<typeof ListImagesInputSchema>;
@@ -48,7 +51,15 @@ export const ImagePayloadSchema = z
 		asset_id: z.string().optional(),
 		metadata: z.record(z.string(), z.unknown()).optional(),
 	})
-	.loose();
+	.loose()
+	.refine(
+		(image) => {
+			const hasUrl = Boolean(image.url);
+			const hasRaw = Boolean(image.raw);
+			return (hasUrl || hasRaw) && !(hasUrl && hasRaw);
+		},
+		{ message: 'Provide exactly one of image.url or image.raw' },
+	);
 
 export const CreateImageInputSchema = z
 	.object({
@@ -56,7 +67,15 @@ export const CreateImageInputSchema = z
 		async: z.boolean().optional(),
 		lang: z.string().optional(),
 		max_chars: z.number().int().min(80).max(500).optional(),
-		model_name: z.string().optional(),
+		model_name: z
+			.enum([
+				'describe-detailed',
+				'describe-regular',
+				'describe-factual',
+				'succinct-describe-factual',
+				'describe-terse',
+			])
+			.optional(),
 		keywords: z.array(z.string()).max(6).optional(),
 		negative_keywords: z.array(z.string()).max(6).optional(),
 		keyword_source: z.string().optional(),
@@ -168,7 +187,10 @@ export const PageScrapeInputSchema = z
 				url: z.string().url().optional(),
 				html: z.string().optional(),
 			})
-			.loose(),
+			.loose()
+			.refine((page) => Boolean(page.url) || Boolean(page.html), {
+				message: 'page_scrape.url or page_scrape.html is required',
+			}),
 		keywords: z.array(z.string()).max(6).optional(),
 		negative_keywords: z.array(z.string()).max(6).optional(),
 		lang: z.string().optional(),
@@ -210,6 +232,12 @@ export const AltTextAiAccountSchema = z
 		notification_email: z.string().nullable().optional(),
 		usage: z.number().optional(),
 		usage_limit: z.number().optional(),
+		whitelabel: z.boolean().optional(),
+		default_lang: z.string().optional(),
+		ending_period: z.boolean().optional(),
+		no_quotes: z.boolean().optional(),
+		remove_symbols: z.array(z.string()).nullable().optional(),
+		gpt_prompt: z.string().nullable().optional(),
 		max_chars: z.number().nullable().optional(),
 		subscription: z
 			.object({

@@ -38,17 +38,19 @@ export type AltTextAiContext = CorsairPluginContext<
 	AltTextAiPluginOptions
 >;
 
-export type AltTextAiKeyBuilderContext = KeyBuilderContext<AltTextAiPluginOptions>;
+export type AltTextAiKeyBuilderContext =
+	KeyBuilderContext<AltTextAiPluginOptions>;
 
 export type AltTextAiBoundEndpoints = BindEndpoints<
 	typeof alttextAiEndpointsNested
 >;
 
-type AltTextAiEndpoint<K extends keyof AltTextAiEndpointOutputs> = CorsairEndpoint<
-	AltTextAiContext,
-	AltTextAiEndpointInputs[K],
-	AltTextAiEndpointOutputs[K]
->;
+type AltTextAiEndpoint<K extends keyof AltTextAiEndpointOutputs> =
+	CorsairEndpoint<
+		AltTextAiContext,
+		AltTextAiEndpointInputs[K],
+		AltTextAiEndpointOutputs[K]
+	>;
 
 export type AltTextAiEndpoints = {
 	list: AltTextAiEndpoint<'list'>;
@@ -132,7 +134,8 @@ const alttextAiEndpointMeta = {
 	},
 	'images.create': {
 		riskLevel: 'write',
-		description: 'Add an image and generate AI alt text from URL or base64 data',
+		description:
+			'Add an image and generate AI alt text from URL or base64 data',
 	},
 	'images.get': {
 		riskLevel: 'read',
@@ -143,7 +146,7 @@ const alttextAiEndpointMeta = {
 		description: 'Update alt text or metadata for an existing image',
 	},
 	'images.delete': {
-		riskLevel: 'write',
+		riskLevel: 'destructive',
 		description: 'Delete an image from the AltText.ai library',
 	},
 	'images.search': {
@@ -174,23 +177,25 @@ export const alttextAiAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
-export type BaseAltTextAiPlugin<T extends AltTextAiPluginOptions> = CorsairPlugin<
-	'alttext_ai',
-	typeof AltTextAiSchema,
-	typeof alttextAiEndpointsNested,
-	typeof alttextAiWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseAltTextAiPlugin<T extends AltTextAiPluginOptions> =
+	CorsairPlugin<
+		'alttext_ai',
+		typeof AltTextAiSchema,
+		typeof alttextAiEndpointsNested,
+		typeof alttextAiWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalAltTextAiPlugin = BaseAltTextAiPlugin<AltTextAiPluginOptions>;
+export type InternalAltTextAiPlugin =
+	BaseAltTextAiPlugin<AltTextAiPluginOptions>;
 
 export type ExternalAltTextAiPlugin<T extends AltTextAiPluginOptions> =
 	BaseAltTextAiPlugin<T>;
 
 export function alttextAi<const T extends AltTextAiPluginOptions>(
-	incomingOptions: AltTextAiPluginOptions &
-		T = {} as AltTextAiPluginOptions & T,
+	incomingOptions: AltTextAiPluginOptions & T = {} as AltTextAiPluginOptions &
+		T,
 ): ExternalAltTextAiPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -219,7 +224,10 @@ export function alttextAi<const T extends AltTextAiPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('alttext_ai', 'api_key');
+				}
+				return res;
 			}
 
 			throw new AuthMissingError('alttext_ai', 'api_key');

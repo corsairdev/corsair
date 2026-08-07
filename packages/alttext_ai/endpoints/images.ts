@@ -1,22 +1,28 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAltTextAiRequest } from '../client';
 import type { AltTextAiEndpoints } from '../index';
-import { cacheImageRecord } from './shared';
+import { cacheImageRecord, toCsvUploadFile } from './shared';
 import type { AltTextAiEndpointOutputs } from './types';
 
 export const list: AltTextAiEndpoints['list'] = async (ctx, input) => {
-	const response = await makeAltTextAiRequest<
-		AltTextAiEndpointOutputs['list']
-	>('/images', {
-		apiKey: ctx.key,
-		query: {
-			page: input.page,
-			limit: input.limit,
-			url: input.url,
+	const response = await makeAltTextAiRequest<AltTextAiEndpointOutputs['list']>(
+		'/images',
+		{
+			apiKey: ctx.key,
+			query: {
+				page: input.page,
+				limit: input.limit,
+				url: input.url,
+			},
 		},
-	});
+	);
 
-	await logEventFromContext(ctx, 'alttext_ai.images.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'alttext_ai.images.list',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -32,7 +38,12 @@ export const create: AltTextAiEndpoints['create'] = async (ctx, input) => {
 
 	await cacheImageRecord(ctx, response);
 
-	await logEventFromContext(ctx, 'alttext_ai.images.create', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'alttext_ai.images.create',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -113,13 +124,22 @@ export const search: AltTextAiEndpoints['search'] = async (ctx, input) => {
 		},
 	});
 
-	await logEventFromContext(ctx, 'alttext_ai.images.search', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'alttext_ai.images.search',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const bulkCreate: AltTextAiEndpoints['bulkCreate'] = async (ctx, input) => {
+export const bulkCreate: AltTextAiEndpoints['bulkCreate'] = async (
+	ctx,
+	input,
+) => {
 	const formData: Record<string, unknown> = {
-		file: input.file,
+		// API requires a filename on the multipart part; bare Blobs 422.
+		file: toCsvUploadFile(input.file),
 	};
 	if (input.email !== undefined) {
 		formData.email = input.email;
@@ -142,7 +162,10 @@ export const bulkCreate: AltTextAiEndpoints['bulkCreate'] = async (ctx, input) =
 	return response;
 };
 
-export const pageScrape: AltTextAiEndpoints['pageScrape'] = async (ctx, input) => {
+export const pageScrape: AltTextAiEndpoints['pageScrape'] = async (
+	ctx,
+	input,
+) => {
 	// PageScrapeInput uses .loose() Zod schema; cast satisfies JSON body typing.
 	const response = await makeAltTextAiRequest<
 		AltTextAiEndpointOutputs['pageScrape']

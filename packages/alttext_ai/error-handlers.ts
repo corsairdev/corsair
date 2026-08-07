@@ -47,7 +47,10 @@ export const errorHandlers = {
 		},
 	},
 	BAD_REQUEST_ERROR: {
-		match: (error: Error) => getStatus(error) === 400,
+		match: (error: Error) => {
+			const status = getStatus(error);
+			return status === 400 || status === 422;
+		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	SERVER_ERROR: {
