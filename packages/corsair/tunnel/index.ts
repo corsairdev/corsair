@@ -288,6 +288,9 @@ async function handleWebhookTunnel(
 						typeof result.response.error === 'string'
 							? result.response.error
 							: 'Webhook handler failed',
+					...(result.response.data !== undefined && {
+						data: result.response.data,
+					}),
 				},
 				headers: result.responseHeaders,
 			},

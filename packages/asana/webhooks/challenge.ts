@@ -48,6 +48,19 @@ export const challenge: AsanaWebhooks['challenge'] = {
 			};
 		}
 
+		const rejectExistingSecret = () => {
+			// Logged so operators can tell an attack from a blocked
+			// re-registration; both land here.
+			console.warn(
+				'[corsair:asana] Rejected X-Hook-Secret for an account that already has one configured',
+			);
+			return {
+				success: false as const,
+				statusCode: 401,
+				error: 'Webhook signing secret is already configured',
+			};
+		};
+
 		const storedSecret = await ctx.keys.get_webhook_signature();
 
 		if (storedSecret) {
@@ -56,16 +69,7 @@ export const challenge: AsanaWebhooks['challenge'] = {
 			// rewriting storage. A different value belongs to no handshake Corsair
 			// started, so refuse it and do not echo the sender's value back.
 			if (!secretsMatch(storedSecret, hookSecret)) {
-				// Logged so operators can tell an attack from a blocked
-				// re-registration; both land here.
-				console.warn(
-					'[corsair:asana] Rejected X-Hook-Secret for an account that already has one configured',
-				);
-				return {
-					success: false,
-					statusCode: 401,
-					error: 'Webhook signing secret is already configured',
-				};
+				return rejectExistingSecret();
 			}
 
 			return {
@@ -82,14 +86,7 @@ export const challenge: AsanaWebhooks['challenge'] = {
 		} catch (error) {
 			const existing = await ctx.keys.get_webhook_signature();
 			if (existing && !secretsMatch(existing, hookSecret)) {
-				console.warn(
-					'[corsair:asana] Rejected X-Hook-Secret for an account that already has one configured',
-				);
-				return {
-					success: false,
-					statusCode: 401,
-					error: 'Webhook signing secret is already configured',
-				};
+				return rejectExistingSecret();
 			}
 			// Echoing a secret we failed to store would leave Asana signing events
 			// with a key this account cannot verify.

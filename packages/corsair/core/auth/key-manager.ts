@@ -483,7 +483,7 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	type AccountConfigRow = {
 		id: string;
 		config: unknown;
-		dek: string | null;
+		dek: string | null | undefined;
 	};
 
 	const loadFreshAccountConfig = async (): Promise<{
@@ -575,10 +575,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	const setWebhookSignatureIfAbsent = (
 		value: string,
 	): Promise<{ created: boolean }> => {
-		const normalized = value.trim();
-		if (!normalized) {
+		// Trim only for emptiness — store the exact value handlers echo/compare.
+		if (!value.trim()) {
 			return Promise.reject(new Error('Webhook signature cannot be empty'));
 		}
+		const normalized = value;
 
 		// Share the write chain with set_* on this manager. Cross-manager races
 		// reuse the same optimistic config CAS as doUpdateConfig.

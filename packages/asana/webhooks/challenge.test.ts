@@ -138,5 +138,28 @@ describe('asana challenge webhook', () => {
 
 			warn.mockRestore();
 		});
+
+		it('returns 401 when a concurrent writer already stored a different secret', async () => {
+			const { ctx, keys } = createContext(null);
+			keys.get_webhook_signature
+				.mockResolvedValueOnce(null)
+				.mockResolvedValueOnce('already-stored');
+			keys.set_webhook_signature_if_absent.mockRejectedValue(
+				new Error('Webhook signature already configured'),
+			);
+			const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+			const result = await challenge.handler(
+				ctx,
+				createRequest({ 'x-hook-secret': 'asana-secret' }),
+			);
+
+			expect(result.success).toBe(false);
+			expect(result.statusCode).toBe(401);
+			expect(result.responseHeaders).toBeUndefined();
+			expect(warn).toHaveBeenCalled();
+
+			warn.mockRestore();
+		});
 	});
 });

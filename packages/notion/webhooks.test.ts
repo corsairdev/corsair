@@ -96,4 +96,27 @@ describe('Notion Webhook Verification', () => {
 		});
 		expect(webhookSignature).toBe('existing-secret-456');
 	});
+
+	it('returns 500 when persistence fails and no secret is stored', async () => {
+		mockCtx.keys.set_webhook_signature_if_absent.mockRejectedValue(
+			new Error('db down'),
+		);
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+		const result = await verification.handler(
+			mockCtx as any,
+			{
+				payload: { verification_token: 'new-token-123' },
+			} as any,
+		);
+
+		expect(result).toEqual({
+			success: false,
+			statusCode: 500,
+			error: 'Failed to persist verification token',
+		});
+		expect(warn).toHaveBeenCalled();
+
+		warn.mockRestore();
+	});
 });

@@ -101,6 +101,23 @@ describe('set_webhook_signature_if_absent', () => {
 		}
 	});
 
+	it('rejects an empty or whitespace-only signature', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database);
+			const km = makeManager(database);
+
+			await expect(km.set_webhook_signature_if_absent('')).rejects.toThrow(
+				'Webhook signature cannot be empty',
+			);
+			await expect(km.set_webhook_signature_if_absent('   ')).rejects.toThrow(
+				'Webhook signature cannot be empty',
+			);
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('lets only one of two concurrent managers create the first secret', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {

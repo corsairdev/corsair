@@ -304,7 +304,8 @@ export async function processWebhook(
 				response: {
 					success: false,
 					statusCode: 500,
-					error: error instanceof Error ? error.message : 'Unknown error',
+					// Don't leak Error.message to webhook senders.
+					error: 'Internal server error',
 				},
 			};
 		}

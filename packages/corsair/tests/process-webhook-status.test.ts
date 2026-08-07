@@ -61,7 +61,7 @@ describe('processWebhook status propagation', () => {
 		expect(result.response).toEqual({
 			success: false,
 			statusCode: 500,
-			error: 'boom',
+			error: 'Internal server error',
 		});
 	});
 });
