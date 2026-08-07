@@ -16,17 +16,13 @@ export const start: WizaEndpoints['individualRevealsStart'] = async (
 		{ method: 'POST', body: input },
 	);
 
-	try {
-		await ctx.db.reveals.upsertByEntityId(String(response.data.id), {
-			id: response.data.id,
-			status: response.data.status,
-			is_complete: response.data.is_complete,
-			enrichment_level: input.enrichment_level,
-			updatedAt: new Date(),
-		});
-	} catch (error) {
-		console.warn(`[wiza] Failed to save reveal ${response.data.id}:`, error);
-	}
+	await ctx.db.reveals.upsertByEntityId(String(response.data.id), {
+		id: response.data.id,
+		status: response.data.status,
+		is_complete: response.data.is_complete,
+		enrichment_level: input.enrichment_level,
+		updatedAt: new Date(),
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -48,14 +44,10 @@ export const get: WizaEndpoints['individualRevealsGet'] = async (
 		{ method: 'GET' },
 	);
 
-	try {
-		await ctx.db.reveals.upsertByEntityId(String(response.data.id), {
-			...response.data,
-			updatedAt: new Date(),
-		});
-	} catch (error) {
-		console.warn(`[wiza] Failed to save reveal ${input.id}:`, error);
-	}
+	await ctx.db.reveals.upsertByEntityId(String(response.data.id), {
+		...response.data,
+		updatedAt: new Date(),
+	});
 
 	await logEventFromContext(
 		ctx,

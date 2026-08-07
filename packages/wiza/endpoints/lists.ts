@@ -10,20 +10,16 @@ export const get: WizaEndpoints['listsGet'] = async (ctx, input) => {
 		{ method: 'GET' },
 	);
 
-	try {
-		await ctx.db.lists.upsertByEntityId(String(response.data.id), {
-			id: response.data.id,
-			name: response.data.name,
-			status: response.data.status,
-			enrichment_level: response.data.enrichment_level,
-			report_type: response.data.report_type,
-			created_at: response.data.created_at,
-			finished_at: response.data.finished_at,
-			updatedAt: new Date(),
-		});
-	} catch (error) {
-		console.warn(`[wiza] Failed to save list ${input.id}:`, error);
-	}
+	await ctx.db.lists.upsertByEntityId(String(response.data.id), {
+		id: response.data.id,
+		name: response.data.name,
+		status: response.data.status,
+		enrichment_level: response.data.enrichment_level,
+		report_type: response.data.report_type,
+		created_at: response.data.created_at,
+		finished_at: response.data.finished_at,
+		updatedAt: new Date(),
+	});
 
 	await logEventFromContext(
 		ctx,

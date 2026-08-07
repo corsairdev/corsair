@@ -38,7 +38,7 @@ export type WizaList = z.infer<typeof WizaList>;
 
 export const WizaProspect = z
 	.object({
-		linkedin_url: z.string(),
+		linkedin_url: z.string().nullable().optional(),
 		full_name: z.string().nullable().optional(),
 		job_title: z.string().nullable().optional(),
 		job_company_name: z.string().nullable().optional(),

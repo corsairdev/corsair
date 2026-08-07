@@ -50,7 +50,7 @@ const IndividualRevealIdentifierSchema = z
 	.refine(
 		(v) =>
 			Boolean(
-				v.profile_url ?? v.email ?? (v.full_name && (v.company ?? v.domain)),
+				v.profile_url || v.email || (v.full_name && (v.company || v.domain)),
 			),
 		{
 			message:

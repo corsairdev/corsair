@@ -5,8 +5,7 @@ export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return /\brate[_\s-]?limit(?:ed)?\b/i.test(error.message);
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
@@ -23,6 +22,19 @@ export const errorHandlers = {
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status >= 500) return true;
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('econnreset') ||
+				msg.includes('etimedout') ||
+				msg.includes('enotfound') ||
+				msg.includes('network')
+			);
+		},
+		handler: async () => ({ maxRetries: 3 }),
 	},
 	DEFAULT: {
 		match: () => true,

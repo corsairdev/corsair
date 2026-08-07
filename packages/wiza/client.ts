@@ -2,10 +2,7 @@ import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class WizaAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
+	constructor(message: string) {
 		super(message);
 		this.name = 'WizaAPIError';
 	}
@@ -32,8 +29,6 @@ export async function makeWizaRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
 		},
 	};
 
@@ -45,7 +40,7 @@ export async function makeWizaRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {

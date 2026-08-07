@@ -12,22 +12,15 @@ export const search: WizaEndpoints['prospectsSearch'] = async (ctx, input) => {
 
 	for (const profile of response.data.profiles ?? []) {
 		if (!profile.linkedin_url) continue;
-		try {
-			await ctx.db.prospects.upsertByEntityId(profile.linkedin_url, {
-				linkedin_url: profile.linkedin_url,
-				full_name: profile.full_name,
-				job_title: profile.job_title,
-				job_company_name: profile.job_company_name,
-				industry: profile.industry,
-				location_name: profile.location_name,
-				updatedAt: new Date(),
-			});
-		} catch (error) {
-			console.warn(
-				`[wiza] Failed to save prospect ${profile.linkedin_url}:`,
-				error,
-			);
-		}
+		await ctx.db.prospects.upsertByEntityId(profile.linkedin_url, {
+			linkedin_url: profile.linkedin_url,
+			full_name: profile.full_name,
+			job_title: profile.job_title,
+			job_company_name: profile.job_company_name,
+			industry: profile.industry,
+			location_name: profile.location_name,
+			updatedAt: new Date(),
+		});
 	}
 
 	await logEventFromContext(

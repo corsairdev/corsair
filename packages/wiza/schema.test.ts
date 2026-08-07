@@ -74,6 +74,14 @@ describe('Wiza endpoint input schemas', () => {
 		expect(result.success).toBe(false);
 	});
 
+	it('accepts email when profile_url is an empty string', () => {
+		const result = WizaEndpointInputSchemas.individualRevealsStart.safeParse({
+			individual_reveal: { profile_url: '', email: 'jane@acme.com' },
+			enrichment_level: 'partial',
+		});
+		expect(result.success).toBe(true);
+	});
+
 	it('rejects an invalid enrichment level', () => {
 		const result = WizaEndpointInputSchemas.individualRevealsStart.safeParse({
 			individual_reveal: { email: 'jane@acme.com' },
@@ -280,6 +288,25 @@ describe('Wiza endpoint handlers', () => {
 			'99',
 			expect.objectContaining({ id: 99 }),
 		);
+	});
+
+	it('individualReveals.start does not log completed when persistence fails', async () => {
+		const ctx = createMockCtx();
+		const input = {
+			individual_reveal: { profile_url: 'https://www.linkedin.com/in/janedoe' },
+			enrichment_level: 'partial' as const,
+		};
+		mockedMakeWizaRequest.mockResolvedValueOnce({
+			status: { code: 200, message: 'ok' },
+			type: 'individual_reveal',
+			data: { id: 7, status: 'queued', is_complete: false },
+		});
+		ctx.db.reveals.upsertByEntityId.mockRejectedValueOnce(new Error('db down'));
+
+		await expect(IndividualReveals.start(ctx as never, input)).rejects.toThrow(
+			'db down',
+		);
+		expect(mockedLogEventFromContext).not.toHaveBeenCalled();
 	});
 
 	it('lists.get fetches by id and upserts', async () => {

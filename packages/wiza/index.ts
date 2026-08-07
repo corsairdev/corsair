@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -94,7 +93,7 @@ export const wizaEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof wizaEndpointsNested>;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 const wizaEndpointMeta = {
 	'credits.get': {
