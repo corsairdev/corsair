@@ -83,6 +83,47 @@ describe('AgencyZoom database schemas', () => {
 			}),
 		).toMatchObject({ leadDataRequests: [{ email: 'a@b.com' }] });
 	});
+
+	it('types OpenAPI pagination on search and thread list inputs', () => {
+		for (const key of [
+			'leads.searchLeads',
+			'customers.searchCustomers',
+			'textThreads.searchSmsThreads',
+			'emailThreads.searchEmailThreads',
+			'leads.searchLeadsCount',
+			'life.searchLifeAndHealthLeads',
+			'referenceData.searchBusinessClassifications',
+			'tasks.searchTasks',
+			'leads.getLeadFiles',
+			'emailThreads.getThreadDetails',
+			'textThreads.textDetailThread',
+		] as const) {
+			const schema = agencyZoomEndpointSchemas[key]?.input;
+			expect(schema).toBeDefined();
+			const sample =
+				key === 'textThreads.textDetailThread'
+					? {
+							threadId: 't-1',
+							page: 0,
+							pageSize: 20,
+							sort: 'id',
+							order: 'asc',
+						}
+					: { page: 0, pageSize: 20, sort: 'id', order: 'asc' };
+			expect(schema!.parse(sample)).toMatchObject({
+				page: 0,
+				pageSize: 20,
+			});
+		}
+
+		const deleteMessage =
+			agencyZoomEndpointSchemas['emailThreads.deleteMessage']?.input;
+		expect(deleteMessage).toBeDefined();
+		expect(deleteMessage!.parse({ messageId: 'msg-1' })).toMatchObject({
+			messageId: 'msg-1',
+		});
+		expect(() => deleteMessage!.parse({ id: 1 })).toThrow();
+	});
 });
 
 describe('AgencyZoom plugin shape', () => {

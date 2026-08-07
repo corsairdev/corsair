@@ -601,7 +601,13 @@ export type DeleteAVehicleResponse = z.infer<
 
 // deleteMessage
 const DeleteMessageInputSchema = z.object({
-	id: z.number().int(),
+	// OpenAPI: POST /email-thread/delete-message — messageId (string).
+	messageId: z.string(),
+	page: z.number().int().optional(),
+	pageSize: z.number().int().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+	location: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -612,7 +618,13 @@ export type DeleteMessageResponse = z.infer<typeof DeleteMessageResponseSchema>;
 
 // deleteThread
 const DeleteThreadInputSchema = z.object({
+	// OpenAPI: POST /email-thread/delete-thread
 	threadId: z.string(),
+	page: z.number().int().optional(),
+	pageSize: z.number().int().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+	location: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -896,7 +908,15 @@ export type GetDepartmentsGroupsResponse = z.infer<
 
 // getLeadFiles
 const GetLeadFilesInputSchema = z.object({
+	// OpenAPI: POST /leads/files
+	page: z.number().int().optional(),
+	pageSize: z.number().int().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+	location: z.string().optional(),
 	leadId: z.number().int().optional(),
+	fileType: z.number().int().optional(),
+	customerReferralId: z.number().int().optional(),
 	body: AgencyZoomOptionalBodySchema,
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1089,6 +1109,16 @@ export type GetTheVehicleDetailsResponse = z.infer<
 
 // getThreadDetails
 const GetThreadDetailsInputSchema = z.object({
+	// OpenAPI: POST /email-thread/email-thread-detail
+	page: z.number().int().optional(),
+	pageSize: z.number().int().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+	location: z.string().optional(),
+	threadId: z.string().optional(),
+	searchTerm: z.string().optional(),
+	status: z.number().int().optional(),
+	lastDateUTC: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1200,7 +1230,13 @@ export type MoveLeadToSoldResponse = z.infer<
 
 // removeTextThreadEndpoint
 const RemoveTextThreadEndpointInputSchema = z.object({
+	// OpenAPI: POST /text-thread/delete-thread
 	threadId: z.string(),
+	page: z.number().int().optional(),
+	pageSize: z.number().int().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+	location: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1225,9 +1261,14 @@ export type ReopenATaskInput = z.infer<typeof ReopenATaskInputSchema>;
 const ReopenATaskResponseSchema = AgencyZoomResponseSchema;
 export type ReopenATaskResponse = z.infer<typeof ReopenATaskResponseSchema>;
 
-// Open-ended POST search bodies: keep known control keys typed, pass through filter fields.
+// OpenAPI search/list bodies share pagination/sort; .loose() keeps endpoint-specific filters.
 const AgencyZoomSearchInputSchema = z
 	.object({
+		page: z.number().int().optional(),
+		pageSize: z.number().int().optional(),
+		sort: z.string().optional(),
+		order: z.string().optional(),
+		location: z.string().optional(),
 		body: AgencyZoomOptionalBodySchema,
 		query: AgencyZoomQueryParamsSchema,
 		headers: z.record(z.string(), z.string()).optional(),
@@ -1339,7 +1380,16 @@ export type ServiceTicketListResponse = z.infer<
 
 // textDetailThread
 const TextDetailThreadInputSchema = z.object({
+	// OpenAPI: POST /text-thread/text-thread-detail
 	threadId: z.string(),
+	page: z.number().int().optional(),
+	pageSize: z.number().int().optional(),
+	sort: z.string().optional(),
+	order: z.string().optional(),
+	location: z.string().optional(),
+	searchTerm: z.string().optional(),
+	status: z.number().int().optional(),
+	lastDateUTC: z.string().optional(),
 	body: AgencyZoomOptionalBodySchema,
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
