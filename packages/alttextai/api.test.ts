@@ -24,7 +24,7 @@ const skipWithoutKey = !TEST_API_KEY
 		}
 	: null;
 
-describe('alttext_ai helpers', () => {
+describe('alttextai helpers', () => {
 	it('toCsvUploadFile adds a .csv filename for bare Blobs', () => {
 		const blob = new Blob(['url\nhttps://example.com/a.png\n'], {
 			type: 'text/csv',
@@ -169,7 +169,7 @@ describe('AltText.ai API Type Tests', () => {
 					body: {
 						image: {
 							alt_text: 'Updated alt text from corsair live test',
-							metadata: { source: 'alttext_ai-api.test' },
+							metadata: { source: 'alttextai-api.test' },
 						},
 					},
 				},

@@ -30,7 +30,7 @@ export type AltTextAiPluginOptions = {
 	key?: string;
 	hooks?: InternalAltTextAiPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof alttextAiEndpointsNested>;
+	permissions?: PluginPermissionsConfig<typeof alttextaiEndpointsNested>;
 };
 
 export type AltTextAiContext = CorsairPluginContext<
@@ -42,7 +42,7 @@ export type AltTextAiKeyBuilderContext =
 	KeyBuilderContext<AltTextAiPluginOptions>;
 
 export type AltTextAiBoundEndpoints = BindEndpoints<
-	typeof alttextAiEndpointsNested
+	typeof alttextaiEndpointsNested
 >;
 
 type AltTextAiEndpoint<K extends keyof AltTextAiEndpointOutputs> =
@@ -65,7 +65,7 @@ export type AltTextAiEndpoints = {
 	updateAccount: AltTextAiEndpoint<'updateAccount'>;
 };
 
-const alttextAiEndpointsNested = {
+const alttextaiEndpointsNested = {
 	images: {
 		list: Images.list,
 		create: Images.create,
@@ -82,9 +82,9 @@ const alttextAiEndpointsNested = {
 	},
 } as const;
 
-const alttextAiWebhooksNested = {} as const;
+const alttextaiWebhooksNested = {} as const;
 
-export const alttextAiEndpointSchemas = {
+export const alttextaiEndpointSchemas = {
 	'images.list': {
 		input: AltTextAiEndpointInputSchemas.list,
 		output: AltTextAiEndpointOutputSchemas.list,
@@ -125,9 +125,9 @@ export const alttextAiEndpointSchemas = {
 		input: AltTextAiEndpointInputSchemas.updateAccount,
 		output: AltTextAiEndpointOutputSchemas.updateAccount,
 	},
-} satisfies RequiredPluginEndpointSchemas<typeof alttextAiEndpointsNested>;
+} satisfies RequiredPluginEndpointSchemas<typeof alttextaiEndpointsNested>;
 
-const alttextAiEndpointMeta = {
+const alttextaiEndpointMeta = {
 	'images.list': {
 		riskLevel: 'read',
 		description: 'List images in the AltText.ai library with pagination',
@@ -169,20 +169,20 @@ const alttextAiEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Update AltText.ai account settings',
 	},
-} satisfies RequiredPluginEndpointMeta<typeof alttextAiEndpointsNested>;
+} satisfies RequiredPluginEndpointMeta<typeof alttextaiEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-export const alttextAiAuthConfig = {
+export const alttextaiAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseAltTextAiPlugin<T extends AltTextAiPluginOptions> =
 	CorsairPlugin<
-		'alttext_ai',
+		'alttextai',
 		typeof AltTextAiSchema,
-		typeof alttextAiEndpointsNested,
-		typeof alttextAiWebhooksNested,
+		typeof alttextaiEndpointsNested,
+		typeof alttextaiWebhooksNested,
 		T,
 		typeof defaultAuthType
 	>;
@@ -193,7 +193,7 @@ export type InternalAltTextAiPlugin =
 export type ExternalAltTextAiPlugin<T extends AltTextAiPluginOptions> =
 	BaseAltTextAiPlugin<T>;
 
-export function alttextAi<const T extends AltTextAiPluginOptions>(
+export function alttextai<const T extends AltTextAiPluginOptions>(
 	incomingOptions: AltTextAiPluginOptions & T = {} as AltTextAiPluginOptions &
 		T,
 ): ExternalAltTextAiPlugin<T> {
@@ -202,16 +202,16 @@ export function alttextAi<const T extends AltTextAiPluginOptions>(
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	return {
-		id: 'alttext_ai',
-		authConfig: alttextAiAuthConfig,
+		id: 'alttextai',
+		authConfig: alttextaiAuthConfig,
 		schema: AltTextAiSchema,
 		options,
 		hooks: options.hooks,
 		webhookHooks: undefined,
-		endpoints: alttextAiEndpointsNested,
-		webhooks: alttextAiWebhooksNested,
-		endpointMeta: alttextAiEndpointMeta,
-		endpointSchemas: alttextAiEndpointSchemas,
+		endpoints: alttextaiEndpointsNested,
+		webhooks: alttextaiWebhooksNested,
+		endpointMeta: alttextaiEndpointMeta,
+		endpointSchemas: alttextaiEndpointSchemas,
 		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
@@ -225,12 +225,12 @@ export function alttextAi<const T extends AltTextAiPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new AuthMissingError('alttext_ai', 'api_key');
+					throw new AuthMissingError('alttextai', 'api_key');
 				}
 				return res;
 			}
 
-			throw new AuthMissingError('alttext_ai', 'api_key');
+			throw new AuthMissingError('alttextai', 'api_key');
 		},
 	} satisfies InternalAltTextAiPlugin;
 }

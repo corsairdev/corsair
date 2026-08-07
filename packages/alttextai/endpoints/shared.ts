@@ -38,6 +38,6 @@ export async function cacheImageRecord(
 			toImageDbRecord(image),
 		);
 	} catch (error) {
-		console.warn('[alttext_ai] Failed to save image to database:', error);
+		console.warn('[alttextai] Failed to save image to database:', error);
 	}
 }

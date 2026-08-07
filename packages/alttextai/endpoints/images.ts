@@ -19,7 +19,7 @@ export const list: AltTextAiEndpoints['list'] = async (ctx, input) => {
 
 	await logEventFromContext(
 		ctx,
-		'alttext_ai.images.list',
+		'alttextai.images.list',
 		{ ...input },
 		'completed',
 	);
@@ -40,7 +40,7 @@ export const create: AltTextAiEndpoints['create'] = async (ctx, input) => {
 
 	await logEventFromContext(
 		ctx,
-		'alttext_ai.images.create',
+		'alttextai.images.create',
 		{ ...input },
 		'completed',
 	);
@@ -57,7 +57,7 @@ export const get: AltTextAiEndpoints['get'] = async (ctx, input) => {
 
 	await logEventFromContext(
 		ctx,
-		'alttext_ai.images.get',
+		'alttextai.images.get',
 		{ assetId: input.assetId },
 		'completed',
 	);
@@ -80,7 +80,7 @@ export const update: AltTextAiEndpoints['update'] = async (ctx, input) => {
 
 	await logEventFromContext(
 		ctx,
-		'alttext_ai.images.update',
+		'alttextai.images.update',
 		{ assetId: input.assetId },
 		'completed',
 	);
@@ -99,13 +99,13 @@ export const deleteImage: AltTextAiEndpoints['delete'] = async (ctx, input) => {
 		try {
 			await ctx.db.images.deleteByEntityId(input.assetId);
 		} catch (error) {
-			console.warn('[alttext_ai] Failed to delete image from database:', error);
+			console.warn('[alttextai] Failed to delete image from database:', error);
 		}
 	}
 
 	await logEventFromContext(
 		ctx,
-		'alttext_ai.images.delete',
+		'alttextai.images.delete',
 		{ assetId: input.assetId },
 		'completed',
 	);
@@ -126,7 +126,7 @@ export const search: AltTextAiEndpoints['search'] = async (ctx, input) => {
 
 	await logEventFromContext(
 		ctx,
-		'alttext_ai.images.search',
+		'alttextai.images.search',
 		{ ...input },
 		'completed',
 	);
@@ -155,7 +155,7 @@ export const bulkCreate: AltTextAiEndpoints['bulkCreate'] = async (
 
 	await logEventFromContext(
 		ctx,
-		'alttext_ai.images.bulkCreate',
+		'alttextai.images.bulkCreate',
 		{ email: input.email },
 		'completed',
 	);
@@ -177,7 +177,7 @@ export const pageScrape: AltTextAiEndpoints['pageScrape'] = async (
 
 	await logEventFromContext(
 		ctx,
-		'alttext_ai.images.pageScrape',
+		'alttextai.images.pageScrape',
 		{ ...input },
 		'completed',
 	);

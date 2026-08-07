@@ -1,5 +1,5 @@
 {
-  "name": "@corsair-dev/alttext_ai",
+  "name": "@corsair-dev/alttextai",
   "version": "0.1.0",
   "description": "AltText.ai plugin for Corsair",
   "type": "module",
@@ -34,7 +34,7 @@
   },
   "keywords": [
     "corsair",
-    "alttext_ai",
+    "alttextai",
     "plugin"
   ],
   "author": "",

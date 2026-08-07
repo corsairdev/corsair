@@ -10,7 +10,7 @@ export const get: AltTextAiEndpoints['getAccount'] = async (ctx) => {
 		apiKey: ctx.key,
 	});
 
-	await logEventFromContext(ctx, 'alttext_ai.account.get', {}, 'completed');
+	await logEventFromContext(ctx, 'alttextai.account.get', {}, 'completed');
 	return response;
 };
 
@@ -29,7 +29,7 @@ export const update: AltTextAiEndpoints['updateAccount'] = async (
 
 	await logEventFromContext(
 		ctx,
-		'alttext_ai.account.update',
+		'alttextai.account.update',
 		{ ...input },
 		'completed',
 	);
