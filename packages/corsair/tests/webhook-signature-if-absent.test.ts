@@ -1,0 +1,138 @@
+import {
+	encryptConfig,
+	encryptDEK,
+	generateDEK,
+} from '../core/auth/encryption';
+import { createAccountKeyManager } from '../core/auth/key-manager';
+import { createTestDatabase } from './setup-db';
+
+const KEK = 'test-kek-with-at-least-32-characters!!';
+
+async function seedAccount(
+	database: ReturnType<typeof createTestDatabase>['database'],
+) {
+	const now = new Date();
+	const dek = generateDEK();
+	const encryptedDek = await encryptDEK(dek, KEK);
+
+	await database.db
+		.insertInto('corsair_integrations')
+		.values({
+			id: 'integration-notion',
+			created_at: now,
+			updated_at: now,
+			name: 'notion',
+			config: encryptConfig({}, dek),
+			dek: encryptedDek,
+		})
+		.execute();
+
+	await database.db
+		.insertInto('corsair_accounts')
+		.values({
+			id: 'account-default',
+			created_at: now,
+			updated_at: now,
+			tenant_id: 'default',
+			integration_id: 'integration-notion',
+			config: encryptConfig({ access_token: 'tok' }, dek),
+			dek: encryptedDek,
+		})
+		.execute();
+}
+
+function makeManager(
+	database: ReturnType<typeof createTestDatabase>['database'],
+) {
+	return createAccountKeyManager({
+		authType: 'oauth_2',
+		integrationName: 'notion',
+		tenantId: 'default',
+		kek: KEK,
+		database,
+	});
+}
+
+describe('set_webhook_signature_if_absent', () => {
+	it('creates the signature when none is stored', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database);
+			const km = makeManager(database);
+
+			await expect(
+				km.set_webhook_signature_if_absent('secret-a'),
+			).resolves.toEqual({ created: true });
+			expect(await km.get_webhook_signature()).toBe('secret-a');
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('is a no-op when the same secret is already stored', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database);
+			const km = makeManager(database);
+			await km.set_webhook_signature('secret-a');
+
+			await expect(
+				km.set_webhook_signature_if_absent('secret-a'),
+			).resolves.toEqual({ created: false });
+			expect(await km.get_webhook_signature()).toBe('secret-a');
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('rejects a different secret when one is already stored', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database);
+			const km = makeManager(database);
+			await km.set_webhook_signature('secret-a');
+
+			await expect(
+				km.set_webhook_signature_if_absent('secret-b'),
+			).rejects.toThrow('Webhook signature already configured');
+			expect(await km.get_webhook_signature()).toBe('secret-a');
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('lets only one of two concurrent managers create the first secret', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database);
+			const a = makeManager(database);
+			const b = makeManager(database);
+
+			const results = await Promise.allSettled([
+				a.set_webhook_signature_if_absent('secret-a'),
+				b.set_webhook_signature_if_absent('secret-b'),
+			]);
+
+			const fulfilled = results.filter((r) => r.status === 'fulfilled');
+			const rejected = results.filter((r) => r.status === 'rejected');
+
+			expect(fulfilled).toHaveLength(1);
+			expect(rejected).toHaveLength(1);
+			expect(
+				(fulfilled[0] as PromiseFulfilledResult<{ created: boolean }>).value,
+			).toEqual({
+				created: true,
+			});
+			expect((rejected[0] as PromiseRejectedResult).reason).toEqual(
+				expect.objectContaining({
+					message: 'Webhook signature already configured',
+				}),
+			);
+
+			const stored = await a.get_webhook_signature();
+			expect(stored === 'secret-a' || stored === 'secret-b').toBe(true);
+		} finally {
+			cleanup();
+		}
+	});
+});

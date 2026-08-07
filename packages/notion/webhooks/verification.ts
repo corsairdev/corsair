@@ -14,18 +14,37 @@ export const verification: NotionWebhooks['verification'] = {
 			};
 		}
 
-		ctx.keys.set_webhook_signature(request.payload.verification_token);
-		console.log(
-			`Enter this key in your Notion webhook verification modal: ${ctx.key}`,
-		);
+		const token = request.payload.verification_token;
+
+		try {
+			await ctx.keys.set_webhook_signature_if_absent(token);
+		} catch {
+			const existing = await ctx.keys.get_webhook_signature();
+			if (existing && existing !== token) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Invalid verification token',
+				};
+			}
+			if (!existing) {
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to persist verification token',
+				};
+			}
+		}
+
+		console.log('Notion webhook verification request received');
 
 		return {
 			success: true,
 			returnToSender: {
-				verification_token: request.payload.verification_token,
+				verification_token: token,
 			},
 			data: {
-				verification_token: request.payload.verification_token,
+				verification_token: token,
 				type: 'url_verification',
 			},
 		};

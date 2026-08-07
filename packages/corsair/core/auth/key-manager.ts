@@ -508,6 +508,88 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		await ctx.updateAccount({ config: encryptedConfig });
 	};
 
+	const setWebhookSignatureIfAbsent = (
+		value: string,
+	): Promise<{ created: boolean }> => {
+		const normalized = value.trim();
+		if (!normalized) {
+			return Promise.reject(new Error('Webhook signature cannot be empty'));
+		}
+
+		// Share the write chain so this can't race set_webhook_signature on the
+		// same manager instance. Cross-manager races use optimistic updated_at.
+		const run = configWriteChain.then(async () => {
+			for (let attempt = 0; attempt < 5; attempt++) {
+				cachedAccount = null;
+
+				const account = await ctx.getAccount();
+				const row = await database.db
+					.selectFrom('corsair_accounts')
+					.selectAll()
+					.where('id', '=', account.id)
+					.executeTakeFirstOrThrow();
+
+				if (!row.dek) {
+					throw new Error(
+						`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
+					);
+				}
+
+				const dek = await decryptDEK(row.dek, kek);
+				const rawConfig = parseConfig(row.config) as Record<string, string>;
+				const currentConfig =
+					!rawConfig || Object.keys(rawConfig).length === 0
+						? {}
+						: decryptConfig(rawConfig, dek);
+
+				const existing = currentConfig.webhook_signature;
+				if (existing) {
+					if (existing !== normalized) {
+						throw new Error('Webhook signature already configured');
+					}
+					return { created: false };
+				}
+
+				const encryptedConfig = encryptConfig(
+					{ ...currentConfig, webhook_signature: normalized },
+					dek,
+				);
+
+				// Optimistic lock on the opaque encrypted blob so a concurrent
+				// writer that landed first causes a clean retry instead of a
+				// silent overwrite.
+				const result = await database.db
+					.updateTable('corsair_accounts')
+					.set({
+						config: encryptedConfig,
+						updated_at: new Date(),
+					})
+					.where('id', '=', row.id)
+					.where('config', '=', row.config as any)
+					.executeTakeFirst();
+
+				const updated =
+					result.numUpdatedRows !== undefined && result.numUpdatedRows > 0n;
+
+				cachedAccount = null;
+				cachedDek = null;
+
+				if (updated) {
+					return { created: true };
+				}
+				// Lost the race — retry and re-evaluate.
+			}
+
+			throw new Error('Failed to set webhook signature atomically');
+		});
+
+		configWriteChain = run.then(
+			() => undefined,
+			() => undefined,
+		);
+		return run;
+	};
+
 	// Build the key manager
 	const manager: Record<string, unknown> = {
 		get_dek: getDecryptedDek,
@@ -536,6 +618,8 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			cachedDek = newDek;
 			return newDek;
 		},
+
+		set_webhook_signature_if_absent: setWebhookSignatureIfAbsent,
 
 		// Auto-generated field accessors
 		...createFieldAccessors(getDecryptedConfig, updateConfig, allFields),
