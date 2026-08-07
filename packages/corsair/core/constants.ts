@@ -34,6 +34,7 @@ export const BaseProviders = [
 	'canva',
 	'cloudflare',
 	'cloudinary',
+	'composio',
 	'confluence',
 	'cursor',
 	'databricks',
@@ -137,6 +138,7 @@ export const ProviderDisplayNames = {
 	canva: 'Canva',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
+	composio: 'Composio',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
@@ -247,6 +249,7 @@ export type AllProviders =
 	| 'canva'
 	| 'cloudflare'
 	| 'cloudinary'
+	| 'composio'
 	| 'confluence'
 	| 'cursor'
 	| 'databricks'
