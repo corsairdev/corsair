@@ -517,10 +517,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 					: decryptConfig(rawConfig, dek);
 		} catch (err) {
 			console.error(
-				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`,
+				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"):`,
 				err,
 			);
-			currentConfig = {};
+			// Never CAS-write from a failed decrypt — that would wipe real secrets.
+			throw err;
 		}
 
 		return { row, dek, currentConfig };

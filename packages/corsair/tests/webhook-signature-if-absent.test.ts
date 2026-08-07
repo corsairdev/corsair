@@ -190,4 +190,44 @@ describe('set_webhook_signature_if_absent', () => {
 			cleanup();
 		}
 	});
+
+	it('does not write when the stored config cannot be decrypted', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database);
+			const wrongDek = generateDEK();
+			await database.db
+				.updateTable('corsair_accounts')
+				.set({
+					config: encryptConfig({ access_token: 'tok' }, wrongDek),
+				})
+				.where('id', '=', 'account-default')
+				.execute();
+
+			const before = await database.db
+				.selectFrom('corsair_accounts')
+				.select('config')
+				.where('id', '=', 'account-default')
+				.executeTakeFirstOrThrow();
+
+			const km = makeManager(database);
+			const error = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+			await expect(
+				km.set_webhook_signature_if_absent('secret-a'),
+			).rejects.toThrow();
+
+			const after = await database.db
+				.selectFrom('corsair_accounts')
+				.select('config')
+				.where('id', '=', 'account-default')
+				.executeTakeFirstOrThrow();
+
+			expect(after.config).toEqual(before.config);
+
+			error.mockRestore();
+		} finally {
+			cleanup();
+		}
+	});
 });
