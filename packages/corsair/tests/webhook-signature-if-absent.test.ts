@@ -135,4 +135,23 @@ describe('set_webhook_signature_if_absent', () => {
 			cleanup();
 		}
 	});
+
+	it('does not let a concurrent set_* wipe a just-created signature', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database);
+			const registrar = makeManager(database);
+			const tokenWriter = makeManager(database);
+
+			await Promise.all([
+				registrar.set_webhook_signature_if_absent('secret-a'),
+				tokenWriter.set_access_token('tok-fresh'),
+			]);
+
+			expect(await registrar.get_webhook_signature()).toBe('secret-a');
+			expect(await tokenWriter.get_access_token()).toBe('tok-fresh');
+		} finally {
+			cleanup();
+		}
+	});
 });

@@ -468,9 +468,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		return decryptConfig(config, dek);
 	};
 
-	// Serialize config writes — same lost-update hazard as the integration
-	// manager above (this is what silently dropped Outlook's refreshed token
-	// when its keyBuilder persisted via Promise.all).
+	// Serialize config writes on this manager instance (same lost-update hazard
+	// that dropped Outlook's refreshed token under Promise.all). Cross-manager
+	// races use optimistic CAS on the opaque encrypted config blob below.
 	let configWriteChain: Promise<void> = Promise.resolve();
 	const updateConfig = (
 		updates: Record<string, string | null>,
@@ -480,13 +480,41 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		return run;
 	};
 
-	const doUpdateConfig = async (
-		updates: Record<string, string | null>,
-	): Promise<void> => {
-		const dek = await getDecryptedDek();
+	type AccountConfigRow = {
+		id: string;
+		config: unknown;
+		dek: string | null;
+	};
+
+	const loadFreshAccountConfig = async (): Promise<{
+		row: AccountConfigRow;
+		dek: string;
+		currentConfig: Record<string, string>;
+	}> => {
+		cachedAccount = null;
+		cachedDek = null;
+
+		const account = await ctx.getAccount();
+		const row = await database.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('id', '=', account.id)
+			.executeTakeFirstOrThrow();
+
+		if (!row.dek) {
+			throw new Error(
+				`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
+			);
+		}
+
+		const dek = await decryptDEK(row.dek, kek);
+		const rawConfig = parseConfig(row.config) as Record<string, string>;
 		let currentConfig: Record<string, string>;
 		try {
-			currentConfig = await getDecryptedConfig();
+			currentConfig =
+				!rawConfig || Object.keys(rawConfig).length === 0
+					? {}
+					: decryptConfig(rawConfig, dek);
 		} catch (err) {
 			console.error(
 				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`,
@@ -495,17 +523,53 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			currentConfig = {};
 		}
 
-		const newConfig = { ...currentConfig };
-		for (const [key, value] of Object.entries(updates)) {
-			if (value === null) {
-				delete newConfig[key];
-			} else {
-				newConfig[key] = value;
+		return { row, dek, currentConfig };
+	};
+
+	const casWriteAccountConfig = async (
+		row: AccountConfigRow,
+		encryptedConfig: Record<string, string>,
+	): Promise<boolean> => {
+		const result = await database.db
+			.updateTable('corsair_accounts')
+			.set({
+				config: encryptedConfig,
+				updated_at: new Date(),
+			})
+			.where('id', '=', row.id)
+			.where('config', '=', row.config as any)
+			.executeTakeFirst();
+
+		cachedAccount = null;
+		cachedDek = null;
+
+		return result.numUpdatedRows !== undefined && result.numUpdatedRows > 0n;
+	};
+
+	const doUpdateConfig = async (
+		updates: Record<string, string | null>,
+	): Promise<void> => {
+		for (let attempt = 0; attempt < 5; attempt++) {
+			const { row, dek, currentConfig } = await loadFreshAccountConfig();
+
+			const newConfig = { ...currentConfig };
+			for (const [key, value] of Object.entries(updates)) {
+				if (value === null) {
+					delete newConfig[key];
+				} else {
+					newConfig[key] = value;
+				}
+			}
+
+			const encryptedConfig = encryptConfig(newConfig, dek);
+			if (await casWriteAccountConfig(row, encryptedConfig)) {
+				return;
 			}
 		}
 
-		const encryptedConfig = encryptConfig(newConfig, dek);
-		await ctx.updateAccount({ config: encryptedConfig });
+		throw new Error(
+			`Failed to update account config atomically (tenant: "${tenantId}", integration: "${integrationName}")`,
+		);
 	};
 
 	const setWebhookSignatureIfAbsent = (
@@ -516,31 +580,11 @@ export function createAccountKeyManager<T extends AuthTypes>(
 			return Promise.reject(new Error('Webhook signature cannot be empty'));
 		}
 
-		// Share the write chain so this can't race set_webhook_signature on the
-		// same manager instance. Cross-manager races use optimistic updated_at.
+		// Share the write chain with set_* on this manager. Cross-manager races
+		// reuse the same optimistic config CAS as doUpdateConfig.
 		const run = configWriteChain.then(async () => {
 			for (let attempt = 0; attempt < 5; attempt++) {
-				cachedAccount = null;
-
-				const account = await ctx.getAccount();
-				const row = await database.db
-					.selectFrom('corsair_accounts')
-					.selectAll()
-					.where('id', '=', account.id)
-					.executeTakeFirstOrThrow();
-
-				if (!row.dek) {
-					throw new Error(
-						`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
-					);
-				}
-
-				const dek = await decryptDEK(row.dek, kek);
-				const rawConfig = parseConfig(row.config) as Record<string, string>;
-				const currentConfig =
-					!rawConfig || Object.keys(rawConfig).length === 0
-						? {}
-						: decryptConfig(rawConfig, dek);
+				const { row, dek, currentConfig } = await loadFreshAccountConfig();
 
 				const existing = currentConfig.webhook_signature;
 				if (existing) {
@@ -555,29 +599,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 					dek,
 				);
 
-				// Optimistic lock on the opaque encrypted blob so a concurrent
-				// writer that landed first causes a clean retry instead of a
-				// silent overwrite.
-				const result = await database.db
-					.updateTable('corsair_accounts')
-					.set({
-						config: encryptedConfig,
-						updated_at: new Date(),
-					})
-					.where('id', '=', row.id)
-					.where('config', '=', row.config as any)
-					.executeTakeFirst();
-
-				const updated =
-					result.numUpdatedRows !== undefined && result.numUpdatedRows > 0n;
-
-				cachedAccount = null;
-				cachedDek = null;
-
-				if (updated) {
+				if (await casWriteAccountConfig(row, encryptedConfig)) {
 					return { created: true };
 				}
-				// Lost the race — retry and re-evaluate.
 			}
 
 			throw new Error('Failed to set webhook signature atomically');
