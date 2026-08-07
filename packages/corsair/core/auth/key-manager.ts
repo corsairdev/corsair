@@ -529,16 +529,28 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	const casWriteAccountConfig = async (
 		row: AccountConfigRow,
 		encryptedConfig: Record<string, string>,
+		encryptedDek?: string,
 	): Promise<boolean> => {
-		const result = await database.db
+		let query = database.db
 			.updateTable('corsair_accounts')
 			.set({
 				config: encryptedConfig,
+				...(encryptedDek !== undefined ? { dek: encryptedDek } : {}),
 				updated_at: new Date(),
 			})
 			.where('id', '=', row.id)
-			.where('config', '=', row.config as any)
-			.executeTakeFirst();
+			.where('config', '=', row.config as any);
+
+		// DEK rotation also locks on the prior dek so a concurrent config write
+		// (or another rotator) forces a clean re-read instead of a blind overwrite.
+		if (encryptedDek !== undefined) {
+			query =
+				row.dek == null
+					? query.where('dek', 'is', null)
+					: query.where('dek', '=', row.dek);
+		}
+
+		const result = await query.executeTakeFirst();
 
 		cachedAccount = null;
 		cachedDek = null;
@@ -615,34 +627,53 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		return run;
 	};
 
+	const issueNewDek = (): Promise<string> => {
+		const run = configWriteChain.then(async () => {
+			for (let attempt = 0; attempt < 5; attempt++) {
+				cachedAccount = null;
+				cachedDek = null;
+
+				const account = await ctx.getAccount();
+				const row = await database.db
+					.selectFrom('corsair_accounts')
+					.selectAll()
+					.where('id', '=', account.id)
+					.executeTakeFirstOrThrow();
+
+				const newDek = generateDEK();
+				let newConfig: Record<string, string> = {};
+				if (row.dek) {
+					const oldDek = await decryptDEK(row.dek, kek);
+					const config = parseConfig(row.config) as Record<string, string>;
+					if (config && Object.keys(config).length > 0) {
+						newConfig = reEncryptConfig(config, oldDek, newDek);
+					}
+				}
+
+				const encryptedNewDek = await encryptDEK(newDek, kek);
+				if (await casWriteAccountConfig(row, newConfig, encryptedNewDek)) {
+					cachedDek = newDek;
+					return newDek;
+				}
+			}
+
+			throw new Error(
+				`Failed to rotate account DEK atomically (tenant: "${tenantId}", integration: "${integrationName}")`,
+			);
+		});
+
+		configWriteChain = run.then(
+			() => undefined,
+			() => undefined,
+		);
+		return run;
+	};
+
 	// Build the key manager
 	const manager: Record<string, unknown> = {
 		get_dek: getDecryptedDek,
 
-		issue_new_dek: async () => {
-			const account = await ctx.getAccount();
-			const newDek = generateDEK();
-
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
-			let newConfig: Record<string, string> = {};
-			if (account.dek) {
-				const oldDek = await decryptDEK(account.dek, kek);
-				const config = account.config as Record<string, string>;
-				if (config && Object.keys(config).length > 0) {
-					newConfig = reEncryptConfig(config, oldDek, newDek);
-				}
-			}
-
-			const encryptedNewDek = await encryptDEK(newDek, kek);
-
-			await ctx.updateAccount({
-				config: newConfig,
-				dek: encryptedNewDek,
-			});
-
-			cachedDek = newDek;
-			return newDek;
-		},
+		issue_new_dek: issueNewDek,
 
 		set_webhook_signature_if_absent: setWebhookSignatureIfAbsent,
 
