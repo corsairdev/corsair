@@ -16,6 +16,7 @@ export const BaseProviders = [
 	'abstract',
 	'activetrail',
 	'addresszen',
+	'agencyzoom',
 	'agentmail',
 	'agentql',
 	'ahrefs',
@@ -117,6 +118,7 @@ export const ProviderDisplayNames = {
 	abstract: 'Abstract',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
@@ -225,6 +227,7 @@ export type AllProviders =
 	| 'abstract'
 	| 'activetrail'
 	| 'addresszen'
+	| 'agencyzoom'
 	| 'agentmail'
 	| 'agentql'
 	| 'ahrefs'
