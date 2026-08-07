@@ -23,7 +23,9 @@ const AGENCYZOOM_API_BASE = 'https://api.agencyzoom.com/v1/api';
 
 export type AgencyZoomRequestOptions = {
 	method?: AgencyZoomMethod;
+	// body is unknown because request payloads vary per AgencyZoom endpoint and are built dynamically.
 	body?: unknown;
+	// query values are heterogeneous (pagination, filters); not fully typed across 99 ops.
 	query?: Record<string, unknown>;
 	headers?: Record<string, string>;
 };
@@ -40,10 +42,11 @@ export async function makeAgencyZoomRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
+		// Caller headers first; plugin-owned Authorization/Content-Type always win.
 		HEADERS: {
+			...headers,
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,
-			...headers,
 		},
 	};
 

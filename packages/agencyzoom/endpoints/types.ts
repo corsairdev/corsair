@@ -5,7 +5,9 @@ const AgencyZoomResponseSchema = z.unknown();
 // Optional raw JSON body passthrough for operations with complex or dynamic request payloads.
 const AgencyZoomOptionalBodySchema = z.unknown().optional();
 // Optional query filters vary by endpoint; values are heterogeneous JSON filter objects.
-const AgencyZoomQueryParamsSchema = z.record(z.string(), z.unknown()).optional();
+const AgencyZoomQueryParamsSchema = z
+	.record(z.string(), z.unknown())
+	.optional();
 // Batch item arrays contain heterogeneous lead/contact/task objects per AgencyZoom API docs.
 const AgencyZoomBatchItemsSchema = z.array(z.unknown());
 const AgencyZoomBatchItemsOptionalSchema = z.array(z.unknown()).optional();
@@ -25,9 +27,13 @@ const AuthenticateForJwtviaV4SsoInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type AuthenticateForJwtviaV4SsoInput = z.infer<typeof AuthenticateForJwtviaV4SsoInputSchema>;
+export type AuthenticateForJwtviaV4SsoInput = z.infer<
+	typeof AuthenticateForJwtviaV4SsoInputSchema
+>;
 const AuthenticateForJwtviaV4SsoResponseSchema = AgencyZoomResponseSchema;
-export type AuthenticateForJwtviaV4SsoResponse = z.infer<typeof AuthenticateForJwtviaV4SsoResponseSchema>;
+export type AuthenticateForJwtviaV4SsoResponse = z.infer<
+	typeof AuthenticateForJwtviaV4SsoResponseSchema
+>;
 
 // batchCreateContact
 const BatchCreateContactInputSchema = z.object({
@@ -36,9 +42,13 @@ const BatchCreateContactInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type BatchCreateContactInput = z.infer<typeof BatchCreateContactInputSchema>;
+export type BatchCreateContactInput = z.infer<
+	typeof BatchCreateContactInputSchema
+>;
 const BatchCreateContactResponseSchema = AgencyZoomResponseSchema;
-export type BatchCreateContactResponse = z.infer<typeof BatchCreateContactResponseSchema>;
+export type BatchCreateContactResponse = z.infer<
+	typeof BatchCreateContactResponseSchema
+>;
 
 // batchCreateLead
 const BatchCreateLeadInputSchema = z.object({
@@ -49,7 +59,9 @@ const BatchCreateLeadInputSchema = z.object({
 });
 export type BatchCreateLeadInput = z.infer<typeof BatchCreateLeadInputSchema>;
 const BatchCreateLeadResponseSchema = AgencyZoomResponseSchema;
-export type BatchCreateLeadResponse = z.infer<typeof BatchCreateLeadResponseSchema>;
+export type BatchCreateLeadResponse = z.infer<
+	typeof BatchCreateLeadResponseSchema
+>;
 
 // batchDeleteTask
 const BatchDeleteTaskInputSchema = z.object({
@@ -60,7 +72,9 @@ const BatchDeleteTaskInputSchema = z.object({
 });
 export type BatchDeleteTaskInput = z.infer<typeof BatchDeleteTaskInputSchema>;
 const BatchDeleteTaskResponseSchema = AgencyZoomResponseSchema;
-export type BatchDeleteTaskResponse = z.infer<typeof BatchDeleteTaskResponseSchema>;
+export type BatchDeleteTaskResponse = z.infer<
+	typeof BatchDeleteTaskResponseSchema
+>;
 
 // changeStatusForLead
 const ChangeStatusForLeadInputSchema = z.object({
@@ -80,9 +94,13 @@ const ChangeStatusForLeadInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ChangeStatusForLeadInput = z.infer<typeof ChangeStatusForLeadInputSchema>;
+export type ChangeStatusForLeadInput = z.infer<
+	typeof ChangeStatusForLeadInputSchema
+>;
 const ChangeStatusForLeadResponseSchema = AgencyZoomResponseSchema;
-export type ChangeStatusForLeadResponse = z.infer<typeof ChangeStatusForLeadResponseSchema>;
+export type ChangeStatusForLeadResponse = z.infer<
+	typeof ChangeStatusForLeadResponseSchema
+>;
 
 // completeTask
 const CompleteTaskInputSchema = z.object({
@@ -103,9 +121,13 @@ const CreateACustomerNoteInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateACustomerNoteInput = z.infer<typeof CreateACustomerNoteInputSchema>;
+export type CreateACustomerNoteInput = z.infer<
+	typeof CreateACustomerNoteInputSchema
+>;
 const CreateACustomerNoteResponseSchema = AgencyZoomResponseSchema;
-export type CreateACustomerNoteResponse = z.infer<typeof CreateACustomerNoteResponseSchema>;
+export type CreateACustomerNoteResponse = z.infer<
+	typeof CreateACustomerNoteResponseSchema
+>;
 
 // createADriverForAnOpportunity
 const CreateADriverForAnOpportunityInputSchema = z.object({
@@ -123,9 +145,13 @@ const CreateADriverForAnOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateADriverForAnOpportunityInput = z.infer<typeof CreateADriverForAnOpportunityInputSchema>;
+export type CreateADriverForAnOpportunityInput = z.infer<
+	typeof CreateADriverForAnOpportunityInputSchema
+>;
 const CreateADriverForAnOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type CreateADriverForAnOpportunityResponse = z.infer<typeof CreateADriverForAnOpportunityResponseSchema>;
+export type CreateADriverForAnOpportunityResponse = z.infer<
+	typeof CreateADriverForAnOpportunityResponseSchema
+>;
 
 // createALeadNote
 const CreateALeadNoteInputSchema = z.object({
@@ -137,7 +163,9 @@ const CreateALeadNoteInputSchema = z.object({
 });
 export type CreateALeadNoteInput = z.infer<typeof CreateALeadNoteInputSchema>;
 const CreateALeadNoteResponseSchema = AgencyZoomResponseSchema;
-export type CreateALeadNoteResponse = z.infer<typeof CreateALeadNoteResponseSchema>;
+export type CreateALeadNoteResponse = z.infer<
+	typeof CreateALeadNoteResponseSchema
+>;
 
 // createALeadOpportunity
 const CreateALeadOpportunityInputSchema = z.object({
@@ -151,9 +179,13 @@ const CreateALeadOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateALeadOpportunityInput = z.infer<typeof CreateALeadOpportunityInputSchema>;
+export type CreateALeadOpportunityInput = z.infer<
+	typeof CreateALeadOpportunityInputSchema
+>;
 const CreateALeadOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type CreateALeadOpportunityResponse = z.infer<typeof CreateALeadOpportunityResponseSchema>;
+export type CreateALeadOpportunityResponse = z.infer<
+	typeof CreateALeadOpportunityResponseSchema
+>;
 
 // createALeadQuote
 const CreateALeadQuoteInputSchema = z.object({
@@ -169,7 +201,9 @@ const CreateALeadQuoteInputSchema = z.object({
 });
 export type CreateALeadQuoteInput = z.infer<typeof CreateALeadQuoteInputSchema>;
 const CreateALeadQuoteResponseSchema = AgencyZoomResponseSchema;
-export type CreateALeadQuoteResponse = z.infer<typeof CreateALeadQuoteResponseSchema>;
+export type CreateALeadQuoteResponse = z.infer<
+	typeof CreateALeadQuoteResponseSchema
+>;
 
 // createAnOpportunity
 const CreateAnOpportunityInputSchema = z.object({
@@ -191,9 +225,13 @@ const CreateAnOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateAnOpportunityInput = z.infer<typeof CreateAnOpportunityInputSchema>;
+export type CreateAnOpportunityInput = z.infer<
+	typeof CreateAnOpportunityInputSchema
+>;
 const CreateAnOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type CreateAnOpportunityResponse = z.infer<typeof CreateAnOpportunityResponseSchema>;
+export type CreateAnOpportunityResponse = z.infer<
+	typeof CreateAnOpportunityResponseSchema
+>;
 
 // createAVehicleForAnOpportunity
 const CreateAVehicleForAnOpportunityInputSchema = z.object({
@@ -207,9 +245,13 @@ const CreateAVehicleForAnOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type CreateAVehicleForAnOpportunityInput = z.infer<typeof CreateAVehicleForAnOpportunityInputSchema>;
+export type CreateAVehicleForAnOpportunityInput = z.infer<
+	typeof CreateAVehicleForAnOpportunityInputSchema
+>;
 const CreateAVehicleForAnOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type CreateAVehicleForAnOpportunityResponse = z.infer<typeof CreateAVehicleForAnOpportunityResponseSchema>;
+export type CreateAVehicleForAnOpportunityResponse = z.infer<
+	typeof CreateAVehicleForAnOpportunityResponseSchema
+>;
 
 // createBizLead
 const CreateBizLeadInputSchema = z.object({
@@ -341,7 +383,9 @@ const DeleteACustomerInputSchema = z.object({
 });
 export type DeleteACustomerInput = z.infer<typeof DeleteACustomerInputSchema>;
 const DeleteACustomerResponseSchema = AgencyZoomResponseSchema;
-export type DeleteACustomerResponse = z.infer<typeof DeleteACustomerResponseSchema>;
+export type DeleteACustomerResponse = z.infer<
+	typeof DeleteACustomerResponseSchema
+>;
 
 // deleteACustomerFile
 const DeleteACustomerFileInputSchema = z.object({
@@ -351,9 +395,13 @@ const DeleteACustomerFileInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteACustomerFileInput = z.infer<typeof DeleteACustomerFileInputSchema>;
+export type DeleteACustomerFileInput = z.infer<
+	typeof DeleteACustomerFileInputSchema
+>;
 const DeleteACustomerFileResponseSchema = AgencyZoomResponseSchema;
-export type DeleteACustomerFileResponse = z.infer<typeof DeleteACustomerFileResponseSchema>;
+export type DeleteACustomerFileResponse = z.infer<
+	typeof DeleteACustomerFileResponseSchema
+>;
 
 // deleteACustomerPolicy
 const DeleteACustomerPolicyInputSchema = z.object({
@@ -363,9 +411,13 @@ const DeleteACustomerPolicyInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteACustomerPolicyInput = z.infer<typeof DeleteACustomerPolicyInputSchema>;
+export type DeleteACustomerPolicyInput = z.infer<
+	typeof DeleteACustomerPolicyInputSchema
+>;
 const DeleteACustomerPolicyResponseSchema = AgencyZoomResponseSchema;
-export type DeleteACustomerPolicyResponse = z.infer<typeof DeleteACustomerPolicyResponseSchema>;
+export type DeleteACustomerPolicyResponse = z.infer<
+	typeof DeleteACustomerPolicyResponseSchema
+>;
 
 // deleteADriver
 const DeleteADriverInputSchema = z.object({
@@ -388,7 +440,9 @@ const DeleteALeadFileInputSchema = z.object({
 });
 export type DeleteALeadFileInput = z.infer<typeof DeleteALeadFileInputSchema>;
 const DeleteALeadFileResponseSchema = AgencyZoomResponseSchema;
-export type DeleteALeadFileResponse = z.infer<typeof DeleteALeadFileResponseSchema>;
+export type DeleteALeadFileResponse = z.infer<
+	typeof DeleteALeadFileResponseSchema
+>;
 
 // deleteALeadOpportunity
 const DeleteALeadOpportunityInputSchema = z.object({
@@ -398,9 +452,13 @@ const DeleteALeadOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteALeadOpportunityInput = z.infer<typeof DeleteALeadOpportunityInputSchema>;
+export type DeleteALeadOpportunityInput = z.infer<
+	typeof DeleteALeadOpportunityInputSchema
+>;
 const DeleteALeadOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type DeleteALeadOpportunityResponse = z.infer<typeof DeleteALeadOpportunityResponseSchema>;
+export type DeleteALeadOpportunityResponse = z.infer<
+	typeof DeleteALeadOpportunityResponseSchema
+>;
 
 // deleteALeadQuote
 const DeleteALeadQuoteInputSchema = z.object({
@@ -412,7 +470,9 @@ const DeleteALeadQuoteInputSchema = z.object({
 });
 export type DeleteALeadQuoteInput = z.infer<typeof DeleteALeadQuoteInputSchema>;
 const DeleteALeadQuoteResponseSchema = AgencyZoomResponseSchema;
-export type DeleteALeadQuoteResponse = z.infer<typeof DeleteALeadQuoteResponseSchema>;
+export type DeleteALeadQuoteResponse = z.infer<
+	typeof DeleteALeadQuoteResponseSchema
+>;
 
 // deleteAnOpportunity
 const DeleteAnOpportunityInputSchema = z.object({
@@ -421,9 +481,13 @@ const DeleteAnOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type DeleteAnOpportunityInput = z.infer<typeof DeleteAnOpportunityInputSchema>;
+export type DeleteAnOpportunityInput = z.infer<
+	typeof DeleteAnOpportunityInputSchema
+>;
 const DeleteAnOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type DeleteAnOpportunityResponse = z.infer<typeof DeleteAnOpportunityResponseSchema>;
+export type DeleteAnOpportunityResponse = z.infer<
+	typeof DeleteAnOpportunityResponseSchema
+>;
 
 // deleteATask
 const DeleteATaskInputSchema = z.object({
@@ -445,7 +509,9 @@ const DeleteAVehicleInputSchema = z.object({
 });
 export type DeleteAVehicleInput = z.infer<typeof DeleteAVehicleInputSchema>;
 const DeleteAVehicleResponseSchema = AgencyZoomResponseSchema;
-export type DeleteAVehicleResponse = z.infer<typeof DeleteAVehicleResponseSchema>;
+export type DeleteAVehicleResponse = z.infer<
+	typeof DeleteAVehicleResponseSchema
+>;
 
 // deleteMessage
 const DeleteMessageInputSchema = z.object({
@@ -475,9 +541,13 @@ const GetAListOfAssignGroupsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfAssignGroupsInput = z.infer<typeof GetAListOfAssignGroupsInputSchema>;
+export type GetAListOfAssignGroupsInput = z.infer<
+	typeof GetAListOfAssignGroupsInputSchema
+>;
 const GetAListOfAssignGroupsResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfAssignGroupsResponse = z.infer<typeof GetAListOfAssignGroupsResponseSchema>;
+export type GetAListOfAssignGroupsResponse = z.infer<
+	typeof GetAListOfAssignGroupsResponseSchema
+>;
 
 // getAListOfCarriers
 const GetAListOfCarriersInputSchema = z.object({
@@ -485,9 +555,13 @@ const GetAListOfCarriersInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfCarriersInput = z.infer<typeof GetAListOfCarriersInputSchema>;
+export type GetAListOfCarriersInput = z.infer<
+	typeof GetAListOfCarriersInputSchema
+>;
 const GetAListOfCarriersResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfCarriersResponse = z.infer<typeof GetAListOfCarriersResponseSchema>;
+export type GetAListOfCarriersResponse = z.infer<
+	typeof GetAListOfCarriersResponseSchema
+>;
 
 // getAListOfCsrs
 const GetAListOfCsrsInputSchema = z.object({
@@ -497,7 +571,9 @@ const GetAListOfCsrsInputSchema = z.object({
 });
 export type GetAListOfCsrsInput = z.infer<typeof GetAListOfCsrsInputSchema>;
 const GetAListOfCsrsResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfCsrsResponse = z.infer<typeof GetAListOfCsrsResponseSchema>;
+export type GetAListOfCsrsResponse = z.infer<
+	typeof GetAListOfCsrsResponseSchema
+>;
 
 // getAListOfCustomFields
 const GetAListOfCustomFieldsInputSchema = z.object({
@@ -505,9 +581,13 @@ const GetAListOfCustomFieldsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfCustomFieldsInput = z.infer<typeof GetAListOfCustomFieldsInputSchema>;
+export type GetAListOfCustomFieldsInput = z.infer<
+	typeof GetAListOfCustomFieldsInputSchema
+>;
 const GetAListOfCustomFieldsResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfCustomFieldsResponse = z.infer<typeof GetAListOfCustomFieldsResponseSchema>;
+export type GetAListOfCustomFieldsResponse = z.infer<
+	typeof GetAListOfCustomFieldsResponseSchema
+>;
 
 // getAListOfDriversForAnOpportunity
 const GetAListOfDriversForAnOpportunityInputSchema = z.object({
@@ -516,9 +596,14 @@ const GetAListOfDriversForAnOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfDriversForAnOpportunityInput = z.infer<typeof GetAListOfDriversForAnOpportunityInputSchema>;
-const GetAListOfDriversForAnOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfDriversForAnOpportunityResponse = z.infer<typeof GetAListOfDriversForAnOpportunityResponseSchema>;
+export type GetAListOfDriversForAnOpportunityInput = z.infer<
+	typeof GetAListOfDriversForAnOpportunityInputSchema
+>;
+const GetAListOfDriversForAnOpportunityResponseSchema =
+	AgencyZoomResponseSchema;
+export type GetAListOfDriversForAnOpportunityResponse = z.infer<
+	typeof GetAListOfDriversForAnOpportunityResponseSchema
+>;
 
 // getAListOfEmployees
 const GetAListOfEmployeesInputSchema = z.object({
@@ -526,9 +611,13 @@ const GetAListOfEmployeesInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfEmployeesInput = z.infer<typeof GetAListOfEmployeesInputSchema>;
+export type GetAListOfEmployeesInput = z.infer<
+	typeof GetAListOfEmployeesInputSchema
+>;
 const GetAListOfEmployeesResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfEmployeesResponse = z.infer<typeof GetAListOfEmployeesResponseSchema>;
+export type GetAListOfEmployeesResponse = z.infer<
+	typeof GetAListOfEmployeesResponseSchema
+>;
 
 // getAListOfLeadSourceCategories
 const GetAListOfLeadSourceCategoriesInputSchema = z.object({
@@ -536,9 +625,13 @@ const GetAListOfLeadSourceCategoriesInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfLeadSourceCategoriesInput = z.infer<typeof GetAListOfLeadSourceCategoriesInputSchema>;
+export type GetAListOfLeadSourceCategoriesInput = z.infer<
+	typeof GetAListOfLeadSourceCategoriesInputSchema
+>;
 const GetAListOfLeadSourceCategoriesResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfLeadSourceCategoriesResponse = z.infer<typeof GetAListOfLeadSourceCategoriesResponseSchema>;
+export type GetAListOfLeadSourceCategoriesResponse = z.infer<
+	typeof GetAListOfLeadSourceCategoriesResponseSchema
+>;
 
 // getAListOfLeadSources
 const GetAListOfLeadSourcesInputSchema = z.object({
@@ -546,9 +639,13 @@ const GetAListOfLeadSourcesInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfLeadSourcesInput = z.infer<typeof GetAListOfLeadSourcesInputSchema>;
+export type GetAListOfLeadSourcesInput = z.infer<
+	typeof GetAListOfLeadSourcesInputSchema
+>;
 const GetAListOfLeadSourcesResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfLeadSourcesResponse = z.infer<typeof GetAListOfLeadSourcesResponseSchema>;
+export type GetAListOfLeadSourcesResponse = z.infer<
+	typeof GetAListOfLeadSourcesResponseSchema
+>;
 
 // getAListOfLifeProfessionals
 const GetAListOfLifeProfessionalsInputSchema = z.object({
@@ -556,9 +653,13 @@ const GetAListOfLifeProfessionalsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfLifeProfessionalsInput = z.infer<typeof GetAListOfLifeProfessionalsInputSchema>;
+export type GetAListOfLifeProfessionalsInput = z.infer<
+	typeof GetAListOfLifeProfessionalsInputSchema
+>;
 const GetAListOfLifeProfessionalsResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfLifeProfessionalsResponse = z.infer<typeof GetAListOfLifeProfessionalsResponseSchema>;
+export type GetAListOfLifeProfessionalsResponse = z.infer<
+	typeof GetAListOfLifeProfessionalsResponseSchema
+>;
 
 // getAListOfLocations
 const GetAListOfLocationsInputSchema = z.object({
@@ -566,9 +667,13 @@ const GetAListOfLocationsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfLocationsInput = z.infer<typeof GetAListOfLocationsInputSchema>;
+export type GetAListOfLocationsInput = z.infer<
+	typeof GetAListOfLocationsInputSchema
+>;
 const GetAListOfLocationsResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfLocationsResponse = z.infer<typeof GetAListOfLocationsResponseSchema>;
+export type GetAListOfLocationsResponse = z.infer<
+	typeof GetAListOfLocationsResponseSchema
+>;
 
 // getAListOfLossReasons
 const GetAListOfLossReasonsInputSchema = z.object({
@@ -576,9 +681,13 @@ const GetAListOfLossReasonsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfLossReasonsInput = z.infer<typeof GetAListOfLossReasonsInputSchema>;
+export type GetAListOfLossReasonsInput = z.infer<
+	typeof GetAListOfLossReasonsInputSchema
+>;
 const GetAListOfLossReasonsResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfLossReasonsResponse = z.infer<typeof GetAListOfLossReasonsResponseSchema>;
+export type GetAListOfLossReasonsResponse = z.infer<
+	typeof GetAListOfLossReasonsResponseSchema
+>;
 
 // getAListOfPipelines
 const GetAListOfPipelinesInputSchema = z.object({
@@ -586,9 +695,13 @@ const GetAListOfPipelinesInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfPipelinesInput = z.infer<typeof GetAListOfPipelinesInputSchema>;
+export type GetAListOfPipelinesInput = z.infer<
+	typeof GetAListOfPipelinesInputSchema
+>;
 const GetAListOfPipelinesResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfPipelinesResponse = z.infer<typeof GetAListOfPipelinesResponseSchema>;
+export type GetAListOfPipelinesResponse = z.infer<
+	typeof GetAListOfPipelinesResponseSchema
+>;
 
 // getAListOfProducer
 const GetAListOfProducerInputSchema = z.object({
@@ -596,9 +709,13 @@ const GetAListOfProducerInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfProducerInput = z.infer<typeof GetAListOfProducerInputSchema>;
+export type GetAListOfProducerInput = z.infer<
+	typeof GetAListOfProducerInputSchema
+>;
 const GetAListOfProducerResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfProducerResponse = z.infer<typeof GetAListOfProducerResponseSchema>;
+export type GetAListOfProducerResponse = z.infer<
+	typeof GetAListOfProducerResponseSchema
+>;
 
 // getAListOfProductLinesPolicyTypes
 const GetAListOfProductLinesPolicyTypesInputSchema = z.object({
@@ -606,9 +723,14 @@ const GetAListOfProductLinesPolicyTypesInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfProductLinesPolicyTypesInput = z.infer<typeof GetAListOfProductLinesPolicyTypesInputSchema>;
-const GetAListOfProductLinesPolicyTypesResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfProductLinesPolicyTypesResponse = z.infer<typeof GetAListOfProductLinesPolicyTypesResponseSchema>;
+export type GetAListOfProductLinesPolicyTypesInput = z.infer<
+	typeof GetAListOfProductLinesPolicyTypesInputSchema
+>;
+const GetAListOfProductLinesPolicyTypesResponseSchema =
+	AgencyZoomResponseSchema;
+export type GetAListOfProductLinesPolicyTypesResponse = z.infer<
+	typeof GetAListOfProductLinesPolicyTypesResponseSchema
+>;
 
 // getAListOfRecycleEvents
 const GetAListOfRecycleEventsInputSchema = z.object({
@@ -617,9 +739,13 @@ const GetAListOfRecycleEventsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfRecycleEventsInput = z.infer<typeof GetAListOfRecycleEventsInputSchema>;
+export type GetAListOfRecycleEventsInput = z.infer<
+	typeof GetAListOfRecycleEventsInputSchema
+>;
 const GetAListOfRecycleEventsResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfRecycleEventsResponse = z.infer<typeof GetAListOfRecycleEventsResponseSchema>;
+export type GetAListOfRecycleEventsResponse = z.infer<
+	typeof GetAListOfRecycleEventsResponseSchema
+>;
 
 // getAListOfVehiclesForAnOpportunity
 const GetAListOfVehiclesForAnOpportunityInputSchema = z.object({
@@ -628,9 +754,14 @@ const GetAListOfVehiclesForAnOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAListOfVehiclesForAnOpportunityInput = z.infer<typeof GetAListOfVehiclesForAnOpportunityInputSchema>;
-const GetAListOfVehiclesForAnOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type GetAListOfVehiclesForAnOpportunityResponse = z.infer<typeof GetAListOfVehiclesForAnOpportunityResponseSchema>;
+export type GetAListOfVehiclesForAnOpportunityInput = z.infer<
+	typeof GetAListOfVehiclesForAnOpportunityInputSchema
+>;
+const GetAListOfVehiclesForAnOpportunityResponseSchema =
+	AgencyZoomResponseSchema;
+export type GetAListOfVehiclesForAnOpportunityResponse = z.infer<
+	typeof GetAListOfVehiclesForAnOpportunityResponseSchema
+>;
 
 // getAmsPoliciesForACustomer
 const GetAmsPoliciesForACustomerInputSchema = z.object({
@@ -639,9 +770,13 @@ const GetAmsPoliciesForACustomerInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAmsPoliciesForACustomerInput = z.infer<typeof GetAmsPoliciesForACustomerInputSchema>;
+export type GetAmsPoliciesForACustomerInput = z.infer<
+	typeof GetAmsPoliciesForACustomerInputSchema
+>;
 const GetAmsPoliciesForACustomerResponseSchema = AgencyZoomResponseSchema;
-export type GetAmsPoliciesForACustomerResponse = z.infer<typeof GetAmsPoliciesForACustomerResponseSchema>;
+export type GetAmsPoliciesForACustomerResponse = z.infer<
+	typeof GetAmsPoliciesForACustomerResponseSchema
+>;
 
 // getAuthUrlForV4Sso
 const GetAuthUrlForV4SsoInputSchema = z.object({
@@ -649,9 +784,13 @@ const GetAuthUrlForV4SsoInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetAuthUrlForV4SsoInput = z.infer<typeof GetAuthUrlForV4SsoInputSchema>;
+export type GetAuthUrlForV4SsoInput = z.infer<
+	typeof GetAuthUrlForV4SsoInputSchema
+>;
 const GetAuthUrlForV4SsoResponseSchema = AgencyZoomResponseSchema;
-export type GetAuthUrlForV4SsoResponse = z.infer<typeof GetAuthUrlForV4SsoResponseSchema>;
+export type GetAuthUrlForV4SsoResponse = z.infer<
+	typeof GetAuthUrlForV4SsoResponseSchema
+>;
 
 // getDepartmentsGroups
 const GetDepartmentsGroupsInputSchema = z.object({
@@ -660,9 +799,13 @@ const GetDepartmentsGroupsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetDepartmentsGroupsInput = z.infer<typeof GetDepartmentsGroupsInputSchema>;
+export type GetDepartmentsGroupsInput = z.infer<
+	typeof GetDepartmentsGroupsInputSchema
+>;
 const GetDepartmentsGroupsResponseSchema = AgencyZoomResponseSchema;
-export type GetDepartmentsGroupsResponse = z.infer<typeof GetDepartmentsGroupsResponseSchema>;
+export type GetDepartmentsGroupsResponse = z.infer<
+	typeof GetDepartmentsGroupsResponseSchema
+>;
 
 // getLeadFiles
 const GetLeadFilesInputSchema = z.object({
@@ -714,9 +857,13 @@ const GetListOfEndStagesInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetListOfEndStagesInput = z.infer<typeof GetListOfEndStagesInputSchema>;
+export type GetListOfEndStagesInput = z.infer<
+	typeof GetListOfEndStagesInputSchema
+>;
 const GetListOfEndStagesResponseSchema = AgencyZoomResponseSchema;
-export type GetListOfEndStagesResponse = z.infer<typeof GetListOfEndStagesResponseSchema>;
+export type GetListOfEndStagesResponse = z.infer<
+	typeof GetListOfEndStagesResponseSchema
+>;
 
 // getPoliciesForACustomer
 const GetPoliciesForACustomerInputSchema = z.object({
@@ -725,9 +872,13 @@ const GetPoliciesForACustomerInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetPoliciesForACustomerInput = z.infer<typeof GetPoliciesForACustomerInputSchema>;
+export type GetPoliciesForACustomerInput = z.infer<
+	typeof GetPoliciesForACustomerInputSchema
+>;
 const GetPoliciesForACustomerResponseSchema = AgencyZoomResponseSchema;
-export type GetPoliciesForACustomerResponse = z.infer<typeof GetPoliciesForACustomerResponseSchema>;
+export type GetPoliciesForACustomerResponse = z.infer<
+	typeof GetPoliciesForACustomerResponseSchema
+>;
 
 // getTheCustomerDetails
 const GetTheCustomerDetailsInputSchema = z.object({
@@ -736,9 +887,13 @@ const GetTheCustomerDetailsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetTheCustomerDetailsInput = z.infer<typeof GetTheCustomerDetailsInputSchema>;
+export type GetTheCustomerDetailsInput = z.infer<
+	typeof GetTheCustomerDetailsInputSchema
+>;
 const GetTheCustomerDetailsResponseSchema = AgencyZoomResponseSchema;
-export type GetTheCustomerDetailsResponse = z.infer<typeof GetTheCustomerDetailsResponseSchema>;
+export type GetTheCustomerDetailsResponse = z.infer<
+	typeof GetTheCustomerDetailsResponseSchema
+>;
 
 // getTheCustomerTasks
 const GetTheCustomerTasksInputSchema = z.object({
@@ -747,9 +902,13 @@ const GetTheCustomerTasksInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetTheCustomerTasksInput = z.infer<typeof GetTheCustomerTasksInputSchema>;
+export type GetTheCustomerTasksInput = z.infer<
+	typeof GetTheCustomerTasksInputSchema
+>;
 const GetTheCustomerTasksResponseSchema = AgencyZoomResponseSchema;
-export type GetTheCustomerTasksResponse = z.infer<typeof GetTheCustomerTasksResponseSchema>;
+export type GetTheCustomerTasksResponse = z.infer<
+	typeof GetTheCustomerTasksResponseSchema
+>;
 
 // getTheDriverDetails
 const GetTheDriverDetailsInputSchema = z.object({
@@ -758,9 +917,13 @@ const GetTheDriverDetailsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetTheDriverDetailsInput = z.infer<typeof GetTheDriverDetailsInputSchema>;
+export type GetTheDriverDetailsInput = z.infer<
+	typeof GetTheDriverDetailsInputSchema
+>;
 const GetTheDriverDetailsResponseSchema = AgencyZoomResponseSchema;
-export type GetTheDriverDetailsResponse = z.infer<typeof GetTheDriverDetailsResponseSchema>;
+export type GetTheDriverDetailsResponse = z.infer<
+	typeof GetTheDriverDetailsResponseSchema
+>;
 
 // getTheLeadDetails
 const GetTheLeadDetailsInputSchema = z.object({
@@ -769,9 +932,13 @@ const GetTheLeadDetailsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetTheLeadDetailsInput = z.infer<typeof GetTheLeadDetailsInputSchema>;
+export type GetTheLeadDetailsInput = z.infer<
+	typeof GetTheLeadDetailsInputSchema
+>;
 const GetTheLeadDetailsResponseSchema = AgencyZoomResponseSchema;
-export type GetTheLeadDetailsResponse = z.infer<typeof GetTheLeadDetailsResponseSchema>;
+export type GetTheLeadDetailsResponse = z.infer<
+	typeof GetTheLeadDetailsResponseSchema
+>;
 
 // getTheOpportunitiesForALead
 const GetTheOpportunitiesForALeadInputSchema = z.object({
@@ -780,9 +947,13 @@ const GetTheOpportunitiesForALeadInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetTheOpportunitiesForALeadInput = z.infer<typeof GetTheOpportunitiesForALeadInputSchema>;
+export type GetTheOpportunitiesForALeadInput = z.infer<
+	typeof GetTheOpportunitiesForALeadInputSchema
+>;
 const GetTheOpportunitiesForALeadResponseSchema = AgencyZoomResponseSchema;
-export type GetTheOpportunitiesForALeadResponse = z.infer<typeof GetTheOpportunitiesForALeadResponseSchema>;
+export type GetTheOpportunitiesForALeadResponse = z.infer<
+	typeof GetTheOpportunitiesForALeadResponseSchema
+>;
 
 // getTheOpportunityDetails
 const GetTheOpportunityDetailsInputSchema = z.object({
@@ -791,9 +962,13 @@ const GetTheOpportunityDetailsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetTheOpportunityDetailsInput = z.infer<typeof GetTheOpportunityDetailsInputSchema>;
+export type GetTheOpportunityDetailsInput = z.infer<
+	typeof GetTheOpportunityDetailsInputSchema
+>;
 const GetTheOpportunityDetailsResponseSchema = AgencyZoomResponseSchema;
-export type GetTheOpportunityDetailsResponse = z.infer<typeof GetTheOpportunityDetailsResponseSchema>;
+export type GetTheOpportunityDetailsResponse = z.infer<
+	typeof GetTheOpportunityDetailsResponseSchema
+>;
 
 // getTheTaskDetails
 const GetTheTaskDetailsInputSchema = z.object({
@@ -802,9 +977,13 @@ const GetTheTaskDetailsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetTheTaskDetailsInput = z.infer<typeof GetTheTaskDetailsInputSchema>;
+export type GetTheTaskDetailsInput = z.infer<
+	typeof GetTheTaskDetailsInputSchema
+>;
 const GetTheTaskDetailsResponseSchema = AgencyZoomResponseSchema;
-export type GetTheTaskDetailsResponse = z.infer<typeof GetTheTaskDetailsResponseSchema>;
+export type GetTheTaskDetailsResponse = z.infer<
+	typeof GetTheTaskDetailsResponseSchema
+>;
 
 // getTheVehicleDetails
 const GetTheVehicleDetailsInputSchema = z.object({
@@ -813,9 +992,13 @@ const GetTheVehicleDetailsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type GetTheVehicleDetailsInput = z.infer<typeof GetTheVehicleDetailsInputSchema>;
+export type GetTheVehicleDetailsInput = z.infer<
+	typeof GetTheVehicleDetailsInputSchema
+>;
 const GetTheVehicleDetailsResponseSchema = AgencyZoomResponseSchema;
-export type GetTheVehicleDetailsResponse = z.infer<typeof GetTheVehicleDetailsResponseSchema>;
+export type GetTheVehicleDetailsResponse = z.infer<
+	typeof GetTheVehicleDetailsResponseSchema
+>;
 
 // getThreadDetails
 const GetThreadDetailsInputSchema = z.object({
@@ -825,7 +1008,9 @@ const GetThreadDetailsInputSchema = z.object({
 });
 export type GetThreadDetailsInput = z.infer<typeof GetThreadDetailsInputSchema>;
 const GetThreadDetailsResponseSchema = AgencyZoomResponseSchema;
-export type GetThreadDetailsResponse = z.infer<typeof GetThreadDetailsResponseSchema>;
+export type GetThreadDetailsResponse = z.infer<
+	typeof GetThreadDetailsResponseSchema
+>;
 
 // linkADriverToOpportunity
 const LinkADriverToOpportunityInputSchema = z.object({
@@ -835,9 +1020,13 @@ const LinkADriverToOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type LinkADriverToOpportunityInput = z.infer<typeof LinkADriverToOpportunityInputSchema>;
+export type LinkADriverToOpportunityInput = z.infer<
+	typeof LinkADriverToOpportunityInputSchema
+>;
 const LinkADriverToOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type LinkADriverToOpportunityResponse = z.infer<typeof LinkADriverToOpportunityResponseSchema>;
+export type LinkADriverToOpportunityResponse = z.infer<
+	typeof LinkADriverToOpportunityResponseSchema
+>;
 
 // linkAVehicleToOpportunity
 const LinkAVehicleToOpportunityInputSchema = z.object({
@@ -847,9 +1036,13 @@ const LinkAVehicleToOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type LinkAVehicleToOpportunityInput = z.infer<typeof LinkAVehicleToOpportunityInputSchema>;
+export type LinkAVehicleToOpportunityInput = z.infer<
+	typeof LinkAVehicleToOpportunityInputSchema
+>;
 const LinkAVehicleToOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type LinkAVehicleToOpportunityResponse = z.infer<typeof LinkAVehicleToOpportunityResponseSchema>;
+export type LinkAVehicleToOpportunityResponse = z.infer<
+	typeof LinkAVehicleToOpportunityResponseSchema
+>;
 
 // listProductCategories
 const ListProductCategoriesInputSchema = z.object({
@@ -857,9 +1050,13 @@ const ListProductCategoriesInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ListProductCategoriesInput = z.infer<typeof ListProductCategoriesInputSchema>;
+export type ListProductCategoriesInput = z.infer<
+	typeof ListProductCategoriesInputSchema
+>;
 const ListProductCategoriesResponseSchema = AgencyZoomResponseSchema;
-export type ListProductCategoriesResponse = z.infer<typeof ListProductCategoriesResponseSchema>;
+export type ListProductCategoriesResponse = z.infer<
+	typeof ListProductCategoriesResponseSchema
+>;
 
 // logTheUserIn
 const LogTheUserInInputSchema = z.object({
@@ -891,9 +1088,13 @@ const MarkThreadAsUnreadApiEndpointInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type MarkThreadAsUnreadApiEndpointInput = z.infer<typeof MarkThreadAsUnreadApiEndpointInputSchema>;
+export type MarkThreadAsUnreadApiEndpointInput = z.infer<
+	typeof MarkThreadAsUnreadApiEndpointInputSchema
+>;
 const MarkThreadAsUnreadApiEndpointResponseSchema = AgencyZoomResponseSchema;
-export type MarkThreadAsUnreadApiEndpointResponse = z.infer<typeof MarkThreadAsUnreadApiEndpointResponseSchema>;
+export type MarkThreadAsUnreadApiEndpointResponse = z.infer<
+	typeof MarkThreadAsUnreadApiEndpointResponseSchema
+>;
 
 // moveLeadToSold
 const MoveLeadToSoldInputSchema = z.object({
@@ -906,7 +1107,9 @@ const MoveLeadToSoldInputSchema = z.object({
 });
 export type MoveLeadToSoldInput = z.infer<typeof MoveLeadToSoldInputSchema>;
 const MoveLeadToSoldResponseSchema = AgencyZoomResponseSchema;
-export type MoveLeadToSoldResponse = z.infer<typeof MoveLeadToSoldResponseSchema>;
+export type MoveLeadToSoldResponse = z.infer<
+	typeof MoveLeadToSoldResponseSchema
+>;
 
 // removeTextThreadEndpoint
 const RemoveTextThreadEndpointInputSchema = z.object({
@@ -915,9 +1118,13 @@ const RemoveTextThreadEndpointInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type RemoveTextThreadEndpointInput = z.infer<typeof RemoveTextThreadEndpointInputSchema>;
+export type RemoveTextThreadEndpointInput = z.infer<
+	typeof RemoveTextThreadEndpointInputSchema
+>;
 const RemoveTextThreadEndpointResponseSchema = AgencyZoomResponseSchema;
-export type RemoveTextThreadEndpointResponse = z.infer<typeof RemoveTextThreadEndpointResponseSchema>;
+export type RemoveTextThreadEndpointResponse = z.infer<
+	typeof RemoveTextThreadEndpointResponseSchema
+>;
 
 // reopenATask
 const ReopenATaskInputSchema = z.object({
@@ -931,75 +1138,74 @@ export type ReopenATaskInput = z.infer<typeof ReopenATaskInputSchema>;
 const ReopenATaskResponseSchema = AgencyZoomResponseSchema;
 export type ReopenATaskResponse = z.infer<typeof ReopenATaskResponseSchema>;
 
+// Open-ended POST search bodies: keep known control keys typed, pass through filter fields.
+const AgencyZoomSearchInputSchema = z
+	.object({
+		body: AgencyZoomOptionalBodySchema,
+		query: AgencyZoomQueryParamsSchema,
+		headers: z.record(z.string(), z.string()).optional(),
+	})
+	.passthrough();
+
 // searchBusinessClassifications
-const SearchBusinessClassificationsInputSchema = z.object({
-	body: AgencyZoomOptionalBodySchema,
-	query: AgencyZoomQueryParamsSchema,
-	headers: z.record(z.string(), z.string()).optional(),
-});
-export type SearchBusinessClassificationsInput = z.infer<typeof SearchBusinessClassificationsInputSchema>;
+const SearchBusinessClassificationsInputSchema = AgencyZoomSearchInputSchema;
+export type SearchBusinessClassificationsInput = z.infer<
+	typeof SearchBusinessClassificationsInputSchema
+>;
 const SearchBusinessClassificationsResponseSchema = AgencyZoomResponseSchema;
-export type SearchBusinessClassificationsResponse = z.infer<typeof SearchBusinessClassificationsResponseSchema>;
+export type SearchBusinessClassificationsResponse = z.infer<
+	typeof SearchBusinessClassificationsResponseSchema
+>;
 
 // searchCustomers
-const SearchCustomersInputSchema = z.object({
-	body: AgencyZoomOptionalBodySchema,
-	query: AgencyZoomQueryParamsSchema,
-	headers: z.record(z.string(), z.string()).optional(),
-});
+const SearchCustomersInputSchema = AgencyZoomSearchInputSchema;
 export type SearchCustomersInput = z.infer<typeof SearchCustomersInputSchema>;
 const SearchCustomersResponseSchema = AgencyZoomResponseSchema;
-export type SearchCustomersResponse = z.infer<typeof SearchCustomersResponseSchema>;
+export type SearchCustomersResponse = z.infer<
+	typeof SearchCustomersResponseSchema
+>;
 
 // searchEmailThreads
-const SearchEmailThreadsInputSchema = z.object({
-	body: AgencyZoomOptionalBodySchema,
-	query: AgencyZoomQueryParamsSchema,
-	headers: z.record(z.string(), z.string()).optional(),
-});
-export type SearchEmailThreadsInput = z.infer<typeof SearchEmailThreadsInputSchema>;
+const SearchEmailThreadsInputSchema = AgencyZoomSearchInputSchema;
+export type SearchEmailThreadsInput = z.infer<
+	typeof SearchEmailThreadsInputSchema
+>;
 const SearchEmailThreadsResponseSchema = AgencyZoomResponseSchema;
-export type SearchEmailThreadsResponse = z.infer<typeof SearchEmailThreadsResponseSchema>;
+export type SearchEmailThreadsResponse = z.infer<
+	typeof SearchEmailThreadsResponseSchema
+>;
 
 // searchLeads
-const SearchLeadsInputSchema = z.object({
-	body: AgencyZoomOptionalBodySchema,
-	query: AgencyZoomQueryParamsSchema,
-	headers: z.record(z.string(), z.string()).optional(),
-});
+const SearchLeadsInputSchema = AgencyZoomSearchInputSchema;
 export type SearchLeadsInput = z.infer<typeof SearchLeadsInputSchema>;
 const SearchLeadsResponseSchema = AgencyZoomResponseSchema;
 export type SearchLeadsResponse = z.infer<typeof SearchLeadsResponseSchema>;
 
 // searchLeadsCount
-const SearchLeadsCountInputSchema = z.object({
-	body: AgencyZoomOptionalBodySchema,
-	query: AgencyZoomQueryParamsSchema,
-	headers: z.record(z.string(), z.string()).optional(),
-});
+const SearchLeadsCountInputSchema = AgencyZoomSearchInputSchema;
 export type SearchLeadsCountInput = z.infer<typeof SearchLeadsCountInputSchema>;
 const SearchLeadsCountResponseSchema = AgencyZoomResponseSchema;
-export type SearchLeadsCountResponse = z.infer<typeof SearchLeadsCountResponseSchema>;
+export type SearchLeadsCountResponse = z.infer<
+	typeof SearchLeadsCountResponseSchema
+>;
 
 // searchLifeAndHealthLeads
-const SearchLifeAndHealthLeadsInputSchema = z.object({
-	body: AgencyZoomOptionalBodySchema,
-	query: AgencyZoomQueryParamsSchema,
-	headers: z.record(z.string(), z.string()).optional(),
-});
-export type SearchLifeAndHealthLeadsInput = z.infer<typeof SearchLifeAndHealthLeadsInputSchema>;
+const SearchLifeAndHealthLeadsInputSchema = AgencyZoomSearchInputSchema;
+export type SearchLifeAndHealthLeadsInput = z.infer<
+	typeof SearchLifeAndHealthLeadsInputSchema
+>;
 const SearchLifeAndHealthLeadsResponseSchema = AgencyZoomResponseSchema;
-export type SearchLifeAndHealthLeadsResponse = z.infer<typeof SearchLifeAndHealthLeadsResponseSchema>;
+export type SearchLifeAndHealthLeadsResponse = z.infer<
+	typeof SearchLifeAndHealthLeadsResponseSchema
+>;
 
 // searchSmsThreads
-const SearchSmsThreadsInputSchema = z.object({
-	body: AgencyZoomOptionalBodySchema,
-	query: AgencyZoomQueryParamsSchema,
-	headers: z.record(z.string(), z.string()).optional(),
-});
+const SearchSmsThreadsInputSchema = AgencyZoomSearchInputSchema;
 export type SearchSmsThreadsInput = z.infer<typeof SearchSmsThreadsInputSchema>;
 const SearchSmsThreadsResponseSchema = AgencyZoomResponseSchema;
-export type SearchSmsThreadsResponse = z.infer<typeof SearchSmsThreadsResponseSchema>;
+export type SearchSmsThreadsResponse = z.infer<
+	typeof SearchSmsThreadsResponseSchema
+>;
 
 // searchTasks
 const SearchTasksInputSchema = z.object({
@@ -1036,20 +1242,26 @@ const ServiceTicketListInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type ServiceTicketListInput = z.infer<typeof ServiceTicketListInputSchema>;
+export type ServiceTicketListInput = z.infer<
+	typeof ServiceTicketListInputSchema
+>;
 const ServiceTicketListResponseSchema = AgencyZoomResponseSchema;
-export type ServiceTicketListResponse = z.infer<typeof ServiceTicketListResponseSchema>;
+export type ServiceTicketListResponse = z.infer<
+	typeof ServiceTicketListResponseSchema
+>;
 
 // textDetailThread
 const TextDetailThreadInputSchema = z.object({
-	threadId: z.string().optional(),
+	threadId: z.string(),
 	body: AgencyZoomOptionalBodySchema,
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type TextDetailThreadInput = z.infer<typeof TextDetailThreadInputSchema>;
 const TextDetailThreadResponseSchema = AgencyZoomResponseSchema;
-export type TextDetailThreadResponse = z.infer<typeof TextDetailThreadResponseSchema>;
+export type TextDetailThreadResponse = z.infer<
+	typeof TextDetailThreadResponseSchema
+>;
 
 // unlinkADriverFromOpportunity
 const UnlinkADriverFromOpportunityInputSchema = z.object({
@@ -1059,9 +1271,13 @@ const UnlinkADriverFromOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UnlinkADriverFromOpportunityInput = z.infer<typeof UnlinkADriverFromOpportunityInputSchema>;
+export type UnlinkADriverFromOpportunityInput = z.infer<
+	typeof UnlinkADriverFromOpportunityInputSchema
+>;
 const UnlinkADriverFromOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type UnlinkADriverFromOpportunityResponse = z.infer<typeof UnlinkADriverFromOpportunityResponseSchema>;
+export type UnlinkADriverFromOpportunityResponse = z.infer<
+	typeof UnlinkADriverFromOpportunityResponseSchema
+>;
 
 // unlinkAVehicleFromOpportunity
 const UnlinkAVehicleFromOpportunityInputSchema = z.object({
@@ -1071,9 +1287,13 @@ const UnlinkAVehicleFromOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UnlinkAVehicleFromOpportunityInput = z.infer<typeof UnlinkAVehicleFromOpportunityInputSchema>;
+export type UnlinkAVehicleFromOpportunityInput = z.infer<
+	typeof UnlinkAVehicleFromOpportunityInputSchema
+>;
 const UnlinkAVehicleFromOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type UnlinkAVehicleFromOpportunityResponse = z.infer<typeof UnlinkAVehicleFromOpportunityResponseSchema>;
+export type UnlinkAVehicleFromOpportunityResponse = z.infer<
+	typeof UnlinkAVehicleFromOpportunityResponseSchema
+>;
 
 // unreadThread
 const UnreadThreadInputSchema = z.object({
@@ -1103,9 +1323,13 @@ const UpdateADriverSDetailsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateADriverSDetailsInput = z.infer<typeof UpdateADriverSDetailsInputSchema>;
+export type UpdateADriverSDetailsInput = z.infer<
+	typeof UpdateADriverSDetailsInputSchema
+>;
 const UpdateADriverSDetailsResponseSchema = AgencyZoomResponseSchema;
-export type UpdateADriverSDetailsResponse = z.infer<typeof UpdateADriverSDetailsResponseSchema>;
+export type UpdateADriverSDetailsResponse = z.infer<
+	typeof UpdateADriverSDetailsResponseSchema
+>;
 
 // updateALeadFileName
 const UpdateALeadFileNameInputSchema = z.object({
@@ -1117,9 +1341,13 @@ const UpdateALeadFileNameInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateALeadFileNameInput = z.infer<typeof UpdateALeadFileNameInputSchema>;
+export type UpdateALeadFileNameInput = z.infer<
+	typeof UpdateALeadFileNameInputSchema
+>;
 const UpdateALeadFileNameResponseSchema = AgencyZoomResponseSchema;
-export type UpdateALeadFileNameResponse = z.infer<typeof UpdateALeadFileNameResponseSchema>;
+export type UpdateALeadFileNameResponse = z.infer<
+	typeof UpdateALeadFileNameResponseSchema
+>;
 
 // updateALeadOpportunity
 const UpdateALeadOpportunityInputSchema = z.object({
@@ -1134,9 +1362,13 @@ const UpdateALeadOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateALeadOpportunityInput = z.infer<typeof UpdateALeadOpportunityInputSchema>;
+export type UpdateALeadOpportunityInput = z.infer<
+	typeof UpdateALeadOpportunityInputSchema
+>;
 const UpdateALeadOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type UpdateALeadOpportunityResponse = z.infer<typeof UpdateALeadOpportunityResponseSchema>;
+export type UpdateALeadOpportunityResponse = z.infer<
+	typeof UpdateALeadOpportunityResponseSchema
+>;
 
 // updateALeadQuote
 const UpdateALeadQuoteInputSchema = z.object({
@@ -1153,7 +1385,9 @@ const UpdateALeadQuoteInputSchema = z.object({
 });
 export type UpdateALeadQuoteInput = z.infer<typeof UpdateALeadQuoteInputSchema>;
 const UpdateALeadQuoteResponseSchema = AgencyZoomResponseSchema;
-export type UpdateALeadQuoteResponse = z.infer<typeof UpdateALeadQuoteResponseSchema>;
+export type UpdateALeadQuoteResponse = z.infer<
+	typeof UpdateALeadQuoteResponseSchema
+>;
 
 // updateAnOpportunity
 const UpdateAnOpportunityInputSchema = z.object({
@@ -1175,9 +1409,13 @@ const UpdateAnOpportunityInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateAnOpportunityInput = z.infer<typeof UpdateAnOpportunityInputSchema>;
+export type UpdateAnOpportunityInput = z.infer<
+	typeof UpdateAnOpportunityInputSchema
+>;
 const UpdateAnOpportunityResponseSchema = AgencyZoomResponseSchema;
-export type UpdateAnOpportunityResponse = z.infer<typeof UpdateAnOpportunityResponseSchema>;
+export type UpdateAnOpportunityResponse = z.infer<
+	typeof UpdateAnOpportunityResponseSchema
+>;
 
 // updateAPolicy
 const UpdateAPolicyInputSchema = z.object({
@@ -1221,9 +1459,13 @@ const UpdateAVehicleSDetailsInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateAVehicleSDetailsInput = z.infer<typeof UpdateAVehicleSDetailsInputSchema>;
+export type UpdateAVehicleSDetailsInput = z.infer<
+	typeof UpdateAVehicleSDetailsInputSchema
+>;
 const UpdateAVehicleSDetailsResponseSchema = AgencyZoomResponseSchema;
-export type UpdateAVehicleSDetailsResponse = z.infer<typeof UpdateAVehicleSDetailsResponseSchema>;
+export type UpdateAVehicleSDetailsResponse = z.infer<
+	typeof UpdateAVehicleSDetailsResponseSchema
+>;
 
 // updateBusinessLead
 const UpdateBusinessLeadInputSchema = z.object({
@@ -1274,9 +1516,13 @@ const UpdateBusinessLeadInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateBusinessLeadInput = z.infer<typeof UpdateBusinessLeadInputSchema>;
+export type UpdateBusinessLeadInput = z.infer<
+	typeof UpdateBusinessLeadInputSchema
+>;
 const UpdateBusinessLeadResponseSchema = AgencyZoomResponseSchema;
-export type UpdateBusinessLeadResponse = z.infer<typeof UpdateBusinessLeadResponseSchema>;
+export type UpdateBusinessLeadResponse = z.infer<
+	typeof UpdateBusinessLeadResponseSchema
+>;
 
 // updateCustomer
 const UpdateCustomerInputSchema = z.object({
@@ -1311,7 +1557,9 @@ const UpdateCustomerInputSchema = z.object({
 });
 export type UpdateCustomerInput = z.infer<typeof UpdateCustomerInputSchema>;
 const UpdateCustomerResponseSchema = AgencyZoomResponseSchema;
-export type UpdateCustomerResponse = z.infer<typeof UpdateCustomerResponseSchema>;
+export type UpdateCustomerResponse = z.infer<
+	typeof UpdateCustomerResponseSchema
+>;
 
 // updateLead
 const UpdateLeadInputSchema = z.object({
@@ -1379,9 +1627,13 @@ const UpdateLeadStatusByIdInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateLeadStatusByIdInput = z.infer<typeof UpdateLeadStatusByIdInputSchema>;
+export type UpdateLeadStatusByIdInput = z.infer<
+	typeof UpdateLeadStatusByIdInputSchema
+>;
 const UpdateLeadStatusByIdResponseSchema = AgencyZoomResponseSchema;
-export type UpdateLeadStatusByIdResponse = z.infer<typeof UpdateLeadStatusByIdResponseSchema>;
+export type UpdateLeadStatusByIdResponse = z.infer<
+	typeof UpdateLeadStatusByIdResponseSchema
+>;
 
 // updateMyProfile
 const UpdateMyProfileInputSchema = z.object({
@@ -1395,7 +1647,9 @@ const UpdateMyProfileInputSchema = z.object({
 });
 export type UpdateMyProfileInput = z.infer<typeof UpdateMyProfileInputSchema>;
 const UpdateMyProfileResponseSchema = AgencyZoomResponseSchema;
-export type UpdateMyProfileResponse = z.infer<typeof UpdateMyProfileResponseSchema>;
+export type UpdateMyProfileResponse = z.infer<
+	typeof UpdateMyProfileResponseSchema
+>;
 
 // updateTagsForAPolicy
 const UpdateTagsForAPolicyInputSchema = z.object({
@@ -1406,9 +1660,13 @@ const UpdateTagsForAPolicyInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type UpdateTagsForAPolicyInput = z.infer<typeof UpdateTagsForAPolicyInputSchema>;
+export type UpdateTagsForAPolicyInput = z.infer<
+	typeof UpdateTagsForAPolicyInputSchema
+>;
 const UpdateTagsForAPolicyResponseSchema = AgencyZoomResponseSchema;
-export type UpdateTagsForAPolicyResponse = z.infer<typeof UpdateTagsForAPolicyResponseSchema>;
+export type UpdateTagsForAPolicyResponse = z.infer<
+	typeof UpdateTagsForAPolicyResponseSchema
+>;
 
 // updateTask
 const UpdateTaskInputSchema = z.object({
@@ -1441,9 +1699,13 @@ const V4SsoLogTheUserInInputSchema = z.object({
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
 });
-export type V4SsoLogTheUserInInput = z.infer<typeof V4SsoLogTheUserInInputSchema>;
+export type V4SsoLogTheUserInInput = z.infer<
+	typeof V4SsoLogTheUserInInputSchema
+>;
 const V4SsoLogTheUserInResponseSchema = AgencyZoomResponseSchema;
-export type V4SsoLogTheUserInResponse = z.infer<typeof V4SsoLogTheUserInResponseSchema>;
+export type V4SsoLogTheUserInResponse = z.infer<
+	typeof V4SsoLogTheUserInResponseSchema
+>;
 
 export const AgencyZoomEndpointInputSchemas = {
 	authenticateForJwtviaV4Sso: AuthenticateForJwtviaV4SsoInputSchema,
@@ -1478,7 +1740,8 @@ export const AgencyZoomEndpointInputSchemas = {
 	getAListOfCarriers: GetAListOfCarriersInputSchema,
 	getAListOfCsrs: GetAListOfCsrsInputSchema,
 	getAListOfCustomFields: GetAListOfCustomFieldsInputSchema,
-	getAListOfDriversForAnOpportunity: GetAListOfDriversForAnOpportunityInputSchema,
+	getAListOfDriversForAnOpportunity:
+		GetAListOfDriversForAnOpportunityInputSchema,
 	getAListOfEmployees: GetAListOfEmployeesInputSchema,
 	getAListOfLeadSourceCategories: GetAListOfLeadSourceCategoriesInputSchema,
 	getAListOfLeadSources: GetAListOfLeadSourcesInputSchema,
@@ -1487,9 +1750,11 @@ export const AgencyZoomEndpointInputSchemas = {
 	getAListOfLossReasons: GetAListOfLossReasonsInputSchema,
 	getAListOfPipelines: GetAListOfPipelinesInputSchema,
 	getAListOfProducer: GetAListOfProducerInputSchema,
-	getAListOfProductLinesPolicyTypes: GetAListOfProductLinesPolicyTypesInputSchema,
+	getAListOfProductLinesPolicyTypes:
+		GetAListOfProductLinesPolicyTypesInputSchema,
 	getAListOfRecycleEvents: GetAListOfRecycleEventsInputSchema,
-	getAListOfVehiclesForAnOpportunity: GetAListOfVehiclesForAnOpportunityInputSchema,
+	getAListOfVehiclesForAnOpportunity:
+		GetAListOfVehiclesForAnOpportunityInputSchema,
 	getAmsPoliciesForACustomer: GetAmsPoliciesForACustomerInputSchema,
 	getAuthUrlForV4Sso: GetAuthUrlForV4SsoInputSchema,
 	getDepartmentsGroups: GetDepartmentsGroupsInputSchema,
@@ -1548,7 +1813,9 @@ export const AgencyZoomEndpointInputSchemas = {
 } as const;
 
 export type AgencyZoomEndpointInputs = {
-	[K in keyof typeof AgencyZoomEndpointInputSchemas]: z.infer<(typeof AgencyZoomEndpointInputSchemas)[K]>;
+	[K in keyof typeof AgencyZoomEndpointInputSchemas]: z.infer<
+		(typeof AgencyZoomEndpointInputSchemas)[K]
+	>;
 };
 
 export const AgencyZoomEndpointOutputSchemas = {
@@ -1584,7 +1851,8 @@ export const AgencyZoomEndpointOutputSchemas = {
 	getAListOfCarriers: GetAListOfCarriersResponseSchema,
 	getAListOfCsrs: GetAListOfCsrsResponseSchema,
 	getAListOfCustomFields: GetAListOfCustomFieldsResponseSchema,
-	getAListOfDriversForAnOpportunity: GetAListOfDriversForAnOpportunityResponseSchema,
+	getAListOfDriversForAnOpportunity:
+		GetAListOfDriversForAnOpportunityResponseSchema,
 	getAListOfEmployees: GetAListOfEmployeesResponseSchema,
 	getAListOfLeadSourceCategories: GetAListOfLeadSourceCategoriesResponseSchema,
 	getAListOfLeadSources: GetAListOfLeadSourcesResponseSchema,
@@ -1593,9 +1861,11 @@ export const AgencyZoomEndpointOutputSchemas = {
 	getAListOfLossReasons: GetAListOfLossReasonsResponseSchema,
 	getAListOfPipelines: GetAListOfPipelinesResponseSchema,
 	getAListOfProducer: GetAListOfProducerResponseSchema,
-	getAListOfProductLinesPolicyTypes: GetAListOfProductLinesPolicyTypesResponseSchema,
+	getAListOfProductLinesPolicyTypes:
+		GetAListOfProductLinesPolicyTypesResponseSchema,
 	getAListOfRecycleEvents: GetAListOfRecycleEventsResponseSchema,
-	getAListOfVehiclesForAnOpportunity: GetAListOfVehiclesForAnOpportunityResponseSchema,
+	getAListOfVehiclesForAnOpportunity:
+		GetAListOfVehiclesForAnOpportunityResponseSchema,
 	getAmsPoliciesForACustomer: GetAmsPoliciesForACustomerResponseSchema,
 	getAuthUrlForV4Sso: GetAuthUrlForV4SsoResponseSchema,
 	getDepartmentsGroups: GetDepartmentsGroupsResponseSchema,
@@ -1654,11 +1924,14 @@ export const AgencyZoomEndpointOutputSchemas = {
 } as const;
 
 export type AgencyZoomEndpointOutputs = {
-	[K in keyof typeof AgencyZoomEndpointOutputSchemas]: z.infer<(typeof AgencyZoomEndpointOutputSchemas)[K]>;
+	[K in keyof typeof AgencyZoomEndpointOutputSchemas]: z.infer<
+		(typeof AgencyZoomEndpointOutputSchemas)[K]
+	>;
 };
 
-export type AgencyZoomEndpointInput = AgencyZoomEndpointInputs[keyof AgencyZoomEndpointInputs] & {
-	// Index signature required: factory helpers (resolvePath, buildQuery, requestBody) access
-	// fields by dynamic string keys; stricter per-key typing is not feasible across all 99 ops.
-	[key: string]: unknown;
-};
+export type AgencyZoomEndpointInput =
+	AgencyZoomEndpointInputs[keyof AgencyZoomEndpointInputs] & {
+		// Index signature required: factory helpers (resolvePath, buildQuery, requestBody) access
+		// fields by dynamic string keys; stricter per-key typing is not feasible across all 99 ops.
+		[key: string]: unknown;
+	};

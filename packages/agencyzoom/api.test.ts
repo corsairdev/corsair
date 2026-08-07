@@ -1,7 +1,9 @@
 import { request } from 'corsair/http';
 import { makeAgencyZoomRequest } from './client';
+import { resolvePath } from './endpoints/factory';
+import { agencyZoomRoutes } from './endpoints/routes';
 import type { AgencyZoomContext } from './index';
-import { agencyzoom, agencyZoomEndpointSchemas } from './index';
+import { agencyZoomEndpointSchemas, agencyzoom } from './index';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -62,6 +64,19 @@ describe('AgencyZoom plugin shape', () => {
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.authConfig).toEqual({ api_key: {} });
 	});
+
+	it('classifies textDetailThread as read and unreadThread as reversible write', () => {
+		const textDetail = agencyZoomRoutes.find(
+			(route) => route.name === 'textDetailThread',
+		);
+		const unread = agencyZoomRoutes.find(
+			(route) => route.name === 'unreadThread',
+		);
+		expect(textDetail?.riskLevel).toBe('read');
+		expect(unread?.riskLevel).toBe('write');
+		expect(textDetail && 'irreversible' in textDetail).toBe(false);
+		expect(unread && 'irreversible' in unread).toBe(false);
+	});
 });
 
 describe('AgencyZoom request client', () => {
@@ -92,6 +107,22 @@ describe('AgencyZoom request client', () => {
 			}),
 		);
 	});
+
+	it('does not let caller headers override Authorization', async () => {
+		await makeAgencyZoomRequest('/leads/list', 'test-jwt-token', {
+			method: 'POST',
+			headers: {
+				Authorization: 'Bearer attacker',
+				'X-Custom': 'ok',
+			},
+		});
+
+		const config = mockRequest.mock.calls[0]?.[0] as {
+			HEADERS: Record<string, string>;
+		};
+		expect(config.HEADERS.Authorization).toBe('Bearer test-jwt-token');
+		expect(config.HEADERS['X-Custom']).toBe('ok');
+	});
 });
 
 describe('AgencyZoom endpoints', () => {
@@ -102,9 +133,14 @@ describe('AgencyZoom endpoints', () => {
 
 	it('maps representative operations to API routes', async () => {
 		const plugin = agencyzoom({ key: 'test-jwt-token' });
-		const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
 			leads: {
-				searchLeads: (ctx: AgencyZoomContext, input: {}) => Promise<unknown>;
+				searchLeads: (
+					ctx: AgencyZoomContext,
+					input: Record<string, unknown>,
+				) => Promise<unknown>;
 				createLead: (
 					ctx: AgencyZoomContext,
 					input: { firstName: string; lastName: string; email: string },
@@ -112,7 +148,7 @@ describe('AgencyZoom endpoints', () => {
 			};
 		};
 
-		await endpoints.leads.searchLeads(mockCtx, {});
+		await endpoints.leads.searchLeads(mockCtx, { page: 1 });
 		await endpoints.leads.createLead(mockCtx, {
 			firstName: 'Jane',
 			lastName: 'Doe',
@@ -124,6 +160,7 @@ describe('AgencyZoom endpoints', () => {
 				expect.objectContaining({
 					method: 'POST',
 					url: '/leads/list',
+					body: { page: 1 },
 				}),
 				expect.objectContaining({
 					method: 'POST',
@@ -135,6 +172,16 @@ describe('AgencyZoom endpoints', () => {
 					},
 				}),
 			]),
+		);
+	});
+
+	it('resolves snake_case path-param aliases', () => {
+		const route = agencyZoomRoutes.find(
+			(candidate) => candidate.name === 'getTheLeadDetails',
+		);
+		expect(route).toBeDefined();
+		expect(resolvePath(route!.path, { lead_id: 42 } as never, route)).toBe(
+			'/leads/42',
 		);
 	});
 });

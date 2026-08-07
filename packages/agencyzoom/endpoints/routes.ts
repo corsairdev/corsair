@@ -22,7 +22,8 @@ export const agencyZoomRoutes = [
 		name: 'authenticateForJwtviaV4Sso',
 		method: 'POST',
 		path: '/v4sso/sso-login',
-		description: "Completes AgencyZoom V4 Single Sign-On (SSO) authentication by exchanging an OAuth2 authorization code for a JWT token. Prerequisites: First call get_auth_url_for_v4sso to obtain the authentication URL, then redirect the user to that URL for login. After successful authentication through Vertafore's OAuth provider, the callback will include a 'code' parameter. Use that code with this action to obtain the JWT token for API access. Note: This is typically used during initial authentication setup. The code is single-use, time-limited, and must match the PKCE challenge from the original auth request.",
+		description:
+			"Completes AgencyZoom V4 Single Sign-On (SSO) authentication by exchanging an OAuth2 authorization code for a JWT token. Prerequisites: First call get_auth_url_for_v4sso to obtain the authentication URL, then redirect the user to that URL for login. After successful authentication through Vertafore's OAuth provider, the callback will include a 'code' parameter. Use that code with this action to obtain the JWT token for API access. Note: This is typically used during initial authentication setup. The code is single-use, time-limited, and must match the PKCE challenge from the original auth request.",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -33,7 +34,8 @@ export const agencyZoomRoutes = [
 		name: 'batchCreateContact',
 		method: 'POST',
 		path: '/contact/batch-create',
-		description: 'Creates 1 to 5 new contacts in AgencyZoom in a single batch API call.',
+		description:
+			'Creates 1 to 5 new contacts in AgencyZoom in a single batch API call.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -44,7 +46,8 @@ export const agencyZoomRoutes = [
 		name: 'batchCreateLead',
 		method: 'POST',
 		path: '/leads/batch-create',
-		description: 'Creates up to 5 new leads in AgencyZoom; all referenced entity IDs (e.g., pipeline, user, custom field names) must exist, and organization `name` is required if `isBusiness` is true.',
+		description:
+			'Creates up to 5 new leads in AgencyZoom; all referenced entity IDs (e.g., pipeline, user, custom field names) must exist, and organization `name` is required if `isBusiness` is true.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -55,7 +58,8 @@ export const agencyZoomRoutes = [
 		name: 'batchDeleteTask',
 		method: 'POST',
 		path: '/tasks/batch-delete',
-		description: 'Deletes multiple AgencyZoom tasks in a batch; task deletion is permanent and the response indicates overall batch success, not individual task status.',
+		description:
+			'Deletes multiple AgencyZoom tasks in a batch; task deletion is permanent and the response indicates overall batch success, not individual task status.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -67,7 +71,8 @@ export const agencyZoomRoutes = [
 		name: 'changeStatusForLead',
 		method: 'PUT',
 		path: '/leads/{leadId}/status',
-		description: "Updates a lead's lifecycle status (e.g., Active, Won, Lost, X-Dated) and can optionally manage its workflow, pipeline, stage, source, or associated tags.",
+		description:
+			"Updates a lead's lifecycle status (e.g., Active, Won, Lost, X-Dated) and can optionally manage its workflow, pipeline, stage, source, or associated tags.",
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -78,7 +83,8 @@ export const agencyZoomRoutes = [
 		name: 'completeTask',
 		method: 'PUT',
 		path: '/tasks/{taskId}/completed',
-		description: "Marks an existing and accessible task in AgencyZoom as 'completed'; this action does not return the full updated task object.",
+		description:
+			"Marks an existing and accessible task in AgencyZoom as 'completed'; this action does not return the full updated task object.",
 		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -89,7 +95,8 @@ export const agencyZoomRoutes = [
 		name: 'createACustomerNote',
 		method: 'POST',
 		path: '/customers/{customerId}/notes',
-		description: "Adds a new note to an existing customer's profile using their ID; cannot be used to edit or retrieve existing notes.",
+		description:
+			"Adds a new note to an existing customer's profile using their ID; cannot be used to edit or retrieve existing notes.",
 		pathParams: ['customerId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -100,7 +107,8 @@ export const agencyZoomRoutes = [
 		name: 'createADriverForAnOpportunity',
 		method: 'POST',
 		path: '/opportunities/{opportunityId}/driver',
-		description: 'Creates a new driver record associated with an existing AgencyZoom opportunity using its ID; requires firstName and lastName, with optional fields for additional driver details.',
+		description:
+			'Creates a new driver record associated with an existing AgencyZoom opportunity using its ID; requires firstName and lastName, with optional fields for additional driver details.',
 		pathParams: ['opportunityId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -111,7 +119,8 @@ export const agencyZoomRoutes = [
 		name: 'createALeadNote',
 		method: 'POST',
 		path: '/leads/{leadId}/notes',
-		description: 'Adds a new note to an existing lead in AgencyZoom, identified by `leadId`.',
+		description:
+			'Adds a new note to an existing lead in AgencyZoom, identified by `leadId`.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -122,7 +131,8 @@ export const agencyZoomRoutes = [
 		name: 'createALeadOpportunity',
 		method: 'POST',
 		path: '/leads/{leadId}/opportunities',
-		description: 'Adds a new sales opportunity to an existing lead in AgencyZoom, requiring a valid `leadId`, `carrierId`, `productLineId`, and that custom field names match existing definitions in AgencyZoom.',
+		description:
+			'Adds a new sales opportunity to an existing lead in AgencyZoom, requiring a valid `leadId`, `carrierId`, `productLineId`, and that custom field names match existing definitions in AgencyZoom.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -133,7 +143,8 @@ export const agencyZoomRoutes = [
 		name: 'createALeadQuote',
 		method: 'POST',
 		path: '/leads/{leadId}/quotes',
-		description: 'Creates a new insurance quote for an existing lead in AgencyZoom, using valid carrier and product line IDs, to track a proposal; this action does not bind policies or process payments.',
+		description:
+			'Creates a new insurance quote for an existing lead in AgencyZoom, using valid carrier and product line IDs, to track a proposal; this action does not bind policies or process payments.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -144,7 +155,8 @@ export const agencyZoomRoutes = [
 		name: 'createAnOpportunity',
 		method: 'POST',
 		path: '/opportunities',
-		description: 'Creates a new lead opportunity in AgencyZoom; this action cannot update existing opportunities.',
+		description:
+			'Creates a new lead opportunity in AgencyZoom; this action cannot update existing opportunities.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -155,7 +167,8 @@ export const agencyZoomRoutes = [
 		name: 'createAVehicleForAnOpportunity',
 		method: 'POST',
 		path: '/opportunities/{opportunityId}/vehicle',
-		description: 'Adds a new vehicle record to a specified opportunity; `opportunityId` must refer to a valid, existing opportunity.',
+		description:
+			'Adds a new vehicle record to a specified opportunity; `opportunityId` must refer to a valid, existing opportunity.',
 		pathParams: ['opportunityId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -166,7 +179,8 @@ export const agencyZoomRoutes = [
 		name: 'createBizLead',
 		method: 'POST',
 		path: '/leads/create-biz-lead',
-		description: 'Creates or updates a business lead in AgencyZoom using detailed personal and company information, for B2B sales and marketing lead management.',
+		description:
+			'Creates or updates a business lead in AgencyZoom using detailed personal and company information, for B2B sales and marketing lead management.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -177,7 +191,8 @@ export const agencyZoomRoutes = [
 		name: 'createLead',
 		method: 'POST',
 		path: '/leads/create',
-		description: 'Creates a new lead or updates an existing one in AgencyZoom; ensure `pipelineId`, `stageId`, `leadSourceId`, and `assignTo` reference valid, existing entities.',
+		description:
+			'Creates a new lead or updates an existing one in AgencyZoom; ensure `pipelineId`, `stageId`, `leadSourceId`, and `assignTo` reference valid, existing entities.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -188,7 +203,8 @@ export const agencyZoomRoutes = [
 		name: 'createTask',
 		method: 'POST',
 		path: '/tasks',
-		description: 'Creates a new task in AgencyZoom; ensure `assigneeId`, `customerId`, or `leadId` are valid existing entities if provided, and use `contactEmail`, `customerId`, or `leadId` to link the task to a contact.',
+		description:
+			'Creates a new task in AgencyZoom; ensure `assigneeId`, `customerId`, or `leadId` are valid existing entities if provided, and use `contactEmail`, `customerId`, or `leadId` to link the task to a contact.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -199,7 +215,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteACustomer',
 		method: 'DELETE',
 		path: '/customers/{customerId}',
-		description: 'Irreversibly deletes a customer and all associated data in AgencyZoom using their `customerId`; useful for offboarding or data privacy compliance.',
+		description:
+			'Irreversibly deletes a customer and all associated data in AgencyZoom using their `customerId`; useful for offboarding or data privacy compliance.',
 		pathParams: ['customerId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -211,7 +228,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteACustomerFile',
 		method: 'DELETE',
 		path: '/customers/{customerId}/files/{fileId}',
-		description: 'Permanently deletes a specific file, identified by `fileId`, associated with a customer, identified by `customerId`.',
+		description:
+			'Permanently deletes a specific file, identified by `fileId`, associated with a customer, identified by `customerId`.',
 		pathParams: ['customerId', 'fileId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -223,7 +241,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteACustomerPolicy',
 		method: 'DELETE',
 		path: '/customers/{customerId}/policies/{policyId}',
-		description: "Permanently deletes a specific policy associated with a customer, for instance, if it's cancelled or inactive; this action is irreversible and requires caution.",
+		description:
+			"Permanently deletes a specific policy associated with a customer, for instance, if it's cancelled or inactive; this action is irreversible and requires caution.",
 		pathParams: ['customerId', 'policyId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -235,7 +254,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteADriver',
 		method: 'DELETE',
 		path: '/opportunities/drivers/{driverId}',
-		description: 'Permanently deletes an existing driver record (a person associated with an insurance opportunity) from AgencyZoom using its unique `driverId`; this action is irreversible.',
+		description:
+			'Permanently deletes an existing driver record (a person associated with an insurance opportunity) from AgencyZoom using its unique `driverId`; this action is irreversible.',
 		pathParams: ['driverId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -247,7 +267,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteALeadFile',
 		method: 'DELETE',
 		path: '/leads/{leadId}/files/{fileId}',
-		description: 'Deletes a specific file (identified by `fileId`) associated with an existing lead (identified by `leadId`); this operation is irreversible.',
+		description:
+			'Deletes a specific file (identified by `fileId`) associated with an existing lead (identified by `leadId`); this operation is irreversible.',
 		pathParams: ['leadId', 'fileId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -259,7 +280,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteALeadOpportunity',
 		method: 'DELETE',
 		path: '/leads/{leadId}/opportunities/{opportunityId}',
-		description: "Permanently deletes an existing opportunity (by `opportunityId`) associated with an existing lead (by `leadId`) when it's irrelevant, closed, or erroneous; the lead itself remains.",
+		description:
+			"Permanently deletes an existing opportunity (by `opportunityId`) associated with an existing lead (by `leadId`) when it's irrelevant, closed, or erroneous; the lead itself remains.",
 		pathParams: ['leadId', 'opportunityId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -271,7 +293,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteALeadQuote',
 		method: 'DELETE',
 		path: '/leads/{leadId}/quotes/{quoteId}',
-		description: 'Deletes a specific quote from a lead, requiring that the lead and quote exist and are associated.',
+		description:
+			'Deletes a specific quote from a lead, requiring that the lead and quote exist and are associated.',
 		pathParams: ['leadId', 'quoteId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -283,7 +306,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteAnOpportunity',
 		method: 'DELETE',
 		path: '/opportunities/{opportunityId}',
-		description: 'Permanently deletes a specific opportunity by its unique ID; this action is irreversible and requires a valid, existing `opportunityId`.',
+		description:
+			'Permanently deletes a specific opportunity by its unique ID; this action is irreversible and requires a valid, existing `opportunityId`.',
 		pathParams: ['opportunityId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -295,7 +319,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteATask',
 		method: 'DELETE',
 		path: '/tasks/{taskId}',
-		description: 'Permanently and irreversibly deletes an existing task, identified by its `taskId`.',
+		description:
+			'Permanently and irreversibly deletes an existing task, identified by its `taskId`.',
 		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -307,7 +332,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteAVehicle',
 		method: 'DELETE',
 		path: '/opportunities/vehicles/{vehicleId}',
-		description: 'Permanently deletes a vehicle record by its `vehicleId`, which must correspond to an existing vehicle in the AgencyZoom system.',
+		description:
+			'Permanently deletes a vehicle record by its `vehicleId`, which must correspond to an existing vehicle in the AgencyZoom system.',
 		pathParams: ['vehicleId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -319,7 +345,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteMessage',
 		method: 'POST',
 		path: '/email-thread/delete-message',
-		description: 'Deletes a specific message from an email thread within AgencyZoom. Requires the message ID to identify which message to remove. Returns the updated thread information with the remaining messages after deletion.',
+		description:
+			'Deletes a specific message from an email thread within AgencyZoom. Requires the message ID to identify which message to remove. Returns the updated thread information with the remaining messages after deletion.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -331,7 +358,8 @@ export const agencyZoomRoutes = [
 		name: 'deleteThread',
 		method: 'POST',
 		path: '/email-thread/delete-thread',
-		description: 'Permanently deletes a specific email thread from the AgencyZoom system, identified by its `threadId` (expected by the endpoint), provided the thread exists.',
+		description:
+			'Permanently deletes a specific email thread from the AgencyZoom system, identified by its `threadId` (expected by the endpoint), provided the thread exists.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -343,7 +371,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfAssignGroups',
 		method: 'GET',
 		path: '/assign-groups',
-		description: 'Retrieves all assign groups configured in AgencyZoom, used for categorizing or assigning items to specific teams or units. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves all assign groups configured in AgencyZoom, used for categorizing or assigning items to specific teams or units. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -354,7 +383,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfCarriers',
 		method: 'GET',
 		path: '/carriers',
-		description: 'Retrieves all insurance carriers from AgencyZoom, typically used for populating selection lists or synchronizing carrier data; does not return detailed policy or coverage information. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves all insurance carriers from AgencyZoom, typically used for populating selection lists or synchronizing carrier data; does not return detailed policy or coverage information. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -365,7 +395,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfCsrs',
 		method: 'GET',
 		path: '/csrs',
-		description: 'Fetches all Customer Service Representatives (CSRs), including their ID and name, returning an empty list if none are configured. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Fetches all Customer Service Representatives (CSRs), including their ID and name, returning an empty list if none are configured. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -376,7 +407,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfCustomFields',
 		method: 'GET',
 		path: '/custom-fields',
-		description: 'Retrieves metadata for all configured custom field definitions, not the specific values entered for individual records. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves metadata for all configured custom field definitions, not the specific values entered for individual records. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -387,7 +419,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfDriversForAnOpportunity',
 		method: 'GET',
 		path: '/opportunities/{opportunityId}/drivers',
-		description: 'Retrieves a list of drivers (individuals), including their personal details, licensing information, and relationship status, associated with a specific, existing `opportunityId` in AgencyZoom.',
+		description:
+			'Retrieves a list of drivers (individuals), including their personal details, licensing information, and relationship status, associated with a specific, existing `opportunityId` in AgencyZoom.',
 		pathParams: ['opportunityId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -398,7 +431,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfEmployees',
 		method: 'GET',
 		path: '/employees',
-		description: 'Retrieves a complete list of all employees for the authenticated agency; returns an empty list if no employees are configured. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves a complete list of all employees for the authenticated agency; returns an empty list if no employees are configured. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -409,7 +443,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfLeadSourceCategories',
 		method: 'GET',
 		path: '/lead-source-categories',
-		description: 'Retrieves a comprehensive list of all predefined lead source categories from AgencyZoom, used to classify lead origins. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves a comprehensive list of all predefined lead source categories from AgencyZoom, used to classify lead origins. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -420,7 +455,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfLeadSources',
 		method: 'GET',
 		path: '/lead-sources',
-		description: 'Fetches a list of all lead sources configured in AgencyZoom, including their ID, name, sales exclusion status, and category ID. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Fetches a list of all lead sources configured in AgencyZoom, including their ID, name, sales exclusion status, and category ID. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -431,7 +467,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfLifeProfessionals',
 		method: 'GET',
 		path: '/life-professionals',
-		description: 'Retrieves a list of life insurance professionals, including only their contact and status information (excluding sales or customer data), from the AgencyZoom platform. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves a list of life insurance professionals, including only their contact and status information (excluding sales or customer data), from the AgencyZoom platform. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -442,7 +479,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfLocations',
 		method: 'GET',
 		path: '/locations',
-		description: 'Retrieves all agency locations or branches from AgencyZoom; filtering options are not available. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves all agency locations or branches from AgencyZoom; filtering options are not available. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -453,7 +491,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfLossReasons',
 		method: 'GET',
 		path: '/loss-reasons',
-		description: "Retrieves all predefined loss reasons (e.g., 'Lost to competitor', 'Premium too high') available in AgencyZoom. These reasons can be used when marking leads as lost or for reporting purposes. No parameters required - returns complete list. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+		description:
+			"Retrieves all predefined loss reasons (e.g., 'Lost to competitor', 'Premium too high') available in AgencyZoom. These reasons can be used when marking leads as lost or for reporting purposes. No parameters required - returns complete list. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -464,7 +503,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfPipelines',
 		method: 'GET',
 		path: '/pipelines',
-		description: 'Retrieves all pipelines and their stages from AgencyZoom to understand workflow structures; this is a read-only operation and does not return individual items (like leads or tasks) within these pipelines. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves all pipelines and their stages from AgencyZoom to understand workflow structures; this is a read-only operation and does not return individual items (like leads or tasks) within these pipelines. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -475,7 +515,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfProducer',
 		method: 'GET',
 		path: '/text-thread/producer',
-		description: 'Retrieves a list of all producers from AgencyZoom, typically related to text thread functionalities. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves a list of all producers from AgencyZoom, typically related to text thread functionalities. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -486,7 +527,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfProductLinesPolicyTypes',
 		method: 'GET',
 		path: '/product-lines',
-		description: 'Fetches all product lines and policy types from AgencyZoom, each detailed with its ID, name, and product category ID. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Fetches all product lines and policy types from AgencyZoom, each detailed with its ID, name, and product category ID. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -497,7 +539,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfRecycleEvents',
 		method: 'GET',
 		path: '/{leadId}/recycle-events',
-		description: "Retrieves the available recycle event types and any existing X-Date information for a specified lead in AgencyZoom. Returns a list of recycle event categories that can be used to trigger follow-ups (e.g., 'X-Date', 'Accident Falls Off', 'Prior Insurance Fulfilled').",
+		description:
+			"Retrieves the available recycle event types and any existing X-Date information for a specified lead in AgencyZoom. Returns a list of recycle event categories that can be used to trigger follow-ups (e.g., 'X-Date', 'Accident Falls Off', 'Prior Insurance Fulfilled').",
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -508,7 +551,8 @@ export const agencyZoomRoutes = [
 		name: 'getAListOfVehiclesForAnOpportunity',
 		method: 'GET',
 		path: '/opportunities/{opportunityId}/vehicles',
-		description: 'Retrieves all vehicles associated with an existing opportunity, using its unique opportunityId.',
+		description:
+			'Retrieves all vehicles associated with an existing opportunity, using its unique opportunityId.',
 		pathParams: ['opportunityId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -519,7 +563,8 @@ export const agencyZoomRoutes = [
 		name: 'getAmsPoliciesForACustomer',
 		method: 'GET',
 		path: '/customers/{customerId}/ams-policies',
-		description: "Retrieves a customer's synchronized Agency Management System (AMS) policy data (typically a single policy); requires an active AMS integration, may return empty/default values if data is missing.",
+		description:
+			"Retrieves a customer's synchronized Agency Management System (AMS) policy data (typically a single policy); requires an active AMS integration, may return empty/default values if data is missing.",
 		pathParams: ['customerId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -530,7 +575,8 @@ export const agencyZoomRoutes = [
 		name: 'getAuthUrlForV4Sso',
 		method: 'POST',
 		path: '/v4sso/get-auth-params',
-		description: "Retrieves a fresh authentication URL for AgencyZoom's V4 Single Sign-On (SSO) process; call before each SSO attempt as the URL may change and should not be cached. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
+		description:
+			"Retrieves a fresh authentication URL for AgencyZoom's V4 Single Sign-On (SSO) process; call before each SSO attempt as the URL may change and should not be cached. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |",
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -541,7 +587,8 @@ export const agencyZoomRoutes = [
 		name: 'getDepartmentsGroups',
 		method: 'POST',
 		path: '/department-groups',
-		description: 'Fetches department and group information for an agency, optionally filtered by a specific `agencyNumber`, to analyze its organizational structure.',
+		description:
+			'Fetches department and group information for an agency, optionally filtered by a specific `agencyNumber`, to analyze its organizational structure.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -552,7 +599,8 @@ export const agencyZoomRoutes = [
 		name: 'getLeadFiles',
 		method: 'POST',
 		path: '/leads/files',
-		description: 'Retrieves metadata (id, title, MIME type, size, dates, creator info) for files attached to leads in AgencyZoom. Optionally filter by `leadId` to get files for a specific lead, or omit to retrieve files across all leads. Returns file metadata only, not the actual file content.',
+		description:
+			'Retrieves metadata (id, title, MIME type, size, dates, creator info) for files attached to leads in AgencyZoom. Optionally filter by `leadId` to get files for a specific lead, or omit to retrieve files across all leads. Returns file metadata only, not the actual file content.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -563,7 +611,8 @@ export const agencyZoomRoutes = [
 		name: 'getLeadNotes',
 		method: 'GET',
 		path: '/leads/{leadId}/notes',
-		description: 'Fetches the complete history of notes for a specific lead by `leadId` (which must exist), useful for reviewing context for communications or follow-ups; this is a read-only operation.',
+		description:
+			'Fetches the complete history of notes for a specific lead by `leadId` (which must exist), useful for reviewing context for communications or follow-ups; this is a read-only operation.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -574,7 +623,8 @@ export const agencyZoomRoutes = [
 		name: 'getLeadQuotes',
 		method: 'GET',
 		path: '/leads/{leadId}/quotes',
-		description: 'Retrieves all insurance quotes (active and inactive) for a specific lead ID, useful for reviewing or tracking quote history.',
+		description:
+			'Retrieves all insurance quotes (active and inactive) for a specific lead ID, useful for reviewing or tracking quote history.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -585,7 +635,8 @@ export const agencyZoomRoutes = [
 		name: 'getLeadTasks',
 		method: 'GET',
 		path: '/leads/{leadId}/tasks',
-		description: 'Retrieves all tasks for a specific lead, identified by its `leadId`, to review its activity history or manage follow-ups.',
+		description:
+			'Retrieves all tasks for a specific lead, identified by its `leadId`, to review its activity history or manage follow-ups.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -596,7 +647,8 @@ export const agencyZoomRoutes = [
 		name: 'getListOfEndStages',
 		method: 'GET',
 		path: '/end-stages',
-		description: 'Fetches a list of all defined end stages, representing final steps in processes like lead conversion or policy closure. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Fetches a list of all defined end stages, representing final steps in processes like lead conversion or policy closure. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -607,7 +659,8 @@ export const agencyZoomRoutes = [
 		name: 'getPoliciesForACustomer',
 		method: 'GET',
 		path: '/customers/{customerId}/policies',
-		description: 'Retrieves from AgencyZoom all insurance policies for an existing customer (identified by `customerId`), including policy details like type, carrier, premium, effective dates, and assigned agents. Excludes premium payment history or claims information.',
+		description:
+			'Retrieves from AgencyZoom all insurance policies for an existing customer (identified by `customerId`), including policy details like type, carrier, premium, effective dates, and assigned agents. Excludes premium payment history or claims information.',
 		pathParams: ['customerId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -618,7 +671,8 @@ export const agencyZoomRoutes = [
 		name: 'getTheCustomerDetails',
 		method: 'GET',
 		path: '/customers/{customerId}',
-		description: 'Fetches comprehensive details for a specific customer, including personal information, policies, notes, tasks, files, and custom fields, using their unique customer ID.',
+		description:
+			'Fetches comprehensive details for a specific customer, including personal information, policies, notes, tasks, files, and custom fields, using their unique customer ID.',
 		pathParams: ['customerId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -629,7 +683,8 @@ export const agencyZoomRoutes = [
 		name: 'getTheCustomerTasks',
 		method: 'GET',
 		path: '/customers/{customerId}/tasks',
-		description: 'Fetches all tasks (read-only task data) for a customer by `customerId` to review their activities, follow-ups, and action items; the `customerId` must be valid.',
+		description:
+			'Fetches all tasks (read-only task data) for a customer by `customerId` to review their activities, follow-ups, and action items; the `customerId` must be valid.',
 		pathParams: ['customerId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -640,7 +695,8 @@ export const agencyZoomRoutes = [
 		name: 'getTheDriverDetails',
 		method: 'GET',
 		path: '/opportunities/drivers/{driverId}',
-		description: 'Retrieves detailed information for a specific, existing driver (by `driverId`) associated with an AgencyZoom opportunity.',
+		description:
+			'Retrieves detailed information for a specific, existing driver (by `driverId`) associated with an AgencyZoom opportunity.',
 		pathParams: ['driverId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -651,7 +707,8 @@ export const agencyZoomRoutes = [
 		name: 'getTheLeadDetails',
 		method: 'GET',
 		path: '/leads/{leadId}',
-		description: 'Retrieves comprehensive details for a specific lead in AgencyZoom by its unique `leadId` (which must correspond to an existing lead), including contact information, status, associated opportunities, quotes/policies, custom fields, and interaction history.',
+		description:
+			'Retrieves comprehensive details for a specific lead in AgencyZoom by its unique `leadId` (which must correspond to an existing lead), including contact information, status, associated opportunities, quotes/policies, custom fields, and interaction history.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -662,7 +719,8 @@ export const agencyZoomRoutes = [
 		name: 'getTheOpportunitiesForALead',
 		method: 'GET',
 		path: '/leads/{leadId}/opportunities',
-		description: 'Retrieves all sales opportunities and their details for a specified, existing `leadId` in AgencyZoom.',
+		description:
+			'Retrieves all sales opportunities and their details for a specified, existing `leadId` in AgencyZoom.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -673,7 +731,8 @@ export const agencyZoomRoutes = [
 		name: 'getTheOpportunityDetails',
 		method: 'GET',
 		path: '/opportunities/{opportunityId}',
-		description: 'Fetches comprehensive details for an existing opportunity using its unique `opportunityId`.',
+		description:
+			'Fetches comprehensive details for an existing opportunity using its unique `opportunityId`.',
 		pathParams: ['opportunityId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -684,7 +743,8 @@ export const agencyZoomRoutes = [
 		name: 'getTheTaskDetails',
 		method: 'GET',
 		path: '/tasks/{taskId}',
-		description: 'Retrieves comprehensive details for a specific task using its unique `taskId`, which must correspond to an existing task in AgencyZoom.',
+		description:
+			'Retrieves comprehensive details for a specific task using its unique `taskId`, which must correspond to an existing task in AgencyZoom.',
 		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -695,7 +755,8 @@ export const agencyZoomRoutes = [
 		name: 'getTheVehicleDetails',
 		method: 'GET',
 		path: '/opportunities/vehicles/{vehicleId}',
-		description: 'Retrieves detailed information for a specific vehicle, often associated with an AgencyZoom opportunity, using its unique vehicleId.',
+		description:
+			'Retrieves detailed information for a specific vehicle, often associated with an AgencyZoom opportunity, using its unique vehicleId.',
 		pathParams: ['vehicleId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -706,7 +767,8 @@ export const agencyZoomRoutes = [
 		name: 'getThreadDetails',
 		method: 'POST',
 		path: '/email-thread/email-thread-detail',
-		description: 'Searches and retrieves detailed information for email threads in AgencyZoom; no explicit search criteria are passed in this request. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Searches and retrieves detailed information for email threads in AgencyZoom; no explicit search criteria are passed in this request. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -717,7 +779,8 @@ export const agencyZoomRoutes = [
 		name: 'linkADriverToOpportunity',
 		method: 'PUT',
 		path: '/opportunities/{opportunityId}/link-driver/{driverId}',
-		description: 'Assigns or reassigns an existing driver to an existing opportunity.',
+		description:
+			'Assigns or reassigns an existing driver to an existing opportunity.',
 		pathParams: ['opportunityId', 'driverId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -728,7 +791,8 @@ export const agencyZoomRoutes = [
 		name: 'linkAVehicleToOpportunity',
 		method: 'PUT',
 		path: '/opportunities/{opportunityId}/link-vehicle/{vehicleId}',
-		description: 'Links an existing vehicle to an existing sales opportunity in AgencyZoom using their respective IDs, typically for managing auto insurance policies or related services.',
+		description:
+			'Links an existing vehicle to an existing sales opportunity in AgencyZoom using their respective IDs, typically for managing auto insurance policies or related services.',
 		pathParams: ['opportunityId', 'vehicleId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -739,7 +803,8 @@ export const agencyZoomRoutes = [
 		name: 'listProductCategories',
 		method: 'GET',
 		path: '/product-categories',
-		description: 'Retrieves a complete, unfiltered list of all product categories (ID and name) from AgencyZoom, useful for understanding product organization or populating UI elements. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves a complete, unfiltered list of all product categories (ID and name) from AgencyZoom, useful for understanding product organization or populating UI elements. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -750,7 +815,8 @@ export const agencyZoomRoutes = [
 		name: 'logTheUserIn',
 		method: 'POST',
 		path: '/auth/login',
-		description: 'Authenticates an existing AgencyZoom user using their email (as username) and password to obtain a JWT for API access; this action does not support new user creation.',
+		description:
+			'Authenticates an existing AgencyZoom user using their email (as username) and password to obtain a JWT for API access; this action does not support new user creation.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -761,7 +827,8 @@ export const agencyZoomRoutes = [
 		name: 'logTheUserOut',
 		method: 'POST',
 		path: '/auth/logout',
-		description: 'Use this action to log the current user out of AgencyZoom by invalidating their active session token. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Use this action to log the current user out of AgencyZoom by invalidating their active session token. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -772,7 +839,8 @@ export const agencyZoomRoutes = [
 		name: 'markThreadAsUnreadApiEndpoint',
 		method: 'POST',
 		path: '/email-thread/unread-thread',
-		description: 'Marks a text thread in AgencyZoom as read or unread using its `threadId`; this action does not modify message content and the specified `threadId` must refer to an existing thread.',
+		description:
+			'Marks a text thread in AgencyZoom as read or unread using its `threadId`; this action does not modify message content and the specified `threadId` must refer to an existing thread.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -783,7 +851,8 @@ export const agencyZoomRoutes = [
 		name: 'moveLeadToSold',
 		method: 'POST',
 		path: '/leads/{leadId}/sold',
-		description: 'Marks an existing lead as sold by its `leadId` and records product details; `productLineId`, `premium`, `effectiveDate`, and `soldDate` are operationally required for each sold product, despite schema flexibility.',
+		description:
+			'Marks an existing lead as sold by its `leadId` and records product details; `productLineId`, `premium`, `effectiveDate`, and `soldDate` are operationally required for each sold product, despite schema flexibility.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -794,7 +863,8 @@ export const agencyZoomRoutes = [
 		name: 'removeTextThreadEndpoint',
 		method: 'POST',
 		path: '/text-thread/delete-thread',
-		description: 'Call this action to permanently delete an SMS/text message thread in AgencyZoom; the target thread is identified by its `threadId`. Note: This operation is idempotent - deleting a non-existent thread will return success.',
+		description:
+			'Call this action to permanently delete an SMS/text message thread in AgencyZoom; the target thread is identified by its `threadId`. Note: This operation is idempotent - deleting a non-existent thread will return success.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -806,7 +876,8 @@ export const agencyZoomRoutes = [
 		name: 'reopenATask',
 		method: 'PUT',
 		path: '/tasks/{taskId}/reopened',
-		description: "Reopens an existing AgencyZoom task that is currently 'completed' or 'closed', allowing it to be reactivated with optional comments.",
+		description:
+			"Reopens an existing AgencyZoom task that is currently 'completed' or 'closed', allowing it to be reactivated with optional comments.",
 		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -817,7 +888,8 @@ export const agencyZoomRoutes = [
 		name: 'searchBusinessClassifications',
 		method: 'POST',
 		path: '/get-classifications',
-		description: 'Retrieves a comprehensive list of all available business classifications from AgencyZoom, each including an ID, code, and description. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves a comprehensive list of all available business classifications from AgencyZoom, each including an ID, code, and description. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -828,7 +900,8 @@ export const agencyZoomRoutes = [
 		name: 'searchCustomers',
 		method: 'POST',
 		path: '/customers',
-		description: 'Searches for customers in AgencyZoom using criteria like contact information, policy details, or custom fields, with options for filtering, sorting, and pagination. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Searches for customers in AgencyZoom using criteria like contact information, policy details, or custom fields, with options for filtering, sorting, and pagination. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -839,7 +912,8 @@ export const agencyZoomRoutes = [
 		name: 'searchEmailThreads',
 		method: 'POST',
 		path: '/email-thread/list',
-		description: 'Retrieves a list of email thread metadata from AgencyZoom, suitable for an overview when no specific filtering, sorting, or pagination is needed, as results are subject to default server-side limits and ordering. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves a list of email thread metadata from AgencyZoom, suitable for an overview when no specific filtering, sorting, or pagination is needed, as results are subject to default server-side limits and ordering. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -850,7 +924,8 @@ export const agencyZoomRoutes = [
 		name: 'searchLeads',
 		method: 'POST',
 		path: '/leads/list',
-		description: 'Retrieves AgencyZoom leads, using filters, pagination, and sorting options sent in the POST body, as the request schema itself is empty. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves AgencyZoom leads, using filters, pagination, and sorting options sent in the POST body, as the request schema itself is empty. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -861,7 +936,8 @@ export const agencyZoomRoutes = [
 		name: 'searchLeadsCount',
 		method: 'POST',
 		path: '/leads/pipeline-count',
-		description: 'Retrieves a summary of lead counts categorized by workflow stage from AgencyZoom; this action does not support filtering and returns aggregate counts rather than individual lead details. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Retrieves a summary of lead counts categorized by workflow stage from AgencyZoom; this action does not support filtering and returns aggregate counts rather than individual lead details. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -872,7 +948,8 @@ export const agencyZoomRoutes = [
 		name: 'searchLifeAndHealthLeads',
 		method: 'POST',
 		path: '/life',
-		description: 'Searches for life and health insurance leads by providing filter criteria (matching AlrLead fields) in the request body; an empty request may retrieve all leads or a default set. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Searches for life and health insurance leads by providing filter criteria (matching AlrLead fields) in the request body; an empty request may retrieve all leads or a default set. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -883,7 +960,8 @@ export const agencyZoomRoutes = [
 		name: 'searchSmsThreads',
 		method: 'POST',
 		path: '/text-thread/list',
-		description: 'Searches and retrieves SMS threads from AgencyZoom, with search parameters, filters, sorting, and pagination typically provided in the request body of this POST operation. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+		description:
+			'Searches and retrieves SMS threads from AgencyZoom, with search parameters, filters, sorting, and pagination typically provided in the request body of this POST operation. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -894,7 +972,8 @@ export const agencyZoomRoutes = [
 		name: 'searchTasks',
 		method: 'POST',
 		path: '/tasks/list',
-		description: 'Searches and lists tasks, supporting pagination and accepting filter criteria in the POST request body despite an empty request schema.',
+		description:
+			'Searches and lists tasks, supporting pagination and accepting filter criteria in the POST request body despite an empty request schema.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -905,7 +984,8 @@ export const agencyZoomRoutes = [
 		name: 'serviceTicketList',
 		method: 'POST',
 		path: '/serviceTicket/service-tickets/list',
-		description: 'Retrieves a paginated list of service tickets from AgencyZoom. Supports filtering by: - Status (0=removed, 1=active, 2=completed) - Priority ID and Category ID Returns service ticket details including subject, description, dates, assignment information, and workflow stage. Results are paginated with default page size of 20 tickets per page.',
+		description:
+			'Retrieves a paginated list of service tickets from AgencyZoom. Supports filtering by: - Status (0=removed, 1=active, 2=completed) - Priority ID and Category ID Returns service ticket details including subject, description, dates, assignment information, and workflow stage. Results are paginated with default page size of 20 tickets per page.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -916,11 +996,11 @@ export const agencyZoomRoutes = [
 		name: 'textDetailThread',
 		method: 'POST',
 		path: '/text-thread/text-thread-detail',
-		description: 'Retrieves detailed messages for a specific SMS/text thread by its thread ID. Returns all messages in the thread with their content, attachments, sender/recipient information, and metadata. The thread ID can be obtained from the search_sms_threads action.',
+		description:
+			'Retrieves detailed messages for a specific SMS/text thread by its thread ID. Returns all messages in the thread with their content, attachments, sender/recipient information, and metadata. The thread ID can be obtained from the search_sms_threads action.',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'destructive' as const,
-		irreversible: true,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'unlinkADriverFromOpportunity',
@@ -928,7 +1008,8 @@ export const agencyZoomRoutes = [
 		name: 'unlinkADriverFromOpportunity',
 		method: 'PUT',
 		path: '/opportunities/{opportunityId}/unlink-driver/{driverId}',
-		description: "Unlinks a currently associated driver from an AgencyZoom opportunity, used when the driver is no longer relevant, for policy or data updates, potentially impacting the opportunity's status or associated policy details.",
+		description:
+			"Unlinks a currently associated driver from an AgencyZoom opportunity, used when the driver is no longer relevant, for policy or data updates, potentially impacting the opportunity's status or associated policy details.",
 		pathParams: ['opportunityId', 'driverId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -939,7 +1020,8 @@ export const agencyZoomRoutes = [
 		name: 'unlinkAVehicleFromOpportunity',
 		method: 'PUT',
 		path: '/opportunities/{opportunityId}/unlink-vehicle/{vehicleId}',
-		description: 'Unlinks a specific, existing vehicle from a specific, existing opportunity using their respective IDs, removing only the association and not the records themselves.',
+		description:
+			'Unlinks a specific, existing vehicle from a specific, existing opportunity using their respective IDs, removing only the association and not the records themselves.',
 		pathParams: ['opportunityId', 'vehicleId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -950,11 +1032,11 @@ export const agencyZoomRoutes = [
 		name: 'unreadThread',
 		method: 'POST',
 		path: '/text-thread/unread-thread',
-		description: 'Updates the read or unread status of a specific email thread within AgencyZoom.',
+		description:
+			'Updates the read or unread status of a specific email thread within AgencyZoom.',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'destructive' as const,
-		irreversible: true,
+		riskLevel: 'write' as const,
 	},
 	{
 		key: 'updateADriverSDetails',
@@ -962,7 +1044,8 @@ export const agencyZoomRoutes = [
 		name: 'updateADriverSDetails',
 		method: 'PUT',
 		path: '/opportunities/drivers/{driverId}',
-		description: "Updates an existing driver's details in AgencyZoom, requiring `driverId` in the path and `firstName` and `lastName` in the request.",
+		description:
+			"Updates an existing driver's details in AgencyZoom, requiring `driverId` in the path and `firstName` and `lastName` in the request.",
 		pathParams: ['driverId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -973,7 +1056,8 @@ export const agencyZoomRoutes = [
 		name: 'updateALeadFileName',
 		method: 'PUT',
 		path: '/leads/{leadId}/rename',
-		description: "Updates a lead's file name to `newFileName`; requires `fileId` of the target file, which must be associated with both the `leadId` (path parameter) and the provided `customerReferralId`.",
+		description:
+			"Updates a lead's file name to `newFileName`; requires `fileId` of the target file, which must be associated with both the `leadId` (path parameter) and the provided `customerReferralId`.",
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -984,7 +1068,8 @@ export const agencyZoomRoutes = [
 		name: 'updateALeadOpportunity',
 		method: 'PUT',
 		path: '/leads/{leadId}/opportunities',
-		description: "Updates an existing opportunity's details (carrier, product line, premium, items, custom fields) for a specific lead; `leadId`, opportunity `id`, `carrierId`, and `productLineId` must refer to existing entities.",
+		description:
+			"Updates an existing opportunity's details (carrier, product line, premium, items, custom fields) for a specific lead; `leadId`, opportunity `id`, `carrierId`, and `productLineId` must refer to existing entities.",
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -995,7 +1080,8 @@ export const agencyZoomRoutes = [
 		name: 'updateALeadQuote',
 		method: 'PUT',
 		path: '/leads/{leadId}/quotes',
-		description: 'Updates an existing quote for a specified lead in AgencyZoom when its details require revision, ensuring the provided `leadId` (path parameter), quote `id` (body parameter), `carrierId`, and `productLineId` are valid and correspond to existing entities.',
+		description:
+			'Updates an existing quote for a specified lead in AgencyZoom when its details require revision, ensuring the provided `leadId` (path parameter), quote `id` (body parameter), `carrierId`, and `productLineId` are valid and correspond to existing entities.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1006,7 +1092,8 @@ export const agencyZoomRoutes = [
 		name: 'updateAnOpportunity',
 		method: 'PUT',
 		path: '/opportunities/{opportunityId}',
-		description: 'Updates an existing opportunity with the provided details; ensure any custom field names are predefined in AgencyZoom configuration.',
+		description:
+			'Updates an existing opportunity with the provided details; ensure any custom field names are predefined in AgencyZoom configuration.',
 		pathParams: ['opportunityId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1017,7 +1104,8 @@ export const agencyZoomRoutes = [
 		name: 'updateAPolicy',
 		method: 'PUT',
 		path: '/policies/{policyId}',
-		description: 'Updates an existing insurance policy for the given `policyId`; monetary values must be in cents and dates in YYYY-MM-DD format.',
+		description:
+			'Updates an existing insurance policy for the given `policyId`; monetary values must be in cents and dates in YYYY-MM-DD format.',
 		pathParams: ['policyId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1028,7 +1116,8 @@ export const agencyZoomRoutes = [
 		name: 'updateAVehicleSDetails',
 		method: 'PUT',
 		path: '/opportunities/vehicles/{vehicleId}',
-		description: 'Updates details for an existing vehicle within an opportunity; this action cannot be used to create new vehicle records.',
+		description:
+			'Updates details for an existing vehicle within an opportunity; this action cannot be used to create new vehicle records.',
 		pathParams: ['vehicleId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1039,7 +1128,8 @@ export const agencyZoomRoutes = [
 		name: 'updateBusinessLead',
 		method: 'PUT',
 		path: '/leads/{leadId}/update-biz-lead',
-		description: 'Updates an existing business lead in AgencyZoom. Requires leadId (path parameter) plus core business information fields: firstname, email, name (business name), pipelineId, stageId, leadSourceId, assignTo (producer ID), and country. All other fields are optional and will only update if provided.',
+		description:
+			'Updates an existing business lead in AgencyZoom. Requires leadId (path parameter) plus core business information fields: firstname, email, name (business name), pipelineId, stageId, leadSourceId, assignTo (producer ID), and country. All other fields are optional and will only update if provided.',
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1050,7 +1140,8 @@ export const agencyZoomRoutes = [
 		name: 'updateCustomer',
 		method: 'PUT',
 		path: '/customers/{customerId}',
-		description: "Updates an existing customer's information in AgencyZoom using their unique customerId.",
+		description:
+			"Updates an existing customer's information in AgencyZoom using their unique customerId.",
 		pathParams: ['customerId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1061,7 +1152,8 @@ export const agencyZoomRoutes = [
 		name: 'updateLead',
 		method: 'PUT',
 		path: '/leads/{leadId}',
-		description: "Updates an existing lead's information in AgencyZoom using the `leadId`; ensure the `leadId` corresponds to an existing lead in AgencyZoom.",
+		description:
+			"Updates an existing lead's information in AgencyZoom using the `leadId`; ensure the `leadId` corresponds to an existing lead in AgencyZoom.",
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1072,7 +1164,8 @@ export const agencyZoomRoutes = [
 		name: 'updateLeadStatusById',
 		method: 'PUT',
 		path: '/leads/{leadId}/stage',
-		description: "Updates a lead's status (0=ACTIVE, 2=WON, 3=LOST, 5=XDATED) by `leadId`, optionally setting workflow, stage, date, loss reason, X-date type, source, recycle stage/pipeline, or tags; requires `date` and `xDateType` for status 5 (XDATED), and `lossReasonId` for status 3 (LOST).",
+		description:
+			"Updates a lead's status (0=ACTIVE, 2=WON, 3=LOST, 5=XDATED) by `leadId`, optionally setting workflow, stage, date, loss reason, X-date type, source, recycle stage/pipeline, or tags; requires `date` and `xDateType` for status 5 (XDATED), and `lossReasonId` for status 3 (LOST).",
 		pathParams: ['leadId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1083,7 +1176,8 @@ export const agencyZoomRoutes = [
 		name: 'updateMyProfile',
 		method: 'PUT',
 		path: '/profile/my',
-		description: 'Updates the profile information (first name, last name, email, and optional phone) for the currently authenticated user in AgencyZoom; the provided email address must be unique within the system.',
+		description:
+			'Updates the profile information (first name, last name, email, and optional phone) for the currently authenticated user in AgencyZoom; the provided email address must be unique within the system.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1094,7 +1188,8 @@ export const agencyZoomRoutes = [
 		name: 'updateTagsForAPolicy',
 		method: 'POST',
 		path: '/policies/update-tags',
-		description: 'Adds new comma-separated `tagNames` to a policy, requiring `tagNames` and identification by either `policyId` or `amsPolicyId`; if `amsPolicyId` is provided, `policyId` is ignored, and existing tags are not affected.',
+		description:
+			'Adds new comma-separated `tagNames` to a policy, requiring `tagNames` and identification by either `policyId` or `amsPolicyId`; if `amsPolicyId` is provided, `policyId` is ignored, and existing tags are not affected.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1105,7 +1200,8 @@ export const agencyZoomRoutes = [
 		name: 'updateTask',
 		method: 'PUT',
 		path: '/tasks/{taskId}',
-		description: 'Modifies an existing AgencyZoom task (which must be valid and identified by `taskId` in the path) with new attributes from the request body, which must also contain `taskId`.',
+		description:
+			'Modifies an existing AgencyZoom task (which must be valid and identified by `taskId` in the path) with new attributes from the request body, which must also contain `taskId`.',
 		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -1116,7 +1212,8 @@ export const agencyZoomRoutes = [
 		name: 'v4SsoLogTheUserIn',
 		method: 'POST',
 		path: '/auth/ssologin',
-		description: 'Logs a user into the AgencyZoom platform via Single Sign-On (SSO). Returns JWT on success or error details on authentication failure.',
+		description:
+			'Logs a user into the AgencyZoom platform via Single Sign-On (SSO). Returns JWT on success or error details on authentication failure.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,

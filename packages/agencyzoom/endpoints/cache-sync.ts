@@ -68,11 +68,13 @@ export async function syncAgencyZoomOperationCache(
 	ctx: AgencyZoomContext,
 	route: Pick<AgencyZoomRoute, 'method' | 'group'>,
 	input: AgencyZoomEndpointInput,
+	// response is unknown: AgencyZoom payloads vary by endpoint; items narrowed via isRecord.
 	response: unknown,
 ) {
 	const rule = GROUP_CACHE_RULES[route.group];
 	if (!rule) return;
 
+	// ctx.db entity clients are dynamically keyed; assert to the upsert/delete shape used here.
 	const db = ctx.db as
 		| Record<
 				string,
