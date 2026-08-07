@@ -36,15 +36,21 @@ export async function makeAgencyZoomRequest<T>(
 	options: AgencyZoomRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query, headers } = options;
+	// HTTP header names are case-insensitive; strip reserved keys before plugin owns them.
+	const protectedHeaderNames = new Set(['authorization', 'content-type']);
+	const safeHeaders = Object.fromEntries(
+		Object.entries(headers ?? {}).filter(
+			([name]) => !protectedHeaderNames.has(name.toLowerCase()),
+		),
+	);
 	const config: OpenAPIConfig = {
 		BASE: AGENCYZOOM_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey || undefined,
-		// Caller headers first; plugin-owned Content-Type/Authorization win when present.
 		HEADERS: {
-			...headers,
+			...safeHeaders,
 			'Content-Type': 'application/json',
 			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
 		},

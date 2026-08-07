@@ -67,8 +67,13 @@ function cacheDeleteEntityIds(
 	input: Record<string, unknown>,
 	rule: CacheRule,
 ): string[] {
+	// Explicit `{ body: { taskIds } }` shape from the request factory.
+	const deleteInput = isRecord(input.body)
+		? { ...input, ...input.body }
+		: input;
+
 	for (const key of BATCH_DELETE_ID_KEYS) {
-		const value = input[key];
+		const value = deleteInput[key];
 		if (!Array.isArray(value)) continue;
 		return value.flatMap((entry) => {
 			if (typeof entry === 'string' && entry.length > 0) return [entry];
@@ -78,7 +83,7 @@ function cacheDeleteEntityIds(
 	}
 
 	for (const key of rule.deleteInputKeys ?? rule.idKeys) {
-		const value = input[key];
+		const value = deleteInput[key];
 		if (typeof value === 'string' && value.length > 0) return [value];
 		if (typeof value === 'number') return [String(value)];
 	}

@@ -1,4 +1,7 @@
 import { z } from 'zod';
+import type { AgencyZoomRoutes } from './routes';
+
+type AgencyZoomRouteKey = AgencyZoomRoutes[number]['key'];
 
 // AgencyZoom returns JSON objects or arrays; keep unknown fields via record/array unions.
 const AgencyZoomResponseSchema = z.union([
@@ -1229,7 +1232,7 @@ const AgencyZoomSearchInputSchema = z
 		query: AgencyZoomQueryParamsSchema,
 		headers: z.record(z.string(), z.string()).optional(),
 	})
-	.passthrough();
+	.loose();
 
 // searchBusinessClassifications
 const SearchBusinessClassificationsInputSchema = AgencyZoomSearchInputSchema;
@@ -1894,7 +1897,7 @@ export const AgencyZoomEndpointInputSchemas = {
 	updateTagsForAPolicy: UpdateTagsForAPolicyInputSchema,
 	updateTask: UpdateTaskInputSchema,
 	v4SsoLogTheUserIn: V4SsoLogTheUserInInputSchema,
-} as const;
+} as const satisfies Record<AgencyZoomRouteKey, z.ZodType>;
 
 export type AgencyZoomEndpointInputs = {
 	[K in keyof typeof AgencyZoomEndpointInputSchemas]: z.infer<
@@ -2005,7 +2008,7 @@ export const AgencyZoomEndpointOutputSchemas = {
 	updateTagsForAPolicy: UpdateTagsForAPolicyResponseSchema,
 	updateTask: UpdateTaskResponseSchema,
 	v4SsoLogTheUserIn: V4SsoLogTheUserInResponseSchema,
-} as const;
+} as const satisfies Record<AgencyZoomRouteKey, z.ZodType>;
 
 export type AgencyZoomEndpointOutputs = {
 	[K in keyof typeof AgencyZoomEndpointOutputSchemas]: z.infer<

@@ -608,7 +608,7 @@ export const agencyZoomRoutes = [
 			'Retrieves metadata (id, title, MIME type, size, dates, creator info) for files attached to leads in AgencyZoom. Optionally filter by `leadId` to get files for a specific lead, or omit to retrieve files across all leads. Returns file metadata only, not the actual file content.',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'getLeadNotes',
@@ -776,7 +776,7 @@ export const agencyZoomRoutes = [
 			'Searches and retrieves detailed information for email threads in AgencyZoom; no explicit search criteria are passed in this request. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'linkADriverToOpportunity',
@@ -846,7 +846,7 @@ export const agencyZoomRoutes = [
 		method: 'POST',
 		path: '/email-thread/unread-thread',
 		description:
-			'Marks a text thread in AgencyZoom as read or unread using its `threadId`; this action does not modify message content and the specified `threadId` must refer to an existing thread.',
+			'Marks an email thread in AgencyZoom as read or unread using its `threadId`; this action does not modify message content and the specified `threadId` must refer to an existing thread.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
@@ -898,7 +898,7 @@ export const agencyZoomRoutes = [
 			'Retrieves a comprehensive list of all available business classifications from AgencyZoom, each including an ID, code, and description. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'searchCustomers',
@@ -910,7 +910,7 @@ export const agencyZoomRoutes = [
 			'Searches for customers in AgencyZoom using criteria like contact information, policy details, or custom fields, with options for filtering, sorting, and pagination. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'searchEmailThreads',
@@ -922,7 +922,7 @@ export const agencyZoomRoutes = [
 			'Retrieves a list of email thread metadata from AgencyZoom, suitable for an overview when no specific filtering, sorting, or pagination is needed, as results are subject to default server-side limits and ordering. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'searchLeads',
@@ -934,7 +934,7 @@ export const agencyZoomRoutes = [
 			'Retrieves AgencyZoom leads, using filters, pagination, and sorting options sent in the POST body, as the request schema itself is empty. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'searchLeadsCount',
@@ -946,7 +946,7 @@ export const agencyZoomRoutes = [
 			'Retrieves a summary of lead counts categorized by workflow stage from AgencyZoom; this action does not support filtering and returns aggregate counts rather than individual lead details. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'searchLifeAndHealthLeads',
@@ -958,7 +958,7 @@ export const agencyZoomRoutes = [
 			'Searches for life and health insurance leads by providing filter criteria (matching AlrLead fields) in the request body; an empty request may retrieve all leads or a default set. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'searchSmsThreads',
@@ -970,7 +970,7 @@ export const agencyZoomRoutes = [
 			'Searches and retrieves SMS threads from AgencyZoom, with search parameters, filters, sorting, and pagination typically provided in the request body of this POST operation. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'searchTasks',
@@ -982,7 +982,7 @@ export const agencyZoomRoutes = [
 			'Searches and lists tasks, supporting pagination and accepting filter criteria in the POST request body despite an empty request schema.',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'serviceTicketList',
@@ -994,7 +994,7 @@ export const agencyZoomRoutes = [
 			'Retrieves a paginated list of service tickets from AgencyZoom. Supports filtering by: - Status (0=removed, 1=active, 2=completed) - Priority ID and Category ID Returns service ticket details including subject, description, dates, assignment information, and workflow stage. Results are paginated with default page size of 20 tickets per page.',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'textDetailThread',
@@ -1039,7 +1039,7 @@ export const agencyZoomRoutes = [
 		method: 'POST',
 		path: '/text-thread/unread-thread',
 		description:
-			'Updates the read or unread status of a specific email thread within AgencyZoom.',
+			'Updates the read or unread status of a specific SMS/text thread within AgencyZoom.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,

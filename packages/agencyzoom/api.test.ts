@@ -1,7 +1,7 @@
 import { request } from 'corsair/http';
 import { makeAgencyZoomRequest } from './client';
 import { syncAgencyZoomOperationCache } from './endpoints/cache-sync';
-import { resolvePath } from './endpoints/factory';
+import { requestBody, resolvePath } from './endpoints/factory';
 import { agencyZoomRoutes } from './endpoints/routes';
 import type { AgencyZoomContext } from './index';
 import { agencyZoomEndpointSchemas, agencyzoom } from './index';
@@ -118,6 +118,40 @@ describe('AgencyZoom plugin shape', () => {
 		expect(textDetail && 'irreversible' in textDetail).toBe(false);
 		expect(unread && 'irreversible' in unread).toBe(false);
 	});
+
+	it('classifies POST search/list retrievals as read', () => {
+		for (const name of [
+			'searchCustomers',
+			'searchLeads',
+			'searchTasks',
+			'searchEmailThreads',
+			'searchSmsThreads',
+			'searchLeadsCount',
+			'searchLifeAndHealthLeads',
+			'searchBusinessClassifications',
+			'serviceTicketList',
+			'getThreadDetails',
+			'getLeadFiles',
+		]) {
+			const route = agencyZoomRoutes.find(
+				(candidate) => candidate.name === name,
+			);
+			expect(route?.riskLevel).toBe('read');
+		}
+	});
+
+	it('keeps unread-thread descriptions matched to channel', () => {
+		const emailUnread = agencyZoomRoutes.find(
+			(route) => route.name === 'markThreadAsUnreadApiEndpoint',
+		);
+		const textUnread = agencyZoomRoutes.find(
+			(route) => route.name === 'unreadThread',
+		);
+		expect(emailUnread?.description.toLowerCase()).toContain('email');
+		expect(emailUnread?.description.toLowerCase()).not.toContain('text thread');
+		expect(textUnread?.description.toLowerCase()).toMatch(/sms|text/);
+		expect(textUnread?.description.toLowerCase()).not.toContain('email');
+	});
 });
 
 describe('AgencyZoom request client', () => {
@@ -154,6 +188,8 @@ describe('AgencyZoom request client', () => {
 			method: 'POST',
 			headers: {
 				Authorization: 'Bearer attacker',
+				authorization: 'Bearer lowercase-attacker',
+				'content-type': 'text/plain',
 				'X-Custom': 'ok',
 			},
 		});
@@ -162,6 +198,9 @@ describe('AgencyZoom request client', () => {
 			HEADERS: Record<string, string>;
 		};
 		expect(config.HEADERS.Authorization).toBe('Bearer test-jwt-token');
+		expect(config.HEADERS.authorization).toBeUndefined();
+		expect(config.HEADERS['Content-Type']).toBe('application/json');
+		expect(config.HEADERS['content-type']).toBeUndefined();
 		expect(config.HEADERS['X-Custom']).toBe('ok');
 	});
 });
@@ -329,6 +368,43 @@ describe('AgencyZoom endpoints', () => {
 		expect(deleteByEntityId).toHaveBeenCalledWith('1');
 		expect(deleteByEntityId).toHaveBeenCalledWith('2');
 		expect(upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('evicts task cache when ids are nested under body', async () => {
+		const deleteByEntityId = jest.fn().mockResolvedValue(true);
+		const route = agencyZoomRoutes.find(
+			(candidate) => candidate.name === 'batchDeleteTask',
+		);
+		expect(route).toBeDefined();
+
+		await syncAgencyZoomOperationCache(
+			{
+				...mockCtx,
+				db: {
+					tasks: { deleteByEntityId },
+				},
+			} as unknown as AgencyZoomContext,
+			route!,
+			{ body: { taskIds: [9, 10] } },
+			{ ok: true },
+		);
+
+		expect(deleteByEntityId).toHaveBeenCalledWith('9');
+		expect(deleteByEntityId).toHaveBeenCalledWith('10');
+	});
+
+	it('excludes path-param aliases from request bodies', () => {
+		const route = agencyZoomRoutes.find(
+			(candidate) => candidate.name === 'createACustomerNote',
+		);
+		expect(route).toBeDefined();
+		expect(
+			requestBody(route!, {
+				customer_id: 11,
+				customerId: 11,
+				note: 'hello',
+			}),
+		).toEqual({ note: 'hello' });
 	});
 
 	it('maps destructive and multi-path-param routes correctly', async () => {

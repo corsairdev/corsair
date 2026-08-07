@@ -90,9 +90,18 @@ function buildQuery(route: AgencyZoomRoute, input: AgencyZoomEndpointInput) {
 	return Object.keys(query).length > 0 ? query : undefined;
 }
 
-function requestBody(route: AgencyZoomRoute, input: AgencyZoomEndpointInput) {
+export function requestBody(
+	route: AgencyZoomRoute,
+	input: AgencyZoomEndpointInput,
+) {
 	if ('body' in input && input.body !== undefined) return input.body;
-	const pathParams = new Set(route.pathParams ?? []);
+	const pathParams = new Set(
+		(route.pathParams ?? []).flatMap((key) => [
+			key,
+			camelToSnake(key),
+			...(PATH_PARAM_ALIASES[key] ?? []),
+		]),
+	);
 	const queryParams = new Set(
 		(route.queryParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
 	);
