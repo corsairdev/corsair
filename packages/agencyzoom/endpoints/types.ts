@@ -1809,7 +1809,8 @@ export type UpdateTagsForAPolicyResponse = z.infer<
 	typeof UpdateTagsForAPolicyResponseSchema
 >;
 
-// updateTask
+// updateTask — taskId is a path param and must also appear in the JSON body.
+// Kept via route.bodyPathParams (see routes.ts + factory.requestBody).
 const UpdateTaskInputSchema = z.object({
 	type: z.string().optional(),
 	title: z.string().optional(),
