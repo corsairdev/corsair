@@ -11,6 +11,8 @@ export type AgencyZoomRoute = {
 	description: string;
 	pathParams?: readonly string[];
 	queryParams?: readonly string[];
+	/** Path params that must also be included in the JSON body (AgencyZoom quirk). */
+	bodyPathParams?: readonly string[];
 	riskLevel: EndpointRiskLevel;
 	irreversible?: boolean;
 	/** When false, JWT is optional (login / V4 SSO bootstrap). Default true. */
@@ -1209,6 +1211,7 @@ export const agencyZoomRoutes = [
 		description:
 			'Modifies an existing AgencyZoom task (which must be valid and identified by `taskId` in the path) with new attributes from the request body, which must also contain `taskId`.',
 		pathParams: ['taskId'],
+		bodyPathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},

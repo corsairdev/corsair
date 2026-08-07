@@ -448,6 +448,39 @@ describe('AgencyZoom endpoints', () => {
 		).toEqual({ note: 'hello' });
 	});
 
+	it('keeps updateTask taskId in both path and body', () => {
+		const route = agencyZoomRoutes.find(
+			(candidate) => candidate.name === 'updateTask',
+		);
+		expect(route).toBeDefined();
+		expect(route!.bodyPathParams).toEqual(['taskId']);
+		expect(
+			requestBody(route!, {
+				taskId: 123,
+				title: 'Call',
+			}),
+		).toEqual({ taskId: 123, title: 'Call' });
+		expect(resolvePath(route!.path, { taskId: 123 } as never, route)).toBe(
+			'/tasks/123',
+		);
+	});
+
+	it('requires tagNames and a policy identifier for updateTagsForAPolicy', () => {
+		const schema =
+			agencyZoomEndpointSchemas['policies.updateTagsForAPolicy']?.input;
+		expect(schema).toBeDefined();
+		expect(() => schema!.parse({})).toThrow();
+		expect(() => schema!.parse({ tagNames: 'vip' })).toThrow();
+		expect(schema!.parse({ tagNames: 'vip', policyId: 1 })).toMatchObject({
+			tagNames: 'vip',
+			policyId: 1,
+		});
+		expect(schema!.parse({ tagNames: 'vip', amsPolicyId: 9 })).toMatchObject({
+			tagNames: 'vip',
+			amsPolicyId: 9,
+		});
+	});
+
 	it('maps destructive and multi-path-param routes correctly', async () => {
 		const plugin = agencyzoom({ key: 'test-jwt-token' });
 		// Test-only: exercise deletes Greptile flagged + multi-segment path params.

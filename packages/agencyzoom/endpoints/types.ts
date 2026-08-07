@@ -1788,15 +1788,20 @@ export type UpdateMyProfileResponse = z.infer<
 	typeof UpdateMyProfileResponseSchema
 >;
 
-// updateTagsForAPolicy
-const UpdateTagsForAPolicyInputSchema = z.object({
-	policyId: z.number().int().optional(),
-	tagNames: z.string().optional(),
-	amsPolicyId: z.number().int().optional(),
-	body: AgencyZoomOptionalBodySchema,
-	query: AgencyZoomQueryParamsSchema,
-	headers: z.record(z.string(), z.string()).optional(),
-});
+// updateTagsForAPolicy — OpenAPI needs tagNames + policyId or amsPolicyId.
+const UpdateTagsForAPolicyInputSchema = z
+	.object({
+		policyId: z.number().int().optional(),
+		tagNames: z.string(),
+		amsPolicyId: z.number().int().optional(),
+		body: AgencyZoomOptionalBodySchema,
+		query: AgencyZoomQueryParamsSchema,
+		headers: z.record(z.string(), z.string()).optional(),
+	})
+	.refine(
+		(value) => value.policyId !== undefined || value.amsPolicyId !== undefined,
+		{ message: 'Either policyId or amsPolicyId is required' },
+	);
 export type UpdateTagsForAPolicyInput = z.infer<
 	typeof UpdateTagsForAPolicyInputSchema
 >;

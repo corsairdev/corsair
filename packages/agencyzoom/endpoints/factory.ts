@@ -102,13 +102,23 @@ export function requestBody(
 			...(PATH_PARAM_ALIASES[key] ?? []),
 		]),
 	);
+	// Some AgencyZoom writes require the path id in the JSON body as well (e.g. updateTask).
+	const bodyPathParams = new Set(
+		(route.bodyPathParams ?? []).flatMap((key) => [
+			key,
+			camelToSnake(key),
+			...(PATH_PARAM_ALIASES[key] ?? []),
+		]),
+	);
 	const queryParams = new Set(
 		(route.queryParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
 	);
 	const body = Object.fromEntries(
 		Object.entries(input).filter(([key, value]) => {
+			const isExcludedPathParam =
+				pathParams.has(key) && !bodyPathParams.has(key);
 			return (
-				!pathParams.has(key) &&
+				!isExcludedPathParam &&
 				!queryParams.has(key) &&
 				!BODY_CONTROL_KEYS.has(key) &&
 				value !== undefined
