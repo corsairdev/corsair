@@ -135,7 +135,7 @@ export type BatchCreateContactResponse = z.infer<
 
 // batchCreateLead
 const BatchCreateLeadInputSchema = z.object({
-	leadDataRequests: AgencyZoomBatchItemsOptionalSchema,
+	leadDataRequests: AgencyZoomBatchItemsSchema,
 	body: AgencyZoomOptionalBodySchema,
 	query: AgencyZoomQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
