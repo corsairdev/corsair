@@ -10,7 +10,6 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
 import {
 	agencyZoomEndpointSchemas,
 	agencyZoomEndpointsNested,
@@ -92,25 +91,17 @@ export function agencyzoom<const T extends AgencyZoomPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AgencyZoomKeyBuilderContext, source) => {
+			// Soft keyBuilder: login/SSO bootstrap ops run with '' (no Bearer).
+			// Authenticated routes throw AuthMissingError in the factory when key is empty.
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
-					console.error(
-						'[AGENCYZOOM] JWT token missing — connect AgencyZoom or pass key in plugin options.',
-					);
-					throw new AuthMissingError('agencyzoom', 'api_key');
-				}
-				return res;
+				return (await ctx.keys.get_api_key()) ?? '';
 			}
 
-			console.error(
-				'[AGENCYZOOM] Authentication required for AgencyZoom API requests.',
-			);
-			throw new AuthMissingError('agencyzoom', 'api_key');
+			return '';
 		},
 	} satisfies InternalAgencyZoomPlugin;
 }

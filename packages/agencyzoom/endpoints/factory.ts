@@ -1,5 +1,5 @@
 import type { CorsairEndpoint } from 'corsair/core';
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { makeAgencyZoomRequest } from '../client';
 import type { AgencyZoomContext } from '../index';
 import { syncAgencyZoomOperationCache } from './cache-sync';
@@ -140,14 +140,25 @@ export async function requestAgencyZoomOperation(
 	input: AgencyZoomEndpointInput,
 	route: AgencyZoomRoute,
 ) {
-	return makeAgencyZoomRequest(resolvePath(route.path, input, route), ctx.key, {
-		method: route.method,
-		body: requestBody(route, input),
-		query: buildQuery(route, input),
-		// input.headers is unknown via the AgencyZoomEndpointInput index signature;
-		// callers supply string-valued header maps validated by per-op Zod schemas.
-		headers: input.headers as Record<string, string> | undefined,
-	});
+	if (route.requiresAuth !== false && !ctx.key) {
+		console.error(
+			'[AGENCYZOOM] JWT token missing — connect AgencyZoom or pass key in plugin options.',
+		);
+		throw new AuthMissingError('agencyzoom', 'api_key');
+	}
+
+	return makeAgencyZoomRequest(
+		resolvePath(route.path, input, route),
+		ctx.key ?? '',
+		{
+			method: route.method,
+			body: requestBody(route, input),
+			query: buildQuery(route, input),
+			// input.headers is unknown via the AgencyZoomEndpointInput index signature;
+			// callers supply string-valued header maps validated by per-op Zod schemas.
+			headers: input.headers as Record<string, string> | undefined,
+		},
+	);
 }
 
 export async function executeAgencyZoomOperation(

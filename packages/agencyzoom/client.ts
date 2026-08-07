@@ -41,12 +41,12 @@ export async function makeAgencyZoomRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		// Caller headers first; plugin-owned Authorization/Content-Type always win.
+		TOKEN: apiKey || undefined,
+		// Caller headers first; plugin-owned Content-Type/Authorization win when present.
 		HEADERS: {
 			...headers,
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
+			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
 		},
 	};
 

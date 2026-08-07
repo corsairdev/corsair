@@ -1,9 +1,91 @@
 import { z } from 'zod';
 
-// AgencyZoom response payloads vary across 99 endpoints; per-route schemas are not yet mapped from API docs.
-const AgencyZoomResponseSchema = z.unknown();
+// AgencyZoom returns JSON objects or arrays; keep unknown fields via record/array unions.
+const AgencyZoomResponseSchema = z.union([
+	z.record(z.string(), z.unknown()),
+	z.array(z.unknown()),
+]);
 // Optional raw JSON body passthrough for operations with complex or dynamic request payloads.
 const AgencyZoomOptionalBodySchema = z.unknown().optional();
+
+// OpenAPI: POST /auth/login, /auth/ssologin, /v4sso/sso-login
+const AgencyZoomJwtAuthResponseSchema = z
+	.object({
+		jwt: z.string(),
+		ownerAgent: z.boolean().optional(),
+	})
+	.loose();
+
+// OpenAPI lead resource (GET /leads/{leadId}, list items)
+const AgencyZoomLeadSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		firstname: z.string().optional(),
+		middlename: z.string().optional(),
+		lastname: z.string().optional(),
+		email: z.string().optional(),
+		phone: z.string().optional(),
+		status: z.union([z.string(), z.number()]).optional(),
+		leadSourceId: z.number().optional(),
+		pipelineId: z.number().optional(),
+		stageId: z.number().optional(),
+	})
+	.loose();
+
+const AgencyZoomLeadListResponseSchema = z
+	.object({
+		totalCount: z.number().optional(),
+		page: z.number().optional(),
+		pageSize: z.number().optional(),
+		leads: z.array(AgencyZoomLeadSchema).optional(),
+	})
+	.loose();
+
+// OpenAPI customer resource (GET /customers/{customerId})
+const AgencyZoomCustomerSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		businessName: z.string().optional(),
+		firstname: z.string().optional(),
+		lastname: z.string().optional(),
+		email: z.string().optional(),
+		phone: z.string().optional(),
+		customerType: z.string().optional(),
+	})
+	.loose();
+
+// OpenAPI task resource (GET /tasks/{taskId})
+const AgencyZoomTaskSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		title: z.string().optional(),
+		status: z.union([z.string(), z.number()]).optional(),
+		dueDate: z.string().optional(),
+		comments: z.string().optional(),
+		customerId: z.number().optional(),
+		leadId: z.number().optional(),
+	})
+	.loose();
+
+// OpenAPI opportunity resource (GET /opportunities/{opportunityId})
+const AgencyZoomOpportunitySchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+		carrierId: z.number().optional(),
+		productLineId: z.number().optional(),
+		premium: z.number().optional(),
+		items: z.number().optional(),
+		status: z.number().optional(),
+	})
+	.loose();
+
+// OpenAPI: GET /{leadId}/recycle-events
+const AgencyZoomRecycleEventsResponseSchema = z
+	.object({
+		existingXDate: z.array(z.unknown()).optional(),
+		newXDate: z.array(z.unknown()).optional(),
+	})
+	.loose();
 // Optional query filters vary by endpoint; values are heterogeneous JSON filter objects.
 const AgencyZoomQueryParamsSchema = z
 	.record(z.string(), z.unknown())
@@ -30,7 +112,8 @@ const AuthenticateForJwtviaV4SsoInputSchema = z.object({
 export type AuthenticateForJwtviaV4SsoInput = z.infer<
 	typeof AuthenticateForJwtviaV4SsoInputSchema
 >;
-const AuthenticateForJwtviaV4SsoResponseSchema = AgencyZoomResponseSchema;
+const AuthenticateForJwtviaV4SsoResponseSchema =
+	AgencyZoomJwtAuthResponseSchema;
 export type AuthenticateForJwtviaV4SsoResponse = z.infer<
 	typeof AuthenticateForJwtviaV4SsoResponseSchema
 >;
@@ -228,7 +311,7 @@ const CreateAnOpportunityInputSchema = z.object({
 export type CreateAnOpportunityInput = z.infer<
 	typeof CreateAnOpportunityInputSchema
 >;
-const CreateAnOpportunityResponseSchema = AgencyZoomResponseSchema;
+const CreateAnOpportunityResponseSchema = AgencyZoomOpportunitySchema;
 export type CreateAnOpportunityResponse = z.infer<
 	typeof CreateAnOpportunityResponseSchema
 >;
@@ -349,7 +432,7 @@ const CreateLeadInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateLeadInput = z.infer<typeof CreateLeadInputSchema>;
-const CreateLeadResponseSchema = AgencyZoomResponseSchema;
+const CreateLeadResponseSchema = AgencyZoomLeadSchema;
 export type CreateLeadResponse = z.infer<typeof CreateLeadResponseSchema>;
 
 // createTask
@@ -371,7 +454,7 @@ const CreateTaskInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type CreateTaskInput = z.infer<typeof CreateTaskInputSchema>;
-const CreateTaskResponseSchema = AgencyZoomResponseSchema;
+const CreateTaskResponseSchema = AgencyZoomTaskSchema;
 export type CreateTaskResponse = z.infer<typeof CreateTaskResponseSchema>;
 
 // deleteACustomer
@@ -742,7 +825,8 @@ const GetAListOfRecycleEventsInputSchema = z.object({
 export type GetAListOfRecycleEventsInput = z.infer<
 	typeof GetAListOfRecycleEventsInputSchema
 >;
-const GetAListOfRecycleEventsResponseSchema = AgencyZoomResponseSchema;
+const GetAListOfRecycleEventsResponseSchema =
+	AgencyZoomRecycleEventsResponseSchema;
 export type GetAListOfRecycleEventsResponse = z.infer<
 	typeof GetAListOfRecycleEventsResponseSchema
 >;
@@ -890,7 +974,7 @@ const GetTheCustomerDetailsInputSchema = z.object({
 export type GetTheCustomerDetailsInput = z.infer<
 	typeof GetTheCustomerDetailsInputSchema
 >;
-const GetTheCustomerDetailsResponseSchema = AgencyZoomResponseSchema;
+const GetTheCustomerDetailsResponseSchema = AgencyZoomCustomerSchema;
 export type GetTheCustomerDetailsResponse = z.infer<
 	typeof GetTheCustomerDetailsResponseSchema
 >;
@@ -935,7 +1019,7 @@ const GetTheLeadDetailsInputSchema = z.object({
 export type GetTheLeadDetailsInput = z.infer<
 	typeof GetTheLeadDetailsInputSchema
 >;
-const GetTheLeadDetailsResponseSchema = AgencyZoomResponseSchema;
+const GetTheLeadDetailsResponseSchema = AgencyZoomLeadSchema;
 export type GetTheLeadDetailsResponse = z.infer<
 	typeof GetTheLeadDetailsResponseSchema
 >;
@@ -965,7 +1049,7 @@ const GetTheOpportunityDetailsInputSchema = z.object({
 export type GetTheOpportunityDetailsInput = z.infer<
 	typeof GetTheOpportunityDetailsInputSchema
 >;
-const GetTheOpportunityDetailsResponseSchema = AgencyZoomResponseSchema;
+const GetTheOpportunityDetailsResponseSchema = AgencyZoomOpportunitySchema;
 export type GetTheOpportunityDetailsResponse = z.infer<
 	typeof GetTheOpportunityDetailsResponseSchema
 >;
@@ -980,7 +1064,7 @@ const GetTheTaskDetailsInputSchema = z.object({
 export type GetTheTaskDetailsInput = z.infer<
 	typeof GetTheTaskDetailsInputSchema
 >;
-const GetTheTaskDetailsResponseSchema = AgencyZoomResponseSchema;
+const GetTheTaskDetailsResponseSchema = AgencyZoomTaskSchema;
 export type GetTheTaskDetailsResponse = z.infer<
 	typeof GetTheTaskDetailsResponseSchema
 >;
@@ -1067,7 +1151,7 @@ const LogTheUserInInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type LogTheUserInInput = z.infer<typeof LogTheUserInInputSchema>;
-const LogTheUserInResponseSchema = AgencyZoomResponseSchema;
+const LogTheUserInResponseSchema = AgencyZoomJwtAuthResponseSchema;
 export type LogTheUserInResponse = z.infer<typeof LogTheUserInResponseSchema>;
 
 // logTheUserOut
@@ -1178,7 +1262,7 @@ export type SearchEmailThreadsResponse = z.infer<
 // searchLeads
 const SearchLeadsInputSchema = AgencyZoomSearchInputSchema;
 export type SearchLeadsInput = z.infer<typeof SearchLeadsInputSchema>;
-const SearchLeadsResponseSchema = AgencyZoomResponseSchema;
+const SearchLeadsResponseSchema = AgencyZoomLeadListResponseSchema;
 export type SearchLeadsResponse = z.infer<typeof SearchLeadsResponseSchema>;
 
 // searchLeadsCount
@@ -1412,7 +1496,7 @@ const UpdateAnOpportunityInputSchema = z.object({
 export type UpdateAnOpportunityInput = z.infer<
 	typeof UpdateAnOpportunityInputSchema
 >;
-const UpdateAnOpportunityResponseSchema = AgencyZoomResponseSchema;
+const UpdateAnOpportunityResponseSchema = AgencyZoomOpportunitySchema;
 export type UpdateAnOpportunityResponse = z.infer<
 	typeof UpdateAnOpportunityResponseSchema
 >;
@@ -1556,7 +1640,7 @@ const UpdateCustomerInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateCustomerInput = z.infer<typeof UpdateCustomerInputSchema>;
-const UpdateCustomerResponseSchema = AgencyZoomResponseSchema;
+const UpdateCustomerResponseSchema = AgencyZoomCustomerSchema;
 export type UpdateCustomerResponse = z.infer<
 	typeof UpdateCustomerResponseSchema
 >;
@@ -1606,7 +1690,7 @@ const UpdateLeadInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateLeadInput = z.infer<typeof UpdateLeadInputSchema>;
-const UpdateLeadResponseSchema = AgencyZoomResponseSchema;
+const UpdateLeadResponseSchema = AgencyZoomLeadSchema;
 export type UpdateLeadResponse = z.infer<typeof UpdateLeadResponseSchema>;
 
 // updateLeadStatusById
@@ -1688,7 +1772,7 @@ const UpdateTaskInputSchema = z.object({
 	headers: z.record(z.string(), z.string()).optional(),
 });
 export type UpdateTaskInput = z.infer<typeof UpdateTaskInputSchema>;
-const UpdateTaskResponseSchema = AgencyZoomResponseSchema;
+const UpdateTaskResponseSchema = AgencyZoomTaskSchema;
 export type UpdateTaskResponse = z.infer<typeof UpdateTaskResponseSchema>;
 
 // v4SsoLogTheUserIn
@@ -1702,7 +1786,7 @@ const V4SsoLogTheUserInInputSchema = z.object({
 export type V4SsoLogTheUserInInput = z.infer<
 	typeof V4SsoLogTheUserInInputSchema
 >;
-const V4SsoLogTheUserInResponseSchema = AgencyZoomResponseSchema;
+const V4SsoLogTheUserInResponseSchema = AgencyZoomJwtAuthResponseSchema;
 export type V4SsoLogTheUserInResponse = z.infer<
 	typeof V4SsoLogTheUserInResponseSchema
 >;

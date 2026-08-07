@@ -186,7 +186,7 @@ describe('AgencyZoom endpoints', () => {
 		);
 	});
 
-	it('maps getAListOfRecycleEvents under /leads/{leadId}', async () => {
+	it('maps getAListOfRecycleEvents to OpenAPI /{leadId}/recycle-events', async () => {
 		const plugin = agencyzoom({ key: 'test-jwt-token' });
 		const endpoints = plugin.endpoints as NonNullable<
 			typeof plugin.endpoints
@@ -206,9 +206,64 @@ describe('AgencyZoom endpoints', () => {
 		expect(mockRequest.mock.calls[0]?.[1]).toEqual(
 			expect.objectContaining({
 				method: 'GET',
-				url: '/leads/42/recycle-events',
+				url: '/42/recycle-events',
 			}),
 		);
+	});
+
+	it('allows login bootstrap without an existing JWT', async () => {
+		const plugin = agencyzoom();
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			auth: {
+				logTheUserIn: (
+					ctx: AgencyZoomContext,
+					input: { username: string; password: string },
+				) => Promise<unknown>;
+			};
+		};
+
+		const noKeyCtx = { ...mockCtx, key: '' } as unknown as AgencyZoomContext;
+		await endpoints.auth.logTheUserIn(noKeyCtx, {
+			username: 'agent@example.com',
+			password: 'secret',
+		});
+
+		const config = mockRequest.mock.calls[0]?.[0] as {
+			HEADERS: Record<string, string>;
+			TOKEN?: string;
+		};
+		expect(config.HEADERS.Authorization).toBeUndefined();
+		expect(mockRequest.mock.calls[0]?.[1]).toEqual(
+			expect.objectContaining({
+				method: 'POST',
+				url: '/auth/login',
+				body: {
+					username: 'agent@example.com',
+					password: 'secret',
+				},
+			}),
+		);
+	});
+
+	it('requires JWT for authenticated routes', async () => {
+		const plugin = agencyzoom();
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			leads: {
+				getTheLeadDetails: (
+					ctx: AgencyZoomContext,
+					input: { leadId: number },
+				) => Promise<unknown>;
+			};
+		};
+
+		const noKeyCtx = { ...mockCtx, key: '' } as unknown as AgencyZoomContext;
+		await expect(
+			endpoints.leads.getTheLeadDetails(noKeyCtx, { leadId: 1 }),
+		).rejects.toThrow(/agencyzoom|api_key|Authentication|JWT/i);
 	});
 
 	it('evicts task cache on POST batchDeleteTask', async () => {

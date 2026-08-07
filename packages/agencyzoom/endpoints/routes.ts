@@ -13,6 +13,8 @@ export type AgencyZoomRoute = {
 	queryParams?: readonly string[];
 	riskLevel: EndpointRiskLevel;
 	irreversible?: boolean;
+	/** When false, JWT is optional (login / V4 SSO bootstrap). Default true. */
+	requiresAuth?: boolean;
 };
 
 export const agencyZoomRoutes = [
@@ -27,6 +29,7 @@ export const agencyZoomRoutes = [
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
+		requiresAuth: false,
 	},
 	{
 		key: 'batchCreateContact',
@@ -538,7 +541,8 @@ export const agencyZoomRoutes = [
 		group: 'referenceData',
 		name: 'getAListOfRecycleEvents',
 		method: 'GET',
-		path: '/leads/{leadId}/recycle-events',
+		// OpenAPI: GET /v1/api/{leadId}/recycle-events (no /leads prefix).
+		path: '/{leadId}/recycle-events',
 		description:
 			"Retrieves the available recycle event types and any existing X-Date information for a specified lead in AgencyZoom. Returns a list of recycle event categories that can be used to trigger follow-ups (e.g., 'X-Date', 'Accident Falls Off', 'Prior Insurance Fulfilled').",
 		pathParams: ['leadId'],
@@ -580,6 +584,7 @@ export const agencyZoomRoutes = [
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
+		requiresAuth: false,
 	},
 	{
 		key: 'getDepartmentsGroups',
@@ -820,6 +825,7 @@ export const agencyZoomRoutes = [
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
+		requiresAuth: false,
 	},
 	{
 		key: 'logTheUserOut',
@@ -1217,6 +1223,7 @@ export const agencyZoomRoutes = [
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'write' as const,
+		requiresAuth: false,
 	},
 ] as const;
 
