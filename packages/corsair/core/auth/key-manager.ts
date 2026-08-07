@@ -642,13 +642,20 @@ export function createAccountKeyManager<T extends AuthTypes>(
 					.executeTakeFirstOrThrow();
 
 				const newDek = generateDEK();
+				const config = parseConfig(row.config) as Record<string, string>;
+				const hasConfig = !!config && Object.keys(config).length > 0;
 				let newConfig: Record<string, string> = {};
+
 				if (row.dek) {
-					const oldDek = await decryptDEK(row.dek, kek);
-					const config = parseConfig(row.config) as Record<string, string>;
-					if (config && Object.keys(config).length > 0) {
+					if (hasConfig) {
+						const oldDek = await decryptDEK(row.dek, kek);
 						newConfig = reEncryptConfig(config, oldDek, newDek);
 					}
+				} else if (hasConfig) {
+					// Config without a DEK is unreadable — refuse rather than wipe it.
+					throw new Error(
+						`Account has encrypted config but no DEK (tenant: "${tenantId}", integration: "${integrationName}"). Recover the DEK before rotating.`,
+					);
 				}
 
 				const encryptedNewDek = await encryptDEK(newDek, kek);

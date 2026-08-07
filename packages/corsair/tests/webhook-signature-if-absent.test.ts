@@ -191,6 +191,40 @@ describe('set_webhook_signature_if_absent', () => {
 		}
 	});
 
+	it('refuses issue_new_dek when config exists without a DEK', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedAccount(database);
+			const before = await database.db
+				.selectFrom('corsair_accounts')
+				.select(['config', 'dek'])
+				.where('id', '=', 'account-default')
+				.executeTakeFirstOrThrow();
+
+			await database.db
+				.updateTable('corsair_accounts')
+				.set({ dek: null })
+				.where('id', '=', 'account-default')
+				.execute();
+
+			const km = makeManager(database);
+			await expect(km.issue_new_dek()).rejects.toThrow(
+				/encrypted config but no DEK/,
+			);
+
+			const after = await database.db
+				.selectFrom('corsair_accounts')
+				.select(['config', 'dek'])
+				.where('id', '=', 'account-default')
+				.executeTakeFirstOrThrow();
+
+			expect(after.config).toEqual(before.config);
+			expect(after.dek).toBeNull();
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('does not write when the stored config cannot be decrypted', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
