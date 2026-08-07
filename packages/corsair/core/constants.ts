@@ -21,6 +21,7 @@ export const BaseProviders = [
 	'ahrefs',
 	'airtable',
 	'algolia',
+	'alttextai',
 	'amplitude',
 	'asana',
 	'bitwarden',
@@ -121,6 +122,7 @@ export const ProviderDisplayNames = {
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
+	alttextai: 'AltText.ai',
 	amplitude: 'Amplitude',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -228,6 +230,7 @@ export type AllProviders =
 	| 'ahrefs'
 	| 'airtable'
 	| 'algolia'
+	| 'alttextai'
 	| 'amplitude'
 	| 'asana'
 	| 'bitwarden'
