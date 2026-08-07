@@ -67,6 +67,7 @@ module.exports = {
 			'<rootDir>/../linear/error-handlers.ts',
 		'^@corsair-dev/slack$': '<rootDir>/../slack/index.ts',
 		'^@corsair-dev/slack/client$': '<rootDir>/../slack/client.ts',
+		'^@corsair-dev/slack/schema$': '<rootDir>/../slack/schema/index.ts',
 		'^@corsair-dev/slack/error-handlers$':
 			'<rootDir>/../slack/error-handlers.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',

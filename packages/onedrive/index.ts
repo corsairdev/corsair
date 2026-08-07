@@ -15,6 +15,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import {
 	Drive,
@@ -34,6 +35,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { OnedriveSchema } from './schema';
+import { onedriveSubscribe } from './subscribe';
 import { DriveWebhooks } from './webhooks';
 import { matchOnedriveTenantWebhook } from './webhooks/tenant-matcher';
 import type {
@@ -50,7 +52,7 @@ import {
 } from './webhooks/types';
 
 export type OnedrivePluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	hooks?: InternalOnedrivePlugin['hooks'];
 	webhookHooks?: InternalOnedrivePlugin['webhookHooks'];
@@ -745,6 +747,9 @@ export const onedriveAuthConfig = {
 	oauth_2: {
 		account: ['subscription_id', 'client_state'] as const,
 	},
+	managed: {
+		account: ['subscription_id', 'client_state'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseOnedrivePlugin<PluginOptions extends OnedrivePluginOptions> =
@@ -802,6 +807,7 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			return createOnedriveMatch()(request);
 		},
 		pluginTenantWebhookMatcher: matchOnedriveTenantWebhook,
+		subscribe: onedriveSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -900,6 +906,25 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return result.accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:onedrive:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'onedrive',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

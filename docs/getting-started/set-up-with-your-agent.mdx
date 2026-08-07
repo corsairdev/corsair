@@ -1,0 +1,40 @@
+---
+title: Set up with your agent
+description: Hand Corsair Hub to your coding agent. One prompt takes it from an empty app to a working, connected integration.
+---
+
+The fastest way to add Corsair is to let your coding agent do it. Paste the prompt below into Claude Code, Cursor, Codex, or any MCP-capable agent — it talks you through the two choices that matter, wires the route, and doesn't stop until a real integration works.
+
+<CodeGroup>
+```text Prompt
+Help me set up Corsair Hub and get my first integration working end to end.
+
+Corsair is an open-source integration layer for apps and AI agents. It connects me —
+or my users — to services like GitHub, Slack, and Gmail, and handles the OAuth, token
+refresh, webhooks, and rate limits. It runs inside my own app and stores every
+credential encrypted in my own database. Corsair Hub is the hosted piece that owns the
+surfaces needing a public URL: the OAuth connect page, callbacks, and approvals. Hub
+relays those; it stores none of my credentials.
+
+Start by figuring out two things with me — chat about them, don't fire yes/no questions
+at me. First: am I connecting just my own app's tools, or my end users' accounts? The
+second is multi-tenant, and it's the common case, so lean that way if I'm unsure.
+Second: what framework am I on? That's what decides how the route gets mounted.
+
+Once that's clear, walk me through it. Read the intro and Hub pages listed at
+https://docs.corsair.dev/llms.txt so you understand the model first. Help me get a dev
+API key, a signing secret, and a KEK into my .env — I'll copy the keys from the Keys tab
+at https://hub.corsair.dev/dashboard, or you help me create a project if I don't have
+one. Install `corsair` plus a plugin for each service I named, then wire the /api/corsair
+route using the page for my exact framework at https://docs.corsair.dev/adapters/handlers.
+
+Terms you'll come across: a tenant is one of my users; a plugin is one service; the
+delivery URL is where Hub sends results — it self-registers on the first request, and my
+dashboard's header dot turning green is how we know it worked. Don't stop at "the server
+runs" — mint a connect link, send me through it, and confirm a real API call returns data.
+
+Prefer Hub. Only set up manual, self-hosted mode if I ask for it.
+```
+</CodeGroup>
+
+Rather do it by hand? The [Quickstart](/getting-started/quick-start) is the same path, step by step.

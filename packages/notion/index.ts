@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { Blocks, DatabasePages, Databases, Pages, Users } from './endpoints';
 import type {
 	NotionEndpointInputs,
@@ -42,7 +43,7 @@ import {
 } from './webhooks/types';
 
 export type NotionPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalNotionPlugin['hooks'];
@@ -291,6 +292,9 @@ export const notionAuthConfig = {
 	oauth_2: {
 		account: ['workspace_id'] as const,
 	},
+	managed: {
+		account: ['workspace_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseNotionPlugin<T extends NotionPluginOptions> = CorsairPlugin<
@@ -395,6 +399,25 @@ export function notion<const T extends NotionPluginOptions>(
 				}
 
 				return accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:notion:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'notion',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('notion', 'oauth_2');

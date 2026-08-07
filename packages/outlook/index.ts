@@ -17,6 +17,7 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import { Calendars, Contacts, Events, Folders, Messages } from './endpoints';
 import type {
@@ -29,6 +30,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { OutlookSchema } from './schema';
+import { outlookSubscribe } from './subscribe';
 import {
 	ContactWebhooks,
 	EventWebhooks,
@@ -57,7 +59,7 @@ import {
 } from './webhooks/types';
 
 export type OutlookPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalOutlookPlugin['hooks'];
@@ -532,6 +534,9 @@ export const outlookAuthConfig = {
 	oauth_2: {
 		account: ['subscription_id', 'client_state'] as const,
 	},
+	managed: {
+		account: ['subscription_id', 'client_state'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseOutlookPlugin<T extends OutlookPluginOptions> = CorsairPlugin<
@@ -611,6 +616,7 @@ export function outlook<const T extends OutlookPluginOptions>(
 			return false;
 		},
 		pluginTenantWebhookMatcher: matchOutlookTenantWebhook,
+		subscribe: outlookSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -667,6 +673,25 @@ export function outlook<const T extends OutlookPluginOptions>(
 					]);
 				}
 
+				return result.accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:outlook:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'outlook',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

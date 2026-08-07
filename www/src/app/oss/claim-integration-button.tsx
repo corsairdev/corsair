@@ -6,12 +6,29 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
+import type { ClaimBlockReason } from '@/lib/integration-claim-limits';
+import { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
 import { cn } from '@/lib/utils';
 
 import { claimIntegration } from '@/server/actions/claim-integration';
 
 export function wipClaimTooltipMessage(integrationName: string) {
 	return `Please complete ${integrationName} before claiming your next integration`;
+}
+
+export function claimBlockTooltipMessage(
+	blockReason: ClaimBlockReason | null | undefined,
+	wipIntegrationName?: string | null,
+) {
+	if (blockReason === 'wip' && wipIntegrationName) {
+		return wipClaimTooltipMessage(wipIntegrationName);
+	}
+
+	if (blockReason === 'limit_reached') {
+		return `You've built the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations`;
+	}
+
+	return undefined;
 }
 
 function ClaimButtonTooltip({
@@ -45,6 +62,7 @@ export function ClaimIntegrationButton({
 	integrationSlug,
 	disabled = false,
 	wipIntegrationName,
+	claimBlockReason,
 	size = 'sm',
 	className,
 }: {
@@ -52,16 +70,16 @@ export function ClaimIntegrationButton({
 	integrationSlug: string;
 	disabled?: boolean;
 	wipIntegrationName?: string | null;
+	claimBlockReason?: ClaimBlockReason | null;
 	size?: 'sm' | 'lg';
 	className?: string;
 }) {
 	const router = useRouter();
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
-	const tooltip =
-		disabled && wipIntegrationName
-			? wipClaimTooltipMessage(wipIntegrationName)
-			: undefined;
+	const tooltip = disabled
+		? claimBlockTooltipMessage(claimBlockReason, wipIntegrationName)
+		: undefined;
 
 	const handleClick = async () => {
 		setLoading(true);
