@@ -34,7 +34,14 @@ export const errorHandlers = {
 				msg.includes('network')
 			);
 		},
-		handler: async () => ({ maxRetries: 3 }),
+		handler: async (_error, context) => {
+			// Credit-consuming POST — ambiguous network failures must not retry
+			// or Wiza may charge twice for one reveal.
+			if (context.operation === 'individualReveals.start') {
+				return { maxRetries: 0 };
+			}
+			return { maxRetries: 3 };
+		},
 	},
 	DEFAULT: {
 		match: () => true,

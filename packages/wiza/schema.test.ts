@@ -3,6 +3,7 @@ import {
 	WizaEndpointInputSchemas,
 	WizaEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { WizaSchema } from './schema';
 
 jest.mock('./client', () => ({
@@ -198,6 +199,30 @@ describe('Wiza endpoint output schemas', () => {
 			},
 		});
 		expect(result.success).toBe(true);
+	});
+});
+
+describe('Wiza error handlers', () => {
+	const networkError = new Error('ECONNRESET');
+
+	it('does not retry SERVER_ERROR for individualReveals.start', async () => {
+		const result = await errorHandlers.SERVER_ERROR.handler(networkError, {
+			pluginId: 'wiza',
+			operation: 'individualReveals.start',
+			input: {},
+			originalError: networkError,
+		});
+		expect(result.maxRetries).toBe(0);
+	});
+
+	it('retries SERVER_ERROR for idempotent reads', async () => {
+		const result = await errorHandlers.SERVER_ERROR.handler(networkError, {
+			pluginId: 'wiza',
+			operation: 'individualReveals.get',
+			input: {},
+			originalError: networkError,
+		});
+		expect(result.maxRetries).toBe(3);
 	});
 });
 
