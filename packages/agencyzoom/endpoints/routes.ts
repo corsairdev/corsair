@@ -598,7 +598,7 @@ export const agencyZoomRoutes = [
 			'Fetches department and group information for an agency, optionally filtered by a specific `agencyNumber`, to analyze its organizational structure.',
 		pathParams: [],
 		queryParams: [],
-		riskLevel: 'write' as const,
+		riskLevel: 'read' as const,
 	},
 	{
 		key: 'getLeadFiles',

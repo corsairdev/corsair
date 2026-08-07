@@ -95,7 +95,6 @@ const AgencyZoomQueryParamsSchema = z
 	.optional();
 // Batch item arrays contain heterogeneous lead/contact/task objects per AgencyZoom API docs.
 const AgencyZoomBatchItemsSchema = z.array(z.unknown());
-const AgencyZoomBatchItemsOptionalSchema = z.array(z.unknown()).optional();
 // Tag IDs may be numeric or string depending on tenant configuration.
 const AgencyZoomTagIdsSchema = z.array(z.unknown()).optional();
 // Custom field payloads are tenant-specific and not fully described in the OpenAPI spec.

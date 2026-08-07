@@ -173,6 +173,7 @@ describe('AgencyZoom plugin shape', () => {
 			'serviceTicketList',
 			'getThreadDetails',
 			'getLeadFiles',
+			'getDepartmentsGroups',
 		]) {
 			const route = agencyZoomRoutes.find(
 				(candidate) => candidate.name === name,
