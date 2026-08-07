@@ -74,11 +74,11 @@ describe('AgencyZoom database schemas', () => {
 	});
 
 	it('requires leadDataRequests for batchCreateLead', () => {
-		expect(() =>
-			agencyZoomEndpointSchemas['leads.batchCreateLead'].input.parse({}),
-		).toThrow();
+		const schema = agencyZoomEndpointSchemas['leads.batchCreateLead']?.input;
+		expect(schema).toBeDefined();
+		expect(() => schema!.parse({})).toThrow();
 		expect(
-			agencyZoomEndpointSchemas['leads.batchCreateLead'].input.parse({
+			schema!.parse({
 				leadDataRequests: [{ email: 'a@b.com' }],
 			}),
 		).toMatchObject({ leadDataRequests: [{ email: 'a@b.com' }] });
