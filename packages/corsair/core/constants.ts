@@ -66,6 +66,7 @@ export const BaseProviders = [
 	'instagram',
 	'intercom',
 	'jira',
+	'kaggle',
 	'linear',
 	'linkedin',
 	'mailchimp',
@@ -167,6 +168,7 @@ export const ProviderDisplayNames = {
 	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
+	kaggle: 'Kaggle',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	mailchimp: 'Mailchimp',
@@ -275,6 +277,7 @@ export type AllProviders =
 	| 'instagram'
 	| 'intercom'
 	| 'jira'
+	| 'kaggle'
 	| 'linear'
 	| 'linkedin'
 	| 'mailchimp'
