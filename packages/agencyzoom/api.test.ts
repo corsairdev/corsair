@@ -5,6 +5,11 @@ import { resolvePath } from './endpoints/factory';
 import { agencyZoomRoutes } from './endpoints/routes';
 import type { AgencyZoomContext } from './index';
 import { agencyZoomEndpointSchemas, agencyzoom } from './index';
+import {
+	AgencyZoomCustomer,
+	AgencyZoomLead,
+	AgencyZoomTask,
+} from './schema/database';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -44,6 +49,41 @@ const mockCtx = {
 	logEvent: jest.fn(),
 	db: {},
 } as unknown as AgencyZoomContext;
+
+describe('AgencyZoom database schemas', () => {
+	it('uses AgencyZoom wire-case field names', () => {
+		expect(
+			AgencyZoomLead.parse({
+				id: 1,
+				firstname: 'Jane',
+				lastname: 'Doe',
+				email: 'jane@example.com',
+				status: 0,
+			}),
+		).toMatchObject({ firstname: 'Jane', lastname: 'Doe' });
+		expect(
+			AgencyZoomCustomer.parse({
+				id: 2,
+				firstname: 'John',
+				lastname: 'Smith',
+			}),
+		).toMatchObject({ firstname: 'John', lastname: 'Smith' });
+		expect(
+			AgencyZoomTask.parse({ id: 3, title: 'Call', status: 0 }),
+		).toMatchObject({ title: 'Call', status: 0 });
+	});
+
+	it('requires leadDataRequests for batchCreateLead', () => {
+		expect(() =>
+			agencyZoomEndpointSchemas['leads.batchCreateLead'].input.parse({}),
+		).toThrow();
+		expect(
+			agencyZoomEndpointSchemas['leads.batchCreateLead'].input.parse({
+				leadDataRequests: [{ email: 'a@b.com' }],
+			}),
+		).toMatchObject({ leadDataRequests: [{ email: 'a@b.com' }] });
+	});
+});
 
 describe('AgencyZoom plugin shape', () => {
 	it('exposes every listed operation with schemas and no webhooks', () => {

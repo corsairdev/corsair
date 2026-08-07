@@ -1,10 +1,11 @@
 import { z } from 'zod';
 
+// Field names match AgencyZoom API wire format (lowercase firstname/lastname).
 export const AgencyZoomLead = z
 	.object({
 		id: z.union([z.string(), z.number()]).optional(),
-		firstName: z.string().optional(),
-		lastName: z.string().optional(),
+		firstname: z.string().optional(),
+		lastname: z.string().optional(),
 		email: z.string().optional(),
 		status: z.union([z.string(), z.number()]).optional(),
 	})
@@ -13,8 +14,8 @@ export const AgencyZoomLead = z
 export const AgencyZoomCustomer = z
 	.object({
 		id: z.union([z.string(), z.number()]).optional(),
-		firstName: z.string().optional(),
-		lastName: z.string().optional(),
+		firstname: z.string().optional(),
+		lastname: z.string().optional(),
 		email: z.string().optional(),
 	})
 	.catchall(z.unknown());
@@ -23,7 +24,7 @@ export const AgencyZoomTask = z
 	.object({
 		id: z.union([z.string(), z.number()]).optional(),
 		title: z.string().optional(),
-		status: z.string().optional(),
+		status: z.union([z.string(), z.number()]).optional(),
 		dueDate: z.string().optional(),
 	})
 	.catchall(z.unknown());
