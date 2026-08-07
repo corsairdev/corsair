@@ -39,6 +39,7 @@ export const BaseProviders = [
 	'deepseek',
 	'digitalocean',
 	'discord',
+	'dockerhub',
 	'dodopayments',
 	'dropbox',
 	'exa',
@@ -140,6 +141,7 @@ export const ProviderDisplayNames = {
 	deepseek: 'DeepSeek',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
 	exa: 'Exa',
@@ -248,6 +250,7 @@ export type AllProviders =
 	| 'deepseek'
 	| 'digitalocean'
 	| 'discord'
+	| 'dockerhub'
 	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
