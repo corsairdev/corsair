@@ -2,7 +2,6 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
-import { agencyzoom } from '@corsair-dev/agencyzoom';
 import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
@@ -56,9 +55,6 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		hubspot(),
-		agencyzoom({
-			key: process.env.AGENCYZOOM_JWT,
-		}),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
 		}),

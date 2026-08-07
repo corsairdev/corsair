@@ -2,7 +2,10 @@ import type { AgencyZoomEndpoint } from './factory';
 import { executeAgencyZoomOperation, getRoute } from './factory';
 
 const createACustomerNoteRoute = getRoute('createACustomerNote');
-export const createACustomerNote: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const createACustomerNote: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, createACustomerNoteRoute);
 };
 
@@ -12,32 +15,54 @@ export const deleteACustomer: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const deleteACustomerFileRoute = getRoute('deleteACustomerFile');
-export const deleteACustomerFile: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const deleteACustomerFile: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, deleteACustomerFileRoute);
 };
 
 const deleteACustomerPolicyRoute = getRoute('deleteACustomerPolicy');
-export const deleteACustomerPolicy: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const deleteACustomerPolicy: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, deleteACustomerPolicyRoute);
 };
 
 const getAmsPoliciesForACustomerRoute = getRoute('getAmsPoliciesForACustomer');
-export const getAmsPoliciesForACustomer: AgencyZoomEndpoint = async (ctx, input = {}) => {
-	return executeAgencyZoomOperation(ctx, input, getAmsPoliciesForACustomerRoute);
+export const getAmsPoliciesForACustomer: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAgencyZoomOperation(
+		ctx,
+		input,
+		getAmsPoliciesForACustomerRoute,
+	);
 };
 
 const getPoliciesForACustomerRoute = getRoute('getPoliciesForACustomer');
-export const getPoliciesForACustomer: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const getPoliciesForACustomer: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, getPoliciesForACustomerRoute);
 };
 
 const getTheCustomerDetailsRoute = getRoute('getTheCustomerDetails');
-export const getTheCustomerDetails: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const getTheCustomerDetails: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, getTheCustomerDetailsRoute);
 };
 
 const getTheCustomerTasksRoute = getRoute('getTheCustomerTasks');
-export const getTheCustomerTasks: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const getTheCustomerTasks: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, getTheCustomerTasksRoute);
 };
 
@@ -61,5 +86,5 @@ export const CustomersEndpoints = {
 	getTheCustomerDetails,
 	getTheCustomerTasks,
 	searchCustomers,
-	updateCustomer
+	updateCustomer,
 } as const;

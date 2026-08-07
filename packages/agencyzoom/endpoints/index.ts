@@ -1,3 +1,4 @@
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import { AuthEndpoints } from './auth';
 import { ContactEndpoints } from './contact';
 import { CustomersEndpoints } from './customers';
@@ -8,13 +9,15 @@ import { OpportunitiesEndpoints } from './opportunities';
 import { PoliciesEndpoints } from './policies';
 import { ProfileEndpoints } from './profile';
 import { ReferenceDataEndpoints } from './reference-data';
+import { agencyZoomRoutes } from './routes';
 import { ServiceTicketsEndpoints } from './service-tickets';
 import { TasksEndpoints } from './tasks';
 import { TextThreadsEndpoints } from './text-threads';
+import {
+	AgencyZoomEndpointInputSchemas,
+	AgencyZoomEndpointOutputSchemas,
+} from './types';
 import { V4ssoEndpoints } from './v4sso';
-import type { RequiredPluginEndpointMeta } from 'corsair/core';
-import { agencyZoomRoutes } from './routes';
-import { AgencyZoomEndpointInputSchemas, AgencyZoomEndpointOutputSchemas } from './types';
 
 export const agencyZoomEndpointsNested = {
 	auth: AuthEndpoints,
@@ -30,7 +33,7 @@ export const agencyZoomEndpointsNested = {
 	serviceTickets: ServiceTicketsEndpoints,
 	tasks: TasksEndpoints,
 	textThreads: TextThreadsEndpoints,
-	v4sso: V4ssoEndpoints
+	v4sso: V4ssoEndpoints,
 } as const;
 
 export const agencyZoomEndpointMeta = Object.fromEntries(

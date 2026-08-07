@@ -7,7 +7,10 @@ export const batchCreateLead: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const changeStatusForLeadRoute = getRoute('changeStatusForLead');
-export const changeStatusForLead: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const changeStatusForLead: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, changeStatusForLeadRoute);
 };
 
@@ -17,7 +20,10 @@ export const createALeadNote: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const createALeadOpportunityRoute = getRoute('createALeadOpportunity');
-export const createALeadOpportunity: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const createALeadOpportunity: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, createALeadOpportunityRoute);
 };
 
@@ -42,7 +48,10 @@ export const deleteALeadFile: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const deleteALeadOpportunityRoute = getRoute('deleteALeadOpportunity');
-export const deleteALeadOpportunity: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const deleteALeadOpportunity: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, deleteALeadOpportunityRoute);
 };
 
@@ -72,13 +81,25 @@ export const getLeadTasks: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const getTheLeadDetailsRoute = getRoute('getTheLeadDetails');
-export const getTheLeadDetails: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const getTheLeadDetails: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, getTheLeadDetailsRoute);
 };
 
-const getTheOpportunitiesForALeadRoute = getRoute('getTheOpportunitiesForALead');
-export const getTheOpportunitiesForALead: AgencyZoomEndpoint = async (ctx, input = {}) => {
-	return executeAgencyZoomOperation(ctx, input, getTheOpportunitiesForALeadRoute);
+const getTheOpportunitiesForALeadRoute = getRoute(
+	'getTheOpportunitiesForALead',
+);
+export const getTheOpportunitiesForALead: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAgencyZoomOperation(
+		ctx,
+		input,
+		getTheOpportunitiesForALeadRoute,
+	);
 };
 
 const moveLeadToSoldRoute = getRoute('moveLeadToSold');
@@ -97,12 +118,18 @@ export const searchLeadsCount: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const updateALeadFileNameRoute = getRoute('updateALeadFileName');
-export const updateALeadFileName: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const updateALeadFileName: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, updateALeadFileNameRoute);
 };
 
 const updateALeadOpportunityRoute = getRoute('updateALeadOpportunity');
-export const updateALeadOpportunity: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const updateALeadOpportunity: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, updateALeadOpportunityRoute);
 };
 
@@ -112,7 +139,10 @@ export const updateALeadQuote: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const updateBusinessLeadRoute = getRoute('updateBusinessLead');
-export const updateBusinessLead: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const updateBusinessLead: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, updateBusinessLeadRoute);
 };
 
@@ -122,7 +152,10 @@ export const updateLead: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const updateLeadStatusByIdRoute = getRoute('updateLeadStatusById');
-export const updateLeadStatusById: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const updateLeadStatusById: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, updateLeadStatusByIdRoute);
 };
 
@@ -151,5 +184,5 @@ export const LeadsEndpoints = {
 	updateALeadQuote,
 	updateBusinessLead,
 	updateLead,
-	updateLeadStatusById
+	updateLeadStatusById,
 } as const;

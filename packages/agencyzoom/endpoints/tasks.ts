@@ -22,7 +22,10 @@ export const deleteATask: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const getTheTaskDetailsRoute = getRoute('getTheTaskDetails');
-export const getTheTaskDetails: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const getTheTaskDetails: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, getTheTaskDetailsRoute);
 };
 
@@ -49,5 +52,5 @@ export const TasksEndpoints = {
 	getTheTaskDetails,
 	reopenATask,
 	searchTasks,
-	updateTask
+	updateTask,
 } as const;

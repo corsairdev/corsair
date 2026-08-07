@@ -2,12 +2,18 @@ import type { AgencyZoomEndpoint } from './factory';
 import { executeAgencyZoomOperation, getRoute } from './factory';
 
 const getAListOfProducerRoute = getRoute('getAListOfProducer');
-export const getAListOfProducer: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const getAListOfProducer: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, getAListOfProducerRoute);
 };
 
 const removeTextThreadEndpointRoute = getRoute('removeTextThreadEndpoint');
-export const removeTextThreadEndpoint: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const removeTextThreadEndpoint: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, removeTextThreadEndpointRoute);
 };
 
@@ -31,5 +37,5 @@ export const TextThreadsEndpoints = {
 	removeTextThreadEndpoint,
 	searchSmsThreads,
 	textDetailThread,
-	unreadThread
+	unreadThread,
 } as const;

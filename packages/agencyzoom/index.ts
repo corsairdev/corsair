@@ -12,9 +12,9 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
-	agencyZoomEndpointMeta as generatedAgencyZoomEndpointMeta,
 	agencyZoomEndpointSchemas,
 	agencyZoomEndpointsNested,
+	agencyZoomEndpointMeta as generatedAgencyZoomEndpointMeta,
 } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { AgencyZoomSchema } from './schema';
@@ -37,9 +37,12 @@ export type AgencyZoomContext = CorsairPluginContext<
 	AgencyZoomPluginOptions
 >;
 
-export type AgencyZoomKeyBuilderContext = KeyBuilderContext<AgencyZoomPluginOptions>;
+export type AgencyZoomKeyBuilderContext =
+	KeyBuilderContext<AgencyZoomPluginOptions>;
 
-export type AgencyZoomBoundEndpoints = BindEndpoints<typeof agencyZoomEndpointsNested>;
+export type AgencyZoomBoundEndpoints = BindEndpoints<
+	typeof agencyZoomEndpointsNested
+>;
 
 export type AgencyZoomEndpoints = typeof agencyZoomEndpointsNested;
 
@@ -49,22 +52,25 @@ export const agencyZoomAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
-export type BaseAgencyZoomPlugin<T extends AgencyZoomPluginOptions> = CorsairPlugin<
-	'agencyzoom',
-	typeof AgencyZoomSchema,
-	typeof agencyZoomEndpointsNested,
-	{},
-	T,
-	typeof defaultAuthType
->;
+export type BaseAgencyZoomPlugin<T extends AgencyZoomPluginOptions> =
+	CorsairPlugin<
+		'agencyzoom',
+		typeof AgencyZoomSchema,
+		typeof agencyZoomEndpointsNested,
+		{},
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalAgencyZoomPlugin = BaseAgencyZoomPlugin<AgencyZoomPluginOptions>;
+export type InternalAgencyZoomPlugin =
+	BaseAgencyZoomPlugin<AgencyZoomPluginOptions>;
 
 export type ExternalAgencyZoomPlugin<T extends AgencyZoomPluginOptions> =
 	BaseAgencyZoomPlugin<T>;
 
 export function agencyzoom<const T extends AgencyZoomPluginOptions>(
-	incomingOptions: AgencyZoomPluginOptions & T = {} as AgencyZoomPluginOptions & T,
+	incomingOptions: AgencyZoomPluginOptions & T = {} as AgencyZoomPluginOptions &
+		T,
 ): ExternalAgencyZoomPlugin<T> {
 	const options = {
 		...incomingOptions,

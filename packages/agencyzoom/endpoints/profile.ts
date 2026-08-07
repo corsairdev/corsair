@@ -7,5 +7,5 @@ export const updateMyProfile: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 export const ProfileEndpoints = {
-	updateMyProfile
+	updateMyProfile,
 } as const;

@@ -16,13 +16,25 @@ export const getThreadDetails: AgencyZoomEndpoint = async (ctx, input = {}) => {
 	return executeAgencyZoomOperation(ctx, input, getThreadDetailsRoute);
 };
 
-const markThreadAsUnreadApiEndpointRoute = getRoute('markThreadAsUnreadApiEndpoint');
-export const markThreadAsUnreadApiEndpoint: AgencyZoomEndpoint = async (ctx, input = {}) => {
-	return executeAgencyZoomOperation(ctx, input, markThreadAsUnreadApiEndpointRoute);
+const markThreadAsUnreadApiEndpointRoute = getRoute(
+	'markThreadAsUnreadApiEndpoint',
+);
+export const markThreadAsUnreadApiEndpoint: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
+	return executeAgencyZoomOperation(
+		ctx,
+		input,
+		markThreadAsUnreadApiEndpointRoute,
+	);
 };
 
 const searchEmailThreadsRoute = getRoute('searchEmailThreads');
-export const searchEmailThreads: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const searchEmailThreads: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, searchEmailThreadsRoute);
 };
 
@@ -31,5 +43,5 @@ export const EmailThreadsEndpoints = {
 	deleteThread,
 	getThreadDetails,
 	markThreadAsUnreadApiEndpoint,
-	searchEmailThreads
+	searchEmailThreads,
 } as const;

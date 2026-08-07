@@ -7,11 +7,14 @@ export const updateAPolicy: AgencyZoomEndpoint = async (ctx, input = {}) => {
 };
 
 const updateTagsForAPolicyRoute = getRoute('updateTagsForAPolicy');
-export const updateTagsForAPolicy: AgencyZoomEndpoint = async (ctx, input = {}) => {
+export const updateTagsForAPolicy: AgencyZoomEndpoint = async (
+	ctx,
+	input = {},
+) => {
 	return executeAgencyZoomOperation(ctx, input, updateTagsForAPolicyRoute);
 };
 
 export const PoliciesEndpoints = {
 	updateAPolicy,
-	updateTagsForAPolicy
+	updateTagsForAPolicy,
 } as const;
