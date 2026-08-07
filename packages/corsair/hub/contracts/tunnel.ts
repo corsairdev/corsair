@@ -101,11 +101,19 @@ export type RunStepResult = {
  * survive process restarts.
  */
 export type RunResultPayload = {
-	status: 'completed' | 'failed' | 'sleeping';
+	status: 'completed' | 'failed' | 'sleeping' | 'awaiting_approval';
 	steps: RunStepResult[];
 	error?: { message: string; failedStep?: string };
 	/** ISO timestamp when a `sleeping` run should be re-invoked. */
 	sleepUntil?: string;
+	/**
+	 * Approval link for an `awaiting_approval` run (a step hit a permission gate).
+	 * The user visits it to approve/deny, then re-runs. Absent if the SDK couldn't
+	 * parse a URL from the approval error — see `approvalMessage`.
+	 */
+	approvalUrl?: string;
+	/** Raw approval error message when no URL could be extracted. */
+	approvalMessage?: string;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

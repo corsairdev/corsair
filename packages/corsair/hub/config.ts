@@ -34,6 +34,7 @@ export function normalizeHubConfig(input: HubConfigInput): HubConfig {
 		oauthCallbackUrl: input.oauthCallbackUrl?.trim().replace(/\/$/, ''),
 		redirectURL: input.redirectURL?.trim() || undefined,
 		allowWorkflowExecution: input.allowWorkflowExecution ?? false,
+		workflowExecutor: input.workflowExecutor,
 	};
 }
 

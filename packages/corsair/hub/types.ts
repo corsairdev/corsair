@@ -1,3 +1,5 @@
+import type { WorkflowExecutor } from '../workflows/executor';
+
 export type HubEnvironmentSlug = 'development' | 'production';
 
 export type HubOAuthMode = 'byo' | 'managed';
@@ -17,6 +19,11 @@ export type HubConfigInput = {
 	 * enabling in production — see workflows/execute.ts.
 	 */
 	allowWorkflowExecution?: boolean;
+	/**
+	 * Executor for `type: 'run'` deliveries. Defaults to the in-process node:vm
+	 * executor; pass `createChildProcessExecutor(...)` for out-of-process isolation.
+	 */
+	workflowExecutor?: WorkflowExecutor;
 };
 
 export type HubConfig = {
@@ -26,6 +33,7 @@ export type HubConfig = {
 	oauthCallbackUrl?: string;
 	redirectURL?: string;
 	allowWorkflowExecution?: boolean;
+	workflowExecutor?: WorkflowExecutor;
 };
 
 export type HubConnectSessionInput = {
