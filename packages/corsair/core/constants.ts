@@ -109,6 +109,7 @@ export const BaseProviders = [
 	'vercel',
 	'whatsapp',
 	'xquik',
+	'youcom',
 	'youtube',
 	'zendesk',
 	'zohomail',
@@ -212,6 +213,7 @@ export const ProviderDisplayNames = {
 	vercel: 'Vercel',
 	whatsapp: 'WhatsApp',
 	xquik: 'XQuik',
+	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
@@ -322,6 +324,7 @@ export type AllProviders =
 	| 'vercel'
 	| 'whatsapp'
 	| 'xquik'
+	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'
