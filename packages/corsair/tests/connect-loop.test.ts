@@ -34,6 +34,20 @@ function res(status: number, json?: unknown): Response {
 
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
+const pulled = (extra?: Record<string, unknown>) =>
+	res(200, {
+		deliveryId: 'd1',
+		body: '{"type":"run"}',
+		headers: { 'x-corsair-signature': 'sha256=x' },
+		...extra,
+	});
+
+const okRun = () =>
+	jest.fn(async () => ({
+		status: 'ok',
+		webhookResponse: { status: 200, body: { status: 'ok' } },
+	}));
+
 describe('deriveAck', () => {
 	it('maps a run success to its webhookResponse', () => {
 		expect(
@@ -67,18 +81,9 @@ describe('pollOnce', () => {
 	it('processes an envelope and posts the ack', async () => {
 		const fetchMock = jest
 			.fn()
-			.mockResolvedValueOnce(
-				res(200, {
-					deliveryId: 'd1',
-					body: '{"type":"run"}',
-					headers: { 'x-corsair-signature': 'sha256=x' },
-				}),
-			)
+			.mockResolvedValueOnce(pulled())
 			.mockResolvedValueOnce(res(200, { ok: true }));
-		const process = jest.fn(async () => ({
-			status: 'ok',
-			webhookResponse: { status: 200, body: { status: 'ok' } },
-		}));
+		const process = okRun();
 		const out = await pollOnce({}, hub, {
 			fetch: fetchMock as any,
 			process: process as any,
@@ -107,6 +112,47 @@ describe('pollOnce', () => {
 			process: jest.fn() as any,
 		});
 		expect(out).toBe('error');
+	});
+
+	it('treats a stale ack (ok:false) as handled without retrying', async () => {
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce(pulled())
+			.mockResolvedValueOnce(res(200, { ok: false }));
+		const out = await pollOnce({}, hub, {
+			fetch: fetchMock as any,
+			process: okRun() as any,
+		});
+		expect(out).toBe('handled');
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+	});
+
+	it('retries a transiently failed ack and succeeds', async () => {
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce(pulled())
+			.mockResolvedValueOnce(res(503))
+			.mockResolvedValueOnce(res(200, { ok: true }));
+		const out = await pollOnce({}, hub, {
+			fetch: fetchMock as any,
+			process: okRun() as any,
+		});
+		expect(out).toBe('handled');
+		expect(fetchMock).toHaveBeenCalledTimes(3);
+	});
+
+	it('returns error when the ack never lands', async () => {
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce(pulled())
+			.mockResolvedValue(res(500));
+		const out = await pollOnce({}, hub, {
+			fetch: fetchMock as any,
+			process: okRun() as any,
+		});
+		expect(out).toBe('error');
+		// 1 pull + 3 ack attempts
+		expect(fetchMock).toHaveBeenCalledTimes(4);
 	});
 });
 
@@ -139,6 +185,27 @@ describe('startConnectLoop', () => {
 		return { state, deps };
 	}
 
+	// A pull that blocks until its request is aborted, so a stop() can be
+	// observed while a pull is genuinely in flight.
+	function blockingDeps() {
+		const state = { starts: 0, aborts: 0 };
+		const deps = {
+			fetch: ((_url: string, init?: { signal?: AbortSignal }) => {
+				state.starts++;
+				return new Promise<Response>((_resolve, reject) => {
+					init?.signal?.addEventListener('abort', () => {
+						state.aborts++;
+						const err = new Error('aborted');
+						err.name = 'AbortError';
+						reject(err);
+					});
+				});
+			}) as unknown as typeof fetch,
+			process: (async () => ({ status: 'ok' })) as any,
+		};
+		return { state, deps };
+	}
+
 	it('polls while running and halts on stop()', async () => {
 		const { state, deps } = countingIdleDeps();
 		const handle = startConnectLoop(mockCorsair('ck_dev_runtest'), deps);
@@ -157,13 +224,31 @@ describe('startConnectLoop', () => {
 		const second = startConnectLoop(mockCorsair('ck_dev_dedupe'), deps);
 		await sleep(40);
 		expect(state.calls).toBeGreaterThan(0);
-		// Stopping the one real loop must halt all polling — proving the second
-		// call did not start its own loop.
 		first.stop();
 		await sleep(40);
 		const afterStop = state.calls;
 		await sleep(40);
 		expect(state.calls).toBe(afterStop);
 		second.stop();
+	});
+
+	it('frees the key on stop so an immediate restart runs exactly one loop', async () => {
+		const a = blockingDeps();
+		const first = startConnectLoop(mockCorsair('ck_dev_owner'), a.deps);
+		await sleep(10);
+		expect(a.state.starts).toBe(1);
+
+		first.stop();
+		expect(a.state.aborts).toBe(1);
+
+		const b = blockingDeps();
+		const second = startConnectLoop(mockCorsair('ck_dev_owner'), b.deps);
+		await sleep(10);
+		// The restart actually started (the key was freed), and the old loop is
+		// gone — only the new loop is polling.
+		expect(b.state.starts).toBe(1);
+		second.stop();
+		await sleep(10);
+		expect(b.state.aborts).toBe(1);
 	});
 });
