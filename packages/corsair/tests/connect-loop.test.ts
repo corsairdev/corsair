@@ -1,4 +1,18 @@
-import { deriveAck, pollOnce } from '../hub/connect/loop';
+import { CORSAIR_INTERNAL } from '../core';
+import { deriveAck, pollOnce, startConnectLoop } from '../hub/connect/loop';
+
+function mockCorsair(projectApiKey: string): unknown {
+	return {
+		[CORSAIR_INTERNAL]: {
+			hub: {
+				apiUrl: 'https://hub.test',
+				projectApiKey,
+				signingSecret: 's',
+				allowWorkflowExecution: true,
+			},
+		},
+	};
+}
 
 const hub = {
 	apiUrl: 'https://hub.test',
@@ -88,5 +102,22 @@ describe('pollOnce', () => {
 			process: jest.fn() as any,
 		});
 		expect(out).toBe('error');
+	});
+});
+
+describe('startConnectLoop', () => {
+	it('is a no-op when the hub is not configured', () => {
+		const handle = startConnectLoop({});
+		expect(typeof handle.stop).toBe('function');
+		handle.stop();
+	});
+
+	it('does not start the loop for a non-dev (prod) key', async () => {
+		const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue(res(204));
+		const handle = startConnectLoop(mockCorsair('ck_prod_abc'));
+		await Promise.resolve();
+		expect(fetchSpy).not.toHaveBeenCalled();
+		handle.stop();
+		fetchSpy.mockRestore();
 	});
 });
