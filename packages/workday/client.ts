@@ -38,7 +38,12 @@ export function normalizeWorkdayHost(host: string): string {
 			throw error;
 		}
 	}
-	return trimmed.replace(/\/+$/, '');
+	// ponytail: no /\/+$/ — CodeQL flags ReDoS on uncontrolled host input
+	let value = trimmed;
+	while (value.endsWith('/')) {
+		value = value.slice(0, -1);
+	}
+	return value;
 }
 
 export function normalizeWorkdayTenant(tenant: string): string {
