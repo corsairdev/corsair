@@ -1,12 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeGoogleDriveRequest } from '../client';
 import type { GoogleDriveWebhooks } from '../index';
-import type { ChangeList, File } from '../types';
+import type { Change, ChangeList, File } from '../types';
 import { createGoogleDriveWebhookMatcher, decodePubSubMessage } from './types';
 
 const PAGE_TOKEN_PATTERN = /[?&]pageToken=([^&]+)/;
 const FOLDER_MIME_TYPE = 'application/vnd.google-apps.folder';
 const RECENT_CHANGES_WINDOW_MS = 60000;
+const MAX_CHANGE_PAGES = 10;
 const FILE_FIELDS = [
 	'id',
 	'name',
@@ -89,6 +90,39 @@ async function fetchChanges(
 	});
 }
 
+/**
+ * Drives the changes feed to exhaustion. Google returns at most `pageSize`
+ * changes per call and hands back a `nextPageToken` while more are pending;
+ * the final page carries `newStartPageToken` instead, which is the cursor to
+ * watch from next cycle. Capped at MAX_CHANGE_PAGES so a large backlog cannot
+ * stall the webhook response.
+ */
+async function fetchAllChanges(
+	credentials: string,
+	startPageToken: string,
+): Promise<{ changes: Change[]; newStartPageToken?: string }> {
+	const changes: Change[] = [];
+	// Tokens already requested. A feed that points back at any earlier page
+	// (77 → 78 → 77, not just 77 → 77) would otherwise refetch the same pages
+	// and duplicate their changes until the page cap stopped it.
+	const requestedTokens = new Set<string>();
+	let pageToken: string | undefined = startPageToken;
+	let newStartPageToken: string | undefined;
+
+	for (let page = 0; pageToken && page < MAX_CHANGE_PAGES; page++) {
+		if (requestedTokens.has(pageToken)) break;
+		requestedTokens.add(pageToken);
+
+		const response: ChangeList = await fetchChanges(credentials, pageToken);
+		changes.push(...(response.changes ?? []));
+		newStartPageToken = response.newStartPageToken ?? newStartPageToken;
+
+		pageToken = response.nextPageToken;
+	}
+
+	return { changes, newStartPageToken };
+}
+
 async function buildFilePath(
 	credentials: string,
 	file: File,
@@ -162,10 +196,11 @@ export const driveChanged: GoogleDriveWebhooks['driveChanged'] = {
 		}
 
 		try {
-			const changesResponse = await fetchChanges(credentials, pageToken);
-			let changes = changesResponse.changes ?? [];
-
-			changes = filterRecentChanges(changes);
+			const { changes: allChanges } = await fetchAllChanges(
+				credentials,
+				pageToken,
+			);
+			const changes = filterRecentChanges(allChanges);
 
 			let corsairEntityId = '';
 
