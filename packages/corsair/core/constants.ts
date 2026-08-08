@@ -29,6 +29,7 @@ export const BaseProviders = [
 	'bitwarden',
 	'bluesky',
 	'box',
+	'canvas',
 	'cal',
 	'calendly',
 	'canva',
@@ -133,6 +134,7 @@ export const ProviderDisplayNames = {
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	box: 'Box',
+	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
@@ -246,6 +248,7 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canvas'
 	| 'canva'
 	| 'cloudflare'
 	| 'cloudinary'
