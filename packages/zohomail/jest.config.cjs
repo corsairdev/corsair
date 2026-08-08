@@ -44,6 +44,7 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
+		'^corsair/hub$': '<rootDir>/../corsair/hub.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
 		'^corsair/core$': '<rootDir>/../corsair/core/index.ts',
 		'^corsair/orm$': '<rootDir>/../corsair/orm.ts',
