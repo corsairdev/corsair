@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
+import type { WorkdayService } from './endpoints/routes';
 
 export class WorkdayAPIError extends Error {
 	constructor(
@@ -11,22 +12,90 @@ export class WorkdayAPIError extends Error {
 	}
 }
 
-const WORKDAY_API_BASE = 'https://api.workday.com';
+export type WorkdayConnection = {
+	/** e.g. wd2-impl-services1.workday.com — no scheme */
+	host: string;
+	/** Workday tenant identifier */
+	tenant: string;
+};
+
+const DEFAULT_HOST = 'wd2-impl-services1.workday.com';
+
+/** Strip scheme / trailing slash; host only. */
+export function normalizeWorkdayHost(host: string): string {
+	const trimmed = host.trim();
+	if (!trimmed) throw new Error('[workday] host is required');
+	try {
+		if (trimmed.includes('://')) {
+			const url = new URL(trimmed);
+			if (url.protocol !== 'https:') {
+				throw new Error('[workday] host must use https');
+			}
+			return url.host;
+		}
+	} catch (error) {
+		if (error instanceof Error && error.message.startsWith('[workday]')) {
+			throw error;
+		}
+	}
+	return trimmed.replace(/\/+$/, '');
+}
+
+export function normalizeWorkdayTenant(tenant: string): string {
+	const trimmed = tenant.trim();
+	if (!trimmed) throw new Error('[workday] tenant is required');
+	if (trimmed.includes('/') || trimmed.includes('://')) {
+		throw new Error('[workday] tenant must be the bare tenant name');
+	}
+	return trimmed;
+}
+
+export function resolveWorkdayConnection(input: {
+	host?: string;
+	tenant?: string;
+}): WorkdayConnection {
+	return {
+		host: normalizeWorkdayHost(input.host?.trim() || DEFAULT_HOST),
+		tenant: normalizeWorkdayTenant(input.tenant ?? ''),
+	};
+}
+
+/** OAuth endpoints: https://{host}/ccx/oauth2/{tenant}/{authorize|token} */
+export function workdayOAuthUrls(connection: WorkdayConnection) {
+	const base = `https://${connection.host}/ccx/oauth2/${connection.tenant}`;
+	return {
+		authUrl: `${base}/authorize`,
+		tokenUrl: `${base}/token`,
+	};
+}
+
+/** REST base: https://{host}/ccx/api/{service}/{version}/{tenant} */
+export function workdayServiceBase(
+	connection: WorkdayConnection,
+	service: WorkdayService,
+	version: string,
+): string {
+	return `https://${connection.host}/ccx/api/${service}/${version}/${connection.tenant}`;
+}
 
 export async function makeWorkdayRequest<T>(
-	endpoint: string,
+	path: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: { [key: string]: unknown };
 		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+		connection: WorkdayConnection;
+		service: WorkdayService;
+		version: string;
+	},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, connection, service, version } = options;
+	const base = workdayServiceBase(connection, service, version);
 
 	const config: OpenAPIConfig = {
-		BASE: WORKDAY_API_BASE,
-		VERSION: '1.0.0',
+		BASE: base,
+		VERSION: version,
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
@@ -38,13 +107,13 @@ export async function makeWorkdayRequest<T>(
 
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: endpoint,
+		url: path.startsWith('/') ? path : `/${path}`,
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {

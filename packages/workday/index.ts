@@ -1,55 +1,23 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
-	CorsairContext,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
-	Absence,
-	Assignment,
-	Balances,
-	Business,
-	Candidate,
-	Collection,
-	Company,
-	Contingent,
-	Countries,
-	Country,
-	Currencies,
-	Current,
-	Grants,
-	Headcount,
-	History,
-	Holiday,
-	Interview,
-	Interviews,
-	Job,
-	Jobs,
-	Leave,
-	Message,
-	My,
-	Organization,
-	Pay,
-	Payroll,
-	Proposed,
-	Prospect,
-	Supervisory,
-	Time,
-	Work,
-	Worker,
-	Workers,
-	Workspace,
-} from './endpoints';
+	normalizeWorkdayHost,
+	normalizeWorkdayTenant,
+	workdayOAuthUrls,
+} from './client';
+import { workdayEndpointsNested } from './endpoints';
 import type {
 	WorkdayEndpointInputs,
 	WorkdayEndpointOutputs,
@@ -62,12 +30,22 @@ import { errorHandlers } from './error-handlers';
 import { WorkdaySchema } from './schema';
 import { resolveWorkdayOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchWorkdayTenantWebhook } from './webhooks/tenant-matcher';
-import { workerUpdated } from './webhooks/worker';
+import { workdayWebhooksNested } from './webhooks/triggers';
+
+export const workdayAuthConfig = {
+	oauth_2: {
+		account: ['tenant', 'host', 'tenant_external_id'] as const,
+	},
+} as const satisfies PluginAuthConfig;
 
 export type WorkdayPluginOptions = {
-	/** Workday integration for Corsair */
 	authType?: PickAuth<'oauth_2'>;
+	/** Bearer token override (tests / BYO). */
 	key?: string;
+	/** Workday API host, e.g. wd2-impl-services1.workday.com */
+	host?: string;
+	/** Workday tenant name (required for OAuth + REST base URLs). */
+	tenant?: string;
 	webhookSecret?: string;
 	hooks?: InternalWorkdayPlugin['hooks'];
 	webhookHooks?: InternalWorkdayPlugin['webhookHooks'];
@@ -77,9 +55,14 @@ export type WorkdayPluginOptions = {
 
 export type WorkdayContext = CorsairPluginContext<
 	typeof WorkdaySchema,
-	WorkdayPluginOptions
+	WorkdayPluginOptions,
+	undefined,
+	typeof workdayAuthConfig
 >;
-export type WorkdayKeyBuilderContext = KeyBuilderContext<WorkdayPluginOptions>;
+export type WorkdayKeyBuilderContext = KeyBuilderContext<
+	WorkdayPluginOptions,
+	typeof workdayAuthConfig
+>;
 export type WorkdayBoundEndpoints = BindEndpoints<
 	typeof workdayEndpointsNested
 >;
@@ -116,18 +99,20 @@ export type WorkdayEndpoints = {
 	updateJobChangeBusinessTitle: WorkdayEndpoint<'updateJobChangeBusinessTitle'>;
 	createPayrollInputs: WorkdayEndpoint<'createPayrollInputs'>;
 	getPayrollInputInstance: WorkdayEndpoint<'getPayrollInputInstance'>;
+	updateAnExistingPayroll: WorkdayEndpoint<'updateAnExistingPayroll'>;
+	getCollectionOfPayroll: WorkdayEndpoint<'getCollectionOfPayroll'>;
 	createTimeOffRequest: WorkdayEndpoint<'createTimeOffRequest'>;
 	getTimeOffEntriesForWorker: WorkdayEndpoint<'getTimeOffEntriesForWorker'>;
 	getTimeOffPlansForWorker: WorkdayEndpoint<'getTimeOffPlansForWorker'>;
 	getTimeOffStatusValues: WorkdayEndpoint<'getTimeOffStatusValues'>;
 	getTimeTypes: WorkdayEndpoint<'getTimeTypes'>;
 	getAbsenceBalance: WorkdayEndpoint<'getAbsenceBalance'>;
+	listBalances: WorkdayEndpoint<'listBalances'>;
 	getAssignmentChangeGroupCostCenters: WorkdayEndpoint<'getAssignmentChangeGroupCostCenters'>;
 	getAssignmentChangeGroupJobs: WorkdayEndpoint<'getAssignmentChangeGroupJobs'>;
 	getAssignmentTypes: WorkdayEndpoint<'getAssignmentTypes'>;
 	getCandidateAvailabilityTemplate: WorkdayEndpoint<'getCandidateAvailabilityTemplate'>;
 	getCollectionOfJobs: WorkdayEndpoint<'getCollectionOfJobs'>;
-	getCollectionOfPayroll: WorkdayEndpoint<'getCollectionOfPayroll'>;
 	getCompanyInsiderTypes: WorkdayEndpoint<'getCompanyInsiderTypes'>;
 	getContingentWorkerTypes: WorkdayEndpoint<'getContingentWorkerTypes'>;
 	getCountryInfo: WorkdayEndpoint<'getCountryInfo'>;
@@ -170,186 +155,15 @@ export type WorkdayEndpoints = {
 	retrieveWorkerLeaveOfAbsenceSubresource: WorkdayEndpoint<'retrieveWorkerLeaveOfAbsenceSubresource'>;
 	getWorkersCollectionStaffing: WorkdayEndpoint<'getWorkersCollectionStaffing'>;
 	getWorkspaceInstances: WorkdayEndpoint<'getWorkspaceInstances'>;
-	listBalances: WorkdayEndpoint<'listBalances'>;
 	listCountries: WorkdayEndpoint<'listCountries'>;
 	listInterviews: WorkdayEndpoint<'listInterviews'>;
 	listJobs: WorkdayEndpoint<'listJobs'>;
-	updateAnExistingPayroll: WorkdayEndpoint<'updateAnExistingPayroll'>;
 	updateMessageTemplateById: WorkdayEndpoint<'updateMessageTemplateById'>;
 };
 
-export type WorkdayBoundWebhooks = BindWebhooks<{
-	'worker.updated': CorsairWebhook<CorsairContext, unknown, unknown>;
-}>;
+const defaultAuthType: AuthTypes = 'oauth_2' as const;
 
-const workdayEndpointsNested = {
-	business: {
-		createBusinessTitleChange: Business.createBusinessTitleChange,
-		getBusinessTitleChange: Business.getBusinessTitleChange,
-		getBusinessTitleChangeForWorker: Business.getBusinessTitleChangeForWorker,
-	},
-	job: {
-		createJobChange: Job.createJobChange,
-		getJobById: Job.getJobById,
-		getJobChangeFrequencies: Job.getJobChangeFrequencies,
-		getJobChangeLocationInfo: Job.getJobChangeLocationInfo,
-		getJobChangePosition: Job.getJobChangePosition,
-		getJobChangeReasonInstance: Job.getJobChangeReasonInstance,
-		getJobChangeReasonValues: Job.getJobChangeReasonValues,
-		getJobChangeReasons: Job.getJobChangeReasons,
-		getJobChangesGroupTemplates: Job.getJobChangesGroupTemplates,
-		getJobChangesJobValues: Job.getJobChangesJobValues,
-		getJobChangesWorkerValues: Job.getJobChangesWorkerValues,
-		getJobClassifications: Job.getJobClassifications,
-		getJobPosting: Job.getJobPosting,
-		getJobPostingQuestionnaire: Job.getJobPostingQuestionnaire,
-		getJobProfilesValues: Job.getJobProfilesValues,
-		getJobRequisitionValues: Job.getJobRequisitionValues,
-		getJobWorkspace: Job.getJobWorkspace,
-		getJobWorkspaces: Job.getJobWorkspaces,
-		listJobPostings: Job.listJobPostings,
-		updateJobChangeBusinessTitle: Job.updateJobChangeBusinessTitle,
-	},
-	payroll: {
-		createPayrollInputs: Payroll.createPayrollInputs,
-		getPayrollInputInstance: Payroll.getPayrollInputInstance,
-		updateAnExistingPayroll: Payroll.updateAnExistingPayroll,
-	},
-	time: {
-		createTimeOffRequest: Time.createTimeOffRequest,
-		getTimeOffEntriesForWorker: Time.getTimeOffEntriesForWorker,
-		getTimeOffPlansForWorker: Time.getTimeOffPlansForWorker,
-		getTimeOffStatusValues: Time.getTimeOffStatusValues,
-		getTimeTypes: Time.getTimeTypes,
-	},
-	absence: {
-		getAbsenceBalance: Absence.getAbsenceBalance,
-	},
-	assignment: {
-		getAssignmentChangeGroupCostCenters:
-			Assignment.getAssignmentChangeGroupCostCenters,
-		getAssignmentChangeGroupJobs: Assignment.getAssignmentChangeGroupJobs,
-		getAssignmentTypes: Assignment.getAssignmentTypes,
-	},
-	candidate: {
-		getCandidateAvailabilityTemplate:
-			Candidate.getCandidateAvailabilityTemplate,
-	},
-	collection: {
-		getCollectionOfJobs: Collection.getCollectionOfJobs,
-		getCollectionOfPayroll: Collection.getCollectionOfPayroll,
-	},
-	company: {
-		getCompanyInsiderTypes: Company.getCompanyInsiderTypes,
-	},
-	contingent: {
-		getContingentWorkerTypes: Contingent.getContingentWorkerTypes,
-	},
-	country: {
-		getCountryInfo: Country.getCountryInfo,
-	},
-	currencies: {
-		getCurrencies: Currencies.getCurrencies,
-	},
-	current: {
-		getCurrentUser: Current.getCurrentUser,
-	},
-	grants: {
-		getGrants: Grants.getGrants,
-	},
-	headcount: {
-		getHeadcountOptions: Headcount.getHeadcountOptions,
-	},
-	history: {
-		getHistoryInstanceForWorker: History.getHistoryInstanceForWorker,
-		getHistoryItemsForWorker: History.getHistoryItemsForWorker,
-	},
-	holiday: {
-		getHolidayEvents: Holiday.getHolidayEvents,
-	},
-	interview: {
-		getInterview: Interview.getInterview,
-		getInterviewFeedback2: Interview.getInterviewFeedback2,
-	},
-	leave: {
-		getLeaveStatusValues: Leave.getLeaveStatusValues,
-	},
-	my: {
-		getMyJobPostings: My.getMyJobPostings,
-	},
-	organization: {
-		getOrganizationAssignmentBusinessUnits:
-			Organization.getOrganizationAssignmentBusinessUnits,
-		getOrganizationAssignmentCustoms:
-			Organization.getOrganizationAssignmentCustoms,
-		getOrganizationAssignmentFunds: Organization.getOrganizationAssignmentFunds,
-		getOrganizationAssignmentRegions:
-			Organization.getOrganizationAssignmentRegions,
-		getOrganizationAssignmentWorkers:
-			Organization.getOrganizationAssignmentWorkers,
-	},
-	pay: {
-		getPayGroupByJobId: Pay.getPayGroupByJobId,
-		getPaySlipInstancesForWorker: Pay.getPaySlipInstancesForWorker,
-		getPaySlipsForWorker: Pay.getPaySlipsForWorker,
-	},
-	proposed: {
-		getProposedPositionValues: Proposed.getProposedPositionValues,
-	},
-	prospect: {
-		getProspect: Prospect.getProspect,
-		getProspectEducations: Prospect.getProspectEducations,
-		getProspectExperiences: Prospect.getProspectExperiences,
-		getProspectResumeAttachments: Prospect.getProspectResumeAttachments,
-		getProspectSkills: Prospect.getProspectSkills,
-	},
-	supervisory: {
-		getSupervisoryOrgValues: Supervisory.getSupervisoryOrgValues,
-	},
-	work: {
-		getWorkStudyAwards: Work.getWorkStudyAwards,
-	},
-	worker: {
-		getWorkerBusinessTitleChanges: Worker.getWorkerBusinessTitleChanges,
-		getWorkerEligibleAbsenceTypes: Worker.getWorkerEligibleAbsenceTypes,
-		getWorkerInfo: Worker.getWorkerInfo,
-		getWorkerLeavesOfAbsence: Worker.getWorkerLeavesOfAbsence,
-		getWorkerServiceDates: Worker.getWorkerServiceDates,
-		getWorkerStaffingInformation: Worker.getWorkerStaffingInformation,
-		getWorkerTimeOffDetails: Worker.getWorkerTimeOffDetails,
-		getWorkerTypes: Worker.getWorkerTypes,
-		getWorkerValidTimeOffDates: Worker.getWorkerValidTimeOffDates,
-		retrieveWorkerLeaveOfAbsenceSubresource:
-			Worker.retrieveWorkerLeaveOfAbsenceSubresource,
-	},
-	workers: {
-		getWorkersCollectionStaffing: Workers.getWorkersCollectionStaffing,
-	},
-	workspace: {
-		getWorkspaceInstances: Workspace.getWorkspaceInstances,
-	},
-	balances: {
-		listBalances: Balances.listBalances,
-	},
-	countries: {
-		listCountries: Countries.listCountries,
-	},
-	interviews: {
-		listInterviews: Interviews.listInterviews,
-	},
-	jobs: {
-		listJobs: Jobs.listJobs,
-	},
-	message: {
-		updateMessageTemplateById: Message.updateMessageTemplateById,
-	},
-} as const;
-
-const workdayWebhooksNested = {
-	'worker.updated': workerUpdated,
-} as const;
-
-export const workdayEndpointSchemas = {
+const workdayEndpointSchemas = {
 	'business.createBusinessTitleChange': {
 		input: WorkdayEndpointInputSchemas.createBusinessTitleChange,
 		output: WorkdayEndpointOutputSchemas.createBusinessTitleChange,
@@ -450,6 +264,14 @@ export const workdayEndpointSchemas = {
 		input: WorkdayEndpointInputSchemas.getPayrollInputInstance,
 		output: WorkdayEndpointOutputSchemas.getPayrollInputInstance,
 	},
+	'payroll.updateAnExistingPayroll': {
+		input: WorkdayEndpointInputSchemas.updateAnExistingPayroll,
+		output: WorkdayEndpointOutputSchemas.updateAnExistingPayroll,
+	},
+	'collection.getCollectionOfPayroll': {
+		input: WorkdayEndpointInputSchemas.getCollectionOfPayroll,
+		output: WorkdayEndpointOutputSchemas.getCollectionOfPayroll,
+	},
 	'time.createTimeOffRequest': {
 		input: WorkdayEndpointInputSchemas.createTimeOffRequest,
 		output: WorkdayEndpointOutputSchemas.createTimeOffRequest,
@@ -474,6 +296,10 @@ export const workdayEndpointSchemas = {
 		input: WorkdayEndpointInputSchemas.getAbsenceBalance,
 		output: WorkdayEndpointOutputSchemas.getAbsenceBalance,
 	},
+	'balances.listBalances': {
+		input: WorkdayEndpointInputSchemas.listBalances,
+		output: WorkdayEndpointOutputSchemas.listBalances,
+	},
 	'assignment.getAssignmentChangeGroupCostCenters': {
 		input: WorkdayEndpointInputSchemas.getAssignmentChangeGroupCostCenters,
 		output: WorkdayEndpointOutputSchemas.getAssignmentChangeGroupCostCenters,
@@ -493,10 +319,6 @@ export const workdayEndpointSchemas = {
 	'collection.getCollectionOfJobs': {
 		input: WorkdayEndpointInputSchemas.getCollectionOfJobs,
 		output: WorkdayEndpointOutputSchemas.getCollectionOfJobs,
-	},
-	'collection.getCollectionOfPayroll': {
-		input: WorkdayEndpointInputSchemas.getCollectionOfPayroll,
-		output: WorkdayEndpointOutputSchemas.getCollectionOfPayroll,
 	},
 	'company.getCompanyInsiderTypes': {
 		input: WorkdayEndpointInputSchemas.getCompanyInsiderTypes,
@@ -667,10 +489,6 @@ export const workdayEndpointSchemas = {
 		input: WorkdayEndpointInputSchemas.getWorkspaceInstances,
 		output: WorkdayEndpointOutputSchemas.getWorkspaceInstances,
 	},
-	'balances.listBalances': {
-		input: WorkdayEndpointInputSchemas.listBalances,
-		output: WorkdayEndpointOutputSchemas.listBalances,
-	},
 	'countries.listCountries': {
 		input: WorkdayEndpointInputSchemas.listCountries,
 		output: WorkdayEndpointOutputSchemas.listCountries,
@@ -683,366 +501,383 @@ export const workdayEndpointSchemas = {
 		input: WorkdayEndpointInputSchemas.listJobs,
 		output: WorkdayEndpointOutputSchemas.listJobs,
 	},
-	'payroll.updateAnExistingPayroll': {
-		input: WorkdayEndpointInputSchemas.updateAnExistingPayroll,
-		output: WorkdayEndpointOutputSchemas.updateAnExistingPayroll,
-	},
 	'message.updateMessageTemplateById': {
 		input: WorkdayEndpointInputSchemas.updateMessageTemplateById,
 		output: WorkdayEndpointOutputSchemas.updateMessageTemplateById,
 	},
 } as const;
 
-const defaultAuthType: AuthTypes = 'oauth_2' as const;
-
 const workdayEndpointMeta = {
 	'business.createBusinessTitleChange': {
 		riskLevel: 'write',
-		description: 'Create Business Title Change',
+		description:
+			'Creates a business title change for a worker (Common API v1).',
 	},
 	'business.getBusinessTitleChange': {
 		riskLevel: 'read',
-		description: 'Get Business Title Change',
+		description:
+			'Retrieves a business title change instance by ID (Common API v1).',
 	},
 	'business.getBusinessTitleChangeForWorker': {
 		riskLevel: 'read',
-		description: 'Get Business Title Change For Worker',
+		description:
+			'Retrieves a business title change for a specific worker (Common API v1).',
 	},
 	'job.createJobChange': {
 		riskLevel: 'write',
-		description: 'Create Job Change',
+		description: 'Initiates a job change for a worker (Staffing v6).',
 	},
 	'job.getJobById': {
 		riskLevel: 'read',
-		description: 'Get Job By ID',
+		description: 'Retrieves a single job instance by ID (Staffing v6).',
 	},
 	'job.getJobChangeFrequencies': {
 		riskLevel: 'read',
-		description: 'Get Job Change Frequencies',
+		description:
+			'Retrieves frequency prompt values for job changes (Staffing v6).',
 	},
 	'job.getJobChangeLocationInfo': {
 		riskLevel: 'read',
-		description: 'Get Job Change Location Info',
+		description: 'Retrieves location info for a job change (Staffing v6).',
 	},
 	'job.getJobChangePosition': {
 		riskLevel: 'read',
-		description: 'Get Job Change Position',
+		description: 'Retrieves position details for a job change (Staffing v6).',
 	},
 	'job.getJobChangeReasonInstance': {
 		riskLevel: 'read',
-		description: 'Get Job Change Reason Instance',
+		description: 'Retrieves a job change reason instance (Staffing v6).',
 	},
 	'job.getJobChangeReasonValues': {
 		riskLevel: 'read',
-		description: 'Get Job Change Reason Values',
+		description: 'Retrieves job change reason prompt values (Staffing v6).',
 	},
 	'job.getJobChangeReasons': {
 		riskLevel: 'read',
-		description: 'Get Job Change Reasons',
+		description: 'Retrieves job change reasons collection (Staffing v6).',
 	},
 	'job.getJobChangesGroupTemplates': {
 		riskLevel: 'read',
-		description: 'Get Job Changes Group Templates',
+		description: 'Retrieves job change templates (Staffing v6).',
 	},
 	'job.getJobChangesJobValues': {
 		riskLevel: 'read',
-		description: 'Get Job Changes Job Values',
+		description: 'Retrieves job prompt values for job changes (Staffing v6).',
 	},
 	'job.getJobChangesWorkerValues': {
 		riskLevel: 'read',
-		description: 'Get Job Changes Worker Values',
+		description:
+			'Retrieves worker prompt values for job changes (Staffing v6).',
 	},
 	'job.getJobClassifications': {
 		riskLevel: 'read',
-		description: 'Get Job Classifications',
+		description: 'Retrieves job classification prompt values (Staffing v6).',
 	},
 	'job.getJobPosting': {
 		riskLevel: 'read',
-		description: 'Get Job Posting',
+		description:
+			'Retrieves a job posting including description (Recruiting v4).',
 	},
 	'job.getJobPostingQuestionnaire': {
 		riskLevel: 'read',
-		description: 'Get Job Posting Questionnaire',
+		description: 'Retrieves questionnaires for a job posting (Recruiting v4).',
 	},
 	'job.getJobProfilesValues': {
 		riskLevel: 'read',
-		description: 'Get Job Profiles Values',
+		description: 'Retrieves job profile prompt values (Staffing v6).',
 	},
 	'job.getJobRequisitionValues': {
 		riskLevel: 'read',
-		description: 'Get Job Requisition Values',
+		description: 'Retrieves job requisition prompt values (Staffing v6).',
 	},
 	'job.getJobWorkspace': {
 		riskLevel: 'read',
-		description: 'Get Job Workspace',
+		description: 'Retrieves a workspace for a job (Staffing v6).',
 	},
 	'job.getJobWorkspaces': {
 		riskLevel: 'read',
-		description: 'Get Job Workspaces',
+		description: 'Retrieves workspaces for a job (Staffing v6).',
 	},
 	'job.listJobPostings': {
 		riskLevel: 'read',
-		description: 'List Job Postings',
+		description: 'Lists job postings (Recruiting v4).',
 	},
 	'job.updateJobChangeBusinessTitle': {
 		riskLevel: 'write',
-		description: 'Update Job Change Business Title',
+		description:
+			'Partially updates business title on a job change (Staffing v6).',
 	},
 	'payroll.createPayrollInputs': {
 		riskLevel: 'write',
-		description: 'Create Payroll Inputs',
+		description: 'Creates payroll inputs (Payroll v1).',
 	},
 	'payroll.getPayrollInputInstance': {
 		riskLevel: 'read',
-		description: 'Get Payroll Input Instance',
-	},
-	'time.createTimeOffRequest': {
-		riskLevel: 'write',
-		description: 'Create Time Off Request',
-	},
-	'time.getTimeOffEntriesForWorker': {
-		riskLevel: 'read',
-		description: 'Get Time Off Entries for Worker',
-	},
-	'time.getTimeOffPlansForWorker': {
-		riskLevel: 'read',
-		description: 'Get Time Off Plans For Worker',
-	},
-	'time.getTimeOffStatusValues': {
-		riskLevel: 'read',
-		description: 'Get Time Off Status Values',
-	},
-	'time.getTimeTypes': {
-		riskLevel: 'read',
-		description: 'Get Time Types',
-	},
-	'absence.getAbsenceBalance': {
-		riskLevel: 'read',
-		description: 'Get Absence Balance',
-	},
-	'assignment.getAssignmentChangeGroupCostCenters': {
-		riskLevel: 'read',
-		description: 'Get Assignment Change Group Cost Centers',
-	},
-	'assignment.getAssignmentChangeGroupJobs': {
-		riskLevel: 'read',
-		description: 'Get Assignment Change Group Jobs',
-	},
-	'assignment.getAssignmentTypes': {
-		riskLevel: 'read',
-		description: 'Get Assignment Types',
-	},
-	'candidate.getCandidateAvailabilityTemplate': {
-		riskLevel: 'read',
-		description: 'Get Candidate Availability Template',
-	},
-	'collection.getCollectionOfJobs': {
-		riskLevel: 'read',
-		description: 'Get Collection of Jobs',
-	},
-	'collection.getCollectionOfPayroll': {
-		riskLevel: 'read',
-		description: 'Get Collection of Payroll',
-	},
-	'company.getCompanyInsiderTypes': {
-		riskLevel: 'read',
-		description: 'Get Company Insider Types',
-	},
-	'contingent.getContingentWorkerTypes': {
-		riskLevel: 'read',
-		description: 'Get Contingent Worker Types',
-	},
-	'country.getCountryInfo': {
-		riskLevel: 'read',
-		description: 'Get Country Info',
-	},
-	'currencies.getCurrencies': {
-		riskLevel: 'read',
-		description: 'Get Currencies',
-	},
-	'current.getCurrentUser': {
-		riskLevel: 'read',
-		description: 'Get Current User',
-	},
-	'grants.getGrants': {
-		riskLevel: 'read',
-		description: 'Get Grants',
-	},
-	'headcount.getHeadcountOptions': {
-		riskLevel: 'read',
-		description: 'Get Headcount Options',
-	},
-	'history.getHistoryInstanceForWorker': {
-		riskLevel: 'read',
-		description: 'Get History Instance for Worker',
-	},
-	'history.getHistoryItemsForWorker': {
-		riskLevel: 'read',
-		description: 'Get History Items for Worker',
-	},
-	'holiday.getHolidayEvents': {
-		riskLevel: 'read',
-		description: 'Get Holiday Events',
-	},
-	'interview.getInterview': {
-		riskLevel: 'read',
-		description: 'Get Interview',
-	},
-	'interview.getInterviewFeedback2': {
-		riskLevel: 'read',
-		description: 'Get Interview Feedback',
-	},
-	'leave.getLeaveStatusValues': {
-		riskLevel: 'read',
-		description: 'Get Leave Status Values',
-	},
-	'my.getMyJobPostings': {
-		riskLevel: 'read',
-		description: 'Get My Job Postings',
-	},
-	'organization.getOrganizationAssignmentBusinessUnits': {
-		riskLevel: 'read',
-		description: 'Get Organization Assignment Business Units',
-	},
-	'organization.getOrganizationAssignmentCustoms': {
-		riskLevel: 'read',
-		description: 'Get Organization Assignment Customs',
-	},
-	'organization.getOrganizationAssignmentFunds': {
-		riskLevel: 'read',
-		description: 'Get Organization Assignment Funds',
-	},
-	'organization.getOrganizationAssignmentRegions': {
-		riskLevel: 'read',
-		description: 'Get Organization Assignment Regions',
-	},
-	'organization.getOrganizationAssignmentWorkers': {
-		riskLevel: 'read',
-		description: 'Get Organization Assignment Workers',
-	},
-	'pay.getPayGroupByJobId': {
-		riskLevel: 'read',
-		description: 'Get Pay Group by Job ID',
-	},
-	'pay.getPaySlipInstancesForWorker': {
-		riskLevel: 'read',
-		description: 'Get Pay Slip Instance for Worker',
-	},
-	'pay.getPaySlipsForWorker': {
-		riskLevel: 'read',
-		description: 'Get Pay Slips for Worker',
-	},
-	'proposed.getProposedPositionValues': {
-		riskLevel: 'read',
-		description: 'Get Proposed Position Values',
-	},
-	'prospect.getProspect': {
-		riskLevel: 'read',
-		description: 'Get Prospect',
-	},
-	'prospect.getProspectEducations': {
-		riskLevel: 'read',
-		description: 'Get Prospect Educations',
-	},
-	'prospect.getProspectExperiences': {
-		riskLevel: 'read',
-		description: 'Get Prospect Experiences',
-	},
-	'prospect.getProspectResumeAttachments': {
-		riskLevel: 'read',
-		description: 'Get Prospect Resume Attachments',
-	},
-	'prospect.getProspectSkills': {
-		riskLevel: 'read',
-		description: 'Get Prospect Skills',
-	},
-	'supervisory.getSupervisoryOrgValues': {
-		riskLevel: 'read',
-		description: 'Get Supervisory Organization Values',
-	},
-	'work.getWorkStudyAwards': {
-		riskLevel: 'read',
-		description: 'Get Work Study Awards',
-	},
-	'worker.getWorkerBusinessTitleChanges': {
-		riskLevel: 'read',
-		description: 'Get Worker Business Title Changes',
-	},
-	'worker.getWorkerEligibleAbsenceTypes': {
-		riskLevel: 'read',
-		description: 'Get Worker Eligible Absence Types',
-	},
-	'worker.getWorkerInfo': {
-		riskLevel: 'read',
-		description: 'Get Worker Info',
-	},
-	'worker.getWorkerLeavesOfAbsence': {
-		riskLevel: 'read',
-		description: 'Get Worker Leaves of Absence',
-	},
-	'worker.getWorkerServiceDates': {
-		riskLevel: 'read',
-		description: 'Get Worker Service Dates',
-	},
-	'worker.getWorkerStaffingInformation': {
-		riskLevel: 'read',
-		description: 'Get Worker Staffing Information',
-	},
-	'worker.getWorkerTimeOffDetails': {
-		riskLevel: 'read',
-		description: 'Get Worker Time Off Details',
-	},
-	'worker.getWorkerTypes': {
-		riskLevel: 'read',
-		description: 'Get Worker Types',
-	},
-	'worker.getWorkerValidTimeOffDates': {
-		riskLevel: 'read',
-		description: 'Get Worker Valid Time Off Dates',
-	},
-	'worker.retrieveWorkerLeaveOfAbsenceSubresource': {
-		riskLevel: 'write',
-		description: 'Retrieve Worker Leave of Absence',
-	},
-	'workers.getWorkersCollectionStaffing': {
-		riskLevel: 'read',
-		description: 'Get Workers Collection Staffing',
-	},
-	'workspace.getWorkspaceInstances': {
-		riskLevel: 'read',
-		description: 'Get Workspace Instances',
-	},
-	'balances.listBalances': {
-		riskLevel: 'read',
-		description: 'List Balances',
-	},
-	'countries.listCountries': {
-		riskLevel: 'read',
-		description: 'List Countries',
-	},
-	'interviews.listInterviews': {
-		riskLevel: 'read',
-		description: 'List Interviews',
-	},
-	'jobs.listJobs': {
-		riskLevel: 'read',
-		description: 'List Jobs',
+		description: 'Retrieves a payroll input by ID (Payroll v1).',
 	},
 	'payroll.updateAnExistingPayroll': {
 		riskLevel: 'write',
-		description: 'Update An Existing Payroll',
+		description: 'Partially updates a payroll input (Payroll v1).',
+	},
+	'collection.getCollectionOfPayroll': {
+		riskLevel: 'read',
+		description: 'Retrieves a collection of payroll inputs (Payroll v1).',
+	},
+	'time.createTimeOffRequest': {
+		riskLevel: 'write',
+		description: 'Creates a time off request (Absence Management v5).',
+	},
+	'time.getTimeOffEntriesForWorker': {
+		riskLevel: 'read',
+		description: 'Retrieves time off entries for a worker (Common API v1).',
+	},
+	'time.getTimeOffPlansForWorker': {
+		riskLevel: 'read',
+		description: 'Retrieves time off plans for a worker (Common API v1).',
+	},
+	'time.getTimeOffStatusValues': {
+		riskLevel: 'read',
+		description:
+			'Retrieves time off status prompt values (Absence Management v5).',
+	},
+	'time.getTimeTypes': {
+		riskLevel: 'read',
+		description: 'Retrieves time type prompt values (Staffing v6).',
+	},
+	'absence.getAbsenceBalance': {
+		riskLevel: 'read',
+		description: 'Retrieves an absence balance by ID (Absence Management v5).',
+	},
+	'balances.listBalances': {
+		riskLevel: 'read',
+		description: 'Lists absence balances (Absence Management v5).',
+	},
+	'assignment.getAssignmentChangeGroupCostCenters': {
+		riskLevel: 'read',
+		description:
+			'Retrieves cost center prompt values for org assignment changes (Staffing v6).',
+	},
+	'assignment.getAssignmentChangeGroupJobs': {
+		riskLevel: 'read',
+		description:
+			'Retrieves job prompt values for org assignment changes (Staffing v6).',
+	},
+	'assignment.getAssignmentTypes': {
+		riskLevel: 'read',
+		description: 'Retrieves assignment type prompt values (Staffing v6).',
+	},
+	'candidate.getCandidateAvailabilityTemplate': {
+		riskLevel: 'read',
+		description:
+			'Retrieves candidate availability template for a job posting (Recruiting v4).',
+	},
+	'collection.getCollectionOfJobs': {
+		riskLevel: 'read',
+		description: 'Retrieves a paginated collection of jobs (Staffing v6).',
+	},
+	'company.getCompanyInsiderTypes': {
+		riskLevel: 'read',
+		description: 'Retrieves company insider type prompt values (Staffing v6).',
+	},
+	'contingent.getContingentWorkerTypes': {
+		riskLevel: 'read',
+		description:
+			'Retrieves contingent worker type prompt values (Staffing v6).',
+	},
+	'country.getCountryInfo': {
+		riskLevel: 'read',
+		description: 'Retrieves country info (Common API v1).',
+	},
+	'currencies.getCurrencies': {
+		riskLevel: 'read',
+		description:
+			'Retrieves currency prompt values for job changes (Staffing v6).',
+	},
+	'current.getCurrentUser': {
+		riskLevel: 'read',
+		description: 'Retrieves the authenticated worker profile (Staffing v6).',
+	},
+	'grants.getGrants': {
+		riskLevel: 'read',
+		description:
+			'Retrieves grant prompt values for org assignment changes (Staffing v6).',
+	},
+	'headcount.getHeadcountOptions': {
+		riskLevel: 'read',
+		description: 'Retrieves headcount option prompt values (Staffing v6).',
+	},
+	'history.getHistoryInstanceForWorker': {
+		riskLevel: 'read',
+		description: 'Retrieves a history instance for a worker (Common API v1).',
+	},
+	'history.getHistoryItemsForWorker': {
+		riskLevel: 'read',
+		description: 'Retrieves history items for a worker (Common API v1).',
+	},
+	'holiday.getHolidayEvents': {
+		riskLevel: 'read',
+		description:
+			'Retrieves holiday events for workers/time period (Person v4).',
+	},
+	'interview.getInterview': {
+		riskLevel: 'read',
+		description: 'Retrieves an interview by ID (Recruiting v4).',
+	},
+	'interview.getInterviewFeedback2': {
+		riskLevel: 'read',
+		description: 'Retrieves interview feedback (Recruiting v4).',
+	},
+	'leave.getLeaveStatusValues': {
+		riskLevel: 'read',
+		description:
+			'Retrieves leave status prompt values (Absence Management v5).',
+	},
+	'my.getMyJobPostings': {
+		riskLevel: 'read',
+		description:
+			'Retrieves job postings for the authenticated recruiter (Recruiting v4).',
+	},
+	'organization.getOrganizationAssignmentBusinessUnits': {
+		riskLevel: 'read',
+		description:
+			'Retrieves business unit prompt values for org assignment changes (Staffing v6).',
+	},
+	'organization.getOrganizationAssignmentCustoms': {
+		riskLevel: 'read',
+		description: 'Retrieves custom org assignment prompt values (Staffing v6).',
+	},
+	'organization.getOrganizationAssignmentFunds': {
+		riskLevel: 'read',
+		description:
+			'Retrieves fund prompt values for org assignment changes (Staffing v6).',
+	},
+	'organization.getOrganizationAssignmentRegions': {
+		riskLevel: 'read',
+		description:
+			'Retrieves region prompt values for org assignment changes (Staffing v6).',
+	},
+	'organization.getOrganizationAssignmentWorkers': {
+		riskLevel: 'read',
+		description:
+			'Retrieves worker prompt values for org assignment changes (Staffing v6).',
+	},
+	'pay.getPayGroupByJobId': {
+		riskLevel: 'read',
+		description: 'Retrieves the pay group for a job (Staffing v6).',
+	},
+	'pay.getPaySlipInstancesForWorker': {
+		riskLevel: 'read',
+		description: 'Retrieves a pay slip instance for a worker (Common API v1).',
+	},
+	'pay.getPaySlipsForWorker': {
+		riskLevel: 'read',
+		description: 'Retrieves pay slips for a worker (Common API v1).',
+	},
+	'proposed.getProposedPositionValues': {
+		riskLevel: 'read',
+		description: 'Retrieves proposed position prompt values (Staffing v6).',
+	},
+	'prospect.getProspect': {
+		riskLevel: 'read',
+		description: 'Retrieves a prospect (Recruiting v4).',
+	},
+	'prospect.getProspectEducations': {
+		riskLevel: 'read',
+		description: 'Retrieves prospect educations (Recruiting v4).',
+	},
+	'prospect.getProspectExperiences': {
+		riskLevel: 'read',
+		description: 'Retrieves prospect experiences (Recruiting v4).',
+	},
+	'prospect.getProspectResumeAttachments': {
+		riskLevel: 'read',
+		description: 'Retrieves prospect resume attachments (Recruiting v4).',
+	},
+	'prospect.getProspectSkills': {
+		riskLevel: 'read',
+		description: 'Retrieves prospect skills (Recruiting v4).',
+	},
+	'supervisory.getSupervisoryOrgValues': {
+		riskLevel: 'read',
+		description:
+			'Retrieves supervisory organization prompt values (Staffing v6).',
+	},
+	'work.getWorkStudyAwards': {
+		riskLevel: 'read',
+		description: 'Retrieves work study award prompt values (Staffing v6).',
+	},
+	'worker.getWorkerBusinessTitleChanges': {
+		riskLevel: 'read',
+		description:
+			'Retrieves business title changes for a worker (Common API v1).',
+	},
+	'worker.getWorkerEligibleAbsenceTypes': {
+		riskLevel: 'read',
+		description:
+			'Retrieves eligible absence types for a worker (Absence Management v5).',
+	},
+	'worker.getWorkerInfo': {
+		riskLevel: 'read',
+		description: 'Retrieves worker staffing information (Staffing v6).',
+	},
+	'worker.getWorkerLeavesOfAbsence': {
+		riskLevel: 'read',
+		description:
+			'Retrieves leaves of absence for a worker (Absence Management v5).',
+	},
+	'worker.getWorkerServiceDates': {
+		riskLevel: 'read',
+		description: 'Retrieves service dates for a worker (Staffing v6).',
+	},
+	'worker.getWorkerStaffingInformation': {
+		riskLevel: 'read',
+		description:
+			'Retrieves current staffing information for a worker (Staffing v6).',
+	},
+	'worker.getWorkerTimeOffDetails': {
+		riskLevel: 'read',
+		description:
+			'Retrieves time off details for a worker (Absence Management v5).',
+	},
+	'worker.getWorkerTypes': {
+		riskLevel: 'read',
+		description: 'Retrieves worker type prompt values (Staffing v6).',
+	},
+	'worker.getWorkerValidTimeOffDates': {
+		riskLevel: 'read',
+		description:
+			'Retrieves valid time off dates for a worker (Absence Management v5).',
+	},
+	'worker.retrieveWorkerLeaveOfAbsenceSubresource': {
+		riskLevel: 'read',
+		description:
+			'Retrieves a leave of absence subresource (Absence Management v5).',
+	},
+	'workers.getWorkersCollectionStaffing': {
+		riskLevel: 'read',
+		description: 'Retrieves workers with staffing information (Staffing v6).',
+	},
+	'workspace.getWorkspaceInstances': {
+		riskLevel: 'read',
+		description: 'Retrieves workspace prompt values (Staffing v6).',
+	},
+	'countries.listCountries': {
+		riskLevel: 'read',
+		description: 'Retrieves country values for recruiting (Recruiting v4).',
+	},
+	'interviews.listInterviews': {
+		riskLevel: 'read',
+		description: 'Lists interviews (Recruiting v4).',
+	},
+	'jobs.listJobs': {
+		riskLevel: 'read',
+		description: 'Lists jobs (Staffing v6).',
 	},
 	'message.updateMessageTemplateById': {
 		riskLevel: 'write',
-		description: 'Update Message Template By ID',
+		description: 'Updates a message template by ID (Recruiting v4).',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof workdayEndpointsNested>;
-
-export const workdayAuthConfig = {
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
 
 export type BaseWorkdayPlugin<T extends WorkdayPluginOptions> = CorsairPlugin<
 	'workday',
@@ -1050,7 +885,8 @@ export type BaseWorkdayPlugin<T extends WorkdayPluginOptions> = CorsairPlugin<
 	typeof workdayEndpointsNested,
 	typeof workdayWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof workdayAuthConfig
 >;
 
 export type InternalWorkdayPlugin = BaseWorkdayPlugin<WorkdayPluginOptions>;
@@ -1064,9 +900,40 @@ export function workday<const T extends WorkdayPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const tenant = options.tenant?.trim()
+		? normalizeWorkdayTenant(options.tenant)
+		: undefined;
+	const host = options.host?.trim()
+		? normalizeWorkdayHost(options.host)
+		: undefined;
+
+	if (options.authType === 'oauth_2' && !tenant) {
+		throw new Error('[workday] options.tenant is required for oauth_2');
+	}
+
+	const oauthUrls =
+		tenant != null
+			? workdayOAuthUrls({
+					host: host ?? 'wd2-impl-services1.workday.com',
+					tenant,
+				})
+			: null;
+
 	return {
 		id: 'workday',
 		authConfig: workdayAuthConfig,
+		...(oauthUrls
+			? {
+					oauthConfig: {
+						providerName: 'Workday',
+						authUrl: oauthUrls.authUrl,
+						tokenUrl: oauthUrls.tokenUrl,
+						scopes: ['staffing', 'absenceManagement', 'recruiting', 'payroll'],
+						tokenAuthMethod: 'body' as const,
+						requiresRegisteredRedirect: true,
+					},
+				}
+			: {}),
 		schema: WorkdaySchema,
 		options,
 		hooks: options.hooks,
@@ -1076,7 +943,10 @@ export function workday<const T extends WorkdayPluginOptions>(
 		endpointMeta: workdayEndpointMeta,
 		endpointSchemas: workdayEndpointSchemas,
 		pluginWebhookMatcher: (request) => {
-			return 'x-workday-signature' in request.headers;
+			return (
+				'x-workday-signature' in request.headers ||
+				'x-workday-event' in request.headers
+			);
 		},
 		pluginTenantWebhookMatcher: matchWorkdayTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveWorkdayOAuthWebhookTenantLink,
@@ -1089,19 +959,21 @@ export function workday<const T extends WorkdayPluginOptions>(
 				return options.webhookSecret;
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) throw new AuthMissingError('workday', 'webhook_signature');
+				return res;
 			}
 			if (source === 'endpoint' && options.key) return options.key;
-
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) throw new AuthMissingError('workday', 'oauth_2');
+				return res;
 			}
 			return '';
 		},
 	} satisfies InternalWorkdayPlugin;
 }
 
+export { workdayRoutes } from './endpoints/routes';
 export type {
 	WorkdayEndpointInputs,
 	WorkdayEndpointOutputs,

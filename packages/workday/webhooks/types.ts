@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
 
 export const WorkdayWebhookPayloadSchema = z.object({
@@ -12,15 +13,59 @@ export const WorkdayWebhookPayloadSchema = z.object({
 });
 export type WorkdayWebhookPayload = z.infer<typeof WorkdayWebhookPayloadSchema>;
 
-export const WorkdayWorkerEventSchema = z.object({
-	type: z.literal('worker.updated'),
-	created_at: z.string(),
-	data: z.object({ worker_id: z.string() }).catchall(z.unknown()),
+const SnapshotEventBase = z.object({
+	created_at: z.string().optional(),
+	data: z.record(z.string(), z.unknown()),
 });
-export type WorkdayWorkerEvent = z.infer<typeof WorkdayWorkerEventSchema>;
+
+export const WorkdayTriggerEventSchemas = {
+	'absenceBalance.changed': SnapshotEventBase.extend({
+		type: z.literal('absenceBalance.changed'),
+	}),
+	'balanceDetails.changed': SnapshotEventBase.extend({
+		type: z.literal('balanceDetails.changed'),
+	}),
+	'interviewFeedback.submitted': SnapshotEventBase.extend({
+		type: z.literal('interviewFeedback.submitted'),
+	}),
+	'jobPosting.changed': SnapshotEventBase.extend({
+		type: z.literal('jobPosting.changed'),
+	}),
+	'jobPostingQuestionnaire.changed': SnapshotEventBase.extend({
+		type: z.literal('jobPostingQuestionnaire.changed'),
+	}),
+	'absenceBalance.created': SnapshotEventBase.extend({
+		type: z.literal('absenceBalance.created'),
+	}),
+	'interview.scheduled': SnapshotEventBase.extend({
+		type: z.literal('interview.scheduled'),
+	}),
+	'jobPosting.created': SnapshotEventBase.extend({
+		type: z.literal('jobPosting.created'),
+	}),
+	'prospectResumeAttachment.added': SnapshotEventBase.extend({
+		type: z.literal('prospectResumeAttachment.added'),
+	}),
+	'prospectProfile.changed': SnapshotEventBase.extend({
+		type: z.literal('prospectProfile.changed'),
+	}),
+	'workerEligibleAbsenceType.changed': SnapshotEventBase.extend({
+		type: z.literal('workerEligibleAbsenceType.changed'),
+	}),
+	'workerLeaveOfAbsence.changed': SnapshotEventBase.extend({
+		type: z.literal('workerLeaveOfAbsence.changed'),
+	}),
+	'workerLeaveOfAbsence.created': SnapshotEventBase.extend({
+		type: z.literal('workerLeaveOfAbsence.created'),
+	}),
+} as const;
+
+export type WorkdayTriggerEventName = keyof typeof WorkdayTriggerEventSchemas;
 
 export type WorkdayWebhookOutputs = {
-	'worker.updated': WorkdayWorkerEvent;
+	[K in WorkdayTriggerEventName]: z.infer<
+		(typeof WorkdayTriggerEventSchemas)[K]
+	>;
 };
 
 function parseBody(body: unknown): unknown {
@@ -33,17 +78,19 @@ function parseBody(body: unknown): unknown {
 }
 
 export function createWorkdayEventMatch(
-	eventType: string,
+	eventType: WorkdayTriggerEventName | string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
+		const headerType = request.headers['x-workday-event'];
+		if (typeof headerType === 'string' && headerType === eventType) {
+			return true;
+		}
 		const parsed = parseBody(request.body);
 		if (!parsed || typeof parsed !== 'object') return false;
 		const record = parsed as Record<string, unknown>;
 		return typeof record.type === 'string' && record.type === eventType;
 	};
 }
-
-import { verifyHmacSignature } from 'corsair/http';
 
 export function verifyWorkdayWebhookSignature(
 	request: WebhookRequest<WorkdayWebhookPayload>,
