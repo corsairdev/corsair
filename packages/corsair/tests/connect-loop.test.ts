@@ -4,6 +4,9 @@ import { deriveAck, pollOnce, startConnectLoop } from '../hub/connect/loop';
 function mockCorsair(projectApiKey: string): unknown {
 	return {
 		[CORSAIR_INTERNAL]: {
+			plugins: [],
+			kek: 'test-kek-with-at-least-32-characters!!',
+			multiTenancy: false,
 			hub: {
 				apiUrl: 'https://hub.test',
 				projectApiKey,
@@ -28,6 +31,8 @@ function res(status: number, json?: unknown): Response {
 		json: async () => json,
 	} as unknown as Response;
 }
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
 describe('deriveAck', () => {
 	it('maps a run success to its webhookResponse', () => {
@@ -119,5 +124,46 @@ describe('startConnectLoop', () => {
 		expect(fetchSpy).not.toHaveBeenCalled();
 		handle.stop();
 		fetchSpy.mockRestore();
+	});
+
+	function countingIdleDeps() {
+		const state = { calls: 0 };
+		const deps = {
+			fetch: (async () => {
+				state.calls++;
+				await sleep(5);
+				return res(204);
+			}) as unknown as typeof fetch,
+			process: (async () => ({ status: 'ok' })) as any,
+		};
+		return { state, deps };
+	}
+
+	it('polls while running and halts on stop()', async () => {
+		const { state, deps } = countingIdleDeps();
+		const handle = startConnectLoop(mockCorsair('ck_dev_runtest'), deps);
+		await sleep(40);
+		expect(state.calls).toBeGreaterThan(0);
+		handle.stop();
+		await sleep(40);
+		const afterStop = state.calls;
+		await sleep(40);
+		expect(state.calls).toBe(afterStop);
+	});
+
+	it('does not spawn a second loop for the same project key', async () => {
+		const { state, deps } = countingIdleDeps();
+		const first = startConnectLoop(mockCorsair('ck_dev_dedupe'), deps);
+		const second = startConnectLoop(mockCorsair('ck_dev_dedupe'), deps);
+		await sleep(40);
+		expect(state.calls).toBeGreaterThan(0);
+		// Stopping the one real loop must halt all polling — proving the second
+		// call did not start its own loop.
+		first.stop();
+		await sleep(40);
+		const afterStop = state.calls;
+		await sleep(40);
+		expect(state.calls).toBe(afterStop);
+		second.stop();
 	});
 });

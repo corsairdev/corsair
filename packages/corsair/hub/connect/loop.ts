@@ -46,7 +46,7 @@ export async function pollOnce(
 		{ headers, body },
 		{
 			signingSecret: hub.signingSecret,
-			allowWorkflowExecution: hub.allowWorkflowExecution ?? true,
+			allowWorkflowExecution: hub.allowWorkflowExecution,
 		},
 	);
 	const { status, body: ackBody } = deriveAck(ack);
@@ -65,7 +65,17 @@ function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
-export function startConnectLoop(corsair: unknown): { stop: () => void } {
+// One loop per project key, tracked on globalThis so it survives module
+// re-evaluation under watch/HMR — otherwise every createCorsair() (or reload)
+// would spawn another perpetual poll loop against the same environment.
+const activeLoopKeys: Set<string> = ((
+	globalThis as typeof globalThis & { __corsairConnectLoops?: Set<string> }
+).__corsairConnectLoops ??= new Set<string>());
+
+export function startConnectLoop(
+	corsair: unknown,
+	deps: ConnectDeps = { fetch, process: processCorsair },
+): { stop: () => void } {
 	let hub: HubConfig;
 	try {
 		hub = getHubConfig(corsair);
@@ -75,10 +85,13 @@ export function startConnectLoop(corsair: unknown): { stop: () => void } {
 	if (!hub.allowWorkflowExecution || !hub.projectApiKey.startsWith('ck_dev_')) {
 		return { stop: () => {} };
 	}
+	if (activeLoopKeys.has(hub.projectApiKey)) {
+		return { stop: () => {} };
+	}
+	activeLoopKeys.add(hub.projectApiKey);
 
 	let stopped = false;
 	let backoff = BACKOFF_MS;
-	const deps: ConnectDeps = { fetch, process: processCorsair };
 
 	const run = async (): Promise<void> => {
 		while (!stopped) {
@@ -102,6 +115,7 @@ export function startConnectLoop(corsair: unknown): { stop: () => void } {
 	return {
 		stop: () => {
 			stopped = true;
+			activeLoopKeys.delete(hub.projectApiKey);
 		},
 	};
 }
