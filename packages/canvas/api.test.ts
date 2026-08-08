@@ -1,14 +1,27 @@
+import crypto from 'node:crypto';
 import { request } from 'corsair/http';
-import { makeCanvasRequest, resolvePath } from './client';
+import {
+	makeCanvasRequest,
+	normalizeCanvasBaseUrl,
+	resolvePath,
+} from './client';
 import { createCanvasEndpoint } from './endpoints/factory';
 import type {
 	CanvasOperation,
 	CanvasOperationName,
 } from './endpoints/operations';
 import { canvasOperations } from './endpoints/operations';
-import { CanvasEndpointInputSchemas } from './endpoints/types';
+import {
+	CanvasEndpointInputSchemas,
+	CanvasEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { canvas } from './index';
-import { resolveCanvasOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import {
+	accountIdFromAccountsList,
+	resolveCanvasOAuthWebhookTenantLink,
+} from './webhooks/oauth-tenant-link';
+import { verifyCanvasWebhookSignature } from './webhooks/types';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -86,8 +99,39 @@ describe('Canvas plugin shape', () => {
 			api_key: { account: ['base_url'] },
 			oauth_2: { account: ['base_url'] },
 		});
-		expect(plugin.oauthConfig?.authUrl).toContain('/login/oauth2/auth');
-		expect(plugin.oauthConfig?.tokenUrl).toContain('/login/oauth2/token');
+		expect(plugin.oauthConfig?.authUrl).toBe(
+			'https://school.instructure.com/login/oauth2/auth',
+		);
+		expect(plugin.oauthConfig?.tokenUrl).toBe(
+			'https://school.instructure.com/login/oauth2/token',
+		);
+	});
+
+	it('requires options.baseUrl for oauth_2 and never falls back to public host', () => {
+		expect(() => canvas({ authType: 'oauth_2' })).toThrow(
+			/baseUrl is required/,
+		);
+		const plugin = canvas({ baseUrl: 'https://school.instructure.com' });
+		expect(plugin.oauthConfig?.authUrl).not.toContain(
+			'canvas.instructure.com/login',
+		);
+	});
+
+	it('marks GraphQL delete ops as destructive', () => {
+		const plugin = canvas({ baseUrl: 'https://school.instructure.com' });
+		expect(
+			plugin.endpointMeta?.['discussions.deleteDiscussionEntry']?.riskLevel,
+		).toBe('destructive');
+		expect(
+			plugin.endpointMeta?.['discussions.deleteDiscussionTopicGraphQl']
+				?.riskLevel,
+		).toBe('destructive');
+		expect(
+			plugin.endpointMeta?.['submissions.deleteSubmissionDraft']?.riskLevel,
+		).toBe('destructive');
+		expect(
+			plugin.endpointMeta?.['outcomes.deleteOutcomeLinks']?.riskLevel,
+		).toBe('destructive');
 	});
 
 	it('registers six Live Event webhook triggers', () => {
@@ -134,13 +178,45 @@ describe('Canvas HTTP client', () => {
 		);
 	});
 
-	it('resolvePath encodes path params', () => {
+	it('resolvePath encodes path params and rejects missing ones', () => {
 		expect(
 			resolvePath('/api/v1/courses/{course_id}/pages/{url}', {
 				course_id: '1',
 				url: 'a/b',
 			}),
 		).toBe('/api/v1/courses/1/pages/a%2Fb');
+		expect(() => resolvePath('/api/v1/courses/{course_id}', {})).toThrow(
+			/Missing path param/,
+		);
+	});
+
+	it('requires https base URLs', () => {
+		expect(normalizeCanvasBaseUrl('https://school.instructure.com/')).toBe(
+			'https://school.instructure.com',
+		);
+		expect(() =>
+			normalizeCanvasBaseUrl('http://school.instructure.com'),
+		).toThrow(/https/);
+		expect(() => normalizeCanvasBaseUrl('not-a-url')).toThrow(/valid/);
+	});
+
+	it('rewrites array query keys to Canvas bracket form', async () => {
+		await makeCanvasRequest('/api/v1/courses', 'tok', {
+			method: 'GET',
+			query: { include: ['total_scores', 'teachers'], per_page: 50 },
+			baseUrl: 'https://school.instructure.com',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				query: {
+					'include[]': ['total_scores', 'teachers'],
+					per_page: 50,
+				},
+			}),
+			expect.anything(),
+		);
 	});
 });
 
@@ -165,6 +241,59 @@ describe('Canvas input schemas', () => {
 			pathParams: { course_id: '1' },
 			body: {},
 		});
+	});
+
+	it('requires path placeholders as non-empty strings', () => {
+		const schema = CanvasEndpointInputSchemas.getSingleCourse;
+		expect(() => schema.parse({})).toThrow();
+		expect(() => schema.parse({ pathParams: { course_id: '' } })).toThrow();
+		expect(schema.parse({ pathParams: { course_id: '9' } })).toMatchObject({
+			pathParams: { course_id: '9' },
+		});
+	});
+
+	it('accepts empty and string response bodies', () => {
+		const schema = CanvasEndpointOutputSchemas.getRubricsUploadTemplate;
+		expect(schema.parse(undefined)).toBeUndefined();
+		expect(schema.parse('')).toBe('');
+		expect(schema.parse('csv,data')).toBe('csv,data');
+		expect(schema.parse({ id: 1 })).toEqual({ id: 1 });
+	});
+});
+
+describe('Canvas error handlers', () => {
+	it('does not treat unrelated 429 substrings as rate limits', () => {
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(new Error('order-4291-failed')),
+		).toBe(false);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(new Error('HTTP 429 rate limit')),
+		).toBe(true);
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(new Error('rate_limited')),
+		).toBe(true);
+	});
+});
+
+describe('Canvas webhook signature header', () => {
+	it('accepts array-valued x-canvas-signature headers', () => {
+		const rawBody = '{"type":"course_created"}';
+		const secret = 'webhook-secret';
+		const signature = crypto
+			.createHmac('sha256', secret)
+			.update(rawBody)
+			.digest('base64');
+
+		expect(
+			verifyCanvasWebhookSignature(
+				{
+					headers: { 'x-canvas-signature': [signature] },
+					rawBody,
+					payload: { type: 'course_created' },
+				} as never,
+				secret,
+			),
+		).toEqual({ valid: true });
 	});
 });
 
@@ -215,6 +344,31 @@ describe('Canvas OAuth webhook tenant link', () => {
 		await expect(
 			resolveCanvasOAuthWebhookTenantLink({ access_token: 'tok' }),
 		).resolves.toBeNull();
+	});
+
+	it('does not pick an arbitrary accounts[0] when multiple accounts are returned', async () => {
+		mockRequest.mockResolvedValueOnce([
+			{ id: 7, name: 'Sub', parent_account_id: 1 },
+			{ id: 1, name: 'Root', parent_account_id: null },
+		]);
+
+		await expect(
+			resolveCanvasOAuthWebhookTenantLink({
+				access_token: 'tok',
+				base_url: 'https://school.instructure.com',
+			}),
+		).resolves.toEqual({
+			linkType: 'canvas_account_id',
+			externalId: '1',
+		});
+
+		expect(accountIdFromAccountsList([{ id: 7 }, { id: 1 }])).toBeNull();
+		expect(
+			accountIdFromAccountsList([
+				{ id: 7, parent_account_id: 1 },
+				{ id: 9, parent_account_id: 1 },
+			]),
+		).toBeNull();
 	});
 });
 

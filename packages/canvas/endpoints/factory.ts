@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { CanvasEndpoints } from '..';
+import type { CanvasEndpoints, CanvasKeyBuilderContext } from '..';
 import { makeCanvasRequest } from '../client';
 import type { CanvasOperationName } from './operations';
 import { canvasOperations } from './operations';
@@ -9,17 +9,15 @@ import {
 	CanvasEndpointOutputSchemas,
 } from './types';
 
-async function resolveCanvasBaseUrl(ctx: {
-	options?: { baseUrl?: string };
-	keys?: object;
-}): Promise<string> {
+async function resolveCanvasBaseUrl(
+	ctx: Pick<CanvasKeyBuilderContext, 'options'> & {
+		keys?: CanvasKeyBuilderContext['keys'];
+	},
+): Promise<string> {
 	const fromOptions = ctx.options?.baseUrl?.trim();
 	if (fromOptions) return fromOptions;
 
-	const keys = ctx.keys as
-		| { get_base_url?: () => Promise<string | null | undefined> }
-		| undefined;
-	const fromAccount = await keys?.get_base_url?.();
+	const fromAccount = await ctx.keys?.get_base_url?.();
 	if (fromAccount?.trim()) return fromAccount.trim();
 
 	throw new Error(
@@ -36,12 +34,7 @@ export function createCanvasEndpoint<K extends CanvasOperationName>(
 			rawInput ?? {},
 		) as CanvasEndpointInputs[K];
 		const operation = canvasOperations[name];
-		const baseUrl = await resolveCanvasBaseUrl(
-			ctx as {
-				options?: { baseUrl?: string };
-				keys?: object;
-			},
-		);
+		const baseUrl = await resolveCanvasBaseUrl(ctx);
 
 		const response = await makeCanvasRequest<unknown>(operation.path, ctx.key, {
 			method: operation.method,
@@ -54,7 +47,13 @@ export function createCanvasEndpoint<K extends CanvasOperationName>(
 		const parsed = CanvasEndpointOutputSchemas[name].parse(
 			response,
 		) as CanvasEndpointOutputs[K];
-		await logEventFromContext(ctx, eventPath, input, 'completed');
+		// Avoid logging raw input (may include tokens / PII in body/query/pathParams).
+		await logEventFromContext(
+			ctx,
+			eventPath,
+			{ method: operation.method, path: operation.path },
+			'completed',
+		);
 		return parsed;
 	}) as CanvasEndpoints[K];
 }

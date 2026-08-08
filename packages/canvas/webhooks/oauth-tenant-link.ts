@@ -23,6 +23,40 @@ function baseUrlFromTokens(tokens: TokenResponse): string | null {
 	);
 }
 
+type CanvasAccount = {
+	id?: string | number;
+	parent_account_id?: string | number | null;
+	root_account_id?: string | number | null;
+};
+
+/**
+ * Pick a stable account id from GET /api/v1/accounts.
+ * Prefer a single unambiguous root (no parent); never invent one from accounts[0].
+ */
+export function accountIdFromAccountsList(accounts: unknown): string | null {
+	if (!Array.isArray(accounts) || accounts.length === 0) return null;
+
+	const rows = accounts.filter(
+		(row): row is CanvasAccount => !!row && typeof row === 'object',
+	);
+	if (rows.length === 0) return null;
+
+	if (rows.length === 1) {
+		return toExternalId(firstString(rows[0]?.id)) ?? null;
+	}
+
+	const roots = rows.filter(
+		(row) =>
+			row.parent_account_id === null || row.parent_account_id === undefined,
+	);
+	if (roots.length === 1) {
+		return toExternalId(firstString(roots[0]?.id)) ?? null;
+	}
+
+	// Ambiguous multi-account page — require an explicit id on the OAuth token.
+	return null;
+}
+
 /**
  * Resolve Canvas account id for webhook tenant routing.
  * Prefer token fields; otherwise call GET /api/v1/accounts when base URL is known.
@@ -47,7 +81,7 @@ export async function resolveCanvasOAuthWebhookTenantLink(
 
 	try {
 		const baseUrl = normalizeCanvasBaseUrl(baseUrlRaw);
-		const accounts = await makeCanvasRequest<Array<{ id?: string | number }>>(
+		const accounts = await makeCanvasRequest<CanvasAccount[]>(
 			'/api/v1/accounts',
 			accessToken,
 			{
@@ -56,10 +90,7 @@ export async function resolveCanvasOAuthWebhookTenantLink(
 			},
 		);
 
-		const accountId = Array.isArray(accounts)
-			? firstString(accounts[0]?.id)
-			: null;
-		const externalId = toExternalId(accountId);
+		const externalId = accountIdFromAccountsList(accounts);
 		if (!externalId) return null;
 		return { linkType: 'canvas_account_id', externalId };
 	} catch {

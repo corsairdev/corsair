@@ -70,7 +70,11 @@ import {
 	Users,
 	UserTokens,
 } from './endpoints';
-import type { CanvasOperationName } from './endpoints/operations';
+import type {
+	CanvasOperation,
+	CanvasOperationName,
+} from './endpoints/operations';
+import { canvasOperations } from './endpoints/operations';
 import type {
 	CanvasEndpointInputs,
 	CanvasEndpointOutputs,
@@ -331,7 +335,6 @@ const canvasEndpointsNested = {
 		editConversation: Conversations.editConversation,
 		deleteConversations: Conversations.deleteConversations,
 		deleteConversationMessages: Conversations.deleteConversationMessages,
-		deleteAMessage: Conversations.deleteAMessage,
 		addConversationMessage: Conversations.addConversationMessage,
 		addRecipientsToConversation: Conversations.addRecipientsToConversation,
 		getUnreadCount: Conversations.getUnreadCount,
@@ -576,14 +579,14 @@ const canvasWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 // ── Helper: build endpoint meta from operations ───────────────────────────
-import { canvasOperations } from './endpoints/operations';
-
 function buildEndpointMeta() {
 	const meta: Record<string, { riskLevel: string; description: string }> = {};
 	for (const [groupKey, group] of Object.entries(canvasEndpointsNested)) {
 		for (const endpointKey of Object.keys(group as Record<string, unknown>)) {
 			const dotKey = `${groupKey}.${endpointKey}`;
-			const op = canvasOperations[endpointKey as CanvasOperationName];
+			const op = canvasOperations[
+				endpointKey as CanvasOperationName
+			] as CanvasOperation;
 			const method: string = op.method;
 			let riskLevel: 'read' | 'write' | 'destructive' = 'read';
 			if (method === 'POST' || method === 'PUT' || method === 'PATCH') {
@@ -592,7 +595,7 @@ function buildEndpointMeta() {
 				riskLevel = 'destructive';
 			}
 			meta[dotKey] = {
-				riskLevel,
+				riskLevel: op.riskLevel ?? riskLevel,
 				description: op.description,
 			};
 		}
@@ -631,17 +634,26 @@ export function canvas<const T extends CanvasPluginOptions>(
 		? normalizeCanvasBaseUrl(options.baseUrl)
 		: undefined;
 
+	// OAuthConfig is static strings — framework cannot resolve per-tenant hosts.
+	if (options.authType === 'oauth_2' && !baseUrl) {
+		throw new Error('[canvas] options.baseUrl is required for oauth_2');
+	}
+
 	return {
 		id: 'canvas',
 		authConfig: canvasAuthConfig,
-		oauthConfig: {
-			providerName: 'Canvas LMS',
-			authUrl: `${baseUrl ?? 'https://canvas.instructure.com'}/login/oauth2/auth`,
-			tokenUrl: `${baseUrl ?? 'https://canvas.instructure.com'}/login/oauth2/token`,
-			scopes: ['url:GET|/api/v1/users/self', 'url:GET|/api/v1/courses'],
-			tokenAuthMethod: 'body',
-			requiresRegisteredRedirect: true,
-		},
+		...(baseUrl
+			? {
+					oauthConfig: {
+						providerName: 'Canvas LMS',
+						authUrl: `${baseUrl}/login/oauth2/auth`,
+						tokenUrl: `${baseUrl}/login/oauth2/token`,
+						scopes: ['url:GET|/api/v1/users/self', 'url:GET|/api/v1/courses'],
+						tokenAuthMethod: 'body' as const,
+						requiresRegisteredRedirect: true,
+					},
+				}
+			: {}),
 		schema: CanvasSchema,
 		options: options,
 		hooks: options.hooks,

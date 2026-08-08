@@ -6,7 +6,20 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			if (
+				msg.includes('rate_limited') ||
+				msg.includes('rate limit') ||
+				msg.includes('too many requests')
+			) {
+				return true;
+			}
+			// Bare "429" only when the message clearly indicates rate limiting.
+			return (
+				msg.includes('429') &&
+				(msg.includes('rate') ||
+					msg.includes('throttl') ||
+					msg.includes('too many'))
+			);
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;

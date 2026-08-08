@@ -18,6 +18,20 @@ export function normalizeCanvasBaseUrl(baseUrl: string): string {
 	if (!trimmed) {
 		throw new Error('[canvas] baseUrl is required');
 	}
+
+	let parsed: URL;
+	try {
+		parsed = new URL(trimmed);
+	} catch {
+		throw new Error('[canvas] baseUrl must be a valid absolute HTTPS URL');
+	}
+	if (parsed.protocol !== 'https:') {
+		throw new Error('[canvas] baseUrl must use https');
+	}
+	if (!parsed.host) {
+		throw new Error('[canvas] baseUrl must include a valid host');
+	}
+
 	return trimmed;
 }
 
@@ -38,12 +52,30 @@ export function resolvePath(
 	template: string,
 	pathParams?: Record<string, string>,
 ): string {
-	if (!pathParams) return template;
-	let resolved = template;
-	for (const [key, value] of Object.entries(pathParams)) {
-		resolved = resolved.replace(`{${key}}`, encodeURIComponent(value));
+	return template.replace(/\{([^}]+)\}/g, (_match, key: string) => {
+		const value = pathParams?.[key];
+		if (value === undefined || value === '') {
+			throw new Error(`[canvas] Missing path param: ${key}`);
+		}
+		return encodeURIComponent(value);
+	});
+}
+
+function toCanvasQuery(
+	query?: Record<string, string | number | boolean | string[] | undefined>,
+): Record<string, unknown> | undefined {
+	if (!query) return undefined;
+	const out: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(query)) {
+		if (value === undefined) continue;
+		if (Array.isArray(value)) {
+			const bracketKey = key.endsWith('[]') ? key : `${key}[]`;
+			out[bracketKey] = value;
+		} else {
+			out[key] = value;
+		}
 	}
-	return resolved;
+	return out;
 }
 
 export async function makeCanvasRequest<T>(
@@ -82,7 +114,7 @@ export async function makeCanvasRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: query as Record<string, unknown> | undefined,
+		query: toCanvasQuery(query),
 	};
 
 	return await request<T>(config, requestOptions, {

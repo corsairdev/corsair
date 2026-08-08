@@ -15,6 +15,6 @@
     "skipLibCheck": true
   },
   "include": ["./**/*"],
-  "exclude": ["dist", "node_modules"],
+  "exclude": ["dist", "node_modules", "schema.test.ts", "tsup.config.ts"],
   "references": []
 }

@@ -206,7 +206,6 @@ export const Conversations = defineGroup('conversations', [
 	'editConversation',
 	'deleteConversations',
 	'deleteConversationMessages',
-	'deleteAMessage',
 	'addConversationMessage',
 	'addRecipientsToConversation',
 	'getUnreadCount',

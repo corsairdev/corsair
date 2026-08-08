@@ -92,7 +92,8 @@ export function verifyCanvasWebhookSignature(
 	request: WebhookRequest<CanvasWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	const signature = request.headers['x-canvas-signature'] as string | undefined;
+	const header = request.headers['x-canvas-signature'];
+	const signature = Array.isArray(header) ? header[0] : header;
 	if (!signature) {
 		return { valid: false, error: 'Missing x-canvas-signature header' };
 	}

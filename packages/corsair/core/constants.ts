@@ -231,6 +231,7 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canvas'
 	| 'canva'
 	| 'cloudflare'
 	| 'cloudinary'

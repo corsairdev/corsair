@@ -6,6 +6,8 @@ export type CanvasOperation = {
 	description: string;
 	/** POST/PUT/PATCH that Canvas accepts with no JSON body (e.g. favorites). */
 	bodyless?: boolean;
+	/** Overrides HTTP-method risk inference in buildEndpointMeta. */
+	riskLevel?: 'read' | 'write' | 'destructive';
 };
 
 export const canvasOperations = {
@@ -67,7 +69,7 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/graphql',
 		description:
-			'Retrieve account information by ID using the Canvas GraphQL API',
+			'Call Canvas GraphQL (/api/graphql); supply the query document and variables in input.body',
 	},
 	getAccountNotifications: {
 		method: 'GET',
@@ -206,7 +208,7 @@ export const canvasOperations = {
 	},
 	addLastAttendedDate: {
 		method: 'PUT',
-		path: '/api/v1/courses/{course_id}/enrollments/{enrollment_id}/last_attended',
+		path: '/api/v1/courses/{course_id}/users/{user_id}/last_attended',
 		description:
 			'Add or update the last attended date for a student enrollment',
 	},
@@ -227,7 +229,7 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/graphql',
 		description:
-			'Retrieve information about a specific assignment by ID using GraphQL',
+			'Call Canvas GraphQL (/api/graphql); supply the query document and variables in input.body',
 	},
 	editAssignment: {
 		method: 'PUT',
@@ -247,7 +249,8 @@ export const canvasOperations = {
 	createAssignmentGraphQl: {
 		method: 'POST',
 		path: '/api/graphql',
-		description: 'Create a new assignment in a Canvas course using GraphQL API',
+		description:
+			'Call Canvas GraphQL (/api/graphql); supply the mutation document and variables in input.body',
 	},
 	getSubmissionSummary: {
 		method: 'GET',
@@ -338,6 +341,7 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/graphql',
 		description: 'Delete a submission draft in Canvas via GraphQL',
+		riskLevel: 'destructive',
 	},
 	getAUsersMostRecentlyGraded: {
 		method: 'GET',
@@ -454,11 +458,13 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/graphql',
 		description: 'Delete a discussion entry via GraphQL',
+		riskLevel: 'destructive',
 	},
 	deleteDiscussionTopicGraphQl: {
 		method: 'POST',
 		path: '/api/graphql',
 		description: 'Delete a discussion topic in Canvas via GraphQL',
+		riskLevel: 'destructive',
 	},
 
 	// ── Group Discussions ──────────────────────────────────────────────────
@@ -493,6 +499,7 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/v1/groups/{group_id}/discussion_topics/{topic_id}/duplicate',
 		description: 'Duplicate an existing discussion topic in a Canvas group',
+		bodyless: true,
 	},
 
 	// ── Quizzes ────────────────────────────────────────────────────────────
@@ -623,11 +630,6 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/v1/conversations/{conversation_id}/remove_messages',
 		description: 'Delete specific messages from a Canvas conversation',
-	},
-	deleteAMessage: {
-		method: 'POST',
-		path: '/api/v1/conversations/{conversation_id}/remove_messages',
-		description: 'Delete messages from a Canvas conversation',
 	},
 	addConversationMessage: {
 		method: 'POST',
@@ -776,6 +778,7 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/v1/group_categories/{group_category_id}/assign_unassigned_members',
 		description: 'Assign unassigned members to groups within a group category',
+		bodyless: true,
 	},
 
 	// ── Group Memberships ──────────────────────────────────────────────────
@@ -1020,6 +1023,7 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/graphql',
 		description: 'Delete links between outcomes and content in Canvas',
+		riskLevel: 'destructive',
 	},
 
 	// ── Outcome Groups ─────────────────────────────────────────────────────
@@ -1215,7 +1219,7 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/graphql',
 		description:
-			'Fetch Canvas objects using REST-style numeric identifiers via GraphQL',
+			'Call Canvas GraphQL (/api/graphql); supply the query document and variables in input.body',
 	},
 } as const satisfies Record<string, CanvasOperation>;
 

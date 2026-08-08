@@ -30,7 +30,24 @@ const queryValueSchema = z.union([
 
 const querySchema = z.record(z.string(), queryValueSchema.optional());
 const bodySchema = z.record(z.string(), z.unknown());
-const pathParamsSchema = z.record(z.string(), z.string());
+
+function pathParamNames(path: string): string[] {
+	return [...path.matchAll(/\{([^}]+)\}/g)].map((match) => match[1]!);
+}
+
+function pathParamsSchemaFor(operation: CanvasOperation) {
+	const names = pathParamNames(operation.path);
+	if (names.length === 0) {
+		return z.record(z.string(), z.string().min(1)).optional();
+	}
+	return z
+		.object(
+			Object.fromEntries(
+				names.map((name) => [name, z.string().min(1)]),
+			) as Record<string, z.ZodString>,
+		)
+		.passthrough();
+}
 
 function createRequestInputSchema(
 	operation: CanvasOperation,
@@ -38,10 +55,11 @@ function createRequestInputSchema(
 	const method: string = operation.method;
 	const isMutation =
 		method === 'POST' || method === 'PUT' || method === 'PATCH';
+	const pathParams = pathParamsSchemaFor(operation);
 
 	if (!isMutation) {
 		return z.object({
-			pathParams: pathParamsSchema.optional(),
+			pathParams,
 			query: querySchema.optional(),
 			body: bodySchema.optional(),
 		});
@@ -49,7 +67,7 @@ function createRequestInputSchema(
 
 	if (operation.bodyless === true) {
 		return z.object({
-			pathParams: pathParamsSchema.optional(),
+			pathParams,
 			query: querySchema.optional(),
 			body: bodySchema.optional().default({}),
 		});
@@ -57,7 +75,7 @@ function createRequestInputSchema(
 
 	// Body-required mutations reject omitted / empty payloads.
 	return z.object({
-		pathParams: pathParamsSchema.optional(),
+		pathParams,
 		query: querySchema.optional(),
 		body: bodySchema.refine(
 			(value) => Object.keys(value).length > 0,
@@ -73,12 +91,13 @@ export const CanvasEndpointInputSchemas = Object.fromEntries(
 	]),
 ) as { [K in CanvasOperationName]: z.ZodType<CanvasRequestInput> };
 
-// Canvas returns either a JSON object or a JSON array depending on the
-// endpoint (and sometimes the same op can return either). Accept both so
-// list responses are not rejected by an object-only schema.
+// Canvas returns JSON objects/arrays, empty/string bodies (CSV templates),
+// or undefined for 204 DELETE-style responses.
 const canvasResponseSchema = z.union([
 	z.record(z.string(), z.unknown()),
 	z.array(z.unknown()),
+	z.string(),
+	z.undefined(),
 ]);
 
 export const CanvasEndpointOutputSchemas = Object.fromEntries(
