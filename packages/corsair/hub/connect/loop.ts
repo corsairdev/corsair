@@ -155,8 +155,8 @@ export function startConnectLoop(
 	}
 	if (!hub.allowWorkflowExecution) {
 		console.warn(
-			'[corsair] connect loop not started: hub.allowWorkflowExecution is off, ' +
-				'so this app will not poll for run/probe delivery.',
+			'[corsair] workflow executions not enabled. ' +
+				'Please set hub: { ..., allowWorkflowExecution: true }',
 		);
 		return { stop: () => {} };
 	}

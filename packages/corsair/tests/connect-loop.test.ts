@@ -182,7 +182,7 @@ describe('startConnectLoop', () => {
 		await Promise.resolve();
 		expect(fetchSpy).not.toHaveBeenCalled();
 		expect(warnSpy).toHaveBeenCalledWith(
-			expect.stringContaining('allowWorkflowExecution is off'),
+			expect.stringContaining('workflow executions not enabled'),
 		);
 		handle.stop();
 		warnSpy.mockRestore();
