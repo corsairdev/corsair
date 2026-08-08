@@ -142,15 +142,47 @@ describe('driveChanged pagination', () => {
 		expect(result.data?.allFiles).toHaveLength(10);
 	});
 
-	it('breaks when nextPageToken does not advance', async () => {
+	it('breaks when nextPageToken points back at the current page', async () => {
 		const changeRequests = mockDriveFetch([
 			{ changes: [makeChange('file-1')], nextPageToken: '77' },
 			{ changes: [makeChange('file-2')], nextPageToken: '77' },
 		]);
 
-		await driveChanged.handler(ctx, makeRequest('77'));
+		const result = await driveChanged.handler(ctx, makeRequest('77'));
 
 		expect(changeRequests).toEqual(['77']);
+		expect(result.data?.allFiles).toHaveLength(1);
+	});
+
+	it('breaks on a multi-step cycle without refetching pages', async () => {
+		// 77 → 78 → 77: each token advances, so a same-token check alone would
+		// keep looping and duplicate file-1/file-2 until the page cap.
+		const changeRequests: string[] = [];
+		global.fetch = (async (url: unknown) => {
+			const href = String(url);
+
+			if (href.includes('/changes')) {
+				const pageToken = new URL(href).searchParams.get('pageToken') ?? '';
+				changeRequests.push(pageToken);
+				return jsonResponse(
+					pageToken === '77'
+						? { changes: [makeChange('file-1')], nextPageToken: '78' }
+						: { changes: [makeChange('file-2')], nextPageToken: '77' },
+				);
+			}
+
+			if (href.includes('alt=media')) {
+				return { ok: false, status: 404, text: async () => 'no binary' };
+			}
+
+			const fileId = href.split('/files/')[1]?.split('?')[0] ?? 'unknown';
+			return jsonResponse(stubFile(fileId));
+		}) as unknown as typeof fetch;
+
+		const result = await driveChanged.handler(ctx, makeRequest('77'));
+
+		expect(changeRequests).toEqual(['77', '78']);
+		expect(result.data?.allFiles).toHaveLength(2);
 	});
 
 	it('reports no changes when every page is stale', async () => {
