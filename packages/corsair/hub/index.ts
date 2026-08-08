@@ -39,6 +39,7 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export { startConnectLoop } from './connect/loop';
 export type {
 	ConnectCreateLinkDeliveryPayload,
 	ConnectCreateLinkDeliveryResult,
