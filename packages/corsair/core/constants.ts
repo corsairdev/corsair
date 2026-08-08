@@ -13,10 +13,12 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'abstract',
+	'activetrail',
 	'agentql',
-	'algolia',
 	'ahrefs',
 	'airtable',
+	'algolia',
 	'amplitude',
 	'asana',
 	'bitwarden',
@@ -24,15 +26,20 @@ export const BaseProviders = [
 	'box',
 	'cal',
 	'calendly',
+	'canva',
 	'cloudflare',
+	'cloudinary',
 	'confluence',
 	'cursor',
+	'databricks',
 	'datadog',
 	'deepseek',
+	'digitalocean',
 	'discord',
 	'dodopayments',
 	'dropbox',
 	'exa',
+	'facebook',
 	'figma',
 	'firecrawl',
 	'fireflies',
@@ -40,13 +47,17 @@ export const BaseProviders = [
 	'github',
 	'gitlab',
 	'gmail',
+	'googlebigquery',
 	'googlecalendar',
 	'googledocs',
 	'googledrive',
+	'googlemaps',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'hashnode',
+	'heygen',
 	'hubspot',
 	'insightoai',
 	'instagram',
@@ -58,7 +69,9 @@ export const BaseProviders = [
 	'monday',
 	'neon',
 	'notion',
+	'ollama',
 	'onedrive',
+	'onepassword',
 	'openai',
 	'openweathermap',
 	'oura',
@@ -69,6 +82,7 @@ export const BaseProviders = [
 	'razorpay',
 	'reddit',
 	'resend',
+	'retailed',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -87,6 +101,8 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'vercel',
+	'whatsapp',
 	'workday',
 	'xquik',
 	'youtube',
@@ -96,10 +112,12 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	abstract: 'Abstract',
+	activetrail: 'Active Trail',
 	agentql: 'AgentQL',
-	algolia: 'Algolia',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
+	algolia: 'Algolia',
 	amplitude: 'Amplitude',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -107,15 +125,20 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	canva: 'Canva',
 	cloudflare: 'Cloudflare',
+	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
+	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
+	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
 	exa: 'Exa',
+	facebook: 'Facebook',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
@@ -123,13 +146,17 @@ export const ProviderDisplayNames = {
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
+	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
+	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	hashnode: 'Hashnode',
+	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
@@ -141,16 +168,20 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
+	ollama: 'Ollama',
 	onedrive: 'OneDrive',
+	onepassword: '1Password',
 	openai: 'OpenAI',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	resend: 'Resend',
+	retailed: 'Retailed',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -169,13 +200,14 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	vercel: 'Vercel',
+	whatsapp: 'WhatsApp',
 	workday: 'Workday',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	perplexityai: 'Perplexity AI',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -186,10 +218,12 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'abstract'
+	| 'activetrail'
 	| 'agentql'
-	| 'algolia'
 	| 'ahrefs'
 	| 'airtable'
+	| 'algolia'
 	| 'amplitude'
 	| 'asana'
 	| 'bitwarden'
@@ -197,15 +231,20 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canva'
 	| 'cloudflare'
+	| 'cloudinary'
 	| 'confluence'
 	| 'cursor'
+	| 'databricks'
 	| 'datadog'
 	| 'deepseek'
+	| 'digitalocean'
 	| 'discord'
 	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
+	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
@@ -213,13 +252,17 @@ export type AllProviders =
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
+	| 'googlebigquery'
 	| 'googlecalendar'
 	| 'googledocs'
 	| 'googledrive'
+	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'hashnode'
+	| 'heygen'
 	| 'hubspot'
 	| 'insightoai'
 	| 'instagram'
@@ -231,7 +274,9 @@ export type AllProviders =
 	| 'monday'
 	| 'neon'
 	| 'notion'
+	| 'ollama'
 	| 'onedrive'
+	| 'onepassword'
 	| 'openai'
 	| 'openweathermap'
 	| 'oura'
@@ -242,6 +287,7 @@ export type AllProviders =
 	| 'razorpay'
 	| 'reddit'
 	| 'resend'
+	| 'retailed'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
@@ -260,6 +306,8 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'vercel'
+	| 'whatsapp'
 	| 'workday'
 	| 'xquik'
 	| 'youtube'
