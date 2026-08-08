@@ -52,13 +52,18 @@ export function resolvePath(
 	template: string,
 	pathParams?: Record<string, string>,
 ): string {
-	return template.replace(/\{([^}]+)\}/g, (_match, key: string) => {
+	const resolved = template.replace(/\{([^}]+)\}/g, (_match, key: string) => {
 		const value = pathParams?.[key];
 		if (value === undefined || value === '') {
 			throw new Error(`[canvas] Missing path param: ${key}`);
 		}
 		return encodeURIComponent(value);
 	});
+	// Fail closed — never send literal `{placeholder}` segments to Canvas.
+	if (resolved.includes('{') || resolved.includes('}')) {
+		throw new Error(`[canvas] Unresolved path placeholder in URL: ${resolved}`);
+	}
+	return resolved;
 }
 
 function toCanvasQuery(

@@ -421,7 +421,7 @@ describe('Canvas endpoint API coverage', () => {
 			}
 
 			const endpoint = createCanvasEndpoint(name, `canvas.test.${name}`);
-			const result = await endpoint(mockCtx as never, input);
+			const result = await endpoint(mockCtx as never, input as never);
 
 			expect(result).toEqual({ ok: true, id: 1 });
 
