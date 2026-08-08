@@ -252,12 +252,36 @@ describe('Canvas input schemas', () => {
 		});
 	});
 
+	it('requires path params for every operation that has placeholders', () => {
+		for (const name of operationNames) {
+			const op = canvasOperations[name] as CanvasOperation;
+			if (!/\{[^}]+\}/.test(op.path)) continue;
+			const schema = CanvasEndpointInputSchemas[name];
+			expect(() => schema.parse({})).toThrow();
+		}
+	});
+
 	it('accepts empty and string response bodies', () => {
 		const schema = CanvasEndpointOutputSchemas.getRubricsUploadTemplate;
 		expect(schema.parse(undefined)).toBeUndefined();
 		expect(schema.parse('')).toBe('');
 		expect(schema.parse('csv,data')).toBe('csv,data');
 		expect(schema.parse({ id: 1 })).toEqual({ id: 1 });
+	});
+
+	it('uses operation-specific output schemas (GraphQL vs REST)', () => {
+		expect(() =>
+			CanvasEndpointOutputSchemas.getLegacyNode.parse([{ id: 1 }]),
+		).toThrow();
+		expect(
+			CanvasEndpointOutputSchemas.getLegacyNode.parse({ data: { id: 1 } }),
+		).toEqual({ data: { id: 1 } });
+		expect(
+			CanvasEndpointOutputSchemas.getSingleCourse.parse({ id: 9, name: 'X' }),
+		).toMatchObject({ id: 9 });
+		expect(() =>
+			CanvasEndpointOutputSchemas.getSingleCourse.parse(42),
+		).toThrow();
 	});
 });
 

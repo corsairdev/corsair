@@ -91,15 +91,53 @@ export const CanvasEndpointInputSchemas = Object.fromEntries(
 	]),
 ) as { [K in CanvasOperationName]: z.ZodType<CanvasRequestInput> };
 
-// Canvas returns JSON objects/arrays, empty/string bodies (CSV templates),
-// or undefined for 204 DELETE-style responses.
-const canvasResponseSchema = z.union([
-	z.record(z.string(), z.unknown()),
-	z.array(z.unknown()),
-	z.string(),
-	z.undefined(),
-]);
+// Canvas REST resources usually carry an id; keep unknown fields via passthrough.
+// Full per-field OpenAPI mapping is out of scope for the registry (same as neon /
+// digitalocean / activetrail — Zod on every endpoint, shapes stay loose).
+const canvasResourceSchema = z
+	.object({
+		id: z.union([z.string(), z.number()]).optional(),
+	})
+	.passthrough();
+
+const canvasListSchema = z.array(
+	z.union([canvasResourceSchema, z.record(z.string(), z.unknown())]),
+);
+
+const canvasGraphqlSchema = z
+	.object({
+		data: z.unknown().optional(),
+		errors: z.array(z.unknown()).optional(),
+	})
+	.passthrough();
+
+function createResponseSchema(operation: CanvasOperation): z.ZodTypeAny {
+	if (operation.path === '/api/graphql') {
+		return canvasGraphqlSchema;
+	}
+	if (operation.method === 'DELETE') {
+		return z.union([
+			canvasResourceSchema,
+			canvasListSchema,
+			z.undefined(),
+			z.null(),
+		]);
+	}
+	// CSV templates and a few text endpoints return strings.
+	if (operation.path.includes('/upload')) {
+		return z.union([z.string(), canvasResourceSchema, z.undefined()]);
+	}
+	return z.union([
+		canvasResourceSchema,
+		canvasListSchema,
+		z.string(),
+		z.undefined(),
+	]);
+}
 
 export const CanvasEndpointOutputSchemas = Object.fromEntries(
-	Object.keys(canvasOperations).map((name) => [name, canvasResponseSchema]),
-) as { [K in CanvasOperationName]: typeof canvasResponseSchema };
+	Object.entries(canvasOperations).map(([name, operation]) => [
+		name,
+		createResponseSchema(operation),
+	]),
+) as { [K in CanvasOperationName]: z.ZodTypeAny };
