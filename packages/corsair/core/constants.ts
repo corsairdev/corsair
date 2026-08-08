@@ -35,6 +35,7 @@ export const BaseProviders = [
 	'cloudflare',
 	'cloudinary',
 	'confluence',
+	'convex',
 	'cursor',
 	'databricks',
 	'datadog',
@@ -139,6 +140,7 @@ export const ProviderDisplayNames = {
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
+	convex: 'Convex',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
@@ -250,6 +252,7 @@ export type AllProviders =
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
+	| 'convex'
 	| 'cursor'
 	| 'databricks'
 	| 'datadog'
