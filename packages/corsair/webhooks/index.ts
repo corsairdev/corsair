@@ -260,6 +260,23 @@ export async function processWebhook(
 		try {
 			const response = await matched.webhook.handler(webhookRequest);
 
+			if (response.success === false) {
+				return {
+					plugin: pluginId,
+					action,
+					body: parsedBody,
+					response: {
+						success: false,
+						error: response.error,
+						statusCode: response.statusCode,
+						data: response.data,
+					},
+					...(response.responseHeaders && {
+						responseHeaders: response.responseHeaders,
+					}),
+				};
+			}
+
 			const returnToSenderObjectExists = !!Object.keys(
 				response.returnToSender || {},
 			)?.length;
@@ -286,7 +303,9 @@ export async function processWebhook(
 				body: parsedBody,
 				response: {
 					success: false,
-					error: error instanceof Error ? error.message : 'Unknown error',
+					statusCode: 500,
+					// Don't leak Error.message to webhook senders.
+					error: 'Internal server error',
 				},
 			};
 		}
