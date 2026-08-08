@@ -71,8 +71,17 @@ export async function resolveCanvasOAuthWebhookTenantLink(
 			tokens.root_account_id,
 		),
 	);
-	if (fromToken) {
+	// Keep canvas_account_id numeric-only so webhook UUID fields cannot collide.
+	if (fromToken && /^\d+$/.test(fromToken)) {
 		return { linkType: 'canvas_account_id', externalId: fromToken };
+	}
+
+	const fromUuid = firstString(
+		tokens.root_account_uuid,
+		tokens.canvas_account_uuid,
+	);
+	if (fromUuid) {
+		return { linkType: 'canvas_root_account_uuid', externalId: fromUuid };
 	}
 
 	const accessToken = firstString(tokens.access_token);

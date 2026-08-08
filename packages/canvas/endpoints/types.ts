@@ -139,16 +139,11 @@ function createResponseSchema(operation: CanvasOperation): z.ZodTypeAny {
 			z.null(),
 		]);
 	}
-	// CSV templates and a few text endpoints return strings.
+	// CSV / text templates only — do not accept bare strings for general REST ops.
 	if (operation.path.includes('/upload')) {
 		return z.union([z.string(), canvasResourceSchema, z.undefined()]);
 	}
-	return z.union([
-		canvasResourceSchema,
-		canvasListSchema,
-		z.string(),
-		z.undefined(),
-	]);
+	return z.union([canvasResourceSchema, canvasListSchema]);
 }
 
 export const CanvasEndpointOutputSchemas = Object.fromEntries(

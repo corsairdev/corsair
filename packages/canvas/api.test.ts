@@ -21,6 +21,7 @@ import {
 	accountIdFromAccountsList,
 	resolveCanvasOAuthWebhookTenantLink,
 } from './webhooks/oauth-tenant-link';
+import { matchCanvasTenantWebhook } from './webhooks/tenant-matcher';
 import { verifyCanvasWebhookSignature } from './webhooks/types';
 
 jest.mock('corsair/http', () => {
@@ -282,6 +283,40 @@ describe('Canvas input schemas', () => {
 		expect(() =>
 			CanvasEndpointOutputSchemas.getSingleCourse.parse(42),
 		).toThrow();
+		// General REST ops must not accept bare strings (only upload templates).
+		expect(() =>
+			CanvasEndpointOutputSchemas.getSingleCourse.parse('not-json'),
+		).toThrow();
+	});
+});
+
+describe('Canvas tenant matcher', () => {
+	it('uses numeric ids for canvas_account_id, never UUID', () => {
+		expect(
+			matchCanvasTenantWebhook({
+				body: {
+					metadata: {
+						root_account_id: '55',
+						root_account_uuid: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+					},
+				},
+				headers: {},
+			} as never),
+		).toEqual({ linkType: 'canvas_account_id', externalId: '55' });
+
+		expect(
+			matchCanvasTenantWebhook({
+				body: {
+					metadata: {
+						root_account_uuid: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+					},
+				},
+				headers: {},
+			} as never),
+		).toEqual({
+			linkType: 'canvas_root_account_uuid',
+			externalId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
+		});
 	});
 });
 
