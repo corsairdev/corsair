@@ -109,6 +109,7 @@ export const BaseProviders = [
 	'vercel',
 	'whatsapp',
 	'wiza',
+	'workday',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -213,6 +214,7 @@ export const ProviderDisplayNames = {
 	vercel: 'Vercel',
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
+	workday: 'Workday',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -324,6 +326,7 @@ export type AllProviders =
 	| 'vercel'
 	| 'whatsapp'
 	| 'wiza'
+	| 'workday'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
