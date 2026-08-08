@@ -4,6 +4,8 @@ export type CanvasOperation = {
 	method: CanvasHttpMethod;
 	path: string;
 	description: string;
+	/** POST/PUT/PATCH that Canvas accepts with no JSON body (e.g. favorites). */
+	bodyless?: boolean;
 };
 
 export const canvasOperations = {
@@ -40,6 +42,7 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/v1/users/self/favorites/courses/{course_id}',
 		description: 'Add a course to the current user favorites',
+		bodyless: true,
 	},
 
 	// ── Accounts ───────────────────────────────────────────────────────────
@@ -738,6 +741,7 @@ export const canvasOperations = {
 		method: 'POST',
 		path: '/api/v1/users/self/favorites/groups/{group_id}',
 		description: 'Add a group to the current user favorites',
+		bodyless: true,
 	},
 	getGroupPermissions: {
 		method: 'GET',

@@ -126,6 +126,26 @@ describe('Canvas endpoint behavior', () => {
 		);
 	});
 
+	it('rejects body-required mutations with missing or empty body', async () => {
+		const createCourse = createCanvasEndpoint(
+			'createCourse',
+			'canvas.courses.createCourse',
+		);
+		const ctx = {
+			key: 'test_token',
+			options: { baseUrl: 'https://test.canvas.com' },
+			logEvent: jest.fn(),
+		} as never;
+
+		await expect(
+			createCourse(ctx, { pathParams: { account_id: '1' } }),
+		).rejects.toThrow();
+		await expect(
+			createCourse(ctx, { pathParams: { account_id: '1' }, body: {} }),
+		).rejects.toThrow();
+		expect(makeCanvasRequest).not.toHaveBeenCalled();
+	});
+
 	it('accepts array responses from list endpoints', async () => {
 		(makeCanvasRequest as jest.Mock).mockResolvedValueOnce([
 			{ id: 1 },

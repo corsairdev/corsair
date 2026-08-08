@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { CanvasOperationName } from './operations';
+import type { CanvasOperation, CanvasOperationName } from './operations';
 import { canvasOperations } from './operations';
 
 export type CanvasRequestInput = {
@@ -33,14 +33,21 @@ const bodySchema = z.record(z.string(), z.unknown());
 const pathParamsSchema = z.record(z.string(), z.string());
 
 function createRequestInputSchema(
-	operation: (typeof canvasOperations)[CanvasOperationName],
+	operation: CanvasOperation,
 ): z.ZodType<CanvasRequestInput> {
 	const method: string = operation.method;
-	const needsBody = method === 'POST' || method === 'PUT' || method === 'PATCH';
+	const isMutation =
+		method === 'POST' || method === 'PUT' || method === 'PATCH';
 
-	if (needsBody) {
-		// Optional: Canvas has many bodyless POST/PUT actions (e.g. favorites).
-		// Default {} so callers can omit body without failing Zod.
+	if (!isMutation) {
+		return z.object({
+			pathParams: pathParamsSchema.optional(),
+			query: querySchema.optional(),
+			body: bodySchema.optional(),
+		});
+	}
+
+	if (operation.bodyless === true) {
 		return z.object({
 			pathParams: pathParamsSchema.optional(),
 			query: querySchema.optional(),
@@ -48,10 +55,14 @@ function createRequestInputSchema(
 		});
 	}
 
+	// Body-required mutations reject omitted / empty payloads.
 	return z.object({
 		pathParams: pathParamsSchema.optional(),
 		query: querySchema.optional(),
-		body: bodySchema.optional(),
+		body: bodySchema.refine(
+			(value) => Object.keys(value).length > 0,
+			'Request body is required for this Canvas mutation',
+		),
 	});
 }
 

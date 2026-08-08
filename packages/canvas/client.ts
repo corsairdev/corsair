@@ -34,7 +34,7 @@ const CANVAS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 /**
  * Resolve path template placeholders like `{course_id}` into real values.
  */
-function resolvePath(
+export function resolvePath(
 	template: string,
 	pathParams?: Record<string, string>,
 ): string {
