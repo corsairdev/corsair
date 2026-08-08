@@ -1,10 +1,13 @@
+import { ApiError } from 'corsair/http';
 import {
+	makeWorkdayRequest,
 	normalizeWorkdayHost,
 	workdayOAuthUrls,
 	workdayServiceBase,
 } from './client.js';
 import { buildQuery, requestBody, resolvePath } from './endpoints/factory.js';
 import { workdayRoutes } from './endpoints/routes.js';
+import { errorHandlers } from './error-handlers.js';
 import { workday } from './index.js';
 
 function mockJsonResponse(body: unknown, status = 200) {
@@ -233,5 +236,75 @@ describe('Workday Plugin', () => {
 			body: JSON.stringify({ type: 'jobPosting.created', data: {} }),
 		} as never);
 		expect(matched).toBe(true);
+	});
+
+	it('rethrows ApiError so rate-limit handler keeps retryAfter', async () => {
+		// Use 503 (not 429) so corsair/http does not enter its retry/sleep loop.
+		const apiError = new ApiError(
+			{ method: 'GET', url: '/jobs' },
+			{
+				url: 'https://example.workday.com/jobs',
+				ok: false,
+				status: 503,
+				statusText: 'Service Unavailable',
+				body: {},
+			},
+			'upstream unavailable',
+		);
+		mockFetch.mockRejectedValue(apiError);
+
+		await expect(
+			makeWorkdayRequest('jobs', 'tok', {
+				method: 'GET',
+				connection: { host: 'example.workday.com', tenant: 'acme' },
+				service: 'staffing',
+				version: 'v6',
+			}),
+		).rejects.toBe(apiError);
+
+		const rateLimited = new ApiError(
+			{ method: 'GET', url: '/jobs' },
+			{
+				url: 'https://example.workday.com/jobs',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {},
+			},
+			'Rate limited',
+			{ retryAfter: 5000 },
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimited)).toBe(true);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited);
+		expect(result.headersRetryAfterMs).toBe(5000);
+	});
+
+	it('uses distinct service/path/query fingerprints for previously aliased ops', () => {
+		const fingerprint = (name: string) => {
+			const route = workdayRoutes.find((r) => r.name === name);
+			expect(route).toBeDefined();
+			if (!route) return '';
+			return [
+				route.service,
+				route.version,
+				route.path,
+				[...route.queryParams].sort().join(','),
+			].join('|');
+		};
+
+		expect(fingerprint('getWorkerInfo')).not.toBe(
+			fingerprint('getWorkerStaffingInformation'),
+		);
+		expect(fingerprint('getCollectionOfJobs')).not.toBe(
+			fingerprint('listJobs'),
+		);
+		expect(fingerprint('listJobPostings')).not.toBe(
+			fingerprint('getMyJobPostings'),
+		);
+
+		expect(fingerprint('getWorkerInfo')).toContain(
+			'compensation|v3|/workers/{ID}',
+		);
+		expect(fingerprint('getMyJobPostings')).toContain('/jobRequisitions');
 	});
 });

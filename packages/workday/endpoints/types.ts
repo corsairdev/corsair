@@ -789,6 +789,12 @@ export const WorkdayEndpointInputSchemas = {
 		.passthrough(),
 	getMyJobPostings: z
 		.object({
+			status: z
+				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
+				.optional(),
+			supervisoryOrganization: z
+				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
+				.optional(),
 			limit: z.number().int().min(1).max(100).optional(),
 			offset: z.number().int().min(0).optional(),
 		})
@@ -1229,12 +1235,6 @@ export const WorkdayEndpointInputSchemas = {
 		.passthrough(),
 	listJobs: z
 		.object({
-			includeTerminatedWorkers: z
-				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
-				.optional(),
-			search: z
-				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
-				.optional(),
 			limit: z.number().int().min(1).max(100).optional(),
 			offset: z.number().int().min(0).optional(),
 		})

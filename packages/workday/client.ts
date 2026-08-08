@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import type { WorkdayService } from './endpoints/routes';
 
 export class WorkdayAPIError extends Error {
@@ -124,6 +124,8 @@ export async function makeWorkdayRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// Preserve ApiError so RATE_LIMIT_ERROR can read status/retryAfter.
+		if (error instanceof ApiError) throw error;
 		if (error instanceof Error) throw new WorkdayAPIError(error.message);
 		throw new WorkdayAPIError('Unknown error');
 	}
