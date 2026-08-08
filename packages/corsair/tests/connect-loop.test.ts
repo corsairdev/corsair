@@ -1,7 +1,10 @@
 import { CORSAIR_INTERNAL } from '../core';
 import { deriveAck, pollOnce, startConnectLoop } from '../hub/connect/loop';
 
-function mockCorsair(projectApiKey: string): unknown {
+function mockCorsair(
+	projectApiKey: string,
+	allowWorkflowExecution = true,
+): unknown {
 	return {
 		[CORSAIR_INTERNAL]: {
 			plugins: [],
@@ -11,7 +14,7 @@ function mockCorsair(projectApiKey: string): unknown {
 				apiUrl: 'https://hub.test',
 				projectApiKey,
 				signingSecret: 's',
-				allowWorkflowExecution: true,
+				allowWorkflowExecution,
 			},
 		},
 	};
@@ -169,6 +172,20 @@ describe('startConnectLoop', () => {
 		await Promise.resolve();
 		expect(fetchSpy).not.toHaveBeenCalled();
 		handle.stop();
+		fetchSpy.mockRestore();
+	});
+
+	it('warns and does not poll for a dev key with execution disabled', async () => {
+		const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue(res(204));
+		const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		const handle = startConnectLoop(mockCorsair('ck_dev_noexec', false));
+		await Promise.resolve();
+		expect(fetchSpy).not.toHaveBeenCalled();
+		expect(warnSpy).toHaveBeenCalledWith(
+			expect.stringContaining('allowWorkflowExecution is off'),
+		);
+		handle.stop();
+		warnSpy.mockRestore();
 		fetchSpy.mockRestore();
 	});
 

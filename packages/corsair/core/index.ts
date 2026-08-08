@@ -154,10 +154,10 @@ function maybeStartConnectLoop(
 	instance: unknown,
 	hub: HubConfig | undefined,
 ): void {
-	if (
-		!hub?.allowWorkflowExecution ||
-		!hub.projectApiKey.startsWith('ck_dev_')
-	) {
+	// Only dev keys use connect; prod is out of scope. Delegate the execution-flag
+	// decision to startConnectLoop (the single owner of the "flag is off" warning) —
+	// short-circuiting on the flag here would swallow that warning silently.
+	if (!hub?.projectApiKey?.startsWith('ck_dev_')) {
 		return;
 	}
 	void import('../hub/connect/loop')
