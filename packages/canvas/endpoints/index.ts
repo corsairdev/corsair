@@ -423,4 +423,6 @@ export const FetchData = defineGroup('fetchData', ['fetchData'] as const);
 export const GraphQL = defineGroup('graphql', ['getLegacyNode'] as const);
 
 export * from './operations';
+export * from './response-schemas';
+export * from './routes';
 export * from './types';

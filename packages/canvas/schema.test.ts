@@ -56,7 +56,7 @@ describe('Canvas operations', () => {
 });
 
 jest.mock('./client', () => ({
-	makeCanvasRequest: jest.fn().mockResolvedValue({ success: true }),
+	makeCanvasRequest: jest.fn().mockResolvedValue({ id: 1, name: 'Test' }),
 	normalizeCanvasBaseUrl: jest.requireActual('./client').normalizeCanvasBaseUrl,
 }));
 
@@ -97,7 +97,7 @@ describe('Canvas endpoint behavior', () => {
 			}),
 		);
 
-		expect(response).toEqual({ success: true });
+		expect(response).toEqual({ id: 1, name: 'Test' });
 	});
 
 	it('allows bodyless mutating actions without a body field', async () => {

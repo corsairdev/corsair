@@ -11,9 +11,11 @@ import type {
 	CanvasOperationName,
 } from './endpoints/operations';
 import { canvasOperations } from './endpoints/operations';
+import { canvasRoutes } from './endpoints/routes';
 import {
 	CanvasEndpointInputSchemas,
 	CanvasEndpointOutputSchemas,
+	expectsListResponse,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { canvas } from './index';
@@ -23,6 +25,56 @@ import {
 } from './webhooks/oauth-tenant-link';
 import { matchCanvasTenantWebhook } from './webhooks/tenant-matcher';
 import { verifyCanvasWebhookSignature } from './webhooks/types';
+
+function mockResponseFor(
+	name: CanvasOperationName,
+	op: CanvasOperation,
+): unknown {
+	if (op.path === '/api/graphql') return { data: { id: 1 } };
+	if (op.method === 'DELETE') return { id: 1 };
+	if (op.path.includes('/upload')) return 'id,name\n1,x';
+	if (name.toLowerCase().includes('permission')) {
+		return { read_roster: true, manage_grades: false };
+	}
+	if (name.toLowerCase().includes('unreadcount')) {
+		return { unread_count: 0 };
+	}
+	if (name.toLowerCase().includes('quota')) {
+		return { quota: 1000, quota_used: 10 };
+	}
+	if (name.toLowerCase().includes('submissionsummary')) {
+		return { graded: 1, ungraded: 2, not_submitted: 3 };
+	}
+	if (
+		name.toLowerCase().includes('brandvariables') ||
+		name.toLowerCase().includes('customcolors') ||
+		name.toLowerCase().includes('dashboardpositions') ||
+		name.toLowerCase().includes('kalturaconfig') ||
+		name.toLowerCase().includes('latepolicy') ||
+		name.toLowerCase().includes('readstate') ||
+		name.toLowerCase().includes('moduleitemsequence') ||
+		name.toLowerCase().includes('helplinks') ||
+		name.toLowerCase().includes('customcolor') ||
+		name.toLowerCase().includes('statusoflastreport') ||
+		name.toLowerCase().includes('fulltopic')
+	) {
+		return { ok: true };
+	}
+	if (
+		name.toLowerCase().includes('participationdata') ||
+		name.toLowerCase().includes('quizstatistics') ||
+		name.toLowerCase().includes('activitystream')
+	) {
+		return [{ date: '2026-01-01', views: 1 }];
+	}
+	if (name.toLowerCase().includes('page')) {
+		return { page_id: 1, url: 'home', title: 'Home' };
+	}
+	if (expectsListResponse(name, op)) {
+		return [{ id: 1, name: name }];
+	}
+	return { id: 1, name: name };
+}
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -278,15 +330,43 @@ describe('Canvas input schemas', () => {
 			CanvasEndpointOutputSchemas.getLegacyNode.parse({ data: { id: 1 } }),
 		).toEqual({ data: { id: 1 } });
 		expect(
-			CanvasEndpointOutputSchemas.getSingleCourse.parse({ id: 9, name: 'X' }),
-		).toMatchObject({ id: 9 });
+			CanvasEndpointOutputSchemas.getSingleCourse.parse({
+				id: 9,
+				name: 'X',
+				course_code: 'CS101',
+				workflow_state: 'available',
+			}),
+		).toMatchObject({ id: 9, course_code: 'CS101' });
+		// Canvas Course objects require id — empty/malformed objects fail.
+		expect(() =>
+			CanvasEndpointOutputSchemas.getSingleCourse.parse({ name: 'X' }),
+		).toThrow();
 		expect(() =>
 			CanvasEndpointOutputSchemas.getSingleCourse.parse(42),
 		).toThrow();
-		// General REST ops must not accept bare strings (only upload templates).
 		expect(() =>
 			CanvasEndpointOutputSchemas.getSingleCourse.parse('not-json'),
 		).toThrow();
+		expect(
+			CanvasEndpointOutputSchemas.getAllUsers.parse([
+				{ id: 1, name: 'Ada' },
+				{ id: 2, name: 'Grace' },
+			]),
+		).toHaveLength(2);
+		expect(() =>
+			CanvasEndpointOutputSchemas.getAllUsers.parse({ id: 1 }),
+		).toThrow();
+	});
+
+	it('exposes a Canvas-doc route table for every operation', () => {
+		expect(canvasRoutes).toHaveLength(operationNames.length);
+		for (const route of canvasRoutes) {
+			expect(route.path.startsWith('/api/')).toBe(true);
+			expect(route.pathParams).toEqual(
+				[...route.path.matchAll(/\{([^}]+)\}/g)].map((m) => m[1]),
+			);
+			expect(['read', 'write', 'destructive']).toContain(route.riskLevel);
+		}
 	});
 });
 
@@ -434,7 +514,6 @@ describe('Canvas OAuth webhook tenant link', () => {
 describe('Canvas endpoint API coverage', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ ok: true, id: 1 });
 	});
 
 	it(`exercises all ${operationNames.length} operations against the HTTP client`, async () => {
@@ -443,6 +522,8 @@ describe('Canvas endpoint API coverage', () => {
 			const pathParams = pathParamsFor(op.path);
 			const isMutation =
 				op.method === 'POST' || op.method === 'PUT' || op.method === 'PATCH';
+			const mockBody = mockResponseFor(name, op);
+			mockRequest.mockResolvedValueOnce(mockBody);
 
 			const input: {
 				pathParams?: Record<string, string>;
@@ -458,7 +539,7 @@ describe('Canvas endpoint API coverage', () => {
 			const endpoint = createCanvasEndpoint(name, `canvas.test.${name}`);
 			const result = await endpoint(mockCtx as never, input as never);
 
-			expect(result).toEqual({ ok: true, id: 1 });
+			expect(result).toEqual(mockBody);
 
 			const lastCall = mockRequest.mock.calls.at(-1);
 			expect(lastCall).toBeDefined();
@@ -471,6 +552,7 @@ describe('Canvas endpoint API coverage', () => {
 			expect(config.TOKEN).toBe('test_token');
 			expect(requestOptions.method).toBe(op.method);
 			expect(requestOptions.url).toBe(resolvePath(op.path, pathParams));
+			expect(requestOptions.url).not.toMatch(/\{[^}]+\}/);
 
 			if (isMutation) {
 				if (op.bodyless === true) {

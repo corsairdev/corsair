@@ -1,6 +1,33 @@
 import { z } from 'zod';
 import type { CanvasOperation, CanvasOperationName } from './operations';
 import { canvasOperations } from './operations';
+import type { CanvasEndpointOutputs } from './response-schemas';
+import { CanvasEndpointOutputSchemas } from './response-schemas';
+
+export type {
+	CanvasAccount,
+	CanvasAssignment,
+	CanvasConversation,
+	CanvasCourse,
+	CanvasDiscussionTopic,
+	CanvasEndpointOutputs,
+	CanvasEnrollment,
+	CanvasEntity,
+	CanvasFile,
+	CanvasGraphqlResponse,
+	CanvasGroup,
+	CanvasModule,
+	CanvasPage,
+	CanvasPermissions,
+	CanvasQuiz,
+	CanvasUnreadCount,
+	CanvasUser,
+} from './response-schemas';
+export {
+	CanvasEndpointOutputSchemas,
+	createResponseSchema,
+	expectsListResponse,
+} from './response-schemas';
 
 type ExtractPathParams<Path extends string> =
 	Path extends `${string}{${infer Param}}${infer Rest}`
@@ -18,7 +45,7 @@ type PathParamsFor<Path extends string> = HasPathParams<Path> extends true
 	: Record<string, string>;
 
 type CanvasRequestFields = {
-	/** Query string parameters */
+	/** Query string parameters (array values become `key[]` for Canvas). */
 	query?: Record<string, string | number | boolean | string[] | undefined>;
 	/** Request body for POST/PUT/PATCH */
 	body?: Record<string, unknown>;
@@ -29,17 +56,14 @@ export type CanvasRequestInput = CanvasRequestFields & {
 	pathParams?: Record<string, string>;
 };
 
-export type CanvasResponse = unknown;
+/** @deprecated Prefer CanvasEndpointOutputs[K] — kept for callers that need a wide union. */
+export type CanvasResponse = CanvasEndpointOutputs[CanvasOperationName];
 
 export type CanvasEndpointInputs = {
 	[K in CanvasOperationName]: CanvasRequestFields &
 		(HasPathParams<(typeof canvasOperations)[K]['path']> extends true
 			? { pathParams: PathParamsFor<(typeof canvasOperations)[K]['path']> }
 			: { pathParams?: Record<string, string> });
-};
-
-export type CanvasEndpointOutputs = {
-	[K in CanvasOperationName]: CanvasResponse;
 };
 
 const queryValueSchema = z.union([
@@ -62,7 +86,6 @@ function createRequestInputSchema(operation: CanvasOperation): z.ZodTypeAny {
 		method === 'POST' || method === 'PUT' || method === 'PATCH';
 	const names = pathParamNames(operation.path);
 
-	// Neon-style: each `{placeholder}` becomes a required non-empty string.
 	const requiredPathParams = Object.fromEntries(
 		names.map((name) => [name, z.string().min(1)]),
 	) as Record<string, z.ZodString>;
@@ -107,48 +130,4 @@ export const CanvasEndpointInputSchemas = Object.fromEntries(
 	]),
 ) as { [K in CanvasOperationName]: z.ZodTypeAny };
 
-// Canvas REST resources usually carry an id; keep unknown fields via passthrough.
-// Full per-field OpenAPI mapping is out of scope for the registry (same as neon /
-// digitalocean / activetrail — Zod on every endpoint, shapes stay loose).
-const canvasResourceSchema = z
-	.object({
-		id: z.union([z.string(), z.number()]).optional(),
-	})
-	.passthrough();
-
-const canvasListSchema = z.array(
-	z.union([canvasResourceSchema, z.record(z.string(), z.unknown())]),
-);
-
-const canvasGraphqlSchema = z
-	.object({
-		data: z.unknown().optional(),
-		errors: z.array(z.unknown()).optional(),
-	})
-	.passthrough();
-
-function createResponseSchema(operation: CanvasOperation): z.ZodTypeAny {
-	if (operation.path === '/api/graphql') {
-		return canvasGraphqlSchema;
-	}
-	if (operation.method === 'DELETE') {
-		return z.union([
-			canvasResourceSchema,
-			canvasListSchema,
-			z.undefined(),
-			z.null(),
-		]);
-	}
-	// CSV / text templates only — do not accept bare strings for general REST ops.
-	if (operation.path.includes('/upload')) {
-		return z.union([z.string(), canvasResourceSchema, z.undefined()]);
-	}
-	return z.union([canvasResourceSchema, canvasListSchema]);
-}
-
-export const CanvasEndpointOutputSchemas = Object.fromEntries(
-	Object.entries(canvasOperations).map(([name, operation]) => [
-		name,
-		createResponseSchema(operation),
-	]),
-) as { [K in CanvasOperationName]: z.ZodTypeAny };
+// CanvasEndpointOutputSchemas is re-exported from ./response-schemas above.

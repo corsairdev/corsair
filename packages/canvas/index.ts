@@ -715,10 +715,28 @@ export function canvas<const T extends CanvasPluginOptions>(
 	} satisfies InternalCanvasPlugin;
 }
 
+export type { CanvasRoute } from './endpoints/routes';
+export { canvasRoutes, getCanvasRoute } from './endpoints/routes';
 export type {
+	CanvasAccount,
+	CanvasAssignment,
+	CanvasConversation,
+	CanvasCourse,
+	CanvasDiscussionTopic,
 	CanvasEndpointInputs,
 	CanvasEndpointOutputs,
+	CanvasEnrollment,
+	CanvasEntity,
+	CanvasFile,
+	CanvasGraphqlResponse,
+	CanvasGroup,
+	CanvasModule,
+	CanvasPage,
+	CanvasPermissions,
+	CanvasQuiz,
 	CanvasRequestInput,
 	CanvasResponse,
+	CanvasUnreadCount,
+	CanvasUser,
 } from './endpoints/types';
 export type { CanvasWebhookOutputs } from './webhooks/types';
