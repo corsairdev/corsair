@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { makeApiBibleRequest } from './client';
 import {
 	AudioBibles,
@@ -13,9 +13,11 @@ import {
 	Verses,
 } from './endpoints';
 import { ApiBibleEndpointOutputSchemas } from './endpoints/types';
-import type { ApiBibleContext } from './index';
+import type { ApiBibleContext, ApiBibleKeyBuilderContext } from './index';
+import { apibible } from './index';
 
 jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
 	logEventFromContext: jest.fn(),
 }));
 
@@ -490,5 +492,30 @@ describe('API.Bible endpoints', () => {
 				ApiBibleEndpointOutputSchemas.audioChaptersGet.parse(result),
 			).toEqual(result);
 		});
+	});
+});
+
+describe('apibible keyBuilder authentication', () => {
+	const plugin = apibible();
+
+	it('fails through AuthMissingError instead of sending an empty api-key credential', async () => {
+		// Test fakes only need the key-manager surface the keyBuilder reads.
+		const noKeyCtx = {
+			authType: 'api_key',
+			keys: { get_api_key: async (): Promise<string | null> => null },
+		} as unknown as ApiBibleKeyBuilderContext;
+
+		await expect(
+			plugin.keyBuilder!(noKeyCtx, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('returns the stored key when one is available', async () => {
+		const withKeyCtx = {
+			authType: 'api_key',
+			keys: { get_api_key: async (): Promise<string | null> => KEY },
+		} as unknown as ApiBibleKeyBuilderContext;
+
+		await expect(plugin.keyBuilder!(withKeyCtx, 'endpoint')).resolves.toBe(KEY);
 	});
 });

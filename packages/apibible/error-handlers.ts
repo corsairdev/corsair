@@ -11,13 +11,6 @@ function getStatus(error: Error): number | undefined {
 }
 
 /**
- * Helper to extract the Retry-After value (in ms) from an error.
- */
-function getRetryAfter(error: Error): number | undefined {
-	return (error as Partial<ApiBibleAPIError>).retryAfter;
-}
-
-/**
  * Error handlers for the API.Bible plugin.
  *
  * API.Bible error codes:
@@ -37,11 +30,15 @@ export const errorHandlers = {
 			return msg.includes('429') || msg.includes('rate limit');
 		},
 		handler: async (error: Error) => {
-			return {
-				maxRetries: 3,
-				retryStrategy: 'exponential_backoff' as const,
-				headersRetryAfterMs: getRetryAfter(error),
-			};
+			console.warn(
+				'[APIBIBLE] Rate limit exceeded — the transport layer already retries 429s with ' +
+					`its own budget. Error: ${error.message}`,
+			);
+			// No binder-level retry: makeApiBibleRequest passes a RateLimitConfig to the transport,
+			// which retries 429 responses internally and returns the successful attempt. Returning
+			// retry metadata here would re-run the endpoint a second time (discarding the result)
+			// on top of the transport retries.
+			return { maxRetries: 0 };
 		},
 	},
 	AUTH_ERROR: {
@@ -91,10 +88,15 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('500') || msg.includes('internal server error');
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			console.warn(
+				'[APIBIBLE] API.Bible server error — not retried to avoid compounding the transport ' +
+					`retry budget. Error: ${error.message}`,
+			);
+			// No binder-level retry: the binder cannot propagate a successful retry result, so we
+			// surface the error to the caller instead of silently discarding a retried response.
+			return { maxRetries: 0 };
+		},
 	},
 	DEFAULT: {
 		match: () => true,

@@ -69,6 +69,8 @@ const BibleSchema = z
 		countries: z.array(CountrySchema),
 		type: z.string(),
 		updatedAt: z.string(),
+		// Embedded audio Bible resources arrive with a provider-unstable shape; we never consume
+		// them here, so keep the element type unknown rather than pinning an unsupported contract.
 		audioBibles: z.array(z.unknown()).optional(),
 	})
 	.loose();
@@ -259,6 +261,8 @@ const PassageContentSchema = z
 		content: z.string(),
 		reference: z.string(),
 		copyright: z.string().optional(),
+		// API.Bible's OT/NT payloads are large navigation maps whose shape varies by bible/plan;
+		// the plugin only surfaces the flattened `content`, so these stay loosely typed on purpose.
 		ot: z.unknown().optional(),
 		nt: z.unknown().optional(),
 	})

@@ -8,6 +8,8 @@ import { ApiError, request } from 'corsair/http';
 export class ApiBibleAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	// The raw provider response payload has a provider-defined shape (never parsed/typed), so
+	// `unknown` is the honest type here; callers narrow it only when they need specific fields.
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 

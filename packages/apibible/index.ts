@@ -391,7 +391,12 @@ export function apibible<const T extends ApiBiblePluginOptions>(
 			// Retrieve from key manager
 			if (source === 'endpoint' && authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				// Missing stored key → fail through Corsair's auth path instead of sending an empty
+				// `api-key` credential (API.Bible would only reject it later as a 401).
+				if (!res) {
+					throw new AuthMissingError('apibible', 'api_key');
+				}
+				return res;
 			}
 
 			throw new AuthMissingError('apibible', 'api_key');
