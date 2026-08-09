@@ -42,6 +42,13 @@ export const handshake: ZohoMailWebhooks['handshake'] = {
 			};
 		}
 
+		if (existingSecret === hookSecret) {
+			return {
+				success: true,
+				data: { hookSecret },
+			};
+		}
+
 		const signature = getZohoWebhookSignature(headers);
 
 		if (existingSecret) {

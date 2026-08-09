@@ -297,6 +297,38 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 		testDb.cleanup();
 	});
 
+	it('treats repeat handshake with the same secret as a no-op ACK', async () => {
+		const { corsair, testDb } = await buildCorsair({
+			webhookSecret: undefined,
+		});
+		const handshake = corsair.zohomail.webhooks.challenge.handshake;
+
+		// 1. Establish first-time secret
+		const initialSecret = 'initial-secret';
+		const firstResponse = await handshake.handler({
+			payload: {},
+			headers: { 'x-hook-secret': initialSecret },
+		});
+		expect(firstResponse.success).toBe(true);
+		expect(await corsair.zohomail.keys.get_webhook_signature()).toBe(
+			initialSecret,
+		);
+
+		// 2. Retry handshake with the EXACT same secret (no signature)
+		const retryResponse = await handshake.handler({
+			payload: {},
+			headers: { 'x-hook-secret': initialSecret },
+		});
+
+		expect(retryResponse.success).toBe(true);
+		expect(retryResponse.data?.hookSecret).toBe(initialSecret);
+		expect(await corsair.zohomail.keys.get_webhook_signature()).toBe(
+			initialSecret,
+		);
+
+		testDb.cleanup();
+	});
+
 	it('perserves large numeric messageId values from raw JSON', async () => {
 		const { corsair, testDb } = await buildCorsair();
 		const wh = corsair.zohomail.webhooks.messages.received;
