@@ -24,6 +24,7 @@ export const BaseProviders = [
 	'algolia',
 	'alttextai',
 	'amplitude',
+	'apibible',
 	'apilabz',
 	'asana',
 	'bitwarden',
@@ -128,6 +129,7 @@ export const ProviderDisplayNames = {
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
 	amplitude: 'Amplitude',
+	apibible: 'ApiBible',
 	apilabz: 'API Labz',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -239,6 +241,7 @@ export type AllProviders =
 	| 'algolia'
 	| 'alttextai'
 	| 'amplitude'
+	| 'apibible'
 	| 'apilabz'
 	| 'asana'
 	| 'bitwarden'
