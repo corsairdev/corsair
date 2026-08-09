@@ -134,4 +134,40 @@ describe('postHubConnectSession', () => {
 
 		expect(getRequestBody()).not.toHaveProperty('redirectUri');
 	});
+
+	it('surfaces the managed OAuth callback URL on the session result', async () => {
+		const { fetchMock } = mockHubConnectFetch();
+		global.fetch = fetchMock;
+
+		const result = await postHubConnectSession(devHub, {
+			tenantId: 'default',
+			plugins: [
+				{
+					plugin: 'github',
+					providerName: 'GitHub',
+					authKind: 'oauth',
+					oauthMode: 'managed',
+				},
+			],
+		});
+
+		expect(result.oauthCallbackUrl).toBe('https://hub.example/oauth/callback');
+	});
+
+	it('uses an explicit oauthCallbackUrl when hub config sets it', async () => {
+		const { fetchMock } = mockHubConnectFetch();
+		global.fetch = fetchMock;
+
+		const result = await postHubConnectSession(
+			{
+				...prodHub,
+				oauthCallbackUrl: 'https://auth.corsair.dev/oauth/callback',
+			},
+			{ tenantId: 'default', plugins },
+		);
+
+		expect(result.oauthCallbackUrl).toBe(
+			'https://auth.corsair.dev/oauth/callback',
+		);
+	});
 });
