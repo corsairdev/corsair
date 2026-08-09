@@ -44,26 +44,40 @@ type PathParamsFor<Path extends string> = HasPathParams<Path> extends true
 	? { [K in ExtractPathParams<Path>]: string }
 	: Record<string, string>;
 
-type CanvasRequestFields = {
+type IsMutationMethod<M extends string> = M extends 'POST' | 'PUT' | 'PATCH'
+	? true
+	: false;
+
+type RequiresBody<K extends CanvasOperationName> = IsMutationMethod<
+	(typeof canvasOperations)[K]['method']
+> extends true
+	? (typeof canvasOperations)[K] extends { bodyless: true }
+		? false
+		: true
+	: false;
+
+type CanvasRequestFieldsBase = {
 	/** Query string parameters (array values become `key[]` for Canvas). */
 	query?: Record<string, string | number | boolean | string[] | undefined>;
-	/** Request body for POST/PUT/PATCH */
-	body?: Record<string, unknown>;
 };
 
 /** Shared request shape used by the factory; pathParams required when the path has placeholders. */
-export type CanvasRequestInput = CanvasRequestFields & {
+export type CanvasRequestInput = CanvasRequestFieldsBase & {
 	pathParams?: Record<string, string>;
+	body?: Record<string, unknown>;
 };
 
 /** @deprecated Prefer CanvasEndpointOutputs[K] — kept for callers that need a wide union. */
 export type CanvasResponse = CanvasEndpointOutputs[CanvasOperationName];
 
 export type CanvasEndpointInputs = {
-	[K in CanvasOperationName]: CanvasRequestFields &
+	[K in CanvasOperationName]: CanvasRequestFieldsBase &
 		(HasPathParams<(typeof canvasOperations)[K]['path']> extends true
 			? { pathParams: PathParamsFor<(typeof canvasOperations)[K]['path']> }
-			: { pathParams?: Record<string, string> });
+			: { pathParams?: Record<string, string> }) &
+		(RequiresBody<K> extends true
+			? { body: Record<string, unknown> }
+			: { body?: Record<string, unknown> });
 };
 
 const queryValueSchema = z.union([

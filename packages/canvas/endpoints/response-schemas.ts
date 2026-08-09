@@ -296,6 +296,38 @@ export type CanvasJsonObject = z.infer<typeof CanvasJsonObjectSchema>;
 export const CanvasJsonArraySchema = z.array(z.unknown());
 export type CanvasJsonArray = z.infer<typeof CanvasJsonArraySchema>;
 
+/** GET .../statistics → `{ quiz_statistics: [...] }` */
+export const CanvasQuizStatisticsResponseSchema = z
+	.object({
+		quiz_statistics: z.array(z.unknown()),
+	})
+	.passthrough();
+
+/** GET .../outcome_results → `{ outcome_results: [...], linked?: ... }` */
+export const CanvasOutcomeResultsResponseSchema = z
+	.object({
+		outcome_results: z.array(z.unknown()),
+		linked: z.record(z.string(), z.unknown()).optional(),
+	})
+	.passthrough();
+
+/** POST batch assignment overrides → array of overrides */
+export const CanvasAssignmentOverrideListSchema = z.array(CanvasEntitySchema);
+
+/** Polls API wraps creates as `{ polls: [...] }` etc. */
+export const CanvasPollsWrapperSchema = z
+	.object({ polls: z.array(z.unknown()) })
+	.passthrough();
+export const CanvasPollChoicesWrapperSchema = z
+	.object({ poll_choices: z.array(z.unknown()) })
+	.passthrough();
+export const CanvasPollSessionsWrapperSchema = z
+	.object({ poll_sessions: z.array(z.unknown()) })
+	.passthrough();
+export const CanvasPollSubmissionsWrapperSchema = z
+	.object({ poll_submissions: z.array(z.unknown()) })
+	.passthrough();
+
 const LIST_NAME =
 	/^(getAll|find|getAccountsThat|getAccountNotifications|getEnrollmentInvitations|getCourses12|getAUsersMostRecently|getAllPeer|getAllOutcome|getAllEPortfolios|getAligned|getCoursesBlueprint)/i;
 
@@ -328,6 +360,20 @@ function resourceSchemaFor(
 	if (key.includes('unreadcount')) return CanvasUnreadCountSchema;
 	if (key.includes('quota')) return CanvasQuotaSchema;
 	if (key.includes('submissionsummary')) return CanvasSubmissionSummarySchema;
+	if (name === 'getQuizStatistics') return CanvasQuizStatisticsResponseSchema;
+	if (name === 'getOutcomeResults') return CanvasOutcomeResultsResponseSchema;
+	if (name === 'createBatchOverridesInACourse') {
+		return CanvasAssignmentOverrideListSchema;
+	}
+	if (name === 'createSinglePoll') return CanvasPollsWrapperSchema;
+	if (name === 'createSinglePollChoice') return CanvasPollChoicesWrapperSchema;
+	if (name === 'createSinglePollSession') {
+		return CanvasPollSessionsWrapperSchema;
+	}
+	if (name === 'createSinglePollSubmission') {
+		return CanvasPollSubmissionsWrapperSchema;
+	}
+
 	if (
 		key.includes('customcolors') ||
 		key.includes('dashboardpositions') ||
@@ -343,11 +389,7 @@ function resourceSchemaFor(
 	) {
 		return CanvasJsonObjectSchema;
 	}
-	if (
-		key.includes('participationdata') ||
-		key.includes('quizstatistics') ||
-		key.includes('activitystream')
-	) {
+	if (key.includes('participationdata') || key.includes('activitystream')) {
 		return CanvasJsonArraySchema;
 	}
 
@@ -433,7 +475,14 @@ export function createResponseSchema(
 		resource === CanvasQuotaSchema ||
 		resource === CanvasSubmissionSummarySchema ||
 		resource === CanvasJsonObjectSchema ||
-		resource === CanvasJsonArraySchema
+		resource === CanvasJsonArraySchema ||
+		resource === CanvasQuizStatisticsResponseSchema ||
+		resource === CanvasOutcomeResultsResponseSchema ||
+		resource === CanvasAssignmentOverrideListSchema ||
+		resource === CanvasPollsWrapperSchema ||
+		resource === CanvasPollChoicesWrapperSchema ||
+		resource === CanvasPollSessionsWrapperSchema ||
+		resource === CanvasPollSubmissionsWrapperSchema
 	) {
 		return resource;
 	}
@@ -445,7 +494,7 @@ export function createResponseSchema(
 	return resource;
 }
 
-/** True when the operation's Zod output expects a JSON array. */
+/** True when the operation's Zod output expects a top-level JSON array. */
 export function expectsListResponse(
 	name: CanvasOperationName,
 	operation: CanvasOperation = canvasOperations[name],
@@ -453,6 +502,7 @@ export function expectsListResponse(
 	if (operation.path === '/api/graphql') return false;
 	if (operation.method === 'DELETE') return false;
 	if (operation.path.includes('/upload')) return false;
+	if (name === 'createBatchOverridesInACourse') return true;
 	const resource = resourceSchemaFor(name, operation);
 	if (
 		resource === CanvasPermissionsSchema ||
@@ -460,10 +510,17 @@ export function expectsListResponse(
 		resource === CanvasQuotaSchema ||
 		resource === CanvasSubmissionSummarySchema ||
 		resource === CanvasJsonObjectSchema ||
-		resource === CanvasJsonArraySchema
+		resource === CanvasJsonArraySchema ||
+		resource === CanvasQuizStatisticsResponseSchema ||
+		resource === CanvasOutcomeResultsResponseSchema ||
+		resource === CanvasPollsWrapperSchema ||
+		resource === CanvasPollChoicesWrapperSchema ||
+		resource === CanvasPollSessionsWrapperSchema ||
+		resource === CanvasPollSubmissionsWrapperSchema
 	) {
 		return resource === CanvasJsonArraySchema;
 	}
+	if (resource === CanvasAssignmentOverrideListSchema) return true;
 	return isListOperation(name, operation);
 }
 

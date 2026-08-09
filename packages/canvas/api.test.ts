@@ -60,9 +60,24 @@ function mockResponseFor(
 	) {
 		return { ok: true };
 	}
+	if (name === 'getQuizStatistics') {
+		return { quiz_statistics: [{ id: 1, quiz_id: 2 }] };
+	}
+	if (name === 'getOutcomeResults') {
+		return { outcome_results: [{ id: 1 }], linked: {} };
+	}
+	if (name === 'createSinglePoll') return { polls: [{ id: 1 }] };
+	if (name === 'createSinglePollChoice') {
+		return { poll_choices: [{ id: 1 }] };
+	}
+	if (name === 'createSinglePollSession') {
+		return { poll_sessions: [{ id: 1 }] };
+	}
+	if (name === 'createSinglePollSubmission') {
+		return { poll_submissions: [{ id: 1 }] };
+	}
 	if (
 		name.toLowerCase().includes('participationdata') ||
-		name.toLowerCase().includes('quizstatistics') ||
 		name.toLowerCase().includes('activitystream')
 	) {
 		return [{ date: '2026-01-01', views: 1 }];
@@ -356,6 +371,26 @@ describe('Canvas input schemas', () => {
 		expect(() =>
 			CanvasEndpointOutputSchemas.getAllUsers.parse({ id: 1 }),
 		).toThrow();
+		expect(
+			CanvasEndpointOutputSchemas.getQuizStatistics.parse({
+				quiz_statistics: [{ id: 1 }],
+			}),
+		).toMatchObject({ quiz_statistics: [{ id: 1 }] });
+		expect(
+			CanvasEndpointOutputSchemas.getOutcomeResults.parse({
+				outcome_results: [],
+			}),
+		).toMatchObject({ outcome_results: [] });
+		expect(
+			CanvasEndpointOutputSchemas.createBatchOverridesInACourse.parse([
+				{ id: 1 },
+			]),
+		).toEqual([{ id: 1 }]);
+		expect(
+			CanvasEndpointOutputSchemas.createSinglePoll.parse({
+				polls: [{ id: 9 }],
+			}),
+		).toMatchObject({ polls: [{ id: 9 }] });
 	});
 
 	it('exposes a Canvas-doc route table for every operation', () => {
@@ -397,6 +432,18 @@ describe('Canvas tenant matcher', () => {
 			linkType: 'canvas_root_account_uuid',
 			externalId: 'aaaaaaaa-bbbb-cccc-dddd-eeeeeeeeeeee',
 		});
+	});
+
+	it('skips non-numeric candidates and uses the first numeric id', () => {
+		expect(
+			matchCanvasTenantWebhook({
+				body: {
+					root_account_id: 'not-a-number',
+					account_id: '77',
+				},
+				headers: {},
+			} as never),
+		).toEqual({ linkType: 'canvas_account_id', externalId: '77' });
 	});
 });
 
@@ -508,6 +555,30 @@ describe('Canvas OAuth webhook tenant link', () => {
 				{ id: 9, parent_account_id: 1 },
 			]),
 		).toBeNull();
+	});
+
+	it('does not use a singleton child account id as the tenant', () => {
+		expect(
+			accountIdFromAccountsList([
+				{ id: 7, parent_account_id: 1, root_account_id: 1 },
+			]),
+		).toBe('1');
+		expect(
+			accountIdFromAccountsList([{ id: 7, parent_account_id: 1 }]),
+		).toBeNull();
+	});
+
+	it('skips non-numeric token account fields', async () => {
+		await expect(
+			resolveCanvasOAuthWebhookTenantLink({
+				access_token: 'tok',
+				account_id: 'acct_abc',
+				root_account_id: '42',
+			}),
+		).resolves.toEqual({
+			linkType: 'canvas_account_id',
+			externalId: '42',
+		});
 	});
 });
 

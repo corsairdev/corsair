@@ -138,7 +138,13 @@ describe('Canvas endpoint behavior', () => {
 		} as never;
 
 		await expect(
-			createCourse(ctx, { pathParams: { account_id: '1' } }),
+			// Runtime still rejects when body is omitted despite the cast.
+			createCourse(ctx, {
+				pathParams: { account_id: '1' },
+			} as {
+				pathParams: { account_id: string };
+				body: Record<string, unknown>;
+			}),
 		).rejects.toThrow();
 		await expect(
 			createCourse(ctx, { pathParams: { account_id: '1' }, body: {} }),

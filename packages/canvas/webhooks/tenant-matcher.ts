@@ -1,11 +1,13 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
 import { asRecord, firstString, readBodyRecord } from 'corsair/core';
 
-/** Canvas numeric account ids are digits; UUIDs must use a separate linkType. */
+/** First numeric Canvas account id in `values` (skips non-numeric entries). */
 function numericAccountId(values: unknown[]): string | null {
-	const value = firstString(values);
-	if (!value || !/^\d+$/.test(value)) return null;
-	return value;
+	for (const value of values) {
+		const candidate = firstString([value]);
+		if (candidate && /^\d+$/.test(candidate)) return candidate;
+	}
+	return null;
 }
 
 export function matchCanvasTenantWebhook(
