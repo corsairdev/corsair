@@ -44,8 +44,6 @@ const APIBIBLE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-type ApiBibleMethod = 'GET';
-
 /** Query values API.Bible understands (booleans become `true`/`false` strings). */
 export type ApiBibleQuery = Record<
 	string,
@@ -91,9 +89,11 @@ export async function makeApiBibleRequest<T>(
 		});
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw new ApiBibleAPIError(error.message, String(error.status), {
-				cause: error,
-			});
+			throw new ApiBibleAPIError(
+				error.message,
+				error.status === undefined ? undefined : String(error.status),
+				{ cause: error },
+			);
 		}
 		if (error instanceof Error) {
 			throw new ApiBibleAPIError(error.message, undefined, { cause: error });
