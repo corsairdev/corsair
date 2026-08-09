@@ -26,6 +26,7 @@ import {
 	resolveTenantIdFromWebhookLink,
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
+import { createAiStepCallback } from '../workflows/ai';
 import { executeWorkflowRun } from '../workflows/execute';
 import { runReadonlyProbe } from '../workflows/probe';
 
@@ -473,6 +474,7 @@ function scopeCorsairToTenant(corsair: unknown, tenantId: string): unknown {
 
 async function handleRunTunnel(
 	corsair: unknown,
+	internal: CorsairInternalConfig,
 	payload: RunTunnelPayload,
 ): Promise<TunnelAck> {
 	try {
@@ -480,11 +482,24 @@ async function handleRunTunnel(
 		// generated code's `corsair.<plugin>.api.*` calls resolve the right tenant's
 		// credentials. Dropping this silently breaks every multi-tenant run.
 		const tenantScopedCorsair = scopeCorsairToTenant(corsair, payload.tenantId);
+		// `step.ai` runs its inference through Hub, which holds the central LLM key.
+		// Wire it only when Hub is configured; otherwise `step.ai` fails with a clear
+		// message rather than a silent no-op.
+		const ai = internal.hub
+			? createAiStepCallback({
+					hub: internal.hub,
+					plugins: internal.plugins,
+					runId: payload.runId,
+					workflowId: payload.workflowId,
+					tenantId: payload.tenantId,
+				})
+			: undefined;
 		const result: RunResultPayload = await executeWorkflowRun({
 			corsair: tenantScopedCorsair,
 			code: payload.code,
 			payload: payload.trigger?.payload ?? null,
 			memoizedSteps: payload.memoizedSteps,
+			ai,
 		});
 		// The envelope was processed successfully regardless of whether the workflow
 		// itself succeeded — Hub reads the run status/steps from `run` in the ack
@@ -699,7 +714,11 @@ export async function processCorsair(
 						'Workflow execution is not enabled (set allowWorkflowExecution: true)',
 				};
 			}
-			return handleRunTunnel(corsair, envelope.payload as RunTunnelPayload);
+			return handleRunTunnel(
+				corsair,
+				internal,
+				envelope.payload as RunTunnelPayload,
+			);
 		case 'probe':
 			// Same gate as `run`: a probe still executes Hub-authored code (read-only).
 			// Could be split into its own flag if a tenant ever needs authoring probes
