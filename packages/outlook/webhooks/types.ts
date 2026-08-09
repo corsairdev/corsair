@@ -127,7 +127,14 @@ export function verifyOutlookWebhookSignature(
 		return { valid: false, error: 'Missing client state' };
 	}
 
-	const notifications = request.payload?.value ?? [];
+	// An empty array must not pass: [].every(...) is true, so a request that
+	// carried no notification -- and therefore no clientState -- would otherwise
+	// be reported as verified.
+	const notifications = request.payload?.value;
+	if (!Array.isArray(notifications) || notifications.length === 0) {
+		return { valid: false, error: 'Invalid payload: missing value array' };
+	}
+
 	const allMatch = notifications.every(
 		(n) => typeof n.clientState === 'string' && n.clientState === clientState,
 	);
