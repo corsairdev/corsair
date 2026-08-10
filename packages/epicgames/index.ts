@@ -25,7 +25,7 @@ import { EpicGamesSchema } from './schema';
 
 export type EpicGamesPluginOptions = {
 	authType?: PickAuth<'oauth_2'>;
-	/** OAuth access token override for scripts/demos. */
+	/** OAuth access token override for local scripts. */
 	key?: string;
 	/** Unreal Web Remote Control base URL (default http://127.0.0.1:30010). */
 	remoteControlBaseUrl?: string;
