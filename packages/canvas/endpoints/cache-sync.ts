@@ -122,6 +122,29 @@ function cacheDeleteEntityIds(
 	return [];
 }
 
+/** Canvas enrollment destroy task — omit/conclude/deactivate keep the row. */
+function enrollmentDestroyTask(input: CanvasRequestInput): string | undefined {
+	const query = isRecord(input.query) ? input.query : {};
+	const body = isRecord(input.body) ? input.body : {};
+	const task = query.task ?? body.task;
+	if (typeof task === 'string' && task.trim()) return task.trim().toLowerCase();
+	return undefined;
+}
+
+/**
+ * Hard cache removal only for true deletes.
+ * Enrollment DELETE concludes by default; only task=delete removes the entity.
+ */
+function shouldRemoveFromCache(
+	route: Pick<CanvasRoute, 'method' | 'key' | 'riskLevel'>,
+	input: CanvasRequestInput,
+): boolean {
+	if (route.key === 'concludeDeactivateOrDeleteEnrollment') {
+		return enrollmentDestroyTask(input) === 'delete';
+	}
+	return route.method === 'DELETE' || route.riskLevel === 'destructive';
+}
+
 export async function syncCanvasOperationCache(
 	ctx: CanvasContext,
 	route: Pick<CanvasRoute, 'method' | 'key' | 'riskLevel'>,
@@ -149,9 +172,7 @@ export async function syncCanvasOperationCache(
 	if (!client) return;
 
 	try {
-		const isDelete =
-			route.method === 'DELETE' || route.riskLevel === 'destructive';
-		if (isDelete) {
+		if (shouldRemoveFromCache(route, input)) {
 			if (!client.deleteByEntityId) return;
 			for (const entityId of cacheDeleteEntityIds(input, rule)) {
 				await client.deleteByEntityId(entityId);

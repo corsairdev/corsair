@@ -233,6 +233,70 @@ describe('Canvas db schema + cache sync', () => {
 
 		expect(deleteByEntityId).toHaveBeenCalledWith('42');
 	});
+
+	it('upserts concluded/deactivated enrollments; deletes only for task=delete', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const deleteByEntityId = jest.fn().mockResolvedValue(true);
+		const route = canvasRoutes.find(
+			(r) => r.key === 'concludeDeactivateOrDeleteEnrollment',
+		);
+		expect(route).toBeDefined();
+		expect(route!.method).toBe('DELETE');
+
+		const enrollment = {
+			id: 7,
+			enrollment_state: 'completed',
+			user_id: 3,
+			course_id: 1,
+		};
+
+		await syncCanvasOperationCache(
+			{
+				key: 'tok',
+				db: { enrollments: { upsertByEntityId, deleteByEntityId } },
+			} as never,
+			route!,
+			{ pathParams: { course_id: '1', enrollment_id: '7' } },
+			enrollment,
+		);
+		expect(deleteByEntityId).not.toHaveBeenCalled();
+		expect(upsertByEntityId).toHaveBeenCalledWith('7', enrollment);
+
+		upsertByEntityId.mockClear();
+		await syncCanvasOperationCache(
+			{
+				key: 'tok',
+				db: { enrollments: { upsertByEntityId, deleteByEntityId } },
+			} as never,
+			route!,
+			{
+				pathParams: { course_id: '1', enrollment_id: '7' },
+				query: { task: 'deactivate' },
+			},
+			{ ...enrollment, enrollment_state: 'inactive' },
+		);
+		expect(deleteByEntityId).not.toHaveBeenCalled();
+		expect(upsertByEntityId).toHaveBeenCalledWith('7', {
+			...enrollment,
+			enrollment_state: 'inactive',
+		});
+
+		upsertByEntityId.mockClear();
+		await syncCanvasOperationCache(
+			{
+				key: 'tok',
+				db: { enrollments: { upsertByEntityId, deleteByEntityId } },
+			} as never,
+			route!,
+			{
+				pathParams: { course_id: '1', enrollment_id: '7' },
+				body: { task: 'delete' },
+			},
+			enrollment,
+		);
+		expect(upsertByEntityId).not.toHaveBeenCalled();
+		expect(deleteByEntityId).toHaveBeenCalledWith('7');
+	});
 });
 
 describe('Canvas plugin shape', () => {
