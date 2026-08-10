@@ -19,8 +19,8 @@ export const WorkdayCollectionSchema = z
 	.catchall(z.unknown());
 
 const PaginationQueryShape = {
-	limit: z.number().int().min(1).max(100).optional(),
-	offset: z.number().int().min(0).optional(),
+	limit: z.coerce.number().int().min(1).max(100).optional(),
+	offset: z.coerce.number().int().min(0).optional(),
 };
 
 export const WorkdayEndpointInputSchemas = {
@@ -29,8 +29,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 			// Remaining fields form the JSON body (Workday resource payloads).
 		})
 		.passthrough(),
@@ -39,8 +38,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getBusinessTitleChangeForWorker: z
@@ -49,8 +47,7 @@ export const WorkdayEndpointInputSchemas = {
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
 			subresourceID: z.string().min(1),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	createJobChange: z
@@ -58,8 +55,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 			// Remaining fields form the JSON body (Workday resource payloads).
 		})
 		.passthrough(),
@@ -68,8 +64,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobChangeFrequencies: z
@@ -95,8 +90,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobChangeLocationInfo: z
@@ -104,8 +98,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobChangePosition: z
@@ -113,8 +106,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobChangeReasonInstance: z
@@ -122,8 +114,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobChangeReasonValues: z
@@ -149,8 +140,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobChangeReasons: z
@@ -167,8 +157,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobChangesGroupTemplates: z
@@ -194,8 +183,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobChangesJobValues: z
@@ -206,8 +194,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobChangesWorkerValues: z
@@ -215,8 +202,7 @@ export const WorkdayEndpointInputSchemas = {
 			effectiveDate: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobClassifications: z
@@ -242,8 +228,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobPosting: z
@@ -251,8 +236,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobPostingQuestionnaire: z
@@ -260,8 +244,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobProfilesValues: z
@@ -287,8 +270,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobRequisitionValues: z
@@ -314,8 +296,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobWorkspace: z
@@ -324,8 +305,7 @@ export const WorkdayEndpointInputSchemas = {
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
 			subresourceID: z.string().min(1),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getJobWorkspaces: z
@@ -333,8 +313,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	listJobPostings: z
@@ -351,8 +330,7 @@ export const WorkdayEndpointInputSchemas = {
 			jobSite: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	updateJobChangeBusinessTitle: z
@@ -361,15 +339,13 @@ export const WorkdayEndpointInputSchemas = {
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
 			subresourceID: z.string().min(1),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 			// Remaining fields form the JSON body (Workday resource payloads).
 		})
 		.passthrough(),
 	createPayrollInputs: z
 		.object({
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 			// Remaining fields form the JSON body (Workday resource payloads).
 		})
 		.passthrough(),
@@ -378,8 +354,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	updateAnExistingPayroll: z
@@ -387,8 +362,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 			// Remaining fields form the JSON body (Workday resource payloads).
 		})
 		.passthrough(),
@@ -406,8 +380,7 @@ export const WorkdayEndpointInputSchemas = {
 			payComponent: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	createTimeOffRequest: z
@@ -415,8 +388,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 			// Remaining fields form the JSON body (Workday resource payloads).
 		})
 		.passthrough(),
@@ -425,8 +397,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getTimeOffPlansForWorker: z
@@ -434,14 +405,12 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getTimeOffStatusValues: z
 		.object({
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getTimeTypes: z
@@ -467,8 +436,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getAbsenceBalance: z
@@ -485,8 +453,7 @@ export const WorkdayEndpointInputSchemas = {
 			effective: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	listBalances: z
@@ -500,8 +467,7 @@ export const WorkdayEndpointInputSchemas = {
 			effective: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getAssignmentChangeGroupCostCenters: z
@@ -518,8 +484,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getAssignmentChangeGroupJobs: z
@@ -536,8 +501,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getAssignmentTypes: z
@@ -563,8 +527,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getCandidateAvailabilityTemplate: z
@@ -572,14 +535,12 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getCollectionOfJobs: z
 		.object({
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getCompanyInsiderTypes: z
@@ -605,8 +566,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getContingentWorkerTypes: z
@@ -632,8 +592,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getCountryInfo: z
@@ -641,8 +600,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getCurrencies: z
@@ -668,14 +626,12 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getCurrentUser: z
 		.object({
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getGrants: z
@@ -692,8 +648,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getHeadcountOptions: z
@@ -719,8 +674,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getHistoryInstanceForWorker: z
@@ -729,8 +683,7 @@ export const WorkdayEndpointInputSchemas = {
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
 			subresourceID: z.string().min(1),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getHistoryItemsForWorker: z
@@ -738,8 +691,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getHolidayEvents: z
@@ -753,8 +705,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getInterview: z
@@ -762,8 +713,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getInterviewFeedback2: z
@@ -771,14 +721,12 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getLeaveStatusValues: z
 		.object({
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getMyJobPostings: z
@@ -789,8 +737,7 @@ export const WorkdayEndpointInputSchemas = {
 			supervisoryOrganization: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getOrganizationAssignmentBusinessUnits: z
@@ -807,8 +754,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getOrganizationAssignmentCustoms: z
@@ -825,8 +771,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getOrganizationAssignmentFunds: z
@@ -843,8 +788,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getOrganizationAssignmentRegions: z
@@ -861,8 +805,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getOrganizationAssignmentWorkers: z
@@ -879,8 +822,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getPayGroupByJobId: z
@@ -888,8 +830,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getPaySlipInstancesForWorker: z
@@ -898,8 +839,7 @@ export const WorkdayEndpointInputSchemas = {
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
 			subresourceID: z.string().min(1),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getPaySlipsForWorker: z
@@ -907,8 +847,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getProposedPositionValues: z
@@ -934,8 +873,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getProspect: z
@@ -943,8 +881,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getProspectEducations: z
@@ -952,8 +889,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getProspectExperiences: z
@@ -961,8 +897,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getProspectResumeAttachments: z
@@ -970,8 +905,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getProspectSkills: z
@@ -979,8 +913,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getSupervisoryOrgValues: z
@@ -1006,8 +939,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkStudyAwards: z
@@ -1033,8 +965,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkerBusinessTitleChanges: z
@@ -1042,8 +973,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkerEligibleAbsenceTypes: z
@@ -1054,8 +984,7 @@ export const WorkdayEndpointInputSchemas = {
 			effective: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkerInfo: z
@@ -1063,8 +992,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkerLeavesOfAbsence: z
@@ -1081,8 +1009,7 @@ export const WorkdayEndpointInputSchemas = {
 			status: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkerServiceDates: z
@@ -1090,8 +1017,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkerStaffingInformation: z
@@ -1099,8 +1025,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkerTimeOffDetails: z
@@ -1114,8 +1039,7 @@ export const WorkdayEndpointInputSchemas = {
 			toDate: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkerTypes: z
@@ -1141,8 +1065,7 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkerValidTimeOffDates: z
@@ -1159,8 +1082,7 @@ export const WorkdayEndpointInputSchemas = {
 			timeOffType: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	retrieveWorkerLeaveOfAbsenceSubresource: z
@@ -1169,8 +1091,7 @@ export const WorkdayEndpointInputSchemas = {
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
 			subresourceID: z.string().min(1),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkersCollectionStaffing: z
@@ -1181,8 +1102,7 @@ export const WorkdayEndpointInputSchemas = {
 			search: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	getWorkspaceInstances: z
@@ -1208,14 +1128,12 @@ export const WorkdayEndpointInputSchemas = {
 			worker: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	listCountries: z
 		.object({
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	listInterviews: z
@@ -1223,14 +1141,12 @@ export const WorkdayEndpointInputSchemas = {
 			status: z
 				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
 				.optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	listJobs: z
 		.object({
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 		})
 		.passthrough(),
 	updateMessageTemplateById: z
@@ -1238,8 +1154,7 @@ export const WorkdayEndpointInputSchemas = {
 			ID: z.string().min(1),
 			id: z.string().min(1).optional(),
 			workerId: z.string().min(1).optional(),
-			limit: z.number().int().min(1).max(100).optional(),
-			offset: z.number().int().min(0).optional(),
+			...PaginationQueryShape,
 			// Remaining fields form the JSON body (Workday resource payloads).
 		})
 		.passthrough(),

@@ -1,3 +1,4 @@
+import { createHmac } from 'node:crypto';
 import { ApiError } from 'corsair/http';
 import {
 	makeWorkdayRequest,
@@ -8,6 +9,7 @@ import {
 import { syncWorkdayOperationCache } from './endpoints/cache-sync.js';
 import { buildQuery, requestBody, resolvePath } from './endpoints/factory.js';
 import { workdayRoutes } from './endpoints/routes.js';
+import { WorkdayEndpointInputSchemas } from './endpoints/types.js';
 import { errorHandlers } from './error-handlers.js';
 import { workday } from './index.js';
 import {
@@ -21,6 +23,7 @@ import {
 	WorkdaySchema,
 	WorkdayWorker,
 } from './schema/index.js';
+import { verifyWorkdayWebhookSignature } from './webhooks/types.js';
 
 function mockJsonResponse(body: unknown, status = 200) {
 	return {
@@ -71,10 +74,23 @@ describe('Workday Plugin', () => {
 	it('registers 13 Composio-aligned triggers', () => {
 		const plugin = workday(pluginOpts);
 		const hooks = plugin.webhooks as Record<string, unknown> | undefined;
-		expect(Object.keys(hooks ?? {})).toHaveLength(13);
-		expect(hooks?.['absenceBalance.changed']).toBeDefined();
-		expect(hooks?.['jobPosting.created']).toBeDefined();
-		expect(hooks?.['workerLeaveOfAbsence.created']).toBeDefined();
+		expect(Object.keys(hooks ?? {}).sort()).toEqual(
+			[
+				'absenceBalance.changed',
+				'absenceBalance.created',
+				'balanceDetails.changed',
+				'interview.scheduled',
+				'interviewFeedback.submitted',
+				'jobPosting.changed',
+				'jobPosting.created',
+				'jobPostingQuestionnaire.changed',
+				'prospectProfile.changed',
+				'prospectResumeAttachment.added',
+				'workerEligibleAbsenceType.changed',
+				'workerLeaveOfAbsence.changed',
+				'workerLeaveOfAbsence.created',
+			].sort(),
+		);
 	});
 
 	it('requires tenant and host for oauth_2 and builds Workday OAuth URLs', () => {
@@ -269,28 +285,71 @@ describe('Workday Plugin', () => {
 		} as never);
 		expect(matched).toBe(true);
 
-		const { verifyWorkdayWebhookSignature } = await import(
-			'./webhooks/types.js'
-		);
+		const rawBody = '{"type":"jobPosting.created","data":{}}';
+		const secret = 'secret';
+		const validSig = createHmac('sha256', secret).update(rawBody).digest('hex');
+		const payload = { type: 'jobPosting.created' as const, data: {} };
+
+		expect(
+			verifyWorkdayWebhookSignature(
+				{
+					headers: { 'x-workday-signature': validSig },
+					payload,
+					rawBody,
+				} as never,
+				secret,
+			).valid,
+		).toBe(true);
 		expect(
 			verifyWorkdayWebhookSignature(
 				{
 					headers: { 'x-workday-signature': 'deadbeef' },
-					payload: { type: 'jobPosting.created', data: {} },
+					payload,
+					rawBody,
 				} as never,
-				'secret',
+				secret,
 			).valid,
 		).toBe(false);
 		expect(
 			verifyWorkdayWebhookSignature(
 				{
-					headers: { 'x-workday-signature': 'deadbeef' },
-					payload: { type: 'jobPosting.created', data: {} },
-					rawBody: '{"type":"jobPosting.created","data":{}}',
+					headers: { 'x-workday-signature': validSig },
+					payload,
 				} as never,
-				'secret',
-			).error,
-		).toMatch(/Invalid webhook signature|Raw request body/);
+				secret,
+			),
+		).toMatchObject({
+			valid: false,
+			error: 'Raw request body is required for signature verification',
+		});
+
+		const ctx = {
+			options: pluginOpts,
+			key: secret,
+		} as never;
+		await expect(
+			trigger?.handler?.(ctx, {
+				headers: { 'x-workday-signature': validSig },
+				payload,
+				rawBody,
+			} as never),
+		).resolves.toMatchObject({ success: true });
+		await expect(
+			trigger?.handler?.(ctx, {
+				headers: { 'x-workday-signature': 'deadbeef' },
+				payload,
+				rawBody,
+			} as never),
+		).resolves.toMatchObject({ success: false, statusCode: 401 });
+	});
+
+	it('coerces pagination query strings on list inputs', () => {
+		const parsed = WorkdayEndpointInputSchemas.listBalances.parse({
+			limit: '20',
+			offset: '0',
+			worker: 'w1',
+		});
+		expect(parsed).toMatchObject({ limit: 20, offset: 0, worker: 'w1' });
 	});
 
 	it('rethrows ApiError so rate-limit handler keeps retryAfter', async () => {
