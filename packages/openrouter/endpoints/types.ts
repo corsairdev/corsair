@@ -49,6 +49,9 @@ const ToolSchema = z.object({
 	function: z.object({
 		name: z.string(),
 		description: z.string().optional(),
+		// Parameters are a provider-defined JSON Schema; treating them as a
+		// generic record is safe (passed through verbatim) and a better type
+		// is not practical since each tool declares its own schema.
 		parameters: z.record(z.string(), z.unknown()).optional(),
 	}),
 });
@@ -59,6 +62,8 @@ const ResponseFormatSchema = z.object({
 		.object({
 			name: z.string(),
 			strict: z.boolean().optional(),
+			// Arbitrary JSON Schema per the user's structured-output request;
+			// passed through verbatim, so no tighter type is practical.
 			schema: z.record(z.string(), z.unknown()).optional(),
 		})
 		.optional(),
@@ -142,6 +147,8 @@ export const CreateChatCompletionOutputSchema = z.object({
 	usage: CompletionUsageSchema,
 	provider: z.string().optional(),
 	models: z.array(z.string()).optional(),
+	// Anthropic-style native tool calls vary by model and tool definitions;
+	// kept generic to stay forward-compatible with new tool shapes.
 	native_tool_calls: z.array(z.unknown()).optional(),
 });
 
@@ -172,6 +179,8 @@ export const CreateAnthropicMessageOutputSchema = z.object({
 		z.object({
 			type: z.literal('text'),
 			text: z.string(),
+			// Citation objects differ per provider/source and are evolving;
+			// kept generic rather than pinning a shape that will drift.
 			citations: z.array(z.unknown()).optional(),
 		}),
 	),
@@ -185,6 +194,8 @@ export const CreateAnthropicMessageOutputSchema = z.object({
 				.object({ thinking_tokens: z.number().optional() })
 				.optional(),
 		})
+		// Anthropic adds usage fields as models evolve; unknown keys are
+		// tolerated so newer responses still validate.
 		.catchall(z.unknown()),
 	provider: z.string().optional(),
 });
@@ -197,7 +208,21 @@ export const ModelSchema = z.object({
 	created: z.number().optional(),
 	description: z.string().optional(),
 	context_length: z.number().optional(),
-	pricing: z.record(z.string(), z.unknown()).optional(),
+	// Pricing keys vary per model (prompt/completion/input_cache_read/
+	// discount/overrides...) and values are per-1k-token strings, numeric
+	// multipliers, or nested override arrays/records; the union covers the
+	// observed forms.
+	pricing: z
+		.record(
+			z.string(),
+			z.union([
+				z.string(),
+				z.number(),
+				z.array(z.unknown()),
+				z.record(z.string(), z.unknown()),
+			]),
+		)
+		.optional(),
 	architecture: z
 		.object({
 			modality: z.string().optional(),
@@ -274,7 +299,18 @@ export const ModelEndpointSchema = z
 		max_completion_tokens: z.number().nullable().optional(),
 		max_prompt_tokens: z.number().nullable().optional(),
 		quantization: z.string().nullable().optional(),
-		pricing: z.record(z.string(), z.unknown()).optional(),
+		// Same pricing record shape as ModelSchema (string/number/array/record)
+		pricing: z
+			.record(
+				z.string(),
+				z.union([
+					z.string(),
+					z.number(),
+					z.array(z.unknown()),
+					z.record(z.string(), z.unknown()),
+				]),
+			)
+			.optional(),
 		supported_parameters: z.array(z.string()).optional(),
 		status: z.number().optional(),
 		uptime_last_30m: z.number().nullable().optional(),
@@ -285,6 +321,8 @@ export const ModelEndpointSchema = z
 		latency_last_30m: p95LatencySchema.nullable().optional(),
 		throughput_last_30m: p95LatencySchema.nullable().optional(),
 	})
+	// Providers can add endpoint-level fields (e.g. new uptime metrics);
+	// unknown keys are tolerated so newer responses still validate.
 	.catchall(z.unknown());
 
 export const ListModelEndpointsOutputSchema = z.object({
@@ -293,6 +331,8 @@ export const ListModelEndpointsOutputSchema = z.object({
 		name: z.string(),
 		created: z.number().optional(),
 		description: z.string().optional(),
+		// The model's architecture blob differs across model families;
+		// kept generic for forward compatibility.
 		architecture: z.record(z.string(), z.unknown()).optional(),
 		endpoints: z.array(ModelEndpointSchema),
 	}),
@@ -321,6 +361,8 @@ export const CreateCoinbaseChargeOutputSchema = z.object({
 			created_at: z.string().optional(),
 			expires_at: z.string().optional(),
 		})
+		// The Coinbase charge payload evolves (web3_data etc.); unknown keys
+		// are tolerated so newer responses still validate.
 		.catchall(z.unknown()),
 });
 
@@ -337,6 +379,7 @@ const EmbeddingUsageSchema = z
 		prompt_tokens: z.number(),
 		total_tokens: z.number(),
 	})
+	// OpenRouter may append usage fields for new embedding models.
 	.catchall(z.unknown());
 
 export const CreateEmbeddingOutputSchema = z.object({
@@ -387,9 +430,12 @@ export const GetGenerationOutputSchema = z.object({
 			prompt_tokens: z.number().optional(),
 			completion_tokens: z.number().optional(),
 			total_tokens: z.number().optional(),
+			// Usage breakdown and the raw provider payload are provider-defined;
+			// kept generic rather than pinning shapes that vary per provider.
 			usage: z.record(z.string(), z.unknown()).optional(),
 			provider_response: z.record(z.string(), z.unknown()).optional(),
 		})
+		// Generation records gain fields over time; unknown keys tolerated.
 		.catchall(z.unknown()),
 });
 
@@ -413,6 +459,7 @@ export const ListCreditsOutputSchema = z.object({
 			soft_limit: z.number().optional(),
 			pending_balance: z.number().optional(),
 		})
+		// Credits payload gains ZDR fields as OpenRouter expands it.
 		.catchall(z.unknown()),
 });
 
@@ -437,6 +484,8 @@ export const GetKeyOutputSchema = z.object({
 			expires_at: z.string().nullable().optional(),
 			created_at: z.string().optional(),
 		})
+		// Key metadata gains fields as OpenRouter expands it; unknown keys
+		// are tolerated so newer responses still validate.
 		.catchall(z.unknown()),
 });
 
