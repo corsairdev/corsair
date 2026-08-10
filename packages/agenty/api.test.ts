@@ -1,5 +1,6 @@
 import { request } from 'corsair/http';
 import { makeAgentyRequest } from './client';
+import { resolvePath } from './endpoints/factory';
 import { agentyRoutes } from './endpoints/routes';
 import type { AgentyContext } from './index';
 import { agenty, agentyEndpointSchemas } from './index';
@@ -74,8 +75,10 @@ describe('Agenty request client', () => {
 	it('sends Bearer Authorization header and JSON bodies', async () => {
 		await makeAgentyRequest('/agents', 'test-api-key', {
 			method: 'GET',
+			headers: { Authorization: 'Bearer spoofed', 'X-Custom': '1' },
 		});
 
+		const headers = mockRequest.mock.calls[0]?.[0].HEADERS;
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				BASE: 'https://api.agenty.com/v2',
@@ -83,6 +86,7 @@ describe('Agenty request client', () => {
 				HEADERS: expect.objectContaining({
 					Authorization: 'Bearer test-api-key',
 					'Content-Type': 'application/json',
+					'X-Custom': '1',
 				}),
 			}),
 			expect.objectContaining({
@@ -90,11 +94,10 @@ describe('Agenty request client', () => {
 				url: '/agents',
 			}),
 		);
+		expect(headers?.Authorization).toBe('Bearer test-api-key');
 		expect(mockRequest.mock.calls[0]?.[1].query?.apikey).toBeUndefined();
 		expect(mockRequest.mock.calls[0]?.[1].query?.apiKey).toBeUndefined();
-		expect(
-			mockRequest.mock.calls[0]?.[0].HEADERS?.['X-Agenty-ApiKey'],
-		).toBeUndefined();
+		expect(headers?.['X-Agenty-ApiKey']).toBeUndefined();
 	});
 
 	it('adds X-Agenty-ApiKey for browser host without query-param leakage', async () => {
@@ -120,6 +123,15 @@ describe('Agenty request client', () => {
 		);
 		expect(mockRequest.mock.calls[0]?.[1].query?.apikey).toBeUndefined();
 		expect(mockRequest.mock.calls[0]?.[1].query?.apiKey).toBeUndefined();
+	});
+
+	it('rejects non-allowlisted baseUrl before attaching credentials', async () => {
+		await expect(
+			makeAgentyRequest('/agents', 'test-api-key', {
+				baseUrl: 'https://evil.example/browser.agenty.com',
+			}),
+		).rejects.toThrow(/baseUrl host not allowed/);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });
 
@@ -432,8 +444,10 @@ describe('Agenty route wiring', () => {
 					? 'https://browser.agenty.com/api'
 					: 'https://api.agenty.com/v2';
 
+			const expectedUrl = resolvePath(route.path, input, route);
 			expect(config).toMatchObject({ BASE: expectedBase });
 			expect(call).toMatchObject({ method: route.method });
+			expect(call.url).toBe(expectedUrl);
 			expect(call.url).not.toContain('{');
 		}
 	});

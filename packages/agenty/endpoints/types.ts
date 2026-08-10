@@ -19,6 +19,7 @@ const AgentyLooseRecordOptionalSchema = z
 const AgentyKeyIdSchema = z.number().int();
 const AgentyJobIdSchema = z.number().int();
 const AgentyProjectIdSchema = z.number().int();
+const AgentyUserIdSchema = z.number().int();
 const AgentyListIdSchema = z.union([z.string(), z.number()]);
 
 // addListRows
@@ -731,7 +732,7 @@ export type GetScheduleResponse = z.infer<typeof GetScheduleResponseSchema>;
 
 // getUserById
 const GetUserByIdInputSchema = z.object({
-	user_id: z.number().int(),
+	user_id: AgentyUserIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1206,14 +1207,14 @@ export type UpdateScheduleResponse = z.infer<
 	typeof UpdateScheduleResponseSchema
 >;
 
-// updateUserById
+// updateUserById — OpenAPI: user_id number; email/role/status required.
 const UpdateUserByIdInputSchema = z.object({
 	name: z.string().optional(),
-	role: z.string().optional(),
+	role: z.string(),
 	email: z.string(),
 	avatar: z.string().optional(),
-	status: z.string().optional(),
-	user_id: z.string(),
+	status: z.string(),
+	user_id: AgentyUserIdSchema,
 	is_email_verified: z.boolean().optional(),
 	is_email_subscribed: z.boolean().optional(),
 	body: AgentyOptionalBodySchema,

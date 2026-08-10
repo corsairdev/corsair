@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import type { AgentyContext } from '../index';
 import type { AgentyRoute } from './routes';
 import type { AgentyEndpointInput } from './types';
@@ -31,6 +32,17 @@ const GROUP_CACHE_RULES: Record<string, CacheRule> = {
 	},
 };
 
+// Sub-resource / result payloads must not upsert or delete parent entities.
+const CACHE_OPT_OUT_ROUTES = new Set([
+	'listsGetRowsById',
+	'getJobResult',
+	'getAgentResult',
+	'jobsGetLogsById',
+	'deleteListRow',
+	'deleteListRows',
+	'listsClearRows',
+]);
+
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -44,7 +56,8 @@ function cacheItems(response: unknown, rule: CacheRule) {
 		if (Array.isArray(value)) return value.filter(isRecord);
 	}
 
-	return [response];
+	const hasId = rule.idKeys.some((key) => response[key] !== undefined);
+	return hasId ? [response] : [];
 }
 
 function cacheEntityId(item: Record<string, unknown>, rule: CacheRule) {
@@ -67,10 +80,12 @@ function cacheDeleteEntityId(input: Record<string, unknown>, rule: CacheRule) {
 
 export async function syncAgentyOperationCache(
 	ctx: AgentyContext,
-	route: Pick<AgentyRoute, 'method' | 'group'>,
+	route: Pick<AgentyRoute, 'method' | 'group' | 'name'>,
 	input: AgentyEndpointInput,
 	response: unknown,
 ) {
+	if (CACHE_OPT_OUT_ROUTES.has(route.name)) return;
+
 	const rule = GROUP_CACHE_RULES[route.group];
 	if (!rule) return;
 
@@ -107,6 +122,15 @@ export async function syncAgentyOperationCache(
 			await client.upsertByEntityId(entityId, item);
 		}
 	} catch (error) {
-		console.warn(`[agenty] Failed to sync ${rule.entity} cache:`, error);
+		await logEventFromContext(
+			ctx,
+			`agenty.cache.${rule.entity}.failed`,
+			{
+				message: `[agenty] Failed to sync ${rule.entity} cache`,
+				entity: rule.entity,
+				error: error instanceof Error ? error.message : String(error),
+			},
+			'failed',
+		);
 	}
 }

@@ -188,7 +188,8 @@ export const agentyRoutes = [
 			"Resets (regenerates) the secret value of an existing API key. The old secret becomes invalid immediately. Important: This action only confirms the reset was successful but does NOT return the new secret. After resetting, use the 'Get API Key By ID' action to retrieve the new secret value. Use this when you need to: - Rotate API key secrets for security - Invalidate a compromised API key and generate a new secret - Update credentials as part of security maintenance",
 		pathParams: ['key_id'],
 		queryParams: [],
-		riskLevel: 'read' as const,
+		riskLevel: 'destructive' as const,
+		irreversible: true,
 	},
 	{
 		key: 'apiKeysUpdateById',
@@ -240,7 +241,7 @@ export const agentyRoutes = [
 			'Toggles the enabled/disabled status of an API key. This endpoint switches the key between enabled and disabled states - if the key is currently enabled, it will be disabled, and vice versa. Returns a confirmation message upon successful status change. Use this after retrieving the key_id from the list or get API key endpoints.',
 		pathParams: ['key_id'],
 		queryParams: [],
-		riskLevel: 'read' as const,
+		riskLevel: 'write' as const,
 	},
 	{
 		key: 'connectionsGetAll',
@@ -385,7 +386,7 @@ export const agentyRoutes = [
 		group: 'workflows',
 		name: 'deleteWorkflow',
 		method: 'DELETE',
-		path: '/workflows/{id}',
+		path: '/workflows/{workflow_id}',
 		hostType: 'main',
 		description:
 			'Tool to delete a workflow by its ID. Use when you need to permanently remove a workflow after confirming it exists.',
@@ -649,7 +650,7 @@ export const agentyRoutes = [
 		group: 'workflows',
 		name: 'getWorkflowById',
 		method: 'GET',
-		path: '/workflows/{id}',
+		path: '/workflows/{workflow_id}',
 		hostType: 'main',
 		description:
 			'Retrieves complete details of a specific workflow by its ID. Use this to view workflow configuration including agents, triggers, and actions before updating or deleting.',
@@ -798,7 +799,7 @@ export const agentyRoutes = [
 			'Tool to stop a running job by job ID. Use when you need to halt an in-progress job before it completes. Confirm the job ID beforehand to avoid unintended stops.',
 		pathParams: ['job_id'],
 		queryParams: [],
-		riskLevel: 'read' as const,
+		riskLevel: 'write' as const,
 	},
 	{
 		key: 'listsClearRows',
@@ -832,7 +833,7 @@ export const agentyRoutes = [
 		group: 'lists',
 		name: 'listsDeleteById',
 		method: 'DELETE',
-		path: '/lists/{id}',
+		path: '/lists/{list_id}',
 		hostType: 'main',
 		description:
 			'Tool to delete a specific list by its ID. Use when you need to permanently remove a list after confirming it exists.',
@@ -911,7 +912,7 @@ export const agentyRoutes = [
 		group: 'workflows',
 		name: 'patchWorkflow',
 		method: 'PATCH',
-		path: '/workflows/{id}',
+		path: '/workflows/{workflow_id}',
 		hostType: 'main',
 		description:
 			'Tool to partially update a workflow by ID. Use when you need to update specific fields of a workflow without replacing the entire workflow object. This action performs a PATCH operation, allowing you to update only the fields you specify (e.g., just the name) without affecting other workflow properties. Currently supports updating the workflow name.',
@@ -924,7 +925,7 @@ export const agentyRoutes = [
 		group: 'projects',
 		name: 'projectsAddAgents',
 		method: 'POST',
-		path: '/projects/{id}/add',
+		path: '/projects/{project_id}/add',
 		hostType: 'main',
 		description:
 			"Add one or more agents to an Agenty project to organize and group related agents together. This action associates agents with a project, allowing better organization and management of your automation workflows. The response includes the complete updated project information with all associated agents. Prerequisites: - Project must exist (use projects_get_all to find valid project IDs) - Agent(s) must exist (use agents_get_all to find valid agent IDs) Example usage: \"Add agents ['tx8lubfbun', 'o3xuc2n8es'] to project 7\"",
@@ -963,7 +964,7 @@ export const agentyRoutes = [
 		group: 'projects',
 		name: 'removeAgentFromProject',
 		method: 'DELETE',
-		path: '/projects/{id}/delete',
+		path: '/projects/{project_id}/delete',
 		hostType: 'main',
 		description:
 			"Remove an agent from an Agenty project. Use when you need to disassociate an agent from a project while keeping both the agent and project intact. The agent will no longer be part of the project's organization structure.",
@@ -1068,7 +1069,7 @@ export const agentyRoutes = [
 		group: 'workflows',
 		name: 'updateWorkflow',
 		method: 'PUT',
-		path: '/workflows/{id}',
+		path: '/workflows/{workflow_id}',
 		hostType: 'main',
 		description:
 			"Tool to update an existing workflow's configuration by workflow ID. Use this to modify workflow properties including name, agent selection, trigger conditions, and actions to execute. Workflows automate responses to agent events such as job completion, errors, or change detection. Common use cases include sending notifications, triggering webhooks, or updating external systems.",

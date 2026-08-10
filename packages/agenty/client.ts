@@ -20,6 +20,36 @@ export class AgentyAPIError extends Error {
 }
 
 const AGENTY_API_BASE = 'https://api.agenty.com/v2';
+const AGENTY_ALLOWED_HOSTS = new Set(['api.agenty.com', 'browser.agenty.com']);
+
+function resolveAgentyBase(baseUrl?: string): {
+	base: string;
+	isBrowserHost: boolean;
+} {
+	const resolvedBase = baseUrl ?? AGENTY_API_BASE;
+	let url: URL;
+	try {
+		url = new URL(resolvedBase);
+	} catch {
+		throw new AgentyAPIError(`[agenty] invalid baseUrl: ${resolvedBase}`);
+	}
+
+	const hostname = url.hostname.replace(/\.$/, '').toLowerCase();
+	if (
+		url.protocol !== 'https:' ||
+		(url.port !== '' && url.port !== '443') ||
+		!AGENTY_ALLOWED_HOSTS.has(hostname)
+	) {
+		throw new AgentyAPIError(
+			`[agenty] baseUrl host not allowed: ${hostname || resolvedBase}`,
+		);
+	}
+
+	return {
+		base: resolvedBase,
+		isBrowserHost: hostname === 'browser.agenty.com',
+	};
+}
 
 export type AgentyRequestOptions = {
 	method?: AgentyMethod;
@@ -37,10 +67,10 @@ export async function makeAgentyRequest<T>(
 	options: AgentyRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query, headers, baseUrl } = options;
-	const resolvedBase = baseUrl ?? AGENTY_API_BASE;
 	// Main API accepts Bearer; browser API docs require X-Agenty-ApiKey (not Bearer).
 	// Keep key out of query strings — URL leakage was a prior P1.
-	const isBrowserHost = resolvedBase.includes('browser.agenty.com');
+	// Fail closed: never attach credentials unless hostname is an allowlisted Agenty host.
+	const { base: resolvedBase, isBrowserHost } = resolveAgentyBase(baseUrl);
 	const config: OpenAPIConfig = {
 		BASE: resolvedBase,
 		VERSION: '1.0.0',
@@ -49,9 +79,9 @@ export async function makeAgentyRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
+			...headers,
 			Authorization: `Bearer ${apiKey}`,
 			...(isBrowserHost ? { 'X-Agenty-ApiKey': apiKey } : {}),
-			...headers,
 		},
 	};
 
@@ -67,10 +97,7 @@ export async function makeAgentyRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new AgentyAPIError(error.message, { cause: error });
-		}
-		if (error instanceof Error) {
+		if (error instanceof ApiError || error instanceof Error) {
 			throw new AgentyAPIError(error.message, { cause: error });
 		}
 		throw new AgentyAPIError('Unknown error');

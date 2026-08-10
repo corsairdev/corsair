@@ -148,12 +148,16 @@ export async function logAgentyOperation(
 	route: AgentyRoute,
 	status: 'completed' | 'failed',
 ) {
-	await logEventFromContext(
-		ctx,
-		`agenty.${route.group}.${route.name}`,
-		{ method: route.method, path: route.path, hostType: route.hostType },
-		status,
-	);
+	try {
+		await logEventFromContext(
+			ctx,
+			`agenty.${route.group}.${route.name}`,
+			{ method: route.method, path: route.path, hostType: route.hostType },
+			status,
+		);
+	} catch (error) {
+		console.warn('[agenty] Failed to log operation event:', error);
+	}
 }
 
 export async function requestAgentyOperation(
@@ -186,6 +190,7 @@ export async function executeAgentyOperation(
 		status = 'failed';
 		throw error;
 	} finally {
+		// Telemetry must not mask the original request result/error.
 		await logAgentyOperation(ctx, input, route, status);
 	}
 }
