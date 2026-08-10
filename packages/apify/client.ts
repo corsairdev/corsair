@@ -143,7 +143,7 @@ export async function callApifyMcpTool<T>(
 			: undefined,
 		fetch: fetchWithRetryAfter,
 	});
-	const client = new Client({ name: 'corsair-apify-mcp', version: '1.0.0' });
+	const client = new Client({ name: 'corsair-apify', version: '1.0.0' });
 
 	try {
 		await client.connect(transport);

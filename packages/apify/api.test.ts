@@ -134,7 +134,7 @@ describeLive('Apify MCP API Type Tests', () => {
 			expect(ctx.db.actors.upsertByEntityId).toHaveBeenCalled();
 			expect(logEventFromContext).toHaveBeenCalledWith(
 				ctx,
-				'apifymcp.actors.searchActors',
+				'apify.actors.searchActors',
 				expect.objectContaining({ tool: 'search-actors' }),
 				'completed',
 			);
@@ -189,7 +189,7 @@ describeLive('Apify MCP API Type Tests', () => {
 			expect(response).toBeDefined();
 			expect(logEventFromContext).toHaveBeenCalledWith(
 				ctx,
-				'apifymcp.docs.searchApifyDocs',
+				'apify.docs.searchApifyDocs',
 				expect.objectContaining({ tool: 'search-apify-docs' }),
 				'completed',
 			);

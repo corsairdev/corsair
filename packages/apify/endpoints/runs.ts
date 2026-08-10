@@ -7,7 +7,7 @@ export const getActorRun: ApifyMcpEndpoints['getActorRun'] = async (
 ) => {
 	return executeApifyMcpTool(
 		ctx,
-		'apifymcp.runs.getActorRun',
+		'apify.runs.getActorRun',
 		'get-actor-run',
 		input,
 		{ cache: 'actorRun', requireAuth: true },
@@ -21,7 +21,7 @@ export const getActorOutput: ApifyMcpEndpoints['getActorOutput'] = async (
 	// Hosted Apify MCP tool is get-dataset-items (get-actor-output was removed).
 	return executeApifyMcpTool(
 		ctx,
-		'apifymcp.runs.getActorOutput',
+		'apify.runs.getActorOutput',
 		'get-dataset-items',
 		input,
 		{ cache: 'actorOutput', datasetId: input.datasetId, requireAuth: true },

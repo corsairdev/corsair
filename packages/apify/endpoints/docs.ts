@@ -7,7 +7,7 @@ export const searchApifyDocs: ApifyMcpEndpoints['searchApifyDocs'] = async (
 ) => {
 	return executeApifyMcpTool(
 		ctx,
-		'apifymcp.docs.searchApifyDocs',
+		'apify.docs.searchApifyDocs',
 		'search-apify-docs',
 		input,
 		{},
@@ -20,7 +20,7 @@ export const fetchApifyDocs: ApifyMcpEndpoints['fetchApifyDocs'] = async (
 ) => {
 	return executeApifyMcpTool(
 		ctx,
-		'apifymcp.docs.fetchApifyDocs',
+		'apify.docs.fetchApifyDocs',
 		'fetch-apify-docs',
 		input,
 		{},

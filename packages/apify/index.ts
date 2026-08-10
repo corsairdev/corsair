@@ -30,7 +30,7 @@ export type ApifyMcpPluginOptions = {
 	key?: string;
 	hooks?: InternalApifyMcpPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof apifyMcpEndpointsNested>;
+	permissions?: PluginPermissionsConfig<typeof apifyEndpointsNested>;
 };
 
 export type ApifyMcpContext = CorsairPluginContext<
@@ -41,9 +41,7 @@ export type ApifyMcpContext = CorsairPluginContext<
 export type ApifyMcpKeyBuilderContext =
 	KeyBuilderContext<ApifyMcpPluginOptions>;
 
-export type ApifyMcpBoundEndpoints = BindEndpoints<
-	typeof apifyMcpEndpointsNested
->;
+export type ApifyMcpBoundEndpoints = BindEndpoints<typeof apifyEndpointsNested>;
 
 type ApifyMcpEndpoint<K extends keyof ApifyMcpEndpointOutputs> =
 	CorsairEndpoint<
@@ -63,15 +61,15 @@ export type ApifyMcpEndpoints = {
 	fetchApifyDocs: ApifyMcpEndpoint<'fetchApifyDocs'>;
 };
 
-const apifyMcpEndpointsNested = {
+const apifyEndpointsNested = {
 	actors: ActorsEndpoints,
 	runs: RunsEndpoints,
 	docs: DocsEndpoints,
 } as const;
 
-const apifyMcpWebhooksNested = {} as const;
+const apifyWebhooksNested = {} as const;
 
-export const apifyMcpEndpointSchemas = {
+export const apifyEndpointSchemas = {
 	'actors.searchActors': {
 		input: ApifyMcpEndpointInputSchemas.searchActors,
 		output: ApifyMcpEndpointOutputSchemas.searchActors,
@@ -104,13 +102,11 @@ export const apifyMcpEndpointSchemas = {
 		input: ApifyMcpEndpointInputSchemas.fetchApifyDocs,
 		output: ApifyMcpEndpointOutputSchemas.fetchApifyDocs,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<
-	typeof apifyMcpEndpointsNested
->;
+} as const satisfies RequiredPluginEndpointSchemas<typeof apifyEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const apifyMcpEndpointMeta = {
+const apifyEndpointMeta = {
 	'actors.searchActors': {
 		riskLevel: 'read',
 		description: 'Search for Actors in the Apify Store',
@@ -146,17 +142,17 @@ const apifyMcpEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Fetch the full content of an Apify documentation page',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof apifyMcpEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<typeof apifyEndpointsNested>;
 
-export const apifyMcpAuthConfig = {
+export const apifyAuthConfig = {
 	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseApifyMcpPlugin<T extends ApifyMcpPluginOptions> = CorsairPlugin<
-	'apifymcp',
+	'apify',
 	typeof ApifyMcpSchema,
-	typeof apifyMcpEndpointsNested,
-	typeof apifyMcpWebhooksNested,
+	typeof apifyEndpointsNested,
+	typeof apifyWebhooksNested,
 	T,
 	typeof defaultAuthType
 >;
@@ -166,7 +162,7 @@ export type InternalApifyMcpPlugin = BaseApifyMcpPlugin<ApifyMcpPluginOptions>;
 export type ExternalApifyMcpPlugin<T extends ApifyMcpPluginOptions> =
 	BaseApifyMcpPlugin<T>;
 
-export function apifyMcp<const T extends ApifyMcpPluginOptions>(
+export function apify<const T extends ApifyMcpPluginOptions>(
 	incomingOptions: ApifyMcpPluginOptions & T = {} as ApifyMcpPluginOptions & T,
 ): ExternalApifyMcpPlugin<T> {
 	const options = {
@@ -174,16 +170,16 @@ export function apifyMcp<const T extends ApifyMcpPluginOptions>(
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	return {
-		id: 'apifymcp',
-		authConfig: apifyMcpAuthConfig,
+		id: 'apify',
+		authConfig: apifyAuthConfig,
 		schema: ApifyMcpSchema,
 		options: options,
 		hooks: options.hooks,
 		webhookHooks: undefined,
-		endpoints: apifyMcpEndpointsNested,
-		webhooks: apifyMcpWebhooksNested,
-		endpointMeta: apifyMcpEndpointMeta,
-		endpointSchemas: apifyMcpEndpointSchemas,
+		endpoints: apifyEndpointsNested,
+		webhooks: apifyWebhooksNested,
+		endpointMeta: apifyEndpointMeta,
+		endpointSchemas: apifyEndpointSchemas,
 		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
@@ -197,12 +193,12 @@ export function apifyMcp<const T extends ApifyMcpPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new AuthMissingError('apifymcp', 'api_key');
+					throw new AuthMissingError('apify', 'api_key');
 				}
 				return res;
 			}
 
-			throw new AuthMissingError('apifymcp', 'api_key');
+			throw new AuthMissingError('apify', 'api_key');
 		},
 	} satisfies InternalApifyMcpPlugin;
 }

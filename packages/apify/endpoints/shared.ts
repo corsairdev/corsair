@@ -46,7 +46,7 @@ async function cacheActors(ctx: ApifyMcpContext, response: unknown) {
 		try {
 			await ctx.db.actors.upsertByEntityId(entityId, item);
 		} catch (error) {
-			console.warn('[apifymcp] Failed to cache actor:', error);
+			console.warn('[apify] Failed to cache actor:', error);
 		}
 	}
 }
@@ -76,7 +76,7 @@ async function cacheActorRun(ctx: ApifyMcpContext, response: unknown) {
 	try {
 		await ctx.db.actorRuns.upsertByEntityId(entityId, payload);
 	} catch (error) {
-		console.warn('[apifymcp] Failed to cache actor run:', error);
+		console.warn('[apify] Failed to cache actor run:', error);
 	}
 }
 
@@ -95,7 +95,7 @@ async function cacheActorOutput(
 			updatedAt: new Date(),
 		});
 	} catch (error) {
-		console.warn('[apifymcp] Failed to cache actor output:', error);
+		console.warn('[apify] Failed to cache actor output:', error);
 	}
 }
 
@@ -113,7 +113,7 @@ export async function executeApifyMcpTool<T>(
 	let status: 'completed' | 'failed' = 'completed';
 	try {
 		if (options.requireAuth && !ctx.key) {
-			throw new AuthMissingError('apifymcp', 'api_key');
+			throw new AuthMissingError('apify', 'api_key');
 		}
 
 		const response = await callApifyMcpTool<T>(
