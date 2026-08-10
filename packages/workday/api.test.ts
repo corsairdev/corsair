@@ -77,8 +77,11 @@ describe('Workday Plugin', () => {
 		expect(hooks?.['workerLeaveOfAbsence.created']).toBeDefined();
 	});
 
-	it('requires tenant for oauth_2 and builds Workday OAuth URLs', () => {
+	it('requires tenant and host for oauth_2 and builds Workday OAuth URLs', () => {
 		expect(() => workday({ key: 'x' })).toThrow(/tenant is required/);
+		expect(() => workday({ key: 'x', tenant: 'acme' })).toThrow(
+			/host is required/,
+		);
 		const plugin = workday(pluginOpts);
 		expect(plugin.oauthConfig?.authUrl).toBe(
 			'https://wd2-impl-services1.workday.com/ccx/oauth2/acme/authorize',
@@ -221,11 +224,28 @@ describe('Workday Plugin', () => {
 		expect(requestBody(route, { ID: 'w1', date: '2026-01-01' })).toEqual({
 			date: '2026-01-01',
 		});
+		// Pagination + path aliases must never leak into write bodies.
+		expect(
+			requestBody(route, {
+				ID: 'w1',
+				id: 'alias',
+				workerId: 'alias2',
+				limit: 10,
+				offset: 2,
+				date: '2026-01-01',
+			}),
+		).toEqual({ date: '2026-01-01' });
 	});
 
 	it('builds service base URLs and normalizes host', () => {
 		expect(normalizeWorkdayHost('https://example.workday.com/')).toBe(
 			'example.workday.com',
+		);
+		expect(() => normalizeWorkdayHost('evil.com@attacker.com')).toThrow(
+			/bare hostname/,
+		);
+		expect(() => normalizeWorkdayHost('tenant.workday.com/extra/path')).toThrow(
+			/bare hostname/,
 		);
 		expect(
 			workdayServiceBase(
@@ -244,10 +264,33 @@ describe('Workday Plugin', () => {
 		const trigger = plugin.webhooks?.['jobPosting.created'];
 		expect(trigger).toBeDefined();
 		const matched = trigger?.match?.({
-			headers: { 'x-workday-event': 'jobPosting.created' },
+			headers: { 'X-Workday-Event': ['jobPosting.created'] },
 			body: JSON.stringify({ type: 'jobPosting.created', data: {} }),
 		} as never);
 		expect(matched).toBe(true);
+
+		const { verifyWorkdayWebhookSignature } = await import(
+			'./webhooks/types.js'
+		);
+		expect(
+			verifyWorkdayWebhookSignature(
+				{
+					headers: { 'x-workday-signature': 'deadbeef' },
+					payload: { type: 'jobPosting.created', data: {} },
+				} as never,
+				'secret',
+			).valid,
+		).toBe(false);
+		expect(
+			verifyWorkdayWebhookSignature(
+				{
+					headers: { 'x-workday-signature': 'deadbeef' },
+					payload: { type: 'jobPosting.created', data: {} },
+					rawBody: '{"type":"jobPosting.created","data":{}}',
+				} as never,
+				'secret',
+			).error,
+		).toMatch(/Invalid webhook signature|Raw request body/);
 	});
 
 	it('rethrows ApiError so rate-limit handler keeps retryAfter', async () => {
@@ -289,6 +332,10 @@ describe('Workday Plugin', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(rateLimited)).toBe(true);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(rateLimited);
 		expect(result.headersRetryAfterMs).toBe(5000);
+		// Do not treat ids like worker-4291 as rate limits.
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(new Error('worker-4291 missing')),
+		).toBe(false);
 	});
 
 	it('maps worker/job ops to documented Workday REST surfaces', () => {
@@ -300,12 +347,14 @@ describe('Workday Plugin', () => {
 			path: '/workers/{ID}',
 			method: 'GET',
 		});
+		// Composio alias of WorkersApi.getStaffingInformation (Staffing docs).
 		expect(byName.getWorkerInfo).toMatchObject({
-			service: 'compensation',
-			version: 'v3',
+			service: 'staffing',
+			version: 'v6',
 			path: '/workers/{ID}',
 			method: 'GET',
 		});
+		expect(byName.getJobById?.queryParams).toEqual([]);
 		// JobsApi.getCollection — Composio exposes two aliases, same docs path/params.
 		expect(byName.getCollectionOfJobs).toMatchObject({
 			service: 'staffing',
@@ -327,6 +376,7 @@ describe('Workday Plugin', () => {
 		);
 		expect(byName.listJobPostings?.path).toBe('/jobPostings');
 		expect(byName.getMyJobPostings?.path).toBe('/jobRequisitions');
+		expect(byName.getCurrentUser?.path).toBe('/workers/me');
 	});
 
 	it('declares db schema entities aligned to Workday REST resources', () => {
@@ -344,23 +394,59 @@ describe('Workday Plugin', () => {
 			].sort(),
 		);
 		expect(
-			WorkdayWorker.parse({ id: 'w1', descriptor: 'Ada Lovelace' }),
-		).toMatchObject({ id: 'w1', descriptor: 'Ada Lovelace' });
-		expect(WorkdayJob.parse({ id: 'j1' })).toMatchObject({ id: 'j1' });
-		expect(WorkdayJobPosting.parse({ id: 'jp1' })).toMatchObject({
-			id: 'jp1',
+			WorkdayWorker.parse({
+				id: 'w1',
+				descriptor: 'Ada Lovelace',
+				businessTitle: 'Engineer',
+				primaryWorkEmail: 'ada@example.com',
+				primaryJob: { id: 'j1', descriptor: 'Eng' },
+			}),
+		).toMatchObject({
+			id: 'w1',
+			businessTitle: 'Engineer',
+			primaryJob: { id: 'j1' },
 		});
-		expect(WorkdayJobRequisition.parse({ id: 'jr1' })).toMatchObject({
-			id: 'jr1',
-		});
-		expect(WorkdayPayrollInput.parse({ id: 'p1' })).toMatchObject({
-			id: 'p1',
-		});
-		expect(WorkdayProspect.parse({ id: 'pr1' })).toMatchObject({ id: 'pr1' });
-		expect(WorkdayInterview.parse({ id: 'i1' })).toMatchObject({ id: 'i1' });
-		expect(WorkdayAbsenceBalance.parse({ id: 'b1' })).toMatchObject({
-			id: 'b1',
-		});
+		expect(
+			WorkdayJob.parse({
+				id: 'j1',
+				businessTitle: 'Engineer',
+				jobProfile: { id: 'jp', descriptor: 'Profile' },
+			}),
+		).toMatchObject({ id: 'j1', businessTitle: 'Engineer' });
+		expect(
+			WorkdayJobPosting.parse({
+				id: 'jp1',
+				title: 'SWE',
+				jobRequisition: { id: 'jr1' },
+			}),
+		).toMatchObject({ id: 'jp1', title: 'SWE' });
+		expect(
+			WorkdayJobRequisition.parse({
+				id: 'jr1',
+				status: 'Open',
+				hiringManager: { id: 'w1' },
+			}),
+		).toMatchObject({ id: 'jr1', status: 'Open' });
+		expect(
+			WorkdayPayrollInput.parse({
+				id: 'p1',
+				amount: 100,
+				worker: { id: 'w1' },
+			}),
+		).toMatchObject({ id: 'p1', amount: 100 });
+		expect(
+			WorkdayProspect.parse({ id: 'pr1', email: 'a@b.com' }),
+		).toMatchObject({ id: 'pr1', email: 'a@b.com' });
+		expect(
+			WorkdayInterview.parse({ id: 'i1', status: 'Scheduled' }),
+		).toMatchObject({ id: 'i1', status: 'Scheduled' });
+		expect(
+			WorkdayAbsenceBalance.parse({
+				id: 'b1',
+				quantity: 8,
+				unitOfTime: 'Hours',
+			}),
+		).toMatchObject({ id: 'b1', quantity: 8 });
 	});
 
 	it('upserts worker cache after getWorkerStaffingInformation responses', async () => {

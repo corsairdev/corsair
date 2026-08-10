@@ -7,8 +7,7 @@ export type WorkdayService =
 	| 'recruiting'
 	| 'payroll'
 	| 'common'
-	| 'person'
-	| 'compensation';
+	| 'person';
 
 export type WorkdayRoute = {
 	key: string;
@@ -95,7 +94,7 @@ export const workdayRoutes = [
 		path: '/jobs/{ID}',
 		description: 'Retrieves a single job instance by ID (Staffing v6).',
 		pathParams: ['ID'] as const,
-		queryParams: ['limit', 'offset'] as const,
+		queryParams: [] as const,
 		riskLevel: 'read' as const,
 	},
 	{
@@ -1224,13 +1223,13 @@ export const workdayRoutes = [
 		group: 'worker',
 		name: 'getWorkerInfo',
 		method: 'GET',
-		// Compensation REST surface also exposes /workers/{ID} (worker profile view).
-		// Distinct from Staffing getStaffingInformation on the same path shape.
-		service: 'compensation',
-		version: 'v3',
+		// Composio alias of Staffing WorkersApi.getStaffingInformation (same as
+		// getWorkerStaffingInformation). Workday docs do not expose a separate path.
+		service: 'staffing',
+		version: 'v6',
 		path: '/workers/{ID}',
 		description:
-			'Retrieves worker profile via Compensation REST v3 GET /workers/{ID}.',
+			'Retrieves worker staffing profile (Staffing v6 GET /workers/{ID}).',
 		pathParams: ['ID'] as const,
 		queryParams: [] as const,
 		riskLevel: 'read' as const,

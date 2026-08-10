@@ -77,12 +77,25 @@ function parseBody(body: unknown): unknown {
 	}
 }
 
+function headerValue(
+	headers: Record<string, string | string[] | undefined>,
+	name: string,
+): string | undefined {
+	const lower = name.toLowerCase();
+	for (const [key, value] of Object.entries(headers)) {
+		if (key.toLowerCase() !== lower) continue;
+		if (Array.isArray(value)) return value[0];
+		return value;
+	}
+	return undefined;
+}
+
 export function createWorkdayEventMatch(
 	eventType: WorkdayTriggerEventName | string,
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		const headerType = request.headers['x-workday-event'];
-		if (typeof headerType === 'string' && headerType === eventType) {
+		const headerType = headerValue(request.headers, 'x-workday-event');
+		if (headerType === eventType) {
 			return true;
 		}
 		const parsed = parseBody(request.body);
@@ -98,19 +111,19 @@ export function verifyWorkdayWebhookSignature(
 ): { valid: boolean; error?: string } {
 	if (!secret) return { valid: false, error: 'No webhook secret configured' };
 
-	const signature = request.headers['x-workday-signature'];
-	if (!signature || typeof signature !== 'string') {
+	const signature = headerValue(request.headers, 'x-workday-signature');
+	if (!signature) {
 		return { valid: false, error: 'Missing x-workday-signature header' };
 	}
 
-	let bodyString: string;
-	if (typeof request.rawBody === 'string') {
-		bodyString = request.rawBody;
-	} else {
-		bodyString = JSON.stringify(request.payload);
+	if (typeof request.rawBody !== 'string') {
+		return {
+			valid: false,
+			error: 'Raw request body is required for signature verification',
+		};
 	}
 
-	const isValid = verifyHmacSignature(bodyString, secret, signature);
+	const isValid = verifyHmacSignature(request.rawBody, secret, signature);
 	if (!isValid) {
 		return { valid: false, error: 'Invalid webhook signature' };
 	}

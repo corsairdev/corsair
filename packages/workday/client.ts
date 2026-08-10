@@ -20,28 +20,36 @@ export type WorkdayConnection = {
 };
 
 const DEFAULT_HOST = 'wd2-impl-services1.workday.com';
+const HOST_PATTERN = /^[a-z0-9]([a-z0-9.-]*[a-z0-9])?(:\d{1,5})?$/i;
 
-/** Strip scheme / trailing slash; host only. */
+/** Strip scheme / trailing slash; host only (no credentials, no path). */
 export function normalizeWorkdayHost(host: string): string {
 	const trimmed = host.trim();
 	if (!trimmed) throw new Error('[workday] host is required');
-	try {
-		if (trimmed.includes('://')) {
-			const url = new URL(trimmed);
-			if (url.protocol !== 'https:') {
-				throw new Error('[workday] host must use https');
-			}
-			return url.host;
-		}
-	} catch (error) {
-		if (error instanceof Error && error.message.startsWith('[workday]')) {
-			throw error;
-		}
-	}
-	// ponytail: no /\/+$/ — CodeQL flags ReDoS on uncontrolled host input
+
 	let value = trimmed;
+	if (trimmed.includes('://')) {
+		let url: URL;
+		try {
+			url = new URL(trimmed);
+		} catch {
+			throw new Error('[workday] host is not a valid URL');
+		}
+		if (url.protocol !== 'https:') {
+			throw new Error('[workday] host must use https');
+		}
+		if (url.username || url.password) {
+			throw new Error('[workday] host must not contain credentials');
+		}
+		value = url.host;
+	}
+
+	// ponytail: no /\/+$/ — CodeQL flags ReDoS on uncontrolled host input
 	while (value.endsWith('/')) {
 		value = value.slice(0, -1);
+	}
+	if (!HOST_PATTERN.test(value)) {
+		throw new Error('[workday] host must be a bare hostname');
 	}
 	return value;
 }

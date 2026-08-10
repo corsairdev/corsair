@@ -18,7 +18,13 @@ export type WorkdayEndpoint = CorsairEndpoint<
 	unknown
 >;
 
-const BODY_CONTROL_KEYS = new Set(['body', 'query', 'headers']);
+const BODY_CONTROL_KEYS = new Set([
+	'body',
+	'query',
+	'headers',
+	'limit',
+	'offset',
+]);
 
 const PATH_ALIASES: Record<string, readonly string[]> = {
 	ID: ['ID', 'id', 'workerId', 'worker_id'],
@@ -110,11 +116,14 @@ export function requestBody(
 	const pathKeys = new Set(
 		route.pathParams.flatMap((key) => [key, ...(PATH_ALIASES[key] ?? [])]),
 	);
+	// Alias fields exist on input schemas; never send them as body content.
+	const aliasKeys = new Set(Object.values(PATH_ALIASES).flat());
 	const queryKeys = new Set(route.queryParams);
 	const body = Object.fromEntries(
 		Object.entries(input).filter(([key, value]) => {
 			return (
 				!pathKeys.has(key) &&
+				!aliasKeys.has(key) &&
 				!queryKeys.has(key) &&
 				!BODY_CONTROL_KEYS.has(key) &&
 				value !== undefined
@@ -189,12 +198,16 @@ export async function executeWorkdayOperation(
 		status = 'failed';
 		throw error;
 	} finally {
-		await logEventFromContext(
-			ctx,
-			`workday.${route.group}.${route.name}`,
-			{ method: route.method, service: route.service, path: route.path },
-			status,
-		);
+		try {
+			await logEventFromContext(
+				ctx,
+				`workday.${route.group}.${route.name}`,
+				{ method: route.method, service: route.service, path: route.path },
+				status,
+			);
+		} catch (logError) {
+			console.warn('[workday] Failed to log operation event:', logError);
+		}
 	}
 }
 

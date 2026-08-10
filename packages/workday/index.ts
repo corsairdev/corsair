@@ -910,14 +910,12 @@ export function workday<const T extends WorkdayPluginOptions>(
 	if (options.authType === 'oauth_2' && !tenant) {
 		throw new Error('[workday] options.tenant is required for oauth_2');
 	}
+	if (options.authType === 'oauth_2' && !host) {
+		throw new Error('[workday] options.host is required for oauth_2');
+	}
 
 	const oauthUrls =
-		tenant != null
-			? workdayOAuthUrls({
-					host: host ?? 'wd2-impl-services1.workday.com',
-					tenant,
-				})
-			: null;
+		tenant != null && host != null ? workdayOAuthUrls({ host, tenant }) : null;
 
 	return {
 		id: 'workday',
@@ -933,7 +931,6 @@ export function workday<const T extends WorkdayPluginOptions>(
 							'absenceManagement',
 							'recruiting',
 							'payroll',
-							'compensation',
 							'common',
 							'person',
 						],
@@ -951,9 +948,9 @@ export function workday<const T extends WorkdayPluginOptions>(
 		endpointMeta: workdayEndpointMeta,
 		endpointSchemas: workdayEndpointSchemas,
 		pluginWebhookMatcher: (request) => {
+			const keys = Object.keys(request.headers).map((k) => k.toLowerCase());
 			return (
-				'x-workday-signature' in request.headers ||
-				'x-workday-event' in request.headers
+				keys.includes('x-workday-signature') || keys.includes('x-workday-event')
 			);
 		},
 		pluginTenantWebhookMatcher: matchWorkdayTenantWebhook,
