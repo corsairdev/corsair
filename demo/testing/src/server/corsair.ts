@@ -1,4 +1,4 @@
-import dotenv from 'dotenv';
+﻿import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
@@ -7,6 +7,9 @@ import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { hubspot } from '@corsair-dev/hubspot';
+import { instagram } from '@corsair-dev/instagram';
+import { boloforms } from '@corsair-dev/boloforms';
+
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
@@ -55,6 +58,7 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		hubspot(),
+		boloforms(),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
 		}),
@@ -66,3 +70,4 @@ export const corsair = createCorsair({
 		instagram(),
 	],
 });
+
