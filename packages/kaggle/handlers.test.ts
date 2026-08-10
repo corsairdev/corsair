@@ -204,9 +204,9 @@ describe('handler path construction', () => {
 		expect(lastJsonCall()[0]).toBe('/kernels/output');
 	});
 
-	it('kernels.listOutputFiles → GET /kernels/files', async () => {
+	it('kernels.listOutputFiles → GET /kernels/output', async () => {
 		await Kernels.listOutputFiles(ctx(), { userName: 'u', kernelSlug: 'k' });
-		expect(lastJsonCall()[0]).toBe('/kernels/files');
+		expect(lastJsonCall()[0]).toBe('/kernels/output');
 	});
 
 	it('models.list → GET /models/list', async () => {

@@ -110,9 +110,12 @@ export const downloadOutput: KaggleEndpoints['kernelsDownloadOutput'] = async (
 
 export const listOutputFiles: KaggleEndpoints['kernelsListOutputFiles'] =
 	async (ctx, input) => {
+		// Kaggle /kernels/output returns the run-output artefacts (files array
+		// with GCS URLs + log). /kernels/files is a different endpoint that lists
+		// the kernel's source/input files, not its run output.
 		const result = await makeKaggleRequest<
 			KaggleEndpointOutputs['kernelsListOutputFiles']
-		>('/kernels/files', ctx.key, {
+		>('/kernels/output', ctx.key, {
 			method: 'GET',
 			query: {
 				userName: input.userName,
