@@ -108,6 +108,7 @@ export const BaseProviders = [
 	'vapi',
 	'vercel',
 	'whatsapp',
+	'wiza',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -211,6 +212,7 @@ export const ProviderDisplayNames = {
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	whatsapp: 'WhatsApp',
+	wiza: 'Wiza',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -321,6 +323,7 @@ export type AllProviders =
 	| 'vapi'
 	| 'vercel'
 	| 'whatsapp'
+	| 'wiza'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
