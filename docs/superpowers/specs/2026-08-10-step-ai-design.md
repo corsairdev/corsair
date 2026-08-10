@@ -24,11 +24,12 @@ output and never re-calls the model.
 
 ```ts
 interface AiStep {
+  // callable = freeform text
+  (name: string, opts: { input: unknown; prompt: string; model?: string }): Promise<string>;
   object<Op extends OpId, K extends keyof OpInput<Op> = keyof OpInput<Op>>(
     name: string,
     opts: { input: unknown; prompt: string; returnObject: { op: Op; pick?: readonly K[] }; model?: string },
   ): Promise<Pick<OpInput<Op>, K>>;
-  text(name: string, opts: { input: unknown; prompt: string; model?: string }): Promise<string>;
   enum<const T extends readonly string[]>(
     name: string,
     opts: { input: unknown; prompt: string; options: T; model?: string },

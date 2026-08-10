@@ -60,12 +60,12 @@ describe('step.ai — verbs', () => {
 		expect(result.steps[1].output).toBe('Bug:2');
 	});
 
-	it('text: returns a plain string', async () => {
+	it('callable: returns a plain string (text)', async () => {
 		const { ai } = stubAi({ sum: 'a short summary' });
 		const result = await run(
 			`
 			module.exports.main = async (corsair, payload, step) => {
-				const s = await step.ai.text('sum', { input: 'long thread', prompt: 'summarize' });
+				const s = await step.ai('sum', { input: 'long thread', prompt: 'summarize' });
 				await step('out', async () => s.toUpperCase());
 			};
 		`,
@@ -159,7 +159,7 @@ describe('step.ai — memoization & failure', () => {
 	it('fails clearly when step.ai is used but no ai capability is wired', async () => {
 		const result = await run(`
 			module.exports.main = async (corsair, payload, step) => {
-				await step.ai.text('sum', { input: 'x', prompt: 'p' });
+				await step.ai('sum', { input: 'x', prompt: 'p' });
 			};
 		`);
 		expect(result.status).toBe('failed');

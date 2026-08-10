@@ -48,8 +48,16 @@ export type AiStepRequest = {
  */
 export type AiStepCallback = (req: AiStepRequest) => Promise<string>;
 
-/** The `step.ai` sub-namespace. Each call is memoized like `step.run`. */
+/**
+ * The `step.ai` sub-namespace. Callable for freeform text (`step.ai(name, opts)`),
+ * with `.object`/`.enum`/`.bool` for typed inference. Each call is memoized like
+ * `step.run`.
+ */
 export interface WorkflowStepAi {
+	(
+		name: string,
+		opts: { input: unknown; prompt: string; model?: string },
+	): Promise<string>;
 	object<T = Record<string, unknown>>(
 		name: string,
 		opts: {
@@ -59,10 +67,6 @@ export interface WorkflowStepAi {
 			model?: string;
 		},
 	): Promise<T>;
-	text(
-		name: string,
-		opts: { input: unknown; prompt: string; model?: string },
-	): Promise<string>;
 	enum<const T extends readonly string[]>(
 		name: string,
 		opts: { input: unknown; prompt: string; options: T; model?: string },
@@ -306,7 +310,11 @@ function runWorkflowInSandbox(input: {
 					});
 				};
 			};
-			step.ai = { object: verb('object'), text: verb('text'), enum: verb('enum'), bool: verb('bool') };
+			const ai = verb('text');
+			ai.object = verb('object');
+			ai.enum = verb('enum');
+			ai.bool = verb('bool');
+			step.ai = ai;
 			return step;
 		})`,
 		context,
