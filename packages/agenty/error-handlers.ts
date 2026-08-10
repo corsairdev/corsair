@@ -17,7 +17,10 @@ function retryAfterMs(error: Error): number | undefined {
 		return error.retryAfter;
 	}
 	if (error instanceof AgentyAPIError) {
-		if (error.cause instanceof ApiError && typeof error.cause.retryAfter === 'number') {
+		if (
+			error.cause instanceof ApiError &&
+			typeof error.cause.retryAfter === 'number'
+		) {
 			return error.cause.retryAfter;
 		}
 		const body = error.body;
