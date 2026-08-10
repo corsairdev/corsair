@@ -1,21 +1,20 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { packAmbientWeatherCredentials } from './client';
+import { Devices } from './endpoints';
 import type {
 	AmbientWeatherEndpointInputs,
 	AmbientWeatherEndpointOutputs,
@@ -26,35 +25,28 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { AmbientWeatherSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveAmbientWeatherOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchAmbientWeatherTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	AmbientWeatherWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type AmbientWeatherPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
-	key?: string;
-	webhookSecret?: string;
+	authType?: PickAuth<'api_key'>;
 	hooks?: InternalAmbientWeatherPlugin['hooks'];
-	webhookHooks?: InternalAmbientWeatherPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
-	permissions?: PluginPermissionsConfig<typeof ambientWeatherEndpointsNested>;
+	permissions?: PluginPermissionsConfig<typeof ambientweatherEndpointsNested>;
 };
 
 export type AmbientWeatherContext = CorsairPluginContext<
 	typeof AmbientWeatherSchema,
-	AmbientWeatherPluginOptions
+	AmbientWeatherPluginOptions,
+	undefined,
+	typeof ambientweatherAuthConfig
 >;
 
-export type AmbientWeatherKeyBuilderContext =
-	KeyBuilderContext<AmbientWeatherPluginOptions>;
+export type AmbientWeatherKeyBuilderContext = KeyBuilderContext<
+	AmbientWeatherPluginOptions,
+	typeof ambientweatherAuthConfig
+>;
 
 export type AmbientWeatherBoundEndpoints = BindEndpoints<
-	typeof ambientWeatherEndpointsNested
+	typeof ambientweatherEndpointsNested
 >;
 
 type AmbientWeatherEndpoint<K extends keyof AmbientWeatherEndpointOutputs> =
@@ -65,72 +57,52 @@ type AmbientWeatherEndpoint<K extends keyof AmbientWeatherEndpointOutputs> =
 	>;
 
 export type AmbientWeatherEndpoints = {
-	exampleGet: AmbientWeatherEndpoint<'exampleGet'>;
+	devicesList: AmbientWeatherEndpoint<'devicesList'>;
+	devicesGetData: AmbientWeatherEndpoint<'devicesGetData'>;
 };
 
-type AmbientWeatherWebhook<
-	K extends keyof AmbientWeatherWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<
-	AmbientWeatherContext,
-	TEvent,
-	AmbientWeatherWebhookOutputs[K]
->;
-
-export type AmbientWeatherWebhooks = {
-	example: AmbientWeatherWebhook<'example', ExampleEvent>;
-};
-
-export type AmbientWeatherBoundWebhooks = BindWebhooks<AmbientWeatherWebhooks>;
-
-const ambientWeatherEndpointsNested = {
-	example: {
-		get: Example.get,
+const ambientweatherEndpointsNested = {
+	devices: {
+		list: Devices.list,
+		getData: Devices.getData,
 	},
 } as const;
 
-const ambientWeatherWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const ambientweatherWebhooksNested = {} as const;
 
-export const ambientWeatherEndpointSchemas = {
-	'example.get': {
-		input: AmbientWeatherEndpointInputSchemas.exampleGet,
-		output: AmbientWeatherEndpointOutputSchemas.exampleGet,
+export const ambientweatherEndpointSchemas = {
+	'devices.list': {
+		input: AmbientWeatherEndpointInputSchemas.devicesList,
+		output: AmbientWeatherEndpointOutputSchemas.devicesList,
+	},
+	'devices.getData': {
+		input: AmbientWeatherEndpointInputSchemas.devicesGetData,
+		output: AmbientWeatherEndpointOutputSchemas.devicesGetData,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
-	typeof ambientWeatherEndpointsNested
+	typeof ambientweatherEndpointsNested
 >;
 
-const ambientWeatherWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+const ambientweatherEndpointMeta = {
+	'devices.list': {
+		riskLevel: 'read',
+		description:
+			'List all Ambient Weather devices for the connected account with their latest readings',
 	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof ambientWeatherWebhooksNested
+	'devices.getData': {
+		riskLevel: 'read',
+		description:
+			'Fetch historical weather data for a specific Ambient Weather device',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof ambientweatherEndpointsNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const ambientWeatherEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
-	},
-} as const satisfies RequiredPluginEndpointMeta<
-	typeof ambientWeatherEndpointsNested
->;
-
-export const ambientWeatherAuthConfig = {
+export const ambientweatherAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['applicationKey'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -138,10 +110,11 @@ export type BaseAmbientWeatherPlugin<T extends AmbientWeatherPluginOptions> =
 	CorsairPlugin<
 		'ambientweather',
 		typeof AmbientWeatherSchema,
-		typeof ambientWeatherEndpointsNested,
-		typeof ambientWeatherWebhooksNested,
+		typeof ambientweatherEndpointsNested,
+		typeof ambientweatherWebhooksNested,
 		T,
-		typeof defaultAuthType
+		typeof defaultAuthType,
+		typeof ambientweatherAuthConfig
 	>;
 
 export type InternalAmbientWeatherPlugin =
@@ -159,65 +132,56 @@ export function ambientweather<const T extends AmbientWeatherPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'ambientweather',
-		authConfig: ambientWeatherAuthConfig,
+		authConfig: ambientweatherAuthConfig,
 		schema: AmbientWeatherSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
-		endpoints: ambientWeatherEndpointsNested,
-		webhooks: ambientWeatherWebhooksNested,
-		endpointMeta: ambientWeatherEndpointMeta,
-		endpointSchemas: ambientWeatherEndpointSchemas,
-		webhookSchemas: ambientWeatherWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-ambientweather-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchAmbientWeatherTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveAmbientWeatherOAuthWebhookTenantLink,
+		endpoints: ambientweatherEndpointsNested,
+		webhooks: ambientweatherWebhooksNested,
+		endpointMeta: ambientweatherEndpointMeta,
+		endpointSchemas: ambientweatherEndpointSchemas,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (ctx: AmbientWeatherKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
+		keyBuilder: async (ctx: AmbientWeatherKeyBuilderContext) => {
+			if (ctx.authType !== 'api_key') {
+				throw new AuthMissingError('ambientweather', 'api_key');
 			}
 
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+			const [apiKey, applicationKey] = await Promise.all([
+				ctx.keys.get_api_key(),
+				ctx.keys.get_applicationKey(),
+			]);
+
+			if (!apiKey || !applicationKey) {
+				throw new AuthMissingError('ambientweather', 'api_key');
 			}
 
-			if (source === 'endpoint' && options.key) {
-				return options.key;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			return packAmbientWeatherCredentials({ apiKey, applicationKey });
 		},
 	} satisfies InternalAmbientWeatherPlugin;
 }
 
+export {
+	AmbientWeatherAPIError,
+	AmbientWeatherCredentialsSchema,
+	AmbientWeatherRateLimitError,
+	makeAmbientWeatherRequest,
+	packAmbientWeatherCredentials,
+	parseAmbientWeatherKey,
+} from './client';
 export type {
+	AmbientWeatherDataPoint,
+	AmbientWeatherDeviceInfo,
+	AmbientWeatherDeviceListItem,
+	AmbientWeatherDeviceListResponse,
+	AmbientWeatherDevicesGetDataInput,
+	AmbientWeatherDevicesListInput,
 	AmbientWeatherEndpointInputs,
 	AmbientWeatherEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
-export type {
-	AmbientWeatherWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';

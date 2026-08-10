@@ -1,7 +1,8 @@
-import { get as exampleGet } from './example';
+import { getData, list } from './devices';
 
-export const Example = {
-	get: exampleGet,
+export const Devices = {
+	list,
+	getData,
 };
 
 export * from './types';

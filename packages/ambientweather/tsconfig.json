@@ -14,7 +14,7 @@
     "declarationMap": true,
     "skipLibCheck": true
   },
-  "include": ["./**/*"],
-  "exclude": ["dist", "node_modules"],
+  "include": ["**/*.ts"],
+  "exclude": ["**/dist/**", "**/node_modules/**", "**/*.test.ts"],
   "references": []
 }
