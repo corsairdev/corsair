@@ -53,16 +53,36 @@ const GetIslandInputSchema = z.object({
 });
 export type GetIslandInput = z.infer<typeof GetIslandInputSchema>;
 
+/** OpenAPI MetricsListQuery enum (camelCase; path segments use kebab-case). */
+const IslandMetricsFilterEnum = z.enum([
+	'averageMinutesPerPlayer',
+	'peakCCU',
+	'favorites',
+	'minutesPlayed',
+	'recommendations',
+	'plays',
+	'uniquePlayers',
+	'retention',
+]);
+
 const GetIslandMetricsByIntervalInputSchema = MetricRangeInput.extend({
-	// OpenAPI MetricsListQuery — optional filter of metric names
-	metrics: z.union([z.string(), z.array(z.string())]).optional(),
-}).catchall(z.unknown());
+	// OpenAPI MetricsListQuery — form+explode; only valid on /metrics/{interval}
+	metrics: z
+		.union([IslandMetricsFilterEnum, z.array(IslandMetricsFilterEnum)])
+		.optional(),
+});
 export type GetIslandMetricsByIntervalInput = z.infer<
 	typeof GetIslandMetricsByIntervalInputSchema
 >;
 
 const IslandMetricInputSchema = MetricRangeInput;
 export type IslandMetricInput = z.infer<typeof IslandMetricInputSchema>;
+
+/** Retention is day-only per OpenAPI (hour/minute → 404). */
+const IslandRetentionInputSchema = MetricRangeInput.extend({
+	interval: z.literal('day').optional(),
+});
+export type IslandRetentionInput = z.infer<typeof IslandRetentionInputSchema>;
 
 // ---------------------------------------------------------------------------
 // Remote Control (17) — Unreal Engine Web Remote Control HTTP API
@@ -184,15 +204,16 @@ export type CallObjectFunctionInput = z.infer<
 	typeof CallObjectFunctionInputSchema
 >;
 
-const PutObjectPropertyInputSchema = z
-	.object({
-		objectPath: z.string(),
-		// property map is free-form; keys are property names, values are UE JSON values
-		access: z.enum(['READ_ACCESS', 'WRITE_ACCESS']).optional(),
-		// unknown property bag — shape depends on which UObject properties are requested
-		propertyValues: LooseObjectSchema.optional(),
-	})
-	.catchall(z.unknown());
+const PutObjectPropertyInputSchema = z.object({
+	objectPath: z.string(),
+	/** Optional single property name (UE `propertyName`). */
+	propertyName: z.string().optional(),
+	access: z
+		.enum(['READ_ACCESS', 'WRITE_ACCESS', 'WRITE_TRANSACTION_ACCESS'])
+		.optional(),
+	// property map is free-form; keys are property names, values are UE JSON values
+	propertyValue: LooseObjectSchema.optional(),
+});
 export type PutObjectPropertyInput = z.infer<
 	typeof PutObjectPropertyInputSchema
 >;
@@ -211,13 +232,15 @@ export type ListBlueprintCallableFunctionsInput = z.infer<
 	typeof ListBlueprintCallableFunctionsInputSchema
 >;
 
-const WaitForObjectEventInputSchema = z
-	.object({
-		objectPath: z.string(),
-		// event descriptor is free-form (property name / event type) per experimental API
-		eventName: z.string().optional(),
-	})
-	.catchall(z.unknown());
+const WaitForObjectEventInputSchema = z.object({
+	objectPath: z.string(),
+	/** UE EventType (default ObjectPropertyChanged). */
+	eventType: z
+		.enum(['ObjectPropertyChanged', 'PreObjectPropertyChanged'])
+		.optional(),
+	/** UE PropertyName to watch. */
+	propertyName: z.string().optional(),
+});
 export type WaitForObjectEventInput = z.infer<
 	typeof WaitForObjectEventInputSchema
 >;
@@ -237,7 +260,7 @@ export type EpicGamesEndpointInputs = {
 	islandsGetPeakCcu: IslandMetricInput;
 	islandsGetFavorites: IslandMetricInput;
 	islandsGetRecommendations: IslandMetricInput;
-	islandsGetRetention: IslandMetricInput;
+	islandsGetRetention: IslandRetentionInput;
 
 	remoteInitiateSession: RemoteSessionInput;
 	remoteBatch: RemoteBatchInput;
@@ -275,7 +298,7 @@ export const EpicGamesEndpointInputSchemas = {
 	islandsGetPeakCcu: IslandMetricInputSchema,
 	islandsGetFavorites: IslandMetricInputSchema,
 	islandsGetRecommendations: IslandMetricInputSchema,
-	islandsGetRetention: IslandMetricInputSchema,
+	islandsGetRetention: IslandRetentionInputSchema,
 
 	remoteInitiateSession: RemoteSessionInputSchema,
 	remoteBatch: RemoteBatchInputSchema,

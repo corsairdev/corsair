@@ -188,10 +188,6 @@ export const getPresetProperty: EpicGamesEndpoints['remoteGetPresetProperty'] =
 
 export const updatePresetProperty: EpicGamesEndpoints['remoteUpdatePresetProperty'] =
 	async (ctx, input) => {
-		// PropertyValue is free-form UE JSON; client body type is Record | array.
-		// Wrap primitives so the HTTP helper always receives a Record body.
-		// cast: after typeof object guard, TS still types value as unknown from Zod
-
 		const result = await makeEpicGamesRequest<
 			EpicGamesEndpointOutputs['remoteUpdatePresetProperty']
 		>(
@@ -279,18 +275,20 @@ export const callObjectFunction: EpicGamesEndpoints['remoteCallObjectFunction'] 
 
 export const putObjectProperty: EpicGamesEndpoints['remotePutObjectProperty'] =
 	async (ctx, input) => {
-		const { objectPath, access, propertyValues, ...rest } = input;
-		// Spread free-form property bag first, then pin required keys last so a
-		// property named "objectPath" / "access" cannot overwrite the path/access.
+		// UE docs: objectPath + access + optional propertyName + nested propertyValue
 		const result = await makeEpicGamesRequest<
 			EpicGamesEndpointOutputs['remotePutObjectProperty']
 		>('/remote/object/property', ctx.key, {
 			method: 'PUT',
 			body: {
-				...(propertyValues ?? {}),
-				...rest,
-				objectPath,
-				access: access ?? 'READ_ACCESS',
+				objectPath: input.objectPath,
+				access: input.access ?? 'READ_ACCESS',
+				...(input.propertyName !== undefined
+					? { propertyName: input.propertyName }
+					: {}),
+				...(input.propertyValue !== undefined
+					? { propertyValue: input.propertyValue }
+					: {}),
 			},
 			...remoteOpts(ctx),
 		});
@@ -336,11 +334,7 @@ export const listBlueprintCallableFunctions: EpicGamesEndpoints['remoteListBluep
 			{
 				method: 'PUT',
 				// same transport as describeObject, different return shape (filtered)
-				body: {
-					objectPath: input.objectPath,
-					// request function metadata when the UE build supports it
-					access: 'READ_ACCESS',
-				},
+				body: { objectPath: input.objectPath },
 				...remoteOpts(ctx),
 			},
 		);
@@ -395,15 +389,17 @@ function extractBlueprintCallableFunctions(
 export const waitForObjectEvent: EpicGamesEndpoints['remoteWaitForObjectEvent'] =
 	async (ctx, input) => {
 		// Experimental: requires WebControl.EnableExperimentalRoutes=1 in UE.
-		const { objectPath, eventName, ...rest } = input;
+		// UE docs use PascalCase EventType / ObjectPath / PropertyName.
 		const result = await makeEpicGamesRequest<
 			EpicGamesEndpointOutputs['remoteWaitForObjectEvent']
 		>('/remote/object/event', ctx.key, {
 			method: 'PUT',
 			body: {
-				objectPath,
-				eventName,
-				...rest,
+				EventType: input.eventType ?? 'ObjectPropertyChanged',
+				ObjectPath: input.objectPath,
+				...(input.propertyName !== undefined
+					? { PropertyName: input.propertyName }
+					: {}),
 			},
 			...remoteOpts(ctx),
 		});

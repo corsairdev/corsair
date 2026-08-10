@@ -35,7 +35,7 @@ export const list: EpicGamesEndpoints['islandsList'] = async (ctx, input) => {
 			after: input.after,
 			before: input.before,
 		},
-		bearer: true,
+		bearer: Boolean(ctx.key),
 	});
 
 	await logEventFromContext(ctx, 'epicgames.islands.list', {}, 'completed');
@@ -47,7 +47,7 @@ export const get: EpicGamesEndpoints['islandsGet'] = async (ctx, input) => {
 		EpicGamesEndpointOutputs['islandsGet']
 	>(`/islands/${encodeURIComponent(input.code)}`, ctx.key, {
 		method: 'GET',
-		bearer: true,
+		bearer: Boolean(ctx.key),
 	});
 
 	await logEventFromContext(
@@ -61,28 +61,22 @@ export const get: EpicGamesEndpoints['islandsGet'] = async (ctx, input) => {
 
 export const getMetricsByInterval: EpicGamesEndpoints['islandsGetMetricsByInterval'] =
 	async (ctx, input) => {
-		const { code, interval, from, to, metrics, ...rest } = input;
-		// With explicit interval → /metrics/{interval}; default day also has /metrics
+		const { code, interval, from, to, metrics } = input;
+		// /metrics (day default) documents only from/to. metrics filter needs /metrics/{interval}.
 		const path =
 			interval === undefined
 				? `/islands/${encodeURIComponent(code)}/metrics`
 				: `/islands/${encodeURIComponent(code)}/metrics/${encodeURIComponent(interval)}`;
 
-		const metricsParam = Array.isArray(metrics) ? metrics.join(',') : metrics;
-
-		// Input schema uses .catchall(z.unknown()); query only accepts primitives.
-		const query: Record<string, string | number | boolean | undefined> = {
+		const query: Record<
+			string,
+			string | number | boolean | undefined | string[]
+		> = {
 			...metricRangeQuery({ from, to }),
-			metrics: metricsParam,
 		};
-		for (const [key, value] of Object.entries(rest)) {
-			if (
-				typeof value === 'string' ||
-				typeof value === 'number' ||
-				typeof value === 'boolean'
-			) {
-				query[key] = value;
-			}
+		if (interval !== undefined && metrics !== undefined) {
+			// OpenAPI MetricsListQuery: form + explode → metrics=a&metrics=b
+			query.metrics = Array.isArray(metrics) ? metrics : [metrics];
 		}
 
 		const result = await makeEpicGamesRequest<
@@ -90,7 +84,7 @@ export const getMetricsByInterval: EpicGamesEndpoints['islandsGetMetricsByInterv
 		>(path, ctx.key, {
 			method: 'GET',
 			query,
-			bearer: true,
+			bearer: Boolean(ctx.key),
 		});
 
 		await logEventFromContext(
@@ -123,7 +117,7 @@ async function islandMetric(
 		{
 			method: 'GET',
 			query: metricRangeQuery(input),
-			bearer: true,
+			bearer: Boolean(ctx.key),
 		},
 	);
 	await logEventFromContext(ctx, event, { code: input.code }, 'completed');

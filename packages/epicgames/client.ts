@@ -23,7 +23,8 @@ type RequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'OPTIONS';
 	// body shape varies per endpoint and is validated by callers via typed Zod input schemas
 	body?: unknown;
-	query?: Record<string, EpicGamesQueryValue>;
+	// arrays use OpenAPI form+explode (metrics=a&metrics=b) via corsair/http getQueryString
+	query?: Record<string, EpicGamesQueryValue | EpicGamesQueryValue[]>;
 	/** Override base URL (Remote Control often uses a local UE host). */
 	baseUrl?: string;
 	/** When true, send Authorization: Bearer <token>. */
@@ -72,7 +73,16 @@ export async function makeEpicGamesRequest<T>(
 		);
 		if (query) {
 			for (const [k, v] of Object.entries(query)) {
-				if (v !== undefined && v !== null) url.searchParams.set(k, String(v));
+				if (v === undefined || v === null) continue;
+				if (Array.isArray(v)) {
+					for (const item of v) {
+						if (item !== undefined && item !== null) {
+							url.searchParams.append(k, String(item));
+						}
+					}
+				} else {
+					url.searchParams.set(k, String(v));
+				}
 			}
 		}
 		const controller = new AbortController();

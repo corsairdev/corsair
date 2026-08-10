@@ -53,7 +53,7 @@ describe('Epic Games island handlers (mocked HTTP)', () => {
 			expect.objectContaining({
 				method: 'GET',
 				query: expect.objectContaining({ size: 5, after: 'cursor1' }),
-				bearer: true,
+				bearer: true, // token present
 			}),
 		);
 		expect(mockLog).toHaveBeenCalled();
@@ -83,6 +83,7 @@ describe('Epic Games island handlers (mocked HTTP)', () => {
 			interval: 'hour',
 			from: '2026-07-01T00:00:00.000Z',
 			to: '2026-07-02T00:00:00.000Z',
+			metrics: ['plays', 'peakCCU'],
 		});
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/islands/ABCD-0000/metrics/hour',
@@ -92,16 +93,40 @@ describe('Epic Games island handlers (mocked HTTP)', () => {
 				query: expect.objectContaining({
 					from: '2026-07-01T00:00:00.000Z',
 					to: '2026-07-02T00:00:00.000Z',
+					metrics: ['plays', 'peakCCU'],
 				}),
 			}),
 		);
 	});
 
+	it('islands.getMetricsByInterval omits metrics filter on /metrics (no interval)', async () => {
+		await Islands.getMetricsByInterval(mockCtx(), {
+			code: 'ABCD-0000',
+			metrics: 'plays',
+		});
+		const call = mockRequest.mock.calls.find(
+			(c) => c[0] === '/islands/ABCD-0000/metrics',
+		);
+		expect(call?.[2]).toEqual(
+			expect.objectContaining({
+				query: expect.not.objectContaining({ metrics: expect.anything() }),
+			}),
+		);
+	});
+
+	it('islands.list without token does not send Bearer', async () => {
+		await Islands.list(mockCtx({ key: '' }), { size: 1 });
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/islands',
+			'',
+			expect.objectContaining({ bearer: false }),
+		);
+	});
+
 	const metricCases: Array<{
-		// Shared island-metric handler signature (all share IntervalInput)
 		fn: (
 			ctx: EpicGamesContext,
-			input: { code: string; interval?: 'day' | 'hour' | 'minute' },
+			input: { code: string; interval?: 'day' },
 		) => Promise<unknown>;
 		segment: string;
 	}> = [
@@ -306,42 +331,53 @@ describe('Epic Games remote-control handlers (mocked HTTP)', () => {
 		);
 	});
 
-	it('putObjectProperty → PUT /remote/object/property (propertyValues bag)', async () => {
+	it('putObjectProperty → PUT /remote/object/property (nested propertyValue)', async () => {
 		await RemoteControl.putObjectProperty(mockCtx(), {
 			objectPath: '/Game/A',
 			access: 'WRITE_ACCESS',
-			propertyValues: { bHidden: true },
+			propertyName: 'bHidden',
+			propertyValue: { bHidden: true },
 		});
-		const call = mockRequest.mock.calls.find(
-			(c) => c[0] === '/remote/object/property',
-		);
-		expect(call).toBeDefined();
-		expect(call?.[2]).toEqual(
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/remote/object/property',
+			'test-token',
 			expect.objectContaining({
 				method: 'PUT',
-				body: expect.objectContaining({
+				body: {
 					objectPath: '/Game/A',
 					access: 'WRITE_ACCESS',
-					bHidden: true,
-				}),
+					propertyName: 'bHidden',
+					propertyValue: { bHidden: true },
+				},
 			}),
 		);
 	});
 
-	it('putObjectProperty pins reserved keys over propertyValues', async () => {
-		// A property literally named "objectPath" in the bag must not overwrite
-		// the real path; the handler spreads the bag first then pins reserved keys.
+	it('putObjectProperty keeps propertyValue nested (no top-level flatten)', async () => {
 		await RemoteControl.putObjectProperty(mockCtx(), {
 			objectPath: '/Game/A',
-			access: 'WRITE_ACCESS',
-			propertyValues: { objectPath: '/spoofed', bHidden: true },
+			access: 'WRITE_TRANSACTION_ACCESS',
+			propertyValue: { objectPath: '/spoofed', bHidden: true },
 		});
 		const call = mockRequest.mock.calls.find(
 			(c) => c[0] === '/remote/object/property',
 		);
-		const body = (call?.[2] as { body: { objectPath: string } }).body;
+		const body = (
+			call?.[2] as {
+				body: {
+					objectPath: string;
+					access: string;
+					propertyValue: Record<string, unknown>;
+				};
+			}
+		).body;
 		expect(body.objectPath).toBe('/Game/A');
-		expect((body as { bHidden?: boolean }).bHidden).toBe(true);
+		expect(body.access).toBe('WRITE_TRANSACTION_ACCESS');
+		expect(body.propertyValue).toEqual({
+			objectPath: '/spoofed',
+			bHidden: true,
+		});
+		expect(body).not.toHaveProperty('bHidden');
 	});
 
 	it('getObjectThumbnail → PUT /remote/object/thumbnail', async () => {
@@ -371,10 +407,7 @@ describe('Epic Games remote-control handlers (mocked HTTP)', () => {
 			'test-token',
 			expect.objectContaining({
 				method: 'PUT',
-				body: expect.objectContaining({
-					objectPath: '/Game/A',
-					access: 'READ_ACCESS',
-				}),
+				body: { objectPath: '/Game/A' },
 			}),
 		);
 		expect(result).toEqual({
@@ -430,21 +463,35 @@ describe('Epic Games remote-control handlers (mocked HTTP)', () => {
 		});
 	});
 
-	it('waitForObjectEvent → PUT /remote/object/event', async () => {
+	it('waitForObjectEvent → PUT /remote/object/event (UE PascalCase body)', async () => {
 		await RemoteControl.waitForObjectEvent(mockCtx(), {
 			objectPath: '/Game/A',
-			eventName: 'OnChanged',
+			eventType: 'ObjectPropertyChanged',
+			propertyName: 'StaticMesh',
 		});
 		expect(mockRequest).toHaveBeenCalledWith(
 			'/remote/object/event',
 			'test-token',
 			expect.objectContaining({
 				method: 'PUT',
-				body: expect.objectContaining({
-					objectPath: '/Game/A',
-					eventName: 'OnChanged',
-				}),
+				body: {
+					EventType: 'ObjectPropertyChanged',
+					ObjectPath: '/Game/A',
+					PropertyName: 'StaticMesh',
+				},
 			}),
+		);
+	});
+
+	it('remote opts default bearer to false', async () => {
+		await RemoteControl.getPreset(
+			mockCtx({ options: { remoteControlBaseUrl: 'http://127.0.0.1:30010' } }),
+			{ presetName: 'P' },
+		);
+		expect(mockRequest).toHaveBeenCalledWith(
+			'/remote/preset/P',
+			'test-token',
+			expect.objectContaining({ bearer: false }),
 		);
 	});
 });

@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -12,7 +11,6 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
 import { Islands, RemoteControl } from './endpoints';
 import type {
 	EpicGamesEndpointInputs,
@@ -418,19 +416,17 @@ export function epicgames<const T extends EpicGamesPluginOptions>(
 			};
 		})(),
 		keyBuilder: async (ctx: EpicGamesKeyBuilderContext, source) => {
+			// Fortnite Data API GETs and local UE Remote Control work without a token.
+			// Never throw for a missing OAuth token — Bearer is attached only when present.
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const token = await ctx.keys.get_access_token();
-				if (!token) {
-					throw new AuthMissingError('epicgames', 'oauth_2');
-				}
-				return token;
+				return (await ctx.keys.get_access_token()) ?? '';
 			}
 
-			throw new AuthMissingError('epicgames', 'oauth_2');
+			return '';
 		},
 	} satisfies InternalEpicGamesPlugin;
 }

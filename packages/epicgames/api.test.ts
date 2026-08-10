@@ -156,7 +156,8 @@ const FIXTURES: {
 		input: {
 			objectPath: '/Game/Map.Map:PersistentLevel.Actor',
 			access: 'READ_ACCESS',
-			propertyValues: {},
+			propertyName: 'bHidden',
+			propertyValue: { bHidden: false },
 		},
 		output: looseOut,
 	},
@@ -175,7 +176,8 @@ const FIXTURES: {
 	remoteWaitForObjectEvent: {
 		input: {
 			objectPath: '/Game/Map.Map:PersistentLevel.Actor',
-			eventName: 'OnChanged',
+			eventType: 'ObjectPropertyChanged',
+			propertyName: 'StaticMesh',
 		},
 		output: looseOut,
 	},
@@ -219,6 +221,14 @@ describe('Epic Games endpoint schemas', () => {
 		expect(parsed.success).toBe(false);
 	});
 
+	it('rejects hour interval on retention (day-only)', () => {
+		const parsed = EpicGamesEndpointInputSchemas.islandsGetRetention.safeParse({
+			code: 'x',
+			interval: 'hour',
+		});
+		expect(parsed.success).toBe(false);
+	});
+
 	it('documents Fortnite OpenAPI metric path segments', () => {
 		// /islands/{code}/metrics/{interval}/{metric}
 		const code = '3475-0071-5270';
@@ -253,7 +263,7 @@ describeIfToken('Epic Games live smoke tests', () => {
 		const parsed =
 			EpicGamesEndpointOutputSchemas.islandsList.safeParse(response);
 		expect(parsed.success).toBe(true);
-	});
+	}, 20000);
 });
 
 // Public Fortnite Data API (no OAuth required for GET). Opt-in so CI without
@@ -276,7 +286,7 @@ describePublicLive('Epic Games public Fortnite Data API', () => {
 		expect(Array.isArray((response as { data?: unknown }).data)).toBe(true);
 	}, 20000);
 
-	it('gets island metrics by interval path', async () => {
+	it('gets island + all day metric path segments', async () => {
 		const list = (await makeEpicGamesRequest('/islands', undefined, {
 			method: 'GET',
 			query: { size: 1 },
@@ -284,16 +294,56 @@ describePublicLive('Epic Games public Fortnite Data API', () => {
 		})) as { data?: Array<{ code?: string }> };
 		const code = list?.data?.[0]?.code;
 		expect(code).toBeTruthy();
-		const metrics = await makeEpicGamesRequest(
-			`/islands/${encodeURIComponent(code!)}/metrics/day/plays`,
+
+		const meta = await makeEpicGamesRequest(
+			`/islands/${encodeURIComponent(code!)}`,
 			undefined,
 			{ method: 'GET', bearer: false },
 		);
-		const parsed =
-			EpicGamesEndpointOutputSchemas.islandsGetPlays.safeParse(metrics);
-		expect(parsed.success).toBe(true);
+		expect(
+			EpicGamesEndpointOutputSchemas.islandsGet.safeParse(meta).success,
+		).toBe(true);
+
+		const metrics = [
+			'plays',
+			'unique-players',
+			'minutes-played',
+			'average-minutes-per-player',
+			'peak-ccu',
+			'favorites',
+			'recommendations',
+			'retention',
+		];
+		for (const metric of metrics) {
+			const body = await makeEpicGamesRequest(
+				`/islands/${encodeURIComponent(code!)}/metrics/day/${metric}`,
+				undefined,
+				{ method: 'GET', bearer: false },
+			);
+			expect(
+				EpicGamesEndpointOutputSchemas.islandsGetPlays.safeParse(body).success,
+			).toBe(true);
+		}
+	}, 60000);
+
+	it('rejects hour retention at the live API (OpenAPI day-only)', async () => {
+		const list = (await makeEpicGamesRequest('/islands', undefined, {
+			method: 'GET',
+			query: { size: 1 },
+			bearer: false,
+		})) as { data?: Array<{ code?: string }> };
+		const code = list?.data?.[0]?.code;
+		expect(code).toBeTruthy();
+		await expect(
+			makeEpicGamesRequest(
+				`/islands/${encodeURIComponent(code!)}/metrics/hour/retention`,
+				undefined,
+				{ method: 'GET', bearer: false },
+			),
+		).rejects.toBeTruthy();
 	}, 20000);
 });
+
 it('requires RequestId, URL, and Verb for remote batch requests', () => {
 	const schema = EpicGamesEndpointInputSchemas.remoteBatch;
 	expect(
