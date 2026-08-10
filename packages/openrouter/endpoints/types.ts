@@ -272,7 +272,7 @@ const AnthropicToolSchema = z.object({
 
 export const CreateAnthropicMessageInputSchema = z.object({
 	model: z.string(),
-	maxTokens: z.number(),
+	maxTokens: z.number().int().min(1).optional(),
 	messages: z
 		.array(
 			z.object({

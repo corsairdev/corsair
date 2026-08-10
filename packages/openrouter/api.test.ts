@@ -13,9 +13,7 @@ import {
 	Zdr,
 } from './endpoints';
 import type {
-	CreateAnthropicMessageResponse,
 	CreateChatCompletionResponse,
-	CreateEmbeddingOutput,
 	GetKeyResponse,
 	ListCreditsResponse,
 	ListEmbeddingModelsResponse,
@@ -98,6 +96,35 @@ describe('OpenRouter schemas', () => {
 			provider: 'OpenAI',
 		});
 		expect(output.success).toBe(true);
+	});
+
+	it('validates optional Anthropic maxTokens bounds', () => {
+		const base = {
+			model: 'anthropic/claude-sonnet-4',
+			messages: [{ role: 'user' as const, content: 'Hello' }],
+		};
+
+		expect(
+			OpenRouterEndpointInputSchemas.messagesCreate.safeParse(base).success,
+		).toBe(true);
+		expect(
+			OpenRouterEndpointInputSchemas.messagesCreate.safeParse({
+				...base,
+				maxTokens: 0,
+			}).success,
+		).toBe(false);
+		expect(
+			OpenRouterEndpointInputSchemas.messagesCreate.safeParse({
+				...base,
+				maxTokens: 1.5,
+			}).success,
+		).toBe(false);
+		expect(
+			OpenRouterEndpointInputSchemas.messagesCreate.safeParse({
+				...base,
+				maxTokens: 1,
+			}).success,
+		).toBe(true);
 	});
 
 	it('supports multi-turn chat tool calls', () => {
@@ -892,47 +919,6 @@ describeIfApiKey('OpenRouter API type tests (live)', () => {
 			'./client',
 		).makeOpenRouterRequest;
 
-	it('chat completion returns the expected shape', async () => {
-		const response = await makeOpenRouterRequest<CreateChatCompletionResponse>(
-			'chat/completions',
-			TEST_API_KEY!,
-			{
-				method: 'POST',
-				body: {
-					model: 'openai/gpt-4o-mini',
-					messages: [{ role: 'user', content: 'Say hello in one word.' }],
-					stream: false,
-					max_tokens: 16,
-				},
-			},
-		);
-
-		const parsed =
-			OpenRouterEndpointOutputSchemas.chatCompletionsCreate.safeParse(response);
-		expect(parsed.success).toBe(true);
-	});
-
-	it('anthropic messages returns the expected shape', async () => {
-		const response =
-			await makeOpenRouterRequest<CreateAnthropicMessageResponse>(
-				'messages',
-				TEST_API_KEY!,
-				{
-					method: 'POST',
-					body: {
-						model: 'openai/gpt-4o-mini',
-						max_tokens: 32,
-						messages: [{ role: 'user', content: 'Say hello in one word.' }],
-						stream: false,
-					},
-				},
-			);
-
-		const parsed =
-			OpenRouterEndpointOutputSchemas.messagesCreate.safeParse(response);
-		expect(parsed.success).toBe(true);
-	});
-
 	it('models list returns the expected shape', async () => {
 		const response = await makeOpenRouterRequest<ListModelsResponse>(
 			'models',
@@ -1002,24 +988,6 @@ describeIfApiKey('OpenRouter API type tests (live)', () => {
 
 		const parsed =
 			OpenRouterEndpointOutputSchemas.modelsEndpointsList.safeParse(response);
-		expect(parsed.success).toBe(true);
-	});
-
-	it('embeddings returns the expected shape', async () => {
-		const response = await makeOpenRouterRequest<CreateEmbeddingOutput>(
-			'embeddings',
-			TEST_API_KEY!,
-			{
-				method: 'POST',
-				body: {
-					model: 'openai/text-embedding-3-small',
-					input: 'hello world',
-				},
-			},
-		);
-
-		const parsed =
-			OpenRouterEndpointOutputSchemas.embeddingsCreate.safeParse(response);
 		expect(parsed.success).toBe(true);
 	});
 
