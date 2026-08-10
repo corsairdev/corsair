@@ -663,16 +663,12 @@ export const workdayRoutes = [
 		method: 'GET',
 		service: 'staffing',
 		version: 'v6',
+		// JobsApi.getCollection — only limit/offset (includeTerminatedWorkers is /workers).
 		path: '/jobs',
 		description:
-			'Retrieves a paginated collection of jobs with worker/location filters (Staffing v6).',
+			'Retrieves a paginated collection of jobs (Staffing v6 JobsApi.getCollection).',
 		pathParams: [] as const,
-		queryParams: [
-			'limit',
-			'offset',
-			'includeTerminatedWorkers',
-			'search',
-		] as const,
+		queryParams: ['limit', 'offset'] as const,
 		riskLevel: 'read' as const,
 	},
 	{
@@ -903,11 +899,11 @@ export const workdayRoutes = [
 		method: 'GET',
 		service: 'recruiting',
 		version: 'v4',
-		// Composio "my postings" walks interviews → requisitions → postings.
-		// Surface requisitions (recruiter-owned hiring needs) as the distinct REST entry.
+		// Composio resolves "my postings" via interviews → requisitions → postings.
+		// REST entry: Recruiting v4 GET /jobRequisitions (not identical to /jobPostings).
 		path: '/jobRequisitions',
 		description:
-			'Lists job requisitions for the authenticated recruiter (Recruiting v4; used to resolve assigned postings).',
+			'Lists job requisitions (Recruiting v4 GET /jobRequisitions; Composio getMyJobPostings entry).',
 		pathParams: [] as const,
 		queryParams: [
 			'limit',
@@ -1228,11 +1224,13 @@ export const workdayRoutes = [
 		group: 'worker',
 		name: 'getWorkerInfo',
 		method: 'GET',
+		// Compensation REST surface also exposes /workers/{ID} (worker profile view).
+		// Distinct from Staffing getStaffingInformation on the same path shape.
 		service: 'compensation',
 		version: 'v3',
 		path: '/workers/{ID}',
 		description:
-			'Retrieves worker profile (person details, primary job) via Compensation v3 /workers/{ID}.',
+			'Retrieves worker profile via Compensation REST v3 GET /workers/{ID}.',
 		pathParams: ['ID'] as const,
 		queryParams: [] as const,
 		riskLevel: 'read' as const,
@@ -1271,9 +1269,10 @@ export const workdayRoutes = [
 		method: 'GET',
 		service: 'staffing',
 		version: 'v6',
+		// WorkersApi.getStaffingInformation
 		path: '/workers/{ID}',
 		description:
-			'Retrieves current staffing information for a worker (Staffing v6).',
+			'Retrieves current staffing information for a worker (Staffing v6 WorkersApi.getStaffingInformation).',
 		pathParams: ['ID'] as const,
 		queryParams: [] as const,
 		riskLevel: 'read' as const,
@@ -1423,8 +1422,10 @@ export const workdayRoutes = [
 		method: 'GET',
 		service: 'staffing',
 		version: 'v6',
+		// Composio alias of JobsApi.getCollection (same as getCollectionOfJobs).
 		path: '/jobs',
-		description: 'Lists jobs (Staffing v6; limit/offset only).',
+		description:
+			'Lists jobs (Staffing v6 JobsApi.getCollection; Composio alias of getCollectionOfJobs).',
 		pathParams: [] as const,
 		queryParams: ['limit', 'offset'] as const,
 		riskLevel: 'read' as const,

@@ -578,12 +578,6 @@ export const WorkdayEndpointInputSchemas = {
 		.passthrough(),
 	getCollectionOfJobs: z
 		.object({
-			includeTerminatedWorkers: z
-				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
-				.optional(),
-			search: z
-				.union([z.string(), z.number(), z.boolean(), z.array(z.string())])
-				.optional(),
 			limit: z.number().int().min(1).max(100).optional(),
 			offset: z.number().int().min(0).optional(),
 		})
@@ -1295,7 +1289,7 @@ export const WorkdayEndpointOutputSchemas = {
 	getContingentWorkerTypes: WorkdayCollectionSchema,
 	getCountryInfo: WorkdayResourceSchema,
 	getCurrencies: WorkdayCollectionSchema,
-	getCurrentUser: WorkdayCollectionSchema,
+	getCurrentUser: WorkdayResourceSchema,
 	getGrants: WorkdayCollectionSchema,
 	getHeadcountOptions: WorkdayCollectionSchema,
 	getHistoryInstanceForWorker: WorkdayResourceSchema,

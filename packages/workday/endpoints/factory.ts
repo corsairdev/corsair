@@ -3,6 +3,7 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { WorkdayConnection } from '../client';
 import { makeWorkdayRequest, resolveWorkdayConnection } from '../client';
 import type { WorkdayContext, WorkdayKeyBuilderContext } from '../index';
+import { syncWorkdayOperationCache } from './cache-sync';
 import type { WorkdayRoute, WorkdayRouteName } from './routes';
 import { getWorkdayRoute } from './routes';
 import type { WorkdayEndpointInput, WorkdayEndpointOutputs } from './types';
@@ -179,9 +180,11 @@ export async function executeWorkdayOperation(
 			service: route.service,
 			version: route.version,
 		});
-		return WorkdayEndpointOutputSchemas[route.name as WorkdayRouteName].parse(
-			response,
-		) as WorkdayEndpointOutputs[WorkdayRouteName];
+		const parsed = WorkdayEndpointOutputSchemas[
+			route.name as WorkdayRouteName
+		].parse(response) as WorkdayEndpointOutputs[WorkdayRouteName];
+		await syncWorkdayOperationCache(ctx, route, input, parsed);
+		return parsed;
 	} catch (error) {
 		status = 'failed';
 		throw error;

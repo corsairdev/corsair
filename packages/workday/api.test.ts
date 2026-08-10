@@ -5,10 +5,22 @@ import {
 	workdayOAuthUrls,
 	workdayServiceBase,
 } from './client.js';
+import { syncWorkdayOperationCache } from './endpoints/cache-sync.js';
 import { buildQuery, requestBody, resolvePath } from './endpoints/factory.js';
 import { workdayRoutes } from './endpoints/routes.js';
 import { errorHandlers } from './error-handlers.js';
 import { workday } from './index.js';
+import {
+	WorkdayAbsenceBalance,
+	WorkdayInterview,
+	WorkdayJob,
+	WorkdayJobPosting,
+	WorkdayJobRequisition,
+	WorkdayPayrollInput,
+	WorkdayProspect,
+	WorkdaySchema,
+	WorkdayWorker,
+} from './schema/index.js';
 
 function mockJsonResponse(body: unknown, status = 200) {
 	return {
@@ -279,32 +291,158 @@ describe('Workday Plugin', () => {
 		expect(result.headersRetryAfterMs).toBe(5000);
 	});
 
-	it('uses distinct service/path/query fingerprints for previously aliased ops', () => {
-		const fingerprint = (name: string) => {
-			const route = workdayRoutes.find((r) => r.name === name);
-			expect(route).toBeDefined();
-			if (!route) return '';
-			return [
-				route.service,
-				route.version,
-				route.path,
-				[...route.queryParams].sort().join(','),
-			].join('|');
-		};
+	it('maps worker/job ops to documented Workday REST surfaces', () => {
+		const byName = Object.fromEntries(workdayRoutes.map((r) => [r.name, r]));
 
-		expect(fingerprint('getWorkerInfo')).not.toBe(
-			fingerprint('getWorkerStaffingInformation'),
+		expect(byName.getWorkerStaffingInformation).toMatchObject({
+			service: 'staffing',
+			version: 'v6',
+			path: '/workers/{ID}',
+			method: 'GET',
+		});
+		expect(byName.getWorkerInfo).toMatchObject({
+			service: 'compensation',
+			version: 'v3',
+			path: '/workers/{ID}',
+			method: 'GET',
+		});
+		// JobsApi.getCollection — Composio exposes two aliases, same docs path/params.
+		expect(byName.getCollectionOfJobs).toMatchObject({
+			service: 'staffing',
+			path: '/jobs',
+			queryParams: ['limit', 'offset'],
+		});
+		expect(byName.listJobs).toMatchObject({
+			service: 'staffing',
+			path: '/jobs',
+			queryParams: ['limit', 'offset'],
+		});
+		expect(byName.getWorkersCollectionStaffing?.queryParams).toEqual(
+			expect.arrayContaining([
+				'includeTerminatedWorkers',
+				'search',
+				'limit',
+				'offset',
+			]),
 		);
-		expect(fingerprint('getCollectionOfJobs')).not.toBe(
-			fingerprint('listJobs'),
+		expect(byName.listJobPostings?.path).toBe('/jobPostings');
+		expect(byName.getMyJobPostings?.path).toBe('/jobRequisitions');
+	});
+
+	it('declares db schema entities aligned to Workday REST resources', () => {
+		expect(WorkdaySchema.version).toMatch(/^\d+\.\d+\.\d+$/);
+		expect(Object.keys(WorkdaySchema.entities).sort()).toEqual(
+			[
+				'absenceBalances',
+				'interviews',
+				'jobPostings',
+				'jobRequisitions',
+				'jobs',
+				'payrollInputs',
+				'prospects',
+				'workers',
+			].sort(),
 		);
-		expect(fingerprint('listJobPostings')).not.toBe(
-			fingerprint('getMyJobPostings'),
+		expect(
+			WorkdayWorker.parse({ id: 'w1', descriptor: 'Ada Lovelace' }),
+		).toMatchObject({ id: 'w1', descriptor: 'Ada Lovelace' });
+		expect(WorkdayJob.parse({ id: 'j1' })).toMatchObject({ id: 'j1' });
+		expect(WorkdayJobPosting.parse({ id: 'jp1' })).toMatchObject({
+			id: 'jp1',
+		});
+		expect(WorkdayJobRequisition.parse({ id: 'jr1' })).toMatchObject({
+			id: 'jr1',
+		});
+		expect(WorkdayPayrollInput.parse({ id: 'p1' })).toMatchObject({
+			id: 'p1',
+		});
+		expect(WorkdayProspect.parse({ id: 'pr1' })).toMatchObject({ id: 'pr1' });
+		expect(WorkdayInterview.parse({ id: 'i1' })).toMatchObject({ id: 'i1' });
+		expect(WorkdayAbsenceBalance.parse({ id: 'b1' })).toMatchObject({
+			id: 'b1',
+		});
+	});
+
+	it('upserts worker cache after getWorkerStaffingInformation responses', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const route = workdayRoutes.find(
+			(r) => r.name === 'getWorkerStaffingInformation',
+		);
+		expect(route).toBeDefined();
+
+		await syncWorkdayOperationCache(
+			{
+				key: 'tok',
+				db: { workers: { upsertByEntityId } },
+			} as never,
+			route!,
+			{ ID: 'w1' },
+			{ id: 'w1', descriptor: 'Ada' },
 		);
 
-		expect(fingerprint('getWorkerInfo')).toContain(
-			'compensation|v3|/workers/{ID}',
+		expect(upsertByEntityId).toHaveBeenCalledWith('w1', {
+			id: 'w1',
+			descriptor: 'Ada',
+		});
+	});
+
+	it('does not cache worker subresources into workers entity', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const route = workdayRoutes.find(
+			(r) => r.name === 'getWorkerLeavesOfAbsence',
 		);
-		expect(fingerprint('getMyJobPostings')).toContain('/jobRequisitions');
+		expect(route).toBeDefined();
+
+		await syncWorkdayOperationCache(
+			{
+				key: 'tok',
+				db: { workers: { upsertByEntityId } },
+			} as never,
+			route!,
+			{ ID: 'w1' },
+			{ data: [{ id: 'loa-1' }] },
+		);
+
+		expect(upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('upserts job collection items into jobs cache', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const route = workdayRoutes.find((r) => r.name === 'getCollectionOfJobs');
+		expect(route).toBeDefined();
+
+		await syncWorkdayOperationCache(
+			{
+				key: 'tok',
+				db: { jobs: { upsertByEntityId } },
+			} as never,
+			route!,
+			{ limit: 2 },
+			{ data: [{ id: 'j1' }, { id: 'j2' }], total: 2 },
+		);
+
+		expect(upsertByEntityId).toHaveBeenCalledWith('j1', { id: 'j1' });
+		expect(upsertByEntityId).toHaveBeenCalledWith('j2', { id: 'j2' });
+	});
+
+	it('caches getMyJobPostings into jobRequisitions (Recruiting v4)', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const route = workdayRoutes.find((r) => r.name === 'getMyJobPostings');
+		expect(route).toBeDefined();
+
+		await syncWorkdayOperationCache(
+			{
+				key: 'tok',
+				db: { jobRequisitions: { upsertByEntityId } },
+			} as never,
+			route!,
+			{ limit: 1 },
+			{ data: [{ id: 'jr-1', descriptor: 'Eng Req' }] },
+		);
+
+		expect(upsertByEntityId).toHaveBeenCalledWith('jr-1', {
+			id: 'jr-1',
+			descriptor: 'Eng Req',
+		});
 	});
 });
