@@ -51,4 +51,6 @@ module.exports = {
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 120000,
 	verbose: true,
+	// MCP Streamable HTTP leaves sockets open briefly after client.close().
+	forceExit: true,
 };

@@ -137,7 +137,8 @@ const apifyMcpEndpointMeta = {
 	},
 	'runs.getActorOutput': {
 		riskLevel: 'read',
-		description: 'Retrieve full output from an Actor run dataset',
+		description:
+			'Retrieve dataset items from an Actor run (Apify MCP get-dataset-items)',
 	},
 	'docs.searchApifyDocs': {
 		riskLevel: 'read',

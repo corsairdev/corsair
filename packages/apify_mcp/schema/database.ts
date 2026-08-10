@@ -10,8 +10,10 @@ export const ApifyMcpActor = z.object({
 
 export const ApifyMcpActorRun = z.object({
 	id: z.string().optional(),
+	runId: z.string().optional(),
 	status: z.string().optional(),
 	actorId: z.string().optional(),
+	actorName: z.string().optional(),
 	datasetId: z.string().optional(),
 	startedAt: z.coerce.date().nullable().optional(),
 	finishedAt: z.coerce.date().nullable().optional(),

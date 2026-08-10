@@ -5,14 +5,36 @@ import { ApifyMcpEndpointOutputSchemas } from './endpoints/types';
 const TEST_API_KEY =
 	process.env.APIFY_TOKEN || process.env.APIFY_API_KEY || undefined;
 
-describe('Apify MCP API Type Tests', () => {
+const describeLive = TEST_API_KEY ? describe : describe.skip;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+function readString(record: Record<string, unknown>, keys: string[]) {
+	for (const key of keys) {
+		const value = record[key];
+		if (typeof value === 'string' && value.length > 0) return value;
+	}
+	return undefined;
+}
+
+function readDatasetId(record: Record<string, unknown>) {
+	const direct = readString(record, ['datasetId', 'defaultDatasetId']);
+	if (direct) return direct;
+
+	const storages = record.storages;
+	if (!isRecord(storages)) return undefined;
+	const datasets = storages.datasets;
+	if (!isRecord(datasets)) return undefined;
+	const defaults = datasets.default;
+	if (!isRecord(defaults)) return undefined;
+	return readString(defaults, ['id']);
+}
+
+describeLive('Apify MCP API Type Tests', () => {
 	describe('actors', () => {
 		it('searchActors returns a valid response', async () => {
-			if (!TEST_API_KEY) {
-				console.warn('Skipping: APIFY_TOKEN not set');
-				return;
-			}
-
 			const response = await callApifyMcpTool(
 				'search-actors',
 				{ search: 'google search', limit: 2 },
@@ -21,14 +43,19 @@ describe('Apify MCP API Type Tests', () => {
 
 			ApifyMcpEndpointOutputSchemas.searchActors.parse(response);
 			expect(response).toBeDefined();
+			if (Array.isArray(response)) {
+				expect(response.length).toBeGreaterThan(0);
+			} else if (isRecord(response)) {
+				const items = Array.isArray(response.items)
+					? response.items
+					: Array.isArray(response.actors)
+						? response.actors
+						: null;
+				if (items) expect(items.length).toBeGreaterThan(0);
+			}
 		});
 
 		it('fetchActorDetails returns a valid response', async () => {
-			if (!TEST_API_KEY) {
-				console.warn('Skipping: APIFY_TOKEN not set');
-				return;
-			}
-
 			const response = await callApifyMcpTool(
 				'fetch-actor-details',
 				{
@@ -40,14 +67,24 @@ describe('Apify MCP API Type Tests', () => {
 
 			ApifyMcpEndpointOutputSchemas.fetchActorDetails.parse(response);
 			expect(response).toBeDefined();
+			expect(isRecord(response)).toBe(true);
 		});
 
-		it('ragWebBrowser returns a valid response', async () => {
-			if (!TEST_API_KEY) {
-				console.warn('Skipping: APIFY_TOKEN not set');
-				return;
-			}
+		it('callActor returns a valid response', async () => {
+			const response = await callApifyMcpTool(
+				'call-actor',
+				{
+					actor: 'apify/rag-web-browser',
+					input: { query: 'corsair apify mcp', maxResults: 1 },
+				},
+				TEST_API_KEY,
+			);
 
+			ApifyMcpEndpointOutputSchemas.callActor.parse(response);
+			expect(response).toBeDefined();
+		}, 120000);
+
+		it('ragWebBrowser returns a valid response', async () => {
 			const response = await callApifyMcpTool(
 				'apify/rag-web-browser',
 				{ query: 'Apify MCP server', maxResults: 1 },
@@ -61,11 +98,6 @@ describe('Apify MCP API Type Tests', () => {
 
 	describe('docs', () => {
 		it('searchApifyDocs returns a valid response', async () => {
-			if (!TEST_API_KEY) {
-				console.warn('Skipping: APIFY_TOKEN not set');
-				return;
-			}
-
 			const response = await callApifyMcpTool(
 				'search-apify-docs',
 				{ query: 'actor runs', docSource: 'apify' },
@@ -77,11 +109,6 @@ describe('Apify MCP API Type Tests', () => {
 		});
 
 		it('fetchApifyDocs returns a valid response', async () => {
-			if (!TEST_API_KEY) {
-				console.warn('Skipping: APIFY_TOKEN not set');
-				return;
-			}
-
 			const response = await callApifyMcpTool(
 				'fetch-apify-docs',
 				{ url: 'https://docs.apify.com/platform/integrations/mcp' },
@@ -95,24 +122,20 @@ describe('Apify MCP API Type Tests', () => {
 
 	describe('runs', () => {
 		it('getActorRun and getActorOutput return valid responses', async () => {
-			if (!TEST_API_KEY) {
-				console.warn('Skipping: APIFY_TOKEN not set');
-				return;
-			}
-
 			const run = await callApifyMcpTool<Record<string, unknown>>(
-				'apify/rag-web-browser',
-				{ query: 'corsair integrations', maxResults: 1 },
+				'call-actor',
+				{
+					actor: 'apify/rag-web-browser',
+					input: { query: 'corsair integrations', maxResults: 1 },
+				},
 				TEST_API_KEY,
 			);
 
+			ApifyMcpEndpointOutputSchemas.callActor.parse(run);
+
 			const runId =
-				(typeof run.id === 'string' && run.id) ||
-				(typeof run.runId === 'string' && run.runId) ||
-				(isRecord(run.data) &&
-					typeof run.data.id === 'string' &&
-					run.data.id) ||
-				undefined;
+				readString(run, ['id', 'runId']) ||
+				(isRecord(run.data) ? readString(run.data, ['id', 'runId']) : undefined);
 
 			expect(runId).toBeTruthy();
 
@@ -122,28 +145,27 @@ describe('Apify MCP API Type Tests', () => {
 				TEST_API_KEY,
 			);
 			ApifyMcpEndpointOutputSchemas.getActorRun.parse(runDetails);
+			expect(runDetails).toBeDefined();
 
+			const details = isRecord(runDetails) ? runDetails : {};
 			const datasetId =
-				(isRecord(runDetails) && typeof runDetails.datasetId === 'string'
-					? runDetails.datasetId
-					: undefined) ||
-				(typeof run.datasetId === 'string' ? run.datasetId : undefined);
+				readDatasetId(details) ||
+				readDatasetId(run) ||
+				(isRecord(run.data) ? readDatasetId(run.data) : undefined);
 
-			if (!datasetId) {
-				console.warn('Skipping getActorOutput: datasetId not available yet');
-				return;
-			}
+			expect(datasetId).toBeTruthy();
 
 			const output = await callApifyMcpTool(
-				'get-actor-output',
-				{ datasetId, limit: 1 },
+				'get-dataset-items',
+				{ datasetId: datasetId!, limit: 1 },
 				TEST_API_KEY,
 			);
 			ApifyMcpEndpointOutputSchemas.getActorOutput.parse(output);
-		}, 120000);
+			expect(output).toBeDefined();
+			expect(isRecord(output)).toBe(true);
+			expect(Array.isArray((output as Record<string, unknown>).items)).toBe(
+				true,
+			);
+		}, 180000);
 	});
 });
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-	return typeof value === 'object' && value !== null && !Array.isArray(value);
-}

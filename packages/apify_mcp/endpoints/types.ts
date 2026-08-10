@@ -27,6 +27,7 @@ export const FetchActorDetailsInputSchema = z.object({
 
 export const CallActorInputSchema = z.object({
 	actor: z.string().min(1).describe('Actor ID or full name (username/name)'),
+	// Actor input schemas differ per Actor; values stay unknown until Actor-specific validation.
 	input: z
 		.record(z.string(), z.unknown())
 		.optional()
@@ -46,7 +47,12 @@ export const GetActorRunInputSchema = z.object({
 });
 
 export const GetActorOutputInputSchema = z.object({
-	datasetId: z.string().min(1).describe('Dataset ID from an Actor run'),
+	datasetId: z
+		.string()
+		.min(1)
+		.describe(
+			'Dataset ID from an Actor run (storages.datasets.default.id)',
+		),
 	limit: z.number().int().positive().max(1000).optional(),
 	offset: z.number().int().nonnegative().optional(),
 	fields: z.string().optional(),

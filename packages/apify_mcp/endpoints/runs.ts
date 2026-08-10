@@ -18,10 +18,11 @@ export const getActorOutput: ApifyMcpEndpoints['getActorOutput'] = async (
 	ctx,
 	input,
 ) => {
+	// Hosted Apify MCP tool is get-dataset-items (get-actor-output was removed).
 	return executeApifyMcpTool(
 		ctx,
 		'apify_mcp.runs.getActorOutput',
-		'get-actor-output',
+		'get-dataset-items',
 		input,
 		{ cache: 'actorOutput', datasetId: input.datasetId, requireAuth: true },
 	);

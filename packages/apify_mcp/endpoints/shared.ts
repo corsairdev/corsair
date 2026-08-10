@@ -33,9 +33,10 @@ async function cacheActors(ctx: ApifyMcpContext, response: unknown) {
 	}
 
 	for (const item of items) {
+		// Prefer stable ids; never key by bare `name` (collides across publishers).
 		const entityId =
-			readEntityId(item, ['id', 'actorId', 'name', 'username']) ??
-			(typeof item.name === 'string' && typeof item.username === 'string'
+			readEntityId(item, ['id', 'actorId']) ??
+			(typeof item.username === 'string' && typeof item.name === 'string'
 				? `${item.username}/${item.name}`
 				: undefined);
 		if (!entityId) continue;
@@ -47,6 +48,18 @@ async function cacheActors(ctx: ApifyMcpContext, response: unknown) {
 	}
 }
 
+function readDefaultDatasetId(response: Record<string, unknown>) {
+	const direct = readEntityId(response, ['datasetId', 'defaultDatasetId']);
+	if (direct) return direct;
+	const storages = response.storages;
+	if (!isRecord(storages)) return undefined;
+	const datasets = storages.datasets;
+	if (!isRecord(datasets)) return undefined;
+	const defaults = datasets.default;
+	if (!isRecord(defaults)) return undefined;
+	return readEntityId(defaults, ['id']);
+}
+
 // `unknown` because run metadata shape varies by Actor and run state.
 async function cacheActorRun(ctx: ApifyMcpContext, response: unknown) {
 	if (!ctx.db.actorRuns?.upsertByEntityId || !isRecord(response)) return;
@@ -54,8 +67,11 @@ async function cacheActorRun(ctx: ApifyMcpContext, response: unknown) {
 	const entityId = readEntityId(response, ['id', 'runId', 'run_id']);
 	if (!entityId) return;
 
+	const datasetId = readDefaultDatasetId(response);
+	const payload = datasetId ? { ...response, datasetId } : response;
+
 	try {
-		await ctx.db.actorRuns.upsertByEntityId(entityId, response);
+		await ctx.db.actorRuns.upsertByEntityId(entityId, payload);
 	} catch (error) {
 		console.warn('[apify_mcp] Failed to cache actor run:', error);
 	}
