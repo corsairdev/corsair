@@ -209,3 +209,6 @@ state.txt
 **/fixtures
 
 .mcp.json
+
+# design specs / plans stay local
+docs/superpowers/
