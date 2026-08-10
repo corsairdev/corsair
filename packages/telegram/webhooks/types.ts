@@ -265,9 +265,8 @@ export function verifyTelegramWebhookSignature(
 	secretToken: string,
 ): { valid: boolean; error?: string } {
 	if (!secretToken) {
-		// No secret configured — skip verification (valid deployment scenario)
-		return { valid: true };
-	}
+    return { valid: false, error: 'Missing webhook secret' };
+}
 
 	const headers = request.headers;
 	const providedToken = Array.isArray(
