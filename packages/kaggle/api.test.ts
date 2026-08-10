@@ -38,7 +38,12 @@ const FIXTURES: {
 		output: [{ ref: 'owner/slug', title: 'Titanic' }],
 	},
 	datasetsCreate: {
-		input: { title: 'My Dataset', id: 'user/my-dataset', isPrivate: true },
+		input: {
+			ownerSlug: 'user',
+			slug: 'my-dataset',
+			title: 'My Dataset',
+			isPrivate: true,
+		},
 		output: { status: 'ok', ref: 'user/my-dataset' },
 	},
 	datasetsCreateVersion: {
@@ -100,9 +105,10 @@ const FIXTURES: {
 	},
 	competitionsGenerateSubmissionUrl: {
 		input: {
-			id: 'titanic',
+			competitionName: 'titanic',
 			contentLength: 1024,
-			lastModifiedDateUtc: 1700000000,
+			lastModifiedEpochSeconds: 1700000000,
+			fileName: 'sub.csv',
 		},
 		output: { createUrl: 'https://example.com/upload', token: 'tok' },
 	},
@@ -244,10 +250,10 @@ describeIfCreds('Kaggle API live smoke tests (list endpoints only)', () => {
 		expect(parsed.success).toBe(true);
 	});
 
-	it('lists models (GET /models)', async () => {
+	it('lists models (GET /models/list)', async () => {
 		const response = await makeKaggleRequest<
 			KaggleEndpointOutputs['modelsList']
-		>('/models', TEST_CREDENTIAL!, {
+		>('/models/list', TEST_CREDENTIAL!, {
 			method: 'GET',
 			query: { pageSize: 5 },
 		});

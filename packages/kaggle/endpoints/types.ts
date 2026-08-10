@@ -47,18 +47,17 @@ export type ListDatasetsInput = z.infer<typeof ListDatasetsInputSchema>;
 
 const CreateDatasetInputSchema = z
 	.object({
-		// Dataset creation body — free-form metadata + file tokens per Kaggle create API.
-		// keys/values depend on title, licenses, resources, and prior upload tokens.
-		id: z.string(),
+		// Dataset creation body — fields mapped to Kaggle's create/new API.
+		ownerSlug: z.string(),
+		slug: z.string(),
 		title: z.string(),
 		subtitle: z.string().optional(),
 		description: z.string().optional(),
 		isPrivate: z.boolean().optional(),
+		// Free-form license name (e.g. "CC0-1.0").
+		licenseName: z.string().optional(),
 		// free-form resource/file token list — shape depends on prior uploads
 		files: z.array(LooseObjectSchema).optional(),
-		// free-form licenses array — license identifiers vary
-		licenses: z.array(LooseObjectSchema).optional(),
-		// remaining create fields are passthrough (owner slug, keywords, etc.)
 	})
 	.catchall(z.unknown());
 export type CreateDatasetInput = z.infer<typeof CreateDatasetInputSchema>;
@@ -168,9 +167,10 @@ export type DownloadCompetitionLeaderboardInput = z.infer<
 >;
 
 const GenerateCompetitionSubmissionUrlInputSchema = z.object({
-	id: z.string(),
+	competitionName: z.string(),
 	contentLength: z.number(),
-	lastModifiedDateUtc: z.number(),
+	lastModifiedEpochSeconds: z.number(),
+	fileName: z.string(),
 });
 export type GenerateCompetitionSubmissionUrlInput = z.infer<
 	typeof GenerateCompetitionSubmissionUrlInputSchema

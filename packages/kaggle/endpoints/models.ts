@@ -4,9 +4,9 @@ import type { KaggleEndpoints } from '../index';
 import type { KaggleEndpointOutputs } from './types';
 
 export const list: KaggleEndpoints['modelsList'] = async (ctx, input) => {
-	// Kaggle v1: GET /models (no /list suffix — /models/list 404s)
+	// Kaggle v1: GET /models/list (verified live — returns 200)
 	const result = await makeKaggleRequest<KaggleEndpointOutputs['modelsList']>(
-		'/models',
+		'/models/list',
 		ctx.key,
 		{
 			method: 'GET',
@@ -26,9 +26,9 @@ export const list: KaggleEndpoints['modelsList'] = async (ctx, input) => {
 };
 
 export const get: KaggleEndpoints['modelsGet'] = async (ctx, input) => {
-	// Kaggle v1: GET /models/{ownerSlug}/{modelSlug} (no /get prefix)
+	// Kaggle v1: GET /models/{ownerSlug}/{modelSlug}/get (verified live — 200)
 	const result = await makeKaggleRequest<KaggleEndpointOutputs['modelsGet']>(
-		`/models/${input.ownerSlug}/${input.modelSlug}`,
+		`/models/${input.ownerSlug}/${input.modelSlug}/get`,
 		ctx.key,
 		{ method: 'GET', username: ctx.options.username },
 	);
@@ -46,11 +46,11 @@ export const getInstance: KaggleEndpoints['modelsGetInstance'] = async (
 	ctx,
 	input,
 ) => {
-	// Kaggle v1: GET /models/{owner}/{model}/{framework}/{instance} (no trailing /get)
+	// Kaggle v1: GET /models/{owner}/{model}/{framework}/{instance}/get (verified live — 400 on bad slug, /get variant exists)
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['modelsGetInstance']
 	>(
-		`/models/${input.ownerSlug}/${input.modelSlug}/${input.framework}/${input.instanceSlug}`,
+		`/models/${input.ownerSlug}/${input.modelSlug}/${input.framework}/${input.instanceSlug}/get`,
 		ctx.key,
 		{ method: 'GET', username: ctx.options.username },
 	);

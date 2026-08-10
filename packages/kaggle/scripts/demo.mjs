@@ -159,8 +159,8 @@ async function main() {
 	});
 
 	await tryStep('models.list', async () => {
-		section('4/4  models.list  GET /models');
-		const data = await request('/models', { query: { pageSize: 5 } });
+		section('4/4  models.list  GET /models/list');
+		const data = await request('/models/list', { query: { pageSize: 5 } });
 		const rows = Array.isArray(data)
 			? data
 			: (data?.list ?? data?.results ?? []);

@@ -34,7 +34,18 @@ export const create: KaggleEndpoints['datasetsCreate'] = async (ctx, input) => {
 		KaggleEndpointOutputs['datasetsCreate']
 	>('/datasets/create/new', ctx.key, {
 		method: 'POST',
-		body: input,
+		// Map the internal metadata shape to the Kaggle wire fields expected by
+		// POST /datasets/create/new: ownerSlug, slug, title, licenseName, files.
+		body: {
+			ownerSlug: input.ownerSlug,
+			slug: input.slug,
+			title: input.title,
+			subtitle: input.subtitle,
+			description: input.description,
+			isPrivate: input.isPrivate,
+			licenseName: input.licenseName,
+			files: input.files,
+		},
 		username: ctx.options.username,
 	});
 
@@ -68,10 +79,10 @@ export const getMetadata: KaggleEndpoints['datasetsGetMetadata'] = async (
 	ctx,
 	input,
 ) => {
-	// Kaggle v1: GET /datasets/{ownerSlug}/{datasetSlug} (no /view infix)
+	// Kaggle v1: GET /datasets/metadata/{ownerSlug}/{datasetSlug} (verified live — 403 with invalid creds, route exists)
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['datasetsGetMetadata']
-	>(`/datasets/${input.ownerSlug}/${input.datasetSlug}`, ctx.key, {
+	>(`/datasets/metadata/${input.ownerSlug}/${input.datasetSlug}`, ctx.key, {
 		method: 'GET',
 		username: ctx.options.username,
 	});
@@ -109,11 +120,10 @@ export const listFiles: KaggleEndpoints['datasetsListFiles'] = async (
 	ctx,
 	input,
 ) => {
-	// Kaggle v1: GET /datasets/{ownerSlug}/{datasetSlug}/files
-	// (not /datasets/list/{owner}/{slug}, which collides with the bulk list route)
+	// Kaggle v1: GET /datasets/list/{ownerSlug}/{datasetSlug} (verified live — 403 with invalid creds, route exists)
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['datasetsListFiles']
-	>(`/datasets/${input.ownerSlug}/${input.datasetSlug}/files`, ctx.key, {
+	>(`/datasets/list/${input.ownerSlug}/${input.datasetSlug}`, ctx.key, {
 		method: 'GET',
 		query: {
 			datasetVersionNumber: input.datasetVersionNumber,

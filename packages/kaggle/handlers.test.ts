@@ -59,21 +59,34 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('datasets.getMetadata → GET /datasets/{owner}/{slug}', async () => {
+	it('datasets.getMetadata → GET /datasets/metadata/{owner}/{slug}', async () => {
 		await Datasets.getMetadata(ctx(), {
 			ownerSlug: 'owner',
 			datasetSlug: 'slug',
 		});
-		expect(lastJsonCall()[0]).toBe('/datasets/owner/slug');
+		expect(lastJsonCall()[0]).toBe('/datasets/metadata/owner/slug');
 	});
 
-	it('datasets.create → POST /datasets/create/new', async () => {
+	it('datasets.create → POST /datasets/create/new with wire-mapped body', async () => {
 		await Datasets.create(ctx(), {
-			id: 'owner/slug',
+			ownerSlug: 'owner',
+			slug: 'slug',
 			title: 'Dataset',
 			isPrivate: true,
 		});
-		expect(lastJsonCall()[0]).toBe('/datasets/create/new');
+		expect(mockReq).toHaveBeenCalledWith(
+			'/datasets/create/new',
+			'user:key',
+			expect.objectContaining({
+				method: 'POST',
+				body: expect.objectContaining({
+					ownerSlug: 'owner',
+					slug: 'slug',
+					title: 'Dataset',
+					isPrivate: true,
+				}),
+			}),
+		);
 	});
 
 	it('datasets.createVersion → POST /datasets/create/version/{owner}/{slug}', async () => {
@@ -93,12 +106,12 @@ describe('handler path construction', () => {
 		expect(lastJsonCall()[0]).toBe('/datasets/status/owner/slug');
 	});
 
-	it('datasets.listFiles → GET /datasets/{owner}/{slug}/files', async () => {
+	it('datasets.listFiles → GET /datasets/list/{owner}/{slug}', async () => {
 		await Datasets.listFiles(ctx(), {
 			ownerSlug: 'owner',
 			datasetSlug: 'slug',
 		});
-		expect(lastJsonCall()[0]).toBe('/datasets/owner/slug/files');
+		expect(lastJsonCall()[0]).toBe('/datasets/list/owner/slug');
 	});
 
 	it('competitions.list → GET /competitions/list', async () => {
@@ -111,9 +124,9 @@ describe('handler path construction', () => {
 		expect(lastJsonCall()[0]).toBe('/competitions/data/list/titanic');
 	});
 
-	it('competitions.viewLeaderboard → GET /competitions/leaderboard/view/{id}', async () => {
+	it('competitions.viewLeaderboard → GET /competitions/{id}/leaderboard/view', async () => {
 		await Competitions.viewLeaderboard(ctx(), { id: 'titanic' });
-		expect(lastJsonCall()[0]).toBe('/competitions/leaderboard/view/titanic');
+		expect(lastJsonCall()[0]).toBe('/competitions/titanic/leaderboard/view');
 	});
 
 	it('competitions.downloadFile uses binary client', async () => {
@@ -128,18 +141,24 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('competitions.generateSubmissionUrl path + competitionName body', async () => {
+	it('competitions.generateSubmissionUrl posts to submission-url with metadata body', async () => {
 		await Competitions.generateSubmissionUrl(ctx(), {
-			id: 'titanic',
+			competitionName: 'titanic',
 			contentLength: 1024,
-			lastModifiedDateUtc: 1700000000,
+			lastModifiedEpochSeconds: 1700000000,
+			fileName: 'sub.csv',
 		});
 		expect(mockReq).toHaveBeenCalledWith(
-			'/competitions/submissions/url/1024/1700000000',
+			'/competitions/submission-url',
 			'user:key',
 			expect.objectContaining({
 				method: 'POST',
-				body: { competitionName: 'titanic' },
+				body: {
+					competitionName: 'titanic',
+					contentLength: 1024,
+					lastModifiedEpochSeconds: 1700000000,
+					fileName: 'sub.csv',
+				},
 			}),
 		);
 	});
@@ -190,27 +209,27 @@ describe('handler path construction', () => {
 		expect(lastJsonCall()[0]).toBe('/kernels/files');
 	});
 
-	it('models.list → GET /models', async () => {
+	it('models.list → GET /models/list', async () => {
 		await Models.list(ctx(), { search: 'bert' });
-		expect(lastJsonCall()[0]).toBe('/models');
+		expect(lastJsonCall()[0]).toBe('/models/list');
 	});
 
-	it('models.get → GET /models/{owner}/{slug}', async () => {
+	it('models.get → GET /models/{owner}/{slug}/get', async () => {
 		await Models.get(ctx(), {
 			ownerSlug: 'google',
 			modelSlug: 'bert',
 		});
-		expect(lastJsonCall()[0]).toBe('/models/google/bert');
+		expect(lastJsonCall()[0]).toBe('/models/google/bert/get');
 	});
 
-	it('models.getInstance → GET /models/{owner}/{slug}/{fw}/{instance}', async () => {
+	it('models.getInstance → GET /models/{owner}/{slug}/{fw}/{instance}/get', async () => {
 		await Models.getInstance(ctx(), {
 			ownerSlug: 'google',
 			modelSlug: 'bert',
 			framework: 'tf',
 			instanceSlug: 'base',
 		});
-		expect(lastJsonCall()[0]).toBe('/models/google/bert/tf/base');
+		expect(lastJsonCall()[0]).toBe('/models/google/bert/tf/base/get');
 	});
 
 	it('competitions.downloadFiles uses binary client', async () => {
@@ -254,7 +273,7 @@ describe('handler path construction', () => {
 	it('competitions.downloadLeaderboard uses binary client', async () => {
 		await Competitions.downloadLeaderboard(ctx(), { id: 'titanic' });
 		expect(mockBin).toHaveBeenCalledWith(
-			'/competitions/leaderboard/download/titanic',
+			'/competitions/titanic/leaderboard/download',
 			'user:key',
 			expect.objectContaining({ method: 'GET' }),
 		);

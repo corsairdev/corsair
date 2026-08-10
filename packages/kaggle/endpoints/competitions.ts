@@ -86,7 +86,7 @@ export const viewLeaderboard: KaggleEndpoints['competitionsViewLeaderboard'] =
 	async (ctx, input) => {
 		const result = await makeKaggleRequest<
 			KaggleEndpointOutputs['competitionsViewLeaderboard']
-		>(`/competitions/leaderboard/view/${input.id}`, ctx.key, {
+		>(`/competitions/${input.id}/leaderboard/view`, ctx.key, {
 			method: 'GET',
 			username: ctx.options.username,
 		});
@@ -103,7 +103,7 @@ export const viewLeaderboard: KaggleEndpoints['competitionsViewLeaderboard'] =
 export const downloadLeaderboard: KaggleEndpoints['competitionsDownloadLeaderboard'] =
 	async (ctx, input) => {
 		const result = await makeKaggleBinaryRequest(
-			`/competitions/leaderboard/download/${input.id}`,
+			`/competitions/${input.id}/leaderboard/download`,
 			ctx.key,
 			{ method: 'GET', username: ctx.options.username },
 		);
@@ -122,13 +122,18 @@ export const generateSubmissionUrl: KaggleEndpoints['competitionsGenerateSubmiss
 		const result = await makeKaggleRequest<
 			KaggleEndpointOutputs['competitionsGenerateSubmissionUrl']
 		>(
-			// Kaggle v1: POST /competitions/submissions/url/{contentLength}/{lastModifiedDateUtc}
-			// Competition slug belongs in the body as competitionName (not a path segment).
-			`/competitions/submissions/url/${encodeURIComponent(String(input.contentLength))}/${encodeURIComponent(String(input.lastModifiedDateUtc))}`,
+			// Kaggle v1: POST /competitions/submission-url
+			// Competition slug + upload metadata belong in the body (not the path).
+			'/competitions/submission-url',
 			ctx.key,
 			{
 				method: 'POST',
-				body: { competitionName: input.id },
+				body: {
+					competitionName: input.competitionName,
+					contentLength: input.contentLength,
+					lastModifiedEpochSeconds: input.lastModifiedEpochSeconds,
+					fileName: input.fileName,
+				},
 				username: ctx.options.username,
 			},
 		);
@@ -136,7 +141,7 @@ export const generateSubmissionUrl: KaggleEndpoints['competitionsGenerateSubmiss
 		await logEventFromContext(
 			ctx,
 			'kaggle.competitions.generateSubmissionUrl',
-			{ competitionId: input.id },
+			{ competitionId: input.competitionName },
 			'completed',
 		);
 		return result;

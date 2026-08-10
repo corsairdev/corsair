@@ -156,7 +156,9 @@ export async function makeKaggleBinaryRequest(
 	}
 
 	if (!res.ok) {
-		const text = await res.text();
+		const rawText = await res.text();
+		// Cap the error body so a huge error response isn't retained in memory.
+		const text = rawText.slice(0, 4096);
 		// Forward rate-limit headers so error-handlers RATE_LIMIT_ERROR can back off.
 		const retryAfterHeader = res.headers.get('retry-after');
 		let retryAfterMs: number | undefined;
@@ -177,7 +179,9 @@ export async function makeKaggleBinaryRequest(
 		throw new ApiError(
 			{ method, url: endpoint },
 			{
-				url: url.toString(),
+				// Store only the path (strip query params) so API secrets that may
+				// appear in query strings never leak into the error object.
+				url: endpoint,
 				ok: false,
 				status: res.status,
 				statusText: res.statusText,
