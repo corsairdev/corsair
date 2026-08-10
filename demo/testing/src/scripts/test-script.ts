@@ -19,6 +19,22 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
+	if (process.env.AYRSHARE_API_KEY) {
+		const schedule = await corsair.ayrshare.autoSchedule.set({
+			schedule: ['13:05Z', '20:14Z'],
+			title: 'corsair-test',
+			daysOfWeek: [1, 3],
+		});
+		console.log('Ayrshare schedule set:', schedule.title);
+		console.log('Ayrshare schedules:', await corsair.ayrshare.autoSchedule.list({}));
+		console.log('Ayrshare history:', await corsair.ayrshare.posts.history({ lastRecords: 10 }));
+		if (process.env.AYRSHARE_TEST_POST_ID) {
+			console.log('Ayrshare post deleted:', await corsair.ayrshare.posts.delete({
+				id: process.env.AYRSHARE_TEST_POST_ID,
+				markManualDeleted: process.env.AYRSHARE_MARK_MANUAL_DELETED === 'true',
+			}));
+		}
+	}
 	const res = await corsair.slack.api.messages.post({
 		channel: 'general',
 		text: 'hello',

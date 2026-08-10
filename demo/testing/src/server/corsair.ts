@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
+import { ayrshare } from '@corsair-dev/ayrshare';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -57,6 +58,10 @@ export const corsair = createCorsair({
 		hubspot(),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
+		}),
+		ayrshare({
+			key: process.env.AYRSHARE_API_KEY,
+			profileKey: process.env.AYRSHARE_PROFILE_KEY,
 		}),
 		twilio(),
 		vapi({

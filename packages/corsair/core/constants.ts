@@ -26,6 +26,7 @@ export const BaseProviders = [
 	'amplitude',
 	'apilabz',
 	'asana',
+	'ayrshare',
 	'bitwarden',
 	'bluesky',
 	'box',
@@ -130,6 +131,7 @@ export const ProviderDisplayNames = {
 	amplitude: 'Amplitude',
 	apilabz: 'API Labz',
 	asana: 'Asana',
+	ayrshare: 'Ayrshare',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	box: 'Box',
@@ -241,6 +243,7 @@ export type AllProviders =
 	| 'amplitude'
 	| 'apilabz'
 	| 'asana'
+	| 'ayrshare'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'box'
