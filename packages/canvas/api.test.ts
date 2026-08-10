@@ -5,6 +5,7 @@ import {
 	normalizeCanvasBaseUrl,
 	resolvePath,
 } from './client';
+import { syncCanvasOperationCache } from './endpoints/cache-sync';
 import { createCanvasEndpoint } from './endpoints/factory';
 import type {
 	CanvasOperation,
@@ -19,6 +20,7 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { canvas } from './index';
+import { CanvasSchema } from './schema';
 import {
 	accountIdFromAccountsList,
 	resolveCanvasOAuthWebhookTenantLink,
@@ -139,6 +141,99 @@ const mockCtx = {
 	logEvent: jest.fn(),
 	db: {},
 };
+
+describe('Canvas db schema + cache sync', () => {
+	it('declares LMS core entities on the plugin schema', () => {
+		expect(Object.keys(CanvasSchema.entities).sort()).toEqual(
+			['accounts', 'assignments', 'courses', 'enrollments', 'users'].sort(),
+		);
+	});
+
+	it('upserts course cache after getSingleCourse responses', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const route = canvasRoutes.find((r) => r.key === 'getSingleCourse');
+		expect(route).toBeDefined();
+
+		await syncCanvasOperationCache(
+			{
+				key: 'tok',
+				db: { courses: { upsertByEntityId } },
+			} as never,
+			route!,
+			{ pathParams: { course_id: '1' } },
+			{ id: 1, name: 'Bio 101' },
+		);
+
+		expect(upsertByEntityId).toHaveBeenCalledWith('1', {
+			id: 1,
+			name: 'Bio 101',
+		});
+	});
+
+	it('does not cache course subresources into courses entity', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const route = canvasRoutes.find((r) => r.key === 'getCoursePermissions');
+		expect(route).toBeDefined();
+
+		await syncCanvasOperationCache(
+			{
+				key: 'tok',
+				db: { courses: { upsertByEntityId } },
+			} as never,
+			route!,
+			{ pathParams: { course_id: '1' } },
+			{ read_roster: true },
+		);
+
+		expect(upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('upserts assignment list items into assignments cache', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const route = canvasRoutes.find((r) => r.key === 'getAllAssignments');
+		expect(route).toBeDefined();
+
+		await syncCanvasOperationCache(
+			{
+				key: 'tok',
+				db: { assignments: { upsertByEntityId } },
+			} as never,
+			route!,
+			{ pathParams: { course_id: '9' } },
+			[
+				{ id: 1, name: 'HW1' },
+				{ id: 2, name: 'HW2' },
+			],
+		);
+
+		expect(upsertByEntityId).toHaveBeenCalledWith('1', {
+			id: 1,
+			name: 'HW1',
+		});
+		expect(upsertByEntityId).toHaveBeenCalledWith('2', {
+			id: 2,
+			name: 'HW2',
+		});
+	});
+
+	it('deletes assignment cache using pathParams.assignment_id', async () => {
+		const deleteByEntityId = jest.fn().mockResolvedValue(true);
+		const route = canvasRoutes.find((r) => r.key === 'deleteAssignment');
+		expect(route).toBeDefined();
+
+		await syncCanvasOperationCache(
+			{
+				key: 'tok',
+				db: { assignments: { deleteByEntityId } },
+			} as never,
+			route!,
+			{ pathParams: { course_id: '9', assignment_id: '42' } },
+			{ id: 42, workflow_state: 'deleted' },
+		);
+
+		expect(deleteByEntityId).toHaveBeenCalledWith('42');
+	});
+});
 
 describe('Canvas plugin shape', () => {
 	it('registers every operation with matching schemas and meta', () => {

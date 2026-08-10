@@ -1,8 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CanvasEndpoints, CanvasKeyBuilderContext } from '..';
 import { makeCanvasRequest } from '../client';
+import { syncCanvasOperationCache } from './cache-sync';
 import type { CanvasOperationName } from './operations';
 import { canvasOperations } from './operations';
+import { getCanvasRoute } from './routes';
 import type { CanvasEndpointInputs, CanvasEndpointOutputs } from './types';
 import {
 	CanvasEndpointInputSchemas,
@@ -47,6 +49,7 @@ export function createCanvasEndpoint<K extends CanvasOperationName>(
 		const parsed = CanvasEndpointOutputSchemas[name].parse(
 			response,
 		) as CanvasEndpointOutputs[K];
+		await syncCanvasOperationCache(ctx, getCanvasRoute(name), input, parsed);
 		// Avoid logging raw input (may include tokens / PII in body/query/pathParams).
 		await logEventFromContext(
 			ctx,

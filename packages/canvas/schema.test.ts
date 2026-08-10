@@ -5,7 +5,14 @@ import {
 	CanvasEndpointInputSchemas,
 	CanvasEndpointOutputSchemas,
 } from './endpoints/types';
-import { CanvasSchema } from './schema';
+import {
+	CanvasAccount,
+	CanvasAssignment,
+	CanvasCourse,
+	CanvasEnrollment,
+	CanvasSchema,
+	CanvasUser,
+} from './schema';
 import {
 	createCanvasMatch,
 	verifyCanvasWebhookSignature,
@@ -17,13 +24,29 @@ describe('Canvas schema', () => {
 		expect(CanvasSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof CanvasSchema.entities).toBe('object');
-		expect(CanvasSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(CanvasSchema.entities))).toBe(true);
-		for (const entity of Object.values(CanvasSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares db schema entities aligned to Canvas REST resources', () => {
+		expect(Object.keys(CanvasSchema.entities).sort()).toEqual(
+			['accounts', 'assignments', 'courses', 'enrollments', 'users'].sort(),
+		);
+		expect(CanvasCourse.parse({ id: 1, name: 'Bio' })).toMatchObject({
+			id: 1,
+			name: 'Bio',
+		});
+		expect(CanvasAccount.parse({ id: 2, name: 'Root' })).toMatchObject({
+			id: 2,
+			name: 'Root',
+		});
+		expect(CanvasUser.parse({ id: 3, name: 'Ada' })).toMatchObject({
+			id: 3,
+			name: 'Ada',
+		});
+		expect(CanvasAssignment.parse({ id: 4, name: 'HW1' })).toMatchObject({
+			id: 4,
+			name: 'HW1',
+		});
+		expect(
+			CanvasEnrollment.parse({ id: 5, user_id: 3, course_id: 1 }),
+		).toMatchObject({ id: 5, user_id: 3, course_id: 1 });
 	});
 });
 
