@@ -12,8 +12,8 @@ Each plugin lives under `docs/plugins/<plugin>/`:
 
 ```text
 docs/plugins/<plugin>/
-├── main.mdx              # Hub: overview, setup, auth, quickstarts, links to reference
-├── api-endpoints.mdx     # Deterministic reference: all API operations, inputs, outputs
+├── overview.mdx          # Hub: overview, setup, auth, quickstarts, links to reference
+├── api.mdx               # Deterministic reference: all API operations, inputs, outputs
 ├── webhooks.mdx          # Deterministic reference: events, payloads, handler I/O
 └── database.mdx          # Deterministic reference: synced entities, schema, DB API
 ```
@@ -24,7 +24,7 @@ Some integrations need extra narrative depth. These are **optional** and sit bes
 
 | File | When to add |
 |------|-------------|
-| `get-credentials.mdx` | Long provider-dashboard walkthroughs (scopes, redirect URLs, screenshots) that would clutter `main.mdx`. |
+| `get-credentials.mdx` | Long provider-dashboard walkthroughs (scopes, redirect URLs, screenshots) that would clutter `overview.mdx`. |
 
 The Slack docs use `get-credentials` where helpful; the **four-page skeleton** still applies—treat optional files as supplements.
 
@@ -50,7 +50,7 @@ Plugins **subset** these types; only document modes the plugin actually implemen
 
 ---
 
-## Page 1: `main.mdx` (hub)
+## Page 1: `overview.mdx` (hub)
 
 **Purpose:** Onboarding and orientation—not a full endpoint list.
 
@@ -74,13 +74,13 @@ Plugins **subset** these types; only document modes the plugin actually implemen
 6. **Webhooks (high level)** — Route handler using `processWebhook`, tiny `webhookHooks` sample, table of **event keys** (names only); link to `webhooks.mdx` for payloads.
 7. **Plugin options** — Code block + table: option name, TypeScript type, description (`authType`, hooks, webhookHooks, errorHandlers, optional inline secrets, etc.).
 8. **Multi-tenancy** (if applicable) — `withTenant`, webhook URL query params.
-9. **What’s next** (`<Cards>`) — Links to `api-endpoints`, `webhooks`, `database`, and optional `get-credentials`.
+9. **What’s next** (`<Cards>`) — Links to `api`, `webhooks`, `database`, and optional `get-credentials`.
 
 **Tone:** Task-focused, like the Slack hub—not a parameter-by-parameter dump (that belongs on reference pages).
 
 ---
 
-## Page 2: `api-endpoints.mdx`
+## Page 2: `api.mdx`
 
 **Purpose:** Complete, **deterministic** reference for HTTP-backed operations exposed as `corsair.<plugin>.api.<group>.<method>(…)`.
 
@@ -161,7 +161,7 @@ If the plugin exposes **generated** or **Zod** types for `data`, reference them 
 
 Below is a **minimal outline** you can copy when adding a new plugin. Replace `<Plugin>`, `<plugin>`, and examples with real values.
 
-### `main.mdx` (outline)
+### `overview.mdx` (outline)
 
 - Frontmatter: title `<Plugin>`, description.
 - Intro bullets: what users get.
@@ -169,7 +169,7 @@ Below is a **minimal outline** you can copy when adding a new plugin. Replace `<
 - Tabs: `api_key` (or `bot_token`) vs `oauth_2` setup commands.
 - One API example; Tabs for API vs DB; short webhook section + event table; plugin options table; Cards to other pages.
 
-### `api-endpoints.mdx` (outline)
+### `api.mdx` (outline)
 
 - Intro callouts.
 - For each `resource.method`: heading, id, example, **Input** table, **Output** type/shape.
@@ -186,8 +186,8 @@ Below is a **minimal outline** you can copy when adding a new plugin. Replace `<
 
 ## Relationship to automation
 
-- **`api-endpoints.mdx`**, **`webhooks.mdx`**, and **`database.mdx`** should be treated as **machine-generated or machine-verifiable** from plugin metadata (schemas, operation lists, entity definitions).
-- **`main.mdx`** stays **human-first** (or templated with small manifest data): positioning, setup narrative, and cross-links.
+- **`api.mdx`**, **`webhooks.mdx`**, and **`database.mdx`** should be treated as **machine-generated or machine-verifiable** from plugin metadata (schemas, operation lists, entity definitions).
+- **`overview.mdx`** stays **human-first** (or templated with small manifest data): positioning, setup narrative, and cross-links.
 
 Keeping this split makes it possible to regenerate reference pages on every plugin change without rewriting the hub.
 
@@ -199,10 +199,10 @@ The Slack plugin illustrates the four-page model plus optional depth:
 
 | Standard file | Slack example |
 |---------------|-----------------|
-| Hub | [`slack/main.mdx`](./slack/main.mdx) |
-| API | [`slack/api-endpoints.mdx`](./slack/api-endpoints.mdx) |
+| Hub | [`slack/overview.mdx`](./slack/overview.mdx) |
+| API | [`slack/api.mdx`](./slack/api.mdx) |
 | Webhooks | [`slack/webhooks.mdx`](./slack/webhooks.mdx) |
 | Database | [`slack/database.mdx`](./slack/database.mdx) |
 | Optional | [`slack/get-credentials.mdx`](./slack/get-credentials.mdx) |
 
-New plugins should implement at least the **four standard files**; add optional pages when onboarding would otherwise be too long for `main.mdx`.
+New plugins should implement at least the **four standard files**; add optional pages when onboarding would otherwise be too long for `overview.mdx`.

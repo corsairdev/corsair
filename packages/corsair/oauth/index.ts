@@ -20,7 +20,10 @@ import {
 	requireCorsairPlugin,
 } from '../core/utils/corsair-instance';
 import { createCorsairOrm } from '../db/orm';
-import { registerHubWebhookTenantLink } from '../hub/report-connection-status';
+import {
+	registerHubWebhookTenantLink,
+	reportPluginConnectionStatus,
+} from '../hub/report-connection-status';
 import { resolveOAuthWebhookTenantLink } from '../webhooks/resolve-oauth-tenant-link';
 import { setWebhookTenantLink } from '../webhooks/tenant-links';
 import { buildOAuthAuthorizeUrl } from './authorize-url';
@@ -214,12 +217,22 @@ export type ProcessOAuthCallbackOptions = {
 	/** Required when `trusted` is true. Ignored otherwise (state is decoded). */
 	plugin?: string;
 	tenantId?: string;
+	// Provider callback params (e.g. GitHub's installation_id) absent from the token body.
+	callbackParams?: Record<string, string>;
 };
 
 export type ProcessOAuthCallbackResult = {
 	plugin: string;
 	tenantId: string;
 };
+
+// Token body wins on collision; callback params only fill gaps.
+export function mergeOAuthProviderData(
+	tokens: Record<string, unknown>,
+	callbackParams?: Record<string, string>,
+): Record<string, unknown> {
+	return { ...(callbackParams ?? {}), ...tokens };
+}
 
 /**
  * Completes the OAuth flow by exchanging the authorization code for tokens
@@ -342,11 +355,20 @@ export async function processOAuthCallback(
 		);
 	}
 
+	// Ack the stored token to Hub so the grid and list_connections flip to
+	// connected. The webhook-link and subscribe blocks below only add inbound
+	// routing — connection status must not depend on either.
+	await reportPluginConnectionStatus(corsair, {
+		plugin,
+		tenantId,
+	}).catch(() => {});
+
 	try {
+		const providerData = mergeOAuthProviderData(tokens, options.callbackParams);
 		const tenantLink = await resolveOAuthWebhookTenantLink(
 			internal.plugins,
 			pluginId,
-			tokens,
+			providerData,
 		);
 		if (tenantLink) {
 			try {
