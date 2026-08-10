@@ -100,6 +100,33 @@ export const getLatestByPostalCode: AmbeeEndpoints['airQualityGetLatestByPostalC
 	};
 
 /**
+ * Latest air quality for the monitoring stations across a whole country.
+ *
+ * API: GET api.ambeedata.com/latest/by-country-code
+ * Docs: https://docs.ambeedata.com/apis/air-quality
+ */
+export const getLatestByCountryCode: AmbeeEndpoints['airQualityGetLatestByCountryCode'] =
+	async (ctx, input) => {
+		const raw = await makeAmbeeRequest<AirQualityStationsResponse>(
+			'latest/by-country-code',
+			ctx.key,
+			{ query: { countryCode: input.countryCode } },
+		);
+
+		const response = AirQualityStationsResponseSchema.parse(raw);
+
+		await persistAirQualityStations(ctx, response.stations);
+		await logEventFromContext(
+			ctx,
+			'ambee.airQuality.getLatestByCountryCode',
+			{ countryCode: input.countryCode },
+			'completed',
+		);
+
+		return response;
+	};
+
+/**
  * Hourly historical air quality for a coordinate pair (up to 48 hours per
  * request).
  *

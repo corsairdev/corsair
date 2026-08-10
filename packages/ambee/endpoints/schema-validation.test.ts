@@ -142,6 +142,64 @@ describe('output schemas', () => {
 		const outputKeys = Object.keys(AmbeeEndpointOutputSchemas).sort();
 
 		expect(inputKeys).toEqual(outputKeys);
-		expect(inputKeys).toHaveLength(18);
+		expect(inputKeys).toHaveLength(29);
+	});
+
+	it('restricts the disasters continent filter to Ambee’s codes', () => {
+		expect(
+			AmbeeEndpointInputSchemas.disastersGetLatestByContinent.safeParse({
+				continent: 'NAR',
+			}).success,
+		).toBe(true);
+		expect(
+			AmbeeEndpointInputSchemas.disastersGetLatestByContinent.safeParse({
+				continent: 'Atlantis',
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects non-positive pagination values on the disasters endpoints', () => {
+		expect(
+			AmbeeEndpointInputSchemas.disastersGetLatestByCountryCode.safeParse({
+				countryCode: 'IND',
+				page: 0,
+			}).success,
+		).toBe(false);
+		expect(
+			AmbeeEndpointInputSchemas.disastersGetLatestByCountryCode.safeParse({
+				countryCode: 'IND',
+				page: 2,
+				limit: 50,
+			}).success,
+		).toBe(true);
+	});
+
+	it('accepts a disasters payload under either `result` or `data`', () => {
+		expect(
+			AmbeeEndpointOutputSchemas.disastersGetLatestByLatLng.safeParse({
+				message: 'success',
+				result: [{ event_type: 'EQ' }],
+			}).success,
+		).toBe(true);
+		expect(
+			AmbeeEndpointOutputSchemas.disastersGetLatestByLatLng.safeParse({
+				message: 'success',
+				data: [{ event_type: 'FL' }],
+			}).success,
+		).toBe(true);
+	});
+
+	it('makes `to` optional only on the global disasters history endpoint', () => {
+		expect(
+			AmbeeEndpointInputSchemas.disastersGetHistoryByDateRange.safeParse({
+				from: '2026-07-01 15:00:00',
+			}).success,
+		).toBe(true);
+		expect(
+			AmbeeEndpointInputSchemas.disastersGetHistoryByCountryCode.safeParse({
+				countryCode: 'IND',
+				from: '2026-07-01 15:00:00',
+			}).success,
+		).toBe(false);
 	});
 });

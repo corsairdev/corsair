@@ -12,7 +12,16 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AirQuality, Fire, Geocode, Pollen, Weather } from './endpoints';
+import {
+	AirQuality,
+	Disasters,
+	Elevation,
+	Fire,
+	Geocode,
+	Ili,
+	Pollen,
+	Weather,
+} from './endpoints';
 import type {
 	AmbeeEndpointInputs,
 	AmbeeEndpointOutputs,
@@ -75,6 +84,7 @@ export type AmbeeEndpoints = {
 	airQualityGetLatestByLatLng: AmbeeEndpoint<'airQualityGetLatestByLatLng'>;
 	airQualityGetLatestByCity: AmbeeEndpoint<'airQualityGetLatestByCity'>;
 	airQualityGetLatestByPostalCode: AmbeeEndpoint<'airQualityGetLatestByPostalCode'>;
+	airQualityGetLatestByCountryCode: AmbeeEndpoint<'airQualityGetLatestByCountryCode'>;
 	airQualityGetHistoryByLatLng: AmbeeEndpoint<'airQualityGetHistoryByLatLng'>;
 	airQualityGetHistoryByPostalCode: AmbeeEndpoint<'airQualityGetHistoryByPostalCode'>;
 	airQualityGetForecastByLatLng: AmbeeEndpoint<'airQualityGetForecastByLatLng'>;
@@ -88,6 +98,16 @@ export type AmbeeEndpoints = {
 	fireGetLatestByPlace: AmbeeEndpoint<'fireGetLatestByPlace'>;
 	fireGetRiskByLatLng: AmbeeEndpoint<'fireGetRiskByLatLng'>;
 	fireGetRiskByPlace: AmbeeEndpoint<'fireGetRiskByPlace'>;
+	elevationGetByLatLng: AmbeeEndpoint<'elevationGetByLatLng'>;
+	elevationGetByPlace: AmbeeEndpoint<'elevationGetByPlace'>;
+	iliGetForecastByLatLng: AmbeeEndpoint<'iliGetForecastByLatLng'>;
+	disastersGetLatestByLatLng: AmbeeEndpoint<'disastersGetLatestByLatLng'>;
+	disastersGetLatestByCountryCode: AmbeeEndpoint<'disastersGetLatestByCountryCode'>;
+	disastersGetLatestByContinent: AmbeeEndpoint<'disastersGetLatestByContinent'>;
+	disastersGetHistoryByLatLng: AmbeeEndpoint<'disastersGetHistoryByLatLng'>;
+	disastersGetHistoryByCountryCode: AmbeeEndpoint<'disastersGetHistoryByCountryCode'>;
+	disastersGetHistoryByContinent: AmbeeEndpoint<'disastersGetHistoryByContinent'>;
+	disastersGetHistoryByDateRange: AmbeeEndpoint<'disastersGetHistoryByDateRange'>;
 	geocodeByPlace: AmbeeEndpoint<'geocodeByPlace'>;
 	geocodeReverseByLatLng: AmbeeEndpoint<'geocodeReverseByLatLng'>;
 };
@@ -101,6 +121,7 @@ const ambeeEndpointsNested = {
 		getLatestByLatLng: AirQuality.getLatestByLatLng,
 		getLatestByCity: AirQuality.getLatestByCity,
 		getLatestByPostalCode: AirQuality.getLatestByPostalCode,
+		getLatestByCountryCode: AirQuality.getLatestByCountryCode,
 		getHistoryByLatLng: AirQuality.getHistoryByLatLng,
 		getHistoryByPostalCode: AirQuality.getHistoryByPostalCode,
 		getForecastByLatLng: AirQuality.getForecastByLatLng,
@@ -120,6 +141,22 @@ const ambeeEndpointsNested = {
 		getLatestByPlace: Fire.getLatestByPlace,
 		getRiskByLatLng: Fire.getRiskByLatLng,
 		getRiskByPlace: Fire.getRiskByPlace,
+	},
+	elevation: {
+		getByLatLng: Elevation.getByLatLng,
+		getByPlace: Elevation.getByPlace,
+	},
+	ili: {
+		getForecastByLatLng: Ili.getForecastByLatLng,
+	},
+	disasters: {
+		getLatestByLatLng: Disasters.getLatestByLatLng,
+		getLatestByCountryCode: Disasters.getLatestByCountryCode,
+		getLatestByContinent: Disasters.getLatestByContinent,
+		getHistoryByLatLng: Disasters.getHistoryByLatLng,
+		getHistoryByCountryCode: Disasters.getHistoryByCountryCode,
+		getHistoryByContinent: Disasters.getHistoryByContinent,
+		getHistoryByDateRange: Disasters.getHistoryByDateRange,
 	},
 	geocode: {
 		byPlace: Geocode.byPlace,
@@ -146,6 +183,10 @@ export const ambeeEndpointSchemas = {
 	'airQuality.getLatestByPostalCode': {
 		input: AmbeeEndpointInputSchemas.airQualityGetLatestByPostalCode,
 		output: AmbeeEndpointOutputSchemas.airQualityGetLatestByPostalCode,
+	},
+	'airQuality.getLatestByCountryCode': {
+		input: AmbeeEndpointInputSchemas.airQualityGetLatestByCountryCode,
+		output: AmbeeEndpointOutputSchemas.airQualityGetLatestByCountryCode,
 	},
 	'airQuality.getHistoryByLatLng': {
 		input: AmbeeEndpointInputSchemas.airQualityGetHistoryByLatLng,
@@ -199,6 +240,46 @@ export const ambeeEndpointSchemas = {
 		input: AmbeeEndpointInputSchemas.fireGetRiskByPlace,
 		output: AmbeeEndpointOutputSchemas.fireGetRiskByPlace,
 	},
+	'elevation.getByLatLng': {
+		input: AmbeeEndpointInputSchemas.elevationGetByLatLng,
+		output: AmbeeEndpointOutputSchemas.elevationGetByLatLng,
+	},
+	'elevation.getByPlace': {
+		input: AmbeeEndpointInputSchemas.elevationGetByPlace,
+		output: AmbeeEndpointOutputSchemas.elevationGetByPlace,
+	},
+	'ili.getForecastByLatLng': {
+		input: AmbeeEndpointInputSchemas.iliGetForecastByLatLng,
+		output: AmbeeEndpointOutputSchemas.iliGetForecastByLatLng,
+	},
+	'disasters.getLatestByLatLng': {
+		input: AmbeeEndpointInputSchemas.disastersGetLatestByLatLng,
+		output: AmbeeEndpointOutputSchemas.disastersGetLatestByLatLng,
+	},
+	'disasters.getLatestByCountryCode': {
+		input: AmbeeEndpointInputSchemas.disastersGetLatestByCountryCode,
+		output: AmbeeEndpointOutputSchemas.disastersGetLatestByCountryCode,
+	},
+	'disasters.getLatestByContinent': {
+		input: AmbeeEndpointInputSchemas.disastersGetLatestByContinent,
+		output: AmbeeEndpointOutputSchemas.disastersGetLatestByContinent,
+	},
+	'disasters.getHistoryByLatLng': {
+		input: AmbeeEndpointInputSchemas.disastersGetHistoryByLatLng,
+		output: AmbeeEndpointOutputSchemas.disastersGetHistoryByLatLng,
+	},
+	'disasters.getHistoryByCountryCode': {
+		input: AmbeeEndpointInputSchemas.disastersGetHistoryByCountryCode,
+		output: AmbeeEndpointOutputSchemas.disastersGetHistoryByCountryCode,
+	},
+	'disasters.getHistoryByContinent': {
+		input: AmbeeEndpointInputSchemas.disastersGetHistoryByContinent,
+		output: AmbeeEndpointOutputSchemas.disastersGetHistoryByContinent,
+	},
+	'disasters.getHistoryByDateRange': {
+		input: AmbeeEndpointInputSchemas.disastersGetHistoryByDateRange,
+		output: AmbeeEndpointOutputSchemas.disastersGetHistoryByDateRange,
+	},
 	'geocode.byPlace': {
 		input: AmbeeEndpointInputSchemas.geocodeByPlace,
 		output: AmbeeEndpointOutputSchemas.geocodeByPlace,
@@ -230,6 +311,11 @@ const ambeeEndpointMeta = {
 	'airQuality.getLatestByPostalCode': {
 		riskLevel: 'read',
 		description: 'Get the latest air quality for a postal code and country',
+	},
+	'airQuality.getLatestByCountryCode': {
+		riskLevel: 'read',
+		description:
+			'Get the latest air quality for the monitoring stations across a country',
 	},
 	'airQuality.getHistoryByLatLng': {
 		riskLevel: 'read',
@@ -295,6 +381,52 @@ const ambeeEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Get the wildfire risk forecast for a named place (up to 4 weeks ahead)',
+	},
+	'elevation.getByLatLng': {
+		riskLevel: 'read',
+		description: 'Get the ground elevation at a latitude/longitude',
+	},
+	'elevation.getByPlace': {
+		riskLevel: 'read',
+		description: 'Get the ground elevation for a named place',
+	},
+	'ili.getForecastByLatLng': {
+		riskLevel: 'read',
+		description:
+			'Get the daily influenza-like-illness risk forecast for a latitude/longitude',
+	},
+	'disasters.getLatestByLatLng': {
+		riskLevel: 'read',
+		description:
+			'Get the latest natural disasters near a latitude/longitude (paginated)',
+	},
+	'disasters.getLatestByCountryCode': {
+		riskLevel: 'read',
+		description: 'Get the latest natural disasters in a country (paginated)',
+	},
+	'disasters.getLatestByContinent': {
+		riskLevel: 'read',
+		description: 'Get the latest natural disasters on a continent (paginated)',
+	},
+	'disasters.getHistoryByLatLng': {
+		riskLevel: 'read',
+		description:
+			'Get historical natural disasters near a latitude/longitude over a date range (paginated)',
+	},
+	'disasters.getHistoryByCountryCode': {
+		riskLevel: 'read',
+		description:
+			'Get historical natural disasters in a country over a date range (paginated)',
+	},
+	'disasters.getHistoryByContinent': {
+		riskLevel: 'read',
+		description:
+			'Get historical natural disasters on a continent over a date range (paginated)',
+	},
+	'disasters.getHistoryByDateRange': {
+		riskLevel: 'read',
+		description:
+			'Get historical natural disasters worldwide over a date range (paginated)',
 	},
 	'geocode.byPlace': {
 		riskLevel: 'read',
@@ -403,6 +535,7 @@ export type {
 	AirQualityGetHistoryByLatLngInput,
 	AirQualityGetHistoryByPostalCodeInput,
 	AirQualityGetLatestByCityInput,
+	AirQualityGetLatestByCountryCodeInput,
 	AirQualityGetLatestByLatLngInput,
 	AirQualityGetLatestByPostalCodeInput,
 	AirQualityReading,
@@ -411,6 +544,19 @@ export type {
 	AirQualityStationsResponse,
 	AmbeeEndpointInputs,
 	AmbeeEndpointOutputs,
+	DisasterEvent,
+	DisasterResponse,
+	DisastersGetHistoryByContinentInput,
+	DisastersGetHistoryByCountryCodeInput,
+	DisastersGetHistoryByDateRangeInput,
+	DisastersGetHistoryByLatLngInput,
+	DisastersGetLatestByContinentInput,
+	DisastersGetLatestByCountryCodeInput,
+	DisastersGetLatestByLatLngInput,
+	ElevationGetByLatLngInput,
+	ElevationGetByPlaceInput,
+	ElevationReading,
+	ElevationResponse,
 	FireEvent,
 	FireGetLatestByLatLngInput,
 	FireGetLatestByPlaceInput,
@@ -423,6 +569,9 @@ export type {
 	GeocodeResponse,
 	GeocodeResult,
 	GeocodeReverseByLatLngInput,
+	IliForecastEntry,
+	IliForecastResponse,
+	IliGetForecastByLatLngInput,
 	PollenGetForecastInput,
 	PollenGetHistoryInput,
 	PollenGetLatestInput,

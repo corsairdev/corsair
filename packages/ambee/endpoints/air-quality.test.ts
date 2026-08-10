@@ -6,6 +6,7 @@ import {
 	getHistoryByLatLng,
 	getHistoryByPostalCode,
 	getLatestByCity,
+	getLatestByCountryCode,
 	getLatestByLatLng,
 	getLatestByPostalCode,
 } from './air-quality';
@@ -175,6 +176,27 @@ describe('airQuality.getLatestByPostalCode', () => {
 			'latest/by-postal-code',
 			'test-key',
 			{ query: { postalCode: '560020', countryCode: 'IND' } },
+		);
+	});
+});
+
+describe('airQuality.getLatestByCountryCode', () => {
+	it('calls latest/by-country-code and persists the returned stations', async () => {
+		mockRequest.mockResolvedValue(STATIONS_RESPONSE);
+
+		await getLatestByCountryCode(makeCtx(), { countryCode: 'IND' });
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'latest/by-country-code',
+			'test-key',
+			{ query: { countryCode: 'IND' } },
+		);
+		expect(upsertByEntityId).toHaveBeenCalledTimes(1);
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			expect.anything(),
+			'ambee.airQuality.getLatestByCountryCode',
+			{ countryCode: 'IND' },
+			'completed',
 		);
 	});
 });

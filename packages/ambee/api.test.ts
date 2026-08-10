@@ -131,6 +131,34 @@ describeLive('Ambee API contract', () => {
 		expect(parsed.message).toBe('success');
 	});
 
+	it('elevation by lat/lng matches the output schema', async () => {
+		const response = await makeAmbeeRequest(
+			'elevation/latest/by-lat-lng',
+			key,
+			{
+				query: { lat: LAT, lng: LNG },
+			},
+		);
+
+		const parsed =
+			AmbeeEndpointOutputSchemas.elevationGetByLatLng.parse(response);
+		expect(parsed.message).toBe('success');
+	});
+
+	it('latest natural disasters by country code match the output schema', async () => {
+		const response = await makeAmbeeRequest(
+			'disasters/latest/by-country-code',
+			key,
+			{ query: { countryCode: 'IND', limit: 5, page: 1 } },
+		);
+
+		const parsed =
+			AmbeeEndpointOutputSchemas.disastersGetLatestByCountryCode.parse(
+				response,
+			);
+		expect(parsed.message).toBe('success');
+	});
+
 	it('geocoding matches the output schema', async () => {
 		const response = await makeAmbeeRequest('geocode/by-place', key, {
 			query: { place: 'new york' },

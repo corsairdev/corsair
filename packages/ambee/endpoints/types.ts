@@ -255,6 +255,95 @@ export const FireRiskResponseSchema = z
 
 export type FireRiskResponse = z.infer<typeof FireRiskResponseSchema>;
 
+/** An elevation reading for a point or place. */
+export const ElevationReadingSchema = z
+	.object({
+		lat: z.number().nullable().optional(),
+		lng: z.number().nullable().optional(),
+		elevation: z.number().nullable().optional(),
+		minElevation: z.number().nullable().optional(),
+		maxElevation: z.number().nullable().optional(),
+		meanElevation: z.number().nullable().optional(),
+		placeName: z.string().nullable().optional(),
+		unit: z.string().nullable().optional(),
+	})
+	.loose();
+
+export type ElevationReading = z.infer<typeof ElevationReadingSchema>;
+
+export const ElevationResponseSchema = z
+	.object({
+		message: MessageSchema,
+		data: z.array(ElevationReadingSchema).optional(),
+	})
+	.loose();
+
+export type ElevationResponse = z.infer<typeof ElevationResponseSchema>;
+
+/** A natural-disaster event record. */
+export const DisasterEventSchema = z
+	.object({
+		event_id: z.union([z.string(), z.number()]).nullable().optional(),
+		event_type: z.string().nullable().optional(),
+		event_name: z.string().nullable().optional(),
+		lat: z.number().nullable().optional(),
+		lng: z.number().nullable().optional(),
+		country_code: z.string().nullable().optional(),
+		continent: z.string().nullable().optional(),
+		date: z.union([z.string(), z.number()]).nullable().optional(),
+		updated_at: z.union([z.string(), z.number()]).nullable().optional(),
+		severity: z.union([z.string(), z.number()]).nullable().optional(),
+		source: z.string().nullable().optional(),
+		details: z.record(z.string(), z.unknown()).optional(),
+	})
+	.loose();
+
+export type DisasterEvent = z.infer<typeof DisasterEventSchema>;
+
+/**
+ * The disasters product is the only paginated part of Ambee, and it is
+ * inconsistent about the payload key — some responses use `result`, others
+ * `data`. Both are modelled so a caller never has to guess.
+ */
+export const DisasterResponseSchema = z
+	.object({
+		message: MessageSchema,
+		result: z.array(DisasterEventSchema).optional(),
+		data: z.array(DisasterEventSchema).optional(),
+		page: z.number().optional(),
+		limit: z.number().optional(),
+		total: z.number().optional(),
+	})
+	.loose();
+
+export type DisasterResponse = z.infer<typeof DisasterResponseSchema>;
+
+/** A daily influenza-like-illness risk forecast entry. */
+export const IliForecastEntrySchema = z
+	.object({
+		date: z.string().nullable().optional(),
+		time: z.number().nullable().optional(),
+		risk: z.union([z.string(), z.number()]).nullable().optional(),
+		riskCategory: z.string().nullable().optional(),
+		// Present only when `details` is requested — 28 days of supporting
+		// weather and pollen data, whose shape varies by region.
+		details: z.record(z.string(), z.unknown()).optional(),
+	})
+	.loose();
+
+export type IliForecastEntry = z.infer<typeof IliForecastEntrySchema>;
+
+export const IliForecastResponseSchema = z
+	.object({
+		message: MessageSchema,
+		lat: z.number().optional(),
+		lng: z.number().optional(),
+		data: z.array(IliForecastEntrySchema).optional(),
+	})
+	.loose();
+
+export type IliForecastResponse = z.infer<typeof IliForecastResponseSchema>;
+
 /** A geocoding / reverse-geocoding match. */
 export const GeocodeResultSchema = z
 	.object({
@@ -312,6 +401,16 @@ export const AirQualityGetLatestByPostalCodeInputSchema = z.object({
 });
 export type AirQualityGetLatestByPostalCodeInput = z.infer<
 	typeof AirQualityGetLatestByPostalCodeInputSchema
+>;
+
+export const AirQualityGetLatestByCountryCodeInputSchema = z.object({
+	countryCode: z
+		.string()
+		.min(2)
+		.describe('Three-letter ISO country code, e.g. "IND" or "USA"'),
+});
+export type AirQualityGetLatestByCountryCodeInput = z.infer<
+	typeof AirQualityGetLatestByCountryCodeInputSchema
 >;
 
 export const AirQualityGetHistoryByLatLngInputSchema = LatLngRangeInputSchema;
@@ -484,6 +583,148 @@ export type FireGetRiskByPlaceInput = z.infer<
 >;
 
 // ─────────────────────────────────────────────────────────────────────────────
+// Elevation — https://docs.ambeedata.com/apis/elevation
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ElevationGetByLatLngInputSchema = LatLngInputSchema;
+export type ElevationGetByLatLngInput = z.infer<
+	typeof ElevationGetByLatLngInputSchema
+>;
+
+export const ElevationGetByPlaceInputSchema = z.object({
+	place: z.string().min(1).describe('Place name, e.g. "San Francisco, USA"'),
+});
+export type ElevationGetByPlaceInput = z.infer<
+	typeof ElevationGetByPlaceInputSchema
+>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Influenza-like illness (beta) — https://docs.ambeedata.com/apis/ili
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const IliGetForecastByLatLngInputSchema = LatLngInputSchema.extend({
+	details: z
+		.boolean()
+		.optional()
+		.describe(
+			'Include the supporting 28-day weather and pollen forecast (defaults to false)',
+		),
+});
+export type IliGetForecastByLatLngInput = z.infer<
+	typeof IliGetForecastByLatLngInputSchema
+>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Natural disasters — https://docs.ambeedata.com/apis/natural_disasters
+//
+// The only paginated Ambee product: every endpoint takes `page`/`limit`.
+// ─────────────────────────────────────────────────────────────────────────────
+
+const ContinentSchema = z
+	.enum(['AFR', 'ANT', 'ASIA', 'AUS', 'EUR', 'NAR', 'SAR', 'Ocean'])
+	.describe('Continent code');
+
+const EventTypeSchema = z
+	.string()
+	.min(1)
+	.optional()
+	.describe('Restrict results to a single Ambee event-type code');
+
+const PaginationSchema = {
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Records per page (Ambee defaults to 1)'),
+	page: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Page number, 1-based (Ambee defaults to 1)'),
+};
+
+export const DisastersGetLatestByLatLngInputSchema = z.object({
+	lat: LatSchema,
+	lng: LngSchema,
+	eventType: EventTypeSchema,
+	...PaginationSchema,
+});
+export type DisastersGetLatestByLatLngInput = z.infer<
+	typeof DisastersGetLatestByLatLngInputSchema
+>;
+
+export const DisastersGetLatestByCountryCodeInputSchema = z.object({
+	countryCode: z
+		.string()
+		.min(2)
+		.describe('Three-letter ISO country code, e.g. "IND"'),
+	eventType: EventTypeSchema,
+	...PaginationSchema,
+});
+export type DisastersGetLatestByCountryCodeInput = z.infer<
+	typeof DisastersGetLatestByCountryCodeInputSchema
+>;
+
+export const DisastersGetLatestByContinentInputSchema = z.object({
+	continent: ContinentSchema,
+	eventType: EventTypeSchema,
+	...PaginationSchema,
+});
+export type DisastersGetLatestByContinentInput = z.infer<
+	typeof DisastersGetLatestByContinentInputSchema
+>;
+
+export const DisastersGetHistoryByLatLngInputSchema = z.object({
+	lat: LatSchema,
+	lng: LngSchema,
+	from: FromSchema,
+	to: ToSchema,
+	eventType: EventTypeSchema,
+	...PaginationSchema,
+});
+export type DisastersGetHistoryByLatLngInput = z.infer<
+	typeof DisastersGetHistoryByLatLngInputSchema
+>;
+
+export const DisastersGetHistoryByCountryCodeInputSchema = z.object({
+	countryCode: z
+		.string()
+		.min(2)
+		.describe('Three-letter ISO country code, e.g. "IND"'),
+	from: FromSchema,
+	to: ToSchema,
+	eventType: EventTypeSchema,
+	...PaginationSchema,
+});
+export type DisastersGetHistoryByCountryCodeInput = z.infer<
+	typeof DisastersGetHistoryByCountryCodeInputSchema
+>;
+
+export const DisastersGetHistoryByContinentInputSchema = z.object({
+	continent: ContinentSchema,
+	from: FromSchema,
+	to: ToSchema,
+	eventType: EventTypeSchema,
+	...PaginationSchema,
+});
+export type DisastersGetHistoryByContinentInput = z.infer<
+	typeof DisastersGetHistoryByContinentInputSchema
+>;
+
+/** Global history endpoint — only `from` is required, no location filter. */
+export const DisastersGetHistoryByDateRangeInputSchema = z.object({
+	from: FromSchema,
+	to: ToSchema.optional(),
+	eventType: EventTypeSchema,
+	...PaginationSchema,
+});
+export type DisastersGetHistoryByDateRangeInput = z.infer<
+	typeof DisastersGetHistoryByDateRangeInputSchema
+>;
+
+// ─────────────────────────────────────────────────────────────────────────────
 // Location services — https://docs.ambeedata.com/apis/location
 // ─────────────────────────────────────────────────────────────────────────────
 
@@ -505,6 +746,7 @@ export type AmbeeEndpointInputs = {
 	airQualityGetLatestByLatLng: AirQualityGetLatestByLatLngInput;
 	airQualityGetLatestByCity: AirQualityGetLatestByCityInput;
 	airQualityGetLatestByPostalCode: AirQualityGetLatestByPostalCodeInput;
+	airQualityGetLatestByCountryCode: AirQualityGetLatestByCountryCodeInput;
 	airQualityGetHistoryByLatLng: AirQualityGetHistoryByLatLngInput;
 	airQualityGetHistoryByPostalCode: AirQualityGetHistoryByPostalCodeInput;
 	airQualityGetForecastByLatLng: AirQualityGetForecastByLatLngInput;
@@ -518,6 +760,16 @@ export type AmbeeEndpointInputs = {
 	fireGetLatestByPlace: FireGetLatestByPlaceInput;
 	fireGetRiskByLatLng: FireGetRiskByLatLngInput;
 	fireGetRiskByPlace: FireGetRiskByPlaceInput;
+	elevationGetByLatLng: ElevationGetByLatLngInput;
+	elevationGetByPlace: ElevationGetByPlaceInput;
+	iliGetForecastByLatLng: IliGetForecastByLatLngInput;
+	disastersGetLatestByLatLng: DisastersGetLatestByLatLngInput;
+	disastersGetLatestByCountryCode: DisastersGetLatestByCountryCodeInput;
+	disastersGetLatestByContinent: DisastersGetLatestByContinentInput;
+	disastersGetHistoryByLatLng: DisastersGetHistoryByLatLngInput;
+	disastersGetHistoryByCountryCode: DisastersGetHistoryByCountryCodeInput;
+	disastersGetHistoryByContinent: DisastersGetHistoryByContinentInput;
+	disastersGetHistoryByDateRange: DisastersGetHistoryByDateRangeInput;
 	geocodeByPlace: GeocodeByPlaceInput;
 	geocodeReverseByLatLng: GeocodeReverseByLatLngInput;
 };
@@ -526,6 +778,7 @@ export type AmbeeEndpointOutputs = {
 	airQualityGetLatestByLatLng: AirQualityStationsResponse;
 	airQualityGetLatestByCity: AirQualityStationsResponse;
 	airQualityGetLatestByPostalCode: AirQualityStationsResponse;
+	airQualityGetLatestByCountryCode: AirQualityStationsResponse;
 	airQualityGetHistoryByLatLng: AirQualitySeriesResponse;
 	airQualityGetHistoryByPostalCode: AirQualitySeriesResponse;
 	airQualityGetForecastByLatLng: AirQualitySeriesResponse;
@@ -539,6 +792,16 @@ export type AmbeeEndpointOutputs = {
 	fireGetLatestByPlace: FireResponse;
 	fireGetRiskByLatLng: FireRiskResponse;
 	fireGetRiskByPlace: FireRiskResponse;
+	elevationGetByLatLng: ElevationResponse;
+	elevationGetByPlace: ElevationResponse;
+	iliGetForecastByLatLng: IliForecastResponse;
+	disastersGetLatestByLatLng: DisasterResponse;
+	disastersGetLatestByCountryCode: DisasterResponse;
+	disastersGetLatestByContinent: DisasterResponse;
+	disastersGetHistoryByLatLng: DisasterResponse;
+	disastersGetHistoryByCountryCode: DisasterResponse;
+	disastersGetHistoryByContinent: DisasterResponse;
+	disastersGetHistoryByDateRange: DisasterResponse;
 	geocodeByPlace: GeocodeResponse;
 	geocodeReverseByLatLng: GeocodeResponse;
 };
@@ -547,6 +810,7 @@ export const AmbeeEndpointInputSchemas = {
 	airQualityGetLatestByLatLng: AirQualityGetLatestByLatLngInputSchema,
 	airQualityGetLatestByCity: AirQualityGetLatestByCityInputSchema,
 	airQualityGetLatestByPostalCode: AirQualityGetLatestByPostalCodeInputSchema,
+	airQualityGetLatestByCountryCode: AirQualityGetLatestByCountryCodeInputSchema,
 	airQualityGetHistoryByLatLng: AirQualityGetHistoryByLatLngInputSchema,
 	airQualityGetHistoryByPostalCode: AirQualityGetHistoryByPostalCodeInputSchema,
 	airQualityGetForecastByLatLng: AirQualityGetForecastByLatLngInputSchema,
@@ -560,6 +824,16 @@ export const AmbeeEndpointInputSchemas = {
 	fireGetLatestByPlace: FireGetLatestByPlaceInputSchema,
 	fireGetRiskByLatLng: FireGetRiskByLatLngInputSchema,
 	fireGetRiskByPlace: FireGetRiskByPlaceInputSchema,
+	elevationGetByLatLng: ElevationGetByLatLngInputSchema,
+	elevationGetByPlace: ElevationGetByPlaceInputSchema,
+	iliGetForecastByLatLng: IliGetForecastByLatLngInputSchema,
+	disastersGetLatestByLatLng: DisastersGetLatestByLatLngInputSchema,
+	disastersGetLatestByCountryCode: DisastersGetLatestByCountryCodeInputSchema,
+	disastersGetLatestByContinent: DisastersGetLatestByContinentInputSchema,
+	disastersGetHistoryByLatLng: DisastersGetHistoryByLatLngInputSchema,
+	disastersGetHistoryByCountryCode: DisastersGetHistoryByCountryCodeInputSchema,
+	disastersGetHistoryByContinent: DisastersGetHistoryByContinentInputSchema,
+	disastersGetHistoryByDateRange: DisastersGetHistoryByDateRangeInputSchema,
 	geocodeByPlace: GeocodeByPlaceInputSchema,
 	geocodeReverseByLatLng: GeocodeReverseByLatLngInputSchema,
 } as const;
@@ -568,6 +842,7 @@ export const AmbeeEndpointOutputSchemas = {
 	airQualityGetLatestByLatLng: AirQualityStationsResponseSchema,
 	airQualityGetLatestByCity: AirQualityStationsResponseSchema,
 	airQualityGetLatestByPostalCode: AirQualityStationsResponseSchema,
+	airQualityGetLatestByCountryCode: AirQualityStationsResponseSchema,
 	airQualityGetHistoryByLatLng: AirQualitySeriesResponseSchema,
 	airQualityGetHistoryByPostalCode: AirQualitySeriesResponseSchema,
 	airQualityGetForecastByLatLng: AirQualitySeriesResponseSchema,
@@ -581,6 +856,16 @@ export const AmbeeEndpointOutputSchemas = {
 	fireGetLatestByPlace: FireResponseSchema,
 	fireGetRiskByLatLng: FireRiskResponseSchema,
 	fireGetRiskByPlace: FireRiskResponseSchema,
+	elevationGetByLatLng: ElevationResponseSchema,
+	elevationGetByPlace: ElevationResponseSchema,
+	iliGetForecastByLatLng: IliForecastResponseSchema,
+	disastersGetLatestByLatLng: DisasterResponseSchema,
+	disastersGetLatestByCountryCode: DisasterResponseSchema,
+	disastersGetLatestByContinent: DisasterResponseSchema,
+	disastersGetHistoryByLatLng: DisasterResponseSchema,
+	disastersGetHistoryByCountryCode: DisasterResponseSchema,
+	disastersGetHistoryByContinent: DisasterResponseSchema,
+	disastersGetHistoryByDateRange: DisasterResponseSchema,
 	geocodeByPlace: GeocodeResponseSchema,
 	geocodeReverseByLatLng: GeocodeResponseSchema,
 } as const;

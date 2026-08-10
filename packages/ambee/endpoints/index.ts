@@ -3,9 +3,23 @@ import {
 	getHistoryByLatLng as airQualityGetHistoryByLatLng,
 	getHistoryByPostalCode as airQualityGetHistoryByPostalCode,
 	getLatestByCity as airQualityGetLatestByCity,
+	getLatestByCountryCode as airQualityGetLatestByCountryCode,
 	getLatestByLatLng as airQualityGetLatestByLatLng,
 	getLatestByPostalCode as airQualityGetLatestByPostalCode,
 } from './air-quality';
+import {
+	getHistoryByContinent as disastersGetHistoryByContinent,
+	getHistoryByCountryCode as disastersGetHistoryByCountryCode,
+	getHistoryByDateRange as disastersGetHistoryByDateRange,
+	getHistoryByLatLng as disastersGetHistoryByLatLng,
+	getLatestByContinent as disastersGetLatestByContinent,
+	getLatestByCountryCode as disastersGetLatestByCountryCode,
+	getLatestByLatLng as disastersGetLatestByLatLng,
+} from './disasters';
+import {
+	getByLatLng as elevationGetByLatLng,
+	getByPlace as elevationGetByPlace,
+} from './elevation';
 import {
 	getLatestByLatLng as fireGetLatestByLatLng,
 	getLatestByPlace as fireGetLatestByPlace,
@@ -16,6 +30,7 @@ import {
 	byPlace as geocodeByPlace,
 	reverseByLatLng as geocodeReverseByLatLng,
 } from './geocode';
+import { getForecastByLatLng as iliGetForecastByLatLng } from './ili';
 import {
 	getForecast as pollenGetForecast,
 	getHistory as pollenGetHistory,
@@ -31,6 +46,7 @@ export const AirQuality = {
 	getLatestByLatLng: airQualityGetLatestByLatLng,
 	getLatestByCity: airQualityGetLatestByCity,
 	getLatestByPostalCode: airQualityGetLatestByPostalCode,
+	getLatestByCountryCode: airQualityGetLatestByCountryCode,
 	getHistoryByLatLng: airQualityGetHistoryByLatLng,
 	getHistoryByPostalCode: airQualityGetHistoryByPostalCode,
 	getForecastByLatLng: airQualityGetForecastByLatLng,
@@ -53,6 +69,25 @@ export const Fire = {
 	getLatestByPlace: fireGetLatestByPlace,
 	getRiskByLatLng: fireGetRiskByLatLng,
 	getRiskByPlace: fireGetRiskByPlace,
+};
+
+export const Elevation = {
+	getByLatLng: elevationGetByLatLng,
+	getByPlace: elevationGetByPlace,
+};
+
+export const Ili = {
+	getForecastByLatLng: iliGetForecastByLatLng,
+};
+
+export const Disasters = {
+	getLatestByLatLng: disastersGetLatestByLatLng,
+	getLatestByCountryCode: disastersGetLatestByCountryCode,
+	getLatestByContinent: disastersGetLatestByContinent,
+	getHistoryByLatLng: disastersGetHistoryByLatLng,
+	getHistoryByCountryCode: disastersGetHistoryByCountryCode,
+	getHistoryByContinent: disastersGetHistoryByContinent,
+	getHistoryByDateRange: disastersGetHistoryByDateRange,
 };
 
 export const Geocode = {
