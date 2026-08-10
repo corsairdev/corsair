@@ -9,139 +9,289 @@ Every `vercel.api.*` operation is listed below with parameter shapes and return 
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
-## Projects
+## Aliases
 
-### getProjects
+### assignAlias
 
-`projects.getProjects`
+`aliases.assignAlias`
 
-Get all projects
+Assign an alias
 
-**Risk:** `read`
+**Risk:** `write`
 
 ```ts
-await corsair.vercel.api.projects.getProjects({});
+await corsair.vercel.api.aliases.assignAlias({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
-| --- | --- | --- | --- |
+|------|------|----------|-------------|
+| `deploymentId` | `string` | Yes | — |
+| `alias` | `string` | Yes | — |
+| `redirect` | `string` | No | — |
+| `teamId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `alias` | `string` | Yes | — |
+| `created` | `string` | Yes | — |
+| `oldDeploymentId` | `string` | No | — |
+
+
+
+---
+
+### getAliases
+
+`aliases.getAliases`
+
+Get all aliases
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.aliases.getAliases({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
 | `limit` | `number` | No | — |
 | `until` | `number` | No | — |
 | `since` | `number` | No | — |
 | `teamId` | `string` | No | — |
 
+
+
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `projects` | `array` | Yes | — |
+| `aliases` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Response full type">
+<Accordion title="aliases full type">
 
 ```ts
 {
-  projects: {
-    id: string;
-    name: string;
-    accountId: string;
-    createdAt: number;
-    updatedAt: number;
-    framework: string | null;
-    link?: {
-      type: string;
-      repo: string;
-      repoId?: number;
-      org?: string | null;
-      gitCredentialId?: string | null;
-      productionBranch?: string | null;
-      createdAt?: number | null;
-      updatedAt?: number | null;
-      deployHooks?: unknown[] | null;
-    } | null;
-    latestDeployments?: any[] | null;
-    targets?: Record<string, any> | null;
-  }[];
-  pagination: {
-    count: number;
-    next: number | null;
-    prev: number | null;
-  };
+  uid: string,
+  alias: string,
+  created: string,
+  createdAt: number,
+  deploymentId?: string | null,
+  projectId?: string | null,
+  redirect?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
 }
 ```
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
 
-### getProject
+## Deployments
 
-`projects.getProject`
+### createDeployment
 
-Get project details
+`deployments.createDeployment`
 
-**Risk:** `read`
+Create a deployment
+
+**Risk:** `write`
 
 ```ts
-await corsair.vercel.api.projects.getProject({ idOrName: 'my-project' });
+await corsair.vercel.api.deployments.createDeployment({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `idOrName` | `string` | Yes | — |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `project` | `string` | No | — |
+| `target` | `production \| staging` | No | — |
+| `gitSource` | `object` | No | — |
+| `files` | `any[]` | No | — |
+| `meta` | `object` | No | — |
+| `env` | `object` | No | — |
 | `teamId` | `string` | No | — |
 
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `id` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `accountId` | `string` | Yes | — |
-| `createdAt` | `number` | Yes | — |
-| `updatedAt` | `number` | Yes | — |
-| `framework` | `string` | No | — |
-| `link` | `object` | No | — |
-| `latestDeployments` | `array` | No | — |
-| `targets` | `object` | No | — |
-
 <AccordionGroup>
-<Accordion title="Response full type">
+<Accordion title="gitSource full type">
 
 ```ts
 {
-  id: string;
-  name: string;
-  accountId: string;
-  createdAt: number;
-  updatedAt: number;
-  framework: string | null;
-  link?: {
-    type: string;
-    repo: string;
-    repoId?: number;
-    org?: string | null;
-    gitCredentialId?: string | null;
-    productionBranch?: string | null;
-    createdAt?: number | null;
-    updatedAt?: number | null;
-    deployHooks?: unknown[] | null;
-  } | null;
-  latestDeployments?: any[] | null;
-  targets?: Record<string, any> | null;
+  type: github | gitlab | bitbucket,
+  ref?: string,
+  repoId?: string | number,
+  sha?: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="env full type">
+
+```ts
+{
 }
 ```
 </Accordion>
 </AccordionGroup>
 
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `created` | `number` | Yes | — |
+| `readyState` | `string` | Yes | — |
+| `type` | `LAMBDAS \| PREBUILT \| STATIC \| string` | Yes | — |
+| `creator` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `target` | `production \| staging \| string` | No | — |
+| `aliasError` | `object` | No | — |
+| `aliasAssigned` | `number` | No | — |
+| `inspectorUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  uid: string,
+  email: string,
+  username: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="aliasError full type">
+
+```ts
+{
+  code: string,
+  message: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
 ---
 
-## Deployments
+### getDeployment
+
+`deployments.getDeployment`
+
+Get deployment details
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.deployments.getDeployment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `idOrUrl` | `string` | Yes | — |
+| `teamId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `uid` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `created` | `number` | Yes | — |
+| `readyState` | `string` | Yes | — |
+| `type` | `LAMBDAS \| PREBUILT \| STATIC \| string` | Yes | — |
+| `creator` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `target` | `production \| staging \| string` | No | — |
+| `aliasError` | `object` | No | — |
+| `aliasAssigned` | `number` | No | — |
+| `inspectorUrl` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  uid: string,
+  email: string,
+  username: string
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="aliasError full type">
+
+```ts
+{
+  code: string,
+  message: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### getDeployments
 
@@ -158,206 +308,63 @@ await corsair.vercel.api.deployments.getDeployments({});
 **Input**
 
 | Name | Type | Required | Description |
-| --- | --- | --- | --- |
+|------|------|----------|-------------|
 | `projectId` | `string` | No | — |
 | `limit` | `number` | No | — |
 | `until` | `number` | No | — |
 | `teamId` | `string` | No | — |
 
+
+
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `deployments` | `array` | Yes | — |
+| `deployments` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Response full type">
+<Accordion title="deployments full type">
 
 ```ts
 {
-  deployments: {
-    uid: string;
-    name: string;
-    url: string;
-    created: number;
-    readyState: string;
-    type: 'LAMBDAS' | 'PREBUILT' | 'STATIC' | string;
-    creator?: {
-      uid: string;
-      email: string;
-      username: string;
-    } | null;
-    meta?: Record<string, string> | null;
-    target: 'production' | 'staging' | string | null;
-    aliasError?: {
-      code: string;
-      message: string;
-    } | null;
-    aliasAssigned?: number | null;
-    inspectorUrl?: string | null;
-  }[];
-  pagination: {
-    count: number;
-    next: number | null;
-    prev: number | null;
-  };
-}
-```
-</Accordion>
-</AccordionGroup>
-
----
-
-### getDeployment
-
-`deployments.getDeployment`
-
-Get deployment details
-
-**Risk:** `read`
-
-```ts
-await corsair.vercel.api.deployments.getDeployment({ idOrUrl: 'dpl_xxx' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `idOrUrl` | `string` | Yes | — |
-| `teamId` | `string` | No | — |
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `uid` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `url` | `string` | Yes | — |
-| `created` | `number` | Yes | — |
-| `readyState` | `string` | Yes | — |
-| `type` | `string` | Yes | — |
-| `creator` | `object` | No | — |
-| `meta` | `object` | No | — |
-| `target` | `string` | No | — |
-| `aliasError` | `object` | No | — |
-| `aliasAssigned` | `number` | No | — |
-| `inspectorUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="Response full type">
-
-```ts
-{
-  uid: string;
-  name: string;
-  url: string;
-  created: number;
-  readyState: string;
-  type: 'LAMBDAS' | 'PREBUILT' | 'STATIC' | string;
+  uid: string,
+  name: string,
+  url: string,
+  created: number,
+  readyState: string,
+  type: LAMBDAS | PREBUILT | STATIC | string,
   creator?: {
-    uid: string;
-    email: string;
-    username: string;
-  } | null;
-  meta?: Record<string, string> | null;
-  target: 'production' | 'staging' | string | null;
+    uid: string,
+    email: string,
+    username: string
+  } | null,
+  meta?: {
+  } | null,
+  target?: production | staging | string | null,
   aliasError?: {
-    code: string;
-    message: string;
-  } | null;
-  aliasAssigned?: number | null;
-  inspectorUrl?: string | null;
+    code: string,
+    message: string
+  } | null,
+  aliasAssigned?: number | null,
+  inspectorUrl?: string | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
 }
 ```
 </Accordion>
 </AccordionGroup>
 
----
 
-### createDeployment
-
-`deployments.createDeployment`
-
-Create a deployment
-
-**Risk:** `write`
-
-```ts
-await corsair.vercel.api.deployments.createDeployment({ name: 'my-deploy' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `name` | `string` | Yes | — |
-| `project` | `string` | No | — |
-| `target` | `'production' \| 'staging'` | No | — |
-| `gitSource` | `object` | No | — |
-| `files` | `array` | No | — |
-| `meta` | `record` | No | — |
-| `env` | `record` | No | — |
-| `teamId` | `string` | No | — |
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `uid` | `string` | Yes | — |
-| `name` | `string` | Yes | — |
-| `url` | `string` | Yes | — |
-| `created` | `number` | Yes | — |
-| `readyState` | `string` | Yes | — |
-| `type` | `string` | Yes | — |
-| `creator` | `object` | No | — |
-| `meta` | `object` | No | — |
-| `target` | `string` | No | — |
-| `aliasError` | `object` | No | — |
-| `aliasAssigned` | `number` | No | — |
-| `inspectorUrl` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="gitSource full type">
-
-```ts
-{
-  type: 'github' | 'gitlab' | 'bitbucket';
-  ref?: string;
-  repoId?: string | number;
-  sha?: string;
-}
-```
-</Accordion>
-
-<Accordion title="Response full type">
-
-```ts
-{
-  uid: string;
-  name: string;
-  url: string;
-  created: number;
-  readyState: string;
-  type: 'LAMBDAS' | 'PREBUILT' | 'STATIC' | string;
-  creator?: {
-    uid: string;
-    email: string;
-    username: string;
-  } | null;
-  meta?: Record<string, string> | null;
-  target: 'production' | 'staging' | string | null;
-  aliasError?: {
-    code: string;
-    message: string;
-  } | null;
-  aliasAssigned?: number | null;
-  inspectorUrl?: string | null;
-}
-```
-</Accordion>
-</AccordionGroup>
 
 ---
 
@@ -378,44 +385,52 @@ await corsair.vercel.api.domains.getDomains({});
 **Input**
 
 | Name | Type | Required | Description |
-| --- | --- | --- | --- |
+|------|------|----------|-------------|
 | `limit` | `number` | No | — |
 | `until` | `number` | No | — |
 | `since` | `number` | No | — |
 | `teamId` | `string` | No | — |
 
+
+
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domains` | `array` | Yes | — |
+| `domains` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Response full type">
+<Accordion title="domains full type">
 
 ```ts
 {
-  domains: {
-    id: string;
-    name: string;
-    createdAt: number;
-    boughtAt: number | null;
-    expiresAt: number | null;
-    transferredAt: number | null;
-    verified: boolean;
-    nameservers: string[];
-    intendedNameservers: string[];
-  }[];
-  pagination: {
-    count: number;
-    next: number | null;
-    prev: number | null;
-  };
+  id: string,
+  name: string,
+  createdAt: number,
+  boughtAt?: number | null,
+  expiresAt?: number | null,
+  transferredAt?: number | null,
+  verified: boolean,
+  nameservers: string[],
+  intendedNameservers: string[]
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
@@ -428,105 +443,63 @@ Get project domains
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.domains.getProjectDomains({ idOrName: 'my-project' });
+await corsair.vercel.api.domains.getProjectDomains({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
-| --- | --- | --- | --- |
+|------|------|----------|-------------|
 | `idOrName` | `string` | Yes | — |
 | `limit` | `number` | No | — |
 | `until` | `number` | No | — |
 | `since` | `number` | No | — |
 | `teamId` | `string` | No | — |
 
+
+
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `domains` | `array` | Yes | — |
+| `domains` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Response full type">
+<Accordion title="domains full type">
 
 ```ts
 {
-  domains: {
-    name: string;
-    apexName: string;
-    projectId: string;
-    redirect: string | null;
-    redirectStatusCode: number | null;
-    gitBranch: string | null;
-    updatedAt: number;
-    createdAt: number;
-    verified: boolean;
-  }[];
-  pagination: {
-    count: number;
-    next: number | null;
-    prev: number | null;
-  };
+  name: string,
+  apexName: string,
+  projectId: string,
+  redirect?: string | null,
+  redirectStatusCode?: number | null,
+  gitBranch?: string | null,
+  updatedAt: number,
+  createdAt: number,
+  verified: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
 
 ---
 
 ## Envs
-
-### getEnvVariables
-
-`envs.getEnvVariables`
-
-Get environment variables for a project (may include secret/sensitive values)
-
-**Risk:** `read`
-
-```ts
-await corsair.vercel.api.envs.getEnvVariables({ idOrName: 'my-project' });
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `idOrName` | `string` | Yes | — |
-| `teamId` | `string` | No | — |
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `envs` | `array` | No | — |
-
-<AccordionGroup>
-<Accordion title="Response full type">
-
-```ts
-{
-  envs?: {
-    id: string;
-    key: string;
-    value: string;
-    type: 'plain' | 'secret' | 'encrypted' | 'sensitive';
-    target: ('production' | 'preview' | 'development')[];
-    gitBranch: string | null;
-    configurationId?: string | null;
-    createdAt: number;
-    updatedAt: number;
-    createdBy?: string | null;
-    updatedBy?: string | null;
-  }[];
-}
-```
-</Accordion>
-</AccordionGroup>
-
----
 
 ### createEnvVariable
 
@@ -537,27 +510,23 @@ Create an environment variable for a project (supports plain, secret, encrypted,
 **Risk:** `write`
 
 ```ts
-await corsair.vercel.api.envs.createEnvVariable({
-    idOrName: 'my-project',
-    key: 'API_KEY',
-    value: 'secret',
-    type: 'encrypted',
-    target: ['production']
-});
+await corsair.vercel.api.envs.createEnvVariable({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
-| --- | --- | --- | --- |
+|------|------|----------|-------------|
 | `idOrName` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
-| `type` | `'plain' \| 'secret' \| 'encrypted' \| 'sensitive'` | Yes | — |
-| `target` | `array` | Yes | — |
+| `type` | `plain \| secret \| encrypted \| sensitive` | Yes | — |
+| `target` | `production \| preview \| development[]` | Yes | — |
 | `gitBranch` | `string` | No | — |
 | `comment` | `string` | No | — |
 | `teamId` | `string` | No | — |
+
+
 
 **Output**
 
@@ -566,8 +535,8 @@ await corsair.vercel.api.envs.createEnvVariable({
 | `id` | `string` | Yes | — |
 | `key` | `string` | Yes | — |
 | `value` | `string` | Yes | — |
-| `type` | `string` | Yes | — |
-| `target` | `array` | Yes | — |
+| `type` | `plain \| secret \| encrypted \| sensitive` | Yes | — |
+| `target` | `production \| preview \| development[]` | Yes | — |
 | `gitBranch` | `string` | No | — |
 | `configurationId` | `string` | No | — |
 | `createdAt` | `number` | Yes | — |
@@ -575,231 +544,202 @@ await corsair.vercel.api.envs.createEnvVariable({
 | `createdBy` | `string` | No | — |
 | `updatedBy` | `string` | No | — |
 
-<AccordionGroup>
-<Accordion title="Response full type">
 
-```ts
-{
-  id: string;
-  key: string;
-  value: string;
-  type: 'plain' | 'secret' | 'encrypted' | 'sensitive';
-  target: ('production' | 'preview' | 'development')[];
-  gitBranch: string | null;
-  configurationId?: string | null;
-  createdAt: number;
-  updatedAt: number;
-  createdBy?: string | null;
-  updatedBy?: string | null;
-}
-```
-</Accordion>
-</AccordionGroup>
 
 ---
 
-## Aliases
+### getEnvVariables
 
-### getAliases
+`envs.getEnvVariables`
 
-`aliases.getAliases`
-
-Get all aliases
+Get environment variables for a project (may include secret/sensitive values)
 
 **Risk:** `read`
 
 ```ts
-await corsair.vercel.api.aliases.getAliases({});
+await corsair.vercel.api.envs.getEnvVariables({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `limit` | `number` | No | — |
-| `until` | `number` | No | — |
-| `since` | `number` | No | — |
+|------|------|----------|-------------|
+| `idOrName` | `string` | Yes | — |
 | `teamId` | `string` | No | — |
+
+
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `aliases` | `array` | Yes | — |
-| `pagination` | `object` | Yes | — |
+| `envs` | `object[]` | No | — |
 
 <AccordionGroup>
-<Accordion title="Response full type">
+<Accordion title="envs full type">
 
 ```ts
 {
-  aliases: {
-    uid: string;
-    alias: string;
-    created: string;
-    createdAt: number;
-    deploymentId: string | null;
-    projectId: string | null;
-    redirect: string | null;
-  }[];
-  pagination: {
-    count: number;
-    next: number | null;
-    prev: number | null;
-  };
-}
-```
-</Accordion>
-</AccordionGroup>
-
----
-
-### assignAlias
-
-`aliases.assignAlias`
-
-Assign an alias
-
-**Risk:** `write`
-
-```ts
-await corsair.vercel.api.aliases.assignAlias({
-    deploymentId: 'dpl_123',
-    alias: 'my-alias.vercel.app'
-});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `deploymentId` | `string` | Yes | — |
-| `alias` | `string` | Yes | — |
-| `redirect` | `string` | No | — |
-| `teamId` | `string` | No | — |
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `uid` | `string` | Yes | — |
-| `alias` | `string` | Yes | — |
-| `created` | `string` | Yes | — |
-| `oldDeploymentId` | `string` | No | — |
-
-<AccordionGroup>
-<Accordion title="Response full type">
-
-```ts
-{
-  uid: string;
-  alias: string;
-  created: string;
-  oldDeploymentId: string | null;
-}
-```
-</Accordion>
-</AccordionGroup>
-
----
-
-## Webhooks
-
-### getWebhooks
-
-`webhooks.getWebhooks`
-
-Get all webhooks
-
-**Risk:** `read`
-
-```ts
-await corsair.vercel.api.webhooks.getWebhooks({});
-```
-
-**Input**
-
-| Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `teamId` | `string` | No | — |
-
-**Output**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `(Array of Webhooks)` | `array` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="Response full type">
-
-```ts
-{
-  id: string;
-  url: string;
-  events: string[];
-  ownerId: string;
-  projectIds?: string[];
-  createdAt: number;
-  updatedAt: number;
+  id: string,
+  key: string,
+  value: string,
+  type: plain | secret | encrypted | sensitive,
+  target: production | preview | development[],
+  gitBranch?: string | null,
+  configurationId?: string | null,
+  createdAt: number,
+  updatedAt: number,
+  createdBy?: string | null,
+  updatedBy?: string | null
 }[]
 ```
 </Accordion>
 </AccordionGroup>
 
+
+
 ---
 
-### createWebhook
+## Projects
 
-`webhooks.createWebhook`
+### getProject
 
-Create a webhook
+`projects.getProject`
 
-**Risk:** `write`
+Get project details
+
+**Risk:** `read`
 
 ```ts
-await corsair.vercel.api.webhooks.createWebhook({
-    url: 'https://example.com/api/webhook',
-    events: ['deployment.created']
-});
+await corsair.vercel.api.projects.getProject({});
 ```
 
 **Input**
 
 | Name | Type | Required | Description |
-| --- | --- | --- | --- |
-| `url` | `string` | Yes | — |
-| `events` | `string[]` | Yes | — |
-| `projectIds` | `string[]` | No | — |
+|------|------|----------|-------------|
+| `idOrName` | `string` | Yes | — |
 | `teamId` | `string` | No | — |
+
+
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `id` | `string` | Yes | — |
-| `url` | `string` | Yes | — |
-| `events` | `array` | Yes | — |
-| `ownerId` | `string` | Yes | — |
-| `projectIds` | `array` | No | — |
+| `name` | `string` | Yes | — |
+| `accountId` | `string` | Yes | — |
 | `createdAt` | `number` | Yes | — |
 | `updatedAt` | `number` | Yes | — |
+| `framework` | `string` | No | — |
+| `link` | `object` | No | — |
+| `latestDeployments` | `any[]` | No | — |
+| `targets` | `object` | No | — |
 
 <AccordionGroup>
-<Accordion title="Response full type">
+<Accordion title="link full type">
 
 ```ts
 {
-  id: string;
-  url: string;
-  events: string[];
-  ownerId: string;
-  projectIds?: string[];
-  createdAt: number;
-  updatedAt: number;
+  type: string,
+  repo: string,
+  repoId?: number,
+  org?: string | null,
+  gitCredentialId?: string | null,
+  productionBranch?: string | null,
+  createdAt?: number | null,
+  updatedAt?: number | null,
+  deployHooks?: any[] | null
+}
+```
+</Accordion>
+
+<Accordion title="targets full type">
+
+```ts
+{
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+### getProjects
+
+`projects.getProjects`
+
+Get all projects
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.projects.getProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `until` | `number` | No | — |
+| `since` | `number` | No | — |
+| `teamId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `pagination` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  accountId: string,
+  createdAt: number,
+  updatedAt: number,
+  framework?: string | null,
+  link?: {
+    type: string,
+    repo: string,
+    repoId?: number,
+    org?: string | null,
+    gitCredentialId?: string | null,
+    productionBranch?: string | null,
+    createdAt?: number | null,
+    updatedAt?: number | null,
+    deployHooks?: any[] | null
+  } | null,
+  latestDeployments?: any[] | null,
+  targets?: {
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
 
 ---
 
@@ -820,40 +760,136 @@ await corsair.vercel.api.teams.getTeams({});
 **Input**
 
 | Name | Type | Required | Description |
-| --- | --- | --- | --- |
+|------|------|----------|-------------|
 | `teamId` | `string` | No | — |
+
+
 
 **Output**
 
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
-| `teams` | `array` | Yes | — |
+| `teams` | `object[]` | Yes | — |
 | `pagination` | `object` | Yes | — |
 
 <AccordionGroup>
-<Accordion title="Response full type">
+<Accordion title="teams full type">
 
 ```ts
 {
-  teams: {
-    id: string;
-    slug: string;
-    name: string;
-    createdAt: number;
-    updatedAt?: number | null;
-    avatar: string | null;
-    membership: {
-      uid: string;
-      role: 'OWNER' | 'MEMBER' | 'DEVELOPER' | 'BILLING' | 'VIEWER' | string;
-      createdAt: number;
-    };
-  }[];
-  pagination: {
-    count: number;
-    next: number | null;
-    prev: number | null;
-  };
+  id: string,
+  slug: string,
+  name: string,
+  createdAt: number,
+  updatedAt?: number | null,
+  avatar?: string | null,
+  membership: {
+    uid: string,
+    role: OWNER | MEMBER | DEVELOPER | BILLING | VIEWER | string,
+    createdAt: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="pagination full type">
+
+```ts
+{
+  count: number,
+  next?: number | null,
+  prev?: number | null
 }
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### createWebhook
+
+`webhooks.createWebhook`
+
+Create a webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.vercel.api.webhooks.createWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `events` | `(deployment.created \| deployment.succeeded \| deployment.ready \| deployment.error \| deployment.canceled \| deployment.promoted \| project.created \| project.removed \| domain.created \| integration-configuration.scope-change-confirmed \| integration-configuration.removed \| integration-configuration.permission-upgraded \| string)[]` | Yes | — |
+| `projectIds` | `string[]` | No | — |
+| `teamId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `events` | `(deployment.created \| deployment.succeeded \| deployment.ready \| deployment.error \| deployment.canceled \| deployment.promoted \| project.created \| project.removed \| domain.created \| integration-configuration.scope-change-confirmed \| integration-configuration.removed \| integration-configuration.permission-upgraded \| string)[]` | Yes | — |
+| `ownerId` | `string` | Yes | — |
+| `projectIds` | `string[]` | No | — |
+| `createdAt` | `number` | Yes | — |
+| `updatedAt` | `number` | Yes | — |
+
+
+
+---
+
+### getWebhooks
+
+`webhooks.getWebhooks`
+
+Get all webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.vercel.api.webhooks.getWebhooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `teamId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  url: string,
+  events: (
+    deployment.created | deployment.succeeded | deployment.ready | deployment.error | deployment.canceled | deployment.promoted | project.created | project.removed | domain.created | integration-configuration.scope-change-confirmed | integration-configuration.removed | integration-configuration.permission-upgraded | string
+  )[],
+  ownerId: string,
+  projectIds?: string[],
+  createdAt: number,
+  updatedAt: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

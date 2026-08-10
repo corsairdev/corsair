@@ -3,6 +3,7 @@ import { GithubAPIError, makeGithubRequest } from '../client';
 import type { GithubBoundEndpoints, GithubEndpoints } from '../index';
 import type {
 	RepositoriesListResponse,
+	RepositoriesListStargazersResponse,
 	RepositoryBranchesListResponse,
 	RepositoryCommitsListResponse,
 	RepositoryContentGetResponse,
@@ -257,3 +258,29 @@ export const listStarred: GithubEndpoints['repositoriesListStarred'] = async (
 	);
 	return result;
 };
+
+/** List users who have starred a repository (GET /repos/{owner}/{repo}/stargazers). */
+export const listStargazers: GithubEndpoints['repositoriesListStargazers'] =
+	async (ctx, input) => {
+		const { owner, repo, perPage, page } = input;
+		const endpoint = `/repos/${owner}/${repo}/stargazers`;
+		const result = await makeGithubRequest<RepositoriesListStargazersResponse>(
+			endpoint,
+			ctx,
+			{
+				query: {
+					per_page: perPage,
+					page,
+				},
+				accept: 'application/vnd.github.v3.star+json',
+			},
+		);
+
+		await logEventFromContext(
+			ctx,
+			'github.repositories.listStargazers',
+			{ ...input },
+			'completed',
+		);
+		return result;
+	};

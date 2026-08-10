@@ -97,7 +97,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	const manage = buildManagementNamespace(internalConfig);
 
 	if (config.multiTenancy) {
-		return Object.assign(
+		const tenantWrapper = Object.assign(
 			{
 				withTenant: (tenantId: string) => {
 					if (!tenantId) {
@@ -125,6 +125,8 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 			},
 			{ [CORSAIR_INTERNAL]: internalConfig },
 		);
+		maybeStartConnectLoop(tenantWrapper, internalConfig.hub);
+		return tenantWrapper;
 	}
 
 	const client = buildCorsairClient(config.plugins, {
@@ -138,12 +140,29 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		internalConfig,
 	});
 
-	return Object.assign({}, client, {
+	const singleTenant = Object.assign({}, client, {
 		keys: integrationKeys,
 		permissions,
 		manage,
 		[CORSAIR_INTERNAL]: internalConfig,
 	}) as CorsairSingleTenantClient<Plugins>;
+	maybeStartConnectLoop(singleTenant, internalConfig.hub);
+	return singleTenant;
+}
+
+function maybeStartConnectLoop(
+	instance: unknown,
+	hub: HubConfig | undefined,
+): void {
+	// Only dev keys use connect; prod is out of scope. Delegate the execution-flag
+	// decision to startConnectLoop (the single owner of the "flag is off" warning) —
+	// short-circuiting on the flag here would swallow that warning silently.
+	if (!hub?.projectApiKey?.startsWith('ck_dev_')) {
+		return;
+	}
+	void import('../hub/connect/loop')
+		.then((m) => m.startConnectLoop(instance))
+		.catch(() => {});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -238,6 +257,13 @@ export type {
 	EnforcePermissionOptions,
 	EnforcePermissionResult,
 } from './permissions';
+export {
+	assertReadonlyAllowed,
+	isReadonlyScopeActive,
+	PermissionRequiredError,
+	ReadonlyForbiddenError,
+	runReadonly,
+} from './permissions';
 // Plugin types
 export type {
 	BeforeHookResult,
@@ -246,6 +272,8 @@ export type {
 	CorsairKeyBuilderBase,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairPluginSubscribe,
+	CorsairPluginSubscribeResult,
 	EndpointHooks,
 	EndpointMetaEntry,
 	EndpointRiskLevel,
@@ -260,6 +288,15 @@ export type {
 	RequiredPluginWebhookSchemas,
 	WebhookHooks,
 } from './plugins';
+// Agent chat threads namespace
+export type {
+	AgentReply,
+	CorsairThreadsNamespace,
+	CreateThreadResult,
+	ThreadHandle,
+	ThreadMessage,
+	ThreadSummary,
+} from './threads';
 // Utility types
 export type { Bivariant, UnionToIntersection } from './utils';
 // Webhook types
@@ -279,6 +316,11 @@ export type {
 	WebhookTenantMatch,
 	WebhookTree,
 } from './webhooks';
+export { googleChannelSubscribe } from './webhooks/google-channel-subscribe';
+export {
+	MS_GRAPH_API_BASE,
+	msGraphSubscribe,
+} from './webhooks/ms-graph-subscribe';
 export {
 	collectPluginWebhookMatchers,
 	matchWebhookPlugin,

@@ -1,0 +1,4 @@
+displayName: Google Docs
+description: Google Docs plugin for Corsair
+overviewNote: |
+  Google Docs exposes document creation and editing, text operations, structure (headers, footers, footnotes, named ranges, bullets), tables, images, styling, and batch updates for serverless document workflows. Use Corsair permissions for destructive actions such as deleting content ranges, headers, footers, named ranges, table rows, or table columns.

@@ -11,7 +11,7 @@ export class GoogleDriveAPIError extends Error {
 	}
 }
 
-const GOOGLE_DRIVE_API_BASE = 'https://www.googleapis.com/drive/v3';
+export const GOOGLE_DRIVE_API_BASE = 'https://www.googleapis.com/drive/v3';
 
 async function refreshAccessToken(
 	clientId: string,
@@ -118,7 +118,7 @@ export async function makeGoogleDriveRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	const response = await request<T>(config, requestOptions);

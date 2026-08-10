@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
+import { convertKeysToCamelCase } from './utils';
 
 export class GithubAPIError extends Error {
 	constructor(
@@ -17,6 +18,7 @@ type GithubRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	accept?: string;
 };
 
 export type GithubAuthContext = {
@@ -37,7 +39,7 @@ async function makeGithubRequestWithToken<T>(
 	token: string,
 	options: GithubRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, accept } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: GITHUB_API_BASE,
@@ -47,7 +49,7 @@ async function makeGithubRequestWithToken<T>(
 		TOKEN: token,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Accept: 'application/vnd.github.v3+json',
+			Accept: accept ?? 'application/vnd.github.v3+json',
 		},
 	};
 
@@ -64,7 +66,8 @@ async function makeGithubRequestWithToken<T>(
 
 	try {
 		const response = await request<T>(config, requestOptions);
-		return response;
+		// GitHub REST returns snake_case; the plugin is camelCase throughout.
+		return convertKeysToCamelCase(response) as T;
 	} catch (error) {
 		if (
 			error &&

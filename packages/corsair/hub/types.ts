@@ -9,6 +9,14 @@ export type HubConfigInput = {
 	signingSecret: string;
 	apiUrl?: string;
 	oauthCallbackUrl?: string;
+	/** URL the connect/approve pages send the user back to when they're done. */
+	redirectURL?: string;
+	/**
+	 * Opt-in to executing Hub-delivered workflow code (`type: 'run'`). Off by
+	 * default because it dynamically evaluates code in-process. Sandbox before
+	 * enabling in production — see workflows/execute.ts.
+	 */
+	allowWorkflowExecution?: boolean;
 };
 
 export type HubConfig = {
@@ -16,6 +24,8 @@ export type HubConfig = {
 	projectApiKey: string;
 	signingSecret: string;
 	oauthCallbackUrl?: string;
+	redirectURL?: string;
+	allowWorkflowExecution?: boolean;
 };
 
 export type HubConnectSessionInput = {
@@ -69,6 +79,12 @@ export type {
 export type { DeliveryTransport } from './contracts/environment';
 export type {
 	BrowserDeliveryMode,
+	ProbeResultPayload,
+	ProbeTunnelPayload,
+	RunResultPayload,
+	RunStepResult,
+	RunTriggerType,
+	RunTunnelPayload,
 	TunnelEnvelope,
 	TunnelType,
 } from './contracts/tunnel';

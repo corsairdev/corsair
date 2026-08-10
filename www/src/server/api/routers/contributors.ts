@@ -3,11 +3,11 @@ import { eq } from 'drizzle-orm';
 import { z } from 'zod';
 
 import { user } from '@/db/auth-schema';
-import { getGithubUserAvatar } from '@/server/github-users';
 import {
 	buildContributorRankings,
 	getContributorRank,
 } from '@/server/contributor-rankings';
+import { getGithubUserAvatar } from '@/server/github-users';
 
 import { githubUsernameSchema } from '../schemas/usernames';
 import { createTRPCRouter, publicProcedure } from '../trpc';
