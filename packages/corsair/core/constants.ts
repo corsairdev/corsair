@@ -18,6 +18,7 @@ export const BaseProviders = [
 	'addresszen',
 	'agencyzoom',
 	'agentmail',
+	'agenty',
 	'agentql',
 	'ahrefs',
 	'airtable',
@@ -123,6 +124,7 @@ export const ProviderDisplayNames = {
 	addresszen: 'Addresszen',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
+	agenty: 'Agenty',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
@@ -235,6 +237,7 @@ export type AllProviders =
 	| 'addresszen'
 	| 'agencyzoom'
 	| 'agentmail'
+	| 'agenty'
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
