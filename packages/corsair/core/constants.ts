@@ -16,6 +16,7 @@ export const BaseProviders = [
 	'abstract',
 	'activetrail',
 	'addresszen',
+	'adrapid',
 	'agencyzoom',
 	'agentmail',
 	'agentql',
@@ -110,6 +111,7 @@ export const BaseProviders = [
 	'whatsapp',
 	'wiza',
 	'xquik',
+	'youcom',
 	'youtube',
 	'zendesk',
 	'zohomail',
@@ -120,6 +122,7 @@ export const ProviderDisplayNames = {
 	abstract: 'Abstract',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	adrapid: 'Adrapid',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
 	agentql: 'AgentQL',
@@ -214,6 +217,7 @@ export const ProviderDisplayNames = {
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
 	xquik: 'XQuik',
+	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
@@ -231,6 +235,7 @@ export type AllProviders =
 	| 'abstract'
 	| 'activetrail'
 	| 'addresszen'
+	| 'adrapid'
 	| 'agencyzoom'
 	| 'agentmail'
 	| 'agentql'
@@ -325,6 +330,7 @@ export type AllProviders =
 	| 'whatsapp'
 	| 'wiza'
 	| 'xquik'
+	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'
