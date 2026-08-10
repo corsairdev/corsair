@@ -66,6 +66,15 @@ describe('Apify MCP endpoint guards', () => {
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
+	it('ragWebBrowser throws AuthMissingError without api key', async () => {
+		await expect(
+			ActorsEndpoints.ragWebBrowser(createCtx(), {
+				query: 'x',
+				maxResults: 1,
+			}),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
 	it('getActorRun throws AuthMissingError without api key', async () => {
 		await expect(
 			RunsEndpoints.getActorRun(createCtx(), { runId: 'missing' }),
@@ -100,7 +109,7 @@ describeLive('Apify MCP API Type Tests', () => {
 			expect(ctx.db.actors.upsertByEntityId).toHaveBeenCalled();
 			expect(logEventFromContext).toHaveBeenCalledWith(
 				ctx,
-				'apify_mcp.actors.searchActors',
+				'apifymcp.actors.searchActors',
 				expect.objectContaining({ tool: 'search-actors' }),
 				'completed',
 			);
@@ -155,7 +164,7 @@ describeLive('Apify MCP API Type Tests', () => {
 			expect(response).toBeDefined();
 			expect(logEventFromContext).toHaveBeenCalledWith(
 				ctx,
-				'apify_mcp.docs.searchApifyDocs',
+				'apifymcp.docs.searchApifyDocs',
 				expect.objectContaining({ tool: 'search-apify-docs' }),
 				'completed',
 			);

@@ -153,7 +153,7 @@ export const apifyMcpAuthConfig = {
 } as const satisfies PluginAuthConfig;
 
 export type BaseApifyMcpPlugin<T extends ApifyMcpPluginOptions> = CorsairPlugin<
-	'apify_mcp',
+	'apifymcp',
 	typeof ApifyMcpSchema,
 	typeof apifyMcpEndpointsNested,
 	typeof apifyMcpWebhooksNested,
@@ -174,7 +174,7 @@ export function apifyMcp<const T extends ApifyMcpPluginOptions>(
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	return {
-		id: 'apify_mcp',
+		id: 'apifymcp',
 		authConfig: apifyMcpAuthConfig,
 		schema: ApifyMcpSchema,
 		options: options,
@@ -197,12 +197,12 @@ export function apifyMcp<const T extends ApifyMcpPluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
-					throw new AuthMissingError('apify_mcp', 'api_key');
+					throw new AuthMissingError('apifymcp', 'api_key');
 				}
 				return res;
 			}
 
-			throw new AuthMissingError('apify_mcp', 'api_key');
+			throw new AuthMissingError('apifymcp', 'api_key');
 		},
 	} satisfies InternalApifyMcpPlugin;
 }

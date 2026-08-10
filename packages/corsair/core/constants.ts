@@ -24,7 +24,7 @@ export const BaseProviders = [
 	'algolia',
 	'alttextai',
 	'amplitude',
-	'apify_mcp',
+	'apifymcp',
 	'apilabz',
 	'asana',
 	'bitwarden',
@@ -129,7 +129,7 @@ export const ProviderDisplayNames = {
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
 	amplitude: 'Amplitude',
-	apify_mcp: 'Apify MCP',
+	apifymcp: 'Apify MCP',
 	apilabz: 'API Labz',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -241,7 +241,7 @@ export type AllProviders =
 	| 'algolia'
 	| 'alttextai'
 	| 'amplitude'
-	| 'apify_mcp'
+	| 'apifymcp'
 	| 'apilabz'
 	| 'asana'
 	| 'bitwarden'

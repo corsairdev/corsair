@@ -7,7 +7,7 @@ export const searchActors: ApifyMcpEndpoints['searchActors'] = async (
 ) => {
 	return executeApifyMcpTool(
 		ctx,
-		'apify_mcp.actors.searchActors',
+		'apifymcp.actors.searchActors',
 		'search-actors',
 		input,
 		{ cache: 'actors' },
@@ -20,7 +20,7 @@ export const fetchActorDetails: ApifyMcpEndpoints['fetchActorDetails'] = async (
 ) => {
 	return executeApifyMcpTool(
 		ctx,
-		'apify_mcp.actors.fetchActorDetails',
+		'apifymcp.actors.fetchActorDetails',
 		'fetch-actor-details',
 		input,
 		{ cache: 'actors' },
@@ -30,7 +30,7 @@ export const fetchActorDetails: ApifyMcpEndpoints['fetchActorDetails'] = async (
 export const callActor: ApifyMcpEndpoints['callActor'] = async (ctx, input) => {
 	return executeApifyMcpTool(
 		ctx,
-		'apify_mcp.actors.callActor',
+		'apifymcp.actors.callActor',
 		'call-actor',
 		input,
 		{ cache: 'actorRun', requireAuth: true },
@@ -43,7 +43,7 @@ export const ragWebBrowser: ApifyMcpEndpoints['ragWebBrowser'] = async (
 ) => {
 	return executeApifyMcpTool(
 		ctx,
-		'apify_mcp.actors.ragWebBrowser',
+		'apifymcp.actors.ragWebBrowser',
 		'apify/rag-web-browser',
 		input,
 		{ cache: 'actorRun', requireAuth: true },
