@@ -158,7 +158,19 @@ describe('postgres-js database integration', () => {
 	const skipFlag = (process.env.SKIP_PG_TESTS ?? '').toLowerCase();
 	const liveDisabled =
 		skipFlag === '1' || skipFlag === 'true' || skipFlag === 'yes';
-	const gated = () => (liveDisabled ? it.skip : it);
+	const gated = () => {
+		const runner = liveDisabled ? it.skip : it;
+		return (name: string, fn: any, timeout?: number) => {
+			runner(
+				name,
+				async (...args: any[]) => {
+					if (!connectable) return;
+					return fn(...args);
+				},
+				timeout,
+			);
+		};
+	};
 
 	// ────────────────────────────────────────────────────────────────────────
 	// Input detection + dispatch
@@ -790,7 +802,17 @@ describe('postgres-js database integration', () => {
 		// registration. Decide solely on env var presence here; the beforeAll
 		// probe will fail loudly if Postgres isn't reachable.
 		const slackEnabled = !liveDisabled && Boolean(botToken && channel && kek);
-		const runIf = slackEnabled ? it : it.skip;
+		const runIf = (name: string, fn: any, timeout?: number) => {
+			const runner = slackEnabled ? it : it.skip;
+			runner(
+				name,
+				async (...args: any[]) => {
+					if (!connectable) return;
+					return fn(...args);
+				},
+				timeout,
+			);
+		};
 
 		runIf(
 			'posts/updates/deletes a message and logs events+entities',

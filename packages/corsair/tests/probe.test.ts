@@ -125,10 +125,13 @@ describe('runReadonlyProbe', () => {
 		// the scope to it — so the write throws. No escape past the readonly guard.
 		let sendAttempted = false;
 		let wrote = false;
+		let resolveRead: ((val: string) => void) | undefined;
 		const corsair = {
 			slow: {
 				read: () =>
-					new Promise((resolve) => setTimeout(() => resolve('late'), 40)),
+					new Promise<string>((resolve) => {
+						resolveRead = resolve;
+					}),
 			},
 			slack: {
 				send: async () => {
@@ -146,6 +149,9 @@ describe('runReadonlyProbe', () => {
 		});
 		expect(result.status).toBe('error'); // timed out first
 		// Let the detached continuation resume past the now-resolved slow read.
+		if (resolveRead) {
+			resolveRead('late');
+		}
 		await waitFor(() => sendAttempted);
 		expect(sendAttempted).toBe(true); // proves the continuation DID resume post-timeout
 		expect(wrote).toBe(false); // and the write was still blocked by readonly
