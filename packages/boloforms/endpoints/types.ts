@@ -28,7 +28,9 @@ const GetDocumentsListResponseSchema = z.object({
 	formCount: z.number(),
 });
 
-export type GetDocumentsListResponse = z.infer<typeof GetDocumentsListResponseSchema>;
+export type GetDocumentsListResponse = z.infer<
+	typeof GetDocumentsListResponseSchema
+>;
 
 export type BoloformsEndpointInputs = {
 	getDocumentsList: GetDocumentsListInput;
