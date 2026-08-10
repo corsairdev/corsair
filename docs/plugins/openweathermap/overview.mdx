@@ -110,7 +110,11 @@ Synced entities support `corsair.openweathermap.db.<entity>.search()` and `.list
 **Read-style (read):** `history.timeMachine`
 
 ```ts
-await corsair.openweathermap.api.history.timeMachine({});
+await corsair.openweathermap.api.history.timeMachine({
+    lat: 0,
+    lon: 0,
+    dt: 0,
+});
 ```
 
 

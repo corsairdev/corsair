@@ -341,6 +341,54 @@ function pickExampleEndpoints(api: DocsApiEndpoint[]): {
 	return { read, write };
 }
 
+function exampleValueForField(type: string): string {
+	const t = type.trim();
+
+	// Use the first literal value when the type contains one.
+	const literal = t.match(/['"]([^'"]+)['"]/);
+	if (literal?.[1]) {
+		return `'${literal[1]}'`;
+	}
+
+	if (t === 'string' || t.includes('string |')) {
+		return "'example'";
+	}
+
+	if (t === 'number') {
+		return '0';
+	}
+
+	if (t === 'boolean') {
+		return 'true';
+	}
+
+	if (t === 'Date') {
+		return 'new Date()';
+	}
+
+	if (t.endsWith('[]')) {
+		return '[]';
+	}
+
+	return '{}';
+}
+
+function buildExampleInput(shape: DocSchemaShape): string {
+	if (shape.kind === 'inline' || shape.fields.length === 0) {
+		return '{}';
+	}
+	const requiredFields = shape.fields.filter((field) => !field.optional);
+	if (requiredFields.length === 0) {
+		return '{}';
+	}
+
+	return `{
+${requiredFields
+	.map((field) => `    ${field.key}: ${exampleValueForField(field.type)},`)
+	.join('\n')}
+}`;
+}
+
 function buildMainMdx(opts: {
 	pluginId: string;
 	title: string;
@@ -447,14 +495,24 @@ Synced entities support \`corsair.${pluginId}.db.<entity>.search()\` and \`.list
 
 	const exampleRead = exRead
 		? `\`\`\`ts
-await corsair.${pluginId}.api.${exRead.shortPath}({});
+await corsair.${pluginId}.api.${exRead.shortPath}(${buildExampleInput(exRead.input)});
 \`\`\`
 `
 		: '_No read-style endpoint inferred; pick any operation from the reference below._\n';
 
 	const exampleWrite = exWrite
-		? `\`\`\`ts
-await corsair.${pluginId}.api.${exWrite.shortPath}({});
+		? `
+		${
+			exWrite.riskLevel === 'destructive' || exWrite.irreversible
+				? `<Warning>
+This is a destructive operation. Review [Permissions](/concepts/permissions) and [Hooks](/concepts/hooks) before invoking it.
+</Warning>
+
+`
+				: ''
+		}
+		\`\`\`ts
+await corsair.${pluginId}.api.${exWrite.shortPath}(${buildExampleInput(exWrite.input)});
 \`\`\`
 `
 		: '_No write-style endpoint inferred; pick any operation from the reference below._\n';

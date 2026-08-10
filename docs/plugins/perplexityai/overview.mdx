@@ -105,7 +105,10 @@ More: [API Key](/concepts/api-key)
 **Read-style (read):** `chat.completions`
 
 ```ts
-await corsair.perplexityai.api.chat.completions({});
+await corsair.perplexityai.api.chat.completions({
+    model: 'example',
+    messages: [],
+});
 ```
 
 

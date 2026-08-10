@@ -110,7 +110,9 @@ Synced entities support `corsair.tavily.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `crawl.crawl`
 
 ```ts
-await corsair.tavily.api.crawl.crawl({});
+await corsair.tavily.api.crawl.crawl({
+    url: 'example',
+});
 ```
 
 

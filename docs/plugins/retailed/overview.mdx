@@ -123,7 +123,9 @@ Synced entities support `corsair.retailed.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `goat.prices`
 
 ```ts
-await corsair.retailed.api.goat.prices({});
+await corsair.retailed.api.goat.prices({
+    query: 'example',
+});
 ```
 
 
