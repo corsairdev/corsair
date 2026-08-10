@@ -5,7 +5,7 @@ import type { ListModelEndpointsResponse } from './types';
 export const listModelEndpoints: OpenRouterEndpoints['modelsEndpointsList'] =
 	async (ctx, input) => {
 		const result = await makeOpenRouterRequest<ListModelEndpointsResponse>(
-			`models/${input.author}/${input.slug}/endpoints`,
+			`models/${encodeURIComponent(input.author)}/${encodeURIComponent(input.slug)}/endpoints`,
 			ctx.key,
 		);
 

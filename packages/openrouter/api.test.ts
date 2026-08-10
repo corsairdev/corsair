@@ -1,3 +1,4 @@
+import type { CorsairErrorHandler } from 'corsair/core';
 import { makeOpenRouterRequest } from './client';
 import {
 	ChatCompletions,
@@ -14,7 +15,6 @@ import {
 import type {
 	CreateAnthropicMessageResponse,
 	CreateChatCompletionResponse,
-	CreateCoinbaseChargeResponse,
 	CreateEmbeddingOutput,
 	GetKeyResponse,
 	ListCreditsResponse,
@@ -27,28 +27,17 @@ import type {
 	ListZdrEndpointsResponse,
 } from './endpoints/types';
 import {
+	ChatMessageSchema,
 	OpenRouterEndpointInputSchemas,
 	OpenRouterEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import type { OpenrouterContext } from './index';
 
-// Handler tests mock the client; live tests (gated on OPENROUTER_API_KEY)
-// fall through to the real implementation via jest.requireActual.
+const typedErrorHandlers: CorsairErrorHandler = errorHandlers;
+
 jest.mock('./client', () => ({
-	makeOpenRouterRequest: jest.fn().mockImplementation((...args: unknown[]) => {
-		const actual = jest.requireActual<typeof import('./client')>('./client');
-		return actual.makeOpenRouterRequest(
-			args[0] as string,
-			args[1] as string,
-			args[2] as
-				| {
-						method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-						body?: Record<string, unknown>;
-						query?: Record<string, string | number | boolean | undefined>;
-				  }
-				| undefined,
-		);
-	}),
+	makeOpenRouterRequest: jest.fn(),
 }));
 
 const mockRequest = makeOpenRouterRequest as jest.MockedFunction<
@@ -111,9 +100,179 @@ describe('OpenRouter schemas', () => {
 		expect(output.success).toBe(true);
 	});
 
-	it('parses models.list input and response', () => {
-		const input = OpenRouterEndpointInputSchemas.modelsList.safeParse({});
+	it('supports multi-turn chat tool calls', () => {
+		const parsed = ChatMessageSchema.safeParse({
+			role: 'assistant',
+			content: null,
+			tool_calls: [
+				{
+					id: 'call-1',
+					type: 'function',
+					function: { name: 'lookup', arguments: '{"id":"1"}' },
+				},
+			],
+		});
+
+		expect(parsed.success).toBe(true);
+	});
+
+	it('rejects unsupported streaming requests', () => {
+		const parsed =
+			OpenRouterEndpointInputSchemas.chatCompletionsCreate.safeParse({
+				model: 'openai/gpt-4o-mini',
+				messages: [{ role: 'user', content: 'Hello' }],
+				stream: true,
+			});
+
+		expect(parsed.success).toBe(false);
+	});
+
+	it('supports Anthropic image, tool, and thinking blocks', () => {
+		const input = OpenRouterEndpointInputSchemas.messagesCreate.safeParse({
+			model: 'anthropic/claude-sonnet-4',
+			maxTokens: 1024,
+			messages: [
+				{
+					role: 'user',
+					content: [
+						{
+							type: 'image',
+							source: {
+								type: 'base64',
+								media_type: 'image/png',
+								data: 'aW1hZ2U=',
+							},
+						},
+						{
+							type: 'document',
+							source: {
+								type: 'text',
+								media_type: 'text/plain',
+								data: 'Document text',
+							},
+						},
+						{
+							type: 'document',
+							source: {
+								type: 'file',
+								file_id: 'file-1',
+							},
+						},
+						{
+							type: 'document',
+							title: null,
+							context: null,
+							source: {
+								type: 'content',
+								content: [{ type: 'text', text: 'Nested text' }],
+							},
+						},
+						{
+							type: 'tool_result',
+							tool_use_id: 'tool-1',
+							content: [{ type: 'text', text: 'done' }],
+						},
+					],
+				},
+			],
+			tools: [
+				{
+					name: 'lookup',
+					description: 'Look up a record',
+					input_schema: { type: 'object' },
+				},
+			],
+			thinking: { type: 'enabled', budget_tokens: 1024 },
+		});
 		expect(input.success).toBe(true);
+
+		const invalidToolChoice =
+			OpenRouterEndpointInputSchemas.messagesCreate.safeParse({
+				model: 'anthropic/claude-sonnet-4',
+				maxTokens: 1024,
+				messages: [{ role: 'user', content: 'Hello' }],
+				toolChoice: { type: 'tool' },
+			});
+		expect(invalidToolChoice.success).toBe(false);
+
+		const output = OpenRouterEndpointOutputSchemas.messagesCreate.safeParse({
+			id: 'msg-1',
+			type: 'message',
+			role: 'assistant',
+			model: 'anthropic/claude-sonnet-4',
+			stop_reason: 'tool_use',
+			content: [
+				{ type: 'thinking', thinking: 'Need a lookup', signature: 'sig' },
+				{
+					type: 'tool_use',
+					id: 'tool-1',
+					name: 'lookup',
+					input: { id: '1' },
+				},
+			],
+			usage: {
+				input_tokens: 10,
+				output_tokens: 20,
+				output_tokens_details: null,
+			},
+		});
+		expect(output.success).toBe(true);
+
+		const nullableTextOutput =
+			OpenRouterEndpointOutputSchemas.messagesCreate.safeParse({
+				id: 'msg-2',
+				type: 'message',
+				role: 'assistant',
+				model: 'anthropic/claude-sonnet-4',
+				stop_reason: 'end_turn',
+				content: [{ type: 'text', text: 'Hi', citations: null }],
+				usage: { input_tokens: 1, output_tokens: 1 },
+			});
+		expect(nullableTextOutput.success).toBe(true);
+	});
+
+	it('supports reasoning output and per-request ZDR', () => {
+		const input =
+			OpenRouterEndpointInputSchemas.chatCompletionsCreate.safeParse({
+				model: 'openai/o4-mini',
+				messages: [{ role: 'user', content: 'Reason about this' }],
+				reasoning: { effort: 'xhigh', summary: 'detailed' },
+				provider: { zdr: true },
+			});
+		expect(input.success).toBe(true);
+
+		const output =
+			OpenRouterEndpointOutputSchemas.chatCompletionsCreate.safeParse({
+				id: 'gen-1',
+				object: 'chat.completion',
+				created: 1700000000,
+				model: 'openai/o4-mini',
+				choices: [
+					{
+						index: 0,
+						message: {
+							role: 'assistant',
+							content: 'Answer',
+							reasoning: 'Reasoning text',
+							reasoning_details: [{ type: 'reasoning.text', text: 'detail' }],
+						},
+						finish_reason: 'stop',
+					},
+				],
+				usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
+			});
+		expect(output.success).toBe(true);
+	});
+
+	it('parses models.list input and response', () => {
+		const input = OpenRouterEndpointInputSchemas.modelsList.safeParse({
+			offset: 10,
+			limit: 25,
+		});
+		expect(input.success).toBe(true);
+		if (input.success) {
+			expect(input.data).toMatchObject({ offset: 10, limit: 25 });
+		}
 
 		const output = OpenRouterEndpointOutputSchemas.modelsList.safeParse({
 			data: [
@@ -130,6 +289,22 @@ describe('OpenRouter schemas', () => {
 		expect(output.success).toBe(true);
 	});
 
+	it('preserves model pagination metadata', () => {
+		const output = OpenRouterEndpointOutputSchemas.modelsList.safeParse({
+			data: [],
+			links: { next: 'https://openrouter.ai/api/v1/models?cursor=next' },
+			total_count: 42,
+		});
+
+		expect(output.success).toBe(true);
+		if (output.success) {
+			expect(output.data).toMatchObject({
+				links: { next: 'https://openrouter.ai/api/v1/models?cursor=next' },
+				total_count: 42,
+			});
+		}
+	});
+
 	it('parses embeddings.create input and response', () => {
 		const input = OpenRouterEndpointInputSchemas.embeddingsCreate.safeParse({
 			model: 'openai/text-embedding-3-small',
@@ -143,6 +318,21 @@ describe('OpenRouter schemas', () => {
 			data: [{ object: 'embedding', embedding: [0.1, 0.2, 0.3] }],
 			model: 'openai/text-embedding-3-small',
 			usage: { prompt_tokens: 2, completion_tokens: 0, total_tokens: 2 },
+		});
+		expect(output.success).toBe(true);
+	});
+
+	it('accepts token embedding input and responses without usage', () => {
+		const input = OpenRouterEndpointInputSchemas.embeddingsCreate.safeParse({
+			model: 'openai/text-embedding-3-small',
+			input: [12, 34, 56],
+		});
+		expect(input.success).toBe(true);
+
+		const output = OpenRouterEndpointOutputSchemas.embeddingsCreate.safeParse({
+			object: 'list',
+			data: [{ object: 'embedding', embedding: [0.1, 0.2] }],
+			model: 'openai/text-embedding-3-small',
 		});
 		expect(output.success).toBe(true);
 	});
@@ -205,16 +395,41 @@ describe('OpenRouter schemas', () => {
 		expect(output.success).toBe(true);
 	});
 
-	it('parses credits.list input and response', () => {
-		const input = OpenRouterEndpointInputSchemas.creditsList.safeParse({
-			query: '2024-01-01',
+	it('parses the official numeric generation usage field', () => {
+		const output = OpenRouterEndpointOutputSchemas.generationsGet.safeParse({
+			data: {
+				id: 'gen-1',
+				provider_name: null,
+				usage: 0.0025,
+				streamed: null,
+				tokens_prompt: null,
+				tokens_completion: null,
+				provider_responses: null,
+			},
 		});
+
+		expect(output.success).toBe(true);
+	});
+
+	it('parses credits.list input and response', () => {
+		const input = OpenRouterEndpointInputSchemas.creditsList.safeParse({});
 		expect(input.success).toBe(true);
+
+		const unsupportedFilters =
+			OpenRouterEndpointInputSchemas.creditsList.safeParse({
+				query: '2024-01-01',
+			});
+		expect(unsupportedFilters.success).toBe(false);
 
 		const output = OpenRouterEndpointOutputSchemas.creditsList.safeParse({
 			data: { total_credits: 10, total_usage: 3.5 },
 		});
 		expect(output.success).toBe(true);
+
+		const missingUsage = OpenRouterEndpointOutputSchemas.creditsList.safeParse({
+			data: { total_credits: 10 },
+		});
+		expect(missingUsage.success).toBe(false);
 	});
 
 	it('parses key.get input and response', () => {
@@ -225,11 +440,20 @@ describe('OpenRouter schemas', () => {
 			data: {
 				label: 'test-key',
 				usage: 0.0000075,
+				usage_daily: 0.000001,
+				byok_usage: 0,
 				limit: null,
+				limit_reset: null,
+				include_byok_in_limit: false,
+				creator_user_id: 'user-1',
 				is_free_tier: true,
 			},
 		});
 		expect(output.success).toBe(true);
+		if (output.success) {
+			expect(output.data.data.usage_daily).toBe(0.000001);
+			expect(output.data.data.include_byok_in_limit).toBe(false);
+		}
 	});
 
 	it('parses models.count input and response', () => {
@@ -265,8 +489,14 @@ describe('OpenRouter schemas', () => {
 	});
 
 	it('parses models.listUser input and response', () => {
-		const input = OpenRouterEndpointInputSchemas.modelsUserList.safeParse({});
+		const input = OpenRouterEndpointInputSchemas.modelsUserList.safeParse({
+			offset: 5,
+			limit: 50,
+		});
 		expect(input.success).toBe(true);
+		if (input.success) {
+			expect(input.data).toMatchObject({ offset: 5, limit: 50 });
+		}
 
 		const output = OpenRouterEndpointOutputSchemas.modelsUserList.safeParse({
 			data: [
@@ -296,40 +526,12 @@ describe('OpenRouter schemas', () => {
 		expect(output.success).toBe(true);
 	});
 
-	it('parses credits.createCoinbaseCharge input and response', () => {
-		const input =
-			OpenRouterEndpointInputSchemas.creditsCoinbaseCreate.safeParse({
-				amount: 50.25,
-				sender: '0x1234567890123456789012345678901234567890',
-				chainId: 8453,
-			});
-		expect(input.success).toBe(true);
-
-		const invalid =
-			OpenRouterEndpointInputSchemas.creditsCoinbaseCreate.safeParse({
-				amount: 10,
-				sender: '0x1234',
-				chainId: 999,
-			});
-		expect(invalid.success).toBe(false);
-
-		const output =
-			OpenRouterEndpointOutputSchemas.creditsCoinbaseCreate.safeParse({
-				data: {
-					id: 'charge-id',
-					chain_id: 8453,
-					sender: '0x1234567890123456789012345678901234567890',
-					addresses: {
-						'8453:0xcharge123': '0xcharge123',
-					},
-					calldata: {
-						'8453:0xcharge123': '0xdeadbeef',
-					},
-					created_at: '2026-01-01T00:00:00Z',
-					expires_at: '2026-01-08T00:00:00Z',
-				},
-			});
-		expect(output.success).toBe(true);
+	it('exposes exactly 13 supported operations', () => {
+		expect(Object.keys(OpenRouterEndpointInputSchemas)).toHaveLength(13);
+		expect('creditsCoinbaseCreate' in OpenRouterEndpointInputSchemas).toBe(
+			false,
+		);
+		expect('embeddingsCreate' in OpenRouterEndpointInputSchemas).toBe(true);
 	});
 
 	it('rejects invalid chatCompletions.create input', () => {
@@ -344,7 +546,16 @@ describe('OpenRouter schemas', () => {
 
 describe('OpenRouter endpoint handlers (mocked client)', () => {
 	beforeEach(() => {
-		mockRequest.mockClear();
+		mockRequest.mockReset();
+		mockRequest.mockRejectedValue(
+			new Error('Unexpected unmocked OpenRouter request in offline test'),
+		);
+	});
+
+	it('does not fall through to the live API', async () => {
+		await expect(Models.listModels(testCtx('k'), {})).rejects.toThrow(
+			'Unexpected unmocked OpenRouter request',
+		);
 	});
 
 	it('ChatCompletions.createChatCompletion POSTs to chat/completions', async () => {
@@ -406,6 +617,8 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 			maxTokens: 64,
 			messages: [{ role: 'user', content: 'Hi' }],
 			system: 'Be brief',
+			tools: [{ name: 'lookup', input_schema: { type: 'object' } }],
+			thinking: { type: 'enabled', budget_tokens: 1024 },
 		});
 
 		expect(mockRequest).toHaveBeenCalledWith(
@@ -418,10 +631,12 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 					max_tokens: 64,
 					stream: false,
 					system: 'Be brief',
+					tools: [{ name: 'lookup', input_schema: { type: 'object' } }],
+					thinking: { type: 'enabled', budget_tokens: 1024 },
 				}),
 			}),
 		);
-		expect(result.content[0]?.text).toBe('Hi');
+		expect(result.content[0]).toMatchObject({ type: 'text', text: 'Hi' });
 	});
 
 	it('Models.listModels GETs models', async () => {
@@ -430,9 +645,14 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 		} as ListModelsResponse;
 		mockRequest.mockResolvedValueOnce(response);
 
-		const result = await Models.listModels(testCtx('k'), {});
+		const result = await Models.listModels(testCtx('k'), {
+			offset: 10,
+			limit: 25,
+		});
 
-		expect(mockRequest).toHaveBeenCalledWith('models', 'k');
+		expect(mockRequest).toHaveBeenCalledWith('models', 'k', {
+			query: { offset: 10, limit: 25 },
+		});
 		expect(result.data[0]?.id).toBe('openai/gpt-4o-mini');
 	});
 
@@ -483,6 +703,22 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 		);
 	});
 
+	it('encodes model endpoint path segments', async () => {
+		mockRequest.mockResolvedValueOnce({
+			data: { id: 'author/model', name: 'Model', endpoints: [] },
+		});
+
+		await ModelEndpoints.listModelEndpoints(testCtx('k'), {
+			author: 'author/name',
+			slug: 'model?variant=free',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'models/author%2Fname/model%3Fvariant%3Dfree/endpoints',
+			'k',
+		);
+	});
+
 	it('Models.listModelsCount GETs models/count', async () => {
 		const response = { data: { count: 400 } } as ListModelsCountResponse;
 		mockRequest.mockResolvedValueOnce(response);
@@ -518,9 +754,14 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 		} as ListUserModelsResponse;
 		mockRequest.mockResolvedValueOnce(response);
 
-		const result = await Models.listUserModels(testCtx('k'), {});
+		const result = await Models.listUserModels(testCtx('k'), {
+			offset: 5,
+			limit: 50,
+		});
 
-		expect(mockRequest).toHaveBeenCalledWith('models/user', 'k');
+		expect(mockRequest).toHaveBeenCalledWith('models/user', 'k', {
+			query: { offset: 5, limit: 50 },
+		});
 		expect(result.data[0]?.id).toBe('myorg/custom-model');
 	});
 
@@ -534,37 +775,6 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 
 		expect(mockRequest).toHaveBeenCalledWith('endpoints/zdr', 'k');
 		expect(result.data[0]?.provider_name).toBe('OpenAI');
-	});
-
-	it('Credits.createCoinbaseCharge POSTs to credits/coinbase', async () => {
-		const response = {
-			data: {
-				id: 'charge-id',
-				chain_id: 8453,
-				sender: '0x1234567890123456789012345678901234567890',
-			},
-		} as CreateCoinbaseChargeResponse;
-		mockRequest.mockResolvedValueOnce(response);
-
-		const result = await Credits.createCoinbaseCharge(testCtx('k'), {
-			amount: 50.25,
-			sender: '0x1234567890123456789012345678901234567890',
-			chainId: 8453,
-		});
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			'credits/coinbase',
-			'k',
-			expect.objectContaining({
-				method: 'POST',
-				body: {
-					amount: 50.25,
-					sender: '0x1234567890123456789012345678901234567890',
-					chain_id: 8453,
-				},
-			}),
-		);
-		expect(result.data.id).toBe('charge-id');
 	});
 
 	it('Providers.listProviders GETs providers', async () => {
@@ -595,7 +805,7 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 		expect(result.data.id).toBe('gen-1');
 	});
 
-	it('Credits.listCredits GETs credits with optional ZDR params', async () => {
+	it('Credits.listCredits GETs credits', async () => {
 		const response = {
 			data: { total_credits: 10, total_usage: 2 },
 		} as ListCreditsResponse;
@@ -603,14 +813,7 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 
 		const result = await Credits.listCredits(testCtx('k'), {});
 
-		expect(mockRequest).toHaveBeenCalledWith('credits', 'k', {
-			query: {
-				query: undefined,
-				cursor: undefined,
-				per_page: undefined,
-				max_age: undefined,
-			},
-		});
+		expect(mockRequest).toHaveBeenCalledWith('credits', 'k');
 		expect(result.data.total_credits).toBe(10);
 	});
 
@@ -627,10 +830,68 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 	});
 });
 
+describe('OpenRouter error handlers', () => {
+	const writeContext = {
+		pluginId: 'openrouter',
+		operation: 'chatCompletions.create',
+		input: {},
+		originalError: new Error('server error'),
+	};
+	const readContext = {
+		...writeContext,
+		operation: 'models.list',
+	};
+
+	it('does not retry paid write operations on server errors', async () => {
+		const strategy = await typedErrorHandlers.SERVER_ERROR!.handler(
+			new Error('server error'),
+			writeContext,
+		);
+		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('retries read operations on server errors', async () => {
+		const strategy = await typedErrorHandlers.SERVER_ERROR!.handler(
+			new Error('server error'),
+			readContext,
+		);
+		expect(strategy.maxRetries).toBe(3);
+	});
+
+	it('does not retry paid writes after timeouts', async () => {
+		expect(
+			typedErrorHandlers.TIMEOUT_ERROR!.match(
+				new Error('request timed out'),
+				writeContext,
+			),
+		).toBe(true);
+
+		const strategy = await typedErrorHandlers.TIMEOUT_ERROR!.handler(
+			new Error('request timed out'),
+			writeContext,
+		);
+		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('does not classify unrelated numeric messages as rate limits', () => {
+		expect(
+			typedErrorHandlers.RATE_LIMIT_ERROR!.match(
+				new Error('model-4290 completed in 4290ms'),
+				readContext,
+			),
+		).toBe(false);
+	});
+});
+
 const TEST_API_KEY = process.env.OPENROUTER_API_KEY;
 const describeIfApiKey = TEST_API_KEY ? describe : describe.skip;
 
 describeIfApiKey('OpenRouter API type tests (live)', () => {
+	const makeOpenRouterRequest =
+		jest.requireActual<typeof import('./client')>(
+			'./client',
+		).makeOpenRouterRequest;
+
 	it('chat completion returns the expected shape', async () => {
 		const response = await makeOpenRouterRequest<CreateChatCompletionResponse>(
 			'chat/completions',

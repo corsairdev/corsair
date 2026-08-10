@@ -17,6 +17,8 @@ export const createEmbedding: OpenRouterEndpoints['embeddingsCreate'] = async (
 				encoding_format: input.encodingFormat,
 				dimensions: input.dimensions,
 				user: input.user,
+				input_type: input.inputType,
+				provider: input.provider,
 			},
 		},
 	);

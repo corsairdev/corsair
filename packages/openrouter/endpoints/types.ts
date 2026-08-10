@@ -15,26 +15,6 @@ const MessagePartSchema = z.union([
 	}),
 ]);
 
-export const ChatMessageSchema = z.union([
-	z.object({
-		role: z.literal('system'),
-		content: z.string(),
-	}),
-	z.object({
-		role: z.literal('assistant'),
-		content: z.union([z.string(), z.array(MessagePartSchema)]).optional(),
-	}),
-	z.object({
-		role: z.literal('user'),
-		content: z.union([z.string(), z.array(MessagePartSchema)]),
-	}),
-	z.object({
-		role: z.literal('tool'),
-		tool_call_id: z.string(),
-		content: z.string(),
-	}),
-]);
-
 const ToolCallSchema = z.object({
 	id: z.string(),
 	type: z.literal('function'),
@@ -43,6 +23,30 @@ const ToolCallSchema = z.object({
 		arguments: z.string(),
 	}),
 });
+
+export const ChatMessageSchema = z.union([
+	z.object({
+		role: z.literal('system'),
+		content: z.string(),
+	}),
+	z.object({
+		role: z.literal('assistant'),
+		content: z
+			.union([z.string(), z.array(MessagePartSchema)])
+			.nullable()
+			.optional(),
+		tool_calls: z.array(ToolCallSchema).optional(),
+	}),
+	z.object({
+		role: z.literal('user'),
+		content: z.union([z.string(), z.array(MessagePartSchema)]),
+	}),
+	z.object({
+		role: z.literal('tool'),
+		tool_call_id: z.string(),
+		content: z.union([z.string(), z.array(MessagePartSchema)]),
+	}),
+]);
 
 const ToolSchema = z.object({
 	type: z.literal('function'),
@@ -69,10 +73,19 @@ const ResponseFormatSchema = z.object({
 		.optional(),
 });
 
+const ProviderPreferencesSchema = z.object({
+	order: z.array(z.string()).optional(),
+	allow_fallbacks: z.boolean().optional(),
+	ignore: z.array(z.string()).optional(),
+	require_parameters: z.boolean().optional(),
+	data_collection: z.string().optional(),
+	zdr: z.boolean().optional(),
+});
+
 export const CreateChatCompletionInputSchema = z.object({
 	model: z.string(),
 	messages: z.array(ChatMessageSchema).min(1),
-	stream: z.boolean().optional(),
+	stream: z.literal(false).optional(),
 	temperature: z.number().optional(),
 	topP: z.number().optional(),
 	maxTokens: z.number().optional(),
@@ -95,20 +108,17 @@ export const CreateChatCompletionInputSchema = z.object({
 		])
 		.optional(),
 	reasoning: z
-		.object({ effort: z.enum(['low', 'medium', 'high']).optional() })
+		.object({
+			effort: z
+				.enum(['none', 'minimal', 'low', 'medium', 'high', 'xhigh', 'max'])
+				.optional(),
+			summary: z.enum(['auto', 'concise', 'detailed']).nullable().optional(),
+		})
 		.optional(),
 	transforms: z.array(z.string()).optional(),
 	models: z.array(z.string()).optional(),
 	route: z.string().optional(),
-	provider: z
-		.object({
-			order: z.array(z.string()).optional(),
-			allow_fallbacks: z.boolean().optional(),
-			ignore: z.array(z.string()).optional(),
-			require_parameters: z.boolean().optional(),
-			data_collection: z.string().optional(),
-		})
-		.optional(),
+	provider: ProviderPreferencesSchema.optional(),
 	plugins: z
 		.array(
 			z.object({
@@ -126,6 +136,23 @@ export const CompletionUsageSchema = z.object({
 	prompt_tokens: z.number(),
 	completion_tokens: z.number(),
 	total_tokens: z.number(),
+	prompt_tokens_details: z
+		.object({
+			cached_tokens: z.number().optional(),
+			cache_write_tokens: z.number().optional(),
+			audio_tokens: z.number().optional(),
+			video_tokens: z.number().optional(),
+		})
+		.optional(),
+	completion_tokens_details: z
+		.object({
+			reasoning_tokens: z.number().optional(),
+			audio_tokens: z.number().optional(),
+			image_tokens: z.number().optional(),
+		})
+		.optional(),
+	cost: z.number().optional(),
+	is_byok: z.boolean().optional(),
 });
 
 export const CreateChatCompletionOutputSchema = z.object({
@@ -140,16 +167,107 @@ export const CreateChatCompletionOutputSchema = z.object({
 				role: z.literal('assistant'),
 				content: z.string().nullable(),
 				tool_calls: z.array(ToolCallSchema).optional(),
+				reasoning: z.string().nullable().optional(),
+				reasoning_details: z
+					.array(z.record(z.string(), z.unknown()))
+					.optional(),
 			}),
 			finish_reason: z.string().nullable(),
 		}),
 	),
-	usage: CompletionUsageSchema,
+	usage: CompletionUsageSchema.optional(),
 	provider: z.string().optional(),
 	models: z.array(z.string()).optional(),
 	// Anthropic-style native tool calls vary by model and tool definitions;
 	// kept generic to stay forward-compatible with new tool shapes.
 	native_tool_calls: z.array(z.unknown()).optional(),
+});
+
+const AnthropicBase64SourceSchema = z.object({
+	type: z.literal('base64'),
+	media_type: z.string(),
+	data: z.string(),
+});
+
+const AnthropicUrlSourceSchema = z.object({
+	type: z.literal('url'),
+	url: z.string().url(),
+});
+
+const AnthropicImageSourceSchema = z.union([
+	AnthropicBase64SourceSchema,
+	AnthropicUrlSourceSchema,
+]);
+
+const AnthropicDocumentContentPartSchema = z.union([
+	z.object({ type: z.literal('text'), text: z.string() }),
+	z.object({
+		type: z.literal('image'),
+		source: AnthropicImageSourceSchema,
+	}),
+]);
+
+const AnthropicDocumentSourceSchema = z.union([
+	AnthropicBase64SourceSchema,
+	AnthropicUrlSourceSchema,
+	z.object({
+		type: z.literal('text'),
+		media_type: z.literal('text/plain'),
+		data: z.string(),
+	}),
+	z.object({
+		type: z.literal('content'),
+		content: z.union([z.string(), z.array(AnthropicDocumentContentPartSchema)]),
+	}),
+	z.object({
+		type: z.literal('file'),
+		file_id: z.string(),
+	}),
+]);
+
+const AnthropicContentBlockSchema = z.union([
+	z.object({ type: z.literal('text'), text: z.string() }),
+	z.object({
+		type: z.literal('image'),
+		source: AnthropicImageSourceSchema,
+	}),
+	z.object({
+		type: z.literal('document'),
+		source: AnthropicDocumentSourceSchema,
+		title: z.string().nullable().optional(),
+		context: z.string().nullable().optional(),
+		citations: z
+			.object({ enabled: z.boolean().optional() })
+			.nullable()
+			.optional(),
+	}),
+	z.object({
+		type: z.literal('tool_use'),
+		id: z.string(),
+		name: z.string(),
+		input: z.record(z.string(), z.unknown()),
+	}),
+	z.object({
+		type: z.literal('tool_result'),
+		tool_use_id: z.string(),
+		content: z.union([z.string(), z.array(z.unknown())]),
+		is_error: z.boolean().optional(),
+	}),
+	z.object({
+		type: z.literal('thinking'),
+		thinking: z.string(),
+		signature: z.string().optional(),
+	}),
+	z.object({
+		type: z.literal('redacted_thinking'),
+		data: z.string(),
+	}),
+]);
+
+const AnthropicToolSchema = z.object({
+	name: z.string(),
+	description: z.string().optional(),
+	input_schema: z.record(z.string(), z.unknown()),
 });
 
 export const CreateAnthropicMessageInputSchema = z.object({
@@ -159,7 +277,7 @@ export const CreateAnthropicMessageInputSchema = z.object({
 		.array(
 			z.object({
 				role: z.enum(['user', 'assistant']),
-				content: z.union([z.string(), z.array(MessagePartSchema)]),
+				content: z.union([z.string(), z.array(AnthropicContentBlockSchema)]),
 			}),
 		)
 		.min(1),
@@ -167,6 +285,22 @@ export const CreateAnthropicMessageInputSchema = z.object({
 	temperature: z.number().optional(),
 	topP: z.number().optional(),
 	stopSequences: z.array(z.string()).optional(),
+	tools: z.array(AnthropicToolSchema).optional(),
+	toolChoice: z
+		.union([
+			z.object({ type: z.literal('tool'), name: z.string() }),
+			z.object({ type: z.enum(['auto', 'any', 'none']) }),
+		])
+		.optional(),
+	thinking: z
+		.union([
+			z.object({
+				type: z.literal('enabled'),
+				budget_tokens: z.number().int().positive(),
+			}),
+			z.object({ type: z.literal('disabled') }),
+		])
+		.optional(),
 });
 
 export const CreateAnthropicMessageOutputSchema = z.object({
@@ -176,13 +310,30 @@ export const CreateAnthropicMessageOutputSchema = z.object({
 	model: z.string(),
 	stop_reason: z.string().nullable(),
 	content: z.array(
-		z.object({
-			type: z.literal('text'),
-			text: z.string(),
-			// Citation objects differ per provider/source and are evolving;
-			// kept generic rather than pinning a shape that will drift.
-			citations: z.array(z.unknown()).optional(),
-		}),
+		z.union([
+			z.object({
+				type: z.literal('text'),
+				text: z.string(),
+				// Citation objects differ per provider/source and are evolving;
+				// kept generic rather than pinning a shape that will drift.
+				citations: z.array(z.unknown()).nullable().optional(),
+			}),
+			z.object({
+				type: z.literal('thinking'),
+				thinking: z.string(),
+				signature: z.string().optional(),
+			}),
+			z.object({
+				type: z.literal('redacted_thinking'),
+				data: z.string(),
+			}),
+			z.object({
+				type: z.literal('tool_use'),
+				id: z.string(),
+				name: z.string(),
+				input: z.record(z.string(), z.unknown()),
+			}),
+		]),
 	),
 	usage: z
 		.object({
@@ -192,6 +343,7 @@ export const CreateAnthropicMessageOutputSchema = z.object({
 			cache_creation_input_tokens: z.number().nullable().optional(),
 			output_tokens_details: z
 				.object({ thinking_tokens: z.number().optional() })
+				.nullable()
 				.optional(),
 		})
 		// Anthropic adds usage fields as models evolve; unknown keys are
@@ -200,7 +352,12 @@ export const CreateAnthropicMessageOutputSchema = z.object({
 	provider: z.string().optional(),
 });
 
-export const ListModelsInputSchema = z.object({});
+const ModelListPaginationSchema = z.object({
+	offset: z.number().int().nonnegative().optional(),
+	limit: z.number().int().min(1).max(1000).optional(),
+});
+
+export const ListModelsInputSchema = ModelListPaginationSchema;
 
 export const ModelSchema = z.object({
 	id: z.string(),
@@ -251,6 +408,8 @@ export const ModelSchema = z.object({
 
 export const ListModelsOutputSchema = z.object({
 	data: z.array(ModelSchema),
+	links: z.object({ next: z.string().nullable().optional() }).optional(),
+	total_count: z.number().optional(),
 });
 
 export const ListModelsCountInputSchema = z.object({});
@@ -262,18 +421,22 @@ export const ListModelsCountOutputSchema = z.object({
 });
 
 export const ListEmbeddingModelsInputSchema = z.object({
-	offset: z.number().optional(),
-	limit: z.number().optional(),
+	offset: z.number().int().nonnegative().optional(),
+	limit: z.number().int().min(1).max(1000).optional(),
 });
 
 export const ListEmbeddingModelsOutputSchema = z.object({
 	data: z.array(ModelSchema),
+	links: z.object({ next: z.string().nullable().optional() }).optional(),
+	total_count: z.number().optional(),
 });
 
-export const ListUserModelsInputSchema = z.object({});
+export const ListUserModelsInputSchema = ModelListPaginationSchema;
 
 export const ListUserModelsOutputSchema = z.object({
 	data: z.array(ModelSchema),
+	links: z.object({ next: z.string().nullable().optional() }).optional(),
+	total_count: z.number().optional(),
 });
 
 export const ListModelEndpointsInputSchema = z.object({
@@ -344,34 +507,20 @@ export const ListZdrEndpointsOutputSchema = z.object({
 	data: z.array(ModelEndpointSchema),
 });
 
-export const CreateCoinbaseChargeInputSchema = z.object({
-	amount: z.number(),
-	sender: z.string(),
-	chainId: z.union([z.literal(1), z.literal(137), z.literal(8453)]),
-});
-
-export const CreateCoinbaseChargeOutputSchema = z.object({
-	data: z
-		.object({
-			id: z.string().optional(),
-			chain_id: z.number().optional(),
-			sender: z.string().optional(),
-			addresses: z.record(z.string(), z.string()).optional(),
-			calldata: z.record(z.string(), z.string()).optional(),
-			created_at: z.string().optional(),
-			expires_at: z.string().optional(),
-		})
-		// The Coinbase charge payload evolves (web3_data etc.); unknown keys
-		// are tolerated so newer responses still validate.
-		.catchall(z.unknown()),
-});
-
 export const CreateEmbeddingInputSchema = z.object({
 	model: z.string(),
-	input: z.union([z.string(), z.array(z.string())]),
+	input: z.union([
+		z.string(),
+		z.array(z.string()),
+		z.array(z.number()),
+		z.array(z.array(z.number())),
+		z.array(z.record(z.string(), z.unknown())),
+	]),
 	encodingFormat: z.enum(['float', 'base64']).optional(),
 	dimensions: z.number().optional(),
 	user: z.string().optional(),
+	inputType: z.string().optional(),
+	provider: ProviderPreferencesSchema.optional(),
 });
 
 const EmbeddingUsageSchema = z
@@ -393,7 +542,7 @@ export const CreateEmbeddingOutputSchema = z.object({
 		}),
 	),
 	model: z.string(),
-	usage: EmbeddingUsageSchema,
+	usage: EmbeddingUsageSchema.optional(),
 });
 
 export const ListProvidersInputSchema = z.object({});
@@ -422,9 +571,10 @@ export const GetGenerationOutputSchema = z.object({
 			id: z.string(),
 			model: z.string().optional(),
 			provider: z.string().optional(),
+			provider_name: z.string().nullable().optional(),
 			api_type: z.string().nullable().optional(),
 			created_at: z.string().optional(),
-			streamed: z.boolean().optional(),
+			streamed: z.boolean().nullable().optional(),
 			finish_reason: z.string().nullable().optional(),
 			total_cost: z.number().nullable().optional(),
 			prompt_tokens: z.number().optional(),
@@ -432,19 +582,19 @@ export const GetGenerationOutputSchema = z.object({
 			total_tokens: z.number().optional(),
 			// Usage breakdown and the raw provider payload are provider-defined;
 			// kept generic rather than pinning shapes that vary per provider.
-			usage: z.record(z.string(), z.unknown()).optional(),
+			usage: z
+				.union([z.number(), z.record(z.string(), z.unknown())])
+				.optional(),
+			tokens_prompt: z.number().nullable().optional(),
+			tokens_completion: z.number().nullable().optional(),
+			provider_responses: z.array(z.unknown()).nullable().optional(),
 			provider_response: z.record(z.string(), z.unknown()).optional(),
 		})
 		// Generation records gain fields over time; unknown keys tolerated.
 		.catchall(z.unknown()),
 });
 
-export const GetCreditsInputSchema = z.object({
-	query: z.string().optional(),
-	cursor: z.string().optional(),
-	perPage: z.number().optional(),
-	maxAge: z.number().optional(),
-});
+export const GetCreditsInputSchema = z.object({}).strict();
 
 export const ListCreditsInputSchema = GetCreditsInputSchema;
 
@@ -452,7 +602,7 @@ export const ListCreditsOutputSchema = z.object({
 	data: z
 		.object({
 			total_credits: z.number(),
-			total_usage: z.number().optional(),
+			total_usage: z.number(),
 			limit_reached: z.boolean().optional(),
 			prepaid: z.number().optional(),
 			billed_prepaid: z.number().optional(),
@@ -470,8 +620,18 @@ export const GetKeyOutputSchema = z.object({
 		.object({
 			label: z.string().optional(),
 			usage: z.number(),
+			usage_daily: z.number().optional(),
+			usage_weekly: z.number().optional(),
+			usage_monthly: z.number().optional(),
+			byok_usage: z.number().optional(),
+			byok_usage_daily: z.number().optional(),
+			byok_usage_weekly: z.number().optional(),
+			byok_usage_monthly: z.number().optional(),
 			limit: z.number().nullable().optional(),
+			limit_reset: z.string().nullable().optional(),
 			limit_remaining: z.number().nullable().optional(),
+			include_byok_in_limit: z.boolean().optional(),
+			creator_user_id: z.string().nullable().optional(),
 			is_free_tier: z.boolean().optional(),
 			is_management_key: z.boolean().optional(),
 			is_provisioning_key: z.boolean().optional(),
@@ -529,12 +689,6 @@ export type ListZdrEndpointsInput = z.infer<typeof ListZdrEndpointsInputSchema>;
 export type ListZdrEndpointsResponse = z.infer<
 	typeof ListZdrEndpointsOutputSchema
 >;
-export type CreateCoinbaseChargeInput = z.infer<
-	typeof CreateCoinbaseChargeInputSchema
->;
-export type CreateCoinbaseChargeResponse = z.infer<
-	typeof CreateCoinbaseChargeOutputSchema
->;
 export type GetGenerationInput = z.infer<typeof GetGenerationInputSchema>;
 export type GetGenerationResponse = z.infer<typeof GetGenerationOutputSchema>;
 export type ListCreditsInput = z.infer<typeof ListCreditsInputSchema>;
@@ -553,7 +707,6 @@ export type OpenRouterEndpointInputs = {
 	modelsEndpointsList: ListModelEndpointsInput;
 	providersList: ListProvidersInput;
 	zdrEndpointsList: ListZdrEndpointsInput;
-	creditsCoinbaseCreate: CreateCoinbaseChargeInput;
 	generationsGet: GetGenerationInput;
 	creditsList: ListCreditsInput;
 	keyGet: GetKeyInput;
@@ -570,7 +723,6 @@ export type OpenRouterEndpointOutputs = {
 	modelsEndpointsList: ListModelEndpointsResponse;
 	providersList: ListProvidersResponse;
 	zdrEndpointsList: ListZdrEndpointsResponse;
-	creditsCoinbaseCreate: CreateCoinbaseChargeResponse;
 	generationsGet: GetGenerationResponse;
 	creditsList: ListCreditsResponse;
 	keyGet: GetKeyResponse;
@@ -587,7 +739,6 @@ export const OpenRouterEndpointInputSchemas = {
 	modelsEndpointsList: ListModelEndpointsInputSchema,
 	providersList: ListProvidersInputSchema,
 	zdrEndpointsList: ListZdrEndpointsInputSchema,
-	creditsCoinbaseCreate: CreateCoinbaseChargeInputSchema,
 	generationsGet: GetGenerationInputSchema,
 	creditsList: ListCreditsInputSchema,
 	keyGet: GetKeyInputSchema,
@@ -604,7 +755,6 @@ export const OpenRouterEndpointOutputSchemas = {
 	modelsEndpointsList: ListModelEndpointsOutputSchema,
 	providersList: ListProvidersOutputSchema,
 	zdrEndpointsList: ListZdrEndpointsOutputSchema,
-	creditsCoinbaseCreate: CreateCoinbaseChargeOutputSchema,
 	generationsGet: GetGenerationOutputSchema,
 	creditsList: ListCreditsOutputSchema,
 	keyGet: GetKeyOutputSchema,

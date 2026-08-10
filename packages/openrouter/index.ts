@@ -73,7 +73,6 @@ export type OpenRouterEndpoints = {
 	modelsEndpointsList: OpenrouterEndpoint<'modelsEndpointsList'>;
 	providersList: OpenrouterEndpoint<'providersList'>;
 	zdrEndpointsList: OpenrouterEndpoint<'zdrEndpointsList'>;
-	creditsCoinbaseCreate: OpenrouterEndpoint<'creditsCoinbaseCreate'>;
 	generationsGet: OpenrouterEndpoint<'generationsGet'>;
 	creditsList: OpenrouterEndpoint<'creditsList'>;
 	keyGet: OpenrouterEndpoint<'keyGet'>;
@@ -106,7 +105,6 @@ const openrouterEndpointsNested = {
 	},
 	credits: {
 		list: Credits.listCredits,
-		createCoinbaseCharge: Credits.createCoinbaseCharge,
 	},
 	key: {
 		get: Key.getKey,
@@ -161,10 +159,6 @@ export const openrouterEndpointSchemas = {
 		input: OpenRouterEndpointInputSchemas.creditsList,
 		output: OpenRouterEndpointOutputSchemas.creditsList,
 	},
-	'credits.createCoinbaseCharge': {
-		input: OpenRouterEndpointInputSchemas.creditsCoinbaseCreate,
-		output: OpenRouterEndpointOutputSchemas.creditsCoinbaseCreate,
-	},
 	'key.get': {
 		input: OpenRouterEndpointInputSchemas.keyGet,
 		output: OpenRouterEndpointOutputSchemas.keyGet,
@@ -206,7 +200,7 @@ const openrouterEndpointMeta = {
 	'models.listUser': {
 		riskLevel: 'read',
 		description:
-			'List the models that have been created by the authenticated user',
+			'List models filtered by the authenticated user’s provider preferences, privacy settings, and guardrails',
 	},
 	'embeddings.create': {
 		riskLevel: 'write',
@@ -231,12 +225,7 @@ const openrouterEndpointMeta = {
 	'credits.list': {
 		riskLevel: 'read',
 		description:
-			'Get the account credit balance and usage, optionally with a Zero-Data Residency (ZDR) report when filter params are provided',
-	},
-	'credits.createCoinbaseCharge': {
-		riskLevel: 'write',
-		description:
-			'Create a Coinbase Commerce on-chain charge to top up the account with credits',
+			'Get the account credit balance and usage with a management API key',
 	},
 	'key.get': {
 		riskLevel: 'read',

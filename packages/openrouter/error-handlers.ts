@@ -1,6 +1,22 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
+const PAID_WRITE_OPERATIONS = new Set([
+	'chatCompletions.create',
+	'messages.create',
+	'embeddings.create',
+]);
+
+function retryTransientRead(context: { operation: string }) {
+	if (PAID_WRITE_OPERATIONS.has(context.operation)) {
+		return { maxRetries: 0 };
+	}
+	return {
+		maxRetries: 3,
+		retryStrategy: 'exponential_backoff' as const,
+	};
+}
+
 /**
  * Error handlers for the OpenRouter plugin.
  *
@@ -19,7 +35,7 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limit') || msg.includes('429');
+			return msg.includes('rate_limit') || /(?:^|\s)429(?:\s|$)/.test(msg);
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
@@ -49,24 +65,29 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 422) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('invalid') || msg.includes('validation');
+			return (
+				msg.includes('invalid request') || msg.includes('validation error')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	TIMEOUT_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 408) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('request timeout') || msg.includes('timed out');
+		},
+		handler: async (_error, context) => retryTransientRead(context),
 	},
 	SERVER_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError) {
-				return (
-					(error.status >= 500 && error.status < 600) || error.status === 529
-				);
+				return error.status >= 500 && error.status < 600;
 			}
 			const msg = error.message.toLowerCase();
 			return msg.includes('server error') || msg.includes('overloaded');
 		},
-		handler: async () => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (_error, context) => retryTransientRead(context),
 	},
 	DEFAULT: {
 		match: () => true,

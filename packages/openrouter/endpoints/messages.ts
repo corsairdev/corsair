@@ -21,6 +21,9 @@ export const createAnthropicMessage: OpenRouterEndpoints['messagesCreate'] =
 					top_p: input.topP,
 					stop_sequences: input.stopSequences,
 					stream: false,
+					tools: input.tools,
+					tool_choice: input.toolChoice,
+					thinking: input.thinking,
 				},
 			},
 		);

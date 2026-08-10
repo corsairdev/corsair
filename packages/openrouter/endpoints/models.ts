@@ -9,11 +9,12 @@ import type {
 
 export const listModels: OpenRouterEndpoints['modelsList'] = async (
 	ctx,
-	_input,
+	input,
 ) => {
 	const result = await makeOpenRouterRequest<ListModelsResponse>(
 		'models',
 		ctx.key,
+		{ query: { offset: input.offset, limit: input.limit } },
 	);
 
 	return result;
@@ -49,11 +50,12 @@ export const listEmbeddingModels: OpenRouterEndpoints['modelsEmbeddingsList'] =
 
 export const listUserModels: OpenRouterEndpoints['modelsUserList'] = async (
 	ctx,
-	_input,
+	input,
 ) => {
 	const result = await makeOpenRouterRequest<ListUserModelsResponse>(
 		'models/user',
 		ctx.key,
+		{ query: { offset: input.offset, limit: input.limit } },
 	);
 
 	return result;

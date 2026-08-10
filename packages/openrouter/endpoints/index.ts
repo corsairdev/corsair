@@ -1,5 +1,5 @@
 import { createChatCompletion } from './chat-completions';
-import { createCoinbaseCharge, listCredits } from './credits';
+import { listCredits } from './credits';
 import { createEmbedding } from './embeddings';
 import { getGeneration } from './generations';
 import { getKey } from './key';
@@ -47,7 +47,6 @@ export const Generations = {
 
 export const Credits = {
 	listCredits,
-	createCoinbaseCharge,
 };
 
 export const Key = {
