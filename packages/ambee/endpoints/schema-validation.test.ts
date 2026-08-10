@@ -1,0 +1,147 @@
+import { AmbeeEndpointInputSchemas, AmbeeEndpointOutputSchemas } from './types';
+
+describe('input schemas', () => {
+	it('rejects out-of-range coordinates before an API call is made', () => {
+		expect(
+			AmbeeEndpointInputSchemas.airQualityGetLatestByLatLng.safeParse({
+				lat: 91,
+				lng: 0,
+			}).success,
+		).toBe(false);
+		expect(
+			AmbeeEndpointInputSchemas.airQualityGetLatestByLatLng.safeParse({
+				lat: 0,
+				lng: 181,
+			}).success,
+		).toBe(false);
+		expect(
+			AmbeeEndpointInputSchemas.airQualityGetLatestByLatLng.safeParse({
+				lat: 12.99,
+				lng: 77.57,
+			}).success,
+		).toBe(true);
+	});
+
+	it('accepts either a coordinate pair or a place name for pollen, but not neither', () => {
+		expect(
+			AmbeeEndpointInputSchemas.pollenGetLatest.safeParse({
+				lat: 41.38,
+				lng: 2.16,
+			}).success,
+		).toBe(true);
+		expect(
+			AmbeeEndpointInputSchemas.pollenGetLatest.safeParse({
+				place: 'Barcelona',
+			}).success,
+		).toBe(true);
+		expect(
+			AmbeeEndpointInputSchemas.pollenGetLatest.safeParse({ speciesRisk: true })
+				.success,
+		).toBe(false);
+	});
+
+	it('limits the pollen forecast horizon to the two Ambee supports', () => {
+		expect(
+			AmbeeEndpointInputSchemas.pollenGetForecast.safeParse({
+				place: 'california',
+				hours: 120,
+			}).success,
+		).toBe(true);
+		expect(
+			AmbeeEndpointInputSchemas.pollenGetForecast.safeParse({
+				place: 'california',
+				hours: 72,
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires both ends of a history range', () => {
+		expect(
+			AmbeeEndpointInputSchemas.airQualityGetHistoryByLatLng.safeParse({
+				lat: 12.99,
+				lng: 77.57,
+				from: '2026-07-13 12:16:44',
+			}).success,
+		).toBe(false);
+	});
+
+	it('restricts the fire type filter to reported or detected', () => {
+		expect(
+			AmbeeEndpointInputSchemas.fireGetLatestByPlace.safeParse({
+				place: 'Virgin, UT',
+				type: 'smouldering',
+			}).success,
+		).toBe(false);
+	});
+});
+
+describe('output schemas', () => {
+	it('requires the Ambee status envelope', () => {
+		expect(
+			AmbeeEndpointOutputSchemas.airQualityGetLatestByLatLng.safeParse({
+				stations: [],
+			}).success,
+		).toBe(false);
+	});
+
+	it('accepts a station whose sensors report only some pollutants', () => {
+		const parsed =
+			AmbeeEndpointOutputSchemas.airQualityGetLatestByCity.safeParse({
+				message: 'success',
+				stations: [{ PM25: 12.5, city: 'Bengaluru' }],
+			});
+
+		expect(parsed.success).toBe(true);
+	});
+
+	it('passes provider-side fields we do not model through untouched', () => {
+		const parsed = AmbeeEndpointOutputSchemas.weatherGetLatest.parse({
+			message: 'success',
+			lat: 40,
+			lng: -77,
+			data: { temperature: 70, someNewAmbeeField: 'kept' },
+		});
+
+		expect(parsed.data).toMatchObject({ someNewAmbeeField: 'kept' });
+	});
+
+	it('accepts the per-species pollen breakdown as an open record', () => {
+		const parsed = AmbeeEndpointOutputSchemas.pollenGetLatest.parse({
+			message: 'success',
+			data: [
+				{
+					Count: { grass_pollen: 0 },
+					Species: { Tree: { Alder: 1, Birch: 0 }, Others: 0 },
+				},
+			],
+		});
+
+		expect(parsed.data?.[0]?.Species).toEqual({
+			Tree: { Alder: 1, Birch: 0 },
+			Others: 0,
+		});
+	});
+
+	it('accepts geocode coordinates whether Ambee returns them as strings or numbers', () => {
+		expect(
+			AmbeeEndpointOutputSchemas.geocodeByPlace.safeParse({
+				message: 'success',
+				data: [{ lat: '40.71', lng: '-74.00' }],
+			}).success,
+		).toBe(true);
+		expect(
+			AmbeeEndpointOutputSchemas.geocodeByPlace.safeParse({
+				message: 'success',
+				data: [{ lat: 40.71, lng: -74.0 }],
+			}).success,
+		).toBe(true);
+	});
+
+	it('covers every endpoint with an input and an output schema', () => {
+		const inputKeys = Object.keys(AmbeeEndpointInputSchemas).sort();
+		const outputKeys = Object.keys(AmbeeEndpointOutputSchemas).sort();
+
+		expect(inputKeys).toEqual(outputKeys);
+		expect(inputKeys).toHaveLength(18);
+	});
+});
