@@ -1,7 +1,10 @@
 import 'dotenv/config';
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ActorsEndpoints, DocsEndpoints, RunsEndpoints } from './endpoints';
-import { ApifyMcpEndpointOutputSchemas } from './endpoints/types';
+import {
+	ApifyMcpEndpointOutputSchemas,
+	FetchApifyDocsInputSchema,
+} from './endpoints/types';
 import type { ApifyMcpContext } from './index';
 
 jest.mock('corsair/core', () => {
@@ -15,7 +18,11 @@ jest.mock('corsair/core', () => {
 const TEST_API_KEY =
 	process.env.APIFY_TOKEN || process.env.APIFY_API_KEY || undefined;
 
-const describeLive = TEST_API_KEY ? describe : describe.skip;
+// Opt-in live suite: APIFY_LIVE_TESTS=1 plus a token (avoids accidental paid runs).
+const describeLive =
+	process.env.APIFY_LIVE_TESTS === '1' && TEST_API_KEY
+		? describe
+		: describe.skip;
 
 function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -88,6 +95,24 @@ describe('Apify MCP endpoint guards', () => {
 				limit: 1,
 			}),
 		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('fetchApifyDocs schema allows only Apify/Crawlee docs hosts', () => {
+		expect(
+			FetchApifyDocsInputSchema.parse({
+				url: 'https://docs.apify.com/platform/integrations/mcp',
+			}).url,
+		).toBe('https://docs.apify.com/platform/integrations/mcp');
+		expect(
+			FetchApifyDocsInputSchema.safeParse({
+				url: 'https://example.com/docs',
+			}).success,
+		).toBe(false);
+		expect(
+			FetchApifyDocsInputSchema.safeParse({
+				url: 'http://docs.apify.com/platform',
+			}).success,
+		).toBe(false);
 	});
 });
 
@@ -222,6 +247,10 @@ describeLive('Apify MCP API Type Tests', () => {
 			expect(Array.isArray((output as Record<string, unknown>).items)).toBe(
 				true,
 			);
+			// limit/offset/fields responses are not cached under bare datasetId.
+			expect(ctx.db.actorOutputs.upsertByEntityId).not.toHaveBeenCalled();
+
+			await RunsEndpoints.getActorOutput(ctx, { datasetId: datasetId! });
 			expect(ctx.db.actorOutputs.upsertByEntityId).toHaveBeenCalledWith(
 				datasetId,
 				expect.objectContaining({ datasetId }),

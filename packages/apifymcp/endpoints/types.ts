@@ -64,10 +64,29 @@ export const SearchApifyDocsInputSchema = z.object({
 		.describe('Documentation source to search'),
 });
 
+const APIFY_DOCS_HOSTS = new Set(['docs.apify.com', 'crawlee.dev']);
+
 export const FetchApifyDocsInputSchema = z.object({
 	url: z
 		.string()
 		.url()
+		.refine(
+			(value) => {
+				try {
+					const parsed = new URL(value);
+					return (
+						parsed.protocol === 'https:' &&
+						APIFY_DOCS_HOSTS.has(parsed.hostname)
+					);
+				} catch {
+					return false;
+				}
+			},
+			{
+				message:
+					'Only https://docs.apify.com and https://crawlee.dev documentation URLs are allowed',
+			},
+		)
 		.describe('Full Apify or Crawlee documentation page URL'),
 });
 

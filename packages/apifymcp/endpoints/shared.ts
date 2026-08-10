@@ -127,7 +127,14 @@ export async function executeApifyMcpTool<T>(
 		} else if (options.cache === 'actorRun') {
 			await cacheActorRun(ctx, response);
 		} else if (options.cache === 'actorOutput' && options.datasetId) {
-			await cacheActorOutput(ctx, options.datasetId, response);
+			// Only cache full snapshots — filtered/paginated reads must not overwrite.
+			const isPartial =
+				args.limit !== undefined ||
+				args.offset !== undefined ||
+				(typeof args.fields === 'string' && args.fields.length > 0);
+			if (!isPartial) {
+				await cacheActorOutput(ctx, options.datasetId, response);
+			}
 		}
 
 		return response;

@@ -17,17 +17,28 @@ export class ApifyMcpAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: number,
-		options?: { cause?: Error; body?: unknown },
+		options?: { cause?: Error; body?: unknown; retryAfter?: number },
 	) {
 		super(message, options);
 		this.name = 'ApifyMcpAPIError';
 		this.body = options?.body;
+		this.retryAfter = options?.retryAfter;
 
 		if (options?.cause instanceof StreamableHTTPError) {
 			this.status = options.cause.code;
 			this.statusText = options.cause.message;
 		}
 	}
+}
+
+/** Parse Retry-After into milliseconds for Corsair error handlers. */
+function parseRetryAfterMs(header: string | null): number | undefined {
+	if (!header) return undefined;
+	const asSeconds = Number(header);
+	if (Number.isFinite(asSeconds)) return Math.max(0, asSeconds * 1000);
+	const asDate = Date.parse(header);
+	if (!Number.isNaN(asDate)) return Math.max(0, asDate - Date.now());
+	return undefined;
 }
 
 function normalizeToolResult(result: unknown): CallToolResult {
@@ -118,10 +129,19 @@ export async function callApifyMcpTool<T>(
 	args: Record<string, unknown>,
 	apiKey?: string,
 ): Promise<T> {
+	// StreamableHTTPError only carries status/code; capture Retry-After via fetch.
+	let retryAfterMs: number | undefined;
+	const fetchWithRetryAfter: typeof fetch = async (input, init) => {
+		const response = await fetch(input, init);
+		retryAfterMs = parseRetryAfterMs(response.headers.get('retry-after'));
+		return response;
+	};
+
 	const transport = new StreamableHTTPClientTransport(new URL(APIFY_MCP_URL), {
 		requestInit: apiKey
 			? { headers: { Authorization: `Bearer ${apiKey}` } }
 			: undefined,
+		fetch: fetchWithRetryAfter,
 	});
 	const client = new Client({ name: 'corsair-apify-mcp', version: '1.0.0' });
 
@@ -135,6 +155,7 @@ export async function callApifyMcpTool<T>(
 		if (result.isError) {
 			throw new ApifyMcpAPIError(toolErrorMessage(result), undefined, {
 				body: parseToolResult(result),
+				retryAfter: retryAfterMs,
 			});
 		}
 		// Caller supplies T; endpoint output schemas validate the parsed payload.
@@ -146,13 +167,18 @@ export async function callApifyMcpTool<T>(
 		if (error instanceof StreamableHTTPError) {
 			throw new ApifyMcpAPIError(error.message, error.code, {
 				cause: error,
+				retryAfter: retryAfterMs,
 			});
 		}
 		if (error instanceof Error) {
-			throw new ApifyMcpAPIError(error.message, undefined, { cause: error });
+			throw new ApifyMcpAPIError(error.message, undefined, {
+				cause: error,
+				retryAfter: retryAfterMs,
+			});
 		}
 		throw new ApifyMcpAPIError('Unknown Apify MCP error');
 	} finally {
-		await client.close();
+		await client.close().catch(() => undefined);
+		await transport.close().catch(() => undefined);
 	}
 }
