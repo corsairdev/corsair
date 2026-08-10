@@ -5,6 +5,7 @@ import {
 	EpicGamesEndpointInputSchemas,
 	EpicGamesEndpointOutputSchemas,
 } from './endpoints/types';
+import { EpicGamesIsland } from './schema';
 
 const TEST_TOKEN =
 	process.env.EPIC_GAMES_ACCESS_TOKEN ||
@@ -248,6 +249,20 @@ describe('Epic Games endpoint schemas', () => {
 			expect(path).toContain('/metrics/day/');
 			expect(path.endsWith(`/${metric}`)).toBe(true);
 		}
+	});
+
+	it('parses IslandMetadataSummary-shaped DB entity', () => {
+		// Live Fortnite GET /islands/{code} shape (type often omitted despite OpenAPI)
+		const parsed = EpicGamesIsland.safeParse({
+			code: '3475-0071-5270',
+			creatorCode: 'fortnite',
+			title: 'My Island',
+			createdIn: 'UEFN',
+			tags: ['1v1'],
+			meta: { page: { cursor: 'abc' } },
+		});
+		expect(parsed.success).toBe(true);
+		expect(EpicGamesIsland.safeParse({ title: 'no-code' }).success).toBe(false);
 	});
 });
 
