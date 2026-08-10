@@ -5,7 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useCallback, useEffect, useState } from 'react';
 import { APP_URL, DISCORD_URL, DOCS_URL, GITHUB_URL } from '@/lib/site-links';
-import { PlusCorner } from '../icons';
+import { ArrowRightIcon, PlusCorner } from '../icons';
 
 function MenuIcon() {
 	return (
