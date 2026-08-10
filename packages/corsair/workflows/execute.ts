@@ -75,16 +75,25 @@ export interface WorkflowStepAi {
 
 /**
  * The step primitive handed to workflow code. Callable for normal work
- * (`step(name, fn)`), with `.sleep` for durable pauses and `.ai` for durable
- * typed inference — mirroring Inngest's `step.run` / `step.sleep` / `step.ai`.
+ * (`step(name, fn)`), with `.sleep`/`.sleepUntil` for durable pauses, `.ai` for
+ * durable typed inference, and `.corsair` for a durable typed plugin-op call —
+ * mirroring Inngest's `step.run` / `step.sleep` / `step.ai`.
  */
 export interface WorkflowStep {
 	/** Runs `fn` once, memoizing its result so retries replay it instead of re-running. */
 	<T>(name: string, fn: () => Promise<T>): Promise<T>;
 	/** Durably pauses the workflow for `ms`. Survives restarts; resumes after the delay. */
 	sleep(name: string, ms: number): Promise<void>;
+	/** Durably pauses until an absolute time (epoch ms, ISO string, or `Date`). */
+	sleepUntil(name: string, when: number | string | Date): Promise<void>;
 	/** Durable, typed AI inference — see {@link WorkflowStepAi}. */
 	ai: WorkflowStepAi;
+	/**
+	 * Runs a plugin op by id (`"<plugin>.<endpoint.path>"`, e.g. `"linear.issues.create"`)
+	 * with `input`, memoized like `step.run`. Sugar over `corsair.<plugin>.api.<path>(input)`
+	 * that shares the op id with `step.ai`'s `returnObject`.
+	 */
+	corsair<T = unknown>(name: string, op: string, input?: unknown): Promise<T>;
 }
 
 const FAILED_STEP_MARKER = '__corsairFailedStep';
@@ -247,12 +256,44 @@ function runWorkflowInSandbox(input: {
 	}) as (s: string) => unknown;
 	const realmPayload = realmParse(JSON.stringify(input.payload ?? null));
 
+	// The membrane the workflow navigates. Shared by `main`'s `corsair` arg and
+	// `step.corsair`, so both resolve ops through the exact same hardened client.
+	const hardenedCorsair = harden(input.corsair, undefined);
+
 	// Realm-native `step`: built in-realm from host callbacks captured in a closure
 	// (not reachable as properties), so `step.constructor` is the realm's Function.
 	const makeStep = vm.runInContext(
-		`(function (hostRun, hostSleep, hostAi) {
+		`(function (hostRun, hostSleep, hostAi, corsairRef) {
 			const step = function step(name, fn) { return hostRun(name, fn); };
 			step.sleep = function sleep(name, ms) { return hostSleep(name, ms); };
+			// Absolute-time pause: convert to a relative delay and reuse step.sleep so
+			// it inherits the same durable record/replay. The host clamps non-finite or
+			// negative ms to 0, so a past or unparseable time becomes a 0-delay pause
+			// (suspends once, then reschedules immediately).
+			const toMs = function (when) {
+				if (typeof when === 'number') return when;
+				if (when instanceof Date) return when.getTime();
+				return Date.parse(when);
+			};
+			step.sleepUntil = function sleepUntil(name, when) {
+				return step.sleep(name, toMs(when) - Date.now());
+			};
+			// Typed op call by id: walk corsair.<plugin>.api.<seg...> over the same
+			// membrane the workflow uses, inside step() so it inherits memo / replay /
+			// failed-step recording. No new host reference crosses — corsairRef is the
+			// already-hardened client.
+			step.corsair = function corsair(name, op, input) {
+				return step(name, function () {
+					const dot = op.indexOf('.');
+					if (dot < 1) throw new Error('Invalid op "' + op + '": expected "<plugin>.<endpoint.path>"');
+					const path = op.slice(dot + 1).split('.');
+					let node = corsairRef[op.slice(0, dot)];
+					node = node && node.api;
+					for (let i = 0; i < path.length; i++) node = node && node[path[i]];
+					if (typeof node !== 'function') throw new Error('Unknown op "' + op + '"');
+					return node(input);
+				});
+			};
 			// Each ai verb routes through step() so it inherits memo / replay /
 			// failed-step recording; opts are serialized in-realm and the JSON-string
 			// result is parsed back in-realm, so no host object reference crosses.
@@ -274,11 +315,13 @@ function runWorkflowInSandbox(input: {
 		hostRun: (name: string, fn: () => Promise<unknown>) => Promise<unknown>,
 		hostSleep: (name: string, ms: number) => Promise<void>,
 		hostAi: (kind: string, name: string, optsJson: string) => Promise<string>,
+		corsairRef: unknown,
 	) => WorkflowStep;
 	const realmStep = makeStep(
 		(name, fn) => input.step(name, fn),
 		(name, ms) => input.step.sleep(name, ms),
 		(kind, name, optsJson) => input.ai(kind, name, optsJson),
+		hardenedCorsair,
 	);
 
 	// Realm-native forwarding console (methods created in-realm; host sink hidden
@@ -314,7 +357,7 @@ function runWorkflowInSandbox(input: {
 	// (`while (true) {}`) in the workflow body. `corsair` is the membrane;
 	// `payload`/`step`/`console` are realm-native, so no bare host reference is
 	// exposed by making them globals.
-	sandbox.__corsair = harden(input.corsair, undefined);
+	sandbox.__corsair = hardenedCorsair;
 	sandbox.__payload = realmPayload;
 	sandbox.__step = realmStep;
 	sandbox.__console = realmConsole;
