@@ -92,6 +92,34 @@ describe('Agenty request client', () => {
 		);
 		expect(mockRequest.mock.calls[0]?.[1].query?.apikey).toBeUndefined();
 		expect(mockRequest.mock.calls[0]?.[1].query?.apiKey).toBeUndefined();
+		expect(
+			mockRequest.mock.calls[0]?.[0].HEADERS?.['X-Agenty-ApiKey'],
+		).toBeUndefined();
+	});
+
+	it('adds X-Agenty-ApiKey for browser host without query-param leakage', async () => {
+		await makeAgentyRequest('/screenshot', 'test-api-key', {
+			method: 'GET',
+			baseUrl: 'https://browser.agenty.com/api',
+			query: { url: 'https://example.com' },
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://browser.agenty.com/api',
+				HEADERS: expect.objectContaining({
+					Authorization: 'Bearer test-api-key',
+					'X-Agenty-ApiKey': 'test-api-key',
+				}),
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/screenshot',
+				query: { url: 'https://example.com' },
+			}),
+		);
+		expect(mockRequest.mock.calls[0]?.[1].query?.apikey).toBeUndefined();
+		expect(mockRequest.mock.calls[0]?.[1].query?.apiKey).toBeUndefined();
 	});
 });
 
@@ -246,13 +274,13 @@ describe('Agenty endpoints', () => {
 			apiKeys: {
 				apiKeysDeleteById: (
 					ctx: AgentyContext,
-					input: { key_id: string },
+					input: { key_id: number },
 				) => Promise<unknown>;
 			};
 		};
 
 		await endpoints.lists.listsDeleteById(mockCtx, { list_id: 123 });
-		await endpoints.apiKeys.apiKeysDeleteById(mockCtx, { key_id: 'key-789' });
+		await endpoints.apiKeys.apiKeysDeleteById(mockCtx, { key_id: 789 });
 
 		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
 			expect.arrayContaining([
@@ -262,7 +290,95 @@ describe('Agenty endpoints', () => {
 				}),
 				expect.objectContaining({
 					method: 'DELETE',
-					url: '/apikeys/key-789',
+					url: '/apikeys/789',
+				}),
+			]),
+		);
+	});
+
+	it('matches live Agenty shapes for copy, delete project, scrape, and add agents', async () => {
+		const plugin = agenty({ key: 'test-api-key' });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			agents: {
+				copyAgent: (
+					ctx: AgentyContext,
+					input: { agent_id: string; name: string },
+				) => Promise<unknown>;
+			};
+			projects: {
+				deleteProject: (
+					ctx: AgentyContext,
+					input: { project_id: number },
+				) => Promise<unknown>;
+				projectsAddAgents: (
+					ctx: AgentyContext,
+					input: { project_id: number; agent_ids: string[] },
+				) => Promise<unknown>;
+				removeAgentFromProject: (
+					ctx: AgentyContext,
+					input: { project_id: number; agent_id: string },
+				) => Promise<unknown>;
+			};
+			browser: {
+				scrapeWebpageData: (
+					ctx: AgentyContext,
+					input: {
+						url: string;
+						query: Record<string, string>;
+					},
+				) => Promise<unknown>;
+			};
+		};
+
+		await endpoints.agents.copyAgent(mockCtx, {
+			agent_id: 'oruylgx351',
+			name: 'copy-dst',
+		});
+		await endpoints.projects.deleteProject(mockCtx, { project_id: 28 });
+		await endpoints.projects.projectsAddAgents(mockCtx, {
+			project_id: 29,
+			agent_ids: ['oruylgx351'],
+		});
+		await endpoints.projects.removeAgentFromProject(mockCtx, {
+			project_id: 29,
+			agent_id: 'oruylgx351',
+		});
+		await endpoints.browser.scrapeWebpageData(mockCtx, {
+			url: 'https://example.com',
+			query: { title: "$('h1').text()" },
+		});
+
+		expect(mockRequest.mock.calls.map((call) => call[1])).toEqual(
+			expect.arrayContaining([
+				expect.objectContaining({
+					method: 'POST',
+					url: '/agents/oruylgx351/copy',
+					body: { name: 'copy-dst' },
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/projects',
+					query: { project_id: 28 },
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/projects/29/add',
+					body: ['oruylgx351'],
+				}),
+				expect.objectContaining({
+					method: 'DELETE',
+					url: '/projects/29/delete',
+					query: { agent_id: 'oruylgx351' },
+				}),
+				expect.objectContaining({
+					method: 'POST',
+					url: '/scrape',
+					body: {
+						url: 'https://example.com',
+						query: { title: "$('h1').text()" },
+					},
 				}),
 			]),
 		);

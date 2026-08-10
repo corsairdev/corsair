@@ -14,11 +14,17 @@ const AgentyLooseRecordSchema = z.record(z.string(), z.unknown());
 const AgentyLooseRecordOptionalSchema = z
 	.record(z.string(), z.unknown())
 	.optional();
+// Live API: key_id/job_id/project_id are numbers; list_id is numeric in OpenAPI
+// but some Composio samples use strings — accept both at the trust boundary.
+const AgentyKeyIdSchema = z.number().int();
+const AgentyJobIdSchema = z.number().int();
+const AgentyProjectIdSchema = z.number().int();
+const AgentyListIdSchema = z.union([z.string(), z.number()]);
 
 // addListRows
 const AddListRowsInputSchema = z.object({
 	rows: AgentyBatchItemsSchema,
-	list_id: z.string(),
+	list_id: AgentyListIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -163,7 +169,7 @@ export type ApiKeysControllerCreateApiKeysResponse = z.infer<
 
 // apiKeysDeleteById
 const ApiKeysDeleteByIdInputSchema = z.object({
-	key_id: z.string(),
+	key_id: AgentyKeyIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -208,7 +214,7 @@ export type ApiKeysGetAllResponse = z.infer<typeof ApiKeysGetAllResponseSchema>;
 
 // apiKeysGetById
 const ApiKeysGetByIdInputSchema = z.object({
-	key_id: z.number().int(),
+	key_id: AgentyKeyIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -221,7 +227,7 @@ export type ApiKeysGetByIdResponse = z.infer<
 
 // apiKeysResetById
 const ApiKeysResetByIdInputSchema = z.object({
-	key_id: z.number().int(),
+	key_id: AgentyKeyIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -236,7 +242,7 @@ export type ApiKeysResetByIdResponse = z.infer<
 const ApiKeysUpdateByIdInputSchema = z.object({
 	name: z.string(),
 	role: z.string().optional(),
-	key_id: z.number().int(),
+	key_id: AgentyKeyIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -289,7 +295,7 @@ export type CaptureScreenshotWithOptionsResponse = z.infer<
 
 // changeApiKeyStatusById
 const ChangeApiKeyStatusByIdInputSchema = z.object({
-	key_id: z.number().int(),
+	key_id: AgentyKeyIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -358,7 +364,7 @@ export type ConvertUrlToPdfWithOptionsResponse = z.infer<
 
 // copyAgent
 const CopyAgentInputSchema = z.object({
-	name: z.string().optional(),
+	name: z.string(),
 	agent_id: z.string(),
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
@@ -403,7 +409,7 @@ export type DashboardGetReportsUsageResponse = z.infer<
 // deleteListRow
 const DeleteListRowInputSchema = z.object({
 	id: z.string(),
-	list_id: z.string(),
+	list_id: AgentyListIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -415,7 +421,7 @@ export type DeleteListRowResponse = z.infer<typeof DeleteListRowResponseSchema>;
 // deleteListRows
 const DeleteListRowsInputSchema = z.object({
 	id: AgentyBatchItemsSchema,
-	list_id: z.string(),
+	list_id: AgentyListIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -428,7 +434,7 @@ export type DeleteListRowsResponse = z.infer<
 
 // deleteProject
 const DeleteProjectInputSchema = z.object({
-	id: z.string(),
+	project_id: AgentyProjectIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -488,7 +494,7 @@ export type DownloadAgentResultResponse = z.infer<
 
 // downloadListRows
 const DownloadListRowsInputSchema = z.object({
-	list_id: z.string(),
+	list_id: AgentyListIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -617,7 +623,7 @@ const GetJobResultInputSchema = z.object({
 	limit: z.number().int().optional(),
 	order: z.string().optional(),
 	format: z.string().optional(),
-	job_id: z.number().int(),
+	job_id: AgentyJobIdSchema,
 	offset: z.number().int().optional(),
 	search: z.string().optional(),
 	collection: z.string().optional(),
@@ -631,7 +637,7 @@ export type GetJobResultResponse = z.infer<typeof GetJobResultResponseSchema>;
 
 // getListById
 const GetListByIdInputSchema = z.object({
-	list_id: z.string(),
+	list_id: AgentyListIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -643,7 +649,7 @@ export type GetListByIdResponse = z.infer<typeof GetListByIdResponseSchema>;
 // getListRowById
 const GetListRowByIdInputSchema = z.object({
 	id: z.string(),
-	list_id: z.string(),
+	list_id: AgentyListIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -685,7 +691,7 @@ export type GetPageContentWithOptionsResponse = z.infer<
 
 // getProjectById
 const GetProjectByIdInputSchema = z.object({
-	id: z.number().int(),
+	id: AgentyProjectIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -801,7 +807,7 @@ export type JobsDownloadResponse = z.infer<typeof JobsDownloadResponseSchema>;
 // jobsDownloadFilesById
 const JobsDownloadFilesByIdInputSchema = z.object({
 	name: z.string(),
-	job_id: z.number().int(),
+	job_id: AgentyJobIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -820,7 +826,7 @@ const JobsDownloadResultByIdInputSchema = z.object({
 	limit: z.number().int().optional(),
 	order: z.string().optional(),
 	format: z.string().optional(),
-	job_id: z.number().int(),
+	job_id: AgentyJobIdSchema,
 	offset: z.number().int().optional(),
 	collection: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
@@ -852,7 +858,7 @@ export type JobsGetAllResponse = z.infer<typeof JobsGetAllResponseSchema>;
 
 // jobsGetById
 const JobsGetByIdInputSchema = z.object({
-	job_id: z.number().int(),
+	job_id: AgentyJobIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -864,7 +870,7 @@ export type JobsGetByIdResponse = z.infer<typeof JobsGetByIdResponseSchema>;
 // jobsGetLogsById
 const JobsGetLogsByIdInputSchema = z.object({
 	limit: z.number().int().optional(),
-	job_id: z.string(),
+	job_id: AgentyJobIdSchema,
 	offset: z.number().int().optional(),
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
@@ -878,7 +884,7 @@ export type JobsGetLogsByIdResponse = z.infer<
 
 // jobsListFilesById
 const JobsListFilesByIdInputSchema = z.object({
-	job_id: z.number().int(),
+	job_id: AgentyJobIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -904,7 +910,7 @@ export type JobsStartResponse = z.infer<typeof JobsStartResponseSchema>;
 
 // jobsStopById
 const JobsStopByIdInputSchema = z.object({
-	job_id: z.number().int(),
+	job_id: AgentyJobIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -915,7 +921,7 @@ export type JobsStopByIdResponse = z.infer<typeof JobsStopByIdResponseSchema>;
 
 // listsClearRows
 const ListsClearRowsInputSchema = z.object({
-	list_id: z.number().int(),
+	list_id: AgentyListIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -944,7 +950,7 @@ export type ListsControllerCreateListResponse = z.infer<
 
 // listsDeleteById
 const ListsDeleteByIdInputSchema = z.object({
-	list_id: z.number().int(),
+	list_id: AgentyListIdSchema,
 	id: z.union([z.string(), z.number()]).optional(),
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
@@ -990,7 +996,7 @@ const ListsGetRowsByIdInputSchema = z.object({
 	limit: z.number().int().optional(),
 	order: z.string().optional(),
 	offset: z.number().int().optional(),
-	list_id: z.string(),
+	list_id: AgentyListIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1004,7 +1010,7 @@ export type ListsGetRowsByIdResponse = z.infer<
 // listsUpdateById
 const ListsUpdateByIdInputSchema = z.object({
 	name: z.string(),
-	list_id: z.number().int(),
+	list_id: AgentyListIdSchema,
 	description: z.string().optional(),
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
@@ -1019,7 +1025,7 @@ export type ListsUpdateByIdResponse = z.infer<
 // listsUploadCsv
 const ListsUploadCsvInputSchema = z.object({
 	file: AgentyLooseRecordSchema,
-	list_id: z.number().int(),
+	list_id: AgentyListIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1045,8 +1051,8 @@ export type PatchWorkflowResponse = z.infer<typeof PatchWorkflowResponseSchema>;
 
 // projectsAddAgents
 const ProjectsAddAgentsInputSchema = z.object({
-	agent_ids: AgentyBatchItemsSchema,
-	project_id: z.number().int(),
+	agent_ids: z.array(z.string()),
+	project_id: AgentyProjectIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1094,7 +1100,7 @@ export type ProjectsGetAllResponse = z.infer<
 // removeAgentFromProject
 const RemoveAgentFromProjectInputSchema = z.object({
 	agent_id: z.string(),
-	project_id: z.string(),
+	project_id: AgentyProjectIdSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -1159,7 +1165,7 @@ export type TransferAgentOwnershipResponse = z.infer<
 // updateListRow
 const UpdateListRowInputSchema = z.object({
 	id: z.string(),
-	list_id: z.string(),
+	list_id: AgentyListIdSchema,
 	row_data: AgentyLooseRecordSchema,
 	body: AgentyOptionalBodySchema,
 	query: AgentyQueryParamsSchema,
@@ -1171,7 +1177,7 @@ export type UpdateListRowResponse = z.infer<typeof UpdateListRowResponseSchema>;
 
 // updateProject
 const UpdateProjectInputSchema = z.object({
-	id: z.string(),
+	id: AgentyProjectIdSchema,
 	name: z.string(),
 	description: z.string().optional(),
 	body: AgentyOptionalBodySchema,

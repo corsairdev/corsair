@@ -38,6 +38,9 @@ export async function makeAgentyRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query, headers, baseUrl } = options;
 	const resolvedBase = baseUrl ?? AGENTY_API_BASE;
+	// Main API accepts Bearer; browser API docs require X-Agenty-ApiKey (not Bearer).
+	// Keep key out of query strings — URL leakage was a prior P1.
+	const isBrowserHost = resolvedBase.includes('browser.agenty.com');
 	const config: OpenAPIConfig = {
 		BASE: resolvedBase,
 		VERSION: '1.0.0',
@@ -47,6 +50,7 @@ export async function makeAgentyRequest<T>(
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Authorization: `Bearer ${apiKey}`,
+			...(isBrowserHost ? { 'X-Agenty-ApiKey': apiKey } : {}),
 			...headers,
 		},
 	};

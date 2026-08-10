@@ -285,14 +285,16 @@ export const agentyRoutes = [
 		key: 'copyAgent',
 		group: 'agents',
 		name: 'copyAgent',
-		method: 'GET',
-		path: '/agents/{agent_id}/clone',
+		// Live Agenty API: POST /v2/agents/{agent_id}/copy with body { name }.
+		// OpenAPI "GET .../clone" is stale and 404s.
+		method: 'POST',
+		path: '/agents/{agent_id}/copy',
 		hostType: 'main',
 		description:
 			"Tool to copy an existing agent by its ID, creating a duplicate with optionally a new name. Use when you need to duplicate an agent's configuration to create a similar agent without starting from scratch.",
 		pathParams: ['agent_id'],
-		queryParams: ['name'],
-		riskLevel: 'read' as const,
+		queryParams: [],
+		riskLevel: 'write' as const,
 	},
 	{
 		key: 'createWorkflow',
@@ -352,13 +354,15 @@ export const agentyRoutes = [
 		key: 'deleteProject',
 		group: 'projects',
 		name: 'deleteProject',
+		// Live Agenty API: DELETE /v2/projects?project_id={n}
+		// Path /projects/{id} 404s; query name is project_id (not id).
 		method: 'DELETE',
-		path: '/projects/{id}',
+		path: '/projects',
 		hostType: 'main',
 		description:
 			'Tool to delete a project by its ID. Use when you need to permanently remove a project. This action cannot be undone, so ensure the project ID is correct before deletion.',
-		pathParams: ['id'],
-		queryParams: [],
+		pathParams: [],
+		queryParams: ['project_id'],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
 	},
@@ -964,7 +968,7 @@ export const agentyRoutes = [
 		description:
 			"Remove an agent from an Agenty project. Use when you need to disassociate an agent from a project while keeping both the agent and project intact. The agent will no longer be part of the project's organization structure.",
 		pathParams: ['project_id'],
-		queryParams: [],
+		queryParams: ['agent_id'],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
 	},

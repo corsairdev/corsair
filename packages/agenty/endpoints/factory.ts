@@ -19,6 +19,16 @@ const PATH_PARAM_ALIASES: Record<string, readonly string[]> = {
 
 const BODY_CONTROL_KEYS = new Set(['body', 'query', 'headers', 'baseUrl']);
 
+// Agenty batch endpoints expect a raw JSON array body, not `{ agent_ids: [...] }`.
+// Confirmed live: POST /projects/{id}/add with ["agent_id"] returns 200.
+const ARRAY_BODY_FIELD_BY_ROUTE: Record<string, string> = {
+	projectsAddAgents: 'agent_ids',
+};
+
+// scrapeWebpageData uses top-level `query` as the jQuery selector map in the POST
+// body (Composio/Agenty browser scrape). It is not the URL-query control bag.
+const BODY_QUERY_FIELD_ROUTES = new Set(['scrapeWebpageData']);
+
 // Agenty response payloads vary by resource; outputs validated via shared Zod schemas.
 export type AgentyEndpoint = CorsairEndpoint<
 	AgentyContext,
@@ -73,7 +83,9 @@ export function resolvePath(
 }
 
 function buildQuery(route: AgentyRoute, input: AgentyEndpointInput) {
-	const query: Record<string, unknown> = { ...(input.query ?? {}) };
+	const query: Record<string, unknown> = BODY_QUERY_FIELD_ROUTES.has(route.name)
+		? {}
+		: { ...(input.query ?? {}) };
 	for (const key of route.queryParams ?? []) {
 		const snake = camelToSnake(key);
 		const value = input[snake] ?? input[key] ?? resolvePathParam(input, key);
@@ -84,16 +96,25 @@ function buildQuery(route: AgentyRoute, input: AgentyEndpointInput) {
 
 function requestBody(route: AgentyRoute, input: AgentyEndpointInput) {
 	if ('body' in input && input.body !== undefined) return input.body;
+
+	const arrayField = ARRAY_BODY_FIELD_BY_ROUTE[route.name];
+	if (arrayField !== undefined && input[arrayField] !== undefined) {
+		return input[arrayField];
+	}
+
 	const pathParams = new Set(route.pathParams ?? []);
 	const queryParams = new Set(
 		(route.queryParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
 	);
 	const body = Object.fromEntries(
 		Object.entries(input).filter(([key, value]) => {
+			const isControl =
+				BODY_CONTROL_KEYS.has(key) &&
+				!(key === 'query' && BODY_QUERY_FIELD_ROUTES.has(route.name));
 			return (
 				!pathParams.has(key) &&
 				!queryParams.has(key) &&
-				!BODY_CONTROL_KEYS.has(key) &&
+				!isControl &&
 				value !== undefined
 			);
 		}),
