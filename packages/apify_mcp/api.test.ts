@@ -1,6 +1,16 @@
 import 'dotenv/config';
-import { callApifyMcpTool } from './client';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { ActorsEndpoints, DocsEndpoints, RunsEndpoints } from './endpoints';
 import { ApifyMcpEndpointOutputSchemas } from './endpoints/types';
+import type { ApifyMcpContext } from './index';
+
+jest.mock('corsair/core', () => {
+	const original = jest.requireActual('corsair/core');
+	return {
+		...original,
+		logEventFromContext: jest.fn().mockResolvedValue(null),
+	};
+});
 
 const TEST_API_KEY =
 	process.env.APIFY_TOKEN || process.env.APIFY_API_KEY || undefined;
@@ -32,88 +42,130 @@ function readDatasetId(record: Record<string, unknown>) {
 	return readString(defaults, ['id']);
 }
 
+function createCtx(key?: string): ApifyMcpContext {
+	return {
+		key,
+		$getAccountId: async () => 'test-account',
+		db: {
+			actors: { upsertByEntityId: jest.fn().mockResolvedValue(undefined) },
+			actorRuns: { upsertByEntityId: jest.fn().mockResolvedValue(undefined) },
+			actorOutputs: {
+				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+		},
+	} as unknown as ApifyMcpContext;
+}
+
+describe('Apify MCP endpoint guards', () => {
+	it('callActor throws AuthMissingError without api key', async () => {
+		await expect(
+			ActorsEndpoints.callActor(createCtx(), {
+				actor: 'apify/rag-web-browser',
+				input: { query: 'x', maxResults: 1 },
+			}),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('getActorRun throws AuthMissingError without api key', async () => {
+		await expect(
+			RunsEndpoints.getActorRun(createCtx(), { runId: 'missing' }),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('getActorOutput throws AuthMissingError without api key', async () => {
+		await expect(
+			RunsEndpoints.getActorOutput(createCtx(), {
+				datasetId: 'missing',
+				limit: 1,
+			}),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+});
+
 describeLive('Apify MCP API Type Tests', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
 	describe('actors', () => {
-		it('searchActors returns a valid response', async () => {
-			const response = await callApifyMcpTool(
-				'search-actors',
-				{ search: 'google search', limit: 2 },
-				TEST_API_KEY,
-			);
+		it('searchActors returns a valid response and caches', async () => {
+			const ctx = createCtx(TEST_API_KEY);
+			const response = await ActorsEndpoints.searchActors(ctx, {
+				search: 'google search',
+				limit: 2,
+			});
 
 			ApifyMcpEndpointOutputSchemas.searchActors.parse(response);
 			expect(response).toBeDefined();
-			if (Array.isArray(response)) {
-				expect(response.length).toBeGreaterThan(0);
-			} else if (isRecord(response)) {
-				const items = Array.isArray(response.items)
-					? response.items
-					: Array.isArray(response.actors)
-						? response.actors
-						: null;
-				if (items) expect(items.length).toBeGreaterThan(0);
-			}
+			expect(ctx.db.actors.upsertByEntityId).toHaveBeenCalled();
+			expect(logEventFromContext).toHaveBeenCalledWith(
+				ctx,
+				'apify_mcp.actors.searchActors',
+				expect.objectContaining({ tool: 'search-actors' }),
+				'completed',
+			);
 		});
 
-		it('fetchActorDetails returns a valid response', async () => {
-			const response = await callApifyMcpTool(
-				'fetch-actor-details',
-				{
-					actor: 'apify/rag-web-browser',
-					output: { description: true, inputSchema: true },
-				},
-				TEST_API_KEY,
-			);
+		it('fetchActorDetails returns a valid response and caches', async () => {
+			const ctx = createCtx(TEST_API_KEY);
+			const response = await ActorsEndpoints.fetchActorDetails(ctx, {
+				actor: 'apify/rag-web-browser',
+				output: { description: true, inputSchema: true },
+			});
 
 			ApifyMcpEndpointOutputSchemas.fetchActorDetails.parse(response);
-			expect(response).toBeDefined();
 			expect(isRecord(response)).toBe(true);
+			expect(ctx.db.actors.upsertByEntityId).toHaveBeenCalled();
 		});
 
-		it('callActor returns a valid response', async () => {
-			const response = await callApifyMcpTool(
-				'call-actor',
-				{
-					actor: 'apify/rag-web-browser',
-					input: { query: 'corsair apify mcp', maxResults: 1 },
-				},
-				TEST_API_KEY,
-			);
+		it('callActor returns a valid response and caches run', async () => {
+			const ctx = createCtx(TEST_API_KEY);
+			const response = await ActorsEndpoints.callActor(ctx, {
+				actor: 'apify/rag-web-browser',
+				input: { query: 'corsair apify mcp', maxResults: 1 },
+			});
 
 			ApifyMcpEndpointOutputSchemas.callActor.parse(response);
 			expect(response).toBeDefined();
+			expect(ctx.db.actorRuns.upsertByEntityId).toHaveBeenCalled();
 		}, 120000);
 
-		it('ragWebBrowser returns a valid response', async () => {
-			const response = await callApifyMcpTool(
-				'apify/rag-web-browser',
-				{ query: 'Apify MCP server', maxResults: 1 },
-				TEST_API_KEY,
-			);
+		it('ragWebBrowser returns a valid response and caches run', async () => {
+			const ctx = createCtx(TEST_API_KEY);
+			const response = await ActorsEndpoints.ragWebBrowser(ctx, {
+				query: 'Apify MCP server',
+				maxResults: 1,
+			});
 
 			ApifyMcpEndpointOutputSchemas.ragWebBrowser.parse(response);
 			expect(response).toBeDefined();
+			expect(ctx.db.actorRuns.upsertByEntityId).toHaveBeenCalled();
 		}, 90000);
 	});
 
 	describe('docs', () => {
 		it('searchApifyDocs returns a valid response', async () => {
-			const response = await callApifyMcpTool(
-				'search-apify-docs',
-				{ query: 'actor runs', docSource: 'apify' },
-				TEST_API_KEY,
-			);
+			const ctx = createCtx(TEST_API_KEY);
+			const response = await DocsEndpoints.searchApifyDocs(ctx, {
+				query: 'actor runs',
+				docSource: 'apify',
+			});
 
 			ApifyMcpEndpointOutputSchemas.searchApifyDocs.parse(response);
 			expect(response).toBeDefined();
+			expect(logEventFromContext).toHaveBeenCalledWith(
+				ctx,
+				'apify_mcp.docs.searchApifyDocs',
+				expect.objectContaining({ tool: 'search-apify-docs' }),
+				'completed',
+			);
 		});
 
 		it('fetchApifyDocs returns a valid response', async () => {
-			const response = await callApifyMcpTool(
-				'fetch-apify-docs',
-				{ url: 'https://docs.apify.com/platform/integrations/mcp' },
-				TEST_API_KEY,
-			);
+			const ctx = createCtx(TEST_API_KEY);
+			const response = await DocsEndpoints.fetchApifyDocs(ctx, {
+				url: 'https://docs.apify.com/platform/integrations/mcp',
+			});
 
 			ApifyMcpEndpointOutputSchemas.fetchApifyDocs.parse(response);
 			expect(response).toBeDefined();
@@ -121,31 +173,28 @@ describeLive('Apify MCP API Type Tests', () => {
 	});
 
 	describe('runs', () => {
-		it('getActorRun and getActorOutput return valid responses', async () => {
-			const run = await callApifyMcpTool<Record<string, unknown>>(
-				'call-actor',
-				{
-					actor: 'apify/rag-web-browser',
-					input: { query: 'corsair integrations', maxResults: 1 },
-				},
-				TEST_API_KEY,
-			);
+		it('getActorRun and getActorOutput return valid responses via endpoints', async () => {
+			const ctx = createCtx(TEST_API_KEY);
+			const run = (await ActorsEndpoints.callActor(ctx, {
+				actor: 'apify/rag-web-browser',
+				input: { query: 'corsair integrations', maxResults: 1 },
+			})) as Record<string, unknown>;
 
 			ApifyMcpEndpointOutputSchemas.callActor.parse(run);
 
 			const runId =
 				readString(run, ['id', 'runId']) ||
-				(isRecord(run.data) ? readString(run.data, ['id', 'runId']) : undefined);
+				(isRecord(run.data)
+					? readString(run.data, ['id', 'runId'])
+					: undefined);
 
 			expect(runId).toBeTruthy();
 
-			const runDetails = await callApifyMcpTool(
-				'get-actor-run',
-				{ runId: runId! },
-				TEST_API_KEY,
-			);
+			const runDetails = await RunsEndpoints.getActorRun(ctx, {
+				runId: runId!,
+			});
 			ApifyMcpEndpointOutputSchemas.getActorRun.parse(runDetails);
-			expect(runDetails).toBeDefined();
+			expect(ctx.db.actorRuns.upsertByEntityId).toHaveBeenCalled();
 
 			const details = isRecord(runDetails) ? runDetails : {};
 			const datasetId =
@@ -155,16 +204,18 @@ describeLive('Apify MCP API Type Tests', () => {
 
 			expect(datasetId).toBeTruthy();
 
-			const output = await callApifyMcpTool(
-				'get-dataset-items',
-				{ datasetId: datasetId!, limit: 1 },
-				TEST_API_KEY,
-			);
+			const output = await RunsEndpoints.getActorOutput(ctx, {
+				datasetId: datasetId!,
+				limit: 1,
+			});
 			ApifyMcpEndpointOutputSchemas.getActorOutput.parse(output);
-			expect(output).toBeDefined();
 			expect(isRecord(output)).toBe(true);
 			expect(Array.isArray((output as Record<string, unknown>).items)).toBe(
 				true,
+			);
+			expect(ctx.db.actorOutputs.upsertByEntityId).toHaveBeenCalledWith(
+				datasetId,
+				expect.objectContaining({ datasetId }),
 			);
 		}, 180000);
 	});

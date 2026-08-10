@@ -27,6 +27,9 @@ async function cacheActors(ctx: ApifyMcpContext, response: unknown) {
 			items.push(...response.items.filter(isRecord));
 		} else if (Array.isArray(response.actors)) {
 			items.push(...response.actors.filter(isRecord));
+		} else if (isRecord(response.actorInfo)) {
+			// fetch-actor-details wraps metadata under actorInfo.
+			items.push(response.actorInfo);
 		} else {
 			items.push(response);
 		}
@@ -35,7 +38,7 @@ async function cacheActors(ctx: ApifyMcpContext, response: unknown) {
 	for (const item of items) {
 		// Prefer stable ids; never key by bare `name` (collides across publishers).
 		const entityId =
-			readEntityId(item, ['id', 'actorId']) ??
+			readEntityId(item, ['id', 'actorId', 'fullName']) ??
 			(typeof item.username === 'string' && typeof item.name === 'string'
 				? `${item.username}/${item.name}`
 				: undefined);

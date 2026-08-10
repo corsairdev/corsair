@@ -18,10 +18,7 @@ export const SearchActorsInputSchema = z.object({
 });
 
 export const FetchActorDetailsInputSchema = z.object({
-	actor: z
-		.string()
-		.min(1)
-		.describe('Actor ID or full name (username/name)'),
+	actor: z.string().min(1).describe('Actor ID or full name (username/name)'),
 	output: ActorOutputFlagsSchema,
 });
 
@@ -38,7 +35,10 @@ export const CallActorInputSchema = z.object({
 });
 
 export const RagWebBrowserInputSchema = z.object({
-	query: z.string().min(1).describe('Search query for the RAG Web Browser Actor'),
+	query: z
+		.string()
+		.min(1)
+		.describe('Search query for the RAG Web Browser Actor'),
 	maxResults: z.number().int().positive().max(20).optional(),
 });
 
@@ -50,9 +50,7 @@ export const GetActorOutputInputSchema = z.object({
 	datasetId: z
 		.string()
 		.min(1)
-		.describe(
-			'Dataset ID from an Actor run (storages.datasets.default.id)',
-		),
+		.describe('Dataset ID from an Actor run (storages.datasets.default.id)'),
 	limit: z.number().int().positive().max(1000).optional(),
 	offset: z.number().int().nonnegative().optional(),
 	fields: z.string().optional(),
@@ -67,14 +65,19 @@ export const SearchApifyDocsInputSchema = z.object({
 });
 
 export const FetchApifyDocsInputSchema = z.object({
-	url: z.string().url().describe('Full Apify or Crawlee documentation page URL'),
+	url: z
+		.string()
+		.url()
+		.describe('Full Apify or Crawlee documentation page URL'),
 });
 
 // MCP tool responses vary by tool and Actor; validated at runtime via shared unknown schemas.
 const McpToolResponseSchema = z.unknown();
 
 export type SearchActorsInput = z.infer<typeof SearchActorsInputSchema>;
-export type FetchActorDetailsInput = z.infer<typeof FetchActorDetailsInputSchema>;
+export type FetchActorDetailsInput = z.infer<
+	typeof FetchActorDetailsInputSchema
+>;
 export type CallActorInput = z.infer<typeof CallActorInputSchema>;
 export type RagWebBrowserInput = z.infer<typeof RagWebBrowserInputSchema>;
 export type GetActorRunInput = z.infer<typeof GetActorRunInputSchema>;

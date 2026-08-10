@@ -13,11 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import {
-	ActorsEndpoints,
-	DocsEndpoints,
-	RunsEndpoints,
-} from './endpoints';
+import { ActorsEndpoints, DocsEndpoints, RunsEndpoints } from './endpoints';
 import type {
 	ApifyMcpEndpointInputs,
 	ApifyMcpEndpointOutputs,
@@ -108,7 +104,9 @@ export const apifyMcpEndpointSchemas = {
 		input: ApifyMcpEndpointInputSchemas.fetchApifyDocs,
 		output: ApifyMcpEndpointOutputSchemas.fetchApifyDocs,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof apifyMcpEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof apifyMcpEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -163,8 +161,7 @@ export type BaseApifyMcpPlugin<T extends ApifyMcpPluginOptions> = CorsairPlugin<
 	typeof defaultAuthType
 >;
 
-export type InternalApifyMcpPlugin =
-	BaseApifyMcpPlugin<ApifyMcpPluginOptions>;
+export type InternalApifyMcpPlugin = BaseApifyMcpPlugin<ApifyMcpPluginOptions>;
 
 export type ExternalApifyMcpPlugin<T extends ApifyMcpPluginOptions> =
 	BaseApifyMcpPlugin<T>;
