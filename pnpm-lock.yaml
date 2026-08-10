@@ -130,7 +130,7 @@ importers:
         version: link:../../packages/slack
       corsair:
         specifier: ^0.1.4
-        version: link:../../packages/corsair
+        version: 0.1.107(postgres@3.4.7)(react@19.2.7)
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -4605,11 +4605,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
-    deprecated: 'Merged into tsx: https://tsx.is'
+    deprecated: 'Merged into tsx: https://tsx.hirok.io'
 
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
@@ -9520,6 +9520,14 @@ packages:
   cors@2.8.6:
     resolution: {integrity: sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw==}
     engines: {node: '>= 0.10'}
+
+  corsair@0.1.107:
+    resolution: {integrity: sha512-fh+iU4agP8j74vd2Uw2DJVLzBJ7hHvsm8bRyuanmpxkWxnXs0NxIsphv7fltSnCwg2l/lG9kEoUUckhv/nbPCg==}
+    peerDependencies:
+      react: '>=18.0.0'
+    peerDependenciesMeta:
+      react:
+        optional: true
 
   cosmiconfig@9.0.1:
     resolution: {integrity: sha512-hr4ihw+DBqcvrsEDioRO31Z17x71pUYoNe/4h6Z0wB72p7MU7/9gH8Q3s12NFhHPfYBBOV3qyfUxmr/Yn3shnQ==}
@@ -21378,6 +21386,17 @@ snapshots:
       object-assign: 4.1.1
       vary: 1.1.2
 
+  corsair@0.1.107(postgres@3.4.7)(react@19.2.7):
+    dependencies:
+      kysely: 0.28.17
+      kysely-postgres-js: 3.0.0(kysely@0.28.17)(postgres@3.4.7)
+      uuid: 13.0.0
+      zod: 4.4.3
+    optionalDependencies:
+      react: 19.2.7
+    transitivePeerDependencies:
+      - postgres
+
   cosmiconfig@9.0.1(typescript@5.9.3):
     dependencies:
       env-paths: 2.2.1
@@ -23494,6 +23513,12 @@ snapshots:
   kleur@3.0.3: {}
 
   kleur@4.1.5: {}
+
+  kysely-postgres-js@3.0.0(kysely@0.28.17)(postgres@3.4.7):
+    dependencies:
+      kysely: 0.28.17
+    optionalDependencies:
+      postgres: 3.4.7
 
   kysely-postgres-js@3.0.0(kysely@0.28.9)(postgres@3.4.7):
     dependencies:
