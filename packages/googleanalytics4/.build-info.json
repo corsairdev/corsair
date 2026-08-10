@@ -1,0 +1,71 @@
+{
+  "plugin": "Google Analytics 4",
+  "identifier": "googleanalytics4",
+  "version": "0.0.1",
+  "buildDate": "2026-08-10",
+  "status": "complete",
+  "endpoints": {
+    "admin": 12,
+    "reporting": 2,
+    "measurement_protocol": 2,
+    "total": 16
+  },
+  "services": {
+    "admin_api": {
+      "name": "Admin API",
+      "resources": [
+        "accounts",
+        "properties",
+        "customDimensions",
+        "customMetrics",
+        "dataStreams",
+        "audiences"
+      ]
+    },
+    "data_api": {
+      "name": "Data API",
+      "features": [
+        "standard_reports",
+        "realtime_reports"
+      ]
+    },
+    "measurement_protocol": {
+      "name": "Measurement Protocol",
+      "features": [
+        "send_events",
+        "validate_events"
+      ]
+    }
+  },
+  "authentication": {
+    "type": "oauth_2",
+    "provider": "Google",
+    "scope": "https://www.googleapis.com/auth/analytics",
+    "token_refresh": "automatic"
+  },
+  "files": {
+    "total": 20,
+    "lines_of_code": 2800,
+    "structure": {
+      "core": 4,
+      "endpoints": 5,
+      "config": 4,
+      "tests": 1,
+      "docs": 6
+    }
+  },
+  "features": {
+    "type_safety": true,
+    "error_handling": true,
+    "permissions": true,
+    "multi_tenancy": true,
+    "rate_limiting": true,
+    "documentation": true,
+    "testing": true
+  },
+  "registration": {
+    "in_base_providers": true,
+    "in_display_names": true,
+    "in_all_providers": true
+  }
+}

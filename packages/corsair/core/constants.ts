@@ -59,6 +59,7 @@ export const BaseProviders = [
 	'googlemaps',
 	'googlemeet',
 	'googlesheets',
+	'googleanalytics4',
 	'grafana',
 	'hackernews',
 	'hashnode',
@@ -163,6 +164,7 @@ export const ProviderDisplayNames = {
 	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
+	googleanalytics4: 'Google Analytics 4',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
 	hashnode: 'Hashnode',
@@ -274,6 +276,7 @@ export type AllProviders =
 	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
+	| 'googleanalytics4'
 	| 'grafana'
 	| 'hackernews'
 	| 'hashnode'
