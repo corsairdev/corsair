@@ -15,12 +15,17 @@ export type AllErrors =
 export const BaseProviders = [
 	'abstract',
 	'activetrail',
+	'addresszen',
 	'affinda',
+	'agencyzoom',
+	'agentmail',
 	'agentql',
 	'ahrefs',
 	'airtable',
 	'algolia',
+	'alttextai',
 	'amplitude',
+	'apilabz',
 	'asana',
 	'bitwarden',
 	'bluesky',
@@ -104,6 +109,7 @@ export const BaseProviders = [
 	'vapi',
 	'vercel',
 	'whatsapp',
+	'wiza',
 	'xquik',
 	'youtube',
 	'zendesk',
@@ -114,12 +120,17 @@ export const BaseProviders = [
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
 	activetrail: 'Active Trail',
+	addresszen: 'Addresszen',
 	affinda: 'Affinda',
+	agencyzoom: 'AgencyZoom',
+	agentmail: 'AgentMail',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
+	alttextai: 'AltText.ai',
 	amplitude: 'Amplitude',
+	apilabz: 'API Labz',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
@@ -203,6 +214,7 @@ export const ProviderDisplayNames = {
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	whatsapp: 'WhatsApp',
+	wiza: 'Wiza',
 	xquik: 'XQuik',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
@@ -220,12 +232,17 @@ export function formatProviderDisplayName(plugin: string): string {
 export type AllProviders =
 	| 'abstract'
 	| 'activetrail'
+	| 'addresszen'
 	| 'affinda'
+	| 'agencyzoom'
+	| 'agentmail'
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
 	| 'algolia'
+	| 'alttextai'
 	| 'amplitude'
+	| 'apilabz'
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
@@ -309,6 +326,7 @@ export type AllProviders =
 	| 'vapi'
 	| 'vercel'
 	| 'whatsapp'
+	| 'wiza'
 	| 'xquik'
 	| 'youtube'
 	| 'zendesk'
