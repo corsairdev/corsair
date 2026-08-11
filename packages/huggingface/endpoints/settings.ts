@@ -6,7 +6,8 @@ export const updateNotifications: HuggingFaceEndpoints['updateNotificationSettin
 	async (ctx, input) => {
 		const response = await req(ctx, '/api/settings/notifications', {
 			method: 'PATCH',
-			body: input.settings,
+			// OpenAPI: `{ notifications: { announcements?: boolean, ... } }`
+			body: { notifications: input.notifications },
 		});
 		await logEventFromContext(
 			ctx,

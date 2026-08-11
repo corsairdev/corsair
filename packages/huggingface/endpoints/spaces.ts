@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { encodePath, splitRepoId } from '../client';
 import type { HuggingFaceEndpoints } from '../index';
-import { req, summarize } from './helpers';
+import { hubCommitRequestOptions, req, summarize } from './helpers';
 
 export const list: HuggingFaceEndpoints['spacesList'] = async (ctx, input) => {
 	const response = await req(ctx, '/api/spaces', {
@@ -268,7 +268,11 @@ export const createBranch: HuggingFaceEndpoints['spacesCreateBranch'] = async (
 		`/api/spaces/${namespace}/${repo}/branch/${encodeURIComponent(input.branch)}`,
 		{
 			method: 'POST',
-			body: { startingPoint: input.startingPoint ?? input.revision },
+			body: {
+				startingPoint: input.startingPoint ?? input.revision,
+				emptyBranch: input.emptyBranch,
+				overwrite: input.overwrite,
+			},
 		},
 	);
 	await logEventFromContext(
@@ -307,16 +311,7 @@ export const createCommit: HuggingFaceEndpoints['spacesCreateCommit'] = async (
 	const response = await req(
 		ctx,
 		`/api/spaces/${namespace}/${repo}/commit/${encodeURIComponent(input.revision)}`,
-		{
-			method: 'POST',
-			body: {
-				summary: input.summary,
-				description: input.description,
-				operations: input.operations,
-				parentCommit: input.parentCommit,
-				create_pr: input.createPr,
-			},
-		},
+		hubCommitRequestOptions(input),
 	);
 	await logEventFromContext(
 		ctx,
@@ -377,7 +372,11 @@ export const checkUploadMethod: HuggingFaceEndpoints['spacesCheckUploadMethod'] 
 			`/api/spaces/${namespace}/${repo}/preupload/${encodeURIComponent(input.revision)}`,
 			{
 				method: 'POST',
-				body: { files: input.files },
+				body: {
+					files: input.files,
+					gitAttributes: input.gitAttributes,
+					gitIgnore: input.gitIgnore,
+				},
 			},
 		);
 		await logEventFromContext(

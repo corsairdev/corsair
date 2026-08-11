@@ -32,8 +32,9 @@ export type HuggingFaceQueryValue =
 
 export type HuggingFaceRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-	// body shape varies per endpoint; validated by callers via typed Zod input schemas
-	body?: Record<string, unknown> | unknown[];
+	// body shape varies per endpoint; validated by callers via typed Zod input schemas.
+	// string = raw body (Hub NDJSON commits: application/x-ndjson).
+	body?: Record<string, unknown> | unknown[] | string;
 	query?: Record<string, HuggingFaceQueryValue>;
 	/** Override base URL (default Hub). */
 	baseUrl?: string;
@@ -122,17 +123,32 @@ export async function makeHuggingFaceRequest<T>(
 		method,
 		url: endpoint.startsWith('/') ? endpoint : `/${endpoint}`,
 		body:
-			method === 'POST' ||
-			method === 'PUT' ||
-			method === 'PATCH' ||
-			// HF DELETE secrets/variables/notifications send a JSON body
-			(method === 'DELETE' && body !== undefined)
-				? // cast: RequestOptions.body is Record | array; ApiRequestOptions.body is Record
-					(body as Record<string, unknown>)
-				: undefined,
+			typeof body === 'string'
+				? undefined
+				: method === 'POST' ||
+						method === 'PUT' ||
+						method === 'PATCH' ||
+						// HF DELETE secrets/variables/notifications send a JSON body
+						(method === 'DELETE' && body !== undefined)
+					? // cast: RequestOptions.body is Record | array; ApiRequestOptions.body is Record
+						(body as Record<string, unknown>)
+					: undefined,
 		mediaType: 'application/json; charset=utf-8',
 		query: query as Record<string, string | number | boolean | undefined>,
 	};
+	// Raw string bodies (NDJSON) go through rawFetch — corsair/http JSON-encodes objects only.
+	if (typeof body === 'string') {
+		return rawFetch<T>(
+			baseUrl,
+			endpoint,
+			method,
+			headers,
+			body,
+			query,
+			timeoutMs,
+			sse,
+		);
+	}
 
 	try {
 		return await request<T>(config, requestOptions);
@@ -153,7 +169,7 @@ async function rawFetch<T>(
 	endpoint: string,
 	method: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH',
 	headers: Record<string, string>,
-	body: Record<string, unknown> | unknown[] | undefined,
+	body: Record<string, unknown> | unknown[] | string | undefined,
 	query: Record<string, HuggingFaceQueryValue> | undefined,
 	timeoutMs: number,
 	sse = false,
@@ -176,9 +192,14 @@ async function rawFetch<T>(
 	const res = await fetch(url, {
 		method,
 		headers,
-		// HF DELETE secrets/variables/notifications may send a JSON body
+		// HF DELETE secrets/variables/notifications may send a JSON body;
+		// commit NDJSON sends a pre-serialized string.
 		body:
-			body !== undefined && method !== 'GET' ? JSON.stringify(body) : undefined,
+			body !== undefined && method !== 'GET'
+				? typeof body === 'string'
+					? body
+					: JSON.stringify(body)
+				: undefined,
 		redirect: 'manual',
 		signal: AbortSignal.timeout(timeoutMs),
 	});

@@ -1,7 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import { encodePath, HF_DATASETS_SERVER_BASE, splitRepoId } from '../client';
 import type { HuggingFaceEndpoints } from '../index';
-import { hubRepoTypeSegment, req, summarize } from './helpers';
+import {
+	hubCommitRequestOptions,
+	hubRepoTypeSegment,
+	req,
+	summarize,
+} from './helpers';
 
 export const list: HuggingFaceEndpoints['datasetsList'] = async (
 	ctx,
@@ -268,7 +273,11 @@ export const createBranch: HuggingFaceEndpoints['datasetsCreateBranch'] =
 			`/api/datasets/${namespace}/${repo}/branch/${encodeURIComponent(input.branch)}`,
 			{
 				method: 'POST',
-				body: { startingPoint: input.startingPoint ?? input.revision },
+				body: {
+					startingPoint: input.startingPoint ?? input.revision,
+					emptyBranch: input.emptyBranch,
+					overwrite: input.overwrite,
+				},
 			},
 		);
 		await logEventFromContext(
@@ -303,16 +312,7 @@ export const createCommit: HuggingFaceEndpoints['datasetsCreateCommit'] =
 		const response = await req(
 			ctx,
 			`/api/datasets/${namespace}/${repo}/commit/${encodeURIComponent(input.revision)}`,
-			{
-				method: 'POST',
-				body: {
-					summary: input.summary,
-					description: input.description,
-					operations: input.operations,
-					parentCommit: input.parentCommit,
-					create_pr: input.createPr,
-				},
-			},
+			hubCommitRequestOptions(input),
 		);
 		await logEventFromContext(
 			ctx,
@@ -373,7 +373,11 @@ export const checkUploadMethod: HuggingFaceEndpoints['datasetsCheckUploadMethod'
 			`/api/datasets/${namespace}/${repo}/preupload/${encodeURIComponent(input.revision)}`,
 			{
 				method: 'POST',
-				body: { files: input.files },
+				body: {
+					files: input.files,
+					gitAttributes: input.gitAttributes,
+					gitIgnore: input.gitIgnore,
+				},
 			},
 		);
 		await logEventFromContext(

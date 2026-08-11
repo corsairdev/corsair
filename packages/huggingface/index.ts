@@ -1072,7 +1072,8 @@ const huggingFaceEndpointMeta = {
 	},
 	'models.createCommit': {
 		riskLevel: 'write',
-		description: 'Create a commit on a model',
+		description:
+			'Create a commit on a model (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)',
 	},
 	'models.createTag': {
 		riskLevel: 'write',
@@ -1152,7 +1153,8 @@ const huggingFaceEndpointMeta = {
 	},
 	'datasets.createCommit': {
 		riskLevel: 'write',
-		description: 'Create a commit on a dataset',
+		description:
+			'Create a commit on a dataset (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)',
 	},
 	'datasets.createTag': {
 		riskLevel: 'write',
@@ -1232,7 +1234,8 @@ const huggingFaceEndpointMeta = {
 	},
 	'spaces.createCommit': {
 		riskLevel: 'write',
-		description: 'Create a commit on a space',
+		description:
+			'Create a commit on a space (Hub NDJSON/JSON: files, deletedEntries, lfsFiles)',
 	},
 	'spaces.createTag': {
 		riskLevel: 'write',

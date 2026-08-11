@@ -40,7 +40,8 @@ export type DeleteNotificationsInput = z.infer<
 export type DeleteNotificationsResponse = HfOpenResponse; // open HF JSON
 
 const UpdateNotificationSettingsInputSchema = z.object({
-	settings: z.record(z.string(), z.unknown()),
+	// Hub PATCH /api/settings/notifications body is `{ notifications: { ...flags } }`
+	notifications: z.record(z.string(), z.boolean()),
 });
 
 export type UpdateNotificationSettingsInput = z.infer<
@@ -297,6 +298,8 @@ const ModelsCreateBranchInputSchema = z.object({
 	branch: z.string(),
 	revision: z.string().default('main'),
 	startingPoint: z.string().optional(),
+	emptyBranch: z.boolean().optional(),
+	overwrite: z.boolean().optional(),
 });
 
 export type ModelsCreateBranchInput = z.infer<
@@ -316,15 +319,59 @@ export type ModelsDeleteBranchInput = z.infer<
 
 export type ModelsDeleteBranchResponse = HfOpenResponse; // open HF JSON
 
-const ModelsCreateCommitInputSchema = z.object({
-	repoId: z.string(),
+const HubCommitFileSchema = z.object({
+	path: z.string(),
+	content: z.string().optional(),
+	encoding: z.enum(['utf-8', 'base64']).optional(),
+	oldPath: z.string().optional(),
+});
+const HubCommitDeletedEntrySchema = z.object({ path: z.string() });
+const HubCommitLfsFileSchema = z.object({
+	path: z.string(),
+	oid: z.string().optional(),
+	algo: z.literal('sha256').optional(),
+	size: z.number().optional(),
+	oldPath: z.string().optional(),
+});
+const HubCreateCommitFields = {
 	revision: z.string().default('main'),
-	summary: z.string().optional(),
+	summary: z.string(),
 	description: z.string().optional(),
-	operations: z.array(z.record(z.string(), z.unknown())),
 	parentCommit: z.string().optional(),
 	createPr: z.boolean().optional(),
-});
+	hotReload: z.boolean().optional(),
+	// optional; handlers default to ndjson (Hub-recommended)
+	format: z.enum(['json', 'ndjson']).optional(),
+	files: z.array(HubCommitFileSchema).optional(),
+	deletedEntries: z.array(HubCommitDeletedEntrySchema).optional(),
+	lfsFiles: z.array(HubCommitLfsFileSchema).optional(),
+};
+const hubCreateCommitRefine = (
+	v: {
+		files?: unknown[];
+		deletedEntries?: unknown[];
+		lfsFiles?: unknown[];
+	},
+	ctx: z.RefinementCtx,
+) => {
+	const n =
+		(v.files?.length ?? 0) +
+		(v.deletedEntries?.length ?? 0) +
+		(v.lfsFiles?.length ?? 0);
+	if (n < 1) {
+		ctx.addIssue({
+			code: z.ZodIssueCode.custom,
+			message: 'Provide at least one of files, deletedEntries, or lfsFiles',
+		});
+	}
+};
+
+const ModelsCreateCommitInputSchema = z
+	.object({
+		repoId: z.string(),
+		...HubCreateCommitFields,
+	})
+	.superRefine(hubCreateCommitRefine);
 
 export type ModelsCreateCommitInput = z.infer<
 	typeof ModelsCreateCommitInputSchema
@@ -352,10 +399,18 @@ export type ModelsDeleteTagInput = z.infer<typeof ModelsDeleteTagInputSchema>;
 
 export type ModelsDeleteTagResponse = HfOpenResponse; // open HF JSON
 
+const HubPreuploadFileSchema = z.object({
+	path: z.string(),
+	size: z.number(),
+	sample: z.string(),
+});
+
 const ModelsCheckUploadMethodInputSchema = z.object({
 	repoId: z.string(),
 	revision: z.string().default('main'),
-	files: z.array(z.record(z.string(), z.unknown())),
+	files: z.array(HubPreuploadFileSchema),
+	gitAttributes: z.string().optional(),
+	gitIgnore: z.string().optional(),
 });
 
 export type ModelsCheckUploadMethodInput = z.infer<
@@ -535,6 +590,8 @@ const DatasetsCreateBranchInputSchema = z.object({
 	branch: z.string(),
 	revision: z.string().default('main'),
 	startingPoint: z.string().optional(),
+	emptyBranch: z.boolean().optional(),
+	overwrite: z.boolean().optional(),
 });
 
 export type DatasetsCreateBranchInput = z.infer<
@@ -554,15 +611,12 @@ export type DatasetsDeleteBranchInput = z.infer<
 
 export type DatasetsDeleteBranchResponse = HfOpenResponse; // open HF JSON
 
-const DatasetsCreateCommitInputSchema = z.object({
-	repoId: z.string(),
-	revision: z.string().default('main'),
-	summary: z.string().optional(),
-	description: z.string().optional(),
-	operations: z.array(z.record(z.string(), z.unknown())),
-	parentCommit: z.string().optional(),
-	createPr: z.boolean().optional(),
-});
+const DatasetsCreateCommitInputSchema = z
+	.object({
+		repoId: z.string(),
+		...HubCreateCommitFields,
+	})
+	.superRefine(hubCreateCommitRefine);
 
 export type DatasetsCreateCommitInput = z.infer<
 	typeof DatasetsCreateCommitInputSchema
@@ -597,7 +651,9 @@ export type DatasetsDeleteTagResponse = HfOpenResponse; // open HF JSON
 const DatasetsCheckUploadMethodInputSchema = z.object({
 	repoId: z.string(),
 	revision: z.string().default('main'),
-	files: z.array(z.record(z.string(), z.unknown())),
+	files: z.array(HubPreuploadFileSchema),
+	gitAttributes: z.string().optional(),
+	gitIgnore: z.string().optional(),
 });
 
 export type DatasetsCheckUploadMethodInput = z.infer<
@@ -773,6 +829,8 @@ const SpacesCreateBranchInputSchema = z.object({
 	branch: z.string(),
 	revision: z.string().default('main'),
 	startingPoint: z.string().optional(),
+	emptyBranch: z.boolean().optional(),
+	overwrite: z.boolean().optional(),
 });
 
 export type SpacesCreateBranchInput = z.infer<
@@ -792,15 +850,12 @@ export type SpacesDeleteBranchInput = z.infer<
 
 export type SpacesDeleteBranchResponse = HfOpenResponse; // open HF JSON
 
-const SpacesCreateCommitInputSchema = z.object({
-	repoId: z.string(),
-	revision: z.string().default('main'),
-	summary: z.string().optional(),
-	description: z.string().optional(),
-	operations: z.array(z.record(z.string(), z.unknown())),
-	parentCommit: z.string().optional(),
-	createPr: z.boolean().optional(),
-});
+const SpacesCreateCommitInputSchema = z
+	.object({
+		repoId: z.string(),
+		...HubCreateCommitFields,
+	})
+	.superRefine(hubCreateCommitRefine);
 
 export type SpacesCreateCommitInput = z.infer<
 	typeof SpacesCreateCommitInputSchema
@@ -831,7 +886,9 @@ export type SpacesDeleteTagResponse = HfOpenResponse; // open HF JSON
 const SpacesCheckUploadMethodInputSchema = z.object({
 	repoId: z.string(),
 	revision: z.string().default('main'),
-	files: z.array(z.record(z.string(), z.unknown())),
+	files: z.array(HubPreuploadFileSchema),
+	gitAttributes: z.string().optional(),
+	gitIgnore: z.string().optional(),
 });
 
 export type SpacesCheckUploadMethodInput = z.infer<
@@ -1191,7 +1248,7 @@ export type SpacesDeleteVariableResponse = HfOpenResponse; // open HF JSON
 
 const CollectionsCreateInputSchema = z.object({
 	title: z.string(),
-	namespace: z.string().optional(),
+	namespace: z.string(),
 	description: z.string().optional(),
 	private: z.boolean().optional(),
 });

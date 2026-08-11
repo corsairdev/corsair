@@ -394,12 +394,12 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('datasets.createCommit sends parentCommit camelCase', async () => {
+	it('datasets.createCommit sends Hub NDJSON with parentCommit', async () => {
 		await DatasetsEndpoints.createCommit(ctx(), {
 			repoId: 'org/data',
 			revision: 'main',
 			summary: 'Update',
-			operations: [{ key: 'file', value: { path: 'a.txt', content: 'x' } }],
+			files: [{ path: 'a.txt', content: 'x' }],
 			parentCommit: 'abc123',
 		});
 		const call = lastCall();
@@ -407,12 +407,20 @@ describe('handler path construction', () => {
 		expect(call[2]).toEqual(
 			expect.objectContaining({
 				method: 'POST',
-				body: expect.objectContaining({ parentCommit: 'abc123' }),
+				rawText: true,
+				headers: expect.objectContaining({
+					'Content-Type': 'application/x-ndjson',
+				}),
 			}),
 		);
+		const opts = call[2] as {
+			body?: unknown;
+		};
+		expect(String(opts.body)).toContain('"parentCommit":"abc123"');
+		expect(String(opts.body)).toContain('"key":"file"');
 	});
 
-	it('datasets.getRows â†’ datasets-server /rows', async () => {
+	it('datasets.getRows → datasets-server /rows', async () => {
 		await DatasetsEndpoints.getRows(ctx(), {
 			dataset: 'org/data',
 			config: 'default',
@@ -435,22 +443,32 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('models.createCommit sends parentCommit camelCase', async () => {
+	it('models.createCommit sends Hub NDJSON with parentCommit + create_pr query', async () => {
 		await ModelsEndpoints.createCommit(ctx(), {
 			repoId: 'org/model',
 			revision: 'main',
 			summary: 'Update',
-			operations: [{ key: 'file', value: { path: 'a.txt', content: 'x' } }],
+			files: [{ path: 'a.txt', content: 'x' }],
 			parentCommit: 'abc123',
+			createPr: true,
 		});
 		const call = lastCall();
 		expect(call[0]).toBe('/api/models/org/model/commit/main');
 		expect(call[2]).toEqual(
 			expect.objectContaining({
 				method: 'POST',
-				body: expect.objectContaining({ parentCommit: 'abc123' }),
+				rawText: true,
+				query: expect.objectContaining({ create_pr: true }),
+				headers: expect.objectContaining({
+					'Content-Type': 'application/x-ndjson',
+				}),
 			}),
 		);
+		const opts = call[2] as {
+			body?: unknown;
+		};
+		expect(String(opts.body)).toContain('"parentCommit":"abc123"');
+		expect(String(opts.body)).not.toContain('operations');
 	});
 
 	it('models.getResolve uses raw fetch path', async () => {
@@ -480,15 +498,15 @@ describe('handler path construction', () => {
 		);
 	});
 
-	it('settings.updateNotifications â†’ PATCH /api/settings/notifications', async () => {
+	it('settings.updateNotifications → PATCH /api/settings/notifications', async () => {
 		await SettingsEndpoints.updateNotifications(ctx(), {
-			settings: { email: true },
+			notifications: { announcements: true },
 		});
 		expect(lastCall()[0]).toBe('/api/settings/notifications');
 		expect(lastCall()[2]).toEqual(
 			expect.objectContaining({
 				method: 'PATCH',
-				body: { email: true },
+				body: { notifications: { announcements: true } },
 			}),
 		);
 	});
