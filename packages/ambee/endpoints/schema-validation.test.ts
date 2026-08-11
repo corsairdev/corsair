@@ -127,6 +127,20 @@ describe('output schemas', () => {
 		expect(parsed.data).toMatchObject({ someNewAmbeeField: 'kept' });
 	});
 
+	it('normalises weather history/forecast data when Ambee returns an object', () => {
+		const asPoint = AmbeeEndpointOutputSchemas.weatherGetForecast.parse({
+			message: 'success',
+			data: { temperature: 70, humidity: 40 },
+		});
+		expect(asPoint.data).toEqual([{ temperature: 70, humidity: 40 }]);
+
+		const nested = AmbeeEndpointOutputSchemas.weatherGetHistory.parse({
+			message: 'success',
+			data: { forecast: [{ temperature: 71 }, { temperature: 72 }] },
+		});
+		expect(nested.data).toHaveLength(2);
+	});
+
 	it('accepts the per-species pollen breakdown as an open record', () => {
 		const parsed = AmbeeEndpointOutputSchemas.pollenGetLatest.parse({
 			message: 'success',

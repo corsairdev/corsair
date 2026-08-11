@@ -101,6 +101,7 @@ describeLive('Ambee API contract', () => {
 		const parsed =
 			AmbeeEndpointOutputSchemas.weatherGetForecast.parse(response);
 		expect(parsed.message).toBe('success');
+		expect(Array.isArray(parsed.data)).toBe(true);
 	});
 
 	it('latest pollen matches the output schema', async () => {
@@ -143,7 +144,8 @@ describeLive('Ambee API contract', () => {
 
 		const parsed =
 			AmbeeEndpointOutputSchemas.elevationGetByLatLng.parse(response);
-		expect(parsed.message).toBe('success');
+		// Free / unsubscribed keys get a documented empty envelope instead of 404.
+		expect(['success', 'Data not available!']).toContain(parsed.message);
 	});
 
 	it('elevation by place matches the output schema', async () => {
@@ -153,7 +155,7 @@ describeLive('Ambee API contract', () => {
 
 		const parsed =
 			AmbeeEndpointOutputSchemas.elevationGetByPlace.parse(response);
-		expect(parsed.message).toBe('success');
+		expect(['success', 'Data not available!']).toContain(parsed.message);
 	});
 
 	it('latest air quality by country code matches the output schema', async () => {
@@ -183,6 +185,7 @@ describeLive('Ambee API contract', () => {
 
 		const parsed = AmbeeEndpointOutputSchemas.weatherGetHistory.parse(response);
 		expect(parsed.message).toBe('success');
+		expect(Array.isArray(parsed.data)).toBe(true);
 	});
 
 	it('pollen by place matches the output schema', async () => {

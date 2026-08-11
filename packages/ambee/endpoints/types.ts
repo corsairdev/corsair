@@ -476,14 +476,40 @@ export const WeatherLatestResponseSchema = z
 	.loose();
 export type WeatherLatestResponse = z.infer<typeof WeatherLatestResponseSchema>;
 
+/**
+ * Ambee documents history/forecast `data` as an hourly array, but some plans
+ * return a single point object (same shape as latest) or nest the series under
+ * `forecast` / `history`. Normalize to an array before validation so callers
+ * always see `WeatherPoint[]`.
+ */
+function coerceWeatherSeriesData(data: unknown): unknown {
+	if (data == null) return data;
+	if (Array.isArray(data)) return data;
+	if (typeof data === 'object') {
+		const obj = data as Record<string, unknown>;
+		for (const key of ['forecast', 'history', 'hourly'] as const) {
+			if (Array.isArray(obj[key])) return obj[key];
+		}
+		return [data];
+	}
+	return data;
+}
+
 /** History and forecast return an hourly series under `data`. */
-export const WeatherSeriesResponseSchema = z
-	.object({
-		message: MessageSchema,
-		...WeatherLocationSchema,
-		data: z.array(WeatherPointSchema).optional(),
-	})
-	.loose();
+export const WeatherSeriesResponseSchema = z.preprocess(
+	(raw) => {
+		if (!raw || typeof raw !== 'object') return raw;
+		const obj = raw as Record<string, unknown>;
+		return { ...obj, data: coerceWeatherSeriesData(obj.data) };
+	},
+	z
+		.object({
+			message: MessageSchema,
+			...WeatherLocationSchema,
+			data: z.array(WeatherPointSchema).optional(),
+		})
+		.loose(),
+);
 export type WeatherSeriesResponse = z.infer<typeof WeatherSeriesResponseSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
