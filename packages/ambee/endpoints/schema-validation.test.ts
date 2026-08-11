@@ -22,7 +22,7 @@ describe('input schemas', () => {
 		).toBe(true);
 	});
 
-	it('accepts either a coordinate pair or a place name for pollen, but not neither', () => {
+	it('accepts either a coordinate pair or a place name for pollen, but not neither or both', () => {
 		expect(
 			AmbeeEndpointInputSchemas.pollenGetLatest.safeParse({
 				lat: 41.38,
@@ -37,6 +37,28 @@ describe('input schemas', () => {
 		expect(
 			AmbeeEndpointInputSchemas.pollenGetLatest.safeParse({ speciesRisk: true })
 				.success,
+		).toBe(false);
+		expect(
+			AmbeeEndpointInputSchemas.pollenGetLatest.safeParse({
+				lat: 41.38,
+				lng: 2.16,
+				place: 'Barcelona',
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires a three-letter ISO country code', () => {
+		expect(
+			AmbeeEndpointInputSchemas.airQualityGetLatestByPostalCode.safeParse({
+				postalCode: '560020',
+				countryCode: 'IND',
+			}).success,
+		).toBe(true);
+		expect(
+			AmbeeEndpointInputSchemas.airQualityGetLatestByPostalCode.safeParse({
+				postalCode: '560020',
+				countryCode: 'IN',
+			}).success,
 		).toBe(false);
 	});
 
@@ -172,6 +194,21 @@ describe('output schemas', () => {
 				limit: 50,
 			}).success,
 		).toBe(true);
+	});
+
+	it('restricts disasters eventType to Ambee’s documented codes', () => {
+		expect(
+			AmbeeEndpointInputSchemas.disastersGetLatestByCountryCode.safeParse({
+				countryCode: 'IND',
+				eventType: 'EQ',
+			}).success,
+		).toBe(true);
+		expect(
+			AmbeeEndpointInputSchemas.disastersGetLatestByCountryCode.safeParse({
+				countryCode: 'IND',
+				eventType: 'ASTEROID',
+			}).success,
+		).toBe(false);
 	});
 
 	it('accepts a disasters payload under either `result` or `data`', () => {

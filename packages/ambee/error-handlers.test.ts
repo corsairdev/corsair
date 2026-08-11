@@ -82,4 +82,10 @@ describe('errorHandlers', () => {
 			'RATE_LIMIT_ERROR',
 		);
 	});
+
+	it('does not let digits in the message override an explicit status', () => {
+		const error = ambeeError(503);
+		error.message = 'upstream failed for postalCode 560429 with body 404';
+		expect(route(error)).toBe('SERVER_ERROR');
+	});
 });

@@ -110,7 +110,7 @@ export const getLatestByCountryCode: AmbeeEndpoints['airQualityGetLatestByCountr
 		const raw = await makeAmbeeRequest<AirQualityStationsResponse>(
 			'latest/by-country-code',
 			ctx.key,
-			{ query: { countryCode: input.countryCode } },
+			{ query: { countryCode: input.countryCode, limit: input.limit } },
 		);
 
 		const response = AirQualityStationsResponseSchema.parse(raw);
@@ -119,7 +119,7 @@ export const getLatestByCountryCode: AmbeeEndpoints['airQualityGetLatestByCountr
 		await logEventFromContext(
 			ctx,
 			'ambee.airQuality.getLatestByCountryCode',
-			{ countryCode: input.countryCode },
+			{ countryCode: input.countryCode, limit: input.limit },
 			'completed',
 		);
 

@@ -79,6 +79,7 @@ describe('makeAmbeeRequest', () => {
 	});
 
 	it('wraps an ApiError in AmbeeAPIError, preserving status and cause', async () => {
+		expect.assertions(5);
 		const original = apiError(429, 1500);
 		mockRequest.mockRejectedValue(original);
 

@@ -77,6 +77,17 @@ describe('pollen.getLatest', () => {
 			query: { place: 'Barcelona', speciesRisk: true },
 		});
 	});
+
+	it('rejects an ambiguous location that supplies both place and coordinates', async () => {
+		await expect(
+			getLatest(makeCtx(), {
+				lat: 41.3874,
+				lng: 2.1686,
+				place: 'Barcelona',
+			} as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('pollen.getHistory', () => {

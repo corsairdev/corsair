@@ -120,11 +120,24 @@ export async function persistGeocodeResults(
 	if (!table || !results?.length) return;
 
 	for (const [index, result] of results.entries()) {
+		const lat = Number(result.lat);
+		const lng = Number(result.lng);
+
 		await safeUpsert('geocode result', () =>
 			table.upsertByEntityId(`${query}#${index}`, {
 				query,
-				lat: result.lat === null ? undefined : Number(result.lat) || undefined,
-				lng: result.lng === null ? undefined : Number(result.lng) || undefined,
+				lat:
+					result.lat === null ||
+					result.lat === undefined ||
+					!Number.isFinite(lat)
+						? undefined
+						: lat,
+				lng:
+					result.lng === null ||
+					result.lng === undefined ||
+					!Number.isFinite(lng)
+						? undefined
+						: lng,
 				city: result.city ?? undefined,
 				state: result.state ?? undefined,
 				countryCode: result.countryCode ?? undefined,

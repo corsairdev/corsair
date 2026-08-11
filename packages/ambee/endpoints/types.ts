@@ -392,22 +392,27 @@ export type AirQualityGetLatestByCityInput = z.infer<
 	typeof AirQualityGetLatestByCityInputSchema
 >;
 
+const CountryCodeSchema = z
+	.string()
+	.length(3)
+	.describe('Three-letter ISO country code, e.g. "IND" or "USA"');
+
 export const AirQualityGetLatestByPostalCodeInputSchema = z.object({
 	postalCode: z.string().min(1).describe('Postal code, e.g. "560020"'),
-	countryCode: z
-		.string()
-		.min(2)
-		.describe('Three-letter ISO country code, e.g. "IND" or "USA"'),
+	countryCode: CountryCodeSchema,
 });
 export type AirQualityGetLatestByPostalCodeInput = z.infer<
 	typeof AirQualityGetLatestByPostalCodeInputSchema
 >;
 
 export const AirQualityGetLatestByCountryCodeInputSchema = z.object({
-	countryCode: z
-		.string()
-		.min(2)
-		.describe('Three-letter ISO country code, e.g. "IND" or "USA"'),
+	countryCode: CountryCodeSchema,
+	limit: z
+		.number()
+		.int()
+		.positive()
+		.optional()
+		.describe('Maximum number of stations to return (Ambee defaults to 1)'),
 });
 export type AirQualityGetLatestByCountryCodeInput = z.infer<
 	typeof AirQualityGetLatestByCountryCodeInputSchema
@@ -420,10 +425,7 @@ export type AirQualityGetHistoryByLatLngInput = z.infer<
 
 export const AirQualityGetHistoryByPostalCodeInputSchema = z.object({
 	postalCode: z.string().min(1).describe('Postal code, e.g. "560020"'),
-	countryCode: z
-		.string()
-		.min(2)
-		.describe('Three-letter ISO country code, e.g. "IND" or "USA"'),
+	countryCode: CountryCodeSchema,
 	from: FromSchema,
 	to: ToSchema,
 });
@@ -502,20 +504,24 @@ const PlaceSchema = z.string().min(1).describe('Place name, e.g. "Barcelona"');
  * validation time instead of silently dropping a parameter at request time.
  */
 export const PollenGetLatestInputSchema = z.union([
-	z.object({ lat: LatSchema, lng: LngSchema, speciesRisk: SpeciesRiskSchema }),
-	z.object({ place: PlaceSchema, speciesRisk: SpeciesRiskSchema }),
+	z.strictObject({
+		lat: LatSchema,
+		lng: LngSchema,
+		speciesRisk: SpeciesRiskSchema,
+	}),
+	z.strictObject({ place: PlaceSchema, speciesRisk: SpeciesRiskSchema }),
 ]);
 export type PollenGetLatestInput = z.infer<typeof PollenGetLatestInputSchema>;
 
 export const PollenGetHistoryInputSchema = z.union([
-	z.object({
+	z.strictObject({
 		lat: LatSchema,
 		lng: LngSchema,
 		from: FromSchema,
 		to: ToSchema,
 		speciesRisk: SpeciesRiskSchema,
 	}),
-	z.object({
+	z.strictObject({
 		place: PlaceSchema,
 		from: FromSchema,
 		to: ToSchema,
@@ -530,13 +536,13 @@ const PollenForecastHoursSchema = z
 	.describe('Forecast horizon in hours: 48 (hourly) or 120 (3-hourly)');
 
 export const PollenGetForecastInputSchema = z.union([
-	z.object({
+	z.strictObject({
 		lat: LatSchema,
 		lng: LngSchema,
 		hours: PollenForecastHoursSchema,
 		speciesRisk: SpeciesRiskSchema,
 	}),
-	z.object({
+	z.strictObject({
 		place: PlaceSchema,
 		hours: PollenForecastHoursSchema,
 		speciesRisk: SpeciesRiskSchema,
@@ -625,8 +631,20 @@ const ContinentSchema = z
 	.describe('Continent code');
 
 const EventTypeSchema = z
-	.string()
-	.min(1)
+	.enum([
+		'TN',
+		'EQ',
+		'TC',
+		'WF',
+		'FL',
+		'ET',
+		'DR',
+		'SW',
+		'SI',
+		'VO',
+		'LS',
+		'Misc',
+	])
 	.optional()
 	.describe('Restrict results to a single Ambee event-type code');
 
@@ -656,10 +674,7 @@ export type DisastersGetLatestByLatLngInput = z.infer<
 >;
 
 export const DisastersGetLatestByCountryCodeInputSchema = z.object({
-	countryCode: z
-		.string()
-		.min(2)
-		.describe('Three-letter ISO country code, e.g. "IND"'),
+	countryCode: CountryCodeSchema,
 	eventType: EventTypeSchema,
 	...PaginationSchema,
 });
@@ -689,10 +704,7 @@ export type DisastersGetHistoryByLatLngInput = z.infer<
 >;
 
 export const DisastersGetHistoryByCountryCodeInputSchema = z.object({
-	countryCode: z
-		.string()
-		.min(2)
-		.describe('Three-letter ISO country code, e.g. "IND"'),
+	countryCode: CountryCodeSchema,
 	from: FromSchema,
 	to: ToSchema,
 	eventType: EventTypeSchema,

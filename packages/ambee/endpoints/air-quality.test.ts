@@ -189,14 +189,26 @@ describe('airQuality.getLatestByCountryCode', () => {
 		expect(mockRequest).toHaveBeenCalledWith(
 			'latest/by-country-code',
 			'test-key',
-			{ query: { countryCode: 'IND' } },
+			{ query: { countryCode: 'IND', limit: undefined } },
 		);
 		expect(upsertByEntityId).toHaveBeenCalledTimes(1);
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			expect.anything(),
 			'ambee.airQuality.getLatestByCountryCode',
-			{ countryCode: 'IND' },
+			{ countryCode: 'IND', limit: undefined },
 			'completed',
+		);
+	});
+
+	it('forwards an optional limit to makeAmbeeRequest', async () => {
+		mockRequest.mockResolvedValue(STATIONS_RESPONSE);
+
+		await getLatestByCountryCode(makeCtx(), { countryCode: 'IND', limit: 5 });
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			'latest/by-country-code',
+			'test-key',
+			{ query: { countryCode: 'IND', limit: 5 } },
 		);
 	});
 });

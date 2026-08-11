@@ -3,12 +3,18 @@ import type { AmbeeQuery } from '../client';
 import { makeAmbeeRequest, toAmbeeTimestamp } from '../client';
 import type { AmbeeEndpoints } from '../index';
 import type { PollenResponse } from './types';
-import { PollenResponseSchema } from './types';
+import {
+	PollenGetForecastInputSchema,
+	PollenGetHistoryInputSchema,
+	PollenGetLatestInputSchema,
+	PollenResponseSchema,
+} from './types';
 
 /**
  * Pollen endpoints are addressed either geospatially or by place name. Both
  * forms share every other parameter, so the location half of the query is
- * resolved once here.
+ * resolved once here. Callers must already be a validated exclusive union —
+ * `'place' in input` is only safe after that check.
  */
 function pollenLocationQuery(
 	input: { lat: number; lng: number } | { place: string },
@@ -31,8 +37,9 @@ function speciesRiskQuery(speciesRisk: boolean | undefined): AmbeeQuery {
  */
 export const getLatest: AmbeeEndpoints['pollenGetLatest'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = PollenGetLatestInputSchema.parse(rawInput);
 	const location = pollenLocationQuery(input);
 
 	const raw = await makeAmbeeRequest<PollenResponse>(
@@ -61,8 +68,9 @@ export const getLatest: AmbeeEndpoints['pollenGetLatest'] = async (
  */
 export const getHistory: AmbeeEndpoints['pollenGetHistory'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = PollenGetHistoryInputSchema.parse(rawInput);
 	const location = pollenLocationQuery(input);
 	const from = toAmbeeTimestamp(input.from);
 	const to = toAmbeeTimestamp(input.to);
@@ -101,8 +109,9 @@ export const getHistory: AmbeeEndpoints['pollenGetHistory'] = async (
  */
 export const getForecast: AmbeeEndpoints['pollenGetForecast'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = PollenGetForecastInputSchema.parse(rawInput);
 	const location = pollenLocationQuery(input);
 	const hours = input.hours ?? 48;
 

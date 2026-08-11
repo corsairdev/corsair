@@ -136,12 +136,82 @@ describeLive('Ambee API contract', () => {
 			'elevation/latest/by-lat-lng',
 			key,
 			{
-				query: { lat: LAT, lng: LNG },
+				// San Francisco — inside North America elevation coverage.
+				query: { lat: 37.77355324503912, lng: -122.39428048824142 },
 			},
 		);
 
 		const parsed =
 			AmbeeEndpointOutputSchemas.elevationGetByLatLng.parse(response);
+		expect(parsed.message).toBe('success');
+	});
+
+	it('elevation by place matches the output schema', async () => {
+		const response = await makeAmbeeRequest('elevation/latest/by-place', key, {
+			query: { place: 'San Francisco, USA' },
+		});
+
+		const parsed =
+			AmbeeEndpointOutputSchemas.elevationGetByPlace.parse(response);
+		expect(parsed.message).toBe('success');
+	});
+
+	it('latest air quality by country code matches the output schema', async () => {
+		const response = await makeAmbeeRequest('latest/by-country-code', key, {
+			query: { countryCode: 'IND', limit: 2 },
+		});
+
+		const parsed =
+			AmbeeEndpointOutputSchemas.airQualityGetLatestByCountryCode.parse(
+				response,
+			);
+		expect(parsed.message).toBe('success');
+	});
+
+	it('weather history matches the output schema', async () => {
+		const to = new Date();
+		const from = new Date(to.getTime() - 12 * 60 * 60 * 1000);
+
+		const response = await makeAmbeeRequest('weather/history/by-lat-lng', key, {
+			query: {
+				lat: LAT,
+				lng: LNG,
+				from: toAmbeeTimestamp(from.toISOString()),
+				to: toAmbeeTimestamp(to.toISOString()),
+			},
+		});
+
+		const parsed = AmbeeEndpointOutputSchemas.weatherGetHistory.parse(response);
+		expect(parsed.message).toBe('success');
+	});
+
+	it('pollen by place matches the output schema', async () => {
+		const response = await makeAmbeeRequest('v3/pollen/latest', key, {
+			query: { place: 'Barcelona' },
+		});
+
+		const parsed = AmbeeEndpointOutputSchemas.pollenGetLatest.parse(response);
+		expect(parsed.message).toBe('success');
+	});
+
+	it('fire risk by lat/lng matches the output schema', async () => {
+		const response = await makeAmbeeRequest('fire/risk/by-lat-lng', key, {
+			query: { lat: 22.948819, lng: -101.495951 },
+		});
+
+		const parsed =
+			AmbeeEndpointOutputSchemas.fireGetRiskByLatLng.parse(response);
+		expect(parsed.message).toBe('success');
+	});
+
+	it('ILI forecast matches the output schema', async () => {
+		const response = await makeAmbeeRequest('ili/forecast/by-lat-lng', key, {
+			// San Francisco — inside Ambee ILI coverage (US / limited EU).
+			query: { lat: 37.7749, lng: -122.4194, details: false },
+		});
+
+		const parsed =
+			AmbeeEndpointOutputSchemas.iliGetForecastByLatLng.parse(response);
 		expect(parsed.message).toBe('success');
 	});
 
@@ -156,6 +226,18 @@ describeLive('Ambee API contract', () => {
 			AmbeeEndpointOutputSchemas.disastersGetLatestByCountryCode.parse(
 				response,
 			);
+		expect(parsed.message).toBe('success');
+	});
+
+	it('latest natural disasters by continent match the output schema', async () => {
+		const response = await makeAmbeeRequest(
+			'disasters/latest/by-continent',
+			key,
+			{ query: { continent: 'ASIA', limit: 5, page: 1 } },
+		);
+
+		const parsed =
+			AmbeeEndpointOutputSchemas.disastersGetLatestByContinent.parse(response);
 		expect(parsed.message).toBe('success');
 	});
 

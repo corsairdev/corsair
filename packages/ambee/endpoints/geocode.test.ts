@@ -72,6 +72,21 @@ describe('geocode.byPlace', () => {
 			city: 'New York',
 		});
 	});
+
+	it('preserves zero-valued coordinates when persisting', async () => {
+		mockRequest.mockResolvedValue({
+			message: 'success',
+			data: [{ lat: '0', lng: '0', city: 'Null Island' }],
+		});
+
+		await byPlace(makeCtx(), { place: 'null island' });
+
+		expect(upsertByEntityId.mock.calls[0][1]).toMatchObject({
+			lat: 0,
+			lng: 0,
+			city: 'Null Island',
+		});
+	});
 });
 
 describe('geocode.reverseByLatLng', () => {

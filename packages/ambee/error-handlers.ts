@@ -15,6 +15,11 @@ function getRetryAfter(error: Error): number | undefined {
 	return (error as Partial<AmbeeAPIError>).retryAfter;
 }
 
+/** Matches a bare HTTP status code as a standalone token in a message. */
+function messageHasCode(message: string, ...codes: number[]): boolean {
+	return codes.some((code) => new RegExp(`\\b${code}\\b`).test(message));
+}
+
 /**
  * Error handlers for the Ambee plugin.
  *
@@ -28,9 +33,10 @@ function getRetryAfter(error: Error): number | undefined {
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 429) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 429;
 			const msg = error.message.toLowerCase();
-			return msg.includes('429') || msg.includes('rate limit');
+			return messageHasCode(msg, 429) || msg.includes('rate limit');
 		},
 		handler: async (error: Error) => ({
 			maxRetries: 3,
@@ -41,11 +47,10 @@ export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			const status = getStatus(error);
-			if (status === 401 || status === 403) return true;
+			if (status !== undefined) return status === 401 || status === 403;
 			const msg = error.message.toLowerCase();
 			return (
-				msg.includes('401') ||
-				msg.includes('403') ||
+				messageHasCode(msg, 401, 403) ||
 				msg.includes('unauthorized') ||
 				msg.includes('forbidden') ||
 				msg.includes('invalid api key')
@@ -63,9 +68,10 @@ export const errorHandlers = {
 		// Ambee returns 404 when a location is outside a product's coverage
 		// (e.g. wildfire risk outside North America) — retrying cannot help.
 		match: (error: Error) => {
-			if (getStatus(error) === 404) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 404;
 			const msg = error.message.toLowerCase();
-			return msg.includes('404') || msg.includes('not found');
+			return messageHasCode(msg, 404) || msg.includes('not found');
 		},
 		handler: async () => {
 			console.warn(
@@ -78,13 +84,9 @@ export const errorHandlers = {
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = getStatus(error);
-			if (status === 400 || status === 422) return true;
+			if (status !== undefined) return status === 400 || status === 422;
 			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('400') ||
-				msg.includes('422') ||
-				msg.includes('unprocessable')
-			);
+			return messageHasCode(msg, 400, 422) || msg.includes('unprocessable');
 		},
 		handler: async () => {
 			console.warn(
@@ -96,9 +98,9 @@ export const errorHandlers = {
 	SERVER_ERROR: {
 		match: (error: Error) => {
 			const status = getStatus(error);
-			if (status !== undefined && status >= 500) return true;
+			if (status !== undefined) return status >= 500;
 			const msg = error.message.toLowerCase();
-			return msg.includes('500') || msg.includes('internal server error');
+			return messageHasCode(msg, 500) || msg.includes('internal server error');
 		},
 		handler: async () => ({
 			maxRetries: 2,
