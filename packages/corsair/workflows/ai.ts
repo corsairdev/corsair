@@ -42,8 +42,6 @@ export type HubAiRequestBody = {
 
 export type HubAiResponse = {
 	output: unknown;
-	model?: string;
-	usage?: { inputTokens: number; outputTokens: number };
 };
 
 /** Runs one inference against Hub and returns its output — the only impure seam. */
