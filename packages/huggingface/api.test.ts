@@ -8,6 +8,15 @@ import {
 	HuggingFaceEndpointInputSchemas,
 	HuggingFaceEndpointOutputSchemas,
 } from './endpoints/types';
+import {
+	HuggingFaceCollection,
+	HuggingFaceDataset,
+	HuggingFaceDiscussion,
+	HuggingFaceModel,
+	HuggingFacePaper,
+	HuggingFaceSchema,
+	HuggingFaceSpace,
+} from './schema';
 
 const FIXTURES: Record<string, unknown> = {
 	getWhoami: {},
@@ -329,6 +338,77 @@ describe('HuggingFace endpoint input schemas', () => {
 			);
 		});
 	}
+});
+
+describe('HuggingFace database schema', () => {
+	it('registers Hub entity types', () => {
+		expect(Object.keys(HuggingFaceSchema.entities).sort()).toEqual([
+			'collections',
+			'datasets',
+			'discussions',
+			'models',
+			'papers',
+			'spaces',
+		]);
+	});
+
+	it('parses ModelInfo-shaped payloads', () => {
+		const parsed = HuggingFaceModel.parse({
+			id: 'openai-community/gpt2',
+			modelId: 'openai-community/gpt2',
+			author: 'openai-community',
+			pipeline_tag: 'text-generation',
+			library_name: 'transformers',
+			downloads: 1,
+			likes: 2,
+			tags: ['transformers'],
+			gated: false,
+			siblings: [{ rfilename: 'config.json' }],
+			extraFutureField: true,
+		});
+		expect(parsed.id).toBe('openai-community/gpt2');
+		expect(parsed.extraFutureField).toBe(true);
+	});
+
+	it('parses DatasetInfo / SpaceInfo / collection / discussion / paper', () => {
+		expect(
+			HuggingFaceDataset.parse({
+				id: 'nyu-mll/glue',
+				author: 'nyu-mll',
+				description: 'GLUE',
+				paperswithcode_id: 'glue',
+			}).id,
+		).toBe('nyu-mll/glue');
+		expect(
+			HuggingFaceSpace.parse({
+				id: 'user/space',
+				sdk: 'gradio',
+				runtime: { stage: 'RUNNING' },
+			}).sdk,
+		).toBe('gradio');
+		expect(
+			HuggingFaceCollection.parse({
+				slug: 'org/my-collection',
+				title: 'My collection',
+				owner: { name: 'org', type: 'org' },
+			}).slug,
+		).toBe('org/my-collection');
+		expect(
+			HuggingFaceDiscussion.parse({
+				num: 1,
+				title: 'Hello',
+				status: 'open',
+				repo: { name: 'openai-community/gpt2', type: 'model' },
+			}).num,
+		).toBe(1);
+		expect(
+			HuggingFacePaper.parse({
+				id: '2607.27637',
+				title: 'A paper',
+				authors: [{ name: 'Ada' }],
+			}).id,
+		).toBe('2607.27637');
+	});
 });
 
 describe('client helpers', () => {
