@@ -1,33 +1,43 @@
 import type { WebhookRequest } from 'corsair/core';
 import type { TelegramContext } from '../index';
 import { message } from './message';
+import type { MessageEvent } from './types';
 import { verifyTelegramWebhookSignature } from './types';
 
 const SECRET = 'telegram-secret-token';
 
-function makeRequest(
-	payload: unknown,
+type MessageContextFixture = Pick<TelegramContext, 'key' | '$getAccountId'> & {
+	db: {
+		messages: Pick<TelegramContext['db']['messages'], 'upsertByEntityId'>;
+	};
+};
+
+function makeRequest<TPayload>(
+	payload: TPayload,
 	headers: Record<string, string | string[]> = {},
-): WebhookRequest<unknown> {
+): WebhookRequest<TPayload> {
 	return {
 		payload,
 		rawBody: JSON.stringify(payload),
 		headers,
-	} as unknown as WebhookRequest<unknown>;
+	};
 }
 
 function makeCtx(key: string): TelegramContext {
-	return {
+	const fixture = {
 		key,
 		db: {
 			messages: {
 				upsertByEntityId: jest.fn().mockResolvedValue({ id: 'entity-1' }),
 			},
 		},
-	} as unknown as TelegramContext;
+		$getAccountId: jest.fn().mockResolvedValue('account-1'),
+	} satisfies MessageContextFixture;
+
+	return fixture as unknown as TelegramContext;
 }
 
-const messageUpdate = {
+const messageUpdate: MessageEvent = {
 	update_id: 1,
 	message: {
 		message_id: 42,
@@ -92,15 +102,16 @@ describe('verifyTelegramWebhookSignature', () => {
 });
 
 describe('message handler', () => {
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
 	it('rejects with 401 and persists nothing when no secret is configured', async () => {
 		// This is the consequence the fix is really about: the handler upserts
 		// attacker-controlled message content, so an unverified request must not
 		// reach the database.
 		const ctx = makeCtx('');
-		const result = await message.handler(
-			ctx,
-			makeRequest(messageUpdate) as never,
-		);
+		const result = await message.handler(ctx, makeRequest(messageUpdate));
 
 		expect(result.success).toBe(false);
 		if (!result.success) {
@@ -115,7 +126,7 @@ describe('message handler', () => {
 			ctx,
 			makeRequest(messageUpdate, {
 				'x-telegram-bot-api-secret-token': 'wrong',
-			}) as never,
+			}),
 		);
 
 		expect(result.success).toBe(false);
@@ -123,15 +134,17 @@ describe('message handler', () => {
 	});
 
 	it('accepts a correctly signed update and persists the message', async () => {
+		const warnSpy = jest.spyOn(console, 'warn').mockImplementation();
 		const ctx = makeCtx(SECRET);
 		const result = await message.handler(
 			ctx,
 			makeRequest(messageUpdate, {
 				'x-telegram-bot-api-secret-token': SECRET,
-			}) as never,
+			}),
 		);
 
 		expect(result.success).toBe(true);
+		expect(warnSpy).not.toHaveBeenCalled();
 		expect(ctx.db.messages?.upsertByEntityId).toHaveBeenCalledWith(
 			'42',
 			expect.objectContaining({ id: '42', chat_id: '1234' }),
