@@ -46,9 +46,3 @@ export function consumeDeliveryReplayKey(
 export function resetDeliveryReplayGuardForTests(): void {
 	consumedKeys.clear();
 }
-
-/** Test helper: current in-memory key count after pruning. */
-export function countDeliveryReplayKeysForTests(): number {
-	pruneExpired(Date.now());
-	return consumedKeys.size;
-}

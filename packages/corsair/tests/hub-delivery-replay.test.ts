@@ -18,38 +18,31 @@ function signBrowserDeliveryToken(
 	return `${payloadBase64}.${signature}`;
 }
 
+function createReplayTestCorsair(env: ReturnType<typeof createTestDatabase>) {
+	return createCorsair({
+		plugins: [],
+		database: env.db,
+		kek: 'test-kek-hub-browser-delivery-replay-tests',
+		hub: {
+			projectApiKey: 'ck_dev_test_key',
+			signingSecret: 'signing-secret',
+		},
+	});
+}
+
 describe('hub browser delivery replay guard', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 
 	beforeEach(async () => {
 		resetDeliveryReplayGuardForTests();
 		env = createTestDatabase();
-		await setupCorsair(
-			createCorsair({
-				plugins: [],
-				database: env.db,
-				kek: 'test-kek-hub-browser-delivery-replay-tests',
-				hub: {
-					projectApiKey: 'ck_dev_test_key',
-					signingSecret: 'signing-secret',
-				},
-			} as any),
-			{ tenantId: 'default' },
-		);
+		await setupCorsair(createReplayTestCorsair(env), { tenantId: 'default' });
 	});
 
 	afterEach(() => env.cleanup());
 
 	it('rejects replayed auth.credentials browser delivery tokens', async () => {
-		const corsair = createCorsair({
-			plugins: [],
-			database: env.db,
-			kek: 'test-kek-hub-browser-delivery-replay-tests',
-			hub: {
-				projectApiKey: 'ck_dev_test_key',
-				signingSecret: 'signing-secret',
-			},
-		} as any);
+		const corsair = createReplayTestCorsair(env);
 
 		const now = Math.floor(Date.now() / 1000);
 		const token = signBrowserDeliveryToken(
@@ -72,11 +65,11 @@ describe('hub browser delivery replay guard', () => {
 		const url = `http://localhost:3001/api/corsair?d=${encodeURIComponent(token)}`;
 
 		const first = await handleHubDeliveryGet(corsair, url);
-		expect(first.type).toBe('redirect');
-		if (first.type === 'redirect') {
-			const error = new URL(first.url).searchParams.get('error');
-			expect(error).toBe('Credential delivery missing credentials');
+		if (first.type !== 'redirect') {
+			throw new Error(`Expected redirect, received ${first.type}`);
 		}
+		const error = new URL(first.url).searchParams.get('error');
+		expect(error).toBe('Credential delivery missing credentials');
 
 		const second = await handleHubDeliveryGet(corsair, url);
 		expect(second).toEqual({
@@ -87,15 +80,7 @@ describe('hub browser delivery replay guard', () => {
 	});
 
 	it('rejects replayed connections.sync browser delivery tokens', async () => {
-		const corsair = createCorsair({
-			plugins: [],
-			database: env.db,
-			kek: 'test-kek-hub-browser-delivery-replay-tests',
-			hub: {
-				projectApiKey: 'ck_dev_test_key',
-				signingSecret: 'signing-secret',
-			},
-		} as any);
+		const corsair = createReplayTestCorsair(env);
 
 		const now = Math.floor(Date.now() / 1000);
 		const token = signBrowserDeliveryToken(
@@ -134,15 +119,7 @@ describe('hub browser delivery replay guard', () => {
 	});
 
 	it('does not treat stray accessToken as managed OAuth delivery', async () => {
-		const corsair = createCorsair({
-			plugins: [],
-			database: env.db,
-			kek: 'test-kek-hub-browser-delivery-replay-tests',
-			hub: {
-				projectApiKey: 'ck_dev_test_key',
-				signingSecret: 'signing-secret',
-			},
-		} as any);
+		const corsair = createReplayTestCorsair(env);
 
 		const now = Math.floor(Date.now() / 1000);
 		const token = signBrowserDeliveryToken(
