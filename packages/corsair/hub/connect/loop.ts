@@ -147,19 +147,16 @@ export function startConnectLoop(
 	} catch {
 		return { stop: () => {} };
 	}
-	// A prod key means connect is out of scope — stay silent. But a dev key with
-	// execution gated off is almost always a mistake (it used to fail silently:
-	// the app just never polls). Say why, and where the flag actually goes.
+	// A prod key means connect is out of scope — prod apps receive server push.
 	if (!hub.projectApiKey.startsWith('ck_dev_')) {
 		return { stop: () => {} };
 	}
-	if (!hub.allowWorkflowExecution) {
-		console.warn(
-			'[corsair] workflow executions not enabled. ' +
-				'Please set hub: { ..., allowWorkflowExecution: true }',
-		);
-		return { stop: () => {} };
-	}
+	// The loop is the dev app's single inbound channel for ALL hub-delivered work.
+	// Webhooks must drain regardless of allowWorkflowExecution; run/probe execution
+	// is gated per-envelope inside processCorsair, so starting the loop here is safe
+	// even when execution is disabled (a delivered run just acks back "not enabled").
+	// ponytail: every dev key long-polls (~once/25s). Fine at current scale; gate on
+	// registered-webhook-or-execution intent if idle polling ever becomes a cost.
 	const key = hub.projectApiKey;
 	if (activeLoops.has(key)) {
 		return { stop: () => {} };

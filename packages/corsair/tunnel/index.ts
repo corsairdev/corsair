@@ -100,6 +100,12 @@ export type WebhookTunnelPayload = {
 	linkType?: string;
 	externalId?: string;
 	tenantId?: string;
+	/**
+	 * Stable per-event id (provider delivery id, else a body hash) set by Hub. Used
+	 * to skip a handler re-fire when the same event is redelivered — a provider
+	 * retry, or a durable-queue lease reclaim.
+	 */
+	dedupeKey?: string;
 };
 
 export type OAuthCallbackTunnelPayload = {
@@ -245,11 +251,33 @@ async function resolveWebhookTenantId(
 	return resolved ?? undefined;
 }
 
+// Bounded set of webhook delivery ids already handled this session, so a
+// redelivery (provider retry, or a durable-queue lease reclaim) doesn't re-fire
+// handlers — the SDK's own dedup, since webhook handlers carry none. In-memory
+// and bounded: a process restart forgets, so a redelivery after restart can
+// still double-fire. Acceptable at dev scale; a durable seen-store is the upgrade.
+const WEBHOOK_SEEN_MAX = 1000;
+const seenWebhookDeliveries = new Map<string, true>();
+
+function markWebhookSeen(key: string): boolean {
+	if (seenWebhookDeliveries.has(key)) return false;
+	seenWebhookDeliveries.set(key, true);
+	if (seenWebhookDeliveries.size > WEBHOOK_SEEN_MAX) {
+		const oldest = seenWebhookDeliveries.keys().next().value;
+		if (oldest !== undefined) seenWebhookDeliveries.delete(oldest);
+	}
+	return true;
+}
+
 async function handleWebhookTunnel(
 	corsair: unknown,
 	internal: CorsairInternalConfig,
 	payload: WebhookTunnelPayload,
 ): Promise<TunnelAck> {
+	// Already handled this delivery — ack ok without re-running the handler.
+	if (payload.dedupeKey && !markWebhookSeen(payload.dedupeKey)) {
+		return { status: 'ok' };
+	}
 	const tenantId = await resolveWebhookTenantId(corsair, internal, payload);
 	const query = {
 		...(payload.query ?? {}),
