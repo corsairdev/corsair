@@ -128,7 +128,7 @@ export const ProviderDisplayNames = {
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
-	ambientweather: 'AmbientWeather',
+	ambientweather: 'Ambient Weather',
 	amplitude: 'Amplitude',
 	apilabz: 'API Labz',
 	asana: 'Asana',

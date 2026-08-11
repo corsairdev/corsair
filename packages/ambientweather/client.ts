@@ -51,7 +51,8 @@ export class AmbientWeatherRateLimitError extends AmbientWeatherAPIError {
 	}
 }
 
-const AMBIENTWEATHER_API_BASE = 'https://api.ambientweather.net';
+// Official REST host per https://ambientweather.docs.apiary.io/ (api. also aliases)
+const AMBIENTWEATHER_API_BASE = 'https://rt.ambientweather.net';
 
 const AMBIENTWEATHER_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,

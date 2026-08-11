@@ -6,17 +6,13 @@ describe('AmbientWeather schema', () => {
 		expect(AmbientWeatherSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof AmbientWeatherSchema.entities).toBe('object');
-		expect(AmbientWeatherSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(AmbientWeatherSchema.entities))).toBe(
-			true,
-		);
+	it('declares devices and readings entities from Ambient Weather docs', () => {
+		expect(Object.keys(AmbientWeatherSchema.entities).sort()).toEqual([
+			'devices',
+			'readings',
+		]);
 		for (const entity of Object.values(AmbientWeatherSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

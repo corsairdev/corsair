@@ -7,34 +7,44 @@ export const AmbientWeatherDeviceInfoSchema = z
 	})
 	.passthrough();
 
+/**
+ * Device data point fields from the Ambient Weather REST sample + wiki.
+ * `.passthrough()` keeps station-specific sensors (temp1f, pm25, …).
+ * https://ambientweather.docs.apiary.io/
+ * https://github.com/ambient-weather/api-docs/wiki/Device-Data-Specs
+ */
 export const AmbientWeatherDataPointSchema = z
 	.object({
 		dateutc: z.number().int(),
-		tempf: z.number().optional(),
-		humidity: z.number().optional(),
+		date: z.string().optional(),
+		tz: z.string().optional(),
+		winddir: z.number().optional(),
 		windspeedmph: z.number().optional(),
 		windgustmph: z.number().optional(),
 		maxdailygust: z.number().optional(),
-		winddir: z.number().optional(),
-		uv: z.number().optional(),
-		solarradiation: z.number().optional(),
-		hourlyrainin: z.number().optional(),
-		eventrainin: z.number().optional(),
-		dailyrainin: z.number().optional(),
-		weeklyrainin: z.number().optional(),
-		monthlyrainin: z.number().optional(),
-		totalrainin: z.number().optional(),
+		windgustdir: z.number().optional(),
+		winddir_avg2m: z.number().optional(),
+		windspdmph_avg2m: z.number().optional(),
+		winddir_avg10m: z.number().optional(),
+		windspdmph_avg10m: z.number().optional(),
+		tempf: z.number().optional(),
+		humidity: z.number().optional(),
 		baromrelin: z.number().optional(),
 		baromabsin: z.number().optional(),
 		tempinf: z.number().optional(),
 		humidityin: z.number().optional(),
+		hourlyrainin: z.number().optional(),
+		dailyrainin: z.number().optional(),
+		weeklyrainin: z.number().optional(),
+		monthlyrainin: z.number().optional(),
+		yearlyrainin: z.number().optional(),
+		eventrainin: z.number().optional(),
+		totalrainin: z.number().optional(),
+		uv: z.number().optional(),
+		solarradiation: z.number().optional(),
 		feelsLike: z.number().optional(),
 		dewPoint: z.number().optional(),
 		lastRain: z.string().optional(),
-		tz: z.string().optional(),
-		date: z.string().optional(),
-		loc: z.string().optional(),
-		time: z.number().optional(),
 	})
 	.passthrough();
 
@@ -56,9 +66,10 @@ export const AmbientWeatherDeviceDataResponseSchema = z.array(
 
 export const AmbientWeatherDevicesListInputSchema = z.object({});
 
+/** Docs: limit max 288; omit to use Ambient Weather's default (288). */
 export const AmbientWeatherDevicesGetDataInputSchema = z.object({
 	macAddress: z.string().min(1),
-	limit: z.coerce.number().int().min(1).max(288).default(1),
+	limit: z.coerce.number().int().min(1).max(288).optional(),
 	endDate: z.coerce.number().int().optional(),
 });
 

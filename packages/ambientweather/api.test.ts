@@ -25,6 +25,26 @@ jest.mock('corsair/http', () => {
 
 const mockedRequest = request as jest.MockedFunction<typeof request>;
 
+const sampleDevice = {
+	macAddress: '00:11:22:33:44:55',
+	info: {
+		name: 'Backyard Station',
+		location: 'Patio',
+	},
+	lastData: {
+		dateutc: 1720000000000,
+		date: '2018-01-08T18:35:00.000Z',
+		tz: 'America/Los_Angeles',
+		tempf: 66.9,
+		humidity: 30,
+		winddir: 58,
+		windspeedmph: 0.9,
+		yearlyrainin: 0,
+		feelsLike: 66.9,
+		dewPoint: 34.45,
+	},
+};
+
 describe('ambientweather client', () => {
 	beforeEach(() => {
 		mockedRequest.mockReset();
@@ -42,24 +62,7 @@ describe('ambientweather client', () => {
 	});
 
 	it('adds both auth query params on every request', async () => {
-		const sampleResponse = [
-			{
-				macAddress: '00:11:22:33:44:55',
-				info: {
-					name: 'Backyard Station',
-					location: 'Patio',
-				},
-				lastData: {
-					dateutc: 1720000000000,
-					date: '2024-07-03 12:00:00',
-					tz: 'America/Los_Angeles',
-					tempf: 72.5,
-					humidity: 44,
-				},
-			},
-		];
-
-		mockedRequest.mockResolvedValueOnce(sampleResponse);
+		mockedRequest.mockResolvedValueOnce([sampleDevice]);
 
 		const response = await makeAmbientWeatherRequest(
 			'/v1/devices',
@@ -79,7 +82,7 @@ describe('ambientweather client', () => {
 		expect(firstCall).toBeDefined();
 		const [config, requestOptions, requestConfig] = firstCall!;
 
-		expect(config.BASE).toBe('https://api.ambientweather.net');
+		expect(config.BASE).toBe('https://rt.ambientweather.net');
 		expect(requestOptions.url).toBe('/v1/devices');
 		expect(requestOptions.query).toEqual({
 			limit: 1,
@@ -93,7 +96,7 @@ describe('ambientweather client', () => {
 		const apiError = new ApiError(
 			{ method: 'GET', url: '/v1/devices' } as ApiRequestOptions,
 			{
-				url: 'https://api.ambientweather.net/v1/devices',
+				url: 'https://rt.ambientweather.net/v1/devices',
 				ok: false,
 				status: 429,
 				statusText: 'Too Many Requests',
@@ -125,32 +128,17 @@ describe('ambientweather endpoints', () => {
 		mockedRequest.mockReset();
 	});
 
-	it('lists devices using the packed account credentials', async () => {
-		const response = [
-			{
-				macAddress: '00:11:22:33:44:55',
-				info: {
-					name: 'Backyard Station',
-					location: 'Patio',
-				},
-				lastData: {
-					dateutc: 1720000000000,
-					date: '2024-07-03 12:00:00',
-					tz: 'America/Los_Angeles',
-					tempf: 72.5,
-					humidity: 44,
-				},
-			},
-		];
-
-		mockedRequest.mockResolvedValueOnce(response);
+	it('lists devices and upserts them into the devices entity', async () => {
+		mockedRequest.mockResolvedValueOnce([sampleDevice]);
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
 
 		const ctx = {
 			key: packAmbientWeatherCredentials({
 				apiKey: 'user-api-key',
 				applicationKey: 'developer-app-key',
 			}),
-		} as Parameters<typeof list>[0];
+			db: { devices: { upsertByEntityId } },
+		} as unknown as Parameters<typeof list>[0];
 
 		const parsed = await list(ctx, {});
 
@@ -163,31 +151,45 @@ describe('ambientweather endpoints', () => {
 				applicationKey: 'developer-app-key',
 			},
 		});
+		expect(upsertByEntityId).toHaveBeenCalledWith('00:11:22:33:44:55', {
+			macAddress: '00:11:22:33:44:55',
+			name: 'Backyard Station',
+			location: 'Patio',
+			dateutc: 1720000000000,
+			date: '2018-01-08T18:35:00.000Z',
+			tz: 'America/Los_Angeles',
+			tempf: 66.9,
+			humidity: 30,
+			winddir: 58,
+			windspeedmph: 0.9,
+			yearlyrainin: 0,
+			feelsLike: 66.9,
+			dewPoint: 34.45,
+		});
 	});
 
-	it('fetches device history with path params and query args', async () => {
-		const response = [
-			{
-				dateutc: 1720000000000,
-				date: '2024-07-03 12:00:00',
-				tz: 'America/Los_Angeles',
-				tempf: 72.5,
-				humidity: 44,
-			},
-		];
-
-		mockedRequest.mockResolvedValueOnce(response);
+	it('fetches device history, omits unset limit, and upserts readings', async () => {
+		const reading = {
+			dateutc: 1720000000000,
+			date: '2018-01-08T18:35:00.000Z',
+			tz: 'America/Los_Angeles',
+			tempf: 66.9,
+			humidity: 30,
+			yearlyrainin: 0,
+		};
+		mockedRequest.mockResolvedValueOnce([reading]);
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
 
 		const ctx = {
 			key: packAmbientWeatherCredentials({
 				apiKey: 'user-api-key',
 				applicationKey: 'developer-app-key',
 			}),
-		} as Parameters<typeof getData>[0];
+			db: { readings: { upsertByEntityId } },
+		} as unknown as Parameters<typeof getData>[0];
 
 		const parsed = await getData(ctx, {
 			macAddress: '00:11:22:33:44:55',
-			limit: 12,
 			endDate: 1720000000000,
 		});
 
@@ -198,10 +200,22 @@ describe('ambientweather endpoints', () => {
 			query: {
 				apiKey: 'user-api-key',
 				applicationKey: 'developer-app-key',
-				limit: 12,
 				endDate: 1720000000000,
 			},
 		});
+		expect(mockedRequest.mock.calls[0]?.[1].query).not.toHaveProperty('limit');
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'00:11:22:33:44:55:1720000000000',
+			{
+				macAddress: '00:11:22:33:44:55',
+				dateutc: 1720000000000,
+				date: '2018-01-08T18:35:00.000Z',
+				tz: 'America/Los_Angeles',
+				tempf: 66.9,
+				humidity: 30,
+				yearlyrainin: 0,
+			},
+		);
 	});
 });
 
@@ -211,6 +225,8 @@ describe('ambientweather factory', () => {
 
 		expect(plugin.id).toBe('ambientweather');
 		expect(plugin.authConfig).toEqual(ambientweatherAuthConfig);
+		expect(plugin.schema?.entities).toHaveProperty('devices');
+		expect(plugin.schema?.entities).toHaveProperty('readings');
 		expect(plugin.endpoints).toBeDefined();
 		expect(plugin.endpoints!.devices.list).toEqual(expect.any(Function));
 		expect(plugin.endpoints!.devices.getData).toEqual(expect.any(Function));

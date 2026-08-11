@@ -33,8 +33,9 @@ export const errorHandlers = {
 			return (
 				message.includes('unauthorized') ||
 				message.includes('forbidden') ||
-				message.includes('invalid') ||
-				message.includes('authentication')
+				message.includes('authentication') ||
+				message.includes('apikey') ||
+				message.includes('applicationkey')
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
