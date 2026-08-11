@@ -130,7 +130,7 @@ importers:
         version: link:../../packages/slack
       corsair:
         specifier: ^0.1.4
-        version: 0.1.107(postgres@3.4.7)(react@19.2.7)
+        version: link:../../packages/corsair
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -1594,9 +1594,6 @@ importers:
       corsair:
         specifier: workspace:*
         version: link:../corsair
-      dotenv:
-        specifier: ^16.4.7
-        version: 16.6.1
       jest:
         specifier: ^29.7.0
         version: 29.7.0(@types/node@24.10.1)(ts-node@10.9.2(@types/node@24.10.1)(typescript@5.9.3))
@@ -9370,14 +9367,6 @@ packages:
   cors@2.8.6:
     resolution: {integrity: sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw==}
     engines: {node: '>= 0.10'}
-
-  corsair@0.1.107:
-    resolution: {integrity: sha512-fh+iU4agP8j74vd2Uw2DJVLzBJ7hHvsm8bRyuanmpxkWxnXs0NxIsphv7fltSnCwg2l/lG9kEoUUckhv/nbPCg==}
-    peerDependencies:
-      react: '>=18.0.0'
-    peerDependenciesMeta:
-      react:
-        optional: true
 
   cosmiconfig@9.0.1:
     resolution: {integrity: sha512-hr4ihw+DBqcvrsEDioRO31Z17x71pUYoNe/4h6Z0wB72p7MU7/9gH8Q3s12NFhHPfYBBOV3qyfUxmr/Yn3shnQ==}
@@ -21236,17 +21225,6 @@ snapshots:
       object-assign: 4.1.1
       vary: 1.1.2
 
-  corsair@0.1.107(postgres@3.4.7)(react@19.2.7):
-    dependencies:
-      kysely: 0.28.17
-      kysely-postgres-js: 3.0.0(kysely@0.28.17)(postgres@3.4.7)
-      uuid: 13.0.0
-      zod: 4.4.3
-    optionalDependencies:
-      react: 19.2.7
-    transitivePeerDependencies:
-      - postgres
-
   cosmiconfig@9.0.1(typescript@5.9.3):
     dependencies:
       env-paths: 2.2.1
@@ -23363,12 +23341,6 @@ snapshots:
   kleur@3.0.3: {}
 
   kleur@4.1.5: {}
-
-  kysely-postgres-js@3.0.0(kysely@0.28.17)(postgres@3.4.7):
-    dependencies:
-      kysely: 0.28.17
-    optionalDependencies:
-      postgres: 3.4.7
 
   kysely-postgres-js@3.0.0(kysely@0.28.9)(postgres@3.4.7):
     dependencies:

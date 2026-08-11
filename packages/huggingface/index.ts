@@ -44,7 +44,7 @@ import { HuggingFaceSchema } from './schema';
 
 export type HuggingFacePluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
-	/** Access token override for scripts/demos (hf_... or OAuth token). */
+	/** Access token override for tests / local calls (hf_... or OAuth token). */
 	key?: string;
 	hooks?: InternalHuggingFacePlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
