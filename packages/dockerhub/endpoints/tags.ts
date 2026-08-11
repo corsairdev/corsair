@@ -2,10 +2,11 @@ import { logEventFromContext } from 'corsair/core';
 import type { DockerHubEndpoints } from '../index';
 import { pageQuery, req, summarize } from './helpers';
 
+/** Official: GET /v2/namespaces/{namespace}/repositories/{repository}/tags */
 export const list: DockerHubEndpoints['tagsList'] = async (ctx, input) => {
 	const response = await req(
 		ctx,
-		`/repositories/${encodeURIComponent(input.namespace)}/${encodeURIComponent(input.name)}/tags`,
+		`/namespaces/${encodeURIComponent(input.namespace)}/repositories/${encodeURIComponent(input.name)}/tags`,
 		{ method: 'GET', query: pageQuery(input) },
 	);
 	await logEventFromContext(
@@ -17,10 +18,11 @@ export const list: DockerHubEndpoints['tagsList'] = async (ctx, input) => {
 	return response;
 };
 
+/** Official: GET /v2/namespaces/{namespace}/repositories/{repository}/tags/{tag} */
 export const get: DockerHubEndpoints['tagsGet'] = async (ctx, input) => {
 	const response = await req(
 		ctx,
-		`/repositories/${encodeURIComponent(input.namespace)}/${encodeURIComponent(input.name)}/tags/${encodeURIComponent(input.tag)}`,
+		`/namespaces/${encodeURIComponent(input.namespace)}/repositories/${encodeURIComponent(input.name)}/tags/${encodeURIComponent(input.tag)}`,
 		{ method: 'GET' },
 	);
 	await logEventFromContext(
@@ -32,6 +34,10 @@ export const get: DockerHubEndpoints['tagsGet'] = async (ctx, input) => {
 	return response;
 };
 
+/**
+ * Delete tag. Not in public Hub OpenAPI; Hub REST still accepts
+ * DELETE /v2/repositories/{namespace}/{name}/tags/{tag}/ (idempotent).
+ */
 export const deleteTag: DockerHubEndpoints['tagsDelete'] = async (
 	ctx,
 	input,

@@ -72,7 +72,6 @@ export type DockerHubEndpoints = {
 	tagsDelete: DockerHubEndpoint<'tagsDelete'>;
 	imagesList: DockerHubEndpoint<'imagesList'>;
 	imagesGet: DockerHubEndpoint<'imagesGet'>;
-	imagesDelete: DockerHubEndpoint<'imagesDelete'>;
 	organizationsList: DockerHubEndpoint<'organizationsList'>;
 	organizationsCreate: DockerHubEndpoint<'organizationsCreate'>;
 	organizationsDelete: DockerHubEndpoint<'organizationsDelete'>;
@@ -106,7 +105,6 @@ const dockerHubEndpointsNested = {
 	images: {
 		list: ImagesEndpoints.list,
 		get: ImagesEndpoints.get,
-		delete: ImagesEndpoints.delete,
 	},
 	organizations: {
 		list: OrganizationsEndpoints.list,
@@ -168,10 +166,6 @@ export const dockerHubEndpointSchemas = {
 	'images.get': {
 		input: DockerHubEndpointInputSchemas.imagesGet,
 		output: DockerHubEndpointOutputSchemas.imagesGet,
-	},
-	'images.delete': {
-		input: DockerHubEndpointInputSchemas.imagesDelete,
-		output: DockerHubEndpointOutputSchemas.imagesDelete,
 	},
 	'organizations.list': {
 		input: DockerHubEndpointInputSchemas.organizationsList,
@@ -280,10 +274,6 @@ const dockerHubEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get image variant by digest',
 	},
-	'images.delete': {
-		riskLevel: 'destructive',
-		description: 'Bulk-delete images by digest',
-	},
 	'organizations.list': {
 		riskLevel: 'read',
 		description: 'List organizations for the authenticated user',
@@ -302,7 +292,7 @@ const dockerHubEndpointMeta = {
 	},
 	'organizations.addMember': {
 		riskLevel: 'write',
-		description: 'Invite a member to an organization',
+		description: 'Invite a member to an organization (bulk invite API)',
 	},
 	'organizations.removeMember': {
 		riskLevel: 'destructive',

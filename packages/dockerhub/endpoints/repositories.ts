@@ -2,13 +2,14 @@ import { logEventFromContext } from 'corsair/core';
 import type { DockerHubEndpoints } from '../index';
 import { pageQuery, req, summarize } from './helpers';
 
+/** Official: GET /v2/namespaces/{namespace}/repositories */
 export const list: DockerHubEndpoints['repositoriesList'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await req(
 		ctx,
-		`/repositories/${encodeURIComponent(input.namespace)}/`,
+		`/namespaces/${encodeURIComponent(input.namespace)}/repositories`,
 		{ method: 'GET', query: pageQuery(input) },
 	);
 	await logEventFromContext(
@@ -20,13 +21,14 @@ export const list: DockerHubEndpoints['repositoriesList'] = async (
 	return response;
 };
 
+/** Official: GET /v2/namespaces/{namespace}/repositories/{repository} */
 export const get: DockerHubEndpoints['repositoriesGet'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await req(
 		ctx,
-		`/repositories/${encodeURIComponent(input.namespace)}/${encodeURIComponent(input.name)}/`,
+		`/namespaces/${encodeURIComponent(input.namespace)}/repositories/${encodeURIComponent(input.name)}`,
 		{ method: 'GET' },
 	);
 	await logEventFromContext(
@@ -38,20 +40,25 @@ export const get: DockerHubEndpoints['repositoriesGet'] = async (
 	return response;
 };
 
+/** Official: POST /v2/namespaces/{namespace}/repositories */
 export const create: DockerHubEndpoints['repositoriesCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await req(ctx, '/repositories/', {
-		method: 'POST',
-		body: {
-			namespace: input.namespace,
-			name: input.name,
-			description: input.description,
-			is_private: input.isPrivate,
-			full_description: input.fullDescription,
+	const response = await req(
+		ctx,
+		`/namespaces/${encodeURIComponent(input.namespace)}/repositories`,
+		{
+			method: 'POST',
+			body: {
+				namespace: input.namespace,
+				name: input.name,
+				description: input.description,
+				is_private: input.isPrivate,
+				full_description: input.fullDescription,
+			},
 		},
-	});
+	);
 	await logEventFromContext(
 		ctx,
 		'dockerhub.repositories.create',
@@ -61,6 +68,10 @@ export const create: DockerHubEndpoints['repositoriesCreate'] = async (
 	return response;
 };
 
+/**
+ * Delete repository. Not in public Hub OpenAPI; Hub REST still accepts
+ * DELETE /v2/repositories/{namespace}/{name}/ (idempotent).
+ */
 export const deleteRepository: DockerHubEndpoints['repositoriesDelete'] =
 	async (ctx, input) => {
 		const response = await req(

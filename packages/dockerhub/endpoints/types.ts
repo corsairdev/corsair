@@ -93,19 +93,6 @@ const ImagesGetInputSchema = z.object({
 export type ImagesGetInput = z.infer<typeof ImagesGetInputSchema>;
 export type ImagesGetResponse = DhOpenResponse; // open Hub JSON
 
-const ImagesDeleteInputSchema = z.object({
-	namespace: z.string(),
-	manifests: z.array(
-		z.object({
-			repository: z.string(),
-			digest: z.string(),
-		}),
-	),
-	dryRun: z.boolean().optional(),
-});
-export type ImagesDeleteInput = z.infer<typeof ImagesDeleteInputSchema>;
-export type ImagesDeleteResponse = DhOpenResponse; // open Hub JSON
-
 // ── Organizations ─────────────────────────────────────────────
 const OrganizationsListInputSchema = z.object({
 	...pageFields,
@@ -147,9 +134,11 @@ export type OrganizationsListMembersResponse = DhOpenResponse; // open Hub JSON
 
 const OrganizationsAddMemberInputSchema = z.object({
 	orgname: z.string(),
-	/** Docker ID or email to invite */
+	/** Docker ID or email to invite (POST /v2/invites/bulk) */
 	member: z.string(),
-	role: z.enum(['member', 'owner']).optional(),
+	role: z.enum(['member', 'owner', 'editor']).optional(),
+	/** Optional team (group) name for the invite */
+	team: z.string().optional(),
 });
 export type OrganizationsAddMemberInput = z.infer<
 	typeof OrganizationsAddMemberInputSchema
@@ -258,7 +247,6 @@ export type DockerHubEndpointInputs = {
 	tagsDelete: TagsDeleteInput;
 	imagesList: ImagesListInput;
 	imagesGet: ImagesGetInput;
-	imagesDelete: ImagesDeleteInput;
 	organizationsList: OrganizationsListInput;
 	organizationsCreate: OrganizationsCreateInput;
 	organizationsDelete: OrganizationsDeleteInput;
@@ -287,7 +275,6 @@ export type DockerHubEndpointOutputs = {
 	tagsDelete: TagsDeleteResponse;
 	imagesList: ImagesListResponse;
 	imagesGet: ImagesGetResponse;
-	imagesDelete: ImagesDeleteResponse;
 	organizationsList: OrganizationsListResponse;
 	organizationsCreate: OrganizationsCreateResponse;
 	organizationsDelete: OrganizationsDeleteResponse;
@@ -316,7 +303,6 @@ export const DockerHubEndpointInputSchemas = {
 	tagsDelete: TagsDeleteInputSchema,
 	imagesList: ImagesListInputSchema,
 	imagesGet: ImagesGetInputSchema,
-	imagesDelete: ImagesDeleteInputSchema,
 	organizationsList: OrganizationsListInputSchema,
 	organizationsCreate: OrganizationsCreateInputSchema,
 	organizationsDelete: OrganizationsDeleteInputSchema,
@@ -345,7 +331,6 @@ export const DockerHubEndpointOutputSchemas = {
 	tagsDelete: OpenResponseSchema,
 	imagesList: OpenResponseSchema,
 	imagesGet: OpenResponseSchema,
-	imagesDelete: OpenResponseSchema,
 	organizationsList: OpenResponseSchema,
 	organizationsCreate: OpenResponseSchema,
 	organizationsDelete: OpenResponseSchema,

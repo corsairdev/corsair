@@ -4,7 +4,8 @@ Corsair plugin for [Docker Hub](https://hub.docker.com) API v2.
 
 - **Package id:** `dockerhub` (OSS slug: `docker_hub`)
 - **Auth:** API Key (Personal Access Token as Bearer); optional username for JWT login on create-org
-- **Ops:** 26 — repositories, tags, images, organizations, teams, repo webhooks (REST)
+- **Ops:** 25 — repositories, tags, images (from tags), organizations, teams, repo webhooks (REST)
+- **Docs:** [Hub API reference](https://docs.docker.com/reference/api/hub/latest/)
 
 ## Install
 
@@ -54,29 +55,26 @@ await client.dockerhub.images.list({
 });
 ```
 
-## Local test / demo (R4 Loom)
+## Tests
 
-```powershell
-cd D:\opensource\corsair
-
-# Offline schema + handler tests (no key)
+```bash
+# Offline schema + handler tests
 pnpm --filter @corsair-dev/dockerhub test
 
-# Optional live public GETs
-$env:DOCKER_HUB_LIVE = "1"
-pnpm --filter @corsair-dev/dockerhub test
-
-# Terminal demo
-pnpm --filter @corsair-dev/dockerhub demo
-
-# With PAT
-$env:DOCKER_HUB_TOKEN = "dckr_pat_..."
-pnpm --filter @corsair-dev/dockerhub demo
+# Optional live public GETs against hub.docker.com
+DOCKER_HUB_LIVE=1 pnpm --filter @corsair-dev/dockerhub test
 ```
 
 ### R4 demo video
 
 [Loom — tests + live Hub demo](https://www.loom.com/share/8321f25934ef45a2bf0bfd23dbd1f7f0)
+
+## Notes
+
+- Repo/tag reads + create use official `/v2/namespaces/...` routes.
+- Org invites use official `POST /v2/invites/bulk`.
+- Hub retired `POST /v2/namespaces/{ns}/delete-images` (Advanced Image Management) — use `tags.delete` or the Hub UI / Registry delete API.
+- Some org/webhook/delete routes are live Hub REST not listed in the public OpenAPI; handlers note that where relevant.
 
 ## Issue
 

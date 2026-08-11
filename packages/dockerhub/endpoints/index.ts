@@ -21,7 +21,6 @@ export const TagsEndpoints = {
 export const ImagesEndpoints = {
 	list: Images.list,
 	get: Images.get,
-	delete: Images.deleteImages,
 } as const;
 
 export const OrganizationsEndpoints = {

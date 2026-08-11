@@ -3,6 +3,11 @@ import {
 	DockerHubEndpointInputSchemas,
 	DockerHubEndpointOutputSchemas,
 } from './endpoints/types';
+import {
+	DockerHubImage,
+	DockerHubRepository,
+	DockerHubTag,
+} from './schema/database';
 
 const FIXTURES: Record<keyof typeof DockerHubEndpointInputSchemas, unknown> = {
 	repositoriesList: { namespace: 'library', page: 1, pageSize: 10 },
@@ -22,15 +27,15 @@ const FIXTURES: Record<keyof typeof DockerHubEndpointInputSchemas, unknown> = {
 		name: 'alpine',
 		digest: 'sha256:abc',
 	},
-	imagesDelete: {
-		namespace: 'myuser',
-		manifests: [{ repository: 'myapp', digest: 'sha256:abc' }],
-	},
 	organizationsList: { page: 1 },
 	organizationsCreate: { orgname: 'my-org' },
 	organizationsDelete: { orgname: 'my-org' },
 	organizationsListMembers: { orgname: 'my-org' },
-	organizationsAddMember: { orgname: 'my-org', member: 'user@example.com' },
+	organizationsAddMember: {
+		orgname: 'my-org',
+		member: 'user@example.com',
+		team: 'owners',
+	},
 	organizationsRemoveMember: { orgname: 'my-org', username: 'other' },
 	organizationsListAccessTokens: { orgname: 'my-org' },
 	teamsList: { orgname: 'my-org' },
@@ -58,8 +63,8 @@ describe('DockerHub endpoint input schemas', () => {
 		keyof typeof DockerHubEndpointInputSchemas
 	>;
 
-	it('registers all 26 endpoint schemas', () => {
-		expect(keys.length).toBe(26);
+	it('registers all 25 endpoint schemas', () => {
+		expect(keys.length).toBe(25);
 	});
 
 	for (const key of keys) {
@@ -85,6 +90,50 @@ describe('DockerHub endpoint input schemas', () => {
 	});
 });
 
+describe('DockerHub database schemas', () => {
+	it('parses live-shaped repository', () => {
+		const repo = DockerHubRepository.parse({
+			user: 'library',
+			name: 'alpine',
+			namespace: 'library',
+			repository_type: 'image',
+			status: 1,
+			status_description: 'active',
+			description: 'Alpine Linux',
+			is_private: false,
+			star_count: 1,
+			pull_count: 1,
+			permissions: { read: true, write: false, admin: false },
+			extra_future_field: true,
+		});
+		expect(repo.name).toBe('alpine');
+	});
+
+	it('parses live-shaped tag with images', () => {
+		const tag = DockerHubTag.parse({
+			id: 1,
+			name: 'latest',
+			digest: 'sha256:abc',
+			media_type: 'application/vnd.oci.image.index.v1+json',
+			content_type: 'image',
+			tag_status: 'active',
+			images: [
+				{
+					architecture: 'amd64',
+					os: 'linux',
+					digest: 'sha256:abc',
+					size: 100,
+					status: 'active',
+				},
+			],
+		});
+		expect(tag.images?.[0]?.architecture).toBe('amd64');
+		expect(DockerHubImage.parse(tag.images?.[0] ?? {}).digest).toBe(
+			'sha256:abc',
+		);
+	});
+});
+
 describe('client helpers', () => {
 	it('DOCKER_HUB_BASE is hub.docker.com/v2', () => {
 		expect(DOCKER_HUB_BASE).toContain('hub.docker.com');
@@ -96,24 +145,27 @@ const LIVE = process.env.DOCKER_HUB_LIVE === '1';
 const TOKEN = process.env.DOCKER_HUB_TOKEN || process.env.DOCKERHUB_TOKEN || '';
 
 describe('DockerHub live public API', () => {
-	it('lists tags for library/hello-world', async () => {
+	it('lists tags for library/hello-world via namespaces path', async () => {
 		if (!LIVE) return;
 		const res = await makeDockerHubRequest<{ results?: unknown[] }>(
-			'/repositories/library/hello-world/tags',
+			'/namespaces/library/repositories/hello-world/tags',
 			TOKEN || undefined,
 			{ method: 'GET', query: { page_size: 2 } },
 		);
 		expect(Array.isArray(res.results)).toBe(true);
 		expect((res.results ?? []).length).toBeGreaterThan(0);
+		expect(DockerHubTag.parse((res.results ?? [])[0])).toBeDefined();
 	});
 
-	it('gets repository library/hello-world', async () => {
+	it('gets repository library/hello-world via namespaces path', async () => {
 		if (!LIVE) return;
 		const res = await makeDockerHubRequest<Record<string, unknown>>(
-			'/repositories/library/hello-world/',
+			'/namespaces/library/repositories/hello-world',
 			TOKEN || undefined,
 			{ method: 'GET' },
 		);
-		expect(res.name || res.repository_type || res.namespace).toBeDefined();
+		const parsed = DockerHubRepository.parse(res);
+		expect(parsed.name).toBe('hello-world');
+		expect(parsed.namespace).toBe('library');
 	});
 });

@@ -10,6 +10,7 @@ module.exports = {
 	],
 	collectCoverageFrom: [
 		'**/*.ts',
+		'!**/*.test.ts',
 		'!**/*.d.ts',
 		'!**/node_modules/**',
 		'!**/dist/**',

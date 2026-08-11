@@ -54,7 +54,7 @@ describe('handler path construction', () => {
 			namespace: 'library',
 			pageSize: 10,
 		});
-		expectPath('/repositories/library/');
+		expectPath('/namespaces/library/repositories');
 		expect(lastCall()[2]).toEqual(
 			expect.objectContaining({
 				query: expect.objectContaining({ page_size: 10 }),
@@ -67,7 +67,7 @@ describe('handler path construction', () => {
 			namespace: 'library',
 			name: 'hello-world',
 		});
-		expectPath('/repositories/library/hello-world/');
+		expectPath('/namespaces/library/repositories/hello-world');
 	});
 
 	it('repositories.create', async () => {
@@ -75,8 +75,11 @@ describe('handler path construction', () => {
 			namespace: 'me',
 			name: 'app',
 		});
-		expectPath('/repositories/');
+		expectPath('/namespaces/me/repositories');
 		expect(lastCall()[2]?.method).toBe('POST');
+		expect(lastCall()[2]?.body).toEqual(
+			expect.objectContaining({ namespace: 'me', name: 'app' }),
+		);
 	});
 
 	it('repositories.delete', async () => {
@@ -95,7 +98,7 @@ describe('handler path construction', () => {
 			namespace: 'library',
 			name: 'alpine',
 		});
-		expectPath('/repositories/library/alpine/tags');
+		expectPath('/namespaces/library/repositories/alpine/tags');
 	});
 
 	it('tags.get', async () => {
@@ -104,7 +107,7 @@ describe('handler path construction', () => {
 			name: 'alpine',
 			tag: 'latest',
 		});
-		expectPath('/repositories/library/alpine/tags/latest');
+		expectPath('/namespaces/library/repositories/alpine/tags/latest');
 	});
 
 	it('tags.delete', async () => {
@@ -131,7 +134,7 @@ describe('handler path construction', () => {
 			namespace: 'library',
 			name: 'alpine',
 		});
-		expectPath('/repositories/library/alpine/tags');
+		expectPath('/namespaces/library/repositories/alpine/tags');
 		expect((res as { count: number }).count).toBe(1);
 	});
 
@@ -169,14 +172,9 @@ describe('handler path construction', () => {
 		});
 		expect((res as { digest: string }).digest).toBe('sha256:target');
 		expect((res as { foundOnPage: number }).foundOnPage).toBe(2);
-	});
-
-	it('images.delete bulk path', async () => {
-		await ImagesEndpoints.delete(ctx(), {
-			namespace: 'myuser',
-			manifests: [{ repository: 'app', digest: 'sha256:x' }],
-		});
-		expectPath('/namespaces/myuser/delete-images');
+		expect(mockReq.mock.calls[0]?.[0]).toBe(
+			'/namespaces/library/repositories/alpine/tags',
+		);
 	});
 
 	it('organizations.list', async () => {
@@ -185,12 +183,19 @@ describe('handler path construction', () => {
 	});
 
 	it('organizations.create', async () => {
+		const loginSpy = jest
+			.spyOn(Client, 'loginDockerHubJwt')
+			.mockResolvedValue('jwt-token');
+		mockReq.mockResolvedValueOnce({ orgname: 'acme' });
 		await OrganizationsEndpoints.create(ctx(), { orgname: 'acme' });
-		// may call login first when username set — last call is create
-		const paths = mockReq.mock.calls.map((c) => c[0]);
-		expect(paths.some((p) => p === '/orgs/' || p === '/users/login/')).toBe(
-			true,
+		expect(loginSpy).toHaveBeenCalledWith('testuser', 'dckr_pat_test');
+		expectPath('/orgs/');
+		expect(lastCall()[1]).toBe('jwt-token');
+		expect(lastCall()[2]?.method).toBe('POST');
+		expect(lastCall()[2]?.body).toEqual(
+			expect.objectContaining({ orgname: 'acme' }),
 		);
+		loginSpy.mockRestore();
 	});
 
 	it('organizations.delete', async () => {
@@ -207,9 +212,16 @@ describe('handler path construction', () => {
 		await OrganizationsEndpoints.addMember(ctx(), {
 			orgname: 'acme',
 			member: 'u@example.com',
+			team: 'owners',
 		});
-		expectPath('/orgs/acme/members/');
+		expectPath('/invites/bulk');
 		expect(lastCall()[2]?.method).toBe('POST');
+		expect(lastCall()[2]?.body).toEqual({
+			org: 'acme',
+			invitees: ['u@example.com'],
+			role: 'member',
+			team: 'owners',
+		});
 	});
 
 	it('organizations.removeMember', async () => {
