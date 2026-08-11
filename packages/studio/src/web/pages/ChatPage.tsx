@@ -108,6 +108,7 @@ function ToolCallRow({ tc }: { tc: ToolBlock }) {
 			<button
 				type="button"
 				onClick={() => setOpen((v) => !v)}
+				aria-expanded={open}
 				className="w-full flex items-center gap-2 px-2 py-1 bg-[var(--color-bg-elevated)] text-left hover:bg-[var(--color-bg-hover)] transition-colors"
 			>
 				<span
@@ -448,6 +449,7 @@ export function ChatPage({ tenant }: { tenant: string }) {
 					value={activeChatId ?? ''}
 					onChange={(e) => void switchChat(e.target.value)}
 					disabled={chatLoading || streaming}
+					aria-label="Active chat"
 					className="flex-1 text-xs bg-[var(--color-bg)] border border-[var(--color-border)] rounded-md px-2 h-7 text-[var(--color-text)] focus:outline-none focus:border-[var(--color-accent-dim)] disabled:opacity-40"
 				>
 					{chats.map((c) => (
@@ -565,6 +567,7 @@ export function ChatPage({ tenant }: { tenant: string }) {
 						variant="primary"
 						onClick={() => void send()}
 						disabled={!input.trim() || streaming || chatLoading}
+						aria-label="Send"
 						className="h-auto py-2 self-stretch"
 					>
 						{streaming ? '…' : '↑'}

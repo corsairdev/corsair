@@ -1,15 +1,13 @@
+import type { GoogleSubscribePlugin } from '../lib/google/plugins';
+import { GOOGLE_SUBSCRIBE_PLUGINS } from '../lib/google/plugins';
+
+export { GOOGLE_SUBSCRIBE_PLUGINS };
+
 export const MICROSOFT_SUBSCRIBE_PLUGINS = [
 	'outlook',
 	'sharepoint',
 	'teams',
 	'onedrive',
-] as const;
-
-export const GOOGLE_SUBSCRIBE_PLUGINS = [
-	'gmail',
-	'googledrive',
-	'googlecalendar',
-	'googlesheets',
 ] as const;
 
 export const SUBSCRIBE_PLUGINS = [
@@ -31,7 +29,7 @@ export function formatSubscribePluginList(): string {
 
 export function isGoogleSubscribePlugin(
 	pluginId: string,
-): pluginId is (typeof GOOGLE_SUBSCRIBE_PLUGINS)[number] {
+): pluginId is GoogleSubscribePlugin {
 	return (GOOGLE_SUBSCRIBE_PLUGINS as readonly string[]).includes(pluginId);
 }
 

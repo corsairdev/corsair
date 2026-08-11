@@ -17,8 +17,9 @@
     }
   },
   "scripts": {
-    "test": "node --import tsx --test src/utils/subscription.test.ts",
-    "test:watch": "node --import tsx --test --watch src/utils/subscription.test.ts",
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:coverage": "jest --coverage",
     "build": "tsup && tsc -p tsconfig.build.json",
     "build:watch": "tsup --watch",
     "typecheck": "tsc --noEmit",
