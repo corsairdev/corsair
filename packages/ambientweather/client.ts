@@ -1,9 +1,3 @@
-import type {
-	ApiRequestOptions,
-	OpenAPIConfig,
-	RateLimitConfig,
-} from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
 import { z } from 'zod';
 
 export const AmbientWeatherCredentialsSchema = z.object({
@@ -20,49 +14,38 @@ export class AmbientWeatherAPIError extends Error {
 	public readonly statusText?: string;
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
-	public readonly rateLimitReset?: number;
-	public readonly rateLimitRemaining?: number;
-	public readonly rateLimitLimit?: number;
 
 	constructor(
 		message: string,
 		public readonly code?: number,
-		options?: { cause?: Error },
+		options?: {
+			cause?: Error;
+			status?: number;
+			statusText?: string;
+			body?: unknown;
+			retryAfter?: number;
+		},
 	) {
 		super(message, options);
 		this.name = 'AmbientWeatherAPIError';
-
-		if (options?.cause instanceof ApiError) {
-			this.status = options.cause.status;
-			this.statusText = options.cause.statusText;
-			this.body = options.cause.body;
-			this.retryAfter = options.cause.retryAfter;
-			this.rateLimitReset = options.cause.rateLimitReset;
-			this.rateLimitRemaining = options.cause.rateLimitRemaining;
-			this.rateLimitLimit = options.cause.rateLimitLimit;
-		}
+		this.status = options?.status ?? code;
+		this.statusText = options?.statusText;
+		this.body = options?.body;
+		this.retryAfter = options?.retryAfter;
 	}
 }
 
 export class AmbientWeatherRateLimitError extends AmbientWeatherAPIError {
-	constructor(message: string, options?: { cause?: Error }) {
+	constructor(
+		message: string,
+		options?: ConstructorParameters<typeof AmbientWeatherAPIError>[2],
+	) {
 		super(message, 429, options);
 		this.name = 'AmbientWeatherRateLimitError';
 	}
 }
 
-// Official REST host per https://ambientweather.docs.apiary.io/ (api. also aliases)
 const AMBIENTWEATHER_API_BASE = 'https://rt.ambientweather.net';
-
-const AMBIENTWEATHER_RATE_LIMIT_CONFIG: RateLimitConfig = {
-	enabled: true,
-	maxRetries: 0,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
-	headerNames: {
-		retryAfter: 'Retry-After',
-	},
-};
 
 export type AmbientWeatherQueryValue = string | number | boolean | undefined;
 
@@ -89,62 +72,95 @@ export function parseAmbientWeatherKey(
 	}
 }
 
+function buildAmbientWeatherUrl(
+	endpoint: string,
+	apiKey: string,
+	applicationKey: string,
+	query?: AmbientWeatherRequestQuery,
+): URL {
+	const path = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+	const url = new URL(path, `${AMBIENTWEATHER_API_BASE}/`);
+	const params: AmbientWeatherRequestQuery = {
+		...query,
+		apiKey,
+		applicationKey,
+	};
+	for (const [key, value] of Object.entries(params)) {
+		if (value !== undefined) url.searchParams.set(key, String(value));
+	}
+	return url;
+}
+
 export async function makeAmbientWeatherRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	applicationKey: string,
 	options: {
-		path?: Record<string, string>;
 		query?: AmbientWeatherRequestQuery;
 	} = {},
 ): Promise<T> {
-	const config: OpenAPIConfig = {
-		BASE: AMBIENTWEATHER_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: undefined,
-		// Keep macAddress colons percent-encoded (same as encodeURIComponent).
-		ENCODE_PATH: encodeURIComponent,
-		HEADERS: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-		},
-	};
+	const url = buildAmbientWeatherUrl(
+		endpoint,
+		apiKey,
+		applicationKey,
+		options.query,
+	);
 
-	const requestOptions: ApiRequestOptions = {
-		method: 'GET',
-		url: endpoint,
-		path: options.path,
-		query: {
-			...options.query,
-			apiKey,
-			applicationKey,
-		},
-	};
-
+	let response: Response;
 	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: AMBIENTWEATHER_RATE_LIMIT_CONFIG,
+		response = await fetch(url, {
+			method: 'GET',
+			headers: { Accept: 'application/json' },
 		});
 	} catch (error) {
-		if (error instanceof ApiError) {
-			if (error.status === 429) {
-				throw new AmbientWeatherRateLimitError(error.message, {
-					cause: error,
-				});
-			}
-			throw new AmbientWeatherAPIError(error.message, error.status, {
-				cause: error,
-			});
-		}
-
 		if (error instanceof Error) {
 			throw new AmbientWeatherAPIError(error.message, undefined, {
 				cause: error,
 			});
 		}
-
 		throw new AmbientWeatherAPIError('Unknown Ambient Weather API error');
 	}
+
+	if (!response.ok) {
+		let body: unknown;
+		try {
+			body = await response.json();
+		} catch {
+			body = undefined;
+		}
+
+		const retryAfterHeader = response.headers.get('Retry-After');
+		const retryAfterMs = retryAfterHeader
+			? Number(retryAfterHeader) * 1000
+			: undefined;
+		const retryAfter =
+			retryAfterMs !== undefined && Number.isFinite(retryAfterMs)
+				? retryAfterMs
+				: undefined;
+
+		if (response.status === 429) {
+			throw new AmbientWeatherRateLimitError(
+				response.statusText || 'Too Many Requests',
+				{
+					status: 429,
+					statusText: response.statusText,
+					body,
+					retryAfter,
+				},
+			);
+		}
+
+		throw new AmbientWeatherAPIError(
+			response.statusText || 'Ambient Weather API error',
+			response.status,
+			{
+				status: response.status,
+				statusText: response.statusText,
+				body,
+				retryAfter,
+			},
+		);
+	}
+
+	return (await response.json()) as T;
 }

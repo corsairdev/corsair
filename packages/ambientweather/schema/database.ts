@@ -2,10 +2,9 @@ import { z } from 'zod';
 
 /**
  * Core Ambient Weather reading fields from the REST API docs sample + wiki.
- * Devices emit a subset; unknown sensor keys are not stored on the local row.
  * https://github.com/ambient-weather/api-docs/wiki/Device-Data-Specs
  */
-const AmbientWeatherReadingFields = {
+const AmbientWeatherReadingFieldsSchema = z.object({
 	dateutc: z.number().int(),
 	date: z.string().optional(),
 	tz: z.string().optional(),
@@ -36,28 +35,22 @@ const AmbientWeatherReadingFields = {
 	feelsLike: z.number().optional(),
 	dewPoint: z.number().optional(),
 	lastRain: z.string().optional(),
-} as const;
+});
 
-/**
- * Local cache of an Ambient Weather station and its latest reading.
- * Synced from GET /v1/devices.
- */
+/** Latest-reading cache row from GET /v1/devices. */
 export const AmbientWeatherDevice = z.object({
 	macAddress: z.string(),
 	name: z.string(),
 	location: z.string().optional(),
-	...AmbientWeatherReadingFields,
+	...AmbientWeatherReadingFieldsSchema.shape,
 	dateutc: z.number().int().optional(),
 	checkedAt: z.coerce.date().nullable().optional(),
 });
 
-/**
- * Local cache of a historical reading for a station.
- * Synced from GET /v1/devices/{macAddress}.
- */
+/** Historical reading cache row from GET /v1/devices/{macAddress}. */
 export const AmbientWeatherReading = z.object({
 	macAddress: z.string(),
-	...AmbientWeatherReadingFields,
+	...AmbientWeatherReadingFieldsSchema.shape,
 	checkedAt: z.coerce.date().nullable().optional(),
 });
 
@@ -65,11 +58,7 @@ export type AmbientWeatherDevice = z.infer<typeof AmbientWeatherDevice>;
 export type AmbientWeatherReading = z.infer<typeof AmbientWeatherReading>;
 
 export function pickAmbientWeatherReadingFields(
-	data: Record<string, unknown>,
-): Omit<AmbientWeatherReading, 'macAddress' | 'checkedAt'> {
-	const out: Record<string, unknown> = {};
-	for (const key of Object.keys(AmbientWeatherReadingFields)) {
-		if (key in data) out[key] = data[key];
-	}
-	return out as Omit<AmbientWeatherReading, 'macAddress' | 'checkedAt'>;
+	data: unknown,
+): z.infer<typeof AmbientWeatherReadingFieldsSchema> {
+	return AmbientWeatherReadingFieldsSchema.parse(data);
 }

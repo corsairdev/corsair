@@ -38,9 +38,7 @@ export const list: AmbientWeatherEndpoints['devicesList'] = async (
 					macAddress: device.macAddress,
 					name: device.info.name,
 					location: device.info.location,
-					...pickAmbientWeatherReadingFields(
-						device.lastData as Record<string, unknown>,
-					),
+					...pickAmbientWeatherReadingFields(device.lastData),
 				});
 			} catch (error) {
 				console.warn('Failed to save Ambient Weather device:', error);
@@ -60,13 +58,17 @@ export const getData: AmbientWeatherEndpoints['devicesGetData'] = async (
 	const response = AmbientWeatherDeviceDataResponseSchema.parse(
 		await makeAmbientWeatherRequest<
 			AmbientWeatherEndpointOutputs['devicesGetData']
-		>('/v1/devices/{macAddress}', apiKey, applicationKey, {
-			path: { macAddress: input.macAddress },
-			query: {
-				...(input.limit !== undefined ? { limit: input.limit } : {}),
-				...(input.endDate !== undefined ? { endDate: input.endDate } : {}),
+		>(
+			`/v1/devices/${encodeURIComponent(input.macAddress)}`,
+			apiKey,
+			applicationKey,
+			{
+				query: {
+					...(input.limit !== undefined ? { limit: input.limit } : {}),
+					...(input.endDate !== undefined ? { endDate: input.endDate } : {}),
+				},
 			},
-		}),
+		),
 	);
 
 	if (ctx.db.readings) {
@@ -75,7 +77,7 @@ export const getData: AmbientWeatherEndpoints['devicesGetData'] = async (
 				const entityId = `${input.macAddress}:${point.dateutc}`;
 				await ctx.db.readings.upsertByEntityId(entityId, {
 					macAddress: input.macAddress,
-					...pickAmbientWeatherReadingFields(point as Record<string, unknown>),
+					...pickAmbientWeatherReadingFields(point),
 				});
 			} catch (error) {
 				console.warn('Failed to save Ambient Weather reading:', error);

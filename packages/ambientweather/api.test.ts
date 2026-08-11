@@ -1,6 +1,5 @@
-import type { ApiRequestOptions, ApiResult } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
 import {
+	AmbientWeatherRateLimitError,
 	makeAmbientWeatherRequest,
 	packAmbientWeatherCredentials,
 	parseAmbientWeatherKey,
@@ -8,22 +7,27 @@ import {
 import { getData, list } from './endpoints/devices';
 import {
 	AmbientWeatherDeviceDataResponseSchema,
-	AmbientWeatherDeviceListResponseSchema,
 	AmbientWeatherEndpointOutputSchemas,
 } from './endpoints/types';
 import { ambientweather, ambientweatherAuthConfig } from './index';
 
-jest.mock('corsair/http', () => {
-	const actual = jest.requireActual(
-		'corsair/http',
-	) as typeof import('corsair/http');
-	return {
-		...actual,
-		request: jest.fn(),
-	};
+const mockFetch = jest.fn();
+
+beforeAll(() => {
+	globalThis.fetch = mockFetch as typeof fetch;
 });
 
-const mockedRequest = request as jest.MockedFunction<typeof request>;
+beforeEach(() => {
+	mockFetch.mockReset();
+});
+
+function jsonResponse(body: unknown, init?: ResponseInit): Response {
+	return new Response(JSON.stringify(body), {
+		status: 200,
+		headers: { 'Content-Type': 'application/json' },
+		...init,
+	});
+}
 
 const sampleDevice = {
 	macAddress: '00:11:22:33:44:55',
@@ -46,10 +50,6 @@ const sampleDevice = {
 };
 
 describe('ambientweather client', () => {
-	beforeEach(() => {
-		mockedRequest.mockReset();
-	});
-
 	it('packs and parses credentials for the key builder', () => {
 		const credentials = {
 			apiKey: 'user-api-key',
@@ -62,51 +62,35 @@ describe('ambientweather client', () => {
 	});
 
 	it('adds both auth query params on every request', async () => {
-		mockedRequest.mockResolvedValueOnce([sampleDevice]);
+		mockFetch.mockResolvedValueOnce(jsonResponse([sampleDevice]));
 
 		const response = await makeAmbientWeatherRequest(
 			'/v1/devices',
 			'user-api-key',
 			'developer-app-key',
-			{
-				query: {
-					limit: 1,
-				},
-			},
+			{ query: { limit: 1 } },
 		);
 
-		AmbientWeatherDeviceListResponseSchema.parse(response);
+		AmbientWeatherEndpointOutputSchemas.devicesList.parse(response);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
 
-		expect(mockedRequest).toHaveBeenCalledTimes(1);
-		const firstCall = mockedRequest.mock.calls[0];
-		expect(firstCall).toBeDefined();
-		const [config, requestOptions, requestConfig] = firstCall!;
-
-		expect(config.BASE).toBe('https://rt.ambientweather.net');
-		expect(requestOptions.url).toBe('/v1/devices');
-		expect(requestOptions.query).toEqual({
-			limit: 1,
-			apiKey: 'user-api-key',
-			applicationKey: 'developer-app-key',
-		});
-		expect(requestConfig?.rateLimitConfig).toMatchObject({ maxRetries: 0 });
+		const called = mockFetch.mock.calls[0]?.[0];
+		expect(called).toBeInstanceOf(URL);
+		const url = called as URL;
+		expect(url.origin).toBe('https://rt.ambientweather.net');
+		expect(url.pathname).toBe('/v1/devices');
+		expect(url.searchParams.get('apiKey')).toBe('user-api-key');
+		expect(url.searchParams.get('applicationKey')).toBe('developer-app-key');
+		expect(url.searchParams.get('limit')).toBe('1');
 	});
 
 	it('wraps 429 responses in AmbientWeatherRateLimitError', async () => {
-		const apiError = new ApiError(
-			{ method: 'GET', url: '/v1/devices' } as ApiRequestOptions,
-			{
-				url: 'https://rt.ambientweather.net/v1/devices',
-				ok: false,
-				status: 429,
-				statusText: 'Too Many Requests',
-				body: { error: 'rate limited' },
-			} as ApiResult,
-			'Too Many Requests',
-			{ retryAfter: 1000 },
+		mockFetch.mockResolvedValueOnce(
+			jsonResponse(
+				{ error: 'rate limited' },
+				{ status: 429, statusText: 'Too Many Requests' },
+			),
 		);
-
-		mockedRequest.mockRejectedValueOnce(apiError);
 
 		await expect(
 			makeAmbientWeatherRequest(
@@ -114,22 +98,14 @@ describe('ambientweather client', () => {
 				'user-api-key',
 				'developer-app-key',
 			),
-		).rejects.toMatchObject({
-			name: 'AmbientWeatherRateLimitError',
-			code: 429,
-			status: 429,
-		});
-		expect(mockedRequest).toHaveBeenCalledTimes(1);
+		).rejects.toBeInstanceOf(AmbientWeatherRateLimitError);
+		expect(mockFetch).toHaveBeenCalledTimes(1);
 	});
 });
 
 describe('ambientweather endpoints', () => {
-	beforeEach(() => {
-		mockedRequest.mockReset();
-	});
-
 	it('lists devices and upserts them into the devices entity', async () => {
-		mockedRequest.mockResolvedValueOnce([sampleDevice]);
+		mockFetch.mockResolvedValueOnce(jsonResponse([sampleDevice]));
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
 
 		const ctx = {
@@ -143,14 +119,11 @@ describe('ambientweather endpoints', () => {
 		const parsed = await list(ctx, {});
 
 		AmbientWeatherEndpointOutputSchemas.devicesList.parse(parsed);
-		expect(mockedRequest).toHaveBeenCalledTimes(1);
-		expect(mockedRequest.mock.calls[0]?.[1]).toMatchObject({
-			url: '/v1/devices',
-			query: {
-				apiKey: 'user-api-key',
-				applicationKey: 'developer-app-key',
-			},
-		});
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const url = mockFetch.mock.calls[0]?.[0] as URL;
+		expect(url.pathname).toBe('/v1/devices');
+		expect(url.searchParams.get('apiKey')).toBe('user-api-key');
+		expect(url.searchParams.get('applicationKey')).toBe('developer-app-key');
 		expect(upsertByEntityId).toHaveBeenCalledWith('00:11:22:33:44:55', {
 			macAddress: '00:11:22:33:44:55',
 			name: 'Backyard Station',
@@ -177,7 +150,7 @@ describe('ambientweather endpoints', () => {
 			humidity: 30,
 			yearlyrainin: 0,
 		};
-		mockedRequest.mockResolvedValueOnce([reading]);
+		mockFetch.mockResolvedValueOnce(jsonResponse([reading]));
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
 
 		const ctx = {
@@ -194,17 +167,13 @@ describe('ambientweather endpoints', () => {
 		});
 
 		AmbientWeatherDeviceDataResponseSchema.parse(parsed);
-		expect(mockedRequest).toHaveBeenCalledTimes(1);
-		expect(mockedRequest.mock.calls[0]?.[1]).toMatchObject({
-			url: '/v1/devices/{macAddress}',
-			path: { macAddress: '00:11:22:33:44:55' },
-			query: {
-				apiKey: 'user-api-key',
-				applicationKey: 'developer-app-key',
-				endDate: 1720000000000,
-			},
-		});
-		expect(mockedRequest.mock.calls[0]?.[1].query).not.toHaveProperty('limit');
+		expect(mockFetch).toHaveBeenCalledTimes(1);
+		const url = mockFetch.mock.calls[0]?.[0] as URL;
+		expect(url.pathname).toBe('/v1/devices/00%3A11%3A22%3A33%3A44%3A55');
+		expect(url.searchParams.get('apiKey')).toBe('user-api-key');
+		expect(url.searchParams.get('applicationKey')).toBe('developer-app-key');
+		expect(url.searchParams.get('endDate')).toBe('1720000000000');
+		expect(url.searchParams.has('limit')).toBe(false);
 		expect(upsertByEntityId).toHaveBeenCalledWith(
 			'00:11:22:33:44:55:1720000000000',
 			{
