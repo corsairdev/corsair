@@ -100,14 +100,6 @@ describe('step.ai — end to end on a generated workflow', () => {
 			ai,
 		});
 
-		console.log('\n--- GENERATED WORKFLOW ---' + GENERATED_WORKFLOW);
-		console.log(
-			'--- RESPONSE SCHEMA SENT TO HUB (derived from linear.issues.create) ---',
-		);
-		console.log(JSON.stringify(inferCalls[0]?.responseSchema, null, 2));
-		console.log('--- RUN RESULT ---');
-		console.log(JSON.stringify(result, null, 2));
-
 		expect(result.status).toBe('completed');
 
 		// The op's input schema was resolved, picked to title+description, and turned
