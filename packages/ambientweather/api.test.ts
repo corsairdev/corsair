@@ -101,6 +101,50 @@ describe('ambientweather client', () => {
 		).rejects.toBeInstanceOf(AmbientWeatherRateLimitError);
 		expect(mockFetch).toHaveBeenCalledTimes(1);
 	});
+
+	it('parses Retry-After delta-seconds and HTTP-date', async () => {
+		mockFetch.mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'rate limited' }), {
+				status: 429,
+				statusText: 'Too Many Requests',
+				headers: {
+					'Content-Type': 'application/json',
+					'Retry-After': '2',
+				},
+			}),
+		);
+
+		await expect(
+			makeAmbientWeatherRequest(
+				'/v1/devices',
+				'user-api-key',
+				'developer-app-key',
+			),
+		).rejects.toMatchObject({
+			name: 'AmbientWeatherRateLimitError',
+			retryAfter: 2000,
+		});
+
+		const future = new Date(Date.now() + 5000).toUTCString();
+		mockFetch.mockResolvedValueOnce(
+			new Response(JSON.stringify({ error: 'rate limited' }), {
+				status: 429,
+				statusText: 'Too Many Requests',
+				headers: {
+					'Content-Type': 'application/json',
+					'Retry-After': future,
+				},
+			}),
+		);
+
+		const err = await makeAmbientWeatherRequest(
+			'/v1/devices',
+			'user-api-key',
+			'developer-app-key',
+		).catch((error: unknown) => error);
+		expect(err).toBeInstanceOf(AmbientWeatherRateLimitError);
+		expect((err as AmbientWeatherRateLimitError).retryAfter).toBeGreaterThan(0);
+	});
 });
 
 describe('ambientweather endpoints', () => {

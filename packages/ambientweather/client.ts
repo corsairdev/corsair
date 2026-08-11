@@ -91,6 +91,22 @@ function buildAmbientWeatherUrl(
 	return url;
 }
 
+/** Retry-After: delta-seconds or HTTP-date → non-negative delay ms. */
+function parseRetryAfterMs(header: string | null): number | undefined {
+	if (!header) return undefined;
+
+	const seconds = Number(header);
+	if (Number.isFinite(seconds) && seconds >= 0) {
+		return seconds * 1000;
+	}
+
+	const dateMs = Date.parse(header);
+	if (!Number.isFinite(dateMs)) return undefined;
+
+	const delayMs = dateMs - Date.now();
+	return delayMs >= 0 ? delayMs : undefined;
+}
+
 export async function makeAmbientWeatherRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -129,14 +145,7 @@ export async function makeAmbientWeatherRequest<T>(
 			body = undefined;
 		}
 
-		const retryAfterHeader = response.headers.get('Retry-After');
-		const retryAfterMs = retryAfterHeader
-			? Number(retryAfterHeader) * 1000
-			: undefined;
-		const retryAfter =
-			retryAfterMs !== undefined && Number.isFinite(retryAfterMs)
-				? retryAfterMs
-				: undefined;
+		const retryAfter = parseRetryAfterMs(response.headers.get('Retry-After'));
 
 		if (response.status === 429) {
 			throw new AmbientWeatherRateLimitError(
