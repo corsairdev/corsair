@@ -196,7 +196,8 @@ describe('ambientweather endpoints', () => {
 		AmbientWeatherDeviceDataResponseSchema.parse(parsed);
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		expect(mockedRequest.mock.calls[0]?.[1]).toMatchObject({
-			url: '/v1/devices/00%3A11%3A22%3A33%3A44%3A55',
+			url: '/v1/devices/{macAddress}',
+			path: { macAddress: '00:11:22:33:44:55' },
 			query: {
 				apiKey: 'user-api-key',
 				applicationKey: 'developer-app-key',

@@ -60,17 +60,13 @@ export const getData: AmbientWeatherEndpoints['devicesGetData'] = async (
 	const response = AmbientWeatherDeviceDataResponseSchema.parse(
 		await makeAmbientWeatherRequest<
 			AmbientWeatherEndpointOutputs['devicesGetData']
-		>(
-			`/v1/devices/${encodeURIComponent(input.macAddress)}`,
-			apiKey,
-			applicationKey,
-			{
-				query: {
-					...(input.limit !== undefined ? { limit: input.limit } : {}),
-					...(input.endDate !== undefined ? { endDate: input.endDate } : {}),
-				},
+		>('/v1/devices/{macAddress}', apiKey, applicationKey, {
+			path: { macAddress: input.macAddress },
+			query: {
+				...(input.limit !== undefined ? { limit: input.limit } : {}),
+				...(input.endDate !== undefined ? { endDate: input.endDate } : {}),
 			},
-		),
+		}),
 	);
 
 	if (ctx.db.readings) {

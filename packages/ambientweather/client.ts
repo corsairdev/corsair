@@ -94,6 +94,7 @@ export async function makeAmbientWeatherRequest<T>(
 	apiKey: string,
 	applicationKey: string,
 	options: {
+		path?: Record<string, string>;
 		query?: AmbientWeatherRequestQuery;
 	} = {},
 ): Promise<T> {
@@ -103,6 +104,8 @@ export async function makeAmbientWeatherRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
+		// Keep macAddress colons percent-encoded (same as encodeURIComponent).
+		ENCODE_PATH: encodeURIComponent,
 		HEADERS: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json',
@@ -112,6 +115,7 @@ export async function makeAmbientWeatherRequest<T>(
 	const requestOptions: ApiRequestOptions = {
 		method: 'GET',
 		url: endpoint,
+		path: options.path,
 		query: {
 			...options.query,
 			apiKey,
