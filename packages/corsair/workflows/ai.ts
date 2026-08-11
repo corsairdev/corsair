@@ -56,12 +56,21 @@ export function resolveOpInputSchema(
 	plugins: readonly SchemaPlugin[],
 	op: string,
 ): z.ZodTypeAny {
+	if (typeof op !== 'string' || op.length === 0) {
+		throw new Error(
+			`step.ai.object requires returnObject.op to be a string like "linear.issues.create", got ${JSON.stringify(op)}`,
+		);
+	}
 	const dot = op.indexOf('.');
 	if (dot < 1) {
 		throw new Error(`Invalid op "${op}": expected "<plugin>.<endpoint.path>"`);
 	}
 	const pluginId = op.slice(0, dot);
-	const key = op.slice(dot + 1);
+	// endpointSchemas are keyed by the endpoint path WITHOUT the `.api` segment
+	// (e.g. "issues.create"). Accept the call-path form the agent naturally
+	// writes too — "linear.api.issues.create" == "linear.issues.create".
+	let key = op.slice(dot + 1);
+	if (key.startsWith('api.')) key = key.slice(4);
 	const plugin = plugins.find((p) => p.id === pluginId);
 	if (!plugin) throw new Error(`Unknown plugin "${pluginId}" in op "${op}"`);
 	const schema = plugin.endpointSchemas?.[key]?.input;
