@@ -49,6 +49,17 @@ describe('step.corsair — typed op call', () => {
 		});
 	});
 
+	it('resolves the call-path form (leading api segment) the agent emits', async () => {
+		const { promise, calls } = run(`
+			module.exports.main = async (corsair, payload, step) => {
+				return step.corsair('create', 'linear.api.issues.create', { title: 'Bug' });
+			};
+		`);
+		const result = await promise;
+		expect(result.status).toBe('completed');
+		expect(calls).toEqual([{ title: 'Bug' }]);
+	});
+
 	it('replays a memoized op without re-calling it', async () => {
 		const stepId = computeStepId('create', 0);
 		const { promise, calls } = run(

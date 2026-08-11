@@ -285,12 +285,14 @@ function runWorkflowInSandbox(input: {
 			// Typed op call by id: walk corsair.<plugin>.api.<seg...> over the same
 			// membrane the workflow uses, inside step() so it inherits memo / replay /
 			// failed-step recording. No new host reference crosses — corsairRef is the
-			// already-hardened client.
+			// already-hardened client. Accept the call-path form the agent emits too
+			// ("linear.api.issues.create" == "linear.issues.create"), matching step.ai.
 			step.corsair = function corsair(name, op, input) {
 				return step(name, function () {
 					const dot = op.indexOf('.');
 					if (dot < 1) throw new Error('Invalid op "' + op + '": expected "<plugin>.<endpoint.path>"');
 					const path = op.slice(dot + 1).split('.');
+					if (path[0] === 'api') path.shift();
 					let node = corsairRef[op.slice(0, dot)];
 					node = node && node.api;
 					for (let i = 0; i < path.length; i++) node = node && node[path[i]];
