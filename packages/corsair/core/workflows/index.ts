@@ -1,5 +1,3 @@
-import type { WorkflowRun } from '../../hub/runs';
-import { listWorkflowRuns } from '../../hub/runs';
 import type { HubConfig } from '../../hub/types';
 import type {
 	TriggerRunResult,
@@ -13,6 +11,8 @@ import {
 	setWorkflowStatus,
 	triggerWorkflowRun,
 } from '../../hub/workflows';
+import type { CorsairRunsNamespace } from '../runs';
+import { buildRunsNamespace } from '../runs';
 
 export type { WorkflowRun, WorkflowRunStep } from '../../hub/runs';
 export type {
@@ -26,7 +26,7 @@ export type {
  *   await corsair.workflows.list()
  *   await corsair.workflows.get(id)
  *   await corsair.workflows.run(id, { payload })
- *   await corsair.workflows.listRuns(id)
+ *   await corsair.workflows.runs.list({ workflowId })  // or .list() for all runs
  *   await corsair.workflows.disable(id)
  *   await corsair.workflows.rename(id, 'new name')
  *
@@ -41,7 +41,8 @@ export interface CorsairWorkflowsNamespace {
 		workflowId: string,
 		opts?: { payload?: unknown; idempotencyKey?: string },
 	): Promise<TriggerRunResult>;
-	listRuns(workflowId: string): Promise<WorkflowRun[]>;
+	/** This workflow plane's runs — feed, get, approve/deny/cancel. */
+	runs: CorsairRunsNamespace;
 	/** Pause the workflow — sets status inactive; stops it triggering. */
 	disable(workflowId: string): Promise<void>;
 	/** Resume a paused workflow — sets status active. */
@@ -79,8 +80,7 @@ export function buildWorkflowsNamespace(
 				payload: opts?.payload,
 				idempotencyKey: opts?.idempotencyKey,
 			}),
-		listRuns: (workflowId) =>
-			listWorkflowRuns(requireHub(), { workflowId, tenantId }),
+		runs: buildRunsNamespace(hub, tenantId),
 		disable: (workflowId) => status(workflowId, 'inactive'),
 		enable: (workflowId) => status(workflowId, 'active'),
 		archive: (workflowId) => status(workflowId, 'archived'),

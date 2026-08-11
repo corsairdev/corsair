@@ -1,4 +1,3 @@
-import { buildRunsNamespace } from '../core/runs';
 import { buildWorkflowsNamespace } from '../core/workflows';
 import { createChat, listChats, postChatMessage } from '../hub/chats';
 import type { HubConfig } from '../hub/types';
@@ -115,11 +114,11 @@ describe('chats / workflows / runs SDK surface', () => {
 		expect(result.runId).toBe('run_1');
 	});
 
-	it('workflows.listRuns(id) calls /workflows/:id/runs and returns the runs array', async () => {
+	it('workflows.runs.list({ workflowId }) calls /workflows/:id/runs and returns the runs array', async () => {
 		mockFetch({ runs: [{ id: 'run_1' }, { id: 'run_2' }] });
 
 		const workflows = buildWorkflowsNamespace(hub, 'dev');
-		const runs = await workflows.listRuns('wf_1');
+		const runs = await workflows.runs.list({ workflowId: 'wf_1' });
 
 		expect(calls[0]!.url).toBe(
 			'https://hub.example/workflows/wf_1/runs?tenantId=dev',
@@ -161,7 +160,7 @@ describe('chats / workflows / runs SDK surface', () => {
 	it('runs.list() calls GET /runs tenant-wide', async () => {
 		mockFetch({ runs: [{ id: 'run_1' }, { id: 'run_2' }] });
 
-		const runs = buildRunsNamespace(hub, 'dev');
+		const runs = buildWorkflowsNamespace(hub, 'dev').runs;
 		const all = await runs.list();
 
 		expect(calls[0]!.url).toBe('https://hub.example/runs?tenantId=dev');
@@ -171,7 +170,7 @@ describe('chats / workflows / runs SDK surface', () => {
 	it('runs.get(id) calls GET /runs/:id', async () => {
 		mockFetch({ run: { id: 'run_9', workflowId: 'wf_1' } });
 
-		const runs = buildRunsNamespace(hub, 'dev');
+		const runs = buildWorkflowsNamespace(hub, 'dev').runs;
 		const run = await runs.get('run_9');
 
 		expect(calls[0]!.url).toBe('https://hub.example/runs/run_9?tenantId=dev');
@@ -179,7 +178,7 @@ describe('chats / workflows / runs SDK surface', () => {
 	});
 
 	it('runs.approve/deny/cancel POST to /runs/:id/:action', async () => {
-		const runs = buildRunsNamespace(hub, 'dev');
+		const runs = buildWorkflowsNamespace(hub, 'dev').runs;
 		for (const action of ['approve', 'deny', 'cancel'] as const) {
 			mockFetch({ ok: true });
 			await runs[action]('run_9');

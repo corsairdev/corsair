@@ -5,6 +5,7 @@ import {
 	denyRun,
 	getRun,
 	listRuns,
+	listWorkflowRuns,
 } from '../../hub/runs';
 import type { HubConfig } from '../../hub/types';
 
@@ -15,14 +16,16 @@ export type {
 } from '../../hub/runs';
 
 /**
- * This tenant's workflow runs — the cross-workflow activity feed (`list`) plus
+ * This tenant's workflow runs, under the workflows plane — the cross-workflow
+ * activity feed (`list`), one workflow's runs (`list({ workflowId })`), plus
  * `get` and approve/deny/cancel by run id:
- *   await corsair.runs.list()
- *   await corsair.runs.get(runId)
- *   await corsair.runs.approve(runId)   // .deny / .cancel
+ *   await corsair.workflows.runs.list()
+ *   await corsair.workflows.runs.list({ workflowId })
+ *   await corsair.workflows.runs.get(runId)
+ *   await corsair.workflows.runs.approve(runId)   // .deny / .cancel
  */
 export interface CorsairRunsNamespace {
-	list(): Promise<WorkflowRun[]>;
+	list(opts?: { workflowId?: string }): Promise<WorkflowRun[]>;
 	get(runId: string): Promise<WorkflowRun>;
 	/** Approve a run that is paused awaiting approval. */
 	approve(runId: string): Promise<void>;
@@ -38,14 +41,20 @@ export function buildRunsNamespace(
 	const requireHub = (): HubConfig => {
 		if (!hub) {
 			throw new Error(
-				'corsair.runs requires Hub to be configured. Pass `hub` to createCorsair({ hub: { projectApiKey, ... } }).',
+				'corsair.workflows.runs requires Hub to be configured. Pass `hub` to createCorsair({ hub: { projectApiKey, ... } }).',
 			);
 		}
 		return hub;
 	};
 
 	return {
-		list: () => listRuns(requireHub(), { tenantId }),
+		list: (opts) =>
+			opts?.workflowId
+				? listWorkflowRuns(requireHub(), {
+						workflowId: opts.workflowId,
+						tenantId,
+					})
+				: listRuns(requireHub(), { tenantId }),
 		get: (runId) => getRun(requireHub(), { runId, tenantId }),
 		approve: (runId) => approveRun(requireHub(), { runId, tenantId }),
 		deny: (runId) => denyRun(requireHub(), { runId, tenantId }),

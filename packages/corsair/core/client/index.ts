@@ -36,8 +36,6 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
-import type { CorsairRunsNamespace } from '../runs';
-import { buildRunsNamespace } from '../runs';
 import { ensureTenantProvisioned } from '../tenant-provision';
 import type {
 	BindWebhooks,
@@ -221,16 +219,11 @@ export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 		 */
 		chats: CorsairChatsNamespace;
 		/**
-		 * Manage this tenant's workflows — list/get, run, list a workflow's runs,
-		 * pause/resume (disable/enable), archive/unarchive, rename. Requires `hub`
-		 * to be configured.
+		 * Manage this tenant's workflows — list/get, run, its runs under
+		 * `workflows.runs` (feed or one workflow's), pause/resume (disable/enable),
+		 * archive/unarchive, rename. Requires `hub` to be configured.
 		 */
 		workflows: CorsairWorkflowsNamespace;
-		/**
-		 * This tenant's workflow runs — the cross-workflow activity feed (`list`),
-		 * plus `get`/approve/deny/cancel by run id. Requires `hub` to be configured.
-		 */
-		runs: CorsairRunsNamespace;
 	};
 
 /**
@@ -599,11 +592,6 @@ export function buildCorsairClient<
 		hubConfig,
 		effectiveTenantId,
 	);
-	(apiUnsafe as Record<string, unknown>).runs = buildRunsNamespace(
-		hubConfig,
-		effectiveTenantId,
-	);
-
 	return apiUnsafe as CorsairClient<Plugins>;
 }
 
