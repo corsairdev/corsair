@@ -41,6 +41,13 @@ function buildAuthHeader(apiToken: string): string {
 	return `Basic ${encoded}`;
 }
 
+/**
+ * Issues a Toggl request with Basic auth, rate-limit retries and this plugin's
+ * error handlers.
+ *
+ * `options.base` selects the host: the Track v9 API by default, or Toggl's
+ * separate webhooks service for subscription management.
+ */
 export async function makeTogglRequest<T>(
 	endpoint: string,
 	apiToken: string,

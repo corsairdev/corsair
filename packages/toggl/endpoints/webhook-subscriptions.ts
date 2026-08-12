@@ -12,6 +12,7 @@ import type { TogglEndpointOutputs } from './types';
  * Corsair webhook handlers — see the note in index.ts.
  */
 
+/** Reads the health of Toggl's webhooks service, which runs on its own host. */
 export const getStatus: TogglEndpoints['webhooksGetStatus'] = async (
 	ctx,
 	input,

@@ -5,6 +5,7 @@ import { auditPayload } from './logging';
 import { cacheProject, evictEntity } from './persist';
 import type { TogglEndpointOutputs } from './types';
 
+/** Lists a workspace's projects and mirrors each into the cache. */
 export const list: TogglEndpoints['projectsList'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['projectsList']>(
 		`workspaces/${input.workspace_id}/projects`,
@@ -35,6 +36,7 @@ export const list: TogglEndpoints['projectsList'] = async (ctx, input) => {
 	return projects;
 };
 
+/** Reads a single project and refreshes its cached copy. */
 export const get: TogglEndpoints['projectsGet'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['projectsGet']>(
 		`workspaces/${input.workspace_id}/projects/${input.project_id}`,
@@ -53,6 +55,10 @@ export const get: TogglEndpoints['projectsGet'] = async (ctx, input) => {
 	return result;
 };
 
+/**
+ * Creates a project in a workspace. Colours, templates and rates are
+ * accepted but only honoured on paid Toggl plans.
+ */
 export const create: TogglEndpoints['projectsCreate'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['projectsCreate']>(
 		`workspaces/${input.workspace_id}/projects`,
@@ -90,6 +96,7 @@ export const create: TogglEndpoints['projectsCreate'] = async (ctx, input) => {
 	return result;
 };
 
+/** Updates a project's name, client, visibility, billing or estimate. */
 export const update: TogglEndpoints['projectsUpdate'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['projectsUpdate']>(
 		`workspaces/${input.workspace_id}/projects/${input.project_id}`,
@@ -125,6 +132,7 @@ export const update: TogglEndpoints['projectsUpdate'] = async (ctx, input) => {
 	return result;
 };
 
+/** Deletes a project and evicts it from the cache. */
 export const remove: TogglEndpoints['projectsDelete'] = async (ctx, input) => {
 	await makeTogglRequest<unknown>(
 		`workspaces/${input.workspace_id}/projects/${input.project_id}`,
@@ -143,6 +151,7 @@ export const remove: TogglEndpoints['projectsDelete'] = async (ctx, input) => {
 	return { deleted: true, id: input.project_id };
 };
 
+/** Assigns a user to a project, optionally as a manager and with a rate. */
 export const addUser: TogglEndpoints['projectsAddUser'] = async (
 	ctx,
 	input,
@@ -169,6 +178,7 @@ export const addUser: TogglEndpoints['projectsAddUser'] = async (
 	return result;
 };
 
+/** Removes a project group from a workspace. */
 export const deleteGroup: TogglEndpoints['projectsDeleteGroup'] = async (
 	ctx,
 	input,

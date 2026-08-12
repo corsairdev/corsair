@@ -10,6 +10,7 @@ import type { TogglEndpointOutputs } from './types';
  * worth persisting locally.
  */
 
+/** Lists the countries Toggl supports, with VAT and currency defaults. */
 export const getCountries: TogglEndpoints['referenceGetCountries'] = async (
 	ctx,
 	input,
@@ -44,6 +45,7 @@ export const getCountrySubdivisions: TogglEndpoints['referenceGetCountrySubdivis
 		return result ?? [];
 	};
 
+/** Lists the currencies Toggl supports. */
 export const getCurrencies: TogglEndpoints['referenceGetCurrencies'] = async (
 	ctx,
 	input,
@@ -61,6 +63,7 @@ export const getCurrencies: TogglEndpoints['referenceGetCurrencies'] = async (
 	return result ?? [];
 };
 
+/** Lists the timezone names Toggl accepts. */
 export const getTimezones: TogglEndpoints['referenceGetTimezones'] = async (
 	ctx,
 	input,

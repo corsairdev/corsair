@@ -34,6 +34,11 @@ const describeLive = TOKEN ? describe : describe.skip;
 
 // Toggl paces requests at roughly 1/sec per token; keep a margin between calls.
 const PACE_MS = 1100;
+
+/**
+ * Waits out Toggl's leaky bucket so a live run does not spend its retry budget
+ * on self-inflicted 429s.
+ */
 const pace = () => new Promise((resolve) => setTimeout(resolve, PACE_MS));
 
 describeLive('Toggl live API', () => {
@@ -78,6 +83,9 @@ describeLive('Toggl live API', () => {
 	});
 
 	it('returns the authenticated user matching the declared schema', async () => {
+		// `beforeAll` may have just spent a request discovering the workspace, so
+		// this keeps the leaky-bucket margin even for the first test.
+		await pace();
 		const me = await makeTogglRequest<unknown>('me', token);
 		const parsed = TogglUserSchema.parse(me);
 		expect(typeof parsed.id).toBe('number');

@@ -17,6 +17,7 @@ function withoutCredentials(
 	return safe;
 }
 
+/** Reads the authenticated user's profile with the account credential stripped. */
 export const get: TogglEndpoints['meGet'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['meGet']>(
 		'me',
@@ -36,6 +37,7 @@ export const get: TogglEndpoints['meGet'] = async (ctx, input) => {
 	return withoutCredentials(result);
 };
 
+/** Updates the authenticated user's profile, answering without the credential. */
 export const update: TogglEndpoints['meUpdate'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['meUpdate']>(
 		'me',
@@ -62,6 +64,7 @@ export const update: TogglEndpoints['meUpdate'] = async (ctx, input) => {
 	return withoutCredentials(result);
 };
 
+/** Reads the caller's display, notification and alpha-feature preferences. */
 export const getPreferences: TogglEndpoints['meGetPreferences'] = async (
 	ctx,
 	input,
@@ -79,6 +82,7 @@ export const getPreferences: TogglEndpoints['meGetPreferences'] = async (
 	return result;
 };
 
+/** Updates the caller's preferences. */
 export const updatePreferences: TogglEndpoints['meUpdatePreferences'] = async (
 	ctx,
 	input,
@@ -116,6 +120,7 @@ export const getLogged: TogglEndpoints['meGetLogged'] = async (ctx, input) => {
 	return { ok: true };
 };
 
+/** Reads the location Toggl last inferred for the caller from its request IP. */
 export const getLocation: TogglEndpoints['meGetLocation'] = async (
 	ctx,
 	input,
@@ -136,6 +141,7 @@ export const getLocation: TogglEndpoints['meGetLocation'] = async (
 	return result;
 };
 
+/** Reads the caller's remaining API quota, one record per organization. */
 export const getQuota: TogglEndpoints['meGetQuota'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['meGetQuota']>(
 		'me/quota',
@@ -152,6 +158,7 @@ export const getQuota: TogglEndpoints['meGetQuota'] = async (ctx, input) => {
 	return result ?? [];
 };
 
+/** Lists every client the caller can reach, across all their workspaces. */
 export const getClients: TogglEndpoints['meGetClients'] = async (
 	ctx,
 	input,
@@ -171,6 +178,7 @@ export const getClients: TogglEndpoints['meGetClients'] = async (
 	return result ?? [];
 };
 
+/** Lists every project the caller can reach, across all their workspaces. */
 export const getProjects: TogglEndpoints['meGetProjects'] = async (
 	ctx,
 	input,
@@ -190,6 +198,7 @@ export const getProjects: TogglEndpoints['meGetProjects'] = async (
 	return result ?? [];
 };
 
+/** Lists every tag the caller can reach, across all their workspaces. */
 export const getTags: TogglEndpoints['meGetTags'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['meGetTags']>(
 		'me/tags',
@@ -206,6 +215,7 @@ export const getTags: TogglEndpoints['meGetTags'] = async (ctx, input) => {
 	return result ?? [];
 };
 
+/** Lists every task the caller can reach, across all their workspaces. */
 export const getTasks: TogglEndpoints['meGetTasks'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['meGetTasks']>(
 		'me/tasks',

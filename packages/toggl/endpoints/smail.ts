@@ -13,6 +13,7 @@ import type { TogglEndpointOutputs } from './types';
  * kept out of the event log for the same reason the profile endpoints are.
  */
 
+/** Requests a product demo through Toggl's transactional mail service. */
 export const sendDemo: TogglEndpoints['smailSendDemo'] = async (ctx, input) => {
 	await makeTogglRequest<unknown>('smail/demo', ctx.key, {
 		method: 'POST',
@@ -33,6 +34,7 @@ export const sendDemo: TogglEndpoints['smailSendDemo'] = async (ctx, input) => {
 	return { ok: true } satisfies TogglEndpointOutputs['smailSendDemo'];
 };
 
+/** Sends a message to a named contact through Toggl's mail service. */
 export const sendContact: TogglEndpoints['smailSendContact'] = async (
 	ctx,
 	input,
@@ -55,6 +57,7 @@ export const sendContact: TogglEndpoints['smailSendContact'] = async (
 	return { ok: true } satisfies TogglEndpointOutputs['smailSendContact'];
 };
 
+/** Sends a meeting invitation through Toggl's mail service. */
 export const sendMeet: TogglEndpoints['smailSendMeet'] = async (ctx, input) => {
 	await makeTogglRequest<unknown>('smail/meet', ctx.key, {
 		method: 'POST',
@@ -68,7 +71,9 @@ export const sendMeet: TogglEndpoints['smailSendMeet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'toggl.smail.sendMeet',
-		auditPayload(input, ['location']),
+		// A meeting location can carry a street address, so it is recorded as a
+		// supplied field name only — never as an identifier value.
+		auditPayload(input, []),
 		'completed',
 	);
 	return { ok: true } satisfies TogglEndpointOutputs['smailSendMeet'];

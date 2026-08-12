@@ -5,6 +5,10 @@ import { auditPayload } from './logging';
 import { cacheClient, evictEntity } from './persist';
 import type { TogglEndpointOutputs } from './types';
 
+/**
+ * Lists a workspace's clients, optionally narrowed by status or name, and
+ * mirrors each record into the cache.
+ */
 export const list: TogglEndpoints['clientsList'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['clientsList']>(
 		`workspaces/${input.workspace_id}/clients`,
@@ -31,6 +35,7 @@ export const list: TogglEndpoints['clientsList'] = async (ctx, input) => {
 	return clients;
 };
 
+/** Reads a single client and refreshes its cached copy. */
 export const get: TogglEndpoints['clientsGet'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['clientsGet']>(
 		`workspaces/${input.workspace_id}/clients/${input.client_id}`,
@@ -49,13 +54,16 @@ export const get: TogglEndpoints['clientsGet'] = async (ctx, input) => {
 	return result;
 };
 
+/** Creates a client in a workspace. */
 export const create: TogglEndpoints['clientsCreate'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['clientsCreate']>(
 		`workspaces/${input.workspace_id}/clients`,
 		ctx.key,
 		{
 			method: 'POST',
-			body: { name: input.name, wid: input.workspace_id, notes: input.notes },
+			// The workspace is already identified by the route, so the documented
+			// body carries only the client's own fields.
+			body: { name: input.name, notes: input.notes },
 		},
 	);
 
@@ -70,6 +78,7 @@ export const create: TogglEndpoints['clientsCreate'] = async (ctx, input) => {
 	return result;
 };
 
+/** Renames a client or replaces its notes. */
 export const update: TogglEndpoints['clientsUpdate'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['clientsUpdate']>(
 		`workspaces/${input.workspace_id}/clients/${input.client_id}`,
@@ -92,6 +101,7 @@ export const update: TogglEndpoints['clientsUpdate'] = async (ctx, input) => {
 	return result;
 };
 
+/** Deletes a client and evicts it from the cache. */
 export const remove: TogglEndpoints['clientsDelete'] = async (ctx, input) => {
 	await makeTogglRequest<unknown>(
 		`workspaces/${input.workspace_id}/clients/${input.client_id}`,
@@ -111,6 +121,12 @@ export const remove: TogglEndpoints['clientsDelete'] = async (ctx, input) => {
 	return { deleted: true, id: input.client_id };
 };
 
+/** Narrows an archive response to the branch that carries client fields. */
+const isClientRecord = (
+	result: TogglEndpointOutputs['clientsArchive'],
+): result is TogglEndpointOutputs['clientsGet'] =>
+	typeof (result as { id?: unknown })?.id === 'number';
+
 /**
  * Archives a client. Toggl exposes this as its own route rather than an
  * `archived` field on the update call.
@@ -122,7 +138,12 @@ export const archive: TogglEndpoints['clientsArchive'] = async (ctx, input) => {
 		{ method: 'POST' },
 	);
 
-	await cacheClient(ctx.db.clients, result);
+	// Only refresh the cache when Toggl answered with a client record — the
+	// `{ items: [...] }` envelope carries no fields to cache, and writing it
+	// would key the row on an undefined id.
+	if (isClientRecord(result)) {
+		await cacheClient(ctx.db.clients, result);
+	}
 
 	await logEventFromContext(
 		ctx,

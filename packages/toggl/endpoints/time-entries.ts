@@ -4,6 +4,7 @@ import type { TogglEndpoints } from '../index';
 import { auditPayload } from './logging';
 import type { TogglEndpointOutputs } from './types';
 
+/** Lists the caller's time entries, by date range or modification time. */
 export const list: TogglEndpoints['timeEntriesList'] = async (ctx, input) => {
 	const result = await makeTogglRequest<
 		TogglEndpointOutputs['timeEntriesList']
@@ -29,6 +30,7 @@ export const list: TogglEndpoints['timeEntriesList'] = async (ctx, input) => {
 	return entries;
 };
 
+/** Reads the caller's running timer, or null when none is running. */
 export const getCurrent: TogglEndpoints['timeEntriesGetCurrent'] = async (
 	ctx,
 	input,
@@ -47,6 +49,7 @@ export const getCurrent: TogglEndpoints['timeEntriesGetCurrent'] = async (
 	return result ?? null;
 };
 
+/** Reads one of the caller's time entries by id. */
 export const get: TogglEndpoints['timeEntriesGet'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['timeEntriesGet']>(
 		`me/time_entries/${input.time_entry_id}`,
@@ -63,6 +66,10 @@ export const get: TogglEndpoints['timeEntriesGet'] = async (ctx, input) => {
 	return result;
 };
 
+/**
+ * Creates a time entry. A negative duration starts a running timer, and
+ * `created_with` defaults to this plugin when the caller omits it.
+ */
 export const create: TogglEndpoints['timeEntriesCreate'] = async (
 	ctx,
 	input,
@@ -104,6 +111,7 @@ export const create: TogglEndpoints['timeEntriesCreate'] = async (
 	return result;
 };
 
+/** Updates a single time entry. */
 export const update: TogglEndpoints['timeEntriesUpdate'] = async (
 	ctx,
 	input,
@@ -147,6 +155,7 @@ export const update: TogglEndpoints['timeEntriesUpdate'] = async (
 	return result;
 };
 
+/** Stops a running time entry, fixing its duration. */
 export const stop: TogglEndpoints['timeEntriesStop'] = async (ctx, input) => {
 	const result = await makeTogglRequest<
 		TogglEndpointOutputs['timeEntriesStop']
@@ -165,6 +174,7 @@ export const stop: TogglEndpoints['timeEntriesStop'] = async (ctx, input) => {
 	return result;
 };
 
+/** Deletes a time entry. */
 export const remove: TogglEndpoints['timeEntriesDelete'] = async (
 	ctx,
 	input,

@@ -27,6 +27,7 @@ const WEBHOOKS = 'https://api.track.toggl.com/webhooks/api/v1';
 
 type Ctx = Parameters<typeof Me.get>[0];
 
+/** Builds a minimal endpoint context for endpoints that do not touch the cache. */
 function makeCtx() {
 	const store = () => ({
 		upsertByEntityId: jest.fn(async () => undefined),
@@ -48,6 +49,7 @@ function makeCtx() {
 
 let lastCall: { url: string; init: RequestInit } | undefined;
 
+/** Stubs global fetch with a single JSON response and records the request. */
 function mockResponse(body: unknown) {
 	global.fetch = (async (url: string, init: RequestInit) => {
 		lastCall = { url, init };
@@ -63,6 +65,7 @@ function mockResponse(body: unknown) {
 	}) as unknown as typeof global.fetch;
 }
 
+/** Returns the URL, method and parsed body of the last recorded request. */
 function requested() {
 	if (!lastCall) throw new Error('no request was made');
 	return {
@@ -112,6 +115,20 @@ describe('me — collections and account actions', () => {
 		mockResponse([]);
 		await Me.getProjects(makeCtx(), { since: 1755000000 });
 		expect(requested().url).toBe(`${BASE}/me/projects?since=1755000000`);
+	});
+
+	it('lists the user tags and passes `since` through', async () => {
+		mockResponse([{ id: 7, workspace_id: 1, name: 'billable' }]);
+		const result = await Me.getTags(makeCtx(), { since: 1755000000 });
+		expect(requested().url).toBe(`${BASE}/me/tags?since=1755000000`);
+		expect(requested().method).toBe('GET');
+		expect(result[0]?.name).toBe('billable');
+	});
+
+	it('normalises a null tags collection to an empty array', async () => {
+		mockResponse(null);
+		expect(await Me.getTags(makeCtx(), {})).toEqual([]);
+		expect(requested().url).toBe(`${BASE}/me/tags`);
 	});
 
 	it('normalises a null tasks collection to an empty array', async () => {

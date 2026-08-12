@@ -215,7 +215,8 @@ export type TogglLocation = z.infer<typeof TogglLocationSchema>;
 
 export const TogglQuotaSchema = z
 	.object({
-		organization_id: z.number(),
+		/** Null on the unscoped record Toggl returns alongside per-org quotas. */
+		organization_id: z.number().nullable(),
 		remaining: z.number(),
 		total: z.number(),
 		resets_in_secs: z.number().nullable().optional(),
@@ -381,6 +382,40 @@ export const TogglAcknowledgementSchema = z
 	.loose();
 export type TogglAcknowledgement = z.infer<typeof TogglAcknowledgementSchema>;
 
+/**
+ * `POST …/clients/{client_id}/archive` does not answer with a client record on
+ * every account — it can also return an `{ items: [...] }` envelope carrying
+ * the ids it touched. Both shapes are accepted so the declared contract cannot
+ * drift from the live response; callers needing the full record should re-read
+ * the client.
+ */
+export const TogglClientArchiveResultSchema = z.union([
+	TogglClientSchema,
+	z.object({ items: z.array(z.number()).nullable().optional() }).loose(),
+]);
+export type TogglClientArchiveResult = z.infer<
+	typeof TogglClientArchiveResultSchema
+>;
+
+/**
+ * Every Toggl resource identifier is an integer, so inputs reject fractional
+ * values rather than forwarding them and letting the API answer with a 400.
+ */
+const TogglIdSchema = z.number().int();
+
+/**
+ * Time-entry writes carry RFC3339 timestamps. The offset form is accepted
+ * alongside plain UTC so a caller holding a local-offset timestamp does not
+ * have to normalise it first.
+ */
+const TogglTimestampSchema = z.iso.datetime({ offset: true });
+
+/** Range filters accept either a calendar date or a full RFC3339 timestamp. */
+const TogglDateOrTimestampSchema = z.union([
+	z.iso.date(),
+	TogglTimestampSchema,
+]);
+
 /* -------------------------------------------------------------------------- */
 /* me                                                                          */
 /* -------------------------------------------------------------------------- */
@@ -395,7 +430,7 @@ const MeUpdateInputSchema = z.object({
 	email: z.string().optional(),
 	timezone: z.string().optional(),
 	beginning_of_week: z.number().int().min(0).max(6).optional(),
-	default_workspace_id: z.number().optional(),
+	default_workspace_id: TogglIdSchema.optional(),
 });
 export type MeUpdateInput = z.infer<typeof MeUpdateInputSchema>;
 
@@ -422,12 +457,12 @@ const WorkspacesListInputSchema = z.object({
 export type WorkspacesListInput = z.infer<typeof WorkspacesListInputSchema>;
 
 const WorkspacesGetInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 });
 export type WorkspacesGetInput = z.infer<typeof WorkspacesGetInputSchema>;
 
 const WorkspacesUpdateInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	name: z.string().optional(),
 	default_currency: z.string().optional(),
 	default_hourly_rate: z.number().optional(),
@@ -437,7 +472,7 @@ const WorkspacesUpdateInputSchema = z.object({
 export type WorkspacesUpdateInput = z.infer<typeof WorkspacesUpdateInputSchema>;
 
 const WorkspacesGetUsersInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 });
 export type WorkspacesGetUsersInput = z.infer<
 	typeof WorkspacesGetUsersInputSchema
@@ -448,12 +483,12 @@ export type WorkspacesGetUsersInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const OrganizationsGetInputSchema = z.object({
-	organization_id: z.number(),
+	organization_id: TogglIdSchema,
 });
 export type OrganizationsGetInput = z.infer<typeof OrganizationsGetInputSchema>;
 
 const OrganizationsUpdateInputSchema = z.object({
-	organization_id: z.number(),
+	organization_id: TogglIdSchema,
 	name: z.string(),
 });
 export type OrganizationsUpdateInput = z.infer<
@@ -461,7 +496,7 @@ export type OrganizationsUpdateInput = z.infer<
 >;
 
 const OrganizationsGetWorkspacesInputSchema = z.object({
-	organization_id: z.number(),
+	organization_id: TogglIdSchema,
 });
 export type OrganizationsGetWorkspacesInput = z.infer<
 	typeof OrganizationsGetWorkspacesInputSchema
@@ -472,7 +507,7 @@ export type OrganizationsGetWorkspacesInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const ClientsListInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	/** Filter by archived state. Omit to return both. */
 	status: z.enum(['active', 'archived', 'both']).optional(),
 	/** Case-insensitive substring match on the client name. */
@@ -481,36 +516,36 @@ const ClientsListInputSchema = z.object({
 export type ClientsListInput = z.infer<typeof ClientsListInputSchema>;
 
 const ClientsGetInputSchema = z.object({
-	workspace_id: z.number(),
-	client_id: z.number(),
+	workspace_id: TogglIdSchema,
+	client_id: TogglIdSchema,
 });
 export type ClientsGetInput = z.infer<typeof ClientsGetInputSchema>;
 
 const ClientsCreateInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	name: z.string().min(1),
 	notes: z.string().optional(),
 });
 export type ClientsCreateInput = z.infer<typeof ClientsCreateInputSchema>;
 
 const ClientsUpdateInputSchema = z.object({
-	workspace_id: z.number(),
-	client_id: z.number(),
+	workspace_id: TogglIdSchema,
+	client_id: TogglIdSchema,
 	/** Toggl rejects an update that omits the name, even when only notes change. */
 	name: z.string().min(1),
 	notes: z.string().optional(),
 });
 
 const ClientsArchiveInputSchema = z.object({
-	workspace_id: z.number(),
-	client_id: z.number(),
+	workspace_id: TogglIdSchema,
+	client_id: TogglIdSchema,
 });
 export type ClientsArchiveInput = z.infer<typeof ClientsArchiveInputSchema>;
 export type ClientsUpdateInput = z.infer<typeof ClientsUpdateInputSchema>;
 
 const ClientsDeleteInputSchema = z.object({
-	workspace_id: z.number(),
-	client_id: z.number(),
+	workspace_id: TogglIdSchema,
+	client_id: TogglIdSchema,
 });
 export type ClientsDeleteInput = z.infer<typeof ClientsDeleteInputSchema>;
 
@@ -519,7 +554,7 @@ export type ClientsDeleteInput = z.infer<typeof ClientsDeleteInputSchema>;
 /* -------------------------------------------------------------------------- */
 
 const ProjectsListInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	active: z.boolean().optional(),
 	/** Substring match on project name. */
 	name: z.string().optional(),
@@ -530,15 +565,15 @@ const ProjectsListInputSchema = z.object({
 export type ProjectsListInput = z.infer<typeof ProjectsListInputSchema>;
 
 const ProjectsGetInputSchema = z.object({
-	workspace_id: z.number(),
-	project_id: z.number(),
+	workspace_id: TogglIdSchema,
+	project_id: TogglIdSchema,
 });
 export type ProjectsGetInput = z.infer<typeof ProjectsGetInputSchema>;
 
 const ProjectsCreateInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	name: z.string().min(1),
-	client_id: z.number().optional(),
+	client_id: TogglIdSchema.optional(),
 	active: z.boolean().optional(),
 	is_private: z.boolean().optional(),
 	billable: z.boolean().optional(),
@@ -550,10 +585,10 @@ const ProjectsCreateInputSchema = z.object({
 export type ProjectsCreateInput = z.infer<typeof ProjectsCreateInputSchema>;
 
 const ProjectsUpdateInputSchema = z.object({
-	workspace_id: z.number(),
-	project_id: z.number(),
+	workspace_id: TogglIdSchema,
+	project_id: TogglIdSchema,
 	name: z.string().min(1).optional(),
-	client_id: z.number().nullable().optional(),
+	client_id: TogglIdSchema.nullable().optional(),
 	active: z.boolean().optional(),
 	is_private: z.boolean().optional(),
 	billable: z.boolean().optional(),
@@ -562,8 +597,8 @@ const ProjectsUpdateInputSchema = z.object({
 export type ProjectsUpdateInput = z.infer<typeof ProjectsUpdateInputSchema>;
 
 const ProjectsDeleteInputSchema = z.object({
-	workspace_id: z.number(),
-	project_id: z.number(),
+	workspace_id: TogglIdSchema,
+	project_id: TogglIdSchema,
 });
 export type ProjectsDeleteInput = z.infer<typeof ProjectsDeleteInputSchema>;
 
@@ -572,36 +607,38 @@ export type ProjectsDeleteInput = z.infer<typeof ProjectsDeleteInputSchema>;
 /* -------------------------------------------------------------------------- */
 
 const TasksListInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	/** Omit to list every task in the workspace. */
-	project_id: z.number().optional(),
+	project_id: TogglIdSchema.optional(),
 	active: z.boolean().optional(),
+	/** Honoured only on the workspace-wide route; Toggl's project-scoped task
+	 * route documents `active` alone and is sent without page params. */
 	page: z.number().int().positive().optional(),
 	per_page: z.number().int().positive().max(200).optional(),
 });
 export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
 const TasksGetInputSchema = z.object({
-	workspace_id: z.number(),
-	project_id: z.number(),
-	task_id: z.number(),
+	workspace_id: TogglIdSchema,
+	project_id: TogglIdSchema,
+	task_id: TogglIdSchema,
 });
 export type TasksGetInput = z.infer<typeof TasksGetInputSchema>;
 
 const TasksCreateInputSchema = z.object({
-	workspace_id: z.number(),
-	project_id: z.number(),
+	workspace_id: TogglIdSchema,
+	project_id: TogglIdSchema,
 	name: z.string().min(1),
 	active: z.boolean().optional(),
 	estimated_seconds: z.number().optional(),
-	user_id: z.number().optional(),
+	user_id: TogglIdSchema.optional(),
 });
 export type TasksCreateInput = z.infer<typeof TasksCreateInputSchema>;
 
 const TasksUpdateInputSchema = z.object({
-	workspace_id: z.number(),
-	project_id: z.number(),
-	task_id: z.number(),
+	workspace_id: TogglIdSchema,
+	project_id: TogglIdSchema,
+	task_id: TogglIdSchema,
 	name: z.string().min(1).optional(),
 	active: z.boolean().optional(),
 	estimated_seconds: z.number().optional(),
@@ -609,9 +646,9 @@ const TasksUpdateInputSchema = z.object({
 export type TasksUpdateInput = z.infer<typeof TasksUpdateInputSchema>;
 
 const TasksDeleteInputSchema = z.object({
-	workspace_id: z.number(),
-	project_id: z.number(),
-	task_id: z.number(),
+	workspace_id: TogglIdSchema,
+	project_id: TogglIdSchema,
+	task_id: TogglIdSchema,
 });
 export type TasksDeleteInput = z.infer<typeof TasksDeleteInputSchema>;
 
@@ -620,7 +657,7 @@ export type TasksDeleteInput = z.infer<typeof TasksDeleteInputSchema>;
 /* -------------------------------------------------------------------------- */
 
 const TagsListInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	page: z.number().int().positive().optional(),
 	per_page: z.number().int().positive().max(200).optional(),
 	/** Case-insensitive substring match on the tag name. */
@@ -629,21 +666,21 @@ const TagsListInputSchema = z.object({
 export type TagsListInput = z.infer<typeof TagsListInputSchema>;
 
 const TagsCreateInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	name: z.string().min(1),
 });
 export type TagsCreateInput = z.infer<typeof TagsCreateInputSchema>;
 
 const TagsUpdateInputSchema = z.object({
-	workspace_id: z.number(),
-	tag_id: z.number(),
+	workspace_id: TogglIdSchema,
+	tag_id: TogglIdSchema,
 	name: z.string().min(1),
 });
 export type TagsUpdateInput = z.infer<typeof TagsUpdateInputSchema>;
 
 const TagsDeleteInputSchema = z.object({
-	workspace_id: z.number(),
-	tag_id: z.number(),
+	workspace_id: TogglIdSchema,
+	tag_id: TogglIdSchema,
 });
 export type TagsDeleteInput = z.infer<typeof TagsDeleteInputSchema>;
 
@@ -654,11 +691,11 @@ export type TagsDeleteInput = z.infer<typeof TagsDeleteInputSchema>;
 const TimeEntriesListInputSchema = z
 	.object({
 		/** RFC3339 or YYYY-MM-DD. Must be supplied together with `end_date`. */
-		start_date: z.string().optional(),
-		end_date: z.string().optional(),
+		start_date: TogglDateOrTimestampSchema.optional(),
+		end_date: TogglDateOrTimestampSchema.optional(),
 		/** UNIX timestamp; returns entries modified since then. */
-		since: z.number().optional(),
-		before: z.string().optional(),
+		since: z.number().int().optional(),
+		before: TogglDateOrTimestampSchema.optional(),
 		meta: z.boolean().optional(),
 	})
 	.refine(
@@ -677,26 +714,26 @@ export type TimeEntriesGetCurrentInput = z.infer<
 >;
 
 const TimeEntriesGetInputSchema = z.object({
-	time_entry_id: z.number(),
+	time_entry_id: TogglIdSchema,
 });
 export type TimeEntriesGetInput = z.infer<typeof TimeEntriesGetInputSchema>;
 
 const TimeEntriesCreateInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	/** RFC3339. Toggl rejects entries without an explicit start. */
-	start: z.string(),
+	start: TogglTimestampSchema,
 	/**
-	 * Seconds. A negative value marks the entry as still running, in which case
-	 * Toggl expects -1 by convention.
+	 * Whole seconds. A negative value marks the entry as still running, in which
+	 * case Toggl expects -1 by convention.
 	 */
-	duration: z.number(),
+	duration: z.number().int(),
 	description: z.string().optional(),
-	project_id: z.number().optional(),
-	task_id: z.number().optional(),
+	project_id: TogglIdSchema.optional(),
+	task_id: TogglIdSchema.optional(),
 	billable: z.boolean().optional(),
 	tags: z.array(z.string()).optional(),
-	tag_ids: z.array(z.number()).optional(),
-	stop: z.string().optional(),
+	tag_ids: z.array(TogglIdSchema).optional(),
+	stop: TogglTimestampSchema.optional(),
 	/** Required by Toggl to identify the writing client. */
 	created_with: z.string().optional(),
 });
@@ -705,31 +742,31 @@ export type TimeEntriesCreateInput = z.infer<
 >;
 
 const TimeEntriesUpdateInputSchema = z.object({
-	workspace_id: z.number(),
-	time_entry_id: z.number(),
+	workspace_id: TogglIdSchema,
+	time_entry_id: TogglIdSchema,
 	description: z.string().optional(),
-	start: z.string().optional(),
-	stop: z.string().optional(),
-	duration: z.number().optional(),
-	project_id: z.number().nullable().optional(),
-	task_id: z.number().nullable().optional(),
+	start: TogglTimestampSchema.optional(),
+	stop: TogglTimestampSchema.optional(),
+	duration: z.number().int().optional(),
+	project_id: TogglIdSchema.nullable().optional(),
+	task_id: TogglIdSchema.nullable().optional(),
 	billable: z.boolean().optional(),
 	tags: z.array(z.string()).optional(),
-	tag_ids: z.array(z.number()).optional(),
+	tag_ids: z.array(TogglIdSchema).optional(),
 });
 export type TimeEntriesUpdateInput = z.infer<
 	typeof TimeEntriesUpdateInputSchema
 >;
 
 const TimeEntriesStopInputSchema = z.object({
-	workspace_id: z.number(),
-	time_entry_id: z.number(),
+	workspace_id: TogglIdSchema,
+	time_entry_id: TogglIdSchema,
 });
 export type TimeEntriesStopInput = z.infer<typeof TimeEntriesStopInputSchema>;
 
 const TimeEntriesDeleteInputSchema = z.object({
-	workspace_id: z.number(),
-	time_entry_id: z.number(),
+	workspace_id: TogglIdSchema,
+	time_entry_id: TogglIdSchema,
 });
 export type TimeEntriesDeleteInput = z.infer<
 	typeof TimeEntriesDeleteInputSchema
@@ -789,14 +826,14 @@ export type OrganizationsCreateInput = z.infer<
 >;
 
 const OrganizationsGetGroupsInputSchema = z.object({
-	organization_id: z.number(),
+	organization_id: TogglIdSchema,
 });
 export type OrganizationsGetGroupsInput = z.infer<
 	typeof OrganizationsGetGroupsInputSchema
 >;
 
 const OrganizationsCreateGroupInputSchema = z.object({
-	organization_id: z.number(),
+	organization_id: TogglIdSchema,
 	name: z.string().min(1),
 });
 export type OrganizationsCreateGroupInput = z.infer<
@@ -804,15 +841,15 @@ export type OrganizationsCreateGroupInput = z.infer<
 >;
 
 const OrganizationsDeleteGroupInputSchema = z.object({
-	organization_id: z.number(),
-	group_id: z.number(),
+	organization_id: TogglIdSchema,
+	group_id: TogglIdSchema,
 });
 export type OrganizationsDeleteGroupInput = z.infer<
 	typeof OrganizationsDeleteGroupInputSchema
 >;
 
 const OrganizationsGetUsersInputSchema = z.object({
-	organization_id: z.number(),
+	organization_id: TogglIdSchema,
 	/** Case-insensitive match against name or email. */
 	filter: z.string().optional(),
 	active: z.boolean().optional(),
@@ -826,13 +863,13 @@ export type OrganizationsGetUsersInput = z.infer<
 >;
 
 const OrganizationsCreateInvitationInputSchema = z.object({
-	organization_id: z.number(),
+	organization_id: TogglIdSchema,
 	emails: z.array(z.string()).min(1),
 	/** Workspaces the invitee should be added to. */
 	workspaces: z
 		.array(
 			z.object({
-				workspace_id: z.number(),
+				workspace_id: TogglIdSchema,
 				admin: z.boolean().optional(),
 			}),
 		)
@@ -844,7 +881,7 @@ export type OrganizationsCreateInvitationInput = z.infer<
 >;
 
 const OrganizationsGetPlansInputSchema = z.object({
-	organization_id: z.number(),
+	organization_id: TogglIdSchema,
 });
 export type OrganizationsGetPlansInput = z.infer<
 	typeof OrganizationsGetPlansInputSchema
@@ -855,21 +892,21 @@ export type OrganizationsGetPlansInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const WorkspacesGetLogoInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 });
 export type WorkspacesGetLogoInput = z.infer<
 	typeof WorkspacesGetLogoInputSchema
 >;
 
 const WorkspacesGetPreferencesInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 });
 export type WorkspacesGetPreferencesInput = z.infer<
 	typeof WorkspacesGetPreferencesInputSchema
 >;
 
 const TasksListWorkspaceInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	active: z.boolean().optional(),
 	page: z.number().int().positive().optional(),
 	per_page: z.number().int().positive().max(200).optional(),
@@ -883,9 +920,9 @@ export type TasksListWorkspaceInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const ProjectsAddUserInputSchema = z.object({
-	workspace_id: z.number(),
-	project_id: z.number(),
-	user_id: z.number(),
+	workspace_id: TogglIdSchema,
+	project_id: TogglIdSchema,
+	user_id: TogglIdSchema,
 	manager: z.boolean().optional(),
 	rate: z.number().optional(),
 	labour_cost: z.number().optional(),
@@ -893,8 +930,8 @@ const ProjectsAddUserInputSchema = z.object({
 export type ProjectsAddUserInput = z.infer<typeof ProjectsAddUserInputSchema>;
 
 const ProjectsDeleteGroupInputSchema = z.object({
-	workspace_id: z.number(),
-	project_group_id: z.number(),
+	workspace_id: TogglIdSchema,
+	project_group_id: TogglIdSchema,
 });
 export type ProjectsDeleteGroupInput = z.infer<
 	typeof ProjectsDeleteGroupInputSchema
@@ -905,17 +942,28 @@ export type ProjectsDeleteGroupInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const TimeEntriesBulkEditInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 	/** Toggl caps a bulk edit at 100 entries per request. */
-	time_entry_ids: z.array(z.number()).min(1).max(100),
+	time_entry_ids: z.array(TogglIdSchema).min(1).max(100),
 	/** JSON Patch operations applied to every listed entry. */
 	operations: z
 		.array(
-			z.object({
-				op: z.enum(['add', 'remove', 'replace']),
-				path: z.string().min(1),
-				value: z.unknown().optional(),
-			}),
+			z
+				.object({
+					op: z.enum(['add', 'remove', 'replace']),
+					path: z.string().min(1),
+					value: z.unknown().optional(),
+				})
+				// RFC 6902 requires `value` on add and replace; remove takes none.
+				// Expressed as a refinement rather than a discriminated union
+				// because zod cannot mark an `unknown` field as required.
+				.refine(
+					(operation) => operation.op === 'remove' || 'value' in operation,
+					{
+						message: 'value is required for add and replace operations',
+						path: ['value'],
+					},
+				),
 		)
 		.min(1),
 });
@@ -942,15 +990,15 @@ export type BulkEditResult = z.infer<typeof BulkEditResultSchema>;
 /* -------------------------------------------------------------------------- */
 
 const WebhooksListSubscriptionsInputSchema = z.object({
-	workspace_id: z.number(),
+	workspace_id: TogglIdSchema,
 });
 export type WebhooksListSubscriptionsInput = z.infer<
 	typeof WebhooksListSubscriptionsInputSchema
 >;
 
 const WebhooksDeleteSubscriptionInputSchema = z.object({
-	workspace_id: z.number(),
-	subscription_id: z.number(),
+	workspace_id: TogglIdSchema,
+	subscription_id: TogglIdSchema,
 });
 export type WebhooksDeleteSubscriptionInput = z.infer<
 	typeof WebhooksDeleteSubscriptionInputSchema
@@ -1088,7 +1136,7 @@ export type TogglEndpointOutputs = {
 	clientsGet: TogglClient;
 	clientsCreate: TogglClient;
 	clientsUpdate: TogglClient;
-	clientsArchive: TogglClient;
+	clientsArchive: TogglClientArchiveResult;
 	clientsDelete: DeletedResult;
 	projectsList: TogglProject[];
 	projectsGet: TogglProject;
@@ -1240,7 +1288,7 @@ export const TogglEndpointOutputSchemas = {
 	clientsGet: TogglClientSchema,
 	clientsCreate: TogglClientSchema,
 	clientsUpdate: TogglClientSchema,
-	clientsArchive: TogglClientSchema,
+	clientsArchive: TogglClientArchiveResultSchema,
 	clientsDelete: DeletedResultSchema,
 	projectsList: z.array(TogglProjectSchema),
 	projectsGet: TogglProjectSchema,

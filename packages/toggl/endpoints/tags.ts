@@ -5,6 +5,7 @@ import { auditPayload } from './logging';
 import { cacheTag, evictEntity } from './persist';
 import type { TogglEndpointOutputs } from './types';
 
+/** Lists a workspace's tags and mirrors each into the cache. */
 export const list: TogglEndpoints['tagsList'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['tagsList']>(
 		`workspaces/${input.workspace_id}/tags`,
@@ -34,6 +35,7 @@ export const list: TogglEndpoints['tagsList'] = async (ctx, input) => {
 	return tags;
 };
 
+/** Creates a tag in a workspace. */
 export const create: TogglEndpoints['tagsCreate'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['tagsCreate']>(
 		`workspaces/${input.workspace_id}/tags`,
@@ -55,6 +57,7 @@ export const create: TogglEndpoints['tagsCreate'] = async (ctx, input) => {
 	return result;
 };
 
+/** Renames a tag. */
 export const update: TogglEndpoints['tagsUpdate'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['tagsUpdate']>(
 		`workspaces/${input.workspace_id}/tags/${input.tag_id}`,
@@ -76,6 +79,7 @@ export const update: TogglEndpoints['tagsUpdate'] = async (ctx, input) => {
 	return result;
 };
 
+/** Deletes a tag and evicts it from the cache. */
 export const remove: TogglEndpoints['tagsDelete'] = async (ctx, input) => {
 	await makeTogglRequest<unknown>(
 		`workspaces/${input.workspace_id}/tags/${input.tag_id}`,

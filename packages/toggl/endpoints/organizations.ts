@@ -4,6 +4,7 @@ import type { TogglEndpoints } from '../index';
 import { auditPayload } from './logging';
 import type { TogglEndpointOutputs } from './types';
 
+/** Reads an organization, including its pricing plan and trial state. */
 export const get: TogglEndpoints['organizationsGet'] = async (ctx, input) => {
 	const result = await makeTogglRequest<
 		TogglEndpointOutputs['organizationsGet']
@@ -18,6 +19,7 @@ export const get: TogglEndpoints['organizationsGet'] = async (ctx, input) => {
 	return result;
 };
 
+/** Renames an organization. */
 export const update: TogglEndpoints['organizationsUpdate'] = async (
 	ctx,
 	input,
@@ -55,6 +57,10 @@ export const getWorkspaces: TogglEndpoints['organizationsGetWorkspaces'] =
 		return result;
 	};
 
+/**
+ * Creates an organization and its default workspace in one call. The
+ * authenticated user becomes the owner.
+ */
 export const create: TogglEndpoints['organizationsCreate'] = async (
 	ctx,
 	input,
@@ -75,6 +81,7 @@ export const create: TogglEndpoints['organizationsCreate'] = async (
 	return result;
 };
 
+/** Lists an organization's groups with their members and workspace assignments. */
 export const getGroups: TogglEndpoints['organizationsGetGroups'] = async (
 	ctx,
 	input,
@@ -94,6 +101,7 @@ export const getGroups: TogglEndpoints['organizationsGetGroups'] = async (
 	return result ?? [];
 };
 
+/** Creates a group in an organization. */
 export const createGroup: TogglEndpoints['organizationsCreateGroup'] = async (
 	ctx,
 	input,
@@ -114,6 +122,7 @@ export const createGroup: TogglEndpoints['organizationsCreateGroup'] = async (
 	return result;
 };
 
+/** Deletes a group along with the permissions attached to it. */
 export const deleteGroup: TogglEndpoints['organizationsDeleteGroup'] = async (
 	ctx,
 	input,
@@ -133,6 +142,7 @@ export const deleteGroup: TogglEndpoints['organizationsDeleteGroup'] = async (
 	return { deleted: true, id: input.group_id };
 };
 
+/** Lists an organization's users, with filtering by name, status and role. */
 export const getUsers: TogglEndpoints['organizationsGetUsers'] = async (
 	ctx,
 	input,
@@ -188,6 +198,7 @@ export const createInvitation: TogglEndpoints['organizationsCreateInvitation'] =
 		return result ?? {};
 	};
 
+/** Lists the plans available to a specific organization. */
 export const getPlans: TogglEndpoints['organizationsGetPlans'] = async (
 	ctx,
 	input,

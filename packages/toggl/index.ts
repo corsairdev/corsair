@@ -39,7 +39,6 @@ import { errorHandlers } from './error-handlers';
 import { TogglSchema } from './schema';
 import { resolveTogglOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchTogglTenantWebhook } from './webhooks/tenant-matcher';
-import type { TogglWebhookOutputs } from './webhooks/types';
 
 export type TogglPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -831,6 +830,12 @@ export type InternalTogglPlugin = BaseTogglPlugin<TogglPluginOptions>;
 export type ExternalTogglPlugin<T extends TogglPluginOptions> =
 	BaseTogglPlugin<T>;
 
+/**
+ * Builds the Toggl Track plugin.
+ *
+ * Toggl authenticates with a per-user API token over HTTP Basic and has no
+ * OAuth flow, so only `api_key` auth is offered.
+ */
 export function toggl<const T extends TogglPluginOptions>(
 	incomingOptions: TogglPluginOptions & T = {} as TogglPluginOptions & T,
 ): ExternalTogglPlugin<T> {

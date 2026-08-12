@@ -238,6 +238,83 @@ describe('input validation', () => {
 		expect(parsed.duration).toBe(-1);
 	});
 
+	it('rejects a fractional resource id', () => {
+		expect(() =>
+			TogglEndpointInputSchemas.clientsGet.parse({
+				workspace_id: 1,
+				client_id: 1.5,
+			}),
+		).toThrow();
+	});
+
+	it('rejects a non-RFC3339 time entry start', () => {
+		expect(() =>
+			TogglEndpointInputSchemas.timeEntriesCreate.parse({
+				workspace_id: 1,
+				start: '12/08/2026',
+				duration: -1,
+			}),
+		).toThrow();
+	});
+
+	it('accepts an offset timestamp as well as plain UTC', () => {
+		const parsed = TogglEndpointInputSchemas.timeEntriesCreate.parse({
+			workspace_id: 1,
+			start: '2026-08-12T10:00:00+02:00',
+			duration: 60,
+		});
+		expect(parsed.start).toBe('2026-08-12T10:00:00+02:00');
+	});
+
+	it('rejects a fractional duration', () => {
+		expect(() =>
+			TogglEndpointInputSchemas.timeEntriesCreate.parse({
+				workspace_id: 1,
+				start: '2026-08-12T10:00:00Z',
+				duration: 1.5,
+			}),
+		).toThrow();
+	});
+
+	it('requires a value on add and replace bulk-edit operations', () => {
+		const base = { workspace_id: 1, time_entry_ids: [1] };
+		for (const op of ['add', 'replace'] as const) {
+			expect(() =>
+				TogglEndpointInputSchemas.timeEntriesBulkEdit.parse({
+					...base,
+					operations: [{ op, path: '/description' }],
+				}),
+			).toThrow();
+		}
+		// remove carries no value, per RFC 6902.
+		expect(
+			TogglEndpointInputSchemas.timeEntriesBulkEdit.parse({
+				...base,
+				operations: [{ op: 'remove', path: '/description' }],
+			}).operations,
+		).toHaveLength(1);
+	});
+
+	it('accepts an unscoped quota record', () => {
+		const parsed = TogglEndpointOutputSchemas.meGetQuota.parse([
+			{ organization_id: null, remaining: 600, total: 600 },
+		]);
+		expect(parsed[0]?.organization_id).toBeNull();
+	});
+
+	it('accepts either archive response shape', () => {
+		expect(
+			TogglEndpointOutputSchemas.clientsArchive.parse({ items: [1, 2] }),
+		).toMatchObject({ items: [1, 2] });
+		expect(
+			TogglEndpointOutputSchemas.clientsArchive.parse({
+				id: 1,
+				name: 'Acme',
+				archived: true,
+			}),
+		).toMatchObject({ id: 1, archived: true });
+	});
+
 	it('caps project pagination at Toggl’s per_page maximum', () => {
 		expect(() =>
 			TogglEndpointInputSchemas.projectsList.parse({

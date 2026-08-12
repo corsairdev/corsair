@@ -5,6 +5,7 @@ import { auditPayload } from './logging';
 import { cacheWorkspace } from './persist';
 import type { TogglEndpointOutputs } from './types';
 
+/** Lists the workspaces the caller belongs to and caches each one. */
 export const list: TogglEndpoints['workspacesList'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['workspacesList']>(
 		'workspaces',
@@ -30,6 +31,7 @@ export const list: TogglEndpoints['workspacesList'] = async (ctx, input) => {
 	return workspaces;
 };
 
+/** Reads a single workspace and refreshes its cached copy. */
 export const get: TogglEndpoints['workspacesGet'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['workspacesGet']>(
 		`workspaces/${input.workspace_id}`,
@@ -48,6 +50,7 @@ export const get: TogglEndpoints['workspacesGet'] = async (ctx, input) => {
 	return result;
 };
 
+/** Updates a workspace's name and default project, billing or rounding settings. */
 export const update: TogglEndpoints['workspacesUpdate'] = async (
 	ctx,
 	input,
@@ -82,6 +85,7 @@ export const update: TogglEndpoints['workspacesUpdate'] = async (
 	return result;
 };
 
+/** Lists a workspace's members with their role and activity state. */
 export const getUsers: TogglEndpoints['workspacesGetUsers'] = async (
 	ctx,
 	input,
@@ -99,6 +103,7 @@ export const getUsers: TogglEndpoints['workspacesGetUsers'] = async (
 	return result ?? [];
 };
 
+/** Reads the logo associated with a workspace. */
 export const getLogo: TogglEndpoints['workspacesGetLogo'] = async (
 	ctx,
 	input,

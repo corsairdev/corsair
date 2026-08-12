@@ -12,6 +12,10 @@ type ErrorContext = Parameters<typeof errorHandlers.DEFAULT.match>[1];
 // without restating the whole plugin context.
 const context = { operation: 'me.get' } as ErrorContext;
 
+/**
+ * Builds an ApiError carrying a given status and body, for asserting which
+ * handler a response routes to.
+ */
 function apiError(status: number, message: string): ApiError {
 	return new ApiError(
 		{ method: 'GET', url: 'me' },

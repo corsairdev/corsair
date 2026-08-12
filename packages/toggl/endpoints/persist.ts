@@ -34,6 +34,7 @@ async function safely(operation: () => Promise<unknown>, what: string) {
 	}
 }
 
+/** Mirrors a workspace into the local cache. */
 export async function cacheWorkspace(
 	store: EntityStore<TogglWorkspaceEntity> | undefined,
 	workspace: TogglWorkspace | undefined | null,
@@ -54,6 +55,10 @@ export async function cacheWorkspace(
 	);
 }
 
+/**
+ * Mirrors a client into the local cache, mapping Toggl's `wid` onto
+ * `workspace_id`.
+ */
 export async function cacheClient(
 	store: EntityStore<TogglClientEntity> | undefined,
 	client: TogglClient | undefined | null,
@@ -73,6 +78,7 @@ export async function cacheClient(
 	);
 }
 
+/** Mirrors a project into the local cache. */
 export async function cacheProject(
 	store: EntityStore<TogglProjectEntity> | undefined,
 	project: TogglProject | undefined | null,
@@ -94,6 +100,7 @@ export async function cacheProject(
 	);
 }
 
+/** Mirrors a tag into the local cache. */
 export async function cacheTag(
 	store: EntityStore<TogglTagEntity> | undefined,
 	tag: TogglTag | undefined | null,
@@ -122,6 +129,7 @@ type DeletableStore = {
 	deleteByEntityId?: (entityId: string) => Promise<unknown>;
 };
 
+/** Drops a cached record once the provider confirmed the delete. */
 export async function evictEntity(
 	store: DeletableStore | undefined,
 	id: number,

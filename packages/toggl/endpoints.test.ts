@@ -21,6 +21,7 @@ type Store = {
 	deleteByEntityId: jest.Mock;
 };
 
+/** Builds a spying entity store so cache writes and evictions can be asserted. */
 function makeStore(): Store {
 	return {
 		upsertByEntityId: jest.fn(async () => undefined),
@@ -32,6 +33,7 @@ function makeStore(): Store {
 // assertion keeps the fixture readable instead of restating the whole context.
 type Ctx = Parameters<typeof Me.get>[0];
 
+/** Builds a minimal endpoint context with spying stores. */
 function makeCtx() {
 	const db = {
 		workspaces: makeStore(),
@@ -50,6 +52,7 @@ function makeCtx() {
 
 let lastCall: { url: string; init: RequestInit } | undefined;
 
+/** Stubs global fetch with a single JSON response and records the request. */
 function mockResponse(body: unknown, status = 200) {
 	global.fetch = (async (url: string, init: RequestInit) => {
 		lastCall = { url, init };
@@ -65,6 +68,7 @@ function mockResponse(body: unknown, status = 200) {
 	}) as unknown as typeof global.fetch;
 }
 
+/** Returns the URL, method and parsed body of the last recorded request. */
 function requested() {
 	if (!lastCall) throw new Error('no request was made');
 	return {
@@ -235,12 +239,15 @@ describe('clients', () => {
 		);
 	});
 
-	it('creates a client with the workspace id as wid', async () => {
+	it('creates a client without restating the workspace in the body', async () => {
 		const { ctx } = makeCtx();
 		mockResponse(client);
 		await Clients.create(ctx, { workspace_id: WS, name: 'Acme Corp' });
 		expect(requested().method).toBe('POST');
-		expect(requested().body).toMatchObject({ name: 'Acme Corp', wid: WS });
+		expect(requested().url).toBe(`${BASE}/workspaces/${WS}/clients`);
+		expect(requested().body).toMatchObject({ name: 'Acme Corp' });
+		// The route already identifies the workspace.
+		expect(requested().body).not.toHaveProperty('wid');
 	});
 
 	it('updates a client with name and notes, never archived', async () => {
@@ -261,8 +268,8 @@ describe('clients', () => {
 		expect(requested().body).not.toHaveProperty('archived');
 	});
 
-	it('archives a client through its own route', async () => {
-		const { ctx } = makeCtx();
+	it('archives a client through its own route and caches the record', async () => {
+		const { ctx, db } = makeCtx();
 		mockResponse({ ...client, archived: true });
 		const result = await Clients.archive(ctx, {
 			workspace_id: WS,
@@ -272,7 +279,21 @@ describe('clients', () => {
 		expect(requested().url).toBe(
 			`${BASE}/workspaces/${WS}/clients/${client.id}/archive`,
 		);
-		expect(result.archived).toBe(true);
+		expect(result).toMatchObject({ id: client.id, archived: true });
+		expect(db.clients.upsertByEntityId).toHaveBeenCalledTimes(1);
+	});
+
+	it('skips the cache when archive answers with an id envelope', async () => {
+		const { ctx, db } = makeCtx();
+		// Toggl can answer with the ids it touched rather than a client record.
+		// Caching that would key the row on an undefined id.
+		mockResponse({ items: [client.id] });
+		const result = await Clients.archive(ctx, {
+			workspace_id: WS,
+			client_id: client.id,
+		});
+		expect(result).toMatchObject({ items: [client.id] });
+		expect(db.clients.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('sends notes on create', async () => {
@@ -369,6 +390,36 @@ describe('tasks', () => {
 		});
 		expect(requested().url).toBe(
 			`${BASE}/workspaces/${WS}/projects/${project.id}/tasks`,
+		);
+		expect(result).toHaveLength(1);
+	});
+
+	it('omits page params on the project-scoped route', async () => {
+		const { ctx } = makeCtx();
+		mockResponse([task]);
+		await Tasks.list(ctx, {
+			workspace_id: WS,
+			project_id: project.id,
+			active: true,
+			page: 2,
+			per_page: 50,
+		});
+		// Toggl documents `active` alone on this route.
+		expect(requested().url).toBe(
+			`${BASE}/workspaces/${WS}/projects/${project.id}/tasks?active=true`,
+		);
+	});
+
+	it('paginates the workspace-wide route and unwraps its envelope', async () => {
+		const { ctx } = makeCtx();
+		mockResponse({ data: [task] });
+		const result = await Tasks.list(ctx, {
+			workspace_id: WS,
+			page: 2,
+			per_page: 50,
+		});
+		expect(requested().url).toBe(
+			`${BASE}/workspaces/${WS}/tasks?page=2&per_page=50`,
 		);
 		expect(result).toHaveLength(1);
 	});
