@@ -6,15 +6,11 @@ describe('Amara schema', () => {
 		expect(AmaraSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('declares video, user, and team entities', () => {
 		expect(typeof AmaraSchema.entities).toBe('object');
 		expect(AmaraSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(AmaraSchema.entities))).toBe(true);
-		for (const entity of Object.values(AmaraSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(AmaraSchema.entities.videos).toBeDefined();
+		expect(AmaraSchema.entities.users).toBeDefined();
+		expect(AmaraSchema.entities.teams).toBeDefined();
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
