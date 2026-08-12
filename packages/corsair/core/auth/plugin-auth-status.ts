@@ -39,6 +39,8 @@ const OPTIONAL_AUTH_FIELDS = new Set([
 	'expires_at',
 	'scope',
 	'redirect_url',
+	// Optional — non-rotating providers never issue one; it's for renewal, not connectivity.
+	'refresh_token',
 ]);
 
 export function isOptionalAuthField(field: string): boolean {
@@ -68,7 +70,9 @@ function getConnectionCredentialFields(authType: AuthTypes): readonly string[] {
 	switch (authType) {
 		case 'oauth_2':
 		case 'managed':
-			return ['access_token', 'refresh_token'];
+			// access_token alone means connected; requiring refresh_token would
+			// falsely report non-rotating providers (e.g. Slack bot tokens) as never-connected.
+			return ['access_token'];
 		case 'api_key':
 			return ['api_key'];
 		case 'bot_token':
@@ -76,17 +80,41 @@ function getConnectionCredentialFields(authType: AuthTypes): readonly string[] {
 	}
 }
 
+// refresh_token is needed for durable connectivity only when the access token
+// expires: rotating providers (e.g. Zoho) renew with it, non-rotating ones
+// (e.g. Slack bot tokens) never issue one. Keyed on the account's own expires_at,
+// so each provider is judged by its stored token shape rather than a blanket rule.
+function accessTokenRotates(
+	authType: AuthTypes,
+	fields: AuthFieldStatus[],
+): boolean {
+	if (authType !== 'oauth_2' && authType !== 'managed') {
+		return false;
+	}
+	return fields.some(
+		(field) =>
+			field.level === 'account' &&
+			field.name === 'expires_at' &&
+			field.configured,
+	);
+}
+
 function isAuthTypeConnected(
 	authType: AuthTypes,
 	fields: AuthFieldStatus[],
 ): boolean {
+	const accountField = (name: string) =>
+		fields.find((entry) => entry.level === 'account' && entry.name === name);
+
 	const connectionFields = getConnectionCredentialFields(authType);
-	return connectionFields.every((fieldName) => {
-		const field = fields.find(
-			(entry) => entry.level === 'account' && entry.name === fieldName,
-		);
-		return field?.configured ?? false;
-	});
+	if (!connectionFields.every((name) => accountField(name)?.configured)) {
+		return false;
+	}
+
+	// refresh_token is marked required (in getPluginAuthStatus) only for rotating
+	// providers, so a required-but-missing one means not connected.
+	const refreshToken = accountField('refresh_token');
+	return refreshToken?.required ? Boolean(refreshToken.configured) : true;
 }
 
 async function readFieldConfigured(
@@ -219,6 +247,17 @@ export async function getPluginAuthStatus(
 			required: isRequiredAccountField(field),
 			configured: await readFieldConfigured(accountKeyManager, field),
 		});
+	}
+
+	// refresh_token stays globally optional (sync-delivery and introspect rely on
+	// that), but a rotating provider can't stay connected without it.
+	if (accessTokenRotates(authType, fields)) {
+		const refreshToken = fields.find(
+			(field) => field.level === 'account' && field.name === 'refresh_token',
+		);
+		if (refreshToken) {
+			refreshToken.required = true;
+		}
 	}
 
 	return derivePluginAuthStatus(plugin.id, authType, fields);

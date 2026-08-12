@@ -13,28 +13,44 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'abstract',
+	'activetrail',
+	'addresszen',
+	'affinda',
+	'agencyzoom',
+	'agentmail',
+	'agenty',
 	'agentql',
 	'ahrefs',
 	'airtable',
 	'algolia',
+	'alttextai',
+	'ambientweather',
+	'ambee',
 	'amplitude',
 	'apify',
+	'apilabz',
 	'asana',
 	'bitwarden',
 	'bluesky',
 	'box',
 	'cal',
 	'calendly',
+	'canva',
 	'cloudflare',
+	'cloudinary',
 	'confluence',
 	'cursor',
+	'databricks',
 	'datadog',
 	'deepseek',
 	'digitalocean',
 	'discord',
+	'dockerhub',
 	'dodopayments',
 	'dropbox',
 	'exa',
+	'facebook',
 	'figma',
 	'firecrawl',
 	'fireflies',
@@ -46,12 +62,15 @@ export const BaseProviders = [
 	'googlecalendar',
 	'googledocs',
 	'googledrive',
+	'googlemaps',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'hashnode',
 	'heygen',
 	'hubspot',
+	'huggingface',
 	'insightoai',
 	'instagram',
 	'intercom',
@@ -94,9 +113,11 @@ export const BaseProviders = [
 	'twitterapiio',
 	'typeform',
 	'vapi',
-	'whatsapp',
 	'vercel',
+	'whatsapp',
+	'wiza',
 	'xquik',
+	'youcom',
 	'youtube',
 	'zendesk',
 	'zohomail',
@@ -104,28 +125,44 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	abstract: 'Abstract',
+	activetrail: 'Active Trail',
+	addresszen: 'Addresszen',
+	affinda: 'Affinda',
+	agencyzoom: 'AgencyZoom',
+	agentmail: 'AgentMail',
+	agenty: 'Agenty',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
+	alttextai: 'AltText.ai',
+	ambientweather: 'Ambient Weather',
+	ambee: 'Ambee',
 	amplitude: 'Amplitude',
 	apify: 'Apify',
+	apilabz: 'API Labz',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	box: 'Box',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	canva: 'Canva',
 	cloudflare: 'Cloudflare',
+	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
+	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
 	exa: 'Exa',
+	facebook: 'Facebook',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
@@ -137,12 +174,15 @@ export const ProviderDisplayNames = {
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
+	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	hashnode: 'Hashnode',
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
+	huggingface: 'Hugging Face',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -185,9 +225,11 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
-	whatsapp: 'WhatsApp',
 	vercel: 'Vercel',
+	whatsapp: 'WhatsApp',
+	wiza: 'Wiza',
 	xquik: 'XQuik',
+	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
@@ -202,28 +244,44 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'abstract'
+	| 'activetrail'
+	| 'addresszen'
+	| 'affinda'
+	| 'agencyzoom'
+	| 'agentmail'
+	| 'agenty'
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
 	| 'algolia'
+	| 'alttextai'
+	| 'ambientweather'
+	| 'ambee'
 	| 'amplitude'
 	| 'apify'
+	| 'apilabz'
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canva'
 	| 'cloudflare'
+	| 'cloudinary'
 	| 'confluence'
 	| 'cursor'
+	| 'databricks'
 	| 'datadog'
 	| 'deepseek'
 	| 'digitalocean'
 	| 'discord'
+	| 'dockerhub'
 	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
+	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
@@ -235,12 +293,15 @@ export type AllProviders =
 	| 'googlecalendar'
 	| 'googledocs'
 	| 'googledrive'
+	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'hashnode'
 	| 'heygen'
 	| 'hubspot'
+	| 'huggingface'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
@@ -283,9 +344,11 @@ export type AllProviders =
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
-	| 'whatsapp'
 	| 'vercel'
+	| 'whatsapp'
+	| 'wiza'
 	| 'xquik'
+	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'

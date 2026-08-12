@@ -45,6 +45,9 @@ jobs:
       - name: Validate Plugins
         run: pnpm run validate:plugins
 
+      - name: Validate Docs
+        run: pnpm run validate:docs
+
       - name: Typecheck
         run: pnpm typecheck
 
