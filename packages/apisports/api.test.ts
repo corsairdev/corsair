@@ -1,5 +1,9 @@
 import 'dotenv/config';
-import { ApiSportsAPIError, makeApiSportsRequest } from './client';
+import {
+	ApiSportsAPIError,
+	makeApiSportsRequest,
+	normalizeQuery,
+} from './client';
 import { API_SPORTS_ROUTES } from './endpoints/routes';
 import type { ApiSportsResponse } from './endpoints/types';
 import {
@@ -9,13 +13,34 @@ import {
 
 const TEST_API_KEY = process.env.API_SPORTS_API_KEY;
 
-describe('API-Sports API Type Tests', () => {
-	it('football countries returns correct type', async () => {
-		if (!TEST_API_KEY) {
-			console.warn('Skipping: API_SPORTS_API_KEY not set');
-			return;
-		}
+describe('normalizeQuery', () => {
+	it('joins array query params with hyphens', () => {
+		expect(normalizeQuery({ ids: [1208002, 1208003] })).toEqual({
+			ids: '1208002-1208003',
+		});
+		expect(normalizeQuery({ ids: [1, 2], live: true })).toEqual({
+			ids: '1-2',
+			live: true,
+		});
+	});
+});
 
+describe('API-Sports auth body errors', () => {
+	it('throws auth body errors for invalid key', async () => {
+		await expect(
+			makeApiSportsRequest<ApiSportsResponse>('football', '/countries', {
+				apiKey: 'invalid',
+			}),
+		).rejects.toThrow(/token|application key/i);
+	});
+});
+
+(TEST_API_KEY ? describe : describe.skip)('API-Sports API Type Tests', () => {
+	if (!TEST_API_KEY) {
+		console.warn('Skipping: API_SPORTS_API_KEY not set');
+	}
+
+	it('football countries returns correct type', async () => {
 		const response = await makeApiSportsRequest<ApiSportsResponse>(
 			'football',
 			'/countries',
@@ -27,8 +52,6 @@ describe('API-Sports API Type Tests', () => {
 	});
 
 	it('football timezone returns correct type', async () => {
-		if (!TEST_API_KEY) return;
-
 		const response = await makeApiSportsRequest<ApiSportsResponse>(
 			'football',
 			'/timezone',
@@ -40,8 +63,6 @@ describe('API-Sports API Type Tests', () => {
 	});
 
 	it('nba status returns correct type', async () => {
-		if (!TEST_API_KEY) return;
-
 		const response = await makeApiSportsRequest<ApiSportsResponse>(
 			'nba',
 			'/status',
@@ -53,8 +74,6 @@ describe('API-Sports API Type Tests', () => {
 	});
 
 	it('standings stages route hits football host', async () => {
-		if (!TEST_API_KEY) return;
-
 		const route = API_SPORTS_ROUTES.getStandingsStages;
 		expect(route.sport).toBe('football');
 
@@ -69,8 +88,6 @@ describe('API-Sports API Type Tests', () => {
 	});
 
 	it('standings groups route hits football host', async () => {
-		if (!TEST_API_KEY) return;
-
 		const route = API_SPORTS_ROUTES.getStandingsGroups;
 		expect(route.sport).toBe('football');
 
@@ -84,8 +101,6 @@ describe('API-Sports API Type Tests', () => {
 	});
 
 	it('games events route hits nfl host', async () => {
-		if (!TEST_API_KEY) return;
-
 		const route = API_SPORTS_ROUTES.getGamesEvents;
 		expect(route.sport).toBe('nfl');
 
@@ -99,38 +114,13 @@ describe('API-Sports API Type Tests', () => {
 	});
 
 	it('throws on API-Sports body errors', async () => {
-		if (!TEST_API_KEY) return;
+		const error = await makeApiSportsRequest<ApiSportsResponse>(
+			'nba',
+			'/games/events',
+			{ apiKey: TEST_API_KEY },
+		).catch((e: unknown) => e);
 
-		await expect(
-			makeApiSportsRequest<ApiSportsResponse>('nba', '/games/events', {
-				apiKey: TEST_API_KEY,
-			}),
-		).rejects.toBeInstanceOf(ApiSportsAPIError);
-	});
-
-	it('throws auth body errors for invalid key', async () => {
-		await expect(
-			makeApiSportsRequest<ApiSportsResponse>('football', '/countries', {
-				apiKey: 'invalid',
-			}),
-		).rejects.toThrow(/token|application key/i);
-	});
-
-	it('joins array query params with hyphens', async () => {
-		if (!TEST_API_KEY) return;
-
-		// Free plan may reject ids; assert we don't get a repeated-key style failure —
-		// either results or a plan/parameter body error (still proves request was formed).
-		try {
-			const response = await makeApiSportsRequest<ApiSportsResponse>(
-				'football',
-				'/fixtures',
-				{ apiKey: TEST_API_KEY, query: { ids: [1208002, 1208003] } },
-			);
-			ApiSportsResponseSchema.parse(response);
-		} catch (error) {
-			expect(error).toBeInstanceOf(ApiSportsAPIError);
-			expect((error as Error).message.toLowerCase()).not.toContain('endpoint');
-		}
+		expect(error).toBeInstanceOf(ApiSportsAPIError);
+		expect((error as Error).message).toMatch(/endpoint/i);
 	});
 });

@@ -56,7 +56,7 @@ export type ApiSportsQueryValue =
 	| undefined;
 
 /** API-Sports multi-id filters expect `ids=1-2-3`, not repeated keys. */
-function normalizeQuery(
+export function normalizeQuery(
 	query: Record<string, ApiSportsQueryValue>,
 ): Record<string, string | number | boolean> {
 	const out: Record<string, string | number | boolean> = {};
