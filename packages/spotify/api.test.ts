@@ -26,6 +26,11 @@ import type {
 import { SpotifyEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_ACCESS_TOKEN = process.env.SPOTIFY_ACCESS_TOKEN || '';
+
+if (!TEST_ACCESS_TOKEN) {
+	console.warn('Skipping Spotify API tests: SPOTIFY_ACCESS_TOKEN is not set.');
+}
+
 const describeApi = TEST_ACCESS_TOKEN ? describe : describe.skip;
 
 describeApi('Spotify API Type Tests', () => {
