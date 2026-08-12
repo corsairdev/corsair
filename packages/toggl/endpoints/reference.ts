@@ -32,14 +32,14 @@ export const getCountrySubdivisions: TogglEndpoints['referenceGetCountrySubdivis
 	async (ctx, input) => {
 		const result = await makeTogglRequest<
 			TogglEndpointOutputs['referenceGetCountrySubdivisions']
-		>(`countries/${input.country_code}/subdivisions`, ctx.key, {
+		>(`countries/${input.country_id}/subdivisions`, ctx.key, {
 			method: 'GET',
 		});
 
 		await logEventFromContext(
 			ctx,
 			'toggl.reference.getCountrySubdivisions',
-			auditPayload(input, ['country_code']),
+			auditPayload(input, ['country_id']),
 			'completed',
 		);
 		return result ?? [];

@@ -706,7 +706,7 @@ const togglEndpointMeta = {
 	},
 	'reference.getCountrySubdivisions': {
 		riskLevel: 'read',
-		description: 'List states or provinces for a country',
+		description: 'List states or provinces for a country id from getCountries',
 	},
 	'reference.getCurrencies': {
 		riskLevel: 'read',

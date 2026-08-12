@@ -197,10 +197,10 @@ describe('reference data', () => {
 		expect(result[0]?.name).toBe('United States');
 	});
 
-	it('lists country subdivisions for a country code', async () => {
-		mockResponse([{ name: 'California', code: 'US-CA' }]);
-		await Reference.getCountrySubdivisions(makeCtx(), { country_code: 'US' });
-		expect(requested().url).toBe(`${BASE}/countries/US/subdivisions`);
+	it('lists country subdivisions for a country id', async () => {
+		mockResponse([{ name: 'California', iso_code: 'US-CA', country_id: 235 }]);
+		await Reference.getCountrySubdivisions(makeCtx(), { country_id: 235 });
+		expect(requested().url).toBe(`${BASE}/countries/235/subdivisions`);
 	});
 
 	it('lists currencies', async () => {

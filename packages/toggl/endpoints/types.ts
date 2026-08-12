@@ -238,9 +238,11 @@ export type TogglCountry = z.infer<typeof TogglCountrySchema>;
 
 export const TogglCountrySubdivisionSchema = z
 	.object({
+		country_subdivision_id: z.number().nullable().optional(),
+		country_id: z.number().nullable().optional(),
 		name: z.string(),
-		code: z.string().nullable().optional(),
-		country_code: z.string().nullable().optional(),
+		/** ISO 3166-2 code, e.g. `US-AL`. */
+		iso_code: z.string().nullable().optional(),
 	})
 	.loose();
 export type TogglCountrySubdivision = z.infer<
@@ -806,7 +808,8 @@ export type MeDisableWeeklyReportInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const ReferenceGetCountrySubdivisionsInputSchema = z.object({
-	country_code: z.string().min(2),
+	/** Numeric id from `reference.getCountries` — ISO codes are rejected by Toggl. */
+	country_id: TogglIdSchema,
 });
 export type ReferenceGetCountrySubdivisionsInput = z.infer<
 	typeof ReferenceGetCountrySubdivisionsInputSchema
