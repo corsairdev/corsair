@@ -1,0 +1,185 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeTogglRequest } from '../client';
+import type { TogglEndpoints } from '../index';
+import { auditPayload } from './logging';
+import type { TogglEndpointOutputs } from './types';
+
+export const list: TogglEndpoints['timeEntriesList'] = async (ctx, input) => {
+	const result = await makeTogglRequest<
+		TogglEndpointOutputs['timeEntriesList']
+	>('me/time_entries', ctx.key, {
+		method: 'GET',
+		query: {
+			start_date: input.start_date,
+			end_date: input.end_date,
+			since: input.since,
+			before: input.before,
+			meta: input.meta,
+		},
+	});
+
+	const entries = result ?? [];
+
+	await logEventFromContext(
+		ctx,
+		'toggl.timeEntries.list',
+		auditPayload(input, ['start_date', 'end_date', 'since', 'before', 'meta']),
+		'completed',
+	);
+	return entries;
+};
+
+export const getCurrent: TogglEndpoints['timeEntriesGetCurrent'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<
+		TogglEndpointOutputs['timeEntriesGetCurrent']
+	>('me/time_entries/current', ctx.key, { method: 'GET' });
+
+	await logEventFromContext(
+		ctx,
+		'toggl.timeEntries.getCurrent',
+		auditPayload(input, []),
+		'completed',
+	);
+	// Toggl returns null when no timer is running.
+	return result ?? null;
+};
+
+export const get: TogglEndpoints['timeEntriesGet'] = async (ctx, input) => {
+	const result = await makeTogglRequest<TogglEndpointOutputs['timeEntriesGet']>(
+		`me/time_entries/${input.time_entry_id}`,
+		ctx.key,
+		{ method: 'GET' },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.timeEntries.get',
+		auditPayload(input, ['time_entry_id']),
+		'completed',
+	);
+	return result;
+};
+
+export const create: TogglEndpoints['timeEntriesCreate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<
+		TogglEndpointOutputs['timeEntriesCreate']
+	>(`workspaces/${input.workspace_id}/time_entries`, ctx.key, {
+		method: 'POST',
+		body: {
+			description: input.description,
+			start: input.start,
+			stop: input.stop,
+			duration: input.duration,
+			workspace_id: input.workspace_id,
+			project_id: input.project_id,
+			task_id: input.task_id,
+			billable: input.billable,
+			tags: input.tags,
+			tag_ids: input.tag_ids,
+			// Toggl requires a client identifier on writes.
+			created_with: input.created_with ?? 'corsair',
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'toggl.timeEntries.create',
+		auditPayload(input, [
+			'workspace_id',
+			'project_id',
+			'task_id',
+			'billable',
+			'duration',
+			'start',
+			'stop',
+		]),
+		'completed',
+	);
+	return result;
+};
+
+export const update: TogglEndpoints['timeEntriesUpdate'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<
+		TogglEndpointOutputs['timeEntriesUpdate']
+	>(
+		`workspaces/${input.workspace_id}/time_entries/${input.time_entry_id}`,
+		ctx.key,
+		{
+			method: 'PUT',
+			body: {
+				description: input.description,
+				start: input.start,
+				stop: input.stop,
+				duration: input.duration,
+				project_id: input.project_id,
+				task_id: input.task_id,
+				billable: input.billable,
+				tags: input.tags,
+				tag_ids: input.tag_ids,
+			},
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.timeEntries.update',
+		auditPayload(input, [
+			'workspace_id',
+			'time_entry_id',
+			'project_id',
+			'task_id',
+			'billable',
+			'duration',
+			'start',
+			'stop',
+		]),
+		'completed',
+	);
+	return result;
+};
+
+export const stop: TogglEndpoints['timeEntriesStop'] = async (ctx, input) => {
+	const result = await makeTogglRequest<
+		TogglEndpointOutputs['timeEntriesStop']
+	>(
+		`workspaces/${input.workspace_id}/time_entries/${input.time_entry_id}/stop`,
+		ctx.key,
+		{ method: 'PATCH' },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.timeEntries.stop',
+		auditPayload(input, ['workspace_id', 'time_entry_id']),
+		'completed',
+	);
+	return result;
+};
+
+export const remove: TogglEndpoints['timeEntriesDelete'] = async (
+	ctx,
+	input,
+) => {
+	await makeTogglRequest<unknown>(
+		`workspaces/${input.workspace_id}/time_entries/${input.time_entry_id}`,
+		ctx.key,
+		{ method: 'DELETE' },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.timeEntries.delete',
+		auditPayload(input, ['workspace_id', 'time_entry_id']),
+		'completed',
+	);
+	return { deleted: true, id: input.time_entry_id };
+};
