@@ -288,16 +288,68 @@ describe('clients', () => {
 		expect(db.clients.upsertByEntityId).toHaveBeenCalledTimes(1);
 	});
 
-	it('skips the cache when archive answers with an id envelope', async () => {
+	it('re-reads the client when archive answers with an id envelope', async () => {
+		// Toggl answers with the ids it touched rather than a client record. That
+		// carries no fields to cache, but leaving the row untouched would keep
+		// reporting the client as active, so the client is re-read instead.
 		const { ctx, db } = makeCtx();
-		// Toggl can answer with the ids it touched rather than a client record.
-		// Caching that would key the row on an undefined id.
-		mockResponse({ items: [client.id] });
+		let call = 0;
+		global.fetch = (async (url: string, init: RequestInit) => {
+			call += 1;
+			lastCall = { url, init };
+			const body =
+				call === 1 ? { items: [client.id] } : { ...client, archived: true };
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url,
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => body,
+				text: async () => JSON.stringify(body),
+			};
+		}) as unknown as typeof global.fetch;
+
 		const result = await Clients.archive(ctx, {
 			workspace_id: WS,
 			client_id: client.id,
 		});
+
 		expect(result).toMatchObject({ items: [client.id] });
+		expect(call).toBe(2);
+		expect(requested().url).toBe(
+			`${BASE}/workspaces/${WS}/clients/${client.id}`,
+		);
+		expect(db.clients.upsertByEntityId).toHaveBeenCalledWith(
+			String(client.id),
+			expect.objectContaining({ archived: true }),
+		);
+	});
+
+	it('evicts the cached client when the re-read fails', async () => {
+		const { ctx, db } = makeCtx();
+		let call = 0;
+		global.fetch = (async (url: string, init: RequestInit) => {
+			call += 1;
+			lastCall = { url, init };
+			if (call > 1) throw new Error('network down');
+			const body = { items: [client.id] };
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url,
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => body,
+				text: async () => JSON.stringify(body),
+			};
+		}) as unknown as typeof global.fetch;
+		jest.spyOn(console, 'warn').mockImplementation(() => {});
+
+		await Clients.archive(ctx, { workspace_id: WS, client_id: client.id });
+
+		// A cache miss is safe; a stale hit saying the client is active is not.
+		expect(db.clients.deleteByEntityId).toHaveBeenCalledWith(String(client.id));
 		expect(db.clients.upsertByEntityId).not.toHaveBeenCalled();
 	});
 

@@ -138,11 +138,30 @@ export const archive: TogglEndpoints['clientsArchive'] = async (ctx, input) => {
 		{ method: 'POST' },
 	);
 
-	// Only refresh the cache when Toggl answered with a client record — the
-	// `{ items: [...] }` envelope carries no fields to cache, and writing it
-	// would key the row on an undefined id.
 	if (isClientRecord(result)) {
 		await cacheClient(ctx.db.clients, result);
+	} else if (ctx.db.clients) {
+		// Toggl's documented `{ items: [...] }` envelope carries no client fields,
+		// so there is nothing to write. Leaving the cache untouched would keep
+		// serving the row as unarchived, so re-read the client and store that.
+		// Falls back to eviction, because a cache miss is safe where a stale hit
+		// reporting the client as active is not.
+		try {
+			const refreshed = await makeTogglRequest<
+				TogglEndpointOutputs['clientsGet']
+			>(
+				`workspaces/${input.workspace_id}/clients/${input.client_id}`,
+				ctx.key,
+				{ method: 'GET' },
+			);
+			await cacheClient(ctx.db.clients, refreshed);
+		} catch (error) {
+			console.warn(
+				`[TOGGL:clients.archive] could not refresh cached client ${input.client_id}, evicting instead:`,
+				error,
+			);
+			await evictEntity(ctx.db.clients, input.client_id, 'client');
+		}
 	}
 
 	await logEventFromContext(
