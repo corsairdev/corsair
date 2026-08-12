@@ -81,6 +81,7 @@ export type TogglEndpoints = {
 	clientsGet: TogglEndpoint<'clientsGet'>;
 	clientsCreate: TogglEndpoint<'clientsCreate'>;
 	clientsUpdate: TogglEndpoint<'clientsUpdate'>;
+	clientsArchive: TogglEndpoint<'clientsArchive'>;
 	clientsDelete: TogglEndpoint<'clientsDelete'>;
 	projectsList: TogglEndpoint<'projectsList'>;
 	projectsGet: TogglEndpoint<'projectsGet'>;
@@ -128,7 +129,6 @@ export type TogglEndpoints = {
 	organizationsGetSubscriptionPlans: TogglEndpoint<'organizationsGetSubscriptionPlans'>;
 	workspacesGetLogo: TogglEndpoint<'workspacesGetLogo'>;
 	workspacesGetPreferences: TogglEndpoint<'workspacesGetPreferences'>;
-	tasksListWorkspace: TogglEndpoint<'tasksListWorkspace'>;
 	projectsAddUser: TogglEndpoint<'projectsAddUser'>;
 	projectsDeleteGroup: TogglEndpoint<'projectsDeleteGroup'>;
 	timeEntriesBulkEdit: TogglEndpoint<'timeEntriesBulkEdit'>;
@@ -187,6 +187,7 @@ const togglEndpointsNested = {
 		get: Clients.get,
 		create: Clients.create,
 		update: Clients.update,
+		archive: Clients.archive,
 		delete: Clients.delete,
 	},
 	projects: {
@@ -204,7 +205,6 @@ const togglEndpointsNested = {
 		create: Tasks.create,
 		update: Tasks.update,
 		delete: Tasks.delete,
-		listWorkspace: Tasks.listWorkspace,
 	},
 	tags: {
 		list: Tags.list,
@@ -310,6 +310,10 @@ export const togglEndpointSchemas = {
 	'clients.update': {
 		input: TogglEndpointInputSchemas.clientsUpdate,
 		output: TogglEndpointOutputSchemas.clientsUpdate,
+	},
+	'clients.archive': {
+		input: TogglEndpointInputSchemas.clientsArchive,
+		output: TogglEndpointOutputSchemas.clientsArchive,
 	},
 	'clients.delete': {
 		input: TogglEndpointInputSchemas.clientsDelete,
@@ -499,10 +503,6 @@ export const togglEndpointSchemas = {
 		input: TogglEndpointInputSchemas.workspacesGetPreferences,
 		output: TogglEndpointOutputSchemas.workspacesGetPreferences,
 	},
-	'tasks.listWorkspace': {
-		input: TogglEndpointInputSchemas.tasksListWorkspace,
-		output: TogglEndpointOutputSchemas.tasksListWorkspace,
-	},
 	'projects.addUser': {
 		input: TogglEndpointInputSchemas.projectsAddUser,
 		output: TogglEndpointOutputSchemas.projectsAddUser,
@@ -602,6 +602,10 @@ const togglEndpointMeta = {
 	'clients.update': {
 		riskLevel: 'write',
 		description: 'Update or archive a client',
+	},
+	'clients.archive': {
+		riskLevel: 'write',
+		description: 'Archive a client',
 	},
 	'clients.delete': {
 		riskLevel: 'destructive',
@@ -760,10 +764,6 @@ const togglEndpointMeta = {
 	'workspaces.getPreferences': {
 		riskLevel: 'read',
 		description: 'Get workspace preferences',
-	},
-	'tasks.listWorkspace': {
-		riskLevel: 'read',
-		description: 'List all tasks in a workspace',
 	},
 	'projects.addUser': {
 		riskLevel: 'write',

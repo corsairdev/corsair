@@ -5,18 +5,38 @@ import { auditPayload } from './logging';
 import type { TogglEndpointOutputs } from './types';
 
 export const list: TogglEndpoints['tasksList'] = async (ctx, input) => {
-	const result = await makeTogglRequest<TogglEndpointOutputs['tasksList']>(
-		`workspaces/${input.workspace_id}/projects/${input.project_id}/tasks`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	// Project-scoped reads return a bare array; the workspace-wide route wraps
+	// the same records in a paginated envelope.
+	const path =
+		input.project_id === undefined
+			? `workspaces/${input.workspace_id}/tasks`
+			: `workspaces/${input.workspace_id}/projects/${input.project_id}/tasks`;
 
-	const tasks = result ?? [];
+	const result = await makeTogglRequest<
+		| TogglEndpointOutputs['tasksList']
+		| { data?: TogglEndpointOutputs['tasksList'] | null }
+		| null
+	>(path, ctx.key, {
+		method: 'GET',
+		query: {
+			active: input.active,
+			page: input.page,
+			per_page: input.per_page,
+		},
+	});
+
+	const tasks = Array.isArray(result) ? result : (result?.data ?? []);
 
 	await logEventFromContext(
 		ctx,
 		'toggl.tasks.list',
-		auditPayload(input, ['workspace_id', 'project_id']),
+		auditPayload(input, [
+			'workspace_id',
+			'project_id',
+			'active',
+			'page',
+			'per_page',
+		]),
 		'completed',
 	);
 	return tasks;
@@ -111,33 +131,4 @@ export const remove: TogglEndpoints['tasksDelete'] = async (ctx, input) => {
 		'completed',
 	);
 	return { deleted: true, id: input.task_id };
-};
-
-/**
- * Lists every task in a workspace rather than within one project. Toggl wraps
- * this response in a paginated envelope, unlike the project-scoped variant
- * which returns a bare array.
- */
-export const listWorkspace: TogglEndpoints['tasksListWorkspace'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeTogglRequest<{
-		data?: TogglEndpointOutputs['tasksListWorkspace'] | null;
-	}>(`workspaces/${input.workspace_id}/tasks`, ctx.key, {
-		method: 'GET',
-		query: {
-			active: input.active,
-			page: input.page,
-			per_page: input.per_page,
-		},
-	});
-
-	await logEventFromContext(
-		ctx,
-		'toggl.tasks.listWorkspace',
-		auditPayload(input, ['workspace_id', 'active', 'page', 'per_page']),
-		'completed',
-	);
-	return result?.data ?? [];
 };

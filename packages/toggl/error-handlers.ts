@@ -31,12 +31,18 @@ export const errorHandlers = {
 	 */
 	RATE_LIMIT_ERROR: {
 		match: (error, context) => {
-			if (error instanceof ApiError && error.status === 429) {
+			// 429 is the leaky bucket. 402 is the separate sliding-window quota
+			// Toggl applies per organization, which also clears with time.
+			if (
+				error instanceof ApiError &&
+				(error.status === 429 || error.status === 402)
+			) {
 				return true;
 			}
 			const errorMessage = error.message.toLowerCase();
 			return (
 				errorMessage.includes('too many requests') ||
+				errorMessage.includes('quota exceeded') ||
 				error.message.includes('429')
 			);
 		},

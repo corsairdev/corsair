@@ -37,251 +37,316 @@ export const TogglUserSchema = z.object({
 });
 export type TogglUser = z.infer<typeof TogglUserSchema>;
 
-export const TogglUserPreferencesSchema = z.object({
-	timeofday_format: z.string().nullable().optional(),
-	date_format: z.string().nullable().optional(),
-	duration_format: z.string().nullable().optional(),
-	CollapseTimeEntries: z.boolean().nullable().optional(),
-});
+/**
+ * Field names here are taken from a live `/me/preferences` response. Toggl
+ * mixes casing conventions in this payload (`BeginningOfWeek` alongside
+ * snake_case), and the set varies by plan, so the schema is loose.
+ */
+export const TogglUserPreferencesSchema = z
+	.object({
+		BeginningOfWeek: z.number().nullable().optional(),
+		timeofday_format: z.string().nullable().optional(),
+		date_format: z.string().nullable().optional(),
+		duration_format: z.string().nullable().optional(),
+		record_timeline: z.boolean().nullable().optional(),
+		send_product_emails: z.boolean().nullable().optional(),
+		send_timer_notifications: z.boolean().nullable().optional(),
+		send_weekly_report: z.boolean().nullable().optional(),
+		pg_time_zone_name: z.string().nullable().optional(),
+		alpha_features: z
+			.array(z.record(z.string(), z.unknown()))
+			.nullable()
+			.optional(),
+	})
+	.loose();
 export type TogglUserPreferences = z.infer<typeof TogglUserPreferencesSchema>;
 
-export const TogglWorkspaceSchema = z.object({
-	id: z.number(),
-	organization_id: z.number().nullable().optional(),
-	name: z.string(),
-	premium: z.boolean().nullable().optional(),
-	business_ws: z.boolean().nullable().optional(),
-	admin: z.boolean().nullable().optional(),
-	role: z.string().nullable().optional(),
-	default_currency: z.string().nullable().optional(),
-	default_hourly_rate: z.number().nullable().optional(),
-	only_admins_may_create_projects: z.boolean().nullable().optional(),
-	only_admins_may_create_tags: z.boolean().nullable().optional(),
-	only_admins_see_billable_rates: z.boolean().nullable().optional(),
-	rounding: z.number().nullable().optional(),
-	rounding_minutes: z.number().nullable().optional(),
-	suspended_at: z.string().nullable().optional(),
-	server_deleted_at: z.string().nullable().optional(),
-	logo_url: z.string().nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglWorkspaceSchema = z
+	.object({
+		id: z.number(),
+		organization_id: z.number().nullable().optional(),
+		name: z.string(),
+		premium: z.boolean().nullable().optional(),
+		business_ws: z.boolean().nullable().optional(),
+		admin: z.boolean().nullable().optional(),
+		role: z.string().nullable().optional(),
+		default_currency: z.string().nullable().optional(),
+		default_hourly_rate: z.number().nullable().optional(),
+		only_admins_may_create_projects: z.boolean().nullable().optional(),
+		only_admins_may_create_tags: z.boolean().nullable().optional(),
+		only_admins_see_billable_rates: z.boolean().nullable().optional(),
+		rounding: z.number().nullable().optional(),
+		rounding_minutes: z.number().nullable().optional(),
+		suspended_at: z.string().nullable().optional(),
+		server_deleted_at: z.string().nullable().optional(),
+		logo_url: z.string().nullable().optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglWorkspace = z.infer<typeof TogglWorkspaceSchema>;
 
-export const TogglWorkspaceUserSchema = z.object({
-	id: z.number(),
-	user_id: z.number().nullable().optional(),
-	workspace_id: z.number().nullable().optional(),
-	admin: z.boolean().nullable().optional(),
-	active: z.boolean().nullable().optional(),
-	email: z.string().nullable().optional(),
-	name: z.string().nullable().optional(),
-	role: z.string().nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglWorkspaceUserSchema = z
+	.object({
+		id: z.number(),
+		user_id: z.number().nullable().optional(),
+		workspace_id: z.number().nullable().optional(),
+		admin: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		email: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		role: z.string().nullable().optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglWorkspaceUser = z.infer<typeof TogglWorkspaceUserSchema>;
 
-export const TogglOrganizationSchema = z.object({
-	id: z.number(),
-	name: z.string(),
-	pricing_plan_id: z.number().nullable().optional(),
-	created_at: z.string().nullable().optional(),
-	is_multi_workspace_enabled: z.boolean().nullable().optional(),
-	max_workspaces: z.number().nullable().optional(),
-	admin: z.boolean().nullable().optional(),
-	owner: z.boolean().nullable().optional(),
-	trial_info: z.unknown().nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglOrganizationSchema = z
+	.object({
+		id: z.number(),
+		name: z.string(),
+		pricing_plan_id: z.number().nullable().optional(),
+		created_at: z.string().nullable().optional(),
+		is_multi_workspace_enabled: z.boolean().nullable().optional(),
+		max_workspaces: z.number().nullable().optional(),
+		admin: z.boolean().nullable().optional(),
+		owner: z.boolean().nullable().optional(),
+		trial_info: z.unknown().nullable().optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglOrganization = z.infer<typeof TogglOrganizationSchema>;
 
-export const TogglClientSchema = z.object({
-	id: z.number(),
-	wid: z.number().nullable().optional(),
-	name: z.string(),
-	archived: z.boolean().nullable().optional(),
-	creator_id: z.number().nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglClientSchema = z
+	.object({
+		id: z.number(),
+		wid: z.number().nullable().optional(),
+		name: z.string(),
+		notes: z.string().nullable().optional(),
+		archived: z.boolean().nullable().optional(),
+		creator_id: z.number().nullable().optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglClient = z.infer<typeof TogglClientSchema>;
 
-export const TogglProjectSchema = z.object({
-	id: z.number(),
-	workspace_id: z.number().nullable().optional(),
-	client_id: z.number().nullable().optional(),
-	name: z.string(),
-	is_private: z.boolean().nullable().optional(),
-	active: z.boolean().nullable().optional(),
-	billable: z.boolean().nullable().optional(),
-	color: z.string().nullable().optional(),
-	currency: z.string().nullable().optional(),
-	rate: z.number().nullable().optional(),
-	estimated_hours: z.number().nullable().optional(),
-	actual_hours: z.number().nullable().optional(),
-	start_date: z.string().nullable().optional(),
-	end_date: z.string().nullable().optional(),
-	template: z.boolean().nullable().optional(),
-	recurring: z.boolean().nullable().optional(),
-	server_deleted_at: z.string().nullable().optional(),
-	created_at: z.string().nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglProjectSchema = z
+	.object({
+		id: z.number(),
+		workspace_id: z.number().nullable().optional(),
+		client_id: z.number().nullable().optional(),
+		name: z.string(),
+		is_private: z.boolean().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		billable: z.boolean().nullable().optional(),
+		color: z.string().nullable().optional(),
+		currency: z.string().nullable().optional(),
+		rate: z.number().nullable().optional(),
+		estimated_hours: z.number().nullable().optional(),
+		actual_hours: z.number().nullable().optional(),
+		start_date: z.string().nullable().optional(),
+		end_date: z.string().nullable().optional(),
+		template: z.boolean().nullable().optional(),
+		recurring: z.boolean().nullable().optional(),
+		server_deleted_at: z.string().nullable().optional(),
+		created_at: z.string().nullable().optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglProject = z.infer<typeof TogglProjectSchema>;
 
-export const TogglTaskSchema = z.object({
-	id: z.number(),
-	workspace_id: z.number().nullable().optional(),
-	project_id: z.number().nullable().optional(),
-	user_id: z.number().nullable().optional(),
-	name: z.string(),
-	active: z.boolean().nullable().optional(),
-	estimated_seconds: z.number().nullable().optional(),
-	tracked_seconds: z.number().nullable().optional(),
-	server_deleted_at: z.string().nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglTaskSchema = z
+	.object({
+		id: z.number(),
+		workspace_id: z.number().nullable().optional(),
+		project_id: z.number().nullable().optional(),
+		user_id: z.number().nullable().optional(),
+		name: z.string(),
+		active: z.boolean().nullable().optional(),
+		estimated_seconds: z.number().nullable().optional(),
+		tracked_seconds: z.number().nullable().optional(),
+		server_deleted_at: z.string().nullable().optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglTask = z.infer<typeof TogglTaskSchema>;
 
-export const TogglTagSchema = z.object({
-	id: z.number(),
-	workspace_id: z.number().nullable().optional(),
-	name: z.string(),
-	creator_id: z.number().nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglTagSchema = z
+	.object({
+		id: z.number(),
+		workspace_id: z.number().nullable().optional(),
+		name: z.string(),
+		creator_id: z.number().nullable().optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglTag = z.infer<typeof TogglTagSchema>;
 
-export const TogglTimeEntrySchema = z.object({
-	id: z.number(),
-	workspace_id: z.number().nullable().optional(),
-	project_id: z.number().nullable().optional(),
-	task_id: z.number().nullable().optional(),
-	user_id: z.number().nullable().optional(),
-	description: z.string().nullable().optional(),
-	start: z.string(),
-	stop: z.string().nullable().optional(),
-	duration: z.number(),
-	billable: z.boolean().nullable().optional(),
-	duronly: z.boolean().nullable().optional(),
-	tags: z.array(z.string()).nullable().optional(),
-	tag_ids: z.array(z.number()).nullable().optional(),
-	server_deleted_at: z.string().nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglTimeEntrySchema = z
+	.object({
+		id: z.number(),
+		workspace_id: z.number().nullable().optional(),
+		project_id: z.number().nullable().optional(),
+		task_id: z.number().nullable().optional(),
+		user_id: z.number().nullable().optional(),
+		description: z.string().nullable().optional(),
+		start: z.string(),
+		stop: z.string().nullable().optional(),
+		duration: z.number(),
+		billable: z.boolean().nullable().optional(),
+		duronly: z.boolean().nullable().optional(),
+		tags: z.array(z.string()).nullable().optional(),
+		tag_ids: z.array(z.number()).nullable().optional(),
+		server_deleted_at: z.string().nullable().optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglTimeEntry = z.infer<typeof TogglTimeEntrySchema>;
 
-export const TogglLocationSchema = z.object({
-	city: z.string().nullable().optional(),
-	city_lat_long: z.string().nullable().optional(),
-	state: z.string().nullable().optional(),
-	country_code: z.string().nullable().optional(),
-	country_name: z.string().nullable().optional(),
-});
+export const TogglLocationSchema = z
+	.object({
+		city: z.string().nullable().optional(),
+		city_lat_long: z.string().nullable().optional(),
+		state: z.string().nullable().optional(),
+		country_code: z.string().nullable().optional(),
+		country_name: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglLocation = z.infer<typeof TogglLocationSchema>;
 
-export const TogglQuotaSchema = z.object({
-	organization_id: z.number(),
-	remaining: z.number(),
-	total: z.number(),
-	resets_in_secs: z.number().nullable().optional(),
-});
+export const TogglQuotaSchema = z
+	.object({
+		organization_id: z.number(),
+		remaining: z.number(),
+		total: z.number(),
+		resets_in_secs: z.number().nullable().optional(),
+	})
+	.loose();
 export type TogglQuota = z.infer<typeof TogglQuotaSchema>;
 
-export const TogglCountrySchema = z.object({
-	id: z.number(),
-	name: z.string(),
-	country_code: z.string().nullable().optional(),
-	vat_applicable: z.boolean().nullable().optional(),
-	vat_percentage: z.number().nullable().optional(),
-	vat_regex: z.string().nullable().optional(),
-});
+export const TogglCountrySchema = z
+	.object({
+		id: z.number(),
+		name: z.string(),
+		country_code: z.string().nullable().optional(),
+		vat_applicable: z.boolean().nullable().optional(),
+		vat_percentage: z.number().nullable().optional(),
+		vat_regex: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglCountry = z.infer<typeof TogglCountrySchema>;
 
-export const TogglCountrySubdivisionSchema = z.object({
-	name: z.string(),
-	code: z.string().nullable().optional(),
-	country_code: z.string().nullable().optional(),
-});
+export const TogglCountrySubdivisionSchema = z
+	.object({
+		name: z.string(),
+		code: z.string().nullable().optional(),
+		country_code: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglCountrySubdivision = z.infer<
 	typeof TogglCountrySubdivisionSchema
 >;
 
-export const TogglCurrencySchema = z.object({
-	currency_id: z.number().nullable().optional(),
-	iso_code: z.string(),
-	symbol: z.string().nullable().optional(),
-});
+export const TogglCurrencySchema = z
+	.object({
+		currency_id: z.number().nullable().optional(),
+		iso_code: z.string(),
+		symbol: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglCurrency = z.infer<typeof TogglCurrencySchema>;
 
-export const TogglTimezoneOffsetSchema = z.object({
-	name: z.string(),
-	utc: z.string(),
-});
+export const TogglTimezoneOffsetSchema = z
+	.object({
+		name: z.string(),
+		utc: z.string(),
+	})
+	.loose();
 export type TogglTimezoneOffset = z.infer<typeof TogglTimezoneOffsetSchema>;
 
 /** JWKS keyset used to verify Toggl-issued JWTs. */
-export const TogglKeysetSchema = z.object({
-	keys: z.array(z.record(z.string(), z.unknown())),
-});
+export const TogglKeysetSchema = z
+	.object({
+		keys: z.array(z.record(z.string(), z.unknown())),
+	})
+	.loose();
 export type TogglKeyset = z.infer<typeof TogglKeysetSchema>;
 
-export const TogglGroupSchema = z.object({
-	group_id: z.number().nullable().optional(),
-	id: z.number().nullable().optional(),
-	organization_id: z.number().nullable().optional(),
-	name: z.string(),
-	users: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
-	workspaces: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglGroupSchema = z
+	.object({
+		group_id: z.number().nullable().optional(),
+		id: z.number().nullable().optional(),
+		organization_id: z.number().nullable().optional(),
+		name: z.string(),
+		users: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
+		workspaces: z
+			.array(z.record(z.string(), z.unknown()))
+			.nullable()
+			.optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglGroup = z.infer<typeof TogglGroupSchema>;
 
-export const TogglOrganizationUserSchema = z.object({
-	id: z.number(),
-	user_id: z.number().nullable().optional(),
-	organization_id: z.number().nullable().optional(),
-	email: z.string().nullable().optional(),
-	name: z.string().nullable().optional(),
-	admin: z.boolean().nullable().optional(),
-	owner: z.boolean().nullable().optional(),
-	joined: z.boolean().nullable().optional(),
-	inactive: z.boolean().nullable().optional(),
-	workspaces: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
-	groups: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
-});
+export const TogglOrganizationUserSchema = z
+	.object({
+		id: z.number(),
+		user_id: z.number().nullable().optional(),
+		organization_id: z.number().nullable().optional(),
+		email: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		admin: z.boolean().nullable().optional(),
+		owner: z.boolean().nullable().optional(),
+		joined: z.boolean().nullable().optional(),
+		inactive: z.boolean().nullable().optional(),
+		workspaces: z
+			.array(z.record(z.string(), z.unknown()))
+			.nullable()
+			.optional(),
+		groups: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
+	})
+	.loose();
 export type TogglOrganizationUser = z.infer<typeof TogglOrganizationUserSchema>;
 
 /** Toggl returns plan/billing data with a shape that varies by tier. */
 export const TogglPlanInfoSchema = z.record(z.string(), z.unknown());
 export type TogglPlanInfo = z.infer<typeof TogglPlanInfoSchema>;
 
-export const TogglProjectUserSchema = z.object({
-	id: z.number(),
-	project_id: z.number().nullable().optional(),
-	user_id: z.number().nullable().optional(),
-	workspace_id: z.number().nullable().optional(),
-	manager: z.boolean().nullable().optional(),
-	rate: z.number().nullable().optional(),
-	labour_cost: z.number().nullable().optional(),
-	at: z.string().nullable().optional(),
-});
+export const TogglProjectUserSchema = z
+	.object({
+		id: z.number(),
+		project_id: z.number().nullable().optional(),
+		user_id: z.number().nullable().optional(),
+		workspace_id: z.number().nullable().optional(),
+		manager: z.boolean().nullable().optional(),
+		rate: z.number().nullable().optional(),
+		labour_cost: z.number().nullable().optional(),
+		at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglProjectUser = z.infer<typeof TogglProjectUserSchema>;
 
-export const TogglWorkspacePreferencesSchema = z.object({
-	initial_pricing_plan: z.number().nullable().optional(),
-	hide_start_end_times: z.boolean().nullable().optional(),
-});
+export const TogglWorkspacePreferencesSchema = z
+	.object({
+		initial_pricing_plan: z.number().nullable().optional(),
+		hide_start_end_times: z.boolean().nullable().optional(),
+	})
+	.loose();
 export type TogglWorkspacePreferences = z.infer<
 	typeof TogglWorkspacePreferencesSchema
 >;
 
-export const TogglWorkspaceLogoSchema = z.object({
-	logo: z.string().nullable().optional(),
-});
+export const TogglWorkspaceLogoSchema = z
+	.object({
+		logo: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglWorkspaceLogo = z.infer<typeof TogglWorkspaceLogoSchema>;
 
-export const TogglWebhooksStatusSchema = z.object({
-	status: z.string(),
-});
+export const TogglWebhooksStatusSchema = z
+	.object({
+		status: z.string(),
+	})
+	.loose();
 export type TogglWebhooksStatus = z.infer<typeof TogglWebhooksStatusSchema>;
 
 /** Map of entity name to the event names that can be subscribed to. */
@@ -291,25 +356,29 @@ export const TogglEventFiltersSchema = z.record(
 );
 export type TogglEventFilters = z.infer<typeof TogglEventFiltersSchema>;
 
-export const TogglSubscriptionSchema = z.object({
-	subscription_id: z.number().nullable().optional(),
-	workspace_id: z.number().nullable().optional(),
-	user_id: z.number().nullable().optional(),
-	url_callback: z.string().nullable().optional(),
-	enabled: z.boolean().nullable().optional(),
-	description: z.string().nullable().optional(),
-	event_filters: z
-		.array(z.record(z.string(), z.unknown()))
-		.nullable()
-		.optional(),
-	created_at: z.string().nullable().optional(),
-});
+export const TogglSubscriptionSchema = z
+	.object({
+		subscription_id: z.number().nullable().optional(),
+		workspace_id: z.number().nullable().optional(),
+		user_id: z.number().nullable().optional(),
+		url_callback: z.string().nullable().optional(),
+		enabled: z.boolean().nullable().optional(),
+		description: z.string().nullable().optional(),
+		event_filters: z
+			.array(z.record(z.string(), z.unknown()))
+			.nullable()
+			.optional(),
+		created_at: z.string().nullable().optional(),
+	})
+	.loose();
 export type TogglSubscription = z.infer<typeof TogglSubscriptionSchema>;
 
 /** Toggl's transactional mail endpoints answer with a bare acknowledgement. */
-export const TogglAcknowledgementSchema = z.object({
-	ok: z.literal(true),
-});
+export const TogglAcknowledgementSchema = z
+	.object({
+		ok: z.literal(true),
+	})
+	.loose();
 export type TogglAcknowledgement = z.infer<typeof TogglAcknowledgementSchema>;
 
 /* -------------------------------------------------------------------------- */
@@ -420,15 +489,23 @@ export type ClientsGetInput = z.infer<typeof ClientsGetInputSchema>;
 const ClientsCreateInputSchema = z.object({
 	workspace_id: z.number(),
 	name: z.string().min(1),
+	notes: z.string().optional(),
 });
 export type ClientsCreateInput = z.infer<typeof ClientsCreateInputSchema>;
 
 const ClientsUpdateInputSchema = z.object({
 	workspace_id: z.number(),
 	client_id: z.number(),
-	name: z.string().min(1).optional(),
-	archived: z.boolean().optional(),
+	/** Toggl rejects an update that omits the name, even when only notes change. */
+	name: z.string().min(1),
+	notes: z.string().optional(),
 });
+
+const ClientsArchiveInputSchema = z.object({
+	workspace_id: z.number(),
+	client_id: z.number(),
+});
+export type ClientsArchiveInput = z.infer<typeof ClientsArchiveInputSchema>;
 export type ClientsUpdateInput = z.infer<typeof ClientsUpdateInputSchema>;
 
 const ClientsDeleteInputSchema = z.object({
@@ -496,7 +573,11 @@ export type ProjectsDeleteInput = z.infer<typeof ProjectsDeleteInputSchema>;
 
 const TasksListInputSchema = z.object({
 	workspace_id: z.number(),
-	project_id: z.number(),
+	/** Omit to list every task in the workspace. */
+	project_id: z.number().optional(),
+	active: z.boolean().optional(),
+	page: z.number().int().positive().optional(),
+	per_page: z.number().int().positive().max(200).optional(),
 });
 export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
@@ -540,6 +621,10 @@ export type TasksDeleteInput = z.infer<typeof TasksDeleteInputSchema>;
 
 const TagsListInputSchema = z.object({
 	workspace_id: z.number(),
+	page: z.number().int().positive().optional(),
+	per_page: z.number().int().positive().max(200).optional(),
+	/** Case-insensitive substring match on the tag name. */
+	search: z.string().optional(),
 });
 export type TagsListInput = z.infer<typeof TagsListInputSchema>;
 
@@ -566,15 +651,24 @@ export type TagsDeleteInput = z.infer<typeof TagsDeleteInputSchema>;
 /* time entries                                                                */
 /* -------------------------------------------------------------------------- */
 
-const TimeEntriesListInputSchema = z.object({
-	/** RFC3339 or YYYY-MM-DD. Must be paired with `end_date`. */
-	start_date: z.string().optional(),
-	end_date: z.string().optional(),
-	/** UNIX timestamp; returns entries modified since then. */
-	since: z.number().optional(),
-	before: z.string().optional(),
-	meta: z.boolean().optional(),
-});
+const TimeEntriesListInputSchema = z
+	.object({
+		/** RFC3339 or YYYY-MM-DD. Must be supplied together with `end_date`. */
+		start_date: z.string().optional(),
+		end_date: z.string().optional(),
+		/** UNIX timestamp; returns entries modified since then. */
+		since: z.number().optional(),
+		before: z.string().optional(),
+		meta: z.boolean().optional(),
+	})
+	.refine(
+		(value) =>
+			(value.start_date === undefined) === (value.end_date === undefined),
+		{
+			message: 'start_date and end_date must be supplied together',
+			path: ['end_date'],
+		},
+	);
 export type TimeEntriesListInput = z.infer<typeof TimeEntriesListInputSchema>;
 
 const TimeEntriesGetCurrentInputSchema = z.object({});
@@ -918,6 +1012,7 @@ export type TogglEndpointInputs = {
 	clientsGet: ClientsGetInput;
 	clientsCreate: ClientsCreateInput;
 	clientsUpdate: ClientsUpdateInput;
+	clientsArchive: ClientsArchiveInput;
 	clientsDelete: ClientsDeleteInput;
 	projectsList: ProjectsListInput;
 	projectsGet: ProjectsGetInput;
@@ -965,7 +1060,6 @@ export type TogglEndpointInputs = {
 	organizationsGetSubscriptionPlans: OrganizationsGetPlansInput;
 	workspacesGetLogo: WorkspacesGetLogoInput;
 	workspacesGetPreferences: WorkspacesGetPreferencesInput;
-	tasksListWorkspace: TasksListWorkspaceInput;
 	projectsAddUser: ProjectsAddUserInput;
 	projectsDeleteGroup: ProjectsDeleteGroupInput;
 	timeEntriesBulkEdit: TimeEntriesBulkEditInput;
@@ -994,6 +1088,7 @@ export type TogglEndpointOutputs = {
 	clientsGet: TogglClient;
 	clientsCreate: TogglClient;
 	clientsUpdate: TogglClient;
+	clientsArchive: TogglClient;
 	clientsDelete: DeletedResult;
 	projectsList: TogglProject[];
 	projectsGet: TogglProject;
@@ -1041,7 +1136,6 @@ export type TogglEndpointOutputs = {
 	organizationsGetSubscriptionPlans: TogglPlanInfo;
 	workspacesGetLogo: TogglWorkspaceLogo;
 	workspacesGetPreferences: TogglWorkspacePreferences;
-	tasksListWorkspace: TogglTask[];
 	projectsAddUser: TogglProjectUser;
 	projectsDeleteGroup: DeletedResult;
 	timeEntriesBulkEdit: BulkEditResult;
@@ -1070,6 +1164,7 @@ export const TogglEndpointInputSchemas = {
 	clientsGet: ClientsGetInputSchema,
 	clientsCreate: ClientsCreateInputSchema,
 	clientsUpdate: ClientsUpdateInputSchema,
+	clientsArchive: ClientsArchiveInputSchema,
 	clientsDelete: ClientsDeleteInputSchema,
 	projectsList: ProjectsListInputSchema,
 	projectsGet: ProjectsGetInputSchema,
@@ -1117,7 +1212,6 @@ export const TogglEndpointInputSchemas = {
 	organizationsGetSubscriptionPlans: OrganizationsGetPlansInputSchema,
 	workspacesGetLogo: WorkspacesGetLogoInputSchema,
 	workspacesGetPreferences: WorkspacesGetPreferencesInputSchema,
-	tasksListWorkspace: TasksListWorkspaceInputSchema,
 	projectsAddUser: ProjectsAddUserInputSchema,
 	projectsDeleteGroup: ProjectsDeleteGroupInputSchema,
 	timeEntriesBulkEdit: TimeEntriesBulkEditInputSchema,
@@ -1146,6 +1240,7 @@ export const TogglEndpointOutputSchemas = {
 	clientsGet: TogglClientSchema,
 	clientsCreate: TogglClientSchema,
 	clientsUpdate: TogglClientSchema,
+	clientsArchive: TogglClientSchema,
 	clientsDelete: DeletedResultSchema,
 	projectsList: z.array(TogglProjectSchema),
 	projectsGet: TogglProjectSchema,
@@ -1193,7 +1288,6 @@ export const TogglEndpointOutputSchemas = {
 	organizationsGetSubscriptionPlans: TogglPlanInfoSchema,
 	workspacesGetLogo: TogglWorkspaceLogoSchema,
 	workspacesGetPreferences: TogglWorkspacePreferencesSchema,
-	tasksListWorkspace: z.array(TogglTaskSchema),
 	projectsAddUser: TogglProjectUserSchema,
 	projectsDeleteGroup: DeletedResultSchema,
 	timeEntriesBulkEdit: BulkEditResultSchema,

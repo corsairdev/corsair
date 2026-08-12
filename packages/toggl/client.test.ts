@@ -108,6 +108,16 @@ describe('error handlers', () => {
 		expect(result.maxRetries).toBe(5);
 	});
 
+	it('treats a 402 as the sliding-window quota, not a payment failure', async () => {
+		// Toggl uses 402 for its per-organization request quota, which clears
+		// with time, so it is retryable in the same way as a 429.
+		const error = apiError(402, 'Payment Required');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error, context)).toBe(true);
+
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error, context);
+		expect(result.maxRetries).toBe(5);
+	});
+
 	it('treats a plain 403 as a permission error', async () => {
 		const error = apiError(403, 'Forbidden');
 		expect(errorHandlers.PERMISSION_ERROR.match(error, context)).toBe(true);

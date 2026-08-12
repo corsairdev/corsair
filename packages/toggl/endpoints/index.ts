@@ -1,4 +1,5 @@
 import {
+	archive as clientsArchive,
 	create as clientsCreate,
 	get as clientsGet,
 	list as clientsList,
@@ -65,7 +66,6 @@ import {
 	create as tasksCreate,
 	get as tasksGet,
 	list as tasksList,
-	listWorkspace as tasksListWorkspace,
 	remove as tasksRemove,
 	update as tasksUpdate,
 } from './tasks';
@@ -138,6 +138,7 @@ export const Clients = {
 	get: clientsGet,
 	create: clientsCreate,
 	update: clientsUpdate,
+	archive: clientsArchive,
 	delete: clientsRemove,
 };
 
@@ -153,7 +154,6 @@ export const Projects = {
 
 export const Tasks = {
 	list: tasksList,
-	listWorkspace: tasksListWorkspace,
 	get: tasksGet,
 	create: tasksCreate,
 	update: tasksUpdate,

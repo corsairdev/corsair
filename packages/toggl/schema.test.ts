@@ -272,4 +272,63 @@ describe('input validation', () => {
 			TogglEndpointOutputSchemas.timeEntriesGetCurrent.parse(null),
 		).toBeNull();
 	});
+
+	it('requires start_date and end_date to be supplied together', () => {
+		const schema = TogglEndpointInputSchemas.timeEntriesList;
+		expect(() => schema.parse({ start_date: '2026-08-01' })).toThrow();
+		expect(() => schema.parse({ end_date: '2026-08-12' })).toThrow();
+		expect(
+			schema.parse({ start_date: '2026-08-01', end_date: '2026-08-12' })
+				.start_date,
+		).toBe('2026-08-01');
+		// Neither supplied is fine — it just means "recent entries".
+		expect(schema.parse({})).toEqual({});
+	});
+
+	it('accepts pagination on the tag list', () => {
+		const parsed = TogglEndpointInputSchemas.tagsList.parse({
+			workspace_id: 1,
+			page: 2,
+			per_page: 50,
+		});
+		expect(parsed.per_page).toBe(50);
+	});
+
+	it('makes project_id optional on the task list', () => {
+		expect(
+			TogglEndpointInputSchemas.tasksList.parse({ workspace_id: 1 }).project_id,
+		).toBeUndefined();
+	});
+
+	it('requires a name on every client update', () => {
+		expect(() =>
+			TogglEndpointInputSchemas.clientsUpdate.parse({
+				workspace_id: 1,
+				client_id: 2,
+				notes: 'only notes',
+			}),
+		).toThrow();
+	});
+});
+
+describe('schema strictness', () => {
+	it('keeps unknown provider fields on entity schemas', () => {
+		// Toggl adds fields over time; dropping them would make the plugin lossy.
+		const parsed = TogglClientSchema.parse({
+			id: 1,
+			name: 'Acme',
+			some_new_toggl_field: 'kept',
+		}) as Record<string, unknown>;
+		expect(parsed.some_new_toggl_field).toBe('kept');
+	});
+
+	it('still strips api_token from the user schema', () => {
+		// The one schema that must stay strict.
+		const parsed = TogglUserSchema.parse({
+			id: 1,
+			email: 'user@example.com',
+			api_token: 'a-reusable-account-credential',
+		});
+		expect(parsed).not.toHaveProperty('api_token');
+	});
 });

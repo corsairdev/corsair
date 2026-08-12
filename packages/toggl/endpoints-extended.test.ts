@@ -266,22 +266,33 @@ describe('workspaces — logo, preferences and workspace-wide tasks', () => {
 		expect(result.hide_start_end_times).toBe(false);
 	});
 
-	it('unwraps the paginated envelope on workspace tasks', async () => {
+	it('lists workspace-wide tasks and unwraps the paginated envelope', async () => {
+		// Omitting project_id selects the workspace route, which wraps results.
 		mockResponse({
 			total_count: 1,
 			page: 1,
 			data: [{ id: 1, name: 'Task', workspace_id: WS }],
 		});
-		const result = await Tasks.listWorkspace(makeCtx(), { workspace_id: WS });
+		const result = await Tasks.list(makeCtx(), { workspace_id: WS });
 		expect(requested().url).toContain(`${BASE}/workspaces/${WS}/tasks`);
 		expect(result).toHaveLength(1);
 	});
 
 	it('returns an empty array when the envelope carries no data', async () => {
 		mockResponse({ total_count: 0, data: null });
-		expect(await Tasks.listWorkspace(makeCtx(), { workspace_id: WS })).toEqual(
-			[],
+		expect(await Tasks.list(makeCtx(), { workspace_id: WS })).toEqual([]);
+	});
+
+	it('uses the project route and a bare array when project_id is given', async () => {
+		mockResponse([{ id: 1, name: 'Task', workspace_id: WS, project_id: 5 }]);
+		const result = await Tasks.list(makeCtx(), {
+			workspace_id: WS,
+			project_id: 5,
+		});
+		expect(requested().url).toContain(
+			`${BASE}/workspaces/${WS}/projects/5/tasks`,
 		);
+		expect(result).toHaveLength(1);
 	});
 });
 

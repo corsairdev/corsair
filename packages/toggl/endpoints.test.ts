@@ -243,16 +243,47 @@ describe('clients', () => {
 		expect(requested().body).toMatchObject({ name: 'Acme Corp', wid: WS });
 	});
 
-	it('updates a client', async () => {
+	it('updates a client with name and notes, never archived', async () => {
 		const { ctx } = makeCtx();
-		mockResponse({ ...client, archived: true });
+		mockResponse({ ...client, notes: 'updated' });
 		await Clients.update(ctx, {
 			workspace_id: WS,
 			client_id: client.id,
-			archived: true,
+			name: 'Acme Corp',
+			notes: 'updated',
 		});
 		expect(requested().method).toBe('PUT');
-		expect(requested().body).toMatchObject({ archived: true });
+		// Toggl requires name on every update; archiving is a separate route.
+		expect(requested().body).toMatchObject({
+			name: 'Acme Corp',
+			notes: 'updated',
+		});
+		expect(requested().body).not.toHaveProperty('archived');
+	});
+
+	it('archives a client through its own route', async () => {
+		const { ctx } = makeCtx();
+		mockResponse({ ...client, archived: true });
+		const result = await Clients.archive(ctx, {
+			workspace_id: WS,
+			client_id: client.id,
+		});
+		expect(requested().method).toBe('POST');
+		expect(requested().url).toBe(
+			`${BASE}/workspaces/${WS}/clients/${client.id}/archive`,
+		);
+		expect(result.archived).toBe(true);
+	});
+
+	it('sends notes on create', async () => {
+		const { ctx } = makeCtx();
+		mockResponse({ ...client, notes: 'a note' });
+		await Clients.create(ctx, {
+			workspace_id: WS,
+			name: 'Acme Corp',
+			notes: 'a note',
+		});
+		expect(requested().body).toMatchObject({ notes: 'a note' });
 	});
 
 	it('deletes a client and evicts it from the cache', async () => {

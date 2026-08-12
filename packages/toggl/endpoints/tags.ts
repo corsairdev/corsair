@@ -9,7 +9,14 @@ export const list: TogglEndpoints['tagsList'] = async (ctx, input) => {
 	const result = await makeTogglRequest<TogglEndpointOutputs['tagsList']>(
 		`workspaces/${input.workspace_id}/tags`,
 		ctx.key,
-		{ method: 'GET' },
+		{
+			method: 'GET',
+			query: {
+				page: input.page,
+				per_page: input.per_page,
+				search: input.search,
+			},
+		},
 	);
 
 	const tags = result ?? [];
@@ -21,7 +28,7 @@ export const list: TogglEndpoints['tagsList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'toggl.tags.list',
-		auditPayload(input, ['workspace_id']),
+		auditPayload(input, ['workspace_id', 'page', 'per_page']),
 		'completed',
 	);
 	return tags;

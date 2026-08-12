@@ -55,7 +55,7 @@ export const create: TogglEndpoints['clientsCreate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'POST',
-			body: { name: input.name, wid: input.workspace_id },
+			body: { name: input.name, wid: input.workspace_id, notes: input.notes },
 		},
 	);
 
@@ -76,7 +76,8 @@ export const update: TogglEndpoints['clientsUpdate'] = async (ctx, input) => {
 		ctx.key,
 		{
 			method: 'PUT',
-			body: { name: input.name, archived: input.archived },
+			// Toggl requires name on every update, and archiving is a separate route.
+			body: { name: input.name, notes: input.notes },
 		},
 	);
 
@@ -85,7 +86,7 @@ export const update: TogglEndpoints['clientsUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'toggl.clients.update',
-		auditPayload(input, ['workspace_id', 'client_id', 'archived']),
+		auditPayload(input, ['workspace_id', 'client_id']),
 		'completed',
 	);
 	return result;
@@ -108,4 +109,26 @@ export const remove: TogglEndpoints['clientsDelete'] = async (ctx, input) => {
 	);
 	// Toggl returns an empty body on a successful delete.
 	return { deleted: true, id: input.client_id };
+};
+
+/**
+ * Archives a client. Toggl exposes this as its own route rather than an
+ * `archived` field on the update call.
+ */
+export const archive: TogglEndpoints['clientsArchive'] = async (ctx, input) => {
+	const result = await makeTogglRequest<TogglEndpointOutputs['clientsArchive']>(
+		`workspaces/${input.workspace_id}/clients/${input.client_id}/archive`,
+		ctx.key,
+		{ method: 'POST' },
+	);
+
+	await cacheClient(ctx.db.clients, result);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.clients.archive',
+		auditPayload(input, ['workspace_id', 'client_id']),
+		'completed',
+	);
+	return result;
 };
