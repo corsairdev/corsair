@@ -1,4 +1,4 @@
-import { makeAmaraRequest } from './client';
+import { AmaraAPIError, makeAmaraRequest } from './client';
 import { AmaraEndpointOutputSchemas } from './endpoints/types';
 
 /**
@@ -194,7 +194,12 @@ describeLive('Amara API contract', () => {
 			createdId = created.id;
 			expect(created.id).toBeTruthy();
 		} catch (error) {
-			expect(String(error)).toMatch(/400|Bad Request|Team is required/i);
+			expect(error).toBeInstanceOf(AmaraAPIError);
+			const amaraError = error as AmaraAPIError;
+			expect(amaraError.status).toBe(400);
+			expect(JSON.stringify(amaraError.body ?? amaraError.message)).toMatch(
+				/Team is required/i,
+			);
 		} finally {
 			if (createdId) {
 				await makeAmaraRequest(`videos/${createdId}/`, key, {
