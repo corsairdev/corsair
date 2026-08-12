@@ -107,6 +107,24 @@ const ocrSpaceEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof ocrSpaceEndpointsNested>;
 
+// `handleCorsairError` selects the first handler whose `match` returns true,
+// walking keys in insertion order. DEFAULT matches everything, so it has to be
+// last: spreading caller-supplied handlers after it would leave them
+// unreachable.
+function mergeErrorHandlers(
+	builtIn: CorsairErrorHandler,
+	overrides?: CorsairErrorHandler,
+): CorsairErrorHandler {
+	const { DEFAULT: builtInDefault, ...builtInRest } = builtIn;
+	const { DEFAULT: overrideDefault, ...overrideRest } = overrides ?? {};
+
+	return {
+		...builtInRest,
+		...overrideRest,
+		DEFAULT: overrideDefault ?? builtInDefault,
+	};
+}
+
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const ocrSpaceAuthConfig = {
@@ -153,10 +171,7 @@ export function ocrspace<const T extends OcrSpacePluginOptions>(
 		authConfig: ocrSpaceAuthConfig,
 		// OCR.space is a request/response API with no webhook support.
 		pluginWebhookMatcher: () => false,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: mergeErrorHandlers(errorHandlers, options.errorHandlers),
 		keyBuilder: async (ctx: OcrSpaceKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;

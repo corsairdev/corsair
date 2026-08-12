@@ -147,6 +147,10 @@ export const ParseInputSchema = z
 		// Prefer a `File` over a bare `Blob`: multipart uploads carry the
 		// filename, and OCR.space uses the extension to detect the file type. A
 		// `Blob` is sent without one, so pair it with an explicit `filetype`.
+		//
+		// Note: `z.instanceof()` carries no JSON Schema representation, so this
+		// field surfaces as `unknown` in generated introspection and docs. The
+		// binary payload cannot be expressed in JSON Schema either way.
 		file: z.instanceof(Blob).optional(),
 		// The provider requires the data URI prefix, e.g.
 		// "data:image/png;base64,iVBORw0KGgo..."

@@ -54,6 +54,8 @@ module.exports = {
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
-	testTimeout: 30000,
+	// Must exceed the client's 60s request timeout so a slow live OCR call
+	// fails on the provider's timeout rather than on Jest's.
+	testTimeout: 90000,
 	verbose: true,
 };

@@ -18,6 +18,7 @@ import {
 	OcrSpaceEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { ocrspace } from './index';
 
 const TEST_API_KEY = process.env.OCRSPACE_API_KEY ?? '';
 const describeIfApiKey = TEST_API_KEY ? describe : describe.skip;
@@ -422,6 +423,25 @@ describe('error handler classification', () => {
 
 		expect(zodError).toBeDefined();
 		expect(classify(zodError as Error)).toBe('VALIDATION_ERROR');
+	});
+
+	it('keeps DEFAULT last so caller-supplied handlers stay reachable', () => {
+		// handleCorsairError picks the first matching key in insertion order and
+		// DEFAULT matches everything, so DEFAULT must sort last after a merge.
+		const plugin = ocrspace({
+			errorHandlers: {
+				CUSTOM_ERROR: {
+					match: (error: Error) => error.message.includes('custom'),
+					handler: async () => ({ maxRetries: 7 }),
+				},
+			},
+		});
+
+		expect(plugin.errorHandlers).toBeDefined();
+		const keys = Object.keys(plugin.errorHandlers ?? {});
+		expect(keys).toContain('CUSTOM_ERROR');
+		expect(keys.indexOf('CUSTOM_ERROR')).toBeLessThan(keys.indexOf('DEFAULT'));
+		expect(keys[keys.length - 1]).toBe('DEFAULT');
 	});
 
 	it('falls back to DEFAULT for an unrecognised error', () => {

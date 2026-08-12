@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeOcrSpacePostRequest, OCRSPACE_MYAPI_BASE } from '../client';
+import {
+	makeOcrSpacePostRequest,
+	OCRSPACE_MYAPI_BASE,
+	OcrSpaceAPIError,
+} from '../client';
 import type { OcrSpaceEndpoints } from '../index';
 import type { ConversionsResponse } from './types';
 import { ConversionsInputSchema, ConversionsResponseSchema } from './types';
@@ -34,6 +38,23 @@ export const conversions: OcrSpaceEndpoints['conversions'] = async (
 	// Validated against the declared output schema so callers never receive a
 	// payload that violates the exported contract.
 	const response = ConversionsResponseSchema.parse(rawResponse);
+
+	// Every counter is optional and the schema is loose, so a body carrying no
+	// statistics at all still parses. Without this guard a rejection returned
+	// with HTTP 200 would be cached as a row of nulls and logged as completed.
+	const hasCounters = [
+		response.count_total,
+		response.count_engine1,
+		response.count_engine2,
+		response.count_engine3,
+	].some((counter) => typeof counter === 'number');
+
+	if (!hasCounters) {
+		throw new OcrSpaceAPIError(
+			'OCR.space returned no conversion counters for this account',
+			{ body: response },
+		);
+	}
 
 	const period = validatedInput.startDate ?? CURRENT_PERIOD;
 
