@@ -48,6 +48,7 @@ export const BaseProviders = [
 	'dockerhub',
 	'dodopayments',
 	'dropbox',
+	'epicgames',
 	'exa',
 	'facebook',
 	'figma',
@@ -159,6 +160,7 @@ export const ProviderDisplayNames = {
 	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
+	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
 	figma: 'Figma',
@@ -277,6 +279,7 @@ export type AllProviders =
 	| 'dockerhub'
 	| 'dodopayments'
 	| 'dropbox'
+	| 'epicgames'
 	| 'exa'
 	| 'facebook'
 	| 'figma'
