@@ -48,6 +48,13 @@ export type AiStepRequest = {
  */
 export type AiStepCallback = (req: AiStepRequest) => Promise<string>;
 
+/** Host capability that emits one event to Hub. `dataJson` is the in-realm-
+ *  serialized event data. Absent when Hub isn't configured. */
+export type SendEventCallback = (
+	name: string,
+	dataJson: string,
+) => Promise<void>;
+
 /**
  * The `step.ai` sub-namespace. Callable for freeform text (`step.ai(name, opts)`),
  * with `.object`/`.enum`/`.bool` for typed inference. Each call is memoized like
@@ -296,6 +303,7 @@ function runWorkflowInSandbox(input: {
 	payload: unknown;
 	step: WorkflowStep;
 	ai: (kind: string, name: string, optsJson: string) => Promise<string>;
+	send: (name: string, dataJson: string) => Promise<void>;
 	timeoutMs: number;
 }): Promise<void> {
 	// Null-proto global object → `globalThis`'s prototype chain can't reach host
@@ -320,7 +328,7 @@ function runWorkflowInSandbox(input: {
 	// Realm-native `step`: built in-realm from host callbacks captured in a closure
 	// (not reachable as properties), so `step.constructor` is the realm's Function.
 	const makeStep = vm.runInContext(
-		`(function (hostRun, hostSleep, hostAi, corsairRef, hostWait) {
+		`(function (hostRun, hostSleep, hostAi, corsairRef, hostWait, hostSend) {
 			const step = function step(name, fn) { return hostRun(name, fn); };
 			step.sleep = function sleep(name, ms) { return hostSleep(name, ms); };
 			// Absolute-time pause: convert to a relative delay and reuse step.sleep so
@@ -373,6 +381,13 @@ function runWorkflowInSandbox(input: {
 			step.waitForEvent = function waitForEvent(name, opts) {
 				return hostWait(name, opts || {});
 			};
+			step.sendEvent = function sendEvent(name, data) {
+				return step(name, function () {
+					return hostSend(name, JSON.stringify(data === undefined ? null : data)).then(function () {
+						return null;
+					});
+				});
+			};
 			return step;
 		})`,
 		context,
@@ -390,6 +405,7 @@ function runWorkflowInSandbox(input: {
 				timeout?: string;
 			},
 		) => Promise<unknown>,
+		hostSend: (name: string, dataJson: string) => Promise<void>,
 	) => WorkflowStep;
 	const realmStep = makeStep(
 		(name, fn) => input.step(name, fn),
@@ -397,6 +413,7 @@ function runWorkflowInSandbox(input: {
 		(kind, name, optsJson) => input.ai(kind, name, optsJson),
 		hardenedCorsair,
 		(name, opts) => input.step.waitForEvent(name, opts),
+		(name, dataJson) => input.send(name, dataJson),
 	);
 
 	// Realm-native forwarding console (methods created in-realm; host sink hidden
@@ -492,6 +509,8 @@ export type ExecuteWorkflowRunInput = {
 	memoizedSteps?: Record<string, { output: unknown }>;
 	/** Runs one `step.ai` inference against Hub. Absent when Hub isn't configured. */
 	ai?: AiStepCallback;
+	/** Emits a `step.sendEvent`. Absent when Hub isn't configured. */
+	sendEvent?: SendEventCallback;
 	/** Max run time (sync + wall-clock) in ms. Defaults to {@link WORKFLOW_TIMEOUT_MS}. */
 	timeoutMs?: number;
 };
@@ -633,6 +652,17 @@ export async function executeWorkflowRun(
 		});
 	};
 
+	const sendBridge = (name: string, dataJson: string): Promise<void> => {
+		if (!input.sendEvent) {
+			return Promise.reject(
+				new Error(
+					'step.sendEvent is unavailable: Hub is not configured for this run',
+				),
+			);
+		}
+		return input.sendEvent(name, dataJson);
+	};
+
 	try {
 		await runWorkflowInSandbox({
 			code: input.code,
@@ -640,6 +670,7 @@ export async function executeWorkflowRun(
 			payload: input.payload,
 			step,
 			ai: aiBridge,
+			send: sendBridge,
 			timeoutMs: input.timeoutMs ?? WORKFLOW_TIMEOUT_MS,
 		});
 		// `main` returned without propagating the interrupt — a try/catch swallowed

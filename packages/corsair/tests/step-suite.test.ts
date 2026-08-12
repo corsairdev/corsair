@@ -178,6 +178,61 @@ describe('step.waitForEvent — durable coordinate', () => {
 	});
 });
 
+describe('step.sendEvent — emit into the stream', () => {
+	it('calls the host send capability once and memoizes it', async () => {
+		const sent: Array<{ name: string; data: unknown }> = [];
+		const { promise } = run(
+			`
+			module.exports.main = async (corsair, payload, step) => {
+				await step.sendEvent('order.paid', { id: 'o1' });
+			};
+		`,
+			{
+				sendEvent: (name: string, dataJson: string) => {
+					sent.push({ name, data: JSON.parse(dataJson) });
+					return Promise.resolve();
+				},
+			},
+		);
+		const result = await promise;
+		expect(result.status).toBe('completed');
+		expect(sent).toEqual([{ name: 'order.paid', data: { id: 'o1' } }]);
+	});
+
+	it('replays a memoized send without re-emitting', async () => {
+		const stepId = computeStepId('order.paid', 0);
+		const sent: unknown[] = [];
+		const { promise } = run(
+			`
+			module.exports.main = async (corsair, payload, step) => {
+				await step.sendEvent('order.paid', { id: 'o1' });
+			};
+		`,
+			{
+				memoizedSteps: { [stepId]: { output: null } },
+				sendEvent: (name: string, dataJson: string) => {
+					sent.push(dataJson);
+					return Promise.resolve();
+				},
+			},
+		);
+		const result = await promise;
+		expect(result.status).toBe('completed');
+		expect(sent).toEqual([]);
+	});
+
+	it('fails the step clearly when sendEvent is unavailable', async () => {
+		const { promise } = run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step.sendEvent('order.paid', { id: 'o1' });
+			};
+		`);
+		const result = await promise;
+		expect(result.status).toBe('failed');
+		expect(result.error?.message).toContain('sendEvent is unavailable');
+	});
+});
+
 describe('step.sleepUntil — absolute-time pause', () => {
 	it('suspends until a future time', async () => {
 		const when = new Date(Date.now() + 60_000).toISOString();
