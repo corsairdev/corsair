@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -12,17 +13,23 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { AlchemyEndpointInputs, AlchemyEndpointOutputs } from './endpoints/types';
-import { AlchemyEndpointInputSchemas, AlchemyEndpointOutputSchemas } from './endpoints/types';
-import { Core, Nft, Token, Transfers } from './endpoints';
-import { AlchemySchema } from './schema';
-import { errorHandlers } from './error-handlers';
 import type { AlchemyNetwork } from './client';
+import { Nft, Portfolio, Prices, Rpc, Token } from './endpoints';
+import type {
+	AlchemyEndpointInputs,
+	AlchemyEndpointOutputs,
+} from './endpoints/types';
+import {
+	AlchemyEndpointInputSchemas,
+	AlchemyEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { AlchemySchema } from './schema';
 
 export type AlchemyPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/** Default Alchemy network label (e.g. eth-mainnet). Validated against allowlist. */
 	network?: AlchemyNetwork;
 	hooks?: InternalAlchemyPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -36,110 +43,242 @@ export type AlchemyContext = CorsairPluginContext<
 
 export type AlchemyKeyBuilderContext = KeyBuilderContext<AlchemyPluginOptions>;
 
-export type AlchemyBoundEndpoints = BindEndpoints<typeof alchemyEndpointsNested>;
+export type AlchemyBoundEndpoints = BindEndpoints<
+	typeof alchemyEndpointsNested
+>;
 
-type AlchemyEndpoint<
-	K extends keyof AlchemyEndpointOutputs,
-> = CorsairEndpoint<
+type AlchemyEndpoint<K extends keyof AlchemyEndpointOutputs> = CorsairEndpoint<
 	AlchemyContext,
 	AlchemyEndpointInputs[K],
 	AlchemyEndpointOutputs[K]
 >;
 
 export type AlchemyEndpoints = {
-	coreGetBlockNumber: AlchemyEndpoint<'coreGetBlockNumber'>;
-	coreGetBlock: AlchemyEndpoint<'coreGetBlock'>;
-	coreGetBalance: AlchemyEndpoint<'coreGetBalance'>;
-	coreGetTransaction: AlchemyEndpoint<'coreGetTransaction'>;
-	coreGetTransactionReceipt: AlchemyEndpoint<'coreGetTransactionReceipt'>;
-	coreCall: AlchemyEndpoint<'coreCall'>;
-	coreSendRawTransaction: AlchemyEndpoint<'coreSendRawTransaction'>;
-	nftGetNftsForOwner: AlchemyEndpoint<'nftGetNftsForOwner'>;
+	nftIsHolderOfCollection: AlchemyEndpoint<'nftIsHolderOfCollection'>;
+	nftIsAirdrop: AlchemyEndpoint<'nftIsAirdrop'>;
+	nftIsAirdropNft: AlchemyEndpoint<'nftIsAirdropNft'>;
+	nftIsHolderOfContract: AlchemyEndpoint<'nftIsHolderOfContract'>;
+	nftIsSpamContract: AlchemyEndpoint<'nftIsSpamContract'>;
+	nftIsSpamContractV3: AlchemyEndpoint<'nftIsSpamContractV3'>;
+	nftComputeRarityV3: AlchemyEndpoint<'nftComputeRarityV3'>;
+	nftGetCollectionsForOwner: AlchemyEndpoint<'nftGetCollectionsForOwner'>;
+	nftGetContractMetadataBatchV3: AlchemyEndpoint<'nftGetContractMetadataBatchV3'>;
+	nftGetContractMetadataV3: AlchemyEndpoint<'nftGetContractMetadataV3'>;
+	nftGetContractsForOwnerV3: AlchemyEndpoint<'nftGetContractsForOwnerV3'>;
+	nftGetCollectionMetadata: AlchemyEndpoint<'nftGetCollectionMetadata'>;
+	nftGetFloorPriceV3: AlchemyEndpoint<'nftGetFloorPriceV3'>;
 	nftGetNftMetadata: AlchemyEndpoint<'nftGetNftMetadata'>;
-	nftGetOwnersForNft: AlchemyEndpoint<'nftGetOwnersForNft'>;
-	nftGetContractMetadata: AlchemyEndpoint<'nftGetContractMetadata'>;
+	nftGetNftMetadataBatch: AlchemyEndpoint<'nftGetNftMetadataBatch'>;
+	nftGetOwnersForNftV3: AlchemyEndpoint<'nftGetOwnersForNftV3'>;
+	nftGetNftSalesV3: AlchemyEndpoint<'nftGetNftSalesV3'>;
+	nftGetNftsForCollectionV3: AlchemyEndpoint<'nftGetNftsForCollectionV3'>;
+	nftGetNftsForContract: AlchemyEndpoint<'nftGetNftsForContract'>;
+	nftGetNftsForOwner: AlchemyEndpoint<'nftGetNftsForOwner'>;
+	nftGetOwnersForCollection: AlchemyEndpoint<'nftGetOwnersForCollection'>;
+	nftGetOwnersForContract: AlchemyEndpoint<'nftGetOwnersForContract'>;
+	nftInvalidateContractV3: AlchemyEndpoint<'nftInvalidateContractV3'>;
+	nftSearchContractMetadataV3: AlchemyEndpoint<'nftSearchContractMetadataV3'>;
+	nftSummarizeNftAttributes: AlchemyEndpoint<'nftSummarizeNftAttributes'>;
+	pricesGetHistoricalPrices: AlchemyEndpoint<'pricesGetHistoricalPrices'>;
+	pricesGetTokenPricesByAddress: AlchemyEndpoint<'pricesGetTokenPricesByAddress'>;
+	pricesGetPricesBySymbol: AlchemyEndpoint<'pricesGetPricesBySymbol'>;
+	portfolioGetNftContractsByAddress: AlchemyEndpoint<'portfolioGetNftContractsByAddress'>;
+	portfolioGetPortfolioNftsByAddress: AlchemyEndpoint<'portfolioGetPortfolioNftsByAddress'>;
+	portfolioGetTokenBalancesByAddress: AlchemyEndpoint<'portfolioGetTokenBalancesByAddress'>;
+	portfolioGetTokensByAddress: AlchemyEndpoint<'portfolioGetTokensByAddress'>;
+	portfolioGetTransactionsHistoryByAddress: AlchemyEndpoint<'portfolioGetTransactionsHistoryByAddress'>;
 	tokenGetTokenBalances: AlchemyEndpoint<'tokenGetTokenBalances'>;
 	tokenGetTokenMetadata: AlchemyEndpoint<'tokenGetTokenMetadata'>;
-	tokenGetTokenAllowance: AlchemyEndpoint<'tokenGetTokenAllowance'>;
-	transfersGetAssetTransfers: AlchemyEndpoint<'transfersGetAssetTransfers'>;
+	rpcGetTransactionCount: AlchemyEndpoint<'rpcGetTransactionCount'>;
 };
 
-// No webhooks for Alchemy in this integration
 export type AlchemyWebhooks = Record<string, never>;
 export type AlchemyBoundWebhooks = BindWebhooks<AlchemyWebhooks>;
 
 const alchemyEndpointsNested = {
-	core: {
-		getBlockNumber: Core.getBlockNumber,
-		getBlock: Core.getBlock,
-		getBalance: Core.getBalance,
-		getTransaction: Core.getTransaction,
-		getTransactionReceipt: Core.getTransactionReceipt,
-		call: Core.call,
-		sendRawTransaction: Core.sendRawTransaction,
-	},
 	nft: {
-		getNftsForOwner: Nft.getNftsForOwner,
+		isHolderOfCollection: Nft.isHolderOfCollection,
+		isAirdrop: Nft.isAirdrop,
+		isAirdropNft: Nft.isAirdropNft,
+		isHolderOfContract: Nft.isHolderOfContract,
+		isSpamContract: Nft.isSpamContract,
+		isSpamContractV3: Nft.isSpamContractV3,
+		computeRarityV3: Nft.computeRarityV3,
+		getCollectionsForOwner: Nft.getCollectionsForOwner,
+		getContractMetadataBatchV3: Nft.getContractMetadataBatchV3,
+		getContractMetadataV3: Nft.getContractMetadataV3,
+		getContractsForOwnerV3: Nft.getContractsForOwnerV3,
+		getCollectionMetadata: Nft.getCollectionMetadata,
+		getFloorPriceV3: Nft.getFloorPriceV3,
 		getNftMetadata: Nft.getNftMetadata,
-		getOwnersForNft: Nft.getOwnersForNft,
-		getContractMetadata: Nft.getContractMetadata,
+		getNftMetadataBatch: Nft.getNftMetadataBatch,
+		getOwnersForNftV3: Nft.getOwnersForNftV3,
+		getNftSalesV3: Nft.getNftSalesV3,
+		getNftsForCollectionV3: Nft.getNftsForCollectionV3,
+		getNftsForContract: Nft.getNftsForContract,
+		getNftsForOwner: Nft.getNftsForOwner,
+		getOwnersForCollection: Nft.getOwnersForCollection,
+		getOwnersForContract: Nft.getOwnersForContract,
+		invalidateContractV3: Nft.invalidateContractV3,
+		searchContractMetadataV3: Nft.searchContractMetadataV3,
+		summarizeNftAttributes: Nft.summarizeNftAttributes,
+	},
+	prices: {
+		getHistoricalPrices: Prices.getHistoricalPrices,
+		getTokenPricesByAddress: Prices.getTokenPricesByAddress,
+		getPricesBySymbol: Prices.getPricesBySymbol,
+	},
+	portfolio: {
+		getNftContractsByAddress: Portfolio.getNftContractsByAddress,
+		getPortfolioNftsByAddress: Portfolio.getPortfolioNftsByAddress,
+		getTokenBalancesByAddress: Portfolio.getTokenBalancesByAddress,
+		getTokensByAddress: Portfolio.getTokensByAddress,
+		getTransactionsHistoryByAddress: Portfolio.getTransactionsHistoryByAddress,
 	},
 	token: {
 		getTokenBalances: Token.getTokenBalances,
 		getTokenMetadata: Token.getTokenMetadata,
-		getTokenAllowance: Token.getTokenAllowance,
 	},
-	transfers: {
-		getAssetTransfers: Transfers.getAssetTransfers,
+	rpc: {
+		getTransactionCount: Rpc.getTransactionCount,
 	},
 } as const;
 
 const alchemyWebhooksNested = {} as const;
 
 export const alchemyEndpointSchemas = {
-	'core.getBlockNumber': {
-		input: AlchemyEndpointInputSchemas.coreGetBlockNumber,
-		output: AlchemyEndpointOutputSchemas.coreGetBlockNumber,
+	'nft.isHolderOfCollection': {
+		input: AlchemyEndpointInputSchemas.nftIsHolderOfCollection,
+		output: AlchemyEndpointOutputSchemas.nftIsHolderOfCollection,
 	},
-	'core.getBlock': {
-		input: AlchemyEndpointInputSchemas.coreGetBlock,
-		output: AlchemyEndpointOutputSchemas.coreGetBlock,
+	'nft.isAirdrop': {
+		input: AlchemyEndpointInputSchemas.nftIsAirdrop,
+		output: AlchemyEndpointOutputSchemas.nftIsAirdrop,
 	},
-	'core.getBalance': {
-		input: AlchemyEndpointInputSchemas.coreGetBalance,
-		output: AlchemyEndpointOutputSchemas.coreGetBalance,
+	'nft.isAirdropNft': {
+		input: AlchemyEndpointInputSchemas.nftIsAirdropNft,
+		output: AlchemyEndpointOutputSchemas.nftIsAirdropNft,
 	},
-	'core.getTransaction': {
-		input: AlchemyEndpointInputSchemas.coreGetTransaction,
-		output: AlchemyEndpointOutputSchemas.coreGetTransaction,
+	'nft.isHolderOfContract': {
+		input: AlchemyEndpointInputSchemas.nftIsHolderOfContract,
+		output: AlchemyEndpointOutputSchemas.nftIsHolderOfContract,
 	},
-	'core.getTransactionReceipt': {
-		input: AlchemyEndpointInputSchemas.coreGetTransactionReceipt,
-		output: AlchemyEndpointOutputSchemas.coreGetTransactionReceipt,
+	'nft.isSpamContract': {
+		input: AlchemyEndpointInputSchemas.nftIsSpamContract,
+		output: AlchemyEndpointOutputSchemas.nftIsSpamContract,
 	},
-	'core.call': {
-		input: AlchemyEndpointInputSchemas.coreCall,
-		output: AlchemyEndpointOutputSchemas.coreCall,
+	'nft.isSpamContractV3': {
+		input: AlchemyEndpointInputSchemas.nftIsSpamContractV3,
+		output: AlchemyEndpointOutputSchemas.nftIsSpamContractV3,
 	},
-	'core.sendRawTransaction': {
-		input: AlchemyEndpointInputSchemas.coreSendRawTransaction,
-		output: AlchemyEndpointOutputSchemas.coreSendRawTransaction,
+	'nft.computeRarityV3': {
+		input: AlchemyEndpointInputSchemas.nftComputeRarityV3,
+		output: AlchemyEndpointOutputSchemas.nftComputeRarityV3,
 	},
-	'nft.getNftsForOwner': {
-		input: AlchemyEndpointInputSchemas.nftGetNftsForOwner,
-		output: AlchemyEndpointOutputSchemas.nftGetNftsForOwner,
+	'nft.getCollectionsForOwner': {
+		input: AlchemyEndpointInputSchemas.nftGetCollectionsForOwner,
+		output: AlchemyEndpointOutputSchemas.nftGetCollectionsForOwner,
+	},
+	'nft.getContractMetadataBatchV3': {
+		input: AlchemyEndpointInputSchemas.nftGetContractMetadataBatchV3,
+		output: AlchemyEndpointOutputSchemas.nftGetContractMetadataBatchV3,
+	},
+	'nft.getContractMetadataV3': {
+		input: AlchemyEndpointInputSchemas.nftGetContractMetadataV3,
+		output: AlchemyEndpointOutputSchemas.nftGetContractMetadataV3,
+	},
+	'nft.getContractsForOwnerV3': {
+		input: AlchemyEndpointInputSchemas.nftGetContractsForOwnerV3,
+		output: AlchemyEndpointOutputSchemas.nftGetContractsForOwnerV3,
+	},
+	'nft.getCollectionMetadata': {
+		input: AlchemyEndpointInputSchemas.nftGetCollectionMetadata,
+		output: AlchemyEndpointOutputSchemas.nftGetCollectionMetadata,
+	},
+	'nft.getFloorPriceV3': {
+		input: AlchemyEndpointInputSchemas.nftGetFloorPriceV3,
+		output: AlchemyEndpointOutputSchemas.nftGetFloorPriceV3,
 	},
 	'nft.getNftMetadata': {
 		input: AlchemyEndpointInputSchemas.nftGetNftMetadata,
 		output: AlchemyEndpointOutputSchemas.nftGetNftMetadata,
 	},
-	'nft.getOwnersForNft': {
-		input: AlchemyEndpointInputSchemas.nftGetOwnersForNft,
-		output: AlchemyEndpointOutputSchemas.nftGetOwnersForNft,
+	'nft.getNftMetadataBatch': {
+		input: AlchemyEndpointInputSchemas.nftGetNftMetadataBatch,
+		output: AlchemyEndpointOutputSchemas.nftGetNftMetadataBatch,
 	},
-	'nft.getContractMetadata': {
-		input: AlchemyEndpointInputSchemas.nftGetContractMetadata,
-		output: AlchemyEndpointOutputSchemas.nftGetContractMetadata,
+	'nft.getOwnersForNftV3': {
+		input: AlchemyEndpointInputSchemas.nftGetOwnersForNftV3,
+		output: AlchemyEndpointOutputSchemas.nftGetOwnersForNftV3,
+	},
+	'nft.getNftSalesV3': {
+		input: AlchemyEndpointInputSchemas.nftGetNftSalesV3,
+		output: AlchemyEndpointOutputSchemas.nftGetNftSalesV3,
+	},
+	'nft.getNftsForCollectionV3': {
+		input: AlchemyEndpointInputSchemas.nftGetNftsForCollectionV3,
+		output: AlchemyEndpointOutputSchemas.nftGetNftsForCollectionV3,
+	},
+	'nft.getNftsForContract': {
+		input: AlchemyEndpointInputSchemas.nftGetNftsForContract,
+		output: AlchemyEndpointOutputSchemas.nftGetNftsForContract,
+	},
+	'nft.getNftsForOwner': {
+		input: AlchemyEndpointInputSchemas.nftGetNftsForOwner,
+		output: AlchemyEndpointOutputSchemas.nftGetNftsForOwner,
+	},
+	'nft.getOwnersForCollection': {
+		input: AlchemyEndpointInputSchemas.nftGetOwnersForCollection,
+		output: AlchemyEndpointOutputSchemas.nftGetOwnersForCollection,
+	},
+	'nft.getOwnersForContract': {
+		input: AlchemyEndpointInputSchemas.nftGetOwnersForContract,
+		output: AlchemyEndpointOutputSchemas.nftGetOwnersForContract,
+	},
+	'nft.invalidateContractV3': {
+		input: AlchemyEndpointInputSchemas.nftInvalidateContractV3,
+		output: AlchemyEndpointOutputSchemas.nftInvalidateContractV3,
+	},
+	'nft.searchContractMetadataV3': {
+		input: AlchemyEndpointInputSchemas.nftSearchContractMetadataV3,
+		output: AlchemyEndpointOutputSchemas.nftSearchContractMetadataV3,
+	},
+	'nft.summarizeNftAttributes': {
+		input: AlchemyEndpointInputSchemas.nftSummarizeNftAttributes,
+		output: AlchemyEndpointOutputSchemas.nftSummarizeNftAttributes,
+	},
+	'prices.getHistoricalPrices': {
+		input: AlchemyEndpointInputSchemas.pricesGetHistoricalPrices,
+		output: AlchemyEndpointOutputSchemas.pricesGetHistoricalPrices,
+	},
+	'prices.getTokenPricesByAddress': {
+		input: AlchemyEndpointInputSchemas.pricesGetTokenPricesByAddress,
+		output: AlchemyEndpointOutputSchemas.pricesGetTokenPricesByAddress,
+	},
+	'prices.getPricesBySymbol': {
+		input: AlchemyEndpointInputSchemas.pricesGetPricesBySymbol,
+		output: AlchemyEndpointOutputSchemas.pricesGetPricesBySymbol,
+	},
+	'portfolio.getNftContractsByAddress': {
+		input: AlchemyEndpointInputSchemas.portfolioGetNftContractsByAddress,
+		output: AlchemyEndpointOutputSchemas.portfolioGetNftContractsByAddress,
+	},
+	'portfolio.getPortfolioNftsByAddress': {
+		input: AlchemyEndpointInputSchemas.portfolioGetPortfolioNftsByAddress,
+		output: AlchemyEndpointOutputSchemas.portfolioGetPortfolioNftsByAddress,
+	},
+	'portfolio.getTokenBalancesByAddress': {
+		input: AlchemyEndpointInputSchemas.portfolioGetTokenBalancesByAddress,
+		output: AlchemyEndpointOutputSchemas.portfolioGetTokenBalancesByAddress,
+	},
+	'portfolio.getTokensByAddress': {
+		input: AlchemyEndpointInputSchemas.portfolioGetTokensByAddress,
+		output: AlchemyEndpointOutputSchemas.portfolioGetTokensByAddress,
+	},
+	'portfolio.getTransactionsHistoryByAddress': {
+		input: AlchemyEndpointInputSchemas.portfolioGetTransactionsHistoryByAddress,
+		output:
+			AlchemyEndpointOutputSchemas.portfolioGetTransactionsHistoryByAddress,
 	},
 	'token.getTokenBalances': {
 		input: AlchemyEndpointInputSchemas.tokenGetTokenBalances,
@@ -149,15 +288,13 @@ export const alchemyEndpointSchemas = {
 		input: AlchemyEndpointInputSchemas.tokenGetTokenMetadata,
 		output: AlchemyEndpointOutputSchemas.tokenGetTokenMetadata,
 	},
-	'token.getTokenAllowance': {
-		input: AlchemyEndpointInputSchemas.tokenGetTokenAllowance,
-		output: AlchemyEndpointOutputSchemas.tokenGetTokenAllowance,
+	'rpc.getTransactionCount': {
+		input: AlchemyEndpointInputSchemas.rpcGetTransactionCount,
+		output: AlchemyEndpointOutputSchemas.rpcGetTransactionCount,
 	},
-	'transfers.getAssetTransfers': {
-		input: AlchemyEndpointInputSchemas.transfersGetAssetTransfers,
-		output: AlchemyEndpointOutputSchemas.transfersGetAssetTransfers,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof alchemyEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof alchemyEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -166,68 +303,151 @@ export const alchemyAuthConfig = {
 } as const satisfies PluginAuthConfig;
 
 const alchemyEndpointMeta = {
-	'core.getBlockNumber': {
+	'nft.isHolderOfCollection': {
 		riskLevel: 'read',
-		description: 'Returns the number of most recent block.',
+		description: 'Check if a wallet owns any NFT from a collection/contract.',
 	},
-	'core.getBlock': {
+	'nft.isAirdrop': {
 		riskLevel: 'read',
-		description: 'Returns information about a block by hash or block number.',
+		description: 'Check if an NFT token is marked as an airdrop.',
 	},
-	'core.getBalance': {
+	'nft.isAirdropNft': {
 		riskLevel: 'read',
-		description: 'Returns the balance of the account of given address.',
+		description: 'Check whether an NFT was airdropped to its owner.',
 	},
-	'core.getTransaction': {
+	'nft.isHolderOfContract': {
 		riskLevel: 'read',
-		description: 'Returns the information about a transaction requested by transaction hash.',
+		description: 'Check if a wallet holds any NFT from a contract.',
 	},
-	'core.getTransactionReceipt': {
+	'nft.isSpamContract': {
 		riskLevel: 'read',
-		description: 'Returns the receipt of a transaction by transaction hash.',
+		description: 'Check if an NFT contract is marked as spam.',
 	},
-	'core.call': {
+	'nft.isSpamContractV3': {
 		riskLevel: 'read',
-		description: 'Executes a new message call immediately without creating a transaction on the block chain.',
+		description: 'Check if an NFT contract is marked as spam (v3).',
 	},
-	'core.sendRawTransaction': {
-		riskLevel: 'write',
-		description: 'Creates new message call transaction or a contract creation for signed transactions.',
-	},
-	'nft.getNftsForOwner': {
+	'nft.computeRarityV3': {
 		riskLevel: 'read',
-		description: 'Get all NFTs owned by the provided address.',
+		description: 'Compute rarity for each attribute of an NFT.',
+	},
+	'nft.getCollectionsForOwner': {
+		riskLevel: 'read',
+		description: 'Get NFT collections held by an owner.',
+	},
+	'nft.getContractMetadataBatchV3': {
+		riskLevel: 'read',
+		description: 'Batch-fetch NFT contract metadata.',
+	},
+	'nft.getContractMetadataV3': {
+		riskLevel: 'read',
+		description: 'Get metadata for an NFT contract.',
+	},
+	'nft.getContractsForOwnerV3': {
+		riskLevel: 'read',
+		description: 'Get NFT contracts owned by an address.',
+	},
+	'nft.getCollectionMetadata': {
+		riskLevel: 'read',
+		description: 'Get collection metadata by marketplace slug.',
+	},
+	'nft.getFloorPriceV3': {
+		riskLevel: 'read',
+		description: 'Get floor price across marketplaces.',
 	},
 	'nft.getNftMetadata': {
 		riskLevel: 'read',
-		description: 'Get the NFT metadata for an NFT.',
+		description: 'Get metadata for a specific NFT.',
 	},
-	'nft.getOwnersForNft': {
+	'nft.getNftMetadataBatch': {
 		riskLevel: 'read',
-		description: 'Get all the owners for a given NFT.',
+		description: 'Batch-fetch NFT metadata (up to 100).',
 	},
-	'nft.getContractMetadata': {
+	'nft.getOwnersForNftV3': {
 		riskLevel: 'read',
-		description: 'Get the metadata associated with an NFT contract.',
+		description: 'Get owners for a specific NFT.',
+	},
+	'nft.getNftSalesV3': {
+		riskLevel: 'read',
+		description: 'Get NFT sales across marketplaces.',
+	},
+	'nft.getNftsForCollectionV3': {
+		riskLevel: 'read',
+		description: 'Get NFTs for a collection slug or contract.',
+	},
+	'nft.getNftsForContract': {
+		riskLevel: 'read',
+		description: 'Get NFTs for a contract address.',
+	},
+	'nft.getNftsForOwner': {
+		riskLevel: 'read',
+		description: 'Get NFTs owned by an address.',
+	},
+	'nft.getOwnersForCollection': {
+		riskLevel: 'read',
+		description: 'Get owners for an NFT collection/contract.',
+	},
+	'nft.getOwnersForContract': {
+		riskLevel: 'read',
+		description: 'Get owners for an NFT contract.',
+	},
+	'nft.invalidateContractV3': {
+		riskLevel: 'write',
+		description: 'Invalidate cached metadata for an NFT contract.',
+	},
+	'nft.searchContractMetadataV3': {
+		riskLevel: 'read',
+		description: 'Search NFT contract metadata by keywords.',
+	},
+	'nft.summarizeNftAttributes': {
+		riskLevel: 'read',
+		description: 'Summarize attribute distribution for a collection.',
+	},
+	'prices.getHistoricalPrices': {
+		riskLevel: 'read',
+		description: 'Get historical token prices over a time range.',
+	},
+	'prices.getTokenPricesByAddress': {
+		riskLevel: 'read',
+		description: 'Get current token prices by address/network.',
+	},
+	'prices.getPricesBySymbol': {
+		riskLevel: 'read',
+		description: 'Get current token prices by symbol.',
+	},
+	'portfolio.getNftContractsByAddress': {
+		riskLevel: 'read',
+		description: 'Get NFT contracts for wallets across networks.',
+	},
+	'portfolio.getPortfolioNftsByAddress': {
+		riskLevel: 'read',
+		description: 'Get portfolio NFTs for wallets across networks.',
+	},
+	'portfolio.getTokenBalancesByAddress': {
+		riskLevel: 'read',
+		description: 'Get lightweight token balances across networks.',
+	},
+	'portfolio.getTokensByAddress': {
+		riskLevel: 'read',
+		description: 'Get fungible tokens with metadata and prices.',
+	},
+	'portfolio.getTransactionsHistoryByAddress': {
+		riskLevel: 'read',
+		description: 'Get transaction history across networks.',
 	},
 	'token.getTokenBalances': {
 		riskLevel: 'read',
-		description: 'Returns ERC20 token balances for a specific address.',
+		description: 'Get ERC-20 token balances for an address (JSON-RPC).',
 	},
 	'token.getTokenMetadata': {
 		riskLevel: 'read',
-		description: 'Returns metadata for a given token contract address.',
+		description: 'Get ERC-20 token metadata (JSON-RPC).',
 	},
-	'token.getTokenAllowance': {
+	'rpc.getTransactionCount': {
 		riskLevel: 'read',
-		description: 'Returns the amount which spender is still allowed to withdraw from owner.',
-	},
-	'transfers.getAssetTransfers': {
-		riskLevel: 'read',
-		description: 'Get historical transactions and asset transfers (ETH, ERC20, ERC721, ERC1155).',
+		description: 'Get transaction count (nonce) for an address.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof alchemyEndpointsNested>;
-
 
 export type BaseAlchemyPlugin<T extends AlchemyPluginOptions> = CorsairPlugin<
 	'alchemy',
@@ -280,11 +500,15 @@ export function alchemy<const T extends AlchemyPluginOptions>(
 	} satisfies InternalAlchemyPlugin;
 }
 
+export {
+	ALCHEMY_NETWORKS,
+	assertAlchemyNetwork,
+	getAlchemyBaseUrl,
+} from './client';
 export type {
 	AlchemyEndpointInputs,
 	AlchemyEndpointOutputs,
 } from './endpoints/types';
-
 export {
 	AlchemyEndpointInputSchemas,
 	AlchemyEndpointOutputSchemas,

@@ -1,33 +1,58 @@
-import * as core from './core';
 import * as nft from './nft';
+import * as portfolio from './portfolio';
+import * as prices from './prices';
+import * as rpc from './rpc';
 import * as token from './token';
-import * as transfers from './transfers';
-
-export const Core = {
-	getBlockNumber: core.getBlockNumber,
-	getBlock: core.getBlock,
-	getBalance: core.getBalance,
-	getTransaction: core.getTransaction,
-	getTransactionReceipt: core.getTransactionReceipt,
-	call: core.call,
-	sendRawTransaction: core.sendRawTransaction,
-};
 
 export const Nft = {
-	getNftsForOwner: nft.getNftsForOwner,
+	isHolderOfCollection: nft.isHolderOfCollection,
+	isAirdrop: nft.isAirdrop,
+	isAirdropNft: nft.isAirdropNft,
+	isHolderOfContract: nft.isHolderOfContract,
+	isSpamContract: nft.isSpamContract,
+	isSpamContractV3: nft.isSpamContractV3,
+	computeRarityV3: nft.computeRarityV3,
+	getCollectionsForOwner: nft.getCollectionsForOwner,
+	getContractMetadataBatchV3: nft.getContractMetadataBatchV3,
+	getContractMetadataV3: nft.getContractMetadataV3,
+	getContractsForOwnerV3: nft.getContractsForOwnerV3,
+	getCollectionMetadata: nft.getCollectionMetadata,
+	getFloorPriceV3: nft.getFloorPriceV3,
 	getNftMetadata: nft.getNftMetadata,
-	getOwnersForNft: nft.getOwnersForNft,
-	getContractMetadata: nft.getContractMetadata,
+	getNftMetadataBatch: nft.getNftMetadataBatch,
+	getOwnersForNftV3: nft.getOwnersForNftV3,
+	getNftSalesV3: nft.getNftSalesV3,
+	getNftsForCollectionV3: nft.getNftsForCollectionV3,
+	getNftsForContract: nft.getNftsForContract,
+	getNftsForOwner: nft.getNftsForOwner,
+	getOwnersForCollection: nft.getOwnersForCollection,
+	getOwnersForContract: nft.getOwnersForContract,
+	invalidateContractV3: nft.invalidateContractV3,
+	searchContractMetadataV3: nft.searchContractMetadataV3,
+	summarizeNftAttributes: nft.summarizeNftAttributes,
+};
+
+export const Prices = {
+	getHistoricalPrices: prices.getHistoricalPrices,
+	getTokenPricesByAddress: prices.getTokenPricesByAddress,
+	getPricesBySymbol: prices.getPricesBySymbol,
+};
+
+export const Portfolio = {
+	getNftContractsByAddress: portfolio.getNftContractsByAddress,
+	getPortfolioNftsByAddress: portfolio.getPortfolioNftsByAddress,
+	getTokenBalancesByAddress: portfolio.getTokenBalancesByAddress,
+	getTokensByAddress: portfolio.getTokensByAddress,
+	getTransactionsHistoryByAddress: portfolio.getTransactionsHistoryByAddress,
 };
 
 export const Token = {
 	getTokenBalances: token.getTokenBalances,
 	getTokenMetadata: token.getTokenMetadata,
-	getTokenAllowance: token.getTokenAllowance,
 };
 
-export const Transfers = {
-	getAssetTransfers: transfers.getAssetTransfers,
+export const Rpc = {
+	getTransactionCount: rpc.getTransactionCount,
 };
 
 export * from './types';

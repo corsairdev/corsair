@@ -1,84 +1,46 @@
 import { logEventFromContext } from 'corsair/core';
-import type { AlchemyEndpoints } from '..';
-import type { AlchemyEndpointOutputs } from './types';
 import { makeAlchemyJsonRpcRequest } from '../client';
+import type { AlchemyEndpoints } from '../index';
+import { resolveNetwork } from './resolve';
+import type { AlchemyEndpointOutputs } from './types';
 
-export const getTokenBalances: AlchemyEndpoints['tokenGetTokenBalances'] = async (
-	ctx,
-	input,
-) => {
-	const params: unknown[] = [input.address];
-	if (input.tokenAddresses) {
-		params.push(input.tokenAddresses);
-	} else {
-		params.push('DEFAULT'); // Fetch top 100 tokens by default if no contract address is specified
-	}
-
-	const response = await makeAlchemyJsonRpcRequest<
-		AlchemyEndpointOutputs['tokenGetTokenBalances']
-	>(
-		input.network || ctx.options.network || 'eth-mainnet',
-		ctx.key,
-		'alchemy_getTokenBalances',
-		params,
-	);
-
-	await logEventFromContext(
-		ctx,
-		'alchemy.token.getTokenBalances',
-		{ ...input },
-		'completed',
-	);
-
-	return response;
-};
-
-export const getTokenMetadata: AlchemyEndpoints['tokenGetTokenMetadata'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeAlchemyJsonRpcRequest<
-		AlchemyEndpointOutputs['tokenGetTokenMetadata']
-	>(
-		input.network || ctx.options.network || 'eth-mainnet',
-		ctx.key,
-		'alchemy_getTokenMetadata',
-		[input.contractAddress],
-	);
-
-	await logEventFromContext(
-		ctx,
-		'alchemy.token.getTokenMetadata',
-		{ ...input },
-		'completed',
-	);
-
-	return response;
-};
-
-export const getTokenAllowance: AlchemyEndpoints['tokenGetTokenAllowance'] =
+export const getTokenBalances: AlchemyEndpoints['tokenGetTokenBalances'] =
 	async (ctx, input) => {
+		// Docs: omit second arg for default set, or pass address list / "erc20".
+		const params: unknown[] = [input.address];
+		params.push(input.tokenAddresses ?? 'erc20');
+
 		const response = await makeAlchemyJsonRpcRequest<
-			AlchemyEndpointOutputs['tokenGetTokenAllowance']
+			AlchemyEndpointOutputs['tokenGetTokenBalances']
 		>(
-			input.network || ctx.options.network || 'eth-mainnet',
+			resolveNetwork(ctx, input.network),
 			ctx.key,
-			'alchemy_getTokenAllowance',
-			[
-				{
-					contract: input.contract,
-					owner: input.owner,
-					spender: input.spender,
-				},
-			],
+			'alchemy_getTokenBalances',
+			params,
 		);
 
 		await logEventFromContext(
 			ctx,
-			'alchemy.token.getTokenAllowance',
-			{ ...input },
+			'alchemy.token.getTokenBalances',
+			{ address: input.address },
 			'completed',
 		);
+		return response;
+	};
 
+export const getTokenMetadata: AlchemyEndpoints['tokenGetTokenMetadata'] =
+	async (ctx, input) => {
+		const response = await makeAlchemyJsonRpcRequest<
+			AlchemyEndpointOutputs['tokenGetTokenMetadata']
+		>(resolveNetwork(ctx, input.network), ctx.key, 'alchemy_getTokenMetadata', [
+			input.contractAddress,
+		]);
+
+		await logEventFromContext(
+			ctx,
+			'alchemy.token.getTokenMetadata',
+			{ contractAddress: input.contractAddress },
+			'completed',
+		);
 		return response;
 	};

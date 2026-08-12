@@ -1,63 +1,64 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { AlchemyAPIError } from './client';
 
+function getStatus(error: Error): number | undefined {
+	return error instanceof AlchemyAPIError ? error.status : undefined;
+}
+
+function getCode(error: Error): number | undefined {
+	return error instanceof AlchemyAPIError ? error.code : undefined;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	return error instanceof AlchemyAPIError ? error.retryAfter : undefined;
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof AlchemyAPIError && error.status === 429) return true;
+			if (getStatus(error) === 429) return true;
 			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('rate limit') ||
-				msg.includes('429') ||
-				msg.includes('exceeded capacity')
-			);
+			return msg.includes('rate limit') || msg.includes('exceeded capacity');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof AlchemyAPIError && error.status === 429) {
-				// We don't have direct access to headers unless we parse them in ApiError,
-				// but Corsair's core handles generic retryAfter if it exists.
-				retryAfterMs = undefined;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error: Error) => ({
+			maxRetries: 5,
+			retryStrategy: 'exponential_backoff' as const,
+			headersRetryAfterMs: getRetryAfter(error),
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof AlchemyAPIError) {
-				if (error.status === 401 || error.status === 403) return true;
-			}
+			const status = getStatus(error);
+			if (status === 401 || status === 403) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||
 				msg.includes('invalid api key') ||
 				msg.includes('forbidden') ||
-				msg.includes('401') ||
-				msg.includes('403')
+				msg.includes('not enabled for this app')
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof AlchemyAPIError && error.status === 404) return true;
-			return error.message.includes('404');
+			if (getStatus(error) === 404) return true;
+			return error.message.toLowerCase().includes('not found');
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	BAD_REQUEST_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof AlchemyAPIError) {
-				if (error.status === 400) return true;
-				if (
-					error.code === -32602 ||
-					error.code === -32600 ||
-					error.code === -32700
-				) {
-					return true; // JSON-RPC invalid params / request
-				}
+			if (getStatus(error) === 400) return true;
+			const code = getCode(error);
+			if (code === -32602 || code === -32600 || code === -32700) {
+				return true;
 			}
-			return error.message.includes('400');
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('invalid params') ||
+				msg.includes('unsupported alchemy network')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

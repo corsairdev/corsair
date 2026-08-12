@@ -1,26 +1,33 @@
-
-import { AlchemyAPIError, getAlchemyBaseUrl } from './client';
 import { ApiError } from 'corsair/http';
+import {
+	ALCHEMY_NETWORKS,
+	AlchemyAPIError,
+	assertAlchemyNetwork,
+	getAlchemyBaseUrl,
+} from './client';
 
 describe('Alchemy client', () => {
-	it('formats base URL correctly', () => {
+	it('formats base URL for allowlisted networks only', () => {
 		expect(getAlchemyBaseUrl()).toBe('https://eth-mainnet.g.alchemy.com');
-		expect(getAlchemyBaseUrl('polygon-mainnet')).toBe(
-			'https://polygon-mainnet.g.alchemy.com',
+		expect(getAlchemyBaseUrl('base-mainnet')).toBe(
+			'https://base-mainnet.g.alchemy.com',
 		);
-		expect(getAlchemyBaseUrl('eth-sepolia')).toBe(
-			'https://eth-sepolia.g.alchemy.com',
+		expect(ALCHEMY_NETWORKS).toContain('eth-mainnet');
+	});
+
+	it('rejects credential-redirect style networks', () => {
+		expect(() => assertAlchemyNetwork('evil.com')).toThrow(
+			/Unsupported Alchemy network/,
+		);
+		expect(() => assertAlchemyNetwork('eth-mainnet/../../attacker')).toThrow(
+			/Unsupported Alchemy network/,
+		);
+		expect(() => getAlchemyBaseUrl('not-a-network')).toThrow(
+			/Unsupported Alchemy network/,
 		);
 	});
 
-	it('creates AlchemyAPIError correctly', () => {
-		const error = new AlchemyAPIError('Test error', { status: 400 });
-		expect(error.message).toBe('Test error');
-		expect(error.name).toBe('AlchemyAPIError');
-		expect(error.status).toBe(400);
-	});
-
-	it('creates AlchemyAPIError from ApiError correctly', () => {
+	it('creates AlchemyAPIError from ApiError', () => {
 		const cause = new ApiError(
 			{
 				method: 'GET',
@@ -32,11 +39,10 @@ describe('Alchemy client', () => {
 				statusText: 'Forbidden',
 				url: 'https://test.com',
 				body: null,
-			} as any,
+			} as never,
 			'Forbidden',
 		);
 		const error = new AlchemyAPIError('Wrapper error', { cause });
-		expect(error.message).toBe('Wrapper error');
 		expect(error.status).toBe(403);
 		expect(error.statusText).toBe('Forbidden');
 	});

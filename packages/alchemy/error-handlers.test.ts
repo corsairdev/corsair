@@ -1,6 +1,5 @@
-
-import { errorHandlers } from './error-handlers';
 import { AlchemyAPIError } from './client';
+import { errorHandlers } from './error-handlers';
 
 describe('Alchemy error handlers', () => {
 	it('matches RATE_LIMIT_ERROR on 429', () => {
