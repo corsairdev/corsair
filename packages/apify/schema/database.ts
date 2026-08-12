@@ -1,42 +1,38 @@
 import { z } from 'zod';
 
+export const ApifyMcpActor = z.object({
+	id: z.string().optional(),
+	name: z.string().optional(),
+	username: z.string().optional(),
+	title: z.string().optional(),
+	description: z.string().optional(),
+});
+
+export const ApifyMcpActorRun = z.object({
+	id: z.string().optional(),
+	runId: z.string().optional(),
+	status: z.string().optional(),
+	actorId: z.string().optional(),
+	actorName: z.string().optional(),
+	datasetId: z.string().optional(),
+	startedAt: z.coerce.date().nullable().optional(),
+	finishedAt: z.coerce.date().nullable().optional(),
+});
+
+export const ApifyMcpActorOutput = z.object({
+	datasetId: z.string(),
+	// Output payloads vary by Actor and dataset schema.
+	output: z.unknown(),
+	updatedAt: z.coerce.date().nullable().optional(),
+});
+
+export type ApifyMcpActor = z.infer<typeof ApifyMcpActor>;
+export type ApifyMcpActorRun = z.infer<typeof ApifyMcpActorRun>;
+export type ApifyMcpActorOutput = z.infer<typeof ApifyMcpActorOutput>;
+
 const ApifyAccessLevel = z
 	.enum(['PRIVATE', 'READ', 'WRITE', 'READ_WRITE'])
 	.or(z.string());
-
-export const ApifyActor = z
-	.object({
-		id: z.string(),
-		userId: z.string().optional(),
-		name: z.string().optional(),
-		username: z.string().optional(),
-		title: z.string().nullable().optional(),
-		description: z.string().nullable().optional(),
-		isPublic: z.boolean().optional(),
-		isDeprecated: z.boolean().optional(),
-		notice: z.string().nullable().optional(),
-		createdAt: z.coerce.date().nullable().optional(),
-		modifiedAt: z.coerce.date().nullable().optional(),
-	})
-	.loose();
-
-export const ApifyActorRun = z
-	.object({
-		id: z.string(),
-		actId: z.string().optional(),
-		actorTaskId: z.string().nullable().optional(),
-		status: z.string(),
-		statusMessage: z.string().nullable().optional(),
-		startedAt: z.coerce.date().nullable().optional(),
-		finishedAt: z.coerce.date().nullable().optional(),
-		buildId: z.string().nullable().optional(),
-		buildNumber: z.string().nullable().optional(),
-		defaultDatasetId: z.string().nullable().optional(),
-		defaultKeyValueStoreId: z.string().nullable().optional(),
-		defaultRequestQueueId: z.string().nullable().optional(),
-		usageTotalUsd: z.number().nullable().optional(),
-	})
-	.loose();
 
 export const ApifyActorBuild = z
 	.object({
@@ -136,8 +132,6 @@ export const ApifyUser = z
 	})
 	.loose();
 
-export type ApifyActor = z.infer<typeof ApifyActor>;
-export type ApifyActorRun = z.infer<typeof ApifyActorRun>;
 export type ApifyActorBuild = z.infer<typeof ApifyActorBuild>;
 export type ApifyActorTask = z.infer<typeof ApifyActorTask>;
 export type ApifyDataset = z.infer<typeof ApifyDataset>;

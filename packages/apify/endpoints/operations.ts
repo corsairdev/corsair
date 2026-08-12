@@ -202,7 +202,7 @@ export const apifyOperations = {
 			riskLevel: 'destructive',
 			irreversible: true,
 			description:
-				'Tool to delete an Actor task permanently. Use when you need to remove a task by its ID or username\\~taskName. Confirm before calling.',
+				'Tool to delete an Actor task permanently. Use when you need to remove a task by its ID or username~taskName. Confirm before calling.',
 			slug: 'APIFY_ACTOR_TASK_DELETE',
 		},
 		getActorTask: {
@@ -211,7 +211,7 @@ export const apifyOperations = {
 			pathParams: ['actorTaskId'],
 			riskLevel: 'read',
 			description:
-				'Tool to get complete details about an Actor task. Use when you need to retrieve task configuration, input settings, or metadata by task ID or username\\~task-name.',
+				'Tool to get complete details about an Actor task. Use when you need to retrieve task configuration, input settings, or metadata by task ID or username~task-name.',
 			slug: 'APIFY_ACTOR_TASK_GET',
 		},
 		getTaskInput: {
@@ -450,11 +450,12 @@ export const apifyOperations = {
 			pathParams: ['actorTaskId'],
 			riskLevel: 'write',
 			description:
-				'Tool to update the input configuration of a specific Actor task. Use when you need to modify a scheduled tasks input before execution.',
+				'Tool to update the input configuration of a specific Actor task. Use when you need to modify a scheduled task input before execution.',
 			slug: 'APIFY_UPDATE_TASK_INPUT',
 		},
 	},
-	actors: {
+	// REST actor CRUD. MCP already owns the `actors` namespace.
+	acts: {
 		buildActor: {
 			method: 'POST',
 			path: '/v2/actors/{actorId}/builds',
@@ -505,7 +506,7 @@ export const apifyOperations = {
 			riskLevel: 'destructive',
 			irreversible: true,
 			description:
-				'Tool to delete an Actor permanently. Use when you need to remove an Actor by its ID or username\\~actorName. Confirm before calling.',
+				'Tool to delete an Actor permanently. Use when you need to remove an Actor by its ID or username~actorName. Confirm before calling.',
 			slug: 'APIFY_DELETE_ACTOR',
 		},
 		deleteActorVersion: {
@@ -872,7 +873,7 @@ export const apifyOperations = {
 			riskLevel: 'destructive',
 			irreversible: true,
 			description:
-				'Tool to delete a dataset permanently. Use when you need to remove a dataset by its ID or username\\~dataset-name. Confirm before calling.',
+				'Tool to delete a dataset permanently. Use when you need to remove a dataset by its ID or username~dataset-name. Confirm before calling.',
 			slug: 'APIFY_DATASET_DELETE',
 		},
 		getDataset: {

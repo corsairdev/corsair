@@ -10,6 +10,6 @@ export default defineConfig({
 	splitting: true,
 	minify: true,
 	outDir: 'dist',
-	external: ['corsair', 'zod'],
+	external: ['corsair', 'zod', '@modelcontextprotocol/sdk'],
 	entry: ['index.ts'],
 });

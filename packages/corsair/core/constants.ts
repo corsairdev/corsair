@@ -22,18 +22,23 @@ export const BaseProviders = [
 	'agenty',
 	'agentql',
 	'ahrefs',
+	'aimlapi',
 	'airtable',
 	'algolia',
 	'alttextai',
+	'amara',
 	'ambientweather',
 	'ambee',
 	'amplitude',
+	'apibible',
 	'apify',
 	'apilabz',
+	'apisports',
 	'asana',
 	'bitwarden',
 	'bluesky',
 	'box',
+	'canvas',
 	'cal',
 	'calendly',
 	'canva',
@@ -49,6 +54,7 @@ export const BaseProviders = [
 	'dockerhub',
 	'dodopayments',
 	'dropbox',
+	'epicgames',
 	'exa',
 	'facebook',
 	'figma',
@@ -107,6 +113,7 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'todoist',
+	'toggl',
 	'trello',
 	'twilio',
 	'twitter',
@@ -116,6 +123,7 @@ export const BaseProviders = [
 	'vercel',
 	'whatsapp',
 	'wiza',
+	'workday',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -134,18 +142,23 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
+	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
+	amara: 'Amara',
 	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
 	amplitude: 'Amplitude',
+	apibible: 'API.Bible',
 	apify: 'Apify',
 	apilabz: 'API Labz',
+	apisports: 'API-Sports',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	box: 'Box',
+	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
@@ -161,6 +174,7 @@ export const ProviderDisplayNames = {
 	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
+	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
 	figma: 'Figma',
@@ -219,6 +233,7 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	todoist: 'Todoist',
+	toggl: 'Toggl',
 	trello: 'Trello',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
@@ -228,6 +243,7 @@ export const ProviderDisplayNames = {
 	vercel: 'Vercel',
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
+	workday: 'Workday',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -253,20 +269,25 @@ export type AllProviders =
 	| 'agenty'
 	| 'agentql'
 	| 'ahrefs'
+	| 'aimlapi'
 	| 'airtable'
 	| 'algolia'
 	| 'alttextai'
+	| 'amara'
 	| 'ambientweather'
 	| 'ambee'
 	| 'amplitude'
+	| 'apibible'
 	| 'apify'
 	| 'apilabz'
+	| 'apisports'
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canvas'
 	| 'canva'
 	| 'cloudflare'
 	| 'cloudinary'
@@ -280,6 +301,7 @@ export type AllProviders =
 	| 'dockerhub'
 	| 'dodopayments'
 	| 'dropbox'
+	| 'epicgames'
 	| 'exa'
 	| 'facebook'
 	| 'figma'
@@ -338,6 +360,7 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'todoist'
+	| 'toggl'
 	| 'trello'
 	| 'twilio'
 	| 'twitter'
@@ -347,6 +370,7 @@ export type AllProviders =
 	| 'vercel'
 	| 'whatsapp'
 	| 'wiza'
+	| 'workday'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'

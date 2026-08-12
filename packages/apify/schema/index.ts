@@ -1,22 +1,24 @@
 import {
-	ApifyActor,
 	ApifyActorBuild,
-	ApifyActorRun,
 	ApifyActorTask,
 	ApifyDataset,
 	ApifyKeyValueStore,
+	ApifyMcpActor,
+	ApifyMcpActorOutput,
+	ApifyMcpActorRun,
 	ApifyRequestQueue,
 	ApifySchedule,
 	ApifyUser,
 	ApifyWebhook,
 } from './database';
 
-export const ApifySchema = {
-	version: '2.0.0',
+export const ApifyMcpSchema = {
+	version: '1.0.0',
 	entities: {
-		actors: ApifyActor,
+		actors: ApifyMcpActor,
+		actorRuns: ApifyMcpActorRun,
+		actorOutputs: ApifyMcpActorOutput,
 		actorBuilds: ApifyActorBuild,
-		actorRuns: ApifyActorRun,
 		actorTasks: ApifyActorTask,
 		datasets: ApifyDataset,
 		keyValueStores: ApifyKeyValueStore,

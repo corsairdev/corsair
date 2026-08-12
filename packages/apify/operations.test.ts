@@ -1,17 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
-import type { ApifyOperationDefinition } from './endpoints';
+import type { ApifyOperationDefinition } from './endpoints/operations';
 import {
-	ApifyEndpoints,
+	ApifyRestEndpoints,
 	apifyOperations,
 	buildApifyEndpointMeta,
 	buildApifyEndpointSchemas,
-} from './endpoints';
+} from './endpoints/rest';
 import {
 	ApifyOperationInputSchema,
 	ApifyOperationOutputSchema,
-} from './endpoints/types';
-import type { ApifyContext } from './index';
+} from './endpoints/rest-types';
+import type { ApifyMcpContext } from './index';
 import { apify } from './index';
 
 jest.mock('corsair/http', () => {
@@ -115,11 +115,11 @@ describe('apify operation registry', () => {
 
 describe('apify endpoint tree', () => {
 	it('exposes a callable function for every registered operation', () => {
-		expect(typeof ApifyEndpoints).toBe('object');
-		const actors = (ApifyEndpoints as Record<string, unknown>).actors;
-		expect(typeof actors).toBe('object');
+		expect(typeof ApifyRestEndpoints).toBe('object');
+		const acts = (ApifyRestEndpoints as Record<string, unknown>).acts;
+		expect(typeof acts).toBe('object');
 		expect(
-			typeof (actors as Record<string, (...a: unknown[]) => unknown>)
+			typeof (acts as Record<string, (...a: unknown[]) => unknown>)
 				.getActorDetails,
 		).toBe('function');
 	});
@@ -144,14 +144,14 @@ describe('apify endpoint schemas', () => {
 	});
 
 	it('treats each path param as a required string|number input', () => {
-		const sample = schemaMap['actors.getActorDetails'];
+		const sample = schemaMap['acts.getActorDetails'];
 		expect(sample).toBeDefined();
 		const parsed = sample?.input.safeParse({ actorId: 'abc123' });
 		expect(parsed?.success).toBe(true);
 	});
 
 	it('rejects inputs missing a required path param', () => {
-		const sample = schemaMap['actors.getActorDetails'];
+		const sample = schemaMap['acts.getActorDetails'];
 		expect(sample).toBeDefined();
 		const parsed = sample?.input.safeParse({});
 		expect(parsed?.success).toBe(false);
@@ -187,13 +187,13 @@ describe('apify endpoint meta', () => {
 	});
 
 	it('tags actor delete as irreversible', () => {
-		expect(metaMap['actors.deleteActor']?.riskLevel).toBe('destructive');
-		expect(metaMap['actors.deleteActor']?.irreversible).toBe(true);
+		expect(metaMap['acts.deleteActor']?.riskLevel).toBe('destructive');
+		expect(metaMap['acts.deleteActor']?.irreversible).toBe(true);
 	});
 });
 
-function makeCtx(key = 'test-token'): ApifyContext {
-	return { key } as unknown as ApifyContext;
+function makeCtx(key = 'test-token'): ApifyMcpContext {
+	return { key } as unknown as ApifyMcpContext;
 }
 
 describe('apify endpoint invocation', () => {
@@ -207,15 +207,15 @@ describe('apify endpoint invocation', () => {
 		mockRequest.mockResolvedValue({ id: 'actor-1' });
 
 		const result = await (
-			ApifyEndpoints as unknown as {
-				actors: {
+			ApifyRestEndpoints as unknown as {
+				acts: {
 					getActorDetails: (
-						ctx: ApifyContext,
+						ctx: ApifyMcpContext,
 						input: unknown,
 					) => Promise<unknown>;
 				};
 			}
-		).actors.getActorDetails(makeCtx(), { actorId: 'abc123' });
+		).acts.getActorDetails(makeCtx(), { actorId: 'abc123' });
 
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 		const [config, requestOptions] = mockRequest.mock.calls[0] ?? [];
@@ -237,15 +237,15 @@ describe('apify endpoint invocation', () => {
 		mockLog.mockRejectedValue(new Error('logger down'));
 
 		const result = await (
-			ApifyEndpoints as unknown as {
-				actors: {
+			ApifyRestEndpoints as unknown as {
+				acts: {
 					getActorDetails: (
-						ctx: ApifyContext,
+						ctx: ApifyMcpContext,
 						input: unknown,
 					) => Promise<unknown>;
 				};
 			}
-		).actors.getActorDetails(makeCtx(), { actorId: 'abc123' });
+		).acts.getActorDetails(makeCtx(), { actorId: 'abc123' });
 
 		expect(result).toEqual({ id: 'actor-1' });
 	});
@@ -254,10 +254,10 @@ describe('apify endpoint invocation', () => {
 		mockRequest.mockResolvedValue({ ok: true });
 
 		await (
-			ApifyEndpoints as unknown as {
+			ApifyRestEndpoints as unknown as {
 				datasets: {
 					storeDataInDataset: (
-						ctx: ApifyContext,
+						ctx: ApifyMcpContext,
 						input: unknown,
 					) => Promise<unknown>;
 				};
@@ -280,15 +280,15 @@ describe('apify endpoint invocation', () => {
 		mockRequest.mockResolvedValue([]);
 
 		await (
-			ApifyEndpoints as unknown as {
-				actors: {
+			ApifyRestEndpoints as unknown as {
+				acts: {
 					getListOfBuilds: (
-						ctx: ApifyContext,
+						ctx: ApifyMcpContext,
 						input: unknown,
 					) => Promise<unknown>;
 				};
 			}
-		).actors.getListOfBuilds(makeCtx(), {
+		).acts.getListOfBuilds(makeCtx(), {
 			actorId: 'a1',
 			limit: 5,
 			offset: 10,
@@ -303,10 +303,10 @@ describe('apify endpoint invocation', () => {
 		mockRequest.mockResolvedValue(undefined);
 
 		const result = await (
-			ApifyEndpoints as unknown as {
+			ApifyRestEndpoints as unknown as {
 				actorRuns: {
 					deleteActorRun: (
-						ctx: ApifyContext,
+						ctx: ApifyMcpContext,
 						input: unknown,
 					) => Promise<unknown>;
 				};
@@ -321,23 +321,23 @@ describe('apify endpoint invocation', () => {
 
 		await expect(
 			(
-				ApifyEndpoints as unknown as {
-					actors: {
+				ApifyRestEndpoints as unknown as {
+					acts: {
 						getActorDetails: (
-							ctx: ApifyContext,
+							ctx: ApifyMcpContext,
 							input: unknown,
 						) => Promise<unknown>;
 					};
 				}
-			).actors.getActorDetails(makeCtx(), { actorId: 'abc123' }),
+			).acts.getActorDetails(makeCtx(), { actorId: 'abc123' }),
 		).rejects.toThrow('network down');
 	});
 
 	it('routes the first operation of every namespace to its declared path and method', async () => {
 		mockRequest.mockResolvedValue({ ok: true });
-		const endpoints = ApifyEndpoints as unknown as Record<
+		const endpoints = ApifyRestEndpoints as unknown as Record<
 			string,
-			Record<string, (ctx: ApifyContext, input: unknown) => Promise<unknown>>
+			Record<string, (ctx: ApifyMcpContext, input: unknown) => Promise<unknown>>
 		>;
 
 		for (const sample of sampleOperationPerNamespace()) {
@@ -455,5 +455,19 @@ describe('apify plugin factory', () => {
 			(plugin.options as { authType?: string } | undefined)?.authType,
 		).toBe('api_key');
 		expect(plugin.webhooks).toEqual({});
+	});
+
+	it('keeps MCP actors endpoints next to REST acts', () => {
+		const plugin = apify({});
+		const endpoints = plugin.endpoints as unknown as {
+			actors: { searchActors: unknown };
+			acts: { getActorDetails: unknown };
+			docs: { searchApifyDocs: unknown };
+			runs: { getActorRun: unknown };
+		};
+		expect(typeof endpoints.actors.searchActors).toBe('function');
+		expect(typeof endpoints.acts.getActorDetails).toBe('function');
+		expect(typeof endpoints.docs.searchApifyDocs).toBe('function');
+		expect(typeof endpoints.runs.getActorRun).toBe('function');
 	});
 });

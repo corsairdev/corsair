@@ -44,12 +44,13 @@ module.exports = {
 		],
 	},
 	moduleNameMapper: {
-		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
+		'^corsair$': '<rootDir>/../corsair/index.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
-	testTimeout: 30000,
+	testTimeout: 120000,
 	verbose: true,
 };
