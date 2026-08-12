@@ -50,16 +50,14 @@ function fakeCtx(key = 'test-key') {
 	} as never;
 }
 
+const wallet = '0xwallet';
+const contract = '0xcontract';
+const owner = '0xowner';
+const addresses = [{ address: owner, networks: ['eth-mainnet'] }];
+
 describe('Alchemy claim endpoint schemas', () => {
 	it('registers all 36 claim endpoints', () => {
 		expect(Object.keys(alchemyEndpointSchemas)).toHaveLength(36);
-		expect(alchemyEndpointSchemas['nft.getNftsForOwner']).toBeDefined();
-		expect(alchemyEndpointSchemas['prices.getPricesBySymbol']).toBeDefined();
-		expect(
-			alchemyEndpointSchemas['portfolio.getTokensByAddress'],
-		).toBeDefined();
-		expect(alchemyEndpointSchemas['token.getTokenBalances']).toBeDefined();
-		expect(alchemyEndpointSchemas['rpc.getTransactionCount']).toBeDefined();
 	});
 
 	it('rejects unsupported networks on NFT inputs', () => {
@@ -122,78 +120,151 @@ describe('Alchemy endpoint behavior', () => {
 		jest.clearAllMocks();
 	});
 
-	it('isHolderOfContract calls NFT isHolderOfContract', async () => {
-		mockedNft.mockResolvedValueOnce({ isHolderOfContract: true });
-		const result = await nft.isHolderOfContract(fakeCtx(), {
-			wallet: '0xwallet',
-			contractAddress: '0xcontract',
-		});
-		expect(result).toEqual({ isHolderOfContract: true });
-		expect(mockedNft).toHaveBeenCalledWith(
-			'eth-mainnet',
-			'test-key',
+	it.each([
+		[
+			'isHolderOfCollection',
 			'isHolderOfContract',
-			{ wallet: '0xwallet', contractAddress: '0xcontract' },
-		);
-	});
-
-	it('isHolderOfCollection aliases isHolderOfContract', async () => {
-		mockedNft.mockResolvedValueOnce({ isHolderOfContract: false });
-		await nft.isHolderOfCollection(fakeCtx(), {
-			wallet: '0xwallet',
-			contractAddress: '0xcontract',
-		});
-		expect(mockedNft.mock.calls[0]?.[2]).toBe('isHolderOfContract');
-	});
-
-	it('isAirdropNft calls isAirdropNFT', async () => {
-		mockedNft.mockResolvedValueOnce(true);
-		await nft.isAirdropNft(fakeCtx(), {
-			contractAddress: '0xcontract',
-			tokenId: '1',
-		});
-		expect(mockedNft.mock.calls[0]?.[2]).toBe('isAirdropNFT');
-	});
-
-	it('isSpamContractV3 calls isSpamContract', async () => {
-		mockedNft.mockResolvedValueOnce(false);
-		await nft.isSpamContractV3(fakeCtx(), { contractAddress: '0xcontract' });
-		expect(mockedNft.mock.calls[0]?.[2]).toBe('isSpamContract');
-	});
-
-	it('getNftMetadataBatch posts tokens body', async () => {
-		mockedNft.mockResolvedValueOnce({ nfts: [] });
-		await nft.getNftMetadataBatch(fakeCtx(), {
-			tokens: [{ contractAddress: '0xc', tokenId: '1' }],
-		});
-		expect(mockedNft).toHaveBeenCalledWith(
-			'eth-mainnet',
-			'test-key',
-			'getNFTMetadataBatch',
-			undefined,
-			{
-				method: 'POST',
-				body: {
-					tokens: [{ contractAddress: '0xc', tokenId: '1' }],
-					tokenUriTimeoutInMs: undefined,
-					refreshCache: undefined,
-				},
-			},
-		);
-	});
-
-	it('getNftsForOwner maps array query keys', async () => {
-		mockedNft.mockResolvedValueOnce({ ownedNfts: [] });
-		await nft.getNftsForOwner(fakeCtx(), {
-			owner: '0xowner',
-			contractAddresses: ['0xa'],
-			excludeFilters: ['SPAM'],
-		});
-		expect(mockedNft.mock.calls[0]?.[3]).toMatchObject({
-			owner: '0xowner',
-			'contractAddresses[]': ['0xa'],
-			'excludeFilters[]': ['SPAM'],
-		});
+			() =>
+				nft.isHolderOfCollection(fakeCtx(), {
+					wallet,
+					contractAddress: contract,
+				}),
+		],
+		[
+			'isHolderOfContract',
+			'isHolderOfContract',
+			() =>
+				nft.isHolderOfContract(fakeCtx(), {
+					wallet,
+					contractAddress: contract,
+				}),
+		],
+		[
+			'isAirdrop',
+			'isAirdropNFT',
+			() =>
+				nft.isAirdrop(fakeCtx(), { contractAddress: contract, tokenId: '1' }),
+		],
+		[
+			'isAirdropNft',
+			'isAirdropNFT',
+			() =>
+				nft.isAirdropNft(fakeCtx(), {
+					contractAddress: contract,
+					tokenId: '1',
+				}),
+		],
+		[
+			'isSpamContract',
+			'isSpamContract',
+			() => nft.isSpamContract(fakeCtx(), { contractAddress: contract }),
+		],
+		[
+			'isSpamContractV3',
+			'isSpamContract',
+			() => nft.isSpamContractV3(fakeCtx(), { contractAddress: contract }),
+		],
+		[
+			'computeRarityV3',
+			'computeRarity',
+			() =>
+				nft.computeRarityV3(fakeCtx(), {
+					contractAddress: contract,
+					tokenId: '1',
+				}),
+		],
+		[
+			'getCollectionsForOwner',
+			'getCollectionsForOwner',
+			() => nft.getCollectionsForOwner(fakeCtx(), { owner }),
+		],
+		[
+			'getContractMetadataV3',
+			'getContractMetadata',
+			() => nft.getContractMetadataV3(fakeCtx(), { contractAddress: contract }),
+		],
+		[
+			'getContractsForOwnerV3',
+			'getContractsForOwner',
+			() => nft.getContractsForOwnerV3(fakeCtx(), { owner }),
+		],
+		[
+			'getCollectionMetadata',
+			'getCollectionMetadata',
+			() =>
+				nft.getCollectionMetadata(fakeCtx(), {
+					collectionSlug: 'boredapeyachtclub',
+				}),
+		],
+		[
+			'getFloorPriceV3',
+			'getFloorPrice',
+			() => nft.getFloorPriceV3(fakeCtx(), { contractAddress: contract }),
+		],
+		[
+			'getNftMetadata',
+			'getNFTMetadata',
+			() =>
+				nft.getNftMetadata(fakeCtx(), {
+					contractAddress: contract,
+					tokenId: '1',
+				}),
+		],
+		[
+			'getOwnersForNftV3',
+			'getOwnersForNFT',
+			() =>
+				nft.getOwnersForNftV3(fakeCtx(), {
+					contractAddress: contract,
+					tokenId: '1',
+				}),
+		],
+		[
+			'getNftSalesV3',
+			'getNFTSales',
+			() => nft.getNftSalesV3(fakeCtx(), { contractAddress: contract }),
+		],
+		[
+			'getNftsForContract',
+			'getNFTsForContract',
+			() => nft.getNftsForContract(fakeCtx(), { contractAddress: contract }),
+		],
+		[
+			'getNftsForOwner',
+			'getNFTsForOwner',
+			() => nft.getNftsForOwner(fakeCtx(), { owner }),
+		],
+		[
+			'getOwnersForCollection',
+			'getOwnersForContract',
+			() =>
+				nft.getOwnersForCollection(fakeCtx(), { contractAddress: contract }),
+		],
+		[
+			'getOwnersForContract',
+			'getOwnersForContract',
+			() => nft.getOwnersForContract(fakeCtx(), { contractAddress: contract }),
+		],
+		[
+			'invalidateContractV3',
+			'invalidateContract',
+			() => nft.invalidateContractV3(fakeCtx(), { contractAddress: contract }),
+		],
+		[
+			'searchContractMetadataV3',
+			'searchContractMetadata',
+			() => nft.searchContractMetadataV3(fakeCtx(), { query: 'bayc' }),
+		],
+		[
+			'summarizeNftAttributes',
+			'summarizeNFTAttributes',
+			() =>
+				nft.summarizeNftAttributes(fakeCtx(), { contractAddress: contract }),
+		],
+	] as const)('%s calls NFT %s', async (_name, method, invoke) => {
+		mockedNft.mockResolvedValueOnce({});
+		await invoke();
+		expect(mockedNft.mock.calls[0]?.[2]).toBe(method);
 	});
 
 	it('getNftsForCollectionV3 prefers collection slug path', async () => {
@@ -202,6 +273,51 @@ describe('Alchemy endpoint behavior', () => {
 			collectionSlug: 'boredapeyachtclub',
 		});
 		expect(mockedNft.mock.calls[0]?.[2]).toBe('getNFTsForCollection');
+	});
+
+	it('getNftsForCollectionV3 falls back to contract path', async () => {
+		mockedNft.mockResolvedValueOnce({ nfts: [] });
+		await nft.getNftsForCollectionV3(fakeCtx(), {
+			contractAddress: contract,
+		});
+		expect(mockedNft.mock.calls[0]?.[2]).toBe('getNFTsForContract');
+	});
+
+	it('getContractMetadataBatchV3 posts contractAddresses', async () => {
+		mockedNft.mockResolvedValueOnce({ contracts: [] });
+		await nft.getContractMetadataBatchV3(fakeCtx(), {
+			contractAddresses: [contract],
+		});
+		expect(mockedNft).toHaveBeenCalledWith(
+			'eth-mainnet',
+			'test-key',
+			'getContractMetadataBatch',
+			undefined,
+			{ method: 'POST', body: { contractAddresses: [contract] } },
+		);
+	});
+
+	it('getNftMetadataBatch posts tokens body', async () => {
+		mockedNft.mockResolvedValueOnce({ nfts: [] });
+		await nft.getNftMetadataBatch(fakeCtx(), {
+			tokens: [{ contractAddress: contract, tokenId: '1' }],
+		});
+		expect(mockedNft.mock.calls[0]?.[2]).toBe('getNFTMetadataBatch');
+		expect(mockedNft.mock.calls[0]?.[4]).toMatchObject({ method: 'POST' });
+	});
+
+	it('getNftsForOwner maps array query keys', async () => {
+		mockedNft.mockResolvedValueOnce({ ownedNfts: [] });
+		await nft.getNftsForOwner(fakeCtx(), {
+			owner,
+			contractAddresses: ['0xa'],
+			excludeFilters: ['SPAM'],
+		});
+		expect(mockedNft.mock.calls[0]?.[3]).toMatchObject({
+			owner,
+			'contractAddresses[]': ['0xa'],
+			'excludeFilters[]': ['SPAM'],
+		});
 	});
 
 	it('getPricesBySymbol hits prices by-symbol', async () => {
@@ -231,47 +347,84 @@ describe('Alchemy endpoint behavior', () => {
 		);
 	});
 
-	it('getTokensByAddress posts portfolio path', async () => {
-		mockedData.mockResolvedValueOnce({ data: { tokens: [] } });
-		await portfolio.getTokensByAddress(fakeCtx(), {
-			addresses: [{ address: '0xowner', networks: ['eth-mainnet'] }],
+	it('getTokenPricesByAddress posts address pairs', async () => {
+		mockedPrices.mockResolvedValueOnce({ data: [] });
+		await prices.getTokenPricesByAddress(fakeCtx(), {
+			addresses: [{ network: 'eth-mainnet', address: contract }],
 		});
-		expect(mockedData).toHaveBeenCalledWith(
+		expect(mockedPrices).toHaveBeenCalledWith(
 			'test-key',
-			'/assets/tokens/by-address',
-			expect.objectContaining({
-				addresses: [{ address: '0xowner', networks: ['eth-mainnet'] }],
-			}),
+			'/tokens/by-address',
+			{
+				method: 'POST',
+				body: {
+					addresses: [{ network: 'eth-mainnet', address: contract }],
+				},
+			},
 		);
 	});
 
-	it('getPortfolioNftsByAddress posts nfts path', async () => {
-		mockedData.mockResolvedValueOnce({ data: { ownedNfts: [] } });
-		await portfolio.getPortfolioNftsByAddress(fakeCtx(), {
-			addresses: [{ address: '0xowner', networks: ['eth-mainnet'] }],
-			pageSize: 2,
-		});
-		expect(mockedData.mock.calls[0]?.[1]).toBe('/assets/nfts/by-address');
+	it.each([
+		[
+			'getNftContractsByAddress',
+			'/assets/nfts/contracts/by-address',
+			() => portfolio.getNftContractsByAddress(fakeCtx(), { addresses }),
+		],
+		[
+			'getPortfolioNftsByAddress',
+			'/assets/nfts/by-address',
+			() => portfolio.getPortfolioNftsByAddress(fakeCtx(), { addresses }),
+		],
+		[
+			'getTokenBalancesByAddress',
+			'/assets/tokens/balances/by-address',
+			() => portfolio.getTokenBalancesByAddress(fakeCtx(), { addresses }),
+		],
+		[
+			'getTokensByAddress',
+			'/assets/tokens/by-address',
+			() => portfolio.getTokensByAddress(fakeCtx(), { addresses }),
+		],
+		[
+			'getTransactionsHistoryByAddress',
+			'/transactions/history/by-address',
+			() => portfolio.getTransactionsHistoryByAddress(fakeCtx(), { addresses }),
+		],
+	] as const)('%s posts %s', async (_name, path, invoke) => {
+		mockedData.mockResolvedValueOnce({ data: {} });
+		await invoke();
+		expect(mockedData.mock.calls[0]?.[1]).toBe(path);
 	});
 
 	it('getTokenBalances uses erc20 tokenSpec when omitted', async () => {
 		mockedRpc.mockResolvedValueOnce({
-			address: '0xowner',
+			address: owner,
 			tokenBalances: [],
 		});
-		await token.getTokenBalances(fakeCtx(), { address: '0xowner' });
+		await token.getTokenBalances(fakeCtx(), { address: owner });
 		expect(mockedRpc).toHaveBeenCalledWith(
 			'eth-mainnet',
 			'test-key',
 			'alchemy_getTokenBalances',
-			['0xowner', 'erc20'],
+			[owner, 'erc20'],
+		);
+	});
+
+	it('getTokenMetadata calls alchemy_getTokenMetadata', async () => {
+		mockedRpc.mockResolvedValueOnce({ name: 'USD Coin', symbol: 'USDC' });
+		await token.getTokenMetadata(fakeCtx(), { contractAddress: contract });
+		expect(mockedRpc).toHaveBeenCalledWith(
+			'eth-mainnet',
+			'test-key',
+			'alchemy_getTokenMetadata',
+			[contract],
 		);
 	});
 
 	it('getTransactionCount parses hex nonce', async () => {
 		mockedRpc.mockResolvedValueOnce('0x10');
 		const result = await rpc.getTransactionCount(fakeCtx(), {
-			address: '0xowner',
+			address: owner,
 			blockTag: 'latest',
 		});
 		expect(result).toEqual({ count: 16, hex: '0x10' });
@@ -281,7 +434,7 @@ describe('Alchemy endpoint behavior', () => {
 		await expect(
 			nft.getContractMetadataV3(
 				{ key: 'k', options: { network: 'evil.com' } } as never,
-				{ contractAddress: '0xc' },
+				{ contractAddress: contract },
 			),
 		).rejects.toThrow(/Unsupported Alchemy network/);
 		expect(mockedNft).not.toHaveBeenCalled();

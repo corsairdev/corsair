@@ -2,14 +2,28 @@ import { AlchemyAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 describe('Alchemy error handlers', () => {
-	it('matches RATE_LIMIT_ERROR on 429', () => {
+	it('matches RATE_LIMIT_ERROR on 429', async () => {
 		const error = new AlchemyAPIError('Too Many Requests', { status: 429 });
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({
+			maxRetries: 5,
+			retryStrategy: 'exponential_backoff',
+			headersRetryAfterMs: undefined,
+		});
 	});
 
-	it('matches RATE_LIMIT_ERROR on message', () => {
+	it('matches RATE_LIMIT_ERROR on message', async () => {
 		const error = new Error('Rate limit exceeded');
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({
+			maxRetries: 5,
+			retryStrategy: 'exponential_backoff',
+			headersRetryAfterMs: undefined,
+		});
 	});
 
 	it('matches AUTH_ERROR on 401 and 403', () => {
