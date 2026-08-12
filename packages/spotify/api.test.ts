@@ -26,19 +26,13 @@ import type {
 import { SpotifyEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_ACCESS_TOKEN = process.env.SPOTIFY_ACCESS_TOKEN || '';
+const describeApi = TEST_ACCESS_TOKEN ? describe : describe.skip;
 
-const skipWithoutToken = !TEST_ACCESS_TOKEN
-	? () => {
-			console.warn('Skipping: SPOTIFY_ACCESS_TOKEN not set');
-		}
-	: null;
-
-describe('Spotify API Type Tests', () => {
+describeApi('Spotify API Type Tests', () => {
 	describe('albums', () => {
 		let testAlbumId: string;
 
 		beforeAll(async () => {
-			if (!TEST_ACCESS_TOKEN) return;
 			const searchResponse = await makeSpotifyRequest<AlbumsSearchResponse>(
 				'search',
 				TEST_ACCESS_TOKEN,
@@ -52,7 +46,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('albumsGet returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<AlbumsGetResponse>(
 				`albums/${testAlbumId}`,
 				TEST_ACCESS_TOKEN,
@@ -63,7 +56,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('albumsGetNewReleases returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<AlbumsGetNewReleasesResponse>(
 				'browse/new-releases',
 				TEST_ACCESS_TOKEN,
@@ -75,7 +67,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('albumsGetTracks returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<AlbumsGetTracksResponse>(
 				`albums/${testAlbumId}/tracks`,
 				TEST_ACCESS_TOKEN,
@@ -87,7 +78,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('albumsSearch returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<AlbumsSearchResponse>(
 				'search',
 				TEST_ACCESS_TOKEN,
@@ -103,7 +93,6 @@ describe('Spotify API Type Tests', () => {
 		let testArtistId: string;
 
 		beforeAll(async () => {
-			if (!TEST_ACCESS_TOKEN) return;
 			const searchResponse = await makeSpotifyRequest<ArtistsSearchResponse>(
 				'search',
 				TEST_ACCESS_TOKEN,
@@ -117,7 +106,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('artistsGet returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<ArtistsGetResponse>(
 				`artists/${testArtistId}`,
 				TEST_ACCESS_TOKEN,
@@ -128,7 +116,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('artistsGetAlbums returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<ArtistsGetAlbumsResponse>(
 				`artists/${testArtistId}/albums`,
 				TEST_ACCESS_TOKEN,
@@ -140,7 +127,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('artistsGetRelatedArtists returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response =
 				await makeSpotifyRequest<ArtistsGetRelatedArtistsResponse>(
 					`artists/${testArtistId}/related-artists`,
@@ -152,7 +138,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('artistsGetTopTracks returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<ArtistsGetTopTracksResponse>(
 				`artists/${testArtistId}/top-tracks`,
 				TEST_ACCESS_TOKEN,
@@ -164,7 +149,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('artistsSearch returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<ArtistsSearchResponse>(
 				'search',
 				TEST_ACCESS_TOKEN,
@@ -180,7 +164,6 @@ describe('Spotify API Type Tests', () => {
 		let testTrackId: string;
 
 		beforeAll(async () => {
-			if (!TEST_ACCESS_TOKEN) return;
 			const searchResponse = await makeSpotifyRequest<TracksSearchResponse>(
 				'search',
 				TEST_ACCESS_TOKEN,
@@ -200,7 +183,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('tracksGet returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<TracksGetResponse>(
 				`tracks/${testTrackId}`,
 				TEST_ACCESS_TOKEN,
@@ -211,7 +193,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('tracksGetAudioFeatures returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<TracksGetAudioFeaturesResponse>(
 				`audio-features/${testTrackId}`,
 				TEST_ACCESS_TOKEN,
@@ -222,7 +203,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('tracksSearch returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<TracksSearchResponse>(
 				'search',
 				TEST_ACCESS_TOKEN,
@@ -245,7 +225,6 @@ describe('Spotify API Type Tests', () => {
 		let testUserId: string | undefined;
 
 		beforeAll(async () => {
-			if (!TEST_ACCESS_TOKEN) return;
 			const userPlaylistsResponse =
 				await makeSpotifyRequest<PlaylistsGetUserPlaylistsResponse>(
 					'me/playlists',
@@ -278,7 +257,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('playlistsGet returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			if (!testPlaylistId) {
 				return;
 			}
@@ -293,7 +271,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('playlistsGetUserPlaylists returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			if (!testUserId) {
 				const response =
 					await makeSpotifyRequest<PlaylistsGetUserPlaylistsResponse>(
@@ -318,7 +295,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('playlistsGetTracks returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			if (!testPlaylistId) {
 				return;
 			}
@@ -334,7 +310,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('playlistsSearch returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<PlaylistsSearchResponse>(
 				'search',
 				TEST_ACCESS_TOKEN,
@@ -346,7 +321,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('playlistsCreate returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			if (!testUserId) {
 				return;
 			}
@@ -371,7 +345,6 @@ describe('Spotify API Type Tests', () => {
 
 	describe('library', () => {
 		it('libraryGetLikedTracks returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response = await makeSpotifyRequest<LibraryGetLikedTracksResponse>(
 				'me/tracks',
 				TEST_ACCESS_TOKEN,
@@ -385,7 +358,6 @@ describe('Spotify API Type Tests', () => {
 
 	describe('myData', () => {
 		it('myDataGetFollowedArtists returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response =
 				await makeSpotifyRequest<MyDataGetFollowedArtistsResponse>(
 					'me/following',
@@ -400,7 +372,6 @@ describe('Spotify API Type Tests', () => {
 
 	describe('player', () => {
 		it('playerGetCurrentlyPlaying returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response =
 				await makeSpotifyRequest<PlayerGetCurrentlyPlayingResponse>(
 					'me/player/currently-playing',
@@ -412,7 +383,6 @@ describe('Spotify API Type Tests', () => {
 		});
 
 		it('playerGetRecentlyPlayed returns correct type', async () => {
-			if (skipWithoutToken) return skipWithoutToken();
 			const response =
 				await makeSpotifyRequest<PlayerGetRecentlyPlayedResponse>(
 					'me/player/recently-played',
