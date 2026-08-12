@@ -281,17 +281,18 @@ async function handleWebhookTunnel(
 	internal: CorsairInternalConfig,
 	payload: WebhookTunnelPayload,
 ): Promise<TunnelAck> {
-	// Tenant-scope the dedup key to match Hub's (tenant, environment, dedupeKey)
-	// uniqueness, so two tenants under one dev env that share an identical-body
-	// event (a plugin with no provider delivery id) don't collapse onto each other.
+	// Resolve the tenant first, then tenant-scope the dedup key on the RESOLVED id.
+	// Keying on payload.tenantId alone would collapse two tenants whose identity
+	// comes from query.tenantId or a webhook-link lookup (both would share the empty
+	// prefix). Scoping matches Hub's (tenant, environment, dedupeKey) uniqueness.
+	const tenantId = await resolveWebhookTenantId(corsair, internal, payload);
 	const seenKey = payload.dedupeKey
-		? `${payload.tenantId ?? ''}:${payload.dedupeKey}`
+		? `${tenantId ?? ''}:${payload.dedupeKey}`
 		: undefined;
 	// Already handled this delivery — ack ok without re-running the handler.
 	if (seenKey && hasWebhookSeen(seenKey)) {
 		return { status: 'ok' };
 	}
-	const tenantId = await resolveWebhookTenantId(corsair, internal, payload);
 	const query = {
 		...(payload.query ?? {}),
 		...(tenantId ? { tenantId } : {}),

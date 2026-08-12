@@ -155,8 +155,6 @@ export function startConnectLoop(
 	// Webhooks must drain regardless of allowWorkflowExecution; run/probe execution
 	// is gated per-envelope inside processCorsair, so starting the loop here is safe
 	// even when execution is disabled (a delivered run just acks back "not enabled").
-	// ponytail: every dev key long-polls (~once/25s). Fine at current scale; gate on
-	// registered-webhook-or-execution intent if idle polling ever becomes a cost.
 	const key = hub.projectApiKey;
 	if (activeLoops.has(key)) {
 		return { stop: () => {} };
