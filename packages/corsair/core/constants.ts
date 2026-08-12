@@ -16,16 +16,29 @@ export const BaseProviders = [
 	'abstract',
 	'activetrail',
 	'addresszen',
+	'affinda',
+	'agencyzoom',
 	'agentmail',
+	'agenty',
 	'agentql',
 	'ahrefs',
+	'aimlapi',
 	'airtable',
 	'algolia',
+	'alttextai',
+	'amara',
+	'ambientweather',
+	'ambee',
 	'amplitude',
+	'apibible',
+	'apify',
+	'apilabz',
+	'apisports',
 	'asana',
 	'bitwarden',
 	'bluesky',
 	'box',
+	'canvas',
 	'cal',
 	'calendly',
 	'canva',
@@ -38,8 +51,10 @@ export const BaseProviders = [
 	'deepseek',
 	'digitalocean',
 	'discord',
+	'dockerhub',
 	'dodopayments',
 	'dropbox',
+	'epicgames',
 	'exa',
 	'facebook',
 	'figma',
@@ -61,6 +76,7 @@ export const BaseProviders = [
 	'hashnode',
 	'heygen',
 	'hubspot',
+	'huggingface',
 	'insightoai',
 	'instagram',
 	'intercom',
@@ -97,6 +113,7 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'todoist',
+	'toggl',
 	'trello',
 	'twilio',
 	'twitter',
@@ -105,7 +122,10 @@ export const BaseProviders = [
 	'vapi',
 	'vercel',
 	'whatsapp',
+	'wiza',
+	'workday',
 	'xquik',
+	'youcom',
 	'youtube',
 	'zendesk',
 	'zohomail',
@@ -116,16 +136,29 @@ export const ProviderDisplayNames = {
 	abstract: 'Abstract',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	affinda: 'Affinda',
+	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
+	agenty: 'Agenty',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
+	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
+	alttextai: 'AltText.ai',
+	amara: 'Amara',
+	ambientweather: 'Ambient Weather',
+	ambee: 'Ambee',
 	amplitude: 'Amplitude',
+	apibible: 'API.Bible',
+	apify: 'Apify',
+	apilabz: 'API Labz',
+	apisports: 'API-Sports',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	box: 'Box',
+	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
@@ -138,8 +171,10 @@ export const ProviderDisplayNames = {
 	deepseek: 'DeepSeek',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
+	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
 	figma: 'Figma',
@@ -161,6 +196,7 @@ export const ProviderDisplayNames = {
 	hashnode: 'Hashnode',
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
+	huggingface: 'Hugging Face',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -197,6 +233,7 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	todoist: 'Todoist',
+	toggl: 'Toggl',
 	trello: 'Trello',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
@@ -205,7 +242,10 @@ export const ProviderDisplayNames = {
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	whatsapp: 'WhatsApp',
+	wiza: 'Wiza',
+	workday: 'Workday',
 	xquik: 'XQuik',
+	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
@@ -223,18 +263,31 @@ export type AllProviders =
 	| 'abstract'
 	| 'activetrail'
 	| 'addresszen'
+	| 'affinda'
+	| 'agencyzoom'
 	| 'agentmail'
+	| 'agenty'
 	| 'agentql'
 	| 'ahrefs'
+	| 'aimlapi'
 	| 'airtable'
 	| 'algolia'
+	| 'alttextai'
+	| 'amara'
+	| 'ambientweather'
+	| 'ambee'
 	| 'amplitude'
+	| 'apibible'
+	| 'apify'
+	| 'apilabz'
+	| 'apisports'
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canvas'
 	| 'canva'
 	| 'cloudflare'
 	| 'cloudinary'
@@ -245,8 +298,10 @@ export type AllProviders =
 	| 'deepseek'
 	| 'digitalocean'
 	| 'discord'
+	| 'dockerhub'
 	| 'dodopayments'
 	| 'dropbox'
+	| 'epicgames'
 	| 'exa'
 	| 'facebook'
 	| 'figma'
@@ -268,6 +323,7 @@ export type AllProviders =
 	| 'hashnode'
 	| 'heygen'
 	| 'hubspot'
+	| 'huggingface'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
@@ -304,6 +360,7 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'todoist'
+	| 'toggl'
 	| 'trello'
 	| 'twilio'
 	| 'twitter'
@@ -312,7 +369,10 @@ export type AllProviders =
 	| 'vapi'
 	| 'vercel'
 	| 'whatsapp'
+	| 'wiza'
+	| 'workday'
 	| 'xquik'
+	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'
