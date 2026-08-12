@@ -252,7 +252,8 @@ describe('input validation', () => {
 			TogglEndpointInputSchemas.timeEntriesCreate.parse({
 				workspace_id: 1,
 				start: '12/08/2026',
-				duration: -1,
+				// A plainly valid duration, so only `start` can fail the parse.
+				duration: 60,
 			}),
 		).toThrow();
 	});

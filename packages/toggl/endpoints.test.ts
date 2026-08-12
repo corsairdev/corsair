@@ -202,11 +202,16 @@ describe('organizations', () => {
 		expect(requested().body).toMatchObject({ name: 'New Name' });
 	});
 
-	it('lists organization workspaces', async () => {
-		const { ctx } = makeCtx();
+	it('lists organization workspaces and caches them', async () => {
+		const { ctx, db } = makeCtx();
 		mockResponse([workspace]);
 		await Organizations.getWorkspaces(ctx, { organization_id: 2000001 });
 		expect(requested().url).toBe(`${BASE}/organizations/2000001/workspaces`);
+		// Same records as workspaces.list, so the mirror must not go stale.
+		expect(db.workspaces.upsertByEntityId).toHaveBeenCalledWith(
+			String(WS),
+			expect.objectContaining({ id: WS, name: 'Workspace' }),
+		);
 	});
 });
 

@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeTogglRequest } from '../client';
 import type { TogglEndpoints } from '../index';
 import { auditPayload } from './logging';
+import { cacheWorkspace } from './persist';
 import type { TogglEndpointOutputs } from './types';
 
 /** Reads an organization, including its pricing plan and trial state. */
@@ -48,13 +49,20 @@ export const getWorkspaces: TogglEndpoints['organizationsGetWorkspaces'] =
 			method: 'GET',
 		});
 
+		const workspaces = result ?? [];
+
+		// Same records as workspaces.list, so they populate the cache identically.
+		for (const workspace of workspaces) {
+			await cacheWorkspace(ctx.db.workspaces, workspace);
+		}
+
 		await logEventFromContext(
 			ctx,
 			'toggl.organizations.getWorkspaces',
 			auditPayload(input, ['organization_id']),
 			'completed',
 		);
-		return result;
+		return workspaces;
 	};
 
 /**

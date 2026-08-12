@@ -27,24 +27,34 @@ const WEBHOOKS = 'https://api.track.toggl.com/webhooks/api/v1';
 
 type Ctx = Parameters<typeof Me.get>[0];
 
-/** Builds a minimal endpoint context for endpoints that do not touch the cache. */
-function makeCtx() {
-	const store = () => ({
+function makeStore() {
+	return {
 		upsertByEntityId: jest.fn(async () => undefined),
 		deleteByEntityId: jest.fn(async () => true),
-	});
+	};
+}
+
+/** Builds an endpoint context and hands back the cache mocks for assertions. */
+function makeCtxWithDb() {
+	const db = {
+		workspaces: makeStore(),
+		clients: makeStore(),
+		projects: makeStore(),
+		tags: makeStore(),
+	};
 	// Only `key`, `db` and the logging members are touched by the endpoints.
-	return {
+	const ctx = {
 		key: 'fake-toggl-token-for-tests-only',
-		db: {
-			workspaces: store(),
-			clients: store(),
-			projects: store(),
-			tags: store(),
-		},
+		db,
 		database: undefined,
 		$getAccountId: async () => 'test-account',
 	} as unknown as Ctx;
+	return { ctx, db };
+}
+
+/** Builds a minimal endpoint context when the cache is not under test. */
+function makeCtx() {
+	return makeCtxWithDb().ctx;
 }
 
 let lastCall: { url: string; init: RequestInit } | undefined;
@@ -134,6 +144,33 @@ describe('me — collections and account actions', () => {
 	it('normalises a null tasks collection to an empty array', async () => {
 		mockResponse(null);
 		expect(await Me.getTasks(makeCtx(), {})).toEqual([]);
+	});
+
+	it('feeds the entity cache from the /me collections', async () => {
+		// These return the same records as the workspace-scoped lists, so reading
+		// through /me must not leave the local mirror stale.
+		const { ctx, db } = makeCtxWithDb();
+
+		mockResponse([{ id: 4000001, wid: WS, name: 'Acme Corp' }]);
+		await Me.getClients(ctx, {});
+		expect(db.clients.upsertByEntityId).toHaveBeenCalledWith(
+			'4000001',
+			expect.objectContaining({ workspace_id: WS, name: 'Acme Corp' }),
+		);
+
+		mockResponse([{ id: 5000001, workspace_id: WS, name: 'Website' }]);
+		await Me.getProjects(ctx, {});
+		expect(db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			'5000001',
+			expect.objectContaining({ name: 'Website' }),
+		);
+
+		mockResponse([{ id: 6000001, workspace_id: WS, name: 'billable' }]);
+		await Me.getTags(ctx, {});
+		expect(db.tags.upsertByEntityId).toHaveBeenCalledWith(
+			'6000001',
+			expect.objectContaining({ name: 'billable' }),
+		);
 	});
 
 	it('posts the unsubscribe code for product emails', async () => {

@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeTogglRequest } from '../client';
 import type { TogglEndpoints } from '../index';
 import { auditPayload } from './logging';
+import { cacheClient, cacheProject, cacheTag } from './persist';
 import type { TogglEndpointOutputs } from './types';
 
 /**
@@ -169,13 +170,21 @@ export const getClients: TogglEndpoints['meGetClients'] = async (
 		{ method: 'GET', query: { since: input.since } },
 	);
 
+	const clients = result ?? [];
+
+	// These are the same records the workspace-scoped list returns, so they feed
+	// the cache the same way; otherwise reading via /me would leave it stale.
+	for (const client of clients) {
+		await cacheClient(ctx.db.clients, client);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'toggl.me.getClients',
 		auditPayload(input, ['since']),
 		'completed',
 	);
-	return result ?? [];
+	return clients;
 };
 
 /** Lists every project the caller can reach, across all their workspaces. */
@@ -189,13 +198,19 @@ export const getProjects: TogglEndpoints['meGetProjects'] = async (
 		{ method: 'GET', query: { since: input.since } },
 	);
 
+	const projects = result ?? [];
+
+	for (const project of projects) {
+		await cacheProject(ctx.db.projects, project);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'toggl.me.getProjects',
 		auditPayload(input, ['since']),
 		'completed',
 	);
-	return result ?? [];
+	return projects;
 };
 
 /** Lists every tag the caller can reach, across all their workspaces. */
@@ -206,13 +221,19 @@ export const getTags: TogglEndpoints['meGetTags'] = async (ctx, input) => {
 		{ method: 'GET', query: { since: input.since } },
 	);
 
+	const tags = result ?? [];
+
+	for (const tag of tags) {
+		await cacheTag(ctx.db.tags, tag);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'toggl.me.getTags',
 		auditPayload(input, ['since']),
 		'completed',
 	);
-	return result ?? [];
+	return tags;
 };
 
 /** Lists every task the caller can reach, across all their workspaces. */
