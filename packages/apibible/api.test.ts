@@ -565,6 +565,16 @@ describe('apibible keyBuilder authentication', () => {
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
+	it('throws AuthMissingError when the key manager is absent (no DB account)', async () => {
+		const noManagerCtx = {
+			authType: 'api_key',
+		} as unknown as ApiBibleKeyBuilderContext;
+
+		await expect(
+			plugin.keyBuilder!(noManagerCtx, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
 	it('returns the stored key when one is available', async () => {
 		const withKeyCtx = {
 			authType: 'api_key',
