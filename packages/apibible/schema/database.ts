@@ -6,6 +6,14 @@ import { z } from 'zod';
  * (docs: https://docs.api.bible).
  */
 
+const ApiBibleLanguage = z.object({
+	id: z.string(),
+	name: z.string(),
+	nameLocal: z.string().optional(),
+	script: z.string().nullable().optional(),
+	scriptDirection: z.string().nullable().optional(),
+});
+
 /** GET /v1/bibles — Bible version catalog row */
 export const ApiBibleBible = z.object({
 	id: z.string(),
@@ -17,8 +25,7 @@ export const ApiBibleBible = z.object({
 	abbreviationLocal: z.string().nullable().optional(),
 	description: z.string().nullable().optional(),
 	descriptionLocal: z.string().nullable().optional(),
-	languageId: z.string(),
-	languageName: z.string().optional(),
+	language: ApiBibleLanguage,
 	type: z.string(),
 	updatedAt: z.string(),
 	copyright: z.string().optional(),
@@ -90,7 +97,7 @@ export const ApiBibleAudioBible = z.object({
 	nameLocal: z.string(),
 	abbreviation: z.string().nullable().optional(),
 	abbreviationLocal: z.string().nullable().optional(),
-	languageId: z.string(),
+	language: ApiBibleLanguage,
 	type: z.string(),
 	updatedAt: z.string(),
 	copyright: z.string().optional(),

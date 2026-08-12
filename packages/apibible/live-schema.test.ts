@@ -31,6 +31,7 @@ function load(name: string): unknown {
 			['sectionsGet', 'section_get'],
 			['searchQuery', 'search_eng'],
 			['audioBiblesList', 'audio_bibles'],
+			['audioBiblesGet', 'audio_bible'],
 			['audioBooksList', 'audio_books'],
 			['audioBooksGet', 'audio_book'],
 			['audioChaptersList', 'audio_chapters'],
