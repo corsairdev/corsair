@@ -124,12 +124,18 @@ const FAILED_STEP_MARKER = '__corsairFailedStep';
 // workflows. Promote to a per-run config knob if long workflows land.
 const WORKFLOW_TIMEOUT_MS = 30_000;
 
+// Module-private symbol brands. Never exported, never placed on a global, so
+// sandbox code has no reference to them — it can't fabricate a branded object to
+// forge a durable interrupt (an ordinary `throw { ... }` stays a failed run).
+const SLEEP_BRAND = Symbol('corsairSleep');
+const WAIT_BRAND = Symbol('corsairWait');
+
 /**
  * Thrown by `step.sleep` to unwind `main` at the sleep boundary. Not an Error, so
  * workflow `try/catch` around real work won't accidentally swallow it.
  */
 class SleepInterrupt {
-	readonly __corsairSleep = true as const;
+	readonly [SLEEP_BRAND] = true;
 	constructor(
 		readonly wakeAt: number,
 		readonly stepName: string,
@@ -140,7 +146,7 @@ function isSleepInterrupt(value: unknown): value is SleepInterrupt {
 	return (
 		typeof value === 'object' &&
 		value !== null &&
-		(value as { __corsairSleep?: unknown }).__corsairSleep === true
+		(value as Record<PropertyKey, unknown>)[SLEEP_BRAND] === true
 	);
 }
 
@@ -167,7 +173,7 @@ export function parseDurationMs(s: string): number {
 /** Thrown by `step.waitForEvent` to unwind `main` at the wait boundary. Mirrors
  *  {@link SleepInterrupt}; not an Error so workflow try/catch won't swallow it. */
 class WaitInterrupt {
-	readonly __corsairWait = true as const;
+	readonly [WAIT_BRAND] = true;
 	constructor(
 		readonly stepId: string,
 		readonly stepName: string,
@@ -182,7 +188,7 @@ function isWaitInterrupt(value: unknown): value is WaitInterrupt {
 	return (
 		typeof value === 'object' &&
 		value !== null &&
-		(value as { __corsairWait?: unknown }).__corsairWait === true
+		(value as Record<PropertyKey, unknown>)[WAIT_BRAND] === true
 	);
 }
 

@@ -266,3 +266,27 @@ describe('step.sleepUntil — absolute-time pause', () => {
 		);
 	});
 });
+
+describe('interrupt brand is unforgeable by sandbox code', () => {
+	it('a workflow throwing a fake wait brand is a failed run, not waiting', async () => {
+		const { promise } = run(`
+			module.exports.main = async (corsair, payload, step) => {
+				throw { __corsairWait: true, stepId: 'st_x', event: 'evil' };
+			};
+		`);
+		const result = await promise;
+		expect(result.status).toBe('failed');
+		expect(result.waiter).toBeUndefined();
+	});
+
+	it('a workflow throwing a fake sleep brand is a failed run, not sleeping', async () => {
+		const { promise } = run(`
+			module.exports.main = async (corsair, payload, step) => {
+				throw { __corsairSleep: true, wakeAt: 0 };
+			};
+		`);
+		const result = await promise;
+		expect(result.status).toBe('failed');
+		expect(result.sleepUntil).toBeUndefined();
+	});
+});
