@@ -33,4 +33,20 @@ describe('Alchemy error handlers', () => {
 		const error = new AlchemyAPIError('Invalid params', { code: -32602 });
 		expect(errorHandlers.BAD_REQUEST_ERROR.match(error)).toBe(true);
 	});
+
+	it('matches SERVER_ERROR on 5xx and retries', async () => {
+		const error = new AlchemyAPIError('Upstream failed', { status: 503 });
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+		await expect(errorHandlers.SERVER_ERROR.handler()).resolves.toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('does not treat address substrings as HTTP status matches', () => {
+		const error = new Error('tx 0x400aaa failed');
+		expect(errorHandlers.BAD_REQUEST_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+	});
 });

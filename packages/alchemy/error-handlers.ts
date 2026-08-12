@@ -62,6 +62,16 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			const status = getStatus(error);
+			return status !== undefined && status >= 500;
+		},
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),

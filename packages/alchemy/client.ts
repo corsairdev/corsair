@@ -61,9 +61,12 @@ export type AlchemyNetwork = (typeof ALCHEMY_NETWORKS)[number];
 
 const NETWORK_SET = new Set<string>(ALCHEMY_NETWORKS);
 
+/** Hostname-safe label: lowercase alphanumerics + hyphens only (no dots/slashes). */
+const NETWORK_LABEL = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+
 /** Reject anything that is not a known Alchemy network label. */
 export function assertAlchemyNetwork(network: string): AlchemyNetwork {
-	if (!NETWORK_SET.has(network)) {
+	if (!NETWORK_LABEL.test(network) || !NETWORK_SET.has(network)) {
 		throw new AlchemyAPIError(
 			`Unsupported Alchemy network "${network}". Allowed: ${ALCHEMY_NETWORKS.join(', ')}`,
 			{ status: 400 },

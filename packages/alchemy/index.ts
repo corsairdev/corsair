@@ -486,16 +486,22 @@ export function alchemy<const T extends AlchemyPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AlchemyKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
+			if (source !== 'endpoint') {
+				return '';
+			}
+
+			if (options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (res) return res;
 			}
 
-			return '';
+			throw new Error(
+				'Alchemy API key missing. Pass options.key or configure an api_key credential.',
+			);
 		},
 	} satisfies InternalAlchemyPlugin;
 }
