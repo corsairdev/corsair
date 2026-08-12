@@ -242,6 +242,38 @@ describe('OCR.space response schemas', () => {
 	});
 });
 
+describe('output validation', () => {
+	it('rejects a response whose types have drifted', () => {
+		// Endpoints parse responses through these schemas before returning, so a
+		// drifted payload fails at the boundary instead of reaching the caller.
+		expect(() =>
+			OcrSpaceEndpointOutputSchemas.parse.parse({
+				ParsedResults: 'not-an-array',
+				OCRExitCode: 1,
+			}),
+		).toThrow();
+
+		expect(() =>
+			OcrSpaceEndpointOutputSchemas.parse.parse({
+				ParsedResults: [{ ParsedText: 42 }],
+				OCRExitCode: 1,
+			}),
+		).toThrow();
+
+		expect(() =>
+			OcrSpaceEndpointOutputSchemas.conversions.parse({
+				count_total: 'many',
+			}),
+		).toThrow();
+	});
+
+	it('accepts a well-formed response unchanged', () => {
+		expect(() =>
+			OcrSpaceEndpointOutputSchemas.parse.parse(SUCCESS_RESPONSE),
+		).not.toThrow();
+	});
+});
+
 describe('isSearchablePdfUrl', () => {
 	it('recognises a real searchable PDF link', () => {
 		expect(

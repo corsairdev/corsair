@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeOcrSpacePostRequest, OCRSPACE_MYAPI_BASE } from '../client';
 import type { OcrSpaceEndpoints } from '../index';
 import type { ConversionsResponse } from './types';
-import { ConversionsInputSchema } from './types';
+import { ConversionsInputSchema, ConversionsResponseSchema } from './types';
 
 // Current-month and last-month counters are different data, so each period
 // gets its own cached row rather than overwriting a single one.
@@ -25,11 +25,15 @@ export const conversions: OcrSpaceEndpoints['conversions'] = async (
 		formData.startDate = validatedInput.startDate;
 	}
 
-	const response = await makeOcrSpacePostRequest<ConversionsResponse>(
+	const rawResponse = await makeOcrSpacePostRequest<ConversionsResponse>(
 		'/conversions',
 		ctx.key,
 		{ formData, baseUrl: OCRSPACE_MYAPI_BASE },
 	);
+
+	// Validated against the declared output schema so callers never receive a
+	// payload that violates the exported contract.
+	const response = ConversionsResponseSchema.parse(rawResponse);
 
 	const period = validatedInput.startDate ?? CURRENT_PERIOD;
 

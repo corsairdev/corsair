@@ -10,7 +10,12 @@ import type {
 	ParseImageUrlResponse,
 	ParseResponse,
 } from './types';
-import { ParseImageUrlInputSchema, ParseInputSchema } from './types';
+import {
+	ParseImageUrlInputSchema,
+	ParseImageUrlResponseSchema,
+	ParseInputSchema,
+	ParseResponseSchema,
+} from './types';
 
 /**
  * `ParsedResults` holds one entry per page of a PDF. The joined text is stored
@@ -86,11 +91,15 @@ export const parseImageUrl: OcrSpaceEndpoints['parseImageUrl'] = async (
 	// the runtime behaviour in step.
 	const validatedInput = ParseImageUrlInputSchema.parse(input);
 
-	const response = await makeOcrSpaceGetRequest<ParseImageUrlResponse>(
+	const rawResponse = await makeOcrSpaceGetRequest<ParseImageUrlResponse>(
 		'/parse/imageurl',
 		ctx.key,
 		{ query: validatedInput, baseUrl: ctx.options.baseUrl },
 	);
+
+	// Responses are validated against the declared output schema so callers
+	// never receive a payload that violates the exported contract.
+	const response = ParseImageUrlResponseSchema.parse(rawResponse);
 
 	assertOcrSuccess(response);
 
@@ -125,11 +134,13 @@ export const parse: OcrSpaceEndpoints['parse'] = async (ctx, input) => {
 		formData.base64Image = base64Image;
 	}
 
-	const response = await makeOcrSpacePostRequest<ParseResponse>(
+	const rawResponse = await makeOcrSpacePostRequest<ParseResponse>(
 		'/parse/image',
 		ctx.key,
 		{ formData, baseUrl: ctx.options.baseUrl },
 	);
+
+	const response = ParseResponseSchema.parse(rawResponse);
 
 	assertOcrSuccess(response);
 
