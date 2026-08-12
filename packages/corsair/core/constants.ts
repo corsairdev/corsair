@@ -19,17 +19,18 @@ export const BaseProviders = [
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agenty',
 	'agentql',
+	'agenty',
 	'ahrefs',
 	'airtable',
 	'algolia',
 	'alttextai',
-	'ambientweather',
 	'ambee',
+	'ambientweather',
 	'amplitude',
 	'apilabz',
 	'asana',
+	'asindataapi',
 	'bitwarden',
 	'bluesky',
 	'box',
@@ -130,17 +131,18 @@ export const ProviderDisplayNames = {
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agenty: 'Agenty',
 	agentql: 'AgentQL',
+	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
-	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	ambientweather: 'Ambient Weather',
 	amplitude: 'Amplitude',
 	apilabz: 'API Labz',
 	asana: 'Asana',
+	asindataapi: 'AsinDataApi',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	box: 'Box',
@@ -248,17 +250,18 @@ export type AllProviders =
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agenty'
 	| 'agentql'
+	| 'agenty'
 	| 'ahrefs'
 	| 'airtable'
 	| 'algolia'
 	| 'alttextai'
-	| 'ambientweather'
 	| 'ambee'
+	| 'ambientweather'
 	| 'amplitude'
 	| 'apilabz'
 	| 'asana'
+	| 'asindataapi'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'box'
