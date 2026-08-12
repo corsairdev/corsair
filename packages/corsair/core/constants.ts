@@ -16,14 +16,17 @@ export const BaseProviders = [
 	'abstract',
 	'activetrail',
 	'addresszen',
+	'affinda',
 	'agencyzoom',
 	'agentmail',
+	'agenty',
 	'agentql',
 	'ahrefs',
 	'airtable',
 	'algolia',
 	'alttextai',
 	'ambientweather',
+	'ambee',
 	'amplitude',
 	'apilabz',
 	'asana',
@@ -111,6 +114,7 @@ export const BaseProviders = [
 	'whatsapp',
 	'wiza',
 	'xquik',
+	'youcom',
 	'youtube',
 	'zendesk',
 	'zohomail',
@@ -121,14 +125,17 @@ export const ProviderDisplayNames = {
 	abstract: 'Abstract',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
+	agenty: 'Agenty',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
 	ambientweather: 'Ambient Weather',
+	ambee: 'Ambee',
 	amplitude: 'Amplitude',
 	apilabz: 'API Labz',
 	asana: 'Asana',
@@ -216,6 +223,7 @@ export const ProviderDisplayNames = {
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
 	xquik: 'XQuik',
+	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
@@ -233,14 +241,17 @@ export type AllProviders =
 	| 'abstract'
 	| 'activetrail'
 	| 'addresszen'
+	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
+	| 'agenty'
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
 	| 'algolia'
 	| 'alttextai'
 	| 'ambientweather'
+	| 'ambee'
 	| 'amplitude'
 	| 'apilabz'
 	| 'asana'
@@ -328,6 +339,7 @@ export type AllProviders =
 	| 'whatsapp'
 	| 'wiza'
 	| 'xquik'
+	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'
