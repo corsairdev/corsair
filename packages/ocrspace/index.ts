@@ -29,9 +29,15 @@ export type OcrSpacePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
 	/**
-	 * Base URL for the parse endpoints. Defaults to the shared free-plan host,
-	 * `https://api.ocr.space`. PRO and PRO PDF accounts are issued dedicated,
-	 * redundant endpoints by email on sign-up; set that host here to use them.
+	 * Base URL for the OCR parse endpoints (`ocr.parseImageUrl`, `ocr.parse`).
+	 * Defaults to the shared free-plan host, `https://api.ocr.space`. PRO and
+	 * PRO PDF accounts are issued dedicated, redundant parse endpoints by email
+	 * on sign-up; set that host here to use them.
+	 *
+	 * This deliberately does not apply to `account.conversions`: conversion
+	 * statistics are served by a separate host (`https://myapi.ocr.space`) that
+	 * is the same for free and paid accounts. Routing that call to a dedicated
+	 * parse host would request a path the host does not serve.
 	 */
 	baseUrl?: string;
 	hooks?: InternalOcrSpacePlugin['hooks'];

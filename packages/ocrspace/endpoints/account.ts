@@ -29,6 +29,10 @@ export const conversions: OcrSpaceEndpoints['conversions'] = async (
 		formData.startDate = validatedInput.startDate;
 	}
 
+	// Pinned to the statistics host on purpose, and not routed through
+	// `ctx.options.baseUrl`: that option points at a PRO account's dedicated
+	// *parse* endpoint, which does not serve /conversions. Statistics are on
+	// the same host for free and paid accounts.
 	const rawResponse = await makeOcrSpacePostRequest<ConversionsResponse>(
 		'/conversions',
 		ctx.key,
