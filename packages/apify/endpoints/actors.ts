@@ -5,7 +5,7 @@ export const searchActors: ApifyMcpEndpoints['searchActors'] = async (
 	ctx,
 	input,
 ) => {
-	return executeApifyMcpTool(
+	return executeApifyMcpTool( 
 		ctx,
 		'apify.actors.searchActors',
 		'search-actors',
