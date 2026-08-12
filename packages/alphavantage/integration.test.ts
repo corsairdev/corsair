@@ -39,6 +39,11 @@ function makeCtx(): Ctx {
 					upserts.push({ id, data });
 				},
 			},
+			companies: {
+				upsertByEntityId: async (id: string, data: unknown) => {
+					upserts.push({ id, data });
+				},
+			},
 		},
 		database: undefined,
 		$getAccountId: async () => 'integration-test',
@@ -61,7 +66,7 @@ describeLive('Alpha Vantage live API', () => {
 		const result = await TimeSeries.globalQuote(ctx, { symbol: 'IBM' });
 
 		expect(() => Outputs.timeSeriesGlobalQuote.parse(result)).not.toThrow();
-		expect(result['Global Quote']).toHaveProperty('01. symbol', 'IBM');
+		expect(result['Global Quote']['01. symbol']).toBe('IBM');
 	});
 
 	it('returns a daily series matching the declared schema', async () => {
@@ -88,8 +93,10 @@ describeLive('Alpha Vantage live API', () => {
 			Outputs.fundamentalsCompanyOverview.parse(result),
 		).not.toThrow();
 		expect(result.Symbol).toBe('IBM');
-		expect(upserts).toHaveLength(1);
-		expect(upserts[0]?.id).toBe('IBM');
+		expect(upserts.map((row) => row.id)).toEqual(['IBM', 'IBM']);
+		expect(upserts[1]?.data).toEqual(
+			expect.objectContaining({ Symbol: 'IBM' }),
+		);
 	});
 
 	it('returns a currency exchange rate matching the declared schema', async () => {

@@ -1,4 +1,8 @@
-import type { AlphaVantageSymbolEntity } from '../schema/database';
+import {
+	AlphaVantageCompany,
+	AlphaVantageCompanyOverview,
+	type AlphaVantageSymbolEntity,
+} from '../schema/database';
 
 /**
  * Minimal structural view of a Corsair entity store. Only the operation the
@@ -63,6 +67,26 @@ export async function cacheSymbol(
  * simultaneous writes.
  */
 const CACHE_WRITE_CONCURRENCY = 16;
+
+/** Mirrors a Company Overview row under its `Symbol`. */
+export async function cacheCompany(
+	store: EntityStore<AlphaVantageCompany> | undefined,
+	overview: unknown,
+) {
+	if (!store) return;
+	const parsed = AlphaVantageCompanyOverview.safeParse(overview);
+	if (!parsed.success) return;
+	const symbol = parsed.data.Symbol;
+	if (!symbol) return;
+	await safely(
+		() =>
+			store.upsertByEntityId(symbol, {
+				...parsed.data,
+				fetchedAt: new Date(),
+			}),
+		`company ${symbol}`,
+	);
+}
 
 /** Mirrors many securities, skipping rows with no ticker. */
 export async function cacheSymbols(

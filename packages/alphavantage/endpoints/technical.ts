@@ -33,7 +33,12 @@ export const indicator: AlphaVantageEndpoints['technicalIndicator'] = async (
 		input.indicator,
 		ctx.key,
 		compactQuery({
-			...input.extra_params,
+			...Object.fromEntries(
+				Object.entries(input.extra_params ?? {}).filter(
+					([key]) =>
+						!['function', 'apikey', 'datatype'].includes(key.toLowerCase()),
+				),
+			),
 			symbol: input.symbol,
 			interval: input.interval,
 			time_period: input.time_period,

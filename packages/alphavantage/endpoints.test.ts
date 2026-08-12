@@ -38,7 +38,7 @@ function makeStore(): Store {
 type Ctx = Parameters<typeof TimeSeries.daily>[0];
 
 function makeCtx() {
-	const db = { symbols: makeStore() };
+	const db = { symbols: makeStore(), companies: makeStore() };
 	const ctx = {
 		key: 'test-alphavantage-key',
 		db,
@@ -632,6 +632,27 @@ describe('query construction', () => {
 		expect(query().get('symbol')).toBe('IBM');
 	});
 
+	it('drops reserved extra_params so they cannot switch the response to CSV or replace the key', async () => {
+		const { ctx } = makeCtx();
+		mockJson(SERIES);
+
+		await Technical.indicator(ctx, {
+			indicator: 'RSI',
+			symbol: 'IBM',
+			interval: 'daily',
+			time_period: 14,
+			extra_params: {
+				datatype: 'csv',
+				apikey: 'attacker-key',
+				function: 'OVERVIEW',
+			},
+		});
+
+		expect(query().get('function')).toBe('RSI');
+		expect(query().get('apikey')).toBe('test-alphavantage-key');
+		expect(query().get('datatype')).toBeNull();
+	});
+
 	// 'intelligence.slidingWindowAnalytics' is the one operation absent from the
 	// table above, because it has no `function` parameter to assert on. Its path
 	// is named here so a coverage sweep over this file still finds all 56.
@@ -807,6 +828,8 @@ describe('symbol caching', () => {
 				symbol: 'TSCO.LON',
 				name: 'Tesco PLC',
 				region: 'United Kingdom',
+				timezone: 'UTC+01',
+				marketOpen: '08:00',
 				currency: 'GBX',
 			}),
 		);
@@ -850,6 +873,14 @@ describe('symbol caching', () => {
 		expect(db.symbols.upsertByEntityId).toHaveBeenCalledWith(
 			'IBM',
 			expect.objectContaining({ symbol: 'IBM', exchange: 'NYSE' }),
+		);
+		expect(db.companies.upsertByEntityId).toHaveBeenCalledWith(
+			'IBM',
+			expect.objectContaining({
+				Symbol: 'IBM',
+				Exchange: 'NYSE',
+				fetchedAt: expect.any(Date),
+			}),
 		);
 	});
 

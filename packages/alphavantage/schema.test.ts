@@ -9,6 +9,7 @@ import {
 	AlphaVantageEndpointInputSchemas as Inputs,
 	AlphaVantageEndpointOutputSchemas as Outputs,
 } from './endpoints/types';
+import { AlphaVantageCompanyOverview } from './schema/database';
 
 describe('captured live responses satisfy the output schemas', () => {
 	it('GLOBAL_QUOTE', () => {
@@ -84,14 +85,69 @@ describe('captured live responses satisfy the output schemas', () => {
 			Name: 'International Business Machines',
 			Description:
 				'International Business Machines Corporation (IBM) is an American multinational technology company.',
+			CIK: '51143',
 			Exchange: 'NYSE',
 			Currency: 'USD',
 			Country: 'USA',
 			Sector: 'TECHNOLOGY',
-			Industry: 'COMPUTER & OFFICE EQUIPMENT',
-			MarketCapitalization: '221626695000',
+			Industry: 'INFORMATION TECHNOLOGY SERVICES',
+			Address: 'ONE NEW ORCHARD ROAD, ARMONK, NY, UNITED STATES, 10504',
+			OfficialSite: 'https://www.ibm.com',
+			FiscalYearEnd: 'December',
+			LatestQuarter: '2026-06-30',
+			MarketCapitalization: '224623690000',
+			EBITDA: '16473000000',
+			PERatio: '21.01',
+			PEGRatio: '2.405',
+			BookValue: '36.57',
+			DividendPerShare: '6.73',
+			DividendYield: '0.0285',
+			EPS: '11.35',
+			RevenuePerShareTTM: '73.7',
+			ProfitMargin: '0.155',
+			OperatingMarginTTM: '0.166',
+			ReturnOnAssetsTTM: '0.053',
+			ReturnOnEquityTTM: '0.345',
+			RevenueTTM: '69094998000',
+			GrossProfitTTM: '40143000000',
+			DilutedEPSTTM: '11.35',
+			QuarterlyEarningsGrowthYOY: '-0.018',
+			QuarterlyRevenueGrowthYOY: '0.011',
+			AnalystTargetPrice: '244.16',
+			AnalystRatingStrongBuy: '3',
+			AnalystRatingBuy: '11',
+			AnalystRatingHold: '9',
+			AnalystRatingSell: '1',
+			AnalystRatingStrongSell: '1',
+			TrailingPE: '21.01',
+			ForwardPE: '19.12',
+			PriceToSalesRatioTTM: '3.251',
+			PriceToBookRatio: '6.46',
+			EVToRevenue: '4.049',
+			EVToEBITDA: '15.92',
+			Beta: '0.705',
+			'52WeekHigh': '330.09',
+			'52WeekLow': '197.77',
+			'50DayMovingAverage': '257.3',
+			'200DayMovingAverage': '268.87',
+			SharesOutstanding: '942134000',
+			SharesFloat: '919542000',
+			PercentInsiders: '0.107',
+			PercentInstitutions: '65.971',
+			DividendDate: '2026-09-10',
+			ExDividendDate: '2026-08-10',
 		};
 		expect(Outputs.fundamentalsCompanyOverview.parse(captured)).toBeTruthy();
+		expect(AlphaVantageCompanyOverview.parse(captured).Symbol).toBe('IBM');
+		for (const key of Object.keys(captured)) {
+			expect(AlphaVantageCompanyOverview.shape).toHaveProperty(key);
+		}
+	});
+
+	it('OVERVIEW treats missing fundamentals as absent, not zero', () => {
+		expect(
+			Outputs.fundamentalsCompanyOverview.parse({ Symbol: 'ZZZZ' }),
+		).toEqual({ Symbol: 'ZZZZ' });
 	});
 
 	it('CURRENCY_EXCHANGE_RATE', () => {

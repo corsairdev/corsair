@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { AlphaVantageCompanyOverview as CompanyOverviewFields } from '../schema/database';
 
 /**
  * Input and output schemas for every Alpha Vantage operation.
@@ -471,21 +472,12 @@ const MoverSchema = z
 	})
 	.loose();
 
-/** `OVERVIEW` — a flat object of ~60 PascalCase string fields. */
-export const CompanyOverviewSchema = z
-	.object({
-		Symbol: z.string(),
-		AssetType: z.string(),
-		Name: z.string(),
-		Description: z.string(),
-		Exchange: z.string(),
-		Currency: z.string(),
-		Country: z.string(),
-		Sector: z.string(),
-		Industry: z.string(),
-		MarketCapitalization: NumericString,
-	})
-	.loose();
+/**
+ * `OVERVIEW` — official PascalCase keys from live IBM 2026-08-13.
+ * Only `Symbol` is required; other fields are frequently empty or absent.
+ * Extra keys are kept (`.loose`) so a newly added official field is not dropped.
+ */
+export const CompanyOverviewSchema = CompanyOverviewFields.loose();
 
 /**
  * `INCOME_STATEMENT`, `BALANCE_SHEET` and `CASH_FLOW` share this envelope. The

@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAlphaVantageCsvRequest, makeAlphaVantageRequest } from '../client';
 import type { AlphaVantageEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { cacheSymbol, cacheSymbols } from './persist';
+import { cacheCompany, cacheSymbol, cacheSymbols } from './persist';
 import { assertNotEmpty, compactQuery } from './shared';
 import type { AlphaVantageEndpointOutputs } from './types';
 
@@ -27,6 +27,7 @@ export const companyOverview: AlphaVantageEndpoints['fundamentalsCompanyOverview
 			assetType: result.AssetType,
 			currency: result.Currency,
 		});
+		await cacheCompany(ctx.db.companies, result);
 
 		await logEventFromContext(
 			ctx,
