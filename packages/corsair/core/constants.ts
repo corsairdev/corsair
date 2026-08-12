@@ -25,6 +25,7 @@ export const BaseProviders = [
 	'airtable',
 	'algolia',
 	'alttextai',
+	'ambee',
 	'amplitude',
 	'apilabz',
 	'asana',
@@ -132,6 +133,7 @@ export const ProviderDisplayNames = {
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
+	ambee: 'Ambee',
 	amplitude: 'Amplitude',
 	apilabz: 'API Labz',
 	asana: 'Asana',
@@ -246,6 +248,7 @@ export type AllProviders =
 	| 'airtable'
 	| 'algolia'
 	| 'alttextai'
+	| 'ambee'
 	| 'amplitude'
 	| 'apilabz'
 	| 'asana'
