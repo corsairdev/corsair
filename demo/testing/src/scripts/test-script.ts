@@ -1,4 +1,4 @@
-﻿import dotenv from 'dotenv';
+import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
@@ -19,19 +19,13 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
-	const { BOLOFORMS_API_KEY, BOLOFORMS_WORKSPACE_ID } = process.env;
-	if (BOLOFORMS_API_KEY) {
-		await corsair.boloforms.keys.set_api_key(BOLOFORMS_API_KEY);
-	}
-
-	const res = await corsair.boloforms.api.documents.list({
-		workspaceId: BOLOFORMS_WORKSPACE_ID ?? '',
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
 	});
-	console.log(res);
 };
 
 main().catch((err) => {
 	console.error(err);
 	process.exit(1);
 });
-

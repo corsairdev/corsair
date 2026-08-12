@@ -1,7 +1,7 @@
-import { get as getDocumentsList } from './example';
+import { list as documentsList } from './documents';
 
 export const Documents = {
-	list: getDocumentsList,
+	list: documentsList,
 };
 
 export * from './types';

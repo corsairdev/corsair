@@ -1,4 +1,5 @@
-import { BoloformsSchema } from './schema';
+import { BoloformsEndpointOutputSchemas } from './endpoints/types';
+import { BoloformsDocument, BoloformsSchema } from './schema';
 
 describe('Boloforms schema', () => {
 	it('declares a semver version', () => {
@@ -6,15 +7,29 @@ describe('Boloforms schema', () => {
 		expect(BoloformsSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof BoloformsSchema.entities).toBe('object');
-		expect(BoloformsSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(BoloformsSchema.entities))).toBe(true);
-		for (const entity of Object.values(BoloformsSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares documents entity', () => {
+		expect(BoloformsSchema.entities.documents).toBe(BoloformsDocument);
+	});
+
+	it('accepts live list envelope without pagination', () => {
+		const live = {
+			documents: [],
+			message: 'Fetched documents',
+			formCount: 0,
+			documentsCount: 0,
+		};
+		expect(BoloformsEndpointOutputSchemas.getDocumentsList.parse(live)).toEqual(
+			live,
+		);
+	});
+
+	it('accepts OpenAPI document fields', () => {
+		const doc = {
+			documentId: 'id-1',
+			name: 'Contract',
+			createdAt: '2024-01-01T00:00:00.000Z',
+			status: 'DRAFT',
+		};
+		expect(BoloformsDocument.parse(doc)).toMatchObject(doc);
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.

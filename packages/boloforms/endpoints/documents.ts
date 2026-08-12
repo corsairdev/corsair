@@ -3,7 +3,13 @@ import type { BoloformsEndpoints } from '..';
 import { makeBoloformsRequest } from '../client';
 import type { BoloformsEndpointOutputs } from './types';
 
-export const get: BoloformsEndpoints['getDocumentsList'] = async (
+/**
+ * List documents in a workspace.
+ * API: GET /signature/get-documents
+ * Docs: https://bolosign-developer-docs.readme.io/reference/get_get-documents-1
+ * Auth: x-api-key + workspaceid header
+ */
+export const list: BoloformsEndpoints['getDocumentsList'] = async (
 	ctx,
 	input,
 ) => {
@@ -11,11 +17,14 @@ export const get: BoloformsEndpoints['getDocumentsList'] = async (
 
 	const response = await makeBoloformsRequest<
 		BoloformsEndpointOutputs['getDocumentsList']
-	>('signature/get-documents', ctx.key, workspaceId, { method: 'GET', query });
+	>('signature/get-documents', ctx.key, workspaceId, {
+		method: 'GET',
+		query,
+	});
 
 	await logEventFromContext(
 		ctx,
-		'boloforms.get_documents_list',
+		'boloforms.documents.list',
 		{ ...input },
 		'completed',
 	);

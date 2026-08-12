@@ -1,7 +1,5 @@
 ﻿import type {
-	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -12,8 +10,8 @@
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Documents } from './endpoints';
 import type {
 	BoloformsEndpointInputs,
@@ -27,10 +25,14 @@ import { errorHandlers } from './error-handlers';
 import { BoloformsSchema } from './schema';
 
 export type BoloformsPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	/** Authentication method. BoloForms Signature only supports API keys. */
+	authType?: PickAuth<'api_key'>;
+	/**
+	 * BoloForms API key, sent as the `x-api-key` header. When omitted the key
+	 * is resolved from the account key manager instead.
+	 */
 	key?: string;
 	hooks?: InternalBoloformsPlugin['hooks'];
-	webhookHooks?: InternalBoloformsPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof boloformsEndpointsNested>;
 };
@@ -58,17 +60,11 @@ export type BoloformsEndpoints = {
 	getDocumentsList: BoloformsEndpoint<'getDocumentsList'>;
 };
 
-export type BoloformsWebhooks = Record<string, never>;
-
-export type BoloformsBoundWebhooks = BindWebhooks<BoloformsWebhooks>;
-
 const boloformsEndpointsNested = {
 	documents: {
 		list: Documents.list,
 	},
 } as const;
-
-const boloformsWebhooksNested = {} as const;
 
 export const boloformsEndpointSchemas = {
 	'documents.list': {
@@ -79,12 +75,7 @@ export const boloformsEndpointSchemas = {
 	typeof boloformsEndpointsNested
 >;
 
-const boloformsWebhookSchemas =
-	{} as const satisfies RequiredPluginWebhookSchemas<
-		typeof boloformsWebhooksNested
-	>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 const boloformsEndpointMeta = {
 	'documents.list': {
@@ -100,9 +91,6 @@ export const boloformsAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseBoloformsPlugin<T extends BoloformsPluginOptions> =
@@ -110,7 +98,7 @@ export type BaseBoloformsPlugin<T extends BoloformsPluginOptions> =
 		'boloforms',
 		typeof BoloformsSchema,
 		typeof boloformsEndpointsNested,
-		typeof boloformsWebhooksNested,
+		{},
 		T,
 		typeof defaultAuthType
 	>;
@@ -121,10 +109,9 @@ export type InternalBoloformsPlugin =
 export type ExternalBoloformsPlugin<T extends BoloformsPluginOptions> =
 	BaseBoloformsPlugin<T>;
 
-export function boloforms<const T extends BoloformsPluginOptions>(
-	incomingOptions: BoloformsPluginOptions & T = {} as BoloformsPluginOptions &
-		T,
-): ExternalBoloformsPlugin<T> {
+export function boloforms(
+	incomingOptions: BoloformsPluginOptions = {},
+): InternalBoloformsPlugin {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
@@ -135,12 +122,12 @@ export function boloforms<const T extends BoloformsPluginOptions>(
 		schema: BoloformsSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: boloformsEndpointsNested,
-		webhooks: boloformsWebhooksNested,
+		webhooks: {},
 		endpointMeta: boloformsEndpointMeta,
 		endpointSchemas: boloformsEndpointSchemas,
-		webhookSchemas: boloformsWebhookSchemas,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -151,16 +138,14 @@ export function boloforms<const T extends BoloformsPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const res = await ctx.keys?.get_api_key();
+				if (!res) {
+					throw new AuthMissingError('boloforms', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('boloforms', 'api_key');
 		},
 	} satisfies InternalBoloformsPlugin;
 }
