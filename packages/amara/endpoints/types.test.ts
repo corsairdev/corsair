@@ -23,6 +23,11 @@ describe('input schemas', () => {
 				title: 'Meet Amara',
 			}).success,
 		).toBe(false);
+		expect(
+			AmaraEndpointInputSchemas.videosCreate.safeParse({
+				video_url: 'https://example.com/v.mp4',
+			}).success,
+		).toBe(false);
 	});
 
 	it('requires exactly one of user or team for messages.send', () => {

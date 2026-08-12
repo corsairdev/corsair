@@ -13,12 +13,7 @@ export const getData: AmaraEndpoints['usersGetData'] = async (ctx, input) => {
 		ctx.key,
 	);
 	const response = UserSchema.parse(raw);
-	await logEventFromContext(
-		ctx,
-		'amara.users.getData',
-		{ identifier: input.identifier },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'amara.users.getData', {}, 'completed');
 	return response;
 };
 
@@ -37,11 +32,6 @@ export const getActivity: AmaraEndpoints['usersGetActivity'] = async (
 		},
 	);
 	const response = ActivityListResponseSchema.parse(raw);
-	await logEventFromContext(
-		ctx,
-		'amara.users.getActivity',
-		{ identifier: input.identifier },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'amara.users.getActivity', {}, 'completed');
 	return response;
 };

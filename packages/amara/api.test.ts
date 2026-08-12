@@ -9,6 +9,8 @@ import { AmaraEndpointOutputSchemas } from './endpoints/types';
  *
  * The suite skips itself when no key is present so a keyless local run stays green.
  */
+jest.setTimeout(60_000);
+
 const API_KEY = process.env.AMARA_API_KEY;
 const describeLive = API_KEY ? describe : describe.skip;
 
@@ -177,7 +179,7 @@ describeLive('Amara API contract', () => {
 
 	it('videos.create reports team requirement clearly for this API key', async () => {
 		// This Amara account requires a team on create; public teams reject us.
-		// Assert the live contract so the write path is still exercised.
+		let createdId: string | undefined;
 		try {
 			const created = AmaraEndpointOutputSchemas.videosCreate.parse(
 				await makeAmaraRequest('videos/', key, {
@@ -189,9 +191,16 @@ describeLive('Amara API contract', () => {
 					},
 				}),
 			);
+			createdId = created.id;
 			expect(created.id).toBeTruthy();
 		} catch (error) {
 			expect(String(error)).toMatch(/400|Bad Request|Team is required/i);
+		} finally {
+			if (createdId) {
+				await makeAmaraRequest(`videos/${createdId}/`, key, {
+					method: 'DELETE',
+				});
+			}
 		}
 	});
 });

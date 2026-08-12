@@ -69,10 +69,9 @@ export const viewDetails: AmaraEndpoints['videosViewDetails'] = async (
 };
 
 export const create: AmaraEndpoints['videosCreate'] = async (ctx, input) => {
-	const { ...body } = input;
 	const raw = await makeAmaraRequest('videos/', ctx.key, {
 		method: 'POST',
-		body,
+		body: input,
 	});
 	const response = VideoSchema.parse(raw);
 	await logEventFromContext(ctx, 'amara.videos.create', {}, 'completed');

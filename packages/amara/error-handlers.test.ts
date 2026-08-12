@@ -75,4 +75,11 @@ describe('errorHandlers', () => {
 			maxRetries: 0,
 		});
 	});
+
+	it('does not let message heuristics override a known non-matching status', () => {
+		// 400 body mentioning "rate limit" must stay VALIDATION, not RATE_LIMIT.
+		const error = amaraError(400);
+		error.message = 'rate limit exceeded somehow';
+		expect(route(error)).toBe('VALIDATION_ERROR');
+	});
 });

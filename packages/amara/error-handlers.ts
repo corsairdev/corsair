@@ -17,11 +17,14 @@ function getRetryAfter(error: Error): number | undefined {
  * - 400/422: malformed request
  * - 429: rate limited
  * - 5xx: upstream failure
+ *
+ * When an HTTP status is present, message heuristics must not override it.
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 429) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 429;
 			const msg = error.message.toLowerCase();
 			return msg.includes('429') || msg.includes('rate limit');
 		},
@@ -34,7 +37,7 @@ export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			const status = getStatus(error);
-			if (status === 401 || status === 403) return true;
+			if (status !== undefined) return status === 401 || status === 403;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('401') ||
@@ -53,7 +56,8 @@ export const errorHandlers = {
 	},
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 404) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 404;
 			const msg = error.message.toLowerCase();
 			return msg.includes('404') || msg.includes('not found');
 		},
@@ -65,7 +69,7 @@ export const errorHandlers = {
 	VALIDATION_ERROR: {
 		match: (error: Error) => {
 			const status = getStatus(error);
-			if (status === 400 || status === 422) return true;
+			if (status !== undefined) return status === 400 || status === 422;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('400') ||
@@ -83,7 +87,7 @@ export const errorHandlers = {
 	SERVER_ERROR: {
 		match: (error: Error) => {
 			const status = getStatus(error);
-			if (status !== undefined && status >= 500) return true;
+			if (status !== undefined) return status >= 500;
 			const msg = error.message.toLowerCase();
 			return msg.includes('500') || msg.includes('internal server error');
 		},

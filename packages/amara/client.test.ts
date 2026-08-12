@@ -93,15 +93,13 @@ describe('makeAmaraRequest', () => {
 	});
 
 	it('wraps an ApiError in AmaraAPIError, preserving status and cause', async () => {
+		expect.assertions(4);
 		const original = apiError(429, 1500);
 		mockRequest.mockRejectedValue(original);
 
-		await expect(makeAmaraRequest('videos/', 'k')).rejects.toThrow(
-			AmaraAPIError,
-		);
-
 		try {
 			await makeAmaraRequest('videos/', 'k');
+			throw new Error('expected makeAmaraRequest to throw');
 		} catch (error) {
 			const amaraError = error as AmaraAPIError;
 			expect(amaraError.status).toBe(429);
