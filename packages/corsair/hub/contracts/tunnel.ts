@@ -51,7 +51,12 @@ export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
 // only runs the failed step + everything after it.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export type RunTriggerType = 'cron' | 'cadence' | 'webhook' | 'manual';
+export type RunTriggerType =
+	| 'cron'
+	| 'cadence'
+	| 'webhook'
+	| 'manual'
+	| 'event';
 
 /** Hub → app: a single workflow execution attempt. */
 export type RunTunnelPayload = {
@@ -91,6 +96,19 @@ export type RunStepResult = {
 	error?: string;
 };
 
+/** What a `waiting` run is blocked on — Hub persists this as an open waiter. */
+export type WaiterDescriptor = {
+	stepId: string;
+	name: string;
+	seq: number;
+	/** Event name to match (e.g. `'<plugin>.<event>'` or a custom name). */
+	event: string;
+	/** Dot-path → value equalities, all ANDed. Null when unfiltered. */
+	match: Record<string, unknown> | null;
+	/** ISO time the wait resolves to `null`; null = wait forever. */
+	timeoutAt: string | null;
+};
+
 /**
  * App → Hub: outcome of one execution attempt (returned in the tunnel ack body).
  *
@@ -99,13 +117,18 @@ export type RunStepResult = {
  * `sleepUntil`; on the next attempt the sleep step is memoized (satisfied) and
  * execution continues past it. This is what makes long, multi-day workflows
  * survive process restarts.
+ *
+ * `waiting` is a durable event wait: the workflow called `step.waitForEvent(...)`.
+ * Hub parks the run until a matching event arrives (or `timeoutAt` elapses).
  */
 export type RunResultPayload = {
-	status: 'completed' | 'failed' | 'sleeping';
+	status: 'completed' | 'failed' | 'sleeping' | 'waiting';
 	steps: RunStepResult[];
 	error?: { message: string; failedStep?: string };
 	/** ISO timestamp when a `sleeping` run should be re-invoked. */
 	sleepUntil?: string;
+	/** Present only when `status === 'waiting'`. */
+	waiter?: WaiterDescriptor;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
