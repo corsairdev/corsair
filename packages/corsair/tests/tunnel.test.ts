@@ -133,6 +133,34 @@ describe('processCorsair', () => {
 		expect(ack.error).not.toBe('Invalid or missing tunnel timestamp');
 	});
 
+	it('does not dedupe a FAILED webhook — a redelivery is re-attempted, not dropped', async () => {
+		const secret = 'tunnel-signing-secret';
+		const body = JSON.stringify({
+			type: 'webhook',
+			// No handler is registered (plugins: []), so this delivery fails. The key
+			// must NOT be marked seen on failure, or the durable-queue redelivery
+			// would be silently acked as a duplicate and the event lost.
+			payload: {
+				headers: {},
+				body: '{}',
+				plugin: 'github',
+				tenantId: 't1',
+				dedupeKey: 'evt-1',
+			},
+		});
+		const call = () =>
+			processCorsair(
+				createMockCorsair(),
+				{ headers: signedTunnelHeaders(body, secret), body },
+				{ signingSecret: secret },
+			);
+
+		const first = await call();
+		expect(first.status).toBe('failed');
+		const second = await call();
+		expect(second.status).toBe('failed'); // re-attempted, not a duplicate 'ok'
+	});
+
 	it('rejects replayed tunnel nonces', async () => {
 		const secret = 'tunnel-signing-secret';
 		const nonce = randomUUID();

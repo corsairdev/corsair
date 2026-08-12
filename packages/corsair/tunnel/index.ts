@@ -251,22 +251,29 @@ async function resolveWebhookTenantId(
 	return resolved ?? undefined;
 }
 
-// Bounded set of webhook delivery ids already handled this session, so a
-// redelivery (provider retry, or a durable-queue lease reclaim) doesn't re-fire
-// handlers — the SDK's own dedup, since webhook handlers carry none. In-memory
-// and bounded: a process restart forgets, so a redelivery after restart can
-// still double-fire. Acceptable at dev scale; a durable seen-store is the upgrade.
+// Bounded set of webhook deliveries already handled this session, so a redelivery
+// (provider retry, or a durable-queue lease reclaim) doesn't re-fire handlers —
+// the SDK's own dedup, since webhook handlers carry none. In-memory and bounded:
+// a process restart forgets, so a redelivery after restart can still double-fire.
+// Acceptable at dev scale; a durable seen-store is the upgrade.
+//
+// A key is recorded only AFTER a successful handle (see handleWebhookTunnel), so a
+// failed/thrown delivery stays retryable — recording before running would burn the
+// key and turn every retry into a silent duplicate-ack that drops the event.
 const WEBHOOK_SEEN_MAX = 1000;
 const seenWebhookDeliveries = new Map<string, true>();
 
-function markWebhookSeen(key: string): boolean {
-	if (seenWebhookDeliveries.has(key)) return false;
+function hasWebhookSeen(key: string): boolean {
+	return seenWebhookDeliveries.has(key);
+}
+
+function recordWebhookSeen(key: string): void {
+	if (seenWebhookDeliveries.has(key)) return;
 	seenWebhookDeliveries.set(key, true);
 	if (seenWebhookDeliveries.size > WEBHOOK_SEEN_MAX) {
 		const oldest = seenWebhookDeliveries.keys().next().value;
 		if (oldest !== undefined) seenWebhookDeliveries.delete(oldest);
 	}
-	return true;
 }
 
 async function handleWebhookTunnel(
@@ -274,8 +281,14 @@ async function handleWebhookTunnel(
 	internal: CorsairInternalConfig,
 	payload: WebhookTunnelPayload,
 ): Promise<TunnelAck> {
+	// Tenant-scope the dedup key to match Hub's (tenant, environment, dedupeKey)
+	// uniqueness, so two tenants under one dev env that share an identical-body
+	// event (a plugin with no provider delivery id) don't collapse onto each other.
+	const seenKey = payload.dedupeKey
+		? `${payload.tenantId ?? ''}:${payload.dedupeKey}`
+		: undefined;
 	// Already handled this delivery — ack ok without re-running the handler.
-	if (payload.dedupeKey && !markWebhookSeen(payload.dedupeKey)) {
+	if (seenKey && hasWebhookSeen(seenKey)) {
 		return { status: 'ok' };
 	}
 	const tenantId = await resolveWebhookTenantId(corsair, internal, payload);
@@ -323,6 +336,11 @@ async function handleWebhookTunnel(
 			: returnToSender
 				? returnToSender
 				: (result.response?.data ?? result.response);
+
+	// Handler ran cleanly — only now record the delivery as seen, so any failure
+	// above (thrown, no handler, or success:false) stays retryable via redelivery
+	// or a Hub lease reclaim.
+	if (seenKey) recordWebhookSeen(seenKey);
 
 	return {
 		status: 'ok',

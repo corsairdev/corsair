@@ -175,18 +175,19 @@ describe('startConnectLoop', () => {
 		fetchSpy.mockRestore();
 	});
 
-	it('warns and does not poll for a dev key with execution disabled', async () => {
-		const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue(res(204));
+	it('polls for a dev key even when execution is disabled (webhooks still drain)', async () => {
 		const warnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
-		const handle = startConnectLoop(mockCorsair('ck_dev_noexec', false));
-		await Promise.resolve();
-		expect(fetchSpy).not.toHaveBeenCalled();
-		expect(warnSpy).toHaveBeenCalledWith(
+		const { state, deps } = countingIdleDeps();
+		const handle = startConnectLoop(mockCorsair('ck_dev_noexec', false), deps);
+		await sleep(40);
+		// The loop is the app's only inbound channel for webhooks, so it must poll
+		// regardless of allowWorkflowExecution — and no longer warns about it.
+		expect(state.calls).toBeGreaterThan(0);
+		expect(warnSpy).not.toHaveBeenCalledWith(
 			expect.stringContaining('workflow executions not enabled'),
 		);
 		handle.stop();
 		warnSpy.mockRestore();
-		fetchSpy.mockRestore();
 	});
 
 	function countingIdleDeps() {
