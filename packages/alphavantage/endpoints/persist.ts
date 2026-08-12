@@ -1,8 +1,8 @@
-import {
+import type {
 	AlphaVantageCompany,
-	AlphaVantageCompanyOverview,
-	type AlphaVantageSymbolEntity,
+	AlphaVantageSymbolEntity,
 } from '../schema/database';
+import { AlphaVantageCompanyOverview } from '../schema/database';
 
 /**
  * Minimal structural view of a Corsair entity store. Only the operation the
