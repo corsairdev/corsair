@@ -244,29 +244,7 @@ describe('CSV decoding', () => {
 		).rejects.toThrow(/HTTP 503/);
 	});
 
-	it('retries a 429 and succeeds on a later attempt', async () => {
-		let calls = 0;
-		global.fetch = (async (url: string) => {
-			calls++;
-			const limited = calls < 3;
-			return {
-				ok: !limited,
-				status: limited ? 429 : 200,
-				statusText: limited ? 'Too Many Requests' : 'OK',
-				url: String(url),
-				headers: new Headers({ 'Retry-After': '0' }),
-				json: async () => ({}),
-				text: async () => (limited ? 'rate limited' : 'symbol,name\nIBM,IBM\n'),
-			};
-		}) as unknown as typeof global.fetch;
-
-		const rows = await makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY);
-
-		expect(calls).toBe(3);
-		expect(rows).toEqual([{ symbol: 'IBM', name: 'IBM' }]);
-	});
-
-	it('gives up on a 429 once the retry budget is spent', async () => {
+	it('rejects a 429 after one attempt so the plugin handler is the only retry layer', async () => {
 		let calls = 0;
 		global.fetch = (async (url: string) => {
 			calls++;
@@ -284,8 +262,7 @@ describe('CSV decoding', () => {
 		await expect(
 			makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY),
 		).rejects.toMatchObject({ status: 429 });
-		// One initial attempt plus the configured retries.
-		expect(calls).toBe(3);
+		expect(calls).toBe(1);
 	});
 
 	it('does not retry a 5xx', async () => {

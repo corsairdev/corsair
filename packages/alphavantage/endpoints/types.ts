@@ -395,12 +395,29 @@ export const AlphaVantageEndpointInputSchemas = {
 		})
 		.refine(
 			(input) =>
-				!['SMA', 'EMA', 'RSI', 'WMA', 'DEMA', 'TEMA', 'MOM', 'ROC'].includes(
-					input.indicator,
-				) || input.time_period !== undefined,
+				![
+					'SMA',
+					'EMA',
+					'RSI',
+					'WMA',
+					'DEMA',
+					'TEMA',
+					'MOM',
+					'ROC',
+					'STOCHRSI',
+				].includes(input.indicator) || input.time_period !== undefined,
 			{
 				message: 'time_period is required for this indicator',
 				path: ['time_period'],
+			},
+		)
+		.refine(
+			(input) =>
+				!['RSI', 'MACD', 'STOCHRSI'].includes(input.indicator) ||
+				input.series_type !== undefined,
+			{
+				message: 'series_type is required for this indicator',
+				path: ['series_type'],
 			},
 		),
 } as const;

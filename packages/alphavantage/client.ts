@@ -37,9 +37,6 @@ const ALPHA_VANTAGE_RATE_LIMIT_CONFIG: RateLimitConfig = {
  */
 const CSV_REQUEST_TIMEOUT_MS = 30_000;
 
-/** Ceiling on a single retry wait, however long the provider asks for. */
-const CSV_MAX_RETRY_DELAY_MS = 5_000;
-
 export type AlphaVantageErrorKind =
 	| 'rate_limit'
 	| 'premium'
@@ -359,70 +356,40 @@ export async function makeAlphaVantageCsvRequest(
 		query: { ...query, function: functionName, apikey: apiKey },
 	};
 
-	let text = '';
+	// One fetch. A 429 is thrown as ApiError so RATE_LIMIT_ERROR is the only
+	// retry layer — an inner loop here would multiply with that handler.
+	let response: Response;
+	try {
+		response = await fetch(url, {
+			method: 'GET',
+			headers: { Accept: 'text/csv' },
+			signal: AbortSignal.timeout(CSV_REQUEST_TIMEOUT_MS),
+		});
+	} catch (error) {
+		const reason = error instanceof Error ? error.message : String(error);
+		throw new Error(
+			`Alpha Vantage ${functionName} request failed: ${redactApiKeyInUrl(reason)}`,
+		);
+	}
 
-	// The shared transport retries a 429 for the JSON operations; this path does
-	// not go through it, so the same behaviour is reproduced here rather than
-	// letting the CSV operations fail on a limit the others ride out. Only 429
-	// is retried — a 5xx from the CDN is not something a second identical
-	// request is likely to fix.
-	for (let attempt = 0; ; attempt++) {
-		let response: Response;
-		try {
-			response = await fetch(url, {
-				method: 'GET',
-				headers: { Accept: 'text/csv' },
-				// Without this a hung connection would block forever, since the
-				// shared transport's timeout does not apply here.
-				signal: AbortSignal.timeout(CSV_REQUEST_TIMEOUT_MS),
-			});
-		} catch (error) {
-			// Never let the raw url — which carries the api key — reach the message.
-			const reason = error instanceof Error ? error.message : String(error);
-			throw new Error(
-				`Alpha Vantage ${functionName} request failed: ${redactApiKeyInUrl(reason)}`,
-			);
-		}
-
-		text = await response.text();
-		if (response.ok) break;
-
-		const retryAfterMs = parseRetryAfter(response.headers.get('Retry-After'));
-		const canRetry =
-			response.status === 429 &&
-			attempt < ALPHA_VANTAGE_RATE_LIMIT_CONFIG.maxRetries;
-
-		if (!canRetry) {
-			// A transport-level failure must not be parsed as data. Alpha Vantage
-			// signals its *own* errors with HTTP 200 and a JSON body, but a gateway
-			// or CDN in front of the API can still answer 5xx or 429 with an HTML
-			// page — and `parseCsv` would happily turn that page into rows.
-			throw sanitizeApiError(
-				new ApiError(
-					requestOptions,
-					{
-						url: url.toString(),
-						ok: false,
-						status: response.status,
-						statusText: response.statusText,
-						// Truncated because an HTML error page is large and adds no
-						// signal, and redacted because such pages routinely echo the
-						// request URI — which carries the api key.
-						body: redactApiKeyInUrl(text.slice(0, 500)),
-					},
-					`Alpha Vantage ${functionName} returned HTTP ${response.status}`,
-					{ retryAfter: retryAfterMs },
-				),
-			);
-		}
-
-		const backoff =
-			ALPHA_VANTAGE_RATE_LIMIT_CONFIG.initialRetryDelay *
-			ALPHA_VANTAGE_RATE_LIMIT_CONFIG.backoffMultiplier ** attempt;
-		// A server-supplied delay wins, but is capped: a provider asking us to
-		// wait minutes should surface as an error rather than stall the caller.
-		const delay = Math.min(retryAfterMs ?? backoff, CSV_MAX_RETRY_DELAY_MS);
-		await new Promise((resolve) => setTimeout(resolve, delay));
+	const text = await response.text();
+	if (!response.ok) {
+		throw sanitizeApiError(
+			new ApiError(
+				requestOptions,
+				{
+					url: url.toString(),
+					ok: false,
+					status: response.status,
+					statusText: response.statusText,
+					body: redactApiKeyInUrl(text.slice(0, 500)),
+				},
+				`Alpha Vantage ${functionName} returned HTTP ${response.status}`,
+				{
+					retryAfter: parseRetryAfter(response.headers.get('Retry-After')),
+				},
+			),
+		);
 	}
 
 	// An Alpha Vantage error on a CSV endpoint still arrives as HTTP 200, but as

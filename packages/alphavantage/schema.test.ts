@@ -442,12 +442,20 @@ describe('input schemas reject malformed calls', () => {
 		).toBeTruthy();
 	});
 
-	it('requires time_period for indicators that need one', () => {
+	it('requires time_period and series_type where Alpha Vantage does', () => {
 		expect(() =>
 			Inputs.technicalIndicator.parse({
 				indicator: 'RSI',
 				symbol: 'IBM',
 				interval: 'daily',
+			}),
+		).toThrow();
+		expect(() =>
+			Inputs.technicalIndicator.parse({
+				indicator: 'RSI',
+				symbol: 'IBM',
+				interval: 'daily',
+				time_period: 14,
 			}),
 		).toThrow();
 		expect(
@@ -456,14 +464,38 @@ describe('input schemas reject malformed calls', () => {
 				symbol: 'IBM',
 				interval: 'daily',
 				time_period: 14,
+				series_type: 'close',
 			}),
 		).toBeTruthy();
-		// MACD takes fast/slow/signal periods instead, so it must not be forced.
+		expect(() =>
+			Inputs.technicalIndicator.parse({
+				indicator: 'MACD',
+				symbol: 'IBM',
+				interval: 'daily',
+			}),
+		).toThrow();
 		expect(
 			Inputs.technicalIndicator.parse({
 				indicator: 'MACD',
 				symbol: 'IBM',
 				interval: 'daily',
+				series_type: 'close',
+			}),
+		).toBeTruthy();
+		expect(() =>
+			Inputs.technicalIndicator.parse({
+				indicator: 'STOCHRSI',
+				symbol: 'IBM',
+				interval: 'daily',
+			}),
+		).toThrow();
+		expect(
+			Inputs.technicalIndicator.parse({
+				indicator: 'STOCHRSI',
+				symbol: 'IBM',
+				interval: 'daily',
+				time_period: 14,
+				series_type: 'close',
 			}),
 		).toBeTruthy();
 	});
@@ -484,6 +516,8 @@ describe('input schemas reject malformed calls', () => {
 				indicator: 'STOCHRSI',
 				symbol: 'IBM',
 				interval: 'daily',
+				time_period: 14,
+				series_type: 'close',
 			}),
 		).toBeTruthy();
 	});
