@@ -102,3 +102,161 @@ export const updatePreferences: TogglEndpoints['meUpdatePreferences'] = async (
 	);
 	return result;
 };
+
+/** Confirms the token is valid; Toggl answers 200 with an empty body. */
+export const getLogged: TogglEndpoints['meGetLogged'] = async (ctx, input) => {
+	await makeTogglRequest<unknown>('me/logged', ctx.key, { method: 'GET' });
+
+	await logEventFromContext(
+		ctx,
+		'toggl.me.getLogged',
+		auditPayload(input, []),
+		'completed',
+	);
+	return { ok: true };
+};
+
+export const getLocation: TogglEndpoints['meGetLocation'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<TogglEndpointOutputs['meGetLocation']>(
+		'me/location',
+		ctx.key,
+		{ method: 'GET' },
+	);
+
+	// The response is geolocation data about the user; nothing of it is logged.
+	await logEventFromContext(
+		ctx,
+		'toggl.me.getLocation',
+		auditPayload(input, []),
+		'completed',
+	);
+	return result;
+};
+
+export const getQuota: TogglEndpoints['meGetQuota'] = async (ctx, input) => {
+	const result = await makeTogglRequest<TogglEndpointOutputs['meGetQuota']>(
+		'me/quota',
+		ctx.key,
+		{ method: 'GET' },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.me.getQuota',
+		auditPayload(input, []),
+		'completed',
+	);
+	return result ?? [];
+};
+
+export const getClients: TogglEndpoints['meGetClients'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<TogglEndpointOutputs['meGetClients']>(
+		'me/clients',
+		ctx.key,
+		{ method: 'GET', query: { since: input.since } },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.me.getClients',
+		auditPayload(input, ['since']),
+		'completed',
+	);
+	return result ?? [];
+};
+
+export const getProjects: TogglEndpoints['meGetProjects'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<TogglEndpointOutputs['meGetProjects']>(
+		'me/projects',
+		ctx.key,
+		{ method: 'GET', query: { since: input.since } },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.me.getProjects',
+		auditPayload(input, ['since']),
+		'completed',
+	);
+	return result ?? [];
+};
+
+export const getTags: TogglEndpoints['meGetTags'] = async (ctx, input) => {
+	const result = await makeTogglRequest<TogglEndpointOutputs['meGetTags']>(
+		'me/tags',
+		ctx.key,
+		{ method: 'GET', query: { since: input.since } },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.me.getTags',
+		auditPayload(input, ['since']),
+		'completed',
+	);
+	return result ?? [];
+};
+
+export const getTasks: TogglEndpoints['meGetTasks'] = async (ctx, input) => {
+	const result = await makeTogglRequest<TogglEndpointOutputs['meGetTasks']>(
+		'me/tasks',
+		ctx.key,
+		{ method: 'GET', query: { since: input.since } },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.me.getTasks',
+		auditPayload(input, ['since']),
+		'completed',
+	);
+	return result ?? [];
+};
+
+/**
+ * Unsubscribes the account from Toggl product emails using a code taken from an
+ * unsubscribe link. Never exercised by the live suite — it would opt the test
+ * account out of Toggl's mail for real.
+ */
+export const disableProductEmails: TogglEndpoints['meDisableProductEmails'] =
+	async (ctx, input) => {
+		await makeTogglRequest<unknown>('me/disable_product_emails', ctx.key, {
+			method: 'POST',
+			body: { disable_code: input.disable_code },
+		});
+
+		// The unsubscribe code acts as a bearer secret; keep it out of the log.
+		await logEventFromContext(
+			ctx,
+			'toggl.me.disableProductEmails',
+			auditPayload(input, []),
+			'completed',
+		);
+		return { ok: true };
+	};
+
+/** As above, for the weekly report email. Also never live-tested. */
+export const disableWeeklyReport: TogglEndpoints['meDisableWeeklyReport'] =
+	async (ctx, input) => {
+		await makeTogglRequest<unknown>('me/disable_weekly_report', ctx.key, {
+			method: 'POST',
+			body: { code: input.code },
+		});
+
+		await logEventFromContext(
+			ctx,
+			'toggl.me.disableWeeklyReport',
+			auditPayload(input, []),
+			'completed',
+		);
+		return { ok: true };
+	};

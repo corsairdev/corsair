@@ -183,3 +183,29 @@ export const remove: TogglEndpoints['timeEntriesDelete'] = async (
 	);
 	return { deleted: true, id: input.time_entry_id };
 };
+
+/**
+ * Applies the same JSON Patch operations to many entries at once. Toggl caps a
+ * request at 100 entries and reports per-entry success and failure rather than
+ * failing the whole batch.
+ */
+export const bulkEdit: TogglEndpoints['timeEntriesBulkEdit'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<
+		TogglEndpointOutputs['timeEntriesBulkEdit']
+	>(
+		`workspaces/${input.workspace_id}/time_entries/${input.time_entry_ids.join(',')}`,
+		ctx.key,
+		{ method: 'PATCH', body: input.operations },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.timeEntries.bulkEdit',
+		auditPayload(input, ['workspace_id']),
+		'completed',
+	);
+	return result ?? {};
+};

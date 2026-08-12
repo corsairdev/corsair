@@ -18,6 +18,12 @@ export class TogglAPIError extends Error {
 const TOGGL_API_BASE = 'https://api.track.toggl.com/api/v9';
 
 /**
+ * Webhook subscriptions live on a separate service with its own version, not
+ * under the Track v9 path.
+ */
+const TOGGL_WEBHOOKS_BASE = 'https://api.track.toggl.com/webhooks/api/v1';
+
+/**
  * Toggl enforces roughly one request per second per API token per IP using a
  * leaky bucket, and answers with 429 once the bucket is full. It does not
  * document a Retry-After header, so the exponential backoff below is what
@@ -50,14 +56,16 @@ export async function makeTogglRequest<T>(
 	apiToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: Record<string, unknown> | unknown[];
 		query?: Record<string, string | number | boolean | undefined>;
+		/** Target the webhooks service instead of the Track v9 API. */
+		base?: 'track' | 'webhooks';
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, base = 'track' } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: TOGGL_API_BASE,
+		BASE: base === 'webhooks' ? TOGGL_WEBHOOKS_BASE : TOGGL_API_BASE,
 		VERSION: '9',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

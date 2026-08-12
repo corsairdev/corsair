@@ -112,3 +112,32 @@ export const remove: TogglEndpoints['tasksDelete'] = async (ctx, input) => {
 	);
 	return { deleted: true, id: input.task_id };
 };
+
+/**
+ * Lists every task in a workspace rather than within one project. Toggl wraps
+ * this response in a paginated envelope, unlike the project-scoped variant
+ * which returns a bare array.
+ */
+export const listWorkspace: TogglEndpoints['tasksListWorkspace'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<{
+		data?: TogglEndpointOutputs['tasksListWorkspace'] | null;
+	}>(`workspaces/${input.workspace_id}/tasks`, ctx.key, {
+		method: 'GET',
+		query: {
+			active: input.active,
+			page: input.page,
+			per_page: input.per_page,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'toggl.tasks.listWorkspace',
+		auditPayload(input, ['workspace_id', 'active', 'page', 'per_page']),
+		'completed',
+	);
+	return result?.data ?? [];
+};

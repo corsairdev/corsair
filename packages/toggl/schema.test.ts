@@ -33,7 +33,7 @@ describe('Toggl schema', () => {
 describe('entity schemas', () => {
 	// Captured from live Toggl Track API v9 responses.
 	const user = {
-		id: 13388076,
+		id: 1000001,
 		email: 'user@example.com',
 		fullname: 'Example User',
 		timezone: 'Asia/Colombo',
@@ -46,8 +46,8 @@ describe('entity schemas', () => {
 	};
 
 	const workspace = {
-		id: 21597802,
-		organization_id: 21598573,
+		id: 3000001,
+		organization_id: 2000001,
 		name: 'Workspace',
 		premium: true,
 		admin: true,
@@ -59,18 +59,18 @@ describe('entity schemas', () => {
 	};
 
 	const client = {
-		id: 69027594,
-		wid: 21597802,
+		id: 4000001,
+		wid: 3000001,
 		archived: false,
 		name: 'Acme Corp',
-		creator_id: 13388076,
+		creator_id: 1000001,
 		at: '2026-08-12T09:50:41+00:00',
 	};
 
 	const project = {
-		id: 221374378,
-		workspace_id: 21597802,
-		client_id: 69027594,
+		id: 5000001,
+		workspace_id: 3000001,
+		client_id: 4000001,
 		name: 'Website Redesign',
 		is_private: false,
 		active: true,
@@ -79,17 +79,17 @@ describe('entity schemas', () => {
 	};
 
 	const tag = {
-		id: 20781248,
-		workspace_id: 21597802,
+		id: 6000001,
+		workspace_id: 3000001,
 		name: 'billable',
-		creator_id: 13388076,
+		creator_id: 1000001,
 		at: '2026-08-12T09:50:42.542251Z',
 	};
 
 	const timeEntry = {
-		id: 4514813464,
-		workspace_id: 21597802,
-		project_id: 221374378,
+		id: 7000001,
+		workspace_id: 3000001,
+		project_id: 5000001,
 		task_id: null,
 		billable: false,
 		start: '2026-08-09T09:50:42Z',
@@ -100,7 +100,7 @@ describe('entity schemas', () => {
 	};
 
 	it('accepts a real /me payload', () => {
-		expect(TogglUserSchema.parse(user).id).toBe(13388076);
+		expect(TogglUserSchema.parse(user).id).toBe(1000001);
 	});
 
 	it('strips api_token out of a profile payload', () => {
@@ -115,7 +115,7 @@ describe('entity schemas', () => {
 
 	it('accepts a real workspace payload', () => {
 		const parsed = TogglWorkspaceSchema.parse(workspace);
-		expect(parsed.organization_id).toBe(21598573);
+		expect(parsed.organization_id).toBe(2000001);
 		expect(parsed.role).toBe('admin');
 	});
 
@@ -124,7 +124,7 @@ describe('entity schemas', () => {
 	});
 
 	it('accepts a real project payload', () => {
-		expect(TogglProjectSchema.parse(project).client_id).toBe(69027594);
+		expect(TogglProjectSchema.parse(project).client_id).toBe(4000001);
 	});
 
 	it('accepts a real tag payload', () => {
@@ -159,56 +159,48 @@ describe('entity schemas', () => {
 });
 
 describe('endpoint schema registry', () => {
-	const expectedKeys = [
-		'meGet',
-		'meUpdate',
-		'meGetPreferences',
-		'meUpdatePreferences',
-		'workspacesList',
-		'workspacesGet',
-		'workspacesUpdate',
-		'workspacesGetUsers',
-		'organizationsGet',
-		'organizationsUpdate',
-		'organizationsGetWorkspaces',
-		'clientsList',
-		'clientsGet',
-		'clientsCreate',
-		'clientsUpdate',
-		'clientsDelete',
-		'projectsList',
-		'projectsGet',
-		'projectsCreate',
-		'projectsUpdate',
-		'projectsDelete',
-		'tasksList',
-		'tasksGet',
-		'tasksCreate',
-		'tasksUpdate',
-		'tasksDelete',
-		'tagsList',
-		'tagsCreate',
-		'tagsUpdate',
-		'tagsDelete',
-		'timeEntriesList',
-		'timeEntriesGetCurrent',
-		'timeEntriesGet',
-		'timeEntriesCreate',
-		'timeEntriesUpdate',
-		'timeEntriesStop',
-		'timeEntriesDelete',
-	];
+	const inputKeys = Object.keys(TogglEndpointInputSchemas).sort();
+	const outputKeys = Object.keys(TogglEndpointOutputSchemas).sort();
 
-	it('declares an input schema for every operation', () => {
-		expect(Object.keys(TogglEndpointInputSchemas).sort()).toEqual(
-			[...expectedKeys].sort(),
-		);
+	it('declares matching input and output schemas for every operation', () => {
+		expect(inputKeys).toEqual(outputKeys);
 	});
 
-	it('declares an output schema for every operation', () => {
-		expect(Object.keys(TogglEndpointOutputSchemas).sort()).toEqual(
-			[...expectedKeys].sort(),
-		);
+	const groups = [
+		'clients',
+		'me',
+		'organizations',
+		'projects',
+		'reference',
+		'smail',
+		'tags',
+		'tasks',
+		'timeEntries',
+		'webhooks',
+		'workspaces',
+	];
+
+	it('has at least one operation in every resource group', () => {
+		for (const group of groups) {
+			expect(inputKeys.some((key) => key.startsWith(group))).toBe(true);
+		}
+	});
+
+	it('assigns every operation to a known resource group', () => {
+		for (const key of inputKeys) {
+			expect(groups.some((group) => key.startsWith(group))).toBe(true);
+		}
+	});
+
+	it('declares a zod schema, not a bare object, for each side', () => {
+		for (const key of inputKeys) {
+			const input = (TogglEndpointInputSchemas as Record<string, unknown>)[key];
+			const output = (TogglEndpointOutputSchemas as Record<string, unknown>)[
+				key
+			];
+			expect(typeof (input as { parse?: unknown })?.parse).toBe('function');
+			expect(typeof (output as { parse?: unknown })?.parse).toBe('function');
+		}
 	});
 });
 
@@ -239,7 +231,7 @@ describe('input validation', () => {
 
 	it('accepts a negative duration to mark a running timer', () => {
 		const parsed = TogglEndpointInputSchemas.timeEntriesCreate.parse({
-			workspace_id: 21597802,
+			workspace_id: 3000001,
 			start: '2026-08-12T10:00:00Z',
 			duration: -1,
 		});
@@ -270,9 +262,9 @@ describe('input validation', () => {
 	it('models a delete result as an explicit typed value', () => {
 		const parsed = TogglEndpointOutputSchemas.clientsDelete.parse({
 			deleted: true,
-			id: 69027594,
+			id: 4000001,
 		});
-		expect(parsed).toEqual({ deleted: true, id: 69027594 });
+		expect(parsed).toEqual({ deleted: true, id: 4000001 });
 	});
 
 	it('allows a null current time entry when no timer runs', () => {

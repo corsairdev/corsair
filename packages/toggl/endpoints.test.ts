@@ -14,7 +14,7 @@ import {
 	Workspaces,
 } from './endpoints';
 
-const WS = 21597802;
+const WS = 3000001;
 
 type Store = {
 	upsertByEntityId: jest.Mock;
@@ -78,13 +78,13 @@ function requested() {
 
 const BASE = 'https://api.track.toggl.com/api/v9';
 
-const workspace = { id: WS, organization_id: 21598573, name: 'Workspace' };
-const client = { id: 69027594, wid: WS, name: 'Acme Corp' };
-const project = { id: 221374378, workspace_id: WS, name: 'Website Redesign' };
+const workspace = { id: WS, organization_id: 2000001, name: 'Workspace' };
+const client = { id: 4000001, wid: WS, name: 'Acme Corp' };
+const project = { id: 5000001, workspace_id: WS, name: 'Website Redesign' };
 const task = { id: 1, workspace_id: WS, project_id: project.id, name: 'Task' };
-const tag = { id: 20781248, workspace_id: WS, name: 'billable' };
+const tag = { id: 6000001, workspace_id: WS, name: 'billable' };
 const entry = {
-	id: 4514813464,
+	id: 7000001,
 	workspace_id: WS,
 	start: '2026-08-09T09:50:42Z',
 	duration: 3600,
@@ -182,16 +182,16 @@ describe('workspaces', () => {
 describe('organizations', () => {
 	it('gets an organization', async () => {
 		const { ctx } = makeCtx();
-		mockResponse({ id: 21598573, name: 'Agam Arora' });
-		await Organizations.get(ctx, { organization_id: 21598573 });
-		expect(requested().url).toBe(`${BASE}/organizations/21598573`);
+		mockResponse({ id: 2000001, name: 'Example Org' });
+		await Organizations.get(ctx, { organization_id: 2000001 });
+		expect(requested().url).toBe(`${BASE}/organizations/2000001`);
 	});
 
 	it('renames an organization', async () => {
 		const { ctx } = makeCtx();
-		mockResponse({ id: 21598573, name: 'New Name' });
+		mockResponse({ id: 2000001, name: 'New Name' });
 		await Organizations.update(ctx, {
-			organization_id: 21598573,
+			organization_id: 2000001,
 			name: 'New Name',
 		});
 		expect(requested().method).toBe('PUT');
@@ -201,8 +201,8 @@ describe('organizations', () => {
 	it('lists organization workspaces', async () => {
 		const { ctx } = makeCtx();
 		mockResponse([workspace]);
-		await Organizations.getWorkspaces(ctx, { organization_id: 21598573 });
-		expect(requested().url).toBe(`${BASE}/organizations/21598573/workspaces`);
+		await Organizations.getWorkspaces(ctx, { organization_id: 2000001 });
+		expect(requested().url).toBe(`${BASE}/organizations/2000001/workspaces`);
 	});
 });
 

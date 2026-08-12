@@ -98,3 +98,37 @@ export const getUsers: TogglEndpoints['workspacesGetUsers'] = async (
 	);
 	return result ?? [];
 };
+
+export const getLogo: TogglEndpoints['workspacesGetLogo'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<
+		TogglEndpointOutputs['workspacesGetLogo']
+	>(`workspaces/${input.workspace_id}/logo`, ctx.key, { method: 'GET' });
+
+	await logEventFromContext(
+		ctx,
+		'toggl.workspaces.getLogo',
+		auditPayload(input, ['workspace_id']),
+		'completed',
+	);
+	return result;
+};
+
+export const getPreferences: TogglEndpoints['workspacesGetPreferences'] =
+	async (ctx, input) => {
+		const result = await makeTogglRequest<
+			TogglEndpointOutputs['workspacesGetPreferences']
+		>(`workspaces/${input.workspace_id}/preferences`, ctx.key, {
+			method: 'GET',
+		});
+
+		await logEventFromContext(
+			ctx,
+			'toggl.workspaces.getPreferences',
+			auditPayload(input, ['workspace_id']),
+			'completed',
+		);
+		return result;
+	};

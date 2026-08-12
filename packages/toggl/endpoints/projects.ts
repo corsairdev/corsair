@@ -142,3 +142,48 @@ export const remove: TogglEndpoints['projectsDelete'] = async (ctx, input) => {
 	);
 	return { deleted: true, id: input.project_id };
 };
+
+export const addUser: TogglEndpoints['projectsAddUser'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeTogglRequest<
+		TogglEndpointOutputs['projectsAddUser']
+	>(`workspaces/${input.workspace_id}/project_users`, ctx.key, {
+		method: 'POST',
+		body: {
+			project_id: input.project_id,
+			user_id: input.user_id,
+			manager: input.manager,
+			rate: input.rate,
+			labour_cost: input.labour_cost,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'toggl.projects.addUser',
+		auditPayload(input, ['workspace_id', 'project_id', 'user_id', 'manager']),
+		'completed',
+	);
+	return result;
+};
+
+export const deleteGroup: TogglEndpoints['projectsDeleteGroup'] = async (
+	ctx,
+	input,
+) => {
+	await makeTogglRequest<unknown>(
+		`workspaces/${input.workspace_id}/project_groups/${input.project_group_id}`,
+		ctx.key,
+		{ method: 'DELETE' },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'toggl.projects.deleteGroup',
+		auditPayload(input, ['workspace_id', 'project_group_id']),
+		'completed',
+	);
+	return { deleted: true, id: input.project_group_id };
+};

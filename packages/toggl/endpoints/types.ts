@@ -169,6 +169,149 @@ export const TogglTimeEntrySchema = z.object({
 });
 export type TogglTimeEntry = z.infer<typeof TogglTimeEntrySchema>;
 
+export const TogglLocationSchema = z.object({
+	city: z.string().nullable().optional(),
+	city_lat_long: z.string().nullable().optional(),
+	state: z.string().nullable().optional(),
+	country_code: z.string().nullable().optional(),
+	country_name: z.string().nullable().optional(),
+});
+export type TogglLocation = z.infer<typeof TogglLocationSchema>;
+
+export const TogglQuotaSchema = z.object({
+	organization_id: z.number(),
+	remaining: z.number(),
+	total: z.number(),
+	resets_in_secs: z.number().nullable().optional(),
+});
+export type TogglQuota = z.infer<typeof TogglQuotaSchema>;
+
+export const TogglCountrySchema = z.object({
+	id: z.number(),
+	name: z.string(),
+	country_code: z.string().nullable().optional(),
+	vat_applicable: z.boolean().nullable().optional(),
+	vat_percentage: z.number().nullable().optional(),
+	vat_regex: z.string().nullable().optional(),
+});
+export type TogglCountry = z.infer<typeof TogglCountrySchema>;
+
+export const TogglCountrySubdivisionSchema = z.object({
+	name: z.string(),
+	code: z.string().nullable().optional(),
+	country_code: z.string().nullable().optional(),
+});
+export type TogglCountrySubdivision = z.infer<
+	typeof TogglCountrySubdivisionSchema
+>;
+
+export const TogglCurrencySchema = z.object({
+	currency_id: z.number().nullable().optional(),
+	iso_code: z.string(),
+	symbol: z.string().nullable().optional(),
+});
+export type TogglCurrency = z.infer<typeof TogglCurrencySchema>;
+
+export const TogglTimezoneOffsetSchema = z.object({
+	name: z.string(),
+	utc: z.string(),
+});
+export type TogglTimezoneOffset = z.infer<typeof TogglTimezoneOffsetSchema>;
+
+/** JWKS keyset used to verify Toggl-issued JWTs. */
+export const TogglKeysetSchema = z.object({
+	keys: z.array(z.record(z.string(), z.unknown())),
+});
+export type TogglKeyset = z.infer<typeof TogglKeysetSchema>;
+
+export const TogglGroupSchema = z.object({
+	group_id: z.number().nullable().optional(),
+	id: z.number().nullable().optional(),
+	organization_id: z.number().nullable().optional(),
+	name: z.string(),
+	users: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
+	workspaces: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
+	at: z.string().nullable().optional(),
+});
+export type TogglGroup = z.infer<typeof TogglGroupSchema>;
+
+export const TogglOrganizationUserSchema = z.object({
+	id: z.number(),
+	user_id: z.number().nullable().optional(),
+	organization_id: z.number().nullable().optional(),
+	email: z.string().nullable().optional(),
+	name: z.string().nullable().optional(),
+	admin: z.boolean().nullable().optional(),
+	owner: z.boolean().nullable().optional(),
+	joined: z.boolean().nullable().optional(),
+	inactive: z.boolean().nullable().optional(),
+	workspaces: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
+	groups: z.array(z.record(z.string(), z.unknown())).nullable().optional(),
+});
+export type TogglOrganizationUser = z.infer<typeof TogglOrganizationUserSchema>;
+
+/** Toggl returns plan/billing data with a shape that varies by tier. */
+export const TogglPlanInfoSchema = z.record(z.string(), z.unknown());
+export type TogglPlanInfo = z.infer<typeof TogglPlanInfoSchema>;
+
+export const TogglProjectUserSchema = z.object({
+	id: z.number(),
+	project_id: z.number().nullable().optional(),
+	user_id: z.number().nullable().optional(),
+	workspace_id: z.number().nullable().optional(),
+	manager: z.boolean().nullable().optional(),
+	rate: z.number().nullable().optional(),
+	labour_cost: z.number().nullable().optional(),
+	at: z.string().nullable().optional(),
+});
+export type TogglProjectUser = z.infer<typeof TogglProjectUserSchema>;
+
+export const TogglWorkspacePreferencesSchema = z.object({
+	initial_pricing_plan: z.number().nullable().optional(),
+	hide_start_end_times: z.boolean().nullable().optional(),
+});
+export type TogglWorkspacePreferences = z.infer<
+	typeof TogglWorkspacePreferencesSchema
+>;
+
+export const TogglWorkspaceLogoSchema = z.object({
+	logo: z.string().nullable().optional(),
+});
+export type TogglWorkspaceLogo = z.infer<typeof TogglWorkspaceLogoSchema>;
+
+export const TogglWebhooksStatusSchema = z.object({
+	status: z.string(),
+});
+export type TogglWebhooksStatus = z.infer<typeof TogglWebhooksStatusSchema>;
+
+/** Map of entity name to the event names that can be subscribed to. */
+export const TogglEventFiltersSchema = z.record(
+	z.string(),
+	z.array(z.string()),
+);
+export type TogglEventFilters = z.infer<typeof TogglEventFiltersSchema>;
+
+export const TogglSubscriptionSchema = z.object({
+	subscription_id: z.number().nullable().optional(),
+	workspace_id: z.number().nullable().optional(),
+	user_id: z.number().nullable().optional(),
+	url_callback: z.string().nullable().optional(),
+	enabled: z.boolean().nullable().optional(),
+	description: z.string().nullable().optional(),
+	event_filters: z
+		.array(z.record(z.string(), z.unknown()))
+		.nullable()
+		.optional(),
+	created_at: z.string().nullable().optional(),
+});
+export type TogglSubscription = z.infer<typeof TogglSubscriptionSchema>;
+
+/** Toggl's transactional mail endpoints answer with a bare acknowledgement. */
+export const TogglAcknowledgementSchema = z.object({
+	ok: z.literal(true),
+});
+export type TogglAcknowledgement = z.infer<typeof TogglAcknowledgementSchema>;
+
 /* -------------------------------------------------------------------------- */
 /* me                                                                          */
 /* -------------------------------------------------------------------------- */
@@ -499,6 +642,253 @@ export type TimeEntriesDeleteInput = z.infer<
 >;
 
 /* -------------------------------------------------------------------------- */
+/* me — collections and account actions                                        */
+/* -------------------------------------------------------------------------- */
+
+const EmptyInputSchema = z.object({});
+export type EmptyInput = z.infer<typeof EmptyInputSchema>;
+
+/** `since` filters most /me collections to records changed after a UNIX time. */
+const SinceInputSchema = z.object({
+	since: z.number().optional(),
+});
+export type SinceInput = z.infer<typeof SinceInputSchema>;
+
+const MeDisableProductEmailsInputSchema = z.object({
+	/** Code taken from the unsubscribe link in a Toggl product email. */
+	disable_code: z.string().min(1),
+});
+export type MeDisableProductEmailsInput = z.infer<
+	typeof MeDisableProductEmailsInputSchema
+>;
+
+const MeDisableWeeklyReportInputSchema = z.object({
+	/** Code taken from the footer of a weekly report email. */
+	code: z.string().min(1),
+});
+export type MeDisableWeeklyReportInput = z.infer<
+	typeof MeDisableWeeklyReportInputSchema
+>;
+
+/* -------------------------------------------------------------------------- */
+/* reference data                                                              */
+/* -------------------------------------------------------------------------- */
+
+const ReferenceGetCountrySubdivisionsInputSchema = z.object({
+	country_code: z.string().min(2),
+});
+export type ReferenceGetCountrySubdivisionsInput = z.infer<
+	typeof ReferenceGetCountrySubdivisionsInputSchema
+>;
+
+/* -------------------------------------------------------------------------- */
+/* organizations — groups, users, invitations, plans                           */
+/* -------------------------------------------------------------------------- */
+
+const OrganizationsCreateInputSchema = z.object({
+	name: z.string().min(1),
+	/** Name for the organization's first workspace. */
+	workspace_name: z.string().min(1).optional(),
+});
+export type OrganizationsCreateInput = z.infer<
+	typeof OrganizationsCreateInputSchema
+>;
+
+const OrganizationsGetGroupsInputSchema = z.object({
+	organization_id: z.number(),
+});
+export type OrganizationsGetGroupsInput = z.infer<
+	typeof OrganizationsGetGroupsInputSchema
+>;
+
+const OrganizationsCreateGroupInputSchema = z.object({
+	organization_id: z.number(),
+	name: z.string().min(1),
+});
+export type OrganizationsCreateGroupInput = z.infer<
+	typeof OrganizationsCreateGroupInputSchema
+>;
+
+const OrganizationsDeleteGroupInputSchema = z.object({
+	organization_id: z.number(),
+	group_id: z.number(),
+});
+export type OrganizationsDeleteGroupInput = z.infer<
+	typeof OrganizationsDeleteGroupInputSchema
+>;
+
+const OrganizationsGetUsersInputSchema = z.object({
+	organization_id: z.number(),
+	/** Case-insensitive match against name or email. */
+	filter: z.string().optional(),
+	active: z.boolean().optional(),
+	only_admins: z.boolean().optional(),
+	groups: z.boolean().optional(),
+	page: z.number().int().positive().optional(),
+	per_page: z.number().int().positive().max(200).optional(),
+});
+export type OrganizationsGetUsersInput = z.infer<
+	typeof OrganizationsGetUsersInputSchema
+>;
+
+const OrganizationsCreateInvitationInputSchema = z.object({
+	organization_id: z.number(),
+	emails: z.array(z.string()).min(1),
+	/** Workspaces the invitee should be added to. */
+	workspaces: z
+		.array(
+			z.object({
+				workspace_id: z.number(),
+				admin: z.boolean().optional(),
+			}),
+		)
+		.optional(),
+	prevent_email_notification: z.boolean().optional(),
+});
+export type OrganizationsCreateInvitationInput = z.infer<
+	typeof OrganizationsCreateInvitationInputSchema
+>;
+
+const OrganizationsGetPlansInputSchema = z.object({
+	organization_id: z.number(),
+});
+export type OrganizationsGetPlansInput = z.infer<
+	typeof OrganizationsGetPlansInputSchema
+>;
+
+/* -------------------------------------------------------------------------- */
+/* workspaces — logo, preferences, tasks                                       */
+/* -------------------------------------------------------------------------- */
+
+const WorkspacesGetLogoInputSchema = z.object({
+	workspace_id: z.number(),
+});
+export type WorkspacesGetLogoInput = z.infer<
+	typeof WorkspacesGetLogoInputSchema
+>;
+
+const WorkspacesGetPreferencesInputSchema = z.object({
+	workspace_id: z.number(),
+});
+export type WorkspacesGetPreferencesInput = z.infer<
+	typeof WorkspacesGetPreferencesInputSchema
+>;
+
+const TasksListWorkspaceInputSchema = z.object({
+	workspace_id: z.number(),
+	active: z.boolean().optional(),
+	page: z.number().int().positive().optional(),
+	per_page: z.number().int().positive().max(200).optional(),
+});
+export type TasksListWorkspaceInput = z.infer<
+	typeof TasksListWorkspaceInputSchema
+>;
+
+/* -------------------------------------------------------------------------- */
+/* projects — members and groups                                               */
+/* -------------------------------------------------------------------------- */
+
+const ProjectsAddUserInputSchema = z.object({
+	workspace_id: z.number(),
+	project_id: z.number(),
+	user_id: z.number(),
+	manager: z.boolean().optional(),
+	rate: z.number().optional(),
+	labour_cost: z.number().optional(),
+});
+export type ProjectsAddUserInput = z.infer<typeof ProjectsAddUserInputSchema>;
+
+const ProjectsDeleteGroupInputSchema = z.object({
+	workspace_id: z.number(),
+	project_group_id: z.number(),
+});
+export type ProjectsDeleteGroupInput = z.infer<
+	typeof ProjectsDeleteGroupInputSchema
+>;
+
+/* -------------------------------------------------------------------------- */
+/* time entries — bulk edit                                                    */
+/* -------------------------------------------------------------------------- */
+
+const TimeEntriesBulkEditInputSchema = z.object({
+	workspace_id: z.number(),
+	/** Toggl caps a bulk edit at 100 entries per request. */
+	time_entry_ids: z.array(z.number()).min(1).max(100),
+	/** JSON Patch operations applied to every listed entry. */
+	operations: z
+		.array(
+			z.object({
+				op: z.enum(['add', 'remove', 'replace']),
+				path: z.string().min(1),
+				value: z.unknown().optional(),
+			}),
+		)
+		.min(1),
+});
+export type TimeEntriesBulkEditInput = z.infer<
+	typeof TimeEntriesBulkEditInputSchema
+>;
+
+const BulkEditResultSchema = z.object({
+	success: z.array(z.number()).nullable().optional(),
+	failure: z
+		.array(
+			z.object({
+				id: z.number().nullable().optional(),
+				message: z.string().nullable().optional(),
+			}),
+		)
+		.nullable()
+		.optional(),
+});
+export type BulkEditResult = z.infer<typeof BulkEditResultSchema>;
+
+/* -------------------------------------------------------------------------- */
+/* webhook subscriptions                                                       */
+/* -------------------------------------------------------------------------- */
+
+const WebhooksListSubscriptionsInputSchema = z.object({
+	workspace_id: z.number(),
+});
+export type WebhooksListSubscriptionsInput = z.infer<
+	typeof WebhooksListSubscriptionsInputSchema
+>;
+
+const WebhooksDeleteSubscriptionInputSchema = z.object({
+	workspace_id: z.number(),
+	subscription_id: z.number(),
+});
+export type WebhooksDeleteSubscriptionInput = z.infer<
+	typeof WebhooksDeleteSubscriptionInputSchema
+>;
+
+/* -------------------------------------------------------------------------- */
+/* transactional mail                                                          */
+/* -------------------------------------------------------------------------- */
+
+const SmailSendDemoInputSchema = z.object({
+	email: z.string().min(1),
+	name: z.string().optional(),
+	company: z.string().optional(),
+	message: z.string().optional(),
+});
+export type SmailSendDemoInput = z.infer<typeof SmailSendDemoInputSchema>;
+
+const SmailSendContactInputSchema = z.object({
+	email: z.string().min(1),
+	name: z.string().min(1),
+	message: z.string().min(1),
+});
+export type SmailSendContactInput = z.infer<typeof SmailSendContactInputSchema>;
+
+const SmailSendMeetInputSchema = z.object({
+	email: z.string().min(1),
+	name: z.string().optional(),
+	location: z.string().min(1),
+});
+export type SmailSendMeetInput = z.infer<typeof SmailSendMeetInputSchema>;
+
+/* -------------------------------------------------------------------------- */
 /* outputs                                                                     */
 /* -------------------------------------------------------------------------- */
 
@@ -550,6 +940,42 @@ export type TogglEndpointInputs = {
 	timeEntriesUpdate: TimeEntriesUpdateInput;
 	timeEntriesStop: TimeEntriesStopInput;
 	timeEntriesDelete: TimeEntriesDeleteInput;
+	meGetLogged: EmptyInput;
+	meGetLocation: EmptyInput;
+	meGetQuota: EmptyInput;
+	meGetClients: SinceInput;
+	meGetProjects: SinceInput;
+	meGetTags: SinceInput;
+	meGetTasks: SinceInput;
+	meDisableProductEmails: MeDisableProductEmailsInput;
+	meDisableWeeklyReport: MeDisableWeeklyReportInput;
+	referenceGetCountries: EmptyInput;
+	referenceGetCountrySubdivisions: ReferenceGetCountrySubdivisionsInput;
+	referenceGetCurrencies: EmptyInput;
+	referenceGetTimezones: EmptyInput;
+	referenceGetTimezoneOffsets: EmptyInput;
+	referenceGetKeys: EmptyInput;
+	organizationsCreate: OrganizationsCreateInput;
+	organizationsGetGroups: OrganizationsGetGroupsInput;
+	organizationsCreateGroup: OrganizationsCreateGroupInput;
+	organizationsDeleteGroup: OrganizationsDeleteGroupInput;
+	organizationsGetUsers: OrganizationsGetUsersInput;
+	organizationsCreateInvitation: OrganizationsCreateInvitationInput;
+	organizationsGetPlans: OrganizationsGetPlansInput;
+	organizationsGetSubscriptionPlans: OrganizationsGetPlansInput;
+	workspacesGetLogo: WorkspacesGetLogoInput;
+	workspacesGetPreferences: WorkspacesGetPreferencesInput;
+	tasksListWorkspace: TasksListWorkspaceInput;
+	projectsAddUser: ProjectsAddUserInput;
+	projectsDeleteGroup: ProjectsDeleteGroupInput;
+	timeEntriesBulkEdit: TimeEntriesBulkEditInput;
+	webhooksGetStatus: EmptyInput;
+	webhooksGetEventFilters: EmptyInput;
+	webhooksListSubscriptions: WebhooksListSubscriptionsInput;
+	webhooksDeleteSubscription: WebhooksDeleteSubscriptionInput;
+	smailSendDemo: SmailSendDemoInput;
+	smailSendContact: SmailSendContactInput;
+	smailSendMeet: SmailSendMeetInput;
 };
 
 export type TogglEndpointOutputs = {
@@ -590,6 +1016,42 @@ export type TogglEndpointOutputs = {
 	timeEntriesUpdate: TogglTimeEntry;
 	timeEntriesStop: TogglTimeEntry;
 	timeEntriesDelete: DeletedResult;
+	meGetLogged: TogglAcknowledgement;
+	meGetLocation: TogglLocation;
+	meGetQuota: TogglQuota[];
+	meGetClients: TogglClient[];
+	meGetProjects: TogglProject[];
+	meGetTags: TogglTag[];
+	meGetTasks: TogglTask[];
+	meDisableProductEmails: TogglAcknowledgement;
+	meDisableWeeklyReport: TogglAcknowledgement;
+	referenceGetCountries: TogglCountry[];
+	referenceGetCountrySubdivisions: TogglCountrySubdivision[];
+	referenceGetCurrencies: TogglCurrency[];
+	referenceGetTimezones: string[];
+	referenceGetTimezoneOffsets: TogglTimezoneOffset[];
+	referenceGetKeys: TogglKeyset;
+	organizationsCreate: TogglOrganization;
+	organizationsGetGroups: TogglGroup[];
+	organizationsCreateGroup: TogglGroup;
+	organizationsDeleteGroup: DeletedResult;
+	organizationsGetUsers: TogglOrganizationUser[];
+	organizationsCreateInvitation: TogglPlanInfo;
+	organizationsGetPlans: TogglPlanInfo;
+	organizationsGetSubscriptionPlans: TogglPlanInfo;
+	workspacesGetLogo: TogglWorkspaceLogo;
+	workspacesGetPreferences: TogglWorkspacePreferences;
+	tasksListWorkspace: TogglTask[];
+	projectsAddUser: TogglProjectUser;
+	projectsDeleteGroup: DeletedResult;
+	timeEntriesBulkEdit: BulkEditResult;
+	webhooksGetStatus: TogglWebhooksStatus;
+	webhooksGetEventFilters: TogglEventFilters;
+	webhooksListSubscriptions: TogglSubscription[];
+	webhooksDeleteSubscription: DeletedResult;
+	smailSendDemo: TogglAcknowledgement;
+	smailSendContact: TogglAcknowledgement;
+	smailSendMeet: TogglAcknowledgement;
 };
 
 export const TogglEndpointInputSchemas = {
@@ -630,6 +1092,42 @@ export const TogglEndpointInputSchemas = {
 	timeEntriesUpdate: TimeEntriesUpdateInputSchema,
 	timeEntriesStop: TimeEntriesStopInputSchema,
 	timeEntriesDelete: TimeEntriesDeleteInputSchema,
+	meGetLogged: EmptyInputSchema,
+	meGetLocation: EmptyInputSchema,
+	meGetQuota: EmptyInputSchema,
+	meGetClients: SinceInputSchema,
+	meGetProjects: SinceInputSchema,
+	meGetTags: SinceInputSchema,
+	meGetTasks: SinceInputSchema,
+	meDisableProductEmails: MeDisableProductEmailsInputSchema,
+	meDisableWeeklyReport: MeDisableWeeklyReportInputSchema,
+	referenceGetCountries: EmptyInputSchema,
+	referenceGetCountrySubdivisions: ReferenceGetCountrySubdivisionsInputSchema,
+	referenceGetCurrencies: EmptyInputSchema,
+	referenceGetTimezones: EmptyInputSchema,
+	referenceGetTimezoneOffsets: EmptyInputSchema,
+	referenceGetKeys: EmptyInputSchema,
+	organizationsCreate: OrganizationsCreateInputSchema,
+	organizationsGetGroups: OrganizationsGetGroupsInputSchema,
+	organizationsCreateGroup: OrganizationsCreateGroupInputSchema,
+	organizationsDeleteGroup: OrganizationsDeleteGroupInputSchema,
+	organizationsGetUsers: OrganizationsGetUsersInputSchema,
+	organizationsCreateInvitation: OrganizationsCreateInvitationInputSchema,
+	organizationsGetPlans: OrganizationsGetPlansInputSchema,
+	organizationsGetSubscriptionPlans: OrganizationsGetPlansInputSchema,
+	workspacesGetLogo: WorkspacesGetLogoInputSchema,
+	workspacesGetPreferences: WorkspacesGetPreferencesInputSchema,
+	tasksListWorkspace: TasksListWorkspaceInputSchema,
+	projectsAddUser: ProjectsAddUserInputSchema,
+	projectsDeleteGroup: ProjectsDeleteGroupInputSchema,
+	timeEntriesBulkEdit: TimeEntriesBulkEditInputSchema,
+	webhooksGetStatus: EmptyInputSchema,
+	webhooksGetEventFilters: EmptyInputSchema,
+	webhooksListSubscriptions: WebhooksListSubscriptionsInputSchema,
+	webhooksDeleteSubscription: WebhooksDeleteSubscriptionInputSchema,
+	smailSendDemo: SmailSendDemoInputSchema,
+	smailSendContact: SmailSendContactInputSchema,
+	smailSendMeet: SmailSendMeetInputSchema,
 } as const;
 
 export const TogglEndpointOutputSchemas = {
@@ -670,4 +1168,40 @@ export const TogglEndpointOutputSchemas = {
 	timeEntriesUpdate: TogglTimeEntrySchema,
 	timeEntriesStop: TogglTimeEntrySchema,
 	timeEntriesDelete: DeletedResultSchema,
+	meGetLogged: TogglAcknowledgementSchema,
+	meGetLocation: TogglLocationSchema,
+	meGetQuota: z.array(TogglQuotaSchema),
+	meGetClients: z.array(TogglClientSchema),
+	meGetProjects: z.array(TogglProjectSchema),
+	meGetTags: z.array(TogglTagSchema),
+	meGetTasks: z.array(TogglTaskSchema),
+	meDisableProductEmails: TogglAcknowledgementSchema,
+	meDisableWeeklyReport: TogglAcknowledgementSchema,
+	referenceGetCountries: z.array(TogglCountrySchema),
+	referenceGetCountrySubdivisions: z.array(TogglCountrySubdivisionSchema),
+	referenceGetCurrencies: z.array(TogglCurrencySchema),
+	referenceGetTimezones: z.array(z.string()),
+	referenceGetTimezoneOffsets: z.array(TogglTimezoneOffsetSchema),
+	referenceGetKeys: TogglKeysetSchema,
+	organizationsCreate: TogglOrganizationSchema,
+	organizationsGetGroups: z.array(TogglGroupSchema),
+	organizationsCreateGroup: TogglGroupSchema,
+	organizationsDeleteGroup: DeletedResultSchema,
+	organizationsGetUsers: z.array(TogglOrganizationUserSchema),
+	organizationsCreateInvitation: TogglPlanInfoSchema,
+	organizationsGetPlans: TogglPlanInfoSchema,
+	organizationsGetSubscriptionPlans: TogglPlanInfoSchema,
+	workspacesGetLogo: TogglWorkspaceLogoSchema,
+	workspacesGetPreferences: TogglWorkspacePreferencesSchema,
+	tasksListWorkspace: z.array(TogglTaskSchema),
+	projectsAddUser: TogglProjectUserSchema,
+	projectsDeleteGroup: DeletedResultSchema,
+	timeEntriesBulkEdit: BulkEditResultSchema,
+	webhooksGetStatus: TogglWebhooksStatusSchema,
+	webhooksGetEventFilters: TogglEventFiltersSchema,
+	webhooksListSubscriptions: z.array(TogglSubscriptionSchema),
+	webhooksDeleteSubscription: DeletedResultSchema,
+	smailSendDemo: TogglAcknowledgementSchema,
+	smailSendContact: TogglAcknowledgementSchema,
+	smailSendMeet: TogglAcknowledgementSchema,
 } as const;

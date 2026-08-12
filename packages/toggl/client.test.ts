@@ -81,21 +81,21 @@ describe('makeTogglRequest', () => {
 
 	it('targets the Track API v9 base url', async () => {
 		const spy = mockFetch({ id: 1 });
-		await makeTogglRequest('workspaces/21597802/clients', TOKEN);
+		await makeTogglRequest('workspaces/3000001/clients', TOKEN);
 
 		const [url] = spy.mock.calls[0] as unknown as [string];
 		expect(url).toBe(
-			'https://api.track.toggl.com/api/v9/workspaces/21597802/clients',
+			'https://api.track.toggl.com/api/v9/workspaces/3000001/clients',
 		);
 	});
 
 	it('returns the parsed response body', async () => {
-		mockFetch({ id: 69027594, name: 'Acme Corp' });
+		mockFetch({ id: 4000001, name: 'Acme Corp' });
 		const result = await makeTogglRequest<{ id: number; name: string }>(
-			'workspaces/21597802/clients/69027594',
+			'workspaces/3000001/clients/4000001',
 			TOKEN,
 		);
-		expect(result).toEqual({ id: 69027594, name: 'Acme Corp' });
+		expect(result).toEqual({ id: 4000001, name: 'Acme Corp' });
 	});
 });
 
