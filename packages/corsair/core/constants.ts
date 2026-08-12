@@ -69,6 +69,7 @@ export const BaseProviders = [
 	'hashnode',
 	'heygen',
 	'hubspot',
+	'huggingface',
 	'insightoai',
 	'instagram',
 	'intercom',
@@ -179,6 +180,7 @@ export const ProviderDisplayNames = {
 	hashnode: 'Hashnode',
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
+	huggingface: 'Hugging Face',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -296,6 +298,7 @@ export type AllProviders =
 	| 'hashnode'
 	| 'heygen'
 	| 'hubspot'
+	| 'huggingface'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
