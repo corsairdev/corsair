@@ -19,20 +19,25 @@ export const BaseProviders = [
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agentql',
 	'agenty',
+	'agentql',
 	'ahrefs',
+	'aimlapi',
 	'airtable',
 	'algolia',
 	'alttextai',
-	'ambee',
+	'amara',
 	'ambientweather',
+	'ambee',
 	'amplitude',
+	'apibible',
+	'apify',
 	'apilabz',
 	'asana',
 	'bitwarden',
 	'bluesky',
 	'box',
+	'canvas',
 	'cal',
 	'calendly',
 	'canva',
@@ -48,6 +53,7 @@ export const BaseProviders = [
 	'dockerhub',
 	'dodopayments',
 	'dropbox',
+	'epicgames',
 	'exa',
 	'facebook',
 	'figma',
@@ -116,6 +122,7 @@ export const BaseProviders = [
 	'vercel',
 	'whatsapp',
 	'wiza',
+	'workday',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -131,20 +138,25 @@ export const ProviderDisplayNames = {
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agentql: 'AgentQL',
 	agenty: 'Agenty',
+	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
+	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
-	ambee: 'Ambee',
+	amara: 'Amara',
 	ambientweather: 'Ambient Weather',
+	ambee: 'Ambee',
 	amplitude: 'Amplitude',
+	apibible: 'API.Bible',
+	apify: 'Apify',
 	apilabz: 'API Labz',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	box: 'Box',
+	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
@@ -160,6 +172,7 @@ export const ProviderDisplayNames = {
 	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
+	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
 	figma: 'Figma',
@@ -228,6 +241,7 @@ export const ProviderDisplayNames = {
 	vercel: 'Vercel',
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
+	workday: 'Workday',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -250,15 +264,19 @@ export type AllProviders =
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agentql'
 	| 'agenty'
+	| 'agentql'
 	| 'ahrefs'
+	| 'aimlapi'
 	| 'airtable'
 	| 'algolia'
 	| 'alttextai'
-	| 'ambee'
+	| 'amara'
 	| 'ambientweather'
+	| 'ambee'
 	| 'amplitude'
+	| 'apibible'
+	| 'apify'
 	| 'apilabz'
 	| 'asana'
 	| 'bitwarden'
@@ -266,6 +284,7 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canvas'
 	| 'canva'
 	| 'cloudflare'
 	| 'cloudinary'
@@ -279,6 +298,7 @@ export type AllProviders =
 	| 'dockerhub'
 	| 'dodopayments'
 	| 'dropbox'
+	| 'epicgames'
 	| 'exa'
 	| 'facebook'
 	| 'figma'
@@ -347,6 +367,7 @@ export type AllProviders =
 	| 'vercel'
 	| 'whatsapp'
 	| 'wiza'
+	| 'workday'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
