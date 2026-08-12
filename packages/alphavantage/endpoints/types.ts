@@ -405,6 +405,7 @@ export const AlphaVantageEndpointInputSchemas = {
 					'MOM',
 					'ROC',
 					'STOCHRSI',
+					'T3',
 				].includes(input.indicator) || input.time_period !== undefined,
 			{
 				message: 'time_period is required for this indicator',
@@ -413,7 +414,7 @@ export const AlphaVantageEndpointInputSchemas = {
 		)
 		.refine(
 			(input) =>
-				!['RSI', 'MACD', 'STOCHRSI'].includes(input.indicator) ||
+				!['RSI', 'MACD', 'STOCHRSI', 'T3'].includes(input.indicator) ||
 				input.series_type !== undefined,
 			{
 				message: 'series_type is required for this indicator',

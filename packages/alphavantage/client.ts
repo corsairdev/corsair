@@ -374,6 +374,7 @@ export async function makeAlphaVantageCsvRequest(
 
 	const text = await response.text();
 	if (!response.ok) {
+		const retryAfter = parseRetryAfter(response.headers.get('Retry-After'));
 		throw sanitizeApiError(
 			new ApiError(
 				requestOptions,
@@ -386,7 +387,8 @@ export async function makeAlphaVantageCsvRequest(
 				},
 				`Alpha Vantage ${functionName} returned HTTP ${response.status}`,
 				{
-					retryAfter: parseRetryAfter(response.headers.get('Retry-After')),
+					retryAfter:
+						retryAfter === undefined ? undefined : Math.min(retryAfter, 5_000),
 				},
 			),
 		);

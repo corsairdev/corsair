@@ -47,7 +47,8 @@ export const errorHandlers = {
 		handler: async (error, context) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
+				// A gateway can send Retry-After of minutes; don't stall the caller.
+				retryAfterMs = Math.min(error.retryAfter, 5_000);
 			}
 
 			console.warn(

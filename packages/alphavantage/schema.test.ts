@@ -498,6 +498,31 @@ describe('input schemas reject malformed calls', () => {
 				series_type: 'close',
 			}),
 		).toBeTruthy();
+		expect(() =>
+			Inputs.technicalIndicator.parse({
+				indicator: 'T3',
+				symbol: 'IBM',
+				interval: 'daily',
+				series_type: 'close',
+			}),
+		).toThrow();
+		expect(() =>
+			Inputs.technicalIndicator.parse({
+				indicator: 'T3',
+				symbol: 'IBM',
+				interval: 'daily',
+				time_period: 10,
+			}),
+		).toThrow();
+		expect(
+			Inputs.technicalIndicator.parse({
+				indicator: 'T3',
+				symbol: 'IBM',
+				interval: 'daily',
+				time_period: 10,
+				series_type: 'close',
+			}),
+		).toBeTruthy();
 	});
 
 	it('accepts indicator names containing a digit', () => {
@@ -509,6 +534,7 @@ describe('input schemas reject malformed calls', () => {
 				symbol: 'IBM',
 				interval: 'daily',
 				time_period: 10,
+				series_type: 'close',
 			}),
 		).toBeTruthy();
 		expect(

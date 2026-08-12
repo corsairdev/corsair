@@ -265,6 +265,24 @@ describe('CSV decoding', () => {
 		expect(calls).toBe(1);
 	});
 
+	it('caps a CSV 429 Retry-After at five seconds', async () => {
+		global.fetch = (async (url: string) => {
+			return {
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				url: String(url),
+				headers: new Headers({ 'Retry-After': '120' }),
+				json: async () => ({}),
+				text: async () => 'rate limited',
+			};
+		}) as unknown as typeof global.fetch;
+
+		await expect(
+			makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY),
+		).rejects.toMatchObject({ status: 429, retryAfter: 5_000 });
+	});
+
 	it('does not retry a 5xx', async () => {
 		let calls = 0;
 		global.fetch = (async (url: string) => {
