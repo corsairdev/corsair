@@ -412,6 +412,36 @@ describe('input schemas reject malformed calls', () => {
 		).toBeTruthy();
 	});
 
+	it('accepts indicator names containing a digit', () => {
+		// T3 is a real Alpha Vantage function (triple exponential moving
+		// average). A letters-only pattern would reject it.
+		expect(
+			Inputs.technicalIndicator.parse({
+				indicator: 'T3',
+				symbol: 'IBM',
+				interval: 'daily',
+				time_period: 10,
+			}),
+		).toBeTruthy();
+		expect(
+			Inputs.technicalIndicator.parse({
+				indicator: 'STOCHRSI',
+				symbol: 'IBM',
+				interval: 'daily',
+			}),
+		).toBeTruthy();
+	});
+
+	it('rejects an indicator name starting with a digit', () => {
+		expect(() =>
+			Inputs.technicalIndicator.parse({
+				indicator: '3T',
+				symbol: 'IBM',
+				interval: 'daily',
+			}),
+		).toThrow();
+	});
+
 	it('rejects a lower-case indicator name', () => {
 		expect(() =>
 			Inputs.technicalIndicator.parse({

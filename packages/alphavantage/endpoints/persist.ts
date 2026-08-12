@@ -53,13 +53,28 @@ export async function cacheSymbol(
 	);
 }
 
+/**
+ * How many cache writes may be in flight at once.
+ *
+ * `LISTING_STATUS` returns every security Alpha Vantage covers — tens of
+ * thousands of rows — and awaiting each write in turn makes that one call take
+ * far longer than the request it followed. The cap keeps the improvement
+ * without letting a single call flood the database with thousands of
+ * simultaneous writes.
+ */
+const CACHE_WRITE_CONCURRENCY = 16;
+
 /** Mirrors many securities, skipping rows with no ticker. */
 export async function cacheSymbols(
 	store: EntityStore<AlphaVantageSymbolEntity> | undefined,
 	symbols: readonly (SymbolCandidate | undefined | null)[],
 ) {
 	if (!store) return;
-	for (const symbol of symbols) {
-		await cacheSymbol(store, symbol);
+
+	for (let i = 0; i < symbols.length; i += CACHE_WRITE_CONCURRENCY) {
+		const batch = symbols.slice(i, i + CACHE_WRITE_CONCURRENCY);
+		// `cacheSymbol` swallows its own failures, so no write in a batch can
+		// reject and abandon the rest.
+		await Promise.all(batch.map((symbol) => cacheSymbol(store, symbol)));
 	}
 }

@@ -3,6 +3,7 @@
  * HTTP-200 error bodies are classified, and how the CSV-only endpoints are
  * decoded. Network access is mocked, so this runs in CI.
  */
+import { ApiError } from 'corsair/http';
 import {
 	AlphaVantageApiError,
 	assertNoAlphaVantageError,
@@ -10,6 +11,7 @@ import {
 	makeAlphaVantageCsvRequest,
 	makeAlphaVantageRequest,
 	parseCsv,
+	sanitizeApiError,
 	splitCsvLine,
 } from './client';
 
@@ -34,15 +36,20 @@ function mockJson(body: unknown, status = 200) {
 }
 
 /** Stubs global fetch with a text response, as the CSV endpoints return. */
-function mockText(body: string, contentType = 'application/x-download') {
+function mockText(
+	body: string,
+	contentType = 'application/x-download',
+	status = 200,
+	extraHeaders: Record<string, string> = {},
+) {
 	global.fetch = (async (url: string) => {
 		lastUrl = String(url);
 		return {
-			ok: true,
-			status: 200,
-			statusText: 'OK',
+			ok: status >= 200 && status < 300,
+			status,
+			statusText: status === 200 ? 'OK' : 'Error',
 			url: String(url),
-			headers: new Headers({ 'Content-Type': contentType }),
+			headers: new Headers({ 'Content-Type': contentType, ...extraHeaders }),
 			json: async () => JSON.parse(body),
 			text: async () => body,
 		};
@@ -220,5 +227,113 @@ describe('CSV decoding', () => {
 		await expect(
 			makeAlphaVantageCsvRequest('EARNINGS_CALENDAR', TEST_KEY),
 		).rejects.toThrow(AlphaVantageApiError);
+	});
+
+	it('rejects a non-2xx response instead of parsing the error page as rows', async () => {
+		// A gateway in front of the API can answer 5xx with an HTML page, which
+		// parseCsv would otherwise turn into a single nonsense row.
+		mockText(
+			'<html><body>503 Service Unavailable</body></html>',
+			'text/html',
+			503,
+		);
+
+		await expect(
+			makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY),
+		).rejects.toThrow(/HTTP 503/);
+	});
+
+	it('surfaces a 429 on a CSV endpoint as a retryable ApiError', async () => {
+		mockText('rate limited', 'text/plain', 429, { 'Retry-After': '30' });
+
+		await expect(
+			makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY),
+		).rejects.toMatchObject({ status: 429, retryAfter: 30_000 });
+	});
+
+	it('does not leak the api key in a CSV transport failure', async () => {
+		mockText('<html>500</html>', 'text/html', 500);
+
+		await expect(
+			makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY),
+		).rejects.toMatchObject({
+			url: expect.not.stringContaining(TEST_KEY),
+			request: expect.objectContaining({
+				query: expect.objectContaining({ apikey: '[REDACTED]' }),
+			}),
+		});
+	});
+});
+
+describe('api key redaction', () => {
+	// Core's ApiError redacts `api_key`, `key`, `token` and `appid`, but Alpha
+	// Vantage spells its parameter `apikey`, which is not in that set — so
+	// without the plugin's own sanitiser the live key would ride along in every
+	// failed request's url and query.
+	it('strips the key from an ApiError url, query and message', () => {
+		const raw = new ApiError(
+			{
+				method: 'GET',
+				url: `query?function=GLOBAL_QUOTE&apikey=${TEST_KEY}`,
+				query: { function: 'GLOBAL_QUOTE', apikey: TEST_KEY },
+			},
+			{
+				url: `https://www.alphavantage.co/query?function=GLOBAL_QUOTE&apikey=${TEST_KEY}`,
+				ok: false,
+				status: 500,
+				statusText: 'Server Error',
+				body: 'boom',
+			},
+			`request to https://www.alphavantage.co/query?apikey=${TEST_KEY} failed`,
+		);
+
+		// Confirms the gap is real rather than assumed.
+		expect(JSON.stringify({ u: raw.url, q: raw.request.query })).toContain(
+			TEST_KEY,
+		);
+
+		const safe = sanitizeApiError(raw) as ApiError;
+
+		expect(safe).toBeInstanceOf(ApiError);
+		expect(safe.url).not.toContain(TEST_KEY);
+		expect(safe.message).not.toContain(TEST_KEY);
+		expect(safe.request.query?.apikey).toBe('[REDACTED]');
+		expect(safe.status).toBe(500);
+		expect(safe.body).toBe('boom');
+	});
+
+	it('leaves non-ApiError values alone', () => {
+		const plain = new Error('nothing sensitive');
+		expect(sanitizeApiError(plain)).toBe(plain);
+	});
+
+	it('strips the key from an ApiError raised by the JSON transport', async () => {
+		// A non-2xx makes the shared transport construct an ApiError from the
+		// request options — which carry `apikey` — so this is the realistic path
+		// by which the key would otherwise escape.
+		mockJson({ message: 'internal error' }, 500);
+
+		let caught: unknown;
+		try {
+			await makeAlphaVantageRequest('GLOBAL_QUOTE', TEST_KEY, {
+				symbol: 'IBM',
+			});
+		} catch (error) {
+			caught = error;
+		}
+
+		expect(caught).toBeInstanceOf(ApiError);
+		const apiError = caught as ApiError;
+		expect(apiError.status).toBe(500);
+		// Serialising the whole error is the assertion that matters: the key must
+		// not survive anywhere on it.
+		expect(
+			JSON.stringify({
+				url: apiError.url,
+				message: apiError.message,
+				request: apiError.request,
+			}),
+		).not.toContain(TEST_KEY);
+		expect(apiError.request.query?.apikey).toBe('[REDACTED]');
 	});
 });

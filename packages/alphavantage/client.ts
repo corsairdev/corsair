@@ -3,7 +3,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 /** Every JSON operation is a GET against this single query endpoint. */
 const ALPHA_VANTAGE_API_BASE = 'https://www.alphavantage.co';
@@ -30,6 +30,12 @@ const ALPHA_VANTAGE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 		retryAfter: 'Retry-After',
 	},
 };
+
+/**
+ * The CSV endpoints bypass the shared transport, so they need their own
+ * ceiling. `LISTING_STATUS` is around a megabyte, hence the generous value.
+ */
+const CSV_REQUEST_TIMEOUT_MS = 30_000;
 
 export type AlphaVantageErrorKind =
 	| 'rate_limit'
@@ -120,6 +126,65 @@ export type AlphaVantageQuery = Record<
 >;
 
 /**
+ * Core's `ApiError` redacts a known set of sensitive query parameters —
+ * `api_key`, `key`, `token`, `appid` — but Alpha Vantage spells its parameter
+ * `apikey`, with no underscore, which is not in that set. Without this, a
+ * failed request would carry the caller's live API key in `error.url` and
+ * `error.request.query` and into anything that logs the error.
+ *
+ * Every transport below therefore routes its failures through
+ * `sanitizeApiError`, which rebuilds the error with the key already replaced.
+ * `instanceof ApiError` still holds, so the plugin's error handlers and core's
+ * retry logic are unaffected.
+ */
+const REDACTED = '[REDACTED]';
+
+function redactApiKeyInUrl(url: string): string {
+	// Operates on the raw string: the value may be a relative url, and a
+	// malformed one must still be scrubbed rather than thrown away.
+	return url.replace(/([?&]apikey=)[^&#]*/gi, `$1${REDACTED}`);
+}
+
+/**
+ * Rebuilds an `ApiError` with the Alpha Vantage key removed from its url,
+ * request query and message. Non-`ApiError` values are returned untouched.
+ */
+export function sanitizeApiError(error: unknown): unknown {
+	if (!(error instanceof ApiError)) return error;
+
+	const query = error.request.query
+		? {
+				...error.request.query,
+				...('apikey' in error.request.query ? { apikey: REDACTED } : {}),
+			}
+		: error.request.query;
+
+	const sanitized = new ApiError(
+		{
+			...error.request,
+			url: redactApiKeyInUrl(error.request.url),
+			...(query ? { query } : {}),
+		},
+		{
+			url: redactApiKeyInUrl(error.url),
+			ok: false,
+			status: error.status,
+			statusText: error.statusText,
+			body: error.body,
+		},
+		redactApiKeyInUrl(error.message),
+		{
+			retryAfter: error.retryAfter,
+			rateLimitReset: error.rateLimitReset,
+			rateLimitRemaining: error.rateLimitRemaining,
+			rateLimitLimit: error.rateLimitLimit,
+		},
+	);
+	sanitized.stack = error.stack;
+	return sanitized;
+}
+
+/**
  * Issues a JSON request against the Alpha Vantage query endpoint.
  *
  * `functionName` is the provider's `function` parameter, which is not always
@@ -153,9 +218,14 @@ export async function makeAlphaVantageRequest<T>(
 		},
 	};
 
-	const body = await request<T>(config, requestOptions, {
-		rateLimitConfig: ALPHA_VANTAGE_RATE_LIMIT_CONFIG,
-	});
+	let body: T;
+	try {
+		body = await request<T>(config, requestOptions, {
+			rateLimitConfig: ALPHA_VANTAGE_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		throw sanitizeApiError(error);
+	}
 
 	assertNoAlphaVantageError(body);
 	return body;
@@ -191,9 +261,14 @@ export async function makeAlphaVantageAnalyticsRequest<T>(
 		},
 	};
 
-	const body = await request<T>(config, requestOptions, {
-		rateLimitConfig: ALPHA_VANTAGE_RATE_LIMIT_CONFIG,
-	});
+	let body: T;
+	try {
+		body = await request<T>(config, requestOptions, {
+			rateLimitConfig: ALPHA_VANTAGE_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		throw sanitizeApiError(error);
+	}
 
 	assertNoAlphaVantageError(body);
 	return body;
@@ -269,14 +344,56 @@ export async function makeAlphaVantageCsvRequest(
 	url.searchParams.set('function', functionName);
 	url.searchParams.set('apikey', apiKey);
 
-	const response = await fetch(url, {
+	const requestOptions: ApiRequestOptions = {
 		method: 'GET',
-		headers: { Accept: 'text/csv' },
-	});
+		url: 'query',
+		mediaType: 'text/csv',
+		query: { ...query, function: functionName, apikey: apiKey },
+	};
+
+	let response: Response;
+	try {
+		response = await fetch(url, {
+			method: 'GET',
+			headers: { Accept: 'text/csv' },
+			// The shared transport applies its own timeout; this path does not go
+			// through it, so without this a hung connection would block forever.
+			signal: AbortSignal.timeout(CSV_REQUEST_TIMEOUT_MS),
+		});
+	} catch (error) {
+		// Never let the raw url — which carries the api key — reach the message.
+		const reason = error instanceof Error ? error.message : String(error);
+		throw new Error(
+			`Alpha Vantage ${functionName} request failed: ${redactApiKeyInUrl(reason)}`,
+		);
+	}
 
 	const text = await response.text();
 
-	// An error on a CSV endpoint still arrives as HTTP 200, but as a JSON body.
+	// A transport-level failure must not be parsed as data. Alpha Vantage
+	// signals its *own* errors with HTTP 200 and a JSON body, but a gateway or
+	// CDN in front of the API can still answer 5xx or 429 with an HTML page —
+	// and `parseCsv` would happily turn that page into rows.
+	if (!response.ok) {
+		throw sanitizeApiError(
+			new ApiError(
+				requestOptions,
+				{
+					url: url.toString(),
+					ok: false,
+					status: response.status,
+					statusText: response.statusText,
+					// Truncated: an HTML error page is large and adds no signal.
+					body: text.slice(0, 500),
+				},
+				`Alpha Vantage ${functionName} returned HTTP ${response.status}`,
+				{ retryAfter: parseRetryAfter(response.headers.get('Retry-After')) },
+			),
+		);
+	}
+
+	// An Alpha Vantage error on a CSV endpoint still arrives as HTTP 200, but as
+	// a JSON body rather than CSV.
 	const trimmed = text.trimStart();
 	if (trimmed.startsWith('{')) {
 		try {
@@ -289,4 +406,13 @@ export async function makeAlphaVantageCsvRequest(
 	}
 
 	return parseCsv(text);
+}
+
+/** Seconds or an HTTP date, per RFC 9110, converted to milliseconds. */
+function parseRetryAfter(header: string | null): number | undefined {
+	if (!header) return undefined;
+	const seconds = Number(header);
+	if (Number.isFinite(seconds)) return Math.max(0, seconds) * 1000;
+	const when = Date.parse(header);
+	return Number.isNaN(when) ? undefined : Math.max(0, when - Date.now());
 }

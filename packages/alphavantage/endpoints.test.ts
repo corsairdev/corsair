@@ -3,6 +3,7 @@
  * one calls, the query it builds, the emptiness checks it applies and the cache
  * writes it performs. Network access is mocked, so this runs in CI.
  */
+import { logEventFromContext } from 'corsair/core';
 import {
 	Commodities,
 	Crypto,
@@ -14,6 +15,18 @@ import {
 	Technical,
 	TimeSeries,
 } from './endpoints';
+
+// The event-log payload is asserted directly further down: it is the one place
+// caller-supplied text could leak into durable storage, so it needs to be
+// inspected rather than inferred.
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn(async () => undefined),
+}));
+
+const mockLogEvent = logEventFromContext as jest.MockedFunction<
+	typeof logEventFromContext
+>;
 
 type Store = { upsertByEntityId: jest.Mock };
 
@@ -899,13 +912,62 @@ describe('symbol caching', () => {
 });
 
 describe('event log payloads', () => {
+	/** The payload argument of the most recent logEventFromContext call. */
+	const lastLoggedPayload = () => {
+		const call = mockLogEvent.mock.calls.at(-1);
+		return call?.[2];
+	};
+
 	it('does not record the free-text search term', async () => {
 		const { ctx } = makeCtx();
 		mockJson({ bestMatches: [] });
 
-		// The handler passes only a match count; asserting on the absence of the
-		// keyword protects against someone later spreading the raw input in.
 		await Market.symbolSearch(ctx, { keywords: 'private company name' });
-		expect(JSON.stringify(lastUrl)).not.toContain('corsair_events');
+
+		const payload = lastLoggedPayload();
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			expect.anything(),
+			'alphavantage.market.symbolSearch',
+			expect.anything(),
+			'completed',
+		);
+		expect(JSON.stringify(payload)).not.toContain('private company name');
+		expect(payload).toEqual({ matches: 0 });
+	});
+
+	it('does not record the tickers or topics a news query asked for', async () => {
+		const { ctx } = makeCtx();
+		mockJson({
+			items: '0',
+			sentiment_score_definition: 'd',
+			relevance_score_definition: 'd',
+			feed: [],
+		});
+
+		// Together these describe a watchlist, which is information about the
+		// caller rather than about the request.
+		await Intelligence.newsSentiment(ctx, {
+			tickers: ['AAPL', 'TSLA'],
+			topics: ['earnings'],
+			limit: 5,
+		});
+
+		const serialized = JSON.stringify(lastLoggedPayload());
+		expect(serialized).not.toContain('AAPL');
+		expect(serialized).not.toContain('TSLA');
+		expect(serialized).not.toContain('earnings');
+		expect(serialized).toContain('limit');
+	});
+
+	it('records identifiers that are not caller-authored', async () => {
+		const { ctx } = makeCtx();
+		mockJson(SERIES);
+
+		await TimeSeries.daily(ctx, { symbol: 'IBM', outputsize: 'compact' });
+
+		expect(lastLoggedPayload()).toMatchObject({
+			symbol: 'IBM',
+			outputsize: 'compact',
+		});
 	});
 });

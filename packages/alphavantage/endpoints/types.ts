@@ -360,10 +360,16 @@ export const AlphaVantageEndpointInputSchemas = {
 			 * `BBANDS`, `STOCH`. The catalog collapses roughly fifty separate
 			 * provider functions into this one operation.
 			 */
+			// Digits are allowed after the first character: several Alpha Vantage
+			// indicator functions carry one, such as `T3` (triple exponential
+			// moving average). A letters-only pattern would reject them.
 			indicator: z
 				.string()
 				.min(1)
-				.regex(/^[A-Z_]+$/, 'indicator must be upper-case, e.g. RSI'),
+				.regex(
+					/^[A-Z][A-Z0-9_]*$/,
+					'indicator must be upper-case and start with a letter, e.g. RSI or T3',
+				),
 			symbol: SymbolSchema,
 			interval: z.enum([
 				'1min',
