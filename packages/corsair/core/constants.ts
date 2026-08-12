@@ -22,6 +22,7 @@ export const BaseProviders = [
 	'agenty',
 	'agentql',
 	'ahrefs',
+	'aimlapi',
 	'airtable',
 	'algolia',
 	'alttextai',
@@ -135,6 +136,7 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
+	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
@@ -255,6 +257,7 @@ export type AllProviders =
 	| 'agenty'
 	| 'agentql'
 	| 'ahrefs'
+	| 'aimlapi'
 	| 'airtable'
 	| 'algolia'
 	| 'alttextai'
