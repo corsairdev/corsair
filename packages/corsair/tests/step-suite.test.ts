@@ -104,6 +104,135 @@ describe('step.corsair — typed op call', () => {
 	});
 });
 
+describe('step.waitForEvent — durable coordinate', () => {
+	it('suspends with a waiter descriptor on first encounter', async () => {
+		const { promise } = run(`
+			module.exports.main = async (corsair, payload, step) => {
+				const d = await step.waitForEvent('decision', {
+					event: 'slack.block_actions',
+					match: { 'data.callback_id': 'refund_1' },
+					timeout: '1d',
+				});
+				await step('after', async () => d);
+			};
+		`);
+		const result = await promise;
+		expect(result.status).toBe('waiting');
+		expect(result.waiter?.name).toBe('decision');
+		expect(result.waiter?.event).toBe('slack.block_actions');
+		expect(result.waiter?.match).toEqual({ 'data.callback_id': 'refund_1' });
+		expect(result.waiter?.stepId).toBe(computeStepId('decision', 0));
+		// timeoutAt is ~1 day out.
+		const dtMs = new Date(result.waiter!.timeoutAt!).getTime() - Date.now();
+		expect(Math.abs(dtMs - 86_400_000)).toBeLessThan(5_000);
+		// The step after the wait did not run this attempt.
+		expect(result.steps.map((s) => s.name)).toEqual([]);
+	});
+
+	it('replays past the wait with the injected event on resume', async () => {
+		const stepId = computeStepId('decision', 0);
+		const event = { name: 'slack.block_actions', data: { action: 'approve' } };
+		const { promise } = run(
+			`
+			module.exports.main = async (corsair, payload, step) => {
+				const d = await step.waitForEvent('decision', { event: 'slack.block_actions' });
+				return step('after', async () => d.data.action);
+			};
+		`,
+			{ memoizedSteps: { [stepId]: { output: event } } },
+		);
+		const result = await promise;
+		expect(result.status).toBe('completed');
+		expect(result.steps.find((s) => s.name === 'after')?.output).toBe(
+			'approve',
+		);
+	});
+
+	it('resumes with null when the memoized output is null (timeout)', async () => {
+		const stepId = computeStepId('decision', 0);
+		const { promise } = run(
+			`
+			module.exports.main = async (corsair, payload, step) => {
+				const d = await step.waitForEvent('decision', { event: 'x' });
+				return step('after', async () => (d === null ? 'timed-out' : 'got-it'));
+			};
+		`,
+			{ memoizedSteps: { [stepId]: { output: null } } },
+		);
+		const result = await promise;
+		expect(result.status).toBe('completed');
+		expect(result.steps.find((s) => s.name === 'after')?.output).toBe(
+			'timed-out',
+		);
+	});
+
+	it('waits forever (no timeoutAt) when timeout is omitted', async () => {
+		const { promise } = run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step.waitForEvent('decision', { event: 'x' });
+			};
+		`);
+		const result = await promise;
+		expect(result.status).toBe('waiting');
+		expect(result.waiter?.timeoutAt).toBeNull();
+	});
+});
+
+describe('step.sendEvent — emit into the stream', () => {
+	it('calls the host send capability once and memoizes it', async () => {
+		const sent: Array<{ name: string; data: unknown }> = [];
+		const { promise } = run(
+			`
+			module.exports.main = async (corsair, payload, step) => {
+				await step.sendEvent('order.paid', { id: 'o1' });
+			};
+		`,
+			{
+				sendEvent: (name: string, dataJson: string) => {
+					sent.push({ name, data: JSON.parse(dataJson) });
+					return Promise.resolve();
+				},
+			},
+		);
+		const result = await promise;
+		expect(result.status).toBe('completed');
+		expect(sent).toEqual([{ name: 'order.paid', data: { id: 'o1' } }]);
+	});
+
+	it('replays a memoized send without re-emitting', async () => {
+		const stepId = computeStepId('order.paid', 0);
+		const sent: unknown[] = [];
+		const { promise } = run(
+			`
+			module.exports.main = async (corsair, payload, step) => {
+				await step.sendEvent('order.paid', { id: 'o1' });
+			};
+		`,
+			{
+				memoizedSteps: { [stepId]: { output: null } },
+				sendEvent: (name: string, dataJson: string) => {
+					sent.push(dataJson);
+					return Promise.resolve();
+				},
+			},
+		);
+		const result = await promise;
+		expect(result.status).toBe('completed');
+		expect(sent).toEqual([]);
+	});
+
+	it('fails the step clearly when sendEvent is unavailable', async () => {
+		const { promise } = run(`
+			module.exports.main = async (corsair, payload, step) => {
+				await step.sendEvent('order.paid', { id: 'o1' });
+			};
+		`);
+		const result = await promise;
+		expect(result.status).toBe('failed');
+		expect(result.error?.message).toContain('sendEvent is unavailable');
+	});
+});
+
 describe('step.sleepUntil — absolute-time pause', () => {
 	it('suspends until a future time', async () => {
 		const when = new Date(Date.now() + 60_000).toISOString();
@@ -135,5 +264,29 @@ describe('step.sleepUntil — absolute-time pause', () => {
 		expect(new Date(result.sleepUntil!).getTime()).toBeLessThanOrEqual(
 			Date.now() + 1_000,
 		);
+	});
+});
+
+describe('interrupt brand is unforgeable by sandbox code', () => {
+	it('a workflow throwing a fake wait brand is a failed run, not waiting', async () => {
+		const { promise } = run(`
+			module.exports.main = async (corsair, payload, step) => {
+				throw { __corsairWait: true, stepId: 'st_x', event: 'evil' };
+			};
+		`);
+		const result = await promise;
+		expect(result.status).toBe('failed');
+		expect(result.waiter).toBeUndefined();
+	});
+
+	it('a workflow throwing a fake sleep brand is a failed run, not sleeping', async () => {
+		const { promise } = run(`
+			module.exports.main = async (corsair, payload, step) => {
+				throw { __corsairSleep: true, wakeAt: 0 };
+			};
+		`);
+		const result = await promise;
+		expect(result.status).toBe('failed');
+		expect(result.sleepUntil).toBeUndefined();
 	});
 });

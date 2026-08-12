@@ -27,6 +27,7 @@ import {
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
 import { createAiStepCallback } from '../workflows/ai';
+import { createSendEventCallback } from '../workflows/events';
 import { executeWorkflowRun } from '../workflows/execute';
 import { runReadonlyProbe } from '../workflows/probe';
 
@@ -494,12 +495,21 @@ async function handleRunTunnel(
 					tenantId: payload.tenantId,
 				})
 			: undefined;
+		const sendEvent = internal.hub
+			? createSendEventCallback({
+					hub: internal.hub,
+					runId: payload.runId,
+					workflowId: payload.workflowId,
+					tenantId: payload.tenantId,
+				})
+			: undefined;
 		const result: RunResultPayload = await executeWorkflowRun({
 			corsair: tenantScopedCorsair,
 			code: payload.code,
 			payload: payload.trigger?.payload ?? null,
 			memoizedSteps: payload.memoizedSteps,
 			ai,
+			sendEvent,
 		});
 		// The envelope was processed successfully regardless of whether the workflow
 		// itself succeeded — Hub reads the run status/steps from `run` in the ack

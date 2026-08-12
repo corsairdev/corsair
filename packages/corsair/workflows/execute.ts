@@ -48,6 +48,13 @@ export type AiStepRequest = {
  */
 export type AiStepCallback = (req: AiStepRequest) => Promise<string>;
 
+/** Host capability that emits one event to Hub. `dataJson` is the in-realm-
+ *  serialized event data. Absent when Hub isn't configured. */
+export type SendEventCallback = (
+	name: string,
+	dataJson: string,
+) => Promise<void>;
+
 /**
  * The `step.ai` sub-namespace. Callable for freeform text (`step.ai(name, opts)`),
  * with `.object`/`.enum`/`.bool` for typed inference. Each call is memoized like
@@ -98,6 +105,17 @@ export interface WorkflowStep {
 	 * that shares the op id with `step.ai`'s `returnObject`.
 	 */
 	corsair<T = unknown>(name: string, op: string, input?: unknown): Promise<T>;
+	/**
+	 * Durably suspends until a matching event arrives or `timeout` elapses.
+	 * Resolves to the event `{ name, data }` on a match, or `null` on timeout.
+	 * `match` is dot-path → value equalities against the event, all ANDed.
+	 */
+	waitForEvent<T = { name: string; data: unknown }>(
+		name: string,
+		opts: { event: string; match?: Record<string, unknown>; timeout?: string },
+	): Promise<T | null>;
+	/** Emits an event into the shared stream (durable, memoized like step.run). */
+	sendEvent(name: string, data: unknown): Promise<void>;
 }
 
 const FAILED_STEP_MARKER = '__corsairFailedStep';
@@ -106,12 +124,18 @@ const FAILED_STEP_MARKER = '__corsairFailedStep';
 // workflows. Promote to a per-run config knob if long workflows land.
 const WORKFLOW_TIMEOUT_MS = 30_000;
 
+// Module-private symbol brands. Never exported, never placed on a global, so
+// sandbox code has no reference to them — it can't fabricate a branded object to
+// forge a durable interrupt (an ordinary `throw { ... }` stays a failed run).
+const SLEEP_BRAND = Symbol('corsairSleep');
+const WAIT_BRAND = Symbol('corsairWait');
+
 /**
  * Thrown by `step.sleep` to unwind `main` at the sleep boundary. Not an Error, so
  * workflow `try/catch` around real work won't accidentally swallow it.
  */
 class SleepInterrupt {
-	readonly __corsairSleep = true as const;
+	readonly [SLEEP_BRAND] = true;
 	constructor(
 		readonly wakeAt: number,
 		readonly stepName: string,
@@ -122,7 +146,49 @@ function isSleepInterrupt(value: unknown): value is SleepInterrupt {
 	return (
 		typeof value === 'object' &&
 		value !== null &&
-		(value as { __corsairSleep?: unknown }).__corsairSleep === true
+		(value as Record<PropertyKey, unknown>)[SLEEP_BRAND] === true
+	);
+}
+
+/** Parses a duration string (`'30s'|'5m'|'8h'|'1d'`) to ms. Throws on garbage
+ *  so a malformed timeout surfaces as a failed step, not a silent forever-wait. */
+export function parseDurationMs(s: string): number {
+	const m = /^(\d+)(s|m|h|d)$/.exec(s.trim());
+	if (!m)
+		throw new Error(
+			`Invalid timeout "${s}": expected like "30s", "5m", "8h", "1d"`,
+		);
+	const n = Number(m[1]);
+	const factor =
+		m[2] === 's'
+			? 1_000
+			: m[2] === 'm'
+				? 60_000
+				: m[2] === 'h'
+					? 3_600_000
+					: 86_400_000;
+	return n * factor;
+}
+
+/** Thrown by `step.waitForEvent` to unwind `main` at the wait boundary. Mirrors
+ *  {@link SleepInterrupt}; not an Error so workflow try/catch won't swallow it. */
+class WaitInterrupt {
+	readonly [WAIT_BRAND] = true;
+	constructor(
+		readonly stepId: string,
+		readonly stepName: string,
+		readonly seq: number,
+		readonly event: string,
+		readonly match: Record<string, unknown> | null,
+		readonly timeoutAt: string | null,
+	) {}
+}
+
+function isWaitInterrupt(value: unknown): value is WaitInterrupt {
+	return (
+		typeof value === 'object' &&
+		value !== null &&
+		(value as Record<PropertyKey, unknown>)[WAIT_BRAND] === true
 	);
 }
 
@@ -243,6 +309,7 @@ function runWorkflowInSandbox(input: {
 	payload: unknown;
 	step: WorkflowStep;
 	ai: (kind: string, name: string, optsJson: string) => Promise<string>;
+	send: (name: string, dataJson: string) => Promise<void>;
 	timeoutMs: number;
 }): Promise<void> {
 	// Null-proto global object → `globalThis`'s prototype chain can't reach host
@@ -267,7 +334,7 @@ function runWorkflowInSandbox(input: {
 	// Realm-native `step`: built in-realm from host callbacks captured in a closure
 	// (not reachable as properties), so `step.constructor` is the realm's Function.
 	const makeStep = vm.runInContext(
-		`(function (hostRun, hostSleep, hostAi, corsairRef) {
+		`(function (hostRun, hostSleep, hostAi, corsairRef, hostWait, hostSend) {
 			const step = function step(name, fn) { return hostRun(name, fn); };
 			step.sleep = function sleep(name, ms) { return hostSleep(name, ms); };
 			// Absolute-time pause: convert to a relative delay and reuse step.sleep so
@@ -317,6 +384,16 @@ function runWorkflowInSandbox(input: {
 			ai.enum = verb('enum');
 			ai.bool = verb('bool');
 			step.ai = ai;
+			step.waitForEvent = function waitForEvent(name, opts) {
+				return hostWait(name, opts || {});
+			};
+			step.sendEvent = function sendEvent(name, data) {
+				return step(name, function () {
+					return hostSend(name, JSON.stringify(data === undefined ? null : data)).then(function () {
+						return null;
+					});
+				});
+			};
 			return step;
 		})`,
 		context,
@@ -326,12 +403,23 @@ function runWorkflowInSandbox(input: {
 		hostSleep: (name: string, ms: number) => Promise<void>,
 		hostAi: (kind: string, name: string, optsJson: string) => Promise<string>,
 		corsairRef: unknown,
+		hostWait: (
+			name: string,
+			opts: {
+				event: string;
+				match?: Record<string, unknown>;
+				timeout?: string;
+			},
+		) => Promise<unknown>,
+		hostSend: (name: string, dataJson: string) => Promise<void>,
 	) => WorkflowStep;
 	const realmStep = makeStep(
 		(name, fn) => input.step(name, fn),
 		(name, ms) => input.step.sleep(name, ms),
 		(kind, name, optsJson) => input.ai(kind, name, optsJson),
 		hardenedCorsair,
+		(name, opts) => input.step.waitForEvent(name, opts),
+		(name, dataJson) => input.send(name, dataJson),
 	);
 
 	// Realm-native forwarding console (methods created in-realm; host sink hidden
@@ -427,6 +515,8 @@ export type ExecuteWorkflowRunInput = {
 	memoizedSteps?: Record<string, { output: unknown }>;
 	/** Runs one `step.ai` inference against Hub. Absent when Hub isn't configured. */
 	ai?: AiStepCallback;
+	/** Emits a `step.sendEvent`. Absent when Hub isn't configured. */
+	sendEvent?: SendEventCallback;
 	/** Max run time (sync + wall-clock) in ms. Defaults to {@link WORKFLOW_TIMEOUT_MS}. */
 	timeoutMs?: number;
 };
@@ -444,11 +534,13 @@ export async function executeWorkflowRun(
 	// Set once step.sleep unwinds. If workflow-level try/catch swallows the throw,
 	// this lets the pause re-assert itself instead of silently continuing.
 	let pendingSleep: SleepInterrupt | null = null;
+	let pendingWait: WaitInterrupt | null = null;
 
 	const step = (async <T>(name: string, fn: () => Promise<T>): Promise<T> => {
-		// A prior sleep unwound but was swallowed — re-throw rather than run more
+		// A prior sleep/wait unwound but was swallowed — re-throw rather than run more
 		// work this attempt.
 		if (pendingSleep) throw pendingSleep;
+		if (pendingWait) throw pendingWait;
 		const current = seq++;
 		const stepId = computeStepId(name, current);
 
@@ -466,6 +558,7 @@ export async function executeWorkflowRun(
 			return output;
 		} catch (err) {
 			if (isSleepInterrupt(err)) throw err;
+			if (isWaitInterrupt(err)) throw err;
 			const message = toMessage(err);
 			steps.push({
 				stepId,
@@ -483,6 +576,7 @@ export async function executeWorkflowRun(
 
 	step.sleep = async (name: string, ms: number): Promise<void> => {
 		if (pendingSleep) throw pendingSleep;
+		if (pendingWait) throw pendingWait;
 		const current = seq++;
 		const stepId = computeStepId(name, current);
 		// Already slept on a prior attempt — the pause is satisfied, continue.
@@ -502,6 +596,35 @@ export async function executeWorkflowRun(
 		pendingSleep = new SleepInterrupt(Date.now() + delay, name);
 		throw pendingSleep;
 	};
+
+	step.waitForEvent = (async (
+		name: string,
+		opts: { event: string; match?: Record<string, unknown>; timeout?: string },
+	): Promise<unknown> => {
+		if (pendingSleep) throw pendingSleep;
+		if (pendingWait) throw pendingWait;
+		const current = seq++;
+		const stepId = computeStepId(name, current);
+		// Replay: Hub injected the matched event (or null on timeout) as this step's
+		// memoized output. Harden so the sandbox gets a safe view.
+		if (Object.hasOwn(memo, stepId)) {
+			return harden(memo[stepId]!.output ?? null, undefined);
+		}
+		// First encounter: no completed step is recorded (its output isn't known
+		// yet — Hub records it on resolution). Unwind with the waiter descriptor.
+		const timeoutAt = opts.timeout
+			? new Date(Date.now() + parseDurationMs(opts.timeout)).toISOString()
+			: null;
+		pendingWait = new WaitInterrupt(
+			stepId,
+			name,
+			current,
+			opts.event,
+			opts.match ?? null,
+			timeoutAt,
+		);
+		throw pendingWait;
+	}) as WorkflowStep['waitForEvent'];
 
 	// Bridges the realm's `step.ai` to the host `ai` capability: parse the
 	// in-realm-serialized opts and run one inference. Rejects clearly when Hub
@@ -535,6 +658,17 @@ export async function executeWorkflowRun(
 		});
 	};
 
+	const sendBridge = (name: string, dataJson: string): Promise<void> => {
+		if (!input.sendEvent) {
+			return Promise.reject(
+				new Error(
+					'step.sendEvent is unavailable: Hub is not configured for this run',
+				),
+			);
+		}
+		return input.sendEvent(name, dataJson);
+	};
+
 	try {
 		await runWorkflowInSandbox({
 			code: input.code,
@@ -542,6 +676,7 @@ export async function executeWorkflowRun(
 			payload: input.payload,
 			step,
 			ai: aiBridge,
+			send: sendBridge,
 			timeoutMs: input.timeoutMs ?? WORKFLOW_TIMEOUT_MS,
 		});
 		// `main` returned without propagating the interrupt — a try/catch swallowed
@@ -555,6 +690,8 @@ export async function executeWorkflowRun(
 				sleepUntil: new Date(swallowed.wakeAt).toISOString(),
 			};
 		}
+		const swallowedWait = pendingWait as WaitInterrupt | null;
+		if (swallowedWait) return waitingResult(steps, swallowedWait);
 		return { status: 'completed', steps };
 	} catch (err) {
 		if (isSleepInterrupt(err)) {
@@ -564,6 +701,7 @@ export async function executeWorkflowRun(
 				sleepUntil: new Date(err.wakeAt).toISOString(),
 			};
 		}
+		if (isWaitInterrupt(err)) return waitingResult(steps, err);
 		const message = toMessage(err);
 		const failedStep =
 			err !== null && typeof err === 'object'
@@ -577,4 +715,22 @@ export async function executeWorkflowRun(
 			error: { message, ...(failedStep ? { failedStep } : {}) },
 		};
 	}
+}
+
+function waitingResult(
+	steps: RunStepResult[],
+	w: WaitInterrupt,
+): RunResultPayload {
+	return {
+		status: 'waiting',
+		steps,
+		waiter: {
+			stepId: w.stepId,
+			name: w.stepName,
+			seq: w.seq,
+			event: w.event,
+			match: w.match,
+			timeoutAt: w.timeoutAt,
+		},
+	};
 }

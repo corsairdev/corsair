@@ -1,5 +1,6 @@
 import { createHmac, randomUUID } from 'node:crypto';
 import { CORSAIR_INTERNAL } from '../core';
+import type { RunResultPayload } from '../hub/contracts/tunnel';
 import { resetDeliveryReplayGuardForTests } from '../hub/internal/delivery-replay-guard';
 import { connectLinkAck, processCorsair } from '../tunnel/index';
 import { createTestDatabase } from './setup-db';
@@ -405,4 +406,20 @@ describe('processCorsair — probe tunnel', () => {
 			probe: { status: 'ok', value: 42 },
 		});
 	});
+});
+
+it('types a waiting run result with a waiter descriptor', () => {
+	const r: RunResultPayload = {
+		status: 'waiting',
+		steps: [],
+		waiter: {
+			stepId: 'st_abc',
+			name: 'decision',
+			seq: 1,
+			event: 'slack.block_actions',
+			match: { 'data.callback_id': 'refund_1' },
+			timeoutAt: '2026-08-13T00:00:00.000Z',
+		},
+	};
+	expect(r.waiter?.event).toBe('slack.block_actions');
 });
