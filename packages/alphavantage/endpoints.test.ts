@@ -129,6 +129,9 @@ const STATEMENT = {
 
 beforeEach(() => {
 	lastUrl = undefined;
+	// Otherwise call counts and "last call" assertions accumulate across the
+	// whole file.
+	mockLogEvent.mockClear();
 });
 
 /* -- every operation calls the function it should -------------------------- */
@@ -952,11 +955,18 @@ describe('event log payloads', () => {
 			limit: 5,
 		});
 
-		const serialized = JSON.stringify(lastLoggedPayload());
-		expect(serialized).not.toContain('AAPL');
-		expect(serialized).not.toContain('TSLA');
-		expect(serialized).not.toContain('earnings');
-		expect(serialized).toContain('limit');
+		// An exact match rather than absence checks: a substring assertion would
+		// still pass if some new caller-authored field were added later.
+		//
+		// `fields` is the list of supplied field *names* with their values
+		// dropped — that is what `auditPayload` is for. Recording that a request
+		// filtered by tickers is fine; recording which tickers is not.
+		expect(mockLogEvent).toHaveBeenLastCalledWith(
+			expect.anything(),
+			'alphavantage.intelligence.newsSentiment',
+			{ limit: 5, fields: ['tickers', 'topics', 'limit'] },
+			'completed',
+		);
 	});
 
 	it('records identifiers that are not caller-authored', async () => {

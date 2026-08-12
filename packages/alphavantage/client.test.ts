@@ -11,6 +11,7 @@ import {
 	makeAlphaVantageCsvRequest,
 	makeAlphaVantageRequest,
 	parseCsv,
+	parseRetryAfter,
 	sanitizeApiError,
 	splitCsvLine,
 } from './client';
@@ -243,25 +244,124 @@ describe('CSV decoding', () => {
 		).rejects.toThrow(/HTTP 503/);
 	});
 
-	it('surfaces a 429 on a CSV endpoint as a retryable ApiError', async () => {
-		mockText('rate limited', 'text/plain', 429, { 'Retry-After': '30' });
+	it('retries a 429 and succeeds on a later attempt', async () => {
+		let calls = 0;
+		global.fetch = (async (url: string) => {
+			calls++;
+			const limited = calls < 3;
+			return {
+				ok: !limited,
+				status: limited ? 429 : 200,
+				statusText: limited ? 'Too Many Requests' : 'OK',
+				url: String(url),
+				headers: new Headers({ 'Retry-After': '0' }),
+				json: async () => ({}),
+				text: async () => (limited ? 'rate limited' : 'symbol,name\nIBM,IBM\n'),
+			};
+		}) as unknown as typeof global.fetch;
 
-		await expect(
-			makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY),
-		).rejects.toMatchObject({ status: 429, retryAfter: 30_000 });
+		const rows = await makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY);
+
+		expect(calls).toBe(3);
+		expect(rows).toEqual([{ symbol: 'IBM', name: 'IBM' }]);
 	});
 
-	it('does not leak the api key in a CSV transport failure', async () => {
-		mockText('<html>500</html>', 'text/html', 500);
+	it('gives up on a 429 once the retry budget is spent', async () => {
+		let calls = 0;
+		global.fetch = (async (url: string) => {
+			calls++;
+			return {
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				url: String(url),
+				headers: new Headers({ 'Retry-After': '0' }),
+				json: async () => ({}),
+				text: async () => 'rate limited',
+			};
+		}) as unknown as typeof global.fetch;
 
 		await expect(
 			makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY),
-		).rejects.toMatchObject({
-			url: expect.not.stringContaining(TEST_KEY),
-			request: expect.objectContaining({
-				query: expect.objectContaining({ apikey: '[REDACTED]' }),
-			}),
-		});
+		).rejects.toMatchObject({ status: 429 });
+		// One initial attempt plus the configured retries.
+		expect(calls).toBe(3);
+	});
+
+	it('does not retry a 5xx', async () => {
+		let calls = 0;
+		global.fetch = (async (url: string) => {
+			calls++;
+			return {
+				ok: false,
+				status: 503,
+				statusText: 'Service Unavailable',
+				url: String(url),
+				headers: new Headers(),
+				json: async () => ({}),
+				text: async () => 'down',
+			};
+		}) as unknown as typeof global.fetch;
+
+		await expect(
+			makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY),
+		).rejects.toMatchObject({ status: 503 });
+		expect(calls).toBe(1);
+	});
+
+	it('does not leak the api key in a CSV transport failure, including in the body', async () => {
+		// Gateways routinely echo the request URI into their error page, which is
+		// how the key would otherwise end up in `error.body`.
+		global.fetch = (async (url: string) => ({
+			ok: false,
+			status: 500,
+			statusText: 'Server Error',
+			url: String(url),
+			headers: new Headers({ 'Content-Type': 'text/html' }),
+			json: async () => ({}),
+			text: async () => `<html>Cannot GET ${String(url)}</html>`,
+		})) as unknown as typeof global.fetch;
+
+		let caught: unknown;
+		try {
+			await makeAlphaVantageCsvRequest('LISTING_STATUS', TEST_KEY);
+		} catch (error) {
+			caught = error;
+		}
+
+		const apiError = caught as ApiError;
+		expect(apiError.status).toBe(500);
+		// The unredacted body would have contained the key, so this asserts the
+		// scrubbing rather than the absence of an echo.
+		expect(apiError.body).toContain('[REDACTED]');
+		expect(apiError.body).not.toContain(TEST_KEY);
+		expect(apiError.url).not.toContain(TEST_KEY);
+		expect(apiError.request.query?.apikey).toBe('[REDACTED]');
+	});
+});
+
+describe('Retry-After parsing', () => {
+	it('reads a delay in seconds', () => {
+		expect(parseRetryAfter('30')).toBe(30_000);
+		expect(parseRetryAfter('0')).toBe(0);
+	});
+
+	it('reads an HTTP date', () => {
+		const tenSeconds = new Date(Date.now() + 10_000).toUTCString();
+		const parsed = parseRetryAfter(tenSeconds) ?? 0;
+		// Second-granularity in the header makes this approximate.
+		expect(parsed).toBeGreaterThan(8_000);
+		expect(parsed).toBeLessThanOrEqual(11_000);
+	});
+
+	it('ignores a missing or unparseable header', () => {
+		expect(parseRetryAfter(null)).toBeUndefined();
+		expect(parseRetryAfter('soon')).toBeUndefined();
+	});
+
+	it('never returns a negative delay for a date in the past', () => {
+		const past = new Date(Date.now() - 60_000).toUTCString();
+		expect(parseRetryAfter(past)).toBe(0);
 	});
 });
 
