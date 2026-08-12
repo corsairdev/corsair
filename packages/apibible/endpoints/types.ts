@@ -1,9 +1,12 @@
 import { z } from 'zod';
 
 /**
- * Shared API.Bible resource shapes.
+ * Shared API.Bible resource shapes — verified against live
+ * `https://rest.api.bible/v1` responses (docs: https://docs.api.bible).
+ *
  * API.Bible wraps every response in `{ data: ... }`; list endpoints return
- * `data` as an array, single-resource endpoints return an object.
+ * `data` as an array, single-resource endpoints return an object. Content
+ * endpoints may also include `{ meta: { fumsToken } }`.
  */
 
 const LanguageSchema = z
@@ -11,8 +14,9 @@ const LanguageSchema = z
 		id: z.string(),
 		name: z.string(),
 		nameLocal: z.string(),
-		script: z.string(),
-		scriptDirection: z.string(),
+		// Audio Bibles frequently omit script metadata.
+		script: z.string().nullable().optional(),
+		scriptDirection: z.string().nullable().optional(),
 	})
 	.loose();
 
@@ -24,32 +28,51 @@ const CountrySchema = z
 	})
 	.loose();
 
-/**
- * Content display options shared by text-content endpoints (chapter, verse,
- * passage, section). API.Bible reads these via `include-*` query params.
- */
-const ContentDisplayOptionsSchema = z
+/** Adjacent chapter / verse / section pointer from content responses. */
+const NavigationRefSchema = z
 	.object({
-		includeNotes: z.boolean().optional(),
-		includeTitles: z.boolean().optional(),
-		includeChapterNumbers: z.boolean().optional(),
-		includeVerseNumbers: z.boolean().optional(),
-		includeVerseSpans: z.boolean().optional(),
+		id: z.string(),
+		number: z.string().optional(),
+		bookId: z.string().optional(),
+		title: z.string().optional(),
 	})
 	.loose();
 
-/** Shared section shape; used by section list/get and chapter sections. */
+/** Fair Use Management System token returned on scripture content responses. */
+const FumsMetaSchema = z
+	.object({
+		fumsToken: z.string().optional(),
+	})
+	.loose();
+
+/**
+ * Content display options shared by text-content endpoints (chapter, verse,
+ * passage, section). API.Bible reads these via `include-*` query params.
+ * Input schemas stay strict (no `.loose()`) so unknown keys are stripped.
+ */
+const ContentDisplayOptionsSchema = z.object({
+	includeNotes: z.boolean().optional(),
+	includeTitles: z.boolean().optional(),
+	includeChapterNumbers: z.boolean().optional(),
+	includeVerseNumbers: z.boolean().optional(),
+	includeVerseSpans: z.boolean().optional(),
+});
+
+/** Section summary from list endpoints (book/chapter sections). */
 const SectionSummarySchema = z
 	.object({
 		id: z.string(),
 		bibleId: z.string(),
 		bookId: z.string(),
 		title: z.string(),
-		intro: z.string().nullable().optional(),
+		firstVerseId: z.string().optional(),
+		lastVerseId: z.string().optional(),
+		firstVerseOrgId: z.string().optional(),
+		lastVerseOrgId: z.string().optional(),
 	})
 	.loose();
 
-/** Catalog: API_BIBLE_GET_SUPPORTED_VERSIONS */
+/** Catalog: API_BIBLE_GET_SUPPORTED_VERSIONS — GET /v1/bibles */
 const BiblesListInputSchema = z.object({
 	language: z.string().optional(),
 });
@@ -61,16 +84,17 @@ const BibleSchema = z
 		relatedDbl: z.string().nullable().optional(),
 		name: z.string(),
 		nameLocal: z.string(),
-		abbreviation: z.string(),
-		abbreviationLocal: z.string(),
-		description: z.string(),
-		descriptionLocal: z.string(),
+		abbreviation: z.string().nullable().optional(),
+		abbreviationLocal: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		descriptionLocal: z.string().nullable().optional(),
 		language: LanguageSchema,
 		countries: z.array(CountrySchema),
 		type: z.string(),
 		updatedAt: z.string(),
-		// Embedded audio Bible resources arrive with a provider-unstable shape; we never consume
-		// them here, so keep the element type unknown rather than pinning an unsupported contract.
+		copyright: z.string().optional(),
+		info: z.string().optional(),
+		// Embedded audio Bible resources arrive with a provider-unstable shape.
 		audioBibles: z.array(z.unknown()).optional(),
 	})
 	.loose();
@@ -85,7 +109,7 @@ export type BiblesListInput = z.infer<typeof BiblesListInputSchema>;
 export type BiblesListResponse = z.infer<typeof BiblesListResponseSchema>;
 export type Bible = z.infer<typeof BibleSchema>;
 
-/** Catalog: API_BIBLE_GET_BIBLE */
+/** Catalog: API_BIBLE_GET_BIBLE — GET /v1/bibles/{bibleId} */
 const BiblesGetInputSchema = z.object({
 	bibleId: z.string().min(1),
 });
@@ -99,10 +123,31 @@ const BiblesGetResponseSchema = z
 export type BiblesGetInput = z.infer<typeof BiblesGetInputSchema>;
 export type BiblesGetResponse = z.infer<typeof BiblesGetResponseSchema>;
 
-/** Catalog: API_BIBLE_GET_ALL_BOOKS */
+/** Catalog: API_BIBLE_GET_ALL_BOOKS — GET /v1/bibles/{bibleId}/books */
 const BooksListInputSchema = z.object({
 	bibleId: z.string().min(1),
 });
+
+const ChapterSummarySchema = z
+	.object({
+		id: z.string(),
+		bibleId: z.string(),
+		bookId: z.string(),
+		number: z.string(),
+		reference: z.string(),
+	})
+	.loose();
+
+/** Embedded under GET book with `include-chapters=true` — no `reference`. */
+const BookChapterEmbedSchema = z
+	.object({
+		id: z.string(),
+		bibleId: z.string(),
+		bookId: z.string(),
+		number: z.string(),
+		position: z.number().optional(),
+	})
+	.loose();
 
 const BookSchema = z
 	.object({
@@ -111,6 +156,8 @@ const BookSchema = z
 		abbreviation: z.string(),
 		name: z.string(),
 		nameLong: z.string().optional(),
+		// Present when `include-chapters=true` on GET book.
+		chapters: z.array(BookChapterEmbedSchema).optional(),
 	})
 	.loose();
 
@@ -124,10 +171,11 @@ export type BooksListInput = z.infer<typeof BooksListInputSchema>;
 export type BooksListResponse = z.infer<typeof BooksListResponseSchema>;
 export type Book = z.infer<typeof BookSchema>;
 
-/** Catalog: API_BIBLE_GET_BOOK */
+/** Catalog: API_BIBLE_GET_BOOK — GET /v1/bibles/{bibleId}/books/{bookId} */
 const BooksGetInputSchema = z.object({
 	bibleId: z.string().min(1),
 	bookId: z.string().min(1),
+	includeChapters: z.boolean().optional(),
 });
 
 const BooksGetResponseSchema = z
@@ -139,21 +187,13 @@ const BooksGetResponseSchema = z
 export type BooksGetInput = z.infer<typeof BooksGetInputSchema>;
 export type BooksGetResponse = z.infer<typeof BooksGetResponseSchema>;
 
-/** Catalog: API_BIBLE_LIST_CHAPTERS */
+/** Catalog: API_BIBLE_LIST_CHAPTERS — GET /v1/bibles/{bibleId}/books/{bookId}/chapters */
 const ChaptersListInputSchema = z.object({
 	bibleId: z.string().min(1),
 	bookId: z.string().min(1),
 });
 
-const ChapterSchema = z
-	.object({
-		id: z.string(),
-		bibleId: z.string(),
-		bookId: z.string(),
-		number: z.string(),
-		reference: z.string(),
-	})
-	.loose();
+const ChapterSchema = ChapterSummarySchema;
 
 const ChaptersListResponseSchema = z
 	.object({
@@ -165,7 +205,7 @@ export type ChaptersListInput = z.infer<typeof ChaptersListInputSchema>;
 export type ChaptersListResponse = z.infer<typeof ChaptersListResponseSchema>;
 export type Chapter = z.infer<typeof ChapterSchema>;
 
-/** Catalog: API_BIBLE_GET_CHAPTER */
+/** Catalog: API_BIBLE_GET_CHAPTER — GET /v1/bibles/{bibleId}/chapters/{chapterId} */
 const ChaptersGetInputSchema = ContentDisplayOptionsSchema.extend({
 	bibleId: z.string().min(1),
 	chapterId: z.string().min(1),
@@ -174,20 +214,22 @@ const ChaptersGetInputSchema = ContentDisplayOptionsSchema.extend({
 const ChapterContentSchema = ChapterSchema.extend({
 	content: z.string(),
 	copyright: z.string().optional(),
-	next: z.string().nullable().optional(),
-	previous: z.string().nullable().optional(),
+	verseCount: z.number().optional(),
+	next: NavigationRefSchema.nullable().optional(),
+	previous: NavigationRefSchema.nullable().optional(),
 }).loose();
 
 const ChaptersGetResponseSchema = z
 	.object({
 		data: ChapterContentSchema,
+		meta: FumsMetaSchema.optional(),
 	})
 	.loose();
 
 export type ChaptersGetInput = z.infer<typeof ChaptersGetInputSchema>;
 export type ChaptersGetResponse = z.infer<typeof ChaptersGetResponseSchema>;
 
-/** Catalog: API_BIBLE_LIST_CHAPTER_SECTIONS */
+/** Catalog: API_BIBLE_LIST_CHAPTER_SECTIONS — GET /v1/bibles/{bibleId}/chapters/{chapterId}/sections */
 const ChaptersListSectionsInputSchema = z.object({
 	bibleId: z.string().min(1),
 	chapterId: z.string().min(1),
@@ -206,49 +248,59 @@ export type ChaptersListSectionsResponse = z.infer<
 	typeof ChaptersListSectionsResponseSchema
 >;
 
-/** Catalog: API_BIBLE_LIST_VERSES */
+/** Verse summary from list — no content body (use verses.get / passages.get). */
+const VerseSummarySchema = z
+	.object({
+		id: z.string(),
+		orgId: z.string().optional(),
+		bibleId: z.string(),
+		bookId: z.string(),
+		chapterId: z.string(),
+		reference: z.string(),
+	})
+	.loose();
+
+/** Catalog: API_BIBLE_LIST_VERSES — GET /v1/bibles/{bibleId}/chapters/{chapterId}/verses */
 const VersesListInputSchema = ContentDisplayOptionsSchema.extend({
 	bibleId: z.string().min(1),
 	chapterId: z.string().min(1),
 });
 
-const VerseSchema = z
-	.object({
-		id: z.string(),
-		bibleId: z.string(),
-		bookId: z.string(),
-		chapterId: z.string(),
-		reference: z.string(),
-		content: z.string(),
-	})
-	.loose();
-
 const VersesListResponseSchema = z
 	.object({
-		data: z.array(VerseSchema),
+		data: z.array(VerseSummarySchema),
 	})
 	.loose();
 
 export type VersesListInput = z.infer<typeof VersesListInputSchema>;
 export type VersesListResponse = z.infer<typeof VersesListResponseSchema>;
-export type Verse = z.infer<typeof VerseSchema>;
+export type Verse = z.infer<typeof VerseSummarySchema>;
 
-/** Catalog: API_BIBLE_GET_VERSE */
+/** Catalog: API_BIBLE_GET_VERSE — GET /v1/bibles/{bibleId}/verses/{verseId} */
 const VersesGetInputSchema = ContentDisplayOptionsSchema.extend({
 	bibleId: z.string().min(1),
 	verseId: z.string().min(1),
 });
 
+const VerseContentSchema = VerseSummarySchema.extend({
+	content: z.string(),
+	copyright: z.string().optional(),
+	verseCount: z.number().optional(),
+	next: NavigationRefSchema.nullable().optional(),
+	previous: NavigationRefSchema.nullable().optional(),
+}).loose();
+
 const VersesGetResponseSchema = z
 	.object({
-		data: VerseSchema,
+		data: VerseContentSchema,
+		meta: FumsMetaSchema.optional(),
 	})
 	.loose();
 
 export type VersesGetInput = z.infer<typeof VersesGetInputSchema>;
 export type VersesGetResponse = z.infer<typeof VersesGetResponseSchema>;
 
-/** Catalog: API_BIBLE_GET_PASSAGE */
+/** Catalog: API_BIBLE_GET_PASSAGE — GET /v1/bibles/{bibleId}/passages/{passageId} */
 const PassagesGetInputSchema = ContentDisplayOptionsSchema.extend({
 	bibleId: z.string().min(1),
 	passageId: z.string().min(1),
@@ -257,27 +309,28 @@ const PassagesGetInputSchema = ContentDisplayOptionsSchema.extend({
 const PassageContentSchema = z
 	.object({
 		id: z.string(),
+		orgId: z.string().optional(),
 		bibleId: z.string(),
+		bookId: z.string().optional(),
+		chapterIds: z.array(z.string()).optional(),
 		content: z.string(),
 		reference: z.string(),
 		copyright: z.string().optional(),
-		// API.Bible's OT/NT payloads are large navigation maps whose shape varies by bible/plan;
-		// the plugin only surfaces the flattened `content`, so these stay loosely typed on purpose.
-		ot: z.unknown().optional(),
-		nt: z.unknown().optional(),
+		verseCount: z.number().optional(),
 	})
 	.loose();
 
 const PassagesGetResponseSchema = z
 	.object({
 		data: PassageContentSchema,
+		meta: FumsMetaSchema.optional(),
 	})
 	.loose();
 
 export type PassagesGetInput = z.infer<typeof PassagesGetInputSchema>;
 export type PassagesGetResponse = z.infer<typeof PassagesGetResponseSchema>;
 
-/** Catalog: API_BIBLE_GET_SECTIONS */
+/** Catalog: API_BIBLE_GET_SECTIONS — GET /v1/bibles/{bibleId}/books/{bookId}/sections */
 const SectionsListInputSchema = z.object({
 	bibleId: z.string().min(1),
 	bookId: z.string().min(1),
@@ -292,27 +345,32 @@ const SectionsListResponseSchema = z
 export type SectionsListInput = z.infer<typeof SectionsListInputSchema>;
 export type SectionsListResponse = z.infer<typeof SectionsListResponseSchema>;
 
-/** Catalog: API_BIBLE_GET_SECTION */
+/** Catalog: API_BIBLE_GET_SECTION — GET /v1/bibles/{bibleId}/sections/{sectionId} */
 const SectionsGetInputSchema = ContentDisplayOptionsSchema.extend({
 	bibleId: z.string().min(1),
 	sectionId: z.string().min(1),
 });
 
 const SectionContentSchema = SectionSummarySchema.extend({
+	chapterId: z.string().optional(),
 	content: z.string(),
 	copyright: z.string().optional(),
+	verseCount: z.number().optional(),
+	next: NavigationRefSchema.nullable().optional(),
+	previous: NavigationRefSchema.nullable().optional(),
 }).loose();
 
 const SectionsGetResponseSchema = z
 	.object({
 		data: SectionContentSchema,
+		meta: FumsMetaSchema.optional(),
 	})
 	.loose();
 
 export type SectionsGetInput = z.infer<typeof SectionsGetInputSchema>;
 export type SectionsGetResponse = z.infer<typeof SectionsGetResponseSchema>;
 
-/** Catalog: API_BIBLE_SEARCH_VERSES */
+/** Catalog: API_BIBLE_SEARCH_VERSES — GET /v1/bibles/{bibleId}/search */
 const SearchQueryInputSchema = z.object({
 	bibleId: z.string().min(1),
 	query: z.string().min(1),
@@ -321,35 +379,41 @@ const SearchQueryInputSchema = z.object({
 	sort: z.enum(['relevance', 'canonical', 'usfm']).optional(),
 });
 
-const SearchResultSchema = z
+/** Search hits use `text`, not `content`. */
+const SearchVerseSchema = z
 	.object({
 		id: z.string(),
+		orgId: z.string().optional(),
 		bibleId: z.string(),
 		bookId: z.string(),
 		chapterId: z.string(),
 		reference: z.string(),
-		content: z.string(),
+		text: z.string(),
+	})
+	.loose();
+
+const SearchDataSchema = z
+	.object({
+		query: z.string(),
+		limit: z.number(),
+		offset: z.number(),
+		total: z.number(),
+		verseCount: z.number(),
+		verses: z.array(SearchVerseSchema),
 	})
 	.loose();
 
 const SearchResponseSchema = z
 	.object({
-		data: z.array(SearchResultSchema),
-		meta: z
-			.object({
-				fums: z.string().optional(),
-				fumsId: z.string().optional(),
-				fumsJsInclude: z.string().optional(),
-			})
-			.loose()
-			.optional(),
+		data: SearchDataSchema,
+		meta: FumsMetaSchema.optional(),
 	})
 	.loose();
 
 export type SearchQueryInput = z.infer<typeof SearchQueryInputSchema>;
 export type SearchQueryResponse = z.infer<typeof SearchResponseSchema>;
 
-/** Catalog: API_BIBLE_LIST_AUDIO_BIBLES */
+/** Catalog: API_BIBLE_LIST_AUDIO_BIBLES — GET /v1/audio-bibles */
 const AudioBiblesListInputSchema = z.object({
 	language: z.string().optional(),
 });
@@ -357,12 +421,14 @@ const AudioBiblesListInputSchema = z.object({
 const AudioBibleSchema = z
 	.object({
 		id: z.string(),
+		dblId: z.string().optional(),
+		relatedDbl: z.string().nullable().optional(),
 		name: z.string(),
 		nameLocal: z.string(),
-		abbreviation: z.string(),
-		abbreviationLocal: z.string(),
-		description: z.string(),
-		descriptionLocal: z.string(),
+		abbreviation: z.string().nullable().optional(),
+		abbreviationLocal: z.string().nullable().optional(),
+		description: z.string().nullable().optional(),
+		descriptionLocal: z.string().nullable().optional(),
 		language: LanguageSchema,
 		countries: z.array(CountrySchema),
 		type: z.string(),
@@ -383,7 +449,7 @@ export type AudioBiblesListResponse = z.infer<
 >;
 export type AudioBible = z.infer<typeof AudioBibleSchema>;
 
-/** Catalog: API_BIBLE_GET_AUDIO_BIBLE */
+/** Catalog: API_BIBLE_GET_AUDIO_BIBLE — GET /v1/audio-bibles/{audioBibleId} */
 const AudioBiblesGetInputSchema = z.object({
 	audioBibleId: z.string().min(1),
 });
@@ -399,7 +465,7 @@ export type AudioBiblesGetResponse = z.infer<
 	typeof AudioBiblesGetResponseSchema
 >;
 
-/** Catalog: API_BIBLE_LIST_AUDIO_BOOKS */
+/** Catalog: API_BIBLE_LIST_AUDIO_BOOKS — GET /v1/audio-bibles/{audioBibleId}/books */
 const AudioBooksListInputSchema = z.object({
 	audioBibleId: z.string().min(1),
 });
@@ -426,7 +492,7 @@ export type AudioBooksListResponse = z.infer<
 >;
 export type AudioBook = z.infer<typeof AudioBookSchema>;
 
-/** Catalog: API_BIBLE_GET_AUDIO_BOOK */
+/** Catalog: API_BIBLE_GET_AUDIO_BOOK — GET /v1/audio-bibles/{audioBibleId}/books/{bookId} */
 const AudioBooksGetInputSchema = z.object({
 	audioBibleId: z.string().min(1),
 	bookId: z.string().min(1),
@@ -441,28 +507,25 @@ const AudioBooksGetResponseSchema = z
 export type AudioBooksGetInput = z.infer<typeof AudioBooksGetInputSchema>;
 export type AudioBooksGetResponse = z.infer<typeof AudioBooksGetResponseSchema>;
 
-/** Catalog: API_BIBLE_LIST_AUDIO_CHAPTERS */
+/** Catalog: API_BIBLE_LIST_AUDIO_CHAPTERS — list has no signed URL yet. */
 const AudioChaptersListInputSchema = z.object({
 	audioBibleId: z.string().min(1),
 	bookId: z.string().min(1),
 });
 
-const AudioChapterSchema = z
+const AudioChapterSummarySchema = z
 	.object({
 		id: z.string(),
 		bibleId: z.string(),
 		bookId: z.string(),
-		chapterId: z.string(),
 		number: z.string(),
 		reference: z.string(),
-		resourceUrl: z.string(),
-		expiresAt: z.string(),
 	})
 	.loose();
 
 const AudioChaptersListResponseSchema = z
 	.object({
-		data: z.array(AudioChapterSchema),
+		data: z.array(AudioChapterSummarySchema),
 	})
 	.loose();
 
@@ -472,17 +535,29 @@ export type AudioChaptersListInput = z.infer<
 export type AudioChaptersListResponse = z.infer<
 	typeof AudioChaptersListResponseSchema
 >;
-export type AudioChapter = z.infer<typeof AudioChapterSchema>;
+export type AudioChapter = z.infer<typeof AudioChapterSummarySchema>;
 
-/** Catalog: API_BIBLE_GET_AUDIO_CHAPTER */
+/**
+ * Catalog: API_BIBLE_GET_AUDIO_CHAPTER —
+ * GET /v1/audio-bibles/{audioBibleId}/chapters/{chapterId}
+ * `resourceUrl` is temporary; `expiresAt` is a unix-seconds string.
+ */
 const AudioChaptersGetInputSchema = z.object({
 	audioBibleId: z.string().min(1),
 	chapterId: z.string().min(1),
 });
 
+const AudioChapterContentSchema = AudioChapterSummarySchema.extend({
+	resourceUrl: z.string(),
+	expiresAt: z.string(),
+	copyright: z.string().optional(),
+	next: NavigationRefSchema.nullable().optional(),
+	previous: NavigationRefSchema.nullable().optional(),
+}).loose();
+
 const AudioChaptersGetResponseSchema = z
 	.object({
-		data: AudioChapterSchema,
+		data: AudioChapterContentSchema,
 	})
 	.loose();
 

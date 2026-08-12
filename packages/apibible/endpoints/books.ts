@@ -31,7 +31,12 @@ export const list: ApiBibleEndpoints['booksList'] = async (ctx, input) => {
 export const get: ApiBibleEndpoints['booksGet'] = async (ctx, input) => {
 	const response = await makeApiBibleRequest<
 		ApiBibleEndpointOutputs['booksGet']
-	>(`bibles/${input.bibleId}/books/${input.bookId}`, ctx.key);
+	>(`bibles/${input.bibleId}/books/${input.bookId}`, ctx.key, {
+		query:
+			typeof input.includeChapters === 'boolean'
+				? { 'include-chapters': input.includeChapters }
+				: undefined,
+	});
 
 	await logEventFromContext(
 		ctx,

@@ -129,7 +129,7 @@ export const ProviderDisplayNames = {
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
 	amplitude: 'Amplitude',
-	apibible: 'ApiBible',
+	apibible: 'API.Bible',
 	apilabz: 'API Labz',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',

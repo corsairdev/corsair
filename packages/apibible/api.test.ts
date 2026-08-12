@@ -185,9 +185,14 @@ describe('API.Bible endpoints', () => {
 			const result = await Books.get(ctx, {
 				bibleId: 'bible-1',
 				bookId: 'GEN',
+				includeChapters: true,
 			});
 
-			expect(mockRequest).toHaveBeenCalledWith('bibles/bible-1/books/GEN', KEY);
+			expect(mockRequest).toHaveBeenCalledWith(
+				'bibles/bible-1/books/GEN',
+				KEY,
+				{ query: { 'include-chapters': true } },
+			);
 			expect(ApiBibleEndpointOutputSchemas.booksGet.parse(result)).toEqual(
 				result,
 			);
@@ -214,7 +219,14 @@ describe('API.Bible endpoints', () => {
 
 		it('chapters.get maps include-* options to query params', async () => {
 			mockRequest.mockResolvedValue({
-				data: { ...chapter, content: '<p>text</p>' },
+				data: {
+					...chapter,
+					content: '<p>text</p>',
+					verseCount: 31,
+					next: { id: 'GEN.2', number: '2', bookId: 'GEN' },
+					previous: null,
+				},
+				meta: { fumsToken: 'tok' },
 			});
 
 			const result = await Chapters.get(ctx, {
@@ -259,7 +271,15 @@ describe('API.Bible endpoints', () => {
 
 	describe('verses', () => {
 		it('verses.list hits GET /bibles/{bibleId}/chapters/{chapterId}/verses', async () => {
-			mockRequest.mockResolvedValue({ data: [verse] });
+			const verseSummary = {
+				id: verse.id,
+				orgId: verse.id,
+				bibleId: verse.bibleId,
+				bookId: verse.bookId,
+				chapterId: verse.chapterId,
+				reference: verse.reference,
+			};
+			mockRequest.mockResolvedValue({ data: [verseSummary] });
 
 			const result = await Verses.list(ctx, {
 				bibleId: 'bible-1',
@@ -277,7 +297,15 @@ describe('API.Bible endpoints', () => {
 		});
 
 		it('verses.get maps include-notes to a query param', async () => {
-			mockRequest.mockResolvedValue({ data: verse });
+			mockRequest.mockResolvedValue({
+				data: {
+					...verse,
+					orgId: verse.id,
+					copyright: 'Public Domain',
+					next: { id: 'GEN.1.2', number: '2' },
+					previous: null,
+				},
+			});
 
 			const result = await Verses.get(ctx, {
 				bibleId: 'bible-1',
@@ -365,17 +393,25 @@ describe('API.Bible endpoints', () => {
 	describe('search', () => {
 		it('search.query hits GET /bibles/{bibleId}/search with query params', async () => {
 			mockRequest.mockResolvedValue({
-				data: [
-					{
-						id: 'GEN.1.1',
-						bibleId: 'bible-1',
-						bookId: 'GEN',
-						chapterId: 'GEN.1',
-						reference: 'Genesis 1:1',
-						content: '<p>In the beginning God created...</p>',
-					},
-				],
-				meta: { fums: 'abc' },
+				data: {
+					query: 'beginning',
+					limit: 10,
+					offset: 0,
+					total: 1,
+					verseCount: 1,
+					verses: [
+						{
+							id: 'GEN.1.1',
+							orgId: 'GEN.1.1',
+							bibleId: 'bible-1',
+							bookId: 'GEN',
+							chapterId: 'GEN.1',
+							reference: 'Genesis 1:1',
+							text: 'In the beginning God created...',
+						},
+					],
+				},
+				meta: { fumsToken: 'abc' },
 			});
 
 			const result = await Search.query(ctx, {
@@ -460,7 +496,14 @@ describe('API.Bible endpoints', () => {
 
 	describe('audioChapters', () => {
 		it('audioChapters.list hits GET /audio-bibles/{audioBibleId}/books/{bookId}/chapters', async () => {
-			mockRequest.mockResolvedValue({ data: [audioChapter] });
+			const audioChapterSummary = {
+				id: audioChapter.id,
+				bibleId: audioChapter.bibleId,
+				bookId: audioChapter.bookId,
+				number: audioChapter.number,
+				reference: audioChapter.reference,
+			};
+			mockRequest.mockResolvedValue({ data: [audioChapterSummary] });
 
 			const result = await AudioChapters.list(ctx, {
 				audioBibleId: 'audio-1',
@@ -477,7 +520,19 @@ describe('API.Bible endpoints', () => {
 		});
 
 		it('audioChapters.get hits GET /audio-bibles/{audioBibleId}/chapters/{chapterId}', async () => {
-			mockRequest.mockResolvedValue({ data: audioChapter });
+			mockRequest.mockResolvedValue({
+				data: {
+					id: audioChapter.id,
+					bibleId: audioChapter.bibleId,
+					bookId: audioChapter.bookId,
+					number: audioChapter.number,
+					reference: audioChapter.reference,
+					resourceUrl: audioChapter.resourceUrl,
+					expiresAt: audioChapter.expiresAt,
+					next: { id: 'GEN.2', number: '2', bookId: 'GEN' },
+					previous: null,
+				},
+			});
 
 			const result = await AudioChapters.get(ctx, {
 				audioBibleId: 'audio-1',
