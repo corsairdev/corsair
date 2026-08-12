@@ -723,7 +723,12 @@ export function twitterapiio<const T extends TwitterApiIOPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:twitterapiio:webhook_signature]: TwitterApiIO webhook signature is missing',
+					);
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && options.key) {

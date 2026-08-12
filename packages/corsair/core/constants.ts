@@ -15,11 +15,20 @@ export type AllErrors =
 export const BaseProviders = [
 	'abstract',
 	'activetrail',
+	'addresszen',
+	'affinda',
+	'agencyzoom',
+	'agentmail',
+	'agenty',
 	'agentql',
 	'ahrefs',
 	'airtable',
 	'algolia',
+	'alttextai',
+	'ambientweather',
+	'ambee',
 	'amplitude',
+	'apilabz',
 	'apisports',
 	'asana',
 	'bitwarden',
@@ -37,6 +46,7 @@ export const BaseProviders = [
 	'deepseek',
 	'digitalocean',
 	'discord',
+	'dockerhub',
 	'dodopayments',
 	'dropbox',
 	'exa',
@@ -60,6 +70,7 @@ export const BaseProviders = [
 	'hashnode',
 	'heygen',
 	'hubspot',
+	'huggingface',
 	'insightoai',
 	'instagram',
 	'intercom',
@@ -104,7 +115,9 @@ export const BaseProviders = [
 	'vapi',
 	'vercel',
 	'whatsapp',
+	'wiza',
 	'xquik',
+	'youcom',
 	'youtube',
 	'zendesk',
 	'zohomail',
@@ -114,11 +127,20 @@ export const BaseProviders = [
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
 	activetrail: 'Active Trail',
+	addresszen: 'Addresszen',
+	affinda: 'Affinda',
+	agencyzoom: 'AgencyZoom',
+	agentmail: 'AgentMail',
+	agenty: 'Agenty',
 	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
+	alttextai: 'AltText.ai',
+	ambientweather: 'Ambient Weather',
+	ambee: 'Ambee',
 	amplitude: 'Amplitude',
+	apilabz: 'API Labz',
 	apisports: 'API-Sports',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -136,6 +158,7 @@ export const ProviderDisplayNames = {
 	deepseek: 'DeepSeek',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
 	exa: 'Exa',
@@ -159,6 +182,7 @@ export const ProviderDisplayNames = {
 	hashnode: 'Hashnode',
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
+	huggingface: 'Hugging Face',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -203,7 +227,9 @@ export const ProviderDisplayNames = {
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	whatsapp: 'WhatsApp',
+	wiza: 'Wiza',
 	xquik: 'XQuik',
+	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
@@ -220,11 +246,20 @@ export function formatProviderDisplayName(plugin: string): string {
 export type AllProviders =
 	| 'abstract'
 	| 'activetrail'
+	| 'addresszen'
+	| 'affinda'
+	| 'agencyzoom'
+	| 'agentmail'
+	| 'agenty'
 	| 'agentql'
 	| 'ahrefs'
 	| 'airtable'
 	| 'algolia'
+	| 'alttextai'
+	| 'ambientweather'
+	| 'ambee'
 	| 'amplitude'
+	| 'apilabz'
 	| 'apisports'
 	| 'asana'
 	| 'bitwarden'
@@ -242,6 +277,7 @@ export type AllProviders =
 	| 'deepseek'
 	| 'digitalocean'
 	| 'discord'
+	| 'dockerhub'
 	| 'dodopayments'
 	| 'dropbox'
 	| 'exa'
@@ -265,6 +301,7 @@ export type AllProviders =
 	| 'hashnode'
 	| 'heygen'
 	| 'hubspot'
+	| 'huggingface'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
@@ -309,7 +346,9 @@ export type AllProviders =
 	| 'vapi'
 	| 'vercel'
 	| 'whatsapp'
+	| 'wiza'
 	| 'xquik'
+	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'

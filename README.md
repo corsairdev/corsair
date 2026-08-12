@@ -63,6 +63,10 @@ You can also override individual endpoints within any mode. For example, set Sla
 Corsair is built for production. Set `multiTenancy: true` and every tenant gets isolated credentials, isolated data storage, and isolated permissions handling. You can scope a request to a tenant id and Corsair ensures there is no cross-contamination.
 
 ```typescript
+import { github } from '@corsair-dev/github';
+import { slack } from '@corsair-dev/slack';
+import { createCorsair } from 'corsair/core';
+
 const corsair = createCorsair({
   multiTenancy: true,
   plugins: [slack(), github()],
@@ -78,8 +82,10 @@ await client.slack.api.messages.post({ channel: '#alerts', text: 'Deploy complet
 Every plugin is shipped with typed, signature-verified webhook handlers. All webhooks point to a single endpoint. Set it and forget it.
 
 ```typescript
+import { processWebhook } from 'corsair';
+
 app.post('/webhooks', async (req, res) => {
-  const webhook = processWebhook(corsair, req.headers, req.body)
+  const webhook = await processWebhook(corsair, req.headers, req.body)
   
   return res.json(webhook.response)
 });
@@ -130,8 +136,8 @@ Licensed under the Apache License, Version 2.0. See [LICENSE](https://github.com
 
 <a href="https://www.star-history.com/?repos=corsairdev%2Fcorsair&type=date&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=corsairdev/corsair&type=date&theme=dark&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=corsairdev/corsair&type=date&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=corsairdev/corsair&type=date&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=corsairdev/corsair&type=date&theme=dark&legend=top-left&sealed_token=1ltznC6phKC-fvT7DL706Z3t4ie0HVoc_5TQ8hhGzmmvV1HPgMZ46FE7yGTGYr59aAI0rEd1MUEMP63BjaV_tGLlx6iWM3okutuw3MIuD5wjQ0ox_sTU7YbMnAeFeY3ONsksQj8kC-tV0Y-1flFG2x7YXISZsqWeIhRtF5aECRiUoilQAiXvwGHZTAbj" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=corsairdev/corsair&type=date&legend=top-left&sealed_token=1ltznC6phKC-fvT7DL706Z3t4ie0HVoc_5TQ8hhGzmmvV1HPgMZ46FE7yGTGYr59aAI0rEd1MUEMP63BjaV_tGLlx6iWM3okutuw3MIuD5wjQ0ox_sTU7YbMnAeFeY3ONsksQj8kC-tV0Y-1flFG2x7YXISZsqWeIhRtF5aECRiUoilQAiXvwGHZTAbj" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=corsairdev/corsair&type=date&legend=top-left&sealed_token=1ltznC6phKC-fvT7DL706Z3t4ie0HVoc_5TQ8hhGzmmvV1HPgMZ46FE7yGTGYr59aAI0rEd1MUEMP63BjaV_tGLlx6iWM3okutuw3MIuD5wjQ0ox_sTU7YbMnAeFeY3ONsksQj8kC-tV0Y-1flFG2x7YXISZsqWeIhRtF5aECRiUoilQAiXvwGHZTAbj" />
  </picture>
 </a>
