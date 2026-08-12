@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BoloformsEndpoints } from '..';
 import { makeBoloformsRequest } from '../client';
-import type { BoloformsEndpointOutputs } from './types';
+import { BoloformsEndpointOutputSchemas } from './types';
 
 /**
  * List documents in a workspace.
@@ -15,12 +15,18 @@ export const list: BoloformsEndpoints['getDocumentsList'] = async (
 ) => {
 	const { workspaceId, ...query } = input;
 
-	const response = await makeBoloformsRequest<
-		BoloformsEndpointOutputs['getDocumentsList']
-	>('signature/get-documents', ctx.key, workspaceId, {
-		method: 'GET',
-		query,
-	});
+	const rawResponse = await makeBoloformsRequest(
+		'signature/get-documents',
+		ctx.key,
+		workspaceId,
+		{
+			method: 'GET',
+			query,
+		},
+	);
+
+	const response =
+		BoloformsEndpointOutputSchemas.getDocumentsList.parse(rawResponse);
 
 	await logEventFromContext(
 		ctx,
