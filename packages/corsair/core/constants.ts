@@ -29,6 +29,7 @@ export const BaseProviders = [
 	'ambientweather',
 	'ambee',
 	'amplitude',
+	'apify',
 	'apilabz',
 	'asana',
 	'bitwarden',
@@ -144,6 +145,7 @@ export const ProviderDisplayNames = {
 	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
 	amplitude: 'Amplitude',
+	apify: 'Apify',
 	apilabz: 'API Labz',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
@@ -266,6 +268,7 @@ export type AllProviders =
 	| 'ambientweather'
 	| 'ambee'
 	| 'amplitude'
+	| 'apify'
 	| 'apilabz'
 	| 'asana'
 	| 'bitwarden'
