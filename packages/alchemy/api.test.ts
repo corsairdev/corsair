@@ -124,6 +124,7 @@ describe('Alchemy endpoint behavior', () => {
 		[
 			'isHolderOfCollection',
 			'isHolderOfContract',
+			{ wallet, contractAddress: contract },
 			() =>
 				nft.isHolderOfCollection(fakeCtx(), {
 					wallet,
@@ -133,6 +134,7 @@ describe('Alchemy endpoint behavior', () => {
 		[
 			'isHolderOfContract',
 			'isHolderOfContract',
+			{ wallet, contractAddress: contract },
 			() =>
 				nft.isHolderOfContract(fakeCtx(), {
 					wallet,
@@ -142,12 +144,14 @@ describe('Alchemy endpoint behavior', () => {
 		[
 			'isAirdrop',
 			'isAirdropNFT',
+			{ contractAddress: contract, tokenId: '1' },
 			() =>
 				nft.isAirdrop(fakeCtx(), { contractAddress: contract, tokenId: '1' }),
 		],
 		[
 			'isAirdropNft',
 			'isAirdropNFT',
+			{ contractAddress: contract, tokenId: '1' },
 			() =>
 				nft.isAirdropNft(fakeCtx(), {
 					contractAddress: contract,
@@ -157,16 +161,19 @@ describe('Alchemy endpoint behavior', () => {
 		[
 			'isSpamContract',
 			'isSpamContract',
+			{ contractAddress: contract },
 			() => nft.isSpamContract(fakeCtx(), { contractAddress: contract }),
 		],
 		[
 			'isSpamContractV3',
 			'isSpamContract',
+			{ contractAddress: contract },
 			() => nft.isSpamContractV3(fakeCtx(), { contractAddress: contract }),
 		],
 		[
 			'computeRarityV3',
 			'computeRarity',
+			{ contractAddress: contract, tokenId: '1' },
 			() =>
 				nft.computeRarityV3(fakeCtx(), {
 					contractAddress: contract,
@@ -176,21 +183,25 @@ describe('Alchemy endpoint behavior', () => {
 		[
 			'getCollectionsForOwner',
 			'getCollectionsForOwner',
+			{ owner },
 			() => nft.getCollectionsForOwner(fakeCtx(), { owner }),
 		],
 		[
 			'getContractMetadataV3',
 			'getContractMetadata',
+			{ contractAddress: contract },
 			() => nft.getContractMetadataV3(fakeCtx(), { contractAddress: contract }),
 		],
 		[
 			'getContractsForOwnerV3',
 			'getContractsForOwner',
+			{ owner },
 			() => nft.getContractsForOwnerV3(fakeCtx(), { owner }),
 		],
 		[
 			'getCollectionMetadata',
 			'getCollectionMetadata',
+			{ collectionSlug: 'boredapeyachtclub' },
 			() =>
 				nft.getCollectionMetadata(fakeCtx(), {
 					collectionSlug: 'boredapeyachtclub',
@@ -199,11 +210,13 @@ describe('Alchemy endpoint behavior', () => {
 		[
 			'getFloorPriceV3',
 			'getFloorPrice',
+			{ contractAddress: contract },
 			() => nft.getFloorPriceV3(fakeCtx(), { contractAddress: contract }),
 		],
 		[
 			'getNftMetadata',
 			'getNFTMetadata',
+			{ contractAddress: contract, tokenId: '1' },
 			() =>
 				nft.getNftMetadata(fakeCtx(), {
 					contractAddress: contract,
@@ -213,6 +226,7 @@ describe('Alchemy endpoint behavior', () => {
 		[
 			'getOwnersForNftV3',
 			'getOwnersForNFT',
+			{ contractAddress: contract, tokenId: '1' },
 			() =>
 				nft.getOwnersForNftV3(fakeCtx(), {
 					contractAddress: contract,
@@ -222,65 +236,91 @@ describe('Alchemy endpoint behavior', () => {
 		[
 			'getNftSalesV3',
 			'getNFTSales',
+			{ contractAddress: contract },
 			() => nft.getNftSalesV3(fakeCtx(), { contractAddress: contract }),
 		],
 		[
 			'getNftsForContract',
 			'getNFTsForContract',
+			{ contractAddress: contract },
 			() => nft.getNftsForContract(fakeCtx(), { contractAddress: contract }),
 		],
 		[
 			'getNftsForOwner',
 			'getNFTsForOwner',
+			{ owner },
 			() => nft.getNftsForOwner(fakeCtx(), { owner }),
 		],
 		[
 			'getOwnersForCollection',
 			'getOwnersForContract',
+			{ contractAddress: contract },
 			() =>
 				nft.getOwnersForCollection(fakeCtx(), { contractAddress: contract }),
 		],
 		[
 			'getOwnersForContract',
 			'getOwnersForContract',
+			{ contractAddress: contract },
 			() => nft.getOwnersForContract(fakeCtx(), { contractAddress: contract }),
 		],
 		[
 			'invalidateContractV3',
 			'invalidateContract',
+			{ contractAddress: contract },
 			() => nft.invalidateContractV3(fakeCtx(), { contractAddress: contract }),
 		],
 		[
 			'searchContractMetadataV3',
 			'searchContractMetadata',
+			{ query: 'bayc' },
 			() => nft.searchContractMetadataV3(fakeCtx(), { query: 'bayc' }),
 		],
 		[
 			'summarizeNftAttributes',
 			'summarizeNFTAttributes',
+			{ contractAddress: contract },
 			() =>
 				nft.summarizeNftAttributes(fakeCtx(), { contractAddress: contract }),
 		],
-	] as const)('%s calls NFT %s', async (_name, method, invoke) => {
-		mockedNft.mockResolvedValueOnce({});
-		await invoke();
-		expect(mockedNft.mock.calls[0]?.[2]).toBe(method);
-	});
+	] as const)(
+		'%s maps query for NFT %s',
+		async (_name, method, query, invoke) => {
+			mockedNft.mockResolvedValueOnce({});
+			await invoke();
+			expect(mockedNft).toHaveBeenCalledWith(
+				'eth-mainnet',
+				'test-key',
+				method,
+				query,
+			);
+		},
+	);
 
-	it('getNftsForCollectionV3 prefers collection slug path', async () => {
+	it('getNftsForCollectionV3 maps slug query', async () => {
 		mockedNft.mockResolvedValueOnce({ nfts: [] });
 		await nft.getNftsForCollectionV3(fakeCtx(), {
 			collectionSlug: 'boredapeyachtclub',
 		});
-		expect(mockedNft.mock.calls[0]?.[2]).toBe('getNFTsForCollection');
+		expect(mockedNft).toHaveBeenCalledWith(
+			'eth-mainnet',
+			'test-key',
+			'getNFTsForCollection',
+			{ collectionSlug: 'boredapeyachtclub' },
+		);
 	});
 
-	it('getNftsForCollectionV3 falls back to contract path', async () => {
+	it('getNftsForCollectionV3 maps contract query', async () => {
 		mockedNft.mockResolvedValueOnce({ nfts: [] });
 		await nft.getNftsForCollectionV3(fakeCtx(), {
 			contractAddress: contract,
 		});
-		expect(mockedNft.mock.calls[0]?.[2]).toBe('getNFTsForContract');
+		expect(mockedNft).toHaveBeenCalledWith(
+			'eth-mainnet',
+			'test-key',
+			'getNFTsForContract',
+			{ contractAddress: contract },
+		);
 	});
 
 	it('getContractMetadataBatchV3 posts contractAddresses', async () => {
@@ -297,13 +337,28 @@ describe('Alchemy endpoint behavior', () => {
 		);
 	});
 
-	it('getNftMetadataBatch posts tokens body', async () => {
+	it('getNftMetadataBatch posts tokens and batch options', async () => {
 		mockedNft.mockResolvedValueOnce({ nfts: [] });
+		const tokens = [{ contractAddress: contract, tokenId: '1' }];
 		await nft.getNftMetadataBatch(fakeCtx(), {
-			tokens: [{ contractAddress: contract, tokenId: '1' }],
+			tokens,
+			tokenUriTimeoutInMs: 1000,
+			refreshCache: true,
 		});
-		expect(mockedNft.mock.calls[0]?.[2]).toBe('getNFTMetadataBatch');
-		expect(mockedNft.mock.calls[0]?.[4]).toMatchObject({ method: 'POST' });
+		expect(mockedNft).toHaveBeenCalledWith(
+			'eth-mainnet',
+			'test-key',
+			'getNFTMetadataBatch',
+			undefined,
+			{
+				method: 'POST',
+				body: {
+					tokens,
+					tokenUriTimeoutInMs: 1000,
+					refreshCache: true,
+				},
+			},
+		);
 	});
 
 	it('getNftsForOwner maps array query keys', async () => {
@@ -313,11 +368,16 @@ describe('Alchemy endpoint behavior', () => {
 			contractAddresses: ['0xa'],
 			excludeFilters: ['SPAM'],
 		});
-		expect(mockedNft.mock.calls[0]?.[3]).toMatchObject({
-			owner,
-			'contractAddresses[]': ['0xa'],
-			'excludeFilters[]': ['SPAM'],
-		});
+		expect(mockedNft).toHaveBeenCalledWith(
+			'eth-mainnet',
+			'test-key',
+			'getNFTsForOwner',
+			{
+				owner,
+				'contractAddresses[]': ['0xa'],
+				'excludeFilters[]': ['SPAM'],
+			},
+		);
 	});
 
 	it('getPricesBySymbol hits prices by-symbol', async () => {
@@ -342,7 +402,12 @@ describe('Alchemy endpoint behavior', () => {
 			'/tokens/historical',
 			{
 				method: 'POST',
-				body: expect.objectContaining({ symbol: 'ETH', interval: '1d' }),
+				body: expect.objectContaining({
+					symbol: 'ETH',
+					startTime: '2026-08-01T00:00:00Z',
+					endTime: '2026-08-05T00:00:00Z',
+					interval: '1d',
+				}),
 			},
 		);
 	});
@@ -368,32 +433,71 @@ describe('Alchemy endpoint behavior', () => {
 		[
 			'getNftContractsByAddress',
 			'/assets/nfts/contracts/by-address',
+			{ addresses },
 			() => portfolio.getNftContractsByAddress(fakeCtx(), { addresses }),
 		],
 		[
 			'getPortfolioNftsByAddress',
 			'/assets/nfts/by-address',
-			() => portfolio.getPortfolioNftsByAddress(fakeCtx(), { addresses }),
+			{
+				addresses,
+				excludeFilters: ['SPAM'],
+				pageSize: 2,
+			},
+			() =>
+				portfolio.getPortfolioNftsByAddress(fakeCtx(), {
+					addresses,
+					excludeFilters: ['SPAM'],
+					pageSize: 2,
+				}),
 		],
 		[
 			'getTokenBalancesByAddress',
 			'/assets/tokens/balances/by-address',
-			() => portfolio.getTokenBalancesByAddress(fakeCtx(), { addresses }),
+			{
+				addresses,
+				includeNativeTokens: true,
+				includeErc20Tokens: false,
+			},
+			() =>
+				portfolio.getTokenBalancesByAddress(fakeCtx(), {
+					addresses,
+					includeNativeTokens: true,
+					includeErc20Tokens: false,
+				}),
 		],
 		[
 			'getTokensByAddress',
 			'/assets/tokens/by-address',
-			() => portfolio.getTokensByAddress(fakeCtx(), { addresses }),
+			{
+				addresses,
+				withMetadata: true,
+				withPrices: false,
+			},
+			() =>
+				portfolio.getTokensByAddress(fakeCtx(), {
+					addresses,
+					withMetadata: true,
+					withPrices: false,
+				}),
 		],
 		[
 			'getTransactionsHistoryByAddress',
 			'/transactions/history/by-address',
-			() => portfolio.getTransactionsHistoryByAddress(fakeCtx(), { addresses }),
+			{ addresses, limit: 5 },
+			() =>
+				portfolio.getTransactionsHistoryByAddress(fakeCtx(), {
+					addresses,
+					limit: 5,
+				}),
 		],
-	] as const)('%s posts %s', async (_name, path, invoke) => {
+	] as const)('%s posts body to %s', async (_name, path, body, invoke) => {
 		mockedData.mockResolvedValueOnce({ data: {} });
 		await invoke();
-		expect(mockedData.mock.calls[0]?.[1]).toBe(path);
+		const [, calledPath, calledBody] = mockedData.mock.calls[0] ?? [];
+		expect(calledPath).toBe(path);
+		expect(calledBody).toEqual(expect.objectContaining(body));
+		expect(calledBody).toEqual(expect.objectContaining({ addresses }));
 	});
 
 	it('getTokenBalances uses erc20 tokenSpec when omitted', async () => {
@@ -428,6 +532,16 @@ describe('Alchemy endpoint behavior', () => {
 			blockTag: 'latest',
 		});
 		expect(result).toEqual({ count: 16, hex: '0x10' });
+	});
+
+	it('rejects transaction counts beyond Number.MAX_SAFE_INTEGER', async () => {
+		mockedRpc.mockResolvedValueOnce('0x20000000000001');
+		await expect(
+			rpc.getTransactionCount(fakeCtx(), {
+				address: owner,
+				blockTag: 'latest',
+			}),
+		).rejects.toThrow(/MAX_SAFE_INTEGER/);
 	});
 
 	it('rejects invalid network before NFT request', async () => {

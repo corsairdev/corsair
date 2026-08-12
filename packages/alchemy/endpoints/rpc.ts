@@ -19,6 +19,15 @@ export const getTransactionCount: AlchemyEndpoints['rpcGetTransactionCount'] =
 			);
 		}
 
+		// z.number() can't represent values past MAX_SAFE_INTEGER losslessly.
+		const countBig = BigInt(hex);
+		if (countBig > BigInt(Number.MAX_SAFE_INTEGER)) {
+			throw new AlchemyAPIError(
+				`eth_getTransactionCount exceeds Number.MAX_SAFE_INTEGER: ${hex}`,
+				{ status: 502 },
+			);
+		}
+
 		await logEventFromContext(
 			ctx,
 			'alchemy.rpc.getTransactionCount',
@@ -27,7 +36,7 @@ export const getTransactionCount: AlchemyEndpoints['rpcGetTransactionCount'] =
 		);
 
 		return {
-			count: Number.parseInt(hex, 16),
+			count: Number(countBig),
 			hex,
 		};
 	};
