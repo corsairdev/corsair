@@ -25,6 +25,7 @@ export const BaseProviders = [
 	'aimlapi',
 	'airtable',
 	'algolia',
+	'alphavantage',
 	'alttextai',
 	'amara',
 	'ambientweather',
@@ -145,6 +146,7 @@ export const ProviderDisplayNames = {
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
+	alphavantage: 'Alpha Vantage',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
 	ambientweather: 'Ambient Weather',
@@ -272,6 +274,7 @@ export type AllProviders =
 	| 'aimlapi'
 	| 'airtable'
 	| 'algolia'
+	| 'alphavantage'
 	| 'alttextai'
 	| 'amara'
 	| 'ambientweather'
