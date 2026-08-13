@@ -9,15 +9,15 @@ export const GetLinkedinDetailsInputSchema = z.object({
 			(val) => {
 				try {
 					const url = new URL(val);
-					return (
-						url.hostname === 'linkedin.com' ||
-						url.hostname.endsWith('.linkedin.com')
-					);
+					const host = url.hostname.toLowerCase();
+					const hostOk =
+						host === 'linkedin.com' || host.endsWith('.linkedin.com');
+					return hostOk && /^\/in\/[^/]+/i.test(url.pathname);
 				} catch {
 					return false;
 				}
 			},
-			{ message: 'Must be a valid LinkedIn URL' },
+			{ message: 'Must be a valid LinkedIn profile URL' },
 		)
 		.describe('The LinkedIn profile URL of the prospect'),
 });
