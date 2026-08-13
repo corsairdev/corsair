@@ -30,7 +30,6 @@ export const BaseProviders = [
 	'alphavantage',
 	'alttextai',
 	'amara',
-	'ambientweather',
 	'ambee',
 	'ambientweather',
 	'amplitude',
@@ -286,7 +285,6 @@ export type AllProviders =
 	| 'alphavantage'
 	| 'alttextai'
 	| 'amara'
-	| 'ambientweather'
 	| 'ambee'
 	| 'ambientweather'
 	| 'amplitude'

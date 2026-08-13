@@ -2,7 +2,11 @@ import { z } from 'zod';
 import { AeroleadsLinkedinDetails } from '../schema/database';
 
 export const GetLinkedinDetailsInputSchema = z.object({
-	linkedin_url: z.string().describe('The LinkedIn profile URL of the prospect'),
+	linkedin_url: z
+		.string()
+		.url()
+		.includes('linkedin.com')
+		.describe('The LinkedIn profile URL of the prospect'),
 });
 export type GetLinkedinDetailsInput = z.infer<
 	typeof GetLinkedinDetailsInputSchema

@@ -14,31 +14,35 @@ export const AeroleadsLinkedinDetails = z.object({
 	job_company_linkedin_url: z.string().nullable().optional(),
 	job_description: z.string().nullable().optional(),
 	education: z
-		.union([z.string(), z.array(z.any())])
+		.union([z.string(), z.array(z.unknown())])
 		.nullable()
 		.optional(),
 	experience: z
-		.union([z.string(), z.array(z.any())])
+		.union([z.string(), z.array(z.unknown())])
 		.nullable()
 		.optional(),
 	interests: z
-		.union([z.string(), z.array(z.any())])
+		.union([z.string(), z.array(z.unknown())])
 		.nullable()
 		.optional(),
 	skills: z
-		.union([z.string(), z.array(z.any())])
+		.union([z.string(), z.array(z.unknown())])
 		.nullable()
 		.optional(),
 	languages: z
-		.union([z.string(), z.record(z.string(), z.any()), z.array(z.any())])
+		.union([
+			z.string(),
+			z.record(z.string(), z.unknown()),
+			z.array(z.unknown()),
+		])
 		.nullable()
 		.optional(),
 	emails: z
-		.union([z.string(), z.array(z.any())])
+		.union([z.string(), z.array(z.unknown())])
 		.nullable()
 		.optional(),
 	phone_numbers: z
-		.union([z.string(), z.array(z.any())])
+		.union([z.string(), z.array(z.unknown())])
 		.nullable()
 		.optional(),
 	cb_rank: z.string().nullable().optional(),

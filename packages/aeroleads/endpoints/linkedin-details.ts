@@ -5,20 +5,26 @@ import type {
 	GetLinkedinDetailsInput,
 	GetLinkedinDetailsResponse,
 } from './types';
-import { AeroleadsEndpointOutputSchemas } from './types';
+import {
+	AeroleadsEndpointInputSchemas,
+	AeroleadsEndpointOutputSchemas,
+} from './types';
 
 export const LinkedinDetails = {
 	get: async (
 		ctx: AeroleadsContext,
 		input: GetLinkedinDetailsInput,
 	): Promise<GetLinkedinDetailsResponse> => {
+		const parsedInput =
+			AeroleadsEndpointInputSchemas.linkedinDetailsGet.parse(input);
+
 		const rawResponse = await makeAeroleadsRequest<GetLinkedinDetailsResponse>(
 			'/api/get_linkedin_details',
 			ctx.key,
 			{
 				method: 'GET',
 				query: {
-					linkedin_url: input.linkedin_url,
+					linkedin_url: parsedInput.linkedin_url,
 				},
 			},
 		);

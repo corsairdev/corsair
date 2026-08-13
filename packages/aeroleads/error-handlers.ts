@@ -18,6 +18,14 @@ export const errorHandlers = {
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},
+	RATE_LIMIT_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 429) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('rate limit') || msg.includes('too many requests');
+		},
+		handler: async () => ({ maxRetries: 3, delay: 1000 }),
+	},
 	DEFAULT: {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
