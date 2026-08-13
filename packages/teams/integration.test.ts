@@ -4,16 +4,21 @@ import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { teams } from './index';
 
+const hasCredentials = (process.env.TEAMS_ACCESS_TOKEN ?? '').length > 0;
+
+const describeIf = hasCredentials ? describe : describe.skip;
+
+if (!hasCredentials) {
+	console.warn('Skipping Teams integration tests: TEAMS_ACCESS_TOKEN not set');
+}
+
 // DB event payloads are stored as JSON strings or objects; unknown enforces narrowing before use
 function parsePayload(payload: unknown): unknown {
 	return typeof payload === 'string' ? JSON.parse(payload) : payload;
 }
 
 async function createTeamsClient() {
-	const accessToken = process.env.TEAMS_ACCESS_TOKEN;
-	if (!accessToken) {
-		return null;
-	}
+	const accessToken = process.env.TEAMS_ACCESS_TOKEN!;
 
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'teams', 'default');
@@ -27,11 +32,10 @@ async function createTeamsClient() {
 	return { corsair, testDb };
 }
 
-describe('Teams plugin integration', () => {
+describeIf('Teams plugin integration', () => {
 	describe('teams', () => {
 		it('teamsList interacts with API and DB', async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { top: 5 };
@@ -58,7 +62,6 @@ describe('Teams plugin integration', () => {
 
 		it('teamsGet interacts with API and DB', async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const listed = await corsair.teams.api.teams.list({ top: 1 });
@@ -84,7 +87,6 @@ describe('Teams plugin integration', () => {
 
 		it('teamsCreate interacts with API and DB', async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = {
@@ -118,7 +120,6 @@ describe('Teams plugin integration', () => {
 
 		it('teamsUpdate interacts with API and DB', async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const listed = await corsair.teams.api.teams.list({ top: 1 });
@@ -158,7 +159,6 @@ describe('Teams plugin integration', () => {
 
 		beforeAll(async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 			const listed = await corsair.teams.api.teams.list({ top: 1 });
 			teamId = listed.value?.[0]?.id ?? '';
@@ -168,7 +168,6 @@ describe('Teams plugin integration', () => {
 		it('channelsList interacts with API and DB', async () => {
 			if (!teamId) return;
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { teamId };
@@ -199,7 +198,6 @@ describe('Teams plugin integration', () => {
 		it('channelsGet interacts with API and DB', async () => {
 			if (!teamId) return;
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const listed = await corsair.teams.api.channels.list({ teamId });
@@ -227,7 +225,6 @@ describe('Teams plugin integration', () => {
 		it('channelsCreate and channelsUpdate and channelsDelete interact with API and DB', async () => {
 			if (!teamId) return;
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const createInput = {
@@ -297,7 +294,6 @@ describe('Teams plugin integration', () => {
 
 		beforeAll(async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const teamsResult = await corsair.teams.api.teams.list({ top: 1 });
@@ -313,7 +309,6 @@ describe('Teams plugin integration', () => {
 		it('messagesSend, messagesGet, messagesList, messagesReply, messagesListReplies, messagesDelete interact with API and DB', async () => {
 			if (!teamId || !channelId) return;
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const orm = createCorsairOrm(testDb.database);
@@ -431,7 +426,6 @@ describe('Teams plugin integration', () => {
 
 		beforeAll(async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 			const listed = await corsair.teams.api.teams.list({ top: 1 });
 			teamId = listed.value?.[0]?.id ?? '';
@@ -441,7 +435,6 @@ describe('Teams plugin integration', () => {
 		it('membersList and membersGet interact with API and DB', async () => {
 			if (!teamId) return;
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const listInput = { teamId };
@@ -487,7 +480,6 @@ describe('Teams plugin integration', () => {
 		it('membersAdd and membersRemove interact with API and DB', async () => {
 			if (!teamId) return;
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const orm = createCorsairOrm(testDb.database);
@@ -554,7 +546,6 @@ describe('Teams plugin integration', () => {
 	describe('chats', () => {
 		it('chatsList and chatsGet interact with API and DB', async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const listInput = { top: 5 };
@@ -596,7 +587,6 @@ describe('Teams plugin integration', () => {
 
 		it('chatsCreate interacts with API and DB', async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const me = (await fetch('https://graph.microsoft.com/v1.0/me', {
@@ -649,7 +639,6 @@ describe('Teams plugin integration', () => {
 
 		it('chatsListMessages and chatsSendMessage interact with API and DB', async () => {
 			const setup = await createTeamsClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const listed = await corsair.teams.api.chats.list({ top: 1 });
