@@ -22,6 +22,7 @@ function mockFetch(response: {
 	body?: unknown;
 	headers?: Record<string, string>;
 	text?: string;
+	bytes?: Uint8Array;
 }) {
 	captured = undefined;
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
@@ -54,6 +55,10 @@ function mockFetch(response: {
 			headers: headerMap,
 			json: async () => response.body ?? {},
 			text: async () => response.text ?? JSON.stringify(response.body ?? {}),
+			arrayBuffer: async () =>
+				response.bytes
+					? response.bytes.slice().buffer
+					: new Uint8Array().buffer,
 			clone() {
 				return this;
 			},
@@ -158,5 +163,22 @@ describe('makeSalesforceRequest', () => {
 		);
 		expect(new URL(captured?.url ?? '').origin).toBe(instanceUrl);
 		expect(captured?.url).toContain('/query/01gxx');
+	});
+
+	it('returns VersionData as raw bytes', async () => {
+		const bytes = Uint8Array.from([0xff, 0xd8, 0xff, 0xe0, 0x00, 0x10]);
+		mockFetch({
+			bytes,
+			headers: { 'content-type': 'application/octet-stream' },
+		});
+		const buf = await makeSalesforceRequest(
+			'sobjects/ContentVersion/068xx/VersionData',
+			'token',
+			{ instanceUrl, responseType: 'binary' },
+		);
+		expect(Buffer.from(buf as Buffer)).toEqual(Buffer.from(bytes));
+		expect(captured?.headers.accept ?? captured?.headers.Accept).toContain(
+			'octet-stream',
+		);
 	});
 });

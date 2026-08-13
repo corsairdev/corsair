@@ -100,6 +100,9 @@ jest.mock('./client', () => ({
 			if (endpoint.includes('composite')) {
 				return { hasErrors: false, results: [], graphs: [], records: [] };
 			}
+			if (endpoint.includes('VersionData')) {
+				return Buffer.from('sample content');
+			}
 			if (
 				endpoint.includes('ContentVersion') ||
 				endpoint.includes('ContentDocument')

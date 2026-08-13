@@ -4,7 +4,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 /**
  * REST API version used in `/services/data/vXX.X/…` paths.
@@ -60,7 +60,7 @@ export type SalesforceRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 	headers?: Record<string, string>;
 	instanceUrl?: string;
-	responseType?: 'json' | 'text';
+	responseType?: 'json' | 'text' | 'binary';
 	mediaType?: string;
 };
 
@@ -165,6 +165,44 @@ export async function makeSalesforceRequest<T>(
 	}
 
 	const method = options.method ?? 'GET';
+	const origin = originOf(endpoint, instanceUrl);
+	const path = toPath(endpoint);
+	const authorization = apiKey.startsWith('Bearer ')
+		? apiKey
+		: `Bearer ${apiKey}`;
+
+	if (options.responseType === 'binary') {
+		const url = `${origin}${path}`;
+		const res = await fetch(url, {
+			method,
+			headers: {
+				Accept: 'application/octet-stream',
+				Authorization: authorization,
+				...options.headers,
+			},
+		});
+		if (!res.ok) {
+			let body: unknown;
+			try {
+				body = await res.json();
+			} catch {
+				body = await res.text();
+			}
+			throw new ApiError(
+				{ method, url: path },
+				{
+					url,
+					ok: false,
+					status: res.status,
+					statusText: res.statusText,
+					body,
+				},
+				res.statusText,
+			);
+		}
+		return Buffer.from(await res.arrayBuffer()) as T;
+	}
+
 	const hasJsonBody =
 		method === 'POST' || method === 'PUT' || method === 'PATCH';
 	const mediaType =
@@ -175,12 +213,12 @@ export async function makeSalesforceRequest<T>(
 
 	const headers: Record<string, string> = {
 		Accept: 'application/json',
-		Authorization: apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`,
+		Authorization: authorization,
 		...options.headers,
 	};
 
 	const config: OpenAPIConfig = {
-		BASE: originOf(endpoint, instanceUrl),
+		BASE: origin,
 		VERSION: SALESFORCE_API_VERSION,
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -190,7 +228,7 @@ export async function makeSalesforceRequest<T>(
 
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: toPath(endpoint),
+		url: path,
 		body: hasJsonBody ? options.body : undefined,
 		mediaType,
 		query: compactQuery(options.query),

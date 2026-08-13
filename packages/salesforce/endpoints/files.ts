@@ -7,22 +7,11 @@ export const getFileContent: SalesforceEndpoints['getFileContent'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await salesforceCall<string | ArrayBuffer | Buffer>(
+	const bytes = await salesforceCall<Buffer>(
 		ctx,
 		`sobjects/ContentVersion/${input.fileId}/VersionData`,
-		{ method: 'GET', responseType: 'text' },
+		{ method: 'GET', responseType: 'binary' },
 	);
-
-	let contentStr: string;
-	if (typeof response === 'string') {
-		contentStr = response;
-	} else if (Buffer.isBuffer(response)) {
-		contentStr = response.toString('base64');
-	} else if (response instanceof ArrayBuffer) {
-		contentStr = Buffer.from(response).toString('base64');
-	} else {
-		contentStr = String(response);
-	}
 
 	await logEventFromContext(
 		ctx,
@@ -30,7 +19,7 @@ export const getFileContent: SalesforceEndpoints['getFileContent'] = async (
 		input,
 		'completed',
 	);
-	return { content: contentStr };
+	return { content: Buffer.from(bytes).toString('base64') };
 };
 
 export const getFileInformation: SalesforceEndpoints['getFileInformation'] =
