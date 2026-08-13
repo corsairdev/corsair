@@ -88,6 +88,24 @@ describe('OCR.space input schemas', () => {
 		).not.toThrow();
 	});
 
+	it('rejects "auto" on engine 1, which the provider does not support', () => {
+		expect(() =>
+			OcrSpaceEndpointInputSchemas.parseImageUrl.parse({
+				url: 'https://example.com/receipt.jpg',
+				language: 'auto',
+				OCREngine: 1,
+			}),
+		).toThrow(/OCREngine 2 or 3/);
+
+		// Omitted OCREngine defaults to 1 on the wire.
+		expect(() =>
+			OcrSpaceEndpointInputSchemas.parse.parse({
+				url: 'https://example.com/receipt.jpg',
+				language: 'auto',
+			}),
+		).toThrow(/OCREngine 2 or 3/);
+	});
+
 	it('rejects an OCR engine outside 1-3', () => {
 		expect(() =>
 			OcrSpaceEndpointInputSchemas.parseImageUrl.parse({
@@ -350,6 +368,19 @@ describe('assertOcrSuccess', () => {
 			}),
 		).toThrow(/Unsupported file type/);
 	});
+
+	it('uses a later page error when page 0 has none', () => {
+		expect(() =>
+			assertOcrSuccess({
+				OCRExitCode: 3,
+				IsErroredOnProcessing: true,
+				ParsedResults: [
+					{ FileParseExitCode: 1, ParsedText: 'ok' },
+					{ FileParseExitCode: -10, ErrorMessage: 'Page two timed out' },
+				],
+			}),
+		).toThrow(/Page two timed out/);
+	});
 });
 
 describe('flattenOcrErrorMessage', () => {
@@ -381,6 +412,20 @@ describe('error handler classification', () => {
 		return new OcrSpaceAPIError(message, { ocrExitCode: exitCode });
 	}
 
+	function httpError(
+		status: number,
+		message: string,
+		body?: unknown,
+	): Error & { status: number; body?: unknown } {
+		const error = new Error(message) as Error & {
+			status: number;
+			body?: unknown;
+		};
+		error.status = status;
+		error.body = body;
+		return error;
+	}
+
 	it('treats a daily quota message as a rate limit', () => {
 		expect(
 			classify(
@@ -389,6 +434,39 @@ describe('error handler classification', () => {
 				),
 			),
 		).toBe('RATE_LIMIT_ERROR');
+	});
+
+	it('treats HTTP 403 throttle as a rate limit, not a bad API key', () => {
+		// OCR.space throttling is HTTP 403. The transport sets message to
+		// "Forbidden"; the real phrase lives on the body.
+		expect(
+			classify(
+				httpError(
+					403,
+					'Forbidden',
+					'You may only perform this action upto maximum 10 number of times within 600 seconds',
+				),
+			),
+		).toBe('RATE_LIMIT_ERROR');
+
+		expect(classify(httpError(403, 'Forbidden'))).toBe('RATE_LIMIT_ERROR');
+	});
+
+	it('does not treat HTTP 403 as an auth failure', () => {
+		expect(classify(httpError(403, 'Forbidden'))).not.toBe('AUTH_ERROR');
+		expect(classify(httpError(401, 'Unauthorized'))).toBe('AUTH_ERROR');
+	});
+
+	it('does not retry a monthly conversion limit as a rate limit', () => {
+		expect(classify(bodyError('Monthly conversion limit reached'))).toBe(
+			'BAD_REQUEST_ERROR',
+		);
+	});
+
+	it('does not treat a "429" buried in a file-size message as a rate limit', () => {
+		expect(
+			classify(bodyError('File size 429kb exceeds the maximum allowed')),
+		).toBe('BAD_REQUEST_ERROR');
 	});
 
 	it('does not treat a file size rejection as a rate limit', () => {
