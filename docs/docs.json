@@ -347,11 +347,7 @@
               },
               {
                 "group": "ApiLabz",
-                "pages": [
-                  "plugins/apilabz/overview",
-                  "plugins/apilabz/api",
-                  "plugins/apilabz/database"
-                ]
+                "pages": ["plugins/apilabz/overview", "plugins/apilabz/api"]
               },
               {
                 "group": "Asana",
