@@ -44,8 +44,8 @@ const NOT_FOUND_CODES = new Set([
  */
 export const errorHandlers = {
 	/**
-	 * 300 requests / 5 minutes per User Profile. 1,000 429s in 24 hours
-	 * suspends the profile, so retries stay small.
+	 * Transport already retries a 429 (client maxRetries: 2). Returning
+	 * another budget here would re-invoke the endpoint and multiply that.
 	 */
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
@@ -53,14 +53,7 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('too many requests') || msg.includes('rate limit');
 		},
-		handler: async (error) => {
-			const retryAfterMs =
-				error instanceof ApiError ? error.retryAfter : undefined;
-			return {
-				maxRetries: 2,
-				headersRetryAfterMs: retryAfterMs,
-			};
-		},
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error) => {

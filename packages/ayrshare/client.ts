@@ -17,7 +17,7 @@ export const AYRSHARE_API_BASE = 'https://api.ayrshare.com/api';
  *
  * Ayrshare answers a 429 with `x-ratelimit-count` / `x-ratelimit-max` and does
  * not document `Retry-After`. 1,000 429s in 24 hours suspends the profile, so
- * the retry budget is small — backoff, then surface the error.
+ * this is the only 429 retry layer — the plugin handler must not add another.
  *
  * Docs: https://www.ayrshare.com/docs/errors/errors-http
  */

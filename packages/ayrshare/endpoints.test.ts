@@ -5,7 +5,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { deletePost, history, list, set } from './endpoints/handlers';
-import { ayrshareErrorCode, isNonIdempotent } from './error-handlers';
+import {
+	ayrshareErrorCode,
+	errorHandlers,
+	isNonIdempotent,
+} from './error-handlers';
 import { ayrshareEndpointMeta } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -279,6 +283,12 @@ describe('ayrshareErrorCode', () => {
 			'Delete id not found',
 		);
 		expect(ayrshareErrorCode(error)).toBe(114);
+	});
+
+	it('does not stack a second 429 retry budget on the plugin layer', async () => {
+		expect(await errorHandlers.RATE_LIMIT_ERROR.handler()).toEqual({
+			maxRetries: 0,
+		});
 	});
 });
 
