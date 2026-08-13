@@ -31,6 +31,7 @@ export const BaseProviders = [
 	'amara',
 	'ambientweather',
 	'ambee',
+	'amcards',
 	'amplitude',
 	'apibible',
 	'apify',
@@ -154,6 +155,7 @@ export const ProviderDisplayNames = {
 	amara: 'Amara',
 	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	apibible: 'API.Bible',
 	apify: 'Apify',
@@ -284,6 +286,7 @@ export type AllProviders =
 	| 'amara'
 	| 'ambientweather'
 	| 'ambee'
+	| 'amcards'
 	| 'amplitude'
 	| 'apibible'
 	| 'apify'
