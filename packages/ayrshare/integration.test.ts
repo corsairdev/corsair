@@ -2,10 +2,10 @@
  * Live checks against a real Ayrshare account.
  *
  * Skipped unless `AYRSHARE_API_KEY` is set. History on an unused account is
- * an HTTP 400 (code 221) rather than an empty array — that is the official
- * empty-state, so it is asserted rather than papered over. The write covered
- * here is an auto-schedule titled `CorsairVerify`, which is deleted in
- * `afterAll`.
+ * an HTTP 400 (code 221) rather than an empty array; an account with posts
+ * returns a history payload instead. Both shapes are asserted. The write
+ * covered here is an auto-schedule titled `CorsairVerify`, which is deleted
+ * in `afterAll`.
  */
 import { ApiError } from 'corsair/http';
 import { makeAyrshareRequest } from './client';
@@ -66,15 +66,23 @@ describeLive('Ayrshare live API', () => {
 		}
 	});
 
-	it('returns HTTP 400 code 221 when there is no history', async () => {
-		const error = await history(makeCtx(), {
+	it('returns HTTP 400 code 221 when empty, or a schema-valid history', async () => {
+		const outcome = await history(makeCtx(), {
 			limit: 5,
 			lastDays: 0,
-		}).catch((e) => e);
+		}).then(
+			(value) => ({ ok: true as const, value }),
+			(error: unknown) => ({ ok: false as const, error }),
+		);
 
-		expect(error).toBeInstanceOf(ApiError);
-		expect((error as ApiError).status).toBe(400);
-		expect(ayrshareErrorCode(error)).toBe(221);
+		if (outcome.ok) {
+			expect(() => Outputs.getPostHistory.parse(outcome.value)).not.toThrow();
+			return;
+		}
+
+		expect(outcome.error).toBeInstanceOf(ApiError);
+		expect((outcome.error as ApiError).status).toBe(400);
+		expect(ayrshareErrorCode(outcome.error as Error)).toBe(221);
 	});
 
 	it('sets, lists and caches an auto-schedule matching the declared schema', async () => {

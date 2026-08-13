@@ -140,6 +140,7 @@ describe('makeAyrshareRequest', () => {
 	});
 
 	it('retries a 429 and leaves the eventual ApiError unwrapped', async () => {
+		jest.useFakeTimers();
 		mockFetchSequence([
 			{
 				status: 429,
@@ -158,13 +159,19 @@ describe('makeAyrshareRequest', () => {
 			},
 		]);
 
-		const error = await makeAyrshareRequest('history', 'test-key').catch(
-			(e) => e,
-		);
+		try {
+			const pending = makeAyrshareRequest('history', 'test-key').catch(
+				(e) => e,
+			);
+			await jest.runAllTimersAsync();
+			const error = await pending;
 
-		expect(error).toBeInstanceOf(ApiError);
-		expect((error as ApiError).status).toBe(429);
-		expect(attempts).toBe(3);
+			expect(error).toBeInstanceOf(ApiError);
+			expect((error as ApiError).status).toBe(429);
+			expect(attempts).toBe(3);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 });
 

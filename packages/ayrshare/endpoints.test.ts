@@ -64,6 +64,7 @@ const LIST_BODY = {
 	status: 'success',
 	schedules: {
 		CorsairVerify: {
+			title: 'other-title',
 			schedule: ['13:05Z', '20:14Z'],
 			excludeDates: ['2026-12-25'],
 			daysOfWeek: [1, 3],

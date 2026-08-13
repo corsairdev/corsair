@@ -161,8 +161,8 @@ export const list: AyrshareEndpoints['listAutoSchedules'] = async (
 		ctx.db.autoSchedules,
 		AyrshareAutoSchedule,
 		Object.entries(result.schedules ?? {}).map(([title, value]) => ({
-			title,
 			...value,
+			title,
 		})),
 		{ label: 'auto-schedule', entityId: titleAsId },
 	);
