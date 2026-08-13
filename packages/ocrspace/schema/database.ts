@@ -15,7 +15,8 @@ export const OcrResult = z.object({
 	updatedAt: z.coerce.date().optional(),
 });
 
-// Monthly conversion counters from the PRO-only statistics endpoint.
+// Monthly conversion counters. Opened to free-plan keys in May 2026;
+// invalid keys still return zeros rather than an error.
 export const ConversionStats = z.object({
 	engine1: z.number().nullable().optional(),
 	engine2: z.number().nullable().optional(),
