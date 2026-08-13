@@ -22,7 +22,7 @@ Some characteristics of Development:
 - **Auto-detected delivery URL.** The SDK figures out where your handler lives from `CORSAIR_DELIVERY_URL` or `PORT`. You do not configure this in the dashboard.
 - **Separate credentials.** Development has its own API key and signing secret. They are shown on the **Keys** tab when the environment picker is set to Development.
 - **Relaxed setup.** No "activate" step. As long as your app is running locally and you are using `ck_dev_…` keys, connect flows work.
-- **All configured plugins available.** Useful for trying integrations before you ship. Production may ask you to choose which Corsair-managed integrations to enable — see [Hub dashboard](/hub/dashboard#corsair-managed-integrations).
+- **Managed OAuth depends on eligibility.** In development you can try every configured plugin, but a Corsair-managed OAuth app only works when that provider is eligible for your plan. If the provider's OAuth page returns an error (for example a GitHub 404), that provider is not Corsair-managed for your project, so use bring-your-own — see [Hub dashboard](/hub/dashboard#corsair-managed-integrations).
 
 Development is for building and testing on your machine. It is not a substitute for a deployed production setup.
 

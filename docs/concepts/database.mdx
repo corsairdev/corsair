@@ -489,6 +489,10 @@ Because Corsair updates `corsair_entities` on every API call and webhook, foreig
 
 Corsair runs on **your** database. Pass a connection to `createCorsair` — it works alongside whatever ORM you already use for your own tables.
 
+<Warning>
+`createCorsair` takes a database **connection**, not an ORM client. Pass a `pg` `Pool`, a `better-sqlite3` instance, a `postgres.js` `Sql`, or a typed `Kysely` instance — never a `PrismaClient`. If you use Prisma or Drizzle for your own tables, hand Corsair the underlying `Pool` they wrap.
+</Warning>
+
 <Tabs>
 <Tab title="SQLite">
 
