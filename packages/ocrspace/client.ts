@@ -94,10 +94,14 @@ export function assertOcrSuccess(response: OcrResponse): void {
 		return;
 	}
 
+	const pageError = (response.ParsedResults ?? [])
+		.map((result) => flattenOcrErrorMessage(result.ErrorMessage))
+		.find((value) => value !== undefined);
+
 	const message =
 		flattenOcrErrorMessage(response.ErrorMessage) ??
 		response.ErrorDetails ??
-		flattenOcrErrorMessage(response.ParsedResults?.[0]?.ErrorMessage) ??
+		pageError ??
 		'OCR.space failed to process the request';
 
 	throw new OcrSpaceAPIError(message, {
