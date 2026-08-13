@@ -63,7 +63,12 @@ describe('makeAmcardsRequest', () => {
 		const [, , reqOpts] = mockRequest.mock.calls.at(-1) as unknown as [
 			OpenAPIConfig,
 			ApiRequestOptions,
-			{ rateLimitConfig: { maxRetries: number; isRateLimitError: (s: number) => boolean } },
+			{
+				rateLimitConfig: {
+					maxRetries: number;
+					isRateLimitError: (s: number) => boolean;
+				};
+			},
 		];
 		expect(reqOpts.rateLimitConfig.maxRetries).toBe(3);
 		expect(reqOpts.rateLimitConfig.isRateLimitError(503)).toBe(true);
