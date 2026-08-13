@@ -150,10 +150,10 @@ describeLive('Harvest live API', () => {
 			currency: 'USD',
 		});
 
-		expect(() => Outputs.clientsCreate.parse(created)).not.toThrow();
-		expect(created.id).toEqual(expect.any(Number));
-
 		try {
+			expect(() => Outputs.clientsCreate.parse(created)).not.toThrow();
+			expect(created.id).toEqual(expect.any(Number));
+
 			const updated = await Clients.update(ctx, {
 				client_id: created.id,
 				address: '1 Verify St',
