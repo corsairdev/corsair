@@ -5,10 +5,6 @@ function getStatus(error: Error): number | undefined {
 	return (error as Partial<AmcardsAPIError>).status;
 }
 
-function getRetryAfter(error: Error): number | undefined {
-	return (error as Partial<AmcardsAPIError>).retryAfter;
-}
-
 /**
  * AMcards is a Django REST API. Status codes are the contract; message
  * heuristics only run when no status is present.
@@ -21,11 +17,9 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('429') || msg.includes('rate limit');
 		},
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-			headersRetryAfterMs: getRetryAfter(error),
-		}),
+		// Transport already retries 429s (AMCARDS_RATE_LIMIT_CONFIG). Don't
+		// start a second budget here or one call fans out to ~16 requests.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {

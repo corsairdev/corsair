@@ -131,13 +131,11 @@ function route(error: Error): string {
 }
 
 describe('errorHandlers', () => {
-	it('routes a 429 to rate-limit with Retry-After', async () => {
+	it('routes a 429 to rate-limit and does not stack a second retry budget', async () => {
 		const error = amcardsError(429, 2000);
 		expect(route(error)).toBe('RATE_LIMIT_ERROR');
-		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toEqual({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff',
-			headersRetryAfterMs: 2000,
+		expect(await errorHandlers.RATE_LIMIT_ERROR.handler()).toEqual({
+			maxRetries: 0,
 		});
 	});
 
