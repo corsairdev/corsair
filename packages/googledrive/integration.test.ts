@@ -183,4 +183,27 @@ describe('Google Drive plugin integration', () => {
 
 		testDb.cleanup();
 	});
+
+	it('storage endpoints reach API', async () => {
+		const setup = await createGoogleDriveClient();
+		if (!setup) {
+			return;
+		}
+
+		const { corsair, testDb } = setup;
+
+		const quotaResponse = await corsair.googledrive.api.storage.getQuota({});
+
+		expect(quotaResponse).toBeDefined();
+		expect(quotaResponse.usage).toBeDefined();
+
+		const quotaEvents = await testDb.db
+			.selectFrom('corsair_events')
+			.where('event_type', '=', 'googledrive.storage.getQuota')
+			.execute();
+
+		expect(quotaEvents.length).toBeGreaterThan(0);
+
+		testDb.cleanup();
+	});
 });
