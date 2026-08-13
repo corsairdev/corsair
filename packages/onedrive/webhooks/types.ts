@@ -186,7 +186,7 @@ export function verifyOnedriveClientState(
 	if (!notification.clientState) {
 		return { valid: false, error: 'Missing clientState in notification' };
 	}
-	const aBuf = Buffer.from(notification.clientState);
+	const aBuf = Buffer.from(String(notification.clientState));
 	const bBuf = Buffer.from(expectedClientState);
 	if (aBuf.length !== bBuf.length) {
 		return { valid: false, error: 'clientState mismatch' };
