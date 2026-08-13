@@ -55,6 +55,13 @@ async function cacheResult(
 	},
 	response: OcrResponse,
 ): Promise<void> {
+	// OCRExitCode 2 is a partial PDF: some pages parsed, some did not.
+	// Caching that as a complete result would serve incomplete text on a later
+	// read. Callers still get the partial payload back from the endpoint.
+	if (response.OCRExitCode === 2) {
+		return;
+	}
+
 	const engine = input.OCREngine ?? 1;
 	const language = input.language ?? 'eng';
 	// Engine and language change the extracted text, so they are part of the
