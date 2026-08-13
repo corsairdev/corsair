@@ -1,8 +1,13 @@
 /**
- * Escapes special characters in string values to safely construct SOQL queries.
+ * Escapes special characters in string values to safely construct SOQL queries,
+ * including LIKE wildcards (`%`, `_`).
  */
 export function escapeSoql(value: string): string {
-	return value.replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+	return value
+		.replace(/\\/g, '\\\\')
+		.replace(/'/g, "\\'")
+		.replace(/%/g, '\\%')
+		.replace(/_/g, '\\_');
 }
 
 /**
@@ -17,21 +22,14 @@ export function parseCsvRecords(
 	}
 
 	if (typeof response === 'string' && response.trim().length > 0) {
-		const lines = response.trim().split(/\r?\n/);
-		if (lines.length <= 1) return [];
+		const rows = parseCsvRows(response);
+		const headers = rows[0];
+		if (!headers || rows.length <= 1) return [];
 
-		const firstLine = lines[0];
-		if (!firstLine) return [];
-
-		const headers = parseCsvLine(firstLine);
 		const records: Array<Record<string, unknown>> = [];
-
-		for (let i = 1; i < lines.length; i++) {
-			const rawLine = lines[i];
-			if (!rawLine) continue;
-			const line = rawLine.trim();
-			if (!line) continue;
-			const values = parseCsvLine(line);
+		for (let i = 1; i < rows.length; i++) {
+			const values = rows[i];
+			if (!values || values.every((value) => value === '')) continue;
 			const record: Record<string, unknown> = {};
 			for (let j = 0; j < headers.length; j++) {
 				const header = headers[j];
@@ -47,29 +45,50 @@ export function parseCsvRecords(
 	return [];
 }
 
-function parseCsvLine(line: string): string[] {
-	const result: string[] = [];
+function parseCsvRows(text: string): string[][] {
+	const rows: string[][] = [];
+	let row: string[] = [];
 	let current = '';
 	let inQuotes = false;
 
-	for (let i = 0; i < line.length; i++) {
-		const char = line[i];
-		if (char === '"') {
-			if (inQuotes && line[i + 1] === '"') {
-				current += '"';
-				i++;
+	for (let i = 0; i < text.length; i++) {
+		const char = text[i];
+		if (inQuotes) {
+			if (char === '"') {
+				if (text[i + 1] === '"') {
+					current += '"';
+					i++;
+				} else {
+					inQuotes = false;
+				}
 			} else {
-				inQuotes = !inQuotes;
+				current += char;
 			}
-		} else if (char === ',' && !inQuotes) {
-			result.push(current.trim());
-			current = '';
-		} else {
-			current += char;
+			continue;
 		}
+		if (char === '"') {
+			inQuotes = true;
+			continue;
+		}
+		if (char === ',') {
+			row.push(current.trim());
+			current = '';
+			continue;
+		}
+		if (char === '\n' || char === '\r') {
+			if (char === '\r' && text[i + 1] === '\n') i++;
+			row.push(current.trim());
+			current = '';
+			if (row.some((value) => value !== '')) rows.push(row);
+			row = [];
+			continue;
+		}
+		current += char;
 	}
-	result.push(current.trim());
-	return result;
+
+	row.push(current.trim());
+	if (row.some((value) => value !== '')) rows.push(row);
+	return rows;
 }
 
 /** Keeps only fields Salesforce reports as createable on the sObject. */

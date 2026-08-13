@@ -1,5 +1,10 @@
 import { flattenFields } from './endpoints/shared';
-import { cloneableFields, soqlWhere } from './utils';
+import {
+	cloneableFields,
+	escapeSoql,
+	parseCsvRecords,
+	soqlWhere,
+} from './utils';
 import { resolveSalesforceOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import {
 	createSalesforceChangeMatch,
@@ -14,6 +19,20 @@ describe('flattenFields', () => {
 				CustomFields: { Region__c: 'West' },
 			}),
 		).toEqual({ Name: 'Acme', Region__c: 'West' });
+	});
+});
+
+describe('escapeSoql', () => {
+	it('escapes quotes, backslashes, and LIKE wildcards', () => {
+		expect(escapeSoql("O'Brien%_")).toBe("O\\'Brien\\%\\_");
+	});
+});
+
+describe('parseCsvRecords', () => {
+	it('keeps quoted newlines inside a single record', () => {
+		expect(parseCsvRecords('Name,Notes\n"Acme","line1\nline2"\n')).toEqual([
+			{ Name: 'Acme', Notes: 'line1\nline2' },
+		]);
 	});
 });
 
