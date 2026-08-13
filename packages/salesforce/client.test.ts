@@ -156,7 +156,7 @@ describe('makeSalesforceRequest', () => {
 			'token',
 			{ instanceUrl },
 		);
-		expect(captured?.url.startsWith(instanceUrl)).toBe(true);
+		expect(new URL(captured?.url ?? '').origin).toBe(instanceUrl);
 		expect(captured?.url).toContain('/query/01gxx');
 	});
 });

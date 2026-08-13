@@ -2593,10 +2593,10 @@ export function salesforce<const T extends SalesforcePluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
-	const loginHost = (options.loginUrl ?? SALESFORCE_LOGIN_HOST).replace(
-		/\/+$/,
-		'',
-	);
+	let loginHost = options.loginUrl ?? SALESFORCE_LOGIN_HOST;
+	while (loginHost.endsWith('/')) {
+		loginHost = loginHost.slice(0, -1);
+	}
 	return {
 		id: 'salesforce',
 		authConfig: salesforceAuthConfig,
