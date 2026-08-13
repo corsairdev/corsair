@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
 	OpenAPIConfig,
@@ -93,11 +94,15 @@ export async function makeAmcardsRequest<T>(
 	const { method = 'GET', body, query, auth = true } = options;
 	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
+	if (auth && !apiKey) {
+		throw new AuthMissingError('amcards', 'api_key');
+	}
+
 	const headers: Record<string, string> = {
 		Accept: 'application/json',
 		'Content-Type': 'application/json',
 	};
-	if (auth && apiKey) {
+	if (auth) {
 		headers.Authorization = `Token ${apiKey}`;
 	}
 

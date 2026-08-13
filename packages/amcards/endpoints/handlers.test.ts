@@ -168,4 +168,24 @@ describe('amcards keyBuilder', () => {
 			plugin.keyBuilder!({ authType: 'api_key' } as never, 'endpoint'),
 		).resolves.toBe('tok');
 	});
+
+	it('returns empty string when no key so public gifts/templates can run', async () => {
+		const plugin = amcards();
+		await expect(
+			plugin.keyBuilder!({ authType: 'api_key' } as never, 'endpoint'),
+		).resolves.toBe('');
+	});
+
+	it('uses the account key manager when present', async () => {
+		const plugin = amcards();
+		await expect(
+			plugin.keyBuilder!(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => 'from-account' },
+				} as never,
+				'endpoint',
+			),
+		).resolves.toBe('from-account');
+	});
 });

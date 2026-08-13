@@ -226,19 +226,15 @@ export function amcards(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AmcardsKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('amcards', 'api_key');
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys?.get_api_key();
-				if (!res) {
-					throw new AuthMissingError('amcards', 'api_key');
-				}
-				return res;
-			}
-
-			throw new AuthMissingError('amcards', 'api_key');
+			if (options.key) return options.key;
+			// Gifts/templates are public; keyBuilder isn't given the endpoint
+			// path, so a missing key is '' here. Protected routes throw
+			// AuthMissingError in makeAmcardsRequest when auth is required.
+			const res = await ctx.keys?.get_api_key();
+			return res ?? '';
 		},
 	} satisfies InternalAmcardsPlugin;
 }

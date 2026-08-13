@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 import {
@@ -64,6 +65,21 @@ describe('makeAmcardsRequest', () => {
 		const [config] = lastCall();
 		expect(config.HEADERS).not.toHaveProperty('Authorization');
 		expect(config.TOKEN).toBeUndefined();
+	});
+
+	it('lets public routes through with no key', async () => {
+		mockRequest.mockResolvedValue([]);
+
+		await makeAmcardsRequest('gifts/', '', { auth: false });
+
+		expect(lastCall()[0].HEADERS).not.toHaveProperty('Authorization');
+	});
+
+	it('throws AuthMissingError when a protected route has no key', async () => {
+		await expect(makeAmcardsRequest('cards/', '')).rejects.toBeInstanceOf(
+			AuthMissingError,
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
 	it('drops undefined query keys and maps the path', async () => {
