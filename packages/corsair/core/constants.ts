@@ -157,7 +157,6 @@ export const ProviderDisplayNames = {
 	amara: 'Amara',
 	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
-	ambientweather: 'Ambient Weather',
 	amplitude: 'Amplitude',
 	apibible: 'API.Bible',
 	apify: 'Apify',
