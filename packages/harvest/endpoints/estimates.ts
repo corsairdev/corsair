@@ -173,11 +173,14 @@ export const listMessages: HarvestEndpoints['estimateMessagesList'] = async (
 };
 
 /**
- * Creates an estimate message.
+ * Creates an estimate message, and sends it when no `event_type` is given.
  *
- * `send` emails the recipients and marks the estimate sent. `accept`, `decline`
- * and `re-open` only move the estimate through its state machine and send
- * nothing.
+ * As with invoice messages, the absence of `event_type` is what reaches the
+ * client. Supplying one runs a state event: `send` marks a draft estimate as
+ * sent, and `accept`, `decline` and `re-open` move it through the rest of its
+ * state machine.
+ *
+ * @see https://help.getharvest.com/api-v2/estimates-api/estimates/estimate-messages/
  */
 export const createMessage: HarvestEndpoints['estimateMessagesCreate'] = async (
 	ctx,

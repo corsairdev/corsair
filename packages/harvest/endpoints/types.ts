@@ -558,22 +558,47 @@ export const HarvestEndpointInputSchemas = {
 		...ListQuery,
 	}),
 	/**
-	 * `event_type` drives the invoice's state machine. `send` mails the
-	 * recipients; `close`, `re-open` and `draft` only change state.
+	 * This endpoint is two operations sharing one route, and `event_type` is what
+	 * selects between them - the opposite way round to what the name suggests.
+	 *
+	 * Omitting `event_type` is "create and send an invoice message": this is the
+	 * call that emails the client. Supplying one runs a state event instead -
+	 * `send` is "mark a draft invoice as sent", which records that it went out
+	 * without sending anything, and `close`, `re-open` and `draft` likewise only
+	 * move the invoice.
+	 *
+	 * Harvest rejects a send with nowhere to go - no recipients and no copy to
+	 * self - so that combination is refused here rather than round-tripped, and
+	 * an explicitly empty `recipients` is refused as the same mistake stated
+	 * outright.
+	 *
+	 * @see https://help.getharvest.com/api-v2/invoices-api/invoices/invoice-messages/
 	 */
-	invoiceMessagesCreate: z.object({
-		invoice_id: z.number().int(),
-		event_type: z.enum(['send', 'close', 're-open', 'draft']).optional(),
-		subject: z.string().optional(),
-		body: z.string().optional(),
-		include_link_to_client_invoice: z.boolean().optional(),
-		attach_pdf: z.boolean().optional(),
-		send_me_a_copy: z.boolean().optional(),
-		thank_you: z.boolean().optional(),
-		recipients: z
-			.array(z.object({ name: z.string().optional(), email: z.email() }))
-			.optional(),
-	}),
+	invoiceMessagesCreate: z
+		.object({
+			invoice_id: z.number().int(),
+			event_type: z.enum(['send', 'close', 're-open', 'draft']).optional(),
+			subject: z.string().optional(),
+			body: z.string().optional(),
+			include_link_to_client_invoice: z.boolean().optional(),
+			attach_pdf: z.boolean().optional(),
+			send_me_a_copy: z.boolean().optional(),
+			thank_you: z.boolean().optional(),
+			recipients: z
+				.array(z.object({ name: z.string().optional(), email: z.email() }))
+				.min(1)
+				.optional(),
+		})
+		.refine(
+			(value) =>
+				value.event_type !== undefined ||
+				(value.recipients?.length ?? 0) > 0 ||
+				value.send_me_a_copy === true,
+			{
+				message:
+					'Sending an invoice message needs at least one recipient, or send_me_a_copy. Pass an event_type to run a state event instead.',
+			},
+		),
 	invoiceMessagesDelete: z.object({
 		invoice_id: z.number().int(),
 		message_id: z.number().int(),
@@ -638,19 +663,35 @@ export const HarvestEndpointInputSchemas = {
 		...ListQuery,
 	}),
 	/**
-	 * `send` mails the recipients; `accept`, `decline` and `re-open` only move
-	 * the estimate through its state machine.
+	 * Same split as `invoiceMessagesCreate`: omitting `event_type` is "create an
+	 * estimate message", the call that reaches the client, while supplying one
+	 * runs a state event - `send` marks a draft estimate as sent, and `accept`,
+	 * `decline` and `re-open` move it through the rest of its state machine.
+	 *
+	 * @see https://help.getharvest.com/api-v2/estimates-api/estimates/estimate-messages/
 	 */
-	estimateMessagesCreate: z.object({
-		estimate_id: z.number().int(),
-		event_type: z.enum(['send', 'accept', 'decline', 're-open']).optional(),
-		subject: z.string().optional(),
-		body: z.string().optional(),
-		send_me_a_copy: z.boolean().optional(),
-		recipients: z
-			.array(z.object({ name: z.string().optional(), email: z.email() }))
-			.optional(),
-	}),
+	estimateMessagesCreate: z
+		.object({
+			estimate_id: z.number().int(),
+			event_type: z.enum(['send', 'accept', 'decline', 're-open']).optional(),
+			subject: z.string().optional(),
+			body: z.string().optional(),
+			send_me_a_copy: z.boolean().optional(),
+			recipients: z
+				.array(z.object({ name: z.string().optional(), email: z.email() }))
+				.min(1)
+				.optional(),
+		})
+		.refine(
+			(value) =>
+				value.event_type !== undefined ||
+				(value.recipients?.length ?? 0) > 0 ||
+				value.send_me_a_copy === true,
+			{
+				message:
+					'Sending an estimate message needs at least one recipient, or send_me_a_copy. Pass an event_type to run a state event instead.',
+			},
+		),
 	estimateMessagesDelete: z.object({
 		estimate_id: z.number().int(),
 		message_id: z.number().int(),

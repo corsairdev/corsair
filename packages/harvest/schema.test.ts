@@ -11,6 +11,7 @@
  * recorded above.
  */
 
+import { HarvestEndpointInputSchemas as Inputs } from './endpoints/types';
 import { HarvestSchema } from './schema';
 import {
 	HarvestClientEntity,
@@ -295,6 +296,54 @@ describe('entity schemas reject a record with no key', () => {
 			false,
 		);
 	});
+});
+
+/**
+ * Message creation is two operations on one route, split by whether
+ * `event_type` is present, and only the branch without it reaches the client.
+ * Harvest rejects a send that has no recipient and no copy to self, so these
+ * assert the plugin refuses it first rather than round-tripping the failure.
+ */
+describe('message send validation', () => {
+	const cases = [
+		['invoiceMessagesCreate', { invoice_id: 1 }],
+		['estimateMessagesCreate', { estimate_id: 1 }],
+	] as const;
+
+	for (const [operation, id] of cases) {
+		const schema = Inputs[operation];
+
+		it(`${operation} rejects a send with no recipients and no copy`, () => {
+			expect(schema.safeParse({ ...id }).success).toBe(false);
+			expect(schema.safeParse({ ...id, send_me_a_copy: false }).success).toBe(
+				false,
+			);
+		});
+
+		it(`${operation} rejects an explicitly empty recipients list`, () => {
+			expect(schema.safeParse({ ...id, recipients: [] }).success).toBe(false);
+		});
+
+		it(`${operation} accepts a send addressed to someone`, () => {
+			expect(
+				schema.safeParse({ ...id, recipients: [{ email: 'ap@example.com' }] })
+					.success,
+			).toBe(true);
+			expect(schema.safeParse({ ...id, send_me_a_copy: true }).success).toBe(
+				true,
+			);
+		});
+
+		it(`${operation} accepts a state event with no recipients`, () => {
+			// A state event sends nothing, so it needs no address.
+			expect(schema.safeParse({ ...id, event_type: 'send' }).success).toBe(
+				true,
+			);
+			expect(schema.safeParse({ ...id, event_type: 're-open' }).success).toBe(
+				true,
+			);
+		});
+	}
 });
 
 describe('plugin schema', () => {

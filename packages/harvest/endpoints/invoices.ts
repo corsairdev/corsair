@@ -223,12 +223,16 @@ export const listMessages: HarvestEndpoints['invoiceMessagesList'] = async (
 };
 
 /**
- * Creates an invoice message.
+ * Creates an invoice message, and sends it when no `event_type` is given.
  *
- * This drives the invoice's state machine, and one of its events sends mail:
- * `send` emails every recipient and marks the invoice open, while `close`,
- * `re-open` and `draft` only change state. Callers should treat `send` as an
- * outbound message to the client, not an internal status change.
+ * The absence of `event_type` is what makes this outbound: Harvest calls that
+ * "create and send an invoice message" and mails every recipient. Supplying an
+ * `event_type` runs a state event instead and sends nothing - including
+ * `event_type: 'send'`, which is "mark a draft invoice as sent" and only records
+ * that the invoice went out. Callers should read a missing `event_type`, not the
+ * word `send`, as the signal that a client will receive mail.
+ *
+ * @see https://help.getharvest.com/api-v2/invoices-api/invoices/invoice-messages/
  */
 export const createMessage: HarvestEndpoints['invoiceMessagesCreate'] = async (
 	ctx,
