@@ -1,16 +1,18 @@
 import type { CorsairDatabase } from '../../db/kysely/database';
 import type { HubConfig } from '../../hub';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
-import { resolveAuthMissingEndpointResult } from '../auth/auth-missing-message';
+import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
 import {
+	assertReadonlyAllowed,
 	enforcePermission,
 	parseDurationMs,
 	resolveAsyncApprovalMessage,
 } from '../permissions';
+import { PermissionRequiredError } from '../permissions/errors/permission-required';
 import type {
 	CorsairKeyBuilderBase,
 	CorsairPermissionsOptions,
@@ -65,6 +67,7 @@ export function bindEndpointsRecursively({
 	plugin,
 	kek,
 	allPlugins,
+	multiTenancy,
 }: {
 	endpoints: Record<string, unknown>;
 	hooks: Record<string, unknown> | undefined;
@@ -93,6 +96,7 @@ export function bindEndpointsRecursively({
 	plugin?: CorsairPlugin;
 	kek?: string;
 	allPlugins?: readonly CorsairPlugin[];
+	multiTenancy?: boolean;
 }): void {
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
@@ -105,10 +109,21 @@ export function bindEndpointsRecursively({
 			const operationPath = [...currentPath, key].join('.');
 
 			const boundFn = async (args: unknown = {}) => {
+				const endpointMetaEntry = endpointMeta?.[operationPath];
+
+				// ── Readonly scope guard ──────────────────────────────────────────────────────────
+				// Enforced ahead of (and independent of) the developer's permission config: when the
+				// call runs inside a runReadonly() scope, any non-read endpoint throws immediately.
+				// Default to 'write' when no risk level is declared — conservative fallback.
+				assertReadonlyAllowed(
+					operationPath,
+					endpointMetaEntry?.riskLevel ?? 'write',
+				);
+
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
 				if (permissionsConfig) {
-					const meta = endpointMeta?.[operationPath];
+					const meta = endpointMetaEntry;
 					const {
 						result: permResult,
 						reason: permReason,
@@ -164,7 +179,7 @@ export function bindEndpointsRecursively({
 						} else {
 							msg = `Action '${operationPath}' requires user approval before it can run.`;
 						}
-						throw new Error(msg);
+						throw new PermissionRequiredError(msg);
 					}
 					onPermissionComplete = onComplete;
 				}
@@ -255,7 +270,7 @@ export function bindEndpointsRecursively({
 								verified: false,
 							});
 						}
-						return resolveAuthMissingEndpointResult({
+						await throwAuthMissingEndpointError({
 							error: err,
 							manual: manualConfig,
 							hub: hubConfig,
@@ -264,6 +279,7 @@ export function bindEndpointsRecursively({
 							database,
 							kek,
 							plugins: allPlugins,
+							multiTenancy,
 						});
 					}
 					throw err;
@@ -341,6 +357,7 @@ export function bindEndpointsRecursively({
 				plugin,
 				kek,
 				allPlugins,
+				multiTenancy,
 			});
 
 			tree[key] = nestedTree;

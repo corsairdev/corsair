@@ -7,6 +7,7 @@ import {
 } from '../core/utils/corsair-instance';
 import { getAccountFields, getPluginAuthType } from '../core/utils/plugin-auth';
 import { ensureCorsairProvisionedForTenant } from './internal/provision';
+import { reportPluginConnectionStatus } from './report-connection-status';
 
 export type AuthCredentialsDeliveryErrorCode =
 	| 'invalid_corsair_instance'
@@ -119,6 +120,13 @@ export async function processAuthCredentialsDelivery(
 			'Provide at least one credential field to save',
 		);
 	}
+
+	// Ack the stored credential to Hub so the grid and list_connections flip to
+	// connected. Never let a reporting failure surface as a failed delivery.
+	await reportPluginConnectionStatus(corsair, {
+		plugin,
+		tenantId: options.tenantId,
+	}).catch(() => {});
 
 	return {
 		plugin: options.plugin,

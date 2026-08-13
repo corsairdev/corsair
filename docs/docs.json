@@ -156,6 +156,39 @@
             "group": "Plugins",
             "pages": [
               {
+                "group": "Abstract",
+                "pages": [
+                  "plugins/abstract/overview",
+                  "plugins/abstract/api",
+                  "plugins/abstract/database"
+                ]
+              },
+              {
+                "group": "ActiveTrail",
+                "pages": [
+                  "plugins/activetrail/overview",
+                  "plugins/activetrail/api",
+                  "plugins/activetrail/database"
+                ]
+              },
+              {
+                "group": "Addresszen",
+                "pages": [
+                  "plugins/addresszen/overview",
+                  "plugins/addresszen/api",
+                  "plugins/addresszen/database"
+                ]
+              },
+              {
+                "group": "AgentMail",
+                "pages": [
+                  "plugins/agentmail/overview",
+                  "plugins/agentmail/api",
+                  "plugins/agentmail/database",
+                  "plugins/agentmail/webhooks"
+                ]
+              },
+              {
                 "group": "AgentQL",
                 "pages": [
                   "plugins/agentql/overview",
@@ -180,6 +213,14 @@
                   "plugins/airtable/api",
                   "plugins/airtable/database",
                   "plugins/airtable/webhooks"
+                ]
+              },
+              {
+                "group": "Algolia",
+                "pages": [
+                  "plugins/algolia/overview",
+                  "plugins/algolia/api",
+                  "plugins/algolia/database"
                 ]
               },
               {
@@ -249,6 +290,14 @@
                 ]
               },
               {
+                "group": "Canva",
+                "pages": [
+                  "plugins/canva/overview",
+                  "plugins/canva/api",
+                  "plugins/canva/database"
+                ]
+              },
+              {
                 "group": "Cloudflare",
                 "pages": [
                   "plugins/cloudflare/overview",
@@ -258,12 +307,61 @@
                 ]
               },
               {
+                "group": "Cloudinary",
+                "pages": [
+                  "plugins/cloudinary/overview",
+                  "plugins/cloudinary/api",
+                  "plugins/cloudinary/database",
+                  "plugins/cloudinary/webhooks"
+                ]
+              },
+              {
+                "group": "Confluence",
+                "pages": [
+                  "plugins/confluence/overview",
+                  "plugins/confluence/api",
+                  "plugins/confluence/database"
+                ]
+              },
+              {
                 "group": "Cursor",
                 "pages": [
                   "plugins/cursor/overview",
                   "plugins/cursor/get-credentials",
                   "plugins/cursor/api",
                   "plugins/cursor/database"
+                ]
+              },
+              {
+                "group": "Databricks",
+                "pages": [
+                  "plugins/databricks/overview",
+                  "plugins/databricks/api",
+                  "plugins/databricks/database"
+                ]
+              },
+              {
+                "group": "Datadog",
+                "pages": [
+                  "plugins/datadog/overview",
+                  "plugins/datadog/api",
+                  "plugins/datadog/database"
+                ]
+              },
+              {
+                "group": "Deepseek",
+                "pages": [
+                  "plugins/deepseek/overview",
+                  "plugins/deepseek/api",
+                  "plugins/deepseek/database"
+                ]
+              },
+              {
+                "group": "DigitalOcean",
+                "pages": [
+                  "plugins/digitalocean/overview",
+                  "plugins/digitalocean/api",
+                  "plugins/digitalocean/database"
                 ]
               },
               {
@@ -306,6 +404,14 @@
                 ]
               },
               {
+                "group": "Facebook",
+                "pages": [
+                  "plugins/facebook/overview",
+                  "plugins/facebook/api",
+                  "plugins/facebook/database"
+                ]
+              },
+              {
                 "group": "Figma",
                 "pages": [
                   "plugins/figma/overview",
@@ -335,6 +441,14 @@
                 ]
               },
               {
+                "group": "Gemini",
+                "pages": [
+                  "plugins/gemini/overview",
+                  "plugins/gemini/api",
+                  "plugins/gemini/database"
+                ]
+              },
+              {
                 "group": "Github",
                 "pages": [
                   "plugins/github/overview",
@@ -361,6 +475,14 @@
                   "plugins/gmail/api",
                   "plugins/gmail/database",
                   "plugins/gmail/webhooks"
+                ]
+              },
+              {
+                "group": "Google BigQuery",
+                "pages": [
+                  "plugins/googlebigquery/overview",
+                  "plugins/googlebigquery/api",
+                  "plugins/googlebigquery/database"
                 ]
               },
               {
@@ -411,6 +533,14 @@
                 ]
               },
               {
+                "group": "GoogleMaps",
+                "pages": [
+                  "plugins/googlemaps/overview",
+                  "plugins/googlemaps/api",
+                  "plugins/googlemaps/database"
+                ]
+              },
+              {
                 "group": "Grafana",
                 "pages": [
                   "plugins/grafana/overview",
@@ -428,6 +558,22 @@
                 ]
               },
               {
+                "group": "Hashnode",
+                "pages": [
+                  "plugins/hashnode/overview",
+                  "plugins/hashnode/api",
+                  "plugins/hashnode/database"
+                ]
+              },
+              {
+                "group": "HeyGen",
+                "pages": [
+                  "plugins/heygen/overview",
+                  "plugins/heygen/api",
+                  "plugins/heygen/database"
+                ]
+              },
+              {
                 "group": "Hubspot",
                 "pages": [
                   "plugins/hubspot/overview",
@@ -435,6 +581,14 @@
                   "plugins/hubspot/api",
                   "plugins/hubspot/database",
                   "plugins/hubspot/webhooks"
+                ]
+              },
+              {
+                "group": "Insighto.ai",
+                "pages": [
+                  "plugins/insightoai/overview",
+                  "plugins/insightoai/api",
+                  "plugins/insightoai/database"
                 ]
               },
               {
@@ -485,6 +639,15 @@
                 ]
               },
               {
+                "group": "Mailchimp",
+                "pages": [
+                  "plugins/mailchimp/overview",
+                  "plugins/mailchimp/api",
+                  "plugins/mailchimp/database",
+                  "plugins/mailchimp/webhooks"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",
@@ -522,6 +685,14 @@
                 ]
               },
               {
+                "group": "Ollama",
+                "pages": [
+                  "plugins/ollama/overview",
+                  "plugins/ollama/api",
+                  "plugins/ollama/database"
+                ]
+              },
+              {
                 "group": "Onedrive",
                 "pages": [
                   "plugins/onedrive/overview",
@@ -532,11 +703,27 @@
                 ]
               },
               {
+                "group": "OnePassword",
+                "pages": [
+                  "plugins/onepassword/overview",
+                  "plugins/onepassword/api",
+                  "plugins/onepassword/database"
+                ]
+              },
+              {
                 "group": "Open Weather Map",
                 "pages": [
                   "plugins/openweathermap/overview",
                   "plugins/openweathermap/api",
                   "plugins/openweathermap/database"
+                ]
+              },
+              {
+                "group": "Openai",
+                "pages": [
+                  "plugins/openai/overview",
+                  "plugins/openai/api",
+                  "plugins/openai/database"
                 ]
               },
               {
@@ -567,6 +754,14 @@
                   "plugins/pagerduty/api",
                   "plugins/pagerduty/database",
                   "plugins/pagerduty/webhooks"
+                ]
+              },
+              {
+                "group": "PerplexityAi",
+                "pages": [
+                  "plugins/perplexityai/overview",
+                  "plugins/perplexityai/api",
+                  "plugins/perplexityai/database"
                 ]
               },
               {
@@ -605,6 +800,14 @@
                   "plugins/resend/api",
                   "plugins/resend/database",
                   "plugins/resend/webhooks"
+                ]
+              },
+              {
+                "group": "Retailed",
+                "pages": [
+                  "plugins/retailed/overview",
+                  "plugins/retailed/api",
+                  "plugins/retailed/database"
                 ]
               },
               {
@@ -780,6 +983,15 @@
                 ]
               },
               {
+                "group": "WhatsApp",
+                "pages": [
+                  "plugins/whatsapp/overview",
+                  "plugins/whatsapp/api",
+                  "plugins/whatsapp/database",
+                  "plugins/whatsapp/webhooks"
+                ]
+              },
+              {
                 "group": "Xquik",
                 "pages": [
                   "plugins/xquik/overview",
@@ -787,6 +999,14 @@
                   "plugins/xquik/api",
                   "plugins/xquik/database",
                   "plugins/xquik/webhooks"
+                ]
+              },
+              {
+                "group": "You.com Web Search",
+                "pages": [
+                  "plugins/youcom/overview",
+                  "plugins/youcom/api",
+                  "plugins/youcom/database"
                 ]
               },
               {

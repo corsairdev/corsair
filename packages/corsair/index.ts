@@ -4,7 +4,14 @@ export type {
 } from './client';
 export { CorsairClientError, createCorsairClient } from './client';
 export type { ResolveConnectLinkResult } from './core';
-export { AuthMissingError, createCorsair, resolveConnectLink } from './core';
+export {
+	AuthMissingError,
+	createCorsair,
+	PermissionRequiredError,
+	ReadonlyForbiddenError,
+	resolveConnectLink,
+	runReadonly,
+} from './core';
 export type {
 	ConnectionStatus,
 	ConnectLink,
