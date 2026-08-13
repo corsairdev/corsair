@@ -381,6 +381,16 @@ describe('assertOcrSuccess', () => {
 			}),
 		).toThrow(/Page two timed out/);
 	});
+
+	it('throws on a structurally empty response', () => {
+		expect(() => assertOcrSuccess({})).toThrow(OcrSpaceAPIError);
+		expect(() =>
+			assertOcrSuccess({
+				SearchablePDFURL:
+					'Searchable PDF not generated as it was not requested.',
+			}),
+		).toThrow(OcrSpaceAPIError);
+	});
 });
 
 describe('flattenOcrErrorMessage', () => {

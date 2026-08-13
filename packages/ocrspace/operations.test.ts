@@ -121,8 +121,25 @@ describe('OCR.space endpoint routing', () => {
 			base64Image:
 				'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
 		});
-
 		expect(ctx.db.ocrResults.upsertByEntityId).not.toHaveBeenCalled();
+
+		await (Ocr.parse as AnyEndpoint)(ctx, {
+			file: new File(['x'], 'scan.png', { type: 'image/png' }),
+		});
+		expect(ctx.db.ocrResults.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('ocr.parseImageUrl rejects an empty OCR body', async () => {
+		mockGet.mockResolvedValue({});
+		const ctx = createContext();
+
+		await expect(
+			(Ocr.parseImageUrl as AnyEndpoint)(ctx, {
+				url: 'https://example.com/receipt.jpg',
+			}),
+		).rejects.toBeInstanceOf(OcrSpaceAPIError);
+		expect(ctx.db.ocrResults.upsertByEntityId).not.toHaveBeenCalled();
+		expect(mockLog).not.toHaveBeenCalled();
 	});
 
 	it('skips the cache for a partial OCRExitCode 2 result', async () => {
