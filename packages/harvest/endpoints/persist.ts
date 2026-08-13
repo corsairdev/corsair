@@ -1,23 +1,28 @@
 import type { z } from 'zod';
 
 /**
- * Minimal structural view of a Corsair entity store. Only the operation the
- * Harvest endpoints need is declared, so the helper stays usable whatever else
+ * Minimal structural view of a Corsair entity store. Only the operations the
+ * Harvest endpoints need are declared, so the helpers stay usable whatever else
  * the concrete store exposes.
  */
 type EntityStore<T> = {
 	upsertByEntityId: (entityId: string, data: T) => Promise<unknown>;
 };
 
+/** The eviction half of the same store, needed only by the delete operations. */
+type EntityEvictor = {
+	deleteByEntityId: (entityId: string) => Promise<unknown>;
+};
+
 /**
- * Caching is best-effort: a plugin call must not fail because the local mirror
- * could not be written.
+ * Mirroring is best-effort: a plugin call must not fail because the local copy
+ * could not be written or removed.
  */
 async function safely(operation: () => Promise<unknown>, what: string) {
 	try {
 		await operation();
 	} catch (error) {
-		console.warn(`[HARVEST] failed to cache ${what}:`, error);
+		console.warn(`[HARVEST] ${what}:`, error);
 	}
 }
 
@@ -54,10 +59,11 @@ const defaultEntityId = <T>(parsed: T): string | undefined => {
  * written, so the cache never holds something the rest of the plugin cannot
  * read back — and a schema gap shows up as a missing row, not as corrupt data.
  *
- * Nothing here is ever evicted. Harvest archives rather than deletes — a client
+ * Nothing is evicted on a read. Harvest archives rather than deletes — a client
  * or project that stops being used comes back with `is_active: false` instead
  * of disappearing — so a stale row keeps its value for resolving historical
- * references and has its status updated in place.
+ * references and has its status updated in place. An explicit delete is the one
+ * case that does evict; see {@link evictEntity}.
  */
 export async function cacheEntity<Schema extends z.ZodType>(
 	store: EntityStore<z.infer<Schema>> | undefined,
@@ -68,14 +74,43 @@ export async function cacheEntity<Schema extends z.ZodType>(
 	if (!store || record == null) return;
 
 	const parsed = schema.safeParse(record);
-	if (!parsed.success) return;
+	if (!parsed.success) {
+		// Silence here would turn a schema gap into a row that simply never
+		// appears; the warning is what makes it diagnosable.
+		console.warn(
+			`[HARVEST] skipped caching a ${options.label} that does not match its schema:`,
+			parsed.error.issues,
+		);
+		return;
+	}
 
 	const entityId = (options.entityId ?? defaultEntityId)(parsed.data);
 	if (!entityId) return;
 
 	await safely(
 		() => store.upsertByEntityId(entityId, parsed.data),
-		`${options.label} ${entityId}`,
+		`failed to cache ${options.label} ${entityId}`,
+	);
+}
+
+/**
+ * Drops a record from the local mirror after Harvest has deleted it.
+ *
+ * Deletion in Harvest is permanent — unlike archival, the record does not come
+ * back on the next list call — so leaving the mirrored row in place would let
+ * the cache outlive the thing it describes and answer reads with a record that
+ * no longer exists.
+ */
+export async function evictEntity(
+	store: EntityEvictor | undefined,
+	entityId: string | number | undefined | null,
+	label: string,
+): Promise<void> {
+	if (!store || entityId == null) return;
+
+	await safely(
+		() => store.deleteByEntityId(String(entityId)),
+		`failed to evict ${label} ${entityId}`,
 	);
 }
 

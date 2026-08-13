@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { HarvestEndpoints } from '../index';
 import { HarvestUserEntity } from '../schema/database';
 import { auditPayload } from './logging';
-import { cacheEntities, cacheEntity } from './persist';
+import { cacheEntities, cacheEntity, evictEntity } from './persist';
 import { compactBody, compactQuery, harvestCall } from './shared';
 import type { HarvestEndpointOutputs } from './types';
 
@@ -143,6 +143,8 @@ export const update: HarvestEndpoints['usersUpdate'] = async (ctx, input) => {
  */
 export const remove: HarvestEndpoints['usersDelete'] = async (ctx, input) => {
 	await harvestCall<void>(ctx, `users/${input.user_id}`, { method: 'DELETE' });
+
+	await evictEntity(ctx.db.users, input.user_id, LABEL);
 
 	await logEventFromContext(
 		ctx,

@@ -5,11 +5,12 @@ import {
 	HarvestInvoiceItemCategoryEntity,
 } from '../schema/database';
 import { auditPayload } from './logging';
-import { cacheEntities, cacheEntity } from './persist';
+import { cacheEntities, cacheEntity, evictEntity } from './persist';
 import { compactBody, compactQuery, harvestCall } from './shared';
 import type { HarvestEndpointOutputs } from './types';
 
 const LABEL = 'invoice';
+const ITEM_CATEGORY_LABEL = 'invoice item category';
 
 /* -------------------------------------------------------------------------- */
 /*                                  Invoices                                   */
@@ -181,6 +182,8 @@ export const remove: HarvestEndpoints['invoicesDelete'] = async (
 	await harvestCall<void>(ctx, `invoices/${input.invoice_id}`, {
 		method: 'DELETE',
 	});
+
+	await evictEntity(ctx.db.invoices, input.invoice_id, LABEL);
 
 	await logEventFromContext(
 		ctx,
@@ -383,7 +386,7 @@ export const listItemCategories: HarvestEndpoints['invoiceItemCategoriesList'] =
 			ctx.db.invoiceItemCategories,
 			HarvestInvoiceItemCategoryEntity,
 			result.invoice_item_categories,
-			{ label: 'invoice item category' },
+			{ label: ITEM_CATEGORY_LABEL },
 		);
 
 		await logEventFromContext(
@@ -409,7 +412,7 @@ export const createItemCategory: HarvestEndpoints['invoiceItemCategoriesCreate']
 			ctx.db.invoiceItemCategories,
 			HarvestInvoiceItemCategoryEntity,
 			result,
-			{ label: 'invoice item category' },
+			{ label: ITEM_CATEGORY_LABEL },
 		);
 
 		await logEventFromContext(
@@ -434,6 +437,12 @@ export const removeItemCategory: HarvestEndpoints['invoiceItemCategoriesDelete']
 			ctx,
 			`invoice_item_categories/${input.invoice_item_category_id}`,
 			{ method: 'DELETE' },
+		);
+
+		await evictEntity(
+			ctx.db.invoiceItemCategories,
+			input.invoice_item_category_id,
+			ITEM_CATEGORY_LABEL,
 		);
 
 		await logEventFromContext(

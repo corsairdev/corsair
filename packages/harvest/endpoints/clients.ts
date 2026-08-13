@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { HarvestEndpoints } from '../index';
 import { HarvestClientEntity } from '../schema/database';
 import { auditPayload } from './logging';
-import { cacheEntities, cacheEntity } from './persist';
+import { cacheEntities, cacheEntity, evictEntity } from './persist';
 import { compactBody, compactQuery, harvestCall } from './shared';
 import type { HarvestEndpointOutputs } from './types';
 
@@ -132,6 +132,8 @@ export const remove: HarvestEndpoints['clientsDelete'] = async (ctx, input) => {
 	await harvestCall<void>(ctx, `clients/${input.client_id}`, {
 		method: 'DELETE',
 	});
+
+	await evictEntity(ctx.db.clients, input.client_id, LABEL);
 
 	await logEventFromContext(
 		ctx,

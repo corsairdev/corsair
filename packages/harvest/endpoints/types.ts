@@ -145,7 +145,16 @@ export const InvoicePaymentSchema = z
 	})
 	.loose();
 
-/** Expenses are returned by create and update but never cached. */
+/**
+ * Expenses are returned by create and update but never cached.
+ *
+ * `receipt` and `user_assignment` are declared `z.unknown()` rather than given a
+ * shape: neither appeared populated in any captured response, so any shape here
+ * would be transcribed from prose and would reject real data the moment it were
+ * wrong. `unknown` passes the value through untouched and forces a caller to
+ * narrow it deliberately, which `any` would not. They are typed properly once a
+ * populated response has been captured.
+ */
 export const ExpenseSchema = z
 	.object({
 		id: z.number(),
@@ -173,7 +182,15 @@ export const ExpenseSchema = z
 	})
 	.loose();
 
-/** Time entries are returned by five operations but never cached. */
+/**
+ * Time entries are returned by five operations but never cached.
+ *
+ * `user_assignment`, `task_assignment` and `external_reference` are `z.unknown()`
+ * for the same reason as on {@link ExpenseSchema}: their contents were not
+ * observed in any captured response, and an invented shape would reject valid
+ * rows. `external_reference` in particular is whatever third-party tool created
+ * the entry chose to put there, so it has no fixed shape to declare.
+ */
 export const TimeEntrySchema = z
 	.object({
 		id: z.number(),
@@ -266,7 +283,7 @@ export const HarvestEndpointInputSchemas = {
 		first_name: z.string().min(1),
 		last_name: z.string().optional(),
 		title: z.string().optional(),
-		email: z.string().email().optional(),
+		email: z.email().optional(),
 		phone_office: z.string().optional(),
 		phone_mobile: z.string().optional(),
 		fax: z.string().optional(),
@@ -277,7 +294,7 @@ export const HarvestEndpointInputSchemas = {
 		first_name: z.string().min(1).optional(),
 		last_name: z.string().optional(),
 		title: z.string().optional(),
-		email: z.string().email().optional(),
+		email: z.email().optional(),
 		phone_office: z.string().optional(),
 		phone_mobile: z.string().optional(),
 		fax: z.string().optional(),
@@ -428,7 +445,7 @@ export const HarvestEndpointInputSchemas = {
 	usersCreate: z.object({
 		first_name: z.string().min(1),
 		last_name: z.string().min(1),
-		email: z.string().email(),
+		email: z.email(),
 		timezone: z.string().optional(),
 		is_contractor: z.boolean().optional(),
 		is_active: z.boolean().optional(),
@@ -443,7 +460,7 @@ export const HarvestEndpointInputSchemas = {
 		user_id: z.number().int(),
 		first_name: z.string().min(1).optional(),
 		last_name: z.string().min(1).optional(),
-		email: z.string().email().optional(),
+		email: z.email().optional(),
 		timezone: z.string().optional(),
 		is_contractor: z.boolean().optional(),
 		is_active: z.boolean().optional(),
@@ -554,9 +571,7 @@ export const HarvestEndpointInputSchemas = {
 		send_me_a_copy: z.boolean().optional(),
 		thank_you: z.boolean().optional(),
 		recipients: z
-			.array(
-				z.object({ name: z.string().optional(), email: z.string().email() }),
-			)
+			.array(z.object({ name: z.string().optional(), email: z.email() }))
 			.optional(),
 	}),
 	invoiceMessagesDelete: z.object({
@@ -633,9 +648,7 @@ export const HarvestEndpointInputSchemas = {
 		body: z.string().optional(),
 		send_me_a_copy: z.boolean().optional(),
 		recipients: z
-			.array(
-				z.object({ name: z.string().optional(), email: z.string().email() }),
-			)
+			.array(z.object({ name: z.string().optional(), email: z.email() }))
 			.optional(),
 	}),
 	estimateMessagesDelete: z.object({

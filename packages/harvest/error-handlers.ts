@@ -8,6 +8,23 @@ import { HarvestAccountIdMissingError } from './client';
  *
  * @see https://help.getharvest.com/api-v2/introduction/overview/general/
  */
+/**
+ * Whether replaying an operation could duplicate a record.
+ *
+ * Corsair re-invokes the whole endpoint when a handler asks for a retry, so a
+ * network failure raised *after* Harvest committed a POST would raise a second
+ * invoice, payment or expense. Harvest accepts no idempotency key, so the only
+ * safe answer for those operations is not to retry at all — a caller that has
+ * lost the response can list and check, whereas a duplicate invoice cannot be
+ * un-sent.
+ *
+ * Every POST operation in the registry is named `create…` and no other operation
+ * is; `endpoints.test.ts` asserts that against the routing table so the
+ * predicate cannot drift away from the endpoints it describes.
+ */
+export const isNonIdempotent = (operation: string): boolean =>
+	operation.toLowerCase().includes('create');
+
 export const errorHandlers = {
 	/**
 	 * 100 requests per 15 seconds. Harvest sends `Retry-After` with the 429 and
@@ -149,8 +166,11 @@ export const errorHandlers = {
 				`[HARVEST:${context.operation}] Network error: ${error.message}`,
 			);
 
+			// A transport failure says nothing about whether the server applied
+			// the request, so only the operations a replay cannot duplicate are
+			// retried.
 			return {
-				maxRetries: 3,
+				maxRetries: isNonIdempotent(context.operation) ? 0 : 3,
 			};
 		},
 	},

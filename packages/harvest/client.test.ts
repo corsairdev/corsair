@@ -3,6 +3,7 @@
  * is resolved, and how account discovery behaves. Network access is mocked, so
  * this runs in CI.
  */
+import { ApiError } from 'corsair/http';
 import {
 	discoverHarvestAccountId,
 	HarvestAccountIdMissingError,
@@ -16,14 +17,25 @@ type Captured = {
 	body?: string;
 };
 
-let captured: Captured | undefined;
-
-function mockFetch(response: {
+type MockResponse = {
 	ok?: boolean;
 	status?: number;
 	body?: unknown;
-}) {
+	headers?: Record<string, string>;
+};
+
+let captured: Captured | undefined;
+let attempts = 0;
+
+/**
+ * Installs a fetch stub that answers each call with the next response in the
+ * list, repeating the last one once the list is exhausted. The cast is the
+ * usual one for replacing a global: the stub implements only the slice of the
+ * `fetch` contract `request` actually reads.
+ */
+function mockFetchSequence(responses: MockResponse[]) {
 	captured = undefined;
+	attempts = 0;
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
 		// `request` may hand fetch either a plain object or a `Headers`
 		// instance; both are normalised to lower-cased keys here.
@@ -46,6 +58,12 @@ function mockFetch(response: {
 			headers,
 			body: typeof init?.body === 'string' ? init.body : undefined,
 		};
+
+		const response =
+			responses[Math.min(attempts, responses.length - 1)] ??
+			({} as MockResponse);
+		attempts++;
+
 		const status = response.status ?? 200;
 		const payload = response.body ?? {};
 		return {
@@ -53,11 +71,18 @@ function mockFetch(response: {
 			status,
 			statusText: 'OK',
 			url: String(url),
-			headers: new Headers({ 'Content-Type': 'application/json' }),
+			headers: new Headers({
+				'Content-Type': 'application/json',
+				...response.headers,
+			}),
 			json: async () => payload,
 			text: async () => JSON.stringify(payload),
 		};
 	}) as unknown as typeof global.fetch;
+}
+
+function mockFetch(response: MockResponse) {
+	mockFetchSequence([response]);
 }
 
 describe('makeHarvestRequest', () => {
@@ -111,6 +136,24 @@ describe('makeHarvestRequest', () => {
 		});
 		expect(captured?.method).toBe('DELETE');
 		expect(captured?.body).toBeUndefined();
+	});
+
+	it('retries once Harvest answers 429 and honours Retry-After', async () => {
+		mockFetchSequence([
+			{ status: 429, body: {}, headers: { 'Retry-After': '1' } },
+			{ status: 200, body: { clients: [] } },
+		]);
+
+		const result = await makeHarvestRequest<{ clients: unknown[] }>(
+			'clients',
+			'test-token',
+			'1234567',
+		);
+
+		// The 429 is the only rate-limit signal Harvest sends, so the retry has
+		// to come from it rather than from a remaining-quota header.
+		expect(attempts).toBe(2);
+		expect(result.clients).toEqual([]);
 	});
 });
 
@@ -166,11 +209,16 @@ describe('discoverHarvestAccountId', () => {
 		);
 	});
 
-	it('reports a missing account when discovery itself fails', async () => {
+	it('surfaces the HTTP status when discovery itself fails', async () => {
 		mockFetch({ ok: false, status: 401, body: {} });
 
-		await expect(discoverHarvestAccountId('bad-token')).rejects.toBeInstanceOf(
-			HarvestAccountIdMissingError,
-		);
+		// A rejected token must not be reported as a missing account id: the
+		// status is what tells the caller which credential to fix, and it is what
+		// `AUTH_ERROR` matches on.
+		const error = await discoverHarvestAccountId('bad-token').catch((e) => e);
+
+		expect(error).toBeInstanceOf(ApiError);
+		expect(error).not.toBeInstanceOf(HarvestAccountIdMissingError);
+		expect((error as ApiError).status).toBe(401);
 	});
 });

@@ -12,7 +12,7 @@ const HARVEST_API_BASE = 'https://api.harvestapp.com/v2';
  *
  * @see https://help.getharvest.com/api-v2/authentication-api/authentication/authentication/
  */
-const HARVEST_ID_ACCOUNTS_URL = 'https://id.getharvest.com/api/v2/accounts';
+const HARVEST_ID_BASE = 'https://id.getharvest.com/api/v2';
 
 /**
  * Harvest allows 100 requests per 15 seconds and answers with 429 plus a
@@ -71,23 +71,37 @@ type HarvestIdAccount = {
  * accounts alongside Harvest ones and a Forecast id is rejected by the Harvest
  * API, so the list is filtered on `product`. Discovery is only unambiguous for
  * a single Harvest account; with several, the caller has to say which one.
+ *
+ * The call goes through the shared `request` helper rather than `fetch` so that
+ * it inherits the same timeout and rate-limit retries as every other request.
+ * A transport failure therefore surfaces as an `ApiError` carrying its status —
+ * a rejected token reads as 401 rather than as a missing account id — and
+ * `HarvestAccountIdMissingError` is reserved for a reachable list that does not
+ * name exactly one Harvest account.
  */
 export async function discoverHarvestAccountId(
 	accessToken: string,
 ): Promise<string> {
-	const response = await fetch(HARVEST_ID_ACCOUNTS_URL, {
-		method: 'GET',
-		headers: {
+	const config: OpenAPIConfig = {
+		BASE: HARVEST_ID_BASE,
+		VERSION: '2',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		TOKEN: undefined,
+		HEADERS: {
 			Authorization: `Bearer ${accessToken}`,
 			'User-Agent': HARVEST_USER_AGENT,
 			Accept: 'application/json',
 		},
-	});
+	};
 
-	if (!response.ok) throw new HarvestAccountIdMissingError();
+	const payload = await request<{ accounts?: HarvestIdAccount[] }>(
+		config,
+		{ method: 'GET', url: 'accounts', mediaType: 'application/json' },
+		{ rateLimitConfig: HARVEST_RATE_LIMIT_CONFIG },
+	);
 
-	const payload = (await response.json()) as { accounts?: HarvestIdAccount[] };
-	const harvestAccounts = (payload.accounts ?? []).filter(
+	const harvestAccounts = (payload?.accounts ?? []).filter(
 		(account) => account.product === 'harvest' && account.id != null,
 	);
 

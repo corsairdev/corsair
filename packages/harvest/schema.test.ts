@@ -3,8 +3,12 @@
  * dropping a field Harvest actually returns, and requiring a field Harvest
  * sometimes omits.
  *
- * The key lists below were captured from live responses (2026-08-13). When Harvest adds a field, the first group of tests fails and
- * the schema is updated rather than silently discarding it.
+ * The key lists below were captured from live responses (2026-08-13). The first
+ * group asserts that every captured key is declared, so removing a field from a
+ * schema — or transcribing one under the wrong name — fails here. It cannot
+ * detect a field Harvest adds after the capture: that shows up only when the
+ * lists are refreshed against a live account, which is why the capture date is
+ * recorded above.
  */
 
 import { HarvestSchema } from './schema';

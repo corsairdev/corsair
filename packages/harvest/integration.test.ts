@@ -32,6 +32,9 @@ function makeStore() {
 		upsertByEntityId: async (id: string, data: unknown) => {
 			upserts.push({ id, data });
 		},
+		// Never reached: every operation below is read-only. Present so the stub
+		// matches the store shape the delete operations expect.
+		deleteByEntityId: async (_id: string) => true,
 	};
 }
 

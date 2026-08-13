@@ -16,6 +16,7 @@ import {
 	TimeEntries,
 	Users,
 } from './endpoints';
+import { isNonIdempotent } from './error-handlers';
 import { harvestEndpointMeta } from './index';
 
 // The event-log payload is asserted directly further down: it is the one place
@@ -30,10 +31,13 @@ const mockLogEvent = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
 
-type Store = { upsertByEntityId: jest.Mock };
+type Store = { upsertByEntityId: jest.Mock; deleteByEntityId: jest.Mock };
 
 function makeStore(): Store {
-	return { upsertByEntityId: jest.fn(async () => undefined) };
+	return {
+		upsertByEntityId: jest.fn(async () => undefined),
+		deleteByEntityId: jest.fn(async () => true),
+	};
 }
 
 type Ctx = Parameters<typeof Clients.list>[0];
@@ -466,11 +470,32 @@ describe('operation coverage', () => {
 	});
 
 	it('marks every delete operation destructive', () => {
-		for (const [path, meta] of Object.entries(harvestEndpointMeta)) {
-			if (path.includes('delete') || path.includes('Delete')) {
-				expect(meta.riskLevel).toBe('destructive');
-			}
+		const deletes = Object.entries(harvestEndpointMeta).filter(([path]) =>
+			path.toLowerCase().includes('delete'),
+		);
+
+		// Without this the loop below passes by matching nothing.
+		expect(deletes.length).toBe(12);
+
+		for (const [, meta] of deletes) {
+			expect(meta.riskLevel).toBe('destructive');
 		}
+	});
+
+	it('treats exactly the POST operations as non-idempotent', () => {
+		// `error-handlers.ts` decides whether a network failure may be retried by
+		// matching `create` in the operation name. That is only safe while the
+		// POST operations are exactly the ones so named, which is what this
+		// asserts against the routing table above.
+		const posts = OPERATIONS.filter(([, , method]) => method === 'POST')
+			.map(([path]) => path)
+			.sort();
+		const nonIdempotent = OPERATIONS.map(([path]) => path)
+			.filter(isNonIdempotent)
+			.sort();
+
+		expect(nonIdempotent).toEqual(posts);
+		expect(posts).toHaveLength(14);
 	});
 });
 
@@ -502,6 +527,48 @@ describe('caching', () => {
 
 		for (const store of Object.values(db)) {
 			expect(store.upsertByEntityId).not.toHaveBeenCalled();
+		}
+	});
+
+	it('evicts a deleted record so the mirror cannot outlive it', async () => {
+		const { ctx, db } = makeCtx();
+		await Clients.remove(ctx, { client_id: 42 });
+
+		expect(db.clients.deleteByEntityId).toHaveBeenCalledWith('42');
+	});
+
+	it('evicts on every delete that has a mirrored entity', async () => {
+		const { ctx, db } = makeCtx();
+
+		await Clients.remove(ctx, { client_id: 1 });
+		await Contacts.remove(ctx, { contact_id: 2 });
+		await Projects.remove(ctx, { project_id: 3 });
+		await Tasks.remove(ctx, { task_id: 4 });
+		await Users.remove(ctx, { user_id: 5 });
+		await Invoices.remove(ctx, { invoice_id: 6 });
+		await Invoices.removeItemCategory(ctx, { invoice_item_category_id: 7 });
+		await Estimates.remove(ctx, { estimate_id: 8 });
+
+		expect(db.clients.deleteByEntityId).toHaveBeenCalledWith('1');
+		expect(db.contacts.deleteByEntityId).toHaveBeenCalledWith('2');
+		expect(db.projects.deleteByEntityId).toHaveBeenCalledWith('3');
+		expect(db.tasks.deleteByEntityId).toHaveBeenCalledWith('4');
+		expect(db.users.deleteByEntityId).toHaveBeenCalledWith('5');
+		expect(db.invoices.deleteByEntityId).toHaveBeenCalledWith('6');
+		expect(db.invoiceItemCategories.deleteByEntityId).toHaveBeenCalledWith('7');
+		expect(db.estimates.deleteByEntityId).toHaveBeenCalledWith('8');
+	});
+
+	it('does not evict for deletes of records that are never mirrored', async () => {
+		const { ctx, db } = makeCtx();
+
+		await TimeEntries.remove(ctx, { time_entry_id: 1 });
+		await Invoices.removeMessage(ctx, { invoice_id: 2, message_id: 3 });
+		await Invoices.removePayment(ctx, { invoice_id: 2, payment_id: 4 });
+		await Estimates.removeMessage(ctx, { estimate_id: 5, message_id: 6 });
+
+		for (const store of Object.values(db)) {
+			expect(store.deleteByEntityId).not.toHaveBeenCalled();
 		}
 	});
 });
