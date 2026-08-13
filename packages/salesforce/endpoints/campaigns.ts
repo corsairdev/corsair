@@ -1,16 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
 import { escapeSoql } from '../utils';
+import { flattenFields, salesforceCall } from './shared';
 
 export const createCampaign: SalesforceEndpoints['createCampaign'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		id: string;
 		success?: boolean;
-	}>('sobjects/Campaign', ctx.key, { method: 'POST', body: input });
+	}>(ctx, 'sobjects/Campaign', { method: 'POST', body: input });
 
 	await logEventFromContext(
 		ctx,
@@ -25,9 +25,9 @@ export const getCampaign: SalesforceEndpoints['getCampaign'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{ Id: string }>(
+	const response = await salesforceCall<{ Id: string }>(
+		ctx,
 		`sobjects/Campaign/${input.id}`,
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -40,14 +40,14 @@ export const listCampaigns: SalesforceEndpoints['listCampaigns'] = async (
 	input,
 ) => {
 	const limit = input.limit ?? 200;
-	const whereStr = input.query ? ` WHERE ${escapeSoql(input.query)}` : '';
+	const whereStr = input.query ? ` WHERE ${input.query}` : '';
 	const q = `SELECT Id, Name, Type, Status, StartDate, EndDate, IsActive FROM Campaign${whereStr} LIMIT ${limit}`;
 
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		totalSize: number;
 		done: boolean;
 		records: Array<Record<string, unknown>>;
-	}>('query', ctx.key, { method: 'GET', query: { q } });
+	}>(ctx, 'query', { method: 'GET', query: { q } });
 
 	await logEventFromContext(
 		ctx,
@@ -62,7 +62,7 @@ export const deleteCampaign: SalesforceEndpoints['deleteCampaign'] = async (
 	ctx,
 	input,
 ) => {
-	await makeSalesforceRequest<void>(`sobjects/Campaign/${input.id}`, ctx.key, {
+	await salesforceCall<void>(ctx, `sobjects/Campaign/${input.id}`, {
 		method: 'DELETE',
 	});
 
@@ -77,9 +77,9 @@ export const deleteCampaign: SalesforceEndpoints['deleteCampaign'] = async (
 
 export const addContactToCampaign: SalesforceEndpoints['addContactToCampaign'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ id: string }>(
+		const response = await salesforceCall<{ id: string }>(
+			ctx,
 			'sobjects/CampaignMember',
-			ctx.key,
 			{
 				method: 'POST',
 				body: {
@@ -101,9 +101,9 @@ export const addContactToCampaign: SalesforceEndpoints['addContactToCampaign'] =
 
 export const addLeadToCampaign: SalesforceEndpoints['addLeadToCampaign'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ id: string }>(
+		const response = await salesforceCall<{ id: string }>(
+			ctx,
 			'sobjects/CampaignMember',
-			ctx.key,
 			{
 				method: 'POST',
 				body: {
@@ -129,9 +129,9 @@ export const removeFromCampaign: SalesforceEndpoints['removeFromCampaign'] =
 
 		if (!memberIdToDelete && input.member_id) {
 			const safeMemberId = escapeSoql(input.member_id);
-			const res = await makeSalesforceRequest<{
+			const res = await salesforceCall<{
 				records: Array<{ Id: string }>;
-			}>('query', ctx.key, {
+			}>(ctx, 'query', {
 				method: 'GET',
 				query: {
 					q: `SELECT Id FROM CampaignMember WHERE ContactId = '${safeMemberId}' OR LeadId = '${safeMemberId}' LIMIT 1`,
@@ -146,9 +146,9 @@ export const removeFromCampaign: SalesforceEndpoints['removeFromCampaign'] =
 			);
 		}
 
-		await makeSalesforceRequest<void>(
+		await salesforceCall<void>(
+			ctx,
 			`sobjects/CampaignMember/${memberIdToDelete}`,
-			ctx.key,
 			{ method: 'DELETE' },
 		);
 
@@ -173,9 +173,9 @@ export const searchCampaigns: SalesforceEndpoints['searchCampaigns'] = async (
 	const whereStr = terms.length > 0 ? ` WHERE ${terms.join(' AND ')}` : '';
 	const q = `SELECT Id, Name, Type, Status, StartDate, EndDate FROM Campaign${whereStr} LIMIT 50`;
 
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		records: Array<Record<string, unknown>>;
-	}>('query', ctx.key, { method: 'GET', query: { q } });
+	}>(ctx, 'query', { method: 'GET', query: { q } });
 
 	await logEventFromContext(
 		ctx,
@@ -189,9 +189,9 @@ export const searchCampaigns: SalesforceEndpoints['searchCampaigns'] = async (
 /** @deprecated */
 export const createCampaignRecordViaPost: SalesforceEndpoints['createCampaignRecordViaPost'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ id: string }>(
+		const response = await salesforceCall<{ id: string }>(
+			ctx,
 			'sobjects/Campaign',
-			ctx.key,
 			{ method: 'POST', body: input },
 		);
 
@@ -207,13 +207,9 @@ export const createCampaignRecordViaPost: SalesforceEndpoints['createCampaignRec
 /** @deprecated */
 export const removeCampaignObjectById: SalesforceEndpoints['removeCampaignObjectById'] =
 	async (ctx, input) => {
-		await makeSalesforceRequest<void>(
-			`sobjects/Campaign/${input.id}`,
-			ctx.key,
-			{
-				method: 'DELETE',
-			},
-		);
+		await salesforceCall<void>(ctx, `sobjects/Campaign/${input.id}`, {
+			method: 'DELETE',
+		});
 
 		await logEventFromContext(
 			ctx,
@@ -227,9 +223,9 @@ export const removeCampaignObjectById: SalesforceEndpoints['removeCampaignObject
 /** @deprecated */
 export const retrieveCampaignDataWithErrorHandling: SalesforceEndpoints['retrieveCampaignDataWithErrorHandling'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
-			input.id ? `sobjects/Campaign/${input.id}` : 'sobjects/Campaign/describe',
-			ctx.key,
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
+			'sobjects/Campaign/describe',
 			{ method: 'GET' },
 		);
 
@@ -245,9 +241,9 @@ export const retrieveCampaignDataWithErrorHandling: SalesforceEndpoints['retriev
 /** @deprecated */
 export const retrieveSpecificCampaignObjectDetails: SalesforceEndpoints['retrieveSpecificCampaignObjectDetails'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ Id: string }>(
+		const response = await salesforceCall<{ Id: string }>(
+			ctx,
 			`sobjects/Campaign/${input.id}`,
-			ctx.key,
 			{
 				method: 'GET',
 				query: input.fields ? { fields: input.fields.join(',') } : undefined,
@@ -262,3 +258,25 @@ export const retrieveSpecificCampaignObjectDetails: SalesforceEndpoints['retriev
 		);
 		return response;
 	};
+
+export const updateCampaign: SalesforceEndpoints['updateCampaign'] = async (
+	ctx,
+	input,
+) => {
+	const { id, ...fields } = input;
+	const body = flattenFields(fields);
+	await salesforceCall<void>(ctx, `sobjects/Campaign/${id}`, {
+		method: 'PATCH',
+		body,
+	});
+	await logEventFromContext(
+		ctx,
+		'salesforce.campaign.update',
+		{ id },
+		'completed',
+	);
+	return { success: true };
+};
+
+export const updateCampaignByIdWithJson: SalesforceEndpoints['updateCampaignByIdWithJson'] =
+	updateCampaign as unknown as SalesforceEndpoints['updateCampaignByIdWithJson'];

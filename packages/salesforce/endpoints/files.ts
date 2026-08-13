@@ -1,15 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
 import { escapeSoql } from '../utils';
+import { salesforceCall } from './shared';
 
 export const getFileContent: SalesforceEndpoints['getFileContent'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<string | ArrayBuffer | Buffer>(
+	const response = await salesforceCall<string | ArrayBuffer | Buffer>(
+		ctx,
 		`sobjects/ContentVersion/${input.fileId}/VersionData`,
-		ctx.key,
 		{ method: 'GET', responseType: 'text' },
 	);
 
@@ -35,9 +35,9 @@ export const getFileContent: SalesforceEndpoints['getFileContent'] = async (
 
 export const getFileInformation: SalesforceEndpoints['getFileInformation'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`sobjects/ContentDocument/${input.fileId}`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -55,9 +55,9 @@ export const getFileShares: SalesforceEndpoints['getFileShares'] = async (
 	input,
 ) => {
 	const safeFileId = escapeSoql(input.fileId);
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		records: Array<Record<string, unknown>>;
-	}>('query', ctx.key, {
+	}>(ctx, 'query', {
 		method: 'GET',
 		query: {
 			q: `SELECT Id, ContentDocumentId, LinkedEntityId, ShareType FROM ContentDocumentLink WHERE ContentDocumentId = '${safeFileId}'`,
@@ -77,12 +77,30 @@ export const deleteFile: SalesforceEndpoints['deleteFile'] = async (
 	ctx,
 	input,
 ) => {
-	await makeSalesforceRequest<void>(
-		`sobjects/ContentDocument/${input.fileId}`,
-		ctx.key,
-		{ method: 'DELETE' },
-	);
+	await salesforceCall<void>(ctx, `sobjects/ContentDocument/${input.fileId}`, {
+		method: 'DELETE',
+	});
 
 	await logEventFromContext(ctx, 'salesforce.files.delete', input, 'completed');
 	return { success: true };
+};
+
+export const uploadFile: SalesforceEndpoints['uploadFile'] = async (
+	ctx,
+	input,
+) => {
+	const response = await salesforceCall<{
+		id: string;
+		success?: boolean;
+	}>(ctx, 'sobjects/ContentVersion', {
+		method: 'POST',
+		body: {
+			Title: input.title,
+			PathOnClient: input.pathOnClient ?? input.title,
+			VersionData: input.versionData,
+			FirstPublishLocationId: input.firstPublishLocationId,
+		},
+	});
+	await logEventFromContext(ctx, 'salesforce.files.upload', input, 'completed');
+	return response;
 };

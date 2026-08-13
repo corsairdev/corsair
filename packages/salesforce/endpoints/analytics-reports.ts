@@ -1,14 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
+import { salesforceCall } from './shared';
 
 export const getDashboard: SalesforceEndpoints['getDashboard'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		`analytics/dashboards/${input.dashboardId}`,
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -25,9 +25,9 @@ export const listDashboards: SalesforceEndpoints['listDashboards'] = async (
 	ctx,
 	_input,
 ) => {
-	const response = await makeSalesforceRequest<Array<Record<string, unknown>>>(
+	const response = await salesforceCall<Array<Record<string, unknown>>>(
+		ctx,
 		'analytics/dashboards',
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -45,9 +45,9 @@ export const listEmailTemplates: SalesforceEndpoints['listEmailTemplates'] =
 		const whereStr = input.query ? ` WHERE ${input.query}` : '';
 		const q = `SELECT Id, Name, DeveloperName, FolderId, Subject FROM EmailTemplate${whereStr}`;
 
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			records: Array<Record<string, unknown>>;
-		}>('query', ctx.key, { method: 'GET', query: { q } });
+		}>(ctx, 'query', { method: 'GET', query: { q } });
 
 		await logEventFromContext(
 			ctx,
@@ -62,9 +62,9 @@ export const listReports: SalesforceEndpoints['listReports'] = async (
 	ctx,
 	_input,
 ) => {
-	const response = await makeSalesforceRequest<Array<Record<string, unknown>>>(
+	const response = await salesforceCall<Array<Record<string, unknown>>>(
+		ctx,
 		'analytics/reports',
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -81,9 +81,9 @@ export const runReport: SalesforceEndpoints['runReport'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		`analytics/reports/${input.reportId}`,
-		ctx.key,
 		{ method: 'POST' },
 	);
 
@@ -98,9 +98,9 @@ export const runReport: SalesforceEndpoints['runReport'] = async (
 
 export const listAnalyticsTemplates: SalesforceEndpoints['listAnalyticsTemplates'] =
 	async (ctx, _input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			templates: Array<Record<string, unknown>>;
-		}>('wave/templates', ctx.key, { method: 'GET' });
+		}>(ctx, 'wave/templates', { method: 'GET' });
 
 		await logEventFromContext(
 			ctx,
@@ -114,9 +114,9 @@ export const listAnalyticsTemplates: SalesforceEndpoints['listAnalyticsTemplates
 /** @deprecated */
 export const getReportInstance: SalesforceEndpoints['getReportInstance'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`analytics/reports/${input.reportId}/instances/${input.instanceId}`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -134,9 +134,9 @@ export const getReport: SalesforceEndpoints['getReport'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		`analytics/reports/${input.reportId}/describe`,
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -154,9 +154,9 @@ export const queryReport: SalesforceEndpoints['queryReport'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		`analytics/reports/${input.id}`,
-		ctx.key,
 		{ method: 'GET' },
 	);
 

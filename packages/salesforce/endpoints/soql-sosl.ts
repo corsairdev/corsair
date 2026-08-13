@@ -1,17 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
+import { salesforceCall } from './shared';
 
 export const runSoqlQuery: SalesforceEndpoints['runSoqlQuery'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		totalSize: number;
 		done: boolean;
 		records: Array<Record<string, unknown>>;
 		nextRecordsUrl?: string;
-	}>('query', ctx.key, { method: 'GET', query: { q: input.q } });
+	}>(ctx, 'query', { method: 'GET', query: { q: input.q } });
 
 	await logEventFromContext(
 		ctx,
@@ -23,11 +23,11 @@ export const runSoqlQuery: SalesforceEndpoints['runSoqlQuery'] = async (
 };
 
 export const queryAll: SalesforceEndpoints['queryAll'] = async (ctx, input) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		totalSize: number;
 		done: boolean;
 		records: Array<Record<string, unknown>>;
-	}>('queryAll', ctx.key, { method: 'GET', query: { q: input.q } });
+	}>(ctx, 'queryAll', { method: 'GET', query: { q: input.q } });
 
 	await logEventFromContext(
 		ctx,
@@ -39,9 +39,9 @@ export const queryAll: SalesforceEndpoints['queryAll'] = async (ctx, input) => {
 };
 
 export const search: SalesforceEndpoints['search'] = async (ctx, input) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		searchRecords: Array<Record<string, unknown>>;
-	}>('search', ctx.key, { method: 'GET', query: { q: input.q } });
+	}>(ctx, 'search', { method: 'GET', query: { q: input.q } });
 
 	await logEventFromContext(ctx, 'salesforce.sosl.search', input, 'completed');
 	return { searchRecords: response.searchRecords ?? [] };
@@ -49,9 +49,9 @@ export const search: SalesforceEndpoints['search'] = async (ctx, input) => {
 
 export const executeSoslSearch: SalesforceEndpoints['executeSoslSearch'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			searchRecords: Array<Record<string, unknown>>;
-		}>('search', ctx.key, { method: 'GET', query: { q: input.q } });
+		}>(ctx, 'search', { method: 'GET', query: { q: input.q } });
 
 		await logEventFromContext(
 			ctx,
@@ -66,11 +66,11 @@ export const toolingQuery: SalesforceEndpoints['toolingQuery'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		totalSize: number;
 		done: boolean;
 		records: Array<Record<string, unknown>>;
-	}>('tooling/query', ctx.key, { method: 'GET', query: { q: input.q } });
+	}>(ctx, 'tooling/query', { method: 'GET', query: { q: input.q } });
 
 	await logEventFromContext(
 		ctx,
@@ -84,9 +84,9 @@ export const toolingQuery: SalesforceEndpoints['toolingQuery'] = async (
 export const parameterizedSearch: SalesforceEndpoints['parameterizedSearch'] =
 	async (ctx, input) => {
 		const isPost = Boolean(input.sobjects);
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			searchRecords: Array<Record<string, unknown>>;
-		}>('parameterizedSearch', ctx.key, {
+		}>(ctx, 'parameterizedSearch', {
 			method: isPost ? 'POST' : 'GET',
 			query: { q: input.q },
 			body: isPost ? { q: input.q, sobjects: input.sobjects } : undefined,
@@ -103,9 +103,9 @@ export const parameterizedSearch: SalesforceEndpoints['parameterizedSearch'] =
 
 export const postParameterizedSearch: SalesforceEndpoints['postParameterizedSearch'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			searchRecords: Array<Record<string, unknown>>;
-		}>('parameterizedSearch', ctx.key, {
+		}>(ctx, 'parameterizedSearch', {
 			method: 'POST',
 			body: input,
 		});
@@ -123,9 +123,9 @@ export const getSearchLayout: SalesforceEndpoints['getSearchLayout'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<Array<Record<string, unknown>>>(
+	const response = await salesforceCall<Array<Record<string, unknown>>>(
+		ctx,
 		'search/layout',
-		ctx.key,
 		{
 			method: 'GET',
 			query: { q: input.sobjects },
@@ -143,10 +143,10 @@ export const getSearchLayout: SalesforceEndpoints['getSearchLayout'] = async (
 
 /** @deprecated */
 export const query: SalesforceEndpoints['query'] = async (ctx, input) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		totalSize: number;
 		records: Array<Record<string, unknown>>;
-	}>('query', ctx.key, { method: 'GET', query: { q: input.q } });
+	}>(ctx, 'query', { method: 'GET', query: { q: input.q } });
 
 	await logEventFromContext(
 		ctx,
@@ -162,10 +162,10 @@ export const executeSoqlQuery: SalesforceEndpoints['executeSoqlQuery'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		totalSize: number;
 		records: Array<Record<string, unknown>>;
-	}>('query', ctx.key, { method: 'GET', query: { q: input.q } });
+	}>(ctx, 'query', { method: 'GET', query: { q: input.q } });
 
 	await logEventFromContext(
 		ctx,
@@ -175,3 +175,44 @@ export const executeSoqlQuery: SalesforceEndpoints['executeSoqlQuery'] = async (
 	);
 	return response;
 };
+
+export const getSearchSuggestions: SalesforceEndpoints['getSearchSuggestions'] =
+	async (ctx, input) => {
+		const response = await salesforceCall<unknown>(
+			ctx,
+			'search/suggestTitleMatches',
+			{
+				method: 'GET',
+				query: { q: input.q, sobject: input.sobject },
+			},
+		);
+		await logEventFromContext(
+			ctx,
+			'salesforce.search.suggestions',
+			input,
+			'completed',
+		);
+		return { result: response };
+	};
+
+export const searchKnowledgeArticles: SalesforceEndpoints['searchKnowledgeArticles'] =
+	async (ctx, input) => {
+		const response = await salesforceCall<unknown>(
+			ctx,
+			'search/suggestTitleMatches',
+			{
+				method: 'GET',
+				query: { q: input.q, sobject: 'KnowledgeArticleVersion' },
+			},
+		);
+		await logEventFromContext(
+			ctx,
+			'salesforce.search.knowledge',
+			input,
+			'completed',
+		);
+		return { result: response };
+	};
+
+export const getParameterizedSearch: SalesforceEndpoints['getParameterizedSearch'] =
+	parameterizedSearch as unknown as SalesforceEndpoints['getParameterizedSearch'];

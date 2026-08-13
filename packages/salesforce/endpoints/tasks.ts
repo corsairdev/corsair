@@ -1,15 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
+import { escapeSoql } from '../utils';
+import { flattenFields, salesforceCall } from './shared';
 
 export const createTask: SalesforceEndpoints['createTask'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		id: string;
 		success?: boolean;
-	}>('sobjects/Task', ctx.key, { method: 'POST', body: input });
+	}>(ctx, 'sobjects/Task', { method: 'POST', body: input });
 
 	await logEventFromContext(ctx, 'salesforce.task.create', input, 'completed');
 	return response;
@@ -24,7 +25,7 @@ export const completeTask: SalesforceEndpoints['completeTask'] = async (
 		body.Description = input.completionNotes;
 	}
 
-	await makeSalesforceRequest<void>(`sobjects/Task/${input.taskId}`, ctx.key, {
+	await salesforceCall<void>(ctx, `sobjects/Task/${input.taskId}`, {
 		method: 'PATCH',
 		body,
 	});
@@ -51,11 +52,10 @@ export const logCall: SalesforceEndpoints['logCall'] = async (ctx, input) => {
 		WhatId: input.WhatId,
 	};
 
-	const response = await makeSalesforceRequest<{ id: string }>(
-		'sobjects/Task',
-		ctx.key,
-		{ method: 'POST', body },
-	);
+	const response = await salesforceCall<{ id: string }>(ctx, 'sobjects/Task', {
+		method: 'POST',
+		body,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -79,9 +79,9 @@ export const logEmailActivity: SalesforceEndpoints['logEmailActivity'] = async (
 		RelatedToId: input.RelatedToId,
 	};
 
-	const response = await makeSalesforceRequest<{ id: string }>(
+	const response = await salesforceCall<{ id: string }>(
+		ctx,
 		'sobjects/EmailMessage',
-		ctx.key,
 		{ method: 'POST', body },
 	);
 
@@ -92,4 +92,121 @@ export const logEmailActivity: SalesforceEndpoints['logEmailActivity'] = async (
 		'completed',
 	);
 	return response;
+};
+
+export const updateTask: SalesforceEndpoints['updateTask'] = async (
+	ctx,
+	input,
+) => {
+	const { id, ...fields } = input;
+	const body = flattenFields(fields);
+	await salesforceCall<void>(ctx, `sobjects/Task/${id}`, {
+		method: 'PATCH',
+		body,
+	});
+	await logEventFromContext(ctx, 'salesforce.task.update', { id }, 'completed');
+	return { success: true };
+};
+
+export const searchTasks: SalesforceEndpoints['searchTasks'] = async (
+	ctx,
+	input,
+) => {
+	const terms: string[] = [];
+	if (input.subject)
+		terms.push(`Subject LIKE '%${escapeSoql(input.subject)}%'`);
+	if (input.status) terms.push(`Status = '${escapeSoql(input.status)}'`);
+	if (input.priority) terms.push(`Priority = '${escapeSoql(input.priority)}'`);
+	if (input.whoId) terms.push(`WhoId = '${escapeSoql(input.whoId)}'`);
+	if (input.whatId) terms.push(`WhatId = '${escapeSoql(input.whatId)}'`);
+	const whereStr = terms.length > 0 ? ` WHERE ${terms.join(' AND ')}` : '';
+	const q = `SELECT Id, Subject, Status, Priority, WhoId, WhatId, ActivityDate FROM Task${whereStr} LIMIT ${input.limit ?? 50}`;
+	const response = await salesforceCall<{
+		records: Array<Record<string, unknown>>;
+	}>(ctx, 'query', { method: 'GET', query: { q } });
+	await logEventFromContext(ctx, 'salesforce.task.search', input, 'completed');
+	return { records: response.records ?? [] };
+};
+
+export const sendEmail: SalesforceEndpoints['sendEmail'] = async (
+	ctx,
+	input,
+) => {
+	const response = await salesforceCall<unknown>(
+		ctx,
+		'actions/standard/emailSimple',
+		{
+			method: 'POST',
+			body: {
+				inputs: [
+					{
+						emailAddresses: input.toAddresses?.join(','),
+						emailSubject: input.subject,
+						emailBody: input.body,
+						senderType: input.senderType ?? 'CurrentUser',
+					},
+				],
+			},
+		},
+	);
+	await logEventFromContext(ctx, 'salesforce.email.send', input, 'completed');
+	return { result: response };
+};
+
+export const sendEmailFromTemplate: SalesforceEndpoints['sendEmailFromTemplate'] =
+	async (ctx, input) => {
+		const response = await salesforceCall<unknown>(
+			ctx,
+			'actions/standard/emailSimple',
+			{
+				method: 'POST',
+				body: {
+					inputs: [
+						{
+							emailAddresses: input.toAddresses?.join(','),
+							emailTemplateId: input.templateId,
+							senderType: input.senderType ?? 'CurrentUser',
+							targetObjectId: input.targetObjectId,
+						},
+					],
+				},
+			},
+		);
+		await logEventFromContext(
+			ctx,
+			'salesforce.email.send_from_template',
+			input,
+			'completed',
+		);
+		return { result: response };
+	};
+
+export const sendMassEmail: SalesforceEndpoints['sendMassEmail'] = async (
+	ctx,
+	input,
+) => {
+	const response = await salesforceCall<unknown>(
+		ctx,
+		'actions/standard/emailMass',
+		{
+			method: 'POST',
+			body: {
+				inputs: [
+					{
+						emailAddresses: input.toAddresses?.join(','),
+						emailSubject: input.subject,
+						emailBody: input.body,
+						emailTemplateId: input.templateId,
+					},
+				],
+			},
+		},
+	);
+	await logEventFromContext(
+		ctx,
+		'salesforce.email.send_mass',
+		input,
+		'completed',
+	);
+	return { result: response };
 };

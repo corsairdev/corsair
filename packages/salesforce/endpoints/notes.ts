@@ -1,26 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
+import { escapeSoql } from '../utils';
+import { flattenFields, salesforceCall } from './shared';
 
 export const createNote: SalesforceEndpoints['createNote'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		id: string;
 		success?: boolean;
-	}>('sobjects/Note', ctx.key, { method: 'POST', body: input });
+	}>(ctx, 'sobjects/Note', { method: 'POST', body: input });
 
 	await logEventFromContext(ctx, 'salesforce.note.create', input, 'completed');
 	return response;
 };
 
 export const getNote: SalesforceEndpoints['getNote'] = async (ctx, input) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		Id: string;
 		Title?: string;
 		Body?: string;
-	}>(`sobjects/Note/${input.id}`, ctx.key, { method: 'GET' });
+	}>(ctx, `sobjects/Note/${input.id}`, { method: 'GET' });
 
 	await logEventFromContext(ctx, 'salesforce.note.get', input, 'completed');
 	return response;
@@ -32,16 +33,17 @@ export const listNotes: SalesforceEndpoints['listNotes'] = async (
 ) => {
 	const limit = input.limit ?? 200;
 	const conditions: string[] = [];
-	if (input.parentId) conditions.push(`ParentId = '${input.parentId}'`);
+	if (input.parentId)
+		conditions.push(`ParentId = '${escapeSoql(input.parentId)}'`);
 	if (input.query) conditions.push(input.query);
 
 	const whereStr =
 		conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
 	const q = `SELECT Id, Title, Body, ParentId, CreatedDate FROM Note${whereStr} LIMIT ${limit}`;
 
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		records: Array<Record<string, unknown>>;
-	}>('query', ctx.key, { method: 'GET', query: { q } });
+	}>(ctx, 'query', { method: 'GET', query: { q } });
 
 	await logEventFromContext(ctx, 'salesforce.note.list', input, 'completed');
 	return { records: response.records ?? [] };
@@ -51,7 +53,7 @@ export const deleteNote: SalesforceEndpoints['deleteNote'] = async (
 	ctx,
 	input,
 ) => {
-	await makeSalesforceRequest<void>(`sobjects/Note/${input.id}`, ctx.key, {
+	await salesforceCall<void>(ctx, `sobjects/Note/${input.id}`, {
 		method: 'DELETE',
 	});
 
@@ -62,9 +64,9 @@ export const deleteNote: SalesforceEndpoints['deleteNote'] = async (
 /** @deprecated */
 export const createNoteRecordWithContentTypeHeader: SalesforceEndpoints['createNoteRecordWithContentTypeHeader'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ id: string }>(
+		const response = await salesforceCall<{ id: string }>(
+			ctx,
 			'sobjects/Note',
-			ctx.key,
 			{ method: 'POST', body: input },
 		);
 
@@ -80,7 +82,7 @@ export const createNoteRecordWithContentTypeHeader: SalesforceEndpoints['createN
 /** @deprecated */
 export const removeNoteObjectById: SalesforceEndpoints['removeNoteObjectById'] =
 	async (ctx, input) => {
-		await makeSalesforceRequest<void>(`sobjects/Note/${input.id}`, ctx.key, {
+		await salesforceCall<void>(ctx, `sobjects/Note/${input.id}`, {
 			method: 'DELETE',
 		});
 
@@ -96,9 +98,9 @@ export const removeNoteObjectById: SalesforceEndpoints['removeNoteObjectById'] =
 /** @deprecated */
 export const getNoteByIdWithFields: SalesforceEndpoints['getNoteByIdWithFields'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ Id: string }>(
+		const response = await salesforceCall<{ Id: string }>(
+			ctx,
 			`sobjects/Note/${input.id}`,
-			ctx.key,
 			{
 				method: 'GET',
 				query: input.fields ? { fields: input.fields.join(',') } : undefined,
@@ -117,9 +119,9 @@ export const getNoteByIdWithFields: SalesforceEndpoints['getNoteByIdWithFields']
 /** @deprecated */
 export const retrieveNoteObjectInformation: SalesforceEndpoints['retrieveNoteObjectInformation'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			input.id ? `sobjects/Note/${input.id}` : 'sobjects/Note/describe',
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -131,3 +133,37 @@ export const retrieveNoteObjectInformation: SalesforceEndpoints['retrieveNoteObj
 		);
 		return { metadata: response };
 	};
+
+export const updateNote: SalesforceEndpoints['updateNote'] = async (
+	ctx,
+	input,
+) => {
+	const { id, ...fields } = input;
+	const body = flattenFields(fields);
+	await salesforceCall<void>(ctx, `sobjects/Note/${id}`, {
+		method: 'PATCH',
+		body,
+	});
+	await logEventFromContext(ctx, 'salesforce.note.update', { id }, 'completed');
+	return { success: true };
+};
+
+export const updateSpecificNoteById: SalesforceEndpoints['updateSpecificNoteById'] =
+	updateNote as unknown as SalesforceEndpoints['updateSpecificNoteById'];
+
+export const searchNotes: SalesforceEndpoints['searchNotes'] = async (
+	ctx,
+	input,
+) => {
+	const terms: string[] = [];
+	if (input.title) terms.push(`Title LIKE '%${escapeSoql(input.title)}%'`);
+	if (input.body) terms.push(`Body LIKE '%${escapeSoql(input.body)}%'`);
+	if (input.parentId) terms.push(`ParentId = '${escapeSoql(input.parentId)}'`);
+	const whereStr = terms.length > 0 ? ` WHERE ${terms.join(' AND ')}` : '';
+	const q = `SELECT Id, Title, Body, ParentId, OwnerId FROM Note${whereStr} LIMIT ${input.limit ?? 50}`;
+	const response = await salesforceCall<{
+		records: Array<Record<string, unknown>>;
+	}>(ctx, 'query', { method: 'GET', query: { q } });
+	await logEventFromContext(ctx, 'salesforce.note.search', input, 'completed');
+	return { records: response.records ?? [] };
+};

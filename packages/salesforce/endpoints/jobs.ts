@@ -1,15 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
 import { parseCsvRecords } from '../utils';
+import { salesforceCall } from './shared';
 
 export const closeOrAbortJob: SalesforceEndpoints['closeOrAbortJob'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{ id: string; state: string }>(
+	const response = await salesforceCall<{ id: string; state: string }>(
+		ctx,
 		`jobs/ingest/${input.jobId}`,
-		ctx.key,
 		{
 			method: 'PATCH',
 			body: { state: input.state },
@@ -29,7 +29,7 @@ export const deleteJobQuery: SalesforceEndpoints['deleteJobQuery'] = async (
 	ctx,
 	input,
 ) => {
-	await makeSalesforceRequest<void>(`jobs/query/${input.jobId}`, ctx.key, {
+	await salesforceCall<void>(ctx, `jobs/query/${input.jobId}`, {
 		method: 'DELETE',
 	});
 
@@ -44,9 +44,9 @@ export const deleteJobQuery: SalesforceEndpoints['deleteJobQuery'] = async (
 
 export const getJobFailedRecordResults: SalesforceEndpoints['getJobFailedRecordResults'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<unknown>(
+		const response = await salesforceCall<unknown>(
+			ctx,
 			`jobs/ingest/${input.jobId}/failedResults`,
-			ctx.key,
 			{ method: 'GET', responseType: 'text' },
 		);
 
@@ -63,9 +63,9 @@ export const getQueryJobInfo: SalesforceEndpoints['getQueryJobInfo'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{ id: string; state: string }>(
+	const response = await salesforceCall<{ id: string; state: string }>(
+		ctx,
 		`jobs/query/${input.jobId}`,
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -80,9 +80,9 @@ export const getQueryJobInfo: SalesforceEndpoints['getQueryJobInfo'] = async (
 
 export const getQueryJobResults: SalesforceEndpoints['getQueryJobResults'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<unknown>(
+		const response = await salesforceCall<unknown>(
+			ctx,
 			`jobs/query/${input.jobId}/results`,
-			ctx.key,
 			{
 				method: 'GET',
 				query: {
@@ -109,9 +109,9 @@ export const getQueryJobResults: SalesforceEndpoints['getQueryJobResults'] =
 
 export const getJobSuccessfulRecordResults: SalesforceEndpoints['getJobSuccessfulRecordResults'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<unknown>(
+		const response = await salesforceCall<unknown>(
+			ctx,
 			`jobs/ingest/${input.jobId}/successfulResults`,
-			ctx.key,
 			{ method: 'GET', responseType: 'text' },
 		);
 
@@ -126,9 +126,9 @@ export const getJobSuccessfulRecordResults: SalesforceEndpoints['getJobSuccessfu
 
 export const getJobUnprocessedRecordResults: SalesforceEndpoints['getJobUnprocessedRecordResults'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<unknown>(
+		const response = await salesforceCall<unknown>(
+			ctx,
 			`jobs/ingest/${input.jobId}/unprocessedrecords`,
-			ctx.key,
 			{ method: 'GET', responseType: 'text' },
 		);
 
@@ -140,3 +140,21 @@ export const getJobUnprocessedRecordResults: SalesforceEndpoints['getJobUnproces
 		);
 		return { records: parseCsvRecords(response) };
 	};
+
+export const uploadJobData: SalesforceEndpoints['uploadJobData'] = async (
+	ctx,
+	input,
+) => {
+	await salesforceCall<void>(ctx, `jobs/ingest/${input.jobId}/batches`, {
+		method: 'PUT',
+		body: input.csv,
+		mediaType: 'text/csv',
+	});
+	await logEventFromContext(
+		ctx,
+		'salesforce.job.upload_data',
+		{ jobId: input.jobId },
+		'completed',
+	);
+	return { success: true };
+};

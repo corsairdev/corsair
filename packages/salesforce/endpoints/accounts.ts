@@ -1,24 +1,48 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
+import { SalesforceAccountEntity } from '../schema/database';
 import { escapeSoql } from '../utils';
+import { cacheEntities, cacheEntity, evictEntity } from './persist';
+import { flattenFields, salesforceCall, soqlList } from './shared';
+
+const LABEL = 'account';
+const DEFAULT_FIELDS = [
+	'Id',
+	'Name',
+	'Type',
+	'Industry',
+	'Phone',
+	'Website',
+	'OwnerId',
+	'CreatedDate',
+	'LastModifiedDate',
+];
 
 export const createAccount: SalesforceEndpoints['createAccount'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const body = flattenFields(input);
+	const response = await salesforceCall<{
 		id: string;
 		success: boolean;
-	}>('sobjects/Account', ctx.key, {
-		method: 'POST',
-		body: input,
-	});
+		errors?: unknown[];
+	}>(ctx, 'sobjects/Account', { method: 'POST', body });
+
+	await cacheEntity(
+		ctx.db?.account,
+		SalesforceAccountEntity,
+		{
+			Id: response.id,
+			...body,
+		},
+		{ label: LABEL },
+	);
 
 	await logEventFromContext(
 		ctx,
 		'salesforce.account.created',
-		input,
+		{ Name: input.Name },
 		'completed',
 	);
 	return response;
@@ -28,14 +52,14 @@ export const getAccount: SalesforceEndpoints['getAccount'] = async (
 	ctx,
 	input,
 ) => {
-	const fields =
-		input.fields?.join(',') ||
-		'Id,Name,Type,Industry,Phone,Website,CreatedDate';
-	const response = await makeSalesforceRequest<{
+	const fields = input.fields?.join(',') || DEFAULT_FIELDS.join(',');
+	const response = await salesforceCall<{
 		Id: string;
-		[key: string]: unknown;
-	}>(`sobjects/Account/${input.id}?fields=${fields}`, ctx.key, {
-		method: 'GET',
+		Name?: string;
+	}>(ctx, `sobjects/Account/${input.id}`, { method: 'GET', query: { fields } });
+
+	await cacheEntity(ctx.db?.account, SalesforceAccountEntity, response, {
+		label: LABEL,
 	});
 
 	await logEventFromContext(ctx, 'salesforce.account.get', input, 'completed');
@@ -46,20 +70,22 @@ export const listAccounts: SalesforceEndpoints['listAccounts'] = async (
 	ctx,
 	input,
 ) => {
-	const fieldsStr = input.fields?.length
-		? input.fields.join(', ')
-		: 'Id, Name, Type, Industry, Phone, Website';
-	const limit = input.limit ?? 200;
-	const offsetStr = input.offset ? ` OFFSET ${input.offset}` : '';
-	const whereStr = input.query ? ` WHERE ${escapeSoql(input.query)}` : '';
-	const q = `SELECT ${fieldsStr} FROM Account${whereStr} LIMIT ${limit}${offsetStr}`;
+	const fields = input.fields?.length ? input.fields : DEFAULT_FIELDS;
+	const q = soqlList('Account', fields, input);
 
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		totalSize: number;
 		done: boolean;
 		records: Array<Record<string, unknown>>;
 		nextRecordsUrl?: string;
-	}>('query', ctx.key, { method: 'GET', query: { q } });
+	}>(ctx, 'query', { method: 'GET', query: { q } });
+
+	await cacheEntities(
+		ctx.db?.account,
+		SalesforceAccountEntity,
+		response.records,
+		{ label: LABEL },
+	);
 
 	await logEventFromContext(ctx, 'salesforce.account.list', input, 'completed');
 	return response;
@@ -75,13 +101,21 @@ export const searchAccounts: SalesforceEndpoints['searchAccounts'] = async (
 	if (input.type) terms.push(`Type = '${escapeSoql(input.type)}'`);
 	if (input.phone) terms.push(`Phone LIKE '%${escapeSoql(input.phone)}%'`);
 
-	const whereClause = terms.length > 0 ? ` WHERE ${terms.join(' AND ')}` : '';
-	const limit = input.limit ?? 50;
-	const q = `SELECT Id, Name, Type, Industry, Phone, Website FROM Account${whereClause} LIMIT ${limit}`;
+	const q = soqlList('Account', DEFAULT_FIELDS, {
+		limit: input.limit ?? 50,
+		query: terms.length > 0 ? terms.join(' AND ') : undefined,
+	});
 
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		records: Array<Record<string, unknown>>;
-	}>('query', ctx.key, { method: 'GET', query: { q } });
+	}>(ctx, 'query', { method: 'GET', query: { q } });
+
+	await cacheEntities(
+		ctx.db?.account,
+		SalesforceAccountEntity,
+		response.records,
+		{ label: LABEL },
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -92,13 +126,45 @@ export const searchAccounts: SalesforceEndpoints['searchAccounts'] = async (
 	return { records: response.records ?? [] };
 };
 
+export const updateAccount: SalesforceEndpoints['updateAccount'] = async (
+	ctx,
+	input,
+) => {
+	const { id, ...fields } = input;
+	const body = flattenFields(fields);
+	await salesforceCall<void>(ctx, `sobjects/Account/${id}`, {
+		method: 'PATCH',
+		body,
+	});
+
+	await cacheEntity(
+		ctx.db?.account,
+		SalesforceAccountEntity,
+		{
+			Id: id,
+			...body,
+		},
+		{ label: LABEL },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'salesforce.account.update',
+		{ id },
+		'completed',
+	);
+	return { success: true };
+};
+
 export const deleteAccount: SalesforceEndpoints['deleteAccount'] = async (
 	ctx,
 	input,
 ) => {
-	await makeSalesforceRequest<void>(`sobjects/Account/${input.id}`, ctx.key, {
+	await salesforceCall<void>(ctx, `sobjects/Account/${input.id}`, {
 		method: 'DELETE',
 	});
+
+	await evictEntity(ctx.db?.account, input.id, LABEL);
 
 	await logEventFromContext(
 		ctx,
@@ -110,60 +176,24 @@ export const deleteAccount: SalesforceEndpoints['deleteAccount'] = async (
 };
 
 export const accountCreationWithContentTypeOption: SalesforceEndpoints['accountCreationWithContentTypeOption'] =
-	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
-			id: string;
-			success: boolean;
-		}>('sobjects/Account', ctx.key, {
-			method: 'POST',
-			body: input,
-		});
-
-		await logEventFromContext(
-			ctx,
-			'salesforce.account.creation_with_content_type',
-			input,
-			'completed',
-		);
-		return response;
-	};
+	createAccount as unknown as SalesforceEndpoints['accountCreationWithContentTypeOption'];
 
 export const fetchAccountByIdWithQuery: SalesforceEndpoints['fetchAccountByIdWithQuery'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
-			Id: string;
-			[key: string]: unknown;
-		}>(`sobjects/Account/${input.id}`, ctx.key, { method: 'GET' });
-
-		await logEventFromContext(
-			ctx,
-			'salesforce.account.fetch_by_id_with_query',
-			input,
-			'completed',
-		);
-		return response;
+		const fields = input.fields
+			? input.fields.split(',').map((f) => f.trim())
+			: undefined;
+		return await getAccount(ctx, { id: input.id, fields });
 	};
 
 export const removeAccountByUniqueIdentifier: SalesforceEndpoints['removeAccountByUniqueIdentifier'] =
-	async (ctx, input) => {
-		await makeSalesforceRequest<void>(`sobjects/Account/${input.id}`, ctx.key, {
-			method: 'DELETE',
-		});
-
-		await logEventFromContext(
-			ctx,
-			'salesforce.account.remove_by_unique_identifier',
-			input,
-			'completed',
-		);
-		return { success: true };
-	};
+	deleteAccount as unknown as SalesforceEndpoints['removeAccountByUniqueIdentifier'];
 
 export const retrieveAccountDataAndErrorResponses: SalesforceEndpoints['retrieveAccountDataAndErrorResponses'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
-			`sobjects/Account/${input.id}/describe`,
-			ctx.key,
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
+			'sobjects/Account/describe',
 			{ method: 'GET' },
 		);
 
@@ -175,3 +205,6 @@ export const retrieveAccountDataAndErrorResponses: SalesforceEndpoints['retrieve
 		);
 		return { objectDescribe: response };
 	};
+
+export const updateAccountObjectById: SalesforceEndpoints['updateAccountObjectById'] =
+	updateAccount as unknown as SalesforceEndpoints['updateAccountObjectById'];

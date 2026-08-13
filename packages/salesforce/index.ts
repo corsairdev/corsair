@@ -6,6 +6,7 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
+	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -13,6 +14,8 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
+import { z } from 'zod';
 import {
 	Accounts,
 	AnalyticsReports,
@@ -42,10 +45,25 @@ import { errorHandlers } from './error-handlers';
 import { SalesforceSchema } from './schema';
 import { resolveSalesforceOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchSalesforceTenantWebhook } from './webhooks/tenant-matcher';
+import {
+	accountCreatedOrUpdated,
+	contactUpdated,
+	genericSObjectRecordUpdated,
+	newContact,
+	newLead,
+	newOrUpdatedOpportunity,
+	taskCreatedOrCompleted,
+} from './webhooks/triggers';
+import type {
+	SalesforceWebhookOutputs,
+	SalesforceWebhookPayload,
+} from './webhooks/types';
+import { SalesforceWebhookPayloadSchema } from './webhooks/types';
 
 export type SalesforcePluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	instanceUrl?: string;
 	webhookSecret?: string;
 	hooks?: InternalSalesforcePlugin['hooks'];
 	webhookHooks?: InternalSalesforcePlugin['webhookHooks'];
@@ -78,6 +96,8 @@ export type SalesforceEndpoints = {
 	getAccount: SalesforceEndpoint<'getAccount'>;
 	listAccounts: SalesforceEndpoint<'listAccounts'>;
 	searchAccounts: SalesforceEndpoint<'searchAccounts'>;
+	updateAccount: SalesforceEndpoint<'updateAccount'>;
+	updateAccountObjectById: SalesforceEndpoint<'updateAccountObjectById'>;
 	deleteAccount: SalesforceEndpoint<'deleteAccount'>;
 	accountCreationWithContentTypeOption: SalesforceEndpoint<'accountCreationWithContentTypeOption'>;
 	fetchAccountByIdWithQuery: SalesforceEndpoint<'fetchAccountByIdWithQuery'>;
@@ -90,6 +110,9 @@ export type SalesforceEndpoints = {
 	listContacts: SalesforceEndpoint<'listContacts'>;
 	deleteContact: SalesforceEndpoint<'deleteContact'>;
 	associateContactToAccount: SalesforceEndpoint<'associateContactToAccount'>;
+	updateContact: SalesforceEndpoint<'updateContact'>;
+	updateContactById: SalesforceEndpoint<'updateContactById'>;
+	searchContacts: SalesforceEndpoint<'searchContacts'>;
 	createNewContactWithJsonHeader: SalesforceEndpoint<'createNewContactWithJsonHeader'>;
 	queryContactsByName: SalesforceEndpoint<'queryContactsByName'>;
 	removeASpecificContactById: SalesforceEndpoint<'removeASpecificContactById'>;
@@ -102,6 +125,9 @@ export type SalesforceEndpoints = {
 	listLeads: SalesforceEndpoint<'listLeads'>;
 	deleteLead: SalesforceEndpoint<'deleteLead'>;
 	applyLeadAssignmentRules: SalesforceEndpoint<'applyLeadAssignmentRules'>;
+	updateLead: SalesforceEndpoint<'updateLead'>;
+	updateLeadByIdWithJsonPayload: SalesforceEndpoint<'updateLeadByIdWithJsonPayload'>;
+	searchLeads: SalesforceEndpoint<'searchLeads'>;
 	createLeadWithSpecifiedContentType: SalesforceEndpoint<'createLeadWithSpecifiedContentType'>;
 	deleteALeadObjectByItsId: SalesforceEndpoint<'deleteALeadObjectByItsId'>;
 	retrieveLeadById: SalesforceEndpoint<'retrieveLeadById'>;
@@ -113,6 +139,9 @@ export type SalesforceEndpoints = {
 	listOpportunities: SalesforceEndpoint<'listOpportunities'>;
 	deleteOpportunity: SalesforceEndpoint<'deleteOpportunity'>;
 	addOpportunityLineItem: SalesforceEndpoint<'addOpportunityLineItem'>;
+	updateOpportunity: SalesforceEndpoint<'updateOpportunity'>;
+	updateOpportunityById: SalesforceEndpoint<'updateOpportunityById'>;
+	searchOpportunities: SalesforceEndpoint<'searchOpportunities'>;
 	cloneOpportunityWithProducts: SalesforceEndpoint<'cloneOpportunityWithProducts'>;
 	listPricebookEntries: SalesforceEndpoint<'listPricebookEntries'>;
 	listPricebooks: SalesforceEndpoint<'listPricebooks'>;
@@ -127,6 +156,8 @@ export type SalesforceEndpoints = {
 	listCampaigns: SalesforceEndpoint<'listCampaigns'>;
 	deleteCampaign: SalesforceEndpoint<'deleteCampaign'>;
 	addContactToCampaign: SalesforceEndpoint<'addContactToCampaign'>;
+	updateCampaign: SalesforceEndpoint<'updateCampaign'>;
+	updateCampaignByIdWithJson: SalesforceEndpoint<'updateCampaignByIdWithJson'>;
 	addLeadToCampaign: SalesforceEndpoint<'addLeadToCampaign'>;
 	removeFromCampaign: SalesforceEndpoint<'removeFromCampaign'>;
 	searchCampaigns: SalesforceEndpoint<'searchCampaigns'>;
@@ -137,6 +168,9 @@ export type SalesforceEndpoints = {
 
 	// Notes
 	createNote: SalesforceEndpoint<'createNote'>;
+	updateNote: SalesforceEndpoint<'updateNote'>;
+	updateSpecificNoteById: SalesforceEndpoint<'updateSpecificNoteById'>;
+	searchNotes: SalesforceEndpoint<'searchNotes'>;
 	getNote: SalesforceEndpoint<'getNote'>;
 	listNotes: SalesforceEndpoint<'listNotes'>;
 	deleteNote: SalesforceEndpoint<'deleteNote'>;
@@ -150,6 +184,11 @@ export type SalesforceEndpoints = {
 	completeTask: SalesforceEndpoint<'completeTask'>;
 	logCall: SalesforceEndpoint<'logCall'>;
 	logEmailActivity: SalesforceEndpoint<'logEmailActivity'>;
+	updateTask: SalesforceEndpoint<'updateTask'>;
+	searchTasks: SalesforceEndpoint<'searchTasks'>;
+	sendEmail: SalesforceEndpoint<'sendEmail'>;
+	sendEmailFromTemplate: SalesforceEndpoint<'sendEmailFromTemplate'>;
+	sendMassEmail: SalesforceEndpoint<'sendMassEmail'>;
 
 	// Jobs
 	closeOrAbortJob: SalesforceEndpoint<'closeOrAbortJob'>;
@@ -159,6 +198,7 @@ export type SalesforceEndpoints = {
 	getQueryJobResults: SalesforceEndpoint<'getQueryJobResults'>;
 	getJobSuccessfulRecordResults: SalesforceEndpoint<'getJobSuccessfulRecordResults'>;
 	getJobUnprocessedRecordResults: SalesforceEndpoint<'getJobUnprocessedRecordResults'>;
+	uploadJobData: SalesforceEndpoint<'uploadJobData'>;
 
 	// SOQL / SOSL
 	runSoqlQuery: SalesforceEndpoint<'runSoqlQuery'>;
@@ -171,6 +211,9 @@ export type SalesforceEndpoints = {
 	getSearchLayout: SalesforceEndpoint<'getSearchLayout'>;
 	query: SalesforceEndpoint<'query'>;
 	executeSoqlQuery: SalesforceEndpoint<'executeSoqlQuery'>;
+	getSearchSuggestions: SalesforceEndpoint<'getSearchSuggestions'>;
+	searchKnowledgeArticles: SalesforceEndpoint<'searchKnowledgeArticles'>;
+	getParameterizedSearch: SalesforceEndpoint<'getParameterizedSearch'>;
 
 	// Composite
 	postCompositeSobjects: SalesforceEndpoint<'postCompositeSobjects'>;
@@ -182,6 +225,7 @@ export type SalesforceEndpoints = {
 	getCompositeResources: SalesforceEndpoint<'getCompositeResources'>;
 	getCompositeSobjects: SalesforceEndpoint<'getCompositeSobjects'>;
 	getSobjectCollections: SalesforceEndpoint<'getSobjectCollections'>;
+	patchCompositeSobjects: SalesforceEndpoint<'patchCompositeSobjects'>;
 
 	// Metadata
 	createSObjectRecord: SalesforceEndpoint<'createSObjectRecord'>;
@@ -230,6 +274,10 @@ export type SalesforceEndpoints = {
 	getUserInfo: SalesforceEndpoint<'getUserInfo'>;
 	sobjectUserPassword: SalesforceEndpoint<'sobjectUserPassword'>;
 	massTransferOwnership: SalesforceEndpoint<'massTransferOwnership'>;
+	updateSobject: SalesforceEndpoint<'updateSobject'>;
+	sobjectRowsUpdate: SalesforceEndpoint<'sobjectRowsUpdate'>;
+	upsertSobjectByExternalId: SalesforceEndpoint<'upsertSobjectByExternalId'>;
+	setUserPassword: SalesforceEndpoint<'setUserPassword'>;
 
 	// UI API
 	createARecord: SalesforceEndpoint<'createARecord'>;
@@ -273,12 +321,17 @@ export type SalesforceEndpoints = {
 	getRelatedListRecordsContacts: SalesforceEndpoint<'getRelatedListRecordsContacts'>;
 	getUiapiRelatedListPreferences: SalesforceEndpoint<'getUiapiRelatedListPreferences'>;
 	getSobjectListView: SalesforceEndpoint<'getSobjectListView'>;
+	updateRecord: SalesforceEndpoint<'updateRecord'>;
+	updateFavorite: SalesforceEndpoint<'updateFavorite'>;
+	updateRelatedListPreferences: SalesforceEndpoint<'updateRelatedListPreferences'>;
+	updateListViewPreferences: SalesforceEndpoint<'updateListViewPreferences'>;
 
 	// Files
 	getFileContent: SalesforceEndpoint<'getFileContent'>;
 	getFileInformation: SalesforceEndpoint<'getFileInformation'>;
 	getFileShares: SalesforceEndpoint<'getFileShares'>;
 	deleteFile: SalesforceEndpoint<'deleteFile'>;
+	uploadFile: SalesforceEndpoint<'uploadFile'>;
 
 	// Analytics & Reports
 	getDashboard: SalesforceEndpoint<'getDashboard'>;
@@ -292,7 +345,24 @@ export type SalesforceEndpoints = {
 	queryReport: SalesforceEndpoint<'queryReport'>;
 };
 
-export type SalesforceBoundWebhooks = BindWebhooks<Record<string, never>>;
+type SalesforceWebhook<K extends keyof SalesforceWebhookOutputs> =
+	CorsairWebhook<
+		SalesforceContext,
+		SalesforceWebhookPayload,
+		SalesforceWebhookOutputs[K]
+	>;
+
+export type SalesforceWebhooks = {
+	accountCreatedOrUpdated: SalesforceWebhook<'accountCreatedOrUpdated'>;
+	contactUpdated: SalesforceWebhook<'contactUpdated'>;
+	newContact: SalesforceWebhook<'newContact'>;
+	newLead: SalesforceWebhook<'newLead'>;
+	newOrUpdatedOpportunity: SalesforceWebhook<'newOrUpdatedOpportunity'>;
+	genericSObjectRecordUpdated: SalesforceWebhook<'genericSObjectRecordUpdated'>;
+	taskCreatedOrCompleted: SalesforceWebhook<'taskCreatedOrCompleted'>;
+};
+
+export type SalesforceBoundWebhooks = BindWebhooks<SalesforceWebhooks>;
 
 const salesforceEndpointsNested = {
 	accounts: {
@@ -300,6 +370,8 @@ const salesforceEndpointsNested = {
 		getAccount: Accounts.getAccount,
 		listAccounts: Accounts.listAccounts,
 		searchAccounts: Accounts.searchAccounts,
+		updateAccount: Accounts.updateAccount,
+		updateAccountObjectById: Accounts.updateAccountObjectById,
 		deleteAccount: Accounts.deleteAccount,
 		accountCreationWithContentTypeOption:
 			Accounts.accountCreationWithContentTypeOption,
@@ -314,6 +386,9 @@ const salesforceEndpointsNested = {
 		listContacts: Contacts.listContacts,
 		deleteContact: Contacts.deleteContact,
 		associateContactToAccount: Contacts.associateContactToAccount,
+		updateContact: Contacts.updateContact,
+		updateContactById: Contacts.updateContactById,
+		searchContacts: Contacts.searchContacts,
 		createNewContactWithJsonHeader: Contacts.createNewContactWithJsonHeader,
 		queryContactsByName: Contacts.queryContactsByName,
 		removeASpecificContactById: Contacts.removeASpecificContactById,
@@ -327,6 +402,9 @@ const salesforceEndpointsNested = {
 		listLeads: Leads.listLeads,
 		deleteLead: Leads.deleteLead,
 		applyLeadAssignmentRules: Leads.applyLeadAssignmentRules,
+		updateLead: Leads.updateLead,
+		updateLeadByIdWithJsonPayload: Leads.updateLeadByIdWithJsonPayload,
+		searchLeads: Leads.searchLeads,
 		createLeadWithSpecifiedContentType:
 			Leads.createLeadWithSpecifiedContentType,
 		deleteALeadObjectByItsId: Leads.deleteALeadObjectByItsId,
@@ -340,6 +418,9 @@ const salesforceEndpointsNested = {
 		listOpportunities: Opportunities.listOpportunities,
 		deleteOpportunity: Opportunities.deleteOpportunity,
 		addOpportunityLineItem: Opportunities.addOpportunityLineItem,
+		updateOpportunity: Opportunities.updateOpportunity,
+		updateOpportunityById: Opportunities.updateOpportunityById,
+		searchOpportunities: Opportunities.searchOpportunities,
 		cloneOpportunityWithProducts: Opportunities.cloneOpportunityWithProducts,
 		listPricebookEntries: Opportunities.listPricebookEntries,
 		listPricebooks: Opportunities.listPricebooks,
@@ -355,6 +436,8 @@ const salesforceEndpointsNested = {
 		listCampaigns: Campaigns.listCampaigns,
 		deleteCampaign: Campaigns.deleteCampaign,
 		addContactToCampaign: Campaigns.addContactToCampaign,
+		updateCampaign: Campaigns.updateCampaign,
+		updateCampaignByIdWithJson: Campaigns.updateCampaignByIdWithJson,
 		addLeadToCampaign: Campaigns.addLeadToCampaign,
 		removeFromCampaign: Campaigns.removeFromCampaign,
 		searchCampaigns: Campaigns.searchCampaigns,
@@ -367,6 +450,9 @@ const salesforceEndpointsNested = {
 	},
 	notes: {
 		createNote: Notes.createNote,
+		updateNote: Notes.updateNote,
+		updateSpecificNoteById: Notes.updateSpecificNoteById,
+		searchNotes: Notes.searchNotes,
 		getNote: Notes.getNote,
 		listNotes: Notes.listNotes,
 		deleteNote: Notes.deleteNote,
@@ -381,6 +467,11 @@ const salesforceEndpointsNested = {
 		completeTask: Tasks.completeTask,
 		logCall: Tasks.logCall,
 		logEmailActivity: Tasks.logEmailActivity,
+		updateTask: Tasks.updateTask,
+		searchTasks: Tasks.searchTasks,
+		sendEmail: Tasks.sendEmail,
+		sendEmailFromTemplate: Tasks.sendEmailFromTemplate,
+		sendMassEmail: Tasks.sendMassEmail,
 	},
 	jobs: {
 		closeOrAbortJob: Jobs.closeOrAbortJob,
@@ -390,6 +481,7 @@ const salesforceEndpointsNested = {
 		getQueryJobResults: Jobs.getQueryJobResults,
 		getJobSuccessfulRecordResults: Jobs.getJobSuccessfulRecordResults,
 		getJobUnprocessedRecordResults: Jobs.getJobUnprocessedRecordResults,
+		uploadJobData: Jobs.uploadJobData,
 	},
 	soqlSosl: {
 		runSoqlQuery: SoqlSosl.runSoqlQuery,
@@ -402,6 +494,9 @@ const salesforceEndpointsNested = {
 		getSearchLayout: SoqlSosl.getSearchLayout,
 		query: SoqlSosl.query,
 		executeSoqlQuery: SoqlSosl.executeSoqlQuery,
+		getSearchSuggestions: SoqlSosl.getSearchSuggestions,
+		searchKnowledgeArticles: SoqlSosl.searchKnowledgeArticles,
+		getParameterizedSearch: SoqlSosl.getParameterizedSearch,
 	},
 	composite: {
 		postCompositeSobjects: Composite.postCompositeSobjects,
@@ -413,6 +508,7 @@ const salesforceEndpointsNested = {
 		getCompositeResources: Composite.getCompositeResources,
 		getCompositeSobjects: Composite.getCompositeSobjects,
 		getSobjectCollections: Composite.getSobjectCollections,
+		patchCompositeSobjects: Composite.patchCompositeSobjects,
 	},
 	metadata: {
 		createSObjectRecord: Metadata.createSObjectRecord,
@@ -467,6 +563,10 @@ const salesforceEndpointsNested = {
 		getUserInfo: Metadata.getUserInfo,
 		sobjectUserPassword: Metadata.sobjectUserPassword,
 		massTransferOwnership: Metadata.massTransferOwnership,
+		updateSobject: Metadata.updateSobject,
+		sobjectRowsUpdate: Metadata.sobjectRowsUpdate,
+		upsertSobjectByExternalId: Metadata.upsertSobjectByExternalId,
+		setUserPassword: Metadata.setUserPassword,
 	},
 	uiApi: {
 		createARecord: UiApi.createARecord,
@@ -514,12 +614,17 @@ const salesforceEndpointsNested = {
 		getRelatedListRecordsContacts: UiApi.getRelatedListRecordsContacts,
 		getUiapiRelatedListPreferences: UiApi.getUiapiRelatedListPreferences,
 		getSobjectListView: UiApi.getSobjectListView,
+		updateRecord: UiApi.updateRecord,
+		updateFavorite: UiApi.updateFavorite,
+		updateRelatedListPreferences: UiApi.updateRelatedListPreferences,
+		updateListViewPreferences: UiApi.updateListViewPreferences,
 	},
 	files: {
 		getFileContent: Files.getFileContent,
 		getFileInformation: Files.getFileInformation,
 		getFileShares: Files.getFileShares,
 		deleteFile: Files.deleteFile,
+		uploadFile: Files.uploadFile,
 	},
 	analyticsReports: {
 		getDashboard: AnalyticsReports.getDashboard,
@@ -534,7 +639,53 @@ const salesforceEndpointsNested = {
 	},
 } as const;
 
-const salesforceWebhooksNested = {} as const;
+const salesforceWebhooksNested = {
+	accountCreatedOrUpdated,
+	contactUpdated,
+	newContact,
+	newLead,
+	newOrUpdatedOpportunity,
+	genericSObjectRecordUpdated,
+	taskCreatedOrCompleted,
+} as const;
+
+const salesforceWebhookSchemas = {
+	accountCreatedOrUpdated: {
+		description: 'Account created or updated',
+		payload: SalesforceWebhookPayloadSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	contactUpdated: {
+		description: 'Contact updated',
+		payload: SalesforceWebhookPayloadSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	newContact: {
+		description: 'New contact created',
+		payload: SalesforceWebhookPayloadSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	newLead: {
+		description: 'New lead created',
+		payload: SalesforceWebhookPayloadSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	newOrUpdatedOpportunity: {
+		description: 'Opportunity created or updated',
+		payload: SalesforceWebhookPayloadSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	genericSObjectRecordUpdated: {
+		description: 'Generic sObject record updated',
+		payload: SalesforceWebhookPayloadSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+	taskCreatedOrCompleted: {
+		description: 'Task created or completed',
+		payload: SalesforceWebhookPayloadSchema,
+		response: z.object({ success: z.boolean() }),
+	},
+} as const;
 
 export const salesforceEndpointSchemas = {
 	'accounts.createAccount': {
@@ -552,6 +703,14 @@ export const salesforceEndpointSchemas = {
 	'accounts.searchAccounts': {
 		input: SalesforceEndpointInputSchemas.searchAccounts,
 		output: SalesforceEndpointOutputSchemas.searchAccounts,
+	},
+	'accounts.updateAccount': {
+		input: SalesforceEndpointInputSchemas.updateAccount,
+		output: SalesforceEndpointOutputSchemas.updateAccount,
+	},
+	'accounts.updateAccountObjectById': {
+		input: SalesforceEndpointInputSchemas.updateAccountObjectById,
+		output: SalesforceEndpointOutputSchemas.updateAccountObjectById,
 	},
 	'accounts.deleteAccount': {
 		input: SalesforceEndpointInputSchemas.deleteAccount,
@@ -596,6 +755,18 @@ export const salesforceEndpointSchemas = {
 		input: SalesforceEndpointInputSchemas.associateContactToAccount,
 		output: SalesforceEndpointOutputSchemas.associateContactToAccount,
 	},
+	'contacts.updateContact': {
+		input: SalesforceEndpointInputSchemas.updateContact,
+		output: SalesforceEndpointOutputSchemas.updateContact,
+	},
+	'contacts.updateContactById': {
+		input: SalesforceEndpointInputSchemas.updateContactById,
+		output: SalesforceEndpointOutputSchemas.updateContactById,
+	},
+	'contacts.searchContacts': {
+		input: SalesforceEndpointInputSchemas.searchContacts,
+		output: SalesforceEndpointOutputSchemas.searchContacts,
+	},
 	'contacts.createNewContactWithJsonHeader': {
 		input: SalesforceEndpointInputSchemas.createNewContactWithJsonHeader,
 		output: SalesforceEndpointOutputSchemas.createNewContactWithJsonHeader,
@@ -639,6 +810,18 @@ export const salesforceEndpointSchemas = {
 		input: SalesforceEndpointInputSchemas.applyLeadAssignmentRules,
 		output: SalesforceEndpointOutputSchemas.applyLeadAssignmentRules,
 	},
+	'leads.updateLead': {
+		input: SalesforceEndpointInputSchemas.updateLead,
+		output: SalesforceEndpointOutputSchemas.updateLead,
+	},
+	'leads.updateLeadByIdWithJsonPayload': {
+		input: SalesforceEndpointInputSchemas.updateLeadByIdWithJsonPayload,
+		output: SalesforceEndpointOutputSchemas.updateLeadByIdWithJsonPayload,
+	},
+	'leads.searchLeads': {
+		input: SalesforceEndpointInputSchemas.searchLeads,
+		output: SalesforceEndpointOutputSchemas.searchLeads,
+	},
 	'leads.createLeadWithSpecifiedContentType': {
 		input: SalesforceEndpointInputSchemas.createLeadWithSpecifiedContentType,
 		output: SalesforceEndpointOutputSchemas.createLeadWithSpecifiedContentType,
@@ -676,6 +859,18 @@ export const salesforceEndpointSchemas = {
 	'opportunities.addOpportunityLineItem': {
 		input: SalesforceEndpointInputSchemas.addOpportunityLineItem,
 		output: SalesforceEndpointOutputSchemas.addOpportunityLineItem,
+	},
+	'opportunities.updateOpportunity': {
+		input: SalesforceEndpointInputSchemas.updateOpportunity,
+		output: SalesforceEndpointOutputSchemas.updateOpportunity,
+	},
+	'opportunities.updateOpportunityById': {
+		input: SalesforceEndpointInputSchemas.updateOpportunityById,
+		output: SalesforceEndpointOutputSchemas.updateOpportunityById,
+	},
+	'opportunities.searchOpportunities': {
+		input: SalesforceEndpointInputSchemas.searchOpportunities,
+		output: SalesforceEndpointOutputSchemas.searchOpportunities,
 	},
 	'opportunities.cloneOpportunityWithProducts': {
 		input: SalesforceEndpointInputSchemas.cloneOpportunityWithProducts,
@@ -728,6 +923,14 @@ export const salesforceEndpointSchemas = {
 		input: SalesforceEndpointInputSchemas.addContactToCampaign,
 		output: SalesforceEndpointOutputSchemas.addContactToCampaign,
 	},
+	'campaigns.updateCampaign': {
+		input: SalesforceEndpointInputSchemas.updateCampaign,
+		output: SalesforceEndpointOutputSchemas.updateCampaign,
+	},
+	'campaigns.updateCampaignByIdWithJson': {
+		input: SalesforceEndpointInputSchemas.updateCampaignByIdWithJson,
+		output: SalesforceEndpointOutputSchemas.updateCampaignByIdWithJson,
+	},
 	'campaigns.addLeadToCampaign': {
 		input: SalesforceEndpointInputSchemas.addLeadToCampaign,
 		output: SalesforceEndpointOutputSchemas.addLeadToCampaign,
@@ -762,6 +965,18 @@ export const salesforceEndpointSchemas = {
 	'notes.createNote': {
 		input: SalesforceEndpointInputSchemas.createNote,
 		output: SalesforceEndpointOutputSchemas.createNote,
+	},
+	'notes.updateNote': {
+		input: SalesforceEndpointInputSchemas.updateNote,
+		output: SalesforceEndpointOutputSchemas.updateNote,
+	},
+	'notes.updateSpecificNoteById': {
+		input: SalesforceEndpointInputSchemas.updateSpecificNoteById,
+		output: SalesforceEndpointOutputSchemas.updateSpecificNoteById,
+	},
+	'notes.searchNotes': {
+		input: SalesforceEndpointInputSchemas.searchNotes,
+		output: SalesforceEndpointOutputSchemas.searchNotes,
 	},
 	'notes.getNote': {
 		input: SalesforceEndpointInputSchemas.getNote,
@@ -809,6 +1024,26 @@ export const salesforceEndpointSchemas = {
 		input: SalesforceEndpointInputSchemas.logEmailActivity,
 		output: SalesforceEndpointOutputSchemas.logEmailActivity,
 	},
+	'tasks.updateTask': {
+		input: SalesforceEndpointInputSchemas.updateTask,
+		output: SalesforceEndpointOutputSchemas.updateTask,
+	},
+	'tasks.searchTasks': {
+		input: SalesforceEndpointInputSchemas.searchTasks,
+		output: SalesforceEndpointOutputSchemas.searchTasks,
+	},
+	'tasks.sendEmail': {
+		input: SalesforceEndpointInputSchemas.sendEmail,
+		output: SalesforceEndpointOutputSchemas.sendEmail,
+	},
+	'tasks.sendEmailFromTemplate': {
+		input: SalesforceEndpointInputSchemas.sendEmailFromTemplate,
+		output: SalesforceEndpointOutputSchemas.sendEmailFromTemplate,
+	},
+	'tasks.sendMassEmail': {
+		input: SalesforceEndpointInputSchemas.sendMassEmail,
+		output: SalesforceEndpointOutputSchemas.sendMassEmail,
+	},
 
 	'jobs.closeOrAbortJob': {
 		input: SalesforceEndpointInputSchemas.closeOrAbortJob,
@@ -837,6 +1072,10 @@ export const salesforceEndpointSchemas = {
 	'jobs.getJobUnprocessedRecordResults': {
 		input: SalesforceEndpointInputSchemas.getJobUnprocessedRecordResults,
 		output: SalesforceEndpointOutputSchemas.getJobUnprocessedRecordResults,
+	},
+	'jobs.uploadJobData': {
+		input: SalesforceEndpointInputSchemas.uploadJobData,
+		output: SalesforceEndpointOutputSchemas.uploadJobData,
 	},
 
 	'soqlSosl.runSoqlQuery': {
@@ -879,6 +1118,18 @@ export const salesforceEndpointSchemas = {
 		input: SalesforceEndpointInputSchemas.executeSoqlQuery,
 		output: SalesforceEndpointOutputSchemas.executeSoqlQuery,
 	},
+	'soqlSosl.getSearchSuggestions': {
+		input: SalesforceEndpointInputSchemas.getSearchSuggestions,
+		output: SalesforceEndpointOutputSchemas.getSearchSuggestions,
+	},
+	'soqlSosl.searchKnowledgeArticles': {
+		input: SalesforceEndpointInputSchemas.searchKnowledgeArticles,
+		output: SalesforceEndpointOutputSchemas.searchKnowledgeArticles,
+	},
+	'soqlSosl.getParameterizedSearch': {
+		input: SalesforceEndpointInputSchemas.getParameterizedSearch,
+		output: SalesforceEndpointOutputSchemas.getParameterizedSearch,
+	},
 
 	'composite.postCompositeSobjects': {
 		input: SalesforceEndpointInputSchemas.postCompositeSobjects,
@@ -915,6 +1166,10 @@ export const salesforceEndpointSchemas = {
 	'composite.getSobjectCollections': {
 		input: SalesforceEndpointInputSchemas.getSobjectCollections,
 		output: SalesforceEndpointOutputSchemas.getSobjectCollections,
+	},
+	'composite.patchCompositeSobjects': {
+		input: SalesforceEndpointInputSchemas.patchCompositeSobjects,
+		output: SalesforceEndpointOutputSchemas.patchCompositeSobjects,
 	},
 
 	'metadata.createSObjectRecord': {
@@ -1105,6 +1360,22 @@ export const salesforceEndpointSchemas = {
 		input: SalesforceEndpointInputSchemas.massTransferOwnership,
 		output: SalesforceEndpointOutputSchemas.massTransferOwnership,
 	},
+	'metadata.updateSobject': {
+		input: SalesforceEndpointInputSchemas.updateSobject,
+		output: SalesforceEndpointOutputSchemas.updateSobject,
+	},
+	'metadata.sobjectRowsUpdate': {
+		input: SalesforceEndpointInputSchemas.sobjectRowsUpdate,
+		output: SalesforceEndpointOutputSchemas.sobjectRowsUpdate,
+	},
+	'metadata.upsertSobjectByExternalId': {
+		input: SalesforceEndpointInputSchemas.upsertSobjectByExternalId,
+		output: SalesforceEndpointOutputSchemas.upsertSobjectByExternalId,
+	},
+	'metadata.setUserPassword': {
+		input: SalesforceEndpointInputSchemas.setUserPassword,
+		output: SalesforceEndpointOutputSchemas.setUserPassword,
+	},
 
 	'uiApi.createARecord': {
 		input: SalesforceEndpointInputSchemas.createARecord,
@@ -1272,6 +1543,22 @@ export const salesforceEndpointSchemas = {
 		input: SalesforceEndpointInputSchemas.getSobjectListView,
 		output: SalesforceEndpointOutputSchemas.getSobjectListView,
 	},
+	'uiApi.updateRecord': {
+		input: SalesforceEndpointInputSchemas.updateRecord,
+		output: SalesforceEndpointOutputSchemas.updateRecord,
+	},
+	'uiApi.updateFavorite': {
+		input: SalesforceEndpointInputSchemas.updateFavorite,
+		output: SalesforceEndpointOutputSchemas.updateFavorite,
+	},
+	'uiApi.updateRelatedListPreferences': {
+		input: SalesforceEndpointInputSchemas.updateRelatedListPreferences,
+		output: SalesforceEndpointOutputSchemas.updateRelatedListPreferences,
+	},
+	'uiApi.updateListViewPreferences': {
+		input: SalesforceEndpointInputSchemas.updateListViewPreferences,
+		output: SalesforceEndpointOutputSchemas.updateListViewPreferences,
+	},
 
 	'files.getFileContent': {
 		input: SalesforceEndpointInputSchemas.getFileContent,
@@ -1288,6 +1575,10 @@ export const salesforceEndpointSchemas = {
 	'files.deleteFile': {
 		input: SalesforceEndpointInputSchemas.deleteFile,
 		output: SalesforceEndpointOutputSchemas.deleteFile,
+	},
+	'files.uploadFile': {
+		input: SalesforceEndpointInputSchemas.uploadFile,
+		output: SalesforceEndpointOutputSchemas.uploadFile,
 	},
 
 	'analyticsReports.getDashboard': {
@@ -1330,7 +1621,7 @@ export const salesforceEndpointSchemas = {
 	typeof salesforceEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'oauth_2' as const;
 
 const salesforceEndpointMeta = {
 	'accounts.createAccount': {
@@ -1348,6 +1639,14 @@ const salesforceEndpointMeta = {
 	'accounts.searchAccounts': {
 		riskLevel: 'read',
 		description: 'Search accounts',
+	},
+	'accounts.updateAccount': {
+		riskLevel: 'write',
+		description: 'Update account',
+	},
+	'accounts.updateAccountObjectById': {
+		riskLevel: 'write',
+		description: 'Update account by id (deprecated)',
 	},
 	'accounts.deleteAccount': {
 		riskLevel: 'destructive',
@@ -1393,6 +1692,18 @@ const salesforceEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Associate contact to account',
 	},
+	'contacts.updateContact': {
+		riskLevel: 'write',
+		description: 'Update contact',
+	},
+	'contacts.updateContactById': {
+		riskLevel: 'write',
+		description: 'Update contact by id (deprecated)',
+	},
+	'contacts.searchContacts': {
+		riskLevel: 'read',
+		description: 'Search contacts',
+	},
 	'contacts.createNewContactWithJsonHeader': {
 		riskLevel: 'write',
 		description: 'Create new contact with JSON header (deprecated)',
@@ -1436,6 +1747,18 @@ const salesforceEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Apply lead assignment rules',
 	},
+	'leads.updateLead': {
+		riskLevel: 'write',
+		description: 'Update lead',
+	},
+	'leads.updateLeadByIdWithJsonPayload': {
+		riskLevel: 'write',
+		description: 'Update lead by id (deprecated)',
+	},
+	'leads.searchLeads': {
+		riskLevel: 'read',
+		description: 'Search leads',
+	},
 	'leads.createLeadWithSpecifiedContentType': {
 		riskLevel: 'write',
 		description: 'Create lead with content type (deprecated)',
@@ -1474,6 +1797,18 @@ const salesforceEndpointMeta = {
 	'opportunities.addOpportunityLineItem': {
 		riskLevel: 'write',
 		description: 'Add line item to opportunity',
+	},
+	'opportunities.updateOpportunity': {
+		riskLevel: 'write',
+		description: 'Update opportunity',
+	},
+	'opportunities.updateOpportunityById': {
+		riskLevel: 'write',
+		description: 'Update opportunity by id (deprecated)',
+	},
+	'opportunities.searchOpportunities': {
+		riskLevel: 'read',
+		description: 'Search opportunities',
 	},
 	'opportunities.cloneOpportunityWithProducts': {
 		riskLevel: 'write',
@@ -1526,6 +1861,14 @@ const salesforceEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Add contact to campaign',
 	},
+	'campaigns.updateCampaign': {
+		riskLevel: 'write',
+		description: 'Update campaign',
+	},
+	'campaigns.updateCampaignByIdWithJson': {
+		riskLevel: 'write',
+		description: 'Update campaign by id (deprecated)',
+	},
 	'campaigns.addLeadToCampaign': {
 		riskLevel: 'write',
 		description: 'Add lead to campaign',
@@ -1560,6 +1903,18 @@ const salesforceEndpointMeta = {
 	'notes.createNote': {
 		riskLevel: 'write',
 		description: 'Create note',
+	},
+	'notes.updateNote': {
+		riskLevel: 'write',
+		description: 'Update note',
+	},
+	'notes.updateSpecificNoteById': {
+		riskLevel: 'write',
+		description: 'Update note by id (deprecated)',
+	},
+	'notes.searchNotes': {
+		riskLevel: 'read',
+		description: 'Search notes',
 	},
 	'notes.getNote': {
 		riskLevel: 'read',
@@ -1608,6 +1963,26 @@ const salesforceEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Log email activity',
 	},
+	'tasks.updateTask': {
+		riskLevel: 'write',
+		description: 'Update task',
+	},
+	'tasks.searchTasks': {
+		riskLevel: 'read',
+		description: 'Search tasks',
+	},
+	'tasks.sendEmail': {
+		riskLevel: 'write',
+		description: 'Send email',
+	},
+	'tasks.sendEmailFromTemplate': {
+		riskLevel: 'write',
+		description: 'Send email from template',
+	},
+	'tasks.sendMassEmail': {
+		riskLevel: 'write',
+		description: 'Send mass email',
+	},
 
 	'jobs.closeOrAbortJob': {
 		riskLevel: 'write',
@@ -1637,6 +2012,10 @@ const salesforceEndpointMeta = {
 	'jobs.getJobUnprocessedRecordResults': {
 		riskLevel: 'read',
 		description: 'Get job unprocessed record results',
+	},
+	'jobs.uploadJobData': {
+		riskLevel: 'write',
+		description: 'Upload CSV data to a bulk ingest job',
 	},
 
 	'soqlSosl.runSoqlQuery': {
@@ -1679,6 +2058,18 @@ const salesforceEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Execute SOQL query (deprecated)',
 	},
+	'soqlSosl.getSearchSuggestions': {
+		riskLevel: 'read',
+		description: 'Get search suggestions',
+	},
+	'soqlSosl.searchKnowledgeArticles': {
+		riskLevel: 'read',
+		description: 'Search knowledge articles',
+	},
+	'soqlSosl.getParameterizedSearch': {
+		riskLevel: 'read',
+		description: 'Parameterized search via GET',
+	},
 
 	'composite.postCompositeSobjects': {
 		riskLevel: 'write',
@@ -1716,6 +2107,10 @@ const salesforceEndpointMeta = {
 	'composite.getSobjectCollections': {
 		riskLevel: 'read',
 		description: 'Get sObject collections',
+	},
+	'composite.patchCompositeSobjects': {
+		riskLevel: 'write',
+		description: 'Upsert records using external ID',
 	},
 
 	'metadata.createSObjectRecord': {
@@ -1904,6 +2299,22 @@ const salesforceEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Mass transfer record ownership',
 	},
+	'metadata.updateSobject': {
+		riskLevel: 'write',
+		description: 'Update sObject fields',
+	},
+	'metadata.sobjectRowsUpdate': {
+		riskLevel: 'write',
+		description: 'Update sObject rows',
+	},
+	'metadata.upsertSobjectByExternalId': {
+		riskLevel: 'write',
+		description: 'Upsert sObject by external ID',
+	},
+	'metadata.setUserPassword': {
+		riskLevel: 'write',
+		description: 'Set user password',
+	},
 
 	'uiApi.createARecord': {
 		riskLevel: 'write',
@@ -2070,6 +2481,22 @@ const salesforceEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get sObject list view information',
 	},
+	'uiApi.updateRecord': {
+		riskLevel: 'write',
+		description: 'Update a record via UI API',
+	},
+	'uiApi.updateFavorite': {
+		riskLevel: 'write',
+		description: 'Update a favorite',
+	},
+	'uiApi.updateRelatedListPreferences': {
+		riskLevel: 'write',
+		description: 'Update related list preferences',
+	},
+	'uiApi.updateListViewPreferences': {
+		riskLevel: 'write',
+		description: 'Update list view preferences',
+	},
 
 	'files.getFileContent': {
 		riskLevel: 'read',
@@ -2087,6 +2514,10 @@ const salesforceEndpointMeta = {
 		riskLevel: 'destructive',
 		irreversible: true,
 		description: 'Delete file permanently',
+	},
+	'files.uploadFile': {
+		riskLevel: 'write',
+		description: 'Upload a file to Salesforce Files',
 	},
 
 	'analyticsReports.getDashboard': {
@@ -2134,7 +2565,7 @@ export const salesforceAuthConfig = {
 		account: ['tenant_external_id'] as const,
 	},
 	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['tenant_external_id', 'instance_url'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -2172,9 +2603,23 @@ export function salesforce<const T extends SalesforcePluginOptions>(
 		webhooks: salesforceWebhooksNested,
 		endpointMeta: salesforceEndpointMeta,
 		endpointSchemas: salesforceEndpointSchemas,
+		oauthConfig: {
+			providerName: 'Salesforce',
+			authUrl: 'https://login.salesforce.com/services/oauth2/authorize',
+			tokenUrl: 'https://login.salesforce.com/services/oauth2/token',
+			scopes: ['api', 'refresh_token', 'id'],
+		},
+		webhookSchemas: salesforceWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			return 'x-salesforce-signature' in headers;
+			const hasSig =
+				'x-salesforce-signature' in headers || 'x-sfdc-signature' in headers;
+			const body = request.body as Record<string, unknown> | undefined;
+			const hasCdc =
+				!!body &&
+				(typeof body.ChangeEventHeader === 'object' ||
+					typeof body.sobject === 'string');
+			return hasSig || hasCdc;
 		},
 		pluginTenantWebhookMatcher: matchSalesforceTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveSalesforceOAuthWebhookTenantLink,
@@ -2198,15 +2643,17 @@ export function salesforce<const T extends SalesforcePluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) throw new AuthMissingError('salesforce', 'api_key');
+				return res;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) throw new AuthMissingError('salesforce', 'oauth_2');
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('salesforce', ctx.authType ?? 'oauth_2');
 		},
 	} satisfies InternalSalesforcePlugin;
 }

@@ -1,14 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
 import { escapeSoql } from '../utils';
+import { salesforceCall } from './shared';
 
 export const createSObjectRecord: SalesforceEndpoints['createSObjectRecord'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			id: string;
 			success?: boolean;
-		}>(`sobjects/${input.sobject}`, ctx.key, {
+		}>(ctx, `sobjects/${input.sobject}`, {
 			method: 'POST',
 			body: input.fields,
 		});
@@ -26,9 +26,9 @@ export const cloneRecord: SalesforceEndpoints['cloneRecord'] = async (
 	ctx,
 	input,
 ) => {
-	const orig = await makeSalesforceRequest<Record<string, unknown>>(
+	const orig = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		`sobjects/${input.sobject}/${input.recordId}`,
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -44,9 +44,9 @@ export const cloneRecord: SalesforceEndpoints['cloneRecord'] = async (
 
 	const body = { ...fieldsToClone, ...(input.overrides ?? {}) };
 
-	const response = await makeSalesforceRequest<{ id: string }>(
+	const response = await salesforceCall<{ id: string }>(
+		ctx,
 		`sobjects/${input.sobject}`,
-		ctx.key,
 		{ method: 'POST', body },
 	);
 
@@ -70,10 +70,10 @@ export const createCustomField: SalesforceEndpoints['createCustomField'] =
 			},
 		};
 
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			id: string;
 			success?: boolean;
-		}>('tooling/sobjects/CustomField', ctx.key, { method: 'POST', body });
+		}>(ctx, 'tooling/sobjects/CustomField', { method: 'POST', body });
 
 		await logEventFromContext(
 			ctx,
@@ -100,10 +100,10 @@ export const createCustomObject: SalesforceEndpoints['createCustomObject'] =
 			},
 		};
 
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			id: string;
 			success?: boolean;
-		}>('tooling/sobjects/CustomObject', ctx.key, { method: 'POST', body });
+		}>(ctx, 'tooling/sobjects/CustomObject', { method: 'POST', body });
 
 		await logEventFromContext(
 			ctx,
@@ -118,11 +118,9 @@ export const deleteSobject: SalesforceEndpoints['deleteSobject'] = async (
 	ctx,
 	input,
 ) => {
-	await makeSalesforceRequest<void>(
-		`sobjects/${input.sobject}/${input.id}`,
-		ctx.key,
-		{ method: 'DELETE' },
-	);
+	await salesforceCall<void>(ctx, `sobjects/${input.sobject}/${input.id}`, {
+		method: 'DELETE',
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -135,11 +133,9 @@ export const deleteSobject: SalesforceEndpoints['deleteSobject'] = async (
 
 export const deleteSobjectRows: SalesforceEndpoints['deleteSobjectRows'] =
 	async (ctx, input) => {
-		await makeSalesforceRequest<void>(
-			`sobjects/${input.sobject}/${input.id}`,
-			ctx.key,
-			{ method: 'DELETE' },
-		);
+		await salesforceCall<void>(ctx, `sobjects/${input.sobject}/${input.id}`, {
+			method: 'DELETE',
+		});
 
 		await logEventFromContext(
 			ctx,
@@ -154,11 +150,11 @@ export const getSobjects: SalesforceEndpoints['getSobjects'] = async (
 	ctx,
 	_input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		encoding?: string;
 		maxBatchSize?: number;
 		sobjects: Array<Record<string, unknown>>;
-	}>('sobjects', ctx.key, { method: 'GET' });
+	}>(ctx, 'sobjects', { method: 'GET' });
 
 	await logEventFromContext(
 		ctx,
@@ -175,10 +171,10 @@ export const executeSobjectQuickAction: SalesforceEndpoints['executeSobjectQuick
 			? `sobjects/${input.sobject}/quickActions/${input.actionName}/${input.contextId}`
 			: `sobjects/${input.sobject}/quickActions/${input.actionName}`;
 
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			success: boolean;
 			recordId?: string;
-		}>(endpoint, ctx.key, {
+		}>(ctx, endpoint, {
 			method: 'POST',
 			body: input.record ?? {},
 		});
@@ -194,9 +190,9 @@ export const executeSobjectQuickAction: SalesforceEndpoints['executeSobjectQuick
 
 export const getApi: SalesforceEndpoints['getApi'] = async (ctx, input) => {
 	const endpoint = input.version ? `v${input.version}` : '';
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		endpoint,
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -211,9 +207,9 @@ export const getApi: SalesforceEndpoints['getApi'] = async (ctx, input) => {
 
 export const getChatterResources: SalesforceEndpoints['getChatterResources'] =
 	async (ctx, _input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			'chatter',
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -228,9 +224,9 @@ export const getChatterResources: SalesforceEndpoints['getChatterResources'] =
 
 export const getSobjectPlatformaction: SalesforceEndpoints['getSobjectPlatformaction'] =
 	async (ctx, _input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			'sobjects/PlatformAction/describe',
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -247,7 +243,7 @@ export const headQuickActions: SalesforceEndpoints['headQuickActions'] = async (
 	ctx,
 	_input,
 ) => {
-	await makeSalesforceRequest<void>('quickActions', ctx.key, { method: 'GET' });
+	await salesforceCall<void>(ctx, 'quickActions', { method: 'HEAD' });
 
 	await logEventFromContext(
 		ctx,
@@ -260,11 +256,9 @@ export const headQuickActions: SalesforceEndpoints['headQuickActions'] = async (
 
 export const headSobjectsUserPassword: SalesforceEndpoints['headSobjectsUserPassword'] =
 	async (ctx, input) => {
-		await makeSalesforceRequest<void>(
-			`sobjects/User/${input.userId}/password`,
-			ctx.key,
-			{ method: 'GET' },
-		);
+		await salesforceCall<void>(ctx, `sobjects/User/${input.userId}/password`, {
+			method: 'HEAD',
+		});
 
 		await logEventFromContext(
 			ctx,
@@ -277,9 +271,9 @@ export const headSobjectsUserPassword: SalesforceEndpoints['headSobjectsUserPass
 
 export const getPicklistValuesByRecordType: SalesforceEndpoints['getPicklistValuesByRecordType'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`ui-api/object-info/${input.sobject}/picklist-values/${input.recordTypeId}`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -294,9 +288,9 @@ export const getPicklistValuesByRecordType: SalesforceEndpoints['getPicklistValu
 
 export const getAllFieldsForObject: SalesforceEndpoints['getAllFieldsForObject'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			fields: Array<Record<string, unknown>>;
-		}>(`sobjects/${input.sobject}/describe`, ctx.key, { method: 'GET' });
+		}>(ctx, `sobjects/${input.sobject}/describe`, { method: 'GET' });
 
 		await logEventFromContext(
 			ctx,
@@ -309,9 +303,9 @@ export const getAllFieldsForObject: SalesforceEndpoints['getAllFieldsForObject']
 
 export const getAllCustomObjects: SalesforceEndpoints['getAllCustomObjects'] =
 	async (ctx, _input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			sobjects: Array<Record<string, unknown>>;
-		}>('sobjects', ctx.key, { method: 'GET' });
+		}>(ctx, 'sobjects', { method: 'GET' });
 
 		const customObjects = (response.sobjects ?? []).filter(
 			(obj) => obj.custom === true,
@@ -328,9 +322,9 @@ export const getAllCustomObjects: SalesforceEndpoints['getAllCustomObjects'] =
 
 export const getSobjectsSobjectDescribeApprovallayouts: SalesforceEndpoints['getSobjectsSobjectDescribeApprovallayouts'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`sobjects/${input.sobject}/describe/approvalLayouts`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -345,9 +339,9 @@ export const getSobjectsSobjectDescribeApprovallayouts: SalesforceEndpoints['get
 
 export const getSobjectApprovalLayouts: SalesforceEndpoints['getSobjectApprovalLayouts'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`sobjects/${input.sobject}/approvalLayouts`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -364,9 +358,9 @@ export const getChildRecords: SalesforceEndpoints['getChildRecords'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		records: Array<Record<string, unknown>>;
-	}>(`sobjects/Account/${input.parentId}/${input.relationshipName}`, ctx.key, {
+	}>(ctx, `sobjects/Account/${input.parentId}/${input.relationshipName}`, {
 		method: 'GET',
 	});
 
@@ -383,9 +377,9 @@ export const getConsentAction: SalesforceEndpoints['getConsentAction'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		'consent/action',
-		ctx.key,
 		{
 			method: 'GET',
 			query: {
@@ -406,8 +400,8 @@ export const getConsentAction: SalesforceEndpoints['getConsentAction'] = async (
 
 export const headActionsCustom: SalesforceEndpoints['headActionsCustom'] =
 	async (ctx, _input) => {
-		await makeSalesforceRequest<void>('actions/custom', ctx.key, {
-			method: 'GET',
+		await salesforceCall<void>(ctx, 'actions/custom', {
+			method: 'HEAD',
 		});
 
 		await logEventFromContext(
@@ -421,9 +415,9 @@ export const headActionsCustom: SalesforceEndpoints['headActionsCustom'] =
 
 export const listCustomInvocableActions: SalesforceEndpoints['listCustomInvocableActions'] =
 	async (ctx, _input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			actions: Array<Record<string, unknown>>;
-		}>('actions/custom', ctx.key, { method: 'GET' });
+		}>(ctx, 'actions/custom', { method: 'GET' });
 
 		await logEventFromContext(
 			ctx,
@@ -436,9 +430,9 @@ export const listCustomInvocableActions: SalesforceEndpoints['listCustomInvocabl
 
 export const getSupportedObjectsDirectory: SalesforceEndpoints['getSupportedObjectsDirectory'] =
 	async (ctx, _input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			'ui-api/object-info',
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -455,9 +449,9 @@ export const getGlobalActions: SalesforceEndpoints['getGlobalActions'] = async (
 	ctx,
 	_input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		actions: Array<Record<string, unknown>>;
-	}>('quickActions', ctx.key, { method: 'GET' });
+	}>(ctx, 'quickActions', { method: 'GET' });
 
 	await logEventFromContext(
 		ctx,
@@ -470,13 +464,9 @@ export const getGlobalActions: SalesforceEndpoints['getGlobalActions'] = async (
 
 export const headSobjectsGlobalDescribeLayouts: SalesforceEndpoints['headSobjectsGlobalDescribeLayouts'] =
 	async (ctx, _input) => {
-		await makeSalesforceRequest<void>(
-			'sobjects/Global/describe/layouts',
-			ctx.key,
-			{
-				method: 'GET',
-			},
-		);
+		await salesforceCall<void>(ctx, 'sobjects/Global/describe/layouts', {
+			method: 'HEAD',
+		});
 
 		await logEventFromContext(
 			ctx,
@@ -489,9 +479,9 @@ export const headSobjectsGlobalDescribeLayouts: SalesforceEndpoints['headSobject
 
 export const getSObjectsDescribeLayoutsRecordTypeId: SalesforceEndpoints['getSObjectsDescribeLayoutsRecordTypeId'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`sobjects/${input.sobject}/describe/layouts/${input.recordTypeId}`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -508,9 +498,9 @@ export const getOrgLimits: SalesforceEndpoints['getOrgLimits'] = async (
 	ctx,
 	_input,
 ) => {
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		'limits',
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -525,11 +515,9 @@ export const getOrgLimits: SalesforceEndpoints['getOrgLimits'] = async (
 
 export const headProcessRulesSObject: SalesforceEndpoints['headProcessRulesSObject'] =
 	async (ctx, input) => {
-		await makeSalesforceRequest<void>(
-			`process/rules/${input.sobject}`,
-			ctx.key,
-			{ method: 'GET' },
-		);
+		await salesforceCall<void>(ctx, `process/rules/${input.sobject}`, {
+			method: 'HEAD',
+		});
 
 		await logEventFromContext(
 			ctx,
@@ -546,7 +534,7 @@ export const headSobjectQuickActionDefaultValues: SalesforceEndpoints['headSobje
 			? `sobjects/${input.sobject}/quickActions/${input.actionName}/defaultValues/${input.contextId}`
 			: `sobjects/${input.sobject}/quickActions/${input.actionName}/defaultValues`;
 
-		await makeSalesforceRequest<void>(endpoint, ctx.key, { method: 'GET' });
+		await salesforceCall<void>(ctx, endpoint, { method: 'HEAD' });
 
 		await logEventFromContext(
 			ctx,
@@ -561,9 +549,9 @@ export const getQuickActions: SalesforceEndpoints['getQuickActions'] = async (
 	ctx,
 	_input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		actions: Array<Record<string, unknown>>;
-	}>('quickActions', ctx.key, { method: 'GET' });
+	}>(ctx, 'quickActions', { method: 'GET' });
 
 	await logEventFromContext(
 		ctx,
@@ -578,9 +566,9 @@ export const getRecordCounts: SalesforceEndpoints['getRecordCounts'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		sObjects: Array<Record<string, unknown>>;
-	}>('limits/recordCount', ctx.key, {
+	}>(ctx, 'limits/recordCount', {
 		method: 'GET',
 		query: { sObjects: input.sobjects.join(',') },
 	});
@@ -596,9 +584,9 @@ export const getRecordCounts: SalesforceEndpoints['getRecordCounts'] = async (
 
 export const getSobjectRelationship: SalesforceEndpoints['getSobjectRelationship'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`sobjects/${input.sobject}/${input.id}/${input.fieldName}`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -613,9 +601,9 @@ export const getSobjectRelationship: SalesforceEndpoints['getSobjectRelationship
 
 export const getSobjectQuickActionDefaultValues: SalesforceEndpoints['getSobjectQuickActionDefaultValues'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`sobjects/${input.sobject}/quickActions/${input.actionName}/defaultValues`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -634,9 +622,9 @@ export const getSObjectQuickActionDefaultValues: SalesforceEndpoints['getSObject
 			? `sobjects/${input.sobject}/quickActions/${input.actionName}/defaultValues/${input.contextId}`
 			: `sobjects/${input.sobject}/quickActions/${input.actionName}/defaultValues`;
 
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			endpoint,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -651,9 +639,9 @@ export const getSObjectQuickActionDefaultValues: SalesforceEndpoints['getSObject
 
 export const getSobjectByExternalId: SalesforceEndpoints['getSobjectByExternalId'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`sobjects/${input.sobject}/${input.fieldName}/${input.fieldValue}`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -668,10 +656,10 @@ export const getSobjectByExternalId: SalesforceEndpoints['getSobjectByExternalId
 
 export const headSobjectsQuickAction: SalesforceEndpoints['headSobjectsQuickAction'] =
 	async (ctx, input) => {
-		await makeSalesforceRequest<void>(
+		await salesforceCall<void>(
+			ctx,
 			`sobjects/${input.sobject}/quickActions/${input.actionName}`,
-			ctx.key,
-			{ method: 'GET' },
+			{ method: 'HEAD' },
 		);
 
 		await logEventFromContext(
@@ -687,9 +675,9 @@ export const getSObjectRecord: SalesforceEndpoints['getSObjectRecord'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		`sobjects/${input.sobject}/${input.id}`,
-		ctx.key,
 		{
 			method: 'GET',
 			query: input.fields ? { fields: input.fields.join(',') } : undefined,
@@ -707,8 +695,8 @@ export const getSObjectRecord: SalesforceEndpoints['getSObjectRecord'] = async (
 
 export const headActionsStandard: SalesforceEndpoints['headActionsStandard'] =
 	async (ctx, _input) => {
-		await makeSalesforceRequest<void>('actions/standard', ctx.key, {
-			method: 'GET',
+		await salesforceCall<void>(ctx, 'actions/standard', {
+			method: 'HEAD',
 		});
 
 		await logEventFromContext(
@@ -722,9 +710,9 @@ export const headActionsStandard: SalesforceEndpoints['headActionsStandard'] =
 
 export const listStandardInvocableActions: SalesforceEndpoints['listStandardInvocableActions'] =
 	async (ctx, _input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			actions: Array<Record<string, unknown>>;
-		}>('actions/standard', ctx.key, { method: 'GET' });
+		}>(ctx, 'actions/standard', { method: 'GET' });
 
 		await logEventFromContext(
 			ctx,
@@ -739,9 +727,9 @@ export const getSupport: SalesforceEndpoints['getSupport'] = async (
 	ctx,
 	_input,
 ) => {
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		'support/data',
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -756,9 +744,9 @@ export const getSupport: SalesforceEndpoints['getSupport'] = async (
 
 export const getSupportKnowledgeArticles: SalesforceEndpoints['getSupportKnowledgeArticles'] =
 	async (ctx, _input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			'support/knowledgeArticles',
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -775,11 +763,9 @@ export const getTheme: SalesforceEndpoints['getTheme'] = async (
 	ctx,
 	_input,
 ) => {
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
-		'theme',
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const response = await salesforceCall<Record<string, unknown>>(ctx, 'theme', {
+		method: 'GET',
+	});
 
 	await logEventFromContext(ctx, 'salesforce.metadata.theme', {}, 'completed');
 	return response;
@@ -787,10 +773,10 @@ export const getTheme: SalesforceEndpoints['getTheme'] = async (
 
 export const getSObjectsUpdated: SalesforceEndpoints['getSObjectsUpdated'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			ids: string[];
 			latestDateCovered: string;
-		}>(`sobjects/${input.sobject}/updated`, ctx.key, {
+		}>(ctx, `sobjects/${input.sobject}/updated`, {
 			method: 'GET',
 			query: {
 				start: input.start,
@@ -814,9 +800,9 @@ export const getUserInfo: SalesforceEndpoints['getUserInfo'] = async (
 	const endpoint = input.userId
 		? `sobjects/User/${input.userId}`
 		: 'chatter/users/me';
-	const response = await makeSalesforceRequest<Record<string, unknown>>(
+	const response = await salesforceCall<Record<string, unknown>>(
+		ctx,
 		endpoint,
-		ctx.key,
 		{ method: 'GET' },
 	);
 
@@ -831,9 +817,9 @@ export const getUserInfo: SalesforceEndpoints['getUserInfo'] = async (
 
 export const sobjectUserPassword: SalesforceEndpoints['sobjectUserPassword'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ isExpired?: boolean }>(
+		const response = await salesforceCall<{ isExpired?: boolean }>(
+			ctx,
 			`sobjects/User/${input.userId}/password`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -852,9 +838,9 @@ export const massTransferOwnership: SalesforceEndpoints['massTransferOwnership']
 		if (recordIds.length === 0) {
 			const safeSobject = escapeSoql(input.sobject);
 			const safeFromUserId = escapeSoql(input.fromUserId);
-			const queryRes = await makeSalesforceRequest<{
+			const queryRes = await salesforceCall<{
 				records: Array<{ Id: string }>;
-			}>('query', ctx.key, {
+			}>(ctx, 'query', {
 				method: 'GET',
 				query: {
 					q: `SELECT Id FROM ${safeSobject} WHERE OwnerId = '${safeFromUserId}' LIMIT 200`,
@@ -871,7 +857,7 @@ export const massTransferOwnership: SalesforceEndpoints['massTransferOwnership']
 			OwnerId: input.toUserId,
 		}));
 
-		await makeSalesforceRequest<unknown>('composite/sobjects', ctx.key, {
+		await salesforceCall<unknown>(ctx, 'composite/sobjects', {
 			method: 'PATCH',
 			body: { records: compositeRecords },
 		});
@@ -884,3 +870,62 @@ export const massTransferOwnership: SalesforceEndpoints['massTransferOwnership']
 		);
 		return { success: true };
 	};
+
+export const updateSobject: SalesforceEndpoints['updateSobject'] = async (
+	ctx,
+	input,
+) => {
+	await salesforceCall<void>(ctx, `sobjects/${input.sobject}/${input.id}`, {
+		method: 'PATCH',
+		body: input.fields,
+	});
+	await logEventFromContext(
+		ctx,
+		'salesforce.metadata.update_sobject',
+		input,
+		'completed',
+	);
+	return { success: true };
+};
+
+export const sobjectRowsUpdate: SalesforceEndpoints['sobjectRowsUpdate'] =
+	updateSobject as unknown as SalesforceEndpoints['sobjectRowsUpdate'];
+
+export const upsertSobjectByExternalId: SalesforceEndpoints['upsertSobjectByExternalId'] =
+	async (ctx, input) => {
+		const response = await salesforceCall<{
+			id?: string;
+			created?: boolean;
+			success?: boolean;
+		}>(
+			ctx,
+			`sobjects/${input.sobject}/${input.fieldName}/${encodeURIComponent(input.fieldValue)}`,
+			{ method: 'PATCH', body: input.fields },
+		);
+		await logEventFromContext(
+			ctx,
+			'salesforce.metadata.upsert_by_external_id',
+			input,
+			'completed',
+		);
+		return response;
+	};
+
+export const setUserPassword: SalesforceEndpoints['setUserPassword'] = async (
+	ctx,
+	input,
+) => {
+	const body = input.password ? { NewPassword: input.password } : {};
+	const response = await salesforceCall<unknown>(
+		ctx,
+		`sobjects/User/${input.userId}/password`,
+		{ method: 'POST', body },
+	);
+	await logEventFromContext(
+		ctx,
+		'salesforce.metadata.set_user_password',
+		{ userId: input.userId },
+		'completed',
+	);
+	return { result: response };
+};

@@ -1,16 +1,30 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
+import { SalesforceOpportunityEntity } from '../schema/database';
+import { escapeSoql } from '../utils';
+import { cacheEntities, cacheEntity, evictEntity } from './persist';
+import { flattenFields, salesforceCall } from './shared';
+
+const LABEL = 'opportunity';
 
 export const createOpportunity: SalesforceEndpoints['createOpportunity'] =
 	async (ctx, input) => {
-		const { CustomFields, ...rest } = input;
-		const body = { ...rest, ...(CustomFields ?? {}) };
+		const body = flattenFields(input);
 
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			id: string;
 			success?: boolean;
-		}>('sobjects/Opportunity', ctx.key, { method: 'POST', body });
+		}>(ctx, 'sobjects/Opportunity', { method: 'POST', body });
+
+		await cacheEntity(
+			ctx.db?.opportunity,
+			SalesforceOpportunityEntity,
+			{
+				Id: response.id,
+				...body,
+			},
+			{ label: LABEL },
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -25,10 +39,19 @@ export const getOpportunity: SalesforceEndpoints['getOpportunity'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeSalesforceRequest<{ Id: string }>(
+	const response = await salesforceCall<{ Id: string }>(
+		ctx,
 		`sobjects/Opportunity/${input.id}`,
-		ctx.key,
 		{ method: 'GET' },
+	);
+
+	await cacheEntity(
+		ctx.db?.opportunity,
+		SalesforceOpportunityEntity,
+		response,
+		{
+			label: LABEL,
+		},
 	);
 
 	await logEventFromContext(
@@ -47,12 +70,19 @@ export const listOpportunities: SalesforceEndpoints['listOpportunities'] =
 		const whereStr = input.query ? ` WHERE ${input.query}` : '';
 		const q = `SELECT Id, Name, StageName, CloseDate, Amount, AccountId FROM Opportunity${whereStr} LIMIT ${limit}${offsetStr}`;
 
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			totalSize: number;
 			done: boolean;
 			records: Array<Record<string, unknown>>;
 			nextRecordsUrl?: string;
-		}>('query', ctx.key, { method: 'GET', query: { q } });
+		}>(ctx, 'query', { method: 'GET', query: { q } });
+
+		await cacheEntities(
+			ctx.db?.opportunity,
+			SalesforceOpportunityEntity,
+			response.records,
+			{ label: LABEL },
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -65,11 +95,11 @@ export const listOpportunities: SalesforceEndpoints['listOpportunities'] =
 
 export const deleteOpportunity: SalesforceEndpoints['deleteOpportunity'] =
 	async (ctx, input) => {
-		await makeSalesforceRequest<void>(
-			`sobjects/Opportunity/${input.id}`,
-			ctx.key,
-			{ method: 'DELETE' },
-		);
+		await salesforceCall<void>(ctx, `sobjects/Opportunity/${input.id}`, {
+			method: 'DELETE',
+		});
+
+		await evictEntity(ctx.db?.opportunity, input.id, LABEL);
 
 		await logEventFromContext(
 			ctx,
@@ -82,9 +112,9 @@ export const deleteOpportunity: SalesforceEndpoints['deleteOpportunity'] =
 
 export const addOpportunityLineItem: SalesforceEndpoints['addOpportunityLineItem'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ id: string }>(
+		const response = await salesforceCall<{ id: string }>(
+			ctx,
 			'sobjects/OpportunityLineItem',
-			ctx.key,
 			{
 				method: 'POST',
 				body: input,
@@ -102,9 +132,9 @@ export const addOpportunityLineItem: SalesforceEndpoints['addOpportunityLineItem
 
 export const cloneOpportunityWithProducts: SalesforceEndpoints['cloneOpportunityWithProducts'] =
 	async (ctx, input) => {
-		const orig = await makeSalesforceRequest<Record<string, unknown>>(
+		const orig = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			`sobjects/Opportunity/${input.opportunityId}`,
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -120,16 +150,16 @@ export const cloneOpportunityWithProducts: SalesforceEndpoints['cloneOpportunity
 
 		if (input.name) fieldsToClone.Name = input.name;
 
-		const created = await makeSalesforceRequest<{ id: string }>(
+		const created = await salesforceCall<{ id: string }>(
+			ctx,
 			'sobjects/Opportunity',
-			ctx.key,
 			{ method: 'POST', body: fieldsToClone },
 		);
 
 		if (input.cloneProducts) {
-			const lineItemsRes = await makeSalesforceRequest<{
+			const lineItemsRes = await salesforceCall<{
 				records: Array<Record<string, unknown>>;
-			}>('query', ctx.key, {
+			}>(ctx, 'query', {
 				method: 'GET',
 				query: {
 					q: `SELECT PricebookEntryId, Quantity, UnitPrice FROM OpportunityLineItem WHERE OpportunityId = '${input.opportunityId}'`,
@@ -137,19 +167,15 @@ export const cloneOpportunityWithProducts: SalesforceEndpoints['cloneOpportunity
 			});
 
 			for (const item of lineItemsRes.records ?? []) {
-				await makeSalesforceRequest<void>(
-					'sobjects/OpportunityLineItem',
-					ctx.key,
-					{
-						method: 'POST',
-						body: {
-							OpportunityId: created.id,
-							PricebookEntryId: item.PricebookEntryId,
-							Quantity: item.Quantity,
-							UnitPrice: item.UnitPrice,
-						},
+				await salesforceCall<void>(ctx, 'sobjects/OpportunityLineItem', {
+					method: 'POST',
+					body: {
+						OpportunityId: created.id,
+						PricebookEntryId: item.PricebookEntryId,
+						Quantity: item.Quantity,
+						UnitPrice: item.UnitPrice,
 					},
-				);
+				});
 			}
 		}
 
@@ -173,9 +199,9 @@ export const listPricebookEntries: SalesforceEndpoints['listPricebookEntries'] =
 		const whereStr = ` WHERE ${conditions.join(' AND ')}`;
 		const q = `SELECT Id, Name, Pricebook2Id, Product2Id, UnitPrice, IsActive FROM PricebookEntry${whereStr} LIMIT ${limit}`;
 
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			records: Array<Record<string, unknown>>;
-		}>('query', ctx.key, { method: 'GET', query: { q } });
+		}>(ctx, 'query', { method: 'GET', query: { q } });
 
 		await logEventFromContext(
 			ctx,
@@ -194,9 +220,9 @@ export const listPricebooks: SalesforceEndpoints['listPricebooks'] = async (
 	const whereStr = input.query ? ` WHERE ${input.query}` : '';
 	const q = `SELECT Id, Name, IsActive, IsStandard FROM Pricebook2${whereStr} LIMIT ${limit}`;
 
-	const response = await makeSalesforceRequest<{
+	const response = await salesforceCall<{
 		records: Array<Record<string, unknown>>;
-	}>('query', ctx.key, { method: 'GET', query: { q } });
+	}>(ctx, 'query', { method: 'GET', query: { q } });
 
 	await logEventFromContext(
 		ctx,
@@ -210,9 +236,9 @@ export const listPricebooks: SalesforceEndpoints['listPricebooks'] = async (
 /** @deprecated */
 export const createOpportunityRecord: SalesforceEndpoints['createOpportunityRecord'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ id: string }>(
+		const response = await salesforceCall<{ id: string }>(
+			ctx,
 			'sobjects/Opportunity',
-			ctx.key,
 			{ method: 'POST', body: input },
 		);
 
@@ -228,11 +254,9 @@ export const createOpportunityRecord: SalesforceEndpoints['createOpportunityReco
 /** @deprecated */
 export const removeOpportunityById: SalesforceEndpoints['removeOpportunityById'] =
 	async (ctx, input) => {
-		await makeSalesforceRequest<void>(
-			`sobjects/Opportunity/${input.id}`,
-			ctx.key,
-			{ method: 'DELETE' },
-		);
+		await salesforceCall<void>(ctx, `sobjects/Opportunity/${input.id}`, {
+			method: 'DELETE',
+		});
 
 		await logEventFromContext(
 			ctx,
@@ -248,9 +272,9 @@ export const retrieveOpportunitiesData: SalesforceEndpoints['retrieveOpportuniti
 		const whereStr = input.query ? ` WHERE ${input.query}` : '';
 		const q = `SELECT Id, Name, StageName, Amount FROM Opportunity${whereStr}`;
 
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			records: Array<Record<string, unknown>>;
-		}>('query', ctx.key, { method: 'GET', query: { q } });
+		}>(ctx, 'query', { method: 'GET', query: { q } });
 
 		await logEventFromContext(
 			ctx,
@@ -264,9 +288,9 @@ export const retrieveOpportunitiesData: SalesforceEndpoints['retrieveOpportuniti
 /** @deprecated */
 export const retrieveOpportunityByIdWithOptionalFields: SalesforceEndpoints['retrieveOpportunityByIdWithOptionalFields'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{ Id: string }>(
+		const response = await salesforceCall<{ Id: string }>(
+			ctx,
 			`sobjects/Opportunity/${input.id}`,
-			ctx.key,
 			{
 				method: 'GET',
 				query: input.fields ? { fields: input.fields.join(',') } : undefined,
@@ -280,4 +304,63 @@ export const retrieveOpportunityByIdWithOptionalFields: SalesforceEndpoints['ret
 			'completed',
 		);
 		return response;
+	};
+
+export const updateOpportunity: SalesforceEndpoints['updateOpportunity'] =
+	async (ctx, input) => {
+		const { id, ...fields } = input;
+		const body = flattenFields(fields);
+		await salesforceCall<void>(ctx, `sobjects/Opportunity/${id}`, {
+			method: 'PATCH',
+			body,
+		});
+		await cacheEntity(
+			ctx.db?.opportunity,
+			SalesforceOpportunityEntity,
+			{
+				Id: id,
+				...body,
+			},
+			{ label: LABEL },
+		);
+		await logEventFromContext(
+			ctx,
+			'salesforce.opportunity.update',
+			{ id },
+			'completed',
+		);
+		return { success: true };
+	};
+
+export const updateOpportunityById: SalesforceEndpoints['updateOpportunityById'] =
+	updateOpportunity as unknown as SalesforceEndpoints['updateOpportunityById'];
+
+export const searchOpportunities: SalesforceEndpoints['searchOpportunities'] =
+	async (ctx, input) => {
+		const terms: string[] = [];
+		if (input.name) terms.push(`Name LIKE '%${escapeSoql(input.name)}%'`);
+		if (input.accountId)
+			terms.push(`AccountId = '${escapeSoql(input.accountId)}'`);
+		if (input.stageName)
+			terms.push(`StageName = '${escapeSoql(input.stageName)}'`);
+		if (input.isClosed !== undefined)
+			terms.push(`IsClosed = ${input.isClosed}`);
+		const whereStr = terms.length > 0 ? ` WHERE ${terms.join(' AND ')}` : '';
+		const q = `SELECT Id, Name, StageName, CloseDate, Amount, AccountId, IsClosed FROM Opportunity${whereStr} LIMIT ${input.limit ?? 50}`;
+		const response = await salesforceCall<{
+			records: Array<Record<string, unknown>>;
+		}>(ctx, 'query', { method: 'GET', query: { q } });
+		await cacheEntities(
+			ctx.db?.opportunity,
+			SalesforceOpportunityEntity,
+			response.records,
+			{ label: LABEL },
+		);
+		await logEventFromContext(
+			ctx,
+			'salesforce.opportunity.search',
+			input,
+			'completed',
+		);
+		return { records: response.records ?? [] };
 	};

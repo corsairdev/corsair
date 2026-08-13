@@ -1,6 +1,10 @@
 import { salesforce } from './index';
 
 jest.mock('./client', () => ({
+	SALESFORCE_API_VERSION: '60.0',
+	discoverSalesforceInstanceUrl: jest.fn(
+		async () => 'https://example.my.salesforce.com',
+	),
 	makeSalesforceRequest: jest.fn(
 		async (endpoint: string, _apiKey: string, options: any) => {
 			if (endpoint.includes('tree')) {
@@ -123,11 +127,22 @@ describe('Salesforce Plugin API', () => {
 	const ctx = {
 		key: 'test_token',
 		authType: 'api_key' as const,
-		options: { key: 'test_token' },
+		options: {
+			key: 'test_token',
+			instanceUrl: 'https://example.my.salesforce.com',
+		},
 		$getAccountId: () => 'acc_test',
 	} as any;
 
 	describe('Accounts', () => {
+		it('updates account', async () => {
+			const res = await endpoints.accounts.updateAccount(ctx, {
+				id: 'acc_123',
+				Name: 'Acme Updated',
+			});
+			expect(res.success).toBe(true);
+		});
+
 		it('creates account', async () => {
 			const res = await endpoints.accounts.createAccount(ctx, { Name: 'Acme' });
 			expect(res).toBeDefined();
@@ -525,6 +540,24 @@ describe('Salesforce Plugin API', () => {
 				Subject: 'Intro Email',
 			});
 			expect(logE.id).toBeDefined();
+
+			const updated = await endpoints.tasks.updateTask(ctx, {
+				id: 'task_123',
+				Status: 'In Progress',
+			});
+			expect(updated.success).toBe(true);
+
+			const searched = await endpoints.tasks.searchTasks(ctx, {
+				subject: 'Follow',
+			});
+			expect(searched.records).toBeDefined();
+
+			const sent = await endpoints.tasks.sendEmail(ctx, {
+				toAddresses: ['a@example.com'],
+				subject: 'Hi',
+				body: 'Hello',
+			});
+			expect(sent.result).toBeDefined();
 		});
 
 		it('handles bulk jobs', async () => {
@@ -563,6 +596,12 @@ describe('Salesforce Plugin API', () => {
 				jobId: 'job_123',
 			});
 			expect(unprocR.records).toBeDefined();
+
+			const uploaded = await endpoints.jobs.uploadJobData(ctx, {
+				jobId: 'job_123',
+				csv: 'Name\nAcme',
+			});
+			expect(uploaded.success).toBe(true);
 		});
 
 		it('handles SOQL and SOSL queries', async () => {
@@ -680,6 +719,12 @@ describe('Salesforce Plugin API', () => {
 
 			const delF = await endpoints.files.deleteFile(ctx, { fileId: 'doc_123' });
 			expect(delF.success).toBe(true);
+
+			const uploaded = await endpoints.files.uploadFile(ctx, {
+				title: 'notes.txt',
+				versionData: 'aGVsbG8=',
+			});
+			expect(uploaded).toBeDefined();
 		});
 
 		it('handles analytics and reports', async () => {

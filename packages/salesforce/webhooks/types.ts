@@ -6,23 +6,47 @@ import type {
 import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
 
+/**
+ * Salesforce Change Data Capture / Flow HTTP payload.
+ * Official CDC: https://developer.salesforce.com/docs/atlas.en-us.change_data_capture.meta/change_data_capture/cdc_message_structure.htm
+ */
+export const SalesforceChangeEventHeaderSchema = z
+	.object({
+		entityName: z.string().optional(),
+		changeType: z.string().optional(),
+		recordIds: z.array(z.string()).optional(),
+		commitTimestamp: z.number().optional(),
+		commitUser: z.string().optional(),
+	})
+	.loose();
+
 export const SalesforceWebhookPayloadSchema = z
 	.object({
-		event: z
-			.object({
-				type: z.string(),
-				created_at: z.string().optional(),
-			})
-			.optional(),
-		data: z.record(z.string(), z.unknown()).optional(),
+		ChangeEventHeader: SalesforceChangeEventHeaderSchema.optional(),
+		Id: z.string().optional(),
+		id: z.string().optional(),
+		sobject: z.string().optional(),
+		type: z.string().optional(),
+		Status: z.string().optional(),
+		LastModifiedDate: z.string().optional(),
+		SystemModstamp: z.string().optional(),
+		organization_id: z.string().optional(),
 	})
-	.passthrough();
+	.loose();
 
 export type SalesforceWebhookPayload = z.infer<
 	typeof SalesforceWebhookPayloadSchema
 >;
 
-export type SalesforceWebhookOutputs = Record<string, never>;
+export type SalesforceWebhookOutputs = {
+	accountCreatedOrUpdated: { success: boolean };
+	contactUpdated: { success: boolean };
+	newContact: { success: boolean };
+	newLead: { success: boolean };
+	newOrUpdatedOpportunity: { success: boolean };
+	genericSObjectRecordUpdated: { success: boolean };
+	taskCreatedOrCompleted: { success: boolean };
+};
 
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
@@ -42,15 +66,44 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-export function createSalesforceMatch(
-	eventType: string,
-): CorsairWebhookMatcher {
+function headerOf(body: Record<string, unknown>) {
+	const header = body.ChangeEventHeader;
+	if (header && typeof header === 'object' && !Array.isArray(header)) {
+		return header as Record<string, unknown>;
+	}
+	return undefined;
+}
+
+function entityNameOf(body: Record<string, unknown>): string | undefined {
+	const header = headerOf(body);
+	if (typeof header?.entityName === 'string') return header.entityName;
+	if (typeof body.sobject === 'string') return body.sobject;
+	return undefined;
+}
+
+function changeTypeOf(body: Record<string, unknown>): string | undefined {
+	const header = headerOf(body);
+	if (typeof header?.changeType === 'string') return header.changeType;
+	if (typeof body.type === 'string') return body.type;
+	return undefined;
+}
+
+export function createSalesforceChangeMatch(options: {
+	entityName?: string;
+	changeTypes: string[];
+	status?: string;
+}): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		const parsedBody = parseBody(request.body);
-		return (
-			parsedBody !== null &&
-			(parsedBody.type === eventType || parsedBody.event === eventType)
-		);
+		const body = parseBody(request.body);
+		if (!body) return false;
+		const entity = entityNameOf(body);
+		const change = (changeTypeOf(body) ?? '').toUpperCase();
+		if (options.entityName && entity !== options.entityName) return false;
+		if (!options.changeTypes.some((t) => change.includes(t.toUpperCase()))) {
+			return false;
+		}
+		if (options.status && body.Status !== options.status) return false;
+		return true;
 	};
 }
 
@@ -82,4 +135,11 @@ export function verifySalesforceWebhookSignature(
 	}
 
 	return { valid: true };
+}
+
+export function recordIdFromPayload(
+	payload: SalesforceWebhookPayload,
+): string | undefined {
+	const fromHeader = payload.ChangeEventHeader?.recordIds?.[0];
+	return fromHeader || payload.Id || payload.id;
 }

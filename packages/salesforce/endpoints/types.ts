@@ -2873,6 +2873,277 @@ export type QueryReportInput = z.infer<typeof QueryReportInputSchema>;
 export const QueryReportResponseSchema = z.record(z.string(), z.unknown());
 export type QueryReportResponse = z.infer<typeof QueryReportResponseSchema>;
 
+const SuccessResponseSchema = z.object({ success: z.boolean() }).passthrough();
+const RecordsResponseSchema = z
+	.object({ records: z.array(z.record(z.string(), z.unknown())) })
+	.passthrough();
+const ResultResponseSchema = z
+	.object({ result: z.unknown().optional() })
+	.passthrough();
+
+export const UpdateAccountInputSchema =
+	CreateAccountInputSchema.partial().extend({
+		id: z.string(),
+	});
+export type UpdateAccountInput = z.infer<typeof UpdateAccountInputSchema>;
+export const UpdateAccountResponseSchema = SuccessResponseSchema;
+export type UpdateAccountResponse = z.infer<typeof UpdateAccountResponseSchema>;
+export const UpdateAccountObjectByIdInputSchema = UpdateAccountInputSchema;
+export const UpdateAccountObjectByIdResponseSchema = SuccessResponseSchema;
+
+export const UpdateContactInputSchema =
+	CreateContactInputSchema.partial().extend({
+		id: z.string(),
+	});
+export type UpdateContactInput = z.infer<typeof UpdateContactInputSchema>;
+export const UpdateContactResponseSchema = SuccessResponseSchema;
+export const UpdateContactByIdInputSchema = UpdateContactInputSchema;
+export const UpdateContactByIdResponseSchema = SuccessResponseSchema;
+
+export const SearchContactsInputSchema = z.object({
+	name: z.string().optional(),
+	email: z.string().optional(),
+	phone: z.string().optional(),
+	accountId: z.string().optional(),
+	title: z.string().optional(),
+	limit: z.number().optional(),
+});
+export type SearchContactsInput = z.infer<typeof SearchContactsInputSchema>;
+export const SearchContactsResponseSchema = RecordsResponseSchema;
+
+export const UpdateLeadInputSchema = CreateLeadInputSchema.partial().extend({
+	id: z.string(),
+});
+export type UpdateLeadInput = z.infer<typeof UpdateLeadInputSchema>;
+export const UpdateLeadResponseSchema = SuccessResponseSchema;
+export const UpdateLeadByIdWithJsonPayloadInputSchema = UpdateLeadInputSchema;
+export const UpdateLeadByIdWithJsonPayloadResponseSchema =
+	SuccessResponseSchema;
+
+export const SearchLeadsInputSchema = z.object({
+	name: z.string().optional(),
+	email: z.string().optional(),
+	phone: z.string().optional(),
+	company: z.string().optional(),
+	status: z.string().optional(),
+	title: z.string().optional(),
+	limit: z.number().optional(),
+});
+export type SearchLeadsInput = z.infer<typeof SearchLeadsInputSchema>;
+export const SearchLeadsResponseSchema = RecordsResponseSchema;
+
+export const UpdateOpportunityInputSchema =
+	CreateOpportunityInputSchema.partial().extend({
+		id: z.string(),
+	});
+export type UpdateOpportunityInput = z.infer<
+	typeof UpdateOpportunityInputSchema
+>;
+export const UpdateOpportunityResponseSchema = SuccessResponseSchema;
+export const UpdateOpportunityByIdInputSchema = UpdateOpportunityInputSchema;
+export const UpdateOpportunityByIdResponseSchema = SuccessResponseSchema;
+
+export const SearchOpportunitiesInputSchema = z.object({
+	name: z.string().optional(),
+	accountId: z.string().optional(),
+	stageName: z.string().optional(),
+	isClosed: z.boolean().optional(),
+	limit: z.number().optional(),
+});
+export type SearchOpportunitiesInput = z.infer<
+	typeof SearchOpportunitiesInputSchema
+>;
+export const SearchOpportunitiesResponseSchema = RecordsResponseSchema;
+
+export const UpdateCampaignInputSchema =
+	CreateCampaignInputSchema.partial().extend({
+		id: z.string(),
+	});
+export type UpdateCampaignInput = z.infer<typeof UpdateCampaignInputSchema>;
+export const UpdateCampaignResponseSchema = SuccessResponseSchema;
+export const UpdateCampaignByIdWithJsonInputSchema = UpdateCampaignInputSchema;
+export const UpdateCampaignByIdWithJsonResponseSchema = SuccessResponseSchema;
+
+export const UpdateNoteInputSchema = CreateNoteInputSchema.partial().extend({
+	id: z.string(),
+});
+export type UpdateNoteInput = z.infer<typeof UpdateNoteInputSchema>;
+export const UpdateNoteResponseSchema = SuccessResponseSchema;
+export const UpdateSpecificNoteByIdInputSchema = UpdateNoteInputSchema;
+export const UpdateSpecificNoteByIdResponseSchema = SuccessResponseSchema;
+
+export const SearchNotesInputSchema = z.object({
+	title: z.string().optional(),
+	body: z.string().optional(),
+	parentId: z.string().optional(),
+	limit: z.number().optional(),
+});
+export type SearchNotesInput = z.infer<typeof SearchNotesInputSchema>;
+export const SearchNotesResponseSchema = RecordsResponseSchema;
+
+export const UpdateTaskInputSchema = CreateTaskInputSchema.partial().extend({
+	id: z.string(),
+});
+export type UpdateTaskInput = z.infer<typeof UpdateTaskInputSchema>;
+export const UpdateTaskResponseSchema = SuccessResponseSchema;
+
+export const SearchTasksInputSchema = z.object({
+	subject: z.string().optional(),
+	status: z.string().optional(),
+	priority: z.string().optional(),
+	whoId: z.string().optional(),
+	whatId: z.string().optional(),
+	limit: z.number().optional(),
+});
+export type SearchTasksInput = z.infer<typeof SearchTasksInputSchema>;
+export const SearchTasksResponseSchema = RecordsResponseSchema;
+
+export const SendEmailInputSchema = z.object({
+	toAddresses: z.array(z.string()).optional(),
+	subject: z.string().optional(),
+	body: z.string().optional(),
+	senderType: z.string().optional(),
+});
+export type SendEmailInput = z.infer<typeof SendEmailInputSchema>;
+export const SendEmailResponseSchema = ResultResponseSchema;
+
+export const SendEmailFromTemplateInputSchema = z.object({
+	toAddresses: z.array(z.string()).optional(),
+	templateId: z.string(),
+	targetObjectId: z.string().optional(),
+	senderType: z.string().optional(),
+});
+export type SendEmailFromTemplateInput = z.infer<
+	typeof SendEmailFromTemplateInputSchema
+>;
+export const SendEmailFromTemplateResponseSchema = ResultResponseSchema;
+
+export const SendMassEmailInputSchema = z.object({
+	toAddresses: z.array(z.string()).optional(),
+	subject: z.string().optional(),
+	body: z.string().optional(),
+	templateId: z.string().optional(),
+});
+export type SendMassEmailInput = z.infer<typeof SendMassEmailInputSchema>;
+export const SendMassEmailResponseSchema = ResultResponseSchema;
+
+export const UploadFileInputSchema = z.object({
+	title: z.string(),
+	versionData: z.string(),
+	pathOnClient: z.string().optional(),
+	firstPublishLocationId: z.string().optional(),
+});
+export type UploadFileInput = z.infer<typeof UploadFileInputSchema>;
+export const UploadFileResponseSchema = z
+	.object({ id: z.string(), success: z.boolean().optional() })
+	.passthrough();
+
+export const UploadJobDataInputSchema = z.object({
+	jobId: z.string(),
+	csv: z.string(),
+});
+export type UploadJobDataInput = z.infer<typeof UploadJobDataInputSchema>;
+export const UploadJobDataResponseSchema = SuccessResponseSchema;
+
+export const PatchCompositeSobjectsInputSchema = z.object({
+	allOrNone: z.boolean().optional(),
+	records: z.array(z.record(z.string(), z.unknown())),
+});
+export type PatchCompositeSobjectsInput = z.infer<
+	typeof PatchCompositeSobjectsInputSchema
+>;
+export const PatchCompositeSobjectsResponseSchema = ResultResponseSchema;
+
+export const UpdateSobjectInputSchema = z.object({
+	sobject: z.string(),
+	id: z.string(),
+	fields: z.record(z.string(), z.unknown()),
+});
+export type UpdateSobjectInput = z.infer<typeof UpdateSobjectInputSchema>;
+export const UpdateSobjectResponseSchema = SuccessResponseSchema;
+export const SobjectRowsUpdateInputSchema = UpdateSobjectInputSchema;
+export const SobjectRowsUpdateResponseSchema = SuccessResponseSchema;
+
+export const UpsertSobjectByExternalIdInputSchema = z.object({
+	sobject: z.string(),
+	fieldName: z.string(),
+	fieldValue: z.string(),
+	fields: z.record(z.string(), z.unknown()),
+});
+export type UpsertSobjectByExternalIdInput = z.infer<
+	typeof UpsertSobjectByExternalIdInputSchema
+>;
+export const UpsertSobjectByExternalIdResponseSchema = z
+	.object({
+		id: z.string().optional(),
+		created: z.boolean().optional(),
+		success: z.boolean().optional(),
+	})
+	.passthrough();
+
+export const SetUserPasswordInputSchema = z.object({
+	userId: z.string(),
+	password: z.string().optional(),
+});
+export type SetUserPasswordInput = z.infer<typeof SetUserPasswordInputSchema>;
+export const SetUserPasswordResponseSchema = ResultResponseSchema;
+
+export const GetSearchSuggestionsInputSchema = z.object({
+	q: z.string(),
+	sobject: z.string().optional(),
+});
+export type GetSearchSuggestionsInput = z.infer<
+	typeof GetSearchSuggestionsInputSchema
+>;
+export const GetSearchSuggestionsResponseSchema = ResultResponseSchema;
+
+export const SearchKnowledgeArticlesInputSchema = z.object({
+	q: z.string(),
+});
+export type SearchKnowledgeArticlesInput = z.infer<
+	typeof SearchKnowledgeArticlesInputSchema
+>;
+export const SearchKnowledgeArticlesResponseSchema = ResultResponseSchema;
+
+export const GetParameterizedSearchInputSchema = ParameterizedSearchInputSchema;
+export const GetParameterizedSearchResponseSchema =
+	ParameterizedSearchResponseSchema;
+
+export const UpdateRecordInputSchema = z.object({
+	recordId: z.string(),
+	apiName: z.string(),
+	fields: z.record(z.string(), z.unknown()),
+	ifUnmodifiedSince: z.string().optional(),
+});
+export type UpdateRecordInput = z.infer<typeof UpdateRecordInputSchema>;
+export const UpdateRecordResponseSchema = SuccessResponseSchema;
+
+export const UpdateFavoriteInputSchema = z.object({
+	favoriteId: z.string(),
+	fields: z.record(z.string(), z.unknown()),
+});
+export type UpdateFavoriteInput = z.infer<typeof UpdateFavoriteInputSchema>;
+export const UpdateFavoriteResponseSchema = ResultResponseSchema;
+
+export const UpdateRelatedListPreferencesInputSchema = z.object({
+	relatedListId: z.string(),
+	preferences: z.record(z.string(), z.unknown()),
+});
+export type UpdateRelatedListPreferencesInput = z.infer<
+	typeof UpdateRelatedListPreferencesInputSchema
+>;
+export const UpdateRelatedListPreferencesResponseSchema = ResultResponseSchema;
+
+export const UpdateListViewPreferencesInputSchema = z.object({
+	sobject: z.string(),
+	listViewId: z.string(),
+	preferences: z.record(z.string(), z.unknown()),
+});
+export type UpdateListViewPreferencesInput = z.infer<
+	typeof UpdateListViewPreferencesInputSchema
+>;
+export const UpdateListViewPreferencesResponseSchema = ResultResponseSchema;
+
 // Map Objects
 export const SalesforceEndpointInputSchemas = {
 	// Accounts
@@ -2880,6 +3151,8 @@ export const SalesforceEndpointInputSchemas = {
 	getAccount: GetAccountInputSchema,
 	listAccounts: ListAccountsInputSchema,
 	searchAccounts: SearchAccountsInputSchema,
+	updateAccount: UpdateAccountInputSchema,
+	updateAccountObjectById: UpdateAccountObjectByIdInputSchema,
 	deleteAccount: DeleteAccountInputSchema,
 	accountCreationWithContentTypeOption:
 		AccountCreationWithContentTypeOptionInputSchema,
@@ -2894,6 +3167,9 @@ export const SalesforceEndpointInputSchemas = {
 	listContacts: ListContactsInputSchema,
 	deleteContact: DeleteContactInputSchema,
 	associateContactToAccount: AssociateContactToAccountInputSchema,
+	updateContact: UpdateContactInputSchema,
+	updateContactById: UpdateContactByIdInputSchema,
+	searchContacts: SearchContactsInputSchema,
 	createNewContactWithJsonHeader: CreateNewContactWithJsonHeaderInputSchema,
 	queryContactsByName: QueryContactsByNameInputSchema,
 	removeASpecificContactById: RemoveASpecificContactByIdInputSchema,
@@ -2907,6 +3183,9 @@ export const SalesforceEndpointInputSchemas = {
 	listLeads: ListLeadsInputSchema,
 	deleteLead: DeleteLeadInputSchema,
 	applyLeadAssignmentRules: ApplyLeadAssignmentRulesInputSchema,
+	updateLead: UpdateLeadInputSchema,
+	updateLeadByIdWithJsonPayload: UpdateLeadByIdWithJsonPayloadInputSchema,
+	searchLeads: SearchLeadsInputSchema,
 	createLeadWithSpecifiedContentType:
 		CreateLeadWithSpecifiedContentTypeInputSchema,
 	deleteALeadObjectByItsId: DeleteALeadObjectByItsIdInputSchema,
@@ -2920,6 +3199,9 @@ export const SalesforceEndpointInputSchemas = {
 	listOpportunities: ListOpportunitiesInputSchema,
 	deleteOpportunity: DeleteOpportunityInputSchema,
 	addOpportunityLineItem: AddOpportunityLineItemInputSchema,
+	updateOpportunity: UpdateOpportunityInputSchema,
+	updateOpportunityById: UpdateOpportunityByIdInputSchema,
+	searchOpportunities: SearchOpportunitiesInputSchema,
 	cloneOpportunityWithProducts: CloneOpportunityWithProductsInputSchema,
 	listPricebookEntries: ListPricebookEntriesInputSchema,
 	listPricebooks: ListPricebooksInputSchema,
@@ -2935,6 +3217,8 @@ export const SalesforceEndpointInputSchemas = {
 	listCampaigns: ListCampaignsInputSchema,
 	deleteCampaign: DeleteCampaignInputSchema,
 	addContactToCampaign: AddContactToCampaignInputSchema,
+	updateCampaign: UpdateCampaignInputSchema,
+	updateCampaignByIdWithJson: UpdateCampaignByIdWithJsonInputSchema,
 	addLeadToCampaign: AddLeadToCampaignInputSchema,
 	removeFromCampaign: RemoveFromCampaignInputSchema,
 	searchCampaigns: SearchCampaignsInputSchema,
@@ -2947,6 +3231,9 @@ export const SalesforceEndpointInputSchemas = {
 
 	// Notes
 	createNote: CreateNoteInputSchema,
+	updateNote: UpdateNoteInputSchema,
+	updateSpecificNoteById: UpdateSpecificNoteByIdInputSchema,
+	searchNotes: SearchNotesInputSchema,
 	getNote: GetNoteInputSchema,
 	listNotes: ListNotesInputSchema,
 	deleteNote: DeleteNoteInputSchema,
@@ -2961,6 +3248,11 @@ export const SalesforceEndpointInputSchemas = {
 	completeTask: CompleteTaskInputSchema,
 	logCall: LogCallInputSchema,
 	logEmailActivity: LogEmailActivityInputSchema,
+	updateTask: UpdateTaskInputSchema,
+	searchTasks: SearchTasksInputSchema,
+	sendEmail: SendEmailInputSchema,
+	sendEmailFromTemplate: SendEmailFromTemplateInputSchema,
+	sendMassEmail: SendMassEmailInputSchema,
 
 	// Jobs
 	closeOrAbortJob: CloseOrAbortJobInputSchema,
@@ -2970,6 +3262,7 @@ export const SalesforceEndpointInputSchemas = {
 	getQueryJobResults: GetQueryJobResultsInputSchema,
 	getJobSuccessfulRecordResults: GetJobSuccessfulRecordResultsInputSchema,
 	getJobUnprocessedRecordResults: GetJobUnprocessedRecordResultsInputSchema,
+	uploadJobData: UploadJobDataInputSchema,
 
 	// SOQL / SOSL
 	runSoqlQuery: RunSoqlQueryInputSchema,
@@ -2982,6 +3275,9 @@ export const SalesforceEndpointInputSchemas = {
 	getSearchLayout: GetSearchLayoutInputSchema,
 	query: QueryInputSchema,
 	executeSoqlQuery: ExecuteSoqlQueryInputSchema,
+	getSearchSuggestions: GetSearchSuggestionsInputSchema,
+	searchKnowledgeArticles: SearchKnowledgeArticlesInputSchema,
+	getParameterizedSearch: GetParameterizedSearchInputSchema,
 
 	// Composite
 	postCompositeSobjects: PostCompositeSobjectsInputSchema,
@@ -2993,6 +3289,7 @@ export const SalesforceEndpointInputSchemas = {
 	getCompositeResources: GetCompositeResourcesInputSchema,
 	getCompositeSobjects: GetCompositeSobjectsInputSchema,
 	getSobjectCollections: GetSobjectCollectionsInputSchema,
+	patchCompositeSobjects: PatchCompositeSobjectsInputSchema,
 
 	// Metadata
 	createSObjectRecord: CreateSObjectRecordInputSchema,
@@ -3047,6 +3344,10 @@ export const SalesforceEndpointInputSchemas = {
 	getUserInfo: GetUserInfoInputSchema,
 	sobjectUserPassword: SobjectUserPasswordInputSchema,
 	massTransferOwnership: MassTransferOwnershipInputSchema,
+	updateSobject: UpdateSobjectInputSchema,
+	sobjectRowsUpdate: SobjectRowsUpdateInputSchema,
+	upsertSobjectByExternalId: UpsertSobjectByExternalIdInputSchema,
+	setUserPassword: SetUserPasswordInputSchema,
 
 	// UI API
 	createARecord: CreateARecordInputSchema,
@@ -3094,12 +3395,17 @@ export const SalesforceEndpointInputSchemas = {
 	getRelatedListRecordsContacts: GetRelatedListRecordsContactsInputSchema,
 	getUiapiRelatedListPreferences: GetUiapiRelatedListPreferencesInputSchema,
 	getSobjectListView: GetSobjectListViewInputSchema,
+	updateRecord: UpdateRecordInputSchema,
+	updateFavorite: UpdateFavoriteInputSchema,
+	updateRelatedListPreferences: UpdateRelatedListPreferencesInputSchema,
+	updateListViewPreferences: UpdateListViewPreferencesInputSchema,
 
 	// Files
 	getFileContent: GetFileContentInputSchema,
 	getFileInformation: GetFileInformationInputSchema,
 	getFileShares: GetFileSharesInputSchema,
 	deleteFile: DeleteFileInputSchema,
+	uploadFile: UploadFileInputSchema,
 
 	// Analytics & Reports
 	getDashboard: GetDashboardInputSchema,
@@ -3125,6 +3431,8 @@ export const SalesforceEndpointOutputSchemas = {
 	getAccount: GetAccountResponseSchema,
 	listAccounts: ListAccountsResponseSchema,
 	searchAccounts: SearchAccountsResponseSchema,
+	updateAccount: UpdateAccountResponseSchema,
+	updateAccountObjectById: UpdateAccountObjectByIdResponseSchema,
 	deleteAccount: DeleteAccountResponseSchema,
 	accountCreationWithContentTypeOption:
 		AccountCreationWithContentTypeOptionResponseSchema,
@@ -3140,6 +3448,9 @@ export const SalesforceEndpointOutputSchemas = {
 	listContacts: ListContactsResponseSchema,
 	deleteContact: DeleteContactResponseSchema,
 	associateContactToAccount: AssociateContactToAccountResponseSchema,
+	updateContact: UpdateContactResponseSchema,
+	updateContactById: UpdateContactByIdResponseSchema,
+	searchContacts: SearchContactsResponseSchema,
 	createNewContactWithJsonHeader: CreateNewContactWithJsonHeaderResponseSchema,
 	queryContactsByName: QueryContactsByNameResponseSchema,
 	removeASpecificContactById: RemoveASpecificContactByIdResponseSchema,
@@ -3153,6 +3464,9 @@ export const SalesforceEndpointOutputSchemas = {
 	listLeads: ListLeadsResponseSchema,
 	deleteLead: DeleteLeadResponseSchema,
 	applyLeadAssignmentRules: ApplyLeadAssignmentRulesResponseSchema,
+	updateLead: UpdateLeadResponseSchema,
+	updateLeadByIdWithJsonPayload: UpdateLeadByIdWithJsonPayloadResponseSchema,
+	searchLeads: SearchLeadsResponseSchema,
 	createLeadWithSpecifiedContentType:
 		CreateLeadWithSpecifiedContentTypeResponseSchema,
 	deleteALeadObjectByItsId: DeleteALeadObjectByItsIdResponseSchema,
@@ -3166,6 +3480,9 @@ export const SalesforceEndpointOutputSchemas = {
 	listOpportunities: ListOpportunitiesResponseSchema,
 	deleteOpportunity: DeleteOpportunityResponseSchema,
 	addOpportunityLineItem: AddOpportunityLineItemResponseSchema,
+	updateOpportunity: UpdateOpportunityResponseSchema,
+	updateOpportunityById: UpdateOpportunityByIdResponseSchema,
+	searchOpportunities: SearchOpportunitiesResponseSchema,
 	cloneOpportunityWithProducts: CloneOpportunityWithProductsResponseSchema,
 	listPricebookEntries: ListPricebookEntriesResponseSchema,
 	listPricebooks: ListPricebooksResponseSchema,
@@ -3181,6 +3498,8 @@ export const SalesforceEndpointOutputSchemas = {
 	listCampaigns: ListCampaignsResponseSchema,
 	deleteCampaign: DeleteCampaignResponseSchema,
 	addContactToCampaign: AddContactToCampaignResponseSchema,
+	updateCampaign: UpdateCampaignResponseSchema,
+	updateCampaignByIdWithJson: UpdateCampaignByIdWithJsonResponseSchema,
 	addLeadToCampaign: AddLeadToCampaignResponseSchema,
 	removeFromCampaign: RemoveFromCampaignResponseSchema,
 	searchCampaigns: SearchCampaignsResponseSchema,
@@ -3193,6 +3512,9 @@ export const SalesforceEndpointOutputSchemas = {
 
 	// Notes
 	createNote: CreateNoteResponseSchema,
+	updateNote: UpdateNoteResponseSchema,
+	updateSpecificNoteById: UpdateSpecificNoteByIdResponseSchema,
+	searchNotes: SearchNotesResponseSchema,
 	getNote: GetNoteResponseSchema,
 	listNotes: ListNotesResponseSchema,
 	deleteNote: DeleteNoteResponseSchema,
@@ -3207,6 +3529,11 @@ export const SalesforceEndpointOutputSchemas = {
 	completeTask: CompleteTaskResponseSchema,
 	logCall: LogCallResponseSchema,
 	logEmailActivity: LogEmailActivityResponseSchema,
+	updateTask: UpdateTaskResponseSchema,
+	searchTasks: SearchTasksResponseSchema,
+	sendEmail: SendEmailResponseSchema,
+	sendEmailFromTemplate: SendEmailFromTemplateResponseSchema,
+	sendMassEmail: SendMassEmailResponseSchema,
 
 	// Jobs
 	closeOrAbortJob: CloseOrAbortJobResponseSchema,
@@ -3216,6 +3543,7 @@ export const SalesforceEndpointOutputSchemas = {
 	getQueryJobResults: GetQueryJobResultsResponseSchema,
 	getJobSuccessfulRecordResults: GetJobSuccessfulRecordResultsResponseSchema,
 	getJobUnprocessedRecordResults: GetJobUnprocessedRecordResultsResponseSchema,
+	uploadJobData: UploadJobDataResponseSchema,
 
 	// SOQL / SOSL
 	runSoqlQuery: RunSoqlQueryResponseSchema,
@@ -3228,6 +3556,9 @@ export const SalesforceEndpointOutputSchemas = {
 	getSearchLayout: GetSearchLayoutResponseSchema,
 	query: QueryResponseSchema,
 	executeSoqlQuery: ExecuteSoqlQueryResponseSchema,
+	getSearchSuggestions: GetSearchSuggestionsResponseSchema,
+	searchKnowledgeArticles: SearchKnowledgeArticlesResponseSchema,
+	getParameterizedSearch: GetParameterizedSearchResponseSchema,
 
 	// Composite
 	postCompositeSobjects: PostCompositeSobjectsResponseSchema,
@@ -3239,6 +3570,7 @@ export const SalesforceEndpointOutputSchemas = {
 	getCompositeResources: GetCompositeResourcesResponseSchema,
 	getCompositeSobjects: GetCompositeSobjectsResponseSchema,
 	getSobjectCollections: GetSobjectCollectionsResponseSchema,
+	patchCompositeSobjects: PatchCompositeSobjectsResponseSchema,
 
 	// Metadata
 	createSObjectRecord: CreateSObjectRecordResponseSchema,
@@ -3293,6 +3625,10 @@ export const SalesforceEndpointOutputSchemas = {
 	getUserInfo: GetUserInfoResponseSchema,
 	sobjectUserPassword: SobjectUserPasswordResponseSchema,
 	massTransferOwnership: MassTransferOwnershipResponseSchema,
+	updateSobject: UpdateSobjectResponseSchema,
+	sobjectRowsUpdate: SobjectRowsUpdateResponseSchema,
+	upsertSobjectByExternalId: UpsertSobjectByExternalIdResponseSchema,
+	setUserPassword: SetUserPasswordResponseSchema,
 
 	// UI API
 	createARecord: CreateARecordResponseSchema,
@@ -3342,12 +3678,17 @@ export const SalesforceEndpointOutputSchemas = {
 	getRelatedListRecordsContacts: GetRelatedListRecordsContactsResponseSchema,
 	getUiapiRelatedListPreferences: GetUiapiRelatedListPreferencesResponseSchema,
 	getSobjectListView: GetSobjectListViewResponseSchema,
+	updateRecord: UpdateRecordResponseSchema,
+	updateFavorite: UpdateFavoriteResponseSchema,
+	updateRelatedListPreferences: UpdateRelatedListPreferencesResponseSchema,
+	updateListViewPreferences: UpdateListViewPreferencesResponseSchema,
 
 	// Files
 	getFileContent: GetFileContentResponseSchema,
 	getFileInformation: GetFileInformationResponseSchema,
 	getFileShares: GetFileSharesResponseSchema,
 	deleteFile: DeleteFileResponseSchema,
+	uploadFile: UploadFileResponseSchema,
 
 	// Analytics & Reports
 	getDashboard: GetDashboardResponseSchema,

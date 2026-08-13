@@ -1,15 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { makeSalesforceRequest } from '../client';
+import { salesforceCall } from './shared';
 
 export const postCompositeSobjects: SalesforceEndpoints['postCompositeSobjects'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<
-			Array<Record<string, unknown>>
-		>('composite/sobjects', ctx.key, {
-			method: 'POST',
-			body: input,
-		});
+		const response = await salesforceCall<Array<Record<string, unknown>>>(
+			ctx,
+			'composite/sobjects',
+			{
+				method: 'POST',
+				body: input,
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -22,10 +24,10 @@ export const postCompositeSobjects: SalesforceEndpoints['postCompositeSobjects']
 
 export const createSobjectTree: SalesforceEndpoints['createSobjectTree'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			hasErrors: boolean;
 			results: Array<Record<string, unknown>>;
-		}>(`composite/tree/${input.sobject}`, ctx.key, {
+		}>(ctx, `composite/tree/${input.sobject}`, {
 			method: 'POST',
 			body: { records: input.records },
 		});
@@ -42,15 +44,17 @@ export const createSobjectTree: SalesforceEndpoints['createSobjectTree'] =
 export const deleteSobjectCollections: SalesforceEndpoints['deleteSobjectCollections'] =
 	async (ctx, input) => {
 		const idsQuery = input.ids.join(',');
-		const response = await makeSalesforceRequest<
-			Array<Record<string, unknown>>
-		>('composite/sobjects', ctx.key, {
-			method: 'DELETE',
-			query: {
-				ids: idsQuery,
-				allOrNone: input.allOrNone ? 'true' : 'false',
+		const response = await salesforceCall<Array<Record<string, unknown>>>(
+			ctx,
+			'composite/sobjects',
+			{
+				method: 'DELETE',
+				query: {
+					ids: idsQuery,
+					allOrNone: input.allOrNone ? 'true' : 'false',
+				},
 			},
-		});
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -63,9 +67,9 @@ export const deleteSobjectCollections: SalesforceEndpoints['deleteSobjectCollect
 
 export const postCompositeGraph: SalesforceEndpoints['postCompositeGraph'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			graphs: Array<Record<string, unknown>>;
-		}>('composite/graph', ctx.key, {
+		}>(ctx, 'composite/graph', {
 			method: 'POST',
 			body: input,
 		});
@@ -82,9 +86,9 @@ export const postCompositeGraph: SalesforceEndpoints['postCompositeGraph'] =
 /** @deprecated */
 export const compositeGraphAction: SalesforceEndpoints['compositeGraphAction'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			graphs: Array<Record<string, unknown>>;
-		}>('composite/graph', ctx.key, {
+		}>(ctx, 'composite/graph', {
 			method: 'POST',
 			body: input,
 		});
@@ -100,9 +104,9 @@ export const compositeGraphAction: SalesforceEndpoints['compositeGraphAction'] =
 
 export const getABatchOfRecords: SalesforceEndpoints['getABatchOfRecords'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<{
+		const response = await salesforceCall<{
 			results: Array<Record<string, unknown>>;
-		}>('composite/sobjects', ctx.key, {
+		}>(ctx, 'composite/sobjects', {
 			method: 'POST',
 			body: {
 				ids: input.ids,
@@ -121,9 +125,9 @@ export const getABatchOfRecords: SalesforceEndpoints['getABatchOfRecords'] =
 
 export const getCompositeResources: SalesforceEndpoints['getCompositeResources'] =
 	async (ctx, _input) => {
-		const response = await makeSalesforceRequest<Record<string, unknown>>(
+		const response = await salesforceCall<Record<string, unknown>>(
+			ctx,
 			'composite',
-			ctx.key,
 			{ method: 'GET' },
 		);
 
@@ -138,15 +142,17 @@ export const getCompositeResources: SalesforceEndpoints['getCompositeResources']
 
 export const getCompositeSobjects: SalesforceEndpoints['getCompositeSobjects'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<
-			Array<Record<string, unknown>>
-		>('composite/sobjects', ctx.key, {
-			method: 'POST',
-			body: {
-				ids: input.ids,
-				fields: input.fields,
+		const response = await salesforceCall<Array<Record<string, unknown>>>(
+			ctx,
+			'composite/sobjects',
+			{
+				method: 'POST',
+				body: {
+					ids: input.ids,
+					fields: input.fields,
+				},
 			},
-		});
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -159,15 +165,17 @@ export const getCompositeSobjects: SalesforceEndpoints['getCompositeSobjects'] =
 
 export const getSobjectCollections: SalesforceEndpoints['getSobjectCollections'] =
 	async (ctx, input) => {
-		const response = await makeSalesforceRequest<
-			Array<Record<string, unknown>>
-		>('composite/sobjects', ctx.key, {
-			method: 'POST',
-			body: {
-				ids: input.ids,
-				fields: input.fields,
+		const response = await salesforceCall<Array<Record<string, unknown>>>(
+			ctx,
+			'composite/sobjects',
+			{
+				method: 'POST',
+				body: {
+					ids: input.ids,
+					fields: input.fields,
+				},
 			},
-		});
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -176,4 +184,22 @@ export const getSobjectCollections: SalesforceEndpoints['getSobjectCollections']
 			'completed',
 		);
 		return response;
+	};
+
+export const patchCompositeSobjects: SalesforceEndpoints['patchCompositeSobjects'] =
+	async (ctx, input) => {
+		const response = await salesforceCall<unknown>(ctx, 'composite/sobjects', {
+			method: 'PATCH',
+			body: {
+				allOrNone: input.allOrNone,
+				records: input.records,
+			},
+		});
+		await logEventFromContext(
+			ctx,
+			'salesforce.composite.patch_sobjects',
+			input,
+			'completed',
+		);
+		return { result: response };
 	};
