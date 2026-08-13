@@ -17,12 +17,45 @@ type EntityEvictor = {
 /**
  * Mirroring is best-effort: a plugin call must not fail because the local copy
  * could not be written or removed.
+ *
+ * The one exception is an eviction the caller declared **required** - see
+ * {@link LoyverseMirrorEvictionError}.
  */
 async function safely(operation: () => Promise<unknown>, what: string) {
 	try {
 		await operation();
 	} catch (error) {
 		console.warn(`[LOYVERSE] ${what}:`, error);
+	}
+}
+
+/**
+ * Raised when a record was deleted at Loyverse but could not be removed from the
+ * local mirror, and leaving it there would breach something the plugin promises.
+ *
+ * Customers are the case that matters. Loyverse hard-deletes them - the API
+ * documents this as a personal-data restriction and the record carries
+ * `permanent_deletion_at` - so a mirrored row that survives the delete keeps
+ * answering reads with personal data the account has erased. Reporting that
+ * deletion as a plain success would be wrong: the remote half happened, the
+ * privacy half did not, and only the caller can decide what to do about it.
+ *
+ * The message states both halves, because the remote record is genuinely gone and
+ * retrying the delete will now return 404. What needs attention is the mirror.
+ */
+export class LoyverseMirrorEvictionError extends Error {
+	constructor(
+		readonly label: string,
+		readonly entityId: string,
+		readonly cause: unknown,
+	) {
+		super(
+			`Loyverse deleted the ${label} ${entityId}, but it could not be removed ` +
+				`from the local mirror, which still holds its data. The remote record is ` +
+				`gone and does not need deleting again; the local copy does. ` +
+				`Cause: ${cause instanceof Error ? cause.message : String(cause)}`,
+		);
+		this.name = 'LoyverseMirrorEvictionError';
 	}
 }
 
@@ -102,6 +135,11 @@ export async function cacheEntity<Schema extends z.ZodType>(
 /**
  * Drops a record from the local mirror after Loyverse has deleted it.
  *
+ * Pass `required: true` when leaving the row behind would breach a promise rather
+ * than merely leave the cache stale. A required eviction that fails raises
+ * {@link LoyverseMirrorEvictionError} instead of warning, because a caller that is
+ * told "deleted" is entitled to assume the data is gone from both sides.
+ *
  * For customers this is a correctness requirement rather than tidiness: Loyverse
  * does not soft-delete customers - the API documents this as a personal-data
  * restriction and the record carries `permanent_deletion_at` - so a mirrored row
@@ -121,13 +159,29 @@ export async function evictEntity(
 	store: EntityEvictor | undefined,
 	entityId: string | number | undefined | null,
 	label: string,
+	options: { required?: boolean } = {},
 ): Promise<void> {
 	if (!store || entityId == null) return;
 
-	await safely(
-		() => store.deleteByEntityId(String(entityId)),
-		`failed to evict ${label} ${entityId}`,
-	);
+	if (!options.required) {
+		await safely(
+			() => store.deleteByEntityId(String(entityId)),
+			`failed to evict ${label} ${entityId}`,
+		);
+		return;
+	}
+
+	try {
+		await store.deleteByEntityId(String(entityId));
+	} catch (error) {
+		// Logged as an error rather than a warning: this is data the account
+		// believes it has deleted still sitting in a queryable mirror.
+		console.error(
+			`[LOYVERSE] required eviction of ${label} ${entityId} failed - the local mirror still holds it:`,
+			error,
+		);
+		throw new LoyverseMirrorEvictionError(label, String(entityId), error);
+	}
 }
 
 /**

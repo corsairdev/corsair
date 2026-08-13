@@ -145,6 +145,9 @@ const CAPTURED_KEYS = {
 		'updated_at',
 		'website',
 	],
+	// `state` and `country` are declared on the entity but are documented-only
+	// spellings, never observed, so they are deliberately absent here - this table
+	// records what the API actually returned.
 	stores: [
 		'address',
 		'city',
@@ -401,6 +404,26 @@ describe('full records parse', () => {
 		});
 
 		expect(parsed.success).toBe(true);
+	});
+
+	/**
+	 * The spec and the live API disagree on two store field names. Both spellings
+	 * parse, so neither a doc-driven caller nor the actual response is rejected.
+	 */
+	it('accepts both the live and documented store field spellings', () => {
+		const live = LoyverseStoreEntity.safeParse({
+			id: 'store-1',
+			region: 'Example Region',
+			country_code: 'us',
+		});
+		const documented = LoyverseStoreEntity.safeParse({
+			id: 'store-1',
+			state: 'Example State',
+			country: 'us',
+		});
+
+		expect(live.success).toBe(true);
+		expect(documented.success).toBe(true);
 	});
 
 	it('parses the merchant singleton with its nested currency', () => {

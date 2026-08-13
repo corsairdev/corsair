@@ -119,6 +119,18 @@ export const upsert: LoyverseEndpoints['customersUpsert'] = async (
  * restriction, and the record carries `permanent_deletion_at` - so a mirrored row
  * left in place would outlive a record that no longer exists and would keep
  * answering reads with personal data the account has deleted.
+ *
+ * That is why this is the one eviction in the plugin marked `required`. Everywhere
+ * else a failed cache write is swallowed so a plugin call does not fail over a
+ * local mirror; here, swallowing it would report "customer deleted" while their
+ * name, email, phone and address stayed queryable. A failure raises
+ * `LoyverseMirrorEvictionError`, whose message says the remote record is already
+ * gone so the delete does not need repeating - it is the mirror that needs
+ * attention.
+ *
+ * The event is logged before the eviction so the deletion is recorded even when
+ * the mirror write fails; the raise happens after, and cannot swallow the audit
+ * trail with it.
  */
 export const remove: LoyverseEndpoints['customersDelete'] = async (
 	ctx,
@@ -130,13 +142,17 @@ export const remove: LoyverseEndpoints['customersDelete'] = async (
 		{ method: 'DELETE' },
 	);
 
-	await evictEntity(ctx.db.customers, input.customer_id, LABEL);
-
 	await logEventFromContext(
 		ctx,
 		'loyverse.customers.delete',
 		auditPayload(input, ['customer_id']),
 		'completed',
 	);
+
+	// Last, and allowed to raise: see the note above.
+	await evictEntity(ctx.db.customers, input.customer_id, LABEL, {
+		required: true,
+	});
+
 	return result;
 };

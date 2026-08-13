@@ -271,7 +271,17 @@ export const LoyverseSupplierEntity = z
 	.loose();
 export type LoyverseSupplierEntity = z.infer<typeof LoyverseSupplierEntity>;
 
-/** Stores. 12 live keys. */
+/**
+ * Stores. 12 live keys.
+ *
+ * `state` and `country` are the names the published spec gives the region and
+ * country fields; the live response returns `region` and `country_code` instead.
+ * Both spellings are declared because the difference is undocumented and could go
+ * either way - a reader comparing this against the reference should find the
+ * documented names, and if Loyverse ever switches to them the data is typed rather
+ * than merely surviving `.loose()`. Neither documented name has been observed on a
+ * response.
+ */
 export const LoyverseStoreEntity = z
 	.object({
 		id: Id,
@@ -279,8 +289,10 @@ export const LoyverseStoreEntity = z
 		address: S,
 		city: S,
 		region: S,
+		state: S,
 		postal_code: S,
 		country_code: S,
+		country: S,
 		phone_number: S,
 		description: S,
 		created_at: S,

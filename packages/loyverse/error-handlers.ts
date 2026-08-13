@@ -1,5 +1,6 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { LoyverseMirrorEvictionError } from './endpoints/persist';
 
 /**
  * Loyverse reports failures with ordinary HTTP status codes and a consistent
@@ -209,6 +210,53 @@ export const errorHandlers = {
 
 			return {
 				maxRetries: 0,
+			};
+		},
+	},
+	/**
+	 * A record was deleted at Loyverse but could not be removed from the local
+	 * mirror.
+	 *
+	 * Never retried, and matched before the generic handlers so it cannot be read
+	 * as a transport failure. Replaying the endpoint would re-issue a delete for a
+	 * record that is already gone - a 404 - and would not address the actual
+	 * problem, which is local. The message names both halves of the outcome.
+	 */
+	MIRROR_EVICTION_ERROR: {
+		match: (error, context) => error instanceof LoyverseMirrorEvictionError,
+		handler: async (error, context) => {
+			console.error(`[LOYVERSE:${context.operation}] ${error.message}`);
+
+			return {
+				maxRetries: 0,
+			};
+		},
+	},
+	/**
+	 * A 5xx from Loyverse.
+	 *
+	 * Retried only where a replay cannot duplicate anything, which is the same test
+	 * the network handler applies: the server may or may not have applied a write
+	 * before failing, and Loyverse accepts no idempotency key. Reads and deletes
+	 * therefore get the retry, writes do not.
+	 *
+	 * This sits before `NETWORK_ERROR` because a 5xx arrives as an `ApiError` with a
+	 * status, not as a transport failure, and would otherwise fall through to
+	 * `DEFAULT` and never be retried at all. Loyverse does return 500 for at least
+	 * one deterministic case - an item image below its minimum size - and retrying
+	 * that is pointless but harmless, since `items.uploadImage` is non-idempotent
+	 * and so gets no retry.
+	 */
+	SERVER_ERROR: {
+		match: (error, context) =>
+			error instanceof ApiError && error.status >= 500 && error.status < 600,
+		handler: async (error, context) => {
+			console.warn(
+				`[LOYVERSE:${context.operation}] Server error ${error instanceof ApiError ? error.status : ''}: ${error.message}`,
+			);
+
+			return {
+				maxRetries: isNonIdempotent(context.operation) ? 0 : 3,
 			};
 		},
 	},

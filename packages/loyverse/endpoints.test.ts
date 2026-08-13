@@ -9,6 +9,7 @@
  * All ids and values are fictional.
  */
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import {
 	Categories,
 	Customers,
@@ -29,7 +30,8 @@ import {
 	Variants,
 	Webhooks,
 } from './endpoints';
-import { isNonIdempotent } from './error-handlers';
+import { LoyverseMirrorEvictionError } from './endpoints/persist';
+import { errorHandlers, isNonIdempotent } from './error-handlers';
 import { loyverseEndpointMeta } from './index';
 
 // The event-log payload is asserted directly further down: it is the one place
@@ -95,16 +97,42 @@ function makeCtx() {
 	return { ctx, db };
 }
 
-let captured: { url: string; method: string; body?: string } | undefined;
+let captured:
+	| {
+			url: string;
+			method: string;
+			body?: string;
+			headers: Record<string, string>;
+			rawBody?: unknown;
+	  }
+	| undefined;
 
 /** Answers every request with `payload`, recording what was asked for. */
 function mockFetch(payload: unknown, status = 200) {
 	captured = undefined;
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
+		// `request` may hand fetch a plain object or a `Headers` instance. Both are
+		// normalised to lower-cased keys, because asserting against the raw object
+		// silently passes on the other shape.
+		const headers: Record<string, string> = {};
+		const raw = init?.headers;
+		if (raw instanceof Headers) {
+			raw.forEach((value, key) => {
+				headers[key.toLowerCase()] = value;
+			});
+		} else {
+			for (const [key, value] of Object.entries(
+				(raw ?? {}) as Record<string, string>,
+			)) {
+				headers[key.toLowerCase()] = value;
+			}
+		}
 		captured = {
 			url: String(url),
 			method: init?.method ?? 'GET',
 			body: typeof init?.body === 'string' ? init.body : undefined,
+			rawBody: init?.body,
+			headers,
 		};
 		return {
 			ok: status < 400,
@@ -916,6 +944,128 @@ describe('eviction', () => {
 		}
 	});
 
+	/**
+	 * Customer eviction is the one that is allowed to fail loudly.
+	 *
+	 * Loyverse hard-deletes customers, so a mirrored row that survives the delete
+	 * keeps answering reads with personal data the account has erased. Reporting
+	 * that as a plain success would tell the caller the data is gone when half of it
+	 * is not.
+	 */
+	it('raises when a customer cannot be evicted after deletion', async () => {
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		mockFetch(deleted(CUSTOMER));
+		const { ctx, db } = makeCtx();
+		db.customers.deleteByEntityId.mockRejectedValueOnce(
+			new Error('database unavailable'),
+		);
+
+		await expect(
+			Customers.remove(ctx, { customer_id: CUSTOMER }),
+		).rejects.toBeInstanceOf(LoyverseMirrorEvictionError);
+
+		// Logged as an error, not a warning: this is retained personal data.
+		expect(error).toHaveBeenCalled();
+		error.mockRestore();
+	});
+
+	it('names both halves of the outcome in the eviction error', async () => {
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		mockFetch(deleted(CUSTOMER));
+		const { ctx, db } = makeCtx();
+		db.customers.deleteByEntityId.mockRejectedValueOnce(new Error('disk full'));
+
+		const thrown = await Customers.remove(ctx, {
+			customer_id: CUSTOMER,
+		}).catch((e: unknown) => e as Error);
+
+		// The remote record is gone, so the message must not invite a retry of the
+		// delete; it has to point at the mirror instead.
+		expect(thrown.message).toContain('Loyverse deleted the customer');
+		expect(thrown.message).toContain('local mirror');
+		expect(thrown.message).toContain('does not need deleting again');
+		expect(thrown.message).toContain('disk full');
+		error.mockRestore();
+	});
+
+	/**
+	 * The audit event is written before the eviction, so a failed mirror write
+	 * cannot also erase the record that the deletion happened.
+	 */
+	it('still records the deletion event when the eviction fails', async () => {
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		mockFetch(deleted(CUSTOMER));
+		const { ctx, db } = makeCtx();
+		db.customers.deleteByEntityId.mockRejectedValueOnce(new Error('nope'));
+
+		await Customers.remove(ctx, { customer_id: CUSTOMER }).catch(
+			() => undefined,
+		);
+
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'loyverse.customers.delete',
+			{ customer_id: CUSTOMER, fields: ['customer_id'] },
+			'completed',
+		);
+		error.mockRestore();
+	});
+
+	it('succeeds normally when the customer eviction works', async () => {
+		mockFetch(deleted(CUSTOMER));
+		const { ctx, db } = makeCtx();
+
+		await expect(
+			Customers.remove(ctx, { customer_id: CUSTOMER }),
+		).resolves.toBeDefined();
+		expect(db.customers.deleteByEntityId).toHaveBeenCalledWith(CUSTOMER);
+	});
+
+	/**
+	 * Every other eviction stays best-effort. A plugin call should not fail because
+	 * a local mirror could not be written when no promise depends on it.
+	 */
+	it('keeps every other eviction best-effort', async () => {
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		const cases: Array<
+			[keyof ReturnType<typeof makeCtx>['db'], (c: Ctx) => Promise<unknown>]
+		> = [
+			['items', (c) => Items.remove(c, { item_id: ITEM })],
+			['variants', (c) => Variants.remove(c, { variant_id: VARIANT })],
+			['categories', (c) => Categories.remove(c, { category_id: CATEGORY })],
+			['modifiers', (c) => Modifiers.remove(c, { modifier_id: MODIFIER })],
+			['discounts', (c) => Discounts.remove(c, { discount_id: DISCOUNT })],
+			['taxes', (c) => Taxes.remove(c, { tax_id: TAX })],
+			['suppliers', (c) => Suppliers.remove(c, { supplier_id: SUPPLIER })],
+			[
+				'posDevices',
+				(c) => PosDevices.remove(c, { pos_device_id: POS_DEVICE }),
+			],
+		];
+
+		// Eight of the nine mirrored deletes; customers is the deliberate exception.
+		expect(cases).toHaveLength(8);
+
+		for (const [store, run] of cases) {
+			mockFetch(deleted('x'));
+			const { ctx, db } = makeCtx();
+			db[store].deleteByEntityId.mockRejectedValueOnce(
+				new Error('unavailable'),
+			);
+
+			await expect(run(ctx)).resolves.toBeDefined();
+		}
+		warn.mockRestore();
+	});
+
 	it('does not fail the call when an eviction throws', async () => {
 		const warn = jest
 			.spyOn(console, 'warn')
@@ -1137,6 +1287,11 @@ describe('request bodies', () => {
 		expect(captured?.url).not.toContain('?');
 	});
 
+	/**
+	 * The previous version of this test asserted only that the method was POST,
+	 * which passed regardless of the media type and so proved nothing about the
+	 * behaviour it was named for.
+	 */
 	it('sends the declared image media type when one is given', async () => {
 		mockFetch({});
 		const { ctx } = makeCtx();
@@ -1148,6 +1303,116 @@ describe('request bodies', () => {
 		});
 
 		expect(captured?.method).toBe('POST');
+		expect(captured?.headers['content-type']).toBe('image/jpeg');
+	});
+
+	it('defaults the image media type to PNG when none is given', async () => {
+		mockFetch({});
+		const { ctx } = makeCtx();
+
+		await Items.uploadImage(ctx, {
+			item_id: ITEM,
+			image_base64: Buffer.from('x'.repeat(64)).toString('base64'),
+		});
+
+		expect(captured?.headers['content-type']).toBe('image/png');
+	});
+
+	/**
+	 * Loyverse answers a multipart upload with 500, so the body has to reach fetch
+	 * as raw bytes with no boundary anywhere near the content type.
+	 */
+	it('uploads the image as a raw binary body, never multipart', async () => {
+		mockFetch({});
+		const { ctx } = makeCtx();
+
+		await Items.uploadImage(ctx, {
+			item_id: ITEM,
+			image_base64: Buffer.from('x'.repeat(64)).toString('base64'),
+		});
+
+		expect(captured?.rawBody).toBeInstanceOf(Blob);
+		expect(captured?.headers['content-type']).not.toContain('multipart');
+		expect(captured?.headers['content-type']).not.toContain('boundary');
+	});
+});
+
+describe('server errors', () => {
+	/**
+	 * A 5xx arrives as an ApiError with a status, not as a transport failure, so
+	 * before this handler existed it fell through to DEFAULT and was never retried.
+	 * It is retried on exactly the operations a replay cannot duplicate - the same
+	 * test the network handler applies.
+	 */
+	const context = (operation: string) =>
+		({ operation }) as unknown as Parameters<
+			typeof errorHandlers.SERVER_ERROR.handler
+		>[1];
+
+	const apiError = (status: number) =>
+		Object.assign(new ApiError({} as never, {} as never, 'boom'), { status });
+
+	it('matches a 5xx and not a 4xx', () => {
+		const ctx = context('items.list');
+		expect(errorHandlers.SERVER_ERROR.match(apiError(500), ctx)).toBe(true);
+		expect(errorHandlers.SERVER_ERROR.match(apiError(503), ctx)).toBe(true);
+		expect(errorHandlers.SERVER_ERROR.match(apiError(404), ctx)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(apiError(429), ctx)).toBe(false);
+	});
+
+	it('retries a 5xx on a read but not on a write', async () => {
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+
+		const read = await errorHandlers.SERVER_ERROR.handler(
+			apiError(500),
+			context('items.list'),
+		);
+		const del = await errorHandlers.SERVER_ERROR.handler(
+			apiError(500),
+			context('items.delete'),
+		);
+		const write = await errorHandlers.SERVER_ERROR.handler(
+			apiError(500),
+			context('receipts.create'),
+		);
+		const upload = await errorHandlers.SERVER_ERROR.handler(
+			apiError(500),
+			context('items.uploadImage'),
+		);
+
+		expect(read.maxRetries).toBe(3);
+		expect(del.maxRetries).toBe(3);
+		expect(write.maxRetries).toBe(0);
+		expect(upload.maxRetries).toBe(0);
+		warn.mockRestore();
+	});
+
+	it('never retries a mirror eviction failure', async () => {
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		const evictionError = new LoyverseMirrorEvictionError(
+			'customer',
+			CUSTOMER,
+			new Error('disk full'),
+		);
+		const ctx = context('customers.delete');
+
+		expect(errorHandlers.MIRROR_EVICTION_ERROR.match(evictionError, ctx)).toBe(
+			true,
+		);
+		expect(errorHandlers.MIRROR_EVICTION_ERROR.match(apiError(500), ctx)).toBe(
+			false,
+		);
+
+		const strategy = await errorHandlers.MIRROR_EVICTION_ERROR.handler(
+			evictionError,
+			ctx,
+		);
+		expect(strategy.maxRetries).toBe(0);
+		error.mockRestore();
 	});
 });
 

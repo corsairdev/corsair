@@ -49,6 +49,10 @@ module.exports = {
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	// The live suite is opt-in: a default `jest` run in this package should not
+	// reach the network. CI passes the same exclusion on the command line, so this
+	// only changes what a local default run does. Matches `packages/confluence`.
+	testPathIgnorePatterns: ['/node_modules/', 'integration\.test\.ts'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,

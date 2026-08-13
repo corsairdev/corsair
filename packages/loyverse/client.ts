@@ -48,6 +48,19 @@ const LOYVERSE_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 export type LoyverseRequestOptions = {
 	method?: 'GET' | 'POST' | 'DELETE';
+	/**
+	 * The JSON request body, serialised as given.
+	 *
+	 * The values are `unknown` rather than a union of what Loyverse accepts because
+	 * bodies here are assembled by the endpoints from their own already-validated
+	 * input schemas, and those shapes vary widely - a receipt nests line items,
+	 * their taxes, discounts and modifiers several levels deep. Narrowing at this
+	 * boundary would restate every one of those shapes in a second place, where the
+	 * two could drift apart. Validation belongs to the endpoint input schemas in
+	 * `endpoints/types.ts`; this type deliberately says only "already-checked JSON".
+	 *
+	 * An array is accepted because a few endpoints take a bare collection.
+	 */
 	body?: Record<string, unknown> | unknown[];
 	query?: Record<string, string | number | boolean | undefined>;
 };

@@ -1,8 +1,13 @@
 /**
  * Live tests against a real Loyverse account.
  *
- * Excluded from CI by `--testPathIgnorePatterns`, and self-skipping when no
+ * Excluded from a default run by `testPathIgnorePatterns` in `jest.config.cjs`,
+ * excluded from CI by the same flag on the command line, and self-skipping when no
  * token is present, so a checkout without credentials still runs green.
+ *
+ * Nothing here runs without `LOYVERSE_ACCESS_TOKEN` - including the OpenID Connect
+ * block, which needs no credential but is gated anyway, so that a bare `jest` in
+ * this package makes no network calls at all.
  *
  * Almost every call here is **read-only**, and nothing that was already on the
  * account is ever modified. The single exception is the soft-delete test, which
@@ -14,7 +19,11 @@
  * would alter a real product listing.
  *
  * To run:
- *   LOYVERSE_ACCESS_TOKEN=<token> npx jest integration.test.ts
+ *   LOYVERSE_ACCESS_TOKEN=<token> pnpm test:live
+ *
+ * Passing the filename as a positional argument does not work here: jest treats it
+ * as another `--testPathIgnorePatterns` value and quietly excludes this file, then
+ * reports the unit suites as green. The script uses `--testPathPattern` instead.
  */
 import { makeLoyverseMetadataRequest, makeLoyverseRequest } from './client';
 import {
@@ -257,14 +266,33 @@ describeLive('Loyverse API (live, read-only)', () => {
 	/**
 	 * Filtering receipts by date is plan-limited: on an account without Unlimited
 	 * sales history, reaching past 31 days is answered 402 rather than with an empty
-	 * page. Asserted so the error handler's 402 branch is known to be reachable.
+	 * page.
+	 *
+	 * Both outcomes are accepted, because which one is correct depends on the plan of
+	 * whichever account the token belongs to. Asserting 402 unconditionally would fail
+	 * on a paid account for a reason that has nothing to do with this plugin. What is
+	 * asserted either way is that the call does not fail in some third manner: a 402
+	 * must carry the sales-history explanation, and a success must return the envelope.
 	 */
-	it('answers 402 when a receipt date filter reaches past the plan limit', async () => {
-		await expect(
-			makeLoyverseRequest('receipts', accessToken as string, {
-				query: { created_at_min: '2020-01-01T00:00:00.000Z' },
-			}),
-		).rejects.toMatchObject({ status: 402 });
+	it('either answers 402 or returns receipts for an old date filter', async () => {
+		let status = 0;
+		let body: { receipts?: unknown[] } | undefined;
+		try {
+			body = await makeLoyverseRequest<{ receipts: unknown[] }>(
+				'receipts',
+				accessToken as string,
+				{ query: { created_at_min: '2020-01-01T00:00:00.000Z' } },
+			);
+			status = 200;
+		} catch (error) {
+			status = (error as { status?: number }).status ?? 0;
+			if (status === 402) {
+				expect((error as Error).message).toMatch(/sales history|31 days/i);
+			}
+		}
+
+		expect([200, 402]).toContain(status);
+		if (status === 200) expect(Array.isArray(body?.receipts)).toBe(true);
 	});
 
 	it('lists receipts without a date filter', async () => {
@@ -401,10 +429,14 @@ describeLive('Loyverse API (live, read-only)', () => {
 });
 
 /**
- * The OIDC documents need no credential, so these run even without a token.
- * They are the only tests here that do.
+ * The OIDC documents need no credential, but these are gated behind the same
+ * environment variable as everything else.
+ *
+ * They would otherwise be the one part of this file that reached the network on a
+ * plain `jest` run in a checkout with no credentials, which is a surprising thing
+ * for a default test run to do.
  */
-describe('Loyverse OpenID Connect metadata (live, unauthenticated)', () => {
+describeLive('Loyverse OpenID Connect metadata (live, unauthenticated)', () => {
 	it('serves a discovery document advertising a JWKS URI', async () => {
 		const doc = await makeLoyverseMetadataRequest<{
 			issuer?: string;
