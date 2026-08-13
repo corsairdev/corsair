@@ -254,6 +254,10 @@ export function verifyIntercomWebhookSignature(
 		return { valid: false, error: 'Missing x-hub-signature header' };
 	}
 
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
 	const expectedSignature = `sha1=${crypto
 		.createHmac('sha1', secret)
 		.update(body)
