@@ -26,24 +26,24 @@ pnpm install @corsair-dev/workday
 <Tab title="Solo">
 ```ts corsair.ts
 import { createCorsair } from 'corsair';
-import { workdayDocsGen } from '@corsair-dev/workday';
+import { workday } from '@corsair-dev/workday';
 
 export const corsair = createCorsair({
 	// ... other config options,
 	multiTenancy: false,
-    plugins: [workdayDocsGen()],
+    plugins: [workday({ tenant: 'your-tenant', host: 'wd2-impl-services1.workday.com' })],
 });
 ```
 </Tab>
 <Tab title="Multi-Tenant">
 ```ts corsair.ts
 import { createCorsair } from 'corsair';
-import { workdayDocsGen } from '@corsair-dev/workday';
+import { workday } from '@corsair-dev/workday';
 
 export const corsair = createCorsair({
 	// ... other config options,
     multiTenancy: true,
-    plugins: [workdayDocsGen()],
+    plugins: [workday({ tenant: 'your-tenant', host: 'wd2-impl-services1.workday.com' })],
 });
 ```
 
@@ -51,6 +51,10 @@ See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Tab>
 </Tabs>
+
+<Note>
+Workday requires the `tenant` and `host` options — calling `workday()` without them throws at initialization. Pass your Workday tenant name and API host (for example `wd2-impl-services1.workday.com`).
+</Note>
 
 </Step>
 
@@ -83,7 +87,7 @@ Store per-tenant secrets after you create the tenant record. See [Multi-tenancy]
 
 ## Authentication
 
-See [Get Credentials](/plugins/workday/get-credentials) for how to obtain and store secrets. Auth methods depend on how you configure `workdayDocsGen({ ... })` — check the plugin source `*PluginOptions` type for supported `authType` values.
+See [Get Credentials](/plugins/workday/get-credentials) for how to obtain and store secrets. Auth methods depend on how you configure `workday({ ... })` — check the plugin source `*PluginOptions` type for supported `authType` values.
 
 - [API key authentication](/concepts/api-key)
 - [OAuth 2.0](/concepts/oauth)
