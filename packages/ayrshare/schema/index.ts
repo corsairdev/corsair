@@ -1,8 +1,11 @@
-import { AyrshareAutoSchedule } from './database';
+import { AyrshareAutoSchedule, AyrsharePost } from './database';
 
 export const AyrshareSchema = {
 	version: '1.0.0',
-	entities: { autoSchedules: AyrshareAutoSchedule },
+	entities: {
+		autoSchedules: AyrshareAutoSchedule,
+		posts: AyrsharePost,
+	},
 } as const;
 
-export type { AyrshareAutoSchedule } from './database';
+export * from './database';
