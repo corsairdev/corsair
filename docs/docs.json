@@ -180,6 +180,22 @@
                 ]
               },
               {
+                "group": "Affinda",
+                "pages": [
+                  "plugins/affinda/overview",
+                  "plugins/affinda/api",
+                  "plugins/affinda/database"
+                ]
+              },
+              {
+                "group": "AgencyZoom",
+                "pages": [
+                  "plugins/agencyzoom/overview",
+                  "plugins/agencyzoom/api",
+                  "plugins/agencyzoom/database"
+                ]
+              },
+              {
                 "group": "AgentMail",
                 "pages": [
                   "plugins/agentmail/overview",
@@ -197,12 +213,28 @@
                 ]
               },
               {
+                "group": "Agenty",
+                "pages": [
+                  "plugins/agenty/overview",
+                  "plugins/agenty/api",
+                  "plugins/agenty/database"
+                ]
+              },
+              {
                 "group": "Ahrefs",
                 "pages": [
                   "plugins/ahrefs/overview",
                   "plugins/ahrefs/get-credentials",
                   "plugins/ahrefs/api",
                   "plugins/ahrefs/database"
+                ]
+              },
+              {
+                "group": "AimlApi",
+                "pages": [
+                  "plugins/aimlapi/overview",
+                  "plugins/aimlapi/api",
+                  "plugins/aimlapi/database"
                 ]
               },
               {
@@ -216,11 +248,67 @@
                 ]
               },
               {
+                "group": "Alchemy",
+                "pages": [
+                  "plugins/alchemy/overview",
+                  "plugins/alchemy/api",
+                  "plugins/alchemy/database"
+                ]
+              },
+              {
                 "group": "Algolia",
                 "pages": [
                   "plugins/algolia/overview",
                   "plugins/algolia/api",
                   "plugins/algolia/database"
+                ]
+              },
+              {
+                "group": "Alpha Vantage",
+                "pages": [
+                  "plugins/alphavantage/overview",
+                  "plugins/alphavantage/api",
+                  "plugins/alphavantage/database"
+                ]
+              },
+              {
+                "group": "AltText.ai",
+                "pages": [
+                  "plugins/alttextai/overview",
+                  "plugins/alttextai/api",
+                  "plugins/alttextai/database"
+                ]
+              },
+              {
+                "group": "Amara (subtitling platform)",
+                "pages": [
+                  "plugins/amara/overview",
+                  "plugins/amara/api",
+                  "plugins/amara/database"
+                ]
+              },
+              {
+                "group": "Ambee",
+                "pages": [
+                  "plugins/ambee/overview",
+                  "plugins/ambee/api",
+                  "plugins/ambee/database"
+                ]
+              },
+              {
+                "group": "AmbientWeather",
+                "pages": [
+                  "plugins/ambientweather/overview",
+                  "plugins/ambientweather/api",
+                  "plugins/ambientweather/database"
+                ]
+              },
+              {
+                "group": "AMcards",
+                "pages": [
+                  "plugins/amcards/overview",
+                  "plugins/amcards/api",
+                  "plugins/amcards/database"
                 ]
               },
               {
@@ -231,6 +319,38 @@
                   "plugins/amplitude/api",
                   "plugins/amplitude/database",
                   "plugins/amplitude/webhooks"
+                ]
+              },
+              {
+                "group": "API-Sports",
+                "pages": [
+                  "plugins/apisports/overview",
+                  "plugins/apisports/api",
+                  "plugins/apisports/database"
+                ]
+              },
+              {
+                "group": "API.Bible",
+                "pages": [
+                  "plugins/apibible/overview",
+                  "plugins/apibible/api",
+                  "plugins/apibible/database"
+                ]
+              },
+              {
+                "group": "Apify",
+                "pages": [
+                  "plugins/apify/overview",
+                  "plugins/apify/api",
+                  "plugins/apify/database"
+                ]
+              },
+              {
+                "group": "ApiLabz",
+                "pages": [
+                  "plugins/apilabz/overview",
+                  "plugins/apilabz/api",
+                  "plugins/apilabz/database"
                 ]
               },
               {
@@ -257,6 +377,14 @@
                   "plugins/bluesky/overview",
                   "plugins/bluesky/api",
                   "plugins/bluesky/database"
+                ]
+              },
+              {
+                "group": "Boloforms",
+                "pages": [
+                  "plugins/boloforms/overview",
+                  "plugins/boloforms/api",
+                  "plugins/boloforms/database"
                 ]
               },
               {
@@ -295,6 +423,15 @@
                   "plugins/canva/overview",
                   "plugins/canva/api",
                   "plugins/canva/database"
+                ]
+              },
+              {
+                "group": "Canvas",
+                "pages": [
+                  "plugins/canvas/overview",
+                  "plugins/canvas/api",
+                  "plugins/canvas/database",
+                  "plugins/canvas/webhooks"
                 ]
               },
               {
@@ -375,6 +512,14 @@
                 ]
               },
               {
+                "group": "Docker Hub",
+                "pages": [
+                  "plugins/dockerhub/overview",
+                  "plugins/dockerhub/api",
+                  "plugins/dockerhub/database"
+                ]
+              },
+              {
                 "group": "Dodo Payments",
                 "pages": [
                   "plugins/dodopayments/overview",
@@ -391,6 +536,14 @@
                   "plugins/dropbox/api",
                   "plugins/dropbox/database",
                   "plugins/dropbox/webhooks"
+                ]
+              },
+              {
+                "group": "Epic Games",
+                "pages": [
+                  "plugins/epicgames/overview",
+                  "plugins/epicgames/api",
+                  "plugins/epicgames/database"
                 ]
               },
               {
@@ -584,6 +737,14 @@
                 ]
               },
               {
+                "group": "Hugging Face",
+                "pages": [
+                  "plugins/huggingface/overview",
+                  "plugins/huggingface/api",
+                  "plugins/huggingface/database"
+                ]
+              },
+              {
                 "group": "Insighto.ai",
                 "pages": [
                   "plugins/insightoai/overview",
@@ -682,6 +843,14 @@
                   "plugins/notion/api",
                   "plugins/notion/database",
                   "plugins/notion/webhooks"
+                ]
+              },
+              {
+                "group": "OCR.space",
+                "pages": [
+                  "plugins/ocrspace/overview",
+                  "plugins/ocrspace/api",
+                  "plugins/ocrspace/database"
                 ]
               },
               {
@@ -915,6 +1084,14 @@
                 ]
               },
               {
+                "group": "Toggl",
+                "pages": [
+                  "plugins/toggl/overview",
+                  "plugins/toggl/api",
+                  "plugins/toggl/database"
+                ]
+              },
+              {
                 "group": "Trello",
                 "pages": [
                   "plugins/trello/overview",
@@ -989,6 +1166,22 @@
                   "plugins/whatsapp/api",
                   "plugins/whatsapp/database",
                   "plugins/whatsapp/webhooks"
+                ]
+              },
+              {
+                "group": "Wiza",
+                "pages": [
+                  "plugins/wiza/overview",
+                  "plugins/wiza/api",
+                  "plugins/wiza/database"
+                ]
+              },
+              {
+                "group": "Workday",
+                "pages": [
+                  "plugins/workday/overview",
+                  "plugins/workday/api",
+                  "plugins/workday/database"
                 ]
               },
               {

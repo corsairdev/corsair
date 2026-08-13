@@ -1,0 +1,130 @@
+---
+title: Overview
+description: "Workday plugin for Corsair"
+---
+
+Use **Workday** through Corsair: one client, typed API calls, optional local DB sync.
+
+**What you get:**
+
+- 85 typed API operations
+- 8 database entities synced for fast `.search()` / `.list()` queries
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/workday
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { workdayDocsGen } from '@corsair-dev/workday';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [workdayDocsGen()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { workdayDocsGen } from '@corsair-dev/workday';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [workdayDocsGen()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/workday/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=workday
+```
+
+Use the key names documented in [Get Credentials](/plugins/workday/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=workday --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+See [Get Credentials](/plugins/workday/get-credentials) for how to obtain and store secrets. Auth methods depend on how you configure `workdayDocsGen({ ... })` — check the plugin source `*PluginOptions` type for supported `authType` values.
+
+- [API key authentication](/concepts/api-key)
+- [OAuth 2.0](/concepts/oauth)
+
+
+## Query synced data
+
+Synced entities support `corsair.workday.db.<entity>.search()` and `.list()`. See [Database](/plugins/workday/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `absence.getAbsenceBalance`
+
+```ts
+await corsair.workday.api.absence.getAbsenceBalance({});
+```
+
+
+**Write-style (write):** `business.createBusinessTitleChange`
+
+```ts
+await corsair.workday.api.business.createBusinessTitleChange({});
+```
+
+
+See the full list on the [API](/plugins/workday/api) page. Use `pnpm corsair list --plugin=workday` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/workday/api) |
+| Database | [Database](/plugins/workday/database) |
+| Credentials | [Get credentials](/plugins/workday/get-credentials) |
+

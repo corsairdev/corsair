@@ -1,0 +1,3892 @@
+---
+title: API
+description: "API reference for Workday: every `workday.api.*` operation with input and output types."
+---
+
+Every `workday.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Absence
+
+### getAbsenceBalance
+
+`absence.getAbsenceBalance`
+
+Retrieves an absence balance by ID (Absence Management v5).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.absence.getAbsenceBalance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `absencePlan` | `string \| number \| boolean \| string[]` | No | — |
+| `effective` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+## Assignment
+
+### getAssignmentChangeGroupCostCenters
+
+`assignment.getAssignmentChangeGroupCostCenters`
+
+Retrieves cost center prompt values for org assignment changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.assignment.getAssignmentChangeGroupCostCenters({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `organizationType` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAssignmentChangeGroupJobs
+
+`assignment.getAssignmentChangeGroupJobs`
+
+Retrieves job prompt values for org assignment changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.assignment.getAssignmentChangeGroupJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `organizationType` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getAssignmentTypes
+
+`assignment.getAssignmentTypes`
+
+Retrieves assignment type prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.assignment.getAssignmentTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Balances
+
+### listBalances
+
+`balances.listBalances`
+
+Lists absence balances (Absence Management v5).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.balances.listBalances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `category` | `string \| number \| boolean \| string[]` | No | — |
+| `effective` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Business
+
+### createBusinessTitleChange
+
+`business.createBusinessTitleChange`
+
+Creates a business title change for a worker (Common API v1).
+
+**Risk:** `write`
+
+```ts
+await corsair.workday.api.business.createBusinessTitleChange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getBusinessTitleChange
+
+`business.getBusinessTitleChange`
+
+Retrieves a business title change instance by ID (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.business.getBusinessTitleChange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getBusinessTitleChangeForWorker
+
+`business.getBusinessTitleChangeForWorker`
+
+Retrieves a business title change for a specific worker (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.business.getBusinessTitleChangeForWorker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `subresourceID` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+## Candidate
+
+### getCandidateAvailabilityTemplate
+
+`candidate.getCandidateAvailabilityTemplate`
+
+Retrieves candidate availability template for a job posting (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.candidate.getCandidateAvailabilityTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+## Collection
+
+### getCollectionOfJobs
+
+`collection.getCollectionOfJobs`
+
+Retrieves a paginated collection of jobs (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.collection.getCollectionOfJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCollectionOfPayroll
+
+`collection.getCollectionOfPayroll`
+
+Retrieves a collection of payroll inputs (Payroll v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.collection.getCollectionOfPayroll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startDate` | `string \| number \| boolean \| string[]` | No | — |
+| `endDate` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `payComponent` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Company
+
+### getCompanyInsiderTypes
+
+`company.getCompanyInsiderTypes`
+
+Retrieves company insider type prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.company.getCompanyInsiderTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contingent
+
+### getContingentWorkerTypes
+
+`contingent.getContingentWorkerTypes`
+
+Retrieves contingent worker type prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.contingent.getContingentWorkerTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Countries
+
+### listCountries
+
+`countries.listCountries`
+
+Retrieves country values for recruiting (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.countries.listCountries({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Country
+
+### getCountryInfo
+
+`country.getCountryInfo`
+
+Retrieves country info (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.country.getCountryInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+## Currencies
+
+### getCurrencies
+
+`currencies.getCurrencies`
+
+Retrieves currency prompt values for job changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.currencies.getCurrencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Current
+
+### getCurrentUser
+
+`current.getCurrentUser`
+
+Retrieves the authenticated worker profile (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.current.getCurrentUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+## Grants
+
+### getGrants
+
+`grants.getGrants`
+
+Retrieves grant prompt values for org assignment changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.grants.getGrants({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `organizationType` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Headcount
+
+### getHeadcountOptions
+
+`headcount.getHeadcountOptions`
+
+Retrieves headcount option prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.headcount.getHeadcountOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## History
+
+### getHistoryInstanceForWorker
+
+`history.getHistoryInstanceForWorker`
+
+Retrieves a history instance for a worker (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.history.getHistoryInstanceForWorker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `subresourceID` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getHistoryItemsForWorker
+
+`history.getHistoryItemsForWorker`
+
+Retrieves history items for a worker (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.history.getHistoryItemsForWorker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Holiday
+
+### getHolidayEvents
+
+`holiday.getHolidayEvents`
+
+Retrieves holiday events for workers/time period (Person v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.holiday.getHolidayEvents({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `fromDate` | `string \| number \| boolean \| string[]` | No | — |
+| `toDate` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Interview
+
+### getInterview
+
+`interview.getInterview`
+
+Retrieves an interview by ID (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.interview.getInterview({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getInterviewFeedback2
+
+`interview.getInterviewFeedback2`
+
+Retrieves interview feedback (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.interview.getInterviewFeedback2({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Interviews
+
+### listInterviews
+
+`interviews.listInterviews`
+
+Lists interviews (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.interviews.listInterviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Job
+
+### createJobChange
+
+`job.createJobChange`
+
+Initiates a job change for a worker (Staffing v6).
+
+**Risk:** `write`
+
+```ts
+await corsair.workday.api.job.createJobChange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getJobById
+
+`job.getJobById`
+
+Retrieves a single job instance by ID (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getJobChangeFrequencies
+
+`job.getJobChangeFrequencies`
+
+Retrieves frequency prompt values for job changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobChangeFrequencies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobChangeLocationInfo
+
+`job.getJobChangeLocationInfo`
+
+Retrieves location info for a job change (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobChangeLocationInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getJobChangePosition
+
+`job.getJobChangePosition`
+
+Retrieves position details for a job change (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobChangePosition({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getJobChangeReasonInstance
+
+`job.getJobChangeReasonInstance`
+
+Retrieves a job change reason instance (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobChangeReasonInstance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getJobChangeReasons
+
+`job.getJobChangeReasons`
+
+Retrieves job change reasons collection (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobChangeReasons({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobChangeReasonValues
+
+`job.getJobChangeReasonValues`
+
+Retrieves job change reason prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobChangeReasonValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobChangesGroupTemplates
+
+`job.getJobChangesGroupTemplates`
+
+Retrieves job change templates (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobChangesGroupTemplates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobChangesJobValues
+
+`job.getJobChangesJobValues`
+
+Retrieves job prompt values for job changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobChangesJobValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobChangesWorkerValues
+
+`job.getJobChangesWorkerValues`
+
+Retrieves worker prompt values for job changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobChangesWorkerValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobClassifications
+
+`job.getJobClassifications`
+
+Retrieves job classification prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobClassifications({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobPosting
+
+`job.getJobPosting`
+
+Retrieves a job posting including description (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobPosting({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getJobPostingQuestionnaire
+
+`job.getJobPostingQuestionnaire`
+
+Retrieves questionnaires for a job posting (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobPostingQuestionnaire({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobProfilesValues
+
+`job.getJobProfilesValues`
+
+Retrieves job profile prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobProfilesValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobRequisitionValues
+
+`job.getJobRequisitionValues`
+
+Retrieves job requisition prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobRequisitionValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getJobWorkspace
+
+`job.getJobWorkspace`
+
+Retrieves a workspace for a job (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobWorkspace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `subresourceID` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getJobWorkspaces
+
+`job.getJobWorkspaces`
+
+Retrieves workspaces for a job (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.getJobWorkspaces({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listJobPostings
+
+`job.listJobPostings`
+
+Lists job postings (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.job.listJobPostings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobRequisition` | `string \| number \| boolean \| string[]` | No | — |
+| `category` | `string \| number \| boolean \| string[]` | No | — |
+| `id` | `string \| number \| boolean \| string[]` | No | — |
+| `jobSite` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateJobChangeBusinessTitle
+
+`job.updateJobChangeBusinessTitle`
+
+Partially updates business title on a job change (Staffing v6).
+
+**Risk:** `write`
+
+```ts
+await corsair.workday.api.job.updateJobChangeBusinessTitle({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `subresourceID` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+## Jobs
+
+### listJobs
+
+`jobs.listJobs`
+
+Lists jobs (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.jobs.listJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Leave
+
+### getLeaveStatusValues
+
+`leave.getLeaveStatusValues`
+
+Retrieves leave status prompt values (Absence Management v5).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.leave.getLeaveStatusValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Message
+
+### updateMessageTemplateById
+
+`message.updateMessageTemplateById`
+
+Updates a message template by ID (Recruiting v4).
+
+**Risk:** `write`
+
+```ts
+await corsair.workday.api.message.updateMessageTemplateById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+## My
+
+### getMyJobPostings
+
+`my.getMyJobPostings`
+
+Retrieves job postings for the authenticated recruiter (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.my.getMyJobPostings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string \| number \| boolean \| string[]` | No | — |
+| `supervisoryOrganization` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Organization
+
+### getOrganizationAssignmentBusinessUnits
+
+`organization.getOrganizationAssignmentBusinessUnits`
+
+Retrieves business unit prompt values for org assignment changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.organization.getOrganizationAssignmentBusinessUnits({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `organizationType` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrganizationAssignmentCustoms
+
+`organization.getOrganizationAssignmentCustoms`
+
+Retrieves custom org assignment prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.organization.getOrganizationAssignmentCustoms({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `organizationType` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrganizationAssignmentFunds
+
+`organization.getOrganizationAssignmentFunds`
+
+Retrieves fund prompt values for org assignment changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.organization.getOrganizationAssignmentFunds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `organizationType` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrganizationAssignmentRegions
+
+`organization.getOrganizationAssignmentRegions`
+
+Retrieves region prompt values for org assignment changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.organization.getOrganizationAssignmentRegions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `organizationType` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getOrganizationAssignmentWorkers
+
+`organization.getOrganizationAssignmentWorkers`
+
+Retrieves worker prompt values for org assignment changes (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.organization.getOrganizationAssignmentWorkers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `organizationType` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pay
+
+### getPayGroupByJobId
+
+`pay.getPayGroupByJobId`
+
+Retrieves the pay group for a job (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.pay.getPayGroupByJobId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getPaySlipInstancesForWorker
+
+`pay.getPaySlipInstancesForWorker`
+
+Retrieves a pay slip instance for a worker (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.pay.getPaySlipInstancesForWorker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `subresourceID` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getPaySlipsForWorker
+
+`pay.getPaySlipsForWorker`
+
+Retrieves pay slips for a worker (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.pay.getPaySlipsForWorker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Payroll
+
+### createPayrollInputs
+
+`payroll.createPayrollInputs`
+
+Creates payroll inputs (Payroll v1).
+
+**Risk:** `write`
+
+```ts
+await corsair.workday.api.payroll.createPayrollInputs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getPayrollInputInstance
+
+`payroll.getPayrollInputInstance`
+
+Retrieves a payroll input by ID (Payroll v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.payroll.getPayrollInputInstance({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### updateAnExistingPayroll
+
+`payroll.updateAnExistingPayroll`
+
+Partially updates a payroll input (Payroll v1).
+
+**Risk:** `write`
+
+```ts
+await corsair.workday.api.payroll.updateAnExistingPayroll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+## Proposed
+
+### getProposedPositionValues
+
+`proposed.getProposedPositionValues`
+
+Retrieves proposed position prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.proposed.getProposedPositionValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Prospect
+
+### getProspect
+
+`prospect.getProspect`
+
+Retrieves a prospect (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.prospect.getProspect({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getProspectEducations
+
+`prospect.getProspectEducations`
+
+Retrieves prospect educations (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.prospect.getProspectEducations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProspectExperiences
+
+`prospect.getProspectExperiences`
+
+Retrieves prospect experiences (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.prospect.getProspectExperiences({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProspectResumeAttachments
+
+`prospect.getProspectResumeAttachments`
+
+Retrieves prospect resume attachments (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.prospect.getProspectResumeAttachments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProspectSkills
+
+`prospect.getProspectSkills`
+
+Retrieves prospect skills (Recruiting v4).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.prospect.getProspectSkills({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Supervisory
+
+### getSupervisoryOrgValues
+
+`supervisory.getSupervisoryOrgValues`
+
+Retrieves supervisory organization prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.supervisory.getSupervisoryOrgValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Time
+
+### createTimeOffRequest
+
+`time.createTimeOffRequest`
+
+Creates a time off request (Absence Management v5).
+
+**Risk:** `write`
+
+```ts
+await corsair.workday.api.time.createTimeOffRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getTimeOffEntriesForWorker
+
+`time.getTimeOffEntriesForWorker`
+
+Retrieves time off entries for a worker (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.time.getTimeOffEntriesForWorker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTimeOffPlansForWorker
+
+`time.getTimeOffPlansForWorker`
+
+Retrieves time off plans for a worker (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.time.getTimeOffPlansForWorker({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTimeOffStatusValues
+
+`time.getTimeOffStatusValues`
+
+Retrieves time off status prompt values (Absence Management v5).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.time.getTimeOffStatusValues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getTimeTypes
+
+`time.getTimeTypes`
+
+Retrieves time type prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.time.getTimeTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Work
+
+### getWorkStudyAwards
+
+`work.getWorkStudyAwards`
+
+Retrieves work study award prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.work.getWorkStudyAwards({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Worker
+
+### getWorkerBusinessTitleChanges
+
+`worker.getWorkerBusinessTitleChanges`
+
+Retrieves business title changes for a worker (Common API v1).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.getWorkerBusinessTitleChanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWorkerEligibleAbsenceTypes
+
+`worker.getWorkerEligibleAbsenceTypes`
+
+Retrieves eligible absence types for a worker (Absence Management v5).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.getWorkerEligibleAbsenceTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `effective` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWorkerInfo
+
+`worker.getWorkerInfo`
+
+Retrieves worker staffing information (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.getWorkerInfo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getWorkerLeavesOfAbsence
+
+`worker.getWorkerLeavesOfAbsence`
+
+Retrieves leaves of absence for a worker (Absence Management v5).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.getWorkerLeavesOfAbsence({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `fromDate` | `string \| number \| boolean \| string[]` | No | — |
+| `toDate` | `string \| number \| boolean \| string[]` | No | — |
+| `status` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWorkerServiceDates
+
+`worker.getWorkerServiceDates`
+
+Retrieves service dates for a worker (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.getWorkerServiceDates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWorkerStaffingInformation
+
+`worker.getWorkerStaffingInformation`
+
+Retrieves current staffing information for a worker (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.getWorkerStaffingInformation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+### getWorkerTimeOffDetails
+
+`worker.getWorkerTimeOffDetails`
+
+Retrieves time off details for a worker (Absence Management v5).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.getWorkerTimeOffDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `fromDate` | `string \| number \| boolean \| string[]` | No | — |
+| `toDate` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWorkerTypes
+
+`worker.getWorkerTypes`
+
+Retrieves worker type prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.getWorkerTypes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getWorkerValidTimeOffDates
+
+`worker.getWorkerValidTimeOffDates`
+
+Retrieves valid time off dates for a worker (Absence Management v5).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.getWorkerValidTimeOffDates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `fromDate` | `string \| number \| boolean \| string[]` | No | — |
+| `toDate` | `string \| number \| boolean \| string[]` | No | — |
+| `timeOffType` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### retrieveWorkerLeaveOfAbsenceSubresource
+
+`worker.retrieveWorkerLeaveOfAbsenceSubresource`
+
+Retrieves a leave of absence subresource (Absence Management v5).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.worker.retrieveWorkerLeaveOfAbsenceSubresource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ID` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `workerId` | `string` | No | — |
+| `subresourceID` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `descriptor` | `string` | No | — |
+| `href` | `string` | No | — |
+
+
+
+---
+
+## Workers
+
+### getWorkersCollectionStaffing
+
+`workers.getWorkersCollectionStaffing`
+
+Retrieves workers with staffing information (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.workers.getWorkersCollectionStaffing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includeTerminatedWorkers` | `string \| number \| boolean \| string[]` | No | — |
+| `search` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Workspace
+
+### getWorkspaceInstances
+
+`workspace.getWorkspaceInstances`
+
+Retrieves workspace prompt values (Staffing v6).
+
+**Risk:** `read`
+
+```ts
+await corsair.workday.api.workspace.getWorkspaceInstances({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `effectiveDate` | `string \| number \| boolean \| string[]` | No | — |
+| `event` | `string \| number \| boolean \| string[]` | No | — |
+| `job` | `string \| number \| boolean \| string[]` | No | — |
+| `location` | `string \| number \| boolean \| string[]` | No | — |
+| `manager` | `string \| number \| boolean \| string[]` | No | — |
+| `staffingEvent` | `string \| number \| boolean \| string[]` | No | — |
+| `worker` | `string \| number \| boolean \| string[]` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  descriptor?: string,
+  href?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,0 +1,516 @@
+---
+title: API
+description: "API reference for AMcards: every `amcards.api.*` operation with input and output types."
+---
+
+Every `amcards.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Cards
+
+### list
+
+`cards.list`
+
+List cards for the authenticated account
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.cards.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | Rows to skip (sent as Tastypie/DRF `offset`) |
+| `limit` | `number` | No | Page size |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string
+}[] | {
+  count?: number,
+  next?: string | null,
+  previous?: string | null,
+  results?: {
+    id: number | string
+  }[],
+  meta?: {
+    limit?: number,
+    next?: string | null,
+    offset?: number,
+    previous?: string | null,
+    total_count?: number
+  },
+  objects?: {
+    id: number | string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Categories
+
+### get
+
+`categories.get`
+
+Get a card template category by id
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.categories.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category_id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `title` | `string` | No | — |
+| `priority` | `number` | No | — |
+| `parent` | `any` | No | — |
+| `hierarchy` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`categories.list`
+
+List card template categories ordered by priority
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.categories.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `parent__id` | `number` | No | Filter sub-categories by parent id |
+| `title__icontains` | `string` | No | Case-insensitive title search |
+| `parent__title__icontains` | `string` | No | Case-insensitive parent title search |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  title?: string | null,
+  priority?: number | null,
+  parent?: any,
+  hierarchy?: any
+}[] | {
+  count?: number,
+  next?: string | null,
+  previous?: string | null,
+  results?: {
+    id: number | string,
+    title?: string | null,
+    priority?: number | null,
+    parent?: any,
+    hierarchy?: any
+  }[],
+  meta?: {
+    limit?: number,
+    next?: string | null,
+    offset?: number,
+    previous?: string | null,
+    total_count?: number
+  },
+  objects?: {
+    id: number | string,
+    title?: string | null,
+    priority?: number | null,
+    parent?: any,
+    hierarchy?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### list
+
+`contacts.list`
+
+List contacts, optionally filtered by name or email
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `skip` | `number` | No | Rows to skip (sent as Tastypie/DRF `offset`) |
+| `limit` | `number` | No | Page size |
+| `email` | `string` | No | Filter by email |
+| `first_name` | `string` | No | Filter by first name |
+| `last_name` | `string` | No | Filter by last name |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  first_name?: string | null,
+  last_name?: string | null,
+  email?: string | null,
+  created_at?: string | null,
+  updated_at?: string | null
+}[] | {
+  count?: number,
+  next?: string | null,
+  previous?: string | null,
+  results?: {
+    id: number | string,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[],
+  meta?: {
+    limit?: number,
+    next?: string | null,
+    offset?: number,
+    previous?: string | null,
+    total_count?: number
+  },
+  objects?: {
+    id: number | string,
+    first_name?: string | null,
+    last_name?: string | null,
+    email?: string | null,
+    created_at?: string | null,
+    updated_at?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Gifts
+
+### get
+
+`gifts.get`
+
+Get a gift by id
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.gifts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `description` | `string` | No | — |
+| `price` | `string \| number` | No | — |
+| `shipping_cost` | `string \| number` | No | — |
+| `available` | `boolean` | No | — |
+| `availability` | `string \| boolean` | No | — |
+
+
+
+---
+
+### list
+
+`gifts.list`
+
+List available gifts
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.gifts.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string | null,
+  description?: string | null,
+  price?: string | number | null,
+  shipping_cost?: string | number | null,
+  available?: boolean,
+  availability?: string | boolean
+}[] | {
+  count?: number,
+  next?: string | null,
+  previous?: string | null,
+  results?: {
+    id: number | string,
+    name?: string | null,
+    description?: string | null,
+    price?: string | number | null,
+    shipping_cost?: string | number | null,
+    available?: boolean,
+    availability?: string | boolean
+  }[],
+  meta?: {
+    limit?: number,
+    next?: string | null,
+    offset?: number,
+    previous?: string | null,
+    total_count?: number
+  },
+  objects?: {
+    id: number | string,
+    name?: string | null,
+    description?: string | null,
+    price?: string | number | null,
+    shipping_cost?: string | number | null,
+    available?: boolean,
+    availability?: string | boolean
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Schema
+
+### getApi
+
+`schema.getApi`
+
+Retrieve the AMcards API v1 schema (resource map)
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.schema.getApi({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+} | any[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCategory
+
+`schema.getCategory`
+
+Retrieve the readonly Category resource schema
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.schema.getCategory({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Templates
+
+### get
+
+`templates.get`
+
+Get a public card template by id
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `category` | `any` | No | — |
+| `configuration` | `any` | No | — |
+| `panels` | `any` | No | — |
+| `metadata` | `any` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List public card templates
+
+**Risk:** `read`
+
+```ts
+await corsair.amcards.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `category__id` | `number` | No | Filter templates by category id |
+| `name__icontains` | `string` | No | Case-insensitive template name search |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: number | string,
+  name?: string | null,
+  category?: any,
+  configuration?: any,
+  panels?: any,
+  metadata?: any
+}[] | {
+  count?: number,
+  next?: string | null,
+  previous?: string | null,
+  results?: {
+    id: number | string,
+    name?: string | null,
+    category?: any,
+    configuration?: any,
+    panels?: any,
+    metadata?: any
+  }[],
+  meta?: {
+    limit?: number,
+    next?: string | null,
+    offset?: number,
+    previous?: string | null,
+    total_count?: number
+  },
+  objects?: {
+    id: number | string,
+    name?: string | null,
+    category?: any,
+    configuration?: any,
+    panels?: any,
+    metadata?: any
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
