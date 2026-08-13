@@ -122,6 +122,20 @@ function searchablePdfIsSupported(input: {
 const SEARCHABLE_PDF_ENGINE_MESSAGE =
 	'OCREngine 3 does not support isCreateSearchablePdf. Use engine 1 or 2.';
 
+// "auto" is engines 2 and 3 only. Omitted OCREngine is engine 1 on the wire.
+function autoLanguageIsSupported(input: {
+	OCREngine?: number;
+	language?: string;
+}): boolean {
+	if (input.language !== 'auto') {
+		return true;
+	}
+	return input.OCREngine === 2 || input.OCREngine === 3;
+}
+
+const AUTO_LANGUAGE_ENGINE_MESSAGE =
+	'language "auto" is only supported on OCREngine 2 or 3.';
+
 // ---------------------------------------------------------------------------
 // ocr.parseImageUrl — GET /parse/imageurl
 // ---------------------------------------------------------------------------
@@ -133,6 +147,9 @@ export const ParseImageUrlInputSchema = z
 	})
 	.refine(searchablePdfIsSupported, {
 		message: SEARCHABLE_PDF_ENGINE_MESSAGE,
+	})
+	.refine(autoLanguageIsSupported, {
+		message: AUTO_LANGUAGE_ENGINE_MESSAGE,
 	});
 
 export const ParseImageUrlResponseSchema = OcrResponseSchema;
@@ -174,6 +191,9 @@ export const ParseInputSchema = z
 	)
 	.refine(searchablePdfIsSupported, {
 		message: SEARCHABLE_PDF_ENGINE_MESSAGE,
+	})
+	.refine(autoLanguageIsSupported, {
+		message: AUTO_LANGUAGE_ENGINE_MESSAGE,
 	});
 
 export const ParseResponseSchema = OcrResponseSchema;
