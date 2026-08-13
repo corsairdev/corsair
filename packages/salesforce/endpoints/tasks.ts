@@ -10,7 +10,7 @@ export const createTask: SalesforceEndpoints['createTask'] = async (
 	const response = await salesforceCall<{
 		id: string;
 		success?: boolean;
-	}>(ctx, 'sobjects/Task', { method: 'POST', body: input });
+	}>(ctx, 'sobjects/Task', { method: 'POST', body: flattenFields(input) });
 
 	await logEventFromContext(ctx, 'salesforce.task.create', input, 'completed');
 	return response;
@@ -22,7 +22,16 @@ export const completeTask: SalesforceEndpoints['completeTask'] = async (
 ) => {
 	const body: Record<string, unknown> = { Status: 'Completed' };
 	if (input.completionNotes) {
-		body.Description = input.completionNotes;
+		const current = await salesforceCall<{ Description?: string | null }>(
+			ctx,
+			`sobjects/Task/${input.taskId}`,
+			{ method: 'GET', query: { fields: 'Description' } },
+		);
+		const existing =
+			typeof current.Description === 'string' ? current.Description : '';
+		body.Description = existing
+			? `${existing}\n${input.completionNotes}`
+			: input.completionNotes;
 	}
 
 	await salesforceCall<void>(ctx, `sobjects/Task/${input.taskId}`, {
@@ -185,20 +194,25 @@ export const sendMassEmail: SalesforceEndpoints['sendMassEmail'] = async (
 	ctx,
 	input,
 ) => {
+	const addresses = input.toAddresses ?? [];
+	const item: Record<string, unknown> = {
+		emailAddresses: addresses.join(','),
+	};
+	if (input.templateId) {
+		item.emailTemplateId = input.templateId;
+		const recipient = addresses.find((a) => /^[a-zA-Z0-9]{15,18}$/.test(a));
+		if (recipient) item.recipientId = recipient;
+	} else {
+		item.emailSubject = input.subject;
+		item.emailBody = input.body;
+	}
 	const response = await salesforceCall<unknown>(
 		ctx,
-		'actions/standard/emailMass',
+		'actions/standard/emailSimple',
 		{
 			method: 'POST',
 			body: {
-				inputs: [
-					{
-						emailAddresses: input.toAddresses?.join(','),
-						emailSubject: input.subject,
-						emailBody: input.body,
-						emailTemplateId: input.templateId,
-					},
-				],
+				inputs: [item],
 			},
 		},
 	);

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { escapeSoql } from '../utils';
+import { escapeSoql, soqlWhere } from '../utils';
 import { flattenFields, salesforceCall } from './shared';
 
 export const createNote: SalesforceEndpoints['createNote'] = async (
@@ -10,7 +10,7 @@ export const createNote: SalesforceEndpoints['createNote'] = async (
 	const response = await salesforceCall<{
 		id: string;
 		success?: boolean;
-	}>(ctx, 'sobjects/Note', { method: 'POST', body: input });
+	}>(ctx, 'sobjects/Note', { method: 'POST', body: flattenFields(input) });
 
 	await logEventFromContext(ctx, 'salesforce.note.create', input, 'completed');
 	return response;
@@ -35,7 +35,8 @@ export const listNotes: SalesforceEndpoints['listNotes'] = async (
 	const conditions: string[] = [];
 	if (input.parentId)
 		conditions.push(`ParentId = '${escapeSoql(input.parentId)}'`);
-	if (input.query) conditions.push(input.query);
+	const queryClause = soqlWhere(input.query);
+	if (queryClause) conditions.push(queryClause);
 
 	const whereStr =
 		conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';

@@ -4,6 +4,7 @@ import {
 	makeSalesforceRequest,
 	SALESFORCE_API_VERSION,
 	SalesforceInstanceUrlMissingError,
+	SalesforceRequestOriginError,
 } from './client';
 
 type Captured = {
@@ -129,5 +130,33 @@ describe('makeSalesforceRequest', () => {
 		await expect(discoverSalesforceInstanceUrl('token')).resolves.toBe(
 			'https://na1.salesforce.com',
 		);
+	});
+
+	it('rejects HTTP instance URLs and off-origin absolute endpoints', async () => {
+		mockFetch({ body: { Id: '001xx' } });
+		await expect(
+			makeSalesforceRequest('sobjects/Account', 'token', {
+				instanceUrl: 'http://example.my.salesforce.com',
+			}),
+		).rejects.toBeInstanceOf(SalesforceRequestOriginError);
+
+		captured = undefined;
+		await expect(
+			makeSalesforceRequest('https://evil.example/steal', 'token', {
+				instanceUrl,
+			}),
+		).rejects.toBeInstanceOf(SalesforceRequestOriginError);
+		expect(captured).toBeUndefined();
+	});
+
+	it('keeps same-origin absolute endpoints on the org host', async () => {
+		mockFetch({ body: { records: [] } });
+		await makeSalesforceRequest(
+			`${instanceUrl}/services/data/v${SALESFORCE_API_VERSION}/query/01gxx`,
+			'token',
+			{ instanceUrl },
+		);
+		expect(captured?.url.startsWith(instanceUrl)).toBe(true);
+		expect(captured?.url).toContain('/query/01gxx');
 	});
 });

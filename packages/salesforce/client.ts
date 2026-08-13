@@ -45,6 +45,15 @@ export class SalesforceInstanceUrlMissingError extends Error {
 	}
 }
 
+export class SalesforceRequestOriginError extends Error {
+	constructor() {
+		super(
+			'Salesforce request URL origin must be HTTPS and match the org instance URL',
+		);
+		this.name = 'SalesforceRequestOriginError';
+	}
+}
+
 export type SalesforceRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' | 'HEAD';
 	body?: Record<string, unknown> | unknown[] | string;
@@ -86,7 +95,7 @@ export async function discoverSalesforceInstanceUrl(
 	}>(config, { method: 'GET', url: '/services/oauth2/userinfo' });
 
 	const rest = payload?.urls?.rest;
-	if (typeof rest === 'string' && rest.startsWith('http')) {
+	if (typeof rest === 'string' && rest.startsWith('https://')) {
 		return new URL(rest).origin;
 	}
 
@@ -113,11 +122,22 @@ function toPath(endpoint: string): string {
 	return `/services/data/v${SALESFORCE_API_VERSION}/${endpoint}`;
 }
 
-function originOf(endpoint: string, instanceUrl: string): string {
-	if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
-		return new URL(endpoint).origin;
+function httpsOrigin(url: string): string {
+	const parsed = new URL(url);
+	if (parsed.protocol !== 'https:') {
+		throw new SalesforceRequestOriginError();
 	}
-	return instanceUrl.replace(/\/$/, '');
+	return parsed.origin;
+}
+
+function originOf(endpoint: string, instanceUrl: string): string {
+	const instanceOrigin = httpsOrigin(instanceUrl);
+	if (endpoint.startsWith('http://') || endpoint.startsWith('https://')) {
+		if (httpsOrigin(endpoint) !== instanceOrigin) {
+			throw new SalesforceRequestOriginError();
+		}
+	}
+	return instanceOrigin;
 }
 
 /**

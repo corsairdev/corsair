@@ -1,4 +1,6 @@
 import { flattenFields } from './endpoints/shared';
+import { soqlWhere } from './utils';
+import { resolveSalesforceOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import {
 	createSalesforceChangeMatch,
 	recordIdFromPayload,
@@ -46,11 +48,78 @@ describe('Salesforce webhook matchers', () => {
 		).toBe(false);
 	});
 
+	it('does not treat GAP_CREATE as CREATE', () => {
+		const match = createSalesforceChangeMatch({
+			entityName: 'Account',
+			changeTypes: ['CREATE', 'CREATED'],
+		});
+		expect(
+			match({
+				headers: {},
+				body: {
+					ChangeEventHeader: {
+						entityName: 'Account',
+						changeType: 'GAP_CREATE',
+					},
+				},
+			}),
+		).toBe(false);
+	});
+
 	it('reads the record id from ChangeEventHeader', () => {
 		expect(
 			recordIdFromPayload({
 				ChangeEventHeader: { recordIds: ['001xx'] },
 			}),
 		).toBe('001xx');
+	});
+});
+
+describe('soqlWhere', () => {
+	it('accepts allowlisted field/operator clauses', () => {
+		expect(soqlWhere("Name = 'Acme' AND Status IN ('Open','Closed')")).toBe(
+			"Name = 'Acme' AND Status IN ('Open','Closed')",
+		);
+	});
+
+	it('rejects concatenated SOQL fragments', () => {
+		expect(() => soqlWhere("Name = 'x' OR Id != '' LIMIT 1")).toThrow(
+			'Invalid SOQL WHERE clause',
+		);
+	});
+});
+
+describe('resolveSalesforceOAuthWebhookTenantLink', () => {
+	const originalFetch = global.fetch;
+
+	afterEach(() => {
+		global.fetch = originalFetch;
+	});
+
+	it('extracts a 15-character org id from a Salesforce identity URL', async () => {
+		await expect(
+			resolveSalesforceOAuthWebhookTenantLink({
+				access_token: 'token',
+				id: 'https://login.salesforce.com/id/00D000000000123/005xx',
+			} as never),
+		).resolves.toEqual({
+			linkType: 'tenant_external_id',
+			externalId: '00D000000000123',
+		});
+	});
+
+	it('does not send the bearer token to a non-Salesforce host', async () => {
+		let fetched = false;
+		global.fetch = (async () => {
+			fetched = true;
+			return { ok: true, json: async () => ({}) } as Response;
+		}) as typeof fetch;
+		await expect(
+			resolveSalesforceOAuthWebhookTenantLink({
+				access_token: 'token',
+				id: 'https://evil.example/id/00D000000000123/005xx',
+			} as never),
+		).resolves.toBeNull();
+		expect(fetched).toBe(false);
 	});
 });

@@ -2,6 +2,7 @@ import { salesforce } from './index';
 
 jest.mock('./client', () => ({
 	SALESFORCE_API_VERSION: '60.0',
+	SALESFORCE_LOGIN_HOST: 'https://login.salesforce.com',
 	discoverSalesforceInstanceUrl: jest.fn(
 		async () => 'https://example.my.salesforce.com',
 	),

@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
 import { SalesforceOpportunityEntity } from '../schema/database';
-import { escapeSoql } from '../utils';
+import { cloneableFields, escapeSoql, soqlWhere } from '../utils';
 import { cacheEntities, cacheEntity, evictEntity } from './persist';
 import { flattenFields, salesforceCall } from './shared';
 
@@ -67,7 +67,8 @@ export const listOpportunities: SalesforceEndpoints['listOpportunities'] =
 	async (ctx, input) => {
 		const limit = input.limit ?? 200;
 		const offsetStr = input.offset ? ` OFFSET ${input.offset}` : '';
-		const whereStr = input.query ? ` WHERE ${input.query}` : '';
+		const queryClause = soqlWhere(input.query);
+		const whereStr = queryClause ? ` WHERE ${queryClause}` : '';
 		const q = `SELECT Id, Name, StageName, CloseDate, Amount, AccountId FROM Opportunity${whereStr} LIMIT ${limit}${offsetStr}`;
 
 		const response = await salesforceCall<{
@@ -138,15 +139,7 @@ export const cloneOpportunityWithProducts: SalesforceEndpoints['cloneOpportunity
 			{ method: 'GET' },
 		);
 
-		const {
-			Id,
-			CreatedDate,
-			CreatedById,
-			LastModifiedDate,
-			LastModifiedById,
-			SystemModstamp,
-			...fieldsToClone
-		} = orig;
+		const fieldsToClone = cloneableFields(orig);
 
 		if (input.name) fieldsToClone.Name = input.name;
 
@@ -162,7 +155,7 @@ export const cloneOpportunityWithProducts: SalesforceEndpoints['cloneOpportunity
 			}>(ctx, 'query', {
 				method: 'GET',
 				query: {
-					q: `SELECT PricebookEntryId, Quantity, UnitPrice FROM OpportunityLineItem WHERE OpportunityId = '${input.opportunityId}'`,
+					q: `SELECT PricebookEntryId, Quantity, UnitPrice FROM OpportunityLineItem WHERE OpportunityId = '${escapeSoql(input.opportunityId)}'`,
 				},
 			});
 
@@ -193,8 +186,9 @@ export const listPricebookEntries: SalesforceEndpoints['listPricebookEntries'] =
 		const limit = input.limit ?? 200;
 		const conditions = ['IsActive = true'];
 		if (input.pricebookId)
-			conditions.push(`Pricebook2Id = '${input.pricebookId}'`);
-		if (input.query) conditions.push(input.query);
+			conditions.push(`Pricebook2Id = '${escapeSoql(input.pricebookId)}'`);
+		const queryClause = soqlWhere(input.query);
+		if (queryClause) conditions.push(queryClause);
 
 		const whereStr = ` WHERE ${conditions.join(' AND ')}`;
 		const q = `SELECT Id, Name, Pricebook2Id, Product2Id, UnitPrice, IsActive FROM PricebookEntry${whereStr} LIMIT ${limit}`;
@@ -217,7 +211,8 @@ export const listPricebooks: SalesforceEndpoints['listPricebooks'] = async (
 	input,
 ) => {
 	const limit = input.limit ?? 200;
-	const whereStr = input.query ? ` WHERE ${input.query}` : '';
+	const queryClause = soqlWhere(input.query);
+	const whereStr = queryClause ? ` WHERE ${queryClause}` : '';
 	const q = `SELECT Id, Name, IsActive, IsStandard FROM Pricebook2${whereStr} LIMIT ${limit}`;
 
 	const response = await salesforceCall<{
@@ -269,8 +264,9 @@ export const removeOpportunityById: SalesforceEndpoints['removeOpportunityById']
 
 export const retrieveOpportunitiesData: SalesforceEndpoints['retrieveOpportunitiesData'] =
 	async (ctx, input) => {
-		const whereStr = input.query ? ` WHERE ${input.query}` : '';
-		const q = `SELECT Id, Name, StageName, Amount FROM Opportunity${whereStr}`;
+		const queryClause = soqlWhere(input.query);
+		const whereStr = queryClause ? ` WHERE ${queryClause}` : '';
+		const q = `SELECT Id, Name, StageName, Amount FROM Opportunity${whereStr} LIMIT ${input.limit ?? 200}`;
 
 		const response = await salesforceCall<{
 			records: Array<Record<string, unknown>>;

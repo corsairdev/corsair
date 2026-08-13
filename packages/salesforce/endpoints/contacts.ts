@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
 import { SalesforceContactEntity } from '../schema/database';
-import { escapeSoql } from '../utils';
+import { escapeSoql, soqlWhere } from '../utils';
 import { cacheEntities, cacheEntity, evictEntity } from './persist';
 import { flattenFields, salesforceCall } from './shared';
 
@@ -66,7 +66,8 @@ export const listContacts: SalesforceEndpoints['listContacts'] = async (
 	const conditions: string[] = [];
 	if (input.accountId)
 		conditions.push(`AccountId = '${escapeSoql(input.accountId)}'`);
-	if (input.query) conditions.push(input.query);
+	const queryClause = soqlWhere(input.query);
+	if (queryClause) conditions.push(queryClause);
 
 	const whereStr =
 		conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';

@@ -101,6 +101,11 @@ export const uploadFile: SalesforceEndpoints['uploadFile'] = async (
 			FirstPublishLocationId: input.firstPublishLocationId,
 		},
 	});
-	await logEventFromContext(ctx, 'salesforce.files.upload', input, 'completed');
+	await logEventFromContext(
+		ctx,
+		'salesforce.files.upload',
+		{ id: response.id, title: input.title },
+		'completed',
+	);
 	return response;
 };

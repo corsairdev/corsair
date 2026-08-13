@@ -99,7 +99,7 @@ export function createSalesforceChangeMatch(options: {
 		const entity = entityNameOf(body);
 		const change = (changeTypeOf(body) ?? '').toUpperCase();
 		if (options.entityName && entity !== options.entityName) return false;
-		if (!options.changeTypes.some((t) => change.includes(t.toUpperCase()))) {
+		if (!options.changeTypes.some((t) => change === t.toUpperCase())) {
 			return false;
 		}
 		if (options.status && body.Status !== options.status) return false;

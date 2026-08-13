@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
+import { escapeSoql } from '../utils';
 import { salesforceCall } from './shared';
 
 export const getDashboard: SalesforceEndpoints['getDashboard'] = async (
@@ -42,7 +43,13 @@ export const listDashboards: SalesforceEndpoints['listDashboards'] = async (
 
 export const listEmailTemplates: SalesforceEndpoints['listEmailTemplates'] =
 	async (ctx, input) => {
-		const whereStr = input.query ? ` WHERE ${input.query}` : '';
+		const terms: string[] = [];
+		if (input.name) terms.push(`Name LIKE '%${escapeSoql(input.name)}%'`);
+		if (input.developerName)
+			terms.push(`DeveloperName = '${escapeSoql(input.developerName)}'`);
+		if (input.folderId)
+			terms.push(`FolderId = '${escapeSoql(input.folderId)}'`);
+		const whereStr = terms.length > 0 ? ` WHERE ${terms.join(' AND ')}` : '';
 		const q = `SELECT Id, Name, DeveloperName, FolderId, Subject FROM EmailTemplate${whereStr}`;
 
 		const response = await salesforceCall<{

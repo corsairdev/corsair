@@ -71,3 +71,156 @@ function parseCsvLine(line: string): string[] {
 	result.push(current.trim());
 	return result;
 }
+
+const NON_CREATEABLE_FIELDS = new Set([
+	'Id',
+	'CreatedDate',
+	'CreatedById',
+	'LastModifiedDate',
+	'LastModifiedById',
+	'SystemModstamp',
+	'attributes',
+	'IsDeleted',
+	'LastViewedDate',
+	'LastReferencedDate',
+]);
+
+/** Drops Salesforce GET metadata that cannot be sent on create. */
+export function cloneableFields(
+	record: Record<string, unknown>,
+): Record<string, unknown> {
+	const out: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(record)) {
+		if (!NON_CREATEABLE_FIELDS.has(key)) out[key] = value;
+	}
+	return out;
+}
+
+export function assertSobjectName(name: string): string {
+	if (!/^[A-Za-z][A-Za-z0-9_]{0,39}$/.test(name)) {
+		throw new Error('Invalid Salesforce sObject name');
+	}
+	return name;
+}
+
+const SOQL_FIELD = /^[A-Za-z][A-Za-z0-9_.]*$/;
+const SOQL_OP = /^(=|!=|<>|LIKE|>|<|>=|<=|IN)$/i;
+
+function isSoqlLiteral(value: string): boolean {
+	const v = value.trim();
+	if (/^(true|false|null)$/i.test(v)) return true;
+	if (/^-?\d+(\.\d+)?$/.test(v)) return true;
+	return /^'(?:[^'\\]|\\.)*'$/.test(v);
+}
+
+function splitSoqlList(inner: string): string[] {
+	const parts: string[] = [];
+	let current = '';
+	let inQuote = false;
+	for (let i = 0; i < inner.length; i++) {
+		const ch = inner[i];
+		if (inQuote) {
+			current += ch;
+			if (ch === '\\' && i + 1 < inner.length) {
+				current += inner[++i];
+			} else if (ch === "'") {
+				inQuote = false;
+			}
+			continue;
+		}
+		if (ch === "'") {
+			inQuote = true;
+			current += ch;
+			continue;
+		}
+		if (ch === ',') {
+			parts.push(current);
+			current = '';
+			continue;
+		}
+		current += ch;
+	}
+	parts.push(current);
+	return parts;
+}
+
+function splitSoqlLogic(sql: string): string[] {
+	const clauses: string[] = [];
+	let current = '';
+	let inQuote = false;
+	let i = 0;
+	while (i < sql.length) {
+		const ch = sql[i];
+		if (inQuote) {
+			current += ch;
+			if (ch === '\\' && i + 1 < sql.length) {
+				current += sql[++i];
+			} else if (ch === "'") {
+				inQuote = false;
+			}
+			i++;
+			continue;
+		}
+		if (ch === "'") {
+			inQuote = true;
+			current += ch;
+			i++;
+			continue;
+		}
+		const rest = sql.slice(i);
+		const m = rest.match(/^\s+(AND|OR)\s+/i);
+		if (m) {
+			clauses.push(current.trim());
+			current = '';
+			i += m[0].length;
+			continue;
+		}
+		current += ch;
+		i++;
+	}
+	clauses.push(current.trim());
+	return clauses;
+}
+
+function assertSoqlClause(clause: string): void {
+	const m = clause.match(
+		/^([A-Za-z][A-Za-z0-9_.]*)\s*(=|!=|<>|LIKE|>|<|>=|<=|IN)\s*(.+)$/i,
+	);
+	if (!m || !m[1] || !m[2] || !m[3]) {
+		throw new Error('Invalid SOQL WHERE clause');
+	}
+	if (!SOQL_FIELD.test(m[1]) || !SOQL_OP.test(m[2])) {
+		throw new Error('Invalid SOQL WHERE clause');
+	}
+	const rawValue = m[3].trim();
+	if (m[2].toUpperCase() === 'IN') {
+		const list = rawValue.match(/^\((.*)\)$/);
+		if (!list) throw new Error('Invalid SOQL WHERE clause');
+		const items = splitSoqlList(list[1] ?? '');
+		if (items.length === 0 || items.some((item) => !isSoqlLiteral(item))) {
+			throw new Error('Invalid SOQL WHERE clause');
+		}
+		return;
+	}
+	if (!isSoqlLiteral(rawValue)) {
+		throw new Error('Invalid SOQL WHERE clause');
+	}
+}
+
+/**
+ * Validates a caller-supplied SOQL WHERE fragment. Only allowlisted
+ * field/operator/literal clauses joined by AND/OR are accepted.
+ */
+export function soqlWhere(fragment: string | undefined): string | undefined {
+	if (!fragment) return undefined;
+	const trimmed = fragment.trim();
+	if (!trimmed) return undefined;
+	const clauses = splitSoqlLogic(trimmed);
+	if (clauses.some((clause) => !clause)) {
+		throw new Error('Invalid SOQL WHERE clause');
+	}
+	for (const clause of clauses) {
+		assertSoqlClause(clause);
+	}
+	return trimmed;
+}

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { escapeSoql } from '../utils';
+import { assertSobjectName, cloneableFields, escapeSoql } from '../utils';
 import { salesforceCall } from './shared';
 
 export const createSObjectRecord: SalesforceEndpoints['createSObjectRecord'] =
@@ -32,17 +32,7 @@ export const cloneRecord: SalesforceEndpoints['cloneRecord'] = async (
 		{ method: 'GET' },
 	);
 
-	const {
-		Id,
-		CreatedDate,
-		CreatedById,
-		LastModifiedDate,
-		LastModifiedById,
-		SystemModstamp,
-		...fieldsToClone
-	} = orig;
-
-	const body = { ...fieldsToClone, ...(input.overrides ?? {}) };
+	const body = { ...cloneableFields(orig), ...(input.overrides ?? {}) };
 
 	const response = await salesforceCall<{ id: string }>(
 		ctx,
@@ -641,7 +631,7 @@ export const getSobjectByExternalId: SalesforceEndpoints['getSobjectByExternalId
 	async (ctx, input) => {
 		const response = await salesforceCall<Record<string, unknown>>(
 			ctx,
-			`sobjects/${input.sobject}/${input.fieldName}/${input.fieldValue}`,
+			`sobjects/${input.sobject}/${input.fieldName}/${encodeURIComponent(input.fieldValue)}`,
 			{ method: 'GET' },
 		);
 
@@ -834,33 +824,63 @@ export const sobjectUserPassword: SalesforceEndpoints['sobjectUserPassword'] =
 
 export const massTransferOwnership: SalesforceEndpoints['massTransferOwnership'] =
 	async (ctx, input) => {
+		const sobject = assertSobjectName(input.sobject);
 		const recordIds = input.recordIds ? [...input.recordIds] : [];
 		if (recordIds.length === 0) {
-			const safeSobject = escapeSoql(input.sobject);
 			const safeFromUserId = escapeSoql(input.fromUserId);
-			const queryRes = await salesforceCall<{
-				records: Array<{ Id: string }>;
-			}>(ctx, 'query', {
-				method: 'GET',
-				query: {
-					q: `SELECT Id FROM ${safeSobject} WHERE OwnerId = '${safeFromUserId}' LIMIT 200`,
-				},
-			});
-			for (const r of queryRes.records ?? []) {
-				recordIds.push(r.Id);
+			let endpoint = 'query';
+			let query: Record<string, string> | undefined = {
+				q: `SELECT Id FROM ${sobject} WHERE OwnerId = '${safeFromUserId}' LIMIT 200`,
+			};
+			while (true) {
+				const queryRes = await salesforceCall<{
+					records?: Array<{ Id: string }>;
+					done?: boolean;
+					nextRecordsUrl?: string;
+				}>(ctx, endpoint, { method: 'GET', query });
+				for (const r of queryRes.records ?? []) {
+					recordIds.push(r.Id);
+				}
+				if (queryRes.done !== false || !queryRes.nextRecordsUrl) break;
+				endpoint = queryRes.nextRecordsUrl;
+				query = undefined;
 			}
 		}
 
-		const compositeRecords = recordIds.map((id) => ({
-			attributes: { type: input.sobject },
-			Id: id,
-			OwnerId: input.toUserId,
-		}));
-
-		await salesforceCall<unknown>(ctx, 'composite/sobjects', {
-			method: 'PATCH',
-			body: { records: compositeRecords },
-		});
+		const failed: Array<{ id?: string; errors?: unknown }> = [];
+		let transferred = 0;
+		for (let i = 0; i < recordIds.length; i += 200) {
+			const chunk = recordIds.slice(i, i + 200);
+			const result = await salesforceCall<unknown>(ctx, 'composite/sobjects', {
+				method: 'PATCH',
+				body: {
+					records: chunk.map((id) => ({
+						attributes: { type: sobject },
+						Id: id,
+						OwnerId: input.toUserId,
+					})),
+				},
+			});
+			const rows = Array.isArray(result)
+				? result
+				: Array.isArray((result as { results?: unknown }).results)
+					? (result as { results: unknown[] }).results
+					: [];
+			if (rows.length === 0) {
+				transferred += chunk.length;
+				continue;
+			}
+			for (let j = 0; j < chunk.length; j++) {
+				const row = rows[j] as
+					| { success?: boolean; id?: string; errors?: unknown }
+					| undefined;
+				if (row && row.success === false) {
+					failed.push({ id: row.id ?? chunk[j], errors: row.errors });
+				} else {
+					transferred += 1;
+				}
+			}
+		}
 
 		await logEventFromContext(
 			ctx,
@@ -868,7 +888,7 @@ export const massTransferOwnership: SalesforceEndpoints['massTransferOwnership']
 			input,
 			'completed',
 		);
-		return { success: true };
+		return { success: failed.length === 0, transferred, failed };
 	};
 
 export const updateSobject: SalesforceEndpoints['updateSobject'] = async (

@@ -3,13 +3,14 @@ import {
 	discoverSalesforceInstanceUrl,
 	makeSalesforceRequest,
 } from '../client';
+import { soqlWhere } from '../utils';
 
 /**
  * Minimal structural view of the plugin context the endpoints need.
  */
 export type SalesforceCallContext = {
 	key: string;
-	options: { instanceUrl?: string | undefined };
+	options: { instanceUrl?: string | undefined; loginUrl?: string | undefined };
 	keys?: unknown;
 	db?: unknown;
 };
@@ -40,7 +41,10 @@ export async function resolveInstanceUrl(
 		return fromEnv;
 	}
 
-	const discovered = await discoverSalesforceInstanceUrl(ctx.key);
+	const discovered = await discoverSalesforceInstanceUrl(
+		ctx.key,
+		ctx.options.loginUrl,
+	);
 	ctx.options.instanceUrl = discovered;
 	return discovered;
 }
@@ -86,7 +90,8 @@ export function soqlList(
 	const limit = input.limit ?? 200;
 	const offsetStr = input.offset ? ` OFFSET ${input.offset}` : '';
 	const conditions = [...(extraWhere ?? [])];
-	if (input.query) conditions.push(input.query);
+	const queryClause = soqlWhere(input.query);
+	if (queryClause) conditions.push(queryClause);
 	const whereStr =
 		conditions.length > 0 ? ` WHERE ${conditions.join(' AND ')}` : '';
 	return `SELECT ${fields.join(', ')} FROM ${sobject}${whereStr} LIMIT ${limit}${offsetStr}`;

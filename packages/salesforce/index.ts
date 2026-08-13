@@ -16,6 +16,7 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { z } from 'zod';
+import { SALESFORCE_LOGIN_HOST } from './client';
 import {
 	Accounts,
 	AnalyticsReports,
@@ -40,7 +41,6 @@ import {
 	SalesforceEndpointInputSchemas,
 	SalesforceEndpointOutputSchemas,
 } from './endpoints/types';
-
 import { errorHandlers } from './error-handlers';
 import { SalesforceSchema } from './schema';
 import { resolveSalesforceOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
@@ -64,6 +64,7 @@ export type SalesforcePluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	instanceUrl?: string;
+	loginUrl?: string;
 	webhookSecret?: string;
 	hooks?: InternalSalesforcePlugin['hooks'];
 	webhookHooks?: InternalSalesforcePlugin['webhookHooks'];
@@ -2592,6 +2593,10 @@ export function salesforce<const T extends SalesforcePluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+	const loginHost = (options.loginUrl ?? SALESFORCE_LOGIN_HOST).replace(
+		/\/+$/,
+		'',
+	);
 	return {
 		id: 'salesforce',
 		authConfig: salesforceAuthConfig,
@@ -2605,8 +2610,8 @@ export function salesforce<const T extends SalesforcePluginOptions>(
 		endpointSchemas: salesforceEndpointSchemas,
 		oauthConfig: {
 			providerName: 'Salesforce',
-			authUrl: 'https://login.salesforce.com/services/oauth2/authorize',
-			tokenUrl: 'https://login.salesforce.com/services/oauth2/token',
+			authUrl: `${loginHost}/services/oauth2/authorize`,
+			tokenUrl: `${loginHost}/services/oauth2/token`,
 			scopes: ['api', 'refresh_token', 'id'],
 		},
 		webhookSchemas: salesforceWebhookSchemas,
@@ -2615,9 +2620,12 @@ export function salesforce<const T extends SalesforcePluginOptions>(
 			const hasSig =
 				'x-salesforce-signature' in headers || 'x-sfdc-signature' in headers;
 			const body = request.body as Record<string, unknown> | undefined;
+			const header = body?.ChangeEventHeader;
 			const hasCdc =
 				!!body &&
-				(typeof body.ChangeEventHeader === 'object' ||
+				((header !== null &&
+					typeof header === 'object' &&
+					!Array.isArray(header)) ||
 					typeof body.sobject === 'string');
 			return hasSig || hasCdc;
 		},

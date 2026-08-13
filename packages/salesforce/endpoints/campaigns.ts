@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { escapeSoql } from '../utils';
+import { escapeSoql, soqlWhere } from '../utils';
 import { flattenFields, salesforceCall } from './shared';
 
 export const createCampaign: SalesforceEndpoints['createCampaign'] = async (
@@ -10,7 +10,7 @@ export const createCampaign: SalesforceEndpoints['createCampaign'] = async (
 	const response = await salesforceCall<{
 		id: string;
 		success?: boolean;
-	}>(ctx, 'sobjects/Campaign', { method: 'POST', body: input });
+	}>(ctx, 'sobjects/Campaign', { method: 'POST', body: flattenFields(input) });
 
 	await logEventFromContext(
 		ctx,
@@ -40,7 +40,8 @@ export const listCampaigns: SalesforceEndpoints['listCampaigns'] = async (
 	input,
 ) => {
 	const limit = input.limit ?? 200;
-	const whereStr = input.query ? ` WHERE ${input.query}` : '';
+	const queryClause = soqlWhere(input.query);
+	const whereStr = queryClause ? ` WHERE ${queryClause}` : '';
 	const q = `SELECT Id, Name, Type, Status, StartDate, EndDate, IsActive FROM Campaign${whereStr} LIMIT ${limit}`;
 
 	const response = await salesforceCall<{
@@ -128,16 +129,27 @@ export const removeFromCampaign: SalesforceEndpoints['removeFromCampaign'] =
 		let memberIdToDelete = input.campaign_member_id;
 
 		if (!memberIdToDelete && input.member_id) {
+			if (!input.campaign_id) {
+				throw new Error(
+					'campaign_id is required when looking up CampaignMember by member_id',
+				);
+			}
 			const safeMemberId = escapeSoql(input.member_id);
+			const safeCampaignId = escapeSoql(input.campaign_id);
 			const res = await salesforceCall<{
 				records: Array<{ Id: string }>;
 			}>(ctx, 'query', {
 				method: 'GET',
 				query: {
-					q: `SELECT Id FROM CampaignMember WHERE ContactId = '${safeMemberId}' OR LeadId = '${safeMemberId}' LIMIT 1`,
+					q: `SELECT Id FROM CampaignMember WHERE CampaignId = '${safeCampaignId}' AND (ContactId = '${safeMemberId}' OR LeadId = '${safeMemberId}') LIMIT 1`,
 				},
 			});
-			if (res.records?.[0]) memberIdToDelete = res.records[0].Id;
+			memberIdToDelete = res.records?.[0]?.Id;
+			if (!memberIdToDelete) {
+				throw new Error(
+					'No CampaignMember found for the requested campaign and member',
+				);
+			}
 		}
 
 		if (!memberIdToDelete) {
@@ -171,7 +183,7 @@ export const searchCampaigns: SalesforceEndpoints['searchCampaigns'] = async (
 	if (input.status) terms.push(`Status = '${escapeSoql(input.status)}'`);
 
 	const whereStr = terms.length > 0 ? ` WHERE ${terms.join(' AND ')}` : '';
-	const q = `SELECT Id, Name, Type, Status, StartDate, EndDate FROM Campaign${whereStr} LIMIT 50`;
+	const q = `SELECT Id, Name, Type, Status, StartDate, EndDate FROM Campaign${whereStr} LIMIT ${input.limit ?? 50}`;
 
 	const response = await salesforceCall<{
 		records: Array<Record<string, unknown>>;

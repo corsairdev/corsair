@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
 import { SalesforceLeadEntity } from '../schema/database';
-import { escapeSoql } from '../utils';
+import { escapeSoql, soqlWhere } from '../utils';
 import { cacheEntities, cacheEntity, evictEntity } from './persist';
 import { flattenFields, salesforceCall } from './shared';
 
@@ -53,7 +53,8 @@ export const listLeads: SalesforceEndpoints['listLeads'] = async (
 ) => {
 	const limit = input.limit ?? 200;
 	const offsetStr = input.offset ? ` OFFSET ${input.offset}` : '';
-	const whereStr = input.query ? ` WHERE ${input.query}` : '';
+	const queryClause = soqlWhere(input.query);
+	const whereStr = queryClause ? ` WHERE ${queryClause}` : '';
 	const q = `SELECT Id, FirstName, LastName, Company, Email, Status FROM Lead${whereStr} LIMIT ${limit}${offsetStr}`;
 
 	const response = await salesforceCall<{

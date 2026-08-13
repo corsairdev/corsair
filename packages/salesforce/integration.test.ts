@@ -71,17 +71,21 @@ describeLive('Salesforce live API', () => {
 		const created = await Accounts.createAccount(makeCtx(), { Name: stamp });
 		expect(created.id).toMatch(/^[a-zA-Z0-9]{15,18}$/);
 
-		const got = await Accounts.getAccount(makeCtx(), { id: created.id });
-		expect(got.Name === stamp || got.Id === created.id).toBe(true);
+		try {
+			const got = await Accounts.getAccount(makeCtx(), { id: created.id });
+			expect(got.Name === stamp || got.Id === created.id).toBe(true);
 
-		const updated = await Accounts.updateAccount(makeCtx(), {
-			id: created.id,
-			Phone: '555-0100',
-		});
-		expect(updated.success).toBe(true);
-
-		const deleted = await Accounts.deleteAccount(makeCtx(), { id: created.id });
-		expect(deleted.success).toBe(true);
+			const updated = await Accounts.updateAccount(makeCtx(), {
+				id: created.id,
+				Phone: '555-0100',
+			});
+			expect(updated.success).toBe(true);
+		} finally {
+			const deleted = await Accounts.deleteAccount(makeCtx(), {
+				id: created.id,
+			});
+			expect(deleted.success).toBe(true);
+		}
 	});
 
 	it('lists contacts without throwing', async () => {

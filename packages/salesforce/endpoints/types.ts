@@ -645,6 +645,7 @@ export type RemoveOpportunityByIdResponse = z.infer<
 
 export const RetrieveOpportunitiesDataInputSchema = z.object({
 	query: z.string().optional(),
+	limit: z.number().int().positive().optional(),
 });
 export type RetrieveOpportunitiesDataInput = z.infer<
 	typeof RetrieveOpportunitiesDataInputSchema
@@ -778,6 +779,7 @@ export type AddLeadToCampaignResponse = z.infer<
 export const RemoveFromCampaignInputSchema = z.object({
 	member_id: z.string().optional(),
 	campaign_member_id: z.string().optional(),
+	campaign_id: z.string().optional(),
 });
 export type RemoveFromCampaignInput = z.infer<
 	typeof RemoveFromCampaignInputSchema
@@ -796,6 +798,7 @@ export const SearchCampaignsInputSchema = z.object({
 	name: z.string().optional(),
 	type: z.string().optional(),
 	status: z.string().optional(),
+	limit: z.number().int().positive().optional(),
 });
 export type SearchCampaignsInput = z.infer<typeof SearchCampaignsInputSchema>;
 
@@ -2130,6 +2133,15 @@ export type MassTransferOwnershipInput = z.infer<
 export const MassTransferOwnershipResponseSchema = z
 	.object({
 		success: z.boolean(),
+		transferred: z.number().optional(),
+		failed: z
+			.array(
+				z.object({
+					id: z.string().optional(),
+					errors: z.unknown().optional(),
+				}),
+			)
+			.optional(),
 	})
 	.passthrough();
 export type MassTransferOwnershipResponse = z.infer<
@@ -2793,7 +2805,9 @@ export type ListDashboardsResponse = z.infer<
 >;
 
 export const ListEmailTemplatesInputSchema = z.object({
-	query: z.string().optional(),
+	name: z.string().optional(),
+	developerName: z.string().optional(),
+	folderId: z.string().optional(),
 });
 export type ListEmailTemplatesInput = z.infer<
 	typeof ListEmailTemplatesInputSchema

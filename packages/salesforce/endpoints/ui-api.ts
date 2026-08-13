@@ -291,8 +291,11 @@ export const getListViewMetadataBatch: SalesforceEndpoints['getListViewMetadataB
 	async (ctx, input) => {
 		const response = await salesforceCall<Record<string, unknown>>(
 			ctx,
-			`ui-api/list-info/${input.listViewIds.join(',')}`,
-			{ method: 'GET' },
+			'ui-api/list-info/batch',
+			{
+				method: 'GET',
+				query: { ids: input.listViewIds.join(',') },
+			},
 		);
 
 		await logEventFromContext(
@@ -308,7 +311,7 @@ export const getRelatedListPreferencesBatch: SalesforceEndpoints['getRelatedList
 	async (ctx, input) => {
 		const response = await salesforceCall<Record<string, unknown>>(
 			ctx,
-			`ui-api/related-list-preferences/${input.relatedListIds.join(',')}`,
+			`ui-api/related-list-preferences/batch/${input.relatedListIds.join(',')}`,
 			{ method: 'GET' },
 		);
 
@@ -720,7 +723,7 @@ export const updateRecord: SalesforceEndpoints['updateRecord'] = async (
 ) => {
 	await salesforceCall<void>(ctx, `ui-api/records/${input.recordId}`, {
 		method: 'PATCH',
-		body: { recordInput: { apiName: input.apiName, fields: input.fields } },
+		body: { fields: input.fields },
 		headers: input.ifUnmodifiedSince
 			? { 'If-Unmodified-Since': input.ifUnmodifiedSince }
 			: undefined,

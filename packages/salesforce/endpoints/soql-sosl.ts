@@ -88,7 +88,7 @@ export const parameterizedSearch: SalesforceEndpoints['parameterizedSearch'] =
 			searchRecords: Array<Record<string, unknown>>;
 		}>(ctx, 'parameterizedSearch', {
 			method: isPost ? 'POST' : 'GET',
-			query: { q: input.q },
+			query: isPost ? undefined : { q: input.q },
 			body: isPost ? { q: input.q, sobjects: input.sobjects } : undefined,
 		});
 
