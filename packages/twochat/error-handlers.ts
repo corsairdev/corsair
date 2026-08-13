@@ -1,10 +1,20 @@
 import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
-import { ApiError } from 'corsair/http';
+import type { TwoChatAPIError } from './client';
+
+// The framework hands error handlers a base Error; TwoChatAPIError fields are
+// optional extras, so Partial<TwoChatAPIError> is the safest view.
+function getStatus(error: Error): number | undefined {
+	return (error as Partial<TwoChatAPIError>).status;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	return (error as Partial<TwoChatAPIError>).retryAfter;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error, _context: ErrorContext) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (getStatus(error) === 429) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('rate_limited') ||
@@ -13,16 +23,12 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error: Error, _context: ErrorContext) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			return { maxRetries: 5, headersRetryAfterMs: getRetryAfter(error) };
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error, _context: ErrorContext) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (getStatus(error) === 401) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||
@@ -39,7 +45,7 @@ export const errorHandlers = {
 	},
 	PERMISSION_ERROR: {
 		match: (error: Error, _context: ErrorContext) => {
-			if (error instanceof ApiError && error.status === 403) return true;
+			if (getStatus(error) === 403) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('forbidden') ||

@@ -3,15 +3,29 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class TwoChatAPIError extends Error {
+	public readonly status?: number;
+	public readonly statusText?: string;
+	// 2Chat error bodies vary by endpoint/status; unknown covers all shapes.
+	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+
 	constructor(
 		message: string,
 		public readonly code?: string,
+		options?: { cause?: Error },
 	) {
-		super(message);
+		super(message, options);
 		this.name = 'TwoChatAPIError';
+
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+		}
 	}
 }
 
@@ -60,7 +74,19 @@ export async function makeTwoChatRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	return await request<T>(config, requestOptions, {
-		rateLimitConfig: TWOCHAT_RATE_LIMIT_CONFIG,
-	});
+	try {
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: TWOCHAT_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new TwoChatAPIError(error.message, String(error.status), {
+				cause: error,
+			});
+		}
+		if (error instanceof Error) {
+			throw new TwoChatAPIError(error.message, undefined, { cause: error });
+		}
+		throw new TwoChatAPIError('Unknown 2Chat API error');
+	}
 }

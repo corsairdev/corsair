@@ -1,4 +1,5 @@
 import * as client from './client';
+import { TwoChatAPIError } from './client';
 import { createContact } from './endpoints/create-contact';
 import { getApiUsageInfo } from './endpoints/get-api-usage-info';
 import { listContacts } from './endpoints/list-contacts';
@@ -28,6 +29,8 @@ jest.mock('corsair/core', () => {
 		logEventFromContext: jest.fn().mockResolvedValue(undefined),
 	};
 });
+
+import { logEventFromContext } from 'corsair/core';
 
 describe('TwoChat plugin', () => {
 	const mockContext: any = {
@@ -125,6 +128,12 @@ describe('TwoChat plugin', () => {
 					contact_detail: [{ type: 'PH', value: '+1234567890' }],
 				},
 			},
+		);
+		expect(logEventFromContext).toHaveBeenCalledWith(
+			mockContext,
+			'twochat.contacts.createContact',
+			{ first_name: 'Alice' },
+			'completed',
 		);
 		expect(result).toEqual(mockResponse);
 	});
@@ -312,5 +321,54 @@ describe('TwoChat plugin', () => {
 		expect(errorHandlers.DEFAULT.match(err, mockContext)).toBe(true);
 		const res = await errorHandlers.DEFAULT.handler(err, mockContext);
 		expect(res.maxRetries).toBe(0);
+	});
+
+	// ─── Status-code based error handler matching ───────────────────────────────
+	// Build real ApiError instances so TwoChatAPIError's `instanceof ApiError`
+	// guard fires and the status/retryAfter fields get copied correctly.
+
+	function makeApiError(
+		status: number,
+		message: string,
+		retryAfter?: number,
+	): Error {
+		const { ApiError } = jest.requireActual(
+			'corsair/http',
+		) as typeof import('corsair/http');
+		const req = { method: 'GET' as const, url: '/test' };
+		const res = {
+			url: 'https://api.p.2chat.io/test',
+			ok: false,
+			status,
+			statusText: String(status),
+			body: {},
+		};
+		const rateLimitInfo = retryAfter !== undefined ? { retryAfter } : undefined;
+		return new ApiError(req, res, message, rateLimitInfo);
+	}
+
+	it('RATE_LIMIT_ERROR matches a 429 TwoChatAPIError and forwards retryAfter', async () => {
+		const cause = makeApiError(429, 'rate limited', 30_000);
+		const err = new TwoChatAPIError('rate limited', '429', { cause });
+		expect(err.status).toBe(429);
+		expect(err.retryAfter).toBe(30_000);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(err, mockContext)).toBe(true);
+		const res = await errorHandlers.RATE_LIMIT_ERROR.handler(err, mockContext);
+		expect(res.maxRetries).toBe(5);
+		expect((res as any).headersRetryAfterMs).toBe(30_000);
+	});
+
+	it('AUTH_ERROR matches a 401 TwoChatAPIError', () => {
+		const cause = makeApiError(401, 'unauthorized');
+		const err = new TwoChatAPIError('unauthorized', '401', { cause });
+		expect(err.status).toBe(401);
+		expect(errorHandlers.AUTH_ERROR.match(err, mockContext)).toBe(true);
+	});
+
+	it('PERMISSION_ERROR matches a 403 TwoChatAPIError', () => {
+		const cause = makeApiError(403, 'forbidden');
+		const err = new TwoChatAPIError('forbidden', '403', { cause });
+		expect(err.status).toBe(403);
+		expect(errorHandlers.PERMISSION_ERROR.match(err, mockContext)).toBe(true);
 	});
 });
