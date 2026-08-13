@@ -225,9 +225,6 @@ importers:
       '@corsair-dev/twilio':
         specifier: workspace:*
         version: link:../../packages/twilio
-      '@corsair-dev/twochat':
-        specifier: workspace:*
-        version: link:../../packages/twochat
       '@corsair-dev/vapi':
         specifier: workspace:*
         version: link:../../packages/vapi
