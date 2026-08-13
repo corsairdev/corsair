@@ -29,8 +29,8 @@ export const BaseProviders = [
 	'alphavantage',
 	'alttextai',
 	'amara',
-	'ambee',
 	'ambientweather',
+	'ambee',
 	'amcards',
 	'amplitude',
 	'apibible',
@@ -42,10 +42,10 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'box',
+	'canvas',
 	'cal',
 	'calendly',
 	'canva',
-	'canvas',
 	'cloudflare',
 	'cloudinary',
 	'confluence',
@@ -155,8 +155,8 @@ export const ProviderDisplayNames = {
 	alphavantage: 'Alpha Vantage',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
-	ambee: 'Ambee',
 	ambientweather: 'Ambient Weather',
+	ambee: 'Ambee',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	apibible: 'API.Bible',
@@ -168,10 +168,10 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	box: 'Box',
+	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
-	canvas: 'Canvas LMS',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
@@ -303,8 +303,8 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
-	| 'canva'
 	| 'canvas'
+	| 'canva'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
