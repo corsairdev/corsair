@@ -24,6 +24,7 @@ export const BaseProviders = [
 	'ahrefs',
 	'aimlapi',
 	'airtable',
+	'alchemy',
 	'algolia',
 	'alttextai',
 	'amara',
@@ -144,6 +145,7 @@ export const ProviderDisplayNames = {
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
+	alchemy: 'Alchemy',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
@@ -271,6 +273,7 @@ export type AllProviders =
 	| 'ahrefs'
 	| 'aimlapi'
 	| 'airtable'
+	| 'alchemy'
 	| 'algolia'
 	| 'alttextai'
 	| 'amara'
