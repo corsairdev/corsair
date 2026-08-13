@@ -63,7 +63,10 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('500') || msg.includes('internal server error');
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,

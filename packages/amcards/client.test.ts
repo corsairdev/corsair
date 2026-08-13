@@ -57,24 +57,6 @@ describe('makeAmcardsRequest', () => {
 		expect(JSON.stringify(config.HEADERS)).not.toMatch(/Bearer/);
 	});
 
-	it('retries 429 and 5xx in the HTTP client, not the binder', async () => {
-		mockRequest.mockResolvedValue({ objects: [] });
-		await makeAmcardsRequest('cards/', 'k');
-		const [, , reqOpts] = mockRequest.mock.calls.at(-1) as unknown as [
-			OpenAPIConfig,
-			ApiRequestOptions,
-			{
-				rateLimitConfig: {
-					maxRetries: number;
-					isRateLimitError: (s: number) => boolean;
-				};
-			},
-		];
-		expect(reqOpts.rateLimitConfig.maxRetries).toBe(3);
-		expect(reqOpts.rateLimitConfig.isRateLimitError(503)).toBe(true);
-		expect(reqOpts.rateLimitConfig.isRateLimitError(429)).toBe(false);
-	});
-
 	it('omits the Token header when auth is false', async () => {
 		mockRequest.mockResolvedValue([]);
 
@@ -174,10 +156,11 @@ describe('errorHandlers', () => {
 		expect(route(amcardsError(422))).toBe('VALIDATION_ERROR');
 	});
 
-	it('routes 5xx to server-error without binder retries', async () => {
+	it('retries 5xx with exponential backoff', async () => {
 		expect(route(amcardsError(503))).toBe('SERVER_ERROR');
 		expect(await errorHandlers.SERVER_ERROR.handler()).toEqual({
-			maxRetries: 0,
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
 		});
 	});
 

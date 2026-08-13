@@ -166,7 +166,7 @@ const amcardsEndpointMeta = {
 	},
 	'gifts.list': {
 		riskLevel: 'read',
-		description: 'List available gifts (no authorization required)',
+		description: 'List available gifts',
 	},
 	'gifts.get': {
 		riskLevel: 'read',
@@ -174,7 +174,7 @@ const amcardsEndpointMeta = {
 	},
 	'templates.list': {
 		riskLevel: 'read',
-		description: 'List public card templates (no authorization required)',
+		description: 'List public card templates',
 	},
 	'templates.get': {
 		riskLevel: 'read',
@@ -231,10 +231,10 @@ export function amcards(
 			}
 			if (options.key) return options.key;
 			const res = await ctx.keys?.get_api_key();
-			// Gifts/templates are public (auth: false). keyBuilder isn't told
-			// which endpoint is running, so a missing key is '' and protected
-			// routes throw AuthMissingError in makeAmcardsRequest.
-			return res ?? '';
+			if (!res) {
+				throw new AuthMissingError('amcards', 'api_key');
+			}
+			return res;
 		},
 	} satisfies InternalAmcardsPlugin;
 }
