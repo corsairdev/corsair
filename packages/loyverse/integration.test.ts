@@ -416,6 +416,43 @@ describeLive('Loyverse API (live, read-only)', () => {
 		}
 	});
 
+	/**
+	 * Confirms the premise the customer delete relies on: a repeated delete is not
+	 * idempotent, it answers 404.
+	 *
+	 * That is why the endpoint treats a 404 as confirmation of absence rather than
+	 * surfacing it - otherwise a 5xx-then-retry would end in a not-found error having
+	 * deleted the customer remotely and left their data in the mirror. If Loyverse
+	 * ever makes the repeat idempotent, this fails and the endpoint comment needs
+	 * revisiting.
+	 *
+	 * Writes only records it owns, and removes them.
+	 */
+	it('answers 404 on a repeated customer delete', async () => {
+		const created = await makeLoyverseRequest<{ id: string }>(
+			'customers',
+			accessToken as string,
+			{
+				method: 'POST',
+				body: { name: 'Probe repeat delete', email: 'probe@example.com' },
+			},
+		);
+		expect(created.id).toBeTruthy();
+
+		const first = await makeLoyverseRequest<{ deleted_object_ids?: string[] }>(
+			`customers/${created.id}`,
+			accessToken as string,
+			{ method: 'DELETE' },
+		);
+		expect(first.deleted_object_ids).toContain(created.id);
+
+		await expect(
+			makeLoyverseRequest(`customers/${created.id}`, accessToken as string, {
+				method: 'DELETE',
+			}),
+		).rejects.toMatchObject({ status: 404 });
+	});
+
 	it('reports no rate-limit headers on a successful response', async () => {
 		// Documented here because the client can only react to a 429: there is no
 		// remaining-quota header to pace against.

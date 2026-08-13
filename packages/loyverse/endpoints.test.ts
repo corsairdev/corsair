@@ -8,6 +8,7 @@
  *
  * All ids and values are fictional.
  */
+import { readFileSync } from 'node:fs';
 import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import {
@@ -713,6 +714,19 @@ describe('retry safety', () => {
 		}
 	});
 
+	/**
+	 * `customers.delete` is retryable on a 5xx, and that is only safe because the
+	 * endpoint treats the replay's 404 as confirmation of absence and still clears
+	 * the mirror. Asserted together so the two cannot drift apart: if the endpoint
+	 * ever stops absorbing the 404, this pairing should be revisited.
+	 */
+	it('keeps customers.delete retryable, which the endpoint makes safe', () => {
+		expect(isNonIdempotent('customers.delete')).toBe(false);
+		const source = readFileSync(`${__dirname}/endpoints/customers.ts`, 'utf8');
+		expect(source).toContain('error.status !== 404');
+		expect(source).toContain('required: true');
+	});
+
 	it('does not match an operation name it does not know', () => {
 		expect(isNonIdempotent('items.somethingElse')).toBe(false);
 		expect(isNonIdempotent('upsert')).toBe(false);
@@ -1011,10 +1025,127 @@ describe('eviction', () => {
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'loyverse.customers.delete',
-			{ customer_id: CUSTOMER, fields: ['customer_id'] },
+			{
+				customer_id: CUSTOMER,
+				fields: ['customer_id'],
+				already_absent: false,
+			},
 			'completed',
 		);
 		error.mockRestore();
+	});
+
+	/**
+	 * The scenario this guards is the one a retry creates.
+	 *
+	 * A 5xx on a customer delete is ambiguous - Loyverse may have committed it
+	 * before failing - and the replay's second DELETE answers 404. If that 404 were
+	 * surfaced, the operation would end in a not-found error having deleted the
+	 * customer remotely and left their personal data in the mirror.
+	 */
+	it('treats a 404 on a customer delete as confirmation of absence', async () => {
+		mockFetch({ errors: [{ code: 'NOT_FOUND', details: 'not found' }] }, 404);
+		const { ctx, db } = makeCtx();
+
+		const result = await Customers.remove(ctx, { customer_id: CUSTOMER });
+
+		// Nothing was removed by this call, so the result does not claim an id.
+		expect(result.deleted_object_ids).toEqual([]);
+		// The mirror is cleared anyway - the entire point of catching the 404.
+		expect(db.customers.deleteByEntityId).toHaveBeenCalledWith(CUSTOMER);
+	});
+
+	it('records that the customer was already absent', async () => {
+		mockFetch({ errors: [{ code: 'NOT_FOUND', details: 'not found' }] }, 404);
+		const { ctx } = makeCtx();
+
+		await Customers.remove(ctx, { customer_id: CUSTOMER });
+
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			ctx,
+			'loyverse.customers.delete',
+			{ customer_id: CUSTOMER, fields: ['customer_id'], already_absent: true },
+			'completed',
+		);
+	});
+
+	it('records already_absent as false on an ordinary delete', async () => {
+		mockFetch(deleted(CUSTOMER));
+		const { ctx } = makeCtx();
+
+		await Customers.remove(ctx, { customer_id: CUSTOMER });
+
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			already_absent: false,
+		});
+	});
+
+	/**
+	 * The 404 branch must not weaken the privacy guarantee: if the mirror still
+	 * cannot be cleared, that has to be as loud as it is on the ordinary path.
+	 */
+	it('still raises when an already-absent customer cannot be evicted', async () => {
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		mockFetch({ errors: [{ code: 'NOT_FOUND', details: 'not found' }] }, 404);
+		const { ctx, db } = makeCtx();
+		db.customers.deleteByEntityId.mockRejectedValueOnce(
+			new Error('unavailable'),
+		);
+
+		await expect(
+			Customers.remove(ctx, { customer_id: CUSTOMER }),
+		).rejects.toBeInstanceOf(LoyverseMirrorEvictionError);
+		error.mockRestore();
+	});
+
+	/**
+	 * Only a 404 is absorbed. Every other failure still propagates, so a 500 does
+	 * not get quietly reported as a successful deletion.
+	 */
+	it('propagates a non-404 failure from a customer delete', async () => {
+		for (const status of [500, 403, 429]) {
+			mockFetch({ errors: [{ code: 'ERR', details: 'boom' }] }, status);
+			const { ctx, db } = makeCtx();
+
+			await expect(
+				Customers.remove(ctx, { customer_id: CUSTOMER }),
+			).rejects.toMatchObject({ status });
+			// An ambiguous failure must not clear the mirror - the record may still
+			// be there, and the retry will establish which.
+			expect(db.customers.deleteByEntityId).not.toHaveBeenCalled();
+		}
+	});
+
+	/**
+	 * The 404 tolerance is deliberately limited to customers, whose mirror holds
+	 * personal data. Elsewhere a delete of something absent is surfaced, because a
+	 * stale reference row is explicitly acceptable.
+	 */
+	it('does not absorb a 404 on any other delete', async () => {
+		const others: Array<[string, (c: Ctx) => Promise<unknown>]> = [
+			['items.delete', (c) => Items.remove(c, { item_id: ITEM })],
+			['variants.delete', (c) => Variants.remove(c, { variant_id: VARIANT })],
+			[
+				'categories.delete',
+				(c) => Categories.remove(c, { category_id: CATEGORY }),
+			],
+			['taxes.delete', (c) => Taxes.remove(c, { tax_id: TAX })],
+			[
+				'suppliers.delete',
+				(c) => Suppliers.remove(c, { supplier_id: SUPPLIER }),
+			],
+		];
+
+		expect(others).toHaveLength(5);
+
+		for (const [, run] of others) {
+			mockFetch({ errors: [{ code: 'NOT_FOUND', details: 'not found' }] }, 404);
+			const { ctx } = makeCtx();
+
+			await expect(run(ctx)).rejects.toMatchObject({ status: 404 });
+		}
 	});
 
 	it('succeeds normally when the customer eviction works', async () => {

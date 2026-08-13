@@ -246,6 +246,17 @@ export const errorHandlers = {
 	 * one deterministic case - an item image below its minimum size - and retrying
 	 * that is pointless but harmless, since `items.uploadImage` is non-idempotent
 	 * and so gets no retry.
+	 *
+	 * `customers.delete` is worth singling out, because a 5xx there is genuinely
+	 * ambiguous - Loyverse may have committed the delete before failing - and a
+	 * repeated customer delete answers 404 rather than succeeding again. The retry is
+	 * still correct, but only because the endpoint treats that 404 as confirmation
+	 * that the record is absent and goes on to clear the mirror. Were it to surface
+	 * the 404 instead, the replay would end in a not-found error having deleted the
+	 * customer remotely and left their personal data cached. The safety of this retry
+	 * lives in `endpoints/customers.ts`, not here; a handler cannot check remote state
+	 * or reach the mirror, since it receives only the error, the operation name and
+	 * the input.
 	 */
 	SERVER_ERROR: {
 		match: (error, context) =>

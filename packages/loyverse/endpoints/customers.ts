@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import type { LoyverseEndpoints } from '../index';
 import { LoyverseCustomerEntity } from '../schema/database';
 import { auditPayload } from './logging';
@@ -131,25 +132,59 @@ export const upsert: LoyverseEndpoints['customersUpsert'] = async (
  * The event is logged before the eviction so the deletion is recorded even when
  * the mirror write fails; the raise happens after, and cannot swallow the audit
  * trail with it.
+ *
+ * A 404 from the delete is treated as success rather than surfaced, which matters
+ * more than it looks. Loyverse hard-deletes customers, so a 404 is positive
+ * confirmation that the record is not there - which is the outcome the caller
+ * asked for. Surfacing it as a failure would abandon the call *before* the
+ * eviction, leaving the customer's personal data in the mirror with nothing to
+ * report it.
+ *
+ * That is not hypothetical. A 500 on the delete is ambiguous: Loyverse may have
+ * committed it before failing. The retry replays the whole endpoint, the second
+ * DELETE returns 404 (verified live - a repeated customer delete is not
+ * idempotent), and without this branch the operation would end in a not-found
+ * error having deleted the customer remotely and cleaned nothing locally. The same
+ * branch covers an ordinary double delete and a customer removed in the back
+ * office.
+ *
+ * The distinction is deliberate and limited to customers: elsewhere a 404 on a
+ * delete is surfaced, because those mirrors hold non-personal reference data where
+ * a stale row is explicitly acceptable - Loyverse soft-deletes them and the row
+ * keeps its value for resolving historical references.
  */
 export const remove: LoyverseEndpoints['customersDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await loyverseCall<LoyverseEndpointOutputs['customersDelete']>(
-		ctx,
-		`customers/${input.customer_id}`,
-		{ method: 'DELETE' },
-	);
+	let result: LoyverseEndpointOutputs['customersDelete'];
+	let alreadyAbsent = false;
+
+	try {
+		result = await loyverseCall<LoyverseEndpointOutputs['customersDelete']>(
+			ctx,
+			`customers/${input.customer_id}`,
+			{ method: 'DELETE' },
+		);
+	} catch (error) {
+		if (!(error instanceof ApiError) || error.status !== 404) throw error;
+
+		// The record is confirmed absent, so the deletion the caller asked for has
+		// happened - by this call or an earlier one. Nothing was removed now, so the
+		// result says so rather than claiming an id it did not delete.
+		alreadyAbsent = true;
+		result = { deleted_object_ids: [] };
+	}
 
 	await logEventFromContext(
 		ctx,
 		'loyverse.customers.delete',
-		auditPayload(input, ['customer_id']),
+		{ ...auditPayload(input, ['customer_id']), already_absent: alreadyAbsent },
 		'completed',
 	);
 
-	// Last, and allowed to raise: see the note above.
+	// Last, and allowed to raise: see the note above. This runs on the
+	// already-absent path too - that is the whole point of catching the 404.
 	await evictEntity(ctx.db.customers, input.customer_id, LABEL, {
 		required: true,
 	});
