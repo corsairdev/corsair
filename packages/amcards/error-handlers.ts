@@ -1,28 +1,80 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ApiError } from 'corsair/http';
+import type { AmcardsAPIError } from './client';
 
+function getStatus(error: Error): number | undefined {
+	return (error as Partial<AmcardsAPIError>).status;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	return (error as Partial<AmcardsAPIError>).retryAfter;
+}
+
+/**
+ * AMcards is a Django REST API. Status codes are the contract; message
+ * heuristics only run when no status is present.
+ */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 429;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return msg.includes('429') || msg.includes('rate limit');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error: Error) => ({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff' as const,
+			headersRetryAfterMs: getRetryAfter(error),
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			const status = getStatus(error);
+			if (status !== undefined) return status === 401 || status === 403;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('401') ||
+				msg.includes('403') ||
+				msg.includes('unauthorized') ||
+				msg.includes('forbidden') ||
+				msg.includes('invalid token')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			const status = getStatus(error);
+			if (status !== undefined) return status === 404;
+			const msg = error.message.toLowerCase();
+			return msg.includes('404') || msg.includes('not found');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	VALIDATION_ERROR: {
+		match: (error: Error) => {
+			const status = getStatus(error);
+			if (status !== undefined) return status === 400 || status === 422;
+			const msg = error.message.toLowerCase();
+			return (
+				msg.includes('400') ||
+				msg.includes('422') ||
+				msg.includes('unprocessable')
+			);
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			const status = getStatus(error);
+			if (status !== undefined) return status >= 500;
+			const msg = error.message.toLowerCase();
+			return msg.includes('500') || msg.includes('internal server error');
+		},
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,

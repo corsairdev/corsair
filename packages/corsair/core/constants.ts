@@ -111,7 +111,6 @@ export const BaseProviders = [
 	'whatsapp',
 	'wiza',
 	'xquik',
-	'youcom',
 	'youtube',
 	'zendesk',
 	'zohomail',
@@ -129,7 +128,7 @@ export const ProviderDisplayNames = {
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
-	amcards: 'Amcards',
+	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	apilabz: 'API Labz',
 	asana: 'Asana',
@@ -217,7 +216,6 @@ export const ProviderDisplayNames = {
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
 	xquik: 'XQuik',
-	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
@@ -330,7 +328,6 @@ export type AllProviders =
 	| 'whatsapp'
 	| 'wiza'
 	| 'xquik'
-	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'

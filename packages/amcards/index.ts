@@ -1,21 +1,18 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import * as Handlers from './endpoints/handlers';
 import type {
 	AmcardsEndpointInputs,
 	AmcardsEndpointOutputs,
@@ -26,18 +23,16 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { AmcardsSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveAmcardsOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchAmcardsTenantWebhook } from './webhooks/tenant-matcher';
-import type { AmcardsWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type AmcardsPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	/** Authentication method. AMcards only supports API access tokens. */
+	authType?: PickAuth<'api_key'>;
+	/**
+	 * AMcards API access token, sent as `Authorization: Token <token>`.
+	 * When omitted the key is resolved from the account key manager.
+	 */
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalAmcardsPlugin['hooks'];
-	webhookHooks?: InternalAmcardsPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof amcardsEndpointsNested>;
 };
@@ -60,63 +55,135 @@ type AmcardsEndpoint<K extends keyof AmcardsEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type AmcardsEndpoints = {
-	exampleGet: AmcardsEndpoint<'exampleGet'>;
+	getApiSchema: AmcardsEndpoint<'getApiSchema'>;
+	getCategorySchema: AmcardsEndpoint<'getCategorySchema'>;
+	getCards: AmcardsEndpoint<'getCards'>;
+	getContacts: AmcardsEndpoint<'getContacts'>;
+	getCategory: AmcardsEndpoint<'getCategory'>;
+	listCategories: AmcardsEndpoint<'listCategories'>;
+	getGift: AmcardsEndpoint<'getGift'>;
+	listGifts: AmcardsEndpoint<'listGifts'>;
+	getPublicTemplate: AmcardsEndpoint<'getPublicTemplate'>;
+	listPublicTemplates: AmcardsEndpoint<'listPublicTemplates'>;
 };
-
-type AmcardsWebhook<
-	K extends keyof AmcardsWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<AmcardsContext, TEvent, AmcardsWebhookOutputs[K]>;
-
-export type AmcardsWebhooks = {
-	example: AmcardsWebhook<'example', ExampleEvent>;
-};
-
-export type AmcardsBoundWebhooks = BindWebhooks<AmcardsWebhooks>;
 
 const amcardsEndpointsNested = {
-	example: {
-		get: Example.get,
+	schema: {
+		getApi: Handlers.getApiSchema,
+		getCategory: Handlers.getCategorySchema,
 	},
-} as const;
-
-const amcardsWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	cards: {
+		list: Handlers.getCards,
+	},
+	contacts: {
+		list: Handlers.getContacts,
+	},
+	categories: {
+		list: Handlers.listCategories,
+		get: Handlers.getCategory,
+	},
+	gifts: {
+		list: Handlers.listGifts,
+		get: Handlers.getGift,
+	},
+	templates: {
+		list: Handlers.listPublicTemplates,
+		get: Handlers.getPublicTemplate,
 	},
 } as const;
 
 export const amcardsEndpointSchemas = {
-	'example.get': {
-		input: AmcardsEndpointInputSchemas.exampleGet,
-		output: AmcardsEndpointOutputSchemas.exampleGet,
+	'schema.getApi': {
+		input: AmcardsEndpointInputSchemas.getApiSchema,
+		output: AmcardsEndpointOutputSchemas.getApiSchema,
+	},
+	'schema.getCategory': {
+		input: AmcardsEndpointInputSchemas.getCategorySchema,
+		output: AmcardsEndpointOutputSchemas.getCategorySchema,
+	},
+	'cards.list': {
+		input: AmcardsEndpointInputSchemas.getCards,
+		output: AmcardsEndpointOutputSchemas.getCards,
+	},
+	'contacts.list': {
+		input: AmcardsEndpointInputSchemas.getContacts,
+		output: AmcardsEndpointOutputSchemas.getContacts,
+	},
+	'categories.list': {
+		input: AmcardsEndpointInputSchemas.listCategories,
+		output: AmcardsEndpointOutputSchemas.listCategories,
+	},
+	'categories.get': {
+		input: AmcardsEndpointInputSchemas.getCategory,
+		output: AmcardsEndpointOutputSchemas.getCategory,
+	},
+	'gifts.list': {
+		input: AmcardsEndpointInputSchemas.listGifts,
+		output: AmcardsEndpointOutputSchemas.listGifts,
+	},
+	'gifts.get': {
+		input: AmcardsEndpointInputSchemas.getGift,
+		output: AmcardsEndpointOutputSchemas.getGift,
+	},
+	'templates.list': {
+		input: AmcardsEndpointInputSchemas.listPublicTemplates,
+		output: AmcardsEndpointOutputSchemas.listPublicTemplates,
+	},
+	'templates.get': {
+		input: AmcardsEndpointInputSchemas.getPublicTemplate,
+		output: AmcardsEndpointOutputSchemas.getPublicTemplate,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof amcardsEndpointsNested
 >;
 
-const amcardsWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof amcardsWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 const amcardsEndpointMeta = {
-	'example.get': {
+	'schema.getApi': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Retrieve the AMcards API v1 schema (resource map)',
+	},
+	'schema.getCategory': {
+		riskLevel: 'read',
+		description: 'Retrieve the readonly Category resource schema',
+	},
+	'cards.list': {
+		riskLevel: 'read',
+		description: 'List cards for the authenticated account',
+	},
+	'contacts.list': {
+		riskLevel: 'read',
+		description: 'List contacts, optionally filtered by name or email',
+	},
+	'categories.list': {
+		riskLevel: 'read',
+		description: 'List card template categories ordered by priority',
+	},
+	'categories.get': {
+		riskLevel: 'read',
+		description: 'Get a card template category by id',
+	},
+	'gifts.list': {
+		riskLevel: 'read',
+		description: 'List available gifts (no authorization required)',
+	},
+	'gifts.get': {
+		riskLevel: 'read',
+		description: 'Get a gift by id',
+	},
+	'templates.list': {
+		riskLevel: 'read',
+		description: 'List public card templates (no authorization required)',
+	},
+	'templates.get': {
+		riskLevel: 'read',
+		description: 'Get a public card template by id',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof amcardsEndpointsNested>;
 
 export const amcardsAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -125,7 +192,7 @@ export type BaseAmcardsPlugin<T extends AmcardsPluginOptions> = CorsairPlugin<
 	'amcards',
 	typeof AmcardsSchema,
 	typeof amcardsEndpointsNested,
-	typeof amcardsWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -135,9 +202,9 @@ export type InternalAmcardsPlugin = BaseAmcardsPlugin<AmcardsPluginOptions>;
 export type ExternalAmcardsPlugin<T extends AmcardsPluginOptions> =
 	BaseAmcardsPlugin<T>;
 
-export function amcards<const T extends AmcardsPluginOptions>(
-	incomingOptions: AmcardsPluginOptions & T = {} as AmcardsPluginOptions & T,
-): ExternalAmcardsPlugin<T> {
+export function amcards(
+	incomingOptions: AmcardsPluginOptions = {},
+): InternalAmcardsPlugin {
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
@@ -148,59 +215,40 @@ export function amcards<const T extends AmcardsPluginOptions>(
 		schema: AmcardsSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: amcardsEndpointsNested,
-		webhooks: amcardsWebhooksNested,
+		webhooks: {},
 		endpointMeta: amcardsEndpointMeta,
 		endpointSchemas: amcardsEndpointSchemas,
-		webhookSchemas: amcardsWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-amcards-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchAmcardsTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveAmcardsOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AmcardsKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const res = await ctx.keys?.get_api_key();
+				if (!res) {
+					throw new AuthMissingError('amcards', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('amcards', 'api_key');
 		},
 	} satisfies InternalAmcardsPlugin;
 }
 
+export { AMCARDS_API_BASE, AmcardsAPIError } from './client';
 export type {
 	AmcardsEndpointInputs,
 	AmcardsEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
-export type {
-	AmcardsWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
+export {
+	AmcardsEndpointInputSchemas,
+	AmcardsEndpointOutputSchemas,
+} from './endpoints/types';
