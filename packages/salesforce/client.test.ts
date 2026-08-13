@@ -181,4 +181,51 @@ describe('makeSalesforceRequest', () => {
 			'octet-stream',
 		);
 	});
+
+	it('retries binary VersionData on 429', async () => {
+		const bytes = Uint8Array.from([0xff, 0xd8]);
+		let calls = 0;
+		global.fetch = (async (url: unknown, init?: RequestInit) => {
+			calls += 1;
+			captured = {
+				url: String(url),
+				method: String(init?.method ?? 'GET'),
+				headers: {},
+			};
+			if (calls === 1) {
+				return {
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					headers: new Headers({ 'retry-after': '0' }),
+					json: async () => [{ errorCode: 'REQUEST_LIMIT_EXCEEDED' }],
+					text: async () => '',
+					arrayBuffer: async () => new Uint8Array().buffer,
+					clone() {
+						return this;
+					},
+				} as Response;
+			}
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				headers: new Headers({ 'content-type': 'application/octet-stream' }),
+				json: async () => ({}),
+				text: async () => '',
+				arrayBuffer: async () => bytes.slice().buffer,
+				clone() {
+					return this;
+				},
+			} as Response;
+		}) as typeof fetch;
+
+		const buf = await makeSalesforceRequest(
+			'sobjects/ContentVersion/068xx/VersionData',
+			'token',
+			{ instanceUrl, responseType: 'binary' },
+		);
+		expect(calls).toBe(2);
+		expect(Buffer.from(buf as Buffer)).toEqual(Buffer.from(bytes));
+	});
 });

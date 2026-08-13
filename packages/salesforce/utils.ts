@@ -50,6 +50,13 @@ function parseCsvRows(text: string): string[][] {
 	let row: string[] = [];
 	let current = '';
 	let inQuotes = false;
+	let quoted = false;
+
+	const pushField = () => {
+		row.push(quoted ? current : current.trim());
+		current = '';
+		quoted = false;
+	};
 
 	for (let i = 0; i < text.length; i++) {
 		const char = text[i];
@@ -68,17 +75,16 @@ function parseCsvRows(text: string): string[][] {
 		}
 		if (char === '"') {
 			inQuotes = true;
+			quoted = true;
 			continue;
 		}
 		if (char === ',') {
-			row.push(current.trim());
-			current = '';
+			pushField();
 			continue;
 		}
 		if (char === '\n' || char === '\r') {
 			if (char === '\r' && text[i + 1] === '\n') i++;
-			row.push(current.trim());
-			current = '';
+			pushField();
 			if (row.some((value) => value !== '')) rows.push(row);
 			row = [];
 			continue;
@@ -86,7 +92,7 @@ function parseCsvRows(text: string): string[][] {
 		current += char;
 	}
 
-	row.push(current.trim());
+	pushField();
 	if (row.some((value) => value !== '')) rows.push(row);
 	return rows;
 }

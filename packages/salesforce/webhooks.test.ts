@@ -34,6 +34,12 @@ describe('parseCsvRecords', () => {
 			{ Name: 'Acme', Notes: 'line1\nline2' },
 		]);
 	});
+
+	it('preserves whitespace inside quoted fields', () => {
+		expect(parseCsvRecords('Name,Notes\nAcme,"  padded  "\n')).toEqual([
+			{ Name: 'Acme', Notes: '  padded  ' },
+		]);
+	});
 });
 
 describe('cloneableFields', () => {

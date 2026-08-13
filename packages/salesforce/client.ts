@@ -140,6 +140,67 @@ function originOf(endpoint: string, instanceUrl: string): string {
 	return instanceOrigin;
 }
 
+async function errorBody(res: Response): Promise<unknown> {
+	try {
+		return await res.json();
+	} catch {
+		return await res.text();
+	}
+}
+
+function retryDelayMs(res: Response, attempt: number): number {
+	const retryAfter = res.headers.get(
+		SALESFORCE_RATE_LIMIT_CONFIG.headerNames.retryAfter ?? 'Retry-After',
+	);
+	const seconds = retryAfter ? Number.parseInt(retryAfter, 10) : Number.NaN;
+	if (!Number.isNaN(seconds)) return Math.min(seconds * 1000, 60_000);
+	return Math.min(
+		SALESFORCE_RATE_LIMIT_CONFIG.initialRetryDelay *
+			SALESFORCE_RATE_LIMIT_CONFIG.backoffMultiplier ** (attempt - 1),
+		60_000,
+	);
+}
+
+async function fetchSalesforceBinary(
+	url: string,
+	path: string,
+	method: NonNullable<SalesforceRequestOptions['method']>,
+	headers: Record<string, string>,
+): Promise<Buffer> {
+	const maxAttempts = SALESFORCE_RATE_LIMIT_CONFIG.maxRetries + 1;
+	for (let attempt = 1; attempt <= maxAttempts; attempt++) {
+		const res = await fetch(url, { method, headers });
+		if (
+			SALESFORCE_RATE_LIMIT_CONFIG.enabled &&
+			res.status === 429 &&
+			attempt < maxAttempts
+		) {
+			await new Promise((resolve) =>
+				setTimeout(resolve, retryDelayMs(res, attempt)),
+			);
+			continue;
+		}
+		if (!res.ok) {
+			throw new ApiError(
+				{ method, url: path },
+				{
+					url,
+					ok: false,
+					status: res.status,
+					statusText: res.statusText,
+					body: await errorBody(res),
+				},
+				res.statusText,
+				res.status === 429
+					? { retryAfter: retryDelayMs(res, attempt) }
+					: undefined,
+			);
+		}
+		return Buffer.from(await res.arrayBuffer());
+	}
+	throw new Error('Salesforce binary request failed');
+}
+
 /**
  * Issues a Salesforce REST request.
  *
@@ -172,35 +233,11 @@ export async function makeSalesforceRequest<T>(
 		: `Bearer ${apiKey}`;
 
 	if (options.responseType === 'binary') {
-		const url = `${origin}${path}`;
-		const res = await fetch(url, {
-			method,
-			headers: {
-				Accept: 'application/octet-stream',
-				Authorization: authorization,
-				...options.headers,
-			},
-		});
-		if (!res.ok) {
-			let body: unknown;
-			try {
-				body = await res.json();
-			} catch {
-				body = await res.text();
-			}
-			throw new ApiError(
-				{ method, url: path },
-				{
-					url,
-					ok: false,
-					status: res.status,
-					statusText: res.statusText,
-					body,
-				},
-				res.statusText,
-			);
-		}
-		return Buffer.from(await res.arrayBuffer()) as T;
+		return (await fetchSalesforceBinary(`${origin}${path}`, path, method, {
+			Accept: 'application/octet-stream',
+			Authorization: authorization,
+			...options.headers,
+		})) as T;
 	}
 
 	const hasJsonBody =
