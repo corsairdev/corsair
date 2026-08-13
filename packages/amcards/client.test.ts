@@ -156,11 +156,10 @@ describe('errorHandlers', () => {
 		expect(route(amcardsError(422))).toBe('VALIDATION_ERROR');
 	});
 
-	it('retries 5xx', async () => {
+	it('routes 5xx to server-error without binder retries', async () => {
 		expect(route(amcardsError(503))).toBe('SERVER_ERROR');
 		expect(await errorHandlers.SERVER_ERROR.handler()).toEqual({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
+			maxRetries: 0,
 		});
 	});
 

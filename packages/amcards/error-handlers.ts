@@ -65,10 +65,9 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('500') || msg.includes('internal server error');
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		// Binder retries discard a successful result and rethrow the original
+		// 5xx, so a recovered call still looks like a failure.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
 		match: () => true,
