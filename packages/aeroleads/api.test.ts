@@ -1,6 +1,8 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { request } from 'corsair/http';
-import { makeAeroleadsRequest } from './client';
+import { ApiError, request } from 'corsair/http';
+import { AeroleadsAPIError, makeAeroleadsRequest } from './client';
+import { GetLinkedinDetailsInputSchema } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import type { AeroleadsContext, AeroleadsKeyBuilderContext } from './index';
 import { aeroleads, aeroleadsEndpointSchemas } from './index';
 
@@ -50,6 +52,47 @@ const mockCtx = {
 	keyBuilder: async () => 'test-api-key',
 } as unknown as AeroleadsContext;
 
+const profile = {
+	full_name: 'Ayushi Mathur',
+	linkedin_url: 'https://www.linkedin.com/in/ayushi-mathur-061b9010b/',
+	job_title: 'Software Engineer',
+	emails: 'test@example.com',
+};
+
+type LinkedinDetailsGet = (
+	ctx: AeroleadsContext,
+	input: { linkedin_url: string },
+) => Promise<unknown>;
+
+function getLinkedinDetails(): LinkedinDetailsGet {
+	const plugin = aeroleads({ key: 'test-api-key' });
+	const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
+		linkedinDetails: { get: LinkedinDetailsGet };
+	};
+	return endpoints.linkedinDetails.get;
+}
+
+function classify(error: Error): string {
+	const name = (
+		Object.keys(errorHandlers) as Array<keyof typeof errorHandlers>
+	).find((key) => errorHandlers[key].match(error));
+	return name ?? 'none';
+}
+
+function httpError(status: number, message: string): ApiError {
+	return new ApiError(
+		{ method: 'GET', url: 'https://aeroleads.com/api/get_linkedin_details' },
+		{
+			url: 'https://aeroleads.com/api/get_linkedin_details',
+			ok: false,
+			status,
+			statusText: 'Error',
+			body: { message },
+		},
+		message,
+	);
+}
+
 describe('Aeroleads plugin shape', () => {
 	it('exposes every listed operation with schemas and no webhooks', () => {
 		const plugin = aeroleads();
@@ -77,7 +120,7 @@ describe('Aeroleads plugin shape', () => {
 describe('Aeroleads request client', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ ok: true });
+		mockRequest.mockResolvedValue(profile);
 	});
 
 	it('adds API key to config TOKEN and request query', async () => {
@@ -104,29 +147,70 @@ describe('Aeroleads request client', () => {
 			}),
 		);
 	});
+
+	it('throws on a 200 body with an error status', async () => {
+		mockRequest.mockResolvedValue({
+			message: 'User not Found, Please Pass Valid Api Key',
+			status: 400,
+		});
+
+		await expect(
+			makeAeroleadsRequest('/api/get_linkedin_details', 'test-api-key', {
+				query: { linkedin_url: 'https://linkedin.com/in/test' },
+			}),
+		).rejects.toBeInstanceOf(AeroleadsAPIError);
+	});
+
+	it('throws on a 200 body that only asks for an API key', async () => {
+		mockRequest.mockResolvedValue({
+			message: 'Pass your Api Key also as params',
+			status: 400,
+		});
+
+		await expect(
+			makeAeroleadsRequest('/api/get_linkedin_details', 'test-api-key'),
+		).rejects.toThrow(/api key/i);
+	});
+
+	it('throws on an empty 200 body', async () => {
+		mockRequest.mockResolvedValue({});
+
+		await expect(
+			makeAeroleadsRequest('/api/get_linkedin_details', 'test-api-key', {
+				query: { linkedin_url: 'https://linkedin.com/in/test' },
+			}),
+		).rejects.toBeInstanceOf(AeroleadsAPIError);
+	});
+
+	it('returns a profile payload unchanged', async () => {
+		await expect(
+			makeAeroleadsRequest('/api/get_linkedin_details', 'test-api-key', {
+				query: { linkedin_url: 'https://linkedin.com/in/test' },
+			}),
+		).resolves.toEqual(profile);
+	});
+
+	it('accepts a profile that only has documented job fields', async () => {
+		const sparse = { job_title_role: 'Engineer', city: 'Bengaluru' };
+		mockRequest.mockResolvedValue(sparse);
+
+		await expect(
+			makeAeroleadsRequest('/api/get_linkedin_details', 'test-api-key', {
+				query: { linkedin_url: 'https://linkedin.com/in/test' },
+			}),
+		).resolves.toEqual(sparse);
+	});
 });
 
 describe('Aeroleads endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
 		mockLog.mockReset();
-		mockRequest.mockResolvedValue({});
+		mockRequest.mockResolvedValue(profile);
 	});
 
 	it('maps representative operations to API routes', async () => {
-		const plugin = aeroleads({ key: 'test-api-key' });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
-			linkedinDetails: {
-				get: (
-					ctx: AeroleadsContext,
-					input: { linkedin_url: string },
-				) => Promise<unknown>;
-			};
-		};
-
-		await endpoints.linkedinDetails.get(mockCtx, {
+		await getLinkedinDetails()(mockCtx, {
 			linkedin_url: 'https://linkedin.com/in/test',
 		});
 
@@ -148,6 +232,104 @@ describe('Aeroleads endpoints', () => {
 			{ linkedin_url: 'https://linkedin.com/in/test' },
 			'completed',
 		);
+	});
+
+	it('does not log completed when Aeroleads returns an error envelope', async () => {
+		mockRequest.mockResolvedValue({
+			message: 'User not Found, Please Pass Valid Api Key',
+			status: 400,
+		});
+
+		await expect(
+			getLinkedinDetails()(mockCtx, {
+				linkedin_url: 'https://linkedin.com/in/test',
+			}),
+		).rejects.toBeInstanceOf(AeroleadsAPIError);
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('rejects a company page URL before calling Aeroleads', async () => {
+		await expect(
+			getLinkedinDetails()(mockCtx, {
+				linkedin_url: 'https://www.linkedin.com/company/microsoft',
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+});
+
+describe('linkedin_url input', () => {
+	it('accepts public profile URLs', () => {
+		expect(() =>
+			GetLinkedinDetailsInputSchema.parse({
+				linkedin_url: 'https://www.linkedin.com/in/satyanadella',
+			}),
+		).not.toThrow();
+		expect(() =>
+			GetLinkedinDetailsInputSchema.parse({
+				linkedin_url: 'https://uk.linkedin.com/in/example/',
+			}),
+		).not.toThrow();
+	});
+
+	it('rejects company pages and lookalike hosts', () => {
+		expect(() =>
+			GetLinkedinDetailsInputSchema.parse({
+				linkedin_url: 'https://www.linkedin.com/company/microsoft',
+			}),
+		).toThrow();
+		expect(() =>
+			GetLinkedinDetailsInputSchema.parse({
+				linkedin_url: 'https://evil.com/linkedin.com/in/test',
+			}),
+		).toThrow();
+		expect(() =>
+			GetLinkedinDetailsInputSchema.parse({
+				linkedin_url: 'https://linkedin.com.evil.com/in/test',
+			}),
+		).toThrow();
+	});
+});
+
+describe('error handler classification', () => {
+	it('treats a 200 invalid-key envelope as auth, not success', () => {
+		expect(
+			classify(
+				new AeroleadsAPIError('User not Found, Please Pass Valid Api Key'),
+			),
+		).toBe('AUTH_ERROR');
+		expect(
+			classify(new AeroleadsAPIError('Pass your Api Key also as params')),
+		).toBe('AUTH_ERROR');
+	});
+
+	it('treats a missing LinkedIn URL envelope as a bad request', () => {
+		expect(
+			classify(new AeroleadsAPIError('Pass Linkedin Url also as params')),
+		).toBe('BAD_REQUEST_ERROR');
+	});
+
+	it('does not retry auth, credit, or empty-profile failures', async () => {
+		const auth = await errorHandlers.AUTH_ERROR.handler();
+		const credit = await errorHandlers.CREDIT_LIMIT_ERROR.handler();
+
+		expect(classify(httpError(401, 'Wrong API key'))).toBe('AUTH_ERROR');
+		expect(classify(httpError(402, 'Credit Limit Reached'))).toBe(
+			'CREDIT_LIMIT_ERROR',
+		);
+		expect(
+			classify(new AeroleadsAPIError('Aeroleads returned no profile details')),
+		).toBe('NOT_FOUND_ERROR');
+		expect(auth.maxRetries).toBe(0);
+		expect(credit.maxRetries).toBe(0);
+	});
+
+	it('does not stack handler retries on transport 429 retries', async () => {
+		const rateLimit = await errorHandlers.RATE_LIMIT_ERROR.handler();
+		expect(classify(httpError(429, 'too many requests'))).toBe(
+			'RATE_LIMIT_ERROR',
+		);
+		expect(rateLimit.maxRetries).toBe(0);
 	});
 });
 
