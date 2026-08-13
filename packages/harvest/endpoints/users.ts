@@ -79,6 +79,7 @@ export const create: HarvestEndpoints['usersCreate'] = async (ctx, input) => {
 				cost_rate: input.cost_rate,
 				has_access_to_all_future_projects:
 					input.has_access_to_all_future_projects,
+				saml_exempt: input.saml_exempt,
 				roles: input.roles,
 				access_roles: input.access_roles,
 			}),
@@ -117,6 +118,7 @@ export const update: HarvestEndpoints['usersUpdate'] = async (ctx, input) => {
 				cost_rate: input.cost_rate,
 				has_access_to_all_future_projects:
 					input.has_access_to_all_future_projects,
+				saml_exempt: input.saml_exempt,
 				roles: input.roles,
 				access_roles: input.access_roles,
 			}),

@@ -93,6 +93,8 @@ export const create: HarvestEndpoints['invoicesCreate'] = async (
 			method: 'POST',
 			body: compactBody({
 				client_id: input.client_id,
+				retainer_id: input.retainer_id,
+				estimate_id: input.estimate_id,
 				subject: input.subject,
 				notes: input.notes,
 				number: input.number,
@@ -101,10 +103,10 @@ export const create: HarvestEndpoints['invoicesCreate'] = async (
 				issue_date: input.issue_date,
 				due_date: input.due_date,
 				payment_term: input.payment_term,
+				payment_options: input.payment_options,
 				tax: input.tax,
 				tax2: input.tax2,
 				discount: input.discount,
-				estimate_id: input.estimate_id,
 				line_items: input.line_items,
 			}),
 		},
@@ -145,6 +147,8 @@ export const update: HarvestEndpoints['invoicesUpdate'] = async (
 			method: 'PATCH',
 			body: compactBody({
 				client_id: input.client_id,
+				retainer_id: input.retainer_id,
+				estimate_id: input.estimate_id,
 				subject: input.subject,
 				notes: input.notes,
 				number: input.number,
@@ -153,6 +157,7 @@ export const update: HarvestEndpoints['invoicesUpdate'] = async (
 				issue_date: input.issue_date,
 				due_date: input.due_date,
 				payment_term: input.payment_term,
+				payment_options: input.payment_options,
 				tax: input.tax,
 				tax2: input.tax2,
 				discount: input.discount,
@@ -320,8 +325,9 @@ export const listPayments: HarvestEndpoints['invoicePaymentsList'] = async (
 /**
  * Records a payment against an invoice.
  *
- * `send_thank_you: true` emails the client a receipt; left unset, the payment
- * is recorded silently.
+ * Harvest defaults `send_thank_you` to true, which emails the client when the
+ * invoice becomes fully paid. Unset here means false so recording a payment
+ * does not send mail unless the caller asks.
  */
 export const createPayment: HarvestEndpoints['invoicePaymentsCreate'] = async (
 	ctx,
@@ -336,7 +342,7 @@ export const createPayment: HarvestEndpoints['invoicePaymentsCreate'] = async (
 			paid_at: input.paid_at,
 			paid_date: input.paid_date,
 			notes: input.notes,
-			send_thank_you: input.send_thank_you,
+			send_thank_you: input.send_thank_you ?? false,
 		}),
 	});
 

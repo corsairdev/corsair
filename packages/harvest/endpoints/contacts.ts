@@ -11,8 +11,9 @@ const LABEL = 'contact';
 /**
  * Lists client contacts.
  *
- * Harvest exposes no "get one contact" endpoint, so this list — optionally
- * narrowed to a single client — is the only way to read a contact back.
+ * The OSS catalog has no get-contact operation, so this list — optionally
+ * narrowed to a single client — is the read path. Harvest itself does expose
+ * GET /v2/contacts/{id}; it is out of R1 scope.
  */
 export const list: HarvestEndpoints['contactsList'] = async (ctx, input) => {
 	const result = await harvestCall<HarvestEndpointOutputs['contactsList']>(
@@ -60,6 +61,7 @@ export const create: HarvestEndpoints['contactsCreate'] = async (
 				phone_office: input.phone_office,
 				phone_mobile: input.phone_mobile,
 				fax: input.fax,
+				invoice_recipient_status: input.invoice_recipient_status,
 			}),
 		},
 	);
@@ -98,6 +100,7 @@ export const update: HarvestEndpoints['contactsUpdate'] = async (
 				phone_office: input.phone_office,
 				phone_mobile: input.phone_mobile,
 				fax: input.fax,
+				invoice_recipient_status: input.invoice_recipient_status,
 			}),
 		},
 	);

@@ -146,14 +146,75 @@ export const InvoicePaymentSchema = z
 	.loose();
 
 /**
+ * Project user assignment stub returned on expenses and time entries.
+ * Official expense example + live 2026-08-13 (includes `use_default_rates`).
+ */
+const UserAssignmentSchema = z
+	.object({
+		id: N,
+		is_project_manager: B,
+		is_active: B,
+		budget: N,
+		hourly_rate: N,
+		use_default_rates: B,
+		created_at: S,
+		updated_at: S,
+	})
+	.loose();
+
+/** Project task assignment stub returned on time entries. Live 2026-08-13. */
+const TaskAssignmentSchema = z
+	.object({
+		id: N,
+		billable: B,
+		is_active: B,
+		budget: N,
+		hourly_rate: N,
+		created_at: S,
+		updated_at: S,
+	})
+	.loose();
+
+/**
+ * Expense receipt. Official:
+ * https://help.getharvest.com/api-v2/expenses-api/expenses/expenses/
+ */
+const ReceiptSchema = z
+	.object({
+		url: S,
+		file_name: S,
+		file_size: N,
+		content_type: S,
+	})
+	.loose();
+
+/**
+ * External reference on a time entry. Official:
+ * https://help.getharvest.com/api-v2/timesheets-api/timesheets/time-entries/
+ */
+const ExternalReferenceSchema = z
+	.object({
+		id: S,
+		group_id: S,
+		account_id: S,
+		permalink: S,
+		service: S,
+		service_icon_url: S,
+	})
+	.loose();
+
+const ExternalReferenceInput = z.object({
+	id: z.string().optional(),
+	group_id: z.string().optional(),
+	account_id: z.string().optional(),
+	permalink: z.string().optional(),
+});
+
+/**
  * Expenses are returned by create and update but never cached.
  *
- * `receipt` and `user_assignment` are declared `z.unknown()` rather than given a
- * shape: neither appeared populated in any captured response, so any shape here
- * would be transcribed from prose and would reject real data the moment it were
- * wrong. `unknown` passes the value through untouched and forces a caller to
- * narrow it deliberately, which `any` would not. They are typed properly once a
- * populated response has been captured.
+ * Official: https://help.getharvest.com/api-v2/expenses-api/expenses/expenses/
+ * Live 2026-08-13 also returns `is_explicitly_locked` and `reimbursement`.
  */
 export const ExpenseSchema = z
 	.object({
@@ -163,7 +224,7 @@ export const ExpenseSchema = z
 		total_cost: N,
 		units: N,
 		billable: B,
-		receipt: z.unknown().optional(),
+		receipt: ReceiptSchema.nullable().optional(),
 		approval_status: S,
 		is_closed: B,
 		is_locked: B,
@@ -175,7 +236,7 @@ export const ExpenseSchema = z
 		client: HarvestReference.nullable().optional(),
 		project: HarvestReference.nullable().optional(),
 		expense_category: HarvestReference.nullable().optional(),
-		user_assignment: z.unknown().optional(),
+		user_assignment: UserAssignmentSchema.nullable().optional(),
 		invoice: HarvestReference.nullable().optional(),
 		created_at: S,
 		updated_at: S,
@@ -185,11 +246,8 @@ export const ExpenseSchema = z
 /**
  * Time entries are returned by five operations but never cached.
  *
- * `user_assignment`, `task_assignment` and `external_reference` are `z.unknown()`
- * for the same reason as on {@link ExpenseSchema}: their contents were not
- * observed in any captured response, and an invented shape would reject valid
- * rows. `external_reference` in particular is whatever third-party tool created
- * the entry chose to put there, so it has no fixed shape to declare.
+ * Official: https://help.getharvest.com/api-v2/timesheets-api/timesheets/time-entries/
+ * Live 2026-08-13 also returns `is_explicitly_locked`.
  */
 export const TimeEntrySchema = z
 	.object({
@@ -217,10 +275,10 @@ export const TimeEntrySchema = z
 		client: HarvestReference.nullable().optional(),
 		project: HarvestReference.nullable().optional(),
 		task: HarvestReference.nullable().optional(),
-		user_assignment: z.unknown().optional(),
-		task_assignment: z.unknown().optional(),
+		user_assignment: UserAssignmentSchema.nullable().optional(),
+		task_assignment: TaskAssignmentSchema.nullable().optional(),
 		invoice: HarvestReference.nullable().optional(),
-		external_reference: z.unknown().optional(),
+		external_reference: ExternalReferenceSchema.nullable().optional(),
 		created_at: S,
 		updated_at: S,
 	})
@@ -245,6 +303,7 @@ export const EstimateItemCategorySchema = z
  * `kind` must name an existing item category.
  */
 const LineItemInput = z.object({
+	id: z.number().int().optional(),
 	kind: z.string(),
 	description: z.string().optional(),
 	quantity: z.number().optional(),
@@ -287,6 +346,9 @@ export const HarvestEndpointInputSchemas = {
 		phone_office: z.string().optional(),
 		phone_mobile: z.string().optional(),
 		fax: z.string().optional(),
+		invoice_recipient_status: z
+			.enum(['none', 'recipient', 'cc', 'bcc'])
+			.optional(),
 	}),
 	contactsUpdate: z.object({
 		contact_id: z.number().int(),
@@ -298,6 +360,9 @@ export const HarvestEndpointInputSchemas = {
 		phone_office: z.string().optional(),
 		phone_mobile: z.string().optional(),
 		fax: z.string().optional(),
+		invoice_recipient_status: z
+			.enum(['none', 'recipient', 'cc', 'bcc'])
+			.optional(),
 	}),
 	contactsDelete: z.object({ contact_id: z.number().int() }),
 
@@ -401,8 +466,12 @@ export const HarvestEndpointInputSchemas = {
 		client_id: z.number().int().optional(),
 		project_id: z.number().int().optional(),
 		task_id: z.number().int().optional(),
+		external_reference_id: z.string().optional(),
 		is_billed: z.boolean().optional(),
 		is_running: z.boolean().optional(),
+		approval_status: z
+			.enum(['unsubmitted', 'submitted', 'approved'])
+			.optional(),
 		from: z.string().optional(),
 		to: z.string().optional(),
 		...ListQuery,
@@ -422,6 +491,7 @@ export const HarvestEndpointInputSchemas = {
 		started_time: z.string().optional(),
 		ended_time: z.string().optional(),
 		notes: z.string().optional(),
+		external_reference: ExternalReferenceInput.optional(),
 	}),
 	timeEntriesUpdate: z.object({
 		time_entry_id: z.number().int(),
@@ -432,6 +502,7 @@ export const HarvestEndpointInputSchemas = {
 		started_time: z.string().optional(),
 		ended_time: z.string().optional(),
 		notes: z.string().optional(),
+		external_reference: ExternalReferenceInput.optional(),
 	}),
 	timeEntriesDelete: z.object({ time_entry_id: z.number().int() }),
 
@@ -453,6 +524,7 @@ export const HarvestEndpointInputSchemas = {
 		default_hourly_rate: z.number().optional(),
 		cost_rate: z.number().optional(),
 		has_access_to_all_future_projects: z.boolean().optional(),
+		saml_exempt: z.boolean().optional(),
 		roles: z.array(z.string()).optional(),
 		access_roles: z.array(z.string()).optional(),
 	}),
@@ -468,6 +540,7 @@ export const HarvestEndpointInputSchemas = {
 		default_hourly_rate: z.number().optional(),
 		cost_rate: z.number().optional(),
 		has_access_to_all_future_projects: z.boolean().optional(),
+		saml_exempt: z.boolean().optional(),
 		roles: z.array(z.string()).optional(),
 		access_roles: z.array(z.string()).optional(),
 	}),
@@ -521,6 +594,8 @@ export const HarvestEndpointInputSchemas = {
 	invoicesGet: z.object({ invoice_id: z.number().int() }),
 	invoicesCreate: z.object({
 		client_id: z.number().int(),
+		retainer_id: z.number().int().optional(),
+		estimate_id: z.number().int().optional(),
 		subject: z.string().optional(),
 		notes: z.string().optional(),
 		number: z.string().optional(),
@@ -529,15 +604,19 @@ export const HarvestEndpointInputSchemas = {
 		issue_date: z.string().optional(),
 		due_date: z.string().optional(),
 		payment_term: z.string().optional(),
+		payment_options: z
+			.array(z.enum(['ach', 'credit_card', 'paypal']))
+			.optional(),
 		tax: z.number().optional(),
 		tax2: z.number().optional(),
 		discount: z.number().optional(),
-		estimate_id: z.number().int().optional(),
 		line_items: z.array(LineItemInput).optional(),
 	}),
 	invoicesUpdate: z.object({
 		invoice_id: z.number().int(),
 		client_id: z.number().int().optional(),
+		retainer_id: z.number().int().optional(),
+		estimate_id: z.number().int().optional(),
 		subject: z.string().optional(),
 		notes: z.string().optional(),
 		number: z.string().optional(),
@@ -546,6 +625,9 @@ export const HarvestEndpointInputSchemas = {
 		issue_date: z.string().optional(),
 		due_date: z.string().optional(),
 		payment_term: z.string().optional(),
+		payment_options: z
+			.array(z.enum(['ach', 'credit_card', 'paypal']))
+			.optional(),
 		tax: z.number().optional(),
 		tax2: z.number().optional(),
 		discount: z.number().optional(),

@@ -664,6 +664,29 @@ describe('request bodies', () => {
 
 		expect(lastBody).toBeUndefined();
 	});
+
+	it('defaults send_thank_you to false so Harvest does not email the client', async () => {
+		const { ctx } = makeCtx();
+		await Invoices.createPayment(ctx, { invoice_id: 9, amount: 5 });
+
+		expect(JSON.parse(lastBody ?? '{}')).toEqual({
+			amount: 5,
+			send_thank_you: false,
+		});
+	});
+
+	it('forwards invoice_recipient_status on contact create', async () => {
+		const { ctx } = makeCtx();
+		await Contacts.create(ctx, {
+			client_id: 1,
+			first_name: 'A',
+			invoice_recipient_status: 'cc',
+		});
+
+		expect(JSON.parse(lastBody ?? '{}')).toMatchObject({
+			invoice_recipient_status: 'cc',
+		});
+	});
 });
 
 describe('delete results', () => {

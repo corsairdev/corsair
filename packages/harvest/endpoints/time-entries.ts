@@ -24,8 +24,10 @@ export const list: HarvestEndpoints['timeEntriesList'] = async (ctx, input) => {
 				client_id: input.client_id,
 				project_id: input.project_id,
 				task_id: input.task_id,
+				external_reference_id: input.external_reference_id,
 				is_billed: input.is_billed,
 				is_running: input.is_running,
+				approval_status: input.approval_status,
 				from: input.from,
 				to: input.to,
 				updated_since: input.updated_since,
@@ -95,6 +97,7 @@ export const create: HarvestEndpoints['timeEntriesCreate'] = async (
 				started_time: input.started_time,
 				ended_time: input.ended_time,
 				notes: input.notes,
+				external_reference: input.external_reference,
 			}),
 		},
 	);
@@ -130,6 +133,7 @@ export const update: HarvestEndpoints['timeEntriesUpdate'] = async (
 				started_time: input.started_time,
 				ended_time: input.ended_time,
 				notes: input.notes,
+				external_reference: input.external_reference,
 			}),
 		},
 	);

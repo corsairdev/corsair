@@ -9,6 +9,7 @@
 import {
 	Clients,
 	Company,
+	Contacts,
 	Expenses,
 	Invoices,
 	Projects,
@@ -134,5 +135,35 @@ describeLive('Harvest live API', () => {
 
 		expect(result.per_page).toBe(1);
 		expect((result.tasks ?? []).length).toBeLessThanOrEqual(1);
+	});
+
+	it('returns contacts matching the declared schema', async () => {
+		const result = await Contacts.list(makeCtx(), { per_page: 10 });
+
+		expect(() => Outputs.contactsList.parse(result)).not.toThrow();
+	});
+
+	it('creates, updates and deletes a client through the plugin', async () => {
+		const ctx = makeCtx();
+		const created = await Clients.create(ctx, {
+			name: 'Corsair plugin verify',
+			currency: 'USD',
+		});
+
+		expect(() => Outputs.clientsCreate.parse(created)).not.toThrow();
+		expect(created.id).toEqual(expect.any(Number));
+
+		try {
+			const updated = await Clients.update(ctx, {
+				client_id: created.id,
+				address: '1 Verify St',
+			});
+			expect(updated.address).toBe('1 Verify St');
+
+			const fetched = await Clients.get(ctx, { client_id: created.id });
+			expect(fetched.id).toBe(created.id);
+		} finally {
+			await Clients.remove(ctx, { client_id: created.id });
+		}
 	});
 });

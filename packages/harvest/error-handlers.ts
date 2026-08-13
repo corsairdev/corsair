@@ -149,6 +149,26 @@ export const errorHandlers = {
 			};
 		},
 	},
+	/**
+	 * Harvest documents 500 as a server error to retry after, not a client
+	 * fault. DEFAULT would drop it with zero retries.
+	 */
+	SERVER_ERROR: {
+		match: (error) => {
+			if (error instanceof ApiError && error.status !== undefined) {
+				return error.status >= 500;
+			}
+			const errorMessage = error.message.toLowerCase();
+			return (
+				errorMessage.includes('500') ||
+				errorMessage.includes('internal server error')
+			);
+		},
+		handler: async (_error, context) => ({
+			maxRetries: isNonIdempotent(context.operation) ? 0 : 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
+	},
 	NETWORK_ERROR: {
 		match: (error, context) => {
 			const errorMessage = error.message.toLowerCase();
