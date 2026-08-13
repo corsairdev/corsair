@@ -230,11 +230,11 @@ export function amcards(
 				throw new AuthMissingError('amcards', 'api_key');
 			}
 			if (options.key) return options.key;
-			// Gifts/templates are public; keyBuilder isn't given the endpoint
-			// path, so a missing key is '' here. Protected routes throw
-			// AuthMissingError in makeAmcardsRequest when auth is required.
 			const res = await ctx.keys?.get_api_key();
-			return res ?? '';
+			if (!res) {
+				throw new AuthMissingError('amcards', 'api_key');
+			}
+			return res;
 		},
 	} satisfies InternalAmcardsPlugin;
 }

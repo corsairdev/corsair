@@ -170,11 +170,11 @@ describe('amcards keyBuilder', () => {
 		).resolves.toBe('tok');
 	});
 
-	it('returns empty string when no key so public gifts/templates can run', async () => {
+	it('rejects a missing key with AuthMissingError so the binder can attach a connect link', async () => {
 		const plugin = amcards();
 		await expect(
 			plugin.keyBuilder!({ authType: 'api_key' } as never, 'endpoint'),
-		).resolves.toBe('');
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('rejects webhook source with AuthMissingError', async () => {
