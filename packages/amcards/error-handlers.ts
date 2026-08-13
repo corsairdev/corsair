@@ -17,8 +17,6 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('429') || msg.includes('rate limit');
 		},
-		// Transport already retries 429s (AMCARDS_RATE_LIMIT_CONFIG). Don't
-		// start a second budget here or one call fans out to ~16 requests.
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
@@ -65,8 +63,6 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('500') || msg.includes('internal server error');
 		},
-		// Binder retries discard a successful result and rethrow the original
-		// 5xx, so a recovered call still looks like a failure.
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {

@@ -26,6 +26,9 @@ const AMCARDS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	headerNames: {
 		retryAfter: 'Retry-After',
 	},
+	// 5xx retries belong here: binder retries drop a successful result
+	// and rethrow the original error.
+	isRateLimitError: (status) => status >= 500,
 };
 
 export class AmcardsAPIError extends Error {
