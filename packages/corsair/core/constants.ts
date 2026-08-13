@@ -29,8 +29,8 @@ export const BaseProviders = [
 	'alphavantage',
 	'alttextai',
 	'amara',
-	'ambientweather',
 	'ambee',
+	'ambientweather',
 	'amcards',
 	'amplitude',
 	'apibible',
@@ -42,10 +42,10 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'box',
-	'canvas',
 	'cal',
 	'calendly',
 	'canva',
+	'canvas',
 	'cloudflare',
 	'cloudinary',
 	'confluence',
@@ -123,6 +123,7 @@ export const BaseProviders = [
 	'twilio',
 	'twitter',
 	'twitterapiio',
+	'twochat',
 	'typeform',
 	'vapi',
 	'vercel',
@@ -154,8 +155,8 @@ export const ProviderDisplayNames = {
 	alphavantage: 'Alpha Vantage',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
-	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	apibible: 'API.Bible',
@@ -167,10 +168,10 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	box: 'Box',
-	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
@@ -248,6 +249,7 @@ export const ProviderDisplayNames = {
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
+	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
@@ -301,8 +303,8 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
-	| 'canvas'
 	| 'canva'
+	| 'canvas'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
@@ -380,6 +382,7 @@ export type AllProviders =
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
+	| 'twochat'
 	| 'typeform'
 	| 'vapi'
 	| 'vercel'
