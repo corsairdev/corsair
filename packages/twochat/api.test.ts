@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import * as client from './client';
 import { TwoChatAPIError } from './client';
 import { createContact } from './endpoints/create-contact';
@@ -370,5 +371,31 @@ describe('TwoChat plugin', () => {
 		const err = new TwoChatAPIError('forbidden', '403', { cause });
 		expect(err.status).toBe(403);
 		expect(errorHandlers.PERMISSION_ERROR.match(err, mockContext)).toBe(true);
+	});
+});
+
+const LIVE_API_KEY = process.env.TWOCHAT_API_KEY;
+const describeLive = LIVE_API_KEY ? describe : describe.skip;
+
+describeLive('TwoChat live API integration', () => {
+	it('fetches real account API usage info', async () => {
+		const { makeTwoChatRequest } = jest.requireActual(
+			'./client',
+		) as typeof import('./client');
+		const response = await makeTwoChatRequest<any>('open/info', LIVE_API_KEY!);
+		expect(response.success).toBe(true);
+		expect(response.account).toBeDefined();
+	});
+
+	it('lists webhooks from live 2Chat account', async () => {
+		const { makeTwoChatRequest } = jest.requireActual(
+			'./client',
+		) as typeof import('./client');
+		const response = await makeTwoChatRequest<any>(
+			'open/webhooks',
+			LIVE_API_KEY!,
+		);
+		expect(response.success).toBe(true);
+		expect(Array.isArray(response.webhooks)).toBe(true);
 	});
 });

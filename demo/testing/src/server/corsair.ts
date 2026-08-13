@@ -12,6 +12,7 @@ import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
 import { twilio } from '@corsair-dev/twilio';
+import { twochat } from '@corsair-dev/twochat';
 import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
 
@@ -62,6 +63,9 @@ export const corsair = createCorsair({
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
+		}),
+		twochat({
+			key: process.env.TWOCHAT_API_KEY,
 		}),
 		instagram(),
 	],
