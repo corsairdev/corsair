@@ -15,12 +15,30 @@ function getOcrExitCode(error: Error): number | undefined {
 	return (error as Partial<OcrSpaceAPIError>).ocrExitCode;
 }
 
-// OCR.space reports quota and key problems inside a HTTP 200 body, so those
-// errors reach the handlers with no status attached and have to be recognised
-// from the message text.
+function getBody(error: Error): unknown {
+	return (error as Partial<OcrSpaceAPIError>).body;
+}
+
+function bodyText(body: unknown): string {
+	if (body == null) {
+		return '';
+	}
+	if (typeof body === 'string') {
+		return body;
+	}
+	try {
+		return JSON.stringify(body);
+	} catch {
+		return String(body);
+	}
+}
+
+// OCR.space reports quota and key problems inside a HTTP 200 body, and
+// throttle details on 403 responses live on `body` while `message` is just
+// "Forbidden". Search both.
 function messageIncludes(error: Error, needles: string[]): boolean {
-	const message = error.message.toLowerCase();
-	return needles.some((needle) => message.includes(needle));
+	const haystack = `${error.message} ${bodyText(getBody(error))}`.toLowerCase();
+	return needles.some((needle) => haystack.includes(needle));
 }
 
 export const errorHandlers = {
@@ -33,20 +51,15 @@ export const errorHandlers = {
 	},
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 429) return true;
-			// The free plan caps usage per day and per month, and reports both in
-			// the response body rather than as a 429. These phrases are specific
-			// to quota exhaustion: broader words such as "maximum" also appear in
-			// file-size rejections, which must not be retried.
+			const status = getStatus(error);
+			// Provider-confirmed: short-window throttling is HTTP 403, not 429.
+			// Invalid keys are a HTTP 200 body error (E555 / "API key not valid"),
+			// so 403 is not an auth failure on this API.
+			if (status === 429 || status === 403) return true;
 			return messageIncludes(error, [
-				'429',
 				'rate limit',
 				'too many requests',
 				'number of times within',
-				'per day',
-				'daily limit',
-				'monthly limit',
-				'quota',
 			]);
 		},
 		handler: async (error: Error) => ({
@@ -57,8 +70,7 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status === 401 || status === 403) return true;
+			if (getStatus(error) === 401) return true;
 			return messageIncludes(error, [
 				'unauthorized',
 				'invalid api key',
@@ -89,6 +101,7 @@ export const errorHandlers = {
 				'file type',
 				'unable to recognize',
 				'no file',
+				'conversion limit',
 			]);
 		},
 		handler: async (error: Error, context) => {
