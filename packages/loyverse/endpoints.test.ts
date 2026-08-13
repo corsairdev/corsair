@@ -1022,6 +1022,8 @@ describe('eviction', () => {
 			() => undefined,
 		);
 
+		// Recorded as failed, not completed: the remote delete happened but the
+		// mirror still holds the customer, so the operation did not complete.
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'loyverse.customers.delete',
@@ -1029,8 +1031,9 @@ describe('eviction', () => {
 				customer_id: CUSTOMER,
 				fields: ['customer_id'],
 				already_absent: false,
+				mirror_evicted: false,
 			},
-			'completed',
+			'failed',
 		);
 		error.mockRestore();
 	});
@@ -1064,7 +1067,12 @@ describe('eviction', () => {
 		expect(mockLogEvent).toHaveBeenCalledWith(
 			ctx,
 			'loyverse.customers.delete',
-			{ customer_id: CUSTOMER, fields: ['customer_id'], already_absent: true },
+			{
+				customer_id: CUSTOMER,
+				fields: ['customer_id'],
+				already_absent: true,
+				mirror_evicted: true,
+			},
 			'completed',
 		);
 	});
@@ -1146,6 +1154,57 @@ describe('eviction', () => {
 
 			await expect(run(ctx)).rejects.toMatchObject({ status: 404 });
 		}
+	});
+
+	/**
+	 * The event status has to describe what actually happened. Logging 'completed'
+	 * before an eviction that can raise would record a thrown operation as complete;
+	 * skipping the log on failure would lose the record that a customer was deleted
+	 * at Loyverse, which is irreversible. So it is emitted once, afterwards, with the
+	 * status reflecting both halves.
+	 */
+	it('reports the event status according to the eviction outcome', async () => {
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+
+		mockFetch(deleted(CUSTOMER));
+		const ok = makeCtx();
+		await Customers.remove(ok.ctx, { customer_id: CUSTOMER });
+		expect(mockLogEvent.mock.calls[0]?.[3]).toBe('completed');
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			mirror_evicted: true,
+		});
+
+		mockLogEvent.mockClear();
+		mockFetch(deleted(CUSTOMER));
+		const bad = makeCtx();
+		bad.db.customers.deleteByEntityId.mockRejectedValueOnce(new Error('down'));
+		await Customers.remove(bad.ctx, { customer_id: CUSTOMER }).catch(
+			() => undefined,
+		);
+		expect(mockLogEvent.mock.calls[0]?.[3]).toBe('failed');
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			mirror_evicted: false,
+		});
+
+		error.mockRestore();
+	});
+
+	it('emits exactly one event even when the eviction fails', async () => {
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		mockFetch(deleted(CUSTOMER));
+		const { ctx, db } = makeCtx();
+		db.customers.deleteByEntityId.mockRejectedValueOnce(new Error('down'));
+
+		await Customers.remove(ctx, { customer_id: CUSTOMER }).catch(
+			() => undefined,
+		);
+
+		expect(mockLogEvent).toHaveBeenCalledTimes(1);
+		error.mockRestore();
 	});
 
 	it('succeeds normally when the customer eviction works', async () => {

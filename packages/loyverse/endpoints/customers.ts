@@ -129,9 +129,14 @@ export const upsert: LoyverseEndpoints['customersUpsert'] = async (
  * gone so the delete does not need repeating - it is the mirror that needs
  * attention.
  *
- * The event is logged before the eviction so the deletion is recorded even when
- * the mirror write fails; the raise happens after, and cannot swallow the audit
- * trail with it.
+ * The audit event is emitted once, after the eviction, carrying the outcome of
+ * both halves: `completed` when the mirror was cleared, `failed` when the remote
+ * delete succeeded but the local copy could not be removed. Logging `completed`
+ * before the eviction would record an operation that then threw as having
+ * completed; skipping the log when the eviction fails would lose the record that a
+ * customer was deleted at Loyverse at all, which is irreversible and the thing an
+ * audit trail most needs to keep. Emitting it afterwards with an accurate status
+ * does neither.
  *
  * A 404 from the delete is treated as success rather than surfaced, which matters
  * more than it looks. Loyverse hard-deletes customers, so a 404 is positive
@@ -141,12 +146,13 @@ export const upsert: LoyverseEndpoints['customersUpsert'] = async (
  * report it.
  *
  * That is not hypothetical. A 500 on the delete is ambiguous: Loyverse may have
- * committed it before failing. The retry replays the whole endpoint, the second
- * DELETE returns 404 (verified live - a repeated customer delete is not
- * idempotent), and without this branch the operation would end in a not-found
- * error having deleted the customer remotely and cleaned nothing locally. The same
- * branch covers an ordinary double delete and a customer removed in the back
- * office.
+ * committed it before failing. The retry replays the whole endpoint, and the second
+ * DELETE answers 404 rather than repeating the 200 - verified live. The deletion is
+ * still idempotent in effect, since the customer ends up absent either way; it is
+ * only the status code that differs, and that difference is enough to break the
+ * call. Without this branch the operation would end in a not-found error having
+ * deleted the customer remotely and cleaned nothing locally. The same branch covers
+ * an ordinary double delete and a customer removed in the back office.
  *
  * The distinction is deliberate and limited to customers: elsewhere a 404 on a
  * delete is surfaced, because those mirrors hold non-personal reference data where
@@ -176,18 +182,37 @@ export const remove: LoyverseEndpoints['customersDelete'] = async (
 		result = { deleted_object_ids: [] };
 	}
 
+	// Runs on the already-absent path too - that is the whole point of catching the
+	// 404. Allowed to raise, but not before the event is recorded.
+	//
+	// The failure is held in a container rather than as a bare `unknown`, so the
+	// rethrow below tests for presence instead of truthiness. A thrown falsy value
+	// would otherwise be dropped, and on this path that would mean reporting a
+	// customer as deleted while their data stayed in the mirror - the exact outcome
+	// this function exists to prevent.
+	let evictionFailure: { error: unknown } | undefined;
+	try {
+		await evictEntity(ctx.db.customers, input.customer_id, LABEL, {
+			required: true,
+		});
+	} catch (error) {
+		evictionFailure = { error };
+	}
+
+	const evicted = evictionFailure === undefined;
+
 	await logEventFromContext(
 		ctx,
 		'loyverse.customers.delete',
-		{ ...auditPayload(input, ['customer_id']), already_absent: alreadyAbsent },
-		'completed',
+		{
+			...auditPayload(input, ['customer_id']),
+			already_absent: alreadyAbsent,
+			mirror_evicted: evicted,
+		},
+		evicted ? 'completed' : 'failed',
 	);
 
-	// Last, and allowed to raise: see the note above. This runs on the
-	// already-absent path too - that is the whole point of catching the 404.
-	await evictEntity(ctx.db.customers, input.customer_id, LABEL, {
-		required: true,
-	});
+	if (evictionFailure) throw evictionFailure.error;
 
 	return result;
 };

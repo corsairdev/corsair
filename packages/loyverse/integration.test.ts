@@ -45,6 +45,29 @@ const accessToken = process.env.LOYVERSE_ACCESS_TOKEN;
 
 const describeLive = accessToken ? describe : describe.skip;
 
+/**
+ * Deletes a probe record, tolerating one that is already gone.
+ *
+ * Used from `finally` so a failed assertion between a create and its delete cannot
+ * leave a record behind on a real account. A 404 means an earlier delete in the test
+ * already succeeded, which is the outcome cleanup wants; anything else is reported
+ * rather than swallowed, because a probe left behind should be visible.
+ */
+async function cleanUp(collection: string, id: string | undefined) {
+	if (!id) return;
+	try {
+		await makeLoyverseRequest(`${collection}/${id}`, accessToken as string, {
+			method: 'DELETE',
+		});
+	} catch (error) {
+		if ((error as { status?: number }).status === 404) return;
+		console.warn(
+			`[loyverse integration] could not clean up ${collection}/${id}:`,
+			error,
+		);
+	}
+}
+
 /** Collections that share the cursor envelope, with the entity each row parses as. */
 const COLLECTIONS = [
 	['items', 'items', LoyverseItemEntity],
@@ -370,87 +393,103 @@ describeLive('Loyverse API (live, read-only)', () => {
 		];
 
 		for (const [collection, key, body, expectedReadBack] of cases) {
-			const created = await makeLoyverseRequest<{ id: string }>(
-				collection,
-				accessToken as string,
-				{ method: 'POST', body },
-			);
-			expect(created.id).toBeTruthy();
+			let createdId: string | undefined;
+			try {
+				const created = await makeLoyverseRequest<{ id: string }>(
+					collection,
+					accessToken as string,
+					{ method: 'POST', body },
+				);
+				createdId = created.id;
+				expect(created.id).toBeTruthy();
 
-			const deleted = await makeLoyverseRequest<{
-				deleted_object_ids?: string[];
-			}>(`${collection}/${created.id}`, accessToken as string, {
-				method: 'DELETE',
-			});
-			expect(deleted.deleted_object_ids).toContain(created.id);
+				const deleted = await makeLoyverseRequest<{
+					deleted_object_ids?: string[];
+				}>(`${collection}/${created.id}`, accessToken as string, {
+					method: 'DELETE',
+				});
+				expect(deleted.deleted_object_ids).toContain(created.id);
 
-			// The read-back status differs by resource, which is the point.
-			if (expectedReadBack === 404) {
-				await expect(
-					makeLoyverseRequest(
+				// The read-back status differs by resource, which is the point.
+				if (expectedReadBack === 404) {
+					await expect(
+						makeLoyverseRequest(
+							`${collection}/${created.id}`,
+							accessToken as string,
+						),
+					).rejects.toMatchObject({ status: 404 });
+				} else {
+					const readBack = await makeLoyverseRequest<{ deleted_at?: string }>(
 						`${collection}/${created.id}`,
 						accessToken as string,
-					),
-				).rejects.toMatchObject({ status: 404 });
-			} else {
-				const readBack = await makeLoyverseRequest<{ deleted_at?: string }>(
-					`${collection}/${created.id}`,
-					accessToken as string,
-				);
-				expect(readBack.deleted_at).toBeTruthy();
+					);
+					expect(readBack.deleted_at).toBeTruthy();
+				}
+
+				// Uniform across resources: gone from the default list, present when
+				// deleted rows are asked for. This is what the mirror reflects, and why
+				// an explicit delete evicts.
+				const plain = await makeLoyverseRequest<
+					Record<string, { id: string }[]>
+				>(collection, accessToken as string);
+				expect((plain[key] ?? []).map((r) => r.id)).not.toContain(created.id);
+
+				const withDeleted = await makeLoyverseRequest<
+					Record<string, { id: string }[]>
+				>(collection, accessToken as string, {
+					query: { show_deleted: true },
+				});
+				expect((withDeleted[key] ?? []).map((r) => r.id)).toContain(created.id);
+			} finally {
+				// A failed assertion above must not leave a probe on the account.
+				await cleanUp(collection, createdId);
 			}
-
-			// Uniform across resources: gone from the default list, present when
-			// deleted rows are asked for. This is what the mirror reflects, and why
-			// an explicit delete evicts.
-			const plain = await makeLoyverseRequest<Record<string, { id: string }[]>>(
-				collection,
-				accessToken as string,
-			);
-			expect((plain[key] ?? []).map((r) => r.id)).not.toContain(created.id);
-
-			const withDeleted = await makeLoyverseRequest<
-				Record<string, { id: string }[]>
-			>(collection, accessToken as string, { query: { show_deleted: true } });
-			expect((withDeleted[key] ?? []).map((r) => r.id)).toContain(created.id);
 		}
 	});
 
 	/**
-	 * Confirms the premise the customer delete relies on: a repeated delete is not
-	 * idempotent, it answers 404.
+	 * Confirms the premise the customer delete relies on: deleting an already-absent
+	 * customer answers 404 rather than repeating the 200.
 	 *
-	 * That is why the endpoint treats a 404 as confirmation of absence rather than
-	 * surfacing it - otherwise a 5xx-then-retry would end in a not-found error having
-	 * deleted the customer remotely and left their data in the mirror. If Loyverse
-	 * ever makes the repeat idempotent, this fails and the endpoint comment needs
-	 * revisiting.
+	 * The deletion is still idempotent in effect - the customer ends up absent either
+	 * way - so this is about the response contract, not about the operation being
+	 * unsafe to repeat. Only the status code differs, and that difference is enough to
+	 * break a retried call, which is why the endpoint treats a 404 as confirmation of
+	 * absence and goes on to clear the mirror. If Loyverse ever answers 200 here
+	 * instead, this fails and the endpoint comment needs revisiting.
 	 *
-	 * Writes only records it owns, and removes them.
+	 * Writes only a record it owns, and removes it on every outcome.
 	 */
-	it('answers 404 on a repeated customer delete', async () => {
-		const created = await makeLoyverseRequest<{ id: string }>(
-			'customers',
-			accessToken as string,
-			{
-				method: 'POST',
-				body: { name: 'Probe repeat delete', email: 'probe@example.com' },
-			},
-		);
-		expect(created.id).toBeTruthy();
+	it('answers 404 when deleting an already-absent customer', async () => {
+		let createdId: string | undefined;
+		try {
+			const created = await makeLoyverseRequest<{ id: string }>(
+				'customers',
+				accessToken as string,
+				{
+					method: 'POST',
+					body: { name: 'Probe repeat delete', email: 'probe@example.com' },
+				},
+			);
+			createdId = created.id;
+			expect(created.id).toBeTruthy();
 
-		const first = await makeLoyverseRequest<{ deleted_object_ids?: string[] }>(
-			`customers/${created.id}`,
-			accessToken as string,
-			{ method: 'DELETE' },
-		);
-		expect(first.deleted_object_ids).toContain(created.id);
-
-		await expect(
-			makeLoyverseRequest(`customers/${created.id}`, accessToken as string, {
+			const first = await makeLoyverseRequest<{
+				deleted_object_ids?: string[];
+			}>(`customers/${created.id}`, accessToken as string, {
 				method: 'DELETE',
-			}),
-		).rejects.toMatchObject({ status: 404 });
+			});
+			expect(first.deleted_object_ids).toContain(created.id);
+
+			await expect(
+				makeLoyverseRequest(`customers/${created.id}`, accessToken as string, {
+					method: 'DELETE',
+				}),
+			).rejects.toMatchObject({ status: 404 });
+		} finally {
+			// Already deleted on the happy path; this covers an early failure.
+			await cleanUp('customers', createdId);
+		}
 	});
 
 	it('reports no rate-limit headers on a successful response', async () => {
