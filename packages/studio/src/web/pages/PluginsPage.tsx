@@ -244,6 +244,7 @@ function PluginsToolbar({
 					<Input
 						value={newTenant}
 						onChange={(e) => setNewTenant(e.target.value)}
+						aria-label="New tenant ID"
 						placeholder="tenant-id"
 					/>
 					<Button
