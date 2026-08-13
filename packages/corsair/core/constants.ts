@@ -16,17 +16,18 @@ export const BaseProviders = [
 	'abstract',
 	'activetrail',
 	'addresszen',
+	'aeroleads',
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agenty',
 	'agentql',
+	'agenty',
 	'ahrefs',
 	'airtable',
 	'algolia',
 	'alttextai',
-	'ambientweather',
 	'ambee',
+	'ambientweather',
 	'amplitude',
 	'apilabz',
 	'asana',
@@ -127,17 +128,18 @@ export const ProviderDisplayNames = {
 	abstract: 'Abstract',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	aeroleads: 'Aeroleads',
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agenty: 'Agenty',
 	agentql: 'AgentQL',
+	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	airtable: 'Airtable',
 	algolia: 'Algolia',
 	alttextai: 'AltText.ai',
-	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	ambientweather: 'Ambient Weather',
 	amplitude: 'Amplitude',
 	apilabz: 'API Labz',
 	asana: 'Asana',
@@ -245,17 +247,18 @@ export type AllProviders =
 	| 'abstract'
 	| 'activetrail'
 	| 'addresszen'
+	| 'aeroleads'
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agenty'
 	| 'agentql'
+	| 'agenty'
 	| 'ahrefs'
 	| 'airtable'
 	| 'algolia'
 	| 'alttextai'
-	| 'ambientweather'
 	| 'ambee'
+	| 'ambientweather'
 	| 'amplitude'
 	| 'apilabz'
 	| 'asana'
