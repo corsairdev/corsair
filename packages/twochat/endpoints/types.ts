@@ -13,6 +13,22 @@ export const ContactDetailSchema = z.object({
 	value: z
 		.string()
 		.describe('The contact detail value (email, phone number, or address)'),
+	id: z
+		.number()
+		.optional()
+		.describe('Unique numeric ID for the contact detail'),
+	created_at: z
+		.string()
+		.optional()
+		.describe('ISO timestamp when the contact detail was created'),
+	created_at_timestamp: z
+		.number()
+		.optional()
+		.describe('Unix timestamp when the contact detail was created'),
+	updated_at: z
+		.string()
+		.optional()
+		.describe('ISO timestamp when the contact detail was updated'),
 });
 
 export type ContactDetail = z.infer<typeof ContactDetailSchema>;
@@ -21,11 +37,23 @@ export const ContactSchema = z.object({
 	uuid: z.string().describe('Unique identifier for the contact'),
 	first_name: z.string().describe('Contact first name'),
 	last_name: z.string().optional().describe('Contact last name'),
+	name: z.string().optional().describe('Contact full display name'),
+	channel_uuid: z
+		.string()
+		.nullable()
+		.optional()
+		.describe('UUID of the WhatsApp channel associated with this contact'),
 	profile_pic_url: z
 		.string()
+		.nullable()
 		.optional()
 		.describe('URL to the contact profile picture'),
+	details: z.array(ContactDetailSchema).optional(),
 	contact_details: z.array(ContactDetailSchema).optional(),
+	last_updated: z
+		.string()
+		.optional()
+		.describe('ISO timestamp when contact was last updated'),
 	created_at: z
 		.string()
 		.optional()
@@ -93,6 +121,10 @@ export const ApiLimitsSchema = z.object({
 });
 
 export const ApiUsageSchema = z.object({
+	api_requests_available: z.number().optional(),
+	api_requests_plan_default: z.number().optional(),
+	number_check_requests_available: z.number().optional(),
+	number_check_requests_plan_default: z.number().optional(),
 	api_request_count: z.number().optional(),
 	max_api_request_count: z.number().optional(),
 	number_check_count: z.number().optional(),
@@ -149,10 +181,10 @@ export const ListContactsInputSchema = z.object({
 export type ListContactsInput = z.infer<typeof ListContactsInputSchema>;
 
 export const ListContactsResponseSchema = z.object({
-	success: z.boolean().optional(),
-	results: z.array(ContactSchema),
-	page_number: z.number().optional(),
-	results_per_page: z.number().optional(),
+	success: z.boolean(),
+	page: z.number(),
+	count: z.number(),
+	contacts: z.array(ContactSchema),
 });
 
 export type ListContactsResponse = z.infer<typeof ListContactsResponseSchema>;
@@ -175,9 +207,9 @@ export const WebhookSubscriptionSchema = z.object({
 		.describe('UUID of the WhatsApp channel this webhook is tied to'),
 	hook_url: z.string().describe('Callback URL called when the event fires'),
 	hook_params: z
-		.record(z.string(), z.unknown())
+		.record(z.string(), z.string())
 		.optional()
-		.describe('Custom webhook parameters'),
+		.describe('Custom webhook parameters (key-value strings)'),
 	created_at: z
 		.string()
 		.optional()

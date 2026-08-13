@@ -60,14 +60,7 @@ export async function makeTwoChatRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: TWOCHAT_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new TwoChatAPIError(error.message);
-		}
-		throw new TwoChatAPIError('Unknown error');
-	}
+	return await request<T>(config, requestOptions, {
+		rateLimitConfig: TWOCHAT_RATE_LIMIT_CONFIG,
+	});
 }

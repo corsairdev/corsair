@@ -22,7 +22,7 @@ export const createContact = async (
 			last_name: input.last_name,
 			profile_pic_url: input.profile_pic_url,
 			channel_uuid: input.channel_uuid,
-			contact_details: input.contact_details,
+			contact_detail: input.contact_details,
 		},
 	});
 

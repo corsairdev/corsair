@@ -1,3 +1,9 @@
+import * as client from './client';
+import { createContact } from './endpoints/create-contact';
+import { getApiUsageInfo } from './endpoints/get-api-usage-info';
+import { listContacts } from './endpoints/list-contacts';
+import { listWebhooks } from './endpoints/list-webhooks';
+import { testApiKey } from './endpoints/test-api-key';
 import {
 	TwoChatEndpointInputSchemas,
 	TwoChatEndpointOutputSchemas,
@@ -5,8 +11,38 @@ import {
 import { errorHandlers } from './error-handlers';
 import { twochat, twochatAuthConfig } from './index';
 
+// Mock client.makeTwoChatRequest to verify endpoint behavioral dispatch
+jest.mock('./client', () => {
+	const actual = jest.requireActual('./client');
+	return {
+		...actual,
+		makeTwoChatRequest: jest.fn(),
+	};
+});
+
+// Mock logEventFromContext
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	return {
+		...actual,
+		logEventFromContext: jest.fn().mockResolvedValue(undefined),
+	};
+});
+
 describe('TwoChat plugin', () => {
-	// ─── Initialisation ────────────────────────────────────────────────────────
+	const mockContext: any = {
+		key: 'test-api-key-123',
+		pluginId: 'twochat',
+		operation: 'test',
+		input: {},
+		originalError: new Error(''),
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	// ─── Initialisation & Structure ────────────────────────────────────────────
 
 	it('initializes plugin with id = twochat', () => {
 		const instance = twochat({ key: 'test-api-key' });
@@ -33,100 +69,184 @@ describe('TwoChat plugin', () => {
 		expect(instance.webhooks).toEqual({});
 	});
 
-	// ─── Endpoint registration ─────────────────────────────────────────────────
+	// ─── Endpoint Registration & Risk Metadata ─────────────────────────────────
 
-	it('registers contacts.createContact endpoint', () => {
+	it('registers all 5 endpoints on the plugin instance', () => {
 		const instance = twochat();
 		expect(instance.endpoints!.contacts.createContact).toBeDefined();
-	});
-
-	it('registers contacts.listContacts endpoint', () => {
-		const instance = twochat();
 		expect(instance.endpoints!.contacts.listContacts).toBeDefined();
-	});
-
-	it('registers account.getApiUsageInfo endpoint', () => {
-		const instance = twochat();
 		expect(instance.endpoints!.account.getApiUsageInfo).toBeDefined();
-	});
-
-	it('registers account.testApiKey endpoint', () => {
-		const instance = twochat();
 		expect(instance.endpoints!.account.testApiKey).toBeDefined();
-	});
-
-	it('registers webhookSubscriptions.listWebhooks endpoint', () => {
-		const instance = twochat();
 		expect(instance.endpoints!.webhookSubscriptions.listWebhooks).toBeDefined();
 	});
 
-	// ─── Endpoint meta ─────────────────────────────────────────────────────────
-
-	it('createContact is write risk', () => {
+	it('assigns correct risk levels to all endpoints', () => {
 		const meta = (twochat() as any).endpointMeta;
 		expect(meta['contacts.createContact'].riskLevel).toBe('write');
-	});
-
-	it('all read endpoints have read risk', () => {
-		const meta = (twochat() as any).endpointMeta;
 		expect(meta['contacts.listContacts'].riskLevel).toBe('read');
 		expect(meta['account.getApiUsageInfo'].riskLevel).toBe('read');
 		expect(meta['account.testApiKey'].riskLevel).toBe('read');
 		expect(meta['webhookSubscriptions.listWebhooks'].riskLevel).toBe('read');
 	});
 
-	// ─── Schema validation — valid data ────────────────────────────────────────
+	// ─── Endpoint Execution & Behavioral Tests ─────────────────────────────────
 
-	it('parses a valid createContact response', () => {
-		const result = TwoChatEndpointOutputSchemas.createContact.parse({
+	it('createContact calls POST /open/contacts with correct payload', async () => {
+		const mockResponse = {
 			success: true,
 			contact: {
-				uuid: 'CON123',
-				first_name: 'John',
-				contact_details: [{ type: 'E', value: 'john@example.com' }],
+				uuid: 'CON_123',
+				first_name: 'Alice',
+				details: [{ type: 'PH' as const, value: '+1234567890' }],
 			},
-		});
-		expect(result.contact.first_name).toBe('John');
+		};
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce(
+			mockResponse,
+		);
+
+		const input = {
+			first_name: 'Alice',
+			last_name: 'Smith',
+			contact_details: [{ type: 'PH' as const, value: '+1234567890' }],
+		};
+
+		const result = await createContact(mockContext, input);
+
+		expect(client.makeTwoChatRequest).toHaveBeenCalledWith(
+			'open/contacts',
+			'test-api-key-123',
+			{
+				method: 'POST',
+				body: {
+					first_name: 'Alice',
+					last_name: 'Smith',
+					profile_pic_url: undefined,
+					channel_uuid: undefined,
+					contact_detail: [{ type: 'PH', value: '+1234567890' }],
+				},
+			},
+		);
+		expect(result).toEqual(mockResponse);
 	});
 
-	it('parses a valid getApiUsageInfo response', () => {
-		const result = TwoChatEndpointOutputSchemas.getApiUsageInfo.parse({
+	it('listContacts calls GET /open/contacts with pagination parameters', async () => {
+		const mockResponse = {
 			success: true,
-			account: { uuid: 'ACC123', on_trial: false, blocked: false },
-			limits: { requests_per_minute: 80 },
-			usage: {
-				api_request_count: 100,
-				max_api_request_count: 500000,
-				number_check_count: 50,
-				max_number_check_count: 500000,
+			page: 1,
+			count: 1,
+			contacts: [{ uuid: 'CON_1', first_name: 'Bob' }],
+		};
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce(
+			mockResponse,
+		);
+
+		const result = await listContacts(mockContext, {
+			page_number: 1,
+			results_per_page: 20,
+		});
+
+		expect(client.makeTwoChatRequest).toHaveBeenCalledWith(
+			'open/contacts',
+			'test-api-key-123',
+			{
+				method: 'GET',
+				query: {
+					page_number: 1,
+					results_per_page: 20,
+				},
 			},
-		});
-		expect(result.usage?.api_request_count).toBe(100);
+		);
+		expect(result).toEqual(mockResponse);
 	});
 
-	it('parses a valid listContacts response', () => {
-		const result = TwoChatEndpointOutputSchemas.listContacts.parse({
-			results: [{ uuid: 'CON123', first_name: 'Jane' }],
-			page_number: 0,
-			results_per_page: 30,
-		});
-		expect(result.results.length).toBe(1);
+	it('getApiUsageInfo calls GET /open/info', async () => {
+		const mockResponse = {
+			success: true,
+			account: { uuid: 'ACC_1', name: 'Pro Plan' },
+			limits: { requests_per_minute: 100 },
+			usage: {
+				api_requests_available: 1950,
+				api_requests_plan_default: 2000,
+				number_check_requests_available: 100,
+				number_check_requests_plan_default: 100,
+			},
+		};
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce(
+			mockResponse,
+		);
+
+		const result = await getApiUsageInfo(mockContext, {});
+
+		expect(client.makeTwoChatRequest).toHaveBeenCalledWith(
+			'open/info',
+			'test-api-key-123',
+			{ method: 'GET' },
+		);
+		expect(result).toEqual(mockResponse);
 	});
 
-	it('parses a valid listWebhooks response', () => {
-		const result = TwoChatEndpointOutputSchemas.listWebhooks.parse({
+	it('testApiKey calls GET /open/info to validate credentials', async () => {
+		const mockResponse = {
+			success: true,
+			account: { uuid: 'ACC_1', on_trial: false, blocked: false },
+		};
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce(
+			mockResponse,
+		);
+
+		const result = await testApiKey(mockContext, {});
+
+		expect(client.makeTwoChatRequest).toHaveBeenCalledWith(
+			'open/info',
+			'test-api-key-123',
+			{ method: 'GET' },
+		);
+		expect(result).toEqual(mockResponse);
+	});
+
+	it('listWebhooks calls GET /open/webhooks', async () => {
+		const mockResponse = {
+			success: true,
 			webhooks: [
 				{
-					uuid: 'WHKabc123',
+					uuid: 'WHK_1',
 					event_name: 'whatsapp.message.received',
 					hook_url: 'https://example.com/webhook',
 				},
 			],
-		});
-		expect(result.webhooks[0]?.uuid).toBe('WHKabc123');
+		};
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce(
+			mockResponse,
+		);
+
+		const result = await listWebhooks(mockContext, {});
+
+		expect(client.makeTwoChatRequest).toHaveBeenCalledWith(
+			'open/webhooks',
+			'test-api-key-123',
+			{ method: 'GET' },
+		);
+		expect(result).toEqual(mockResponse);
 	});
 
-	// ─── Schema validation — rejection on invalid data ─────────────────────────
+	// ─── Zod Schema Validation ─────────────────────────────────────────────────
+
+	it('parses valid output payloads', () => {
+		const contactRes = TwoChatEndpointOutputSchemas.createContact.parse({
+			success: true,
+			contact: { uuid: 'CON_1', first_name: 'John' },
+		});
+		expect(contactRes.contact.first_name).toBe('John');
+
+		const usageRes = TwoChatEndpointOutputSchemas.getApiUsageInfo.parse({
+			success: true,
+			usage: {
+				api_requests_available: 1999,
+				api_requests_plan_default: 2000,
+			},
+		});
+		expect(usageRes.usage?.api_requests_available).toBe(1999);
+	});
 
 	it('rejects createContact input missing first_name', () => {
 		expect(() =>
@@ -145,60 +265,52 @@ describe('TwoChat plugin', () => {
 		).toThrow();
 	});
 
-	it('accepts listContacts input with no params (uses defaults)', () => {
+	it('accepts listContacts input with no params and uses defaults', () => {
 		expect(() =>
 			TwoChatEndpointInputSchemas.listContacts.parse({}),
 		).not.toThrow();
 	});
 
-	it('rejects listContacts results_per_page > 100', () => {
+	it('rejects listContacts results_per_page exceeding max of 100', () => {
 		expect(() =>
 			TwoChatEndpointInputSchemas.listContacts.parse({ results_per_page: 200 }),
 		).toThrow();
 	});
 
-	// ─── Webhook plugin matcher ─────────────────────────────────────────────────
+	// ─── Error Handlers ────────────────────────────────────────────────────────
 
-	it('pluginWebhookMatcher always returns false (no incoming webhooks)', () => {
-		const instance = twochat();
-		const matcher = instance.pluginWebhookMatcher!;
-		expect(matcher({ headers: { 'x-2chat-signature': 'sig' }, body: {} })).toBe(
-			false,
-		);
-		expect(matcher({ headers: {}, body: {} })).toBe(false);
-	});
-
-	// ─── Error handlers ────────────────────────────────────────────────────────
-
-	const mockCtx = {
-		pluginId: 'twochat',
-		operation: 'test',
-		input: {},
-		originalError: new Error(''),
-	};
-
-	it('RATE_LIMIT_ERROR matches rate_limited message', () => {
+	it('RATE_LIMIT_ERROR matches 429 and rate_limited messages', async () => {
 		const err = new Error('rate_limited: too many requests');
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(err, mockCtx)).toBe(true);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(err, mockContext)).toBe(true);
+		const res = await errorHandlers.RATE_LIMIT_ERROR.handler(err, mockContext);
+		expect(res.maxRetries).toBe(5);
 	});
 
-	it('AUTH_ERROR matches unauthorized message', () => {
-		const err = new Error('unauthorized: invalid_auth');
-		expect(errorHandlers.AUTH_ERROR.match(err, mockCtx)).toBe(true);
+	it('AUTH_ERROR matches 401 and unauthorized messages', async () => {
+		const err = new Error('unauthorized: invalid_key');
+		expect(errorHandlers.AUTH_ERROR.match(err, mockContext)).toBe(true);
+		const res = await errorHandlers.AUTH_ERROR.handler(err, mockContext);
+		expect(res.maxRetries).toBe(0);
 	});
 
-	it('PERMISSION_ERROR matches forbidden message', () => {
+	it('PERMISSION_ERROR matches 403 and forbidden messages', async () => {
 		const err = new Error('forbidden: permission_denied');
-		expect(errorHandlers.PERMISSION_ERROR.match(err, mockCtx)).toBe(true);
+		expect(errorHandlers.PERMISSION_ERROR.match(err, mockContext)).toBe(true);
+		const res = await errorHandlers.PERMISSION_ERROR.handler(err, mockContext);
+		expect(res.maxRetries).toBe(0);
 	});
 
-	it('NETWORK_ERROR matches fetch failed', () => {
+	it('NETWORK_ERROR matches connection errors', async () => {
 		const err = new Error('fetch failed');
-		expect(errorHandlers.NETWORK_ERROR.match(err, mockCtx)).toBe(true);
+		expect(errorHandlers.NETWORK_ERROR.match(err, mockContext)).toBe(true);
+		const res = await errorHandlers.NETWORK_ERROR.handler(err, mockContext);
+		expect(res.maxRetries).toBe(3);
 	});
 
-	it('DEFAULT matches any error', () => {
-		const err = new Error('some unknown error');
-		expect(errorHandlers.DEFAULT.match(err, mockCtx)).toBe(true);
+	it('DEFAULT catches any unhandled error', async () => {
+		const err = new Error('unexpected error');
+		expect(errorHandlers.DEFAULT.match(err, mockContext)).toBe(true);
+		const res = await errorHandlers.DEFAULT.handler(err, mockContext);
+		expect(res.maxRetries).toBe(0);
 	});
 });

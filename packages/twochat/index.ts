@@ -232,7 +232,7 @@ export function twochat<const T extends TwoChatPluginOptions>(
 
 			throw new AuthMissingError('twochat', 'api_key');
 		},
-	} as unknown as ExternalTwoChatPlugin<T>;
+	} satisfies InternalTwoChatPlugin as ExternalTwoChatPlugin<T>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
