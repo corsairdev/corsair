@@ -4,7 +4,8 @@ import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { teams } from './index';
 
-const hasCredentials = (process.env.TEAMS_ACCESS_TOKEN ?? '').length > 0;
+const configuredAccessToken = process.env.TEAMS_ACCESS_TOKEN?.trim();
+const hasCredentials = Boolean(configuredAccessToken);
 
 const describeIf = hasCredentials ? describe : describe.skip;
 
@@ -18,7 +19,7 @@ function parsePayload(payload: unknown): unknown {
 }
 
 async function createTeamsClient() {
-	const accessToken = process.env.TEAMS_ACCESS_TOKEN!;
+	const accessToken = configuredAccessToken!;
 
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'teams', 'default');
@@ -65,8 +66,8 @@ describeIf('Teams plugin integration', () => {
 			const { corsair, testDb } = setup;
 
 			const listed = await corsair.teams.api.teams.list({ top: 1 });
-			const teamId = listed.value?.[0]?.id;
-			if (!teamId) return;
+			const teamId = listed.value?.[0]?.id ?? '';
+			expect(teamId).toBeTruthy();
 
 			const input = { teamId };
 			const result = await corsair.teams.api.teams.get(input);
@@ -123,8 +124,8 @@ describeIf('Teams plugin integration', () => {
 			const { corsair, testDb } = setup;
 
 			const listed = await corsair.teams.api.teams.list({ top: 1 });
-			const teamId = listed.value?.[0]?.id;
-			if (!teamId) return;
+			const teamId = listed.value?.[0]?.id ?? '';
+			expect(teamId).toBeTruthy();
 
 			const input = {
 				teamId,
@@ -166,7 +167,7 @@ describeIf('Teams plugin integration', () => {
 		});
 
 		it('channelsList interacts with API and DB', async () => {
-			if (!teamId) return;
+			expect(teamId).toBeTruthy();
 			const setup = await createTeamsClient();
 			const { corsair, testDb } = setup;
 
@@ -196,13 +197,13 @@ describeIf('Teams plugin integration', () => {
 		});
 
 		it('channelsGet interacts with API and DB', async () => {
-			if (!teamId) return;
+			expect(teamId).toBeTruthy();
 			const setup = await createTeamsClient();
 			const { corsair, testDb } = setup;
 
 			const listed = await corsair.teams.api.channels.list({ teamId });
-			const channelId = listed.value?.[0]?.id;
-			if (!channelId) return;
+			const channelId = listed.value?.[0]?.id ?? '';
+			expect(channelId).toBeTruthy();
 
 			const input = { teamId, channelId };
 			const result = await corsair.teams.api.channels.get(input);
@@ -223,7 +224,7 @@ describeIf('Teams plugin integration', () => {
 		});
 
 		it('channelsCreate and channelsUpdate and channelsDelete interact with API and DB', async () => {
-			if (!teamId) return;
+			expect(teamId).toBeTruthy();
 			const setup = await createTeamsClient();
 			const { corsair, testDb } = setup;
 
@@ -298,7 +299,7 @@ describeIf('Teams plugin integration', () => {
 
 			const teamsResult = await corsair.teams.api.teams.list({ top: 1 });
 			teamId = teamsResult.value?.[0]?.id ?? '';
-			if (!teamId) return;
+			expect(teamId).toBeTruthy();
 
 			const channelsResult = await corsair.teams.api.channels.list({ teamId });
 			channelId = channelsResult.value?.[0]?.id ?? '';
@@ -307,7 +308,8 @@ describeIf('Teams plugin integration', () => {
 		});
 
 		it('messagesSend, messagesGet, messagesList, messagesReply, messagesListReplies, messagesDelete interact with API and DB', async () => {
-			if (!teamId || !channelId) return;
+			expect(teamId).toBeTruthy();
+			expect(channelId).toBeTruthy();
 			const setup = await createTeamsClient();
 			const { corsair, testDb } = setup;
 
@@ -433,7 +435,7 @@ describeIf('Teams plugin integration', () => {
 		});
 
 		it('membersList and membersGet interact with API and DB', async () => {
-			if (!teamId) return;
+			expect(teamId).toBeTruthy();
 			const setup = await createTeamsClient();
 			const { corsair, testDb } = setup;
 
@@ -478,7 +480,7 @@ describeIf('Teams plugin integration', () => {
 		});
 
 		it('membersAdd and membersRemove interact with API and DB', async () => {
-			if (!teamId) return;
+			expect(teamId).toBeTruthy();
 			const setup = await createTeamsClient();
 			const { corsair, testDb } = setup;
 
@@ -494,7 +496,7 @@ describeIf('Teams plugin integration', () => {
 				`https://graph.microsoft.com/v1.0/users?$top=999&$select=id`,
 				{
 					headers: {
-						Authorization: `Bearer ${process.env.TEAMS_ACCESS_TOKEN}`,
+						Authorization: `Bearer ${configuredAccessToken}`,
 					},
 				},
 			).then((r) => r.json())) as { value: Array<{ id: string }> };
@@ -590,14 +592,14 @@ describeIf('Teams plugin integration', () => {
 			const { corsair, testDb } = setup;
 
 			const me = (await fetch('https://graph.microsoft.com/v1.0/me', {
-				headers: { Authorization: `Bearer ${process.env.TEAMS_ACCESS_TOKEN}` },
+				headers: { Authorization: `Bearer ${configuredAccessToken}` },
 			}).then((r) => r.json())) as { id: string };
 
 			const orgUsers = (await fetch(
 				`https://graph.microsoft.com/v1.0/users?$top=5&$select=id`,
 				{
 					headers: {
-						Authorization: `Bearer ${process.env.TEAMS_ACCESS_TOKEN}`,
+						Authorization: `Bearer ${configuredAccessToken}`,
 					},
 				},
 			).then((r) => r.json())) as { value: Array<{ id: string }> };
@@ -642,11 +644,8 @@ describeIf('Teams plugin integration', () => {
 			const { corsair, testDb } = setup;
 
 			const listed = await corsair.teams.api.chats.list({ top: 1 });
-			const chatId = listed.value?.[0]?.id;
-			if (!chatId) {
-				testDb.cleanup();
-				return;
-			}
+			const chatId = listed.value?.[0]?.id ?? '';
+			expect(chatId).toBeTruthy();
 
 			const orm = createCorsairOrm(testDb.database);
 
