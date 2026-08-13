@@ -26,6 +26,7 @@ export const BaseProviders = [
 	'airtable',
 	'alchemy',
 	'algolia',
+	'alphavantage',
 	'alttextai',
 	'amara',
 	'ambientweather',
@@ -148,6 +149,7 @@ export const ProviderDisplayNames = {
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	alphavantage: 'Alpha Vantage',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
 	ambientweather: 'Ambient Weather',
@@ -277,6 +279,7 @@ export type AllProviders =
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
+	| 'alphavantage'
 	| 'alttextai'
 	| 'amara'
 	| 'ambientweather'
