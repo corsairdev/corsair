@@ -38,6 +38,7 @@ export const BaseProviders = [
 	'asana',
 	'bitwarden',
 	'bluesky',
+	'boloforms',
 	'box',
 	'canvas',
 	'cal',
@@ -159,6 +160,7 @@ export const ProviderDisplayNames = {
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
+	boloforms: 'Boloforms',
 	box: 'Box',
 	canvas: 'Canvas LMS',
 	cal: 'Cal',
@@ -287,6 +289,7 @@ export type AllProviders =
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
+	| 'boloforms'
 	| 'box'
 	| 'cal'
 	| 'calendly'
