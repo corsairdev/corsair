@@ -91,6 +91,7 @@ export const BaseProviders = [
 	'monday',
 	'neon',
 	'notion',
+	'ocrspace',
 	'ollama',
 	'onedrive',
 	'onepassword',
@@ -215,6 +216,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
+	ocrspace: 'OCR.space',
 	ollama: 'Ollama',
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
@@ -346,6 +348,7 @@ export type AllProviders =
 	| 'monday'
 	| 'neon'
 	| 'notion'
+	| 'ocrspace'
 	| 'ollama'
 	| 'onedrive'
 	| 'onepassword'
