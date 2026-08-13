@@ -151,6 +151,7 @@ export function DatabasePage() {
 					</div>
 					<div className="ml-auto w-[260px]">
 						<Input
+							aria-label="Search records"
 							placeholder="Search all payload fields…"
 							value={search}
 							onChange={(e) => setSearch(e.target.value)}
@@ -170,6 +171,7 @@ export function DatabasePage() {
 						</select>
 						<button
 							type="button"
+							aria-label={`Sort direction: ${sortDirection}`}
 							onClick={() =>
 								setSortDirection((current) =>
 									current === 'asc' ? 'desc' : 'asc',
