@@ -162,12 +162,26 @@ describe('OCR.space input schemas', () => {
 				base64Image: 'data:image/png;base64,not-valid!!!',
 			}),
 		).toThrow();
+
+		expect(() =>
+			OcrSpaceEndpointInputSchemas.parse.parse({
+				base64Image: 'data:image/png;base64,A',
+			}),
+		).toThrow();
 	});
 
 	it('accepts a typed Blob without filetype', () => {
 		expect(() =>
 			OcrSpaceEndpointInputSchemas.parse.parse({
 				file: new Blob(['x'], { type: 'image/png' }),
+			}),
+		).not.toThrow();
+	});
+
+	it('accepts a File with a filename and no MIME type', () => {
+		expect(() =>
+			OcrSpaceEndpointInputSchemas.parse.parse({
+				file: new File(['x'], 'scan.png'),
 			}),
 		).not.toThrow();
 	});
@@ -438,6 +452,26 @@ describe('assertOcrSuccess', () => {
 		).toThrow(OcrSpaceAPIError);
 	});
 
+	it('throws when every parsed page failed', () => {
+		expect(() =>
+			assertOcrSuccess({
+				OCRExitCode: 1,
+				ParsedResults: [
+					{ FileParseExitCode: -10, ErrorMessage: 'Parse failed' },
+				],
+			}),
+		).toThrow(OcrSpaceAPIError);
+		expect(() =>
+			assertOcrSuccess({
+				OCRExitCode: 2,
+				ParsedResults: [
+					{ FileParseExitCode: -20, ErrorMessage: 'Timed out' },
+					{ FileParseExitCode: -30, ErrorMessage: 'Invalid file' },
+				],
+			}),
+		).toThrow(OcrSpaceAPIError);
+	});
+
 	it('allows a successful OCR with empty page text', () => {
 		expect(() =>
 			assertOcrSuccess({
@@ -592,14 +626,12 @@ describe('error handler classification', () => {
 		expect(classify(new Error('something unexpected'))).toBe('DEFAULT');
 	});
 
-	it('retries rate limits but never auth failures', async () => {
+	it('does not stack handler retries on transport retries', async () => {
 		// The auth handler logs by design; silence it so the suite output stays
 		// clean rather than showing what looks like a failure.
 		const logged = jest.spyOn(console, 'error').mockImplementation(() => {});
 		const authError = bodyError('invalid api key');
-		const rateLimit = await errorHandlers.RATE_LIMIT_ERROR.handler(
-			bodyError('daily limit reached'),
-		);
+		const rateLimit = await errorHandlers.RATE_LIMIT_ERROR.handler();
 		const auth = await errorHandlers.AUTH_ERROR.handler(authError, {
 			pluginId: 'ocrspace',
 			operation: 'ocr.parse',
@@ -607,7 +639,7 @@ describe('error handler classification', () => {
 			originalError: authError,
 		});
 
-		expect(rateLimit.maxRetries).toBeGreaterThan(0);
+		expect(rateLimit.maxRetries).toBe(0);
 		expect(auth.maxRetries).toBe(0);
 		expect(logged).toHaveBeenCalled();
 		logged.mockRestore();

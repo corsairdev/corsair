@@ -89,22 +89,23 @@ export function assertOcrSuccess(response: OcrResponse): void {
 	const exitCode = response.OCRExitCode ?? undefined;
 	const failed =
 		response.IsErroredOnProcessing === true || exitCode === 3 || exitCode === 4;
+	const parsedResults = response.ParsedResults ?? [];
+	const pageError = parsedResults
+		.map((result) => flattenOcrErrorMessage(result.ErrorMessage))
+		.find((value) => value !== undefined);
 
 	if (!failed) {
 		if (
 			(exitCode !== 1 && exitCode !== 2) ||
-			(response.ParsedResults?.length ?? 0) === 0
+			!parsedResults.some((result) => result.FileParseExitCode === 1)
 		) {
-			throw new OcrSpaceAPIError('OCR.space returned an empty OCR response', {
-				body: response,
-			});
+			throw new OcrSpaceAPIError(
+				pageError ?? 'OCR.space returned no successfully parsed pages',
+				{ body: response, ocrExitCode: exitCode },
+			);
 		}
 		return;
 	}
-
-	const pageError = (response.ParsedResults ?? [])
-		.map((result) => flattenOcrErrorMessage(result.ErrorMessage))
-		.find((value) => value !== undefined);
 
 	const message =
 		flattenOcrErrorMessage(response.ErrorMessage) ??

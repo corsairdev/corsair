@@ -147,8 +147,23 @@ const TYPED_BLOB_MIMES = new Set([
 	'image/bmp',
 ]);
 
+const BASE64_DATA_URI =
+	/^data:(image\/[a-z0-9.+-]+|application\/pdf);base64,([A-Za-z0-9+/]+={0,2})$/i;
+
+function base64ImageIsValid(value: string): boolean {
+	const payload = BASE64_DATA_URI.exec(value)?.[2];
+	return payload !== undefined && payload.length % 4 === 0;
+}
+
 function blobUploadIsTyped(input: { file?: Blob; filetype?: string }): boolean {
 	if (input.file === undefined || input.filetype !== undefined) {
+		return true;
+	}
+	if (
+		typeof File !== 'undefined' &&
+		input.file instanceof File &&
+		input.file.name.length > 0
+	) {
 		return true;
 	}
 	return TYPED_BLOB_MIMES.has(input.file.type.toLowerCase());
@@ -163,7 +178,7 @@ const UNTYPED_BLOB_MESSAGE =
 
 export const ParseImageUrlInputSchema = z
 	.object({
-		url: z.string().url(),
+		url: z.url(),
 		...ocrOptionsShape,
 	})
 	.refine(searchablePdfIsSupported, {
@@ -181,7 +196,7 @@ export const ParseImageUrlResponseSchema = OcrResponseSchema;
 
 export const ParseInputSchema = z
 	.object({
-		url: z.string().url().optional(),
+		url: z.url().optional(),
 		// Prefer a `File` over a bare `Blob`: multipart uploads carry the
 		// filename, and OCR.space uses the extension to detect the file type. A
 		// `Blob` is sent without one, so pair it with an explicit `filetype`.
@@ -194,13 +209,10 @@ export const ParseInputSchema = z
 		// "data:image/png;base64,iVBORw0KGgo..."
 		base64Image: z
 			.string()
-			.regex(
-				/^data:(image\/[a-z0-9.+-]+|application\/pdf);base64,[A-Za-z0-9+/]+={0,2}$/i,
-				{
-					message:
-						'base64Image must include the data URI prefix, e.g. "data:image/png;base64,...".',
-				},
-			)
+			.refine(base64ImageIsValid, {
+				message:
+					'base64Image must include the data URI prefix and a valid base64 payload.',
+			})
 			.optional(),
 		...ocrOptionsShape,
 	})

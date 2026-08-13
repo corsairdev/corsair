@@ -159,6 +159,22 @@ describe('OCR.space endpoint routing', () => {
 		expect(ctx.db.ocrResults.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
+	it('ocr.parseImageUrl rejects a failed-only page array', async () => {
+		mockGet.mockResolvedValue({
+			OCRExitCode: 1,
+			ParsedResults: [{ FileParseExitCode: -10, ErrorMessage: 'Parse failed' }],
+		});
+		const ctx = createContext();
+
+		await expect(
+			(Ocr.parseImageUrl as AnyEndpoint)(ctx, {
+				url: 'https://example.com/receipt.jpg',
+			}),
+		).rejects.toBeInstanceOf(OcrSpaceAPIError);
+		expect(ctx.db.ocrResults.upsertByEntityId).not.toHaveBeenCalled();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
 	it('skips the cache for a partial OCRExitCode 2 result', async () => {
 		mockGet.mockResolvedValue({
 			OCRExitCode: 2,

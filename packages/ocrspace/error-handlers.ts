@@ -7,10 +7,6 @@ function getStatus(error: Error): number | undefined {
 	return (error as Partial<OcrSpaceAPIError>).status;
 }
 
-function getRetryAfter(error: Error): number | undefined {
-	return (error as Partial<OcrSpaceAPIError>).retryAfter;
-}
-
 function getOcrExitCode(error: Error): number | undefined {
 	return (error as Partial<OcrSpaceAPIError>).ocrExitCode;
 }
@@ -62,11 +58,7 @@ export const errorHandlers = {
 				'number of times within',
 			]);
 		},
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-			headersRetryAfterMs: getRetryAfter(error),
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
