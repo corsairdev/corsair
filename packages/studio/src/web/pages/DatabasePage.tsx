@@ -169,7 +169,7 @@ export function DatabasePage() {
 						</select>
 						<button
 							type="button"
-							aria-label="Sort direction"
+							aria-label={`Sort direction: ${sortDirection}`}
 							onClick={() =>
 								setSortDirection((current) =>
 									current === 'asc' ? 'desc' : 'asc',
