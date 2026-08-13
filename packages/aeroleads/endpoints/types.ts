@@ -5,7 +5,20 @@ export const GetLinkedinDetailsInputSchema = z.object({
 	linkedin_url: z
 		.string()
 		.url()
-		.includes('linkedin.com')
+		.refine(
+			(val) => {
+				try {
+					const url = new URL(val);
+					return (
+						url.hostname === 'linkedin.com' ||
+						url.hostname.endsWith('.linkedin.com')
+					);
+				} catch {
+					return false;
+				}
+			},
+			{ message: 'Must be a valid LinkedIn URL' },
+		)
 		.describe('The LinkedIn profile URL of the prospect'),
 });
 export type GetLinkedinDetailsInput = z.infer<

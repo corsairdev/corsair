@@ -24,7 +24,11 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate limit') || msg.includes('too many requests');
 		},
-		handler: async () => ({ maxRetries: 3, delay: 1000 }),
+		handler: async (error: Error) => ({
+			maxRetries: 3,
+			headersRetryAfterMs:
+				error instanceof ApiError && error.retryAfter ? error.retryAfter : 1000,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,
