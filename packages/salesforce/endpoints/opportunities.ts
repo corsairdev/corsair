@@ -1,7 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
 import { SalesforceOpportunityEntity } from '../schema/database';
-import { cloneableFields, escapeSoql, soqlWhere } from '../utils';
+import {
+	cloneableFields,
+	createableNames,
+	escapeSoql,
+	soqlWhere,
+} from '../utils';
 import { cacheEntities, cacheEntity, evictEntity } from './persist';
 import { flattenFields, salesforceCall } from './shared';
 
@@ -138,8 +143,10 @@ export const cloneOpportunityWithProducts: SalesforceEndpoints['cloneOpportunity
 			`sobjects/Opportunity/${input.opportunityId}`,
 			{ method: 'GET' },
 		);
-
-		const fieldsToClone = cloneableFields(orig);
+		const describe = await salesforceCall<{
+			fields?: Array<{ name?: string; createable?: boolean }>;
+		}>(ctx, 'sobjects/Opportunity/describe', { method: 'GET' });
+		const fieldsToClone = cloneableFields(orig, createableNames(describe));
 
 		if (input.name) fieldsToClone.Name = input.name;
 

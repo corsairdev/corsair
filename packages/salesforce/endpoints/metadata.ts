@@ -1,6 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SalesforceEndpoints } from '..';
-import { assertSobjectName, cloneableFields, escapeSoql } from '../utils';
+import {
+	assertSobjectName,
+	cloneableFields,
+	createableNames,
+	escapeSoql,
+} from '../utils';
 import { salesforceCall } from './shared';
 
 export const createSObjectRecord: SalesforceEndpoints['createSObjectRecord'] =
@@ -31,8 +36,14 @@ export const cloneRecord: SalesforceEndpoints['cloneRecord'] = async (
 		`sobjects/${input.sobject}/${input.recordId}`,
 		{ method: 'GET' },
 	);
-
-	const body = { ...cloneableFields(orig), ...(input.overrides ?? {}) };
+	const describe = await salesforceCall<{
+		fields?: Array<{ name?: string; createable?: boolean }>;
+	}>(ctx, `sobjects/${input.sobject}/describe`, { method: 'GET' });
+	const allowed = createableNames(describe);
+	const body = {
+		...cloneableFields(orig, allowed),
+		...cloneableFields(input.overrides ?? {}, allowed),
+	};
 
 	const response = await salesforceCall<{ id: string }>(
 		ctx,

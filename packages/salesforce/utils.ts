@@ -72,26 +72,26 @@ function parseCsvLine(line: string): string[] {
 	return result;
 }
 
-const NON_CREATEABLE_FIELDS = new Set([
-	'Id',
-	'CreatedDate',
-	'CreatedById',
-	'LastModifiedDate',
-	'LastModifiedById',
-	'SystemModstamp',
-	'attributes',
-	'IsDeleted',
-	'LastViewedDate',
-	'LastReferencedDate',
-]);
+/** Keeps only fields Salesforce reports as createable on the sObject. */
+export function createableNames(describe: {
+	fields?: Array<{ name?: string; createable?: boolean }>;
+}): Set<string> {
+	const names = new Set<string>();
+	for (const field of describe.fields ?? []) {
+		if (field.createable && typeof field.name === 'string') {
+			names.add(field.name);
+		}
+	}
+	return names;
+}
 
-/** Drops Salesforce GET metadata that cannot be sent on create. */
 export function cloneableFields(
 	record: Record<string, unknown>,
+	createable: Set<string>,
 ): Record<string, unknown> {
 	const out: Record<string, unknown> = {};
 	for (const [key, value] of Object.entries(record)) {
-		if (!NON_CREATEABLE_FIELDS.has(key)) out[key] = value;
+		if (createable.has(key)) out[key] = value;
 	}
 	return out;
 }
@@ -184,7 +184,7 @@ function splitSoqlLogic(sql: string): string[] {
 
 function assertSoqlClause(clause: string): void {
 	const m = clause.match(
-		/^([A-Za-z][A-Za-z0-9_.]*)\s*(=|!=|<>|LIKE|>|<|>=|<=|IN)\s*(.+)$/i,
+		/^([A-Za-z][A-Za-z0-9_.]*)\s*(=|!=|<>|LIKE|>=|<=|>|<|IN)\s*(.+)$/i,
 	);
 	if (!m || !m[1] || !m[2] || !m[3]) {
 		throw new Error('Invalid SOQL WHERE clause');

@@ -1,5 +1,5 @@
 import { flattenFields } from './endpoints/shared';
-import { soqlWhere } from './utils';
+import { cloneableFields, soqlWhere } from './utils';
 import { resolveSalesforceOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import {
 	createSalesforceChangeMatch,
@@ -14,6 +14,21 @@ describe('flattenFields', () => {
 				CustomFields: { Region__c: 'West' },
 			}),
 		).toEqual({ Name: 'Acme', Region__c: 'West' });
+	});
+});
+
+describe('cloneableFields', () => {
+	it('keeps only createable fields from the record and overrides', () => {
+		const allowed = new Set(['Name', 'Phone']);
+		expect(
+			cloneableFields(
+				{ Id: '001xx', Name: 'Acme', LastModifiedDate: '2026-01-01' },
+				allowed,
+			),
+		).toEqual({ Name: 'Acme' });
+		expect(
+			cloneableFields({ Name: 'Beta', OwnerId: '005xx' }, allowed),
+		).toEqual({ Name: 'Beta' });
 	});
 });
 
@@ -80,6 +95,11 @@ describe('soqlWhere', () => {
 		expect(soqlWhere("Name = 'Acme' AND Status IN ('Open','Closed')")).toBe(
 			"Name = 'Acme' AND Status IN ('Open','Closed')",
 		);
+	});
+
+	it('accepts inclusive comparison operators', () => {
+		expect(soqlWhere('Amount >= 10')).toBe('Amount >= 10');
+		expect(soqlWhere('Amount <= 25')).toBe('Amount <= 25');
 	});
 
 	it('rejects concatenated SOQL fragments', () => {
