@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import { makeAmcardsRequest } from '../client';
 import type { AmcardsContext } from '../index';
 import { amcards } from '../index';
@@ -174,6 +175,13 @@ describe('amcards keyBuilder', () => {
 		await expect(
 			plugin.keyBuilder!({ authType: 'api_key' } as never, 'endpoint'),
 		).resolves.toBe('');
+	});
+
+	it('rejects webhook source with AuthMissingError', async () => {
+		const plugin = amcards();
+		await expect(
+			plugin.keyBuilder!({ authType: 'api_key' } as never, 'webhook'),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
 	it('uses the account key manager when present', async () => {
