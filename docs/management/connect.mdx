@@ -97,7 +97,7 @@ In `hub` mode, the OAuth app shown on the provider's page depends on the plugin'
 
 To switch a managed plugin to BYO:
 
-1. Register an OAuth app with the provider and set its redirect URL to `https://auth.corsair.dev/oauth/callback`.
+1. Register an OAuth app with the provider and set its redirect URL to your Hub OAuth callback URL — by default `https://auth.corsair.dev/oauth/callback`. If you self-host the Hub API (`hub.apiUrl`) or set a custom `hub.oauthCallbackUrl`, register that derived value instead: the SDK sends this exact URL to the provider as `redirect_uri`.
 2. Set the plugin's `authType` to `'oauth_2'`.
 3. Store the credentials at the integration level:
 
