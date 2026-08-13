@@ -113,7 +113,7 @@ describe('OCR.space endpoint routing', () => {
 		expect(ctx.db.ocrResults.upsertByEntityId).toHaveBeenCalledTimes(1);
 	});
 
-	it('ocr.parse does not cache file or base64 payloads', async () => {
+	it('ocr.parse does not cache a base64 payload', async () => {
 		mockPost.mockResolvedValue(SUCCESS_RESPONSE);
 		const ctx = createContext();
 
@@ -122,6 +122,11 @@ describe('OCR.space endpoint routing', () => {
 				'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
 		});
 		expect(ctx.db.ocrResults.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('ocr.parse does not cache a file upload', async () => {
+		mockPost.mockResolvedValue(SUCCESS_RESPONSE);
+		const ctx = createContext();
 
 		await (Ocr.parse as AnyEndpoint)(ctx, {
 			file: new File(['x'], 'scan.png', { type: 'image/png' }),
@@ -140,6 +145,18 @@ describe('OCR.space endpoint routing', () => {
 		).rejects.toBeInstanceOf(OcrSpaceAPIError);
 		expect(ctx.db.ocrResults.upsertByEntityId).not.toHaveBeenCalled();
 		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('ocr.parseImageUrl rejects a success exit code with no pages', async () => {
+		mockGet.mockResolvedValue({ OCRExitCode: 1 });
+		const ctx = createContext();
+
+		await expect(
+			(Ocr.parseImageUrl as AnyEndpoint)(ctx, {
+				url: 'https://example.com/receipt.jpg',
+			}),
+		).rejects.toBeInstanceOf(OcrSpaceAPIError);
+		expect(ctx.db.ocrResults.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('skips the cache for a partial OCRExitCode 2 result', async () => {

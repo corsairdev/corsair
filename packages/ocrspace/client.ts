@@ -91,7 +91,10 @@ export function assertOcrSuccess(response: OcrResponse): void {
 		response.IsErroredOnProcessing === true || exitCode === 3 || exitCode === 4;
 
 	if (!failed) {
-		if (exitCode !== 1 && exitCode !== 2) {
+		if (
+			(exitCode !== 1 && exitCode !== 2) ||
+			(response.ParsedResults?.length ?? 0) === 0
+		) {
 			throw new OcrSpaceAPIError('OCR.space returned an empty OCR response', {
 				body: response,
 			});

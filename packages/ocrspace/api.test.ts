@@ -150,6 +150,43 @@ describe('OCR.space input schemas', () => {
 		).toThrow(/data URI prefix/);
 	});
 
+	it('rejects an empty or non-base64 payload after the data URI prefix', () => {
+		expect(() =>
+			OcrSpaceEndpointInputSchemas.parse.parse({
+				base64Image: 'data:image/png;base64,',
+			}),
+		).toThrow();
+
+		expect(() =>
+			OcrSpaceEndpointInputSchemas.parse.parse({
+				base64Image: 'data:image/png;base64,not-valid!!!',
+			}),
+		).toThrow();
+	});
+
+	it('accepts a typed Blob without filetype', () => {
+		expect(() =>
+			OcrSpaceEndpointInputSchemas.parse.parse({
+				file: new Blob(['x'], { type: 'image/png' }),
+			}),
+		).not.toThrow();
+	});
+
+	it('rejects an untyped Blob unless filetype is set', () => {
+		expect(() =>
+			OcrSpaceEndpointInputSchemas.parse.parse({
+				file: new Blob(['x']),
+			}),
+		).toThrow(/filetype/);
+
+		expect(() =>
+			OcrSpaceEndpointInputSchemas.parse.parse({
+				file: new Blob(['x']),
+				filetype: 'PNG',
+			}),
+		).not.toThrow();
+	});
+
 	it('rejects engine 3 combined with searchable PDF output', () => {
 		expect(() =>
 			OcrSpaceEndpointInputSchemas.parse.parse({
@@ -390,6 +427,25 @@ describe('assertOcrSuccess', () => {
 					'Searchable PDF not generated as it was not requested.',
 			}),
 		).toThrow(OcrSpaceAPIError);
+	});
+
+	it('throws when a success exit code has no parsed pages', () => {
+		expect(() => assertOcrSuccess({ OCRExitCode: 1 })).toThrow(
+			OcrSpaceAPIError,
+		);
+		expect(() =>
+			assertOcrSuccess({ OCRExitCode: 2, ParsedResults: [] }),
+		).toThrow(OcrSpaceAPIError);
+	});
+
+	it('allows a successful OCR with empty page text', () => {
+		expect(() =>
+			assertOcrSuccess({
+				OCRExitCode: 1,
+				IsErroredOnProcessing: false,
+				ParsedResults: [{ ParsedText: '', FileParseExitCode: 1 }],
+			}),
+		).not.toThrow();
 	});
 });
 

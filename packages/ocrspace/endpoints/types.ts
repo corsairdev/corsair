@@ -136,6 +136,27 @@ function autoLanguageIsSupported(input: {
 const AUTO_LANGUAGE_ENGINE_MESSAGE =
 	'language "auto" is only supported on OCREngine 2 or 3.';
 
+const TYPED_BLOB_MIMES = new Set([
+	'application/pdf',
+	'image/gif',
+	'image/png',
+	'image/jpeg',
+	'image/jpg',
+	'image/tiff',
+	'image/tif',
+	'image/bmp',
+]);
+
+function blobUploadIsTyped(input: { file?: Blob; filetype?: string }): boolean {
+	if (input.file === undefined || input.filetype !== undefined) {
+		return true;
+	}
+	return TYPED_BLOB_MIMES.has(input.file.type.toLowerCase());
+}
+
+const UNTYPED_BLOB_MESSAGE =
+	'Untyped Blob uploads require filetype. Pass a typed Blob or set filetype.';
+
 // ---------------------------------------------------------------------------
 // ocr.parseImageUrl — GET /parse/imageurl
 // ---------------------------------------------------------------------------
@@ -173,10 +194,13 @@ export const ParseInputSchema = z
 		// "data:image/png;base64,iVBORw0KGgo..."
 		base64Image: z
 			.string()
-			.regex(/^data:(image\/[a-z0-9.+-]+|application\/pdf);base64,/i, {
-				message:
-					'base64Image must include the data URI prefix, e.g. "data:image/png;base64,...".',
-			})
+			.regex(
+				/^data:(image\/[a-z0-9.+-]+|application\/pdf);base64,[A-Za-z0-9+/]+={0,2}$/i,
+				{
+					message:
+						'base64Image must include the data URI prefix, e.g. "data:image/png;base64,...".',
+				},
+			)
 			.optional(),
 		...ocrOptionsShape,
 	})
@@ -194,6 +218,9 @@ export const ParseInputSchema = z
 	})
 	.refine(autoLanguageIsSupported, {
 		message: AUTO_LANGUAGE_ENGINE_MESSAGE,
+	})
+	.refine(blobUploadIsTyped, {
+		message: UNTYPED_BLOB_MESSAGE,
 	});
 
 export const ParseResponseSchema = OcrResponseSchema;
