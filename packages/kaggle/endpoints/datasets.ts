@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeKaggleBinaryRequest, makeKaggleRequest } from '../client';
+import {
+	kagglePath,
+	makeKaggleBinaryRequest,
+	makeKaggleRequest,
+} from '../client';
 import type { KaggleEndpoints } from '../index';
 import type { KaggleEndpointOutputs } from './types';
 
@@ -57,19 +61,31 @@ export const createVersion: KaggleEndpoints['datasetsCreateVersion'] = async (
 	ctx,
 	input,
 ) => {
-	const { ownerSlug, datasetSlug, ...body } = input;
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['datasetsCreateVersion']
-	>(`/datasets/create/version/${ownerSlug}/${datasetSlug}`, ctx.key, {
-		method: 'POST',
-		body,
-		username: ctx.options.username,
-	});
+	>(
+		kagglePath(
+			'datasets',
+			'create',
+			'version',
+			input.ownerSlug,
+			input.datasetSlug,
+		),
+		ctx.key,
+		{
+			method: 'POST',
+			body: {
+				versionNotes: input.versionNotes,
+				files: input.files,
+			},
+			username: ctx.options.username,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
 		'kaggle.datasets.createVersion',
-		{ ownerSlug, datasetSlug },
+		{ ownerSlug: input.ownerSlug, datasetSlug: input.datasetSlug },
 		'completed',
 	);
 	return result;
@@ -82,10 +98,14 @@ export const getMetadata: KaggleEndpoints['datasetsGetMetadata'] = async (
 	// Kaggle v1: GET /datasets/metadata/{ownerSlug}/{datasetSlug} (verified live — 403 with invalid creds, route exists)
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['datasetsGetMetadata']
-	>(`/datasets/metadata/${input.ownerSlug}/${input.datasetSlug}`, ctx.key, {
-		method: 'GET',
-		username: ctx.options.username,
-	});
+	>(
+		kagglePath('datasets', 'metadata', input.ownerSlug, input.datasetSlug),
+		ctx.key,
+		{
+			method: 'GET',
+			username: ctx.options.username,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -102,10 +122,14 @@ export const getStatus: KaggleEndpoints['datasetsGetStatus'] = async (
 ) => {
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['datasetsGetStatus']
-	>(`/datasets/status/${input.ownerSlug}/${input.datasetSlug}`, ctx.key, {
-		method: 'GET',
-		username: ctx.options.username,
-	});
+	>(
+		kagglePath('datasets', 'status', input.ownerSlug, input.datasetSlug),
+		ctx.key,
+		{
+			method: 'GET',
+			username: ctx.options.username,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -123,15 +147,19 @@ export const listFiles: KaggleEndpoints['datasetsListFiles'] = async (
 	// Kaggle v1: GET /datasets/list/{ownerSlug}/{datasetSlug} (verified live — 403 with invalid creds, route exists)
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['datasetsListFiles']
-	>(`/datasets/list/${input.ownerSlug}/${input.datasetSlug}`, ctx.key, {
-		method: 'GET',
-		query: {
-			datasetVersionNumber: input.datasetVersionNumber,
-			pageSize: input.pageSize,
-			pageToken: input.pageToken,
+	>(
+		kagglePath('datasets', 'list', input.ownerSlug, input.datasetSlug),
+		ctx.key,
+		{
+			method: 'GET',
+			query: {
+				datasetVersionNumber: input.datasetVersionNumber,
+				pageSize: input.pageSize,
+				pageToken: input.pageToken,
+			},
+			username: ctx.options.username,
 		},
-		username: ctx.options.username,
-	});
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -146,7 +174,12 @@ export const download: KaggleEndpoints['datasetsDownload'] = async (
 	ctx,
 	input,
 ) => {
-	const path = `/datasets/download/${input.ownerSlug}/${input.datasetSlug}`;
+	const path = kagglePath(
+		'datasets',
+		'download',
+		input.ownerSlug,
+		input.datasetSlug,
+	);
 	const result = await makeKaggleBinaryRequest(path, ctx.key, {
 		method: 'GET',
 		query: { datasetVersionNumber: input.datasetVersionNumber },
@@ -170,7 +203,13 @@ export const downloadFile: KaggleEndpoints['datasetsDownloadFile'] = async (
 	ctx,
 	input,
 ) => {
-	const path = `/datasets/download/${input.ownerSlug}/${input.datasetSlug}/${encodeURIComponent(input.fileName)}`;
+	const path = kagglePath(
+		'datasets',
+		'download',
+		input.ownerSlug,
+		input.datasetSlug,
+		input.fileName,
+	);
 	const result = await makeKaggleBinaryRequest(path, ctx.key, {
 		method: 'GET',
 		query: { datasetVersionNumber: input.datasetVersionNumber },

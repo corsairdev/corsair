@@ -1,5 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeKaggleBinaryRequest, makeKaggleRequest } from '../client';
+import {
+	kagglePath,
+	makeKaggleBinaryRequest,
+	makeKaggleRequest,
+} from '../client';
 import type { KaggleEndpoints } from '../index';
 import type { KaggleEndpointOutputs } from './types';
 
@@ -28,7 +32,7 @@ export const listFiles: KaggleEndpoints['competitionsListFiles'] = async (
 ) => {
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['competitionsListFiles']
-	>(`/competitions/data/list/${input.id}`, ctx.key, {
+	>(kagglePath('competitions', 'data', 'list', input.id), ctx.key, {
 		method: 'GET',
 		query: {
 			pageToken: input.pageToken,
@@ -49,7 +53,7 @@ export const listFiles: KaggleEndpoints['competitionsListFiles'] = async (
 export const downloadFiles: KaggleEndpoints['competitionsDownloadFiles'] =
 	async (ctx, input) => {
 		const result = await makeKaggleBinaryRequest(
-			`/competitions/data/download-all/${input.id}`,
+			kagglePath('competitions', 'data', 'download-all', input.id),
 			ctx.key,
 			{ method: 'GET', username: ctx.options.username },
 		);
@@ -68,7 +72,7 @@ export const downloadFile: KaggleEndpoints['competitionsDownloadFile'] = async (
 	input,
 ) => {
 	const result = await makeKaggleBinaryRequest(
-		`/competitions/data/download/${input.id}/${encodeURIComponent(input.fileName)}`,
+		kagglePath('competitions', 'data', 'download', input.id, input.fileName),
 		ctx.key,
 		{ method: 'GET', username: ctx.options.username },
 	);
@@ -86,7 +90,7 @@ export const viewLeaderboard: KaggleEndpoints['competitionsViewLeaderboard'] =
 	async (ctx, input) => {
 		const result = await makeKaggleRequest<
 			KaggleEndpointOutputs['competitionsViewLeaderboard']
-		>(`/competitions/${input.id}/leaderboard/view`, ctx.key, {
+		>(kagglePath('competitions', input.id, 'leaderboard', 'view'), ctx.key, {
 			method: 'GET',
 			username: ctx.options.username,
 		});
@@ -103,7 +107,7 @@ export const viewLeaderboard: KaggleEndpoints['competitionsViewLeaderboard'] =
 export const downloadLeaderboard: KaggleEndpoints['competitionsDownloadLeaderboard'] =
 	async (ctx, input) => {
 		const result = await makeKaggleBinaryRequest(
-			`/competitions/${input.id}/leaderboard/download`,
+			kagglePath('competitions', input.id, 'leaderboard', 'download'),
 			ctx.key,
 			{ method: 'GET', username: ctx.options.username },
 		);
@@ -153,7 +157,7 @@ export const submit: KaggleEndpoints['competitionsSubmit'] = async (
 ) => {
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['competitionsSubmit']
-	>(`/competitions/submissions/submit/${input.id}`, ctx.key, {
+	>(kagglePath('competitions', 'submissions', 'submit', input.id), ctx.key, {
 		method: 'POST',
 		body: {
 			blobFileTokens: input.blobFileTokens,

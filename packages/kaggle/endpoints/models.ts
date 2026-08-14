@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeKaggleRequest } from '../client';
+import { kagglePath, makeKaggleRequest } from '../client';
 import type { KaggleEndpoints } from '../index';
 import type { KaggleEndpointOutputs } from './types';
 
@@ -28,7 +28,7 @@ export const list: KaggleEndpoints['modelsList'] = async (ctx, input) => {
 export const get: KaggleEndpoints['modelsGet'] = async (ctx, input) => {
 	// Kaggle v1: GET /models/{ownerSlug}/{modelSlug}/get (verified live — 200)
 	const result = await makeKaggleRequest<KaggleEndpointOutputs['modelsGet']>(
-		`/models/${input.ownerSlug}/${input.modelSlug}/get`,
+		kagglePath('models', input.ownerSlug, input.modelSlug, 'get'),
 		ctx.key,
 		{ method: 'GET', username: ctx.options.username },
 	);
@@ -50,7 +50,14 @@ export const getInstance: KaggleEndpoints['modelsGetInstance'] = async (
 	const result = await makeKaggleRequest<
 		KaggleEndpointOutputs['modelsGetInstance']
 	>(
-		`/models/${input.ownerSlug}/${input.modelSlug}/${input.framework}/${input.instanceSlug}/get`,
+		kagglePath(
+			'models',
+			input.ownerSlug,
+			input.modelSlug,
+			input.framework,
+			input.instanceSlug,
+			'get',
+		),
 		ctx.key,
 		{ method: 'GET', username: ctx.options.username },
 	);
@@ -73,7 +80,15 @@ export const listInstanceVersionFiles: KaggleEndpoints['modelsListInstanceVersio
 		const result = await makeKaggleRequest<
 			KaggleEndpointOutputs['modelsListInstanceVersionFiles']
 		>(
-			`/models/${input.ownerSlug}/${input.modelSlug}/${input.framework}/${input.instanceSlug}/${input.versionNumber}/files`,
+			kagglePath(
+				'models',
+				input.ownerSlug,
+				input.modelSlug,
+				input.framework,
+				input.instanceSlug,
+				String(input.versionNumber),
+				'files',
+			),
 			ctx.key,
 			{
 				method: 'GET',

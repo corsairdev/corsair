@@ -3,6 +3,8 @@ import * as Client from './client';
 import { Competitions, Datasets, Kernels, Models } from './endpoints';
 import type { KaggleEndpoints } from './index';
 
+const fetchSpy = jest.spyOn(globalThis as { fetch: typeof fetch }, 'fetch');
+
 const mockReq = jest.spyOn(Client, 'makeKaggleRequest');
 const mockBin = jest.spyOn(Client, 'makeKaggleBinaryRequest');
 const logSpy = jest.spyOn(CorsairCore, 'logEventFromContext');
@@ -42,8 +44,13 @@ beforeEach(() => {
 		dataBase64: 'YQ==',
 		fileName: 'a.zip',
 	});
+	fetchSpy.mockReset();
 	logSpy.mockClear();
 	logSpy.mockImplementation(async () => null);
+});
+
+afterAll(() => {
+	fetchSpy.mockRestore();
 });
 
 describe('handler path construction', () => {
@@ -65,6 +72,14 @@ describe('handler path construction', () => {
 			datasetSlug: 'slug',
 		});
 		expect(lastJsonCall()[0]).toBe('/datasets/metadata/owner/slug');
+	});
+
+	it('encodes slashes and spaces in path slugs', async () => {
+		await Datasets.getMetadata(ctx(), {
+			ownerSlug: 'acme/team',
+			datasetSlug: 'my data',
+		});
+		expect(lastJsonCall()[0]).toBe('/datasets/metadata/acme%2Fteam/my%20data');
 	});
 
 	it('datasets.create → POST /datasets/create/new with wire-mapped body', async () => {
@@ -94,8 +109,19 @@ describe('handler path construction', () => {
 			ownerSlug: 'owner',
 			datasetSlug: 'slug',
 			versionNotes: 'v1',
+			unexpected: true,
+		} as Parameters<typeof Datasets.createVersion>[1] & {
+			unexpected: boolean;
 		});
 		expect(lastJsonCall()[0]).toBe('/datasets/create/version/owner/slug');
+		expect(mockReq).toHaveBeenCalledWith(
+			'/datasets/create/version/owner/slug',
+			'user:key',
+			expect.objectContaining({
+				method: 'POST',
+				body: { versionNotes: 'v1', files: undefined },
+			}),
+		);
 	});
 
 	it('datasets.getStatus → GET /datasets/status/{owner}/{slug}', async () => {
@@ -199,9 +225,63 @@ describe('handler path construction', () => {
 		expect(lastJsonCall()[0]).toBe('/kernels/status');
 	});
 
-	it('kernels.downloadOutput → JSON /kernels/output', async () => {
-		await Kernels.downloadOutput(ctx(), { userName: 'u', kernelSlug: 'k' });
+	it('kernels.downloadOutput fetches signed output files without Kaggle auth', async () => {
+		mockReq.mockResolvedValue({
+			files: [
+				{
+					fileName: 'submission.csv',
+					url: 'https://storage.googleapis.com/kaggle-output/submission.csv',
+				},
+			],
+			log: 'done',
+		});
+		fetchSpy.mockResolvedValue(
+			new Response(Buffer.from('csv-bytes'), {
+				status: 200,
+				headers: { 'content-type': 'text/csv' },
+			}),
+		);
+
+		const result = await Kernels.downloadOutput(ctx(), {
+			userName: 'u',
+			kernelSlug: 'k',
+		});
+
 		expect(lastJsonCall()[0]).toBe('/kernels/output');
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		const [url, init] = fetchSpy.mock.calls[0] as [
+			string | URL,
+			RequestInit | undefined,
+		];
+		expect(String(url)).toBe(
+			'https://storage.googleapis.com/kaggle-output/submission.csv',
+		);
+		const headers = new Headers(init?.headers);
+		expect(headers.get('Authorization')).toBeNull();
+		expect(result.files).toEqual([
+			{
+				contentType: 'text/csv',
+				size: 9,
+				dataBase64: Buffer.from('csv-bytes').toString('base64'),
+				fileName: 'submission.csv',
+			},
+		]);
+	});
+
+	it('kernels.downloadOutput rejects signed URLs off the Kaggle storage hosts', async () => {
+		mockReq.mockResolvedValue({
+			files: [
+				{
+					fileName: 'x.bin',
+					url: 'https://evil.example/steal',
+				},
+			],
+		});
+
+		await expect(
+			Kernels.downloadOutput(ctx(), { userName: 'u', kernelSlug: 'k' }),
+		).rejects.toThrow(/signed output url/i);
+		expect(fetchSpy).not.toHaveBeenCalled();
 	});
 
 	it('kernels.listOutputFiles → GET /kernels/output', async () => {
