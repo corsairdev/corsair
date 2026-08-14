@@ -204,9 +204,10 @@ export function verifyTeamsClientState(
 		return { valid: false, error: 'Invalid payload: missing value array' };
 	}
 
-	const allMatch = notifications.every(
-		(n) => n.clientState === expectedClientState,
-	);
+	const allMatch = notifications.every((n) => {
+		if (!n || typeof n !== 'object') return false;
+		return (n as TeamsNotification).clientState === expectedClientState;
+	});
 	if (!allMatch) {
 		return { valid: false, error: 'clientState mismatch' };
 	}
