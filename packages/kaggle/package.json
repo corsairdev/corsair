@@ -17,7 +17,7 @@
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
     "test": "jest",
-    "demo": "node ./scripts/demo.mjs"
+    "demo": "pnpm exec tsx ./scripts/demo.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
