@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAeroleadsRequest } from '../client';
 import type { AeroleadsContext } from '../index';
+import { cacheLinkedinDetails } from './persist';
 import type {
 	GetLinkedinDetailsInput,
 	GetLinkedinDetailsResponse,
@@ -30,6 +31,7 @@ export const LinkedinDetails = {
 		);
 		const response =
 			AeroleadsEndpointOutputSchemas.linkedinDetailsGet.parse(rawResponse);
+		await cacheLinkedinDetails(ctx, parsedInput.linkedin_url, response);
 		await logEventFromContext(
 			ctx,
 			'aeroleads.linkedinDetails.get',

@@ -248,6 +248,44 @@ describe('Aeroleads endpoints', () => {
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 
+	it('caches linkedin details by profile URL', async () => {
+		const linkedinDetails = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		const ctx = {
+			...mockCtx,
+			db: { linkedinDetails },
+		} as unknown as AeroleadsContext;
+
+		await getLinkedinDetails()(ctx, {
+			linkedin_url: 'https://linkedin.com/in/test',
+		});
+
+		expect(linkedinDetails.upsertByEntityId).toHaveBeenCalledWith(
+			'https://linkedin.com/in/test',
+			expect.objectContaining({
+				full_name: 'Ayushi Mathur',
+				linkedin_url: profile.linkedin_url,
+			}),
+		);
+	});
+
+	it('cache write failures do not fail the API call', async () => {
+		const linkedinDetails = {
+			upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
+		};
+		const ctx = {
+			...mockCtx,
+			db: { linkedinDetails },
+		} as unknown as AeroleadsContext;
+
+		await expect(
+			getLinkedinDetails()(ctx, {
+				linkedin_url: 'https://linkedin.com/in/test',
+			}),
+		).resolves.toMatchObject({ full_name: 'Ayushi Mathur' });
+	});
+
 	it('rejects a company page URL before calling Aeroleads', async () => {
 		await expect(
 			getLinkedinDetails()(mockCtx, {

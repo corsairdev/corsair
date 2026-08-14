@@ -7,13 +7,8 @@ describe('Aeroleads schema', () => {
 		expect(AeroleadsSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof AeroleadsSchema.entities).toBe('object');
-		expect(AeroleadsSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(AeroleadsSchema.entities))).toBe(true);
-		for (const entity of Object.values(AeroleadsSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares db schema entities aligned to Aeroleads resources', () => {
+		expect(Object.keys(AeroleadsSchema.entities)).toEqual(['linkedinDetails']);
 	});
 	it('accepts valid linkedin details response', () => {
 		const live = {
