@@ -3,6 +3,17 @@ import { CORSAIR_TUNNEL_PATH } from './constants';
 
 const UPSTREAM_TIMEOUT_MS = 30_000;
 
+// Client-controlled routing/identity headers the app must not trust from a
+// request that arrived over the public tunnel.
+const UNSAFE_REQUEST_HEADERS = new Set([
+	'host',
+	'forwarded',
+	'x-forwarded-for',
+	'x-forwarded-host',
+	'x-forwarded-proto',
+	'x-real-ip',
+]);
+
 /**
  * Loopback proxy that only forwards `/api/corsair` (and its subpaths) to the dev
  * app; every other path gets a 404. The tunnel shares this guard instead of the
@@ -38,6 +49,16 @@ export function startPathGuard(
 			return;
 		}
 
+		// Strip client-controlled routing/identity headers so whoever reaches the
+		// public URL can't feed the dev app a spoofed Host / X-Forwarded-*.
+		const fwdHeaders: http.OutgoingHttpHeaders = {
+			host: `127.0.0.1:${appPort}`,
+		};
+		for (const [k, v] of Object.entries(req.headers)) {
+			if (v !== undefined && !UNSAFE_REQUEST_HEADERS.has(k)) {
+				fwdHeaders[k] = v;
+			}
+		}
 		const proxyReq = http.request(
 			{
 				host: '127.0.0.1',
@@ -45,20 +66,34 @@ export function startPathGuard(
 				method: req.method,
 				// Forward the normalized path so the app can't re-resolve `..`.
 				path: url.pathname + url.search,
-				headers: req.headers,
+				headers: fwdHeaders,
 				timeout: UPSTREAM_TIMEOUT_MS,
 			},
 			(proxyRes) => {
-				res.writeHead(proxyRes.statusCode ?? 502, proxyRes.headers);
+				// Don't leak app cookies back out through the public tunnel.
+				const respHeaders: http.OutgoingHttpHeaders = {};
+				for (const [k, v] of Object.entries(proxyRes.headers)) {
+					if (v !== undefined && k !== 'set-cookie') respHeaders[k] = v;
+				}
+				res.writeHead(proxyRes.statusCode ?? 502, respHeaders);
 				proxyRes.pipe(res);
 			},
 		);
 		proxyReq.on('timeout', () => proxyReq.destroy());
 		proxyReq.on('error', () => {
-			if (!res.headersSent) res.statusCode = 502;
+			if (res.writableEnded) return;
+			if (res.headersSent) {
+				res.destroy();
+				return;
+			}
+			res.statusCode = 502;
 			res.end('Bad gateway');
 		});
 		req.on('error', () => proxyReq.destroy());
+		// A client abort closes `res` without emitting an error on `req`.
+		res.on('close', () => {
+			if (!proxyReq.destroyed) proxyReq.destroy();
+		});
 		req.pipe(proxyReq);
 	});
 

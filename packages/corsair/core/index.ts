@@ -192,7 +192,7 @@ function maybeStartTunnel(
 	const key = hub!.projectApiKey;
 	if (activeTunnels.has(key)) return;
 	const port = Number(process.env.PORT);
-	if (!port || port < 1 || port > 65535) {
+	if (!Number.isInteger(port) || port < 1 || port > 65535) {
 		console.error(
 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair tunnel <port>`.',
 		);
@@ -213,6 +213,7 @@ function maybeStartTunnel(
 				apiKey: key,
 				bin,
 				shareHost,
+				onClose: () => activeTunnels.delete(key),
 			}),
 		)
 		.then(({ url }) => {

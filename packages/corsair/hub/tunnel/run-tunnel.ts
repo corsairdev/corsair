@@ -6,6 +6,13 @@ function escapeRegExp(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+/** Linear trailing-char strip — avoids a backtracking `[…]+$` regex (ReDoS). */
+function stripTrailing(s: string, chars: string): string {
+	let end = s.length;
+	while (end > 0 && chars.includes(s.charAt(end - 1))) end--;
+	return s.slice(0, end);
+}
+
 /**
  * Extracts the public share URL from zrok's headless output.
  *
@@ -29,7 +36,7 @@ export function extractTunnelUrl(
 
 	let found: string | null = null;
 	for (const rawLine of output.split('\n')) {
-		const line = rawLine.trim().replace(/['".,;)]+$/, '');
+		const line = stripTrailing(rawLine.trim(), `'".,;)`);
 		if (/^https:\/\/\S+$/.test(line)) {
 			found = line;
 		}
@@ -50,8 +57,9 @@ export async function fetchTunnelSlug(opts: {
 		throw new Error(`Hub tunnel-config failed (HTTP ${res.status})`);
 	}
 	const body = (await res.json()) as { slug?: string };
-	if (!body.slug) {
-		throw new Error('Hub tunnel-config returned no slug');
+	// The slug becomes a zrok share name; reject anything but a clean label.
+	if (!body.slug || !/^[a-z0-9-]+$/.test(body.slug)) {
+		throw new Error('Hub tunnel-config returned an invalid slug');
 	}
 	return body.slug;
 }
@@ -69,6 +77,8 @@ export async function runTunnel(opts: {
 	bin?: string;
 	shareHost?: string;
 	timeoutMs?: number;
+	/** Called if the zrok child exits *after* the tunnel came up. */
+	onClose?: () => void;
 }): Promise<{ url: string; stop: () => void }> {
 	const {
 		port,
@@ -77,6 +87,7 @@ export async function runTunnel(opts: {
 		bin = 'zrok',
 		shareHost = CORSAIR_TUNNEL_ZONE,
 		timeoutMs = 20_000,
+		onClose,
 	} = opts;
 
 	// The Hub owns the slug; the SDK just reserves + shares the assigned name.
@@ -167,7 +178,12 @@ export async function runTunnel(opts: {
 						`${bin} exited early (code ${code ?? 'null'}) before a public URL appeared`,
 					),
 				);
+				return;
 			}
+			// Tunnel died after startup: reap the guard and let the caller restart.
+			process.removeListener('exit', exitHandler);
+			void guard.close();
+			onClose?.();
 		});
 
 		const timer = setTimeout(() => {

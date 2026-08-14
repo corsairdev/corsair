@@ -18,8 +18,9 @@ export default class TunnelCommand extends BaseCommand {
 	}
 
 	async action({ args }: CommandActionData): Promise<void> {
-		const port = Number.parseInt(args[0] ?? '', 10);
-		if (!port || port < 1 || port > 65535) {
+		const raw = args[0] ?? '';
+		const port = Number(raw);
+		if (!/^\d+$/.test(raw) || port < 1 || port > 65535) {
 			console.error('[corsair]: Invalid port. Usage: corsair tunnel <port>');
 			process.exit(1);
 		}
