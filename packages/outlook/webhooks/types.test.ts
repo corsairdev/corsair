@@ -21,6 +21,7 @@ function makeRequest(payload: unknown): WebhookRequest<OutlookWebhookPayload> {
 		payload,
 		rawBody: JSON.stringify(payload),
 		headers: {},
+		// Tests pass a raw JSON object, not a parsed WebhookRequest payload.
 	} as unknown as WebhookRequest<OutlookWebhookPayload>;
 }
 
@@ -49,7 +50,10 @@ describe('verifyOutlookWebhookSignature', () => {
 
 	it('should reject a payload with no value key', () => {
 		const result = verifyOutlookWebhookSignature(makeRequest({}), CLIENT_STATE);
-		expect(result.valid).toBe(false);
+		expect(result).toEqual({
+			valid: false,
+			error: 'Invalid payload: missing value array',
+		});
 	});
 
 	it('should reject when the client state does not match', () => {
