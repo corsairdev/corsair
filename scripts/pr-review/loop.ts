@@ -15,12 +15,11 @@ export function currentRound(issueComments: { body: string }[]): number {
 export function decide(
 	round: number,
 	findings: Finding[],
-): 'comment' | 'fix' | 'escalate' | 'done' {
+): 'comment' | 'escalate' | 'done' {
 	const serious = findings.filter((f) => f.severity !== 'P2');
 	if (serious.length === 0) return 'done';
 	if (round === 0) return 'comment';
-	if (round === 1) return 'fix';
-	if (round === 2) return 'escalate';
+	if (round === 1) return 'escalate';
 	// Already escalated — stay silent no matter how many pushes follow.
 	return 'done';
 }
@@ -64,7 +63,7 @@ export function buildRoundOneComment(
 	}
 	parts.push(
 		'',
-		'_If anything remains after your next push, a bot commit will clean it up; a maintainer always does the final review and merge._',
+		'_If anything remains after your next push, a maintainer will take it from there and do the final review and merge._',
 	);
 	return parts.join('\n');
 }
