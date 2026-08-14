@@ -17,18 +17,19 @@ export type PostgresQueryResult = {
 	command: string;
 };
 
-const READ_ONLY_RE = /^\s*\(\s*(select)/i;
+const READ_ONLY_PREFIX = /^\s*(\(\s*)?(select|with)\b/i;
+const SELECT_INTO = /\binto\s+(?!stdout\b|outfile\b)/i;
+const ROW_LOCK = /\bfor\s+(update|no\s+key\s+update|share|key\s+share)\b/i;
 
 function isReadOnly(sql: string): boolean {
-	const trimmed = sql.trim();
-	// reject anything that starts with a non-select statement after
-	// stripping leading whitespace/parens (covers WITH...INSERT mutations)
-	if (trimmed.startsWith('(')) {
-		return READ_ONLY_RE.test(trimmed);
-	}
-	if (!/^\s*select\b/i.test(trimmed)) {
-		return false;
-	}
+	const trimmed = sql
+		.trim()
+		.replace(/;+\s*$/g, '')
+		.trim();
+	if (trimmed.includes(';')) return false;
+	if (!READ_ONLY_PREFIX.test(trimmed)) return false;
+	if (SELECT_INTO.test(trimmed)) return false;
+	if (ROW_LOCK.test(trimmed)) return false;
 	return true;
 }
 
@@ -38,6 +39,33 @@ function assertReadOnlyQuery(sql: string): void {
 			'[prisma] read-only SQL endpoint rejected a non-SELECT statement',
 		);
 	}
+}
+
+function postgresClientConfig(connection: PostgresConnectionInput) {
+	return {
+		host: connection.host,
+		port: connection.port ?? 5432,
+		user: connection.user,
+		password: connection.password,
+		database: connection.database,
+		ssl: {
+			rejectUnauthorized: connection.sslRejectUnauthorized ?? true,
+		},
+		connectionTimeoutMillis: 10_000,
+		query_timeout: 30_000,
+	};
+}
+
+function toQueryResult(result: {
+	rows?: unknown[];
+	rowCount?: number | null;
+	command?: string;
+}): PostgresQueryResult {
+	return {
+		rows: (result.rows ?? []) as Record<string, unknown>[],
+		rowCount: result.rowCount ?? null,
+		command: result.command ?? '',
+	};
 }
 
 /**
@@ -55,25 +83,29 @@ export async function executePostgresQuery(
 		assertReadOnlyQuery(sql);
 	}
 
-	const client = new Client({
-		host: connection.host,
-		port: connection.port ?? 5432,
-		user: connection.user,
-		password: connection.password,
-		database: connection.database,
-		ssl: {
-			rejectUnauthorized: connection.sslRejectUnauthorized ?? false,
-		},
-	});
+	const client = new Client(postgresClientConfig(connection));
+	const queryParams = Array.isArray(params) ? params : [];
 
 	try {
 		await client.connect();
-		const result = await client.query(sql, params);
-		return {
-			rows: (result.rows ?? []) as Record<string, unknown>[],
-			rowCount: result.rowCount ?? null,
-			command: result.command,
-		};
+		if (mode !== 'read') {
+			const result = await client.query(sql, queryParams);
+			return toQueryResult(result);
+		}
+
+		await client.query('BEGIN READ ONLY');
+		try {
+			const result = await client.query(sql, queryParams);
+			await client.query('COMMIT');
+			return toQueryResult(result);
+		} catch (error) {
+			try {
+				await client.query('ROLLBACK');
+			} catch {
+				// the original query error is the one callers need
+			}
+			throw error;
+		}
 	} finally {
 		await client.end();
 	}
@@ -133,16 +165,7 @@ ORDER BY tc.table_schema, tc.table_name, kcu.ordinal_position;
 export async function inspectPostgresSchema(
 	connection: PostgresConnectionInput,
 ): Promise<SchemaInspection> {
-	const client = new Client({
-		host: connection.host,
-		port: connection.port ?? 5432,
-		user: connection.user,
-		password: connection.password,
-		database: connection.database,
-		ssl: {
-			rejectUnauthorized: connection.sslRejectUnauthorized ?? false,
-		},
-	});
+	const client = new Client(postgresClientConfig(connection));
 
 	try {
 		await client.connect();
