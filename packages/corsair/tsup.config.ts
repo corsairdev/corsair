@@ -48,6 +48,7 @@ export default defineConfig({
 		'oauth.ts',
 		'tunnel.ts',
 		'hub.ts',
+		'hub/tunnel/run-tunnel.ts',
 		'orm.ts',
 		'setup.ts',
 		'http.ts',
