@@ -135,9 +135,11 @@ export function verifyOutlookWebhookSignature(
 		return { valid: false, error: 'Invalid payload: missing value array' };
 	}
 
-	const allMatch = notifications.every(
-		(n) => typeof n.clientState === 'string' && n.clientState === clientState,
-	);
+	const allMatch = notifications.every((n) => {
+		if (!n || typeof n !== 'object') return false;
+		const client = (n as OutlookChangeNotification).clientState;
+		return typeof client === 'string' && client === clientState;
+	});
 
 	if (!allMatch) {
 		return { valid: false, error: 'Client state mismatch' };
