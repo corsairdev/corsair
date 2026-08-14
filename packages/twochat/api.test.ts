@@ -175,10 +175,10 @@ describe('TwoChat plugin', () => {
 			account: { uuid: 'ACC_1', name: 'Pro Plan' },
 			limits: { requests_per_minute: 100 },
 			usage: {
-				api_requests_available: 1950,
-				api_requests_plan_default: 2000,
-				number_check_requests_available: 100,
-				number_check_requests_plan_default: 100,
+				api_request_count: 1950,
+				max_api_request_count: 2000,
+				number_check_count: 100,
+				max_number_check_count: 100,
 			},
 		};
 		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce(
@@ -251,11 +251,11 @@ describe('TwoChat plugin', () => {
 		const usageRes = TwoChatEndpointOutputSchemas.getApiUsageInfo.parse({
 			success: true,
 			usage: {
-				api_requests_available: 1999,
-				api_requests_plan_default: 2000,
+				api_request_count: 77112,
+				max_api_request_count: 500000,
 			},
 		});
-		expect(usageRes.usage?.api_requests_available).toBe(1999);
+		expect(usageRes.usage?.api_request_count).toBe(77112);
 	});
 
 	it('rejects createContact input missing first_name', () => {

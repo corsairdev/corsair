@@ -117,10 +117,6 @@ export const ApiLimitsSchema = z.object({
 });
 
 export const ApiUsageSchema = z.object({
-	api_requests_available: z.number().optional(),
-	api_requests_plan_default: z.number().optional(),
-	number_check_requests_available: z.number().optional(),
-	number_check_requests_plan_default: z.number().optional(),
 	api_request_count: z.number().optional(),
 	max_api_request_count: z.number().optional(),
 	number_check_count: z.number().optional(),
