@@ -1,5 +1,6 @@
 import type { OpenRouterEndpoints } from './..';
 import { makeOpenRouterRequest } from '../client';
+import { cacheGeneration } from './persist';
 import type { GetGenerationInput, GetGenerationResponse } from './types';
 
 // GET /generation returns request & usage metadata for a previous generation.
@@ -15,5 +16,6 @@ export const getGeneration: OpenRouterEndpoints['generationsGet'] = async (
 		},
 	);
 
+	await cacheGeneration(ctx, result.data);
 	return result;
 };

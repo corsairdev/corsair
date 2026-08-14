@@ -1,5 +1,6 @@
 import type { OpenRouterEndpoints } from './..';
 import { makeOpenRouterRequest } from '../client';
+import { cacheModels } from './persist';
 import type {
 	ListEmbeddingModelsResponse,
 	ListModelsCountResponse,
@@ -17,6 +18,7 @@ export const listModels: OpenRouterEndpoints['modelsList'] = async (
 		{ query: { offset: input.offset, limit: input.limit } },
 	);
 
+	await cacheModels(ctx, result.data);
 	return result;
 };
 
@@ -45,6 +47,7 @@ export const listEmbeddingModels: OpenRouterEndpoints['modelsEmbeddingsList'] =
 			},
 		);
 
+		await cacheModels(ctx, result.data);
 		return result;
 	};
 
@@ -58,5 +61,6 @@ export const listUserModels: OpenRouterEndpoints['modelsUserList'] = async (
 		{ query: { offset: input.offset, limit: input.limit } },
 	);
 
+	await cacheModels(ctx, result.data);
 	return result;
 };

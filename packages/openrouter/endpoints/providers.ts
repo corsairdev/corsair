@@ -1,5 +1,6 @@
 import type { OpenRouterEndpoints } from './..';
 import { makeOpenRouterRequest } from '../client';
+import { cacheProviders } from './persist';
 import type { ListProvidersResponse } from './types';
 
 export const listProviders: OpenRouterEndpoints['providersList'] = async (
@@ -11,5 +12,6 @@ export const listProviders: OpenRouterEndpoints['providersList'] = async (
 		ctx.key,
 	);
 
+	await cacheProviders(ctx, result.data);
 	return result;
 };

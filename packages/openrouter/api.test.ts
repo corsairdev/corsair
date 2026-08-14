@@ -892,6 +892,103 @@ describe('OpenRouter endpoint handlers (mocked client)', () => {
 		expect(mockRequest).toHaveBeenCalledWith('key', 'k');
 		expect(result.data.usage).toBe(0.1);
 	});
+
+	function cacheCtx() {
+		const models = { upsertByEntityId: jest.fn().mockResolvedValue(undefined) };
+		const providers = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		const generations = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		return {
+			ctx: { key: 'k', db: { models, providers, generations } } as never,
+			models,
+			providers,
+			generations,
+		};
+	}
+
+	it('listModels caches each model', async () => {
+		mockRequest.mockResolvedValueOnce({
+			data: [
+				{
+					id: 'openai/gpt-4o-mini',
+					name: 'GPT-4o mini',
+					context_length: 128000,
+				},
+			],
+		});
+		const { ctx, models } = cacheCtx();
+		await Models.listModels(ctx, {});
+		expect(models.upsertByEntityId).toHaveBeenCalledWith(
+			'openai/gpt-4o-mini',
+			expect.objectContaining({
+				id: 'openai/gpt-4o-mini',
+				name: 'GPT-4o mini',
+				context_length: 128000,
+			}),
+		);
+	});
+
+	it('listEmbeddingModels caches each model', async () => {
+		mockRequest.mockResolvedValueOnce({
+			data: [{ id: 'openai/text-embedding-3-small' }],
+		});
+		const { ctx, models } = cacheCtx();
+		await Models.listEmbeddingModels(ctx, {});
+		expect(models.upsertByEntityId).toHaveBeenCalledWith(
+			'openai/text-embedding-3-small',
+			expect.objectContaining({ id: 'openai/text-embedding-3-small' }),
+		);
+	});
+
+	it('listUserModels caches each model', async () => {
+		mockRequest.mockResolvedValueOnce({
+			data: [{ id: 'myorg/custom-model' }],
+		});
+		const { ctx, models } = cacheCtx();
+		await Models.listUserModels(ctx, {});
+		expect(models.upsertByEntityId).toHaveBeenCalledWith(
+			'myorg/custom-model',
+			expect.objectContaining({ id: 'myorg/custom-model' }),
+		);
+	});
+
+	it('listProviders caches each provider', async () => {
+		mockRequest.mockResolvedValueOnce({
+			data: [{ name: 'OpenAI', slug: 'openai', headquarters: 'US' }],
+		});
+		const { ctx, providers } = cacheCtx();
+		await Providers.listProviders(ctx, {});
+		expect(providers.upsertByEntityId).toHaveBeenCalledWith(
+			'openai',
+			expect.objectContaining({ slug: 'openai', name: 'OpenAI' }),
+		);
+	});
+
+	it('getGeneration caches the generation', async () => {
+		mockRequest.mockResolvedValueOnce({
+			data: { id: 'gen-1', model: 'openai/gpt-4o-mini', total_cost: 0.01 },
+		});
+		const { ctx, generations } = cacheCtx();
+		await Generations.getGeneration(ctx, { id: 'gen-1' });
+		expect(generations.upsertByEntityId).toHaveBeenCalledWith(
+			'gen-1',
+			expect.objectContaining({ id: 'gen-1', model: 'openai/gpt-4o-mini' }),
+		);
+	});
+
+	it('cache write failures do not fail the API call', async () => {
+		mockRequest.mockResolvedValueOnce({
+			data: [{ id: 'openai/gpt-4o-mini' }],
+		});
+		const { ctx, models } = cacheCtx();
+		models.upsertByEntityId.mockRejectedValueOnce(new Error('db down'));
+		await expect(Models.listModels(ctx, {})).resolves.toMatchObject({
+			data: [{ id: 'openai/gpt-4o-mini' }],
+		});
+	});
 });
 
 describe('OpenRouter error handlers', () => {
