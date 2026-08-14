@@ -20,8 +20,8 @@ export const BaseProviders = [
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agentql',
 	'agenty',
+	'agentql',
 	'ahrefs',
 	'aimlapi',
 	'airtable',
@@ -30,8 +30,9 @@ export const BaseProviders = [
 	'alphavantage',
 	'alttextai',
 	'amara',
-	'ambee',
 	'ambientweather',
+	'ambee',
+	'amcards',
 	'amplitude',
 	'apibible',
 	'apify',
@@ -91,6 +92,7 @@ export const BaseProviders = [
 	'monday',
 	'neon',
 	'notion',
+	'ocrspace',
 	'ollama',
 	'onedrive',
 	'onepassword',
@@ -144,8 +146,8 @@ export const ProviderDisplayNames = {
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agentql: 'AgentQL',
 	agenty: 'Agenty',
+	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
@@ -156,6 +158,7 @@ export const ProviderDisplayNames = {
 	amara: 'Amara',
 	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	apibible: 'API.Bible',
 	apify: 'Apify',
@@ -215,6 +218,7 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
+	ocrspace: 'OCR.space',
 	ollama: 'Ollama',
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
@@ -275,8 +279,8 @@ export type AllProviders =
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agentql'
 	| 'agenty'
+	| 'agentql'
 	| 'ahrefs'
 	| 'aimlapi'
 	| 'airtable'
@@ -285,8 +289,9 @@ export type AllProviders =
 	| 'alphavantage'
 	| 'alttextai'
 	| 'amara'
-	| 'ambee'
 	| 'ambientweather'
+	| 'ambee'
+	| 'amcards'
 	| 'amplitude'
 	| 'apibible'
 	| 'apify'
@@ -346,6 +351,7 @@ export type AllProviders =
 	| 'monday'
 	| 'neon'
 	| 'notion'
+	| 'ocrspace'
 	| 'ollama'
 	| 'onedrive'
 	| 'onepassword'
