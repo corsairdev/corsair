@@ -193,9 +193,9 @@ describe('request bodies, persistence and audit payloads', () => {
 
 			await op('accounts', 'upsert')(makeCtx(), { name: 'Acme' });
 
-			expect(
-				calls.filter((c) => c.method.toUpperCase() === 'GET'),
-			).toHaveLength(2);
+			const gets = calls.filter((c) => c.method.toUpperCase() === 'GET');
+			expect(gets).toHaveLength(2);
+			expect(gets[1]?.url).toContain('offset=100');
 			expect(call(2).method.toUpperCase()).toBe('PUT');
 			expect(call(2).url).toContain('/accounts/101');
 		});
