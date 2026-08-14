@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import type { InstagramWebhooks } from '../index';
 import {
@@ -5,7 +6,7 @@ import {
 	extractMetaWebhookChallenge,
 	InstagramUrlVerificationEventSchema,
 } from './types';
-import { timingSafeEqual } from 'node:crypto';
+
 export const url_verification: InstagramWebhooks['url_verification'] = {
 	match: createInstagramWebhookMatcher('url_verification'),
 	handler: async (ctx, request) => {
@@ -22,19 +23,19 @@ export const url_verification: InstagramWebhooks['url_verification'] = {
 		}
 
 		const expectedVerifyToken = ctx.options.webhookVerifyToken;
-		const a = Buffer.from(challengeRequest.verifyToken || ''); 
-    const b = Buffer.from(expectedVerifyToken || '');
+		const a = Buffer.from(challengeRequest.verifyToken || '');
+		const b = Buffer.from(expectedVerifyToken || '');
+		if (
+			!expectedVerifyToken ||
+			a.length !== b.length ||
+			!timingSafeEqual(a, b)
+		) {
+			return {
+				success: false,
+				error: 'Invalid verification token',
+			};
+		}
 
-    if (
-        !expectedVerifyToken ||
-        a.length !== b.length ||
-        !timingSafeEqual(a, b)
-    ) {
-        return {
-      success: false,
-      error: 'Invalid verification token',
-    };
-  }
 		const event = InstagramUrlVerificationEventSchema.parse({
 			type: 'url_verification',
 			challenge: challengeRequest.challenge,
