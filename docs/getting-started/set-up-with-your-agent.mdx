@@ -53,10 +53,13 @@ https://docs.corsair.dev/concepts/permissions — it's not one of the four core 
 Don't stop at "the server runs" — mint a connect link, send me through it, and confirm a
 real API call returns data. If the provider's page 404s on Connect, don't assume why —
 check the plugin and my plan in Hub first. If the managed OAuth app truly isn't
-available to me, flip that plugin to `authType: 'oauth_2'` with my own
-credentials: { clientId, clientSecret }, register
-https://auth.corsair.dev/oauth/callback with the provider, and set the scopes its
-credentials guide lists, instead of giving up.
+available to me, flip that plugin to `authType: 'oauth_2'` and store my client id
+and secret the documented way — `corsair.keys.<plugin>.set_client_id` and
+`set_client_secret`, the CLI (`corsair setup --plugin=<id> client_id=...
+client_secret=...`), or the dashboard's BYO modal, per the plugin's Get
+Credentials guide. On Hub, register the redirect URL from the Keys tab
+(https://auth.corsair.dev/oauth/callback) with the provider — not a URL of my own —
+then set the scopes the guide lists and retry instead of giving up.
 
 Prefer Hub. Only set up manual, self-hosted mode if I ask for it.
 ```
