@@ -19,8 +19,11 @@ export function decide(
 	const serious = findings.filter((f) => f.severity !== 'P2');
 	if (serious.length === 0) return 'done';
 	if (round === 0) return 'comment';
-	if (round === 1) return 'escalate';
-	// Already escalated — stay silent no matter how many pushes follow.
+	// round 1, or a legacy round=2 marker left by the retired fix job — escalate
+	// to the maintainer queue. Escalating posts the round=3 marker, so the next
+	// review lands here as round 3.
+	if (round <= 2) return 'escalate';
+	// Round 3+: already escalated — stay silent; the done branch refreshes in place.
 	return 'done';
 }
 
