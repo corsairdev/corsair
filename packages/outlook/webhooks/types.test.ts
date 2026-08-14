@@ -1,6 +1,6 @@
 import type { WebhookRequest } from 'corsair/core';
 import type { OutlookChangeNotification, OutlookWebhookPayload } from './types';
-import { verifyOutlookWebhookSignature } from './types';
+import { createOutlookMatch, verifyOutlookWebhookSignature } from './types';
 
 const CLIENT_STATE = 'outlook-client-state';
 
@@ -90,5 +90,46 @@ describe('verifyOutlookWebhookSignature', () => {
 			CLIENT_STATE,
 		);
 		expect(result).toEqual({ valid: true });
+	});
+
+	it('should reject a value array that contains null without throwing', () => {
+		expect(() =>
+			verifyOutlookWebhookSignature(
+				makeRequest({ value: [null] }),
+				CLIENT_STATE,
+			),
+		).not.toThrow();
+		expect(
+			verifyOutlookWebhookSignature(
+				makeRequest({ value: [null] }),
+				CLIENT_STATE,
+			),
+		).toEqual({ valid: false, error: 'Client state mismatch' });
+	});
+});
+
+describe('createOutlookMatch', () => {
+	const matchMessages = createOutlookMatch(/[Mm]essages\//, ['created']);
+
+	it('should not throw when value contains null', () => {
+		const request = {
+			body: { value: [null] },
+			headers: {},
+			rawBody: '{"value":[null]}',
+		} as never;
+		expect(() => matchMessages(request)).not.toThrow();
+		expect(matchMessages(request)).toBe(false);
+	});
+
+	it('should match a created message notification', () => {
+		expect(
+			matchMessages({
+				body: {
+					value: [notification({ resource: 'Users/u1/Messages/m1' })],
+				},
+				headers: {},
+				rawBody: '',
+			} as never),
+		).toBe(true);
 	});
 });
