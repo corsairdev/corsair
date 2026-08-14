@@ -76,7 +76,7 @@ describe('pingTunnelLive', () => {
 		fetchMock.mockReset();
 	});
 
-	it('POSTs to /api/dev/register with Bearer auth and no URL body', async () => {
+	it('POSTs to /api/dev/register with Bearer auth, no URL body, bounded by a signal', async () => {
 		fetchMock.mockResolvedValue({ ok: true, status: 200 });
 
 		await pingTunnelLive({
@@ -84,13 +84,12 @@ describe('pingTunnelLive', () => {
 			apiKey: 'ck_dev_test',
 		});
 
-		expect(fetchMock).toHaveBeenCalledWith(
-			'https://auth.corsair.dev/api/dev/register',
-			{
-				method: 'POST',
-				headers: { authorization: 'Bearer ck_dev_test' },
-			},
-		);
+		const [url, init] = fetchMock.mock.calls[0];
+		expect(url).toBe('https://auth.corsair.dev/api/dev/register');
+		expect(init.method).toBe('POST');
+		expect(init.headers).toEqual({ authorization: 'Bearer ck_dev_test' });
+		// A hung Hub must not wedge startup — the request is abort-bounded.
+		expect(init.signal).toBeInstanceOf(AbortSignal);
 	});
 
 	it('throws on a non-2xx response', async () => {

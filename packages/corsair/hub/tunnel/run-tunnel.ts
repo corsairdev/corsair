@@ -2,6 +2,10 @@ import { spawn } from 'node:child_process';
 import { CORSAIR_TUNNEL_ZONE } from './constants';
 import { startPathGuard } from './path-guard';
 
+// Bound every Hub request so a hung/silent Hub can't wedge startup with an
+// open zrok child + path guard (and, on the auto path, a stuck activeTunnels key).
+const HUB_REQUEST_TIMEOUT_MS = 15_000;
+
 function escapeRegExp(value: string): string {
 	return value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
@@ -52,6 +56,7 @@ export async function fetchTunnelSlug(opts: {
 	const base = opts.apiUrl.replace(/\/$/, '');
 	const res = await fetch(`${base}/api/dev/tunnel-config`, {
 		headers: { authorization: `Bearer ${opts.apiKey}` },
+		signal: AbortSignal.timeout(HUB_REQUEST_TIMEOUT_MS),
 	});
 	if (!res.ok) {
 		throw new Error(`Hub tunnel-config failed (HTTP ${res.status})`);
@@ -211,6 +216,7 @@ export async function pingTunnelLive(opts: {
 	const res = await fetch(`${base}/api/dev/register`, {
 		method: 'POST',
 		headers: { authorization: `Bearer ${opts.apiKey}` },
+		signal: AbortSignal.timeout(HUB_REQUEST_TIMEOUT_MS),
 	});
 	if (!res.ok) {
 		throw new Error(`Hub tunnel-live ping failed (HTTP ${res.status})`);
