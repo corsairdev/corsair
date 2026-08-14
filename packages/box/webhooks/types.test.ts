@@ -73,7 +73,7 @@ describe('Tests for verifyBoxWebhookSignature', () => {
 		const result = verifyBoxWebhookSignature(
 			requestWith({
 				'box-signature-primary': wrongSignature,
-				'box-delivery-timestamp': new Date().toISOString(),
+				'box-delivery-timestamp': timestamp,
 			}),
 			secret,
 		);
