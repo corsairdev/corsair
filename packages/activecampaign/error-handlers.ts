@@ -262,8 +262,12 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.status === 404) {
 				return true;
 			}
+			// DNS failures say "no such host"; those must reach NETWORK_ERROR.
+			if (!(error instanceof ApiError)) {
+				return false;
+			}
 			const message = error.message.toLowerCase();
-			return message.includes('not found') || message.includes('no such');
+			return message.includes('not found');
 		},
 		handler: async (error, context) => {
 			console.warn(

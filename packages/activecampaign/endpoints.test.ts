@@ -199,6 +199,15 @@ describe('error handlers', () => {
 	 * account slug would fall through to the catch-all handler and be reported
 	 * as an unhandled error.
 	 */
+	it('does not treat a DNS failure as not-found', () => {
+		expect(errorHandlers.NOT_FOUND_ERROR.match(new Error('no such host'))).toBe(
+			false,
+		);
+		expect(
+			errorHandlers.NETWORK_ERROR.match(new Error('getaddrinfo ENOTFOUND')),
+		).toBe(true);
+	});
+
 	it('treats a missing credential as a configuration fault', async () => {
 		const err = new AuthMissingError('activecampaign', 'account');
 		expect(errorHandlers.CONFIGURATION_ERROR.match(err)).toBe(true);

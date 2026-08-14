@@ -183,7 +183,7 @@ const addresses = makeResource({
 	// Street address fields are personal data on a sole-trader account.
 	logKeys: ['id', 'limit', 'offset', 'country'],
 	bodyKeys: [
-		'company',
+		'companyName',
 		'address1',
 		'address2',
 		'city',

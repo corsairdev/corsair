@@ -130,8 +130,7 @@ export async function makeActiveCampaignRequest<T>(
  * transports therefore share one config builder and one rate-limit config, so
  * the two surfaces cannot drift apart in auth or throttling behaviour.
  *
- * Not used by the operations in this PR, which are all REST. It is exported so
- * that the e-commerce groups can be added without reworking the transport.
+ * Used by the e-commerce GraphQL operations in `endpoints/platform.ts`.
  *
  * @see https://developers.activecampaign.com/reference/about-the-graphql-api
  */

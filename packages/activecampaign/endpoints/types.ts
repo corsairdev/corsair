@@ -1664,7 +1664,7 @@ export const AddressesListOutput = listOf('addresses', ActiveCampaignAddress);
 export const AddressesGetInput = IdInput;
 export const AddressesGetOutput = oneOf('address', ActiveCampaignAddress);
 export const AddressesCreateInput = z.object({
-	company: z.string().min(1),
+	companyName: z.string().min(1),
 	address1: z.string().min(1),
 	address2: z.string().optional(),
 	city: z.string().min(1),

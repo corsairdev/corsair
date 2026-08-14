@@ -1,82 +1,115 @@
 import { z } from 'zod';
 
 /**
- * Entity schemas for the ActiveCampaign local mirror.
+ * Locally persisted ActiveCampaign entities.
  *
- * Field lists are transcribed from responses captured against a live
- * ActiveCampaign account on 2026-08-13, not from the documentation.
+ * Field names match official JSON keys.
+ * Docs: https://developers.activecampaign.com/reference/overview
  *
- * Almost every scalar ActiveCampaign returns is a JSON string, including
- * numeric ids ("1"), counts ("0") and booleans ("0" / "1"), so those fields
- * are modelled as strings rather than the types the documentation implies.
+ * Each field is labeled from the official attribute table / example payload,
+ * or as live-observed when this account (2026-08-14) returned a key the docs
+ * example omits. Only the primary key is required: ActiveCampaign omits or
+ * nulls fields depending on plan, permissions and enabled features.
  *
- * The exceptions were found by capture, not by reading, and they follow a
- * pattern worth knowing: the newer **camelCase-keyed** resources return real
- * JSON types, while the older snake_case ones stringify everything.
- * `groupMembers`, `dealCustomFieldMeta` and `accountCustomFieldMeta` all
- * return genuine numbers. Anything observed as either is modelled as a union,
- * and entity ids are coerced, because the store keys on strings.
+ * Almost every scalar is a JSON string, including ids (`"1"`), counts (`"0"`)
+ * and flags (`"0"` / `"1"`). Newer camelCase resources (`groupMembers`,
+ * `dealCustomFieldMeta`, `accountCustomFieldMeta`) return real JSON numbers.
+ * Create vs list also disagrees on a few CRM fields (`deal.value` is an
+ * integer on POST and a string on GET) — those are unions so a create
+ * response is not skipped by the mirror.
  *
- * `schema.test.ts` asserts that every captured key is declared here.
- *
- * Only the primary key is required. ActiveCampaign omits or nulls fields
- * depending on plan, enabled features and permissions - a stricter schema
- * would reject valid rows, and a rejected row is a lost row. Every object is
- * `.loose()` so that fields added by ActiveCampaign later are preserved
- * instead of being stripped.
+ * `schema.test.ts` asserts every captured key is declared here.
  */
 
-/** Nullable, optional string - the shape of nearly every ActiveCampaign field. */
+/** Nullable-optional string — the shape of nearly every ActiveCampaign field. */
 const S = z.string().nullable().optional();
 /**
- * A field that has been observed as a JSON number on at least one endpoint.
- * Accepts either representation so one resource returning numbers cannot
- * reject rows that another returns as strings.
+ * Observed as a JSON number on at least one endpoint (or as a string on
+ * another). Accepts either so one representation cannot reject the other.
  */
 const SN = z.union([z.string(), z.number()]).nullable().optional();
+/** Real JSON boolean, or the `"0"`/`"1"`/`1` forms ActiveCampaign also sends. */
+const Flag = z
+	.union([z.boolean(), z.string(), z.number()])
+	.nullable()
+	.optional();
 /** Sideloaded relation arrays and the `links` object are shape-unstable. */
 const Unknown = z.unknown().nullable().optional();
 
 /**
- * A contact. Reference data: contacts are the entity every other resource in
- * this plugin points at, and they are updated in place rather than appended.
+ * A contact. Official:
+ * https://developers.activecampaign.com/reference/list-all-contacts
+ * Live 2026-08-14: 46 keys. Docs example omits orgname, anonymized, deleted_at,
+ * created/updated timestamps, mpp_tracking, last_*_date, sms_consent and
+ * whatsapp_* — those are live-observed.
  */
 export const ActiveCampaignContact = z
 	.object({
+		/** Unique id of the contact. */
 		id: z.string(),
+		/** Email address of the contact. */
 		email: S,
+		/** First name. */
 		firstName: S,
+		/** Last name. */
 		lastName: S,
+		/** Phone number. */
 		phone: S,
+		/** Organization id (deprecated; use account-contact). Official example. */
 		orgid: S,
+		/** Organization name. Live-observed 2026-08-14. */
 		orgname: S,
+		/** Organization id when set, otherwise null. Official example. */
 		organization: S,
+		/** Creation date. */
 		cdate: S,
+		/** Last update date. */
 		udate: S,
+		/** Last activity date. */
 		adate: S,
+		/** Last email date. */
 		edate: S,
+		/** Contact hash. */
 		hash: S,
+		/** Last known IP. */
 		ip: S,
+		/** Last known user agent. */
 		ua: S,
+		/** Gravatar flag (`"0"` / `"1"` / `"3"`). */
 		gravatar: S,
+		/** Soft-deleted flag. */
 		deleted: S,
+		/** Deletion timestamp. Live-observed 2026-08-14. */
 		deleted_at: S,
+		/** Anonymized flag. Live-observed 2026-08-14. */
 		anonymized: S,
+		/** Local part of the email. */
 		email_local: S,
+		/** Domain part of the email. */
 		email_domain: S,
+		/** Segment.io identifier. */
 		segmentio_id: S,
+		/** Hard bounce count. */
 		bounced_hard: S,
+		/** Soft bounce count. */
 		bounced_soft: S,
+		/** Last bounce date. */
 		bounced_date: S,
+		/** Emails sent to this contact. */
 		sentcnt: S,
+		/** Lead-scoring timestamp. */
 		rating_tstamp: S,
+		/** Last social-data enrichment check. */
 		socialdata_lastcheck: S,
+		/** Creating user id. Live-observed 2026-08-14. */
 		created_by: S,
+		/** Updating user id. Live-observed 2026-08-14. */
 		updated_by: S,
 		created_utc_timestamp: S,
 		updated_utc_timestamp: S,
 		created_timestamp: S,
 		updated_timestamp: S,
+		/** Machine-open tracking flag. Live-observed 2026-08-14. */
 		mpp_tracking: S,
 		last_click_date: S,
 		last_open_date: S,
@@ -86,21 +119,30 @@ export const ActiveCampaignContact = z
 		sms_consent_updated_at: S,
 		whatsapp_id: S,
 		whatsapp_username: S,
+		/** Sideloaded score values. */
 		scoreValues: Unknown,
+		/** Sideloaded account-contact ids. */
 		accountContacts: Unknown,
 		links: Unknown,
 	})
 	.loose();
 
 /**
- * A mailing list. Reference data - lists are created once and reused.
+ * A mailing list. Official:
+ * https://developers.activecampaign.com/reference/create-new-list
+ * Live 2026-08-14: 52 keys.
  */
 export const ActiveCampaignList = z
 	.object({
+		/** Unique id of the list. */
 		id: z.string(),
+		/** List name. */
 		name: S,
+		/** URL-safe list identifier. */
 		stringid: S,
+		/** Owning user id. */
 		userid: S,
+		/** Owning user id (duplicate of userid on some payloads). */
 		user: S,
 		description: S,
 		cdate: S,
@@ -130,6 +172,7 @@ export const ActiveCampaignList = z
 		sender_phone: S,
 		sender_url: S,
 		sender_reminder: S,
+		/** Official default is true; this plugin sends false on create. */
 		send_last_broadcast: S,
 		analytics_domains: S,
 		analytics_source: S,
@@ -357,58 +400,101 @@ export const ActiveCampaignListGroup = z
 // ---------------------------------------------------------------------------
 // CRM: deals
 //
-// The routes below were confirmed against a live account on 2026-08-13, but a
-// trial account holds no deals, pipelines, stages, tasks or accounts, so their
-// row shapes could not be captured. Those entities declare the primary key
-// plus the fields ActiveCampaign documents, and stay `.loose()` so unobserved
-// fields are preserved rather than dropped. Where a shape *was* captured, the
-// full captured key set is declared and `schema.test.ts` asserts it.
+// Official list example: https://developers.activecampaign.com/reference/list-all-deals
+// Official create example: https://developers.activecampaign.com/reference/create-a-deal-new
+// Live 2026-08-14: deal, dealGroup and dealStage shapes captured after seeding
+// a pipeline. Create vs list disagree on types for value/status/isDisabled.
 // ---------------------------------------------------------------------------
 
-/** Shape not captured - the trial account holds no deals. */
+/**
+ * A deal. Official list example + live GET 2026-08-14.
+ * POST /deals returns `value` and `status` as JSON numbers; GET returns
+ * strings. `isDisabled` is a boolean on a full row and `1` on a permission-
+ * limited row.
+ */
 export const ActiveCampaignDeal = z
 	.object({
+		/** Unique id of the deal. */
 		id: z.string(),
+		/** Deal title. */
 		title: S,
 		description: S,
-		value: S,
+		/** Value in cents. Integer on create, string on list. */
+		value: SN,
+		/** 3-letter ISO currency, lowercased. */
 		currency: S,
-		status: S,
+		/** 0 open, 1 won, 2 lost. Integer on create, string on list. */
+		status: SN,
+		/** Primary contact id. */
 		contact: S,
 		organization: S,
+		/** Pipeline (dealGroup) id. */
 		group: S,
+		/** Stage id. */
 		stage: S,
+		/** Owner user id. */
 		owner: S,
-		percent: S,
+		percent: SN,
 		nextdate: S,
 		cdate: S,
 		mdate: S,
+		edate: S,
+		hash: S,
+		nextdealid: S,
+		nexttaskid: S,
+		activitycount: S,
+		winProbability: SN,
+		winProbabilityMdate: S,
+		/** False on a full row; `1` when pipeline permission is missing. */
+		isDisabled: Flag,
+		account: SN,
+		customerAccount: SN,
+		fields: Unknown,
+		customFieldSaveStatus: Unknown,
 		links: Unknown,
 	})
 	.loose();
 
-/** A pipeline. Shape not captured. */
+/**
+ * A pipeline (deal group). Official create-pipeline + live GET 2026-08-14.
+ */
 export const ActiveCampaignDealGroup = z
 	.object({
+		/** Unique id of the pipeline. */
 		id: z.string(),
 		title: S,
 		currency: S,
 		allgroups: S,
+		allusers: S,
 		autoassign: S,
+		source: S,
+		count: S,
+		stages: Unknown,
+		win_probability_initialize_date: S,
 		cdate: S,
+		udate: S,
 		links: Unknown,
 	})
 	.loose();
 
-/** A pipeline stage. Shape not captured. */
+/**
+ * A pipeline stage. Official create-deal sideload + live GET 2026-08-14.
+ */
 export const ActiveCampaignDealStage = z
 	.object({
+		/** Unique id of the stage. */
 		id: z.string(),
 		title: S,
 		group: S,
 		order: S,
 		width: S,
 		color: S,
+		dealOrder: S,
+		cardRegion1: S,
+		cardRegion2: S,
+		cardRegion3: S,
+		cardRegion4: S,
+		cardRegion5: S,
 		cdate: S,
 		udate: S,
 		links: Unknown,
@@ -464,15 +550,18 @@ export const ActiveCampaignDealRole = z
 	})
 	.loose();
 
-/** Shape not captured. */
+/** A task outcome. Live GET 2026-08-14. */
 export const ActiveCampaignTaskOutcome = z
 	.object({
 		id: z.string(),
 		title: S,
 		sentiment: S,
-		status: S,
-		cdate: S,
-		udate: S,
+		disabled: S,
+		created_by: S,
+		updated_by: S,
+		created_utc_timestamp: S,
+		updated_utc_timestamp: S,
+		dealTasktype_ids: Unknown,
 		links: Unknown,
 	})
 	.loose();
@@ -512,12 +601,19 @@ export const ActiveCampaignAccountCustomFieldMeta =
 
 // ---------------------------------------------------------------------------
 // CRM: accounts
+// Official: https://developers.activecampaign.com/reference/list-all-accounts
+// Live 2026-08-14: list row plus create extras (fields, customFieldSaveStatus).
 // ---------------------------------------------------------------------------
 
-/** Shape not captured - the trial account holds no accounts. */
+/**
+ * A CRM account (organization). Official list example + live GET 2026-08-14.
+ * `contactCount` / `dealCount` are strings; omitted unless `count_deals=true`.
+ */
 export const ActiveCampaignAccount = z
 	.object({
+		/** Unique id of the account. */
 		id: z.string(),
+		/** Account name. Must be unique. */
 		name: S,
 		accountUrl: S,
 		owner: S,
@@ -525,6 +621,8 @@ export const ActiveCampaignAccount = z
 		dealCount: SN,
 		createdTimestamp: S,
 		updatedTimestamp: S,
+		fields: Unknown,
+		customFieldSaveStatus: Unknown,
 		links: Unknown,
 	})
 	.loose();
@@ -546,7 +644,10 @@ export const ActiveCampaignAccountContact = z
 // Content: notes, campaigns, messages, templates, forms, personalizations
 // ---------------------------------------------------------------------------
 
-/** Shape not captured. */
+/**
+ * A note. Official create-note + live GET 2026-08-14.
+ * `owner` is `{ type, id }`, not a string.
+ */
 export const ActiveCampaignNote = z
 	.object({
 		id: z.string(),
@@ -555,6 +656,10 @@ export const ActiveCampaignNote = z
 		relid: S,
 		cdate: S,
 		mdate: S,
+		userid: S,
+		user: S,
+		is_draft: S,
+		owner: Unknown,
 		links: Unknown,
 	})
 	.loose();
@@ -718,17 +823,30 @@ export const ActiveCampaignSegment = z
 // date range. Connections and customers are reference data and are mirrored.
 // ---------------------------------------------------------------------------
 
-/** Shape not captured. */
+/**
+ * A Deep Data connection. Official create-connection + live GET 2026-08-14.
+ * `isInternal` and `listId` are integers on create, strings on list.
+ */
 export const ActiveCampaignConnection = z
 	.object({
 		id: z.string(),
 		service: S,
+		serviceName: S,
 		externalid: S,
 		name: S,
 		logoUrl: S,
 		linkUrl: S,
 		status: S,
 		syncStatus: S,
+		connectionType: S,
+		isInternal: SN,
+		listId: SN,
+		planTier: S,
+		lastSync: S,
+		sync_request_time: S,
+		sync_start_time: S,
+		credentialExpiration: S,
+		disconnectDate: S,
 		cdate: S,
 		udate: S,
 		links: Unknown,
@@ -815,33 +933,46 @@ export const ActiveCampaignGroupLimit = z
 	})
 	.loose();
 
-/** Shape not captured. */
+/**
+ * A company address. Live POST+GET 2026-08-14.
+ * Official JSON key is `companyName`, not `company`. `isDefault` is an
+ * integer on create and a string on list. `allgroup` is the list key.
+ */
 export const ActiveCampaignAddress = z
 	.object({
 		id: z.string(),
-		company: S,
+		companyName: S,
 		address1: S,
 		address2: S,
 		city: S,
 		state: S,
+		district: S,
 		zip: S,
 		country: S,
-		isDefault: S,
-		allGroups: S,
+		isDefault: SN,
+		allgroup: S,
+		smsName: S,
+		created_by: S,
+		updated_by: S,
+		created_timestamp: S,
+		updated_timestamp: S,
 		links: Unknown,
 	})
 	.loose();
 
-/** Shape not captured. */
+/**
+ * A calendar feed. Live GET 2026-08-14.
+ */
 export const ActiveCampaignCalendar = z
 	.object({
 		id: z.string(),
 		title: S,
 		type: S,
 		token: S,
-		description: S,
+		userid: S,
+		notification: S,
 		cdate: S,
-		udate: S,
+		mdate: S,
 		links: Unknown,
 	})
 	.loose();
@@ -906,7 +1037,9 @@ export const ActiveCampaignCustomObjectSchema = z
 	})
 	.loose();
 
-/** A webhook subscription. Shape not captured. */
+/**
+ * A webhook subscription. Official create-webhook + live GET 2026-08-14.
+ */
 export const ActiveCampaignWebhook = z
 	.object({
 		id: z.string(),
@@ -917,6 +1050,7 @@ export const ActiveCampaignWebhook = z
 		listid: S,
 		cdate: S,
 		state: S,
+		deactivated_date: S,
 		links: Unknown,
 	})
 	.loose();
