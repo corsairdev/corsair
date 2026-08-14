@@ -36,6 +36,7 @@ export const BaseProviders = [
 	'apibible',
 	'apify',
 	'apilabz',
+	'apininjas',
 	'apisports',
 	'asana',
 	'ayrshare',
@@ -166,6 +167,7 @@ export const ProviderDisplayNames = {
 	apibible: 'API.Bible',
 	apify: 'Apify',
 	apilabz: 'API Labz',
+	apininjas: 'API Ninjas',
 	apisports: 'API-Sports',
 	asana: 'Asana',
 	ayrshare: 'Ayrshare',
@@ -303,6 +305,7 @@ export type AllProviders =
 	| 'apibible'
 	| 'apify'
 	| 'apilabz'
+	| 'apininjas'
 	| 'apisports'
 	| 'asana'
 	| 'ayrshare'
