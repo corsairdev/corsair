@@ -3,6 +3,7 @@ import { ApiError } from 'corsair/http';
 import { makeGoogleDriveRequest } from './client';
 import { GoogleDriveEndpointOutputSchemas } from './endpoints/types';
 import type {
+	About,
 	File,
 	FileList,
 	Permission,
@@ -637,6 +638,25 @@ describe('Google Drive API Type Tests', () => {
 			});
 
 			expect(true).toBe(true);
+		});
+	});
+
+	describe('storage', () => {
+		it('storageGetQuota returns correct type', async () => {
+			const response = await makeGoogleDriveRequest<About>(
+				'/about',
+				TEST_TOKEN,
+				{
+					method: 'GET',
+					query: {
+						fields: 'storageQuota',
+					},
+				},
+			);
+
+			GoogleDriveEndpointOutputSchemas.storageGetQuota.parse(
+				response.storageQuota,
+			);
 		});
 	});
 
