@@ -9,16 +9,9 @@ import {
 	ActiveCampaignGroupMember,
 } from '../schema/database';
 import { auditPayload, listAuditPayload } from './logging';
-import { evictRow, persistRow, persistRows } from './persist';
-import { buildPaginationQuery, compactBody } from './shared';
+import { evictChildren, evictRow, persistRow, persistRows } from './persist';
+import { buildPaginationQuery, compactBody, resolveAccount } from './shared';
 import type { ActiveCampaignEndpointOutputs } from './types';
-
-async function resolveAccount(ctx: {
-	options: { account?: string };
-	keys: { get_account: () => Promise<string | null | undefined> };
-}): Promise<string> {
-	return ctx.options.account ?? (await ctx.keys.get_account()) ?? '';
-}
 
 // ---------------------------------------------------------------------------
 // Field definitions
@@ -91,12 +84,10 @@ export const create: ActiveCampaignEndpoints['fieldsCreate'] = async (
 				perstag: input.perstag,
 				defval: input.defval,
 				// ActiveCampaign expects its booleans as 0/1.
-				isrequired: input.isrequired === undefined
-					? undefined
-					: input.isrequired ? 1 : 0,
-				visible: input.visible === undefined
-					? undefined
-					: input.visible ? 1 : 0,
+				isrequired:
+					input.isrequired === undefined ? undefined : input.isrequired ? 1 : 0,
+				visible:
+					input.visible === undefined ? undefined : input.visible ? 1 : 0,
 				ordernum: input.ordernum,
 			}),
 		},
@@ -129,12 +120,10 @@ export const update: ActiveCampaignEndpoints['fieldsUpdate'] = async (
 				descript: input.descript,
 				perstag: input.perstag,
 				defval: input.defval,
-				isrequired: input.isrequired === undefined
-					? undefined
-					: input.isrequired ? 1 : 0,
-				visible: input.visible === undefined
-					? undefined
-					: input.visible ? 1 : 0,
+				isrequired:
+					input.isrequired === undefined ? undefined : input.isrequired ? 1 : 0,
+				visible:
+					input.visible === undefined ? undefined : input.visible ? 1 : 0,
 				ordernum: input.ordernum,
 			}),
 		},
@@ -152,8 +141,9 @@ export const update: ActiveCampaignEndpoints['fieldsUpdate'] = async (
 };
 
 /**
- * Deleting a field definition also destroys every value stored against it, so
- * the field and its cached rows are both evicted.
+ * Deleting a field definition also destroys every value stored against it
+ * upstream, so both the field and its cached values are evicted - leaving the
+ * values behind would let the mirror describe data that no longer exists.
  */
 export const remove: ActiveCampaignEndpoints['fieldsDelete'] = async (
 	ctx,
@@ -168,6 +158,7 @@ export const remove: ActiveCampaignEndpoints['fieldsDelete'] = async (
 	);
 
 	await evictRow(ctx.db.fields, input.id, 'field');
+	await evictChildren(ctx.db.fieldValues, 'field', input.id, 'fieldValue');
 
 	await logEventFromContext(
 		ctx,
@@ -196,9 +187,8 @@ export const createOptionsBulk: ActiveCampaignEndpoints['fieldOptionsCreateBulk'
 						label: o.label,
 						value: o.value,
 						orderid: o.orderid,
-						isdefault: o.isdefault === undefined
-							? undefined
-							: o.isdefault ? 1 : 0,
+						isdefault:
+							o.isdefault === undefined ? undefined : o.isdefault ? 1 : 0,
 					}),
 				),
 			},

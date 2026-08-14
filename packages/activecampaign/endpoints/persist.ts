@@ -17,12 +17,29 @@ import type { z } from 'zod';
 /** A list page can run to hundreds of rows; cap the concurrent writes. */
 const WRITE_CONCURRENCY = 16;
 
+/**
+ * The subset of the entity store these helpers use.
+ *
+ * Declared with method shorthand rather than function properties on purpose:
+ * the real store types its `data` parameter as the specific entity, and under
+ * property syntax TypeScript checks parameters contravariantly, so a store for
+ * a concrete entity would not be assignable to a store for a generic row.
+ * Method shorthand is bivariant, which is what lets one helper serve all 43
+ * entities.
+ */
 type Store = {
-	upsertByEntityId: (
-		entityId: string,
-		data: Record<string, unknown>,
-	) => Promise<unknown>;
-	deleteByEntityId?: (entityId: string) => Promise<unknown>;
+	upsertByEntityId(entityId: string, data: never): Promise<unknown>;
+	deleteByEntityId?(entityId: string): Promise<unknown>;
+};
+
+/**
+ * The extra capability {@link evictChildren} needs: a search by stored field.
+ * Kept separate from {@link Store} so the common helpers do not require it.
+ */
+type ChildStore = Store & {
+	search?(options: {
+		data: Record<string, unknown>;
+	}): Promise<Array<{ entity_id?: string } | undefined>>;
 };
 
 /**
@@ -58,7 +75,7 @@ export async function persistRow(
 	}
 
 	try {
-		await store.upsertByEntityId(entityId, data);
+		await store.upsertByEntityId(entityId, data as never);
 	} catch (error) {
 		console.warn(`[ACTIVECAMPAIGN] Failed to cache ${entityName}:`, error);
 	}
@@ -106,6 +123,55 @@ export async function evictRow(
 	} catch (error) {
 		console.warn(
 			`[ACTIVECAMPAIGN] Failed to evict ${entityName} ${entityId} from the cache:`,
+			error,
+		);
+	}
+}
+
+/**
+ * Removes every mirrored row that points at a deleted parent.
+ *
+ * Some deletions cascade upstream: removing a custom field destroys every
+ * value stored against it, and removing a tag removes every contact-tag
+ * association. Evicting only the parent would leave those children in the
+ * mirror describing something that no longer exists, which is the same
+ * staleness `evictRow` exists to prevent - just one level down.
+ *
+ * The store exposes `search`, so the children are found by their foreign key
+ * and evicted individually. Best-effort throughout: a mirror that cannot be
+ * cleaned must not fail the API call that already succeeded.
+ */
+export async function evictChildren(
+	store: ChildStore | undefined,
+	foreignKey: string,
+	parentId: string,
+	entityName: string,
+): Promise<void> {
+	if (!store?.search || !store.deleteByEntityId || !parentId) {
+		return;
+	}
+
+	try {
+		const rows = await store.search({ data: { [foreignKey]: parentId } });
+		if (!Array.isArray(rows) || rows.length === 0) {
+			return;
+		}
+
+		for (const row of rows) {
+			const entityId = row?.entity_id;
+			if (typeof entityId !== 'string' || entityId.length === 0) continue;
+			try {
+				await store.deleteByEntityId(entityId);
+			} catch (error) {
+				console.warn(
+					`[ACTIVECAMPAIGN] Failed to evict ${entityName} ${entityId} after its parent was deleted:`,
+					error,
+				);
+			}
+		}
+	} catch (error) {
+		console.warn(
+			`[ACTIVECAMPAIGN] Could not look up ${entityName} rows to evict after a parent delete:`,
 			error,
 		);
 	}

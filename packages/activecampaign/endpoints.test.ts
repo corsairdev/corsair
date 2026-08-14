@@ -9,7 +9,7 @@ import {
 	ActiveCampaignEndpointInputSchemas,
 	ActiveCampaignEndpointOutputSchemas,
 } from './endpoints/types';
-import { NON_IDEMPOTENT_OPERATIONS, errorHandlers } from './error-handlers';
+import { errorHandlers, NON_IDEMPOTENT_OPERATIONS } from './error-handlers';
 import { activecampaignEndpointMeta } from './index';
 
 const META = activecampaignEndpointMeta as Record<
@@ -17,10 +17,10 @@ const META = activecampaignEndpointMeta as Record<
 	{ riskLevel: string; description: string }
 >;
 
-const OPERATION_COUNT = 45;
-const READ_COUNT = 22;
-const MUTATING_COUNT = 23;
-const DESTRUCTIVE_COUNT = 8;
+const OPERATION_COUNT = 304;
+const READ_COUNT = 145;
+const MUTATING_COUNT = 159;
+const DESTRUCTIVE_COUNT = 46;
 
 /** 'fieldValues.setForContact' -> 'fieldValuesSetForContact' */
 function toOperationKey(path: string): string {
@@ -80,7 +80,9 @@ describe('endpoint registry', () => {
 	 */
 	it('marks every destructive operation destructive', () => {
 		const destructive = Object.entries(META).filter(
-			([path]) => path.endsWith('.delete') || path.includes('remove'),
+			([path]) =>
+				path.toLowerCase().includes('delete') ||
+				path.toLowerCase().includes('remove'),
 		);
 		expect(destructive).toHaveLength(DESTRUCTIVE_COUNT);
 		for (const [, meta] of destructive) {

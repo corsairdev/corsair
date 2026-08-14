@@ -97,7 +97,8 @@ export async function makeActiveCampaignRequest<T>(
 	account: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		/** Most endpoints take an object envelope; the bulk ones take a raw array. */
+		body?: Record<string, unknown> | unknown[];
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {

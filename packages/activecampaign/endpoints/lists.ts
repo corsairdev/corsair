@@ -4,18 +4,17 @@ import type { ActiveCampaignEndpoints } from '../index';
 import {
 	ActiveCampaignContactList,
 	ActiveCampaignList,
+	ActiveCampaignListGroup,
 } from '../schema/database';
 import { auditPayload, listAuditPayload } from './logging';
 import { evictRow, persistRow, persistRows } from './persist';
-import { buildPaginationQuery, compactBody, compactQuery } from './shared';
+import {
+	buildPaginationQuery,
+	compactBody,
+	compactQuery,
+	resolveAccount,
+} from './shared';
 import type { ActiveCampaignEndpointOutputs } from './types';
-
-async function resolveAccount(ctx: {
-	options: { account?: string };
-	keys: { get_account: () => Promise<string | null | undefined> };
-}): Promise<string> {
-	return ctx.options.account ?? (await ctx.keys.get_account()) ?? '';
-}
 
 export const list: ActiveCampaignEndpoints['listsList'] = async (
 	ctx,
@@ -39,11 +38,7 @@ export const list: ActiveCampaignEndpoints['listsList'] = async (
 	await logEventFromContext(
 		ctx,
 		'activecampaign.lists.list',
-		listAuditPayload(
-			input,
-			['limit', 'offset'],
-			response.lists?.length ?? 0,
-		),
+		listAuditPayload(input, ['limit', 'offset'], response.lists?.length ?? 0),
 		'completed',
 	);
 	return response;
@@ -192,6 +187,40 @@ export const updateSubscription: ActiveCampaignEndpoints['listsUpdateSubscriptio
 			ctx,
 			'activecampaign.lists.updateSubscription',
 			auditPayload(input, ['list', 'contact', 'status']),
+			'completed',
+		);
+		return response;
+	};
+
+/**
+ * Grants a user group a set of permissions over a list.
+ *
+ * ActiveCampaign derives the individual permission flags from the account's
+ * defaults; this endpoint only takes the list and the group.
+ */
+export const createListGroup: ActiveCampaignEndpoints['listGroupsCreate'] =
+	async (ctx, input) => {
+		const account = await resolveAccount(ctx);
+		const response = await makeActiveCampaignRequest<
+			ActiveCampaignEndpointOutputs['listGroupsCreate']
+		>('listGroups', ctx.key, account, {
+			method: 'POST',
+			body: {
+				listGroup: { listid: input.listid, groupid: input.groupid },
+			},
+		});
+
+		await persistRow(
+			ctx.db.listGroups,
+			ActiveCampaignListGroup,
+			response.listGroup,
+			'listGroup',
+		);
+
+		await logEventFromContext(
+			ctx,
+			'activecampaign.listGroups.create',
+			auditPayload(input, ['listid', 'groupid']),
 			'completed',
 		);
 		return response;

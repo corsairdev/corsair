@@ -8,19 +8,13 @@ import {
 } from '../schema/database';
 import { auditPayload, listAuditPayload } from './logging';
 import { evictRow, persistRow, persistRows } from './persist';
-import { buildPaginationQuery, compactBody, compactQuery } from './shared';
+import {
+	buildPaginationQuery,
+	compactBody,
+	compactQuery,
+	resolveAccount,
+} from './shared';
 import type { ActiveCampaignEndpointOutputs } from './types';
-
-/**
- * The account slug half of the credential. Supplied as a plugin option, or
- * resolved from the stored key material.
- */
-async function resolveAccount(ctx: {
-	options: { account?: string };
-	keys: { get_account: () => Promise<string | null | undefined> };
-}): Promise<string> {
-	return ctx.options.account ?? (await ctx.keys.get_account()) ?? '';
-}
 
 export const list: ActiveCampaignEndpoints['contactsList'] = async (
 	ctx,
@@ -73,7 +67,10 @@ export const get: ActiveCampaignEndpoints['contactsGet'] = async (
 	const account = await resolveAccount(ctx);
 	const response = await makeActiveCampaignRequest<
 		ActiveCampaignEndpointOutputs['contactsGet']
-	>(`contacts/${input.id}`, ctx.key, account, { method: 'GET' });
+	>(`contacts/${input.id}`, ctx.key, account, {
+		method: 'GET',
+		query: compactQuery({ automations: input.automations }),
+	});
 
 	await persistRow(
 		ctx.db.contacts,
@@ -301,7 +298,12 @@ function subResource<
 		| 'contactsGetAutomations'
 		| 'contactsGetGeoIps'
 		| 'contactsGetScoreValues'
-		| 'contactsGetDeals',
+		| 'contactsGetDeals'
+		| 'contactsGetLogs'
+		| 'contactsGetTrackingLogs'
+		| 'contactsGetGoals'
+		| 'contactsGetAccountContacts'
+		| 'contactsGetNotes',
 >(path: string, event: string): ActiveCampaignEndpoints[K] {
 	return (async (
 		ctx: Parameters<ActiveCampaignEndpoints[K]>[0],
@@ -345,3 +347,100 @@ export const getDeals = subResource<'contactsGetDeals'>(
 	'deals',
 	'activecampaign.contacts.getDeals',
 );
+export const getLogs = subResource<'contactsGetLogs'>(
+	'contactLogs',
+	'activecampaign.contacts.getLogs',
+);
+export const getTrackingLogs = subResource<'contactsGetTrackingLogs'>(
+	'trackingLogs',
+	'activecampaign.contacts.getTrackingLogs',
+);
+export const getGoals = subResource<'contactsGetGoals'>(
+	'contactGoals',
+	'activecampaign.contacts.getGoals',
+);
+export const getAccountContacts = subResource<'contactsGetAccountContacts'>(
+	'accountContacts',
+	'activecampaign.contacts.getAccountContacts',
+);
+export const getNotes = subResource<'contactsGetNotes'>(
+	'notes',
+	'activecampaign.contacts.getNotes',
+);
+
+/**
+ * Singleton sub-resources: one record per contact rather than a collection, so
+ * they take no pagination and answer with a bare `{}` when the contact has no
+ * such record.
+ */
+function singletonSubResource<
+	K extends
+		| 'contactsGetData'
+		| 'contactsGetOrganization'
+		| 'contactsGetPlusAppend',
+>(path: string, event: string): ActiveCampaignEndpoints[K] {
+	return (async (
+		ctx: Parameters<ActiveCampaignEndpoints[K]>[0],
+		input: { id: string },
+	) => {
+		const account = await resolveAccount(ctx);
+		const response = await makeActiveCampaignRequest<
+			ActiveCampaignEndpointOutputs[K]
+		>(`contacts/${input.id}/${path}`, ctx.key, account, { method: 'GET' });
+
+		await logEventFromContext(
+			ctx,
+			event,
+			auditPayload(input, ['id']),
+			'completed',
+		);
+		return response;
+	}) as ActiveCampaignEndpoints[K];
+}
+
+export const getData = singletonSubResource<'contactsGetData'>(
+	'contactData',
+	'activecampaign.contacts.getData',
+);
+export const getOrganization = singletonSubResource<'contactsGetOrganization'>(
+	'organization',
+	'activecampaign.contacts.getOrganization',
+);
+export const getPlusAppend = singletonSubResource<'contactsGetPlusAppend'>(
+	'plusAppend',
+	'activecampaign.contacts.getPlusAppend',
+);
+
+/**
+ * Account-wide activity feed, optionally narrowed to one contact.
+ *
+ * Activity rows are transactional - appended continuously and only meaningful
+ * against a time range - so they are returned but never mirrored.
+ */
+export const listActivities: ActiveCampaignEndpoints['activitiesList'] = async (
+	ctx,
+	input,
+) => {
+	const account = await resolveAccount(ctx);
+	const response = await makeActiveCampaignRequest<
+		ActiveCampaignEndpointOutputs['activitiesList']
+	>('activities', ctx.key, account, {
+		method: 'GET',
+		query: {
+			...buildPaginationQuery(input),
+			...compactQuery({ contact: input.contact, after: input.after }),
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'activecampaign.activities.list',
+		listAuditPayload(
+			input,
+			['contact', 'limit', 'offset', 'after'],
+			response.activities?.length ?? 0,
+		),
+		'completed',
+	);
+	return response;
+};

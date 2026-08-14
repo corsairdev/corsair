@@ -6,16 +6,14 @@ import {
 	ActiveCampaignTag,
 } from '../schema/database';
 import { auditPayload, listAuditPayload } from './logging';
-import { evictRow, persistRow, persistRows } from './persist';
-import { buildPaginationQuery, compactBody, compactQuery } from './shared';
+import { evictChildren, evictRow, persistRow, persistRows } from './persist';
+import {
+	buildPaginationQuery,
+	compactBody,
+	compactQuery,
+	resolveAccount,
+} from './shared';
 import type { ActiveCampaignEndpointOutputs } from './types';
-
-async function resolveAccount(ctx: {
-	options: { account?: string };
-	keys: { get_account: () => Promise<string | null | undefined> };
-}): Promise<string> {
-	return ctx.options.account ?? (await ctx.keys.get_account()) ?? '';
-}
 
 export const list: ActiveCampaignEndpoints['tagsList'] = async (ctx, input) => {
 	const account = await resolveAccount(ctx);
@@ -120,11 +118,19 @@ export const remove: ActiveCampaignEndpoints['tagsDelete'] = async (
 	input,
 ) => {
 	const account = await resolveAccount(ctx);
-	await makeActiveCampaignRequest<unknown>(`tags/${input.id}`, ctx.key, account, {
-		method: 'DELETE',
-	});
+	await makeActiveCampaignRequest<unknown>(
+		`tags/${input.id}`,
+		ctx.key,
+		account,
+		{
+			method: 'DELETE',
+		},
+	);
 
 	await evictRow(ctx.db.tags, input.id, 'tag');
+	// Deleting a tag removes it from every contact upstream, so the cached
+	// associations go with it.
+	await evictChildren(ctx.db.contactTags, 'tag', input.id, 'contactTag');
 
 	await logEventFromContext(
 		ctx,
