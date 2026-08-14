@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+// Any IPv4 or IPv6 address.
+const IpAddressSchema = z.union([z.ipv4(), z.ipv6()]);
+
 // ─────────────────────────────────────────────────────────────────────────────
 // CHECK — GET /api/v2/check
 // Look up an IP address and get its abuse confidence score, country, ISP,
@@ -9,7 +12,7 @@ import { z } from 'zod';
 
 export const CheckIpInputSchema = z.object({
 	/** IPv4 or IPv6 address to look up, e.g. "118.25.6.39" */
-	ipAddress: z.string().describe('IPv4 or IPv6 address to check'),
+	ipAddress: IpAddressSchema.describe('IPv4 or IPv6 address to check'),
 	/** Only consider reports from the last N days (1–365, default 30) */
 	maxAgeInDays: z
 		.number()
@@ -66,7 +69,9 @@ export type CheckIpResponse = z.infer<typeof CheckIpResponseSchema>;
 
 export const GetReportsInputSchema = z.object({
 	/** IPv4 or IPv6 address to fetch reports for */
-	ipAddress: z.string().describe('IPv4 or IPv6 address to fetch reports for'),
+	ipAddress: IpAddressSchema.describe(
+		'IPv4 or IPv6 address to fetch reports for',
+	),
 	/** Only consider reports from the last N days (1–365, default 30) */
 	maxAgeInDays: z
 		.number()
@@ -94,16 +99,7 @@ export const GetReportsInputSchema = z.object({
 
 export type GetReportsInput = z.infer<typeof GetReportsInputSchema>;
 
-const ReportsItemSchema = z
-	.object({
-		reportedAt: z.string(),
-		comment: z.string().nullable().optional(),
-		categories: z.array(z.number()),
-		reporterId: z.number(),
-		reporterCountryCode: z.string().nullable().optional(),
-		reporterCountryName: z.string().nullable().optional(),
-	})
-	.loose();
+const ReportsItemSchema = CheckReportSchema;
 
 export const GetReportsResponseSchema = z
 	.object({
@@ -187,7 +183,7 @@ export type GetBlacklistResponse = z.infer<typeof GetBlacklistResponseSchema>;
 
 export const ReportIpInputSchema = z.object({
 	/** IPv4 or IPv6 address being reported */
-	ip: z.string().describe('IPv4 or IPv6 address being reported'),
+	ip: IpAddressSchema.describe('IPv4 or IPv6 address being reported'),
 	/** Abuse category IDs (integers 1–30, at least one required) */
 	categories: z
 		.array(z.number().int().min(1).max(30))
@@ -225,7 +221,7 @@ export type ReportIpResponse = z.infer<typeof ReportIpResponseSchema>;
 export const CheckBlockInputSchema = z.object({
 	/** CIDR notation network block, e.g. "127.0.0.1/24" or an IPv6 prefix */
 	network: z
-		.string()
+		.union([z.cidrv4(), z.cidrv6()])
 		.describe('CIDR notation network block, e.g. "127.0.0.1/24"'),
 	/** Only consider reports from the last N days (1–365, default 30) */
 	maxAgeInDays: z
@@ -271,7 +267,9 @@ export type CheckBlockResponse = z.infer<typeof CheckBlockResponseSchema>;
 
 export const ClearAddressInputSchema = z.object({
 	/** IPv4 or IPv6 address to clear reports for from your account */
-	ipAddress: z.string().describe('IPv4 or IPv6 address to clear reports for'),
+	ipAddress: IpAddressSchema.describe(
+		'IPv4 or IPv6 address to clear reports for',
+	),
 });
 
 export type ClearAddressInput = z.infer<typeof ClearAddressInputSchema>;

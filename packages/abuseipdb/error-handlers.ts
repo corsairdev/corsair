@@ -18,24 +18,6 @@ function getRetryAfter(error: Error): number | undefined {
 }
 
 /**
- * Extracts a searchable string from AbuseIPDB's JSON:API error body
- * (`{ "errors": [{ "detail", "status", "source" }] }`). The thrown error's
- * own `.message` can end up as the raw error *object* rather than a string
- * (corsair's request layer falls back to `result.body?.detail`, which is
- * undefined for AbuseIPDB's nested `errors[].detail` shape), so `.body` —
- * preserved untouched on `AbuseIPDBAPIError` — is the reliable source.
- */
-function getErrorBodyText(error: Error): string {
-	const body = (error as Partial<AbuseIPDBAPIError>).body as
-		| { errors?: Array<{ detail?: string; status?: number }> }
-		| undefined;
-	const details = (body?.errors ?? [])
-		.map((e) => e.detail)
-		.filter((d): d is string => typeof d === 'string');
-	return [details.join(' '), error.message].join(' ').toLowerCase();
-}
-
-/**
  * Error handlers for the AbuseIPDB plugin.
  *
  * AbuseIPDB returns reliable HTTP status codes:

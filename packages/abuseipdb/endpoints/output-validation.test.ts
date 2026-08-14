@@ -198,4 +198,12 @@ describe('runtime output validation rejects malformed provider responses', () =>
 
 		expect(() => ClearAddressResponseSchema.parse(wrongShape.data)).toThrow();
 	});
+
+	it('rejects a check-block response missing the reported addresses', () => {
+		const wrongShape = {
+			data: { networkAddress: '118.25.6.39', netmask: '255.255.255.0' },
+		};
+
+		expect(() => CheckBlockResponseSchema.parse(wrongShape.data)).toThrow();
+	});
 });

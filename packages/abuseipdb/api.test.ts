@@ -15,6 +15,12 @@ import { AbuseIPDBEndpointOutputSchemas } from './endpoints/types';
 // actually returns.
 const ABUSEIPDB_API_KEY = process.env.ABUSEIPDB_API_KEY;
 
+// The write tests (report, clear-address) mutate a real AbuseIPDB account —
+// `clear-address` deletes every report filed against the test IP — so they
+// additionally require ABUSEIPDB_WRITE_ENABLED=true. Read-only tests only
+// need the API key.
+const ABUSEIPDB_WRITE_ENABLED = process.env.ABUSEIPDB_WRITE_ENABLED === 'true';
+
 // A public, stable IP frequently reported to AbuseIPDB (a Tencent Cloud
 // datacenter address) used as the shared fixture across tests.
 const TEST_IP = '118.25.6.39';
@@ -92,7 +98,14 @@ describeOrSkip('AbuseIPDB API Type Tests', () => {
 		expect(parsed.networkAddress).toBeTruthy();
 		expect(Array.isArray(parsed.reportedAddress)).toBe(true);
 	});
+});
 
+// Write operations mutate a real AbuseIPDB account (clear-address deletes
+// every report filed against the IP), so they only run when explicitly
+// opted in via ABUSEIPDB_WRITE_ENABLED=true.
+const describeWriteOrSkip = ABUSEIPDB_WRITE_ENABLED ? describe : describe.skip;
+
+describeWriteOrSkip('AbuseIPDB API write tests', () => {
 	it('report accepts a report for a well-known test IP', async () => {
 		const response = await makeAbuseIPDBRequest<{ data: ReportIpResponse }>(
 			'report',
@@ -111,7 +124,7 @@ describeOrSkip('AbuseIPDB API Type Tests', () => {
 		expect(parsed.ipAddress).toBe(TEST_IP);
 	});
 
-	it('clear-address returns the number of reports deleted', async () => {
+	it('clear-address deletes all reports for the IP and returns the count', async () => {
 		const response = await makeAbuseIPDBRequest<{
 			data: ClearAddressResponse;
 		}>('clear-address', ABUSEIPDB_API_KEY!, {

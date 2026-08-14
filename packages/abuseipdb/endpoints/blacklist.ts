@@ -1,7 +1,7 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { z } from 'zod';
 import { makeAbuseIPDBRequest } from '../client';
 import type { AbuseIPDBEndpoints } from '../index';
-import type { GetBlacklistResponse } from './types';
 import { GetBlacklistResponseSchema } from './types';
 
 /**
@@ -34,14 +34,15 @@ export const get: AbuseIPDBEndpoints['getBlacklist'] = async (ctx, input) => {
 		},
 	});
 
-	// The API wraps entries in `data` and the generation timestamp in `meta` —
-	// flatten them into a single ergonomic result object.
-	const blacklistResult: GetBlacklistResponse = {
-		generatedAt: response.meta.generatedAt,
+	// The API wraps entries in `data` and the generation timestamp in `meta`.
+	// Validate the meta envelope and the whole flattened result so a missing
+	// `meta` surfaces as a schema error instead of a raw property-access
+	// crash on `response.meta.generatedAt`.
+	const generatedAt = z.string().parse(response.meta?.generatedAt);
+	const blacklistResult = GetBlacklistResponseSchema.parse({
+		generatedAt,
 		entries: response.data,
-	};
-
-	GetBlacklistResponseSchema.parse(blacklistResult);
+	});
 
 	await logEventFromContext(
 		ctx,

@@ -9,6 +9,12 @@ import { ApiError, request } from 'corsair/http';
 export class AbuseIPDBAPIError extends Error {
 	public readonly status?: number;
 	public readonly statusText?: string;
+	/**
+	 * The raw response body. Deliberately `unknown` — AbuseIPDB returns
+	 * JSON:API-shaped errors (`{ errors: [{ detail, status, source }] }`)
+	 * that don't map to a single known schema, so callers narrow it
+	 * themselves (see error-handlers.ts).
+	 */
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
 	public readonly rateLimitReset?: number;
