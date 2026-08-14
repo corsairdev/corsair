@@ -370,3 +370,79 @@ describe('handler path construction', () => {
 		expect(lastJsonCall()[0]).toBe('/models/google/bert/tf/base/1/files');
 	});
 });
+
+describe('entity cache', () => {
+	function cacheCtx() {
+		const datasets = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		const models = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		const competitions = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		const kernels = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		return {
+			ctx: {
+				...ctx(),
+				db: { datasets, models, competitions, kernels },
+			} as unknown as ReturnType<typeof ctx>,
+			datasets,
+			models,
+			competitions,
+			kernels,
+		};
+	}
+
+	it('datasets.list caches each dataset ref', async () => {
+		mockReq.mockResolvedValueOnce([{ ref: 'owner/slug', title: 'Titanic' }]);
+		const { ctx: cache, datasets } = cacheCtx();
+		await Datasets.list(cache, {});
+		expect(datasets.upsertByEntityId).toHaveBeenCalledWith(
+			'owner/slug',
+			expect.objectContaining({ ref: 'owner/slug', title: 'Titanic' }),
+		);
+	});
+
+	it('models.get caches the model using owner/slug fallback', async () => {
+		mockReq.mockResolvedValueOnce({ title: 'BERT' });
+		const { ctx: cache, models } = cacheCtx();
+		await Models.get(cache, { ownerSlug: 'org', modelSlug: 'bert' });
+		expect(models.upsertByEntityId).toHaveBeenCalledWith(
+			'org/bert',
+			expect.objectContaining({ ref: 'org/bert', title: 'BERT' }),
+		);
+	});
+
+	it('competitions.list caches each competition ref', async () => {
+		mockReq.mockResolvedValueOnce([{ ref: 'titanic', title: 'Titanic' }]);
+		const { ctx: cache, competitions } = cacheCtx();
+		await Competitions.list(cache, {});
+		expect(competitions.upsertByEntityId).toHaveBeenCalledWith(
+			'titanic',
+			expect.objectContaining({ ref: 'titanic' }),
+		);
+	});
+
+	it('kernels.list caches each kernel ref', async () => {
+		mockReq.mockResolvedValueOnce([{ ref: 'user/kernel', title: 'EDA' }]);
+		const { ctx: cache, kernels } = cacheCtx();
+		await Kernels.list(cache, {});
+		expect(kernels.upsertByEntityId).toHaveBeenCalledWith(
+			'user/kernel',
+			expect.objectContaining({ ref: 'user/kernel' }),
+		);
+	});
+
+	it('cache write failures do not fail the API call', async () => {
+		mockReq.mockResolvedValueOnce([{ ref: 'owner/slug' }]);
+		const { ctx: cache, datasets } = cacheCtx();
+		datasets.upsertByEntityId.mockRejectedValueOnce(new Error('db down'));
+		await expect(Datasets.list(cache, {})).resolves.toEqual([
+			{ ref: 'owner/slug' },
+		]);
+	});
+});

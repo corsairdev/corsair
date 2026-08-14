@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { kagglePath, makeKaggleRequest } from '../client';
 import type { KaggleEndpoints } from '../index';
+import { cacheModels } from './persist';
 import type { KaggleEndpointOutputs } from './types';
 
 export const list: KaggleEndpoints['modelsList'] = async (ctx, input) => {
@@ -21,6 +22,7 @@ export const list: KaggleEndpoints['modelsList'] = async (ctx, input) => {
 		},
 	);
 
+	await cacheModels(ctx, result);
 	await logEventFromContext(ctx, 'kaggle.models.list', {}, 'completed');
 	return result;
 };
@@ -33,6 +35,7 @@ export const get: KaggleEndpoints['modelsGet'] = async (ctx, input) => {
 		{ method: 'GET', username: ctx.options.username },
 	);
 
+	await cacheModels(ctx, result, `${input.ownerSlug}/${input.modelSlug}`);
 	await logEventFromContext(
 		ctx,
 		'kaggle.models.get',

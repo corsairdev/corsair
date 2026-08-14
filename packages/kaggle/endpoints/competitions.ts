@@ -5,6 +5,7 @@ import {
 	makeKaggleRequest,
 } from '../client';
 import type { KaggleEndpoints } from '../index';
+import { cacheCompetitions } from './persist';
 import type { KaggleEndpointOutputs } from './types';
 
 export const list: KaggleEndpoints['competitionsList'] = async (ctx, input) => {
@@ -22,6 +23,7 @@ export const list: KaggleEndpoints['competitionsList'] = async (ctx, input) => {
 		username: ctx.options.username,
 	});
 
+	await cacheCompetitions(ctx, result);
 	await logEventFromContext(ctx, 'kaggle.competitions.list', {}, 'completed');
 	return result;
 };

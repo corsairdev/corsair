@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { downloadKaggleOutputFile, makeKaggleRequest } from '../client';
 import type { KaggleEndpoints } from '../index';
+import { cacheKernels } from './persist';
 import type { KaggleEndpointOutputs } from './types';
 
 export const list: KaggleEndpoints['kernelsList'] = async (ctx, input) => {
@@ -27,6 +28,7 @@ export const list: KaggleEndpoints['kernelsList'] = async (ctx, input) => {
 		},
 	);
 
+	await cacheKernels(ctx, result);
 	await logEventFromContext(ctx, 'kaggle.kernels.list', {}, 'completed');
 	return result;
 };
@@ -46,6 +48,7 @@ export const pull: KaggleEndpoints['kernelsPull'] = async (ctx, input) => {
 		},
 	);
 
+	await cacheKernels(ctx, result, `${input.userName}/${input.kernelSlug}`);
 	await logEventFromContext(
 		ctx,
 		'kaggle.kernels.pull',

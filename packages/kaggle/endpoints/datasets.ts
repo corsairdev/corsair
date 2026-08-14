@@ -5,6 +5,7 @@ import {
 	makeKaggleRequest,
 } from '../client';
 import type { KaggleEndpoints } from '../index';
+import { cacheDatasets } from './persist';
 import type { KaggleEndpointOutputs } from './types';
 
 export const list: KaggleEndpoints['datasetsList'] = async (ctx, input) => {
@@ -29,6 +30,7 @@ export const list: KaggleEndpoints['datasetsList'] = async (ctx, input) => {
 		},
 	);
 
+	await cacheDatasets(ctx, result);
 	await logEventFromContext(ctx, 'kaggle.datasets.list', {}, 'completed');
 	return result;
 };
@@ -53,6 +55,7 @@ export const create: KaggleEndpoints['datasetsCreate'] = async (ctx, input) => {
 		username: ctx.options.username,
 	});
 
+	await cacheDatasets(ctx, result);
 	await logEventFromContext(ctx, 'kaggle.datasets.create', {}, 'completed');
 	return result;
 };
@@ -107,6 +110,7 @@ export const getMetadata: KaggleEndpoints['datasetsGetMetadata'] = async (
 		},
 	);
 
+	await cacheDatasets(ctx, result, `${input.ownerSlug}/${input.datasetSlug}`);
 	await logEventFromContext(
 		ctx,
 		'kaggle.datasets.getMetadata',
