@@ -54,7 +54,13 @@ function inputSchemaForOperation(operation: PrismaOperation) {
 	const requiredParams = Object.fromEntries(
 		(operation.pathParams ?? []).map((param) => [param, z.string().min(1)]),
 	);
-	return PrismaEndpointInputBaseSchema.extend(requiredParams);
+	const bodySchema = PRISMA_REST_BODY_INPUT_SCHEMAS[operation.key];
+	return PrismaEndpointInputBaseSchema.extend({
+		...requiredParams,
+		// narrowed body schema (if any) so callers passing a known request
+		// body get it validated instead of silently accepted
+		body: bodySchema ?? z.unknown(),
+	});
 }
 
 export const QueryDatabaseInputSchema = PrismaEndpointInputBaseSchema.extend({
@@ -98,6 +104,187 @@ export const InspectDatabaseSchemaOutputSchema = z.object({
 	),
 });
 
+// ---- REST output schemas ---------------------------------------------------
+// Verified against the Management API (public getting-started guide returns
+// bare camelCase resources, e.g. create project => { id, createdAt, name,
+// databases[] }). Fields beyond the documented ones are passed through.
+
+const PrismaApiKeySchema = z
+	.object({
+		id: z.string().optional(),
+		createdAt: z.string().optional(),
+		apiKey: z.string().optional(),
+		connectionString: z.string().optional(),
+		ppgDirectConnection: z
+			.object({
+				host: z.string().optional(),
+				user: z.string().optional(),
+				pass: z.string().optional(),
+			})
+			.passthrough()
+			.optional(),
+	})
+	.passthrough();
+
+const PrismaDatabaseSchema = z
+	.object({
+		id: z.string().optional(),
+		createdAt: z.string().optional(),
+		name: z.string().optional(),
+		connectionString: z.string().optional(),
+		region: z.string().optional(),
+		status: z.string().optional(),
+		isDefault: z.boolean().optional(),
+		apiKeys: z.array(PrismaApiKeySchema).optional(),
+	})
+	.passthrough();
+
+const PrismaProjectSchema = z
+	.object({
+		id: z.string().optional(),
+		createdAt: z.string().optional(),
+		name: z.string().optional(),
+		displayName: z.string().nullable().optional(),
+		workspaceId: z.string().optional(),
+		region: z.string().optional(),
+		logicalId: z.string().optional(),
+		databases: z.array(PrismaDatabaseSchema).optional(),
+	})
+	.passthrough();
+
+const PrismaWorkspaceSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+	})
+	.passthrough();
+
+const PrismaConnectionSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		databaseId: z.string().optional(),
+		connectionString: z.string().optional(),
+		type: z.string().optional(),
+		createdAt: z.string().optional(),
+	})
+	.passthrough();
+
+const PrismaBackupSchema = z
+	.object({
+		id: z.string().optional(),
+		databaseId: z.string().optional(),
+		status: z.string().optional(),
+		createdAt: z.string().optional(),
+	})
+	.passthrough();
+
+const PrismaRegionSchema = z
+	.object({
+		id: z.string().optional(),
+		region: z.string().optional(),
+		displayName: z.string().optional(),
+		available: z.boolean().optional(),
+		product: z.string().optional(),
+	})
+	.passthrough();
+
+const PrismaIntegrationSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		workspaceId: z.string().optional(),
+		type: z.string().optional(),
+	})
+	.passthrough();
+
+// a single resource or a list envelope (the API returns a bare resource for
+// get/create and an array/envelope for lists)
+const resourceOrList = <T extends z.ZodTypeAny>(schema: T) =>
+	z.union([
+		schema,
+		z.array(schema),
+		z.object({ items: z.array(schema) }).passthrough(),
+	]);
+
+const ListWorkspacesOutputSchema = resourceOrList(PrismaWorkspaceSchema);
+const CreateProjectOutputSchema = PrismaProjectSchema.passthrough();
+const GetProjectOutputSchema = PrismaProjectSchema.passthrough();
+const ListProjectsOutputSchema = resourceOrList(PrismaProjectSchema);
+const TransferProjectOutputSchema = PrismaProjectSchema.passthrough();
+const CreateDatabaseOutputSchema = PrismaDatabaseSchema.passthrough();
+const GetDatabaseOutputSchema = PrismaDatabaseSchema.passthrough();
+const ListDatabasesOutputSchema = resourceOrList(PrismaDatabaseSchema);
+const GetDatabaseUsageOutputSchema = z.record(z.string(), z.unknown());
+const CreateConnectionOutputSchema = PrismaConnectionSchema.passthrough();
+const ListConnectionsOutputSchema = resourceOrList(PrismaConnectionSchema);
+const ListBackupsOutputSchema = resourceOrList(PrismaBackupSchema);
+const ListRegionsOutputSchema = resourceOrList(PrismaRegionSchema);
+const ListPostgresRegionsOutputSchema = resourceOrList(PrismaRegionSchema);
+const ListWorkspaceIntegrationsOutputSchema = resourceOrList(
+	PrismaIntegrationSchema,
+);
+
+const PRISMA_REST_OUTPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
+	listWorkspaces: ListWorkspacesOutputSchema,
+	createProject: CreateProjectOutputSchema,
+	getProject: GetProjectOutputSchema,
+	listProjects: ListProjectsOutputSchema,
+	transferProject: TransferProjectOutputSchema,
+	createDatabase: CreateDatabaseOutputSchema,
+	getDatabase: GetDatabaseOutputSchema,
+	listDatabases: ListDatabasesOutputSchema,
+	getDatabaseUsage: GetDatabaseUsageOutputSchema,
+	createConnection: CreateConnectionOutputSchema,
+	listConnections: ListConnectionsOutputSchema,
+	listBackups: ListBackupsOutputSchema,
+	listRegions: ListRegionsOutputSchema,
+	listPostgresRegions: ListPostgresRegionsOutputSchema,
+	listWorkspaceIntegrations: ListWorkspaceIntegrationsOutputSchema,
+};
+
+// ---- POST body input schemas ----------------------------------------------
+
+const CreateProjectBodySchema = z
+	.object({
+		name: z.string().min(1),
+		displayName: z.string().optional(),
+		region: z.string().min(1),
+		createDatabase: z.boolean().optional(),
+	})
+	.passthrough();
+
+const TransferProjectBodySchema = z.object({
+	recipientAccessToken: z.string().min(1),
+});
+
+const CreateDatabaseBodySchema = z
+	.object({
+		name: z.string().min(1),
+		region: z.string().min(1),
+		isDefault: z.boolean().optional(),
+	})
+	.passthrough();
+
+const RestoreBackupBodySchema = z.object({
+	backupId: z.string().min(1),
+});
+
+const CreateConnectionBodySchema = z
+	.object({
+		name: z.string().min(1),
+		databaseId: z.string().min(1),
+	})
+	.passthrough();
+
+const PRISMA_REST_BODY_INPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
+	createProject: CreateProjectBodySchema,
+	transferProject: TransferProjectBodySchema,
+	createDatabase: CreateDatabaseBodySchema,
+	restoreBackup: RestoreBackupBodySchema,
+	createConnection: CreateConnectionBodySchema,
+};
+
 // Object.fromEntries infers a value type union across all entries; assert to
 // the homogeneous record the entries are built as (one zod schema per
 // operation key from prismaOperations)
@@ -114,8 +301,8 @@ export const PrismaEndpointInputSchemas = Object.fromEntries(
 	]),
 ) as Record<string, z.ZodTypeAny>;
 
-// same rationale as PrismaEndpointInputSchemas above; only the direct
-// postgres operations have a shaped output, everything else passes through
+// operation-specific output schemas for the REST Management API operations;
+// the direct-postgres operations keep their shaped (non-unknown) schemas
 export const PrismaEndpointOutputSchemas = Object.fromEntries(
 	prismaOperations.map((operation: PrismaOperation) => {
 		if (operation.kind === 'sql') {
@@ -124,6 +311,9 @@ export const PrismaEndpointOutputSchemas = Object.fromEntries(
 		if (operation.kind === 'schema') {
 			return [operation.key, InspectDatabaseSchemaOutputSchema];
 		}
-		return [operation.key, PrismaEndpointOutputSchema];
+		return [
+			operation.key,
+			PRISMA_REST_OUTPUT_SCHEMAS[operation.key] ?? z.unknown(),
+		];
 	}),
 ) as Record<string, z.ZodTypeAny>;

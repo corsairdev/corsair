@@ -2,7 +2,9 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { ApiError, request } from 'corsair/http';
 import { makePrismaRequest, PRISMA_API_BASE, PrismaAPIError } from './client';
+import type { PrismaOperation } from './endpoints';
 import { prismaOperations } from './endpoints';
+import { PrismaEndpointOutputSchemas } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { PrismaContext } from './index';
 import { prisma, prismaEndpointSchemas } from './index';
@@ -97,6 +99,22 @@ describe('Prisma plugin shape', () => {
 		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: '' })).toBe(
 			false,
 		);
+	});
+
+	it('gives list/get/create REST operations concrete output schemas', () => {
+		const enforced = prismaOperations
+			.filter(
+				(op: PrismaOperation) => op.kind !== 'sql' && op.kind !== 'schema',
+			)
+			.filter((op: PrismaOperation) => !op.key.startsWith('delete'))
+			.map((op: PrismaOperation) => op.key);
+		for (const key of enforced) {
+			const schema = PrismaEndpointOutputSchemas[key];
+			expect(schema).toBeDefined();
+			expect(typeof (schema as unknown as { parse?: unknown }).parse).toBe(
+				'function',
+			);
+		}
 	});
 
 	it('marks destructive operations as irreversible', () => {
