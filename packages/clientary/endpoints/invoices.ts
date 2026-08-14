@@ -241,6 +241,8 @@ export const remove: ClientaryEndpoints['invoicesDelete'] = async (
 ) => {
 	const { apiKey, domain } = await getClientaryCredentials(ctx);
 
+	// any/unknown: DELETE response body is untyped and discarded; the plugin
+	// synthesizes the DeleteSuccess response from the requested id.
 	await makeClientaryRequest<unknown>(`invoices/${input.id}`, apiKey, domain, {
 		method: 'DELETE',
 	});
@@ -269,6 +271,8 @@ export const send: ClientaryEndpoints['invoicesSend'] = async (ctx, input) => {
 	const { apiKey, domain } = await getClientaryCredentials(ctx);
 	const { id, ...message } = input;
 
+	// any/unknown: POST send response body is untyped and discarded; the
+	// plugin synthesizes the SendSuccess response from the requested id.
 	await makeClientaryRequest<unknown>(
 		`invoices/${id}/messages`,
 		apiKey,

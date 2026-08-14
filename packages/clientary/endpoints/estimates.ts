@@ -188,6 +188,8 @@ export const remove: ClientaryEndpoints['estimatesDelete'] = async (
 ) => {
 	const { apiKey, domain } = await getClientaryCredentials(ctx);
 
+	// any/unknown: DELETE response body is untyped and discarded; the plugin
+	// synthesizes the DeleteSuccess response from the requested id.
 	await makeClientaryRequest<unknown>(`estimates/${input.id}`, apiKey, domain, {
 		method: 'DELETE',
 	});
@@ -216,6 +218,8 @@ export const send: ClientaryEndpoints['estimatesSend'] = async (ctx, input) => {
 	const { apiKey, domain } = await getClientaryCredentials(ctx);
 	const { id, ...message } = input;
 
+	// any/unknown: POST send response body is untyped and discarded; the
+	// plugin synthesizes the SendSuccess response from the requested id.
 	await makeClientaryRequest<unknown>(
 		`estimates/${id}/messages`,
 		apiKey,

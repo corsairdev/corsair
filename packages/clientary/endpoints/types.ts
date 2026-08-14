@@ -36,6 +36,8 @@ export const ClientaryClientSchema = z
 		state: z.string().nullable().optional(),
 		website: z.string().nullable().optional(),
 		description: z.string().nullable().optional(),
+		// any/unknown: invoice_extra_fields is a free-form JSON blob that
+		// Clientary passes through without a documented shape.
 		invoice_extra_fields: z.unknown().nullable().optional(),
 	})
 	.loose();
@@ -81,6 +83,8 @@ export const ClientaryClientInputSchema = z.object({
 	state: z.string().optional(),
 	website: z.string().optional(),
 	description: z.string().optional(),
+	// any/unknown: invoice_extra_fields is a free-form JSON blob that
+	// Clientary passes through without a documented shape.
 	invoice_extra_fields: z.unknown().optional(),
 });
 
@@ -916,6 +920,9 @@ export const ClientaryRecurringScheduleSchema = z
 		tax3_label: z.string().nullable().optional(),
 		compound_tax: z.boolean(),
 		updated_at: z.string().nullable().optional(),
+		// any/unknown: `client` is the full nested client object, which has
+		// the same free-form fields as the client record; kept untyped to
+		// avoid duplicating the client schema here.
 		client: z.unknown().nullable().optional(),
 		recurring_schedule_items: z.array(RecurringItemResponseSchema).optional(),
 	})

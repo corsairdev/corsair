@@ -83,6 +83,8 @@ export const remove: ClientaryEndpoints['paymentProfilesDelete'] = async (
 	const { apiKey, domain } = await getClientaryCredentials(ctx);
 	const { client_id, id } = input;
 
+	// any/unknown: DELETE response body is untyped and discarded; the plugin
+	// synthesizes the DeleteSuccess response from the requested id.
 	await makeClientaryRequest<unknown>(
 		`clients/${client_id}/payment_profiles/${id}`,
 		apiKey,
