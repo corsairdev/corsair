@@ -127,6 +127,7 @@ export const BaseProviders = [
 	'twilio',
 	'twitter',
 	'twitterapiio',
+	'twochat',
 	'typeform',
 	'vapi',
 	'vercel',
@@ -256,6 +257,7 @@ export const ProviderDisplayNames = {
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
+	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
@@ -392,6 +394,7 @@ export type AllProviders =
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
+	| 'twochat'
 	| 'typeform'
 	| 'vapi'
 	| 'vercel'
