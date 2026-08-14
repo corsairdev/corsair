@@ -38,6 +38,7 @@ export const BaseProviders = [
 	'apilabz',
 	'apisports',
 	'asana',
+	'ayrshare',
 	'bitwarden',
 	'bluesky',
 	'boloforms',
@@ -163,6 +164,7 @@ export const ProviderDisplayNames = {
 	apilabz: 'API Labz',
 	apisports: 'API-Sports',
 	asana: 'Asana',
+	ayrshare: 'Ayrshare',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
@@ -295,6 +297,7 @@ export type AllProviders =
 	| 'apilabz'
 	| 'apisports'
 	| 'asana'
+	| 'ayrshare'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'boloforms'
