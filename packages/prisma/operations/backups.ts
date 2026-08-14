@@ -19,6 +19,7 @@ export const backupsOperations = [
 		path: '/databases/{targetDatabaseId}/restore',
 		pathParams: ['targetDatabaseId'],
 		riskLevel: 'destructive',
+		irreversible: true,
 		description:
 			'Restore a backup onto the target database (async, overwrites current data)',
 	},

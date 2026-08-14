@@ -20,7 +20,8 @@ export const sqlOperations = [
 		method: 'POST',
 		path: '/sql/execute',
 		pathParams: [],
-		riskLevel: 'write',
+		riskLevel: 'destructive',
+		irreversible: true,
 		kind: 'sql',
 		description:
 			'Execute a SQL command (INSERT/UPDATE/DELETE/DDL) over the Postgres connection',
