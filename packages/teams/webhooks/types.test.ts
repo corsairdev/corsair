@@ -31,7 +31,7 @@ describe('verifyTeamsClientState', () => {
 	it('should reject an empty value array', () => {
 		// The regression: [].every(...) is true, so a request carrying no
 		// notification -- and therefore no clientState at all -- was reported as
-		// verified, and the handler went on to fetch an access token.
+		// verified. Routing already drops empty value arrays; this is defense in depth.
 		const result = verifyTeamsClientState(payload([]), CLIENT_STATE);
 		expect(result).toEqual({
 			valid: false,
@@ -44,7 +44,23 @@ describe('verifyTeamsClientState', () => {
 			{} as TeamsWebhookPayload<TeamsNotification>,
 			CLIENT_STATE,
 		);
-		expect(result.valid).toBe(false);
+		expect(result).toEqual({
+			valid: false,
+			error: 'Invalid payload: missing value array',
+		});
+	});
+
+	it('should reject a non-array value', () => {
+		const result = verifyTeamsClientState(
+			{
+				value: 'not-an-array',
+			} as unknown as TeamsWebhookPayload<TeamsNotification>,
+			CLIENT_STATE,
+		);
+		expect(result).toEqual({
+			valid: false,
+			error: 'Invalid payload: missing value array',
+		});
 	});
 
 	it('should reject when the client state does not match', () => {
