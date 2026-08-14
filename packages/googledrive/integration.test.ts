@@ -9,6 +9,9 @@ async function createGoogleDriveClient() {
 	const accessToken = process.env.GOOGLE_ACCESS_TOKEN;
 	const refreshToken = process.env.GOOGLE_REFRESH_TOKEN;
 	if (!clientId || !clientSecret || !accessToken || !refreshToken) {
+		console.warn(
+			'Skipping Google Drive integration tests: missing GOOGLE_* credentials',
+		);
 		return null;
 	}
 
