@@ -22,7 +22,6 @@ export const PrismaEndpointInputBaseSchema = z.object({
 	body: z.unknown().optional(),
 	query: QuerySchema.optional(),
 	headers: z.record(z.string(), z.string()).optional(),
-	baseUrl: z.string().url().optional(),
 });
 
 // direct postgres connection fields shared by the sql + schema operations

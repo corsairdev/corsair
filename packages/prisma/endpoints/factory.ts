@@ -83,11 +83,13 @@ const CACHE_RULES: Record<string, CacheRule> = {
 		entity: 'connections',
 		idKeys: ['id'],
 		itemKeys: ['data', 'connection'],
+		omitKeys: ['connectionString', 'pass', 'directConnection', 'endpoints'],
 	},
 	listConnections: {
 		entity: 'connections',
 		idKeys: ['id'],
 		listKeys: ['data', 'items'],
+		omitKeys: ['connectionString', 'pass', 'directConnection', 'endpoints'],
 	},
 	deleteConnection: {
 		entity: 'connections',
@@ -212,9 +214,30 @@ function cacheItems(response: unknown, rule: CacheRule) {
 	return [response];
 }
 
+const CACHE_SECRET_KEYS = new Set([
+	'connectionString',
+	'pass',
+	'password',
+	'directConnection',
+	'endpoints',
+]);
+
+function stripCacheSecrets(value: unknown): unknown {
+	if (Array.isArray(value)) return value.map(stripCacheSecrets);
+	if (!isRecord(value)) return value;
+	const data: Record<string, unknown> = {};
+	for (const [key, nested] of Object.entries(value)) {
+		if (CACHE_SECRET_KEYS.has(key)) continue;
+		data[key] = stripCacheSecrets(nested);
+	}
+	return data;
+}
+
 function cacheData(item: Record<string, unknown>, rule: CacheRule) {
-	if (!rule.omitKeys?.length) return item;
-	const data = { ...item };
+	const stripped = stripCacheSecrets(item);
+	if (!isRecord(stripped)) return item;
+	if (!rule.omitKeys?.length) return stripped;
+	const data = { ...stripped };
 	for (const key of rule.omitKeys) {
 		delete data[key];
 	}
@@ -314,6 +337,5 @@ export async function requestPrismaOperation(
 		body: requestBody(operation, input),
 		query: requestQuery(operation, input),
 		headers: input.headers,
-		baseUrl: input.baseUrl,
 	});
 }
