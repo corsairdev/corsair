@@ -102,6 +102,7 @@ export const BaseProviders = [
 	'pagerduty',
 	'perplexityai',
 	'posthog',
+	'prisma',
 	'razorpay',
 	'reddit',
 	'resend',
@@ -227,6 +228,7 @@ export const ProviderDisplayNames = {
 	pagerduty: 'PagerDuty',
 	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
+	prisma: 'Prisma',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	resend: 'Resend',
@@ -359,6 +361,7 @@ export type AllProviders =
 	| 'pagerduty'
 	| 'perplexityai'
 	| 'posthog'
+	| 'prisma'
 	| 'razorpay'
 	| 'reddit'
 	| 'resend'

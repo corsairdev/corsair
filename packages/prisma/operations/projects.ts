@@ -1,0 +1,53 @@
+import type { PrismaOperation } from '../endpoints/operation-types';
+
+export const projectsOperations = [
+	{
+		key: 'createProject',
+		group: 'projects',
+		name: 'create',
+		method: 'POST',
+		path: '/projects',
+		riskLevel: 'write',
+		description: 'Create a project and its default/database environment',
+	},
+	{
+		key: 'getProject',
+		group: 'projects',
+		name: 'get',
+		method: 'GET',
+		path: '/projects/{projectId}',
+		pathParams: ['projectId'],
+		riskLevel: 'read',
+		description: 'Retrieve project details',
+	},
+	{
+		key: 'listProjects',
+		group: 'projects',
+		name: 'list',
+		method: 'GET',
+		path: '/projects',
+		riskLevel: 'read',
+		description: 'List projects the token has access to',
+	},
+	{
+		key: 'deleteProject',
+		group: 'projects',
+		name: 'delete',
+		method: 'DELETE',
+		path: '/projects/{projectId}',
+		pathParams: ['projectId'],
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a project and all of its data',
+	},
+	{
+		key: 'transferProject',
+		group: 'projects',
+		name: 'transfer',
+		method: 'POST',
+		path: '/projects/{projectId}/transfer',
+		pathParams: ['projectId'],
+		riskLevel: 'write',
+		description: 'Transfer a project to another workspace',
+	},
+] as const satisfies readonly PrismaOperation[];
