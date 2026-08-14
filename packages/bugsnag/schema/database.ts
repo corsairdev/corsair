@@ -180,3 +180,26 @@ export const BugsnagCollaboratorEntity = z
 export type BugsnagCollaboratorEntity = z.infer<
 	typeof BugsnagCollaboratorEntity
 >;
+
+/**
+ * Teams. Only 4 live keys - by far the narrowest entity here, and deliberately so:
+ * a team is a name and two counts, with the membership held on the collaborator.
+ *
+ * Mirrored because it is structural in the same way an organization is - team ids
+ * appear on collaborators (`team_ids`) and in the membership operations, and
+ * resolving one to a name is the lookup a local copy exists for.
+ *
+ * Note what is **not** here. There is no `collaborators` array: the two counts are
+ * the only membership information a team record carries, so the mirror cannot answer
+ * "who is on this team" and must not appear to. That is what
+ * `collaborators.list`'s `team_ids` is for.
+ */
+export const BugsnagTeamEntity = z
+	.object({
+		id: Id,
+		name: S,
+		collaborator_count: N,
+		project_count: N,
+	})
+	.loose();
+export type BugsnagTeamEntity = z.infer<typeof BugsnagTeamEntity>;

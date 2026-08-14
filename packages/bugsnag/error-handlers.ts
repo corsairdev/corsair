@@ -32,23 +32,49 @@ import { ApiError } from 'corsair/http';
  * Corsair re-invokes the whole endpoint when a handler asks for a retry
  * (`packages/corsair/core/endpoints/bind.ts:206`), so a network failure raised
  * *after* BugSnag committed a write would apply it twice. BugSnag accepts no
- * idempotency key.
+ * idempotency key, so there is nothing to make a replay safe.
  *
- * Creates are here for the obvious reason. The GDPR operations are here for a
- * stronger one: replaying a data deletion, or a confirmation of one, acts on real
- * user data and cannot be undone. `regenerateApiKey` is here because a second
- * rotation would invalidate the key issued by the first, compounding the breakage.
+ * The membership is reasoned per group rather than by HTTP method:
  *
- * Deletes of a *named* resource are absent deliberately: repeating one is not a
- * duplication risk and the second attempt reports not-found, which
- * `NOT_FOUND_ERROR` already handles.
+ * - **Creates**, for the obvious reason: names are not unique anywhere in this API, so a
+ *   replay produces a second team, project, saved search or event field rather than
+ *   returning the first.
+ * - **`projects.regenerateApiKey`**, because a second rotation invalidates the key the
+ *   first one issued, compounding the breakage instead of repeating it harmlessly.
+ * - **`errors.bulkUpdate`**, because it reapplies an operation - possibly `delete` - to
+ *   an entire batch.
+ * - **The GDPR operations**, for the strongest reason: a replayed export starts a second
+ *   gathering of an identified person's data, and a replayed deletion or confirmation
+ *   acts irreversibly on real user data. A replay there is probably harmless, and
+ *   "probably" is not a good enough basis for repeating it automatically.
  *
- * `endpoints.test.ts` asserts this set against the routing table so the predicate
- * cannot drift away from the endpoints it describes.
+ * Absent deliberately, each for a stated reason rather than by omission:
+ *
+ * - **Deletes of a named resource** - repeating one is not a duplication risk, and the
+ *   second attempt reports not-found, which `NOT_FOUND_ERROR` already handles.
+ * - **`collaborators.invite`** - a POST, but re-inviting an address that already has
+ *   access returns the existing collaborator rather than creating a second one.
+ * - **`integrations.test`** - a POST that validates without creating anything.
+ * - **`teams.addMembers` and `teams.addCollaboratorMemberships`** - adding an existing
+ *   member again leaves the same membership, so a replay converges.
+ *
+ * `endpoints.test.ts` asserts every member of this set against the routing table, so a
+ * name here cannot drift away from - or outlive - the endpoint it describes.
  */
-const NON_IDEMPOTENT_OPERATIONS: ReadonlySet<string> = new Set([
+export const NON_IDEMPOTENT_OPERATIONS: ReadonlySet<string> = new Set([
 	'projects.create',
 	'projects.regenerateApiKey',
+	'teams.create',
+	'eventFields.create',
+	'savedSearches.create',
+	'integrations.configure',
+	'errors.bulkUpdate',
+	'errors.deleteAll',
+	'dataRequests.createForOrganization',
+	'dataRequests.createForProject',
+	'dataDeletions.createForOrganization',
+	'dataDeletions.createForProject',
+	'dataDeletions.confirmForProject',
 ]);
 
 export const isNonIdempotent = (operation: string): boolean =>
@@ -59,6 +85,25 @@ export const isRouteMissing = (error: Error): boolean => {
 	if (!(error instanceof ApiError)) return false;
 	const body = error.body as { status?: number; error?: string } | undefined;
 	return body?.status === 404 && body?.error === 'Not Found';
+};
+
+/**
+ * BugSnag's code for "that offset is too deep to answer".
+ *
+ * Mapped live on the error list: offsets past the end return an empty array, but an
+ * offset beyond roughly a thousand returns 422 with this code. The two mean different
+ * things to a caller paging by offset - an empty page says stop, a 422 says the request
+ * cannot be served at all - so reporting it as an ordinary validation failure would send
+ * an operator looking for a malformed request instead of a paging depth limit.
+ */
+const PAGINATION_LIMIT_CODE = 60000;
+
+/** Whether a 422 says the requested page is too deep rather than the input malformed. */
+export const isPaginationLimit = (error: Error): boolean => {
+	if (!(error instanceof ApiError)) return false;
+	if (error.status !== 422) return false;
+	const body = error.body as { code?: number } | undefined;
+	return body?.code === PAGINATION_LIMIT_CODE;
 };
 
 export const errorHandlers = {
@@ -145,6 +190,16 @@ export const errorHandlers = {
 			error instanceof ApiError &&
 			(error.status === 400 || error.status === 422),
 		handler: async (error, context) => {
+			if (isPaginationLimit(error)) {
+				// Distinguished from an ordinary 422 because the fix is different: the
+				// request is well formed, the page is simply too deep to serve. Retrying
+				// is pointless and the operator needs to narrow the query rather than
+				// correct it.
+				console.warn(
+					`[BUGSNAG:${context.operation}] The requested page is too deep for this API to answer. Offsets past roughly a thousand rows are refused; narrow the result set with filters instead. Note that the suggested 'sort=unsorted' cannot be combined with an offset: ${error.message}`,
+				);
+				return { maxRetries: 0 };
+			}
 			console.warn(
 				`[BUGSNAG:${context.operation}] Invalid request: ${error.message}`,
 			);

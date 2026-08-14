@@ -14,7 +14,30 @@ import {
 	BugsnagOrganizationEntity,
 	BugsnagProjectEntity,
 	BugsnagStabilityTarget,
+	BugsnagTeamEntity,
 } from './schema/database';
+import {
+	BugsnagBulkUpdateResult,
+	BugsnagConfiguredIntegration,
+	BugsnagError,
+	BugsnagEvent,
+	BugsnagEventDataDeletion,
+	BugsnagEventDataRequest,
+	BugsnagEventField,
+	BugsnagFeatureFlag,
+	BugsnagFeatureFlagSummary,
+	BugsnagNetworkEndpointGrouping,
+	BugsnagPivot,
+	BugsnagPivotValue,
+	BugsnagProjectAccess,
+	BugsnagProjectAccessCount,
+	BugsnagRelease,
+	BugsnagReleaseGroup,
+	BugsnagSavedSearch,
+	BugsnagSavedSearchUsageSummary,
+	BugsnagSupportedIntegration,
+	BugsnagTrendBucket,
+} from './schema/responses';
 
 /** Field names observed on live responses, per entity. */
 const CAPTURED_KEYS = {
@@ -90,12 +113,18 @@ const CAPTURED_KEYS = {
 		'team_ids',
 		'managed_by_smartbear_id',
 	],
+	/**
+	 * Only 4 fields, and that is the whole record - there is no members array. Enumerated
+	 * from a live create and read on a team made for the purpose.
+	 */
+	teams: ['id', 'name', 'collaborator_count', 'project_count'],
 } as const;
 
 const ENTITIES = {
 	organizations: BugsnagOrganizationEntity,
 	projects: BugsnagProjectEntity,
 	collaborators: BugsnagCollaboratorEntity,
+	teams: BugsnagTeamEntity,
 } as const;
 
 describe('captured fields are declared', () => {
@@ -107,7 +136,7 @@ describe('captured fields are declared', () => {
 		expect(Object.keys(CAPTURED_KEYS).sort()).toEqual(
 			Object.keys(ENTITIES).sort(),
 		);
-		expect(Object.keys(ENTITIES)).toHaveLength(3);
+		expect(Object.keys(ENTITIES)).toHaveLength(4);
 	});
 
 	for (const [name, entity] of Object.entries(ENTITIES)) {
@@ -142,10 +171,13 @@ describe('only the primary key is required', () => {
 		['organizations', BugsnagOrganizationEntity],
 		['projects', BugsnagProjectEntity],
 		['collaborators', BugsnagCollaboratorEntity],
+		['teams', BugsnagTeamEntity],
 	] as const;
 
-	it('covers all three entities', () => {
-		expect(KEY_ONLY).toHaveLength(3);
+	it('covers every registered entity', () => {
+		expect(KEY_ONLY.map(([name]) => name).sort()).toEqual(
+			Object.keys(ENTITIES).sort(),
+		);
 	});
 
 	for (const [name, entity] of KEY_ONLY) {
@@ -268,7 +300,8 @@ describe('the schema registry', () => {
 	it('registers the structural entities and nothing transactional', () => {
 		const names = Object.keys(BugsnagSchema.entities);
 
-		expect(names).toHaveLength(3);
+		expect(names).toHaveLength(4);
+		expect(names).toContain('teams');
 		// Errors and events arrive continuously and are only meaningful against a
 		// time range, so they are deliberately not mirrored.
 		expect(names).not.toContain('errors');
@@ -315,6 +348,148 @@ describe('input validation', () => {
 	});
 
 	/**
+	 * The bulk-update operation vocabulary, pinned against what the API actually accepts.
+	 *
+	 * This test exists because the enum was wrong in two directions at once and both
+	 * versions had twelve entries, so nothing about the count would have revealed it. Each
+	 * name below was confirmed by a PATCH against a **non-existent error id** - a name the
+	 * API rejects answers `"Operation is not included in the list"`, and anything else
+	 * means the name is accepted.
+	 */
+	describe('the bulk update operation vocabulary', () => {
+		const VALID = [
+			'fix',
+			'open',
+			'ignore',
+			'snooze',
+			'discard',
+			'undiscard',
+			'delete',
+			'override_severity',
+			'assign',
+			'create_issue',
+			'link_issue',
+			'unlink_issue',
+		];
+
+		/** Rejected by name when probed live, so they must not be accepted here. */
+		const REJECTED_BY_THE_API = ['unassign', 'unsnooze', 'reopen', 'archive'];
+
+		const parse = (operation: string, extra: Record<string, unknown> = {}) =>
+			BugsnagEndpointInputSchemas.errorsBulkUpdate.safeParse({
+				project_id: 'project-1',
+				error_ids: ['error-1'],
+				operation,
+				...extra,
+			});
+
+		it.each(VALID)('accepts %s', (operation) => {
+			// The companion fields each conditional operation needs, so this test measures
+			// the enum rather than the refinements.
+			const extra: Record<string, unknown> =
+				{
+					snooze: { reopen_rules: { type: 'time', value: '7d' } },
+					link_issue: { issue_url: 'https://example.com/issue/1' },
+					override_severity: { severity: 'info' },
+					assign: { assigned_collaborator_id: 'collaborator-1' },
+				}[operation] ?? {};
+
+			expect(parse(operation, extra).success).toBe(true);
+		});
+
+		it.each(REJECTED_BY_THE_API)(
+			'rejects %s, which the API rejects too',
+			(operation) => {
+				expect(parse(operation).success).toBe(false);
+			},
+		);
+
+		it('accepts exactly the twelve live-verified operations and no others', () => {
+			// Guards against the enum drifting by addition as well as by substitution.
+			expect(VALID).toHaveLength(12);
+			for (const operation of [...VALID, ...REJECTED_BY_THE_API]) {
+				expect(
+					parse(operation, {
+						reopen_rules: { type: 'time' },
+						issue_url: 'https://example.com/i/1',
+						severity: 'info',
+						assigned_collaborator_id: 'collaborator-1',
+					}).success,
+				).toBe(VALID.includes(operation));
+			}
+		});
+	});
+
+	/**
+	 * Several operations need a companion field, and the API reports each separately. The
+	 * refinements catch them locally, which matters more here than usual: the request
+	 * applies to every id in the batch.
+	 */
+	describe('bulk update conditional requirements', () => {
+		const base = { project_id: 'project-1', error_ids: ['error-1'] };
+		const parse = (extra: Record<string, unknown>) =>
+			BugsnagEndpointInputSchemas.errorsBulkUpdate.safeParse({
+				...base,
+				...extra,
+			});
+
+		it('requires reopen_rules for snooze', () => {
+			expect(parse({ operation: 'snooze' }).success).toBe(false);
+			expect(
+				parse({ operation: 'snooze', reopen_rules: { type: 'time' } }).success,
+			).toBe(true);
+		});
+
+		it('requires issue_url for link_issue', () => {
+			expect(parse({ operation: 'link_issue' }).success).toBe(false);
+			expect(
+				parse({
+					operation: 'link_issue',
+					issue_url: 'https://example.com/issue/1',
+				}).success,
+			).toBe(true);
+		});
+
+		it('requires severity for override_severity', () => {
+			expect(parse({ operation: 'override_severity' }).success).toBe(false);
+			expect(
+				parse({ operation: 'override_severity', severity: 'info' }).success,
+			).toBe(true);
+		});
+
+		it('requires an assignee for assign, of either kind', () => {
+			expect(parse({ operation: 'assign' }).success).toBe(false);
+			expect(
+				parse({
+					operation: 'assign',
+					assigned_collaborator_id: 'collaborator-1',
+				}).success,
+			).toBe(true);
+			expect(
+				parse({ operation: 'assign', assigned_team_id: 'team-1' }).success,
+			).toBe(true);
+		});
+
+		it('leaves unconditional operations alone', () => {
+			for (const operation of ['fix', 'open', 'ignore', 'discard', 'delete']) {
+				expect(parse({ operation }).success).toBe(true);
+			}
+		});
+
+		it('rejects an empty error_ids list whatever the operation', () => {
+			// An empty batch with a destructive operation is the worst request to send by
+			// accident, so it is refused rather than sent and ignored.
+			expect(
+				BugsnagEndpointInputSchemas.errorsBulkUpdate.safeParse({
+					project_id: 'project-1',
+					error_ids: [],
+					operation: 'delete',
+				}).success,
+			).toBe(false);
+		});
+	});
+
+	/**
 	 * `type` selects the notifier platform and BugSnag uses it to decide how errors
 	 * are grouped, so there is no sensible default and it is required.
 	 */
@@ -339,5 +514,329 @@ describe('input validation', () => {
 				type: 'android',
 			}).success,
 		).toBe(false);
+	});
+});
+
+/* -------------------------------------------------------------------------- */
+/*                        Response shapes that stay remote                    */
+/* -------------------------------------------------------------------------- */
+
+describe('response schemas match the live responses', () => {
+	/**
+	 * Field names enumerated from live responses on 2026-08-14, for the families that
+	 * are returned but not mirrored.
+	 *
+	 * The `verified: false` entries are the honest part: those shapes could not be
+	 * observed, either because the recon account held no such record or because
+	 * producing one would have been destructive. They are asserted only for their key,
+	 * because asserting documented field names would be asserting a guess - which is
+	 * exactly how `target_stability` was wrong for two rounds.
+	 */
+	const CAPTURED = [
+		{
+			name: 'error',
+			schema: BugsnagError,
+			verified: true,
+			keys: [
+				'id',
+				'project_id',
+				'error_class',
+				'message',
+				'status',
+				'events',
+				'users',
+				'first_seen',
+				'last_seen',
+				'assigned_collaborator_id',
+				'grouping_reason',
+			],
+		},
+		{
+			name: 'event',
+			schema: BugsnagEvent,
+			verified: true,
+			keys: [
+				'id',
+				'url',
+				'project_url',
+				'is_full_report',
+				'error_id',
+				'received_at',
+				'exceptions',
+				'severity',
+				'context',
+				'unhandled',
+				'app',
+			],
+		},
+		{
+			// The wide form of the same record, present only with full reports. Every
+			// field here is personal data or application-supplied context.
+			name: 'event (full report)',
+			schema: BugsnagEvent,
+			verified: true,
+			keys: [
+				'threads',
+				'metaData',
+				'request',
+				'device',
+				'user',
+				'breadcrumbs',
+				'feature_flags',
+				'correlation',
+				'session',
+			],
+		},
+		{
+			name: 'event field',
+			schema: BugsnagEventField,
+			verified: true,
+			keys: [
+				'display_id',
+				'custom',
+				'pivot_options',
+				'path',
+				'filter_options',
+				'reindex_in_progress',
+				'reindex_percentage',
+			],
+		},
+		{
+			name: 'pivot',
+			schema: BugsnagPivot,
+			verified: true,
+			keys: ['event_field_display_id', 'name', 'cardinality'],
+		},
+		{
+			name: 'pivot value',
+			schema: BugsnagPivotValue,
+			verified: true,
+			keys: [
+				'event_field_value',
+				'events',
+				'proportion',
+				'first_seen',
+				'last_seen',
+				'fields',
+				'aggregates',
+			],
+		},
+		{
+			name: 'trend bucket',
+			schema: BugsnagTrendBucket,
+			verified: true,
+			keys: ['from', 'to', 'events_count'],
+		},
+		{
+			name: 'release',
+			schema: BugsnagRelease,
+			verified: true,
+			keys: [
+				'id',
+				'project_id',
+				'release_group_id',
+				'release_time',
+				'app_version',
+				'errors_introduced_count',
+				'total_sessions_count',
+			],
+		},
+		{
+			name: 'release group',
+			schema: BugsnagReleaseGroup,
+			verified: true,
+			keys: [
+				'id',
+				'project_id',
+				'release_stage_name',
+				'app_version',
+				'first_released_at',
+				'releases_count',
+			],
+		},
+		{
+			name: 'saved search',
+			schema: BugsnagSavedSearch,
+			verified: true,
+			keys: [
+				'id',
+				'user_id',
+				'project_id',
+				'name',
+				'filters',
+				'shared',
+				'project_default',
+				'open_error_inclusion',
+				'advanced_filters',
+			],
+		},
+		{
+			name: 'saved search usage summary',
+			schema: BugsnagSavedSearchUsageSummary,
+			verified: true,
+			keys: [
+				'project_notifications_count',
+				'current_user_using_for_email_notification',
+				'collaborator_email_notifications_count',
+				'performance_monitor_count',
+			],
+		},
+		{
+			name: 'supported integration',
+			schema: BugsnagSupportedIntegration,
+			verified: true,
+			keys: ['key', 'name', 'url', 'type', 'description', 'fields', 'icon_url'],
+		},
+		{
+			name: 'project access',
+			schema: BugsnagProjectAccess,
+			verified: true,
+			keys: [
+				'project_summary',
+				'team_count',
+				'is_admin',
+				'project_role',
+				'individual_project_role',
+				'team_project_role',
+			],
+		},
+		{
+			name: 'project access count',
+			schema: BugsnagProjectAccessCount,
+			verified: true,
+			keys: ['collaborator_id', 'project_count', 'is_admin'],
+		},
+		{
+			name: 'network endpoint grouping',
+			schema: BugsnagNetworkEndpointGrouping,
+			verified: true,
+			keys: ['project_id', 'endpoints'],
+		},
+		// Not observed: no integration is configured on the account, and configuring one
+		// requires real third-party credentials.
+		{
+			name: 'configured integration',
+			schema: BugsnagConfiguredIntegration,
+			verified: false,
+			keys: [],
+		},
+		// Not observed: the account has no feature flags, so the list returned empty.
+		{
+			name: 'feature flag',
+			schema: BugsnagFeatureFlag,
+			verified: false,
+			keys: [],
+		},
+		{
+			name: 'feature flag summary',
+			schema: BugsnagFeatureFlagSummary,
+			verified: false,
+			keys: [],
+		},
+		// Not observed: creating one would export or destroy real event data.
+		{
+			name: 'event data request',
+			schema: BugsnagEventDataRequest,
+			verified: false,
+			keys: [],
+		},
+		{
+			name: 'event data deletion',
+			schema: BugsnagEventDataDeletion,
+			verified: false,
+			keys: [],
+		},
+	] as const;
+
+	it('covers every response family the plugin returns', () => {
+		// Guards the table itself: a family added to `schema/responses.ts` without an
+		// entry here would otherwise go unchecked, and the loop below would shrink
+		// silently rather than fail.
+		expect(CAPTURED).toHaveLength(20);
+		expect(CAPTURED.filter((c) => c.verified)).toHaveLength(15);
+		expect(CAPTURED.filter((c) => !c.verified)).toHaveLength(5);
+	});
+
+	for (const { name, schema, keys, verified } of CAPTURED) {
+		if (!verified) continue;
+		it(`declares every captured ${name} field`, () => {
+			const declared = Object.keys(schema.shape);
+
+			expect(keys.length).toBeGreaterThan(0);
+			for (const key of keys) {
+				expect(declared).toContain(key);
+			}
+		});
+	}
+
+	/**
+	 * Every response shape is `.loose()` with only its key required, for the same reason
+	 * the entities are: BugSnag omits fields by plan and by feature, and a rejected row
+	 * is a lost row.
+	 */
+	it.each([
+		['error', BugsnagError, { id: 'error-1' }],
+		['event', BugsnagEvent, { id: 'event-1' }],
+		['event field', BugsnagEventField, { display_id: 'metaData.x' }],
+		['pivot', BugsnagPivot, { event_field_display_id: 'error' }],
+		['release', BugsnagRelease, { id: 'release-1' }],
+		['release group', BugsnagReleaseGroup, { id: 'release-group-1' }],
+		['saved search', BugsnagSavedSearch, { id: 'saved-search-1' }],
+		['supported integration', BugsnagSupportedIntegration, { key: 'slack' }],
+		['configured integration', BugsnagConfiguredIntegration, { id: 'ci-1' }],
+		['feature flag', BugsnagFeatureFlag, { name: 'flag' }],
+		['event data request', BugsnagEventDataRequest, { id: 'r-1' }],
+		['event data deletion', BugsnagEventDataDeletion, { id: 'd-1' }],
+	])('parses a %s carrying only its key', (_name, schema, minimal) => {
+		expect(schema.safeParse(minimal).success).toBe(true);
+	});
+
+	it('keeps a field a response schema does not declare', () => {
+		const parsed = BugsnagError.parse({
+			id: 'error-1',
+			a_field_added_later: 'kept',
+		});
+
+		expect(parsed).toMatchObject({ a_field_added_later: 'kept' });
+	});
+
+	/**
+	 * A pivot has no `id`. Asserted because addressing one by `id` or by `name` is what
+	 * mis-mapped the pivot values path during recon: the human-readable name returned a
+	 * resource-missing 404, which reads as a missing record rather than a wrong key.
+	 */
+	it('identifies a pivot by its event field display id, not an id', () => {
+		const declared = Object.keys(BugsnagPivot.shape);
+
+		expect(declared).toContain('event_field_display_id');
+		expect(declared).not.toContain('id');
+		expect(BugsnagPivot.safeParse({ name: 'Errors' }).success).toBe(false);
+	});
+
+	/**
+	 * A team record tells the whole membership story it can: two counts, no member list.
+	 * Asserted so the mirror is never assumed to answer "who is on this team".
+	 */
+	it('gives a team counts rather than a member list', () => {
+		const declared = Object.keys(BugsnagTeamEntity.shape);
+
+		expect(declared).toContain('collaborator_count');
+		expect(declared).not.toContain('collaborators');
+		expect(declared).not.toContain('collaborator_ids');
+	});
+
+	/**
+	 * The bulk update result is deliberately minimal. The catalog records that the live
+	 * API returns only the operation name rather than the per-error results its own
+	 * specification documents, so modelling per-error results would promise data that
+	 * never arrives.
+	 */
+	it('models the bulk update result as the API actually answers it', () => {
+		const declared = Object.keys(BugsnagBulkUpdateResult.shape);
+
+		expect(declared).toEqual(['operation']);
+		expect(
+			BugsnagBulkUpdateResult.safeParse({ operation: 'fix' }).success,
+		).toBe(true);
 	});
 });

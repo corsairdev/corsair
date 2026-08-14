@@ -2,8 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import type { BugsnagEndpoints } from '../index';
 import { BugsnagOrganizationEntity } from '../schema/database';
 import { auditPayload } from './logging';
-import { cacheEntities, cacheEntity } from './persist';
-import { bugsnagCall, listQuery } from './shared';
+import { cacheEntities, cacheEntity, evictEntity } from './persist';
+import { bugsnagCall, listParams, withQuery } from './shared';
 import type { BugsnagEndpointOutputs } from './types';
 
 const LABEL = 'organization';
@@ -25,8 +25,7 @@ export const list: BugsnagEndpoints['organizationsList'] = async (
 ) => {
 	const result = await bugsnagCall<BugsnagEndpointOutputs['organizationsList']>(
 		ctx,
-		'user/organizations',
-		{ query: listQuery(input) },
+		withQuery('user/organizations', listParams(input)),
 	);
 
 	await cacheEntities(ctx.db.organizations, BugsnagOrganizationEntity, result, {
@@ -64,4 +63,58 @@ export const get: BugsnagEndpoints['organizationsGet'] = async (ctx, input) => {
 		'completed',
 	);
 	return result;
+};
+
+/**
+ * Deletes an organization.
+ *
+ * The most destructive operation in the API: it removes every project, error, event
+ * and collaborator association the organization holds, irreversibly. Never exercised
+ * against a live account - it is covered by mocked tests only, and the live suite is
+ * read-only.
+ *
+ * The mirrored row is evicted as **required** rather than best-effort, unlike a
+ * project. An organization record carries `billing_emails`, so a surviving row keeps
+ * real email addresses queryable after the account they belong to has been deleted.
+ * Reporting that as a plain success would be untrue in the way that matters.
+ *
+ * The ordering below is deliberate. The event is logged **after** the eviction, with a
+ * status reflecting what actually happened and an explicit `mirror_evicted` flag, and
+ * the eviction failure is rethrown afterwards. Logging `'completed'` before the
+ * eviction would record a success that had not happened yet; letting the eviction
+ * error propagate before logging would lose the audit record of a deletion that did
+ * occur remotely. The error is held in a container rather than tested for truthiness,
+ * because a thrown value may legitimately be falsy and `if (error)` would silently
+ * swallow it on a privacy-critical path.
+ */
+export const remove: BugsnagEndpoints['organizationsDelete'] = async (
+	ctx,
+	input,
+) => {
+	await bugsnagCall<unknown>(ctx, `organizations/${input.organization_id}`, {
+		method: 'DELETE',
+	});
+
+	let evictionFailure: { error: unknown } | undefined;
+	try {
+		await evictEntity(ctx.db.organizations, input.organization_id, LABEL, {
+			required: true,
+		});
+	} catch (error) {
+		evictionFailure = { error };
+	}
+	const evicted = evictionFailure === undefined;
+
+	await logEventFromContext(
+		ctx,
+		'bugsnag.organizations.delete',
+		{
+			...auditPayload(input, ['organization_id']),
+			mirror_evicted: evicted,
+		},
+		evicted ? 'completed' : 'failed',
+	);
+
+	if (evictionFailure) throw evictionFailure.error;
+	return { success: true, id: input.organization_id };
 };

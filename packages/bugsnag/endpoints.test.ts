@@ -2,20 +2,46 @@
  * Covers every operation: the method and path it calls, what it writes to the local
  * mirror, what it evicts, and exactly what reaches the event log.
  *
- * The coverage sweep asserts that the operations exercised here are precisely the
- * operations registered, so an operation cannot be added without a test.
+ * Three sweeps make this hard to leave incomplete:
+ *
+ * - **Coverage** asserts the operations exercised here are precisely the operations
+ *   registered, so an operation cannot be added without a test.
+ * - **Privacy** runs every operation against a response poisoned with a secret, an email
+ *   address, a name and a metadata value, and asserts none of them reaches the event log.
+ *   A per-operation assertion would only cover the operations someone remembered.
+ * - **Retry safety** asserts every name in the non-idempotent set is a registered
+ *   operation, so an entry cannot outlive or precede the endpoint it describes.
  *
  * All ids and values are fictional.
  */
 import { readFileSync } from 'node:fs';
 import { logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { Collaborators, Organizations, Projects } from './endpoints';
+import {
+	Collaborators,
+	DataDeletions,
+	DataRequests,
+	Errors,
+	EventFields,
+	Events,
+	FeatureFlags,
+	Integrations,
+	Organizations,
+	Pivots,
+	Projects,
+	Releases,
+	SavedSearches,
+	Teams,
+	Trends,
+} from './endpoints';
 import { BugsnagMirrorEvictionError } from './endpoints/persist';
+import { buildQuery, withQuery } from './endpoints/shared';
 import {
 	errorHandlers,
 	isNonIdempotent,
+	isPaginationLimit,
 	isRouteMissing,
+	NON_IDEMPOTENT_OPERATIONS,
 } from './error-handlers';
 import { bugsnagEndpointMeta } from './index';
 
@@ -35,6 +61,12 @@ const BASE = 'https://api.bugsnag.com';
 const ORG = 'organization-1';
 const PROJECT = 'project-1';
 const COLLABORATOR = 'collaborator-1';
+const TEAM = 'team-1';
+const ERROR_ID = 'error-1';
+const SEARCH = 'saved-search-1';
+const INTEGRATION = 'configured-integration-1';
+const REQUEST_ID = 'data-request-1';
+const DELETION_ID = 'data-deletion-1';
 
 type Store = { upsertByEntityId: jest.Mock; deleteByEntityId: jest.Mock };
 
@@ -50,6 +82,7 @@ function makeCtx() {
 		organizations: makeStore(),
 		projects: makeStore(),
 		collaborators: makeStore(),
+		teams: makeStore(),
 	};
 	const ctx = { key: 'test-token', db } as unknown as Ctx;
 	return { ctx, db };
@@ -106,6 +139,84 @@ const collaborator = {
 	email: 'tester@example.com',
 	project_ids: [PROJECT],
 };
+const team = {
+	id: TEAM,
+	name: 'Example Team',
+	collaborator_count: 1,
+	project_count: 1,
+};
+const errorRecord = {
+	id: ERROR_ID,
+	project_id: PROJECT,
+	error_class: 'ExampleError',
+	message: 'something a user typed',
+	status: 'open',
+	events: 3,
+};
+const eventRecord = {
+	id: 'event-1',
+	error_id: ERROR_ID,
+	received_at: '2026-08-14T00:00:00.000Z',
+	user: { id: 'user-1', name: 'Test Tester', email: 'tester@example.com' },
+};
+const eventField = {
+	display_id: 'metaData.example.field',
+	custom: true,
+	path: 'metaData.example.field',
+	filter_options: { name: 'Example', match_types: ['eq'] },
+};
+const pivot = {
+	event_field_display_id: 'error',
+	name: 'Errors',
+	cardinality: 3,
+};
+const pivotValue = { event_field_value: 'user-1', events: 1, proportion: 0.33 };
+const release = { id: 'release-1', project_id: PROJECT, app_version: '1.4.0' };
+const releaseGroup = {
+	id: 'release-group-1',
+	project_id: PROJECT,
+	release_stage_name: 'production',
+};
+const savedSearch = {
+	id: SEARCH,
+	project_id: PROJECT,
+	name: 'Open errors',
+	filters: { 'error.status': [{ type: 'eq', value: 'open' }] },
+};
+const usageSummary = {
+	project_notifications_count: 0,
+	collaborator_email_notifications_count: 0,
+	performance_monitor_count: 0,
+};
+const trendBucket = {
+	from: '2026-08-13T00:00:00Z',
+	to: '2026-08-14T00:00:00Z',
+	events_count: 3,
+};
+const supportedIntegration = { key: 'slack', name: 'Slack', type: 'chat' };
+const configuredIntegration = {
+	id: INTEGRATION,
+	integration_key: 'slack',
+	project_id: PROJECT,
+};
+const projectAccess = {
+	project_summary: { id: PROJECT, name: 'Example App' },
+	is_admin: true,
+	project_role: 'project_owner',
+};
+const projectAccessCount = {
+	collaborator_id: COLLABORATOR,
+	project_count: 1,
+	is_admin: true,
+};
+const networkGrouping = { project_id: PROJECT, endpoints: [] };
+const dataRequest = { id: REQUEST_ID, status: 'PREPARING' };
+const dataDeletion = { id: DELETION_ID, status: 'AWAITING_CONFIRMATION' };
+const featureFlag = { name: 'new-checkout', active: true };
+const featureFlagSummary = { name: 'new-checkout', error_count: 0 };
+
+/** A filter used wherever an operation accepts one. */
+const FILTERS = { 'error.status': [{ type: 'eq', value: 'open' }] };
 
 /** Every registered operation with the request it is expected to make. */
 const OPERATIONS: Array<
@@ -114,31 +225,46 @@ const OPERATIONS: Array<
 		method: string,
 		path: string,
 		run: (ctx: Ctx) => Promise<unknown>,
+		payload: unknown,
 	]
 > = [
+	/* ------------------------------ organizations ---------------------------- */
 	[
 		'organizations.list',
 		'GET',
 		'user/organizations',
 		(c) => Organizations.list(c, {}),
+		[organization],
 	],
 	[
 		'organizations.get',
 		'GET',
 		`organizations/${ORG}`,
 		(c) => Organizations.get(c, { organization_id: ORG }),
+		organization,
 	],
+	[
+		'organizations.delete',
+		'DELETE',
+		`organizations/${ORG}`,
+		(c) => Organizations.remove(c, { organization_id: ORG }),
+		{},
+	],
+
+	/* --------------------------------- projects ------------------------------ */
 	[
 		'projects.list',
 		'GET',
 		`organizations/${ORG}/projects`,
 		(c) => Projects.list(c, { organization_id: ORG }),
+		[project],
 	],
 	[
 		'projects.get',
 		'GET',
 		`projects/${PROJECT}`,
 		(c) => Projects.get(c, { project_id: PROJECT }),
+		project,
 	],
 	[
 		'projects.create',
@@ -150,18 +276,37 @@ const OPERATIONS: Array<
 				name: 'Example App',
 				type: 'android',
 			}),
+		project,
 	],
 	[
 		'projects.delete',
 		'DELETE',
 		`projects/${PROJECT}`,
 		(c) => Projects.remove(c, { project_id: PROJECT }),
+		{},
 	],
+	[
+		'projects.regenerateApiKey',
+		'DELETE',
+		`projects/${PROJECT}/api_key`,
+		(c) => Projects.regenerateApiKey(c, { project_id: PROJECT }),
+		project,
+	],
+	[
+		'projects.networkGroupingRuleset',
+		'GET',
+		`projects/${PROJECT}/network_endpoint_grouping`,
+		(c) => Projects.networkGroupingRuleset(c, { project_id: PROJECT }),
+		networkGrouping,
+	],
+
+	/* ------------------------------ collaborators ---------------------------- */
 	[
 		'collaborators.list',
 		'GET',
 		`organizations/${ORG}/collaborators`,
 		(c) => Collaborators.list(c, { organization_id: ORG }),
+		[collaborator],
 	],
 	[
 		'collaborators.get',
@@ -172,34 +317,524 @@ const OPERATIONS: Array<
 				organization_id: ORG,
 				collaborator_id: COLLABORATOR,
 			}),
+		collaborator,
+	],
+	[
+		'collaborators.invite',
+		'POST',
+		`organizations/${ORG}/collaborators`,
+		(c) =>
+			Collaborators.invite(c, {
+				organization_id: ORG,
+				email: 'invitee@example.com',
+			}),
+		collaborator,
+	],
+	[
+		'collaborators.updatePermissions',
+		'PATCH',
+		`organizations/${ORG}/collaborators/${COLLABORATOR}`,
+		(c) =>
+			Collaborators.updatePermissions(c, {
+				organization_id: ORG,
+				collaborator_id: COLLABORATOR,
+				admin: true,
+			}),
+		collaborator,
+	],
+	[
+		'collaborators.delete',
+		'DELETE',
+		`organizations/${ORG}/collaborators/${COLLABORATOR}`,
+		(c) =>
+			Collaborators.remove(c, {
+				organization_id: ORG,
+				collaborator_id: COLLABORATOR,
+			}),
+		{},
+	],
+	[
+		'collaborators.listOnProject',
+		'GET',
+		`projects/${PROJECT}/collaborators`,
+		(c) => Collaborators.listOnProject(c, { project_id: PROJECT }),
+		[collaborator],
+	],
+	[
+		'collaborators.getOnProject',
+		'GET',
+		`projects/${PROJECT}/collaborators/${COLLABORATOR}`,
+		(c) =>
+			Collaborators.getOnProject(c, {
+				project_id: PROJECT,
+				collaborator_id: COLLABORATOR,
+			}),
+		collaborator,
+	],
+	[
+		'collaborators.listProjects',
+		'GET',
+		`organizations/${ORG}/collaborators/${COLLABORATOR}/projects`,
+		(c) =>
+			Collaborators.listProjects(c, {
+				organization_id: ORG,
+				collaborator_id: COLLABORATOR,
+			}),
+		[project],
+	],
+	[
+		'collaborators.projectAccessCounts',
+		'GET',
+		`organizations/${ORG}/collaborators/project_access_counts`,
+		(c) =>
+			Collaborators.projectAccessCounts(c, {
+				organization_id: ORG,
+				collaborator_ids: [COLLABORATOR],
+			}),
+		[projectAccessCount],
+	],
+	[
+		'collaborators.listProjectAccesses',
+		'GET',
+		`organizations/${ORG}/collaborators/${COLLABORATOR}/project_accesses`,
+		(c) =>
+			Collaborators.listProjectAccesses(c, {
+				organization_id: ORG,
+				collaborator_id: COLLABORATOR,
+			}),
+		[projectAccess],
+	],
+	[
+		'collaborators.getProjectAccess',
+		'GET',
+		`organizations/${ORG}/collaborators/${COLLABORATOR}/project_accesses/${PROJECT}`,
+		(c) =>
+			Collaborators.getProjectAccess(c, {
+				organization_id: ORG,
+				collaborator_id: COLLABORATOR,
+				project_id: PROJECT,
+			}),
+		projectAccess,
+	],
+
+	/* ---------------------------------- teams -------------------------------- */
+	[
+		'teams.list',
+		'GET',
+		`organizations/${ORG}/teams`,
+		(c) => Teams.list(c, { organization_id: ORG }),
+		[team],
+	],
+	[
+		'teams.create',
+		'POST',
+		`organizations/${ORG}/teams`,
+		(c) => Teams.create(c, { organization_id: ORG, name: 'Example Team' }),
+		team,
+	],
+	[
+		'teams.get',
+		'GET',
+		`organizations/${ORG}/teams/${TEAM}`,
+		(c) => Teams.get(c, { organization_id: ORG, team_id: TEAM }),
+		team,
+	],
+	[
+		'teams.delete',
+		'DELETE',
+		`organizations/${ORG}/teams/${TEAM}`,
+		(c) => Teams.remove(c, { organization_id: ORG, team_id: TEAM }),
+		{},
+	],
+	[
+		'teams.addMembers',
+		'POST',
+		`organizations/${ORG}/teams/${TEAM}/team_memberships`,
+		(c) =>
+			Teams.addMembers(c, {
+				organization_id: ORG,
+				team_id: TEAM,
+				collaborator_ids: [COLLABORATOR],
+			}),
+		team,
+	],
+	[
+		'teams.addCollaboratorMemberships',
+		'POST',
+		`organizations/${ORG}/collaborators/${COLLABORATOR}/team_memberships`,
+		(c) =>
+			Teams.addCollaboratorMemberships(c, {
+				organization_id: ORG,
+				collaborator_id: COLLABORATOR,
+				team_ids: [TEAM],
+			}),
+		collaborator,
+	],
+
+	/* --------------------------------- errors -------------------------------- */
+	[
+		'errors.list',
+		'GET',
+		`projects/${PROJECT}/errors`,
+		(c) => Errors.list(c, { project_id: PROJECT, filters: FILTERS }),
+		[errorRecord],
+	],
+	[
+		'errors.bulkUpdate',
+		'PATCH',
+		`projects/${PROJECT}/errors`,
+		(c) =>
+			Errors.bulkUpdate(c, {
+				project_id: PROJECT,
+				error_ids: [ERROR_ID],
+				operation: 'fix',
+			}),
+		{ operation: 'fix' },
+	],
+	[
+		'errors.deleteAll',
+		'DELETE',
+		`projects/${PROJECT}/errors`,
+		(c) => Errors.deleteAll(c, { project_id: PROJECT }),
+		{},
+	],
+
+	/* --------------------------------- events -------------------------------- */
+	[
+		'events.list',
+		'GET',
+		`projects/${PROJECT}/events`,
+		(c) => Events.list(c, { project_id: PROJECT }),
+		[eventRecord],
+	],
+	[
+		'events.listForError',
+		'GET',
+		`projects/${PROJECT}/errors/${ERROR_ID}/events`,
+		(c) => Events.listForError(c, { project_id: PROJECT, error_id: ERROR_ID }),
+		[eventRecord],
+	],
+
+	/* ------------------------------- event fields ---------------------------- */
+	[
+		'eventFields.list',
+		'GET',
+		`projects/${PROJECT}/event_fields`,
+		(c) => EventFields.list(c, { project_id: PROJECT }),
+		[eventField],
+	],
+	[
+		'eventFields.create',
+		'POST',
+		`projects/${PROJECT}/event_fields`,
+		(c) =>
+			EventFields.create(c, {
+				project_id: PROJECT,
+				path: 'metaData.example.field',
+				filter_options: { name: 'Example', match_types: ['eq'] },
+			}),
+		eventField,
+	],
+	[
+		'eventFields.delete',
+		'DELETE',
+		`projects/${PROJECT}/event_fields/metaData.example.field`,
+		(c) =>
+			EventFields.remove(c, {
+				project_id: PROJECT,
+				display_id: 'metaData.example.field',
+			}),
+		{},
+	],
+
+	/* --------------------------------- pivots -------------------------------- */
+	[
+		'pivots.list',
+		'GET',
+		`projects/${PROJECT}/pivots`,
+		(c) => Pivots.list(c, { project_id: PROJECT }),
+		[pivot],
+	],
+	[
+		'pivots.values',
+		'GET',
+		`projects/${PROJECT}/pivots/error/values`,
+		(c) =>
+			Pivots.values(c, {
+				project_id: PROJECT,
+				event_field_display_id: 'error',
+			}),
+		[pivotValue],
+	],
+
+	/* -------------------------------- releases ------------------------------- */
+	[
+		'releases.list',
+		'GET',
+		`projects/${PROJECT}/releases`,
+		(c) => Releases.list(c, { project_id: PROJECT }),
+		[release],
+	],
+	[
+		'releases.listGroups',
+		'GET',
+		`projects/${PROJECT}/release_groups`,
+		(c) =>
+			Releases.listGroups(c, {
+				project_id: PROJECT,
+				release_stage_name: 'production',
+			}),
+		[releaseGroup],
+	],
+
+	/* ----------------------------- saved searches ---------------------------- */
+	[
+		'savedSearches.list',
+		'GET',
+		`projects/${PROJECT}/saved_searches`,
+		(c) => SavedSearches.list(c, { project_id: PROJECT }),
+		[savedSearch],
+	],
+	[
+		'savedSearches.create',
+		'POST',
+		'saved_searches',
+		(c) =>
+			SavedSearches.create(c, {
+				project_id: PROJECT,
+				name: 'Open errors',
+				filters: FILTERS,
+			}),
+		savedSearch,
+	],
+	[
+		'savedSearches.get',
+		'GET',
+		`saved_searches/${SEARCH}`,
+		(c) => SavedSearches.get(c, { saved_search_id: SEARCH }),
+		savedSearch,
+	],
+	[
+		'savedSearches.delete',
+		'DELETE',
+		`saved_searches/${SEARCH}`,
+		(c) => SavedSearches.remove(c, { saved_search_id: SEARCH }),
+		{},
+	],
+	[
+		'savedSearches.usageSummary',
+		'GET',
+		`saved_searches/${SEARCH}/usage_summary`,
+		(c) => SavedSearches.usageSummary(c, { saved_search_id: SEARCH }),
+		usageSummary,
+	],
+
+	/* --------------------------------- trends -------------------------------- */
+	[
+		'trends.projectBuckets',
+		'GET',
+		`projects/${PROJECT}/trend`,
+		(c) => Trends.projectBuckets(c, { project_id: PROJECT, buckets_count: 3 }),
+		[trendBucket],
+	],
+
+	/* ------------------------------ integrations ----------------------------- */
+	[
+		'integrations.listSupported',
+		'GET',
+		'integrations',
+		(c) => Integrations.listSupported(c, {}),
+		[supportedIntegration],
+	],
+	[
+		'integrations.listConfigured',
+		'GET',
+		`projects/${PROJECT}/configured_integrations`,
+		(c) => Integrations.listConfigured(c, { project_id: PROJECT }),
+		[configuredIntegration],
+	],
+	[
+		'integrations.configure',
+		'POST',
+		`projects/${PROJECT}/configured_integrations`,
+		(c) =>
+			Integrations.configure(c, {
+				project_id: PROJECT,
+				integration_key: 'slack',
+				configuration: { webhook: 'https://example.com/hook' },
+			}),
+		configuredIntegration,
+	],
+	[
+		'integrations.getConfigured',
+		'GET',
+		`configured_integrations/${INTEGRATION}`,
+		(c) => Integrations.getConfigured(c, { integration_id: INTEGRATION }),
+		configuredIntegration,
+	],
+	[
+		'integrations.deleteConfigured',
+		'DELETE',
+		`configured_integrations/${INTEGRATION}`,
+		(c) => Integrations.deleteConfigured(c, { integration_id: INTEGRATION }),
+		{},
+	],
+	[
+		'integrations.test',
+		'POST',
+		'integrations/test',
+		(c) =>
+			Integrations.test(c, {
+				key: 'slack',
+				configuration: { webhook: 'https://example.com/hook' },
+			}),
+		{ success: true },
+	],
+
+	/* ----------------------------- GDPR requests ----------------------------- */
+	[
+		'dataRequests.createForOrganization',
+		'POST',
+		`organizations/${ORG}/event_data_requests`,
+		(c) =>
+			DataRequests.createForOrganization(c, {
+				organization_id: ORG,
+				filters: FILTERS,
+			}),
+		dataRequest,
+	],
+	[
+		'dataRequests.getForOrganization',
+		'GET',
+		`organizations/${ORG}/event_data_requests/${REQUEST_ID}`,
+		(c) =>
+			DataRequests.getForOrganization(c, {
+				organization_id: ORG,
+				request_id: REQUEST_ID,
+			}),
+		dataRequest,
+	],
+	[
+		'dataRequests.createForProject',
+		'POST',
+		`projects/${PROJECT}/event_data_requests`,
+		(c) =>
+			DataRequests.createForProject(c, {
+				project_id: PROJECT,
+				filters: FILTERS,
+			}),
+		dataRequest,
+	],
+	[
+		'dataRequests.getForProject',
+		'GET',
+		`projects/${PROJECT}/event_data_requests/${REQUEST_ID}`,
+		(c) =>
+			DataRequests.getForProject(c, {
+				project_id: PROJECT,
+				request_id: REQUEST_ID,
+			}),
+		dataRequest,
+	],
+
+	/* ---------------------------- GDPR deletions ----------------------------- */
+	[
+		'dataDeletions.createForOrganization',
+		'POST',
+		`organizations/${ORG}/event_data_deletions`,
+		(c) =>
+			DataDeletions.createForOrganization(c, {
+				organization_id: ORG,
+				filters: FILTERS,
+			}),
+		dataDeletion,
+	],
+	[
+		'dataDeletions.getForOrganization',
+		'GET',
+		`organizations/${ORG}/event_data_deletions/${DELETION_ID}`,
+		(c) =>
+			DataDeletions.getForOrganization(c, {
+				organization_id: ORG,
+				deletion_id: DELETION_ID,
+			}),
+		dataDeletion,
+	],
+	[
+		'dataDeletions.createForProject',
+		'POST',
+		`projects/${PROJECT}/event_data_deletions`,
+		(c) =>
+			DataDeletions.createForProject(c, {
+				project_id: PROJECT,
+				filters: FILTERS,
+			}),
+		dataDeletion,
+	],
+	[
+		'dataDeletions.getForProject',
+		'GET',
+		`projects/${PROJECT}/event_data_deletions/${DELETION_ID}`,
+		(c) =>
+			DataDeletions.getForProject(c, {
+				project_id: PROJECT,
+				deletion_id: DELETION_ID,
+			}),
+		dataDeletion,
+	],
+	[
+		'dataDeletions.confirmForProject',
+		'POST',
+		`projects/${PROJECT}/event_data_deletions/${DELETION_ID}/confirm`,
+		(c) =>
+			DataDeletions.confirmForProject(c, {
+				project_id: PROJECT,
+				deletion_id: DELETION_ID,
+			}),
+		dataDeletion,
+	],
+
+	/* ------------------------------ feature flags ---------------------------- */
+	[
+		'featureFlags.list',
+		'GET',
+		`projects/${PROJECT}/feature_flags`,
+		(c) =>
+			FeatureFlags.list(c, {
+				project_id: PROJECT,
+				release_stage_name: 'production',
+			}),
+		[featureFlag],
+	],
+	[
+		'featureFlags.listSummaries',
+		'GET',
+		`projects/${PROJECT}/feature_flag_summaries`,
+		(c) => FeatureFlags.listSummaries(c, { project_id: PROJECT }),
+		[featureFlagSummary],
 	],
 ];
 
-/** A response body plausible enough for each operation to parse. */
-function payloadFor(op: string): unknown {
-	if (op === 'organizations.list') return [organization];
-	if (op === 'projects.list') return [project];
-	if (op === 'collaborators.list') return [collaborator];
-	if (op.startsWith('organizations')) return organization;
-	if (op.startsWith('projects')) return project;
-	if (op.startsWith('collaborators')) return collaborator;
-	return {};
-}
+const payloadFor = (op: string) =>
+	OPERATIONS.find(([name]) => name === op)?.[4] ?? {};
 
 beforeEach(() => {
 	mockLogEvent.mockClear();
 });
 
 describe('routing', () => {
-	for (const [op, method, path, run] of OPERATIONS) {
+	for (const [op, method, path, run, payload] of OPERATIONS) {
 		it(`${op} calls ${method} ${path}`, async () => {
-			mockFetch(payloadFor(op));
+			mockFetch(payload);
 			const { ctx } = makeCtx();
 
 			await run(ctx);
 
 			expect(captured?.method).toBe(method);
-			expect(captured?.url.startsWith(`${BASE}/${path}`)).toBe(true);
+			// `encodeURI` is applied to the path by the transport, so a dotted display
+			// id survives unchanged while a query string stays separated by `?`.
+			const actual = decodeURIComponent(captured?.url ?? '');
+			expect(actual.startsWith(`${BASE}/${path}`)).toBe(true);
 		});
 	}
 
@@ -216,6 +851,61 @@ describe('routing', () => {
 		expect(captured?.url).toBe(`${BASE}/user/organizations`);
 		expect(captured?.url).not.toContain('/organizations?');
 	});
+
+	/**
+	 * The paths that recon had wrong. Each was corrected against a live account, and
+	 * each is pinned here because the wrong version failed in a way that looked like
+	 * something else - a resource-missing 404 or a 400 about an absent id, rather than
+	 * an obvious route error.
+	 */
+	it('uses the corrected paths rather than the plausible wrong ones', async () => {
+		// The wrong forms are written as whole path segments, with the leading slash.
+		// Without it, `memberships` is a substring of the correct `team_memberships` and
+		// the assertion could never hold - a check that can only fail is as useless as
+		// one that can only pass.
+		const CORRECTED: Array<{ correct: string; wrong: string; ops: number }> = [
+			{ correct: 'team_memberships', wrong: '/memberships', ops: 2 },
+			{ correct: 'project_accesses', wrong: '/access_details', ops: 2 },
+			{
+				correct: 'feature_flag_summaries',
+				wrong: 'feature_flags/summaries',
+				ops: 1,
+			},
+			{
+				correct: 'network_endpoint_grouping',
+				wrong: 'network_grouping_ruleset',
+				ops: 1,
+			},
+		];
+
+		for (const { correct, wrong, ops } of CORRECTED) {
+			const matching = OPERATIONS.filter(([, , path]) =>
+				path.includes(correct),
+			);
+
+			// Without this the loop below could pass on an empty list - which is exactly
+			// what would happen if a path regressed to the wrong spelling.
+			expect(matching).toHaveLength(ops);
+			for (const [, , path] of matching) {
+				expect(path).not.toContain(wrong);
+			}
+		}
+
+		// And the saved-search writes are top-level, not nested under the project.
+		const topLevel = OPERATIONS.filter(([op]) =>
+			[
+				'savedSearches.create',
+				'savedSearches.get',
+				'savedSearches.delete',
+				'savedSearches.usageSummary',
+			].includes(op),
+		);
+		expect(topLevel).toHaveLength(4);
+		for (const [, , path] of topLevel) {
+			expect(path.startsWith('saved_searches')).toBe(true);
+			expect(path).not.toContain('projects/');
+		}
+	});
 });
 
 describe('coverage', () => {
@@ -224,7 +914,7 @@ describe('coverage', () => {
 		const registered = Object.keys(bugsnagEndpointMeta).sort();
 
 		expect(exercised).toEqual(registered);
-		expect(registered).toHaveLength(8);
+		expect(registered).toHaveLength(61);
 	});
 
 	it('has no duplicate entries in the routing table', () => {
@@ -235,7 +925,7 @@ describe('coverage', () => {
 	it('assigns every operation a risk level and a description', () => {
 		const entries = Object.entries(bugsnagEndpointMeta);
 
-		expect(entries).toHaveLength(8);
+		expect(entries).toHaveLength(61);
 		for (const [op, meta] of entries) {
 			expect(['read', 'write', 'destructive']).toContain(meta.riskLevel);
 			expect(meta.description.length).toBeGreaterThan(0);
@@ -245,43 +935,127 @@ describe('coverage', () => {
 });
 
 describe('risk levels', () => {
-	/**
-	 * Deleting a project removes its entire error history irreversibly, so it is
-	 * destructive rather than merely a write.
-	 */
-	it('marks the project delete destructive', () => {
-		const deletes = Object.entries(bugsnagEndpointMeta).filter(([op]) =>
-			op.endsWith('.delete'),
-		);
+	const meta = Object.entries(bugsnagEndpointMeta);
 
-		// Without this the loop would pass trivially on an empty list.
-		expect(deletes).toHaveLength(1);
-		for (const [, meta] of deletes) {
-			expect(meta.riskLevel).toBe('destructive');
+	/**
+	 * Every irreversible operation, listed explicitly rather than inferred from the
+	 * name. `projects.regenerateApiKey` deletes nothing yet stops every deployed
+	 * notifier; `errors.bulkUpdate` can apply `delete` to an arbitrary batch. Neither
+	 * would be caught by a rule about names ending in `.delete`.
+	 */
+	it('marks everything irreversible destructive', () => {
+		const expected = [
+			'organizations.delete',
+			'projects.delete',
+			'projects.regenerateApiKey',
+			'collaborators.delete',
+			'teams.delete',
+			'errors.bulkUpdate',
+			'errors.deleteAll',
+			'eventFields.delete',
+			'savedSearches.delete',
+			'integrations.deleteConfigured',
+			'dataDeletions.createForOrganization',
+			'dataDeletions.createForProject',
+			'dataDeletions.confirmForProject',
+		];
+
+		for (const op of expected) {
+			expect(
+				bugsnagEndpointMeta[op as keyof typeof bugsnagEndpointMeta].riskLevel,
+			).toBe('destructive');
 		}
+
+		// The set is exactly these - so a new destructive operation has to be
+		// considered here rather than added silently.
+		const destructive = meta
+			.filter(([, m]) => m.riskLevel === 'destructive')
+			.map(([op]) => op)
+			.sort();
+		expect(destructive).toEqual([...expected].sort());
 	});
 
-	it('marks every read read', () => {
-		const reads = Object.entries(bugsnagEndpointMeta).filter(
-			([op]) => op.endsWith('.list') || op.endsWith('.get'),
+	/**
+	 * A GDPR export destroys nothing, but it gathers everything the account holds about
+	 * an identified person and returns a download link. That is not a read.
+	 */
+	it('treats a data export as a write rather than a read', () => {
+		expect(
+			bugsnagEndpointMeta['dataRequests.createForOrganization'].riskLevel,
+		).toBe('write');
+		expect(bugsnagEndpointMeta['dataRequests.createForProject'].riskLevel).toBe(
+			'write',
 		);
+		// Reading the status of one is a genuine read.
+		expect(bugsnagEndpointMeta['dataRequests.getForProject'].riskLevel).toBe(
+			'read',
+		);
+	});
 
-		expect(reads).toHaveLength(6);
-		for (const [, meta] of reads) {
-			expect(meta.riskLevel).toBe('read');
+	it('marks every GET read', () => {
+		const gets = OPERATIONS.filter(([, method]) => method === 'GET');
+
+		expect(gets.length).toBeGreaterThan(30);
+		for (const [op] of gets) {
+			expect(
+				bugsnagEndpointMeta[op as keyof typeof bugsnagEndpointMeta].riskLevel,
+			).toBe('read');
 		}
 	});
 });
 
 describe('retry safety', () => {
 	/**
-	 * Creating a project is the only write here that a replay could duplicate: it
-	 * would produce a second project rather than returning the first. A delete of a
-	 * named project is not a duplication risk.
+	 * The drift check the comment in `error-handlers.ts` promises. Without it a name in
+	 * the set could refer to an endpoint that does not exist - which was true of
+	 * `projects.regenerateApiKey` while the scaffold only had eight operations.
 	 */
-	it('treats the project create as unsafe to replay and the delete as safe', () => {
-		expect(isNonIdempotent('projects.create')).toBe(true);
-		expect(isNonIdempotent('projects.delete')).toBe(false);
+	it('names only registered operations in the non-idempotent set', () => {
+		const registered = new Set(Object.keys(bugsnagEndpointMeta));
+
+		expect(NON_IDEMPOTENT_OPERATIONS.size).toBeGreaterThan(0);
+		for (const op of NON_IDEMPOTENT_OPERATIONS) {
+			expect(registered.has(op)).toBe(true);
+		}
+	});
+
+	it('treats every create as unsafe to replay', () => {
+		for (const op of [
+			'projects.create',
+			'teams.create',
+			'eventFields.create',
+			'savedSearches.create',
+			'integrations.configure',
+		]) {
+			expect(isNonIdempotent(op)).toBe(true);
+		}
+	});
+
+	/**
+	 * Deleting a named resource is safe to replay - the second attempt reports
+	 * not-found, which `NOT_FOUND_ERROR` handles - so those are absent from the set.
+	 */
+	it('treats a delete of a named resource as safe to replay', () => {
+		for (const op of [
+			'projects.delete',
+			'teams.delete',
+			'collaborators.delete',
+			'savedSearches.delete',
+			'eventFields.delete',
+		]) {
+			expect(isNonIdempotent(op)).toBe(false);
+		}
+	});
+
+	/**
+	 * Two POSTs that are nonetheless safe to repeat, for stated reasons: re-inviting an
+	 * existing address returns the existing collaborator, and testing a configuration
+	 * creates nothing.
+	 */
+	it('treats the idempotent POSTs as safe to replay', () => {
+		expect(isNonIdempotent('collaborators.invite')).toBe(false);
+		expect(isNonIdempotent('integrations.test')).toBe(false);
+		expect(isNonIdempotent('teams.addMembers')).toBe(false);
 	});
 
 	it('never marks a read unsafe to replay', () => {
@@ -289,7 +1063,7 @@ describe('retry safety', () => {
 			([op]) => op,
 		);
 
-		expect(reads).toHaveLength(6);
+		expect(reads.length).toBeGreaterThan(30);
 		for (const op of reads) {
 			expect(isNonIdempotent(op)).toBe(false);
 		}
@@ -304,8 +1078,13 @@ describe('the two 404 shapes', () => {
 	/**
 	 * BugSnag returns `{"status":404,"error":"Not Found"}` when the route does not
 	 * exist and `{"errors":["... not found"]}` when the route exists and the resource
-	 * does not. The distinction was used during recon to map the GDPR endpoints, and
-	 * an operator needs it: a wrong path and a missing record need different fixes.
+	 * does not.
+	 *
+	 * The rule was confirmed live and is narrower than it first appears: a garbage
+	 * **path parameter** still matches its route, so `projects/<garbage>` returns the
+	 * resource-missing shape, while only a path matching no route at all returns
+	 * route-absent. That distinction is what mapped the GDPR endpoints, and misreading
+	 * it in the other direction is what produced two false "enterprise-only" verdicts.
 	 */
 	const apiError = (status: number, body: unknown) =>
 		Object.assign(new ApiError({} as never, {} as never, 'boom'), {
@@ -355,6 +1134,158 @@ describe('the two 404 shapes', () => {
 	});
 });
 
+describe('the deep-offset 422', () => {
+	/**
+	 * A 422 with code 60000 means the requested page is too deep to serve, not that the
+	 * request was malformed. Distinguished because the remedy differs: narrow the query
+	 * rather than correct it, and do not retry.
+	 */
+	const apiError = (status: number, body: unknown) =>
+		Object.assign(new ApiError({} as never, {} as never, 'boom'), {
+			status,
+			body,
+		});
+
+	it('recognises the pagination limit', () => {
+		expect(
+			isPaginationLimit(
+				apiError(422, {
+					errors: ['Unable to return complete results'],
+					code: 60000,
+				}),
+			),
+		).toBe(true);
+	});
+
+	it('does not mistake an ordinary validation failure for it', () => {
+		expect(
+			isPaginationLimit(apiError(422, { errors: ["Name can't be blank"] })),
+		).toBe(false);
+		expect(isPaginationLimit(apiError(400, { code: 60000 }))).toBe(false);
+		expect(isPaginationLimit(new Error('plain error'))).toBe(false);
+	});
+
+	it('explains the depth limit rather than reporting a bad request', async () => {
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		const context = { operation: 'errors.list' } as unknown as Parameters<
+			typeof errorHandlers.VALIDATION_ERROR.handler
+		>[1];
+
+		const result = await errorHandlers.VALIDATION_ERROR.handler(
+			apiError(422, {
+				errors: ['Unable to return complete results'],
+				code: 60000,
+			}),
+			context,
+		);
+
+		expect(result.maxRetries).toBe(0);
+		const message = String(warn.mock.calls[0]?.[0]);
+		expect(message).toContain('too deep');
+		// The message the API suggests is a dead end with an offset, so the warning says
+		// so rather than repeating advice that does not work.
+		expect(message).toContain('sort=unsorted');
+		warn.mockRestore();
+	});
+});
+
+describe('query construction', () => {
+	/**
+	 * These assert the exact string, because the reason the plugin builds its own is
+	 * that a *plausible* string is silently the wrong query. See `endpoints/shared.ts`.
+	 */
+	it('returns nothing when there is nothing to send', () => {
+		expect(buildQuery({})).toBe('');
+		expect(buildQuery({ per_page: undefined })).toBe('');
+		expect(withQuery('projects/p/errors')).toBe('projects/p/errors');
+	});
+
+	it('brackets an array, because the bare repeated form is rejected', () => {
+		const query = buildQuery({ collaborator_ids: ['a', 'b'] });
+
+		expect(decodeURIComponent(query)).toBe(
+			'?collaborator_ids[]=a&collaborator_ids[]=b',
+		);
+		// The bare form is what the shared transport would have produced, and the API
+		// answers it with "Collaborator_ids must be an array".
+		expect(decodeURIComponent(query)).not.toBe(
+			'?collaborator_ids=a&collaborator_ids=b',
+		);
+	});
+
+	it('keeps each filter comparison type/value pair adjacent', () => {
+		const query = decodeURIComponent(
+			buildQuery({}, { 'error.status': [{ type: 'eq', value: 'open' }] }),
+		);
+
+		expect(query).toBe(
+			'?filters[error.status][][type]=eq&filters[error.status][][value]=open',
+		);
+	});
+
+	/**
+	 * The case that matters. Grouped keys - which is what a generic serialiser produces
+	 * for an array of objects - are answered 400 by the API, and the flat form it
+	 * produces instead resolves last-wins, silently meaning only the final comparison.
+	 */
+	it('pairs two comparisons on one field without grouping the keys', () => {
+		const query = decodeURIComponent(
+			buildQuery(
+				{},
+				{
+					'error.status': [
+						{ type: 'eq', value: 'open' },
+						{ type: 'eq', value: 'fixed' },
+					],
+				},
+			),
+		);
+
+		expect(query).toBe(
+			'?filters[error.status][][type]=eq&filters[error.status][][value]=open' +
+				'&filters[error.status][][type]=eq&filters[error.status][][value]=fixed',
+		);
+		// Grouped - type,type,value,value - is the form the API rejects.
+		expect(query).not.toContain('[][type]=eq&filters[error.status][][type]=eq');
+	});
+
+	it('accepts a single comparison as well as an array', () => {
+		const one = decodeURIComponent(
+			buildQuery({}, { 'error.status': { type: 'eq', value: 'open' } }),
+		);
+		const asArray = decodeURIComponent(
+			buildQuery({}, { 'error.status': [{ type: 'eq', value: 'open' }] }),
+		);
+
+		expect(one).toBe(asArray);
+	});
+
+	it('orders comparison keys deterministically so the string is assertable', () => {
+		const query = decodeURIComponent(
+			buildQuery({}, { 'user.email': { value: 'x', type: 'eq', extra: '1' } }),
+		);
+
+		expect(query).toBe(
+			'?filters[user.email][][type]=eq&filters[user.email][][value]=x&filters[user.email][][extra]=1',
+		);
+	});
+
+	it('percent-encodes keys and values', () => {
+		expect(buildQuery({ q: 'a b&c' })).toBe('?q=a%20b%26c');
+		expect(buildQuery({ collaborator_ids: ['a'] })).toContain('%5B%5D');
+	});
+
+	it('puts paging before filters', () => {
+		const query = decodeURIComponent(
+			buildQuery({ per_page: 10 }, { 'error.status': { type: 'eq' } }),
+		);
+
+		expect(query.indexOf('per_page')).toBeLessThan(query.indexOf('filters'));
+	});
+});
+
 describe('caching', () => {
 	it('mirrors a fetched project under its id', async () => {
 		mockFetch(project);
@@ -375,6 +1306,95 @@ describe('caching', () => {
 		await Projects.list(ctx, { organization_id: ORG });
 
 		expect(db.projects.upsertByEntityId).toHaveBeenCalledTimes(2);
+	});
+
+	it('mirrors a team under its id', async () => {
+		mockFetch(team);
+		const { ctx, db } = makeCtx();
+
+		await Teams.get(ctx, { organization_id: ORG, team_id: TEAM });
+
+		expect(db.teams.upsertByEntityId).toHaveBeenCalledWith(
+			TEAM,
+			expect.objectContaining({ id: TEAM }),
+		);
+	});
+
+	/**
+	 * The collaborator's projects operation returns full project records, so they belong
+	 * in the project mirror rather than the collaborator one.
+	 */
+	it("mirrors a collaborator's projects as projects", async () => {
+		mockFetch([project]);
+		const { ctx, db } = makeCtx();
+
+		await Collaborators.listProjects(ctx, {
+			organization_id: ORG,
+			collaborator_id: COLLABORATOR,
+		});
+
+		expect(db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			PROJECT,
+			expect.objectContaining({ id: PROJECT }),
+		);
+		expect(db.collaborators.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	/**
+	 * The membership operation returns the updated collaborator, not a team, despite
+	 * living in the teams group. Asserted because the two membership operations look
+	 * symmetrical and are not.
+	 */
+	it('mirrors a collaborator when team memberships are added to one', async () => {
+		mockFetch(collaborator);
+		const { ctx, db } = makeCtx();
+
+		await Teams.addCollaboratorMemberships(ctx, {
+			organization_id: ORG,
+			collaborator_id: COLLABORATOR,
+			team_ids: [TEAM],
+		});
+
+		expect(db.collaborators.upsertByEntityId).toHaveBeenCalledWith(
+			COLLABORATOR,
+			expect.objectContaining({ id: COLLABORATOR }),
+		);
+		expect(db.teams.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	/**
+	 * Rotation returns the whole project with the new key, so the row is refreshed
+	 * rather than evicted - the project still exists.
+	 */
+	it('refreshes rather than evicts the project when the api key is rotated', async () => {
+		mockFetch(project);
+		const { ctx, db } = makeCtx();
+
+		await Projects.regenerateApiKey(ctx, { project_id: PROJECT });
+
+		expect(db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			PROJECT,
+			expect.objectContaining({ id: PROJECT }),
+		);
+		expect(db.projects.deleteByEntityId).not.toHaveBeenCalled();
+	});
+
+	/**
+	 * Errors and events are not mirrored at all - the premise is a live stream, so a
+	 * cached copy would be stale on arrival. There is no store for them, and none of the
+	 * existing stores should receive their rows either.
+	 */
+	it('mirrors nothing when errors or events are read', async () => {
+		mockFetch([errorRecord]);
+		const { ctx, db } = makeCtx();
+		await Errors.list(ctx, { project_id: PROJECT });
+
+		mockFetch([eventRecord]);
+		await Events.list(ctx, { project_id: PROJECT });
+
+		for (const store of Object.values(db)) {
+			expect(store.upsertByEntityId).not.toHaveBeenCalled();
+		}
 	});
 
 	it('skips a row the entity schema rejects rather than storing it', async () => {
@@ -423,24 +1443,26 @@ describe('caching', () => {
 	 * ids that older errors reference.
 	 */
 	it('never evicts on a read', async () => {
-		mockFetch([project]);
-		const { ctx, db } = makeCtx();
+		for (const [op, method, , run, payload] of OPERATIONS) {
+			if (method !== 'GET') continue;
+			mockFetch(payload);
+			const { ctx, db } = makeCtx();
 
-		await Projects.list(ctx, { organization_id: ORG });
-		mockFetch(project);
-		await Projects.get(ctx, { project_id: PROJECT });
+			await run(ctx);
 
-		for (const store of Object.values(db)) {
-			expect(store.deleteByEntityId).not.toHaveBeenCalled();
+			for (const [name, store] of Object.entries(db)) {
+				if (store.deleteByEntityId.mock.calls.length > 0) {
+					throw new Error(`${op} evicted from ${name} during a read`);
+				}
+			}
 		}
 	});
 
 	/**
 	 * The project eviction is best-effort: a project carries no personal data of its
-	 * own, so a stale row is untidy rather than a privacy problem. The required
-	 * variant exists for entities that do - see the collaborator note in persist.ts.
+	 * own, so a stale row is untidy rather than a privacy problem.
 	 */
-	it('does not fail the delete when the eviction throws', async () => {
+	it('does not fail the delete when a best-effort eviction throws', async () => {
 		const warn = jest
 			.spyOn(console, 'warn')
 			.mockImplementation(() => undefined);
@@ -453,6 +1475,92 @@ describe('caching', () => {
 		).resolves.toMatchObject({ success: true });
 		expect(warn).toHaveBeenCalled();
 		warn.mockRestore();
+	});
+
+	/**
+	 * The collaborator and organization deletes are different: both rows hold personal
+	 * data - a name and email address, and billing email addresses - so a failed
+	 * eviction must not be reported as a success.
+	 */
+	it.each([
+		[
+			'collaborator',
+			'collaborators' as const,
+			(ctx: Ctx) =>
+				Collaborators.remove(ctx, {
+					organization_id: ORG,
+					collaborator_id: COLLABORATOR,
+				}),
+		],
+		[
+			'organization',
+			'organizations' as const,
+			(ctx: Ctx) => Organizations.remove(ctx, { organization_id: ORG }),
+		],
+	])(
+		'fails the %s delete when its required eviction fails',
+		async (_label, storeName, run) => {
+			const error = jest
+				.spyOn(console, 'error')
+				.mockImplementation(() => undefined);
+			mockFetch({});
+			const { ctx, db } = makeCtx();
+			db[storeName].deleteByEntityId.mockRejectedValueOnce(
+				new Error('db down'),
+			);
+
+			await expect(run(ctx)).rejects.toBeInstanceOf(BugsnagMirrorEvictionError);
+			error.mockRestore();
+		},
+	);
+
+	/**
+	 * And the audit record must survive that failure, reporting what actually happened
+	 * rather than being lost with the error. Logging `'completed'` before the eviction
+	 * would claim a success that had not happened; letting the error propagate first
+	 * would lose the record of a removal that did happen remotely.
+	 */
+	it('still records a failed eviction in the event log, as failed', async () => {
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		mockFetch({});
+		const { ctx, db } = makeCtx();
+		db.collaborators.deleteByEntityId.mockRejectedValueOnce(
+			new Error('db down'),
+		);
+
+		await expect(
+			Collaborators.remove(ctx, {
+				organization_id: ORG,
+				collaborator_id: COLLABORATOR,
+			}),
+		).rejects.toThrow();
+
+		expect(mockLogEvent).toHaveBeenCalledTimes(1);
+		expect(mockLogEvent.mock.calls[0]?.[1]).toBe(
+			'bugsnag.collaborators.delete',
+		);
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			mirror_evicted: false,
+		});
+		expect(mockLogEvent.mock.calls[0]?.[3]).toBe('failed');
+		error.mockRestore();
+	});
+
+	it('records a successful eviction as completed', async () => {
+		mockFetch({});
+		const { ctx } = makeCtx();
+
+		await Collaborators.remove(ctx, {
+			organization_id: ORG,
+			collaborator_id: COLLABORATOR,
+		});
+
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			mirror_evicted: true,
+		});
+		expect(mockLogEvent.mock.calls[0]?.[3]).toBe('completed');
 	});
 
 	it('exposes a typed error for a required eviction failure', () => {
@@ -509,13 +1617,150 @@ describe('request bodies and queries', () => {
 		expect(captured?.url).not.toContain('per_page');
 		expect(captured?.url).not.toContain('offset');
 	});
+
+	/**
+	 * `project_id` belongs in the body for a saved search, because the path is
+	 * top-level. The mirror image of the project create above, and asserted for the same
+	 * reason: putting an id in the wrong half of the request is a silent 404 or a
+	 * silently ignored field.
+	 */
+	it('sends project_id in the body when creating a saved search', async () => {
+		mockFetch(savedSearch);
+		const { ctx } = makeCtx();
+
+		await SavedSearches.create(ctx, {
+			project_id: PROJECT,
+			name: 'Open errors',
+			filters: FILTERS,
+		});
+
+		expect(captured?.url).toBe(`${BASE}/saved_searches`);
+		expect(JSON.parse(captured?.body ?? '{}')).toMatchObject({
+			project_id: PROJECT,
+			name: 'Open errors',
+		});
+	});
+
+	/**
+	 * `error_ids` is a query parameter and `operation` is a body field. Confirmed live,
+	 * and asserted because the asymmetry is the kind of thing a later refactor would
+	 * quietly normalise.
+	 */
+	it('splits the bulk update across query and body as the API requires', async () => {
+		mockFetch({ operation: 'fix' });
+		const { ctx } = makeCtx();
+
+		await Errors.bulkUpdate(ctx, {
+			project_id: PROJECT,
+			error_ids: [ERROR_ID, 'error-2'],
+			operation: 'fix',
+		});
+
+		const url = decodeURIComponent(captured?.url ?? '');
+		expect(url).toContain('error_ids[]=error-1');
+		expect(url).toContain('error_ids[]=error-2');
+		expect(JSON.parse(captured?.body ?? '{}')).toEqual({ operation: 'fix' });
+	});
+
+	/**
+	 * `display_id` is a dotted path, so it must be URL-encoded. Deleting by an
+	 * unencoded or wrong id is exactly how a probe left a field behind on a live
+	 * account.
+	 */
+	it('encodes a dotted event field display id in the path', async () => {
+		mockFetch({});
+		const { ctx } = makeCtx();
+
+		await EventFields.remove(ctx, {
+			project_id: PROJECT,
+			display_id: 'metaData.user.accountId',
+		});
+
+		expect(decodeURIComponent(captured?.url ?? '')).toBe(
+			`${BASE}/projects/${PROJECT}/event_fields/metaData.user.accountId`,
+		);
+	});
+
+	/**
+	 * `display_id` is deliberately absent from the create input, because the API assigns
+	 * it from `path` and ignores anything sent. Asserted so it cannot be reintroduced as
+	 * a convenience.
+	 */
+	it('does not send a display_id when creating an event field', async () => {
+		mockFetch(eventField);
+		const { ctx } = makeCtx();
+
+		await EventFields.create(ctx, {
+			project_id: PROJECT,
+			path: 'metaData.example.field',
+			filter_options: { name: 'Example', match_types: ['eq'] },
+		});
+
+		const body = JSON.parse(captured?.body ?? '{}');
+		expect(body).toEqual({
+			path: 'metaData.example.field',
+			filter_options: { name: 'Example', match_types: ['eq'] },
+		});
+		expect('display_id' in body).toBe(false);
+	});
+
+	/**
+	 * The API calls the same value `integration_key` on configure and `key` on test.
+	 * Both are asserted, because sending the wrong one produces a blank-field error that
+	 * reads as though the value were missing.
+	 */
+	it('uses integration_key to configure and key to test', async () => {
+		mockFetch(configuredIntegration);
+		const { ctx } = makeCtx();
+		await Integrations.configure(ctx, {
+			project_id: PROJECT,
+			integration_key: 'slack',
+			configuration: { webhook: 'https://example.com/hook' },
+		});
+		expect(JSON.parse(captured?.body ?? '{}')).toMatchObject({
+			integration_key: 'slack',
+		});
+
+		mockFetch({ success: true });
+		await Integrations.test(ctx, {
+			key: 'slack',
+			configuration: { webhook: 'https://example.com/hook' },
+		});
+		const body = JSON.parse(captured?.body ?? '{}');
+		expect(body).toMatchObject({ key: 'slack' });
+		expect('integration_key' in body).toBe(false);
+	});
+
+	it('sends the required filters on a GDPR request', async () => {
+		mockFetch(dataRequest);
+		const { ctx } = makeCtx();
+
+		await DataRequests.createForProject(ctx, {
+			project_id: PROJECT,
+			filters: FILTERS,
+		});
+
+		expect(JSON.parse(captured?.body ?? '{}')).toEqual({ filters: FILTERS });
+	});
+
+	it('sends no body when confirming a deletion', async () => {
+		mockFetch(dataDeletion);
+		const { ctx } = makeCtx();
+
+		await DataDeletions.confirmForProject(ctx, {
+			project_id: PROJECT,
+			deletion_id: DELETION_ID,
+		});
+
+		expect(captured?.body).toBeUndefined();
+	});
 });
 
 describe('event payloads', () => {
 	/**
 	 * These assertions are the point of the file. BugSnag carries collaborator
-	 * identities and two kinds of API key, and `logEventFromContext` persists
-	 * whatever it is handed.
+	 * identities, end-user personal data and two kinds of API key, and
+	 * `logEventFromContext` persists whatever it is handed.
 	 */
 	it('records no secret when an organization is read', async () => {
 		mockFetch(organization);
@@ -567,10 +1812,113 @@ describe('event payloads', () => {
 		expect(payload).toContain(COLLABORATOR);
 	});
 
+	/**
+	 * The invited address is the one piece of personal data a caller supplies directly
+	 * rather than reading back, and it must not be logged either.
+	 */
+	it('records no email address when a collaborator is invited', async () => {
+		mockFetch(collaborator);
+		const { ctx } = makeCtx();
+
+		await Collaborators.invite(ctx, {
+			organization_id: ORG,
+			email: 'invitee@example.com',
+			project_ids: [PROJECT],
+		});
+
+		const payload = JSON.stringify(mockLogEvent.mock.calls[0]?.[2]);
+		expect(payload).not.toContain('invitee@example.com');
+		expect(payload).toContain(COLLABORATOR);
+		// The shape of the grant is recorded, without who received it.
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			admin: false,
+			project_count: 1,
+		});
+	});
+
+	/**
+	 * A filter value can be an end-user's email address - that is the normal way to
+	 * answer a subject access request - so the field *names* are recorded and the values
+	 * are not.
+	 */
+	it('records which fields a filter used but not the values', async () => {
+		mockFetch([errorRecord]);
+		const { ctx } = makeCtx();
+
+		await Errors.list(ctx, {
+			project_id: PROJECT,
+			filters: { 'user.email': { type: 'eq', value: 'someone@example.com' } },
+		});
+
+		const logged = mockLogEvent.mock.calls[0]?.[2];
+		expect(logged).toMatchObject({ filtered_fields: ['user.email'] });
+		expect(JSON.stringify(logged)).not.toContain('someone@example.com');
+	});
+
+	it('records a count rather than the rows when errors are listed', async () => {
+		mockFetch([errorRecord, { ...errorRecord, id: 'error-2' }]);
+		const { ctx } = makeCtx();
+
+		await Errors.list(ctx, { project_id: PROJECT });
+
+		const logged = mockLogEvent.mock.calls[0]?.[2];
+		expect(logged).toMatchObject({ error_count: 2 });
+		expect(JSON.stringify(logged)).not.toContain('something a user typed');
+	});
+
+	/**
+	 * Whether full reports were requested is worth recording precisely because it says
+	 * whether personal data was pulled.
+	 */
+	it('records whether full event reports were requested', async () => {
+		mockFetch([eventRecord]);
+		const { ctx } = makeCtx();
+
+		await Events.list(ctx, { project_id: PROJECT, full_reports: true });
+
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			full_reports: true,
+		});
+	});
+
+	/**
+	 * A configured integration's `configuration` is a credential for another service.
+	 */
+	it('records configuration field names but never their values', async () => {
+		mockFetch(configuredIntegration);
+		const { ctx } = makeCtx();
+
+		await Integrations.configure(ctx, {
+			project_id: PROJECT,
+			integration_key: 'slack',
+			configuration: { apiToken: 'not-a-real-token-value' },
+		});
+
+		const logged = mockLogEvent.mock.calls[0]?.[2];
+		expect(logged).toMatchObject({ configuration_fields: ['apiToken'] });
+		expect(JSON.stringify(logged)).not.toContain('not-a-real-token-value');
+	});
+
+	/** A deletion's status distinguishes "prepared" from "carried out". */
+	it('records the status of a GDPR deletion it created', async () => {
+		mockFetch(dataDeletion);
+		const { ctx } = makeCtx();
+
+		await DataDeletions.createForProject(ctx, {
+			project_id: PROJECT,
+			filters: FILTERS,
+		});
+
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			deletion_id: DELETION_ID,
+			status: 'AWAITING_CONFIRMATION',
+		});
+	});
+
 	it('logs every operation exactly once, under its own event name', async () => {
-		for (const [op, , , run] of OPERATIONS) {
+		for (const [op, , , run, payload] of OPERATIONS) {
 			mockLogEvent.mockClear();
-			mockFetch(payloadFor(op));
+			mockFetch(payload);
 			const { ctx } = makeCtx();
 
 			await run(ctx);
@@ -579,17 +1927,92 @@ describe('event payloads', () => {
 			expect(mockLogEvent.mock.calls[0]?.[1]).toBe(`bugsnag.${op}`);
 		}
 	});
+
+	/**
+	 * The sweep. Every operation is run against a response carrying a planted secret, a
+	 * planted email address, a planted name and a planted metadata value, and none of
+	 * them may appear in what is logged.
+	 *
+	 * A per-operation assertion only covers the operations someone thought of; this
+	 * covers the ones nobody did, including any added later.
+	 */
+	describe('privacy sweep', () => {
+		const POISON = {
+			secret: 'PLANTED-SECRET-0123456789abcdef',
+			email: 'planted.person@poison.invalid',
+			name: 'Planted Personname',
+			meta: 'PLANTED-METADATA-VALUE',
+		};
+
+		/** Adds the planted values to every object in a response. */
+		const poison = (payload: unknown): unknown => {
+			if (Array.isArray(payload)) return payload.map(poison);
+			if (payload === null || typeof payload !== 'object') return payload;
+			return {
+				...(payload as Record<string, unknown>),
+				api_key: POISON.secret,
+				upload_api_key: POISON.secret,
+				email: POISON.email,
+				name: POISON.name,
+				billing_emails: [POISON.email],
+				user: { name: POISON.name, email: POISON.email },
+				metaData: { anything: POISON.meta },
+				request: { url: `https://poison.invalid/${POISON.meta}` },
+			};
+		};
+
+		for (const [op, , , run, payload] of OPERATIONS) {
+			it(`${op} leaks nothing into the event log`, async () => {
+				mockFetch(poison(payload));
+				const { ctx } = makeCtx();
+
+				await run(ctx);
+
+				const logged = JSON.stringify(mockLogEvent.mock.calls[0]?.[2] ?? {});
+				for (const [label, value] of Object.entries(POISON)) {
+					if (logged.includes(value)) {
+						throw new Error(
+							`${op} wrote the planted ${label} into the event log: ${logged}`,
+						);
+					}
+				}
+			});
+		}
+
+		/**
+		 * Guards the guard. If `poison` stopped injecting anything, every assertion above
+		 * would pass vacuously - so this proves the planted values really are present in
+		 * what the operations receive.
+		 */
+		it('actually plants the values it searches for', () => {
+			const poisoned = JSON.stringify(poison({ id: 'x' }));
+
+			for (const value of Object.values(POISON)) {
+				expect(poisoned).toContain(value);
+			}
+			expect(JSON.stringify(poison([{ id: 'a' }, { id: 'b' }]))).toContain(
+				POISON.secret,
+			);
+		});
+	});
 });
 
-describe('the scaffold is honest about its scope', () => {
+describe('the plugin is honest about its scope', () => {
 	/**
-	 * This PR is the scaffold that secures the claim, not the finished plugin. The
-	 * catalog lists 60 operations and 8 are implemented here. Asserting the count
-	 * keeps the code and the PR description from drifting apart, which `greptile.json`
-	 * treats as a P1.
+	 * The catalog lists 60 operations and all 60 are registered, plus `projects.get`,
+	 * which is **not** a catalog operation - the catalog has no get-single-project. So
+	 * 61 endpoints implement 60 catalog operations, and the difference is deliberate
+	 * rather than a miscount.
+	 *
+	 * Asserted because the last integration shipped a description claiming a number that
+	 * the code did not support, and `greptile.json` treats a description that disagrees
+	 * with the implementation as a P1.
 	 */
-	it('registers 8 of the 60 catalog operations', () => {
-		expect(Object.keys(bugsnagEndpointMeta)).toHaveLength(8);
+	it('registers 61 endpoints covering the 60 catalog operations', () => {
+		const registered = Object.keys(bugsnagEndpointMeta);
+
+		expect(registered).toHaveLength(61);
+		expect(registered).toContain('projects.get');
 	});
 
 	it('carries no generator or template residue', () => {
@@ -601,6 +2024,7 @@ describe('the scaffold is honest about its scope', () => {
 			'endpoints/persist.ts',
 			'endpoints/logging.ts',
 			'schema/database.ts',
+			'schema/responses.ts',
 		]) {
 			const source = readFileSync(`${__dirname}/${file}`, 'utf8');
 			expect(source).not.toMatch(/TODO|FIXME|example\.com\/api|loyverse/i);
