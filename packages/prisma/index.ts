@@ -89,8 +89,11 @@ export function prisma<const T extends PrismaPluginOptions>(
 		endpointSchemas: prismaEndpointSchemas,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
+			...(({ DEFAULT: _defaultHandler, ...rest }) => rest)(errorHandlers),
+			...(({ DEFAULT: _customDefault, ...rest }) => rest)(
+				options.errorHandlers ?? {},
+			),
+			DEFAULT: options.errorHandlers?.DEFAULT ?? errorHandlers.DEFAULT,
 		},
 		keyBuilder: async (ctx: PrismaKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
