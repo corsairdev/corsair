@@ -92,6 +92,12 @@ describe('TwoChat schema', () => {
 		expect(TwoChatSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
+	it('declares db schema entities aligned to 2Chat resources', () => {
+		expect(Object.keys(TwoChatSchema.entities).sort()).toEqual(
+			['accounts', 'contacts', 'webhookSubscriptions'].sort(),
+		);
+	});
+
 	it('parses the documented POST /open/contacts response', () => {
 		const parsed = CreateContactResponseSchema.parse(CREATE_CONTACT_RESPONSE);
 		expect(parsed.contact.details?.[0]).toMatchObject({

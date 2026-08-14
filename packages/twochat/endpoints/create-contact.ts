@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeTwoChatRequest } from '../client';
 import type { TwoChatContext } from '../index';
+import { cacheContacts } from './persist';
 import type { TwoChatEndpointOutputs } from './types';
 
 export const createContact = async (
@@ -26,6 +27,7 @@ export const createContact = async (
 		},
 	});
 
+	await cacheContacts(ctx, [response.contact]);
 	await logEventFromContext(
 		ctx,
 		'twochat.contacts.createContact',

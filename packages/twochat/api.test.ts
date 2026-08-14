@@ -239,6 +239,112 @@ describe('TwoChat plugin', () => {
 		expect(result).toEqual(mockResponse);
 	});
 
+	function cacheCtx() {
+		const contacts = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		const accounts = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		const webhookSubscriptions = {
+			upsertByEntityId: jest.fn().mockResolvedValue(undefined),
+		};
+		return {
+			ctx: {
+				...mockContext,
+				db: { contacts, accounts, webhookSubscriptions },
+			},
+			contacts,
+			accounts,
+			webhookSubscriptions,
+		};
+	}
+
+	it('listContacts caches each contact', async () => {
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce({
+			success: true,
+			page: 0,
+			count: 1,
+			contacts: [{ uuid: 'CON_1', first_name: 'Bob' }],
+		});
+		const { ctx, contacts } = cacheCtx();
+		await listContacts(ctx, {});
+		expect(contacts.upsertByEntityId).toHaveBeenCalledWith(
+			'CON_1',
+			expect.objectContaining({ uuid: 'CON_1', first_name: 'Bob' }),
+		);
+	});
+
+	it('createContact caches the created contact', async () => {
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce({
+			success: true,
+			contact: { uuid: 'CON_123', first_name: 'Alice' },
+		});
+		const { ctx, contacts } = cacheCtx();
+		await createContact(ctx, {
+			first_name: 'Alice',
+			contact_details: [{ type: 'PH', value: '+1234567890' }],
+		});
+		expect(contacts.upsertByEntityId).toHaveBeenCalledWith(
+			'CON_123',
+			expect.objectContaining({ uuid: 'CON_123', first_name: 'Alice' }),
+		);
+	});
+
+	it('getApiUsageInfo caches the account', async () => {
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce({
+			success: true,
+			account: { uuid: 'ACC_1', name: 'Pro Plan' },
+			limits: { requests_per_minute: 100 },
+		});
+		const { ctx, accounts } = cacheCtx();
+		await getApiUsageInfo(ctx, {});
+		expect(accounts.upsertByEntityId).toHaveBeenCalledWith(
+			'ACC_1',
+			expect.objectContaining({
+				uuid: 'ACC_1',
+				name: 'Pro Plan',
+				requests_per_minute: 100,
+			}),
+		);
+	});
+
+	it('listWebhooks caches each webhook', async () => {
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce({
+			success: true,
+			webhooks: [
+				{
+					uuid: 'WHK_1',
+					event_name: 'whatsapp.message.received',
+					hook_url: 'https://example.com/webhook',
+				},
+			],
+		});
+		const { ctx, webhookSubscriptions } = cacheCtx();
+		await listWebhooks(ctx, {});
+		expect(webhookSubscriptions.upsertByEntityId).toHaveBeenCalledWith(
+			'WHK_1',
+			expect.objectContaining({
+				uuid: 'WHK_1',
+				event_name: 'whatsapp.message.received',
+			}),
+		);
+	});
+
+	it('cache write failures do not fail the API call', async () => {
+		(client.makeTwoChatRequest as jest.Mock).mockResolvedValueOnce({
+			success: true,
+			page: 0,
+			count: 1,
+			contacts: [{ uuid: 'CON_1', first_name: 'Bob' }],
+		});
+		const { ctx, contacts } = cacheCtx();
+		contacts.upsertByEntityId.mockRejectedValueOnce(new Error('db down'));
+		await expect(listContacts(ctx, {})).resolves.toMatchObject({
+			contacts: [{ uuid: 'CON_1', first_name: 'Bob' }],
+		});
+	});
+
 	// ─── Zod Schema Validation ─────────────────────────────────────────────────
 
 	it('parses valid output payloads', () => {
