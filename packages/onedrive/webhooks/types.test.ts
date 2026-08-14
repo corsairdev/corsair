@@ -68,10 +68,21 @@ describe('verifyOnedriveClientState', () => {
 
 	it('should return invalid without throwing when clientState is a non-string truthy value', () => {
 		// Truthy non-string values (e.g. number) can arrive in untrusted webhook payloads
-		// at runtime despite TypeScript types. Buffer.from(String(...)) must handle these safely.
+		// at runtime despite TypeScript types. Reject them instead of coercing.
 		const result = verifyOnedriveClientState(
 			{ clientState: 12345 as unknown as string },
 			expectedClientState,
+		);
+		expect(result).toEqual({
+			valid: false,
+			error: 'clientState mismatch',
+		});
+	});
+
+	it('should not treat a numeric clientState as equal to its string form', () => {
+		const result = verifyOnedriveClientState(
+			{ clientState: 12345 as unknown as string },
+			'12345',
 		);
 		expect(result).toEqual({
 			valid: false,
