@@ -18,17 +18,13 @@ export const ContactDetailSchema = z.object({
 		.optional()
 		.describe('Unique numeric ID for the contact detail'),
 	created_at: z
-		.string()
+		.union([z.string(), z.number()])
 		.optional()
-		.describe('ISO timestamp when the contact detail was created'),
-	created_at_timestamp: z
-		.number()
-		.optional()
-		.describe('Unix timestamp when the contact detail was created'),
+		.describe('ISO timestamp or unix seconds when the contact detail was created'),
 	updated_at: z
-		.string()
+		.union([z.string(), z.number()])
 		.optional()
-		.describe('ISO timestamp when the contact detail was updated'),
+		.describe('ISO timestamp or unix seconds when the contact detail was updated'),
 });
 
 export type ContactDetail = z.infer<typeof ContactDetailSchema>;
