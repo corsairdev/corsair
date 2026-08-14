@@ -49,7 +49,15 @@ async function main() {
 		return warn(`unsupported platform ${process.platform}/${process.arch}`);
 	}
 	const bin = process.platform === 'win32' ? 'frpc.exe' : 'frpc';
-	const dir = join(homedir(), '.cache', 'corsair', 'frpc', FRPC_VERSION);
+	// platform-arch segment kept in lockstep with hub/tunnel/frpc-binary.ts.
+	const dir = join(
+		homedir(),
+		'.cache',
+		'corsair',
+		'frpc',
+		FRPC_VERSION,
+		`${process.platform}-${process.arch}`,
+	);
 	const dest = join(dir, bin);
 	if (existsSync(dest)) return; // already cached
 

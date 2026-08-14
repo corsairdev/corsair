@@ -194,7 +194,7 @@ function maybeStartTunnel(
 	const port = Number(process.env.PORT);
 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
 		console.error(
-			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair tunnel <port>`.',
+			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
 		);
 		return;
 	}

@@ -20,7 +20,17 @@ function binName(): string {
  * a shared frpc-version.json is the upgrade path if this drifts.
  */
 export function frpcCacheBinary(): string {
-	return join(homedir(), '.cache', 'corsair', 'frpc', FRPC_VERSION, binName());
+	// The platform-arch segment keeps a shared $HOME (devcontainer/NFS) from
+	// serving a wrong-arch binary. Kept in lockstep with postinstall-frpc.mjs.
+	return join(
+		homedir(),
+		'.cache',
+		'corsair',
+		'frpc',
+		FRPC_VERSION,
+		frpcPlatformKey(),
+		binName(),
+	);
 }
 
 /**

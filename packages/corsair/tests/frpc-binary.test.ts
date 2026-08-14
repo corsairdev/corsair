@@ -3,8 +3,16 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { frpcPlatformKey, resolveFrpcBinary } from '../hub/tunnel/frpc-binary';
 
-// Jest isolates test files, so mutating CORSAIR_FRP_BIN here can't leak out.
 describe('resolveFrpcBinary', () => {
+	const original = process.env.CORSAIR_FRP_BIN;
+	afterEach(() => {
+		if (original === undefined) {
+			Reflect.deleteProperty(process.env, 'CORSAIR_FRP_BIN');
+		} else {
+			process.env.CORSAIR_FRP_BIN = original;
+		}
+	});
+
 	it('returns CORSAIR_FRP_BIN when it points to an existing file', () => {
 		const dir = mkdtempSync(join(tmpdir(), 'frpc-'));
 		const fake = join(dir, 'frpc');

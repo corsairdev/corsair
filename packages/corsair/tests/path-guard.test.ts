@@ -77,6 +77,13 @@ describe('path-guard', () => {
 		expect(appHits).toContain('/api/corsair?token=abc');
 	});
 
+	it('allows percent-encoded slashes in the query string (only the path is guarded)', async () => {
+		expect(await get('/api/corsair?u=https%3A%2F%2Fapp.example%2Fcb')).toBe(
+			200,
+		);
+		expect(appHits.some((h) => h.startsWith('/api/corsair?u='))).toBe(true);
+	});
+
 	it('404s any other route — the app is never hit', async () => {
 		expect(await get('/secret')).toBe(404);
 		expect(appHits).toHaveLength(0);

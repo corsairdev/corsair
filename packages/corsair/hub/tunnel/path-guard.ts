@@ -22,18 +22,20 @@ export function startPathGuard(
 ): Promise<{ port: number; close: () => Promise<void> }> {
 	const server = http.createServer((req, res) => {
 		const raw = req.url ?? '/';
-		// Encoded path separators can smuggle traversal past normalization.
-		if (/%2f|%5c/i.test(raw)) {
-			res.statusCode = 400;
-			res.end('Bad request');
-			return;
-		}
 		let url: URL;
 		try {
 			// Resolves `..` and `//` so the allow-check below can't be tricked
 			// into forwarding a raw traversal path (e.g. /api/corsair/../admin).
 			url = new URL(raw, 'http://127.0.0.1');
 		} catch {
+			res.statusCode = 400;
+			res.end('Bad request');
+			return;
+		}
+		// Encoded path separators in the PATH can smuggle traversal past
+		// normalization (WHATWG URL keeps %2F/%5C undecoded in pathname). The
+		// query string is exempt — encoded URLs in params are legitimate.
+		if (/%2f|%5c/i.test(url.pathname)) {
 			res.statusCode = 400;
 			res.end('Bad request');
 			return;

@@ -32,9 +32,13 @@ export async function enrollDevTunnel(opts: {
 		return;
 	}
 
+	// Bounded so a hung Hub can't wedge `corsair setup` forever.
 	const res = await fetch(
 		`${apiUrl.replace(/\/$/, '')}/api/dev/tunnel-config`,
-		{ headers: { authorization: `Bearer ${projectApiKey}` } },
+		{
+			headers: { authorization: `Bearer ${projectApiKey}` },
+			signal: AbortSignal.timeout(15_000),
+		},
 	).catch(() => null);
 	if (!res || !res.ok) {
 		console.log(
@@ -43,15 +47,14 @@ export async function enrollDevTunnel(opts: {
 		return;
 	}
 
-	const { slug } = (await res.json()) as { slug?: string };
-	if (!/^[a-z0-9-]+$/.test(slug ?? '')) {
+	// A 200 with a non-JSON body (proxy/HTML error page) must not throw out of setup.
+	const body = (await res.json().catch(() => null)) as { slug?: string } | null;
+	const slug = body?.slug;
+	if (!slug || !/^[a-z0-9-]+$/.test(slug)) {
 		console.error('[corsair] Hub returned an invalid tunnel slug.');
 		return;
 	}
 
-	console.log(
-		corsairBanner(
-			`https://${slug}.${CORSAIR_TUNNEL_ZONE}${CORSAIR_TUNNEL_PATH}`,
-		),
-	);
+	const zone = process.env.CORSAIR_FRP_HOST ?? CORSAIR_TUNNEL_ZONE;
+	console.log(corsairBanner(`https://${slug}.${zone}${CORSAIR_TUNNEL_PATH}`));
 }

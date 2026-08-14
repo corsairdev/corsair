@@ -59,6 +59,7 @@ export default class HttpCommand extends BaseCommand {
 				port,
 				apiUrl: hub.apiUrl,
 				apiKey: hub.projectApiKey,
+				shareHost: process.env.CORSAIR_FRP_HOST,
 			});
 			stop = result.stop;
 			console.log(`\n  Public URL: ${result.url}${CORSAIR_TUNNEL_PATH}\n`);
