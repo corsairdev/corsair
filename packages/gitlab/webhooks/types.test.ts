@@ -54,11 +54,55 @@ describe('verifyGitlabWebhookSignature', () => {
 		});
 	});
 
+	it('should return invalid for a same-length token that differs', () => {
+		// Exercises the timingSafeEqual compare itself — 'not-the-secret' above is
+		// short enough that it never gets past the length guard.
+		const sameLength = 'my-super-secret-toXen';
+		expect(sameLength).toHaveLength(secret.length);
+		const result = verifyGitlabWebhookSignature(
+			requestWith({ 'x-gitlab-token': sameLength }),
+			secret,
+		);
+		expect(result).toEqual({
+			valid: false,
+			error: 'X-Gitlab-Token does not match configured secret',
+		});
+	});
+
 	it('should return valid when the token matches the configured secret', () => {
 		const result = verifyGitlabWebhookSignature(
 			requestWith({ 'x-gitlab-token': secret }),
 			secret,
 		);
 		expect(result).toEqual({ valid: true });
+	});
+
+	it('should use the first value of a repeated token header', () => {
+		const result = verifyGitlabWebhookSignature(
+			requestWith({ 'x-gitlab-token': [secret, 'ignored'] }),
+			secret,
+		);
+		expect(result).toEqual({ valid: true });
+	});
+
+	it('should handle a multi-byte secret without throwing', () => {
+		// 'sécret' is 6 chars but 7 bytes: a char-length guard would let this
+		// through to timingSafeEqual, which throws on unequal buffer lengths.
+		const multiByte = 'sécret';
+		expect(
+			verifyGitlabWebhookSignature(
+				requestWith({ 'x-gitlab-token': multiByte }),
+				multiByte,
+			),
+		).toEqual({ valid: true });
+		expect(
+			verifyGitlabWebhookSignature(
+				requestWith({ 'x-gitlab-token': 'secret' }),
+				multiByte,
+			),
+		).toEqual({
+			valid: false,
+			error: 'X-Gitlab-Token does not match configured secret',
+		});
 	});
 });

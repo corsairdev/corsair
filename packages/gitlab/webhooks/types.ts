@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -37,13 +38,24 @@ export function verifyGitlabWebhookSignature(
 		return { valid: false, error: 'Missing webhook secret' };
 	}
 
-	const token = request.headers['x-gitlab-token'];
+	const rawToken = request.headers['x-gitlab-token'];
+	const token = Array.isArray(rawToken) ? rawToken[0] : rawToken;
 
 	if (!token) {
 		return { valid: false, error: 'Missing X-Gitlab-Token header' };
 	}
 
-	if (token !== secret) {
+	// Constant-time compare so response timing cannot leak the configured secret
+	// byte-by-byte. timingSafeEqual throws on unequal buffer lengths, hence the
+	// byte-length guard first — and it reuses the same error so a mismatch never
+	// reveals the secret's length.
+	const tokenBuffer = Buffer.from(token);
+	const secretBuffer = Buffer.from(secret);
+
+	if (
+		tokenBuffer.length !== secretBuffer.length ||
+		!timingSafeEqual(tokenBuffer, secretBuffer)
+	) {
 		return {
 			valid: false,
 			error: 'X-Gitlab-Token does not match configured secret',
