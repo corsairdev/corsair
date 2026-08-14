@@ -127,6 +127,43 @@ describe('OpenRouter schemas', () => {
 		).toBe(true);
 	});
 
+	it('validates optional chat maxTokens and maxCompletionTokens bounds', () => {
+		const base = {
+			model: 'openai/gpt-4o-mini',
+			messages: [{ role: 'user' as const, content: 'Hello' }],
+		};
+
+		expect(
+			OpenRouterEndpointInputSchemas.chatCompletionsCreate.safeParse(base)
+				.success,
+		).toBe(true);
+		expect(
+			OpenRouterEndpointInputSchemas.chatCompletionsCreate.safeParse({
+				...base,
+				maxTokens: 0,
+			}).success,
+		).toBe(false);
+		expect(
+			OpenRouterEndpointInputSchemas.chatCompletionsCreate.safeParse({
+				...base,
+				maxTokens: 1.5,
+			}).success,
+		).toBe(false);
+		expect(
+			OpenRouterEndpointInputSchemas.chatCompletionsCreate.safeParse({
+				...base,
+				maxCompletionTokens: -1,
+			}).success,
+		).toBe(false);
+		expect(
+			OpenRouterEndpointInputSchemas.chatCompletionsCreate.safeParse({
+				...base,
+				maxTokens: 1,
+				maxCompletionTokens: 16,
+			}).success,
+		).toBe(true);
+	});
+
 	it('supports multi-turn chat tool calls', () => {
 		const parsed = ChatMessageSchema.safeParse({
 			role: 'assistant',

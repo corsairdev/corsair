@@ -6,15 +6,7 @@ describe('Openrouter schema', () => {
 		expect(OpenrouterSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof OpenrouterSchema.entities).toBe('object');
-		expect(OpenrouterSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(OpenrouterSchema.entities))).toBe(true);
-		for (const entity of Object.values(OpenrouterSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares an empty entities map', () => {
+		expect(OpenrouterSchema.entities).toEqual({});
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
