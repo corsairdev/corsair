@@ -13,6 +13,7 @@ import SharepointSubscribeCommand from './commands/sharepoint-subscribe.command'
 import StudioCommand from './commands/studio.command';
 import SubscribeCommand from './commands/subscribe.command';
 import TeamsSubscribeCommand from './commands/teams-subscribe.command';
+import TunnelCommand from './commands/tunnel.command';
 import WatchRenewCommand from './commands/watch-renew.command';
 import {
 	findCorsairConfigPath,
@@ -37,6 +38,7 @@ function createProgram(): Command {
 		new SchemaCommand(),
 		new ScriptCommand(),
 		new StudioCommand(),
+		new TunnelCommand(),
 	];
 
 	COMMANDS.forEach((command) => {

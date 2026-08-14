@@ -1,7 +1,20 @@
 import {
 	describeDeliveryNetworkError,
 	formatServerDeliveryError,
+	signDeliveryEnvelope,
 } from '../hub/signing/envelope';
+
+describe('signDeliveryEnvelope', () => {
+	it('includes skip_zrok_interstitial header', () => {
+		const { headers } = signDeliveryEnvelope({
+			projectId: 'proj_test',
+			signingSecret: 'secret',
+			type: 'connect.create_link',
+			payload: {},
+		});
+		expect(headers['skip_zrok_interstitial']).toBe('1');
+	});
+});
 
 describe('describeDeliveryNetworkError', () => {
 	it('explains connection refused without environment-specific hints', () => {

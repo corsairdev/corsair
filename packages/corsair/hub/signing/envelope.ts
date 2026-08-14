@@ -30,6 +30,8 @@ export type SignedDeliveryHeaders = {
 	'x-corsair-nonce': string;
 	/** Always `application/json`. */
 	'content-type': string;
+	/** Bypasses the zrok.io browser interstitial for non-interactive HTTP clients. */
+	skip_zrok_interstitial: string;
 };
 
 /**
@@ -126,6 +128,7 @@ export function signDeliveryEnvelope(input: {
 			'x-corsair-timestamp': timestamp,
 			'x-corsair-project': input.projectId,
 			'x-corsair-nonce': randomUUID(),
+			skip_zrok_interstitial: '1',
 		},
 	};
 }

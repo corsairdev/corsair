@@ -52,6 +52,11 @@
       "types": "./dist/hub.d.ts",
       "default": "./dist/hub.js"
     },
+    "./hub/tunnel/run-tunnel": {
+      "dev-source": "./hub/tunnel/run-tunnel.ts",
+      "types": "./dist/hub/tunnel/run-tunnel.d.ts",
+      "default": "./dist/hub/tunnel/run-tunnel.js"
+    },
     "./tests": {
       "dev-source": "./tests.ts",
       "types": "./dist/tests.d.ts",

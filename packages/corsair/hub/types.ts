@@ -17,6 +17,24 @@ export type HubConfigInput = {
 	 * enabling in production — see workflows/execute.ts.
 	 */
 	allowWorkflowExecution?: boolean;
+	/**
+	 * A `ck_dev_` key tunnels automatically so the Hub can reach your local
+	 * server — no config needed (the share host and per-key slug are internal).
+	 * Set `false` to opt out (or `CORSAIR_TUNNEL=0`). A {@link TunnelConfig}
+	 * object is an advanced escape hatch to override the binary, host, or name.
+	 */
+	tunnel?: boolean | TunnelConfig;
+};
+
+/**
+ * Targets a self-hosted zrok for auto-tunneling. Defaults match zrok.io's
+ * hosted service; override `bin`/`shareHost` for your own instance.
+ */
+export type TunnelConfig = {
+	/** zrok binary to spawn. Default `'zrok'`; use `'zrok2'` for a self-hosted zrok2 instance. */
+	bin?: string;
+	/** DNS host of the share URLs to capture, e.g. `'corsair.cloud'`. Default `'shares.zrok.io'`. */
+	shareHost?: string;
 };
 
 export type HubConfig = {
@@ -26,6 +44,7 @@ export type HubConfig = {
 	oauthCallbackUrl?: string;
 	redirectURL?: string;
 	allowWorkflowExecution?: boolean;
+	tunnel?: boolean | TunnelConfig;
 };
 
 export type HubConnectSessionInput = {
