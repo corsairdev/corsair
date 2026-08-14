@@ -1,5 +1,5 @@
 import type { TeamsNotification, TeamsWebhookPayload } from './types';
-import { verifyTeamsClientState } from './types';
+import { createTeamsNotificationMatch, verifyTeamsClientState } from './types';
 
 const CLIENT_STATE = 'teams-client-state';
 
@@ -93,5 +93,51 @@ describe('verifyTeamsClientState', () => {
 			CLIENT_STATE,
 		);
 		expect(result).toEqual({ valid: true });
+	});
+
+	it('should reject a value array that contains null without throwing', () => {
+		const malformed = {
+			value: [null],
+		} as unknown as TeamsWebhookPayload<TeamsNotification>;
+		expect(() => verifyTeamsClientState(malformed, CLIENT_STATE)).not.toThrow();
+		expect(verifyTeamsClientState(malformed, CLIENT_STATE)).toEqual({
+			valid: false,
+			error: 'clientState mismatch',
+		});
+	});
+
+	it('should reject a mixed batch that contains null without throwing', () => {
+		const malformed = {
+			value: [notification(), null],
+		} as unknown as TeamsWebhookPayload<TeamsNotification>;
+		expect(() => verifyTeamsClientState(malformed, CLIENT_STATE)).not.toThrow();
+		expect(verifyTeamsClientState(malformed, CLIENT_STATE)).toEqual({
+			valid: false,
+			error: 'clientState mismatch',
+		});
+	});
+});
+
+describe('createTeamsNotificationMatch', () => {
+	const matchChannels = createTeamsNotificationMatch(
+		/teams\([^)]+\)\/channels/,
+	);
+
+	it('should not throw when value contains null', () => {
+		const request = {
+			body: { value: [null] },
+			headers: {},
+		} as never;
+		expect(() => matchChannels(request)).not.toThrow();
+		expect(matchChannels(request)).toBe(false);
+	});
+
+	it('should match a valid notification even when the batch also contains null', () => {
+		expect(
+			matchChannels({
+				body: { value: [null, notification()] },
+				headers: {},
+			} as never),
+		).toBe(true);
 	});
 });
