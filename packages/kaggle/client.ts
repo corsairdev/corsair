@@ -14,7 +14,19 @@ export class KaggleAPIError extends Error {
 /** Official Kaggle REST base used by the public API / CLI. */
 const KAGGLE_API_BASE = 'https://www.kaggle.com/api/v1';
 const KAGGLE_REQUEST_TIMEOUT_MS = 30_000;
+const KAGGLE_MAX_ERROR_BODY_BYTES = 4096;
 export const KAGGLE_MAX_BINARY_PAYLOAD_BYTES = 100 * 1024 * 1024;
+
+const SIGNED_OUTPUT_HOSTS = new Set([
+	'storage.googleapis.com',
+	'kaggleusercontent.com',
+	'www.kaggle.com',
+	'kaggle.com',
+]);
+
+export function kagglePath(...segments: string[]): string {
+	return `/${segments.map((segment) => encodeURIComponent(segment)).join('/')}`;
+}
 
 /**
  * Parse credentials for HTTP Basic auth.
@@ -55,6 +67,43 @@ function authHeaders(
 		return { Authorization: `Basic ${token}` };
 	}
 	return { Authorization: `Bearer ${parsed.token}` };
+}
+
+function isAllowedSignedOutputHost(hostname: string): boolean {
+	const host = hostname.toLowerCase();
+	if (SIGNED_OUTPUT_HOSTS.has(host)) return true;
+	return (
+		host.endsWith('.storage.googleapis.com') ||
+		host.endsWith('.kaggleusercontent.com')
+	);
+}
+
+async function readCappedText(
+	res: Response,
+	maxBytes: number,
+): Promise<string> {
+	if (!res.body) return '';
+	const chunks: Buffer[] = [];
+	let totalBytes = 0;
+	const reader = res.body.getReader();
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			const chunk = Buffer.from(value);
+			if (totalBytes + chunk.length > maxBytes) {
+				chunks.push(chunk.subarray(0, maxBytes - totalBytes));
+				totalBytes = maxBytes;
+				await reader.cancel();
+				break;
+			}
+			chunks.push(chunk);
+			totalBytes += chunk.length;
+		}
+	} finally {
+		reader.releaseLock();
+	}
+	return Buffer.concat(chunks, totalBytes).toString('utf8');
 }
 
 export type KaggleQueryValue = string | number | boolean | undefined;
@@ -156,9 +205,7 @@ export async function makeKaggleBinaryRequest(
 	}
 
 	if (!res.ok) {
-		const rawText = await res.text();
-		// Cap the error body so a huge error response isn't retained in memory.
-		const text = rawText.slice(0, 4096);
+		const text = await readCappedText(res, KAGGLE_MAX_ERROR_BODY_BYTES);
 		// Forward rate-limit headers so error-handlers RATE_LIMIT_ERROR can back off.
 		const retryAfterHeader = res.headers.get('retry-after');
 		let retryAfterMs: number | undefined;
@@ -252,6 +299,99 @@ export async function makeKaggleBinaryRequest(
 			fileName = rawFileName;
 		}
 	}
+
+	return {
+		contentType,
+		size: buf.length,
+		dataBase64: buf.toString('base64'),
+		fileName,
+	};
+}
+
+export async function downloadKaggleOutputFile(
+	url: string,
+	fileName?: string,
+): Promise<{
+	contentType: string;
+	size: number;
+	dataBase64: string;
+	fileName?: string;
+}> {
+	let parsed: URL;
+	try {
+		parsed = new URL(url);
+	} catch {
+		throw new KaggleAPIError('Unsupported signed output url');
+	}
+	if (
+		parsed.protocol !== 'https:' ||
+		!isAllowedSignedOutputHost(parsed.hostname)
+	) {
+		throw new KaggleAPIError('Unsupported signed output url');
+	}
+
+	let res: Response;
+	try {
+		res = await fetch(parsed, {
+			method: 'GET',
+			headers: { Accept: '*/*' },
+			signal: AbortSignal.timeout(KAGGLE_REQUEST_TIMEOUT_MS),
+		});
+	} catch (error) {
+		throw new KaggleAPIError(
+			error instanceof Error ? error.message : 'Kaggle output download failed',
+		);
+	}
+
+	if (!res.ok) {
+		await readCappedText(res, KAGGLE_MAX_ERROR_BODY_BYTES);
+		throw new KaggleAPIError(
+			`Kaggle output download failed: ${res.status} ${res.statusText}`,
+		);
+	}
+
+	const contentLength = Number(res.headers.get('content-length'));
+	if (
+		Number.isFinite(contentLength) &&
+		contentLength > KAGGLE_MAX_BINARY_PAYLOAD_BYTES
+	) {
+		throw new KaggleAPIError(
+			`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`,
+		);
+	}
+	if (!res.body) {
+		throw new KaggleAPIError('Kaggle binary response has no body');
+	}
+	const chunks: Buffer[] = [];
+	let totalBytes = 0;
+	const reader = res.body.getReader();
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			const chunk = Buffer.from(value);
+			totalBytes += chunk.length;
+			if (totalBytes > KAGGLE_MAX_BINARY_PAYLOAD_BYTES) {
+				await reader.cancel();
+				throw new KaggleAPIError(
+					`Kaggle binary payload exceeds ${KAGGLE_MAX_BINARY_PAYLOAD_BYTES} bytes`,
+				);
+			}
+			chunks.push(chunk);
+		}
+	} catch (error) {
+		if (error instanceof KaggleAPIError) throw error;
+		throw new KaggleAPIError(
+			error instanceof Error
+				? error.message
+				: 'Kaggle binary stream read failed',
+		);
+	} finally {
+		reader.releaseLock();
+	}
+	const buf = Buffer.concat(chunks, totalBytes);
+	const contentType =
+		res.headers.get('content-type') ?? 'application/octet-stream';
 
 	return {
 		contentType,

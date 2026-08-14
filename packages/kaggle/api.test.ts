@@ -15,6 +15,11 @@ const TEST_CREDENTIAL =
 		? `${process.env.KAGGLE_USERNAME}:${process.env.KAGGLE_KEY}`
 		: process.env.KAGGLE_API_TOKEN);
 
+if (!TEST_CREDENTIAL) {
+	console.warn(
+		'Skipping Kaggle live smokes: set KAGGLE_USERNAME+KAGGLE_KEY, KAGGLE_API_KEY, or KAGGLE_API_TOKEN',
+	);
+}
 const describeIfCreds = TEST_CREDENTIAL ? describe : describe.skip;
 
 const binarySample = {
@@ -138,10 +143,13 @@ const FIXTURES: {
 		output: {
 			files: [
 				{
+					contentType: 'text/csv',
+					size: 4,
+					dataBase64: 'dGVzdA==',
 					fileName: 'submission.csv',
-					url: 'https://storage.googleapis.com/kaggle-output/sample',
 				},
 			],
+			log: 'done',
 		},
 	},
 	kernelsListOutputFiles: {
@@ -211,6 +219,18 @@ describe('Kaggle endpoint schemas', () => {
 		]) {
 			expect(schema.safeParse({}).success).toBe(false);
 		}
+	});
+
+	it('strips unknown fields from dataset createVersion input', () => {
+		const parsed = KaggleEndpointInputSchemas.datasetsCreateVersion.safeParse({
+			ownerSlug: 'user',
+			datasetSlug: 'my-dataset',
+			versionNotes: 'v2',
+			unexpected: true,
+		});
+		expect(parsed.success).toBe(true);
+		if (!parsed.success) return;
+		expect(parsed.data).not.toHaveProperty('unexpected');
 	});
 });
 

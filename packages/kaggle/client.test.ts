@@ -107,4 +107,31 @@ describe('makeKaggleBinaryRequest', () => {
 		expect(out.dataBase64).toBe(Buffer.from('hello').toString('base64'));
 		expect(out.fileName).toBe('report q1.csv');
 	});
+
+	it('stops reading a non-ok error body after the cap', async () => {
+		let pulls = 0;
+		const body = new ReadableStream<Uint8Array>({
+			pull(controller) {
+				pulls += 1;
+				if (pulls > 30) {
+					controller.close();
+					return;
+				}
+				controller.enqueue(Buffer.from('e'.repeat(1000)));
+			},
+		});
+		fetchSpy.mockResolvedValue(
+			new Response(body, {
+				status: 500,
+				statusText: 'Internal Server Error',
+			}),
+		);
+		const error = (await captureError(
+			makeKaggleBinaryRequest('/x', 'user:key'),
+		)) as ApiError;
+		expect(error).toBeInstanceOf(ApiError);
+		expect(typeof error.body).toBe('string');
+		expect((error.body as string).length).toBeLessThanOrEqual(4096);
+		expect(pulls).toBeLessThan(30);
+	});
 });

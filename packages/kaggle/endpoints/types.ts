@@ -27,6 +27,12 @@ const BinaryDownloadSchema = z.object({
 	fileName: z.string().optional(),
 });
 
+const KernelOutputDownloadSchema = z.object({
+	files: z.array(BinaryDownloadSchema),
+	log: z.string().optional(),
+	nextPageToken: z.string().optional(),
+});
+
 // ---------------------------------------------------------------------------
 // Datasets (8)
 // ---------------------------------------------------------------------------
@@ -45,32 +51,24 @@ const ListDatasetsInputSchema = z.object({
 });
 export type ListDatasetsInput = z.infer<typeof ListDatasetsInputSchema>;
 
-const CreateDatasetInputSchema = z
-	.object({
-		// Dataset creation body — fields mapped to Kaggle's create/new API.
-		ownerSlug: z.string(),
-		slug: z.string(),
-		title: z.string(),
-		subtitle: z.string().optional(),
-		description: z.string().optional(),
-		isPrivate: z.boolean().optional(),
-		// Free-form license name (e.g. "CC0-1.0").
-		licenseName: z.string().optional(),
-		// free-form resource/file token list — shape depends on prior uploads
-		files: z.array(LooseObjectSchema).optional(),
-	})
-	.catchall(z.unknown());
+const CreateDatasetInputSchema = z.object({
+	ownerSlug: z.string(),
+	slug: z.string(),
+	title: z.string(),
+	subtitle: z.string().optional(),
+	description: z.string().optional(),
+	isPrivate: z.boolean().optional(),
+	licenseName: z.string().optional(),
+	files: z.array(LooseObjectSchema).optional(),
+});
 export type CreateDatasetInput = z.infer<typeof CreateDatasetInputSchema>;
 
-const CreateDatasetVersionInputSchema = z
-	.object({
-		ownerSlug: z.string(),
-		datasetSlug: z.string(),
-		// free-form version body (notes, files/upload tokens, convert settings)
-		versionNotes: z.string().optional(),
-		files: z.array(LooseObjectSchema).optional(),
-	})
-	.catchall(z.unknown());
+const CreateDatasetVersionInputSchema = z.object({
+	ownerSlug: z.string(),
+	datasetSlug: z.string(),
+	versionNotes: z.string().optional(),
+	files: z.array(LooseObjectSchema).optional(),
+});
 export type CreateDatasetVersionInput = z.infer<
 	typeof CreateDatasetVersionInputSchema
 >;
@@ -333,7 +331,7 @@ export type KaggleEndpointOutputs = {
 	kernelsList: z.infer<typeof LooseListSchema>;
 	kernelsPull: z.infer<typeof LooseObjectSchema>;
 	kernelsGetStatus: z.infer<typeof LooseObjectSchema>;
-	kernelsDownloadOutput: z.infer<typeof LooseObjectSchema>;
+	kernelsDownloadOutput: z.infer<typeof KernelOutputDownloadSchema>;
 	kernelsListOutputFiles: z.infer<typeof LooseListSchema>;
 
 	modelsList: z.infer<typeof LooseListSchema>;
@@ -396,7 +394,7 @@ export const KaggleEndpointOutputSchemas = {
 	kernelsList: LooseListSchema,
 	kernelsPull: LooseObjectSchema,
 	kernelsGetStatus: LooseObjectSchema,
-	kernelsDownloadOutput: LooseObjectSchema,
+	kernelsDownloadOutput: KernelOutputDownloadSchema,
 	kernelsListOutputFiles: LooseListSchema,
 
 	modelsList: LooseListSchema,

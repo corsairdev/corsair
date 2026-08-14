@@ -324,7 +324,7 @@ const kaggleEndpointMeta = {
 	'kernels.downloadOutput': {
 		riskLevel: 'read',
 		description:
-			'List kernel session output files with download URLs (JSON metadata from GET /kernels/output)',
+			'Download kernel session output files as base64 (fetches signed GCS URLs from GET /kernels/output)',
 	},
 	'kernels.listOutputFiles': {
 		riskLevel: 'read',

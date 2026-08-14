@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeKaggleRequest } from '../client';
+import { downloadKaggleOutputFile, makeKaggleRequest } from '../client';
 import type { KaggleEndpoints } from '../index';
 import type { KaggleEndpointOutputs } from './types';
 
@@ -83,11 +83,11 @@ export const downloadOutput: KaggleEndpoints['kernelsDownloadOutput'] = async (
 	ctx,
 	input,
 ) => {
-	// Kaggle /kernels/output returns a JSON listing of output file URLs;
-	// it is not the binary download endpoint.
-	const result = await makeKaggleRequest<
-		KaggleEndpointOutputs['kernelsDownloadOutput']
-	>('/kernels/output', ctx.key, {
+	const listing = await makeKaggleRequest<{
+		files?: Array<{ url?: string; fileName?: string; name?: string }>;
+		log?: string;
+		nextPageToken?: string;
+	}>('/kernels/output', ctx.key, {
 		method: 'GET',
 		query: {
 			userName: input.userName,
@@ -96,12 +96,28 @@ export const downloadOutput: KaggleEndpoints['kernelsDownloadOutput'] = async (
 		username: ctx.options.username,
 	});
 
+	const files = [];
+	for (const item of listing.files ?? []) {
+		if (!item?.url) continue;
+		files.push(
+			await downloadKaggleOutputFile(item.url, item.fileName ?? item.name),
+		);
+	}
+
+	const result = {
+		files,
+		log: listing.log,
+		nextPageToken: listing.nextPageToken,
+	};
+
 	await logEventFromContext(
 		ctx,
 		'kaggle.kernels.downloadOutput',
 		{
 			userName: input.userName,
 			kernelSlug: input.kernelSlug,
+			fileCount: files.length,
+			size: files.reduce((sum, file) => sum + file.size, 0),
 		},
 		'completed',
 	);
