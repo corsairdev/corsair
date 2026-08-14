@@ -99,21 +99,29 @@ export function createOutlookMatch(
 			typeof request.body === 'string'
 				? (JSON.parse(request.body) as unknown)
 				: request.body;
-		const payload = body as OutlookWebhookPayload;
-		return (
-			payload?.value?.some(
-				(notification) =>
-					notification.resource !== undefined &&
-					resourcePattern.test(notification.resource) &&
-					!(
-						options?.excludeResourcePatterns?.some((pattern) =>
-							pattern.test(notification.resource as string),
-						) ?? false
-					) &&
-					(notification.changeType === undefined ||
-						changeTypes.includes(notification.changeType)),
-			) ?? false
-		);
+		if (!body || typeof body !== 'object') return false;
+		const value = (body as Record<string, unknown>)['value'];
+		if (!Array.isArray(value)) return false;
+		return value.some((entry: unknown) => {
+			if (!entry || typeof entry !== 'object') return false;
+			const notification = entry as Record<string, unknown>;
+			const resource =
+				typeof notification['resource'] === 'string'
+					? notification['resource']
+					: undefined;
+			if (resource === undefined) return false;
+			return (
+				resourcePattern.test(resource) &&
+				!(
+					options?.excludeResourcePatterns?.some((pattern) =>
+						pattern.test(resource),
+					) ?? false
+				) &&
+				(notification['changeType'] === undefined ||
+					(typeof notification['changeType'] === 'string' &&
+						changeTypes.includes(notification['changeType'])))
+			);
+		});
 	};
 }
 
