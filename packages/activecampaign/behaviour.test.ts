@@ -74,7 +74,6 @@ describe('request bodies, persistence and audit payloads', () => {
 
 	const originalFetch = globalThis.fetch;
 	let calls: Captured[] = [];
-	let events: Array<{ type: string; payload: Record<string, unknown> }> = [];
 	let warn: jest.SpyInstance;
 
 	function makeCtx(db: Record<string, unknown> = {}) {
@@ -84,13 +83,7 @@ describe('request bodies, persistence and audit payloads', () => {
 			keys: { get_account: async () => ACCOUNT },
 			db,
 			$getAccountId: async () => 'test-account',
-			// logEventFromContext calls logEvent(ctx.database, ...) and swallows a
-			// failure, so the payload is captured here instead.
-			database: {
-				insertInto: () => {
-					throw new Error('not used');
-				},
-			},
+			database: undefined,
 		};
 	}
 
@@ -111,7 +104,6 @@ describe('request bodies, persistence and audit payloads', () => {
 
 	beforeEach(() => {
 		calls = [];
-		events = [];
 		warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
 		respondWith({ meta: { total: '0' } });
 	});
@@ -174,6 +166,38 @@ describe('request bodies, persistence and audit payloads', () => {
 
 			const body = call().body as Record<string, unknown>;
 			expect(body.exclude_automations).toBe(true);
+		});
+
+		it('pages the account upsert lookup until an exact name match', async () => {
+			const firstPage = Array.from({ length: 100 }, (_, i) => ({
+				id: String(i + 1),
+				name: `other-${i}`,
+			}));
+			const pages = [
+				{ accounts: firstPage },
+				{ accounts: [{ id: '101', name: 'Acme' }] },
+				{ account: { id: '101', name: 'Acme' } },
+			];
+			globalThis.fetch = (async (url: string, init?: RequestInit) => {
+				calls.push({
+					url: String(url),
+					method: init?.method ?? 'GET',
+					body:
+						typeof init?.body === 'string' ? JSON.parse(init.body) : init?.body,
+				});
+				return new Response(JSON.stringify(pages.shift() ?? {}), {
+					status: 200,
+					headers: { 'Content-Type': 'application/json' },
+				});
+			}) as typeof fetch;
+
+			await op('accounts', 'upsert')(makeCtx(), { name: 'Acme' });
+
+			expect(
+				calls.filter((c) => c.method.toUpperCase() === 'GET'),
+			).toHaveLength(2);
+			expect(call(2).method.toUpperCase()).toBe('PUT');
+			expect(call(2).url).toContain('/accounts/101');
 		});
 	});
 

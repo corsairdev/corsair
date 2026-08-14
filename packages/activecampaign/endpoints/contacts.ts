@@ -67,7 +67,7 @@ export const get: ActiveCampaignEndpoints['contactsGet'] = async (
 	const account = await resolveAccount(ctx);
 	const response = await makeActiveCampaignRequest<
 		ActiveCampaignEndpointOutputs['contactsGet']
-	>(`contacts/${input.id}`, ctx.key, account, {
+	>(`contacts/${encodeURIComponent(input.id)}`, ctx.key, account, {
 		method: 'GET',
 		query: compactQuery({ automations: input.automations }),
 	});
@@ -312,7 +312,7 @@ function subResource<
 		const account = await resolveAccount(ctx);
 		const response = await makeActiveCampaignRequest<
 			ActiveCampaignEndpointOutputs[K]
-		>(`contacts/${input.id}/${path}`, ctx.key, account, {
+		>(`contacts/${encodeURIComponent(input.id)}/${path}`, ctx.key, account, {
 			method: 'GET',
 			query: buildPaginationQuery(input),
 		});
@@ -386,7 +386,9 @@ function singletonSubResource<
 		const account = await resolveAccount(ctx);
 		const response = await makeActiveCampaignRequest<
 			ActiveCampaignEndpointOutputs[K]
-		>(`contacts/${input.id}/${path}`, ctx.key, account, { method: 'GET' });
+		>(`contacts/${encodeURIComponent(input.id)}/${path}`, ctx.key, account, {
+			method: 'GET',
+		});
 
 		await logEventFromContext(
 			ctx,

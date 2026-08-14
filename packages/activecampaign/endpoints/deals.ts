@@ -14,7 +14,12 @@ import {
 import { auditPayload, listAuditPayload } from './logging';
 import { persistRow } from './persist';
 import { makeResource } from './resource';
-import { buildPaginationQuery, compactQuery, resolveAccount } from './shared';
+import {
+	AC_PAGE_SIZE_MAX,
+	buildPaginationQuery,
+	compactQuery,
+	resolveAccount,
+} from './shared';
 import type { ActiveCampaignEndpointOutputs } from './types';
 
 /**
@@ -524,17 +529,31 @@ export const createContactTask: ActiveCampaignEndpoints['contactTasksCreate'] =
 export const findContactTask: ActiveCampaignEndpoints['contactTasksFind'] =
 	async (ctx, input) => {
 		const account = await resolveAccount(ctx);
-		const response = await makeActiveCampaignRequest<{
-			dealTasks?: Array<{ title?: string; relid?: string; reltype?: string }>;
-		}>('dealTasks', ctx.key, account, {
-			method: 'GET',
-			query: compactQuery({
-				'filters[reltype]': 'Subscriber',
-				'filters[relid]': input.contactId,
-			}),
-		});
+		type DealTaskRow = {
+			title?: string;
+			relid?: string;
+			reltype?: string;
+		};
+		const dealTasks: DealTaskRow[] = [];
+		for (let offset = 0; ; ) {
+			const page = await makeActiveCampaignRequest<{
+				dealTasks?: DealTaskRow[];
+			}>('dealTasks', ctx.key, account, {
+				method: 'GET',
+				query: compactQuery({
+					'filters[reltype]': 'Subscriber',
+					'filters[relid]': input.contactId,
+					limit: AC_PAGE_SIZE_MAX,
+					offset,
+				}),
+			});
+			const rows = page.dealTasks ?? [];
+			dealTasks.push(...rows);
+			if (rows.length < AC_PAGE_SIZE_MAX) break;
+			offset += rows.length;
+		}
 
-		const matches = (response.dealTasks ?? []).filter(
+		const matches = dealTasks.filter(
 			(t) => t.title === input.title && t.reltype === 'Subscriber',
 		);
 

@@ -1931,7 +1931,8 @@ const activecampaignEndpointMeta = {
 	},
 	'imports.createBulk': {
 		riskLevel: 'write',
-		description: 'Queue up to 250,000 contacts for asynchronous import',
+		description:
+			'Queue up to 250 contacts per call (payload under 400 KB) for asynchronous import',
 	},
 	'imports.list': {
 		riskLevel: 'read',
@@ -2829,7 +2830,7 @@ const activecampaignEndpointMeta = {
 	'ecomOrders.upsert': {
 		riskLevel: 'write',
 		description:
-			'Create an order, or update the one with the same store order ID',
+			'Create an order, or update the one with the same store order ID. Concurrent upserts for the same connectionid and externalid can duplicate; serialize them or use orders.upsertBulk',
 	},
 	'ecomOrderProducts.listForOrder': {
 		riskLevel: 'read',

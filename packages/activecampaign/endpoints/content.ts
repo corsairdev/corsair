@@ -13,7 +13,12 @@ import {
 } from '../schema/database';
 import { auditPayload, listAuditPayload } from './logging';
 import { makeResource } from './resource';
-import { buildPaginationQuery, compactQuery, resolveAccount } from './shared';
+import {
+	AC_PAGE_SIZE_MAX,
+	buildPaginationQuery,
+	compactQuery,
+	resolveAccount,
+} from './shared';
 import type { ActiveCampaignEndpointOutputs } from './types';
 
 /**
@@ -377,10 +382,10 @@ export const removeVariablesBulk: ActiveCampaignEndpoints['personalizationsDelet
 			{ method: 'POST', body: { ids: input.ids } },
 		);
 
+		const store = ctx.db.personalizations as
+			| { deleteByEntityId?: (entityId: string) => Promise<unknown> }
+			| undefined;
 		for (const id of input.ids) {
-			const store = ctx.db.personalizations as
-				| { deleteByEntityId?: (entityId: string) => Promise<unknown> }
-				| undefined;
 			if (store?.deleteByEntityId) {
 				try {
 					await store.deleteByEntityId(String(id));
@@ -582,25 +587,57 @@ export const removeContactFromAutomation: ActiveCampaignEndpoints['contactAutoma
 			);
 		}
 
-		const enrolments = await makeActiveCampaignRequest<{
-			contactAutomations?: Array<{ id?: string; automation?: string }>;
-		}>(`contacts/${contactId}/contactAutomations`, ctx.key, account, {
-			method: 'GET',
-		});
+		type Enrolment = { id?: string; automation?: string; adddate?: string };
+		const enrolments: Enrolment[] = [];
+		for (let offset = 0; ; ) {
+			const page = await makeActiveCampaignRequest<{
+				contactAutomations?: Enrolment[];
+				meta?: { total?: string | number };
+			}>(`contacts/${contactId}/contactAutomations`, ctx.key, account, {
+				method: 'GET',
+				query: { limit: AC_PAGE_SIZE_MAX, offset },
+			});
+			const rows = page.contactAutomations ?? [];
+			enrolments.push(...rows);
+			offset += rows.length;
+			const total = Number(page.meta?.total);
+			if (rows.length === 0 || rows.length < AC_PAGE_SIZE_MAX) break;
+			if (Number.isFinite(total) && offset >= total) break;
+		}
 
-		const matching = (enrolments.contactAutomations ?? []).filter(
+		const matching = enrolments.filter(
 			(e) => e.automation === input.automation_id && e.id,
+		);
+		matching.sort((a, b) =>
+			String(a.adddate ?? '').localeCompare(String(b.adddate ?? '')),
 		);
 		const targets =
 			input.run_remove_option === 'last' ? matching.slice(-1) : matching;
 
-		for (const target of targets) {
-			await makeActiveCampaignRequest<unknown>(
-				`contactAutomations/${target.id}`,
-				ctx.key,
-				account,
-				{ method: 'DELETE' },
+		let removed = 0;
+		try {
+			for (const target of targets) {
+				await makeActiveCampaignRequest<unknown>(
+					`contactAutomations/${target.id}`,
+					ctx.key,
+					account,
+					{ method: 'DELETE' },
+				);
+				removed++;
+			}
+		} catch (error) {
+			await logEventFromContext(
+				ctx,
+				'activecampaign.contactAutomations.remove',
+				{
+					contact: contactId,
+					automation: input.automation_id,
+					removed,
+					fields: ['email'],
+				},
+				'failed',
 			);
+			throw error;
 		}
 
 		await logEventFromContext(
@@ -609,12 +646,12 @@ export const removeContactFromAutomation: ActiveCampaignEndpoints['contactAutoma
 			{
 				contact: contactId,
 				automation: input.automation_id,
-				removed: targets.length,
+				removed,
 				fields: ['email'],
 			},
 			'completed',
 		);
-		return { removed: targets.length };
+		return { removed };
 	};
 
 /**

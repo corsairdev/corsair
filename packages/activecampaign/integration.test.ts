@@ -7,6 +7,7 @@
  */
 import { Accounts, Contacts, Deals, Lists, Platform, Tags } from './endpoints';
 import { ActiveCampaignEndpointOutputSchemas as Outputs } from './endpoints/types';
+import { activecampaign } from './index';
 import {
 	ActiveCampaignAccount,
 	ActiveCampaignContact,
@@ -25,12 +26,12 @@ const describeLive = apiKey && account ? describe : describe.skip;
 
 type Ctx = Parameters<typeof Contacts.list>[0];
 
-const upserts: { id: string; data: unknown }[] = [];
+const upserts: { store: string; id: string; data: unknown }[] = [];
 
-function makeStore() {
+function makeStore(name: string) {
 	return {
 		upsertByEntityId: async (id: string, data: unknown) => {
-			upserts.push({ id, data });
+			upserts.push({ store: name, id, data });
 		},
 		deleteByEntityId: async (_id: string) => true,
 	};
@@ -42,14 +43,14 @@ function makeCtx(): Ctx {
 		options: { account },
 		keys: { get_account: async () => account },
 		db: {
-			contacts: makeStore(),
-			lists: makeStore(),
-			tags: makeStore(),
-			accounts: makeStore(),
-			deals: makeStore(),
-			dealGroups: makeStore(),
-			dealStages: makeStore(),
-			users: makeStore(),
+			contacts: makeStore('contacts'),
+			lists: makeStore('lists'),
+			tags: makeStore('tags'),
+			accounts: makeStore('accounts'),
+			deals: makeStore('deals'),
+			dealGroups: makeStore('dealGroups'),
+			dealStages: makeStore('dealStages'),
+			users: makeStore('users'),
 		},
 		database: undefined,
 		$getAccountId: async () => 'integration-test',
@@ -66,8 +67,16 @@ describeLive('ActiveCampaign live API', () => {
 		expect(() => Outputs.contactsList.parse(result)).not.toThrow();
 		expect(Array.isArray(result.contacts)).toBe(true);
 		if (result.contacts?.[0]) {
-			expect(ActiveCampaignContact.parse(result.contacts[0]).id).toBe(
-				result.contacts[0].id,
+			const row = result.contacts[0];
+			expect(ActiveCampaignContact.parse(row).id).toBe(row.id);
+			expect(upserts).toEqual(
+				expect.arrayContaining([
+					expect.objectContaining({
+						store: 'contacts',
+						id: row.id,
+						data: expect.objectContaining({ id: row.id }),
+					}),
+				]),
 			);
 		}
 	});
@@ -131,7 +140,39 @@ describeLive('ActiveCampaign live API', () => {
 	});
 
 	it('authenticates with Api-Token against the account subdomain', async () => {
-		const result = await Contacts.list(makeCtx(), { limit: 1 });
-		expect(result.meta).toBeDefined();
+		const plugin = activecampaign({ key: apiKey, account });
+		if (!plugin.keyBuilder) {
+			throw new Error('plugin keyBuilder is missing');
+		}
+		const token = await plugin.keyBuilder(
+			{ authType: 'api_key' } as never,
+			'endpoint',
+		);
+		expect(token).toBe(apiKey);
+
+		const originalFetch = globalThis.fetch;
+		let captured: { url: string; token: string | null } | undefined;
+		globalThis.fetch = (async (
+			input: string | URL | Request,
+			init?: RequestInit,
+		) => {
+			const headers = new Headers(init?.headers);
+			captured = {
+				url: String(input),
+				token: headers.get('Api-Token'),
+			};
+			return originalFetch(input, init);
+		}) as typeof fetch;
+		try {
+			const result = await Contacts.list(
+				{ ...makeCtx(), key: token ?? '' },
+				{ limit: 1 },
+			);
+			expect(result.meta).toBeDefined();
+			expect(captured?.token).toBe(apiKey);
+			expect(captured?.url).toContain(`https://${account}.api-us1.com/`);
+		} finally {
+			globalThis.fetch = originalFetch;
+		}
 	});
 });

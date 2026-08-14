@@ -1586,8 +1586,9 @@ export const CustomObjectRecordsDeleteOutput = z
 	.loose();
 export const CustomObjectRecordsDeleteByExternalIdInput =
 	CustomObjectRecordsGetByExternalIdInput;
-export const CustomObjectRecordsDeleteByExternalIdOutput =
-	CustomObjectRecordsDeleteOutput;
+export const CustomObjectRecordsDeleteByExternalIdOutput = z
+	.object({ schemaId: z.string(), externalId: z.string().optional() })
+	.loose();
 
 export const WebhooksListInput = PageInput;
 export const WebhooksListOutput = listOf('webhooks', ActiveCampaignWebhook);

@@ -612,7 +612,7 @@ export const ActiveCampaignAccountCustomFieldMeta =
 export const ActiveCampaignAccount = z
 	.object({
 		/** Unique id of the account. */
-		id: z.string(),
+		id: z.coerce.string(),
 		/** Account name. Must be unique. */
 		name: S,
 		accountUrl: S,
@@ -630,7 +630,7 @@ export const ActiveCampaignAccount = z
 /** Shape not captured. */
 export const ActiveCampaignAccountContact = z
 	.object({
-		id: z.string(),
+		id: z.coerce.string(),
 		contact: S,
 		account: S,
 		jobTitle: S,
@@ -1024,7 +1024,7 @@ export const ActiveCampaignBranding = z
 /** A custom object schema. Shape not captured. */
 export const ActiveCampaignCustomObjectSchema = z
 	.object({
-		id: z.string(),
+		id: z.coerce.string(),
 		slug: S,
 		name: S,
 		description: S,

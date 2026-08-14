@@ -16,6 +16,8 @@ import type { z } from 'zod';
 
 /** A list page can run to hundreds of rows; cap the concurrent writes. */
 const WRITE_CONCURRENCY = 16;
+/** Cap a child-eviction search so a parent cannot load an unbounded page. */
+const SEARCH_LIMIT = 1000;
 
 /**
  * The subset of the entity store these helpers use.
@@ -152,26 +154,38 @@ export async function evictChildren(
 	if (!store?.search || !store.deleteByEntityId || !parentId) {
 		return;
 	}
+	const remove = store.deleteByEntityId;
 
 	try {
 		const rows = await store.search({
 			data: { [foreignKey]: parentId },
+			limit: SEARCH_LIMIT,
 		} as never);
 		if (!Array.isArray(rows) || rows.length === 0) {
 			return;
 		}
 
+		const ids: string[] = [];
 		for (const row of rows) {
 			const entityId = row?.entity_id;
 			if (typeof entityId !== 'string' || entityId.length === 0) continue;
-			try {
-				await store.deleteByEntityId(entityId);
-			} catch (error) {
-				console.warn(
-					`[ACTIVECAMPAIGN] Failed to evict ${entityName} ${entityId} after its parent was deleted:`,
-					error,
-				);
-			}
+			ids.push(entityId);
+		}
+
+		for (let i = 0; i < ids.length; i += WRITE_CONCURRENCY) {
+			const batch = ids.slice(i, i + WRITE_CONCURRENCY);
+			await Promise.all(
+				batch.map(async (entityId) => {
+					try {
+						await remove(entityId);
+					} catch (error) {
+						console.warn(
+							`[ACTIVECAMPAIGN] Failed to evict ${entityName} ${entityId} after its parent was deleted:`,
+							error,
+						);
+					}
+				}),
+			);
 		}
 	} catch (error) {
 		console.warn(

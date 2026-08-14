@@ -9,7 +9,7 @@ import {
 } from '../schema/database';
 import { persistRow } from './persist';
 import { makeResource } from './resource';
-import { resolveAccount } from './shared';
+import { AC_PAGE_SIZE_MAX, resolveAccount } from './shared';
 import type { ActiveCampaignEndpointOutputs } from './types';
 
 /**
@@ -166,15 +166,22 @@ export const upsert: ActiveCampaignEndpoints['accountsUpsert'] = async (
 ) => {
 	const acct = await resolveAccount(ctx);
 
-	const found = await makeActiveCampaignRequest<{
-		accounts?: Array<{ id?: string; name?: string }>;
-	}>('accounts', ctx.key, acct, {
-		method: 'GET',
-		query: { search: input.name, limit: 100 },
-	});
-
 	// `search` is a substring match, so an exact name comparison decides.
-	const existing = found.accounts?.find((a) => a.name === input.name);
+	// A match past the first page would otherwise POST and hit uniqueness.
+	let existing: { id?: string; name?: string } | undefined;
+	for (let offset = 0; ; ) {
+		const found = await makeActiveCampaignRequest<{
+			accounts?: Array<{ id?: string; name?: string }>;
+		}>('accounts', ctx.key, acct, {
+			method: 'GET',
+			query: { search: input.name, limit: AC_PAGE_SIZE_MAX, offset },
+		});
+		existing = found.accounts?.find((a) => a.name === input.name);
+		if (existing) break;
+		const page = found.accounts?.length ?? 0;
+		if (page < AC_PAGE_SIZE_MAX) break;
+		offset += page;
+	}
 
 	const body = {
 		account: {

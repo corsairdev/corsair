@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import {
 	makeActiveCampaignGraphQLRequest,
 	makeActiveCampaignRequest,
@@ -738,6 +739,20 @@ export const trackEvent: ActiveCampaignEndpoints['trackingTrackEvent'] = async (
 		body,
 		signal: AbortSignal.timeout(20000),
 	});
+	if (!res.ok) {
+		const body = await res.text();
+		throw new ApiError(
+			{ method: 'POST', url: 'https://trackcmp.net/event' },
+			{
+				url: 'https://trackcmp.net/event',
+				ok: false,
+				status: res.status,
+				statusText: res.statusText,
+				body,
+			},
+			`ActiveCampaign tracking request failed: ${res.status}`,
+		);
+	}
 	const parsed =
 		(await res.json()) as ActiveCampaignEndpointOutputs['trackingTrackEvent'];
 
@@ -765,7 +780,11 @@ export const listWhitelistedDomains: ActiveCampaignEndpoints['trackingListWhitel
 		await logEventFromContext(
 			ctx,
 			'activecampaign.tracking.listWhitelist',
-			listAuditPayload(input, ['limit', 'offset'], 0),
+			listAuditPayload(
+				input,
+				['limit', 'offset'],
+				response.siteTrackingWhitelist?.length ?? 0,
+			),
 			'completed',
 		);
 		return response;
@@ -1049,10 +1068,17 @@ function recordByKey<
 	) => {
 		const account = await resolveAccount(ctx);
 		const key = segment === 'id' ? input.id : input.externalId;
+		if (typeof key !== 'string' || key.length === 0) {
+			throw new Error(
+				segment === 'id'
+					? 'A custom object record id is required'
+					: 'A custom object record externalId is required',
+			);
+		}
 		const path =
 			segment === 'id'
-				? `customObjects/records/${input.schemaId}/${key}`
-				: `customObjects/records/${input.schemaId}/externalid/${encodeURIComponent(String(key))}`;
+				? `customObjects/records/${input.schemaId}/${encodeURIComponent(key)}`
+				: `customObjects/records/${input.schemaId}/externalid/${encodeURIComponent(key)}`;
 
 		const response = await makeActiveCampaignRequest<
 			ActiveCampaignEndpointOutputs[K]
@@ -1067,7 +1093,7 @@ function recordByKey<
 		return method === 'DELETE'
 			? ({
 					schemaId: input.schemaId,
-					id: key,
+					...(segment === 'id' ? { id: key } : { externalId: key }),
 				} as ActiveCampaignEndpointOutputs[K])
 			: response;
 	}) as ActiveCampaignEndpoints[K];
@@ -1361,6 +1387,10 @@ export const findOrder: ActiveCampaignEndpoints['ecomOrdersFind'] = async (
  * Creates an order, or updates the existing one with the same store order id
  * within the connection.
  *
+ * Lookup and write are separate requests, so concurrent calls for the same
+ * connectionid and externalid can both miss and POST duplicates. Callers must
+ * serialize those upserts, or use orders.upsertBulk which matches server-side.
+ *
  * The lookup is a read, so a transport failure before the write is safe to
  * replay; the write half is listed as non-idempotent.
  */
@@ -1424,7 +1454,11 @@ export const listProductsForOrder: ActiveCampaignEndpoints['ecomOrderProductsLis
 		await logEventFromContext(
 			ctx,
 			'activecampaign.ecomOrderProducts.listForOrder',
-			listAuditPayload(input, ['orderId', 'limit', 'offset'], 0),
+			listAuditPayload(
+				input,
+				['orderId', 'limit', 'offset'],
+				response.ecomOrderProducts?.length ?? 0,
+			),
 			'completed',
 		);
 		return response;

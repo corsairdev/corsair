@@ -292,6 +292,9 @@ describe('operation routing', () => {
 			if (rest.length === 0) {
 				// A GraphQL-only operation: POST is correct even for a query.
 				expect(external.length).toBeGreaterThan(0);
+				expect(external.every((c) => c.method.toUpperCase() === 'POST')).toBe(
+					true,
+				);
 				return;
 			}
 			if (META[path]?.riskLevel === 'read') {

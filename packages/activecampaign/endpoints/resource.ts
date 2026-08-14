@@ -160,7 +160,7 @@ export function makeResource(config: ResourceConfig) {
 	const get: Handler = async (ctx, rawInput) => {
 		const input = rawInput as unknown as { id: string };
 		const response = (await makeActiveCampaignRequest(
-			`${config.path}/${input.id}`,
+			`${config.path}/${encodeURIComponent(input.id)}`,
 			ctx.key,
 			await account(ctx),
 			{ method: 'GET' },
@@ -216,9 +216,12 @@ export function makeResource(config: ResourceConfig) {
 
 	const update: Handler = async (ctx, rawInput) => {
 		const input = rawInput as Record<string, unknown>;
-		const id = input.id as string;
+		const id = input.id;
+		if (typeof id !== 'string' || id.length === 0) {
+			throw new Error('An id is required to update this resource');
+		}
 		const response = (await makeActiveCampaignRequest(
-			`${config.path}/${id}`,
+			`${config.path}/${encodeURIComponent(id)}`,
 			ctx.key,
 			await account(ctx),
 			{
@@ -252,7 +255,7 @@ export function makeResource(config: ResourceConfig) {
 	const remove: Handler = async (ctx, rawInput) => {
 		const input = rawInput as unknown as { id: string };
 		await makeActiveCampaignRequest(
-			`${config.path}/${input.id}`,
+			`${config.path}/${encodeURIComponent(input.id)}`,
 			ctx.key,
 			await account(ctx),
 			{ method: 'DELETE' },
