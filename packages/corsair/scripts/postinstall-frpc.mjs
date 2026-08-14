@@ -12,7 +12,7 @@ import {
 	rmSync,
 } from 'node:fs';
 import { writeFile } from 'node:fs/promises';
-import { homedir, tmpdir } from 'node:os';
+import { homedir } from 'node:os';
 import { join } from 'node:path';
 
 const FRPC_VERSION = '0.71.0'; // keep in sync with hub/tunnel/frpc-binary.ts
@@ -67,7 +67,12 @@ async function main() {
 	const url = `https://github.com/fatedier/frp/releases/download/v${FRPC_VERSION}/${archive}`;
 	try {
 		mkdirSync(dir, { recursive: true });
-		const res = await fetch(url, { redirect: 'follow' });
+		// Bounded so a release host that accepts then stalls can't hang `npm install`
+		// with no output. Best-effort like the rest of this script — timeout warns.
+		const res = await fetch(url, {
+			redirect: 'follow',
+			signal: AbortSignal.timeout(60_000),
+		});
 		if (!res.ok) throw new Error(`HTTP ${res.status}`);
 		const buf = Buffer.from(await res.arrayBuffer());
 

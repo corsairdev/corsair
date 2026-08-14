@@ -92,19 +92,28 @@ export async function runTunnel(opts: {
 
 	// frpc reads config from a file — keeps the ck_dev_ key off argv/ps. The
 	// temp dir (0600 file) is reaped on stop/exit so the key doesn't linger.
-	const cfgDir = mkdtempSync(join(tmpdir(), 'corsair-frpc-'));
-	const cfgPath = join(cfgDir, 'frpc.toml');
-	writeFileSync(
-		cfgPath,
-		buildFrpcConfig({
-			serverAddr,
-			serverPort,
-			apiKey,
-			slug,
-			localPort: guard.port,
-		}),
-		{ mode: 0o600 },
-	);
+	// If writing it throws (disk full, unwritable tmp), close the guard we just
+	// opened so a failed start can't leak a listening socket.
+	let cfgDir: string;
+	let cfgPath: string;
+	try {
+		cfgDir = mkdtempSync(join(tmpdir(), 'corsair-frpc-'));
+		cfgPath = join(cfgDir, 'frpc.toml');
+		writeFileSync(
+			cfgPath,
+			buildFrpcConfig({
+				serverAddr,
+				serverPort,
+				apiKey,
+				slug,
+				localPort: guard.port,
+			}),
+			{ mode: 0o600 },
+		);
+	} catch (err) {
+		await guard.close();
+		throw err;
+	}
 
 	// The Hub owns the slug, so the URL is derived, never parsed from frpc output.
 	const url = `https://${slug}.${shareHost}`;

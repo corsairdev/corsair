@@ -48,7 +48,9 @@ export function resolveFrpcBinary(): string {
 	const cached = frpcCacheBinary();
 	if (existsSync(cached)) return cached;
 
+	// pnpm 10 skips a dependency's postinstall until the consumer approves its
+	// build, which leaves this cache empty — name that remedy explicitly.
 	throw new Error(
-		`frpc binary not found for ${frpcPlatformKey()}. Reinstall corsair, or set CORSAIR_FRP_BIN to an frpc path (https://github.com/fatedier/frp/releases).`,
+		`frpc binary not found for ${frpcPlatformKey()}. If you use pnpm, run \`pnpm approve-builds corsair\` (or add corsair to onlyBuiltDependencies) and reinstall; otherwise reinstall corsair, or set CORSAIR_FRP_BIN to an frpc path (https://github.com/fatedier/frp/releases).`,
 	);
 }

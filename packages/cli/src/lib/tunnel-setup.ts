@@ -25,6 +25,7 @@ export async function enrollDevTunnel(opts: {
 			[
 				'[corsair] the bundled frpc tunnel binary is missing — reinstall corsair:',
 				'  macOS / Linux / Windows:  npm i corsair   (or pnpm add / yarn add)',
+				'  pnpm (skips install scripts): pnpm approve-builds corsair, then reinstall',
 				'  offline or locked registry: set CORSAIR_FRP_BIN to an frpc path',
 				'  frpc binaries (any platform): https://github.com/fatedier/frp/releases',
 			].join('\n'),
