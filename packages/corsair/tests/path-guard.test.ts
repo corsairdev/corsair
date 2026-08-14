@@ -15,15 +15,19 @@ let guard: { port: number; close: () => Promise<void> };
 // The stub records forwarded paths here rather than echoing req.url into the
 // response body (which would be a reflected-input pattern).
 let appHits: string[] = [];
+let lastHeaders: http.IncomingHttpHeaders = {};
+let appPort = 0;
 
 beforeAll(async () => {
 	app = http.createServer((req, res) => {
 		appHits.push(req.url ?? '');
+		lastHeaders = req.headers;
 		res.statusCode = 200;
 		res.end('ok');
 	});
 	await new Promise<void>((r) => app.listen(0, '127.0.0.1', () => r()));
-	guard = await startPathGuard((app.address() as AddressInfo).port);
+	appPort = (app.address() as AddressInfo).port;
+	guard = await startPathGuard(appPort);
 });
 
 beforeEach(() => {
@@ -96,5 +100,21 @@ describe('path-guard', () => {
 	it('blocks protocol-relative //api/corsair (resolves off-path) → 404', async () => {
 		expect(await rawGet('//api/corsair')).toBe(404);
 		expect(appHits).toHaveLength(0);
+	});
+
+	it('strips client-controlled host + x-forwarded-* before forwarding', async () => {
+		const res = await fetch(`http://127.0.0.1:${guard.port}/api/corsair`, {
+			headers: {
+				host: 'evil.example.com',
+				'x-forwarded-for': '1.2.3.4',
+				'x-forwarded-port': '443',
+				'x-real-ip': '1.2.3.4',
+			},
+		});
+		await res.text();
+		expect(lastHeaders.host).toBe(`127.0.0.1:${appPort}`);
+		expect(lastHeaders['x-forwarded-for']).toBeUndefined();
+		expect(lastHeaders['x-forwarded-port']).toBeUndefined();
+		expect(lastHeaders['x-real-ip']).toBeUndefined();
 	});
 });

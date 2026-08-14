@@ -110,6 +110,7 @@ export async function runTunnel(opts: {
 
 	return new Promise((resolve, reject) => {
 		let settled = false;
+		let urlSeen = false;
 		let outputBuffer = '';
 
 		const child = spawn(bin, shareArgs, { stdio: ['ignore', 'pipe', 'pipe'] });
@@ -138,21 +139,23 @@ export async function runTunnel(opts: {
 		};
 
 		const onChunk = async (chunk: Buffer): Promise<void> => {
-			if (settled) return;
+			if (urlSeen) return;
 			outputBuffer += chunk.toString();
 			const url = extractTunnelUrl(outputBuffer, { host: shareHost });
 			if (!url) return;
-			settled = true;
+			// URL is up, but stay unsettled until the ping succeeds — so a child
+			// death mid-ping still routes through fail()/onClose, not a dead resolve.
+			urlSeen = true;
 			clearTimeout(timer);
 
 			try {
 				await pingTunnelLive({ apiUrl, apiKey });
 			} catch (err) {
-				stop();
-				reject(err instanceof Error ? err : new Error(String(err)));
+				fail(err instanceof Error ? err : new Error(String(err)));
 				return;
 			}
-
+			if (settled) return;
+			settled = true;
 			resolve({ url, stop });
 		};
 

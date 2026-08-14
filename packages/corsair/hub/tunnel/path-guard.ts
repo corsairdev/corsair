@@ -4,15 +4,13 @@ import { CORSAIR_TUNNEL_PATH } from './constants';
 const UPSTREAM_TIMEOUT_MS = 30_000;
 
 // Client-controlled routing/identity headers the app must not trust from a
-// request that arrived over the public tunnel.
-const UNSAFE_REQUEST_HEADERS = new Set([
-	'host',
-	'forwarded',
-	'x-forwarded-for',
-	'x-forwarded-host',
-	'x-forwarded-proto',
-	'x-real-ip',
-]);
+// request that arrived over the public tunnel. Any `x-forwarded-*` is dropped
+// by prefix (for/host/proto/port/…), plus these exact names.
+const UNSAFE_REQUEST_HEADERS = new Set(['host', 'forwarded', 'x-real-ip']);
+
+function isUnsafeRequestHeader(name: string): boolean {
+	return UNSAFE_REQUEST_HEADERS.has(name) || name.startsWith('x-forwarded-');
+}
 
 /**
  * Loopback proxy that only forwards `/api/corsair` (and its subpaths) to the dev
@@ -55,7 +53,7 @@ export function startPathGuard(
 			host: `127.0.0.1:${appPort}`,
 		};
 		for (const [k, v] of Object.entries(req.headers)) {
-			if (v !== undefined && !UNSAFE_REQUEST_HEADERS.has(k)) {
+			if (v !== undefined && !isUnsafeRequestHeader(k)) {
 				fwdHeaders[k] = v;
 			}
 		}

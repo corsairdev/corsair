@@ -2,6 +2,10 @@ import { spawnSync } from 'node:child_process';
 import { CORSAIR_TUNNEL_PATH, CORSAIR_TUNNEL_ZONE } from 'corsair/hub';
 import { corsairBanner } from './banner';
 
+// zrok subprocesses can block on the network (enable enrolls over the wire);
+// cap them so `corsair setup` can never hang.
+const ZROK_TIMEOUT_MS = 30_000;
+
 /**
  * One-time machine enrollment for the dev tunnel. Fetches Corsair's zrok
  * account from Hub (using the `ck_dev_` key), points the local zrok client at
@@ -15,7 +19,9 @@ export async function enrollDevTunnel(opts: {
 	const { apiUrl, projectApiKey } = opts;
 	if (!projectApiKey.startsWith('ck_dev_')) return;
 
-	if (spawnSync('zrok', ['version'], { stdio: 'ignore' }).error) {
+	if (
+		spawnSync('zrok', ['version'], { stdio: 'ignore', timeout: 5_000 }).error
+	) {
 		console.log(
 			[
 				'[corsair] zrok is not installed. Install it, then re-run `corsair setup`:',
@@ -45,6 +51,12 @@ export async function enrollDevTunnel(opts: {
 		slug: string;
 	};
 
+	// The slug is rendered and (elsewhere) fed to zrok; accept only a clean label.
+	if (!/^[a-z0-9-]+$/.test(slug ?? '')) {
+		console.error('[corsair] Hub returned an invalid tunnel slug.');
+		return;
+	}
+
 	// Validate before pointing the local zrok client at it — a compromised Hub
 	// must not be able to MITM enrollment through an arbitrary endpoint.
 	try {
@@ -61,7 +73,9 @@ export async function enrollDevTunnel(opts: {
 
 	const cfg = spawnSync('zrok', ['config', 'set', 'apiEndpoint', apiEndpoint], {
 		stdio: 'ignore',
+		timeout: ZROK_TIMEOUT_MS,
 	});
+	// status === null means it was killed (timeout/signal) — treat as failure.
 	if (cfg.error || cfg.status !== 0) {
 		console.error(
 			'[corsair] failed to point zrok at the Corsair controller — is zrok installed?',
@@ -71,6 +85,7 @@ export async function enrollDevTunnel(opts: {
 
 	const enable = spawnSync('zrok', ['enable', accountToken], {
 		encoding: 'utf8',
+		timeout: ZROK_TIMEOUT_MS,
 	});
 	const enableOut = `${enable.stdout ?? ''}${enable.stderr ?? ''}`;
 	// zrok exits non-zero when a machine is already enrolled — that's our
