@@ -5,7 +5,7 @@ import {
 	extractMetaWebhookChallenge,
 	InstagramUrlVerificationEventSchema,
 } from './types';
-
+import { timingSafeEqual } from 'node:crypto';
 export const url_verification: InstagramWebhooks['url_verification'] = {
 	match: createInstagramWebhookMatcher('url_verification'),
 	handler: async (ctx, request) => {
@@ -22,10 +22,9 @@ export const url_verification: InstagramWebhooks['url_verification'] = {
 		}
 
 		const expectedVerifyToken = ctx.options.webhookVerifyToken;
-		if (
-			!expectedVerifyToken ||
-			challengeRequest.verifyToken !== expectedVerifyToken
-		) {
+		const a = Buffer.from(challengeRequest.verifyToken || '');
+const b = Buffer.from(expectedVerifyToken || '');
+if (!expectedVerifyToken || a.length !== b.length || !timingSafeEqual(a, b)) {
 			return {
 				success: false,
 				error: 'Invalid verification token',
