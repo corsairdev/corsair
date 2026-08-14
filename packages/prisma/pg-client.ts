@@ -17,24 +17,135 @@ export type PostgresQueryResult = {
 	command: string;
 };
 
-const READ_ONLY_PREFIX = /^\s*(\(\s*)?(select|with)\b/i;
-const SELECT_INTO = /\binto\s+(?!stdout\b|outfile\b)/i;
-const ROW_LOCK = /\bfor\s+(update|no\s+key\s+update|share|key\s+share)\b/i;
+// Read-only guard. SQL is classified by a single linear-time scan that tracks
+// string literals, quoted identifiers, and line/block comments so keywords are
+// only recognized in real SQL code (CodeQL flagged the prior regex alternatives
+// as potentially polynomial on crafted input). The maximum length is bounded to
+// keep validation cheap and deterministic on uncontrolled data.
+const MAX_SQL_LENGTH = 64 * 1024;
 
-function isReadOnly(sql: string): boolean {
-	const trimmed = sql
-		.trim()
-		.replace(/;+\s*$/g, '')
-		.trim();
-	if (trimmed.includes(';')) return false;
-	if (!READ_ONLY_PREFIX.test(trimmed)) return false;
-	if (SELECT_INTO.test(trimmed)) return false;
-	if (ROW_LOCK.test(trimmed)) return false;
+/**
+ * Returns true when the statement is a pure read-only SELECT.
+ *
+ * - Only an unquoted top-level `SELECT` prefix is accepted; `WITH` is rejected
+ *   because `WITH x AS (DELETE ...) RETURNING *` is a single-statement mutation
+ *   with no second statement / semicolon to detect.
+ * - `SELECT ... INTO` (disk writes) and row-lock forms (`FOR UPDATE / FOR
+ *   SHARE`) are rejected, but only when they appear as real tokens, not inside
+ *   string literals, quoted identifiers, or comments.
+ * - A `;` outside literals/comments (multi-statement input) is rejected.
+ */
+export function isReadOnlySql(sql: string): boolean {
+	if (sql.length > MAX_SQL_LENGTH) return false;
+
+	const s = sql;
+	const n = s.length;
+	let i = 0;
+
+	const isWordChar = (ch: string): boolean => /[A-Za-z0-9_$]/.test(ch);
+
+	// skip leading whitespace and optional wrapping `(`
+	while (i < n && /\s/.test(s.charAt(i))) i += 1;
+	while (i < n && s.charAt(i) === '(') i += 1;
+	while (i < n && /\s/.test(s.charAt(i))) i += 1;
+
+	// must start with SELECT (case-insensitive, followed by a non-word char)
+	if (!/^select\b/i.test(s.slice(i, Math.min(i + 16, n)))) {
+		return false;
+	}
+
+	let inString = false;
+	let inIdent = false;
+	let inLineComment = false;
+	let inBlockComment = false;
+	let sawForUpdate = false;
+	let sawSelectInto = false;
+
+	while (i < n) {
+		const c = s.charAt(i);
+		const next = s.charAt(i + 1);
+
+		if (inLineComment) {
+			if (c === '\n') inLineComment = false;
+			i += 1;
+			continue;
+		}
+		if (inBlockComment) {
+			if (c === '*' && next === '/') {
+				inBlockComment = false;
+				i += 2;
+			} else {
+				i += 1;
+			}
+			continue;
+		}
+		if (inString) {
+			if (c === '\\') {
+				i += 2;
+				continue;
+			}
+			if (c === "'") inString = false;
+			i += 1;
+			continue;
+		}
+		if (inIdent) {
+			if (c === '"') inIdent = false;
+			i += 1;
+			continue;
+		}
+
+		// line / block comments
+		if (c === '-' && next === '-') {
+			inLineComment = true;
+			i += 2;
+			continue;
+		}
+		if (c === '/' && next === '*') {
+			inBlockComment = true;
+			i += 2;
+			continue;
+		}
+		// string literal (handle escaped '' and backslash)
+		if (c === "'") {
+			inString = true;
+			i += 1;
+			continue;
+		}
+		// quoted identifier
+		if (c === '"') {
+			inIdent = true;
+			i += 1;
+			continue;
+		}
+		// multi-statement
+		if (c === ';') return false;
+
+		// read the next SQL word token (only continues in plain code)
+		if (isWordChar(c)) {
+			let j = i;
+			while (j < n && isWordChar(s.charAt(j))) j += 1;
+			const word = s.slice(i, j).toLowerCase();
+			if (word === 'into') sawSelectInto = true;
+			if (word === 'for') {
+				// look ahead for update/share row-lock modes
+				const after = s.slice(j).trimStart().toLowerCase();
+				if (/^(update|share|no\s+key\s+update|key\s+share)\b/.test(after)) {
+					sawForUpdate = true;
+				}
+			}
+			i = j;
+			continue;
+		}
+
+		i += 1;
+	}
+
+	if (sawForUpdate || sawSelectInto) return false;
 	return true;
 }
 
 function assertReadOnlyQuery(sql: string): void {
-	if (!isReadOnly(sql)) {
+	if (!isReadOnlySql(sql)) {
 		throw new Error(
 			'[prisma] read-only SQL endpoint rejected a non-SELECT statement',
 		);
