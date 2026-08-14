@@ -22,6 +22,17 @@ describe('verifyOnedriveClientState', () => {
 		});
 	});
 
+	it('should return invalid when clientState is an empty string', () => {
+		const result = verifyOnedriveClientState(
+			{ clientState: '' },
+			expectedClientState,
+		);
+		expect(result).toEqual({
+			valid: false,
+			error: 'Missing clientState in notification',
+		});
+	});
+
 	it('should return valid for matching clientState', () => {
 		const result = verifyOnedriveClientState(
 			{ clientState: 'secret-client-state-12345' },
