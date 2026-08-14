@@ -1,22 +1,16 @@
 import { connectionsOperations } from '../operations/connections';
 import type { PrismaEndpoint } from './factory';
 import {
+	findOperation,
 	logPrismaOperation,
 	requestPrismaOperation,
 	syncPrismaOperationResult,
 } from './factory';
 
-function getOperation(name: (typeof connectionsOperations)[number]['name']) {
-	const operation = connectionsOperations.find(
-		(candidate) => candidate.name === name,
-	);
-	if (!operation) {
-		throw new Error(`[prisma] missing operation: ${name}`);
-	}
-	return operation;
-}
-
-const createConnectionDefinition = getOperation('create');
+const createConnectionDefinition = findOperation(
+	connectionsOperations,
+	'create',
+);
 export const createConnection: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,
@@ -33,7 +27,7 @@ export const createConnection: PrismaEndpoint = async (ctx, input = {}) => {
 	return result;
 };
 
-const listConnectionsDefinition = getOperation('list');
+const listConnectionsDefinition = findOperation(connectionsOperations, 'list');
 export const listConnections: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,
@@ -50,7 +44,10 @@ export const listConnections: PrismaEndpoint = async (ctx, input = {}) => {
 	return result;
 };
 
-const deleteConnectionDefinition = getOperation('delete');
+const deleteConnectionDefinition = findOperation(
+	connectionsOperations,
+	'delete',
+);
 export const deleteConnection: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,

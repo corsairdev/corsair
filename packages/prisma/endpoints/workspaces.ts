@@ -1,22 +1,13 @@
 import { workspacesOperations } from '../operations/workspaces';
 import type { PrismaEndpoint } from './factory';
 import {
+	findOperation,
 	logPrismaOperation,
 	requestPrismaOperation,
 	syncPrismaOperationResult,
 } from './factory';
 
-function getOperation(name: (typeof workspacesOperations)[number]['name']) {
-	const operation = workspacesOperations.find(
-		(candidate) => candidate.name === name,
-	);
-	if (!operation) {
-		throw new Error(`[prisma] missing operation: ${name}`);
-	}
-	return operation;
-}
-
-const listWorkspacesDefinition = getOperation('list');
+const listWorkspacesDefinition = findOperation(workspacesOperations, 'list');
 export const listWorkspaces: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,

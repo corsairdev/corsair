@@ -17,23 +17,50 @@ export type PostgresQueryResult = {
 	command: string;
 };
 
-// Read-only guard. SQL is classified by a single linear-time scan that tracks
-// string literals, quoted identifiers, and line/block comments so keywords are
-// only recognized in real SQL code (CodeQL flagged the prior regex alternatives
-// as potentially polynomial on crafted input). The maximum length is bounded to
-// keep validation cheap and deterministic on uncontrolled data.
+// Read-only guard. SQL is classified by a single linear-time scan that mirrors
+// PostgreSQL lexical rules for string literals, quoted identifiers, dollar
+// quoting, and (nesting) block comments, so keywords are only recognized in
+// real SQL code. The maximum length is bounded to keep validation cheap and
+// deterministic on uncontrolled input (fixes the polynomial-regex finding).
 const MAX_SQL_LENGTH = 64 * 1024;
+
+type ScanState =
+	| 'code'
+	| 'string' // standard '...' (standard_conforming_strings=on: no backslash escapes)
+	| 'estring' // E'...' escape string: backslash escapes
+	| 'ident' // "..." quoted identifier
+	| 'lineComment'
+	| 'blockComment'
+	| 'dollarQuote';
+
+const TRANSACTION_CONTROL = new Set([
+	'commit',
+	'rollback',
+	'abort',
+	'begin',
+	'start',
+	'end',
+	'checkpoint',
+]);
 
 /**
  * Returns true when the statement is a pure read-only SELECT.
  *
- * - Only an unquoted top-level `SELECT` prefix is accepted; `WITH` is rejected
- *   because `WITH x AS (DELETE ...) RETURNING *` is a single-statement mutation
- *   with no second statement / semicolon to detect.
- * - `SELECT ... INTO` (disk writes) and row-lock forms (`FOR UPDATE / FOR
- *   SHARE`) are rejected, but only when they appear as real tokens, not inside
- *   string literals, quoted identifiers, or comments.
- * - A `;` outside literals/comments (multi-statement input) is rejected.
+ * Parsing follows PostgreSQL (standard_conforming_strings=on):
+ * - `'...'` strings escape a quote by doubling it (`''`); a backslash is NOT an
+ *   escape, so `'...\' ; COMMIT` cannot hide the `COMMIT` from this scanner the
+ *   way it would a scanner that assumes C-style backslash escapes.
+ * - `E'...'`/`U&'...'` strings do support backslash escapes (`\'`, `\\`).
+ * - `"..."` quoted identifiers escape by doubling (`""`).
+ * - `--` line comments and nestable `/* ... *\/` block comments are skipped.
+ * - `$tag$ ... $tag$` dollar-quoted strings are skipped.
+ *
+ * Only an unquoted top-level `SELECT` prefix is accepted (WITH is rejected so
+ * CTE-hidden mutations like `WITH x AS (DELETE ...) RETURNING *` fail), any
+ * top-level `;` (multi-statement), transaction-control tokens, `SELECT INTO`,
+ * row-lock `FOR UPDATE/SHARE` forms, and sequence-mutating `nextval`/`setval`
+ * are rejected, and every keyword check runs only in plain code — never inside
+ * literals, identifiers, or comments.
  */
 export function isReadOnlySql(sql: string): boolean {
 	if (sql.length > MAX_SQL_LENGTH) return false;
@@ -54,83 +81,135 @@ export function isReadOnlySql(sql: string): boolean {
 		return false;
 	}
 
-	let inString = false;
-	let inIdent = false;
-	let inLineComment = false;
-	let inBlockComment = false;
-	let sawForUpdate = false;
+	let state: ScanState = 'code';
+	let blockDepth = 0;
+	let dollarTag = '';
 	let sawSelectInto = false;
+	let sawRowLock = false;
+	let sawSequenceMutation = false;
 
 	while (i < n) {
 		const c = s.charAt(i);
 		const next = s.charAt(i + 1);
 
-		if (inLineComment) {
-			if (c === '\n') inLineComment = false;
-			i += 1;
-			continue;
-		}
-		if (inBlockComment) {
-			if (c === '*' && next === '/') {
-				inBlockComment = false;
-				i += 2;
-			} else {
+		switch (state) {
+			case 'lineComment':
+				if (c === '\n') state = 'code';
 				i += 1;
-			}
-			continue;
-		}
-		if (inString) {
-			if (c === '\\') {
-				i += 2;
 				continue;
-			}
-			if (c === "'") inString = false;
-			i += 1;
-			continue;
-		}
-		if (inIdent) {
-			if (c === '"') inIdent = false;
-			i += 1;
-			continue;
+			case 'blockComment':
+				if (c === '/' && next === '*') {
+					blockDepth += 1;
+					i += 2;
+					continue;
+				}
+				if (c === '*' && next === '/') {
+					blockDepth -= 1;
+					if (blockDepth === 0) state = 'code';
+					i += 2;
+					continue;
+				}
+				i += 1;
+				continue;
+			case 'string':
+				if (c === "'" && next === "'") {
+					i += 2;
+					continue;
+				}
+				if (c === "'") state = 'code';
+				i += 1;
+				continue;
+			case 'estring':
+				if (c === '\\') {
+					i += 2;
+					continue;
+				}
+				if (c === "'" && next === "'") {
+					i += 2;
+					continue;
+				}
+				if (c === "'") state = 'code';
+				i += 1;
+				continue;
+			case 'ident':
+				if (c === '"' && next === '"') {
+					i += 2;
+					continue;
+				}
+				if (c === '"') state = 'code';
+				i += 1;
+				continue;
+			case 'dollarQuote':
+				if (c === '$' && s.startsWith(dollarTag, i)) {
+					state = 'code';
+					i += dollarTag.length;
+					continue;
+				}
+				i += 1;
+				continue;
+			default:
+				break;
 		}
 
-		// line / block comments
+		// code state: classify tokens
 		if (c === '-' && next === '-') {
-			inLineComment = true;
+			state = 'lineComment';
 			i += 2;
 			continue;
 		}
 		if (c === '/' && next === '*') {
-			inBlockComment = true;
+			state = 'blockComment';
+			blockDepth = 1;
 			i += 2;
 			continue;
 		}
-		// string literal (handle escaped '' and backslash)
 		if (c === "'") {
-			inString = true;
+			state = 'string';
 			i += 1;
 			continue;
 		}
-		// quoted identifier
 		if (c === '"') {
-			inIdent = true;
+			state = 'ident';
 			i += 1;
 			continue;
 		}
-		// multi-statement
+		if (c === '$') {
+			const tagMatch = /^\$[A-Za-z0-9_]*\$/.exec(
+				s.slice(i, Math.min(i + 64, n)),
+			);
+			if (tagMatch) {
+				state = 'dollarQuote';
+				dollarTag = tagMatch[0];
+				i += dollarTag.length;
+				continue;
+			}
+		}
 		if (c === ';') return false;
 
-		// read the next SQL word token (only continues in plain code)
 		if (isWordChar(c)) {
 			let j = i;
 			while (j < n && isWordChar(s.charAt(j))) j += 1;
 			const word = s.slice(i, j).toLowerCase();
+
+			// E'...' / U&'...' strings use backslash escapes
+			if (word === 'e' && s.charAt(j) === "'") {
+				state = 'estring';
+				i = j + 1;
+				continue;
+			}
+			if (word === 'u' && s.charAt(j) === '&' && s.charAt(j + 1) === "'") {
+				state = 'estring';
+				i = j + 2;
+				continue;
+			}
+
+			if (TRANSACTION_CONTROL.has(word)) return false;
 			if (word === 'into') sawSelectInto = true;
+			if (word === 'nextval' || word === 'setval') sawSequenceMutation = true;
 			if (word === 'for') {
-				// look ahead for update/share row-lock modes
 				const after = s.slice(j).trimStart().toLowerCase();
 				if (/^(update|share|no\s+key\s+update|key\s+share)\b/.test(after)) {
-					sawForUpdate = true;
+					sawRowLock = true;
 				}
 			}
 			i = j;
@@ -140,7 +219,7 @@ export function isReadOnlySql(sql: string): boolean {
 		i += 1;
 	}
 
-	if (sawForUpdate || sawSelectInto) return false;
+	if (sawSelectInto || sawRowLock || sawSequenceMutation) return false;
 	return true;
 }
 

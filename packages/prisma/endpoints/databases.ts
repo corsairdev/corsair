@@ -1,23 +1,14 @@
 import { databasesOperations } from '../operations/databases';
 import type { PrismaEndpoint } from './factory';
 import {
+	findOperation,
 	logPrismaOperation,
 	requestPrismaOperation,
 	syncPrismaOperationResult,
 } from './factory';
 import { inspectDatabaseSchema } from './sql';
 
-function getOperation(name: (typeof databasesOperations)[number]['name']) {
-	const operation = databasesOperations.find(
-		(candidate) => candidate.name === name,
-	);
-	if (!operation) {
-		throw new Error(`[prisma] missing operation: ${name}`);
-	}
-	return operation;
-}
-
-const createDatabaseDefinition = getOperation('create');
+const createDatabaseDefinition = findOperation(databasesOperations, 'create');
 export const createDatabase: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,
@@ -29,7 +20,7 @@ export const createDatabase: PrismaEndpoint = async (ctx, input = {}) => {
 	return result;
 };
 
-const getDatabaseDefinition = getOperation('get');
+const getDatabaseDefinition = findOperation(databasesOperations, 'get');
 export const getDatabase: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,
@@ -41,7 +32,7 @@ export const getDatabase: PrismaEndpoint = async (ctx, input = {}) => {
 	return result;
 };
 
-const listDatabasesDefinition = getOperation('list');
+const listDatabasesDefinition = findOperation(databasesOperations, 'list');
 export const listDatabases: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,
@@ -53,7 +44,7 @@ export const listDatabases: PrismaEndpoint = async (ctx, input = {}) => {
 	return result;
 };
 
-const deleteDatabaseDefinition = getOperation('delete');
+const deleteDatabaseDefinition = findOperation(databasesOperations, 'delete');
 export const deleteDatabase: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,
@@ -65,7 +56,10 @@ export const deleteDatabase: PrismaEndpoint = async (ctx, input = {}) => {
 	return result;
 };
 
-const getDatabaseUsageDefinition = getOperation('getUsage');
+const getDatabaseUsageDefinition = findOperation(
+	databasesOperations,
+	'getUsage',
+);
 export const getDatabaseUsage: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,

@@ -170,4 +170,54 @@ describe('isReadOnlySql token-aware validation', () => {
 		const big = 'SELECT 1' + ' '.repeat(70 * 1024);
 		expect(isReadOnlySql(big)).toBe(false);
 	});
+
+	it('cannot hide COMMIT behind a backslash (standard_conforming_strings)', () => {
+		// PostgreSQL standard strings do NOT treat backslash as an escape, so the
+		// string ends at the quote right after it and the ';' starts a second
+		// statement — a scanner that skips \' would miss the COMMIT entirely.
+		expect(isReadOnlySql("SELECT '\\'; COMMIT; DROP TABLE users; --'")).toBe(
+			false,
+		);
+		expect(isReadOnlySql("SELECT 'a\\'; ROLLBACK; SELECT 1; --'")).toBe(false);
+	});
+
+	it('still accepts literal backslashes in standard strings', () => {
+		expect(isReadOnlySql("SELECT * FROM t WHERE path LIKE 'C:\\Users%'")).toBe(
+			true,
+		);
+	});
+
+	it('handles doubled-quote escapes in standard strings', () => {
+		expect(isReadOnlySql("SELECT 'it''s'")).toBe(true);
+		expect(isReadOnlySql("SELECT 'a'''; COMMIT")).toBe(false);
+	});
+
+	it('handles E-string backslash escapes correctly', () => {
+		expect(isReadOnlySql("SELECT E'it\\'s'")).toBe(true);
+		// escaped backslash then closing quote: '; COMMIT' is a real boundary
+		expect(isReadOnlySql("SELECT E'x\\\\'; COMMIT; DROP TABLE t; --'")).toBe(
+			false,
+		);
+	});
+
+	it('handles nesting block comments', () => {
+		expect(isReadOnlySql('SELECT /* a /* b */ c */ 1')).toBe(true);
+		expect(isReadOnlySql("SELECT /* ' */ ; COMMIT; -- '")).toBe(false);
+	});
+
+	it('handles dollar-quoted strings', () => {
+		expect(isReadOnlySql('SELECT $$hello; world$$')).toBe(true);
+		expect(isReadOnlySql('SELECT $tag$; DROP$tag$ FROM t')).toBe(true);
+		expect(isReadOnlySql('SELECT $$x$$; COMMIT')).toBe(false);
+	});
+
+	it('rejects transaction-control tokens in plain code', () => {
+		expect(isReadOnlySql('SELECT 1 FROM t COMMIT')).toBe(false);
+		expect(isReadOnlySql('SELECT rollback FROM t')).toBe(false);
+	});
+
+	it('rejects sequence-mutating functions', () => {
+		expect(isReadOnlySql("SELECT nextval('s')")).toBe(false);
+		expect(isReadOnlySql("SELECT setval('s', 1)")).toBe(false);
+	});
 });

@@ -1,22 +1,13 @@
 import { regionsOperations } from '../operations/regions';
 import type { PrismaEndpoint } from './factory';
 import {
+	findOperation,
 	logPrismaOperation,
 	requestPrismaOperation,
 	syncPrismaOperationResult,
 } from './factory';
 
-function getOperation(name: (typeof regionsOperations)[number]['name']) {
-	const operation = regionsOperations.find(
-		(candidate) => candidate.name === name,
-	);
-	if (!operation) {
-		throw new Error(`[prisma] missing operation: ${name}`);
-	}
-	return operation;
-}
-
-const listRegionsDefinition = getOperation('list');
+const listRegionsDefinition = findOperation(regionsOperations, 'list');
 export const listRegions: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,
@@ -28,7 +19,10 @@ export const listRegions: PrismaEndpoint = async (ctx, input = {}) => {
 	return result;
 };
 
-const listPostgresRegionsDefinition = getOperation('listPostgres');
+const listPostgresRegionsDefinition = findOperation(
+	regionsOperations,
+	'listPostgres',
+);
 export const listPostgresRegions: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,

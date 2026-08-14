@@ -1,22 +1,13 @@
 import { backupsOperations } from '../operations/backups';
 import type { PrismaEndpoint } from './factory';
 import {
+	findOperation,
 	logPrismaOperation,
 	requestPrismaOperation,
 	syncPrismaOperationResult,
 } from './factory';
 
-function getOperation(name: (typeof backupsOperations)[number]['name']) {
-	const operation = backupsOperations.find(
-		(candidate) => candidate.name === name,
-	);
-	if (!operation) {
-		throw new Error(`[prisma] missing operation: ${name}`);
-	}
-	return operation;
-}
-
-const listBackupsDefinition = getOperation('list');
+const listBackupsDefinition = findOperation(backupsOperations, 'list');
 export const listBackups: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,
@@ -28,7 +19,7 @@ export const listBackups: PrismaEndpoint = async (ctx, input = {}) => {
 	return result;
 };
 
-const restoreBackupDefinition = getOperation('restore');
+const restoreBackupDefinition = findOperation(backupsOperations, 'restore');
 export const restoreBackup: PrismaEndpoint = async (ctx, input = {}) => {
 	const result = await requestPrismaOperation(
 		ctx,

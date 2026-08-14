@@ -101,20 +101,33 @@ describe('Prisma plugin shape', () => {
 		);
 	});
 
-	it('gives list/get/create REST operations concrete output schemas', () => {
-		const enforced = prismaOperations
-			.filter(
-				(op: PrismaOperation) => op.kind !== 'sql' && op.kind !== 'schema',
-			)
-			.filter((op: PrismaOperation) => !op.key.startsWith('delete'))
-			.map((op: PrismaOperation) => op.key);
-		for (const key of enforced) {
-			const schema = PrismaEndpointOutputSchemas[key];
-			expect(schema).toBeDefined();
-			expect(typeof (schema as unknown as { parse?: unknown }).parse).toBe(
-				'function',
-			);
+	it('gives every REST operation a concrete output schema (no z.unknown)', () => {
+		const restOps = prismaOperations.filter(
+			(op: PrismaOperation) => op.kind !== 'sql' && op.kind !== 'schema',
+		);
+		for (const op of restOps) {
+			expect(PrismaEndpointOutputSchemas[op.key]).toBeDefined();
 		}
+		// resource endpoints require a stable id: empty objects must not validate
+		expect(PrismaEndpointOutputSchemas.getProject!.safeParse({}).success).toBe(
+			false,
+		);
+		expect(
+			PrismaEndpointOutputSchemas.listWorkspaces!.safeParse([{}]).success,
+		).toBe(false);
+		expect(PrismaEndpointOutputSchemas.getDatabase!.safeParse({}).success).toBe(
+			false,
+		);
+		// delete/restore endpoints legitimately return no content
+		expect(
+			PrismaEndpointOutputSchemas.deleteProject!.safeParse(undefined).success,
+		).toBe(true);
+		expect(
+			PrismaEndpointOutputSchemas.deleteConnection!.safeParse(null).success,
+		).toBe(true);
+		expect(
+			PrismaEndpointOutputSchemas.restoreBackup!.safeParse({}).success,
+		).toBe(true);
 	});
 
 	it('marks destructive operations as irreversible', () => {

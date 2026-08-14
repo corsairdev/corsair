@@ -111,7 +111,7 @@ export const InspectDatabaseSchemaOutputSchema = z.object({
 
 const PrismaApiKeySchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		createdAt: z.string().optional(),
 		apiKey: z.string().optional(),
 		connectionString: z.string().optional(),
@@ -128,7 +128,7 @@ const PrismaApiKeySchema = z
 
 const PrismaDatabaseSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		createdAt: z.string().optional(),
 		name: z.string().optional(),
 		connectionString: z.string().optional(),
@@ -141,7 +141,7 @@ const PrismaDatabaseSchema = z
 
 const PrismaProjectSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		createdAt: z.string().optional(),
 		name: z.string().optional(),
 		displayName: z.string().nullable().optional(),
@@ -154,14 +154,14 @@ const PrismaProjectSchema = z
 
 const PrismaWorkspaceSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		name: z.string().optional(),
 	})
 	.passthrough();
 
 const PrismaConnectionSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		name: z.string().optional(),
 		databaseId: z.string().optional(),
 		connectionString: z.string().optional(),
@@ -172,7 +172,7 @@ const PrismaConnectionSchema = z
 
 const PrismaBackupSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		databaseId: z.string().optional(),
 		status: z.string().optional(),
 		createdAt: z.string().optional(),
@@ -181,7 +181,7 @@ const PrismaBackupSchema = z
 
 const PrismaRegionSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		region: z.string().optional(),
 		displayName: z.string().optional(),
 		available: z.boolean().optional(),
@@ -191,7 +191,7 @@ const PrismaRegionSchema = z
 
 const PrismaIntegrationSchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		name: z.string().optional(),
 		workspaceId: z.string().optional(),
 		type: z.string().optional(),
@@ -225,19 +225,31 @@ const ListWorkspaceIntegrationsOutputSchema = resourceOrList(
 	PrismaIntegrationSchema,
 );
 
+// destructive DELETE / restore endpoints return 204 No Content (or an empty
+// 202 Accepted body) — the response carries no resource payload
+const EmptyResponseSchema = z.union([
+	z.undefined(),
+	z.null(),
+	z.object({}).passthrough(),
+]);
+
 const PRISMA_REST_OUTPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
 	listWorkspaces: ListWorkspacesOutputSchema,
 	createProject: CreateProjectOutputSchema,
 	getProject: GetProjectOutputSchema,
 	listProjects: ListProjectsOutputSchema,
 	transferProject: TransferProjectOutputSchema,
+	deleteProject: EmptyResponseSchema,
 	createDatabase: CreateDatabaseOutputSchema,
 	getDatabase: GetDatabaseOutputSchema,
 	listDatabases: ListDatabasesOutputSchema,
+	deleteDatabase: EmptyResponseSchema,
 	getDatabaseUsage: GetDatabaseUsageOutputSchema,
 	createConnection: CreateConnectionOutputSchema,
 	listConnections: ListConnectionsOutputSchema,
+	deleteConnection: EmptyResponseSchema,
 	listBackups: ListBackupsOutputSchema,
+	restoreBackup: EmptyResponseSchema,
 	listRegions: ListRegionsOutputSchema,
 	listPostgresRegions: ListPostgresRegionsOutputSchema,
 	listWorkspaceIntegrations: ListWorkspaceIntegrationsOutputSchema,
@@ -302,7 +314,10 @@ export const PrismaEndpointInputSchemas = Object.fromEntries(
 ) as Record<string, z.ZodTypeAny>;
 
 // operation-specific output schemas for the REST Management API operations;
-// the direct-postgres operations keep their shaped (non-unknown) schemas
+// the direct-postgres operations keep their shaped (non-unknown) schemas.
+// Every REST operation must have an explicit registration in
+// PRISMA_REST_OUTPUT_SCHEMAS — there is no z.unknown() fallback, and a missing
+// registration fails schema construction rather than accepting any payload.
 export const PrismaEndpointOutputSchemas = Object.fromEntries(
 	prismaOperations.map((operation: PrismaOperation) => {
 		if (operation.kind === 'sql') {
@@ -311,9 +326,12 @@ export const PrismaEndpointOutputSchemas = Object.fromEntries(
 		if (operation.kind === 'schema') {
 			return [operation.key, InspectDatabaseSchemaOutputSchema];
 		}
-		return [
-			operation.key,
-			PRISMA_REST_OUTPUT_SCHEMAS[operation.key] ?? z.unknown(),
-		];
+		const schema = PRISMA_REST_OUTPUT_SCHEMAS[operation.key];
+		if (!schema) {
+			throw new Error(
+				`[prisma] missing REST output schema for ${operation.key}`,
+			);
+		}
+		return [operation.key, schema];
 	}),
 ) as Record<string, z.ZodTypeAny>;

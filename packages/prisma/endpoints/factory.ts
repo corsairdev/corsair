@@ -118,20 +118,35 @@ const CACHE_RULES: Record<string, CacheRule> = {
 	},
 };
 
-function encodePathPart(value: unknown): string {
+function encodePathPart(value: unknown, key: string): string {
 	if (typeof value === 'number') {
 		return encodeURIComponent(String(value));
 	}
 	if (typeof value !== 'string' || value.length === 0) {
-		throw new Error('[prisma] missing required path parameter');
+		throw new Error(`[prisma] missing required path parameter: ${key}`);
 	}
 	return encodeURIComponent(value);
 }
 
 export function resolvePath(path: string, input: PrismaEndpointInput): string {
 	return path.replace(/\{([^}]+)\}/g, (_, key: string) =>
-		encodePathPart(input[key]),
+		encodePathPart(input[key], key),
 	);
+}
+
+/**
+ * Shared operation lookup used by every endpoint module — throws a clear error
+ * naming the missing operation when the route is absent.
+ */
+export function findOperation<TOperations extends readonly PrismaOperation[]>(
+	operations: TOperations,
+	name: TOperations[number]['name'],
+): TOperations[number] {
+	const operation = operations.find((candidate) => candidate.name === name);
+	if (!operation) {
+		throw new Error(`[prisma] missing operation: ${name}`);
+	}
+	return operation;
 }
 
 function extraInputEntries(
