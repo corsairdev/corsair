@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BugsnagEndpoints } from '../index';
+import { deleteAndEvict } from './delete-flow';
 import { auditPayload, countOf } from './logging';
 import { bugsnagCall, compactBody, listParams, withQuery } from './shared';
 import type { BugsnagEndpointOutputs } from './types';
@@ -126,19 +127,16 @@ export const get: BugsnagEndpoints['savedSearchesGet'] = async (ctx, input) => {
 export const remove: BugsnagEndpoints['savedSearchesDelete'] = async (
 	ctx,
 	input,
-) => {
-	await bugsnagCall<unknown>(ctx, `saved_searches/${input.saved_search_id}`, {
-		method: 'DELETE',
+) =>
+	await deleteAndEvict(ctx, {
+		path: `saved_searches/${input.saved_search_id}`,
+		event: 'bugsnag.savedSearches.delete',
+		input,
+		identifierKeys: ['saved_search_id'],
+		resultId: input.saved_search_id,
+		// No mirror: a saved search's filters can hold end-user identifiers, so it is
+		// deliberately never cached.
 	});
-
-	await logEventFromContext(
-		ctx,
-		'bugsnag.savedSearches.delete',
-		auditPayload(input, ['saved_search_id']),
-		'completed',
-	);
-	return { success: true, id: input.saved_search_id };
-};
 
 /**
  * Reports how widely a saved search is relied upon - project notifications,

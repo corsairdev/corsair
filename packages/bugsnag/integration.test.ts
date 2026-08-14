@@ -26,7 +26,7 @@
  * another `--testPathIgnorePatterns` value and quietly excludes this file, then
  * reports the unit suites as green. The script uses `--testPathPattern` instead.
  */
-import { makeBugsnagRequest, readRateLimit } from './client';
+import { BUGSNAG_API_BASE, makeBugsnagRequest, readRateLimit } from './client';
 import { buildQuery, withQuery } from './endpoints/shared';
 import {
 	BugsnagCollaboratorEntity,
@@ -50,6 +50,24 @@ import {
 const authToken = process.env.BUGSNAG_AUTH_TOKEN;
 
 const describeLive = authToken ? describe : describe.skip;
+
+/**
+ * A raw `fetch` against the API, for the two tests that need the **response headers**
+ * rather than the parsed body - which `makeBugsnagRequest` cannot return, because
+ * `request()` yields the body or one header, never both.
+ *
+ * It reuses `BUGSNAG_API_BASE` and mirrors the client's auth headers rather than
+ * hard-coding them, so a change to the base URL or the auth scheme fails here too
+ * instead of leaving the tests quietly asserting against the old one.
+ */
+async function rawFetch(path: string): Promise<Response> {
+	return await fetch(`${BUGSNAG_API_BASE}/${path}`, {
+		headers: {
+			Authorization: `token ${authToken as string}`,
+			'X-Version': '2',
+		},
+	});
+}
 
 /** Parses every row, naming the offending field rather than just failing red. */
 function expectEveryRowParses(
@@ -98,22 +116,50 @@ describeLive('BugSnag Data Access API (live, read-only)', () => {
 	/** Fetched once, because this endpoint has the tightest budget on the API. */
 	let allErrors: { id: string }[];
 
+	/**
+	 * Fails immediately with a clear message when a precondition is missing, rather than
+	 * letting an `undefined` id be interpolated into the next URL.
+	 *
+	 * Without this, an account with no project would produce a request for
+	 * `projects/undefined`, which answers 404 - and every later test would fail with a
+	 * confusing not-found instead of "this account has no project to read".
+	 */
+	const requireFirst = <T extends { id: string }>(
+		rows: T[],
+		what: string,
+	): string => {
+		const id = rows[0]?.id;
+		if (!id) {
+			throw new Error(
+				`live suite precondition failed: the account has no ${what}, so there is ` +
+					`nothing to read. Seed one before running the live suite.`,
+			);
+		}
+		return id;
+	};
+
 	beforeAll(async () => {
-		const orgs = await makeBugsnagRequest<{ id: string }[]>(
-			'user/organizations',
-			authToken as string,
+		orgId = requireFirst(
+			await makeBugsnagRequest<{ id: string }[]>(
+				'user/organizations',
+				authToken as string,
+			),
+			'organization',
 		);
-		orgId = orgs[0]?.id as string;
-		const projects = await makeBugsnagRequest<{ id: string }[]>(
-			`organizations/${orgId}/projects`,
-			authToken as string,
+		projectId = requireFirst(
+			await makeBugsnagRequest<{ id: string }[]>(
+				`organizations/${orgId}/projects`,
+				authToken as string,
+			),
+			'project',
 		);
-		projectId = projects[0]?.id as string;
-		const collaborators = await makeBugsnagRequest<{ id: string }[]>(
-			`organizations/${orgId}/collaborators`,
-			authToken as string,
+		collaboratorId = requireFirst(
+			await makeBugsnagRequest<{ id: string }[]>(
+				`organizations/${orgId}/collaborators`,
+				authToken as string,
+			),
+			'collaborator',
 		);
-		collaboratorId = collaborators[0]?.id as string;
 		allErrors = await makeBugsnagRequest<{ id: string }[]>(
 			`projects/${projectId}/errors`,
 			authToken as string,
@@ -143,12 +189,7 @@ describeLive('BugSnag Data Access API (live, read-only)', () => {
 		const seen: Record<string, string | null> = {};
 
 		for (const path of ['user/organizations', `projects/${projectId}/errors`]) {
-			const response = await fetch(`https://api.bugsnag.com/${path}`, {
-				headers: {
-					Authorization: `token ${authToken as string}`,
-					'X-Version': '2',
-				},
-			});
+			const response = await rawFetch(path);
 			expect([200, 429]).toContain(response.status);
 			seen[path] = response.headers.get('x-ratelimit-limit');
 		}
@@ -645,12 +686,7 @@ describeLive('BugSnag Data Access API (live, read-only)', () => {
 	 * but the names themselves are the thing being pinned.
 	 */
 	it('parses the live rate-limit headers through readRateLimit', async () => {
-		const response = await fetch('https://api.bugsnag.com/user/organizations', {
-			headers: {
-				Authorization: `token ${authToken as string}`,
-				'X-Version': '2',
-			},
-		});
+		const response = await rawFetch('user/organizations');
 
 		const budget = readRateLimit(response.headers);
 		expect(budget.limit).toBeGreaterThan(0);

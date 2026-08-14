@@ -34,7 +34,12 @@ export function auditPayload<T extends Record<string, unknown>>(
 
 	const supplied = Object.keys(input).filter((key) => input[key] !== undefined);
 	if (supplied.length > 0) {
-		payload.fields = supplied;
+		// `supplied_fields` rather than `fields`, so the list can never overwrite an
+		// identifier that was copied above. No current operation has an input named
+		// `fields`, but one named `display_id` or `path` already exists, and a provider
+		// adding a `fields` parameter later would have silently replaced a recorded id
+		// with this list - losing the identifier an audit trail is for.
+		payload.supplied_fields = supplied;
 	}
 
 	return payload;

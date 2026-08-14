@@ -16,6 +16,7 @@ import {
 	BugsnagStabilityTarget,
 	BugsnagTeamEntity,
 } from './schema/database';
+import * as responses from './schema/responses';
 import {
 	BugsnagBulkUpdateResult,
 	BugsnagConfiguredIntegration,
@@ -26,6 +27,7 @@ import {
 	BugsnagEventField,
 	BugsnagFeatureFlag,
 	BugsnagFeatureFlagSummary,
+	BugsnagIntegrationTestResult,
 	BugsnagNetworkEndpointGrouping,
 	BugsnagPivot,
 	BugsnagPivotValue,
@@ -521,6 +523,16 @@ describe('input validation', () => {
 /*                        Response shapes that stay remote                    */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Resolves a schema back to its exported name.
+ *
+ * Needed because a zod schema carries no name of its own, and the coverage check compares
+ * the table against the module's actual exports rather than against a hand-written count.
+ */
+const schemaName = (schema: unknown): string =>
+	Object.entries(responses).find(([, value]) => value === schema)?.[0] ??
+	'UNKNOWN_SCHEMA';
+
 describe('response schemas match the live responses', () => {
 	/**
 	 * Field names enumerated from live responses on 2026-08-14, for the families that
@@ -746,15 +758,64 @@ describe('response schemas match the live responses', () => {
 			verified: false,
 			keys: [],
 		},
+		// Not observed: testing an integration needs real third-party credentials, so the
+		// route was confirmed by its validation response rather than by a success. This
+		// entry was missing until the coverage check started comparing the table against
+		// the module's exports instead of against a hand-written count - which is the
+		// whole reason for that change.
+		{
+			name: 'integration test result',
+			schema: BugsnagIntegrationTestResult,
+			verified: false,
+			keys: [],
+		},
 	] as const;
 
 	it('covers every response family the plugin returns', () => {
-		// Guards the table itself: a family added to `schema/responses.ts` without an
-		// entry here would otherwise go unchecked, and the loop below would shrink
-		// silently rather than fail.
-		expect(CAPTURED).toHaveLength(20);
-		expect(CAPTURED.filter((c) => c.verified)).toHaveLength(15);
-		expect(CAPTURED.filter((c) => !c.verified)).toHaveLength(5);
+		// Guards the table itself, by comparing it against what the module actually
+		// exports rather than against a number written by hand.
+		//
+		// An earlier version asserted `toHaveLength(20)`. That would have passed
+		// unchanged after a new response family was added to `schema/responses.ts` and
+		// forgotten here - the count is only a proxy for coverage, and the thing being
+		// guarded is coverage.
+		const exportedSchemas = Object.entries(responses)
+			.filter(
+				([name, value]) =>
+					// Zod schemas only: the module also exports the inferred types, which
+					// disappear at runtime, and helpers that are not response families.
+					name.startsWith('Bugsnag') &&
+					typeof value === 'object' &&
+					value !== null &&
+					'safeParse' in value,
+			)
+			.map(([name]) => name);
+
+		// Not a response family in its own right: the bulk-update result is the response
+		// of one operation rather than a record shape, and `BugsnagProjectSummary` is a
+		// nested stub inside `BugsnagProjectAccess` rather than a top-level response.
+		const NOT_A_RESPONSE_FAMILY = [
+			'BugsnagBulkUpdateResult',
+			'BugsnagProjectSummary',
+		];
+
+		const expected = exportedSchemas
+			.filter((name) => !NOT_A_RESPONSE_FAMILY.includes(name))
+			.sort();
+
+		// `BugsnagEvent` appears twice in the table - once for the narrow list shape and
+		// once for the wide full-report shape - so the comparison is on the set.
+		const covered = [
+			...new Set(CAPTURED.map(({ schema }) => schemaName(schema))),
+		].sort();
+
+		expect(covered).toEqual(expected);
+
+		// And the exclusions must still exist, so a renamed export cannot leave a dead
+		// entry silently widening the check.
+		for (const name of NOT_A_RESPONSE_FAMILY) {
+			expect(exportedSchemas).toContain(name);
+		}
 	});
 
 	for (const { name, schema, keys, verified } of CAPTURED) {

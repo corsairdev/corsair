@@ -76,6 +76,17 @@ const ListQuery = {
 export const DeleteResultSchema = z.object({
 	success: z.boolean(),
 	id: z.string(),
+	/**
+	 * `true` when the record was already gone - the API answered 404 rather than removing
+	 * anything.
+	 *
+	 * Reported rather than hidden because a delete of a named resource is replayed after a
+	 * network failure, and the replay legitimately finds nothing. Collapsing that into a
+	 * plain `success: true` would leave a caller unable to tell "I removed it" from "it was
+	 * not there", and treating it as an error would strand the local mirror holding a
+	 * record the API no longer has. See `endpoints/delete-flow.ts`.
+	 */
+	already_absent: z.boolean(),
 });
 
 /**
@@ -120,6 +131,24 @@ const FilterObject = z.record(
 	z.string(),
 	z.union([FilterComparison, z.array(FilterComparison)]),
 );
+
+/**
+ * An object whose keys are defined by the caller or the account, not by the API.
+ *
+ * Deliberately unmodelled, and each use below states which of the two reasons applies:
+ *
+ * - **Caller-defined**: the keys come from the caller's own data or configuration, so a
+ *   closed schema would reject valid input. `filter_options`, `configuration` and
+ *   `project_roles` are all of this kind.
+ * - **Never observed**: the shape could not be produced on the recon account, and
+ *   inventing field names is the mistake that put a fabricated `target_stability` shape
+ *   past both the type checker and its own test. `reopen_rules` is the one case.
+ *
+ * `unknown` rather than `any`, so a consumer has to narrow before using a value -
+ * `PLUGIN_PR_RULES.md` bans `any` on exported surfaces and this keeps that promise while
+ * still accepting a shape the API does not publish.
+ */
+const OpenRecord = z.record(z.string(), z.unknown());
 
 /* -------------------------------------------------------------------------- */
 /*                              Common id inputs                              */
@@ -238,7 +267,11 @@ export const BugsnagEndpointInputSchemas = {
 			collaborator_id: z.string(),
 			admin: z.boolean().optional(),
 			project_ids: z.array(z.string()).optional(),
-			project_roles: z.record(z.string(), z.unknown()).optional(),
+			/**
+			 * Caller-defined: keyed by project id, with the role for each, so the valid
+			 * keys are whichever projects the organization has.
+			 */
+			project_roles: OpenRecord.optional(),
 		})
 		.refine(
 			(input) =>
@@ -388,7 +421,7 @@ export const BugsnagEndpointInputSchemas = {
 			 * open record because the rule shapes are not documented and inventing them
 			 * would repeat a mistake this plugin has already made once.
 			 */
-			reopen_rules: z.record(z.string(), z.unknown()).optional(),
+			reopen_rules: OpenRecord.optional(),
 		})
 		.refine(
 			(input) =>
@@ -460,7 +493,12 @@ export const BugsnagEndpointInputSchemas = {
 	eventFieldsCreate: z.object({
 		project_id: z.string(),
 		path: z.string().min(1),
-		filter_options: z.record(z.string(), z.unknown()),
+		/**
+		 * Caller-defined: the display name and the comparison types the new field should
+		 * support, e.g. `{name: 'Account ID', match_types: ['eq', 'ne']}`. Required - the
+		 * API answers `{"errors":["Filter options can't be blank"]}` without it.
+		 */
+		filter_options: OpenRecord,
 	}),
 	eventFieldsDelete: z.object({
 		project_id: z.string(),
@@ -563,7 +601,13 @@ export const BugsnagEndpointInputSchemas = {
 	integrationsConfigure: z.object({
 		project_id: z.string(),
 		integration_key: z.string().min(1),
-		configuration: z.record(z.string(), z.unknown()),
+		/**
+		 * Caller-defined: the fields differ per integration, and the valid set for one is
+		 * published by `integrations.listSupported` as its `fields`. Modelling them would
+		 * mean enumerating ninety services. Holds a third-party credential, so only the
+		 * field *names* are ever logged.
+		 */
+		configuration: OpenRecord,
 	}),
 	integrationsGetConfigured: z.object({ integration_id: z.string() }),
 	integrationsDeleteConfigured: z.object({ integration_id: z.string() }),
@@ -573,7 +617,8 @@ export const BugsnagEndpointInputSchemas = {
 	 */
 	integrationsTest: z.object({
 		key: z.string().min(1),
-		configuration: z.record(z.string(), z.unknown()),
+		/** Caller-defined, as in {@link integrationsConfigure}. Never logged. */
+		configuration: OpenRecord,
 	}),
 
 	/* --------------------------- GDPR data requests --------------------------- */

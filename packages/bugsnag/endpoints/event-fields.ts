@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BugsnagEndpoints } from '../index';
+import { deleteAndEvict } from './delete-flow';
 import { auditPayload, countOf } from './logging';
 import { bugsnagCall, listParams, withQuery } from './shared';
 import type { BugsnagEndpointOutputs } from './types';
@@ -119,18 +120,12 @@ export const create: BugsnagEndpoints['eventFieldsCreate'] = async (
 export const remove: BugsnagEndpoints['eventFieldsDelete'] = async (
 	ctx,
 	input,
-) => {
-	await bugsnagCall<unknown>(
-		ctx,
-		`projects/${input.project_id}/event_fields/${encodeURIComponent(input.display_id)}`,
-		{ method: 'DELETE' },
-	);
-
-	await logEventFromContext(
-		ctx,
-		'bugsnag.eventFields.delete',
-		auditPayload(input, ['project_id', 'display_id']),
-		'completed',
-	);
-	return { success: true, id: input.display_id };
-};
+) =>
+	await deleteAndEvict(ctx, {
+		path: `projects/${input.project_id}/event_fields/${encodeURIComponent(input.display_id)}`,
+		event: 'bugsnag.eventFields.delete',
+		input,
+		identifierKeys: ['project_id', 'display_id'],
+		resultId: input.display_id,
+		// No mirror: event fields are filter metadata, not data.
+	});

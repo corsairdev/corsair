@@ -10,7 +10,7 @@ type EntityStore<T> = {
 };
 
 /** The eviction half of the same store, needed only by the delete operations. */
-type EntityEvictor = {
+export type EntityEvictor = {
 	deleteByEntityId: (entityId: string) => Promise<unknown>;
 };
 
@@ -103,9 +103,19 @@ export async function cacheEntity<Schema extends z.ZodType>(
 	if (!parsed.success) {
 		// Silence here would turn a schema gap into a row that simply never
 		// appears; the warning is what makes it diagnosable.
+		//
+		// Only the path and the code are logged, never the issue objects themselves.
+		// Several zod issue types embed the offending **value** - `invalid_type` carries
+		// `received`, and enum and literal mismatches include it in the message - so
+		// logging `error.issues` from a collaborator or event row would put a name or an
+		// email address into durable log output. The field name and the kind of problem
+		// are enough to diagnose a schema gap; the value adds nothing a maintainer needs.
 		console.warn(
 			`[BUGSNAG] skipped caching a ${options.label} that does not match its schema:`,
-			parsed.error.issues,
+			parsed.error.issues.map((issue) => ({
+				path: issue.path.join('.'),
+				code: issue.code,
+			})),
 		);
 		return;
 	}

@@ -90,6 +90,13 @@ function makeCtx() {
 
 let captured: { url: string; method: string; body?: string } | undefined;
 
+/** The real `fetch`, restored after the suite so no stub leaks into another file. */
+const originalFetch = global.fetch;
+
+afterAll(() => {
+	global.fetch = originalFetch;
+});
+
 /** Answers every request with `payload`, recording what was asked for. */
 function mockFetch(payload: unknown, status = 200) {
 	captured = undefined;
@@ -815,8 +822,15 @@ const OPERATIONS: Array<
 	],
 ];
 
-const payloadFor = (op: string) =>
-	OPERATIONS.find(([name]) => name === op)?.[4] ?? {};
+/**
+ * The number of endpoints the plugin registers: the catalog's 60 operations plus
+ * `projects.get`, which is not a catalog operation.
+ *
+ * Declared once rather than repeated, so a deliberate change to the surface has to be made
+ * in a single place and the assertions cannot disagree with each other.
+ */
+const EXPECTED_ENDPOINTS = 61;
+const EXPECTED_CATALOG_OPERATIONS = 60;
 
 beforeEach(() => {
 	mockLogEvent.mockClear();
@@ -859,36 +873,45 @@ describe('routing', () => {
 	 * an obvious route error.
 	 */
 	it('uses the corrected paths rather than the plausible wrong ones', async () => {
-		// The wrong forms are written as whole path segments, with the leading slash.
-		// Without it, `memberships` is a substring of the correct `team_memberships` and
-		// the assertion could never hold - a check that can only fail is as useless as
-		// one that can only pass.
-		const CORRECTED: Array<{ correct: string; wrong: string; ops: number }> = [
-			{ correct: 'team_memberships', wrong: '/memberships', ops: 2 },
-			{ correct: 'project_accesses', wrong: '/access_details', ops: 2 },
-			{
-				correct: 'feature_flag_summaries',
-				wrong: 'feature_flags/summaries',
-				ops: 1,
-			},
-			{
-				correct: 'network_endpoint_grouping',
-				wrong: 'network_grouping_ruleset',
-				ops: 1,
-			},
-		];
+		// Each operation is pinned to its **exact** expected path, keyed by operation name.
+		//
+		// Two earlier versions of this test were weaker in different ways, and both are
+		// worth recording. The first asserted that a path did not contain a wrong
+		// substring - but `memberships` is a substring of the correct `team_memberships`,
+		// so the assertion could never hold. The second fixed that by comparing whole
+		// segments, which could pass while a path had regressed to something else
+		// entirely: "does not contain the one wrong spelling I thought of" is a much
+		// weaker claim than "is exactly this". Only the exact form fails on any
+		// regression.
+		const CORRECTED: Record<string, string> = {
+			'teams.addMembers': `organizations/${ORG}/teams/${TEAM}/team_memberships`,
+			'teams.addCollaboratorMemberships': `organizations/${ORG}/collaborators/${COLLABORATOR}/team_memberships`,
+			'collaborators.listProjectAccesses': `organizations/${ORG}/collaborators/${COLLABORATOR}/project_accesses`,
+			'collaborators.getProjectAccess': `organizations/${ORG}/collaborators/${COLLABORATOR}/project_accesses/${PROJECT}`,
+			'featureFlags.listSummaries': `projects/${PROJECT}/feature_flag_summaries`,
+			'projects.networkGroupingRuleset': `projects/${PROJECT}/network_endpoint_grouping`,
+			'savedSearches.create': 'saved_searches',
+			'savedSearches.get': `saved_searches/${SEARCH}`,
+			'savedSearches.delete': `saved_searches/${SEARCH}`,
+			'savedSearches.usageSummary': `saved_searches/${SEARCH}/usage_summary`,
+			'integrations.getConfigured': `configured_integrations/${INTEGRATION}`,
+			'integrations.deleteConfigured': `configured_integrations/${INTEGRATION}`,
+			'integrations.test': 'integrations/test',
+		};
 
-		for (const { correct, wrong, ops } of CORRECTED) {
-			const matching = OPERATIONS.filter(([, , path]) =>
-				path.includes(correct),
-			);
+		for (const [op, expectedPath] of Object.entries(CORRECTED)) {
+			const entry = OPERATIONS.find(([name]) => name === op);
 
-			// Without this the loop below could pass on an empty list - which is exactly
-			// what would happen if a path regressed to the wrong spelling.
-			expect(matching).toHaveLength(ops);
-			for (const [, , path] of matching) {
-				expect(path).not.toContain(wrong);
-			}
+			// Without this, a renamed or removed operation would make the loop body skip
+			// silently rather than fail.
+			expect(entry).toBeDefined();
+			expect(entry?.[2]).toBe(expectedPath);
+		}
+
+		// And every corrected operation is actually registered, so this table cannot
+		// drift into describing operations that no longer exist.
+		for (const op of Object.keys(CORRECTED)) {
+			expect(Object.keys(bugsnagEndpointMeta)).toContain(op);
 		}
 
 		// And the saved-search writes are top-level, not nested under the project.
@@ -914,7 +937,7 @@ describe('coverage', () => {
 		const registered = Object.keys(bugsnagEndpointMeta).sort();
 
 		expect(exercised).toEqual(registered);
-		expect(registered).toHaveLength(61);
+		expect(registered).toHaveLength(EXPECTED_ENDPOINTS);
 	});
 
 	it('has no duplicate entries in the routing table', () => {
@@ -925,7 +948,7 @@ describe('coverage', () => {
 	it('assigns every operation a risk level and a description', () => {
 		const entries = Object.entries(bugsnagEndpointMeta);
 
-		expect(entries).toHaveLength(61);
+		expect(entries).toHaveLength(EXPECTED_ENDPOINTS);
 		for (const [op, meta] of entries) {
 			expect(['read', 'write', 'destructive']).toContain(meta.riskLevel);
 			expect(meta.description.length).toBeGreaterThan(0);
@@ -1997,6 +2020,315 @@ describe('event payloads', () => {
 	});
 });
 
+describe('a replayed delete still evicts the mirror', () => {
+	/**
+	 * The P1 this suite previously missed, and the reason `endpoints/delete-flow.ts`
+	 * exists.
+	 *
+	 * A delete of a named resource is safe to replay, so `collaborators.delete` and
+	 * `organizations.delete` are deliberately absent from `NON_IDEMPOTENT_OPERATIONS` and
+	 * therefore *are* retried after a network or 5xx failure. But if the first attempt
+	 * succeeded remotely and only its response was lost, the replay receives a 404. In the
+	 * original code the request threw before the eviction ran, so the caller was told the
+	 * deletion failed **while the mirror still held the deleted person's name and email**.
+	 *
+	 * A 404 is now read as confirmed absence: the record is gone, whether this call removed
+	 * it or an earlier attempt did, so the eviction must still happen.
+	 */
+	const NOT_FOUND_BODY = { errors: ['User not found'] };
+	const ROUTE_MISSING_BODY = { status: 404, error: 'Not Found' };
+
+	const deletes = [
+		[
+			'collaborator',
+			'collaborators' as const,
+			COLLABORATOR,
+			(ctx: Ctx) =>
+				Collaborators.remove(ctx, {
+					organization_id: ORG,
+					collaborator_id: COLLABORATOR,
+				}),
+		],
+		[
+			'organization',
+			'organizations' as const,
+			ORG,
+			(ctx: Ctx) => Organizations.remove(ctx, { organization_id: ORG }),
+		],
+	] as const;
+
+	for (const [label, storeName, entityId, run] of deletes) {
+		it(`evicts the mirrored ${label} even when the API answers 404`, async () => {
+			const warn = jest
+				.spyOn(console, 'warn')
+				.mockImplementation(() => undefined);
+			mockFetch(NOT_FOUND_BODY, 404);
+			const { ctx, db } = makeCtx();
+
+			// The caller is told the record is gone, because it is.
+			await expect(run(ctx)).resolves.toMatchObject({
+				success: true,
+				id: entityId,
+				already_absent: true,
+			});
+
+			// And - the whole point - the mirror was still cleared.
+			expect(db[storeName].deleteByEntityId).toHaveBeenCalledWith(entityId);
+			warn.mockRestore();
+		});
+
+		it(`records already_absent for a replayed ${label} delete`, async () => {
+			const warn = jest
+				.spyOn(console, 'warn')
+				.mockImplementation(() => undefined);
+			mockFetch(NOT_FOUND_BODY, 404);
+			const { ctx } = makeCtx();
+
+			await run(ctx);
+
+			// An operator can still distinguish "this call removed it" from "it was
+			// already gone", which is what a replay looks like.
+			expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+				already_absent: true,
+				mirror_evicted: true,
+			});
+			expect(mockLogEvent.mock.calls[0]?.[3]).toBe('completed');
+			warn.mockRestore();
+		});
+
+		/**
+		 * The distinction that keeps this from being a blanket 404 swallow. A route-missing
+		 * 404 means the plugin asked for a path that does not exist - a bug in the
+		 * request, not evidence that anything was deleted - and must never be reported as
+		 * a successful deletion.
+		 */
+		it(`does not treat a route-missing 404 as a deleted ${label}`, async () => {
+			mockFetch(ROUTE_MISSING_BODY, 404);
+			const { ctx, db } = makeCtx();
+
+			await expect(run(ctx)).rejects.toMatchObject({ status: 404 });
+
+			expect(db[storeName].deleteByEntityId).not.toHaveBeenCalled();
+			// No event either: nothing happened that an audit trail should record as a
+			// deletion.
+			expect(mockLogEvent).not.toHaveBeenCalled();
+		});
+	}
+
+	it('reports already_absent as false when the delete really removed something', async () => {
+		mockFetch({}, 200);
+		const { ctx } = makeCtx();
+
+		await expect(
+			Collaborators.remove(ctx, {
+				organization_id: ORG,
+				collaborator_id: COLLABORATOR,
+			}),
+		).resolves.toMatchObject({ already_absent: false });
+	});
+
+	/**
+	 * A 404 confirms absence; it does not excuse leaving the row behind. If the eviction
+	 * itself then fails, the caller must still be told - otherwise the replay path becomes
+	 * a way to silently keep personal data.
+	 */
+	it('still fails when a 404 delete cannot clear the mirror', async () => {
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		mockFetch(NOT_FOUND_BODY, 404);
+		const { ctx, db } = makeCtx();
+		db.collaborators.deleteByEntityId.mockRejectedValueOnce(
+			new Error('db down'),
+		);
+
+		await expect(
+			Collaborators.remove(ctx, {
+				organization_id: ORG,
+				collaborator_id: COLLABORATOR,
+			}),
+		).rejects.toBeInstanceOf(BugsnagMirrorEvictionError);
+
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			already_absent: true,
+			mirror_evicted: false,
+		});
+		expect(mockLogEvent.mock.calls[0]?.[3]).toBe('failed');
+		warn.mockRestore();
+		error.mockRestore();
+	});
+
+	/**
+	 * Every other error stays an error. Without this, "treat 404 as absence" could quietly
+	 * widen into "treat failures as success".
+	 */
+	it.each([
+		[500, { errors: ['boom'] }],
+		[403, { errors: ['Forbidden'] }],
+		[401, { errors: ['Unauthorized'] }],
+	])(
+		'propagates a %i rather than reporting a deletion',
+		async (status, body) => {
+			mockFetch(body, status);
+			const { ctx, db } = makeCtx();
+
+			await expect(
+				Collaborators.remove(ctx, {
+					organization_id: ORG,
+					collaborator_id: COLLABORATOR,
+				}),
+			).rejects.toMatchObject({ status });
+
+			expect(db.collaborators.deleteByEntityId).not.toHaveBeenCalled();
+		},
+	);
+
+	/**
+	 * The same 404 tolerance applies to every delete, including those that mirror nothing -
+	 * a replayed saved-search delete should report the search gone rather than fail. Swept
+	 * rather than asserted per operation, so an operation added later is covered.
+	 */
+	it('treats a 404 as absence on every delete operation', async () => {
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+
+		/**
+		 * Operations that use HTTP DELETE but are **not** deletions, so a 404 must stay an
+		 * error for them.
+		 *
+		 * `projects.regenerateApiKey` is the case, and an earlier version of this sweep
+		 * filtered on `method === 'DELETE'` and wrongly demanded absence-handling from it.
+		 * It rotates a key and returns the whole project; a 404 means the project is
+		 * missing, which is a genuine failure and must not be reported as
+		 * `{success: true}`. The HTTP verb is not what makes an operation a deletion.
+		 */
+		const DELETE_METHOD_BUT_NOT_A_DELETION = ['projects.regenerateApiKey'];
+
+		const deleteOps = OPERATIONS.filter(
+			([op, method]) =>
+				method === 'DELETE' && !DELETE_METHOD_BUT_NOT_A_DELETION.includes(op),
+		);
+
+		// Guards the exclusion list: if `regenerateApiKey` stopped using DELETE, the
+		// entry would be dead and this sweep would quietly narrow.
+		for (const op of DELETE_METHOD_BUT_NOT_A_DELETION) {
+			expect(OPERATIONS.find(([name]) => name === op)?.[1]).toBe('DELETE');
+		}
+
+		expect(deleteOps.length).toBeGreaterThanOrEqual(7);
+		for (const [op, , , run] of deleteOps) {
+			mockFetch(NOT_FOUND_BODY, 404);
+			const { ctx } = makeCtx();
+
+			const result = await run(ctx).catch((error: unknown) => {
+				throw new Error(
+					`${op} rejected a 404 instead of reporting absence: ${error}`,
+				);
+			});
+
+			expect(result).toMatchObject({ success: true, already_absent: true });
+		}
+		warn.mockRestore();
+	});
+
+	/**
+	 * The other half of that distinction: an operation that merely uses the DELETE verb
+	 * must still fail on a 404. Without this, "treat 404 as absence" could creep into
+	 * operations where absence is not the meaning.
+	 */
+
+	/**
+	 * The invariant a reviewer asked to have confirmed: a failing eviction must never
+	 * prevent the audit event.
+	 *
+	 * It holds for two independent reasons, and both are asserted here rather than
+	 * described, because "I checked" is not a durable guarantee:
+	 *
+	 * 1. A best-effort `evictEntity` cannot reject at all - it routes through `safely()`,
+	 *    which try/catches internally (`endpoints/persist.ts`).
+	 * 2. Even if it could, `deleteAndEvict` wraps every eviction and logs before
+	 *    rethrowing, so the event survives regardless.
+	 *
+	 * The second is what makes the first not worth relying on. These tests would catch a
+	 * regression in either.
+	 */
+	it.each([
+		[
+			'project',
+			'projects' as const,
+			(ctx: Ctx) => Projects.remove(ctx, { project_id: PROJECT }),
+			'bugsnag.projects.delete',
+		],
+		[
+			'team',
+			'teams' as const,
+			(ctx: Ctx) => Teams.remove(ctx, { organization_id: ORG, team_id: TEAM }),
+			'bugsnag.teams.delete',
+		],
+	])(
+		'still logs the %s delete when its best-effort eviction throws',
+		async (_label, storeName, run, event) => {
+			const warn = jest
+				.spyOn(console, 'warn')
+				.mockImplementation(() => undefined);
+			mockFetch({}, 200);
+			const { ctx, db } = makeCtx();
+			db[storeName].deleteByEntityId.mockRejectedValueOnce(
+				new Error('db down'),
+			);
+
+			// The call still succeeds: a stale row for these entities is untidy, not a
+			// disclosure.
+			await expect(run(ctx)).resolves.toMatchObject({ success: true });
+
+			// And the audit record is still written, as completed.
+			expect(mockLogEvent).toHaveBeenCalledTimes(1);
+			expect(mockLogEvent.mock.calls[0]?.[1]).toBe(event);
+			expect(mockLogEvent.mock.calls[0]?.[3]).toBe('completed');
+			warn.mockRestore();
+		},
+	);
+
+	/**
+	 * And the required case: the call fails, but the event is written **first** so a
+	 * deletion that did happen remotely is not lost from the audit trail.
+	 */
+	it('logs before rethrowing when a required eviction throws', async () => {
+		const error = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => undefined);
+		mockFetch({}, 200);
+		const { ctx, db } = makeCtx();
+		db.organizations.deleteByEntityId.mockRejectedValueOnce(
+			new Error('db down'),
+		);
+
+		await expect(
+			Organizations.remove(ctx, { organization_id: ORG }),
+		).rejects.toBeInstanceOf(BugsnagMirrorEvictionError);
+
+		expect(mockLogEvent).toHaveBeenCalledTimes(1);
+		expect(mockLogEvent.mock.calls[0]?.[2]).toMatchObject({
+			mirror_evicted: false,
+		});
+		expect(mockLogEvent.mock.calls[0]?.[3]).toBe('failed');
+		error.mockRestore();
+	});
+
+	it('still fails a key rotation when the project is missing', async () => {
+		mockFetch(NOT_FOUND_BODY, 404);
+		const { ctx } = makeCtx();
+
+		await expect(
+			Projects.regenerateApiKey(ctx, { project_id: PROJECT }),
+		).rejects.toMatchObject({ status: 404 });
+	});
+});
+
 describe('the plugin is honest about its scope', () => {
 	/**
 	 * The catalog lists 60 operations and all 60 are registered, plus `projects.get`,
@@ -2008,10 +2340,10 @@ describe('the plugin is honest about its scope', () => {
 	 * the code did not support, and `greptile.json` treats a description that disagrees
 	 * with the implementation as a P1.
 	 */
-	it('registers 61 endpoints covering the 60 catalog operations', () => {
+	it('registers the full surface, counted once and asserted everywhere', () => {
 		const registered = Object.keys(bugsnagEndpointMeta);
 
-		expect(registered).toHaveLength(61);
+		expect(registered).toHaveLength(EXPECTED_ENDPOINTS);
 		expect(registered).toContain('projects.get');
 	});
 

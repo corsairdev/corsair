@@ -2,19 +2,15 @@ module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
-	testMatch: [
-		'**/*.test.ts',
-		'**/tests/**/*.test.ts',
-		'**/plugins/**/*.test.ts',
-		'**/setup/**/*.test.ts',
-	],
+	// This package keeps its tests beside the code, so one pattern covers them. The
+	// `tests/`, `plugins/` and `setup/` patterns this was copied with matched no
+	// directory here.
+	testMatch: ['**/*.test.ts'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
 		'!**/node_modules/**',
 		'!**/dist/**',
-		'!jest.config.ts',
-		'!tests/**',
 	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 	transform: {
@@ -52,7 +48,13 @@ module.exports = {
 	// The live suite is opt-in: a default `jest` run in this package should not
 	// reach the network. CI passes the same exclusion on the command line, so this
 	// only changes what a local default run does. Matches `packages/confluence`.
-	testPathIgnorePatterns: ['/node_modules/', 'integration\.test\.ts'],
+	// The backslashes are doubled on purpose. These strings become regular
+	// expressions, and in a JS string literal a single backslash before a dot is a
+	// useless escape that collapses to a bare dot - which in a regex matches ANY
+	// character, so the pattern would also match something like `integrationXtestYts`.
+	// Doubling it survives the string literal and reaches the regex as an escaped
+	// literal dot, which is the narrow match intended here.
+	testPathIgnorePatterns: ['/node_modules/', 'integration\\.test\\.ts'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,

@@ -80,12 +80,35 @@ export const NON_IDEMPOTENT_OPERATIONS: ReadonlySet<string> = new Set([
 export const isNonIdempotent = (operation: string): boolean =>
 	NON_IDEMPOTENT_OPERATIONS.has(operation);
 
-/** Whether a 404 body says the route is missing rather than the resource. */
-export const isRouteMissing = (error: Error): boolean => {
+/**
+ * Whether a 404 body says the route is missing rather than the resource.
+ *
+ * Takes `unknown` rather than `Error` because the honest input is whatever a `catch` block
+ * received, and the `instanceof` check below is what narrows it. `Error` is assignable to
+ * `unknown`, so the handlers that pass a typed error still work - and a caller in a catch
+ * no longer needs a cast, which would have hidden the question of whether the value really
+ * is an Error.
+ */
+export const isRouteMissing = (error: unknown): boolean => {
 	if (!(error instanceof ApiError)) return false;
 	const body = error.body as { status?: number; error?: string } | undefined;
 	return body?.status === 404 && body?.error === 'Not Found';
 };
+
+/**
+ * Whether a 404 says the **resource** is absent, as opposed to the route being wrong.
+ *
+ * The counterpart to {@link isRouteMissing}, and it lives beside it because they are the
+ * same classification read in opposite directions - splitting them across files would
+ * invite a reader to wonder whether they agree.
+ *
+ * Used by the delete flow to decide that a record is genuinely gone. A route-missing 404
+ * returns `false` on purpose: that is a defect in the request rather than evidence anything
+ * was deleted, and reporting it as a successful deletion would be a lie that also strands
+ * the local mirror. See `endpoints/delete-flow.ts`.
+ */
+export const isResourceAbsent = (error: unknown): boolean =>
+	error instanceof ApiError && error.status === 404 && !isRouteMissing(error);
 
 /**
  * BugSnag's code for "that offset is too deep to answer".
@@ -99,12 +122,32 @@ export const isRouteMissing = (error: Error): boolean => {
 const PAGINATION_LIMIT_CODE = 60000;
 
 /** Whether a 422 says the requested page is too deep rather than the input malformed. */
-export const isPaginationLimit = (error: Error): boolean => {
+export const isPaginationLimit = (error: unknown): boolean => {
 	if (!(error instanceof ApiError)) return false;
 	if (error.status !== 422) return false;
 	const body = error.body as { code?: number } | undefined;
 	return body?.code === PAGINATION_LIMIT_CODE;
 };
+
+/**
+ * Whether a message-based fallback should even be consulted.
+ *
+ * Every handler below matches on an `ApiError` status first and falls back to sniffing the
+ * message, for transport-level failures that never reach a status. That fallback must not
+ * apply when a status **is** available, and the reason is specific rather than theoretical:
+ *
+ * - Corsair takes the **first** matching handler in declaration order
+ *   (`packages/corsair/core/errors/handler.ts:41`), and `NOT_FOUND_ERROR` is declared
+ *   before `SERVER_ERROR`.
+ * - `ApiError`'s message **embeds the response body**
+ *   (`packages/corsair/async-core/request.ts:323`).
+ *
+ * So a retryable 500 whose body happened to contain the words "not found" would be claimed
+ * by `NOT_FOUND_ERROR` and never retried - and the same trap exists for a 500 mentioning
+ * "unauthorized", "forbidden" or "too many requests". Gating each fallback on the absence
+ * of a status removes the whole class rather than the one instance.
+ */
+const hasNoStatus = (error: Error): boolean => !(error instanceof ApiError);
 
 export const errorHandlers = {
 	/**
@@ -116,7 +159,10 @@ export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error, context) => {
 			if (error instanceof ApiError && error.status === 429) return true;
-			return error.message.toLowerCase().includes('too many requests');
+			return (
+				hasNoStatus(error) &&
+				error.message.toLowerCase().includes('too many requests')
+			);
 		},
 		handler: async (error, context) => {
 			let retryAfterMs: number | undefined;
@@ -129,7 +175,10 @@ export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error, context) => {
 			if (error instanceof ApiError && error.status === 401) return true;
-			return error.message.toLowerCase().includes('unauthorized');
+			return (
+				hasNoStatus(error) &&
+				error.message.toLowerCase().includes('unauthorized')
+			);
 		},
 		handler: async (error, context) => {
 			console.warn(
@@ -146,7 +195,9 @@ export const errorHandlers = {
 	PERMISSION_ERROR: {
 		match: (error, context) => {
 			if (error instanceof ApiError && error.status === 403) return true;
-			return error.message.toLowerCase().includes('forbidden');
+			return (
+				hasNoStatus(error) && error.message.toLowerCase().includes('forbidden')
+			);
 		},
 		handler: async (error, context) => {
 			console.warn(
@@ -163,7 +214,9 @@ export const errorHandlers = {
 	NOT_FOUND_ERROR: {
 		match: (error, context) => {
 			if (error instanceof ApiError && error.status === 404) return true;
-			return error.message.toLowerCase().includes('not found');
+			return (
+				hasNoStatus(error) && error.message.toLowerCase().includes('not found')
+			);
 		},
 		handler: async (error, context) => {
 			if (isRouteMissing(error)) {

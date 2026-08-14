@@ -1,8 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BugsnagEndpoints } from '../index';
 import { BugsnagProjectEntity } from '../schema/database';
+import { deleteAndEvict } from './delete-flow';
 import { auditPayload } from './logging';
-import { cacheEntities, cacheEntity, evictEntity } from './persist';
+import { cacheEntities, cacheEntity } from './persist';
 import { bugsnagCall, compactBody, listParams, withQuery } from './shared';
 import type { BugsnagEndpointOutputs } from './types';
 
@@ -120,24 +121,21 @@ export const create: BugsnagEndpoints['projectsCreate'] = async (
  * privacy one. Contrast the collaborator and organization deletes, which do carry
  * personal data.
  */
-export const remove: BugsnagEndpoints['projectsDelete'] = async (
-	ctx,
-	input,
-) => {
-	await bugsnagCall<unknown>(ctx, `projects/${input.project_id}`, {
-		method: 'DELETE',
+export const remove: BugsnagEndpoints['projectsDelete'] = async (ctx, input) =>
+	await deleteAndEvict(ctx, {
+		path: `projects/${input.project_id}`,
+		event: 'bugsnag.projects.delete',
+		input,
+		identifierKeys: ['project_id'],
+		resultId: input.project_id,
+		mirror: {
+			store: ctx.db.projects,
+			entityId: input.project_id,
+			label: LABEL,
+			// Best-effort: a project carries no personal data of its own, so a stale row
+			// is untidy rather than a disclosure.
+		},
 	});
-
-	await evictEntity(ctx.db.projects, input.project_id, LABEL);
-
-	await logEventFromContext(
-		ctx,
-		'bugsnag.projects.delete',
-		auditPayload(input, ['project_id']),
-		'completed',
-	);
-	return { success: true, id: input.project_id };
-};
 
 /**
  * Regenerates a project's notifier API key.

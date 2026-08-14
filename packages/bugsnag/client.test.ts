@@ -31,6 +31,19 @@ let attempts = 0;
  * repeating the last once exhausted. The cast is the usual one for replacing a
  * global: the stub implements only the slice of `fetch` that `request` reads.
  */
+/**
+ * The real `fetch`, captured before any stub replaces it.
+ *
+ * Restored in `afterAll` so this file cannot leave a stub installed for whatever runs
+ * next. Jest gives each suite its own module registry but not its own globals, so a
+ * replaced `global.fetch` is a side effect on the environment rather than on this file.
+ */
+const originalFetch = global.fetch;
+
+afterAll(() => {
+	global.fetch = originalFetch;
+});
+
 function mockFetchSequence(responses: MockResponse[]) {
 	captured = undefined;
 	attempts = 0;

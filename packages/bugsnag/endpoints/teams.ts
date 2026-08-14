@@ -4,8 +4,9 @@ import {
 	BugsnagCollaboratorEntity,
 	BugsnagTeamEntity,
 } from '../schema/database';
+import { deleteAndEvict } from './delete-flow';
 import { auditPayload } from './logging';
-import { cacheEntities, cacheEntity, evictEntity } from './persist';
+import { cacheEntities, cacheEntity } from './persist';
 import { bugsnagCall, compactBody, listParams, withQuery } from './shared';
 import type { BugsnagEndpointOutputs } from './types';
 
@@ -100,23 +101,21 @@ export const get: BugsnagEndpoints['teamsGet'] = async (ctx, input) => {
  * and two counts - so a stale row is untidy rather than a disclosure. The people who
  * were on it are unaffected; only the grouping is removed.
  */
-export const remove: BugsnagEndpoints['teamsDelete'] = async (ctx, input) => {
-	await bugsnagCall<unknown>(
-		ctx,
-		`organizations/${input.organization_id}/teams/${input.team_id}`,
-		{ method: 'DELETE' },
-	);
-
-	await evictEntity(ctx.db.teams, input.team_id, LABEL);
-
-	await logEventFromContext(
-		ctx,
-		'bugsnag.teams.delete',
-		auditPayload(input, ['organization_id', 'team_id']),
-		'completed',
-	);
-	return { success: true, id: input.team_id };
-};
+export const remove: BugsnagEndpoints['teamsDelete'] = async (ctx, input) =>
+	await deleteAndEvict(ctx, {
+		path: `organizations/${input.organization_id}/teams/${input.team_id}`,
+		event: 'bugsnag.teams.delete',
+		input,
+		identifierKeys: ['organization_id', 'team_id'],
+		resultId: input.team_id,
+		mirror: {
+			store: ctx.db.teams,
+			entityId: input.team_id,
+			label: LABEL,
+			// Best-effort: a team is a name and two counts, so a stale row is untidy
+			// rather than a disclosure. The people who were on it are unaffected.
+		},
+	});
 
 /**
  * Adds collaborators to a team.

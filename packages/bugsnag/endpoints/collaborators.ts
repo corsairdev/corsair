@@ -4,8 +4,9 @@ import {
 	BugsnagCollaboratorEntity,
 	BugsnagProjectEntity,
 } from '../schema/database';
+import { deleteAndEvict } from './delete-flow';
 import { auditPayload } from './logging';
-import { cacheEntities, cacheEntity, evictEntity } from './persist';
+import { cacheEntities, cacheEntity } from './persist';
 import { bugsnagCall, compactBody, listParams, withQuery } from './shared';
 import type { BugsnagEndpointOutputs } from './types';
 
@@ -171,48 +172,30 @@ export const updatePermissions: BugsnagEndpoints['collaboratorsUpdatePermissions
  * would tell the caller someone's access is gone when their details are still sitting
  * in a queryable local table - which is exactly the promise a deletion makes.
  *
- * Ordering, as in `organizations.remove`: evict, then log with a status reflecting what
- * actually happened plus an explicit `mirror_evicted` flag, then rethrow. Logging
- * `'completed'` first would record a success that had not happened; propagating the
- * error first would lose the audit record of a removal that did happen remotely. The
- * failure is held in a container rather than tested for truthiness, because a thrown
- * value can legitimately be falsy and `if (error)` would swallow it here.
+ * The whole flow - including the reason a 404 must not abort before the eviction - lives
+ * in `endpoints/delete-flow.ts`. That indirection is deliberate: the ordering here is
+ * subtle enough that two call sites had drifted into slightly different versions of it,
+ * and a privacy guarantee should not depend on each of them getting it right.
  *
  * Not exercised live - the only collaborator on the recon account is its own admin.
  */
 export const remove: BugsnagEndpoints['collaboratorsDelete'] = async (
 	ctx,
 	input,
-) => {
-	await bugsnagCall<unknown>(
-		ctx,
-		`organizations/${input.organization_id}/collaborators/${input.collaborator_id}`,
-		{ method: 'DELETE' },
-	);
-
-	let evictionFailure: { error: unknown } | undefined;
-	try {
-		await evictEntity(ctx.db.collaborators, input.collaborator_id, LABEL, {
+) =>
+	await deleteAndEvict(ctx, {
+		path: `organizations/${input.organization_id}/collaborators/${input.collaborator_id}`,
+		event: 'bugsnag.collaborators.delete',
+		input,
+		identifierKeys: ['organization_id', 'collaborator_id'],
+		resultId: input.collaborator_id,
+		mirror: {
+			store: ctx.db.collaborators,
+			entityId: input.collaborator_id,
+			label: LABEL,
 			required: true,
-		});
-	} catch (error) {
-		evictionFailure = { error };
-	}
-	const evicted = evictionFailure === undefined;
-
-	await logEventFromContext(
-		ctx,
-		'bugsnag.collaborators.delete',
-		{
-			...auditPayload(input, ['organization_id', 'collaborator_id']),
-			mirror_evicted: evicted,
 		},
-		evicted ? 'completed' : 'failed',
-	);
-
-	if (evictionFailure) throw evictionFailure.error;
-	return { success: true, id: input.collaborator_id };
-};
+	});
 
 /** Lists the collaborators who can reach a project. */
 export const listOnProject: BugsnagEndpoints['collaboratorsListOnProject'] =

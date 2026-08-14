@@ -1,8 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BugsnagEndpoints } from '../index';
 import { BugsnagOrganizationEntity } from '../schema/database';
+import { deleteAndEvict } from './delete-flow';
 import { auditPayload } from './logging';
-import { cacheEntities, cacheEntity, evictEntity } from './persist';
+import { cacheEntities, cacheEntity } from './persist';
 import { bugsnagCall, listParams, withQuery } from './shared';
 import type { BugsnagEndpointOutputs } from './types';
 
@@ -78,43 +79,23 @@ export const get: BugsnagEndpoints['organizationsGet'] = async (ctx, input) => {
  * real email addresses queryable after the account they belong to has been deleted.
  * Reporting that as a plain success would be untrue in the way that matters.
  *
- * The ordering below is deliberate. The event is logged **after** the eviction, with a
- * status reflecting what actually happened and an explicit `mirror_evicted` flag, and
- * the eviction failure is rethrown afterwards. Logging `'completed'` before the
- * eviction would record a success that had not happened yet; letting the eviction
- * error propagate before logging would lose the audit record of a deletion that did
- * occur remotely. The error is held in a container rather than tested for truthiness,
- * because a thrown value may legitimately be falsy and `if (error)` would silently
- * swallow it on a privacy-critical path.
+ * The ordering, the 404-as-absence handling and the reasons for both live in
+ * `endpoints/delete-flow.ts`, shared with the collaborator delete.
  */
 export const remove: BugsnagEndpoints['organizationsDelete'] = async (
 	ctx,
 	input,
-) => {
-	await bugsnagCall<unknown>(ctx, `organizations/${input.organization_id}`, {
-		method: 'DELETE',
-	});
-
-	let evictionFailure: { error: unknown } | undefined;
-	try {
-		await evictEntity(ctx.db.organizations, input.organization_id, LABEL, {
+) =>
+	await deleteAndEvict(ctx, {
+		path: `organizations/${input.organization_id}`,
+		event: 'bugsnag.organizations.delete',
+		input,
+		identifierKeys: ['organization_id'],
+		resultId: input.organization_id,
+		mirror: {
+			store: ctx.db.organizations,
+			entityId: input.organization_id,
+			label: LABEL,
 			required: true,
-		});
-	} catch (error) {
-		evictionFailure = { error };
-	}
-	const evicted = evictionFailure === undefined;
-
-	await logEventFromContext(
-		ctx,
-		'bugsnag.organizations.delete',
-		{
-			...auditPayload(input, ['organization_id']),
-			mirror_evicted: evicted,
 		},
-		evicted ? 'completed' : 'failed',
-	);
-
-	if (evictionFailure) throw evictionFailure.error;
-	return { success: true, id: input.organization_id };
-};
+	});

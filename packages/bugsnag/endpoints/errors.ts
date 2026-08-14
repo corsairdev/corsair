@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BugsnagEndpoints } from '../index';
+import { deleteAndEvict } from './delete-flow';
 import { auditPayload, countOf } from './logging';
 import { bugsnagCall, compactBody, listParams, withQuery } from './shared';
 import type { BugsnagEndpointOutputs } from './types';
@@ -142,16 +143,14 @@ export const bulkUpdate: BugsnagEndpoints['errorsBulkUpdate'] = async (
 export const deleteAll: BugsnagEndpoints['errorsDeleteAll'] = async (
 	ctx,
 	input,
-) => {
-	await bugsnagCall<unknown>(ctx, `projects/${input.project_id}/errors`, {
-		method: 'DELETE',
+) =>
+	await deleteAndEvict(ctx, {
+		path: `projects/${input.project_id}/errors`,
+		event: 'bugsnag.errors.deleteAll',
+		input,
+		identifierKeys: ['project_id'],
+		resultId: input.project_id,
+		// No mirror: errors and events are never cached, so there is nothing to evict.
+		// The project row survives and stays correct - the project still exists, it is
+		// simply empty - though its open_error_count is stale until the next read.
 	});
-
-	await logEventFromContext(
-		ctx,
-		'bugsnag.errors.deleteAll',
-		auditPayload(input, ['project_id']),
-		'completed',
-	);
-	return { success: true, id: input.project_id };
-};

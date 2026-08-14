@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BugsnagEndpoints } from '../index';
+import { deleteAndEvict } from './delete-flow';
 import { auditPayload, countOf } from './logging';
 import { bugsnagCall, listParams, withQuery } from './shared';
 import type { BugsnagEndpointOutputs } from './types';
@@ -158,21 +159,15 @@ export const getConfigured: BugsnagEndpoints['integrationsGetConfigured'] =
  * Nothing is evicted because configured integrations are not mirrored.
  */
 export const deleteConfigured: BugsnagEndpoints['integrationsDeleteConfigured'] =
-	async (ctx, input) => {
-		await bugsnagCall<unknown>(
-			ctx,
-			`configured_integrations/${input.integration_id}`,
-			{ method: 'DELETE' },
-		);
-
-		await logEventFromContext(
-			ctx,
-			'bugsnag.integrations.deleteConfigured',
-			auditPayload(input, ['integration_id']),
-			'completed',
-		);
-		return { success: true, id: input.integration_id };
-	};
+	async (ctx, input) =>
+		await deleteAndEvict(ctx, {
+			path: `configured_integrations/${input.integration_id}`,
+			event: 'bugsnag.integrations.deleteConfigured',
+			input,
+			identifierKeys: ['integration_id'],
+			resultId: input.integration_id,
+			// No mirror: a configured integration holds a third-party credential.
+		});
 
 /**
  * Tests a configuration **before** an integration is created.

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { B, Id, N, S } from './primitives';
 
 /**
  * Locally persisted BugSnag entities.
@@ -21,14 +22,6 @@ import { z } from 'zod';
  * plan and on which features an organization has enabled, so a stricter schema
  * would reject valid rows, and a rejected row is a lost row.
  */
-
-/** Nullable-optional helpers - BugSnag nulls unset fields rather than omitting them. */
-const S = z.string().nullable().optional();
-const N = z.number().nullable().optional();
-const B = z.boolean().nullable().optional();
-
-/** Ids are 24-character hex strings throughout. */
-const Id = z.string();
 
 /**
  * The `creator` stub embedded on an organization.

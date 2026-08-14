@@ -127,13 +127,49 @@ const encode = (value: string) => encodeURIComponent(value);
  */
 function comparisonEntries(
 	comparison: BugsnagFilterComparison,
-): [string, unknown][] {
+): [string, string][] {
 	const rest = Object.keys(comparison)
 		.filter((key) => key !== 'type' && key !== 'value')
 		.sort();
 	return (['type', 'value', ...rest] as const)
 		.filter((key) => comparison[key] !== undefined)
-		.map((key) => [key, comparison[key]]);
+		.map((key) => [key, serialiseComparisonValue(key, comparison[key])]);
+}
+
+/**
+ * Renders one comparison value, refusing the shapes `String()` would mangle.
+ *
+ * This matters because `String()` produces something plausible for values that cannot be
+ * expressed in a query string, and the API would then filter on the wrong thing while
+ * answering 200:
+ *
+ * ```
+ * String(null)        -> "null"     filters for the literal text "null"
+ * String([1, 2])      -> "1,2"      filters for the literal text "1,2"
+ * String({a: 1})      -> "[object Object]"
+ * ```
+ *
+ * A filter that silently means something else is the worst outcome on this API - an
+ * unrecognised *field* is already ignored without complaint, so a caller has little chance
+ * of noticing a value that was quietly rewritten. Failing loudly is the only honest
+ * option.
+ *
+ * `null` is rejected rather than dropped: BugSnag expresses emptiness through the
+ * comparison `type` rather than a null value, so a caller passing `null` has misunderstood
+ * the shape and should be told, not have it silently omitted.
+ */
+function serialiseComparisonValue(key: string, value: unknown): string {
+	if (typeof value === 'string') return value;
+	if (typeof value === 'number' || typeof value === 'boolean') {
+		return String(value);
+	}
+	throw new TypeError(
+		`BugSnag filter comparison '${key}' must be a string, number or boolean; ` +
+			`received ${value === null ? 'null' : Array.isArray(value) ? 'an array' : typeof value}. ` +
+			`A query string cannot express that shape, and String() would have silently ` +
+			`filtered on its text form instead. Use several comparisons for several values, ` +
+			`and express emptiness with the comparison type rather than a null value.`,
+	);
 }
 
 /**

@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { B, Id, N, S, StrArray, U, UnknownArray } from './primitives';
 
 /**
  * Response shapes that are returned but **not** mirrored locally.
@@ -31,14 +32,6 @@ import { z } from 'zod';
  * Docs: https://docs.bugsnag.com/api/data-access/
  */
 
-/** Nullable-optional helpers, matching `schema/database.ts`. */
-const S = z.string().nullable().optional();
-const N = z.number().nullable().optional();
-const B = z.boolean().nullable().optional();
-const U = z.unknown().optional();
-const Id = z.string();
-const StrArray = z.array(z.string()).nullable().optional();
-
 /* -------------------------------------------------------------------------- */
 /*                                   Errors                                   */
 /* -------------------------------------------------------------------------- */
@@ -70,7 +63,7 @@ export const BugsnagError = z
 		last_seen_unfiltered: S,
 		status: S,
 		created_issue: U,
-		linked_issues: z.array(z.unknown()).nullable().optional(),
+		linked_issues: UnknownArray,
 		reopen_rules: U,
 		assigned_collaborator_id: S,
 		assigned_team_id: S,
@@ -83,7 +76,7 @@ export const BugsnagError = z
 		project_url: S,
 		discarded: B,
 		trend: U,
-		introduced_in_releases: z.array(z.unknown()).nullable().optional(),
+		introduced_in_releases: UnknownArray,
 	})
 	.loose();
 export type BugsnagError = z.infer<typeof BugsnagError>;
@@ -130,19 +123,19 @@ export const BugsnagEvent = z
 		is_full_report: B,
 		error_id: S,
 		received_at: S,
-		exceptions: z.array(z.unknown()).nullable().optional(),
+		exceptions: UnknownArray,
 		severity: S,
 		context: S,
 		unhandled: B,
 		app: U,
 		// Present only on a full report.
-		threads: z.array(z.unknown()).nullable().optional(),
+		threads: UnknownArray,
 		metaData: U,
 		request: U,
 		device: U,
 		user: U,
-		breadcrumbs: z.array(z.unknown()).nullable().optional(),
-		feature_flags: z.array(z.unknown()).nullable().optional(),
+		breadcrumbs: UnknownArray,
+		feature_flags: UnknownArray,
 		correlation: U,
 		session: U,
 	})
@@ -437,7 +430,7 @@ export const BugsnagIntegrationTestResult = z
 	.object({
 		success: B,
 		message: S,
-		errors: z.array(z.unknown()).nullable().optional(),
+		errors: UnknownArray,
 	})
 	.loose();
 export type BugsnagIntegrationTestResult = z.infer<
@@ -464,7 +457,7 @@ export const BugsnagFeatureFlag = z
 		active: B,
 		first_seen: S,
 		last_seen: S,
-		variants: z.array(z.unknown()).nullable().optional(),
+		variants: UnknownArray,
 		variant_summary: U,
 	})
 	.loose();
@@ -563,7 +556,7 @@ export type BugsnagProjectAccessCount = z.infer<
 export const BugsnagNetworkEndpointGrouping = z
 	.object({
 		project_id: S,
-		endpoints: z.array(z.unknown()).nullable().optional(),
+		endpoints: UnknownArray,
 	})
 	.loose();
 export type BugsnagNetworkEndpointGrouping = z.infer<
