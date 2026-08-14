@@ -55,8 +55,6 @@ describe('verifyGitlabWebhookSignature', () => {
 	});
 
 	it('should return invalid for a same-length token that differs', () => {
-		// Exercises the timingSafeEqual compare itself — 'not-the-secret' above is
-		// short enough that it never gets past the length guard.
 		const sameLength = 'my-super-secret-toXen';
 		expect(sameLength).toHaveLength(secret.length);
 		const result = verifyGitlabWebhookSignature(
@@ -97,8 +95,6 @@ describe('verifyGitlabWebhookSignature', () => {
 	});
 
 	it('should handle a multi-byte secret without throwing', () => {
-		// 'sécret' is 6 chars but 7 bytes: a char-length guard would let this
-		// through to timingSafeEqual, which throws on unequal buffer lengths.
 		const multiByte = 'sécret';
 		expect(
 			verifyGitlabWebhookSignature(

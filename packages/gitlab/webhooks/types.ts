@@ -1,10 +1,24 @@
-import { timingSafeEqual } from 'node:crypto';
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
 import { z } from 'zod';
+
+// Mixer only — not an auth key. HMAC both sides so timingSafeEqual always
+// sees 32-byte digests and never short-circuits on the secret's length.
+const TOKEN_COMPARE_KEY = Buffer.from('corsair-gitlab-webhook-token-v1');
+
+function tokensMatch(token: string, secret: string): boolean {
+	const tokenDigest = createHmac('sha256', TOKEN_COMPARE_KEY)
+		.update(token, 'utf8')
+		.digest();
+	const secretDigest = createHmac('sha256', TOKEN_COMPARE_KEY)
+		.update(secret, 'utf8')
+		.digest();
+	return timingSafeEqual(tokenDigest, secretDigest);
+}
 
 // ============================================================================
 // Base webhook payload
@@ -45,17 +59,7 @@ export function verifyGitlabWebhookSignature(
 		return { valid: false, error: 'Missing X-Gitlab-Token header' };
 	}
 
-	// Constant-time compare so response timing cannot leak the configured secret
-	// byte-by-byte. timingSafeEqual throws on unequal buffer lengths, hence the
-	// byte-length guard first — and it reuses the same error so a mismatch never
-	// reveals the secret's length.
-	const tokenBuffer = Buffer.from(token);
-	const secretBuffer = Buffer.from(secret);
-
-	if (
-		tokenBuffer.length !== secretBuffer.length ||
-		!timingSafeEqual(tokenBuffer, secretBuffer)
-	) {
+	if (!tokensMatch(token, secret)) {
 		return {
 			valid: false,
 			error: 'X-Gitlab-Token does not match configured secret',
