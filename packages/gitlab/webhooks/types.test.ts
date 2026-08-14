@@ -85,6 +85,17 @@ describe('verifyGitlabWebhookSignature', () => {
 		expect(result).toEqual({ valid: true });
 	});
 
+	it('should reject a repeated token header when the first value is wrong', () => {
+		const result = verifyGitlabWebhookSignature(
+			requestWith({ 'x-gitlab-token': ['wrong', secret] }),
+			secret,
+		);
+		expect(result).toEqual({
+			valid: false,
+			error: 'X-Gitlab-Token does not match configured secret',
+		});
+	});
+
 	it('should handle a multi-byte secret without throwing', () => {
 		// 'sécret' is 6 chars but 7 bytes: a char-length guard would let this
 		// through to timingSafeEqual, which throws on unequal buffer lengths.
