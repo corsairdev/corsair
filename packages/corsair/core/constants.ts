@@ -108,6 +108,7 @@ export const BaseProviders = [
 	'reddit',
 	'resend',
 	'retailed',
+	'salesforce',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -235,6 +236,7 @@ export const ProviderDisplayNames = {
 	reddit: 'Reddit',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	salesforce: 'Salesforce',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -369,6 +371,7 @@ export type AllProviders =
 	| 'reddit'
 	| 'resend'
 	| 'retailed'
+	| 'salesforce'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
