@@ -22,15 +22,19 @@ export const url_verification: InstagramWebhooks['url_verification'] = {
 		}
 
 		const expectedVerifyToken = ctx.options.webhookVerifyToken;
-		const a = Buffer.from(challengeRequest.verifyToken || '');
-const b = Buffer.from(expectedVerifyToken || '');
-if (!expectedVerifyToken || a.length !== b.length || !timingSafeEqual(a, b)) {
-			return {
-				success: false,
-				error: 'Invalid verification token',
-			};
-		}
+		const a = Buffer.from(challengeRequest.verifyToken || ''); 
+    const b = Buffer.from(expectedVerifyToken || '');
 
+    if (
+        !expectedVerifyToken ||
+        a.length !== b.length ||
+        !timingSafeEqual(a, b)
+    ) {
+        return {
+      success: false,
+      error: 'Invalid verification token',
+    };
+  }
 		const event = InstagramUrlVerificationEventSchema.parse({
 			type: 'url_verification',
 			challenge: challengeRequest.challenge,
