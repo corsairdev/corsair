@@ -2236,12 +2236,6 @@ describe('a replayed delete still evicts the mirror', () => {
 	});
 
 	/**
-	 * The other half of that distinction: an operation that merely uses the DELETE verb
-	 * must still fail on a 404. Without this, "treat 404 as absence" could creep into
-	 * operations where absence is not the meaning.
-	 */
-
-	/**
 	 * The invariant a reviewer asked to have confirmed: a failing eviction must never
 	 * prevent the audit event.
 	 *
@@ -2319,6 +2313,11 @@ describe('a replayed delete still evicts the mirror', () => {
 		error.mockRestore();
 	});
 
+	/**
+	 * The other half of that distinction: an operation that merely uses the DELETE verb
+	 * must still fail on a 404. Without this, "treat 404 as absence" could creep into
+	 * operations where absence is not the meaning.
+	 */
 	it('still fails a key rotation when the project is missing', async () => {
 		mockFetch(NOT_FOUND_BODY, 404);
 		const { ctx } = makeCtx();
@@ -2326,6 +2325,196 @@ describe('a replayed delete still evicts the mirror', () => {
 		await expect(
 			Projects.regenerateApiKey(ctx, { project_id: PROJECT }),
 		).rejects.toMatchObject({ status: 404 });
+	});
+});
+
+describe('no message-matching handler claims an error that has a status', () => {
+	/**
+	 * The property the `hasNoStatus` comment asserts, tested rather than trusted.
+	 *
+	 * Every handler that sniffs the message was supposed to be gated on the error having
+	 * no status. Four were; `NETWORK_ERROR` was missed, and the comment claimed the whole
+	 * class was covered while it was not. A sweep is the only version of this that cannot
+	 * drift - it covers a handler added later without anyone remembering to extend it.
+	 *
+	 * Corsair takes the first matching handler in declaration order
+	 * (`packages/corsair/core/errors/handler.ts:41`), and `ApiError`'s message embeds the
+	 * response body, so an unlucky body is all it takes.
+	 */
+	const apiError = (status: number, body: unknown, message: string) =>
+		Object.assign(new ApiError({} as never, {} as never, message), {
+			status,
+			body,
+		});
+
+	/** The words each message-matching handler looks for. */
+	const TRIGGER_WORDS = [
+		'too many requests',
+		'unauthorized',
+		'forbidden',
+		'not found',
+		'network',
+		'connection',
+		'econnrefused',
+		'enotfound',
+		'etimedout',
+		'fetch failed',
+	];
+
+	/**
+	 * Statuses no status-matching handler claims, so an ungated message matcher would be
+	 * reached. 402 is the realistic one - a plan limit - and retrying it is pointless.
+	 */
+	const UNCLAIMED_STATUSES = [402, 405, 409, 410, 451];
+
+	/** Resolves an error to the handler name that would claim it, as Corsair does. */
+	const matchingHandler = (error: Error): string | undefined => {
+		const context = { operation: 'errors.list' } as never;
+		return Object.keys(errorHandlers).find((name) =>
+			(
+				errorHandlers[name as keyof typeof errorHandlers] as {
+					match: (e: Error, c: never) => boolean;
+				}
+			).match(error, context),
+		);
+	};
+
+	it.each(UNCLAIMED_STATUSES)(
+		'sends a %i to DEFAULT however its body reads',
+		(status) => {
+			for (const word of TRIGGER_WORDS) {
+				const error = apiError(
+					status,
+					{ errors: [`something about ${word}`] },
+					`Generic Error: status: ${status}; body: {"errors":["something about ${word}"]}`,
+				);
+
+				const handler = matchingHandler(error);
+				if (handler !== 'DEFAULT') {
+					throw new Error(
+						`a ${status} whose body mentions "${word}" was claimed by ${handler} ` +
+							`on the strength of its message; only DEFAULT should take it`,
+					);
+				}
+			}
+		},
+	);
+
+	/**
+	 * The specific case that was broken: an unclaimed status mentioning a network word was
+	 * treated as a transport failure and retried.
+	 */
+	it('does not treat a 402 mentioning a connection as a network error', () => {
+		const error = apiError(
+			402,
+			{ errors: ['Upgrade required to use this connection'] },
+			'Generic Error: status: 402; body: {"errors":["Upgrade required to use this connection"]}',
+		);
+
+		expect(matchingHandler(error)).toBe('DEFAULT');
+		expect(errorHandlers.NETWORK_ERROR.match(error, {} as never)).toBe(false);
+	});
+
+	/**
+	 * And a genuine transport failure - no status at all - still reaches NETWORK_ERROR, so
+	 * the gating did not simply disable it.
+	 */
+	it('still matches a statusless transport failure', () => {
+		for (const message of [
+			'fetch failed',
+			'ECONNREFUSED 127.0.0.1:443',
+			'network timeout',
+		]) {
+			expect(
+				errorHandlers.NETWORK_ERROR.match(new Error(message), {} as never),
+			).toBe(true);
+		}
+	});
+
+	it('still routes each status to its own handler', () => {
+		// The gating must not have broken the status-based matching it sits alongside.
+		const cases: Array<[number, string]> = [
+			[429, 'RATE_LIMIT_ERROR'],
+			[401, 'AUTH_ERROR'],
+			[403, 'PERMISSION_ERROR'],
+			[404, 'NOT_FOUND_ERROR'],
+			[400, 'VALIDATION_ERROR'],
+			[422, 'VALIDATION_ERROR'],
+			[500, 'SERVER_ERROR'],
+			[503, 'SERVER_ERROR'],
+		];
+
+		for (const [status, expected] of cases) {
+			expect(matchingHandler(apiError(status, { errors: ['x'] }, 'boom'))).toBe(
+				expected,
+			);
+		}
+	});
+});
+
+describe('filter values that a query string cannot express', () => {
+	/**
+	 * `NaN` and `Infinity` are numbers, so an earlier version of the guard let them through
+	 * and `String()` rendered them as the text `"NaN"` and `"Infinity"` - which the API
+	 * would have matched literally. Exactly the silent corruption the guard exists to stop,
+	 * one `typeof` check away from being missed.
+	 */
+	it.each([
+		['NaN', Number.NaN],
+		['Infinity', Number.POSITIVE_INFINITY],
+		['-Infinity', Number.NEGATIVE_INFINITY],
+	])('rejects %s rather than filtering on its text form', (_label, value) => {
+		expect(() =>
+			buildQuery({}, { 'error.status': { type: 'eq', value } }),
+		).toThrow(TypeError);
+	});
+
+	it('names the problem as the number rather than as the type', () => {
+		// "must be a number; received number" would be baffling - the caller did pass a
+		// number, and which number is the point.
+		expect(() =>
+			buildQuery({}, { 'error.status': { type: 'eq', value: Number.NaN } }),
+		).toThrow(/NaN/);
+		expect(() =>
+			buildQuery({}, { x: { type: 'eq', value: Number.POSITIVE_INFINITY } }),
+		).toThrow(/non-finite number/);
+	});
+
+	it.each([
+		['null', null],
+		['an array', ['a', 'b']],
+		['an object', { nested: true }],
+	])('still rejects %s', (_label, value) => {
+		expect(() =>
+			buildQuery({}, { 'error.status': { type: 'eq', value } }),
+		).toThrow(TypeError);
+	});
+
+	it('still accepts the scalars the API can express', () => {
+		expect(
+			decodeURIComponent(buildQuery({}, { a: { type: 'eq', value: 'open' } })),
+		).toContain('=open');
+		expect(
+			decodeURIComponent(buildQuery({}, { a: { type: 'eq', value: 0 } })),
+		).toContain('=0');
+		expect(
+			decodeURIComponent(buildQuery({}, { a: { type: 'eq', value: -1.5 } })),
+		).toContain('=-1.5');
+		expect(
+			decodeURIComponent(buildQuery({}, { a: { type: 'eq', value: false } })),
+		).toContain('=false');
+	});
+
+	/**
+	 * Zero and `false` are the values a truthiness check would have dropped, so they are
+	 * asserted explicitly - a filter silently losing `value: 0` would be the same class of
+	 * bug in a different place.
+	 */
+	it('does not confuse a falsy value with an absent one', () => {
+		const zero = decodeURIComponent(
+			buildQuery({}, { a: { type: 'eq', value: 0 } }),
+		);
+		expect(zero).toBe('?filters[a][][type]=eq&filters[a][][value]=0');
 	});
 });
 

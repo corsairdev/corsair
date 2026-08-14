@@ -144,8 +144,14 @@ export const isPaginationLimit = (error: unknown): boolean => {
  *
  * So a retryable 500 whose body happened to contain the words "not found" would be claimed
  * by `NOT_FOUND_ERROR` and never retried - and the same trap exists for a 500 mentioning
- * "unauthorized", "forbidden" or "too many requests". Gating each fallback on the absence
- * of a status removes the whole class rather than the one instance.
+ * "unauthorized", "forbidden" or "too many requests".
+ *
+ * **Every** message-matching handler is gated on this: `RATE_LIMIT_ERROR`, `AUTH_ERROR`,
+ * `PERMISSION_ERROR`, `NOT_FOUND_ERROR` and `NETWORK_ERROR`. The last of those was missed
+ * when the others were fixed, and the earlier version of this comment claimed the class was
+ * covered while it was not - so `endpoints.test.ts` now asserts the property directly
+ * rather than trusting the claim: no `ApiError` bearing a status may be matched by a
+ * handler on the strength of its message alone.
  */
 const hasNoStatus = (error: Error): boolean => !(error instanceof ApiError);
 
@@ -276,8 +282,22 @@ export const errorHandlers = {
 			return { maxRetries: isNonIdempotent(context.operation) ? 0 : 3 };
 		},
 	},
+	/**
+	 * A transport failure, which by definition carries no HTTP status - if a status came
+	 * back, the network worked.
+	 *
+	 * So this is gated on `hasNoStatus` like the others. It was the one member of the
+	 * class left ungated when the rest were fixed, and it matches on message alone, which
+	 * makes it the widest of them: it is declared after `VALIDATION_ERROR` and
+	 * `SERVER_ERROR`, so the common statuses are already claimed, but an `ApiError` with a
+	 * status none of them handles - a 402, 405 or 409 whose body happened to mention
+	 * "connection" - would have been treated as a transport failure and **retried**.
+	 * Retrying a 402 is pointless, and the comment above claimed the whole class was
+	 * covered while this one was not.
+	 */
 	NETWORK_ERROR: {
 		match: (error, context) => {
+			if (!hasNoStatus(error)) return false;
 			const message = error.message.toLowerCase();
 			return (
 				message.includes('network') ||

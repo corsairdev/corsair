@@ -160,16 +160,32 @@ function comparisonEntries(
  */
 function serialiseComparisonValue(key: string, value: unknown): string {
 	if (typeof value === 'string') return value;
-	if (typeof value === 'number' || typeof value === 'boolean') {
-		return String(value);
-	}
+	if (typeof value === 'boolean') return String(value);
+	// `Number.isFinite` rather than `typeof value === 'number'`, because `NaN`,
+	// `Infinity` and `-Infinity` are all numbers and `String()` renders them as the
+	// text `"NaN"` and `"Infinity"`. Those would be sent as filter values and matched
+	// literally - the same silent-corruption failure this function exists to prevent,
+	// which an earlier version of it let through.
+	if (Number.isFinite(value)) return String(value);
 	throw new TypeError(
-		`BugSnag filter comparison '${key}' must be a string, number or boolean; ` +
-			`received ${value === null ? 'null' : Array.isArray(value) ? 'an array' : typeof value}. ` +
-			`A query string cannot express that shape, and String() would have silently ` +
-			`filtered on its text form instead. Use several comparisons for several values, ` +
-			`and express emptiness with the comparison type rather than a null value.`,
+		`BugSnag filter comparison '${key}' must be a string, a boolean or a finite ` +
+			`number; received ${describeRejectedValue(value)}. A query string cannot ` +
+			`express that shape, and String() would have silently filtered on its text ` +
+			`form instead. Use several comparisons for several values, and express ` +
+			`emptiness with the comparison type rather than a null value.`,
 	);
+}
+
+/** Names a rejected value precisely enough to be actionable, without printing it. */
+function describeRejectedValue(value: unknown): string {
+	if (value === null) return 'null';
+	if (Array.isArray(value)) return 'an array';
+	if (typeof value === 'number') {
+		// Distinguished because "received number" would be baffling when the caller did
+		// pass a number - the problem is which number.
+		return Number.isNaN(value) ? 'NaN' : 'a non-finite number';
+	}
+	return typeof value;
 }
 
 /**
