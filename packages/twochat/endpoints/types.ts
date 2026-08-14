@@ -4,27 +4,37 @@ import { z } from 'zod';
 // Shared sub-schemas
 // ─────────────────────────────────────────────────────────────────────────────
 
+const contactDetailType = z
+	.enum(['E', 'A', 'PH', 'WAPH'])
+	.describe(
+		'Contact detail type: E=Email, A=Address, PH=Phone, WAPH=WhatsApp phone',
+	);
+
+const contactDetailValue = z
+	.string()
+	.describe('The contact detail value (email, phone number, or address)');
+
+// Create returns unix seconds (and updated_at: 0); list returns ISO strings.
+const contactDetailTimestamp = z.union([z.string(), z.number()]).optional();
+
+export const ContactDetailInputSchema = z.object({
+	type: contactDetailType,
+	value: contactDetailValue,
+});
+
 export const ContactDetailSchema = z.object({
-	type: z
-		.enum(['E', 'A', 'PH', 'WAPH'])
-		.describe(
-			'Contact detail type: E=Email, A=Address, PH=Phone, WAPH=WhatsApp phone',
-		),
-	value: z
-		.string()
-		.describe('The contact detail value (email, phone number, or address)'),
+	type: contactDetailType,
+	value: contactDetailValue,
 	id: z
 		.number()
 		.optional()
 		.describe('Unique numeric ID for the contact detail'),
-	created_at: z
-		.union([z.string(), z.number()])
-		.optional()
-		.describe('ISO timestamp or unix seconds when the contact detail was created'),
-	updated_at: z
-		.union([z.string(), z.number()])
-		.optional()
-		.describe('ISO timestamp or unix seconds when the contact detail was updated'),
+	created_at: contactDetailTimestamp.describe(
+		'ISO timestamp or unix seconds when the contact detail was created',
+	),
+	updated_at: contactDetailTimestamp.describe(
+		'ISO timestamp or unix seconds when the contact detail was updated',
+	),
 });
 
 export type ContactDetail = z.infer<typeof ContactDetailSchema>;
@@ -78,7 +88,7 @@ export const CreateContactInputSchema = z.object({
 			'UUID of a WhatsApp channel — if provided the contact is also created on that WhatsApp account',
 		),
 	contact_details: z
-		.array(ContactDetailSchema)
+		.array(ContactDetailInputSchema)
 		.min(1)
 		.describe(
 			'At least one contact detail (email, phone, or address). Required.',
