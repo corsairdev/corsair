@@ -6,7 +6,7 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return msg.includes('rate_limited') || msg.includes('too many requests');
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
