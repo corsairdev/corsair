@@ -23,9 +23,11 @@ export const getQuota: GoogleDriveEndpoints['storageGetQuota'] = async (
 		},
 	);
 
-	if (!result.storageQuota) {
+	const quota = result.storageQuota;
+	if (!quota || Object.keys(quota).length === 0) {
 		throw new GoogleDriveAPIError(
 			'Google Drive about.get returned no storageQuota',
+			502,
 		);
 	}
 
@@ -35,5 +37,5 @@ export const getQuota: GoogleDriveEndpoints['storageGetQuota'] = async (
 		{ ...input },
 		'completed',
 	);
-	return result.storageQuota;
+	return quota;
 };
