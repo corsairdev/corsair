@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
 /**
@@ -188,6 +189,13 @@ export const errorHandlers = {
 	 */
 	CONFIGURATION_ERROR: {
 		match: (error) => {
+			// The client raises ActiveCampaignAPIError with a code; the shared
+			// account resolver raises the core's AuthMissingError. Both mean the
+			// integration is misconfigured rather than that the API failed, and
+			// neither becomes valid on a retry.
+			if (error instanceof AuthMissingError) {
+				return true;
+			}
 			const code = (error as { code?: string }).code;
 			return (
 				code === 'MISSING_API_TOKEN' ||

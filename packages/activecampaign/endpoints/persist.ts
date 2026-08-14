@@ -37,9 +37,11 @@ type Store = {
  * Kept separate from {@link Store} so the common helpers do not require it.
  */
 type ChildStore = Store & {
-	search?(options: {
-		data: Record<string, unknown>;
-	}): Promise<Array<{ entity_id?: string } | undefined>>;
+	// `options` is deliberately `never` for the same reason `upsertByEntityId`
+	// takes `never` above: the real store types this against its own entity
+	// schema, and a wider parameter here would make no concrete store
+	// assignable. The filter is built and cast at the call site below.
+	search?(options: never): Promise<Array<{ entity_id?: string } | undefined>>;
 };
 
 /**
@@ -152,7 +154,9 @@ export async function evictChildren(
 	}
 
 	try {
-		const rows = await store.search({ data: { [foreignKey]: parentId } });
+		const rows = await store.search({
+			data: { [foreignKey]: parentId },
+		} as never);
 		if (!Array.isArray(rows) || rows.length === 0) {
 			return;
 		}

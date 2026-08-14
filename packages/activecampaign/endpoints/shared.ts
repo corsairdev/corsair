@@ -1,3 +1,5 @@
+import { AuthMissingError } from 'corsair/core';
+
 /**
  * Strips keys whose value is `undefined`.
  *
@@ -59,4 +61,35 @@ export function buildPaginationQuery(input: {
 			? undefined
 			: Math.min(Math.max(input.limit, 1), AC_PAGE_SIZE_MAX);
 	return compactQuery({ limit, offset: input.offset });
+}
+
+/**
+ * Resolves the account slug - the second half of the ActiveCampaign
+ * credential.
+ *
+ * Declared once here rather than per endpoint file. It raises rather than
+ * returning an empty string, because an empty slug would otherwise be
+ * interpolated into the base URL and the failure would surface as a confusing
+ * transport error against `https://.api-us1.com` instead of as the missing
+ * credential it actually is.
+ *
+ * `AuthMissingError` is the core's own signal for this, so the runtime can
+ * tell a configuration gap apart from an API failure.
+ */
+export async function resolveAccount(ctx: {
+	options?: { account?: string };
+	keys?: { get_account?: () => Promise<string | null | undefined> };
+}): Promise<string> {
+	const account =
+		ctx.options?.account ?? (await ctx.keys?.get_account?.()) ?? '';
+
+	if (!account) {
+		throw new AuthMissingError(
+			'activecampaign',
+			'account',
+			'[auth-missing:activecampaign:account]: an ActiveCampaign account slug is required - it is the subdomain of your API URL, https://<account>.api-us1.com',
+		);
+	}
+
+	return account;
 }

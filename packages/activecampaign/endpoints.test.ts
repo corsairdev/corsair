@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import { auditPayload, listAuditPayload } from './endpoints/logging';
 import {
 	AC_PAGE_SIZE_MAX,
@@ -190,6 +191,22 @@ describe('error handlers', () => {
 		expect(order.indexOf('CONFIGURATION_ERROR')).toBeLessThan(
 			order.indexOf('DEFAULT'),
 		);
+	});
+
+	/**
+	 * The shared account resolver raises AuthMissingError rather than an
+	 * ActiveCampaignAPIError with a code, so without this branch a missing
+	 * account slug would fall through to the catch-all handler and be reported
+	 * as an unhandled error.
+	 */
+	it('treats a missing credential as a configuration fault', async () => {
+		const err = new AuthMissingError('activecampaign', 'account');
+		expect(errorHandlers.CONFIGURATION_ERROR.match(err)).toBe(true);
+		const result = await errorHandlers.CONFIGURATION_ERROR.handler(
+			err,
+			writeCtx,
+		);
+		expect(result.maxRetries).toBe(0);
 	});
 
 	it('does not treat an ordinary error as a configuration fault', () => {
