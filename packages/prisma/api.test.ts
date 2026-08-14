@@ -1,8 +1,9 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { request } from 'corsair/http';
-import { makePrismaRequest, PRISMA_API_BASE } from './client';
+import { ApiError, request } from 'corsair/http';
+import { makePrismaRequest, PRISMA_API_BASE, PrismaAPIError } from './client';
 import { prismaOperations } from './endpoints';
+import { errorHandlers } from './error-handlers';
 import type { PrismaContext } from './index';
 import { prisma, prismaEndpointSchemas } from './index';
 import { executePostgresQuery } from './pg-client';
@@ -112,6 +113,8 @@ describe('Prisma plugin shape', () => {
 			expect(meta[key]!.irreversible).toBe(true);
 		}
 		expect(meta['backups.restore']!.riskLevel).toBe('destructive');
+		expect(meta['backups.restore']!.irreversible).toBe(true);
+		expect(meta['sql.execute']!.riskLevel).toBe('destructive');
 	});
 
 	it('uses api key auth by default and supports oauth', () => {
@@ -145,7 +148,35 @@ describe('Prisma request client', () => {
 			region: 'aws-us-east-1',
 		});
 	});
+
+	it('retries Management API 429s from PrismaAPIError', async () => {
+		const error = new PrismaAPIError('Too Many Requests', 429, undefined, 1500);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({
+			maxRetries: 5,
+			headersRetryAfterMs: 1500,
+		});
+	});
+
+	it('still matches corsair ApiError 429s', async () => {
+		const error = new ApiError(
+			{ method: 'GET', url: '/projects' },
+			{
+				url: 'https://api.prisma.io/v1/projects',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: {},
+			},
+			'Too Many Requests',
+			{ retryAfter: 2000 },
+		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+	});
 });
+
 describe('Prisma REST endpoints', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
@@ -172,6 +203,17 @@ describe('Prisma REST endpoints', () => {
 		expect((mockRequest.mock.calls[2][1] as { body: unknown }).body).toEqual({
 			recipientAccessToken: 'oauth-token',
 		});
+	});
+
+	it('does not send the bearer token to a caller-supplied origin', async () => {
+		const plugin = prisma();
+		const e = plugin.endpoints as NonNullable<typeof plugin.endpoints>;
+		await e.projects.list(mockCtx, {
+			baseUrl: 'https://evil.example',
+		} as never);
+
+		expect(mockRequest.mock.calls[0][0].BASE).toBe(PRISMA_API_BASE);
+		expect(mockRequest.mock.calls[0][0].TOKEN).toBe('test-token');
 	});
 
 	it('builds database sub-resource paths from path params', async () => {
@@ -230,10 +272,18 @@ describe('Prisma REST endpoints', () => {
 			},
 		});
 
-		const result = await (plugin.endpoints as any).connections.create(
-			ctxWithDb,
-			{ body: { name: 'demo', databaseId: 'db1' } },
-		);
+		const result = await (
+			plugin.endpoints as {
+				connections: {
+					create: (
+						ctx: PrismaContext,
+						input: Record<string, unknown>,
+					) => Promise<unknown>;
+				};
+			}
+		).connections.create(ctxWithDb, {
+			body: { name: 'demo', databaseId: 'db1' },
+		});
 
 		expect(
 			ctxWithDb.db.connections.upsertByEntityId as jest.Mock,
@@ -241,6 +291,9 @@ describe('Prisma REST endpoints', () => {
 			'conn1',
 			expect.objectContaining({ id: 'conn1', name: 'demo' }),
 		);
+		expect(
+			(ctxWithDb.db.connections.upsertByEntityId as jest.Mock).mock.calls[0][1],
+		).not.toHaveProperty('connectionString');
 		expect(result).toMatchObject({
 			data: {
 				id: 'conn1',
