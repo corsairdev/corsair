@@ -31,6 +31,14 @@ describe('verifyCalWebhookSignature', () => {
 		});
 	});
 
+	it('returns invalid when secret is empty', () => {
+		const result = verifyCalWebhookSignature(baseRequest(), '');
+		expect(result).toEqual({
+			valid: false,
+			error: 'No secret provided',
+		});
+	});
+
 	it('returns invalid when raw body is missing', () => {
 		const request = { ...baseRequest(), rawBody: undefined };
 		const result = verifyCalWebhookSignature(request, secret);
@@ -42,6 +50,18 @@ describe('verifyCalWebhookSignature', () => {
 
 	it('returns invalid when x-cal-signature-256 header is missing', () => {
 		const request = { ...baseRequest(), headers: {} };
+		const result = verifyCalWebhookSignature(request, secret);
+		expect(result).toEqual({
+			valid: false,
+			error: 'Missing x-cal-signature-256 header',
+		});
+	});
+
+	it('returns invalid when x-cal-signature-256 is an empty array', () => {
+		const request: WebhookRequest<CalWebhookPayload> = {
+			...baseRequest(),
+			headers: { 'x-cal-signature-256': [] },
+		};
 		const result = verifyCalWebhookSignature(request, secret);
 		expect(result).toEqual({
 			valid: false,
