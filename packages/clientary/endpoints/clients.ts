@@ -119,7 +119,7 @@ export const create: ClientaryEndpoints['clientsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'clientary.clients.create',
-		{ ...input },
+		{ id: parsed.id },
 		'completed',
 	);
 	return parsed;

@@ -85,7 +85,7 @@ export const create: ClientaryEndpoints['recurringCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'clientary.recurring.create',
-		{ ...input },
+		{ id: parsed.id },
 		'completed',
 	);
 	return parsed;
