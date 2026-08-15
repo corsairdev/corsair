@@ -64,7 +64,12 @@ export const listForClient: ClientaryEndpoints['projectsListForClient'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.projectsListForClient>
-		>(`clients/${input.client_id}/projects`, apiKey, domain);
+		>(`clients/${input.client_id}/projects`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.projectsListForClient.parse(response);
@@ -156,7 +161,7 @@ export const create: ClientaryEndpoints['projectsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'clientary.projects.create',
-		{ ...input },
+		{ id: parsed.id },
 		'completed',
 	);
 	return parsed;

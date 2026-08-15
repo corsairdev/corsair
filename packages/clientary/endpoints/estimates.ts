@@ -48,7 +48,12 @@ export const listForClient: ClientaryEndpoints['estimatesListForClient'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.estimatesListForClient>
-		>(`clients/${input.client_id}/estimates`, apiKey, domain);
+		>(`clients/${input.client_id}/estimates`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.estimatesListForClient.parse(response);
@@ -74,7 +79,12 @@ export const listForProject: ClientaryEndpoints['estimatesListForProject'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.estimatesListForProject>
-		>(`projects/${input.project_id}/estimates`, apiKey, domain);
+		>(`projects/${input.project_id}/estimates`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.estimatesListForProject.parse(response);
@@ -138,7 +148,7 @@ export const create: ClientaryEndpoints['estimatesCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'clientary.estimates.create',
-		{ ...input },
+		{ id: parsed.id },
 		'completed',
 	);
 	return parsed;

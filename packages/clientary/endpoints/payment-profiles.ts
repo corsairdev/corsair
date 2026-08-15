@@ -23,7 +23,12 @@ export const listForClient: ClientaryEndpoints['paymentProfilesListForClient'] =
 			z.infer<
 				typeof ClientaryEndpointOutputSchemas.paymentProfilesListForClient
 			>
-		>(`clients/${input.client_id}/payment_profiles`, apiKey, domain);
+		>(`clients/${input.client_id}/payment_profiles`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.paymentProfilesListForClient.parse(
