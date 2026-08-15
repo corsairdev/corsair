@@ -275,6 +275,46 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql("SELECT 'dblink' AS note")).toBe(true);
 	});
 
+	it('sees through comments between a function name and its parenthesis', () => {
+		// PostgreSQL treats comments as token separators, so every one of these
+		// is a real function call on the server; a whitespace-only lookahead
+		// misses the '(' and lets unlisted side-effecting functions run.
+		expect(isReadOnlySql('SELECT pg_sleep /*comment*/ (30)')).toBe(false);
+		expect(
+			isReadOnlySql("SELECT dblink_exec /*comment*/ ('conn', 'DELETE FROM t')"),
+		).toBe(false);
+		expect(isReadOnlySql('SELECT pg_sleep -- comment\n(30)')).toBe(false);
+		expect(isReadOnlySql('SELECT pg_sleep -- comment\r(30)')).toBe(false);
+		expect(
+			isReadOnlySql(
+				'SELECT pg_sleep /* outer /* inner */ still comment */ (30)',
+			),
+		).toBe(false);
+		expect(isReadOnlySql('SELECT pg_sleep\n/* mixed */\n-- line\n(30)')).toBe(
+			false,
+		);
+		// quoted invocations get the same comment-aware treatment
+		expect(isReadOnlySql('SELECT "pg_sleep" /*comment*/ (30)')).toBe(false);
+		expect(isReadOnlySql("SELECT \"dblink\" -- comment\n('c', 'x')")).toBe(
+			false,
+		);
+		// allowlisted names still pass when a comment intervenes
+		expect(isReadOnlySql('SELECT count /* tally */ (*) FROM users')).toBe(true);
+		expect(
+			isReadOnlySql('SELECT * FROM generate_series -- series\n(1, 3)'),
+		).toBe(true);
+		// the AS alias column-list exemption still works across comments
+		expect(
+			isReadOnlySql(
+				'SELECT * FROM generate_series(1, 3) AS /* cols */ t(a, b)',
+			),
+		).toBe(true);
+		// a comment between a non-call word and '(' is not a call site
+		expect(isReadOnlySql('SELECT 1 AS /* alias */ total FROM users')).toBe(
+			true,
+		);
+	});
+
 	it('accepts allowlisted built-in calls and keyword constructs', () => {
 		expect(isReadOnlySql('SELECT count(*) FROM users')).toBe(true);
 		expect(isReadOnlySql('SELECT max(id), sum(amount) FROM users')).toBe(true);

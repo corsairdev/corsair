@@ -496,8 +496,10 @@ const SAFE_FUNCTIONS = new Set(
  * `UPDATE`, `DELETE`, `MERGE`, ...) anywhere in plain code, and any function
  * invocation whose name is not on the `SAFE_FUNCTIONS` allowlist (including
  * advisory locks, dblink remote writes, large-object writers, `pg_sleep`,
- * `pg_stat_reset`, and every user-defined or extension function) are rejected,
- * and every keyword check runs only in plain code — never inside literals,
+ * `pg_stat_reset`, and every user-defined or extension function) are rejected.
+ * A function name and its `(` may be separated by whitespace and comments —
+ * `pg_sleep /*c*\/ (30)` is still a call — so the call-site lookahead skips
+ * both. Every keyword check runs only in plain code — never inside literals,
  * identifiers, or comments.
  */
 export function isReadOnlySql(sql: string): boolean {
@@ -519,6 +521,44 @@ export function isReadOnlySql(sql: string): boolean {
 					ch,
 				))
 		);
+	};
+
+	// PostgreSQL treats comments as token separators, so a call site can hide
+	// its '(' behind whitespace AND comments: `pg_sleep /*c*/ (30)` and
+	// `pg_sleep -- c\n(30)` are both function invocations on the server. Skip
+	// that trivia here so the allowlist checks below see the real next token —
+	// a whitespace-only lookahead would let unlisted functions slip through.
+	// Block comments nest, mirroring the main scanner. An unterminated comment
+	// runs to end-of-input and simply yields a non-'(' position (the server
+	// rejects the statement as a syntax error, so nothing executes).
+	const skipSqlTrivia = (from: number): number => {
+		let k = from;
+		for (;;) {
+			while (k < n && /\s/.test(s.charAt(k))) k += 1;
+			if (s.charAt(k) === '-' && s.charAt(k + 1) === '-') {
+				while (k < n && s.charAt(k) !== '\n' && s.charAt(k) !== '\r') {
+					k += 1;
+				}
+				continue;
+			}
+			if (s.charAt(k) === '/' && s.charAt(k + 1) === '*') {
+				let depth = 1;
+				k += 2;
+				while (k < n && depth > 0) {
+					if (s.charAt(k) === '/' && s.charAt(k + 1) === '*') {
+						depth += 1;
+						k += 2;
+					} else if (s.charAt(k) === '*' && s.charAt(k + 1) === '/') {
+						depth -= 1;
+						k += 2;
+					} else {
+						k += 1;
+					}
+				}
+				continue;
+			}
+			return k;
+		}
 	};
 
 	// skip leading whitespace and optional wrapping `(`
@@ -593,9 +633,9 @@ export function isReadOnlySql(sql: string): boolean {
 					// invocation with a user-chosen name ("dblink"(...)). Quoted
 					// names are never on the allowlist, so reject it — this
 					// closes the case where an unlisted unsafe function is called
-					// through a quoted identifier.
-					let k = i + 1;
-					while (k < n && /\s/.test(s.charAt(k))) k += 1;
+					// through a quoted identifier. Trivia is skipped so a comment
+					// cannot hide the '(' ("dblink" /*c*/ (...) still rejects).
+					const k = skipSqlTrivia(i + 1);
 					if (s.charAt(k) === '(') return false;
 					i += 1;
 					continue;
@@ -669,16 +709,18 @@ export function isReadOnlySql(sql: string): boolean {
 			if (TRANSACTION_CONTROL.has(word)) return false;
 			if (WRITE_STATEMENT_KEYWORDS.has(word)) return false;
 			if (word === 'into') sawSelectInto = true;
-			// Allowlist check for function invocations: a word directly
-			// followed by '(' is a call site. Unless it is the `AS` alias
-			// column-list form (`FROM f(x) AS t(a, b)` — where `t(a,b)` names
-			// output columns and is not a call), the function name must be on
-			// the allowlist or the statement is rejected. This is fail-closed:
-			// any function not explicitly allowed — pg_sleep(), pg_stat_reset(),
-			// advisory locks, dblink, user/extension functions — is refused.
+			// Allowlist check for function invocations: a word followed by '('
+			// — with only whitespace and/or comments in between, which
+			// PostgreSQL treats as token separators — is a call site. Unless it
+			// is the `AS` alias column-list form (`FROM f(x) AS t(a, b)` — where
+			// `t(a,b)` names output columns and is not a call), the function
+			// name must be on the allowlist or the statement is rejected. This
+			// is fail-closed: any function not explicitly allowed — pg_sleep(),
+			// pg_stat_reset(), advisory locks, dblink, user/extension functions
+			// — is refused, and `name /*c*/ (` / `name -- c\n(` cannot hide the
+			// call from this check.
 			{
-				let k = j;
-				while (k < n && /\s/.test(s.charAt(k))) k += 1;
+				const k = skipSqlTrivia(j);
 				if (
 					s.charAt(k) === '(' &&
 					prevWord !== 'as' &&
