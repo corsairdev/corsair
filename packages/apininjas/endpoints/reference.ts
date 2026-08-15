@@ -39,7 +39,11 @@ export const animals: ApiNinjasEndpoints['referenceAnimals'] = async (
 	return result;
 };
 
-/** Get a list of cat breeds matching specified parameters. Returns at most 20 results. To access more than 20 results, use the offset parameter to offset results in multiple API calls. */
+/**
+ * Get a list of cat breeds matching specified parameters. Returns at most
+ * 20 results. To access more than 20 results, use the offset parameter to
+ * offset results in multiple API calls.
+ */
 export const cats: ApiNinjasEndpoints['referenceCats'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['referenceCats']
@@ -86,7 +90,11 @@ export const cats: ApiNinjasEndpoints['referenceCats'] = async (ctx, input) => {
 	return result;
 };
 
-/** Get a list of dog breeds matching specified parameters. Returns at most 20 results. To access more than 20 results, use the offset parameter to offset results in multiple API calls. */
+/**
+ * Get a list of dog breeds matching specified parameters. Returns at most
+ * 20 results. To access more than 20 results, use the offset parameter to
+ * offset results in multiple API calls.
+ */
 export const dogs: ApiNinjasEndpoints['referenceDogs'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['referenceDogs']
@@ -135,7 +143,11 @@ export const dogs: ApiNinjasEndpoints['referenceDogs'] = async (ctx, input) => {
 	return result;
 };
 
-/** Get a list of planets matching specified parameters. Returns at most 30 results. To access more than 30 results, use the offset parameter to offset results in multiple API calls. */
+/**
+ * Get a list of planets matching specified parameters. Returns at most 30
+ * results. To access more than 30 results, use the offset parameter to
+ * offset results in multiple API calls.
+ */
 export const planets: ApiNinjasEndpoints['referencePlanets'] = async (
 	ctx,
 	input,
@@ -191,7 +203,11 @@ export const planets: ApiNinjasEndpoints['referencePlanets'] = async (
 	return result;
 };
 
-/** Get a list of stars matching specified parameters. Returns at most 30 results. To access more than 30 results, use the offset parameter to offset results in multiple API calls. */
+/**
+ * Get a list of stars matching specified parameters. Returns at most 30
+ * results. To access more than 30 results, use the offset parameter to
+ * offset results in multiple API calls.
+ */
 export const stars: ApiNinjasEndpoints['referenceStars'] = async (
 	ctx,
 	input,
@@ -237,7 +253,10 @@ export const stars: ApiNinjasEndpoints['referenceStars'] = async (
 	return result;
 };
 
-/** Returns a list of up to 10 events that match the search parameters. Use the offset parameter to paginate through more results. */
+/**
+ * Returns a list of up to 10 events that match the search parameters. Use
+ * the offset parameter to paginate through more results.
+ */
 export const historicalEvents: ApiNinjasEndpoints['referenceHistoricalEvents'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -287,7 +306,10 @@ export const historicalFigures: ApiNinjasEndpoints['referenceHistoricalFigures']
 		return result;
 	};
 
-/** Returns historical events that occurred on a specific date. If no date parameters are provided, returns events for today's date. */
+/**
+ * Returns historical events that occurred on a specific date. If no date
+ * parameters are provided, returns events for today's date.
+ */
 export const dayInHistory: ApiNinjasEndpoints['referenceDayInHistory'] = async (
 	ctx,
 	input,
@@ -313,7 +335,10 @@ export const dayInHistory: ApiNinjasEndpoints['referenceDayInHistory'] = async (
 	return result;
 };
 
-/** Returns a list of up to 30 celebrities that match the search parameters. To get more than 30 results, use the offset parameter. */
+/**
+ * Returns a list of up to 30 celebrities that match the search parameters.
+ * To get more than 30 results, use the offset parameter.
+ */
 export const celebrities: ApiNinjasEndpoints['referenceCelebrities'] = async (
 	ctx,
 	input,

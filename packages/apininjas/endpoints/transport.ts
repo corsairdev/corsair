@@ -21,7 +21,11 @@ import type { ApiNinjasEndpointOutputs } from './types';
  * parameters, so nothing is renamed on the way through.
  */
 
-/** Returns a list of aircrafts that match the given parameters. This API only supports airplanes - for helicopter specs please use our Helicopter API. */
+/**
+ * Returns a list of aircrafts that match the given parameters. This API
+ * only supports airplanes - for helicopter specs please use our Helicopter
+ * API.
+ */
 export const aircraft: ApiNinjasEndpoints['transportAircraft'] = async (
 	ctx,
 	input,
@@ -77,7 +81,10 @@ export const aircraft: ApiNinjasEndpoints['transportAircraft'] = async (
 	return result;
 };
 
-/** Returns airline details including fleet composition, base airport and branding assets, by name, IATA code or ICAO code. */
+/**
+ * Returns airline details including fleet composition, base airport and
+ * branding assets, by name, IATA code or ICAO code.
+ */
 export const airlines: ApiNinjasEndpoints['transportAirlines'] = async (
 	ctx,
 	input,
@@ -104,7 +111,10 @@ export const airlines: ApiNinjasEndpoints['transportAirlines'] = async (
 	return result;
 };
 
-/** Returns a list of up to 10 airport results. Use the offset parameter to access more results if available. */
+/**
+ * Returns a list of up to 10 airport results. Use the offset parameter to
+ * access more results if available.
+ */
 export const airports: ApiNinjasEndpoints['transportAirports'] = async (
 	ctx,
 	input,
@@ -226,7 +236,10 @@ export const helicopters: ApiNinjasEndpoints['transportHelicopters'] = async (
 	return result;
 };
 
-/** Get car data from given parameters. Returns a list of car models (and their information) that satisfy the parameters. */
+/**
+ * Get car data from given parameters. Returns a list of car models (and
+ * their information) that satisfy the parameters.
+ */
 export const cars: ApiNinjasEndpoints['transportCars'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['transportCars']
@@ -250,7 +263,11 @@ export const cars: ApiNinjasEndpoints['transportCars'] = async (ctx, input) => {
 	return result;
 };
 
-/** Returns up to 30 motorcycle results matching the input name parameters. For searches that yield more than 30 results, please use the offset parameter. */
+/**
+ * Returns up to 30 motorcycle results matching the input name parameters.
+ * For searches that yield more than 30 results, please use the offset
+ * parameter.
+ */
 export const motorcycles: ApiNinjasEndpoints['transportMotorcycles'] = async (
 	ctx,
 	input,
@@ -278,7 +295,10 @@ export const motorcycles: ApiNinjasEndpoints['transportMotorcycles'] = async (
 	return result;
 };
 
-/** Get electric vehicle data from given parameters. Returns a list of electric vehicles that satisfy the parameters. */
+/**
+ * Get electric vehicle data from given parameters. Returns a list of
+ * electric vehicles that satisfy the parameters.
+ */
 export const electricVehicles: ApiNinjasEndpoints['transportElectricVehicles'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -320,7 +340,10 @@ export const electricVehicles: ApiNinjasEndpoints['transportElectricVehicles'] =
 		return result;
 	};
 
-/** Returns key vehicle information including manufacturer, country of origin, and model year for a given VIN. */
+/**
+ * Returns key vehicle information including manufacturer, country of
+ * origin, and model year for a given VIN.
+ */
 export const vin: ApiNinjasEndpoints['transportVin'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['transportVin']

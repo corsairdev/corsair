@@ -119,8 +119,10 @@ describe('risk levels', () => {
 				path,
 				empty: false,
 			});
-			// biome-ignore lint/suspicious/noControlCharactersInRegex: the point is to reject control and non-ASCII bytes
-			expect(entry.description).toMatch(/^[\x20-\x7e]+$/);
+			// Printable ASCII only: these descriptions are rendered in the operation
+			// catalog and quoted in the pull request, and a stray byte from a
+			// scraped description would surface there as mojibake.
+			expect(entry.description).toMatch(/^[ -~]+$/);
 		}
 	});
 
@@ -348,5 +350,73 @@ describe('plugin definition', () => {
 				'endpoint',
 			),
 		).rejects.toThrow();
+	});
+
+	it('returns the stored credential when there is one', async () => {
+		const keyBuilder = plugin.keyBuilder as (
+			ctx: unknown,
+			source: string,
+		) => Promise<string>;
+
+		await expect(
+			keyBuilder(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => 'stored-key' },
+				},
+				'endpoint',
+			),
+		).resolves.toBe('stored-key');
+	});
+
+	it('raises for any source other than an endpoint call', async () => {
+		// There is no webhook or OAuth path on this plugin, so a request for a key
+		// from anywhere else is a bug rather than a case to serve.
+		const keyBuilder = plugin.keyBuilder as (
+			ctx: unknown,
+			source: string,
+		) => Promise<string>;
+
+		await expect(
+			keyBuilder(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => 'stored-key' },
+				},
+				'webhook',
+			),
+		).rejects.toThrow();
+	});
+
+	it('merges caller-supplied error handlers ahead of the built-in default', () => {
+		// DEFAULT matches everything, so a caller handler spread after it would be
+		// unreachable. The merge keeps DEFAULT last.
+		const custom = apininjas({
+			errorHandlers: {
+				RATE_LIMIT_ERROR: { match: () => false, handler: async () => ({}) },
+			},
+		});
+		const names = Object.keys(custom.errorHandlers ?? {});
+
+		expect(names[names.length - 1]).toBe('DEFAULT');
+		expect(
+			custom.errorHandlers?.RATE_LIMIT_ERROR?.match(new Error('x'), {
+				pluginId: 'apininjas',
+				operation: 'text.sentiment',
+				input: {},
+				originalError: new Error('x'),
+			}),
+		).toBe(false);
+	});
+
+	it('lets a caller replace the default handler itself', () => {
+		const replacement = {
+			match: () => true,
+			handler: async () => ({ maxRetries: 9 }),
+		};
+		const custom = apininjas({ errorHandlers: { DEFAULT: replacement } });
+
+		expect(custom.errorHandlers?.DEFAULT).toBe(replacement);
+		expect(Object.keys(custom.errorHandlers ?? {}).pop()).toBe('DEFAULT');
 	});
 });

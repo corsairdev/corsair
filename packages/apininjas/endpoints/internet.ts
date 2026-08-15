@@ -12,7 +12,10 @@ import type { ApiNinjasEndpointOutputs } from './types';
  * parameters, so nothing is renamed on the way through.
  */
 
-/** Returns availability, registration lifecycle, and email/hosting intelligence for a given domain name. */
+/**
+ * Returns availability, registration lifecycle, and email/hosting
+ * intelligence for a given domain name.
+ */
 export const domain: ApiNinjasEndpoints['internetDomain'] = async (
 	ctx,
 	input,
@@ -58,7 +61,11 @@ export const dnsRecords: ApiNinjasEndpoints['internetDnsRecords'] = async (
 	return result;
 };
 
-/** Returns a list of MX records associated with a particular domain. Free users receive only data from the first MX record, while premium users get access to all MX records. */
+/**
+ * Returns a list of MX records associated with a particular domain. Free
+ * users receive only data from the first MX record, while premium users
+ * get access to all MX records.
+ */
 export const mxRecords: ApiNinjasEndpoints['internetMxRecords'] = async (
 	ctx,
 	input,
@@ -81,7 +88,10 @@ export const mxRecords: ApiNinjasEndpoints['internetMxRecords'] = async (
 	return result;
 };
 
-/** Returns domain registration details (e.g. registrar, contact information, expiration date, name servers) for a given domain name. */
+/**
+ * Returns domain registration details (e.g. registrar, contact
+ * information, expiration date, name servers) for a given domain name.
+ */
 export const whois: ApiNinjasEndpoints['internetWhois'] = async (
 	ctx,
 	input,
@@ -104,7 +114,11 @@ export const whois: ApiNinjasEndpoints['internetWhois'] = async (
 	return result;
 };
 
-/** Returns the location of the IP address specified. The response contains both the geographical coordinates (latitude/longitude) as well as the city and country. */
+/**
+ * Returns the location of the IP address specified. The response contains
+ * both the geographical coordinates (latitude/longitude) as well as the
+ * city and country.
+ */
 export const ipLookup: ApiNinjasEndpoints['internetIpLookup'] = async (
 	ctx,
 	input,
@@ -127,7 +141,11 @@ export const ipLookup: ApiNinjasEndpoints['internetIpLookup'] = async (
 	return result;
 };
 
-/** Returns the location of the IP address hosting the URL domain. The response contains both the geographical coordinates (latitude/longitude) as well as the city and country. */
+/**
+ * Returns the location of the IP address hosting the URL domain. The
+ * response contains both the geographical coordinates (latitude/longitude)
+ * as well as the city and country.
+ */
 export const urlLookup: ApiNinjasEndpoints['internetUrlLookup'] = async (
 	ctx,
 	input,
@@ -173,7 +191,10 @@ export const webpage: ApiNinjasEndpoints['internetWebpage'] = async (
 	return result;
 };
 
-/** Returns the HTML or plaintext data scraped from a given URL. Maximum size of data returned is 2MB. */
+/**
+ * Returns the HTML or plaintext data scraped from a given URL. Maximum
+ * size of data returned is 2MB.
+ */
 export const scrape: ApiNinjasEndpoints['internetScrape'] = async (
 	ctx,
 	input,

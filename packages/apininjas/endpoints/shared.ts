@@ -11,12 +11,20 @@
 /**
  * Matches the prose the free tier returns in place of a value.
  *
- * The wording is not consistent between endpoints - "This field is for premium
- * subscribers only.", "Only available for premium subscribers.", "Available for
- * premium subscribers only.", "premium subscription required." and a lowercase
- * variant all occur - so this matches the common stem rather than a phrase.
+ * The wording is not consistent between endpoints. Across the responses
+ * captured from every operation there are 38 distinct variants - "This field is
+ * for premium subscribers only.", "Only available for premium subscribers.",
+ * "sector is reserved for premium subscribers only.", "premium subscription
+ * required.", a lowercase form, and the electric-vehicle endpoint's bare "No
+ * Data" - so this cannot match a phrase.
+ *
+ * It deliberately does not match the bare word "premium" either. A field value
+ * like "Premium Economy" or a fund named "... Premium Fund" is real data, and
+ * treating it as withheld would silently drop it from the mirror. Every one of
+ * the 38 observed variants names the subscription, so that is what is matched.
  */
-const PREMIUM_PLACEHOLDER = /premium|only available|reserved for|no data/i;
+const PREMIUM_PLACEHOLDER =
+	/premium subscriber|premium subscription|premium users only|^no data$/i;
 
 /**
  * True when a field holds the provider's placeholder prose rather than data.

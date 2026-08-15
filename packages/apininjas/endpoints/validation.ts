@@ -12,7 +12,12 @@ import type { ApiNinjasEndpointOutputs } from './types';
  * parameters, so nothing is renamed on the way through.
  */
 
-/** Returns metadata (including whether it is valid) for a given email address. This API will check the formatting of the email and the existence of DNS records for the domain to make sure it is a valid email address. */
+/**
+ * Returns metadata (including whether it is valid) for a given email
+ * address. This API will check the formatting of the email and the
+ * existence of DNS records for the domain to make sure it is a valid email
+ * address.
+ */
 export const email: ApiNinjasEndpoints['validationEmail'] = async (
 	ctx,
 	input,
@@ -35,7 +40,12 @@ export const email: ApiNinjasEndpoints['validationEmail'] = async (
 	return result;
 };
 
-/** Returns metadata for a given email address, including whether it is from a disposable email provider. We maintain a large database of hundreds of thousands of disposable domains and check against it for every email address. */
+/**
+ * Returns metadata for a given email address, including whether it is from
+ * a disposable email provider. We maintain a large database of hundreds of
+ * thousands of disposable domains and check against it for every email
+ * address.
+ */
 export const disposableEmail: ApiNinjasEndpoints['validationDisposableEmail'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -56,7 +66,10 @@ export const disposableEmail: ApiNinjasEndpoints['validationDisposableEmail'] =
 		return result;
 	};
 
-/** Returns metadata (including whether it is valid) for a given phone number. */
+/**
+ * Returns metadata (including whether it is valid) for a given phone
+ * number.
+ */
 export const phone: ApiNinjasEndpoints['validationPhone'] = async (
 	ctx,
 	input,
@@ -124,7 +137,10 @@ export const iban: ApiNinjasEndpoints['validationIban'] = async (
 	return result;
 };
 
-/** Returns detailed information about a bank based on the BIN number provided. */
+/**
+ * Returns detailed information about a bank based on the BIN number
+ * provided.
+ */
 export const bin: ApiNinjasEndpoints['validationBin'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['validationBin']
@@ -144,7 +160,11 @@ export const bin: ApiNinjasEndpoints['validationBin'] = async (ctx, input) => {
 	return result;
 };
 
-/** Returns a list of bank information (including SWIFT/BIC Code) that match the input parameter. Returns at most 100 results. For more results, use the offset parameter. */
+/**
+ * Returns a list of bank information (including SWIFT/BIC Code) that match
+ * the input parameter. Returns at most 100 results. For more results, use
+ * the offset parameter.
+ */
 export const swiftCode: ApiNinjasEndpoints['validationSwiftCode'] = async (
 	ctx,
 	input,

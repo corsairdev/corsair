@@ -12,7 +12,10 @@ import type { ApiNinjasEndpointOutputs } from './types';
  * parameters, so nothing is renamed on the way through.
  */
 
-/** Returns the calories burned per hour and total calories burned according to given parameters for given activities (up to 10). */
+/**
+ * Returns the calories burned per hour and total calories burned according
+ * to given parameters for given activities (up to 10).
+ */
 export const caloriesBurned: ApiNinjasEndpoints['healthCaloriesBurned'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -38,7 +41,14 @@ export const caloriesBurned: ApiNinjasEndpoints['healthCaloriesBurned'] =
 		return result;
 	};
 
-/** This endpoint uses AI to automatically read any text and extract every food item it contains, along with the right portion for each. It can process multiple food items at once - simply copy and paste any text, such as a recipe or your food journal, directly, and it will return the nutrition data for every food item found. Items without a specified amount default to a 100g serving. */
+/**
+ * This endpoint uses AI to automatically read any text and extract every
+ * food item it contains, along with the right portion for each. It can
+ * process multiple food items at once - simply copy and paste any text,
+ * such as a recipe or your food journal, directly, and it will return the
+ * nutrition data for every food item found. Items without a specified
+ * amount default to a 100g serving.
+ */
 export const nutrition: ApiNinjasEndpoints['healthNutrition'] = async (
 	ctx,
 	input,
@@ -99,7 +109,12 @@ export const exercises: ApiNinjasEndpoints['healthExercises'] = async (
 	return result;
 };
 
-/** Get a list of recipes for a given recipe name or ingredient(s). Returns a list of recipes. To access more results, use the limit parameter to limit the number of results and the offset parameter to offset results for pagination in multiple API calls. */
+/**
+ * Get a list of recipes for a given recipe name or ingredient(s). Returns
+ * a list of recipes. To access more results, use the limit parameter to
+ * limit the number of results and the offset parameter to offset results
+ * for pagination in multiple API calls.
+ */
 export const recipes: ApiNinjasEndpoints['healthRecipes'] = async (
 	ctx,
 	input,

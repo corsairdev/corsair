@@ -329,4 +329,123 @@ describe('image operations', () => {
 
 		expect(result.content_type).toBe('image/png');
 	});
+
+	it('honours an explicit QR format instead of the safe default', async () => {
+		const { ctx } = makeCtx();
+		let requested = '';
+		global.fetch = (async (url: string) => {
+			requested = url;
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url,
+				headers: new Headers({ 'Content-Type': 'image/png' }),
+				json: async () => ({}),
+				text: async () => 'png-bytes-as-text',
+			};
+		}) as unknown as typeof global.fetch;
+
+		const result = await Utility.qrCode(ctx, {
+			data: 'https://example.com',
+			format: 'png',
+			size: 300,
+			fg_color: '000000',
+			bg_color: 'ffffff',
+		});
+
+		expect(requested).toContain('format=png');
+		expect(requested).toContain('size=300');
+		expect(result.content_type).toBe('image/png');
+	});
+
+	it('defaults the barcode format the same way as the QR code', async () => {
+		const { ctx } = makeCtx();
+		let requested = '';
+		global.fetch = (async (url: string) => {
+			requested = url;
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url,
+				headers: new Headers({ 'Content-Type': 'image/svg+xml' }),
+				json: async () => ({}),
+				text: async () => '<svg>barcode</svg>',
+			};
+		}) as unknown as typeof global.fetch;
+
+		const result = await Utility.barcode(ctx, {
+			text: 'hello',
+			type: 'code128',
+			include_text: true,
+		});
+
+		expect(requested).toContain('format=svg');
+		expect(requested).toContain('type=code128');
+		expect(result.data).toBe('<svg>barcode</svg>');
+	});
+
+	it('labels the random image as JPEG, the only format it returns', async () => {
+		const { ctx } = makeCtx();
+		let requested = '';
+		global.fetch = (async (url: string) => {
+			requested = url;
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url,
+				headers: new Headers({ 'Content-Type': 'image/jpeg' }),
+				json: async () => ({}),
+				text: async () => 'jpeg-bytes-as-text',
+			};
+		}) as unknown as typeof global.fetch;
+
+		const result = await Utility.randomImage(ctx, {
+			category: 'nature',
+			width: 640,
+			height: 480,
+		});
+
+		expect(requested).toContain('category=nature');
+		expect(result).toEqual({
+			content_type: 'image/jpeg',
+			data: 'jpeg-bytes-as-text',
+		});
+	});
+
+	it.each([
+		[
+			'the QR code',
+			(ctx: Ctx) => Utility.qrCode(ctx, { data: 'x', format: 'svg' }),
+		],
+		[
+			'the barcode',
+			(ctx: Ctx) => Utility.barcode(ctx, { text: 'x', format: 'svg' }),
+		],
+		['the random image', (ctx: Ctx) => Utility.randomImage(ctx, {})],
+	])(
+		'returns an empty payload rather than "undefined" when %s body is missing',
+		async (_label, run) => {
+			// The core transport yields `undefined` when a response carries no
+			// content type at all. Without the fallback that would be stringified
+			// into the literal text "undefined" and handed back as if it were an
+			// image.
+			const { ctx } = makeCtx();
+			global.fetch = (async (url: string) => ({
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url,
+				headers: new Headers({}),
+				json: async () => undefined,
+				text: async () => '',
+			})) as unknown as typeof global.fetch;
+
+			const result = (await run(ctx)) as { data: string };
+
+			expect(result.data).toBe('');
+		},
+	);
 });

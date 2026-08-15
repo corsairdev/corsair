@@ -12,7 +12,10 @@ import type { ApiNinjasEndpointOutputs } from './types';
  * parameters, so nothing is renamed on the way through.
  */
 
-/** Returns one (or more) random funny jokes. Free users have access to 100 jokes - premium users have access to over 20,000 jokes. */
+/**
+ * Returns one (or more) random funny jokes. Free users have access to 100
+ * jokes - premium users have access to over 20,000 jokes.
+ */
 export const jokes: ApiNinjasEndpoints['entertainmentJokes'] = async (
 	ctx,
 	input,
@@ -35,7 +38,10 @@ export const jokes: ApiNinjasEndpoints['entertainmentJokes'] = async (
 	return result;
 };
 
-/** Returns one (or more) random dad jokes. Free users have access to 100 jokes - premium users have access to over 15,000 dad jokes. */
+/**
+ * Returns one (or more) random dad jokes. Free users have access to 100
+ * jokes - premium users have access to over 15,000 dad jokes.
+ */
 export const dadJokes: ApiNinjasEndpoints['entertainmentDadJokes'] = async (
 	ctx,
 	input,
@@ -76,7 +82,12 @@ export const chuckNorris: ApiNinjasEndpoints['entertainmentChuckNorris'] =
 		return result;
 	};
 
-/** Returns a single joke for the current day. The same joke is returned for all requests on the same day, and changes each day. Perfect for displaying on your website or app. No parameters are available for this endpoint to ensure everyone sees the same joke of the day. */
+/**
+ * Returns a single joke for the current day. The same joke is returned for
+ * all requests on the same day, and changes each day. Perfect for
+ * displaying on your website or app. No parameters are available for this
+ * endpoint to ensure everyone sees the same joke of the day.
+ */
 export const jokeOfTheDay: ApiNinjasEndpoints['entertainmentJokeOfTheDay'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -94,7 +105,10 @@ export const jokeOfTheDay: ApiNinjasEndpoints['entertainmentJokeOfTheDay'] =
 		return result;
 	};
 
-/** Returns one (or more) random facts. Free users have access to 100 facts - premium users have access to over 500,000 facts. */
+/**
+ * Returns one (or more) random facts. Free users have access to 100 facts
+ * - premium users have access to over 500,000 facts.
+ */
 export const facts: ApiNinjasEndpoints['entertainmentFacts'] = async (
 	ctx,
 	input,
@@ -117,7 +131,12 @@ export const facts: ApiNinjasEndpoints['entertainmentFacts'] = async (
 	return result;
 };
 
-/** Returns a single fact for the current day. The same fact is returned for all requests on the same day, and changes each day. Perfect for displaying on your website or app. No parameters are available for this endpoint to ensure everyone sees the same fact of the day. */
+/**
+ * Returns a single fact for the current day. The same fact is returned for
+ * all requests on the same day, and changes each day. Perfect for
+ * displaying on your website or app. No parameters are available for this
+ * endpoint to ensure everyone sees the same fact of the day.
+ */
 export const factOfTheDay: ApiNinjasEndpoints['entertainmentFactOfTheDay'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -135,7 +154,12 @@ export const factOfTheDay: ApiNinjasEndpoints['entertainmentFactOfTheDay'] =
 		return result;
 	};
 
-/** Returns high-quality quotes with advanced filtering by categories (include/exclude), author, work, and pagination support. Returns quotes in deterministic order. For random quotes, use /v2/randomquotes or /v2/quoteoftheday. */
+/**
+ * Returns high-quality quotes with advanced filtering by categories
+ * (include/exclude), author, work, and pagination support. Returns quotes
+ * in deterministic order. For random quotes, use /v2/randomquotes or
+ * /v2/quoteoftheday.
+ */
 export const quotes: ApiNinjasEndpoints['entertainmentQuotes'] = async (
 	ctx,
 	input,
@@ -173,7 +197,11 @@ export const quotes: ApiNinjasEndpoints['entertainmentQuotes'] = async (
 	return result;
 };
 
-/** Returns random high-quality quotes with advanced filtering by categories (include/exclude), author, and work. Each request returns different random quotes. */
+/**
+ * Returns random high-quality quotes with advanced filtering by categories
+ * (include/exclude), author, and work. Each request returns different
+ * random quotes.
+ */
 export const randomQuotes: ApiNinjasEndpoints['entertainmentRandomQuotes'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -207,7 +235,13 @@ export const randomQuotes: ApiNinjasEndpoints['entertainmentRandomQuotes'] =
 		return result;
 	};
 
-/** Returns a single aphoristic quote for the current day. The same pre-vetted, high-quality quote is returned for all requests on the same day, and changes each day. Perfect for displaying on your website or app. No filtering parameters are available for this endpoint to ensure everyone sees the same quote of the day. */
+/**
+ * Returns a single aphoristic quote for the current day. The same
+ * pre-vetted, high-quality quote is returned for all requests on the same
+ * day, and changes each day. Perfect for displaying on your website or
+ * app. No filtering parameters are available for this endpoint to ensure
+ * everyone sees the same quote of the day.
+ */
 export const quoteOfTheDay: ApiNinjasEndpoints['entertainmentQuoteOfTheDay'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -288,7 +322,10 @@ export const hobbies: ApiNinjasEndpoints['entertainmentHobbies'] = async (
 	return result;
 };
 
-/** Returns the daily horoscope for a specific zodiac sign. Optionally, you can provide a date parameter to get historical horoscopes. */
+/**
+ * Returns the daily horoscope for a specific zodiac sign. Optionally, you
+ * can provide a date parameter to get historical horoscopes.
+ */
 export const horoscope: ApiNinjasEndpoints['entertainmentHoroscope'] = async (
 	ctx,
 	input,
@@ -335,7 +372,11 @@ export const riddles: ApiNinjasEndpoints['entertainmentRiddles'] = async (
 	return result;
 };
 
-/** Returns a random trivia question and answer. Free users have access to 100 trivia questions - premium users have access to over 100,000 trivia questions. */
+/**
+ * Returns a random trivia question and answer. Free users have access to
+ * 100 trivia questions - premium users have access to over 100,000 trivia
+ * questions.
+ */
 export const trivia: ApiNinjasEndpoints['entertainmentTrivia'] = async (
 	ctx,
 	input,
@@ -359,7 +400,13 @@ export const trivia: ApiNinjasEndpoints['entertainmentTrivia'] = async (
 	return result;
 };
 
-/** Returns a single trivia question and answer for the current day. The same question is returned for all requests on the same day, and changes each day. Perfect for displaying on your website or app. No filtering parameters are available for this endpoint to ensure everyone sees the same trivia of the day. */
+/**
+ * Returns a single trivia question and answer for the current day. The
+ * same question is returned for all requests on the same day, and changes
+ * each day. Perfect for displaying on your website or app. No filtering
+ * parameters are available for this endpoint to ensure everyone sees the
+ * same trivia of the day.
+ */
 export const triviaOfTheDay: ApiNinjasEndpoints['entertainmentTriviaOfTheDay'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<

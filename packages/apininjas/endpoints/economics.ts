@@ -12,7 +12,10 @@ import type { ApiNinjasEndpointOutputs } from './types';
  * parameters, so nothing is renamed on the way through.
  */
 
-/** Get GDP data from given parameters. Returns GDP statistics that satisfy the parameters. */
+/**
+ * Get GDP data from given parameters. Returns GDP statistics that satisfy
+ * the parameters.
+ */
 export const gdp: ApiNinjasEndpoints['economicsGdp'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['economicsGdp']
@@ -57,7 +60,10 @@ export const inflation: ApiNinjasEndpoints['economicsInflation'] = async (
 	return result;
 };
 
-/** Get unemployment data for a given country. Returns historical, current and forecast unemployment statistics. */
+/**
+ * Get unemployment data for a given country. Returns historical, current
+ * and forecast unemployment statistics.
+ */
 export const unemployment: ApiNinjasEndpoints['economicsUnemployment'] = async (
 	ctx,
 	input,
@@ -81,7 +87,11 @@ export const unemployment: ApiNinjasEndpoints['economicsUnemployment'] = async (
 	return result;
 };
 
-/** Get population data from given parameters. Returns a list of up to 5 country population statistics that satisfy the parameters. For more results use the offset parameter. */
+/**
+ * Get population data from given parameters. Returns a list of up to 5
+ * country population statistics that satisfy the parameters. For more
+ * results use the offset parameter.
+ */
 export const population: ApiNinjasEndpoints['economicsPopulation'] = async (
 	ctx,
 	input,
@@ -115,7 +125,10 @@ export const population: ApiNinjasEndpoints['economicsPopulation'] = async (
 	return result;
 };
 
-/** Get a specific interest rate by name. Returns the rate value, name, and last updated timestamp. */
+/**
+ * Get a specific interest rate by name. Returns the rate value, name, and
+ * last updated timestamp.
+ */
 export const interestRate: ApiNinjasEndpoints['economicsInterestRate'] = async (
 	ctx,
 	input,
@@ -138,7 +151,11 @@ export const interestRate: ApiNinjasEndpoints['economicsInterestRate'] = async (
 	return result;
 };
 
-/** Returns the daily 30-year and 15-year fixed-rate mortgage (FRM) data. If no parameters are set, the mortgage rate data for the most recent day is returned. */
+/**
+ * Returns the daily 30-year and 15-year fixed-rate mortgage (FRM) data. If
+ * no parameters are set, the mortgage rate data for the most recent day is
+ * returned.
+ */
 export const mortgageRate: ApiNinjasEndpoints['economicsMortgageRate'] = async (
 	ctx,
 	input,
@@ -163,7 +180,10 @@ export const mortgageRate: ApiNinjasEndpoints['economicsMortgageRate'] = async (
 	return result;
 };
 
-/** Returns monthly payment, annual payment, and interest rate information based on given mortgage parameters. */
+/**
+ * Returns monthly payment, annual payment, and interest rate information
+ * based on given mortgage parameters.
+ */
 export const mortgageCalculator: ApiNinjasEndpoints['economicsMortgageCalculator'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -203,7 +223,10 @@ export const mortgageCalculator: ApiNinjasEndpoints['economicsMortgageCalculator
 		return result;
 	};
 
-/** Returns comprehensive income tax information including tax brackets and rates at both federal and state/provincial levels (where applicable). */
+/**
+ * Returns comprehensive income tax information including tax brackets and
+ * rates at both federal and state/provincial levels (where applicable).
+ */
 export const incomeTax: ApiNinjasEndpoints['economicsIncomeTax'] = async (
 	ctx,
 	input,
@@ -228,7 +251,10 @@ export const incomeTax: ApiNinjasEndpoints['economicsIncomeTax'] = async (
 	return result;
 };
 
-/** Returns comprehensive annual tax calculations including federal, state/provincial, and FICA taxes where applicable. */
+/**
+ * Returns comprehensive annual tax calculations including federal,
+ * state/provincial, and FICA taxes where applicable.
+ */
 export const incomeTaxCalculator: ApiNinjasEndpoints['economicsIncomeTaxCalculator'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -268,7 +294,13 @@ export const incomeTaxCalculator: ApiNinjasEndpoints['economicsIncomeTaxCalculat
 		return result;
 	};
 
-/** Returns one or more sales tax breakdowns by ZIP code according to the specified parameters. Each breakdown includes the state sales tax (if any), county sales tax (if any), city sales tax (if any), and any additional special sales taxes. All tax values are presented in decimals (e.g. 0.1 means 10% tax). */
+/**
+ * Returns one or more sales tax breakdowns by ZIP code according to the
+ * specified parameters. Each breakdown includes the state sales tax (if
+ * any), county sales tax (if any), city sales tax (if any), and any
+ * additional special sales taxes. All tax values are presented in decimals
+ * (e.g. 0.1 means 10% tax).
+ */
 export const salesTax: ApiNinjasEndpoints['economicsSalesTax'] = async (
 	ctx,
 	input,
@@ -297,7 +329,11 @@ export const salesTax: ApiNinjasEndpoints['economicsSalesTax'] = async (
 	return result;
 };
 
-/** Calculates sales tax for a given amount and location. Returns a detailed breakdown including state, county, city, and special district taxes, along with the calculated tax amount and total amount after tax. */
+/**
+ * Calculates sales tax for a given amount and location. Returns a detailed
+ * breakdown including state, county, city, and special district taxes,
+ * along with the calculated tax amount and total amount after tax.
+ */
 export const salesTaxCalculator: ApiNinjasEndpoints['economicsSalesTaxCalculator'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -331,7 +367,12 @@ export const salesTaxCalculator: ApiNinjasEndpoints['economicsSalesTaxCalculator
 		return result;
 	};
 
-/** Returns a list of regions and corresponding 25th, 50th (median), and 75th percentile effective property tax rates. The region is mostly zipcode-based, but sometimes a single zipcode can contain multiple regions due to local tax laws. */
+/**
+ * Returns a list of regions and corresponding 25th, 50th (median), and
+ * 75th percentile effective property tax rates. The region is mostly
+ * zipcode-based, but sometimes a single zipcode can contain multiple
+ * regions due to local tax laws.
+ */
 export const propertyTax: ApiNinjasEndpoints['economicsPropertyTax'] = async (
 	ctx,
 	input,
@@ -357,7 +398,10 @@ export const propertyTax: ApiNinjasEndpoints['economicsPropertyTax'] = async (
 	return result;
 };
 
-/** Returns VAT rates for a specified EU country. Results include standard rate, reduced rates, super-reduced rates, and any special categories. */
+/**
+ * Returns VAT rates for a specified EU country. Results include standard
+ * rate, reduced rates, super-reduced rates, and any special categories.
+ */
 export const vatRates: ApiNinjasEndpoints['economicsVatRates'] = async (
 	ctx,
 	input,

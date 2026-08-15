@@ -12,7 +12,10 @@ import type { ApiNinjasEndpointOutputs } from './types';
  * parameters, so nothing is renamed on the way through.
  */
 
-/** Returns sentiment analysis score and overall sentiment for a given block of text. */
+/**
+ * Returns sentiment analysis score and overall sentiment for a given block
+ * of text.
+ */
 export const sentiment: ApiNinjasEndpoints['textSentiment'] = async (
 	ctx,
 	input,
@@ -35,7 +38,10 @@ export const sentiment: ApiNinjasEndpoints['textSentiment'] = async (
 	return result;
 };
 
-/** Returns a similarity score between 0 and 1 (1 is similar and 0 is dissimilar) of two given texts. */
+/**
+ * Returns a similarity score between 0 and 1 (1 is similar and 0 is
+ * dissimilar) of two given texts.
+ */
 export const similarity: ApiNinjasEndpoints['textSimilarity'] = async (
 	ctx,
 	input,
@@ -60,7 +66,10 @@ export const similarity: ApiNinjasEndpoints['textSimilarity'] = async (
 	return result;
 };
 
-/** Returns a 768-dimensional vector as an array that encodes the meaning of any given input text. */
+/**
+ * Returns a 768-dimensional vector as an array that encodes the meaning of
+ * any given input text.
+ */
 export const embeddings: ApiNinjasEndpoints['textEmbeddings'] = async (
 	ctx,
 	input,
@@ -84,7 +93,10 @@ export const embeddings: ApiNinjasEndpoints['textEmbeddings'] = async (
 	return result;
 };
 
-/** Returns the language name and 2-letter ISO language code for a given block of text string. */
+/**
+ * Returns the language name and 2-letter ISO language code for a given
+ * block of text string.
+ */
 export const language: ApiNinjasEndpoints['textLanguage'] = async (
 	ctx,
 	input,
@@ -130,7 +142,10 @@ export const spellCheck: ApiNinjasEndpoints['textSpellCheck'] = async (
 	return result;
 };
 
-/** Returns the censored version (bad words replaced with asterisks) of any given text and whether the text contains profanity. */
+/**
+ * Returns the censored version (bad words replaced with asterisks) of any
+ * given text and whether the text contains profanity.
+ */
 export const profanityFilter: ApiNinjasEndpoints['textProfanityFilter'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<

@@ -14,7 +14,11 @@ import type { ApiNinjasEndpointOutputs } from './types';
  * parameters, so nothing is renamed on the way through.
  */
 
-/** Returns price information for any given ticker symbol. Premium members have access to live prices, while free users only have access to 15-minute delayed data. */
+/**
+ * Returns price information for any given ticker symbol. Premium members
+ * have access to live prices, while free users only have access to
+ * 15-minute delayed data.
+ */
 export const stockPrice: ApiNinjasEndpoints['marketsStockPrice'] = async (
 	ctx,
 	input,
@@ -37,7 +41,13 @@ export const stockPrice: ApiNinjasEndpoints['marketsStockPrice'] = async (
 	return result;
 };
 
-/** Returns comprehensive company profile information including company name, CEO, address, financial data, exchange information, identifiers (CIK, CUSIP, ISIN), and latest earnings information when available. Premium members have access to live prices, while free users only have access to 15-minute delayed data. */
+/**
+ * Returns comprehensive company profile information including company
+ * name, CEO, address, financial data, exchange information, identifiers
+ * (CIK, CUSIP, ISIN), and latest earnings information when available.
+ * Premium members have access to live prices, while free users only have
+ * access to 15-minute delayed data.
+ */
 export const ticker: ApiNinjasEndpoints['marketsTicker'] = async (
 	ctx,
 	input,
@@ -60,7 +70,10 @@ export const ticker: ApiNinjasEndpoints['marketsTicker'] = async (
 	return result;
 };
 
-/** Returns a list of all available companies and their ticker symbols. Supports pagination to retrieve results in batches. */
+/**
+ * Returns a list of all available companies and their ticker symbols.
+ * Supports pagination to retrieve results in batches.
+ */
 export const tickerList: ApiNinjasEndpoints['marketsTickerList'] = async (
 	ctx,
 	input,
@@ -84,7 +97,10 @@ export const tickerList: ApiNinjasEndpoints['marketsTickerList'] = async (
 	return result;
 };
 
-/** Returns detailed information about stock exchanges matching the specified criteria. At least one parameter is required. */
+/**
+ * Returns detailed information about stock exchanges matching the
+ * specified criteria. At least one parameter is required.
+ */
 export const stockExchanges: ApiNinjasEndpoints['marketsStockExchanges'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -117,7 +133,10 @@ export const stockExchanges: ApiNinjasEndpoints['marketsStockExchanges'] =
 		return result;
 	};
 
-/** Returns S&P 500 index constituents, filterable by ticker, company name, sector or the date the company joined the index. */
+/**
+ * Returns S&P 500 index constituents, filterable by ticker, company name,
+ * sector or the date the company joined the index.
+ */
 export const sp500: ApiNinjasEndpoints['marketsSp500'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['marketsSp500']
@@ -145,7 +164,11 @@ export const sp500: ApiNinjasEndpoints['marketsSp500'] = async (ctx, input) => {
 	return result;
 };
 
-/** Returns the current market cap data for any given company ticker. Premium members have access to live prices, while free users only have access to 15-minute delayed data. */
+/**
+ * Returns the current market cap data for any given company ticker.
+ * Premium members have access to live prices, while free users only have
+ * access to 15-minute delayed data.
+ */
 export const marketCap: ApiNinjasEndpoints['marketsMarketCap'] = async (
 	ctx,
 	input,
@@ -168,7 +191,13 @@ export const marketCap: ApiNinjasEndpoints['marketsMarketCap'] = async (
 	return result;
 };
 
-/** Returns a JSON array of detailed earnings reports, each with comprehensive financial statements and key performance metrics. Query a single company by ticker or cik, or query every company that filed within a date range using date or date_start/date_end. Results are paginated 50 per page via offset. */
+/**
+ * Returns a JSON array of detailed earnings reports, each with
+ * comprehensive financial statements and key performance metrics. Query a
+ * single company by ticker or cik, or query every company that filed
+ * within a date range using date or date_start/date_end. Results are
+ * paginated 50 per page via offset.
+ */
 export const earnings: ApiNinjasEndpoints['marketsEarnings'] = async (
 	ctx,
 	input,
@@ -212,7 +241,12 @@ export const earnings: ApiNinjasEndpoints['marketsEarnings'] = async (
 	return result;
 };
 
-/** Returns a list of past earnings results and upcoming earnings dates. You can query by ticker symbol to get earnings for a specific company, by a single date, or by a date range. Up to 50 earnings results are returned per request. */
+/**
+ * Returns a list of past earnings results and upcoming earnings dates. You
+ * can query by ticker symbol to get earnings for a specific company, by a
+ * single date, or by a date range. Up to 50 earnings results are returned
+ * per request.
+ */
 export const earningsCalendar: ApiNinjasEndpoints['marketsEarningsCalendar'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -276,7 +310,11 @@ export const earningsTranscript: ApiNinjasEndpoints['marketsEarningsTranscript']
 		return result;
 	};
 
-/** Returns a list of insider trading transactions that match the specified filters. All parameters are optional and can be combined for advanced filtering. */
+/**
+ * Returns a list of insider trading transactions that match the specified
+ * filters. All parameters are optional and can be combined for advanced
+ * filtering.
+ */
 export const insiderTransactions: ApiNinjasEndpoints['marketsInsiderTransactions'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<
@@ -328,7 +366,10 @@ export const insiderTransactions: ApiNinjasEndpoints['marketsInsiderTransactions
 		return result;
 	};
 
-/** Returns a list of SEC filing information (including the submission URL) corresponding to the given search parameters. */
+/**
+ * Returns a list of SEC filing information (including the submission URL)
+ * corresponding to the given search parameters.
+ */
 export const secFilings: ApiNinjasEndpoints['marketsSecFilings'] = async (
 	ctx,
 	input,
@@ -358,7 +399,11 @@ export const secFilings: ApiNinjasEndpoints['marketsSecFilings'] = async (
 	return result;
 };
 
-/** Returns comprehensive information about any ETF by its ticker. Premium members have access to live prices, while free users only have access to 15-minute delayed data. */
+/**
+ * Returns comprehensive information about any ETF by its ticker. Premium
+ * members have access to live prices, while free users only have access to
+ * 15-minute delayed data.
+ */
 export const etf: ApiNinjasEndpoints['marketsEtf'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['marketsEtf']
@@ -401,7 +446,12 @@ export const mutualFund: ApiNinjasEndpoints['marketsMutualFund'] = async (
 	return result;
 };
 
-/** Returns the current price and current time (in UNIX timestamp in seconds) for any cryptocurrency symbol. Premium members have access to live prices, while free users only have access to 15-minute delayed data. For historical price data, see /v1/cryptopricehistorical. */
+/**
+ * Returns the current price and current time (in UNIX timestamp in
+ * seconds) for any cryptocurrency symbol. Premium members have access to
+ * live prices, while free users only have access to 15-minute delayed
+ * data. For historical price data, see /v1/cryptopricehistorical.
+ */
 export const cryptoPrice: ApiNinjasEndpoints['marketsCryptoPrice'] = async (
 	ctx,
 	input,
@@ -424,7 +474,12 @@ export const cryptoPrice: ApiNinjasEndpoints['marketsCryptoPrice'] = async (
 	return result;
 };
 
-/** Returns the latest Bitcoin price in USD and 24-hour market data. Premium members have access to live prices, while free users only have access to 15-minute delayed data. For historical price data, see /v1/bitcoinhistorical. */
+/**
+ * Returns the latest Bitcoin price in USD and 24-hour market data. Premium
+ * members have access to live prices, while free users only have access to
+ * 15-minute delayed data. For historical price data, see
+ * /v1/bitcoinhistorical.
+ */
 export const bitcoin: ApiNinjasEndpoints['marketsBitcoin'] = async (
 	ctx,
 	input,
@@ -444,7 +499,15 @@ export const bitcoin: ApiNinjasEndpoints['marketsBitcoin'] = async (
 	return result;
 };
 
-/** Returns the current price information for one or more commodities. Prices are based on rolling futures contracts and are quoted in the commodity's native unit and currency convention - see the unit and currency_unit fields below. Use the optional currency and unit parameters to convert into any supported currency or compatible mass/volume/energy unit. Premium members have access to live prices, while free users only have access to 15-minute delayed data. */
+/**
+ * Returns the current price information for one or more commodities.
+ * Prices are based on rolling futures contracts and are quoted in the
+ * commodity's native unit and currency convention - see the unit and
+ * currency_unit fields below. Use the optional currency and unit
+ * parameters to convert into any supported currency or compatible
+ * mass/volume/energy unit. Premium members have access to live prices,
+ * while free users only have access to 15-minute delayed data.
+ */
 export const commodityPrice: ApiNinjasEndpoints['marketsCommodityPrice'] =
 	async (ctx, input) => {
 		const result = await makeApiNinjasRequest<

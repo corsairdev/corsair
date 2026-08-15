@@ -341,7 +341,7 @@ const CASES: Case[] = [
 		key: 'validationDisposableEmail',
 		path: 'validation.disposableEmail',
 		call: (ctx, input) => Validation.disposableEmail(ctx, input as never),
-		input: { email: 'test@mailinator.com' },
+		input: { email: 'someone@example.com' },
 		url: 'https://api.api-ninjas.com/v1/disposableemailchecker',
 		method: 'GET',
 	},

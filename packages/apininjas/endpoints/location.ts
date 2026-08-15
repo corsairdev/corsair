@@ -65,7 +65,10 @@ export const reverseGeocode: ApiNinjasEndpoints['locationReverseGeocode'] =
 		return result;
 	};
 
-/** Get city data from either a name or population range. Returns a list of cities that satisfies the parameters. */
+/**
+ * Get city data from either a name or population range. Returns a list of
+ * cities that satisfies the parameters.
+ */
 export const cities: ApiNinjasEndpoints['locationCities'] = async (
 	ctx,
 	input,
@@ -113,7 +116,10 @@ export const cities: ApiNinjasEndpoints['locationCities'] = async (
 	return result;
 };
 
-/** Get country data from given parameters. Returns a list of country statistics that satisfy the parameters. */
+/**
+ * Get country data from given parameters. Returns a list of country
+ * statistics that satisfy the parameters.
+ */
 export const country: ApiNinjasEndpoints['locationCountry'] = async (
 	ctx,
 	input,
@@ -179,7 +185,11 @@ export const country: ApiNinjasEndpoints['locationCountry'] = async (
 	return result;
 };
 
-/** Returns details for one or more counties matching the input parameters. For premium users, you can also specify the limit and offset parameters to paginate through results. */
+/**
+ * Returns details for one or more counties matching the input parameters.
+ * For premium users, you can also specify the limit and offset parameters
+ * to paginate through results.
+ */
 export const county: ApiNinjasEndpoints['locationCounty'] = async (
 	ctx,
 	input,
@@ -259,7 +269,11 @@ export const postalCode: ApiNinjasEndpoints['locationPostalCode'] = async (
 	return result;
 };
 
-/** Returns information about universities matching the provided filters. At least one filter parameter is required. Free users can use name or country - all other filters are premium-only. */
+/**
+ * Returns information about universities matching the provided filters. At
+ * least one filter parameter is required. Free users can use name or
+ * country - all other filters are premium-only.
+ */
 export const universities: ApiNinjasEndpoints['locationUniversities'] = async (
 	ctx,
 	input,
@@ -311,7 +325,10 @@ export const universities: ApiNinjasEndpoints['locationUniversities'] = async (
 	return result;
 };
 
-/** Get hospital data based on given parameters. Returns a list of hospitals that match the specified criteria. */
+/**
+ * Get hospital data based on given parameters. Returns a list of hospitals
+ * that match the specified criteria.
+ */
 export const hospitals: ApiNinjasEndpoints['locationHospitals'] = async (
 	ctx,
 	input,
@@ -397,7 +414,10 @@ export const evChargers: ApiNinjasEndpoints['locationEvChargers'] = async (
 	return result;
 };
 
-/** Get current weather, wind speed and direction, humidity, and temperature data by city, ZIP code, or geolocation coordinates (latitude/longitude). */
+/**
+ * Get current weather, wind speed and direction, humidity, and temperature
+ * data by city, ZIP code, or geolocation coordinates (latitude/longitude).
+ */
 export const weather: ApiNinjasEndpoints['locationWeather'] = async (
 	ctx,
 	input,
@@ -457,7 +477,11 @@ export const weatherForecast: ApiNinjasEndpoints['locationWeatherForecast'] =
 		return result;
 	};
 
-/** Get air quality by city or location coordinates (latitude/longitude). Returns the air quality index (AQI) and concentrations of major pollutants. */
+/**
+ * Get air quality by city or location coordinates (latitude/longitude).
+ * Returns the air quality index (AQI) and concentrations of major
+ * pollutants.
+ */
 export const airQuality: ApiNinjasEndpoints['locationAirQuality'] = async (
 	ctx,
 	input,

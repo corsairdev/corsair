@@ -46,7 +46,10 @@ export const password: ApiNinjasEndpoints['utilityPassword'] = async (
 	return result;
 };
 
-/** Returns fake random user profiles. Supports customizable fields, filtering, and localization. */
+/**
+ * Returns fake random user profiles. Supports customizable fields,
+ * filtering, and localization.
+ */
 export const randomUser: ApiNinjasEndpoints['utilityRandomUser'] = async (
 	ctx,
 	input,
@@ -113,7 +116,10 @@ export const counter: ApiNinjasEndpoints['utilityCounter'] = async (
 	return result;
 };
 
-/** Returns conversions between different units of the same measurement type. */
+/**
+ * Returns conversions between different units of the same measurement
+ * type.
+ */
 export const convertUnit: ApiNinjasEndpoints['utilityConvertUnit'] = async (
 	ctx,
 	input,
@@ -137,7 +143,10 @@ export const convertUnit: ApiNinjasEndpoints['utilityConvertUnit'] = async (
 	return result;
 };
 
-/** Get a list of company names, ticker symbols, and logo image URLs matching the input parameters. Returns at most 10 results. */
+/**
+ * Get a list of company names, ticker symbols, and logo image URLs
+ * matching the input parameters. Returns at most 10 results.
+ */
 export const logo: ApiNinjasEndpoints['utilityLogo'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['utilityLogo']
@@ -158,7 +167,10 @@ export const logo: ApiNinjasEndpoints['utilityLogo'] = async (ctx, input) => {
 	return result;
 };
 
-/** Get a country's flag as SVG image URLs. Both 1:1 and 4:3 aspect ratios are supported and returned in the response. */
+/**
+ * Get a country's flag as SVG image URLs. Both 1:1 and 4:3 aspect ratios
+ * are supported and returned in the response.
+ */
 export const countryFlag: ApiNinjasEndpoints['utilityCountryFlag'] = async (
 	ctx,
 	input,
@@ -181,7 +193,11 @@ export const countryFlag: ApiNinjasEndpoints['utilityCountryFlag'] = async (
 	return result;
 };
 
-/** Returns a list of emojis according to input parameters. Returns at most 30 results. To access more than 30 results, use the offset parameter to offset results in multiple API calls. */
+/**
+ * Returns a list of emojis according to input parameters. Returns at most
+ * 30 results. To access more than 30 results, use the offset parameter to
+ * offset results in multiple API calls.
+ */
 export const emoji: ApiNinjasEndpoints['utilityEmoji'] = async (ctx, input) => {
 	const result = await makeApiNinjasRequest<
 		ApiNinjasEndpointOutputs['utilityEmoji']

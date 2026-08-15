@@ -12,7 +12,11 @@ import type { ApiNinjasEndpointOutputs } from './types';
  * parameters, so nothing is renamed on the way through.
  */
 
-/** Get timezone info by city/state/country or location coordinates (latitude/longitude). Returns the timezone name of the specified input location and the time offset in seconds. */
+/**
+ * Get timezone info by city/state/country or location coordinates
+ * (latitude/longitude). Returns the timezone name of the specified input
+ * location and the time offset in seconds.
+ */
 export const timezone: ApiNinjasEndpoints['calendarTimezone'] = async (
 	ctx,
 	input,
@@ -50,7 +54,10 @@ export const timezone: ApiNinjasEndpoints['calendarTimezone'] = async (
 	return result;
 };
 
-/** Get the current date and time by city/state/country, location coordinates (latitude/longitude), or timezone. */
+/**
+ * Get the current date and time by city/state/country, location
+ * coordinates (latitude/longitude), or timezone.
+ */
 export const worldTime: ApiNinjasEndpoints['calendarWorldTime'] = async (
 	ctx,
 	input,
@@ -88,7 +95,11 @@ export const worldTime: ApiNinjasEndpoints['calendarWorldTime'] = async (
 	return result;
 };
 
-/** Returns a list of holiday entries for a given country and year. Each entry in the response contains the holiday name, date, day of the week, and the type of holiday. */
+/**
+ * Returns a list of holiday entries for a given country and year. Each
+ * entry in the response contains the holiday name, date, day of the week,
+ * and the type of holiday.
+ */
 export const holidays: ApiNinjasEndpoints['calendarHolidays'] = async (
 	ctx,
 	input,
@@ -186,7 +197,10 @@ export const isWorkingDay: ApiNinjasEndpoints['calendarIsWorkingDay'] = async (
 	return result;
 };
 
-/** Returns a list of working days and non-working days for a given country and year/month. */
+/**
+ * Returns a list of working days and non-working days for a given country
+ * and year/month.
+ */
 export const workingDays: ApiNinjasEndpoints['calendarWorkingDays'] = async (
 	ctx,
 	input,
