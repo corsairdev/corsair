@@ -1,9 +1,7 @@
-import { example } from './example';
+import { collectionCompleted } from './collection-completed';
 
-export const ExampleWebhooks = {
-	example: example,
+export const CollectionWebhooks = {
+	collectionCompleted,
 };
 
 export * from './types';
-export * from './tenant-matcher';
-export * from './oauth-tenant-link';

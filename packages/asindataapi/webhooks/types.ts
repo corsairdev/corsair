@@ -1,36 +1,88 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { z } from 'zod';
 
-export const AsinDataApiWebhookPayloadSchema = z.object({
-	type: z.string(),
-	created_at: z.string(),
-	data: z.record(z.string(), z.unknown()),
-});
+// ── Shared Sub-schemas ────────────────────────────────────────────────────────
 
-export type AsinDataApiWebhookPayload = z.infer<
-	typeof AsinDataApiWebhookPayloadSchema
+const DownloadLinksSchema = z
+	.object({
+		pages: z.array(z.string()).optional(),
+		all_pages: z.string().optional(),
+	})
+	.loose();
+
+const WebhookResultSetSchema = z
+	.object({
+		id: z.number().or(z.string()),
+		started_at: z.string().optional(),
+		ended_at: z.string().optional(),
+		requests_completed: z.number().optional(),
+		requests_failed: z.number().optional(),
+		download_links: z
+			.object({
+				json: DownloadLinksSchema.optional(),
+				jsonlines: DownloadLinksSchema.optional(),
+				csv: DownloadLinksSchema.optional(),
+			})
+			.loose()
+			.optional(),
+	})
+	.loose();
+
+// ── Webhook Payload Schema ───────────────────────────────────────────────────
+
+export const CollectionCompletedPayloadSchema = z
+	.object({
+		request_info: z
+			.object({
+				success: z.boolean().optional(),
+				type: z.literal('collection_resultset_completed').optional(),
+			})
+			.loose(),
+		collection: z
+			.object({
+				id: z.string(),
+				name: z.string().optional(),
+			})
+			.loose(),
+		result_set: WebhookResultSetSchema,
+	})
+	.loose();
+
+export type CollectionCompletedEvent = z.infer<
+	typeof CollectionCompletedPayloadSchema
 >;
 
-export const ExampleEventSchema = AsinDataApiWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
-		})
-		.loose(),
+// ── Event Response Schema ────────────────────────────────────────────────────
+
+export const CollectionCompletedEventSchema = z.object({
+	collectionId: z.string(),
+	collectionName: z.string().optional(),
+	resultSet: WebhookResultSetSchema,
 });
 
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
+export type CollectionCompletedResponse = z.infer<
+	typeof CollectionCompletedEventSchema
+>;
+
+// ── Webhook Outputs ──────────────────────────────────────────────────────────
 
 export type AsinDataApiWebhookOutputs = {
-	example: ExampleEvent;
+	collectionCompleted: CollectionCompletedEvent;
 };
+
+// ── Event Matcher ────────────────────────────────────────────────────────────
 
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
-			return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+			return parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
 				? (parsed as Record<string, unknown>)
 				: null;
 		} catch {
@@ -42,17 +94,34 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-export function createAsinDataApiMatch(eventType: string): CorsairWebhookMatcher {
+export function createAsinDataApiMatch(
+	eventType: string,
+): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
-		return parsedBody !== null && parsedBody.type === eventType;
+		if (!parsedBody) return false;
+
+		const requestInfo = parsedBody.request_info as
+			| Record<string, unknown>
+			| undefined;
+		if (requestInfo?.type === eventType) return true;
+
+		return parsedBody.type === eventType;
 	};
 }
 
+// ── Signature Verification ───────────────────────────────────────────────────
+// ASIN Data API webhooks do not document a signature verification header.
+// Collection completion notifications are delivered as plain HTTP POST to
+// the configured `notification_webhook` URL. The only way to verify them
+// is by checking the payload content. If the provider adds signature
+// support in the future, update this function and `pluginWebhookMatcher`.
+
 export function verifyAsinDataApiWebhookSignature(
-	request: WebhookRequest<AsinDataApiWebhookPayload>,
-	secret: string,
+	_request: WebhookRequest<unknown>,
+	_secret: string | undefined,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
+	// No documented signature header — always return valid.
+	// The `pluginWebhookMatcher` will filter non-matching payloads.
 	return { valid: true };
 }
