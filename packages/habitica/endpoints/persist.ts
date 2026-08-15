@@ -95,6 +95,35 @@ const CACHE_WRITE_CONCURRENCY = 16;
  */
 type EntityIdOf<T> = (parsed: T) => string | undefined;
 
+/** Response-only / secret fields that must not be written to the mirror. */
+const OMIT_FROM_CACHE: Record<string, ReadonlySet<string>> = {
+	group: new Set(['chat']),
+	webhook: new Set(['url']),
+};
+
+/**
+ * Keeps declared schema keys only, minus fields the mirror must not store.
+ *
+ * Entities are `.loose()`, so `parsed.data` still carries unknown properties
+ * and group `chat` / webhook `url`. The schema shape is the allowlist.
+ */
+function projectForCache<Schema extends z.ZodType>(
+	schema: Schema,
+	data: z.infer<Schema>,
+	label: string,
+): z.infer<Schema> {
+	const shape = (schema as { shape?: Record<string, unknown> }).shape;
+	if (!shape) return data;
+	const omit = OMIT_FROM_CACHE[label];
+	const src = data as Record<string, unknown>;
+	const out: Record<string, unknown> = {};
+	for (const key of Object.keys(shape)) {
+		if (omit?.has(key) || !(key in src)) continue;
+		out[key] = src[key];
+	}
+	return out as z.infer<Schema>;
+}
+
 const defaultEntityId = <T>(parsed: T): string | undefined => {
 	const id = (parsed as { id?: unknown }).id;
 	if (typeof id === 'string' || typeof id === 'number') return String(id);
@@ -134,7 +163,11 @@ export async function cacheEntity<Schema extends z.ZodType>(
 	if (!entityId) return;
 
 	await safely(
-		() => store.upsertByEntityId(entityId, parsed.data),
+		() =>
+			store.upsertByEntityId(
+				entityId,
+				projectForCache(schema, parsed.data, options.label),
+			),
 		`failed to cache ${options.label} ${entityId}`,
 	);
 }

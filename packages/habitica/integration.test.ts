@@ -711,15 +711,27 @@ describeLive('Habitica live API', () => {
 			];
 
 			for (const [method, path] of cases) {
-				const body = await paced(async () => {
-					const res = await fetch(apiUrl(path), {
-						method,
-						headers: { ...authHeaders(), 'Content-Type': 'application/json' },
-						body: method === 'GET' || method === 'DELETE' ? undefined : '{}',
+				let body: { message?: string };
+				try {
+					body = await paced(async () => {
+						const res = await fetch(apiUrl(path), {
+							method,
+							headers: {
+								...authHeaders(),
+								'Content-Type': 'application/json',
+							},
+							body: method === 'GET' || method === 'DELETE' ? undefined : '{}',
+						});
+						return (await res.json()) as { message?: string };
 					});
-					return (await res.json()) as { message?: string; error?: string };
-				});
-				expect(body.message).not.toBe('Not found.');
+				} catch (error) {
+					const message =
+						error instanceof Error ? error.message : String(error);
+					throw new Error(`${method} ${path}: ${message}`);
+				}
+				if (body.message === 'Not found.') {
+					throw new Error(`${method} ${path}: unrouted`);
+				}
 			}
 		}, 240000);
 	});

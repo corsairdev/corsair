@@ -29,6 +29,7 @@ import {
 	Webhooks,
 } from './endpoints';
 import { HabiticaMirrorEvictionError } from './endpoints/persist';
+import { HabiticaEndpointInputSchemas } from './endpoints/types';
 import { habiticaEndpointMeta } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -831,6 +832,41 @@ describe('mirroring', () => {
 		expect(db.tasks.deleteByEntityId).toHaveBeenCalledWith('task-b');
 	});
 
+	it('does not persist group chat, webhook urls, or undeclared keys', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch(
+			wrap({
+				id: GROUP,
+				name: 'A group',
+				chat: [{ text: 'other people talking' }],
+				aKeyNobodyDeclared: 1,
+			}),
+		);
+		await Groups.get(ctx, { groupId: GROUP });
+		const groupRow = db.groups.upsertByEntityId.mock.calls[0]?.[1] as Record<
+			string,
+			unknown
+		>;
+		expect(groupRow).not.toHaveProperty('chat');
+		expect(groupRow).not.toHaveProperty('aKeyNobodyDeclared');
+		expect(groupRow.id).toBe(GROUP);
+
+		mockFetch(
+			wrap({
+				...webhookRecord,
+				aKeyNobodyDeclared: 1,
+			}),
+		);
+		await Webhooks.create(ctx, { url: 'https://example.com/hook' });
+		const hookRow = db.webhooks.upsertByEntityId.mock.calls[0]?.[1] as Record<
+			string,
+			unknown
+		>;
+		expect(hookRow).not.toHaveProperty('url');
+		expect(hookRow).not.toHaveProperty('aKeyNobodyDeclared');
+		expect(hookRow.id).toBe(WEBHOOK);
+	});
+
 	it('does not mirror anything the user document touches', async () => {
 		const { ctx, db } = makeCtx();
 		mockFetch(
@@ -1255,6 +1291,21 @@ describe('request construction', () => {
 
 		expect(query().get('type')).toBe('todos');
 		expect(query().has('dueDate')).toBe(false);
+	});
+
+	it('rejects a members list limit above 60', () => {
+		expect(
+			HabiticaEndpointInputSchemas.groupsListMembers.safeParse({
+				groupId: GROUP,
+				limit: 61,
+			}).success,
+		).toBe(false);
+		expect(
+			HabiticaEndpointInputSchemas.groupsListMembers.safeParse({
+				groupId: GROUP,
+				limit: 5,
+			}).success,
+		).toBe(true);
 	});
 
 	it('normalizes a single challenge-task create into an array', async () => {

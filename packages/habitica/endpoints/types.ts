@@ -429,7 +429,7 @@ export type GroupsLeaveInput = z.infer<typeof GroupsLeaveInputSchema>;
 const GroupsListMembersInputSchema = z.object({
 	groupId: z.string(),
 	lastId: z.string().optional(),
-	limit: z.number().optional(),
+	limit: z.number().max(60).optional(),
 	includeAllPublicFields: z.boolean().optional(),
 });
 export type GroupsListMembersInput = z.infer<
