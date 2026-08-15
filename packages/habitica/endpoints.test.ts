@@ -1005,6 +1005,38 @@ describe('secrets interpolated into a path', () => {
 			}) as unknown as Response) as unknown as typeof global.fetch;
 	}
 
+	/**
+	 * Returns the error a call rejected with, and fails loudly if it did not
+	 * reject at all.
+	 *
+	 * Without this the redaction assertions below are vacuous: `not.toContain`
+	 * passes just as happily against a resolved value as against a redacted
+	 * error. Verified by making the mocked request succeed - both checks still
+	 * passed, proving they were asserting nothing.
+	 */
+	const RESOLVED = Symbol('resolved');
+	async function rejection(promise: Promise<unknown>): Promise<unknown> {
+		const outcome = await promise.then(
+			() => RESOLVED,
+			(error: unknown) => error,
+		);
+		if (outcome === RESOLVED) {
+			throw new Error(
+				'expected the call to reject; it resolved, so the assertions that follow would prove nothing',
+			);
+		}
+		return outcome;
+	}
+
+	/** Everywhere the secret could hide on the way to a log. */
+	const serialise = (error: unknown) =>
+		[
+			(error as Error)?.message,
+			JSON.stringify(error),
+			String((error as { url?: string })?.url ?? ''),
+			String((error as { request?: { url?: string } })?.request?.url ?? ''),
+		].join(' ');
+
 	it('keeps a coupon code out of the thrown error', async () => {
 		// A valid coupon is a bearer instrument. The shared transport redacts
 		// sensitive query parameters but not path segments, and Habitica takes
@@ -1012,36 +1044,61 @@ describe('secrets interpolated into a path', () => {
 		const { ctx } = makeCtx();
 		mockFailure(404, 'https://habitica.com/api/v3/coupons/validate/x');
 
-		const error = await Content.validateCoupon(ctx, {
-			code: 'SECRET-COUPON-1234',
-		}).catch((e: unknown) => e);
+		const error = await rejection(
+			Content.validateCoupon(ctx, { code: 'SECRET-COUPON-1234' }),
+		);
 
-		const serialised = `${(error as Error).message} ${JSON.stringify(error)} ${String((error as { url?: string }).url ?? '')}`;
-		expect(serialised).not.toContain('SECRET-COUPON-1234');
+		expect(error).toBeInstanceOf(Error);
+		// The status survives redaction, so error-handlers can still classify it.
+		expect((error as { status?: number }).status).toBe(404);
+		expect(serialise(error)).not.toContain('SECRET-COUPON-1234');
 	});
 
 	it('keeps a push-device registration id out of the thrown error', async () => {
 		const { ctx } = makeCtx();
 		mockFailure(404, 'https://habitica.com/api/v3/user/push-devices/x');
 
-		const error = await User.deletePushDevice(ctx, {
-			regId: 'device-token-abcdef',
-		}).catch((e: unknown) => e);
-
-		const serialised = `${(error as Error).message} ${JSON.stringify(error)} ${String((error as { url?: string }).url ?? '')}`;
-		expect(serialised).not.toContain('device-token-abcdef');
-	});
-
-	it('leaves an unrelated error untouched', async () => {
-		// Redaction must not swallow errors that never carried the secret.
-		const { ctx } = makeCtx();
-		mockFailure(404, 'https://habitica.com/api/v3/coupons/validate/x');
-
-		const error = await Content.validateCoupon(ctx, { code: 'ABCD' }).catch(
-			(e: unknown) => e,
+		const error = await rejection(
+			User.deletePushDevice(ctx, { regId: 'device-token-abcdef' }),
 		);
 
 		expect(error).toBeInstanceOf(Error);
+		expect((error as { status?: number }).status).toBe(404);
+		expect(serialise(error)).not.toContain('device-token-abcdef');
+	});
+
+	it('stays diagnosable after redaction', async () => {
+		// Redaction must not cost an operator the ability to tell which call
+		// failed. The transport's message is often just "Not Found" and the
+		// detail lives in the URL, so the masked URL is folded into the message.
+		const { ctx } = makeCtx();
+		mockFailure(404, 'https://habitica.com/api/v3/coupons/validate/x');
+
+		const error = await rejection(
+			Content.validateCoupon(ctx, { code: 'SECRET-COUPON-1234' }),
+		);
+
+		const message = (error as Error).message;
+		expect(message).toContain('coupons/validate');
+		expect(message).toContain('[REDACTED]');
+		expect(message).not.toContain('SECRET-COUPON-1234');
+	});
+
+	it('passes through an error that never carried the secret', async () => {
+		// Redaction rebuilds the error only when the value actually leaked. A
+		// missing user id fails before any request, so nothing needs masking and
+		// the original error type must survive.
+		const ctx = {
+			key: 'test-token',
+			db: {},
+			options: {},
+		} as unknown as Ctx;
+
+		const error = await rejection(
+			Content.validateCoupon(ctx, { code: 'SECRET-COUPON-1234' }),
+		);
+
+		expect(error).toBeInstanceOf(HabiticaUserIdMissingError);
 	});
 });
 
@@ -1072,12 +1129,15 @@ describe('the credential-minting operations send their body', () => {
 			confirmPassword: 'a-password',
 		});
 
-		expect(Object.keys(sentBody()).sort()).toEqual([
-			'confirmPassword',
-			'email',
-			'password',
-			'username',
-		]);
+		// The whole payload, not just its keys: a key check would pass against
+		// empty strings or values swapped between fields, and an empty body was
+		// exactly the bug this test exists to catch.
+		expect(sentBody()).toEqual({
+			username: 'someone',
+			email: 'someone@example.com',
+			password: 'a-password',
+			confirmPassword: 'a-password',
+		});
 	});
 
 	it('auth.social sends the provider response', async () => {

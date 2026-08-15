@@ -216,12 +216,18 @@ function redactPathValue(error: unknown, secret: string): unknown {
 	const retryAfter =
 		typeof carrier.retryAfter === 'number' ? carrier.retryAfter : undefined;
 
+	const url = String(carrier.url ?? '');
 	const masked = mask(error.message);
-	const leaked =
-		masked !== error.message ||
-		forms.some((form) => String(carrier.url ?? '').includes(form));
+	const leaked = masked !== error.message || forms.some((f) => url.includes(f));
 
-	return leaked ? new HabiticaHttpError(masked, status, retryAfter) : error;
+	if (!leaked) return error;
+
+	// The rebuilt error has no `url`, which is usually where the secret sits -
+	// the transport's own message is often just "Not Found". The masked URL is
+	// therefore folded into the message, so redaction does not cost an operator
+	// the ability to tell which call failed.
+	const detail = url ? ` (${mask(url)})` : '';
+	return new HabiticaHttpError(`${masked}${detail}`, status, retryAfter);
 }
 
 /**
