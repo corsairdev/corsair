@@ -1,5 +1,9 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import type { ClientaryAPIError } from './client';
+
+function isNonIdempotentWrite(operation: string): boolean {
+	return /\.(create|send|delete)$/.test(operation);
+}
 
 /**
  * Helper to extract the HTTP status from an error.
@@ -36,7 +40,10 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('429') || msg.includes('rate limit');
 		},
-		handler: async (error: Error) => {
+		handler: async (error: Error, context: ErrorContext) => {
+			if (isNonIdempotentWrite(context.operation)) {
+				return { maxRetries: 0 };
+			}
 			return {
 				maxRetries: 3,
 				retryStrategy: 'exponential_backoff' as const,
@@ -127,10 +134,16 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('500') || msg.includes('internal server error');
 		},
-		handler: async (error: Error) => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error, context: ErrorContext) => {
+			void error;
+			if (isNonIdempotentWrite(context.operation)) {
+				return { maxRetries: 0 };
+			}
+			return {
+				maxRetries: 2,
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	DEFAULT: {
 		match: (error: Error) => {
