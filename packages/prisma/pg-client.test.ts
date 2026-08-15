@@ -315,6 +315,35 @@ describe('isReadOnlySql token-aware validation', () => {
 		);
 	});
 
+	it('accepts quoted alias column lists after AS, comments included', () => {
+		// FROM f(x) AS "series" (value) — the quoted name is a table alias and
+		// the parens hold output-column names, not a function invocation.
+		expect(
+			isReadOnlySql('SELECT * FROM generate_series(1, 3) AS "series"(value)'),
+		).toBe(true);
+		expect(
+			isReadOnlySql(
+				'SELECT * FROM generate_series(1, 3) AS "series" /* comment */ (value)',
+			),
+		).toBe(true);
+		expect(
+			isReadOnlySql(
+				'SELECT * FROM generate_series(1, 3) AS /* c */ "series" (value)',
+			),
+		).toBe(true);
+		// the exemption does not extend past the alias: unsafe calls anywhere
+		// else — including inside the column list — are still rejected
+		expect(isReadOnlySql("SELECT \"dblink\"('c', 'INSERT')")).toBe(false);
+		expect(isReadOnlySql('SELECT "pg_sleep" /*c*/ (30)')).toBe(false);
+		expect(
+			isReadOnlySql(
+				'SELECT * FROM generate_series(1, 3) AS "series"(pg_sleep(1))',
+			),
+		).toBe(false);
+		// and a quoted name followed by '(' without AS is still treated as a call
+		expect(isReadOnlySql('SELECT "pg_stat_reset"()')).toBe(false);
+	});
+
 	it('accepts allowlisted built-in calls and keyword constructs', () => {
 		expect(isReadOnlySql('SELECT count(*) FROM users')).toBe(true);
 		expect(isReadOnlySql('SELECT max(id), sum(amount) FROM users')).toBe(true);

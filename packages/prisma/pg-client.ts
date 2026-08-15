@@ -635,8 +635,20 @@ export function isReadOnlySql(sql: string): boolean {
 					// closes the case where an unlisted unsafe function is called
 					// through a quoted identifier. Trivia is skipped so a comment
 					// cannot hide the '(' ("dblink" /*c*/ (...) still rejects).
+					// Exception: after AS the quoted name is a table alias and
+					// the parens hold a column-alias list, not a call — e.g.
+					// `FROM f(x) AS "series" /*c*/ (value)`. A real call in that
+					// position is a syntax error the server rejects, and the
+					// column list itself is scanned normally, so the exemption
+					// cannot smuggle an invocation.
 					const k = skipSqlTrivia(i + 1);
-					if (s.charAt(k) === '(') return false;
+					if (s.charAt(k) === '(' && prevWord !== 'as') return false;
+					// Do not let the AS exemption leak past the alias: clear
+					// prevWord so a call right after a quoted alias — e.g.
+					// `AS "series"(pg_sleep(1))` — is still classified against
+					// the allowlist (the bare-word branch gets this for free by
+					// recording the alias name; quoted idents record nothing).
+					prevWord = '';
 					i += 1;
 					continue;
 				}
