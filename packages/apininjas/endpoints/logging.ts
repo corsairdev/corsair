@@ -226,7 +226,6 @@ const LOGGABLE_KEYS = new Set([
 	'distance',
 	'duration',
 	'rate',
-	'weight',
 ]);
 
 /** True when a parameter's value may be written to the event log. */

@@ -80,6 +80,7 @@ describe('airports', () => {
 		expect(id).toBe('egll');
 		expect(row).toEqual({
 			id: 'egll',
+			ident: 'EGLL',
 			iata: 'LHR',
 			icao: 'EGLL',
 			name: 'London Heathrow Airport',
@@ -164,7 +165,7 @@ describe('airports', () => {
 });
 
 describe('airlines', () => {
-	it('keys on IATA and flattens the fleet total', async () => {
+	it('keys on IATA and stores the official fleet object', async () => {
 		const store = makeStore();
 
 		await cacheAirlines(
@@ -185,16 +186,16 @@ describe('airlines', () => {
 
 		const [id, row] = written(store);
 		expect(id).toBe('sq');
-		expect(row.fleet_size).toBe(155);
+		expect(row.fleet).toEqual({ A359: 59, B77W: 27, total: 155 });
 		expect(row.base).toBe('Singapore Changi Airport');
 	});
 
-	it('leaves the fleet size unset when the fleet object is absent', async () => {
+	it('leaves the fleet unset when the fleet object is absent', async () => {
 		const store = makeStore();
 
 		await cacheAirlines(store, [{ iata: 'SQ' }], AT);
 
-		expect(written(store)[1].fleet_size).toBeUndefined();
+		expect(written(store)[1].fleet).toBeUndefined();
 	});
 
 	it('ignores a fleet that is not an object', async () => {
@@ -202,7 +203,7 @@ describe('airlines', () => {
 
 		await cacheAirlines(store, [{ iata: 'SQ', fleet: 'unknown' as never }], AT);
 
-		expect(written(store)[1].fleet_size).toBeUndefined();
+		expect(written(store)[1].fleet).toBeUndefined();
 	});
 
 	it('falls back to icao then name', async () => {
@@ -311,7 +312,7 @@ describe('vehicles', () => {
 
 		const [, row] = written(store);
 		expect(row.kind).toBe('car');
-		expect(row.vehicle_class).toBe('compact car');
+		expect(row.class).toBe('compact car');
 		expect(row.fuel_type).toBe('gas');
 	});
 
@@ -333,7 +334,7 @@ describe('vehicles', () => {
 
 		const [, row] = written(store);
 		expect(row.kind).toBe('motorcycle');
-		expect(row.vehicle_class).toBe('ATV');
+		expect(row.type).toBe('ATV');
 	});
 
 	it('marks an electric vehicle as electric without being told', async () => {
@@ -347,7 +348,7 @@ describe('vehicles', () => {
 
 		const [, row] = written(store);
 		expect(row.kind).toBe('electric');
-		expect(row.fuel_type).toBe('electric');
+		expect(row.year_start).toBe('2015');
 	});
 
 	it('drops the masked fields the electric endpoint is full of', async () => {
@@ -359,7 +360,7 @@ describe('vehicles', () => {
 			AT,
 		);
 
-		expect(written(store)[1].year).toBeUndefined();
+		expect(written(store)[1].year_start).toBeUndefined();
 	});
 });
 
@@ -385,7 +386,7 @@ describe('countries and cities', () => {
 
 		const [id, row] = written(store);
 		expect(id).toBe('de');
-		expect(row.currency_code).toBe('EUR');
+		expect(row.currency).toEqual({ code: 'EUR', name: 'Euro' });
 		expect(row.capital).toBe('Berlin');
 	});
 
@@ -402,7 +403,7 @@ describe('countries and cities', () => {
 
 		await cacheCountries(store, [{ iso2: 'DE' }], AT);
 
-		expect(written(store)[1].currency_code).toBeUndefined();
+		expect(written(store)[1].currency).toBeUndefined();
 	});
 
 	it('keys a city on name and country, because it has no id', async () => {
@@ -414,7 +415,6 @@ describe('countries and cities', () => {
 				{
 					name: 'London',
 					country: 'GB',
-					region: 'England',
 					latitude: 51.5072,
 					longitude: -0.1275,
 					population: 10979000,
@@ -603,10 +603,14 @@ describe('emoji, animals and astronomy', () => {
 
 		const [id, row] = written(store);
 		expect(id).toBe('cheetah');
-		expect(row.scientific_name).toBe('Acinonyx jubatus');
-		expect(row.family).toBe('Felidae');
-		expect(row.habitat).toBe('Open grassland');
-		expect(row.diet).toBe('Carnivore');
+		expect(row.taxonomy).toEqual({
+			family: 'Felidae',
+			scientific_name: 'Acinonyx jubatus',
+		});
+		expect(row.characteristics).toEqual({
+			habitat: 'Open grassland',
+			diet: 'Carnivore',
+		});
 		expect(row.locations).toEqual(['Africa', 'Asia']);
 	});
 
@@ -616,8 +620,8 @@ describe('emoji, animals and astronomy', () => {
 		await cacheAnimals(store, [{ name: 'Cheetah' }], AT);
 
 		const [, row] = written(store);
-		expect(row.scientific_name).toBeUndefined();
-		expect(row.habitat).toBeUndefined();
+		expect(row.taxonomy).toBeUndefined();
+		expect(row.characteristics).toBeUndefined();
 		expect(row.locations).toBeUndefined();
 	});
 

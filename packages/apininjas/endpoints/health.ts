@@ -32,10 +32,7 @@ export const caloriesBurned: ApiNinjasEndpoints['healthCaloriesBurned'] =
 		await logEventFromContext(
 			ctx,
 			'apininjas.health.caloriesBurned',
-			withCount(
-				auditPayload(input, ['activity', 'weight', 'duration']),
-				result,
-			),
+			withCount(auditPayload(input, ['activity', 'duration']), result),
 			'completed',
 		);
 		return result;

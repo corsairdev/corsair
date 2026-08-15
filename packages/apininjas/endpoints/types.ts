@@ -112,7 +112,6 @@ const LocationCitiesOutputSchema = z.array(
 			longitude: z.number().nullable().optional(),
 			country: z.string().nullable().optional(),
 			population: z.number().nullable().optional(),
-			region: z.string().nullable().optional(),
 			is_capital: z.boolean().nullable().optional(),
 		})
 		.loose(),
@@ -1515,8 +1514,18 @@ const MarketsStockExchangesOutputSchema = z.array(
 			founded: z.string().nullable().optional(),
 			num_listings: z.number().nullable().optional(),
 			market_cap_usd: z.number().nullable().optional(),
+			/** Market cap in local currency when market_cap_usd is absent. */
+			market_cap: z.union([z.number(), z.string()]).nullable().optional(),
 			currency: z.string().nullable().optional(),
 			timezone: z.string().nullable().optional(),
+			/** Opening time. Business/Professional tier. */
+			market_open: z.string().nullable().optional(),
+			/** Closing time. Business/Professional tier. */
+			market_close: z.string().nullable().optional(),
+			/** Whether the exchange is currently open. Business/Professional tier. */
+			is_market_open: z.union([z.boolean(), z.string()]).nullable().optional(),
+			/** Reason the exchange is closed, or null if open. */
+			closed_reason: z.string().nullable().optional(),
 		})
 		.loose(),
 );
@@ -3353,7 +3362,7 @@ const TransportAirportsInputSchema = z.object({
 	/** Maximum airport elevation in feet. */
 	max_elevation: z.number().optional(),
 	/** Airport size. Must be one of: large, medium, small. */
-	size: z.number().optional(),
+	size: z.string().optional(),
 	/** Filter by whether the airport has an IATA code. true returns only IATA-coded airports; false returns only those without. */
 	has_iata: z.boolean().optional(),
 	/** Minimum length (in feet) of at least one runway at the airport. */

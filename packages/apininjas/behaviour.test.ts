@@ -95,7 +95,7 @@ describe('mirroring reference data', () => {
 		expect(row.captured_at).toBeInstanceOf(Date);
 	});
 
-	it('stores a country under its ISO code and flattens its currency', async () => {
+	it('stores a country under its ISO code and keeps the official currency object', async () => {
 		const { ctx, db } = makeCtx();
 		mockResponse(captured('locationCountry'));
 
@@ -106,7 +106,7 @@ describe('mirroring reference data', () => {
 			Record<string, unknown>,
 		];
 		expect(id).toBe('de');
-		expect(row.currency_code).toBe('EUR');
+		expect((row.currency as { code: string }).code).toBe('EUR');
 	});
 
 	it('keeps the three vehicle endpoints apart in one store', async () => {
