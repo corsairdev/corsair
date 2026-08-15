@@ -9,6 +9,9 @@ import type {
 
 export const AltovizIdSchema = z.number().int();
 
+/** Altoviz calendar dates use the documented `YYYY-MM-DD` wire format. */
+export const AltovizDateSchema = z.iso.date();
+
 /**
  * Every `{id}` path parameter in the Altoviz surface is int32 - confirmed live,
  * a GUID or any other string is a 400 "The value ... is not valid.".
@@ -49,7 +52,7 @@ export function compactQuery(
  */
 export const PagingInputSchema = {
 	pageIndex: z.number().int().min(1).default(1),
-	pageSize: z.number().int().min(1).optional(),
+	pageSize: z.number().int().min(1).max(100).optional(),
 	/** Accepted by every list endpoint but silently ignored by the API - confirmed live. Exposed because it is documented, not because it works. */
 	orderBy: z.string().optional(),
 	query: z.string().optional(),

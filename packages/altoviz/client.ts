@@ -9,11 +9,11 @@ const ALTOVIZ_API_BASE = 'https://api.altoviz.com';
 
 /**
  * Measured live, twice, minutes apart: the quota is exactly 100 requests over
- * a rolling window, and the 429 that follows carries `Retry-After` in seconds
- * — 13s on one run, 36s on the other, since it reports time left in the
- * *current* window rather than a fixed cooldown. Honouring it produced an
- * immediate 200 both times, so `Retry-After` is authoritative: sleep for
- * exactly what it says rather than doubling on top of it.
+ * a rolling window, and the 429 that follows carries `Retry-After` in
+ * milliseconds — 13,000 on one run, 36,000 on the other, since it reports
+ * time left in the *current* window rather than a fixed cooldown. Honouring it
+ * produced an immediate 200 both times, so `Retry-After` is authoritative:
+ * sleep for exactly what it says rather than doubling on top of it.
  *
  * A success carries no rate-limit header of any kind (no `RateLimit-Limit`,
  * no `RateLimit-Remaining`), so the client cannot throttle proactively — only

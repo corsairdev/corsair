@@ -98,6 +98,34 @@ describe('the UNREGISTER_WEBHOOK guard', () => {
 			true,
 		);
 	});
+
+	test('rejects a call with both id and url', () => {
+		expect(
+			schema.safeParse({ webhookId: 1, url: 'https://example.com/wh' }).success,
+		).toBe(false);
+	});
+});
+
+describe('documented input constraints', () => {
+	const listSchema = AltovizEndpointInputSchemas.customersList;
+	const createInvoiceSchema = AltovizEndpointInputSchemas.saleInvoicesCreate;
+
+	test('accepts page sizes from 1 through 100 only', () => {
+		expect(listSchema.safeParse({ pageSize: 1 }).success).toBe(true);
+		expect(listSchema.safeParse({ pageSize: 100 }).success).toBe(true);
+		expect(listSchema.safeParse({ pageSize: 0 }).success).toBe(false);
+		expect(listSchema.safeParse({ pageSize: 101 }).success).toBe(false);
+	});
+
+	test('requires YYYY-MM-DD calendar dates before making a request', () => {
+		const base = { customerId: 1, lines: [{ description: 'Service' }] };
+		expect(
+			createInvoiceSchema.safeParse({ ...base, date: '2026-08-15' }).success,
+		).toBe(true);
+		expect(
+			createInvoiceSchema.safeParse({ ...base, date: '15/08/2026' }).success,
+		).toBe(false);
+	});
 });
 
 describe('audit payload: deny-by-default allow-list', () => {

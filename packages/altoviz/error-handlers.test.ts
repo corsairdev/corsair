@@ -29,9 +29,7 @@ function context(operation: string, error: Error) {
 describe('status-to-handler mapping', () => {
 	test('401 (empty body) matches AUTH_ERROR and is never retried', () => {
 		const error = apiError(401, undefined);
-		expect(
-			errorHandlers.AUTH_ERROR.match(error, context('customers.get', error)),
-		).toBe(true);
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
 	});
 
 	test('404 matches NOT_FOUND_ERROR whether the body is a message or empty', async () => {
@@ -40,18 +38,8 @@ describe('status-to-handler mapping', () => {
 			message: 'Customer with ID 1 not found.',
 		});
 		const empty = apiError(404, undefined);
-		expect(
-			errorHandlers.NOT_FOUND_ERROR.match(
-				withMessage,
-				context('customers.get', withMessage),
-			),
-		).toBe(true);
-		expect(
-			errorHandlers.NOT_FOUND_ERROR.match(
-				empty,
-				context('customers.get', empty),
-			),
-		).toBe(true);
+		expect(errorHandlers.NOT_FOUND_ERROR.match(withMessage)).toBe(true);
+		expect(errorHandlers.NOT_FOUND_ERROR.match(empty)).toBe(true);
 		const result = await errorHandlers.NOT_FOUND_ERROR.handler(
 			withMessage,
 			context('customers.get', withMessage),
@@ -61,9 +49,7 @@ describe('status-to-handler mapping', () => {
 
 	test('405 matches METHOD_ERROR', () => {
 		const error = apiError(405, undefined);
-		expect(
-			errorHandlers.METHOD_ERROR.match(error, context('customers.get', error)),
-		).toBe(true);
+		expect(errorHandlers.METHOD_ERROR.match(error)).toBe(true);
 	});
 
 	test('409 matches CONFLICT_ERROR and is never retried', async () => {
@@ -71,12 +57,7 @@ describe('status-to-handler mapping', () => {
 			errors: null,
 			message: "L'element ... ne peut pas etre supprime car il a ete utilise.",
 		});
-		expect(
-			errorHandlers.CONFLICT_ERROR.match(
-				error,
-				context('customerFamilies.delete', error),
-			),
-		).toBe(true);
+		expect(errorHandlers.CONFLICT_ERROR.match(error)).toBe(true);
 		const result = await errorHandlers.CONFLICT_ERROR.handler(
 			error,
 			context('customerFamilies.delete', error),
@@ -91,12 +72,7 @@ describe('status-to-handler mapping', () => {
 			{ errors: null, message: "La TVA n'existe pas." },
 		]) {
 			const error = apiError(400, body);
-			expect(
-				errorHandlers.VALIDATION_ERROR.match(
-					error,
-					context('products.create', error),
-				),
-			).toBe(true);
+			expect(errorHandlers.VALIDATION_ERROR.match(error)).toBe(true);
 		}
 	});
 
@@ -113,12 +89,7 @@ describe('status-to-handler mapping', () => {
 			'error',
 			{ retryAfter: 36000 },
 		);
-		expect(
-			errorHandlers.RATE_LIMIT_ERROR.match(
-				error,
-				context('account.getUnits', error),
-			),
-		).toBe(true);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
 			error,
 			context('account.getUnits', error),
@@ -166,9 +137,7 @@ describe('status-to-handler mapping', () => {
 
 	test('a network error is retried for a read, never for a non-idempotent write', async () => {
 		const error = new Error('fetch failed');
-		expect(
-			errorHandlers.NETWORK_ERROR.match(error, context('customers.get', error)),
-		).toBe(true);
+		expect(errorHandlers.NETWORK_ERROR.match(error)).toBe(true);
 		const readResult = await errorHandlers.NETWORK_ERROR.handler(
 			error,
 			context('customers.get', error),
@@ -183,9 +152,7 @@ describe('status-to-handler mapping', () => {
 
 	test('DEFAULT catches everything else and never retries', async () => {
 		const error = new Error('something unexpected');
-		expect(
-			errorHandlers.DEFAULT.match(error, context('customers.get', error)),
-		).toBe(true);
+		expect(errorHandlers.DEFAULT.match()).toBe(true);
 		const result = await errorHandlers.DEFAULT.handler(
 			error,
 			context('customers.get', error),

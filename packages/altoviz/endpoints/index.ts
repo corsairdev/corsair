@@ -94,6 +94,7 @@ import {
 	unregister as webhookSubscriptionsUnregister,
 } from './webhook-subscriptions';
 
+/** Customer CRUD and lookup helpers; update preserves omitted fields with read-modify-write. */
 export const Customers = {
 	create: customersCreate,
 	update: customersUpdate,
@@ -105,6 +106,7 @@ export const Customers = {
 	getContacts: customersGetContacts,
 };
 
+/** Customer-family create/get/delete/list; delete is refused while customers reference it. */
 export const CustomerFamilies = {
 	create: customerFamiliesCreate,
 	get: customerFamiliesGet,
@@ -112,6 +114,7 @@ export const CustomerFamilies = {
 	list: customerFamiliesList,
 };
 
+/** Supplier reads and safe updates; contacts are returned through the supplier relationship. */
 export const Suppliers = {
 	get: suppliersGet,
 	list: suppliersList,
@@ -120,6 +123,7 @@ export const Suppliers = {
 	getContacts: suppliersGetContacts,
 };
 
+/** Standalone contact creation and lookup, independent of customer or supplier lists. */
 export const Contacts = {
 	create: contactsCreate,
 	get: contactsGet,
@@ -127,6 +131,7 @@ export const Contacts = {
 	list: contactsList,
 };
 
+/** Colleague reads and safe updates; omitted update fields retain their current values. */
 export const Colleagues = {
 	get: colleaguesGet,
 	list: colleaguesList,
@@ -134,6 +139,7 @@ export const Colleagues = {
 	delete: colleaguesRemove,
 };
 
+/** API-key validation plus current-user, settings, units, VAT, and classification references. */
 export const Account = {
 	getCurrentUser,
 	testApiKey,
@@ -143,12 +149,14 @@ export const Account = {
 	getClassifications,
 };
 
+/** Webhook registration and removal; unregister accepts exactly one webhook ID or callback URL. */
 export const WebhookSubscriptions = {
 	list: webhookSubscriptionsList,
 	register: webhookSubscriptionsRegister,
 	unregister: webhookSubscriptionsUnregister,
 };
 
+/** Product creation, deletion, and lookups; unit, VAT, and family IDs are resolved for writes. */
 export const Products = {
 	create: productsCreate,
 	delete: productsRemove,
@@ -157,6 +165,7 @@ export const Products = {
 	findByNumberOrId: productsFindByNumberOrId,
 };
 
+/** Product-family create/get/delete operations and paginated listing. */
 export const ProductFamilies = {
 	create: productFamiliesCreate,
 	get: productFamiliesGet,
@@ -164,6 +173,7 @@ export const ProductFamilies = {
 	list: productFamiliesList,
 };
 
+/** Invoice lifecycle helpers; create requires lines and delete applies to drafts only. */
 export const SaleInvoices = {
 	create: saleInvoicesCreate,
 	get: saleInvoicesGet,
@@ -173,6 +183,7 @@ export const SaleInvoices = {
 	download: saleInvoicesDownload,
 };
 
+/** Credit lifecycle helpers; updates resend the complete line collection. */
 export const SaleCredits = {
 	create: saleCreditsCreate,
 	update: saleCreditsUpdate,
@@ -183,12 +194,14 @@ export const SaleCredits = {
 	download: saleCreditsDownload,
 };
 
+/** This catalog exposes quote lookup/list/delete; create/send/download remain outside its scope. */
 export const SaleQuotes = {
 	find: saleQuotesFind,
 	list: saleQuotesList,
 	delete: saleQuotesRemove,
 };
 
+/** Receipt lifecycle helpers; linking a receipt requires a finalized sale document. */
 export const Receipts = {
 	create: receiptsCreate,
 	update: receiptsUpdate,
@@ -198,6 +211,7 @@ export const Receipts = {
 	delete: receiptsRemove,
 };
 
+/** Base64 PDF upload and download; uploaded purchase invoices are deleted in the Altoviz UI. */
 export const PurchaseInvoices = {
 	upload: purchaseInvoicesUpload,
 	download: purchaseInvoicesDownload,

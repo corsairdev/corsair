@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import {
+	AltovizDateSchema,
 	AltovizIdSchema,
 	AltovizLineInputSchema,
 	PagingInputSchema,
@@ -484,6 +485,10 @@ const SupplierOutputSchema = z
 			.record(z.string(), z.unknown())
 			.nullable()
 			.optional(),
+		createdAt: z.string().nullable().optional(),
+		createdById: z.string().nullable().optional(),
+		updatedAt: z.string().nullable().optional(),
+		updatedById: z.string().nullable().optional(),
 	})
 	.loose();
 export type SupplierOutput = z.infer<typeof SupplierOutputSchema>;
@@ -678,9 +683,8 @@ const UnregisterWebhookInputSchema = z
 		webhookId: AltovizIdSchema.optional(),
 		url: z.string().optional(),
 	})
-	.refine((v) => v.webhookId !== undefined || v.url !== undefined, {
-		message:
-			'Provide webhookId or url (never neither) to unregister a webhook.',
+	.refine((v) => (v.webhookId !== undefined) !== (v.url !== undefined), {
+		message: 'Provide exactly one of webhookId or url to unregister a webhook.',
 	});
 export type UnregisterWebhookInput = z.infer<
 	typeof UnregisterWebhookInputSchema
@@ -800,13 +804,20 @@ const SaleInvoiceOutputSchema = SaleDocumentOutputSchema.extend({
 	isProforma: z.boolean().nullable().optional(),
 	cancellationCreditId: z.number().nullable().optional(),
 	cancellationCreditNumber: z.string().nullable().optional(),
+	// Observed live but absent from the published schema; all captures were null,
+	// so retain the fields without pretending their non-null types are known.
+	cancelledCreditId: z.unknown().nullable().optional(),
+	cancelledCreditNumber: z.unknown().nullable().optional(),
+	eInvoicingInvoiceId: z.unknown().nullable().optional(),
+	eInvoicingProviderId: z.unknown().nullable().optional(),
+	eInvoicingStatus: z.unknown().nullable().optional(),
 	replacedBy: z.number().nullable().optional(),
 });
 export type SaleInvoiceOutput = z.infer<typeof SaleInvoiceOutputSchema>;
 
 const CreateSaleInvoiceInputSchema = z.object({
 	customerId: AltovizIdSchema,
-	date: z.string(),
+	date: AltovizDateSchema,
 	subject: z.string().optional(),
 	headerNotes: z.string().optional(),
 	footerNotes: z.string().optional(),
@@ -839,8 +850,8 @@ export type FindSaleInvoiceInput = z.infer<typeof FindSaleInvoiceInputSchema>;
 
 const ListSaleInvoicesInputSchema = z.object({
 	...PagingInputSchema,
-	from: z.string().optional(),
-	to: z.string().optional(),
+	from: AltovizDateSchema.optional(),
+	to: AltovizDateSchema.optional(),
 	customerId: AltovizIdSchema.optional(),
 	status: z.enum(['Draft', 'Incoming', 'Expired', 'Paid', 'ToSend']).optional(),
 	includeCancelled: z.boolean().optional(),
@@ -882,6 +893,8 @@ const SaleCreditOutputSchema = SaleDocumentOutputSchema.extend({
 	cancelledInvoicetNumber: z.string().nullable().optional(),
 	cancellationInvoiceId: z.number().nullable().optional(),
 	cancellationInvoiceNumber: z.string().nullable().optional(),
+	// Returned by the live API but omitted from the published credit schema.
+	replacedBy: z.unknown().nullable().optional(),
 });
 export type SaleCreditOutput = z.infer<typeof SaleCreditOutputSchema>;
 
@@ -890,7 +903,7 @@ const CreateSaleCreditInputSchema = z.object({
 	/** Provider spelling, typo included - do not "fix" it to cancelledInvoiceId. */
 	cancelledInvoicetId: AltovizIdSchema.optional(),
 	cancelledInvoicetNumber: z.string().optional(),
-	date: z.string(),
+	date: AltovizDateSchema,
 	subject: z.string().optional(),
 	headerNotes: z.string().optional(),
 	footerNotes: z.string().optional(),
@@ -909,7 +922,7 @@ export type CreateSaleCreditInput = z.infer<typeof CreateSaleCreditInputSchema>;
 const UpdateSaleCreditInputSchema = z.object({
 	creditId: AltovizIdSchema,
 	customerId: AltovizIdSchema.optional(),
-	date: z.string().optional(),
+	date: AltovizDateSchema.optional(),
 	subject: z.string().optional(),
 	headerNotes: z.string().optional(),
 	footerNotes: z.string().optional(),
@@ -929,8 +942,8 @@ export type FindSaleCreditInput = z.infer<typeof FindSaleCreditInputSchema>;
 
 const ListSaleCreditsInputSchema = z.object({
 	...PagingInputSchema,
-	from: z.string().optional(),
-	to: z.string().optional(),
+	from: AltovizDateSchema.optional(),
+	to: AltovizDateSchema.optional(),
 	customerId: AltovizIdSchema.optional(),
 });
 export type ListSaleCreditsInput = z.infer<typeof ListSaleCreditsInputSchema>;
@@ -968,8 +981,8 @@ export type FindSaleQuoteInput = z.infer<typeof FindSaleQuoteInputSchema>;
  */
 const ListSaleQuotesInputSchema = z.object({
 	...PagingInputSchema,
-	from: z.string().optional(),
-	to: z.string().optional(),
+	from: AltovizDateSchema.optional(),
+	to: AltovizDateSchema.optional(),
 	customerId: AltovizIdSchema.optional(),
 });
 export type ListSaleQuotesInput = z.infer<typeof ListSaleQuotesInputSchema>;
@@ -1017,7 +1030,7 @@ export type ReceiptOutput = z.infer<typeof ReceiptOutputSchema>;
  */
 const CreateReceiptInputSchema = z.object({
 	amount: z.number(),
-	date: z.string(),
+	date: AltovizDateSchema,
 	paymentMethod: z.enum([
 		'Transfer',
 		'Order',
@@ -1045,7 +1058,7 @@ export type CreateReceiptInput = z.infer<typeof CreateReceiptInputSchema>;
 const UpdateReceiptInputSchema = z.object({
 	receiptId: AltovizIdSchema,
 	amount: z.number().optional(),
-	date: z.string().optional(),
+	date: AltovizDateSchema.optional(),
 	paymentMethod: z
 		.enum([
 			'Transfer',

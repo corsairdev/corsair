@@ -27,91 +27,107 @@ import { z } from 'zod';
  * the provider says "paid" is the kind of wrong answer that costs money.
  */
 
-export const AltovizUnitEntity = z.object({
-	id: z.number(),
-	code: z.string().nullable().optional(),
-	name: z.string().nullable().optional(),
-	type: z.string().nullable().optional(),
-	conversion: z.number().nullable().optional(),
-	decimals: z.number().nullable().optional(),
-});
+export const AltovizUnitEntity = z
+	.object({
+		id: z.number(),
+		code: z.string().nullable().optional(),
+		name: z.string().nullable().optional(),
+		type: z.string().nullable().optional(),
+		conversion: z.number().nullable().optional(),
+		decimals: z.number().nullable().optional(),
+	})
+	.loose();
 export type AltovizUnitEntity = z.infer<typeof AltovizUnitEntity>;
 
-export const AltovizVatEntity = z.object({
-	id: z.number(),
-	rate: z.number().nullable().optional(),
-	region: z.string().nullable().optional(),
-	label: z.string().nullable().optional(),
-	default: z.boolean().nullable().optional(),
-});
+export const AltovizVatEntity = z
+	.object({
+		id: z.number(),
+		rate: z.number().nullable().optional(),
+		region: z.string().nullable().optional(),
+		label: z.string().nullable().optional(),
+		default: z.boolean().nullable().optional(),
+	})
+	.loose();
 export type AltovizVatEntity = z.infer<typeof AltovizVatEntity>;
 
-export const AltovizClassificationEntity = z.object({
-	id: z.number(),
-	label: z.string().nullable().optional(),
-	type: z.string().nullable().optional(),
-	accountNumber: z.string().nullable().optional(),
-	isProduct: z.boolean().nullable().optional(),
-	isService: z.boolean().nullable().optional(),
-});
+export const AltovizClassificationEntity = z
+	.object({
+		id: z.number(),
+		label: z.string().nullable().optional(),
+		type: z.string().nullable().optional(),
+		accountNumber: z.string().nullable().optional(),
+		isProduct: z.boolean().nullable().optional(),
+		isService: z.boolean().nullable().optional(),
+	})
+	.loose();
 export type AltovizClassificationEntity = z.infer<
 	typeof AltovizClassificationEntity
 >;
 
-export const AltovizCustomerFamilyEntity = z.object({
-	id: z.number(),
-	label: z.string().nullable().optional(),
-	number: z.string().nullable().optional(),
-	internalId: z.string().nullable().optional(),
-});
+export const AltovizCustomerFamilyEntity = z
+	.object({
+		id: z.number(),
+		label: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		internalId: z.string().nullable().optional(),
+	})
+	.loose();
 export type AltovizCustomerFamilyEntity = z.infer<
 	typeof AltovizCustomerFamilyEntity
 >;
 
-export const AltovizProductFamilyEntity = z.object({
-	id: z.number(),
-	label: z.string().nullable().optional(),
-	number: z.string().nullable().optional(),
-});
+export const AltovizProductFamilyEntity = z
+	.object({
+		id: z.number(),
+		label: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+	})
+	.loose();
 export type AltovizProductFamilyEntity = z.infer<
 	typeof AltovizProductFamilyEntity
 >;
 
-export const AltovizProductEntity = z.object({
-	id: z.number(),
-	name: z.string().nullable().optional(),
-	number: z.string().nullable().optional(),
-	internalId: z.string().nullable().optional(),
-	type: z.string().nullable().optional(),
-	active: z.boolean().nullable().optional(),
-	unitPrice: z.number().nullable().optional(),
-	unit_code: z.string().nullable().optional(),
-	vat_rate: z.number().nullable().optional(),
-	vat_region: z.string().nullable().optional(),
-	family_id: z.number().nullable().optional(),
-});
+export const AltovizProductEntity = z
+	.object({
+		id: z.number(),
+		name: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		internalId: z.string().nullable().optional(),
+		type: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+		unitPrice: z.number().nullable().optional(),
+		unit_code: z.string().nullable().optional(),
+		vat_rate: z.number().nullable().optional(),
+		vat_region: z.string().nullable().optional(),
+		family_id: z.number().nullable().optional(),
+	})
+	.loose();
 export type AltovizProductEntity = z.infer<typeof AltovizProductEntity>;
 
-export const AltovizCustomerEntity = z.object({
-	id: z.number(),
-	type: z.string().nullable().optional(),
-	companyName: z.string().nullable().optional(),
-	firstName: z.string().nullable().optional(),
-	lastName: z.string().nullable().optional(),
-	number: z.string().nullable().optional(),
-	internalId: z.string().nullable().optional(),
-	email: z.string().nullable().optional(),
-	active: z.boolean().nullable().optional(),
-});
+export const AltovizCustomerEntity = z
+	.object({
+		id: z.number(),
+		type: z.string().nullable().optional(),
+		companyName: z.string().nullable().optional(),
+		firstName: z.string().nullable().optional(),
+		lastName: z.string().nullable().optional(),
+		number: z.string().nullable().optional(),
+		internalId: z.string().nullable().optional(),
+		email: z.string().nullable().optional(),
+		active: z.boolean().nullable().optional(),
+	})
+	.loose();
 export type AltovizCustomerEntity = z.infer<typeof AltovizCustomerEntity>;
 
-export const AltovizContactEntity = z.object({
-	id: z.number(),
-	displayName: z.string().nullable().optional(),
-	firstName: z.string().nullable().optional(),
-	lastName: z.string().nullable().optional(),
-	companyName: z.string().nullable().optional(),
-	email: z.string().nullable().optional(),
-	internalId: z.string().nullable().optional(),
-});
+export const AltovizContactEntity = z
+	.object({
+		id: z.number(),
+		displayName: z.string().nullable().optional(),
+		firstName: z.string().nullable().optional(),
+		lastName: z.string().nullable().optional(),
+		companyName: z.string().nullable().optional(),
+		email: z.string().nullable().optional(),
+		internalId: z.string().nullable().optional(),
+	})
+	.loose();
 export type AltovizContactEntity = z.infer<typeof AltovizContactEntity>;
