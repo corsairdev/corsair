@@ -62,7 +62,12 @@ export const listForClient: ClientaryEndpoints['contactsListForClient'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.contactsListForClient>
-		>(`clients/${input.client_id}/contacts`, apiKey, domain);
+		>(`clients/${input.client_id}/contacts`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.contactsListForClient.parse(response);
@@ -125,7 +130,7 @@ export const get: ClientaryEndpoints['contactsGet'] = async (ctx, input) => {
 /**
  * Create a new contact. `client_id` and `name` are required.
  *
- * API: POST /api/v2/contacts
+ * API: POST /api/v2/clients/:client_id/contacts
  * Docs: https://www.clientary.com/api/contacts
  */
 export const create: ClientaryEndpoints['contactsCreate'] = async (
@@ -133,12 +138,13 @@ export const create: ClientaryEndpoints['contactsCreate'] = async (
 	input,
 ) => {
 	const { apiKey, domain } = await getClientaryCredentials(ctx);
+	const { client_id, ...fields } = input;
 
 	const response = await makeClientaryRequest<ClientaryContact>(
-		'contacts',
+		`clients/${client_id}/contacts`,
 		apiKey,
 		domain,
-		{ method: 'POST', body: { contact: { ...input } } },
+		{ method: 'POST', body: { client_user: { ...fields } } },
 	);
 
 	const parsed = ClientaryContactSchema.parse(response);
@@ -154,7 +160,7 @@ export const create: ClientaryEndpoints['contactsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'clientary.contacts.create',
-		{ ...input },
+		{ id: parsed.id, client_id: parsed.client_id },
 		'completed',
 	);
 	return parsed;

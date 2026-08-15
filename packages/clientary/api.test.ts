@@ -186,7 +186,7 @@ describeWhenCreds('Clientary API Type Tests', () => {
 
 		itWhenWritable('tasksCreate + tasksDelete round-trip', async () => {
 			const created = await makeClientaryRequest<{ id: number; title: string }>(
-				'tasks',
+				'task',
 				API_KEY!,
 				DOMAIN!,
 				{ method: 'POST', body: { task: { title: 'Corsair Test Task' } } },

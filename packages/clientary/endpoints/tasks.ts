@@ -20,7 +20,12 @@ export const list: ClientaryEndpoints['tasksList'] = async (ctx, input) => {
 
 	const response = await makeClientaryRequest<
 		z.infer<typeof ClientaryEndpointOutputSchemas.tasksList>
-	>('tasks', apiKey, domain);
+	>('tasks', apiKey, domain, {
+		query: {
+			page: input.page,
+			page_size: input.page_size,
+		},
+	});
 
 	const parsed = ClientaryEndpointOutputSchemas.tasksList.parse(response);
 
@@ -57,7 +62,12 @@ export const listForProject: ClientaryEndpoints['tasksListForProject'] = async (
 
 	const response = await makeClientaryRequest<
 		z.infer<typeof ClientaryEndpointOutputSchemas.tasksListForProject>
-	>(`projects/${input.project_id}/tasks`, apiKey, domain);
+	>(`projects/${input.project_id}/tasks`, apiKey, domain, {
+		query: {
+			page: input.page,
+			page_size: input.page_size,
+		},
+	});
 
 	const parsed =
 		ClientaryEndpointOutputSchemas.tasksListForProject.parse(response);
@@ -118,14 +128,14 @@ export const get: ClientaryEndpoints['tasksGet'] = async (ctx, input) => {
 /**
  * Create a new task. `title` is required.
  *
- * API: POST /api/v2/tasks
+ * API: POST /api/v2/task
  * Docs: https://www.clientary.com/api/tasks
  */
 export const create: ClientaryEndpoints['tasksCreate'] = async (ctx, input) => {
 	const { apiKey, domain } = await getClientaryCredentials(ctx);
 
 	const response = await makeClientaryRequest<ClientaryTask>(
-		'tasks',
+		'task',
 		apiKey,
 		domain,
 		{ method: 'POST', body: { task: { ...input } } },
@@ -144,7 +154,7 @@ export const create: ClientaryEndpoints['tasksCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'clientary.tasks.create',
-		{ ...input },
+		{ id: parsed.id },
 		'completed',
 	);
 	return parsed;

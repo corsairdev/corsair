@@ -52,7 +52,12 @@ export const listForClient: ClientaryEndpoints['invoicesListForClient'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.invoicesListForClient>
-		>(`clients/${input.client_id}/invoices`, apiKey, domain);
+		>(`clients/${input.client_id}/invoices`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.invoicesListForClient.parse(response);
@@ -78,7 +83,12 @@ export const listForProject: ClientaryEndpoints['invoicesListForProject'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.invoicesListForProject>
-		>(`projects/${input.project_id}/invoices`, apiKey, domain);
+		>(`projects/${input.project_id}/invoices`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.invoicesListForProject.parse(response);
@@ -104,7 +114,12 @@ export const listForRecurring: ClientaryEndpoints['invoicesListForRecurring'] =
 
 		const response = await makeClientaryRequest<
 			z.infer<typeof ClientaryEndpointOutputSchemas.invoicesListForRecurring>
-		>(`recurring/${input.recurring_id}/invoices`, apiKey, domain);
+		>(`recurring/${input.recurring_id}/invoices`, apiKey, domain, {
+			query: {
+				page: input.page,
+				page_size: input.page_size,
+			},
+		});
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.invoicesListForRecurring.parse(response);
@@ -184,7 +199,7 @@ export const create: ClientaryEndpoints['invoicesCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'clientary.invoices.create',
-		{ ...input },
+		{ id: parsed.id, client_id: parsed.client_id },
 		'completed',
 	);
 	return parsed;
@@ -193,7 +208,7 @@ export const create: ClientaryEndpoints['invoicesCreate'] = async (
 /**
  * Update an existing invoice.
  *
- * API: PUT /api/v2/invoices/:id
+ * API: PUT /api/v2/invoice/:id
  * Docs: https://www.clientary.com/api/invoices
  */
 export const update: ClientaryEndpoints['invoicesUpdate'] = async (
@@ -204,7 +219,7 @@ export const update: ClientaryEndpoints['invoicesUpdate'] = async (
 	const { id, ...fields } = input;
 
 	const response = await makeClientaryRequest<ClientaryInvoice>(
-		`invoices/${id}`,
+		`invoice/${id}`,
 		apiKey,
 		domain,
 		{ method: 'PUT', body: { invoice: { ...fields } } },
