@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
-import { asindataapi } from '@corsair-dev/asindataapi';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -63,9 +62,6 @@ export const corsair = createCorsair({
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
-		}),
-		asindataapi({
-			key: process.env.ASINDATA_API_KEY,
 		}),
 		instagram(),
 	],
