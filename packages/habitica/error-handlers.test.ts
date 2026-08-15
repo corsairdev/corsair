@@ -13,6 +13,7 @@
  * limits on exactly the operations most likely to be slow.
  */
 import { ApiError } from 'corsair/http';
+import { HabiticaHttpError } from './client';
 import { errorHandlers } from './error-handlers';
 
 /** Builds an ApiError the way the shared transport does. */
@@ -84,6 +85,24 @@ describe('Habitica error handlers', () => {
 			expect(result.headersRetryAfterMs).toBe(21_000);
 		});
 
+		it("honours the raw-fetch path's preserved Retry-After", async () => {
+			// The point of HabiticaHttpError: without this the delay Habitica sent
+			// is discarded and the retries run on a blind backoff.
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
+				new HabiticaHttpError('export failed', 429, 21_069),
+			);
+
+			expect(result.headersRetryAfterMs).toBe(21_069);
+		});
+
+		it('classifies a HabiticaHttpError 429 by status, not by message text', async () => {
+			// A message that says nothing about rate limiting still classifies,
+			// because the status travels with the error now.
+			expect(classify(new HabiticaHttpError('export failed', 429))).toBe(
+				'RATE_LIMIT_ERROR',
+			);
+		});
+
 		it('still retries when no retry-after was available', async () => {
 			// The raw-fetch path never populates retryAfter, so the backoff has to
 			// stand on its own.
@@ -103,6 +122,15 @@ describe('Habitica error handlers', () => {
 			);
 			expect(classify(new Error('NotAuthorized'))).toBe('AUTH_ERROR');
 			expect(classify(new Error('invalid_credentials'))).toBe('AUTH_ERROR');
+		});
+
+		it('classifies a redacted HabiticaHttpError 401 by status', () => {
+			// `withRedactedPathValue` rebuilds an error to strip a secret out of
+			// its URL. Without a status branch that would silently downgrade a 401
+			// to the DEFAULT handler.
+			expect(classify(new HabiticaHttpError('[REDACTED]', 401))).toBe(
+				'AUTH_ERROR',
+			);
 		});
 
 		it('never retries an authentication failure', async () => {

@@ -6,6 +6,7 @@ import {
 	habiticaAnonymousCall,
 	habiticaCall,
 	pathSegment,
+	withRedactedPathValue,
 } from './shared';
 import type { HabiticaEndpointOutputs } from './types';
 
@@ -243,15 +244,22 @@ export const timeTravelers: HabiticaEndpoints['shopsTimeTravelers'] = async (
  * holding the string can redeem it - so recording one in a retained event log
  * would turn the audit trail into something worth stealing. Only the outcome is
  * recorded.
+ *
+ * It is kept out of thrown errors for the same reason. Habitica takes the code
+ * as a path parameter, and the shared transport redacts sensitive query
+ * parameters but not path segments, so a failed validation would otherwise
+ * carry the code in `error.url`.
  */
 export const validateCoupon: HabiticaEndpoints['validateCoupon'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await habiticaCall<HabiticaEndpointOutputs['validateCoupon']>(
-		ctx,
-		`coupons/validate/${pathSegment(input.code)}`,
-		{ method: 'POST' },
+	const result = await withRedactedPathValue(input.code, () =>
+		habiticaCall<HabiticaEndpointOutputs['validateCoupon']>(
+			ctx,
+			`coupons/validate/${pathSegment(input.code)}`,
+			{ method: 'POST' },
+		),
 	);
 
 	await logEventFromContext(ctx, 'habitica.coupons.validate', {}, 'completed');

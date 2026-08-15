@@ -125,14 +125,19 @@ export const remove: HabiticaEndpoints['tasksDelete'] = async (ctx, input) => {
 		{ method: 'DELETE' },
 	);
 
-	await evictEntity(ctx.db.tasks, input.taskId, LABEL, { required: true });
-
+	// Logged before the eviction, not after. A required eviction throws when the
+	// local mirror cannot be updated, and the remote delete has already
+	// happened by then - so ordering it the other way loses the audit record of
+	// a destructive change that really did occur.
 	await logEventFromContext(
 		ctx,
 		'habitica.tasks.delete',
 		auditPayload(input, ['taskId']),
 		'completed',
 	);
+
+	await evictEntity(ctx.db.tasks, input.taskId, LABEL, { required: true });
+
 	return result;
 };
 

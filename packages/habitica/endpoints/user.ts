@@ -2,7 +2,12 @@ import { logEventFromContext } from 'corsair/core';
 import type { HabiticaEndpoints } from '../index';
 import { auditPayload, countOf } from './logging';
 import { clearMirroredTasks } from './persist';
-import { compactQuery, habiticaCall, pathSegment } from './shared';
+import {
+	compactQuery,
+	habiticaCall,
+	pathSegment,
+	withRedactedPathValue,
+} from './shared';
 import type { HabiticaEndpointOutputs } from './types';
 
 /**
@@ -207,14 +212,22 @@ export const addPushDevice: HabiticaEndpoints['userAddPushDevice'] = async (
 	return result;
 };
 
-/** Unregisters a push-notification device. `regId` is not logged. */
+/**
+ * Unregisters a push-notification device.
+ *
+ * `regId` is not logged, and it is also kept out of any thrown error: Habitica
+ * takes it as a path parameter, and the shared transport redacts sensitive
+ * query parameters but not path segments.
+ */
 export const deletePushDevice: HabiticaEndpoints['userDeletePushDevice'] =
 	async (ctx, input) => {
-		const result = await habiticaCall<
-			HabiticaEndpointOutputs['userDeletePushDevice']
-		>(ctx, `user/push-devices/${pathSegment(input.regId)}`, {
-			method: 'DELETE',
-		});
+		const result = await withRedactedPathValue(input.regId, () =>
+			habiticaCall<HabiticaEndpointOutputs['userDeletePushDevice']>(
+				ctx,
+				`user/push-devices/${pathSegment(input.regId)}`,
+				{ method: 'DELETE' },
+			),
+		);
 
 		await logEventFromContext(
 			ctx,

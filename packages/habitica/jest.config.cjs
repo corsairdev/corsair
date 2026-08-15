@@ -13,7 +13,11 @@ module.exports = {
 		'!**/*.d.ts',
 		'!**/node_modules/**',
 		'!**/dist/**',
-		'!jest.config.ts',
+		// The generator emitted `!jest.config.ts`, but this file is `.cjs`, so
+		// the exclusion never matched anything.
+		'!jest.config.cjs',
+		// Test files are not the subject of coverage measurement.
+		'!**/*.test.ts',
 		'!tests/**',
 	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],

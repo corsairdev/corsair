@@ -38,6 +38,8 @@
  * then reports the unit suites as green. The script uses `--testPathPattern`.
  */
 import {
+	HABITICA_API_BASE,
+	HABITICA_CLIENT_ID,
 	HABITICA_ROOT_BASE,
 	makeHabiticaAnonymousRequest,
 	makeHabiticaExportRequest,
@@ -82,6 +84,37 @@ async function paced<T>(operation: () => Promise<T>): Promise<T> {
 const unwrap = <T>(response: unknown): T =>
 	(response as { data: T }).data ?? (response as T);
 
+/**
+ * Reports a schema failure without printing the data that failed.
+ *
+ * This suite runs against a real account, so an offending value could be a task
+ * title, a profile line or a message. Zod issues can carry the input alongside
+ * the diagnosis, and the diagnosis is the only part worth seeing: which field,
+ * what rule, what went wrong.
+ */
+function describeIssues(error: { issues: readonly unknown[] }): string[] {
+	return error.issues.map((raw) => {
+		const issue = raw as { path?: unknown[]; code?: string; message?: string };
+		const where = (issue.path ?? []).join('.') || '(root)';
+		return `${where}: ${issue.code ?? 'invalid'} - ${issue.message ?? ''}`;
+	});
+}
+
+/**
+ * A raw request, for the few checks that must bypass the plugin's transport.
+ *
+ * Those checks look at status codes and headers the helpers deliberately hide -
+ * whether a route exists at all, what the rate-limit headers say - so they call
+ * `fetch` directly. Building the URL and headers from the exported constants
+ * keeps them pointed at the same API the plugin uses.
+ */
+const apiUrl = (path: string) => `${HABITICA_API_BASE}/${path}`;
+const authHeaders = () => ({
+	'x-api-user': credentials.userId,
+	'x-api-key': credentials.apiToken,
+	'x-client': HABITICA_CLIENT_ID,
+});
+
 /** Probe objects are named so anything left behind is obvious on the account. */
 const PROBE = 'corsair integration probe - safe to delete';
 
@@ -94,7 +127,7 @@ describeLive('Habitica live API', () => {
 			expect(Array.isArray(tasks)).toBe(true);
 			for (const task of tasks) {
 				const parsed = HabiticaTaskEntity.safeParse(task);
-				if (!parsed.success) console.error(parsed.error.issues);
+				if (!parsed.success) console.error(describeIssues(parsed.error));
 				expect(parsed.success).toBe(true);
 			}
 		});
@@ -113,7 +146,7 @@ describeLive('Habitica live API', () => {
 				await paced(() => makeHabiticaRequest('groups/habitrpg', credentials)),
 			);
 			const parsed = HabiticaGroupEntity.safeParse(group);
-			if (!parsed.success) console.error(parsed.error.issues);
+			if (!parsed.success) console.error(describeIssues(parsed.error));
 			expect(parsed.success).toBe(true);
 		});
 
@@ -125,7 +158,7 @@ describeLive('Habitica live API', () => {
 			);
 			for (const challenge of challenges) {
 				const parsed = HabiticaChallengeEntity.safeParse(challenge);
-				if (!parsed.success) console.error(parsed.error.issues);
+				if (!parsed.success) console.error(describeIssues(parsed.error));
 				expect(parsed.success).toBe(true);
 			}
 		});
@@ -204,25 +237,17 @@ describeLive('Habitica live API', () => {
 			const ghost = '11111111-2222-4333-8444-555555555555';
 
 			const unrouted = await paced(async () => {
-				const res = await fetch(`https://habitica.com/api/v3/groups/${ghost}`, {
+				const res = await fetch(apiUrl(`groups/${ghost}`), {
 					method: 'DELETE',
-					headers: {
-						'x-api-user': credentials.userId,
-						'x-api-key': credentials.apiToken,
-						'x-client': 'corsair',
-					},
+					headers: authHeaders(),
 				});
 				return (await res.json()) as { message?: string };
 			});
 
 			const realRoute = await paced(async () => {
-				const res = await fetch(`https://habitica.com/api/v3/groups/${ghost}`, {
+				const res = await fetch(apiUrl(`groups/${ghost}`), {
 					method: 'GET',
-					headers: {
-						'x-api-user': credentials.userId,
-						'x-api-key': credentials.apiToken,
-						'x-client': 'corsair',
-					},
+					headers: authHeaders(),
 				});
 				return (await res.json()) as { message?: string };
 			});
@@ -234,9 +259,7 @@ describeLive('Habitica live API', () => {
 		});
 
 		it('rejects a request with no x-client header, even unauthenticated', async () => {
-			const res = await paced(() =>
-				fetch('https://habitica.com/api/v3/content'),
-			);
+			const res = await paced(() => fetch(apiUrl('content')));
 			expect(res.status).toBe(400);
 			const body = (await res.json()) as { message?: string };
 			expect(body.message).toMatch(/x-client/i);
@@ -360,13 +383,7 @@ describeLive('Habitica live API', () => {
 	describe('rate limiting', () => {
 		it('reports a limit of 30 per minute in the response headers', async () => {
 			const res = await paced(() =>
-				fetch('https://habitica.com/api/v3/user?userFields=_id', {
-					headers: {
-						'x-api-user': credentials.userId,
-						'x-api-key': credentials.apiToken,
-						'x-client': 'corsair',
-					},
-				}),
+				fetch(apiUrl('user?userFields=_id'), { headers: authHeaders() }),
 			);
 			expect(res.headers.get('x-ratelimit-limit')).toBe('30');
 			expect(Number(res.headers.get('x-ratelimit-remaining'))).toBeLessThan(30);
@@ -374,13 +391,7 @@ describeLive('Habitica live API', () => {
 
 		it('sends x-ratelimit-reset as a date string, which is why it is unconfigured', async () => {
 			const res = await paced(() =>
-				fetch('https://habitica.com/api/v3/user?userFields=_id', {
-					headers: {
-						'x-api-user': credentials.userId,
-						'x-api-key': credentials.apiToken,
-						'x-client': 'corsair',
-					},
-				}),
+				fetch(apiUrl('user?userFields=_id'), { headers: authHeaders() }),
 			);
 			const reset = res.headers.get('x-ratelimit-reset');
 			expect(reset).toBeTruthy();

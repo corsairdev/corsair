@@ -101,16 +101,18 @@ export const remove: HabiticaEndpoints['challengesDelete'] = async (
 		HabiticaEndpointOutputs['challengesDelete']
 	>(ctx, `challenges/${pathSegment(input.challengeId)}`, { method: 'DELETE' });
 
-	await evictEntity(ctx.db.challenges, input.challengeId, LABEL, {
-		required: true,
-	});
-
+	// Logged before the eviction - see the note on `tasks.delete`.
 	await logEventFromContext(
 		ctx,
 		'habitica.challenges.delete',
 		auditPayload(input, ['challengeId']),
 		'completed',
 	);
+
+	await evictEntity(ctx.db.challenges, input.challengeId, LABEL, {
+		required: true,
+	});
+
 	return result;
 };
 

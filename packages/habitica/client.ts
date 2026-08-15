@@ -43,7 +43,9 @@ const HABITICA_ROOT_BASE = 'https://habitica.com';
  *   value. The helper's `parseInt` truncates that to 21, so the first retry
  *   fires a fraction of a second early and can draw a second 429 before the
  *   exponential backoff spaces the attempts out. It converges within
- *   `maxRetries`; the extra 429 is expected, not a defect.
+ *   `maxRetries`; the extra 429 is expected, not a defect. The raw-`fetch`
+ *   paths do not share this quirk - they parse the header themselves, see
+ *   {@link parseRetryAfterMs}.
  */
 const HABITICA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -106,6 +108,47 @@ export class HabiticaUserIdMissingError extends Error {
 		);
 		this.name = 'HabiticaUserIdMissingError';
 	}
+}
+
+/**
+ * A failure from one of the raw-`fetch` paths.
+ *
+ * The four non-JSON operations cannot use the shared transport, so they also do
+ * not get its `ApiError` - which is what normally carries the status and the
+ * parsed `Retry-After` through to `error-handlers.ts`. Throwing a bare `Error`
+ * would strip both, leaving a 429 to be retried on a blind exponential backoff
+ * against a fixed one-minute window.
+ *
+ * The response body is deliberately **not** attached. A failed export can still
+ * carry account data - `userdata.json` contains the account holder's email
+ * address - and this error is exactly the object most likely to reach a log.
+ */
+export class HabiticaHttpError extends Error {
+	constructor(
+		message: string,
+		readonly status: number,
+		/** Milliseconds to wait, from `Retry-After`, when the server sent one. */
+		readonly retryAfter?: number,
+	) {
+		super(message);
+		this.name = 'HabiticaHttpError';
+	}
+}
+
+/**
+ * Reads `Retry-After` into milliseconds.
+ *
+ * Habitica sends **fractional** seconds - `"21.069"` was the observed value on
+ * a real 429. `parseFloat` keeps that precision where the shared transport's
+ * `parseInt` truncates to 21 and retries a fraction of a second early; the
+ * result is rounded up for the same reason, so a retry never fires inside the
+ * window the server asked for.
+ */
+function parseRetryAfterMs(header: string | null): number | undefined {
+	if (!header) return undefined;
+	const seconds = Number.parseFloat(header);
+	if (!Number.isFinite(seconds) || seconds < 0) return undefined;
+	return Math.ceil(seconds * 1000);
 }
 
 /**
@@ -203,11 +246,21 @@ export async function makeHabiticaAnonymousRequest<T>(
 	endpoint: string,
 	options: HabiticaRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', query } = options;
+	const { method = 'GET', body, query } = options;
 
 	return await request<T>(
 		buildConfig(HABITICA_API_BASE),
-		{ method, url: endpoint, mediaType: 'application/json', query },
+		{
+			method,
+			url: endpoint,
+			// The body matters here as much as on the authenticated path: the
+			// three authentication routes are `authOptional` and POST their
+			// credentials through this helper. Dropping it would send an empty
+			// registration or login.
+			body: method === 'POST' || method === 'PUT' ? body : undefined,
+			mediaType: 'application/json',
+			query,
+		},
 		{ rateLimitConfig: HABITICA_RATE_LIMIT_CONFIG },
 	);
 }
@@ -253,8 +306,10 @@ export async function makeHabiticaExportRequest(
 	}
 
 	if (!response.ok) {
-		throw new Error(
+		throw new HabiticaHttpError(
 			`Habitica export ${document} returned HTTP ${response.status} ${response.statusText}`,
+			response.status,
+			parseRetryAfterMs(response.headers.get('retry-after')),
 		);
 	}
 
@@ -299,8 +354,10 @@ export async function makeHabiticaTextRequest(
 	}
 
 	if (!response.ok) {
-		throw new Error(
+		throw new HabiticaHttpError(
 			`Habitica ${endpoint} returned HTTP ${response.status} ${response.statusText}`,
+			response.status,
+			parseRetryAfterMs(response.headers.get('retry-after')),
 		);
 	}
 

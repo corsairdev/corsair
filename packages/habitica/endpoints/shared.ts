@@ -1,5 +1,6 @@
 import type { HabiticaCredentials, HabiticaRequestOptions } from '../client';
 import {
+	HabiticaHttpError,
 	HabiticaUserIdMissingError,
 	makeHabiticaAnonymousRequest,
 	makeHabiticaExportRequest,
@@ -163,6 +164,64 @@ export function compactQuery(
 		if (value !== undefined) compacted[key] = value;
 	}
 	return compacted;
+}
+
+/**
+ * Runs a call whose path carries a value that must not survive into an error.
+ *
+ * Two operations interpolate something sensitive into the URL because the API
+ * offers no alternative - Habitica takes both as path parameters, not body
+ * fields:
+ *
+ * - `POST /coupons/validate/:code` - a valid coupon is a bearer instrument;
+ *   anyone holding the string can redeem it.
+ * - `DELETE /user/push-devices/:regId` - an identifier for someone's device.
+ *
+ * The shared transport's `ApiError` already redacts sensitive **query
+ * parameters**, but it does not touch path segments, so without this the value
+ * would sit in `error.url` and `error.request.url` - the object most likely to
+ * be logged. Both the raw and percent-encoded spellings are masked, because the
+ * path carries the encoded form while the caller supplied the raw one.
+ *
+ * The rethrown error keeps the status so `error-handlers.ts` still classifies
+ * it; what it loses is the offending value.
+ */
+export async function withRedactedPathValue<T>(
+	secret: string,
+	run: () => Promise<T>,
+): Promise<T> {
+	try {
+		return await run();
+	} catch (error) {
+		throw redactPathValue(error, secret);
+	}
+}
+
+function redactPathValue(error: unknown, secret: string): unknown {
+	if (!secret || !(error instanceof Error)) return error;
+
+	const forms = [secret, encodeURIComponent(secret)];
+	const mask = (text: string) =>
+		forms.reduce((acc, form) => acc.split(form).join('[REDACTED]'), text);
+
+	// Read structurally rather than by class: the incoming error may be an
+	// ApiError from the shared transport or a HabiticaHttpError from a raw
+	// path, and both carry these under the same names.
+	const carrier = error as unknown as {
+		status?: unknown;
+		retryAfter?: unknown;
+		url?: unknown;
+	};
+	const status = typeof carrier.status === 'number' ? carrier.status : 0;
+	const retryAfter =
+		typeof carrier.retryAfter === 'number' ? carrier.retryAfter : undefined;
+
+	const masked = mask(error.message);
+	const leaked =
+		masked !== error.message ||
+		forms.some((form) => String(carrier.url ?? '').includes(form));
+
+	return leaked ? new HabiticaHttpError(masked, status, retryAfter) : error;
 }
 
 /**

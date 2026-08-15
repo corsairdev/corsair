@@ -559,7 +559,10 @@ export const habiticaEndpointSchemas = {
 	typeof habiticaEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+// `satisfies` rather than an annotation: `const x: AuthTypes = 'api_key'`
+// widens the inferred type to the whole union, so `typeof defaultAuthType`
+// would reach `BaseHabiticaPlugin` as `AuthTypes` instead of `'api_key'`.
+const defaultAuthType = 'api_key' as const satisfies AuthTypes;
 
 /**
  * Risk levels.

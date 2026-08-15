@@ -66,6 +66,16 @@ function makeStore(): Store {
 
 type Ctx = Parameters<typeof Tasks.list>[0];
 
+/**
+ * Builds the smallest context the endpoints actually read.
+ *
+ * The `as unknown as Ctx` cast is deliberate. A real `CorsairPluginContext`
+ * carries the full ORM surface, hooks, permissions and auth machinery; the
+ * endpoints here touch four members of it. Constructing the genuine article
+ * would couple every endpoint test to core internals that have nothing to do
+ * with the behaviour under test, and would break these tests whenever an
+ * unrelated context field changed.
+ */
 function makeCtx() {
 	const db = {
 		tasks: makeStore(),
@@ -977,6 +987,112 @@ describe('what reaches the event log', () => {
 		await Chat.list(ctx, {});
 
 		expect(JSON.stringify(loggedPayload())).not.toContain('something private');
+	});
+});
+
+describe('secrets interpolated into a path', () => {
+	/** Fails the request so the thrown error can be inspected. */
+	function mockFailure(status: number, url: string) {
+		global.fetch = (async (requested: unknown) =>
+			({
+				ok: false,
+				status,
+				statusText: 'Error',
+				url: String(requested ?? url),
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => ({ success: false, error: 'NotFound' }),
+				text: async () => '{}',
+			}) as unknown as Response) as unknown as typeof global.fetch;
+	}
+
+	it('keeps a coupon code out of the thrown error', async () => {
+		// A valid coupon is a bearer instrument. The shared transport redacts
+		// sensitive query parameters but not path segments, and Habitica takes
+		// the code as a path parameter.
+		const { ctx } = makeCtx();
+		mockFailure(404, 'https://habitica.com/api/v3/coupons/validate/x');
+
+		const error = await Content.validateCoupon(ctx, {
+			code: 'SECRET-COUPON-1234',
+		}).catch((e: unknown) => e);
+
+		const serialised = `${(error as Error).message} ${JSON.stringify(error)} ${String((error as { url?: string }).url ?? '')}`;
+		expect(serialised).not.toContain('SECRET-COUPON-1234');
+	});
+
+	it('keeps a push-device registration id out of the thrown error', async () => {
+		const { ctx } = makeCtx();
+		mockFailure(404, 'https://habitica.com/api/v3/user/push-devices/x');
+
+		const error = await User.deletePushDevice(ctx, {
+			regId: 'device-token-abcdef',
+		}).catch((e: unknown) => e);
+
+		const serialised = `${(error as Error).message} ${JSON.stringify(error)} ${String((error as { url?: string }).url ?? '')}`;
+		expect(serialised).not.toContain('device-token-abcdef');
+	});
+
+	it('leaves an unrelated error untouched', async () => {
+		// Redaction must not swallow errors that never carried the secret.
+		const { ctx } = makeCtx();
+		mockFailure(404, 'https://habitica.com/api/v3/coupons/validate/x');
+
+		const error = await Content.validateCoupon(ctx, { code: 'ABCD' }).catch(
+			(e: unknown) => e,
+		);
+
+		expect(error).toBeInstanceOf(Error);
+	});
+});
+
+describe('the credential-minting operations send their body', () => {
+	// These POST through the anonymous transport. An earlier version dropped the
+	// body there, so registration and login were sent empty - and asserting the
+	// method and path alone did not notice.
+	it('auth.login sends the credentials', async () => {
+		const { ctx } = makeCtx();
+		mockFetch(wrap({ id: USER_ID, apiToken: 'minted-token' }));
+
+		await Auth.login(ctx, { username: 'someone', password: 'a-password' });
+
+		expect(sentBody()).toEqual({
+			username: 'someone',
+			password: 'a-password',
+		});
+	});
+
+	it('auth.register sends every required field', async () => {
+		const { ctx } = makeCtx();
+		mockFetch(wrap({ id: USER_ID, apiToken: 'minted-token' }));
+
+		await Auth.register(ctx, {
+			username: 'someone',
+			email: 'someone@example.com',
+			password: 'a-password',
+			confirmPassword: 'a-password',
+		});
+
+		expect(Object.keys(sentBody()).sort()).toEqual([
+			'confirmPassword',
+			'email',
+			'password',
+			'username',
+		]);
+	});
+
+	it('auth.social sends the provider response', async () => {
+		const { ctx } = makeCtx();
+		mockFetch(wrap({ id: USER_ID, apiToken: 'minted-token' }));
+
+		await Auth.social(ctx, {
+			network: 'google',
+			authResponse: { code: 'an-oauth-code' },
+		});
+
+		expect(sentBody()).toEqual({
+			network: 'google',
+			authResponse: { code: 'an-oauth-code' },
+		});
 	});
 });
 

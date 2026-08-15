@@ -25,9 +25,32 @@ const API_TOKEN = '11111111-1111-4111-8111-111111111111';
 const CREDENTIALS = { userId: USER_ID, apiToken: API_TOKEN };
 
 let captured:
-	| { url: string; method: string; headers: Record<string, string> }
+	| {
+			url: string;
+			method: string;
+			headers: Record<string, string>;
+			body?: string;
+	  }
 	| undefined;
 
+// Every test here replaces the global fetch. Restoring it afterwards keeps this
+// file from deciding what any later suite sees.
+const realFetch = global.fetch;
+afterEach(() => {
+	global.fetch = realFetch;
+});
+
+/**
+ * Replaces `global.fetch` with a stub that records the request.
+ *
+ * The `as unknown as typeof global.fetch` cast at the end is deliberate and
+ * confined to this helper. A faithful `fetch` implementation would have to
+ * satisfy the whole `Response` interface - `blob`, `formData`, `clone`,
+ * `bodyUsed` and the rest - none of which the transport touches. Widening the
+ * stub to the real signature would mean writing a dozen unused members whose
+ * only effect is to obscure the four fields that matter: `ok`, `status`,
+ * `headers` and the body readers.
+ */
 function mockFetch(
 	payload: unknown,
 	{
@@ -50,7 +73,12 @@ function mockFetch(
 				headers[key.toLowerCase()] = value;
 			}
 		}
-		captured = { url: String(url), method: init?.method ?? 'GET', headers };
+		captured = {
+			url: String(url),
+			method: init?.method ?? 'GET',
+			headers,
+			body: typeof init?.body === 'string' ? init.body : undefined,
+		};
 		const body =
 			typeof payload === 'string' ? payload : JSON.stringify(payload);
 		return {
@@ -100,6 +128,34 @@ describe('Habitica transport', () => {
 
 			expect(captured?.headers['x-api-user']).toBeUndefined();
 			expect(captured?.headers['x-api-key']).toBeUndefined();
+		});
+
+		it('forwards the body on an anonymous POST', async () => {
+			// The three authentication routes are `authOptional` and POST their
+			// credentials through this helper. An earlier version destructured
+			// only `method` and `query`, so registration and login were sending
+			// an empty body - and asserting method and path alone did not notice.
+			mockFetch({ success: true, data: {} });
+			await makeHabiticaAnonymousRequest('user/auth/local/login', {
+				method: 'POST',
+				body: { username: 'someone', password: 'a-password' },
+			});
+
+			expect(captured?.body).toBeDefined();
+			expect(JSON.parse(captured?.body ?? '{}')).toEqual({
+				username: 'someone',
+				password: 'a-password',
+			});
+		});
+
+		it('sends no body on an anonymous GET', async () => {
+			mockFetch({ success: true, data: {} });
+			await makeHabiticaAnonymousRequest('content', {
+				method: 'GET',
+				body: { ignored: true },
+			});
+
+			expect(captured?.body).toBeUndefined();
 		});
 	});
 
@@ -219,6 +275,74 @@ describe('Habitica transport', () => {
 				}),
 			).rejects.toBeInstanceOf(HabiticaUserIdMissingError);
 			expect(captured).toBeUndefined();
+		});
+	});
+
+	describe('rate limiting on the raw-fetch paths', () => {
+		/** A 429 carrying Habitica's fractional Retry-After. */
+		function mock429(retryAfter = '21.069') {
+			global.fetch = (async () =>
+				({
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					url: 'https://habitica.com/export/history.csv',
+					headers: new Headers({
+						'Content-Type': 'application/json',
+						'retry-after': retryAfter,
+					}),
+					json: async () => ({ error: 'TooManyRequests' }),
+					text: async () => '{}',
+				}) as unknown as Response) as unknown as typeof global.fetch;
+		}
+
+		it('preserves status and Retry-After through an export failure', async () => {
+			// These paths bypass the shared transport, so they get no ApiError.
+			// Throwing a bare Error would discard the delay and leave the handler
+			// retrying blind against a fixed one-minute window.
+			mock429();
+
+			await expect(
+				makeHabiticaExportRequest('history.csv', CREDENTIALS),
+			).rejects.toMatchObject({
+				name: 'HabiticaHttpError',
+				status: 429,
+				retryAfter: 21_069,
+			});
+		});
+
+		it('preserves them through a challenge CSV failure too', async () => {
+			mock429('5');
+
+			await expect(
+				makeHabiticaTextRequest('challenges/c1/export/csv', CREDENTIALS),
+			).rejects.toMatchObject({ status: 429, retryAfter: 5_000 });
+		});
+
+		it('keeps the fraction instead of truncating it', async () => {
+			// The shared transport parseInts to 21, retrying ~69ms early. Here the
+			// parse is ours, so it rounds up and never fires inside the window.
+			mock429('21.069');
+			await expect(
+				makeHabiticaExportRequest('history.csv', CREDENTIALS),
+			).rejects.toMatchObject({ retryAfter: 21_069 });
+			expect(21_069).toBeGreaterThan(21_000);
+		});
+
+		it('omits retryAfter when the server sent none', async () => {
+			mockFetch('nope', { status: 500, contentType: 'text/csv' });
+
+			await expect(
+				makeHabiticaExportRequest('history.csv', CREDENTIALS),
+			).rejects.toMatchObject({ status: 500, retryAfter: undefined });
+		});
+
+		it('ignores an unparseable Retry-After rather than passing NaN on', async () => {
+			mock429('not-a-number');
+
+			await expect(
+				makeHabiticaExportRequest('history.csv', CREDENTIALS),
+			).rejects.toMatchObject({ status: 429, retryAfter: undefined });
 		});
 	});
 

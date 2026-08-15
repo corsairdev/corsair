@@ -91,13 +91,15 @@ export const remove: HabiticaEndpoints['tagsDelete'] = async (ctx, input) => {
 		{ method: 'DELETE' },
 	);
 
-	await evictEntity(ctx.db.tags, input.tagId, LABEL, { required: true });
-
+	// Logged before the eviction - see the note on `tasks.delete`.
 	await logEventFromContext(
 		ctx,
 		'habitica.tags.delete',
 		auditPayload(input, ['tagId']),
 		'completed',
 	);
+
+	await evictEntity(ctx.db.tags, input.tagId, LABEL, { required: true });
+
 	return result;
 };
