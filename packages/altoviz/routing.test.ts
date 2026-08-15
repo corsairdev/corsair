@@ -683,7 +683,7 @@ describe('routing', () => {
 			await fixture.fn(ctx, fixture.input);
 
 			const call = lastCall();
-			expect(call.url.startsWith(BASE)).toBe(true);
+			expect(new URL(call.url).origin).toBe(new URL(BASE).origin);
 			expect(call.url).toContain(fixture.urlIncludes);
 			expect(call.init.method).toBe(fixture.method);
 
