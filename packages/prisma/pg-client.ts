@@ -1,4 +1,9 @@
+import type { QueryConfig } from 'pg';
 import { Client } from 'pg';
+
+// pg supports queryMode: 'extended' in its runtime QueryConfig (forces the
+// single-statement prepared-query protocol) but @types/pg predates the field.
+type ExtendedQueryConfig = QueryConfig & { queryMode: 'extended' };
 
 export type PostgresConnectionInput = {
 	host: string;
@@ -43,6 +48,84 @@ const TRANSACTION_CONTROL = new Set([
 	'checkpoint',
 ]);
 
+// Functions whose invocation has operational side effects even inside a
+// read-only transaction: advisory locks, remote writes via dblink, sequence
+// mutation (beyond the nextval/setval tokens), configuration/snapshot and
+// large-object writes, and backend control. The read-only endpoint refuses
+// SELECTs that reference them so a read-only classification can never be
+// stretched into server disruption.
+const SIDE_EFFECT_FUNCTIONS = new Set([
+	// advisory locks acquire/release session-level resources
+	'pg_advisory_lock',
+	'pg_advisory_lock_shared',
+	'pg_advisory_unlock',
+	'pg_advisory_unlock_all',
+	'pg_advisory_unlock_shared',
+	'pg_advisory_xact_lock',
+	'pg_advisory_xact_lock_shared',
+	'pg_try_advisory_lock',
+	'pg_try_advisory_lock_shared',
+	'pg_try_advisory_xact_lock',
+	'pg_try_advisory_xact_lock_shared',
+	// dblink runs statements on a remote server through its own connection
+	'dblink',
+	'dblink_cancel_query',
+	'dblink_close',
+	'dblink_connect',
+	'dblink_connect_u',
+	'dblink_disconnect',
+	'dblink_exec',
+	'dblink_get_result',
+	'dblink_open',
+	'dblink_send_query',
+	'dblink_send_query_async',
+	// session/system mutation
+	'set_config',
+	'pg_cancel_backend',
+	'pg_terminate_backend',
+	'pg_reload_conf',
+	'pg_rotate_logfile',
+	'pg_log_backend_memory_contexts',
+	'pg_notify',
+	'pg_listen',
+	'pg_unlisten',
+	'pg_switch_wal',
+	'pg_switch_xlog',
+	'pg_create_restore_point',
+	'pg_promote',
+	'pg_import_snapshot',
+	'pg_export_snapshot',
+	'pg_write_restartpoint_dir',
+	'pg_switch_redaction',
+	// large objects write to the database
+	'lo_import',
+	'lo_import_with_oid',
+	'lo_export',
+	'lo_unlink',
+	'lo_create',
+	'lo_creat',
+	'lo_from_bytea',
+	'lo_put',
+	'lo_open',
+	'lo_write',
+	'lo_truncate',
+	'lo_truncate64',
+	'lo_lseek',
+	'lo_lseek64',
+	'lo_close',
+	'lo_tell',
+	'lo_tell64',
+	// logical replication emission
+	'pg_logical_emit_message',
+	'pg_replication_origin_create',
+	'pg_replication_origin_drop',
+	'pg_replication_origin_setup',
+	'pg_replication_origin_reset',
+	'pg_replication_origin_xact_setup',
+	'pg_replication_origin_xact_reset',
+	'pg_replication_origin_advance',
+]);
+
 /**
  * Returns true when the statement is a pure read-only SELECT.
  *
@@ -58,9 +141,12 @@ const TRANSACTION_CONTROL = new Set([
  * Only an unquoted top-level `SELECT` prefix is accepted (WITH is rejected so
  * CTE-hidden mutations like `WITH x AS (DELETE ...) RETURNING *` fail), any
  * top-level `;` (multi-statement), transaction-control tokens, `SELECT INTO`,
- * row-lock `FOR UPDATE/SHARE` forms, and sequence-mutating `nextval`/`setval`
- * are rejected, and every keyword check runs only in plain code — never inside
- * literals, identifiers, or comments.
+ * row-lock `FOR UPDATE/SHARE` forms, sequence-mutating `nextval`/`setval`,
+ * and functions whose invocation carries side effects even inside a read-only
+ * transaction (advisory locks, dblink remote writes, large-object writes,
+ * backend/config control — see `SIDE_EFFECT_FUNCTIONS`) are rejected, and
+ * every keyword check runs only in plain code — never inside literals,
+ * identifiers, or comments.
  */
 export function isReadOnlySql(sql: string): boolean {
 	if (sql.length > MAX_SQL_LENGTH) return false;
@@ -87,6 +173,8 @@ export function isReadOnlySql(sql: string): boolean {
 	let sawSelectInto = false;
 	let sawRowLock = false;
 	let sawSequenceMutation = false;
+	let sawSideEffectFunction = false;
+	let pendingFor = false;
 
 	while (i < n) {
 		const c = s.charAt(i);
@@ -94,7 +182,7 @@ export function isReadOnlySql(sql: string): boolean {
 
 		switch (state) {
 			case 'lineComment':
-				if (c === '\n') state = 'code';
+				if (c === '\n' || c === '\r') state = 'code';
 				i += 1;
 				continue;
 			case 'blockComment':
@@ -206,11 +294,31 @@ export function isReadOnlySql(sql: string): boolean {
 			if (TRANSACTION_CONTROL.has(word)) return false;
 			if (word === 'into') sawSelectInto = true;
 			if (word === 'nextval' || word === 'setval') sawSequenceMutation = true;
+			// Only flag a side-effect function when it is actually invoked:
+			// the word is treated as a call when '(' follows (whitespace
+			// tolerated), so columns/values that merely share the name stay
+			// allowed.
+			if (SIDE_EFFECT_FUNCTIONS.has(word)) {
+				let k = j;
+				while (k < n && /\s/.test(s.charAt(k))) k += 1;
+				if (s.charAt(k) === '(') sawSideEffectFunction = true;
+			}
+			// Row-lock forms: FOR UPDATE | FOR SHARE | FOR NO KEY UPDATE |
+			// FOR KEY SHARE. Row locks serialize on rows so a read-only query
+			// must not hold them. Detect via a one-token lookahead instead of
+			// slicing the remainder of the buffer on every `for` token.
 			if (word === 'for') {
-				const after = s.slice(j).trimStart().toLowerCase();
-				if (/^(update|share|no\s+key\s+update|key\s+share)\b/.test(after)) {
+				pendingFor = true;
+			} else if (pendingFor) {
+				if (
+					word === 'update' ||
+					word === 'share' ||
+					word === 'no' ||
+					word === 'key'
+				) {
 					sawRowLock = true;
 				}
+				pendingFor = false;
 			}
 			i = j;
 			continue;
@@ -219,7 +327,13 @@ export function isReadOnlySql(sql: string): boolean {
 		i += 1;
 	}
 
-	if (sawSelectInto || sawRowLock || sawSequenceMutation) return false;
+	if (
+		sawSelectInto ||
+		sawRowLock ||
+		sawSequenceMutation ||
+		sawSideEffectFunction
+	)
+		return false;
 	return true;
 }
 
@@ -283,9 +397,21 @@ export async function executePostgresQuery(
 			return toQueryResult(result);
 		}
 
+		// Enforce read-only at the connection session, not just in the first
+		// transaction: even a statement smuggling `COMMIT` opens a new
+		// transaction that stays read-only, and any function that bypasses the
+		// scanner's SELECT check still cannot start DDL/DML.
+		await client.query('SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY');
 		await client.query('BEGIN READ ONLY');
 		try {
-			const result = await client.query(sql, queryParams);
+			// queryMode: 'extended' forces the wire protocol's single-statement
+			// prepared-query path, so multi-statement payloads (`...; DROP ...`)
+			// are rejected by the server even if they slip past the scan.
+			const result = await client.query({
+				text: sql,
+				values: queryParams,
+				queryMode: 'extended',
+			} as ExtendedQueryConfig);
 			await client.query('COMMIT');
 			return toQueryResult(result);
 		} catch (error) {

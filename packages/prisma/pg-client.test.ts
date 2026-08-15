@@ -67,11 +67,31 @@ describe('executePostgresQuery', () => {
 
 	it('runs read queries inside a READ ONLY transaction', async () => {
 		await executePostgresQuery(connection, 'SELECT 1', [], 'read');
-		expect(pgMocks.query.mock.calls.map((call) => call[0])).toEqual([
-			'BEGIN READ ONLY',
-			'SELECT 1',
-			'COMMIT',
-		]);
+
+		const calls = pgMocks.query.mock.calls.map((call) => call[0]);
+		expect(calls[0]).toBe(
+			'SET SESSION CHARACTERISTICS AS TRANSACTION READ ONLY',
+		);
+		expect(calls[1]).toBe('BEGIN READ ONLY');
+		expect(calls[2]).toMatchObject({
+			text: 'SELECT 1',
+			values: [],
+			queryMode: 'extended',
+		});
+		expect(calls[3]).toBe('COMMIT');
+	});
+
+	it('forces the extended protocol for the read query', async () => {
+		await executePostgresQuery(connection, 'SELECT $1::int AS n', [7], 'read');
+		const queryCall = pgMocks.query.mock.calls.find(
+			(call) => call[0] && typeof call[0] === 'object',
+		);
+		expect(queryCall).toBeDefined();
+		expect(queryCall[0]).toMatchObject({
+			text: 'SELECT $1::int AS n',
+			values: [7],
+			queryMode: 'extended',
+		});
 	});
 
 	it('rejects SELECT INTO and multi-statement queries before connecting', async () => {
@@ -131,7 +151,9 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql('DELETE FROM users')).toBe(false);
 	});
 
-	it('rejects WITH CTE mutations even without a semicolon', () => {
+	it('rejects WITH queries because they are not a plain SELECT', () => {
+		// A top-level WITH cannot start a read-only query, so both CTE-based
+		// mutations and read-only CTEs with a trailing SELECT are rejected.
 		expect(
 			isReadOnlySql(
 				'WITH x AS (DELETE FROM users RETURNING *) SELECT * FROM x',
@@ -142,6 +164,7 @@ describe('isReadOnlySql token-aware validation', () => {
 				'WITH x AS (UPDATE users SET id = 1 RETURNING *) SELECT * FROM x',
 			),
 		).toBe(false);
+		expect(isReadOnlySql('WITH x AS (SELECT 1) SELECT * FROM x')).toBe(false);
 	});
 
 	it('rejects SELECT INTO and row-lock forms', () => {
@@ -219,5 +242,44 @@ describe('isReadOnlySql token-aware validation', () => {
 	it('rejects sequence-mutating functions', () => {
 		expect(isReadOnlySql("SELECT nextval('s')")).toBe(false);
 		expect(isReadOnlySql("SELECT setval('s', 1)")).toBe(false);
+	});
+
+	it('rejects side-effecting functions inside a SELECT', () => {
+		expect(isReadOnlySql("SELECT pg_advisory_lock('k')")).toBe(false);
+		expect(isReadOnlySql("SELECT pg_advisory_xact_lock('k')")).toBe(false);
+		expect(isReadOnlySql("SELECT pg_try_advisory_lock('k')")).toBe(false);
+		expect(
+			isReadOnlySql("SELECT dblink('conn','INSERT INTO t VALUES (1)')"),
+		).toBe(false);
+		expect(isReadOnlySql("SELECT dblink_exec('conn', 'DELETE FROM t')")).toBe(
+			false,
+		);
+		expect(isReadOnlySql("SELECT lo_import('/etc/passwd')")).toBe(false);
+		expect(isReadOnlySql("SELECT set_config('x.a', '1', false)")).toBe(false);
+		expect(isReadOnlySql('SELECT pg_terminate_backend(42)')).toBe(false);
+		expect(isReadOnlySql('SELECT pg_cancel_backend(42)')).toBe(false);
+		// quoted identifiers are not invocations and stay allowed
+		expect(isReadOnlySql('SELECT "pg_advisory_lock" FROM functions')).toBe(
+			true,
+		);
+		// the deny list only matches unquoted identifiers
+		expect(isReadOnlySql("SELECT 'dblink' AS note")).toBe(true);
+	});
+
+	it('ends line comments at carriage returns too', () => {
+		// CR-only and CRLF line endings must close the comment; otherwise a
+		// scanner that only looks for \n would swallow a following statement.
+		expect(isReadOnlySql('SELECT 1 -- note\r; COMMIT')).toBe(false);
+		expect(isReadOnlySql('SELECT 1 -- note\r\n; COMMIT')).toBe(false);
+		expect(isReadOnlySql('SELECT 1 -- note\r\nFROM users')).toBe(true);
+	});
+
+	it('rejects row-lock variants after FOR', () => {
+		expect(isReadOnlySql('SELECT * FROM users FOR UPDATE')).toBe(false);
+		expect(isReadOnlySql('SELECT * FROM users FOR SHARE')).toBe(false);
+		expect(isReadOnlySql('SELECT * FROM users FOR NO KEY UPDATE')).toBe(false);
+		expect(isReadOnlySql('SELECT * FROM users FOR KEY SHARE')).toBe(false);
+		// "for" used as an alias or in prose is not a row lock
+		expect(isReadOnlySql('SELECT 1 AS "for"')).toBe(true);
 	});
 });

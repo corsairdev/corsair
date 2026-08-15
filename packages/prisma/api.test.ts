@@ -128,6 +128,26 @@ describe('Prisma plugin shape', () => {
 		expect(
 			PrismaEndpointOutputSchemas.restoreBackup!.safeParse({}).success,
 		).toBe(true);
+		// ... but a non-empty object is an incompatible payload and must fail
+		expect(
+			PrismaEndpointOutputSchemas.deleteProject!.safeParse({
+				unexpected: 'field',
+			}).success,
+		).toBe(false);
+		expect(
+			PrismaEndpointOutputSchemas.deleteDatabase!.safeParse({
+				deleted: true,
+			}).success,
+		).toBe(false);
+		expect(
+			PrismaEndpointOutputSchemas.deleteConnection!.safeParse({ id: 'c1' })
+				.success,
+		).toBe(false);
+		expect(
+			PrismaEndpointOutputSchemas.restoreBackup!.safeParse({
+				status: 'restored',
+			}).success,
+		).toBe(false);
 	});
 
 	it('marks destructive operations as irreversible', () => {

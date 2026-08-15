@@ -226,11 +226,14 @@ const ListWorkspaceIntegrationsOutputSchema = resourceOrList(
 );
 
 // destructive DELETE / restore endpoints return 204 No Content (or an empty
-// 202 Accepted body) — the response carries no resource payload
+// 202 Accepted body) — the response carries no resource payload. Only an
+// actually-empty response is valid: undefined, null, or a bare `{}` — a
+// non-empty object means the provider returned an incompatible payload, so it
+// must fail output validation instead of passing through.
 const EmptyResponseSchema = z.union([
 	z.undefined(),
 	z.null(),
-	z.object({}).passthrough(),
+	z.object({}).strict(),
 ]);
 
 const PRISMA_REST_OUTPUT_SCHEMAS: Record<string, z.ZodTypeAny> = {
