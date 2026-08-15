@@ -1,0 +1,58 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeAltovizRequest } from '../client';
+import type { AltovizEndpoints } from '../index';
+import { auditPayload } from './logging';
+import type { AltovizEndpointOutputs } from './types';
+
+/**
+ * The only multipart operation in the surface, and the only create with NO
+ * delete anywhere in the API - not in the catalog and not in the OpenAPI
+ * document. An uploaded document can only be removed in the Altoviz UI.
+ * `fileBase64` is decoded to a `Blob` here because JSON-RPC-style plugin
+ * inputs cannot carry a raw binary value; the shared transport's `formData`
+ * option accepts string or Blob field values and builds the actual
+ * `multipart/form-data` body.
+ */
+export const upload: AltovizEndpoints['purchaseInvoices']['upload'] = async (
+	ctx,
+	input,
+) => {
+	const bytes = Buffer.from(input.fileBase64, 'base64');
+	const file = new Blob([bytes], { type: input.mimeType });
+
+	const result = await makeAltovizRequest<
+		AltovizEndpointOutputs['purchaseInvoicesUpload']
+	>('v1/purchaseinvoices/file', ctx.key, {
+		method: 'POST',
+		formData: { file },
+	});
+
+	await logEventFromContext(
+		ctx,
+		'altoviz.purchaseInvoices.upload',
+		auditPayload({}, { fileSizeBytes: bytes.length }),
+		'completed',
+	);
+	return result;
+};
+
+/**
+ * Returns `application/pdf` despite the spec declaring `application/json` on
+ * this route's 200 - confirmed live, and it round-tripped an uploaded file
+ * exactly. Same core text-decoding limitation as the sale document downloads.
+ */
+export const download: AltovizEndpoints['purchaseInvoices']['download'] =
+	async (ctx, input) => {
+		const body = await makeAltovizRequest<string>(
+			`v1/purchaseinvoices/download/${input.purchaseInvoiceId}`,
+			ctx.key,
+		);
+
+		await logEventFromContext(
+			ctx,
+			'altoviz.purchaseInvoices.download',
+			auditPayload(input),
+			'completed',
+		);
+		return { contentType: 'application/pdf', body };
+	};
