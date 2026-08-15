@@ -6,6 +6,7 @@ import { clientary } from './index';
 
 const API_KEY = process.env.CLIENTARY_API_KEY;
 const DOMAIN = process.env.CLIENTARY_DOMAIN;
+const describeWhenCreds = API_KEY && DOMAIN ? describe : describe.skip;
 
 async function createClientaryClient() {
 	if (!API_KEY || !DOMAIN) {
@@ -29,7 +30,7 @@ async function createClientaryClient() {
 	return { corsair, testDb };
 }
 
-describe('Clientary plugin integration', () => {
+describeWhenCreds('Clientary plugin integration', () => {
 	it('clients.list calls the API and logs the event', async () => {
 		const setup = await createClientaryClient();
 		if (!setup) {
@@ -85,7 +86,9 @@ describe('Clientary plugin integration', () => {
 			testDb.cleanup();
 		}
 	});
+});
 
+describe('Clientary plugin integration (offline)', () => {
 	it('fails fast with AuthMissingError when no key is configured anywhere', async () => {
 		// No env keys needed — this never reaches the network.
 		const testDb = createTestDatabase();
