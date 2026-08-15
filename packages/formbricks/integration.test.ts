@@ -398,6 +398,57 @@ describeLive('Formbricks API (live)', () => {
 	 * concluded were Pro-only. They are not - full CRUD works on this plan. Pinned so the wrong
 	 * conclusion cannot be re-drawn from the same two facts.
 	 */
+	/**
+	 * The two versions disagree about whether an attribute-key update may be partial, and the plugin's
+	 * input schema declares both fields optional - so the version it calls is load-bearing.
+	 *
+	 * v2 re-validates the whole object; v1 patches. The plugin called v2 while advertising optional
+	 * fields, which meant updating one field answered 422 every time. Pinned here so the API behaviour
+	 * this depends on is asserted rather than remembered.
+	 */
+	it('accepts a partial attribute-key update on v1 and rejects it on v2', async () => {
+		const created = await call<{
+			id: string;
+			name: string;
+			description: string;
+		}>('v2', 'management/contact-attribute-keys', {
+			method: 'POST',
+			body: {
+				workspaceId,
+				key: 'corsair_partial_probe',
+				name: 'Corsair Probe',
+				description: 'probe',
+			},
+		});
+
+		try {
+			// v2 refuses a body missing either field, naming the one it wants.
+			await expectApiError(
+				() =>
+					call('v2', `management/contact-attribute-keys/${created.id}`, {
+						method: 'PUT',
+						body: { name: 'Renamed On v2' },
+					}),
+				422,
+				/description/,
+			);
+
+			// v1 applies it and leaves the untouched field alone - which is what makes the plugin's
+			// "both fields optional" contract honest.
+			const patched = await call<{ name: string; description: string }>(
+				'v1',
+				`management/contact-attribute-keys/${created.id}`,
+				{ method: 'PUT', body: { name: 'Renamed On v1' } },
+			);
+			expect(patched.name).toBe('Renamed On v1');
+			expect(patched.description).toBe('probe');
+		} finally {
+			await call('v1', `management/contact-attribute-keys/${created.id}`, {
+				method: 'DELETE',
+			});
+		}
+	});
+
 	it('creates and deletes a contact and an attribute key', async () => {
 		let contactId: string | undefined;
 		let keyId: string | undefined;

@@ -454,6 +454,27 @@ export const createAttributeKey: FormbricksEndpoints['contactAttributeKeysCreate
  * catalog describes ("update a contact's attributes ... keep contact information in sync with your
  * app").
  *
+ * **v1, because only v1 accepts a partial update.** This operation's inputs are optional, so a caller
+ * may send `name` alone - and the two versions disagree about whether that is allowed:
+ *
+ * ```
+ * PUT v2 {name}                -> 422  description: expected string, received undefined
+ * PUT v2 {description}         -> 422  name: expected string, received undefined
+ * PUT v2 {name, description}   -> 200
+ * PUT v1 {name}                -> 200  description preserved
+ * PUT v1 {description}         -> 200  name preserved
+ * ```
+ *
+ * v2 re-validates the whole body like the webhook update does. This function used to call v2 while
+ * declaring both fields optional, so any caller updating one field got a 422 - the same defect as the
+ * webhook `source` omission, in a second place, and found by diffing the input schemas against
+ * Formbricks' published OpenAPI document rather than by a test.
+ *
+ * Both versions return the identical ten fields, so nothing is lost by preferring v1 here; the
+ * mirrored row is the same either way. Note that `PUT v1/management/contact-attribute-keys/{id}` is
+ * **absent from the published v1 document** and was verified live - the spec is incomplete rather
+ * than authoritative, which it also is for `DELETE v1/management/contacts/{id}`.
+ *
  * The capability the catalog *does* describe has **no management route at all**. Each candidate was
  * tried against a real contact:
  *
@@ -478,7 +499,8 @@ export const updateAttributeKey: FormbricksEndpoints['contactAttributeKeysUpdate
 			FormbricksEndpointOutputs['contactAttributeKeysUpdate']
 		>(
 			ctx,
-			'v2',
+			// v1, and the version matters here in a way it does not for the sibling operations.
+			'v1',
 			`management/contact-attribute-keys/${input.contactAttributeKeyId}`,
 			{
 				method: 'PUT',

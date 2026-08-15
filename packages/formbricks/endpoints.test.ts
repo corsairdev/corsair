@@ -457,7 +457,9 @@ const OPERATIONS: Array<
 	[
 		'contactAttributeKeys.update',
 		'PUT',
-		`v2/management/contact-attribute-keys/${KEY_ID}`,
+		// v1: only v1 accepts a partial body. v2 re-validates the whole object and 422s when either
+		// `name` or `description` is absent, which is what this operation used to do.
+		`v1/management/contact-attribute-keys/${KEY_ID}`,
 		(c) =>
 			Contacts.updateAttributeKey(c, {
 				contactAttributeKeyId: KEY_ID,
@@ -695,7 +697,8 @@ describe('routing', () => {
 			'contacts.uploadBulk',
 			'contactAttributeKeys.listClasses',
 			'contactAttributeKeys.create',
-			'contactAttributeKeys.update',
+			// `contactAttributeKeys.update` is deliberately NOT here - it is the one operation in this
+			// family on v1, because only v1 accepts a partial body.
 			'contactAttributeKeys.delete',
 			'webhooks.list',
 			'webhooks.get',
@@ -1974,6 +1977,36 @@ describe('regressions against verified API behaviour', () => {
 			expect(body[field]).toBeDefined();
 		}
 		expect(body.source).toBe('user');
+	});
+
+	/**
+	 * The attribute-key update must go to **v1**, and must send only what the caller supplied.
+	 *
+	 * The same defect as the webhook update, in a second place: this operation declares `name` and
+	 * `description` optional, but called v2 - which re-validates the whole object and answers
+	 * `422 "expected string, received undefined"` when either is missing. So updating one field failed
+	 * every time. v1 accepts a partial body and preserves the field that was not sent.
+	 *
+	 * Found by diffing the input schemas against Formbricks' published OpenAPI document, not by a
+	 * test - which is why this guard exists now.
+	 */
+	it('sends a partial attribute-key update to v1, not v2', async () => {
+		mockFetch(attributeKey);
+		const { ctx } = makeCtx();
+
+		await Contacts.updateAttributeKey(ctx, {
+			contactAttributeKeyId: KEY_ID,
+			name: 'Renamed',
+		});
+
+		expect(captured?.url).toContain('v1/management/contact-attribute-keys');
+		expect(captured?.url).not.toContain('v2/management/contact-attribute-keys');
+
+		const body = JSON.parse(captured?.body ?? '{}');
+		expect(body.name).toBe('Renamed');
+		// The unsent field must stay unsent - sending `description: null` would clear it, and sending
+		// `undefined` is what `compactBody` exists to prevent.
+		expect('description' in body).toBe(false);
 	});
 
 	/**
