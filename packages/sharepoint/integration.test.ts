@@ -5,17 +5,27 @@ import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { resolveSiteGuid } from './client';
 import { sharepoint } from './index';
 
+const configuredAccessToken = process.env.SHAREPOINT_ACCESS_TOKEN?.trim();
+const configuredSiteId = process.env.SHAREPOINT_SITE_ID?.trim();
+const hasCredentials =
+	Boolean(configuredAccessToken) && Boolean(configuredSiteId);
+
+const describeIf = hasCredentials ? describe : describe.skip;
+
+if (!hasCredentials) {
+	console.warn(
+		'Skipping SharePoint integration tests: SHAREPOINT_ACCESS_TOKEN / SHAREPOINT_SITE_ID not set',
+	);
+}
+
 // Using `unknown` for both parameter and return because DB payloads may arrive as a raw JSON
 function parsePayload(payload: unknown): unknown {
 	return typeof payload === 'string' ? JSON.parse(payload) : payload;
 }
 
 async function createSharepointClient() {
-	const accessToken = process.env.SHAREPOINT_ACCESS_TOKEN;
-	const siteId = process.env.SHAREPOINT_SITE_ID;
-	if (!accessToken || !siteId) {
-		return null;
-	}
+	const accessToken = configuredAccessToken!;
+	const siteId = configuredSiteId!;
 
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'sharepoint', 'default');
@@ -37,11 +47,10 @@ async function createSharepointClient() {
 	return { corsair, testDb, siteId: siteGuid };
 }
 
-describe('SharePoint plugin integration', () => {
+describeIf('SharePoint plugin integration', () => {
 	describe('lists', () => {
 		it('listsListAll interacts with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const result = await corsair.sharepoint.api.lists.listAll({});
@@ -71,7 +80,6 @@ describe('SharePoint plugin integration', () => {
 
 		it('listsCreate, listsGetByTitle, listsUpdate, listsDelete interact with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const orm = createCorsairOrm(testDb.database);
@@ -133,7 +141,6 @@ describe('SharePoint plugin integration', () => {
 
 		it('listsListColumns interacts with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const lists = await corsair.sharepoint.api.lists.listAll({});
@@ -167,7 +174,6 @@ describe('SharePoint plugin integration', () => {
 
 		beforeAll(async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 			const lists = await corsair.sharepoint.api.lists.listAll({});
 			listTitle = lists.value?.find((l) => !l.list?.hidden)?.displayName ?? '';
@@ -177,7 +183,6 @@ describe('SharePoint plugin integration', () => {
 		it('itemsList and itemsGet interact with API and DB', async () => {
 			if (!listTitle) return;
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const listInput = { list_title: listTitle, top: 5 };
@@ -229,7 +234,6 @@ describe('SharePoint plugin integration', () => {
 		it('itemsCreate, itemsUpdate, itemsDelete interact with API and DB', async () => {
 			if (!listTitle) return;
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const orm = createCorsairOrm(testDb.database);
@@ -297,7 +301,6 @@ describe('SharePoint plugin integration', () => {
 	describe('folders', () => {
 		it('foldersCreate, foldersGet, foldersListSubfolders, foldersDelete interact with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const orm = createCorsairOrm(testDb.database);
@@ -358,7 +361,6 @@ describe('SharePoint plugin integration', () => {
 
 		it('foldersGetAll interacts with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const result = await corsair.sharepoint.api.folders.getAll({});
@@ -378,7 +380,6 @@ describe('SharePoint plugin integration', () => {
 	describe('files', () => {
 		it('filesListInFolder and filesGet interact with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			// Use the first available folder so the path is non-empty
@@ -439,7 +440,6 @@ describe('SharePoint plugin integration', () => {
 	describe('users', () => {
 		it('usersGetCurrent and usersListSite interact with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const orm = createCorsairOrm(testDb.database);
@@ -484,7 +484,6 @@ describe('SharePoint plugin integration', () => {
 	describe('search', () => {
 		it('searchQuery interacts with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { query_text: 'test', row_limit: 5 };
@@ -505,7 +504,6 @@ describe('SharePoint plugin integration', () => {
 	describe('web', () => {
 		it('webGetInfo and webGetSiteCollectionInfo interact with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const webInfo = await corsair.sharepoint.api.web.getInfo({});
@@ -536,7 +534,6 @@ describe('SharePoint plugin integration', () => {
 	describe('recycleBin', () => {
 		it('recycleBinList interacts with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const result = await corsair.sharepoint.api.recycleBin.list({});
@@ -556,7 +553,6 @@ describe('SharePoint plugin integration', () => {
 	describe('permissions', () => {
 		it('permissionsGetRoleDefinitions interacts with API and DB', async () => {
 			const setup = await createSharepointClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			// /sites/{id}/permissions requires Sites.FullControl.All or admin consent — skip if Forbidden
