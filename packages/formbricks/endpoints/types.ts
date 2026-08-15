@@ -86,6 +86,22 @@ const ListQuery = {
  */
 const WorkspaceId = z.string().min(1);
 
+/** Receiver URL for a Formbricks webhook. Only http(s) — not javascript:/ftp:/bare strings. */
+const WebhookUrl = z
+	.string()
+	.min(1)
+	.refine(
+		(value) => {
+			try {
+				const parsed = new URL(value);
+				return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+			} catch {
+				return false;
+			}
+		},
+		{ message: 'url must be an http or https URL' },
+	);
+
 /**
  * Where a webhook was registered from.
  *
@@ -469,7 +485,7 @@ export const FormbricksEndpointInputSchemas = {
 	webhooksCreate: z.object({
 		workspaceId: WorkspaceId,
 		name: z.string().min(1),
-		url: z.string().min(1),
+		url: WebhookUrl,
 		source: WebhookSource,
 		triggers: z.array(WebhookTrigger).min(1),
 		surveyIds: z.array(z.string()),
@@ -495,7 +511,7 @@ export const FormbricksEndpointInputSchemas = {
 		webhookId: z.string().min(1),
 		workspaceId: WorkspaceId,
 		name: z.string().min(1),
-		url: z.string().min(1),
+		url: WebhookUrl,
 		source: WebhookSource,
 		triggers: z.array(WebhookTrigger).min(1),
 		surveyIds: z.array(z.string()),

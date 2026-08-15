@@ -681,4 +681,38 @@ describe('input validation', () => {
 			create.safeParse({ ...base, triggers: [], surveyIds: [] }).success,
 		).toBe(false);
 	});
+
+	it('rejects webhook urls that are not http or https', () => {
+		const create = FormbricksEndpointInputSchemas.webhooksCreate;
+		const update = FormbricksEndpointInputSchemas.webhooksUpdate;
+		const base = {
+			workspaceId: 'w',
+			name: 'n',
+			source: 'user' as const,
+			triggers: ['responseCreated' as const],
+			surveyIds: [] as string[],
+		};
+
+		expect(
+			create.safeParse({ ...base, url: 'https://example.com/hook' }).success,
+		).toBe(true);
+		expect(
+			create.safeParse({ ...base, url: 'http://example.com/hook' }).success,
+		).toBe(true);
+		expect(create.safeParse({ ...base, url: 'not-a-url' }).success).toBe(false);
+		expect(
+			create.safeParse({ ...base, url: 'javascript:alert(1)' }).success,
+		).toBe(false);
+		expect(
+			create.safeParse({ ...base, url: 'ftp://example.com/hook' }).success,
+		).toBe(false);
+
+		expect(
+			update.safeParse({
+				...base,
+				webhookId: 'wh-1',
+				url: 'javascript:alert(1)',
+			}).success,
+		).toBe(false);
+	});
 });
