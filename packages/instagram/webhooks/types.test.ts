@@ -1,8 +1,9 @@
+import { createHmac } from 'node:crypto';
 import type { WebhookRequest } from 'corsair/core';
 import { verifyInstagramWebhookSignature } from './types';
 
 describe('verifyInstagramWebhookSignature', () => {
-	const validRequest: WebhookRequest<unknown> = {
+	const validRequest: WebhookRequest = {
 		payload: { object: 'instagram', entry: [] },
 		headers: { 'x-hub-signature-256': 'sha256=dummy_sig' },
 		rawBody: JSON.stringify({ object: 'instagram', entry: [] }),
@@ -25,7 +26,7 @@ describe('verifyInstagramWebhookSignature', () => {
 	});
 
 	it('should return error when rawBody is missing', () => {
-		const requestWithoutBody: WebhookRequest<unknown> = {
+		const requestWithoutBody: WebhookRequest = {
 			...validRequest,
 			rawBody: '',
 		};
@@ -40,7 +41,7 @@ describe('verifyInstagramWebhookSignature', () => {
 	});
 
 	it('should return error when x-hub-signature-256 header is missing', () => {
-		const requestWithoutHeader: WebhookRequest<unknown> = {
+		const requestWithoutHeader: WebhookRequest = {
 			payload: { object: 'instagram', entry: [] },
 			headers: {},
 			rawBody: JSON.stringify({ object: 'instagram', entry: [] }),
@@ -60,6 +61,20 @@ describe('verifyInstagramWebhookSignature', () => {
 		expect(result).toEqual({
 			valid: false,
 			error: 'Invalid signature',
+		});
+	});
+
+	it('should accept a matching sha256 signature', () => {
+		const rawBody = '{"ok":true}';
+		const secret = 'secret';
+		const digest = createHmac('sha256', secret).update(rawBody).digest('hex');
+		const request: WebhookRequest = {
+			payload: { ok: true },
+			headers: { 'x-hub-signature-256': `sha256=${digest}` },
+			rawBody,
+		};
+		expect(verifyInstagramWebhookSignature(request, secret)).toEqual({
+			valid: true,
 		});
 	});
 });
