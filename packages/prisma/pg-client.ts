@@ -48,84 +48,435 @@ const TRANSACTION_CONTROL = new Set([
 	'checkpoint',
 ]);
 
-// Functions whose invocation has operational side effects even inside a
-// read-only transaction: advisory locks, remote writes via dblink, sequence
-// mutation (beyond the nextval/setval tokens), configuration/snapshot and
-// large-object writes, and backend control. The read-only endpoint refuses
-// SELECTs that reference them so a read-only classification can never be
-// stretched into server disruption.
-const SIDE_EFFECT_FUNCTIONS = new Set([
-	// advisory locks acquire/release session-level resources
-	'pg_advisory_lock',
-	'pg_advisory_lock_shared',
-	'pg_advisory_unlock',
-	'pg_advisory_unlock_all',
-	'pg_advisory_unlock_shared',
-	'pg_advisory_xact_lock',
-	'pg_advisory_xact_lock_shared',
-	'pg_try_advisory_lock',
-	'pg_try_advisory_lock_shared',
-	'pg_try_advisory_xact_lock',
-	'pg_try_advisory_xact_lock_shared',
-	// dblink runs statements on a remote server through its own connection
-	'dblink',
-	'dblink_cancel_query',
-	'dblink_close',
-	'dblink_connect',
-	'dblink_connect_u',
-	'dblink_disconnect',
-	'dblink_exec',
-	'dblink_get_result',
-	'dblink_open',
-	'dblink_send_query',
-	'dblink_send_query_async',
-	// session/system mutation
-	'set_config',
-	'pg_cancel_backend',
-	'pg_terminate_backend',
-	'pg_reload_conf',
-	'pg_rotate_logfile',
-	'pg_log_backend_memory_contexts',
-	'pg_notify',
-	'pg_listen',
-	'pg_unlisten',
-	'pg_switch_wal',
-	'pg_switch_xlog',
-	'pg_create_restore_point',
-	'pg_promote',
-	'pg_import_snapshot',
-	'pg_export_snapshot',
-	'pg_write_restartpoint_dir',
-	'pg_switch_redaction',
-	// large objects write to the database
-	'lo_import',
-	'lo_import_with_oid',
-	'lo_export',
-	'lo_unlink',
-	'lo_create',
-	'lo_creat',
-	'lo_from_bytea',
-	'lo_put',
-	'lo_open',
-	'lo_write',
-	'lo_truncate',
-	'lo_truncate64',
-	'lo_lseek',
-	'lo_lseek64',
-	'lo_close',
-	'lo_tell',
-	'lo_tell64',
-	// logical replication emission
-	'pg_logical_emit_message',
-	'pg_replication_origin_create',
-	'pg_replication_origin_drop',
-	'pg_replication_origin_setup',
-	'pg_replication_origin_reset',
-	'pg_replication_origin_xact_setup',
-	'pg_replication_origin_xact_reset',
-	'pg_replication_origin_advance',
+// Reserved data-modifying statement keywords. These cannot appear as unquoted
+// identifiers in any position in a statement, so rejecting them anywhere in
+// plain code also blocks data-modifying CTEs smuggled into subqueries, e.g.
+// `SELECT * FROM (WITH t AS (DELETE FROM u RETURNING *) SELECT * FROM t) s`.
+const WRITE_STATEMENT_KEYWORDS = new Set([
+	'insert',
+	'update',
+	'delete',
+	'merge',
+	'with',
+	'grant',
+	'revoke',
+	'truncate',
+	'create',
+	'alter',
+	'drop',
+	'call',
+	'do',
+	'returning',
+	'show',
 ]);
 
+// Allowlist of functions, keyword constructs, and type names that may appear
+// as a call site in a read-only SELECT. This is an allowlist, NOT a denylist:
+// any identifier directly followed by '(' whose name is not listed here —
+// pg_sleep(), pg_stat_reset(), advisory locks, dblink, large-object helpers,
+// pg_read_file(), and every user-defined or extension function — is rejected
+// before the query touches the server, so an omitted unsafe function can never
+// slip through (the previous denylist could always be bypassed by a function
+// name that was simply left off the list).
+const SAFE_FUNCTIONS = new Set(
+	// prettier-ignore
+	[
+		// SQL keyword constructs that can be followed by '(' in valid SQL:
+		// subqueries, set membership, row/type/value constructors, casts,
+		// aggregate/window framing, and join/derived-table aliases.
+		'select',
+		'from',
+		'where',
+		'and',
+		'or',
+		'not',
+		'in',
+		'exists',
+		'any',
+		'all',
+		'some',
+		'cast',
+		'as',
+		'on',
+		'using',
+		'join',
+		'inner',
+		'left',
+		'right',
+		'full',
+		'outer',
+		'cross',
+		'lateral',
+		'union',
+		'intersect',
+		'except',
+		'distinct',
+		'over',
+		'filter',
+		'within',
+		'group',
+		'between',
+		'like',
+		'ilike',
+		'is',
+		'asc',
+		'desc',
+		'nulls',
+		'first',
+		'last',
+		'values',
+		'row',
+		'array',
+		// type names usable as function-style casts: int4('42'), text(7), jsonb(...)
+		'int',
+		'int2',
+		'int4',
+		'int8',
+		'smallint',
+		'integer',
+		'bigint',
+		'real',
+		'float4',
+		'float8',
+		'double',
+		'numeric',
+		'decimal',
+		'money',
+		'boolean',
+		'bool',
+		'text',
+		'varchar',
+		'char',
+		'bpchar',
+		'name',
+		'bytea',
+		'date',
+		'time',
+		'timetz',
+		'timestamp',
+		'timestamptz',
+		'interval',
+		'oid',
+		'json',
+		'jsonb',
+		'uuid',
+		'inet',
+		'cidr',
+		'macaddr',
+		'macaddr8',
+		'bit',
+		'varbit',
+		'tsvector',
+		'tsquery',
+		'xml',
+		'point',
+		'line',
+		'lseg',
+		'box',
+		'path',
+		'polygon',
+		'circle',
+		// aggregates
+		'count',
+		'sum',
+		'avg',
+		'min',
+		'max',
+		'array_agg',
+		'string_agg',
+		'json_agg',
+		'jsonb_agg',
+		'json_object_agg',
+		'jsonb_object_agg',
+		'bool_and',
+		'bool_or',
+		'every',
+		'bit_and',
+		'bit_or',
+		'stddev',
+		'stddev_pop',
+		'stddev_samp',
+		'variance',
+		'var_pop',
+		'var_samp',
+		'corr',
+		'covar_pop',
+		'covar_samp',
+		'regr_slope',
+		'regr_intercept',
+		'regr_avgx',
+		'regr_avgy',
+		'regr_count',
+		'regr_r2',
+		'regr_sxx',
+		'regr_sxy',
+		'regr_syy',
+		'percentile_cont',
+		'percentile_disc',
+		'mode',
+		// window functions
+		'row_number',
+		'rank',
+		'dense_rank',
+		'percent_rank',
+		'cume_dist',
+		'ntile',
+		'lag',
+		'lead',
+		'first_value',
+		'last_value',
+		'nth_value',
+		// string / character
+		'ascii',
+		'bit_length',
+		'btrim',
+		'char_length',
+		'character_length',
+		'chr',
+		'concat',
+		'concat_ws',
+		'format',
+		'initcap',
+		'left',
+		'length',
+		'lower',
+		'lpad',
+		'ltrim',
+		'md5',
+		'normalize',
+		'octet_length',
+		'overlay',
+		'position',
+		'repeat',
+		'replace',
+		'reverse',
+		'right',
+		'rpad',
+		'rtrim',
+		'split_part',
+		'strpos',
+		'substr',
+		'substring',
+		'translate',
+		'trim',
+		'upper',
+		'to_char',
+		'to_number',
+		'quote_ident',
+		'quote_literal',
+		'quote_nullable',
+		'encode',
+		'decode',
+		'to_hex',
+		// pattern matching
+		'regexp_like',
+		'regexp_match',
+		'regexp_matches',
+		'regexp_replace',
+		'regexp_split_to_array',
+		'regexp_split_to_table',
+		'regexp_count',
+		'regexp_instr',
+		'regexp_substr',
+		// numeric / math
+		'abs',
+		'cbrt',
+		'ceil',
+		'ceiling',
+		'degrees',
+		'div',
+		'exp',
+		'factorial',
+		'floor',
+		'ln',
+		'log',
+		'log10',
+		'mod',
+		'pi',
+		'power',
+		'radians',
+		'round',
+		'scale',
+		'sign',
+		'sin',
+		'cos',
+		'tan',
+		'cot',
+		'asin',
+		'acos',
+		'atan',
+		'atan2',
+		'sinh',
+		'cosh',
+		'tanh',
+		'asinh',
+		'acosh',
+		'atanh',
+		'sqrt',
+		'trunc',
+		'width_bucket',
+		'gcd',
+		'lcm',
+		// date / time
+		'age',
+		'clock_timestamp',
+		'current_date',
+		'current_time',
+		'current_timestamp',
+		'current_catalog',
+		'current_schema',
+		'current_schemas',
+		'current_user',
+		'date_bin',
+		'date_part',
+		'date_trunc',
+		'extract',
+		'isfinite',
+		'justify_days',
+		'justify_hours',
+		'justify_interval',
+		'localtime',
+		'localtimestamp',
+		'make_date',
+		'make_interval',
+		'make_time',
+		'make_timestamp',
+		'make_timestamptz',
+		'now',
+		'statement_timestamp',
+		'session_user',
+		'timeofday',
+		'transaction_timestamp',
+		'to_date',
+		'to_timestamp',
+		'user',
+		// network / inet
+		'abbrev',
+		'broadcast',
+		'family',
+		'host',
+		'hostmask',
+		'netmask',
+		'network',
+		'set_masklen',
+		'masklen',
+		// arrays / sets
+		'generate_series',
+		'generate_subscripts',
+		'unnest',
+		'array_append',
+		'array_cat',
+		'array_dims',
+		'array_fill',
+		'array_length',
+		'array_lower',
+		'array_ndims',
+		'array_position',
+		'array_positions',
+		'array_prepend',
+		'array_remove',
+		'array_replace',
+		'array_to_string',
+		'cardinality',
+		'string_to_array',
+		// json / jsonb
+		'to_json',
+		'to_jsonb',
+		'array_to_json',
+		'row_to_json',
+		'json_build_array',
+		'jsonb_build_array',
+		'json_build_object',
+		'jsonb_build_object',
+		'json_object',
+		'json_typeof',
+		'jsonb_typeof',
+		'json_array_length',
+		'jsonb_array_length',
+		'json_each',
+		'jsonb_each',
+		'json_extract_path',
+		'jsonb_extract_path',
+		'json_extract_path_text',
+		'jsonb_extract_path_text',
+		'json_object_keys',
+		'json_populate_record',
+		'jsonb_populate_record',
+		'json_populate_recordset',
+		'jsonb_populate_recordset',
+		'json_array_elements',
+		'jsonb_array_elements',
+		'json_array_elements_text',
+		'jsonb_array_elements_text',
+		'json_strip_nulls',
+		'jsonb_strip_nulls',
+		'jsonb_pretty',
+		'jsonb_set',
+		'jsonb_insert',
+		// full text
+		'to_tsvector',
+		'to_tsquery',
+		'plainto_tsquery',
+		'phraseto_tsquery',
+		'websearch_to_tsquery',
+		'ts_rank',
+		'ts_rank_cd',
+		'ts_headline',
+		'setweight',
+		'numnode',
+		'querytree',
+		'strip',
+		'get_current_ts_config',
+		// uuid / enums / ranges / conditionals / misc
+		'gen_random_uuid',
+		'enum_first',
+		'enum_last',
+		'enum_range',
+		'coalesce',
+		'nullif',
+		'greatest',
+		'least',
+		'version',
+		'pg_backend_pid',
+		'pg_is_in_recovery',
+		'pg_postmaster_start_time',
+		'pg_conf_load_time',
+		'pg_size_bytes',
+		'pg_size_pretty',
+		'pg_column_size',
+		'pg_relation_size',
+		'pg_table_size',
+		'pg_total_relation_size',
+		'pg_indexes_size',
+		'pg_database_size',
+		'pg_tablespace_size',
+		'col_description',
+		'obj_description',
+		'shobj_description',
+		'format_type',
+		'pg_get_expr',
+		'pg_get_constraintdef',
+		'pg_get_indexdef',
+		'pg_get_triggerdef',
+		'pg_get_functiondef',
+		'pg_get_function_arguments',
+		'pg_get_function_identity_arguments',
+		'pg_get_function_result',
+		'pg_get_keywords',
+		'pg_get_partkeydef',
+		'pg_get_partition_constraintdef',
+		'pg_get_serial_sequence',
+		'pg_get_statisticsobjdef_columns',
+		'pg_get_userbyid',
+		'pg_table_is_visible',
+		'pg_type_is_visible',
+		'pg_function_is_visible',
+		'pg_encoding_to_char',
+		'pg_char_to_encoding',
+		'pg_typeof',
+		'pg_tablespace_location',
+	],
+);
 /**
  * Returns true when the statement is a pure read-only SELECT.
  *
@@ -141,11 +492,12 @@ const SIDE_EFFECT_FUNCTIONS = new Set([
  * Only an unquoted top-level `SELECT` prefix is accepted (WITH is rejected so
  * CTE-hidden mutations like `WITH x AS (DELETE ...) RETURNING *` fail), any
  * top-level `;` (multi-statement), transaction-control tokens, `SELECT INTO`,
- * row-lock `FOR UPDATE/SHARE` forms, sequence-mutating `nextval`/`setval`,
- * and functions whose invocation carries side effects even inside a read-only
- * transaction (advisory locks, dblink remote writes, large-object writes,
- * backend/config control — see `SIDE_EFFECT_FUNCTIONS`) are rejected, and
- * every keyword check runs only in plain code — never inside literals,
+ * row-lock `FOR UPDATE/SHARE` forms, data-modifying keywords (`INSERT`,
+ * `UPDATE`, `DELETE`, `MERGE`, ...) anywhere in plain code, and any function
+ * invocation whose name is not on the `SAFE_FUNCTIONS` allowlist (including
+ * advisory locks, dblink remote writes, large-object writers, `pg_sleep`,
+ * `pg_stat_reset`, and every user-defined or extension function) are rejected,
+ * and every keyword check runs only in plain code — never inside literals,
  * identifiers, or comments.
  */
 export function isReadOnlySql(sql: string): boolean {
@@ -155,7 +507,19 @@ export function isReadOnlySql(sql: string): boolean {
 	const n = s.length;
 	let i = 0;
 
-	const isWordChar = (ch: string): boolean => /[A-Za-z0-9_$]/.test(ch);
+	// Unicode-aware word characters: PostgreSQL identifiers can contain
+	// non-ASCII letters, so treat any code unit over 0x7f as part of a word
+	// token (fails closed — a unicode identifier is never on the allowlist).
+	const isWordChar = (ch: string): boolean => {
+		const code = ch.charCodeAt(0);
+		return (
+			/[A-Za-z0-9_$]/.test(ch) ||
+			(code > 0x7f &&
+				![' ', '\n', '\r', '\t', "'", '"', '(', ')', ';', '.', ','].includes(
+					ch,
+				))
+		);
+	};
 
 	// skip leading whitespace and optional wrapping `(`
 	while (i < n && /\s/.test(s.charAt(i))) i += 1;
@@ -172,8 +536,7 @@ export function isReadOnlySql(sql: string): boolean {
 	let dollarTag = '';
 	let sawSelectInto = false;
 	let sawRowLock = false;
-	let sawSequenceMutation = false;
-	let sawSideEffectFunction = false;
+	let prevWord = '';
 	let pendingFor = false;
 
 	while (i < n) {
@@ -224,7 +587,19 @@ export function isReadOnlySql(sql: string): boolean {
 					i += 2;
 					continue;
 				}
-				if (c === '"') state = 'code';
+				if (c === '"') {
+					state = 'code';
+					// A quoted identifier directly followed by '(' is a function
+					// invocation with a user-chosen name ("dblink"(...)). Quoted
+					// names are never on the allowlist, so reject it — this
+					// closes the case where an unlisted unsafe function is called
+					// through a quoted identifier.
+					let k = i + 1;
+					while (k < n && /\s/.test(s.charAt(k))) k += 1;
+					if (s.charAt(k) === '(') return false;
+					i += 1;
+					continue;
+				}
 				i += 1;
 				continue;
 			case 'dollarQuote':
@@ -292,16 +667,25 @@ export function isReadOnlySql(sql: string): boolean {
 			}
 
 			if (TRANSACTION_CONTROL.has(word)) return false;
+			if (WRITE_STATEMENT_KEYWORDS.has(word)) return false;
 			if (word === 'into') sawSelectInto = true;
-			if (word === 'nextval' || word === 'setval') sawSequenceMutation = true;
-			// Only flag a side-effect function when it is actually invoked:
-			// the word is treated as a call when '(' follows (whitespace
-			// tolerated), so columns/values that merely share the name stay
-			// allowed.
-			if (SIDE_EFFECT_FUNCTIONS.has(word)) {
+			// Allowlist check for function invocations: a word directly
+			// followed by '(' is a call site. Unless it is the `AS` alias
+			// column-list form (`FROM f(x) AS t(a, b)` — where `t(a,b)` names
+			// output columns and is not a call), the function name must be on
+			// the allowlist or the statement is rejected. This is fail-closed:
+			// any function not explicitly allowed — pg_sleep(), pg_stat_reset(),
+			// advisory locks, dblink, user/extension functions — is refused.
+			{
 				let k = j;
 				while (k < n && /\s/.test(s.charAt(k))) k += 1;
-				if (s.charAt(k) === '(') sawSideEffectFunction = true;
+				if (
+					s.charAt(k) === '(' &&
+					prevWord !== 'as' &&
+					!SAFE_FUNCTIONS.has(word)
+				) {
+					return false;
+				}
 			}
 			// Row-lock forms: FOR UPDATE | FOR SHARE | FOR NO KEY UPDATE |
 			// FOR KEY SHARE. Row locks serialize on rows so a read-only query
@@ -320,6 +704,7 @@ export function isReadOnlySql(sql: string): boolean {
 				}
 				pendingFor = false;
 			}
+			prevWord = word;
 			i = j;
 			continue;
 		}
@@ -327,13 +712,7 @@ export function isReadOnlySql(sql: string): boolean {
 		i += 1;
 	}
 
-	if (
-		sawSelectInto ||
-		sawRowLock ||
-		sawSequenceMutation ||
-		sawSideEffectFunction
-	)
-		return false;
+	if (sawSelectInto || sawRowLock) return false;
 	return true;
 }
 

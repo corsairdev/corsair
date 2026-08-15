@@ -244,7 +244,7 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql("SELECT setval('s', 1)")).toBe(false);
 	});
 
-	it('rejects side-effecting functions inside a SELECT', () => {
+	it('rejects side-effecting and unknown function calls (allowlist)', () => {
 		expect(isReadOnlySql("SELECT pg_advisory_lock('k')")).toBe(false);
 		expect(isReadOnlySql("SELECT pg_advisory_xact_lock('k')")).toBe(false);
 		expect(isReadOnlySql("SELECT pg_try_advisory_lock('k')")).toBe(false);
@@ -258,12 +258,89 @@ describe('isReadOnlySql token-aware validation', () => {
 		expect(isReadOnlySql("SELECT set_config('x.a', '1', false)")).toBe(false);
 		expect(isReadOnlySql('SELECT pg_terminate_backend(42)')).toBe(false);
 		expect(isReadOnlySql('SELECT pg_cancel_backend(42)')).toBe(false);
-		// quoted identifiers are not invocations and stay allowed
+		// functions Greptile specifically called out that a denylist missed
+		expect(isReadOnlySql('SELECT pg_sleep(30)')).toBe(false);
+		expect(isReadOnlySql('SELECT pg_stat_reset()')).toBe(false);
+		expect(isReadOnlySql('SELECT pg_stat_clear_snapshot()')).toBe(false);
+		// any unknown or user-defined function is rejected by default
+		expect(isReadOnlySql('SELECT my_custom_function(1)')).toBe(false);
+		expect(isReadOnlySql('SELECT public.my_custom_function(1)')).toBe(false);
+		// quoted invocations of unlisted functions are rejected too
+		expect(isReadOnlySql("SELECT \"dblink\"('c', 'INSERT')")).toBe(false);
+		// ...but a quoted identifier that is not invoked stays allowed
 		expect(isReadOnlySql('SELECT "pg_advisory_lock" FROM functions')).toBe(
 			true,
 		);
-		// the deny list only matches unquoted identifiers
+		// string literals never trigger the check
 		expect(isReadOnlySql("SELECT 'dblink' AS note")).toBe(true);
+	});
+
+	it('accepts allowlisted built-in calls and keyword constructs', () => {
+		expect(isReadOnlySql('SELECT count(*) FROM users')).toBe(true);
+		expect(isReadOnlySql('SELECT max(id), sum(amount) FROM users')).toBe(true);
+		expect(
+			isReadOnlySql(
+				"SELECT lower(name), trim(' x '), length(nickname) FROM users",
+			),
+		).toBe(true);
+		expect(isReadOnlySql('SELECT coalesce(email, phone) FROM users')).toBe(
+			true,
+		);
+		expect(isReadOnlySql('SELECT now(), current_date FROM users')).toBe(true);
+		expect(
+			isReadOnlySql(
+				'SELECT * FROM users WHERE id IN (1, 2) AND (active OR EXISTS (SELECT 1 FROM orgs))',
+			),
+		).toBe(true);
+		expect(
+			isReadOnlySql('SELECT count(*) FILTER (WHERE active > 0) FROM users'),
+		).toBe(true);
+		expect(
+			isReadOnlySql(
+				'SELECT rank() OVER (PARTITION BY org_id ORDER BY created_at) FROM users',
+			),
+		).toBe(true);
+		expect(isReadOnlySql('SELECT * FROM users JOIN orgs USING (org_id)')).toBe(
+			true,
+		);
+		expect(isReadOnlySql('SELECT CAST(id AS numeric(10, 2)) FROM users')).toBe(
+			true,
+		);
+		expect(isReadOnlySql('SELECT pg_catalog.version()')).toBe(true);
+		expect(
+			isReadOnlySql(
+				'SELECT (SELECT count(*) FROM orgs) AS org_count FROM users',
+			),
+		).toBe(true);
+		// function-call-style casts of types
+		expect(isReadOnlySql("SELECT int4('42')")).toBe(true);
+		expect(isReadOnlySql('SELECT text(7)')).toBe(true);
+	});
+
+	it('rejects data-modifying keywords anywhere, including subquery CTEs', () => {
+		expect(
+			isReadOnlySql(
+				'SELECT * FROM (WITH t AS (DELETE FROM users RETURNING *) SELECT * FROM t) s',
+			),
+		).toBe(false);
+		expect(
+			isReadOnlySql(
+				'SELECT * FROM (WITH t AS (INSERT INTO users VALUES (1) RETURNING *) SELECT * FROM t) s',
+			),
+		).toBe(false);
+		expect(
+			isReadOnlySql(
+				'SELECT * FROM (WITH t AS (UPDATE users SET id = 1 RETURNING *) SELECT * FROM t) s',
+			),
+		).toBe(false);
+		// WITH itself is disallowed everywhere (read-only queries must be a
+		// plain top-level SELECT), so even a read-only CTE subquery is refused
+		// rather than trusted to not hide a mutation.
+		expect(
+			isReadOnlySql(
+				'SELECT * FROM (WITH t AS (SELECT 1 AS x) SELECT * FROM t) s',
+			),
+		).toBe(false);
 	});
 
 	it('ends line comments at carriage returns too', () => {
