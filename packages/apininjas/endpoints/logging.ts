@@ -53,7 +53,6 @@ const LOGGABLE_KEYS = new Set([
 	'ticker',
 	'trim',
 	'want',
-	'word',
 
 	// Coarse geography. Deliberately excludes coordinates, postal codes and
 	// street addresses, which locate a caller rather than name a place.

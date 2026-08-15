@@ -124,6 +124,7 @@ describe('the fields this was reported for', () => {
 		['address', '203.0.113.7'],
 		['lat', 51.5074],
 		['lon', -0.1278],
+		['word', 'secret-lookup-term'],
 	])('never records %s by value', (key, value) => {
 		const payload = auditPayload({ [key]: value }, [key]);
 
@@ -168,19 +169,32 @@ describe('the loggable list itself', () => {
 		);
 		const named = new Set<string>();
 		let callSites = 0;
+		let occurrences = 0;
+		const unmatched: string[] = [];
 
 		for (const file of modules) {
 			const source = readFileSync(join(__dirname, 'endpoints', file), 'utf8');
-			for (const match of source.matchAll(
-				/auditPayload\(input, \[([^\]]*)\]/g,
-			)) {
-				callSites++;
+			const calls = [...source.matchAll(/auditPayload\(/g)];
+			const parsed = [...source.matchAll(/auditPayload\(input, \[([^\]]*)\]/g)];
+			occurrences += calls.length;
+			callSites += parsed.length;
+
+			const parsedAt = new Set(parsed.map((match) => match.index));
+			for (const call of calls) {
+				if (parsedAt.has(call.index)) continue;
+				const line = source.slice(0, call.index).split('\n').length;
+				unmatched.push(`${file}:${line}`);
+			}
+
+			for (const match of parsed) {
 				for (const key of match[1]?.matchAll(/'([a-z0-9_]+)'/g) ?? []) {
 					named.add(key[1] as string);
 				}
 			}
 		}
 
+		expect(unmatched).toEqual([]);
+		expect(occurrences).toBe(callSites);
 		expect(callSites).toBe(129);
 		expect([...named].filter((key) => !isLoggableKey(key))).toEqual([]);
 	});

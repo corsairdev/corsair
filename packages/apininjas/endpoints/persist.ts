@@ -40,22 +40,44 @@ function text(value: unknown): string | undefined {
 	return value;
 }
 
+function clean(value: unknown): unknown {
+	if (value === undefined || value === null || isMaskedValue(value)) {
+		return undefined;
+	}
+	if (Array.isArray(value)) {
+		const items = value
+			.map(clean)
+			.filter((item) => item !== undefined && item !== null);
+		return items.length ? items : undefined;
+	}
+	if (typeof value === 'object') {
+		const out: Record<string, unknown> = {};
+		for (const [key, item] of Object.entries(value)) {
+			const next = clean(item);
+			if (next !== undefined && next !== null) out[key] = next;
+		}
+		return Object.keys(out).length ? out : undefined;
+	}
+	return value;
+}
+
 function nested(value: unknown): Record<string, unknown> | undefined {
 	if (!value || typeof value !== 'object' || Array.isArray(value)) {
 		return undefined;
 	}
-	const cleaned: Record<string, unknown> = {};
-	for (const [key, item] of Object.entries(value)) {
-		const next = unmasked(item);
-		if (next !== undefined && next !== null) cleaned[key] = next;
+	const cleaned = clean(value);
+	if (!cleaned || typeof cleaned !== 'object' || Array.isArray(cleaned)) {
+		return undefined;
 	}
-	return Object.keys(cleaned).length ? cleaned : undefined;
+	return cleaned as Record<string, unknown>;
 }
 
 function strings(value: unknown): string[] | undefined {
 	if (!Array.isArray(value)) return undefined;
-	const items = value.filter(
-		(item): item is string => typeof item === 'string' && !isMaskedValue(item),
+	const cleaned = clean(value);
+	if (!Array.isArray(cleaned)) return undefined;
+	const items = cleaned.filter(
+		(item): item is string => typeof item === 'string',
 	);
 	return items.length ? items : undefined;
 }
@@ -78,8 +100,8 @@ function copy(
 		if (value === undefined || value === null) continue;
 		if (OBJECT_KEYS.has(key) || typeof value === 'object') {
 			if (Array.isArray(value)) {
-				const items = strings(value) ?? value.filter((item) => item != null);
-				if (items.length) out[key] = items;
+				const items = strings(value) ?? clean(value);
+				if (Array.isArray(items) && items.length) out[key] = items;
 				continue;
 			}
 			const object = nested(value);

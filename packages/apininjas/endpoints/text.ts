@@ -183,7 +183,7 @@ export const dictionary: ApiNinjasEndpoints['textDictionary'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.text.dictionary',
-		withCount(auditPayload(input, ['word']), result),
+		withCount(auditPayload(input, []), result),
 		'completed',
 	);
 	return result;
@@ -206,7 +206,7 @@ export const thesaurus: ApiNinjasEndpoints['textThesaurus'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.text.thesaurus',
-		withCount(auditPayload(input, ['word']), result),
+		withCount(auditPayload(input, []), result),
 		'completed',
 	);
 	return result;
@@ -226,7 +226,7 @@ export const rhymes: ApiNinjasEndpoints['textRhymes'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'apininjas.text.rhymes',
-		withCount(auditPayload(input, ['word']), result),
+		withCount(auditPayload(input, []), result),
 		'completed',
 	);
 	return result;

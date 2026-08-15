@@ -138,6 +138,33 @@ describe('airports', () => {
 		expect(row.longitude).toBe(-0.45);
 	});
 
+	it('drops masked fields nested inside runways', async () => {
+		const store = makeStore();
+
+		await cacheAirports(
+			store,
+			[
+				{
+					icao: 'EGLL',
+					runways: [
+						{ length: 12799, surface: MASKED },
+						{
+							length: MASKED as never,
+							surface: 'ASP',
+							lights: { has_lights: MASKED },
+						},
+					],
+				},
+			],
+			AT,
+		);
+
+		expect(written(store)[1].runways).toEqual([
+			{ length: 12799 },
+			{ surface: 'ASP' },
+		]);
+	});
+
 	it('does nothing at all when the store is not configured', async () => {
 		// A plugin instance without a database still has to serve lookups.
 		await expect(
@@ -612,6 +639,30 @@ describe('emoji, animals and astronomy', () => {
 			diet: 'Carnivore',
 		});
 		expect(row.locations).toEqual(['Africa', 'Asia']);
+	});
+
+	it('drops masked values nested inside taxonomy', async () => {
+		const store = makeStore();
+
+		await cacheAnimals(
+			store,
+			[
+				{
+					name: 'Cheetah',
+					taxonomy: {
+						family: 'Felidae',
+						scientific_name: MASKED,
+						rank: { order: 'Carnivora', note: MASKED },
+					},
+				},
+			],
+			AT,
+		);
+
+		expect(written(store)[1].taxonomy).toEqual({
+			family: 'Felidae',
+			rank: { order: 'Carnivora' },
+		});
 	});
 
 	it('handles an animal with neither nested object', async () => {
