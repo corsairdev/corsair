@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Account,
 	ActionClasses,
@@ -717,11 +718,14 @@ export function formbricks<const T extends FormbricksPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const res = await ctx.keys?.get_api_key();
+				if (!res) {
+					throw new AuthMissingError('formbricks', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('formbricks', 'api_key');
 		},
 	} satisfies InternalFormbricksPlugin;
 }

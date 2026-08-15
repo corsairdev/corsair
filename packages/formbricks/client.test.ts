@@ -6,11 +6,14 @@
  * are invisible from an endpoint's perspective and both would break something important if changed
  * back.
  */
+import { AuthMissingError } from 'corsair/core';
 import {
 	FORMBRICKS_CLOUD_HOST,
 	makeFormbricksRequest,
 	readRateLimit,
 } from './client';
+import type { FormbricksKeyBuilderContext } from './index';
+import { formbricks } from './index';
 
 const originalFetch = global.fetch;
 
@@ -238,5 +241,42 @@ describe('rate limit headers', () => {
 		const budget = readRateLimit(new Headers({ 'x-ratelimit-limit': 'lots' }));
 
 		expect(budget.limit).toBeUndefined();
+	});
+});
+
+describe('keyBuilder', () => {
+	const plugin = formbricks();
+
+	it('throws AuthMissingError instead of sending an empty x-api-key', async () => {
+		const noKeyCtx = {
+			authType: 'api_key',
+			keys: { get_api_key: async (): Promise<string | null> => null },
+		} as unknown as FormbricksKeyBuilderContext;
+
+		await expect(
+			plugin.keyBuilder!(noKeyCtx, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('throws AuthMissingError when the stored key is an empty string', async () => {
+		const emptyKeyCtx = {
+			authType: 'api_key',
+			keys: { get_api_key: async (): Promise<string | null> => '' },
+		} as unknown as FormbricksKeyBuilderContext;
+
+		await expect(
+			plugin.keyBuilder!(emptyKeyCtx, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('returns the stored key when one is available', async () => {
+		const withKeyCtx = {
+			authType: 'api_key',
+			keys: { get_api_key: async (): Promise<string | null> => 'fbk_test' },
+		} as unknown as FormbricksKeyBuilderContext;
+
+		await expect(plugin.keyBuilder!(withKeyCtx, 'endpoint')).resolves.toBe(
+			'fbk_test',
+		);
 	});
 });
