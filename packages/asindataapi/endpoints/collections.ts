@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
 import type { AsinDataApiEndpointOutputs } from './types';
+import { AsinDataApiEndpointOutputSchemas } from './types';
 
 /**
  * Create a new Collection.
@@ -11,12 +12,13 @@ import type { AsinDataApiEndpointOutputs } from './types';
  */
 export const createCollection: AsinDataApiEndpoints['collectionsCreate'] =
 	async (ctx, input) => {
-		const response = await makeAsinDataApiRequest<
-			AsinDataApiEndpointOutputs['collectionsCreate']
-		>('collections', ctx.key, {
+		const raw = await makeAsinDataApiRequest<unknown>('collections', ctx.key, {
 			method: 'POST',
 			body: input,
 		});
+
+		const response =
+			AsinDataApiEndpointOutputSchemas.collectionsCreate.parse(raw);
 
 		if (ctx.db.collections) {
 			try {
@@ -37,7 +39,7 @@ export const createCollection: AsinDataApiEndpoints['collectionsCreate'] =
 			{ name: input.name },
 			'completed',
 		);
-		return response;
+		return response as AsinDataApiEndpointOutputs['collectionsCreate'];
 	};
 
 /**
@@ -49,12 +51,12 @@ export const listCollections: AsinDataApiEndpoints['collectionsList'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['collectionsList']
-	>('collections', ctx.key, {
+	const raw = await makeAsinDataApiRequest<unknown>('collections', ctx.key, {
 		method: 'GET',
 		query: input as Record<string, string | number | boolean | undefined>,
 	});
+
+	const response = AsinDataApiEndpointOutputSchemas.collectionsList.parse(raw);
 
 	if (response.collections && ctx.db.collections) {
 		try {
@@ -77,7 +79,7 @@ export const listCollections: AsinDataApiEndpoints['collectionsList'] = async (
 		{},
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['collectionsList'];
 };
 
 /**
@@ -90,9 +92,13 @@ export const getCollection: AsinDataApiEndpoints['collectionsGet'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['collectionsGet']
-	>(`collections/${input.id}`, ctx.key, { method: 'GET' });
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`collections/${input.id}`,
+		ctx.key,
+		{ method: 'GET' },
+	);
+
+	const response = AsinDataApiEndpointOutputSchemas.collectionsGet.parse(raw);
 
 	if (ctx.db.collections) {
 		try {
@@ -113,7 +119,7 @@ export const getCollection: AsinDataApiEndpoints['collectionsGet'] = async (
 		{ id: input.id },
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['collectionsGet'];
 };
 
 /**
@@ -125,12 +131,17 @@ export const getCollection: AsinDataApiEndpoints['collectionsGet'] = async (
 export const updateCollection: AsinDataApiEndpoints['collectionsUpdate'] =
 	async (ctx, input) => {
 		const { id, ...fields } = input;
-		const response = await makeAsinDataApiRequest<
-			AsinDataApiEndpointOutputs['collectionsUpdate']
-		>(`collections/${id}`, ctx.key, {
-			method: 'PUT',
-			body: fields,
-		});
+		const raw = await makeAsinDataApiRequest<unknown>(
+			`collections/${id}`,
+			ctx.key,
+			{
+				method: 'PUT',
+				body: fields,
+			},
+		);
+
+		const response =
+			AsinDataApiEndpointOutputSchemas.collectionsUpdate.parse(raw);
 
 		if (ctx.db.collections) {
 			try {
@@ -151,7 +162,7 @@ export const updateCollection: AsinDataApiEndpoints['collectionsUpdate'] =
 			{ id },
 			'completed',
 		);
-		return response;
+		return response as AsinDataApiEndpointOutputs['collectionsUpdate'];
 	};
 
 /**
@@ -162,9 +173,14 @@ export const updateCollection: AsinDataApiEndpoints['collectionsUpdate'] =
  */
 export const deleteCollection: AsinDataApiEndpoints['collectionsDelete'] =
 	async (ctx, input) => {
-		const response = await makeAsinDataApiRequest<
-			AsinDataApiEndpointOutputs['collectionsDelete']
-		>(`collections/${input.id}`, ctx.key, { method: 'DELETE' });
+		const raw = await makeAsinDataApiRequest<unknown>(
+			`collections/${input.id}`,
+			ctx.key,
+			{ method: 'DELETE' },
+		);
+
+		const response =
+			AsinDataApiEndpointOutputSchemas.collectionsDelete.parse(raw);
 
 		if (ctx.db.collections) {
 			try {
@@ -180,7 +196,7 @@ export const deleteCollection: AsinDataApiEndpoints['collectionsDelete'] =
 			{ id: input.id },
 			'completed',
 		);
-		return response;
+		return response as AsinDataApiEndpointOutputs['collectionsDelete'];
 	};
 
 /**
@@ -193,9 +209,13 @@ export const startCollection: AsinDataApiEndpoints['collectionsStart'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['collectionsStart']
-	>(`collections/${input.id}/start`, ctx.key, { method: 'GET' });
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`collections/${input.id}/start`,
+		ctx.key,
+		{ method: 'GET' },
+	);
+
+	const response = AsinDataApiEndpointOutputSchemas.collectionsStart.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -203,7 +223,7 @@ export const startCollection: AsinDataApiEndpoints['collectionsStart'] = async (
 		{ id: input.id },
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['collectionsStart'];
 };
 
 export const Collections = {

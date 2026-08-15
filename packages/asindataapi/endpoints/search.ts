@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
 import type { AsinDataApiEndpointOutputs } from './types';
+import { AsinDataApiEndpointOutputSchemas } from './types';
 
 /**
  * Search Amazon products by keywords across any Amazon domain.
@@ -10,11 +11,11 @@ import type { AsinDataApiEndpointOutputs } from './types';
  * Docs: https://docs.trajectdata.com/asindataapi/product-data-api/parameters/search
  */
 const get: AsinDataApiEndpoints['searchGet'] = async (ctx, input) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['searchGet']
-	>('request', ctx.key, {
+	const raw = await makeAsinDataApiRequest<unknown>('request', ctx.key, {
 		query: { ...input, type: 'search' },
 	});
+
+	const response = AsinDataApiEndpointOutputSchemas.searchGet.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -23,7 +24,7 @@ const get: AsinDataApiEndpoints['searchGet'] = async (ctx, input) => {
 		'completed',
 	);
 
-	return response;
+	return response as AsinDataApiEndpointOutputs['searchGet'];
 };
 
 export const Search = { get };

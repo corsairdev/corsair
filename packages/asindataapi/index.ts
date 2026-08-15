@@ -495,8 +495,13 @@ export function asindataapi<const T extends AsinDataApiPluginOptions>(
 		},
 		keyBuilder: async (ctx: AsinDataApiKeyBuilderContext, source) => {
 			// Direct key from options takes priority
-			if (source === 'endpoint' && options.key) {
+			if (options.key) {
 				return options.key;
+			}
+
+			// Webhook source: use webhook secret if provided, otherwise fall through
+			if (source === 'webhook' && options.webhookSecret) {
+				return options.webhookSecret;
 			}
 
 			// Retrieve from key manager

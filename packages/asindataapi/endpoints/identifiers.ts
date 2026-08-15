@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
 import type { AsinDataApiEndpointOutputs } from './types';
+import { AsinDataApiEndpointOutputSchemas } from './types';
 
 /**
  * Resolve a GTIN/ISBN/UPC/EAN identifier to an ASIN.
@@ -14,11 +15,12 @@ const resolve: AsinDataApiEndpoints['identifiersResolve'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['identifiersResolve']
-	>('request', ctx.key, {
+	const raw = await makeAsinDataApiRequest<unknown>('request', ctx.key, {
 		query: { ...input, type: 'product' },
 	});
+
+	const response =
+		AsinDataApiEndpointOutputSchemas.identifiersResolve.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -27,7 +29,7 @@ const resolve: AsinDataApiEndpoints['identifiersResolve'] = async (
 		'completed',
 	);
 
-	return response;
+	return response as AsinDataApiEndpointOutputs['identifiersResolve'];
 };
 
 export const Identifiers = { resolve };

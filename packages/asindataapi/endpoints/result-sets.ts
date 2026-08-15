@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
 import type { AsinDataApiEndpointOutputs } from './types';
+import { AsinDataApiEndpointOutputSchemas } from './types';
 
 /**
  * List all Result Sets for a Collection.
@@ -13,11 +14,13 @@ export const listResultSets: AsinDataApiEndpoints['resultSetsList'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['resultSetsList']
-	>(`collections/${input.collectionId}/results`, ctx.key, {
-		method: 'GET',
-	});
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`collections/${input.collectionId}/results`,
+		ctx.key,
+		{ method: 'GET' },
+	);
+
+	const response = AsinDataApiEndpointOutputSchemas.resultSetsList.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -25,7 +28,7 @@ export const listResultSets: AsinDataApiEndpoints['resultSetsList'] = async (
 		{ collectionId: input.collectionId },
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['resultSetsList'];
 };
 
 /**
@@ -37,11 +40,13 @@ export const getResultSet: AsinDataApiEndpoints['resultSetsGet'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['resultSetsGet']
-	>(`collections/${input.collectionId}/results/${input.resultSetId}`, ctx.key, {
-		method: 'GET',
-	});
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`collections/${input.collectionId}/results/${input.resultSetId}`,
+		ctx.key,
+		{ method: 'GET' },
+	);
+
+	const response = AsinDataApiEndpointOutputSchemas.resultSetsGet.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -52,7 +57,7 @@ export const getResultSet: AsinDataApiEndpoints['resultSetsGet'] = async (
 		},
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['resultSetsGet'];
 };
 
 export const ResultSets = {

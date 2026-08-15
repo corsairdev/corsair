@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
 import type { AsinDataApiEndpointOutputs } from './types';
+import { AsinDataApiEndpointOutputSchemas } from './types';
 
 /**
  * Retrieve product offers, pricing, availability, and seller information.
@@ -10,11 +11,11 @@ import type { AsinDataApiEndpointOutputs } from './types';
  * Docs: https://docs.trajectdata.com/asindataapi/product-data-api/parameters/offers
  */
 const get: AsinDataApiEndpoints['offersGet'] = async (ctx, input) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['offersGet']
-	>('request', ctx.key, {
+	const raw = await makeAsinDataApiRequest<unknown>('request', ctx.key, {
 		query: { ...input, type: 'offers' },
 	});
+
+	const response = AsinDataApiEndpointOutputSchemas.offersGet.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -23,7 +24,7 @@ const get: AsinDataApiEndpoints['offersGet'] = async (ctx, input) => {
 		'completed',
 	);
 
-	return response;
+	return response as AsinDataApiEndpointOutputs['offersGet'];
 };
 
 export const Offers = { get };

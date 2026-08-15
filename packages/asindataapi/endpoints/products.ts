@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
 import type { AsinDataApiEndpointOutputs } from './types';
+import { AsinDataApiEndpointOutputSchemas } from './types';
 
 /**
  * Retrieve Amazon product details by ASIN, Amazon URL, or GTIN/ISBN/UPC/EAN.
@@ -11,11 +12,11 @@ import type { AsinDataApiEndpointOutputs } from './types';
  * Docs: https://docs.trajectdata.com/asindataapi/product-data-api/parameters/product
  */
 const get: AsinDataApiEndpoints['productsGet'] = async (ctx, input) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['productsGet']
-	>('request', ctx.key, {
+	const raw = await makeAsinDataApiRequest<unknown>('request', ctx.key, {
 		query: { ...input, type: 'product' },
 	});
+
+	const response = AsinDataApiEndpointOutputSchemas.productsGet.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -24,7 +25,7 @@ const get: AsinDataApiEndpoints['productsGet'] = async (ctx, input) => {
 		'completed',
 	);
 
-	return response;
+	return response as AsinDataApiEndpointOutputs['productsGet'];
 };
 
 export const Products = { get };

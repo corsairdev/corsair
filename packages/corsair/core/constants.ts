@@ -19,21 +19,32 @@ export const BaseProviders = [
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agentql',
 	'agenty',
+	'agentql',
 	'ahrefs',
+	'aimlapi',
 	'airtable',
+	'alchemy',
 	'algolia',
+	'alphavantage',
 	'alttextai',
-	'ambee',
+	'amara',
 	'ambientweather',
+	'ambee',
+	'amcards',
 	'amplitude',
+	'apibible',
+	'apify',
 	'apilabz',
+	'apisports',
 	'asana',
 	'asindataapi',
+	'ayrshare',
 	'bitwarden',
 	'bluesky',
+	'boloforms',
 	'box',
+	'canvas',
 	'cal',
 	'calendly',
 	'canva',
@@ -49,6 +60,7 @@ export const BaseProviders = [
 	'dockerhub',
 	'dodopayments',
 	'dropbox',
+	'epicgames',
 	'exa',
 	'facebook',
 	'figma',
@@ -67,6 +79,7 @@ export const BaseProviders = [
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'harvest',
 	'hashnode',
 	'heygen',
 	'hubspot',
@@ -77,10 +90,12 @@ export const BaseProviders = [
 	'jira',
 	'linear',
 	'linkedin',
+	'loyverse',
 	'mailchimp',
 	'monday',
 	'neon',
 	'notion',
+	'ocrspace',
 	'ollama',
 	'onedrive',
 	'onepassword',
@@ -95,6 +110,7 @@ export const BaseProviders = [
 	'reddit',
 	'resend',
 	'retailed',
+	'salesforce',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -107,15 +123,18 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'todoist',
+	'toggl',
 	'trello',
 	'twilio',
 	'twitter',
 	'twitterapiio',
+	'twochat',
 	'typeform',
 	'vapi',
 	'vercel',
 	'whatsapp',
 	'wiza',
+	'workday',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -131,21 +150,32 @@ export const ProviderDisplayNames = {
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agentql: 'AgentQL',
 	agenty: 'Agenty',
+	agentql: 'AgentQL',
 	ahrefs: 'Ahrefs',
+	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
+	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	alphavantage: 'Alpha Vantage',
 	alttextai: 'AltText.ai',
-	ambee: 'Ambee',
+	amara: 'Amara',
 	ambientweather: 'Ambient Weather',
+	ambee: 'Ambee',
+	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	apibible: 'API.Bible',
+	apify: 'Apify',
 	apilabz: 'API Labz',
+	apisports: 'API-Sports',
 	asana: 'Asana',
 	asindataapi: 'AsinDataApi',
+	ayrshare: 'Ayrshare',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
+	boloforms: 'Boloforms',
 	box: 'Box',
+	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
@@ -161,6 +191,7 @@ export const ProviderDisplayNames = {
 	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
+	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
 	figma: 'Figma',
@@ -179,6 +210,7 @@ export const ProviderDisplayNames = {
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	harvest: 'Harvest',
 	hashnode: 'Hashnode',
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
@@ -189,10 +221,12 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
+	loyverse: 'Loyverse',
 	mailchimp: 'Mailchimp',
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
+	ocrspace: 'OCR.space',
 	ollama: 'Ollama',
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
@@ -207,6 +241,7 @@ export const ProviderDisplayNames = {
 	reddit: 'Reddit',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	salesforce: 'Salesforce',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -219,15 +254,18 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	todoist: 'Todoist',
+	toggl: 'Toggl',
 	trello: 'Trello',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
+	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
+	workday: 'Workday',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -250,23 +288,34 @@ export type AllProviders =
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agentql'
 	| 'agenty'
+	| 'agentql'
 	| 'ahrefs'
+	| 'aimlapi'
 	| 'airtable'
+	| 'alchemy'
 	| 'algolia'
+	| 'alphavantage'
 	| 'alttextai'
-	| 'ambee'
+	| 'amara'
 	| 'ambientweather'
+	| 'ambee'
+	| 'amcards'
 	| 'amplitude'
+	| 'apibible'
+	| 'apify'
 	| 'apilabz'
+	| 'apisports'
 	| 'asana'
 	| 'asindataapi'
+	| 'ayrshare'
 	| 'bitwarden'
 	| 'bluesky'
+	| 'boloforms'
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canvas'
 	| 'canva'
 	| 'cloudflare'
 	| 'cloudinary'
@@ -280,6 +329,7 @@ export type AllProviders =
 	| 'dockerhub'
 	| 'dodopayments'
 	| 'dropbox'
+	| 'epicgames'
 	| 'exa'
 	| 'facebook'
 	| 'figma'
@@ -298,6 +348,7 @@ export type AllProviders =
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'harvest'
 	| 'hashnode'
 	| 'heygen'
 	| 'hubspot'
@@ -308,10 +359,12 @@ export type AllProviders =
 	| 'jira'
 	| 'linear'
 	| 'linkedin'
+	| 'loyverse'
 	| 'mailchimp'
 	| 'monday'
 	| 'neon'
 	| 'notion'
+	| 'ocrspace'
 	| 'ollama'
 	| 'onedrive'
 	| 'onepassword'
@@ -326,6 +379,7 @@ export type AllProviders =
 	| 'reddit'
 	| 'resend'
 	| 'retailed'
+	| 'salesforce'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
@@ -338,15 +392,18 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'todoist'
+	| 'toggl'
 	| 'trello'
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
+	| 'twochat'
 	| 'typeform'
 	| 'vapi'
 	| 'vercel'
 	| 'whatsapp'
 	| 'wiza'
+	| 'workday'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'

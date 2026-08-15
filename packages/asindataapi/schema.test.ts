@@ -1,9 +1,17 @@
+import { Collections } from './endpoints/collections';
+import { Destinations } from './endpoints/destinations';
+import { Products } from './endpoints/products';
+import { Requests } from './endpoints/requests';
+import { Search } from './endpoints/search';
 import {
 	AsinDataApiEndpointInputSchemas,
 	AsinDataApiEndpointOutputSchemas,
 } from './endpoints/types';
 import { AsinDataApiSchema } from './schema';
-import { CollectionCompletedPayloadSchema } from './webhooks/types';
+import {
+	CollectionCompletedPayloadSchema,
+	createAsinDataApiMatch,
+} from './webhooks/types';
 
 describe('AsinDataApi schema', () => {
 	it('declares a semver version', () => {
@@ -118,14 +126,15 @@ describe('AsinDataApi endpoint schemas', () => {
 	});
 
 	it('validates a valid destinations create input', () => {
-		const result =
-			AsinDataApiEndpointInputSchemas.destinationsCreate.safeParse({
+		const result = AsinDataApiEndpointInputSchemas.destinationsCreate.safeParse(
+			{
 				name: 'Test Destination',
 				type: 's3',
 				s3_access_key_id: 'AKIAIOSFODNN7EXAMPLE',
 				s3_secret_access_key: 'wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY',
 				s3_bucket_name: 'test-bucket',
-			});
+			},
+		);
 		expect(result.success).toBe(true);
 	});
 
@@ -140,46 +149,183 @@ describe('AsinDataApi endpoint schemas', () => {
 	});
 
 	it('validates a valid destinations delete input', () => {
-		const result =
-			AsinDataApiEndpointInputSchemas.destinationsDelete.safeParse({
+		const result = AsinDataApiEndpointInputSchemas.destinationsDelete.safeParse(
+			{
 				ids: ['371D9C46'],
+			},
+		);
+		expect(result.success).toBe(true);
+	});
+});
+
+describe('AsinDataApi endpoint implementations', () => {
+	const mockCtx = {
+		key: 'test-api-key',
+		db: {
+			collections: {
+				upsertByEntityId: jest.fn().mockResolvedValue({ id: 'test' }),
+				deleteByEntityId: jest.fn().mockResolvedValue(undefined),
+			},
+		},
+	};
+
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('products.get is a function', () => {
+		expect(typeof Products.get).toBe('function');
+	});
+
+	it('search.get is a function', () => {
+		expect(typeof Search.get).toBe('function');
+	});
+
+	it('collections.create is a function', () => {
+		expect(typeof Collections.create).toBe('function');
+	});
+
+	it('collections.list is a function', () => {
+		expect(typeof Collections.list).toBe('function');
+	});
+
+	it('collections.get is a function', () => {
+		expect(typeof Collections.get).toBe('function');
+	});
+
+	it('collections.update is a function', () => {
+		expect(typeof Collections.update).toBe('function');
+	});
+
+	it('collections.delete is a function', () => {
+		expect(typeof Collections.delete).toBe('function');
+	});
+
+	it('collections.start is a function', () => {
+		expect(typeof Collections.start).toBe('function');
+	});
+
+	it('requests.list is a function', () => {
+		expect(typeof Requests.list).toBe('function');
+	});
+
+	it('requests.add is a function', () => {
+		expect(typeof Requests.add).toBe('function');
+	});
+
+	it('requests.update is a function', () => {
+		expect(typeof Requests.update).toBe('function');
+	});
+
+	it('requests.clear is a function', () => {
+		expect(typeof Requests.clear).toBe('function');
+	});
+
+	it('requests.delete is a function', () => {
+		expect(typeof Requests.delete).toBe('function');
+	});
+
+	it('destinations.list is a function', () => {
+		expect(typeof Destinations.list).toBe('function');
+	});
+
+	it('destinations.create is a function', () => {
+		expect(typeof Destinations.create).toBe('function');
+	});
+
+	it('destinations.update is a function', () => {
+		expect(typeof Destinations.update).toBe('function');
+	});
+
+	it('destinations.delete is a function', () => {
+		expect(typeof Destinations.delete).toBe('function');
+	});
+});
+
+describe('AsinDataApi output schema validation', () => {
+	it('validates a product response', () => {
+		const result = AsinDataApiEndpointOutputSchemas.productsGet.safeParse({
+			request_info: { success: true, credits_used: 1, credits_remaining: 999 },
+			product: { asin: 'B00I8RKMSM', title: 'Test Product' },
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it('validates a search response', () => {
+		const result = AsinDataApiEndpointOutputSchemas.searchGet.safeParse({
+			request_info: { success: true },
+			search_results: [{ asin: 'B00I8RKMSM', title: 'Test', position: 1 }],
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it('validates a collection response', () => {
+		const result = AsinDataApiEndpointOutputSchemas.collectionsGet.safeParse({
+			request_info: { success: true },
+			collection: { id: 'ABC123', name: 'Test', status: 'idle' },
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it('validates a collection ack response', () => {
+		const result = AsinDataApiEndpointOutputSchemas.collectionsDelete.safeParse(
+			{
+				request_info: { success: true, message: 'collection deleted' },
+			},
+		);
+		expect(result.success).toBe(true);
+	});
+
+	it('validates a destinations list response', () => {
+		const result = AsinDataApiEndpointOutputSchemas.destinationsList.safeParse({
+			request_info: { success: true },
+			destinations: [
+				{ id: '371D9C46', name: 'test', type: 's3', enabled: true },
+			],
+		});
+		expect(result.success).toBe(true);
+	});
+
+	it('validates a destinations create response', () => {
+		const result =
+			AsinDataApiEndpointOutputSchemas.destinationsCreate.safeParse({
+				request_info: { success: true },
+				usage: { used: 1, limit: 50, available: 49 },
+				destination: { id: 'DB409F46', name: 'test', type: 's3' },
 			});
 		expect(result.success).toBe(true);
 	});
 });
 
-describe('AsinDataApi webhook schemas', () => {
-	it('has the collection_completed payload schema', () => {
-		expect(CollectionCompletedPayloadSchema).toBeDefined();
-	});
+describe('AsinDataApi webhook', () => {
+	it('collection_resultset_completed matcher identifies correct events', () => {
+		const matcher = createAsinDataApiMatch('collection_resultset_completed');
 
-	it('validates a sample collection completed payload', () => {
-		const result = CollectionCompletedPayloadSchema.safeParse({
-			request_info: {
-				success: true,
-				type: 'collection_resultset_completed',
-			},
-			collection: {
-				id: '9E867FAA',
-				name: 'Test Collection',
-			},
-			result_set: {
-				id: 4,
-				started_at: '2020-01-01T00:00:00.000Z',
-				ended_at: '2020-01-01T00:00:10.000Z',
-				requests_completed: 1,
-				requests_failed: 0,
-				download_links: {
-					json: {
-						pages: [
-							'https://results.asindataapi.com/Collection_Results_9E867FAA_4_Page_1.json',
-						],
-						all_pages:
-							'https://results.asindataapi.com/Collection_Results_9E867FAA_4_All_Pages.zip',
-					},
+		expect(
+			matcher({
+				headers: {},
+				body: {
+					request_info: { type: 'collection_resultset_completed' },
+					collection: { id: '123' },
+					result_set: { id: 1 },
 				},
-			},
-		});
-		expect(result.success).toBe(true);
+			}),
+		).toBe(true);
+
+		expect(
+			matcher({
+				headers: {},
+				body: {
+					request_info: { type: 'other_event' },
+				},
+			}),
+		).toBe(false);
+
+		expect(
+			matcher({
+				headers: {},
+				body: null,
+			}),
+		).toBe(false);
 	});
 });

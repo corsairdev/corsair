@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
 import type { AsinDataApiEndpointOutputs } from './types';
+import { AsinDataApiEndpointOutputSchemas } from './types';
 
 /**
  * List all Requests in a Collection (paginated, 1000 per page).
@@ -12,11 +13,13 @@ export const listRequests: AsinDataApiEndpoints['requestsList'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['requestsList']
-	>(`collections/${input.collectionId}/requests/${input.page}`, ctx.key, {
-		method: 'GET',
-	});
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`collections/${input.collectionId}/requests/${input.page}`,
+		ctx.key,
+		{ method: 'GET' },
+	);
+
+	const response = AsinDataApiEndpointOutputSchemas.requestsList.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -24,7 +27,7 @@ export const listRequests: AsinDataApiEndpoints['requestsList'] = async (
 		{ collectionId: input.collectionId, page: input.page },
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['requestsList'];
 };
 
 /**
@@ -36,12 +39,16 @@ export const addRequests: AsinDataApiEndpoints['requestsAdd'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['requestsAdd']
-	>(`collections/${input.collectionId}`, ctx.key, {
-		method: 'PUT',
-		body: { requests: input.requests },
-	});
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`collections/${input.collectionId}`,
+		ctx.key,
+		{
+			method: 'PUT',
+			body: { requests: input.requests },
+		},
+	);
+
+	const response = AsinDataApiEndpointOutputSchemas.requestsAdd.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -49,7 +56,7 @@ export const addRequests: AsinDataApiEndpoints['requestsAdd'] = async (
 		{ collectionId: input.collectionId, count: input.requests.length },
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['requestsAdd'];
 };
 
 /**
@@ -62,12 +69,16 @@ export const updateRequest: AsinDataApiEndpoints['requestsUpdate'] = async (
 	input,
 ) => {
 	const { collectionId, requestId, ...fields } = input;
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['requestsUpdate']
-	>(`collections/${collectionId}/${requestId}`, ctx.key, {
-		method: 'PUT',
-		body: fields,
-	});
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`collections/${collectionId}/${requestId}`,
+		ctx.key,
+		{
+			method: 'PUT',
+			body: fields,
+		},
+	);
+
+	const response = AsinDataApiEndpointOutputSchemas.requestsUpdate.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -75,7 +86,7 @@ export const updateRequest: AsinDataApiEndpoints['requestsUpdate'] = async (
 		{ collectionId, requestId },
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['requestsUpdate'];
 };
 
 /**
@@ -88,12 +99,16 @@ export const clearRequests: AsinDataApiEndpoints['requestsClear'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['requestsClear']
-	>(`collections/${input.collectionId}/requests`, ctx.key, {
-		method: 'DELETE',
-		body: input.requestIds,
-	});
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`collections/${input.collectionId}/requests`,
+		ctx.key,
+		{
+			method: 'DELETE',
+			body: input.requestIds,
+		},
+	);
+
+	const response = AsinDataApiEndpointOutputSchemas.requestsClear.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -101,7 +116,7 @@ export const clearRequests: AsinDataApiEndpoints['requestsClear'] = async (
 		{ collectionId: input.collectionId, count: input.requestIds.length },
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['requestsClear'];
 };
 
 /**
@@ -114,11 +129,13 @@ export const deleteRequest: AsinDataApiEndpoints['requestsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsinDataApiRequest<
-		AsinDataApiEndpointOutputs['requestsDelete']
-	>(`collections/${input.collectionId}/${input.requestId}`, ctx.key, {
-		method: 'DELETE',
-	});
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`collections/${input.collectionId}/${input.requestId}`,
+		ctx.key,
+		{ method: 'DELETE' },
+	);
+
+	const response = AsinDataApiEndpointOutputSchemas.requestsDelete.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -126,7 +143,7 @@ export const deleteRequest: AsinDataApiEndpoints['requestsDelete'] = async (
 		{ collectionId: input.collectionId, requestId: input.requestId },
 		'completed',
 	);
-	return response;
+	return response as AsinDataApiEndpointOutputs['requestsDelete'];
 };
 
 export const Requests = {
