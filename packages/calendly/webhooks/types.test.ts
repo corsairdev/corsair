@@ -6,9 +6,10 @@ describe('Calendly verifyCalendlyWebhookSignature Tests', () => {
 	const signingKey = 'my-signing-key';
 	const rawBody = 'body';
 
+	// WebhookRequest<unknown>: signature verification only reads rawBody/headers; the typed body is irrelevant here
 	const requestWith = (
 		headers: Record<string, string | string[] | undefined>,
-		rawBody: string,
+		rawBody?: string,
 	): WebhookRequest<unknown> => ({
 		headers,
 		rawBody,
@@ -82,7 +83,7 @@ describe('Calendly verifyCalendlyWebhookSignature Tests', () => {
 
 	it('should return invalid for missing raw body for signature verification', () => {
 		const result = verifyCalendlyWebhookSignature(
-			requestWith({ 'calendly-webhook-signature': 'my-valid-signature' }, ''),
+			requestWith({ 'calendly-webhook-signature': 'my-valid-signature' }),
 			signingKey,
 		);
 
