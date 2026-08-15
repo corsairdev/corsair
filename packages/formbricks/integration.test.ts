@@ -11,8 +11,9 @@
  * nothing. Each test creates what it needs, verifies it, and deletes it in a `finally`; the counts
  * are compared before and after, and a mismatch fails the run rather than being tidied away.
  *
- * What is **not** exercised: nothing here touches a pre-existing record. The seeded survey the
- * workspace starts with is read but never modified or deleted.
+ * What is **not** exercised: pre-existing records. The seeded survey the workspace starts with
+ * is read but never modified or deleted. Contact cleanup deletes only ids or emails this suite
+ * created — never `GET management/contacts` followed by a wipe of every row.
  *
  * To run:
  *   FORMBRICKS_API_KEY=<key> pnpm test:live
@@ -109,6 +110,45 @@ function expectEveryRowParses(
 				)}`,
 			);
 		}
+	}
+}
+
+/** Deletes one contact this suite created. No-op when the id never arrived. */
+async function deleteCreatedContact(
+	id: string | null | undefined,
+): Promise<void> {
+	if (!id) return;
+	await call('v1', `management/contacts/${id}`, { method: 'DELETE' });
+}
+
+/**
+ * Deletes contacts whose email attribute matches one this test uploaded.
+ * Looks up by attribute value so a bulk create that does not return ids can still be scoped.
+ */
+async function deleteCreatedContactsByEmail(emails: string[]): Promise<void> {
+	const wanted = new Set(emails);
+	const keys =
+		(await call<Array<{ id: string; key: string }>>(
+			'v2',
+			'management/contact-attribute-keys',
+		)) ?? [];
+	const emailKeyId = keys.find((key) => key.key === 'email')?.id;
+	if (!emailKeyId) return;
+	const values =
+		(await call<
+			Array<{ contactId: string; attributeKeyId: string; value: string }>
+		>('v1', 'management/contact-attributes')) ?? [];
+	const ids = [
+		...new Set(
+			values
+				.filter(
+					(row) => row.attributeKeyId === emailKeyId && wanted.has(row.value),
+				)
+				.map((row) => row.contactId),
+		),
+	];
+	for (const id of ids) {
+		await deleteCreatedContact(id);
 	}
 }
 
@@ -829,6 +869,7 @@ describeLive('Formbricks API (live)', () => {
 	 * submissions, and the message reads like a permissions failure rather than a status one.
 	 */
 	it('links a display by userId and ignores contactId', async () => {
+		let createdContactId: string | undefined;
 		const survey = await call<{ id: string; status: string }>(
 			'v1',
 			'management/surveys',
@@ -883,6 +924,9 @@ describeLive('Formbricks API (live)', () => {
 				},
 			);
 			expect(typeof identified.contactId).toBe('string');
+			if (typeof identified.contactId === 'string') {
+				createdContactId = identified.contactId;
+			}
 
 			// The parameter the plugin used to send: accepted, and silently not applied.
 			const withContactId = await call<{ contactId: string | null }>(
@@ -898,14 +942,7 @@ describeLive('Formbricks API (live)', () => {
 			await call('v1', `management/surveys/${survey.id}`, {
 				method: 'DELETE',
 			});
-			for (const contact of (await call<Array<{ id: string }>>(
-				'v1',
-				'management/contacts',
-			)) ?? []) {
-				await call('v1', `management/contacts/${contact.id}`, {
-					method: 'DELETE',
-				});
-			}
+			await deleteCreatedContact(createdContactId);
 		}
 	});
 
@@ -914,6 +951,7 @@ describeLive('Formbricks API (live)', () => {
 	 * plugin originally read, and every `GET` spelling of it is a 404.
 	 */
 	it('reads contact state from the client user route, and no GET route exists', async () => {
+		let createdContactId: string | undefined;
 		try {
 			const state = await call<{
 				state?: { data?: Record<string, unknown>; expiresAt?: string };
@@ -921,6 +959,8 @@ describeLive('Formbricks API (live)', () => {
 				method: 'POST',
 				body: { userId: 'corsair-state-user' },
 			});
+			const contactId = state.state?.data?.contactId;
+			if (typeof contactId === 'string') createdContactId = contactId;
 
 			// Segments, displays and response history - the payload the catalog describes, and nothing
 			// the environment bundle contains.
@@ -942,14 +982,7 @@ describeLive('Formbricks API (live)', () => {
 				await expectApiError(() => call('v2', path), 404);
 			}
 		} finally {
-			for (const contact of (await call<Array<{ id: string }>>(
-				'v1',
-				'management/contacts',
-			)) ?? []) {
-				await call('v1', `management/contacts/${contact.id}`, {
-					method: 'DELETE',
-				});
-			}
+			await deleteCreatedContact(createdContactId);
 		}
 	});
 
@@ -968,6 +1001,7 @@ describeLive('Formbricks API (live)', () => {
 	 * resource.
 	 */
 	it('sets a contact attribute through the client route, and nowhere else', async () => {
+		let createdContactId: string | undefined;
 		try {
 			const contact = await call<{ id: string }>('v2', 'management/contacts', {
 				method: 'POST',
@@ -980,6 +1014,7 @@ describeLive('Formbricks API (live)', () => {
 					},
 				},
 			});
+			createdContactId = contact.id;
 
 			const readFirstName = async () => {
 				const values =
@@ -1044,18 +1079,12 @@ describeLive('Formbricks API (live)', () => {
 			});
 			expect(await readFirstName()).toBe('After');
 		} finally {
-			for (const contact of (await call<Array<{ id: string }>>(
-				'v1',
-				'management/contacts',
-			)) ?? []) {
-				await call('v1', `management/contacts/${contact.id}`, {
-					method: 'DELETE',
-				});
-			}
+			await deleteCreatedContact(createdContactId);
 		}
 	});
 
 	it('answers a bulk upload with a status, and enforces its own limits', async () => {
+		const uploadedEmails = ['corsair.bulk@example.com'];
 		const row = (email: string) => ({
 			attributes: [
 				{ attributeKey: { key: 'email', name: 'Email' }, value: email },
@@ -1112,14 +1141,7 @@ describeLive('Formbricks API (live)', () => {
 				/Email attribute is required/,
 			);
 		} finally {
-			for (const contact of (await call<Array<{ id: string }>>(
-				'v1',
-				'management/contacts',
-			)) ?? []) {
-				await call('v1', `management/contacts/${contact.id}`, {
-					method: 'DELETE',
-				});
-			}
+			await deleteCreatedContactsByEmail(uploadedEmails);
 		}
 	});
 
