@@ -44,6 +44,7 @@ import {
 	makeHabiticaAnonymousRequest,
 	makeHabiticaExportRequest,
 	makeHabiticaRequest,
+	makeHabiticaTextRequest,
 } from './client';
 import {
 	HabiticaChallengeEntity,
@@ -258,6 +259,17 @@ describeLive('Habitica live API', () => {
 			expect(unrouted.message).not.toBe(realRoute.message);
 		});
 
+		it('rejects Tavern chat because public group chat is retired', async () => {
+			const body = await paced(async () => {
+				const res = await fetch(apiUrl('groups/habitrpg/chat'), {
+					headers: authHeaders(),
+				});
+				return (await res.json()) as { message?: string };
+			});
+			expect(body.message).not.toBe('Not found.');
+			expect(body.message).toMatch(/no longer supported/i);
+		});
+
 		it('rejects a request with no x-client header, even unauthenticated', async () => {
 			const res = await paced(() => fetch(apiUrl('content')));
 			expect(res.status).toBe(400);
@@ -378,6 +390,338 @@ describeLive('Habitica live API', () => {
 				}
 			}
 		});
+	});
+
+	describe('remaining catalog routes', () => {
+		it('answers the remaining public and authenticated reads', async () => {
+			const read = async (path: string, auth = true) => {
+				try {
+					return auth
+						? unwrap(await paced(() => makeHabiticaRequest(path, credentials)))
+						: unwrap(await paced(() => makeHabiticaAnonymousRequest(path)));
+				} catch (error) {
+					const message =
+						error instanceof Error ? error.message : String(error);
+					throw new Error(`${path}: ${message}`);
+				}
+			};
+
+			const status = (await read('status', false)) as { status: string };
+			expect(status.status).toBe('up');
+
+			const world = (await read('world-state', false)) as Record<
+				string,
+				unknown
+			>;
+			expect(world).toHaveProperty('worldBoss');
+
+			expect(await read('news', false)).toBeDefined();
+
+			for (const model of [
+				'user',
+				'tag',
+				'challenge',
+				'group',
+				'habit',
+				'daily',
+				'todo',
+				'reward',
+			] as const) {
+				const paths = (await read(`models/${model}/paths`, false)) as Record<
+					string,
+					unknown
+				>;
+				expect(Object.keys(paths).length).toBeGreaterThan(0);
+			}
+
+			const user = (await read('user?userFields=_id')) as Record<
+				string,
+				unknown
+			>;
+			expect(user._id ?? user.id).toBeTruthy();
+
+			const groups = (await read(
+				'groups?type=party,guilds,tavern',
+			)) as unknown[];
+			expect(Array.isArray(groups)).toBe(true);
+
+			const members = (await read(
+				'groups/habitrpg/members?limit=5',
+			)) as unknown[];
+			expect(Array.isArray(members)).toBe(true);
+
+			const hooks = (await read('user/webhook')) as unknown[];
+			expect(Array.isArray(hooks)).toBe(true);
+
+			const tavernChallenges = (await read(
+				'challenges/groups/habitrpg',
+			)) as unknown[];
+			expect(Array.isArray(tavernChallenges)).toBe(true);
+
+			for (const path of [
+				'shops/market-gear',
+				'shops/time-travelers',
+				'groups/party',
+				'groups/party/chat',
+			]) {
+				const body = (await paced(async () => {
+					const res = await fetch(apiUrl(path), { headers: authHeaders() });
+					return (await res.json()) as {
+						message?: string;
+						data?: unknown;
+					};
+				})) as { message?: string; data?: unknown };
+				expect(body.message).not.toBe('Not found.');
+			}
+		}, 180000);
+
+		it('creates, updates, scores, moves and deletes a probe task', async () => {
+			let taskId: string | undefined;
+			let tagId: string | undefined;
+			try {
+				const tag = unwrap<{ id: string }>(
+					await paced(() =>
+						makeHabiticaRequest('tags', credentials, {
+							method: 'POST',
+							body: { name: PROBE },
+						}),
+					),
+				);
+				tagId = tag.id;
+
+				const created = unwrap<Record<string, unknown>>(
+					await paced(() =>
+						makeHabiticaRequest('tasks/user', credentials, {
+							method: 'POST',
+							body: {
+								text: PROBE,
+								type: 'todo',
+								notes: 'probe',
+								checklist: [{ text: 'item', completed: false }],
+							},
+						}),
+					),
+				);
+				expect(HabiticaTaskEntity.safeParse(created).success).toBe(true);
+				taskId = String(created.id);
+
+				const got = unwrap<Record<string, unknown>>(
+					await paced(() =>
+						makeHabiticaRequest(`tasks/${taskId}`, credentials),
+					),
+				);
+				expect(got.id).toBe(taskId);
+
+				const updated = unwrap<Record<string, unknown>>(
+					await paced(() =>
+						makeHabiticaRequest(`tasks/${taskId}`, credentials, {
+							method: 'PUT',
+							body: { notes: 'probe renamed' },
+						}),
+					),
+				);
+				expect(updated.notes).toBe('probe renamed');
+
+				const tagged = unwrap<Record<string, unknown>>(
+					await paced(() =>
+						makeHabiticaRequest(`tasks/${taskId}/tags/${tagId}`, credentials, {
+							method: 'POST',
+						}),
+					),
+				);
+				expect(Array.isArray(tagged.tags)).toBe(true);
+
+				const itemId = (created.checklist as { id?: string }[] | undefined)?.[0]
+					?.id;
+				if (itemId) {
+					const item = unwrap<Record<string, unknown>>(
+						await paced(() =>
+							makeHabiticaRequest(
+								`tasks/${taskId}/checklist/${itemId}`,
+								credentials,
+								{ method: 'PUT', body: { text: 'item renamed' } },
+							),
+						),
+					);
+					expect(HabiticaTaskEntity.safeParse(item).success).toBe(true);
+
+					await paced(() =>
+						makeHabiticaRequest(
+							`tasks/${taskId}/checklist/${itemId}`,
+							credentials,
+							{ method: 'DELETE' },
+						),
+					);
+				}
+
+				await paced(() =>
+					makeHabiticaRequest(`tasks/${taskId}/move/to/0`, credentials, {
+						method: 'POST',
+					}),
+				);
+
+				const scored = unwrap<Record<string, unknown>>(
+					await paced(() =>
+						makeHabiticaRequest(`tasks/${taskId}/score/up`, credentials, {
+							method: 'POST',
+						}),
+					),
+				);
+				expect(scored).toHaveProperty('gp');
+			} finally {
+				if (taskId) {
+					await paced(() =>
+						makeHabiticaRequest(`tasks/${taskId}`, credentials, {
+							method: 'DELETE',
+						}),
+					).catch((error) => {
+						console.error('failed to clean up probe task', taskId, error);
+					});
+				}
+				if (tagId) {
+					await paced(() =>
+						makeHabiticaRequest(`tags/${tagId}`, credentials, {
+							method: 'DELETE',
+						}),
+					).catch((error) => {
+						console.error('failed to clean up probe tag', tagId, error);
+					});
+				}
+			}
+		}, 120000);
+
+		it('reads a live challenge, its tasks, and its CSV export', async () => {
+			const listed = unwrap<{ id?: string }[]>(
+				await paced(() =>
+					makeHabiticaRequest('challenges/user?page=0', credentials),
+				),
+			);
+			const tavern = unwrap<{ id?: string }[]>(
+				await paced(() =>
+					makeHabiticaRequest('challenges/groups/habitrpg', credentials),
+				),
+			);
+			const challengeId = listed[0]?.id ?? tavern[0]?.id;
+			expect(challengeId).toBeTruthy();
+			if (!challengeId) return;
+
+			const challenge = unwrap<unknown>(
+				await paced(() =>
+					makeHabiticaRequest(`challenges/${challengeId}`, credentials),
+				),
+			);
+			expect(HabiticaChallengeEntity.safeParse(challenge).success).toBe(true);
+
+			const tasks = unwrap<unknown[]>(
+				await paced(() =>
+					makeHabiticaRequest(`tasks/challenge/${challengeId}`, credentials),
+				),
+			);
+			expect(Array.isArray(tasks)).toBe(true);
+			for (const task of tasks.slice(0, 3)) {
+				expect(HabiticaTaskEntity.safeParse(task).success).toBe(true);
+			}
+
+			const csv = await paced(() =>
+				makeHabiticaTextRequest(
+					`challenges/${challengeId}/export/csv`,
+					credentials,
+				),
+			);
+			expect(csv.contentType).toMatch(/csv|text/i);
+			expect(csv.body.length).toBeGreaterThan(0);
+		}, 120000);
+
+		it('registers and deletes a probe push device, and snoozes news', async () => {
+			const regId = `corsair-probe-${Date.now()}`;
+			try {
+				const added = unwrap<unknown[]>(
+					await paced(() =>
+						makeHabiticaRequest('user/push-devices', credentials, {
+							method: 'POST',
+							body: { regId, type: 'android' },
+						}),
+					),
+				);
+				expect(Array.isArray(added)).toBe(true);
+
+				const news = unwrap<unknown>(
+					await paced(() =>
+						makeHabiticaRequest('news/tell-me-later', credentials, {
+							method: 'POST',
+						}),
+					),
+				);
+				expect(news).toBeDefined();
+			} finally {
+				await paced(() =>
+					makeHabiticaRequest(`user/push-devices/${regId}`, credentials, {
+						method: 'DELETE',
+					}),
+				).catch((error) => {
+					console.error('failed to clean up probe push device', error);
+				});
+			}
+		}, 60000);
+
+		it('hits remaining write routes as real endpoints, not unrouted 404s', async () => {
+			const ghost = '11111111-2222-4333-8444-555555555555';
+			const cases: [string, string][] = [
+				['GET', `tasks/${ghost}`],
+				['PUT', `tasks/${ghost}`],
+				['DELETE', `tasks/${ghost}`],
+				['POST', `tasks/${ghost}/score/up`],
+				['POST', `tasks/${ghost}/move/to/0`],
+				['PUT', `tasks/${ghost}/checklist/${ghost}`],
+				['DELETE', `tasks/${ghost}/checklist/${ghost}`],
+				['POST', `tasks/${ghost}/tags/${ghost}`],
+				['GET', `tasks/challenge/${ghost}`],
+				['POST', `tasks/challenge/${ghost}`],
+				['POST', `tasks/unlink-all/${ghost}?keep=keep-all`],
+				['GET', `challenges/${ghost}`],
+				['POST', `challenges/${ghost}/clone`],
+				['DELETE', `challenges/${ghost}`],
+				['POST', `challenges/${ghost}/join`],
+				['POST', `challenges/${ghost}/leave`],
+				['GET', `challenges/groups/${ghost}`],
+				['PUT', `groups/${ghost}`],
+				['POST', `groups/${ghost}/leave`],
+				['GET', `groups/${ghost}/members`],
+				['POST', `groups/${ghost}/invite`],
+				['POST', `groups/${ghost}/removeMember/${ghost}`],
+				['POST', `groups/${ghost}/quests/invite/atom1`],
+				['GET', `groups/${ghost}/chat`],
+				['DELETE', `groups/${ghost}/chat/${ghost}`],
+				['POST', `groups/${ghost}/chat/seen`],
+				['POST', `user/equip/equipped/not_a_real_item`],
+				['POST', `user/read-card/birthday`],
+				['POST', `user/move-pinned-item/armoire/move/to/0`],
+				['DELETE', `user/messages/${ghost}`],
+				['PUT', `user/webhook/${ghost}`],
+				['POST', `notifications/${ghost}/see`],
+				['POST', 'notifications/see'],
+				['POST', 'coupons/validate/NOT-A-CODE'],
+				['GET', `challenges/${ghost}/export/csv`],
+				['POST', 'user/push-devices'],
+				['DELETE', `user/push-devices/${ghost}`],
+				['PUT', 'user'],
+				['POST', 'challenges'],
+				['POST', 'user/auth/local/login'],
+				['POST', 'user/auth/social'],
+			];
+
+			for (const [method, path] of cases) {
+				const body = await paced(async () => {
+					const res = await fetch(apiUrl(path), {
+						method,
+						headers: { ...authHeaders(), 'Content-Type': 'application/json' },
+						body: method === 'GET' || method === 'DELETE' ? undefined : '{}',
+					});
+					return (await res.json()) as { message?: string; error?: string };
+				});
+				expect(body.message).not.toBe('Not found.');
+			}
+		}, 240000);
 	});
 
 	describe('rate limiting', () => {

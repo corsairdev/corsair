@@ -1254,7 +1254,24 @@ describe('request construction', () => {
 		await Tasks.list(ctx, { type: 'todos' });
 
 		expect(query().get('type')).toBe('todos');
-		expect(query().has('tagId')).toBe(false);
+		expect(query().has('dueDate')).toBe(false);
+	});
+
+	it('normalizes a single challenge-task create into an array', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch(wrap(taskRecord));
+
+		const result = await Tasks.createChallengeTask(ctx, {
+			challengeId: CHALLENGE,
+			text: 'A task',
+			type: 'habit',
+		});
+
+		expect(result).toEqual([expect.objectContaining({ id: TASK })]);
+		expect(db.tasks.upsertByEntityId).toHaveBeenCalledWith(
+			TASK,
+			expect.objectContaining({ id: TASK }),
+		);
 	});
 
 	it('omits unset optional body fields', async () => {

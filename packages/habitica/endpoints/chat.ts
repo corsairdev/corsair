@@ -15,7 +15,11 @@ import type { HabiticaEndpointOutputs } from './types';
 /** The default group when the caller names none. */
 const PARTY_ALIAS = 'party';
 
-/** Reads a group's recent chat messages. Defaults to the caller's party. */
+/**
+ * Reads a group's recent chat messages. Defaults to the caller's party.
+ *
+ * Public groups, including the Tavern, answer 400 "This feature is no longer supported."
+ */
 export const list: HabiticaEndpoints['chatList'] = async (ctx, input) => {
 	const groupId = input.groupId ?? PARTY_ALIAS;
 	const result = await habiticaCall<HabiticaEndpointOutputs['chatList']>(

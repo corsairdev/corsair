@@ -48,7 +48,7 @@ export const list: HabiticaEndpoints['tasksList'] = async (ctx, input) => {
 	const result = await habiticaCall<HabiticaEndpointOutputs['tasksList']>(
 		ctx,
 		'tasks/user',
-		{ query: compactQuery({ type: input.type, tagId: input.tagId }) },
+		{ query: compactQuery({ type: input.type, dueDate: input.dueDate }) },
 	);
 
 	await cacheEntities(ctx.db.tasks, HabiticaTaskEntity, result, {
@@ -58,7 +58,7 @@ export const list: HabiticaEndpoints['tasksList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'habitica.tasks.list',
-		{ ...auditPayload(input, ['type', 'tagId']), returned: result.length },
+		{ ...auditPayload(input, ['type', 'dueDate']), returned: result.length },
 		'completed',
 	);
 	return result;
@@ -281,12 +281,16 @@ export const addTag: HabiticaEndpoints['tasksAddTag'] = async (ctx, input) => {
 export const createChallengeTask: HabiticaEndpoints['tasksCreateChallengeTask'] =
 	async (ctx, input) => {
 		const { challengeId, ...task } = input;
-		const result = await habiticaCall<
-			HabiticaEndpointOutputs['tasksCreateChallengeTask']
+		const raw = await habiticaCall<
+			| HabiticaEndpointOutputs['tasksCreateChallengeTask'][number]
+			| HabiticaEndpointOutputs['tasksCreateChallengeTask']
 		>(ctx, `tasks/challenge/${pathSegment(challengeId)}`, {
 			method: 'POST',
 			body: compactBody(task),
 		});
+		// Official POST /tasks/challenge/:id returns the task object when one
+		// is created, and an array only when the body is a list.
+		const result = Array.isArray(raw) ? raw : [raw];
 
 		await cacheEntities(ctx.db.tasks, HabiticaTaskEntity, result, {
 			label: LABEL,

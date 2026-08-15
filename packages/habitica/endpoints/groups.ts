@@ -193,6 +193,7 @@ export const listMembers: HabiticaEndpoints['groupsListMembers'] = async (
 	>(ctx, `groups/${pathSegment(input.groupId)}/members`, {
 		query: compactQuery({
 			lastId: input.lastId,
+			limit: input.limit,
 			includeAllPublicFields: input.includeAllPublicFields,
 		}),
 	});

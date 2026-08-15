@@ -98,13 +98,8 @@ export type TasksCreateInput = z.infer<typeof TasksCreateInputSchema>;
 
 const TasksListInputSchema = z.object({
 	type: TaskListFilter.optional(),
-	/** Restricts the list to tasks carrying this tag id. */
-	tagId: z.string().optional(),
-	/**
-	 * `GET /tasks/user` returns every matching task in one response. It takes no
-	 * page or cursor parameter, so there is nothing to paginate with, and a
-	 * long-lived account's whole task list arrives at once.
-	 */
+	/** Official: date used to compute `nextDue` on each returned daily. */
+	dueDate: z.string().optional(),
 });
 export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
@@ -210,9 +205,17 @@ export type TasksCreateChallengeTaskInput = z.infer<
 	typeof TasksCreateChallengeTaskInputSchema
 >;
 
+const ChallengeTaskListFilter = z.enum([
+	'habits',
+	'dailys',
+	'todos',
+	'rewards',
+]);
+
 const TasksListChallengeTasksInputSchema = z.object({
 	challengeId: z.string(),
-	type: TaskListFilter.optional(),
+	/** Official GET /tasks/challenge/:id — no completedTodos filter. */
+	type: ChallengeTaskListFilter.optional(),
 });
 export type TasksListChallengeTasksInput = z.infer<
 	typeof TasksListChallengeTasksInputSchema
@@ -425,8 +428,8 @@ export type GroupsLeaveInput = z.infer<typeof GroupsLeaveInputSchema>;
 
 const GroupsListMembersInputSchema = z.object({
 	groupId: z.string(),
-	/** Cursor: the id of the last member from the previous page. */
 	lastId: z.string().optional(),
+	limit: z.number().optional(),
 	includeAllPublicFields: z.boolean().optional(),
 });
 export type GroupsListMembersInput = z.infer<
