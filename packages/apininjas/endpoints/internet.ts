@@ -213,7 +213,7 @@ export const scrape: ApiNinjasEndpoints['internetScrape'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.internet.scrape',
-		withCount(auditPayload(input, ['text_only', 'user_agent']), result),
+		withCount(auditPayload(input, ['text_only']), result),
 		'completed',
 	);
 	return result;
@@ -239,7 +239,7 @@ export const userAgent: ApiNinjasEndpoints['internetUserAgent'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.internet.userAgent',
-		withCount(auditPayload(input, ['brand', 'model', 'os', 'browser']), result),
+		withCount(auditPayload(input, ['brand', 'model']), result),
 		'completed',
 	);
 	return result;

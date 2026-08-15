@@ -10,8 +10,28 @@
  * about a dozen and covers one endpoint per version, both HTTP methods, a
  * premium rejection and an unknown route.
  */
+import type { z } from 'zod';
 import { makeApiNinjasRequest } from './client';
 import { ApiNinjasEndpointOutputSchemas } from './endpoints/types';
+
+/**
+ * Parses a live response and fails with the validation issues when it does not
+ * match. Asserting only on `success` reports "expected true, received false",
+ * which says nothing about which field the provider changed.
+ */
+function expectParses(schema: z.ZodType, value: unknown, operation: string) {
+	const result = schema.safeParse(value);
+	if (!result.success) {
+		throw new Error(
+			`${operation} no longer matches its schema: ${JSON.stringify(
+				result.error.issues.slice(0, 5),
+				null,
+				2,
+			)}`,
+		);
+	}
+	expect(result.success).toBe(true);
+}
 
 const API_KEY = process.env.APININJAS_API_KEY;
 const describeLive = API_KEY ? describe : describe.skip;
@@ -25,9 +45,11 @@ describeLive('live API', () => {
 			query: { text: 'this integration works' },
 		});
 
-		expect(
-			ApiNinjasEndpointOutputSchemas.textSentiment.safeParse(result).success,
-		).toBe(true);
+		expectParses(
+			ApiNinjasEndpointOutputSchemas.textSentiment,
+			result,
+			'textSentiment',
+		);
 	});
 
 	it('answers a v2 GET on a route that does not exist under v1', async () => {
@@ -36,11 +58,11 @@ describeLive('live API', () => {
 			version: 'v2',
 		});
 
-		expect(
-			ApiNinjasEndpointOutputSchemas.entertainmentQuoteOfTheDay.safeParse(
-				result,
-			).success,
-		).toBe(true);
+		expectParses(
+			ApiNinjasEndpointOutputSchemas.entertainmentQuoteOfTheDay,
+			result,
+			'entertainmentQuoteOfTheDay',
+		);
 	});
 
 	it('answers a v3 GET', async () => {
@@ -49,9 +71,11 @@ describeLive('live API', () => {
 			query: { title: 'pasta' },
 		});
 
-		expect(
-			ApiNinjasEndpointOutputSchemas.healthRecipes.safeParse(result).success,
-		).toBe(true);
+		expectParses(
+			ApiNinjasEndpointOutputSchemas.healthRecipes,
+			result,
+			'healthRecipes',
+		);
 	});
 
 	it('answers a POST with a JSON body', async () => {
@@ -60,9 +84,11 @@ describeLive('live API', () => {
 			body: { text_1: 'hello there', text_2: 'hi there' },
 		});
 
-		expect(
-			ApiNinjasEndpointOutputSchemas.textSimilarity.safeParse(result).success,
-		).toBe(true);
+		expectParses(
+			ApiNinjasEndpointOutputSchemas.textSimilarity,
+			result,
+			'textSimilarity',
+		);
 	});
 
 	it('still masks premium fields the way the schemas expect', async () => {
@@ -72,10 +98,11 @@ describeLive('live API', () => {
 			query: { ticker: 'AAPL' },
 		});
 
-		expect(
-			ApiNinjasEndpointOutputSchemas.marketsStockPrice.safeParse(result)
-				.success,
-		).toBe(true);
+		expectParses(
+			ApiNinjasEndpointOutputSchemas.marketsStockPrice,
+			result,
+			'marketsStockPrice',
+		);
 	});
 
 	it('reports a premium-gated endpoint as a rejection, not as data', async () => {

@@ -1,3 +1,5 @@
+import type { ApiNinjasEndpointOutputSchemas } from './endpoints/types';
+
 /**
  * Responses captured from api.api-ninjas.com on 2026-08-15 with a free-tier
  * key, one per operation, trimmed to the first row of each collection.
@@ -8,7 +10,9 @@
  * these endpoints return no personal data, and the key never appears in a
  * response.
  */
-export const CAPTURED_RESPONSES: Record<string, unknown> = {
+export const CAPTURED_RESPONSES: Partial<
+	Record<keyof typeof ApiNinjasEndpointOutputSchemas, unknown>
+> = {
 	locationGeocode: [
 		{
 			name: 'Example Name',
@@ -2196,10 +2200,12 @@ export const CAPTURED_RESPONSES: Record<string, unknown> = {
 	},
 	utilityQrCode: {
 		content_type: 'image/svg+xml',
+		encoding: 'text',
 		data: 'PD94bWwgdmVyc2lvbj0nMS4wJyBlbmNvZGluZz0nVVRGLTgnPz4KPHN2ZyB3aWR0aD0iMzNtbSIgaGVpZ2h0PSIzM21tIiB2ZXJzaW9uPSIxLjEiIHZpZXdC',
 	},
 	utilityBarcode: {
 		content_type: 'image/svg+xml',
+		encoding: 'text',
 		data: 'PD94bWwgdmVyc2lvbj0iMS4wIiBlbmNvZGluZz0iVVRGLTgiPz4KPCFET0NUWVBFIHN2ZwogIFBVQkxJQyAnLS8vVzNDLy9EVEQgU1ZHIDEuMS8vRU4nCiAg',
 	},
 	utilityPassword: {
@@ -2296,6 +2302,7 @@ export const CAPTURED_RESPONSES: Record<string, unknown> = {
 	},
 	utilityRandomImage: {
 		content_type: 'image/jpeg',
+		encoding: 'lossy-text',
 		data: '<binary payload, decoded as text by the shared transport>',
 	},
 	utilityEmoji: [

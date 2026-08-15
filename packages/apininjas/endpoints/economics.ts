@@ -205,19 +205,7 @@ export const mortgageCalculator: ApiNinjasEndpoints['economicsMortgageCalculator
 		await logEventFromContext(
 			ctx,
 			'apininjas.economics.mortgageCalculator',
-			withCount(
-				auditPayload(input, [
-					'loan_amount',
-					'home_value',
-					'downpayment',
-					'interest_rate',
-					'duration_years',
-					'monthly_hoa',
-					'annual_property_tax',
-					'annual_home_insurance',
-				]),
-				result,
-			),
+			withCount(auditPayload(input, []), result),
 			'completed',
 		);
 		return result;
@@ -276,19 +264,7 @@ export const incomeTaxCalculator: ApiNinjasEndpoints['economicsIncomeTaxCalculat
 		await logEventFromContext(
 			ctx,
 			'apininjas.economics.incomeTaxCalculator',
-			withCount(
-				auditPayload(input, [
-					'country',
-					'region',
-					'income',
-					'tax_year',
-					'filing_status',
-					'deductions',
-					'credits',
-					'self_employed',
-				]),
-				result,
-			),
+			withCount(auditPayload(input, ['country', 'region', 'tax_year']), result),
 			'completed',
 		);
 		return result;
@@ -320,10 +296,7 @@ export const salesTax: ApiNinjasEndpoints['economicsSalesTax'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.economics.salesTax',
-		withCount(
-			auditPayload(input, ['zip_code', 'street_address', 'city', 'state']),
-			result,
-		),
+		withCount(auditPayload(input, ['city', 'state']), result),
 		'completed',
 	);
 	return result;
@@ -352,16 +325,7 @@ export const salesTaxCalculator: ApiNinjasEndpoints['economicsSalesTaxCalculator
 		await logEventFromContext(
 			ctx,
 			'apininjas.economics.salesTaxCalculator',
-			withCount(
-				auditPayload(input, [
-					'amount',
-					'zip_code',
-					'street_address',
-					'city',
-					'state',
-				]),
-				result,
-			),
+			withCount(auditPayload(input, ['city', 'state']), result),
 			'completed',
 		);
 		return result;
@@ -392,7 +356,7 @@ export const propertyTax: ApiNinjasEndpoints['economicsPropertyTax'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.economics.propertyTax',
-		withCount(auditPayload(input, ['state', 'county', 'city', 'zip']), result),
+		withCount(auditPayload(input, ['state', 'county', 'city']), result),
 		'completed',
 	);
 	return result;

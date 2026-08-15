@@ -70,6 +70,24 @@ export function entityId(
 }
 
 /**
+ * True when at least one part of a natural key carries a value.
+ *
+ * A row with nothing to key on has to be skipped rather than stored, or every
+ * such row collides on the same blank key and overwrites the last. Checking the
+ * parts rather than the joined string keeps that independent of how many parts
+ * a key has - comparing the result against `'|'` only catches it for a key of
+ * exactly two, and silently misses a three-part one.
+ */
+export function keyed(
+	...parts: (string | number | null | undefined)[]
+): boolean {
+	return parts.some(
+		(part) =>
+			part !== null && part !== undefined && String(part).trim().length > 0,
+	);
+}
+
+/**
  * Content types the image endpoints answer with, keyed by the `format`
  * parameter the provider documents.
  */
@@ -90,6 +108,26 @@ export function imageContentType(format: string | undefined): string {
 	return (
 		IMAGE_CONTENT_TYPES[format.toLowerCase()] ?? 'application/octet-stream'
 	);
+}
+
+/** Formats whose payload is text, and therefore survives the transport exactly. */
+const TEXT_IMAGE_FORMATS = new Set(['svg', 'eps']);
+
+/**
+ * Whether the payload for a format is exactly what the provider sent.
+ *
+ * The shared transport decodes any non-JSON response with `response.text()`.
+ * SVG and EPS are text and come back byte-for-byte; raster bytes do not
+ * survive that decode and cannot be written back out as an image. The
+ * operations report this rather than leaving a caller to infer it from
+ * `content_type`, which describes what was asked for, not what arrived.
+ */
+export function imageEncoding(
+	format: string | undefined,
+): 'text' | 'lossy-text' {
+	return TEXT_IMAGE_FORMATS.has((format ?? '').toLowerCase())
+		? 'text'
+		: 'lossy-text';
 }
 
 /** Normalises a collection response that may arrive as a bare object. */

@@ -108,7 +108,7 @@ export const routingNumber: ApiNinjasEndpoints['validationRoutingNumber'] =
 		await logEventFromContext(
 			ctx,
 			'apininjas.validation.routingNumber',
-			withCount(auditPayload(input, ['routing_number']), result),
+			withCount(auditPayload(input, []), result),
 			'completed',
 		);
 		return result;
@@ -131,7 +131,7 @@ export const iban: ApiNinjasEndpoints['validationIban'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.validation.iban',
-		withCount(auditPayload(input, ['iban']), result),
+		withCount(auditPayload(input, []), result),
 		'completed',
 	);
 	return result;
@@ -154,7 +154,7 @@ export const bin: ApiNinjasEndpoints['validationBin'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'apininjas.validation.bin',
-		withCount(auditPayload(input, ['bin']), result),
+		withCount(auditPayload(input, []), result),
 		'completed',
 	);
 	return result;
@@ -187,14 +187,7 @@ export const swiftCode: ApiNinjasEndpoints['validationSwiftCode'] = async (
 		ctx,
 		'apininjas.validation.swiftCode',
 		withCount(
-			auditPayload(input, [
-				'swift',
-				'bank',
-				'city',
-				'country',
-				'routing_number',
-				'offset',
-			]),
+			auditPayload(input, ['bank', 'city', 'country', 'offset']),
 			result,
 		),
 		'completed',

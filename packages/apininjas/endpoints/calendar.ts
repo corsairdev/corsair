@@ -39,14 +39,7 @@ export const timezone: ApiNinjasEndpoints['calendarTimezone'] = async (
 		ctx,
 		'apininjas.calendar.timezone',
 		withCount(
-			auditPayload(input, [
-				'timezone',
-				'lat',
-				'lon',
-				'city',
-				'state',
-				'country',
-			]),
+			auditPayload(input, ['timezone', 'city', 'state', 'country']),
 			result,
 		),
 		'completed',
@@ -80,14 +73,7 @@ export const worldTime: ApiNinjasEndpoints['calendarWorldTime'] = async (
 		ctx,
 		'apininjas.calendar.worldTime',
 		withCount(
-			auditPayload(input, [
-				'timezone',
-				'lat',
-				'lon',
-				'city',
-				'state',
-				'country',
-			]),
+			auditPayload(input, ['timezone', 'city', 'state', 'country']),
 			result,
 		),
 		'completed',

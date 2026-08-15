@@ -97,6 +97,12 @@ describe('risk levels', () => {
 	it('marks the counter as the only operation that changes anything', () => {
 		// Everything else on this API is a pure lookup. The counter endpoint
 		// increments a stored value when called with `hit` or `value`.
+		//
+		// This doubles as the retry-safety check. Corsair replays the whole
+		// endpoint call when a handler asks for a retry and this API offers no
+		// idempotency key, so the set of operations that must not be replayed is
+		// exactly the set that is not a read - and it is derived here rather than
+		// matched by name, so a new write cannot join it silently.
 		const writes = Object.entries(meta)
 			.filter(([, entry]) => entry.riskLevel !== 'read')
 			.map(([path]) => path);
@@ -131,22 +137,6 @@ describe('risk levels', () => {
 			'premium plan required',
 		);
 		expect(meta['transport.cars']?.description).toContain('deprecated');
-	});
-});
-
-describe('retry safety', () => {
-	it('treats the single write as the whole non-idempotent set', () => {
-		// Corsair replays the entire endpoint call when a handler asks for a
-		// retry, and this API offers no idempotency key. With 128 pure reads the
-		// exposure is one operation, and it is named rather than pattern-matched
-		// so a new write cannot join the set silently.
-		const nonIdempotent = Object.entries(
-			plugin.endpointMeta as Record<string, { riskLevel: string }>,
-		)
-			.filter(([, entry]) => entry.riskLevel !== 'read')
-			.map(([path]) => path);
-
-		expect(nonIdempotent).toEqual(['utility.counter']);
 	});
 });
 

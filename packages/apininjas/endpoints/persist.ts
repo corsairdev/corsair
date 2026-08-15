@@ -13,7 +13,7 @@ import type {
 	ApiNinjasUniversityEntity,
 	ApiNinjasVehicleEntity,
 } from '../schema/database';
-import { asNumber, entityId, isMaskedValue, unmasked } from './shared';
+import { asNumber, entityId, isMaskedValue, keyed, unmasked } from './shared';
 import type { ApiNinjasEndpointOutputs } from './types';
 
 /**
@@ -144,8 +144,8 @@ export async function cacheAircraft(
 ) {
 	if (!store) return;
 	for (const row of rows) {
+		if (!keyed(row.manufacturer, row.model)) continue;
 		const id = entityId(row.manufacturer, row.model);
-		if (id === '|') continue;
 		await safely(
 			() =>
 				store.upsertByEntityId(id, {
@@ -169,6 +169,7 @@ export async function cacheCars(
 ) {
 	if (!store) return;
 	for (const row of rows) {
+		if (!keyed(row.make, row.model, row.year)) continue;
 		const id = entityId('car', row.make, row.model, row.year);
 		await safely(
 			() =>
@@ -194,6 +195,7 @@ export async function cacheMotorcycles(
 ) {
 	if (!store) return;
 	for (const row of rows) {
+		if (!keyed(row.make, row.model, row.year)) continue;
 		const id = entityId('motorcycle', row.make, row.model, row.year);
 		await safely(
 			() =>
@@ -218,6 +220,7 @@ export async function cacheElectricVehicles(
 ) {
 	if (!store) return;
 	for (const row of rows) {
+		if (!keyed(row.make, row.model, row.year_start)) continue;
 		const id = entityId('electric', row.make, row.model, row.year_start);
 		await safely(
 			() =>
@@ -270,8 +273,8 @@ export async function cacheCities(
 ) {
 	if (!store) return;
 	for (const row of rows) {
+		if (!keyed(row.name, row.country)) continue;
 		const id = entityId(row.name, row.country);
-		if (id === '|') continue;
 		await safely(
 			() =>
 				store.upsertByEntityId(id, {
@@ -297,8 +300,8 @@ export async function cacheUniversities(
 ) {
 	if (!store) return;
 	for (const row of rows) {
+		if (!keyed(row.name, row.country)) continue;
 		const id = entityId(row.name, row.country);
-		if (id === '|') continue;
 		await safely(
 			() =>
 				store.upsertByEntityId(id, {

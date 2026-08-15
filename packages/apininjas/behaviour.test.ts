@@ -4,6 +4,7 @@
  * and how the image operations wrap a non-JSON payload.
  */
 import {
+	Economics,
 	Internet,
 	Location,
 	Markets,
@@ -71,7 +72,7 @@ function mockResponse(body: unknown, contentType = 'application/json') {
 }
 
 /** The captured response for an operation, as the provider sent it. */
-function captured(key: string): unknown {
+function captured(key: keyof typeof CAPTURED_RESPONSES): unknown {
 	const body = CAPTURED_RESPONSES[key];
 	if (body === undefined) throw new Error(`no captured response for ${key}`);
 	return body;
@@ -203,7 +204,7 @@ describe('audit payloads', () => {
 		);
 
 		expect(payload).toEqual({
-			fields: ['text'],
+			supplied_fields: ['text'],
 			text_length: 25,
 		});
 		expect(JSON.stringify(payload)).not.toContain('sentence');
@@ -235,7 +236,7 @@ describe('audit payloads', () => {
 		expect(payload).toEqual({
 			ticker: 'AAPL',
 			limit: 5,
-			fields: ['ticker', 'limit'],
+			supplied_fields: ['ticker', 'limit'],
 		});
 	});
 
@@ -247,6 +248,31 @@ describe('audit payloads', () => {
 });
 
 describe('operations that take caller data', () => {
+	/**
+	 * Captures the rows the core would write to `corsair_events`.
+	 *
+	 * `logEventFromContext` resolves an account id and then calls `logEvent`,
+	 * which inserts through `ctx.database`. Watching that insert is the only way
+	 * to see what would actually be stored - an earlier version of this test
+	 * stubbed a `ctx.logEvent` method that the core never calls, so its array
+	 * stayed empty and the assertion passed no matter what leaked.
+	 */
+	function makeEventLog() {
+		const rows: Record<string, unknown>[] = [];
+		const database = {
+			db: {
+				insertInto: (table: string) => ({
+					values: (row: Record<string, unknown>) => ({
+						execute: async () => {
+							rows.push({ table, ...row });
+						},
+					}),
+				}),
+			},
+		};
+		return { database, rows };
+	}
+
 	it.each([
 		[
 			'text.sentiment',
@@ -264,24 +290,62 @@ describe('operations that take caller data', () => {
 			async (ctx: Ctx) => Internet.ipLookup(ctx, { address: '203.0.113.7' }),
 			'203.0.113.7',
 		],
-	])(
-		'%s keeps its input out of the request log',
-		async (_name, run, secret) => {
-			const { ctx } = makeCtx();
-			const logged: unknown[] = [];
-			const loggingCtx = {
-				...(ctx as unknown as Record<string, unknown>),
-				logEvent: (...args: unknown[]) => {
-					logged.push(args);
-				},
-			} as unknown as Ctx;
-			mockResponse({});
+		[
+			'validation.iban',
+			async (ctx: Ctx) =>
+				Validation.iban(ctx, { iban: 'DE89370400440532013000' }),
+			'DE89370400440532013000',
+		],
+		[
+			'economics.incomeTaxCalculator',
+			async (ctx: Ctx) =>
+				Economics.incomeTaxCalculator(ctx, {
+					country: 'us',
+					region: 'California',
+					income: 125000,
+					filing_status: 'single',
+				}),
+			'125000',
+		],
+	])('%s keeps its input out of the event log', async (_name, run, secret) => {
+		const { ctx } = makeCtx();
+		const { database, rows } = makeEventLog();
+		const loggingCtx = {
+			...(ctx as unknown as Record<string, unknown>),
+			database,
+		} as unknown as Ctx;
+		mockResponse({});
 
-			await run(loggingCtx);
+		await run(loggingCtx);
 
-			expect(JSON.stringify(logged)).not.toContain(secret);
-		},
-	);
+		// Assert the row was written before asserting what is not in it, or the
+		// check below passes on an empty list.
+		expect(rows).toHaveLength(1);
+		expect(rows[0]?.event_type).toBe(`apininjas.${_name}`);
+		expect(JSON.stringify(rows[0]?.payload)).not.toContain(secret);
+	});
+
+	it('still records the operation and its impersonal arguments', async () => {
+		// Redaction has to leave the log useful: an operator needs to see which
+		// operation ran and what kind of thing it asked for.
+		const { ctx } = makeCtx();
+		const { database, rows } = makeEventLog();
+		const loggingCtx = {
+			...(ctx as unknown as Record<string, unknown>),
+			database,
+		} as unknown as Ctx;
+		mockResponse([{ ticker: 'AAPL' }]);
+
+		await Markets.secFilings(loggingCtx, { ticker: 'AAPL', filing: '10-K' });
+
+		expect(rows).toHaveLength(1);
+		expect(rows[0]?.event_type).toBe('apininjas.markets.secFilings');
+		expect(rows[0]?.payload).toMatchObject({
+			ticker: 'AAPL',
+			filing: '10-K',
+			supplied_fields: ['ticker', 'filing'],
+		});
+	});
 });
 
 describe('image operations', () => {
@@ -306,6 +370,8 @@ describe('image operations', () => {
 		expect(requested).toContain('format=svg');
 		expect(result).toEqual({
 			content_type: 'image/svg+xml',
+			// SVG is text, so what came back is exactly what the provider sent.
+			encoding: 'text',
 			data: '<svg></svg>',
 		});
 	});
@@ -328,6 +394,9 @@ describe('image operations', () => {
 		});
 
 		expect(result.content_type).toBe('image/png');
+		// The bytes did not survive the transport's text decode, and the result
+		// says so rather than presenting them as a usable PNG.
+		expect(result.encoding).toBe('lossy-text');
 	});
 
 	it('honours an explicit QR format instead of the safe default', async () => {
@@ -357,6 +426,7 @@ describe('image operations', () => {
 		expect(requested).toContain('format=png');
 		expect(requested).toContain('size=300');
 		expect(result.content_type).toBe('image/png');
+		expect(result.encoding).toBe('lossy-text');
 	});
 
 	it('defaults the barcode format the same way as the QR code', async () => {
@@ -384,6 +454,7 @@ describe('image operations', () => {
 		expect(requested).toContain('format=svg');
 		expect(requested).toContain('type=code128');
 		expect(result.data).toBe('<svg>barcode</svg>');
+		expect(result.encoding).toBe('text');
 	});
 
 	it('labels the random image as JPEG, the only format it returns', async () => {
@@ -411,6 +482,9 @@ describe('image operations', () => {
 		expect(requested).toContain('category=nature');
 		expect(result).toEqual({
 			content_type: 'image/jpeg',
+			// JPEG is the only format this endpoint offers, so it is always lossy
+			// until the core transport can carry binary responses.
+			encoding: 'lossy-text',
 			data: 'jpeg-bytes-as-text',
 		});
 	});

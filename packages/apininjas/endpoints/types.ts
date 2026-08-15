@@ -2907,9 +2907,16 @@ const UtilityQrCodeInputSchema = z.object({
 	bg_color: z.string().optional(),
 });
 
-/** Returns the generated QR code image in the format specified by the format parameter (for example PNG, JPG, SVG). The response body is binary image data (or text for SVG/EPS). Returns an error if the request is unsuccessful. */
+/**
+ * Returns the generated QR code image in the format specified by the format parameter (for example PNG, JPG, SVG). The response body is binary image data (or text for SVG/EPS). Returns an error if the request is unsuccessful.
+ *
+ * `encoding` is `text` when the payload is exactly what the provider sent
+ * (SVG, EPS) and `lossy-text` when it is a raster format that was decoded as
+ * text on the way through and can no longer be written back out as an image.
+ */
 const UtilityQrCodeOutputSchema = z.object({
 	content_type: z.string(),
+	encoding: z.enum(['text', 'lossy-text']),
 	data: z.string(),
 });
 
@@ -2929,9 +2936,16 @@ const UtilityBarcodeInputSchema = z.object({
 	include_text: z.boolean().optional(),
 });
 
-/** Returns the barcode image as binary data in the requested format (PNG or SVG), or an error if the request is unsuccessful. */
+/**
+ * Returns the barcode image as binary data in the requested format (PNG or SVG), or an error if the request is unsuccessful.
+ *
+ * `encoding` is `text` when the payload is exactly what the provider sent
+ * (SVG, EPS) and `lossy-text` when it is a raster format that was decoded as
+ * text on the way through and can no longer be written back out as an image.
+ */
 const UtilityBarcodeOutputSchema = z.object({
 	content_type: z.string(),
+	encoding: z.enum(['text', 'lossy-text']),
 	data: z.string(),
 });
 
@@ -3145,9 +3159,16 @@ const UtilityRandomImageInputSchema = z.object({
 	height: z.number().optional(),
 });
 
-/** Returns a random image in JPG format. The response body is binary image data. Returns an error if the request is unsuccessful. */
+/**
+ * Returns a random image in JPG format. The response body is binary image data. Returns an error if the request is unsuccessful.
+ *
+ * `encoding` is `text` when the payload is exactly what the provider sent
+ * (SVG, EPS) and `lossy-text` when it is a raster format that was decoded as
+ * text on the way through and can no longer be written back out as an image.
+ */
 const UtilityRandomImageOutputSchema = z.object({
 	content_type: z.string(),
+	encoding: z.enum(['text', 'lossy-text']),
 	data: z.string(),
 });
 

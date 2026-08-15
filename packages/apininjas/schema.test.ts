@@ -184,7 +184,9 @@ describe('captured responses', () => {
 				key as keyof typeof ApiNinjasEndpointOutputSchemas
 			] as AnySchema;
 
-			const result = schema.safeParse(CAPTURED_RESPONSES[key]);
+			const result = schema.safeParse(
+				CAPTURED_RESPONSES[key as keyof typeof CAPTURED_RESPONSES],
+			);
 			if (!result.success) {
 				throw new Error(
 					`${key} rejected its own captured response: ${JSON.stringify(
@@ -210,7 +212,7 @@ describe('captured responses', () => {
 	test.each(
 		Object.keys(CAPTURED_RESPONSES).filter((key) => !PLUGIN_SHAPED.has(key)),
 	)('%s keeps fields it does not declare', (key) => {
-		const captured = CAPTURED_RESPONSES[key];
+		const captured = CAPTURED_RESPONSES[key as keyof typeof CAPTURED_RESPONSES];
 		const row = Array.isArray(captured) ? captured[0] : captured;
 		if (!row || typeof row !== 'object') return;
 

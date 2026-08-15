@@ -50,7 +50,16 @@ function inNodeEsm(body: string): Record<string, unknown> {
 		);
 	}
 
-	return JSON.parse(output.trim().split('\n').pop() ?? '{}');
+	const lastLine = output.trim().split('\n').pop() ?? '';
+	try {
+		return JSON.parse(lastLine);
+	} catch {
+		// Anything the bundle printed before its JSON - a warning, a stray log -
+		// would otherwise surface only as an opaque parse error.
+		throw new Error(
+			`the bundle did not print parseable JSON. Full output:\n${output.trim()}`,
+		);
+	}
 }
 
 /**
@@ -210,7 +219,11 @@ describeBuild('the built bundle', () => {
 	});
 
 	it('contains no credential', () => {
-		expect(bundle).not.toMatch(/X-Api-Key["']\s*:\s*["'][A-Za-z0-9]{20,}/);
+		// Real keys contain more than letters and digits, so the character class
+		// has to allow the punctuation providers use.
+		expect(bundle).not.toMatch(
+			/X-Api-Key["']\s*:\s*["'][A-Za-z0-9\-_+/=]{20,}/,
+		);
 	});
 
 	it('stays a reasonable size for what it carries', () => {

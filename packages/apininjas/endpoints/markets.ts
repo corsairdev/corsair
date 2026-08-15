@@ -349,7 +349,6 @@ export const insiderTransactions: ApiNinjasEndpoints['marketsInsiderTransactions
 					'name',
 					'form_type',
 					'transaction_type',
-					'transaction_code',
 					'transaction_date',
 					'min_transaction_date',
 					'max_transaction_date',
@@ -551,7 +550,7 @@ export const convertCurrency: ApiNinjasEndpoints['marketsConvertCurrency'] =
 		await logEventFromContext(
 			ctx,
 			'apininjas.markets.convertCurrency',
-			withCount(auditPayload(input, ['have', 'want', 'amount']), result),
+			withCount(auditPayload(input, ['have', 'want']), result),
 			'completed',
 		);
 		return result;

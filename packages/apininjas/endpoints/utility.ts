@@ -3,7 +3,7 @@ import { makeApiNinjasRequest } from '../client';
 import type { ApiNinjasEndpoints } from '../index';
 import { auditPayload, withCount } from './logging';
 import { cacheEmoji } from './persist';
-import { asArray, imageContentType } from './shared';
+import { asArray, imageContentType, imageEncoding } from './shared';
 import type { ApiNinjasEndpointOutputs } from './types';
 
 /**
@@ -110,7 +110,7 @@ export const counter: ApiNinjasEndpoints['utilityCounter'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.utility.counter',
-		withCount(auditPayload(input, ['id', 'hit', 'value']), result),
+		withCount(auditPayload(input, []), result),
 		'completed',
 	);
 	return result;
@@ -137,7 +137,7 @@ export const convertUnit: ApiNinjasEndpoints['utilityConvertUnit'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.utility.convertUnit',
-		withCount(auditPayload(input, ['amount', 'unit']), result),
+		withCount(auditPayload(input, ['unit']), result),
 		'completed',
 	);
 	return result;
@@ -233,8 +233,14 @@ export const emoji: ApiNinjasEndpoints['utilityEmoji'] = async (ctx, input) => {
  * any non-JSON body as text - so SVG and EPS come back byte-for-byte while a
  * raster format does not survive the round trip. `format` therefore defaults to
  * `svg` here rather than to the provider's own default of `png`: a caller who
- * does not state a format gets an exact payload instead of a corrupted one. A
- * caller who does ask for `png` still gets it, with `content_type` saying so.
+ * does not state a format gets an exact payload instead of a corrupted one.
+ *
+ * A caller who does ask for `png` or `jpg` still gets the call made, and the
+ * result says so: `encoding` is `lossy-text` rather than `text`, so the payload
+ * is never presented as a usable image when it is not one. Deciding that for
+ * the caller by rejecting the request would be the other defensible choice; it
+ * is not taken here because the catalog lists these operations and the raster
+ * bytes are still useful for length and content checks.
  *
  * The underlying limitation is in the core transport's response handling, not
  * in this plugin; it is raised as a suggestion in the pull request rather than
@@ -265,14 +271,19 @@ export const qrCode: ApiNinjasEndpoints['utilityQrCode'] = async (
 		auditPayload(input, ['format', 'size', 'fg_color', 'bg_color']),
 		'completed',
 	);
-	return { content_type: contentType, data: String(result ?? '') };
+	return {
+		content_type: contentType,
+		encoding: imageEncoding(format),
+		data: String(result ?? ''),
+	};
 };
 
 /**
  * Generates a barcode image.
  *
  * Same transport constraint as {@link qrCode}: `format` defaults to `svg` so
- * the returned payload is exact. The provider defaults `type` to `upc`, which
+ * the returned payload is exact, and `encoding` reports `lossy-text` when a
+ * caller asks for a raster format. The provider defaults `type` to `upc`, which
  * rejects text that is not a valid UPC, so the caller's `type` is passed
  * through untouched rather than guessed at.
  */
@@ -304,17 +315,20 @@ export const barcode: ApiNinjasEndpoints['utilityBarcode'] = async (
 		auditPayload(input, ['type', 'format', 'include_text']),
 		'completed',
 	);
-	return { content_type: contentType, data: String(result ?? '') };
+	return {
+		content_type: contentType,
+		encoding: imageEncoding(format),
+		data: String(result ?? ''),
+	};
 };
 
 /**
  * Returns a random image.
  *
  * This endpoint only ever answers with JPEG bytes - there is no text format to
- * ask for - so the payload arrives text-decoded through the shared transport
- * and should be treated as opaque. `content_type` records what the provider
- * actually sent, so a caller can tell the difference between this and the
- * vector formats the other two image endpoints can return.
+ * ask for - so its payload is always `lossy-text` and should be treated as
+ * opaque. It is the one operation here that cannot return a usable image until
+ * the core transport can carry binary responses.
  */
 export const randomImage: ApiNinjasEndpoints['utilityRandomImage'] = async (
 	ctx,
@@ -338,5 +352,9 @@ export const randomImage: ApiNinjasEndpoints['utilityRandomImage'] = async (
 		auditPayload(input, ['category', 'width', 'height']),
 		'completed',
 	);
-	return { content_type: contentType, data: String(result ?? '') };
+	return {
+		content_type: contentType,
+		encoding: 'lossy-text',
+		data: String(result ?? ''),
+	};
 };

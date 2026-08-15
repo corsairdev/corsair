@@ -11,7 +11,9 @@ import {
 	asNumber,
 	entityId,
 	imageContentType,
+	imageEncoding,
 	isMaskedValue,
+	keyed,
 	unmasked,
 } from './endpoints/shared';
 
@@ -152,6 +154,29 @@ describe('entityId', () => {
 	});
 });
 
+describe('keyed', () => {
+	it('accepts a key with any part present', () => {
+		expect(keyed('toyota', null, undefined)).toBe(true);
+		expect(keyed(null, 'corolla')).toBe(true);
+		expect(keyed(undefined, undefined, 1993)).toBe(true);
+	});
+
+	it('rejects a key with nothing in any part', () => {
+		expect(keyed(null, undefined)).toBe(false);
+		expect(keyed()).toBe(false);
+	});
+
+	it('treats whitespace as absent, matching entityId trimming', () => {
+		expect(keyed('   ', '')).toBe(false);
+	});
+
+	it('is independent of how many parts the key has', () => {
+		// Comparing entityId's output against '|' only catches a two-part key.
+		expect(keyed(null, null, null)).toBe(false);
+		expect(entityId(null, null, null)).toBe('||');
+	});
+});
+
 describe('imageContentType', () => {
 	it.each([
 		['png', 'image/png'],
@@ -179,6 +204,24 @@ describe('imageContentType', () => {
 	});
 });
 
+describe('imageEncoding', () => {
+	it.each(['svg', 'eps', 'SVG'])(
+		'reports %s as exact, because the payload is text',
+		(format) => {
+			expect(imageEncoding(format)).toBe('text');
+		},
+	);
+
+	it.each(['png', 'jpg', 'jpeg', 'webp', undefined, ''])(
+		'reports %s as lossy, because the transport decodes bytes as text',
+		(format) => {
+			// The caller needs to know the difference: one of these can be written
+			// back out as an image and the other cannot.
+			expect(imageEncoding(format)).toBe('lossy-text');
+		},
+	);
+});
+
 describe('asArray', () => {
 	it('passes an array through', () => {
 		const rows = [{ id: 1 }, { id: 2 }];
@@ -203,7 +246,7 @@ describe('auditPayload', () => {
 	it('records named identifiers by value', () => {
 		expect(auditPayload({ ticker: 'AAPL', year: 2026 }, ['ticker'])).toEqual({
 			ticker: 'AAPL',
-			fields: ['ticker', 'year'],
+			supplied_fields: ['ticker', 'year'],
 		});
 	});
 
@@ -212,14 +255,14 @@ describe('auditPayload', () => {
 		// values it used.
 		const payload = auditPayload({ city: 'London', state: 'England' }, []);
 
-		expect(payload.fields).toEqual(['city', 'state']);
+		expect(payload.supplied_fields).toEqual(['city', 'state']);
 		expect(payload.city).toBeUndefined();
 	});
 
 	it('ignores an identifier that was not supplied', () => {
 		expect(
 			auditPayload({ ticker: undefined, limit: 5 }, ['ticker', 'limit']),
-		).toEqual({ limit: 5, fields: ['limit'] });
+		).toEqual({ limit: 5, supplied_fields: ['limit'] });
 	});
 
 	it('omits the fields list entirely when nothing was supplied', () => {
@@ -262,7 +305,7 @@ describe('auditPayload', () => {
 
 		expect(payload.data).toBeUndefined();
 		expect(payload.data_length).toBeUndefined();
-		expect(payload.fields).toEqual(['data']);
+		expect(payload.supplied_fields).toEqual(['data']);
 	});
 });
 

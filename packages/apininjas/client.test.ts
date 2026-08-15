@@ -42,8 +42,13 @@ function mockResponses(
 	}) as unknown as typeof global.fetch;
 }
 
+const realFetch = global.fetch;
+
 beforeEach(() => {
 	calls = [];
+	// Each test stubs fetch; restoring it first keeps a stub from leaking into a
+	// test that meant to observe the unstubbed transport.
+	global.fetch = realFetch;
 });
 
 describe('buildQuery', () => {
@@ -175,19 +180,30 @@ describe('request shape', () => {
 
 describe('rate limiting', () => {
 	it('retries a 429 and returns the eventual success', async () => {
+		// The client waits a second before the first retry. Fake timers keep that
+		// out of the suite's runtime while still exercising the delay.
+		jest.useFakeTimers();
 		mockResponses([
 			{ status: 429, body: { error: 'Too Many Requests' } },
 			{ status: 200, body: { price: '63115.00' } },
 		]);
 
-		const result = await makeApiNinjasRequest<{ price: string }>(
-			'cryptoprice',
-			TEST_KEY,
-			{ query: { symbol: 'BTCUSDT' } },
-		);
+		try {
+			const pending = makeApiNinjasRequest<{ price: string }>(
+				'cryptoprice',
+				TEST_KEY,
+				{ query: { symbol: 'BTCUSDT' } },
+			);
 
-		expect(calls).toHaveLength(2);
-		expect(result.price).toBe('63115.00');
+			// Let the rejected attempt settle, then run the backoff timer out.
+			await jest.advanceTimersByTimeAsync(2000);
+			const result = await pending;
+
+			expect(calls).toHaveLength(2);
+			expect(result.price).toBe('63115.00');
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 
 	it('does not retry a 400', async () => {

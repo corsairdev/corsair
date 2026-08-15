@@ -174,7 +174,6 @@ export const airports: ApiNinjasEndpoints['transportAirports'] = async (
 				'continent',
 				'surface',
 				'has_lights',
-				'q',
 				'include_closed',
 				'limit',
 				'sort',
@@ -357,7 +356,7 @@ export const vin: ApiNinjasEndpoints['transportVin'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'apininjas.transport.vin',
-		withCount(auditPayload(input, ['vin']), result),
+		withCount(auditPayload(input, []), result),
 		'completed',
 	);
 	return result;

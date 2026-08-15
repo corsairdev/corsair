@@ -898,7 +898,7 @@ const CASES: Case[] = [
 		key: 'healthRecipes',
 		path: 'health.recipes',
 		call: (ctx, input) => Health.recipes(ctx, input as never),
-		input: { query: 'pasta' },
+		input: { title: 'pasta' },
 		url: 'https://api.api-ninjas.com/v3/recipe',
 		method: 'GET',
 	},
@@ -1152,6 +1152,29 @@ const CASES: Case[] = [
 
 const capturedResponses = CAPTURED_RESPONSES;
 
+/** Operations whose response is an image, so the mock must not claim JSON. */
+const IMAGE_OPERATIONS = new Set([
+	'utility.qrCode',
+	'utility.barcode',
+	'utility.randomImage',
+]);
+
+/**
+ * Operations the free tier refuses, so no response could be captured. Listed
+ * explicitly: a fixture missing for any other operation is a mistake.
+ */
+const UNCAPTURED = new Set([
+	'calendarWorldTime',
+	'internetWhois',
+	'marketsTickerList',
+	'marketsEarningsTranscript',
+	'marketsConvertCurrency',
+	'marketsExchangeRate',
+	'economicsInflation',
+	'economicsInterestRate',
+	'healthNutrition',
+]);
+
 describe('every operation issues the documented request', () => {
 	beforeEach(() => {
 		lastCall = undefined;
@@ -1161,11 +1184,16 @@ describe('every operation issues the documented request', () => {
 		'%s',
 		async (_path, testCase) => {
 			const { ctx } = makeCtx();
-			const body = capturedResponses[testCase.key] ?? {};
-			const isImage =
-				testCase.path.startsWith('utility.qrCode') ||
-				testCase.path.startsWith('utility.barcode') ||
-				testCase.path.startsWith('utility.randomImage');
+			// Nine operations are premium-gated on the free tier and have no
+			// capture; every other case must have one, so a missing fixture fails
+			// here rather than quietly testing against an empty object.
+			const body = UNCAPTURED.has(testCase.key)
+				? {}
+				: capturedResponses[testCase.key as keyof typeof capturedResponses];
+			if (!UNCAPTURED.has(testCase.key)) {
+				expect(body).toBeDefined();
+			}
+			const isImage = IMAGE_OPERATIONS.has(testCase.path);
 			mockResponse(body, isImage ? 'image/svg+xml' : 'application/json');
 
 			await testCase.call(ctx, testCase.input);

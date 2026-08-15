@@ -1004,7 +1004,7 @@ const apiNinjasEndpointMeta = {
 	'internet.whois': {
 		riskLevel: 'read',
 		description:
-			'Returns domain registration details (e.g [premium plan required]',
+			'Returns domain registration details (e.g. registrar, contact information, expiration date, name servers) for a given domain name [premium plan required]',
 	},
 	'internet.ipLookup': {
 		riskLevel: 'read',
@@ -1070,7 +1070,7 @@ const apiNinjasEndpointMeta = {
 	'markets.ticker': {
 		riskLevel: 'read',
 		description:
-			'Returns comprehensive company profile information including company name, CEO, address, financial data, exchange information, identifiers (CIK, CUS...',
+			'Returns comprehensive company profile information including company name, CEO, address, financial data, exchange information, identifiers...',
 	},
 	'markets.tickerList': {
 		riskLevel: 'read',

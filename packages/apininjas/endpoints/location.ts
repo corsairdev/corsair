@@ -34,10 +34,7 @@ export const geocode: ApiNinjasEndpoints['locationGeocode'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.location.geocode',
-		withCount(
-			auditPayload(input, ['city', 'state', 'country', 'zipcode']),
-			result,
-		),
+		withCount(auditPayload(input, ['city', 'state', 'country']), result),
 		'completed',
 	);
 	return result;
@@ -59,7 +56,7 @@ export const reverseGeocode: ApiNinjasEndpoints['locationReverseGeocode'] =
 		await logEventFromContext(
 			ctx,
 			'apininjas.location.reverseGeocode',
-			withCount(auditPayload(input, ['lat', 'lon']), result),
+			withCount(auditPayload(input, []), result),
 			'completed',
 		);
 		return result;
@@ -100,10 +97,6 @@ export const cities: ApiNinjasEndpoints['locationCities'] = async (
 			auditPayload(input, [
 				'name',
 				'country',
-				'min_lat',
-				'max_lat',
-				'min_lon',
-				'max_lon',
 				'min_population',
 				'max_population',
 				'limit',
@@ -211,7 +204,7 @@ export const county: ApiNinjasEndpoints['locationCounty'] = async (
 		ctx,
 		'apininjas.location.county',
 		withCount(
-			auditPayload(input, ['county', 'zipcode', 'state', 'limit', 'offset']),
+			auditPayload(input, ['county', 'state', 'limit', 'offset']),
 			result,
 		),
 		'completed',
@@ -238,7 +231,7 @@ export const zipCode: ApiNinjasEndpoints['locationZipCode'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.location.zipCode',
-		withCount(auditPayload(input, ['zip', 'city', 'state']), result),
+		withCount(auditPayload(input, ['city', 'state']), result),
 		'completed',
 	);
 	return result;
@@ -263,7 +256,7 @@ export const postalCode: ApiNinjasEndpoints['locationPostalCode'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.location.postalCode',
-		withCount(auditPayload(input, ['postal_code', 'city', 'province']), result),
+		withCount(auditPayload(input, ['city', 'province']), result),
 		'completed',
 	);
 	return result;
@@ -360,12 +353,7 @@ export const hospitals: ApiNinjasEndpoints['locationHospitals'] = async (
 				'name',
 				'city',
 				'state',
-				'zipcode',
 				'county',
-				'min_latitude',
-				'max_latitude',
-				'min_longitude',
-				'max_longitude',
 				'limit',
 				'offset',
 			]),
@@ -399,14 +387,7 @@ export const evChargers: ApiNinjasEndpoints['locationEvChargers'] = async (
 		ctx,
 		'apininjas.location.evChargers',
 		withCount(
-			auditPayload(input, [
-				'lat',
-				'lon',
-				'distance',
-				'level',
-				'limit',
-				'offset',
-			]),
+			auditPayload(input, ['distance', 'level', 'limit', 'offset']),
 			result,
 		),
 		'completed',
@@ -439,10 +420,7 @@ export const weather: ApiNinjasEndpoints['locationWeather'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.location.weather',
-		withCount(
-			auditPayload(input, ['lat', 'lon', 'zip', 'city', 'state', 'country']),
-			result,
-		),
+		withCount(auditPayload(input, ['city', 'state', 'country']), result),
 		'completed',
 	);
 	return result;
@@ -468,10 +446,7 @@ export const weatherForecast: ApiNinjasEndpoints['locationWeatherForecast'] =
 		await logEventFromContext(
 			ctx,
 			'apininjas.location.weatherForecast',
-			withCount(
-				auditPayload(input, ['lat', 'lon', 'zip', 'city', 'state', 'country']),
-				result,
-			),
+			withCount(auditPayload(input, ['city', 'state', 'country']), result),
 			'completed',
 		);
 		return result;
@@ -502,10 +477,7 @@ export const airQuality: ApiNinjasEndpoints['locationAirQuality'] = async (
 	await logEventFromContext(
 		ctx,
 		'apininjas.location.airQuality',
-		withCount(
-			auditPayload(input, ['lat', 'lon', 'city', 'state', 'country']),
-			result,
-		),
+		withCount(auditPayload(input, ['city', 'state', 'country']), result),
 		'completed',
 	);
 	return result;

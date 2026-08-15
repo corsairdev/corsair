@@ -701,12 +701,36 @@ describe('rows that cannot be keyed', () => {
 		['country', cacheCountries, { capital: 'Berlin' }],
 		['stock exchange', cacheStockExchanges, { city: 'New York City' }],
 		['emoji', cacheEmoji, { group: 'smileys_emotion' }],
+		['aircraft', cacheAircraft, { engine_type: 'Jet' }],
+		['city', cacheCities, { population: 1 }],
+		['university', cacheUniversities, { city: 'Cambridge' }],
+		// The vehicle helpers key on three parts, so a row that carried none of
+		// them used to be stored under 'car|||' - and the next such row overwrote
+		// it. A key of more than two parts is also why the guard checks the parts
+		// rather than comparing the joined string to '|'.
+		['car', cacheCars, { fuel_type: 'gas' }],
+		['motorcycle', cacheMotorcycles, { type: 'ATV' }],
+		[
+			'electric vehicle',
+			cacheElectricVehicles,
+			{ battery_type: 'Lithium-ion' },
+		],
 	])('drops an unkeyable %s', async (_label, cache, row) => {
 		const store = makeStore();
 
 		await cache(store, [row as never], AT);
 
 		expect(store.upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('still stores a vehicle identified by only one of its three parts', async () => {
+		// The guard rejects a row with nothing to key on, not a partial one.
+		const store = makeStore();
+
+		await cacheCars(store, [{ model: 'corolla' }], AT);
+
+		expect(store.upsertByEntityId).toHaveBeenCalledTimes(1);
+		expect(store.upsertByEntityId.mock.calls[0]?.[0]).toBe('car||corolla|');
 	});
 });
 
