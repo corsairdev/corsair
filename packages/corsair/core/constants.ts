@@ -19,8 +19,8 @@ export const BaseProviders = [
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agenty',
 	'agentql',
+	'agenty',
 	'ahrefs',
 	'aimlapi',
 	'airtable',
@@ -29,10 +29,11 @@ export const BaseProviders = [
 	'alphavantage',
 	'alttextai',
 	'amara',
-	'ambientweather',
 	'ambee',
+	'ambientweather',
 	'amcards',
 	'amplitude',
+	'apaleo',
 	'apibible',
 	'apify',
 	'apilabz',
@@ -44,10 +45,10 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'box',
-	'canvas',
 	'cal',
 	'calendly',
 	'canva',
+	'canvas',
 	'cloudflare',
 	'cloudinary',
 	'confluence',
@@ -150,8 +151,8 @@ export const ProviderDisplayNames = {
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agenty: 'Agenty',
 	agentql: 'AgentQL',
+	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
@@ -160,10 +161,11 @@ export const ProviderDisplayNames = {
 	alphavantage: 'Alpha Vantage',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
-	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	apaleo: 'Apaleo',
 	apibible: 'API.Bible',
 	apify: 'Apify',
 	apilabz: 'API Labz',
@@ -175,10 +177,10 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	box: 'Box',
-	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
@@ -288,8 +290,8 @@ export type AllProviders =
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agenty'
 	| 'agentql'
+	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
 	| 'airtable'
@@ -298,10 +300,11 @@ export type AllProviders =
 	| 'alphavantage'
 	| 'alttextai'
 	| 'amara'
-	| 'ambientweather'
 	| 'ambee'
+	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
+	| 'apaleo'
 	| 'apibible'
 	| 'apify'
 	| 'apilabz'
@@ -315,8 +318,8 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
-	| 'canvas'
 	| 'canva'
+	| 'canvas'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
