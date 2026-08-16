@@ -2879,7 +2879,7 @@ export const bitbucketOperationCatalog = [
 		code: 'BITBUCKET_UPDATE_ISSUE',
 		title: 'Update an issue',
 		description:
-			'Updates an existing issue in a Bitbucket repository by modifying specified attributes; requires `workspace`, `repo_slug`, `issue_id`, and at least one attribute to update.',
+			'Updates an existing issue in a Bitbucket repository by modifying specified attributes; requires `workspace`, `repo_slug`, `issue_id`, and a `body` setting at least one of `title`, `content`, `state`, `kind`, `priority`, `assignee`, `milestone`, `component` or `version`. An empty body is rejected because it would leave the issue unchanged.',
 		providerOperationId:
 			'PUT /repositories/{workspace}/{repo_slug}/issues/{issue_id}',
 		key: 'updateIssue',

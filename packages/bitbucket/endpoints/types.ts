@@ -4,6 +4,62 @@ export const BitbucketRequestBodySchema = z.union([
 	z.object({}).loose(),
 	z.array(z.object({}).loose()),
 ]);
+/**
+ * Attributes `PUT /repositories/{workspace}/{repo_slug}/issues/{issue_id}`
+ * updates. Bitbucket requires at least one of them — a payload without any is
+ * either rejected or silently leaves the issue unchanged — so the body schema
+ * below refuses `{}` and bodies that carry only unrecognized keys.
+ */
+export const bitbucketIssueUpdateAttributes = [
+	'title',
+	'content',
+	'state',
+	'kind',
+	'priority',
+	'assignee',
+	'milestone',
+	'component',
+	'version',
+] as const;
+export const BitbucketIssueUpdateBodySchema = z
+	.object({
+		title: z.string().min(1).optional(),
+		content: z.object({ raw: z.string() }).loose().optional(),
+		state: z
+			.enum([
+				'new',
+				'open',
+				'resolved',
+				'on hold',
+				'invalid',
+				'duplicate',
+				'wontfix',
+				'closed',
+			])
+			.optional(),
+		kind: z.enum(['bug', 'enhancement', 'proposal', 'task']).optional(),
+		priority: z
+			.enum(['trivial', 'minor', 'major', 'critical', 'blocker'])
+			.optional(),
+		// `null` clears the field; an object selects one (by uuid, account_id or name).
+		assignee: z.object({}).loose().nullable().optional(),
+		milestone: z.object({}).loose().nullable().optional(),
+		component: z.object({}).loose().nullable().optional(),
+		version: z.object({}).loose().nullable().optional(),
+	})
+	.loose()
+	.refine(
+		(body) =>
+			bitbucketIssueUpdateAttributes.some(
+				(attribute) => body[attribute] !== undefined,
+			),
+		{
+			message:
+				'must set at least one issue attribute to update (' +
+				bitbucketIssueUpdateAttributes.join(', ') +
+				')',
+		},
+	);
 export const BitbucketResponseSchema = z.union([
 	z.object({}).loose(),
 	z.array(z.unknown()),
@@ -751,7 +807,7 @@ export const BitbucketEndpointInputSchemas = {
 			issue_id: z.union([z.string(), z.number().int()]),
 			repo_slug: z.string(),
 			workspace: z.string(),
-			body: BitbucketRequestBodySchema,
+			body: BitbucketIssueUpdateBodySchema,
 		})
 		.strict(),
 	updateRepositoriesCommitComments: z

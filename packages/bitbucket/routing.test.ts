@@ -121,6 +121,61 @@ describe('Bitbucket routing coverage', () => {
 		const wire = buildBitbucketWireRequest(operation!, parsed);
 		expect(wire.body).toEqual({ title: 'Updated issue title' });
 	});
+	describe('updateIssue body contract', () => {
+		const parse = (body: unknown) =>
+			BitbucketEndpointInputSchemas.updateIssue.safeParse({
+				workspace: 'team',
+				repo_slug: 'repository',
+				issue_id: 1,
+				body,
+			});
+		it('rejects a body that updates nothing', () => {
+			for (const body of [
+				{},
+				{ unknown_attribute: 'value' },
+				{ title: undefined },
+			]) {
+				const result = parse(body);
+				expect(result.success).toBe(false);
+				expect(result.error?.issues[0]?.message).toContain(
+					'at least one issue attribute',
+				);
+			}
+		});
+		it('rejects a missing body outright', () => {
+			expect(parse(undefined).success).toBe(false);
+		});
+		it('accepts every documented attribute on its own', () => {
+			const bodies: Record<string, unknown>[] = [
+				{ title: 'New title' },
+				{ content: { raw: 'Updated description' } },
+				{ state: 'resolved' },
+				{ kind: 'bug' },
+				{ priority: 'critical' },
+				{ assignee: { uuid: '{some-uuid}' } },
+				{ assignee: null },
+				{ milestone: { name: '1.0' } },
+				{ component: { name: 'api' } },
+				{ version: { name: '2.1' } },
+			];
+			for (const body of bodies) expect(parse(body).success).toBe(true);
+		});
+		it('keeps unrecognized keys once a known attribute is present', () => {
+			const result = parse({ state: 'closed', future_field: 'kept' });
+			expect(result.success).toBe(true);
+			expect(result.data?.body).toEqual({
+				state: 'closed',
+				future_field: 'kept',
+			});
+		});
+		it('rejects attribute values Bitbucket does not accept', () => {
+			expect(parse({ title: '' }).success).toBe(false);
+			expect(parse({ state: 'Resolved' }).success).toBe(false);
+			expect(parse({ kind: 'defect' }).success).toBe(false);
+			expect(parse({ priority: 'urgent' }).success).toBe(false);
+			expect(parse({ content: 'raw text' }).success).toBe(false);
+		});
+	});
 	it('rejects dot segments in path parameters and only spans segments for refs and file paths', () => {
 		const browse = bitbucketOperationCatalog.find(
 			(row) => row.code === 'BITBUCKET_BROWSE_REPOSITORY_PATH',

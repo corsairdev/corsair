@@ -1020,6 +1020,28 @@ const bitbucketEndpointMeta = {
 >;
 const defaultAuthType = 'oauth_2' as const;
 /**
+ * In-flight forced refresh per connection. Bitbucket rotates refresh tokens, so
+ * two concurrent refreshes would present the same token twice and the loser
+ * fails with `invalid_grant`. Endpoint calls of one binding share a single keys
+ * manager instance, which makes it a stable per-connection scope: the first
+ * caller runs the refresh and persists the rotated token, and everyone who
+ * arrives while it is running awaits that same result.
+ */
+const inFlightBitbucketRefresh = new WeakMap<object, Promise<string>>();
+function refreshBitbucketTokenOnce(
+	scope: object,
+	run: () => Promise<string>,
+): Promise<string> {
+	const existing = inFlightBitbucketRefresh.get(scope);
+	if (existing) return existing;
+	const pending = run().finally(() => {
+		if (inFlightBitbucketRefresh.get(scope) === pending)
+			inFlightBitbucketRefresh.delete(scope);
+	});
+	inFlightBitbucketRefresh.set(scope, pending);
+	return pending;
+}
+/**
  * Scopes requested when the caller does not pass `options.scopes`. Every scope
  * here is required by at least one catalog operation — `repository:admin` by
  * `createRepository`, `repository:delete` by `deleteRepository`,
@@ -1113,26 +1135,27 @@ export function bitbucket<const T extends BitbucketPluginOptions>(
 				]);
 			(
 				ctx as unknown as { _refreshAuth?: () => Promise<string> }
-			)._refreshAuth = async () => {
-				// Read the persisted token on every call: Bitbucket rotates refresh
-				// tokens, so a token captured when the key was built goes stale after
-				// the first refresh.
-				const storedRefreshToken = await ctx.keys.get_refresh_token();
-				const fresh = await getValidBitbucketAccessToken({
-					refreshToken: storedRefreshToken ?? refreshToken,
-					clientId: credentials.client_id,
-					clientSecret: credentials.client_secret,
-					forceRefresh: true,
+			)._refreshAuth = () =>
+				refreshBitbucketTokenOnce(ctx.keys, async () => {
+					// Read the persisted token on every call: Bitbucket rotates refresh
+					// tokens, so a token captured when the key was built goes stale after
+					// the first refresh.
+					const storedRefreshToken = await ctx.keys.get_refresh_token();
+					const fresh = await getValidBitbucketAccessToken({
+						refreshToken: storedRefreshToken ?? refreshToken,
+						clientId: credentials.client_id,
+						clientSecret: credentials.client_secret,
+						forceRefresh: true,
+					});
+					await Promise.all([
+						ctx.keys.set_access_token(fresh.accessToken),
+						ctx.keys.set_expires_at(String(fresh.expiresAt)),
+						fresh.refreshToken
+							? ctx.keys.set_refresh_token(fresh.refreshToken)
+							: Promise.resolve(),
+					]);
+					return fresh.accessToken;
 				});
-				await Promise.all([
-					ctx.keys.set_access_token(fresh.accessToken),
-					ctx.keys.set_expires_at(String(fresh.expiresAt)),
-					fresh.refreshToken
-						? ctx.keys.set_refresh_token(fresh.refreshToken)
-						: Promise.resolve(),
-				]);
-				return fresh.accessToken;
-			};
 			return result.accessToken;
 		},
 	} satisfies InternalBitbucketPlugin;
