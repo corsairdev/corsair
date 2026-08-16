@@ -1,9 +1,12 @@
 import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
+import type { ZodTypeAny } from 'zod';
+import type { BasecampAuthContext } from '../client';
 import {
 	BASECAMP_DEFAULT_USER_AGENT,
+	BasecampSchemaError,
 	compactObject,
-	makeBasecampRequest,
+	makeAuthenticatedBasecampRequest,
 } from '../client';
 import type { BasecampContext } from '../index';
 import { basecampAuditPayload } from './logging';
@@ -12,6 +15,40 @@ import { basecampOperationByKey } from './operations';
 import { evictBasecampResult, mirrorBasecampResult } from './persist';
 import { resolveBasecampAccountId } from './shared';
 import type { BasecampEndpointInputs, BasecampEndpointOutputs } from './types';
+import {
+	BasecampEndpointInputSchemas,
+	BasecampEndpointOutputSchemas,
+} from './types';
+
+/**
+ * Applies the registered schema, turning zod failures into a BasecampSchemaError
+ * the plugin error handlers classify as VALIDATION_ERROR. Inputs are checked
+ * before the request is built so malformed calls never reach Basecamp; outputs
+ * are checked so callers get the types the endpoint advertises.
+ */
+function parseWithSchema<T>(
+	schema: ZodTypeAny,
+	value: unknown,
+	direction: 'input' | 'output',
+	path: string,
+): T {
+	const result = schema.safeParse(value);
+	if (result.success) return result.data as T;
+	const issues = result.error.issues.map((issue) => ({
+		path: issue.path.join('.') || '(root)',
+		message: issue.message,
+	}));
+	throw new BasecampSchemaError(
+		'[BASECAMP] Invalid ' +
+			direction +
+			' for ' +
+			path +
+			': ' +
+			issues.map((issue) => issue.path + ' — ' + issue.message).join('; '),
+		direction,
+		issues,
+	);
+}
 
 function pathValue(value: unknown, name: string): string {
 	if (typeof value !== 'string' && typeof value !== 'number') {
@@ -78,15 +115,26 @@ export function createBasecampEndpoint<K extends BasecampEndpointKey>(
 	BasecampEndpointOutputs[K]
 > {
 	return async (ctx, typedInput) => {
-		const input = typedInput as Record<string, unknown>;
 		const definition = basecampOperationByKey[key];
+		const input = parseWithSchema<Record<string, unknown>>(
+			BasecampEndpointInputSchemas[key],
+			typedInput,
+			'input',
+			definition.path,
+		);
 		const accountId = await resolveBasecampAccountId(ctx);
 		const wire = buildBasecampWireRequest(definition, input, accountId);
-		const response = await makeBasecampRequest<BasecampEndpointOutputs[K]>(
+		const raw = await makeAuthenticatedBasecampRequest<unknown>(
 			wire.url,
-			ctx.key,
+			ctx as unknown as BasecampAuthContext,
 			ctx.options.userAgent ?? BASECAMP_DEFAULT_USER_AGENT,
 			wire,
+		);
+		const response = parseWithSchema<BasecampEndpointOutputs[K]>(
+			BasecampEndpointOutputSchemas[key],
+			raw,
+			'output',
+			definition.path,
 		);
 		await mirrorBasecampResult(
 			ctx.db,

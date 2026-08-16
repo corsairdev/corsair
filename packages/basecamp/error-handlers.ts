@@ -3,6 +3,7 @@ import {
 	BasecampAccountIdMissingError,
 	BasecampAPIError,
 	BasecampOAuthError,
+	BasecampSchemaError,
 } from './client';
 import { basecampReadOperationPaths } from './endpoints/operations';
 
@@ -41,6 +42,7 @@ export const errorHandlers = {
 	VALIDATION_ERROR: {
 		match: (error: Error) =>
 			error instanceof BasecampAccountIdMissingError ||
+			error instanceof BasecampSchemaError ||
 			(error instanceof BasecampAPIError &&
 				(error.status === 400 || error.status === 422)),
 		handler: async () => ({ maxRetries: 0 }),

@@ -1464,7 +1464,6 @@ export const basecampEndpointMeta = {
 	},
 	'recordingsAndSubscriptions.putBucketsRecordingsStatusArchived': {
 		riskLevel: 'destructive',
-		irreversible: true,
 		description:
 			'Tool to mark a recording as archived in a Basecamp project. Use when you need to archive a recording to remove it from active view while preserving it for reference.',
 	},
@@ -1580,6 +1579,9 @@ export function basecamp<const T extends BasecampPluginOptions>(
 				clientId: credentials.client_id,
 				clientSecret: credentials.client_secret,
 			});
+			// Mutable so repeated _refreshAuth calls use the latest token: Launchpad
+			// may rotate refresh_token, and the stale one is rejected once it does.
+			let currentRefreshToken = result.refreshToken ?? refreshToken;
 			if (result.refreshed) {
 				await Promise.all([
 					ctx.keys.set_access_token(result.accessToken),
@@ -1593,11 +1595,12 @@ export function basecamp<const T extends BasecampPluginOptions>(
 				ctx as unknown as { _refreshAuth?: () => Promise<string> }
 			)._refreshAuth = async () => {
 				const fresh = await getValidBasecampAccessToken({
-					refreshToken: result.refreshToken ?? refreshToken,
+					refreshToken: currentRefreshToken,
 					clientId: credentials.client_id,
 					clientSecret: credentials.client_secret,
 					forceRefresh: true,
 				});
+				if (fresh.refreshToken) currentRefreshToken = fresh.refreshToken;
 				await Promise.all([
 					ctx.keys.set_access_token(fresh.accessToken),
 					ctx.keys.set_expires_at(String(fresh.expiresAt)),

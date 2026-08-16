@@ -2,6 +2,7 @@ import {
 	BasecampAccountIdMissingError,
 	BasecampAPIError,
 	BasecampOAuthError,
+	BasecampSchemaError,
 } from './client';
 import { basecampAuditPayload } from './endpoints/logging';
 import { basecampOperationCatalog } from './endpoints/operations';
@@ -95,6 +96,9 @@ describe('Basecamp errors and audit safety', () => {
 		expect(handlerFor(new BasecampAccountIdMissingError())).toBe(
 			'VALIDATION_ERROR',
 		);
+		expect(handlerFor(new BasecampSchemaError('bad input', 'input'))).toBe(
+			'VALIDATION_ERROR',
+		);
 		expect(
 			await errorHandlers.RATE_LIMIT_ERROR.handler(
 				new BasecampAPIError('rate', 429),
@@ -120,5 +124,22 @@ describe('Basecamp errors and audit safety', () => {
 		expect(JSON.stringify(payload)).not.toMatch(
 			/private message|secret|person@example.com/,
 		);
+	});
+
+	it('logs the camelCase identifiers the endpoint inputs actually use', () => {
+		const payload = basecampAuditPayload({
+			bucketId: 1,
+			recordingId: '2',
+			campfireId: 3,
+			subscriptionIds: [4, 5],
+			valid: 'not an identifier',
+		});
+		expect(payload).toMatchObject({
+			bucketId: 1,
+			recordingId: '2',
+			campfireId: 3,
+			subscriptionIds_count: 2,
+		});
+		expect(payload).not.toHaveProperty('valid');
 	});
 });

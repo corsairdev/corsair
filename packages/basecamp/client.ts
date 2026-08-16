@@ -51,6 +51,20 @@ export class BasecampAPIError extends Error {
 	}
 }
 
+export type BasecampSchemaIssue = { path: string; message: string };
+
+/** Raised when an endpoint input or a Basecamp response fails its zod schema. */
+export class BasecampSchemaError extends Error {
+	constructor(
+		message: string,
+		public readonly direction: 'input' | 'output',
+		public readonly issues: BasecampSchemaIssue[] = [],
+	) {
+		super(message);
+		this.name = 'BasecampSchemaError';
+	}
+}
+
 export function validateAccountId(value: string): string {
 	if (!/^[0-9]+$/.test(value)) {
 		throw new BasecampAccountIdMissingError();
@@ -258,6 +272,48 @@ export async function makeBasecampRequest<T>(
 				'Basecamp API request failed with status ' + error.status,
 				error.status,
 				error.retryAfter,
+			);
+		}
+		throw error;
+	}
+}
+
+export type BasecampAuthContext = {
+	key: string;
+	/**
+	 * Attached ad hoc by the plugin keyBuilder (see index.ts) so a rejected token
+	 * can be force-refreshed here; absent when the caller supplies a static key.
+	 */
+	_refreshAuth?: () => Promise<string>;
+};
+
+/**
+ * Wrapper around makeBasecampRequest that retries once on 401 by force-refreshing
+ * the access token. Covers tokens Basecamp rejects before their stored `expires_at`
+ * (revoked, or rotated out of band), which the keyBuilder's expiry check cannot see.
+ */
+export async function makeAuthenticatedBasecampRequest<T>(
+	endpoint: string,
+	ctx: BasecampAuthContext,
+	userAgent: string,
+	options: BasecampRequestOptions,
+): Promise<T> {
+	try {
+		return await makeBasecampRequest<T>(endpoint, ctx.key, userAgent, options);
+	} catch (error) {
+		// Keyed chatbot calls send no bearer token, so a 401 there is not refreshable.
+		if (
+			options.authenticated !== false &&
+			error instanceof BasecampAPIError &&
+			error.status === 401 &&
+			ctx._refreshAuth
+		) {
+			const freshToken = await ctx._refreshAuth();
+			return await makeBasecampRequest<T>(
+				endpoint,
+				freshToken,
+				userAgent,
+				options,
 			);
 		}
 		throw error;

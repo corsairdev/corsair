@@ -16,16 +16,16 @@ describe('Basecamp generated schemas', () => {
 	it.each(basecampOperationCatalog)(
 		'$code accepts its generated minimal input and documented output shape',
 		(operation) => {
-			expect(
-				BasecampEndpointInputSchemas[operation.key].safeParse(
-					operation.exampleInput,
-				).success,
-			).toBe(true);
-			expect(
-				BasecampEndpointOutputSchemas[operation.key].safeParse(
-					operation.exampleOutput,
-				).success,
-			).toBe(true);
+			// Assert on the issue list rather than `.success` so a failure reports the
+			// offending field and reason; the test name already names the operation.
+			const input = BasecampEndpointInputSchemas[operation.key].safeParse(
+				operation.exampleInput,
+			);
+			expect(input.error?.issues ?? []).toEqual([]);
+			const output = BasecampEndpointOutputSchemas[operation.key].safeParse(
+				operation.exampleOutput,
+			);
+			expect(output.error?.issues ?? []).toEqual([]);
 		},
 	);
 

@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import { buildBasecampWireRequest } from './endpoints/factory';
 import { basecampOperationCatalog } from './endpoints/operations';
@@ -9,7 +10,15 @@ jest.mock('corsair/http', () => {
 	return { ...actual, request: jest.fn() };
 });
 
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual('corsair/core');
+	return { ...actual, logEventFromContext: jest.fn() };
+});
+
 const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockLogEvent = logEventFromContext as jest.MockedFunction<
+	typeof logEventFromContext
+>;
 type Endpoint = (ctx: unknown, input: unknown) => Promise<unknown>;
 
 function context() {
@@ -35,6 +44,7 @@ describe('Basecamp routing coverage', () => {
 
 	beforeEach(() => {
 		mockRequest.mockReset();
+		mockLogEvent.mockReset();
 	});
 
 	it('registers exactly 161 unique catalog operations', () => {
@@ -83,17 +93,32 @@ describe('Basecamp routing coverage', () => {
 		},
 	);
 
-	it('uses the keyed chatbot URL without leaking the key into audit data', () => {
+	it('uses the keyed chatbot URL without leaking the key into audit data', async () => {
 		const operation = basecampOperationCatalog.find(
 			(row) => row.providerOperationId === 'PostChatbotLine',
 		);
 		expect(operation).toBeDefined();
-		const wire = buildBasecampWireRequest(
-			operation!,
-			{ chatbotKey: 'secret-key', bucketId: 1, campfireId: 2, content: 'hi' },
-			'42',
-		);
+		const input = {
+			chatbotKey: 'secret-key',
+			bucketId: 1,
+			campfireId: 2,
+			content: 'hi',
+		};
+		const wire = buildBasecampWireRequest(operation!, input, '42');
 		expect(wire.url).toContain('/integrations/secret-key/');
 		expect(wire.authenticated).toBe(false);
+
+		// Drive the endpoint so the audit-logging path itself is exercised, not
+		// just the payload builder it delegates to.
+		mockRequest.mockResolvedValueOnce(operation!.exampleOutput);
+		await endpointGroups[operation!.group]?.[operation!.key]?.(
+			context(),
+			input,
+		);
+
+		const [, eventType, auditPayload] = mockLogEvent.mock.calls.at(-1) ?? [];
+		expect(eventType).toBe('basecamp.' + operation!.path);
+		expect(JSON.stringify(auditPayload)).not.toContain('secret-key');
+		expect(auditPayload).toMatchObject({ bucketId: 1, campfireId: 2 });
 	});
 });
