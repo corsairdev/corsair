@@ -7,7 +7,7 @@ import {
 	cacheHeartbeatGroupsList,
 	evictHeartbeatGroups,
 } from './persist';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['heartbeatGroupsCreate'] = async (
@@ -73,9 +73,9 @@ export const list: BetterstackEndpoints['heartbeatGroupsList'] = async (
 		BetterstackEndpointOutputs['heartbeatGroupsList']
 	>('/api/v2/heartbeat-groups', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await cacheHeartbeatGroupsList(ctx.db.heartbeatGroups, result?.data);

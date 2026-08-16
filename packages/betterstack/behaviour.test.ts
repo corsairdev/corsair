@@ -115,6 +115,22 @@ const LIST = {
 	pagination: { first: null, last: null, prev: null, next: null },
 };
 
+/**
+ * Every operation that answers with the paginated list envelope, and so must
+ * accept the page controls that make anything past page one reachable.
+ */
+function isListOperation(op: { handler: string; group: string }) {
+	return (
+		op.handler === 'list' ||
+		op.handler === 'monitors' ||
+		op.handler === 'events' ||
+		op.handler === 'statusPages' ||
+		op.handler === 'timeline' ||
+		op.handler === 'relations' ||
+		op.group === 'integrations'
+	);
+}
+
 /** Picks the envelope an operation is expected to return. */
 function envelopeFor(op: {
 	handler: string;
@@ -122,15 +138,7 @@ function envelopeFor(op: {
 	method: string | null;
 }) {
 	if (op.method === 'DELETE') return {};
-	const listy =
-		op.handler === 'list' ||
-		op.handler === 'monitors' ||
-		op.handler === 'events' ||
-		op.handler === 'statusPages' ||
-		op.handler === 'timeline' ||
-		op.handler === 'relations' ||
-		op.group === 'integrations';
-	return listy ? LIST : SINGLE;
+	return isListOperation(op) ? LIST : SINGLE;
 }
 
 const registry: Record<string, Record<string, unknown>> = {
@@ -214,14 +222,25 @@ function inputFor(op: {
 
 import { compactBody, compactQuery } from './client';
 
+/**
+ * Creates only. A create decides the record's starting state, so defaulting an
+ * unnamed channel to false is a safe choice; a PATCH does not, and the same
+ * default there would silently disable a live alert. See PARTIAL_UPDATE_CASES.
+ */
 const FAIL_SAFE_CASES: ReadonlyArray<readonly [string, readonly string[]]> = [
 	['monitors.create', ['email', 'sms', 'call', 'push', 'critical_alert']],
-	['monitors.update', ['email', 'sms', 'call', 'push', 'critical_alert']],
 	['heartbeats.create', ['email', 'sms', 'call', 'push', 'critical_alert']],
-	['heartbeats.update', ['email', 'sms', 'call', 'push', 'critical_alert']],
 	['incidents.create', ['call', 'sms', 'email', 'push', 'critical_alert']],
 	['statusPageReports.create', ['notify_subscribers']],
 	['statusUpdates.create', ['notify_subscribers']],
+];
+
+/** The PATCH counterparts, which must leave an unnamed channel untouched. */
+const PARTIAL_UPDATE_CASES: ReadonlyArray<
+	readonly [string, readonly string[]]
+> = [
+	['monitors.update', ['email', 'sms', 'call', 'push', 'critical_alert']],
+	['heartbeats.update', ['email', 'sms', 'call', 'push', 'critical_alert']],
 	['statusUpdates.update', ['notify_subscribers']],
 ];
 
@@ -254,8 +273,8 @@ describe('request building', () => {
 });
 
 describe('fail-safe notification defaults', () => {
-	it('has a case for every operation that can page a human', () => {
-		expect(FAIL_SAFE_CASES.length).toBe(8);
+	it('has a case for every create that can page a human', () => {
+		expect(FAIL_SAFE_CASES.length).toBe(5);
 	});
 
 	it.each(FAIL_SAFE_CASES)(
@@ -296,6 +315,114 @@ describe('fail-safe notification defaults', () => {
 
 		await handlerFor('monitors.create')(ctx, { url: 'https://example.com' });
 		expect(requested().body?.email).toBe(false);
+	});
+});
+
+describe('partial updates preserve notification settings', () => {
+	it('has a case for every update that can page a human', () => {
+		expect(PARTIAL_UPDATE_CASES.length).toBe(3);
+	});
+
+	it.each(PARTIAL_UPDATE_CASES)(
+		'%s omits every notification channel the caller did not name',
+		async (key, fields) => {
+			const { ctx } = makeCtx();
+			mockResponse(SINGLE);
+
+			const op = OPERATION_TABLE.find((row) => row.key === key);
+			if (!op) throw new Error(`no operation row for ${key}`);
+
+			await handlerFor(key)(ctx, inputFor(op));
+			const body = requested().body ?? {};
+
+			expect(fields.length).toBeGreaterThan(0);
+			for (const field of fields) {
+				expect(Object.keys(body)).not.toContain(field);
+			}
+		},
+	);
+
+	it.each(PARTIAL_UPDATE_CASES)(
+		'%s still sends a channel the caller set explicitly',
+		async (key, fields) => {
+			const { ctx } = makeCtx();
+			mockResponse(SINGLE);
+
+			const op = OPERATION_TABLE.find((row) => row.key === key);
+			if (!op) throw new Error(`no operation row for ${key}`);
+
+			const field = fields[0];
+			if (!field) throw new Error(`no fields for ${key}`);
+
+			await handlerFor(key)(ctx, { ...inputFor(op), [field]: false });
+			expect(requested().body?.[field]).toBe(false);
+		},
+	);
+
+	it('editing a monitor url leaves its alerting alone', async () => {
+		// The regression this guards: a caller renaming a monitor would otherwise
+		// PATCH email/sms/call/push/critical_alert to false and mute a live alert.
+		const { ctx } = makeCtx();
+		mockResponse(SINGLE);
+
+		await handlerFor('monitors.update')(ctx, {
+			monitor_id: 1234567,
+			url: 'https://example.com/new',
+		});
+
+		expect(requested().body).toEqual({ url: 'https://example.com/new' });
+	});
+});
+
+describe('pagination', () => {
+	const collections = OPERATION_TABLE.filter(
+		(op) => op.api !== 'local' && isListOperation(op),
+	);
+
+	it('covers every operation returning the list envelope', () => {
+		expect(collections.length).toBe(37);
+	});
+
+	it.each(collections.map((op) => [op.key, op] as const))(
+		'%s forwards page and per_page',
+		async (key, op) => {
+			const { ctx } = makeCtx();
+			mockResponse(LIST);
+
+			await handlerFor(key)(ctx, { ...inputFor(op), page: 3, per_page: 25 });
+			const params = new URL(requested().url).searchParams;
+
+			expect(params.get('page')).toBe('3');
+			expect(params.get('per_page')).toBe('25');
+		},
+	);
+
+	it.each(collections.map((op) => [op.key, op] as const))(
+		'%s sends no page controls when the caller does not paginate',
+		async (key, op) => {
+			const { ctx } = makeCtx();
+			mockResponse(LIST);
+
+			await handlerFor(key)(ctx, inputFor(op));
+			const params = new URL(requested().url).searchParams;
+
+			expect(params.has('page')).toBe(false);
+			expect(params.has('per_page')).toBe(false);
+		},
+	);
+
+	it('keeps a list filter alongside the page controls', async () => {
+		const { ctx } = makeCtx();
+		mockResponse(LIST);
+
+		await handlerFor('monitors.list')(ctx, {
+			url: 'https://example.com',
+			page: 2,
+		});
+		const params = new URL(requested().url).searchParams;
+
+		expect(params.get('url')).toBe('https://example.com');
+		expect(params.get('page')).toBe('2');
 	});
 });
 

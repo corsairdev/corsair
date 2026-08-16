@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
+import { withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const awsCloudWatch: BetterstackEndpoints['integrationsAwsCloudWatch'] =
@@ -10,9 +11,9 @@ export const awsCloudWatch: BetterstackEndpoints['integrationsAwsCloudWatch'] =
 			BetterstackEndpointOutputs['integrationsAwsCloudWatch']
 		>('/api/v2/aws-cloudwatch-integrations', ctx.key, {
 			method: 'GET',
-			query: {
+			query: withPagination(input, {
 				team_name: input.team_name,
-			},
+			}),
 		});
 
 		await logEventFromContext(
@@ -32,9 +33,9 @@ export const azure: BetterstackEndpoints['integrationsAzure'] = async (
 		BetterstackEndpointOutputs['integrationsAzure']
 	>('/api/v2/azure-integrations', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -54,9 +55,9 @@ export const datadog: BetterstackEndpoints['integrationsDatadog'] = async (
 		BetterstackEndpointOutputs['integrationsDatadog']
 	>('/api/v2/datadog-integrations', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -76,9 +77,9 @@ export const elastic: BetterstackEndpoints['integrationsElastic'] = async (
 		BetterstackEndpointOutputs['integrationsElastic']
 	>('/api/v2/elastic-integrations', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -98,9 +99,9 @@ export const email: BetterstackEndpoints['integrationsEmail'] = async (
 		BetterstackEndpointOutputs['integrationsEmail']
 	>('/api/v2/email-integrations', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -118,9 +119,9 @@ export const googleMonitoring: BetterstackEndpoints['integrationsGoogleMonitorin
 			BetterstackEndpointOutputs['integrationsGoogleMonitoring']
 		>('/api/v2/google-monitoring-integrations', ctx.key, {
 			method: 'GET',
-			query: {
+			query: withPagination(input, {
 				team_name: input.team_name,
-			},
+			}),
 		});
 
 		await logEventFromContext(
@@ -140,9 +141,9 @@ export const grafana: BetterstackEndpoints['integrationsGrafana'] = async (
 		BetterstackEndpointOutputs['integrationsGrafana']
 	>('/api/v2/grafana-integrations', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -162,9 +163,9 @@ export const jira: BetterstackEndpoints['integrationsJira'] = async (
 		BetterstackEndpointOutputs['integrationsJira']
 	>('/api/v2/jira-integrations', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -184,9 +185,9 @@ export const newRelic: BetterstackEndpoints['integrationsNewRelic'] = async (
 		BetterstackEndpointOutputs['integrationsNewRelic']
 	>('/api/v2/new-relic-integrations', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -206,9 +207,9 @@ export const pagerDuty: BetterstackEndpoints['integrationsPagerDuty'] = async (
 		BetterstackEndpointOutputs['integrationsPagerDuty']
 	>('/api/v2/pager-duty-webhooks', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -226,9 +227,9 @@ export const prometheus: BetterstackEndpoints['integrationsPrometheus'] =
 			BetterstackEndpointOutputs['integrationsPrometheus']
 		>('/api/v2/prometheus-integrations', ctx.key, {
 			method: 'GET',
-			query: {
+			query: withPagination(input, {
 				team_name: input.team_name,
-			},
+			}),
 		});
 
 		await logEventFromContext(
@@ -248,9 +249,9 @@ export const slack: BetterstackEndpoints['integrationsSlack'] = async (
 		BetterstackEndpointOutputs['integrationsSlack']
 	>('/api/v2/slack-integrations', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -268,9 +269,9 @@ export const splunkOnCall: BetterstackEndpoints['integrationsSplunkOnCall'] =
 			BetterstackEndpointOutputs['integrationsSplunkOnCall']
 		>('/api/v2/splunk-on-calls', ctx.key, {
 			method: 'GET',
-			query: {
+			query: withPagination(input, {
 				team_name: input.team_name,
-			},
+			}),
 		});
 
 		await logEventFromContext(

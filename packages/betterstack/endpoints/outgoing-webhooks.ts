@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['outgoingWebhooksCreate'] = async (
@@ -73,9 +73,9 @@ export const list: BetterstackEndpoints['outgoingWebhooksList'] = async (
 		BetterstackEndpointOutputs['outgoingWebhooksList']
 	>('/api/v2/outgoing-webhooks', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await logEventFromContext(

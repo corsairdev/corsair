@@ -358,6 +358,33 @@ export const BetterstackUrgencyGroupAttributes = z.looseObject({
 // ── endpoint input schemas ──────────────────────────────────────────────────
 // Derived from the documented request-parameter tables, never from responses.
 
+/**
+ * Every collection is paginated the same way, and every collection response
+ * carries a `pagination` block whose cursors are full URLs rather than tokens.
+ * Without these two controls on the request side a caller can read the first
+ * page and nothing else, so each operation returning `BetterstackListSchema`
+ * spreads them in.
+ *
+ * `per_page` above the provider's maximum is silently clamped and still answers
+ * 200, so there is no ceiling to validate against here.
+ */
+const PAGINATION_INPUT = {
+	page: z
+		.number()
+		.int()
+		.positive()
+		.describe('Page of results to return. Defaults to the first page.')
+		.optional(),
+	per_page: z
+		.number()
+		.int()
+		.positive()
+		.describe(
+			'Records per page. Values above the provider maximum are silently clamped.',
+		)
+		.optional(),
+} as const;
+
 export const BetterstackEndpointInputSchemas = {
 	monitorsCreate: z.object({
 		team_name: z
@@ -576,6 +603,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('monitor_id (path parameter)'),
 	}),
 	monitorsList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -846,6 +874,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('monitor_group_id (path parameter)'),
 	}),
 	monitorGroupsList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -878,6 +907,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('monitor_group_id (path parameter)'),
 	}),
 	monitorGroupsMonitors: z.object({
+		...PAGINATION_INPUT,
 		monitor_group_id: z
 			.union([z.string(), z.number()])
 			.describe('monitor_group_id (path parameter)'),
@@ -987,6 +1017,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('heartbeat_id (path parameter)'),
 	}),
 	heartbeatsList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -1130,6 +1161,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('heartbeat_group_id (path parameter)'),
 	}),
 	heartbeatGroupsList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -1231,6 +1263,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('incident_id (path parameter)'),
 	}),
 	incidentsList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -1384,6 +1417,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	incidentsTimeline: z.object({
+		...PAGINATION_INPUT,
 		incident_id: z
 			.union([z.string(), z.number()])
 			.describe('incident_id (path parameter)'),
@@ -1411,6 +1445,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('comment_id (path parameter)'),
 	}),
 	incidentCommentsList: z.object({
+		...PAGINATION_INPUT,
 		incident_id: z
 			.union([z.string(), z.number()])
 			.describe('incident_id (path parameter)'),
@@ -1474,6 +1509,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('policy_id (path parameter)'),
 	}),
 	policiesList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -1537,6 +1573,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('policy_group_id (path parameter)'),
 	}),
 	policyGroupsList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -1583,6 +1620,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	onCallsList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -1602,6 +1640,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('schedule_id (path parameter)'),
 	}),
 	onCallsEvents: z.object({
+		...PAGINATION_INPUT,
 		schedule_id: z
 			.union([z.string(), z.number()])
 			.describe('schedule_id (path parameter)'),
@@ -1641,6 +1680,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('urgency_id (path parameter)'),
 	}),
 	urgenciesList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -1703,7 +1743,9 @@ export const BetterstackEndpointInputSchemas = {
 			.union([z.string(), z.number()])
 			.describe('urgency_group_id (path parameter)'),
 	}),
-	urgencyGroupsList: z.object({}),
+	urgencyGroupsList: z.object({
+		...PAGINATION_INPUT,
+	}),
 	urgencyGroupsUpdate: z.object({
 		urgency_group_id: z
 			.union([z.string(), z.number()])
@@ -1727,7 +1769,9 @@ export const BetterstackEndpointInputSchemas = {
 			.union([z.string(), z.number()])
 			.describe('status_page_id (path parameter)'),
 	}),
-	statusPagesList: z.object({}),
+	statusPagesList: z.object({
+		...PAGINATION_INPUT,
+	}),
 	statusPagesUpdate: z.object({
 		status_page_id: z
 			.union([z.string(), z.number()])
@@ -1911,6 +1955,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('section_id (path parameter)'),
 	}),
 	statusPageSectionsList: z.object({
+		...PAGINATION_INPUT,
 		status_page_id: z
 			.union([z.string(), z.number()])
 			.describe('status_page_id (path parameter)'),
@@ -2023,6 +2068,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('resource_id (path parameter)'),
 	}),
 	statusPageResourcesList: z.object({
+		...PAGINATION_INPUT,
 		status_page_id: z
 			.union([z.string(), z.number()])
 			.describe('status_page_id (path parameter)'),
@@ -2161,6 +2207,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('status_report_id (path parameter)'),
 	}),
 	statusPageReportsList: z.object({
+		...PAGINATION_INPUT,
 		status_page_id: z
 			.union([z.string(), z.number()])
 			.describe('status_page_id (path parameter)'),
@@ -2244,6 +2291,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('status_update_id (path parameter)'),
 	}),
 	statusUpdatesList: z.object({
+		...PAGINATION_INPUT,
 		status_page_id: z
 			.union([z.string(), z.number()])
 			.describe('status_page_id (path parameter)'),
@@ -2318,7 +2366,9 @@ export const BetterstackEndpointInputSchemas = {
 			.union([z.string(), z.number()])
 			.describe('status_page_group_id (path parameter)'),
 	}),
-	statusPageGroupsList: z.object({}),
+	statusPageGroupsList: z.object({
+		...PAGINATION_INPUT,
+	}),
 	statusPageGroupsUpdate: z.object({
 		status_page_group_id: z
 			.union([z.string(), z.number()])
@@ -2340,6 +2390,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('status_page_group_id (path parameter)'),
 	}),
 	statusPageGroupsStatusPages: z.object({
+		...PAGINATION_INPUT,
 		status_page_group_id: z
 			.union([z.string(), z.number()])
 			.describe('status_page_group_id (path parameter)'),
@@ -2365,6 +2416,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	metadataList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2452,6 +2504,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('outgoing_webhook_id (path parameter)'),
 	}),
 	outgoingWebhooksList: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2556,6 +2609,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('source_group_id (path parameter)'),
 	}),
 	integrationsAwsCloudWatch: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2564,6 +2618,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsAzure: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2572,6 +2627,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsDatadog: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2580,6 +2636,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsElastic: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2588,6 +2645,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsEmail: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2596,6 +2654,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsGoogleMonitoring: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2604,6 +2663,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsGrafana: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2612,6 +2672,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsJira: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2620,6 +2681,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsNewRelic: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2628,6 +2690,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsPagerDuty: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2636,6 +2699,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsPrometheus: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2644,6 +2708,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsSlack: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2652,6 +2717,7 @@ export const BetterstackEndpointInputSchemas = {
 			.optional(),
 	}),
 	integrationsSplunkOnCall: z.object({
+		...PAGINATION_INPUT,
 		team_name: z
 			.string()
 			.describe(
@@ -2659,7 +2725,9 @@ export const BetterstackEndpointInputSchemas = {
 			)
 			.optional(),
 	}),
-	catalogRelations: z.object({}),
+	catalogRelations: z.object({
+		...PAGINATION_INPUT,
+	}),
 	tokenDescribe: z.object({}),
 } as const;
 

@@ -7,7 +7,7 @@ import {
 	cacheMonitorGroupsList,
 	evictMonitorGroups,
 } from './persist';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['monitorGroupsCreate'] = async (
@@ -73,9 +73,9 @@ export const list: BetterstackEndpoints['monitorGroupsList'] = async (
 		BetterstackEndpointOutputs['monitorGroupsList']
 	>('/api/v2/monitor-groups', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await cacheMonitorGroupsList(ctx.db.monitorGroups, result?.data);
@@ -161,6 +161,7 @@ export const monitors: BetterstackEndpoints['monitorGroupsMonitors'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			query: withPagination(input),
 		},
 	);
 

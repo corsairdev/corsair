@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['incidentsCreate'] = async (
@@ -70,7 +70,7 @@ export const list: BetterstackEndpoints['incidentsList'] = async (
 		BetterstackEndpointOutputs['incidentsList']
 	>('/api/v3/incidents', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
 			from: input.from,
 			to: input.to,
@@ -79,7 +79,7 @@ export const list: BetterstackEndpoints['incidentsList'] = async (
 			resolved: input.resolved,
 			acknowledged: input.acknowledged,
 			metadata: input.metadata,
-		},
+		}),
 	});
 
 	await logEventFromContext(
@@ -228,6 +228,7 @@ export const timeline: BetterstackEndpoints['incidentsTimeline'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			query: withPagination(input),
 		},
 	);
 

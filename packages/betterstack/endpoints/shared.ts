@@ -60,3 +60,22 @@ export type PaginationInput = {
 	page?: number;
 	per_page?: number;
 };
+
+/**
+ * Merges the caller's page controls into a collection's query string.
+ *
+ * The list envelope reports `pagination` as fully-formed URLs rather than
+ * tokens, so a caller cannot resume from the response alone - the only way past
+ * the first page is to send `page` on the next request. Every list handler
+ * therefore routes its query through here. Unset controls stay `undefined` and
+ * are dropped by `compactQuery`, so an unpaginated call is byte-identical to
+ * what it sent before.
+ */
+export function withPagination<
+	T extends Record<string, string | number | boolean | undefined>,
+>(
+	input: PaginationInput,
+	query?: T,
+): Record<string, string | number | boolean | undefined> {
+	return { ...query, page: input.page, per_page: input.per_page };
+}

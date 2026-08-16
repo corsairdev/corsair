@@ -3,7 +3,7 @@ import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
 import { cacheMonitors, cacheMonitorsList, evictMonitors } from './persist';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['monitorsCreate'] = async (
@@ -104,11 +104,11 @@ export const list: BetterstackEndpoints['monitorsList'] = async (
 		BetterstackEndpointOutputs['monitorsList']
 	>('/api/v2/monitors', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
 			url: input.url,
 			pronounceable_name: input.pronounceable_name,
-		},
+		}),
 	});
 
 	await cacheMonitorsList(ctx.db.monitors, result?.data);
@@ -139,11 +139,14 @@ export const update: BetterstackEndpoints['monitorsUpdate'] = async (
 				monitor_type: input.monitor_type,
 				url: input.url,
 				pronounceable_name: input.pronounceable_name,
-				email: input.email ?? false,
-				sms: input.sms ?? false,
-				call: input.call ?? false,
-				push: input.push ?? false,
-				critical_alert: input.critical_alert ?? false,
+				// No `?? false` here, unlike create: this is a partial update, so an
+				// omitted channel must stay omitted. Defaulting it would turn an
+				// unrelated edit into a silent "stop alerting me" on a live monitor.
+				email: input.email,
+				sms: input.sms,
+				call: input.call,
+				push: input.push,
+				critical_alert: input.critical_alert,
 				check_frequency: input.check_frequency,
 				request_headers: input.request_headers,
 				expected_status_codes: input.expected_status_codes,

@@ -3,7 +3,7 @@ import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
 import { cachePolicies, cachePoliciesList, evictPolicies } from './persist';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['policiesCreate'] = async (
@@ -68,9 +68,9 @@ export const list: BetterstackEndpoints['policiesList'] = async (
 		BetterstackEndpointOutputs['policiesList']
 	>('/api/v3/policies', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await cachePoliciesList(ctx.db.policies, result?.data);

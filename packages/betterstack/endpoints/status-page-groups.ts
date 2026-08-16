@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['statusPageGroupsCreate'] = async (
@@ -63,6 +63,7 @@ export const list: BetterstackEndpoints['statusPageGroupsList'] = async (
 		BetterstackEndpointOutputs['statusPageGroupsList']
 	>('/api/v2/status-page-groups', ctx.key, {
 		method: 'GET',
+		query: withPagination(input),
 	});
 
 	await logEventFromContext(
@@ -142,6 +143,7 @@ export const statusPages: BetterstackEndpoints['statusPageGroupsStatusPages'] =
 			ctx.key,
 			{
 				method: 'GET',
+				query: withPagination(input),
 			},
 		);
 

@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['statusPageSectionsCreate'] = async (
@@ -74,6 +74,7 @@ export const list: BetterstackEndpoints['statusPageSectionsList'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			query: withPagination(input),
 		},
 	);
 

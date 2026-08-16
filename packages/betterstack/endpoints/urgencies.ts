@@ -3,7 +3,7 @@ import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
 import { cacheUrgencies, cacheUrgenciesList, evictUrgencies } from './persist';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['urgenciesCreate'] = async (
@@ -69,9 +69,9 @@ export const list: BetterstackEndpoints['urgenciesList'] = async (
 		BetterstackEndpointOutputs['urgenciesList']
 	>('/api/v2/urgencies', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await cacheUrgenciesList(ctx.db.urgencies, result?.data);

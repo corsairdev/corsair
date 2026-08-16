@@ -7,7 +7,7 @@ import {
 	cacheOnCallSchedulesList,
 	evictOnCallSchedules,
 } from './persist';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['onCallsCreate'] = async (
@@ -68,9 +68,9 @@ export const list: BetterstackEndpoints['onCallsList'] = async (ctx, input) => {
 		BetterstackEndpointOutputs['onCallsList']
 	>('/api/v2/on-calls', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await cacheOnCallSchedulesList(ctx.db.onCallSchedules, result?.data);
@@ -154,6 +154,7 @@ export const events: BetterstackEndpoints['onCallsEvents'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			query: withPagination(input),
 		},
 	);
 

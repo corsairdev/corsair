@@ -169,4 +169,45 @@ describe('endpoint schemas', () => {
 			BetterstackEndpointInputSchemas.monitorsList.safeParse({}).success,
 		).toBe(true);
 	});
+
+	it('accepts page controls on every operation returning the list envelope', () => {
+		const collections = OPERATION_TABLE.filter(
+			(op) =>
+				op.api !== 'local' &&
+				(op.handler === 'list' ||
+					op.handler === 'monitors' ||
+					op.handler === 'events' ||
+					op.handler === 'statusPages' ||
+					op.handler === 'timeline' ||
+					op.handler === 'relations' ||
+					op.group === 'integrations'),
+		);
+		expect(collections.length).toBe(37);
+
+		for (const op of collections) {
+			const key = op.key.replace(/\.(.)/, (_m, c: string) =>
+				c.toUpperCase(),
+			) as keyof typeof BetterstackEndpointInputSchemas;
+			const schema = BetterstackEndpointInputSchemas[key];
+			const path = Object.fromEntries(
+				op.pathParams.map((name) => [name, 1] as const),
+			);
+
+			expect(
+				BetterstackEndpointOutputSchemas[key] === BetterstackListSchema,
+			).toBe(true);
+			expect(schema.safeParse({ ...path, page: 2, per_page: 50 }).success).toBe(
+				true,
+			);
+			// Omitting them stays valid: pagination is opt-in.
+			expect(schema.safeParse(path).success).toBe(true);
+		}
+	});
+
+	it('rejects a page number that cannot address a page', () => {
+		const schema = BetterstackEndpointInputSchemas.monitorsList;
+		expect(schema.safeParse({ page: 0 }).success).toBe(false);
+		expect(schema.safeParse({ page: -1 }).success).toBe(false);
+		expect(schema.safeParse({ per_page: 1.5 }).success).toBe(false);
+	});
 });

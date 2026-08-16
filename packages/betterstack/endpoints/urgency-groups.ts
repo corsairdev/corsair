@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['urgencyGroupsCreate'] = async (
@@ -63,6 +63,7 @@ export const list: BetterstackEndpoints['urgencyGroupsList'] = async (
 		BetterstackEndpointOutputs['urgencyGroupsList']
 	>('/api/v2/urgency-groups', ctx.key, {
 		method: 'GET',
+		query: withPagination(input),
 	});
 
 	await logEventFromContext(

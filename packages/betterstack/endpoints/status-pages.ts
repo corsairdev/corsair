@@ -3,7 +3,7 @@ import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
 import { cacheStatusPages, cacheStatusPagesList } from './persist';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const get: BetterstackEndpoints['statusPagesGet'] = async (
@@ -41,6 +41,7 @@ export const list: BetterstackEndpoints['statusPagesList'] = async (
 		BetterstackEndpointOutputs['statusPagesList']
 	>('/api/v2/status-pages', ctx.key, {
 		method: 'GET',
+		query: withPagination(input),
 	});
 
 	await cacheStatusPagesList(ctx.db.statusPages, result?.data);

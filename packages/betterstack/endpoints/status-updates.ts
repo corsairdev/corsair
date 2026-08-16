@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['statusUpdatesCreate'] = async (
@@ -92,6 +92,7 @@ export const list: BetterstackEndpoints['statusUpdatesList'] = async (
 		ctx.key,
 		{
 			method: 'GET',
+			query: withPagination(input),
 		},
 	);
 
@@ -124,7 +125,9 @@ export const update: BetterstackEndpoints['statusUpdatesUpdate'] = async (
 			method: 'PATCH',
 			body: {
 				message: input.message,
-				notify_subscribers: input.notify_subscribers ?? false,
+				// Partial update: leave the stored value alone unless the caller
+				// names it. See the create handler for why create defaults to false.
+				notify_subscribers: input.notify_subscribers,
 				affected_resources: input.affected_resources,
 				published_at: input.published_at,
 			},

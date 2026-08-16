@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeBetterstackRequest } from '../client';
 import type { BetterstackEndpoints } from '../index';
 import { auditPayload } from './logging';
+import { withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['metadataCreate'] = async (
@@ -39,11 +40,11 @@ export const list: BetterstackEndpoints['metadataList'] = async (
 		BetterstackEndpointOutputs['metadataList']
 	>('/api/v3/metadata', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
 			owner_id: input.owner_id,
 			owner_type: input.owner_type,
-		},
+		}),
 	});
 
 	await logEventFromContext(

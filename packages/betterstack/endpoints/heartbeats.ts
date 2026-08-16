@@ -7,7 +7,7 @@ import {
 	cacheHeartbeatsList,
 	evictHeartbeats,
 } from './persist';
-import { buildPath } from './shared';
+import { buildPath, withPagination } from './shared';
 import type { BetterstackEndpointOutputs } from './types';
 
 export const create: BetterstackEndpoints['heartbeatsCreate'] = async (
@@ -88,9 +88,9 @@ export const list: BetterstackEndpoints['heartbeatsList'] = async (
 		BetterstackEndpointOutputs['heartbeatsList']
 	>('/api/v2/heartbeats', ctx.key, {
 		method: 'GET',
-		query: {
+		query: withPagination(input, {
 			team_name: input.team_name,
-		},
+		}),
 	});
 
 	await cacheHeartbeatsList(ctx.db.heartbeats, result?.data);
@@ -121,11 +121,13 @@ export const update: BetterstackEndpoints['heartbeatsUpdate'] = async (
 				name: input.name,
 				period: input.period,
 				grace: input.grace,
-				call: input.call ?? false,
-				sms: input.sms ?? false,
-				email: input.email ?? false,
-				push: input.push ?? false,
-				critical_alert: input.critical_alert ?? false,
+				// Partial update: an omitted channel must stay omitted, or editing
+				// the grace period would silently disable the heartbeat's alerts.
+				call: input.call,
+				sms: input.sms,
+				email: input.email,
+				push: input.push,
+				critical_alert: input.critical_alert,
 				team_wait: input.team_wait,
 				heartbeat_group_id: input.heartbeat_group_id,
 				sort_index: input.sort_index,
