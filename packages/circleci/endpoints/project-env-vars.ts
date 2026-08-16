@@ -7,6 +7,11 @@ import { circleCICall } from './shared';
 import type { CircleCIEndpointOutputs } from './types';
 
 const LABEL = 'project env var';
+const PROJECT_ENV_VAR_MIRROR_FIELDS = [
+	'name',
+	'created_at',
+	'created-at',
+] as const;
 
 /**
  * Env var names are unique per project, not globally - `API_KEY` on one
@@ -18,24 +23,6 @@ const LABEL = 'project env var';
  */
 function projectEnvVarEntityId(projectSlug: string, name: string): string {
 	return `${projectSlug}:${name}`;
-}
-
-/**
- * Drops `value` before a write to the mirror. `value` is masked server-side
- * (`"xxxx"` + the real last four characters), but a masked fragment is still
- * part of a secret, and this file's own schema documents that intent -
- * `CircleCIProjectEnvVarEntity` is `.loose()` like every entity in this
- * plugin, so declaring the field narrower would not actually strip it at
- * parse time; only code that removes it before the cache write does. The
- * caller-facing return value is unaffected - it still carries the masked
- * value straight from the response, which is legitimate confirmation the
- * write took.
- */
-function cacheableProjectEnvVar(
-	record: CircleCIEndpointOutputs['projectEnvVarsCreate'],
-): Record<string, unknown> {
-	const { value: _omittedValue, ...rest } = record;
-	return rest;
 }
 
 /** Creates a project environment variable. The value is never logged - masked server-side, but a mask is still part of a secret. */
@@ -53,9 +40,10 @@ export const create: CircleCIEndpoints['projectEnvVarsCreate'] = async (
 	await cacheEntity(
 		ctx.db.projectEnvVars,
 		CircleCIProjectEnvVarEntity,
-		cacheableProjectEnvVar(result),
+		result,
 		{
 			label: LABEL,
+			fields: PROJECT_ENV_VAR_MIRROR_FIELDS,
 			entityId: (parsed) =>
 				parsed.name
 					? projectEnvVarEntityId(input.projectSlug, parsed.name)
@@ -129,9 +117,10 @@ export const list: CircleCIEndpoints['projectEnvVarsList'] = async (
 	await cacheEntities(
 		ctx.db.projectEnvVars,
 		CircleCIProjectEnvVarEntity,
-		result.items.map(cacheableProjectEnvVar),
+		result.items,
 		{
 			label: LABEL,
+			fields: PROJECT_ENV_VAR_MIRROR_FIELDS,
 			entityId: (parsed) =>
 				parsed.name
 					? projectEnvVarEntityId(input.projectSlug, parsed.name)

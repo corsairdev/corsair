@@ -7,35 +7,7 @@ import { circleCICall, compact } from './shared';
 import type { CircleCIEndpointOutputs } from './types';
 
 const LABEL = 'context';
-
-/**
- * `GET`/`POST context` embed `environment_variables` inline, each carrying
- * `truncated_value` - the masked value's last four characters. A masked
- * fragment is still part of a secret, so it is dropped from what reaches the
- * mirror. Declaring `CircleCIContextEnvVarEntity` without the field would
- * not achieve this on its own - every entity here is `.loose()`, and a
- * `.loose()` schema does not strip a field merely for being undeclared; only
- * code that removes it before the cache write does. The caller-facing
- * return value is unaffected - it still carries the masked value straight
- * from the response.
- */
-function cacheableContext(
-	record: Record<string, unknown>,
-): Record<string, unknown> {
-	const envVars = record.environment_variables;
-	if (!Array.isArray(envVars)) return record;
-	return {
-		...record,
-		environment_variables: envVars.map((envVar) => {
-			if (!envVar || typeof envVar !== 'object') return envVar;
-			const { truncated_value: _omittedValue, ...rest } = envVar as Record<
-				string,
-				unknown
-			>;
-			return rest;
-		}),
-	};
-}
+const CONTEXT_MIRROR_FIELDS = ['id', 'name', 'created_at'] as const;
 
 /** Creates a context. */
 export const create: CircleCIEndpoints['contextsCreate'] = async (
@@ -54,12 +26,10 @@ export const create: CircleCIEndpoints['contextsCreate'] = async (
 		},
 	);
 
-	await cacheEntity(
-		ctx.db.contexts,
-		CircleCIContextEntity,
-		cacheableContext(result as Record<string, unknown>),
-		{ label: LABEL },
-	);
+	await cacheEntity(ctx.db.contexts, CircleCIContextEntity, result, {
+		label: LABEL,
+		fields: CONTEXT_MIRROR_FIELDS,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -77,12 +47,10 @@ export const get: CircleCIEndpoints['contextsGet'] = async (ctx, input) => {
 		`context/${input.contextId}`,
 	);
 
-	await cacheEntity(
-		ctx.db.contexts,
-		CircleCIContextEntity,
-		cacheableContext(result as Record<string, unknown>),
-		{ label: LABEL },
-	);
+	await cacheEntity(ctx.db.contexts, CircleCIContextEntity, result, {
+		label: LABEL,
+		fields: CONTEXT_MIRROR_FIELDS,
+	});
 
 	await logEventFromContext(
 		ctx,

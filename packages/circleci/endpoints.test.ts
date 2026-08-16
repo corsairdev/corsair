@@ -1051,11 +1051,29 @@ describe('mirroring', () => {
 		});
 		await Contexts.get(ctx, { contextId: CONTEXT_ID });
 		const [, mirrored] = db.contexts.upsertByEntityId.mock.calls[0] ?? [];
-		const envVars = (mirrored as { environment_variables?: unknown[] })
-			.environment_variables;
-		expect(envVars).toHaveLength(1);
-		expect(envVars?.[0]).not.toHaveProperty('truncated_value');
-		expect(envVars?.[0]).toMatchObject({ variable: 'X' });
+		expect(mirrored).not.toHaveProperty('environment_variables');
+		expect(JSON.stringify(mirrored)).not.toContain('cret');
+	});
+
+	it('persisted env var records keep no secret-derived fields', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			name: 'X',
+			value: 'xxxxcret',
+			truncated_value: 'cret',
+			secret: 'nope',
+			created_at: '2026-01-01',
+		});
+		await ProjectEnvVars.create(ctx, {
+			projectSlug: PROJECT_SLUG,
+			name: 'X',
+			value: 'plaintext-secret',
+		});
+		const [, mirrored] = db.projectEnvVars.upsertByEntityId.mock.calls[0] ?? [];
+		expect(mirrored).toEqual({ name: 'X', created_at: '2026-01-01' });
+		expect(JSON.stringify(mirrored)).not.toMatch(
+			/plaintext-secret|xxxxcret|cret|nope/,
+		);
 	});
 
 	it('does not mirror orbs or namespaces - they are a shared registry, not account data', async () => {

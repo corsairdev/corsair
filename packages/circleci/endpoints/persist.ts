@@ -34,16 +34,36 @@ const defaultEntityId = <T>(parsed: T): string | undefined => {
  */
 type EntityIdOf<T> = (parsed: T) => string | undefined;
 
+type CacheOptions<T> = {
+	label: string;
+	entityId?: EntityIdOf<T>;
+	fields?: readonly string[];
+};
+
+function pickFields(record: unknown, fields: readonly string[]): unknown {
+	if (!record || typeof record !== 'object' || Array.isArray(record)) {
+		return record;
+	}
+	const src = record as Record<string, unknown>;
+	const out: Record<string, unknown> = {};
+	for (const field of fields) {
+		if (field in src) out[field] = src[field];
+	}
+	return out;
+}
+
 /** Mirrors one record. Skips (with a warning) anything the schema rejects. */
 export async function cacheEntity<Schema extends z.ZodType>(
 	store: EntityStore<z.infer<Schema>> | undefined,
 	schema: Schema,
 	record: unknown,
-	options: { label: string; entityId?: EntityIdOf<z.infer<Schema>> },
+	options: CacheOptions<z.infer<Schema>>,
 ): Promise<void> {
 	if (!store || record == null) return;
 
-	const parsed = schema.safeParse(record);
+	const parsed = schema.safeParse(
+		options.fields ? pickFields(record, options.fields) : record,
+	);
 	if (!parsed.success) {
 		console.warn(
 			`[CIRCLECI] skipped caching a ${options.label} that does not match its schema:`,
@@ -66,7 +86,7 @@ export async function cacheEntities<Schema extends z.ZodType>(
 	store: EntityStore<z.infer<Schema>> | undefined,
 	schema: Schema,
 	records: readonly unknown[] | undefined | null,
-	options: { label: string; entityId?: EntityIdOf<z.infer<Schema>> },
+	options: CacheOptions<z.infer<Schema>>,
 ): Promise<void> {
 	if (!store || !records || records.length === 0) return;
 	for (const record of records) {
