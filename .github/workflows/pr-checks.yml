@@ -79,3 +79,32 @@ jobs:
         run: node --experimental-strip-types scripts/pr-review/gate-main.ts
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  changesets:
+    name: Changeset guard
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard changesets
+        env:
+          BASE: ${{ github.base_ref }}
+        run: |
+          git fetch origin "$BASE" -q
+          base="origin/$BASE"
+
+          # Majors are bumped by hand — fail if any changeset requests one.
+          majors=$(grep -rlE '^[[:space:]]*"[^"]+":[[:space:]]*major[[:space:]]*$' .changeset/*.md 2>/dev/null | grep -v 'README.md' || true)
+          if [ -n "$majors" ]; then
+            echo "::error::major bump requested in: $majors — bump major versions by hand and keep changesets to patch/minor"
+            exit 1
+          fi
+
+          # Non-blocking nudge; the changeset-bot enforces this too.
+          changed=$(git diff --name-only "$base"...HEAD)
+          new_cs=$(echo "$changed" | grep -E '^\.changeset/.+\.md$' | grep -v 'README.md' || true)
+          if echo "$changed" | grep -qE '^packages/' && [ -z "$new_cs" ]; then
+            echo "::warning::a package changed but no changeset was added — run 'pnpm changeset'"
+          fi
