@@ -73,12 +73,12 @@ const MIRROR_SPECS: Partial<Record<BaseLinkerMethod, MirrorSpec>> = {
 	},
 	getOrderReturnReasonsList: {
 		store: 'returnReasons',
-		responseField: 'reasons',
-		idFields: ['id', 'reason_id'],
+		responseField: 'return_reasons',
+		idFields: ['id', 'return_reason_id'],
 	},
 	getOrderReturnProductStatuses: {
 		store: 'returnProductStatuses',
-		responseField: 'statuses',
+		responseField: 'order_return_product_statuses',
 		idFields: ['id', 'status_id'],
 	},
 	getCouriersList: {
@@ -115,23 +115,26 @@ const EVICT_SPECS: Partial<
 	deleteInventoryWarehouse: { store: 'warehouses', inputField: 'warehouse_id' },
 };
 
+function isRecord(value: unknown): value is Record<string, unknown> {
+	return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
 function rowsOf(
 	value: unknown,
 ): Array<{ key?: string; row: Record<string, unknown> }> {
 	if (Array.isArray(value)) {
-		return value
-			.filter(
-				(row): row is Record<string, unknown> =>
-					row !== null && typeof row === 'object' && !Array.isArray(row),
-			)
-			.map((row) => ({ row }));
+		return value.filter(isRecord).map((row) => ({ row }));
 	}
-	if (value !== null && typeof value === 'object') {
-		return Object.entries(value).flatMap(([key, row]) =>
-			row !== null && typeof row === 'object' && !Array.isArray(row)
-				? [{ key, row: row as Record<string, unknown> }]
-				: [],
-		);
+	if (isRecord(value)) {
+		return Object.entries(value).flatMap(([key, child]) => {
+			// Some envelopes group rows under named arrays instead of returning a
+			// flat list or ID-keyed map (e.g. Connect integrations nests them under
+			// `own_integrations` / `connected_integrations`).
+			if (Array.isArray(child)) {
+				return child.filter(isRecord).map((row) => ({ row }));
+			}
+			return isRecord(child) ? [{ key, row: child }] : [];
+		});
 	}
 	return [];
 }

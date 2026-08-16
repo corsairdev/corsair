@@ -94,7 +94,7 @@ export type BaseLinkerReturnStatus = z.infer<typeof BaseLinkerReturnStatus>;
 
 export const BaseLinkerReturnReason = z
 	.object({
-		id: BaseLinkerEntityId,
+		return_reason_id: BaseLinkerEntityId,
 		name: z.string().nullable().optional(),
 	})
 	.loose();
@@ -102,7 +102,7 @@ export type BaseLinkerReturnReason = z.infer<typeof BaseLinkerReturnReason>;
 
 export const BaseLinkerReturnProductStatus = z
 	.object({
-		id: BaseLinkerEntityId,
+		status_id: BaseLinkerEntityId,
 		name: z.string().nullable().optional(),
 	})
 	.loose();
@@ -112,7 +112,7 @@ export type BaseLinkerReturnProductStatus = z.infer<
 
 export const BaseLinkerCourier = z
 	.object({
-		courier_code: BaseLinkerEntityId,
+		code: BaseLinkerEntityId,
 		name: z.string().nullable().optional(),
 	})
 	.loose();
@@ -130,7 +130,7 @@ export type BaseLinkerExternalStorage = z.infer<
 
 export const BaseLinkerConnectIntegration = z
 	.object({
-		integration_id: BaseLinkerEntityId,
+		connect_integration_id: BaseLinkerEntityId,
 		name: z.string().nullable().optional(),
 	})
 	.loose();
