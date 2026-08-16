@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/frpc-darwin-arm64",
-  "version": "0.1.115",
+  "version": "0.1.117",
   "description": "Prebuilt frpc binary for Corsair dev tunnels (darwin arm64). Installed automatically as an optional dependency of `corsair`.",
   "license": "Apache-2.0",
   "repository": "https://github.com/corsairdev/corsair",
