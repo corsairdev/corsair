@@ -18,7 +18,7 @@ export function createBaseLinkerEndpoint<K extends BaseLinkerMethod>(
 	BaseLinkerEndpointOutputs[K]
 > {
 	return async (ctx, input) => {
-		const parameters = input as Record<string, unknown>;
+		const parameters = (input ?? {}) as Record<string, unknown>;
 		const response = await makeBaseLinkerRequest<BaseLinkerEndpointOutputs[K]>(
 			method,
 			ctx.key,

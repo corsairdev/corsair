@@ -23,8 +23,7 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) =>
-			(error instanceof ApiError &&
-				(error.status === 401 || error.status === 403)) ||
+			(error instanceof ApiError && error.status === 401) ||
 			(error instanceof BaseLinkerAPIError &&
 				/AUTH|TOKEN/i.test(error.code ?? error.message)),
 		handler: async () => ({ maxRetries: 0 }),
