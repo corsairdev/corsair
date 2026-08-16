@@ -9,6 +9,26 @@ import type { DopplerEndpointOutputs } from './types';
 const LABEL = 'webhook';
 
 /**
+ * A webhook's identifier is the same value under two different names
+ * depending on context: Doppler's own path template addresses it as
+ * `{slug}` (`/webhooks/webhook/{slug}`), while every response body names
+ * the identical field `id`. Re-confirmed live this session: creating a
+ * webhook, then fetching it back via that same value passed as `{slug}`,
+ * returns the identical `id`.
+ *
+ * Declared here, once, and used for both caching (from a response's `id`)
+ * and eviction (from a request's `slug`) - rather than left to
+ * `persist.ts`'s default `.id` read to merely coincide with whatever
+ * `remove` evicts by. Without this, a cache-key source and an evict-key
+ * source that happen to agree today have no structural reason to keep
+ * agreeing, and no test built on a single literal shared between the two
+ * (e.g. both hardcoded to `'wh-1'`) can tell "they're the same by
+ * construction" apart from "they're the same by coincidence of the
+ * fixture." See `endpoints.test.ts`'s dedicated round-trip test.
+ */
+const entityId = (w: { id: string }) => w.id;
+
+/**
  * `authentication` and `secret` are both declared `unknown`/absent on the
  * entity because they may carry (or, for `secret`, request-echo) a value the
  * caller just set as a signing credential. Confirmed live: the API only
@@ -40,7 +60,7 @@ export const list: DopplerEndpoints['webhooksList'] = async (ctx, input) => {
 		ctx.db.webhooks,
 		DopplerWebhookEntity,
 		result.webhooks.map(forCache),
-		{ label: LABEL },
+		{ label: LABEL, entityId },
 	);
 	await logEventFromContext(
 		ctx,
@@ -63,7 +83,7 @@ export const get: DopplerEndpoints['webhooksGet'] = async (ctx, input) => {
 		ctx.db.webhooks,
 		DopplerWebhookEntity,
 		forCache(result.webhook),
-		{ label: LABEL },
+		{ label: LABEL, entityId },
 	);
 	await logEventFromContext(
 		ctx,
@@ -95,7 +115,7 @@ export const add: DopplerEndpoints['webhooksAdd'] = async (ctx, input) => {
 		ctx.db.webhooks,
 		DopplerWebhookEntity,
 		forCache(result.webhook),
-		{ label: LABEL },
+		{ label: LABEL, entityId },
 	);
 	await logEventFromContext(
 		ctx,
@@ -131,7 +151,7 @@ export const update: DopplerEndpoints['webhooksUpdate'] = async (
 		ctx.db.webhooks,
 		DopplerWebhookEntity,
 		forCache(result.webhook),
-		{ label: LABEL },
+		{ label: LABEL, entityId },
 	);
 	await logEventFromContext(
 		ctx,
@@ -153,7 +173,12 @@ export const remove: DopplerEndpoints['webhooksDelete'] = async (
 		{ method: 'DELETE', query: compact({ project: input.project }) },
 	);
 
-	await evictEntity(ctx.db.webhooks, input.slug, LABEL);
+	// `input.slug` is the same identifier `entityId` reads as `.id` off a
+	// cached record (see the doc comment above) - routed through the same
+	// function, not just the same value by coincidence, so a future change
+	// to how the identifier is derived cannot update one side without the
+	// other.
+	await evictEntity(ctx.db.webhooks, entityId({ id: input.slug }), LABEL);
 	await logEventFromContext(
 		ctx,
 		'doppler.webhooks.delete',
@@ -179,7 +204,7 @@ export const enable: DopplerEndpoints['webhooksEnable'] = async (
 		ctx.db.webhooks,
 		DopplerWebhookEntity,
 		forCache(result.webhook),
-		{ label: LABEL },
+		{ label: LABEL, entityId },
 	);
 	await logEventFromContext(
 		ctx,
@@ -206,7 +231,7 @@ export const disable: DopplerEndpoints['webhooksDisable'] = async (
 		ctx.db.webhooks,
 		DopplerWebhookEntity,
 		forCache(result.webhook),
-		{ label: LABEL },
+		{ label: LABEL, entityId },
 	);
 	await logEventFromContext(
 		ctx,

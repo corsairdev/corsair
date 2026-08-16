@@ -1062,6 +1062,29 @@ describe('mirroring', () => {
 		expect(db.webhooks.deleteByEntityId).toHaveBeenCalledWith('wh-1');
 	});
 
+	/**
+	 * A cache-then-delete round trip, not two independent literal
+	 * assertions: proves the key `remove` evicts by is the *same* key `get`
+	 * cached under, by comparing the two recorded calls to each other rather
+	 * than to a hardcoded string that could drift out of sync with the code
+	 * on both sides at once and still pass. Closes the exact gap a
+	 * coincidentally-matching `'wh-1'`/`'wh-1'` fixture could not: cache and
+	 * evict deriving their key from two different sources (a response's
+	 * `id` field vs. a request's `slug` parameter) that only happen to share
+	 * a value because the fixture was written that way.
+	 */
+	it('evicts a webhook using the exact key it was cached under, proven by round-tripping through both calls', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ webhook: { id: 'wh-round-trip' } });
+		await Webhooks.get(ctx, { project: 'demo', slug: 'wh-round-trip' });
+		const cachedKey = db.webhooks.upsertByEntityId.mock.calls[0]?.[0];
+		expect(typeof cachedKey).toBe('string');
+
+		mockFetch({ success: true });
+		await Webhooks.remove(ctx, { project: 'demo', slug: 'wh-round-trip' });
+		expect(db.webhooks.deleteByEntityId).toHaveBeenCalledWith(cachedKey);
+	});
+
 	it('caches the workplace singleton', async () => {
 		const { ctx, db } = makeCtx();
 		mockFetch({ workplace: { id: 'w-1' } });
