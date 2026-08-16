@@ -29,16 +29,75 @@ import type { RunResultPayload, RunStepResult } from '../hub/contracts/tunnel';
 // Execution is still gated behind `processCorsair({ allowWorkflowExecution: true })`.
 // ─────────────────────────────────────────────────────────────────────────────
 
+/** A single durable AI inference request, handed to the host `ai` capability. */
+export type AiStepRequest = {
+	kind: 'object' | 'text' | 'enum' | 'bool';
+	stepName: string;
+	input: unknown;
+	prompt: string;
+	returnObject?: { op: string; pick?: readonly string[] };
+	options?: readonly string[];
+	model?: string;
+};
+
+/**
+ * Host capability that runs one inference and returns its output as a JSON
+ * string: a JSON-encoded object/value for object/enum/bool, a JSON-encoded
+ * string for text. Provided by the caller (the tunnel run handler); absent when
+ * Hub is not configured, in which case any `step.ai` call fails clearly.
+ */
+export type AiStepCallback = (req: AiStepRequest) => Promise<string>;
+
+/**
+ * The `step.ai` sub-namespace. Callable for freeform text (`step.ai(name, opts)`),
+ * with `.object`/`.enum`/`.bool` for typed inference. Each call is memoized like
+ * `step.run`.
+ */
+export interface WorkflowStepAi {
+	(
+		name: string,
+		opts: { input: unknown; prompt: string; model?: string },
+	): Promise<string>;
+	object<T = Record<string, unknown>>(
+		name: string,
+		opts: {
+			input: unknown;
+			prompt: string;
+			returnObject: { op: string; pick?: readonly string[] };
+			model?: string;
+		},
+	): Promise<T>;
+	enum<const T extends readonly string[]>(
+		name: string,
+		opts: { input: unknown; prompt: string; options: T; model?: string },
+	): Promise<T[number]>;
+	bool(
+		name: string,
+		opts: { input: unknown; prompt: string; model?: string },
+	): Promise<boolean>;
+}
+
 /**
  * The step primitive handed to workflow code. Callable for normal work
- * (`step(name, fn)`) with a `.sleep` method for durable pauses — mirroring
- * Inngest's `step.run` / `step.sleep`.
+ * (`step(name, fn)`), with `.sleep`/`.sleepUntil` for durable pauses, `.ai` for
+ * durable typed inference, and `.corsair` for a durable typed plugin-op call —
+ * mirroring Inngest's `step.run` / `step.sleep` / `step.ai`.
  */
 export interface WorkflowStep {
 	/** Runs `fn` once, memoizing its result so retries replay it instead of re-running. */
 	<T>(name: string, fn: () => Promise<T>): Promise<T>;
 	/** Durably pauses the workflow for `ms`. Survives restarts; resumes after the delay. */
 	sleep(name: string, ms: number): Promise<void>;
+	/** Durably pauses until an absolute time (epoch ms, ISO string, or `Date`). */
+	sleepUntil(name: string, when: number | string | Date): Promise<void>;
+	/** Durable, typed AI inference — see {@link WorkflowStepAi}. */
+	ai: WorkflowStepAi;
+	/**
+	 * Runs a plugin op by id (`"<plugin>.<endpoint.path>"`, e.g. `"linear.issues.create"`)
+	 * with `input`, memoized like `step.run`. Sugar over `corsair.<plugin>.api.<path>(input)`
+	 * that shares the op id with `step.ai`'s `returnObject`.
+	 */
+	corsair<T = unknown>(name: string, op: string, input?: unknown): Promise<T>;
 }
 
 const FAILED_STEP_MARKER = '__corsairFailedStep';
@@ -183,6 +242,7 @@ function runWorkflowInSandbox(input: {
 	corsair: unknown;
 	payload: unknown;
 	step: WorkflowStep;
+	ai: (kind: string, name: string, optsJson: string) => Promise<string>;
 	timeoutMs: number;
 }): Promise<void> {
 	// Null-proto global object → `globalThis`'s prototype chain can't reach host
@@ -200,12 +260,63 @@ function runWorkflowInSandbox(input: {
 	}) as (s: string) => unknown;
 	const realmPayload = realmParse(JSON.stringify(input.payload ?? null));
 
+	// The membrane the workflow navigates. Shared by `main`'s `corsair` arg and
+	// `step.corsair`, so both resolve ops through the exact same hardened client.
+	const hardenedCorsair = harden(input.corsair, undefined);
+
 	// Realm-native `step`: built in-realm from host callbacks captured in a closure
 	// (not reachable as properties), so `step.constructor` is the realm's Function.
 	const makeStep = vm.runInContext(
-		`(function (hostRun, hostSleep) {
+		`(function (hostRun, hostSleep, hostAi, corsairRef) {
 			const step = function step(name, fn) { return hostRun(name, fn); };
 			step.sleep = function sleep(name, ms) { return hostSleep(name, ms); };
+			// Absolute-time pause: convert to a relative delay and reuse step.sleep so
+			// it inherits the same durable record/replay. The host clamps non-finite or
+			// negative ms to 0, so a past or unparseable time becomes a 0-delay pause
+			// (suspends once, then reschedules immediately).
+			const toMs = function (when) {
+				if (typeof when === 'number') return when;
+				if (when instanceof Date) return when.getTime();
+				return Date.parse(when);
+			};
+			step.sleepUntil = function sleepUntil(name, when) {
+				return step.sleep(name, toMs(when) - Date.now());
+			};
+			// Typed op call by id: walk corsair.<plugin>.api.<seg...> over the same
+			// membrane the workflow uses, inside step() so it inherits memo / replay /
+			// failed-step recording. No new host reference crosses — corsairRef is the
+			// already-hardened client. Accept the call-path form the agent emits too
+			// ("linear.api.issues.create" == "linear.issues.create"), matching step.ai.
+			step.corsair = function corsair(name, op, input) {
+				return step(name, function () {
+					const dot = op.indexOf('.');
+					if (dot < 1) throw new Error('Invalid op "' + op + '": expected "<plugin>.<endpoint.path>"');
+					const path = op.slice(dot + 1).split('.');
+					if (path[0] === 'api') path.shift();
+					let node = corsairRef[op.slice(0, dot)];
+					node = node && node.api;
+					for (let i = 0; i < path.length; i++) node = node && node[path[i]];
+					if (typeof node !== 'function') throw new Error('Unknown op "' + op + '"');
+					return node(input);
+				});
+			};
+			// Each ai verb routes through step() so it inherits memo / replay /
+			// failed-step recording; opts are serialized in-realm and the JSON-string
+			// result is parsed back in-realm, so no host object reference crosses.
+			const verb = function (kind) {
+				return function (name, opts) {
+					return step(name, function () {
+						return hostAi(kind, name, JSON.stringify(opts)).then(function (s) {
+							return JSON.parse(s);
+						});
+					});
+				};
+			};
+			const ai = verb('text');
+			ai.object = verb('object');
+			ai.enum = verb('enum');
+			ai.bool = verb('bool');
+			step.ai = ai;
 			return step;
 		})`,
 		context,
@@ -213,10 +324,14 @@ function runWorkflowInSandbox(input: {
 	) as (
 		hostRun: (name: string, fn: () => Promise<unknown>) => Promise<unknown>,
 		hostSleep: (name: string, ms: number) => Promise<void>,
+		hostAi: (kind: string, name: string, optsJson: string) => Promise<string>,
+		corsairRef: unknown,
 	) => WorkflowStep;
 	const realmStep = makeStep(
 		(name, fn) => input.step(name, fn),
 		(name, ms) => input.step.sleep(name, ms),
+		(kind, name, optsJson) => input.ai(kind, name, optsJson),
+		hardenedCorsair,
 	);
 
 	// Realm-native forwarding console (methods created in-realm; host sink hidden
@@ -252,7 +367,7 @@ function runWorkflowInSandbox(input: {
 	// (`while (true) {}`) in the workflow body. `corsair` is the membrane;
 	// `payload`/`step`/`console` are realm-native, so no bare host reference is
 	// exposed by making them globals.
-	sandbox.__corsair = harden(input.corsair, undefined);
+	sandbox.__corsair = hardenedCorsair;
 	sandbox.__payload = realmPayload;
 	sandbox.__step = realmStep;
 	sandbox.__console = realmConsole;
@@ -310,6 +425,8 @@ export type ExecuteWorkflowRunInput = {
 	payload: unknown;
 	/** Outputs of steps that already completed on prior attempts, keyed by stepId. */
 	memoizedSteps?: Record<string, { output: unknown }>;
+	/** Runs one `step.ai` inference against Hub. Absent when Hub isn't configured. */
+	ai?: AiStepCallback;
 	/** Max run time (sync + wall-clock) in ms. Defaults to {@link WORKFLOW_TIMEOUT_MS}. */
 	timeoutMs?: number;
 };
@@ -386,12 +503,45 @@ export async function executeWorkflowRun(
 		throw pendingSleep;
 	};
 
+	// Bridges the realm's `step.ai` to the host `ai` capability: parse the
+	// in-realm-serialized opts and run one inference. Rejects clearly when Hub
+	// (hence `ai`) wasn't wired, so the workflow surfaces a failed step rather
+	// than a TypeError.
+	const aiBridge = (
+		kind: string,
+		name: string,
+		optsJson: string,
+	): Promise<string> => {
+		if (!input.ai) {
+			return Promise.reject(
+				new Error('step.ai is unavailable: Hub is not configured for this run'),
+			);
+		}
+		const opts = JSON.parse(optsJson) as {
+			input?: unknown;
+			prompt?: string;
+			returnObject?: AiStepRequest['returnObject'];
+			options?: readonly string[];
+			model?: string;
+		};
+		return input.ai({
+			kind: kind as AiStepRequest['kind'],
+			stepName: name,
+			input: opts.input,
+			prompt: opts.prompt ?? '',
+			returnObject: opts.returnObject,
+			options: opts.options,
+			model: opts.model,
+		});
+	};
+
 	try {
 		await runWorkflowInSandbox({
 			code: input.code,
 			corsair: input.corsair,
 			payload: input.payload,
 			step,
+			ai: aiBridge,
 			timeoutMs: input.timeoutMs ?? WORKFLOW_TIMEOUT_MS,
 		});
 		// `main` returned without propagating the interrupt — a try/catch swallowed
