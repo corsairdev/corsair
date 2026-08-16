@@ -19,9 +19,11 @@ export {
 	type AccountKeyManagerOptions,
 	createAccountKeyManager,
 	createIntegrationKeyManager,
+	createStaticAccountKeyManager,
 	type IntegrationKeyManagerOptions,
 	initializeAccountDEK,
 	initializeIntegrationDEK,
+	type StaticAccountKeyManagerOptions,
 } from './key-manager';
 export {
 	type AuthFieldLevel,

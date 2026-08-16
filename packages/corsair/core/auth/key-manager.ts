@@ -561,6 +561,70 @@ export function createAccountKeyManager<T extends AuthTypes>(
 	return manager as AccountKeyManagerFor<T>;
 }
 
+export type StaticAccountKeyManagerOptions<T extends AuthTypes> = {
+	authType: T;
+	/** Pre-decrypted account credentials for this plugin, e.g. { access_token: '...' }. */
+	credentials: Record<string, string>;
+	/** Pre-decrypted integration credentials (oauth_2 refresh), e.g. { client_id, client_secret }. */
+	integrationCredentials?: Record<string, string>;
+	/** Extra account-level fields from plugin authConfig. */
+	extraAccountFields?: readonly string[];
+};
+
+/**
+ * Account key manager backed by an in-memory credential map instead of the vault.
+ * Used inside an isolated workflow child, which holds no database and no KEK: the
+ * parent decrypts the run's credentials and injects them here. Same accessor
+ * surface as {@link createAccountKeyManager}; `set_*` mutates the in-memory copy
+ * (so a token refreshed mid-run is reused) but never persists.
+ */
+export function createStaticAccountKeyManager<T extends AuthTypes>(
+	options: StaticAccountKeyManagerOptions<T>,
+): AccountKeyManagerFor<T> {
+	const {
+		authType,
+		credentials,
+		integrationCredentials = {},
+		extraAccountFields = [],
+	} = options;
+
+	const allFields = [
+		...BASE_AUTH_FIELDS[authType].account,
+		...extraAccountFields,
+	];
+
+	const creds: Record<string, string> = { ...credentials };
+	const getConfig = async () => creds;
+	const updateConfig = async (updates: Record<string, string | null>) => {
+		for (const [key, value] of Object.entries(updates)) {
+			if (value === null) delete creds[key];
+			else creds[key] = value;
+		}
+	};
+
+	const noVault = (op: string) => async () => {
+		throw new Error(`${op} is unavailable in an isolated workflow child`);
+	};
+
+	const manager: Record<string, unknown> = {
+		get_dek: noVault('get_dek'),
+		issue_new_dek: noVault('issue_new_dek'),
+		...createFieldAccessors(getConfig, updateConfig, allFields),
+	};
+
+	if (authType === 'oauth_2') {
+		manager.get_integration_credentials =
+			async (): Promise<OAuth2IntegrationCredentials> => ({
+				...integrationCredentials,
+				client_id: integrationCredentials.client_id || null,
+				client_secret: integrationCredentials.client_secret || null,
+				redirect_url: integrationCredentials.redirect_url ?? null,
+			});
+	}
+
+	return manager as AccountKeyManagerFor<T>;
+}
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Initialization Helpers
 // ─────────────────────────────────────────────────────────────────────────────

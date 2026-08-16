@@ -26,7 +26,8 @@ import {
 	resolveTenantIdFromWebhookLink,
 	setWebhookTenantLink,
 } from '../webhooks/tenant-links';
-import { executeWorkflowRun } from '../workflows/execute';
+import type { WorkflowExecutor } from '../workflows/executor';
+import { inProcessVmExecutor } from '../workflows/executor';
 import { runReadonlyProbe } from '../workflows/probe';
 
 export {
@@ -38,6 +39,11 @@ export {
 
 export type { TunnelEnvelope, TunnelType } from '../hub/contracts/tunnel';
 export { verifySignedTunnelDelivery } from '../hub/signing/envelope';
+export { runWorkflowChild } from '../workflows/child';
+export {
+	type ChildProcessExecutorConfig,
+	createChildProcessExecutor,
+} from '../workflows/child-executor';
 export {
 	type BrowserDeliveryPayload,
 	isAuthCredentialsBrowserDelivery,
@@ -474,17 +480,19 @@ function scopeCorsairToTenant(corsair: unknown, tenantId: string): unknown {
 async function handleRunTunnel(
 	corsair: unknown,
 	payload: RunTunnelPayload,
+	executor: WorkflowExecutor,
 ): Promise<TunnelAck> {
 	try {
 		// Scope to the tenant BEFORE handing the client to workflow `main`, so the
 		// generated code's `corsair.<plugin>.api.*` calls resolve the right tenant's
 		// credentials. Dropping this silently breaks every multi-tenant run.
 		const tenantScopedCorsair = scopeCorsairToTenant(corsair, payload.tenantId);
-		const result: RunResultPayload = await executeWorkflowRun({
+		const result: RunResultPayload = await executor.run({
 			corsair: tenantScopedCorsair,
 			code: payload.code,
 			payload: payload.trigger?.payload ?? null,
 			memoizedSteps: payload.memoizedSteps,
+			tenantId: payload.tenantId,
 		});
 		// The envelope was processed successfully regardless of whether the workflow
 		// itself succeeded — Hub reads the run status/steps from `run` in the ack
@@ -553,6 +561,11 @@ export type ProcessCorsairOptions = {
 	 * workflows/execute.ts — sandbox before enabling in production.
 	 */
 	allowWorkflowExecution?: boolean;
+	/**
+	 * Swappable executor for `type: 'run'`. Defaults to the in-process node:vm
+	 * executor; the drop-in point for an out-of-process (KEK-less child) executor.
+	 */
+	workflowExecutor?: WorkflowExecutor;
 };
 
 export async function processCorsair(
@@ -699,7 +712,11 @@ export async function processCorsair(
 						'Workflow execution is not enabled (set allowWorkflowExecution: true)',
 				};
 			}
-			return handleRunTunnel(corsair, envelope.payload as RunTunnelPayload);
+			return handleRunTunnel(
+				corsair,
+				envelope.payload as RunTunnelPayload,
+				options.workflowExecutor ?? inProcessVmExecutor,
+			);
 		case 'probe':
 			// Same gate as `run`: a probe still executes Hub-authored code (read-only).
 			// Could be split into its own flag if a tenant ever needs authoring probes
