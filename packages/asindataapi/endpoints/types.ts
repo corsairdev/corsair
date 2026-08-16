@@ -1,8 +1,36 @@
 import { z } from 'zod';
+import type { ASINDATAAPI_COLLECTION_STATUS } from '../schema/database';
+import {
+	ASINDATAAPI_DESTINATION_TYPE,
+	ASINDATAAPI_PRIORITY,
+	ASINDATAAPI_REQUEST_TYPE,
+	ASINDATAAPI_SCHEDULE_TYPE,
+	AsinDataApiCollection,
+	AsinDataApiCollectionRequest,
+	AsinDataApiDestination,
+	AsinDataApiResultSet,
+} from '../schema/database';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Shared / Common Schemas
-// ─────────────────────────────────────────────────────────────────────────────
+export {
+	ASINDATAAPI_COLLECTION_STATUS,
+	ASINDATAAPI_DESTINATION_TYPE,
+	ASINDATAAPI_PRIORITY,
+	ASINDATAAPI_REQUEST_TYPE,
+	ASINDATAAPI_SCHEDULE_TYPE,
+	AsinDataApiCollection,
+	AsinDataApiCollectionRequest,
+	AsinDataApiDestination,
+	AsinDataApiResultSet,
+} from '../schema/database';
+
+export type AsinDataApiScheduleType =
+	(typeof ASINDATAAPI_SCHEDULE_TYPE)[number];
+export type AsinDataApiPriority = (typeof ASINDATAAPI_PRIORITY)[number];
+export type AsinDataApiCollectionStatus =
+	(typeof ASINDATAAPI_COLLECTION_STATUS)[number];
+export type AsinDataApiRequestType = (typeof ASINDATAAPI_REQUEST_TYPE)[number];
+export type AsinDataApiDestinationType =
+	(typeof ASINDATAAPI_DESTINATION_TYPE)[number];
 
 export const ASINDATAAPI_SORT_BY = [
 	'most_recent',
@@ -12,44 +40,6 @@ export const ASINDATAAPI_SORT_BY = [
 	'average_review',
 ] as const;
 export type AsinDataApiSortBy = (typeof ASINDATAAPI_SORT_BY)[number];
-
-export const ASINDATAAPI_SCHEDULE_TYPE = [
-	'monthly',
-	'weekly',
-	'daily',
-	'minutes',
-	'manual',
-] as const;
-export type AsinDataApiScheduleType =
-	(typeof ASINDATAAPI_SCHEDULE_TYPE)[number];
-
-export const ASINDATAAPI_PRIORITY = [
-	'highest',
-	'high',
-	'normal',
-	'low',
-	'lowest',
-] as const;
-export type AsinDataApiPriority = (typeof ASINDATAAPI_PRIORITY)[number];
-
-export const ASINDATAAPI_COLLECTION_STATUS = [
-	'idle',
-	'queued',
-	'running',
-] as const;
-export type AsinDataApiCollectionStatus =
-	(typeof ASINDATAAPI_COLLECTION_STATUS)[number];
-
-export const ASINDATAAPI_REQUEST_TYPE = [
-	'product',
-	'offers',
-	'category',
-	'search',
-	'reviews',
-	'seller_profile',
-	'autocomplete',
-] as const;
-export type AsinDataApiRequestType = (typeof ASINDATAAPI_REQUEST_TYPE)[number];
 
 /**
  * Common response envelope returned by every ASIN Data API response.
@@ -358,37 +348,7 @@ export type IdentifiersResolveResponse = z.infer<
 // Collections
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const CollectionSchema = z
-	.object({
-		id: z.string(),
-		created_at: z.string().optional(),
-		name: z.string().optional(),
-		schedule_type: z.enum(ASINDATAAPI_SCHEDULE_TYPE).optional(),
-		priority: z.enum(ASINDATAAPI_PRIORITY).optional(),
-		destination_ids: z.array(z.string()).optional(),
-		enabled: z.boolean().optional(),
-		status: z.enum(ASINDATAAPI_COLLECTION_STATUS).optional(),
-		request_total_count: z.number().optional(),
-		request_page_count: z.number().optional(),
-		requests_total_count: z.number().optional(),
-		requests_page_count: z.number().optional(),
-		next_result_set_id: z.number().optional(),
-		results_count: z.number().optional(),
-		schedule_hours: z.array(z.number()).optional(),
-		schedule_days_of_week: z.array(z.number()).optional(),
-		schedule_days_of_month: z.array(z.number()).optional(),
-		notification_email: z.string().optional(),
-		notification_webhook: z.string().optional(),
-		notification_as_json: z.boolean().optional(),
-		notification_as_jsonlines: z.boolean().optional(),
-		notification_as_csv: z.boolean().optional(),
-		request_type: z.string().optional(),
-		request_type_locked: z.boolean().optional(),
-		last_run: z.string().optional(),
-	})
-	.loose();
-
-export type AsinDataApiCollection = z.infer<typeof CollectionSchema>;
+const CollectionSchema = AsinDataApiCollection;
 
 export const CollectionFieldsSchema = z.object({
 	/** Human-readable collection name (required on create). */
@@ -448,8 +408,7 @@ export type CollectionsCreateInput = z.infer<
 >;
 
 export const CollectionsUpdateInputSchema = CollectionFieldsSchema.extend({
-	/** Collection id to update. */
-	id: z.string(),
+	collection_id: z.string(),
 });
 
 export type CollectionsUpdateInput = z.infer<
@@ -457,15 +416,13 @@ export type CollectionsUpdateInput = z.infer<
 >;
 
 export const CollectionsGetInputSchema = z.object({
-	/** Collection id. */
-	id: z.string(),
+	collection_id: z.string(),
 });
 
 export type CollectionsGetInput = z.infer<typeof CollectionsGetInputSchema>;
 
 export const CollectionsDeleteInputSchema = z.object({
-	/** Collection id to delete. */
-	id: z.string(),
+	collection_id: z.string(),
 });
 
 export type CollectionsDeleteInput = z.infer<
@@ -473,8 +430,7 @@ export type CollectionsDeleteInput = z.infer<
 >;
 
 export const CollectionsStartInputSchema = z.object({
-	/** Collection id to start. */
-	id: z.string(),
+	collection_id: z.string(),
 });
 
 export type CollectionsStartInput = z.infer<typeof CollectionsStartInputSchema>;
@@ -565,20 +521,11 @@ export type AsinDataApiCollectionRequestInput = z.infer<
 	typeof CollectionRequestInputSchema
 >;
 
-export const CollectionRequestSchema = CollectionRequestInputSchema.extend({
-	/** ASIN Data API-assigned unique request id. */
-	id: z.string(),
-});
-
-export type AsinDataApiCollectionRequest = z.infer<
-	typeof CollectionRequestSchema
->;
+const CollectionRequestSchema = AsinDataApiCollectionRequest;
 
 export const RequestsListInputSchema = z.object({
-	/** Collection id. */
-	collectionId: z.string(),
-	/** Page number (1-indexed, 1000 requests per page). */
-	page: z.number().int().positive(),
+	collection_id: z.string(),
+	page: z.number().int().positive().optional(),
 });
 
 export type RequestsListInput = z.infer<typeof RequestsListInputSchema>;
@@ -597,19 +544,15 @@ export const RequestsListResponseSchema = z
 export type RequestsListResponse = z.infer<typeof RequestsListResponseSchema>;
 
 export const RequestsAddInputSchema = z.object({
-	/** Collection id to add requests to. */
-	collectionId: z.string(),
-	/** Request objects to add (up to 1000 per call). */
+	collection_id: z.string(),
 	requests: z.array(CollectionRequestInputSchema).min(1).max(1000),
 });
 
 export type RequestsAddInput = z.infer<typeof RequestsAddInputSchema>;
 
 export const RequestsUpdateInputSchema = z.object({
-	/** Collection id. */
-	collectionId: z.string(),
-	/** Request id to update. */
-	requestId: z.string(),
+	collection_id: z.string(),
+	request_id: z.string(),
 	/** Fields to update on the request. */
 	type: z.enum(ASINDATAAPI_REQUEST_TYPE).optional(),
 	amazon_domain: z.string().optional(),
@@ -633,19 +576,15 @@ export const RequestsUpdateInputSchema = z.object({
 export type RequestsUpdateInput = z.infer<typeof RequestsUpdateInputSchema>;
 
 export const RequestsClearInputSchema = z.object({
-	/** Collection id. */
-	collectionId: z.string(),
-	/** Request ids to delete. */
-	requestIds: z.array(z.string()).min(1),
+	collection_id: z.string(),
+	request_ids: z.array(z.string()).min(1),
 });
 
 export type RequestsClearInput = z.infer<typeof RequestsClearInputSchema>;
 
 export const RequestsDeleteInputSchema = z.object({
-	/** Collection id. */
-	collectionId: z.string(),
-	/** Request id to delete. */
-	requestId: z.string(),
+	collection_id: z.string(),
+	request_id: z.string(),
 });
 
 export type RequestsDeleteInput = z.infer<typeof RequestsDeleteInputSchema>;
@@ -682,41 +621,10 @@ export type RequestsDeleteResponse = z.infer<
 // Result Sets
 // ─────────────────────────────────────────────────────────────────────────────
 
-const DownloadLinksSchema = z
-	.object({
-		pages: z.array(z.string()).optional(),
-		all_pages: z.string().optional(),
-	})
-	.loose();
-
-const ResultSetSchema = z
-	.object({
-		id: z.number(),
-		started_at: z.string().optional(),
-		ended_at: z.string().optional(),
-		expires_at: z.string().optional(),
-		results_page_count: z.number().optional(),
-		requests_completed: z.number().optional(),
-		requests_failed: z.number().optional(),
-		requests_total: z.number().optional(),
-		download_links: z
-			.object({
-				json: DownloadLinksSchema.optional(),
-				jsonlines: DownloadLinksSchema.optional(),
-				csv: DownloadLinksSchema.optional(),
-			})
-			.loose()
-			.optional(),
-		webhook_status: z.record(z.string(), z.unknown()).optional(),
-		destination_status: z.record(z.string(), z.unknown()).optional(),
-	})
-	.loose();
-
-export type AsinDataApiResultSet = z.infer<typeof ResultSetSchema>;
+const ResultSetSchema = AsinDataApiResultSet;
 
 export const ResultSetsListInputSchema = z.object({
-	/** Collection id. */
-	collectionId: z.string(),
+	collection_id: z.string(),
 });
 
 export type ResultSetsListInput = z.infer<typeof ResultSetsListInputSchema>;
@@ -736,10 +644,8 @@ export type ResultSetsListResponse = z.infer<
 >;
 
 export const ResultSetsGetInputSchema = z.object({
-	/** Collection id. */
-	collectionId: z.string(),
-	/** Result set id. */
-	resultSetId: z.number(),
+	collection_id: z.string(),
+	result_set_id: z.number(),
 });
 
 export type ResultSetsGetInput = z.infer<typeof ResultSetsGetInputSchema>;
@@ -758,32 +664,20 @@ export type ResultSetsGetResponse = z.infer<typeof ResultSetsGetResponseSchema>;
 // Destinations
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const ASINDATAAPI_DESTINATION_TYPE = [
-	's3',
-	'gcs',
-	'azure_blob',
-	's3_compatible',
-] as const;
-export type AsinDataApiDestinationType =
-	(typeof ASINDATAAPI_DESTINATION_TYPE)[number];
+const DestinationSchema = AsinDataApiDestination;
 
-export const DestinationSchema = z
+const DestinationUsageSchema = z
 	.object({
-		id: z.string(),
-		name: z.string().optional(),
-		type: z.enum(ASINDATAAPI_DESTINATION_TYPE).optional(),
-		enabled: z.boolean().optional(),
-		used_by: z.number().optional(),
-		s3_bucket_name: z.string().optional(),
+		used: z.number().optional(),
+		limit: z.number().optional(),
+		available: z.number().optional(),
 	})
 	.loose();
 
-export type AsinDataApiDestination = z.infer<typeof DestinationSchema>;
-
 export const DestinationsListInputSchema = z.object({
 	page: z.number().int().positive().optional(),
-	type: z.enum(['all', 's3', 'gcs', 'azure_blob', 's3_compatible']).optional(),
-	sort_by: z.enum(['name', 'type', 'status']).optional(),
+	search_term: z.string().optional(),
+	sort_by: z.enum(['type', 'name']).optional(),
 	sort_direction: z.enum(['ascending', 'descending']).optional(),
 });
 
@@ -792,9 +686,8 @@ export type DestinationsListInput = z.infer<typeof DestinationsListInputSchema>;
 export const DestinationsListResponseSchema = z
 	.object({
 		request_info: RequestInfoSchema,
+		usage: DestinationUsageSchema.optional(),
 		destinations: z.array(DestinationSchema).optional(),
-		total_count: z.number().optional(),
-		page: z.number().optional(),
 	})
 	.loose();
 
@@ -802,31 +695,33 @@ export type DestinationsListResponse = z.infer<
 	typeof DestinationsListResponseSchema
 >;
 
-export const DestinationsCreateInputSchema = z.object({
-	/** Destination name. */
-	name: z.string(),
-	/** Destination type: s3, gcs, azure_blob, or s3_compatible. */
-	type: z.enum(ASINDATAAPI_DESTINATION_TYPE),
-	/** Enable or disable the destination. */
-	enabled: z.boolean().optional(),
-	/** S3 Access Key ID (for s3/s3_compatible). */
+const DestinationCredentialFields = {
 	s3_access_key_id: z.string().optional(),
-	/** S3 Secret Access Key (for s3/s3_compatible). */
 	s3_secret_access_key: z.string().optional(),
-	/** S3 Bucket Name (for s3/s3_compatible). */
 	s3_bucket_name: z.string().optional(),
-	/** GCS Bucket Name (for gcs). */
+	s3_path_prefix: z.string().optional(),
+	s3_endpoint: z.string().optional(),
+	s3_region: z.string().optional(),
+	gcs_access_key: z.string().optional(),
+	gcs_secret_key: z.string().optional(),
 	gcs_bucket_name: z.string().optional(),
-	/** GCS Service Account Key JSON (for gcs). */
-	gcs_service_account_key: z.string().optional(),
-	/** Azure Storage Account Name (for azure_blob). */
+	gcs_path_prefix: z.string().optional(),
 	azure_account_name: z.string().optional(),
-	/** Azure Storage Account Key (for azure_blob). */
 	azure_account_key: z.string().optional(),
-	/** Azure Blob Container Name (for azure_blob). */
 	azure_container_name: z.string().optional(),
-	/** Optional path prefix for uploaded files. */
-	path_prefix: z.string().optional(),
+	azure_path_prefix: z.string().optional(),
+	oss_access_key: z.string().optional(),
+	oss_secret_key: z.string().optional(),
+	oss_bucket_name: z.string().optional(),
+	oss_region_id: z.string().optional(),
+	oss_path_prefix: z.string().optional(),
+};
+
+export const DestinationsCreateInputSchema = z.object({
+	name: z.string(),
+	type: z.enum(ASINDATAAPI_DESTINATION_TYPE),
+	enabled: z.boolean(),
+	...DestinationCredentialFields,
 });
 
 export type DestinationsCreateInput = z.infer<
@@ -836,7 +731,7 @@ export type DestinationsCreateInput = z.infer<
 export const DestinationsCreateResponseSchema = z
 	.object({
 		request_info: RequestInfoSchema,
-		usage: z.record(z.string(), z.unknown()).optional(),
+		usage: DestinationUsageSchema.optional(),
 		destination: DestinationSchema.optional(),
 	})
 	.loose();
@@ -846,30 +741,10 @@ export type DestinationsCreateResponse = z.infer<
 >;
 
 export const DestinationsUpdateInputSchema = z.object({
-	/** Destination id to update. */
-	id: z.string(),
-	/** Destination name. */
+	destination_id: z.string(),
 	name: z.string().optional(),
-	/** Enable or disable the destination. */
 	enabled: z.boolean().optional(),
-	/** S3 Access Key ID (for s3/s3_compatible). */
-	s3_access_key_id: z.string().optional(),
-	/** S3 Secret Access Key (for s3/s3_compatible). */
-	s3_secret_access_key: z.string().optional(),
-	/** S3 Bucket Name (for s3/s3_compatible). */
-	s3_bucket_name: z.string().optional(),
-	/** GCS Bucket Name (for gcs). */
-	gcs_bucket_name: z.string().optional(),
-	/** GCS Service Account Key JSON (for gcs). */
-	gcs_service_account_key: z.string().optional(),
-	/** Azure Storage Account Name (for azure_blob). */
-	azure_account_name: z.string().optional(),
-	/** Azure Storage Account Key (for azure_blob). */
-	azure_account_key: z.string().optional(),
-	/** Azure Blob Container Name (for azure_blob). */
-	azure_container_name: z.string().optional(),
-	/** Optional path prefix for uploaded files. */
-	path_prefix: z.string().optional(),
+	...DestinationCredentialFields,
 });
 
 export type DestinationsUpdateInput = z.infer<
@@ -888,8 +763,7 @@ export type DestinationsUpdateResponse = z.infer<
 >;
 
 export const DestinationsDeleteInputSchema = z.object({
-	/** Destination ids to delete. */
-	ids: z.array(z.string()).min(1),
+	destination_id: z.string(),
 });
 
 export type DestinationsDeleteInput = z.infer<

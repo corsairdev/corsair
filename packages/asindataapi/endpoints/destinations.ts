@@ -1,15 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
+import { evictEntity, upsertEntity } from './persist';
 import type { AsinDataApiEndpointOutputs } from './types';
 import { AsinDataApiEndpointOutputSchemas } from './types';
 
-/**
- * List all configured Destinations on the account.
- *
- * Destinations control where Collection Result Sets are exported (S3, GCS, Azure Blob).
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/destinations
- */
 const list: AsinDataApiEndpoints['destinationsList'] = async (ctx, input) => {
 	const raw = await makeAsinDataApiRequest<unknown>('destinations', ctx.key, {
 		method: 'GET',
@@ -17,6 +12,12 @@ const list: AsinDataApiEndpoints['destinationsList'] = async (ctx, input) => {
 	});
 
 	const response = AsinDataApiEndpointOutputSchemas.destinationsList.parse(raw);
+
+	if (response.destinations) {
+		for (const dest of response.destinations) {
+			await upsertEntity(ctx.db.destinations, dest.id, dest);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,
@@ -27,12 +28,6 @@ const list: AsinDataApiEndpoints['destinationsList'] = async (ctx, input) => {
 	return response as AsinDataApiEndpointOutputs['destinationsList'];
 };
 
-/**
- * Create a new Destination.
- *
- * Supports Amazon S3, Google Cloud Storage, Microsoft Azure Blob Storage, and S3-compatible.
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/destinations
- */
 const create: AsinDataApiEndpoints['destinationsCreate'] = async (
 	ctx,
 	input,
@@ -45,6 +40,14 @@ const create: AsinDataApiEndpoints['destinationsCreate'] = async (
 	const response =
 		AsinDataApiEndpointOutputSchemas.destinationsCreate.parse(raw);
 
+	if (response.destination) {
+		await upsertEntity(
+			ctx.db.destinations,
+			response.destination.id,
+			response.destination,
+		);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.destinations.create',
@@ -54,18 +57,13 @@ const create: AsinDataApiEndpoints['destinationsCreate'] = async (
 	return response as AsinDataApiEndpointOutputs['destinationsCreate'];
 };
 
-/**
- * Update an existing Destination's configuration.
- *
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/destinations
- */
 const update: AsinDataApiEndpoints['destinationsUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const { id, ...fields } = input;
+	const { destination_id, ...fields } = input;
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`destinations/${id}`,
+		`destinations/${encodeURIComponent(destination_id)}`,
 		ctx.key,
 		{
 			method: 'PUT',
@@ -76,36 +74,42 @@ const update: AsinDataApiEndpoints['destinationsUpdate'] = async (
 	const response =
 		AsinDataApiEndpointOutputSchemas.destinationsUpdate.parse(raw);
 
+	if (response.destination) {
+		await upsertEntity(
+			ctx.db.destinations,
+			response.destination.id,
+			response.destination,
+		);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.destinations.update',
-		{ id },
+		{ destination_id },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['destinationsUpdate'];
 };
 
-/**
- * Delete one or more Destinations by their IDs.
- *
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/destinations
- */
-const deleteDestinations: AsinDataApiEndpoints['destinationsDelete'] = async (
+const deleteDestination: AsinDataApiEndpoints['destinationsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeAsinDataApiRequest<unknown>('destinations', ctx.key, {
-		method: 'DELETE',
-		body: input.ids,
-	});
+	const raw = await makeAsinDataApiRequest<unknown>(
+		`destinations/${encodeURIComponent(input.destination_id)}`,
+		ctx.key,
+		{ method: 'DELETE' },
+	);
 
 	const response =
 		AsinDataApiEndpointOutputSchemas.destinationsDelete.parse(raw);
 
+	await evictEntity(ctx.db.destinations, input.destination_id);
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.destinations.delete',
-		{ ids: input.ids },
+		{ destination_id: input.destination_id },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['destinationsDelete'];
@@ -115,5 +119,5 @@ export const Destinations = {
 	list,
 	create,
 	update,
-	delete: deleteDestinations,
+	delete: deleteDestination,
 };

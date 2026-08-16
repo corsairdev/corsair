@@ -50,6 +50,7 @@ module.exports = {
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
+	testPathIgnorePatterns: ['/node_modules/', 'integration\\.test\\.ts'],
 	testTimeout: 30000,
 	verbose: true,
 };

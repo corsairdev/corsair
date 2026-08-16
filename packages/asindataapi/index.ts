@@ -305,7 +305,7 @@ const asinDataApiWebhookSchemas = {
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const asinDataApiEndpointMeta = {
+export const asinDataApiEndpointMeta = {
 	'products.get': {
 		riskLevel: 'read',
 		description:
@@ -401,7 +401,7 @@ const asinDataApiEndpointMeta = {
 	},
 	'destinations.delete': {
 		riskLevel: 'destructive',
-		description: 'Delete one or more Destinations [DESTRUCTIVE]',
+		description: 'Delete a Destination [DESTRUCTIVE]',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof asinDataApiEndpointsNested>;
 
@@ -410,7 +410,7 @@ const asinDataApiEndpointMeta = {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const asinDataApiAuthConfig = {
-	api_key: {},
+	api_key: { account: [] as const },
 } as const satisfies PluginAuthConfig;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -494,18 +494,16 @@ export function asindataapi<const T extends AsinDataApiPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AsinDataApiKeyBuilderContext, source) => {
-			// Direct key from options takes priority
 			if (options.key) {
 				return options.key;
 			}
 
-			// Webhook source: use webhook secret if provided, otherwise fall through
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
+			// Official webhooks have no signature header.
+			if (source === 'webhook') {
+				return options.webhookSecret ?? '';
 			}
 
-			// Retrieve from key manager
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
+			if (ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
 					throw new AuthMissingError('asindataapi', 'api_key');

@@ -1,46 +1,44 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
+import { evictEntity, upsertEntity } from './persist';
 import type { AsinDataApiEndpointOutputs } from './types';
 import { AsinDataApiEndpointOutputSchemas } from './types';
 
-/**
- * List all Requests in a Collection (paginated, 1000 per page).
- *
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/requests/list
- */
 export const listRequests: AsinDataApiEndpoints['requestsList'] = async (
 	ctx,
 	input,
 ) => {
+	const page = input.page ?? 1;
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`collections/${input.collectionId}/requests/${input.page}`,
+		`collections/${encodeURIComponent(input.collection_id)}/requests/${page}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
 
 	const response = AsinDataApiEndpointOutputSchemas.requestsList.parse(raw);
 
+	if (response.requests) {
+		for (const req of response.requests) {
+			await upsertEntity(ctx.db.requests, req.id, req);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.requests.list',
-		{ collectionId: input.collectionId, page: input.page },
+		{ collection_id: input.collection_id, page },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['requestsList'];
 };
 
-/**
- * Add Requests to a Collection (up to 1000 per call, call sequentially).
- *
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/requests/create
- */
 export const addRequests: AsinDataApiEndpoints['requestsAdd'] = async (
 	ctx,
 	input,
 ) => {
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`collections/${input.collectionId}`,
+		`collections/${encodeURIComponent(input.collection_id)}`,
 		ctx.key,
 		{
 			method: 'PUT',
@@ -53,24 +51,19 @@ export const addRequests: AsinDataApiEndpoints['requestsAdd'] = async (
 	await logEventFromContext(
 		ctx,
 		'asindataapi.requests.add',
-		{ collectionId: input.collectionId, count: input.requests.length },
+		{ collection_id: input.collection_id, count: input.requests.length },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['requestsAdd'];
 };
 
-/**
- * Update a single Request within a Collection.
- *
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/requests/update
- */
 export const updateRequest: AsinDataApiEndpoints['requestsUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	const { collectionId, requestId, ...fields } = input;
+	const { collection_id, request_id, ...fields } = input;
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`collections/${collectionId}/${requestId}`,
+		`collections/${encodeURIComponent(collection_id)}/${encodeURIComponent(request_id)}`,
 		ctx.key,
 		{
 			method: 'PUT',
@@ -80,67 +73,68 @@ export const updateRequest: AsinDataApiEndpoints['requestsUpdate'] = async (
 
 	const response = AsinDataApiEndpointOutputSchemas.requestsUpdate.parse(raw);
 
+	if (response.request && 'id' in response.request && response.request.id) {
+		await upsertEntity(ctx.db.requests, String(response.request.id), {
+			...response.request,
+			id: String(response.request.id),
+		});
+	}
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.requests.update',
-		{ collectionId, requestId },
+		{ collection_id, request_id },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['requestsUpdate'];
 };
 
-/**
- * Bulk-delete multiple Requests from a Collection by their IDs.
- *
- * Only works when the collection is not running.
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/requests/delete
- */
 export const clearRequests: AsinDataApiEndpoints['requestsClear'] = async (
 	ctx,
 	input,
 ) => {
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`collections/${input.collectionId}/requests`,
+		`collections/${encodeURIComponent(input.collection_id)}/requests`,
 		ctx.key,
 		{
 			method: 'DELETE',
-			body: input.requestIds,
+			body: input.request_ids,
 		},
 	);
 
 	const response = AsinDataApiEndpointOutputSchemas.requestsClear.parse(raw);
 
+	for (const id of input.request_ids) {
+		await evictEntity(ctx.db.requests, id);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.requests.clear',
-		{ collectionId: input.collectionId, count: input.requestIds.length },
+		{ collection_id: input.collection_id, count: input.request_ids.length },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['requestsClear'];
 };
 
-/**
- * Delete a single Request from a Collection.
- *
- * Only works when the collection is not running.
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/requests/delete
- */
 export const deleteRequest: AsinDataApiEndpoints['requestsDelete'] = async (
 	ctx,
 	input,
 ) => {
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`collections/${input.collectionId}/${input.requestId}`,
+		`collections/${encodeURIComponent(input.collection_id)}/${encodeURIComponent(input.request_id)}`,
 		ctx.key,
 		{ method: 'DELETE' },
 	);
 
 	const response = AsinDataApiEndpointOutputSchemas.requestsDelete.parse(raw);
 
+	await evictEntity(ctx.db.requests, input.request_id);
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.requests.delete',
-		{ collectionId: input.collectionId, requestId: input.requestId },
+		{ collection_id: input.collection_id, request_id: input.request_id },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['requestsDelete'];

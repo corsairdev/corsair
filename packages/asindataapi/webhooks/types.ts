@@ -56,17 +56,9 @@ export type CollectionCompletedEvent = z.infer<
 	typeof CollectionCompletedPayloadSchema
 >;
 
-// ── Event Response Schema ────────────────────────────────────────────────────
+export const CollectionCompletedEventSchema = CollectionCompletedPayloadSchema;
 
-export const CollectionCompletedEventSchema = z.object({
-	collectionId: z.string(),
-	collectionName: z.string().optional(),
-	resultSet: WebhookResultSetSchema,
-});
-
-export type CollectionCompletedResponse = z.infer<
-	typeof CollectionCompletedEventSchema
->;
+export type CollectionCompletedResponse = CollectionCompletedEvent;
 
 // ── Webhook Outputs ──────────────────────────────────────────────────────────
 

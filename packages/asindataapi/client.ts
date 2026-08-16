@@ -32,7 +32,7 @@ export class AsinDataApiAPIError extends Error {
 	}
 }
 
-const ASINDATAAPI_API_BASE = 'https://api.asindataapi.com';
+export const ASINDATAAPI_API_BASE = 'https://api.asindataapi.com';
 
 /**
  * Performs a request to the ASIN Data API.

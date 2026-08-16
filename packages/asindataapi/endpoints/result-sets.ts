@@ -1,59 +1,63 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
+import { upsertEntity } from './persist';
 import type { AsinDataApiEndpointOutputs } from './types';
 import { AsinDataApiEndpointOutputSchemas } from './types';
 
-/**
- * List all Result Sets for a Collection.
- *
- * Result Sets are retained for 14 days. Download within that window.
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/results/list
- */
 export const listResultSets: AsinDataApiEndpoints['resultSetsList'] = async (
 	ctx,
 	input,
 ) => {
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`collections/${input.collectionId}/results`,
+		`collections/${encodeURIComponent(input.collection_id)}/results`,
 		ctx.key,
 		{ method: 'GET' },
 	);
 
 	const response = AsinDataApiEndpointOutputSchemas.resultSetsList.parse(raw);
 
+	if (response.results) {
+		for (const result of response.results) {
+			await upsertEntity(ctx.db.resultSets, String(result.id), {
+				...result,
+				collection_id: input.collection_id,
+			});
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.resultSets.list',
-		{ collectionId: input.collectionId },
+		{ collection_id: input.collection_id },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['resultSetsList'];
 };
 
-/**
- * Get a specific Result Set with download links.
- *
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/results/get
- */
 export const getResultSet: AsinDataApiEndpoints['resultSetsGet'] = async (
 	ctx,
 	input,
 ) => {
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`collections/${input.collectionId}/results/${input.resultSetId}`,
+		`collections/${encodeURIComponent(input.collection_id)}/results/${input.result_set_id}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
 
 	const response = AsinDataApiEndpointOutputSchemas.resultSetsGet.parse(raw);
 
+	await upsertEntity(ctx.db.resultSets, String(response.result.id), {
+		...response.result,
+		collection_id: input.collection_id,
+	});
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.resultSets.get',
 		{
-			collectionId: input.collectionId,
-			resultSetId: input.resultSetId,
+			collection_id: input.collection_id,
+			result_set_id: input.result_set_id,
 		},
 		'completed',
 	);

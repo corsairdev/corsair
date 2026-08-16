@@ -1,15 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AsinDataApiEndpoints } from '..';
 import { makeAsinDataApiRequest } from '../client';
+import { evictEntity, upsertEntity } from './persist';
 import type { AsinDataApiEndpointOutputs } from './types';
 import { AsinDataApiEndpointOutputSchemas } from './types';
 
-/**
- * Create a new Collection.
- *
- * Collections hold up to 15,000 requests and can be scheduled or run manually.
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/collections/create
- */
 export const createCollection: AsinDataApiEndpoints['collectionsCreate'] =
 	async (ctx, input) => {
 		const raw = await makeAsinDataApiRequest<unknown>('collections', ctx.key, {
@@ -20,18 +15,11 @@ export const createCollection: AsinDataApiEndpoints['collectionsCreate'] =
 		const response =
 			AsinDataApiEndpointOutputSchemas.collectionsCreate.parse(raw);
 
-		if (ctx.db.collections) {
-			try {
-				await ctx.db.collections.upsertByEntityId(response.collection.id, {
-					id: response.collection.id,
-					name: response.collection.name,
-					status: response.collection.status,
-					scheduleType: response.collection.schedule_type,
-				});
-			} catch (error) {
-				console.warn('Failed to save collection to database:', error);
-			}
-		}
+		await upsertEntity(
+			ctx.db.collections,
+			response.collection.id,
+			response.collection,
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -42,11 +30,6 @@ export const createCollection: AsinDataApiEndpoints['collectionsCreate'] =
 		return response as AsinDataApiEndpointOutputs['collectionsCreate'];
 	};
 
-/**
- * List all Collections on the account (paginated).
- *
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/collections/list
- */
 export const listCollections: AsinDataApiEndpoints['collectionsList'] = async (
 	ctx,
 	input,
@@ -58,18 +41,9 @@ export const listCollections: AsinDataApiEndpoints['collectionsList'] = async (
 
 	const response = AsinDataApiEndpointOutputSchemas.collectionsList.parse(raw);
 
-	if (response.collections && ctx.db.collections) {
-		try {
-			for (const col of response.collections) {
-				await ctx.db.collections.upsertByEntityId(col.id, {
-					id: col.id,
-					name: col.name,
-					status: col.status,
-					scheduleType: col.schedule_type,
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to save collections to database:', error);
+	if (response.collections) {
+		for (const col of response.collections) {
+			await upsertEntity(ctx.db.collections, col.id, col);
 		}
 	}
 
@@ -82,57 +56,38 @@ export const listCollections: AsinDataApiEndpoints['collectionsList'] = async (
 	return response as AsinDataApiEndpointOutputs['collectionsList'];
 };
 
-/**
- * Get details of a specific Collection by its id.
- *
- * Returns status, request counts, and all configuration fields.
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/collections/get
- */
 export const getCollection: AsinDataApiEndpoints['collectionsGet'] = async (
 	ctx,
 	input,
 ) => {
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`collections/${input.id}`,
+		`collections/${encodeURIComponent(input.collection_id)}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
 
 	const response = AsinDataApiEndpointOutputSchemas.collectionsGet.parse(raw);
 
-	if (ctx.db.collections) {
-		try {
-			await ctx.db.collections.upsertByEntityId(response.collection.id, {
-				id: response.collection.id,
-				name: response.collection.name,
-				status: response.collection.status,
-				scheduleType: response.collection.schedule_type,
-			});
-		} catch (error) {
-			console.warn('Failed to save collection to database:', error);
-		}
-	}
+	await upsertEntity(
+		ctx.db.collections,
+		response.collection.id,
+		response.collection,
+	);
 
 	await logEventFromContext(
 		ctx,
 		'asindataapi.collections.get',
-		{ id: input.id },
+		{ collection_id: input.collection_id },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['collectionsGet'];
 };
 
-/**
- * Update an existing Collection's configuration.
- *
- * Only works when the collection is not running.
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/collections/update
- */
 export const updateCollection: AsinDataApiEndpoints['collectionsUpdate'] =
 	async (ctx, input) => {
-		const { id, ...fields } = input;
+		const { collection_id, ...fields } = input;
 		const raw = await makeAsinDataApiRequest<unknown>(
-			`collections/${id}`,
+			`collections/${encodeURIComponent(collection_id)}`,
 			ctx.key,
 			{
 				method: 'PUT',
@@ -143,38 +98,25 @@ export const updateCollection: AsinDataApiEndpoints['collectionsUpdate'] =
 		const response =
 			AsinDataApiEndpointOutputSchemas.collectionsUpdate.parse(raw);
 
-		if (ctx.db.collections) {
-			try {
-				await ctx.db.collections.upsertByEntityId(response.collection.id, {
-					id: response.collection.id,
-					name: response.collection.name,
-					status: response.collection.status,
-					scheduleType: response.collection.schedule_type,
-				});
-			} catch (error) {
-				console.warn('Failed to save collection to database:', error);
-			}
-		}
+		await upsertEntity(
+			ctx.db.collections,
+			response.collection.id,
+			response.collection,
+		);
 
 		await logEventFromContext(
 			ctx,
 			'asindataapi.collections.update',
-			{ id },
+			{ collection_id },
 			'completed',
 		);
 		return response as AsinDataApiEndpointOutputs['collectionsUpdate'];
 	};
 
-/**
- * Delete a Collection by its id.
- *
- * Only works when the collection is not running.
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/collections/delete
- */
 export const deleteCollection: AsinDataApiEndpoints['collectionsDelete'] =
 	async (ctx, input) => {
 		const raw = await makeAsinDataApiRequest<unknown>(
-			`collections/${input.id}`,
+			`collections/${encodeURIComponent(input.collection_id)}`,
 			ctx.key,
 			{ method: 'DELETE' },
 		);
@@ -182,35 +124,23 @@ export const deleteCollection: AsinDataApiEndpoints['collectionsDelete'] =
 		const response =
 			AsinDataApiEndpointOutputSchemas.collectionsDelete.parse(raw);
 
-		if (ctx.db.collections) {
-			try {
-				await ctx.db.collections.deleteByEntityId(input.id);
-			} catch (error) {
-				console.warn('Failed to delete collection from database:', error);
-			}
-		}
+		await evictEntity(ctx.db.collections, input.collection_id);
 
 		await logEventFromContext(
 			ctx,
 			'asindataapi.collections.delete',
-			{ id: input.id },
+			{ collection_id: input.collection_id },
 			'completed',
 		);
 		return response as AsinDataApiEndpointOutputs['collectionsDelete'];
 	};
 
-/**
- * Start a Collection (runs all its requests immediately).
- *
- * Requires sufficient credits. Works for any schedule_type when idle.
- * Docs: https://docs.trajectdata.com/asindataapi/collections-api/collections/start
- */
 export const startCollection: AsinDataApiEndpoints['collectionsStart'] = async (
 	ctx,
 	input,
 ) => {
 	const raw = await makeAsinDataApiRequest<unknown>(
-		`collections/${input.id}/start`,
+		`collections/${encodeURIComponent(input.collection_id)}/start`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -220,7 +150,7 @@ export const startCollection: AsinDataApiEndpoints['collectionsStart'] = async (
 	await logEventFromContext(
 		ctx,
 		'asindataapi.collections.start',
-		{ id: input.id },
+		{ collection_id: input.collection_id },
 		'completed',
 	);
 	return response as AsinDataApiEndpointOutputs['collectionsStart'];
