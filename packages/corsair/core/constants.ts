@@ -58,6 +58,7 @@ export const BaseProviders = [
 	'discord',
 	'dockerhub',
 	'dodopayments',
+	'doppler',
 	'dropbox',
 	'epicgames',
 	'exa',
@@ -188,6 +189,7 @@ export const ProviderDisplayNames = {
 	discord: 'Discord',
 	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
+	doppler: 'Doppler',
 	dropbox: 'Dropbox',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
@@ -325,6 +327,7 @@ export type AllProviders =
 	| 'discord'
 	| 'dockerhub'
 	| 'dodopayments'
+	| 'doppler'
 	| 'dropbox'
 	| 'epicgames'
 	| 'exa'
