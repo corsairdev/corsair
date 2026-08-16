@@ -45,10 +45,15 @@ describe('Calendly verifyCalendlyWebhookSignature Tests', () => {
 
 	it('should return invalid for wrong v1 signature', () => {
 		const timestamp = Math.floor(Date.now() / 1000).toString();
+		// Same-length hex so timingSafeEqual actually compares, not the length-mismatch path
+		const signature = crypto
+			.createHmac('sha256', 'a-different-key')
+			.update(`${timestamp}.${rawBody}`)
+			.digest('hex');
 
 		const result = verifyCalendlyWebhookSignature(
 			requestWith(
-				{ 'calendly-webhook-signature': `t=${timestamp},v1=wrong-signature` },
+				{ 'calendly-webhook-signature': `t=${timestamp},v1=${signature}` },
 				rawBody,
 			),
 			signingKey,
