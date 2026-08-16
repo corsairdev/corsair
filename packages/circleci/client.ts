@@ -251,6 +251,20 @@ export async function makeCircleCIV3Request<T>(
  * what cursor to ask for next. `makeCircleCIV3Request` stays as it is for the
  * single-entity v3 routes (`namespaces.ts`'s name lookups), which have no
  * `page` object to lose in the first place.
+ *
+ * A bare array response is also accepted, as `items` with no `page` -
+ * `makeCircleCIV3Request` above extends the same tolerance to an unwrapped
+ * single entity, for the same reason: a route this integration has not met
+ * in exactly the confirmed shape should not be assumed to match it.
+ *
+ * **Anything else throws, rather than defaulting to an empty list.** An
+ * earlier version of this function read `response.data ?? []`, so a
+ * malformed or unexpected response - `null`, a validation-error object
+ * shaped nothing like a list, a future API change - silently resolved to
+ * zero items instead of surfacing a failure. A caller reading "0 results" as
+ * "the account has none" has no way to tell that apart from "the response
+ * could not be understood," which is a strictly worse outcome than a thrown
+ * error naming what was actually received.
  */
 export async function makeCircleCIV3ListRequest<T>(
 	endpoint: string,
@@ -279,11 +293,25 @@ export async function makeCircleCIV3ListRequest<T>(
 			requestOptions,
 			{ rateLimitConfig: CIRCLECI_RATE_LIMIT_CONFIG },
 		);
-		const envelope = response as {
-			data?: T[];
-			page?: { next?: string | null; prev?: string | null };
-		};
-		return { items: envelope?.data ?? [], page: envelope?.page };
+
+		if (Array.isArray(response)) {
+			return { items: response as T[], page: undefined };
+		}
+		if (
+			response !== null &&
+			typeof response === 'object' &&
+			Array.isArray((response as { data?: unknown }).data)
+		) {
+			const envelope = response as {
+				data: T[];
+				page?: { next?: string | null; prev?: string | null };
+			};
+			return { items: envelope.data, page: envelope.page };
+		}
+
+		throw new CircleCIAPIError(
+			`CircleCI v3 list response did not match either the {"data": [...]} envelope or a bare array: received ${JSON.stringify(response)?.slice(0, 200)}`,
+		);
 	} catch (error) {
 		throw wrapError(error);
 	}

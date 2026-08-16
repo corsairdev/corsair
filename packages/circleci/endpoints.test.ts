@@ -1548,6 +1548,26 @@ describe('list operations surface the pagination cursor CircleCI returns', () =>
 		expect(result.page).toEqual({ next: 'cursor-1', prev: null });
 	});
 
+	it('orbs.listNamespaceOrbs: also accepts a bare array response, with no page', async () => {
+		const { ctx } = makeCtx();
+		mockFetch([{ id: 'p-1', name: 'x' }]);
+		const result = await Orbs.listNamespaceOrbs(ctx, {});
+		expect(result.items).toEqual([{ id: 'p-1', name: 'x' }]);
+		expect(result.page).toBeUndefined();
+	});
+
+	it('orbs.listNamespaceOrbs: throws on a response matching neither shape, rather than silently returning zero results', async () => {
+		const { ctx } = makeCtx();
+		// Not an array, and no `data` array either - the shape a validation
+		// error or an unrelated object would have. An earlier version of the
+		// transport read `response.data ?? []` here, so this resolved to an
+		// empty list with no signal anything had gone wrong.
+		mockFetch({ error: 'something unexpected' });
+		await expect(Orbs.listNamespaceOrbs(ctx, {})).rejects.toThrow(
+			/did not match/i,
+		);
+	});
+
 	// `runners.list` does not appear here: its route's real response is
 	// `{"items": [...]}`, not the `{"data": [...], "page": {...}}` envelope
 	// `orb/packages` uses - confirmed from `circleci-cli`'s own
@@ -1567,11 +1587,15 @@ describe('runners.list reads the real flat {items} envelope, not the JSON:API {d
 		const { ctx } = makeCtx();
 		// This is the shape `orb/packages` actually sends, and the shape an
 		// earlier version of this function wrongly assumed `runner` shared.
-		// Confirmed by planting the fault: this throws (`.items` is undefined
-		// on a `{data, page}` response) rather than silently resolving to an
-		// empty list - a loud failure here is the safer outcome, and this
-		// pins that it stays loud if the assumption is ever reintroduced.
+		// Confirmed by planting the fault: `circleCIV3Call`'s single-entity
+		// unwrap returns the bare `data` array directly as `T` here, so
+		// `result.items` is `undefined` and `.length` throws this specific
+		// TypeError - asserted by message rather than accepting any thrown
+		// value, so an unrelated failure elsewhere could not pass this test
+		// for the wrong reason.
 		mockFetch({ data: [{ id: 'r-1' }], page: { next: null, prev: null } });
-		await expect(Runners.list(ctx, {})).rejects.toThrow();
+		await expect(Runners.list(ctx, {})).rejects.toThrow(
+			/cannot read properties of undefined.*length/i,
+		);
 	});
 });
