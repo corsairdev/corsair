@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { BotpressEndpoints } from '../index';
 import { auditPayload } from './logging';
 import { botpressCall, compactQuery, resolveWorkspaceId } from './shared';
-import type { BotpressEndpointOutputs } from './types';
+import type { BotpressPublicPlugin } from './types';
 
 /**
  * Lists plugins installed in the workspace (distinct from the public
@@ -13,7 +13,8 @@ export const list: BotpressEndpoints['pluginsList'] = async (ctx, input) => {
 	const workspaceId = await resolveWorkspaceId(ctx);
 
 	const result = await botpressCall<{
-		plugins: BotpressEndpointOutputs['pluginsList'];
+		plugins?: BotpressPublicPlugin[];
+		meta?: { nextToken?: string };
 	}>(ctx, '/v1/admin/plugins', {
 		method: 'GET',
 		query: compactQuery({
@@ -31,5 +32,5 @@ export const list: BotpressEndpoints['pluginsList'] = async (ctx, input) => {
 		auditPayload(input, ['name']),
 		'completed',
 	);
-	return result.plugins ?? [];
+	return { plugins: result.plugins ?? [], nextToken: result.meta?.nextToken };
 };

@@ -105,13 +105,19 @@ describe('entity schemas declare every observed field', () => {
 	}
 });
 
-describe('entity schemas require only the primary key', () => {
+describe('entity schemas require only what the live API always sends', () => {
 	/**
-	 * Botpress omits or defaults fields depending on plan and lifecycle state
-	 * — a community-plan workspace has no `activeTrialId`, a bot mid-creation
-	 * has an empty `signingSecret`. A schema that required more than the key
-	 * would reject those valid rows outright, which is the failure mode that
+	 * Every field beyond the ones below is optional: Botpress omits or
+	 * defaults fields depending on plan and lifecycle state — a
+	 * community-plan workspace has no `activeTrialId`, a bot mid-creation has
+	 * an empty `signingSecret`. A schema that required more than these would
+	 * reject those valid rows outright, which is the failure mode that
 	 * matters: a rejected row is a lost row.
+	 *
+	 * `workspaces` and `integrations` require more than just their primary
+	 * key (`name`, and `name`+`version`) because the live API guarantees
+	 * those fields are always present, not because this schema chose to
+	 * require them beyond what is observed. `bots` requires only `id`.
 	 */
 	const minimal = {
 		workspaces: { id: 'wkspace_1', name: 'W' },
@@ -120,7 +126,7 @@ describe('entity schemas require only the primary key', () => {
 	} as const;
 
 	for (const [name, schema] of Object.entries(ENTITIES)) {
-		it(`${name} parses a record carrying only its key`, () => {
+		it(`${name} parses a record carrying only its required fields`, () => {
 			const result = schema.safeParse(minimal[name as keyof typeof minimal]);
 			expect(result.success).toBe(true);
 		});

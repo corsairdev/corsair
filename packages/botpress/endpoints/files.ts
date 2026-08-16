@@ -2,7 +2,6 @@ import { logEventFromContext } from 'corsair/core';
 import type { BotpressEndpoints } from '../index';
 import { auditPayload } from './logging';
 import { botpressCall, compactQuery } from './shared';
-import type { BotpressEndpointOutputs } from './types';
 
 /**
  * Deletes a file from a bot's storage.
@@ -32,7 +31,8 @@ export const listTags: BotpressEndpoints['filesListTags'] = async (
 	input,
 ) => {
 	const result = await botpressCall<{
-		tags: BotpressEndpointOutputs['filesListTags'];
+		tags?: string[];
+		meta?: { nextToken?: string };
 	}>(ctx, '/v1/files/tags', {
 		method: 'GET',
 		query: compactQuery({
@@ -48,7 +48,7 @@ export const listTags: BotpressEndpoints['filesListTags'] = async (
 		auditPayload(input, ['botId']),
 		'completed',
 	);
-	return result.tags ?? [];
+	return { tags: result.tags ?? [], nextToken: result.meta?.nextToken };
 };
 
 /** Lists all values seen for a given file tag. */
@@ -57,7 +57,8 @@ export const listTagValues: BotpressEndpoints['filesListTagValues'] = async (
 	input,
 ) => {
 	const result = await botpressCall<{
-		values: BotpressEndpointOutputs['filesListTagValues'];
+		values?: string[];
+		meta?: { nextToken?: string };
 	}>(ctx, `/v1/files/tags/${encodeURIComponent(input.tag)}/values`, {
 		method: 'GET',
 		query: compactQuery({
@@ -73,5 +74,5 @@ export const listTagValues: BotpressEndpoints['filesListTagValues'] = async (
 		auditPayload(input, ['botId', 'tag']),
 		'completed',
 	);
-	return result.values ?? [];
+	return { values: result.values ?? [], nextToken: result.meta?.nextToken };
 };

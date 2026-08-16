@@ -64,10 +64,10 @@ describeLive('Botpress live API', () => {
 
 	it('resolves a workspace and returns it matching the declared schema', async () => {
 		const list = await Workspaces.list(makeCtx(), {});
-		expect(Array.isArray(list)).toBe(true);
-		expect(list.length).toBeGreaterThan(0);
+		expect(Array.isArray(list.workspaces)).toBe(true);
+		expect(list.workspaces.length).toBeGreaterThan(0);
 
-		const first = list[0];
+		const first = list.workspaces[0];
 		expect(first).toBeDefined();
 		expect(BotpressWorkspaceSchema.safeParse(first).success).toBe(true);
 
@@ -93,7 +93,7 @@ describeLive('Botpress live API', () => {
 
 	it('lists integrations owned by the workspace', async () => {
 		const result = await Integrations.list(makeCtx(), {});
-		expect(Array.isArray(result)).toBe(true);
+		expect(Array.isArray(result.integrations)).toBe(true);
 	});
 
 	it('gets an integration by name+version, scoped by x-workspace-id', async () => {
@@ -118,13 +118,21 @@ describeLive('Botpress live API', () => {
 
 	it('lists plugins installed in the workspace', async () => {
 		const result = await Plugins.list(makeCtx(), {});
-		expect(Array.isArray(result)).toBe(true);
+		expect(Array.isArray(result.plugins)).toBe(true);
 	});
 
 	it('lists workspace invoices without charging anything', async () => {
-		const workspaces = await Workspaces.list(makeCtx(), {});
+		const { workspaces } = await Workspaces.list(makeCtx(), {});
 		const target = workspaces[0];
-		if (!target?.id) return;
+		// A deliberate, visible skip rather than a silent pass: this account is
+		// expected to always own at least one workspace, so a missing id means
+		// the fixture account changed, not that the assertion below is unneeded.
+		if (!target?.id) {
+			console.warn(
+				'[integration.test] skipping invoice check: live account has no workspace',
+			);
+			return;
+		}
 
 		const invoices = await Billing.listInvoices(makeCtx(), {
 			workspaceId: target.id,
@@ -133,7 +141,9 @@ describeLive('Botpress live API', () => {
 	});
 
 	it('browses the public hub with no workspace scoping', async () => {
-		const integrations = await Hub.listIntegrations(makeCtx(), { pageSize: 1 });
+		const { integrations } = await Hub.listIntegrations(makeCtx(), {
+			pageSize: 1,
+		});
 		expect(Array.isArray(integrations)).toBe(true);
 		if (integrations[0]) {
 			expect(
@@ -141,7 +151,7 @@ describeLive('Botpress live API', () => {
 			).toBe(true);
 		}
 
-		const plugins = await Hub.listPlugins(makeCtx(), { pageSize: 1 });
+		const { plugins } = await Hub.listPlugins(makeCtx(), { pageSize: 1 });
 		expect(Array.isArray(plugins)).toBe(true);
 		if (plugins[0]) {
 			expect(BotpressPublicPluginSchema.safeParse(plugins[0]).success).toBe(

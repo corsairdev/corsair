@@ -17,7 +17,8 @@ import type {
 export const listIntegrations: BotpressEndpoints['hubListIntegrations'] =
 	async (ctx, input) => {
 		const result = await botpressCall<{
-			integrations: BotpressEndpointOutputs['hubListIntegrations'];
+			integrations?: BotpressPublicIntegration[];
+			meta?: { nextToken?: string };
 		}>(ctx, '/v1/admin/hub/integrations', {
 			method: 'GET',
 			query: compactQuery({
@@ -42,7 +43,10 @@ export const listIntegrations: BotpressEndpoints['hubListIntegrations'] =
 			auditPayload(input, ['name', 'search']),
 			'completed',
 		);
-		return result.integrations ?? [];
+		return {
+			integrations: result.integrations ?? [],
+			nextToken: result.meta?.nextToken,
+		};
 	};
 
 /** Gets a public integration by name and version. */
@@ -86,7 +90,8 @@ export const listInterfaces: BotpressEndpoints['hubListInterfaces'] = async (
 	input,
 ) => {
 	const result = await botpressCall<{
-		interfaces: BotpressEndpointOutputs['hubListInterfaces'];
+		interfaces?: BotpressPublicInterface[];
+		meta?: { nextToken?: string };
 	}>(ctx, '/v1/admin/hub/interfaces', {
 		method: 'GET',
 		query: compactQuery({
@@ -103,7 +108,10 @@ export const listInterfaces: BotpressEndpoints['hubListInterfaces'] = async (
 		auditPayload(input, ['name']),
 		'completed',
 	);
-	return result.interfaces ?? [];
+	return {
+		interfaces: result.interfaces ?? [],
+		nextToken: result.meta?.nextToken,
+	};
 };
 
 /** Gets a public interface by name and version. */
@@ -148,7 +156,8 @@ export const listPlugins: BotpressEndpoints['hubListPlugins'] = async (
 	input,
 ) => {
 	const result = await botpressCall<{
-		plugins: BotpressEndpointOutputs['hubListPlugins'];
+		plugins?: BotpressPublicPlugin[];
+		meta?: { nextToken?: string };
 	}>(ctx, '/v1/admin/hub/plugins', {
 		method: 'GET',
 		query: compactQuery({
@@ -165,7 +174,7 @@ export const listPlugins: BotpressEndpoints['hubListPlugins'] = async (
 		auditPayload(input, ['name']),
 		'completed',
 	);
-	return result.plugins ?? [];
+	return { plugins: result.plugins ?? [], nextToken: result.meta?.nextToken };
 };
 
 /** Gets a public plugin by name and version. */

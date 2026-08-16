@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { BotpressEndpoints } from '../index';
 import { auditPayload } from './logging';
 import { botpressCall, compactQuery } from './shared';
-import type { BotpressEndpointOutputs } from './types';
+import type { BotpressKnowledgeBase } from './types';
 
 /** Lists a bot's knowledge bases, optionally filtered by tags. */
 export const list: BotpressEndpoints['knowledgeBasesList'] = async (
@@ -10,7 +10,8 @@ export const list: BotpressEndpoints['knowledgeBasesList'] = async (
 	input,
 ) => {
 	const result = await botpressCall<{
-		knowledgeBases: BotpressEndpointOutputs['knowledgeBasesList'];
+		knowledgeBases?: BotpressKnowledgeBase[];
+		meta?: { nextToken?: string };
 	}>(ctx, '/v1/files/knowledge-bases', {
 		method: 'GET',
 		query: compactQuery({
@@ -27,7 +28,10 @@ export const list: BotpressEndpoints['knowledgeBasesList'] = async (
 		auditPayload(input, ['botId']),
 		'completed',
 	);
-	return result.knowledgeBases ?? [];
+	return {
+		knowledgeBases: result.knowledgeBases ?? [],
+		nextToken: result.meta?.nextToken,
+	};
 };
 
 /** Permanently deletes a knowledge base from a bot. [DESTRUCTIVE] */

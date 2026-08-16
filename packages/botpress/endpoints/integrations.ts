@@ -104,7 +104,8 @@ export const list: BotpressEndpoints['integrationsList'] = async (
 	const workspaceId = await resolveWorkspaceId(ctx);
 
 	const result = await botpressCall<{
-		integrations: BotpressEndpointOutputs['integrationsList'];
+		integrations?: BotpressIntegration[];
+		meta?: { nextToken?: string };
 	}>(ctx, '/v1/admin/integrations', {
 		method: 'GET',
 		query: compactQuery({
@@ -127,9 +128,11 @@ export const list: BotpressEndpoints['integrationsList'] = async (
 	});
 
 	const integrations = result.integrations ?? [];
-	for (const integration of integrations) {
-		await cacheIntegration(ctx.db?.integrations, integration);
-	}
+	await Promise.all(
+		integrations.map((integration) =>
+			cacheIntegration(ctx.db?.integrations, integration),
+		),
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -137,7 +140,7 @@ export const list: BotpressEndpoints['integrationsList'] = async (
 		auditPayload(input, ['name']),
 		'completed',
 	);
-	return integrations;
+	return { integrations, nextToken: result.meta?.nextToken };
 };
 
 /** Validates that an integration update would succeed, without applying it. */

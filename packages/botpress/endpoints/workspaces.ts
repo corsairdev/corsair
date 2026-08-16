@@ -95,7 +95,14 @@ export const update: BotpressEndpoints['workspacesUpdate'] = async (
 	return result;
 };
 
-/** Permanently deletes a workspace and evicts it from the cache. [DESTRUCTIVE] */
+/**
+ * Permanently deletes a workspace and evicts it from the cache. [DESTRUCTIVE]
+ *
+ * The audit event is logged immediately once the API confirms the delete,
+ * before the (best-effort, non-throwing) cache eviction - it asserts "the
+ * remote record is gone", which is true the moment the DELETE call returns,
+ * independent of whether the local mirror is cleaned up afterward.
+ */
 export const remove: BotpressEndpoints['workspacesDelete'] = async (
 	ctx,
 	input,
@@ -108,36 +115,44 @@ export const remove: BotpressEndpoints['workspacesDelete'] = async (
 		},
 	);
 
-	await evictEntity(ctx.db?.workspaces, input.id, 'workspace');
-
 	await logEventFromContext(
 		ctx,
 		'botpress.workspaces.delete',
 		auditPayload(input, ['id']),
 		'completed',
 	);
+
+	await evictEntity(ctx.db?.workspaces, input.id, 'workspace');
+
 	return {};
 };
 
-/** Lists workspaces owned by the authenticated account. */
+/**
+ * Lists workspaces owned by the authenticated account.
+ *
+ * Returns the provider's `nextToken` alongside the page: dropping it would
+ * strand a caller on the first page with no way to reach the rest of a
+ * result set larger than `pageSize`.
+ */
 export const list: BotpressEndpoints['workspacesList'] = async (ctx, input) => {
-	const result = await botpressCall<{ workspaces?: BotpressWorkspace[] }>(
-		ctx,
-		'/v1/admin/workspaces',
-		{
-			method: 'GET',
-			query: compactQuery({
-				nextToken: input.nextToken,
-				pageSize: input.pageSize,
-				handle: input.handle,
-			}),
-		},
-	);
+	const result = await botpressCall<{
+		workspaces?: BotpressWorkspace[];
+		meta?: { nextToken?: string };
+	}>(ctx, '/v1/admin/workspaces', {
+		method: 'GET',
+		query: compactQuery({
+			nextToken: input.nextToken,
+			pageSize: input.pageSize,
+			handle: input.handle,
+		}),
+	});
 
 	const workspaces = result.workspaces ?? [];
-	for (const workspace of workspaces) {
-		await cacheWorkspace(ctx.db?.workspaces, workspace);
-	}
+	await Promise.all(
+		workspaces.map((workspace) =>
+			cacheWorkspace(ctx.db?.workspaces, workspace),
+		),
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -145,7 +160,7 @@ export const list: BotpressEndpoints['workspacesList'] = async (ctx, input) => {
 		auditPayload(input, ['handle']),
 		'completed',
 	);
-	return workspaces;
+	return { workspaces, nextToken: result.meta?.nextToken };
 };
 
 /** Lists workspaces that opted into public visibility. */
@@ -153,19 +168,18 @@ export const listPublic: BotpressEndpoints['workspacesListPublic'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await botpressCall<{ workspaces?: BotpressWorkspace[] }>(
-		ctx,
-		'/v1/admin/workspaces/public',
-		{
-			method: 'GET',
-			query: compactQuery({
-				nextToken: input.nextToken,
-				pageSize: input.pageSize,
-				workspaceIds: input.workspaceIds,
-				search: input.search,
-			}),
-		},
-	);
+	const result = await botpressCall<{
+		workspaces?: BotpressWorkspace[];
+		meta?: { nextToken?: string };
+	}>(ctx, '/v1/admin/workspaces/public', {
+		method: 'GET',
+		query: compactQuery({
+			nextToken: input.nextToken,
+			pageSize: input.pageSize,
+			workspaceIds: input.workspaceIds,
+			search: input.search,
+		}),
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -173,7 +187,10 @@ export const listPublic: BotpressEndpoints['workspacesListPublic'] = async (
 		auditPayload(input, ['search']),
 		'completed',
 	);
-	return result.workspaces ?? [];
+	return {
+		workspaces: result.workspaces ?? [],
+		nextToken: result.meta?.nextToken,
+	};
 };
 
 /** Checks whether a workspace handle is available, with suggestions if not. */

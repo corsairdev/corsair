@@ -99,6 +99,9 @@ const RESPONSE_BODY = {
 	suggestions: [],
 	value: null,
 	result: {},
+	// Present on every paginated list response so the routing table's list
+	// operations all get a token to preserve; see "pagination" below.
+	meta: { nextToken: 'next_abc' },
 };
 
 beforeEach(() => {
@@ -523,9 +526,12 @@ describe('scoping headers', () => {
 	];
 
 	it('attaches x-workspace-id to every workspace-scoped operation', async () => {
-		for (const [path, invoke] of OPERATIONS.filter(([p]) =>
-			workspaceScoped.includes(p),
-		)) {
+		const matched = OPERATIONS.filter(([p]) => workspaceScoped.includes(p));
+		// Without this, a renamed/removed operation would silently shrink the
+		// loop below to zero iterations and the test would still pass.
+		expect(matched).toHaveLength(workspaceScoped.length);
+
+		for (const [path, invoke] of matched) {
 			const { ctx } = makeCtx();
 			await invoke(ctx);
 			expect(lastHeaders['x-workspace-id']).toBe('wkspace_test');
@@ -533,9 +539,10 @@ describe('scoping headers', () => {
 	});
 
 	it('attaches x-bot-id to every bot-scoped operation', async () => {
-		for (const [path, invoke] of OPERATIONS.filter(([p]) =>
-			botScoped.includes(p),
-		)) {
+		const matched = OPERATIONS.filter(([p]) => botScoped.includes(p));
+		expect(matched).toHaveLength(botScoped.length);
+
+		for (const [path, invoke] of matched) {
 			const { ctx } = makeCtx();
 			await invoke(ctx);
 			expect(lastHeaders['x-bot-id']).toBe('bot1');
@@ -543,9 +550,10 @@ describe('scoping headers', () => {
 	});
 
 	it('sends neither scoping header for public hub browsing', async () => {
-		for (const [path, invoke] of OPERATIONS.filter(([p]) =>
-			p.startsWith('hub.'),
-		)) {
+		const matched = OPERATIONS.filter(([p]) => p.startsWith('hub.'));
+		expect(matched).toHaveLength(11);
+
+		for (const [path, invoke] of matched) {
 			const { ctx } = makeCtx();
 			await invoke(ctx);
 			expect(lastHeaders['x-workspace-id']).toBeUndefined();
@@ -587,6 +595,47 @@ describe('operation coverage', () => {
 		expect(nonIdempotent).toEqual(expectedNonIdempotent);
 		expect(posts).toHaveLength(10);
 		expect(nonIdempotent).toHaveLength(7);
+	});
+});
+
+describe('pagination', () => {
+	// Every list operation whose real Botpress response carries a
+	// `meta.nextToken` (confirmed from `@botpress/client` v2.2.0's type
+	// declarations - `billing.listInvoices`, `billing.listUsageHistory`,
+	// `workspaces.breakDownUsageByBot` and `integrations.listApiKeys` are
+	// deliberately excluded: their real responses have no `meta` at all).
+	const paginatedPaths = [
+		'workspaces.list',
+		'workspaces.listPublic',
+		'bots.listActionRuns',
+		'bots.listIssues',
+		'chat.listConversations',
+		'integrations.list',
+		'hub.listIntegrations',
+		'hub.listInterfaces',
+		'hub.listPlugins',
+		'plugins.list',
+		'files.listTags',
+		'files.listTagValues',
+		'knowledgeBases.list',
+	];
+	const paginatedOperations = OPERATIONS.filter(([path]) =>
+		paginatedPaths.includes(path),
+	);
+
+	it('covers exactly the operations whose real response carries a continuation token', () => {
+		expect(paginatedOperations.map(([path]) => path).sort()).toEqual(
+			[...paginatedPaths].sort(),
+		);
+		expect(paginatedOperations).toHaveLength(13);
+	});
+
+	it('preserves the continuation token instead of discarding it', async () => {
+		for (const [path, invoke] of paginatedOperations) {
+			const { ctx } = makeCtx();
+			const result = (await invoke(ctx)) as { nextToken?: string };
+			expect(result.nextToken).toBe('next_abc');
+		}
 	});
 });
 

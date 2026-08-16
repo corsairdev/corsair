@@ -1224,8 +1224,8 @@ export type BotpressEndpointOutputs = {
 	workspacesGet: BotpressWorkspace;
 	workspacesUpdate: BotpressWorkspace;
 	workspacesDelete: EmptyResult;
-	workspacesList: BotpressWorkspace[];
-	workspacesListPublic: BotpressWorkspace[];
+	workspacesList: { workspaces: BotpressWorkspace[]; nextToken?: string };
+	workspacesListPublic: { workspaces: BotpressWorkspace[]; nextToken?: string };
 	workspacesCheckHandleAvailability: BotpressHandleAvailability;
 	workspacesSetPreference: EmptyResult;
 	workspacesGetQuota: BotpressQuota;
@@ -1237,35 +1237,47 @@ export type BotpressEndpointOutputs = {
 	billingListUsageHistory: BotpressUsageHistoryItem[];
 	botsCreate: BotpressBot;
 	botsUpdate: BotpressBot;
-	botsListActionRuns: BotpressActionRun[];
-	botsListIssues: BotpressBotIssue[];
+	botsListActionRuns: { data: BotpressActionRun[]; nextToken?: string };
+	botsListIssues: { issues: BotpressBotIssue[]; nextToken?: string };
 	chatCreateConversation: BotpressConversation;
-	chatListConversations: BotpressConversation[];
+	chatListConversations: {
+		conversations: BotpressConversation[];
+		nextToken?: string;
+	};
 	chatSendMessage: BotpressMessage;
 	chatUpdateWorkflow: BotpressWorkflow;
 	integrationsCreate: BotpressIntegration;
 	integrationsGet: BotpressIntegration;
-	integrationsList: BotpressIntegration[];
+	integrationsList: { integrations: BotpressIntegration[]; nextToken?: string };
 	integrationsValidateUpdate: EmptyResult;
 	integrationsRequestVerification: EmptyResult;
 	integrationsListApiKeys: BotpressIntegrationApiKey[];
 	integrationsDeleteShareableId: EmptyResult;
-	hubListIntegrations: BotpressPublicIntegration[];
+	hubListIntegrations: {
+		integrations: BotpressPublicIntegration[];
+		nextToken?: string;
+	};
 	hubGetIntegration: BotpressPublicIntegration;
 	hubGetIntegrationById: BotpressPublicIntegration;
-	hubListInterfaces: BotpressPublicInterface[];
+	hubListInterfaces: {
+		interfaces: BotpressPublicInterface[];
+		nextToken?: string;
+	};
 	hubGetInterface: BotpressPublicInterface;
 	hubGetInterfaceById: BotpressPublicInterface;
-	hubListPlugins: BotpressPublicPlugin[];
+	hubListPlugins: { plugins: BotpressPublicPlugin[]; nextToken?: string };
 	hubGetPlugin: BotpressPublicPlugin;
 	hubGetPluginById: BotpressPublicPlugin;
 	hubGetPluginCode: { code: string };
 	hubGetDereferencedPluginById: Record<string, unknown>;
-	pluginsList: BotpressPublicPlugin[];
+	pluginsList: { plugins: BotpressPublicPlugin[]; nextToken?: string };
 	filesDelete: EmptyResult;
-	filesListTags: string[];
-	filesListTagValues: string[];
-	knowledgeBasesList: BotpressKnowledgeBase[];
+	filesListTags: { tags: string[]; nextToken?: string };
+	filesListTagValues: { values: string[]; nextToken?: string };
+	knowledgeBasesList: {
+		knowledgeBases: BotpressKnowledgeBase[];
+		nextToken?: string;
+	};
 	knowledgeBasesDelete: EmptyResult;
 	toolsRunVrl: BotpressVrlResult;
 	toolsGetTableRow: BotpressTableRow;
@@ -1337,8 +1349,14 @@ export const BotpressEndpointOutputSchemas = {
 	workspacesGet: BotpressWorkspaceSchema,
 	workspacesUpdate: BotpressWorkspaceSchema,
 	workspacesDelete: EmptyResultSchema,
-	workspacesList: z.array(BotpressWorkspaceSchema),
-	workspacesListPublic: z.array(BotpressWorkspaceSchema),
+	workspacesList: z.object({
+		workspaces: z.array(BotpressWorkspaceSchema),
+		nextToken: z.string().optional(),
+	}),
+	workspacesListPublic: z.object({
+		workspaces: z.array(BotpressWorkspaceSchema),
+		nextToken: z.string().optional(),
+	}),
 	workspacesCheckHandleAvailability: BotpressHandleAvailabilitySchema,
 	workspacesSetPreference: EmptyResultSchema,
 	workspacesGetQuota: BotpressQuotaSchema,
@@ -1350,26 +1368,47 @@ export const BotpressEndpointOutputSchemas = {
 	billingListUsageHistory: z.array(BotpressUsageHistoryItemSchema),
 	botsCreate: BotpressBotSchema,
 	botsUpdate: BotpressBotSchema,
-	botsListActionRuns: z.array(BotpressActionRunSchema),
-	botsListIssues: z.array(BotpressBotIssueSchema),
+	botsListActionRuns: z.object({
+		data: z.array(BotpressActionRunSchema),
+		nextToken: z.string().optional(),
+	}),
+	botsListIssues: z.object({
+		issues: z.array(BotpressBotIssueSchema),
+		nextToken: z.string().optional(),
+	}),
 	chatCreateConversation: BotpressConversationSchema,
-	chatListConversations: z.array(BotpressConversationSchema),
+	chatListConversations: z.object({
+		conversations: z.array(BotpressConversationSchema),
+		nextToken: z.string().optional(),
+	}),
 	chatSendMessage: BotpressMessageSchema,
 	chatUpdateWorkflow: BotpressWorkflowSchema,
 	integrationsCreate: BotpressIntegrationSchema,
 	integrationsGet: BotpressIntegrationSchema,
-	integrationsList: z.array(BotpressIntegrationSchema),
+	integrationsList: z.object({
+		integrations: z.array(BotpressIntegrationSchema),
+		nextToken: z.string().optional(),
+	}),
 	integrationsValidateUpdate: EmptyResultSchema,
 	integrationsRequestVerification: EmptyResultSchema,
 	integrationsListApiKeys: z.array(BotpressIntegrationApiKeySchema),
 	integrationsDeleteShareableId: EmptyResultSchema,
-	hubListIntegrations: z.array(BotpressPublicIntegrationSchema),
+	hubListIntegrations: z.object({
+		integrations: z.array(BotpressPublicIntegrationSchema),
+		nextToken: z.string().optional(),
+	}),
 	hubGetIntegration: BotpressPublicIntegrationSchema,
 	hubGetIntegrationById: BotpressPublicIntegrationSchema,
-	hubListInterfaces: z.array(BotpressPublicInterfaceSchema),
+	hubListInterfaces: z.object({
+		interfaces: z.array(BotpressPublicInterfaceSchema),
+		nextToken: z.string().optional(),
+	}),
 	hubGetInterface: BotpressPublicInterfaceSchema,
 	hubGetInterfaceById: BotpressPublicInterfaceSchema,
-	hubListPlugins: z.array(BotpressPublicPluginSchema),
+	hubListPlugins: z.object({
+		plugins: z.array(BotpressPublicPluginSchema),
+		nextToken: z.string().optional(),
+	}),
 	hubGetPlugin: BotpressPublicPluginSchema,
 	hubGetPluginById: BotpressPublicPluginSchema,
 	hubGetPluginCode: z.object({ code: z.string() }),
@@ -1379,11 +1418,23 @@ export const BotpressEndpointOutputSchemas = {
 	 * shape rather than a fixed schema.
 	 */
 	hubGetDereferencedPluginById: z.record(z.string(), z.unknown()),
-	pluginsList: z.array(BotpressPublicPluginSchema),
+	pluginsList: z.object({
+		plugins: z.array(BotpressPublicPluginSchema),
+		nextToken: z.string().optional(),
+	}),
 	filesDelete: EmptyResultSchema,
-	filesListTags: z.array(z.string()),
-	filesListTagValues: z.array(z.string()),
-	knowledgeBasesList: z.array(BotpressKnowledgeBaseSchema),
+	filesListTags: z.object({
+		tags: z.array(z.string()),
+		nextToken: z.string().optional(),
+	}),
+	filesListTagValues: z.object({
+		values: z.array(z.string()),
+		nextToken: z.string().optional(),
+	}),
+	knowledgeBasesList: z.object({
+		knowledgeBases: z.array(BotpressKnowledgeBaseSchema),
+		nextToken: z.string().optional(),
+	}),
 	knowledgeBasesDelete: EmptyResultSchema,
 	toolsRunVrl: BotpressVrlResultSchema,
 	toolsGetTableRow: BotpressTableRowSchema,

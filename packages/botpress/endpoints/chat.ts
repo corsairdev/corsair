@@ -4,7 +4,6 @@ import { auditPayload } from './logging';
 import { botpressCall, compactBody, compactQuery } from './shared';
 import type {
 	BotpressConversation,
-	BotpressEndpointOutputs,
 	BotpressMessage,
 	BotpressWorkflow,
 } from './types';
@@ -51,7 +50,8 @@ export const createConversation: BotpressEndpoints['chatCreateConversation'] =
 export const listConversations: BotpressEndpoints['chatListConversations'] =
 	async (ctx, input) => {
 		const result = await botpressCall<{
-			conversations: BotpressEndpointOutputs['chatListConversations'];
+			conversations?: BotpressConversation[];
+			meta?: { nextToken?: string };
 		}>(ctx, '/v1/chat/conversations', {
 			method: 'GET',
 			query: compactQuery({
@@ -77,7 +77,10 @@ export const listConversations: BotpressEndpoints['chatListConversations'] =
 			auditPayload(input, ['botId', 'channel']),
 			'completed',
 		);
-		return result.conversations ?? [];
+		return {
+			conversations: result.conversations ?? [],
+			nextToken: result.meta?.nextToken,
+		};
 	};
 
 /** Sends a message into a conversation on behalf of a user. */

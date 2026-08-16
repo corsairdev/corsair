@@ -8,7 +8,7 @@ import {
 	compactQuery,
 	resolveWorkspaceId,
 } from './shared';
-import type { BotpressBot, BotpressEndpointOutputs } from './types';
+import type { BotpressActionRun, BotpressBot, BotpressBotIssue } from './types';
 
 /**
  * Creates a bot in a workspace.
@@ -124,7 +124,8 @@ export const listActionRuns: BotpressEndpoints['botsListActionRuns'] = async (
 	input,
 ) => {
 	const result = await botpressCall<{
-		data: BotpressEndpointOutputs['botsListActionRuns'];
+		data?: BotpressActionRun[];
+		meta?: { nextToken?: string };
 	}>(ctx, `/v1/admin/bots/${encodeURIComponent(input.id)}/action-runs`, {
 		method: 'GET',
 		query: compactQuery({
@@ -142,7 +143,7 @@ export const listActionRuns: BotpressEndpoints['botsListActionRuns'] = async (
 		auditPayload(input, ['id']),
 		'completed',
 	);
-	return result.data ?? [];
+	return { data: result.data ?? [], nextToken: result.meta?.nextToken };
 };
 
 /** Lists configuration and runtime issues detected for a bot. */
@@ -151,7 +152,8 @@ export const listIssues: BotpressEndpoints['botsListIssues'] = async (
 	input,
 ) => {
 	const result = await botpressCall<{
-		issues: BotpressEndpointOutputs['botsListIssues'];
+		issues?: BotpressBotIssue[];
+		meta?: { nextToken?: string };
 	}>(ctx, `/v1/admin/bots/${encodeURIComponent(input.id)}/issues`, {
 		method: 'GET',
 		query: compactQuery({
@@ -166,5 +168,5 @@ export const listIssues: BotpressEndpoints['botsListIssues'] = async (
 		auditPayload(input, ['id']),
 		'completed',
 	);
-	return result.issues ?? [];
+	return { issues: result.issues ?? [], nextToken: result.meta?.nextToken };
 };
