@@ -346,7 +346,8 @@ const bigmlEndpointMeta = {
 	'sources.get': { riskLevel: 'read', description: 'Retrieve a data source' },
 	'sources.update': {
 		riskLevel: 'write',
-		description: "Update a data source's name, description, or tags",
+		description:
+			"Update a data source's name, description, tags, parsing configuration, or per-field properties",
 	},
 	'sources.list': { riskLevel: 'read', description: 'List data sources' },
 	'externalConnectors.create': {

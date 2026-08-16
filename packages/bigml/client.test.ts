@@ -28,7 +28,11 @@ beforeEach(() => {
 describe('makeBigmlRequest', () => {
 	it('targets the documented andromeda API host', async () => {
 		await makeBigmlRequest('source', 'testuser', 'testkey');
-		expect(lastUrl.startsWith(BIGML_API_BASE)).toBe(true);
+		const url = new URL(lastUrl);
+		// `startsWith(BIGML_API_BASE)` would false-pass a typo like
+		// `/andromeda2/source` - parse and check the exact pathname instead.
+		expect(url.origin).toBe(new URL(BIGML_API_BASE).origin);
+		expect(url.pathname).toBe('/andromeda/source');
 	});
 
 	it('sends username and api_key as query parameters, not headers', async () => {

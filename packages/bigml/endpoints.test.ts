@@ -481,6 +481,14 @@ describe('caching', () => {
 		);
 	});
 
+	/**
+	 * `'externalConnectors' in db` alone only proves that key was never added
+	 * to the mock - it says nothing about whether the handler wrote the
+	 * connector into some *other* store by mistake (a copy-paste error, for
+	 * instance). This asserts no write reached any of the 37 stores this
+	 * plugin's `ctx.db` actually has, which would fail on either kind of
+	 * regression.
+	 */
 	it('never caches an external connector - its `connection` field carries a live credential', async () => {
 		const { ctx, db } = makeCtx();
 		await ExternalConnectors.create(ctx, {
@@ -492,6 +500,9 @@ describe('caching', () => {
 		});
 
 		expect('externalConnectors' in db).toBe(false);
+		for (const store of Object.values(db)) {
+			expect(store.upsertByEntityId).not.toHaveBeenCalled();
+		}
 	});
 });
 
@@ -628,5 +639,28 @@ describe('request bodies', () => {
 		expect(url.searchParams.get('name')).toBe('Acme upload');
 		expect(url.searchParams.get('size__gt')).toBe('1024');
 		expect(url.searchParams.has('filter')).toBe(false);
+	});
+
+	/**
+	 * `filter`'s value type (`string | number | boolean`) is the same shape
+	 * `limit`/`offset`/`order_by` take, so a `filter` object that happens to
+	 * contain one of those keys is a plausible mistake, not just an
+	 * adversarial input. It must never win over the caller's real pagination
+	 * args - `endpoints/shared.ts`'s `listQuery` spreads `filter` first for
+	 * exactly this reason.
+	 */
+	it('never lets a filter field override the reserved limit/offset/orderBy params', async () => {
+		const { ctx } = makeCtx();
+		await Sources.list(ctx, {
+			limit: 20,
+			offset: 0,
+			orderBy: 'size',
+			filter: { limit: 5, offset: 999, order_by: 'name' },
+		});
+
+		const url = new URL(lastUrl);
+		expect(url.searchParams.get('limit')).toBe('20');
+		expect(url.searchParams.get('offset')).toBe('0');
+		expect(url.searchParams.get('order_by')).toBe('size');
 	});
 });

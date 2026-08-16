@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { BigmlEndpoints } from '../index';
 import { BigmlConfigurationEntity } from '../schema/database';
 import { auditPayload } from './logging';
-import { cacheEntity } from './persist';
+import { cacheEntities, cacheEntity } from './persist';
 import { bigmlCall, listQuery } from './shared';
 import type { BigmlEndpointOutputs } from './types';
 
@@ -38,14 +38,12 @@ export const list: BigmlEndpoints['configurationsList'] = async (
 		{ query: listQuery(input) },
 	);
 
-	for (const configuration of result.objects) {
-		await cacheEntity(
-			ctx.db.configurations,
-			BigmlConfigurationEntity,
-			configuration,
-			{ label: LABEL },
-		);
-	}
+	await cacheEntities(
+		ctx.db.configurations,
+		BigmlConfigurationEntity,
+		result.objects,
+		{ label: LABEL },
+	);
 	await logEventFromContext(
 		ctx,
 		'bigml.configurations.list',

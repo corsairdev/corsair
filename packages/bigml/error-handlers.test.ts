@@ -41,13 +41,69 @@ describe('errorHandlers', () => {
 		);
 	});
 
-	it('falls back to DEFAULT for an unrecognised status', () => {
-		const error = new BigmlAPIError('server exploded', 500);
+	it('falls back to DEFAULT for a genuinely unrecognised status', () => {
+		// 418 - not 4xx (401/403/404) and not 5xx, so nothing else should claim it.
+		const error = new BigmlAPIError("I'm a teapot", 418);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(false);
 		expect(errorHandlers.PERMISSION_ERROR.match(error)).toBe(false);
 		expect(errorHandlers.NOT_FOUND_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(false);
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
+	});
+
+	it('retries a 5xx with a bounded exponential backoff', async () => {
+		const error = new BigmlAPIError('upstream exploded', 503);
+		expect(
+			errorHandlers.SERVER_ERROR.match(error, {
+				pluginId: 'bigml',
+				operation: 'sources.list',
+				input: {},
+				originalError: error,
+			}),
+		).toBe(true);
+
+		const result = await errorHandlers.SERVER_ERROR.handler();
+		expect(result.maxRetries).toBeGreaterThan(0);
+		expect(result.retryStrategy).toBe('exponential_backoff');
+	});
+
+	/**
+	 * `projects.create` and `externalConnectors.create` are the only two
+	 * non-idempotent `POST` operations in this plugin. A 5xx there can mean
+	 * BigML processed the request and only the response was lost - blindly
+	 * retrying would create a second, real, duplicate resource. This is the
+	 * one case `SERVER_ERROR` must refuse to match regardless of status.
+	 */
+	it('never retries a 5xx on a create operation, to avoid duplicating a resource', () => {
+		const error = new BigmlAPIError('upstream exploded', 503);
+		expect(
+			errorHandlers.SERVER_ERROR.match(error, {
+				pluginId: 'bigml',
+				operation: 'projects.create',
+				input: {},
+				originalError: error,
+			}),
+		).toBe(false);
+		expect(
+			errorHandlers.SERVER_ERROR.match(error, {
+				pluginId: 'bigml',
+				operation: 'externalConnectors.create',
+				input: {},
+				originalError: error,
+			}),
+		).toBe(false);
+	});
+
+	/**
+	 * Fails closed, not open: with no `context` at all (the shape a direct
+	 * `.match(error)` call has, as every other test in this file uses), there
+	 * is no way to confirm the failing call wasn't a create - so it must not
+	 * retry, the same reasoning as the explicit `.create` exclusion above.
+	 */
+	it('does not retry a 5xx when no operation context is available', () => {
+		const error = new BigmlAPIError('upstream exploded', 503);
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(false);
 	});
 
 	/**

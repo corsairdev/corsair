@@ -37,6 +37,13 @@ export function compact<T extends Record<string, unknown>>(obj: T): T {
  * unenumerated). `filter`'s keys are spread directly into the query string,
  * exactly like BigML's own SDK treats its `query_string` parameter - a
  * caller passes real BigML field names, not a nested wrapper.
+ *
+ * `filter` is spread *before* the reserved pagination keys, not after - a
+ * `filter` object containing `limit`/`offset`/`order_by` (a plausible
+ * mistake, since `filter`'s value type is the same `string | number |
+ * boolean` shape those take) must never be able to silently override the
+ * caller's actual pagination args. Object-literal spread order means later
+ * keys win, so the explicit params come last on purpose.
  */
 export function listQuery(input: {
 	limit?: number;
@@ -45,9 +52,9 @@ export function listQuery(input: {
 	filter?: Record<string, string | number | boolean | undefined>;
 }): Record<string, string | number | boolean | undefined> {
 	return compact({
+		...(input.filter ? compact(input.filter) : {}),
 		limit: input.limit,
 		offset: input.offset,
 		order_by: input.orderBy,
-		...(input.filter ? compact(input.filter) : {}),
 	});
 }

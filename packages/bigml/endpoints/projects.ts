@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { BigmlEndpoints } from '../index';
 import { BigmlProjectEntity } from '../schema/database';
 import { auditPayload } from './logging';
-import { cacheEntity, evictEntity } from './persist';
+import { cacheEntities, cacheEntity, evictEntity } from './persist';
 import { bigmlCall, compact, listQuery } from './shared';
 import type { BigmlEndpointOutputs } from './types';
 
@@ -79,11 +79,9 @@ export const list: BigmlEndpoints['projectsList'] = async (ctx, input) => {
 		{ query: listQuery(input) },
 	);
 
-	for (const project of result.objects) {
-		await cacheEntity(ctx.db.projects, BigmlProjectEntity, project, {
-			label: LABEL,
-		});
-	}
+	await cacheEntities(ctx.db.projects, BigmlProjectEntity, result.objects, {
+		label: LABEL,
+	});
 	await logEventFromContext(
 		ctx,
 		'bigml.projects.list',

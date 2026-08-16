@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { BigmlContext, BigmlEndpoints } from '../index';
 import type { BigmlSchema } from '../schema';
 import { BigmlGenericResourceEntity } from '../schema/database';
-import { cacheEntity } from './persist';
+import { cacheEntities } from './persist';
 import { bigmlCall, listQuery } from './shared';
 import type { BigmlEndpointOutputs, GenericListOp } from './types';
 
@@ -195,12 +195,14 @@ function makeListEndpoint(
 			{ query: listQuery(input) },
 		);
 
-		const target = ctx.db[store];
-		for (const record of result.objects) {
-			await cacheEntity(target, BigmlGenericResourceEntity, record, {
+		await cacheEntities(
+			ctx.db[store],
+			BigmlGenericResourceEntity,
+			result.objects,
+			{
 				label,
-			});
-		}
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			eventName,
