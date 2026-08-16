@@ -1,6 +1,7 @@
 import { CORSAIR_TUNNEL_PATH } from 'corsair/hub';
 import { runTunnel } from 'corsair/hub/tunnel/run-tunnel';
 import type { CommandActionData, CommandArgument } from '../index.types';
+import { corsairBanner } from '../lib/banner';
 import { extractInternalConfig } from '../utils/corsair';
 import BaseCommand from './base.command';
 
@@ -62,8 +63,8 @@ export default class HttpCommand extends BaseCommand {
 				shareHost: process.env.CORSAIR_FRP_HOST,
 			});
 			stop = result.stop;
-			console.log(`\n  Public URL: ${result.url}${CORSAIR_TUNNEL_PATH}\n`);
-			console.log('[corsair]: Tunnel active. Press Ctrl+C to stop.');
+			console.log(corsairBanner(`${result.url}${CORSAIR_TUNNEL_PATH}`));
+			console.log('  Press Ctrl+C to stop.\n');
 		} catch (err) {
 			console.error(
 				`[corsair]: Tunnel failed — ${err instanceof Error ? err.message : String(err)}`,
