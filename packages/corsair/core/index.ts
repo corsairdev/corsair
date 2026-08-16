@@ -261,6 +261,16 @@ export {
 	initializeIntegrationDEK,
 	reEncryptConfig,
 } from './auth';
+// Agent chats namespace
+export type {
+	AgentMessageRole,
+	AgentReply,
+	ChatHandle,
+	ChatMessage,
+	ChatSummary,
+	CorsairChatsNamespace,
+	CreateChatResult,
+} from './chats';
 // Core types
 export type {
 	CorsairClient,
@@ -348,15 +358,13 @@ export type {
 	RequiredPluginWebhookSchemas,
 	WebhookHooks,
 } from './plugins';
-// Agent chat threads namespace
+// Workflow runs namespace
 export type {
-	AgentReply,
-	CorsairThreadsNamespace,
-	CreateThreadResult,
-	ThreadHandle,
-	ThreadMessage,
-	ThreadSummary,
-} from './threads';
+	CorsairRunsNamespace,
+	WorkflowRun,
+	WorkflowRunStatus,
+	WorkflowRunStep,
+} from './runs';
 // Utility types
 export type { Bivariant, UnionToIntersection } from './utils';
 // Webhook types
@@ -399,3 +407,10 @@ export {
 	readQueryParam,
 	toExternalId,
 } from './webhooks/tenant-match-utils';
+// Workflows namespace
+export type {
+	CorsairWorkflowsNamespace,
+	TriggerRunResult,
+	WorkflowStatus,
+	WorkflowSummary,
+} from './workflows';
