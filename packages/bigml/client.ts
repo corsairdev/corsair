@@ -64,6 +64,48 @@ export type BigmlRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
+/**
+ * Strips the live `username`/`api_key` query params BigML embeds directly
+ * in its own `meta.next`/`meta.previous` pagination links on every list
+ * response - confirmed live: `GET /source?limit=1` returns a `next` field
+ * that is a full URL carrying this account's real credentials in plain
+ * text. Left alone, that URL would leak the account's api_key into the
+ * caller's context, and into any log or cache that ever stores a list
+ * response's `meta` verbatim. Called on every response, not only list ones,
+ * since the shape of what comes back varies by operation and this check is
+ * cheap.
+ */
+function redactPaginationCredentials(value: unknown): unknown {
+	if (value == null || typeof value !== 'object') return value;
+	const meta = (value as { meta?: unknown }).meta;
+	if (meta == null || typeof meta !== 'object') return value;
+
+	const redactUrl = (url: unknown): unknown => {
+		if (typeof url !== 'string') return url;
+		try {
+			const parsed = new URL(url, BIGML_API_BASE);
+			parsed.searchParams.delete('username');
+			parsed.searchParams.delete('api_key');
+			return parsed.pathname + parsed.search;
+		} catch {
+			return url;
+		}
+	};
+
+	const metaRecord = meta as Record<string, unknown>;
+	if ('next' in metaRecord || 'previous' in metaRecord) {
+		return {
+			...value,
+			meta: {
+				...metaRecord,
+				next: redactUrl(metaRecord.next),
+				previous: redactUrl(metaRecord.previous),
+			},
+		};
+	}
+	return value;
+}
+
 function wrapError(error: unknown): BigmlAPIError {
 	if (error instanceof BigmlAPIError) return error;
 	if (error instanceof Error) {
@@ -111,9 +153,10 @@ export async function makeBigmlRequest<T>(
 	};
 
 	try {
-		return await request<T>(buildConfig(), requestOptions, {
+		const result = await request<T>(buildConfig(), requestOptions, {
 			rateLimitConfig: BIGML_RATE_LIMIT_CONFIG,
 		});
+		return redactPaginationCredentials(result) as T;
 	} catch (error) {
 		throw wrapError(error);
 	}
