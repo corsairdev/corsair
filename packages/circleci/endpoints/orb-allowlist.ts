@@ -49,7 +49,16 @@ export const create: CircleCIEndpoints['orbAllowlistCreate'] = async (
 	return result;
 };
 
-/** Removes a URL orb allow-list entry. */
+/**
+ * Removes a URL orb allow-list entry.
+ *
+ * Logged before the eviction, matching `ContextsGraphQL.remove`'s reasoning
+ * in `contexts-graphql.ts`: the delete has already happened remotely by the
+ * time this function reaches the log call. Eviction here stays best-effort
+ * (not `required: true`) - an allow-list entry is a URL prefix, not a
+ * secret or personal data, so a stale mirror row after a failed cache write
+ * is a freshness bug, not the kind of breach `required` exists to prevent.
+ */
 export const remove: CircleCIEndpoints['orbAllowlistDelete'] = async (
 	ctx,
 	input,
@@ -64,13 +73,13 @@ export const remove: CircleCIEndpoints['orbAllowlistDelete'] = async (
 		},
 	);
 
-	await evictEntity(ctx.db.orbAllowlistEntries, input.entryId, LABEL);
-
 	await logEventFromContext(
 		ctx,
 		'circleci.orbAllowlist.delete',
 		auditPayload(input, ['orgSlugOrId', 'entryId']),
 		'completed',
 	);
+
+	await evictEntity(ctx.db.orbAllowlistEntries, input.entryId, LABEL);
 	return result;
 };

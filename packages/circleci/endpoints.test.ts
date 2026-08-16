@@ -790,7 +790,7 @@ const cases: Case[] = [
 	{
 		meta: 'runners.list',
 		run: (c) => Runners.list(c, {}),
-		payload: { data: [] },
+		payload: { items: [] },
 		transport: 'v3',
 		method: 'GET',
 		path: 'runner',
@@ -865,6 +865,40 @@ describe('mirroring', () => {
 		expect(db.projects.upsertByEntityId).toHaveBeenCalledWith(
 			PROJECT_SLUG,
 			expect.objectContaining({ slug: PROJECT_SLUG }),
+		);
+	});
+
+	it('caches a context created via GraphQL, normalising createdAt to the mirror created_at field', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			data: {
+				createContext: {
+					context: { id: CONTEXT_ID, name: 'ctx', createdAt: '2026-01-01' },
+				},
+			},
+		});
+		await ContextsGraphQL.create(ctx, {
+			contextName: 'ctx',
+			ownerId: ORG_ID,
+			ownerType: 'organization',
+		});
+		expect(db.contexts.upsertByEntityId).toHaveBeenCalledWith(
+			CONTEXT_ID,
+			expect.objectContaining({ id: CONTEXT_ID, created_at: '2026-01-01' }),
+		);
+	});
+
+	it('caches a context read via GraphQL the same way its REST v2 twin does', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			data: {
+				context: { id: CONTEXT_ID, name: 'ctx', createdAt: '2026-01-01' },
+			},
+		});
+		await ContextsGraphQL.query(ctx, { contextId: CONTEXT_ID });
+		expect(db.contexts.upsertByEntityId).toHaveBeenCalledWith(
+			CONTEXT_ID,
+			expect.objectContaining({ id: CONTEXT_ID, created_at: '2026-01-01' }),
 		);
 	});
 
@@ -948,10 +982,11 @@ describe('mirroring', () => {
 		const { ctx, db } = makeCtx();
 		db.groups.upsertByEntityId.mockRejectedValueOnce(new Error('db down'));
 		mockFetch({ items: [{ id: 'g-1' }] });
-		await expect(Groups.list(ctx, { orgId: ORG_ID })).resolves.toHaveLength(1);
+		const result = await Groups.list(ctx, { orgId: ORG_ID });
+		expect(result.items).toHaveLength(1);
 	});
 
-	it('never mirrors an env var value, only its masked form on the wire', async () => {
+	it('never mirrors an env var value - not the plaintext, and not the masked wire form either', async () => {
 		const { ctx, db } = makeCtx();
 		mockFetch({ name: 'X', value: 'xxxxcret', created_at: '2026-01-01' });
 		await ProjectEnvVars.create(ctx, {
@@ -961,6 +996,66 @@ describe('mirroring', () => {
 		});
 		const [, mirrored] = db.projectEnvVars.upsertByEntityId.mock.calls[0] ?? [];
 		expect(JSON.stringify(mirrored)).not.toContain('plaintext-secret');
+		// The plaintext was never in the mocked response to begin with, so the
+		// assertion above alone proves nothing about the mirror specifically -
+		// it would pass even if the masked value were written straight through.
+		// This is the assertion that actually distinguishes the two: the
+		// server's own masked confirmation ("xxxxcret") must not reach the
+		// mirror either, even though it legitimately reaches the return value.
+		expect(mirrored).not.toHaveProperty('value');
+	});
+
+	it('the caller-facing return value still carries the masked value - only the mirror strips it', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ name: 'X', value: 'xxxxcret', created_at: '2026-01-01' });
+		const result = await ProjectEnvVars.create(ctx, {
+			projectSlug: PROJECT_SLUG,
+			name: 'X',
+			value: 'plaintext-secret',
+		});
+		expect(result.value).toBe('xxxxcret');
+	});
+
+	it('two projects with an env var of the same name mirror as two rows, not one overwriting the other', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ name: 'API_KEY', value: 'xxxx1111', created_at: '2026-01-01' });
+		await ProjectEnvVars.create(ctx, {
+			projectSlug: 'gh/acme/widgets',
+			name: 'API_KEY',
+			value: 'first-project-secret',
+		});
+		mockFetch({ name: 'API_KEY', value: 'xxxx2222', created_at: '2026-01-01' });
+		await ProjectEnvVars.create(ctx, {
+			projectSlug: 'gh/acme/other-widgets',
+			name: 'API_KEY',
+			value: 'second-project-secret',
+		});
+		const entityIds = db.projectEnvVars.upsertByEntityId.mock.calls.map(
+			([entityId]) => entityId,
+		);
+		// A bare `name`-only key would have written the same id twice; the fix
+		// composes the project into the key, so both calls must use distinct
+		// keys even though the env var name is identical.
+		expect(entityIds).toHaveLength(2);
+		expect(new Set(entityIds).size).toBe(2);
+	});
+
+	it('never mirrors a context env var truncated_value, embedded or not', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			id: CONTEXT_ID,
+			name: 'ctx',
+			environment_variables: [
+				{ variable: 'X', truncated_value: 'cret', context_id: CONTEXT_ID },
+			],
+		});
+		await Contexts.get(ctx, { contextId: CONTEXT_ID });
+		const [, mirrored] = db.contexts.upsertByEntityId.mock.calls[0] ?? [];
+		const envVars = (mirrored as { environment_variables?: unknown[] })
+			.environment_variables;
+		expect(envVars).toHaveLength(1);
+		expect(envVars?.[0]).not.toHaveProperty('truncated_value');
+		expect(envVars?.[0]).toMatchObject({ variable: 'X' });
 	});
 
 	it('does not mirror orbs or namespaces - they are a shared registry, not account data', async () => {
@@ -1025,6 +1120,13 @@ describe('what reaches the event log', () => {
 		});
 		const payload = loggedPayload();
 		expect(typeof payload.returned).toBe('number');
+		// The claim in the test name, made checkable: the previous assertion
+		// alone would pass even if the whole artifact list were logged
+		// alongside `returned`. Confirm the artifact's own fields never reach
+		// the payload.
+		const serialised = JSON.stringify(payload);
+		expect(serialised).not.toContain('coverage.xml');
+		expect(serialised).not.toContain('https://example.com/artifact');
 	});
 });
 
@@ -1069,6 +1171,48 @@ describe('GraphQL existence checks distinguish null from error', () => {
 		mockFetch({ data: { orb: null } });
 		await expect(Orbs.getDetails(ctx, { name: 'not/real' })).rejects.toThrow(
 			/not found/i,
+		);
+	});
+});
+
+describe('namespace.deleteAlias reads its own business-error field, not just the transport-level errors[]', () => {
+	// `deleteNamespaceAlias` reports failure inside its own mutation payload
+	// (`{errors: [...]}`) rather than through the top-level GraphQL errors[]
+	// array `circleCIGraphQLCall` already throws on - a 200 with an empty
+	// `data.deleteNamespaceAlias.errors` is what CircleCI answers on genuine
+	// failure. An earlier version of this function never read that field, so
+	// it logged 'completed' and returned the error payload as a success.
+	it('throws when the mutation payload carries a business error, and does not log completed', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			data: {
+				deleteNamespaceAlias: {
+					errors: [{ message: 'Namespace not found with name "ghost"' }],
+				},
+			},
+		});
+		await expect(
+			Namespaces.deleteAlias(ctx, { name: 'ghost' }),
+		).rejects.toThrow(/ghost/);
+		expect(mockLogEvent).not.toHaveBeenCalledWith(
+			expect.anything(),
+			'circleci.namespace.deleteAlias',
+			expect.anything(),
+			'completed',
+		);
+	});
+
+	it('succeeds and logs completed when errors is empty', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ data: { deleteNamespaceAlias: { errors: [] } } });
+		await expect(
+			Namespaces.deleteAlias(ctx, { name: 'circleci' }),
+		).resolves.toEqual({});
+		expect(mockLogEvent).toHaveBeenCalledWith(
+			expect.anything(),
+			'circleci.namespace.deleteAlias',
+			expect.anything(),
+			'completed',
 		);
 	});
 });
@@ -1191,5 +1335,243 @@ describe('namespace.delete and namespace.rename resolve the name to an id first'
 		expect(calls.length).toBe(2);
 		expect(calls[0]).toMatch(/^GET .*namespaces\?/);
 		expect(calls[1]).toMatch(/^POST .*namespaces\/ns-1\/rename$/);
+	});
+});
+
+/** Answers each successive request with the next payload in `payloads`, repeating the last one once exhausted. */
+function mockSequence(payloads: unknown[]) {
+	let call = 0;
+	global.fetch = (async () => {
+		const payload = payloads[Math.min(call, payloads.length - 1)];
+		call++;
+		return {
+			ok: true,
+			status: 200,
+			statusText: 'OK',
+			headers: new Headers({ 'Content-Type': 'application/json' }),
+			json: async () => payload,
+			text: async () => JSON.stringify(payload),
+		};
+	}) as unknown as typeof global.fetch;
+	return () => call;
+}
+
+describe('orbs.queryCategoryId actually pages, not just on a single response', () => {
+	it('finds a match on the second page after the first has none', async () => {
+		const { ctx } = makeCtx();
+		const callCount = mockSequence([
+			{
+				data: {
+					orbCategories: {
+						edges: [{ node: { id: 'c-1', name: 'Testing' } }],
+						pageInfo: { hasNextPage: true, endCursor: 'cursor-1' },
+					},
+				},
+			},
+			{
+				data: {
+					orbCategories: {
+						edges: [{ node: { id: 'c-2', name: 'Deployment' } }],
+						pageInfo: { hasNextPage: false, endCursor: null },
+					},
+				},
+			},
+		]);
+		const result = await Orbs.queryCategoryId(ctx, { name: 'Deployment' });
+		expect(result).toEqual({ id: 'c-2', name: 'Deployment' });
+		expect(callCount()).toBe(2);
+	});
+
+	it('exhausts every page and throws when no page matches', async () => {
+		const { ctx } = makeCtx();
+		mockSequence([
+			{
+				data: {
+					orbCategories: {
+						edges: [{ node: { id: 'c-1', name: 'Testing' } }],
+						pageInfo: { hasNextPage: false, endCursor: null },
+					},
+				},
+			},
+		]);
+		await expect(
+			Orbs.queryCategoryId(ctx, { name: 'DoesNotExist' }),
+		).rejects.toThrow(/not found/i);
+	});
+
+	it('a page with no edges stops the loop rather than looping on a bound it never advances', async () => {
+		const { ctx } = makeCtx();
+		const callCount = mockSequence([
+			{
+				data: {
+					orbCategories: {
+						edges: [],
+						pageInfo: { hasNextPage: true, endCursor: 'cursor-1' },
+					},
+				},
+			},
+		]);
+		await expect(
+			Orbs.queryCategoryId(ctx, { name: 'Deployment' }),
+		).rejects.toThrow(/not found/i);
+		// One call, not the MAX_SCANNED/PAGE_SIZE ceiling worth of calls a
+		// stuck loop would have made.
+		expect(callCount()).toBe(1);
+	});
+});
+
+/**
+ * Every one of these list operations used to return a bare array, so a
+ * response carrying a real continuation cursor - `next_page_token` on v2,
+ * `page.next` on v3, `pageInfo` on GraphQL - had that cursor silently
+ * discarded: a caller had no way to tell an incomplete page from the whole
+ * collection, and no way to ask for the rest. Each case here mocks a
+ * response where the cursor is present and non-null, and asserts it survives
+ * to the return value - a positive assertion, not just that the function
+ * still resolves.
+ */
+describe('list operations surface the pagination cursor CircleCI returns', () => {
+	it('contexts.listEnvVars: sends pageToken and returns next_page_token', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ items: [{ variable: 'X' }], next_page_token: 'cursor-1' });
+		const result = await Contexts.listEnvVars(ctx, {
+			contextId: CONTEXT_ID,
+			pageToken: 'prev-cursor',
+		});
+		expect(query().get('page-token')).toBe('prev-cursor');
+		expect(result.next_page_token).toBe('cursor-1');
+	});
+
+	it('groups.list: sends pageToken and returns next_page_token', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			items: [{ id: 'g-1' }],
+			next_page_token: 'cursor-1',
+			total_count: 5,
+		});
+		const result = await Groups.list(ctx, {
+			orgId: ORG_ID,
+			pageToken: 'prev-cursor',
+		});
+		expect(query().get('page-token')).toBe('prev-cursor');
+		expect(result.next_page_token).toBe('cursor-1');
+	});
+
+	it('projectEnvVars.list: returns next_page_token even though the route accepts no pageToken input', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ items: [{ name: 'X' }], next_page_token: 'cursor-1' });
+		const result = await ProjectEnvVars.list(ctx, {
+			projectSlug: PROJECT_SLUG,
+		});
+		expect(result.next_page_token).toBe('cursor-1');
+	});
+
+	it('schedules.list: sends pageToken and returns next_page_token', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ items: [{ id: 's-1' }], next_page_token: 'cursor-1' });
+		const result = await Schedules.list(ctx, {
+			projectSlug: PROJECT_SLUG,
+			pageToken: 'prev-cursor',
+		});
+		expect(query().get('page-token')).toBe('prev-cursor');
+		expect(result.next_page_token).toBe('cursor-1');
+	});
+
+	it('pipelines.list: sends pageToken and returns next_page_token', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ items: [{ id: 'pl-1' }], next_page_token: 'cursor-1' });
+		const result = await Pipelines.list(ctx, { pageToken: 'prev-cursor' });
+		expect(query().get('page-token')).toBe('prev-cursor');
+		expect(result.next_page_token).toBe('cursor-1');
+	});
+
+	it('pipelines.listForProject: returns next_page_token', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ items: [{ id: 'pl-1' }], next_page_token: 'cursor-1' });
+		const result = await Pipelines.listForProject(ctx, {
+			projectSlug: PROJECT_SLUG,
+			pageToken: 'prev-cursor',
+		});
+		expect(result.next_page_token).toBe('cursor-1');
+	});
+
+	it('workflows.listByPipelineId: returns next_page_token', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ items: [{ id: 'w-1' }], next_page_token: 'cursor-1' });
+		const result = await Workflows.listByPipelineId(ctx, {
+			pipelineId: 'pl-1',
+			pageToken: 'prev-cursor',
+		});
+		expect(result.next_page_token).toBe('cursor-1');
+	});
+
+	it('orbs.listOrbs: requests pageInfo and returns it', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			data: {
+				orbs: {
+					edges: [{ node: { id: 'o-1', name: 'x', isPrivate: false } }],
+					pageInfo: { hasNextPage: true, endCursor: 'cursor-1' },
+				},
+			},
+		});
+		const result = await Orbs.listOrbs(ctx, {});
+		expect(graphQLSent().query).toContain('pageInfo');
+		expect(result.pageInfo).toEqual({
+			hasNextPage: true,
+			endCursor: 'cursor-1',
+		});
+	});
+
+	it('orbs.listCategories: requests pageInfo and returns it', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			data: {
+				orbCategories: {
+					edges: [{ node: { id: 'c-1', name: 'x' } }],
+					pageInfo: { hasNextPage: false, endCursor: null },
+				},
+			},
+		});
+		const result = await Orbs.listCategories(ctx, {});
+		expect(graphQLSent().query).toContain('pageInfo');
+		expect(result.pageInfo).toEqual({ hasNextPage: false, endCursor: null });
+	});
+
+	it('orbs.listNamespaceOrbs: returns the v3 page object rather than discarding it', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			data: [{ id: 'p-1', name: 'x' }],
+			page: { next: 'cursor-1', prev: null },
+		});
+		const result = await Orbs.listNamespaceOrbs(ctx, {});
+		expect(result.page).toEqual({ next: 'cursor-1', prev: null });
+	});
+
+	// `runners.list` does not appear here: its route's real response is
+	// `{"items": [...]}`, not the `{"data": [...], "page": {...}}` envelope
+	// `orb/packages` uses - confirmed from `circleci-cli`'s own
+	// `ListRunnerInstances`, which decodes into `{Items []RunnerInstance}`.
+	// See the dedicated regression test below instead.
+});
+
+describe('runners.list reads the real flat {items} envelope, not the JSON:API {data, page} shape orb/packages uses', () => {
+	it('returns the items a mocked {items: [...]} response carries', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ items: [{ id: 'r-1', hostname: 'runner-1' }] });
+		const result = await Runners.list(ctx, {});
+		expect(result.items).toEqual([{ id: 'r-1', hostname: 'runner-1' }]);
+	});
+
+	it('regression: a {data: [...]} response - the wrong shape for this route - fails loudly rather than silently returning the wrong data', async () => {
+		const { ctx } = makeCtx();
+		// This is the shape `orb/packages` actually sends, and the shape an
+		// earlier version of this function wrongly assumed `runner` shared.
+		// Confirmed by planting the fault: this throws (`.items` is undefined
+		// on a `{data, page}` response) rather than silently resolving to an
+		// empty list - a loud failure here is the safer outcome, and this
+		// pins that it stays loud if the assumption is ever reintroduced.
+		mockFetch({ data: [{ id: 'r-1' }], page: { next: null, prev: null } });
+		await expect(Runners.list(ctx, {})).rejects.toThrow();
 	});
 });

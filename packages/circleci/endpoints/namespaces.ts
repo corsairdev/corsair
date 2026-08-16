@@ -25,7 +25,15 @@ export const queryExists: CircleCIEndpoints['namespaceQueryExists'] = async (
 		});
 		exists = true;
 	} catch (error) {
-		const status = (error as { status?: unknown }).status;
+		// `wrapError` in `client.ts` always throws a `CircleCIAPIError`, so a
+		// nullish or non-object rejection is not currently reachable through
+		// this call - but a bare `(error as {status}).status` would still
+		// throw a `TypeError` if one ever were, masking the original failure
+		// with an unrelated crash. Guarded rather than assumed.
+		const status =
+			error != null && typeof error === 'object' && 'status' in error
+				? (error as { status?: unknown }).status
+				: undefined;
 		if (status === 404) exists = false;
 		else throw error;
 	}
@@ -98,6 +106,14 @@ export const rename: CircleCIEndpoints['namespaceRename'] = async (
  * live on `graphql-unstable`, answering genuine business errors ("Namespace
  * not found with name ...") rather than a schema error. Orphaned from
  * official tooling, not from the API itself.
+ *
+ * **`errors` here is a mutation-payload field, not the top-level GraphQL
+ * `errors[]` array `circleCIGraphQLCall` already throws on.** This is the
+ * "business error" the doc paragraph above names: the mutation answers 200
+ * with no transport-level failure, and the outcome is only visible by
+ * reading this field. An earlier version of this function never read it,
+ * so a genuine failure - a name that does not exist - logged `completed`
+ * and returned the error payload as if it were a successful `EmptyResult`.
  */
 export const deleteAlias: CircleCIEndpoints['namespaceDeleteAlias'] = async (
 	ctx,
@@ -113,11 +129,20 @@ export const deleteAlias: CircleCIEndpoints['namespaceDeleteAlias'] = async (
 		},
 	);
 
+	const businessErrors = result.deleteNamespaceAlias.errors;
+	if (businessErrors && businessErrors.length > 0) {
+		throw new Error(
+			`Failed to delete namespace alias "${input.name}": ${businessErrors
+				.map((e) => e.message)
+				.join('; ')}`,
+		);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'circleci.namespace.deleteAlias',
 		auditPayload(input, ['name']),
 		'completed',
 	);
-	return result.deleteNamespaceAlias as CircleCIEndpointOutputs['namespaceDeleteAlias'];
+	return {};
 };

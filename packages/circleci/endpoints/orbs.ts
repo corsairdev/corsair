@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CircleCIEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { circleCIGraphQLCall, circleCIV3Call, compact } from './shared';
+import { circleCIGraphQLCall, circleCIV3ListCall, compact } from './shared';
 import type { CircleCIEndpointOutputs } from './types';
 
 /**
@@ -180,52 +180,77 @@ export const querySource: CircleCIEndpoints['orbQuerySource'] = async (
 	return result.orbVersion;
 };
 
-/** Lists orbs across the whole registry, paginated. */
+/**
+ * Lists orbs across the whole registry, paginated.
+ *
+ * Requests `pageInfo { hasNextPage endCursor }` alongside the edges and
+ * returns it to the caller - the same two fields `queryCategoryId` below
+ * already reads to keep paging internally, confirmed live to exist on this
+ * connection. An earlier version of this function accepted `first`/`after`
+ * as input but never requested or returned `pageInfo`, so a caller had no
+ * way to know whether more orbs existed or what cursor to ask for next. Pass
+ * the returned `endCursor` back as this operation's `after` input to
+ * continue.
+ */
 export const listOrbs: CircleCIEndpoints['orbListOrbs'] = async (
 	ctx,
 	input,
 ) => {
 	const result = await circleCIGraphQLCall<{
-		orbs: { edges: { node: CircleCIEndpointOutputs['orbListOrbs'][number] }[] };
+		orbs: {
+			edges: {
+				node: CircleCIEndpointOutputs['orbListOrbs']['items'][number];
+			}[];
+			pageInfo?: { hasNextPage: boolean; endCursor: string | null };
+		};
 	}>(
 		ctx,
-		`query($first: Int, $after: String) { orbs(first: $first, after: $after) { edges { node { id name isPrivate } } } }`,
+		`query($first: Int, $after: String) { orbs(first: $first, after: $after) { edges { node { id name isPrivate } } pageInfo { hasNextPage endCursor } } }`,
 		compact({ first: input.first, after: input.after }),
 	);
-	const orbs = result.orbs.edges.map((edge) => edge.node);
+	const items = result.orbs.edges.map((edge) => edge.node);
 
 	await logEventFromContext(
 		ctx,
 		'circleci.orbs.listOrbs',
-		{ ...auditPayload(input, []), returned: orbs.length },
+		{ ...auditPayload(input, []), returned: items.length },
 		'completed',
 	);
-	return orbs;
+	return { items, pageInfo: result.orbs.pageInfo };
 };
 
-/** Lists orb categories, paginated. */
+/**
+ * Lists orb categories, paginated.
+ *
+ * Same `pageInfo` treatment as `listOrbs` above - see its doc comment. Pass
+ * the returned `endCursor` back as this operation's `after` input to
+ * continue.
+ */
 export const listCategories: CircleCIEndpoints['orbListCategories'] = async (
 	ctx,
 	input,
 ) => {
 	const result = await circleCIGraphQLCall<{
 		orbCategories: {
-			edges: { node: CircleCIEndpointOutputs['orbListCategories'][number] }[];
+			edges: {
+				node: CircleCIEndpointOutputs['orbListCategories']['items'][number];
+			}[];
+			pageInfo?: { hasNextPage: boolean; endCursor: string | null };
 		};
 	}>(
 		ctx,
-		`query($first: Int, $after: String) { orbCategories(first: $first, after: $after) { edges { node { id name } } } }`,
+		`query($first: Int, $after: String) { orbCategories(first: $first, after: $after) { edges { node { id name } } pageInfo { hasNextPage endCursor } } }`,
 		compact({ first: input.first, after: input.after }),
 	);
-	const categories = result.orbCategories.edges.map((edge) => edge.node);
+	const items = result.orbCategories.edges.map((edge) => edge.node);
 
 	await logEventFromContext(
 		ctx,
 		'circleci.orbs.listCategories',
-		{ returned: categories.length },
+		{ returned: items.length },
 		'completed',
 	);
-	return categories;
+	return { items, pageInfo: result.orbCategories.pageInfo };
 };
 
 /**
@@ -271,8 +296,22 @@ export const queryCategoryId: CircleCIEndpoints['orbQueryCategoryId'] = async (
 		)?.node;
 		if (found) break;
 
+		// A page with no edges has nothing left to gain from continuing, even
+		// if `hasNextPage` claims otherwise - guards against looping forever on
+		// a bound (`scanned`) that a zero-edge page never advances.
+		if (page.orbCategories.edges.length === 0) break;
 		if (!page.orbCategories.pageInfo?.hasNextPage) break;
-		after = page.orbCategories.pageInfo.endCursor ?? undefined;
+
+		const nextCursor = page.orbCategories.pageInfo.endCursor ?? undefined;
+		// A missing cursor, or one identical to the one just used, cannot move
+		// this loop forward: `endCursor: null` would restart from the first
+		// page (`after` resets to `undefined`), and a repeated cursor would
+		// refetch the same page - either way, real pagination has stopped even
+		// though the server claims `hasNextPage: true`. Confirmed introspection
+		// is disabled on this schema, so this is defended against rather than
+		// assumed impossible.
+		if (nextCursor === undefined || nextCursor === after) break;
+		after = nextCursor;
 	}
 
 	await logEventFromContext(
@@ -291,14 +330,18 @@ export const queryCategoryId: CircleCIEndpoints['orbQueryCategoryId'] = async (
  * `filter[visibility]=`, and `page[cursor]=` all confirmed live via
  * `circleci-cli`'s own `ListOrbPackages` and a direct fetch of the global
  * (unfiltered) form, which returned real orb data.
+ *
+ * Uses `circleCIV3ListCall`, not `circleCIV3Call`: the real response is
+ * `{"data": [...], "page": {"next", "prev"}}`, and `circleCIV3Call`'s
+ * `{"data": T}` unwrap would discard `page` entirely - an earlier version of
+ * this function did exactly that, leaving a caller with no way to tell an
+ * incomplete page from the whole registry. Pass the returned `page.next`
+ * back as this operation's `pageCursor` input to continue.
  */
 export const listNamespaceOrbs: CircleCIEndpoints['orbListNamespaceOrbs'] =
 	async (ctx, input) => {
-		// The real response is `{"data": [...], "page": {...}}` - the same
-		// `{"data": T}` shape `circleCIV3Call` always unwraps, with T being the
-		// array here rather than a single entity. No special-casing needed.
-		const orbs = await circleCIV3Call<
-			CircleCIEndpointOutputs['orbListNamespaceOrbs']
+		const result = await circleCIV3ListCall<
+			CircleCIEndpointOutputs['orbListNamespaceOrbs']['items'][number]
 		>(ctx, 'orb/packages', {
 			query: compact({
 				'filter[namespace_id]': input.namespaceId,
@@ -313,11 +356,11 @@ export const listNamespaceOrbs: CircleCIEndpoints['orbListNamespaceOrbs'] =
 			'circleci.orbs.listNamespaceOrbs',
 			{
 				...auditPayload(input, ['namespaceId', 'certified']),
-				returned: orbs.length,
+				returned: result.items.length,
 			},
 			'completed',
 		);
-		return orbs;
+		return result;
 	};
 
 /**

@@ -8,6 +8,31 @@ import type { CircleCIEndpointOutputs } from './types';
 
 const LABEL = 'context';
 
+/**
+ * `GET`/`POST context` embed `environment_variables` inline, each carrying
+ * `truncated_value` - the masked value's last four characters. A masked
+ * fragment is still part of a secret, so it is dropped from what reaches the
+ * mirror. Declaring `CircleCIContextEnvVarEntity` without the field would
+ * not achieve this on its own - every entity here is `.loose()`, and a
+ * `.loose()` schema does not strip a field merely for being undeclared; only
+ * code that removes it before the cache write does. The caller-facing
+ * return value is unaffected - it still carries the masked value straight
+ * from the response.
+ */
+function cacheableContext(
+	record: CircleCIEndpointOutputs['contextsCreate'],
+): Record<string, unknown> {
+	const envVars = record.environment_variables;
+	if (!Array.isArray(envVars)) return record;
+	return {
+		...record,
+		environment_variables: envVars.map((envVar) => {
+			const { truncated_value: _omittedValue, ...rest } = envVar;
+			return rest;
+		}),
+	};
+}
+
 /** Creates a context. */
 export const create: CircleCIEndpoints['contextsCreate'] = async (
 	ctx,
@@ -25,9 +50,12 @@ export const create: CircleCIEndpoints['contextsCreate'] = async (
 		},
 	);
 
-	await cacheEntity(ctx.db.contexts, CircleCIContextEntity, result, {
-		label: LABEL,
-	});
+	await cacheEntity(
+		ctx.db.contexts,
+		CircleCIContextEntity,
+		cacheableContext(result),
+		{ label: LABEL },
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -45,9 +73,12 @@ export const get: CircleCIEndpoints['contextsGet'] = async (ctx, input) => {
 		`context/${input.contextId}`,
 	);
 
-	await cacheEntity(ctx.db.contexts, CircleCIContextEntity, result, {
-		label: LABEL,
-	});
+	await cacheEntity(
+		ctx.db.contexts,
+		CircleCIContextEntity,
+		cacheableContext(result),
+		{ label: LABEL },
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -63,16 +94,22 @@ export const get: CircleCIEndpoints['contextsGet'] = async (ctx, input) => {
  *
  * `truncated_value` is CircleCI's own masking - the last four characters of
  * the real value - and it is not treated as safe to log even in that form.
+ *
+ * Wrapped in `{items: [...], next_page_token}` per the spec - and returned to
+ * the caller as that same envelope, not unwrapped to a bare array, so the
+ * continuation token is not silently discarded. Pass the returned
+ * `next_page_token` back as this operation's `pageToken` input to fetch the
+ * next page.
  */
 export const listEnvVars: CircleCIEndpoints['contextsListEnvVars'] = async (
 	ctx,
 	input,
 ) => {
-	// Wrapped in `{items: [...], next_page_token}` per the spec - not a bare
-	// array, the same envelope this plugin's other v2 list routes use.
-	const result = await circleCICall<{
-		items: CircleCIEndpointOutputs['contextsListEnvVars'];
-	}>(ctx, `context/${input.contextId}/environment-variable`);
+	const result = await circleCICall<
+		CircleCIEndpointOutputs['contextsListEnvVars']
+	>(ctx, `context/${input.contextId}/environment-variable`, {
+		query: compact({ 'page-token': input.pageToken }),
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -80,7 +117,7 @@ export const listEnvVars: CircleCIEndpoints['contextsListEnvVars'] = async (
 		{ ...auditPayload(input, ['contextId']), returned: result.items.length },
 		'completed',
 	);
-	return result.items;
+	return result;
 };
 
 /** Adds or updates an environment variable in a context. The value is never logged. */

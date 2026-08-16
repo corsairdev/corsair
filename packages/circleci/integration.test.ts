@@ -33,6 +33,7 @@
  */
 import {
 	Contexts,
+	ContextsGraphQL,
 	Namespaces,
 	Orbs,
 	Organization,
@@ -100,12 +101,18 @@ describeLive('CircleCI live API', () => {
 			expect(parsed.success).toBe(true);
 		});
 
-		it('lists pipelines for the project without error', async () => {
+		it('lists pipelines for the project without error, with the real pagination envelope', async () => {
 			const ctx = makeCtx();
-			const pipelines = await paced(() =>
+			const result = await paced(() =>
 				Pipelines.listForProject(ctx, { projectSlug: projectSlug ?? '' }),
 			);
-			expect(Array.isArray(pipelines)).toBe(true);
+			// The regression this guards: an earlier version of this operation
+			// unwrapped CircleCI's real `{items, next_page_token}` response down
+			// to a bare array before returning it, discarding the continuation
+			// token. Confirming `result` is the envelope - not an array - is what
+			// proves the fix reached the real API, not just the mocks.
+			expect(Array.isArray(result)).toBe(false);
+			expect(Array.isArray(result.items)).toBe(true);
 		});
 	});
 
@@ -189,7 +196,6 @@ describeLive('CircleCI live API', () => {
 					// 403 - not 404 - for a context that no longer exists. Cleanup
 					// here uses the GraphQL delete instead, which is what the recon
 					// confirmed actually removes a context.
-					const { ContextsGraphQL } = await import('./endpoints');
 					await paced(() =>
 						ContextsGraphQL.remove(ctx, { contextId: contextId ?? '' }),
 					).catch((error) => {
@@ -216,9 +222,9 @@ describeLive('CircleCI live API', () => {
 				const listed = await paced(() =>
 					ProjectEnvVars.list(ctx, { projectSlug: projectSlug ?? '' }),
 				);
-				expect(listed.some((v) => v.name === 'CORSAIR_INTEGRATION_PROBE')).toBe(
-					true,
-				);
+				expect(
+					listed.items.some((v) => v.name === 'CORSAIR_INTEGRATION_PROBE'),
+				).toBe(true);
 			} finally {
 				await paced(() =>
 					ProjectEnvVars.remove(ctx, {
@@ -233,13 +239,21 @@ describeLive('CircleCI live API', () => {
 	});
 
 	describe('rate limiting', () => {
-		it('reports the documented limit in response headers', async () => {
+		it('reports a rate limit in response headers', async () => {
+			// Asserts the header exists and is a real number, not the specific
+			// value 300 documented in client.ts and this session's own recon -
+			// CircleCI can change that number at any time, and this suite should
+			// not fail over a fact about CircleCI's account plan rather than a
+			// fact about this plugin's own behaviour.
 			const res = await paced(() =>
 				fetch('https://circleci.com/api/v2/me', {
 					headers: { Authorization: `Bearer ${token}` },
 				}),
 			);
-			expect(res.headers.get('x-ratelimit-limit')).toBe('300');
+			const limit = res.headers.get('x-ratelimit-limit');
+			expect(limit).not.toBeNull();
+			expect(Number.isInteger(Number(limit))).toBe(true);
+			expect(Number(limit)).toBeGreaterThan(0);
 		});
 	});
 });

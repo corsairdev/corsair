@@ -66,6 +66,9 @@ const CIRCLECI_V1_BASE = 'https://circleci.com/api/v1.1';
  */
 const CIRCLECI_GRAPHQL_URL = 'https://circleci.com/graphql-unstable';
 
+/** Same ceiling as the shared transport's default; stated for the raw-fetch GraphQL path, which does not inherit it automatically. */
+const CIRCLECI_GRAPHQL_TIMEOUT_MS = 20_000;
+
 /**
  * 300 requests per window, confirmed from live response headers
  * (`x-ratelimit-limit: 300`). The window's **length** is not configured here:
@@ -238,6 +241,55 @@ export async function makeCircleCIV3Request<T>(
 }
 
 /**
+ * Issues a request against a REST v3 **list** route and preserves the
+ * pagination cursor `makeCircleCIV3Request` above discards.
+ *
+ * The real envelope is `{"data": [...], "page": {"next": ..., "prev": ...}}`
+ * - confirmed from `circleci-cli`'s own `v3List[T]` struct, since v3 has no
+ * published spec. Reshaped to `{"items": [...], "page": {...}}` rather than
+ * unwrapped to a bare array, so a caller can see whether more pages exist and
+ * what cursor to ask for next. `makeCircleCIV3Request` stays as it is for the
+ * single-entity v3 routes (`namespaces.ts`'s name lookups), which have no
+ * `page` object to lose in the first place.
+ */
+export async function makeCircleCIV3ListRequest<T>(
+	endpoint: string,
+	apiToken: string,
+	options: CircleCIRequestOptions = {},
+): Promise<{
+	items: T[];
+	page?: { next?: string | null; prev?: string | null };
+}> {
+	const { method = 'GET', body, query } = options;
+
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: endpoint,
+		body:
+			method === 'POST' || method === 'PUT' || method === 'PATCH'
+				? body
+				: undefined,
+		mediaType: 'application/json',
+		query,
+	};
+
+	try {
+		const response = await request<unknown>(
+			buildConfig(CIRCLECI_V3_BASE, apiToken),
+			requestOptions,
+			{ rateLimitConfig: CIRCLECI_RATE_LIMIT_CONFIG },
+		);
+		const envelope = response as {
+			data?: T[];
+			page?: { next?: string | null; prev?: string | null };
+		};
+		return { items: envelope?.data ?? [], page: envelope?.page };
+	} catch (error) {
+		throw wrapError(error);
+	}
+}
+
+/**
  * Issues a request against the legacy v1.1 API.
  *
  * v1.1 predates the `corsair/http` request helper's assumptions least of any
@@ -357,10 +409,24 @@ export async function makeCircleCIGraphQLRequest<T>(
 		);
 	}
 
-	const body = (await response.json()) as {
-		data?: T;
-		errors?: { message: string }[];
-	};
+	let body: { data?: T; errors?: { message: string }[] };
+	try {
+		body = (await response.json()) as {
+			data?: T;
+			errors?: { message: string }[];
+		};
+	} catch (error) {
+		// A malformed body on an ostensibly-200 response - a proxy or CDN
+		// returning an HTML error page under a 200 status is the realistic
+		// cause. Without this, `response.json()`'s raw `SyntaxError` would
+		// leak past the `CircleCIAPIError`/`CircleCIGraphQLError` contract
+		// every caller and `error-handlers.ts` classify against.
+		const reason = error instanceof Error ? error.message : String(error);
+		throw new CircleCIAPIError(
+			`CircleCI GraphQL returned an unparseable response body: ${reason}`,
+			response.status,
+		);
+	}
 
 	if (body.errors && body.errors.length > 0) {
 		throw new CircleCIGraphQLError(
@@ -371,9 +437,6 @@ export async function makeCircleCIGraphQLRequest<T>(
 
 	return body.data as T;
 }
-
-/** Same ceiling as the shared transport's default; stated for the raw-fetch GraphQL path, which does not inherit it automatically. */
-const CIRCLECI_GRAPHQL_TIMEOUT_MS = 20_000;
 
 export {
 	CIRCLECI_GRAPHQL_URL,

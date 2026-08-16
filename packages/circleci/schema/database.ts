@@ -30,10 +30,18 @@ import { z } from 'zod';
  * immediately after setting it, and returns two different masked shapes
  * depending on the route (`"xxxx" + last 4 chars` on projects,
  * `truncated_value` with just the last 4 on contexts) - see `client.ts` and
- * the entities below for both. A masked fragment is still part of a secret,
- * so only the variable *name* and timestamps are declared as fields; the
- * value fields that do come back are typed but never logged or copied
- * elsewhere in the plugin.
+ * the entities below for both. A masked fragment is still part of a secret.
+ *
+ * `value` and `truncated_value` are still **declared** below, because the
+ * caller-facing return value legitimately includes them - CircleCI's own
+ * masked confirmation that a write took. But every entity here is `.loose()`,
+ * which does not strip a field merely for being undeclared, so declaring
+ * them away would not have kept them out of the mirror on its own; only code
+ * that removes them before the cache write does. `contexts.ts`'s
+ * `cacheableContext` and `project-env-vars.ts`'s `cacheableProjectEnvVar` do
+ * that stripping - an earlier version of this file's comment claimed the
+ * fields were simply "typed but never logged or copied elsewhere," which was
+ * not true of the persisted mirror at the time it was written.
  *
  * Field names match the API's own JSON keys, including the API's own
  * inconsistency between `snake_case` (v2, most fields) and `kebab-case`

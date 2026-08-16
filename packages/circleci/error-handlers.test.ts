@@ -131,4 +131,40 @@ describe('CircleCI error handlers', () => {
 			expect(classify(new Error('something unrelated'))).toBe('DEFAULT');
 		});
 	});
+
+	describe('a CircleCIAPIError is classified by status alone, never by scanning its message', () => {
+		// `ApiError`'s message embeds the response body verbatim for any status
+		// this plugin does not explicitly map, so a genuine unrelated failure
+		// (500, in every case here) whose body happens to mention a job number,
+		// org id, or any digit string containing a trigger word must not be
+		// reclassified as rate-limiting, an auth failure, or a not-found. Each
+		// case below plants exactly that collision.
+		const collisions: [string, string][] = [
+			['a job number that reads as a rate-limit trigger', 'job 429 failed'],
+			['a job number that reads as an auth trigger', 'job 401 failed'],
+			[
+				'a body that mentions "not found" for an unrelated reason',
+				'Generic Error: status: 500; status text: Internal Server Error; body: {"message":"upstream dependency not found in registry"}',
+			],
+		];
+
+		for (const [label, message] of collisions) {
+			it(`does not misclassify: ${label}`, () => {
+				const error = new CircleCIAPIError(message, 500);
+				const result = classify(error);
+				expect(result).not.toBe('RATE_LIMIT_ERROR');
+				expect(result).not.toBe('AUTH_ERROR');
+				expect(result).not.toBe('NOT_FOUND_ERROR');
+				expect(result).toBe('DEFAULT');
+			});
+		}
+
+		it('a bare Error (no status to check instead) still falls back to its message - the one case the fallback exists for', () => {
+			expect(classify(new Error('429 too many requests'))).toBe(
+				'RATE_LIMIT_ERROR',
+			);
+			expect(classify(new Error('401 unauthorized'))).toBe('AUTH_ERROR');
+			expect(classify(new Error('resource not found'))).toBe('NOT_FOUND_ERROR');
+		});
+	});
 });

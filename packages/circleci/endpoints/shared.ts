@@ -4,6 +4,7 @@ import {
 	makeCircleCIGraphQLRequest,
 	makeCircleCIRequest,
 	makeCircleCIV1Request,
+	makeCircleCIV3ListRequest,
 	makeCircleCIV3Request,
 } from '../client';
 
@@ -35,6 +36,21 @@ export async function circleCIV3Call<T>(
 	options: CircleCIRequestOptions = {},
 ): Promise<T> {
 	return await makeCircleCIV3Request<T>(endpoint, ctx.key, options);
+}
+
+/**
+ * Issues a request against a REST v3 **list** route, preserving the `page`
+ * cursor `circleCIV3Call` above discards - see `makeCircleCIV3ListRequest`.
+ */
+export async function circleCIV3ListCall<T>(
+	ctx: CircleCICallContext,
+	endpoint: string,
+	options: CircleCIRequestOptions = {},
+): Promise<{
+	items: T[];
+	page?: { next?: string | null; prev?: string | null };
+}> {
+	return await makeCircleCIV3ListRequest<T>(endpoint, ctx.key, options);
 }
 
 /** Issues a request against the legacy v1.1 API. */

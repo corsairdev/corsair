@@ -89,14 +89,21 @@ export const get: CircleCIEndpoints['groupsGet'] = async (ctx, input) => {
 	return result;
 };
 
-/** Lists an organization's groups. Confirmed live: 200 with an empty list on a free-plan account. */
+/**
+ * Lists an organization's groups. Confirmed live: 200 with an empty list on
+ * a free-plan account.
+ *
+ * Wrapped in `{items: [...], next_page_token, total_count}` per the spec, and
+ * returned to the caller as that same envelope rather than unwrapped to a
+ * bare array, so `next_page_token` is not silently discarded. Pass it back as
+ * this operation's `pageToken` input to fetch the next page.
+ */
 export const list: CircleCIEndpoints['groupsList'] = async (ctx, input) => {
-	// Wrapped in `{items: [...], next_page_token, total_count}` per the spec.
-	const result = await circleCICall<{
-		items: CircleCIEndpointOutputs['groupsList'];
-	}>(ctx, `organizations/${input.orgId}/groups`, {
-		query: compact({ limit: input.limit, 'page-token': input.pageToken }),
-	});
+	const result = await circleCICall<CircleCIEndpointOutputs['groupsList']>(
+		ctx,
+		`organizations/${input.orgId}/groups`,
+		{ query: compact({ limit: input.limit, 'page-token': input.pageToken }) },
+	);
 
 	await cacheEntities(ctx.db.groups, CircleCIGroupEntity, result.items, {
 		label: LABEL,
@@ -108,5 +115,5 @@ export const list: CircleCIEndpoints['groupsList'] = async (ctx, input) => {
 		{ ...auditPayload(input, ['orgId']), returned: result.items.length },
 		'completed',
 	);
-	return result.items;
+	return result;
 };

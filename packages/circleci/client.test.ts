@@ -201,6 +201,26 @@ describe('CircleCI transport', () => {
 			expect(error).toBeInstanceOf(CircleCIAPIError);
 			expect(error).not.toBeInstanceOf(CircleCIGraphQLError);
 		});
+
+		it('a malformed body on a 200 response throws CircleCIAPIError, not a raw SyntaxError', async () => {
+			global.fetch = (async () => ({
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => {
+					throw new SyntaxError('Unexpected token < in JSON');
+				},
+				text: async () => '<html>not json</html>',
+			})) as unknown as typeof global.fetch;
+			const error = await makeCircleCIGraphQLRequest(
+				'query { x }',
+				undefined,
+				TOKEN,
+			).catch((e: unknown) => e);
+			expect(error).toBeInstanceOf(CircleCIAPIError);
+			expect(error).not.toBeInstanceOf(SyntaxError);
+		});
 	});
 
 	describe('GraphQL Retry-After - re-supplied explicitly, since this path bypasses the shared transport that would otherwise parse it', () => {

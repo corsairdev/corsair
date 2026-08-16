@@ -20,12 +20,24 @@ import { CircleCIAPIError, CircleCIGraphQLError } from './client';
  *   never-existed id side by side - both 403, both "Forbidden"). CircleCI
  *   does not distinguish the two on context routes, so a 403 there means
  *   "not accessible", which covers both causes rather than only one.
+ *
+ * **Every message-text fallback below is gated on the error having no
+ * status at all.** `ApiError`'s message embeds the response body verbatim
+ * for any status this plugin's own status map does not name explicitly
+ * (`packages/corsair/async-core/request.ts`'s `catchErrorCodes`), and
+ * `CircleCIAPIError` carries that message through unchanged - so a genuine
+ * 500 whose body happens to mention a job number, org id, or any other
+ * digit string containing "429" or "401" could otherwise be misclassified
+ * as a rate limit or an auth failure instead of the real error. A
+ * `CircleCIAPIError` is therefore classified by `.status` alone, never by
+ * scanning its message; the substring fallback only ever runs for
+ * `CircleCIGraphQLError` or a bare `Error`, neither of which carries a
+ * status to check instead.
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof CircleCIAPIError && error.status === 429)
-				return true;
+			if (error instanceof CircleCIAPIError) return error.status === 429;
 			return error.message.toLowerCase().includes('429');
 		},
 		/**
@@ -46,8 +58,7 @@ export const errorHandlers = {
 
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof CircleCIAPIError && error.status === 401)
-				return true;
+			if (error instanceof CircleCIAPIError) return error.status === 401;
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('401');
 		},
@@ -78,8 +89,12 @@ export const errorHandlers = {
 
 	NOT_FOUND_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof CircleCIAPIError && error.status === 404)
-				return true;
+			// Same gating as RATE_LIMIT_ERROR/AUTH_ERROR above, and the same
+			// class of bug: not named in the review that prompted this file's
+			// header comment, but the identical pattern - found by enumerating
+			// every handler with a message-text fallback rather than fixing
+			// only the ones a reviewer happened to point at.
+			if (error instanceof CircleCIAPIError) return error.status === 404;
 			return error.message.toLowerCase().includes('not found');
 		},
 		handler: async () => ({ maxRetries: 0 }),

@@ -1,7 +1,8 @@
 import { logEventFromContext } from 'corsair/core';
 import type { CircleCIEndpoints } from '../index';
+import { CircleCIContextEntity } from '../schema/database';
 import { auditPayload } from './logging';
-import { evictEntity } from './persist';
+import { cacheEntity, evictEntity } from './persist';
 import { circleCIGraphQLCall } from './shared';
 import type { CircleCIEndpointOutputs } from './types';
 
@@ -25,11 +26,37 @@ import type { CircleCIEndpointOutputs } from './types';
 const LABEL = 'context';
 
 /**
+ * Maps the GraphQL context shape (`{id, name, createdAt}`, camelCase, per
+ * the selection set this plugin requests) onto `CircleCIContextEntity`'s
+ * field names (`created_at`, snake_case, matching what the REST v2 route
+ * returns and what the mirror is keyed against). Caching the raw GraphQL
+ * object as-is would still succeed - every field but `id` is optional on a
+ * `.loose()` entity - but would silently leave `created_at` unset on every
+ * GraphQL-sourced row, which is the kind of quiet data loss this normalises
+ * away rather than accepting.
+ */
+function toMirroredContext(
+	graphqlContext: CircleCIEndpointOutputs['contextsCreateGraphQL'],
+): Record<string, unknown> {
+	return {
+		id: graphqlContext.id,
+		name: graphqlContext.name,
+		created_at: graphqlContext.createdAt,
+	};
+}
+
+/**
  * Creates a context via GraphQL.
  *
  * `createContext(input: {contextName, ownerId, ownerType})` - the field names
  * differ from the REST v2 body (`name`/`owner.id`/`owner.type`), confirmed via
  * the server's own required-keys error rather than assumed to match.
+ *
+ * Cached on the same mirror `Contexts.create`/`Contexts.get` (the REST v2
+ * twins) use - an earlier version of this function left the GraphQL create
+ * uncached while its own `remove` below evicts from that mirror, so a
+ * context created here and never read back over REST would be invisible to
+ * any operation that trusts the local store.
  */
 export const create: CircleCIEndpoints['contextsCreateGraphQL'] = async (
 	ctx,
@@ -52,6 +79,14 @@ export const create: CircleCIEndpoints['contextsCreateGraphQL'] = async (
 			},
 		},
 	);
+	const context = result.createContext.context;
+
+	await cacheEntity(
+		ctx.db.contexts,
+		CircleCIContextEntity,
+		toMirroredContext(context),
+		{ label: LABEL },
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -59,7 +94,7 @@ export const create: CircleCIEndpoints['contextsCreateGraphQL'] = async (
 		auditPayload(input, ['ownerId', 'ownerType']),
 		'completed',
 	);
-	return result.createContext.context;
+	return context;
 };
 
 /**
@@ -107,6 +142,8 @@ export const remove: CircleCIEndpoints['contextsDeleteGraphQL'] = async (
  * error - confirmed live - so a `PERMISSION_ERROR` from this call does not
  * necessarily mean the caller lacks access; it may mean the id does not
  * exist. CircleCI does not distinguish the two on this route.
+ *
+ * Cached on the same mirror as `create` above - see its doc comment.
  */
 export const query: CircleCIEndpoints['contextsQuery'] = async (ctx, input) => {
 	const result = await circleCIGraphQLCall<{
@@ -114,6 +151,13 @@ export const query: CircleCIEndpoints['contextsQuery'] = async (ctx, input) => {
 	}>(ctx, `query($id: ID!) { context(id: $id) { id name createdAt } }`, {
 		id: input.contextId,
 	});
+
+	await cacheEntity(
+		ctx.db.contexts,
+		CircleCIContextEntity,
+		toMirroredContext(result.context),
+		{ label: LABEL },
+	);
 
 	await logEventFromContext(
 		ctx,

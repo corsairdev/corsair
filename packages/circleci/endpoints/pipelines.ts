@@ -10,17 +10,26 @@ import type { CircleCIEndpointOutputs } from './types';
  * task's `value`/`history`. Every operation here reads or writes live.
  */
 
-/** Lists pipelines, org-wide or restricted to the caller's own. */
+/**
+ * Lists pipelines, org-wide or restricted to the caller's own.
+ *
+ * Wrapped in `{items: [...], next_page_token}` per the spec, returned to the
+ * caller as that same envelope rather than unwrapped to a bare array, so
+ * `next_page_token` is not silently discarded. Pass it back as this
+ * operation's `pageToken` input to fetch the next page.
+ */
 export const list: CircleCIEndpoints['pipelinesList'] = async (ctx, input) => {
-	const result = await circleCICall<{
-		items: CircleCIEndpointOutputs['pipelinesList'];
-	}>(ctx, 'pipeline', {
-		query: compact({
-			'org-slug': input.orgSlug,
-			'page-token': input.pageToken,
-			mine: input.mine,
-		}),
-	});
+	const result = await circleCICall<CircleCIEndpointOutputs['pipelinesList']>(
+		ctx,
+		'pipeline',
+		{
+			query: compact({
+				'org-slug': input.orgSlug,
+				'page-token': input.pageToken,
+				mine: input.mine,
+			}),
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -31,15 +40,19 @@ export const list: CircleCIEndpoints['pipelinesList'] = async (ctx, input) => {
 		},
 		'completed',
 	);
-	return result.items;
+	return result;
 };
 
-/** Lists a project's pipelines. */
+/**
+ * Lists a project's pipelines.
+ *
+ * Same paginated envelope as `list` above - see its doc comment.
+ */
 export const listForProject: CircleCIEndpoints['pipelinesListForProject'] =
 	async (ctx, input) => {
-		const result = await circleCICall<{
-			items: CircleCIEndpointOutputs['pipelinesListForProject'];
-		}>(ctx, `project/${input.projectSlug}/pipeline`, {
+		const result = await circleCICall<
+			CircleCIEndpointOutputs['pipelinesListForProject']
+		>(ctx, `project/${input.projectSlug}/pipeline`, {
 			query: compact({ branch: input.branch, 'page-token': input.pageToken }),
 		});
 
@@ -52,7 +65,7 @@ export const listForProject: CircleCIEndpoints['pipelinesListForProject'] =
 			},
 			'completed',
 		);
-		return result.items;
+		return result;
 	};
 
 /** Fetches a pipeline's config - the source or compiled YAML it ran with. */

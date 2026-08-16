@@ -52,5 +52,11 @@ module.exports = {
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,
-	testPathIgnorePatterns: ['/node_modules/', 'integration\.test\.ts'],
+	// The double backslash is load-bearing: a single `\.` in a normal JS
+	// string is not a recognised escape, so JS silently drops the backslash
+	// and the resulting regex's `.` matches any character, not a literal dot -
+	// the exact "useless string escape" trap this house has hit before on a
+	// different plugin. Harmless today only because no other filename differs
+	// from `integration.test.ts` solely by that character.
+	testPathIgnorePatterns: ['/node_modules/', 'integration\\.test\\.ts'],
 };

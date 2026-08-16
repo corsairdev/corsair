@@ -40,6 +40,45 @@ const OpaqueObject = z.record(z.string(), z.unknown());
 /** An operation whose response carries nothing the caller needs back. */
 const EmptyResult = z.record(z.string(), z.unknown());
 
+/**
+ * A v2 REST list response, `{"items": [...], "next_page_token": ...}` per the
+ * spec - confirmed on every v2 list route this plugin calls. The field is
+ * kept as `next_page_token` rather than normalised to camelCase, matching
+ * this file's own convention (see the header comment) that an output mirrors
+ * the API's JSON keys. Pass the value straight back as the next call's
+ * `pageToken` input to continue.
+ */
+const PagedListV2 = <T extends z.ZodTypeAny>(item: T) =>
+	z.object({ items: z.array(item), next_page_token: S });
+
+/**
+ * A REST v3 list response. The real envelope is `{"data": [...], "page":
+ * {"next": ..., "prev": ...}}` - confirmed from `circleci-cli`'s own
+ * `v3List[T]` struct, since v3 has no published spec. `next` feeds back into
+ * the next call's `pageCursor` input.
+ */
+const PagedListV3 = <T extends z.ZodTypeAny>(item: T) =>
+	z.object({
+		items: z.array(item),
+		page: z.object({ next: S, prev: S }).nullable().optional(),
+	});
+
+/**
+ * A GraphQL cursor-paginated list, `edges { node }` plus `pageInfo` - the
+ * same shape `orbs.queryCategoryId` already reads internally to keep paging.
+ * Declares only `hasNextPage`/`endCursor`, the two fields confirmed live
+ * (introspection is disabled); `hasPreviousPage`/`startCursor` are not
+ * declared because they were never confirmed to exist on this schema.
+ */
+const GraphQLPagedList = <T extends z.ZodTypeAny>(item: T) =>
+	z.object({
+		items: z.array(item),
+		pageInfo: z
+			.object({ hasNextPage: z.boolean(), endCursor: S })
+			.nullable()
+			.optional(),
+	});
+
 /* -------------------------------------------------------------------------- */
 /*                          Contexts - REST v2 form                           */
 /* -------------------------------------------------------------------------- */
@@ -57,7 +96,16 @@ export type ContextsCreateInput = z.infer<typeof ContextsCreateInputSchema>;
 const ContextsGetInputSchema = z.object({ contextId: z.string() });
 export type ContextsGetInput = z.infer<typeof ContextsGetInputSchema>;
 
-const ContextsListEnvVarsInputSchema = z.object({ contextId: z.string() });
+/**
+ * `page-token` confirmed present in the spec's query parameters for this
+ * route - an earlier version of this schema omitted it, which meant a caller
+ * had no way to request a further page even though the response carries
+ * `next_page_token`.
+ */
+const ContextsListEnvVarsInputSchema = z.object({
+	contextId: z.string(),
+	pageToken: z.string().optional(),
+});
 export type ContextsListEnvVarsInput = z.infer<
 	typeof ContextsListEnvVarsInputSchema
 >;
@@ -98,6 +146,8 @@ const ContextEnvVarSchema = z
 		updated_at: S,
 	})
 	.loose();
+
+const ContextsListEnvVarsOutputSchema = PagedListV2(ContextEnvVarSchema);
 
 const ContextRestrictionSchema = z
 	.object({
@@ -197,6 +247,17 @@ const GroupsListInputSchema = z.object({
 });
 export type GroupsListInput = z.infer<typeof GroupsListInputSchema>;
 
+/**
+ * `{"items": [...], "next_page_token": ..., "total_count": ...}` per the
+ * spec - the one v2 list route this plugin calls that also sends
+ * `total_count`, so it gets its own schema rather than reusing `PagedListV2`.
+ */
+const GroupsListOutputSchema = z.object({
+	items: z.array(CircleCIGroupEntity),
+	next_page_token: S,
+	total_count: N,
+});
+
 /* -------------------------------------------------------------------------- */
 /*                            Orb URL allow-list                              */
 /* -------------------------------------------------------------------------- */
@@ -264,10 +325,21 @@ export type ProjectEnvVarsDeleteInput = z.infer<
 	typeof ProjectEnvVarsDeleteInputSchema
 >;
 
+/**
+ * No `pageToken` here on purpose - confirmed from the spec's own query
+ * parameter list for this route, which declares only `project-slug`. The
+ * output still carries `next_page_token` (see `projectEnvVarsList` in the
+ * output registry below) even though there is no documented way to supply it
+ * back in a request; that mismatch is the API's, not this plugin's, and is
+ * surfaced rather than silently matched by inventing an input parameter the
+ * route does not accept.
+ */
 const ProjectEnvVarsListInputSchema = z.object({ projectSlug: z.string() });
 export type ProjectEnvVarsListInput = z.infer<
 	typeof ProjectEnvVarsListInputSchema
 >;
+
+const ProjectEnvVarsListOutputSchema = PagedListV2(CircleCIProjectEnvVarEntity);
 
 /* -------------------------------------------------------------------------- */
 /*                                 Schedules                                  */
@@ -278,9 +350,18 @@ export type ProjectEnvVarsListInput = z.infer<
  * (create, list, get, patch, delete); this plugin implements the one the
  * catalog lists and does not add the other four, matching the same
  * catalog-defines-the-surface decision as Habitica's partial webhook family.
+ *
+ * `page-token` confirmed present in the spec's query parameters - an earlier
+ * version of this schema omitted it despite the response carrying
+ * `next_page_token`.
  */
-const SchedulesListInputSchema = z.object({ projectSlug: z.string() });
+const SchedulesListInputSchema = z.object({
+	projectSlug: z.string(),
+	pageToken: z.string().optional(),
+});
 export type SchedulesListInput = z.infer<typeof SchedulesListInputSchema>;
+
+const SchedulesListOutputSchema = PagedListV2(CircleCIScheduleEntity);
 
 /* -------------------------------------------------------------------------- */
 /*                               Usage export                                 */
@@ -350,6 +431,9 @@ const PipelineSchema = z
 		errors: z.array(OpaqueObject).nullable().optional(),
 	})
 	.loose();
+
+const PipelinesListOutputSchema = PagedListV2(PipelineSchema);
+const PipelinesListForProjectOutputSchema = PagedListV2(PipelineSchema);
 
 /* -------------------------------------------------------------------------- */
 /*                            Pipeline definitions                            */
@@ -430,6 +514,8 @@ const WorkflowSchema = z
 		started_by: S,
 	})
 	.loose();
+
+const WorkflowsListByPipelineIdOutputSchema = PagedListV2(WorkflowSchema);
 
 /* -------------------------------------------------------------------------- */
 /*                                  Insights                                  */
@@ -703,6 +789,11 @@ const GraphQLOrbVersionDetailSchema = z
 
 const GraphQLOrbCategorySchema = z.object({ id: S, name: S }).loose();
 
+const OrbListOrbsOutputSchema = GraphQLPagedList(GraphQLOrbSchema);
+const OrbListCategoriesOutputSchema = GraphQLPagedList(
+	GraphQLOrbCategorySchema,
+);
+
 /* -------------------------------------------------------------------------- */
 /*                            Orbs - REST v3 form                             */
 /* -------------------------------------------------------------------------- */
@@ -726,20 +817,47 @@ const OrbPackageSchema = z
 	})
 	.loose();
 
+const OrbListNamespaceOrbsOutputSchema = PagedListV3(OrbPackageSchema);
+
 /* -------------------------------------------------------------------------- */
 /*                             Self-hosted runners                            */
 /* -------------------------------------------------------------------------- */
 
+/**
+ * Both filters are genuinely optional and combinable - `circleci-cli`'s own
+ * `ListRunnerInstances` doc comment says so explicitly ("filtered by
+ * resource class and/or namespace. Either filter may be empty"), which rules
+ * out an exactly-one-of validation a review once suggested adding here.
+ *
+ * No `pageCursor`: `circleci-cli`'s `ListRunnerInstances` never sends a
+ * cursor for this route, unlike its `ListOrbPackages` sibling which does -
+ * an earlier version of this schema added one anyway by extending that
+ * sibling's shape without checking this route specifically. See
+ * `RunnersListOutputSchema` for the same correction on the response side.
+ */
 const RunnersListInputSchema = z.object({
 	namespace: z.string().optional(),
 	resourceClass: z.string().optional(),
-	pageCursor: z.string().optional(),
 });
 export type RunnersListInput = z.infer<typeof RunnersListInputSchema>;
 
 const RunnerSchema = z
 	.object({ id: S, hostname: S, name: S, first_connected: S })
 	.loose();
+
+/**
+ * `{"items": [...]}` - confirmed from `circleci-cli`'s own
+ * `ListRunnerInstances`/`ListRunnerInstancesByOrg`, both of which decode
+ * `/api/v3/runner` into `struct { Items []RunnerInstance }`. Flat and
+ * v2-shaped, **not** the JSON:API `{"data": [...], "page": {...}}` envelope
+ * `orb/packages` uses - a genuinely different route, on the same v3 base.
+ * An earlier version of this schema assumed the two routes shared a shape
+ * and declared `page` here too; `circleCIV3Call`'s `{"data": T}` unwrap
+ * would never have found a `data` key on this route's real response, so
+ * that version's `items` would have silently resolved to an empty array on
+ * every call, live or mocked with the wrong fixture shape.
+ */
+const RunnersListOutputSchema = z.object({ items: z.array(RunnerSchema) });
 
 /* -------------------------------------------------------------------------- */
 /*                            Orb config validation                           */
@@ -868,7 +986,7 @@ export type CircleCIEndpointInputs = {
 export type CircleCIEndpointOutputs = {
 	contextsCreate: z.infer<typeof CircleCIContextEntity>;
 	contextsGet: z.infer<typeof CircleCIContextEntity>;
-	contextsListEnvVars: z.infer<typeof ContextEnvVarSchema>[];
+	contextsListEnvVars: z.infer<typeof ContextsListEnvVarsOutputSchema>;
 	contextsUpsertEnvVar: z.infer<typeof ContextEnvVarSchema>;
 	contextsCreateRestriction: z.infer<typeof ContextRestrictionSchema>;
 	contextsDeleteRestriction: z.infer<typeof EmptyResult>;
@@ -882,7 +1000,7 @@ export type CircleCIEndpointOutputs = {
 	groupsCreate: z.infer<typeof CircleCIGroupEntity>;
 	groupsDelete: z.infer<typeof EmptyResult>;
 	groupsGet: z.infer<typeof CircleCIGroupEntity>;
-	groupsList: z.infer<typeof CircleCIGroupEntity>[];
+	groupsList: z.infer<typeof GroupsListOutputSchema>;
 
 	orbAllowlistCreate: z.infer<typeof OrbAllowlistCreateResponseSchema>;
 	orbAllowlistDelete: z.infer<typeof EmptyResult>;
@@ -893,22 +1011,24 @@ export type CircleCIEndpointOutputs = {
 
 	projectEnvVarsCreate: z.infer<typeof CircleCIProjectEnvVarEntity>;
 	projectEnvVarsDelete: z.infer<typeof EmptyResult>;
-	projectEnvVarsList: z.infer<typeof CircleCIProjectEnvVarEntity>[];
+	projectEnvVarsList: z.infer<typeof ProjectEnvVarsListOutputSchema>;
 
-	schedulesList: z.infer<typeof CircleCIScheduleEntity>[];
+	schedulesList: z.infer<typeof SchedulesListOutputSchema>;
 
 	usageExportCreate: z.infer<typeof OpaqueObject>;
 	usageExportGet: z.infer<typeof OpaqueObject>;
 
-	pipelinesList: z.infer<typeof PipelineSchema>[];
-	pipelinesListForProject: z.infer<typeof PipelineSchema>[];
+	pipelinesList: z.infer<typeof PipelinesListOutputSchema>;
+	pipelinesListForProject: z.infer<typeof PipelinesListForProjectOutputSchema>;
 	pipelinesGetConfig: z.infer<typeof OpaqueObject>;
 	pipelinesTrigger: z.infer<typeof PipelineSchema>;
 
 	pipelineDefinitionsGet: z.infer<typeof CircleCIPipelineDefinitionEntity>;
 	pipelineDefinitionsList: z.infer<typeof CircleCIPipelineDefinitionEntity>[];
 
-	workflowsListByPipelineId: z.infer<typeof WorkflowSchema>[];
+	workflowsListByPipelineId: z.infer<
+		typeof WorkflowsListByPipelineIdOutputSchema
+	>;
 	workflowsGetSummary: z.infer<typeof OpaqueObject>;
 	workflowsListJobs: z.infer<typeof OpaqueObject>;
 	workflowsListTestMetrics: z.infer<typeof OpaqueObject>;
@@ -941,13 +1061,13 @@ export type CircleCIEndpointOutputs = {
 	orbQueryExists: { exists: boolean; isPrivate?: boolean | null };
 	orbQueryLatestVersion: z.infer<typeof GraphQLOrbVersionSchema>;
 	orbQuerySource: z.infer<typeof GraphQLOrbVersionDetailSchema>;
-	orbListOrbs: z.infer<typeof GraphQLOrbSchema>[];
-	orbListCategories: z.infer<typeof GraphQLOrbCategorySchema>[];
+	orbListOrbs: z.infer<typeof OrbListOrbsOutputSchema>;
+	orbListCategories: z.infer<typeof OrbListCategoriesOutputSchema>;
 	orbQueryCategoryId: z.infer<typeof GraphQLOrbCategorySchema>;
-	orbListNamespaceOrbs: z.infer<typeof OrbPackageSchema>[];
+	orbListNamespaceOrbs: z.infer<typeof OrbListNamespaceOrbsOutputSchema>;
 	orbValidateConfig: z.infer<typeof OrbConfigValidationSchema>;
 
-	runnersList: z.infer<typeof RunnerSchema>[];
+	runnersList: z.infer<typeof RunnersListOutputSchema>;
 };
 
 export const CircleCIEndpointInputSchemas = {
@@ -1044,7 +1164,7 @@ const OrbExistsOutputSchema = z.object({
 export const CircleCIEndpointOutputSchemas = {
 	contextsCreate: CircleCIContextEntity,
 	contextsGet: CircleCIContextEntity,
-	contextsListEnvVars: z.array(ContextEnvVarSchema),
+	contextsListEnvVars: ContextsListEnvVarsOutputSchema,
 	contextsUpsertEnvVar: ContextEnvVarSchema,
 	contextsCreateRestriction: ContextRestrictionSchema,
 	contextsDeleteRestriction: EmptyResult,
@@ -1058,7 +1178,7 @@ export const CircleCIEndpointOutputSchemas = {
 	groupsCreate: CircleCIGroupEntity,
 	groupsDelete: EmptyResult,
 	groupsGet: CircleCIGroupEntity,
-	groupsList: z.array(CircleCIGroupEntity),
+	groupsList: GroupsListOutputSchema,
 
 	orbAllowlistCreate: OrbAllowlistCreateResponseSchema,
 	orbAllowlistDelete: EmptyResult,
@@ -1069,22 +1189,22 @@ export const CircleCIEndpointOutputSchemas = {
 
 	projectEnvVarsCreate: CircleCIProjectEnvVarEntity,
 	projectEnvVarsDelete: EmptyResult,
-	projectEnvVarsList: z.array(CircleCIProjectEnvVarEntity),
+	projectEnvVarsList: ProjectEnvVarsListOutputSchema,
 
-	schedulesList: z.array(CircleCIScheduleEntity),
+	schedulesList: SchedulesListOutputSchema,
 
 	usageExportCreate: OpaqueObject,
 	usageExportGet: OpaqueObject,
 
-	pipelinesList: z.array(PipelineSchema),
-	pipelinesListForProject: z.array(PipelineSchema),
+	pipelinesList: PipelinesListOutputSchema,
+	pipelinesListForProject: PipelinesListForProjectOutputSchema,
 	pipelinesGetConfig: OpaqueObject,
 	pipelinesTrigger: PipelineSchema,
 
 	pipelineDefinitionsGet: CircleCIPipelineDefinitionEntity,
 	pipelineDefinitionsList: z.array(CircleCIPipelineDefinitionEntity),
 
-	workflowsListByPipelineId: z.array(WorkflowSchema),
+	workflowsListByPipelineId: WorkflowsListByPipelineIdOutputSchema,
 	workflowsGetSummary: OpaqueObject,
 	workflowsListJobs: OpaqueObject,
 	workflowsListTestMetrics: OpaqueObject,
@@ -1117,11 +1237,11 @@ export const CircleCIEndpointOutputSchemas = {
 	orbQueryExists: OrbExistsOutputSchema,
 	orbQueryLatestVersion: GraphQLOrbVersionSchema,
 	orbQuerySource: GraphQLOrbVersionDetailSchema,
-	orbListOrbs: z.array(GraphQLOrbSchema),
-	orbListCategories: z.array(GraphQLOrbCategorySchema),
+	orbListOrbs: OrbListOrbsOutputSchema,
+	orbListCategories: OrbListCategoriesOutputSchema,
 	orbQueryCategoryId: GraphQLOrbCategorySchema,
-	orbListNamespaceOrbs: z.array(OrbPackageSchema),
+	orbListNamespaceOrbs: OrbListNamespaceOrbsOutputSchema,
 	orbValidateConfig: OrbConfigValidationSchema,
 
-	runnersList: z.array(RunnerSchema),
+	runnersList: RunnersListOutputSchema,
 } as const;

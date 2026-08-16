@@ -4,12 +4,19 @@ import { auditPayload } from './logging';
 import { circleCICall, compact } from './shared';
 import type { CircleCIEndpointOutputs } from './types';
 
-/** Lists the workflows belonging to a pipeline. */
+/**
+ * Lists the workflows belonging to a pipeline.
+ *
+ * Wrapped in `{items: [...], next_page_token}` per the spec, returned to the
+ * caller as that same envelope rather than unwrapped to a bare array, so
+ * `next_page_token` is not silently discarded. Pass it back as this
+ * operation's `pageToken` input to fetch the next page.
+ */
 export const listByPipelineId: CircleCIEndpoints['workflowsListByPipelineId'] =
 	async (ctx, input) => {
-		const result = await circleCICall<{
-			items: CircleCIEndpointOutputs['workflowsListByPipelineId'];
-		}>(ctx, `pipeline/${input.pipelineId}/workflow`, {
+		const result = await circleCICall<
+			CircleCIEndpointOutputs['workflowsListByPipelineId']
+		>(ctx, `pipeline/${input.pipelineId}/workflow`, {
 			query: compact({ 'page-token': input.pageToken }),
 		});
 
@@ -19,7 +26,7 @@ export const listByPipelineId: CircleCIEndpoints['workflowsListByPipelineId'] =
 			{ ...auditPayload(input, ['pipelineId']), returned: result.items.length },
 			'completed',
 		);
-		return result.items;
+		return result;
 	};
 
 /** Gets metrics and trends for one named workflow of a project. */
