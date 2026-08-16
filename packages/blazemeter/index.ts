@@ -7,15 +7,27 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
+	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { errorHandlers } from './error-handlers';
 import {
 	blazemeterEndpointMeta,
 	blazemeterEndpointSchemas,
 	blazemeterEndpointsNested,
-} from './operations';
+} from './endpoints';
+import { errorHandlers } from './error-handlers';
 import { BlazemeterSchema } from './schema';
+
+/**
+ * Exhaustiveness gate: every path in the endpoint tree must carry metadata.
+ * Paired with the catalog/tree equality proof in `endpoints/index.ts`, adding an
+ * endpoint without a catalog entry — or a catalog entry without a tree path —
+ * fails to compile rather than silently shipping an unlabelled endpoint.
+ */
+const endpointMeta =
+	blazemeterEndpointMeta satisfies RequiredPluginEndpointMeta<
+		typeof blazemeterEndpointsNested
+	>;
 
 export const blazemeterAuthConfig = {
 	api_key: {
@@ -89,7 +101,7 @@ export function blazemeter<const T extends BlazemeterPluginOptions>(
 		hooks: options.hooks,
 		endpoints: blazemeterEndpointsNested,
 		webhooks: {},
-		endpointMeta: blazemeterEndpointMeta,
+		endpointMeta,
 		endpointSchemas: blazemeterEndpointSchemas,
 		errorHandlers: {
 			...errorHandlers,
@@ -129,6 +141,17 @@ export {
 	basicAuthorization,
 	parseBlazemeterCredentials,
 } from './client';
+export {
+	blazemeterEndpointMeta,
+	blazemeterEndpointSchemas,
+	blazemeterEndpointsNested,
+} from './endpoints';
+export {
+	BlazemeterCoreResponseSchema,
+	BlazemeterEndpointInputSchemas,
+	BlazemeterEndpointOutputSchemas,
+	inputSchemaFor,
+} from './endpoints/types';
 export type {
 	BlazemeterCatalogSlug,
 	BlazemeterEndpointInput,
@@ -138,16 +161,10 @@ export type {
 } from './operations';
 export {
 	BLAZEMETER_OPERATIONS,
-	BlazemeterEndpointInputSchemas,
-	BlazemeterEndpointOutputSchemas,
-	blazemeterEndpointMeta,
-	blazemeterEndpointSchemas,
-	blazemeterEndpointsNested,
 	buildBlazemeterBody,
 	buildBlazemeterFormData,
 	buildBlazemeterQuery,
 	getBlazemeterOperation,
-	inputSchemaFor,
 	resolveBlazemeterPath,
 } from './operations';
 export { BlazemeterSchema } from './schema';

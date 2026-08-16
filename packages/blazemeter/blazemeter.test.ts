@@ -1,16 +1,24 @@
+import type { ErrorHandler } from 'corsair/core';
 import {
 	BLAZEMETER_BASE_URLS,
+	BlazemeterAPIError,
 	basicAuthorization,
 	compactRecord,
 	parseBlazemeterCredentials,
 } from './client';
-import { blazemeter, blazemeterAuthConfig } from './index';
 import {
-	BLAZEMETER_OPERATIONS,
-	BlazemeterEndpointInputSchemas,
 	blazemeterEndpointMeta,
 	blazemeterEndpointSchemas,
 	blazemeterEndpointsNested,
+} from './endpoints';
+import {
+	BlazemeterEndpointInputSchemas,
+	BlazemeterEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { blazemeter, blazemeterAuthConfig } from './index';
+import {
+	BLAZEMETER_OPERATIONS,
 	buildBlazemeterBody,
 	buildBlazemeterFormData,
 	buildBlazemeterQuery,
@@ -230,5 +238,265 @@ describe('BlazeMeter authentication', () => {
 				'endpoint',
 			),
 		).resolves.toBe('connected-id:connected-secret');
+	});
+});
+
+type TestEndpoint = (
+	ctx: Record<string, unknown>,
+	input: Record<string, unknown>,
+) => Promise<unknown>;
+
+type FetchCall = { url: string; init: RequestInit };
+
+const TEST_KEY = 'key-id:key-secret';
+const TEST_CTX = {
+	key: TEST_KEY,
+	$getAccountId: async () => 'account-1',
+};
+
+function endpointFor(key: string): TestEndpoint {
+	const resolved = key
+		.split('.')
+		.reduce<unknown>(
+			(node, part) => (node as Record<string, unknown>)?.[part],
+			blazemeterEndpointsNested,
+		);
+	if (typeof resolved !== 'function') {
+		throw new Error(`no bound endpoint at path: ${key}`);
+	}
+	return resolved as TestEndpoint;
+}
+
+describe('BlazeMeter endpoint execution', () => {
+	const realFetch = globalThis.fetch;
+	let calls: FetchCall[] = [];
+
+	function stubFetch(respond: () => Response): void {
+		calls = [];
+		globalThis.fetch = (async (
+			input: string | URL | Request,
+			init?: RequestInit,
+		) => {
+			calls.push({ url: String(input), init: init ?? {} });
+			return respond();
+		}) as typeof fetch;
+	}
+
+	function jsonResponse(body: unknown, status = 200): Response {
+		return new Response(JSON.stringify(body), {
+			status,
+			headers: { 'Content-Type': 'application/json' },
+		});
+	}
+
+	afterEach(() => {
+		globalThis.fetch = realFetch;
+	});
+
+	it.each(BLAZEMETER_OPERATIONS)(
+		'$slug issues an authenticated request to its documented route',
+		async (definition) => {
+			stubFetch(() => jsonResponse({ result: { ok: true } }));
+
+			const input = requiredInput(definition.params);
+			const result = await endpointFor(definition.key)(TEST_CTX, input);
+
+			expect(calls).toHaveLength(1);
+			const call = calls[0]!;
+			const url = new URL(call.url);
+			const base = new URL(BLAZEMETER_BASE_URLS[definition.api]);
+
+			expect(url.origin).toBe(base.origin);
+			expect(url.pathname).toBe(
+				`${base.pathname}${resolveBlazemeterPath(definition, input)}`,
+			);
+			expect(url.pathname).not.toMatch(/[{}]/);
+			expect(call.init.method).toBe(definition.method);
+
+			const headers = new Headers(call.init.headers);
+			expect(headers.get('Authorization')).toBe(basicAuthorization(TEST_KEY));
+			expect(headers.get('Accept')).toBe('application/json');
+
+			// GET and DELETE never carry a serialized JSON body.
+			if (definition.method === 'GET' || definition.method === 'DELETE') {
+				expect(call.init.body).toBeUndefined();
+			}
+			expect(result).toEqual({ result: { ok: true } });
+		},
+	);
+
+	it('sends a JSON body for writes and keeps path params out of it', async () => {
+		stubFetch(() => jsonResponse({ result: { id: 9 } }));
+
+		await endpointFor('tests.update')(TEST_CTX, {
+			test_id: 42,
+			name: 'renamed',
+		});
+
+		const call = calls[0]!;
+		expect(new URL(call.url).pathname).toMatch(/\/tests\/42$/);
+		expect(new Headers(call.init.headers).get('Content-Type')).toMatch(
+			/^application\/json/,
+		);
+		expect(JSON.parse(call.init.body as string)).toEqual({ name: 'renamed' });
+	});
+
+	it('sends multipart form data for file uploads', async () => {
+		stubFetch(() => jsonResponse({ result: {} }));
+
+		await endpointFor('tests.uploadFile')(TEST_CTX, {
+			testId: 3,
+			fileContent: {
+				content: Buffer.from('jmx').toString('base64'),
+				contentType: 'text/xml',
+			},
+		});
+
+		const call = calls[0]!;
+		expect(call.init.body).toBeInstanceOf(FormData);
+		expect((call.init.body as FormData).get('file')).toBeInstanceOf(Blob);
+		// Content-Type is left to fetch so the multipart boundary is set.
+		expect(new Headers(call.init.headers).get('Content-Type')).not.toBe(
+			'application/json',
+		);
+	});
+
+	it('appends query parameters instead of a body on GET', async () => {
+		stubFetch(() => jsonResponse({ result: [] }));
+
+		await endpointFor('tests.list')(TEST_CTX, { projectId: 5 });
+
+		const call = calls[0]!;
+		expect(new URL(call.url).searchParams.get('projectId')).toBe('5');
+		expect(call.init.body).toBeUndefined();
+	});
+
+	it('surfaces API failures as BlazemeterAPIError with the status attached', async () => {
+		stubFetch(() => jsonResponse({ error: { message: 'boom' } }, 500));
+
+		const thrown = await endpointFor('tests.get')(TEST_CTX, {
+			test_id: 1,
+		}).catch((error: unknown) => error);
+
+		expect(thrown).toBeInstanceOf(BlazemeterAPIError);
+		expect((thrown as BlazemeterAPIError).status).toBe(500);
+	});
+
+	it('does not retry a destructive request at the transport layer', async () => {
+		stubFetch(() => jsonResponse({ error: { message: 'slow down' } }, 429));
+
+		await expect(
+			endpointFor('tests.remove')(TEST_CTX, { testId: 1 }),
+		).rejects.toBeInstanceOf(BlazemeterAPIError);
+		expect(calls).toHaveLength(1);
+	});
+});
+
+describe('BlazeMeter response contracts', () => {
+	it('types core API responses with the documented v4 envelope', () => {
+		const coreOperations = BLAZEMETER_OPERATIONS.filter(
+			({ api }) => api === 'core',
+		);
+		expect(coreOperations).not.toHaveLength(0);
+
+		for (const definition of coreOperations) {
+			expect(
+				BlazemeterEndpointOutputSchemas[definition.key].safeParse({
+					api_version: 4,
+					error: null,
+					result: { id: 1 },
+					request_id: 'req-1',
+				}).success,
+			).toBe(true);
+		}
+
+		expect(
+			BlazemeterEndpointOutputSchemas['tests.get'].safeParse('not-an-envelope')
+				.success,
+		).toBe(false);
+	});
+
+	it('leaves asset, tdm, and mock responses unconstrained', () => {
+		const others = BLAZEMETER_OPERATIONS.filter(({ api }) => api !== 'core');
+		expect(others).not.toHaveLength(0);
+
+		for (const definition of others) {
+			expect(
+				BlazemeterEndpointOutputSchemas[definition.key].safeParse(
+					'anything at all',
+				).success,
+			).toBe(true);
+		}
+	});
+});
+
+describe('BlazeMeter retry policy', () => {
+	function contextFor(operation: string) {
+		return {
+			pluginId: 'blazemeter',
+			operation,
+			input: {},
+			originalError: new Error('x'),
+		};
+	}
+
+	function apiError(status: number): BlazemeterAPIError {
+		const error = new BlazemeterAPIError('failed');
+		Object.defineProperty(error, 'status', { value: status });
+		return error;
+	}
+
+	const readOperation = 'tests.get';
+
+	it.each([429, 500, 502, 503])(
+		'retries read operations after %s',
+		async (status) => {
+			const name = status === 429 ? 'RATE_LIMIT_ERROR' : 'SERVER_ERROR';
+			const strategy = await errorHandlers[name].handler(
+				apiError(status),
+				contextFor(readOperation),
+			);
+			expect(strategy.maxRetries).toBeGreaterThan(0);
+		},
+	);
+
+	it.each([
+		['write', 'tests.start'],
+		['destructive', 'tests.remove'],
+	])(
+		'never replays a %s operation after an ambiguous failure',
+		async (_label, operation) => {
+			for (const status of [429, 500, 502, 503]) {
+				const name = status === 429 ? 'RATE_LIMIT_ERROR' : 'SERVER_ERROR';
+				const strategy = await errorHandlers[name].handler(
+					apiError(status),
+					contextFor(operation),
+				);
+				expect(strategy.maxRetries).toBe(0);
+			}
+		},
+	);
+
+	it('treats an unknown operation path as unsafe to replay', async () => {
+		const strategy = await errorHandlers.SERVER_ERROR.handler(
+			apiError(500),
+			contextFor('not.an.operation'),
+		);
+		expect(strategy.maxRetries).toBe(0);
+	});
+
+	it('never retries auth, permission, not-found, or validation failures', async () => {
+		for (const name of [
+			'AUTH_ERROR',
+			'PERMISSION_ERROR',
+			'NOT_FOUND_ERROR',
+			'VALIDATION_ERROR',
+			'DEFAULT',
+		] as const) {
+			// These handlers ignore their arguments; the cast keeps the loop uniform.
+			const handler = errorHandlers[name].handler as ErrorHandler;
+			const strategy = await handler(apiError(401), contextFor(readOperation));
+			expect(strategy.maxRetries).toBe(0);
+		}
 	});
 });
