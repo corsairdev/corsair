@@ -21,4 +21,42 @@ describe('buildFrpcConfig', () => {
 		expect(toml).toContain('loginFailExit = true');
 		expect(toml).not.toContain('locations');
 	});
+
+	it('emits no TLS lines when caCertPath is absent', () => {
+		expect(toml).not.toContain('transport.tls');
+	});
+
+	describe('TLS verification', () => {
+		const tlsToml = buildFrpcConfig({
+			serverAddr: 'tunnel.corsair.cloud',
+			serverPort: 7000,
+			apiKey: 'ck_dev_abc',
+			slug: 'salty-kraken-42',
+			localPort: 41234,
+			caCertPath: '/tmp/corsair-frpc-abc/ca.crt',
+			serverName: 'tunnel.corsair.cloud',
+		});
+
+		it('enables TLS with trustedCaFile and serverName when caCertPath is set', () => {
+			expect(tlsToml).toContain('transport.tls.enable = true');
+			expect(tlsToml).toContain(
+				'transport.tls.trustedCaFile = "/tmp/corsair-frpc-abc/ca.crt"',
+			);
+			expect(tlsToml).toContain(
+				'transport.tls.serverName = "tunnel.corsair.cloud"',
+			);
+		});
+
+		it('falls back to serverAddr for serverName when serverName is omitted', () => {
+			const t = buildFrpcConfig({
+				serverAddr: '127.0.0.1',
+				serverPort: 7000,
+				apiKey: 'ck_dev_abc',
+				slug: 'slug-1',
+				localPort: 41234,
+				caCertPath: '/tmp/ca.crt',
+			});
+			expect(t).toContain('transport.tls.serverName = "127.0.0.1"');
+		});
+	});
 });

@@ -15,11 +15,20 @@ const HUB_REQUEST_TIMEOUT_MS = 15_000;
 const READY_RE = /start proxy success/i;
 const PROXY_ERROR_RE = /start error/i;
 
+// Bare hostname regex — reused for serverAddr and serverName validation.
+const HOSTNAME_RE = /^[a-z0-9.-]+$/i;
+
 /** Fetches this dev environment's frp connection details from the Hub. */
 export async function fetchTunnelConfig(opts: {
 	apiUrl: string;
 	apiKey: string;
-}): Promise<{ serverAddr: string; serverPort: number; slug: string }> {
+}): Promise<{
+	serverAddr: string;
+	serverPort: number;
+	slug: string;
+	caCert: string | null;
+	serverName: string | undefined;
+}> {
 	const base = opts.apiUrl.replace(/\/$/, '');
 	const res = await fetch(`${base}/api/dev/tunnel-config`, {
 		headers: { authorization: `Bearer ${opts.apiKey}` },
@@ -32,6 +41,8 @@ export async function fetchTunnelConfig(opts: {
 		serverAddr?: string;
 		serverPort?: number;
 		slug?: string;
+		caCert?: string | null;
+		serverName?: string;
 	};
 	// The slug becomes the frpc subdomain; the addr goes straight into frpc config.
 	if (!body.slug || !/^[a-z0-9-]+$/.test(body.slug)) {
@@ -39,7 +50,7 @@ export async function fetchTunnelConfig(opts: {
 	}
 	// A bare hostname only — reject anything (quotes, newlines, spaces) that could
 	// break out of the frpc toml string literal, even from a compromised Hub.
-	if (!body.serverAddr || !/^[a-z0-9.-]+$/i.test(body.serverAddr)) {
+	if (!body.serverAddr || !HOSTNAME_RE.test(body.serverAddr)) {
 		throw new Error('Hub tunnel-config returned an invalid server address');
 	}
 	if (
@@ -49,10 +60,21 @@ export async function fetchTunnelConfig(opts: {
 	) {
 		throw new Error('Hub tunnel-config returned an invalid server port');
 	}
+	if (body.serverName !== undefined && !HOSTNAME_RE.test(body.serverName)) {
+		throw new Error('Hub tunnel-config returned an invalid serverName');
+	}
+	const caCert = body.caCert ?? null;
+	if (caCert && !caCert.startsWith('-----BEGIN CERTIFICATE-----')) {
+		throw new Error(
+			'Hub tunnel-config returned a caCert that does not begin with "-----BEGIN CERTIFICATE-----"',
+		);
+	}
 	return {
 		serverAddr: body.serverAddr,
 		serverPort: body.serverPort as number,
 		slug: body.slug,
+		caCert,
+		serverName: body.serverName,
 	};
 }
 
@@ -80,10 +102,11 @@ export async function runTunnel(opts: {
 		onClose,
 	} = opts;
 
-	const { serverAddr, serverPort, slug } = await fetchTunnelConfig({
-		apiUrl,
-		apiKey,
-	});
+	const { serverAddr, serverPort, slug, caCert, serverName } =
+		await fetchTunnelConfig({
+			apiUrl,
+			apiKey,
+		});
 	const bin = resolveFrpcBinary();
 
 	// Share the path-guard, not the app: the public URL only ever reaches
@@ -91,7 +114,7 @@ export async function runTunnel(opts: {
 	const guard = await startPathGuard(port);
 
 	// frpc reads config from a file — keeps the ck_dev_ key off argv/ps. The
-	// temp dir (0600 file) is reaped on stop/exit so the key doesn't linger.
+	// temp dir (0600 files) is reaped on stop/exit so the key doesn't linger.
 	// If writing it throws (disk full, unwritable tmp), close the guard we just
 	// opened so a failed start can't leak a listening socket.
 	let cfgDir: string;
@@ -99,6 +122,11 @@ export async function runTunnel(opts: {
 	try {
 		cfgDir = mkdtempSync(join(tmpdir(), 'corsair-frpc-'));
 		cfgPath = join(cfgDir, 'frpc.toml');
+		// Write CA cert first so the path is ready for buildFrpcConfig.
+		const caCertPath = caCert ? join(cfgDir, 'ca.crt') : undefined;
+		if (caCertPath && caCert) {
+			writeFileSync(caCertPath, caCert, { mode: 0o600 });
+		}
 		writeFileSync(
 			cfgPath,
 			buildFrpcConfig({
@@ -107,6 +135,8 @@ export async function runTunnel(opts: {
 				apiKey,
 				slug,
 				localPort: guard.port,
+				caCertPath,
+				serverName,
 			}),
 			{ mode: 0o600 },
 		);

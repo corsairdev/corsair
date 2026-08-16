@@ -9,6 +9,10 @@ export function buildFrpcConfig(opts: {
 	apiKey: string;
 	slug: string;
 	localPort: number;
+	/** When set, frpc verifies the frps TLS cert against this CA file. */
+	caCertPath?: string;
+	/** Hostname to verify the cert against; falls back to serverAddr when absent. */
+	serverName?: string;
 }): string {
 	// Reject anything that could break out of the toml string literal.
 	if (!/^[\x20-\x21\x23-\x7E]+$/.test(opts.apiKey)) {
@@ -16,11 +20,20 @@ export function buildFrpcConfig(opts: {
 			'apiKey contains invalid characters (quotes, newlines, or control chars)',
 		);
 	}
-	return [
+	const lines = [
 		`serverAddr = "${opts.serverAddr}"`,
 		`serverPort = ${opts.serverPort}`,
 		'loginFailExit = true',
 		`metadatas.token = "${opts.apiKey}"`,
+	];
+	if (opts.caCertPath) {
+		lines.push(
+			'transport.tls.enable = true',
+			`transport.tls.serverName = "${opts.serverName ?? opts.serverAddr}"`,
+			`transport.tls.trustedCaFile = "${opts.caCertPath}"`,
+		);
+	}
+	lines.push(
 		'',
 		'[[proxies]]',
 		`name = "corsair-${opts.slug}"`,
@@ -29,5 +42,6 @@ export function buildFrpcConfig(opts: {
 		`localPort = ${opts.localPort}`,
 		`subdomain = "${opts.slug}"`,
 		'',
-	].join('\n');
+	);
+	return lines.join('\n');
 }

@@ -8,7 +8,7 @@ describe('fetchTunnelConfig', () => {
 		fetchMock.mockReset();
 	});
 
-	it('returns the frp server address, port, and slug, bounded by a signal', async () => {
+	it('returns the frp server address, port, slug, caCert and serverName, bounded by a signal', async () => {
 		fetchMock.mockResolvedValue({
 			ok: true,
 			status: 200,
@@ -16,6 +16,8 @@ describe('fetchTunnelConfig', () => {
 				serverAddr: 'tunnel.corsair.cloud',
 				serverPort: 7000,
 				slug: 'salty-kraken-1',
+				caCert: '-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----',
+				serverName: 'tunnel.corsair.cloud',
 			}),
 		});
 
@@ -28,6 +30,8 @@ describe('fetchTunnelConfig', () => {
 			serverAddr: 'tunnel.corsair.cloud',
 			serverPort: 7000,
 			slug: 'salty-kraken-1',
+			caCert: '-----BEGIN CERTIFICATE-----\nABC\n-----END CERTIFICATE-----',
+			serverName: 'tunnel.corsair.cloud',
 		});
 		const [url, init] = fetchMock.mock.calls[0];
 		expect(url).toBe('https://auth.corsair.dev/api/dev/tunnel-config');
@@ -52,6 +56,66 @@ describe('fetchTunnelConfig', () => {
 				apiKey: 'ck_dev_x',
 			}),
 		).rejects.toThrow(/invalid slug/);
+	});
+
+	it('returns null caCert and undefined serverName when absent', async () => {
+		fetchMock.mockResolvedValue({
+			ok: true,
+			status: 200,
+			json: async () => ({
+				serverAddr: 'tunnel.corsair.cloud',
+				serverPort: 7000,
+				slug: 'salty-kraken-1',
+			}),
+		});
+
+		const cfg = await fetchTunnelConfig({
+			apiUrl: 'https://auth.corsair.dev',
+			apiKey: 'ck_dev_x',
+		});
+
+		expect(cfg.caCert).toBeNull();
+		expect(cfg.serverName).toBeUndefined();
+	});
+
+	it('rejects a caCert that does not begin with the PEM header', async () => {
+		fetchMock.mockResolvedValue({
+			ok: true,
+			status: 200,
+			json: async () => ({
+				serverAddr: 'tunnel.corsair.cloud',
+				serverPort: 7000,
+				slug: 'salty-kraken-1',
+				caCert: 'not-a-pem',
+			}),
+		});
+
+		await expect(
+			fetchTunnelConfig({
+				apiUrl: 'https://auth.corsair.dev',
+				apiKey: 'ck_dev_x',
+			}),
+		).rejects.toThrow(/-----BEGIN CERTIFICATE-----/);
+	});
+
+	it('rejects a serverName that could inject frpc toml (quote/newline)', async () => {
+		fetchMock.mockResolvedValue({
+			ok: true,
+			status: 200,
+			json: async () => ({
+				serverAddr: 'tunnel.corsair.cloud',
+				serverPort: 7000,
+				slug: 'salty-kraken-1',
+				serverName: 'evil"\ntrustedCaFile = "/etc/passwd',
+			}),
+		});
+
+		await expect(
+			fetchTunnelConfig({
+				apiUrl: 'https://auth.corsair.dev',
+				apiKey: 'ck_dev_x',
+			}),
+		).rejects.toThrow(/invalid serverName/);
 	});
 
 	it('rejects a serverAddr that could inject frpc toml (quote/newline)', async () => {
