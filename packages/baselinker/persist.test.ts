@@ -10,16 +10,77 @@ function store() {
 	};
 }
 
+afterEach(() => {
+	jest.restoreAllMocks();
+});
+
 describe('BaseLinker reference mirrors', () => {
 	it('mirrors array-shaped collections by natural provider id', async () => {
 		const couriers = store();
 		await mirrorOperationResult({ couriers }, 'getCouriersList', {
 			status: 'SUCCESS',
-			couriers: [{ courier_code: 'dpd', name: 'DPD' }],
+			couriers: [{ code: 'dpd', name: 'DPD' }],
 		});
 		expect(couriers.upsertByEntityId).toHaveBeenCalledWith(
 			'dpd',
 			expect.objectContaining({ name: 'DPD' }),
+		);
+	});
+
+	it('mirrors return reasons from the return_reasons envelope by return_reason_id', async () => {
+		const returnReasons = store();
+		await mirrorOperationResult(
+			{ returnReasons },
+			'getOrderReturnReasonsList',
+			{
+				status: 'SUCCESS',
+				return_reasons: [{ return_reason_id: 7, name: 'Damaged' }],
+			},
+		);
+		expect(returnReasons.upsertByEntityId).toHaveBeenCalledWith(
+			'7',
+			expect.objectContaining({ name: 'Damaged' }),
+		);
+	});
+
+	it('mirrors return product statuses from the order_return_product_statuses envelope', async () => {
+		const returnProductStatuses = store();
+		await mirrorOperationResult(
+			{ returnProductStatuses },
+			'getOrderReturnProductStatuses',
+			{
+				status: 'SUCCESS',
+				order_return_product_statuses: [{ status_id: 3, name: 'Accepted' }],
+			},
+		);
+		expect(returnProductStatuses.upsertByEntityId).toHaveBeenCalledWith(
+			'3',
+			expect.objectContaining({ name: 'Accepted' }),
+		);
+	});
+
+	it('flattens Connect integrations nested under own/connected arrays', async () => {
+		const connectIntegrations = store();
+		await mirrorOperationResult(
+			{ connectIntegrations },
+			'getConnectIntegrations',
+			{
+				status: 'SUCCESS',
+				integrations: {
+					own_integrations: [{ connect_integration_id: 5, name: 'Own' }],
+					connected_integrations: [
+						{ connect_integration_id: 9, name: 'Linked' },
+					],
+				},
+			},
+		);
+		expect(connectIntegrations.upsertByEntityId).toHaveBeenCalledWith(
+			'5',
+			expect.objectContaining({ name: 'Own' }),
+		);
+		expect(connectIntegrations.upsertByEntityId).toHaveBeenCalledWith(
+			'9',
+			expect.objectContaining({ name: 'Linked' }),
 		);
 	});
 

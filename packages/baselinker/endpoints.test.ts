@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import { auditPayload } from './endpoints/logging';
 import { baseLinkerOperationCatalog } from './endpoints/operations';
 import { errorHandlers } from './error-handlers';
@@ -86,6 +87,19 @@ describe('operation registry', () => {
 		expect(exercised).toBe(106);
 	});
 
+	it('tolerates a no-argument call to a parameterless operation', async () => {
+		const endpoint = flattenEndpoints().get('inventory.getInventories');
+		const context = {
+			key: 'fake-baselinker-token-for-tests-only',
+			db: {},
+			database: undefined,
+			$getAccountId: async () => 'test-account',
+		};
+		await expect(
+			endpoint?.(context, undefined as unknown as Record<string, unknown>),
+		).resolves.toBeDefined();
+	});
+
 	it('marks reads, writes and destructive calls from provider semantics', () => {
 		const reads = baseLinkerOperationCatalog.filter(
 			(operation) => operation.riskLevel === 'read',
@@ -117,6 +131,22 @@ describe('retry and audit safety', () => {
 		} as HandlerContext);
 		expect(read.maxRetries).toBe(3);
 		expect(write.maxRetries).toBe(0);
+	});
+
+	it('classifies HTTP 403 as a permission error, not an auth error', () => {
+		const forbidden = new ApiError(
+			{ method: 'POST', url: '/connector.php' } as never,
+			{
+				url: 'https://api.baselinker.com/connector.php',
+				ok: false,
+				status: 403,
+				statusText: 'Forbidden',
+				body: {},
+			} as never,
+			'Forbidden',
+		);
+		expect(errorHandlers.AUTH_ERROR.match(forbidden)).toBe(false);
+		expect(errorHandlers.PERMISSION_ERROR.match(forbidden)).toBe(true);
 	});
 
 	it('retains field names, identifiers and counts without customer values', () => {
