@@ -6,8 +6,11 @@ import { dirname, join } from 'node:path';
 /** Pinned frp release the SDK ships. Bump in lockstep with the VM's frps. */
 export const FRPC_VERSION = '0.71.0';
 
-// The SDK is ESM-only (see tsup.config), so import.meta.url is always defined.
-const require = createRequire(import.meta.url);
+// Seeded from __filename, not import.meta.url: ts-jest transpiles this file to
+// CJS (jest runs without --experimental-vm-modules), where import.meta is a parse
+// error. esbuild shims __filename in the ESM build. nodeRequire, not require, so
+// the CJS output doesn't redeclare the module wrapper's own require.
+const nodeRequire = createRequire(__filename);
 
 /**
  * The frpc binary carried by this platform's optional-dependency package
@@ -20,7 +23,7 @@ function platformPackageBinary(): string | null {
 	try {
 		// require.resolve honors the installed location (incl. pnpm's layout).
 		const bin = join(
-			dirname(require.resolve(`${pkg}/package.json`)),
+			dirname(nodeRequire.resolve(`${pkg}/package.json`)),
 			binName(),
 		);
 		return existsSync(bin) ? bin : null;
