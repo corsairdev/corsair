@@ -17,5 +17,8 @@
   ],
   "publishConfig": {
     "access": "public"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/prepare-frpc-packages.mjs linux-arm64"
   }
 }

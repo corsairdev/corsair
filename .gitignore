@@ -216,3 +216,4 @@ packages/frpc-*/frpc
 packages/frpc-*/frpc.exe
 packages/frpc-*/LICENSE.frp
 packages/frpc-*/NOTICE
+packages/frpc-*/.frpc-version

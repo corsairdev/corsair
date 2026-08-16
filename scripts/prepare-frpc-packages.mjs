@@ -10,6 +10,7 @@ import {
 	chmodSync,
 	existsSync,
 	mkdtempSync,
+	readFileSync,
 	renameSync,
 	rmSync,
 	writeFileSync,
@@ -109,9 +110,18 @@ async function prepare(t) {
 	const pkgDir = join(root, 'packages', `frpc-${t.key}`);
 	if (!existsSync(pkgDir)) throw new Error(`missing package dir: ${pkgDir}`);
 	const dest = join(pkgDir, t.bin);
+	const marker = join(pkgDir, '.frpc-version');
 	writeFileSync(join(pkgDir, 'NOTICE'), NOTICE); // cheap; keeps attribution present
 
-	if (existsSync(dest) && existsSync(join(pkgDir, 'LICENSE.frp'))) {
+	// Skip only when THIS version is already materialized. A binary left from a
+	// previous FRPC_VERSION must be re-downloaded + re-verified, never reused
+	// under new release metadata — so gate the skip on a version marker.
+	if (
+		existsSync(dest) &&
+		existsSync(join(pkgDir, 'LICENSE.frp')) &&
+		existsSync(marker) &&
+		readFileSync(marker, 'utf8').trim() === FRPC_VERSION
+	) {
 		console.log(`  skip ${t.key} (already materialized)`);
 		return;
 	}
@@ -156,10 +166,20 @@ async function prepare(t) {
 	} finally {
 		rmSync(work, { recursive: true, force: true });
 	}
+	writeFileSync(marker, `${FRPC_VERSION}\n`);
 	console.log(`  ok   ${t.key} -> ${t.bin}`);
 }
 
-for (const t of TARGETS) {
+// An optional single target key (e.g. `darwin-arm64`) — each package's prepack
+// hook materializes only its own binary; no arg prepares all six.
+const only = process.argv[2];
+const targets = only ? TARGETS.filter((t) => t.key === only) : TARGETS;
+if (only && targets.length === 0) {
+	throw new Error(
+		`unknown target "${only}" — expected one of: ${TARGETS.map((t) => t.key).join(', ')}`,
+	);
+}
+for (const t of targets) {
 	await prepare(t);
 }
 console.log('frpc packages prepared.');
