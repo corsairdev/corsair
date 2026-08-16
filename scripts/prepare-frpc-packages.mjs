@@ -8,10 +8,10 @@ import { spawnSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
 import {
 	chmodSync,
+	copyFileSync,
 	existsSync,
 	mkdtempSync,
 	readFileSync,
-	renameSync,
 	rmSync,
 	writeFileSync,
 } from 'node:fs';
@@ -153,10 +153,10 @@ async function prepare(t) {
 				`${t.key}: extract failed (tar/unzip status ${r.status})`,
 			);
 		}
-		renameSync(exBin, dest);
+		copyFileSync(exBin, dest);
 		if (!t.bin.endsWith('.exe')) chmodSync(dest, 0o755);
 		const exLic = join(work, 'LICENSE');
-		if (existsSync(exLic)) renameSync(exLic, join(pkgDir, 'LICENSE.frp'));
+		if (existsSync(exLic)) copyFileSync(exLic, join(pkgDir, 'LICENSE.frp'));
 		else {
 			writeFileSync(
 				join(pkgDir, 'LICENSE.frp'),
