@@ -20,14 +20,18 @@ const LABEL = 'context';
  * from the response.
  */
 function cacheableContext(
-	record: CircleCIEndpointOutputs['contextsCreate'],
+	record: Record<string, unknown>,
 ): Record<string, unknown> {
 	const envVars = record.environment_variables;
 	if (!Array.isArray(envVars)) return record;
 	return {
 		...record,
 		environment_variables: envVars.map((envVar) => {
-			const { truncated_value: _omittedValue, ...rest } = envVar;
+			if (!envVar || typeof envVar !== 'object') return envVar;
+			const { truncated_value: _omittedValue, ...rest } = envVar as Record<
+				string,
+				unknown
+			>;
 			return rest;
 		}),
 	};
@@ -53,7 +57,7 @@ export const create: CircleCIEndpoints['contextsCreate'] = async (
 	await cacheEntity(
 		ctx.db.contexts,
 		CircleCIContextEntity,
-		cacheableContext(result),
+		cacheableContext(result as Record<string, unknown>),
 		{ label: LABEL },
 	);
 
@@ -76,7 +80,7 @@ export const get: CircleCIEndpoints['contextsGet'] = async (ctx, input) => {
 	await cacheEntity(
 		ctx.db.contexts,
 		CircleCIContextEntity,
-		cacheableContext(result),
+		cacheableContext(result as Record<string, unknown>),
 		{ label: LABEL },
 	);
 

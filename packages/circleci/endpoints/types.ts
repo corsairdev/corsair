@@ -156,6 +156,7 @@ const ContextRestrictionSchema = z
 		name: S,
 		restriction_type: S,
 		restriction_value: S,
+		project_id: S,
 	})
 	.loose();
 
@@ -667,9 +668,11 @@ const CircleCIUserSchema = z
 
 const CircleCICollaborationSchema = z
 	.object({
+		id: S,
 		vcs_type: S,
 		name: S,
 		slug: S,
+		avatar_url: S,
 	})
 	.loose();
 

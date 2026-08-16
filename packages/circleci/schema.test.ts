@@ -31,14 +31,7 @@ const PROJECT_KEYS = [
 	'vcs_info',
 ];
 const VCS_INFO_KEYS = ['vcs_url', 'default_branch', 'provider'];
-const CONTEXT_KEYS = [
-	'id',
-	'name',
-	'created_at',
-	'org_id',
-	'environment_variables',
-	'restrictions',
-];
+const CONTEXT_KEYS = ['id', 'name', 'created_at'];
 const CONTEXT_ENV_VAR_KEYS = [
 	'variable',
 	'context_id',
@@ -52,8 +45,9 @@ const CONTEXT_RESTRICTION_KEYS = [
 	'name',
 	'restriction_type',
 	'restriction_value',
+	'project_id',
 ];
-const PROJECT_ENV_VAR_KEYS = ['name', 'value', 'created_at'];
+const PROJECT_ENV_VAR_KEYS = ['name', 'value', 'created-at', 'created_at'];
 /** kebab-case, confirmed live - the one entity in this plugin that is not snake_case. */
 const SCHEDULE_KEYS = [
 	'description',
