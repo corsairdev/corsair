@@ -13,12 +13,15 @@ function isUnsafeRequestHeader(name: string): boolean {
 }
 
 /**
- * Loopback proxy that only forwards `/api/corsair` (and its subpaths) to the dev
+ * Loopback proxy that only forwards `basePath` (and its subpaths) to the dev
  * app; every other path gets a 404. The tunnel shares this guard instead of the
  * app itself, so the public URL can never reach the developer's other routes.
+ * `basePath` is the dev's delivery path (default /api/corsair) so a custom
+ * delivery URL is still the only route the tunnel exposes.
  */
 export function startPathGuard(
 	appPort: number,
+	basePath: string = CORSAIR_TUNNEL_PATH,
 ): Promise<{ port: number; close: () => Promise<void> }> {
 	const server = http.createServer((req, res) => {
 		const raw = req.url ?? '/';
@@ -41,8 +44,7 @@ export function startPathGuard(
 			return;
 		}
 		const allowed =
-			url.pathname === CORSAIR_TUNNEL_PATH ||
-			url.pathname.startsWith(`${CORSAIR_TUNNEL_PATH}/`);
+			url.pathname === basePath || url.pathname.startsWith(`${basePath}/`);
 		if (!allowed) {
 			res.statusCode = 404;
 			res.end('Not found');

@@ -26,6 +26,39 @@ describe('buildFrpcConfig', () => {
 		expect(toml).not.toContain('transport.tls');
 	});
 
+	it('omits metadatas.path when no deliveryPath is given', () => {
+		expect(toml).not.toContain('metadatas.path');
+	});
+
+	describe('deliveryPath', () => {
+		it('declares a custom deliveryPath via metadatas.path', () => {
+			const t = buildFrpcConfig({
+				serverAddr: 'tunnel.corsair.cloud',
+				serverPort: 7000,
+				apiKey: 'ck_dev_abc',
+				slug: 'salty-kraken-42',
+				localPort: 41234,
+				deliveryPath: '/external/api/corsair',
+			});
+			expect(t).toContain('metadatas.path = "/external/api/corsair"');
+		});
+
+		it('throws on a deliveryPath that is not a safe absolute path', () => {
+			for (const bad of ['api/corsair', '/api/"x"', '/api/\nx', 'https://x']) {
+				expect(() =>
+					buildFrpcConfig({
+						serverAddr: 'tunnel.corsair.cloud',
+						serverPort: 7000,
+						apiKey: 'ck_dev_abc',
+						slug: 'salty-kraken-42',
+						localPort: 41234,
+						deliveryPath: bad,
+					}),
+				).toThrow(/deliveryPath/);
+			}
+		});
+	});
+
 	describe('TLS verification', () => {
 		const tlsToml = buildFrpcConfig({
 			serverAddr: 'tunnel.corsair.cloud',

@@ -131,3 +131,30 @@ describe('path-guard', () => {
 		expect(lastHeaders['x-real-ip']).toBeUndefined();
 	});
 });
+
+describe('path-guard with a custom basePath', () => {
+	let custom: { port: number; close: () => Promise<void> };
+
+	beforeAll(async () => {
+		custom = await startPathGuard(appPort, '/external/api/corsair');
+	});
+	afterAll(async () => {
+		await custom.close();
+	});
+
+	async function getCustom(path: string): Promise<number> {
+		const res = await fetch(`http://127.0.0.1:${custom.port}${path}`);
+		await res.text();
+		return res.status;
+	}
+
+	it('forwards the custom delivery path to the app', async () => {
+		expect(await getCustom('/external/api/corsair')).toBe(200);
+		expect(appHits).toContain('/external/api/corsair');
+	});
+
+	it('404s the default /api/corsair when a custom path is configured', async () => {
+		expect(await getCustom('/api/corsair')).toBe(404);
+		expect(appHits).toHaveLength(0);
+	});
+});

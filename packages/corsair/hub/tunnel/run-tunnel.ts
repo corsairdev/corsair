@@ -2,7 +2,8 @@ import { spawn } from 'node:child_process';
 import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { CORSAIR_TUNNEL_ZONE } from './constants';
+import { resolveHubDeliveryUrl } from '../resolve-delivery-url';
+import { CORSAIR_TUNNEL_PATH, CORSAIR_TUNNEL_ZONE } from './constants';
 import { resolveFrpcBinary } from './frpc-binary';
 import { buildFrpcConfig } from './frpc-config';
 import { startPathGuard } from './path-guard';
@@ -109,9 +110,14 @@ export async function runTunnel(opts: {
 		});
 	const bin = resolveFrpcBinary();
 
-	// Share the path-guard, not the app: the public URL only ever reaches
-	// /api/corsair, never the developer's other routes.
-	const guard = await startPathGuard(port);
+	// The dev's delivery path (default /api/corsair). The path-guard and the Hub
+	// both scope to exactly this, so a custom CORSAIR_DELIVERY_URL still reaches
+	// the right handler and never exposes the developer's other routes.
+	const deliveryPath = tunnelDeliveryPath();
+
+	// Share the path-guard, not the app: the public URL only ever reaches the
+	// delivery path, never the developer's other routes.
+	const guard = await startPathGuard(port, deliveryPath);
 
 	// frpc reads config from a file — keeps the ck_dev_ key off argv/ps. The
 	// temp dir (0600 files) is reaped on stop/exit so the key doesn't linger.
@@ -137,6 +143,7 @@ export async function runTunnel(opts: {
 				localPort: guard.port,
 				caCertPath,
 				serverName,
+				deliveryPath,
 			}),
 			{ mode: 0o600 },
 		);
@@ -266,6 +273,20 @@ export async function runTunnel(opts: {
 			);
 		}, timeoutMs);
 	});
+}
+
+/**
+ * The path the dev app serves, derived from the resolved delivery URL — the same
+ * value the Hub delivers to. Falls back to /api/corsair when the delivery URL has
+ * no meaningful path (or can't be parsed), matching the default mount.
+ */
+function tunnelDeliveryPath(): string {
+	try {
+		const path = new URL(resolveHubDeliveryUrl()).pathname.replace(/\/$/, '');
+		return path && path !== '/' ? path : CORSAIR_TUNNEL_PATH;
+	} catch {
+		return CORSAIR_TUNNEL_PATH;
+	}
 }
 
 function firstErrorLine(output: string): string {
