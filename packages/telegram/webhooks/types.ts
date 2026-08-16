@@ -285,14 +285,15 @@ export function verifyTelegramWebhookSignature(
 	}
 
 	// Use a constant-time comparison to avoid leaking the secret via timing.
-	// Guard the length first: timingSafeEqual throws if the buffers differ in
-	// length, and a length mismatch already means the token is invalid.
+	// Encode both tokens to UTF-8 buffers first and compare the *byte* lengths
+	// (not JS string code-unit lengths) so a non-ASCII token with the same
+	// string length but different byte length can't make timingSafeEqual throw
+	// and route an unauthenticated request through generic error handling.
+	const providedTokenBuffer = Buffer.from(providedToken);
+	const secretTokenBuffer = Buffer.from(secretToken);
 	const isValid =
-		providedToken.length === secretToken.length &&
-		timingSafeEqual(
-			Buffer.from(providedToken),
-			Buffer.from(secretToken),
-		);
+		providedTokenBuffer.length === secretTokenBuffer.length &&
+		timingSafeEqual(providedTokenBuffer, secretTokenBuffer);
 
 	return {
 		valid: isValid,
