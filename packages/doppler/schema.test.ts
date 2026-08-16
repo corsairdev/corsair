@@ -84,9 +84,21 @@ describe('Doppler schema', () => {
 		}
 	});
 
-	it('catches an undeclared key, so the check above is not vacuous', () => {
+	it('the every-key-declared filter itself would catch a missing declaration - proven by planting one', () => {
+		// The exact comparison the "every live-captured key is declared" block
+		// above runs, applied to a deliberately fabricated "captured" key that
+		// was never added to the entity. If this assertion ever passed with an
+		// empty array, the comparison logic itself would be broken and the
+		// suite above would be silently vacuous.
 		const declared = Object.keys(DopplerProjectEntity.shape);
-		expect(declared).not.toContain('aKeyNobodyDeclared');
+		const fabricatedCapturedKeys = [...PROJECT_KEYS, 'aKeyNobodyDeclared'];
+		const undeclared = fabricatedCapturedKeys.filter(
+			(k) => !declared.includes(k),
+		);
+		expect(undeclared).toEqual(['aKeyNobodyDeclared']);
+	});
+
+	it('an undeclared key does not fail schema parsing either, since every entity is .loose()', () => {
 		expect(
 			DopplerProjectEntity.safeParse({ id: 'project-1', aKeyNobodyDeclared: 1 })
 				.success,

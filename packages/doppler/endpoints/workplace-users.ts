@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DopplerEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { compact, dopplerCall } from './shared';
+import { compact, dopplerCall, seg } from './shared';
 import type { DopplerEndpointOutputs } from './types';
 
 /**
@@ -39,7 +39,7 @@ export const get: DopplerEndpoints['workplaceUsersGet'] = async (
 ) => {
 	const result = await dopplerCall<{
 		workplace_user: DopplerEndpointOutputs['workplaceUsersGet'];
-	}>(ctx, `workplace/users/${input.slug}`);
+	}>(ctx, `workplace/users/${seg(input.slug)}`);
 
 	await logEventFromContext(
 		ctx,

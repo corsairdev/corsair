@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DopplerEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { compact, dopplerCall } from './shared';
+import { compact, dopplerCall, seg } from './shared';
 import type { DopplerEndpointOutputs } from './types';
 
 /** Lists a project's members - workplace users, groups, invites, and service accounts. */
@@ -36,9 +36,13 @@ export const get: DopplerEndpoints['projectMembersGet'] = async (
 ) => {
 	const result = await dopplerCall<{
 		member: DopplerEndpointOutputs['projectMembersGet'];
-	}>(ctx, `projects/project/members/member/${input.type}/${input.slug}`, {
-		query: { project: input.project },
-	});
+	}>(
+		ctx,
+		`projects/project/members/member/${seg(input.type)}/${seg(input.slug)}`,
+		{
+			query: { project: input.project },
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -56,10 +60,14 @@ export const remove: DopplerEndpoints['projectMembersDelete'] = async (
 ) => {
 	const result = await dopplerCall<
 		DopplerEndpointOutputs['projectMembersDelete']
-	>(ctx, `projects/project/members/member/${input.type}/${input.slug}`, {
-		method: 'DELETE',
-		query: { project: input.project },
-	});
+	>(
+		ctx,
+		`projects/project/members/member/${seg(input.type)}/${seg(input.slug)}`,
+		{
+			method: 'DELETE',
+			query: { project: input.project },
+		},
+	);
 
 	await logEventFromContext(
 		ctx,

@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DopplerEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { dopplerCall } from './shared';
+import { dopplerCall, seg } from './shared';
 import type { DopplerEndpointOutputs } from './types';
 
 /** Lists all workplace roles - built-in and custom. */
@@ -26,7 +26,7 @@ export const get: DopplerEndpoints['workplaceRolesGet'] = async (
 ) => {
 	const result = await dopplerCall<{
 		role: DopplerEndpointOutputs['workplaceRolesGet'];
-	}>(ctx, `workplace/roles/role/${input.role}`);
+	}>(ctx, `workplace/roles/role/${seg(input.role)}`);
 
 	await logEventFromContext(
 		ctx,

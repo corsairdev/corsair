@@ -768,8 +768,8 @@ const ChangeRequestSchema = OpaqueObject;
  */
 const ShareCreatePlainInputSchema = z.object({
 	secret: z.string(),
-	expireViews: z.number().min(1).max(50).or(z.literal(-1)).optional(),
-	expireDays: z.number().min(1).max(90).optional(),
+	expireViews: z.number().int().min(1).max(50).or(z.literal(-1)).optional(),
+	expireDays: z.number().int().min(1).max(90).optional(),
 });
 export type ShareCreatePlainInput = z.infer<typeof ShareCreatePlainInputSchema>;
 
@@ -785,8 +785,8 @@ const ShareCreateEncryptedInputSchema = z.object({
 	hashedPassword: z.string(),
 	encryptionKdf: z.literal('pbkdf2').optional(),
 	encryptionSaltRounds: z.literal(1_000_000).optional(),
-	expireViews: z.number().min(1).max(50).or(z.literal(-1)).optional(),
-	expireDays: z.number().min(1).max(90).optional(),
+	expireViews: z.number().int().min(1).max(50).or(z.literal(-1)).optional(),
+	expireDays: z.number().int().min(1).max(90).optional(),
 });
 export type ShareCreateEncryptedInput = z.infer<
 	typeof ShareCreateEncryptedInputSchema

@@ -128,6 +128,14 @@ export type DopplerConfigEntity = z.infer<typeof DopplerConfigEntity>;
  *
  * All fields are camelCase, confirmed live - unlike almost everything else
  * in this API.
+ *
+ * No `secret` field is declared, and `authentication` is deliberately
+ * `unknown` rather than typed to its caller-defined Bearer/Basic/None shape
+ * - both may carry a signing credential the caller just set. Confirmed live
+ * the API only ever echoes `authentication` back as `{type}` and never
+ * echoes `secret` at all, but `endpoints/webhooks.ts`'s `forCache` strips
+ * both explicitly before a record reaches this schema anyway, since `.loose()`
+ * would otherwise pass either straight through if that ever changed.
  */
 export const DopplerWebhookEntity = z
 	.object({

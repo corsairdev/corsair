@@ -52,6 +52,14 @@ const project = process.env.DOPPLER_PROJECT;
 
 const describeLive = token && project ? describe : describe.skip;
 
+/**
+ * `describeLive` already gates the whole suite on `project` being truthy,
+ * but that gate is not a type guard - `project` is still typed
+ * `string | undefined` everywhere below it without this. Narrowed once here
+ * instead of repeating `project ?? ''` at every call site.
+ */
+const projectSlug = project ?? '';
+
 const PACE_MS = 700;
 let lastCall = 0;
 async function paced<T>(operation: () => Promise<T>): Promise<T> {
@@ -95,7 +103,7 @@ describeLive('Doppler live API', () => {
 	it('returns a project that parses as the project entity', async () => {
 		const ctx = makeCtx();
 		const found = await paced(() =>
-			Projects.get(ctx, { project: project ?? '' }),
+			Projects.get(ctx, { project: projectSlug }),
 		);
 		const parsed = DopplerProjectEntity.safeParse(found);
 		if (!parsed.success) console.error(parsed.error.issues);
@@ -105,7 +113,7 @@ describeLive('Doppler live API', () => {
 	it('returns environments including dev', async () => {
 		const ctx = makeCtx();
 		const environments = await paced(() =>
-			Environments.list(ctx, { project: project ?? '' }),
+			Environments.list(ctx, { project: projectSlug }),
 		);
 		expect(environments.some((e) => e.id === 'dev')).toBe(true);
 	});
@@ -113,7 +121,7 @@ describeLive('Doppler live API', () => {
 	it('returns configs for dev', async () => {
 		const ctx = makeCtx();
 		const result = await paced(() =>
-			Configs.list(ctx, { project: project ?? '', environment: 'dev' }),
+			Configs.list(ctx, { project: projectSlug, environment: 'dev' }),
 		);
 		expect(Array.isArray(result.configs)).toBe(true);
 	});
@@ -121,7 +129,7 @@ describeLive('Doppler live API', () => {
 	it('returns secret names without values', async () => {
 		const ctx = makeCtx();
 		const names = await paced(() =>
-			Secrets.names(ctx, { project: project ?? '', config: 'dev' }),
+			Secrets.names(ctx, { project: projectSlug, config: 'dev' }),
 		);
 		expect(Array.isArray(names)).toBe(true);
 	});
@@ -132,7 +140,7 @@ describeLive('Doppler live API', () => {
 		try {
 			const config = await paced(() =>
 				Configs.create(ctx, {
-					project: project ?? '',
+					project: projectSlug,
 					environment: 'dev',
 					name: PROBE,
 				}),
@@ -145,7 +153,7 @@ describeLive('Doppler live API', () => {
 		} finally {
 			if (created) {
 				await paced(() =>
-					Configs.remove(ctx, { project: project ?? '', config: PROBE }),
+					Configs.remove(ctx, { project: projectSlug, config: PROBE }),
 				);
 			}
 		}

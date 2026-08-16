@@ -105,6 +105,17 @@ export const update: DopplerEndpoints['configsUpdate'] = async (ctx, input) => {
 		label: LABEL,
 		entityId,
 	});
+	// A rename changes `name`, which is half of the composite entityId - the
+	// call above just cached the config under a *new* key. Evict the old one
+	// so the renamed config does not leave a stale duplicate row behind, the
+	// same fix applied to `environments.rename`.
+	if (input.name !== input.config) {
+		await evictEntity(
+			ctx.db.configs,
+			entityId({ project: input.project, name: input.config }),
+			LABEL,
+		);
+	}
 	await logEventFromContext(
 		ctx,
 		'doppler.configs.update',

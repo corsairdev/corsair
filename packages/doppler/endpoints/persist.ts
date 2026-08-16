@@ -1,11 +1,18 @@
 import type { z } from 'zod';
 
-/** Minimal structural view of a Corsair entity store. */
+/**
+ * Minimal structural view of a Corsair entity store. `data` is typed - it is
+ * always the schema-validated, entity-specific shape by the time it reaches
+ * here. The `Promise<unknown>` return is deliberately untyped: this module
+ * never reads a store write's resolved value, only whether it rejected (see
+ * `safely` below), so there is nothing to gain from typing a value that is
+ * always discarded.
+ */
 type EntityStore<T> = {
 	upsertByEntityId: (entityId: string, data: T) => Promise<unknown>;
 };
 
-/** The eviction half of the same store, needed only by the delete operations. */
+/** The eviction half of the same store, needed only by the delete operations. Same reasoning on `Promise<unknown>` as `EntityStore` above. */
 type EntityEvictor = {
 	deleteByEntityId: (entityId: string) => Promise<unknown>;
 };
@@ -34,7 +41,16 @@ const defaultEntityId = <T>(parsed: T): string | undefined => {
  */
 type EntityIdOf<T> = (parsed: T) => string | undefined;
 
-/** Mirrors one record. Skips (with a warning) anything the schema rejects. */
+/**
+ * Mirrors one record. Skips (with a warning) anything the schema rejects.
+ *
+ * `record` is `unknown`, not `z.infer<Schema>`, on purpose: the caller
+ * passes a raw API response object here, not something already known to
+ * match the entity shape - `schema.safeParse` below is what establishes
+ * that, and is the only place in this function that trusts the value's
+ * shape. Narrowing the parameter type would just move an unsafe cast to
+ * every call site instead of parsing it once here.
+ */
 export async function cacheEntity<Schema extends z.ZodType>(
 	store: EntityStore<z.infer<Schema>> | undefined,
 	schema: Schema,
@@ -61,7 +77,12 @@ export async function cacheEntity<Schema extends z.ZodType>(
 	);
 }
 
-/** Mirrors many records, skipping any the schema rejects or that have no key. */
+/**
+ * Mirrors many records, skipping any the schema rejects or that have no key.
+ * `records` is `unknown[]`, not `z.infer<Schema>[]`, for the same reason
+ * `cacheEntity`'s `record` param is - each element is validated individually
+ * by the `cacheEntity` call below, not assumed to already match.
+ */
 export async function cacheEntities<Schema extends z.ZodType>(
 	store: EntityStore<z.infer<Schema>> | undefined,
 	schema: Schema,

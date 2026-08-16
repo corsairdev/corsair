@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { DopplerEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { dopplerCall } from './shared';
+import { dopplerCall, seg } from './shared';
 import type { DopplerEndpointOutputs } from './types';
 
 /**
@@ -18,7 +18,7 @@ export const deleteMember: DopplerEndpoints['groupsDeleteMember'] = async (
 		DopplerEndpointOutputs['groupsDeleteMember']
 	>(
 		ctx,
-		`workplace/groups/group/${input.group}/members/${input.type}/${input.memberSlug}`,
+		`workplace/groups/group/${seg(input.group)}/members/${seg(input.type)}/${seg(input.memberSlug)}`,
 		{ method: 'DELETE' },
 	);
 

@@ -142,6 +142,35 @@ describe('Doppler transport', () => {
 		});
 	});
 
+	describe('empty token', () => {
+		it('rejects an empty token before sending a request, on both transports', async () => {
+			mockFetch({});
+			const v3Error = await makeDopplerRequest('me', '').catch(
+				(e: unknown) => e,
+			);
+			expect(v3Error).toBeInstanceOf(DopplerAPIError);
+			expect((v3Error as DopplerAPIError).status).toBe(401);
+			expect(captured).toBeUndefined();
+
+			const shareError = await makeDopplerShareRequest('secrets/plain', '', {
+				method: 'POST',
+				body: { secret: 'x' },
+			}).catch((e: unknown) => e);
+			expect(shareError).toBeInstanceOf(DopplerAPIError);
+			expect((shareError as DopplerAPIError).status).toBe(401);
+			expect(captured).toBeUndefined();
+		});
+
+		it('rejects a whitespace-only token the same way', async () => {
+			mockFetch({});
+			const error = await makeDopplerRequest('me', '   ').catch(
+				(e: unknown) => e,
+			);
+			expect(error).toBeInstanceOf(DopplerAPIError);
+			expect((error as DopplerAPIError).status).toBe(401);
+		});
+	});
+
 	describe('error wrapping', () => {
 		it('wraps a REST failure in DopplerAPIError with its status', async () => {
 			mockFetch(

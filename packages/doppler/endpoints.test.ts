@@ -28,6 +28,7 @@ import {
 	WorkplaceRoles,
 	WorkplaceUsers,
 } from './endpoints';
+import { auditPayload } from './endpoints/logging';
 import { dopplerEndpointMeta } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -801,6 +802,97 @@ describe('every operation calls the route and method it claims to', () => {
 	}
 });
 
+describe('changeRequests.list query construction', () => {
+	function query(): URLSearchParams {
+		return new URL(captured?.url ?? 'https://x/').searchParams;
+	}
+
+	it('sends a joined status filter for a non-empty array', async () => {
+		const { ctx } = makeCtx();
+		mockFetch([]);
+		await ChangeRequests.list(ctx, { status: ['open', 'closed'] });
+		expect(query().get('status')).toBe('open,closed');
+	});
+
+	/**
+	 * `[].join(',')` is `''`, not `undefined` - `compact` only drops
+	 * `undefined`, so an empty array would otherwise still reach the request
+	 * as a literal `?status=`, filtering for an empty string rather than not
+	 * filtering at all.
+	 */
+	it('omits the status filter entirely for an empty array, rather than sending a literal empty value', async () => {
+		const { ctx } = makeCtx();
+		mockFetch([]);
+		await ChangeRequests.list(ctx, { status: [] });
+		expect(query().has('status')).toBe(false);
+	});
+
+	it('omits the status filter when not supplied at all', async () => {
+		const { ctx } = makeCtx();
+		mockFetch([]);
+		await ChangeRequests.list(ctx, {});
+		expect(query().has('status')).toBe(false);
+	});
+});
+
+describe('path-segment encoding', () => {
+	/**
+	 * Every route below builds its path with a plain template literal, not
+	 * `corsair/http`'s own `{param}` substitution (which encodes for you) -
+	 * so an unencoded `/` in a caller-supplied slug would otherwise change
+	 * which path segment (or how many) the request addresses. A slash is
+	 * used here rather than a more exotic character because it is the one
+	 * most likely to appear in a real identifier and the one most likely to
+	 * silently misroute a request instead of just failing loudly.
+	 */
+	it('encodes a slash in a role identifier', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ role: { name: 'weird' } });
+		await WorkplaceRoles.get(ctx, { role: 'weird/role' });
+		expect(calledPath()).toBe('workplace/roles/role/weird%2Frole');
+	});
+
+	it('encodes a slash in a workplace user slug', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ workplace_user: { id: 'u-1' } });
+		await WorkplaceUsers.get(ctx, { slug: 'weird/slug' });
+		expect(calledPath()).toBe('workplace/users/weird%2Fslug');
+	});
+
+	it('encodes a slash in a webhook slug', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ webhook: { id: 'wh-1' } });
+		await Webhooks.get(ctx, { project: 'demo', slug: 'weird/slug' });
+		expect(calledPath()).toBe('webhooks/webhook/weird%2Fslug');
+	});
+
+	it('encodes a slash in a group member type and slug', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ success: true });
+		await Groups.deleteMember(ctx, {
+			group: 'grp/1',
+			type: 'workplace_user',
+			memberSlug: 'weird/member',
+		});
+		expect(calledPath()).toBe(
+			'workplace/groups/group/grp%2F1/members/workplace_user/weird%2Fmember',
+		);
+	});
+
+	it('encodes a slash in a project-member type and slug', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ member: { slug: 'u-1' } });
+		await ProjectMembers.get(ctx, {
+			project: 'demo',
+			type: 'workplace_user',
+			slug: 'weird/slug',
+		});
+		expect(calledPath()).toBe(
+			'projects/project/members/member/workplace_user/weird%2Fslug',
+		);
+	});
+});
+
 describe('coverage sweep', () => {
 	it('exercises precisely the operations that are registered', () => {
 		const exercised = [...new Set(cases.map((c) => c.meta))].sort();
@@ -848,14 +940,95 @@ describe('mirroring', () => {
 		expect(db.configs.deleteByEntityId).toHaveBeenCalledWith('demo:dev');
 	});
 
-	it('caches an environment', async () => {
+	it('renaming a config to a new name evicts the old composite key, not just caching the new one', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ config: { name: 'dev_new', project: 'demo' } });
+		await Configs.update(ctx, {
+			project: 'demo',
+			config: 'dev_old',
+			name: 'dev_new',
+		});
+
+		expect(db.configs.upsertByEntityId).toHaveBeenCalledWith(
+			'demo:dev_new',
+			expect.objectContaining({ name: 'dev_new' }),
+		);
+		expect(db.configs.deleteByEntityId).toHaveBeenCalledWith('demo:dev_old');
+	});
+
+	it('renaming a config to the same name does not evict anything', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ config: { name: 'dev', project: 'demo' } });
+		await Configs.update(ctx, { project: 'demo', config: 'dev', name: 'dev' });
+
+		expect(db.configs.deleteByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('caches an environment keyed by project:id, not id alone - environment slugs (dev/stg/prd) repeat across projects', async () => {
 		const { ctx, db } = makeCtx();
 		mockFetch({ environment: { id: 'dev', project: 'demo' } });
 		await Environments.get(ctx, { project: 'demo', environment: 'dev' });
 		expect(db.environments.upsertByEntityId).toHaveBeenCalledWith(
-			'dev',
+			'demo:dev',
 			expect.objectContaining({ id: 'dev' }),
 		);
+	});
+
+	it("two projects' same-slug environments do not collide in the mirror", async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ environment: { id: 'dev', project: 'project-a' } });
+		await Environments.get(ctx, { project: 'project-a', environment: 'dev' });
+		mockFetch({ environment: { id: 'dev', project: 'project-b' } });
+		await Environments.get(ctx, { project: 'project-b', environment: 'dev' });
+
+		expect(db.environments.upsertByEntityId).toHaveBeenCalledWith(
+			'project-a:dev',
+			expect.objectContaining({ project: 'project-a' }),
+		);
+		expect(db.environments.upsertByEntityId).toHaveBeenCalledWith(
+			'project-b:dev',
+			expect.objectContaining({ project: 'project-b' }),
+		);
+		// Each call used a distinct key - neither overwrote the other.
+		const calledKeys = db.environments.upsertByEntityId.mock.calls.map(
+			(c: unknown[]) => c[0],
+		);
+		expect(new Set(calledKeys).size).toBe(calledKeys.length);
+	});
+
+	it('evicts an environment by the same project:id composite key used to cache it', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ success: true });
+		await Environments.remove(ctx, { project: 'demo', environment: 'dev' });
+		expect(db.environments.deleteByEntityId).toHaveBeenCalledWith('demo:dev');
+	});
+
+	it('renaming an environment to a new slug evicts the old composite key, not just caching the new one', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ environment: { id: 'develop', project: 'demo' } });
+		await Environments.rename(ctx, {
+			project: 'demo',
+			environment: 'dev',
+			slug: 'develop',
+		});
+
+		expect(db.environments.upsertByEntityId).toHaveBeenCalledWith(
+			'demo:develop',
+			expect.objectContaining({ id: 'develop' }),
+		);
+		expect(db.environments.deleteByEntityId).toHaveBeenCalledWith('demo:dev');
+	});
+
+	it('renaming an environment without changing its slug does not evict anything', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ environment: { id: 'dev', project: 'demo' } });
+		await Environments.rename(ctx, {
+			project: 'demo',
+			environment: 'dev',
+			name: 'Development 2',
+		});
+
+		expect(db.environments.deleteByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('caches a webhook, stripping authentication before it reaches the store', async () => {
@@ -882,6 +1055,13 @@ describe('mirroring', () => {
 		expect(result.authentication).toEqual({ type: 'Bearer' });
 	});
 
+	it('evicts a webhook from the mirror on delete, not just on the remote side', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ success: true });
+		await Webhooks.remove(ctx, { project: 'demo', slug: 'wh-1' });
+		expect(db.webhooks.deleteByEntityId).toHaveBeenCalledWith('wh-1');
+	});
+
 	it('caches the workplace singleton', async () => {
 		const { ctx, db } = makeCtx();
 		mockFetch({ workplace: { id: 'w-1' } });
@@ -894,7 +1074,7 @@ describe('mirroring', () => {
 });
 
 describe('privacy: never logged', () => {
-	/** Deep-searches an event payload for a needle value, case-insensitively for strings. */
+	/** Deep-searches a logged event payload's JSON serialization for a needle value, case-sensitively. */
 	function payloadContains(needle: string): boolean {
 		return mockLogEvent.mock.calls.some(([, , payload]) => {
 			const serialised = JSON.stringify(payload ?? {});
@@ -989,5 +1169,36 @@ describe('privacy: never logged', () => {
 		});
 		await ConfigLogs.get(ctx, { project: 'demo', config: 'dev', log: 'cl-1' });
 		expect(payloadContains('sk_test_should_not_be_logged')).toBe(false);
+	});
+
+	describe('auditPayload deny-list - a second guarantee independent of call-site care', () => {
+		it('drops a denied key even if a call site mistakenly lists it as an identifier', () => {
+			const input = { project: 'demo', key: 'dp.st.should_not_be_logged' };
+			const payload = auditPayload(input, ['project', 'key']);
+			expect(payload.key).toBeUndefined();
+			expect(payload.project).toBe('demo');
+		});
+
+		it('drops a denied key from the "fields" name list too, not just from its value', () => {
+			const input = { project: 'demo', secrets: { STRIPE: 'x' } };
+			const payload = auditPayload(input, ['project']);
+			expect(payload.fields).toEqual(['project']);
+		});
+
+		it('is case-insensitive, so a differently-cased denied key is still caught', () => {
+			const input = { project: 'demo', Password: 'should-not-be-logged' };
+			const payload = auditPayload(
+				input as Record<string, unknown>,
+				['project', 'Password'] as never,
+			);
+			expect(payload.Password).toBeUndefined();
+		});
+
+		it('still passes through an allowed identifier normally, so the deny-list is not vacuous', () => {
+			const input = { project: 'demo', config: 'dev' };
+			const payload = auditPayload(input, ['project', 'config']);
+			expect(payload.project).toBe('demo');
+			expect(payload.config).toBe('dev');
+		});
 	});
 });

@@ -24,7 +24,11 @@ export const list: DopplerEndpoints['changeRequestsList'] = async (
 		query: compact({
 			page: input.page,
 			per_page: input.perPage,
-			status: input.status?.join(','),
+			// `[].join(',')` is `''`, not `undefined` - `compact` would keep an
+			// empty string and send a literal `?status=`, which is not the same
+			// request as omitting the filter. Only join when there is something
+			// to filter on.
+			status: input.status?.length ? input.status.join(',') : undefined,
 			title: input.title,
 		}),
 	});

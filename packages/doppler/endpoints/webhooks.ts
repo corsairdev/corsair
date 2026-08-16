@@ -2,26 +2,31 @@ import { logEventFromContext } from 'corsair/core';
 import type { DopplerEndpoints } from '../index';
 import { DopplerWebhookEntity } from '../schema/database';
 import { auditPayload } from './logging';
-import { cacheEntities, cacheEntity } from './persist';
-import { compact, dopplerCall } from './shared';
+import { cacheEntities, cacheEntity, evictEntity } from './persist';
+import { compact, dopplerCall, seg } from './shared';
 import type { DopplerEndpointOutputs } from './types';
 
 const LABEL = 'webhook';
 
 /**
- * A webhook's `authentication` is declared `unknown` on the entity (its
- * shape is caller-defined: Bearer/Basic/None) because it may carry a token
- * or password the caller just set. Confirmed live: the API only ever echoes
- * `{type}` back (e.g. `{"type":"Bearer"}`), never the token/password itself
- * - but stripping it before caching costs nothing and keeps the mirror safe
- * even if that ever changes. The full record (including `authentication`)
- * still reaches the caller, who already knows what they set; only the local
- * mirror is stripped. The webhook signing `secret` and `authentication`'s
- * `token`/`password` are also never passed to `auditPayload` below - every
- * call here lists only identifier fields (`project`, `slug`, `url`, `name`).
+ * `authentication` and `secret` are both declared `unknown`/absent on the
+ * entity because they may carry (or, for `secret`, request-echo) a value the
+ * caller just set as a signing credential. Confirmed live: the API only
+ * ever echoes `authentication` back as `{type}` (e.g. `{"type":"Bearer"}`)
+ * and never echoes `secret` at all (only the boolean `hasSecret`) - but
+ * stripping both before caching costs nothing and keeps the mirror safe even
+ * if that ever changes. `record` here is the raw, not-yet-schema-parsed API
+ * response, so an undeclared field the entity's `.loose()` would otherwise
+ * pass straight through is still caught. The full record (including
+ * `authentication`) still reaches the caller, who already knows what they
+ * set; only the local mirror is stripped. Neither field is passed to
+ * `auditPayload` below either - every call here lists only identifier
+ * fields (`project`, `slug`, `url`, `name`).
  */
-function forCache<T extends { authentication?: unknown }>(record: T) {
-	const { authentication: _authentication, ...safe } = record;
+function forCache<T extends { authentication?: unknown; secret?: unknown }>(
+	record: T,
+) {
+	const { authentication: _authentication, secret: _secret, ...safe } = record;
 	return safe;
 }
 
@@ -50,7 +55,7 @@ export const list: DopplerEndpoints['webhooksList'] = async (ctx, input) => {
 export const get: DopplerEndpoints['webhooksGet'] = async (ctx, input) => {
 	const result = await dopplerCall<{
 		webhook: DopplerEndpointOutputs['webhooksGet'];
-	}>(ctx, `webhooks/webhook/${input.slug}`, {
+	}>(ctx, `webhooks/webhook/${seg(input.slug)}`, {
 		query: compact({ project: input.project }),
 	});
 
@@ -108,7 +113,7 @@ export const update: DopplerEndpoints['webhooksUpdate'] = async (
 ) => {
 	const result = await dopplerCall<{
 		webhook: DopplerEndpointOutputs['webhooksUpdate'];
-	}>(ctx, `webhooks/webhook/${input.slug}`, {
+	}>(ctx, `webhooks/webhook/${seg(input.slug)}`, {
 		method: 'PATCH',
 		query: compact({ project: input.project }),
 		body: compact({
@@ -144,10 +149,11 @@ export const remove: DopplerEndpoints['webhooksDelete'] = async (
 ) => {
 	const result = await dopplerCall<DopplerEndpointOutputs['webhooksDelete']>(
 		ctx,
-		`webhooks/webhook/${input.slug}`,
+		`webhooks/webhook/${seg(input.slug)}`,
 		{ method: 'DELETE', query: compact({ project: input.project }) },
 	);
 
+	await evictEntity(ctx.db.webhooks, input.slug, LABEL);
 	await logEventFromContext(
 		ctx,
 		'doppler.webhooks.delete',
@@ -164,7 +170,7 @@ export const enable: DopplerEndpoints['webhooksEnable'] = async (
 ) => {
 	const result = await dopplerCall<{
 		webhook: DopplerEndpointOutputs['webhooksEnable'];
-	}>(ctx, `webhooks/webhook/${input.slug}/enable`, {
+	}>(ctx, `webhooks/webhook/${seg(input.slug)}/enable`, {
 		method: 'POST',
 		query: compact({ project: input.project }),
 	});
@@ -191,7 +197,7 @@ export const disable: DopplerEndpoints['webhooksDisable'] = async (
 ) => {
 	const result = await dopplerCall<{
 		webhook: DopplerEndpointOutputs['webhooksDisable'];
-	}>(ctx, `webhooks/webhook/${input.slug}/disable`, {
+	}>(ctx, `webhooks/webhook/${seg(input.slug)}/disable`, {
 		method: 'POST',
 		query: compact({ project: input.project }),
 	});
