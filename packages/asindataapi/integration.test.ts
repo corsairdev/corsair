@@ -8,7 +8,7 @@
  * the probe. Does not start collections (that spends product credits) and does
  * not create destinations (that needs real cloud credentials).
  */
-import { makeAsinDataApiRequest } from './client';
+import { AsinDataApiAPIError, makeAsinDataApiRequest } from './client';
 import {
 	AsinDataApiEndpointOutputSchemas,
 	DestinationsListResponseSchema,
@@ -47,8 +47,14 @@ describeLive('ASIN Data API live', () => {
 					method: 'DELETE',
 				},
 			);
-		} catch {
-			// probe already gone
+		} catch (error) {
+			if (
+				error instanceof AsinDataApiAPIError &&
+				(error.status === 404 || /not found/i.test(error.message))
+			) {
+				return;
+			}
+			throw error;
 		}
 	});
 
@@ -79,12 +85,16 @@ describeLive('ASIN Data API live', () => {
 				body: { name: PROBE, schedule_type: 'manual', enabled: true },
 			},
 		);
+		const createdId = (created as { collection?: { id?: unknown } }).collection
+			?.id;
+		if (typeof createdId === 'string' && createdId) {
+			collectionId = createdId;
+		}
 		const createdParsed =
 			AsinDataApiEndpointOutputSchemas.collectionsCreate.safeParse(created);
 		if (!createdParsed.success)
 			console.error(describeIssues(createdParsed.error));
 		expect(createdParsed.success).toBe(true);
-		collectionId = createdParsed.data?.collection.id ?? '';
 		expect(collectionId).toBeTruthy();
 
 		const raw = await makeAsinDataApiRequest<unknown>(

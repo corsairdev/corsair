@@ -139,14 +139,27 @@ const ProductSchema = z
 
 export type AsinDataApiProduct = z.infer<typeof ProductSchema>;
 
-export const ProductResponseSchema = z
-	.object({
-		request_info: RequestInfoSchema,
-		request_parameters: RequestParametersSchema.optional(),
-		request_metadata: RequestMetadataSchema.optional(),
-		product: ProductSchema,
-	})
-	.loose();
+const ProductResponseFields = {
+	request_parameters: RequestParametersSchema.optional(),
+	request_metadata: RequestMetadataSchema.optional(),
+};
+
+export const ProductResponseSchema = z.union([
+	z
+		.object({
+			request_info: RequestInfoSchema.extend({ success: z.literal(true) }),
+			...ProductResponseFields,
+			product: ProductSchema,
+		})
+		.loose(),
+	z
+		.object({
+			request_info: RequestInfoSchema.extend({ success: z.literal(false) }),
+			...ProductResponseFields,
+			product: ProductSchema.extend({ asin: z.string().optional() }).optional(),
+		})
+		.loose(),
+]);
 
 export type ProductResponse = z.infer<typeof ProductResponseSchema>;
 

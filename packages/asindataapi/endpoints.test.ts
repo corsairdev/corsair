@@ -216,6 +216,82 @@ describe('ASIN Data API endpoints', () => {
 		expect(db.destinations.deleteByEntityId).toHaveBeenCalledWith('ABCDEFG');
 	});
 
+	it('START_COLLECTION refreshes the collection cache after start', async () => {
+		const { ctx, db } = makeCtx();
+		let calls = 0;
+		global.fetch = (async (url: unknown) => {
+			calls += 1;
+			const path = new URL(String(url)).pathname;
+			const payload = path.endsWith('/start')
+				? { request_info: { success: true } }
+				: {
+						request_info: { success: true },
+						collection: {
+							id: 'ABC123',
+							name: 'Probe',
+							status: 'queued',
+							schedule_type: 'manual',
+						},
+					};
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url: String(url),
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => payload,
+				text: async () => JSON.stringify(payload),
+			};
+		}) as unknown as typeof global.fetch;
+
+		await Collections.start(ctx, { collection_id: 'ABC123' });
+
+		expect(calls).toBe(2);
+		expect(db.collections.upsertByEntityId).toHaveBeenCalledWith(
+			'ABC123',
+			expect.objectContaining({ status: 'queued' }),
+		);
+	});
+
+	it('ADD_REQUESTS upserts collection when the response includes one', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			collection: {
+				id: 'ABC123',
+				name: 'Probe',
+				request_total_count: 1,
+			},
+		});
+
+		await Requests.add(ctx, {
+			collection_id: 'ABC123',
+			requests: [{ asin: 'B00I8RKMSM', amazon_domain: 'amazon.com' }],
+		});
+
+		expect(db.collections.upsertByEntityId).toHaveBeenCalledWith(
+			'ABC123',
+			expect.objectContaining({ request_total_count: 1 }),
+		);
+	});
+
+	it('UPDATE_REQUEST evicts the cache when the response omits request.id', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			request: { asin: 'B00I8RKMSM' },
+		});
+
+		await Requests.update(ctx, {
+			collection_id: 'ABC123',
+			request_id: 'REQ1',
+			asin: 'B00I8RKMSM',
+		});
+
+		expect(db.requests.upsertByEntityId).not.toHaveBeenCalled();
+		expect(db.requests.deleteByEntityId).toHaveBeenCalledWith('REQ1');
+	});
+
 	it('encodes collection ids in the path', async () => {
 		const { ctx } = makeCtx();
 		mockFetch({

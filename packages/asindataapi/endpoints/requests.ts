@@ -48,6 +48,14 @@ export const addRequests: AsinDataApiEndpoints['requestsAdd'] = async (
 
 	const response = AsinDataApiEndpointOutputSchemas.requestsAdd.parse(raw);
 
+	if (response.collection) {
+		await upsertEntity(
+			ctx.db.collections,
+			response.collection.id,
+			response.collection,
+		);
+	}
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.requests.add',
@@ -78,6 +86,8 @@ export const updateRequest: AsinDataApiEndpoints['requestsUpdate'] = async (
 			...response.request,
 			id: String(response.request.id),
 		});
+	} else {
+		await evictEntity(ctx.db.requests, request_id);
 	}
 
 	await logEventFromContext(

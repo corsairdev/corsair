@@ -1,4 +1,7 @@
-import { AsinDataApiEndpointInputSchemas } from './endpoints/types';
+import {
+	AsinDataApiEndpointInputSchemas,
+	ProductResponseSchema,
+} from './endpoints/types';
 import { AsinDataApiSchema } from './schema';
 import {
 	AsinDataApiCollection,
@@ -253,6 +256,31 @@ describe('AsinDataApi agent-doc inputs', () => {
 		).toBe(false);
 	});
 
+	it('rejects missing or out-of-range inputs', () => {
+		expect(
+			AsinDataApiEndpointInputSchemas.collectionsCreate.safeParse({}).success,
+		).toBe(false);
+		expect(
+			AsinDataApiEndpointInputSchemas.collectionsList.safeParse({
+				page_size: 1001,
+			}).success,
+		).toBe(false);
+		expect(
+			AsinDataApiEndpointInputSchemas.requestsAdd.safeParse({
+				collection_id: 'ABC123',
+				requests: [],
+			}).success,
+		).toBe(false);
+		expect(
+			AsinDataApiEndpointInputSchemas.requestsAdd.safeParse({
+				collection_id: 'ABC123',
+				requests: Array.from({ length: 1001 }, () => ({
+					asin: 'B00I8RKMSM',
+				})),
+			}).success,
+		).toBe(false);
+	});
+
 	it('requires official destination types', () => {
 		expect(
 			AsinDataApiEndpointInputSchemas.destinationsCreate.safeParse({
@@ -271,6 +299,28 @@ describe('AsinDataApi agent-doc inputs', () => {
 				enabled: true,
 			}).success,
 		).toBe(false);
+	});
+});
+
+describe('AsinDataApi product response', () => {
+	it('requires product.asin on success and allows a failed response without product', () => {
+		expect(
+			ProductResponseSchema.safeParse({
+				request_info: { success: true },
+				product: { asin: 'B00I8RKMSM', title: 'Probe' },
+			}).success,
+		).toBe(true);
+		expect(
+			ProductResponseSchema.safeParse({
+				request_info: { success: true },
+				product: { title: 'missing asin' },
+			}).success,
+		).toBe(false);
+		expect(
+			ProductResponseSchema.safeParse({
+				request_info: { success: false, message: 'Invalid ASIN' },
+			}).success,
+		).toBe(true);
 	});
 });
 

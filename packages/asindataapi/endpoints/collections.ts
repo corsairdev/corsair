@@ -147,6 +147,19 @@ export const startCollection: AsinDataApiEndpoints['collectionsStart'] = async (
 
 	const response = AsinDataApiEndpointOutputSchemas.collectionsStart.parse(raw);
 
+	const latest = AsinDataApiEndpointOutputSchemas.collectionsGet.parse(
+		await makeAsinDataApiRequest<unknown>(
+			`collections/${encodeURIComponent(input.collection_id)}`,
+			ctx.key,
+			{ method: 'GET' },
+		),
+	);
+	await upsertEntity(
+		ctx.db.collections,
+		latest.collection.id,
+		latest.collection,
+	);
+
 	await logEventFromContext(
 		ctx,
 		'asindataapi.collections.start',
