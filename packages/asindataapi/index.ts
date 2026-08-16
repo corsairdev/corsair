@@ -494,13 +494,12 @@ export function asindataapi<const T extends AsinDataApiPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AsinDataApiKeyBuilderContext, source) => {
-			if (options.key) {
-				return options.key;
-			}
-
-			// Official webhooks have no signature header.
 			if (source === 'webhook') {
 				return options.webhookSecret ?? '';
+			}
+
+			if (options.key) {
+				return options.key;
 			}
 
 			if (ctx.authType === 'api_key') {

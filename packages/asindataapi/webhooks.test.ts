@@ -76,6 +76,19 @@ describe('ASIN Data API webhooks', () => {
 		).resolves.toBe(SECRET);
 	});
 
+	it('keyBuilder does not let options.key override the webhook secret', async () => {
+		const plugin = asindataapi({
+			key: 'endpoint-api-key',
+			webhookSecret: SECRET,
+		});
+		await expect(
+			plugin.keyBuilder?.({ authType: 'api_key' } as never, 'webhook'),
+		).resolves.toBe(SECRET);
+		await expect(
+			plugin.keyBuilder?.({ authType: 'api_key' } as never, 'endpoint'),
+		).resolves.toBe('endpoint-api-key');
+	});
+
 	it('handler rejects forged completion events without a secret', async () => {
 		const result = await collectionCompleted.handler(
 			{ key: SECRET, db: {} } as never,
