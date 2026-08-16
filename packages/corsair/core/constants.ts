@@ -47,6 +47,7 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'canva',
+	'circleci',
 	'cloudflare',
 	'cloudinary',
 	'confluence',
@@ -177,6 +178,7 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
+	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
@@ -314,6 +316,7 @@ export type AllProviders =
 	| 'calendly'
 	| 'canvas'
 	| 'canva'
+	| 'circleci'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
