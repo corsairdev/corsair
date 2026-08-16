@@ -1,8 +1,14 @@
 import { logEventFromContext } from 'corsair/core';
 import { ASINDATAAPI_API_BASE } from './client';
+import { Categories } from './endpoints/categories';
 import { Collections } from './endpoints/collections';
 import { Destinations } from './endpoints/destinations';
+import { Identifiers } from './endpoints/identifiers';
+import { Offers } from './endpoints/offers';
+import { Products } from './endpoints/products';
 import { Requests } from './endpoints/requests';
+import { ResultSets } from './endpoints/result-sets';
+import { Search } from './endpoints/search';
 import { asinDataApiEndpointMeta } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -77,6 +83,246 @@ function calledUrl() {
 describe('ASIN Data API endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
+	});
+
+	it('PRODUCTS_GET hits /request?type=product and parses the product', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			product: { asin: 'B00I8RKMSM', title: 'Probe' },
+		});
+
+		const result = await Products.get(ctx, {
+			asin: 'B00I8RKMSM',
+			amazon_domain: 'amazon.com',
+		});
+
+		expect(calledUrl().pathname).toBe('/request');
+		expect(calledUrl().searchParams.get('type')).toBe('product');
+		expect(calledUrl().searchParams.get('asin')).toBe('B00I8RKMSM');
+		expect(result.request_info.success).toBe(true);
+		expect(result).toEqual(
+			expect.objectContaining({
+				product: expect.objectContaining({ asin: 'B00I8RKMSM' }),
+			}),
+		);
+	});
+
+	it('SEARCH_GET hits /request?type=search', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			search_results: [{ asin: 'B00I8RKMSM', title: 'Probe' }],
+		});
+
+		const result = await Search.get(ctx, {
+			search_term: 'usb hub',
+			amazon_domain: 'amazon.com',
+		});
+
+		expect(calledUrl().searchParams.get('type')).toBe('search');
+		expect(calledUrl().searchParams.get('search_term')).toBe('usb hub');
+		expect(result.search_results?.[0]?.asin).toBe('B00I8RKMSM');
+	});
+
+	it('OFFERS_GET hits /request?type=offers', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			offers: [{ offer_id: 'OFF1', is_prime: true }],
+		});
+
+		const result = await Offers.get(ctx, {
+			asin: 'B00I8RKMSM',
+			amazon_domain: 'amazon.com',
+		});
+
+		expect(calledUrl().searchParams.get('type')).toBe('offers');
+		expect(result.offers?.[0]?.offer_id).toBe('OFF1');
+	});
+
+	it('CATEGORIES_GET hits /request?type=category', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			category_results: [{ asin: 'B00I8RKMSM', title: 'Probe' }],
+		});
+
+		const result = await Categories.get(ctx, {
+			category_id: '123',
+			amazon_domain: 'amazon.com',
+		});
+
+		expect(calledUrl().searchParams.get('type')).toBe('category');
+		expect(result.category_results?.[0]?.asin).toBe('B00I8RKMSM');
+	});
+
+	it('IDENTIFIERS_RESOLVE hits /request?type=product with gtin', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			product: { asin: 'B00I8RKMSM' },
+		});
+
+		const result = await Identifiers.resolve(ctx, { gtin: '0885909463972' });
+
+		expect(calledUrl().searchParams.get('type')).toBe('product');
+		expect(calledUrl().searchParams.get('gtin')).toBe('0885909463972');
+		expect(result).toEqual(
+			expect.objectContaining({
+				product: expect.objectContaining({ asin: 'B00I8RKMSM' }),
+			}),
+		);
+	});
+
+	it('CREATE_COLLECTION POSTs /collections and upserts', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			collection: { id: 'ABC123', name: 'Probe', schedule_type: 'manual' },
+		});
+
+		const result = await Collections.create(ctx, {
+			name: 'Probe',
+			schedule_type: 'manual',
+		});
+
+		expect(captured?.method).toBe('POST');
+		expect(calledUrl().pathname).toBe('/collections');
+		expect(result.collection.id).toBe('ABC123');
+		expect(db.collections.upsertByEntityId).toHaveBeenCalledWith(
+			'ABC123',
+			expect.objectContaining({ name: 'Probe' }),
+		);
+	});
+
+	it('LIST_COLLECTIONS GETs /collections and upserts each', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			collections: [{ id: 'ABC123', name: 'Probe' }],
+		});
+
+		await Collections.list(ctx, { page: 1 });
+
+		expect(calledUrl().pathname).toBe('/collections');
+		expect(calledUrl().searchParams.get('page')).toBe('1');
+		expect(db.collections.upsertByEntityId).toHaveBeenCalledWith(
+			'ABC123',
+			expect.objectContaining({ name: 'Probe' }),
+		);
+	});
+
+	it('UPDATE_COLLECTION PUTs /collections/{id} without the id in the body', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			collection: { id: 'ABC123', name: 'Renamed' },
+		});
+
+		await Collections.update(ctx, {
+			collection_id: 'ABC123',
+			name: 'Renamed',
+		});
+
+		expect(captured?.method).toBe('PUT');
+		expect(calledUrl().pathname).toBe('/collections/ABC123');
+		expect(JSON.parse(captured?.body ?? 'null')).toEqual({ name: 'Renamed' });
+		expect(db.collections.upsertByEntityId).toHaveBeenCalledWith(
+			'ABC123',
+			expect.objectContaining({ name: 'Renamed' }),
+		);
+	});
+
+	it('DELETE_COLLECTION DELETEs /collections/{id} and evicts', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ request_info: { success: true } });
+
+		await Collections.delete(ctx, { collection_id: 'ABC123' });
+
+		expect(captured?.method).toBe('DELETE');
+		expect(calledUrl().pathname).toBe('/collections/ABC123');
+		expect(db.collections.deleteByEntityId).toHaveBeenCalledWith('ABC123');
+	});
+
+	it('DELETE_REQUEST DELETEs /collections/{id}/{requestId} and evicts', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ request_info: { success: true } });
+
+		await Requests.delete(ctx, {
+			collection_id: 'ABC123',
+			request_id: 'REQ1',
+		});
+
+		expect(captured?.method).toBe('DELETE');
+		expect(calledUrl().pathname).toBe('/collections/ABC123/REQ1');
+		expect(db.requests.deleteByEntityId).toHaveBeenCalledWith('REQ1');
+	});
+
+	it('LIST_RESULT_SETS GETs /collections/{id}/results and upserts', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			results: [{ id: 4, requests_completed: 1 }],
+		});
+
+		await ResultSets.list(ctx, { collection_id: 'ABC123' });
+
+		expect(calledUrl().pathname).toBe('/collections/ABC123/results');
+		expect(db.resultSets.upsertByEntityId).toHaveBeenCalledWith(
+			'4',
+			expect.objectContaining({ id: 4, collection_id: 'ABC123' }),
+		);
+	});
+
+	it('GET_RESULT_SET GETs /collections/{id}/results/{resultSetId}', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			result: { id: 4, requests_completed: 1 },
+		});
+
+		await ResultSets.get(ctx, {
+			collection_id: 'ABC123',
+			result_set_id: 4,
+		});
+
+		expect(calledUrl().pathname).toBe('/collections/ABC123/results/4');
+		expect(db.resultSets.upsertByEntityId).toHaveBeenCalledWith(
+			'4',
+			expect.objectContaining({ id: 4 }),
+		);
+	});
+
+	it('CREATE_DESTINATION POSTs /destinations and upserts', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({
+			request_info: { success: true },
+			destination: { id: 'ABCDEFG', name: 'S3', type: 's3', enabled: true },
+		});
+
+		await Destinations.create(ctx, {
+			name: 'S3',
+			type: 's3',
+			enabled: true,
+			s3_bucket_name: 'bucket',
+		});
+
+		expect(captured?.method).toBe('POST');
+		expect(calledUrl().pathname).toBe('/destinations');
+		expect(db.destinations.upsertByEntityId).toHaveBeenCalledWith(
+			'ABCDEFG',
+			expect.objectContaining({ type: 's3' }),
+		);
+	});
+
+	it('rejects a successful product payload that omits product', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ request_info: { success: true } });
+
+		await expect(
+			Products.get(ctx, { asin: 'B00I8RKMSM', amazon_domain: 'amazon.com' }),
+		).rejects.toThrow();
 	});
 
 	it('GET_COLLECTION hits /collections/{id} and mirrors official keys', async () => {

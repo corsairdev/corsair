@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -102,18 +103,59 @@ export function createAsinDataApiMatch(
 	};
 }
 
-// ── Signature Verification ───────────────────────────────────────────────────
-// ASIN Data API webhooks do not document a signature verification header.
-// Collection completion notifications are delivered as plain HTTP POST to
-// the configured `notification_webhook` URL. The only way to verify them
-// is by checking the payload content. If the provider adds signature
-// support in the future, update this function and `pluginWebhookMatcher`.
+// ── Shared-secret verification ───────────────────────────────────────────────
+// Official collection webhooks have no signature header. Authenticate by
+// putting the same secret on the plugin (`webhookSecret`) and on the
+// `notification_webhook` URL as `?token=` / `?webhook_secret=`, or send it
+// as `X-Webhook-Secret` / `Authorization: Bearer`.
+
+function firstString(value: string | string[] | undefined): string | undefined {
+	if (Array.isArray(value)) return value[0];
+	return value;
+}
+
+function presentedWebhookSecret(
+	request: WebhookRequest<unknown>,
+): string | undefined {
+	const query = request.query ?? {};
+	const fromQuery =
+		firstString(query.token) ?? firstString(query.webhook_secret);
+	if (fromQuery) return fromQuery;
+
+	const fromHeader = firstString(request.headers['x-webhook-secret']);
+	if (fromHeader) return fromHeader;
+
+	const authorization =
+		firstString(request.headers.authorization) ??
+		firstString(request.headers.Authorization);
+	if (authorization?.toLowerCase().startsWith('bearer ')) {
+		return authorization.slice(7).trim();
+	}
+	return undefined;
+}
+
+function secretsEqual(left: string, right: string): boolean {
+	const a = Buffer.from(left);
+	const b = Buffer.from(right);
+	return a.length === b.length && timingSafeEqual(a, b);
+}
 
 export function verifyAsinDataApiWebhookSignature(
-	_request: WebhookRequest<unknown>,
-	_secret: string | undefined,
+	request: WebhookRequest<unknown>,
+	secret: string | undefined,
 ): { valid: boolean; error?: string } {
-	// No documented signature header — always return valid.
-	// The `pluginWebhookMatcher` will filter non-matching payloads.
+	if (!secret) {
+		return { valid: false, error: 'Webhook secret is not configured' };
+	}
+
+	const presented = presentedWebhookSecret(request);
+	if (!presented) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	if (!secretsEqual(presented, secret)) {
+		return { valid: false, error: 'Invalid webhook secret' };
+	}
+
 	return { valid: true };
 }

@@ -58,7 +58,7 @@ export type AsinDataApiPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	/** Optional: pass the API key directly (bypasses key manager) */
 	key?: string;
-	/** Optional: pass a webhook secret for signature verification (future use) */
+	/** Shared secret required on collection-completion webhooks. */
 	webhookSecret?: string;
 	/** Optional: lifecycle hooks for endpoints */
 	hooks?: InternalAsinDataApiPlugin['hooks'];
