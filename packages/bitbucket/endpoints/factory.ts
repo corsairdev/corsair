@@ -42,10 +42,31 @@ function parseWithSchema<T>(
 		issues,
 	);
 }
+// Bitbucket templates only ever span several URL segments for these parameters:
+// `{path}` is a repository file path and `{commit}`/`{revision}`/`{revspec}`/
+// `{spec}` are refs, which may be branch names such as `feature/login`. Every
+// other parameter is a single identifier and stays fully percent-encoded.
+const multiSegmentPathParams = new Set([
+	'path',
+	'commit',
+	'revision',
+	'revspec',
+	'spec',
+]);
 function pathValue(value: unknown, name: string): string {
 	if (typeof value !== 'string' && typeof value !== 'number')
 		throw new Error('[BITBUCKET] Missing required path parameter: ' + name);
-	return encodeURIComponent(String(value)).replaceAll('%2F', '/');
+	const raw = String(value);
+	if (raw.split(/[/\\]/).some((segment) => segment === '.' || segment === '..'))
+		throw new Error(
+			'[BITBUCKET] Path parameter ' +
+				name +
+				' must not contain "." or ".." segments',
+		);
+	const encoded = encodeURIComponent(raw);
+	return multiSegmentPathParams.has(name)
+		? encoded.replaceAll('%2F', '/')
+		: encoded;
 }
 export function buildBitbucketWireRequest(
 	definition: BitbucketOperation,
@@ -99,23 +120,33 @@ export function createBitbucketEndpoint<K extends BitbucketEndpointKey>(
 			definition.path,
 		);
 		const wire = buildBitbucketWireRequest(definition, input);
-		const raw = await makeAuthenticatedBitbucketRequest<unknown>(
-			wire.url,
-			ctx as unknown as BitbucketAuthContext,
-			wire,
-		);
-		const response = parseWithSchema<BitbucketEndpointOutputs[K]>(
-			BitbucketEndpointOutputSchemas[key],
-			raw,
-			'output',
-			definition.path,
-		);
-		await logEventFromContext(
-			ctx,
-			'bitbucket.' + definition.path,
-			bitbucketAuditPayload(input),
-			'completed',
-		);
-		return response;
+		const auditPayload = bitbucketAuditPayload(input);
+		const eventType = 'bitbucket.' + definition.path;
+		try {
+			const raw = await makeAuthenticatedBitbucketRequest<unknown>(
+				wire.url,
+				ctx as unknown as BitbucketAuthContext,
+				wire,
+			);
+			const response = parseWithSchema<BitbucketEndpointOutputs[K]>(
+				BitbucketEndpointOutputSchemas[key],
+				raw,
+				'output',
+				definition.path,
+			);
+			await logEventFromContext(ctx, eventType, auditPayload, 'completed');
+			return response;
+		} catch (error) {
+			await logEventFromContext(
+				ctx,
+				eventType,
+				{
+					...auditPayload,
+					error: error instanceof Error ? error.message : String(error),
+				},
+				'failed',
+			);
+			throw error;
+		}
 	};
 }

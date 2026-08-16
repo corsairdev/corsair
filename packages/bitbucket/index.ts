@@ -11,7 +11,11 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { getValidBitbucketAccessToken } from './client';
+import {
+	BITBUCKET_AUTH_URL,
+	BITBUCKET_TOKEN_URL,
+	getValidBitbucketAccessToken,
+} from './client';
 import { BitbucketEndpoints } from './endpoints';
 import {
 	BitbucketEndpointInputSchemas,
@@ -30,6 +34,12 @@ export type BitbucketPluginOptions = {
 	hooks?: InternalBitbucketPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof bitbucketEndpointsNested>;
+	/**
+	 * OAuth scopes requested during authorization. Defaults to
+	 * `defaultBitbucketScopes`, which covers every operation in the catalog;
+	 * narrow it to only the scopes the operations you actually call need.
+	 */
+	scopes?: readonly string[];
 };
 export type BitbucketContext = CorsairPluginContext<
 	typeof BitbucketSchema,
@@ -1009,6 +1019,33 @@ const bitbucketEndpointMeta = {
 	typeof bitbucketEndpointsNested
 >;
 const defaultAuthType = 'oauth_2' as const;
+/**
+ * Scopes requested when the caller does not pass `options.scopes`. Every scope
+ * here is required by at least one catalog operation — `repository:admin` by
+ * `createRepository`, `repository:delete` by `deleteRepository`,
+ * `pipeline:variable` by the pipeline variable operations and `runner` by
+ * `getRepositoriesPipelinesConfigRunners` — so dropping one disables those
+ * endpoints for the connection.
+ */
+export const defaultBitbucketScopes = [
+	'account',
+	'email',
+	'repository',
+	'repository:write',
+	'repository:admin',
+	'repository:delete',
+	'pullrequest',
+	'pullrequest:write',
+	'issue',
+	'issue:write',
+	'snippet',
+	'snippet:write',
+	'project',
+	'pipeline',
+	'pipeline:write',
+	'pipeline:variable',
+	'runner',
+] as const;
 export type BaseBitbucketPlugin<T extends BitbucketPluginOptions> =
 	CorsairPlugin<
 		'bitbucket',
@@ -1037,27 +1074,9 @@ export function bitbucket<const T extends BitbucketPluginOptions>(
 		authConfig: bitbucketAuthConfig,
 		oauthConfig: {
 			providerName: 'Bitbucket',
-			authUrl: 'https://bitbucket.org/site/oauth2/authorize',
-			tokenUrl: 'https://bitbucket.org/site/oauth2/access_token',
-			scopes: [
-				'account',
-				'email',
-				'repository',
-				'repository:write',
-				'repository:admin',
-				'repository:delete',
-				'pullrequest',
-				'pullrequest:write',
-				'issue',
-				'issue:write',
-				'snippet',
-				'snippet:write',
-				'project',
-				'pipeline',
-				'pipeline:write',
-				'pipeline:variable',
-				'runner',
-			],
+			authUrl: BITBUCKET_AUTH_URL,
+			tokenUrl: BITBUCKET_TOKEN_URL,
+			scopes: [...(options.scopes ?? defaultBitbucketScopes)],
 		},
 		hooks: options.hooks,
 		endpoints: bitbucketEndpointsNested,
@@ -1095,8 +1114,12 @@ export function bitbucket<const T extends BitbucketPluginOptions>(
 			(
 				ctx as unknown as { _refreshAuth?: () => Promise<string> }
 			)._refreshAuth = async () => {
+				// Read the persisted token on every call: Bitbucket rotates refresh
+				// tokens, so a token captured when the key was built goes stale after
+				// the first refresh.
+				const storedRefreshToken = await ctx.keys.get_refresh_token();
 				const fresh = await getValidBitbucketAccessToken({
-					refreshToken: result.refreshToken ?? refreshToken,
+					refreshToken: storedRefreshToken ?? refreshToken,
 					clientId: credentials.client_id,
 					clientSecret: credentials.client_secret,
 					forceRefresh: true,

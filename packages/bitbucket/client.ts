@@ -63,8 +63,9 @@ export async function refreshBitbucketAccessToken(
 	clientSecret: string,
 	refreshToken: string,
 ): Promise<BitbucketTokenResult> {
+	const tokenUrl = new URL(BITBUCKET_TOKEN_URL);
 	const config: OpenAPIConfig = {
-		BASE: 'https://bitbucket.org',
+		BASE: tokenUrl.origin,
 		VERSION: '2',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -85,7 +86,7 @@ export async function refreshBitbucketAccessToken(
 			config,
 			{
 				method: 'POST',
-				url: '/site/oauth2/access_token',
+				url: tokenUrl.pathname,
 				body,
 				mediaType: 'application/x-www-form-urlencoded',
 			},

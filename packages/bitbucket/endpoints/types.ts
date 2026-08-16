@@ -751,6 +751,7 @@ export const BitbucketEndpointInputSchemas = {
 			issue_id: z.union([z.string(), z.number().int()]),
 			repo_slug: z.string(),
 			workspace: z.string(),
+			body: BitbucketRequestBodySchema,
 		})
 		.strict(),
 	updateRepositoriesCommitComments: z

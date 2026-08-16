@@ -79,15 +79,69 @@ describe('Bitbucket routing coverage', () => {
 		expect(wire.query).toMatchObject({ q: 'project.key="PROJ"' });
 	});
 	it('marks every DELETE that permanently removes data as destructive and irreversible', () => {
-		const permanent = bitbucketOperationCatalog.filter(
-			(row) => row.riskLevel === 'destructive',
+		const byRisk = (level: string) =>
+			bitbucketOperationCatalog
+				.filter((row) => row.riskLevel === level)
+				.map((row) => row.code)
+				.sort();
+		expect(byRisk('destructive')).toEqual([
+			'BITBUCKET_DELETE_COMMIT_COMMENT',
+			'BITBUCKET_DELETE_ISSUE',
+			'BITBUCKET_DELETE_REPOSITORIES_COMMIT_REPORTS_ANNOTATIONS',
+			'BITBUCKET_DELETE_REPOSITORY',
+			'BITBUCKET_DELETE_USER_PIPELINE_VARIABLE',
+		]);
+		// Every destructive operation is a DELETE, and the only DELETE that is not
+		// destructive is unwatching a snippet, which removes no data.
+		expect(
+			bitbucketOperationCatalog
+				.filter((row) => row.riskLevel === 'destructive')
+				.every((row) => row.httpMethod === 'DELETE'),
+		).toBe(true);
+		expect(
+			bitbucketOperationCatalog
+				.filter(
+					(row) =>
+						row.httpMethod === 'DELETE' && row.riskLevel !== 'destructive',
+				)
+				.map((row) => row.code),
+		).toEqual(['BITBUCKET_DELETE_SNIPPETS_WATCH']);
+	});
+	it('forwards the request body for operations that accept one', () => {
+		const operation = bitbucketOperationCatalog.find(
+			(row) => row.code === 'BITBUCKET_UPDATE_ISSUE',
 		);
-		expect(permanent.map((row) => row.code)).toEqual(
-			expect.arrayContaining([
-				'BITBUCKET_DELETE_REPOSITORY',
-				'BITBUCKET_DELETE_ISSUE',
-				'BITBUCKET_DELETE_COMMIT_COMMENT',
-			]),
+		expect(operation).toBeDefined();
+		const parsed = BitbucketEndpointInputSchemas.updateIssue.parse({
+			workspace: 'team',
+			repo_slug: 'repository',
+			issue_id: 1,
+			body: { title: 'Updated issue title' },
+		});
+		const wire = buildBitbucketWireRequest(operation!, parsed);
+		expect(wire.body).toEqual({ title: 'Updated issue title' });
+	});
+	it('rejects dot segments in path parameters and only spans segments for refs and file paths', () => {
+		const browse = bitbucketOperationCatalog.find(
+			(row) => row.code === 'BITBUCKET_BROWSE_REPOSITORY_PATH',
+		);
+		expect(browse).toBeDefined();
+		expect(() =>
+			buildBitbucketWireRequest(browse!, {
+				workspace: 'team',
+				repo_slug: 'repository',
+				commit: 'main',
+				path: '../../../user',
+			}),
+		).toThrow(/must not contain/);
+		const wire = buildBitbucketWireRequest(browse!, {
+			workspace: 'team/other',
+			repo_slug: 'repository',
+			commit: 'feature/login',
+			path: 'src/index.ts',
+		});
+		expect(wire.url).toBe(
+			'/repositories/team%2Fother/repository/src/feature/login/src/index.ts',
 		);
 	});
 });
