@@ -234,7 +234,7 @@ describe('routing', () => {
 			const req = requested();
 
 			const base = op.api === 'telemetry' ? TELEMETRY : UPTIME;
-			expect(req.url.startsWith(base)).toBe(true);
+			expect(new URL(req.url).origin).toBe(base);
 			expect(req.method).toBe(op.method);
 		},
 	);
