@@ -1594,8 +1594,13 @@ export function basecamp<const T extends BasecampPluginOptions>(
 			(
 				ctx as unknown as { _refreshAuth?: () => Promise<string> }
 			)._refreshAuth = async () => {
+				// A call that finished after this closure was built may have already
+				// rotated the token, leaving currentRefreshToken spent. The store holds
+				// what that call persisted, so prefer it and keep the captured value
+				// only as the fallback for when the store cannot be read.
+				const stored = await ctx.keys.get_refresh_token().catch(() => null);
 				const fresh = await getValidBasecampAccessToken({
-					refreshToken: currentRefreshToken,
+					refreshToken: stored ?? currentRefreshToken,
 					clientId: credentials.client_id,
 					clientSecret: credentials.client_secret,
 					forceRefresh: true,
