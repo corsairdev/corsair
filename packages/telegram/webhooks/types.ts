@@ -1,3 +1,5 @@
+import { timingSafeEqual } from 'node:crypto';
+
 export interface TelegramUpdate {
 	update_id: number;
 	message?: TelegramMessage;
@@ -282,7 +284,15 @@ export function verifyTelegramWebhookSignature(
 		};
 	}
 
-	const isValid = providedToken === secretToken;
+	// Use a constant-time comparison to avoid leaking the secret via timing.
+	// Guard the length first: timingSafeEqual throws if the buffers differ in
+	// length, and a length mismatch already means the token is invalid.
+	const isValid =
+		providedToken.length === secretToken.length &&
+		timingSafeEqual(
+			Buffer.from(providedToken),
+			Buffer.from(secretToken),
+		);
 
 	return {
 		valid: isValid,

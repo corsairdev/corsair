@@ -80,6 +80,18 @@ describe('verifyTelegramWebhookSignature', () => {
 		expect(result).toEqual({ valid: false, error: 'Invalid secret token' });
 	});
 
+	it('should reject a secret token with a different length', () => {
+		// A length mismatch must be rejected without comparing contents,
+		// and must not throw.
+		const result = verifyTelegramWebhookSignature(
+			makeRequest(messageUpdate, {
+				'x-telegram-bot-api-secret-token': 'telegram-secret-token-extra',
+			}),
+			SECRET,
+		);
+		expect(result).toEqual({ valid: false, error: 'Invalid secret token' });
+	});
+
 	it('should accept a matching secret token', () => {
 		const result = verifyTelegramWebhookSignature(
 			makeRequest(messageUpdate, {
