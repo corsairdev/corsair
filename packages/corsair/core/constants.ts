@@ -169,7 +169,7 @@ export const ProviderDisplayNames = {
 	apilabz: 'API Labz',
 	apisports: 'API-Sports',
 	asana: 'Asana',
-	asindataapi: 'AsinDataApi',
+	asindataapi: 'ASIN Data API',
 	ayrshare: 'Ayrshare',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
