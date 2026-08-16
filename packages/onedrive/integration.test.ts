@@ -4,16 +4,24 @@ import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { onedrive } from './index';
 
+const configuredAccessToken = process.env.ONEDRIVE_ACCESS_TOKEN?.trim();
+const hasCredentials = Boolean(configuredAccessToken);
+
+const describeIf = hasCredentials ? describe : describe.skip;
+
+if (!hasCredentials) {
+	console.warn(
+		'Skipping OneDrive integration tests: ONEDRIVE_ACCESS_TOKEN not set',
+	);
+}
+
 // Using `unknown` for both parameter and return because DB payloads may arrive as a raw JSON
 function parsePayload(payload: unknown): unknown {
 	return typeof payload === 'string' ? JSON.parse(payload) : payload;
 }
 
 async function createOnedriveClient() {
-	const accessToken = process.env.ONEDRIVE_ACCESS_TOKEN;
-	if (!accessToken) {
-		return null;
-	}
+	const accessToken = configuredAccessToken!;
 
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'onedrive', 'default');
@@ -27,11 +35,10 @@ async function createOnedriveClient() {
 	return { corsair, testDb };
 }
 
-describe('OneDrive plugin integration', () => {
+describeIf('OneDrive plugin integration', () => {
 	describe('drive', () => {
 		it('driveGetQuota interacts with API and DB', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const result = await corsair.onedrive.api.drive.getQuota({});
@@ -58,7 +65,6 @@ describe('OneDrive plugin integration', () => {
 
 		it('driveGetRoot interacts with API and DB', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const result = await corsair.onedrive.api.drive.getRoot({});
@@ -85,7 +91,6 @@ describe('OneDrive plugin integration', () => {
 
 		it('driveList interacts with API and DB', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { top: 5 };
@@ -105,7 +110,6 @@ describe('OneDrive plugin integration', () => {
 
 		it('driveGetRecentItems interacts with API and DB', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { top: 5 };
@@ -125,7 +129,6 @@ describe('OneDrive plugin integration', () => {
 
 		it('driveListChanges interacts with API and DB', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { top: 10 };
@@ -149,7 +152,6 @@ describe('OneDrive plugin integration', () => {
 
 		beforeAll(async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 			const root = await corsair.onedrive.api.drive.getRoot({});
 			rootItemId = root.id ?? '';
@@ -159,7 +161,6 @@ describe('OneDrive plugin integration', () => {
 		it('itemsGet interacts with API and DB', async () => {
 			if (!rootItemId) return;
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { item_id: rootItemId };
@@ -187,7 +188,6 @@ describe('OneDrive plugin integration', () => {
 
 		it('itemsSearch interacts with API and DB', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { q: 'test', top: 5 };
@@ -208,7 +208,6 @@ describe('OneDrive plugin integration', () => {
 		it('itemsListFolderChildren interacts with API and DB', async () => {
 			if (!rootItemId) return;
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { folder_item_id: rootItemId };
@@ -230,7 +229,6 @@ describe('OneDrive plugin integration', () => {
 		it('itemsGetVersions interacts with API and DB', async () => {
 			if (!rootItemId) return;
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { item_id: rootItemId };
@@ -251,7 +249,6 @@ describe('OneDrive plugin integration', () => {
 		it('itemsGetThumbnails interacts with API and DB', async () => {
 			if (!rootItemId) return;
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { item_id: rootItemId };
@@ -271,7 +268,6 @@ describe('OneDrive plugin integration', () => {
 
 		it('itemsUpdateMetadata and itemsDelete interact with API and DB via a temp file', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const orm = createCorsairOrm(testDb.database);
@@ -331,7 +327,6 @@ describe('OneDrive plugin integration', () => {
 	describe('files', () => {
 		it('filesList interacts with API and DB', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { top: 5 };
@@ -351,7 +346,6 @@ describe('OneDrive plugin integration', () => {
 
 		it('filesCreateFolder and filesCreateTextFile interact with API and DB', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const orm = createCorsairOrm(testDb.database);
@@ -409,7 +403,6 @@ describe('OneDrive plugin integration', () => {
 
 		it('filesFindFile and filesFindFolder interact with API and DB', async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const orm = createCorsairOrm(testDb.database);
@@ -451,7 +444,6 @@ describe('OneDrive plugin integration', () => {
 
 		beforeAll(async () => {
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 			const root = await corsair.onedrive.api.drive.getRoot({});
 			testItemId = root.id ?? '';
@@ -461,7 +453,6 @@ describe('OneDrive plugin integration', () => {
 		it('permissionsGetForItem interacts with API and DB', async () => {
 			if (!testItemId) return;
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			const input = { item_id: testItemId };
@@ -485,7 +476,6 @@ describe('OneDrive plugin integration', () => {
 		it('permissionsCreateLink interacts with API and DB', async () => {
 			if (!testItemId) return;
 			const setup = await createOnedriveClient();
-			if (!setup) return;
 			const { corsair, testDb } = setup;
 
 			// Create a temp file to link — root drive items reject createLink with Bad Request
