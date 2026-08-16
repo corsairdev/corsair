@@ -6,13 +6,15 @@ import type { HubConfig } from './types';
 //
 // List a tenant's workflows and fire a manual run over the Hub's `/workflows`
 // endpoints. Auth is the project API key (Bearer); the tenant is sent in the
-// query, matching the threads and runs clients.
+// query, matching the chats and runs clients.
 // ─────────────────────────────────────────────────────────────────────────────
+
+export type WorkflowStatus = 'active' | 'inactive' | 'archived';
 
 export type WorkflowSummary = {
 	id: string;
 	name: string;
-	status: string;
+	status: WorkflowStatus;
 	triggerType: string;
 	createdAt: string;
 	updatedAt: string;
@@ -40,6 +42,44 @@ export async function listWorkflows(
 			const workflows = asRecord(payload).workflows;
 			return Array.isArray(workflows) ? (workflows as WorkflowSummary[]) : [];
 		},
+	});
+}
+
+export async function getWorkflow(
+	hub: HubConfig,
+	input: { workflowId: string; tenantId: string },
+): Promise<WorkflowSummary> {
+	return hubApiGet<WorkflowSummary>({
+		hub,
+		path: `/workflows/${encodeURIComponent(input.workflowId)}?tenantId=${encodeURIComponent(input.tenantId)}`,
+		notFoundMessage: `Workflow "${input.workflowId}" not found`,
+		parseResponse: (payload) => asRecord(payload).workflow as WorkflowSummary,
+	});
+}
+
+export async function setWorkflowStatus(
+	hub: HubConfig,
+	input: { workflowId: string; tenantId: string; status: WorkflowStatus },
+): Promise<void> {
+	await hubApiPost<{ ok: boolean }>({
+		hub,
+		path: `/workflows/${encodeURIComponent(input.workflowId)}/status?tenantId=${encodeURIComponent(input.tenantId)}`,
+		body: { status: input.status },
+		notFoundMessage: `Workflow "${input.workflowId}" not found`,
+		parseResponse: (payload) => payload as { ok: boolean },
+	});
+}
+
+export async function renameWorkflow(
+	hub: HubConfig,
+	input: { workflowId: string; tenantId: string; name: string },
+): Promise<void> {
+	await hubApiPost<{ ok: boolean }>({
+		hub,
+		path: `/workflows/${encodeURIComponent(input.workflowId)}/rename?tenantId=${encodeURIComponent(input.tenantId)}`,
+		body: { name: input.name },
+		notFoundMessage: `Workflow "${input.workflowId}" not found`,
+		parseResponse: (payload) => payload as { ok: boolean },
 	});
 }
 
