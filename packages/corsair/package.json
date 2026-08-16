@@ -132,6 +132,7 @@
   "packageManager": "pnpm@10.20.0",
   "files": [
     "dist",
-    "scripts/postinstall-frpc.mjs"
+    "scripts/postinstall-frpc.mjs",
+    "scripts/frpc-release.json"
   ]
 }

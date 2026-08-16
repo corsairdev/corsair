@@ -3,7 +3,9 @@ import { createRequire } from 'node:module';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
 
-/** Pinned frp release the SDK ships. Bump in lockstep with the VM's frps. */
+/** Pinned frp release the SDK ships. Bump in lockstep with the VM's frps and
+ *  scripts/frpc-release.json (the canonical version+checksums the download paths
+ *  verify against). This literal is only the runtime cache-path segment. */
 export const FRPC_VERSION = '0.71.0';
 
 // Seeded from __filename, not import.meta.url: ts-jest transpiles this file to

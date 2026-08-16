@@ -20,7 +20,14 @@ import { tmpdir } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-const FRPC_VERSION = '0.71.0'; // keep in sync with packages/corsair/hub/tunnel/frpc-binary.ts
+// Single source of truth for the pinned frp version + archive checksums, shared
+// with packages/corsair/scripts/postinstall-frpc.mjs.
+const { version: FRPC_VERSION, checksums: SHA256 } = JSON.parse(
+	readFileSync(
+		new URL('../packages/corsair/scripts/frpc-release.json', import.meta.url),
+		'utf8',
+	),
+);
 
 // node `${platform}-${arch}` -> the frp release's os/arch + binary name + archive ext.
 const TARGETS = [
@@ -61,22 +68,6 @@ const TARGETS = [
 		ext: 'zip',
 	},
 ];
-
-// SHA256 of each frp release archive (from the release checksums file).
-const SHA256 = {
-	'frp_0.71.0_darwin_amd64.tar.gz':
-		'1b1b4e2f1836e21e8733f1dddaacd4ed9ae67d7dbee39046b9d7b7eda6253637',
-	'frp_0.71.0_darwin_arm64.tar.gz':
-		'45be02b186860d375ed49a8941ae9569628a54bf14e67fc36b29c98c99dabcc6',
-	'frp_0.71.0_linux_amd64.tar.gz':
-		'84f27e39f11169f7adcef8e8b70c9329de17747b1f14dad9fb95eef5682ea716',
-	'frp_0.71.0_linux_arm64.tar.gz':
-		'f33c293c275d8fc68c654b6fba8f10b2551d6463d09a9fc9cffb7227eae82266',
-	'frp_0.71.0_windows_amd64.zip':
-		'9e5062e3e5cf07e67144a3a4acf175ef6a2486f3605dd6cf288bae34ab39819f',
-	'frp_0.71.0_windows_arm64.zip':
-		'b56a5c2a1a2a55d11bc27aeef6edabd39f3d194360ea66660cc27281b502cb1c',
-};
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const NOTICE = `This package bundles the frpc binary from fatedier/frp
