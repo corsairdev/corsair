@@ -59,7 +59,7 @@ export const list: BigmailerEndpoints['transactionalCampaignsList'] = async (
 ) => {
 	const result = await bigmailerCall<
 		BigmailerEndpointOutputs['transactionalCampaignsList']
-	>(ctx, `brands/${seg(input.brandId)}/campaigns/transactional`, {
+	>(ctx, `brands/${seg(input.brandId)}/transactional-campaigns`, {
 		query: compact({ limit: input.limit, cursor: input.cursor }),
 	});
 
@@ -88,7 +88,7 @@ export const create: BigmailerEndpoints['transactionalCampaignsCreate'] =
 	async (ctx, input) => {
 		const result = await bigmailerCall<
 			BigmailerEndpointOutputs['transactionalCampaignsCreate']
-		>(ctx, `brands/${seg(input.brandId)}/campaigns/transactional`, {
+		>(ctx, `brands/${seg(input.brandId)}/transactional-campaigns`, {
 			method: 'POST',
 			body: campaignBody(input),
 		});
@@ -117,7 +117,7 @@ export const get: BigmailerEndpoints['transactionalCampaignsGet'] = async (
 		BigmailerEndpointOutputs['transactionalCampaignsGet']
 	>(
 		ctx,
-		`brands/${seg(input.brandId)}/campaigns/transactional/${seg(input.campaignId)}`,
+		`brands/${seg(input.brandId)}/transactional-campaigns/${seg(input.campaignId)}`,
 	);
 
 	await cacheEntity(
@@ -136,10 +136,8 @@ export const get: BigmailerEndpoints['transactionalCampaignsGet'] = async (
 };
 
 /**
- * Updates a transactional campaign (`PATCH`, following this plugin's other
- * campaign/template update endpoints - the exact method was not directly
- * confirmable for this specific operation; see the PR description). Setting
- * `ready: true` is what activates sending.
+ * Updates a transactional campaign. Confirmed live against a real account:
+ * `POST`, not `PATCH`. Setting `ready: true` is what activates sending.
  */
 export const update: BigmailerEndpoints['transactionalCampaignsUpdate'] =
 	async (ctx, input) => {
@@ -147,8 +145,8 @@ export const update: BigmailerEndpoints['transactionalCampaignsUpdate'] =
 			BigmailerEndpointOutputs['transactionalCampaignsUpdate']
 		>(
 			ctx,
-			`brands/${seg(input.brandId)}/campaigns/transactional/${seg(input.campaignId)}`,
-			{ method: 'PATCH', body: campaignBody(input) },
+			`brands/${seg(input.brandId)}/transactional-campaigns/${seg(input.campaignId)}`,
+			{ method: 'POST', body: campaignBody(input) },
 		);
 
 		await cacheEntity(

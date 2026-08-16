@@ -84,7 +84,7 @@ export const get: BigmailerEndpoints['brandsGet'] = async (ctx, input) => {
 	return result;
 };
 
-/** Updates a brand. */
+/** Updates a brand. Confirmed live against a real account: `POST`, not `PUT`. */
 export const update: BigmailerEndpoints['brandsUpdate'] = async (
 	ctx,
 	input,
@@ -93,7 +93,7 @@ export const update: BigmailerEndpoints['brandsUpdate'] = async (
 		ctx,
 		`brands/${seg(input.brandId)}`,
 		{
-			method: 'PUT',
+			method: 'POST',
 			body: compact({
 				name: input.name,
 				from_name: input.fromName,

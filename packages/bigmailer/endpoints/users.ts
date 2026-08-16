@@ -72,13 +72,18 @@ export const get: BigmailerEndpoints['usersGet'] = async (ctx, input) => {
 	return result;
 };
 
-/** Updates a user's email, role, or allowed brands. */
+/**
+ * Updates a user's email, role, or allowed brands. Not directly live-tested
+ * (would send a real invitation-style change to a real account user), but
+ * every other update operation in this API was confirmed live to use `POST`
+ * rather than `PUT`/`PATCH` - the same convention applies here.
+ */
 export const update: BigmailerEndpoints['usersUpdate'] = async (ctx, input) => {
 	const result = await bigmailerCall<BigmailerEndpointOutputs['usersUpdate']>(
 		ctx,
 		`users/${seg(input.userId)}`,
 		{
-			method: 'PUT',
+			method: 'POST',
 			body: compact({
 				email: input.email,
 				role: input.role,

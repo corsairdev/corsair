@@ -268,8 +268,8 @@ export type ListsDeleteInput = z.infer<typeof ListsDeleteInputSchema>;
 /*                                 Connections                                */
 /* -------------------------------------------------------------------------- */
 
+/** Account-level, not brand-scoped - confirmed live: `GET /v1/connections` (no `brand_id` in the path). */
 const ConnectionsListInputSchema = z.object({
-	brandId: z.string(),
 	...CursorPageParams,
 });
 export type ConnectionsListInput = z.infer<typeof ConnectionsListInputSchema>;
@@ -807,6 +807,10 @@ const BigmailerUserSchema = z
 		email: S,
 		role: S,
 		allowed_brands: z.array(z.string()).nullable().optional(),
+		/** Confirmed live: matches the catalog's "activation status". */
+		is_activated: z.boolean().nullable().optional(),
+		/** Confirmed live, undocumented in the catalog prose but present on every account's own user. */
+		is_owner: z.boolean().nullable().optional(),
 		created: N,
 	})
 	.loose();
@@ -936,9 +940,7 @@ export type BigmailerEndpointOutputs = {
 	listsDelete: void;
 
 	connectionsList: z.infer<
-		ReturnType<
-			typeof CursorList<typeof BigmailerConnectionEntity, 'connections'>
-		>
+		ReturnType<typeof CursorList<typeof BigmailerConnectionEntity, 'data'>>
 	>;
 
 	messageTypesList: z.infer<
@@ -1124,7 +1126,7 @@ export const BigmailerEndpointOutputSchemas = {
 	listsUpdate: BigmailerListEntity,
 	listsDelete: EmptyResult,
 
-	connectionsList: CursorList(BigmailerConnectionEntity, 'connections'),
+	connectionsList: CursorList(BigmailerConnectionEntity, 'data'),
 
 	messageTypesList: CursorList(BigmailerMessageTypeEntity, 'data'),
 

@@ -84,12 +84,12 @@ export const get: BigmailerEndpoints['listsGet'] = async (ctx, input) => {
 	return result;
 };
 
-/** Renames a contact list. */
+/** Renames a contact list. Confirmed live against a real account: `POST`, not `PUT`. */
 export const update: BigmailerEndpoints['listsUpdate'] = async (ctx, input) => {
 	const result = await bigmailerCall<BigmailerEndpointOutputs['listsUpdate']>(
 		ctx,
 		`brands/${seg(input.brandId)}/lists/${seg(input.listId)}`,
-		{ method: 'PUT', body: { name: input.name } },
+		{ method: 'POST', body: { name: input.name } },
 	);
 
 	await cacheEntity(

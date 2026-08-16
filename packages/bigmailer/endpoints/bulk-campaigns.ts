@@ -79,7 +79,7 @@ export const list: BigmailerEndpoints['bulkCampaignsList'] = async (
 ) => {
 	const result = await bigmailerCall<
 		BigmailerEndpointOutputs['bulkCampaignsList']
-	>(ctx, `brands/${seg(input.brandId)}/campaigns/bulk`, {
+	>(ctx, `brands/${seg(input.brandId)}/bulk-campaigns`, {
 		query: compact({ limit: input.limit, cursor: input.cursor }),
 	});
 
@@ -109,7 +109,7 @@ export const create: BigmailerEndpoints['bulkCampaignsCreate'] = async (
 ) => {
 	const result = await bigmailerCall<
 		BigmailerEndpointOutputs['bulkCampaignsCreate']
-	>(ctx, `brands/${seg(input.brandId)}/campaigns/bulk`, {
+	>(ctx, `brands/${seg(input.brandId)}/bulk-campaigns`, {
 		method: 'POST',
 		body: campaignBody(input),
 	});
@@ -138,7 +138,7 @@ export const get: BigmailerEndpoints['bulkCampaignsGet'] = async (
 		BigmailerEndpointOutputs['bulkCampaignsGet']
 	>(
 		ctx,
-		`brands/${seg(input.brandId)}/campaigns/bulk/${seg(input.campaignId)}`,
+		`brands/${seg(input.brandId)}/bulk-campaigns/${seg(input.campaignId)}`,
 	);
 
 	await cacheEntity(
@@ -157,8 +157,9 @@ export const get: BigmailerEndpoints['bulkCampaignsGet'] = async (
 };
 
 /**
- * Updates a bulk campaign. Confirmed live: `PATCH`, and setting `ready:
- * true` is what actually activates sending/scheduling - see
+ * Updates a bulk campaign. Confirmed live against a real account: `POST`,
+ * not `PATCH`, at `/brands/{brand_id}/bulk-campaigns/{campaign_id}`. Setting
+ * `ready: true` is what actually activates sending/scheduling - see
  * `endpoints/types.ts`'s `BulkCampaignWritableFields.ready` doc comment.
  */
 export const update: BigmailerEndpoints['bulkCampaignsUpdate'] = async (
@@ -169,9 +170,9 @@ export const update: BigmailerEndpoints['bulkCampaignsUpdate'] = async (
 		BigmailerEndpointOutputs['bulkCampaignsUpdate']
 	>(
 		ctx,
-		`brands/${seg(input.brandId)}/campaigns/bulk/${seg(input.campaignId)}`,
+		`brands/${seg(input.brandId)}/bulk-campaigns/${seg(input.campaignId)}`,
 		{
-			method: 'PATCH',
+			method: 'POST',
 			body: campaignBody(input),
 		},
 	);

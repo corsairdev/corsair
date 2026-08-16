@@ -19,7 +19,7 @@ export const list: BigmailerEndpoints['messageTypesList'] = async (
 ) => {
 	const result = await bigmailerCall<
 		BigmailerEndpointOutputs['messageTypesList']
-	>(ctx, `brands/${seg(input.brandId)}/message_types`, {
+	>(ctx, `brands/${seg(input.brandId)}/message-types`, {
 		query: compact({
 			limit: input.limit,
 			cursor: input.cursor,

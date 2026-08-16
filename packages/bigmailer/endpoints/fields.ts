@@ -95,7 +95,7 @@ export const get: BigmailerEndpoints['fieldsGet'] = async (ctx, input) => {
 	return result;
 };
 
-/** Updates a custom field's name, merge-tag name, or sample value. Its data `type` is fixed at creation and cannot be changed here. */
+/** Updates a custom field's name, merge-tag name, or sample value. Its data `type` is fixed at creation and cannot be changed here. Confirmed live against a real account: `POST`, not `PUT`. */
 export const update: BigmailerEndpoints['fieldsUpdate'] = async (
 	ctx,
 	input,
@@ -104,7 +104,7 @@ export const update: BigmailerEndpoints['fieldsUpdate'] = async (
 		ctx,
 		`brands/${seg(input.brandId)}/fields/${seg(input.fieldId)}`,
 		{
-			method: 'PUT',
+			method: 'POST',
 			body: compact({
 				name: input.name,
 				merge_tag_name: input.mergeTagName,

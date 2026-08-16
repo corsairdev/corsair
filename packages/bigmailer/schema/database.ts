@@ -127,11 +127,12 @@ export const BigmailerListEntity = z
 export type BigmailerListEntity = z.infer<typeof BigmailerListEntity>;
 
 /**
- * An email-delivery connection (AWS SES or a supported ESP) configured on a
- * brand. Confirmed live from `listconnections.md`: no credential is ever
- * returned by this API, only `type`/`name`/`created` - there is nothing
- * secret-shaped on this entity to strip before caching. Unique only within
- * its brand; cache under a `brand:id` composite key.
+ * An email-delivery connection (AWS SES or a supported ESP) for the account.
+ * Confirmed live: `GET /v1/connections` is account-level, not brand-scoped
+ * (no `brand_id` in the path), and the response wraps results in `data`
+ * like every other list endpoint here. No credential is ever returned by
+ * this API, only `type`/`name`/`created` - nothing secret-shaped on this
+ * entity to strip before caching. `id` is unique account-wide.
  */
 export const BigmailerConnectionEntity = z
 	.object({

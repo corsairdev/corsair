@@ -103,7 +103,7 @@ export const get: BigmailerEndpoints['brandPropertiesGet'] = async (
 	return result;
 };
 
-/** Updates a brand property. */
+/** Updates a brand property. Confirmed live against a real account: `POST`, not `PUT`. */
 export const update: BigmailerEndpoints['brandPropertiesUpdate'] = async (
 	ctx,
 	input,
@@ -114,7 +114,7 @@ export const update: BigmailerEndpoints['brandPropertiesUpdate'] = async (
 		ctx,
 		`brands/${seg(input.brandId)}/properties/${seg(input.brandPropertyId)}`,
 		{
-			method: 'PUT',
+			method: 'POST',
 			body: compact({
 				name: input.name,
 				merge_tag_name: input.mergeTagName,
