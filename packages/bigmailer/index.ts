@@ -714,25 +714,23 @@ export type ExternalBigmailerPlugin<T extends BigmailerPluginOptions> =
  * segments, suppression lists, templates, bulk campaigns, transactional
  * campaigns, users, and `auth.me`.
  *
- * Contacts, segments, suppression lists and templates went through a
- * second, more thorough verification pass and had several fields/methods/
- * paths corrected from an initial by-analogy guess (see
- * `endpoints/types.ts`'s header comment for the list). Two specifics could
- * still not be directly confirmed from BigMailer's docs after repeated
- * fetches - the exact HTTP method for "update transactional campaign" and
- * the create-user path (`POST /users` vs. a summarizer-suggested
- * `/accounts/{account_id}/users`) - each is documented with its reasoning
- * at the call site and flagged for live verification once a test account
- * is available; see the PR description.
+ * Every route was live-verified against a real account, including twelve
+ * routing corrections a docs-only build had gotten wrong (see
+ * `endpoints/types.ts`'s header comment for the list) - update is `POST`
+ * across this entire API, never `PUT`/`PATCH`, confirmed live on every
+ * write operation except `users.create`, which would send a real
+ * invitation email to exercise and so is documented at its own declaration
+ * as still unverified rather than guessed silently.
  *
  * **No webhooks, no OAuth.** The catalog declares 0 triggers and API-key-only
  * auth for this plugin - confirmed from `corsair.dev/oss`'s own catalog
  * entry - so, like Doppler, this plugin has no `webhooks/` surface at all.
  *
- * **No official downloadable OpenAPI spec.** Built from
- * `docs.bigmailer.io/reference/<slug>.md` - the ReadMe.io-hosted,
- * LLM-readable per-endpoint pages linked from the site's own
- * `llms.txt` index - fetched live this session, not guessed.
+ * **No official downloadable OpenAPI spec.** BigMailer's docs site is
+ * ReadMe.io-hosted; `docs.bigmailer.io/reference/<slug>.md` gives each
+ * operation's own machine-readable page, which is where routing started -
+ * every route was then confirmed or corrected against the live API rather
+ * than trusted as final.
  */
 export function bigmailer<const T extends BigmailerPluginOptions>(
 	incomingOptions: BigmailerPluginOptions & T = {} as BigmailerPluginOptions &

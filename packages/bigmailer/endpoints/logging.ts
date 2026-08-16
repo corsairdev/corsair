@@ -31,16 +31,27 @@ const NEVER_LOG_VALUE = new Set([
 	'email',
 ]);
 
+/** Own-property names that must never be assigned via bracket notation - see `auditPayload`. */
+const UNSAFE_KEYS = new Set(['__proto__', 'constructor', 'prototype']);
+
 /**
  * Builds the payload recorded in `corsair_events`.
+ *
+ * `identifierKeys` is a hardcoded literal array at every call site in this
+ * plugin today, never derived from external input, so `__proto__` cannot
+ * currently reach `payload[key] = ...` - but a null-prototype object plus an
+ * explicit skip costs nothing and removes the question entirely for any call
+ * site added later.
  */
 export function auditPayload<T extends Record<string, unknown>>(
 	input: T,
 	identifierKeys: readonly (keyof T & string)[],
 ): Record<string, unknown> {
-	const payload: Record<string, unknown> = {};
+	const payload: Record<string, unknown> = Object.create(null);
 	for (const key of identifierKeys) {
-		if (NEVER_LOG_VALUE.has(key.toLowerCase())) continue;
+		if (UNSAFE_KEYS.has(key) || NEVER_LOG_VALUE.has(key.toLowerCase())) {
+			continue;
+		}
 		if (input[key] !== undefined) payload[key] = input[key];
 	}
 	const supplied = Object.keys(input).filter(

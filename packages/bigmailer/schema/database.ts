@@ -1,13 +1,13 @@
 import { z } from 'zod';
 
 /**
- * Locally persisted BigMailer entities - Phase 1 of this plugin (brands and
- * everything brand-scoped that Phase 1 implements: brand properties, fields,
- * lists, connections, message types, senders). Contacts, segments,
- * suppression lists, templates, campaigns and users are Phase 2/3 and are
- * not declared here yet.
+ * Locally persisted BigMailer entities - thirteen in total: brands and
+ * everything brand-scoped (brand properties, fields, lists, connections,
+ * message types, senders, contacts, segments, suppression lists, templates,
+ * bulk campaigns, transactional campaigns). Account users are deliberately
+ * not declared here - see the closing comment in this file for why.
  *
- * **Mirrored.** All seven entities below are account-owned configuration
+ * **Mirrored.** All thirteen entities below are account-owned configuration
  * that changes rarely and is what most other operations need a lookup
  * against - the same "reference data" split Doppler, CircleCI, Loyverse and
  * Habitica all use. Every field each endpoint's documented response

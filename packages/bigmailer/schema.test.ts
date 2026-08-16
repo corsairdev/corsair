@@ -6,10 +6,24 @@ describe('Bigmailer schema', () => {
 		expect(BigmailerSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof BigmailerSchema.entities).toBe('object');
-		expect(BigmailerSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(BigmailerSchema.entities))).toBe(true);
+	it('declares exactly the 13 persistence entities this plugin mirrors', () => {
+		expect(Object.keys(BigmailerSchema.entities).sort()).toEqual(
+			[
+				'brands',
+				'brandProperties',
+				'fields',
+				'lists',
+				'connections',
+				'messageTypes',
+				'senders',
+				'contacts',
+				'segments',
+				'suppressionLists',
+				'templates',
+				'bulkCampaigns',
+				'transactionalCampaigns',
+			].sort(),
+		);
 		for (const entity of Object.values(BigmailerSchema.entities)) {
 			expect(entity).toBeDefined();
 		}

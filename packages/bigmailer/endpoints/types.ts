@@ -101,7 +101,7 @@ export type BrandsListInput = z.infer<typeof BrandsListInputSchema>;
 const BrandsCreateInputSchema = z.object({
 	name: z.string().min(1).max(50),
 	fromName: z.string().optional(),
-	fromEmail: z.string().email().optional(),
+	fromEmail: z.email().optional(),
 	bounceDangerPercent: z.number().int().min(1).max(15).optional(),
 	maxSoftBounces: z.number().int().min(0).max(20).optional(),
 	url: z.string().optional(),
@@ -120,7 +120,7 @@ const BrandsUpdateInputSchema = z.object({
 	brandId: z.string(),
 	name: z.string().min(1).max(50).optional(),
 	fromName: z.string().optional(),
-	fromEmail: z.string().email().optional(),
+	fromEmail: z.email().optional(),
 	bounceDangerPercent: z.number().int().min(1).max(15).optional(),
 	maxSoftBounces: z.number().int().min(0).max(20).optional(),
 	url: z.string().optional(),
@@ -331,7 +331,7 @@ export type ContactsListInput = z.infer<typeof ContactsListInputSchema>;
 
 const ContactsCreateInputSchema = z.object({
 	brandId: z.string(),
-	email: z.string().email(),
+	email: z.email(),
 	fieldValues: z.array(FieldValueInputSchema).optional(),
 	listIds: z.array(z.string()).optional(),
 	unsubscribeAll: z.boolean().optional(),
@@ -367,7 +367,7 @@ export type ContactsGetInput = z.infer<typeof ContactsGetInputSchema>;
 const ContactsUpdateInputSchema = z.object({
 	brandId: z.string(),
 	contactId: z.string(),
-	email: z.string().email().optional(),
+	email: z.email().optional(),
 	fieldValues: z.array(FieldValueInputSchema).optional(),
 	listIds: z.array(z.string()).optional(),
 	unsubscribeAll: z.boolean().optional(),
@@ -398,7 +398,7 @@ const ContactDeleteResultSchema = z.object({ id: S }).loose();
  */
 const ContactsUpsertInputSchema = z.object({
 	brandId: z.string(),
-	email: z.string().email(),
+	email: z.email(),
 	fieldValues: z.array(FieldValueInputSchema).optional(),
 	listIds: z.array(z.string()).optional(),
 	unsubscribeAll: z.boolean().optional(),
@@ -413,7 +413,7 @@ const ContactsCreateBatchInputSchema = z.object({
 	contacts: z
 		.array(
 			z.object({
-				email: z.string().email(),
+				email: z.email(),
 				fieldValues: z.array(FieldValueInputSchema).optional(),
 				listIds: z.array(z.string()).optional(),
 				unsubscribeAll: z.boolean().optional(),
@@ -609,7 +609,7 @@ export type TemplatesDeleteInput = z.infer<typeof TemplatesDeleteInputSchema>;
 /* -------------------------------------------------------------------------- */
 
 const CampaignAddressInputSchema = z.object({
-	email: z.string().email(),
+	email: z.email(),
 	name: z.string().optional(),
 });
 
@@ -753,19 +753,7 @@ export type TransactionalCampaignsUpdateInput = z.infer<
 /*                                    Users                                   */
 /* -------------------------------------------------------------------------- */
 
-/**
- * Account-level, not brand-scoped - confirmed live from `listusers.md`/
- * `getuser.md`/`updateuser.md`/`deleteuser.md`'s consistent flat
- * `/users`/`/users/{user_id}` paths (no `brand_id` anywhere). `createuser.md`
- * itself never rendered a literal path line in anything this session could
- * fetch (checked twice, including a raw-quote-only request); `POST /users`
- * is used here rather than a summarizer-suggested
- * `/accounts/{account_id}/users` because it is the only form consistent with
- * the other four confirmed operations on this exact resource, and no
- * `account_id` concept appears anywhere else in this plugin. Flagged for
- * live verification once a test account is available; see the PR
- * description.
- */
+/** An account user's permission level - the fuller-permission roles (`brand_manager`/`campaign_manager`/`campaign_viewer`/`template_manager`) can be scoped to `allowedBrands`, per `createuser.md`. */
 const BigmailerUserRoleSchema = z.enum([
 	'admin',
 	'account_manager',
@@ -778,8 +766,22 @@ const BigmailerUserRoleSchema = z.enum([
 const UsersListInputSchema = z.object({ ...CursorPageParams });
 export type UsersListInput = z.infer<typeof UsersListInputSchema>;
 
+/**
+ * Account-level, not brand-scoped - confirmed live from `listusers.md`/
+ * `getuser.md`/`updateuser.md`/`deleteuser.md`'s consistent flat
+ * `/users`/`/users/{user_id}` paths (no `brand_id` anywhere). `createuser.md`
+ * itself never rendered a literal path line in anything this session could
+ * fetch (checked twice, including a raw-quote-only request); `POST /users`
+ * is used here rather than a summarizer-suggested
+ * `/accounts/{account_id}/users` because it is the only form consistent with
+ * the other four confirmed operations on this exact resource, and no
+ * `account_id` concept appears anywhere else in this plugin. Still
+ * unverified live - creating a real user sends a real invitation email, so
+ * this was deliberately never exercised against a live account either;
+ * flagged for verification once that can be done without emailing someone.
+ */
 const UsersCreateInputSchema = z.object({
-	email: z.string().email(),
+	email: z.email(),
 	role: BigmailerUserRoleSchema,
 	/** Only relevant if `role` is `brand_manager`/`campaign_manager`/`campaign_viewer`/`template_manager`, per `createuser.md`. */
 	allowedBrands: z.array(z.string()).optional(),
@@ -792,7 +794,7 @@ export type UsersGetInput = z.infer<typeof UsersGetInputSchema>;
 
 const UsersUpdateInputSchema = z.object({
 	userId: z.string(),
-	email: z.string().email().optional(),
+	email: z.email().optional(),
 	role: BigmailerUserRoleSchema.optional(),
 	allowedBrands: z.array(z.string()).optional(),
 });

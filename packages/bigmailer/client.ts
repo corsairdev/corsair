@@ -60,8 +60,19 @@ function buildConfig(apiKey: string): OpenAPIConfig {
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
+		/**
+		 * No `Content-Type` here, deliberately - confirmed by tracing
+		 * `corsair/async-core/request.ts`'s `getHeaders`: `config.HEADERS` is
+		 * spread into every request's headers unconditionally, before the
+		 * per-request `mediaType`/body-shape logic runs, and that logic only
+		 * fires when `options.body !== undefined`. The one multipart request
+		 * this plugin sends (`formData`, not `body`) would otherwise inherit a
+		 * hardcoded `application/json` header that `fetch` cannot override,
+		 * silently breaking the multipart boundary. `makeBigmailerRequest`
+		 * already sets `mediaType: 'application/json'` per JSON request, so
+		 * `getHeaders` derives the right `Content-Type` there without this.
+		 */
 		HEADERS: {
-			'Content-Type': 'application/json',
 			'X-API-Key': apiKey,
 		},
 	};

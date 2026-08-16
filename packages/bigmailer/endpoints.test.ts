@@ -75,6 +75,7 @@ let lastUrl = '';
 let lastMethod = '';
 let lastBody: string | undefined;
 let lastFormData: FormData | undefined;
+let lastHeaders: Headers | undefined;
 
 /**
  * One response body serving every operation: it carries every entity's
@@ -126,11 +127,15 @@ beforeEach(() => {
 	lastMethod = '';
 	lastBody = undefined;
 	lastFormData = undefined;
+	lastHeaders = undefined;
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
 		lastUrl = String(url);
 		lastMethod = init?.method ?? 'GET';
 		lastBody = typeof init?.body === 'string' ? init.body : undefined;
 		lastFormData = init?.body instanceof FormData ? init.body : undefined;
+		// `request` may pass a plain object or a `Headers` instance - normalise
+		// both, or a header assertion silently passes against an empty object.
+		lastHeaders = init?.headers ? new Headers(init.headers) : undefined;
 		return {
 			ok: true,
 			status: 200,
@@ -799,10 +804,17 @@ describe('request bodies', () => {
 		const file = lastFormData?.get('file');
 		expect(file).toBeInstanceOf(Blob);
 		expect(await (file as Blob).text()).toBe('email@example.com');
-		// A multipart body must never carry an application/json Content-Type -
-		// fetch derives the multipart boundary header itself only when no
-		// Content-Type (or body) is preset by the caller.
 		expect(lastBody).toBeUndefined();
+		/**
+		 * A multipart body must never carry an explicit Content-Type - `fetch`
+		 * only derives the `multipart/form-data; boundary=...` header itself
+		 * when no Content-Type is preset. This is the assertion that actually
+		 * catches the bug the comment used to only describe: `client.ts`
+		 * previously hardcoded `Content-Type: application/json` in every
+		 * request's base headers, which this test's predecessor never checked
+		 * for - Greptile and CodeRabbit both caught it in review.
+		 */
+		expect(lastHeaders?.get('Content-Type')).toBeNull();
 	});
 
 	it('sends brand update fields snake_cased, only the ones supplied', async () => {

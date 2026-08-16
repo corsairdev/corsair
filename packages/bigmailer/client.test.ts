@@ -110,6 +110,22 @@ describe('makeBigmailerRequest', () => {
 
 		mockFetch({ body: {} });
 		await makeBigmailerRequest('brands/b1', 'test-api-key', {
+			method: 'PUT',
+			body: { name: 'Acme2' },
+		});
+		expect(captured?.method).toBe('PUT');
+		expect(captured?.body).toContain('Acme2');
+
+		mockFetch({ body: {} });
+		await makeBigmailerRequest('brands/b1', 'test-api-key', {
+			method: 'GET',
+			body: { name: 'ignored' },
+		});
+		expect(captured?.method).toBe('GET');
+		expect(captured?.body).toBeUndefined();
+
+		mockFetch({ body: {} });
+		await makeBigmailerRequest('brands/b1', 'test-api-key', {
 			method: 'DELETE',
 			body: { name: 'ignored' },
 		});

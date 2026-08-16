@@ -20,14 +20,20 @@ describe('errorHandlers', () => {
 		expect(result.maxRetries).toBe(0);
 	});
 
-	it('never retries a 403', () => {
+	it('never retries a 403', async () => {
 		const error = new BigmailerAPIError('forbidden', 403);
 		expect(errorHandlers.PERMISSION_ERROR.match(error)).toBe(true);
+
+		const result = await errorHandlers.PERMISSION_ERROR.handler();
+		expect(result.maxRetries).toBe(0);
 	});
 
-	it('never retries a 404', () => {
+	it('never retries a 404', async () => {
 		const error = new BigmailerAPIError('not found', 404);
 		expect(errorHandlers.NOT_FOUND_ERROR.match(error)).toBe(true);
+
+		const result = await errorHandlers.NOT_FOUND_ERROR.handler();
+		expect(result.maxRetries).toBe(0);
 	});
 
 	it('classifies a plain Error with no status by message text alone', () => {
