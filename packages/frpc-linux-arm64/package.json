@@ -19,6 +19,7 @@
     "access": "public"
   },
   "scripts": {
-    "prepack": "node ../../scripts/prepare-frpc-packages.mjs linux-arm64"
+    "build": "node ../../scripts/prepare-frpc-packages.mjs linux-arm64",
+    "prepack": "pnpm build"
   }
 }
