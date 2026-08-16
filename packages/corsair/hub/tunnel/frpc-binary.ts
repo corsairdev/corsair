@@ -1,9 +1,33 @@
 import { existsSync } from 'node:fs';
+import { createRequire } from 'node:module';
 import { homedir } from 'node:os';
-import { join } from 'node:path';
+import { dirname, join } from 'node:path';
 
 /** Pinned frp release the SDK ships. Bump in lockstep with the VM's frps. */
 export const FRPC_VERSION = '0.71.0';
+
+// The SDK is ESM-only (see tsup.config), so import.meta.url is always defined.
+const require = createRequire(import.meta.url);
+
+/**
+ * The frpc binary carried by this platform's optional-dependency package
+ * (`@corsair-dev/frpc-<platform>-<arch>`), if it installed. Only the one package
+ * matching the host os/cpu is installed (npm/pnpm/yarn skip the rest via the
+ * packages' `os`/`cpu` fields), so this resolves at most one candidate.
+ */
+function platformPackageBinary(): string | null {
+	const pkg = `@corsair-dev/frpc-${process.platform}-${process.arch}`;
+	try {
+		// require.resolve honors the installed location (incl. pnpm's layout).
+		const bin = join(
+			dirname(require.resolve(`${pkg}/package.json`)),
+			binName(),
+		);
+		return existsSync(bin) ? bin : null;
+	} catch {
+		return null; // package not installed for this platform
+	}
+}
 
 export function frpcPlatformKey(): string {
 	return `${process.platform}-${process.arch}`;
@@ -35,15 +59,17 @@ export function frpcCacheBinary(): string {
 
 /**
  * Absolute path to a runnable frpc for this platform. Resolution order: an
- * explicit `CORSAIR_FRP_BIN` override, then the postinstall download cache.
- * Throws with an install hint if neither resolves.
- *
- * ponytail: per-platform optional-dependency packages (esbuild's pattern) are
- * the offline-registry upgrade path; add a lookup here once they're published.
+ * explicit `CORSAIR_FRP_BIN` override, then this platform's optional-dependency
+ * package (the esbuild pattern — no install script, so pnpm never blocks it),
+ * then the postinstall download cache as a fallback. Throws with an install hint
+ * if none resolves.
  */
 export function resolveFrpcBinary(): string {
 	const override = process.env.CORSAIR_FRP_BIN;
 	if (override && existsSync(override)) return override;
+
+	const fromPackage = platformPackageBinary();
+	if (fromPackage) return fromPackage;
 
 	const cached = frpcCacheBinary();
 	if (existsSync(cached)) return cached;

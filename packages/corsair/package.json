@@ -93,6 +93,14 @@
     "uuid": "^13.0.0",
     "zod": "^4.1.13"
   },
+  "optionalDependencies": {
+    "@corsair-dev/frpc-darwin-arm64": "workspace:*",
+    "@corsair-dev/frpc-darwin-x64": "workspace:*",
+    "@corsair-dev/frpc-linux-arm64": "workspace:*",
+    "@corsair-dev/frpc-linux-x64": "workspace:*",
+    "@corsair-dev/frpc-win32-arm64": "workspace:*",
+    "@corsair-dev/frpc-win32-x64": "workspace:*"
+  },
   "devDependencies": {
     "@testing-library/react": "^16.3.2",
     "@testing-library/react-hooks": "^8.0.1",

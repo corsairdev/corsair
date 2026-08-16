@@ -1382,6 +1382,25 @@ importers:
       typescript:
         specifier: ^5.3.3
         version: 5.9.3
+    optionalDependencies:
+      '@corsair-dev/frpc-darwin-arm64':
+        specifier: workspace:*
+        version: link:../frpc-darwin-arm64
+      '@corsair-dev/frpc-darwin-x64':
+        specifier: workspace:*
+        version: link:../frpc-darwin-x64
+      '@corsair-dev/frpc-linux-arm64':
+        specifier: workspace:*
+        version: link:../frpc-linux-arm64
+      '@corsair-dev/frpc-linux-x64':
+        specifier: workspace:*
+        version: link:../frpc-linux-x64
+      '@corsair-dev/frpc-win32-arm64':
+        specifier: workspace:*
+        version: link:../frpc-win32-arm64
+      '@corsair-dev/frpc-win32-x64':
+        specifier: workspace:*
+        version: link:../frpc-win32-x64
 
   packages/cursor:
     devDependencies:
@@ -1748,6 +1767,18 @@ importers:
       zod:
         specifier: 4.4.3
         version: 4.4.3
+
+  packages/frpc-darwin-arm64: {}
+
+  packages/frpc-darwin-x64: {}
+
+  packages/frpc-linux-arm64: {}
+
+  packages/frpc-linux-x64: {}
+
+  packages/frpc-win32-arm64: {}
+
+  packages/frpc-win32-x64: {}
 
   packages/gemini:
     devDependencies:
