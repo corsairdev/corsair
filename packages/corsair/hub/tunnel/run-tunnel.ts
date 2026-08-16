@@ -132,6 +132,8 @@ export async function runTunnel(opts: {
 			rmSync(cfgDir, { recursive: true, force: true });
 		};
 
+		let stopped = false;
+
 		// Registered up front so an early exit still reaps the child + guard + cfg.
 		const exitHandler = (): void => {
 			if (!child.killed) child.kill();
@@ -140,12 +142,26 @@ export async function runTunnel(opts: {
 		process.once('exit', exitHandler);
 
 		const stop = (): void => {
+			if (stopped) return;
+			stopped = true;
 			process.removeListener('exit', exitHandler);
+			process.removeListener('SIGINT', sigHandler);
+			process.removeListener('SIGTERM', sigHandler);
 			child.stdout.removeAllListeners('data');
 			child.stderr.removeAllListeners('data');
 			if (!child.killed) child.kill();
 			cleanup();
 		};
+
+		// ponytail: SIGINT/SIGTERM don't trigger 'exit' — without this, frpc is
+		// orphaned and the 0600 toml lingers. Re-raise so the process terminates
+		// normally after cleanup.
+		const sigHandler = (sig: NodeJS.Signals): void => {
+			stop();
+			process.kill(process.pid, sig);
+		};
+		process.once('SIGINT', sigHandler);
+		process.once('SIGTERM', sigHandler);
 
 		const fail = (err: Error): void => {
 			if (settled) return;
@@ -197,9 +213,11 @@ export async function runTunnel(opts: {
 
 		child.on('exit', (code) => {
 			if (!settled) {
+				const tail = lastLine(outputBuffer);
+				const detail = tail ? ` — ${tail}` : '';
 				fail(
 					new Error(
-						`frpc exited early (code ${code ?? 'null'}) before the tunnel came up`,
+						`frpc exited early (code ${code ?? 'null'}) before the tunnel came up${detail}`,
 					),
 				);
 				return;
@@ -223,6 +241,11 @@ export async function runTunnel(opts: {
 function firstErrorLine(output: string): string {
 	const line = output.split('\n').find((l) => PROXY_ERROR_RE.test(l));
 	return (line ?? 'start error').trim();
+}
+
+function lastLine(output: string): string {
+	const lines = output.split('\n').filter((l) => l.trim() !== '');
+	return lines.at(-1)?.trim() ?? '';
 }
 
 /**
