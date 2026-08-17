@@ -1,6 +1,6 @@
 /**
  * Every status this API answers with, mapped to the retry decision this
- * plugin makes for it - including the three empty-body statuses (401, 404
+ * plugin makes for it - including the four empty-body statuses (401, 404
  * unknown-route, 405, 429), the 409 conflict, and the non-idempotent-aware
  * caps on 429/5xx/network retries.
  */

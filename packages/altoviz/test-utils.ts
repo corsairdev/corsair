@@ -90,7 +90,7 @@ export function installFetchMock() {
 		return {
 			ok: status >= 200 && status < 300,
 			status,
-			statusText: status === 200 ? 'OK' : 'Error',
+			statusText: status >= 200 && status < 300 ? 'OK' : 'Error',
 			url,
 			headers,
 			json: async () => JSON.parse(bodyText),

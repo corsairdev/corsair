@@ -77,5 +77,7 @@ export const unregister: AltovizEndpoints['webhookSubscriptions']['unregister'] 
 			auditPayload(input),
 			'completed',
 		);
-		return { deleted: true, id: input.webhookId ?? 0 };
+		return input.webhookId !== undefined
+			? { deleted: true, id: input.webhookId }
+			: { deleted: true, url: input.url };
 	};

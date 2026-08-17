@@ -704,6 +704,19 @@ describe('routing', () => {
 		expect(lastCall().url).toContain(encodeURIComponent('ext id/with space'));
 	});
 
+	test('unregister by url echoes the url, not a fabricated id 0', async () => {
+		const { ctx } = makeCtx();
+		queueResponse({});
+		const byUrl = await WebhookSubscriptions.unregister(ctx, {
+			url: 'https://example.com/wh',
+		});
+		expect(byUrl).toEqual({ deleted: true, url: 'https://example.com/wh' });
+
+		queueResponse({});
+		const byId = await WebhookSubscriptions.unregister(ctx, { webhookId: 9 });
+		expect(byId).toEqual({ deleted: true, id: 9 });
+	});
+
 	test('no undefined value is ever interpolated into a path', async () => {
 		// every path-building fixture supplies its id explicitly; this guards
 		// against a future operation reaching the transport with `undefined`

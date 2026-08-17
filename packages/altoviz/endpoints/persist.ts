@@ -285,10 +285,11 @@ export async function evictEntity(
  * Creating a customer, supplier or colleague auto-creates a contact from its
  * name fields (confirmed live: `GET .../contacts` returns it with
  * `isMain: true`), and deleting the parent does NOT delete that contact.
- * Deleting a customer or supplier therefore fetches its contacts first - the
- * only way to know which cached contact rows belong to it - and evicts each
- * one after the parent delete succeeds. Best-effort: a failed lookup here
- * must not block or fail the parent delete itself.
+ * Deleting a customer or supplier therefore fetches its contacts and evicts
+ * their cached rows here, before the parent delete - the contacts route
+ * (`.../{id}/contacts`) disappears once the parent is gone, so the lookup has
+ * to happen while it still exists. Best-effort: a failed lookup here must not
+ * block or fail the parent delete itself.
  */
 export async function evictContactsForParent(
 	store: DeletableStore | undefined,

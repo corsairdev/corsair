@@ -62,7 +62,7 @@ export const isNonIdempotent = (operation: string): boolean =>
  *        {errors:[],message:"An error occured"} (the provider's spelling)
  *
  * `corsair/async-core`'s `getResponseBody` only parses a body when a
- * `Content-Type` header is present, so the empty-body statuses (401, 404
+ * `Content-Type` header is present, so the four empty-body statuses (401, 404
  * unknown-route, 405, 429) all arrive here with `error.body === undefined`.
  * Handlers below match on `error.status` for that reason rather than reading
  * the body, and supply their own message where the provider supplies none.

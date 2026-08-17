@@ -126,6 +126,12 @@ describe('documented input constraints', () => {
 			createInvoiceSchema.safeParse({ ...base, date: '15/08/2026' }).success,
 		).toBe(false);
 	});
+
+	test('products.find rejects an empty call the API would 400', () => {
+		const schema = AltovizEndpointInputSchemas.productsFind;
+		expect(schema.safeParse({}).success).toBe(false);
+		expect(schema.safeParse({ number: 'ABC' }).success).toBe(true);
+	});
 });
 
 describe('audit payload: deny-by-default allow-list', () => {
@@ -170,6 +176,13 @@ describe('audit payload: deny-by-default allow-list', () => {
 		expect(payload.fields).toEqual(
 			expect.arrayContaining(['companyName', 'email', 'customerId']),
 		);
+	});
+
+	test('free-text search query is recorded by name only, never by value', () => {
+		const payload = auditPayload({ pageIndex: 1, query: 'jane@example.com' });
+		expect(payload).not.toHaveProperty('query');
+		expect(payload.pageIndex).toBe(1);
+		expect(payload.fields).toEqual(expect.arrayContaining(['query']));
 	});
 
 	test('undefined fields are not recorded at all, not even by name', () => {

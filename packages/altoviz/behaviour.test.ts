@@ -4,7 +4,7 @@
  * goes red, a claim in that document is no longer true.
  */
 import { Colleagues, Customers, Products, SaleInvoices } from './endpoints';
-import { buildPagingQuery } from './endpoints/shared';
+import { buildPagingQuery, parsePageInfo } from './endpoints/shared';
 import {
 	installFetchMock,
 	lastCall,
@@ -31,6 +31,20 @@ function seededDb() {
 beforeEach(() => {
 	resetFetchMock();
 	installFetchMock();
+});
+
+describe('parsePageInfo: paging headers arrive case-insensitively', () => {
+	test('reads provider-cased header keys', () => {
+		const info = parsePageInfo({
+			'X-Page-Index': '2',
+			'X-Record-Count': '250',
+			'X-Page-Next': '/v1/Customers?PageIndex=3',
+		});
+		expect(info.pageIndex).toBe(2);
+		expect(info.recordCount).toBe(250);
+		expect(info.hasNext).toBe(true);
+		expect(info.hasPrevious).toBe(false);
+	});
 });
 
 describe('read-modify-write: PUT clears every field the caller omits', () => {

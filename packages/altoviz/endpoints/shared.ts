@@ -92,8 +92,13 @@ export type AltovizPageInfo = {
 export function parsePageInfo(
 	headers: Record<string, string> | undefined,
 ): AltovizPageInfo {
-	const get = (name: string) =>
-		headers?.[name] ?? headers?.[name.toLowerCase()];
+	// Headers may arrive with provider casing (`X-Page-Index`), so fold keys to
+	// lower-case once - the field names below are already lower-case.
+	const normalized: Record<string, string> = {};
+	for (const [name, value] of Object.entries(headers ?? {})) {
+		normalized[name.toLowerCase()] = value;
+	}
+	const get = (name: string) => normalized[name];
 	const num = (name: string) => {
 		const raw = get(name);
 		if (raw === undefined) return undefined;

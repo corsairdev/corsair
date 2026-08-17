@@ -690,6 +690,21 @@ export type UnregisterWebhookInput = z.infer<
 	typeof UnregisterWebhookInputSchema
 >;
 
+/**
+ * Unregister echoes back whichever key the caller deleted by. Deleting by url
+ * carries no id, so `id` stays absent rather than being faked as 0 (which
+ * collides with the register placeholder) - the shared DeletedResult cannot
+ * express that, hence a dedicated shape.
+ */
+const UnregisterWebhookOutputSchema = z.object({
+	deleted: z.literal(true),
+	id: z.number().optional(),
+	url: z.string().optional(),
+});
+export type UnregisterWebhookOutput = z.infer<
+	typeof UnregisterWebhookOutputSchema
+>;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // products
 // ─────────────────────────────────────────────────────────────────────────────
@@ -743,7 +758,10 @@ export type DeleteProductInput = z.infer<typeof DeleteProductInputSchema>;
 const GetProductInputSchema = z.object({ productId: AltovizIdSchema });
 export type GetProductInput = z.infer<typeof GetProductInputSchema>;
 
-const FindProductInputSchema = z.object({ number: z.string().optional() });
+/** Same route as FindProductByNumberOrId - an empty call 400s "Number or internal ID have to be defined", so require `number` client-side. */
+const FindProductInputSchema = z
+	.object({ number: z.string().optional() })
+	.refine((v) => v.number !== undefined, { message: 'Provide number.' });
 export type FindProductInput = z.infer<typeof FindProductInputSchema>;
 
 /** Superset of FindProduct - same route (`GET /v1/products/find`), and requires at least one parameter or the API 400s "Number or internal ID have to be defined". */
@@ -1256,7 +1274,7 @@ export type AltovizEndpointOutputs = {
 
 	webhookSubscriptionsList: WebhookOutput[];
 	webhookSubscriptionsRegister: RegisterWebhookOutput;
-	webhookSubscriptionsUnregister: DeletedResult;
+	webhookSubscriptionsUnregister: UnregisterWebhookOutput;
 
 	productsCreate: ProductOutput;
 	productsDelete: DeletedResult;
@@ -1422,7 +1440,7 @@ export const AltovizEndpointOutputSchemas = {
 
 	webhookSubscriptionsList: z.array(WebhookOutputSchema),
 	webhookSubscriptionsRegister: RegisterWebhookOutputSchema,
-	webhookSubscriptionsUnregister: DeletedResultSchema,
+	webhookSubscriptionsUnregister: UnregisterWebhookOutputSchema,
 
 	productsCreate: ProductOutputSchema,
 	productsDelete: DeletedResultSchema,
