@@ -267,7 +267,7 @@ export type NextDNSAnalyticsRow = z.infer<typeof NextDNSAnalyticsRowSchema>;
 export const NextDNSLogEntrySchema = z.looseObject({});
 export type NextDNSLogEntry = z.infer<typeof NextDNSLogEntrySchema>;
 
-const NextDNSPaginatedSchema = <T extends z.ZodTypeAny>(row: T) =>
+const NextDNSPaginatedSchema = <T extends z.ZodType>(row: T) =>
 	z.object({
 		data: z.array(row),
 		meta: z
@@ -306,6 +306,14 @@ const DateRangeInputSchema = {
 	cursor: z.string().optional(),
 };
 
+/**
+ * Reused directly (not re-spread into a fresh `z.object`) by every operation
+ * whose only input is a profile id - 16 of the 71 operations. A shared zod
+ * schema instance is safe to reference from multiple exported consts: it's
+ * immutable and carries no per-use state.
+ */
+const ProfileIdOnlyInputSchema = z.object({ ...ProfileIdInputSchema });
+
 /* -------------------------------------------------------------------------- */
 /* profiles                                                                    */
 /* -------------------------------------------------------------------------- */
@@ -313,7 +321,7 @@ const DateRangeInputSchema = {
 const ProfilesListInputSchema = z.object({});
 export type ProfilesListInput = z.infer<typeof ProfilesListInputSchema>;
 
-const ProfilesGetInputSchema = z.object({ ...ProfileIdInputSchema });
+const ProfilesGetInputSchema = ProfileIdOnlyInputSchema;
 export type ProfilesGetInput = z.infer<typeof ProfilesGetInputSchema>;
 
 /**
@@ -353,7 +361,7 @@ const ProfilesUpdateInputSchema = z.object({
 });
 export type ProfilesUpdateInput = z.infer<typeof ProfilesUpdateInputSchema>;
 
-const ProfilesDeleteInputSchema = z.object({ ...ProfileIdInputSchema });
+const ProfilesDeleteInputSchema = ProfileIdOnlyInputSchema;
 export type ProfilesDeleteInput = z.infer<typeof ProfilesDeleteInputSchema>;
 
 /** `NEXTDNS_RENAME_CONFIG` - a thin, name-only wrapper over profile update. */
@@ -367,7 +375,7 @@ export type ProfilesRenameInput = z.infer<typeof ProfilesRenameInputSchema>;
 /* settings                                                                    */
 /* -------------------------------------------------------------------------- */
 
-const SettingsGetInputSchema = z.object({ ...ProfileIdInputSchema });
+const SettingsGetInputSchema = ProfileIdOnlyInputSchema;
 export type SettingsGetInput = z.infer<typeof SettingsGetInputSchema>;
 
 const SettingsUpdateInputSchema = z.object({
@@ -379,7 +387,7 @@ const SettingsUpdateInputSchema = z.object({
 });
 export type SettingsUpdateInput = z.infer<typeof SettingsUpdateInputSchema>;
 
-const SettingsGetBlockPageInputSchema = z.object({ ...ProfileIdInputSchema });
+const SettingsGetBlockPageInputSchema = ProfileIdOnlyInputSchema;
 export type SettingsGetBlockPageInput = z.infer<
 	typeof SettingsGetBlockPageInputSchema
 >;
@@ -392,7 +400,7 @@ export type SettingsUpdateBlockPageInput = z.infer<
 	typeof SettingsUpdateBlockPageInputSchema
 >;
 
-const SettingsGetLogsInputSchema = z.object({ ...ProfileIdInputSchema });
+const SettingsGetLogsInputSchema = ProfileIdOnlyInputSchema;
 export type SettingsGetLogsInput = z.infer<typeof SettingsGetLogsInputSchema>;
 
 /**
@@ -414,7 +422,7 @@ export type SettingsUpdateLogsInput = z.infer<
 	typeof SettingsUpdateLogsInputSchema
 >;
 
-const SettingsGetPerformanceInputSchema = z.object({ ...ProfileIdInputSchema });
+const SettingsGetPerformanceInputSchema = ProfileIdOnlyInputSchema;
 export type SettingsGetPerformanceInput = z.infer<
 	typeof SettingsGetPerformanceInputSchema
 >;
@@ -455,7 +463,7 @@ export type SettingsLogDomainsInput = z.infer<
 /* security                                                                    */
 /* -------------------------------------------------------------------------- */
 
-const SecurityGetInputSchema = z.object({ ...ProfileIdInputSchema });
+const SecurityGetInputSchema = ProfileIdOnlyInputSchema;
 export type SecurityGetInput = z.infer<typeof SecurityGetInputSchema>;
 
 const SecurityUpdateInputSchema = z.object({
@@ -475,7 +483,7 @@ const SecurityUpdateInputSchema = z.object({
 });
 export type SecurityUpdateInput = z.infer<typeof SecurityUpdateInputSchema>;
 
-const SecurityGetTldsInputSchema = z.object({ ...ProfileIdInputSchema });
+const SecurityGetTldsInputSchema = ProfileIdOnlyInputSchema;
 export type SecurityGetTldsInput = z.infer<typeof SecurityGetTldsInputSchema>;
 
 const SecurityAddBlockedTldInputSchema = z.object({
@@ -506,7 +514,7 @@ export type SecurityReplaceTldsInput = z.infer<
 /* privacy                                                                     */
 /* -------------------------------------------------------------------------- */
 
-const PrivacyGetInputSchema = z.object({ ...ProfileIdInputSchema });
+const PrivacyGetInputSchema = ProfileIdOnlyInputSchema;
 export type PrivacyGetInput = z.infer<typeof PrivacyGetInputSchema>;
 
 /**
@@ -574,7 +582,7 @@ export type PrivacyReplaceNativesInput = z.infer<
 /* parental control                                                            */
 /* -------------------------------------------------------------------------- */
 
-const ParentalControlGetInputSchema = z.object({ ...ProfileIdInputSchema });
+const ParentalControlGetInputSchema = ProfileIdOnlyInputSchema;
 export type ParentalControlGetInput = z.infer<
 	typeof ParentalControlGetInputSchema
 >;
@@ -691,7 +699,7 @@ export type ParentalControlReplaceServicesInput = z.infer<
 /* denylist / allowlist                                                       */
 /* -------------------------------------------------------------------------- */
 
-const DenylistListInputSchema = z.object({ ...ProfileIdInputSchema });
+const DenylistListInputSchema = ProfileIdOnlyInputSchema;
 export type DenylistListInput = z.infer<typeof DenylistListInputSchema>;
 
 const DenylistAddInputSchema = z.object({
@@ -722,7 +730,7 @@ const DenylistReplaceInputSchema = z.object({
 });
 export type DenylistReplaceInput = z.infer<typeof DenylistReplaceInputSchema>;
 
-const AllowlistGetInputSchema = z.object({ ...ProfileIdInputSchema });
+const AllowlistGetInputSchema = ProfileIdOnlyInputSchema;
 export type AllowlistGetInput = z.infer<typeof AllowlistGetInputSchema>;
 
 const AllowlistAddInputSchema = z.object({
@@ -757,7 +765,7 @@ export type AllowlistReplaceInput = z.infer<typeof AllowlistReplaceInputSchema>;
 /* rewrites                                                                    */
 /* -------------------------------------------------------------------------- */
 
-const RewritesGetInputSchema = z.object({ ...ProfileIdInputSchema });
+const RewritesGetInputSchema = ProfileIdOnlyInputSchema;
 export type RewritesGetInput = z.infer<typeof RewritesGetInputSchema>;
 
 /** `type` defaults to `"A"` server-side when omitted (confirmed live). */
@@ -785,6 +793,24 @@ const AnalyticsInputSchema = z.object({
 });
 export type AnalyticsInput = z.infer<typeof AnalyticsInputSchema>;
 
+/**
+ * `type` is required here and nowhere else in the 11 analytics categories -
+ * confirmed live: `GET .../analytics/destinations` with no `type` 400s with
+ * `{"errors":[{"code":"required","source":{"parameter":"type"}}]}`, and only
+ * `countries`/`gafam` are accepted (a third value 400s with an `enum`
+ * error). Matches the two endpoint variants the docs show
+ * (`?type=countries` / `?type=gafam`) and the operation's own description
+ * ("destinations by country or GAFAM company").
+ */
+const AnalyticsDestinationsInputSchema = z.object({
+	...ProfileIdInputSchema,
+	...DateRangeInputSchema,
+	type: z.enum(['countries', 'gafam']),
+});
+export type AnalyticsDestinationsInput = z.infer<
+	typeof AnalyticsDestinationsInputSchema
+>;
+
 /* -------------------------------------------------------------------------- */
 /* logs                                                                        */
 /* -------------------------------------------------------------------------- */
@@ -803,10 +829,10 @@ export type LogsGetInput = z.infer<typeof LogsGetInputSchema>;
  * URL), not a link to fetch separately. Distrusting the description here,
  * not guessing from it.
  */
-const LogsDownloadInputSchema = z.object({ ...ProfileIdInputSchema });
+const LogsDownloadInputSchema = ProfileIdOnlyInputSchema;
 export type LogsDownloadInput = z.infer<typeof LogsDownloadInputSchema>;
 
-const LogsClearInputSchema = z.object({ ...ProfileIdInputSchema });
+const LogsClearInputSchema = ProfileIdOnlyInputSchema;
 export type LogsClearInput = z.infer<typeof LogsClearInputSchema>;
 
 /* -------------------------------------------------------------------------- */
@@ -819,7 +845,7 @@ export type LogsClearInput = z.infer<typeof LogsClearInputSchema>;
  * from the request itself, matching the operation's own description
  * ("Updates the linked IP address ... to the current caller's public IP").
  */
-const SetupUpdateLinkedIpInputSchema = z.object({ ...ProfileIdInputSchema });
+const SetupUpdateLinkedIpInputSchema = ProfileIdOnlyInputSchema;
 export type SetupUpdateLinkedIpInput = z.infer<
 	typeof SetupUpdateLinkedIpInputSchema
 >;
@@ -933,7 +959,7 @@ export type NextDNSEndpointInputs = {
 	'analytics.ipVersions': AnalyticsInput;
 	'analytics.dnssec': AnalyticsInput;
 	'analytics.encryption': AnalyticsInput;
-	'analytics.destinations': AnalyticsInput;
+	'analytics.destinations': AnalyticsDestinationsInput;
 
 	'logs.get': LogsGetInput;
 	'logs.download': LogsDownloadInput;
@@ -1104,7 +1130,7 @@ export const NextDNSEndpointInputSchemas = {
 	'analytics.ipVersions': AnalyticsInputSchema,
 	'analytics.dnssec': AnalyticsInputSchema,
 	'analytics.encryption': AnalyticsInputSchema,
-	'analytics.destinations': AnalyticsInputSchema,
+	'analytics.destinations': AnalyticsDestinationsInputSchema,
 
 	'logs.get': LogsGetInputSchema,
 	'logs.download': LogsDownloadInputSchema,

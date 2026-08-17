@@ -29,10 +29,13 @@ const mockLogEvent = logEventFromContext as jest.MockedFunction<
 	typeof logEventFromContext
 >;
 
-type Store = { upsertByEntityId: jest.Mock };
+type Store = { upsertByEntityId: jest.Mock; deleteByEntityId: jest.Mock };
 
 function makeStore(): Store {
-	return { upsertByEntityId: jest.fn(async () => undefined) };
+	return {
+		upsertByEntityId: jest.fn(async () => undefined),
+		deleteByEntityId: jest.fn(async () => true),
+	};
 }
 
 type Ctx = Parameters<typeof Profiles.list>[0];
@@ -532,7 +535,7 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 	],
 	[
 		'analytics.destinations',
-		(c) => Analytics.destinations(c, { profileId: P }),
+		(c) => Analytics.destinations(c, { profileId: P, type: 'countries' }),
 		'GET',
 		`/profiles/${P}/analytics/destinations`,
 	],
@@ -593,6 +596,44 @@ describe('operation coverage', () => {
 	});
 });
 
+describe('analytics.destinations type parameter', () => {
+	/**
+	 * Confirmed live: omitting `type` 400s with
+	 * `{"errors":[{"code":"required","source":{"parameter":"type"}}]}` -
+	 * unlike every other one of the 11 analytics categories, this one has a
+	 * required extra parameter.
+	 */
+	it('rejects a request with no type', () => {
+		const result = nextDNSEndpointSchemas[
+			'analytics.destinations'
+		].input.safeParse({ profileId: P });
+		expect(result.success).toBe(false);
+	});
+
+	it('rejects a type outside the confirmed enum', () => {
+		const result = nextDNSEndpointSchemas[
+			'analytics.destinations'
+		].input.safeParse({ profileId: P, type: 'bogus' });
+		expect(result.success).toBe(false);
+	});
+
+	it('accepts both confirmed valid type values', () => {
+		for (const type of ['countries', 'gafam']) {
+			const result = nextDNSEndpointSchemas[
+				'analytics.destinations'
+			].input.safeParse({ profileId: P, type });
+			expect(result.success).toBe(true);
+		}
+	});
+
+	it('sends type as a query parameter', async () => {
+		const { ctx } = makeCtx();
+		await Analytics.destinations(ctx, { profileId: P, type: 'gafam' });
+
+		expect(lastUrl).toContain('type=gafam');
+	});
+});
+
 /**
  * Confirmed live: `PATCH` on these nine sub-resources returns `204` with
  * no body (unlike `setup/linkedip`, which returns the updated resource
@@ -632,15 +673,53 @@ describe('204-no-body sub-resource updates follow up with a GET', () => {
 		];
 
 	for (const [name, invoke] of GET_AFTER_PATCH_OPERATIONS) {
-		it(`${name} issues a PATCH then a GET on the same resource, and returns real data`, async () => {
+		it(`${name} issues a PATCH then a GET on the same resource, and returns the GET's data (not the PATCH's)`, async () => {
 			const { ctx } = makeCtx();
+			// A genuinely empty `204` on the `PATCH` (matching every live-tested
+			// sub-resource update in this catalog), so this test can't pass
+			// just because the mock always hands back parseable data
+			// regardless of method - it has to actually reach the follow-up
+			// `GET` for a result.
+			global.fetch = (async (url: unknown, init?: RequestInit) => {
+				const method = init?.method ?? 'GET';
+				lastUrl = String(url);
+				lastMethod = method;
+				lastBody = init?.body ? JSON.parse(init.body as string) : undefined;
+				calls.push({ url: lastUrl, method, body: lastBody });
+
+				if (method === 'PATCH') {
+					return {
+						ok: true,
+						status: 204,
+						statusText: 'No Content',
+						url: String(url),
+						headers: new Headers(),
+						json: async () => {
+							throw new SyntaxError('Unexpected end of JSON input');
+						},
+						text: async () => '',
+					};
+				}
+				return {
+					ok: true,
+					status: 200,
+					statusText: 'OK',
+					url: String(url),
+					headers: new Headers({ 'Content-Type': 'application/json' }),
+					json: async () => RESPONSE_BODY,
+					text: async () => JSON.stringify(RESPONSE_BODY),
+				};
+			}) as unknown as typeof global.fetch;
+
 			const result = await invoke(ctx);
 
 			expect(calls.length).toBe(2);
 			expect(calls[0]?.method).toBe('PATCH');
 			expect(calls[1]?.method).toBe('GET');
 			expect(calls[1]?.url).toBe(calls[0]?.url);
-			expect(result).toBeDefined();
+			// Proves the returned value came from the GET, not a (nonexistent)
+			// PATCH body: every RESPONSE_BODY-derived field is present.
+			expect(result).toMatchObject({ id: 'test-id', name: 'Test Profile' });
 		});
 	}
 });
@@ -703,6 +782,13 @@ describe('settings.logClientIps / settings.logDomains polarity', () => {
 
 		expect(calls[0]?.body).toEqual({ drop: { domain: false } });
 	});
+
+	it('logDomains(enabled: false) sends drop.domain: true', async () => {
+		const { ctx } = makeCtx();
+		await Settings.logDomains(ctx, { profileId: P, enabled: false });
+
+		expect(calls[0]?.body).toEqual({ drop: { domain: true } });
+	});
 });
 
 describe('caching', () => {
@@ -714,10 +800,27 @@ describe('caching', () => {
 
 		expect(db.profiles.upsertByEntityId).toHaveBeenCalledTimes(2);
 	});
+
+	/**
+	 * `update`/`rename` don't fetch the profile back, so a cached `name`
+	 * would go stale after a rename; `delete` removes the profile entirely.
+	 * Both evict rather than try to keep the cache fresh - same "delete
+	 * doesn't evict" bug class this repo's Mailtrap plugin had for contacts.
+	 */
+	it('evicts the cached profile on update, rename and delete', async () => {
+		const { ctx, db } = makeCtx();
+
+		await Profiles.update(ctx, { profileId: P, name: 'Renamed' });
+		await Profiles.rename(ctx, { profileId: P, name: 'Renamed Again' });
+		await Profiles.deleteProfile(ctx, { profileId: P });
+
+		expect(db.profiles.deleteByEntityId).toHaveBeenCalledTimes(3);
+		expect(db.profiles.deleteByEntityId).toHaveBeenCalledWith(P);
+	});
 });
 
 describe('event log', () => {
-	it('keeps free-text fields (rewrite target, profile name) out of the payload', async () => {
+	it('keeps a rewrite target out of the payload', async () => {
 		const { ctx } = makeCtx();
 		await Rewrites.add(ctx, {
 			profileId: P,
@@ -727,6 +830,14 @@ describe('event log', () => {
 
 		const payload = mockLogEvent.mock.calls[0]?.[2] as Record<string, unknown>;
 		expect(payload).not.toHaveProperty('content');
+	});
+
+	it('keeps a profile name out of the payload', async () => {
+		const { ctx } = makeCtx();
+		await Profiles.update(ctx, { profileId: P, name: 'My Home Profile' });
+
+		const payload = mockLogEvent.mock.calls[0]?.[2] as Record<string, unknown>;
+		expect(payload).not.toHaveProperty('name');
 	});
 
 	it('never logs the linked-IP update token', async () => {

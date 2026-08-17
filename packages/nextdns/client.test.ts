@@ -46,17 +46,27 @@ function mockFetch(response: MockResponse) {
 
 		const status = response.status ?? 200;
 		const payload = response.body ?? {};
+		// A real `204` has no body and no `Content-Type` - confirmed live
+		// (every sub-resource `PATCH` in this catalog returns exactly this).
+		// `json()`/`text()` reject/return empty to match, so a test asserting
+		// 204 handling can't accidentally pass because the mock still handed
+		// back a parseable body.
+		const isNoContent = status === 204;
 		return {
 			ok: response.ok ?? status < 400,
 			status,
 			statusText: 'OK',
 			url: String(url),
-			headers: new Headers({
-				'Content-Type': 'application/json',
-				...response.headers,
-			}),
-			json: async () => payload,
-			text: async () => JSON.stringify(payload),
+			headers: new Headers(
+				isNoContent
+					? { ...response.headers }
+					: { 'Content-Type': 'application/json', ...response.headers },
+			),
+			json: async () => {
+				if (isNoContent) throw new SyntaxError('Unexpected end of JSON input');
+				return payload;
+			},
+			text: async () => (isNoContent ? '' : JSON.stringify(payload)),
 			// Partial `Response` stub; only what the shared request helper reads.
 		};
 	}) as unknown as typeof global.fetch;

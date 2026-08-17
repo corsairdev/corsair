@@ -217,6 +217,28 @@ describeLive('NextDNS live API', () => {
 		expect(NextDNSAnalyticsResponseSchema.safeParse(result).success).toBe(true);
 	});
 
+	/**
+	 * Found during the follow-up Greptile/CodeRabbit verification round:
+	 * `type` (`countries`/`gafam`) is required on this one analytics
+	 * category - confirmed live it 400s without it. Before this fix,
+	 * `analytics.destinations` could never succeed at all.
+	 */
+	it('gets destinations analytics for both confirmed type values', async () => {
+		const countries = await Analytics.destinations(makeCtx(), {
+			profileId,
+			type: 'countries',
+		});
+		expect(NextDNSAnalyticsResponseSchema.safeParse(countries).success).toBe(
+			true,
+		);
+
+		const gafam = await Analytics.destinations(makeCtx(), {
+			profileId,
+			type: 'gafam',
+		});
+		expect(NextDNSAnalyticsResponseSchema.safeParse(gafam).success).toBe(true);
+	});
+
 	it('gets logs without erroring', async () => {
 		const result = await Logs.get(makeCtx(), { profileId });
 		expect(Array.isArray(result.data)).toBe(true);

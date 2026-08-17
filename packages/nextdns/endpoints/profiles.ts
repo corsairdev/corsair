@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { NextDNSEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { cacheProfile } from './persist';
+import { cacheProfile, invalidateCachedProfile } from './persist';
 import { compactBody, nextDNSCall } from './shared';
 import type { NextDNSProfile, NextDNSProfileSummary } from './types';
 
@@ -84,6 +84,7 @@ export const update: NextDNSEndpoints['profilesUpdate'] = async (
 			rewrites: input.rewrites,
 		}),
 	});
+	await invalidateCachedProfile(ctx.db?.profiles, input.profileId);
 
 	await logEventFromContext(
 		ctx,
@@ -102,6 +103,7 @@ export const deleteProfile: NextDNSEndpoints['profilesDelete'] = async (
 	await nextDNSCall(ctx, `/profiles/${input.profileId}`, {
 		method: 'DELETE',
 	});
+	await invalidateCachedProfile(ctx.db?.profiles, input.profileId);
 
 	await logEventFromContext(
 		ctx,
@@ -124,6 +126,7 @@ export const rename: NextDNSEndpoints['profilesRename'] = async (
 		method: 'PATCH',
 		body: { name: input.name },
 	});
+	await invalidateCachedProfile(ctx.db?.profiles, input.profileId);
 
 	await logEventFromContext(
 		ctx,

@@ -10,7 +10,14 @@ import { makeNextDNSRequest } from '../client';
  */
 type NextDNSCallContext = { key: string };
 
-/** Issues a NextDNS request under the plugin's API key. */
+/**
+ * Issues a NextDNS request under the plugin's API key. `T` is left
+ * unconstrained deliberately: every one of the 71 endpoints supplies its
+ * own precise response type at the call site (e.g.
+ * `nextDNSCall<{ data: NextDNSProfile }>(...)`), so a bound here would only
+ * ever be satisfied trivially and add nothing - the real type safety comes
+ * from each call site's explicit generic, not from this wrapper.
+ */
 export async function nextDNSCall<T>(
 	ctx: NextDNSCallContext,
 	path: string,
@@ -20,23 +27,23 @@ export async function nextDNSCall<T>(
 }
 
 /** Drops keys whose value is `undefined`. */
-export function compactQuery<
-	T extends Record<string, string | number | boolean | undefined>,
->(query: T): T {
+function compact<T extends Record<string, unknown>>(obj: T): T {
 	const compacted = {} as T;
-	for (const [key, value] of Object.entries(query)) {
+	for (const [key, value] of Object.entries(obj)) {
 		if (value !== undefined)
 			(compacted as Record<string, unknown>)[key] = value;
 	}
 	return compacted;
 }
 
+/** Drops keys whose value is `undefined`, for query strings. */
+export function compactQuery<
+	T extends Record<string, string | number | boolean | undefined>,
+>(query: T): T {
+	return compact(query);
+}
+
 /** Drops keys whose value is `undefined`, for request bodies. */
 export function compactBody<T extends Record<string, unknown>>(body: T): T {
-	const compacted = {} as T;
-	for (const [key, value] of Object.entries(body)) {
-		if (value !== undefined)
-			(compacted as Record<string, unknown>)[key] = value;
-	}
-	return compacted;
+	return compact(body);
 }

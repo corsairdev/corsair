@@ -5,13 +5,15 @@ import { compactQuery, nextDNSCall } from './shared';
 import type { NextDNSAnalyticsResponse } from './types';
 
 /**
- * Shared implementation for all 11 analytics categories - they differ only
- * in the trailing path segment and event-log name. `GET_ANALYTICS_REASONS2`
- * and `GET_ANALYTICS_DEVICES2` map to plain `reasons`/`devices` (the "2"
- * looks like a catalog-side label-collision artifact, not a distinct
- * `;series` variant - no `;series` counterpart exists anywhere else in this
- * 71-op catalog, and the operation descriptions describe the same snapshot
- * shape as every other analytics category, not a time-series one).
+ * Shared implementation for 10 of the 11 analytics categories - they differ
+ * only in the trailing path segment and event-log name.
+ * `GET_ANALYTICS_REASONS2` and `GET_ANALYTICS_DEVICES2` map to plain
+ * `reasons`/`devices` (the "2" looks like a catalog-side label-collision
+ * artifact, not a distinct `;series` variant - no `;series` counterpart
+ * exists anywhere else in this 71-op catalog, and the operation
+ * descriptions describe the same snapshot shape as every other analytics
+ * category, not a time-series one). `destinations` is not built on this
+ * helper - see below.
  */
 async function getAnalytics(
 	ctx: Parameters<NextDNSEndpoints['analyticsStatus']>[0],
@@ -77,7 +79,35 @@ export const encryption: NextDNSEndpoints['analyticsEncryption'] = (
 	input,
 ) => getAnalytics(ctx, input, 'encryption', 'encryption');
 
-export const destinations: NextDNSEndpoints['analyticsDestinations'] = (
+/**
+ * `type` (`countries` or `gafam`) is required - confirmed live: omitting it
+ * 400s with `{"errors":[{"code":"required","source":{"parameter":"type"}}]}`.
+ * The only one of the 11 analytics categories with a required extra
+ * parameter, so it doesn't go through the shared `getAnalytics` helper.
+ */
+export const destinations: NextDNSEndpoints['analyticsDestinations'] = async (
 	ctx,
 	input,
-) => getAnalytics(ctx, input, 'destinations', 'destinations');
+) => {
+	const result = await nextDNSCall<NextDNSAnalyticsResponse>(
+		ctx,
+		`/profiles/${input.profileId}/analytics/destinations`,
+		{
+			query: compactQuery({
+				type: input.type,
+				from: input.from,
+				to: input.to,
+				limit: input.limit,
+				cursor: input.cursor,
+			}),
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'nextdns.analytics.destinations',
+		auditPayload(input, ['profileId', 'type', 'from', 'to']),
+		'completed',
+	);
+	return result;
+};

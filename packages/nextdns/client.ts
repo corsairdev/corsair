@@ -51,7 +51,11 @@ export async function makeNextDNSRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		// Not restricted to GET: no operation in this catalog currently
+		// combines a body with query params, but silently dropping query on
+		// a future non-GET call would be a hard-to-notice bug rather than a
+		// visible error.
+		query,
 	};
 
 	// No try/catch here deliberately: `request()` throws a `corsair/http`
