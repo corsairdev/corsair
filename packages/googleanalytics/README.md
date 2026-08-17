@@ -62,6 +62,11 @@ webhook handlers.
 
 ## Provider quirks
 
+- `dataStreams.listMeasurementProtocolSecrets` returns `secretValue` and is
+  classified as a write operation so readonly agent mode cannot dump stream
+  secrets.
+- Deprecated `properties.list` (v1alpha) requires a `filter` such as
+  `accounts/{account}` or `firebaseProjects/{project}`.
 - Admin API resource names are hierarchical
   (`properties/{propertyId}/customDimensions/{id}` etc.). Pass the full
   resource name to `name`/`parent` inputs — for example
