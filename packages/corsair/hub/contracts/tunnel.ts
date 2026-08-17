@@ -17,7 +17,8 @@ export type TunnelType =
 	| 'integration.credentials'
 	| 'connect.create_link'
 	| 'connections.sync'
-	| 'run';
+	| 'run'
+	| 'probe';
 
 /** Inbound tunnel types the app accepts (write-only — no credential reads). */
 export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
@@ -30,7 +31,106 @@ export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
 	'integration.credentials',
 	'connect.create_link',
 	'connections.sync',
+	// Workflow execution. Only handled when the app opts in via
+	// processCorsair({ allowWorkflowExecution: true }); off by default.
+	'run',
+	// Read-only probe (authoring dry-run / id grounding). Same opt-in gate as
+	// `run`; the app runs it under runReadonly so it can never write.
+	'probe',
 ]);
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Workflow run contract (`type: 'run'`)
+//
+// Hub orchestrates workflows but cannot run credentialed operations itself, so it
+// delivers a signed `run` envelope to the app's /api/corsair. The app executes the
+// workflow code (which touches the tenant's Corsair client) and returns the result.
+//
+// Durable replay: `memoizedSteps` carries the outputs of steps that already
+// completed on a previous attempt. The app replays those without re-executing and
+// only runs the failed step + everything after it.
+// ─────────────────────────────────────────────────────────────────────────────
+
+export type RunTriggerType = 'cron' | 'cadence' | 'webhook' | 'manual';
+
+/** Hub → app: a single workflow execution attempt. */
+export type RunTunnelPayload = {
+	runId: string;
+	workflowId: string;
+	versionId: string;
+	tenantId: string;
+	/**
+	 * Executable CommonJS module source. Hub transpiles the stored TypeScript
+	 * workflow version to CJS before delivery; it MUST assign `module.exports.main`
+	 * to `(corsair, payload, step) => Promise<void>`. Kept as JS so the app (the
+	 * `corsair` package) needs no transpiler dependency.
+	 */
+	code: string;
+	/** What fired the run; `payload` is the webhook body (or null for schedule/manual). */
+	trigger: { type: RunTriggerType; payload: unknown };
+	/** Completed steps from prior attempts, keyed by step id (memoization store). */
+	memoizedSteps?: Record<string, { output: unknown }>;
+	/** Replay attempt counter (0 on first execution). */
+	attempt?: number;
+};
+
+/** One step's outcome within an execution (only steps that actually ran this attempt). */
+export type RunStepResult = {
+	/**
+	 * Stable, unique id for this step call — the memoization key and the log
+	 * correlation id. Derived from name + position, so loops / reused names don't
+	 * collide and a changed step at a position gets a new id (no stale replay).
+	 */
+	stepId: string;
+	/** Human-readable step name (may repeat across a run; use stepId for identity). */
+	name: string;
+	/** Execution order across all step() calls in this run (stable across attempts). */
+	seq: number;
+	status: 'completed' | 'failed';
+	output?: unknown;
+	error?: string;
+};
+
+/**
+ * App → Hub: outcome of one execution attempt (returned in the tunnel ack body).
+ *
+ * `sleeping` is a durable pause: the workflow called `step.sleep(...)`, so the app
+ * unwound `main` and reported progress so far. Hub reschedules the run for
+ * `sleepUntil`; on the next attempt the sleep step is memoized (satisfied) and
+ * execution continues past it. This is what makes long, multi-day workflows
+ * survive process restarts.
+ */
+export type RunResultPayload = {
+	status: 'completed' | 'failed' | 'sleeping';
+	steps: RunStepResult[];
+	error?: { message: string; failedStep?: string };
+	/** ISO timestamp when a `sleeping` run should be re-invoked. */
+	sleepUntil?: string;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Read-only probe contract (`type: 'probe'`)
+//
+// Hub's authoring agent asks the app to run a short read-only script against the
+// tenant's client — to ground on real ids/fields or dry-run generated code before
+// saving it. The app runs it under `runReadonly`, so any write/destructive call
+// throws and the probe can never change anything.
+// ─────────────────────────────────────────────────────────────────────────────
+
+/** Hub → app: one read-only script to run against the tenant's client. */
+export type ProbeTunnelPayload = {
+	tenantId: string;
+	/** Async JS body with `corsair` in scope; `return` the value to hand back. */
+	code: string;
+	/** Max run time in ms, clamped app-side to (0, 10_000]; omitted, non-positive,
+	 * or non-finite falls back to the 10s default. */
+	timeoutMs?: number;
+};
+
+/** App → Hub: the script's value, or an error (including a blocked write). */
+export type ProbeResultPayload =
+	| { status: 'ok'; value: unknown }
+	| { status: 'error'; error: string };
 
 /**
  * JSON body of a server-side delivery POST from the hub.
@@ -55,7 +155,8 @@ export type BrowserDeliveryMode =
 	| 'permission.approve'
 	| 'permission.deny'
 	| 'auth.credentials'
-	| 'connections.sync';
+	| 'connections.sync'
+	| 'connect.create_link';
 
 /**
  * Decoded payload inside a browser delivery token (`?d=` query param).
@@ -105,6 +206,8 @@ export type BrowserDeliveryPayload = {
 	requestId?: string;
 	/** API key / bot token fields (`deliveryMode: auth.credentials`). */
 	credentials?: Record<string, string>;
+	/** Plugin ids for connect link creation (`deliveryMode: connect.create_link`). */
+	connectLinkPlugins?: string[];
 };
 
 /** Max age of a browser delivery token (60 seconds). */

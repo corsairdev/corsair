@@ -17,6 +17,8 @@ import type {
 	IntegrationKeyManagerFor,
 	PluginAuthConfig,
 } from '../auth/types';
+import type { CorsairChatsNamespace } from '../chats';
+import { buildChatsNamespace } from '../chats';
 import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
@@ -42,6 +44,8 @@ import type {
 	WebhookTree,
 } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
+import type { CorsairWorkflowsNamespace } from '../workflows';
+import { buildWorkflowsNamespace } from '../workflows';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Entity Client Types
@@ -207,7 +211,20 @@ type InferPluginNamespaces<Plugins extends readonly CorsairPlugin[]> =
  * The main Corsair client type that provides access to all plugin APIs, entities, webhooks, and keys.
  */
 export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
-	InferPluginNamespaces<Plugins>;
+	InferPluginNamespaces<Plugins> & {
+		/**
+		 * Chat interface over the Hub-hosted workflow agent, scoped to this
+		 * client's tenant. Create/list chats and send messages that author or
+		 * edit workflows. Requires `hub` to be configured on `createCorsair`.
+		 */
+		chats: CorsairChatsNamespace;
+		/**
+		 * Manage this tenant's workflows — list/get, run, its runs under
+		 * `workflows.runs` (feed or one workflow's), pause/resume (disable/enable),
+		 * archive/unarchive, rename. Requires `hub` to be configured.
+		 */
+		workflows: CorsairWorkflowsNamespace;
+	};
 
 /**
  * Multi-tenant wrapper that provides a `withTenant` method to scope operations to a specific tenant.
@@ -382,9 +399,15 @@ export function buildCorsairClient<
 		internalConfig,
 	} = options;
 
+	// Canonical tenant scope for this client. Single-tenant clients pass no
+	// tenantId → 'default', which is Hub's own single-tenant convention. Used
+	// identically for provisioning, plugin operations, and the chats API so a
+	// client's scope is the same everywhere.
+	const effectiveTenantId = tenantId ?? 'default';
+
 	const ensureProvisioned =
 		internalConfig && database
-			? () => ensureTenantProvisioned(internalConfig, tenantId ?? 'default')
+			? () => ensureTenantProvisioned(internalConfig, effectiveTenantId)
 			: undefined;
 
 	const apiUnsafe: Record<string, Record<string, unknown>> = {};
@@ -397,7 +420,6 @@ export function buildCorsairClient<
 
 	for (const plugin of plugins) {
 		const schema = plugin.schema;
-		const effectiveTenantId = tenantId ?? 'default';
 
 		// Create a shared account ID resolver for this plugin
 		const getAccountId = createAccountIdResolver(
@@ -521,6 +543,7 @@ export function buildCorsairClient<
 			plugin,
 			kek,
 			allPlugins: plugins,
+			multiTenancy: internalConfig?.multiTenancy,
 		});
 
 		if (Object.keys(boundTree).length > 0) {
@@ -559,6 +582,16 @@ export function buildCorsairClient<
 		}
 	}
 
+	// Tenant-scoped chat interface to the Hub workflow agent. Attached to every
+	// client (single- and multi-tenant); throws on use if `hub` isn't configured.
+	(apiUnsafe as Record<string, unknown>).chats = buildChatsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
+	(apiUnsafe as Record<string, unknown>).workflows = buildWorkflowsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
 	return apiUnsafe as CorsairClient<Plugins>;
 }
 

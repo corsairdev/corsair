@@ -24,6 +24,24 @@
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {
+	type AgentMessageRole,
+	type AgentReply,
+	type ChatMessage,
+	type ChatSummary,
+	type CreateChatResult,
+	createChat,
+	listChatMessages,
+	listChats,
+	postChatMessage,
+} from './chats';
+export {
+	buildClientBridgeBrowserDeliveryUrl,
+	type ClientBridgeDeliverySpec,
+	type ClientBridgeTransportResult,
+	type PrepareClientBridgeDeliveryTransportInput,
+	prepareClientBridgeDeliveryTransport,
+} from './client-bridge-delivery';
+export {
 	DEFAULT_HUB_API_URL,
 	getHubConfig,
 	HubNotConfiguredError,
@@ -32,6 +50,11 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export { startConnectLoop } from './connect/loop';
+export type {
+	ConnectCreateLinkDeliveryPayload,
+	ConnectCreateLinkDeliveryResult,
+} from './connect-link-delivery';
 export {
 	type ConnectAuthFieldStatus,
 	type ConnectAuthStatusLevel,
@@ -120,10 +143,14 @@ export {
 	decodeConnectSessionTokenFromPath,
 	decodeConnectTokenFromPath,
 	decodePermissionTokenFromPath,
+	deliverConnectCreateLink,
 	deliverSignedEnvelope,
 	describeDeliveryNetworkError,
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
+	extractConnectLinkFromDeliveryAck,
+	extractProbeFromDeliveryAck,
+	extractRunFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
 	formatServerDeliveryError,
@@ -131,6 +158,7 @@ export {
 	getConnectTokenExpiryMs,
 	isServerDeliveryAckSuccessful,
 	type PermissionTokenPayload,
+	parseConnectLinkFromDeliveryBody,
 	parseServerDeliveryAckBody,
 	parseSyncFromDeliveryBody,
 	type ServerDeliveryAckBody,
@@ -172,6 +200,12 @@ export type {
 	HubPermissionSessionInput,
 	HubPermissionSessionResult,
 	HubProjectConnection,
+	ProbeResultPayload,
+	ProbeTunnelPayload,
+	RunResultPayload,
+	RunStepResult,
+	RunTriggerType,
+	RunTunnelPayload,
 	TunnelEnvelope,
 	TunnelType,
 } from './types';

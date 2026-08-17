@@ -1,5 +1,10 @@
 export const CLIENT_BRIDGE_MESSAGE_TYPE = 'corsair:client-bridge';
 
+/** postMessage targetOrigin must be scheme + host + port, never a page path. */
+export function normalizeBridgeTargetOrigin(hubOrigin: string): string {
+	return new URL(hubOrigin).origin;
+}
+
 export function buildClientBridgePostMessageHtml(input: {
 	hubOrigin: string;
 	requestId: string;
@@ -14,7 +19,9 @@ export function buildClientBridgePostMessageHtml(input: {
 		body: input.body ?? null,
 		error: input.error ?? null,
 	});
-	const targetOrigin = JSON.stringify(input.hubOrigin);
+	const targetOrigin = JSON.stringify(
+		normalizeBridgeTargetOrigin(input.hubOrigin),
+	);
 
 	return `<!DOCTYPE html><html><head><meta charset="utf-8"></head><body><script>
 (function () {
