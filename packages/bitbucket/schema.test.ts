@@ -1,8 +1,8 @@
 /**
  * Asserts every official / live-captured key is declared in `schema/database.ts`.
  *
- * Entities are `.loose()`, so an extra key still parses — `safeParse` alone
- * would never notice a field the schema forgot.
+ * Entities strip unknown keys. `safeParse` alone would never notice a field
+ * the schema forgot, so declared-key lists are the check.
  *
  * Official keys: https://developer.atlassian.com/cloud/bitbucket/swagger.v3.json
  * Live extras: GET /2.0/workspaces/bitbucket and GET /2.0/repositories?pagelen=1
@@ -275,20 +275,53 @@ describe('Bitbucket schema', () => {
 		);
 	});
 
-	it('keeps undeclared live extras because entities are loose', () => {
+	it('strips undeclared keys from persisted entities', () => {
 		const parsed = BitbucketRepositoryEntity.safeParse({
 			uuid: '{r}',
 			aKeyNobodyDeclared: 1,
 		});
 		expect(parsed.success).toBe(true);
+		if (!parsed.success) return;
+		expect(parsed.data).not.toHaveProperty('aKeyNobodyDeclared');
 		expect(declaredKeys(BitbucketRepositoryEntity)).not.toContain(
 			'aKeyNobodyDeclared',
 		);
 	});
 
-	it('does not model email or pipeline-variable values', () => {
+	it('does not persist email, pipeline-variable, or author-raw values', () => {
 		expect(declaredKeys(BitbucketUserEntity)).not.toContain('email');
 		expect(declaredKeys(BitbucketAccount)).not.toContain('email');
 		expect(declaredKeys(BitbucketPipelineEntity)).not.toContain('variables');
+
+		const user = BitbucketUserEntity.safeParse({
+			uuid: '{u}',
+			email: 'hidden@example.com',
+		});
+		expect(user.success).toBe(true);
+		if (user.success) expect(user.data).not.toHaveProperty('email');
+
+		const pipeline = BitbucketPipelineEntity.safeParse({
+			uuid: '{pipe}',
+			variables: [{ key: 'TOKEN', value: 'secret' }],
+		});
+		expect(pipeline.success).toBe(true);
+		if (pipeline.success) expect(pipeline.data).not.toHaveProperty('variables');
+
+		const commit = BitbucketCommitEntity.safeParse({
+			hash: 'abc',
+			author: {
+				type: 'author',
+				raw: 'Ada <ada@example.com>',
+				user: { uuid: '{u}', email: 'ada@example.com' },
+			},
+			committer: {
+				raw: 'Ada <ada@example.com>',
+			},
+		});
+		expect(commit.success).toBe(true);
+		if (!commit.success) return;
+		expect(commit.data.author).not.toHaveProperty('raw');
+		expect(commit.data.committer).not.toHaveProperty('raw');
+		expect(commit.data.author?.user).not.toHaveProperty('email');
 	});
 });
