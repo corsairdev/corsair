@@ -89,6 +89,9 @@ export function verifyFirefliesWebhookSignature(
 	},
 	secret: string,
 ): { valid: boolean; error?: string } {
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
 	const signatureHeader = request.headers['x-fireflies-signature'];
 	if (!signatureHeader) {
 		return { valid: false, error: 'Missing x-fireflies-signature header' };
