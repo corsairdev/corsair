@@ -12,7 +12,10 @@ import {
 } from '@/db/integration-status';
 import type { IntegrationPhase } from '@/db/schema';
 import { integrations } from '@/db/schema';
-import type { ClaimPhase } from '@/server/integrations/claim-decision';
+import type {
+	ClaimDecision,
+	ClaimPhase,
+} from '@/server/integrations/claim-decision';
 import { resolveClaimDecision } from '@/server/integrations/claim-decision';
 
 export type {
@@ -38,17 +41,51 @@ export type AtomicClaimResult =
 			phase: IntegrationPhase;
 	  };
 
+// Advisory-lock classes for the two-arg pg_advisory_xact_lock(class, id) form —
+// a key space separate from the single-arg form. Distinct classes keep user and
+// integration locks from ever colliding.
+const USER_LOCK_CLASS = 1;
+const INTEGRATION_LOCK_CLASS = 2;
+
 /**
- * Advisory-lock keys for a claim, user first then integration. The user key
- * serializes one user claiming two integrations at once (eligibility is a
- * per-user rule, so per-integration locks alone don't); the fixed order avoids
+ * Advisory-lock (class, id) pairs for a claim, user first then integration. The
+ * user lock serializes one user claiming two integrations at once (eligibility
+ * is per-user, so per-integration locks alone don't); the fixed order avoids
  * deadlock.
  */
 export function claimLockKeys(
 	userId: string,
 	integrationId: string,
-): [userKey: string, integrationKey: string] {
-	return [`claim:user:${userId}`, `claim:integration:${integrationId}`];
+): [userLock: [number, string], integrationLock: [number, string]] {
+	return [
+		[USER_LOCK_CLASS, userId],
+		[INTEGRATION_LOCK_CLASS, integrationId],
+	];
+}
+
+/**
+ * Claim precedence: an existing same-user claim or a conflict on this
+ * integration is resolved before the per-user eligibility gate, so re-claiming
+ * an in-progress integration returns already_owned instead of a 'wip' rejection.
+ */
+export function resolveClaimOutcome(
+	decision: ClaimDecision,
+	eligibility: { canClaim: boolean },
+):
+	| { action: 'return_existing'; phase: ClaimPhase }
+	| { action: 'conflict' }
+	| { action: 'blocked' }
+	| { action: 'insert' } {
+	if (decision.action === 'return_existing') {
+		return { action: 'return_existing', phase: decision.phase };
+	}
+	if (decision.action === 'conflict') {
+		return { action: 'conflict' };
+	}
+	if (!eligibility.canClaim) {
+		return { action: 'blocked' };
+	}
+	return { action: 'insert' };
 }
 
 /**
@@ -66,33 +103,19 @@ export async function claimIntegrationAtomically(
 	return db.transaction(async (tx) => {
 		const claimDb = tx as unknown as DB;
 
-		// hashtext → int4 advisory key; xact locks auto-release on commit/rollback.
-		const [userLockKey, integrationLockKey] = claimLockKeys(
+		// Two-arg pg_advisory_xact_lock(class, id) — a key space separate from the
+		// single-arg form; xact locks auto-release on commit/rollback. User lock
+		// first (see claimLockKeys) so concurrent claims can't deadlock.
+		const [userLock, integrationLock] = claimLockKeys(
 			params.userId,
 			params.integrationId,
 		);
 		await tx.execute(
-			sql`SELECT pg_advisory_xact_lock(hashtext(${userLockKey}))`,
+			sql`SELECT pg_advisory_xact_lock(${userLock[0]}, hashtext(${userLock[1]}))`,
 		);
 		await tx.execute(
-			sql`SELECT pg_advisory_xact_lock(hashtext(${integrationLockKey}))`,
+			sql`SELECT pg_advisory_xact_lock(${integrationLock[0]}, hashtext(${integrationLock[1]}))`,
 		);
-
-		const eligibility = await getUserClaimEligibility(claimDb, params.userId);
-		if (!eligibility.canClaim) {
-			if (eligibility.blockReason === 'limit_reached') {
-				throw new TRPCError({
-					code: 'PRECONDITION_FAILED',
-					message: `You've built the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations and can't claim another`,
-				});
-			}
-
-			throw new TRPCError({
-				code: 'PRECONDITION_FAILED',
-				message:
-					'Finish your current integration or mark it ready to review before claiming another',
-			});
-		}
 
 		const [integration] = await tx
 			.select({ id: integrations.id, slug: integrations.slug })
@@ -122,19 +145,32 @@ export async function claimIntegrationAtomically(
 			claimantUserId: params.userId,
 		});
 
-		if (decision.action === 'return_existing') {
+		const eligibility = await getUserClaimEligibility(claimDb, params.userId);
+		const outcome = resolveClaimOutcome(decision, eligibility);
+
+		if (outcome.action === 'return_existing') {
 			return {
 				kind: 'already_owned',
 				integrationId: params.integrationId,
 				slug: integration.slug,
-				phase: decision.phase,
+				phase: outcome.phase,
 			};
 		}
 
-		if (decision.action === 'conflict') {
+		if (outcome.action === 'conflict') {
 			throw new TRPCError({
 				code: 'CONFLICT',
 				message: 'This integration has already been claimed',
+			});
+		}
+
+		if (outcome.action === 'blocked') {
+			throw new TRPCError({
+				code: 'PRECONDITION_FAILED',
+				message:
+					eligibility.blockReason === 'limit_reached'
+						? `You've built the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations and can't claim another`
+						: 'Finish your current integration or mark it ready to review before claiming another',
 			});
 		}
 

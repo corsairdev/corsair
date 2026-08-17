@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { isClaimPhaseAvailable, resolveClaimDecision } from './claim-decision';
-import { claimLockKeys } from './claim-integration';
+import { claimLockKeys, resolveClaimOutcome } from './claim-integration';
 
 describe('isClaimPhaseAvailable', () => {
 	it('treats null and released as available', () => {
@@ -81,26 +81,59 @@ describe('resolveClaimDecision', () => {
 });
 
 describe('claimLockKeys', () => {
-	it('serializes one user across different integrations (user key ignores integration)', () => {
-		const [userKeyA] = claimLockKeys('user-a', 'integration-1');
-		const [userKeyB] = claimLockKeys('user-a', 'integration-2');
-		assert.equal(userKeyA, userKeyB);
+	it('serializes one user across different integrations (user lock ignores integration)', () => {
+		const [userLockA] = claimLockKeys('user-a', 'integration-1');
+		const [userLockB] = claimLockKeys('user-a', 'integration-2');
+		assert.deepEqual(userLockA, userLockB);
 	});
 
-	it('serializes different users on the same integration (integration key ignores user)', () => {
-		const [, intKeyA] = claimLockKeys('user-a', 'integration-1');
-		const [, intKeyB] = claimLockKeys('user-b', 'integration-1');
-		assert.equal(intKeyA, intKeyB);
+	it('serializes different users on the same integration (integration lock ignores user)', () => {
+		const [, intLockA] = claimLockKeys('user-a', 'integration-1');
+		const [, intLockB] = claimLockKeys('user-b', 'integration-1');
+		assert.deepEqual(intLockA, intLockB);
 	});
 
-	it('keeps user and integration locks in distinct namespaces', () => {
-		const [userKey, intKey] = claimLockKeys('same-id', 'same-id');
-		assert.notEqual(userKey, intKey);
+	it('locks user and integration in distinct classes', () => {
+		const [[userClass], [intClass]] = claimLockKeys('same-id', 'same-id');
+		assert.notEqual(userClass, intClass);
 	});
 
-	it('returns keys user-first then integration (fixed order prevents deadlock)', () => {
-		const [first, second] = claimLockKeys('u', 'i');
-		assert.match(first, /^claim:user:/);
-		assert.match(second, /^claim:integration:/);
+	it('returns the user lock first then integration (fixed order prevents deadlock)', () => {
+		const [userLock, intLock] = claimLockKeys('u', 'i');
+		assert.equal(userLock[1], 'u');
+		assert.equal(intLock[1], 'i');
+	});
+});
+
+describe('resolveClaimOutcome', () => {
+	it('returns an existing same-user claim even when the user is otherwise ineligible', () => {
+		assert.deepEqual(
+			resolveClaimOutcome(
+				{ action: 'return_existing', phase: 'awaiting_issue' },
+				{ canClaim: false },
+			),
+			{ action: 'return_existing', phase: 'awaiting_issue' },
+		);
+	});
+
+	it('reports a conflict ahead of the eligibility gate', () => {
+		assert.deepEqual(
+			resolveClaimOutcome({ action: 'conflict' }, { canClaim: false }),
+			{ action: 'conflict' },
+		);
+	});
+
+	it('blocks a genuinely new claim when the user is ineligible', () => {
+		assert.deepEqual(
+			resolveClaimOutcome({ action: 'insert' }, { canClaim: false }),
+			{ action: 'blocked' },
+		);
+	});
+
+	it('allows a new claim when the user is eligible', () => {
+		assert.deepEqual(
+			resolveClaimOutcome({ action: 'insert' }, { canClaim: true }),
+			{ action: 'insert' },
+		);
 	});
 });
