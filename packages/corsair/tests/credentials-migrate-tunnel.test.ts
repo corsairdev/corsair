@@ -1,29 +1,19 @@
-import { createHmac, randomUUID } from 'node:crypto';
 import { CORSAIR_INTERNAL } from '../core';
 import { resetDeliveryReplayGuardForTests } from '../hub/internal/delivery-replay-guard';
+import { signDeliveryEnvelope } from '../hub/signing/envelope';
 import { processCorsair } from '../tunnel/index';
 import { createTestDatabase } from './setup-db';
 
 const SECRET = 'prod-signing-secret-with-32-plus-chars!!';
 
-// Mirrors signDeliveryEnvelope (hub/signing/envelope.ts) exactly, but takes the
-// type as a raw string so the test drives the wire format, not the TS union.
-function signMigrateEnvelope(
-	payload: unknown,
-	secret = SECRET,
-): { body: string; headers: Record<string, string> } {
-	const body = JSON.stringify({ type: 'credentials.migrate', payload });
-	const signature = createHmac('sha256', secret.trim())
-		.update(body)
-		.digest('hex');
-	return {
-		body,
-		headers: {
-			'x-corsair-signature': `sha256=${signature}`,
-			'x-corsair-timestamp': String(Math.floor(Date.now() / 1000)),
-			'x-corsair-nonce': randomUUID(),
-		},
-	};
+// Sign with the real production signer so the test can never drift from it.
+function signMigrateEnvelope(payload: unknown, secret = SECRET) {
+	return signDeliveryEnvelope({
+		projectId: 'proj_test',
+		signingSecret: secret,
+		type: 'credentials.migrate',
+		payload,
+	});
 }
 
 function createCorsair(env: ReturnType<typeof createTestDatabase>) {

@@ -1,4 +1,3 @@
-import { createHmac, randomUUID } from 'node:crypto';
 import { CORSAIR_INTERNAL } from '../core';
 import {
 	decryptDEK,
@@ -9,6 +8,7 @@ import {
 } from '../core/auth/encryption';
 import { buildMigrationPayload } from '../hub/credentials-migrate-client';
 import { resetDeliveryReplayGuardForTests } from '../hub/internal/delivery-replay-guard';
+import { signDeliveryEnvelope } from '../hub/signing/envelope';
 import { processCorsair } from '../tunnel/index';
 import { createTestDatabase } from './setup-db';
 
@@ -16,23 +16,14 @@ const DEV_KEK = 'dev-master-key-with-at-least-32-chars!!';
 const PROD_KEK = 'prod-master-key-with-at-least-32-chars!';
 const PROD_SIGNING_SECRET = 'prod-signing-secret-with-32-plus-chars!!';
 
-// Faithful copy of signDeliveryEnvelope's HMAC, taking a raw string type.
-function signMigrateEnvelope(payload: unknown): {
-	body: string;
-	headers: Record<string, string>;
-} {
-	const body = JSON.stringify({ type: 'credentials.migrate', payload });
-	const signature = createHmac('sha256', PROD_SIGNING_SECRET.trim())
-		.update(body)
-		.digest('hex');
-	return {
-		body,
-		headers: {
-			'x-corsair-signature': `sha256=${signature}`,
-			'x-corsair-timestamp': String(Math.floor(Date.now() / 1000)),
-			'x-corsair-nonce': randomUUID(),
-		},
-	};
+// Sign with the real production signer so the test can never drift from it.
+function signMigrateEnvelope(payload: unknown) {
+	return signDeliveryEnvelope({
+		projectId: 'proj_test',
+		signingSecret: PROD_SIGNING_SECRET,
+		type: 'credentials.migrate',
+		payload,
+	});
 }
 
 describe('dev → prod credential migration (end to end)', () => {
