@@ -196,6 +196,15 @@ describe('Webflow request client', () => {
 		});
 		expect(mockRequest.mock.calls[0]?.[1].body).toBeUndefined();
 	});
+
+	it('rejects a caller-controlled baseUrl that is not the Webflow API host', async () => {
+		await expect(
+			makeWebflowRequest('/sites', 'test-token', {
+				baseUrl: 'https://evil.example/steal',
+			}),
+		).rejects.toThrow(/baseUrl/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
 });
 
 describe('Webflow endpoints', () => {
@@ -1060,5 +1069,233 @@ describe('Webflow endpoints', () => {
 		expect(result).toMatchObject({
 			sites: [{ id: '580e63e98c9a982ac9b8b741' }],
 		});
+	});
+
+	it('does not let live item reads overwrite the staged cache', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collectionItems: {
+				getCollectionItem: (
+					ctx: WebflowContext,
+					input: { collection_id: string; item_id: string },
+				) => Promise<unknown>;
+				getLiveCollectionItem: (
+					ctx: WebflowContext,
+					input: { collection_id: string; item_id: string },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const upsertByEntityId = jest.fn();
+		const ctxWithDb = testContext({
+			db: {
+				collectionItems: { upsertByEntityId },
+			},
+		});
+
+		mockRequest.mockResolvedValueOnce({
+			id: '580e64008c9a982ac9b8b754',
+			isDraft: true,
+			fieldData: { name: 'Draft' },
+		});
+		await endpoints.collectionItems.getCollectionItem(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+			item_id: '580e64008c9a982ac9b8b754',
+		});
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'580e64008c9a982ac9b8b754',
+			expect.objectContaining({ isDraft: true, fieldData: { name: 'Draft' } }),
+		);
+
+		upsertByEntityId.mockClear();
+		mockRequest.mockResolvedValueOnce({
+			id: '580e64008c9a982ac9b8b754',
+			isDraft: false,
+			fieldData: { name: 'Live' },
+		});
+		await endpoints.collectionItems.getLiveCollectionItem(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+			item_id: '580e64008c9a982ac9b8b754',
+		});
+
+		expect(upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('evicts the staged cache after a live item update', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collectionItems: {
+				updateLiveCollectionItem: (
+					ctx: WebflowContext,
+					input: { collection_id: string; item_id: string; body: unknown },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const deleteByEntityId = jest.fn();
+		const upsertByEntityId = jest.fn();
+		const ctxWithDb = testContext({
+			db: {
+				collectionItems: { deleteByEntityId, upsertByEntityId },
+			},
+		});
+
+		mockRequest.mockResolvedValueOnce({
+			id: '580e64008c9a982ac9b8b754',
+			isDraft: false,
+			fieldData: { name: 'Live' },
+		});
+		await endpoints.collectionItems.updateLiveCollectionItem(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+			item_id: '580e64008c9a982ac9b8b754',
+			body: { fieldData: { name: 'Live' } },
+		});
+
+		expect(deleteByEntityId).toHaveBeenCalledWith('580e64008c9a982ac9b8b754');
+		expect(upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('evicts the site and its cached items after publishSite', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			sites: {
+				publishSite: (
+					ctx: WebflowContext,
+					input: { site_id: string; body: unknown },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const listItems = jest
+			.fn()
+			.mockResolvedValueOnce([{ entity_id: '580e64008c9a982ac9b8b754' }])
+			.mockResolvedValueOnce([]);
+		const ctxWithDb = testContext({
+			db: {
+				sites: { deleteByEntityId: jest.fn() },
+				collections: { deleteByEntityId: jest.fn() },
+				collectionItems: {
+					list: listItems,
+					deleteByEntityId: jest.fn(),
+				},
+			},
+		});
+
+		await endpoints.sites.publishSite(ctxWithDb, {
+			site_id: '580e63e98c9a982ac9b8b741',
+			body: { publishToWebflowSubdomain: true },
+		});
+
+		expect(ctxWithDb.db.sites.deleteByEntityId).toHaveBeenCalledWith(
+			'580e63e98c9a982ac9b8b741',
+		);
+		expect(ctxWithDb.db.collectionItems.deleteByEntityId).toHaveBeenCalledWith(
+			'580e64008c9a982ac9b8b754',
+		);
+		expect(ctxWithDb.db.collections.deleteByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('does not cache live item creates into the staged collectionItems row', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collectionItems: {
+				createLiveCollectionItem: (
+					ctx: WebflowContext,
+					input: { collection_id: string; body: unknown },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const upsertByEntityId = jest.fn();
+		const ctxWithDb = testContext({
+			db: {
+				collectionItems: { upsertByEntityId },
+			},
+		});
+
+		mockRequest.mockResolvedValueOnce({
+			id: '580e64008c9a982ac9b8b754',
+			isDraft: false,
+			fieldData: { name: 'Live' },
+		});
+		await endpoints.collectionItems.createLiveCollectionItem(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+			body: { fieldData: { name: 'Live' } },
+		});
+
+		expect(upsertByEntityId).not.toHaveBeenCalled();
+	});
+
+	it('keeps collection fields when a later list upserts the same row', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collections: {
+				listCollections: (
+					ctx: WebflowContext,
+					input: { site_id: string },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const upsertByEntityId = jest.fn();
+		const ctxWithDb = testContext({
+			db: {
+				collections: {
+					findByEntityId: jest.fn().mockResolvedValue({
+						entity_id: '580e63fc8c9a982ac9b8b745',
+						data: {
+							id: '580e63fc8c9a982ac9b8b745',
+							displayName: 'Blog',
+							fields: [{ slug: 'title' }],
+						},
+					}),
+					upsertByEntityId,
+				},
+			},
+		});
+
+		mockRequest.mockResolvedValueOnce({
+			collections: [
+				{
+					id: '580e63fc8c9a982ac9b8b745',
+					displayName: 'Blog Posts',
+					slug: 'posts',
+				},
+			],
+		});
+		await endpoints.collections.listCollections(ctxWithDb, {
+			site_id: '580e63e98c9a982ac9b8b741',
+		});
+
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'580e63fc8c9a982ac9b8b745',
+			expect.objectContaining({
+				displayName: 'Blog Posts',
+				slug: 'posts',
+				siteId: '580e63e98c9a982ac9b8b741',
+				fields: [{ slug: 'title' }],
+			}),
+		);
+	});
+
+	it('evicts the cached collection after a field mutation', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collectionFields: {
+				deleteCollectionField: (
+					ctx: WebflowContext,
+					input: { collection_id: string; field_id: string },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const ctxWithDb = testContext({
+			db: {
+				collections: { deleteByEntityId: jest.fn() },
+			},
+		});
+
+		await endpoints.collectionFields.deleteCollectionField(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+			field_id: '6fc57a92be3e0461c1b3d9d6',
+		});
+
+		expect(ctxWithDb.db.collections.deleteByEntityId).toHaveBeenCalledWith(
+			'580e63fc8c9a982ac9b8b745',
+		);
 	});
 });
