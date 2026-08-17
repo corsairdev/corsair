@@ -97,11 +97,7 @@ export type CollegeFootballDataVenueEntity = z.infer<
 	typeof CollegeFootballDataVenueEntity
 >;
 
-/**
- * No numeric id in the live response - `firstName`+`lastName`+`hireDate`
- * is the closest thing to a natural key, but `id` (present per record) is
- * used as the entity key since it is unique and stable.
- */
+/** `id` is present, unique and stable per record, so it is used as the entity key. */
 export const CollegeFootballDataCoachEntity = z
 	.object({
 		id: z.number(),

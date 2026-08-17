@@ -25,18 +25,28 @@ export const errorHandlers = {
 	 * The free tier's rate limit is undocumented (see `CFBD-PLAN.md` open
 	 * question 5) - this reacts to a 429 when it arrives rather than pacing
 	 * proactively against a budget the provider never states.
+	 *
+	 * `maxRetries: 0` here is deliberate, not a missing feature: `client.ts`'s
+	 * `COLLEGE_FOOTBALL_DATA_RATE_LIMIT_CONFIG` already retries 429s at the
+	 * transport layer (a real loop that returns the successful result). The
+	 * shared endpoint-level retry path this handler could opt into
+	 * (`packages/corsair/core/endpoints/bind.ts`) recurses but discards the
+	 * retried result and always rethrows the original error - stacking it on
+	 * top of the transport retry would risk up to 4x the requests against a
+	 * metered monthly quota while never actually returning a recovered
+	 * response to the caller. Reaching this handler at all means the
+	 * transport already retried and still failed.
 	 */
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			return error.message.toLowerCase().includes('too many requests');
 		},
-		handler: async (error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 3, headersRetryAfterMs: retryAfterMs };
+		handler: async (error, context) => {
+			console.warn(
+				`[COLLEGEFOOTBALLDATA:${context.operation}] Rate limited after transport retries exhausted (status ${safeStatus(error)})`,
+			);
+			return { maxRetries: 0 };
 		},
 	},
 	/** Not documented in the spec; expected in practice for a missing/bad key. */
@@ -87,14 +97,21 @@ export const errorHandlers = {
 		},
 		/**
 		 * Every operation in this catalog is a GET, so retrying a network
-		 * failure never risks a duplicate write - unlike every other plugin in
-		 * this repo, no `isNonIdempotent` predicate is needed here at all.
+		 * failure would never risk a duplicate write - unlike every other
+		 * plugin in this repo, no `isNonIdempotent` predicate would be needed
+		 * here at all. But the shared endpoint-level retry path this
+		 * `maxRetries` feeds (`packages/corsair/core/endpoints/bind.ts`)
+		 * recurses on retry and then discards the result, always rethrowing
+		 * the original error even when the retry succeeds - so returning a
+		 * nonzero value here would only spend extra requests for a caller who
+		 * still gets the same failure. `maxRetries: 0` fails fast and
+		 * honestly instead.
 		 */
 		handler: async (error, context) => {
 			console.warn(
 				`[COLLEGEFOOTBALLDATA:${context.operation}] Network error: ${error.message}`,
 			);
-			return { maxRetries: 3 };
+			return { maxRetries: 0 };
 		},
 	},
 	DEFAULT: {

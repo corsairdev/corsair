@@ -111,18 +111,36 @@ describe('makeCollegeFootballDataRequest', () => {
 		expect(captured?.url).toContain('team=Alabama');
 	});
 
-	it('retries once the provider answers 429 and honours Retry-After', async () => {
-		mockFetchSequence([
-			{ status: 429, body: {}, headers: { 'Retry-After': '1' } },
-			{ status: 200, body: [{ id: 1 }] },
-		]);
+	/**
+	 * `Retry-After: 3` is deliberately different from `client.ts`'s
+	 * `initialRetryDelay: 1000` (1s): if the retry actually waited on the
+	 * fallback backoff instead of the header, this test would still pass at
+	 * 1s of fake-timer advancement, hiding the bug. Advancing by only the
+	 * header's 3s and asserting the second request has landed by then (but
+	 * not before) proves the header value, not the fallback, drove the wait.
+	 */
+	it('retries once the provider answers 429, waiting exactly the Retry-After duration', async () => {
+		jest.useFakeTimers();
+		try {
+			mockFetchSequence([
+				{ status: 429, body: {}, headers: { 'Retry-After': '3' } },
+				{ status: 200, body: [{ id: 1 }] },
+			]);
 
-		const result = await makeCollegeFootballDataRequest<unknown[]>(
-			'/teams',
-			'test-key',
-		);
+			const pending = makeCollegeFootballDataRequest<unknown[]>(
+				'/teams',
+				'test-key',
+			);
 
-		expect(attempts).toBe(2);
-		expect(result).toEqual([{ id: 1 }]);
+			await jest.advanceTimersByTimeAsync(2999);
+			expect(attempts).toBe(1);
+
+			await jest.advanceTimersByTimeAsync(1);
+			expect(attempts).toBe(2);
+
+			expect(await pending).toEqual([{ id: 1 }]);
+		} finally {
+			jest.useRealTimers();
+		}
 	});
 });

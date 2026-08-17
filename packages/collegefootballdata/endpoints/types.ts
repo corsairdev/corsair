@@ -1080,16 +1080,7 @@ export type CollegeFootballDataRosterPlayer = z.infer<
 /* shared input fragments                                                     */
 /* -------------------------------------------------------------------------- */
 
-const SeasonTypeInputSchema = z
-	.enum([
-		'regular',
-		'postseason',
-		'both',
-		'allstar',
-		'spring_regular',
-		'spring_postseason',
-	])
-	.optional();
+const SeasonTypeInputSchema = CollegeFootballDataSeasonTypeSchema.optional();
 const ClassificationInputSchema = z
 	.enum(['fbs', 'fcs', 'ii', 'iii'])
 	.optional();
@@ -1098,22 +1089,22 @@ const ClassificationInputSchema = z
 /* games                                                                       */
 /* -------------------------------------------------------------------------- */
 
-/**
- * `year` is required unless `id` is specified (confirmed from the spec's
- * own parameter description) - a `.refine()` candidate once the endpoint
- * is exercised against a caller that omits both.
- */
-const GamesGetGamesAndResultsInputSchema = z.object({
-	year: z.number().optional(),
-	week: z.number().optional(),
-	seasonType: SeasonTypeInputSchema,
-	classification: ClassificationInputSchema,
-	team: z.string().optional(),
-	home: z.string().optional(),
-	away: z.string().optional(),
-	conference: z.string().optional(),
-	id: z.number().optional(),
-});
+/** `year` is required unless `id` is specified (confirmed from the spec's own parameter description). */
+const GamesGetGamesAndResultsInputSchema = z
+	.object({
+		year: z.number().optional(),
+		week: z.number().optional(),
+		seasonType: SeasonTypeInputSchema,
+		classification: ClassificationInputSchema,
+		team: z.string().optional(),
+		home: z.string().optional(),
+		away: z.string().optional(),
+		conference: z.string().optional(),
+		id: z.number().optional(),
+	})
+	.refine((value) => value.id !== undefined || value.year !== undefined, {
+		message: 'Either id or year is required',
+	});
 export type GamesGetGamesAndResultsInput = z.infer<
 	typeof GamesGetGamesAndResultsInputSchema
 >;

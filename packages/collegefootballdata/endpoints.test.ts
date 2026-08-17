@@ -511,13 +511,14 @@ describe('teams.listFCS', () => {
 });
 
 describe('caching', () => {
-	it('mirrors a team on list, listFBS and listFCS', async () => {
+	// Teams.listFCS's caching (or lack of it, when the fixture's
+	// classification doesn't match 'fcs') is covered by the dedicated
+	// `teams.listFCS` describe block above.
+	it('mirrors a team on list and listFBS', async () => {
 		const { ctx, db } = makeCtx();
 
 		await Teams.list(ctx, {});
 		await Teams.listFBS(ctx, { year: 2023 });
-		// listFCS's fixture (classification: 'fbs') matches nothing, so this
-		// call caches zero rows - covered by the dedicated describe block above.
 
 		expect(db.teams.upsertByEntityId).toHaveBeenCalledTimes(2);
 	});

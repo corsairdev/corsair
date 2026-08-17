@@ -158,4 +158,11 @@ describe('entity schemas reject a record with no key', () => {
 			CollegeFootballDataVenueEntity.safeParse({ name: 'Nameless' }).success,
 		).toBe(false);
 	});
+
+	it('rejects a coach with no id', () => {
+		expect(
+			CollegeFootballDataCoachEntity.safeParse({ firstName: 'Nameless' })
+				.success,
+		).toBe(false);
+	});
 });
