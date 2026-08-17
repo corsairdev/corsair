@@ -370,26 +370,36 @@ export type MailtrapBillingUsage = z.infer<typeof MailtrapBillingUsageSchema>;
  * this account's free tier (see `MAILTRAP-PLAN.md`), so this is SDK-derived
  * rather than live-captured past the auth/routing layer.
  */
-export const MailtrapPermissionResourceSchema: z.ZodType<{
+/**
+ * Named and self-referential so `resources` below stays typed as nested
+ * `MailtrapPermissionResourceShape[]` rather than `unknown[]` - the
+ * recursive `z.lazy()` schema needs an explicit type annotation to avoid a
+ * circular-inference error, and an inline `unknown[]` annotation type-checks
+ * but silently drops type safety on every nested resource a caller reads.
+ */
+export interface MailtrapPermissionResourceShape {
 	id?: number | null;
 	name?: string | null;
 	type?: string | null;
 	access_level?: number | null;
-	resources?: unknown[] | null;
-}> = z.lazy(() =>
-	z
-		.object({
-			id: N,
-			name: S,
-			type: S,
-			access_level: N,
-			resources: z
-				.array(MailtrapPermissionResourceSchema)
-				.nullable()
-				.optional(),
-		})
-		.loose(),
-);
+	resources?: MailtrapPermissionResourceShape[] | null;
+}
+
+export const MailtrapPermissionResourceSchema: z.ZodType<MailtrapPermissionResourceShape> =
+	z.lazy(() =>
+		z
+			.object({
+				id: N,
+				name: S,
+				type: S,
+				access_level: N,
+				resources: z
+					.array(MailtrapPermissionResourceSchema)
+					.nullable()
+					.optional(),
+			})
+			.loose(),
+	);
 export type MailtrapPermissionResource = z.infer<
 	typeof MailtrapPermissionResourceSchema
 >;

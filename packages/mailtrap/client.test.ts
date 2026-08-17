@@ -18,6 +18,9 @@ type Captured = {
 type MockResponse = {
 	ok?: boolean;
 	status?: number;
+	// `unknown`, not a narrower type: different tests hand this a JSON object,
+	// an array, or a raw string (the non-JSON-response case), and it is only
+	// ever handed straight to `json()`/`text()`, never inspected here.
 	body?: unknown;
 	headers?: Record<string, string>;
 };
@@ -32,6 +35,9 @@ let attempts = 0;
 function mockFetchSequence(responses: MockResponse[]) {
 	captured = undefined;
 	attempts = 0;
+	// `url` is `unknown` rather than `RequestInfo | URL` because the stub only
+	// ever needs `String(url)` — accepting the real fetch signature here would
+	// require importing types this test has no other use for.
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
 		const headers: Record<string, string> = {};
 		const raw = init?.headers;
@@ -73,6 +79,10 @@ function mockFetchSequence(responses: MockResponse[]) {
 			text: async () =>
 				typeof payload === 'string' ? payload : JSON.stringify(payload),
 		};
+		// The stub only implements the subset of `Response` the shared request
+		// helper actually reads (`ok`, `status`, `headers`, `json`, `text`), so
+		// it is not assignable to the full `Response` type `typeof fetch`
+		// declares without this cast.
 	}) as unknown as typeof global.fetch;
 }
 
@@ -113,6 +123,9 @@ describe('makeMailtrapRequest', () => {
 			'test-token',
 			{
 				method: 'DELETE',
+				// Cast, not a body shape assertion: the point of this call is
+				// that a DELETE never sends a body at all (asserted below), so
+				// the value only needs to satisfy `MailtrapRequestOptions.body`.
 				body: { name: 'ignored' } as Record<string, unknown>,
 			},
 		);
@@ -126,6 +139,8 @@ describe('makeMailtrapRequest', () => {
 			{ status: 200, body: [] },
 		]);
 
+		// `unknown[]` rather than a real entity type: this test is about the
+		// retry loop, not a response shape, so the type param is left generic.
 		const result = await makeMailtrapRequest<unknown[]>(
 			'/api/accounts/123/contacts/lists',
 			'test-token',

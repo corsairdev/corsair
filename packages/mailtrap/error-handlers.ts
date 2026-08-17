@@ -3,6 +3,23 @@ import { ApiError } from 'corsair/http';
 import { MailtrapAccountIdMissingError } from './client';
 
 /**
+ * A status suitable for a log line, never the error body.
+ *
+ * Mailtrap's error bodies are shaped `{ errors: "..." }` or
+ * `{ errors: { field: "..." } }` — not `message`/`error`/`detail`, the keys
+ * `corsair/async-core/request.ts`'s shared error builder checks before
+ * falling back to a generic message that embeds the full stringified
+ * response body. That fallback triggers for any status the shared layer
+ * does not special-case, which includes 422 — the status
+ * `VALIDATION_ERROR` matches on — so `error.message` can carry whatever the
+ * validation error echoed back (a submitted email, an invalid field value).
+ * Handlers below log this instead of interpolating `error.message`.
+ */
+function safeStatus(error: Error): number | 'unknown' {
+	return error instanceof ApiError ? error.status : 'unknown';
+}
+
+/**
  * Whether replaying an operation could duplicate a record.
  *
  * Corsair re-invokes the whole endpoint when a handler asks for a retry, so
@@ -88,7 +105,7 @@ export const errorHandlers = {
 		},
 		handler: async (error, context) => {
 			console.warn(
-				`[MAILTRAP:${context.operation}] Permission denied: ${error.message}`,
+				`[MAILTRAP:${context.operation}] Permission denied (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: 0 };
 		},
@@ -100,7 +117,7 @@ export const errorHandlers = {
 		},
 		handler: async (error, context) => {
 			console.warn(
-				`[MAILTRAP:${context.operation}] Resource not found: ${error.message}`,
+				`[MAILTRAP:${context.operation}] Resource not found (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: 0 };
 		},
@@ -109,7 +126,7 @@ export const errorHandlers = {
 		match: (error) => error instanceof ApiError && error.status === 422,
 		handler: async (error, context) => {
 			console.warn(
-				`[MAILTRAP:${context.operation}] Invalid request: ${error.message}`,
+				`[MAILTRAP:${context.operation}] Invalid request (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: 0 };
 		},
@@ -132,11 +149,16 @@ export const errorHandlers = {
 			return { maxRetries: isNonIdempotent(context.operation) ? 0 : 3 };
 		},
 	},
+	/**
+	 * The catch-all for any status the handlers above do not classify — the
+	 * same generic-fallback path that motivated `safeStatus` above, so it
+	 * gets the same treatment.
+	 */
 	DEFAULT: {
 		match: () => true,
 		handler: async (error, context) => {
 			console.error(
-				`[MAILTRAP:${context.operation}] Unhandled error: ${error.message}`,
+				`[MAILTRAP:${context.operation}] Unhandled error (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: 0 };
 		},

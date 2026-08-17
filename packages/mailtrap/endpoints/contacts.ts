@@ -42,13 +42,19 @@ export const create: MailtrapEndpoints['contactsCreate'] = async (
 		ctx,
 		'mailtrap.contacts.create',
 		// Email/fields are personal data; only the resulting id goes to the log.
-		{ contact_id: result.data?.id },
+		{ contact_id: result.data.id },
 		'completed',
 	);
 	return result.data;
 };
 
-/** Gets a contact by id or email. */
+/**
+ * Gets a contact by id or email.
+ *
+ * `identifier` accepts either, so it is never logged raw — an email is
+ * personal data. `result.data.id` is always the contact's UUID regardless
+ * of which form was used to look it up, same treatment as `contacts.create`.
+ */
 export const get: MailtrapEndpoints['contactsGet'] = async (ctx, input) => {
 	const path = await accountPath(
 		ctx,
@@ -61,7 +67,7 @@ export const get: MailtrapEndpoints['contactsGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'mailtrap.contacts.get',
-		auditPayload(input, ['identifier']),
+		{ contact_id: result.data.id },
 		'completed',
 	);
 	return result.data;
@@ -92,10 +98,11 @@ export const update: MailtrapEndpoints['contactsUpdate'] = async (
 
 	await cacheContact(ctx.db?.contacts, result.data);
 
+	// `identifier` accepts an email; never logged raw. See `contacts.get`.
 	await logEventFromContext(
 		ctx,
 		'mailtrap.contacts.update',
-		auditPayload(input, ['identifier']),
+		{ contact_id: result.data.id },
 		'completed',
 	);
 	return result.data;
@@ -124,10 +131,19 @@ export const remove: MailtrapEndpoints['contactsDelete'] = async (
 	);
 	await mailtrapCall(ctx, path, { method: 'DELETE' });
 
+	/**
+	 * The empty 204 body leaves no post-call id to log (unlike `get`/
+	 * `update`, which read `result.data.id`), and `identifier` itself may be
+	 * an email. Log the UUID form directly — it identifies nothing on its
+	 * own — and for the email form, log only that the lookup was by email,
+	 * never the address itself.
+	 */
 	await logEventFromContext(
 		ctx,
 		'mailtrap.contacts.delete',
-		auditPayload(input, ['identifier']),
+		input.identifier.includes('@')
+			? { identifier_kind: 'email' }
+			: { identifier: input.identifier },
 		'completed',
 	);
 

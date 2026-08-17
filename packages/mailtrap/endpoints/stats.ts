@@ -20,14 +20,25 @@ const IDENTIFIER_KEYS = [
 	'email_service_providers',
 ] as const;
 
+/**
+ * Confirmed live 2026-08-17: the shared query serializer emits repeated
+ * bare keys for an array (`sending_domain_ids=1&sending_domain_ids=2`), but
+ * Mailtrap only parses the bracket-suffixed Rails form. A bogus domain id
+ * sent bracketed 400s with "Sending domain does not exist" — proof the
+ * server validated it as an array member — while the same bogus id sent
+ * bare returned 200 with an empty result, silently ignored rather than
+ * applied. Suffixing the key here (rather than changing the shared
+ * serializer, which every other plugin also relies on) makes the existing
+ * repeated-key logic emit `sending_domain_ids[]=1&sending_domain_ids[]=2`.
+ */
 function buildQuery(input: StatsFilterInput) {
 	return compactQuery({
 		start_date: input.start_date,
 		end_date: input.end_date,
-		sending_domain_ids: input.sending_domain_ids,
-		sending_streams: input.sending_streams,
-		categories: input.categories,
-		email_service_providers: input.email_service_providers,
+		'sending_domain_ids[]': input.sending_domain_ids,
+		'sending_streams[]': input.sending_streams,
+		'categories[]': input.categories,
+		'email_service_providers[]': input.email_service_providers,
 	});
 }
 

@@ -50,6 +50,10 @@ function makeCtx() {
 		projects: makeStore(),
 		inboxes: makeStore(),
 	};
+	// Cast, not a claim that this satisfies the real Ctx shape: only the
+	// fields every endpoint under test actually reads (`key`, `options`,
+	// `db`) are built, matching the same minimal-mock pattern `client.test.ts`
+	// uses for `Response`.
 	const ctx = {
 		key: 'test-mailtrap-token',
 		options: { accountId: '123' },
@@ -127,28 +131,49 @@ const RESPONSE_BODY = Object.assign([listItem], {
 	data: dataValue,
 });
 
+/**
+ * Per-test override for the mocked response, reset to a 200 JSON success in
+ * `beforeEach`. Tests that need a different status/body (a real 204, a
+ * validation failure) mutate this rather than the fetch stub itself. `body`
+ * is `unknown`, not `RESPONSE_BODY`'s type, because individual tests also
+ * hand it `undefined` (204) and error-shaped objects (`{ errors: ... }`).
+ */
+let mockResponse: { status: number; ok?: boolean; body: unknown } = {
+	status: 200,
+	body: RESPONSE_BODY,
+};
+
 beforeEach(() => {
 	mockLogEvent.mockClear();
 	lastUrl = '';
 	lastMethod = '';
 	lastBody = undefined;
+	mockResponse = { status: 200, body: RESPONSE_BODY };
+	// `url` is `unknown` rather than `RequestInfo | URL`; see client.test.ts.
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
 		lastUrl = String(url);
 		lastMethod = init?.method ?? 'GET';
 		lastBody = typeof init?.body === 'string' ? init.body : undefined;
+		const status = mockResponse.status;
 		return {
-			ok: true,
-			status: 200,
+			ok: mockResponse.ok ?? status < 400,
+			status,
 			statusText: 'OK',
 			url: String(url),
 			headers: new Headers({ 'Content-Type': 'application/json' }),
-			json: async () => RESPONSE_BODY,
-			text: async () => JSON.stringify(RESPONSE_BODY),
+			json: async () => mockResponse.body,
+			text: async () => JSON.stringify(mockResponse.body),
+			// Partial `Response` stub; see client.test.ts for why this cast.
 		};
 	}) as unknown as typeof global.fetch;
 });
 
-/** [registry path, invocation, expected method, expected path] */
+/**
+ * [registry path, invocation, expected method, expected path]. The
+ * invocation returns `Promise<unknown>` because the 49 operations return 49
+ * different shapes and every consumer below (the routing/scoping/coverage
+ * loops) only awaits the call — none reads the resolved value.
+ */
 const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 	[
 		'account.listAccounts',
@@ -646,6 +671,9 @@ describe('event log', () => {
 		const { ctx } = makeCtx();
 		await ContactLists.update(ctx, { list_id: 1, name: 'Renamed' });
 
+		// `logEventFromContext`'s payload parameter type does not narrow past
+		// what the mock captures; cast to the shape every payload in this
+		// plugin actually is (see `logging.ts`) so `.toEqual()` can compare it.
 		const payload = mockLogEvent.mock.calls.at(-1)?.[2] as
 			| Record<string, unknown>
 			| undefined;
@@ -726,6 +754,21 @@ describe('delete results', () => {
 	});
 
 	/**
+	 * Every other test in this file exercises a 200 JSON response. Mailtrap
+	 * actually answers a delete with 204 and no body (confirmed live) - this
+	 * asserts the endpoint handles that real shape too, not just the mock's
+	 * default stand-in.
+	 */
+	it('handles a real 204 empty response', async () => {
+		const { ctx } = makeCtx();
+		mockResponse = { status: 204, body: undefined };
+
+		await expect(Contacts.delete(ctx, { identifier: 'c1' })).resolves.toEqual(
+			{},
+		);
+	});
+
+	/**
 	 * Unlike every other delete in this catalog, the OSS catalog documents
 	 * `DELETE_PROJECT` as returning the deleted project's id rather than an
 	 * empty body (see `endpoints/types.ts`).
@@ -776,5 +819,75 @@ describe('contact export filters', () => {
 				{ name: 'subscription_status', operator: 'equal', value: 'subscribed' },
 			],
 		});
+	});
+});
+
+describe('account discovery', () => {
+	/**
+	 * `mailtrapAuthConfig.api_key.account` declares `account_id`, which the
+	 * framework uses to generate both `get_account_id` and `set_account_id`
+	 * on `ctx.keys`. `resolveAccountId` only reaches discovery when both the
+	 * option and the stored key are absent, then persists what it finds so
+	 * the next call's `get_account_id` short-circuits back to it.
+	 */
+	it('discovers the account id and persists it via set_account_id', async () => {
+		const setAccountId = jest.fn(async () => undefined);
+		const ctx = {
+			key: 'test-mailtrap-token',
+			options: {},
+			keys: {
+				get_account_id: async () => null,
+				set_account_id: setAccountId,
+			},
+			db: { contactLists: makeStore() },
+		} as unknown as Ctx;
+
+		global.fetch = (async (url: unknown) => {
+			const isDiscovery = String(url).endsWith('/api/accounts');
+			const body = isDiscovery ? [{ id: 999, name: 'Only' }] : [];
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url: String(url),
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => body,
+				text: async () => JSON.stringify(body),
+			};
+		}) as unknown as typeof global.fetch;
+
+		await ContactLists.list(ctx, {});
+
+		expect(setAccountId).toHaveBeenCalledWith('999');
+	});
+
+	it('does not discover or persist when an account id is already configured', async () => {
+		const setAccountId = jest.fn(async () => undefined);
+		const ctx = {
+			key: 'test-mailtrap-token',
+			options: { accountId: '123' },
+			keys: { set_account_id: setAccountId },
+			db: { contactLists: makeStore() },
+		} as unknown as Ctx;
+
+		await ContactLists.list(ctx, {});
+
+		expect(setAccountId).not.toHaveBeenCalled();
+	});
+});
+
+describe('error paths', () => {
+	/**
+	 * `completed` asserts the call actually finished. Every other test in
+	 * this file exercises the success path only; this confirms a failed
+	 * call rejects instead of quietly logging `completed` anyway.
+	 */
+	it('does not log a completed event when the request fails', async () => {
+		const { ctx } = makeCtx();
+		mockResponse = { status: 422, ok: false, body: { errors: 'invalid' } };
+
+		await expect(ContactLists.create(ctx, { name: 'L' })).rejects.toBeDefined();
+
+		expect(mockLogEvent).not.toHaveBeenCalled();
 	});
 });

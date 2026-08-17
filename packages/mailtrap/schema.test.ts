@@ -145,6 +145,37 @@ describe('entity schemas require only what the live API always sends', () => {
 	}
 });
 
+describe('entity schemas coerce both persisted date formats', () => {
+	/**
+	 * Mailtrap's own timestamp format varies by resource (see
+	 * `endpoints/types.ts`): contacts use epoch milliseconds, everything
+	 * else uses ISO 8601 strings. `z.coerce.date()` accepts both; `z.date()`
+	 * would silently reject the raw values these entities are actually
+	 * built from in `persist.ts`. Guards against that substitution.
+	 */
+	it('coerces a contact epoch-millisecond timestamp to a Date', () => {
+		const parsed = MailtrapContactEntity.parse({
+			id: 'c1',
+			email: 'a@example.com',
+			created_at: 1700000000000,
+		});
+
+		expect(parsed.created_at).toBeInstanceOf(Date);
+		expect(parsed.created_at?.getTime()).toBe(1700000000000);
+	});
+
+	it('coerces an email template ISO-string timestamp to a Date', () => {
+		const parsed = MailtrapEmailTemplateEntity.parse({
+			id: 1,
+			name: 'T',
+			created_at: '2026-08-17T05:28:36.382Z',
+		});
+
+		expect(parsed.created_at).toBeInstanceOf(Date);
+		expect(parsed.created_at?.toISOString()).toBe('2026-08-17T05:28:36.382Z');
+	});
+});
+
 describe('entity schemas keep unknown fields', () => {
 	it('preserves a field Mailtrap adds later rather than dropping it', () => {
 		const parsed = MailtrapContactListEntity.parse({

@@ -11,6 +11,12 @@
  * other supplied fields are kept, without their values, so an operator can
  * still see what a call attempted to change.
  */
+/**
+ * `unknown`, not a narrower value type: every endpoint's input schema has a
+ * different shape, and this function never inspects a value beyond checking
+ * it against `undefined` — narrowing here would gain nothing and would have
+ * to be re-widened at every call site anyway.
+ */
 export function auditPayload<T extends Record<string, unknown>>(
 	input: T,
 	identifierKeys: readonly (keyof T & string)[],
