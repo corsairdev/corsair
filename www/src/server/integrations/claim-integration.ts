@@ -39,12 +39,22 @@ export type AtomicClaimResult =
 	  };
 
 /**
- * Atomically claim an integration.
- *
- * Serializes concurrent claimants with a transaction-scoped advisory lock keyed
- * by integration id, then re-checks eligibility + latest status before insert.
- * Prevents the classic check-then-insert race that allowed two users to both
- * land `awaiting_issue` rows for the same integration.
+ * Advisory-lock keys for a claim, user first then integration. The user key
+ * serializes one user claiming two integrations at once (eligibility is a
+ * per-user rule, so per-integration locks alone don't); the fixed order avoids
+ * deadlock.
+ */
+export function claimLockKeys(
+	userId: string,
+	integrationId: string,
+): [userKey: string, integrationKey: string] {
+	return [`claim:user:${userId}`, `claim:integration:${integrationId}`];
+}
+
+/**
+ * Atomically claim an integration. Locks on both the user and the integration
+ * (see claimLockKeys), then re-checks eligibility + latest status before insert
+ * to close the check-then-insert race.
  */
 export async function claimIntegrationAtomically(
 	db: DB,
@@ -56,9 +66,16 @@ export async function claimIntegrationAtomically(
 	return db.transaction(async (tx) => {
 		const claimDb = tx as unknown as DB;
 
-		// hashtext → int4 advisory key; xact lock auto-releases on commit/rollback.
+		// hashtext → int4 advisory key; xact locks auto-release on commit/rollback.
+		const [userLockKey, integrationLockKey] = claimLockKeys(
+			params.userId,
+			params.integrationId,
+		);
 		await tx.execute(
-			sql`SELECT pg_advisory_xact_lock(hashtext(${params.integrationId}))`,
+			sql`SELECT pg_advisory_xact_lock(hashtext(${userLockKey}))`,
+		);
+		await tx.execute(
+			sql`SELECT pg_advisory_xact_lock(hashtext(${integrationLockKey}))`,
 		);
 
 		const eligibility = await getUserClaimEligibility(claimDb, params.userId);

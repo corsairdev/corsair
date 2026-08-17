@@ -2,6 +2,7 @@ import assert from 'node:assert/strict';
 import { describe, it } from 'node:test';
 
 import { isClaimPhaseAvailable, resolveClaimDecision } from './claim-decision';
+import { claimLockKeys } from './claim-integration';
 
 describe('isClaimPhaseAvailable', () => {
 	it('treats null and released as available', () => {
@@ -76,5 +77,30 @@ describe('resolveClaimDecision', () => {
 				{ action: 'conflict' },
 			);
 		}
+	});
+});
+
+describe('claimLockKeys', () => {
+	it('serializes one user across different integrations (user key ignores integration)', () => {
+		const [userKeyA] = claimLockKeys('user-a', 'integration-1');
+		const [userKeyB] = claimLockKeys('user-a', 'integration-2');
+		assert.equal(userKeyA, userKeyB);
+	});
+
+	it('serializes different users on the same integration (integration key ignores user)', () => {
+		const [, intKeyA] = claimLockKeys('user-a', 'integration-1');
+		const [, intKeyB] = claimLockKeys('user-b', 'integration-1');
+		assert.equal(intKeyA, intKeyB);
+	});
+
+	it('keeps user and integration locks in distinct namespaces', () => {
+		const [userKey, intKey] = claimLockKeys('same-id', 'same-id');
+		assert.notEqual(userKey, intKey);
+	});
+
+	it('returns keys user-first then integration (fixed order prevents deadlock)', () => {
+		const [first, second] = claimLockKeys('u', 'i');
+		assert.match(first, /^claim:user:/);
+		assert.match(second, /^claim:integration:/);
 	});
 });
