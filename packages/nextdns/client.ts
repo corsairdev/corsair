@@ -1,16 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
-export class NextDNSAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'NextDNSAPIError';
-	}
-}
-
 /**
  * Confirmed from the provider's own API docs (nextdns.github.io/api) - the
  * REST API (currently in beta) is served from a single host, distinct from
@@ -18,14 +8,21 @@ export class NextDNSAPIError extends Error {
  */
 const NEXTDNS_API_BASE = 'https://api.nextdns.io';
 
+export type NextDNSRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	// An array body is real here: the provider's array-resource endpoints
+	// (denylist/allowlist/TLDs/blocklists/natives/parental-control
+	// categories & services) full-replace via `PUT` with a JSON array, not
+	// an object - confirmed from the docs and the independent Go client's
+	// source.
+	body?: Record<string, unknown> | unknown[];
+	query?: Record<string, string | number | boolean | undefined>;
+};
+
 export async function makeNextDNSRequest<T>(
 	endpoint: string,
 	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: NextDNSRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
@@ -57,12 +54,10 @@ export async function makeNextDNSRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new NextDNSAPIError(error.message);
-		}
-		throw new NextDNSAPIError('Unknown error');
-	}
+	// No try/catch here deliberately: `request()` throws a `corsair/http`
+	// `ApiError` (with `.status`/`.retryAfter`) on failure, and
+	// `error-handlers.ts`'s matchers depend on that concrete type. Wrapping
+	// it in a generic error class here (the generator's original scaffold
+	// did this) would strip the status code before any handler ever saw it.
+	return await request<T>(config, requestOptions);
 }
