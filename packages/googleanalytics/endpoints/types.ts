@@ -97,7 +97,7 @@ const AccountSummariesListResponseSchema = z.object({
 
 const PropertiesGetInputSchema = NameInput;
 const PropertiesListInputSchema = ListParams.extend({
-	filter: z.string().optional(),
+	filter: z.string().min(1),
 }).loose();
 const PropertiesListFilteredInputSchema = ListParams.extend({
 	filter: z.string(),
