@@ -45,7 +45,6 @@ module.exports = {
 	},
 	moduleNameMapper: {
 		'^corsair/core$': '<rootDir>/../corsair/core.ts',
-		'^corsair/http$': '<rootDir>/../corsair/http.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],

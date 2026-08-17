@@ -1,25 +1,16 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
-
 export const APALEO_API_BASE = 'https://api.apaleo.com';
 export const APALEO_AUTH_URL = 'https://identity.apaleo.com/connect/authorize';
 export const APALEO_TOKEN_URL = 'https://identity.apaleo.com/connect/token';
 
 export class ApaleoAPIError extends Error {
-	public readonly status?: number;
-	public readonly statusText?: string;
-	public readonly body?: unknown;
-	public readonly retryAfter?: number;
-
-	constructor(message: string, options?: { cause?: Error }) {
-		super(message, options);
+	constructor(
+		message: string,
+		public readonly status?: number,
+		public readonly body?: unknown,
+		public readonly retryAfter?: number,
+	) {
+		super(message);
 		this.name = 'ApaleoAPIError';
-		if (options?.cause instanceof ApiError) {
-			this.status = options.cause.status;
-			this.statusText = options.cause.statusText;
-			this.body = options.cause.body;
-			this.retryAfter = options.cause.retryAfter;
-		}
 	}
 }
 
@@ -145,6 +136,28 @@ export async function getValidApaleoAccessToken({
 	};
 }
 
+function withQuery(endpoint: string, query?: Record<string, unknown>): string {
+	const url = new URL(endpoint, APALEO_API_BASE);
+	if (query) {
+		for (const [key, value] of Object.entries(query)) {
+			if (value === undefined) continue;
+			if (Array.isArray(value)) {
+				for (const item of value) url.searchParams.append(key, String(item));
+			} else {
+				url.searchParams.set(key, String(value));
+			}
+		}
+	}
+	return url.toString();
+}
+
+function retryAfterMs(response: Response): number | undefined {
+	const header = response.headers.get('Retry-After');
+	if (!header) return undefined;
+	const seconds = Number.parseInt(header, 10);
+	return Number.isFinite(seconds) ? seconds * 1000 : undefined;
+}
+
 export async function makeApaleoRequest<T>(
 	endpoint: string,
 	accessToken: string,
@@ -155,38 +168,43 @@ export async function makeApaleoRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
-	const config: OpenAPIConfig = {
-		BASE: APALEO_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: accessToken,
-		HEADERS: {
-			Accept: 'application/json',
-			'Content-Type': 'application/json',
-		},
-	};
-	const requestOptions: ApiRequestOptions = {
+	const response = await fetch(withQuery(endpoint, query), {
 		method,
-		url: endpoint,
-		query: query as ApiRequestOptions['query'],
+		headers: {
+			Accept: 'application/json',
+			Authorization: `Bearer ${accessToken}`,
+			...(method === 'POST' || method === 'PUT' || method === 'PATCH'
+				? { 'Content-Type': 'application/json' }
+				: {}),
+		},
 		body:
 			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
+				? JSON.stringify(body)
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-	};
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new ApaleoAPIError(error.message, { cause: error });
+	});
+
+	const contentType = response.headers.get('Content-Type') ?? '';
+	let parsed: unknown;
+	if (response.status !== 204 && contentType.includes('application/json')) {
+		try {
+			parsed = await response.json();
+		} catch {
+			parsed = undefined;
 		}
-		if (error instanceof Error) {
-			throw new ApaleoAPIError(error.message, { cause: error });
-		}
-		throw new ApaleoAPIError('Unknown error');
 	}
+
+	if (!response.ok) {
+		throw new ApaleoAPIError(
+			typeof parsed === 'object' && parsed && 'message' in parsed
+				? String((parsed as { message: unknown }).message)
+				: `${response.status} ${response.statusText}`.trim(),
+			response.status,
+			parsed,
+			retryAfterMs(response),
+		);
+	}
+
+	return parsed as T;
 }
 
 export async function apaleoResourceExists(

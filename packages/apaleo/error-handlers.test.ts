@@ -2,9 +2,7 @@ import { ApaleoAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 function apiError(status: number) {
-	const error = new ApaleoAPIError('request failed');
-	Object.assign(error, { status });
-	return error;
+	return new ApaleoAPIError('request failed', status);
 }
 
 function classify(error: Error): string {
