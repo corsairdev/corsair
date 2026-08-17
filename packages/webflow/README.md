@@ -46,9 +46,13 @@ registered). The flow requests these scopes: `authorized_user:read`,
 | `token`            | `getTokenAuthorizedBy`                                                                                                                                                                                                                                                                                                                                                                                        |
 
 Read results are cached locally for 8 entity types (sites, collections,
-collection items, assets, asset folders, pages, orders, webhooks); write
-operations evict or update the affected cache entries, including
-cascade-eviction of items when their parent collection is deleted.
+collection items, assets, asset folders, pages, orders, webhooks). The
+collection-item cache is the staged CMS copy: live reads and live creates
+do not write it, and live updates evict the staged row. Write operations
+evict or update the affected cache entries, including cascade-eviction of
+items when their parent collection is deleted. Site publish evicts every
+cached collection item (re-list after publish) because the publish
+response does not include item ids.
 
 ## Webhooks
 
