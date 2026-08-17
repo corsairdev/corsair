@@ -19,8 +19,8 @@ export const BaseProviders = [
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agenty',
 	'agentql',
+	'agenty',
 	'ahrefs',
 	'aimlapi',
 	'airtable',
@@ -29,8 +29,8 @@ export const BaseProviders = [
 	'alphavantage',
 	'alttextai',
 	'amara',
-	'ambientweather',
 	'ambee',
+	'ambientweather',
 	'amcards',
 	'amplitude',
 	'apibible',
@@ -43,10 +43,10 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'box',
-	'canvas',
 	'cal',
 	'calendly',
 	'canva',
+	'canvas',
 	'cloudflare',
 	'cloudinary',
 	'confluence',
@@ -93,6 +93,7 @@ export const BaseProviders = [
 	'mailchimp',
 	'monday',
 	'neon',
+	'nextdns',
 	'notion',
 	'ocrspace',
 	'ollama',
@@ -149,8 +150,8 @@ export const ProviderDisplayNames = {
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agenty: 'Agenty',
 	agentql: 'AgentQL',
+	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
@@ -159,8 +160,8 @@ export const ProviderDisplayNames = {
 	alphavantage: 'Alpha Vantage',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
-	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	apibible: 'API.Bible',
@@ -173,10 +174,10 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	box: 'Box',
-	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
@@ -223,6 +224,7 @@ export const ProviderDisplayNames = {
 	mailchimp: 'Mailchimp',
 	monday: 'Monday',
 	neon: 'Neon',
+	nextdns: 'NextDNS',
 	notion: 'Notion',
 	ocrspace: 'OCR.space',
 	ollama: 'Ollama',
@@ -286,8 +288,8 @@ export type AllProviders =
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agenty'
 	| 'agentql'
+	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
 	| 'airtable'
@@ -296,8 +298,8 @@ export type AllProviders =
 	| 'alphavantage'
 	| 'alttextai'
 	| 'amara'
-	| 'ambientweather'
 	| 'ambee'
+	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
 	| 'apibible'
@@ -312,8 +314,8 @@ export type AllProviders =
 	| 'box'
 	| 'cal'
 	| 'calendly'
-	| 'canvas'
 	| 'canva'
+	| 'canvas'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
@@ -360,6 +362,7 @@ export type AllProviders =
 	| 'mailchimp'
 	| 'monday'
 	| 'neon'
+	| 'nextdns'
 	| 'notion'
 	| 'ocrspace'
 	| 'ollama'
