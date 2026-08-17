@@ -1,8 +1,12 @@
+import { isOptionalAuthField } from '../core/auth/plugin-auth-status';
+import type { PluginAuthConfig } from '../core/auth/types';
 import { listPlugins, listTenants } from '../core/management/operations';
+import type { CorsairPlugin } from '../core/plugins';
 import {
 	getCorsairInternal,
 	InvalidCorsairInstanceError,
 } from '../core/utils/corsair-instance';
+import { getPluginAuthType } from '../core/utils/plugin-auth';
 import { setupCorsair } from '../setup';
 import type { ConnectionsSyncManifest } from './sync-payload';
 import { encryptSyncManifest } from './sync-payload';
@@ -29,6 +33,23 @@ export function isConnectionsSyncRetryableError(error: unknown): boolean {
 	);
 }
 
+/**
+ * Integration-level extension fields (beyond client credentials) that the
+ * CUSTOMER must supply — e.g. gmail's topic_id. Surfaced to the hub grid via
+ * the sync manifest; never shown on tenant-facing connect pages.
+ */
+export function getExtraIntegrationCredentialFields(
+	plugin: CorsairPlugin | undefined,
+): string[] {
+	if (!plugin) return [];
+	const authType = getPluginAuthType(plugin);
+	if (!authType) return [];
+	const authConfig = plugin.authConfig as PluginAuthConfig | undefined;
+	return (authConfig?.[authType]?.integration ?? []).filter(
+		(field) => !isOptionalAuthField(field),
+	);
+}
+
 export async function processConnectionsSyncDelivery(
 	corsair: unknown,
 	signingSecret: string,
@@ -51,12 +72,18 @@ export async function processConnectionsSyncDelivery(
 
 	const manifest: ConnectionsSyncManifest = {
 		tenants: tenants.map((tenant) => ({ id: tenant.id })),
-		plugins: plugins.map((plugin) => ({
-			id: plugin.id,
-			authType: plugin.authType,
-			configured: plugin.configured,
-			missingFields: plugin.missingFields,
-		})),
+		plugins: plugins.map((plugin) => {
+			const extras = getExtraIntegrationCredentialFields(
+				internal.plugins.find((p) => p.id === plugin.id),
+			);
+			return {
+				id: plugin.id,
+				authType: plugin.authType,
+				configured: plugin.configured,
+				missingFields: plugin.missingFields,
+				...(extras.length > 0 ? { integrationCredentialFields: extras } : {}),
+			};
+		}),
 		syncedAt: new Date().toISOString(),
 	};
 

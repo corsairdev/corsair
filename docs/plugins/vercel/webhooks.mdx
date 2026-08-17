@@ -3,7 +3,7 @@ title: Webhooks
 description: "Vercel incoming webhooks: event paths, payloads, and response data."
 ---
 
-The Vercel plugin handles incoming webhooks. Point your Vercel project's webhook URL at your Corsair HTTP handler (see [Overview](/plugins/vercel/overview) for setup context).
+The Vercel plugin handles incoming webhooks. Point your provider’s subscription URL at your Corsair HTTP handler (see [Overview](/plugins/vercel/overview) for setup context and the exact URL shape).
 
 <Info>
 **New to Corsair?** See [webhooks](/concepts/webhooks) and [hooks](/concepts/hooks).
@@ -11,12 +11,10 @@ The Vercel plugin handles incoming webhooks. Point your Vercel project's webhook
 
 ## Webhook map
 
-- `deployment`
-  - `created` (`deploymentCreated`)
-  - `succeeded` (`deploymentSucceeded`)
-  - `error` (`deploymentError`)
-- `project`
-  - `created` (`projectCreated`)
+- `deploymentCreated` (`deploymentCreated`)
+- `deploymentError` (`deploymentError`)
+- `deploymentSucceeded` (`deploymentSucceeded`)
+- `projectCreated` (`projectCreated`)
 
 ## HTTP handler setup
 
@@ -34,39 +32,14 @@ export async function POST(request: Request) {
 
 ## Events
 
-## Deployment
+## Deployment Created
 
-### Created
+### Deployment Created
 
-`deployment.created`
+`deploymentCreated`
 
-Triggered when a deployment is created.
+**Payload:** `unknown`
 
-**Payload**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `type` | `string` | Yes | `deployment.created` |
-| `createdAt` | `number` | Yes | — |
-| `teamId` | `string` | No | — |
-| `payload` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-{
-  deployment: {
-    id: string,
-    name: string,
-    url: string,
-    target?: string,
-    meta?: Record<string, string>
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -86,87 +59,14 @@ vercel({
 
 ---
 
-### Succeeded
+## Deployment Error
 
-`deployment.succeeded`
+### Deployment Error
 
-Triggered when a deployment succeeds.
+`deploymentError`
 
-**Payload**
+**Payload:** `unknown`
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `type` | `string` | Yes | `deployment.succeeded` |
-| `createdAt` | `number` | Yes | — |
-| `teamId` | `string` | No | — |
-| `payload` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-{
-  deployment: {
-    id: string,
-    name: string,
-    url: string,
-    target?: string,
-    meta?: Record<string, string>
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
-
-**`webhookHooks` example**
-
-```ts
-vercel({
-    webhookHooks: {
-        deploymentSucceeded: {
-            before(ctx, args) {
-                return { ctx, args };
-            },
-            after(ctx, response) {
-            },
-        },
-    },
-})
-```
-
----
-
-### Error
-
-`deployment.error`
-
-Triggered when a deployment fails.
-
-**Payload**
-
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `type` | `string` | Yes | `deployment.error` |
-| `createdAt` | `number` | Yes | — |
-| `teamId` | `string` | No | — |
-| `payload` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="payload full type">
-
-```ts
-{
-  deployment: {
-    id: string,
-    name: string,
-    url: string,
-    target?: string,
-    meta?: Record<string, string>
-  }
-}
-```
-</Accordion>
-</AccordionGroup>
 
 **`webhookHooks` example**
 
@@ -186,36 +86,41 @@ vercel({
 
 ---
 
-## Project
+## Deployment Succeeded
 
-### Created
+### Deployment Succeeded
 
-`project.created`
+`deploymentSucceeded`
 
-Triggered when a new project is created.
+**Payload:** `unknown`
 
-**Payload**
 
-| Name | Type | Required | Description |
-|------|------|----------|-------------|
-| `type` | `string` | Yes | `project.created` |
-| `createdAt` | `number` | Yes | — |
-| `teamId` | `string` | No | — |
-| `payload` | `object` | Yes | — |
-
-<AccordionGroup>
-<Accordion title="payload full type">
+**`webhookHooks` example**
 
 ```ts
-{
-  project: {
-    id: string,
-    name: string
-  }
-}
+vercel({
+    webhookHooks: {
+        deploymentSucceeded: {
+            before(ctx, args) {
+                return { ctx, args };
+            },
+            after(ctx, response) {
+            },
+        },
+    },
+})
 ```
-</Accordion>
-</AccordionGroup>
+
+---
+
+## Project Created
+
+### Project Created
+
+`projectCreated`
+
+**Payload:** `unknown`
+
 
 **`webhookHooks` example**
 
@@ -232,3 +137,6 @@ vercel({
     },
 })
 ```
+
+---
+

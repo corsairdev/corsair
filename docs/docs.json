@@ -34,12 +34,43 @@
             ]
           },
           {
-            "group": "Frameworks",
+            "group": "Adapters",
             "pages": [
-              "frameworks/nextjs",
-              "frameworks/express",
-              "frameworks/hono",
-              "frameworks/web-standard"
+              "adapters/handlers",
+              "adapters/client",
+              "adapters/react",
+              {
+                "group": "AI agents",
+                "expanded": false,
+                "pages": [
+                  "mcp-adapters/mcp-adapters",
+                  "mcp-adapters/anthropic-sdk",
+                  "mcp-adapters/claude-sdk",
+                  "mcp-adapters/openai-agents",
+                  "mcp-adapters/vercel-ai",
+                  "mcp-adapters/mastra",
+                  "mcp-adapters/openai"
+                ]
+              },
+              {
+                "group": "Coding agents",
+                "expanded": false,
+                "pages": [
+                  "mcp-adapters/coding-agents",
+                  "mcp-adapters/claude-code",
+                  "mcp-adapters/cursor"
+                ]
+              },
+              {
+                "group": "Workflow engines",
+                "expanded": false,
+                "pages": [
+                  "guides/inngest",
+                  "guides/temporal",
+                  "guides/trigger-dev",
+                  "guides/hatchet"
+                ]
+              }
             ]
           },
           {
@@ -84,7 +115,12 @@
               {
                 "group": "Authentication",
                 "expanded": false,
-                "pages": ["concepts/auth", "concepts/api-key", "concepts/oauth"]
+                "pages": [
+                  "concepts/auth",
+                  "concepts/api-key",
+                  "concepts/oauth",
+                  "concepts/oauth-process"
+                ]
               },
               {
                 "group": "Building",
@@ -92,33 +128,9 @@
                 "pages": [
                   "concepts/permissions",
                   "concepts/multi-tenancy",
+                  "concepts/provisioning",
                   "concepts/webhooks",
                   "concepts/hooks"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "AI Agents",
-            "pages": [
-              {
-                "group": "MCP",
-                "pages": [
-                  "mcp-adapters/mcp-adapters",
-                  "mcp-adapters/anthropic-sdk",
-                  "mcp-adapters/claude-sdk",
-                  "mcp-adapters/openai-agents",
-                  "mcp-adapters/vercel-ai",
-                  "mcp-adapters/mastra",
-                  "mcp-adapters/openai"
-                ]
-              },
-              {
-                "group": "Coding Agents",
-                "pages": [
-                  "mcp-adapters/coding-agents",
-                  "mcp-adapters/claude-code",
-                  "mcp-adapters/cursor"
                 ]
               }
             ]
@@ -128,34 +140,7 @@
             "pages": [
               "management/overview",
               "management/handler",
-              "management/connect",
-              {
-                "group": "Clients",
-                "expanded": false,
-                "pages": ["management/client", "management/react"]
-              }
-            ]
-          },
-          {
-            "group": "Going to Production",
-            "pages": [
-              "production/oauth-process",
-              "production/tenant-provisioning",
-              "going-to-production/provisioning-cli"
-            ]
-          },
-          {
-            "group": "Guides",
-            "pages": [
-              {
-                "group": "Workflow Engines",
-                "pages": [
-                  "guides/inngest",
-                  "guides/temporal",
-                  "guides/trigger-dev",
-                  "guides/hatchet"
-                ]
-              }
+              "management/connect"
             ]
           }
         ]
@@ -170,6 +155,47 @@
           {
             "group": "Plugins",
             "pages": [
+              {
+                "group": "Abstract",
+                "pages": [
+                  "plugins/abstract/overview",
+                  "plugins/abstract/api",
+                  "plugins/abstract/database"
+                ]
+              },
+              {
+                "group": "ActiveTrail",
+                "pages": [
+                  "plugins/activetrail/overview",
+                  "plugins/activetrail/api",
+                  "plugins/activetrail/database"
+                ]
+              },
+              {
+                "group": "Addresszen",
+                "pages": [
+                  "plugins/addresszen/overview",
+                  "plugins/addresszen/api",
+                  "plugins/addresszen/database"
+                ]
+              },
+              {
+                "group": "AgentMail",
+                "pages": [
+                  "plugins/agentmail/overview",
+                  "plugins/agentmail/api",
+                  "plugins/agentmail/database",
+                  "plugins/agentmail/webhooks"
+                ]
+              },
+              {
+                "group": "AgentQL",
+                "pages": [
+                  "plugins/agentql/overview",
+                  "plugins/agentql/api",
+                  "plugins/agentql/database"
+                ]
+              },
               {
                 "group": "Ahrefs",
                 "pages": [
@@ -187,6 +213,14 @@
                   "plugins/airtable/api",
                   "plugins/airtable/database",
                   "plugins/airtable/webhooks"
+                ]
+              },
+              {
+                "group": "Algolia",
+                "pages": [
+                  "plugins/algolia/overview",
+                  "plugins/algolia/api",
+                  "plugins/algolia/database"
                 ]
               },
               {
@@ -256,6 +290,14 @@
                 ]
               },
               {
+                "group": "Canva",
+                "pages": [
+                  "plugins/canva/overview",
+                  "plugins/canva/api",
+                  "plugins/canva/database"
+                ]
+              },
+              {
                 "group": "Cloudflare",
                 "pages": [
                   "plugins/cloudflare/overview",
@@ -265,12 +307,61 @@
                 ]
               },
               {
+                "group": "Cloudinary",
+                "pages": [
+                  "plugins/cloudinary/overview",
+                  "plugins/cloudinary/api",
+                  "plugins/cloudinary/database",
+                  "plugins/cloudinary/webhooks"
+                ]
+              },
+              {
+                "group": "Confluence",
+                "pages": [
+                  "plugins/confluence/overview",
+                  "plugins/confluence/api",
+                  "plugins/confluence/database"
+                ]
+              },
+              {
                 "group": "Cursor",
                 "pages": [
                   "plugins/cursor/overview",
                   "plugins/cursor/get-credentials",
                   "plugins/cursor/api",
                   "plugins/cursor/database"
+                ]
+              },
+              {
+                "group": "Databricks",
+                "pages": [
+                  "plugins/databricks/overview",
+                  "plugins/databricks/api",
+                  "plugins/databricks/database"
+                ]
+              },
+              {
+                "group": "Datadog",
+                "pages": [
+                  "plugins/datadog/overview",
+                  "plugins/datadog/api",
+                  "plugins/datadog/database"
+                ]
+              },
+              {
+                "group": "Deepseek",
+                "pages": [
+                  "plugins/deepseek/overview",
+                  "plugins/deepseek/api",
+                  "plugins/deepseek/database"
+                ]
+              },
+              {
+                "group": "DigitalOcean",
+                "pages": [
+                  "plugins/digitalocean/overview",
+                  "plugins/digitalocean/api",
+                  "plugins/digitalocean/database"
                 ]
               },
               {
@@ -313,6 +404,14 @@
                 ]
               },
               {
+                "group": "Facebook",
+                "pages": [
+                  "plugins/facebook/overview",
+                  "plugins/facebook/api",
+                  "plugins/facebook/database"
+                ]
+              },
+              {
                 "group": "Figma",
                 "pages": [
                   "plugins/figma/overview",
@@ -339,6 +438,14 @@
                   "plugins/fireflies/api",
                   "plugins/fireflies/database",
                   "plugins/fireflies/webhooks"
+                ]
+              },
+              {
+                "group": "Gemini",
+                "pages": [
+                  "plugins/gemini/overview",
+                  "plugins/gemini/api",
+                  "plugins/gemini/database"
                 ]
               },
               {
@@ -371,6 +478,14 @@
                 ]
               },
               {
+                "group": "Google BigQuery",
+                "pages": [
+                  "plugins/googlebigquery/overview",
+                  "plugins/googlebigquery/api",
+                  "plugins/googlebigquery/database"
+                ]
+              },
+              {
                 "group": "Google calendar",
                 "pages": [
                   "plugins/googlecalendar/overview",
@@ -378,6 +493,15 @@
                   "plugins/googlecalendar/api",
                   "plugins/googlecalendar/database",
                   "plugins/googlecalendar/webhooks"
+                ]
+              },
+              {
+                "group": "Google Docs",
+                "pages": [
+                  "plugins/googledocs/overview",
+                  "plugins/googledocs/api",
+                  "plugins/googledocs/database",
+                  "plugins/googledocs/webhooks"
                 ]
               },
               {
@@ -409,6 +533,14 @@
                 ]
               },
               {
+                "group": "GoogleMaps",
+                "pages": [
+                  "plugins/googlemaps/overview",
+                  "plugins/googlemaps/api",
+                  "plugins/googlemaps/database"
+                ]
+              },
+              {
                 "group": "Grafana",
                 "pages": [
                   "plugins/grafana/overview",
@@ -426,6 +558,22 @@
                 ]
               },
               {
+                "group": "Hashnode",
+                "pages": [
+                  "plugins/hashnode/overview",
+                  "plugins/hashnode/api",
+                  "plugins/hashnode/database"
+                ]
+              },
+              {
+                "group": "HeyGen",
+                "pages": [
+                  "plugins/heygen/overview",
+                  "plugins/heygen/api",
+                  "plugins/heygen/database"
+                ]
+              },
+              {
                 "group": "Hubspot",
                 "pages": [
                   "plugins/hubspot/overview",
@@ -433,6 +581,23 @@
                   "plugins/hubspot/api",
                   "plugins/hubspot/database",
                   "plugins/hubspot/webhooks"
+                ]
+              },
+              {
+                "group": "Insighto.ai",
+                "pages": [
+                  "plugins/insightoai/overview",
+                  "plugins/insightoai/api",
+                  "plugins/insightoai/database"
+                ]
+              },
+              {
+                "group": "Instagram",
+                "pages": [
+                  "plugins/instagram/overview",
+                  "plugins/instagram/api",
+                  "plugins/instagram/database",
+                  "plugins/instagram/webhooks"
                 ]
               },
               {
@@ -466,6 +631,23 @@
                 ]
               },
               {
+                "group": "LinkedIn",
+                "pages": [
+                  "plugins/linkedin/overview",
+                  "plugins/linkedin/api",
+                  "plugins/linkedin/database"
+                ]
+              },
+              {
+                "group": "Mailchimp",
+                "pages": [
+                  "plugins/mailchimp/overview",
+                  "plugins/mailchimp/api",
+                  "plugins/mailchimp/database",
+                  "plugins/mailchimp/webhooks"
+                ]
+              },
+              {
                 "group": "Microsoft Teams",
                 "pages": [
                   "plugins/teams/overview",
@@ -485,6 +667,14 @@
                 ]
               },
               {
+                "group": "Neon",
+                "pages": [
+                  "plugins/neon/overview",
+                  "plugins/neon/api",
+                  "plugins/neon/database"
+                ]
+              },
+              {
                 "group": "Notion",
                 "pages": [
                   "plugins/notion/overview",
@@ -492,6 +682,14 @@
                   "plugins/notion/api",
                   "plugins/notion/database",
                   "plugins/notion/webhooks"
+                ]
+              },
+              {
+                "group": "Ollama",
+                "pages": [
+                  "plugins/ollama/overview",
+                  "plugins/ollama/api",
+                  "plugins/ollama/database"
                 ]
               },
               {
@@ -505,11 +703,27 @@
                 ]
               },
               {
+                "group": "OnePassword",
+                "pages": [
+                  "plugins/onepassword/overview",
+                  "plugins/onepassword/api",
+                  "plugins/onepassword/database"
+                ]
+              },
+              {
                 "group": "Open Weather Map",
                 "pages": [
                   "plugins/openweathermap/overview",
                   "plugins/openweathermap/api",
                   "plugins/openweathermap/database"
+                ]
+              },
+              {
+                "group": "Openai",
+                "pages": [
+                  "plugins/openai/overview",
+                  "plugins/openai/api",
+                  "plugins/openai/database"
                 ]
               },
               {
@@ -540,6 +754,14 @@
                   "plugins/pagerduty/api",
                   "plugins/pagerduty/database",
                   "plugins/pagerduty/webhooks"
+                ]
+              },
+              {
+                "group": "PerplexityAi",
+                "pages": [
+                  "plugins/perplexityai/overview",
+                  "plugins/perplexityai/api",
+                  "plugins/perplexityai/database"
                 ]
               },
               {
@@ -578,6 +800,14 @@
                   "plugins/resend/api",
                   "plugins/resend/database",
                   "plugins/resend/webhooks"
+                ]
+              },
+              {
+                "group": "Retailed",
+                "pages": [
+                  "plugins/retailed/overview",
+                  "plugins/retailed/api",
+                  "plugins/retailed/database"
                 ]
               },
               {
@@ -753,6 +983,15 @@
                 ]
               },
               {
+                "group": "WhatsApp",
+                "pages": [
+                  "plugins/whatsapp/overview",
+                  "plugins/whatsapp/api",
+                  "plugins/whatsapp/database",
+                  "plugins/whatsapp/webhooks"
+                ]
+              },
+              {
                 "group": "Xquik",
                 "pages": [
                   "plugins/xquik/overview",
@@ -760,6 +999,14 @@
                   "plugins/xquik/api",
                   "plugins/xquik/database",
                   "plugins/xquik/webhooks"
+                ]
+              },
+              {
+                "group": "You.com Web Search",
+                "pages": [
+                  "plugins/youcom/overview",
+                  "plugins/youcom/api",
+                  "plugins/youcom/database"
                 ]
               },
               {
@@ -830,7 +1077,7 @@
     },
     {
       "source": "/getting-started/installation",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/home",
@@ -842,11 +1089,11 @@
     },
     {
       "source": "/app/agent-setup",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/installation",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/coding-agents",
@@ -914,7 +1161,7 @@
     },
     {
       "source": "/hosted-sdk/quickstart",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/hosted-sdk/instances-and-plugins",
@@ -970,7 +1217,7 @@
     },
     {
       "source": "/app/sdk/installation",
-      "destination": "/getting-started/setup"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/app/sdk/instances-and-plugins",
@@ -986,11 +1233,47 @@
     },
     {
       "source": "/getting-started/setup",
-      "destination": "/going-to-production/provisioning-cli"
+      "destination": "/concepts/provisioning"
     },
     {
       "source": "/getting-started/comparison",
       "destination": "/getting-started/introduction"
+    },
+    {
+      "source": "/frameworks/nextjs",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/frameworks/express",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/frameworks/hono",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/frameworks/web-standard",
+      "destination": "/adapters/handlers"
+    },
+    {
+      "source": "/management/client",
+      "destination": "/adapters/client"
+    },
+    {
+      "source": "/management/react",
+      "destination": "/adapters/react"
+    },
+    {
+      "source": "/production/tenant-provisioning",
+      "destination": "/concepts/provisioning"
+    },
+    {
+      "source": "/going-to-production/provisioning-cli",
+      "destination": "/concepts/provisioning"
+    },
+    {
+      "source": "/production/oauth-process",
+      "destination": "/concepts/oauth-process"
     }
   ]
 }
