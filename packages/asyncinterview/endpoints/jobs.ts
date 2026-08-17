@@ -23,7 +23,7 @@ export async function deleteJob(
 	input: DeleteJobInput,
 ): Promise<DeleteJobOutput> {
 	const raw = await makeAsyncInterviewRequest<unknown>(
-		`/jobs/${input.id}`,
+		`/jobs/${encodeURIComponent(input.id)}`,
 		ctx.key,
 		{ method: 'DELETE' },
 	);
@@ -42,7 +42,7 @@ export async function listResponses(
 	input: ListResponsesInput,
 ): Promise<ListResponsesOutput> {
 	const raw = await makeAsyncInterviewRequest<unknown>(
-		`/jobs/${input.jobId}/responses`,
+		`/jobs/${encodeURIComponent(input.jobId)}/responses`,
 		ctx.key,
 		{ method: 'GET' },
 	);
@@ -73,10 +73,11 @@ export async function updateJob(
 	input: UpdateJobInput,
 ): Promise<UpdateJobOutput> {
 	const { id, ...body } = input;
-	const raw = await makeAsyncInterviewRequest<unknown>(`/jobs/${id}`, ctx.key, {
-		method: 'PATCH',
-		body,
-	});
+	const raw = await makeAsyncInterviewRequest<unknown>(
+		`/jobs/${encodeURIComponent(id)}`,
+		ctx.key,
+		{ method: 'PATCH', body },
+	);
 	const result = UpdateJobOutputSchema.parse(raw);
 	await logEventFromContext(
 		ctx,

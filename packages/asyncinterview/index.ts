@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Jobs } from './endpoints';
 import type {
 	AsyncInterviewEndpointInputs,
@@ -164,10 +165,13 @@ export function asyncinterview<const T extends AsyncInterviewPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('asyncinterview', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('asyncinterview', 'api_key');
 		},
 	} satisfies InternalAsyncInterviewPlugin;
 }

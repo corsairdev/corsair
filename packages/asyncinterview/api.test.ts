@@ -25,6 +25,9 @@ describe('AsyncInterview Plugin Endpoints', () => {
 			expect.objectContaining({
 				BASE: 'https://app.asyncinterview.ai/api',
 				TOKEN: 'test-key',
+				HEADERS: expect.objectContaining({
+					Authorization: 'Bearer test-key',
+				}),
 			}),
 			expect.objectContaining({
 				method: 'GET',
