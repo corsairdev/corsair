@@ -2,7 +2,10 @@ import { TRPCError } from '@trpc/server';
 import { and, eq, sql } from 'drizzle-orm';
 
 import type { DB } from '@/db';
-import type { LatestIntegrationStatus } from '@/db/integration-status';
+import type {
+	LatestIntegrationStatus,
+	UserClaimEligibility,
+} from '@/db/integration-status';
 import {
 	getLatestStatusForIntegration,
 	getUserClaimEligibility,
@@ -63,27 +66,32 @@ export function claimLockKeys(
 	];
 }
 
+type ClaimEligibility = Pick<UserClaimEligibility, 'canClaim' | 'blockReason'>;
+
 /**
  * Claim precedence: an existing same-user claim or a conflict on this
  * integration is resolved before the per-user eligibility gate, so re-claiming
  * an in-progress integration returns already_owned instead of a 'wip' rejection.
+ * Eligibility is passed as a thunk and only queried for a genuinely new insert.
  */
-export function resolveClaimOutcome(
+export async function resolveClaimOutcome(
 	decision: ClaimDecision,
-	eligibility: { canClaim: boolean },
-):
+	getEligibility: () => Promise<ClaimEligibility>,
+): Promise<
 	| { action: 'return_existing'; phase: ClaimPhase }
 	| { action: 'conflict' }
-	| { action: 'blocked' }
-	| { action: 'insert' } {
+	| { action: 'blocked'; blockReason: ClaimEligibility['blockReason'] }
+	| { action: 'insert' }
+> {
 	if (decision.action === 'return_existing') {
 		return { action: 'return_existing', phase: decision.phase };
 	}
 	if (decision.action === 'conflict') {
 		return { action: 'conflict' };
 	}
+	const eligibility = await getEligibility();
 	if (!eligibility.canClaim) {
-		return { action: 'blocked' };
+		return { action: 'blocked', blockReason: eligibility.blockReason };
 	}
 	return { action: 'insert' };
 }
@@ -145,8 +153,9 @@ export async function claimIntegrationAtomically(
 			claimantUserId: params.userId,
 		});
 
-		const eligibility = await getUserClaimEligibility(claimDb, params.userId);
-		const outcome = resolveClaimOutcome(decision, eligibility);
+		const outcome = await resolveClaimOutcome(decision, () =>
+			getUserClaimEligibility(claimDb, params.userId),
+		);
 
 		if (outcome.action === 'return_existing') {
 			return {
@@ -168,7 +177,7 @@ export async function claimIntegrationAtomically(
 			throw new TRPCError({
 				code: 'PRECONDITION_FAILED',
 				message:
-					eligibility.blockReason === 'limit_reached'
+					outcome.blockReason === 'limit_reached'
 						? `You've built the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations and can't claim another`
 						: 'Finish your current integration or mark it ready to review before claiming another',
 			});

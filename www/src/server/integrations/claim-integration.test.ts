@@ -106,34 +106,54 @@ describe('claimLockKeys', () => {
 });
 
 describe('resolveClaimOutcome', () => {
-	it('returns an existing same-user claim even when the user is otherwise ineligible', () => {
-		assert.deepEqual(
-			resolveClaimOutcome(
-				{ action: 'return_existing', phase: 'awaiting_issue' },
-				{ canClaim: false },
-			),
+	it('returns an existing claim without querying eligibility', async () => {
+		let queried = false;
+		const outcome = await resolveClaimOutcome(
 			{ action: 'return_existing', phase: 'awaiting_issue' },
+			async () => {
+				queried = true;
+				return { canClaim: true, blockReason: null };
+			},
 		);
+		assert.deepEqual(outcome, {
+			action: 'return_existing',
+			phase: 'awaiting_issue',
+		});
+		assert.equal(queried, false);
 	});
 
-	it('reports a conflict ahead of the eligibility gate', () => {
-		assert.deepEqual(
-			resolveClaimOutcome({ action: 'conflict' }, { canClaim: false }),
+	it('reports a conflict without querying eligibility', async () => {
+		let queried = false;
+		const outcome = await resolveClaimOutcome(
 			{ action: 'conflict' },
+			async () => {
+				queried = true;
+				return { canClaim: true, blockReason: null };
+			},
 		);
+		assert.deepEqual(outcome, { action: 'conflict' });
+		assert.equal(queried, false);
 	});
 
-	it('blocks a genuinely new claim when the user is ineligible', () => {
-		assert.deepEqual(
-			resolveClaimOutcome({ action: 'insert' }, { canClaim: false }),
-			{ action: 'blocked' },
-		);
-	});
-
-	it('allows a new claim when the user is eligible', () => {
-		assert.deepEqual(
-			resolveClaimOutcome({ action: 'insert' }, { canClaim: true }),
+	it('blocks a genuinely new claim when the user is ineligible', async () => {
+		const outcome = await resolveClaimOutcome(
 			{ action: 'insert' },
+			async () => ({
+				canClaim: false,
+				blockReason: 'wip',
+			}),
 		);
+		assert.deepEqual(outcome, { action: 'blocked', blockReason: 'wip' });
+	});
+
+	it('allows a new claim when the user is eligible', async () => {
+		const outcome = await resolveClaimOutcome(
+			{ action: 'insert' },
+			async () => ({
+				canClaim: true,
+				blockReason: null,
+			}),
+		);
+		assert.deepEqual(outcome, { action: 'insert' });
 	});
 });
