@@ -12,6 +12,7 @@ type OssIntegrationsShellProps = {
 	q: string;
 	selectedTags: string[];
 	view: OssIntegrationsView;
+	pickButton: ReactNode;
 	tagFilter: ReactNode;
 	integrationsContent: ReactNode;
 	leaderboardContent: ReactNode;
@@ -20,14 +21,18 @@ type OssIntegrationsShellProps = {
 function OssIntegrationsShellInner({
 	q,
 	view,
+	pickButton,
 	tagFilter,
 	integrationsContent,
 	leaderboardContent,
 }: OssIntegrationsShellProps) {
 	return (
 		<>
-			<div className="mb-6">
+			<div className="mb-6 flex items-end justify-between gap-4 border-b border-[#1c1c1c1a]">
 				<ViewTabs activeView={view} />
+				{view === 'integrations' ? (
+					<div className="pb-2">{pickButton}</div>
+				) : null}
 			</div>
 
 			{view === 'integrations' ? (
