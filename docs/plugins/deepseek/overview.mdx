@@ -112,12 +112,12 @@ await corsair.deepseek.api.models.list({});
 **Write-style (write):** `anthropic.createMessage`
 
 
-		
-		```ts
+
+```ts
 await corsair.deepseek.api.anthropic.createMessage({
-    model: {},
+    model: 'deepseek-chat',
     maxTokens: 0,
-    messages: 'example',
+    messages: [],
 });
 ```
 
