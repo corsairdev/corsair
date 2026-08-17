@@ -5,6 +5,7 @@ import { makeWebflowRequest, WebflowAPIError } from './client';
 import { webflowOperations } from './endpoints/operations';
 import type { WebflowContext } from './index';
 import { webflow, webflowEndpointSchemas } from './index';
+import { WebflowPage } from './schema/database';
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -1297,5 +1298,15 @@ describe('Webflow endpoints', () => {
 		expect(ctxWithDb.db.collections.deleteByEntityId).toHaveBeenCalledWith(
 			'580e63fc8c9a982ac9b8b745',
 		);
+	});
+
+	it('accepts a null page slug from the Webflow pages API', () => {
+		expect(
+			WebflowPage.parse({
+				id: '6596da6045e56dee495bcbba',
+				title: 'Home',
+				slug: null,
+			}).slug,
+		).toBeNull();
 	});
 });

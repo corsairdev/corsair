@@ -12,6 +12,7 @@
       }
     ]
   },
+  "testPathIgnorePatterns": ["live\\.test\\.ts"],
   "transformIgnorePatterns": ["node_modules/(?!.*uuid)"],
   "moduleNameMapper": {
     "^corsair/(.*)$": [

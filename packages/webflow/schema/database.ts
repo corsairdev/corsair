@@ -70,7 +70,7 @@ export const WebflowPage = z
 		id: z.string().optional(),
 		siteId: z.string().optional(),
 		title: z.string().optional(),
-		slug: z.string().optional(),
+		slug: z.string().nullable().optional(),
 		parentId: z.string().nullable().optional(),
 		collectionId: z.string().nullable().optional(),
 		createdOn: z.string().optional(),

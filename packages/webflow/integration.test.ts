@@ -55,4 +55,36 @@ describe('Webflow plugin integration', () => {
 
 		testDb.cleanup();
 	});
+
+	it('caches pages whose slug is null', async () => {
+		mockRequest.mockResolvedValue({
+			pages: [
+				{
+					id: '6596da6045e56dee495bcbba',
+					title: 'Home',
+					slug: null,
+				},
+			],
+		});
+
+		const testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'webflow');
+
+		const corsair = createCorsair({
+			plugins: [webflow({ key: 'test-token' })],
+			database: testDb.db,
+			kek: 'mock-kek-32-chars-long-mock-kek-3',
+		});
+
+		await corsair.webflow.api.pages.listPages({
+			site_id: '580e63e98c9a982ac9b8b741',
+		});
+
+		const page = await corsair.webflow.db.pages.findByEntityId(
+			'6596da6045e56dee495bcbba',
+		);
+		expect(page?.data.slug).toBeNull();
+
+		testDb.cleanup();
+	});
 });
