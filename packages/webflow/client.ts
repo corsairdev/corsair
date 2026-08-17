@@ -15,6 +15,21 @@ export class WebflowAPIError extends Error {
 }
 
 const WEBFLOW_API_BASE = 'https://api.webflow.com/v2';
+const WEBFLOW_API_HOST = 'api.webflow.com';
+
+function resolveWebflowBaseUrl(baseUrl?: string): string {
+	if (!baseUrl) return WEBFLOW_API_BASE;
+	let parsed: URL;
+	try {
+		parsed = new URL(baseUrl);
+	} catch {
+		throw new Error('[webflow] invalid baseUrl');
+	}
+	if (parsed.protocol !== 'https:' || parsed.hostname !== WEBFLOW_API_HOST) {
+		throw new Error('[webflow] baseUrl must be https://api.webflow.com');
+	}
+	return WEBFLOW_API_BASE;
+}
 
 export type WebflowRequestOptions = {
 	method?: WebflowMethod;
@@ -36,8 +51,9 @@ export async function makeWebflowRequest<T>(
 		body,
 		query,
 		headers,
-		baseUrl = WEBFLOW_API_BASE,
+		baseUrl: requestedBaseUrl,
 	} = options;
+	const baseUrl = resolveWebflowBaseUrl(requestedBaseUrl);
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,
