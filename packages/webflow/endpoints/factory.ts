@@ -45,18 +45,32 @@ type CacheRule = {
 	// whose `matchField` equals the evicted id (webflow deletes a
 	// collection's items server-side when the collection is deleted)
 	cascadeDelete?: { entity: string; matchField: string };
+	mergeExisting?: boolean;
+	evictAllEntities?: string[];
 };
 
 const CACHE_RULES: Record<string, CacheRule> = {
 	listSites: { entity: 'sites', idKeys: ['id'], listKeys: ['sites'] },
 	getSite: { entity: 'sites', idKeys: ['id'] },
 	updateSite: { entity: 'sites', idKeys: ['id'] },
+	publishSite: {
+		entity: 'sites',
+		idKeys: ['id'],
+		deleteInputKeys: ['site_id'],
+		evictAllEntities: ['collectionItems'],
+	},
 	listCollections: {
 		entity: 'collections',
 		idKeys: ['id'],
 		listKeys: ['collections'],
+		stampInputKeys: { siteId: 'site_id' },
+		mergeExisting: true,
 	},
-	createCollection: { entity: 'collections', idKeys: ['id'] },
+	createCollection: {
+		entity: 'collections',
+		idKeys: ['id'],
+		stampInputKeys: { siteId: 'site_id' },
+	},
 	getCollection: { entity: 'collections', idKeys: ['id'] },
 	createCollectionField: {
 		entity: 'collections',
@@ -125,27 +139,15 @@ const CACHE_RULES: Record<string, CacheRule> = {
 		idKeys: ['id'],
 		deleteBodyItemsKeys: ['items'],
 	},
-	getLiveCollectionItem: {
-		entity: 'collectionItems',
-		idKeys: ['id'],
-		stampInputKeys: { collectionId: 'collection_id' },
-	},
-	createLiveCollectionItem: {
-		entity: 'collectionItems',
-		idKeys: ['id'],
-		listKeys: ['items'],
-		stampInputKeys: { collectionId: 'collection_id' },
-	},
 	updateLiveCollectionItem: {
 		entity: 'collectionItems',
 		idKeys: ['id'],
-		stampInputKeys: { collectionId: 'collection_id' },
+		deleteInputKeys: ['item_id'],
 	},
 	updateLiveCollectionItems: {
 		entity: 'collectionItems',
 		idKeys: ['id'],
-		listKeys: ['items'],
-		stampInputKeys: { collectionId: 'collection_id' },
+		deleteBodyItemsKeys: ['items'],
 	},
 	// publishing flips isDraft server-side but the response only returns
 	// publishedItemIds; evict the cached copies instead of serving stale
@@ -400,20 +402,28 @@ function cacheDeleteBodyIds(input: WebflowEndpointInput, rule: CacheRule) {
 	return ids;
 }
 
+type CacheDbClient = {
+	upsertByEntityId?: (
+		entityId: string,
+		data: Record<string, unknown>,
+	) => Promise<unknown>;
+	deleteByEntityId?: (entityId: string) => Promise<boolean>;
+	findByEntityId?: (entityId: string) => Promise<{ data?: unknown } | null>;
+	list?: (options?: {
+		limit?: number;
+		offset?: number;
+	}) => Promise<Array<{ entity_id: string }>>;
+	search?: (options: {
+		data?: Record<string, unknown>;
+		limit?: number;
+		offset?: number;
+	}) => Promise<Array<{ entity_id: string }>>;
+};
+
+type CacheDb = Record<string, CacheDbClient | undefined> | undefined;
+
 async function cascadeDeleteChildren(
-	db:
-		| Record<
-				string,
-				| {
-						deleteByEntityId?: (entityId: string) => Promise<boolean>;
-						search?: (options: {
-							data?: Record<string, unknown>;
-							limit?: number;
-						}) => Promise<Array<{ entity_id: string }>>;
-				  }
-				| undefined
-		  >
-		| undefined,
+	db: CacheDb,
 	rule: CacheRule,
 	deletedId: string,
 ) {
@@ -437,6 +447,37 @@ async function cascadeDeleteChildren(
 	}
 }
 
+async function evictAllOf(db: CacheDb, entityNames: string[]) {
+	const pageSize = 100;
+	for (const name of entityNames) {
+		const client = db?.[name];
+		if (!client?.list || !client.deleteByEntityId) continue;
+		for (;;) {
+			const rows = await client.list({ limit: pageSize });
+			for (const row of rows) {
+				await client.deleteByEntityId(row.entity_id);
+			}
+			if (rows.length < pageSize) break;
+		}
+	}
+}
+
+async function upsertCached(
+	client: CacheDbClient,
+	entityId: string,
+	data: Record<string, unknown>,
+	rule: CacheRule,
+) {
+	if (!client.upsertByEntityId) return;
+	if (rule.mergeExisting && client.findByEntityId) {
+		const existing = await client.findByEntityId(entityId);
+		if (existing && isRecord(existing.data)) {
+			data = { ...existing.data, ...data };
+		}
+	}
+	await client.upsertByEntityId(entityId, data);
+}
+
 export async function syncWebflowOperationResult(
 	ctx: WebflowContext,
 	operation: WebflowOperation,
@@ -449,24 +490,8 @@ export async function syncWebflowOperationResult(
 	// ctx.db maps entity names to typed clients, but this shared sync path
 	// looks clients up dynamically via rule.entity (a plain string), which
 	// the concrete mapped type cannot be indexed with; widen structurally
-	// to just the three methods used here
-	const db = ctx.db as
-		| Record<
-				string,
-				| {
-						upsertByEntityId?: (
-							entityId: string,
-							data: Record<string, unknown>,
-						) => Promise<unknown>;
-						deleteByEntityId?: (entityId: string) => Promise<boolean>;
-						search?: (options: {
-							data?: Record<string, unknown>;
-							limit?: number;
-						}) => Promise<Array<{ entity_id: string }>>;
-				  }
-				| undefined
-		  >
-		| undefined;
+	// to just the methods used here
+	const db = ctx.db as CacheDb;
 	const client = db?.[rule.entity];
 
 	// the api call already succeeded by the time we sync the cache; a local
@@ -476,16 +501,22 @@ export async function syncWebflowOperationResult(
 		// eviction rules are keyed on the rule shape rather than the http
 		// verb: bulk deletes use DELETE, but publish (POST) also evicts
 		// because its response carries no entity data to upsert
-		if (rule.deleteInputKeys || rule.deleteBodyItemsKeys) {
-			if (!client?.deleteByEntityId) return;
-			const entityId = cacheDeleteEntityId(input, rule);
-			if (entityId) {
-				await client.deleteByEntityId(entityId);
-				await cascadeDeleteChildren(db, rule, entityId);
+		if (
+			rule.deleteInputKeys ||
+			rule.deleteBodyItemsKeys ||
+			rule.evictAllEntities
+		) {
+			if (client?.deleteByEntityId) {
+				const entityId = cacheDeleteEntityId(input, rule);
+				if (entityId) {
+					await client.deleteByEntityId(entityId);
+					await cascadeDeleteChildren(db, rule, entityId);
+				}
+				for (const id of cacheDeleteBodyIds(input, rule)) {
+					await client.deleteByEntityId(id);
+				}
 			}
-			for (const id of cacheDeleteBodyIds(input, rule)) {
-				await client.deleteByEntityId(id);
-			}
+			await evictAllOf(db, rule.evictAllEntities ?? []);
 			return;
 		}
 
@@ -494,7 +525,7 @@ export async function syncWebflowOperationResult(
 		for (const item of cacheItems(response, rule)) {
 			const entityId = cacheEntityId(item, rule);
 			if (!entityId) continue;
-			await client.upsertByEntityId(entityId, cacheData(item, rule, input));
+			await upsertCached(client, entityId, cacheData(item, rule, input), rule);
 		}
 	} catch (error) {
 		console.warn(`[webflow] failed to sync ${rule.entity} cache:`, error);

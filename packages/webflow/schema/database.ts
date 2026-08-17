@@ -16,6 +16,7 @@ export const WebflowSite = z
 export const WebflowCollection = z
 	.object({
 		id: z.string().optional(),
+		siteId: z.string().optional(),
 		displayName: z.string().optional(),
 		singularName: z.string().optional(),
 		slug: z.string().optional(),
