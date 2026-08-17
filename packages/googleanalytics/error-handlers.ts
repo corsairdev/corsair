@@ -1,24 +1,36 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { GoogleAnalyticsAPIError } from './client';
+
+function isRateLimit(error: Error): boolean {
+	if (error instanceof ApiError && error.status === 429) return true;
+	if (error instanceof GoogleAnalyticsAPIError && error.code === 429) {
+		return true;
+	}
+	const msg = error.message.toLowerCase();
+	return msg.includes('rate_limited') || msg.includes('429');
+}
+
+function retryAfterMs(error: Error): number | undefined {
+	if (error instanceof ApiError) return error.retryAfter;
+	if (error instanceof GoogleAnalyticsAPIError) return error.retryAfter;
+	return undefined;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
-		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		match: (error: Error) => isRateLimit(error),
+		handler: async (error: Error) => ({
+			maxRetries: 5,
+			headersRetryAfterMs: retryAfterMs(error),
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 401) return true;
+			if (error instanceof GoogleAnalyticsAPIError && error.code === 401) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
+	encodeResourcePath,
 	GOOGLE_ANALYTICS_ADMIN_BASE,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
@@ -15,7 +16,7 @@ export const get: GoogleAnalyticsEndpoints['accountsGet'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['accountsGet']
-	>(`/v1beta/${input.name}`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.name)}`, ctx, {
 		method: 'GET',
 	});
 
@@ -23,7 +24,6 @@ export const get: GoogleAnalyticsEndpoints['accountsGet'] = async (
 		try {
 			await ctx.db.accounts.upsertByEntityId(result.name, {
 				...result,
-				createdAt: new Date(),
 			});
 		} catch (error) {
 			console.warn('Failed to save account to database:', error);
@@ -102,7 +102,7 @@ export const getDataSharingSettings: GoogleAnalyticsEndpoints['accountsGetDataSh
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['accountsGetDataSharingSettings']
-		>(`/v1beta/${input.name}`, ctx, {
+		>(`/v1beta/${encodeResourcePath(input.name)}`, ctx, {
 			method: 'GET',
 		});
 

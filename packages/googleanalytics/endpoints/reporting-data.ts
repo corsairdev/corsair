@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
-import { listQuery, makeAuthenticatedGoogleAnalyticsRequest } from '../client';
+import {
+	encodeResourcePath,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 // All v1alpha. parent is "properties/{id}".
@@ -9,10 +13,14 @@ export const listAnnotations: GoogleAnalyticsEndpoints['reportingDataListAnnotat
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['reportingDataListAnnotations']
-		>(`/v1alpha/${input.parent}/reportingDataAnnotations`, ctx, {
-			method: 'GET',
-			query: listQuery(input),
-		});
+		>(
+			`/v1alpha/${encodeResourcePath(input.parent)}/reportingDataAnnotations`,
+			ctx,
+			{
+				method: 'GET',
+				query: listQuery(input),
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -27,10 +35,14 @@ export const listSubpropertyEventFilters: GoogleAnalyticsEndpoints['reportingDat
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['reportingDataListSubpropertyEventFilters']
-		>(`/v1alpha/${input.parent}/subpropertyEventFilters`, ctx, {
-			method: 'GET',
-			query: listQuery(input),
-		});
+		>(
+			`/v1alpha/${encodeResourcePath(input.parent)}/subpropertyEventFilters`,
+			ctx,
+			{
+				method: 'GET',
+				query: listQuery(input),
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -45,10 +57,14 @@ export const listSubpropertySyncConfigs: GoogleAnalyticsEndpoints['reportingData
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['reportingDataListSubpropertySyncConfigs']
-		>(`/v1alpha/${input.parent}/subpropertySyncConfigs`, ctx, {
-			method: 'GET',
-			query: listQuery(input),
-		});
+		>(
+			`/v1alpha/${encodeResourcePath(input.parent)}/subpropertySyncConfigs`,
+			ctx,
+			{
+				method: 'GET',
+				query: listQuery(input),
+			},
+		);
 
 		await logEventFromContext(
 			ctx,

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
+	encodeResourcePath,
 	GOOGLE_ANALYTICS_DATA_BASE,
 	makeAuthenticatedGoogleAnalyticsRequest,
 	propertyPath,
@@ -164,7 +165,7 @@ export const getMetadata: GoogleAnalyticsEndpoints['reportsGetMetadata'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['reportsGetMetadata']
-		>(`/v1beta/${input.name}`, ctx, {
+		>(`/v1beta/${encodeResourcePath(input.name)}`, ctx, {
 			method: 'GET',
 			base: GOOGLE_ANALYTICS_DATA_BASE,
 		});

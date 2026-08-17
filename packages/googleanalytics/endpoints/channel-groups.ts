@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
-import { listQuery, makeAuthenticatedGoogleAnalyticsRequest } from '../client';
+import {
+	encodeResourcePath,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 // Channel groups are v1alpha.
@@ -10,7 +14,7 @@ export const list: GoogleAnalyticsEndpoints['channelGroupsList'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['channelGroupsList']
-	>(`/v1alpha/${input.parent}/channelGroups`, ctx, {
+	>(`/v1alpha/${encodeResourcePath(input.parent)}/channelGroups`, ctx, {
 		method: 'GET',
 		query: listQuery(input),
 	});

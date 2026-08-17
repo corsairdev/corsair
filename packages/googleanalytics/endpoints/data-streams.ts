@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
-import { listQuery, makeAuthenticatedGoogleAnalyticsRequest } from '../client';
+import {
+	encodeResourcePath,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 // parent is "properties/{id}".
@@ -10,7 +14,7 @@ export const list: GoogleAnalyticsEndpoints['dataStreamsList'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['dataStreamsList']
-	>(`/v1beta/${input.parent}/dataStreams`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.parent)}/dataStreams`, ctx, {
 		method: 'GET',
 		query: listQuery(input),
 	});
@@ -29,10 +33,14 @@ export const listMeasurementProtocolSecrets: GoogleAnalyticsEndpoints['dataStrea
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['dataStreamsListMeasurementProtocolSecrets']
-		>(`/v1beta/${input.parent}/measurementProtocolSecrets`, ctx, {
-			method: 'GET',
-			query: listQuery(input),
-		});
+		>(
+			`/v1beta/${encodeResourcePath(input.parent)}/measurementProtocolSecrets`,
+			ctx,
+			{
+				method: 'GET',
+				query: listQuery(input),
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -48,7 +56,7 @@ export const listEventCreateRules: GoogleAnalyticsEndpoints['dataStreamsListEven
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['dataStreamsListEventCreateRules']
-		>(`/v1alpha/${input.parent}/eventCreateRules`, ctx, {
+		>(`/v1alpha/${encodeResourcePath(input.parent)}/eventCreateRules`, ctx, {
 			method: 'GET',
 			query: listQuery(input),
 		});
@@ -67,10 +75,14 @@ export const listSKAdNetworkConversionValueSchemas: GoogleAnalyticsEndpoints['da
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['dataStreamsListSKAdNetworkConversionValueSchemas']
-		>(`/v1alpha/${input.parent}/sKAdNetworkConversionValueSchema`, ctx, {
-			method: 'GET',
-			query: listQuery(input),
-		});
+		>(
+			`/v1alpha/${encodeResourcePath(input.parent)}/sKAdNetworkConversionValueSchema`,
+			ctx,
+			{
+				method: 'GET',
+				query: listQuery(input),
+			},
+		);
 
 		await logEventFromContext(
 			ctx,

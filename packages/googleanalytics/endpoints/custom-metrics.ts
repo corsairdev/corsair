@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
-import { listQuery, makeAuthenticatedGoogleAnalyticsRequest } from '../client';
+import {
+	encodeResourcePath,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 export const create: GoogleAnalyticsEndpoints['customMetricsCreate'] = async (
@@ -9,7 +13,7 @@ export const create: GoogleAnalyticsEndpoints['customMetricsCreate'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['customMetricsCreate']
-	>(`/v1beta/${input.parent}/customMetrics`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.parent)}/customMetrics`, ctx, {
 		method: 'POST',
 		body: { customMetric: input.customMetric },
 	});
@@ -29,7 +33,7 @@ export const list: GoogleAnalyticsEndpoints['customMetricsList'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['customMetricsList']
-	>(`/v1beta/${input.parent}/customMetrics`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.parent)}/customMetrics`, ctx, {
 		method: 'GET',
 		query: listQuery(input),
 	});

@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
-import { listQuery, makeAuthenticatedGoogleAnalyticsRequest } from '../client';
+import {
+	encodeResourcePath,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 // Audiences are configured via the Admin API v1alpha.
@@ -11,7 +15,7 @@ export const get: GoogleAnalyticsEndpoints['audiencesGet'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['audiencesGet']
-	>(`/v1alpha/${input.name}`, ctx, {
+	>(`/v1alpha/${encodeResourcePath(input.name)}`, ctx, {
 		method: 'GET',
 	});
 
@@ -30,7 +34,7 @@ export const list: GoogleAnalyticsEndpoints['audiencesList'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['audiencesList']
-	>(`/v1alpha/${input.parent}/audiences`, ctx, {
+	>(`/v1alpha/${encodeResourcePath(input.parent)}/audiences`, ctx, {
 		method: 'GET',
 		query: listQuery(input),
 	});

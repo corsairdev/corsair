@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
+	encodeResourcePath,
 	GOOGLE_ANALYTICS_DATA_BASE,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
@@ -16,7 +17,7 @@ export const create: GoogleAnalyticsEndpoints['reportTasksCreate'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['reportTasksCreate']
-	>(`/v1alpha/${input.parent}/reportTasks`, ctx, {
+	>(`/v1alpha/${encodeResourcePath(input.parent)}/reportTasks`, ctx, {
 		method: 'POST',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
 		body: { reportTask: input.reportTask },
@@ -37,7 +38,7 @@ export const get: GoogleAnalyticsEndpoints['reportTasksGet'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['reportTasksGet']
-	>(`/v1alpha/${input.name}`, ctx, {
+	>(`/v1alpha/${encodeResourcePath(input.name)}`, ctx, {
 		method: 'GET',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
 	});
@@ -59,7 +60,7 @@ export const query: GoogleAnalyticsEndpoints['reportTasksQuery'] = async (
 	const { name, ...body } = input;
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['reportTasksQuery']
-	>(`/v1alpha/${name}:query`, ctx, {
+	>(`/v1alpha/${encodeResourcePath(name)}:query`, ctx, {
 		method: 'POST',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
 		body,
@@ -80,7 +81,7 @@ export const list: GoogleAnalyticsEndpoints['reportTasksList'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['reportTasksList']
-	>(`/v1alpha/${input.parent}/reportTasks`, ctx, {
+	>(`/v1alpha/${encodeResourcePath(input.parent)}/reportTasks`, ctx, {
 		method: 'GET',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
 		query: listQuery(input),

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
+	encodeResourcePath,
 	GOOGLE_ANALYTICS_DATA_BASE,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
@@ -14,11 +15,15 @@ export const create: GoogleAnalyticsEndpoints['recurringAudienceListsCreate'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['recurringAudienceListsCreate']
-		>(`/v1alpha/${input.parent}/recurringAudienceLists`, ctx, {
-			method: 'POST',
-			base: GOOGLE_ANALYTICS_DATA_BASE,
-			body: { recurringAudienceList: input.recurringAudienceList },
-		});
+		>(
+			`/v1alpha/${encodeResourcePath(input.parent)}/recurringAudienceLists`,
+			ctx,
+			{
+				method: 'POST',
+				base: GOOGLE_ANALYTICS_DATA_BASE,
+				body: { recurringAudienceList: input.recurringAudienceList },
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -33,7 +38,7 @@ export const get: GoogleAnalyticsEndpoints['recurringAudienceListsGet'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['recurringAudienceListsGet']
-		>(`/v1alpha/${input.name}`, ctx, {
+		>(`/v1alpha/${encodeResourcePath(input.name)}`, ctx, {
 			method: 'GET',
 			base: GOOGLE_ANALYTICS_DATA_BASE,
 		});
@@ -51,11 +56,15 @@ export const list: GoogleAnalyticsEndpoints['recurringAudienceListsList'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['recurringAudienceListsList']
-		>(`/v1alpha/${input.parent}/recurringAudienceLists`, ctx, {
-			method: 'GET',
-			base: GOOGLE_ANALYTICS_DATA_BASE,
-			query: listQuery(input),
-		});
+		>(
+			`/v1alpha/${encodeResourcePath(input.parent)}/recurringAudienceLists`,
+			ctx,
+			{
+				method: 'GET',
+				base: GOOGLE_ANALYTICS_DATA_BASE,
+				query: listQuery(input),
+			},
+		);
 
 		await logEventFromContext(
 			ctx,

@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
+	encodeResourcePath,
 	GOOGLE_ANALYTICS_DATA_BASE,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
@@ -16,7 +17,7 @@ export const create: GoogleAnalyticsEndpoints['audienceExportsCreate'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['audienceExportsCreate']
-	>(`/v1beta/${input.parent}/audienceExports`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.parent)}/audienceExports`, ctx, {
 		method: 'POST',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
 		body: { audienceExport: input.audienceExport },
@@ -37,7 +38,7 @@ export const get: GoogleAnalyticsEndpoints['audienceExportsGet'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['audienceExportsGet']
-	>(`/v1beta/${input.name}`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.name)}`, ctx, {
 		method: 'GET',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
 	});
@@ -57,7 +58,7 @@ export const list: GoogleAnalyticsEndpoints['audienceExportsList'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['audienceExportsList']
-	>(`/v1beta/${input.parent}/audienceExports`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.parent)}/audienceExports`, ctx, {
 		method: 'GET',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
 		query: listQuery(input),
@@ -79,7 +80,7 @@ export const query: GoogleAnalyticsEndpoints['audienceExportsQuery'] = async (
 	const { name, ...body } = input;
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['audienceExportsQuery']
-	>(`/v1beta/${name}:query`, ctx, {
+	>(`/v1beta/${encodeResourcePath(name)}:query`, ctx, {
 		method: 'POST',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
 		body,

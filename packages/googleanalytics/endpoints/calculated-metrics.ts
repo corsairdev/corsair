@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
-import { listQuery, makeAuthenticatedGoogleAnalyticsRequest } from '../client';
+import {
+	encodeResourcePath,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 // Calculated metrics are v1alpha only.
@@ -10,7 +14,7 @@ export const list: GoogleAnalyticsEndpoints['calculatedMetricsList'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['calculatedMetricsList']
-	>(`/v1alpha/${input.parent}/calculatedMetrics`, ctx, {
+	>(`/v1alpha/${encodeResourcePath(input.parent)}/calculatedMetrics`, ctx, {
 		method: 'GET',
 		query: listQuery(input),
 	});

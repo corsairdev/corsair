@@ -5,6 +5,7 @@ export class GoogleAnalyticsAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'GoogleAnalyticsAPIError';
@@ -178,11 +179,32 @@ export async function makeAuthenticatedGoogleAnalyticsRequest<T>(
 	}
 }
 
+export function encodeResourcePath(name: string): string {
+	const trimmed = name.trim();
+	if (!trimmed) {
+		throw new GoogleAnalyticsAPIError(
+			'[googleanalytics] missing resource name',
+		);
+	}
+	const parts = trimmed.split('/');
+	if (
+		parts.some((part) => part.length === 0 || part === '.' || part === '..')
+	) {
+		throw new GoogleAnalyticsAPIError(
+			'[googleanalytics] invalid resource name',
+		);
+	}
+	return parts.map(encodeURIComponent).join('/');
+}
+
 // GA property identifiers can arrive as "properties/123" or a bare "123".
 // The REST paths expect the "properties/{id}" form.
 export function propertyPath(property: string): string {
 	const trimmed = property.trim();
-	return trimmed.startsWith('properties/') ? trimmed : `properties/${trimmed}`;
+	const name = trimmed.startsWith('properties/')
+		? trimmed
+		: `properties/${trimmed}`;
+	return encodeResourcePath(name);
 }
 
 // Build a query string from the common list parameters, dropping any that are
@@ -231,9 +253,23 @@ export async function callMeasurementProtocol<T>(
 
 	const text = await response.text();
 	if (!response.ok) {
+		const retryAfterHeader = response.headers.get('retry-after');
+		let retryAfter: number | undefined;
+		if (retryAfterHeader) {
+			const seconds = Number(retryAfterHeader);
+			if (Number.isFinite(seconds) && seconds >= 0) {
+				retryAfter = seconds * 1000;
+			} else {
+				const when = Date.parse(retryAfterHeader);
+				if (!Number.isNaN(when)) {
+					retryAfter = Math.max(0, when - Date.now());
+				}
+			}
+		}
 		throw new GoogleAnalyticsAPIError(
 			`Measurement Protocol request failed: ${response.status} ${text}`,
 			response.status,
+			retryAfter,
 		);
 	}
 

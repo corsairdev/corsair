@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
+	encodeResourcePath,
 	GOOGLE_ANALYTICS_DATA_BASE,
 	GoogleAnalyticsAPIError,
 	listQuery,
@@ -16,7 +17,7 @@ export const get: GoogleAnalyticsEndpoints['propertiesGet'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['propertiesGet']
-	>(`/v1beta/${input.name}`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.name)}`, ctx, {
 		method: 'GET',
 	});
 
@@ -24,7 +25,6 @@ export const get: GoogleAnalyticsEndpoints['propertiesGet'] = async (
 		try {
 			await ctx.db.properties.upsertByEntityId(result.name, {
 				...result,
-				createdAt: new Date(),
 			});
 		} catch (error) {
 			console.warn('Failed to save property to database:', error);
@@ -140,7 +140,7 @@ export const getAttributionSettings: GoogleAnalyticsEndpoints['propertiesGetAttr
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['propertiesGetAttributionSettings']
-		>(`/v1alpha/${input.name}`, ctx, {
+		>(`/v1alpha/${encodeResourcePath(input.name)}`, ctx, {
 			method: 'GET',
 		});
 
@@ -158,7 +158,7 @@ export const getDataRetentionSettings: GoogleAnalyticsEndpoints['propertiesGetDa
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['propertiesGetDataRetentionSettings']
-		>(`/v1beta/${input.name}`, ctx, {
+		>(`/v1beta/${encodeResourcePath(input.name)}`, ctx, {
 			method: 'GET',
 		});
 
@@ -176,7 +176,7 @@ export const getGoogleSignalsSettings: GoogleAnalyticsEndpoints['propertiesGetGo
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['propertiesGetGoogleSignalsSettings']
-		>(`/v1alpha/${input.name}`, ctx, {
+		>(`/v1alpha/${encodeResourcePath(input.name)}`, ctx, {
 			method: 'GET',
 		});
 
@@ -194,7 +194,7 @@ export const getPropertyQuotasSnapshot: GoogleAnalyticsEndpoints['propertiesGetP
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['propertiesGetPropertyQuotasSnapshot']
-		>(`/v1alpha/${input.name}`, ctx, {
+		>(`/v1alpha/${encodeResourcePath(input.name)}`, ctx, {
 			method: 'GET',
 			base: GOOGLE_ANALYTICS_DATA_BASE,
 		});

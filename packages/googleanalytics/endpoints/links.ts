@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
-import { listQuery, makeAuthenticatedGoogleAnalyticsRequest } from '../client';
+import {
+	encodeResourcePath,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 // parent is "properties/{id}" for every product-link collection.
@@ -11,7 +15,7 @@ export const listAdSense: GoogleAnalyticsEndpoints['linksListAdSense'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['linksListAdSense']
-	>(`/v1alpha/${input.parent}/adSenseLinks`, ctx, {
+	>(`/v1alpha/${encodeResourcePath(input.parent)}/adSenseLinks`, ctx, {
 		method: 'GET',
 		query: listQuery(input),
 	});
@@ -29,7 +33,7 @@ export const listBigQuery: GoogleAnalyticsEndpoints['linksListBigQuery'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['linksListBigQuery']
-		>(`/v1alpha/${input.parent}/bigQueryLinks`, ctx, {
+		>(`/v1alpha/${encodeResourcePath(input.parent)}/bigQueryLinks`, ctx, {
 			method: 'GET',
 			query: listQuery(input),
 		});
@@ -47,7 +51,7 @@ export const listFirebase: GoogleAnalyticsEndpoints['linksListFirebase'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['linksListFirebase']
-		>(`/v1beta/${input.parent}/firebaseLinks`, ctx, {
+		>(`/v1beta/${encodeResourcePath(input.parent)}/firebaseLinks`, ctx, {
 			method: 'GET',
 			query: listQuery(input),
 		});
@@ -65,7 +69,7 @@ export const listGoogleAds: GoogleAnalyticsEndpoints['linksListGoogleAds'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['linksListGoogleAds']
-		>(`/v1beta/${input.parent}/googleAdsLinks`, ctx, {
+		>(`/v1beta/${encodeResourcePath(input.parent)}/googleAdsLinks`, ctx, {
 			method: 'GET',
 			query: listQuery(input),
 		});
@@ -83,10 +87,14 @@ export const listDV360Advertiser: GoogleAnalyticsEndpoints['linksListDV360Advert
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['linksListDV360Advertiser']
-		>(`/v1alpha/${input.parent}/displayVideo360AdvertiserLinks`, ctx, {
-			method: 'GET',
-			query: listQuery(input),
-		});
+		>(
+			`/v1alpha/${encodeResourcePath(input.parent)}/displayVideo360AdvertiserLinks`,
+			ctx,
+			{
+				method: 'GET',
+				query: listQuery(input),
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -101,10 +109,14 @@ export const listDV360Proposals: GoogleAnalyticsEndpoints['linksListDV360Proposa
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['linksListDV360Proposals']
-		>(`/v1alpha/${input.parent}/displayVideo360AdvertiserLinkProposals`, ctx, {
-			method: 'GET',
-			query: listQuery(input),
-		});
+		>(
+			`/v1alpha/${encodeResourcePath(input.parent)}/displayVideo360AdvertiserLinkProposals`,
+			ctx,
+			{
+				method: 'GET',
+				query: listQuery(input),
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -119,7 +131,7 @@ export const listSearchAds360: GoogleAnalyticsEndpoints['linksListSearchAds360']
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['linksListSearchAds360']
-		>(`/v1alpha/${input.parent}/searchAds360Links`, ctx, {
+		>(`/v1alpha/${encodeResourcePath(input.parent)}/searchAds360Links`, ctx, {
 			method: 'GET',
 			query: listQuery(input),
 		});

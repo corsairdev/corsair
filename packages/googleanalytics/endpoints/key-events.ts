@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
-import { listQuery, makeAuthenticatedGoogleAnalyticsRequest } from '../client';
+import {
+	encodeResourcePath,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 // name is "properties/{id}/keyEvents/{keyEvent}".
@@ -10,7 +14,7 @@ export const get: GoogleAnalyticsEndpoints['keyEventsGet'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['keyEventsGet']
-	>(`/v1beta/${input.name}`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.name)}`, ctx, {
 		method: 'GET',
 	});
 
@@ -29,7 +33,7 @@ export const list: GoogleAnalyticsEndpoints['keyEventsList'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['keyEventsList']
-	>(`/v1beta/${input.parent}/keyEvents`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.parent)}/keyEvents`, ctx, {
 		method: 'GET',
 		query: listQuery(input),
 	});

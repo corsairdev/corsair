@@ -1,6 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
-import { listQuery, makeAuthenticatedGoogleAnalyticsRequest } from '../client';
+import {
+	encodeResourcePath,
+	listQuery,
+	makeAuthenticatedGoogleAnalyticsRequest,
+} from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
 // parent is "properties/{id}".
@@ -8,7 +12,7 @@ export const create: GoogleAnalyticsEndpoints['customDimensionsCreate'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['customDimensionsCreate']
-		>(`/v1beta/${input.parent}/customDimensions`, ctx, {
+		>(`/v1beta/${encodeResourcePath(input.parent)}/customDimensions`, ctx, {
 			method: 'POST',
 			body: { customDimension: input.customDimension },
 		});
@@ -29,7 +33,7 @@ export const get: GoogleAnalyticsEndpoints['customDimensionsGet'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['customDimensionsGet']
-	>(`/v1beta/${input.name}`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.name)}`, ctx, {
 		method: 'GET',
 	});
 
@@ -48,7 +52,7 @@ export const list: GoogleAnalyticsEndpoints['customDimensionsList'] = async (
 ) => {
 	const result = await makeAuthenticatedGoogleAnalyticsRequest<
 		GoogleAnalyticsEndpointOutputs['customDimensionsList']
-	>(`/v1beta/${input.parent}/customDimensions`, ctx, {
+	>(`/v1beta/${encodeResourcePath(input.parent)}/customDimensions`, ctx, {
 		method: 'GET',
 		query: listQuery(input),
 	});
@@ -66,7 +70,7 @@ export const archive: GoogleAnalyticsEndpoints['customDimensionsArchive'] =
 	async (ctx, input) => {
 		await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['customDimensionsArchive']
-		>(`/v1beta/${input.name}:archive`, ctx, {
+		>(`/v1beta/${encodeResourcePath(input.name)}:archive`, ctx, {
 			method: 'POST',
 		});
 
