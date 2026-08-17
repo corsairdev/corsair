@@ -43,6 +43,8 @@ function toRow(resource: BetterstackResource): Record<string, unknown> {
 		id: String(resource.id),
 	};
 	for (const key of ['created_at', 'updated_at']) {
+		// An absent key must not overwrite a previously mirrored timestamp with null.
+		if (!(key in attributes)) continue;
 		const value = attributes[key];
 		row[key] = typeof value === 'string' ? new Date(value) : null;
 	}

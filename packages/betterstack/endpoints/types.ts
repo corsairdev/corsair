@@ -1071,7 +1071,7 @@ export const BetterstackEndpointInputSchemas = {
 			)
 			.optional(),
 		heartbeat_group_id: z
-			.string()
+			.number()
 			.describe(
 				'Set this attribute if you want to add this heartbeat to a heartbeat group',
 			)
@@ -1117,7 +1117,7 @@ export const BetterstackEndpointInputSchemas = {
 			)
 			.optional(),
 		policy_id: z
-			.string()
+			.number()
 			.describe('Set the escalation policy for the monitor.')
 			.optional(),
 	}),
@@ -1805,7 +1805,7 @@ export const BetterstackEndpointInputSchemas = {
 				"A direct link to a dark version of your company's logo. The image should be under 20MB in size",
 			)
 			.optional(),
-		whitelabeled: z.boolean().describe('"').optional(),
+		whitelabeled: z.boolean().optional(),
 		timezone: z
 			.string()
 			.describe(
@@ -1858,7 +1858,7 @@ export const BetterstackEndpointInputSchemas = {
 				'Choose between classic and modern status page design. Possible values: v1, v2.',
 			)
 			.optional(),
-		navigation_links: z.array(z.looseObject({})).describe('"').optional(),
+		navigation_links: z.array(z.looseObject({})).optional(),
 		theme: z
 			.string()
 			.describe(
@@ -1921,7 +1921,7 @@ export const BetterstackEndpointInputSchemas = {
 				'Require SSO sign-in to access your status page. Requires SSO to be configured for your organization and is mutually exclusive with password protection.',
 			)
 			.optional(),
-		ip_allowlist: z.array(z.string()).describe('"').optional(),
+		ip_allowlist: z.array(z.string()).optional(),
 		status_page_group_id: z
 			.number()
 			.describe(
@@ -2599,7 +2599,7 @@ export const BetterstackEndpointInputSchemas = {
 			.describe('The name of the group that you can see in the dashboard.')
 			.optional(),
 		sort_index: z
-			.string()
+			.number()
 			.describe('Set sort_index to specify how to sort your source groups.')
 			.optional(),
 	}),

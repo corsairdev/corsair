@@ -9,6 +9,7 @@ import type {
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
+	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
@@ -1153,7 +1154,9 @@ export const betterstackEndpointSchemas = {
 		input: BetterstackEndpointInputSchemas.tokenDescribe,
 		output: BetterstackEndpointOutputSchemas.tokenDescribe,
 	},
-} as const;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof betterstackEndpointsNested
+>;
 
 const defaultAuthType = 'api_key' as const;
 

@@ -422,23 +422,30 @@ describe('audit payloads', () => {
 		expect(payload).not.toHaveProperty('policy_id');
 	});
 
-	it('never carries free text for any operation', async () => {
-		// A representative write with user-authored content in every field.
+	it('never carries free text into the audit row', async () => {
+		// A representative write whose content field is user-authored free text.
 		const { ctx } = makeCtx();
 		mockResponse(SINGLE);
-		const events: unknown[] = [];
-		const spy = {
-			...(ctx as object),
-			$logEvent: (payload: unknown) => events.push(payload),
+		// Capture what logEventFromContext writes to corsair_events.
+		const rows: unknown[] = [];
+		const db = {
+			insertInto: () => ({
+				values: (row: unknown) => {
+					rows.push(row);
+					return { execute: async () => undefined };
+				},
+			}),
 		};
-		expect(spy).toBeDefined();
+		const spy = { ...(ctx as object), database: { db } } as unknown as never;
 
-		await handlerFor('incidentComments.create')(ctx, {
+		await handlerFor('incidentComments.create')(spy, {
 			incident_id: 1234571,
 			content: 'secret customer detail',
 		});
 		// The comment body reaches the API but must not reach the audit row.
 		expect(requested().body?.content).toBe('secret customer detail');
+		expect(rows.length).toBe(1);
+		expect(JSON.stringify(rows)).not.toContain('secret customer detail');
 	});
 });
 

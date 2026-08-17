@@ -204,10 +204,32 @@ describe('endpoint schemas', () => {
 		}
 	});
 
-	it('rejects a page number that cannot address a page', () => {
-		const schema = BetterstackEndpointInputSchemas.monitorsList;
-		expect(schema.safeParse({ page: 0 }).success).toBe(false);
-		expect(schema.safeParse({ page: -1 }).success).toBe(false);
-		expect(schema.safeParse({ per_page: 1.5 }).success).toBe(false);
+	it('rejects unaddressable page controls on every list operation', () => {
+		const collections = OPERATION_TABLE.filter(
+			(op) =>
+				op.api !== 'local' &&
+				(op.handler === 'list' ||
+					op.handler === 'monitors' ||
+					op.handler === 'events' ||
+					op.handler === 'statusPages' ||
+					op.handler === 'timeline' ||
+					op.handler === 'relations' ||
+					op.group === 'integrations'),
+		);
+		expect(collections.length).toBe(37);
+
+		for (const op of collections) {
+			const key = op.key.replace(/\.(.)/, (_m, c: string) =>
+				c.toUpperCase(),
+			) as keyof typeof BetterstackEndpointInputSchemas;
+			const schema = BetterstackEndpointInputSchemas[key];
+			const path = Object.fromEntries(
+				op.pathParams.map((name) => [name, 1] as const),
+			);
+
+			expect(schema.safeParse({ ...path, page: 0 }).success).toBe(false);
+			expect(schema.safeParse({ ...path, page: -1 }).success).toBe(false);
+			expect(schema.safeParse({ ...path, per_page: 1.5 }).success).toBe(false);
+		}
 	});
 });
