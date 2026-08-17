@@ -454,8 +454,11 @@ export const integrationsRouter = createTRPCRouter({
 				const statusDelta = STATUS_RANK[a.status] - STATUS_RANK[b.status];
 				if (statusDelta !== 0) return statusDelta;
 				if (a.status === 'available') {
-					const rankDelta = featuredRank(a.row.slug) - featuredRank(b.row.slug);
-					if (rankDelta !== 0) return rankDelta;
+					const aRank = featuredRank(a.row.slug);
+					const bRank = featuredRank(b.row.slug);
+					// Two non-featured rows share Infinity rank, so aRank === bRank and we
+					// fall through to points/name — subtracting would yield NaN and skip them.
+					if (aRank !== bRank) return aRank - bRank;
 					if (b.row.points !== a.row.points) return b.row.points - a.row.points;
 				}
 				return a.row.name.localeCompare(b.row.name);
