@@ -65,20 +65,16 @@ export const errorHandlers = {
 	},
 	/**
 	 * Mailtrap answers over-limit requests with a plain 429 and no documented
-	 * rate-limit headers to pace against proactively.
+	 * rate-limit headers to pace against proactively. The transport already
+	 * retries 429s with backoff (MAILTRAP_RATE_LIMIT_CONFIG), so don't retry
+	 * again at the operation level — the two layers would multiply.
 	 */
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
 			return error.message.toLowerCase().includes('rate limit');
 		},
-		handler: async (error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 3, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error) => {
