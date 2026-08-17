@@ -2,6 +2,8 @@ import { z } from 'zod';
 import type { WebflowOperation } from './operations';
 import { webflowOperations } from './operations';
 
+// query values are operation-specific; the webflow api validates their
+// shape, so they stay unknown here
 const QuerySchema = z.record(z.string(), z.unknown());
 
 export const WebflowEndpointInputBaseSchema = z.object({
@@ -41,6 +43,7 @@ export type WebflowEndpointInputs = Record<string, WebflowEndpointInput>;
 
 export type WebflowEndpointOutputs = Record<string, WebflowEndpointOutput>;
 
+// responses vary per operation; pass them through and let callers narrow
 export const WebflowEndpointOutputSchema = z.unknown();
 
 function inputSchemaForOperation(operation: WebflowOperation) {

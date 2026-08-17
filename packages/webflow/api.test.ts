@@ -1,8 +1,8 @@
-import { readFileSync } from 'node:fs';
-import { join } from 'node:path';
 import { ApiError, request } from 'corsair/http';
 import { makeWebflowRequest, WebflowAPIError } from './client';
+import * as collectionItemsEndpoints from './endpoints/collection-items';
 import { webflowOperations } from './endpoints/operations';
+import * as sitesEndpoints from './endpoints/sites';
 import type { WebflowContext } from './index';
 import { webflow, webflowEndpointSchemas } from './index';
 import { WebflowPage } from './schema/database';
@@ -65,19 +65,14 @@ const mockCtx = testContext();
 
 describe('Webflow plugin shape', () => {
 	it('keeps endpoint domain files explicit', () => {
-		const sitesSource = readFileSync(
-			join(__dirname, 'endpoints/sites.ts'),
-			'utf8',
+		expect(typeof sitesEndpoints.listSites).toBe('function');
+		expect(typeof sitesEndpoints.publishSite).toBe('function');
+		expect(typeof collectionItemsEndpoints.createCollectionItem).toBe(
+			'function',
 		);
-		const itemsSource = readFileSync(
-			join(__dirname, 'endpoints/collection-items.ts'),
-			'utf8',
+		expect(typeof collectionItemsEndpoints.publishCollectionItems).toBe(
+			'function',
 		);
-
-		expect(sitesSource).toContain('export const listSites');
-		expect(sitesSource).toContain('export const publishSite');
-		expect(itemsSource).toContain('export const createCollectionItem');
-		expect(itemsSource).toContain('export const publishCollectionItems');
 	});
 
 	it('exposes every listed operation with schemas and no webhooks', () => {
@@ -103,6 +98,12 @@ describe('Webflow plugin shape', () => {
 		expect(plugin.webhooks).toEqual({});
 		expect(plugin.pluginWebhookMatcher?.({ headers: {}, body: '' })).toBe(
 			false,
+		);
+		expect(plugin.endpointMeta?.['ecommerce.refundOrder']).toEqual(
+			expect.objectContaining({
+				riskLevel: 'destructive',
+				irreversible: true,
+			}),
 		);
 	});
 
@@ -205,6 +206,24 @@ describe('Webflow request client', () => {
 			}),
 		).rejects.toThrow(/baseUrl/);
 		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a Webflow host baseUrl that does not target /v2', async () => {
+		await expect(
+			makeWebflowRequest('/sites', 'test-token', {
+				baseUrl: 'https://api.webflow.com/v1',
+			}),
+		).rejects.toThrow(/baseUrl/);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('pins an allowlisted baseUrl to the canonical v2 origin', async () => {
+		await makeWebflowRequest('/sites', 'test-token', {
+			baseUrl: 'https://api.webflow.com',
+		});
+		expect(mockRequest.mock.calls[0]?.[0]).toEqual(
+			expect.objectContaining({ BASE: 'https://api.webflow.com/v2' }),
+		);
 	});
 });
 
@@ -979,6 +998,39 @@ describe('Webflow endpoints', () => {
 		);
 	});
 
+	it('stops cascade eviction when deletes do not shrink the page', async () => {
+		const plugin = webflow({ key: 'test-token' });
+		const endpoints = endpointsAs<{
+			collections: {
+				deleteCollection: (
+					ctx: WebflowContext,
+					input: { collection_id: string },
+				) => Promise<unknown>;
+			};
+		}>(plugin);
+		const stuckPage = Array.from({ length: 100 }, (_, index) => ({
+			entity_id: `stuck-${index}`,
+		}));
+		const search = jest.fn().mockResolvedValue(stuckPage);
+		const deleteByEntityId = jest.fn();
+		const ctxWithDb = testContext({
+			db: {
+				collections: { deleteByEntityId: jest.fn() },
+				collectionItems: {
+					search,
+					deleteByEntityId,
+				},
+			},
+		});
+
+		await endpoints.collections.deleteCollection(ctxWithDb, {
+			collection_id: '580e63fc8c9a982ac9b8b745',
+		});
+
+		expect(search).toHaveBeenCalledTimes(2);
+		expect(deleteByEntityId).toHaveBeenCalledTimes(100);
+	});
+
 	it('deletes cached entities for destructive operations', async () => {
 		const plugin = webflow({ key: 'test-token' });
 		const endpoints = endpointsAs<{
@@ -1040,6 +1092,7 @@ describe('Webflow endpoints', () => {
 		// the webflow api call succeeded; a local cache failure must not make
 		// the endpoint throw, or callers could retry a completed operation
 		const result = await endpoints.sites.listSites(ctxWithDb, {});
+		expect(warn).toHaveBeenCalled();
 		warn.mockRestore();
 
 		expect(result).toMatchObject({

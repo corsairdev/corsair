@@ -2,7 +2,7 @@ import type { CorsairEndpoint } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import { makeWebflowRequest } from '../client';
 import type { WebflowContext } from '../index';
-import type { WebflowOperation } from './operations';
+import type { WebflowOperation, webflowOperations } from './operations';
 import type { WebflowEndpointInput } from './types';
 
 const PATH_PARAM_KEYS = [
@@ -19,7 +19,13 @@ const PATH_PARAM_KEYS = [
 ] as const;
 
 const INPUT_CONTROL_KEYS = new Set(['body', 'query', 'headers', 'baseUrl']);
+const EVICT_PAGE_SIZE = 100;
+const MAX_EVICT_PASSES = 50;
 
+type WebflowOperationKey = (typeof webflowOperations)[number]['key'];
+
+// responses are operation-specific json passed through to callers; they
+// stay unknown on this shared handler type and callers narrow them
 export type WebflowEndpoint = CorsairEndpoint<
 	WebflowContext,
 	WebflowEndpointInput,
@@ -49,7 +55,7 @@ type CacheRule = {
 	evictAllEntities?: string[];
 };
 
-const CACHE_RULES: Record<string, CacheRule> = {
+const CACHE_RULES: Partial<Record<WebflowOperationKey, CacheRule>> = {
 	listSites: { entity: 'sites', idKeys: ['id'], listKeys: ['sites'] },
 	getSite: { entity: 'sites', idKeys: ['id'] },
 	updateSite: { entity: 'sites', idKeys: ['id'] },
@@ -430,34 +436,44 @@ async function cascadeDeleteChildren(
 	if (!rule.cascadeDelete) return;
 	const child = db?.[rule.cascadeDelete.entity];
 	if (!child?.search || !child.deleteByEntityId) return;
+	const search = child.search;
+	const deleteByEntityId = child.deleteByEntityId;
 
 	// webflow removed the children server-side along with their parent, so
 	// evict every cached child stamped with the deleted parent id. loop
-	// without an offset because each pass deletes the rows it just fetched
-	const pageSize = 100;
-	for (;;) {
-		const rows = await child.search({
+	// without an offset because each pass deletes the rows it just fetched.
+	// stop on an empty page, a no-progress page, or a pass cap so a no-op
+	// deleteByEntityId cannot spin forever on the request path
+	let previousFirst: string | undefined;
+	for (let pass = 0; pass < MAX_EVICT_PASSES; pass++) {
+		const rows = await search({
 			data: { [rule.cascadeDelete.matchField]: deletedId },
-			limit: pageSize,
+			limit: EVICT_PAGE_SIZE,
 		});
-		for (const row of rows) {
-			await child.deleteByEntityId(row.entity_id);
-		}
-		if (rows.length < pageSize) break;
+		if (rows.length === 0) break;
+		const firstId = rows[0]?.entity_id;
+		if (firstId !== undefined && firstId === previousFirst) break;
+		previousFirst = firstId;
+		await Promise.all(rows.map((row) => deleteByEntityId(row.entity_id)));
+		if (rows.length < EVICT_PAGE_SIZE) break;
 	}
 }
 
 async function evictAllOf(db: CacheDb, entityNames: string[]) {
-	const pageSize = 100;
 	for (const name of entityNames) {
 		const client = db?.[name];
 		if (!client?.list || !client.deleteByEntityId) continue;
-		for (;;) {
-			const rows = await client.list({ limit: pageSize });
-			for (const row of rows) {
-				await client.deleteByEntityId(row.entity_id);
-			}
-			if (rows.length < pageSize) break;
+		const list = client.list;
+		const deleteByEntityId = client.deleteByEntityId;
+		let previousFirst: string | undefined;
+		for (let pass = 0; pass < MAX_EVICT_PASSES; pass++) {
+			const rows = await list({ limit: EVICT_PAGE_SIZE });
+			if (rows.length === 0) break;
+			const firstId = rows[0]?.entity_id;
+			if (firstId !== undefined && firstId === previousFirst) break;
+			previousFirst = firstId;
+			await Promise.all(rows.map((row) => deleteByEntityId(row.entity_id)));
+			if (rows.length < EVICT_PAGE_SIZE) break;
 		}
 	}
 }
@@ -484,7 +500,9 @@ export async function syncWebflowOperationResult(
 	input: WebflowEndpointInput,
 	response: unknown,
 ) {
-	const rule = CACHE_RULES[operation.key];
+	// WebflowOperation.key is a string; the satisfies map is keyed by the
+	// literal operation-key union, so index through that union
+	const rule = CACHE_RULES[operation.key as WebflowOperationKey];
 	if (!rule) return;
 
 	// ctx.db maps entity names to typed clients, but this shared sync path

@@ -31,7 +31,7 @@ export const pagesOperations = [
 		pathParams: ['page_id'],
 		riskLevel: 'read',
 		description:
-			'Get the DOM content node structure for a static page. Returns text and image nodes, not the complete DOM',
+			'Get page content nodes for a static page, including text, image, form, search-button, and component-instance nodes. This is not the complete DOM',
 	},
 	{
 		key: 'updatePageMetadata',

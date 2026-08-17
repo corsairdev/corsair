@@ -15,8 +15,22 @@ jest.mock('corsair/http', () => {
 const mockRequest = request as jest.Mock;
 
 describe('Webflow plugin integration', () => {
-	beforeEach(() => {
+	let testDb: ReturnType<typeof createTestDatabase>;
+	let corsair: ReturnType<typeof createCorsair>;
+
+	beforeEach(async () => {
 		mockRequest.mockReset();
+		testDb = createTestDatabase();
+		await createIntegrationAndAccount(testDb.db, 'webflow');
+		corsair = createCorsair({
+			plugins: [webflow({ key: 'test-token' })],
+			database: testDb.db,
+			kek: 'mock-kek-32-chars-long-mock-kek-3',
+		});
+	});
+
+	afterEach(() => {
+		testDb?.cleanup();
 	});
 
 	it('logs events and caches site entities', async () => {
@@ -31,15 +45,6 @@ describe('Webflow plugin integration', () => {
 			],
 		});
 
-		const testDb = createTestDatabase();
-		await createIntegrationAndAccount(testDb.db, 'webflow');
-
-		const corsair = createCorsair({
-			plugins: [webflow({ key: 'test-token' })],
-			database: testDb.db,
-			kek: 'mock-kek-32-chars-long-mock-kek-3',
-		});
-
 		await corsair.webflow.api.sites.listSites({});
 
 		const site = await corsair.webflow.db.sites.findByEntityId(
@@ -52,8 +57,6 @@ describe('Webflow plugin integration', () => {
 			where: { event_type: 'webflow.sites.listSites' },
 		});
 		expect(events.length).toBeGreaterThan(0);
-
-		testDb.cleanup();
 	});
 
 	it('caches pages whose slug is null', async () => {
@@ -67,15 +70,6 @@ describe('Webflow plugin integration', () => {
 			],
 		});
 
-		const testDb = createTestDatabase();
-		await createIntegrationAndAccount(testDb.db, 'webflow');
-
-		const corsair = createCorsair({
-			plugins: [webflow({ key: 'test-token' })],
-			database: testDb.db,
-			kek: 'mock-kek-32-chars-long-mock-kek-3',
-		});
-
 		await corsair.webflow.api.pages.listPages({
 			site_id: '580e63e98c9a982ac9b8b741',
 		});
@@ -84,7 +78,5 @@ describe('Webflow plugin integration', () => {
 			'6596da6045e56dee495bcbba',
 		);
 		expect(page?.data.slug).toBeNull();
-
-		testDb.cleanup();
 	});
 });

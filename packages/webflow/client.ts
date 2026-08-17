@@ -28,6 +28,12 @@ function resolveWebflowBaseUrl(baseUrl?: string): string {
 	if (parsed.protocol !== 'https:' || parsed.hostname !== WEBFLOW_API_HOST) {
 		throw new Error('[webflow] baseUrl must be https://api.webflow.com');
 	}
+	const path = parsed.pathname.replace(/\/+$/, '');
+	if (path !== '' && path !== '/v2') {
+		throw new Error('[webflow] baseUrl must target the /v2 API');
+	}
+	// host and path are allowlisted only; always pin to the canonical v2
+	// origin so a caller cannot steer requests via a custom path or port
 	return WEBFLOW_API_BASE;
 }
 

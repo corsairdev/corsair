@@ -54,6 +54,17 @@ items when their parent collection is deleted. Site publish evicts every
 cached collection item (re-list after publish) because the publish
 response does not include item ids.
 
+## Live tests
+
+Mocked suites (`api.test.ts`, `integration.test.ts`) run in CI. Live API
+checks live in `live.test.ts` and skip unless `WEBFLOW_TOKEN` is set.
+Put the token in `packages/webflow/.env` (gitignored) or export it in
+the shell; already-set environment variables win over the file. Then:
+
+```sh
+pnpm --filter @corsair-dev/webflow test:live
+```
+
 ## Webhooks
 
 This plugin manages Webflow webhook registrations through the
