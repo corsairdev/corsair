@@ -1,7 +1,7 @@
-import { get as exampleGet } from './example';
+import * as Properties from './properties';
+import * as UnitAttributes from './unit-attributes';
+import * as UnitGroups from './unit-groups';
+import * as Units from './units';
 
-export const Example = {
-	get: exampleGet,
-};
-
+export { Properties, Units, UnitGroups, UnitAttributes };
 export * from './types';

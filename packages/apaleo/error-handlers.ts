@@ -1,28 +1,55 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import type { ApaleoAPIError } from './client';
 
+function getStatus(error: Error): number | undefined {
+	return (error as Partial<ApaleoAPIError>).status;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	return (error as Partial<ApaleoAPIError>).retryAfter;
+}
+
+/**
+ * Apaleo 429 includes Retry-After in seconds.
+ * https://apaleo.dev/guides/api/rate-limiting.html
+ */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
-		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		match: (error: Error) => getStatus(error) === 429,
+		handler: async (error: Error) => ({
+			maxRetries: 5,
+			retryStrategy: 'exponential_backoff' as const,
+			headersRetryAfterMs: getRetryAfter(error),
+		}),
 	},
 	AUTH_ERROR: {
+		match: (error: Error) => getStatus(error) === 401,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	PERMISSION_ERROR: {
+		match: (error: Error) => getStatus(error) === 403,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => getStatus(error) === 404,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	BAD_REQUEST_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			const status = getStatus(error);
+			return status === 400 || status === 422;
 		},
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			const status = getStatus(error);
+			return status !== undefined && status >= 500;
+		},
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,
