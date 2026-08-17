@@ -34,7 +34,7 @@ export function ViewTabs({ activeView }: { activeView: OssIntegrationsView }) {
 	const searchParams = useSearchParams();
 
 	return (
-		<div className="flex gap-6 border-b border-[#1c1c1c1a]">
+		<div className="flex gap-6">
 			{tabs.map((tab) => (
 				<Link
 					key={tab.id}

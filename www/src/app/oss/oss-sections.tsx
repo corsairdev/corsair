@@ -1,9 +1,9 @@
 import Link from 'next/link';
-
 import { getSession } from '@/lib/auth-server';
 import { getCurrentProfile } from '@/lib/current-user-server';
 import { getApi } from '@/server/api/caller';
 import {
+	getCachedFeaturedAvailableSlugs,
 	getCachedLeaderboard,
 	getCachedListTags,
 	getCachedOssStats,
@@ -23,6 +23,7 @@ import { LeaderboardPodium } from './leaderboard-podium';
 import { LeaderboardTable } from './leaderboard-table';
 import { OssHero } from './oss-hero';
 import { buildOssHref } from './oss-url';
+import { PickForMeButton } from './pick-for-me-button';
 import { TopContributors } from './top-contributors';
 import type { OssIntegrationsView } from './view-tabs';
 
@@ -88,6 +89,20 @@ type OssIntegrationsSectionProps = {
 	q: string;
 	selectedTags: string[];
 };
+
+/** "Pick one for me" button in its own Suspense boundary so it never blocks the tab row. */
+export async function OssPickForMeSection() {
+	let slugs: string[] = [];
+	try {
+		slugs = (await getCachedFeaturedAvailableSlugs()).slugs;
+	} catch (error) {
+		console.error('[oss] featured available failed', error);
+		return null;
+	}
+
+	if (slugs.length === 0) return null;
+	return <PickForMeButton slugs={slugs} />;
+}
 
 export async function OssIntegrationsSection({
 	page,

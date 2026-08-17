@@ -1,6 +1,5 @@
 import type { Metadata } from 'next';
 import { Suspense } from 'react';
-
 import { IntegrationListSkeleton } from './integration-list-skeleton';
 import { OssIntegrationsShell } from './oss-integrations-shell';
 import {
@@ -8,6 +7,7 @@ import {
 	OssHeroSection,
 	OssIntegrationsSection,
 	OssLeaderboardSection,
+	OssPickForMeSection,
 	OssSidebarSection,
 	OssTagFilterSection,
 	OssUserSection,
@@ -18,6 +18,7 @@ import {
 	OssSidebarSkeleton,
 	TagFilterSkeleton,
 } from './oss-skeletons';
+
 import { parseTagSlugs } from './oss-url';
 import type { OssIntegrationsView } from './view-tabs';
 
@@ -77,6 +78,11 @@ export default async function OssIntegrationsPage({ searchParams }: PageProps) {
 						q={q}
 						selectedTags={selectedTags}
 						view={view}
+						pickButton={
+							<Suspense fallback={null}>
+								<OssPickForMeSection />
+							</Suspense>
+						}
 						tagFilter={
 							<Suspense fallback={<TagFilterSkeleton />}>
 								<OssTagFilterSection selectedTags={selectedTags} />
