@@ -107,6 +107,75 @@ describe('Bitbucket routing coverage', () => {
 				.map((row) => row.code),
 		).toEqual(['BITBUCKET_DELETE_SNIPPETS_WATCH']);
 	});
+	it('forwards page and pagelen on list endpoints', () => {
+		const operation = bitbucketOperationCatalog.find(
+			(row) => row.code === 'BITBUCKET_LIST_PULL_REQUESTS',
+		);
+		expect(operation).toBeDefined();
+		const wire = buildBitbucketWireRequest(operation!, {
+			workspace: 'team',
+			repo_slug: 'repository',
+			page: 2,
+			pagelen: 50,
+		});
+		expect(wire.query).toMatchObject({ page: 2, pagelen: 50 });
+	});
+	it('requires title and source.branch.name to create a pull request', () => {
+		const parse = BitbucketEndpointInputSchemas.createPullRequest.safeParse;
+		expect(
+			parse({
+				workspace: 'team',
+				repo_slug: 'repository',
+			}).success,
+		).toBe(false);
+		expect(
+			parse({
+				workspace: 'team',
+				repo_slug: 'repository',
+				body: { title: 'Fix' },
+			}).success,
+		).toBe(false);
+		expect(
+			parse({
+				workspace: 'team',
+				repo_slug: 'repository',
+				body: {
+					title: 'Fix pagination',
+					source: { branch: { name: 'feature' } },
+				},
+			}).success,
+		).toBe(true);
+	});
+	it('requires title to create an issue and name plus target.hash to create a branch', () => {
+		expect(
+			BitbucketEndpointInputSchemas.createIssue.safeParse({
+				workspace: 'team',
+				repo_slug: 'repository',
+				body: {},
+			}).success,
+		).toBe(false);
+		expect(
+			BitbucketEndpointInputSchemas.createIssue.safeParse({
+				workspace: 'team',
+				repo_slug: 'repository',
+				body: { title: 'Cannot clone' },
+			}).success,
+		).toBe(true);
+		expect(
+			BitbucketEndpointInputSchemas.createBranch.safeParse({
+				workspace: 'team',
+				repo_slug: 'repository',
+				body: { name: 'feature' },
+			}).success,
+		).toBe(false);
+		expect(
+			BitbucketEndpointInputSchemas.createBranch.safeParse({
+				workspace: 'team',
+				repo_slug: 'repository',
+				body: { name: 'feature', target: { hash: 'abc123' } },
+			}).success,
+		).toBe(true);
+	});
 	it('forwards the request body for operations that accept one', () => {
 		const operation = bitbucketOperationCatalog.find(
 			(row) => row.code === 'BITBUCKET_UPDATE_ISSUE',

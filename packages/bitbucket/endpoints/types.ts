@@ -4,6 +4,30 @@ export const BitbucketRequestBodySchema = z.union([
 	z.object({}).loose(),
 	z.array(z.object({}).loose()),
 ]);
+/** POST /repositories/{workspace}/{repo_slug}/refs/branches */
+export const BitbucketCreateBranchBodySchema = z
+	.object({
+		name: z.string().min(1),
+		target: z.object({ hash: z.string().min(1) }).loose(),
+	})
+	.loose();
+/** POST /repositories/{workspace}/{repo_slug}/pullrequests */
+export const BitbucketCreatePullRequestBodySchema = z
+	.object({
+		title: z.string().min(1),
+		source: z
+			.object({
+				branch: z.object({ name: z.string().min(1) }).loose(),
+			})
+			.loose(),
+	})
+	.loose();
+/** POST /repositories/{workspace}/{repo_slug}/issues — title is the only required element. */
+export const BitbucketCreateIssueBodySchema = z
+	.object({
+		title: z.string().min(1),
+	})
+	.loose();
 /**
  * Attributes `PUT /repositories/{workspace}/{repo_slug}/issues/{issue_id}`
  * updates. Bitbucket requires at least one of them — a payload without any is
@@ -87,6 +111,8 @@ export const BitbucketEndpointInputSchemas = {
 			q: z.string().optional(),
 			sort: z.string().optional(),
 			max_depth: z.number().int().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesIssuesVote: z
@@ -100,21 +126,21 @@ export const BitbucketEndpointInputSchemas = {
 		.object({
 			repo_slug: z.string(),
 			workspace: z.string(),
-			body: BitbucketRequestBodySchema,
+			body: BitbucketCreateBranchBodySchema,
 		})
 		.strict(),
 	createPullRequest: z
 		.object({
 			repo_slug: z.string(),
 			workspace: z.string(),
-			body: BitbucketRequestBodySchema.optional(),
+			body: BitbucketCreatePullRequestBodySchema,
 		})
 		.strict(),
 	createIssue: z
 		.object({
 			repo_slug: z.string(),
 			workspace: z.string(),
-			body: BitbucketRequestBodySchema,
+			body: BitbucketCreateIssueBodySchema,
 		})
 		.strict(),
 	createIssueComment: z
@@ -229,6 +255,8 @@ export const BitbucketEndpointInputSchemas = {
 			path: z.string().optional(),
 			renames: z.boolean().optional(),
 			topic: z.boolean().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getCommitDiff: z
@@ -250,6 +278,8 @@ export const BitbucketEndpointInputSchemas = {
 			workspace: z.string(),
 			repo_slug: z.string(),
 			commit: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getOpenidConfiguration: z
@@ -269,6 +299,8 @@ export const BitbucketEndpointInputSchemas = {
 			pull_request_id: z.union([z.string(), z.number().int()]),
 			repo_slug: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getPullRequestDiff: z
@@ -283,6 +315,8 @@ export const BitbucketEndpointInputSchemas = {
 			pull_request_id: z.union([z.string(), z.number().int()]),
 			repo_slug: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesMergeBase: z
@@ -322,6 +356,8 @@ export const BitbucketEndpointInputSchemas = {
 	getSshLatestKeys: z
 		.object({
 			selected_user: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getWorkspacesPullrequests: z
@@ -329,6 +365,8 @@ export const BitbucketEndpointInputSchemas = {
 			selected_user: z.string(),
 			workspace: z.string(),
 			state: z.enum(['OPEN', 'MERGED', 'DECLINED', 'SUPERSEDED']).optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getBranch: z
@@ -353,6 +391,8 @@ export const BitbucketEndpointInputSchemas = {
 			workspace: z.string(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesCommitReport: z
@@ -380,6 +420,8 @@ export const BitbucketEndpointInputSchemas = {
 			refname: z.string().optional(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getCurrentUser2: z.object({}).strict(),
@@ -388,6 +430,8 @@ export const BitbucketEndpointInputSchemas = {
 			workspace: z.string(),
 			repo_slug: z.string(),
 			environment_uuid: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesEffectiveBranchingModel: z
@@ -405,6 +449,8 @@ export const BitbucketEndpointInputSchemas = {
 			renames: z.string().optional(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getFileFromRepository: z
@@ -417,11 +463,15 @@ export const BitbucketEndpointInputSchemas = {
 			q: z.string().optional(),
 			sort: z.string().optional(),
 			max_depth: z.number().int().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getHookEvents: z
 		.object({
 			subject_type: z.enum(['repository', 'workspace']),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesPipelinesSteps: z
@@ -429,6 +479,8 @@ export const BitbucketEndpointInputSchemas = {
 			workspace: z.string(),
 			repo_slug: z.string(),
 			pipeline_uuid: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getProjectsRepos: z
@@ -438,6 +490,8 @@ export const BitbucketEndpointInputSchemas = {
 			q: z.string().optional(),
 			sort: z.string().optional(),
 			project_key: z.string().min(1),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getPullRequestComment: z
@@ -453,6 +507,8 @@ export const BitbucketEndpointInputSchemas = {
 			pull_request_id: z.union([z.string(), z.number().int()]),
 			repo_slug: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesPullrequestsStatuses: z
@@ -462,12 +518,16 @@ export const BitbucketEndpointInputSchemas = {
 			workspace: z.string(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesPullrequestsActivity: z
 		.object({
 			repo_slug: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRawFileContent: z
@@ -487,6 +547,8 @@ export const BitbucketEndpointInputSchemas = {
 			repo_slug: z.string(),
 			workspace: z.string(),
 			format: z.enum(['meta']).optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepository: z
@@ -499,30 +561,40 @@ export const BitbucketEndpointInputSchemas = {
 		.object({
 			workspace: z.string(),
 			repo_slug: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesPipelinesConfigRunners: z
 		.object({
 			workspace: z.string(),
 			repo_slug: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesPipelinesConfigSchedules: z
 		.object({
 			workspace: z.string(),
 			repo_slug: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesPipelinesConfigVariables: z
 		.object({
 			workspace: z.string(),
 			repo_slug: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesPipelinesConfigCaches: z
 		.object({
 			workspace: z.string(),
 			repo_slug: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesRefs: z
@@ -531,12 +603,16 @@ export const BitbucketEndpointInputSchemas = {
 			workspace: z.string(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getRepositoriesWatchers: z
 		.object({
 			repo_slug: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getSnippet: z
@@ -580,18 +656,24 @@ export const BitbucketEndpointInputSchemas = {
 		.object({
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getUserPermissionsWorkspaces: z
 		.object({
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getUserWorkspaces: z
 		.object({
 			sort: z.string().optional(),
 			administrator: z.boolean().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	getWorkspace: z
@@ -605,6 +687,8 @@ export const BitbucketEndpointInputSchemas = {
 			role: z.enum(['admin', 'contributor', 'member', 'owner']).optional(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listBranches: z
@@ -613,12 +697,16 @@ export const BitbucketEndpointInputSchemas = {
 			workspace: z.string(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listCommits: z
 		.object({
 			repo_slug: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listCommitsFromRevision: z
@@ -626,6 +714,8 @@ export const BitbucketEndpointInputSchemas = {
 			repo_slug: z.string(),
 			revision: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	createRepositoriesCommits2: z
@@ -634,24 +724,32 @@ export const BitbucketEndpointInputSchemas = {
 			revision: z.string(),
 			workspace: z.string(),
 			body: BitbucketRequestBodySchema.optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listCommitsOnMaster: z
 		.object({
 			repo_slug: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listDeployments: z
 		.object({
 			workspace: z.string(),
 			repo_slug: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listIssues: z
 		.object({
 			repo_slug: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listPipelines: z
@@ -700,6 +798,7 @@ export const BitbucketEndpointInputSchemas = {
 			q: z.string().optional(),
 			sort: z.string().optional(),
 			pagelen: z.number().int().optional(),
+			page: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listPullRequests: z
@@ -707,6 +806,8 @@ export const BitbucketEndpointInputSchemas = {
 			repo_slug: z.string(),
 			workspace: z.string(),
 			state: z.enum(['OPEN', 'MERGED', 'DECLINED', 'SUPERSEDED']).optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listRepositoriesInWorkspace: z
@@ -715,12 +816,16 @@ export const BitbucketEndpointInputSchemas = {
 			role: z.enum(['admin', 'contributor', 'member', 'owner']).optional(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listRepositoriesEnvironments: z
 		.object({
 			workspace: z.string(),
 			repo_slug: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listRepositoryPaths: z
@@ -733,11 +838,15 @@ export const BitbucketEndpointInputSchemas = {
 			q: z.string().optional(),
 			sort: z.string().optional(),
 			max_depth: z.number().int().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listSnippets: z
 		.object({
 			role: z.enum(['owner', 'contributor', 'member']).optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listTags: z
@@ -746,22 +855,30 @@ export const BitbucketEndpointInputSchemas = {
 			workspace: z.string(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listVersions: z
 		.object({
 			repo_slug: z.string(),
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listWorkspaceMembers: z
 		.object({
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listWorkspaceProjects: z
 		.object({
 			workspace: z.string(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	listWorkspaces: z
@@ -769,6 +886,8 @@ export const BitbucketEndpointInputSchemas = {
 			role: z.enum(['owner', 'collaborator', 'member']).optional(),
 			q: z.string().optional(),
 			sort: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			pagelen: z.number().int().positive().optional(),
 		})
 		.strict(),
 	requestPullRequestChanges: z

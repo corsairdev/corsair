@@ -1118,21 +1118,24 @@ export function bitbucket<const T extends BitbucketPluginOptions>(
 					ctx.keys.get_refresh_token(),
 					ctx.keys.get_integration_credentials(),
 				]);
-			const result = await getValidBitbucketAccessToken({
-				accessToken,
-				expiresAt,
-				refreshToken,
-				clientId: credentials.client_id,
-				clientSecret: credentials.client_secret,
+			const result = await refreshBitbucketTokenOnce(ctx.keys, async () => {
+				const token = await getValidBitbucketAccessToken({
+					accessToken,
+					expiresAt,
+					refreshToken,
+					clientId: credentials.client_id,
+					clientSecret: credentials.client_secret,
+				});
+				if (token.refreshed)
+					await Promise.all([
+						ctx.keys.set_access_token(token.accessToken),
+						ctx.keys.set_expires_at(String(token.expiresAt)),
+						token.refreshToken
+							? ctx.keys.set_refresh_token(token.refreshToken)
+							: Promise.resolve(),
+					]);
+				return token.accessToken;
 			});
-			if (result.refreshed)
-				await Promise.all([
-					ctx.keys.set_access_token(result.accessToken),
-					ctx.keys.set_expires_at(String(result.expiresAt)),
-					result.refreshToken
-						? ctx.keys.set_refresh_token(result.refreshToken)
-						: Promise.resolve(),
-				]);
 			(
 				ctx as unknown as { _refreshAuth?: () => Promise<string> }
 			)._refreshAuth = () =>
@@ -1156,7 +1159,7 @@ export function bitbucket<const T extends BitbucketPluginOptions>(
 					]);
 					return fresh.accessToken;
 				});
-			return result.accessToken;
+			return result;
 		},
 	} satisfies InternalBitbucketPlugin;
 }

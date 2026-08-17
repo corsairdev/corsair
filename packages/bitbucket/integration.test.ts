@@ -54,6 +54,30 @@ describe('Bitbucket integration', () => {
 			bitbucket({ scopes: ['account', 'repository'] }).oauthConfig?.scopes,
 		).toEqual(['account', 'repository']);
 	});
+	it('collapses concurrent expired-token builds into one refresh', async () => {
+		const plugin = bitbucket({});
+		const { ctx, keys } = keyBuilderContext();
+		ctx.keys.get_expires_at = jest.fn(async () =>
+			String(Math.floor(Date.now() / 1000) - 10),
+		);
+		mockRequest.mockResolvedValueOnce({
+			access_token: 'rotated-access',
+			refresh_token: 'rotated-refresh',
+			expires_in: 3600,
+		});
+		const tokens = await Promise.all([
+			buildKey(plugin, ctx),
+			buildKey(plugin, ctx),
+			buildKey(plugin, ctx),
+		]);
+		expect(tokens).toEqual([
+			'rotated-access',
+			'rotated-access',
+			'rotated-access',
+		]);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(keys.set_refresh_token).toHaveBeenCalledTimes(1);
+	});
 	it('collapses concurrent refreshes into a single token rotation', async () => {
 		const plugin = bitbucket({});
 		const { ctx, keys, stored } = keyBuilderContext();
