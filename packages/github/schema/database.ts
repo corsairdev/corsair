@@ -257,3 +257,48 @@ export type GithubDiscussion = z.infer<typeof GithubDiscussion>;
 export type GithubBranch = z.infer<typeof GithubBranch>;
 export type GithubFork = z.infer<typeof GithubFork>;
 export type GithubComment = z.infer<typeof GithubComment>;
+
+export const GithubEvent = z.preprocess(
+	convertKeysToCamelCase,
+	z.object({
+		id: z.string(),
+		type: z.string(),
+		source: z
+			.enum([
+				'public',
+				'network',
+				'organization',
+				'repository',
+				'user',
+				'userOrganization',
+				'userPublic',
+				'received',
+				'receivedPublic',
+			])
+			.optional(),
+		actor: GithubUser.optional(),
+		repo: z
+			.object({
+				id: z.number(),
+				name: z.string(),
+				url: z.string().optional(),
+			})
+			.optional(),
+		org: GithubUser.optional(),
+		payload: z.record(z.string(), z.unknown()).optional(),
+		public: z.boolean().optional(),
+		createdAt: z.coerce.date().nullable().optional(),
+		repositoryFullName: z.string().optional(),
+		networkRepositoryFullName: z.string().optional(),
+		organization: z.string().optional(),
+		username: z.string().optional(),
+		deletedAt: z.coerce.date().nullable().optional(),
+	}),
+);
+
+export type GithubEvent = z.infer<typeof GithubEvent>;
+
+/** @deprecated Use GithubEvent instead */
+export const GithubRepositoryEvent = GithubEvent;
+/** @deprecated Use GithubEvent instead */
+export type GithubRepositoryEvent = GithubEvent;

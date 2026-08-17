@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
+import { convertKeysToCamelCase } from './utils';
 
 export class GithubAPIError extends Error {
 	constructor(
@@ -13,16 +14,32 @@ export class GithubAPIError extends Error {
 
 const GITHUB_API_BASE = 'https://api.github.com';
 
-export async function makeGithubRequest<T>(
+type GithubRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+	accept?: string;
+};
+
+export type GithubAuthContext = {
+	key: string;
+	_refreshAuth?: () => Promise<string>;
+};
+
+function isUnauthorizedError(error: unknown): boolean {
+	return (
+		error instanceof GithubAPIError &&
+		typeof error.code === 'number' &&
+		error.code === 401
+	);
+}
+
+async function makeGithubRequestWithToken<T>(
 	endpoint: string,
 	token: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: GithubRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, accept } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: GITHUB_API_BASE,
@@ -32,7 +49,7 @@ export async function makeGithubRequest<T>(
 		TOKEN: token,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Accept: 'application/vnd.github.v3+json',
+			Accept: accept ?? 'application/vnd.github.v3+json',
 		},
 	};
 
@@ -49,7 +66,8 @@ export async function makeGithubRequest<T>(
 
 	try {
 		const response = await request<T>(config, requestOptions);
-		return response;
+		// GitHub REST returns snake_case; the plugin is camelCase throughout.
+		return convertKeysToCamelCase(response) as T;
 	} catch (error) {
 		if (
 			error &&
@@ -65,5 +83,24 @@ export async function makeGithubRequest<T>(
 		throw new GithubAPIError(
 			error instanceof Error ? error.message : 'Unknown error',
 		);
+	}
+}
+
+export async function makeGithubRequest<T>(
+	endpoint: string,
+	auth: string | GithubAuthContext,
+	options: GithubRequestOptions = {},
+): Promise<T> {
+	const token = typeof auth === 'string' ? auth : auth.key;
+	const refreshAuth = typeof auth === 'string' ? undefined : auth._refreshAuth;
+
+	try {
+		return await makeGithubRequestWithToken<T>(endpoint, token, options);
+	} catch (error) {
+		if (isUnauthorizedError(error) && refreshAuth) {
+			const freshToken = await refreshAuth();
+			return await makeGithubRequestWithToken<T>(endpoint, freshToken, options);
+		}
+		throw error;
 	}
 }

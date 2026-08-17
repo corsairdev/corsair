@@ -85,13 +85,17 @@ function generatePlugin(pluginName: string) {
 		scripts: {
 			build: 'rm -rf dist && tsc --build --force && tsup',
 			typecheck: 'tsc --noEmit',
+			test: 'jest',
 		},
 		peerDependencies: {
 			corsair: '>=0.1.0',
 			zod: '^4.1.13',
 		},
 		devDependencies: {
+			'@types/jest': '^29.5.14',
 			corsair: 'workspace:*',
+			jest: '^29.7.0',
+			'ts-jest': '^29.4.9',
 			tsup: '^8.0.1',
 			typescript: 'catalog:',
 			zod: '^4.1.13',
@@ -111,7 +115,7 @@ function generatePlugin(pluginName: string) {
 		extends: '../../tsconfig.base.json',
 		compilerOptions: {
 			lib: ['esnext'],
-			types: ['node'],
+			types: ['node', 'jest'],
 			module: 'ESNext',
 			moduleResolution: 'Bundler',
 			outDir: './dist',
@@ -673,6 +677,93 @@ export * from './oauth-tenant-link';
 `,
 	);
 
+	// ── jest.config.cjs + starter test ────────────────────────────────────────
+	// Verbatim copy of packages/tavily/jest.config.cjs (a known-working plugin
+	// config) so scaffolds inherit every alias and transform real tests need.
+	writeFileSync(
+		join(pluginDir, 'jest.config.cjs'),
+		`module.exports = {
+	preset: 'ts-jest',
+	testEnvironment: 'node',
+	roots: ['<rootDir>'],
+	testMatch: [
+		'**/*.test.ts',
+		'**/tests/**/*.test.ts',
+		'**/plugins/**/*.test.ts',
+		'**/setup/**/*.test.ts',
+	],
+	collectCoverageFrom: [
+		'**/*.ts',
+		'!**/*.d.ts',
+		'!**/node_modules/**',
+		'!**/dist/**',
+		'!jest.config.ts',
+		'!tests/**',
+	],
+	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+	transform: {
+		'^.+\\\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',
+		'^.+\\\\.ts$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+					verbatimModuleSyntax: false,
+					module: 'ESNext',
+					moduleResolution: 'Bundler',
+				},
+			},
+		],
+		'.*\\\\.js$': [
+			'ts-jest',
+			{
+				useESM: true,
+				tsconfig: {
+					esModuleInterop: true,
+					allowSyntheticDefaultImports: true,
+				},
+			},
+		],
+	},
+	moduleNameMapper: {
+		'^corsair/core$': '<rootDir>/../corsair/core.ts',
+		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^(\\\\.\\\\.?/.*)\\\\.js$': '$1',
+	},
+	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	extensionsToTreatAsEsm: ['.ts'],
+	testTimeout: 30000,
+	verbose: true,
+};
+`,
+	);
+	writeFileSync(
+		join(pluginDir, 'schema.test.ts'),
+		`import { ${pascalName}Schema } from './schema';
+
+describe('${pascalName} schema', () => {
+\tit('declares a semver version', () => {
+\t\texpect(${pascalName}Schema.version).toBeDefined();
+\t\texpect(${pascalName}Schema.version).toMatch(/^\\d+\\.\\d+\\.\\d+$/);
+\t});
+
+\tit('declares an entities map', () => {
+\t\texpect(typeof ${pascalName}Schema.entities).toBe('object');
+\t\texpect(${pascalName}Schema.entities).not.toBeNull();
+\t\texpect(Array.isArray(Object.keys(${pascalName}Schema.entities))).toBe(true);
+\t\tfor (const entity of Object.values(${pascalName}Schema.entities)) {
+\t\t\texpect(entity).toBeDefined();
+\t\t}
+\t});
+});
+
+// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
+// needs a corresponding test.
+`,
+	);
+
 	// ── Update core/constants.ts to register the new provider ─────────────────
 	const constantsPath = join(packagesDir, 'corsair', 'core', 'constants.ts');
 	if (existsSync(constantsPath)) {
@@ -719,6 +810,24 @@ export * from './oauth-tenant-link';
 							newType,
 						);
 					}
+				}
+
+				const displayMatch = updated.match(
+					/export const ProviderDisplayNames = \{([\s\S]*?)\} as const satisfies/,
+				);
+				if (displayMatch?.[1]) {
+					const entries = displayMatch[1]
+						.split('\n')
+						.map((line) => line.trim())
+						.filter((line) => /^[a-z0-9]+: '/.test(line))
+						.map((line) => line.replace(/,$/, ''));
+					entries.push(`${lowerName}: '${pascalName}'`);
+					entries.sort();
+					const newMap = entries.map((e) => `\t${e},`).join('\n');
+					updated = updated.replace(
+						/export const ProviderDisplayNames = \{[\s\S]*?\} as const satisfies/,
+						`export const ProviderDisplayNames = {\n${newMap}\n} as const satisfies`,
+					);
 				}
 
 				writeFileSync(constantsPath, updated);

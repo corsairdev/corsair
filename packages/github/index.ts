@@ -13,15 +13,18 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { GithubEndpointInputs, GithubEndpointOutputs } from './endpoints';
 import {
 	CommentsEndpoints,
 	DiscussionsEndpoints,
+	EventsEndpoints,
 	ForksEndpoints,
 	IssuesEndpoints,
 	PullRequestsEndpoints,
 	ReleasesEndpoints,
 	RepositoriesEndpoints,
+	SearchEndpoints,
 	UsersEndpoints,
 	WorkflowsEndpoints,
 } from './endpoints';
@@ -306,10 +309,20 @@ export type GithubEndpoints = {
 	repositoriesListBranches: GithubEndpoint<'repositoriesListBranches'>;
 	repositoriesListCommits: GithubEndpoint<'repositoriesListCommits'>;
 	repositoriesGetContent: GithubEndpoint<'repositoriesGetContent'>;
+	eventsList: GithubEndpoint<'eventsList'>;
+	eventsListForNetwork: GithubEndpoint<'eventsListForNetwork'>;
+	eventsListForOrg: GithubEndpoint<'eventsListForOrg'>;
+	eventsListForRepository: GithubEndpoint<'eventsListForRepository'>;
+	eventsListForUser: GithubEndpoint<'eventsListForUser'>;
+	eventsListForUserOrg: GithubEndpoint<'eventsListForUserOrg'>;
+	eventsListPublicForUser: GithubEndpoint<'eventsListPublicForUser'>;
+	eventsListReceivedForUser: GithubEndpoint<'eventsListReceivedForUser'>;
+	eventsListPublicReceivedForUser: GithubEndpoint<'eventsListPublicReceivedForUser'>;
 	repositoriesStar: GithubEndpoint<'repositoriesStar'>;
 	repositoriesUnstar: GithubEndpoint<'repositoriesUnstar'>;
 	repositoriesCheckStarred: GithubEndpoint<'repositoriesCheckStarred'>;
 	repositoriesListStarred: GithubEndpoint<'repositoriesListStarred'>;
+	repositoriesListStargazers: GithubEndpoint<'repositoriesListStargazers'>;
 	releasesList: GithubEndpoint<'releasesList'>;
 	releasesGet: GithubEndpoint<'releasesGet'>;
 	releasesCreate: GithubEndpoint<'releasesCreate'>;
@@ -331,6 +344,9 @@ export type GithubEndpoints = {
 	usersGetAuthenticated: GithubEndpoint<'usersGetAuthenticated'>;
 	usersUpdate: GithubEndpoint<'usersUpdate'>;
 	usersGetHovercard: GithubEndpoint<'usersGetHovercard'>;
+	searchIssues: GithubEndpoint<'searchIssues'>;
+	searchRepositories: GithubEndpoint<'searchRepositories'>;
+	searchUsers: GithubEndpoint<'searchUsers'>;
 };
 
 export type GithubBoundEndpoints = BindEndpoints<typeof githubEndpointsNested>;
@@ -625,6 +641,7 @@ const githubEndpointsNested = {
 		unstar: RepositoriesEndpoints.unstar,
 		checkStarred: RepositoriesEndpoints.checkStarred,
 		listStarred: RepositoriesEndpoints.listStarred,
+		listStargazers: RepositoriesEndpoints.listStargazers,
 	},
 	releases: {
 		list: ReleasesEndpoints.list,
@@ -651,6 +668,17 @@ const githubEndpointsNested = {
 		update: CommentsEndpoints.update,
 		delete: CommentsEndpoints.delete,
 	},
+	events: {
+		list: EventsEndpoints.list,
+		listForNetwork: EventsEndpoints.listForNetwork,
+		listForOrg: EventsEndpoints.listForOrg,
+		listForRepository: EventsEndpoints.listForRepository,
+		listForUser: EventsEndpoints.listForUser,
+		listForUserOrg: EventsEndpoints.listForUserOrg,
+		listPublicForUser: EventsEndpoints.listPublicForUser,
+		listReceivedForUser: EventsEndpoints.listReceivedForUser,
+		listPublicReceivedForUser: EventsEndpoints.listPublicReceivedForUser,
+	},
 	users: {
 		list: UsersEndpoints.list,
 		get: UsersEndpoints.get,
@@ -658,6 +686,11 @@ const githubEndpointsNested = {
 		getAuthenticated: UsersEndpoints.getAuthenticated,
 		update: UsersEndpoints.update,
 		getHovercard: UsersEndpoints.getHovercard,
+	},
+	search: {
+		issues: SearchEndpoints.issues,
+		repositories: SearchEndpoints.repositories,
+		users: SearchEndpoints.users,
 	},
 } as const;
 
@@ -718,6 +751,42 @@ export const githubEndpointSchemas = {
 		input: GithubEndpointInputSchemas.repositoriesGetContent,
 		output: GithubEndpointOutputSchemas.repositoriesGetContent,
 	},
+	'events.list': {
+		input: GithubEndpointInputSchemas.eventsList,
+		output: GithubEndpointOutputSchemas.eventsList,
+	},
+	'events.listForNetwork': {
+		input: GithubEndpointInputSchemas.eventsListForNetwork,
+		output: GithubEndpointOutputSchemas.eventsListForNetwork,
+	},
+	'events.listForOrg': {
+		input: GithubEndpointInputSchemas.eventsListForOrg,
+		output: GithubEndpointOutputSchemas.eventsListForOrg,
+	},
+	'events.listForRepository': {
+		input: GithubEndpointInputSchemas.eventsListForRepository,
+		output: GithubEndpointOutputSchemas.eventsListForRepository,
+	},
+	'events.listForUser': {
+		input: GithubEndpointInputSchemas.eventsListForUser,
+		output: GithubEndpointOutputSchemas.eventsListForUser,
+	},
+	'events.listForUserOrg': {
+		input: GithubEndpointInputSchemas.eventsListForUserOrg,
+		output: GithubEndpointOutputSchemas.eventsListForUserOrg,
+	},
+	'events.listPublicForUser': {
+		input: GithubEndpointInputSchemas.eventsListPublicForUser,
+		output: GithubEndpointOutputSchemas.eventsListPublicForUser,
+	},
+	'events.listReceivedForUser': {
+		input: GithubEndpointInputSchemas.eventsListReceivedForUser,
+		output: GithubEndpointOutputSchemas.eventsListReceivedForUser,
+	},
+	'events.listPublicReceivedForUser': {
+		input: GithubEndpointInputSchemas.eventsListPublicReceivedForUser,
+		output: GithubEndpointOutputSchemas.eventsListPublicReceivedForUser,
+	},
 	'repositories.star': {
 		input: GithubEndpointInputSchemas.repositoriesStar,
 		output: GithubEndpointOutputSchemas.repositoriesStar,
@@ -733,6 +802,10 @@ export const githubEndpointSchemas = {
 	'repositories.listStarred': {
 		input: GithubEndpointInputSchemas.repositoriesListStarred,
 		output: GithubEndpointOutputSchemas.repositoriesListStarred,
+	},
+	'repositories.listStargazers': {
+		input: GithubEndpointInputSchemas.repositoriesListStargazers,
+		output: GithubEndpointOutputSchemas.repositoriesListStargazers,
 	},
 	'releases.list': {
 		input: GithubEndpointInputSchemas.releasesList,
@@ -817,6 +890,18 @@ export const githubEndpointSchemas = {
 	'users.getHovercard': {
 		input: GithubEndpointInputSchemas.usersGetHovercard,
 		output: GithubEndpointOutputSchemas.usersGetHovercard,
+	},
+	'search.issues': {
+		input: GithubEndpointInputSchemas.searchIssues,
+		output: GithubEndpointOutputSchemas.searchIssues,
+	},
+	'search.repositories': {
+		input: GithubEndpointInputSchemas.searchRepositories,
+		output: GithubEndpointOutputSchemas.searchRepositories,
+	},
+	'search.users': {
+		input: GithubEndpointInputSchemas.searchUsers,
+		output: GithubEndpointOutputSchemas.searchUsers,
 	},
 } as const;
 
@@ -1572,6 +1657,42 @@ const githubEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get file or directory content from a repository',
 	},
+	'events.list': {
+		riskLevel: 'read',
+		description: 'List public GitHub events',
+	},
+	'events.listForNetwork': {
+		riskLevel: 'read',
+		description: 'List public events for a repository network',
+	},
+	'events.listForOrg': {
+		riskLevel: 'read',
+		description: 'List public events for an organization',
+	},
+	'events.listForRepository': {
+		riskLevel: 'read',
+		description: 'List events for a repository',
+	},
+	'events.listForUser': {
+		riskLevel: 'read',
+		description: 'List events for a user',
+	},
+	'events.listForUserOrg': {
+		riskLevel: 'read',
+		description: 'List organization events for a user',
+	},
+	'events.listPublicForUser': {
+		riskLevel: 'read',
+		description: 'List public events for a user',
+	},
+	'events.listReceivedForUser': {
+		riskLevel: 'read',
+		description: 'List events received by a user',
+	},
+	'events.listPublicReceivedForUser': {
+		riskLevel: 'read',
+		description: 'List public events received by a user',
+	},
 	'repositories.star': {
 		riskLevel: 'write',
 		description: 'Star a repository for the authenticated user',
@@ -1588,6 +1709,10 @@ const githubEndpointMeta = {
 	'repositories.listStarred': {
 		riskLevel: 'read',
 		description: 'List repositories starred by the authenticated user',
+	},
+	'repositories.listStargazers': {
+		riskLevel: 'read',
+		description: 'List users who have starred a repository',
 	},
 	'releases.list': {
 		riskLevel: 'read',
@@ -1670,10 +1795,22 @@ const githubEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get contextual hovercard information for a user',
 	},
+	'search.issues': {
+		riskLevel: 'read',
+		description: 'Search GitHub issues and pull requests',
+	},
+	'search.repositories': {
+		riskLevel: 'read',
+		description: 'Search GitHub repositories',
+	},
+	'search.users': {
+		riskLevel: 'read',
+		description: 'Search GitHub users and organizations',
+	},
 } satisfies RequiredPluginEndpointMeta<typeof githubEndpointsNested>;
 
 export type GithubPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	credentials?: GithubCredentials;
 	webhookSecret?: string;
 	hooks?: InternalGithubPlugin['hooks'];
@@ -1721,6 +1858,9 @@ export const githubAuthConfig = {
 		account: ['installation_id'] as const,
 	},
 	oauth_2: {
+		account: ['installation_id'] as const,
+	},
+	managed: {
 		account: ['installation_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -1795,10 +1935,27 @@ export function github<const PluginOptions extends GithubPluginOptions>(
 					}
 
 					return res;
+				} else if (ctx.authType === 'managed') {
+					if (!ctx.hub) {
+						throw new Error(
+							'[auth-missing:github:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+						);
+					}
+
+					const managedContext = {
+						keys: ctx.keys,
+						hub: ctx.hub,
+						plugin: 'github',
+						tenantId: ctx.tenantId,
+					};
+
+					const result = await getManagedAccessToken(managedContext);
+					await attachManagedRefreshAuth(ctx, managedContext);
+					return result.accessToken;
 				}
 			}
 
-			throw new AuthMissingError('github', 'oauth_2');
+			throw new AuthMissingError('github', authType ?? 'oauth_2');
 		},
 	} satisfies InternalGithubPlugin;
 }

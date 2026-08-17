@@ -24,6 +24,7 @@ import {
 	GoogleCalendarEndpointOutputSchemas,
 } from './endpoints/types';
 import { GoogleCalendarSchema } from './schema';
+import { googlecalendarSubscribe } from './subscribe';
 import type {
 	EventCreatedEvent,
 	EventDeletedEvent,
@@ -324,6 +325,7 @@ export function googlecalendar<const T extends GoogleCalendarPluginOptions>(
 			}
 		},
 		pluginTenantWebhookMatcher: matchGoogleCalendarTenantWebhook,
+		subscribe: googlecalendarSubscribe,
 	} satisfies InternalGoogleCalendarPlugin;
 }
 

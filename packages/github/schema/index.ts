@@ -3,6 +3,7 @@ import {
 	GithubBranch,
 	GithubComment,
 	GithubDiscussion,
+	GithubEvent,
 	GithubFork,
 	GithubIssue,
 	GithubPullRequest,
@@ -31,5 +32,6 @@ export const GithubSchema = {
 		branches: GithubBranch,
 		forks: GithubFork,
 		comments: GithubComment,
+		events: GithubEvent,
 	},
 } as const;

@@ -10,6 +10,10 @@ const BASE_FIELDS: Record<
 	},
 	api_key: { integration: [], account: ['api_key'] },
 	bot_token: { integration: [], account: ['bot_token'] },
+	managed: {
+		integration: [],
+		account: ['access_token', 'refresh_token', 'expires_at'],
+	},
 } as const;
 
 export type FieldStatus = {

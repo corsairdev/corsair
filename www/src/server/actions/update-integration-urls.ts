@@ -1,9 +1,11 @@
 'use server';
 
-import { revalidatePath } from 'next/cache';
+import { revalidatePath, revalidateTag } from 'next/cache';
 
 import { getActionErrorMessage } from '@/lib/action-errors';
 import { getApi } from '@/server/api/caller';
+import { integrationCacheTag } from '@/server/integration-cache';
+import { revalidateOssWriteSurface } from '@/server/oss-public-cache';
 
 export async function updateIntegrationUrls(formData: FormData) {
 	const integrationId = String(formData.get('integrationId') ?? '').trim();
@@ -22,6 +24,8 @@ export async function updateIntegrationUrls(formData: FormData) {
 		const result = await api.integrations.updateUrls({ integrationId, urls });
 		revalidatePath(`/oss/${result.slug}`);
 		revalidatePath('/oss');
+		revalidateOssWriteSurface();
+		revalidateTag(integrationCacheTag(result.slug));
 		return result;
 	} catch (error) {
 		throw new Error(getActionErrorMessage(error, 'Failed to save URLs'));

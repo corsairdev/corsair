@@ -55,7 +55,7 @@ export function signState(payload: string, kek: string): string {
 	return `${payload}.${sig}`;
 }
 
-const DEFAULT_STATE_TTL_MS = 10 * 60 * 1000;
+export const DEFAULT_CONNECT_LINK_TTL_MS = 10 * 60 * 1000;
 
 export function verifyAndDecodeState(
 	signed: string,
@@ -77,5 +77,5 @@ export function verifyAndDecodeState(
 	) {
 		return null;
 	}
-	return decodeOAuthState(payload, { maxAgeMs: DEFAULT_STATE_TTL_MS });
+	return decodeOAuthState(payload, { maxAgeMs: DEFAULT_CONNECT_LINK_TTL_MS });
 }

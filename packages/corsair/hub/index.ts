@@ -1,0 +1,211 @@
+/**
+ * Corsair Hub client — integrates a Corsair instance with the remote Corsair Hub
+ * (auth.corsair.dev or self-hosted).
+ *
+ * ## Delivery transports
+ *
+ * Development and production are separate environments with distinct API keys:
+ *
+ * - **Development (`ck_dev_`)** — browser delivery (GET `?d=<token>`). The SDK
+ *   auto-detects your localhost delivery URL.
+ * - **Production (`ck_prod_`)** — server delivery (POST, HMAC-signed envelope) to
+ *   the delivery URL registered in the hub dashboard.
+ *
+ * ## Connect flow
+ *
+ * `createHubConnectSession` introspects configured plugins, POSTs a manifest to the hub,
+ * and returns a connect URL for the hosted onboarding UI.
+ *
+ * ## Framework helpers
+ *
+ * `createHubRouteHandlers(corsair)` is optional when using `toNextJsHandler` — hub
+ * delivery at the base path is handled automatically. Use it only for custom
+ * routing or non-Next.js setups that mount delivery separately.
+ */
+export { formatProviderDisplayName } from '../core/constants';
+export {
+	type AgentMessageRole,
+	type AgentReply,
+	type ChatMessage,
+	type ChatSummary,
+	type CreateChatResult,
+	createChat,
+	listChatMessages,
+	listChats,
+	postChatMessage,
+} from './chats';
+export {
+	buildClientBridgeBrowserDeliveryUrl,
+	type ClientBridgeDeliverySpec,
+	type ClientBridgeTransportResult,
+	type PrepareClientBridgeDeliveryTransportInput,
+	prepareClientBridgeDeliveryTransport,
+} from './client-bridge-delivery';
+export {
+	DEFAULT_HUB_API_URL,
+	getHubConfig,
+	HubNotConfiguredError,
+	inferHubEnvironmentSlug,
+	normalizeHubConfig,
+	resolveHubOAuthCallbackUrl,
+} from './config';
+export { createHubConnectSession } from './connect';
+export { startConnectLoop } from './connect/loop';
+export type {
+	ConnectCreateLinkDeliveryPayload,
+	ConnectCreateLinkDeliveryResult,
+} from './connect-link-delivery';
+export {
+	type ConnectAuthFieldStatus,
+	type ConnectAuthStatusLevel,
+	type ConnectStatusPluginEntry,
+	type ConnectStatusResponse,
+	getConnectStatusForTenant,
+} from './connect-status';
+export { listHubProjectConnections } from './connections';
+export {
+	isConnectionsSyncRetryableError,
+	processConnectionsSyncDelivery,
+} from './connections-sync-delivery';
+export {
+	type ConnectAuthKind,
+	type ConnectPluginManifestEntry,
+	parseConnectSessionResponse,
+	parseConnectStatusResponse,
+	parseHubApiErrorBody,
+	parseOAuthRefreshResponse,
+	parsePermissionSessionResponse,
+	parseProjectConnectionsResponse,
+} from './contracts/connect-api';
+export {
+	isLoopbackUrl,
+	resolveDeliveryTransport,
+	usesBrowserDelivery,
+	validateProductionDeliveryUrl,
+} from './contracts/environment';
+export {
+	type BrowserDeliveryMode,
+	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
+} from './contracts/tunnel';
+export {
+	type HubDeliveryRequest,
+	type HubDeliveryResult,
+	handleHubDeliveryGet,
+	handleHubDeliveryPost,
+	handleHubDeliveryRequest,
+	hubDeliveryToResponse,
+	respondToHubDelivery,
+	respondToHubDeliveryFromRequest,
+} from './delivery';
+export {
+	IntegrationCredentialsDeliveryError,
+	processIntegrationCredentialsDelivery,
+} from './integration-credentials-delivery';
+export {
+	attachManagedRefreshAuth,
+	getManagedAccessToken,
+	type ManagedAccessTokenResult,
+	type ManagedAuthContext,
+} from './managed-auth';
+export {
+	ManagedOAuthDeliveryError,
+	type ProcessManagedOAuthDeliveryOptions,
+	type ProcessManagedOAuthDeliveryResult,
+	processManagedOAuthDelivery,
+} from './managed-oauth';
+export {
+	createHubPermissionSession,
+	formatHubApprovalMessage,
+} from './permission';
+export type { ReportConnectionStatusInput } from './report-connection-status';
+export {
+	buildWebhookLinkReport,
+	registerHubWebhookTenantLink,
+	reportConnectionStatus,
+	reportConnectionStatusForHub,
+	reportPluginConnectionAuthMissing,
+	reportPluginConnectionStatus,
+	reportPluginConnectionStatusFromBinding,
+	reportPluginConnectionVerified,
+} from './report-connection-status';
+export { resolveHubDeliveryUrl } from './resolve-delivery-url';
+export { createHubRouteHandlers } from './route-handlers';
+export {
+	BROWSER_DELIVERY_TTL_MS,
+	type BrowserDeliveryPayload,
+	buildBrowserDeliveryRedirectUrl,
+	type ConnectSessionTokenPayload,
+	type ConnectTokenPayload,
+	createConnectSessionJti,
+	createConnectTokenJti,
+	createPermissionSessionJti,
+	createSignedTokenJti,
+	decodeConnectSessionTokenFromPath,
+	decodeConnectTokenFromPath,
+	decodePermissionTokenFromPath,
+	deliverConnectCreateLink,
+	deliverSignedEnvelope,
+	describeDeliveryNetworkError,
+	type ExpiringTokenPayload,
+	encodeConnectTokenForPath,
+	extractConnectLinkFromDeliveryAck,
+	extractProbeFromDeliveryAck,
+	extractRunFromDeliveryAck,
+	extractSyncFromDeliveryAck,
+	type FormatServerDeliveryErrorInput,
+	formatServerDeliveryError,
+	getConnectSessionExpiryMs,
+	getConnectTokenExpiryMs,
+	isServerDeliveryAckSuccessful,
+	type PermissionTokenPayload,
+	parseConnectLinkFromDeliveryBody,
+	parseServerDeliveryAckBody,
+	parseSyncFromDeliveryBody,
+	type ServerDeliveryAckBody,
+	type SignedDeliveryHeaders,
+	type SignedEnvelopeDeliveryResult,
+	signBrowserDeliveryToken,
+	signConnectSessionToken,
+	signConnectToken,
+	signDeliveryEnvelope,
+	signPermissionToken,
+	verifyBrowserDeliveryToken,
+	verifyConnectSessionToken,
+	verifyConnectToken,
+	verifyDeliveryEnvelope,
+	verifyPermissionToken,
+	verifySignedToken,
+	verifySignedTunnelDelivery,
+} from './signing';
+export {
+	type ConnectionsSyncManifest,
+	type ConnectionsSyncPlugin,
+	decryptSyncManifest,
+	type EncryptedSyncPayload,
+	encryptSyncManifest,
+	parseSyncDeliveryBody,
+} from './sync-payload';
+export type {
+	CreateConnectSessionRequestBody,
+	CreatePermissionSessionRequestBody,
+	DeliveryTransport,
+	HubConfig,
+	HubConfigInput,
+	HubConnectSessionInput,
+	HubConnectSessionResult,
+	HubEnvironmentSlug,
+	HubListProjectConnectionsInput,
+	HubOAuthMode,
+	HubOAuthRefreshResponse,
+	HubPermissionSessionInput,
+	HubPermissionSessionResult,
+	HubProjectConnection,
+	ProbeResultPayload,
+	ProbeTunnelPayload,
+	RunResultPayload,
+	RunStepResult,
+	RunTriggerType,
+	RunTunnelPayload,
+	TunnelEnvelope,
+	TunnelType,
+} from './types';

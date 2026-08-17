@@ -13,7 +13,7 @@ export const list: GithubEndpoints['pullRequestsList'] = async (ctx, input) => {
 	const endpoint = `/repos/${owner}/${repo}/pulls`;
 	const result = await makeGithubRequest<PullRequestsListResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ query: queryParams },
 	);
 
@@ -39,10 +39,7 @@ export const list: GithubEndpoints['pullRequestsList'] = async (ctx, input) => {
 export const get: GithubEndpoints['pullRequestsGet'] = async (ctx, input) => {
 	const { owner, repo, pullNumber } = input;
 	const endpoint = `/repos/${owner}/${repo}/pulls/${pullNumber}`;
-	const result = await makeGithubRequest<PullRequestGetResponse>(
-		endpoint,
-		ctx.key,
-	);
+	const result = await makeGithubRequest<PullRequestGetResponse>(endpoint, ctx);
 
 	if (result && ctx.db.pullRequests) {
 		try {
@@ -69,7 +66,7 @@ export const listReviews: GithubEndpoints['pullRequestsListReviews'] = async (
 	const endpoint = `/repos/${owner}/${repo}/pulls/${pullNumber}/reviews`;
 	const result = await makeGithubRequest<PullRequestReviewListResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ query: queryParams },
 	);
 
@@ -97,7 +94,7 @@ export const createReview: GithubEndpoints['pullRequestsCreateReview'] = async (
 	const endpoint = `/repos/${owner}/${repo}/pulls/${pullNumber}/reviews`;
 	const result = await makeGithubRequest<PullRequestReviewCreateResponse>(
 		endpoint,
-		ctx.key,
+		ctx,
 		{ method: 'POST', body },
 	);
 

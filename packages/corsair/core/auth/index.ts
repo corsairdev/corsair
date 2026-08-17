@@ -23,6 +23,16 @@ export {
 	initializeAccountDEK,
 	initializeIntegrationDEK,
 } from './key-manager';
+export {
+	type AuthFieldLevel,
+	type AuthFieldStatus,
+	getPluginAuthStatus,
+	getPluginAuthStatusForTenant,
+	isOptionalAuthField,
+	mapPluginAuthStatusToConnectionState,
+	type PluginAuthStatus,
+	type PluginAuthStatusLevel,
+} from './plugin-auth-status';
 // Types
 export type {
 	AccountFieldNames,

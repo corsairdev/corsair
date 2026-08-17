@@ -61,12 +61,16 @@ module.exports = {
 		'^corsair/http$': '<rootDir>/http.ts',
 		'^corsair/setup$': '<rootDir>/setup.ts',
 		'^corsair/tests$': '<rootDir>/tests.ts',
+		// hub.ts re-exports frpc-binary, whose ESM createRequire lands in dist/hub.js
+		// as import.meta — unparseable by ts-jest's CJS. Map to source like the others.
+		'^corsair/hub$': '<rootDir>/hub.ts',
 		'^corsair$': '<rootDir>/index.ts',
 		'^@corsair-dev/linear$': '<rootDir>/../linear/index.ts',
 		'^@corsair-dev/linear/error-handlers$':
 			'<rootDir>/../linear/error-handlers.ts',
 		'^@corsair-dev/slack$': '<rootDir>/../slack/index.ts',
 		'^@corsair-dev/slack/client$': '<rootDir>/../slack/client.ts',
+		'^@corsair-dev/slack/schema$': '<rootDir>/../slack/schema/index.ts',
 		'^@corsair-dev/slack/error-handlers$':
 			'<rootDir>/../slack/error-handlers.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
@@ -75,4 +79,5 @@ module.exports = {
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,
+	setupFilesAfterEnv: ['<rootDir>/tests/setup-jsdom-fetch.cjs'],
 };

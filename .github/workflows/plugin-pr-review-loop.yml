@@ -1,0 +1,43 @@
+name: Plugin PR Review Loop
+
+on:
+  pull_request_review:
+    types: [submitted]
+  # Fork PRs: pull_request_review runs get a read-only token and no
+  # secrets/vars. Greptile edits its summary comment every review, and
+  # issue_comment runs in base context with full permissions for any PR.
+  issue_comment:
+    types: [created, edited]
+
+concurrency:
+  group: review-loop-${{ github.event.pull_request.number || github.event.issue.number }}-${{ github.event_name == 'pull_request_review' && github.event.pull_request.head.repo.full_name != github.repository && 'fork-review' || 'base' }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  triage:
+    if: >-
+      (github.event_name == 'pull_request_review' &&
+       github.event.review.user.login == 'greptile-apps[bot]' &&
+       github.event.pull_request.draft == false &&
+       github.event.pull_request.head.repo.full_name == github.repository) ||
+      (github.event_name == 'issue_comment' &&
+       github.event.comment.user.login == 'greptile-apps[bot]' &&
+       github.event.issue.pull_request != null)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+
+      - name: Run review loop triage
+        run: node --experimental-strip-types scripts/pr-review/loop-main.ts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PR_BOT_DRY_RUN: ${{ vars.PR_BOT_DRY_RUN }}

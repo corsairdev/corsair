@@ -27,13 +27,19 @@ If you want to contribute a new plugin, please start with the issue first. The i
 
 ## Fork and Local Setup
 
-1. Fork the repository on GitHub.
-2. Clone your fork locally.
-3. Install dependencies from the repo root.
+Prerequisites: Node.js 22 or newer (the plugin generator uses
+`--experimental-strip-types`) and pnpm 10.
+
+For each new integration, start from a fresh fork and a new local clone. If you already forked corsair for a previous integration, delete that fork on GitHub before forking again. Reusing an old fork or local checkout causes merge conflicts when you open a PR.
+
+1. Delete any existing corsair fork on GitHub (if this is not your first integration).
+2. Fork the repository on GitHub from [corsairdev/corsair](https://github.com/corsairdev/corsair).
+3. Clone your new fork into a new local directory (do not reuse a previous clone).
+4. Install dependencies from the repo root.
 
 ```bash
-git clone https://github.com/<your-username>/corsair.git
-cd corsair
+git clone https://github.com/<your-username>/corsair.git corsair-<integration-slug>
+cd corsair-<integration-slug>
 pnpm install
 ```
 
@@ -181,7 +187,7 @@ When starting a new plugin, figure out the integration's default auth model earl
 
 For example, OAuth integrations usually require more than just storing an access token. You should think through token refresh, token expiry, re-auth flows, and any account-scoping rules the provider imposes. API key integrations are often simpler, but you should still confirm whether they are account-level, environment-level, or user-level keys and model them accordingly.
 
-If you are unsure how the auth should fit into Corsair, try asking on our [Discord](https://discord.gg/DphupWS7). We can discuss the integration there and help you get unblocked.
+If you are unsure how the auth should fit into Corsair, try asking on our [Discord](https://discord.gg/uNgCP3mSzU). We can discuss the integration there and help you get unblocked.
 
 ## Webhook Testing
 
@@ -222,7 +228,7 @@ Corsair is strongly typed, and contributions should preserve that.
 
 Not every integration fits perfectly into the current plugin infrastructure. That is expected.
 
-If you discover that Corsair's plugin model does not work well for the integration you want to add, please do not hack around it silently. Open an issue so other contributors can help you. Also, as mentioned before, try asking on our [Discord](https://discord.gg/DphupWS7).
+If you discover that Corsair's plugin model does not work well for the integration you want to add, please do not hack around it silently. Open an issue so other contributors can help you. Also, as mentioned before, try asking on our [Discord](https://discord.gg/uNgCP3mSzU).
 
 Building plugin infrastructure that fits every API and webhook model is hard, and some integrations will need new accommodation points in the framework. We would rather discuss those cases early than merge a plugin that has to fight the abstractions.
 

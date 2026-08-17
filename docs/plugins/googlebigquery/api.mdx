@@ -1,0 +1,5582 @@
+---
+title: API
+description: "API reference for Google BigQuery: every `googlebigquery.api.*` operation with input and output types."
+---
+
+Every `googlebigquery.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Analytics Hub
+
+### createDataExchange
+
+`analyticsHub.createDataExchange`
+
+Create a new data exchange
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.analyticsHub.createDataExchange({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `dataExchangeId` | `string` | Yes | — |
+| `displayName` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `primaryContact` | `string` | No | — |
+| `documentation` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `primaryContact` | `string` | No | — |
+| `documentation` | `string` | No | — |
+| `listingCount` | `number` | No | — |
+
+
+
+---
+
+### createListing
+
+`analyticsHub.createListing`
+
+Create a new listing (shareable dataset) in a data exchange
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.analyticsHub.createListing({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `dataExchangeId` | `string` | Yes | — |
+| `listingId` | `string` | Yes | — |
+| `displayName` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `primaryContact` | `string` | No | — |
+| `bigqueryDataset` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="bigqueryDataset full type">
+
+```ts
+{
+  dataset?: string,
+  selectedResources?: {
+    table?: string,
+    view?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `displayName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `primaryContact` | `string` | No | — |
+| `documentation` | `string` | No | — |
+| `state` | `STATE_UNSPECIFIED \| ACTIVE` | No | — |
+| `categories` | `string[]` | No | — |
+| `bigqueryDataset` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="bigqueryDataset full type">
+
+```ts
+{
+  dataset?: string,
+  selectedResources?: {
+    table?: string,
+    view?: string
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createQueryTemplate
+
+`analyticsHub.createQueryTemplate`
+
+Create a new query template in a data exchange
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.analyticsHub.createQueryTemplate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `dataExchangeId` | `string` | Yes | — |
+| `displayName` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `description` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listDataexchangesListings
+
+`analyticsHub.listDataexchangesListings`
+
+List data exchanges in a location
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.analyticsHub.listDataexchangesListings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataExchanges` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataExchanges full type">
+
+```ts
+{
+  name?: string,
+  displayName?: string,
+  description?: string,
+  primaryContact?: string,
+  documentation?: string,
+  listingCount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listListings
+
+`analyticsHub.listListings`
+
+List listings in a data exchange
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.analyticsHub.listListings({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `dataExchangeId` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `listings` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="listings full type">
+
+```ts
+{
+  name?: string,
+  displayName?: string,
+  description?: string,
+  primaryContact?: string,
+  documentation?: string,
+  state?: STATE_UNSPECIFIED | ACTIVE,
+  categories?: string[],
+  bigqueryDataset?: {
+    dataset?: string,
+    selectedResources?: {
+      table?: string,
+      view?: string
+    }[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listOrganizationDataExchanges
+
+`analyticsHub.listOrganizationDataExchanges`
+
+List data exchanges across an organization
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.analyticsHub.listOrganizationDataExchanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `organizationId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataExchanges` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataExchanges full type">
+
+```ts
+{
+  name?: string,
+  displayName?: string,
+  description?: string,
+  primaryContact?: string,
+  documentation?: string,
+  listingCount?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listQueryTemplates
+
+`analyticsHub.listQueryTemplates`
+
+List query templates in a data exchange
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.analyticsHub.listQueryTemplates({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `dataExchangeId` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `queryTemplates` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="queryTemplates full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Connections
+
+### create
+
+`connections.create`
+
+Create a new external data source connection
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.connections.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `connectionId` | `string` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `cloudSql` | `object` | No | — |
+| `cloudResource` | `object` | No | — |
+| `aws` | `object` | No | — |
+| `azure` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="cloudSql full type">
+
+```ts
+{
+  instanceId?: string,
+  database?: string,
+  type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL,
+  credential?: {
+    username?: string,
+    password?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="cloudResource full type">
+
+```ts
+{
+  serviceAccountId?: string
+}
+```
+</Accordion>
+
+<Accordion title="aws full type">
+
+```ts
+{
+  crossAccountRole?: {
+    iamRoleId?: string
+  },
+  accessRole?: {
+    iamRoleId?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="azure full type">
+
+```ts
+{
+  application?: string,
+  clientId?: string,
+  objectId?: string,
+  customerTenantId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `hasCredential` | `boolean` | No | — |
+| `cloudSql` | `object` | No | — |
+| `cloudResource` | `object` | No | — |
+| `aws` | `object` | No | — |
+| `azure` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="cloudSql full type">
+
+```ts
+{
+  instanceId?: string,
+  database?: string,
+  type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL,
+  credential?: {
+    username?: string,
+    password?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="cloudResource full type">
+
+```ts
+{
+  serviceAccountId?: string
+}
+```
+</Accordion>
+
+<Accordion title="aws full type">
+
+```ts
+{
+  crossAccountRole?: {
+    iamRoleId?: string
+  },
+  accessRole?: {
+    iamRoleId?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="azure full type">
+
+```ts
+{
+  application?: string,
+  clientId?: string,
+  objectId?: string,
+  customerTenantId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listBigQueryConnections
+
+`connections.listBigQueryConnections`
+
+List BigQuery connections across all locations
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.connections.listBigQueryConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connections` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="connections full type">
+
+```ts
+{
+  name?: string,
+  friendlyName?: string,
+  description?: string,
+  creationTime?: string,
+  lastModifiedTime?: string,
+  hasCredential?: boolean,
+  cloudSql?: {
+    instanceId?: string,
+    database?: string,
+    type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL,
+    credential?: {
+      username?: string,
+      password?: string
+    }
+  },
+  cloudResource?: {
+    serviceAccountId?: string
+  },
+  aws?: {
+    crossAccountRole?: {
+      iamRoleId?: string
+    },
+    accessRole?: {
+      iamRoleId?: string
+    }
+  },
+  azure?: {
+    application?: string,
+    clientId?: string,
+    objectId?: string,
+    customerTenantId?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLocationsConnections
+
+`connections.listLocationsConnections`
+
+List BigQuery connections in a specific location
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.connections.listLocationsConnections({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `connections` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="connections full type">
+
+```ts
+{
+  name?: string,
+  friendlyName?: string,
+  description?: string,
+  creationTime?: string,
+  lastModifiedTime?: string,
+  hasCredential?: boolean,
+  cloudSql?: {
+    instanceId?: string,
+    database?: string,
+    type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL,
+    credential?: {
+      username?: string,
+      password?: string
+    }
+  },
+  cloudResource?: {
+    serviceAccountId?: string
+  },
+  aws?: {
+    crossAccountRole?: {
+      iamRoleId?: string
+    },
+    accessRole?: {
+      iamRoleId?: string
+    }
+  },
+  azure?: {
+    application?: string,
+    clientId?: string,
+    objectId?: string,
+    customerTenantId?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`connections.update`
+
+Update an existing connection
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.connections.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `connectionId` | `string` | Yes | — |
+| `updateMask` | `string` | No | — |
+| `connection` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="connection full type">
+
+```ts
+{
+  name?: string,
+  friendlyName?: string,
+  description?: string,
+  creationTime?: string,
+  lastModifiedTime?: string,
+  hasCredential?: boolean,
+  cloudSql?: {
+    instanceId?: string,
+    database?: string,
+    type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL,
+    credential?: {
+      username?: string,
+      password?: string
+    }
+  },
+  cloudResource?: {
+    serviceAccountId?: string
+  },
+  aws?: {
+    crossAccountRole?: {
+      iamRoleId?: string
+    },
+    accessRole?: {
+      iamRoleId?: string
+    }
+  },
+  azure?: {
+    application?: string,
+    clientId?: string,
+    objectId?: string,
+    customerTenantId?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `hasCredential` | `boolean` | No | — |
+| `cloudSql` | `object` | No | — |
+| `cloudResource` | `object` | No | — |
+| `aws` | `object` | No | — |
+| `azure` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="cloudSql full type">
+
+```ts
+{
+  instanceId?: string,
+  database?: string,
+  type?: DATABASE_TYPE_UNSPECIFIED | POSTGRES | MYSQL,
+  credential?: {
+    username?: string,
+    password?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="cloudResource full type">
+
+```ts
+{
+  serviceAccountId?: string
+}
+```
+</Accordion>
+
+<Accordion title="aws full type">
+
+```ts
+{
+  crossAccountRole?: {
+    iamRoleId?: string
+  },
+  accessRole?: {
+    iamRoleId?: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="azure full type">
+
+```ts
+{
+  application?: string,
+  clientId?: string,
+  objectId?: string,
+  customerTenantId?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Datasets
+
+### create
+
+`datasets.create`
+
+Create a new dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.datasets.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `location` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `defaultTableExpirationMs` | `string` | No | — |
+| `defaultPartitionExpirationMs` | `string` | No | — |
+| `access` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasetReference full type">
+
+```ts
+{
+  datasetId: string,
+  projectId?: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="access full type">
+
+```ts
+{
+  role?: string,
+  userByEmail?: string,
+  groupByEmail?: string,
+  domain?: string,
+  specialGroup?: string,
+  iamMember?: string,
+  view?: {
+    projectId?: string,
+    datasetId: string,
+    tableId: string
+  },
+  routine?: {
+    projectId?: string,
+    datasetId: string,
+    routineId: string
+  },
+  dataset?: {
+    dataset: {
+      datasetId: string,
+      projectId?: string
+    },
+    targetTypes?: string[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `datasetReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `defaultTableExpirationMs` | `string` | No | — |
+| `defaultPartitionExpirationMs` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `access` | `object[]` | No | — |
+| `location` | `string` | No | — |
+| `maxTimeTravelHours` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasetReference full type">
+
+```ts
+{
+  datasetId: string,
+  projectId?: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="access full type">
+
+```ts
+{
+  role?: string,
+  userByEmail?: string,
+  groupByEmail?: string,
+  domain?: string,
+  specialGroup?: string,
+  iamMember?: string,
+  view?: {
+    projectId?: string,
+    datasetId: string,
+    tableId: string
+  },
+  routine?: {
+    projectId?: string,
+    datasetId: string,
+    routineId: string
+  },
+  dataset?: {
+    dataset: {
+      datasetId: string,
+      projectId?: string
+    },
+    targetTypes?: string[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`datasets.delete`
+
+Permanently delete a dataset [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlebigquery.api.datasets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `deleteContents` | `boolean` | No | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`datasets.get`
+
+Get a dataset by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.datasets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `datasetView` | `FULL \| METADATA \| ACL` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `datasetReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `defaultTableExpirationMs` | `string` | No | — |
+| `defaultPartitionExpirationMs` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `access` | `object[]` | No | — |
+| `location` | `string` | No | — |
+| `maxTimeTravelHours` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasetReference full type">
+
+```ts
+{
+  datasetId: string,
+  projectId?: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="access full type">
+
+```ts
+{
+  role?: string,
+  userByEmail?: string,
+  groupByEmail?: string,
+  domain?: string,
+  specialGroup?: string,
+  iamMember?: string,
+  view?: {
+    projectId?: string,
+    datasetId: string,
+    tableId: string
+  },
+  routine?: {
+    projectId?: string,
+    datasetId: string,
+    routineId: string
+  },
+  dataset?: {
+    dataset: {
+      datasetId: string,
+      projectId?: string
+    },
+    targetTypes?: string[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`datasets.list`
+
+List datasets in a project
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.datasets.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `all` | `boolean` | No | — |
+| `filter` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `datasets` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasets full type">
+
+```ts
+{
+  kind?: string,
+  id?: string,
+  datasetReference: {
+    datasetId: string,
+    projectId?: string
+  },
+  labels?: {
+  },
+  friendlyName?: string,
+  location?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`datasets.patch`
+
+Partially update a dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.datasets.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `dataset` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="dataset full type">
+
+```ts
+{
+  id?: string,
+  kind?: string,
+  etag?: string,
+  selfLink?: string,
+  datasetReference?: {
+    datasetId: string,
+    projectId?: string
+  },
+  friendlyName?: string,
+  description?: string,
+  defaultTableExpirationMs?: string,
+  defaultPartitionExpirationMs?: string,
+  labels?: {
+  },
+  access?: {
+    role?: string,
+    userByEmail?: string,
+    groupByEmail?: string,
+    domain?: string,
+    specialGroup?: string,
+    iamMember?: string,
+    view?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    routine?: {
+      projectId?: string,
+      datasetId: string,
+      routineId: string
+    },
+    dataset?: {
+      dataset: {
+        datasetId: string,
+        projectId?: string
+      },
+      targetTypes?: string[]
+    }
+  }[],
+  location?: string,
+  maxTimeTravelHours?: string,
+  creationTime?: string,
+  lastModifiedTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `datasetReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `defaultTableExpirationMs` | `string` | No | — |
+| `defaultPartitionExpirationMs` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `access` | `object[]` | No | — |
+| `location` | `string` | No | — |
+| `maxTimeTravelHours` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasetReference full type">
+
+```ts
+{
+  datasetId: string,
+  projectId?: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="access full type">
+
+```ts
+{
+  role?: string,
+  userByEmail?: string,
+  groupByEmail?: string,
+  domain?: string,
+  specialGroup?: string,
+  iamMember?: string,
+  view?: {
+    projectId?: string,
+    datasetId: string,
+    tableId: string
+  },
+  routine?: {
+    projectId?: string,
+    datasetId: string,
+    routineId: string
+  },
+  dataset?: {
+    dataset: {
+      datasetId: string,
+      projectId?: string
+    },
+    targetTypes?: string[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### undelete
+
+`datasets.undelete`
+
+Restore a recently deleted dataset
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.datasets.undelete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `deletionTime` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `datasetReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `defaultTableExpirationMs` | `string` | No | — |
+| `defaultPartitionExpirationMs` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `access` | `object[]` | No | — |
+| `location` | `string` | No | — |
+| `maxTimeTravelHours` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasetReference full type">
+
+```ts
+{
+  datasetId: string,
+  projectId?: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="access full type">
+
+```ts
+{
+  role?: string,
+  userByEmail?: string,
+  groupByEmail?: string,
+  domain?: string,
+  specialGroup?: string,
+  iamMember?: string,
+  view?: {
+    projectId?: string,
+    datasetId: string,
+    tableId: string
+  },
+  routine?: {
+    projectId?: string,
+    datasetId: string,
+    routineId: string
+  },
+  dataset?: {
+    dataset: {
+      datasetId: string,
+      projectId?: string
+    },
+    targetTypes?: string[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`datasets.update`
+
+Replace a dataset (full update)
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.datasets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `dataset` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="dataset full type">
+
+```ts
+{
+  id?: string,
+  kind?: string,
+  etag?: string,
+  selfLink?: string,
+  datasetReference: {
+    datasetId: string,
+    projectId?: string
+  },
+  friendlyName?: string,
+  description?: string,
+  defaultTableExpirationMs?: string,
+  defaultPartitionExpirationMs?: string,
+  labels?: {
+  },
+  access?: {
+    role?: string,
+    userByEmail?: string,
+    groupByEmail?: string,
+    domain?: string,
+    specialGroup?: string,
+    iamMember?: string,
+    view?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    routine?: {
+      projectId?: string,
+      datasetId: string,
+      routineId: string
+    },
+    dataset?: {
+      dataset: {
+        datasetId: string,
+        projectId?: string
+      },
+      targetTypes?: string[]
+    }
+  }[],
+  location?: string,
+  maxTimeTravelHours?: string,
+  creationTime?: string,
+  lastModifiedTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `datasetReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `defaultTableExpirationMs` | `string` | No | — |
+| `defaultPartitionExpirationMs` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `access` | `object[]` | No | — |
+| `location` | `string` | No | — |
+| `maxTimeTravelHours` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="datasetReference full type">
+
+```ts
+{
+  datasetId: string,
+  projectId?: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="access full type">
+
+```ts
+{
+  role?: string,
+  userByEmail?: string,
+  groupByEmail?: string,
+  domain?: string,
+  specialGroup?: string,
+  iamMember?: string,
+  view?: {
+    projectId?: string,
+    datasetId: string,
+    tableId: string
+  },
+  routine?: {
+    projectId?: string,
+    datasetId: string,
+    routineId: string
+  },
+  dataset?: {
+    dataset: {
+      datasetId: string,
+      projectId?: string
+    },
+    targetTypes?: string[]
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Iam
+
+### createLocationsDatapolicies
+
+`iam.createLocationsDatapolicies`
+
+Create a column-level security / data masking policy
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.iam.createLocationsDatapolicies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `dataPolicyId` | `string` | Yes | — |
+| `policyTag` | `string` | No | — |
+| `dataPolicyType` | `DATA_POLICY_TYPE_UNSPECIFIED \| COLUMN_LEVEL_SECURITY_POLICY \| DATA_MASKING_POLICY` | No | — |
+| `dataMaskingPolicy` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataMaskingPolicy full type">
+
+```ts
+{
+  predefinedExpression?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `dataPolicyId` | `string` | No | — |
+| `policyTag` | `string` | No | — |
+| `dataPolicyType` | `DATA_POLICY_TYPE_UNSPECIFIED \| COLUMN_LEVEL_SECURITY_POLICY \| DATA_MASKING_POLICY` | No | — |
+| `dataMaskingPolicy` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataMaskingPolicy full type">
+
+```ts
+{
+  predefinedExpression?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getConnectionIamPolicy
+
+`iam.getConnectionIamPolicy`
+
+Get a connection's IAM policy
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.iam.getConnectionIamPolicy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `connectionId` | `string` | Yes | — |
+| `requestedPolicyVersion` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `number` | No | — |
+| `bindings` | `object[]` | No | — |
+| `etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="bindings full type">
+
+```ts
+{
+  role?: string,
+  members?: string[],
+  condition?: {
+    expression?: string,
+    title?: string,
+    description?: string,
+    location?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRoutineIamPolicy
+
+`iam.getRoutineIamPolicy`
+
+Get a routine's IAM policy
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.iam.getRoutineIamPolicy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `routineId` | `string` | Yes | — |
+| `requestedPolicyVersion` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `number` | No | — |
+| `bindings` | `object[]` | No | — |
+| `etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="bindings full type">
+
+```ts
+{
+  role?: string,
+  members?: string[],
+  condition?: {
+    expression?: string,
+    title?: string,
+    description?: string,
+    location?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getServiceAccount
+
+`iam.getServiceAccount`
+
+Get the project's BigQuery service account email
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.iam.getServiceAccount({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `email` | `string` | No | — |
+
+
+
+---
+
+### getTableIamPolicy
+
+`iam.getTableIamPolicy`
+
+Get a table's IAM policy
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.iam.getTableIamPolicy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `requestedPolicyVersion` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `number` | No | — |
+| `bindings` | `object[]` | No | — |
+| `etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="bindings full type">
+
+```ts
+{
+  role?: string,
+  members?: string[],
+  condition?: {
+    expression?: string,
+    title?: string,
+    description?: string,
+    location?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLocationsDatapolicies
+
+`iam.listLocationsDatapolicies`
+
+List data policies in a location
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.iam.listLocationsDatapolicies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataPolicies` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataPolicies full type">
+
+```ts
+{
+  name?: string,
+  dataPolicyId?: string,
+  policyTag?: string,
+  dataPolicyType?: DATA_POLICY_TYPE_UNSPECIFIED | COLUMN_LEVEL_SECURITY_POLICY | DATA_MASKING_POLICY,
+  dataMaskingPolicy?: {
+    predefinedExpression?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRowAccessPolicies
+
+`iam.listRowAccessPolicies`
+
+List a table's row-level access policies
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.iam.listRowAccessPolicies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rowAccessPolicies` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="rowAccessPolicies full type">
+
+```ts
+{
+  etag?: string,
+  rowAccessPolicyReference?: {
+    projectId?: string,
+    datasetId?: string,
+    tableId?: string,
+    policyId?: string
+  },
+  filterPredicate?: string,
+  creationTime?: string,
+  lastModifiedTime?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### setRoutineIamPolicy
+
+`iam.setRoutineIamPolicy`
+
+Replace a routine's IAM policy
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.iam.setRoutineIamPolicy({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `routineId` | `string` | Yes | — |
+| `policy` | `object` | Yes | — |
+| `updateMask` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="policy full type">
+
+```ts
+{
+  version?: number,
+  bindings?: {
+    role?: string,
+    members?: string[],
+    condition?: {
+      expression?: string,
+      title?: string,
+      description?: string,
+      location?: string
+    }
+  }[],
+  etag?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `number` | No | — |
+| `bindings` | `object[]` | No | — |
+| `etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="bindings full type">
+
+```ts
+{
+  role?: string,
+  members?: string[],
+  condition?: {
+    expression?: string,
+    title?: string,
+    description?: string,
+    location?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### testRoutineIamPermissions
+
+`iam.testRoutineIamPermissions`
+
+Test which permissions the caller has on a routine
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.iam.testRoutineIamPermissions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `routineId` | `string` | Yes | — |
+| `permissions` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `permissions` | `string[]` | No | — |
+
+
+
+---
+
+## Ml
+
+### deleteModel
+
+`ml.deleteModel`
+
+Permanently delete a model [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlebigquery.api.ml.deleteModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `modelId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### getBigqueryModel
+
+`ml.getBigqueryModel`
+
+Get a BigQuery ML model by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.ml.getBigqueryModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `modelId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `modelReference` | `object` | Yes | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `description` | `string` | No | — |
+| `friendlyName` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `expirationTime` | `string` | No | — |
+| `location` | `string` | No | — |
+| `modelType` | `string` | No | — |
+| `featureColumns` | `object[]` | No | — |
+| `labelColumns` | `object[]` | No | — |
+| `trainingRuns` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="modelReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  modelId: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="featureColumns full type">
+
+```ts
+{
+  name?: string,
+  type?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="labelColumns full type">
+
+```ts
+{
+  name?: string,
+  type?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="trainingRuns full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLocations
+
+`ml.listLocations`
+
+List available BigQuery locations for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.ml.listLocations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  name?: string,
+  locationId?: string,
+  displayName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listModels
+
+`ml.listModels`
+
+List BigQuery ML models in a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.ml.listModels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  etag?: string,
+  modelReference: {
+    projectId?: string,
+    datasetId: string,
+    modelId: string
+  },
+  creationTime?: string,
+  lastModifiedTime?: string,
+  description?: string,
+  friendlyName?: string,
+  labels?: {
+  },
+  expirationTime?: string,
+  location?: string,
+  modelType?: string,
+  featureColumns?: {
+    name?: string,
+    type?: {
+    }
+  }[],
+  labelColumns?: {
+    name?: string,
+    type?: {
+    }
+  }[],
+  trainingRuns?: {
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listProjects
+
+`ml.listProjects`
+
+List projects visible to the caller
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.ml.listProjects({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `projects` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `totalItems` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  kind?: string,
+  id?: string,
+  numericId?: string,
+  projectReference?: {
+    projectId?: string
+  },
+  friendlyName?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patchModel
+
+`ml.patchModel`
+
+Partially update a model's metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.ml.patchModel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `modelId` | `string` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `expirationTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `modelReference` | `object` | Yes | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `description` | `string` | No | — |
+| `friendlyName` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `expirationTime` | `string` | No | — |
+| `location` | `string` | No | — |
+| `modelType` | `string` | No | — |
+| `featureColumns` | `object[]` | No | — |
+| `labelColumns` | `object[]` | No | — |
+| `trainingRuns` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="modelReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  modelId: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="featureColumns full type">
+
+```ts
+{
+  name?: string,
+  type?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="labelColumns full type">
+
+```ts
+{
+  name?: string,
+  type?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="trainingRuns full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Queries
+
+### cancelJob
+
+`queries.cancelJob`
+
+Request cancellation of a running job [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googlebigquery.api.queries.cancelJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+| `location` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `job` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id?: string,
+  kind?: string,
+  selfLink?: string,
+  etag?: string,
+  jobReference?: {
+    projectId?: string,
+    jobId?: string,
+    location?: string
+  },
+  configuration?: {
+    jobType?: QUERY | LOAD | EXTRACT | COPY,
+    query?: {
+      query: string,
+      destinationTable?: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+      writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+      defaultDataset?: {
+        datasetId: string,
+        projectId?: string
+      },
+      priority?: INTERACTIVE | BATCH,
+      useLegacySql?: boolean,
+      useQueryCache?: boolean,
+      maximumBytesBilled?: string,
+      queryParameters?: {
+        name?: string,
+        parameterType: {
+          type: string,
+          arrayType?: any,
+          structTypes?: any[]
+        },
+        parameterValue: {
+          value?: any,
+          arrayValues?: any[],
+          structValues?: {
+          }
+        }
+      }[],
+      parameterMode?: POSITIONAL | NAMED
+    },
+    load?: {
+      sourceUris?: string[],
+      destinationTable: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      schema?: {
+        fields?: {
+          name: string,
+          type: string,
+          mode?: string,
+          description?: string,
+          fields?: lazy
+        }[]
+      },
+      sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
+      createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+      writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+      skipLeadingRows?: number,
+      autodetect?: boolean,
+      fieldDelimiter?: string,
+      encoding?: UTF-8 | ISO-8859-1
+    },
+    extract?: {
+      sourceTable?: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      destinationUris?: string[],
+      destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET,
+      compression?: NONE | GZIP | DEFLATE | SNAPPY,
+      fieldDelimiter?: string
+    },
+    copy?: {
+      sourceTable?: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      sourceTables?: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      }[],
+      destinationTable: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+      writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY
+    },
+    dryRun?: boolean,
+    jobTimeoutMs?: string,
+    labels?: {
+    }
+  },
+  status?: {
+    state?: PENDING | RUNNING | DONE,
+    errorResult?: {
+      reason?: string,
+      location?: string,
+      debugInfo?: string,
+      message?: string
+    },
+    errors?: {
+      reason?: string,
+      location?: string,
+      debugInfo?: string,
+      message?: string
+    }[]
+  },
+  statistics?: {
+  },
+  user_email?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteJobMetadata
+
+`queries.deleteJobMetadata`
+
+Delete a job's metadata [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.googlebigquery.api.queries.deleteJobMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+| `location` | `string` | No | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### getJob
+
+`queries.getJob`
+
+Get a job by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.queries.getJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+| `location` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `jobReference` | `object` | No | — |
+| `configuration` | `object` | No | — |
+| `status` | `object` | No | — |
+| `statistics` | `object` | No | — |
+| `user_email` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobReference full type">
+
+```ts
+{
+  projectId?: string,
+  jobId?: string,
+  location?: string
+}
+```
+</Accordion>
+
+<Accordion title="configuration full type">
+
+```ts
+{
+  jobType?: QUERY | LOAD | EXTRACT | COPY,
+  query?: {
+    query: string,
+    destinationTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    defaultDataset?: {
+      datasetId: string,
+      projectId?: string
+    },
+    priority?: INTERACTIVE | BATCH,
+    useLegacySql?: boolean,
+    useQueryCache?: boolean,
+    maximumBytesBilled?: string,
+    queryParameters?: {
+      name?: string,
+      parameterType: {
+        type: string,
+        arrayType?: any,
+        structTypes?: any[]
+      },
+      parameterValue: {
+        value?: any,
+        arrayValues?: any[],
+        structValues?: {
+        }
+      }
+    }[],
+    parameterMode?: POSITIONAL | NAMED
+  },
+  load?: {
+    sourceUris?: string[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    schema?: {
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: lazy
+      }[]
+    },
+    sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    skipLeadingRows?: number,
+    autodetect?: boolean,
+    fieldDelimiter?: string,
+    encoding?: UTF-8 | ISO-8859-1
+  },
+  extract?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    destinationUris?: string[],
+    destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET,
+    compression?: NONE | GZIP | DEFLATE | SNAPPY,
+    fieldDelimiter?: string
+  },
+  copy?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    sourceTables?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    }[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY
+  },
+  dryRun?: boolean,
+  jobTimeoutMs?: string,
+  labels?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  state?: PENDING | RUNNING | DONE,
+  errorResult?: {
+    reason?: string,
+    location?: string,
+    debugInfo?: string,
+    message?: string
+  },
+  errors?: {
+    reason?: string,
+    location?: string,
+    debugInfo?: string,
+    message?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="statistics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getQueryResults
+
+`queries.getQueryResults`
+
+Fetch additional pages of results for a running/completed query job
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.queries.getQueryResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `jobId` | `string` | Yes | — |
+| `startIndex` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `maxResults` | `number` | No | — |
+| `timeoutMs` | `number` | No | — |
+| `location` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `schema` | `object` | No | — |
+| `jobReference` | `object` | No | — |
+| `totalRows` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `rows` | `object[]` | No | — |
+| `totalBytesProcessed` | `string` | No | — |
+| `jobComplete` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+| `cacheHit` | `boolean` | No | — |
+| `numDmlAffectedRows` | `string` | No | — |
+| `etag` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  fields?: {
+    name: string,
+    type: string,
+    mode?: string,
+    description?: string,
+    fields?: lazy
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="jobReference full type">
+
+```ts
+{
+  projectId?: string,
+  jobId?: string,
+  location?: string
+}
+```
+</Accordion>
+
+<Accordion title="rows full type">
+
+```ts
+{
+  f?: {
+    v: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  reason?: string,
+  location?: string,
+  debugInfo?: string,
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertAll
+
+`queries.insertAll`
+
+Stream rows into a table (supports insertId-based deduplication)
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.queries.insertAll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `rows` | `object[]` | Yes | — |
+| `skipInvalidRows` | `boolean` | No | — |
+| `ignoreUnknownValues` | `boolean` | No | — |
+| `templateSuffix` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+  insertId?: string,
+  json: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `insertErrors` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="insertErrors full type">
+
+```ts
+{
+  index?: number,
+  errors?: {
+    reason?: string,
+    location?: string,
+    debugInfo?: string,
+    message?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertJob
+
+`queries.insertJob`
+
+Start a query, load, extract, or copy job (supports dry-run)
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.queries.insertJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `jobReference` | `object` | No | — |
+| `configuration` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="jobReference full type">
+
+```ts
+{
+  projectId?: string,
+  jobId?: string,
+  location?: string
+}
+```
+</Accordion>
+
+<Accordion title="configuration full type">
+
+```ts
+{
+  jobType?: QUERY | LOAD | EXTRACT | COPY,
+  query?: {
+    query: string,
+    destinationTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    defaultDataset?: {
+      datasetId: string,
+      projectId?: string
+    },
+    priority?: INTERACTIVE | BATCH,
+    useLegacySql?: boolean,
+    useQueryCache?: boolean,
+    maximumBytesBilled?: string,
+    queryParameters?: {
+      name?: string,
+      parameterType: {
+        type: string,
+        arrayType?: any,
+        structTypes?: any[]
+      },
+      parameterValue: {
+        value?: any,
+        arrayValues?: any[],
+        structValues?: {
+        }
+      }
+    }[],
+    parameterMode?: POSITIONAL | NAMED
+  },
+  load?: {
+    sourceUris?: string[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    schema?: {
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: lazy
+      }[]
+    },
+    sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    skipLeadingRows?: number,
+    autodetect?: boolean,
+    fieldDelimiter?: string,
+    encoding?: UTF-8 | ISO-8859-1
+  },
+  extract?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    destinationUris?: string[],
+    destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET,
+    compression?: NONE | GZIP | DEFLATE | SNAPPY,
+    fieldDelimiter?: string
+  },
+  copy?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    sourceTables?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    }[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY
+  },
+  dryRun?: boolean,
+  jobTimeoutMs?: string,
+  labels?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `jobReference` | `object` | No | — |
+| `configuration` | `object` | No | — |
+| `status` | `object` | No | — |
+| `statistics` | `object` | No | — |
+| `user_email` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobReference full type">
+
+```ts
+{
+  projectId?: string,
+  jobId?: string,
+  location?: string
+}
+```
+</Accordion>
+
+<Accordion title="configuration full type">
+
+```ts
+{
+  jobType?: QUERY | LOAD | EXTRACT | COPY,
+  query?: {
+    query: string,
+    destinationTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    defaultDataset?: {
+      datasetId: string,
+      projectId?: string
+    },
+    priority?: INTERACTIVE | BATCH,
+    useLegacySql?: boolean,
+    useQueryCache?: boolean,
+    maximumBytesBilled?: string,
+    queryParameters?: {
+      name?: string,
+      parameterType: {
+        type: string,
+        arrayType?: any,
+        structTypes?: any[]
+      },
+      parameterValue: {
+        value?: any,
+        arrayValues?: any[],
+        structValues?: {
+        }
+      }
+    }[],
+    parameterMode?: POSITIONAL | NAMED
+  },
+  load?: {
+    sourceUris?: string[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    schema?: {
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: lazy
+      }[]
+    },
+    sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    skipLeadingRows?: number,
+    autodetect?: boolean,
+    fieldDelimiter?: string,
+    encoding?: UTF-8 | ISO-8859-1
+  },
+  extract?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    destinationUris?: string[],
+    destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET,
+    compression?: NONE | GZIP | DEFLATE | SNAPPY,
+    fieldDelimiter?: string
+  },
+  copy?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    sourceTables?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    }[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY
+  },
+  dryRun?: boolean,
+  jobTimeoutMs?: string,
+  labels?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  state?: PENDING | RUNNING | DONE,
+  errorResult?: {
+    reason?: string,
+    location?: string,
+    debugInfo?: string,
+    message?: string
+  },
+  errors?: {
+    reason?: string,
+    location?: string,
+    debugInfo?: string,
+    message?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="statistics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### insertJobWithUpload
+
+`queries.insertJobWithUpload`
+
+Start a load job that uploads an inline file as the data source
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.queries.insertJobWithUpload({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `jobReference` | `object` | No | — |
+| `configuration` | `object` | Yes | — |
+| `fileContent` | `string` | Yes | — |
+| `fileName` | `string` | No | — |
+| `contentType` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobReference full type">
+
+```ts
+{
+  projectId?: string,
+  jobId?: string,
+  location?: string
+}
+```
+</Accordion>
+
+<Accordion title="configuration full type">
+
+```ts
+{
+  jobType?: QUERY | LOAD | EXTRACT | COPY,
+  query?: {
+    query: string,
+    destinationTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    defaultDataset?: {
+      datasetId: string,
+      projectId?: string
+    },
+    priority?: INTERACTIVE | BATCH,
+    useLegacySql?: boolean,
+    useQueryCache?: boolean,
+    maximumBytesBilled?: string,
+    queryParameters?: {
+      name?: string,
+      parameterType: {
+        type: string,
+        arrayType?: any,
+        structTypes?: any[]
+      },
+      parameterValue: {
+        value?: any,
+        arrayValues?: any[],
+        structValues?: {
+        }
+      }
+    }[],
+    parameterMode?: POSITIONAL | NAMED
+  },
+  load?: {
+    sourceUris?: string[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    schema?: {
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: lazy
+      }[]
+    },
+    sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    skipLeadingRows?: number,
+    autodetect?: boolean,
+    fieldDelimiter?: string,
+    encoding?: UTF-8 | ISO-8859-1
+  },
+  extract?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    destinationUris?: string[],
+    destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET,
+    compression?: NONE | GZIP | DEFLATE | SNAPPY,
+    fieldDelimiter?: string
+  },
+  copy?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    sourceTables?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    }[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY
+  },
+  dryRun?: boolean,
+  jobTimeoutMs?: string,
+  labels?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `jobReference` | `object` | No | — |
+| `configuration` | `object` | No | — |
+| `status` | `object` | No | — |
+| `statistics` | `object` | No | — |
+| `user_email` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobReference full type">
+
+```ts
+{
+  projectId?: string,
+  jobId?: string,
+  location?: string
+}
+```
+</Accordion>
+
+<Accordion title="configuration full type">
+
+```ts
+{
+  jobType?: QUERY | LOAD | EXTRACT | COPY,
+  query?: {
+    query: string,
+    destinationTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    defaultDataset?: {
+      datasetId: string,
+      projectId?: string
+    },
+    priority?: INTERACTIVE | BATCH,
+    useLegacySql?: boolean,
+    useQueryCache?: boolean,
+    maximumBytesBilled?: string,
+    queryParameters?: {
+      name?: string,
+      parameterType: {
+        type: string,
+        arrayType?: any,
+        structTypes?: any[]
+      },
+      parameterValue: {
+        value?: any,
+        arrayValues?: any[],
+        structValues?: {
+        }
+      }
+    }[],
+    parameterMode?: POSITIONAL | NAMED
+  },
+  load?: {
+    sourceUris?: string[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    schema?: {
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: lazy
+      }[]
+    },
+    sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+    skipLeadingRows?: number,
+    autodetect?: boolean,
+    fieldDelimiter?: string,
+    encoding?: UTF-8 | ISO-8859-1
+  },
+  extract?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    destinationUris?: string[],
+    destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET,
+    compression?: NONE | GZIP | DEFLATE | SNAPPY,
+    fieldDelimiter?: string
+  },
+  copy?: {
+    sourceTable?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    sourceTables?: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    }[],
+    destinationTable: {
+      projectId?: string,
+      datasetId: string,
+      tableId: string
+    },
+    createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+    writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY
+  },
+  dryRun?: boolean,
+  jobTimeoutMs?: string,
+  labels?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="status full type">
+
+```ts
+{
+  state?: PENDING | RUNNING | DONE,
+  errorResult?: {
+    reason?: string,
+    location?: string,
+    debugInfo?: string,
+    message?: string
+  },
+  errors?: {
+    reason?: string,
+    location?: string,
+    debugInfo?: string,
+    message?: string
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="statistics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listJobs
+
+`queries.listJobs`
+
+List jobs for a project
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.queries.listJobs({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `allUsers` | `boolean` | No | — |
+| `maxResults` | `number` | No | — |
+| `minCreationTime` | `string` | No | — |
+| `maxCreationTime` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `projection` | `full \| minimal` | No | — |
+| `stateFilter` | `done \| pending \| running[]` | No | — |
+| `parentJobId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `jobs` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="jobs full type">
+
+```ts
+{
+  id?: string,
+  kind?: string,
+  selfLink?: string,
+  etag?: string,
+  jobReference?: {
+    projectId?: string,
+    jobId?: string,
+    location?: string
+  },
+  configuration?: {
+    jobType?: QUERY | LOAD | EXTRACT | COPY,
+    query?: {
+      query: string,
+      destinationTable?: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+      writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+      defaultDataset?: {
+        datasetId: string,
+        projectId?: string
+      },
+      priority?: INTERACTIVE | BATCH,
+      useLegacySql?: boolean,
+      useQueryCache?: boolean,
+      maximumBytesBilled?: string,
+      queryParameters?: {
+        name?: string,
+        parameterType: {
+          type: string,
+          arrayType?: any,
+          structTypes?: any[]
+        },
+        parameterValue: {
+          value?: any,
+          arrayValues?: any[],
+          structValues?: {
+          }
+        }
+      }[],
+      parameterMode?: POSITIONAL | NAMED
+    },
+    load?: {
+      sourceUris?: string[],
+      destinationTable: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      schema?: {
+        fields?: {
+          name: string,
+          type: string,
+          mode?: string,
+          description?: string,
+          fields?: lazy
+        }[]
+      },
+      sourceFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET | ORC | DATASTORE_BACKUP,
+      createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+      writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY,
+      skipLeadingRows?: number,
+      autodetect?: boolean,
+      fieldDelimiter?: string,
+      encoding?: UTF-8 | ISO-8859-1
+    },
+    extract?: {
+      sourceTable?: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      destinationUris?: string[],
+      destinationFormat?: CSV | NEWLINE_DELIMITED_JSON | AVRO | PARQUET,
+      compression?: NONE | GZIP | DEFLATE | SNAPPY,
+      fieldDelimiter?: string
+    },
+    copy?: {
+      sourceTable?: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      sourceTables?: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      }[],
+      destinationTable: {
+        projectId?: string,
+        datasetId: string,
+        tableId: string
+      },
+      createDisposition?: CREATE_IF_NEEDED | CREATE_NEVER,
+      writeDisposition?: WRITE_TRUNCATE | WRITE_APPEND | WRITE_EMPTY
+    },
+    dryRun?: boolean,
+    jobTimeoutMs?: string,
+    labels?: {
+    }
+  },
+  status?: {
+    state?: PENDING | RUNNING | DONE,
+    errorResult?: {
+      reason?: string,
+      location?: string,
+      debugInfo?: string,
+      message?: string
+    },
+    errors?: {
+      reason?: string,
+      location?: string,
+      debugInfo?: string,
+      message?: string
+    }[]
+  },
+  statistics?: {
+  },
+  user_email?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### query
+
+`queries.query`
+
+Run a SQL query and return inline results
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.queries.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `maxResults` | `number` | No | — |
+| `defaultDataset` | `object` | No | — |
+| `timeoutMs` | `number` | No | — |
+| `dryRun` | `boolean` | No | — |
+| `useQueryCache` | `boolean` | No | — |
+| `useLegacySql` | `boolean` | No | — |
+| `parameterMode` | `POSITIONAL \| NAMED` | No | — |
+| `queryParameters` | `object[]` | No | — |
+| `location` | `string` | No | — |
+| `maximumBytesBilled` | `string` | No | — |
+| `requestId` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="defaultDataset full type">
+
+```ts
+{
+  datasetId: string,
+  projectId?: string
+}
+```
+</Accordion>
+
+<Accordion title="queryParameters full type">
+
+```ts
+{
+  name?: string,
+  parameterType: {
+    type: string,
+    arrayType?: any,
+    structTypes?: any[]
+  },
+  parameterValue: {
+    value?: any,
+    arrayValues?: any[],
+    structValues?: {
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `schema` | `object` | No | — |
+| `jobReference` | `object` | No | — |
+| `totalRows` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `rows` | `object[]` | No | — |
+| `totalBytesProcessed` | `string` | No | — |
+| `jobComplete` | `boolean` | No | — |
+| `errors` | `object[]` | No | — |
+| `cacheHit` | `boolean` | No | — |
+| `numDmlAffectedRows` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="schema full type">
+
+```ts
+{
+  fields?: {
+    name: string,
+    type: string,
+    mode?: string,
+    description?: string,
+    fields?: lazy
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="jobReference full type">
+
+```ts
+{
+  projectId?: string,
+  jobId?: string,
+  location?: string
+}
+```
+</Accordion>
+
+<Accordion title="rows full type">
+
+```ts
+{
+  f?: {
+    v: any
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="errors full type">
+
+```ts
+{
+  reason?: string,
+  location?: string,
+  debugInfo?: string,
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Reservations
+
+### create
+
+`reservations.create`
+
+Create a new slot reservation (has billing impact)
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.reservations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `reservationId` | `string` | Yes | — |
+| `slotCapacity` | `string` | No | — |
+| `ignoreIdleSlots` | `boolean` | No | — |
+| `edition` | `EDITION_UNSPECIFIED \| STANDARD \| ENTERPRISE \| ENTERPRISE_PLUS` | No | — |
+| `autoscale` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="autoscale full type">
+
+```ts
+{
+  currentSlots?: string,
+  maxSlots?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `slotCapacity` | `string` | No | — |
+| `ignoreIdleSlots` | `boolean` | No | — |
+| `creationTime` | `string` | No | — |
+| `updateTime` | `string` | No | — |
+| `concurrency` | `string` | No | — |
+| `edition` | `EDITION_UNSPECIFIED \| STANDARD \| ENTERPRISE \| ENTERPRISE_PLUS` | No | — |
+| `autoscale` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="autoscale full type">
+
+```ts
+{
+  currentSlots?: string,
+  maxSlots?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createAssignment
+
+`reservations.createAssignment`
+
+Assign a project/folder/org to a reservation
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.reservations.createAssignment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `reservationId` | `string` | Yes | — |
+| `assignee` | `string` | Yes | — |
+| `jobType` | `JOB_TYPE_UNSPECIFIED \| PIPELINE \| QUERY \| ML_EXTERNAL \| BACKGROUND \| CONTINUOUS` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `assignee` | `string` | No | — |
+| `jobType` | `JOB_TYPE_UNSPECIFIED \| PIPELINE \| QUERY \| ML_EXTERNAL \| BACKGROUND \| CONTINUOUS` | No | — |
+| `state` | `STATE_UNSPECIFIED \| PENDING \| ACTIVE` | No | — |
+
+
+
+---
+
+### createCapacityCommitment
+
+`reservations.createCapacityCommitment`
+
+Purchase a new capacity commitment (has billing impact)
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.reservations.createCapacityCommitment({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `slotCount` | `string` | Yes | — |
+| `plan` | `COMMITMENT_PLAN_UNSPECIFIED \| FLEX \| FLEX_FLAT_RATE \| MONTHLY \| ANNUAL \| THREE_YEAR` | Yes | — |
+| `renewalPlan` | `COMMITMENT_PLAN_UNSPECIFIED \| FLEX \| FLEX_FLAT_RATE \| MONTHLY \| ANNUAL \| THREE_YEAR \| NONE` | No | — |
+| `enforceSingleAdminProjectPerOrg` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `slotCount` | `string` | No | — |
+| `plan` | `COMMITMENT_PLAN_UNSPECIFIED \| FLEX \| FLEX_FLAT_RATE \| MONTHLY \| ANNUAL \| THREE_YEAR` | No | — |
+| `state` | `STATE_UNSPECIFIED \| PENDING \| ACTIVE \| FAILED` | No | — |
+| `commitmentEndTime` | `string` | No | — |
+| `renewalPlan` | `COMMITMENT_PLAN_UNSPECIFIED \| FLEX \| FLEX_FLAT_RATE \| MONTHLY \| ANNUAL \| THREE_YEAR \| NONE` | No | — |
+
+
+
+---
+
+### list
+
+`reservations.list`
+
+List slot reservations in a location
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.reservations.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reservations` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="reservations full type">
+
+```ts
+{
+  name?: string,
+  slotCapacity?: string,
+  ignoreIdleSlots?: boolean,
+  creationTime?: string,
+  updateTime?: string,
+  concurrency?: string,
+  edition?: EDITION_UNSPECIFIED | STANDARD | ENTERPRISE | ENTERPRISE_PLUS,
+  autoscale?: {
+    currentSlots?: string,
+    maxSlots?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listAssignments
+
+`reservations.listAssignments`
+
+List a reservation's assignments
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.reservations.listAssignments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `reservationId` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assignments` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignments full type">
+
+```ts
+{
+  name?: string,
+  assignee?: string,
+  jobType?: JOB_TYPE_UNSPECIFIED | PIPELINE | QUERY | ML_EXTERNAL | BACKGROUND | CONTINUOUS,
+  state?: STATE_UNSPECIFIED | PENDING | ACTIVE
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listCapacityCommitments
+
+`reservations.listCapacityCommitments`
+
+List capacity commitments in a location
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.reservations.listCapacityCommitments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `capacityCommitments` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="capacityCommitments full type">
+
+```ts
+{
+  name?: string,
+  slotCount?: string,
+  plan?: COMMITMENT_PLAN_UNSPECIFIED | FLEX | FLEX_FLAT_RATE | MONTHLY | ANNUAL | THREE_YEAR,
+  state?: STATE_UNSPECIFIED | PENDING | ACTIVE | FAILED,
+  commitmentEndTime?: string,
+  renewalPlan?: COMMITMENT_PLAN_UNSPECIFIED | FLEX | FLEX_FLAT_RATE | MONTHLY | ANNUAL | THREE_YEAR | NONE
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listGroups
+
+`reservations.listGroups`
+
+List reservation groups in a location
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.reservations.listGroups({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reservationGroups` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="reservationGroups full type">
+
+```ts
+{
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchAllAssignments
+
+`reservations.searchAllAssignments`
+
+Search assignments across a location
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.reservations.searchAllAssignments({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `location` | `string` | Yes | — |
+| `query` | `string` | No | — |
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assignments` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="assignments full type">
+
+```ts
+{
+  name?: string,
+  assignee?: string,
+  jobType?: JOB_TYPE_UNSPECIFIED | PIPELINE | QUERY | ML_EXTERNAL | BACKGROUND | CONTINUOUS,
+  state?: STATE_UNSPECIFIED | PENDING | ACTIVE
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Routines
+
+### create
+
+`routines.create`
+
+Create a new routine (UDF or stored procedure)
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.routines.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `routineReference` | `object` | Yes | — |
+| `routineType` | `SCALAR_FUNCTION \| PROCEDURE \| TABLE_VALUED_FUNCTION \| AGGREGATE_FUNCTION` | Yes | — |
+| `definitionBody` | `string` | Yes | — |
+| `language` | `SQL \| JAVASCRIPT \| PYTHON \| JAVA \| SCALA` | No | — |
+| `arguments` | `object[]` | No | — |
+| `returnType` | `object` | No | — |
+| `description` | `string` | No | — |
+| `determinismLevel` | `DETERMINISM_LEVEL_UNSPECIFIED \| DETERMINISTIC \| NOT_DETERMINISTIC` | No | — |
+
+<AccordionGroup>
+<Accordion title="routineReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  routineId: string
+}
+```
+</Accordion>
+
+<Accordion title="arguments full type">
+
+```ts
+{
+  name?: string,
+  argumentKind?: FIXED_TYPE | ANY_TYPE,
+  mode?: IN | OUT | INOUT,
+  dataType?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="returnType full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `routineReference` | `object` | Yes | — |
+| `routineType` | `SCALAR_FUNCTION \| PROCEDURE \| TABLE_VALUED_FUNCTION \| AGGREGATE_FUNCTION` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `language` | `SQL \| JAVASCRIPT \| PYTHON \| JAVA \| SCALA` | No | — |
+| `arguments` | `object[]` | No | — |
+| `returnType` | `object` | No | — |
+| `importedLibraries` | `string[]` | No | — |
+| `definitionBody` | `string` | No | — |
+| `description` | `string` | No | — |
+| `determinismLevel` | `DETERMINISM_LEVEL_UNSPECIFIED \| DETERMINISTIC \| NOT_DETERMINISTIC` | No | — |
+
+<AccordionGroup>
+<Accordion title="routineReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  routineId: string
+}
+```
+</Accordion>
+
+<Accordion title="arguments full type">
+
+```ts
+{
+  name?: string,
+  argumentKind?: FIXED_TYPE | ANY_TYPE,
+  mode?: IN | OUT | INOUT,
+  dataType?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="returnType full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`routines.delete`
+
+Permanently delete a routine [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlebigquery.api.routines.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `routineId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`routines.get`
+
+Get a routine by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.routines.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `routineId` | `string` | Yes | — |
+| `readMask` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `routineReference` | `object` | Yes | — |
+| `routineType` | `SCALAR_FUNCTION \| PROCEDURE \| TABLE_VALUED_FUNCTION \| AGGREGATE_FUNCTION` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `language` | `SQL \| JAVASCRIPT \| PYTHON \| JAVA \| SCALA` | No | — |
+| `arguments` | `object[]` | No | — |
+| `returnType` | `object` | No | — |
+| `importedLibraries` | `string[]` | No | — |
+| `definitionBody` | `string` | No | — |
+| `description` | `string` | No | — |
+| `determinismLevel` | `DETERMINISM_LEVEL_UNSPECIFIED \| DETERMINISTIC \| NOT_DETERMINISTIC` | No | — |
+
+<AccordionGroup>
+<Accordion title="routineReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  routineId: string
+}
+```
+</Accordion>
+
+<Accordion title="arguments full type">
+
+```ts
+{
+  name?: string,
+  argumentKind?: FIXED_TYPE | ANY_TYPE,
+  mode?: IN | OUT | INOUT,
+  dataType?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="returnType full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`routines.list`
+
+List routines (UDFs/stored procedures) in a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.routines.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `filter` | `string` | No | — |
+| `readMask` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `routines` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="routines full type">
+
+```ts
+{
+  etag?: string,
+  routineReference: {
+    projectId?: string,
+    datasetId: string,
+    routineId: string
+  },
+  routineType?: SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION,
+  creationTime?: string,
+  lastModifiedTime?: string,
+  language?: SQL | JAVASCRIPT | PYTHON | JAVA | SCALA,
+  arguments?: {
+    name?: string,
+    argumentKind?: FIXED_TYPE | ANY_TYPE,
+    mode?: IN | OUT | INOUT,
+    dataType?: {
+    }
+  }[],
+  returnType?: {
+  },
+  importedLibraries?: string[],
+  definitionBody?: string,
+  description?: string,
+  determinismLevel?: DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`routines.update`
+
+Replace a routine (full update)
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.routines.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `routineId` | `string` | Yes | — |
+| `routine` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="routine full type">
+
+```ts
+{
+  etag?: string,
+  routineReference: {
+    projectId?: string,
+    datasetId: string,
+    routineId: string
+  },
+  routineType?: SCALAR_FUNCTION | PROCEDURE | TABLE_VALUED_FUNCTION | AGGREGATE_FUNCTION,
+  creationTime?: string,
+  lastModifiedTime?: string,
+  language?: SQL | JAVASCRIPT | PYTHON | JAVA | SCALA,
+  arguments?: {
+    name?: string,
+    argumentKind?: FIXED_TYPE | ANY_TYPE,
+    mode?: IN | OUT | INOUT,
+    dataType?: {
+    }
+  }[],
+  returnType?: {
+  },
+  importedLibraries?: string[],
+  definitionBody?: string,
+  description?: string,
+  determinismLevel?: DETERMINISM_LEVEL_UNSPECIFIED | DETERMINISTIC | NOT_DETERMINISTIC
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `etag` | `string` | No | — |
+| `routineReference` | `object` | Yes | — |
+| `routineType` | `SCALAR_FUNCTION \| PROCEDURE \| TABLE_VALUED_FUNCTION \| AGGREGATE_FUNCTION` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `language` | `SQL \| JAVASCRIPT \| PYTHON \| JAVA \| SCALA` | No | — |
+| `arguments` | `object[]` | No | — |
+| `returnType` | `object` | No | — |
+| `importedLibraries` | `string[]` | No | — |
+| `definitionBody` | `string` | No | — |
+| `description` | `string` | No | — |
+| `determinismLevel` | `DETERMINISM_LEVEL_UNSPECIFIED \| DETERMINISTIC \| NOT_DETERMINISTIC` | No | — |
+
+<AccordionGroup>
+<Accordion title="routineReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  routineId: string
+}
+```
+</Accordion>
+
+<Accordion title="arguments full type">
+
+```ts
+{
+  name?: string,
+  argumentKind?: FIXED_TYPE | ANY_TYPE,
+  mode?: IN | OUT | INOUT,
+  dataType?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="returnType full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tables
+
+### create
+
+`tables.create`
+
+Create a new table or view
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.tables.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `tableReference` | `object` | Yes | — |
+| `schema` | `object` | No | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `timePartitioning` | `object` | No | — |
+| `clustering` | `object` | No | — |
+| `view` | `object` | No | — |
+| `externalDataConfiguration` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tableReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  tableId: string
+}
+```
+</Accordion>
+
+<Accordion title="schema full type">
+
+```ts
+{
+  fields?: {
+    name: string,
+    type: string,
+    mode?: string,
+    description?: string,
+    fields?: lazy
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="timePartitioning full type">
+
+```ts
+{
+  type?: DAY | HOUR | MONTH | YEAR,
+  expirationMs?: string,
+  field?: string
+}
+```
+</Accordion>
+
+<Accordion title="clustering full type">
+
+```ts
+{
+  fields?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="view full type">
+
+```ts
+{
+  query?: string,
+  useLegacySql?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="externalDataConfiguration full type">
+
+```ts
+{
+  sourceUris?: string[],
+  sourceFormat?: string,
+  schema?: {
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: lazy
+    }[]
+  },
+  autodetect?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `tableReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `schema` | `object` | No | — |
+| `timePartitioning` | `object` | No | — |
+| `clustering` | `object` | No | — |
+| `view` | `object` | No | — |
+| `externalDataConfiguration` | `object` | No | — |
+| `type` | `string` | No | — |
+| `location` | `string` | No | — |
+| `numRows` | `string` | No | — |
+| `numBytes` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `expirationTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tableReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  tableId: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="schema full type">
+
+```ts
+{
+  fields?: {
+    name: string,
+    type: string,
+    mode?: string,
+    description?: string,
+    fields?: lazy
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="timePartitioning full type">
+
+```ts
+{
+  type?: DAY | HOUR | MONTH | YEAR,
+  expirationMs?: string,
+  field?: string
+}
+```
+</Accordion>
+
+<Accordion title="clustering full type">
+
+```ts
+{
+  fields?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="view full type">
+
+```ts
+{
+  query?: string,
+  useLegacySql?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="externalDataConfiguration full type">
+
+```ts
+{
+  sourceUris?: string[],
+  sourceFormat?: string,
+  schema?: {
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: lazy
+    }[]
+  },
+  autodetect?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`tables.delete`
+
+Permanently delete a table [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.googlebigquery.api.tables.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### getSchema
+
+`tables.getSchema`
+
+Get a table's schema and metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.tables.getSchema({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `selectedFields` | `string` | No | — |
+| `view` | `TABLE_METADATA_VIEW_UNSPECIFIED \| BASIC \| STORAGE_STATS \| FULL` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `tableReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `schema` | `object` | No | — |
+| `timePartitioning` | `object` | No | — |
+| `clustering` | `object` | No | — |
+| `view` | `object` | No | — |
+| `externalDataConfiguration` | `object` | No | — |
+| `type` | `string` | No | — |
+| `location` | `string` | No | — |
+| `numRows` | `string` | No | — |
+| `numBytes` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `expirationTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tableReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  tableId: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="schema full type">
+
+```ts
+{
+  fields?: {
+    name: string,
+    type: string,
+    mode?: string,
+    description?: string,
+    fields?: lazy
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="timePartitioning full type">
+
+```ts
+{
+  type?: DAY | HOUR | MONTH | YEAR,
+  expirationMs?: string,
+  field?: string
+}
+```
+</Accordion>
+
+<Accordion title="clustering full type">
+
+```ts
+{
+  fields?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="view full type">
+
+```ts
+{
+  query?: string,
+  useLegacySql?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="externalDataConfiguration full type">
+
+```ts
+{
+  sourceUris?: string[],
+  sourceFormat?: string,
+  schema?: {
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: lazy
+    }[]
+  },
+  autodetect?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`tables.list`
+
+List tables in a dataset
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.tables.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `tables` | `object[]` | No | — |
+| `nextPageToken` | `string` | No | — |
+| `totalItems` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="tables full type">
+
+```ts
+{
+  kind?: string,
+  id?: string,
+  tableReference: {
+    projectId?: string,
+    datasetId: string,
+    tableId: string
+  },
+  friendlyName?: string,
+  type?: string,
+  creationTime?: string,
+  expirationTime?: string,
+  labels?: {
+  },
+  view?: {
+    query?: string,
+    useLegacySql?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTableData
+
+`tables.listTableData`
+
+List a table's row data
+
+**Risk:** `read`
+
+```ts
+await corsair.googlebigquery.api.tables.listTableData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `maxResults` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+| `startIndex` | `string` | No | — |
+| `selectedFields` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `totalRows` | `string` | No | — |
+| `pageToken` | `string` | No | — |
+| `rows` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+  f?: {
+    v: any
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patch
+
+`tables.patch`
+
+Partially update a table
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.tables.patch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `table` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="table full type">
+
+```ts
+{
+  id?: string,
+  kind?: string,
+  etag?: string,
+  selfLink?: string,
+  tableReference?: {
+    projectId?: string,
+    datasetId: string,
+    tableId: string
+  },
+  friendlyName?: string,
+  description?: string,
+  labels?: {
+  },
+  schema?: {
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: lazy
+    }[]
+  },
+  timePartitioning?: {
+    type?: DAY | HOUR | MONTH | YEAR,
+    expirationMs?: string,
+    field?: string
+  },
+  clustering?: {
+    fields?: string[]
+  },
+  view?: {
+    query?: string,
+    useLegacySql?: boolean
+  },
+  externalDataConfiguration?: {
+    sourceUris?: string[],
+    sourceFormat?: string,
+    schema?: {
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: lazy
+      }[]
+    },
+    autodetect?: boolean
+  },
+  type?: string,
+  location?: string,
+  numRows?: string,
+  numBytes?: string,
+  creationTime?: string,
+  lastModifiedTime?: string,
+  expirationTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `tableReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `schema` | `object` | No | — |
+| `timePartitioning` | `object` | No | — |
+| `clustering` | `object` | No | — |
+| `view` | `object` | No | — |
+| `externalDataConfiguration` | `object` | No | — |
+| `type` | `string` | No | — |
+| `location` | `string` | No | — |
+| `numRows` | `string` | No | — |
+| `numBytes` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `expirationTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tableReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  tableId: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="schema full type">
+
+```ts
+{
+  fields?: {
+    name: string,
+    type: string,
+    mode?: string,
+    description?: string,
+    fields?: lazy
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="timePartitioning full type">
+
+```ts
+{
+  type?: DAY | HOUR | MONTH | YEAR,
+  expirationMs?: string,
+  field?: string
+}
+```
+</Accordion>
+
+<Accordion title="clustering full type">
+
+```ts
+{
+  fields?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="view full type">
+
+```ts
+{
+  query?: string,
+  useLegacySql?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="externalDataConfiguration full type">
+
+```ts
+{
+  sourceUris?: string[],
+  sourceFormat?: string,
+  schema?: {
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: lazy
+    }[]
+  },
+  autodetect?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`tables.update`
+
+Replace a table (full update)
+
+**Risk:** `write`
+
+```ts
+await corsair.googlebigquery.api.tables.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projectId` | `string` | Yes | — |
+| `datasetId` | `string` | Yes | — |
+| `tableId` | `string` | Yes | — |
+| `table` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="table full type">
+
+```ts
+{
+  id?: string,
+  kind?: string,
+  etag?: string,
+  selfLink?: string,
+  tableReference: {
+    projectId?: string,
+    datasetId: string,
+    tableId: string
+  },
+  friendlyName?: string,
+  description?: string,
+  labels?: {
+  },
+  schema?: {
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: lazy
+    }[]
+  },
+  timePartitioning?: {
+    type?: DAY | HOUR | MONTH | YEAR,
+    expirationMs?: string,
+    field?: string
+  },
+  clustering?: {
+    fields?: string[]
+  },
+  view?: {
+    query?: string,
+    useLegacySql?: boolean
+  },
+  externalDataConfiguration?: {
+    sourceUris?: string[],
+    sourceFormat?: string,
+    schema?: {
+      fields?: {
+        name: string,
+        type: string,
+        mode?: string,
+        description?: string,
+        fields?: lazy
+      }[]
+    },
+    autodetect?: boolean
+  },
+  type?: string,
+  location?: string,
+  numRows?: string,
+  numBytes?: string,
+  creationTime?: string,
+  lastModifiedTime?: string,
+  expirationTime?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `kind` | `string` | No | — |
+| `etag` | `string` | No | — |
+| `selfLink` | `string` | No | — |
+| `tableReference` | `object` | Yes | — |
+| `friendlyName` | `string` | No | — |
+| `description` | `string` | No | — |
+| `labels` | `object` | No | — |
+| `schema` | `object` | No | — |
+| `timePartitioning` | `object` | No | — |
+| `clustering` | `object` | No | — |
+| `view` | `object` | No | — |
+| `externalDataConfiguration` | `object` | No | — |
+| `type` | `string` | No | — |
+| `location` | `string` | No | — |
+| `numRows` | `string` | No | — |
+| `numBytes` | `string` | No | — |
+| `creationTime` | `string` | No | — |
+| `lastModifiedTime` | `string` | No | — |
+| `expirationTime` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tableReference full type">
+
+```ts
+{
+  projectId?: string,
+  datasetId: string,
+  tableId: string
+}
+```
+</Accordion>
+
+<Accordion title="labels full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="schema full type">
+
+```ts
+{
+  fields?: {
+    name: string,
+    type: string,
+    mode?: string,
+    description?: string,
+    fields?: lazy
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="timePartitioning full type">
+
+```ts
+{
+  type?: DAY | HOUR | MONTH | YEAR,
+  expirationMs?: string,
+  field?: string
+}
+```
+</Accordion>
+
+<Accordion title="clustering full type">
+
+```ts
+{
+  fields?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="view full type">
+
+```ts
+{
+  query?: string,
+  useLegacySql?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="externalDataConfiguration full type">
+
+```ts
+{
+  sourceUris?: string[],
+  sourceFormat?: string,
+  schema?: {
+    fields?: {
+      name: string,
+      type: string,
+      mode?: string,
+      description?: string,
+      fields?: lazy
+    }[]
+  },
+  autodetect?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

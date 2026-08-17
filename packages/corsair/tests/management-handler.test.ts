@@ -434,9 +434,14 @@ describe('managementHandler — /permissions', () => {
 			new Request('http://x/api/corsair/permissions/perm-1', { method: 'GET' }),
 		);
 		expect(byId.status).toBe(200);
-		const idBody = await readJson<{ id: string; token: string }>(byId);
+		const idBody = await readJson<{
+			id: string;
+			token: string;
+			approvalUrl: string | null;
+		}>(byId);
 		expect(idBody.id).toBe('perm-1');
 		expect(idBody.token).toBe('tok-abc');
+		expect(idBody.approvalUrl).toBeNull();
 
 		const byTok = await handler(
 			new Request('http://x/api/corsair/permissions/lookup-by-token', {

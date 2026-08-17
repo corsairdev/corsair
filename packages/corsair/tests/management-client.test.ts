@@ -134,7 +134,7 @@ describe('createCorsairClient — round-trip', () => {
 		// 404 because the underlying lookup throws ManagementApiError(404) when
 		// the DB call fails. We verify the client surfaces it cleanly.
 		const client = makeClient(corsair);
-		await expect(client.permissions.get('nope')).rejects.toBeInstanceOf(
+		await expect(client.permissions.get({ id: 'nope' })).rejects.toBeInstanceOf(
 			CorsairClientError,
 		);
 	});

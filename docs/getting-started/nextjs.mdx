@@ -1,22 +1,21 @@
 ---
 title: Next.js
-description: Add Corsair to a Next.js App Router project and deploy it to Vercel.
+description: Add Corsair to a Next.js App Router app and deploy it to Vercel.
 ---
 
 import { GenerateKEK } from '/snippets/generate-kek.mdx';
+import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
 
-Use Corsair from a Next.js App Router project with GitHub as the example plugin. This guide covers PostgreSQL, an API route, a shared webhook route, and deployment to Vercel.
+Add Corsair to a Next.js App Router app and deploy it to Vercel. Hub hosts the OAuth and webhook surfaces. Postgres is the database that survives serverless.
 
-<Info>
-AI SDK setup is covered separately in the [Vercel AI SDK adapter guide](/mcp-adapters/vercel-ai).
-</Info>
+The [Quick start](/getting-started/quick-start) is the same flow with SQLite on your laptop. A coding agent can do this from [Set up with your agent](/getting-started/set-up-with-your-agent). Vercel AI SDK setup is a [separate guide](/mcp-adapters/vercel-ai).
 
-You will add four files:
+You will add these files:
 
 ```text
 src/
+├── app/api/corsair/[[...path]]/route.ts
 ├── app/api/repositories/route.ts
-├── app/api/webhooks/corsair/route.ts
 └── server/
     ├── corsair.ts
     └── database.ts
@@ -28,26 +27,32 @@ src/
 
 ## Create the app
 
-Start with a TypeScript App Router project. Skip this step in an existing app.
+Start with a TypeScript App Router project. Skip this step if you already have one.
+
+`--src-dir` puts the app under `src/` so the paths below match. `--yes` accepts the rest of the recommended defaults (TypeScript, ESLint, Tailwind, App Router).
 
 <CodeGroup>
 ```bash npm
-npx create-next-app@latest corsair-next --ts --eslint --tailwind --app --src-dir --import-alias "@/*"
+npx create-next-app@latest corsair-next --src-dir --yes
 cd corsair-next
 ```
 ```bash yarn
-yarn create next-app corsair-next --ts --eslint --tailwind --app --src-dir --import-alias "@/*"
+yarn create next-app corsair-next --src-dir --yes
 cd corsair-next
 ```
 ```bash pnpm
-pnpm create next-app corsair-next --ts --eslint --tailwind --app --src-dir --import-alias "@/*"
+pnpm create next-app corsair-next --src-dir --yes
 cd corsair-next
 ```
 ```bash bun
-bun create next-app corsair-next --ts --eslint --tailwind --app --src-dir --import-alias "@/*"
+bunx create-next-app corsair-next --src-dir --yes
 cd corsair-next
 ```
 </CodeGroup>
+
+<Note>
+Pages Router is supported. Mount a catch-all at `pages/api/corsair/[...path].ts` instead. See [Frameworks](/adapters/handlers).
+</Note>
 
 </Step>
 
@@ -55,30 +60,30 @@ cd corsair-next
 
 ## Install Corsair
 
-Install Corsair, the GitHub plugin, and the PostgreSQL driver. The CLI stores plugin credentials.
+Install Corsair, the GitHub plugin, and the Postgres driver. Swap GitHub for any other plugin from the [catalog](/guides/plugins).
 
 <CodeGroup>
 ```bash npm
 npm install corsair @corsair-dev/github pg
-npm install --save-dev @corsair-dev/cli @types/pg
+npm install --save-dev @types/pg
 ```
 ```bash yarn
 yarn add corsair @corsair-dev/github pg
-yarn add --dev @corsair-dev/cli @types/pg
+yarn add --dev @types/pg
 ```
 ```bash pnpm
 pnpm add corsair @corsair-dev/github pg
-pnpm add --save-dev @corsair-dev/cli @types/pg
+pnpm add --save-dev @types/pg
 ```
 ```bash bun
 bun add corsair @corsair-dev/github pg
-bun add --dev @corsair-dev/cli @types/pg
+bun add --dev @types/pg
 ```
 </CodeGroup>
 
-<Note>
-Use PostgreSQL when deploying to Vercel. SQLite files are not durable across serverless instances.
-</Note>
+<Warning>
+Use Postgres when you deploy to Vercel. A SQLite file is not durable across serverless instances.
+</Warning>
 
 </Step>
 
@@ -86,32 +91,35 @@ Use PostgreSQL when deploying to Vercel. SQLite files are not durable across ser
 
 ## Configure the environment
 
-Create `.env` in the project root. Both Next.js and the Corsair CLI load this file:
+Create `.env.local` in the project root. Next.js loads it automatically. Do not use `dotenv` here.
 
-```bash .env
-DATABASE_URL=postgresql://user:password@host:5432/database
-CORSAIR_KEK=your-32-byte-base64-key
-```
-
-Generate the KEK instead of writing one yourself:
+Create a project in the [Hub dashboard](https://hub.corsair.dev/dashboard) and copy the **development** API key and signing secret. Then generate a KEK. Corsair encrypts every stored credential with it:
 
 <GenerateKEK />
 
-Run the [PostgreSQL migration from the Quick Start](/getting-started/quick-start#migrate-the-database) before continuing. Use a pooled connection string when your database provider offers one.
+```bash .env.local
+DATABASE_URL=postgresql://user:password@host:5432/database
+CORSAIR_KEK=your-generated-kek
+CORSAIR_DEV_API_KEY=ck_dev_...
+CORSAIR_DEV_SIGNING_SECRET=...
+```
+
+If your provider offers a pooled connection string (Neon `-pooler`, Supabase port `6543`), use that for `DATABASE_URL`. Run the Postgres migration from [Database](/concepts/database) before continuing.
 
 <Warning>
-Keep `DATABASE_URL`, `CORSAIR_KEK`, and plugin credentials server-only. Never prefix them with `NEXT_PUBLIC_` or commit `.env`.
+Keep `DATABASE_URL`, `CORSAIR_KEK`, and Hub keys server-only. Never prefix them with `NEXT_PUBLIC_` or commit `.env.local`.
 </Warning>
 
 </Step>
 
 <Step>
 
-## Connect PostgreSQL
+## Connect Postgres
 
 Keep one pool across Next.js module reloads. Create `src/server/database.ts`:
 
 ```ts src/server/database.ts
+import 'server-only';
 import { Pool } from 'pg';
 
 const connectionString = process.env.DATABASE_URL;
@@ -132,7 +140,7 @@ export const database = globalForDatabase.corsairPool ?? new Pool({
 globalForDatabase.corsairPool = database;
 ```
 
-`max: 1` keeps each serverless function instance from opening a large pool. Increase it only if your database connection limit allows it.
+`max: 1` keeps each serverless function instance from opening a large pool. Increase it only if your database connection limit allows it. `import 'server-only'` fails the build if this file is imported from a Client Component.
 
 </Step>
 
@@ -140,172 +148,60 @@ globalForDatabase.corsairPool = database;
 
 ## Create the Corsair instance
 
-Create `src/server/corsair.ts` and register the plugins used by the app:
-
 ```ts src/server/corsair.ts
+import 'server-only';
 import { github } from '@corsair-dev/github';
 import { createCorsair } from 'corsair';
 
 import { database } from '@/server/database';
 
 const kek = process.env.CORSAIR_KEK;
+const isProd = process.env.VERCEL_ENV === 'production';
+const projectApiKey = isProd
+    ? process.env.CORSAIR_PROD_API_KEY
+    : process.env.CORSAIR_DEV_API_KEY;
+const signingSecret = isProd
+    ? process.env.CORSAIR_PROD_SIGNING_SECRET
+    : process.env.CORSAIR_DEV_SIGNING_SECRET;
 
 if (!kek) {
     throw new Error('CORSAIR_KEK is not set');
 }
 
-export const corsair = createCorsair({
-    plugins: [github()],
-    database,
-    kek,
-    multiTenancy: false,
-});
-```
-
-Other plugins follow the same setup: install the package, add its factory to `plugins`, and store its credentials.
-
-</Step>
-
-<Step>
-
-## Provision GitHub
-
-Create a GitHub personal access token with access to the repositories the app needs. If you will receive webhooks, generate a separate signing secret with `openssl rand -hex 32` and enter the same value in GitHub when you create the webhook.
-
-Run setup from the project root. Replace both placeholder values:
-
-<CodeGroup>
-```bash npm
-npx corsair setup --plugin=github api_key=ghp_your_token webhook_signature=your_webhook_secret
-```
-```bash yarn
-yarn corsair setup --plugin=github api_key=ghp_your_token webhook_signature=your_webhook_secret
-```
-```bash pnpm
-pnpm corsair setup --plugin=github api_key=ghp_your_token webhook_signature=your_webhook_secret
-```
-```bash bun
-bunx corsair setup --plugin=github api_key=ghp_your_token webhook_signature=your_webhook_secret
-```
-</CodeGroup>
-
-The CLI reads `.env`, creates the GitHub integration and default account, and encrypts both credentials with `CORSAIR_KEK`. Setup is idempotent, so the same command can be used to rotate either credential.
-
-See [GitHub credentials](/plugins/github/get-credentials) for token scopes, OAuth setup, and the GitHub webhook form.
-
-</Step>
-
-<Step>
-
-## Add more plugins (optional)
-
-Slack and Linear can use the same Corsair instance and webhook route. Install either package, or both:
-
-<CodeGroup>
-```bash npm
-npm install @corsair-dev/slack @corsair-dev/linear
-```
-```bash yarn
-yarn add @corsair-dev/slack @corsair-dev/linear
-```
-```bash pnpm
-pnpm add @corsair-dev/slack @corsair-dev/linear
-```
-```bash bun
-bun add @corsair-dev/slack @corsair-dev/linear
-```
-</CodeGroup>
-
-Register the plugins in `src/server/corsair.ts`:
-
-```ts src/server/corsair.ts
-import { github } from '@corsair-dev/github';
-import { linear } from '@corsair-dev/linear';
-import { slack } from '@corsair-dev/slack';
-import { createCorsair } from 'corsair';
-
-import { database } from '@/server/database';
-
-const kek = process.env.CORSAIR_KEK;
-
-if (!kek) {
-    throw new Error('CORSAIR_KEK is not set');
+if (!projectApiKey || !signingSecret) {
+    throw new Error(
+        isProd
+            ? 'CORSAIR_PROD_API_KEY and CORSAIR_PROD_SIGNING_SECRET must be set'
+            : 'CORSAIR_DEV_API_KEY and CORSAIR_DEV_SIGNING_SECRET must be set',
+    );
 }
 
 export const corsair = createCorsair({
-    plugins: [github(), slack(), linear()],
+    plugins: [github({ authType: 'managed' })],
     database,
     kek,
-    multiTenancy: false,
+    hub: {
+        projectApiKey,
+        signingSecret,
+    },
 });
 ```
 
-Store credentials for each added plugin:
-
-<CodeGroup>
-```bash npm
-npx corsair setup --plugin=slack bot_token=xoxb-your-token webhook_signature=your-signing-secret
-npx corsair setup --plugin=linear api_key=your-api-key webhook_signature=your-webhook-secret
-```
-```bash yarn
-yarn corsair setup --plugin=slack bot_token=xoxb-your-token webhook_signature=your-signing-secret
-yarn corsair setup --plugin=linear api_key=your-api-key webhook_signature=your-webhook-secret
-```
-```bash pnpm
-pnpm corsair setup --plugin=slack bot_token=xoxb-your-token webhook_signature=your-signing-secret
-pnpm corsair setup --plugin=linear api_key=your-api-key webhook_signature=your-webhook-secret
-```
-```bash bun
-bunx corsair setup --plugin=slack bot_token=xoxb-your-token webhook_signature=your-signing-secret
-bunx corsair setup --plugin=linear api_key=your-api-key webhook_signature=your-webhook-secret
-```
-</CodeGroup>
-
-Call both plugins from the same instance:
-
-```ts
-const channels = await corsair.slack.api.channels.list({ limit: 50 });
-const issues = await corsair.linear.api.issues.list({ first: 20 });
-```
-
-See [Slack credentials](/plugins/slack/get-credentials) and [Linear credentials](/plugins/linear/get-credentials) for provider setup.
+`authType: 'managed'` is the Hub OAuth path. Add more plugins later by installing the package and appending it to `plugins`.
 
 </Step>
 
 <Step>
 
-## Add an API route
+## Mount the handler
 
-Next.js Route Handlers use the standard Web `Request` and `Response` APIs. Create a server-only route that returns repositories available to the stored GitHub account:
+This one route serves Hub delivery (OAuth callbacks, connect pages) and the management API. If you used `--src-dir`, the file lives at `src/app/api/corsair/[[...path]]/route.ts`.
 
-```ts src/app/api/repositories/route.ts
-import { corsair } from '@/server/corsair';
+<MountHandlerNextjs />
 
-export const runtime = 'nodejs';
+Leave the default Node.js runtime. `pg` does not run on Edge, so do not set `export const runtime = 'edge'`.
 
-export async function GET() {
-    try {
-        const repositories = await corsair.github.api.repositories.list({
-            type: 'owner',
-            perPage: 20,
-        });
-
-        return Response.json({ repositories });
-    } catch (error) {
-        console.error('Failed to list GitHub repositories', error);
-        return Response.json(
-            { error: 'Failed to list repositories' },
-            { status: 500 },
-        );
-    }
-}
-```
-
-<Warning>
-Add your app's authentication and authorization checks before exposing this route in production.
-</Warning>
-
-Start Next.js and open `http://localhost:3000/api/repositories`:
+Start the app and hit the health check:
 
 <CodeGroup>
 ```bash npm
@@ -322,61 +218,59 @@ bun dev
 ```
 </CodeGroup>
 
-The route should return the repositories available to the stored token:
-
 ```bash
-curl http://localhost:3000/api/repositories
+curl http://localhost:3000/api/corsair/ok
 ```
+
+You should get `{ "ok": true }`. The first request also registers this app's delivery URL with Hub. The dashboard header dot turns green when that succeeds. See [Delivery URLs](/hub/delivery-urls) if it stays grey.
 
 </Step>
 
 <Step>
 
-## Add the webhook route
+## Connect GitHub and call it
 
-All Corsair plugins can share one endpoint. Read the body as text so Corsair receives the original payload for signature verification.
+Mint a connect link and send the user to it. Hub hosts the connect page:
 
-```ts src/app/api/webhooks/corsair/route.ts
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+    plugin: 'github',
+    tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+After GitHub is connected, call it from a Route Handler or a Server Component. Both import the same server singleton:
+
+```ts src/app/api/repositories/route.ts
 import { corsair } from '@/server/corsair';
-import { processWebhook } from 'corsair';
 
-export const runtime = 'nodejs';
-
-export async function POST(request: Request) {
+export async function GET() {
     try {
-        const result = await processWebhook(
-            corsair,
-            Object.fromEntries(request.headers),
-            await request.text(),
-        );
-
-        if (!result.plugin || !result.response) {
-            return Response.json({ success: false }, { status: 404 });
-        }
-
-        return Response.json(result.response, {
-            headers: result.responseHeaders,
+        const repositories = await corsair.github.api.repositories.list({
+            perPage: 20,
         });
+
+        return Response.json({ repositories });
     } catch (error) {
-        console.error('Failed to process webhook', error);
+        console.error('Failed to list GitHub repositories', error);
         return Response.json(
-            { success: false, error: 'Failed to process webhook' },
+            { error: 'Failed to list repositories' },
             { status: 500 },
         );
     }
 }
 ```
 
-During local development, expose port `3000` with a tunnel. In **GitHub repository → Settings → Webhooks → Add webhook**, configure:
+<Note>
+Add your app's authentication before exposing this route in production.
+</Note>
 
-| Field | Value |
-|---|---|
-| Payload URL | `https://your-domain.example/api/webhooks/corsair` |
-| Content type | `application/json` |
-| Secret | The value stored as `webhook_signature` during setup |
-| Events | Only the events used by your application |
+```bash
+curl http://localhost:3000/api/repositories
+```
 
-After saving the webhook, use GitHub's **Recent Deliveries** section to confirm that the endpoint returns a successful response. See [Webhooks](/guides/webhooks) for tunnels, hooks, and multi-tenant URLs.
+Hub delivers provider webhooks to `/api/corsair`. You do not add a separate `processWebhook` route. Hosting those surfaces yourself is [manual mode](/hub/manual-vs-hub).
 
 </Step>
 
@@ -384,11 +278,13 @@ After saving the webhook, use GitHub's **Recent Deliveries** section to confirm 
 
 ## Deploy to Vercel
 
-1. Push the project to a Git provider and import it into Vercel.
-2. Add `DATABASE_URL` and `CORSAIR_KEK` in **Project Settings → Environment Variables**.
-3. If production uses a separate database, run the migration and GitHub setup against it before deploying.
-4. Deploy the project.
-5. Change the GitHub payload URL to `https://your-project.vercel.app/api/webhooks/corsair` and send a test delivery.
+1. Push the project and import it into Vercel.
+2. Add `DATABASE_URL` and `CORSAIR_KEK` for all environments. Add `CORSAIR_DEV_API_KEY` and `CORSAIR_DEV_SIGNING_SECRET` to Development and Preview. Add `CORSAIR_PROD_API_KEY` and `CORSAIR_PROD_SIGNING_SECRET` to Production. The `corsair.ts` snippet reads `VERCEL_ENV` to pick the pair.
+3. If production uses a separate database, run the [Postgres migration](/concepts/database) against it before deploying.
+4. In the Hub dashboard, switch to **Production** and register `https://your-project.vercel.app/api/corsair` as the delivery URL.
+5. Deploy, then send a test connect.
+
+See [Environments](/hub/environments) for why preview deploys keep development keys.
 
 <Warning>
 Keep the same `CORSAIR_KEK` after credentials have been stored. Changing or losing it makes the encrypted credentials unreadable.
@@ -398,68 +294,19 @@ Keep the same `CORSAIR_KEK` after credentials have been stored. Changing or losi
 
 </Steps>
 
-## Coding agent prompt
-
-Paste this into your coding agent when you want it to add Corsair to a Next.js app:
-
-```text
-Add Corsair to this Next.js App Router project.
-
-Use the self-hosted Corsair SDK from the `corsair` package. Do not use
-`@corsair-dev/app`.
-
-Build the setup around these files:
-
-- `src/server/database.ts`
-- `src/server/corsair.ts`
-- `src/app/api/repositories/route.ts`
-- `src/app/api/webhooks/corsair/route.ts`
-
-Use PostgreSQL for the database connection. Read `DATABASE_URL` and
-`CORSAIR_KEK` from server-only environment variables. If they are missing,
-tell me exactly which values I need to add instead of hard-coding placeholders
-into application code.
-
-Install `corsair`, `@corsair-dev/github`, and `pg`. Add `@corsair-dev/cli`
-and `@types/pg` as dev dependencies if they are not already installed.
-
-Create a shared Corsair instance with `createCorsair` in
-`src/server/corsair.ts`. Register the GitHub plugin first. If I ask for more
-plugins, install only those plugin packages, register them in the same
-Corsair instance, and show the matching `corsair setup --plugin=...` command
-for each one.
-
-Add an API route at `src/app/api/repositories/route.ts` that calls
-`corsair.github.api.repositories.list`. Keep it server-only, set the runtime
-to `nodejs`, and wrap the call in `try/catch` so unexpected failures return a
-controlled 500 response.
-
-Add a shared webhook route at `src/app/api/webhooks/corsair/route.ts` that
-passes `Object.fromEntries(request.headers)` and `await request.text()` to
-`processWebhook`. Keep the raw request body intact for signature verification.
-Use `try/catch`, return 404 when no plugin handles the webhook, and do not add
-tenant IDs unless I explicitly ask for multi-tenancy.
-
-Keep AI SDK wiring out of this change unless I ask for it. If I need that
-later, point me to the existing Vercel AI SDK adapter docs.
-
-After making the change, summarize the files you touched and list the exact
-commands I should run to verify the setup locally.
-```
-
 ## Next steps
 
 <CardGroup cols={2}>
-  <Card title="Add more plugins" icon="grid" href="/guides/plugins">
-    Browse available integrations and install only the packages you need.
+  <Card title="Plugins" href="/guides/plugins">
+    Browse the catalog and install only the packages you need.
   </Card>
-  <Card title="Use multiple tenants" icon="users" href="/concepts/multi-tenancy">
+  <Card title="Multi-tenancy" href="/concepts/multi-tenancy">
     Scope credentials and data to each user or workspace.
   </Card>
-  <Card title="Configure webhooks" icon="webhook" href="/guides/webhooks">
-    Register providers, store secrets, and react with hooks.
+  <Card title="Environments" href="/hub/environments">
+    Development vs production keys, and how preview deploys fit.
   </Card>
-  <Card title="Connect the Vercel AI SDK" icon="robot" href="/mcp-adapters/vercel-ai">
-    Expose your configured Corsair plugins as model tools.
+  <Card title="Vercel AI SDK" href="/mcp-adapters/vercel-ai">
+    Expose Corsair plugins as model tools.
   </Card>
 </CardGroup>

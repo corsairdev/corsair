@@ -1,19 +1,28 @@
-import 'dotenv/config';
+import dotenv from 'dotenv';
+
+dotenv.config({ path: '../.env' });
 
 import { corsair } from '@/server/corsair';
 
-const main = async () => {
-	const res = await corsair.hubspot.api.contacts.search({
-		query: 'test',
-		limit: 5,
-	});
+async function setInstagramCredentials() {
+	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
 
-	// Example: Test Twilio API endpoints
-	// const sms = await corsair.twilio.api.messages.send({
-	// 	To: '+1234567890',
-	// 	From: '+1098765432',
-	// 	Body: 'Hello from Corsair!',
-	// });
+	if (FACEBOOK_APP_ID) {
+		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
+	}
+	if (FACEBOOK_APP_SECRET) {
+		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
+	}
+	if (IG_ACCESS_TOKEN) {
+		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
+	}
+}
+
+const main = async () => {
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
+	});
 };
 
 main().catch((err) => {

@@ -4,7 +4,14 @@ export type {
 } from './client';
 export { CorsairClientError, createCorsairClient } from './client';
 export type { ResolveConnectLinkResult } from './core';
-export { AuthMissingError, createCorsair, resolveConnectLink } from './core';
+export {
+	AuthMissingError,
+	createCorsair,
+	PermissionRequiredError,
+	ReadonlyForbiddenError,
+	resolveConnectLink,
+	runReadonly,
+} from './core';
 export type {
 	ConnectionStatus,
 	ConnectLink,
@@ -17,6 +24,7 @@ export type {
 	ManagementOk,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
+	PermissionLookupInput,
 	PermissionRecord,
 	PluginConnectionState,
 	PluginInfo,
@@ -29,6 +37,10 @@ export {
 	toHonoHandler,
 	toNextJsHandler,
 } from './core/management';
+export type {
+	CorsairManualConfig,
+	CorsairPermissionsOptions,
+} from './core/plugins';
 export {
 	collectPluginWebhookMatchers,
 	matchWebhookPlugin,

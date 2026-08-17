@@ -22,15 +22,15 @@ import {
 	getLatestStatusesForIntegrations,
 	getLatestStatusForIntegration,
 	getUserActiveDeadlineClaim,
-	getUserWipClaim,
+	getUserClaimEligibility,
 	ISSUE_DEADLINE_MS,
 	insertIntegrationStatus,
 	isIntegrationActivelyClaimed,
 	isIntegrationAvailable,
 	legacyStatusFromPhase,
+	MAX_USER_BUILT_INTEGRATIONS,
 	PR_DEADLINE_MS,
 	releaseIntegrationClaim,
-	userHasWipClaim,
 } from '@/db/integration-status';
 import {
 	fetchIntegrationTags,
@@ -532,10 +532,10 @@ export const integrationsRouter = createTRPCRouter({
 				),
 			];
 			const claimerAvatars = await getGithubUserAvatars(claimerUsernames);
-			const wipClaim = currentUserId
-				? await getUserWipClaim(ctx.db, currentUserId)
+			const claimEligibility = currentUserId
+				? await getUserClaimEligibility(ctx.db, currentUserId)
 				: null;
-			const userCanClaim = wipClaim == null;
+			const userCanClaim = claimEligibility?.canClaim ?? true;
 
 			const items = rows.map((row) => {
 				const latestStatus = latestStatuses.get(row.id);
@@ -577,7 +577,8 @@ export const integrationsRouter = createTRPCRouter({
 				totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
 				q: input.q?.trim() ?? '',
 				tags: input.tags ?? [],
-				wipIntegrationName: wipClaim?.name ?? null,
+				wipIntegrationName: claimEligibility?.wipIntegrationName ?? null,
+				claimBlockReason: claimEligibility?.blockReason ?? null,
 			};
 		}),
 
@@ -597,6 +598,193 @@ export const integrationsRouter = createTRPCRouter({
 
 		return { items };
 	}),
+
+	summaryBySlug: publicProcedure
+		.input(z.object({ slug: z.string().min(1) }))
+		.query(async ({ ctx, input }) => {
+			const [integration] = await ctx.db
+				.select({
+					id: integrations.id,
+					name: integrations.name,
+					slug: integrations.slug,
+					description: integrations.description,
+					points: integrations.points,
+				})
+				.from(integrations)
+				.where(
+					and(eq(integrations.slug, input.slug), eq(integrations.show, true)),
+				)
+				.limit(1);
+
+			if (!integration) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'Integration not found',
+				});
+			}
+
+			const [
+				operationCountRow,
+				triggerCountRow,
+				authSchemeCountRow,
+				latestStatus,
+				statusHistory,
+				urls,
+				integrationTagRows,
+			] = await Promise.all([
+				ctx.db
+					.select({ count: count() })
+					.from(operations)
+					.where(eq(operations.integrationId, integration.id)),
+				ctx.db
+					.select({ count: count() })
+					.from(triggers)
+					.where(eq(triggers.integrationId, integration.id)),
+				ctx.db
+					.select({ count: count() })
+					.from(authSchemes)
+					.where(
+						and(
+							eq(authSchemes.integrationId, integration.id),
+							inArray(authSchemes.mode, visibleAuthModes),
+						),
+					),
+				getLatestStatusForIntegration(ctx.db, integration.id),
+				getIntegrationStatusHistory(ctx.db, integration.id),
+				fetchIntegrationUrls(ctx.db, integration.id),
+				fetchIntegrationTags(ctx.db, integration.id),
+			]);
+
+			const claimerGithubUsername = latestStatus
+				? ((
+						await ctx.db
+							.select({ githubUsername: user.githubUsername })
+							.from(user)
+							.where(eq(user.id, latestStatus.userId))
+							.limit(1)
+					)[0]?.githubUsername ?? null)
+				: null;
+
+			const timelineUsernames = [
+				...new Set(
+					statusHistory
+						.map((row) => row.githubUsername)
+						.filter((username): username is string => username !== null),
+				),
+			];
+			if (claimerGithubUsername) {
+				timelineUsernames.push(claimerGithubUsername);
+			}
+
+			const avatars = await getGithubUserAvatars([
+				...new Set(timelineUsernames),
+			]);
+
+			const claimFields = mapIntegrationClaimFields(
+				integration.id,
+				undefined,
+				latestStatus ?? undefined,
+				claimerGithubUsername,
+				claimerGithubUsername
+					? (avatars.get(claimerGithubUsername) ?? null)
+					: null,
+			);
+
+			return {
+				id: integration.id,
+				name: integration.name,
+				slug: integration.slug,
+				description: integration.description,
+				points: integration.points,
+				tags: integrationTagRows,
+				urls: normalizeIntegrationUrls(urls),
+				operationCount: operationCountRow[0]?.count ?? 0,
+				triggerCount: triggerCountRow[0]?.count ?? 0,
+				authSchemeCount: authSchemeCountRow[0]?.count ?? 0,
+				...claimFields,
+				timeline: statusHistory.map((event) => ({
+					id: event.id,
+					phase: event.phase,
+					type: event.phase,
+					createdAt: event.occurredAt.toISOString(),
+					githubUsername: event.githubUsername ?? null,
+					avatarUrl: event.githubUsername
+						? (avatars.get(event.githubUsername) ?? null)
+						: null,
+					releaseReason: event.releaseReason,
+				})),
+			};
+		}),
+
+	capabilitiesBySlug: publicProcedure
+		.input(z.object({ slug: z.string().min(1) }))
+		.query(async ({ ctx, input }) => {
+			const [integration] = await ctx.db
+				.select({ id: integrations.id })
+				.from(integrations)
+				.where(
+					and(eq(integrations.slug, input.slug), eq(integrations.show, true)),
+				)
+				.limit(1);
+
+			if (!integration) {
+				throw new TRPCError({
+					code: 'NOT_FOUND',
+					message: 'Integration not found',
+				});
+			}
+
+			const [operationRows, triggerRows, authSchemeRows] = await Promise.all([
+				ctx.db
+					.select({
+						id: operations.id,
+						slug: operations.slug,
+						name: operations.name,
+						description: operations.description,
+						tags: operations.tags,
+						isDeprecated: operations.isDeprecated,
+					})
+					.from(operations)
+					.where(eq(operations.integrationId, integration.id))
+					.orderBy(asc(operations.name)),
+				ctx.db
+					.select({
+						id: triggers.id,
+						slug: triggers.slug,
+						name: triggers.name,
+						description: triggers.description,
+						type: triggers.type,
+					})
+					.from(triggers)
+					.where(eq(triggers.integrationId, integration.id))
+					.orderBy(asc(triggers.name)),
+				ctx.db
+					.select({
+						id: authSchemes.id,
+						mode: authSchemes.mode,
+						name: authSchemes.name,
+						requiredFields: authSchemes.requiredFields,
+						optionalFields: authSchemes.optionalFields,
+					})
+					.from(authSchemes)
+					.where(
+						and(
+							eq(authSchemes.integrationId, integration.id),
+							inArray(authSchemes.mode, visibleAuthModes),
+						),
+					)
+					.orderBy(asc(authSchemes.name)),
+			]);
+
+			return {
+				operations: operationRows,
+				triggers: triggerRows,
+				authSchemes: authSchemeRows,
+				operationCount: operationRows.length,
+				triggerCount: triggerRows.length,
+				authSchemeCount: authSchemeRows.length,
+			};
+		}),
 
 	getBySlug: publicProcedure
 		.input(z.object({ slug: z.string().min(1) }))
@@ -712,8 +900,8 @@ export const integrationsRouter = createTRPCRouter({
 					: null,
 			);
 
-			const wipClaim = currentUserId
-				? await getUserWipClaim(ctx.db, currentUserId)
+			const claimEligibility = currentUserId
+				? await getUserClaimEligibility(ctx.db, currentUserId)
 				: null;
 
 			const claimExpiredForCurrentUser = getClaimExpiredForUser(
@@ -736,8 +924,9 @@ export const integrationsRouter = createTRPCRouter({
 				triggers: triggerRows,
 				authSchemes: authSchemeRows,
 				...claimFields,
-				canClaimAnother: wipClaim == null,
-				wipIntegrationName: wipClaim?.name ?? null,
+				canClaimAnother: claimEligibility?.canClaim ?? true,
+				wipIntegrationName: claimEligibility?.wipIntegrationName ?? null,
+				claimBlockReason: claimEligibility?.blockReason ?? null,
 				claimExpiredForCurrentUser,
 				timeline: statusHistory.map((event) => ({
 					id: event.id,
@@ -866,7 +1055,19 @@ export const integrationsRouter = createTRPCRouter({
 	claim: protectedProcedure
 		.input(z.object({ integrationId: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {
-			if (await userHasWipClaim(ctx.db, ctx.user.id)) {
+			const claimEligibility = await getUserClaimEligibility(
+				ctx.db,
+				ctx.user.id,
+			);
+
+			if (!claimEligibility.canClaim) {
+				if (claimEligibility.blockReason === 'limit_reached') {
+					throw new TRPCError({
+						code: 'PRECONDITION_FAILED',
+						message: `You've built the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations and can't claim another`,
+					});
+				}
+
 				throw new TRPCError({
 					code: 'PRECONDITION_FAILED',
 					message:

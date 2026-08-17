@@ -29,6 +29,16 @@ export const BASE_AUTH_FIELDS = {
 		integration: [] as const,
 		account: ['bot_token', 'webhook_signature'] as const,
 	},
+	managed: {
+		integration: [] as const,
+		account: [
+			'access_token',
+			'refresh_token',
+			'expires_at',
+			'scope',
+			'webhook_signature',
+		] as const,
+	},
 } as const satisfies Record<
 	AuthTypes,
 	{
@@ -171,6 +181,9 @@ export type OAuth2IntegrationCredentials = {
 	client_id: string | null;
 	client_secret: string | null;
 	redirect_url: string | null;
+	// Extension integration fields declared by the plugin's authConfig
+	// (e.g. gmail's topic_id/pubsub_audience) pass through as-is.
+	[key: string]: string | null | undefined;
 };
 
 /**

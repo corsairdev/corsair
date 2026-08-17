@@ -8,5 +8,6 @@ export default defineConfig({
 	dts: false,
 	clean: true,
 	outDir: 'dist',
-	external: ['@ai-sdk/mcp', '@anthropic-ai/claude-agent-sdk', '@openai/agents'],
+	external: ['@anthropic-ai/claude-agent-sdk', '@openai/agents'],
+	noExternal: ['@ai-sdk/mcp'],
 });
