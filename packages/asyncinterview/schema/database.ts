@@ -1,9 +1,2 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const AsyncInterviewExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type AsyncInterviewExample = z.infer<typeof AsyncInterviewExample>;
+// AsyncInterview's operations are stateless job/response reads and edits —
+// nothing worth persisting locally, so this plugin declares no entities.

@@ -94,4 +94,13 @@ describe('AsyncInterview Plugin Endpoints', () => {
 			}),
 		);
 	});
+
+	it('should reject a malformed provider payload', async () => {
+		// id is required and must be a string; a numeric id fails output validation.
+		(request as jest.Mock).mockResolvedValueOnce({ id: 42 });
+
+		await expect(
+			mockPlugin.endpoints!.jobs.update(mockContext, { id: 'job1' }),
+		).rejects.toThrow();
+	});
 });
