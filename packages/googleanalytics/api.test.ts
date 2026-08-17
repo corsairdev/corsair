@@ -1,8 +1,10 @@
 import { request } from 'corsair/http';
+import { encodeResourcePath, GoogleAnalyticsAPIError } from './client';
 import {
 	GoogleAnalyticsEndpointInputSchemas,
 	GoogleAnalyticsEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import type { GoogleAnalyticsContext } from './index';
 import { googleanalytics } from './index';
 
@@ -100,7 +102,7 @@ const routeCases: RouteCase[] = [
 	},
 	{
 		endpoint: 'properties.list',
-		input: {},
+		input: { filter: 'accounts/123' },
 		base: ADMIN_BASE,
 		method: 'GET',
 		url: '/v1alpha/properties',
@@ -779,6 +781,18 @@ describe('input schemas accept documented shapes', () => {
 		expect(parsed.property).toBe('properties/100');
 	});
 
+	it('propertiesList requires a filter', () => {
+		expect(() =>
+			GoogleAnalyticsEndpointInputSchemas.propertiesList.parse({
+				pageSize: 50,
+			}),
+		).toThrow();
+		const parsed = GoogleAnalyticsEndpointInputSchemas.propertiesList.parse({
+			filter: 'accounts/123',
+		});
+		expect(parsed.filter).toBe('accounts/123');
+	});
+
 	it('propertiesListFiltered requires a filter', () => {
 		expect(() =>
 			GoogleAnalyticsEndpointInputSchemas.propertiesListFiltered.parse({
@@ -845,5 +859,98 @@ describe('input schemas accept documented shapes', () => {
 				events: [{ name: 'login' }],
 			}),
 		).toThrow();
+	});
+});
+
+describe('resource path encoding', () => {
+	it('keeps hierarchical slashes and encodes query metacharacters', () => {
+		expect(encodeResourcePath('accounts/123')).toBe('accounts/123');
+		expect(encodeResourcePath('accounts/123?evil=1')).toBe(
+			'accounts/123%3Fevil%3D1',
+		);
+	});
+
+	it('rejects empty, dot, and parent segments', () => {
+		expect(() => encodeResourcePath('accounts/../123')).toThrow(
+			/invalid resource name/,
+		);
+		expect(() => encodeResourcePath('')).toThrow(/missing resource name/);
+	});
+
+	it('encodes injected query characters before the HTTP client runs', async () => {
+		const plugin = googleanalytics({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as {
+			accounts: {
+				get: (
+					ctx: GoogleAnalyticsContext,
+					input: { name: string },
+				) => Promise<unknown>;
+			};
+		};
+		mockRequest.mockResolvedValue({ name: 'accounts/123' });
+		await endpoints.accounts.get(mockCtx, {
+			name: 'accounts/123?prettyPrint=true',
+		});
+		expect(mockRequest.mock.calls[0]?.[1].url).toBe(
+			'/v1beta/accounts/123%3FprettyPrint%3Dtrue',
+		);
+	});
+});
+
+describe('plugin risk metadata', () => {
+	it('treats listing measurement protocol secrets as a write', () => {
+		const plugin = googleanalytics();
+		expect(
+			plugin.endpointMeta?.['dataStreams.listMeasurementProtocolSecrets'],
+		).toEqual(
+			expect.objectContaining({
+				riskLevel: 'write',
+			}),
+		);
+	});
+});
+
+describe('measurement protocol rate limits', () => {
+	const plugin = googleanalytics({ key: 'test-token' });
+	const endpoints = plugin.endpoints as unknown as {
+		measurementProtocol: {
+			sendEvents: (
+				ctx: GoogleAnalyticsContext,
+				input: Record<string, unknown>,
+			) => Promise<unknown>;
+		};
+	};
+
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	it('surfaces retry-after on 429 so the rate-limit handler can retry', async () => {
+		jest.spyOn(globalThis, 'fetch').mockResolvedValue({
+			ok: false,
+			status: 429,
+			headers: {
+				get: (name: string) =>
+					name.toLowerCase() === 'retry-after' ? '2' : null,
+			},
+			text: async () => 'slow down',
+		} as unknown as Response);
+
+		const error = await endpoints.measurementProtocol
+			.sendEvents(mockCtx, {
+				apiSecret: 'secret',
+				measurementId: 'G-XXXX',
+				clientId: '555',
+				events: [{ name: 'login' }],
+			})
+			.catch((caught: unknown) => caught);
+
+		expect(error).toBeInstanceOf(GoogleAnalyticsAPIError);
+		const gaError = error as GoogleAnalyticsAPIError;
+		expect(gaError.code).toBe(429);
+		expect(gaError.retryAfter).toBe(2000);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(gaError)).toBe(true);
+		const handled = await errorHandlers.RATE_LIMIT_ERROR.handler(gaError);
+		expect(handled).toEqual({ maxRetries: 5, headersRetryAfterMs: 2000 });
 	});
 });
