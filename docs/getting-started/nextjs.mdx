@@ -128,8 +128,9 @@ if (!connectionString) {
     throw new Error('DATABASE_URL is not set');
 }
 
-const globalForDatabase = globalThis as unknown as {
-    corsairPool: Pool | undefined;
+// Next.js HMR re-evaluates this module; keep one Pool on globalThis.
+const globalForDatabase = globalThis as typeof globalThis & {
+    corsairPool?: Pool;
 };
 
 export const database = globalForDatabase.corsairPool ?? new Pool({
@@ -235,10 +236,11 @@ Mint a connect link and send the user to it. Hub hosts the connect page:
 ```ts
 const { connectUrl } = await corsair.manage.connect.createLink({
     plugin: 'github',
-    tenantId: 'acme',
 });
 // redirect the user's browser to connectUrl
 ```
+
+This guide is single-tenant, so the connection lands on the `default` tenant. Per-user accounts are [multi-tenancy](/concepts/multi-tenancy).
 
 After GitHub is connected, call it from a Route Handler or a Server Component. Both import the same server singleton:
 
