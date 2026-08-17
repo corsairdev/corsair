@@ -364,18 +364,38 @@ const ContactsGetInputSchema = z.object({
 });
 export type ContactsGetInput = z.infer<typeof ContactsGetInputSchema>;
 
-const ContactsUpdateInputSchema = z.object({
-	brandId: z.string(),
-	contactId: z.string(),
-	email: z.email().optional(),
-	fieldValues: z.array(FieldValueInputSchema).optional(),
-	listIds: z.array(z.string()).optional(),
-	unsubscribeAll: z.boolean().optional(),
-	unsubscribeIds: z.array(z.string()).optional(),
-	fieldValuesOp: ContactListOp,
-	listIdsOp: ContactListOp,
-	unsubscribeIdsOp: ContactListOp,
-});
+const ContactsUpdateInputSchema = z
+	.object({
+		brandId: z.string(),
+		contactId: z.string(),
+		email: z.email().optional(),
+		fieldValues: z.array(FieldValueInputSchema).optional(),
+		listIds: z.array(z.string()).optional(),
+		unsubscribeAll: z.boolean().optional(),
+		unsubscribeIds: z.array(z.string()).optional(),
+		fieldValuesOp: ContactListOp,
+		listIdsOp: ContactListOp,
+		unsubscribeIdsOp: ContactListOp,
+	})
+	.superRefine((input, ctx) => {
+		// BigMailer defaults an omitted *_op to `replace`, which wipes the
+		// contact's existing values. Require the paired op whenever the array is
+		// supplied so a partial update can't silently clobber data.
+		const pairs = [
+			['listIds', 'listIdsOp'],
+			['unsubscribeIds', 'unsubscribeIdsOp'],
+			['fieldValues', 'fieldValuesOp'],
+		] as const;
+		for (const [arrayKey, opKey] of pairs) {
+			if (input[arrayKey] !== undefined && input[opKey] === undefined) {
+				ctx.addIssue({
+					code: 'custom',
+					path: [opKey],
+					message: `${opKey} is required when ${arrayKey} is provided; BigMailer defaults to 'replace', which removes existing values`,
+				});
+			}
+		}
+	});
 export type ContactsUpdateInput = z.infer<typeof ContactsUpdateInputSchema>;
 
 const ContactsDeleteInputSchema = z.object({
