@@ -8,6 +8,8 @@ import {
 import {
 	buildMigrationPayload,
 	generateProdKek,
+	MIGRATE_HUB_PATH,
+	postMigrationToHub,
 } from '../hub/credentials-migrate-client';
 
 const DEV_KEK = 'dev-master-key-with-at-least-32-chars!!';
@@ -73,5 +75,64 @@ describe('buildMigrationPayload', () => {
 		expect(serialized).not.toContain('xoxb-PLAINTEXT-SECRET');
 		expect(serialized).not.toContain(DEV_KEK);
 		expect(serialized).not.toContain(PROD_KEK);
+	});
+});
+
+describe('postMigrationToHub', () => {
+	const hub = {
+		apiUrl: 'https://hub.example',
+		projectApiKey: 'ck_dev_test',
+		signingSecret: 'signing-secret',
+	};
+	const realFetch = global.fetch;
+
+	afterEach(() => {
+		global.fetch = realFetch;
+	});
+
+	function mockFetch(response: {
+		ok: boolean;
+		status: number;
+		body: unknown;
+	}): { calls: { url: string; init: RequestInit }[] } {
+		const calls: { url: string; init: RequestInit }[] = [];
+		global.fetch = ((url: string, init: RequestInit) => {
+			calls.push({ url, init });
+			return Promise.resolve({
+				ok: response.ok,
+				status: response.status,
+				headers: { get: () => 'application/json' },
+				text: () => Promise.resolve(JSON.stringify(response.body)),
+			});
+		}) as unknown as typeof fetch;
+		return { calls };
+	}
+
+	it('posts the payload to the migrate path with bearer auth, forwarding it untouched', async () => {
+		const { calls } = mockFetch({
+			ok: true,
+			status: 200,
+			body: { ok: true, migrated: 2 },
+		});
+		const payload = {
+			integrations: [{ name: 'slack', dek: 'wrapped', config: { a: 'b' } }],
+		};
+
+		const result = await postMigrationToHub({ hub, payload });
+
+		expect(result).toEqual({ ok: true, migrated: 2 });
+		expect(calls).toHaveLength(1);
+		expect(calls[0]?.url).toBe(`https://hub.example${MIGRATE_HUB_PATH}`);
+		expect(
+			(calls[0]?.init.headers as Record<string, string>).authorization,
+		).toBe('Bearer ck_dev_test');
+		expect(JSON.parse(calls[0]?.init.body as string)).toEqual(payload);
+	});
+
+	it('throws on a non-ok response so the CLI can tell the user to fix prod', async () => {
+		mockFetch({ ok: false, status: 409, body: { error: 'no production env' } });
+		await expect(
+			postMigrationToHub({ hub, payload: { integrations: [] } }),
+		).rejects.toThrow();
 	});
 });

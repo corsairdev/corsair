@@ -1,6 +1,11 @@
 import { generateDEK } from '../core/auth/encryption';
 import type { MigratedIntegration } from '../core/auth/rewrap-integration';
 import { rewrapIntegrationRow } from '../core/auth/rewrap-integration';
+import { hubApiPost } from './client/http';
+import type { HubConfig } from './types';
+
+/** Hub REST path that relays a migration to the caller's production environment. */
+export const MIGRATE_HUB_PATH = '/credentials/migrate';
 
 /** An integration row as read from the local `corsair_integrations` table. */
 export type DevIntegrationRow = {
@@ -39,4 +44,38 @@ export async function buildMigrationPayload(
 			.map((row) => rewrapIntegrationRow(row, devKek, prodKek)),
 	);
 	return { integrations };
+}
+
+/** Result of a migration relay: prod's outcome, surfaced back to the CLI. */
+export type MigrationResult = {
+	ok: boolean;
+	migrated?: number;
+	error?: string;
+};
+
+/**
+ * POST the opaque migration payload to the Hub, which relays it (HMAC-signed) to
+ * the caller's production environment and returns prod's outcome. The Hub never
+ * sees the prod KEK, so it cannot open the rows it relays.
+ */
+export async function postMigrationToHub(input: {
+	hub: HubConfig;
+	payload: MigrationPayload;
+}): Promise<MigrationResult> {
+	return hubApiPost({
+		hub: input.hub,
+		path: MIGRATE_HUB_PATH,
+		notFoundMessage:
+			'Hub migration endpoint not found. Update your Hub deployment or check the API URL.',
+		body: input.payload,
+		parseResponse: (raw): MigrationResult => {
+			const record = (raw ?? {}) as Record<string, unknown>;
+			return {
+				ok: record.ok === true || record.status === 'ok',
+				migrated:
+					typeof record.migrated === 'number' ? record.migrated : undefined,
+				error: typeof record.error === 'string' ? record.error : undefined,
+			};
+		},
+	});
 }

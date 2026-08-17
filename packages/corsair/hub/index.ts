@@ -91,7 +91,10 @@ export {
 	buildMigrationPayload,
 	type DevIntegrationRow,
 	generateProdKek,
+	MIGRATE_HUB_PATH,
 	type MigrationPayload,
+	type MigrationResult,
+	postMigrationToHub,
 } from './credentials-migrate-client';
 export {
 	CredentialsMigrateDeliveryError,
