@@ -671,7 +671,7 @@ const googleAnalyticsEndpointMeta = {
 		description: 'List data streams on a property',
 	},
 	'dataStreams.listMeasurementProtocolSecrets': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'List measurement protocol secrets under a data stream',
 	},
 	'dataStreams.listEventCreateRules': {
