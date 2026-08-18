@@ -792,26 +792,6 @@ describe('${pascalName} schema', () => {
 					`export const BaseProviders = [\n${newArray}\n] as const;`,
 				);
 
-				const allProvidersMatch = content.match(
-					/export type AllProviders =[\s\S]*?\| \(string & \{\}\);/,
-				);
-				if (allProvidersMatch) {
-					const providersInType =
-						allProvidersMatch[0]
-							.match(/'[^']+'/g)
-							?.map((m) => m.replace(/'/g, '')) || [];
-
-					if (!providersInType.includes(lowerName)) {
-						providersInType.push(lowerName);
-						providersInType.sort();
-						const newType = `export type AllProviders =\n\t| ${providersInType.map((p) => `'${p}'`).join('\n\t| ')}\n\t| (string & {});`;
-						updated = updated.replace(
-							/export type AllProviders =[\s\S]*?\| \(string & \{\}\);/,
-							newType,
-						);
-					}
-				}
-
 				const displayMatch = updated.match(
 					/export const ProviderDisplayNames = \{([\s\S]*?)\} as const satisfies/,
 				);

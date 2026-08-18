@@ -1251,22 +1251,6 @@ export const errorHandlers = {
 					/export const BaseProviders = \[[\s\S]*?\] as const;/,
 					`export const BaseProviders = [\n${newArray}\n] as const;`,
 				);
-				const apMatch = content.match(
-					/export type AllProviders =[\s\S]*?\| \(string & \{\}\);/,
-				);
-				if (apMatch) {
-					const inType =
-						apMatch[0].match(/'[^']+'/g)?.map((m) => m.replace(/'/g, '')) || [];
-					if (!inType.includes(lowerName)) {
-						inType.push(lowerName);
-						inType.sort();
-						const newType = `export type AllProviders =\n\t| ${inType.map((p) => `'${p}'`).join('\n\t| ')}\n\t| (string & {});`;
-						updated = updated.replace(
-							/export type AllProviders =[\s\S]*?\| \(string & \{\}\);/,
-							newType,
-						);
-					}
-				}
 				writeFileSync(constantsPath, updated);
 				console.log('  Updated packages/corsair/core/constants.ts');
 			}

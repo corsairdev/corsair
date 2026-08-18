@@ -53,16 +53,9 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'canva',
-	'cal',
-	'calendly',
-	'canva',
 	'bugsnag',
 	'canvas',
-	'cal',
-	'calendly',
-	'canva',
 	'circleci',
-	'canvas',
 	'cloudflare',
 	'cloudinary',
 	'confluence',
@@ -202,16 +195,9 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
-	cal: 'Cal',
-	calendly: 'Calendly',
-	canva: 'Canva',
 	bugsnag: 'BugSnag',
 	canvas: 'Canvas LMS',
-	cal: 'Cal',
-	calendly: 'Calendly',
-	canva: 'Canva',
 	circleci: 'CircleCI',
-	canvas: 'Canvas LMS',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
@@ -317,147 +303,7 @@ export function formatProviderDisplayName(plugin: string): string {
 	return plugin.charAt(0).toUpperCase() + plugin.slice(1);
 }
 
-export type AllProviders =
-	| 'abstract'
-	| 'activecampaign'
-	| 'activetrail'
-	| 'addresszen'
-	| 'affinda'
-	| 'agencyzoom'
-	| 'agentmail'
-	| 'agentql'
-	| 'agenty'
-	| 'ahrefs'
-	| 'aimlapi'
-	| 'airtable'
-	| 'alchemy'
-	| 'algolia'
-	| 'alphavantage'
-	| 'alttextai'
-	| 'amara'
-	| 'ambee'
-	| 'ambientweather'
-	| 'amcards'
-	| 'amplitude'
-	| 'apaleo'
-	| 'apibible'
-	| 'apify'
-	| 'apilabz'
-	| 'apininjas'
-	| 'apisports'
-	| 'asana'
-	| 'asindataapi'
-	| 'ayrshare'
-	| 'bitbucket'
-	| 'betterstack'
-	| 'bigmailer'
-	| 'bitwarden'
-	| 'bluesky'
-	| 'boloforms'
-	| 'box'
-	| 'bugsnag'
-	| 'cal'
-	| 'calendly'
-	| 'canva'
-	| 'circleci'
-	| 'canvas'
-	| 'cloudflare'
-	| 'cloudinary'
-	| 'confluence'
-	| 'cursor'
-	| 'databricks'
-	| 'datadog'
-	| 'deepseek'
-	| 'digitalocean'
-	| 'discord'
-	| 'dockerhub'
-	| 'dodopayments'
-	| 'dropbox'
-	| 'epicgames'
-	| 'exa'
-	| 'facebook'
-	| 'figma'
-	| 'firecrawl'
-	| 'fireflies'
-	| 'gemini'
-	| 'github'
-	| 'gitlab'
-	| 'gmail'
-	| 'googlebigquery'
-	| 'googlecalendar'
-	| 'googledocs'
-	| 'googledrive'
-	| 'googlemaps'
-	| 'googlemeet'
-	| 'googlesheets'
-	| 'grafana'
-	| 'habitica'
-	| 'hackernews'
-	| 'harvest'
-	| 'hashnode'
-	| 'heygen'
-	| 'hubspot'
-	| 'huggingface'
-	| 'insightoai'
-	| 'instagram'
-	| 'intercom'
-	| 'jira'
-	| 'linear'
-	| 'linkedin'
-	| 'loyverse'
-	| 'mailchimp'
-	| 'mailtrap'
-	| 'monday'
-	| 'neon'
-	| 'nextdns'
-	| 'notion'
-	| 'ocrspace'
-	| 'ollama'
-	| 'onedrive'
-	| 'onepassword'
-	| 'openai'
-	| 'openweathermap'
-	| 'oura'
-	| 'outlook'
-	| 'pagerduty'
-	| 'perplexityai'
-	| 'posthog'
-	| 'razorpay'
-	| 'reddit'
-	| 'resend'
-	| 'retailed'
-	| 'salesforce'
-	| 'sentry'
-	| 'sharepoint'
-	| 'slack'
-	| 'spotify'
-	| 'strava'
-	| 'stripe'
-	| 'supabase'
-	| 'tally'
-	| 'tavily'
-	| 'teams'
-	| 'telegram'
-	| 'todoist'
-	| 'toggl'
-	| 'trello'
-	| 'twilio'
-	| 'twitter'
-	| 'twitterapiio'
-	| 'twochat'
-	| 'typeform'
-	| 'vapi'
-	| 'vercel'
-	| 'whatsapp'
-	| 'wiza'
-	| 'workday'
-	| 'xquik'
-	| 'youcom'
-	| 'youtube'
-	| 'zendesk'
-	| 'zohomail'
-	| 'zoom'
-	| (string & {});
+export type AllProviders = (typeof BaseProviders)[number] | (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
 
