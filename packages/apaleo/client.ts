@@ -6,7 +6,9 @@ export class ApaleoAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
+		// unknown: Apaleo error JSON is not a single schema (message vs messages)
 		public readonly body?: unknown,
+		// milliseconds; Retry-After seconds are converted in retryAfterMs()
 		public readonly retryAfter?: number,
 	) {
 		super(message);
@@ -42,25 +44,43 @@ async function requestApaleoToken(params: {
 	if (params.grantType === 'refresh_token' && params.refreshToken) {
 		body.set('refresh_token', params.refreshToken);
 	}
-	const response = await fetch(APALEO_TOKEN_URL, {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-			Authorization:
-				'Basic ' +
-				Buffer.from(params.clientId + ':' + params.clientSecret).toString(
-					'base64',
-				),
-		},
-		body,
-	});
-	const json = (await response.json()) as {
+	let response: Response;
+	try {
+		response = await fetch(APALEO_TOKEN_URL, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+				Authorization:
+					'Basic ' +
+					Buffer.from(params.clientId + ':' + params.clientSecret).toString(
+						'base64',
+					),
+			},
+			body,
+			signal: AbortSignal.timeout(20_000),
+		});
+	} catch (error) {
+		throw new ApaleoOAuthError(
+			error instanceof Error
+				? error.message
+				: 'Failed to obtain Apaleo access token',
+		);
+	}
+	let json: {
 		access_token?: string;
 		refresh_token?: string;
 		expires_in?: number;
 		error?: string;
 		error_description?: string;
-	};
+	} = {};
+	try {
+		const text = await response.text();
+		if (text) json = JSON.parse(text) as typeof json;
+	} catch {
+		throw new ApaleoOAuthError(
+			`Failed to obtain Apaleo access token (${response.status})`,
+		);
+	}
 	if (
 		!response.ok ||
 		!json.access_token ||
@@ -118,16 +138,29 @@ export async function getValidApaleoAccessToken({
 			'Apaleo client_id and client_secret are required',
 		);
 	}
-	const token = await requestApaleoToken(
-		refreshToken
-			? {
-					clientId,
-					clientSecret,
-					grantType: 'refresh_token',
-					refreshToken,
-				}
-			: { clientId, clientSecret, grantType: 'client_credentials' },
-	);
+	let token: Awaited<ReturnType<typeof requestApaleoToken>>;
+	if (refreshToken) {
+		try {
+			token = await requestApaleoToken({
+				clientId,
+				clientSecret,
+				grantType: 'refresh_token',
+				refreshToken,
+			});
+		} catch {
+			token = await requestApaleoToken({
+				clientId,
+				clientSecret,
+				grantType: 'client_credentials',
+			});
+		}
+	} else {
+		token = await requestApaleoToken({
+			clientId,
+			clientSecret,
+			grantType: 'client_credentials',
+		});
+	}
 	return {
 		accessToken: token.access_token,
 		refreshToken: token.refresh_token ?? refreshToken ?? undefined,
@@ -136,7 +169,7 @@ export async function getValidApaleoAccessToken({
 	};
 }
 
-function withQuery(endpoint: string, query?: Record<string, unknown>): string {
+function withQuery(endpoint: string, query?: object): string {
 	const url = new URL(endpoint, APALEO_API_BASE);
 	if (query) {
 		for (const [key, value] of Object.entries(query)) {
@@ -151,6 +184,19 @@ function withQuery(endpoint: string, query?: Record<string, unknown>): string {
 	return url.toString();
 }
 
+// unknown: error JSON is untyped until we check for a string message
+function errorMessage(parsed: unknown, fallback: string): string {
+	if (
+		parsed &&
+		typeof parsed === 'object' &&
+		'message' in parsed &&
+		typeof parsed.message === 'string'
+	) {
+		return parsed.message;
+	}
+	return fallback;
+}
+
 function retryAfterMs(response: Response): number | undefined {
 	const header = response.headers.get('Retry-After');
 	if (!header) return undefined;
@@ -158,13 +204,14 @@ function retryAfterMs(response: Response): number | undefined {
 	return Number.isFinite(seconds) ? seconds * 1000 : undefined;
 }
 
-export async function makeApaleoRequest<T>(
+// unknown: JSON is untyped until the endpoint zod schema parses it
+export async function makeApaleoRequest<T = unknown>(
 	endpoint: string,
 	accessToken: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH' | 'HEAD';
-		body?: unknown;
-		query?: Record<string, unknown>;
+		body?: object;
+		query?: object;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
@@ -184,6 +231,7 @@ export async function makeApaleoRequest<T>(
 	});
 
 	const contentType = response.headers.get('Content-Type') ?? '';
+	// unknown: fetch JSON is untyped; callers parse with zod
 	let parsed: unknown;
 	if (response.status !== 204 && contentType.includes('application/json')) {
 		try {
@@ -195,9 +243,7 @@ export async function makeApaleoRequest<T>(
 
 	if (!response.ok) {
 		throw new ApaleoAPIError(
-			typeof parsed === 'object' && parsed && 'message' in parsed
-				? String((parsed as { message: unknown }).message)
-				: `${response.status} ${response.statusText}`.trim(),
+			errorMessage(parsed, `${response.status} ${response.statusText}`.trim()),
 			response.status,
 			parsed,
 			retryAfterMs(response),

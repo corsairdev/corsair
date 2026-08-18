@@ -11,12 +11,11 @@ export const create: ApaleoEndpoints['unitGroupsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeApaleoRequest<unknown>(GROUPS, ctx.key, {
+	const raw = await makeApaleoRequest(GROUPS, ctx.key, {
 		method: 'POST',
 		body: input,
 	});
 	const response = ApaleoEndpointOutputSchemas.unitGroupsCreate.parse(raw);
-	await upsertEntity(ctx.db.unitGroups, response.id, { id: response.id });
 	await logEventFromContext(
 		ctx,
 		'apaleo.unitGroups.create',
@@ -27,8 +26,8 @@ export const create: ApaleoEndpoints['unitGroupsCreate'] = async (
 };
 
 export const list: ApaleoEndpoints['unitGroupsList'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(GROUPS, ctx.key, {
-		query: compactQuery(input as Record<string, unknown> | undefined),
+	const raw = await makeApaleoRequest(GROUPS, ctx.key, {
+		query: compactQuery(input),
 	});
 	const response = ApaleoEndpointOutputSchemas.unitGroupsList.parse(raw);
 	for (const group of response.unitGroups) {
@@ -39,8 +38,8 @@ export const list: ApaleoEndpoints['unitGroupsList'] = async (ctx, input) => {
 };
 
 export const count: ApaleoEndpoints['unitGroupsCount'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(`${GROUPS}/$count`, ctx.key, {
-		query: compactQuery(input as Record<string, unknown> | undefined),
+	const raw = await makeApaleoRequest(`${GROUPS}/$count`, ctx.key, {
+		query: compactQuery(input),
 	});
 	const response = ApaleoEndpointOutputSchemas.unitGroupsCount.parse(raw);
 	await logEventFromContext(ctx, 'apaleo.unitGroups.count', {}, 'completed');
@@ -65,7 +64,7 @@ export const exists: ApaleoEndpoints['unitGroupsExists'] = async (
 };
 
 export const get: ApaleoEndpoints['unitGroupsGet'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(
+	const raw = await makeApaleoRequest(
 		`${GROUPS}/${encodeURIComponent(input.id)}`,
 		ctx.key,
 	);
@@ -89,6 +88,7 @@ export const replace: ApaleoEndpoints['unitGroupsReplace'] = async (
 		method: 'PUT',
 		body,
 	});
+	await evictEntity(ctx.db.unitGroups, id);
 	await logEventFromContext(
 		ctx,
 		'apaleo.unitGroups.replace',

@@ -17,12 +17,18 @@ const PageQuery = {
 	pageSize: z.number().int().min(1).max(500).optional(),
 };
 
+const InventoryCode = z
+	.string()
+	.min(3)
+	.max(10)
+	.regex(/^[a-zA-Z0-9_]+$/);
+
 const AddressInput = z.object({
 	addressLine1: z.string().min(1),
-	addressLine2: z.string().optional(),
+	addressLine2: z.string().nullable().optional(),
 	postalCode: z.string().min(1),
 	city: z.string().min(1),
-	regionCode: z.string().optional(),
+	regionCode: z.string().nullable().optional(),
 	countryCode: z.string().min(2).max(2),
 });
 
@@ -35,14 +41,10 @@ const BankAccountInput = z
 	.optional();
 
 const CreatePropertyFields = {
-	code: z
-		.string()
-		.min(3)
-		.max(10)
-		.regex(/^[a-zA-Z0-9_]+$/),
+	code: InventoryCode,
 	name: z.record(z.string(), z.string().nullable()),
 	companyName: z.string().min(1),
-	managingDirectors: z.string().optional(),
+	managingDirectors: z.string().min(1).nullable().optional(),
 	commercialRegisterEntry: z.string().min(1),
 	taxId: z.string().min(1),
 	description: Localized,
@@ -66,11 +68,11 @@ const CreateUnitFields = {
 	propertyId: z.string().min(1),
 	name: z.string().min(1),
 	description: z.record(z.string(), z.string().nullable()),
-	unitGroupId: z.string().optional(),
+	unitGroupId: z.string().min(1).nullable().optional(),
 	maxPersons: z.number().int().min(1),
-	condition: z.enum(APALEO_UNIT_CONDITION).optional(),
-	attributes: z.array(CreateUnitAttributeRef).optional(),
-	connectedUnits: z.array(CreateConnectedUnit).optional(),
+	condition: z.enum(APALEO_UNIT_CONDITION).nullable().optional(),
+	attributes: z.array(CreateUnitAttributeRef).nullable().optional(),
+	connectedUnits: z.array(CreateConnectedUnit).nullable().optional(),
 };
 
 export const EmptyOkSchema = z.object({ ok: z.literal(true) });
@@ -192,16 +194,17 @@ export const UnitAttributesCreateInputSchema = z.object({
 export const UnitAttributesCreateOutputSchema = IdCreatedSchema;
 
 const CreateUnitGroupFields = {
-	code: z.string().min(1),
+	code: InventoryCode,
 	propertyId: z.string().min(1),
 	name: z.record(z.string(), z.string().nullable()),
 	description: z.record(z.string(), z.string().nullable()),
 	maxPersons: z.number().int().min(1),
-	rank: z.number().int().min(1).optional(),
+	rank: z.number().int().min(1).nullable().optional(),
 	type: z
 		.enum(['BedRoom', 'MeetingRoom', 'EventSpace', 'ParkingLot'])
+		.nullable()
 		.optional(),
-	connectedUnitGroups: z.array(CreateConnectedUnitGroup).optional(),
+	connectedUnitGroups: z.array(CreateConnectedUnitGroup).nullable().optional(),
 };
 
 export const UnitGroupsCreateInputSchema = z.object(CreateUnitGroupFields);
@@ -238,8 +241,8 @@ export const UnitGroupsReplaceInputSchema = z.object({
 	name: z.record(z.string(), z.string().nullable()),
 	description: z.record(z.string(), z.string().nullable()),
 	maxPersons: z.number().int().min(1).optional(),
-	rank: z.number().int().min(1).optional(),
-	connectedUnitGroups: z.array(CreateConnectedUnitGroup).optional(),
+	rank: z.number().int().min(1).nullable().optional(),
+	connectedUnitGroups: z.array(CreateConnectedUnitGroup).nullable().optional(),
 });
 export const UnitGroupsReplaceOutputSchema = EmptyOkSchema;
 

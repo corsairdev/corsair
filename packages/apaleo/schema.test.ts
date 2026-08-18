@@ -65,7 +65,7 @@ const UNIT_GROUP_KEYS = [
 
 const UNIT_ATTRIBUTE_KEYS = ['id', 'name', 'description'] as const;
 
-function shapeKeys(schema: { shape: Record<string, unknown> }): string[] {
+function shapeKeys(schema: { shape: object }): string[] {
 	return Object.keys(schema.shape);
 }
 
@@ -135,8 +135,22 @@ describe('Apaleo schema', () => {
 			ApaleoPropertyEntity.safeParse({
 				id: 'MUC',
 				code: 'MUC',
+				isTemplate: false,
 				name: 'Demo Hotel Munich',
 				description: 'This is the demo hotel Munich',
+				companyName: 'Hotel Münchner GmbH',
+				commercialRegisterEntry: 'HRB 1',
+				taxId: 'DE1',
+				location: {
+					addressLine1: 'Marienplatz 1',
+					postalCode: '80331',
+					city: 'München',
+					countryCode: 'DE',
+				},
+				paymentTerms: { en: 'Pay on checkout' },
+				timeZone: 'Europe/Berlin',
+				currencyCode: 'EUR',
+				created: '2020-04-08T21:53:26+02:00',
 				status: 'Test',
 				isArchived: false,
 			}).success,
@@ -145,6 +159,17 @@ describe('Apaleo schema', () => {
 
 	it('rejects a property without id', () => {
 		expect(ApaleoPropertyEntity.safeParse({ code: 'MUC' }).success).toBe(false);
+	});
+
+	it('rejects id-only rows for all four entities', () => {
+		expect(ApaleoPropertyEntity.safeParse({ id: 'MUC' }).success).toBe(false);
+		expect(ApaleoUnitEntity.safeParse({ id: 'MUC-MTA' }).success).toBe(false);
+		expect(ApaleoUnitGroupEntity.safeParse({ id: 'MUC-DBL' }).success).toBe(
+			false,
+		);
+		expect(
+			ApaleoUnitAttributeEntity.safeParse({ id: 'KQOSXHLS' }).success,
+		).toBe(false);
 	});
 });
 
@@ -176,12 +201,80 @@ describe('Apaleo inputs', () => {
 		).toBe(false);
 	});
 
+	it('accepts null on nullable create and replace fields', () => {
+		expect(
+			ApaleoEndpointInputSchemas.propertiesCreate.safeParse({
+				code: 'CRS',
+				name: { en: 'Probe' },
+				companyName: 'Probe GmbH',
+				managingDirectors: null,
+				commercialRegisterEntry: 'HRB 1',
+				taxId: 'DE1',
+				location: {
+					addressLine1: 'Street 1',
+					addressLine2: null,
+					postalCode: '10115',
+					city: 'Berlin',
+					regionCode: null,
+					countryCode: 'DE',
+				},
+				paymentTerms: { en: 'Pay on checkout' },
+				timeZone: 'Europe/Berlin',
+				defaultCheckInTime: '17:00:00',
+				defaultCheckOutTime: '11:00:00',
+				currencyCode: 'EUR',
+			}).success,
+		).toBe(true);
+		expect(
+			ApaleoEndpointInputSchemas.unitsCreate.safeParse({
+				propertyId: 'MUC',
+				name: 'A.201',
+				description: { en: 'Room' },
+				unitGroupId: null,
+				maxPersons: 2,
+				condition: null,
+				attributes: null,
+				connectedUnits: null,
+			}).success,
+		).toBe(true);
+		expect(
+			ApaleoEndpointInputSchemas.unitGroupsReplace.safeParse({
+				id: 'MUC-DBL',
+				name: { en: 'Double' },
+				description: { en: 'Double' },
+				rank: null,
+				connectedUnitGroups: null,
+			}).success,
+		).toBe(true);
+	});
+
 	it('rejects pageSize above the official 500 cap', () => {
 		expect(
 			ApaleoEndpointInputSchemas.unitsList.safeParse({ pageSize: 501 }).success,
 		).toBe(false);
 		expect(
 			ApaleoEndpointInputSchemas.unitsList.safeParse({ pageSize: 500 }).success,
+		).toBe(true);
+	});
+
+	it('reuses property code rules for unit groups', () => {
+		expect(
+			ApaleoEndpointInputSchemas.unitGroupsCreate.safeParse({
+				code: 'X',
+				propertyId: 'MUC',
+				name: { en: 'Double' },
+				description: { en: 'Double' },
+				maxPersons: 2,
+			}).success,
+		).toBe(false);
+		expect(
+			ApaleoEndpointInputSchemas.unitGroupsCreate.safeParse({
+				code: 'DBL',
+				propertyId: 'MUC',
+				name: { en: 'Double' },
+				description: { en: 'Double' },
+				maxPersons: 2,
+			}).success,
 		).toBe(true);
 	});
 });

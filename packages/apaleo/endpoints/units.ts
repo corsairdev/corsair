@@ -8,7 +8,7 @@ import { ApaleoEndpointOutputSchemas } from './types';
 const UNITS = '/inventory/v1/units';
 
 export const get: ApaleoEndpoints['unitsGet'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(
+	const raw = await makeApaleoRequest(
 		`${UNITS}/${encodeURIComponent(input.id)}`,
 		ctx.key,
 	);
@@ -52,8 +52,8 @@ export const remove: ApaleoEndpoints['unitsDelete'] = async (ctx, input) => {
 };
 
 export const list: ApaleoEndpoints['unitsList'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(UNITS, ctx.key, {
-		query: compactQuery(input as Record<string, unknown> | undefined),
+	const raw = await makeApaleoRequest(UNITS, ctx.key, {
+		query: compactQuery(input),
 	});
 	const response = ApaleoEndpointOutputSchemas.unitsList.parse(raw);
 	for (const unit of response.units) {
@@ -64,12 +64,11 @@ export const list: ApaleoEndpoints['unitsList'] = async (ctx, input) => {
 };
 
 export const create: ApaleoEndpoints['unitsCreate'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(UNITS, ctx.key, {
+	const raw = await makeApaleoRequest(UNITS, ctx.key, {
 		method: 'POST',
 		body: input,
 	});
 	const response = ApaleoEndpointOutputSchemas.unitsCreate.parse(raw);
-	await upsertEntity(ctx.db.units, response.id, { id: response.id });
 	await logEventFromContext(
 		ctx,
 		'apaleo.units.create',
@@ -80,8 +79,8 @@ export const create: ApaleoEndpoints['unitsCreate'] = async (ctx, input) => {
 };
 
 export const count: ApaleoEndpoints['unitsCount'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(`${UNITS}/$count`, ctx.key, {
-		query: compactQuery(input as Record<string, unknown> | undefined),
+	const raw = await makeApaleoRequest(`${UNITS}/$count`, ctx.key, {
+		query: compactQuery(input),
 	});
 	const response = ApaleoEndpointOutputSchemas.unitsCount.parse(raw);
 	await logEventFromContext(ctx, 'apaleo.units.count', {}, 'completed');
@@ -92,14 +91,11 @@ export const createBulk: ApaleoEndpoints['unitsCreateBulk'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeApaleoRequest<unknown>(`${UNITS}/bulk`, ctx.key, {
+	const raw = await makeApaleoRequest(`${UNITS}/bulk`, ctx.key, {
 		method: 'POST',
 		body: input,
 	});
 	const response = ApaleoEndpointOutputSchemas.unitsCreateBulk.parse(raw);
-	for (const id of response.ids) {
-		await upsertEntity(ctx.db.units, id, { id });
-	}
 	await logEventFromContext(ctx, 'apaleo.units.createBulk', {}, 'completed');
 	return response;
 };

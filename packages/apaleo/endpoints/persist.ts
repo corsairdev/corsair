@@ -1,8 +1,10 @@
 type UpsertStore<T> = {
+	// unknown: local store return value is unused
 	upsertByEntityId?: (id: string, data: T) => Promise<unknown>;
 };
 
 type DeleteStore = {
+	// unknown: local store return value is unused
 	deleteByEntityId?: (id: string) => Promise<unknown>;
 };
 
@@ -31,13 +33,10 @@ export async function evictEntity(
 	}
 }
 
-export function compactQuery(
-	query: Record<string, unknown> | undefined,
-): Record<string, unknown> | undefined {
+export function compactQuery(query: object | undefined) {
 	if (!query) return undefined;
-	const out: Record<string, unknown> = {};
-	for (const [key, value] of Object.entries(query)) {
-		if (value !== undefined) out[key] = value;
-	}
+	const out = Object.fromEntries(
+		Object.entries(query).filter(([, value]) => value !== undefined),
+	);
 	return Object.keys(out).length ? out : undefined;
 }

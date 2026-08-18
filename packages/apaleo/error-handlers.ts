@@ -9,8 +9,17 @@ function getRetryAfter(error: Error): number | undefined {
 	return (error as Partial<ApaleoAPIError>).retryAfter;
 }
 
+const CREATE_OPS = new Set([
+	'properties.create',
+	'properties.clone',
+	'units.create',
+	'units.createBulk',
+	'unitAttributes.create',
+	'unitGroups.create',
+]);
+
 /**
- * Apaleo 429 includes Retry-After in seconds.
+ * Apaleo 429 includes Retry-After in seconds; ApaleoAPIError.retryAfter is ms.
  * https://apaleo.dev/guides/api/rate-limiting.html
  */
 export const errorHandlers = {
@@ -46,8 +55,8 @@ export const errorHandlers = {
 			const status = getStatus(error);
 			return status !== undefined && status >= 500;
 		},
-		handler: async () => ({
-			maxRetries: 2,
+		handler: async (_error, context) => ({
+			maxRetries: CREATE_OPS.has(context.operation) ? 0 : 2,
 			retryStrategy: 'exponential_backoff' as const,
 		}),
 	},

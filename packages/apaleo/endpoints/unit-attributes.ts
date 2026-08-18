@@ -8,7 +8,7 @@ import { ApaleoEndpointOutputSchemas } from './types';
 const ATTRIBUTES = '/inventory/v1/unit-attributes';
 
 export const get: ApaleoEndpoints['unitAttributesGet'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(
+	const raw = await makeApaleoRequest(
 		`${ATTRIBUTES}/${encodeURIComponent(input.id)}`,
 		ctx.key,
 	);
@@ -63,8 +63,8 @@ export const list: ApaleoEndpoints['unitAttributesList'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeApaleoRequest<unknown>(ATTRIBUTES, ctx.key, {
-		query: compactQuery(input as Record<string, unknown> | undefined),
+	const raw = await makeApaleoRequest(ATTRIBUTES, ctx.key, {
+		query: compactQuery(input),
 	});
 	const response = ApaleoEndpointOutputSchemas.unitAttributesList.parse(raw);
 	for (const attribute of response.unitAttributes) {
@@ -78,7 +78,7 @@ export const create: ApaleoEndpoints['unitAttributesCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeApaleoRequest<unknown>(ATTRIBUTES, ctx.key, {
+	const raw = await makeApaleoRequest(ATTRIBUTES, ctx.key, {
 		method: 'POST',
 		body: input,
 	});

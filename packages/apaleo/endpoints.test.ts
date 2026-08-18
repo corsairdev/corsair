@@ -32,6 +32,7 @@ function makeCtx() {
 		unitAttributes: makeStore(),
 	};
 	return {
+		// unknown: test stub is not the full plugin context
 		ctx: { key: 'test-token', db } as unknown as Parameters<
 			typeof Properties.list
 		>[0],
@@ -41,9 +42,10 @@ function makeCtx() {
 
 let captured: { url: string; method: string; body?: string } | undefined;
 
-function mockFetch(payload: unknown, status = 200) {
+function mockFetch(payload: object | undefined, status = 200) {
 	captured = undefined;
-	global.fetch = (async (url: unknown, init?: RequestInit) => {
+	// unknown: jest stub is not a full Response
+	global.fetch = (async (url: string | URL, init?: RequestInit) => {
 		captured = {
 			url: String(url),
 			method: init?.method ?? 'GET',
@@ -66,15 +68,41 @@ function mockFetch(payload: unknown, status = 200) {
 const property = {
 	id: 'MUC',
 	code: 'MUC',
+	isTemplate: false,
 	name: { en: 'Demo Hotel Munich' },
+	companyName: 'Hotel Münchner GmbH',
+	commercialRegisterEntry: 'HRB 1',
+	taxId: 'DE1',
+	location: {
+		addressLine1: 'Marienplatz 1',
+		postalCode: '80331',
+		city: 'München',
+		countryCode: 'DE',
+	},
+	paymentTerms: { en: 'Pay on checkout' },
+	timeZone: 'Europe/Berlin',
+	currencyCode: 'EUR',
+	created: '2020-04-08T21:53:26+02:00',
 	status: 'Test',
 	isArchived: false,
 };
-const unit = { id: 'MUC-MTA', name: 'A.101', maxPersons: 2 };
+const unit = {
+	id: 'MUC-MTA',
+	name: 'A.101',
+	description: { en: 'Room' },
+	property: { id: 'MUC' },
+	status: { isOccupied: false, condition: 'Clean' },
+	maxPersons: 2,
+	created: '2020-04-08T21:53:26+02:00',
+};
 const group = {
 	id: 'MUC-DBL',
 	code: 'DBL',
+	property: { id: 'MUC' },
 	name: { en: 'Double' },
+	description: { en: 'Double' },
+	memberCount: 1,
+	maxPersons: 2,
 	type: 'BedRoom',
 };
 const attribute = { id: 'KQOSXHLS', name: 'Floor 3' };
@@ -173,10 +201,12 @@ describe('Apaleo endpoints', () => {
 		await expect(Properties.archive(ctx, { id: 'MUC' })).resolves.toEqual({
 			ok: true,
 		});
+		expect(db.properties.deleteByEntityId).toHaveBeenCalledWith('MUC');
 		expect(captured?.url).toContain('/property-actions/MUC/archive');
 		await expect(Properties.setLive(ctx, { id: 'MUC' })).resolves.toEqual({
 			ok: true,
 		});
+		expect(db.properties.deleteByEntityId).toHaveBeenCalledWith('MUC');
 		expect(captured?.url).toContain('/set-live');
 		await expect(Properties.reset(ctx, { id: 'MUC' })).resolves.toEqual({
 			ok: true,
@@ -284,6 +314,7 @@ describe('Apaleo endpoints', () => {
 				description: { en: 'Double' },
 			}),
 		).resolves.toEqual({ ok: true });
+		expect(db.unitGroups.deleteByEntityId).toHaveBeenCalledWith('MUC-DBL');
 		expect(captured?.method).toBe('PUT');
 		expect(JSON.parse(captured?.body ?? '{}').id).toBeUndefined();
 		mockFetch(undefined, 204);

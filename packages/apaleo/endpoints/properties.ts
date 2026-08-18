@@ -1,15 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ApaleoEndpoints } from '..';
 import { apaleoResourceExists, makeApaleoRequest } from '../client';
-import { compactQuery, upsertEntity } from './persist';
+import { compactQuery, evictEntity, upsertEntity } from './persist';
 import type { ApaleoEndpointOutputs } from './types';
 import { ApaleoEndpointOutputSchemas } from './types';
 
 const PROPERTIES = '/inventory/v1/properties';
 
 export const list: ApaleoEndpoints['propertiesList'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(PROPERTIES, ctx.key, {
-		query: compactQuery(input as Record<string, unknown> | undefined),
+	const raw = await makeApaleoRequest(PROPERTIES, ctx.key, {
+		query: compactQuery(input),
 	});
 	const response = ApaleoEndpointOutputSchemas.propertiesList.parse(raw);
 	for (const property of response.properties) {
@@ -23,12 +23,11 @@ export const create: ApaleoEndpoints['propertiesCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const raw = await makeApaleoRequest<unknown>(PROPERTIES, ctx.key, {
+	const raw = await makeApaleoRequest(PROPERTIES, ctx.key, {
 		method: 'POST',
 		body: input,
 	});
 	const response = ApaleoEndpointOutputSchemas.propertiesCreate.parse(raw);
-	await upsertEntity(ctx.db.properties, response.id, { id: response.id });
 	await logEventFromContext(
 		ctx,
 		'apaleo.properties.create',
@@ -39,13 +38,9 @@ export const create: ApaleoEndpoints['propertiesCreate'] = async (
 };
 
 export const count: ApaleoEndpoints['propertiesCount'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(
-		`${PROPERTIES}/$count`,
-		ctx.key,
-		{
-			query: compactQuery(input as Record<string, unknown> | undefined),
-		},
-	);
+	const raw = await makeApaleoRequest(`${PROPERTIES}/$count`, ctx.key, {
+		query: compactQuery(input),
+	});
 	const response = ApaleoEndpointOutputSchemas.propertiesCount.parse(raw);
 	await logEventFromContext(ctx, 'apaleo.properties.count', {}, 'completed');
 	return response;
@@ -69,7 +64,7 @@ export const exists: ApaleoEndpoints['propertiesExists'] = async (
 };
 
 export const get: ApaleoEndpoints['propertiesGet'] = async (ctx, input) => {
-	const raw = await makeApaleoRequest<unknown>(
+	const raw = await makeApaleoRequest(
 		`${PROPERTIES}/${encodeURIComponent(input.id)}`,
 		ctx.key,
 	);
@@ -86,13 +81,12 @@ export const get: ApaleoEndpoints['propertiesGet'] = async (ctx, input) => {
 
 export const clone: ApaleoEndpoints['propertiesClone'] = async (ctx, input) => {
 	const { id, ...body } = input;
-	const raw = await makeApaleoRequest<unknown>(
+	const raw = await makeApaleoRequest(
 		`/inventory/v1/property-actions/${encodeURIComponent(id)}/clone`,
 		ctx.key,
 		{ method: 'POST', body },
 	);
 	const response = ApaleoEndpointOutputSchemas.propertiesClone.parse(raw);
-	await upsertEntity(ctx.db.properties, response.id, { id: response.id });
 	await logEventFromContext(
 		ctx,
 		'apaleo.properties.clone',
@@ -111,6 +105,7 @@ export const archive: ApaleoEndpoints['propertiesArchive'] = async (
 		ctx.key,
 		{ method: 'PUT' },
 	);
+	await evictEntity(ctx.db.properties, input.id);
 	await logEventFromContext(
 		ctx,
 		'apaleo.properties.archive',
@@ -129,6 +124,7 @@ export const setLive: ApaleoEndpoints['propertiesSetLive'] = async (
 		ctx.key,
 		{ method: 'PUT' },
 	);
+	await evictEntity(ctx.db.properties, input.id);
 	await logEventFromContext(
 		ctx,
 		'apaleo.properties.setLive',
@@ -156,10 +152,7 @@ export const reset: ApaleoEndpoints['propertiesReset'] = async (ctx, input) => {
 export const countries: ApaleoEndpoints['propertiesCountries'] = async (
 	ctx,
 ) => {
-	const raw = await makeApaleoRequest<unknown>(
-		'/inventory/v1/types/countries',
-		ctx.key,
-	);
+	const raw = await makeApaleoRequest('/inventory/v1/types/countries', ctx.key);
 	const response = ApaleoEndpointOutputSchemas.propertiesCountries.parse(raw);
 	await logEventFromContext(
 		ctx,

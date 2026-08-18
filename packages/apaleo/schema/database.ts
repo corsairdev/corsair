@@ -1,13 +1,5 @@
 import { z } from 'zod';
-import {
-	B,
-	Id,
-	LocalizedOrString,
-	N,
-	Obj,
-	S,
-	UnknownArray,
-} from './primitives';
+import { B, Id, LocalizedOrString, N, S } from './primitives';
 
 /**
  * Field names match official Inventory V1 JSON keys.
@@ -110,8 +102,11 @@ export type ApaleoConnectedUnit = z.infer<typeof ApaleoConnectedUnit>;
 
 export const ApaleoConnectedUnitGroup = z
 	.object({
-		unitGroupId: S,
-		memberCount: N,
+		id: Id,
+		name: z.string(),
+		description: z.string(),
+		memberCount: z.number(),
+		maxPersons: N,
 	})
 	.loose();
 export type ApaleoConnectedUnitGroup = z.infer<typeof ApaleoConnectedUnitGroup>;
@@ -136,28 +131,41 @@ export const ApaleoUnitStatus = z
 	.loose();
 export type ApaleoUnitStatus = z.infer<typeof ApaleoUnitStatus>;
 
+/** expand=actions — ActionModel from Inventory swagger. */
+export const ApaleoAction = z
+	.object({
+		action: S,
+		isAllowed: B,
+		reasons: z
+			.array(z.object({ code: S, message: S }).loose())
+			.nullable()
+			.optional(),
+	})
+	.loose();
+export type ApaleoAction = z.infer<typeof ApaleoAction>;
+
 /** GET /inventory/v1/properties/{id} — PropertyModel */
 export const ApaleoPropertyEntity = z
 	.object({
 		id: Id,
-		code: S,
+		code: z.string(),
 		propertyTemplateId: S,
-		isTemplate: B,
+		isTemplate: z.boolean(),
 		name: LocalizedOrString,
-		description: LocalizedOrString,
-		companyName: S,
+		description: LocalizedOrString.nullable().optional(),
+		companyName: z.string(),
 		managingDirectors: S,
-		commercialRegisterEntry: S,
-		taxId: S,
-		location: ApaleoAddress.nullable().optional(),
+		commercialRegisterEntry: z.string(),
+		taxId: z.string(),
+		location: ApaleoAddress,
 		bankAccount: ApaleoBankAccount.nullable().optional(),
-		paymentTerms: Obj,
-		timeZone: S,
-		currencyCode: S,
-		created: S,
-		status: S,
-		isArchived: B,
-		actions: UnknownArray,
+		paymentTerms: z.record(z.string(), z.string().nullable()),
+		timeZone: z.string(),
+		currencyCode: z.string(),
+		created: z.string(),
+		status: z.string(),
+		isArchived: z.boolean(),
+		actions: z.array(ApaleoAction).nullable().optional(),
 	})
 	.loose();
 export type ApaleoPropertyEntity = z.infer<typeof ApaleoPropertyEntity>;
@@ -166,19 +174,19 @@ export type ApaleoPropertyEntity = z.infer<typeof ApaleoPropertyEntity>;
 export const ApaleoUnitEntity = z
 	.object({
 		id: Id,
-		name: S,
+		name: z.string(),
 		description: LocalizedOrString,
-		property: ApaleoEmbeddedProperty.nullable().optional(),
+		property: ApaleoEmbeddedProperty,
 		unitGroup: ApaleoEmbeddedUnitGroup.nullable().optional(),
 		connectingUnit: ApaleoEmbeddedUnit.nullable().optional(),
-		status: ApaleoUnitStatus.nullable().optional(),
-		maxPersons: N,
-		created: S,
+		status: ApaleoUnitStatus,
+		maxPersons: z.number(),
+		created: z.string(),
 		archived: S,
 		isArchived: B,
 		attributes: z.array(ApaleoUnitAttributeRef).nullable().optional(),
 		connectedUnits: z.array(ApaleoConnectedUnit).nullable().optional(),
-		actions: UnknownArray,
+		actions: z.array(ApaleoAction).nullable().optional(),
 	})
 	.loose();
 export type ApaleoUnitEntity = z.infer<typeof ApaleoUnitEntity>;
@@ -187,14 +195,14 @@ export type ApaleoUnitEntity = z.infer<typeof ApaleoUnitEntity>;
 export const ApaleoUnitGroupEntity = z
 	.object({
 		id: Id,
-		code: S,
-		property: ApaleoEmbeddedProperty.nullable().optional(),
+		code: z.string(),
+		property: ApaleoEmbeddedProperty,
 		name: LocalizedOrString,
-		memberCount: N,
+		memberCount: z.number(),
 		description: LocalizedOrString,
-		maxPersons: N,
+		maxPersons: z.number(),
 		rank: N,
-		type: S,
+		type: z.string(),
 		connectedUnitGroups: z
 			.array(ApaleoConnectedUnitGroup)
 			.nullable()
@@ -207,7 +215,7 @@ export type ApaleoUnitGroupEntity = z.infer<typeof ApaleoUnitGroupEntity>;
 export const ApaleoUnitAttributeEntity = z
 	.object({
 		id: Id,
-		name: S,
+		name: z.string(),
 		description: S,
 	})
 	.loose();

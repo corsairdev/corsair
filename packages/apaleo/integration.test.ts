@@ -46,12 +46,14 @@ const clientId = process.env.APALEO_CLIENT_ID;
 const clientSecret = process.env.APALEO_CLIENT_SECRET;
 const describeLive = clientId && clientSecret ? describe : describe.skip;
 
-const CODE = 'CRS1';
-const cloneCode = 'CRS2';
+const runId = Date.now().toString(36).slice(-5).toUpperCase();
+const CODE = `CR${runId}`;
+const cloneCode = `CL${runId}`;
 
-function issues(error: { issues: readonly unknown[] }): string[] {
-	return error.issues.map((raw) => {
-		const issue = raw as { path?: unknown[]; code?: string; message?: string };
+function issues(error: {
+	issues: readonly { path?: PropertyKey[]; code?: string; message?: string }[];
+}): string[] {
+	return error.issues.map((issue) => {
 		const where = (issue.path ?? []).join('.') || '(root)';
 		return `${where}: ${issue.code ?? 'invalid'} - ${issue.message ?? ''}`;
 	});
@@ -83,6 +85,7 @@ const createBody = {
 describeLive('Apaleo Inventory live', () => {
 	let token = '';
 	let propertyId = '';
+	let ownedProperty = false;
 	let cloneId = '';
 	let unitGroupId = '';
 	let unitId = '';
@@ -138,7 +141,9 @@ describeLive('Apaleo Inventory live', () => {
 				}
 			}
 		}
-		for (const id of [cloneId, propertyId].filter(Boolean)) {
+		for (const id of [cloneId, ownedProperty ? propertyId : ''].filter(
+			Boolean,
+		)) {
 			try {
 				await makeApaleoRequest(
 					`/inventory/v1/properties/${encodeURIComponent(id)}`,
@@ -154,10 +159,7 @@ describeLive('Apaleo Inventory live', () => {
 	});
 
 	it('lists supported countries', async () => {
-		const raw = await makeApaleoRequest<unknown>(
-			'/inventory/v1/types/countries',
-			token,
-		);
+		const raw = await makeApaleoRequest('/inventory/v1/types/countries', token);
 		const parsed =
 			ApaleoEndpointOutputSchemas.propertiesCountries.safeParse(raw);
 		if (!parsed.success) console.error(issues(parsed.error));
@@ -166,21 +168,16 @@ describeLive('Apaleo Inventory live', () => {
 	});
 
 	it('creates a test property and reads it back', async () => {
-		try {
-			const created = await makeApaleoRequest<{ id: string }>(
-				'/inventory/v1/properties',
-				token,
-				{ method: 'POST', body: createBody },
-			);
-			propertyId = created.id;
-		} catch (error) {
-			if (!(error instanceof ApaleoAPIError && error.status === 422))
-				throw error;
-			propertyId = CODE;
-		}
+		const created = await makeApaleoRequest<{ id: string }>(
+			'/inventory/v1/properties',
+			token,
+			{ method: 'POST', body: createBody },
+		);
+		propertyId = created.id;
+		ownedProperty = true;
 		expect(propertyId).toBeTruthy();
 
-		const got = await makeApaleoRequest<unknown>(
+		const got = await makeApaleoRequest(
 			`/inventory/v1/properties/${encodeURIComponent(propertyId)}`,
 			token,
 		);
@@ -191,11 +188,9 @@ describeLive('Apaleo Inventory live', () => {
 	});
 
 	it('lists and counts properties', async () => {
-		const list = await makeApaleoRequest<unknown>(
-			'/inventory/v1/properties',
-			token,
-			{ query: { pageNumber: 1, pageSize: 50 } },
-		);
+		const list = await makeApaleoRequest('/inventory/v1/properties', token, {
+			query: { pageNumber: 1, pageSize: 50 },
+		});
 		const parsed = ApaleoEndpointOutputSchemas.propertiesList.safeParse(list);
 		if (!parsed.success) console.error(issues(parsed.error));
 		expect(parsed.success).toBe(true);
@@ -207,6 +202,7 @@ describeLive('Apaleo Inventory live', () => {
 	});
 
 	it('creates unit group, unit, bulk units, and attribute', async () => {
+		if (!ownedProperty) return;
 		const group = await makeApaleoRequest<{ id: string }>(
 			'/inventory/v1/unit-groups',
 			token,
@@ -223,7 +219,7 @@ describeLive('Apaleo Inventory live', () => {
 			},
 		);
 		unitGroupId = group.id;
-		const groupGot = await makeApaleoRequest<unknown>(
+		const groupGot = await makeApaleoRequest(
 			`/inventory/v1/unit-groups/${encodeURIComponent(unitGroupId)}`,
 			token,
 		);
@@ -262,7 +258,7 @@ describeLive('Apaleo Inventory live', () => {
 			},
 		);
 		unitId = unit.id;
-		const unitGot = await makeApaleoRequest<unknown>(
+		const unitGot = await makeApaleoRequest(
 			`/inventory/v1/units/${encodeURIComponent(unitId)}`,
 			token,
 		);
@@ -300,6 +296,7 @@ describeLive('Apaleo Inventory live', () => {
 	});
 
 	it('replaces the unit group and counts inventory', async () => {
+		if (!ownedProperty) return;
 		await makeApaleoRequest(
 			`/inventory/v1/unit-groups/${encodeURIComponent(unitGroupId)}`,
 			token,
@@ -327,6 +324,7 @@ describeLive('Apaleo Inventory live', () => {
 	});
 
 	it('clone returns official 422 unless the source property is a template', async () => {
+		if (!ownedProperty) return;
 		try {
 			const cloned = await makeApaleoRequest<{ id: string }>(
 				`/inventory/v1/property-actions/${encodeURIComponent(propertyId)}/clone`,
@@ -346,6 +344,7 @@ describeLive('Apaleo Inventory live', () => {
 	});
 
 	it('HEAD exists for property, unit, group, and attribute', async () => {
+		if (!ownedProperty) return;
 		await makeApaleoRequest(
 			`/inventory/v1/properties/${encodeURIComponent(propertyId)}`,
 			token,
@@ -369,6 +368,7 @@ describeLive('Apaleo Inventory live', () => {
 	});
 
 	it('reset/archive/set-live are reachable (204 or 403 if client lacks manage scope)', async () => {
+		if (!ownedProperty) return;
 		try {
 			await makeApaleoRequest(
 				`/inventory/v1/property-actions/${encodeURIComponent(propertyId)}/reset`,
