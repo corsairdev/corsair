@@ -97,8 +97,8 @@ describe('BlazeMeter operation catalog', () => {
 				Object.entries(byRisk).map(([key, value]) => [key, value?.length]),
 			),
 		).toEqual({
-			read: 50,
-			write: 27,
+			read: 45,
+			write: 32,
 			destructive: 15,
 		});
 	});
@@ -156,6 +156,19 @@ describe('BlazeMeter request mapping', () => {
 		expect(() => resolveBlazemeterPath(operation, { workspaceId: 42 })).toThrow(
 			'missing required path parameter: assetId',
 		);
+	});
+
+	it('resolves path placeholders by name, not position', () => {
+		const operation = {
+			...BLAZEMETER_OPERATIONS.find(({ key }) => key === 'assets.get')!,
+			pathParams: ['assetId', 'workspaceId'],
+		};
+		expect(
+			resolveBlazemeterPath(operation, {
+				workspaceId: 42,
+				assetId: 'asset-1',
+			}),
+		).toBe('/workspaces/42/assets/asset-1');
 	});
 
 	it('separates path, query, and body fields without dropping false', () => {
@@ -390,6 +403,89 @@ describe('BlazeMeter endpoint execution', () => {
 		).rejects.toBeInstanceOf(BlazemeterAPIError);
 		expect(calls).toHaveLength(1);
 	});
+
+	it('accepts numeric test IDs for file list and delete', () => {
+		expect(
+			BlazemeterEndpointInputSchemas['tests.files'].safeParse({
+				testId: 1234567,
+			}).success,
+		).toBe(true);
+		expect(
+			BlazemeterEndpointInputSchemas['tests.files'].safeParse({
+				testId: '1234567',
+			}).success,
+		).toBe(false);
+		expect(
+			BlazemeterEndpointInputSchemas['tests.removeFile'].safeParse({
+				testId: 1234567,
+				fileName: 'MyTest.jmx',
+			}).success,
+		).toBe(true);
+	});
+
+	it('calls GET /user, not /user/user', async () => {
+		stubFetch(() => jsonResponse({ result: { id: 1 } }));
+
+		await endpointFor('user.get')(TEST_CTX, {});
+
+		expect(new URL(calls[0]!.url).pathname).toBe('/api/v4/user');
+	});
+
+	it('omits JSON Content-Type when a write has no body', async () => {
+		stubFetch(() => jsonResponse({ result: { id: 2 } }));
+
+		await endpointFor('tests.duplicate')(TEST_CTX, { test_id: 9 });
+
+		expect(calls[0]!.init.body).toBeUndefined();
+		expect(new Headers(calls[0]!.init.headers).get('Content-Type')).toBeNull();
+	});
+
+	it('mirrors list results into the local store', async () => {
+		const upsertByEntityId = jest.fn(async () => undefined);
+		stubFetch(() =>
+			jsonResponse({
+				api_version: 4,
+				error: null,
+				result: [
+					{
+						id: 11,
+						name: 'Default project',
+						userId: 1,
+						description: null,
+						created: 1,
+						updated: 1,
+						workspaceId: 2,
+						testsCount: 0,
+					},
+				],
+			}),
+		);
+
+		await endpointFor('projects.list')(
+			{ ...TEST_CTX, db: { projects: { upsertByEntityId } } },
+			{ workspaceId: 2 },
+		);
+
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'11',
+			expect.objectContaining({ id: 11, name: 'Default project' }),
+		);
+	});
+
+	it('evicts a deleted project from the local store', async () => {
+		const deleteByEntityId = jest.fn(async () => undefined);
+		stubFetch(() => jsonResponse({ result: true }));
+
+		await endpointFor('projects.remove')(
+			{
+				...TEST_CTX,
+				db: { projects: { upsertByEntityId: jest.fn(), deleteByEntityId } },
+			},
+			{ id: 11 },
+		);
+
+		expect(deleteByEntityId).toHaveBeenCalledWith('11');
+	});
 });
 
 describe('BlazeMeter response contracts', () => {
@@ -400,11 +496,15 @@ describe('BlazeMeter response contracts', () => {
 		expect(coreOperations).not.toHaveLength(0);
 
 		for (const definition of coreOperations) {
+			const list =
+				definition.key.endsWith('.list') ||
+				definition.key === 'user.projects' ||
+				definition.key === 'workspaces.users';
 			expect(
 				BlazemeterEndpointOutputSchemas[definition.key].safeParse({
 					api_version: 4,
 					error: null,
-					result: { id: 1 },
+					result: list ? [{ id: 1 }] : { id: 1 },
 					request_id: 'req-1',
 				}).success,
 			).toBe(true);
@@ -416,8 +516,10 @@ describe('BlazeMeter response contracts', () => {
 		).toBe(false);
 	});
 
-	it('leaves asset, tdm, and mock responses unconstrained', () => {
-		const others = BLAZEMETER_OPERATIONS.filter(({ api }) => api !== 'core');
+	it('leaves tdm and mock responses unconstrained', () => {
+		const others = BLAZEMETER_OPERATIONS.filter(
+			({ api }) => api === 'tdm' || api === 'mock',
+		);
 		expect(others).not.toHaveLength(0);
 
 		for (const definition of others) {
@@ -427,6 +529,20 @@ describe('BlazeMeter response contracts', () => {
 				).success,
 			).toBe(true);
 		}
+	});
+
+	it('types asset API responses with the documented AR envelope', () => {
+		expect(
+			BlazemeterEndpointOutputSchemas['assets.get'].safeParse({
+				timestamp: '2022-07-22T13:43:47+00:00',
+				request_id: 'req-1',
+				result: { id: '09af09af-09af-09af-09af-09af09af09af', name: 'Pet' },
+			}).success,
+		).toBe(true);
+		expect(
+			BlazemeterEndpointOutputSchemas['assets.get'].safeParse('not-an-envelope')
+				.success,
+		).toBe(false);
 	});
 });
 
@@ -462,6 +578,7 @@ describe('BlazeMeter retry policy', () => {
 
 	it.each([
 		['write', 'tests.start'],
+		['write', 'tests.validate'],
 		['destructive', 'tests.remove'],
 	])(
 		'never replays a %s operation after an ambiguous failure',

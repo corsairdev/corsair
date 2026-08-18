@@ -2,6 +2,7 @@ import type { CorsairEndpoint, EndpointRiskLevel } from 'corsair/core';
 import { logEventFromContext } from 'corsair/core';
 import type { BlazemeterApi, BlazemeterMethod } from './client';
 import { makeBlazemeterRequest } from './client';
+import { persistBlazemeterResult } from './endpoints/persist';
 import type { BlazemeterContext } from './index';
 
 export type BlazemeterOperationDefinition = {
@@ -33,7 +34,7 @@ export const BLAZEMETER_OPERATIONS = [
 		params: ['file?:object', 'verbose?:boolean', 'fileContent?:object'],
 		queryParams: ['verbose'],
 		multipart: true,
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
 			'Convert Swagger, HAR, YAML, or other transaction input to BlazeMeter DSL',
 	},
@@ -114,7 +115,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'POST',
 		path: '/projects',
-		params: ['name:string', 'description?:string', 'workspaceId:string'],
+		params: ['name:string', 'description?:string', 'workspaceId:integer'],
 		riskLevel: 'write',
 		description: 'Create a project in a workspace',
 	},
@@ -225,7 +226,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'DELETE',
 		path: '/private-locations/{harborId}/workspaces/{workspaceId}',
-		params: ['harborId:string', 'workspaceId:string'],
+		params: ['harborId:string', 'workspaceId:integer'],
 		pathParams: ['harborId', 'workspaceId'],
 		riskLevel: 'destructive',
 		irreversible: true,
@@ -237,7 +238,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'DELETE',
 		path: '/projects/{id}',
-		params: ['id:string', 'force?:boolean'],
+		params: ['id:integer', 'force?:boolean'],
 		pathParams: ['id'],
 		queryParams: ['force'],
 		riskLevel: 'destructive',
@@ -251,7 +252,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'POST',
 		path: '/tests/{testId}/delete-file',
-		params: ['testId:string', 'fileName:string'],
+		params: ['testId:integer', 'fileName:string'],
 		pathParams: ['testId'],
 		riskLevel: 'destructive',
 		irreversible: true,
@@ -362,7 +363,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'POST',
 		path: '/tests/{test_id}/duplicate',
-		params: ['test_id:string'],
+		params: ['test_id:integer'],
 		pathParams: ['test_id'],
 		riskLevel: 'write',
 		description: 'Duplicate a test and its configuration',
@@ -397,7 +398,7 @@ export const BLAZEMETER_OPERATIONS = [
 		path: '/workspaces/{workspaceId}/datamodels/{modelId}/generate',
 		params: ['modelId:string', 'numRecords?:integer', 'workspaceId:integer'],
 		pathParams: ['workspaceId', 'modelId'],
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Generate synthetic records from a stored data model',
 	},
 	{
@@ -409,7 +410,7 @@ export const BLAZEMETER_OPERATIONS = [
 		params: ['data:object', 'entityName:string', 'workspaceId:integer'],
 		pathParams: ['workspaceId'],
 		queryParams: ['entityName'],
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Generate test data from an inline model',
 	},
 	{
@@ -509,7 +510,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'GET',
 		path: '/masters/{master_id}/reports/default/summary',
-		params: ['master_id:string'],
+		params: ['master_id:integer'],
 		pathParams: ['master_id'],
 		riskLevel: 'read',
 		description: 'Get request statistics for a master test run',
@@ -577,8 +578,10 @@ export const BLAZEMETER_OPERATIONS = [
 		params: [
 			'skip?:integer',
 			'sort?:array',
+			'name?:string',
 			'limit?:integer',
-			'workspaceId:integer',
+			'accountId?:integer',
+			'workspaceId?:integer',
 		],
 		riskLevel: 'read',
 		description: 'List projects in a workspace',
@@ -629,7 +632,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'GET',
 		path: '/tests/{test_id}',
-		params: ['test_id:string'],
+		params: ['test_id:integer'],
 		pathParams: ['test_id'],
 		riskLevel: 'read',
 		description: 'Get test details',
@@ -654,9 +657,13 @@ export const BLAZEMETER_OPERATIONS = [
 		params: [
 			'skip?:integer',
 			'sort?:array',
+			'name?:string',
+			'type?:string',
 			'limit?:integer',
+			'platform?:string',
 			'projectId?:integer',
 			'workspaceId?:integer',
+			'hasExecutions?:boolean',
 		],
 		riskLevel: 'read',
 		description: 'List tests by workspace or project',
@@ -667,7 +674,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'GET',
 		path: '/tests/{testId}/files',
-		params: ['name?:string', 'testId:string'],
+		params: ['name?:string', 'testId:integer'],
 		pathParams: ['testId'],
 		riskLevel: 'read',
 		description: 'List files attached to a test',
@@ -677,7 +684,7 @@ export const BLAZEMETER_OPERATIONS = [
 		slug: 'BLAZEMETER_GET_USER',
 		api: 'core',
 		method: 'GET',
-		path: '/user/user',
+		path: '/user',
 		params: [],
 		riskLevel: 'read',
 		description: 'Get the authenticated user profile',
@@ -718,7 +725,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'mock',
 		method: 'GET',
 		path: '/workspaces/{workspaceId}/service-mock-templates/{serviceMockTemplateId}',
-		params: ['workspaceId:string', 'serviceMockTemplateId:string'],
+		params: ['workspaceId:integer', 'serviceMockTemplateId:integer'],
 		pathParams: ['workspaceId', 'serviceMockTemplateId'],
 		riskLevel: 'read',
 		description: 'Get a virtual-service template by ID',
@@ -1022,7 +1029,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'POST',
 		path: '/workspaces/{id}/terminate-masters',
-		params: ['id:string', 'dryRun?:boolean'],
+		params: ['id:integer', 'dryRun?:boolean'],
 		pathParams: ['id'],
 		riskLevel: 'destructive',
 		description: 'Terminate active master executions in a workspace',
@@ -1060,7 +1067,7 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'PATCH',
 		path: '/tests/{test_id}',
-		params: ['name?:string', 'test_id:string', 'configuration?:object'],
+		params: ['name?:string', 'test_id:integer', 'configuration?:object'],
 		pathParams: ['test_id'],
 		riskLevel: 'write',
 		description: 'Update a test configuration',
@@ -1079,7 +1086,7 @@ export const BLAZEMETER_OPERATIONS = [
 			'metadata?:object',
 			'packageId?:string',
 			'displayName?:string',
-			'workspaceId:string',
+			'workspaceId:integer',
 			'dependencies?:object',
 		],
 		pathParams: ['workspaceId', 'assetId'],
@@ -1144,9 +1151,9 @@ export const BLAZEMETER_OPERATIONS = [
 		path: '/workspaces/{workspaceId}/users/{userId}',
 		params: [
 			'roles:array',
-			'userId:string',
+			'userId:integer',
 			'enabled:boolean',
-			'workspaceId:string',
+			'workspaceId:integer',
 		],
 		pathParams: ['workspaceId', 'userId'],
 		riskLevel: 'write',
@@ -1198,9 +1205,9 @@ export const BLAZEMETER_OPERATIONS = [
 		api: 'core',
 		method: 'POST',
 		path: '/tests/{testId}/validate',
-		params: ['testId:string'],
+		params: ['testId:integer'],
 		pathParams: ['testId'],
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Start validation for a test configuration',
 	},
 	{
@@ -1211,7 +1218,7 @@ export const BLAZEMETER_OPERATIONS = [
 		path: '/workspaces/{workspace_id}/datamodels/validate',
 		params: ['workspace_id:integer', 'data_model_id:string'],
 		pathParams: ['workspace_id'],
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description: 'Validate a workspace data model',
 	},
 ] as const satisfies readonly BlazemeterOperationDefinition[];
@@ -1254,14 +1261,13 @@ export function resolveBlazemeterPath(
 	definition: BlazemeterOperationDefinition,
 	input: BlazemeterEndpointInput,
 ): string {
-	let index = 0;
-	return definition.path.replace(/\{[^{}]+\}/g, () => {
-		const name = definition.pathParams?.[index];
-		index += 1;
-		if (!name)
+	const allowed = new Set(definition.pathParams ?? []);
+	return definition.path.replace(/\{([^{}]+)\}/g, (_match, name: string) => {
+		if (!allowed.has(name)) {
 			throw new Error(
-				`[blazemeter] unmapped path placeholder in ${definition.key}`,
+				`[blazemeter] unmapped path placeholder ${name} in ${definition.key}`,
 			);
+		}
 		return requiredPathPart(input[name], name);
 	});
 }
@@ -1347,7 +1353,7 @@ export async function executeBlazemeterOperation(
 ): Promise<unknown> {
 	let status: 'completed' | 'failed' = 'completed';
 	try {
-		return await makeBlazemeterRequest(
+		const response = await makeBlazemeterRequest(
 			resolveBlazemeterPath(definition, input),
 			ctx.key,
 			{
@@ -1361,6 +1367,13 @@ export async function executeBlazemeterOperation(
 				idempotent: definition.riskLevel === 'read',
 			},
 		);
+		await persistBlazemeterResult(
+			ctx.db as Parameters<typeof persistBlazemeterResult>[0],
+			definition.key,
+			input,
+			response,
+		);
+		return response;
 	} catch (error) {
 		status = 'failed';
 		throw error;
@@ -1370,6 +1383,6 @@ export async function executeBlazemeterOperation(
 			`blazemeter.${definition.key}`,
 			{ method: definition.method, path: definition.path },
 			status,
-		);
+		).catch(() => undefined);
 	}
 }

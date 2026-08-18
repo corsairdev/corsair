@@ -125,7 +125,10 @@ export async function makeBlazemeterRequest<T>(
 	const formData = compactRecord(options.formData);
 	const query = compactRecord(options.query);
 	const isJsonWrite =
-		options.method !== 'GET' && options.method !== 'DELETE' && !formData;
+		options.method !== 'GET' &&
+		options.method !== 'DELETE' &&
+		!formData &&
+		body !== undefined;
 
 	const requestOptions: ApiRequestOptions = {
 		method: options.method,
