@@ -71,8 +71,8 @@ type ClaimEligibility = Pick<UserClaimEligibility, 'canClaim' | 'blockReason'>;
 /**
  * Claim precedence: an existing same-user claim or a conflict on this
  * integration is resolved before the per-user eligibility gate, so re-claiming
- * an in-progress integration returns already_owned instead of a 'wip' rejection.
- * Eligibility is passed as a thunk and only queried for a genuinely new insert.
+ * an integration you already hold returns already_owned instead of failing the
+ * claim cap. Eligibility is a thunk, only queried for a genuinely new insert.
  */
 export async function resolveClaimOutcome(
 	decision: ClaimDecision,
@@ -176,10 +176,7 @@ export async function claimIntegrationAtomically(
 		if (outcome.action === 'blocked') {
 			throw new TRPCError({
 				code: 'PRECONDITION_FAILED',
-				message:
-					outcome.blockReason === 'limit_reached'
-						? `You've built the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations and can't claim another`
-						: 'Finish your current integration or mark it ready to review before claiming another',
+				message: `You've claimed the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations and can't claim another`,
 			});
 		}
 

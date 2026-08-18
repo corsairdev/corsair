@@ -12,20 +12,11 @@ import { cn } from '@/lib/utils';
 
 import { claimIntegration } from '@/server/actions/claim-integration';
 
-export function wipClaimTooltipMessage(integrationName: string) {
-	return `Please complete ${integrationName} before claiming your next integration`;
-}
-
 export function claimBlockTooltipMessage(
 	blockReason: ClaimBlockReason | null | undefined,
-	wipIntegrationName?: string | null,
 ) {
-	if (blockReason === 'wip' && wipIntegrationName) {
-		return wipClaimTooltipMessage(wipIntegrationName);
-	}
-
 	if (blockReason === 'limit_reached') {
-		return `You've built the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations`;
+		return `You've claimed the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations`;
 	}
 
 	return undefined;
@@ -61,7 +52,6 @@ export function ClaimIntegrationButton({
 	integrationId,
 	integrationSlug,
 	disabled = false,
-	wipIntegrationName,
 	claimBlockReason,
 	size = 'sm',
 	className,
@@ -69,7 +59,6 @@ export function ClaimIntegrationButton({
 	integrationId: string;
 	integrationSlug: string;
 	disabled?: boolean;
-	wipIntegrationName?: string | null;
 	claimBlockReason?: ClaimBlockReason | null;
 	size?: 'sm' | 'lg';
 	className?: string;
@@ -78,7 +67,7 @@ export function ClaimIntegrationButton({
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const tooltip = disabled
-		? claimBlockTooltipMessage(claimBlockReason, wipIntegrationName)
+		? claimBlockTooltipMessage(claimBlockReason)
 		: undefined;
 
 	const handleClick = async () => {

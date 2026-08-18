@@ -135,15 +135,18 @@ describe('resolveClaimOutcome', () => {
 		assert.equal(queried, false);
 	});
 
-	it('blocks a genuinely new claim when the user is ineligible', async () => {
+	it('blocks a genuinely new claim when the user is at the claim cap', async () => {
 		const outcome = await resolveClaimOutcome(
 			{ action: 'insert' },
 			async () => ({
 				canClaim: false,
-				blockReason: 'wip',
+				blockReason: 'limit_reached',
 			}),
 		);
-		assert.deepEqual(outcome, { action: 'blocked', blockReason: 'wip' });
+		assert.deepEqual(outcome, {
+			action: 'blocked',
+			blockReason: 'limit_reached',
+		});
 	});
 
 	it('allows a new claim when the user is eligible', async () => {
