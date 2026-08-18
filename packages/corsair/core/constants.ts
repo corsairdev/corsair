@@ -43,12 +43,14 @@ export const BaseProviders = [
 	'asana',
 	'asindataapi',
 	'ayrshare',
-	'bitbucket',
+	'baselinker',
 	'betterstack',
 	'bigmailer',
+	'bitbucket',
 	'bitwarden',
 	'bluesky',
 	'boloforms',
+	'botpress',
 	'box',
 	'bugsnag',
 	'cal',
@@ -124,6 +126,7 @@ export const BaseProviders = [
 	'retailed',
 	'salesforce',
 	'sentry',
+	'serpapi',
 	'sharepoint',
 	'slack',
 	'spotify',
@@ -144,6 +147,7 @@ export const BaseProviders = [
 	'typeform',
 	'vapi',
 	'vercel',
+	'webflow',
 	'whatsapp',
 	'wiza',
 	'workday',
@@ -186,12 +190,14 @@ export const ProviderDisplayNames = {
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
 	ayrshare: 'Ayrshare',
-	bitbucket: 'Bitbucket',
+	baselinker: 'BaseLinker',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
+	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
+	botpress: 'Botpress',
 	box: 'Box',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
@@ -267,6 +273,7 @@ export const ProviderDisplayNames = {
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
 	sentry: 'Sentry',
+	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
 	spotify: 'Spotify',
@@ -287,6 +294,7 @@ export const ProviderDisplayNames = {
 	typeform: 'Typeform',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
+	webflow: 'Webflow',
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
 	workday: 'Workday',
@@ -336,19 +344,21 @@ export type AllProviders =
 	| 'asana'
 	| 'asindataapi'
 	| 'ayrshare'
-	| 'bitbucket'
+	| 'baselinker'
 	| 'betterstack'
 	| 'bigmailer'
+	| 'bitbucket'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'boloforms'
+	| 'botpress'
 	| 'box'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
 	| 'canva'
-	| 'circleci'
 	| 'canvas'
+	| 'circleci'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
@@ -417,6 +427,7 @@ export type AllProviders =
 	| 'retailed'
 	| 'salesforce'
 	| 'sentry'
+	| 'serpapi'
 	| 'sharepoint'
 	| 'slack'
 	| 'spotify'
@@ -437,6 +448,7 @@ export type AllProviders =
 	| 'typeform'
 	| 'vapi'
 	| 'vercel'
+	| 'webflow'
 	| 'whatsapp'
 	| 'wiza'
 	| 'workday'
