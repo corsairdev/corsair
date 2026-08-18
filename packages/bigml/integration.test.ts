@@ -5,8 +5,12 @@
  * also ignores this file, so CI never reaches the network. Run with:
  *   BIGML_USERNAME=… BIGML_API_KEY=… pnpm test:live
  *
+ * Source get/update also need BIGML_SOURCE_ID (a source this account owns).
+ * They skip when that env is absent so an empty account still passes.
+ *
  * Writes: one project is created and deleted; one external connector is
- * created without a password and deleted immediately.
+ * created without a password and deleted immediately. A configured source
+ * is renamed and restored.
  */
 import { BigmlAPIError, makeBigmlRequest } from './client';
 import {
@@ -27,7 +31,9 @@ import {
 
 const username = process.env.BIGML_USERNAME;
 const apiKey = process.env.BIGML_API_KEY;
+const sourceId = process.env.BIGML_SOURCE_ID;
 const describeLive = username && apiKey ? describe : describe.skip;
+const itSource = sourceId ? it : it.skip;
 
 type Ctx = Parameters<typeof Projects.list>[0];
 
@@ -97,18 +103,11 @@ describeLive('BigML live API', () => {
 	it('lists projects matching the official project schema', async () => {
 		const result = await Projects.list(ctx, { limit: 5 });
 		expect(Array.isArray(result.objects)).toBe(true);
-		expect(result.meta.total_count).toBeGreaterThan(0);
-		expect(BigmlProjectEntity.safeParse(result.objects[0]).success).toBe(true);
-	});
-
-	it('gets a project by resource id', async () => {
-		const listed = await Projects.list(ctx, { limit: 1 });
-		const id = listed.objects[0]?.resource;
-		expect(id).toMatch(/^project\//);
-		if (!id) throw new Error('expected a project');
-		const result = await Projects.get(ctx, { projectId: id });
-		expect(result.resource).toBe(id);
-		expect(BigmlProjectEntity.safeParse(result).success).toBe(true);
+		if (result.objects[0]) {
+			expect(BigmlProjectEntity.safeParse(result.objects[0]).success).toBe(
+				true,
+			);
+		}
 	});
 
 	it('creates, gets, and deletes a project', async () => {
@@ -137,32 +136,40 @@ describeLive('BigML live API', () => {
 
 	it('lists sources matching the official source schema', async () => {
 		const result = await Sources.list(ctx, { limit: 5 });
-		expect(result.meta.total_count).toBeGreaterThan(0);
-		expect(BigmlSourceEntity.safeParse(result.objects[0]).success).toBe(true);
-	});
-
-	it('gets a source including official fields_preview object', async () => {
-		const listed = await Sources.list(ctx, { limit: 1, filter: { type: 0 } });
-		const id = listed.objects[0]?.resource;
-		expect(id).toMatch(/^source\//);
-		if (!id) throw new Error('expected a source');
-		const result = await Sources.get(ctx, { sourceId: id });
-		expect(BigmlSourceEntity.safeParse(result).success).toBe(true);
-		if (result.fields_preview != null) {
-			expect(Array.isArray(result.fields_preview)).toBe(false);
-			expect(typeof result.fields_preview).toBe('object');
+		expect(Array.isArray(result.objects)).toBe(true);
+		if (result.objects[0]) {
+			expect(BigmlSourceEntity.safeParse(result.objects[0]).success).toBe(true);
 		}
 	});
 
-	it('updates a closed source name with PUT 202', async () => {
-		const listed = await Sources.list(ctx, { limit: 1 });
-		const source = listed.objects[0];
-		if (!source?.resource) throw new Error('expected a source');
-		const result = await Sources.update(ctx, {
-			sourceId: source.resource,
-			name: source.name ?? 'corsair-live-source',
-		});
-		expect(result.resource).toBe(source.resource);
+	itSource(
+		'gets a configured source including official fields_preview object',
+		async () => {
+			const result = await Sources.get(ctx, { sourceId: sourceId as string });
+			expect(result.resource).toBe(sourceId);
+			expect(BigmlSourceEntity.safeParse(result).success).toBe(true);
+			if (result.fields_preview != null) {
+				expect(Array.isArray(result.fields_preview)).toBe(false);
+				expect(typeof result.fields_preview).toBe('object');
+			}
+		},
+	);
+
+	itSource('updates a configured source name and restores it', async () => {
+		const original = await Sources.get(ctx, { sourceId: sourceId as string });
+		const originalName = original.name ?? 'corsair-live-source';
+		try {
+			const updated = await Sources.update(ctx, {
+				sourceId: sourceId as string,
+				name: `${originalName}-pr807`,
+			});
+			expect(updated.resource).toBe(sourceId);
+		} finally {
+			await Sources.update(ctx, {
+				sourceId: sourceId as string,
+				name: originalName,
+			});
+		}
 	});
 
 	it('strips credentials from list pagination links', async () => {

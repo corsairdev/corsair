@@ -23,7 +23,7 @@ export async function bigmlCall<T>(
  * absent key, so only `undefined` is stripped here.
  */
 export function compact<T extends Record<string, unknown>>(obj: T): T {
-	const result = {} as T;
+	const result = Object.create(null) as T;
 	for (const key of Object.keys(obj) as (keyof T)[]) {
 		if (obj[key] !== undefined) result[key] = obj[key];
 	}

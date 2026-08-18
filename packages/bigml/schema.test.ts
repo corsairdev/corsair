@@ -254,6 +254,22 @@ describe('entity primary keys', () => {
 			).toBe('kept');
 		}
 	});
+
+	it.each(entities)(
+		'drops webhook.secret on a parsed %s entity',
+		(_label, entity) => {
+			const parsed = entity.parse({
+				resource: 'project/abc123',
+				webhook: {
+					url: 'https://example.com/hook',
+					secret: 's3cr3t',
+					extra: 1,
+				},
+			});
+			expect(parsed.webhook).toEqual({ url: 'https://example.com/hook' });
+			expect(parsed.webhook).not.toHaveProperty('secret');
+		},
+	);
 });
 
 describe('source fields_preview', () => {

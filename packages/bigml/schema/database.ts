@@ -53,6 +53,15 @@ export const BigmlWebhook = z
 	.optional();
 export type BigmlWebhook = z.infer<typeof BigmlWebhook>;
 
+/** Cached webhook: url only. `secret` is stripped; unknown keys are not kept. */
+export const BigmlPersistedWebhook = z
+	.object({
+		url: S,
+	})
+	.nullable()
+	.optional();
+export type BigmlPersistedWebhook = z.infer<typeof BigmlPersistedWebhook>;
+
 /**
  * Envelope every BigML resource carries.
  * Project: https://bigml.com/api/projects?id=project-properties
@@ -91,7 +100,7 @@ const commonResourceFields = {
 	/** User tags. */
 	tags: StrArray,
 	updated: S,
-	webhook: BigmlWebhook,
+	webhook: BigmlPersistedWebhook,
 };
 
 /**

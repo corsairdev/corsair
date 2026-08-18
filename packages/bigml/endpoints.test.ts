@@ -11,6 +11,7 @@ import {
 	Projects,
 	Sources,
 } from './endpoints';
+import { compact } from './endpoints/shared';
 import { bigmlEndpointSchemas } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -677,5 +678,15 @@ describe('request bodies', () => {
 		expect(url.searchParams.get('limit')).toBe('20');
 		expect(url.searchParams.get('offset')).toBe('0');
 		expect(url.searchParams.get('order_by')).toBe('size');
+	});
+
+	it('copies an own __proto__ key without changing the result prototype', () => {
+		const input = Object.create(null) as Record<string, unknown>;
+		input.__proto__ = { polluted: true };
+		input.name = 'x';
+		const result = compact(input);
+		expect(Object.getPrototypeOf(result)).toBeNull();
+		expect(Object.hasOwn(result, '__proto__')).toBe(true);
+		expect(Object.prototype).not.toHaveProperty('polluted');
 	});
 });
