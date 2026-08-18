@@ -31,7 +31,9 @@ export function generateProdKek(): string {
 /**
  * Re-key every dev integration row for prod: re-wrap each DEK from the dev KEK to
  * the prod KEK, carrying the sealed `config` over untouched. No secret is
- * decrypted. Rows without a DEK have nothing encrypted to migrate and are skipped.
+ * decrypted. Rows without a DEK, or with no sealed config, have nothing to
+ * migrate and are skipped — so a re-run can't overwrite a populated prod row
+ * with an empty config.
  */
 export async function buildMigrationPayload(
 	rows: DevIntegrationRow[],
@@ -40,7 +42,9 @@ export async function buildMigrationPayload(
 ): Promise<MigrationPayload> {
 	const integrations = await Promise.all(
 		rows
-			.filter((row) => Boolean(row.dek))
+			.filter(
+				(row) => Boolean(row.dek) && Object.keys(row.config ?? {}).length > 0,
+			)
 			.map((row) => rewrapIntegrationRow(row, devKek, prodKek)),
 	);
 	return { integrations };

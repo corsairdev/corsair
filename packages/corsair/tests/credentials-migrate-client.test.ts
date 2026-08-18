@@ -49,13 +49,37 @@ describe('buildMigrationPayload', () => {
 	it('skips rows with no DEK (nothing to migrate)', async () => {
 		const rawDek = generateDEK();
 		const rows = [
-			{ name: 'slack', dek: await encryptDEK(rawDek, DEV_KEK), config: {} },
-			{ name: 'empty', dek: null, config: {} },
+			{
+				name: 'slack',
+				dek: await encryptDEK(rawDek, DEV_KEK),
+				config: { bot_token: encryptWithDEK('xoxb-secret', rawDek) },
+			},
+			{
+				name: 'empty',
+				dek: null,
+				config: { token: encryptWithDEK('unused', rawDek) },
+			},
 		];
 
 		const payload = await buildMigrationPayload(rows, DEV_KEK, PROD_KEK);
 
 		expect(payload.integrations.map((i) => i.name)).toEqual(['slack']);
+	});
+
+	it('skips a row with a DEK but no sealed config — never blanks a prod row', async () => {
+		const rawDek = generateDEK();
+		const rows = [
+			{
+				name: 'configured',
+				dek: await encryptDEK(rawDek, DEV_KEK),
+				config: { bot_token: encryptWithDEK('xoxb-secret', rawDek) },
+			},
+			{ name: 'blank', dek: await encryptDEK(rawDek, DEV_KEK), config: {} },
+		];
+
+		const payload = await buildMigrationPayload(rows, DEV_KEK, PROD_KEK);
+
+		expect(payload.integrations.map((i) => i.name)).toEqual(['configured']);
 	});
 
 	it('never leaks a KEK or plaintext secret into the payload', async () => {

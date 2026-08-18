@@ -119,6 +119,13 @@ export default class ProdCommand extends BaseCommand {
 			process.exit(1);
 		}
 
+		if (!internal.kek?.trim()) {
+			console.error(
+				'[corsair]: No development CORSAIR_KEK configured. Set CORSAIR_KEK to the key your dev credentials were created with, then re-run.',
+			);
+			process.exit(1);
+		}
+
 		let payload: Awaited<ReturnType<typeof buildMigrationPayload>>;
 		try {
 			const rows = await readIntegrationRows(internal.database);
