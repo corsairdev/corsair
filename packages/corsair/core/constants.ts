@@ -34,6 +34,7 @@ export const BaseProviders = [
 	'ambientweather',
 	'amcards',
 	'amplitude',
+	'apaleo',
 	'apibible',
 	'apify',
 	'apilabz',
@@ -49,6 +50,9 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'box',
+	'cal',
+	'calendly',
+	'canva',
 	'bugsnag',
 	'canvas',
 	'cal',
@@ -175,6 +179,7 @@ export const ProviderDisplayNames = {
 	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	apaleo: 'Apaleo',
 	apibible: 'API.Bible',
 	apify: 'Apify',
 	apilabz: 'API Labz',
@@ -190,6 +195,9 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	box: 'Box',
+	cal: 'Cal',
+	calendly: 'Calendly',
+	canva: 'Canva',
 	bugsnag: 'BugSnag',
 	canvas: 'Canvas LMS',
 	cal: 'Cal',
@@ -323,6 +331,7 @@ export type AllProviders =
 	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
+	| 'apaleo'
 	| 'apibible'
 	| 'apify'
 	| 'apilabz'
