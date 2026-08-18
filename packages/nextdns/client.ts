@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 /**
@@ -7,6 +11,22 @@ import { request } from 'corsair/http';
  * the `my.nextdns.io` dashboard and `nextdns.io` marketing site.
  */
 const NEXTDNS_API_BASE = 'https://api.nextdns.io';
+
+const MUTATION_METHODS = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
+
+/** Avoid re-submitting writes if the transport layer retries a 429. */
+const NEXTDNS_MUTATION_RATE_LIMIT: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
 
 export type NextDNSRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -63,5 +83,11 @@ export async function makeNextDNSRequest<T>(
 	// `error-handlers.ts`'s matchers depend on that concrete type. Wrapping
 	// it in a generic error class here (the generator's original scaffold
 	// did this) would strip the status code before any handler ever saw it.
-	return await request<T>(config, requestOptions);
+	return await request<T>(
+		config,
+		requestOptions,
+		MUTATION_METHODS.has(method)
+			? { rateLimitConfig: NEXTDNS_MUTATION_RATE_LIMIT }
+			: undefined,
+	);
 }
