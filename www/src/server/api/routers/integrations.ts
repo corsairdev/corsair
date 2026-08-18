@@ -575,7 +575,6 @@ export const integrationsRouter = createTRPCRouter({
 				totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
 				q: input.q?.trim() ?? '',
 				tags: input.tags ?? [],
-				wipIntegrationName: claimEligibility?.wipIntegrationName ?? null,
 				claimBlockReason: claimEligibility?.blockReason ?? null,
 			};
 		}),
@@ -923,7 +922,6 @@ export const integrationsRouter = createTRPCRouter({
 				authSchemes: authSchemeRows,
 				...claimFields,
 				canClaimAnother: claimEligibility?.canClaim ?? true,
-				wipIntegrationName: claimEligibility?.wipIntegrationName ?? null,
 				claimBlockReason: claimEligibility?.blockReason ?? null,
 				claimExpiredForCurrentUser,
 				timeline: statusHistory.map((event) => ({
