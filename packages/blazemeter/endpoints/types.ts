@@ -14,6 +14,33 @@ import {
 	BlazemeterWorkspaceEntity,
 	BlazemeterWorkspaceUserEntity,
 } from '../schema/database';
+import {
+	BlazemeterCardIssuerResult,
+	BlazemeterDataModelResult,
+	BlazemeterDataModelValidationResult,
+	BlazemeterDependencyResult,
+	BlazemeterGeneratedRow,
+	BlazemeterGeneratorFunctionResult,
+	BlazemeterHealthResult,
+	BlazemeterInviteResult,
+	BlazemeterMasterResult,
+	BlazemeterMasterSummaryResult,
+	BlazemeterMultiTestResult,
+	BlazemeterPrivateLocationAgentResult,
+	BlazemeterPrivateLocationResult,
+	BlazemeterRegionResult,
+	BlazemeterScheduleResult,
+	BlazemeterSearchHitResult,
+	BlazemeterSeedListResult,
+	BlazemeterServiceMockTemplateResult,
+	BlazemeterSessionResult,
+	BlazemeterSharedFolderResult,
+	BlazemeterTagResult,
+	BlazemeterTestFileResult,
+	BlazemeterTransactionResult,
+	BlazemeterValidationResult,
+	BlazemeterVersionResult,
+} from '../schema/responses';
 
 const ParamSchemaByType = {
 	string: z.string(),
@@ -59,29 +86,47 @@ export const BlazemeterEndpointInputSchemas = Object.fromEntries(
  * Pagination fields are documented on
  * https://help.blazemeter.com/apidocs/performance/basics.htm
  *
+ * TDM uses the same envelope
+ * (https://help.blazemeter.com/apidocs/test-data/introduction_basics.htm).
  * Asset Repository uses `{ timestamp, request_id, result }`
- * (https://help.blazemeter.com/apidocs/test-data/create.htm). TDM and Mock
- * Services do not share that envelope.
+ * (https://help.blazemeter.com/apidocs/test-data/create.htm).
+ * Mock Services uses camelCase `{ apiVersion, requestId, result }`
+ * (https://help.blazemeter.com/apidocs/service-virtualization/template_update_properties.htm).
  *
  * Output schemas are consumed by `corsair/core/inspect` for docs, form schemas,
  * and MCP tool descriptions — they are not parsed at runtime.
  */
-export const BlazemeterCoreResponseSchema = z.object({
-	limit: z.number().optional(),
-	skip: z.number().optional(),
-	total: z.number().optional(),
-	hidden: z.number().optional(),
-	api_version: z.number().optional(),
-	error: z.unknown().nullish(),
-	result: z.unknown(),
-	request_id: z.string().optional(),
-});
+export const BlazemeterCoreResponseSchema = z
+	.object({
+		limit: z.number().optional(),
+		skip: z.number().optional(),
+		total: z.number().optional(),
+		hidden: z.number().optional(),
+		api_version: z.number().optional(),
+		error: z.unknown().nullish(),
+		result: z.unknown(),
+		request_id: z.string().optional(),
+	})
+	.loose();
 
 export const BlazemeterAssetResponseSchema = z
 	.object({
 		timestamp: z.string().optional(),
 		request_id: z.string().optional(),
 		result: z.unknown(),
+	})
+	.loose();
+
+export const BlazemeterMockResponseSchema = z
+	.object({
+		apiVersion: z.number().optional(),
+		error: z.unknown().nullish(),
+		limit: z.number().optional(),
+		link: z.string().optional(),
+		requestId: z.string().optional(),
+		result: z.unknown(),
+		skip: z.number().optional(),
+		total: z.number().optional(),
 	})
 	.loose();
 
@@ -93,49 +138,126 @@ function assetEnvelope(result: z.ZodType) {
 	return BlazemeterAssetResponseSchema.extend({ result });
 }
 
+function mockEnvelope(result: z.ZodType) {
+	return BlazemeterMockResponseSchema.extend({ result });
+}
+
 const listOrOne = <T extends z.ZodType>(schema: T) =>
 	z.union([schema, z.array(schema)]);
 
-const OUTPUT_RESULT_SCHEMAS: Partial<
-	Record<BlazemeterOperationKey, z.ZodType>
+const Flag = z.boolean();
+const Open = z.record(z.string(), z.unknown());
+
+export const BlazemeterEndpointOutputSchemas: Record<
+	BlazemeterOperationKey,
+	z.ZodType
 > = {
-	'accounts.list': coreEnvelope(z.array(BlazemeterAccountEntity)),
-	'workspaces.get': coreEnvelope(BlazemeterWorkspaceEntity),
-	'workspaces.list': coreEnvelope(z.array(BlazemeterWorkspaceEntity)),
+	'transactions.convert': mockEnvelope(Open),
+	'schedules.create': coreEnvelope(BlazemeterScheduleResult),
+	'assetDependencies.create': assetEnvelope(BlazemeterDependencyResult),
+	'multiTests.create': coreEnvelope(BlazemeterMultiTestResult),
+	'privateLocations.create': coreEnvelope(BlazemeterPrivateLocationResult),
+	'privateLocations.createAgent': coreEnvelope(
+		BlazemeterPrivateLocationAgentResult,
+	),
 	'projects.create': coreEnvelope(BlazemeterProjectEntity),
+	'search.execute': coreEnvelope(z.array(BlazemeterSearchHitResult)),
+	'tags.create': coreEnvelope(BlazemeterTagResult),
+	'tests.create': coreEnvelope(BlazemeterTestEntity),
+	'assets.create': assetEnvelope(BlazemeterAssetEntity),
+	'packages.create': assetEnvelope(BlazemeterPackageEntity),
+	'transactions.create': mockEnvelope(listOrOne(BlazemeterTransactionResult)),
+	'schedules.remove': coreEnvelope(Flag),
+	'privateLocations.removeWorkspace': coreEnvelope(Flag),
+	'projects.remove': coreEnvelope(Flag),
+	'tests.removeFile': coreEnvelope(Flag),
+	'tests.remove': coreEnvelope(Flag),
+	'assets.remove': assetEnvelope(Flag),
+	'assetDependencies.remove': assetEnvelope(Flag),
+	'assetDependencies.removeMatching': assetEnvelope(Flag),
+	'workspaces.removeLogs': coreEnvelope(Flag),
+	'workspaces.removeManagers': coreEnvelope(Flag),
+	'packages.remove': assetEnvelope(Flag),
+	'tests.duplicate': coreEnvelope(BlazemeterTestEntity),
+	'packages.export': assetEnvelope(Open),
+	'packages.exportMany': assetEnvelope(Open),
+	'testData.generateFromModel': coreEnvelope(z.array(BlazemeterGeneratedRow)),
+	'testData.generate': coreEnvelope(z.array(BlazemeterGeneratedRow)),
+	'schedules.get': coreEnvelope(BlazemeterScheduleResult),
+	'schedules.list': coreEnvelope(z.array(BlazemeterScheduleResult)),
+	'accounts.list': coreEnvelope(z.array(BlazemeterAccountEntity)),
+	'assetDependencies.forAsset': assetEnvelope(
+		z.array(BlazemeterDependencyResult),
+	),
+	'generator.functions': coreEnvelope(
+		z.array(BlazemeterGeneratorFunctionResult),
+	),
+	'generator.seedLists': coreEnvelope(z.array(BlazemeterSeedListResult)),
+	'info.health': assetEnvelope(BlazemeterHealthResult),
+	'info.version': assetEnvelope(BlazemeterVersionResult),
+	'masters.summary': coreEnvelope(BlazemeterMasterSummaryResult),
+	'multiTests.get': coreEnvelope(BlazemeterMultiTestResult),
+	'multiTests.list': coreEnvelope(z.array(BlazemeterMultiTestResult)),
+	'privateLocations.list': coreEnvelope(
+		z.array(BlazemeterPrivateLocationResult),
+	),
 	'projects.get': coreEnvelope(BlazemeterProjectEntity),
 	'projects.list': coreEnvelope(z.array(BlazemeterProjectEntity)),
-	'projects.update': coreEnvelope(BlazemeterProjectEntity),
-	'user.projects': coreEnvelope(z.array(BlazemeterProjectEntity)),
-	'tests.create': coreEnvelope(BlazemeterTestEntity),
+	'regions.list': coreEnvelope(z.array(BlazemeterRegionResult)),
+	'search.metadata': coreEnvelope(Open),
+	'sharedFolders.list': coreEnvelope(z.array(BlazemeterSharedFolderResult)),
+	'tags.list': mockEnvelope(z.array(BlazemeterTagResult)),
 	'tests.get': coreEnvelope(listOrOne(BlazemeterTestEntity)),
+	'tests.validations': coreEnvelope(z.array(BlazemeterValidationResult)),
 	'tests.list': coreEnvelope(z.array(BlazemeterTestEntity)),
-	'tests.update': coreEnvelope(BlazemeterTestEntity),
-	'tests.duplicate': coreEnvelope(BlazemeterTestEntity),
+	'tests.files': coreEnvelope(z.array(BlazemeterTestFileResult)),
 	'user.get': coreEnvelope(BlazemeterUserEntity),
-	'workspaces.users': coreEnvelope(z.array(BlazemeterWorkspaceUserEntity)),
-	'assets.create': assetEnvelope(BlazemeterAssetEntity),
+	'user.activeSessions': coreEnvelope(z.array(BlazemeterSessionResult)),
+	'user.invites': coreEnvelope(z.array(BlazemeterInviteResult)),
+	'user.projects': coreEnvelope(z.array(BlazemeterProjectEntity)),
+	'serviceMockTemplates.get': mockEnvelope(BlazemeterServiceMockTemplateResult),
 	'assets.get': assetEnvelope(BlazemeterAssetEntity),
+	'assets.data': assetEnvelope(Open),
+	'assetDependencies.get': assetEnvelope(BlazemeterDependencyResult),
 	'assets.list': assetEnvelope(z.array(BlazemeterAssetEntity)),
-	'assets.update': assetEnvelope(BlazemeterAssetEntity),
-	'packages.create': assetEnvelope(BlazemeterPackageEntity),
+	'assetDependencies.list': assetEnvelope(z.array(BlazemeterDependencyResult)),
+	'testData.getModel': coreEnvelope(BlazemeterDataModelResult),
+	'workspaces.get': coreEnvelope(BlazemeterWorkspaceEntity),
 	'packages.get': assetEnvelope(BlazemeterPackageEntity),
+	'packages.dependencies': assetEnvelope(Open),
 	'packages.list': assetEnvelope(z.array(BlazemeterPackageEntity)),
+	'serviceMockTemplates.list': mockEnvelope(
+		z.array(BlazemeterServiceMockTemplateResult),
+	),
+	'transactions.list': mockEnvelope(z.array(BlazemeterTransactionResult)),
+	'workspaces.users': coreEnvelope(z.array(BlazemeterWorkspaceUserEntity)),
+	'workspaces.list': coreEnvelope(z.array(BlazemeterWorkspaceEntity)),
+	'packages.import': assetEnvelope(BlazemeterPackageEntity),
+	'generator.cardIssuers': coreEnvelope(z.array(BlazemeterCardIssuerResult)),
+	'testData.publish': coreEnvelope(Open),
+	'user.register': coreEnvelope(BlazemeterUserEntity),
+	'tests.start': coreEnvelope(BlazemeterMasterResult),
+	'masters.stop': coreEnvelope(Flag),
+	'tests.stop': coreEnvelope(Flag),
+	'user.terminateSessions': coreEnvelope(Flag),
+	'workspaces.terminateMasters': coreEnvelope(
+		z.union([Flag, z.array(BlazemeterMasterResult), Open]),
+	),
+	'schedules.update': coreEnvelope(BlazemeterScheduleResult),
+	'projects.update': coreEnvelope(BlazemeterProjectEntity),
+	'tests.update': coreEnvelope(BlazemeterTestEntity),
+	'assets.update': assetEnvelope(BlazemeterAssetEntity),
 	'packages.update': assetEnvelope(BlazemeterPackageEntity),
+	'packages.updateDependencies': assetEnvelope(Open),
+	'serviceMockTemplates.update': mockEnvelope(
+		BlazemeterServiceMockTemplateResult,
+	),
+	'workspaces.updateUser': coreEnvelope(BlazemeterWorkspaceUserEntity),
+	'assetDependencies.updateForAsset': assetEnvelope(
+		z.array(BlazemeterDependencyResult),
+	),
+	'tests.uploadFile': coreEnvelope(listOrOne(BlazemeterTestFileResult)),
+	'assets.uploadData': assetEnvelope(BlazemeterAssetEntity),
+	'tests.validate': coreEnvelope(z.union([Flag, Open])),
+	'testData.validateModel': coreEnvelope(BlazemeterDataModelValidationResult),
 };
-
-function outputSchemaFor(definition: BlazemeterOperationDefinition): z.ZodType {
-	const specific =
-		OUTPUT_RESULT_SCHEMAS[definition.key as BlazemeterOperationKey];
-	if (specific) return specific;
-	if (definition.api === 'core') return BlazemeterCoreResponseSchema;
-	if (definition.api === 'asset') return BlazemeterAssetResponseSchema;
-	return z.unknown();
-}
-
-export const BlazemeterEndpointOutputSchemas = Object.fromEntries(
-	BLAZEMETER_OPERATIONS.map((definition) => [
-		definition.key,
-		outputSchemaFor(definition),
-	]),
-) as unknown as Record<BlazemeterOperationKey, z.ZodType>;

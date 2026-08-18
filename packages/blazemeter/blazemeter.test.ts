@@ -524,6 +524,47 @@ describe('BlazeMeter endpoint execution', () => {
 	});
 });
 
+const BOOLEAN_CORE_RESULTS = new Set([
+	'schedules.remove',
+	'privateLocations.removeWorkspace',
+	'projects.remove',
+	'tests.removeFile',
+	'tests.remove',
+	'workspaces.removeLogs',
+	'workspaces.removeManagers',
+	'masters.stop',
+	'tests.stop',
+	'user.terminateSessions',
+	'workspaces.terminateMasters',
+	'tests.validate',
+]);
+
+function sampleCoreResult(key: string): unknown {
+	if (BOOLEAN_CORE_RESULTS.has(key)) return true;
+	if (key.startsWith('schedules.') || key.startsWith('privateLocations.')) {
+		return key.endsWith('.list') ? [{ id: 'id-1' }] : { id: 'id-1' };
+	}
+	if (
+		key === 'regions.list' ||
+		key === 'sharedFolders.list' ||
+		key === 'user.activeSessions' ||
+		key === 'user.invites' ||
+		key === 'tests.files' ||
+		key === 'tests.validations' ||
+		key === 'search.execute'
+	) {
+		return [{ id: 'id-1' }];
+	}
+	if (
+		key.endsWith('.list') ||
+		key === 'user.projects' ||
+		key === 'workspaces.users'
+	) {
+		return [{ id: 1 }];
+	}
+	return { id: 1 };
+}
+
 describe('BlazeMeter response contracts', () => {
 	it('types core API responses with the documented v4 envelope', () => {
 		const coreOperations = BLAZEMETER_OPERATIONS.filter(
@@ -532,15 +573,11 @@ describe('BlazeMeter response contracts', () => {
 		expect(coreOperations).not.toHaveLength(0);
 
 		for (const definition of coreOperations) {
-			const list =
-				definition.key.endsWith('.list') ||
-				definition.key === 'user.projects' ||
-				definition.key === 'workspaces.users';
 			expect(
 				BlazemeterEndpointOutputSchemas[definition.key].safeParse({
 					api_version: 4,
 					error: null,
-					result: list ? [{ id: 1 }] : { id: 1 },
+					result: sampleCoreResult(definition.key),
 					request_id: 'req-1',
 				}).success,
 			).toBe(true);
@@ -552,18 +589,32 @@ describe('BlazeMeter response contracts', () => {
 		).toBe(false);
 	});
 
-	it('leaves tdm and mock responses unconstrained', () => {
-		const others = BLAZEMETER_OPERATIONS.filter(
-			({ api }) => api === 'tdm' || api === 'mock',
-		);
-		expect(others).not.toHaveLength(0);
+	it('types tdm and mock responses with documented envelopes', () => {
+		expect(
+			BlazemeterEndpointOutputSchemas['testData.getModel'].safeParse({
+				api_version: 1,
+				error: null,
+				result: { id: 'datamodel/Pet', title: 'Pet', type: 'object' },
+				request_id: 'req-1',
+			}).success,
+		).toBe(true);
+		expect(
+			BlazemeterEndpointOutputSchemas['serviceMockTemplates.get'].safeParse({
+				apiVersion: 1,
+				error: null,
+				result: { id: 8, name: 'template' },
+				requestId: 'req-1',
+			}).success,
+		).toBe(true);
+	});
 
-		for (const definition of others) {
+	it('rejects a non-envelope payload for every operation', () => {
+		for (const definition of BLAZEMETER_OPERATIONS) {
 			expect(
 				BlazemeterEndpointOutputSchemas[definition.key].safeParse(
 					'anything at all',
 				).success,
-			).toBe(true);
+			).toBe(false);
 		}
 	});
 
