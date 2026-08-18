@@ -4,6 +4,7 @@ import { Command } from 'commander';
 import { version } from '../package.json';
 import AuthCommand from './commands/auth.command';
 import type BaseCommand from './commands/base.command';
+import HttpCommand from './commands/http.command';
 import ListCommand from './commands/list.command';
 import OnedriveSubscribeCommand from './commands/onedrive-subscribe.command';
 import SchemaCommand from './commands/schema.command';
@@ -37,6 +38,7 @@ function createProgram(): Command {
 		new SchemaCommand(),
 		new ScriptCommand(),
 		new StudioCommand(),
+		new HttpCommand(),
 	];
 
 	COMMANDS.forEach((command) => {

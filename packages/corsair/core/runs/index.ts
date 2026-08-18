@@ -5,29 +5,33 @@ import {
 	denyRun,
 	getRun,
 	listRuns,
+	listWorkflowRuns,
 } from '../../hub/runs';
 import type { HubConfig } from '../../hub/types';
 
-export type { WorkflowRun, WorkflowRunStep } from '../../hub/runs';
-
-/** Handle for one run: `corsair.withTenant(t).runs(id).approve()`. */
-export interface RunHandle {
-	get(): Promise<WorkflowRun>;
-	approve(): Promise<void>;
-	deny(): Promise<void>;
-	cancel(): Promise<void>;
-}
+export type {
+	WorkflowRun,
+	WorkflowRunStatus,
+	WorkflowRunStep,
+} from '../../hub/runs';
 
 /**
- * Read and act on a tenant's workflow runs:
- *   await corsair.withTenant('dev').runs.list({ limit: 20 })
- *   await corsair.withTenant('dev').runs.get(runId)
- *   await corsair.withTenant('dev').runs(runId).approve()
+ * This tenant's workflow runs, under the workflows plane — the cross-workflow
+ * activity feed (`list`), one workflow's runs (`list({ workflowId })`), plus
+ * `get` and approve/deny/cancel by run id:
+ *   await corsair.workflows.runs.list()
+ *   await corsair.workflows.runs.list({ workflowId })
+ *   await corsair.workflows.runs.get(runId)
+ *   await corsair.workflows.runs.approve(runId)   // .deny / .cancel
  */
 export interface CorsairRunsNamespace {
-	(runId: string): RunHandle;
-	list(opts?: { limit?: number }): Promise<WorkflowRun[]>;
+	list(opts?: { workflowId?: string }): Promise<WorkflowRun[]>;
 	get(runId: string): Promise<WorkflowRun>;
+	/** Approve a run that is paused awaiting approval. */
+	approve(runId: string): Promise<void>;
+	/** Deny a run that is paused awaiting approval. */
+	deny(runId: string): Promise<void>;
+	cancel(runId: string): Promise<void>;
 }
 
 export function buildRunsNamespace(
@@ -37,22 +41,23 @@ export function buildRunsNamespace(
 	const requireHub = (): HubConfig => {
 		if (!hub) {
 			throw new Error(
-				'corsair.runs requires Hub to be configured. Pass `hub` to createCorsair({ hub: { projectApiKey, ... } }).',
+				'corsair.workflows.runs requires Hub to be configured. Pass `hub` to createCorsair({ hub: { projectApiKey, ... } }).',
 			);
 		}
 		return hub;
 	};
 
-	const namespace = ((runId: string): RunHandle => ({
-		get: () => getRun(requireHub(), { runId, tenantId }),
-		approve: () => approveRun(requireHub(), { runId, tenantId }),
-		deny: () => denyRun(requireHub(), { runId, tenantId }),
-		cancel: () => cancelRun(requireHub(), { runId, tenantId }),
-	})) as CorsairRunsNamespace;
-
-	namespace.list = (opts) =>
-		listRuns(requireHub(), { tenantId, limit: opts?.limit });
-	namespace.get = (runId) => getRun(requireHub(), { runId, tenantId });
-
-	return namespace;
+	return {
+		list: (opts) =>
+			opts?.workflowId
+				? listWorkflowRuns(requireHub(), {
+						workflowId: opts.workflowId,
+						tenantId,
+					})
+				: listRuns(requireHub(), { tenantId }),
+		get: (runId) => getRun(requireHub(), { runId, tenantId }),
+		approve: (runId) => approveRun(requireHub(), { runId, tenantId }),
+		deny: (runId) => denyRun(requireHub(), { runId, tenantId }),
+		cancel: (runId) => cancelRun(requireHub(), { runId, tenantId }),
+	};
 }
