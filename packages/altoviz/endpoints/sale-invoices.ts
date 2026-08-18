@@ -53,7 +53,7 @@ export const get: AltovizEndpoints['saleInvoices']['get'] = async (
 ) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['saleInvoicesGet']
-	>(`v1/saleinvoices/${input.invoiceId}`, ctx.key);
+	>(`v1/saleinvoices/{id}`, ctx.key, { path: { id: input.invoiceId } });
 
 	await logEventFromContext(
 		ctx,
@@ -114,13 +114,10 @@ export const remove: AltovizEndpoints['saleInvoices']['delete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAltovizRequest<unknown>(
-		`v1/saleinvoices/${input.invoiceId}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-		},
-	);
+	await makeAltovizRequest<unknown>('v1/saleinvoices/{id}', ctx.key, {
+		method: 'DELETE',
+		path: { id: input.invoiceId },
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -144,8 +141,9 @@ export const download: AltovizEndpoints['saleInvoices']['download'] = async (
 	input,
 ) => {
 	const body = await makeAltovizRequest<string>(
-		`v1/saleinvoices/download/${input.invoiceId}`,
+		'v1/saleinvoices/download/{id}',
 		ctx.key,
+		{ path: { id: input.invoiceId } },
 	);
 
 	await logEventFromContext(

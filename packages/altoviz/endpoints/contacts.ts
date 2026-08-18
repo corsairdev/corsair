@@ -44,7 +44,7 @@ export const create: AltovizEndpoints['contacts']['create'] = async (
 export const get: AltovizEndpoints['contacts']['get'] = async (ctx, input) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['contactsGet']
-	>(`v1/contacts/${input.contactId}`, ctx.key);
+	>(`v1/contacts/{id}`, ctx.key, { path: { id: input.contactId } });
 
 	await cacheContact(ctx.db.contacts, result);
 

@@ -58,8 +58,9 @@ describeLive('Altoviz live', () => {
 	afterAll(async () => {
 		if (!customerId) return;
 		try {
-			await makeAltovizRequest(`v1/customers/${customerId}`, key, {
+			await makeAltovizRequest('v1/customers/{id}', key, {
 				method: 'DELETE',
+				path: { id: customerId },
 			});
 		} catch (error) {
 			if (!(error instanceof AltovizAPIError && error.status === 404)) {
@@ -147,15 +148,18 @@ describeLive('Altoviz live', () => {
 		expect(created.id).toEqual(expect.any(Number));
 		customerId = created.id;
 
-		const got = await makeAltovizRequest(`v1/customers/${created.id}`, key);
+		const got = await makeAltovizRequest('v1/customers/{id}', key, {
+			path: { id: created.id },
+		});
 		const parsed = AltovizCustomerEntity.safeParse(got);
 		if (!parsed.success) console.error(issues(parsed.error));
 		expect(parsed.success).toBe(true);
 		expect(parsed.data?.id).toBe(created.id);
 		expect(parsed.data?.type).toBe('Business');
 
-		await makeAltovizRequest(`v1/customers/${created.id}`, key, {
+		await makeAltovizRequest('v1/customers/{id}', key, {
 			method: 'DELETE',
+			path: { id: created.id },
 		});
 		customerId = undefined;
 	});

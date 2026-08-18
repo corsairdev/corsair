@@ -44,8 +44,9 @@ export const upload: AltovizEndpoints['purchaseInvoices']['upload'] = async (
 export const download: AltovizEndpoints['purchaseInvoices']['download'] =
 	async (ctx, input) => {
 		const body = await makeAltovizRequest<string>(
-			`v1/purchaseinvoices/download/${input.purchaseInvoiceId}`,
+			'v1/purchaseinvoices/download/{id}',
 			ctx.key,
+			{ path: { id: input.purchaseInvoiceId } },
 		);
 
 		await logEventFromContext(

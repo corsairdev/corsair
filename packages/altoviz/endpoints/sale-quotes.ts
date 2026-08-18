@@ -58,8 +58,9 @@ export const remove: AltovizEndpoints['saleQuotes']['delete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAltovizRequest<unknown>(`v1/salequotes/${input.quoteId}`, ctx.key, {
+	await makeAltovizRequest<unknown>('v1/salequotes/{id}', ctx.key, {
 		method: 'DELETE',
+		path: { id: input.quoteId },
 	});
 
 	await logEventFromContext(

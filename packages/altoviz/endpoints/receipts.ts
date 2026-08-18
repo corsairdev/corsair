@@ -52,8 +52,9 @@ export const update: AltovizEndpoints['receipts']['update'] = async (
 	input,
 ) => {
 	const current = await makeAltovizRequest<ReceiptOutput>(
-		`v1/receipts/${input.receiptId}`,
+		'v1/receipts/{id}',
 		ctx.key,
+		{ path: { id: input.receiptId } },
 	);
 
 	const body = compactBody({
@@ -75,7 +76,11 @@ export const update: AltovizEndpoints['receipts']['update'] = async (
 
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['receiptsUpdate']
-	>(`v1/receipts/${input.receiptId}`, ctx.key, { method: 'PUT', body });
+	>('v1/receipts/{id}', ctx.key, {
+		method: 'PUT',
+		body,
+		path: { id: input.receiptId },
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -89,7 +94,7 @@ export const update: AltovizEndpoints['receipts']['update'] = async (
 export const get: AltovizEndpoints['receipts']['get'] = async (ctx, input) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['receiptsGet']
-	>(`v1/receipts/${input.receiptId}`, ctx.key);
+	>(`v1/receipts/{id}`, ctx.key, { path: { id: input.receiptId } });
 
 	await logEventFromContext(
 		ctx,
@@ -139,8 +144,9 @@ export const remove: AltovizEndpoints['receipts']['delete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAltovizRequest<unknown>(`v1/receipts/${input.receiptId}`, ctx.key, {
+	await makeAltovizRequest<unknown>('v1/receipts/{id}', ctx.key, {
 		method: 'DELETE',
+		path: { id: input.receiptId },
 	});
 
 	await logEventFromContext(

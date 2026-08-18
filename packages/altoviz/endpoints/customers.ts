@@ -75,8 +75,9 @@ export const update: AltovizEndpoints['customers']['update'] = async (
 	input,
 ) => {
 	const current = await makeAltovizRequest<CustomerOutput>(
-		`v1/customers/${input.customerId}`,
+		'v1/customers/{id}',
 		ctx.key,
+		{ path: { id: input.customerId } },
 	);
 
 	const family =
@@ -116,7 +117,11 @@ export const update: AltovizEndpoints['customers']['update'] = async (
 
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['customersUpdate']
-	>(`v1/customers/${input.customerId}`, ctx.key, { method: 'PUT', body });
+	>('v1/customers/{id}', ctx.key, {
+		method: 'PUT',
+		body,
+		path: { id: input.customerId },
+	});
 
 	await cacheCustomer(ctx.db.customers, result);
 
@@ -143,19 +148,17 @@ export const remove: AltovizEndpoints['customers']['delete'] = async (
 		ctx.db.contacts,
 		() =>
 			makeAltovizRequest<ContactOutput[]>(
-				`v1/customers/${input.customerId}/contacts`,
+				'v1/customers/{id}/contacts',
 				ctx.key,
+				{ path: { id: input.customerId } },
 			),
 		`customer ${input.customerId}`,
 	);
 
-	await makeAltovizRequest<unknown>(
-		`v1/customers/${input.customerId}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-		},
-	);
+	await makeAltovizRequest<unknown>('v1/customers/{id}', ctx.key, {
+		method: 'DELETE',
+		path: { id: input.customerId },
+	});
 
 	await evictEntity(ctx.db.customers, input.customerId, 'customer');
 
@@ -171,7 +174,7 @@ export const remove: AltovizEndpoints['customers']['delete'] = async (
 export const get: AltovizEndpoints['customers']['get'] = async (ctx, input) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['customersGet']
-	>(`v1/customers/${input.customerId}`, ctx.key);
+	>(`v1/customers/{id}`, ctx.key, { path: { id: input.customerId } });
 
 	await cacheCustomer(ctx.db.customers, result);
 
@@ -184,15 +187,14 @@ export const get: AltovizEndpoints['customers']['get'] = async (ctx, input) => {
 	return result;
 };
 
-/** internalId is URL-encoded before interpolation - it is a caller-supplied string, unlike the numeric path ids elsewhere. */
+/** internalId is a caller-supplied string; encoding is ENCODE_PATH in the client, not interpolation. */
 export const getByInternalId: AltovizEndpoints['customers']['getByInternalId'] =
 	async (ctx, input) => {
 		const result = await makeAltovizRequest<
 			AltovizEndpointOutputs['customersGetByInternalId']
-		>(
-			`v1/customers/getbyinternalid/${encodeURIComponent(input.internalId)}`,
-			ctx.key,
-		);
+		>('v1/customers/getbyinternalid/{internalId}', ctx.key, {
+			path: { internalId: input.internalId },
+		});
 
 		await cacheCustomer(ctx.db.customers, result);
 
@@ -258,7 +260,9 @@ export const getContacts: AltovizEndpoints['customers']['getContacts'] = async (
 ) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['customersGetContacts']
-	>(`v1/customers/${input.customerId}/contacts`, ctx.key);
+	>(`v1/customers/{id}/contacts`, ctx.key, {
+		path: { id: input.customerId },
+	});
 
 	for (const contact of result) await cacheContact(ctx.db.contacts, contact);
 

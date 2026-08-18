@@ -70,7 +70,11 @@ export const update: AltovizEndpoints['saleCredits']['update'] = async (
 
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['saleCreditsUpdate']
-	>(`v1/salecredits/${input.creditId}`, ctx.key, { method: 'PUT', body });
+	>('v1/salecredits/{id}', ctx.key, {
+		method: 'PUT',
+		body,
+		path: { id: input.creditId },
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -87,7 +91,7 @@ export const get: AltovizEndpoints['saleCredits']['get'] = async (
 ) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['saleCreditsGet']
-	>(`v1/salecredits/${input.creditId}`, ctx.key);
+	>(`v1/salecredits/{id}`, ctx.key, { path: { id: input.creditId } });
 
 	await logEventFromContext(
 		ctx,
@@ -146,13 +150,10 @@ export const remove: AltovizEndpoints['saleCredits']['delete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAltovizRequest<unknown>(
-		`v1/salecredits/${input.creditId}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-		},
-	);
+	await makeAltovizRequest<unknown>('v1/salecredits/{id}', ctx.key, {
+		method: 'DELETE',
+		path: { id: input.creditId },
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -169,8 +170,9 @@ export const download: AltovizEndpoints['saleCredits']['download'] = async (
 	input,
 ) => {
 	const body = await makeAltovizRequest<string>(
-		`v1/salecredits/download/${input.creditId}`,
+		'v1/salecredits/download/{id}',
 		ctx.key,
+		{ path: { id: input.creditId } },
 	);
 
 	await logEventFromContext(

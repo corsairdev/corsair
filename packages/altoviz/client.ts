@@ -45,20 +45,15 @@ export class AltovizAPIError extends Error {
 }
 
 /**
- * `corsair/http`'s `getUrl` runs `{(.*?)}` against the full path to resolve
- * `{param}` placeholders - a pattern that rescans to the end of the string
- * from every unmatched `{`, so a brace-heavy path is quadratic. This plugin
- * never uses that placeholder feature (every id is interpolated before the
- * call), so a literal `{` or `}` here can only mean an unencoded caller value
- * slipped through - reject it before it reaches that regex rather than
- * patching the shared core.
+ * Path ids go through `options.path` and a constant `{id}` template, never
+ * concatenated into the URL string. That keeps caller values off the
+ * `{(.*?)}` placeholder regex in `corsair/http` (CodeQL js/polynomial-redos).
  */
-const UNSAFE_PATH_CHARS = /[{}]/;
-
 export type AltovizRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
 	body?: Record<string, unknown> | unknown[];
 	query?: Record<string, string | number | boolean | undefined>;
+	path?: Record<string, string | number>;
 	/**
 	 * For the one multipart operation in the surface (purchase invoice upload).
 	 * A plain record — the shared transport builds the actual `FormData` and
@@ -80,17 +75,11 @@ export type AltovizRequestOptions = {
  * body as an opaque string and document that it may not be byte-exact.
  */
 export async function makeAltovizRequest<T>(
-	path: string,
+	url: string,
 	apiKey: string,
 	options: AltovizRequestOptions = {},
 ): Promise<T> {
-	if (UNSAFE_PATH_CHARS.test(path)) {
-		throw new AltovizAPIError(
-			`Refusing to build an Altoviz request path containing "{" or "}": ${path}`,
-		);
-	}
-
-	const { method = 'GET', body, query, formData } = options;
+	const { method = 'GET', body, query, formData, path } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: ALTOVIZ_API_BASE,
@@ -98,6 +87,7 @@ export async function makeAltovizRequest<T>(
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
+		ENCODE_PATH: encodeURIComponent,
 		HEADERS: {
 			'X-API-KEY': apiKey,
 			...(formData ? {} : { 'Content-Type': 'application/json' }),
@@ -106,7 +96,8 @@ export async function makeAltovizRequest<T>(
 
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: path.startsWith('/') ? path : `/${path}`,
+		url: url.startsWith('/') ? url : `/${url}`,
+		path,
 		body: formData ? undefined : body,
 		formData,
 		mediaType: formData ? undefined : 'application/json; charset=utf-8',

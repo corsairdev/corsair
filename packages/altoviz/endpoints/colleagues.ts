@@ -12,7 +12,7 @@ export const get: AltovizEndpoints['colleagues']['get'] = async (
 ) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['colleaguesGet']
-	>(`v1/colleagues/${input.colleagueId}`, ctx.key);
+	>(`v1/colleagues/{id}`, ctx.key, { path: { id: input.colleagueId } });
 
 	await logEventFromContext(
 		ctx,
@@ -50,8 +50,9 @@ export const update: AltovizEndpoints['colleagues']['update'] = async (
 	input,
 ) => {
 	const current = await makeAltovizRequest<ColleagueOutput>(
-		`v1/colleagues/${input.colleagueId}`,
+		'v1/colleagues/{id}',
 		ctx.key,
+		{ path: { id: input.colleagueId } },
 	);
 
 	const body = compactBody({
@@ -77,7 +78,11 @@ export const update: AltovizEndpoints['colleagues']['update'] = async (
 
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['colleaguesUpdate']
-	>(`v1/colleagues/${input.colleagueId}`, ctx.key, { method: 'PUT', body });
+	>('v1/colleagues/{id}', ctx.key, {
+		method: 'PUT',
+		body,
+		path: { id: input.colleagueId },
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -99,13 +104,10 @@ export const remove: AltovizEndpoints['colleagues']['delete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAltovizRequest<unknown>(
-		`v1/colleagues/${input.colleagueId}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-		},
-	);
+	await makeAltovizRequest<unknown>('v1/colleagues/{id}', ctx.key, {
+		method: 'DELETE',
+		path: { id: input.colleagueId },
+	});
 
 	await logEventFromContext(
 		ctx,

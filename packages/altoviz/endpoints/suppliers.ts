@@ -14,7 +14,7 @@ import type {
 export const get: AltovizEndpoints['suppliers']['get'] = async (ctx, input) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['suppliersGet']
-	>(`v1/suppliers/${input.supplierId}`, ctx.key);
+	>(`v1/suppliers/{id}`, ctx.key, { path: { id: input.supplierId } });
 
 	await logEventFromContext(
 		ctx,
@@ -48,8 +48,9 @@ export const update: AltovizEndpoints['suppliers']['update'] = async (
 	input,
 ) => {
 	const current = await makeAltovizRequest<SupplierOutput>(
-		`v1/suppliers/${input.supplierId}`,
+		'v1/suppliers/{id}',
 		ctx.key,
+		{ path: { id: input.supplierId } },
 	);
 
 	const body = compactBody({
@@ -72,7 +73,11 @@ export const update: AltovizEndpoints['suppliers']['update'] = async (
 
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['suppliersUpdate']
-	>(`v1/suppliers/${input.supplierId}`, ctx.key, { method: 'PUT', body });
+	>('v1/suppliers/{id}', ctx.key, {
+		method: 'PUT',
+		body,
+		path: { id: input.supplierId },
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -91,19 +96,17 @@ export const remove: AltovizEndpoints['suppliers']['delete'] = async (
 		ctx.db.contacts,
 		() =>
 			makeAltovizRequest<ContactOutput[]>(
-				`v1/suppliers/${input.supplierId}/contacts`,
+				'v1/suppliers/{id}/contacts',
 				ctx.key,
+				{ path: { id: input.supplierId } },
 			),
 		`supplier ${input.supplierId}`,
 	);
 
-	await makeAltovizRequest<unknown>(
-		`v1/suppliers/${input.supplierId}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-		},
-	);
+	await makeAltovizRequest<unknown>('v1/suppliers/{id}', ctx.key, {
+		method: 'DELETE',
+		path: { id: input.supplierId },
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -120,7 +123,9 @@ export const getContacts: AltovizEndpoints['suppliers']['getContacts'] = async (
 ) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['suppliersGetContacts']
-	>(`v1/suppliers/${input.supplierId}/contacts`, ctx.key);
+	>(`v1/suppliers/{id}/contacts`, ctx.key, {
+		path: { id: input.supplierId },
+	});
 
 	for (const contact of result) await cacheContact(ctx.db.contacts, contact);
 

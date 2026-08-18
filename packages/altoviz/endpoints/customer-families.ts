@@ -37,7 +37,7 @@ export const get: AltovizEndpoints['customerFamilies']['get'] = async (
 ) => {
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['customerFamiliesGet']
-	>(`v1/customerfamilies/${input.familyId}`, ctx.key);
+	>(`v1/customerfamilies/{id}`, ctx.key, { path: { id: input.familyId } });
 
 	await cacheCustomerFamily(ctx.db.customerFamilies, result);
 
@@ -55,13 +55,10 @@ export const remove: AltovizEndpoints['customerFamilies']['delete'] = async (
 	ctx,
 	input,
 ) => {
-	await makeAltovizRequest<unknown>(
-		`v1/customerfamilies/${input.familyId}`,
-		ctx.key,
-		{
-			method: 'DELETE',
-		},
-	);
+	await makeAltovizRequest<unknown>('v1/customerfamilies/{id}', ctx.key, {
+		method: 'DELETE',
+		path: { id: input.familyId },
+	});
 
 	await evictEntity(ctx.db.customerFamilies, input.familyId, 'customer family');
 
