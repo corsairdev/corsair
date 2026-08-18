@@ -22,6 +22,75 @@ export type CorsairToolDef = {
 	handler: (args: Record<string, unknown>) => Promise<CallToolResult>;
 };
 
+/**
+ * Creates a proxy around the Corsair client that hides unguarded namespaces.
+ * Blocks access to global `manage`, `keys`, `permissions` and plugin-level `keys`, `db`.
+ * Wraps `withTenant` to ensure the returned tenant client is also proxied.
+ */
+function createScopedCorsairProxy(corsair: any): any {
+	if (!corsair || typeof corsair !== 'object') return corsair;
+
+	return new Proxy(corsair, {
+		get(target, prop) {
+			if (prop === 'manage' || prop === 'keys' || prop === 'permissions') {
+				return undefined;
+			}
+
+			if (prop === 'withTenant') {
+				const original = target[prop as keyof typeof target];
+				if (typeof original === 'function') {
+					return (tenantId: string) =>
+						createScopedCorsairProxy(original.call(target, tenantId));
+				}
+			}
+
+			const val = target[prop as keyof typeof target];
+
+			// Top-level properties that are objects (like plugins) get a nested proxy
+			// to block .db and .keys
+			if (
+				typeof prop === 'string' &&
+				val &&
+				typeof val === 'object' &&
+				!Array.isArray(val)
+			) {
+				return new Proxy(val as object, {
+					get(pluginTarget, pluginProp) {
+						if (pluginProp === 'keys' || pluginProp === 'db') {
+							return undefined;
+						}
+						return pluginTarget[pluginProp as keyof typeof pluginTarget];
+					},
+					ownKeys(pluginTarget) {
+						return Reflect.ownKeys(pluginTarget).filter(
+							(k) => k !== 'keys' && k !== 'db',
+						);
+					},
+					getOwnPropertyDescriptor(pluginTarget, pluginProp) {
+						if (pluginProp === 'keys' || pluginProp === 'db') {
+							return undefined;
+						}
+						return Reflect.getOwnPropertyDescriptor(pluginTarget, pluginProp);
+					},
+				});
+			}
+
+			return val;
+		},
+		ownKeys(target) {
+			return Reflect.ownKeys(target).filter(
+				(k) => k !== 'manage' && k !== 'keys' && k !== 'permissions',
+			);
+		},
+		getOwnPropertyDescriptor(target, prop) {
+			if (prop === 'manage' || prop === 'keys' || prop === 'permissions') {
+				return undefined;
+			}
+			return Reflect.getOwnPropertyDescriptor(target, prop);
+		},
+	});
+}
+
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
 ): CorsairToolDef[] {
@@ -87,12 +156,13 @@ export function buildCorsairToolDefs(
 			handler: async ({ code }) => {
 				const readonly = runOptions?.readonly || false;
 				try {
+					const scopedCorsair = createScopedCorsairProxy(corsair);
 					const fn = new Function(
 						'corsair',
 						`return (async () => { ${code} })()`,
 					);
 					const invoke = () =>
-						(fn as (c: unknown) => Promise<unknown>)(corsair);
+						(fn as (c: unknown) => Promise<unknown>)(scopedCorsair);
 					// When readonly is required, run the whole script inside a readonly
 					// scope that takes precedence over the developer's permission config.
 					// Any write/destructive endpoint throws and aborts the script.
