@@ -39,20 +39,30 @@ export async function serpapiSearch(
 	ctx: SerpapiCallContext,
 	engine: string,
 	query: Record<string, string | number | boolean | undefined>,
+	options: Pick<SerpapiRequestOptions, 'timeout'> = {},
 ): Promise<SerpapiSearchResponse> {
-	return await serpapiCall<SerpapiSearchResponse>(ctx, '/search', {
+	const result = await serpapiCall<SerpapiSearchResponse>(ctx, '/search', {
 		query: compactQuery({ ...query, engine }),
+		timeout: options.timeout,
 	});
+	return rejectSerpapiError(result);
 }
 
-/** Drops keys whose value is `undefined`. */
+export function rejectSerpapiError<T extends { error?: string }>(result: T): T {
+	if (typeof result.error === 'string' && result.error.trim() !== '') {
+		throw new Error(result.error);
+	}
+	return result;
+}
+
 export function compactQuery<
 	T extends Record<string, string | number | boolean | undefined>,
 >(query: T): T {
 	const compacted = {} as T;
 	for (const [key, value] of Object.entries(query)) {
-		if (value !== undefined)
-			(compacted as Record<string, unknown>)[key] = value;
+		if (value === undefined) continue;
+		if (typeof value === 'string' && value.trim() === '') continue;
+		(compacted as Record<string, unknown>)[key] = value;
 	}
 	return compacted;
 }

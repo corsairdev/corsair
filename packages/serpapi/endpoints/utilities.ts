@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { SerpapiEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { compactQuery, serpapiCall } from './shared';
+import { compactQuery, rejectSerpapiError, serpapiCall } from './shared';
 import type {
 	SerpapiGoogleDomain,
 	SerpapiLocation,
@@ -35,9 +35,11 @@ export const searchArchive: SerpapiEndpoints['utilitiesSearchArchive'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await serpapiCall<SerpapiSearchResponse>(
-		ctx,
-		`/searches/${encodeURIComponent(input.search_id)}.json`,
+	const result = rejectSerpapiError(
+		await serpapiCall<SerpapiSearchResponse>(
+			ctx,
+			`/searches/${encodeURIComponent(input.search_id)}.json`,
+		),
 	);
 	await logEventFromContext(
 		ctx,
