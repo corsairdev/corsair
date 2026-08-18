@@ -29,6 +29,7 @@ import {
 	makeCtx,
 	makeDb,
 	queueResponse,
+	recordedCalls,
 	requestedHeaders,
 	resetFetchMock,
 } from './test-utils';
@@ -678,6 +679,7 @@ describe('routing', () => {
 					typeof fixture.response === 'string'
 						? 'application/pdf'
 						: 'application/json; charset=utf-8',
+				repeat: true,
 			});
 
 			await fixture.fn(ctx, fixture.input);
@@ -694,6 +696,10 @@ describe('routing', () => {
 
 			// the key must never appear in the query string
 			expect(call.url).not.toContain('fake-altoviz-key-for-tests-only');
+			for (const recorded of recordedCalls()) {
+				expect(recorded.url).not.toContain('/undefined');
+				expect(recorded.url).not.toContain('undefined/');
+			}
 		},
 	);
 
@@ -715,15 +721,5 @@ describe('routing', () => {
 		queueResponse({});
 		const byId = await WebhookSubscriptions.unregister(ctx, { webhookId: 9 });
 		expect(byId).toEqual({ deleted: true, id: 9 });
-	});
-
-	test('no undefined value is ever interpolated into a path', async () => {
-		// every path-building fixture supplies its id explicitly; this guards
-		// against a future operation reaching the transport with `undefined`
-		// silently stringified into a URL segment.
-		for (const fixture of FIXTURES) {
-			if (!fixture.urlIncludes.match(/\/\d+(\/|$)/)) continue;
-			expect(fixture.urlIncludes).not.toContain('undefined');
-		}
 	});
 });

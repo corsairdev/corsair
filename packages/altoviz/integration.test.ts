@@ -23,7 +23,7 @@ function loadEnvLocal() {
 	try {
 		const text = readFileSync(resolve(__dirname, '../../.env.local'), 'utf8');
 		for (const line of text.split('\n')) {
-			const match = /^([A-Z0-9_]+)=(.*)$/.exec(line);
+			const match = /^([A-Z0-9_]+)=(.*)$/.exec(line.replace(/\r$/, ''));
 			if (!match) continue;
 			const key = match[1];
 			const value = match[2];
@@ -131,6 +131,31 @@ describeLive('Altoviz live', () => {
 		}
 	});
 
+	test.each([
+		['v1/users/me', 'accountGetCurrentUser'],
+		['v1/settings', 'accountGetSettings'],
+		['v1/productfamilies', 'productFamiliesList'],
+		['v1/customerfamilies', 'customerFamiliesList'],
+		['v1/contacts', 'contactsList'],
+		['v1/suppliers', 'suppliersList'],
+		['v1/colleagues', 'colleaguesList'],
+		['v1/saleinvoices', 'saleInvoicesList'],
+		['v1/salecredits', 'saleCreditsList'],
+		['v1/salequotes', 'saleQuotesList'],
+		['v1/receipts', 'receiptsList'],
+		['v1/webhooks', 'webhookSubscriptionsList'],
+	] as const)('GET %s matches the output schema', async (url, schemaKey) => {
+		const raw = await makeAltovizRequest(url, key, {
+			query:
+				url === 'v1/users/me' || url === 'v1/settings' || url === 'v1/webhooks'
+					? undefined
+					: { PageIndex: 1, PageSize: 5 },
+		});
+		const parsed = AltovizEndpointOutputSchemas[schemaKey].safeParse(raw);
+		if (!parsed.success) console.error(url, issues(parsed.error));
+		expect(parsed.success).toBe(true);
+	});
+
 	test('CREATE_CUSTOMER / GET_CUSTOMER / DELETE_CUSTOMER', async () => {
 		const created = await makeAltovizRequest<{ id: number }>(
 			'v1/customers',
@@ -156,6 +181,34 @@ describeLive('Altoviz live', () => {
 		expect(parsed.success).toBe(true);
 		expect(parsed.data?.id).toBe(created.id);
 		expect(parsed.data?.type).toBe('Business');
+
+		const updated = await makeAltovizRequest<AltovizCustomerEntity>(
+			'v1/customers/{id}',
+			key,
+			{
+				method: 'PUT',
+				path: { id: created.id },
+				body: {
+					id: created.id,
+					type: 'Business',
+					companyName: 'Corsair probe 2',
+					email: parsed.data?.email,
+					number: probeNumber,
+				},
+			},
+		);
+		expect(updated.companyName).toBe('Corsair probe 2');
+		expect(updated.number).toBe(probeNumber);
+
+		const contacts = await makeAltovizRequest(
+			'v1/customers/{id}/contacts',
+			key,
+			{ path: { id: created.id } },
+		);
+		expect(
+			AltovizEndpointOutputSchemas.customersGetContacts.safeParse(contacts)
+				.success,
+		).toBe(true);
 
 		await makeAltovizRequest('v1/customers/{id}', key, {
 			method: 'DELETE',

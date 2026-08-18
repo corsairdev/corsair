@@ -152,12 +152,14 @@ describe('audit payload: deny-by-default allow-list', () => {
 			'secret',
 			'signature',
 		];
+		const hits: string[] = [];
 		for (const field of ALLOWED_FIELDS) {
 			const lower = field.toLowerCase();
 			for (const stem of forbidden) {
-				expect(lower.includes(stem)).toBe(false);
+				if (lower.includes(stem)) hits.push(`${field}~${stem}`);
 			}
 		}
+		expect(hits).toEqual([]);
 	});
 
 	test('an allowed field is recorded by value', () => {
@@ -183,6 +185,20 @@ describe('audit payload: deny-by-default allow-list', () => {
 		expect(payload).not.toHaveProperty('query');
 		expect(payload.pageIndex).toBe(1);
 		expect(payload.fields).toEqual(expect.arrayContaining(['query']));
+	});
+
+	test('caller-chosen identifiers are recorded by name only, never by value', () => {
+		const payload = auditPayload({
+			customerId: 42,
+			internalId: 'ssn-shaped',
+			number: 'FR-iban-lookalike',
+		});
+		expect(payload.customerId).toBe(42);
+		expect(payload).not.toHaveProperty('internalId');
+		expect(payload).not.toHaveProperty('number');
+		expect(payload.fields).toEqual(
+			expect.arrayContaining(['internalId', 'number']),
+		);
 	});
 
 	test('undefined fields are not recorded at all, not even by name', () => {

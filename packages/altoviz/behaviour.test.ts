@@ -3,7 +3,14 @@
  * Each test here corresponds to a finding in the PR body - if one of these
  * goes red, a claim in that document is no longer true.
  */
-import { Colleagues, Customers, Products, SaleInvoices } from './endpoints';
+import {
+	Colleagues,
+	Customers,
+	Products,
+	PurchaseInvoices,
+	SaleCredits,
+	SaleInvoices,
+} from './endpoints';
 import { buildPagingQuery, parsePageInfo } from './endpoints/shared';
 import {
 	installFetchMock,
@@ -197,6 +204,30 @@ describe('nested references are resolved to their value form, never sent as a ba
 		const body = requestedBody() as Record<string, unknown>;
 		expect(body.family).toEqual({ label: 'Family', number: 'CRF-001' });
 	});
+
+	test('family resolve walks past page 1', async () => {
+		const { ctx } = makeCtx(makeDb());
+		const page1 = Array.from({ length: 100 }, (_, i) => ({
+			id: i + 1,
+			label: 'L',
+			number: `N${i}`,
+		}));
+		queueResponse(page1);
+		queueResponse([{ id: 101, label: 'Target', number: 'T-101' }]);
+		queueResponse({ id: 1 });
+
+		await Customers.create(ctx, {
+			type: 'Business',
+			companyName: 'Acme',
+			familyId: 101,
+		});
+
+		expect(recordedCalls()[0]?.url).toContain('PageIndex=1');
+		expect(recordedCalls()[1]?.url).toContain('PageIndex=2');
+		expect(requestedBody(recordedCalls()[2])).toMatchObject({
+			family: { label: 'Target', number: 'T-101' },
+		});
+	});
 });
 
 describe('sale document lines: unitPrice is rejected client-side, taxExcludedPrice is the real field', () => {
@@ -246,19 +277,13 @@ describe('contact eviction on parent delete', () => {
 
 		await Customers.delete(ctx, { customerId: 1 });
 
+		expect(recordedCalls()[0]?.url).toContain('/contacts');
+		expect(recordedCalls()[1]?.init.method).toBe('DELETE');
 		expect(db.contacts.deleteByEntityId).toHaveBeenCalledWith('50');
 	});
 
 	test('a failed contact lookup does not fail the parent delete', async () => {
-		const { ctx, db } = makeCtx(seededDb());
-		// GET_CUSTOMER_CONTACTS 404s; DELETE still succeeds
-		global.fetch = (async () => {
-			throw new Error('network down');
-		}) as unknown as typeof global.fetch;
-
-		// swap in a fetch that fails once (contacts) then succeeds (delete) is
-		// awkward with a single stub, so this asserts the delete call itself is
-		// still attempted rather than short-circuited by the lookup failure.
+		const { ctx } = makeCtx(seededDb());
 		let calls = 0;
 		global.fetch = (async (url: string, init: RequestInit) => {
 			calls++;
@@ -279,12 +304,13 @@ describe('contact eviction on parent delete', () => {
 			id: 1,
 		});
 		expect(calls).toBe(2);
+		installFetchMock();
 	});
 });
 
 describe('pagination', () => {
 	test('pageIndex defaults to 1, never 0', () => {
-		const query = buildPagingQuery({ pageIndex: 1 });
+		const query = buildPagingQuery({});
 		expect(query.PageIndex).toBe(1);
 	});
 
@@ -303,5 +329,60 @@ describe('sale credit update resends lines in full', () => {
 			creditId: 1,
 		});
 		expect(result.success).toBe(false);
+	});
+
+	test('update reads the current credit and keeps create-managed fields', async () => {
+		const { ctx } = makeCtx(seededDb());
+		queueResponse({
+			id: 1,
+			customerId: 9,
+			cancelledInvoicetId: 40,
+			cancelledInvoicetNumber: 'F-40',
+			date: '2026-01-01',
+			globalDiscount: { type: 'Percent', value: 10 },
+			vatMode: 'Auto',
+			region: 'FR',
+			internalId: 'keep-me',
+			metadata: { a: 1 },
+			isDraft: true,
+		});
+		queueResponse({ id: 1 });
+
+		await SaleCredits.update(ctx, {
+			creditId: 1,
+			subject: 'updated',
+			lines: [
+				{
+					type: 'Service',
+					description: 'x',
+					quantity: 1,
+					taxExcludedPrice: 10,
+					unitId: unit.id,
+					vatId: vat.id,
+				},
+			],
+		});
+
+		const put = requestedBody(recordedCalls()[1]) as Record<string, unknown>;
+		expect(put.subject).toBe('updated');
+		expect(put.customerId).toBe(9);
+		expect(put.cancelledInvoicetId).toBe(40);
+		expect(put.globalDiscount).toEqual({ type: 'Percent', value: 10 });
+		expect(put.internalId).toBe('keep-me');
+		expect(put.region).toBe('FR');
+	});
+});
+
+describe('purchase invoice upload', () => {
+	test('rejects malformed Base64 before opening a request', async () => {
+		const { ctx } = makeCtx();
+		await expect(
+			PurchaseInvoices.upload(ctx, {
+				fileBase64: '%%%not-base64%%%',
+				fileName: 'x.pdf',
+				mimeType: 'application/pdf',
+			}),
+		).rejects.toThrow(/Base64/);
+		expect(recordedCalls()).toHaveLength(0);
 	});
 });

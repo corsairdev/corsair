@@ -47,6 +47,19 @@ export const NON_IDEMPOTENT_OPERATIONS = new Set<string>([
 export const isNonIdempotent = (operation: string): boolean =>
 	NON_IDEMPOTENT_OPERATIONS.has(operation);
 
+function providerMessage(error: Error, fallback: string): string {
+	const body = error instanceof ApiError ? error.body : undefined;
+	if (
+		body &&
+		typeof body === 'object' &&
+		'message' in body &&
+		(body as { message?: unknown }).message != null
+	) {
+		return String((body as { message: unknown }).message);
+	}
+	return fallback;
+}
+
 /**
  * Altoviz's error surface, captured live rather than from documentation:
  *
@@ -70,10 +83,8 @@ export const isNonIdempotent = (operation: string): boolean =>
 export const errorHandlers = {
 	/**
 	 * Measured live: the quota is exactly 100 requests over a rolling window.
-	 * `Retry-After` is authoritative (confirmed: honouring it produced an
-	 * immediate 200 both times it was measured) and `ApiError.retryAfter` is
-	 * already in milliseconds, parsed from the same header this plugin's rate
-	 * limit config declares.
+	 * `Retry-After` is milliseconds on the wire. corsair/http multiplies by
+	 * 1000 (seconds), so the handler divides back before scheduling the delay.
 	 */
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
@@ -81,8 +92,11 @@ export const errorHandlers = {
 			return error.message.toLowerCase().includes('too many requests');
 		},
 		handler: async (error, context) => {
+			// corsair/http stored header*1000 assuming seconds; Altoviz sent ms.
 			const retryAfterMs =
-				error instanceof ApiError ? error.retryAfter : undefined;
+				error instanceof ApiError && error.retryAfter != null
+					? error.retryAfter / 1000
+					: undefined;
 			return {
 				maxRetries: isNonIdempotent(context.operation) ? 0 : 3,
 				headersRetryAfterMs: retryAfterMs,
@@ -111,12 +125,10 @@ export const errorHandlers = {
 	CONFLICT_ERROR: {
 		match: (error) => error instanceof ApiError && error.status === 409,
 		handler: async (error, context) => {
-			const body = error instanceof ApiError ? error.body : undefined;
-			const message =
-				body && typeof body === 'object' && 'message' in body
-					? String((body as { message?: unknown }).message)
-					: error.message;
-			console.warn(`[ALTOVIZ:${context.operation}] Conflict: ${message}`);
+			const status = error instanceof ApiError ? error.status : undefined;
+			console.warn(
+				`[ALTOVIZ:${context.operation}] ${status} Conflict: ${providerMessage(error, error.message)}`,
+			);
 			return { maxRetries: 0 };
 		},
 	},
@@ -127,12 +139,10 @@ export const errorHandlers = {
 	NOT_FOUND_ERROR: {
 		match: (error) => error instanceof ApiError && error.status === 404,
 		handler: async (error, context) => {
-			const body = error instanceof ApiError ? error.body : undefined;
-			const message =
-				body && typeof body === 'object' && 'message' in body
-					? String((body as { message?: unknown }).message)
-					: 'not found';
-			console.warn(`[ALTOVIZ:${context.operation}] ${message}`);
+			const status = error instanceof ApiError ? error.status : undefined;
+			console.warn(
+				`[ALTOVIZ:${context.operation}] ${status}: ${providerMessage(error, 'not found')}`,
+			);
 			return { maxRetries: 0 };
 		},
 	},
@@ -158,13 +168,9 @@ export const errorHandlers = {
 	VALIDATION_ERROR: {
 		match: (error) => error instanceof ApiError && error.status === 400,
 		handler: async (error, context) => {
-			const body = error instanceof ApiError ? error.body : undefined;
-			const message =
-				body && typeof body === 'object' && 'message' in body
-					? String((body as { message?: unknown }).message)
-					: error.message;
+			const status = error instanceof ApiError ? error.status : undefined;
 			console.warn(
-				`[ALTOVIZ:${context.operation}] Invalid request: ${message}`,
+				`[ALTOVIZ:${context.operation}] ${status} Invalid request: ${providerMessage(error, error.message)}`,
 			);
 			return { maxRetries: 0 };
 		},
@@ -180,16 +186,16 @@ export const errorHandlers = {
 			error.status !== undefined &&
 			error.status >= 500,
 		handler: async (error, context) => {
+			const status = error instanceof ApiError ? error.status : 'unknown';
 			console.warn(
-				`[ALTOVIZ:${context.operation}] Server error (${
-					error instanceof ApiError ? error.status : 'unknown'
-				}): ${error.message}`,
+				`[ALTOVIZ:${context.operation}] ${status}: ${providerMessage(error, error.message)}`,
 			);
 			return { maxRetries: isNonIdempotent(context.operation) ? 0 : 2 };
 		},
 	},
 	NETWORK_ERROR: {
 		match: (error) => {
+			if (error instanceof ApiError && error.status !== undefined) return false;
 			const message = error.message.toLowerCase();
 			return (
 				message.includes('network') ||

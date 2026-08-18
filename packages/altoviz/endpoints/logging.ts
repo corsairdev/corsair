@@ -41,10 +41,6 @@ const ALLOWED_FIELDS = new Set<string>([
 	'vatId',
 	'classificationId',
 	'cancelledInvoiceId',
-	'cancelledInvoiceNumber',
-	// caller-chosen identifiers and provider-issued numbers - not personal data
-	'internalId',
-	'number',
 	// enums and status - describe shape/state, not content
 	'type',
 	'status',

@@ -59,13 +59,13 @@ export const PagingInputSchema = {
 };
 
 export function buildPagingQuery(input: {
-	pageIndex: number;
+	pageIndex?: number;
 	pageSize?: number;
 	orderBy?: string;
 	query?: string;
 }): Record<string, string | number | boolean | undefined> {
 	return compactQuery({
-		PageIndex: input.pageIndex,
+		PageIndex: input.pageIndex ?? 1,
 		PageSize: input.pageSize,
 		OrderBy: input.orderBy,
 		query: input.query,
@@ -146,16 +146,42 @@ type EntityStore<T> = {
 	upsertByEntityId: (entityId: string, data: T) => Promise<unknown>;
 };
 
+/** Request-scoped list memo so parallel line resolves share one GET /units (or /vats). */
+export type RefListCache = Map<string, Promise<unknown[]>>;
+
+const FAMILY_PAGE_SIZE = 100;
+const FAMILY_MAX_PAGES = 20;
+
+async function fetchAllPages<T>(url: string, key: string): Promise<T[]> {
+	const all: T[] = [];
+	for (let page = 1; page <= FAMILY_MAX_PAGES; page++) {
+		const rows = await makeAltovizRequest<T[]>(url, key, {
+			query: { PageIndex: page, PageSize: FAMILY_PAGE_SIZE },
+		});
+		all.push(...rows);
+		if (rows.length < FAMILY_PAGE_SIZE) break;
+	}
+	return all;
+}
+
 async function resolveViaMirrorOrList<T extends { id: number }>(opts: {
 	store: EntityStore<T> | undefined;
 	id: number;
 	fetchList: () => Promise<T[]>;
 	kind: string;
+	lists?: RefListCache;
+	listKey: string;
 }): Promise<T> {
 	const cached = await opts.store?.findByEntityId(String(opts.id));
 	if (cached) return cached.data;
 
-	const list = await opts.fetchList();
+	let pending = opts.lists?.get(opts.listKey) as Promise<T[]> | undefined;
+	if (!pending) {
+		pending = opts.fetchList();
+		opts.lists?.set(opts.listKey, pending as Promise<unknown[]>);
+	}
+	const list = await pending;
+
 	if (opts.store) {
 		for (const row of list) {
 			await opts.store.upsertByEntityId(String(row.id), row);
@@ -176,12 +202,15 @@ export async function resolveUnitRef(
 	store: EntityStore<AltovizUnitEntity> | undefined,
 	key: string,
 	unitId: number | undefined,
+	lists?: RefListCache,
 ): Promise<{ code: string } | undefined> {
 	if (unitId === undefined) return undefined;
 	const unit = await resolveViaMirrorOrList({
 		store,
 		id: unitId,
 		kind: 'unit',
+		listKey: 'units',
+		lists,
 		fetchList: () => makeAltovizRequest<AltovizUnitEntity[]>('v1/units', key),
 	});
 	if (!unit.code) {
@@ -194,12 +223,15 @@ export async function resolveVatRef(
 	store: EntityStore<AltovizVatEntity> | undefined,
 	key: string,
 	vatId: number | undefined,
+	lists?: RefListCache,
 ): Promise<{ rate: number; region: string } | undefined> {
 	if (vatId === undefined) return undefined;
 	const vat = await resolveViaMirrorOrList({
 		store,
 		id: vatId,
 		kind: 'VAT rate',
+		listKey: 'vats',
+		lists,
 		fetchList: () => makeAltovizRequest<AltovizVatEntity[]>('v1/vats', key),
 	});
 	if (vat.rate === undefined || vat.rate === null || !vat.region) {
@@ -220,14 +252,9 @@ export async function resolveCustomerFamilyRef(
 		store,
 		id: familyId,
 		kind: 'customer family',
+		listKey: 'customerfamilies',
 		fetchList: () =>
-			makeAltovizRequest<AltovizCustomerFamilyEntity[]>(
-				'v1/customerfamilies',
-				key,
-				{
-					query: { PageIndex: 1, PageSize: 100 },
-				},
-			),
+			fetchAllPages<AltovizCustomerFamilyEntity>('v1/customerfamilies', key),
 	});
 	if (!family.label || !family.number) {
 		throw new Error(
@@ -247,14 +274,9 @@ export async function resolveProductFamilyRef(
 		store,
 		id: familyId,
 		kind: 'product family',
+		listKey: 'productfamilies',
 		fetchList: () =>
-			makeAltovizRequest<AltovizProductFamilyEntity[]>(
-				'v1/productfamilies',
-				key,
-				{
-					query: { PageIndex: 1, PageSize: 100 },
-				},
-			),
+			fetchAllPages<AltovizProductFamilyEntity>('v1/productfamilies', key),
 	});
 	if (!family.label || !family.number) {
 		throw new Error(
@@ -339,6 +361,7 @@ export async function buildLine(
 		vats?: EntityStore<AltovizVatEntity>;
 	},
 	key: string,
+	lists: RefListCache = new Map(),
 ): Promise<Record<string, unknown>> {
 	return compactBody({
 		type: line.type,
@@ -346,8 +369,8 @@ export async function buildLine(
 		description: line.description,
 		quantity: line.quantity,
 		taxExcludedPrice: line.taxExcludedPrice,
-		unit: await resolveUnitRef(stores.units, key, line.unitId),
-		vat: await resolveVatRef(stores.vats, key, line.vatId),
+		unit: await resolveUnitRef(stores.units, key, line.unitId, lists),
+		vat: await resolveVatRef(stores.vats, key, line.vatId, lists),
 		classificationId: line.classificationId,
 	});
 }

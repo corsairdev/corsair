@@ -87,7 +87,7 @@ describe('status-to-handler mapping', () => {
 				body: undefined,
 			},
 			'error',
-			{ retryAfter: 36000 },
+			{ retryAfter: 36000 * 1000 },
 		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(
@@ -148,6 +148,7 @@ describe('status-to-handler mapping', () => {
 			context('customers.create', error),
 		);
 		expect(writeResult.maxRetries).toBe(0);
+		expect(errorHandlers.NETWORK_ERROR.match(apiError(400))).toBe(false);
 	});
 
 	test('DEFAULT catches everything else and never retries', async () => {

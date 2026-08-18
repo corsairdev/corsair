@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -466,7 +465,7 @@ export const altovizEndpointSchemas = {
 	typeof altovizEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 export const altovizEndpointMeta = {
 	'customers.create': {

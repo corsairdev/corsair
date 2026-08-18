@@ -3,15 +3,21 @@ import { makeAltovizRequest } from '../client';
 import type { AltovizEndpoints } from '../index';
 import { auditPayload } from './logging';
 import { buildLine, buildPagingQuery, compactBody } from './shared';
-import type { AltovizEndpointOutputs } from './types';
+import type { AltovizEndpointOutputs, SaleCreditOutput } from './types';
 
 export const create: AltovizEndpoints['saleCredits']['create'] = async (
 	ctx,
 	input,
 ) => {
+	const lists = new Map();
 	const lines = await Promise.all(
 		input.lines.map((line) =>
-			buildLine(line, { units: ctx.db.units, vats: ctx.db.vats }, ctx.key),
+			buildLine(
+				line,
+				{ units: ctx.db.units, vats: ctx.db.vats },
+				ctx.key,
+				lists,
+			),
 		),
 	);
 
@@ -51,21 +57,40 @@ export const update: AltovizEndpoints['saleCredits']['update'] = async (
 	ctx,
 	input,
 ) => {
+	const current = await makeAltovizRequest<SaleCreditOutput>(
+		'v1/salecredits/{id}',
+		ctx.key,
+		{ path: { id: input.creditId } },
+	);
+
+	const lists = new Map();
 	const lines = await Promise.all(
 		input.lines.map((line) =>
-			buildLine(line, { units: ctx.db.units, vats: ctx.db.vats }, ctx.key),
+			buildLine(
+				line,
+				{ units: ctx.db.units, vats: ctx.db.vats },
+				ctx.key,
+				lists,
+			),
 		),
 	);
 
 	const body = compactBody({
 		id: input.creditId,
-		customerId: input.customerId,
-		date: input.date,
-		subject: input.subject,
-		headerNotes: input.headerNotes,
-		footerNotes: input.footerNotes,
+		customerId: input.customerId ?? current.customerId,
+		cancelledInvoicetId: current.cancelledInvoicetId,
+		cancelledInvoicetNumber: current.cancelledInvoicetNumber,
+		date: input.date ?? current.date,
+		subject: input.subject ?? current.subject,
+		headerNotes: input.headerNotes ?? current.headerNotes,
+		footerNotes: input.footerNotes ?? current.footerNotes,
 		lines,
-		isDraft: input.isDraft,
+		globalDiscount: current.globalDiscount,
+		vatMode: current.vatMode,
+		region: current.region,
+		isDraft: input.isDraft ?? current.isDraft,
+		internalId: current.internalId,
+		metadata: current.metadata,
 	});
 
 	const result = await makeAltovizRequest<

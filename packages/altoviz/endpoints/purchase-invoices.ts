@@ -4,6 +4,24 @@ import type { AltovizEndpoints } from '../index';
 import { auditPayload } from './logging';
 import type { AltovizEndpointOutputs } from './types';
 
+const MAX_PURCHASE_INVOICE_BYTES = 10 * 1024 * 1024;
+
+function decodeFileBase64(raw: string): Buffer {
+	const compact = raw.replace(/\s/g, '');
+	const pad = (4 - (compact.length % 4)) % 4;
+	const normalized = compact + '='.repeat(pad);
+	const bytes = Buffer.from(normalized, 'base64');
+	if (bytes.toString('base64') !== normalized) {
+		throw new Error('fileBase64 is not valid Base64');
+	}
+	if (bytes.length > MAX_PURCHASE_INVOICE_BYTES) {
+		throw new Error(
+			`Purchase invoice exceeds ${MAX_PURCHASE_INVOICE_BYTES} bytes`,
+		);
+	}
+	return bytes;
+}
+
 /**
  * The only multipart operation in the surface, and the only create with NO
  * delete anywhere in the API - not in the catalog and not in the OpenAPI
@@ -17,7 +35,7 @@ export const upload: AltovizEndpoints['purchaseInvoices']['upload'] = async (
 	ctx,
 	input,
 ) => {
-	const bytes = Buffer.from(input.fileBase64, 'base64');
+	const bytes = decodeFileBase64(input.fileBase64);
 	const file = new Blob([bytes], { type: input.mimeType });
 
 	const result = await makeAltovizRequest<

@@ -9,9 +9,15 @@ export const create: AltovizEndpoints['saleInvoices']['create'] = async (
 	ctx,
 	input,
 ) => {
+	const lists = new Map();
 	const lines = await Promise.all(
 		input.lines.map((line) =>
-			buildLine(line, { units: ctx.db.units, vats: ctx.db.vats }, ctx.key),
+			buildLine(
+				line,
+				{ units: ctx.db.units, vats: ctx.db.vats },
+				ctx.key,
+				lists,
+			),
 		),
 	);
 

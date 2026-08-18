@@ -8,20 +8,15 @@ import { request } from 'corsair/http';
 const ALTOVIZ_API_BASE = 'https://api.altoviz.com';
 
 /**
- * Measured live, twice, minutes apart: the quota is exactly 100 requests over
- * a rolling window, and the 429 that follows carries `Retry-After` in
- * milliseconds — 13,000 on one run, 36,000 on the other, since it reports
- * time left in the *current* window rather than a fixed cooldown. Honouring it
- * produced an immediate 200 both times, so `Retry-After` is authoritative:
- * sleep for exactly what it says rather than doubling on top of it.
- *
- * A success carries no rate-limit header of any kind (no `RateLimit-Limit`,
- * no `RateLimit-Remaining`), so the client cannot throttle proactively — only
- * react once the 429 arrives.
+ * Measured live: quota is 100 requests over a rolling window. The 429 carries
+ * `Retry-After` in milliseconds (13_000 / 36_000), not HTTP-spec seconds.
+ * corsair/http multiplies that value by 1000, so transport-level retries would
+ * sleep for hours and would also replay POSTs. maxRetries is 0 here; the
+ * plugin error handler converts the parsed value back to ms and retries reads.
  */
 const ALTOVIZ_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
+	maxRetries: 0,
 	initialRetryDelay: 1000,
 	backoffMultiplier: 2,
 	headerNames: {

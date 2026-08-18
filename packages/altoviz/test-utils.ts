@@ -40,8 +40,8 @@ export function makeCtx(db: ReturnType<typeof makeDb> = makeDb()) {
 		db,
 		database: undefined,
 		$getAccountId: async () => 'test-account',
-	};
-	return { ctx: ctx as never, db };
+	} as never;
+	return { ctx, db };
 }
 
 export type RecordedCall = { url: string; init: RequestInit };
@@ -52,6 +52,7 @@ let queue: Array<{
 	status?: number;
 	contentType?: string | null;
 	headers?: Record<string, string>;
+	repeat?: boolean;
 }> = [];
 
 export function resetFetchMock() {
@@ -66,18 +67,20 @@ export function queueResponse(
 		status?: number;
 		contentType?: string | null;
 		headers?: Record<string, string>;
+		repeat?: boolean;
 	} = {},
 ) {
 	queue.push({ body, ...options });
 }
 
-/** Every call after the queue is exhausted repeats the last queued response - convenient for reads a resolver issues incidentally. */
+/** Consume queued responses in order. After the queue is empty, throw — pass `{ repeat: true }` to reuse the last item. */
 export function installFetchMock() {
 	global.fetch = (async (url: string, init: RequestInit) => {
 		calls.push({ url, init });
-		const next = queue.length > 1 ? queue.shift()! : queue[0];
+		const next = queue[0];
 		if (!next)
 			throw new Error('installFetchMock: no response queued for ' + url);
+		if (!next.repeat) queue.shift();
 		const status = next.status ?? 200;
 		const contentType =
 			next.contentType === undefined

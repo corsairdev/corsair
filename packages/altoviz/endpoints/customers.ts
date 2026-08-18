@@ -5,8 +5,9 @@ import { auditPayload } from './logging';
 import {
 	cacheContact,
 	cacheCustomer,
-	evictContactsForParent,
+	evictContacts,
 	evictEntity,
+	fetchContactsForParent,
 } from './persist';
 import {
 	addressOutputToInput,
@@ -144,8 +145,7 @@ export const remove: AltovizEndpoints['customers']['delete'] = async (
 	ctx,
 	input,
 ) => {
-	await evictContactsForParent(
-		ctx.db.contacts,
+	const contacts = await fetchContactsForParent(
 		() =>
 			makeAltovizRequest<ContactOutput[]>(
 				'v1/customers/{id}/contacts',
@@ -159,6 +159,12 @@ export const remove: AltovizEndpoints['customers']['delete'] = async (
 		method: 'DELETE',
 		path: { id: input.customerId },
 	});
+
+	await evictContacts(
+		ctx.db.contacts,
+		contacts,
+		`customer ${input.customerId}`,
+	);
 
 	await evictEntity(ctx.db.customers, input.customerId, 'customer');
 

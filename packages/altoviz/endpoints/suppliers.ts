@@ -2,7 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeAltovizRequest } from '../client';
 import type { AltovizEndpoints } from '../index';
 import { auditPayload } from './logging';
-import { cacheContact, evictContactsForParent } from './persist';
+import { cacheContact, evictContacts, fetchContactsForParent } from './persist';
 import { addressOutputToInput, buildPagingQuery, compactBody } from './shared';
 import type {
 	AltovizEndpointOutputs,
@@ -92,8 +92,7 @@ export const remove: AltovizEndpoints['suppliers']['delete'] = async (
 	ctx,
 	input,
 ) => {
-	await evictContactsForParent(
-		ctx.db.contacts,
+	const contacts = await fetchContactsForParent(
 		() =>
 			makeAltovizRequest<ContactOutput[]>(
 				'v1/suppliers/{id}/contacts',
@@ -107,6 +106,12 @@ export const remove: AltovizEndpoints['suppliers']['delete'] = async (
 		method: 'DELETE',
 		path: { id: input.supplierId },
 	});
+
+	await evictContacts(
+		ctx.db.contacts,
+		contacts,
+		`supplier ${input.supplierId}`,
+	);
 
 	await logEventFromContext(
 		ctx,

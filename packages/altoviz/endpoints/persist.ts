@@ -21,11 +21,16 @@ type EntityStore<T> = {
 };
 
 /** Caching is best-effort: a plugin call must not fail because the local mirror could not be written. */
+function describeError(error: unknown): string {
+	if (error instanceof Error) return `${error.name}: ${error.message}`;
+	return 'unknown';
+}
+
 async function safely(operation: () => Promise<unknown>, what: string) {
 	try {
 		await operation();
 	} catch (error) {
-		console.warn(`[ALTOVIZ] failed to cache ${what}:`, error);
+		console.warn(`[ALTOVIZ] failed to cache ${what}: ${describeError(error)}`);
 	}
 }
 
@@ -135,27 +140,32 @@ export async function evictEntity(
 }
 
 /**
- * Creating a customer, supplier or colleague auto-creates a contact from its
- * name fields (confirmed live: `GET .../contacts` returns it with
- * `isMain: true`), and deleting the parent does NOT delete that contact.
- * Deleting a customer or supplier therefore fetches its contacts and evicts
- * their cached rows here, before the parent delete - the contacts route
- * (`.../{id}/contacts`) disappears once the parent is gone, so the lookup has
- * to happen while it still exists. Best-effort: a failed lookup here must not
- * block or fail the parent delete itself.
+ * Creating a customer or supplier auto-creates a contact from its name fields
+ * (confirmed live: `GET .../contacts` returns it with `isMain: true`), and
+ * deleting the parent does NOT delete that contact. Fetch the list while the
+ * parent still exists, then evict after the delete succeeds. Best-effort: a
+ * failed lookup must not block the parent delete.
  */
-export async function evictContactsForParent(
-	store: DeletableStore | undefined,
+export async function fetchContactsForParent(
 	fetchContacts: () => Promise<Array<{ id: number }>>,
 	what: string,
-) {
-	if (!store?.deleteByEntityId) return;
+): Promise<Array<{ id: number }>> {
 	try {
-		const contacts = await fetchContacts();
-		for (const contact of contacts) {
-			await evictEntity(store, contact.id, `${what} contact`);
-		}
+		return await fetchContacts();
 	} catch (error) {
-		console.warn(`[ALTOVIZ] failed to evict contacts for ${what}:`, error);
+		console.warn(
+			`[ALTOVIZ] failed to list contacts for ${what}: ${describeError(error)}`,
+		);
+		return [];
+	}
+}
+
+export async function evictContacts(
+	store: DeletableStore | undefined,
+	contacts: Array<{ id: number }>,
+	what: string,
+) {
+	for (const contact of contacts) {
+		await evictEntity(store, contact.id, `${what} contact`);
 	}
 }
