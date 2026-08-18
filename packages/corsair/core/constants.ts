@@ -40,6 +40,7 @@ export const BaseProviders = [
 	'apininjas',
 	'apisports',
 	'asana',
+	'asindataapi',
 	'ayrshare',
 	'betterstack',
 	'bigmailer',
@@ -177,6 +178,7 @@ export const ProviderDisplayNames = {
 	apininjas: 'API Ninjas',
 	apisports: 'API-Sports',
 	asana: 'Asana',
+	asindataapi: 'ASIN Data API',
 	ayrshare: 'Ayrshare',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
@@ -321,6 +323,7 @@ export type AllProviders =
 	| 'apininjas'
 	| 'apisports'
 	| 'asana'
+	| 'asindataapi'
 	| 'ayrshare'
 	| 'betterstack'
 	| 'bigmailer'
