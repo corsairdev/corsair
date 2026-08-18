@@ -110,7 +110,7 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 		'search.scholarSearch',
 		(c) => Search.scholarSearch(c, { q: 'machine learning' }),
 		'engine=google_scholar',
-		'',
+		'q=machine learning',
 	],
 	[
 		'search.scholarAuthor',
@@ -128,13 +128,13 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 		'search.trendsSearch',
 		(c) => Search.trendsSearch(c, { q: 'ai' }),
 		'engine=google_trends',
-		'',
+		'q=ai',
 	],
 	[
 		'search.financeSearch',
 		(c) => Search.financeSearch(c, { q: 'GOOG:NASDAQ' }),
 		'engine=google_finance',
-		'q=GOOG',
+		'q=GOOG:NASDAQ',
 	],
 	[
 		'search.newsSearch',
@@ -152,7 +152,7 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 		'search.hotelSearch',
 		(c) => Search.hotelSearch(c, { q: 'hotels in NYC' }),
 		'engine=google_hotels',
-		'',
+		'q=hotels in NYC',
 	],
 	[
 		'search.hotelsAutocomplete',
@@ -182,7 +182,7 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 		'search.lensSearch',
 		(c) => Search.lensSearch(c, { url: 'https://example.com/img.jpg' }),
 		'engine=google_lens',
-		'',
+		'url=https://example.com/img.jpg',
 	],
 	[
 		'search.lightSearch',
@@ -194,7 +194,7 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 		'search.aboutThisResult',
 		(c) => Search.aboutThisResult(c, { q: 'https://example.com' }),
 		'engine=google_about_this_result',
-		'',
+		'q=https://example.com',
 	],
 	[
 		'search.patentDetails',
@@ -304,13 +304,13 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 		'marketplace.appleAppStoreSearch',
 		(c) => Marketplace.appleAppStoreSearch(c, { term: 'notes app' }),
 		'engine=apple_app_store',
-		'',
+		'term=notes app',
 	],
 	[
 		'marketplace.yelpSearch',
 		(c) => Marketplace.yelpSearch(c, { find_loc: 'Austin, TX' }),
 		'engine=yelp',
-		'',
+		'find_loc=Austin, TX',
 	],
 	[
 		'marketplace.openTableReviews',
@@ -334,8 +334,14 @@ describe('operation routing (search-based operations)', () => {
 
 			expect(lastMethod).toBe('GET');
 			expect(lastUrl).toContain('/search');
-			expect(lastUrl).toContain(expectedEngine);
-			expect(lastUrl).toContain(expectedParam);
+			const params = new URL(lastUrl).searchParams;
+			expect(params.get('engine')).toBe(expectedEngine.replace(/^engine=/, ''));
+			if (expectedParam) {
+				const eq = expectedParam.indexOf('=');
+				expect(params.get(expectedParam.slice(0, eq))).toBe(
+					expectedParam.slice(eq + 1),
+				);
+			}
 		});
 	}
 });
@@ -366,9 +372,11 @@ describe('operation routing (utility operations - distinct paths, not /search)',
 
 	it('utilities.searchArchive issues GET /searches/{search_id}.json', async () => {
 		const ctx = makeCtx();
-		await Utilities.searchArchive(ctx, { search_id: 'abc123' });
+		await Utilities.searchArchive(ctx, {
+			search_id: 'aabbccddeeff001122334455',
+		});
 
-		expect(lastUrl).toContain('/searches/abc123.json');
+		expect(lastUrl).toContain('/searches/aabbccddeeff001122334455.json');
 		expect(lastUrl).not.toContain('/search?');
 	});
 
@@ -507,6 +515,35 @@ describe('parameters confirmed during the verification round', () => {
 		expect(result.success).toBe(true);
 	});
 
+	it('rejects blank required strings', () => {
+		expect(
+			serpapiEndpointSchemas['search.search'].input.safeParse({ q: '' })
+				.success,
+		).toBe(false);
+		expect(
+			serpapiEndpointSchemas['search.search'].input.safeParse({ q: '   ' })
+				.success,
+		).toBe(false);
+		expect(
+			serpapiEndpointSchemas['search.scholarSearch'].input.safeParse({
+				q: '',
+			}).success,
+		).toBe(false);
+		expect(
+			serpapiEndpointSchemas['utilities.searchArchive'].input.safeParse({
+				search_id: 'abc123',
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects non-http Lens urls', () => {
+		expect(
+			serpapiEndpointSchemas['search.lensSearch'].input.safeParse({
+				url: 'file:///tmp/x.jpg',
+			}).success,
+		).toBe(false);
+	});
+
 	/**
 	 * Confirmed live: these are NOT real parameters despite catalog prose
 	 * suggesting otherwise (`hl`/`location` never appear in the API's own
@@ -564,5 +601,29 @@ describe('event log', () => {
 		expect(mockLogEvent).toHaveBeenCalled();
 		const payload = mockLogEvent.mock.calls[0]?.[2] as Record<string, unknown>;
 		expect(payload).toEqual({ product_id: 'com.example.app' });
+	});
+});
+
+describe('error envelope', () => {
+	it('throws when the 200 body includes an error field', async () => {
+		global.fetch = (async (url: unknown) => {
+			lastUrl = String(url);
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url: String(url),
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => ({
+					search_metadata: { id: '1', status: 'Error' },
+					error: 'Google has not returned any results for this query.',
+				}),
+				text: async () => '',
+			};
+		}) as unknown as typeof global.fetch;
+
+		await expect(Search.search(makeCtx(), { q: 'test' })).rejects.toThrow(
+			'Google has not returned any results for this query.',
+		);
 	});
 });

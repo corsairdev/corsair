@@ -111,6 +111,15 @@ describe('makeSerpapiRequest', () => {
 		);
 	});
 
+	it('rejects a blank API key before fetching', async () => {
+		mockFetch({ body: {} });
+
+		await expect(makeSerpapiRequest('/search', '   ')).rejects.toThrow(
+			'SerpApi API key is required',
+		);
+		expect(captured).toBeUndefined();
+	});
+
 	it('propagates a real ApiError with its status, not a generic wrapper', async () => {
 		mockFetch({
 			status: 401,
