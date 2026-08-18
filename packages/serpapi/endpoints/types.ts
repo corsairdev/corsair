@@ -78,10 +78,17 @@ export type SerpapiGoogleDomain = z.infer<typeof SerpapiGoogleDomainSchema>;
  * distinct parameter sets instead), so this is spread only into the
  * engines confirmed to share this convention.
  */
+const nonempty = z.string().trim().min(1);
+
+const httpUrl = nonempty.url().refine((value) => {
+	const protocol = new URL(value).protocol;
+	return protocol === 'http:' || protocol === 'https:';
+});
+
 const CommonSearchParamsSchema = {
-	location: z.string().optional(),
-	hl: z.string().optional(),
-	gl: z.string().optional(),
+	location: nonempty.optional(),
+	hl: nonempty.optional(),
+	gl: nonempty.optional(),
 	device: z.enum(['desktop', 'tablet', 'mobile']).optional(),
 	num: z.number().optional(),
 	start: z.number().optional(),
@@ -94,7 +101,7 @@ const CommonSearchParamsSchema = {
 /* -------------------------------------------------------------------------- */
 
 const SearchInputSchema = z.object({
-	q: z.string(),
+	q: nonempty,
 	...CommonSearchParamsSchema,
 	/** Confirmed from the catalog description: "max num=100". */
 	num: z.number().max(100).optional(),
@@ -102,7 +109,7 @@ const SearchInputSchema = z.object({
 export type SearchInput = z.infer<typeof SearchInputSchema>;
 
 const ImageSearchInputSchema = z.object({
-	q: z.string(),
+	q: nonempty,
 	...CommonSearchParamsSchema,
 	/** Confirmed from the catalog description: 1-100, defaults to 20. */
 	num: z.number().min(1).max(100).optional(),
@@ -110,7 +117,7 @@ const ImageSearchInputSchema = z.object({
 export type ImageSearchInput = z.infer<typeof ImageSearchInputSchema>;
 
 const ImagesLightSearchInputSchema = z.object({
-	q: z.string(),
+	q: nonempty,
 	...CommonSearchParamsSchema,
 });
 export type ImagesLightSearchInput = z.infer<
@@ -118,7 +125,7 @@ export type ImagesLightSearchInput = z.infer<
 >;
 
 const VideosLightSearchInputSchema = z.object({
-	q: z.string(),
+	q: nonempty,
 	...CommonSearchParamsSchema,
 });
 export type VideosLightSearchInput = z.infer<
@@ -126,9 +133,9 @@ export type VideosLightSearchInput = z.infer<
 >;
 
 const MapsSearchInputSchema = z.object({
-	q: z.string(),
-	ll: z.string().optional(),
-	type: z.string().optional(),
+	q: nonempty,
+	ll: nonempty.optional(),
+	type: nonempty.optional(),
 	...CommonSearchParamsSchema,
 });
 export type MapsSearchInput = z.infer<typeof MapsSearchInputSchema>;
@@ -143,36 +150,36 @@ export type MapsSearchInput = z.infer<typeof MapsSearchInputSchema>;
  * seen on every other paginated engine in this catalog.
  */
 const MapsPostsInputSchema = z.object({
-	data_id: z.string(),
-	hl: z.string().optional(),
-	next_page_token: z.string().optional(),
+	data_id: nonempty,
+	hl: nonempty.optional(),
+	next_page_token: nonempty.optional(),
 });
 export type MapsPostsInput = z.infer<typeof MapsPostsInputSchema>;
 
 const JobsSearchInputSchema = z.object({
-	q: z.string(),
-	location: z.string().optional(),
-	hl: z.string().optional(),
-	gl: z.string().optional(),
+	q: nonempty,
+	location: nonempty.optional(),
+	hl: nonempty.optional(),
+	gl: nonempty.optional(),
 	start: z.number().optional(),
 	/** Confirmed from the catalog description's own field names. */
-	ltype: z.string().optional(),
+	ltype: nonempty.optional(),
 });
 export type JobsSearchInput = z.infer<typeof JobsSearchInputSchema>;
 
 /** Confirmed live: `q` is optional (a bare call with no query succeeds). */
 const PlaySearchInputSchema = z.object({
-	q: z.string().optional(),
-	gl: z.string().optional(),
-	hl: z.string().optional(),
+	q: nonempty.optional(),
+	gl: nonempty.optional(),
+	hl: nonempty.optional(),
 });
 export type PlaySearchInput = z.infer<typeof PlaySearchInputSchema>;
 
 const PlayProductInputSchema = z.object({
-	product_id: z.string(),
+	product_id: nonempty,
 	store: z.enum(['apps', 'movies', 'tv', 'audiobooks', 'books']).optional(),
-	gl: z.string().optional(),
-	hl: z.string().optional(),
+	gl: nonempty.optional(),
+	hl: nonempty.optional(),
 });
 export type PlayProductInput = z.infer<typeof PlayProductInputSchema>;
 
@@ -180,10 +187,10 @@ export type PlayProductInput = z.infer<typeof PlayProductInputSchema>;
 /** Confirmed live: needs `q`, `cites` or `cluster` - `{"error":"Missing query \`q\`, \`cites\` or \`cluster\` parameter."}` with none supplied. */
 const ScholarSearchInputSchema = z
 	.object({
-		q: z.string().optional(),
-		cites: z.string().optional(),
-		cluster: z.string().optional(),
-		hl: z.string().optional(),
+		q: nonempty.optional(),
+		cites: nonempty.optional(),
+		cluster: nonempty.optional(),
+		hl: nonempty.optional(),
 		start: z.number().optional(),
 	})
 	.refine(
@@ -196,14 +203,14 @@ const ScholarSearchInputSchema = z
 export type ScholarSearchInput = z.infer<typeof ScholarSearchInputSchema>;
 
 const ScholarAuthorInputSchema = z.object({
-	author_id: z.string(),
-	hl: z.string().optional(),
+	author_id: nonempty,
+	hl: nonempty.optional(),
 });
 export type ScholarAuthorInput = z.infer<typeof ScholarAuthorInputSchema>;
 
 /** `q` here is the paper's Google Scholar result id, not a free-text query. */
 const ScholarCiteInputSchema = z.object({
-	q: z.string(),
+	q: nonempty,
 });
 export type ScholarCiteInput = z.infer<typeof ScholarCiteInputSchema>;
 
@@ -211,11 +218,11 @@ export type ScholarCiteInput = z.infer<typeof ScholarCiteInputSchema>;
 /** Confirmed live: needs `q` or `category` - `{"error":"Missing query \`q\` or \`category\` parameter."}` with neither supplied. */
 const TrendsSearchInputSchema = z
 	.object({
-		q: z.string().optional(),
-		category: z.string().optional(),
-		data_type: z.string().optional(),
-		geo: z.string().optional(),
-		date: z.string().optional(),
+		q: nonempty.optional(),
+		category: nonempty.optional(),
+		data_type: nonempty.optional(),
+		geo: nonempty.optional(),
+		date: nonempty.optional(),
 	})
 	.refine((value) => value.q !== undefined || value.category !== undefined, {
 		message: 'Either q or category is required',
@@ -223,100 +230,100 @@ const TrendsSearchInputSchema = z
 export type TrendsSearchInput = z.infer<typeof TrendsSearchInputSchema>;
 
 const FinanceSearchInputSchema = z.object({
-	q: z.string(),
-	hl: z.string().optional(),
+	q: nonempty,
+	hl: nonempty.optional(),
 });
 export type FinanceSearchInput = z.infer<typeof FinanceSearchInputSchema>;
 
 /** Confirmed live: `q` is optional (a bare call with no query succeeds). */
 const NewsSearchInputSchema = z.object({
-	q: z.string().optional(),
+	q: nonempty.optional(),
 	...CommonSearchParamsSchema,
 });
 export type NewsSearchInput = z.infer<typeof NewsSearchInputSchema>;
 
 const ShoppingSearchInputSchema = z.object({
-	q: z.string(),
-	location: z.string().optional(),
-	hl: z.string().optional(),
-	gl: z.string().optional(),
+	q: nonempty,
+	location: nonempty.optional(),
+	hl: nonempty.optional(),
+	gl: nonempty.optional(),
 });
 export type ShoppingSearchInput = z.infer<typeof ShoppingSearchInputSchema>;
 
 const HotelSearchInputSchema = z.object({
-	q: z.string(),
-	check_in_date: z.string().optional(),
-	check_out_date: z.string().optional(),
+	q: nonempty,
+	check_in_date: nonempty.optional(),
+	check_out_date: nonempty.optional(),
 	adults: z.number().optional(),
-	currency: z.string().optional(),
+	currency: nonempty.optional(),
 	...CommonSearchParamsSchema,
 });
 export type HotelSearchInput = z.infer<typeof HotelSearchInputSchema>;
 
 const HotelsAutocompleteInputSchema = z.object({
-	q: z.string(),
-	hl: z.string().optional(),
+	q: nonempty,
+	hl: nonempty.optional(),
 });
 export type HotelsAutocompleteInput = z.infer<
 	typeof HotelsAutocompleteInputSchema
 >;
 
 const EventSearchInputSchema = z.object({
-	q: z.string(),
-	location: z.string().optional(),
-	hl: z.string().optional(),
-	gl: z.string().optional(),
+	q: nonempty,
+	location: nonempty.optional(),
+	hl: nonempty.optional(),
+	gl: nonempty.optional(),
 });
 export type EventSearchInput = z.infer<typeof EventSearchInputSchema>;
 
 const LocalServicesSearchInputSchema = z.object({
-	q: z.string(),
-	location: z.string().optional(),
-	hl: z.string().optional(),
-	gl: z.string().optional(),
+	q: nonempty,
+	location: nonempty.optional(),
+	hl: nonempty.optional(),
+	gl: nonempty.optional(),
 });
 export type LocalServicesSearchInput = z.infer<
 	typeof LocalServicesSearchInputSchema
 >;
 
 const ForumsSearchInputSchema = z.object({
-	q: z.string(),
+	q: nonempty,
 	...CommonSearchParamsSchema,
 });
 export type ForumsSearchInput = z.infer<typeof ForumsSearchInputSchema>;
 
 /** Confirmed live: requires a publicly accessible `url`, not `q`. */
 const LensSearchInputSchema = z.object({
-	url: z.string(),
-	hl: z.string().optional(),
-	country: z.string().optional(),
+	url: httpUrl,
+	hl: nonempty.optional(),
+	country: nonempty.optional(),
 });
 export type LensSearchInput = z.infer<typeof LensSearchInputSchema>;
 
 const LightSearchInputSchema = z.object({
-	q: z.string(),
+	q: nonempty,
 	...CommonSearchParamsSchema,
 });
 export type LightSearchInput = z.infer<typeof LightSearchInputSchema>;
 
 /** `q` here is the URL to get "About this result" information for. */
 const AboutThisResultInputSchema = z.object({
-	q: z.string(),
-	hl: z.string().optional(),
-	gl: z.string().optional(),
+	q: httpUrl,
+	hl: nonempty.optional(),
+	gl: nonempty.optional(),
 });
 export type AboutThisResultInput = z.infer<typeof AboutThisResultInputSchema>;
 
 const PatentDetailsInputSchema = z.object({
-	patent_id: z.string(),
-	hl: z.string().optional(),
+	patent_id: nonempty,
+	hl: nonempty.optional(),
 });
 export type PatentDetailsInput = z.infer<typeof PatentDetailsInputSchema>;
 
 const ImagesRelatedContentInputSchema = z.object({
-	related_content_id: z.string(),
-	hl: z.string().optional(),
-	gl: z.string().optional(),
+	related_content_id: nonempty,
+	hl: nonempty.optional(),
+	gl: nonempty.optional(),
 });
 export type ImagesRelatedContentInput = z.infer<
 	typeof ImagesRelatedContentInputSchema
@@ -327,38 +334,38 @@ export type ImagesRelatedContentInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const BingSearchInputSchema = z.object({
-	q: z.string(),
-	location: z.string().optional(),
-	mkt: z.string().optional(),
-	cc: z.string().optional(),
+	q: nonempty,
+	location: nonempty.optional(),
+	mkt: nonempty.optional(),
+	cc: nonempty.optional(),
 	device: z.enum(['desktop', 'tablet', 'mobile']).optional(),
 });
 export type BingSearchInput = z.infer<typeof BingSearchInputSchema>;
 
 const BingMapsInputSchema = z.object({
-	q: z.string(),
-	id: z.string().optional(),
-	location: z.string().optional(),
+	q: nonempty,
+	id: nonempty.optional(),
+	location: nonempty.optional(),
 });
 export type BingMapsInput = z.infer<typeof BingMapsInputSchema>;
 
 const DuckDuckGoSearchInputSchema = z.object({
-	q: z.string(),
-	kl: z.string().optional(),
+	q: nonempty,
+	kl: nonempty.optional(),
 });
 export type DuckDuckGoSearchInput = z.infer<typeof DuckDuckGoSearchInputSchema>;
 
 const DuckDuckGoMapsInputSchema = z.object({
-	q: z.string(),
-	kl: z.string().optional(),
+	q: nonempty,
+	kl: nonempty.optional(),
 });
 export type DuckDuckGoMapsInput = z.infer<typeof DuckDuckGoMapsInputSchema>;
 
 /** Confirmed from the catalog description: supports pagination, 15 results/page. */
 const DuckDuckGoLightSearchInputSchema = z.object({
-	q: z.string(),
-	kl: z.string().optional(),
-	df: z.string().optional(),
+	q: nonempty,
+	kl: nonempty.optional(),
+	df: nonempty.optional(),
 	start: z.number().optional(),
 });
 export type DuckDuckGoLightSearchInput = z.infer<
@@ -367,29 +374,29 @@ export type DuckDuckGoLightSearchInput = z.infer<
 
 /** Confirmed live: Yahoo's query parameter is `p`, not `q`. */
 const YahooSearchInputSchema = z.object({
-	p: z.string(),
-	location: z.string().optional(),
+	p: nonempty,
+	location: nonempty.optional(),
 	device: z.enum(['desktop', 'tablet', 'mobile']).optional(),
 });
 export type YahooSearchInput = z.infer<typeof YahooSearchInputSchema>;
 
 const YahooVideosInputSchema = z.object({
-	p: z.string(),
+	p: nonempty,
 });
 export type YahooVideosInput = z.infer<typeof YahooVideosInputSchema>;
 
 /** Confirmed live: Yandex's query parameter is `text`, not `q`. */
 const YandexSearchInputSchema = z.object({
-	text: z.string(),
-	location: z.string().optional(),
+	text: nonempty,
+	location: nonempty.optional(),
 });
 export type YandexSearchInput = z.infer<typeof YandexSearchInputSchema>;
 
 const YandexImagesSearchInputSchema = z.object({
-	text: z.string(),
-	isize: z.string().optional(),
-	icolor: z.string().optional(),
-	itype: z.string().optional(),
+	text: nonempty,
+	isize: nonempty.optional(),
+	icolor: nonempty.optional(),
+	itype: nonempty.optional(),
 });
 export type YandexImagesSearchInput = z.infer<
 	typeof YandexImagesSearchInputSchema
@@ -402,22 +409,22 @@ export type YandexImagesSearchInput = z.infer<
  * catalog description's "filtering options including time periods".
  */
 const NaverSearchInputSchema = z.object({
-	query: z.string(),
-	where: z.string().optional(),
-	period: z.string().optional(),
+	query: nonempty,
+	where: nonempty.optional(),
+	period: nonempty.optional(),
 });
 export type NaverSearchInput = z.infer<typeof NaverSearchInputSchema>;
 
 const BaiduSearchInputSchema = z.object({
-	q: z.string(),
+	q: nonempty,
 });
 export type BaiduSearchInput = z.infer<typeof BaiduSearchInputSchema>;
 
 /** Confirmed live: YouTube's query parameter is `search_query`, not `q`. */
 const YouTubeSearchInputSchema = z.object({
-	search_query: z.string(),
-	gl: z.string().optional(),
-	hl: z.string().optional(),
+	search_query: nonempty,
+	gl: nonempty.optional(),
+	hl: nonempty.optional(),
 });
 export type YouTubeSearchInput = z.infer<typeof YouTubeSearchInputSchema>;
 
@@ -427,8 +434,8 @@ export type YouTubeSearchInput = z.infer<typeof YouTubeSearchInputSchema>;
 
 /** Confirmed live: eBay's query parameter is `_nkw`, not `q`. */
 const EbaySearchInputSchema = z.object({
-	_nkw: z.string(),
-	_sacat: z.string().optional(),
+	_nkw: nonempty,
+	_sacat: nonempty.optional(),
 });
 export type EbaySearchInput = z.infer<typeof EbaySearchInputSchema>;
 
@@ -436,9 +443,9 @@ export type EbaySearchInput = z.infer<typeof EbaySearchInputSchema>;
 /** Confirmed live: needs `query` or `cat_id` - `{"error":"Missing query \`query\` or \`cat_id\` parameter."}` with neither supplied. */
 const WalmartSearchInputSchema = z
 	.object({
-		query: z.string().optional(),
-		cat_id: z.string().optional(),
-		store_id: z.string().optional(),
+		query: nonempty.optional(),
+		cat_id: nonempty.optional(),
+		store_id: nonempty.optional(),
 	})
 	.refine((value) => value.query !== undefined || value.cat_id !== undefined, {
 		message: 'Either query or cat_id is required',
@@ -446,34 +453,34 @@ const WalmartSearchInputSchema = z
 export type WalmartSearchInput = z.infer<typeof WalmartSearchInputSchema>;
 
 const WalmartProductReviewsInputSchema = z.object({
-	product_id: z.string(),
-	sort: z.string().optional(),
+	product_id: nonempty,
+	sort: nonempty.optional(),
 });
 export type WalmartProductReviewsInput = z.infer<
 	typeof WalmartProductReviewsInputSchema
 >;
 
 const AppleAppStoreInputSchema = z.object({
-	term: z.string(),
-	country: z.string().optional(),
+	term: nonempty,
+	country: nonempty.optional(),
 });
 export type AppleAppStoreInput = z.infer<typeof AppleAppStoreInputSchema>;
 
 /** Confirmed live: Yelp requires `find_loc`, a location, alongside a `find_desc` query term. */
 const YelpSearchInputSchema = z.object({
-	find_loc: z.string(),
-	find_desc: z.string().optional(),
+	find_loc: nonempty,
+	find_desc: nonempty.optional(),
 });
 export type YelpSearchInput = z.infer<typeof YelpSearchInputSchema>;
 
 /** Confirmed live: OpenTable reviews need `rid` (the restaurant id), not `q`. */
 const OpenTableReviewsInputSchema = z.object({
-	rid: z.string(),
+	rid: nonempty,
 });
 export type OpenTableReviewsInput = z.infer<typeof OpenTableReviewsInputSchema>;
 
 const FacebookProfileInputSchema = z.object({
-	profile_id: z.string(),
+	profile_id: nonempty,
 });
 export type FacebookProfileInput = z.infer<typeof FacebookProfileInputSchema>;
 
@@ -482,7 +489,7 @@ export type FacebookProfileInput = z.infer<typeof FacebookProfileInputSchema>;
 /* -------------------------------------------------------------------------- */
 
 const LocationOptionsInputSchema = z.object({
-	q: z.string().optional(),
+	q: nonempty.optional(),
 	limit: z.number().optional(),
 });
 export type LocationOptionsInput = z.infer<typeof LocationOptionsInputSchema>;
