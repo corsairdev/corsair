@@ -145,6 +145,7 @@ export const BaseProviders = [
 	'typeform',
 	'vapi',
 	'vercel',
+	'webflow',
 	'whatsapp',
 	'wiza',
 	'workday',
@@ -289,6 +290,7 @@ export const ProviderDisplayNames = {
 	typeform: 'Typeform',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
+	webflow: 'Webflow',
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
 	workday: 'Workday',
@@ -440,6 +442,7 @@ export type AllProviders =
 	| 'typeform'
 	| 'vapi'
 	| 'vercel'
+	| 'webflow'
 	| 'whatsapp'
 	| 'wiza'
 	| 'workday'
