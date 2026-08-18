@@ -82,6 +82,7 @@ export const BaseProviders = [
 	'googlemeet',
 	'googlesheets',
 	'grafana',
+	'habitica',
 	'hackernews',
 	'harvest',
 	'hashnode',
@@ -218,6 +219,7 @@ export const ProviderDisplayNames = {
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
+	habitica: 'Habitica',
 	hackernews: 'Hacker News',
 	harvest: 'Harvest',
 	hashnode: 'Hashnode',
@@ -361,6 +363,7 @@ export type AllProviders =
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
+	| 'habitica'
 	| 'hackernews'
 	| 'harvest'
 	| 'hashnode'
