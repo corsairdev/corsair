@@ -47,12 +47,17 @@ describe('Endpoint retry', () => {
 
 	it('returns the successful retried result instead of rethrowing the original error', async () => {
 		let calls = 0;
+		const recoveredChannelsList = {
+			ok: true,
+			channels: [{ id: 'C1', name: 'general' }],
+		};
+
 		mockedMakeSlackRequest.mockImplementation(async () => {
 			calls += 1;
 			if (calls === 1) {
 				throw rateLimitApiError();
 			}
-			return { ok: true, channels: [{ id: 'C1', name: 'general' }] } as any;
+			return recoveredChannelsList;
 		});
 
 		const corsair = createCorsair({
@@ -105,6 +110,11 @@ describe('Endpoint retry', () => {
 			],
 		});
 
-		await expect(corsair.slack.api.channels.list({})).rejects.toThrow();
+		await expect(corsair.slack.api.channels.list({})).rejects.toMatchObject({
+			name: 'ApiError',
+			status: 429,
+			message: 'rate_limited',
+		});
+		expect(mockedMakeSlackRequest).toHaveBeenCalledTimes(2);
 	});
 });
