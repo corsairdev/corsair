@@ -1,7 +1,30 @@
 import {
 	describeDeliveryNetworkError,
 	formatServerDeliveryError,
+	signDeliveryEnvelope,
 } from '../hub/signing/envelope';
+
+describe('signDeliveryEnvelope', () => {
+	it('signs the body and sets the standard x-corsair headers', () => {
+		const { headers } = signDeliveryEnvelope({
+			projectId: 'proj_test',
+			signingSecret: 'secret',
+			type: 'connect.create_link',
+			payload: {},
+		});
+		expect(headers['x-corsair-signature']).toMatch(/^sha256=/);
+		expect(headers['x-corsair-project']).toBe('proj_test');
+		expect(headers['content-type']).toBe('application/json');
+		// Exactly the standard signed headers — no stray passthrough header.
+		expect(Object.keys(headers).sort()).toEqual([
+			'content-type',
+			'x-corsair-nonce',
+			'x-corsair-project',
+			'x-corsair-signature',
+			'x-corsair-timestamp',
+		]);
+	});
+});
 
 describe('describeDeliveryNetworkError', () => {
 	it('explains connection refused without environment-specific hints', () => {
