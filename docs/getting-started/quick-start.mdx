@@ -15,9 +15,7 @@ Want to host those surfaces yourself instead? Every step below is the same; swap
 
 <Steps>
 
-<Step>
-
-## Install
+<Step title="Install">
 
 <CodeGroup>
 ```bash npm
@@ -40,9 +38,7 @@ bun add corsair @corsair-dev/github
 
 </Step>
 
-<Step>
-
-## Set your environment
+<Step title="Set your environment">
 
 Create a project in the [Hub dashboard](https://hub.corsair.dev/dashboard) and copy the **development** API key and signing secret. Then generate a KEK — Corsair encrypts every stored credential with it:
 
@@ -61,9 +57,7 @@ Keep your KEK safe. Lose it and you lose access to every stored credential. Trea
 
 </Step>
 
-<Step>
-
-## Create the database
+<Step title="Create the database">
 
 Corsair stores data in four tables. SQLite is the fastest way to start:
 
@@ -154,9 +148,7 @@ Using Postgres, Drizzle, or Prisma instead? See [Database](/concepts/database) f
 
 </Step>
 
-<Step>
-
-## Configure Corsair
+<Step title="Configure Corsair">
 
 Wire your database, KEK, and Hub keys together in `src/server/corsair.ts`:
 
@@ -187,9 +179,7 @@ Add more plugins later — `slack()`, `linear()`, `gmail()` — by appending to 
 
 </Step>
 
-<Step>
-
-## Connect and call
+<Step title="Connect and call">
 
 Mint a connect link and send the user to it. Hub hosts the connect page and delivers the result back to your app — no connect page or OAuth callback to build:
 

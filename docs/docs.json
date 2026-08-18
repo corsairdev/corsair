@@ -34,6 +34,16 @@
             ]
           },
           {
+            "group": "Use cases",
+            "pages": [
+              "use-cases/overview",
+              "use-cases/dashboards",
+              "use-cases/agents",
+              "use-cases/knowledge-base",
+              "use-cases/workflows"
+            ]
+          },
+          {
             "group": "Adapters",
             "pages": [
               "adapters/handlers",
