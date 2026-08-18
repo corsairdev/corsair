@@ -50,7 +50,6 @@ const ALLOWED_FIELDS = new Set<string>([
 	// emails, invoice numbers), so it is recorded by NAME only, never by value.
 	'pageIndex',
 	'pageSize',
-	'orderBy',
 	'from',
 	'to',
 	// booleans - describe shape, never carry content
