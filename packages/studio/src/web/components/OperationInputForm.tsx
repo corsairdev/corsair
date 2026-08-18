@@ -80,11 +80,9 @@ function FieldLabel({
 	schema: FormFieldSchema;
 	htmlFor?: string;
 }) {
-	return (
-		<label
-			htmlFor={htmlFor}
-			className="block text-xs font-medium text-[var(--color-text)] mb-1"
-		>
+	const className = 'block text-xs font-medium text-[var(--color-text)] mb-1';
+	const body = (
+		<>
 			{name}
 			{!schema.optional && (
 				<span className="text-[var(--color-err)] ml-0.5">*</span>
@@ -94,8 +92,16 @@ function FieldLabel({
 					{schema.description}
 				</span>
 			)}
-		</label>
+		</>
 	);
+	if (htmlFor) {
+		return (
+			<label htmlFor={htmlFor} className={className}>
+				{body}
+			</label>
+		);
+	}
+	return <div className={className}>{body}</div>;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -180,7 +186,7 @@ function BooleanField({
 	onChange: (v: FormValue) => void;
 }) {
 	return (
-		<label className="inline-flex items-center gap-2 text-xs cursor-pointer">
+		<div className="inline-flex items-center gap-2 text-xs">
 			<input
 				id={id}
 				type="checkbox"
@@ -191,7 +197,7 @@ function BooleanField({
 			<span className="text-[var(--color-text-muted)]">
 				{value ? 'true' : 'false'}
 			</span>
-		</label>
+		</div>
 	);
 }
 
