@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import type {
 	ApiRequestOptions,
 	OpenAPIConfig,
@@ -84,9 +85,9 @@ export async function discoverBotpressWorkspaceId(
 
 	const workspaces = payload?.workspaces ?? [];
 	const only = workspaces.length === 1 ? workspaces[0] : undefined;
-	if (!only?.id) throw new BotpressWorkspaceIdMissingError();
+	if (!only?.id?.trim()) throw new BotpressWorkspaceIdMissingError();
 
-	return only.id;
+	return only.id.trim();
 }
 
 export type BotpressRequestOptions = {
@@ -129,14 +130,25 @@ export async function makeBotpressRequest<T>(
 	personalAccessToken: string,
 	options: BotpressRequestOptions = {},
 ): Promise<T> {
+	const token = personalAccessToken.trim();
+	if (!token) {
+		throw new AuthMissingError('botpress', 'api_key');
+	}
+
 	const { method = 'GET', body, query, workspaceId, botId } = options;
 
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json',
-		Authorization: `Bearer ${personalAccessToken}`,
+		Authorization: `Bearer ${token}`,
 	};
-	if (workspaceId) headers['x-workspace-id'] = workspaceId;
-	if (botId) headers['x-bot-id'] = botId;
+	if (workspaceId !== undefined) {
+		if (!workspaceId.trim()) throw new BotpressWorkspaceIdMissingError();
+		headers['x-workspace-id'] = workspaceId.trim();
+	}
+	if (botId !== undefined) {
+		if (!botId.trim()) throw new BotpressBotIdMissingError();
+		headers['x-bot-id'] = botId.trim();
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: BOTPRESS_API_BASE,

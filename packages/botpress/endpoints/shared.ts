@@ -29,10 +29,10 @@ type BotpressCallContext = {
 export async function resolveWorkspaceId(
 	ctx: BotpressCallContext,
 ): Promise<string> {
-	const configured = ctx.options.workspaceId;
+	const configured = ctx.options.workspaceId?.trim();
 	if (configured) return configured;
 
-	const stored = await ctx.keys?.get_workspace_id?.();
+	const stored = (await ctx.keys?.get_workspace_id?.())?.trim();
 	if (stored) return stored;
 
 	return await discoverBotpressWorkspaceId(ctx.key);

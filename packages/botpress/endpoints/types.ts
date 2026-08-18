@@ -487,9 +487,11 @@ export type EmptyResult = z.infer<typeof EmptyResultSchema>;
 const EmptyInputSchema = z.object({});
 export type EmptyInput = z.infer<typeof EmptyInputSchema>;
 
+const nonempty = z.string().trim().min(1);
+
 /* Shared pagination envelope for the list operations that accept it. */
 const PageInputSchema = z.object({
-	nextToken: z.string().optional(),
+	nextToken: nonempty.optional(),
 	pageSize: z.number().int().positive().optional(),
 });
 
@@ -509,14 +511,14 @@ const AccountUpdateInputSchema = z.object({
 export type AccountUpdateInput = z.infer<typeof AccountUpdateInputSchema>;
 
 const AccountGetPreferenceInputSchema = z.object({
-	key: z.string().min(1),
+	key: nonempty,
 });
 export type AccountGetPreferenceInput = z.infer<
 	typeof AccountGetPreferenceInputSchema
 >;
 
 const AccountSetPreferenceInputSchema = z.object({
-	key: z.string().min(1),
+	key: nonempty,
 	/**
 	 * Botpress types the stored preference value as `any` — never observed a
 	 * stable shape across preference keys, so it is passed through unknown.
@@ -532,18 +534,18 @@ export type AccountSetPreferenceInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const WorkspacesCreateInputSchema = z.object({
-	name: z.string().min(1),
+	name: nonempty,
 	billingVersion: z.string().optional(),
 });
 export type WorkspacesCreateInput = z.infer<typeof WorkspacesCreateInputSchema>;
 
 const WorkspacesGetInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 });
 export type WorkspacesGetInput = z.infer<typeof WorkspacesGetInputSchema>;
 
 const WorkspacesUpdateInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 	name: z.string().optional(),
 	spendingLimit: z.number().optional(),
 	about: z.string().optional(),
@@ -557,7 +559,7 @@ const WorkspacesUpdateInputSchema = z.object({
 export type WorkspacesUpdateInput = z.infer<typeof WorkspacesUpdateInputSchema>;
 
 const WorkspacesDeleteInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 });
 export type WorkspacesDeleteInput = z.infer<typeof WorkspacesDeleteInputSchema>;
 
@@ -576,7 +578,7 @@ export type WorkspacesListPublicInput = z.infer<
 >;
 
 const WorkspacesCheckHandleAvailabilityInputSchema = z.object({
-	handle: z.string().min(1),
+	handle: nonempty,
 });
 export type WorkspacesCheckHandleAvailabilityInput = z.infer<
 	typeof WorkspacesCheckHandleAvailabilityInputSchema
@@ -588,7 +590,7 @@ export type WorkspacesCheckHandleAvailabilityInput = z.infer<
  * from `x-workspace-id`.
  */
 const WorkspacesSetPreferenceInputSchema = z.object({
-	key: z.string().min(1),
+	key: nonempty,
 	value: z.unknown(),
 });
 export type WorkspacesSetPreferenceInput = z.infer<
@@ -596,7 +598,7 @@ export type WorkspacesSetPreferenceInput = z.infer<
 >;
 
 const WorkspacesGetQuotaInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 	type: BotpressQuotaTypeSchema,
 	period: z.string().optional(),
 });
@@ -610,7 +612,7 @@ export type WorkspacesGetAllQuotaCompletionInput = z.infer<
 >;
 
 const WorkspacesBreakDownUsageByBotInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 	type: BotpressQuotaTypeSchema,
 	period: z.string().optional(),
 });
@@ -623,14 +625,14 @@ export type WorkspacesBreakDownUsageByBotInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const BillingListInvoicesInputSchema = z.object({
-	workspaceId: z.string().min(1),
+	workspaceId: nonempty,
 });
 export type BillingListInvoicesInput = z.infer<
 	typeof BillingListInvoicesInputSchema
 >;
 
 const BillingGetUpcomingInvoiceInputSchema = z.object({
-	workspaceId: z.string().min(1),
+	workspaceId: nonempty,
 });
 export type BillingGetUpcomingInvoiceInput = z.infer<
 	typeof BillingGetUpcomingInvoiceInputSchema
@@ -649,8 +651,8 @@ export type BillingGetUpcomingInvoiceInput = z.infer<
  * by omitting the field.
  */
 const BillingChargeUnpaidInvoicesInputSchema = z.object({
-	workspaceId: z.string().min(1),
-	invoiceIds: z.array(z.string()).min(1),
+	workspaceId: nonempty,
+	invoiceIds: z.array(nonempty).min(1),
 });
 export type BillingChargeUnpaidInvoicesInput = z.infer<
 	typeof BillingChargeUnpaidInvoicesInputSchema
@@ -658,7 +660,7 @@ export type BillingChargeUnpaidInvoicesInput = z.infer<
 
 const BillingListUsageHistoryInputSchema = z.object({
 	/** A workspace id or a bot id — this route reports usage for either. */
-	id: z.string().min(1),
+	id: nonempty,
 	type: BotpressQuotaTypeSchema,
 });
 export type BillingListUsageHistoryInput = z.infer<
@@ -708,7 +710,7 @@ const BotsCreateInputSchema = z.object({
 export type BotsCreateInput = z.infer<typeof BotsCreateInputSchema>;
 
 const BotsUpdateInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 	name: z.string().optional(),
 	description: z.string().optional(),
 	tags: z.record(z.string(), z.string()).optional(),
@@ -740,7 +742,7 @@ const BotsUpdateInputSchema = z.object({
 export type BotsUpdateInput = z.infer<typeof BotsUpdateInputSchema>;
 
 const BotsListActionRunsInputSchema = PageInputSchema.extend({
-	id: z.string().min(1),
+	id: nonempty,
 	integrationName: z.string().optional(),
 	timestampFrom: z.string().optional(),
 	timestampUntil: z.string().optional(),
@@ -750,7 +752,7 @@ export type BotsListActionRunsInput = z.infer<
 >;
 
 const BotsListIssuesInputSchema = PageInputSchema.extend({
-	id: z.string().min(1),
+	id: nonempty,
 });
 export type BotsListIssuesInput = z.infer<typeof BotsListIssuesInputSchema>;
 
@@ -759,8 +761,8 @@ export type BotsListIssuesInput = z.infer<typeof BotsListIssuesInputSchema>;
 /* -------------------------------------------------------------------------- */
 
 const ChatCreateConversationInputSchema = z.object({
-	botId: z.string().min(1),
-	channel: z.string().min(1),
+	botId: nonempty,
+	channel: nonempty,
 	tags: z.record(z.string(), z.string()),
 	properties: z.record(z.string(), z.string()).optional(),
 });
@@ -769,7 +771,7 @@ export type ChatCreateConversationInput = z.infer<
 >;
 
 const ChatListConversationsInputSchema = PageInputSchema.extend({
-	botId: z.string().min(1),
+	botId: nonempty,
 	tags: z.record(z.string(), z.string()).optional(),
 	sortField: z.enum(['createdAt', 'updatedAt']).optional(),
 	sortDirection: z.enum(['asc', 'desc']).optional(),
@@ -786,10 +788,10 @@ export type ChatListConversationsInput = z.infer<
 >;
 
 const ChatSendMessageInputSchema = z.object({
-	botId: z.string().min(1),
-	conversationId: z.string().min(1),
-	userId: z.string().min(1),
-	type: z.string().min(1),
+	botId: nonempty,
+	conversationId: nonempty,
+	userId: nonempty,
+	type: nonempty,
 	payload: z.record(z.string(), z.unknown()),
 	/** Required by `CreateMessageRequestBody` - pass `{}` for no tags. */
 	tags: z.record(z.string(), z.string()),
@@ -811,8 +813,8 @@ export type ChatSendMessageInput = z.infer<typeof ChatSendMessageInputSchema>;
  * `timedout`) - those two are system-set and not accepted on update.
  */
 const ChatUpdateWorkflowInputSchema = z.object({
-	botId: z.string().min(1),
-	id: z.string().min(1),
+	botId: nonempty,
+	id: nonempty,
 	status: z
 		.enum([
 			'completed',
@@ -850,8 +852,8 @@ export type ChatUpdateWorkflowInput = z.infer<
  * schema.
  */
 const IntegrationsCreateInputSchema = z.object({
-	name: z.string().min(1),
-	version: z.string().min(1),
+	name: nonempty,
+	version: nonempty,
 	title: z.string().optional(),
 	description: z.string().optional(),
 	url: z.string().optional(),
@@ -901,9 +903,9 @@ export type IntegrationsCreateInput = z.infer<
  * public hub's `agi/edge` integration, which has many versions).
  */
 const IntegrationsGetInputSchema = z.object({
-	name: z.string().min(1),
+	name: nonempty,
 	/** A specific version, or `"latest"` for the newest one. */
-	version: z.string().min(1),
+	version: nonempty,
 });
 export type IntegrationsGetInput = z.infer<typeof IntegrationsGetInputSchema>;
 
@@ -928,7 +930,7 @@ const IntegrationsListInputSchema = PageInputSchema.extend({
 export type IntegrationsListInput = z.infer<typeof IntegrationsListInputSchema>;
 
 const IntegrationsValidateUpdateInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 	configuration: z.record(z.string(), z.unknown()).optional(),
 	configurations: z.record(z.string(), z.unknown()).optional(),
 	states: z.record(z.string(), z.unknown()).optional(),
@@ -964,22 +966,22 @@ export type IntegrationsValidateUpdateInput = z.infer<
 >;
 
 const IntegrationsRequestVerificationInputSchema = z.object({
-	integrationId: z.string().min(1),
+	integrationId: nonempty,
 });
 export type IntegrationsRequestVerificationInput = z.infer<
 	typeof IntegrationsRequestVerificationInputSchema
 >;
 
 const IntegrationsListApiKeysInputSchema = z.object({
-	integrationId: z.string().min(1),
+	integrationId: nonempty,
 });
 export type IntegrationsListApiKeysInput = z.infer<
 	typeof IntegrationsListApiKeysInputSchema
 >;
 
 const IntegrationsDeleteShareableIdInputSchema = z.object({
-	botId: z.string().min(1),
-	integrationId: z.string().min(1),
+	botId: nonempty,
+	integrationId: nonempty,
 	integrationInstanceAlias: z.string().optional(),
 });
 export type IntegrationsDeleteShareableIdInput = z.infer<
@@ -1011,15 +1013,15 @@ export type HubListIntegrationsInput = z.infer<
 >;
 
 const HubGetIntegrationInputSchema = z.object({
-	name: z.string().min(1),
-	version: z.string().min(1),
+	name: nonempty,
+	version: nonempty,
 });
 export type HubGetIntegrationInput = z.infer<
 	typeof HubGetIntegrationInputSchema
 >;
 
 const HubGetIntegrationByIdInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 });
 export type HubGetIntegrationByIdInput = z.infer<
 	typeof HubGetIntegrationByIdInputSchema
@@ -1034,13 +1036,13 @@ export type HubListInterfacesInput = z.infer<
 >;
 
 const HubGetInterfaceInputSchema = z.object({
-	name: z.string().min(1),
-	version: z.string().min(1),
+	name: nonempty,
+	version: nonempty,
 });
 export type HubGetInterfaceInput = z.infer<typeof HubGetInterfaceInputSchema>;
 
 const HubGetInterfaceByIdInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 });
 export type HubGetInterfaceByIdInput = z.infer<
 	typeof HubGetInterfaceByIdInputSchema
@@ -1053,24 +1055,24 @@ const HubListPluginsInputSchema = PageInputSchema.extend({
 export type HubListPluginsInput = z.infer<typeof HubListPluginsInputSchema>;
 
 const HubGetPluginInputSchema = z.object({
-	name: z.string().min(1),
-	version: z.string().min(1),
+	name: nonempty,
+	version: nonempty,
 });
 export type HubGetPluginInput = z.infer<typeof HubGetPluginInputSchema>;
 
 const HubGetPluginByIdInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 });
 export type HubGetPluginByIdInput = z.infer<typeof HubGetPluginByIdInputSchema>;
 
 const HubGetPluginCodeInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 	platform: z.enum(['node', 'browser']),
 });
 export type HubGetPluginCodeInput = z.infer<typeof HubGetPluginCodeInputSchema>;
 
 const HubGetDereferencedPluginByIdInputSchema = z.object({
-	id: z.string().min(1),
+	id: nonempty,
 	/**
 	 * Required mapping of interface alias -> backing integration id
 	 * (`GetDereferencedPublicPluginByIdRequestQuery` in `@botpress/client`
@@ -1099,19 +1101,19 @@ export type PluginsListInput = z.infer<typeof PluginsListInputSchema>;
 /* -------------------------------------------------------------------------- */
 
 const FilesDeleteInputSchema = z.object({
-	botId: z.string().min(1),
-	id: z.string().min(1),
+	botId: nonempty,
+	id: nonempty,
 });
 export type FilesDeleteInput = z.infer<typeof FilesDeleteInputSchema>;
 
 const FilesListTagsInputSchema = PageInputSchema.extend({
-	botId: z.string().min(1),
+	botId: nonempty,
 });
 export type FilesListTagsInput = z.infer<typeof FilesListTagsInputSchema>;
 
 const FilesListTagValuesInputSchema = PageInputSchema.extend({
-	botId: z.string().min(1),
-	tag: z.string().min(1),
+	botId: nonempty,
+	tag: nonempty,
 });
 export type FilesListTagValuesInput = z.infer<
 	typeof FilesListTagValuesInputSchema
@@ -1122,7 +1124,7 @@ export type FilesListTagValuesInput = z.infer<
 /* -------------------------------------------------------------------------- */
 
 const KnowledgeBasesListInputSchema = PageInputSchema.extend({
-	botId: z.string().min(1),
+	botId: nonempty,
 	tags: z.record(z.string(), z.string()).optional(),
 });
 export type KnowledgeBasesListInput = z.infer<
@@ -1130,8 +1132,8 @@ export type KnowledgeBasesListInput = z.infer<
 >;
 
 const KnowledgeBasesDeleteInputSchema = z.object({
-	botId: z.string().min(1),
-	id: z.string().min(1),
+	botId: nonempty,
+	id: nonempty,
 });
 export type KnowledgeBasesDeleteInput = z.infer<
 	typeof KnowledgeBasesDeleteInputSchema
@@ -1144,13 +1146,13 @@ export type KnowledgeBasesDeleteInput = z.infer<
 const ToolsRunVrlInputSchema = z.object({
 	/** Arbitrary input data made available to the script as `.` in VRL. */
 	data: z.record(z.string(), z.unknown()),
-	script: z.string().min(1),
+	script: nonempty,
 });
 export type ToolsRunVrlInput = z.infer<typeof ToolsRunVrlInputSchema>;
 
 const ToolsGetTableRowInputSchema = z.object({
-	botId: z.string().min(1),
-	table: z.string().min(1),
+	botId: nonempty,
+	table: nonempty,
 	id: z.number(),
 });
 export type ToolsGetTableRowInput = z.infer<typeof ToolsGetTableRowInputSchema>;
