@@ -15,10 +15,13 @@ import {
 	BlazemeterWorkspaceUserEntity,
 } from '../schema/database';
 import {
+	BlazemeterAssetDataResult,
 	BlazemeterCardIssuerResult,
+	BlazemeterConvertedTransactionResult,
 	BlazemeterDataModelResult,
 	BlazemeterDataModelValidationResult,
 	BlazemeterDependencyResult,
+	BlazemeterExportResult,
 	BlazemeterGeneratedRow,
 	BlazemeterGeneratorFunctionResult,
 	BlazemeterHealthResult,
@@ -28,15 +31,18 @@ import {
 	BlazemeterMultiTestResult,
 	BlazemeterPrivateLocationAgentResult,
 	BlazemeterPrivateLocationResult,
+	BlazemeterPublishResult,
 	BlazemeterRegionResult,
 	BlazemeterScheduleResult,
 	BlazemeterSearchHitResult,
+	BlazemeterSearchMetadataResult,
 	BlazemeterSeedListResult,
 	BlazemeterServiceMockTemplateResult,
 	BlazemeterSessionResult,
 	BlazemeterSharedFolderResult,
 	BlazemeterTagResult,
 	BlazemeterTestFileResult,
+	BlazemeterTestValidateResult,
 	BlazemeterTransactionResult,
 	BlazemeterValidationResult,
 	BlazemeterVersionResult,
@@ -146,13 +152,14 @@ const listOrOne = <T extends z.ZodType>(schema: T) =>
 	z.union([schema, z.array(schema)]);
 
 const Flag = z.boolean();
-const Open = z.record(z.string(), z.unknown());
 
 export const BlazemeterEndpointOutputSchemas: Record<
 	BlazemeterOperationKey,
 	z.ZodType
 > = {
-	'transactions.convert': mockEnvelope(Open),
+	'transactions.convert': mockEnvelope(
+		z.array(BlazemeterConvertedTransactionResult),
+	),
 	'schedules.create': coreEnvelope(BlazemeterScheduleResult),
 	'assetDependencies.create': assetEnvelope(BlazemeterDependencyResult),
 	'multiTests.create': coreEnvelope(BlazemeterMultiTestResult),
@@ -179,8 +186,8 @@ export const BlazemeterEndpointOutputSchemas: Record<
 	'workspaces.removeManagers': coreEnvelope(Flag),
 	'packages.remove': assetEnvelope(Flag),
 	'tests.duplicate': coreEnvelope(BlazemeterTestEntity),
-	'packages.export': assetEnvelope(Open),
-	'packages.exportMany': assetEnvelope(Open),
+	'packages.export': assetEnvelope(BlazemeterExportResult),
+	'packages.exportMany': assetEnvelope(BlazemeterExportResult),
 	'testData.generateFromModel': coreEnvelope(z.array(BlazemeterGeneratedRow)),
 	'testData.generate': coreEnvelope(z.array(BlazemeterGeneratedRow)),
 	'schedules.get': coreEnvelope(BlazemeterScheduleResult),
@@ -204,7 +211,7 @@ export const BlazemeterEndpointOutputSchemas: Record<
 	'projects.get': coreEnvelope(BlazemeterProjectEntity),
 	'projects.list': coreEnvelope(z.array(BlazemeterProjectEntity)),
 	'regions.list': coreEnvelope(z.array(BlazemeterRegionResult)),
-	'search.metadata': coreEnvelope(Open),
+	'search.metadata': coreEnvelope(BlazemeterSearchMetadataResult),
 	'sharedFolders.list': coreEnvelope(z.array(BlazemeterSharedFolderResult)),
 	'tags.list': mockEnvelope(z.array(BlazemeterTagResult)),
 	'tests.get': coreEnvelope(listOrOne(BlazemeterTestEntity)),
@@ -217,14 +224,14 @@ export const BlazemeterEndpointOutputSchemas: Record<
 	'user.projects': coreEnvelope(z.array(BlazemeterProjectEntity)),
 	'serviceMockTemplates.get': mockEnvelope(BlazemeterServiceMockTemplateResult),
 	'assets.get': assetEnvelope(BlazemeterAssetEntity),
-	'assets.data': assetEnvelope(Open),
+	'assets.data': assetEnvelope(BlazemeterAssetDataResult),
 	'assetDependencies.get': assetEnvelope(BlazemeterDependencyResult),
 	'assets.list': assetEnvelope(z.array(BlazemeterAssetEntity)),
 	'assetDependencies.list': assetEnvelope(z.array(BlazemeterDependencyResult)),
 	'testData.getModel': coreEnvelope(BlazemeterDataModelResult),
 	'workspaces.get': coreEnvelope(BlazemeterWorkspaceEntity),
 	'packages.get': assetEnvelope(BlazemeterPackageEntity),
-	'packages.dependencies': assetEnvelope(Open),
+	'packages.dependencies': assetEnvelope(z.array(BlazemeterDependencyResult)),
 	'packages.list': assetEnvelope(z.array(BlazemeterPackageEntity)),
 	'serviceMockTemplates.list': mockEnvelope(
 		z.array(BlazemeterServiceMockTemplateResult),
@@ -234,21 +241,21 @@ export const BlazemeterEndpointOutputSchemas: Record<
 	'workspaces.list': coreEnvelope(z.array(BlazemeterWorkspaceEntity)),
 	'packages.import': assetEnvelope(BlazemeterPackageEntity),
 	'generator.cardIssuers': coreEnvelope(z.array(BlazemeterCardIssuerResult)),
-	'testData.publish': coreEnvelope(Open),
+	'testData.publish': coreEnvelope(BlazemeterPublishResult),
 	'user.register': coreEnvelope(BlazemeterUserEntity),
 	'tests.start': coreEnvelope(BlazemeterMasterResult),
 	'masters.stop': coreEnvelope(Flag),
 	'tests.stop': coreEnvelope(Flag),
 	'user.terminateSessions': coreEnvelope(Flag),
-	'workspaces.terminateMasters': coreEnvelope(
-		z.union([Flag, z.array(BlazemeterMasterResult), Open]),
-	),
+	'workspaces.terminateMasters': coreEnvelope(z.array(z.number())),
 	'schedules.update': coreEnvelope(BlazemeterScheduleResult),
 	'projects.update': coreEnvelope(BlazemeterProjectEntity),
 	'tests.update': coreEnvelope(BlazemeterTestEntity),
 	'assets.update': assetEnvelope(BlazemeterAssetEntity),
 	'packages.update': assetEnvelope(BlazemeterPackageEntity),
-	'packages.updateDependencies': assetEnvelope(Open),
+	'packages.updateDependencies': assetEnvelope(
+		z.array(BlazemeterDependencyResult),
+	),
 	'serviceMockTemplates.update': mockEnvelope(
 		BlazemeterServiceMockTemplateResult,
 	),
@@ -258,6 +265,6 @@ export const BlazemeterEndpointOutputSchemas: Record<
 	),
 	'tests.uploadFile': coreEnvelope(listOrOne(BlazemeterTestFileResult)),
 	'assets.uploadData': assetEnvelope(BlazemeterAssetEntity),
-	'tests.validate': coreEnvelope(z.union([Flag, Open])),
+	'tests.validate': coreEnvelope(BlazemeterTestValidateResult),
 	'testData.validateModel': coreEnvelope(BlazemeterDataModelValidationResult),
 };

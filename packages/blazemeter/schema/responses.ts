@@ -303,3 +303,108 @@ export const BlazemeterCardIssuerResult = z
 		lengths: UnknownArray,
 	})
 	.loose();
+
+const DslMatcher = z
+	.object({
+		key: S,
+		matcherName: S,
+		matchingValue: S,
+	})
+	.loose();
+
+/** POST /transactions/convert — https://help.blazemeter.com/apidocs/service-virtualization/transaction_convert.htm */
+export const BlazemeterConvertedTransactionResult = z
+	.object({
+		nativeId: S,
+		priority: N,
+		requestDsl: z
+			.object({
+				body: z.array(DslMatcher).nullable().optional(),
+				cookies: z.array(DslMatcher).nullable().optional(),
+				credentials: z
+					.object({
+						username: S,
+						password: S,
+					})
+					.loose()
+					.nullable()
+					.optional(),
+				headers: z.array(DslMatcher).nullable().optional(),
+				host: S,
+				method: S,
+				path: S,
+				queryParams: z.array(DslMatcher).nullable().optional(),
+				url: DslMatcher.nullable().optional(),
+			})
+			.loose()
+			.nullable()
+			.optional(),
+		responseDsl: z
+			.object({
+				binary: B,
+				charset: S,
+				content: S,
+				contentType: S,
+				headers: z
+					.array(
+						z
+							.object({
+								name: S,
+								value: S,
+							})
+							.loose(),
+					)
+					.nullable()
+					.optional(),
+				proxyUrl: S,
+				status: N,
+				statusMessage: S,
+			})
+			.loose()
+			.nullable()
+			.optional(),
+	})
+	.loose();
+
+/** POST /tests/{testId}/validate — https://help.blazemeter.com/apidocs/functional/tests_validate_a_file.htm */
+export const BlazemeterTestValidateResult = z
+	.object({
+		success: B,
+		files: z.record(z.string(), z.boolean()).nullable().optional(),
+	})
+	.loose();
+
+/** GET asset data — https://help.blazemeter.com/apidocs/test-data/create.htm */
+export const BlazemeterAssetDataResult = z
+	.object({
+		fileName: S,
+		contentType: S,
+		content: S,
+	})
+	.loose();
+
+/** GET /search/metadata — https://help.blazemeter.com/apidocs/performance/search.htm */
+export const BlazemeterSearchMetadataResult = z
+	.object({
+		entities: UnknownArray,
+		fields: Obj,
+		relationships: Obj,
+		operators: UnknownArray,
+	})
+	.loose();
+
+export const BlazemeterExportResult = z
+	.object({
+		url: S,
+		fileName: S,
+		contentType: S,
+	})
+	.loose();
+
+export const BlazemeterPublishResult = z
+	.object({
+		type: S,
+		data: Obj,
+		attributes: Obj,
+	})
+	.loose();

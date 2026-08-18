@@ -535,12 +535,12 @@ const BOOLEAN_CORE_RESULTS = new Set([
 	'masters.stop',
 	'tests.stop',
 	'user.terminateSessions',
-	'workspaces.terminateMasters',
-	'tests.validate',
 ]);
 
 function sampleCoreResult(key: string): unknown {
 	if (BOOLEAN_CORE_RESULTS.has(key)) return true;
+	if (key === 'workspaces.terminateMasters') return [21509126];
+	if (key === 'tests.validate') return { success: true, files: {} };
 	if (key.startsWith('schedules.') || key.startsWith('privateLocations.')) {
 		return key.endsWith('.list') ? [{ id: 'id-1' }] : { id: 'id-1' };
 	}
@@ -606,6 +606,32 @@ describe('BlazeMeter response contracts', () => {
 				requestId: 'req-1',
 			}).success,
 		).toBe(true);
+	});
+
+	it('accepts an array of converted transaction DSLs', () => {
+		const envelope = {
+			apiVersion: 1,
+			requestId: 'req-1',
+			result: [
+				{
+					nativeId: 'getPet',
+					priority: 1,
+					requestDsl: { method: 'GET', path: '/pet' },
+					responseDsl: { status: 200, contentType: 'JSON' },
+				},
+			],
+		};
+		expect(
+			BlazemeterEndpointOutputSchemas['transactions.convert'].safeParse(
+				envelope,
+			).success,
+		).toBe(true);
+		expect(
+			BlazemeterEndpointOutputSchemas['transactions.convert'].safeParse({
+				...envelope,
+				result: { nativeId: 'getPet' },
+			}).success,
+		).toBe(false);
 	});
 
 	it('rejects a non-envelope payload for every operation', () => {
