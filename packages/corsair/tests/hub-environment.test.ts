@@ -69,6 +69,8 @@ describe('hub environment delivery', () => {
 			'http://0177.0.0.1/api/corsair', // octal → 127.0.0.1
 			'http://[::1]/api/corsair',
 			'http://[::ffff:127.0.0.1]/api/corsair', // IPv4-mapped loopback
+			'http://[::127.0.0.1]/api/corsair', // IPv4-compatible loopback (→ ::7f00:1)
+			'http://[::7f00:1]/api/corsair', // same, hex form
 			'http://[fe80::1]/api/corsair', // link-local
 			'http://[fd00::1]/api/corsair', // unique-local
 		]) {

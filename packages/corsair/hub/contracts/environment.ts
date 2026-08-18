@@ -49,8 +49,11 @@ export function isPrivateOrLoopbackHost(hostname: string): boolean {
 
 	if (host.startsWith('[') && host.endsWith(']')) {
 		const v6 = host.slice(1, -1);
-		if (v6 === '::' || v6 === '::1') return true;
-		if (v6.startsWith('::ffff:')) return true; // IPv4-mapped — never a public host
+		// Public IPv6 is global-unicast (2000::/3) and never starts with '::'.
+		// Every '::'-prefixed form is special-use — unspecified (::), loopback
+		// (::1), IPv4-mapped (::ffff:7f00:1) or IPv4-compatible (::7f00:1 =
+		// 127.0.0.1) — so reject them all.
+		if (v6.startsWith('::')) return true;
 		if (/^f[cd]/.test(v6)) return true; // fc00::/7 unique-local
 		if (/^fe[89ab]/.test(v6)) return true; // fe80::/10 link-local
 		return false;
