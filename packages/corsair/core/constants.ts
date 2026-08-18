@@ -124,6 +124,7 @@ export const BaseProviders = [
 	'retailed',
 	'salesforce',
 	'sentry',
+	'serpapi',
 	'sharepoint',
 	'slack',
 	'spotify',
@@ -267,6 +268,7 @@ export const ProviderDisplayNames = {
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
 	sentry: 'Sentry',
+	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
 	spotify: 'Spotify',
@@ -348,8 +350,8 @@ export type AllProviders =
 	| 'cal'
 	| 'calendly'
 	| 'canva'
-	| 'circleci'
 	| 'canvas'
+	| 'circleci'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
@@ -417,6 +419,7 @@ export type AllProviders =
 	| 'retailed'
 	| 'salesforce'
 	| 'sentry'
+	| 'serpapi'
 	| 'sharepoint'
 	| 'slack'
 	| 'spotify'
