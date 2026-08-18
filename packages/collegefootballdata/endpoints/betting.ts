@@ -13,10 +13,13 @@ export const getLines: CollegeFootballDataEndpoints['bettingGetLines'] = async (
 		CollegeFootballDataBettingLineGame[]
 	>(ctx, '/lines', {
 		query: compactQuery({
+			gameId: input.gameId,
 			year: input.year,
 			seasonType: input.seasonType,
 			week: input.week,
 			team: input.team,
+			home: input.home,
+			away: input.away,
 			conference: input.conference,
 			classification: input.classification,
 			provider: input.provider,

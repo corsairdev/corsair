@@ -3,14 +3,15 @@
  * dropping a field the provider actually returns, and requiring a field it
  * sometimes omits.
  *
- * Every key list below was captured from live responses against a real
- * College Football Data account on 2026-08-17 (see `CFBD-PLAN.md` and
- * `endpoints/types.ts` for the exact requests).
+ * Every key list below comes from the official OpenAPI document
+ * (`https://api.collegefootballdata.com/api-docs.json`, v5.24.0) and was
+ * confirmed live on 2026-08-18.
  */
 
 import { CollegeFootballDataSchema } from './schema';
 import {
 	CollegeFootballDataCoachEntity,
+	CollegeFootballDataCoachSeason,
 	CollegeFootballDataConferenceEntity,
 	CollegeFootballDataTeamEntity,
 	CollegeFootballDataVenueEntity,
@@ -83,8 +84,26 @@ const LIVE_KEYS = {
 		'elevation',
 		'constructionYear',
 	],
-	coaches: ['id', 'firstName', 'lastName', 'hireDate'],
+	coaches: ['id', 'firstName', 'lastName', 'hireDate', 'seasons'],
 } as const;
+
+const COACH_SEASON_KEYS = [
+	'teamId',
+	'school',
+	'conference',
+	'year',
+	'games',
+	'wins',
+	'losses',
+	'ties',
+	'winPercentage',
+	'preseasonRank',
+	'postseasonRank',
+	'srs',
+	'spOverall',
+	'spOffense',
+	'spDefense',
+] as const;
 
 const ENTITIES = {
 	teams: CollegeFootballDataTeamEntity,
@@ -102,6 +121,12 @@ describe('entity schemas declare every observed field', () => {
 			}
 		});
 	}
+
+	it('coach seasons declare official CoachSeason keys', () => {
+		for (const key of COACH_SEASON_KEYS) {
+			expect(CollegeFootballDataCoachSeason.shape).toHaveProperty(key);
+		}
+	});
 });
 
 describe('entity schemas require only what the live API always sends', () => {

@@ -26,6 +26,10 @@ describe('errorHandlers', () => {
 		expect(matchedHandlerName(apiError(401))).toBe('AUTH_ERROR');
 	});
 
+	it('classifies a 403 as AUTH_ERROR', () => {
+		expect(matchedHandlerName(apiError(403))).toBe('AUTH_ERROR');
+	});
+
 	it('classifies a 404 as NOT_FOUND_ERROR', () => {
 		expect(matchedHandlerName(apiError(404))).toBe('NOT_FOUND_ERROR');
 	});

@@ -1,69 +1,83 @@
 import { z } from 'zod';
+import { B, N, NumId, S, StrArray } from './primitives';
 
 /**
- * Locally persisted College Football Data entities.
+ * Field names match official JSON keys.
+ * https://api.collegefootballdata.com/api-docs.json (OpenAPI 3.0.0, v5.24.0)
+ * Live extras confirmed 2026-08-18 against GET /teams, /conferences, /venues, /coaches.
  *
- * Only slow-changing structural reference data is mirrored: teams,
- * conferences, venues and coaches. Everything else this API returns -
- * games, drives, plays, stats, ratings, rankings, recruiting, betting
- * lines, draft picks, PPA/metrics - is either high-volume, transactional
- * (tied to a specific game/week), or only meaningful scoped to a season, so
- * per the playbook it is deliberately NOT stored; it is always wanted as a
- * live view. This provider is a stats API, so almost its entire surface is
- * a query against history rather than a record with a stable identity
- * worth caching - the opposite shape from a typical CRUD SaaS integration.
- *
- * Field lists come from live responses captured 2026-08-17 against a real
- * account (see `endpoints/types.ts` for per-field provenance).
+ * Only slow-changing reference data is mirrored: teams, conferences, venues,
+ * coaches. Games, stats, ratings, recruiting, and similar history queries
+ * are not persisted.
  */
 
-const S = z.string().nullable().optional();
-const B = z.boolean().nullable().optional();
-const N = z.number().nullable().optional();
+const venueFields = {
+	name: S,
+	city: S,
+	state: S,
+	zip: S,
+	countryCode: S,
+	timezone: S,
+	latitude: N,
+	longitude: N,
+	elevation: S,
+	capacity: N,
+	constructionYear: N,
+	grass: B,
+	dome: B,
+};
 
-const CfbdLocationEntity = z
+/**
+ * Team.location — OpenAPI `Venue` nested on `Team`.
+ * Spec marks `id` nullable here; persisted venues below still require it.
+ */
+export const CollegeFootballDataTeamLocation = z
 	.object({
 		id: N,
-		name: S,
-		city: S,
-		state: S,
-		zip: S,
-		countryCode: S,
-		timezone: S,
-		latitude: N,
-		longitude: N,
-		elevation: S,
-		capacity: N,
-		constructionYear: N,
-		grass: B,
-		dome: B,
+		...venueFields,
 	})
 	.loose();
+export type CollegeFootballDataTeamLocation = z.infer<
+	typeof CollegeFootballDataTeamLocation
+>;
 
+/** GET /venues — OpenAPI `Venue`. */
+export const CollegeFootballDataVenueEntity = z
+	.object({
+		id: NumId,
+		...venueFields,
+	})
+	.loose();
+export type CollegeFootballDataVenueEntity = z.infer<
+	typeof CollegeFootballDataVenueEntity
+>;
+
+/** GET /teams — OpenAPI `Team`. */
 export const CollegeFootballDataTeamEntity = z
 	.object({
-		id: z.number(),
+		id: NumId,
 		school: z.string(),
 		mascot: S,
 		abbreviation: S,
-		alternateNames: z.array(z.string()).nullable().optional(),
+		alternateNames: StrArray,
 		conference: S,
 		division: S,
 		classification: S,
 		color: S,
 		alternateColor: S,
-		logos: z.array(z.string()).nullable().optional(),
+		logos: StrArray,
 		twitter: S,
-		location: CfbdLocationEntity.nullable().optional(),
+		location: CollegeFootballDataTeamLocation.nullable().optional(),
 	})
 	.loose();
 export type CollegeFootballDataTeamEntity = z.infer<
 	typeof CollegeFootballDataTeamEntity
 >;
 
+/** GET /conferences — OpenAPI `Conference`. */
 export const CollegeFootballDataConferenceEntity = z
 	.object({
-		id: z.number(),
+		id: NumId,
 		name: z.string(),
 		shortName: S,
 		abbreviation: S,
@@ -75,35 +89,38 @@ export type CollegeFootballDataConferenceEntity = z.infer<
 	typeof CollegeFootballDataConferenceEntity
 >;
 
-export const CollegeFootballDataVenueEntity = z
+/** Coach.seasons[] — OpenAPI `CoachSeason`. */
+export const CollegeFootballDataCoachSeason = z
 	.object({
-		id: z.number(),
-		name: z.string(),
-		capacity: N,
-		grass: B,
-		dome: B,
-		city: S,
-		state: S,
-		zip: S,
-		countryCode: S,
-		timezone: S,
-		latitude: N,
-		longitude: N,
-		elevation: S,
-		constructionYear: N,
+		teamId: N,
+		school: S,
+		conference: S,
+		year: N,
+		games: N,
+		wins: N,
+		losses: N,
+		ties: N,
+		winPercentage: N,
+		preseasonRank: N,
+		postseasonRank: N,
+		srs: N,
+		spOverall: N,
+		spOffense: N,
+		spDefense: N,
 	})
 	.loose();
-export type CollegeFootballDataVenueEntity = z.infer<
-	typeof CollegeFootballDataVenueEntity
+export type CollegeFootballDataCoachSeason = z.infer<
+	typeof CollegeFootballDataCoachSeason
 >;
 
-/** `id` is present, unique and stable per record, so it is used as the entity key. */
+/** GET /coaches — OpenAPI `Coach`. hireDate is deprecated on the spec. */
 export const CollegeFootballDataCoachEntity = z
 	.object({
-		id: z.number(),
+		id: NumId,
 		firstName: S,
 		lastName: S,
 		hireDate: S,
+		seasons: z.array(CollegeFootballDataCoachSeason).nullable().optional(),
 	})
 	.loose();
 export type CollegeFootballDataCoachEntity = z.infer<

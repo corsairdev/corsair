@@ -62,10 +62,9 @@ export const listFBS: CollegeFootballDataEndpoints['teamsListFBS'] = async (
 /**
  * Lists FCS teams for a season/conference.
  *
- * `GET /teams` documents a `classification` query param but confirmed live
- * to silently ignore it - see `types.ts`'s `TeamsListFCSInput` comment for
- * the evidence. Filters to `classification === 'fcs'` after the call
- * instead of pretending the server does it.
+ * There is no `/teams/fcs` route. OpenAPI 5.24.0 `GET /teams` only
+ * documents `conference` and `year`; a live `classification=fcs` query is
+ * ignored. Filter to `classification === 'fcs'` after the call.
  */
 export const listFCS: CollegeFootballDataEndpoints['teamsListFCS'] = async (
 	ctx,

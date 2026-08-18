@@ -61,7 +61,8 @@ export const getGameHavocStats: CollegeFootballDataEndpoints['statsGetGameHavocS
 				year: input.year,
 				week: input.week,
 				team: input.team,
-				conference: input.conference,
+				opponent: input.opponent,
+				seasonType: input.seasonType,
 			}),
 		});
 

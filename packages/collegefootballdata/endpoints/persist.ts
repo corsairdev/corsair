@@ -121,6 +121,7 @@ export async function cacheCoach(
 				firstName: coach.firstName,
 				lastName: coach.lastName,
 				hireDate: coach.hireDate,
+				seasons: coach.seasons,
 			}),
 		`coach ${coach.id}`,
 	);

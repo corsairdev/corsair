@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -497,7 +496,7 @@ const collegeFootballDataWebhookSchemas =
 		typeof collegeFootballDataWebhooksNested
 	>;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType = 'api_key' as const;
 
 /** Every operation in this catalog is a read - this API has no writes at all. */
 const collegeFootballDataEndpointMeta = {

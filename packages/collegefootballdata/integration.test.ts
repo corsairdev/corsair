@@ -122,6 +122,13 @@ describeLive('College Football Data live API', () => {
 		expect(CollegeFootballDataCoachSchema.safeParse(result[0]).success).toBe(
 			true,
 		);
+		expect(result[0]?.seasons?.[0]).toEqual(
+			expect.objectContaining({
+				teamId: expect.any(Number),
+				school: expect.any(String),
+				year: expect.any(Number),
+			}),
+		);
 	});
 
 	it('gets games for a real week matching the declared schema', async () => {

@@ -1,4 +1,11 @@
 import { z } from 'zod';
+import {
+	CollegeFootballDataCoachEntity,
+	CollegeFootballDataConferenceEntity,
+	CollegeFootballDataTeamEntity,
+	CollegeFootballDataVenueEntity,
+} from '../schema/database';
+import { B, N, S } from '../schema/primitives';
 
 /**
  * Shared entity and operation shapes for the College Football Data games/
@@ -7,10 +14,8 @@ import { z } from 'zod';
  *
  * Ground truth for every route (method, path, query fields) comes from the
  * provider's official OpenAPI 3.0.0 document
- * (`https://api.collegefootballdata.com/api-docs.json`, version 5.24.0) -
- * not docs prose. Response shapes come from live captures against a real
- * account on 2026-08-17 (see `CFBD-PLAN.md` for the capture script and raw
- * output). Every operation is a GET; this API has no writes at all.
+ * (`https://api.collegefootballdata.com/api-docs.json`, version 5.24.0).
+ * Every operation is a GET; this API has no writes at all.
  *
  * Field names are camelCase throughout, matching the provider's own wire
  * format exactly - no translation layer needed.
@@ -18,123 +23,18 @@ import { z } from 'zod';
  * @see https://api.collegefootballdata.com
  */
 
-const S = z.string().nullable().optional();
-const N = z.number().nullable().optional();
-const B = z.boolean().nullable().optional();
+export const CollegeFootballDataTeamSchema = CollegeFootballDataTeamEntity;
+export type CollegeFootballDataTeam = CollegeFootballDataTeamEntity;
 
-/* -------------------------------------------------------------------------- */
-/* entities (persisted)                                                       */
-/* -------------------------------------------------------------------------- */
+export const CollegeFootballDataConferenceSchema =
+	CollegeFootballDataConferenceEntity;
+export type CollegeFootballDataConference = CollegeFootballDataConferenceEntity;
 
-const CfbdLocationSchema = z
-	.object({
-		id: N,
-		name: S,
-		city: S,
-		state: S,
-		zip: S,
-		countryCode: S,
-		timezone: S,
-		latitude: N,
-		longitude: N,
-		elevation: S,
-		capacity: N,
-		constructionYear: N,
-		grass: B,
-		dome: B,
-	})
-	.loose();
+export const CollegeFootballDataVenueSchema = CollegeFootballDataVenueEntity;
+export type CollegeFootballDataVenue = CollegeFootballDataVenueEntity;
 
-/** Live-captured 2026-08-17 from `GET /teams` and `GET /teams/fbs`. */
-export const CollegeFootballDataTeamSchema = z
-	.object({
-		id: z.number(),
-		school: z.string(),
-		mascot: S,
-		abbreviation: S,
-		alternateNames: z.array(z.string()).nullable().optional(),
-		conference: S,
-		division: S,
-		classification: S,
-		color: S,
-		alternateColor: S,
-		logos: z.array(z.string()).nullable().optional(),
-		twitter: S,
-		location: CfbdLocationSchema.nullable().optional(),
-	})
-	.loose();
-export type CollegeFootballDataTeam = z.infer<
-	typeof CollegeFootballDataTeamSchema
->;
-
-/** Live-captured 2026-08-17 from `GET /conferences`. */
-export const CollegeFootballDataConferenceSchema = z
-	.object({
-		id: z.number(),
-		name: z.string(),
-		shortName: S,
-		abbreviation: S,
-		classification: S,
-		memberCount: N,
-	})
-	.loose();
-export type CollegeFootballDataConference = z.infer<
-	typeof CollegeFootballDataConferenceSchema
->;
-
-/** Live-captured 2026-08-17 from `GET /venues`. */
-export const CollegeFootballDataVenueSchema = z
-	.object({
-		id: z.number(),
-		name: z.string(),
-		capacity: N,
-		grass: B,
-		dome: B,
-		city: S,
-		state: S,
-		zip: S,
-		countryCode: S,
-		timezone: S,
-		latitude: N,
-		longitude: N,
-		elevation: S,
-		constructionYear: N,
-	})
-	.loose();
-export type CollegeFootballDataVenue = z.infer<
-	typeof CollegeFootballDataVenueSchema
->;
-
-const CfbdCoachSeasonSchema = z
-	.object({
-		school: S,
-		year: N,
-		games: N,
-		wins: N,
-		losses: N,
-		ties: N,
-		preseasonRank: N,
-		postseasonRank: N,
-		srs: N,
-		spOverall: N,
-		spOffense: N,
-		spDefense: N,
-	})
-	.loose();
-
-/** Live-captured 2026-08-17 from `GET /coaches`. */
-export const CollegeFootballDataCoachSchema = z
-	.object({
-		id: z.number(),
-		firstName: S,
-		lastName: S,
-		hireDate: S,
-		seasons: z.array(CfbdCoachSeasonSchema).nullable().optional(),
-	})
-	.loose();
-export type CollegeFootballDataCoach = z.infer<
-	typeof CollegeFootballDataCoachSchema
->;
+export const CollegeFootballDataCoachSchema = CollegeFootballDataCoachEntity;
+export type CollegeFootballDataCoach = CollegeFootballDataCoachEntity;
 
 /* -------------------------------------------------------------------------- */
 /* entities (not persisted - live views)                                      */
@@ -176,7 +76,20 @@ export const CollegeFootballDataGameSchema = z
 		excitementIndex: N,
 		highlights: S,
 		notes: S,
-		playoff: B,
+		playoff: z
+			.object({
+				competition: S,
+				format: S,
+				round: S,
+				roundName: S,
+				bracketSlot: S,
+				homeSeed: N,
+				awaySeed: N,
+				bowlName: S,
+			})
+			.loose()
+			.nullable()
+			.optional(),
 	})
 	.loose();
 export type CollegeFootballDataGame = z.infer<
@@ -1010,8 +923,8 @@ export type CollegeFootballDataUserInfo = z.infer<
 
 /**
  * Static, provider-documented vocabulary - confirmed no backing endpoint
- * exists anywhere in the OpenAPI document (see `CFBD-PLAN.md` open question
- * 4). Values match the `SeasonType` spec enum exactly.
+ * exists anywhere in the OpenAPI document. Values match the `SeasonType`
+ * spec enum exactly.
  */
 export const CollegeFootballDataSeasonTypeSchema = z.enum([
 	'regular',
@@ -1281,12 +1194,17 @@ export type MetricsGetPregameWinProbabilitiesInput = z.infer<
 /* ppa                                                                         */
 /* -------------------------------------------------------------------------- */
 
-const PpaGetByTeamSeasonInputSchema = z.object({
-	year: z.number().optional(),
-	team: z.string().optional(),
-	conference: z.string().optional(),
-	excludeGarbageTime: z.boolean().optional(),
-});
+/** Either `year` or `team` is required (confirmed from the spec's own parameter descriptions). */
+const PpaGetByTeamSeasonInputSchema = z
+	.object({
+		year: z.number().optional(),
+		team: z.string().optional(),
+		conference: z.string().optional(),
+		excludeGarbageTime: z.boolean().optional(),
+	})
+	.refine((value) => value.year !== undefined || value.team !== undefined, {
+		message: 'Either year or team is required',
+	});
 export type PpaGetByTeamSeasonInput = z.infer<
 	typeof PpaGetByTeamSeasonInputSchema
 >;
@@ -1304,15 +1222,19 @@ const PpaGetByTeamGameInputSchema = z.object({
 export type PpaGetByTeamGameInput = z.infer<typeof PpaGetByTeamGameInputSchema>;
 
 /** `year` required unless `playerId` is specified. */
-const PpaGetByPlayerSeasonInputSchema = z.object({
-	year: z.number().optional(),
-	conference: z.string().optional(),
-	team: z.string().optional(),
-	position: z.string().optional(),
-	playerId: z.string().optional(),
-	threshold: z.number().optional(),
-	excludeGarbageTime: z.boolean().optional(),
-});
+const PpaGetByPlayerSeasonInputSchema = z
+	.object({
+		year: z.number().optional(),
+		conference: z.string().optional(),
+		team: z.string().optional(),
+		position: z.string().optional(),
+		playerId: z.string().optional(),
+		threshold: z.number().optional(),
+		excludeGarbageTime: z.boolean().optional(),
+	})
+	.refine((value) => value.year !== undefined || value.playerId !== undefined, {
+		message: 'Either year or playerId is required',
+	});
 export type PpaGetByPlayerSeasonInput = z.infer<
 	typeof PpaGetByPlayerSeasonInputSchema
 >;
@@ -1414,12 +1336,18 @@ export type StatsGetAdvancedGameStatsInput = z.infer<
 	typeof StatsGetAdvancedGameStatsInputSchema
 >;
 
-const StatsGetGameHavocStatsInputSchema = z.object({
-	year: z.number().optional(),
-	week: z.number().optional(),
-	team: z.string().optional(),
-	conference: z.string().optional(),
-});
+/** Either `year` or `team` is required. Spec query is year/team/week/opponent/seasonType — not conference. */
+const StatsGetGameHavocStatsInputSchema = z
+	.object({
+		year: z.number().optional(),
+		week: z.number().optional(),
+		team: z.string().optional(),
+		opponent: z.string().optional(),
+		seasonType: SeasonTypeInputSchema,
+	})
+	.refine((value) => value.year !== undefined || value.team !== undefined, {
+		message: 'Either year or team is required',
+	});
 export type StatsGetGameHavocStatsInput = z.infer<
 	typeof StatsGetGameHavocStatsInputSchema
 >;
@@ -1489,11 +1417,16 @@ const PlayersGetUsageInputSchema = z.object({
 });
 export type PlayersGetUsageInput = z.infer<typeof PlayersGetUsageInputSchema>;
 
-const PlayersGetReturningProductionInputSchema = z.object({
-	year: z.number().optional(),
-	team: z.string().optional(),
-	conference: z.string().optional(),
-});
+/** Either `year` or `team` is required (confirmed from the spec's own parameter descriptions). */
+const PlayersGetReturningProductionInputSchema = z
+	.object({
+		year: z.number().optional(),
+		team: z.string().optional(),
+		conference: z.string().optional(),
+	})
+	.refine((value) => value.year !== undefined || value.team !== undefined, {
+		message: 'Either year or team is required',
+	});
 export type PlayersGetReturningProductionInput = z.infer<
 	typeof PlayersGetReturningProductionInputSchema
 >;
@@ -1521,12 +1454,9 @@ const TeamsListFBSInputSchema = z.object({
 export type TeamsListFBSInput = z.infer<typeof TeamsListFBSInputSchema>;
 
 /**
- * `classification` is documented as a query param on `GET /teams` but
- * confirmed live to be silently ignored - a request for `classification=fcs`
- * returned 672 teams spanning all four classifications, identical to the
- * unfiltered count. The `classification` field is present on every returned
- * team object though, so this filters client-side after the call instead of
- * pretending the server does it.
+ * There is no `/teams/fcs` route. OpenAPI 5.24.0 `GET /teams` only documents
+ * `conference` and `year`; a live `classification=fcs` query is ignored
+ * (same 672-row mixed list as the unfiltered call). Filter client-side.
  */
 const TeamsListFCSInputSchema = z.object({
 	conference: z.string().optional(),
@@ -1577,8 +1507,7 @@ export type ConferencesListInput = z.infer<typeof ConferencesListInputSchema>;
  * both catalog operations read `GET /conferences/affiliations`, whose
  * response (`TeamConferenceAffiliation`) carries both the team's conference
  * membership *and* its division, each with `startYear`/`endYear`. Confirmed
- * from the response schema, not guessed - see `CFBD-PLAN.md` open questions
- * 2-3.
+ * from the response schema, not guessed.
  */
 const ConferencesListAffiliationsInputSchema = z.object({
 	team: z.string().optional(),
@@ -1653,7 +1582,7 @@ export type RecruitingGetGroupRatingsInput = z.infer<
 >;
 
 const RecruitingGetTeamTalentInputSchema = z.object({
-	year: z.number().optional(),
+	year: z.number(),
 });
 export type RecruitingGetTeamTalentInput = z.infer<
 	typeof RecruitingGetTeamTalentInputSchema
@@ -1674,15 +1603,23 @@ export type RankingsListInput = z.infer<typeof RankingsListInputSchema>;
 /* betting                                                                     */
 /* -------------------------------------------------------------------------- */
 
-const BettingGetLinesInputSchema = z.object({
-	year: z.number().optional(),
-	seasonType: SeasonTypeInputSchema,
-	week: z.number().optional(),
-	team: z.string().optional(),
-	conference: z.string().optional(),
-	classification: ClassificationInputSchema,
-	provider: z.string().optional(),
-});
+/** `year` is required unless `gameId` is specified (confirmed from the spec's own parameter description). */
+const BettingGetLinesInputSchema = z
+	.object({
+		gameId: z.number().optional(),
+		year: z.number().optional(),
+		seasonType: SeasonTypeInputSchema,
+		week: z.number().optional(),
+		team: z.string().optional(),
+		home: z.string().optional(),
+		away: z.string().optional(),
+		conference: z.string().optional(),
+		classification: ClassificationInputSchema,
+		provider: z.string().optional(),
+	})
+	.refine((value) => value.gameId !== undefined || value.year !== undefined, {
+		message: 'Either gameId or year is required',
+	});
 export type BettingGetLinesInput = z.infer<typeof BettingGetLinesInputSchema>;
 
 /* -------------------------------------------------------------------------- */

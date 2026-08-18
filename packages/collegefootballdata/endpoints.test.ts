@@ -433,9 +433,9 @@ describe('operation routing', () => {
 describe('seasonTypes.list', () => {
 	/**
 	 * The only operation in this catalog with no backing endpoint at all -
-	 * confirmed no route exists anywhere in the OpenAPI document (see
-	 * `CFBD-PLAN.md` open question 4). Asserted separately from the routing
-	 * table above since there is no method/path to check.
+	 * confirmed no route exists anywhere in the OpenAPI document. Asserted
+	 * separately from the routing table above since there is no method/path
+	 * to check.
 	 */
 	it('returns the static season-type vocabulary without calling fetch', async () => {
 		const { ctx } = makeCtx();
@@ -471,12 +471,9 @@ describe('operation coverage', () => {
 
 describe('teams.listFCS', () => {
 	/**
-	 * `GET /teams` documents a `classification` query param but confirmed
-	 * live to silently ignore it (see `types.ts`) - a request for
-	 * `classification=fcs` returned every classification, identical to the
-	 * unfiltered count. This asserts the endpoint filters client-side
-	 * instead, using a fixture with a mixed classification list so the test
-	 * cannot pass vacuously.
+	 * There is no `/teams/fcs` route. OpenAPI 5.24.0 `GET /teams` only
+	 * documents `conference` and `year`; a live `classification=fcs` query
+	 * is ignored. This asserts the endpoint filters client-side instead.
 	 */
 	it('filters to fcs client-side rather than trusting the server', async () => {
 		const { ctx } = makeCtx();
@@ -627,6 +624,20 @@ describe('query parameters', () => {
 		expect(lastUrl).toContain('statTypeId=4');
 		expect(lastUrl).not.toContain('playType');
 	});
+
+	it('sends opponent/seasonType, not conference, for stats.getGameHavocStats', async () => {
+		const { ctx } = makeCtx();
+		await Stats.getGameHavocStats(ctx, {
+			year: 2023,
+			team: 'Alabama',
+			opponent: 'Texas',
+			seasonType: 'regular',
+		});
+
+		expect(lastUrl).toContain('opponent=Texas');
+		expect(lastUrl).toContain('seasonType=regular');
+		expect(lastUrl).not.toContain('conference=');
+	});
 });
 
 describe('conditional input requirements', () => {
@@ -710,6 +721,34 @@ describe('conditional input requirements', () => {
 	it('rejects ppa.getByTeamGame without year', () => {
 		const result = collegeFootballDataEndpointSchemas[
 			'ppa.getByTeamGame'
+		].input.safeParse({});
+		expect(result.success).toBe(false);
+	});
+
+	it('rejects ppa.getByTeamSeason with neither year nor team', () => {
+		const result = collegeFootballDataEndpointSchemas[
+			'ppa.getByTeamSeason'
+		].input.safeParse({});
+		expect(result.success).toBe(false);
+	});
+
+	it('rejects stats.getGameHavocStats with neither year nor team', () => {
+		const result = collegeFootballDataEndpointSchemas[
+			'stats.getGameHavocStats'
+		].input.safeParse({});
+		expect(result.success).toBe(false);
+	});
+
+	it('rejects recruiting.getTeamTalent without year', () => {
+		const result = collegeFootballDataEndpointSchemas[
+			'recruiting.getTeamTalent'
+		].input.safeParse({});
+		expect(result.success).toBe(false);
+	});
+
+	it('rejects betting.getLines with neither year nor gameId', () => {
+		const result = collegeFootballDataEndpointSchemas[
+			'betting.getLines'
 		].input.safeParse({});
 		expect(result.success).toBe(false);
 	});

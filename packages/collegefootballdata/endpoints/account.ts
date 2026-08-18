@@ -9,7 +9,7 @@ import type { CollegeFootballDataUserInfo } from './types';
  * Live-captured 2026-08-17: the free tier is a **monthly** call quota
  * (`monthlyLimit`/`remainingCalls`/`usedCalls`/`resetAt`), not a per-minute
  * rate limit - `features` also confirms `scoreboard`/`livePlayByPlay` are
- * paid-tier gated, neither of which this catalog uses (see `CFBD-PLAN.md`).
+ * paid-tier gated, neither of which this catalog uses.
  * Callers should treat this operation as the way to check remaining budget
  * before a heavy batch of calls, not just a status check.
  */

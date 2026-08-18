@@ -9,11 +9,8 @@ const COLLEGE_FOOTBALL_DATA_API_BASE = 'https://api.collegefootballdata.com';
 
 /**
  * The provider documents no published rate-limit numbers for the free
- * tier (confirmed: not stated anywhere on collegefootballdata.com/key or
- * the OpenAPI document), so the retry loop can only react to a 429 when it
- * arrives rather than pacing proactively against a budget it is never
- * told. Placeholder retry shape pending a live 429 to confirm whether
- * `Retry-After` is actually sent - see `CFBD-PLAN.md` open question 5.
+ * tier (not stated on collegefootballdata.com/key or the OpenAPI
+ * document), so the retry loop reacts to a 429 when it arrives.
  */
 const COLLEGE_FOOTBALL_DATA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -41,7 +38,7 @@ export type CollegeFootballDataRequestOptions = {
  * so the key travels as `Authorization: Bearer {key}`, not a custom
  * header. A separate GraphQL endpoint exists at
  * `graphqldocs.collegefootballdata.com` but nothing in this 56-op catalog
- * uses it - see `CFBD-PLAN.md`.
+ * uses it.
  */
 export async function makeCollegeFootballDataRequest<T>(
 	path: string,

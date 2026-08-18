@@ -8,7 +8,7 @@ import { SEASON_TYPES } from './types';
  * provider's own OpenAPI document: no endpoint anywhere serves this data -
  * the `SeasonType` enum exists only as a request-parameter schema, referenced
  * by `seasonType` filters across dozens of other operations, never as a
- * response body of its own (see `CFBD-PLAN.md` open question 4). Returning
+ * response body of its own. Returning
  * it here, rather than omitting the operation, matches the catalog's own
  * framing: "Use this to discover valid seasonType values to pass to other
  * endpoints."

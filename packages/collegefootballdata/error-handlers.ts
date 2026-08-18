@@ -22,9 +22,9 @@ function safeStatus(error: Error): number | 'unknown' {
 
 export const errorHandlers = {
 	/**
-	 * The free tier's rate limit is undocumented (see `CFBD-PLAN.md` open
-	 * question 5) - this reacts to a 429 when it arrives rather than pacing
-	 * proactively against a budget the provider never states.
+	 * The free tier's rate limit is undocumented — this reacts to a 429
+	 * when it arrives rather than pacing against a budget the provider
+	 * never states.
 	 *
 	 * `maxRetries: 0` here is deliberate, not a missing feature: `client.ts`'s
 	 * `COLLEGE_FOOTBALL_DATA_RATE_LIMIT_CONFIG` already retries 429s at the
@@ -52,8 +52,13 @@ export const errorHandlers = {
 	/** Not documented in the spec; expected in practice for a missing/bad key. */
 	AUTH_ERROR: {
 		match: (error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
-			return error.message.toLowerCase().includes('unauthorized');
+			if (
+				error instanceof ApiError &&
+				(error.status === 401 || error.status === 403)
+			)
+				return true;
+			const message = error.message.toLowerCase();
+			return message.includes('unauthorized') || message.includes('forbidden');
 		},
 		handler: async (error, context) => {
 			console.warn(
@@ -107,10 +112,8 @@ export const errorHandlers = {
 		 * still gets the same failure. `maxRetries: 0` fails fast and
 		 * honestly instead.
 		 */
-		handler: async (error, context) => {
-			console.warn(
-				`[COLLEGEFOOTBALLDATA:${context.operation}] Network error: ${error.message}`,
-			);
+		handler: async (_error, context) => {
+			console.warn(`[COLLEGEFOOTBALLDATA:${context.operation}] Network error`);
 			return { maxRetries: 0 };
 		},
 	},
