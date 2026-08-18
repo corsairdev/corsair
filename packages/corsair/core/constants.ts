@@ -14,13 +14,14 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'abstract',
+	'activecampaign',
 	'activetrail',
 	'addresszen',
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agenty',
 	'agentql',
+	'agenty',
 	'ahrefs',
 	'aimlapi',
 	'airtable',
@@ -29,15 +30,20 @@ export const BaseProviders = [
 	'alphavantage',
 	'alttextai',
 	'amara',
-	'ambientweather',
 	'ambee',
+	'ambientweather',
 	'amcards',
 	'amplitude',
 	'apibible',
 	'apify',
 	'apilabz',
+	'apininjas',
 	'apisports',
 	'asana',
+	'asindataapi',
+	'ayrshare',
+	'betterstack',
+	'bigmailer',
 	'bitwarden',
 	'bluesky',
 	'boloforms',
@@ -47,6 +53,8 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'canva',
+	'circleci',
+	'canvas',
 	'cloudflare',
 	'cloudinary',
 	'confluence',
@@ -77,7 +85,9 @@ export const BaseProviders = [
 	'googlemeet',
 	'googlesheets',
 	'grafana',
+	'habitica',
 	'hackernews',
+	'harvest',
 	'hashnode',
 	'heygen',
 	'hubspot',
@@ -88,7 +98,9 @@ export const BaseProviders = [
 	'jira',
 	'linear',
 	'linkedin',
+	'loyverse',
 	'mailchimp',
+	'mailtrap',
 	'monday',
 	'neon',
 	'notion',
@@ -107,6 +119,7 @@ export const BaseProviders = [
 	'reddit',
 	'resend',
 	'retailed',
+	'salesforce',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -124,6 +137,7 @@ export const BaseProviders = [
 	'twilio',
 	'twitter',
 	'twitterapiio',
+	'twochat',
 	'typeform',
 	'vapi',
 	'vercel',
@@ -140,13 +154,14 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
+	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agenty: 'Agenty',
 	agentql: 'AgentQL',
+	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
@@ -155,15 +170,20 @@ export const ProviderDisplayNames = {
 	alphavantage: 'Alpha Vantage',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
-	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	apibible: 'API.Bible',
 	apify: 'Apify',
 	apilabz: 'API Labz',
+	apininjas: 'API Ninjas',
 	apisports: 'API-Sports',
 	asana: 'Asana',
+	asindataapi: 'ASIN Data API',
+	ayrshare: 'Ayrshare',
+	betterstack: 'Better Stack',
+	bigmailer: 'BigMailer',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
@@ -173,6 +193,8 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
+	circleci: 'CircleCI',
+	canvas: 'Canvas LMS',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
@@ -203,7 +225,9 @@ export const ProviderDisplayNames = {
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
+	habitica: 'Habitica',
 	hackernews: 'Hacker News',
+	harvest: 'Harvest',
 	hashnode: 'Hashnode',
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
@@ -214,7 +238,9 @@ export const ProviderDisplayNames = {
 	jira: 'Jira',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
+	loyverse: 'Loyverse',
 	mailchimp: 'Mailchimp',
+	mailtrap: 'Mailtrap',
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
@@ -233,6 +259,7 @@ export const ProviderDisplayNames = {
 	reddit: 'Reddit',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	salesforce: 'Salesforce',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -250,6 +277,7 @@ export const ProviderDisplayNames = {
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
+	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
@@ -273,13 +301,14 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'abstract'
+	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agenty'
 	| 'agentql'
+	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
 	| 'airtable'
@@ -288,15 +317,20 @@ export type AllProviders =
 	| 'alphavantage'
 	| 'alttextai'
 	| 'amara'
-	| 'ambientweather'
 	| 'ambee'
+	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
 	| 'apibible'
 	| 'apify'
 	| 'apilabz'
+	| 'apininjas'
 	| 'apisports'
 	| 'asana'
+	| 'asindataapi'
+	| 'ayrshare'
+	| 'betterstack'
+	| 'bigmailer'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'boloforms'
@@ -304,8 +338,9 @@ export type AllProviders =
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
-	| 'canvas'
 	| 'canva'
+	| 'circleci'
+	| 'canvas'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
@@ -336,7 +371,9 @@ export type AllProviders =
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
+	| 'habitica'
 	| 'hackernews'
+	| 'harvest'
 	| 'hashnode'
 	| 'heygen'
 	| 'hubspot'
@@ -347,7 +384,9 @@ export type AllProviders =
 	| 'jira'
 	| 'linear'
 	| 'linkedin'
+	| 'loyverse'
 	| 'mailchimp'
+	| 'mailtrap'
 	| 'monday'
 	| 'neon'
 	| 'notion'
@@ -366,6 +405,7 @@ export type AllProviders =
 	| 'reddit'
 	| 'resend'
 	| 'retailed'
+	| 'salesforce'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
@@ -383,6 +423,7 @@ export type AllProviders =
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
+	| 'twochat'
 	| 'typeform'
 	| 'vapi'
 	| 'vercel'
