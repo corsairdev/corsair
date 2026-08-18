@@ -50,19 +50,12 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'box',
-	'cal',
-	'calendly',
-	'canva',
-	'cal',
-	'calendly',
-	'canva',
 	'bugsnag',
-	'canvas',
 	'cal',
 	'calendly',
 	'canva',
-	'circleci',
 	'canvas',
+	'circleci',
 	'cloudflare',
 	'cloudinary',
 	'confluence',
@@ -200,19 +193,12 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	box: 'Box',
-	cal: 'Cal',
-	calendly: 'Calendly',
-	canva: 'Canva',
-	cal: 'Cal',
-	calendly: 'Calendly',
-	canva: 'Canva',
 	bugsnag: 'BugSnag',
-	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
-	circleci: 'CircleCI',
 	canvas: 'Canvas LMS',
+	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
@@ -361,8 +347,8 @@ export type AllProviders =
 	| 'cal'
 	| 'calendly'
 	| 'canva'
-	| 'circleci'
 	| 'canvas'
+	| 'circleci'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
