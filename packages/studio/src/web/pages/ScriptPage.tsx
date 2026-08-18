@@ -82,6 +82,7 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 							value={activeTenant}
 							onChange={(e) => setActiveTenant(e.target.value)}
 							className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
+							aria-label="Active Tenant"
 						>
 							<option value="">Select tenant</option>
 							{tenants.map((tenantId) => (
@@ -111,6 +112,7 @@ export function ScriptPage({ tenant }: { tenant: string }) {
 						value={code}
 						onChange={(e) => setCode(e.target.value)}
 						spellCheck={false}
+						aria-label="Script Source"
 					/>
 				</Card>
 			</Section>
