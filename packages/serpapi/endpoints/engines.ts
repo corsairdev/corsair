@@ -104,7 +104,9 @@ export const yandexSearch: SerpapiEndpoints['enginesYandexSearch'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await serpapiSearch(ctx, 'yandex', input);
+	const result = await serpapiSearch(ctx, 'yandex', input, {
+		timeout: 60_000,
+	});
 	await logEventFromContext(
 		ctx,
 		'serpapi.engines.yandexSearch',
@@ -116,7 +118,9 @@ export const yandexSearch: SerpapiEndpoints['enginesYandexSearch'] = async (
 
 export const yandexImagesSearch: SerpapiEndpoints['enginesYandexImagesSearch'] =
 	async (ctx, input) => {
-		const result = await serpapiSearch(ctx, 'yandex_images', input);
+		const result = await serpapiSearch(ctx, 'yandex_images', input, {
+			timeout: 60_000,
+		});
 		await logEventFromContext(
 			ctx,
 			'serpapi.engines.yandexImagesSearch',
