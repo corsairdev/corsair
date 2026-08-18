@@ -5,6 +5,10 @@ import {
 	BotpressWorkspaceIdMissingError,
 } from './client';
 
+function safeStatus(error: Error): number | 'unknown' {
+	return error instanceof ApiError ? error.status : 'unknown';
+}
+
 /**
  * Whether replaying an operation could duplicate a record or a charge.
  *
@@ -90,7 +94,7 @@ export const errorHandlers = {
 		},
 		handler: async (error, context) => {
 			console.warn(
-				`[BOTPRESS:${context.operation}] Permission denied: ${error.message}`,
+				`[BOTPRESS:${context.operation}] Permission denied (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: 0 };
 		},
@@ -102,7 +106,7 @@ export const errorHandlers = {
 		},
 		handler: async (error, context) => {
 			console.warn(
-				`[BOTPRESS:${context.operation}] Resource not found: ${error.message}`,
+				`[BOTPRESS:${context.operation}] Resource not found (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: 0 };
 		},
@@ -111,7 +115,7 @@ export const errorHandlers = {
 		match: (error) => error instanceof ApiError && error.status === 400,
 		handler: async (error, context) => {
 			console.warn(
-				`[BOTPRESS:${context.operation}] Invalid request: ${error.message}`,
+				`[BOTPRESS:${context.operation}] Invalid request (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: 0 };
 		},
@@ -129,7 +133,7 @@ export const errorHandlers = {
 		},
 		handler: async (error, context) => {
 			console.warn(
-				`[BOTPRESS:${context.operation}] Network error: ${error.message}`,
+				`[BOTPRESS:${context.operation}] Network error (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: isNonIdempotent(context.operation) ? 0 : 3 };
 		},
@@ -138,7 +142,7 @@ export const errorHandlers = {
 		match: () => true,
 		handler: async (error, context) => {
 			console.error(
-				`[BOTPRESS:${context.operation}] Unhandled error: ${error.message}`,
+				`[BOTPRESS:${context.operation}] Unhandled error (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: 0 };
 		},
