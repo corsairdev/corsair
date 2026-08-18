@@ -53,6 +53,9 @@ export const BaseProviders = [
 	'cal',
 	'calendly',
 	'canva',
+	'cal',
+	'calendly',
+	'canva',
 	'bugsnag',
 	'canvas',
 	'cal',
@@ -108,6 +111,7 @@ export const BaseProviders = [
 	'mailtrap',
 	'monday',
 	'neon',
+	'nextdns',
 	'notion',
 	'ocrspace',
 	'ollama',
@@ -198,6 +202,9 @@ export const ProviderDisplayNames = {
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
+	cal: 'Cal',
+	calendly: 'Calendly',
+	canva: 'Canva',
 	bugsnag: 'BugSnag',
 	canvas: 'Canvas LMS',
 	cal: 'Cal',
@@ -253,6 +260,7 @@ export const ProviderDisplayNames = {
 	mailtrap: 'Mailtrap',
 	monday: 'Monday',
 	neon: 'Neon',
+	nextdns: 'NextDNS',
 	notion: 'Notion',
 	ocrspace: 'OCR.space',
 	ollama: 'Ollama',
@@ -401,6 +409,7 @@ export type AllProviders =
 	| 'mailtrap'
 	| 'monday'
 	| 'neon'
+	| 'nextdns'
 	| 'notion'
 	| 'ocrspace'
 	| 'ollama'
