@@ -19,6 +19,19 @@ export type MigrationPayload = {
 	integrations: MigratedIntegration[];
 };
 
+/** A dev row that was not migrated, with the reason, so the CLI can report it
+ * instead of silently reducing the payload. */
+export type SkippedIntegration = {
+	name: string;
+	reason: string;
+};
+
+/** Result of preparing a migration: the rows to deliver plus the ones skipped. */
+export type MigrationBuild = {
+	integrations: MigratedIntegration[];
+	skipped: SkippedIntegration[];
+};
+
 /**
  * Generate a fresh prod master key (KEK): 256 bits, base64. Same primitive as a
  * DEK — an opaque high-entropy secret the developer sets as `CORSAIR_KEK` in prod.
@@ -32,22 +45,29 @@ export function generateProdKek(): string {
  * Re-key every dev integration row for prod: re-wrap each DEK from the dev KEK to
  * the prod KEK, carrying the sealed `config` over untouched. No secret is
  * decrypted. Rows without a DEK, or with no sealed config, have nothing to
- * migrate and are skipped — so a re-run can't overwrite a populated prod row
- * with an empty config.
+ * migrate — they're skipped (and reported, never silently dropped) so a re-run
+ * can't overwrite a populated prod row with an empty config.
  */
 export async function buildMigrationPayload(
 	rows: DevIntegrationRow[],
 	devKek: string,
 	prodKek: string,
-): Promise<MigrationPayload> {
+): Promise<MigrationBuild> {
+	const toMigrate: DevIntegrationRow[] = [];
+	const skipped: SkippedIntegration[] = [];
+	for (const row of rows) {
+		if (!row.dek) {
+			skipped.push({ name: row.name, reason: 'no stored credentials' });
+		} else if (Object.keys(row.config ?? {}).length === 0) {
+			skipped.push({ name: row.name, reason: 'empty config' });
+		} else {
+			toMigrate.push(row);
+		}
+	}
 	const integrations = await Promise.all(
-		rows
-			.filter(
-				(row) => Boolean(row.dek) && Object.keys(row.config ?? {}).length > 0,
-			)
-			.map((row) => rewrapIntegrationRow(row, devKek, prodKek)),
+		toMigrate.map((row) => rewrapIntegrationRow(row, devKek, prodKek)),
 	);
-	return { integrations };
+	return { integrations, skipped };
 }
 
 /** Result of a migration relay: prod's outcome, surfaced back to the CLI. */

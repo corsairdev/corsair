@@ -121,4 +121,68 @@ describe('processCorsair — credentials.migrate', () => {
 		expect(ack.status).toBe('failed');
 		expect(await readIntegration(env, 'slack')).toHaveLength(0);
 	});
+
+	it('rejects an unsigned migration even on the local dev path', async () => {
+		const corsair = createCorsair(env);
+		const { body, headers } = signMigrateEnvelope({
+			integrations: [{ name: 'slack', dek: 'x', config: { bot_token: 'y' } }],
+		});
+
+		// allowUnsignedTunnel skips signature verification, but a bulk credential
+		// rewrite must still require a signing secret.
+		const ack = await processCorsair(
+			corsair,
+			{ headers, body },
+			{ allowUnsignedTunnel: true },
+		);
+
+		expect(ack.status).toBe('failed');
+		expect(await readIntegration(env, 'slack')).toHaveLength(0);
+	});
+
+	it('normalizes names so " slack" and "slack" upsert one row', async () => {
+		const corsair = createCorsair(env);
+		const first = signMigrateEnvelope({
+			integrations: [
+				{ name: ' slack', dek: 'dek-1', config: { bot_token: 'v1' } },
+			],
+		});
+		await processCorsair(
+			corsair,
+			{ headers: first.headers, body: first.body },
+			{ signingSecret: SECRET },
+		);
+
+		const second = signMigrateEnvelope({
+			integrations: [
+				{ name: 'slack', dek: 'dek-2', config: { bot_token: 'v2' } },
+			],
+		});
+		const ack = await processCorsair(
+			corsair,
+			{ headers: second.headers, body: second.body },
+			{ signingSecret: SECRET },
+		);
+
+		expect(ack.status).toBe('ok');
+		const rows = await readIntegration(env, 'slack');
+		expect(rows).toHaveLength(1);
+		expect(rows[0].dek).toBe('dek-2');
+	});
+
+	it('rejects a non-object config and writes nothing', async () => {
+		const corsair = createCorsair(env);
+		const { body, headers } = signMigrateEnvelope({
+			integrations: [{ name: 'slack', dek: 'x', config: 'not-an-object' }],
+		});
+
+		const ack = await processCorsair(
+			corsair,
+			{ headers, body },
+			{ signingSecret: SECRET },
+		);
+
+		expect(ack.status).toBe('failed');
+		expect(await readIntegration(env, 'slack')).toHaveLength(0);
+	});
 });

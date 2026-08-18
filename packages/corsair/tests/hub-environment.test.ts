@@ -58,6 +58,28 @@ describe('hub environment delivery', () => {
 		).toBeNull();
 	});
 
+	it('rejects private, link-local, and cloud-metadata delivery targets', () => {
+		for (const url of [
+			'http://169.254.169.254/latest/meta-data', // cloud metadata
+			'http://10.0.0.5/api/corsair', // RFC1918
+			'http://192.168.1.1/api/corsair',
+			'http://172.16.0.1/api/corsair',
+			'http://127.0.0.2/api/corsair', // loopback /8
+			'http://0.0.0.0/api/corsair',
+			'http://0177.0.0.1/api/corsair', // octal → 127.0.0.1
+			'http://[::1]/api/corsair',
+			'http://[::ffff:127.0.0.1]/api/corsair', // IPv4-mapped loopback
+			'http://[fe80::1]/api/corsair', // link-local
+			'http://[fd00::1]/api/corsair', // unique-local
+		]) {
+			expect(validateProductionDeliveryUrl(url)).toMatch(/public URL/);
+		}
+		// A public IP literal is fine — only private ranges are blocked.
+		expect(
+			validateProductionDeliveryUrl('http://93.184.216.34/api/corsair'),
+		).toBeNull();
+	});
+
 	it('auto-detects localhost delivery URL from PORT', () => {
 		withEnv(
 			{

@@ -60,20 +60,36 @@ export async function processCredentialsMigrateDelivery(
 		);
 	}
 
-	// Validate the whole batch before writing anything.
-	for (const row of integrations) {
-		if (!row?.name?.trim() || !row?.dek?.trim()) {
+	// Validate and normalize the whole batch before writing anything. Trim the
+	// name once and use the trimmed value for both lookup and write, so " slack"
+	// and "slack" can't upsert into two rows for the same integration.
+	const normalized = integrations.map((row) => {
+		const name = row?.name?.trim();
+		const dek = row?.dek?.trim();
+		if (!name || !dek) {
 			throw new CredentialsMigrateDeliveryError(
 				'invalid_payload',
 				'Each migrated integration requires a non-empty "name" and "dek"',
 			);
 		}
-	}
+		const config = row.config;
+		if (
+			typeof config !== 'object' ||
+			config === null ||
+			Array.isArray(config)
+		) {
+			throw new CredentialsMigrateDeliveryError(
+				'invalid_payload',
+				`Integration "${name}" config must be an object`,
+			);
+		}
+		return { name, dek, config };
+	});
 
 	const { db } = internal.database;
 
 	await db.transaction().execute(async (trx) => {
-		for (const row of integrations) {
+		for (const row of normalized) {
 			const now = new Date();
 			const existing = await trx
 				.selectFrom('corsair_integrations')
@@ -103,5 +119,5 @@ export async function processCredentialsMigrateDelivery(
 		}
 	});
 
-	return { migrated: integrations.length };
+	return { migrated: normalized.length };
 }

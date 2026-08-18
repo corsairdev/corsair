@@ -699,11 +699,21 @@ export async function processCorsair(
 				corsair,
 				envelope.payload as IntegrationCredentialsTunnelPayload,
 			);
-		case 'credentials.migrate':
+		case 'credentials.migrate': {
+			// A migration rewrites every delivered integration's sealed credentials,
+			// so never accept it on the unsigned local-development path.
+			if (!options.signingSecret?.trim()) {
+				return {
+					status: 'failed',
+					retryable: false,
+					error: 'Tunnel signing secret is required for credentials.migrate',
+				};
+			}
 			return handleCredentialsMigrateTunnel(
 				corsair,
 				envelope.payload as CredentialsMigrateTunnelPayload,
 			);
+		}
 		case 'connect.create_link':
 			return handleConnectCreateLinkTunnel(
 				corsair,

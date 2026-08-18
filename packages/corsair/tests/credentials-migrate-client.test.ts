@@ -64,6 +64,9 @@ describe('buildMigrationPayload', () => {
 		const payload = await buildMigrationPayload(rows, DEV_KEK, PROD_KEK);
 
 		expect(payload.integrations.map((i) => i.name)).toEqual(['slack']);
+		expect(payload.skipped).toEqual([
+			{ name: 'empty', reason: 'no stored credentials' },
+		]);
 	});
 
 	it('skips a row with a DEK but no sealed config — never blanks a prod row', async () => {
@@ -80,6 +83,9 @@ describe('buildMigrationPayload', () => {
 		const payload = await buildMigrationPayload(rows, DEV_KEK, PROD_KEK);
 
 		expect(payload.integrations.map((i) => i.name)).toEqual(['configured']);
+		expect(payload.skipped).toEqual([
+			{ name: 'blank', reason: 'empty config' },
+		]);
 	});
 
 	it('never leaks a KEK or plaintext secret into the payload', async () => {

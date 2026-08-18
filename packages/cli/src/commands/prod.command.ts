@@ -14,18 +14,21 @@ function errorMessage(err: unknown): string {
 }
 
 function parseConfig(value: unknown, name: string): Record<string, unknown> {
-	if (!value) return {};
-	if (typeof value === 'object') return value as Record<string, unknown>;
+	if (value == null) return {};
+	let config = value;
 	if (typeof value === 'string') {
 		try {
-			return JSON.parse(value) as Record<string, unknown>;
+			config = JSON.parse(value);
 		} catch {
 			throw new Error(
 				`Integration "${name}" has an unreadable config (not valid JSON) — refusing to migrate it as empty.`,
 			);
 		}
 	}
-	throw new Error(`Integration "${name}" has an unexpected config type.`);
+	if (typeof config !== 'object' || config === null || Array.isArray(config)) {
+		throw new Error(`Integration "${name}" has an unexpected config type.`);
+	}
+	return config as Record<string, unknown>;
 }
 
 async function readIntegrationRows(
@@ -137,12 +140,23 @@ export default class ProdCommand extends BaseCommand {
 			process.exit(1);
 		}
 
-		if (payload.integrations.length === 0) {
-			console.log('[corsair]: No integration credentials found to migrate.');
+		const { integrations, skipped } = payload;
+
+		if (skipped.length > 0) {
+			console.log(
+				`\n[corsair]: Skipping ${skipped.length} integration(s) with nothing to migrate:`,
+			);
+			for (const row of skipped) {
+				console.log(`             • ${row.name} (${row.reason})`);
+			}
+		}
+
+		if (integrations.length === 0) {
+			console.log('\n[corsair]: No integration credentials to migrate.');
 			return;
 		}
 
-		const names = payload.integrations.map((integration) => integration.name);
+		const names = integrations.map((integration) => integration.name);
 		console.log(
 			`\n[corsair]: Migrating ${names.length} integration(s) to production:`,
 		);
@@ -153,7 +167,10 @@ export default class ProdCommand extends BaseCommand {
 
 		let result: Awaited<ReturnType<typeof postMigrationToHub>>;
 		try {
-			result = await postMigrationToHub({ hub: hub as HubConfig, payload });
+			result = await postMigrationToHub({
+				hub: hub as HubConfig,
+				payload: { integrations },
+			});
 		} catch (err) {
 			console.error(
 				`\n[corsair]: Migration failed — ${errorMessage(err)}. Fix production and re-run.`,
