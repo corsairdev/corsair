@@ -14,6 +14,7 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'abstract',
+	'activecampaign',
 	'activetrail',
 	'addresszen',
 	'affinda',
@@ -149,6 +150,7 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
+	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
 	affinda: 'Affinda',
@@ -291,6 +293,7 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'abstract'
+	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
 	| 'affinda'
