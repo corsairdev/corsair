@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import { createCorsair } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { createCorsairOrm } from 'corsair/orm';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { resolveSiteGuid } from './client';
@@ -13,9 +14,18 @@ const hasCredentials =
 const describeIf = hasCredentials ? describe : describe.skip;
 
 if (!hasCredentials) {
+	const missing = [
+		!configuredAccessToken ? 'SHAREPOINT_ACCESS_TOKEN' : undefined,
+		!configuredSiteId ? 'SHAREPOINT_SITE_ID' : undefined,
+	].filter((name): name is string => Boolean(name));
 	console.warn(
-		'Skipping SharePoint integration tests: SHAREPOINT_ACCESS_TOKEN / SHAREPOINT_SITE_ID not set',
+		`Skipping SharePoint integration tests: ${missing.join(' / ')} not set`,
 	);
+}
+
+function expectHttpStatus(error: unknown, statuses: number[]) {
+	expect(error).toBeInstanceOf(ApiError);
+	expect(statuses).toContain((error as ApiError).status);
 }
 
 // Using `unknown` for both parameter and return because DB payloads may arrive as a raw JSON
@@ -147,6 +157,7 @@ describeIf('SharePoint plugin integration', () => {
 			const listTitle = lists.value?.[0]?.displayName;
 			if (!listTitle) {
 				testDb.cleanup();
+				expect(listTitle).toBeTruthy();
 				return;
 			}
 
@@ -181,7 +192,7 @@ describeIf('SharePoint plugin integration', () => {
 		});
 
 		it('itemsList and itemsGet interact with API and DB', async () => {
-			if (!listTitle) return;
+			expect(listTitle).toBeTruthy();
 			const setup = await createSharepointClient();
 			const { corsair, testDb } = setup;
 
@@ -232,7 +243,7 @@ describeIf('SharePoint plugin integration', () => {
 		});
 
 		it('itemsCreate, itemsUpdate, itemsDelete interact with API and DB', async () => {
-			if (!listTitle) return;
+			expect(listTitle).toBeTruthy();
 			const setup = await createSharepointClient();
 			const { corsair, testDb } = setup;
 
@@ -248,9 +259,9 @@ describeIf('SharePoint plugin integration', () => {
 			>;
 			try {
 				created = await corsair.sharepoint.api.items.create(createInput);
-			} catch {
-				// List may not support item creation — skip
+			} catch (error) {
 				testDb.cleanup();
+				expectHttpStatus(error, [400, 403, 405]);
 				return;
 			}
 
@@ -313,9 +324,9 @@ describeIf('SharePoint plugin integration', () => {
 			>;
 			try {
 				created = await corsair.sharepoint.api.folders.create(createInput);
-			} catch {
-				// May require specific permissions — skip
+			} catch (error) {
 				testDb.cleanup();
+				expectHttpStatus(error, [403]);
 				return;
 			}
 
@@ -388,6 +399,7 @@ describeIf('SharePoint plugin integration', () => {
 			const folderName = allFolders.value?.[0]?.name;
 			if (!folderName) {
 				testDb.cleanup();
+				expect(folderName).toBeTruthy();
 				return;
 			}
 
@@ -563,8 +575,9 @@ describeIf('SharePoint plugin integration', () => {
 				result = await corsair.sharepoint.api.permissions.getRoleDefinitions(
 					{},
 				);
-			} catch {
+			} catch (error) {
 				testDb.cleanup();
+				expectHttpStatus(error, [403]);
 				return;
 			}
 
