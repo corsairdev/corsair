@@ -50,6 +50,7 @@ export const BaseProviders = [
 	'bitwarden',
 	'bluesky',
 	'boloforms',
+	'botpress',
 	'box',
 	'bugsnag',
 	'cal',
@@ -195,6 +196,7 @@ export const ProviderDisplayNames = {
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
+	botpress: 'Botpress',
 	box: 'Box',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
@@ -347,6 +349,7 @@ export type AllProviders =
 	| 'bitwarden'
 	| 'bluesky'
 	| 'boloforms'
+	| 'botpress'
 	| 'box'
 	| 'bugsnag'
 	| 'cal'
