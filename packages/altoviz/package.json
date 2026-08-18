@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest --testPathIgnorePatterns=integration.test.ts",
+    "test:live": "jest --testPathPattern=integration.test.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",

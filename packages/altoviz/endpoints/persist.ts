@@ -1,4 +1,5 @@
-import type {
+import type { ZodType } from 'zod';
+import {
 	AltovizClassificationEntity,
 	AltovizContactEntity,
 	AltovizCustomerEntity,
@@ -28,238 +29,90 @@ async function safely(operation: () => Promise<unknown>, what: string) {
 	}
 }
 
+async function cacheParsed<T extends { id: number }>(
+	store: EntityStore<T> | undefined,
+	schema: ZodType<T>,
+	row: unknown,
+	what: string,
+) {
+	if (!store || row == null) return;
+	const parsed = schema.safeParse(row);
+	if (!parsed.success) return;
+	await safely(
+		() => store.upsertByEntityId(String(parsed.data.id), parsed.data),
+		`${what} ${parsed.data.id}`,
+	);
+}
+
 export async function cacheUnit(
 	store: EntityStore<AltovizUnitEntity> | undefined,
-	unit:
-		| {
-				id: number;
-				code?: string | null;
-				name?: string | null;
-				type?: string | null;
-				conversion?: number | null;
-				decimals?: number | null;
-		  }
-		| undefined
-		| null,
+	unit: unknown,
 ) {
-	if (!store || !unit) return;
-	await safely(
-		() =>
-			store.upsertByEntityId(String(unit.id), {
-				id: unit.id,
-				code: unit.code ?? null,
-				name: unit.name ?? null,
-				type: unit.type ?? null,
-				conversion: unit.conversion ?? null,
-				decimals: unit.decimals ?? null,
-			}),
-		`unit ${unit.id}`,
-	);
+	await cacheParsed(store, AltovizUnitEntity, unit, 'unit');
 }
 
 export async function cacheVat(
 	store: EntityStore<AltovizVatEntity> | undefined,
-	vat:
-		| {
-				id: number;
-				rate?: number | null;
-				region?: string | null;
-				label?: string | null;
-				default?: boolean | null;
-		  }
-		| undefined
-		| null,
+	vat: unknown,
 ) {
-	if (!store || !vat) return;
-	await safely(
-		() =>
-			store.upsertByEntityId(String(vat.id), {
-				id: vat.id,
-				rate: vat.rate ?? null,
-				region: vat.region ?? null,
-				label: vat.label ?? null,
-				default: vat.default ?? null,
-			}),
-		`vat ${vat.id}`,
-	);
+	await cacheParsed(store, AltovizVatEntity, vat, 'vat');
 }
 
 export async function cacheClassification(
 	store: EntityStore<AltovizClassificationEntity> | undefined,
-	classification:
-		| {
-				id: number;
-				label?: string | null;
-				type?: string | null;
-				accountNumber?: string | null;
-				isProduct?: boolean | null;
-				isService?: boolean | null;
-		  }
-		| undefined
-		| null,
+	classification: unknown,
 ) {
-	if (!store || !classification) return;
-	await safely(
-		() =>
-			store.upsertByEntityId(String(classification.id), {
-				id: classification.id,
-				label: classification.label ?? null,
-				type: classification.type ?? null,
-				accountNumber: classification.accountNumber ?? null,
-				isProduct: classification.isProduct ?? null,
-				isService: classification.isService ?? null,
-			}),
-		`classification ${classification.id}`,
+	await cacheParsed(
+		store,
+		AltovizClassificationEntity,
+		classification,
+		'classification',
 	);
 }
 
 export async function cacheCustomerFamily(
 	store: EntityStore<AltovizCustomerFamilyEntity> | undefined,
-	family:
-		| {
-				id: number;
-				label?: string | null;
-				number?: string | null;
-				internalId?: string | null;
-		  }
-		| undefined
-		| null,
+	family: unknown,
 ) {
-	if (!store || !family) return;
-	await safely(
-		() =>
-			store.upsertByEntityId(String(family.id), {
-				id: family.id,
-				label: family.label ?? null,
-				number: family.number ?? null,
-				internalId: family.internalId ?? null,
-			}),
-		`customer family ${family.id}`,
+	await cacheParsed(
+		store,
+		AltovizCustomerFamilyEntity,
+		family,
+		'customer family',
 	);
 }
 
 export async function cacheProductFamily(
 	store: EntityStore<AltovizProductFamilyEntity> | undefined,
-	family:
-		| { id: number; label?: string | null; number?: string | null }
-		| undefined
-		| null,
+	family: unknown,
 ) {
-	if (!store || !family) return;
-	await safely(
-		() =>
-			store.upsertByEntityId(String(family.id), {
-				id: family.id,
-				label: family.label ?? null,
-				number: family.number ?? null,
-			}),
-		`product family ${family.id}`,
+	await cacheParsed(
+		store,
+		AltovizProductFamilyEntity,
+		family,
+		'product family',
 	);
 }
 
-/** `imageUrl`, `internalNotes` etc. are omitted from the mirror deliberately - this is a lookup cache, not a full replica. */
 export async function cacheProduct(
 	store: EntityStore<AltovizProductEntity> | undefined,
-	product:
-		| {
-				id: number;
-				name?: string | null;
-				number?: string | null;
-				internalId?: string | null;
-				type?: string | null;
-				active?: boolean | null;
-				unitPrice?: number | null;
-				unit?: { code?: string | null } | null;
-				vat?: { rate?: number | null; region?: string | null } | null;
-				family?: { id?: number | null } | null;
-		  }
-		| undefined
-		| null,
+	product: unknown,
 ) {
-	if (!store || !product) return;
-	await safely(
-		() =>
-			store.upsertByEntityId(String(product.id), {
-				id: product.id,
-				name: product.name ?? null,
-				number: product.number ?? null,
-				internalId: product.internalId ?? null,
-				type: product.type ?? null,
-				active: product.active ?? null,
-				unitPrice: product.unitPrice ?? null,
-				unit_code: product.unit?.code ?? null,
-				vat_rate: product.vat?.rate ?? null,
-				vat_region: product.vat?.region ?? null,
-				family_id: product.family?.id ?? null,
-			}),
-		`product ${product.id}`,
-	);
+	await cacheParsed(store, AltovizProductEntity, product, 'product');
 }
 
 export async function cacheCustomer(
 	store: EntityStore<AltovizCustomerEntity> | undefined,
-	customer:
-		| {
-				id: number;
-				type?: string | null;
-				companyName?: string | null;
-				firstName?: string | null;
-				lastName?: string | null;
-				number?: string | null;
-				internalId?: string | null;
-				email?: string | null;
-				active?: boolean | null;
-		  }
-		| undefined
-		| null,
+	customer: unknown,
 ) {
-	if (!store || !customer) return;
-	await safely(
-		() =>
-			store.upsertByEntityId(String(customer.id), {
-				id: customer.id,
-				type: customer.type ?? null,
-				companyName: customer.companyName ?? null,
-				firstName: customer.firstName ?? null,
-				lastName: customer.lastName ?? null,
-				number: customer.number ?? null,
-				internalId: customer.internalId ?? null,
-				email: customer.email ?? null,
-				active: customer.active ?? null,
-			}),
-		`customer ${customer.id}`,
-	);
+	await cacheParsed(store, AltovizCustomerEntity, customer, 'customer');
 }
 
 export async function cacheContact(
 	store: EntityStore<AltovizContactEntity> | undefined,
-	contact:
-		| {
-				id: number;
-				displayName?: string | null;
-				firstName?: string | null;
-				lastName?: string | null;
-				companyName?: string | null;
-				email?: string | null;
-				internalId?: string | null;
-		  }
-		| undefined
-		| null,
+	contact: unknown,
 ) {
-	if (!store || !contact) return;
-	await safely(
-		() =>
-			store.upsertByEntityId(String(contact.id), {
-				id: contact.id,
-				displayName: contact.displayName ?? null,
-				firstName: contact.firstName ?? null,
-				lastName: contact.lastName ?? null,
-				companyName: contact.companyName ?? null,
-				email: contact.email ?? null,
-				internalId: contact.internalId ?? null,
-			}),
-		`contact ${contact.id}`,
-	);
+	await cacheParsed(store, AltovizContactEntity, contact, 'contact');
 }
 
 /**

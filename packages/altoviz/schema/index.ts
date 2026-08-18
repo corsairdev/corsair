@@ -22,3 +22,6 @@ export const AltovizSchema = {
 		contacts: AltovizContactEntity,
 	},
 } as const;
+
+export * from './database';
+export * from './primitives';

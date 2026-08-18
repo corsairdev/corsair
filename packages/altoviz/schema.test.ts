@@ -5,6 +5,101 @@ import {
 } from './endpoints/types';
 import { altovizEndpointSchemas } from './index';
 import { AltovizSchema } from './schema';
+import {
+	AltovizClassificationEntity,
+	AltovizContactEntity,
+	AltovizCustomerEntity,
+	AltovizCustomerFamilyEntity,
+	AltovizProductEntity,
+	AltovizProductFamilyEntity,
+	AltovizUnitEntity,
+	AltovizVatEntity,
+} from './schema/database';
+
+/**
+ * Official schema property names, id-first then OpenAPI order.
+ * https://developer.altoviz.com/openapi.json
+ */
+const UNIT_KEYS = [
+	'id',
+	'code',
+	'conversion',
+	'decimals',
+	'name',
+	'type',
+] as const;
+const VAT_KEYS = ['id', 'default', 'label', 'rate', 'region'] as const;
+const CLASSIFICATION_KEYS = [
+	'id',
+	'accountNumber',
+	'defaultVat',
+	'description',
+	'isProduct',
+	'isService',
+	'label',
+	'microBusinessDeclarationType',
+	'type',
+] as const;
+const CUSTOMER_FAMILY_KEYS = ['id', 'internalId', 'label', 'number'] as const;
+const PRODUCT_FAMILY_KEYS = ['id', 'label', 'number'] as const;
+const PRODUCT_KEYS = [
+	'id',
+	'active',
+	'defaultQuantity',
+	'description',
+	'family',
+	'imageUrl',
+	'internalId',
+	'internalNotes',
+	'isUnitPriceTaxIncluded',
+	'name',
+	'number',
+	'purchasePrice',
+	'type',
+	'unit',
+	'unitPrice',
+	'vat',
+] as const;
+const CUSTOMER_KEYS = [
+	'id',
+	'active',
+	'billingAddress',
+	'billingOptions',
+	'cellPhone',
+	'companyInformations',
+	'companyName',
+	'email',
+	'family',
+	'firstName',
+	'internalId',
+	'internalNotes',
+	'lastName',
+	'name',
+	'number',
+	'phone',
+	'shippingAddress',
+	'title',
+	'type',
+] as const;
+const CONTACT_KEYS = [
+	'id',
+	'cellPhone',
+	'companyName',
+	'displayName',
+	'email',
+	'firstName',
+	'function',
+	'internalId',
+	'invertedDisplayName',
+	'lastName',
+	'phone',
+	'service',
+	'title',
+] as const;
+
+function shapeKeys(schema: { shape: object }): string[] {
+	return Object.keys(schema.shape);
+}
 
 const REFERENCE_ENTITIES = [
 	'units',
@@ -366,6 +461,71 @@ describe('Altoviz persisted schema', () => {
 	test('does not expand the mirror beyond the selected reference stores', () => {
 		for (const name of NON_MIRRORED_ENTITIES) {
 			expect(AltovizSchema.entities).not.toHaveProperty(name);
+		}
+	});
+
+	test('declares every official Unit field', () => {
+		expect(shapeKeys(AltovizUnitEntity)).toEqual([...UNIT_KEYS]);
+	});
+
+	test('declares every official Vat field', () => {
+		expect(shapeKeys(AltovizVatEntity)).toEqual([...VAT_KEYS]);
+	});
+
+	test('declares every official Classification field', () => {
+		expect(shapeKeys(AltovizClassificationEntity)).toEqual([
+			...CLASSIFICATION_KEYS,
+		]);
+	});
+
+	test('declares every official CustomerFamily field', () => {
+		expect(shapeKeys(AltovizCustomerFamilyEntity)).toEqual([
+			...CUSTOMER_FAMILY_KEYS,
+		]);
+	});
+
+	test('declares every official ProductFamily field', () => {
+		expect(shapeKeys(AltovizProductFamilyEntity)).toEqual([
+			...PRODUCT_FAMILY_KEYS,
+		]);
+	});
+
+	test('declares every official Product field', () => {
+		expect(shapeKeys(AltovizProductEntity)).toEqual([...PRODUCT_KEYS]);
+		expect(shapeKeys(AltovizProductEntity)).not.toContain('unit_code');
+		expect(shapeKeys(AltovizProductEntity)).not.toContain('vat_rate');
+		expect(shapeKeys(AltovizProductEntity)).not.toContain('family_id');
+	});
+
+	test('declares every official Customer field', () => {
+		expect(shapeKeys(AltovizCustomerEntity)).toEqual([...CUSTOMER_KEYS]);
+	});
+
+	test('declares every official Contact field', () => {
+		expect(shapeKeys(AltovizContactEntity)).toEqual([...CONTACT_KEYS]);
+	});
+
+	test('accepts the OpenAPI Product example with nested unit/vat/family', () => {
+		const parsed = AltovizProductEntity.safeParse({
+			id: 42,
+			name: 'Hour of consulting',
+			number: 'CONSULT-H',
+			description: 'Advisory',
+			type: 'Service',
+			unitPrice: 120,
+			purchasePrice: 0,
+			isUnitPriceTaxIncluded: false,
+			defaultQuantity: 1,
+			active: true,
+			unit: { id: 1, code: 'H', name: 'Hour', type: 'Time' },
+			vat: { id: 10, rate: 20, region: 'FR', label: 'TVA 20%', default: true },
+			family: { id: 3, label: 'Services', number: 'SRV' },
+		});
+		expect(parsed.success).toBe(true);
+		if (parsed.success) {
+			expect(parsed.data.unit?.code).toBe('H');
+			expect(parsed.data.vat?.rate).toBe(20);
+			expect(parsed.data.family?.label).toBe('Services');
 		}
 	});
 });
