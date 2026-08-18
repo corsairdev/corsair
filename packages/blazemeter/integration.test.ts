@@ -106,8 +106,12 @@ describeLive('BlazeMeter live API', () => {
 				workspaceId,
 			}),
 		);
+		const rawId =
+			created && typeof created === 'object' && 'id' in created
+				? (created as { id: unknown }).id
+				: undefined;
+		if (typeof rawId === 'number' && rawId > 0) createdProjectId = rawId;
 		expect(BlazemeterProjectEntity.safeParse(created).success).toBe(true);
-		createdProjectId = (created as { id: number }).id;
 		expect(createdProjectId).toBeGreaterThan(0);
 
 		const fetched = unwrap(

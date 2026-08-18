@@ -77,6 +77,36 @@ async function evict(
 	);
 }
 
+function numericId(value: unknown): number | undefined {
+	if (typeof value === 'number' && Number.isFinite(value)) return value;
+	if (typeof value === 'string' && value !== '') {
+		const parsed = Number(value);
+		if (Number.isFinite(parsed)) return parsed;
+	}
+	return undefined;
+}
+
+async function cacheWorkspaceUsers(
+	store: EntityStore<BlazemeterWorkspaceUserEntity> | undefined,
+	workspaceId: unknown,
+	raw: unknown,
+) {
+	const wsId = numericId(workspaceId);
+	if (!store || wsId == null) return;
+	for (const row of asList(raw)) {
+		const parsed = BlazemeterWorkspaceUserEntity.safeParse(row);
+		if (!parsed.success) continue;
+		const id = entityId(parsed.data);
+		if (!id) continue;
+		const key = `${wsId}:${id}`;
+		const record = { ...parsed.data, workspaceId: wsId };
+		await safely(
+			() => store.upsertByEntityId(key, record),
+			`cache workspace user ${key}`,
+		);
+	}
+}
+
 export type BlazemeterStores = {
 	accounts?: EntityStore<BlazemeterAccountEntity>;
 	workspaces?: EntityStore<BlazemeterWorkspaceEntity>;
@@ -123,12 +153,7 @@ export async function persistBlazemeterResult(
 		case 'user.get':
 			return cacheRows(db.users, BlazemeterUserEntity, result, 'user');
 		case 'workspaces.users':
-			return cacheRows(
-				db.workspaceUsers,
-				BlazemeterWorkspaceUserEntity,
-				result,
-				'workspace user',
-			);
+			return cacheWorkspaceUsers(db.workspaceUsers, input.workspaceId, result);
 		case 'assets.create':
 		case 'assets.get':
 		case 'assets.list':

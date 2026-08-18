@@ -472,6 +472,42 @@ describe('BlazeMeter endpoint execution', () => {
 		);
 	});
 
+	it('keys workspace memberships by workspace and user', async () => {
+		const upsertByEntityId = jest.fn(async () => undefined);
+		const member = {
+			id: 9,
+			email: 'a@b.com',
+			displayName: 'A',
+			firstName: 'A',
+			lastName: 'B',
+			login: 1,
+			access: 1,
+			roles: ['tester'],
+			enabled: true,
+			lastAccess: 1,
+			type: 'user',
+		};
+		stubFetch(() => jsonResponse({ result: [member] }));
+		const ctx = {
+			...TEST_CTX,
+			db: { workspaceUsers: { upsertByEntityId } },
+		};
+
+		await endpointFor('workspaces.users')(ctx, { workspaceId: 1 });
+		await endpointFor('workspaces.users')(ctx, { workspaceId: 2 });
+
+		expect(upsertByEntityId).toHaveBeenNthCalledWith(
+			1,
+			'1:9',
+			expect.objectContaining({ id: 9, workspaceId: 1 }),
+		);
+		expect(upsertByEntityId).toHaveBeenNthCalledWith(
+			2,
+			'2:9',
+			expect.objectContaining({ id: 9, workspaceId: 2 }),
+		);
+	});
+
 	it('evicts a deleted project from the local store', async () => {
 		const deleteByEntityId = jest.fn(async () => undefined);
 		stubFetch(() => jsonResponse({ result: true }));
