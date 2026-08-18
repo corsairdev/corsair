@@ -602,6 +602,21 @@ describe('request bodies', () => {
 		});
 	});
 
+	it('sends official engine when that is the create field provided', async () => {
+		const { ctx } = makeCtx();
+		await ExternalConnectors.create(ctx, {
+			engine: 'postgresql',
+			connection: { host: 'db.example.com' },
+		});
+
+		const body = JSON.parse(lastBody ?? '{}');
+		expect(body).toEqual({
+			source: 'postgresql',
+			engine: 'postgresql',
+			connection: { host: 'db.example.com' },
+		});
+	});
+
 	it('never sends limit/offset as literal undefined query params', async () => {
 		const { ctx } = makeCtx();
 		await Projects.list(ctx, {});

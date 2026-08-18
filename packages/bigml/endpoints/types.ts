@@ -64,6 +64,8 @@ const ProjectsCreateInputSchema = z.object({
 	name: z.string(),
 	description: z.string().optional(),
 	tags: z.array(z.string()).optional(),
+	/** Official category code. https://bigml.com/api/projects?id=project-arguments */
+	category: z.number().int().optional(),
 });
 export type ProjectsCreateInput = z.infer<typeof ProjectsCreateInputSchema>;
 
@@ -97,6 +99,8 @@ const SourceFieldUpdateSchema = z
 		label: z.string().optional(),
 		description: z.string().optional(),
 		optype: z.string().optional(),
+		locale: z.string().optional(),
+		missingTokens: z.array(z.string()).optional(),
 	})
 	.loose();
 
@@ -109,14 +113,10 @@ const SourceFieldUpdateSchema = z
  * `{locale, missing_tokens, separator}`) and `fields` (confirmed live shape:
  * a map from field id to a field-definition object).
  *
- * **Confirmed live: both are rejected with `"Cannot update closed source"`
- * once a source has finished processing** (`closed: true` - true for every
- * source a normal account has, since a source is only open during its
- * initial creation window). The fields still belong in the schema - the
- * catalog asks for them and the API genuinely accepts them on an open
- * source - but a caller should expect a `400` on the ordinary case of an
- * already-closed source, which `error-handlers.ts` surfaces as a
- * non-retryable validation error rather than silently swallowing it.
+ * Confirmed live 2026-08-18: name/description/tags on a closed source
+ * return 202; `source_parser`/`fields` return 400 `"Cannot update closed
+ * source"`. Parser keys match the official Source Parser Object.
+ * https://bigml.com/api/sources?id=source-parser-object
  */
 const SourcesUpdateInputSchema = z.object({
 	sourceId: z.string(),
@@ -125,9 +125,14 @@ const SourcesUpdateInputSchema = z.object({
 	tags: z.array(z.string()).optional(),
 	sourceParser: z
 		.object({
-			separator: z.string().optional(),
+			header: z.boolean().optional(),
+			jsonFields: z.array(z.string()).optional(),
+			jsonKey: z.string().optional(),
 			locale: z.string().optional(),
 			missingTokens: z.array(z.string()).optional(),
+			quote: z.string().optional(),
+			separator: z.string().optional(),
+			trim: z.boolean().optional(),
 		})
 		.optional(),
 	fields: z.record(z.string(), SourceFieldUpdateSchema).optional(),
@@ -164,12 +169,30 @@ const ExternalConnectorConnectionInputSchema = z
 	})
 	.loose();
 
-const ExternalConnectorsCreateInputSchema = z.object({
-	/** The connector type, e.g. `postgresql`, `mysql`, `elasticsearch` - confirmed live as a top-level field, not nested inside `connection`. */
-	source: z.string(),
-	connection: ExternalConnectorConnectionInputSchema,
-	name: z.string().optional(),
-});
+const ExternalConnectorsCreateInputSchema = z
+	.object({
+		/**
+		 * Official GET property and live-confirmed create field
+		 * (`postgresql`, `mysql`, `sqlserver`, `elasticsearch`).
+		 * https://bigml.com/api/external_connectors
+		 */
+		source: z.string().optional(),
+		/**
+		 * Official create argument. Live 2026-08-18: POST with `engine` also
+		 * sets `source`; POST with only `source` leaves `engine` null.
+		 */
+		engine: z.string().optional(),
+		connection: ExternalConnectorConnectionInputSchema,
+		name: z.string().optional(),
+		category: z.number().int().optional(),
+		description: z.string().optional(),
+		tags: z.array(z.string()).optional(),
+		project: z.string().optional(),
+	})
+	.refine((value) => Boolean(value.source || value.engine), {
+		message: 'source or engine is required',
+		path: ['source'],
+	});
 export type ExternalConnectorsCreateInput = z.infer<
 	typeof ExternalConnectorsCreateInputSchema
 >;

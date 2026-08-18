@@ -58,3 +58,6 @@ export const BigmlSchema = {
 		topicModels: BigmlGenericResourceEntity,
 	},
 } as const;
+
+export * from './database';
+export * from './primitives';

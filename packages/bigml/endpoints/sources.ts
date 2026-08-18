@@ -53,12 +53,28 @@ export const update: BigmlEndpoints['sourcesUpdate'] = async (ctx, input) => {
 				tags: input.tags,
 				source_parser: input.sourceParser
 					? compact({
-							separator: input.sourceParser.separator,
+							header: input.sourceParser.header,
+							json_fields: input.sourceParser.jsonFields,
+							json_key: input.sourceParser.jsonKey,
 							locale: input.sourceParser.locale,
 							missing_tokens: input.sourceParser.missingTokens,
+							quote: input.sourceParser.quote,
+							separator: input.sourceParser.separator,
+							trim: input.sourceParser.trim,
 						})
 					: undefined,
-				fields: input.fields,
+				fields: input.fields
+					? Object.fromEntries(
+							Object.entries(input.fields).map(([id, field]) => [
+								id,
+								compact({
+									...field,
+									missing_tokens: field.missingTokens,
+									missingTokens: undefined,
+								}),
+							]),
+						)
+					: undefined,
 			}),
 		},
 	);

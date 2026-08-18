@@ -22,9 +22,14 @@ export const create: BigmlEndpoints['externalConnectorsCreate'] = async (
 	>(ctx, 'externalconnector', {
 		method: 'POST',
 		body: compact({
-			source: input.source,
+			source: input.source ?? input.engine,
+			engine: input.engine,
 			connection: input.connection,
 			name: input.name,
+			category: input.category,
+			description: input.description,
+			tags: input.tags,
+			project: input.project,
 		}),
 	});
 

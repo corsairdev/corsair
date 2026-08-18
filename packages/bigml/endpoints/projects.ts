@@ -19,6 +19,7 @@ export const create: BigmlEndpoints['projectsCreate'] = async (ctx, input) => {
 				name: input.name,
 				description: input.description,
 				tags: input.tags,
+				category: input.category,
 			}),
 		},
 	);

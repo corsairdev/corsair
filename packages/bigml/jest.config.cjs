@@ -2,12 +2,7 @@ module.exports = {
 	preset: 'ts-jest',
 	testEnvironment: 'node',
 	roots: ['<rootDir>'],
-	testMatch: [
-		'**/*.test.ts',
-		'**/tests/**/*.test.ts',
-		'**/plugins/**/*.test.ts',
-		'**/setup/**/*.test.ts',
-	],
+	testMatch: ['**/*.test.ts'],
 	collectCoverageFrom: [
 		'**/*.ts',
 		'!**/*.d.ts',
@@ -49,6 +44,7 @@ module.exports = {
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
+	testPathIgnorePatterns: ['/node_modules/', 'integration\\.test\\.ts'],
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,

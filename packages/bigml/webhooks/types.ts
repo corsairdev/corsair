@@ -1,8 +1,7 @@
 /**
- * BigML has no webhook, callback, or streaming mechanism - it is a
- * request/response REST API only (confirmed: the OSS catalog lists zero
- * triggers for it). This file exists so the package keeps the shape every
- * Corsair plugin has, matching Alpha Vantage's `webhooks/types.ts`.
+ * BigML has no inbound webhook stream (the OSS catalog lists 0 triggers).
+ * Resources may carry an outbound `webhook` field; this plugin does not
+ * receive those callbacks.
  */
 
 /** No webhook handlers are registered, and the provider offers none. */
