@@ -113,3 +113,12 @@ export {
 	verifyPermissionToken,
 	verifySignedTunnelDelivery,
 } from './hub/index';
+export {
+	CORSAIR_TUNNEL_PATH,
+	CORSAIR_TUNNEL_ZONE,
+} from './hub/tunnel/constants';
+export {
+	FRPC_VERSION,
+	frpcPlatformKey,
+	resolveFrpcBinary,
+} from './hub/tunnel/frpc-binary';
