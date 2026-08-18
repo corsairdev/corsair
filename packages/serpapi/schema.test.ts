@@ -6,13 +6,15 @@ describe('Serpapi schema', () => {
 		expect(SerpapiSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	/**
+	 * Zero entities, deliberately: every one of the 48 operations is a live
+	 * search or lookup against a third-party engine's current results, not a
+	 * record with a durable identity worth caching (see `schema/database.ts`).
+	 */
+	it('declares an empty entities map', () => {
 		expect(typeof SerpapiSchema.entities).toBe('object');
 		expect(SerpapiSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(SerpapiSchema.entities))).toBe(true);
-		for (const entity of Object.values(SerpapiSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(Object.keys(SerpapiSchema.entities)).toEqual([]);
 	});
 });
 
