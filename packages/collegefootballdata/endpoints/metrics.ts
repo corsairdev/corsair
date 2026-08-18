@@ -60,7 +60,7 @@ export const getPregameWinProbabilities: CollegeFootballDataEndpoints['metricsGe
 		await logEventFromContext(
 			ctx,
 			'collegefootballdata.metrics.getPregameWinProbabilities',
-			auditPayload(input, ['year', 'week', 'team']),
+			auditPayload(input, ['year', 'week', 'team', 'seasonType']),
 			'completed',
 		);
 		return result ?? [];
