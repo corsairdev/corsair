@@ -905,6 +905,17 @@ describe('coverage sweep', () => {
 	});
 });
 
+describe('list envelopes', () => {
+	it('activityLogs.list returns the official {logs, page} envelope', async () => {
+		const { ctx } = makeCtx();
+		mockFetch({ page: 1, logs: [{ id: 'log-1' }] });
+		await expect(ActivityLogs.list(ctx, {})).resolves.toEqual({
+			page: 1,
+			logs: [{ id: 'log-1' }],
+		});
+	});
+});
+
 describe('mirroring', () => {
 	it('caches a project it read, keyed by slug (not the opaque id)', async () => {
 		const { ctx, db } = makeCtx();
@@ -913,6 +924,16 @@ describe('mirroring', () => {
 		expect(db.projects.upsertByEntityId).toHaveBeenCalledWith(
 			'demo',
 			expect.objectContaining({ slug: 'demo' }),
+		);
+	});
+
+	it('caches a project under the addressing slug when GET omits slug (official retrieve schema has no slug)', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ project: { id: 'ed0c2a68b6', name: 'Compression' } });
+		await Projects.get(ctx, { project: 'demo' });
+		expect(db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			'demo',
+			expect.objectContaining({ id: 'ed0c2a68b6' }),
 		);
 	});
 
@@ -926,6 +947,16 @@ describe('mirroring', () => {
 	it('caches a config keyed by project:name, not name alone - config names repeat across projects', async () => {
 		const { ctx, db } = makeCtx();
 		mockFetch({ config: { name: 'dev', project: 'demo' } });
+		await Configs.get(ctx, { project: 'demo', config: 'dev' });
+		expect(db.configs.upsertByEntityId).toHaveBeenCalledWith(
+			'demo:dev',
+			expect.objectContaining({ name: 'dev' }),
+		);
+	});
+
+	it('caches a config under the addressing slug when the response project is the opaque id from official examples', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ config: { name: 'dev', project: 'ed0c2a68b6' } });
 		await Configs.get(ctx, { project: 'demo', config: 'dev' });
 		expect(db.configs.upsertByEntityId).toHaveBeenCalledWith(
 			'demo:dev',
@@ -967,6 +998,16 @@ describe('mirroring', () => {
 	it('caches an environment keyed by project:id, not id alone - environment slugs (dev/stg/prd) repeat across projects', async () => {
 		const { ctx, db } = makeCtx();
 		mockFetch({ environment: { id: 'dev', project: 'demo' } });
+		await Environments.get(ctx, { project: 'demo', environment: 'dev' });
+		expect(db.environments.upsertByEntityId).toHaveBeenCalledWith(
+			'demo:dev',
+			expect.objectContaining({ id: 'dev' }),
+		);
+	});
+
+	it('caches an environment under the addressing slug when the response project is the opaque id from official examples', async () => {
+		const { ctx, db } = makeCtx();
+		mockFetch({ environment: { id: 'dev', project: 'ed0c2a68b6' } });
 		await Environments.get(ctx, { project: 'demo', environment: 'dev' });
 		expect(db.environments.upsertByEntityId).toHaveBeenCalledWith(
 			'demo:dev',

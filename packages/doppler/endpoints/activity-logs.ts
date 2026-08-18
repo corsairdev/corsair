@@ -15,12 +15,13 @@ export const list: DopplerEndpoints['activityLogsList'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await dopplerCall<{
-		page: number;
-		logs: DopplerEndpointOutputs['activityLogsList'];
-	}>(ctx, 'logs', {
-		query: compact({ page: input.page, per_page: input.perPage }),
-	});
+	const result = await dopplerCall<DopplerEndpointOutputs['activityLogsList']>(
+		ctx,
+		'logs',
+		{
+			query: compact({ page: input.page, per_page: input.perPage }),
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -28,7 +29,7 @@ export const list: DopplerEndpoints['activityLogsList'] = async (
 		{ returned: result.logs.length },
 		'completed',
 	);
-	return result.logs;
+	return result;
 };
 
 /** Retrieves a single activity log entry by id. */

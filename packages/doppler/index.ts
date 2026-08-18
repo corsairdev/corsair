@@ -552,8 +552,8 @@ const defaultAuthType = 'api_key' as const satisfies AuthTypes;
  * `destructive` for anything Doppler cannot undo through this plugin:
  * deleting a project/environment/config/secret/webhook/service token,
  * revoking a lease, or removing a member. `write` covers everything else
- * that changes state, including `configs.lock`/`unlock` (they change who can
- * write, not data itself, but are still a state change worth confirming) and
+ * that changes state, including `configs.lock`/`unlock` (they prevent
+ * rename/delete, not secret writes) and
  * `configLogs.rollback` (it *reverts* a change but does so by writing new
  * secret values, the same reasoning CircleCI's `pipelines.trigger` used).
  * `secrets.updateNote`/`updateNoteViaConfig` are `write`, not `destructive`,
@@ -678,11 +678,11 @@ export const dopplerEndpointMeta = {
 	},
 	'configs.lock': {
 		riskLevel: 'write',
-		description: 'Lock a config, preventing further writes',
+		description: 'Lock a config so it cannot be renamed or deleted',
 	},
 	'configs.unlock': {
 		riskLevel: 'write',
-		description: 'Unlock a previously locked config',
+		description: 'Unlock a config so it can be renamed or deleted',
 	},
 
 	'configLogs.list': {

@@ -1,165 +1,139 @@
 import { z } from 'zod';
+import { B, Id, S, UnknownArray } from './primitives';
 
 /**
- * Locally persisted Doppler entities.
+ * Field names match official JSON keys.
+ * https://docs.doppler.com/reference/projects-object
+ * https://docs.doppler.com/reference/projects-list
+ * https://docs.doppler.com/reference/environments-object
+ * https://docs.doppler.com/reference/environments-create
+ * https://docs.doppler.com/reference/environments-rename
+ * https://docs.doppler.com/reference/configs-object
+ * https://docs.doppler.com/reference/configs-inheritable
+ * https://docs.doppler.com/reference/workplace-get
+ * https://docs.doppler.com/reference/webhooks-add
  *
- * **Mirrored.** Projects, environments, configs, webhooks, and the workplace
- * itself are account-owned configuration that changes rarely and is what
- * most other operations need a lookup against - the same split CircleCI,
- * Loyverse and Habitica all used.
+ * Webhook add/get/list response schemas are official `{}`. Response field
+ * names below are the live record; request labels on `url`/`name` come from
+ * the add body schema.
  *
- * **Not mirrored - secrets, in any shape.** Every secret-reading route on
- * this API returns the actual live value (`raw`/`computed`), not a masked
- * fragment the way CircleCI's env vars are - Doppler's whole product is
- * secrets, so there is no partial-exposure version of this data to even
- * consider caching. No `secrets` entity exists in this schema at all, on
- * purpose - not "declared narrower," genuinely absent.
- *
- * **Not mirrored - a raw credential appears once, at creation.** Creating a
- * service token returns `key` - the full, usable token, in plaintext, the
- * one and only time the API ever sends it. Mirroring service token
- * *metadata* would risk a future edit accidentally widening the schema to
- * capture `key` too (every entity here is `.loose()`, which does not strip
- * an undeclared field - see `endpoints/service-tokens.ts` for where that
- * field is actually stripped before anything downstream sees it). Given
- * that risk and no real efficiency case for caching token metadata, no
- * `serviceTokens` entity exists either. The same reasoning excludes Doppler
- * Share responses (`password` is the link's decryption key).
- *
- * **Not mirrored - transactional.** Activity logs, config logs, and dynamic
- * secret leases are appended continuously and meaningful only against a
- * time range or a specific id - mirroring them would copy a moving target.
- *
- * **Not mirrored - identity/access, not configuration data.** Workplace
- * users, project members, groups, invites, roles and permissions are about
- * *who* can act, not *what* is configured - a different kind of data than
- * the "reference data" this mirror is for, and several of these families
- * (groups, change requests) are plan-gated on the development account used
- * to build this plugin, so their shape is declared from the docs rather
- * than a live capture.
- *
- * Field names match the API's own JSON keys, including the API's own
- * inconsistency between `snake_case` (most fields) and `camelCase`
- * (`inheritedBy` on configs, every field on a webhook) - confirmed live, not
- * a typo carried over from documentation.
- *
- * Shapes captured live on 2026-08-16 from a real account (`corsair` project,
- * `dev`/`dev_personal`/`stg`/`prd` configs) unless noted otherwise.
- *
- * Only the primary key is required; every other field is nullable and
- * optional, and every object is `.loose()`.
- * Official: https://docs.doppler.com/reference/api
+ * Secrets, service-token `key`, and Share `password` are never persisted.
  */
 
-const S = z.string().nullable().optional();
-const B = z.boolean().nullable().optional();
-
-const Id = z.string();
-
-/**
- * A project - the top-level container for environments and configs.
- * Captured live from `GET /v3/projects/project`.
- */
+/** GET /v3/projects — OpenAPI `projects[]`. `slug` is on list, not the object page. */
 export const DopplerProjectEntity = z
 	.object({
+		/** Unique identifier for the object. */
 		id: Id,
+		/** Project slug from GET /v3/projects. Addressing key for `project=` on other routes. */
 		slug: S,
+		/** Name of the project. */
 		name: S,
+		/** Description of the project. */
 		description: S,
+		/** Date and time of the object's creation. */
 		created_at: S,
 	})
 	.loose();
 export type DopplerProjectEntity = z.infer<typeof DopplerProjectEntity>;
 
 /**
- * An environment (dev/stg/prd, or a custom one) within a project.
- * Captured live from `GET /v3/environments/environment`.
+ * GET /v3/environments — OpenAPI environment object.
+ * `slug` and `personal_configs` are on create/rename, not the object page.
  */
 export const DopplerEnvironmentEntity = z
 	.object({
+		/** An identifier for the object. */
 		id: Id,
+		/** Desired slug. GET uses `id` for the same value. */
 		slug: S,
+		/** Name of the environment. */
 		name: S,
+		/** Identifier of the project the environment belongs to. */
 		project: S,
+		/** Date and time of the first secrets fetch from a config in the environment. */
 		initial_fetch_at: S,
+		/** Date and time of the object's creation. */
 		created_at: S,
+		/** Whether or not to enable personal configs for the environment. */
 		personal_configs: B,
 	})
 	.loose();
 export type DopplerEnvironmentEntity = z.infer<typeof DopplerEnvironmentEntity>;
 
 /**
- * A config - the branch-level container secrets actually live in
- * (`dev`, `dev_feature_x`, ...). Captured live from `GET /v3/configs/config`.
- *
- * `inheritedBy` is camelCase - confirmed live, the one field on this entity
- * that breaks from the API's otherwise-consistent snake_case.
- *
- * `slug` is a second, opaque, globally-unique identifier distinct from
- * `name` (`name` repeats across projects, `slug` does not) - confirmed live
- * on a re-verification pass, not present in the earlier capture this entity
- * was first built from. `name` stays the primary key (it, not `slug`, is
- * what every route's `config` parameter addresses), but `slug` is durable
- * and worth keeping rather than silently dropped.
+ * GET /v3/configs — OpenAPI config object.
+ * Inheritance fields and `slug` are on POST /v3/configs/config/inheritable.
  */
 export const DopplerConfigEntity = z
 	.object({
+		/** Name of the config. */
 		name: Id,
+		/** Config slug from the inheritable response (UUID in official examples). */
 		slug: S,
+		/** Identifier of the project that the config belongs to. */
 		project: S,
+		/** Identifier of the environment that the config belongs to. */
 		environment: S,
+		/** Whether the config is the root of the environment. */
 		root: B,
+		/** Boolean determining if the config is inheritable or not. */
 		inheritable: B,
+		/** Whether this config currently inherits from another. */
 		inheriting: B,
-		inherits: z.array(z.unknown()).nullable().optional(),
-		inheritedBy: z.array(z.unknown()).nullable().optional(),
+		/** Configs this one inherits from. */
+		inherits: UnknownArray,
+		/** Configs that inherit from this one. camelCase in the official schema. */
+		inheritedBy: UnknownArray,
+		/** Whether the config can be renamed and/or deleted. */
 		locked: B,
+		/** Date and time of the first secrets fetch. */
 		initial_fetch_at: S,
+		/** Date and time of the last secrets fetch. */
 		last_fetch_at: S,
+		/** Date and time of the object's creation. */
 		created_at: S,
 	})
 	.loose();
 export type DopplerConfigEntity = z.infer<typeof DopplerConfigEntity>;
 
 /**
- * A project webhook - Doppler's own outbound notification resource, the
- * analog of Habitica's outbound webhooks and CircleCI's own webhook family.
- * Captured live by creating and immediately deleting a real entry.
- *
- * All fields are camelCase, confirmed live - unlike almost everything else
- * in this API.
- *
- * No `secret` field is declared, and `authentication` is deliberately
- * `unknown` rather than typed to its caller-defined Bearer/Basic/None shape
- * - both may carry a signing credential the caller just set. Confirmed live
- * the API only ever echoes `authentication` back as `{type}` and never
- * echoes `secret` at all, but `endpoints/webhooks.ts`'s `forCache` strips
- * both explicitly before a record reaches this schema anyway, since `.loose()`
- * would otherwise pass either straight through if that ever changed.
+ * Project webhook. Official add/get/list response schemas are empty;
+ * field names match the live record. camelCase, unlike the rest of v3.
+ * `authentication` and `secret` are stripped before cache (see webhooks.ts).
  */
 export const DopplerWebhookEntity = z
 	.object({
+		/** Webhook identifier; the same value the path calls `{slug}`. */
 		id: Id,
+		/** The name of the webhook. */
 		name: S,
+		/** The webhook URL. Must be https. */
 		url: S,
+		/** Whether the webhook currently receives events. */
 		enabled: B,
+		/** Whether a signing secret is configured. Doppler never echoes `secret`. */
 		hasSecret: B,
+		/** Auth echo. Live: `{type}` only, never token/password. */
 		authentication: z.unknown().nullable().optional(),
-		enabledConfigs: z.array(z.unknown()).nullable().optional(),
+		/** Config slugs that the webhook should be enabled for. */
+		enabledConfigs: UnknownArray,
+		/** Whether the caller can manage this webhook. */
 		canManage: B,
 	})
 	.loose();
 export type DopplerWebhookEntity = z.infer<typeof DopplerWebhookEntity>;
 
-/**
- * The workplace itself - a singleton per account. Captured live from
- * `GET /v3/workplace`.
- */
+/** GET /v3/workplace — OpenAPI `workplace`. */
 export const DopplerWorkplaceEntity = z
 	.object({
+		/** Unique identifier for the workplace. */
 		id: Id,
+		/** Name of the workplace. */
 		name: S,
+		/** Email to send billing invoices to. */
 		billing_email: S,
+		/** Email to send security notices to. */
 		security_email: S,
 	})
 	.loose();

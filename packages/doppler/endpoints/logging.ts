@@ -49,8 +49,3 @@ export function auditPayload<T extends Record<string, unknown>>(
 	if (supplied.length > 0) payload.fields = supplied;
 	return payload;
 }
-
-/** Describes a collection without copying it. */
-export function countOf(value: readonly unknown[] | undefined | null): number {
-	return value?.length ?? 0;
-}

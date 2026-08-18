@@ -1,5 +1,5 @@
 /**
- * Asserts every key captured live is declared in `schema/database.ts`.
+ * Asserts every official and live-captured key is declared in `schema/database.ts`.
  *
  * Every entity is `.loose()`, so a response with an undeclared key parses
  * cleanly - `safeParse` alone would never notice a field the schema forgot.
@@ -66,7 +66,7 @@ describe('Doppler schema', () => {
 		);
 	});
 
-	describe('every live-captured key is declared', () => {
+	describe('every official/live key is declared', () => {
 		const cases: [string, { shape: Record<string, unknown> }, string[]][] = [
 			['project', DopplerProjectEntity, PROJECT_KEYS],
 			['environment', DopplerEnvironmentEntity, ENVIRONMENT_KEYS],

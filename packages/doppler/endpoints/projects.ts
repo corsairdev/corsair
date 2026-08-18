@@ -49,7 +49,7 @@ export const get: DopplerEndpoints['projectsGet'] = async (ctx, input) => {
 
 	await cacheEntity(ctx.db.projects, DopplerProjectEntity, result.project, {
 		label: LABEL,
-		entityId,
+		entityId: (p) => p.slug ?? input.project,
 	});
 	await logEventFromContext(
 		ctx,
@@ -103,7 +103,7 @@ export const update: DopplerEndpoints['projectsUpdate'] = async (
 
 	await cacheEntity(ctx.db.projects, DopplerProjectEntity, result.project, {
 		label: LABEL,
-		entityId,
+		entityId: (p) => p.slug ?? input.project,
 	});
 	await logEventFromContext(
 		ctx,

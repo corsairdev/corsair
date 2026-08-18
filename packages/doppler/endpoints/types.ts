@@ -168,6 +168,10 @@ const ActivityLogSchema = z
 		text: S,
 		html: S,
 		created_at: S,
+		/** Official list schema. CLI still emits the `enclave_*` names below. */
+		config: S,
+		environment: S,
+		project: S,
 		enclave_project: S,
 		enclave_environment: S,
 		enclave_config: S,
@@ -673,7 +677,7 @@ export type WebhooksListInput = z.infer<typeof WebhooksListInputSchema>;
 /** `token` is used for `type: 'Bearer'`; `username`/`password` for `type: 'Basic'` - per the spec's own body schema. */
 const WebhookAuthenticationSchema = z
 	.object({
-		type: z.string(),
+		type: z.enum(['None', 'Bearer', 'Basic']),
 		token: z.string().optional(),
 		username: z.string().optional(),
 		password: z.string().optional(),
@@ -812,7 +816,18 @@ const ShareLinkSchema = z
 const AuthMeInputSchema = z.object({});
 export type AuthMeInput = z.infer<typeof AuthMeInputSchema>;
 
-const ActorInfoSchema = OpaqueObject;
+const ActorInfoSchema = z
+	.object({
+		slug: S,
+		name: S,
+		created_at: S,
+		last_seen_at: S,
+		type: S,
+		token_preview: S,
+		workplace: z.object({ slug: S, name: S }).loose().nullable().optional(),
+		principal: z.object({ type: S, slug: S }).loose().nullable().optional(),
+	})
+	.loose();
 
 /* -------------------------------------------------------------------------- */
 /*                                  Registries                                */

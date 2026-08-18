@@ -9,16 +9,11 @@ import type { DopplerEndpointOutputs } from './types';
 const LABEL = 'environment';
 
 /**
- * An environment's `id` (confirmed live to equal its `slug`, e.g. `dev`) is
- * only unique *within* a project - every project has its own `dev`. Caching
- * by `id` alone lets two projects' `dev` environments collide in the local
- * mirror: whichever was cached second overwrites the first, and deleting
- * either evicts the row both think is theirs. Composite `project:id` key,
- * the same fix already applied to configs (`endpoints/configs.ts`), which
- * has the identical per-project-uniqueness shape.
+ * Environment `id` (the slug, e.g. `dev`) is unique only within a project.
+ * Official examples put the opaque project id on the record; every route
+ * addresses by slug. Key the mirror by the slug the caller used.
  */
-const entityId = (e: { project?: string | null; id: string }) =>
-	`${e.project}:${e.id}`;
+const entityId = (project: string, id: string) => `${project}:${id}`;
 
 /** Lists environments within a project. */
 export const list: DopplerEndpoints['environmentsList'] = async (
@@ -33,7 +28,7 @@ export const list: DopplerEndpoints['environmentsList'] = async (
 		ctx.db.environments,
 		DopplerEnvironmentEntity,
 		result.environments,
-		{ label: LABEL, entityId },
+		{ label: LABEL, entityId: (e) => entityId(input.project, e.id) },
 	);
 	await logEventFromContext(
 		ctx,
@@ -59,7 +54,7 @@ export const get: DopplerEndpoints['environmentsGet'] = async (ctx, input) => {
 		ctx.db.environments,
 		DopplerEnvironmentEntity,
 		result.environment,
-		{ label: LABEL, entityId },
+		{ label: LABEL, entityId: (e) => entityId(input.project, e.id) },
 	);
 	await logEventFromContext(
 		ctx,
@@ -91,7 +86,7 @@ export const create: DopplerEndpoints['environmentsCreate'] = async (
 		ctx.db.environments,
 		DopplerEnvironmentEntity,
 		result.environment,
-		{ label: LABEL, entityId },
+		{ label: LABEL, entityId: (e) => entityId(input.project, e.id) },
 	);
 	await logEventFromContext(
 		ctx,
@@ -123,14 +118,14 @@ export const rename: DopplerEndpoints['environmentsRename'] = async (
 		ctx.db.environments,
 		DopplerEnvironmentEntity,
 		result.environment,
-		{ label: LABEL, entityId },
+		{ label: LABEL, entityId: (e) => entityId(input.project, e.id) },
 	);
 	// A rename can change the slug, which is also the entity's `id` - the
 	// composite key above is then a *different* key than the one this
 	// environment was cached under before the call. Evict the old key so a
 	// renamed environment does not leave a stale duplicate row behind.
-	const oldKey = `${input.project}:${input.environment}`;
-	const newKey = entityId(result.environment);
+	const oldKey = entityId(input.project, input.environment);
+	const newKey = entityId(input.project, result.environment.id);
 	if (oldKey !== newKey) await evictEntity(ctx.db.environments, oldKey, LABEL);
 	await logEventFromContext(
 		ctx,
@@ -161,7 +156,7 @@ export const remove: DopplerEndpoints['environmentsDelete'] = async (
 
 	await evictEntity(
 		ctx.db.environments,
-		`${input.project}:${input.environment}`,
+		entityId(input.project, input.environment),
 		LABEL,
 	);
 	await logEventFromContext(

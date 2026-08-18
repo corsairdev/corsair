@@ -9,14 +9,11 @@ import type { DopplerEndpointOutputs } from './types';
 const LABEL = 'config';
 
 /**
- * A config's `name` (the mirror's declared primary key) is only unique
- * *within* a project - `dev` exists in every project. Mirroring by `name`
- * alone would collide across projects, so every cache/evict call here keys
- * by `project:name` instead. Same composite-id pattern used for CircleCI's
- * project env vars.
+ * Config `name` is unique only within a project. Official examples put the
+ * opaque project id on the record; every route addresses by slug. Key the
+ * mirror by the slug the caller used so cache and evict cannot diverge.
  */
-const entityId = (c: { project?: string | null; name: string }) =>
-	`${c.project}:${c.name}`;
+const entityId = (project: string, name: string) => `${project}:${name}`;
 
 /** Lists configs within a project, optionally scoped to one environment. */
 export const list: DopplerEndpoints['configsList'] = async (ctx, input) => {
@@ -34,7 +31,7 @@ export const list: DopplerEndpoints['configsList'] = async (ctx, input) => {
 
 	await cacheEntities(ctx.db.configs, DopplerConfigEntity, result.configs, {
 		label: LABEL,
-		entityId,
+		entityId: (c) => entityId(input.project, c.name),
 	});
 	await logEventFromContext(
 		ctx,
@@ -55,7 +52,7 @@ export const get: DopplerEndpoints['configsGet'] = async (ctx, input) => {
 
 	await cacheEntity(ctx.db.configs, DopplerConfigEntity, result.config, {
 		label: LABEL,
-		entityId,
+		entityId: (c) => entityId(input.project, c.name),
 	});
 	await logEventFromContext(
 		ctx,
@@ -81,7 +78,7 @@ export const create: DopplerEndpoints['configsCreate'] = async (ctx, input) => {
 
 	await cacheEntity(ctx.db.configs, DopplerConfigEntity, result.config, {
 		label: LABEL,
-		entityId,
+		entityId: (c) => entityId(input.project, c.name),
 	});
 	await logEventFromContext(
 		ctx,
@@ -103,7 +100,7 @@ export const update: DopplerEndpoints['configsUpdate'] = async (ctx, input) => {
 
 	await cacheEntity(ctx.db.configs, DopplerConfigEntity, result.config, {
 		label: LABEL,
-		entityId,
+		entityId: (c) => entityId(input.project, c.name),
 	});
 	// A rename changes `name`, which is half of the composite entityId - the
 	// call above just cached the config under a *new* key. Evict the old one
@@ -112,7 +109,7 @@ export const update: DopplerEndpoints['configsUpdate'] = async (ctx, input) => {
 	if (input.name !== input.config) {
 		await evictEntity(
 			ctx.db.configs,
-			entityId({ project: input.project, name: input.config }),
+			entityId(input.project, input.config),
 			LABEL,
 		);
 	}
@@ -138,7 +135,7 @@ export const remove: DopplerEndpoints['configsDelete'] = async (ctx, input) => {
 
 	await evictEntity(
 		ctx.db.configs,
-		entityId({ project: input.project, name: input.config }),
+		entityId(input.project, input.config),
 		LABEL,
 	);
 	await logEventFromContext(
@@ -161,7 +158,7 @@ export const clone: DopplerEndpoints['configsClone'] = async (ctx, input) => {
 
 	await cacheEntity(ctx.db.configs, DopplerConfigEntity, result.config, {
 		label: LABEL,
-		entityId,
+		entityId: (c) => entityId(input.project, c.name),
 	});
 	await logEventFromContext(
 		ctx,
@@ -172,7 +169,7 @@ export const clone: DopplerEndpoints['configsClone'] = async (ctx, input) => {
 	return result.config;
 };
 
-/** Locks a config, preventing further writes. */
+/** Locks a config so it cannot be renamed or deleted. */
 export const lock: DopplerEndpoints['configsLock'] = async (ctx, input) => {
 	const result = await dopplerCall<{
 		config: DopplerEndpointOutputs['configsLock'];
@@ -183,7 +180,7 @@ export const lock: DopplerEndpoints['configsLock'] = async (ctx, input) => {
 
 	await cacheEntity(ctx.db.configs, DopplerConfigEntity, result.config, {
 		label: LABEL,
-		entityId,
+		entityId: (c) => entityId(input.project, c.name),
 	});
 	await logEventFromContext(
 		ctx,
@@ -194,7 +191,7 @@ export const lock: DopplerEndpoints['configsLock'] = async (ctx, input) => {
 	return result.config;
 };
 
-/** Unlocks a previously locked config. */
+/** Unlocks a config so it can be renamed or deleted. */
 export const unlock: DopplerEndpoints['configsUnlock'] = async (ctx, input) => {
 	const result = await dopplerCall<{
 		config: DopplerEndpointOutputs['configsUnlock'];
@@ -205,7 +202,7 @@ export const unlock: DopplerEndpoints['configsUnlock'] = async (ctx, input) => {
 
 	await cacheEntity(ctx.db.configs, DopplerConfigEntity, result.config, {
 		label: LABEL,
-		entityId,
+		entityId: (c) => entityId(input.project, c.name),
 	});
 	await logEventFromContext(
 		ctx,
