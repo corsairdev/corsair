@@ -43,9 +43,10 @@ export const BaseProviders = [
 	'asana',
 	'asindataapi',
 	'ayrshare',
-	'bitbucket',
+	'baselinker',
 	'betterstack',
 	'bigmailer',
+	'bitbucket',
 	'bitwarden',
 	'bluesky',
 	'boloforms',
@@ -186,9 +187,10 @@ export const ProviderDisplayNames = {
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
 	ayrshare: 'Ayrshare',
-	bitbucket: 'Bitbucket',
+	baselinker: 'BaseLinker',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
+	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
@@ -336,9 +338,10 @@ export type AllProviders =
 	| 'asana'
 	| 'asindataapi'
 	| 'ayrshare'
-	| 'bitbucket'
+	| 'baselinker'
 	| 'betterstack'
 	| 'bigmailer'
+	| 'bitbucket'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'boloforms'
