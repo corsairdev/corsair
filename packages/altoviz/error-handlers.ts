@@ -83,8 +83,8 @@ function providerMessage(error: Error, fallback: string): string {
 export const errorHandlers = {
 	/**
 	 * Measured live: the quota is exactly 100 requests over a rolling window.
-	 * `Retry-After` is milliseconds on the wire. corsair/http multiplies by
-	 * 1000 (seconds), so the handler divides back before scheduling the delay.
+	 * Bind retries are never requested: corsair/core awaits a successful retry
+	 * then still throws the original error. GET 429s retry in the client.
 	 */
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
@@ -98,7 +98,7 @@ export const errorHandlers = {
 					? error.retryAfter / 1000
 					: undefined;
 			return {
-				maxRetries: isNonIdempotent(context.operation) ? 0 : 3,
+				maxRetries: 0,
 				headersRetryAfterMs: retryAfterMs,
 			};
 		},
@@ -176,9 +176,8 @@ export const errorHandlers = {
 		},
 	},
 	/**
-	 * A server fault. Retried with backoff for reads and idempotent writes;
-	 * never for a non-idempotent operation, where a lost response and a
-	 * genuine failure look identical from the caller's side.
+	 * A server fault. Bind retries are never requested: corsair/core awaits a
+	 * successful retry then still throws the original error.
 	 */
 	SERVER_ERROR: {
 		match: (error) =>
@@ -190,7 +189,7 @@ export const errorHandlers = {
 			console.warn(
 				`[ALTOVIZ:${context.operation}] ${status}: ${providerMessage(error, error.message)}`,
 			);
-			return { maxRetries: isNonIdempotent(context.operation) ? 0 : 2 };
+			return { maxRetries: 0 };
 		},
 	},
 	NETWORK_ERROR: {
@@ -209,7 +208,7 @@ export const errorHandlers = {
 			console.warn(
 				`[ALTOVIZ:${context.operation}] Network error: ${error.message}`,
 			);
-			return { maxRetries: isNonIdempotent(context.operation) ? 0 : 2 };
+			return { maxRetries: 0 };
 		},
 	},
 	DEFAULT: {

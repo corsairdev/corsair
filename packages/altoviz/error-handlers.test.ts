@@ -1,8 +1,8 @@
 /**
  * Every status this API answers with, mapped to the retry decision this
  * plugin makes for it - including the four empty-body statuses (401, 404
- * unknown-route, 405, 429), the 409 conflict, and the non-idempotent-aware
- * caps on 429/5xx/network retries.
+ * unknown-route, 405, 429) and the 409 conflict. Bind retries stay at 0
+ * because corsair/core discards a successful retry and rethrows.
  */
 import { ApiError } from 'corsair/http';
 import { errorHandlers, isNonIdempotent } from './error-handlers';
@@ -95,7 +95,7 @@ describe('status-to-handler mapping', () => {
 			context('account.getUnits', error),
 		);
 		expect(result.headersRetryAfterMs).toBe(36000);
-		expect(result.maxRetries).toBeGreaterThan(0);
+		expect(result.maxRetries).toBe(0);
 	});
 
 	test('429 on a non-idempotent operation is never retried, even with Retry-After present', async () => {
@@ -118,7 +118,7 @@ describe('status-to-handler mapping', () => {
 		expect(result.maxRetries).toBe(0);
 	});
 
-	test('500 is retried for a read, never for a non-idempotent write', async () => {
+	test('500 is never retried by bind', async () => {
 		const error = apiError(500, {
 			errors: ['Une erreur est survenue.'],
 			message: 'Internal error',
@@ -127,7 +127,7 @@ describe('status-to-handler mapping', () => {
 			error,
 			context('customers.get', error),
 		);
-		expect(readResult.maxRetries).toBeGreaterThan(0);
+		expect(readResult.maxRetries).toBe(0);
 		const writeResult = await errorHandlers.SERVER_ERROR.handler(
 			error,
 			context('saleInvoices.create', error),
@@ -135,14 +135,14 @@ describe('status-to-handler mapping', () => {
 		expect(writeResult.maxRetries).toBe(0);
 	});
 
-	test('a network error is retried for a read, never for a non-idempotent write', async () => {
+	test('a network error is never retried by bind', async () => {
 		const error = new Error('fetch failed');
 		expect(errorHandlers.NETWORK_ERROR.match(error)).toBe(true);
 		const readResult = await errorHandlers.NETWORK_ERROR.handler(
 			error,
 			context('customers.get', error),
 		);
-		expect(readResult.maxRetries).toBeGreaterThan(0);
+		expect(readResult.maxRetries).toBe(0);
 		const writeResult = await errorHandlers.NETWORK_ERROR.handler(
 			error,
 			context('customers.create', error),

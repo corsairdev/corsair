@@ -3,7 +3,7 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 const ALTOVIZ_API_BASE = 'https://api.altoviz.com';
 
@@ -11,8 +11,12 @@ const ALTOVIZ_API_BASE = 'https://api.altoviz.com';
  * Measured live: quota is 100 requests over a rolling window. The 429 carries
  * `Retry-After` in milliseconds (13_000 / 36_000), not HTTP-spec seconds.
  * corsair/http multiplies that value by 1000, so transport-level retries would
- * sleep for hours and would also replay POSTs. maxRetries is 0 here; the
- * plugin error handler converts the parsed value back to ms and retries reads.
+ * sleep for hours and would also replay POSTs. maxRetries is 0 here.
+ *
+ * GET retries happen in `makeAltovizRequest` instead of corsair's bind layer:
+ * bind awaits a successful retry then still throws the original error
+ * (`packages/corsair/core/endpoints/bind.ts`). This plugin PR cannot change
+ * that file.
  */
 const ALTOVIZ_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -23,6 +27,19 @@ const ALTOVIZ_RATE_LIMIT_CONFIG: RateLimitConfig = {
 		retryAfter: 'retry-after',
 	},
 };
+
+const GET_RETRY_LIMIT = 3;
+
+function sleep(ms: number) {
+	return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+function getRetryDelayMs(error: unknown): number | undefined {
+	if (error instanceof ApiError && error.status === 429) {
+		return error.retryAfter != null ? error.retryAfter / 1000 : 1000;
+	}
+	return undefined;
+}
 
 export class AltovizAPIError extends Error {
 	public readonly status?: number;
@@ -99,16 +116,29 @@ export async function makeAltovizRequest<T>(
 		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions, {
-			rateLimitConfig: ALTOVIZ_RATE_LIMIT_CONFIG,
-		});
-	} catch (error) {
-		if (error instanceof Error) {
-			const status = (error as { status?: number }).status;
-			const body = (error as { body?: unknown }).body;
-			throw new AltovizAPIError(error.message, { cause: error, status, body });
+	const retrySafe = method === 'GET';
+	let lastError: unknown;
+	for (let attempt = 1; attempt <= GET_RETRY_LIMIT + 1; attempt++) {
+		try {
+			return await request<T>(config, requestOptions, {
+				rateLimitConfig: ALTOVIZ_RATE_LIMIT_CONFIG,
+			});
+		} catch (error) {
+			lastError = error;
+			const delay = retrySafe ? getRetryDelayMs(error) : undefined;
+			if (delay == null || attempt > GET_RETRY_LIMIT) break;
+			await sleep(delay);
 		}
-		throw new AltovizAPIError('Unknown error');
 	}
+
+	if (lastError instanceof Error) {
+		const status = (lastError as { status?: number }).status;
+		const body = (lastError as { body?: unknown }).body;
+		throw new AltovizAPIError(lastError.message, {
+			cause: lastError,
+			status,
+			body,
+		});
+	}
+	throw new AltovizAPIError('Unknown error');
 }

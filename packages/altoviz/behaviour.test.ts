@@ -4,7 +4,9 @@
  * goes red, a claim in that document is no longer true.
  */
 import {
+	Account,
 	Colleagues,
+	CustomerFamilies,
 	Customers,
 	Products,
 	PurchaseInvoices,
@@ -399,5 +401,33 @@ describe('purchase invoice upload', () => {
 		const file = (body as FormData).get('file');
 		expect(file).toBeInstanceOf(File);
 		expect((file as File).name).toBe('invoice-42.pdf');
+	});
+});
+
+describe('GET retries in the client (bind discards successful retries)', () => {
+	test('a 429 GET that succeeds on retry returns the body', async () => {
+		const { ctx } = makeCtx();
+		queueResponse('', {
+			status: 429,
+			contentType: null,
+			headers: { 'retry-after': '1' },
+		});
+		queueResponse([{ id: 1, code: 'H', name: 'Heures', type: 'Time' }]);
+		const units = await Account.getUnits(ctx, {});
+		expect(units).toEqual([{ id: 1, code: 'H', name: 'Heures', type: 'Time' }]);
+		expect(recordedCalls()).toHaveLength(2);
+	});
+
+	test('a 429 POST is not retried', async () => {
+		const { ctx } = makeCtx();
+		queueResponse('', {
+			status: 429,
+			contentType: null,
+			headers: { 'retry-after': '1' },
+		});
+		await expect(
+			CustomerFamilies.create(ctx, { label: 'F' }),
+		).rejects.toThrow();
+		expect(recordedCalls()).toHaveLength(1);
 	});
 });
