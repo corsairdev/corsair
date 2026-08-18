@@ -12,6 +12,7 @@ const SERPAPI_API_BASE = 'https://serpapi.com';
 export type SerpapiRequestOptions = {
 	method?: 'GET' | 'POST';
 	query?: Record<string, string | number | boolean | undefined>;
+	timeout?: number;
 };
 
 export async function makeSerpapiRequest<T>(
@@ -19,13 +20,18 @@ export async function makeSerpapiRequest<T>(
 	apiKey: string,
 	options: SerpapiRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', query } = options;
+	if (!apiKey.trim()) {
+		throw new Error('SerpApi API key is required');
+	}
+
+	const { method = 'GET', query, timeout } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: SERPAPI_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		TIMEOUT: timeout,
 		// Left unset deliberately: the shared request layer injects
 		// `Authorization: Bearer {TOKEN}` whenever this is set, which would be
 		// wrong here - auth travels as an `api_key` query parameter instead
