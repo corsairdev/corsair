@@ -9,7 +9,7 @@
  * `identifierKeys`, so this deny-list is not fixing an active leak - it is
  * a second, independent guarantee that does not depend on every future call
  * site getting that right by hand. Checked case-insensitively so a renamed
- * or differently-cased field (e.g. a nested nested nested `Password`) is
+ * or differently-cased field (e.g. a nested `Password`) is
  * still caught.
  */
 const NEVER_LOG_VALUE = new Set([
