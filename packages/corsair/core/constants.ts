@@ -48,6 +48,8 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'box',
+	'bugsnag',
+	'canvas',
 	'cal',
 	'calendly',
 	'canva',
@@ -186,6 +188,8 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	box: 'Box',
+	bugsnag: 'BugSnag',
+	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
@@ -331,6 +335,7 @@ export type AllProviders =
 	| 'bluesky'
 	| 'boloforms'
 	| 'box'
+	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
 	| 'canva'
