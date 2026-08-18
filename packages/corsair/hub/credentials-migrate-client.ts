@@ -71,7 +71,7 @@ export async function postMigrationToHub(input: {
 		parseResponse: (raw): MigrationResult => {
 			const record = (raw ?? {}) as Record<string, unknown>;
 			return {
-				ok: record.ok === true || record.status === 'ok',
+				ok: record.ok === true,
 				migrated:
 					typeof record.migrated === 'number' ? record.migrated : undefined,
 				error: typeof record.error === 'string' ? record.error : undefined,

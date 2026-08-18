@@ -43,9 +43,13 @@ export async function rewrapIntegrationRow(
 	if (!row.dek) {
 		throw new Error(`Integration "${row.name}" has no DEK to migrate`);
 	}
-	return {
-		name: row.name,
-		dek: await rewrapIntegrationDek(row.dek, devKek, prodKek),
-		config: row.config,
-	};
+	let dek: string;
+	try {
+		dek = await rewrapIntegrationDek(row.dek, devKek, prodKek);
+	} catch {
+		throw new Error(
+			`Could not re-key integration "${row.name}": its credentials were encrypted with a different dev KEK than the current CORSAIR_KEK. Set CORSAIR_KEK to the key these credentials were created with.`,
+		);
+	}
+	return { name: row.name, dek, config: row.config };
 }

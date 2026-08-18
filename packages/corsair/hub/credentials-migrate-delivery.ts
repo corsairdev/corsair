@@ -72,11 +72,6 @@ export async function processCredentialsMigrateDelivery(
 
 	const { db } = internal.database;
 
-	// ponytail: select-then-insert per name, matching the existing setup path
-	// (core/auth/key-manager + setup). corsair_integrations has no UNIQUE(name),
-	// so two migrations racing the same name could double-insert. Migrations are
-	// developer-initiated and serial, so this is fine; if that ever changes, add
-	// UNIQUE(name) + onConflict.
 	await db.transaction().execute(async (trx) => {
 		for (const row of integrations) {
 			const now = new Date();

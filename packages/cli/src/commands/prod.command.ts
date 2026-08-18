@@ -13,16 +13,19 @@ function errorMessage(err: unknown): string {
 	return err instanceof Error ? err.message : String(err);
 }
 
-function parseConfigLike(value: unknown): Record<string, unknown> {
+function parseConfig(value: unknown, name: string): Record<string, unknown> {
 	if (!value) return {};
+	if (typeof value === 'object') return value as Record<string, unknown>;
 	if (typeof value === 'string') {
 		try {
 			return JSON.parse(value) as Record<string, unknown>;
 		} catch {
-			return {};
+			throw new Error(
+				`Integration "${name}" has an unreadable config (not valid JSON) — refusing to migrate it as empty.`,
+			);
 		}
 	}
-	return value as Record<string, unknown>;
+	throw new Error(`Integration "${name}" has an unexpected config type.`);
 }
 
 async function readIntegrationRows(
@@ -35,7 +38,7 @@ async function readIntegrationRows(
 	return rows.map((row) => ({
 		name: row.name,
 		dek: row.dek,
-		config: parseConfigLike(row.config),
+		config: parseConfig(row.config, row.name),
 	}));
 }
 
@@ -51,10 +54,13 @@ Also set CORSAIR_API_KEY and CORSAIR_SIGNING_SECRET from the Hub's
 
 This key was generated locally and is shown ONCE — it is never sent to the Hub.
 It is your production master key; store it safely. Once production is deployed,
-re-run this command with --kek set to the CORSAIR_KEK value above to migrate your
-integration credentials:
+re-run this command with --kek to migrate your integration credentials
+(the corsair CLI is @corsair-dev/cli — install it if you haven't):
 
+  pnpm corsair prod --kek <the CORSAIR_KEK above>
   npx corsair prod --kek <the CORSAIR_KEK above>
+  yarn corsair prod --kek <the CORSAIR_KEK above>
+  bunx corsair prod --kek <the CORSAIR_KEK above>
 `);
 }
 
@@ -129,29 +135,45 @@ export default class ProdCommand extends BaseCommand {
 			return;
 		}
 
+		const names = payload.integrations.map((integration) => integration.name);
 		console.log(
-			`[corsair]: Migrating ${payload.integrations.length} integration(s) to production ...`,
+			`\n[corsair]: Migrating ${names.length} integration(s) to production:`,
 		);
+		for (const name of names) {
+			console.log(`             • ${name}`);
+		}
+		console.log('\n[corsair]: Delivering to production via the Hub …');
 
 		let result: Awaited<ReturnType<typeof postMigrationToHub>>;
 		try {
 			result = await postMigrationToHub({ hub: hub as HubConfig, payload });
 		} catch (err) {
 			console.error(
-				`[corsair]: Migration failed — ${errorMessage(err)}. Fix production and re-run.`,
+				`\n[corsair]: Migration failed — ${errorMessage(err)}. Fix production and re-run.`,
 			);
 			process.exit(1);
 		}
 
 		if (!result.ok) {
 			console.error(
-				`[corsair]: Production rejected the migration — ${result.error ?? 'unknown error'}. Fix production and re-run.`,
+				`\n[corsair]: Production rejected the migration — ${result.error ?? 'unknown error'}. Fix production and re-run.`,
 			);
 			process.exit(1);
 		}
 
 		console.log(
-			`[corsair]: ✓ Migrated ${result.migrated ?? payload.integrations.length} integration(s) to production.`,
+			`\n[corsair]: ✓ Migrated ${result.migrated ?? names.length} integration(s) to production.\n`,
 		);
+		console.log(
+			'           Add these to your production corsair.ts so the migrated',
+		);
+		console.log(
+			'           credentials are used (match the authType/options you use in dev):\n',
+		);
+		console.log('             plugins: [');
+		for (const name of names) {
+			console.log(`               ${name}(),`);
+		}
+		console.log('             ],\n');
 	}
 }

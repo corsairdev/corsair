@@ -27,7 +27,16 @@ export function usesBrowserDelivery(slug: HubEnvironmentSlug): boolean {
 export function validateProductionDeliveryUrl(
 	deliveryUrl: string,
 ): string | null {
-	if (isLoopbackUrl(deliveryUrl)) {
+	let parsed: URL;
+	try {
+		parsed = new URL(deliveryUrl);
+	} catch {
+		return 'Production delivery URL must be a full URL, e.g. https://your-app.com/api/corsair';
+	}
+	if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+		return 'Production delivery URL must start with http:// or https://';
+	}
+	if (LOOPBACK_HOSTS.has(parsed.hostname)) {
 		return 'Production delivery URL must be a public URL, not localhost';
 	}
 	return null;

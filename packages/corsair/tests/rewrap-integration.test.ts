@@ -85,6 +85,21 @@ describe('rewrapIntegrationRow', () => {
 			),
 		).rejects.toThrow(/no DEK/i);
 	});
+
+	it('surfaces a clear, named error when the dev KEK is wrong', async () => {
+		const row = {
+			name: 'slack',
+			dek: await encryptDEK(generateDEK(), DEV_KEK),
+			config: {},
+		};
+		await expect(
+			rewrapIntegrationRow(
+				row,
+				'wrong-kek-still-32-characters-long!!!',
+				PROD_KEK,
+			),
+		).rejects.toThrow(/integration "slack".*CORSAIR_KEK/is);
+	});
 });
 
 describe('rewrap-integration source', () => {

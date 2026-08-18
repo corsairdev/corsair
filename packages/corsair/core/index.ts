@@ -261,7 +261,6 @@ export {
 	initializeAccountDEK,
 	initializeIntegrationDEK,
 	reEncryptConfig,
-	rewrapIntegrationDek,
 	rewrapIntegrationRow,
 } from './auth';
 // Agent chats namespace

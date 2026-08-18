@@ -35,10 +35,7 @@ export {
 } from './plugin-auth-status';
 // Dev→prod credential migration (DEK re-wrap)
 export type { MigratedIntegration } from './rewrap-integration';
-export {
-	rewrapIntegrationDek,
-	rewrapIntegrationRow,
-} from './rewrap-integration';
+export { rewrapIntegrationRow } from './rewrap-integration';
 // Types
 export type {
 	AccountFieldNames,
