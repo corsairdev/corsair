@@ -82,7 +82,7 @@ export const errorHandlers = {
 		 */
 		handler: async (error, context) => {
 			console.warn(
-				`[SERPAPI:${context.operation}] Network error: ${error.message}`,
+				`[SERPAPI:${context.operation}] Network error (status ${safeStatus(error)})`,
 			);
 			return { maxRetries: 0 };
 		},
