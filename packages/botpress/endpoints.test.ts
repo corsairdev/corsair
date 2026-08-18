@@ -17,6 +17,7 @@ import {
 	Tools,
 	Workspaces,
 } from './endpoints';
+import { resolveWorkspaceId } from './endpoints/shared';
 import { isNonIdempotent } from './error-handlers';
 import { botpressEndpointSchemas } from './index';
 
@@ -748,5 +749,50 @@ describe('delete results', () => {
 		await expect(
 			Files.delete(ctx, { botId: 'bot1', id: 'file1' }),
 		).resolves.toEqual({});
+	});
+});
+
+describe('input schemas', () => {
+	it('rejects a blank invoice id', () => {
+		const schema =
+			botpressEndpointSchemas['billing.chargeUnpaidInvoices'].input;
+
+		expect(
+			schema.safeParse({ workspaceId: 'w1', invoiceIds: [''] }).success,
+		).toBe(false);
+		expect(
+			schema.safeParse({ workspaceId: 'w1', invoiceIds: ['   '] }).success,
+		).toBe(false);
+		expect(
+			schema.safeParse({ workspaceId: 'w1', invoiceIds: ['i1'] }).success,
+		).toBe(true);
+	});
+
+	it('rejects a whitespace id', () => {
+		const schema = botpressEndpointSchemas['workspaces.get'].input;
+
+		expect(schema.safeParse({ id: '   ' }).success).toBe(false);
+		expect(schema.safeParse({ id: 'w1' }).success).toBe(true);
+	});
+});
+
+describe('resolveWorkspaceId', () => {
+	it('ignores a whitespace configured id', async () => {
+		await expect(
+			resolveWorkspaceId({
+				key: 'test-botpress-token',
+				options: { workspaceId: '   ' },
+			}),
+		).resolves.toBe('wkspace_2');
+	});
+
+	it('trims a stored workspace id', async () => {
+		await expect(
+			resolveWorkspaceId({
+				key: 'test-botpress-token',
+				options: {},
+				keys: { get_workspace_id: async () => '  stored_ws  ' },
+			}),
+		).resolves.toBe('stored_ws');
 	});
 });

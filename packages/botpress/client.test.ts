@@ -3,11 +3,14 @@
  * headers, and how workspace discovery behaves. Network access is mocked, so
  * this runs in CI.
  */
+import { AuthMissingError } from 'corsair/core';
 import {
+	BotpressBotIdMissingError,
 	BotpressWorkspaceIdMissingError,
 	discoverBotpressWorkspaceId,
 	makeBotpressRequest,
 } from './client';
+import { botpress } from './index';
 
 type Captured = {
 	url: string;
@@ -140,6 +143,56 @@ describe('makeBotpressRequest', () => {
 		expect(captured?.body).toBeUndefined();
 	});
 
+	it('rejects a blank token before fetch', async () => {
+		mockFetch({ body: {} });
+		attempts = 0;
+
+		await expect(
+			makeBotpressRequest('/v1/admin/account/me', ''),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(
+			makeBotpressRequest('/v1/admin/account/me', '   '),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(attempts).toBe(0);
+	});
+
+	it('trims the bearer token', async () => {
+		mockFetch({ body: {} });
+
+		await makeBotpressRequest('/v1/admin/account/me', '  test-token  ');
+
+		expect(captured?.headers.authorization).toBe('Bearer test-token');
+	});
+
+	it('rejects a blank workspace or bot id before fetch', async () => {
+		mockFetch({ body: {} });
+		attempts = 0;
+
+		await expect(
+			makeBotpressRequest('/v1/admin/bots', 'test-token', {
+				workspaceId: '   ',
+			}),
+		).rejects.toBeInstanceOf(BotpressWorkspaceIdMissingError);
+		await expect(
+			makeBotpressRequest('/v1/chat/conversations', 'test-token', {
+				botId: '',
+			}),
+		).rejects.toBeInstanceOf(BotpressBotIdMissingError);
+		expect(attempts).toBe(0);
+	});
+
+	it('trims workspace and bot ids on the wire', async () => {
+		mockFetch({ body: {} });
+
+		await makeBotpressRequest('/v1/chat/conversations', 'test-token', {
+			workspaceId: '  wkspace_123  ',
+			botId: '  bot_123  ',
+		});
+
+		expect(captured?.headers['x-workspace-id']).toBe('wkspace_123');
+		expect(captured?.headers['x-bot-id']).toBe('bot_123');
+	});
+
 	it('retries once Botpress answers 429 and honours Retry-After', async () => {
 		mockFetchSequence([
 			{ status: 429, body: {}, headers: { 'Retry-After': '1' } },
@@ -183,5 +236,55 @@ describe('discoverBotpressWorkspaceId', () => {
 		await expect(
 			discoverBotpressWorkspaceId('test-token'),
 		).rejects.toBeInstanceOf(BotpressWorkspaceIdMissingError);
+	});
+
+	it('reports a missing workspace when the only id is blank', async () => {
+		mockFetch({ body: { workspaces: [{ id: '   ' }] } });
+
+		await expect(
+			discoverBotpressWorkspaceId('test-token'),
+		).rejects.toBeInstanceOf(BotpressWorkspaceIdMissingError);
+	});
+
+	it('trims the single reachable workspace id', async () => {
+		mockFetch({ body: { workspaces: [{ id: '  wkspace_123  ' }] } });
+
+		await expect(discoverBotpressWorkspaceId('test-token')).resolves.toBe(
+			'wkspace_123',
+		);
+	});
+});
+
+describe('keyBuilder', () => {
+	it('rejects a blank options.key', async () => {
+		const plugin = botpress({ key: '   ' });
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: async () => null },
+		};
+
+		await expect(
+			plugin.keyBuilder!(ctx as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('trims options.key', async () => {
+		const plugin = botpress({ key: '  pat_123  ' });
+
+		await expect(
+			plugin.keyBuilder!({ authType: 'api_key' } as never, 'endpoint'),
+		).resolves.toBe('pat_123');
+	});
+
+	it('rejects a blank stored api key', async () => {
+		const plugin = botpress();
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: async () => '   ' },
+		};
+
+		await expect(
+			plugin.keyBuilder!(ctx as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });
