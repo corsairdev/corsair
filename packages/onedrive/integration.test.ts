@@ -20,8 +20,20 @@ function parsePayload(payload: unknown): unknown {
 	return typeof payload === 'string' ? JSON.parse(payload) : payload;
 }
 
+function requireEntityId(id: string | undefined, source: string): string {
+	if (!id) {
+		throw new Error(`OneDrive ${source} returned no id`);
+	}
+	return id;
+}
+
 async function createOnedriveClient() {
 	const accessToken = configuredAccessToken!;
+	if (!process.env.CORSAIR_KEK?.trim()) {
+		throw new Error(
+			'CORSAIR_KEK is required when ONEDRIVE_ACCESS_TOKEN is set',
+		);
+	}
 
 	const testDb = createTestDatabase();
 	await createIntegrationAndAccount(testDb.db, 'onedrive', 'default');
@@ -44,7 +56,7 @@ describeIf('OneDrive plugin integration', () => {
 			const result = await corsair.onedrive.api.drive.getQuota({});
 
 			expect(result).toBeDefined();
-			expect(result.id).toBeDefined();
+			const driveId = requireEntityId(result.id, 'drive.getQuota');
 
 			const orm = createCorsairOrm(testDb.database);
 			const events = await orm.events.findMany({
@@ -52,13 +64,9 @@ describeIf('OneDrive plugin integration', () => {
 			});
 			expect(events.length).toBeGreaterThan(0);
 
-			if (result.id) {
-				const fromDb = await corsair.onedrive.db.drives.findByEntityId(
-					result.id,
-				);
-				expect(fromDb).not.toBeNull();
-				expect(fromDb?.data.id).toBe(result.id);
-			}
+			const fromDb = await corsair.onedrive.db.drives.findByEntityId(driveId);
+			expect(fromDb).not.toBeNull();
+			expect(fromDb?.data.id).toBe(driveId);
 
 			testDb.cleanup();
 		});
@@ -70,7 +78,7 @@ describeIf('OneDrive plugin integration', () => {
 			const result = await corsair.onedrive.api.drive.getRoot({});
 
 			expect(result).toBeDefined();
-			expect(result.id).toBeDefined();
+			const rootId = requireEntityId(result.id, 'drive.getRoot');
 
 			const orm = createCorsairOrm(testDb.database);
 			const events = await orm.events.findMany({
@@ -78,13 +86,10 @@ describeIf('OneDrive plugin integration', () => {
 			});
 			expect(events.length).toBeGreaterThan(0);
 
-			if (result.id) {
-				const fromDb = await corsair.onedrive.db.driveItems.findByEntityId(
-					result.id,
-				);
-				expect(fromDb).not.toBeNull();
-				expect(fromDb?.data.id).toBe(result.id);
-			}
+			const fromDb =
+				await corsair.onedrive.db.driveItems.findByEntityId(rootId);
+			expect(fromDb).not.toBeNull();
+			expect(fromDb?.data.id).toBe(rootId);
 
 			testDb.cleanup();
 		});
@@ -153,13 +158,15 @@ describeIf('OneDrive plugin integration', () => {
 		beforeAll(async () => {
 			const setup = await createOnedriveClient();
 			const { corsair, testDb } = setup;
-			const root = await corsair.onedrive.api.drive.getRoot({});
-			rootItemId = root.id ?? '';
-			testDb.cleanup();
+			try {
+				const root = await corsair.onedrive.api.drive.getRoot({});
+				rootItemId = requireEntityId(root.id, 'drive.getRoot');
+			} finally {
+				testDb.cleanup();
+			}
 		});
 
 		it('itemsGet interacts with API and DB', async () => {
-			if (!rootItemId) return;
 			const setup = await createOnedriveClient();
 			const { corsair, testDb } = setup;
 
@@ -206,7 +213,6 @@ describeIf('OneDrive plugin integration', () => {
 		});
 
 		it('itemsListFolderChildren interacts with API and DB', async () => {
-			if (!rootItemId) return;
 			const setup = await createOnedriveClient();
 			const { corsair, testDb } = setup;
 
@@ -227,7 +233,6 @@ describeIf('OneDrive plugin integration', () => {
 		});
 
 		it('itemsGetVersions interacts with API and DB', async () => {
-			if (!rootItemId) return;
 			const setup = await createOnedriveClient();
 			const { corsair, testDb } = setup;
 
@@ -247,7 +252,6 @@ describeIf('OneDrive plugin integration', () => {
 		});
 
 		it('itemsGetThumbnails interacts with API and DB', async () => {
-			if (!rootItemId) return;
 			const setup = await createOnedriveClient();
 			const { corsair, testDb } = setup;
 
@@ -282,21 +286,20 @@ describeIf('OneDrive plugin integration', () => {
 					name: fileName,
 					content: 'corsair integration test',
 				});
-			} catch {
+			} catch (error) {
 				testDb.cleanup();
-				return;
+				throw error;
 			}
 
 			expect(created).toBeDefined();
-			expect(created.id).toBeDefined();
+			const createdId = requireEntityId(created.id, 'files.createTextFile');
 
-			const fromDb = await corsair.onedrive.db.driveItems.findByEntityId(
-				created.id,
-			);
+			const fromDb =
+				await corsair.onedrive.db.driveItems.findByEntityId(createdId);
 			expect(fromDb).not.toBeNull();
 
 			const updateInput = {
-				item_id: created.id,
+				item_id: createdId,
 				description: `Updated by corsair test ${Date.now()}`,
 			};
 			const updated =
@@ -308,7 +311,7 @@ describeIf('OneDrive plugin integration', () => {
 			});
 			expect(updateEvents.length).toBeGreaterThan(0);
 
-			const deleteInput = { item_id: created.id };
+			const deleteInput = { item_id: createdId };
 			const deleted = await corsair.onedrive.api.items.delete(deleteInput);
 			expect(deleted).toBeDefined();
 
@@ -358,16 +361,15 @@ describeIf('OneDrive plugin integration', () => {
 			});
 
 			expect(folder).toBeDefined();
-			expect(folder.id).toBeDefined();
+			const folderId = requireEntityId(folder.id, 'files.createFolder');
 
 			const folderEvents = await orm.events.findMany({
 				where: { event_type: 'onedrive.files.createFolder' },
 			});
 			expect(folderEvents.length).toBeGreaterThan(0);
 
-			const folderFromDb = await corsair.onedrive.db.driveItems.findByEntityId(
-				folder.id,
-			);
+			const folderFromDb =
+				await corsair.onedrive.db.driveItems.findByEntityId(folderId);
 			expect(folderFromDb).not.toBeNull();
 
 			// create text file inside that folder
@@ -379,21 +381,20 @@ describeIf('OneDrive plugin integration', () => {
 			});
 
 			expect(file).toBeDefined();
-			expect(file.id).toBeDefined();
+			const fileId = requireEntityId(file.id, 'files.createTextFile');
 
 			const fileEvents = await orm.events.findMany({
 				where: { event_type: 'onedrive.files.createTextFile' },
 			});
 			expect(fileEvents.length).toBeGreaterThan(0);
 
-			const fileFromDb = await corsair.onedrive.db.driveItems.findByEntityId(
-				file.id,
-			);
+			const fileFromDb =
+				await corsair.onedrive.db.driveItems.findByEntityId(fileId);
 			expect(fileFromDb).not.toBeNull();
 
 			// cleanup: delete the folder (cascades to file)
 			try {
-				await corsair.onedrive.api.items.delete({ item_id: folder.id });
+				await corsair.onedrive.api.items.delete({ item_id: folderId });
 			} catch {
 				// best-effort cleanup
 			}
@@ -407,22 +408,6 @@ describeIf('OneDrive plugin integration', () => {
 
 			const orm = createCorsairOrm(testDb.database);
 
-			// findFile uses search(q=...) with $filter which Graph search does not support — skip gracefully on error
-			const findFileInput = { name: 'corsair' };
-			try {
-				const foundFiles =
-					await corsair.onedrive.api.files.findFile(findFileInput);
-				expect(foundFiles).toBeDefined();
-				expect(Array.isArray(foundFiles.value)).toBe(true);
-
-				const findFileEvents = await orm.events.findMany({
-					where: { event_type: 'onedrive.files.findFile' },
-				});
-				expect(findFileEvents.length).toBeGreaterThan(0);
-			} catch {
-				// Graph search API does not support $filter on search endpoints — skip findFile
-			}
-
 			const findFolderInput = { top: 5 };
 			const foundFolders =
 				await corsair.onedrive.api.files.findFolder(findFolderInput);
@@ -435,6 +420,17 @@ describeIf('OneDrive plugin integration', () => {
 			});
 			expect(findFolderEvents.length).toBeGreaterThan(0);
 
+			const findFileInput = { name: 'corsair' };
+			const foundFiles =
+				await corsair.onedrive.api.files.findFile(findFileInput);
+			expect(foundFiles).toBeDefined();
+			expect(Array.isArray(foundFiles.value)).toBe(true);
+
+			const findFileEvents = await orm.events.findMany({
+				where: { event_type: 'onedrive.files.findFile' },
+			});
+			expect(findFileEvents.length).toBeGreaterThan(0);
+
 			testDb.cleanup();
 		});
 	});
@@ -445,13 +441,15 @@ describeIf('OneDrive plugin integration', () => {
 		beforeAll(async () => {
 			const setup = await createOnedriveClient();
 			const { corsair, testDb } = setup;
-			const root = await corsair.onedrive.api.drive.getRoot({});
-			testItemId = root.id ?? '';
-			testDb.cleanup();
+			try {
+				const root = await corsair.onedrive.api.drive.getRoot({});
+				testItemId = requireEntityId(root.id, 'drive.getRoot');
+			} finally {
+				testDb.cleanup();
+			}
 		});
 
 		it('permissionsGetForItem interacts with API and DB', async () => {
-			if (!testItemId) return;
 			const setup = await createOnedriveClient();
 			const { corsair, testDb } = setup;
 
@@ -474,21 +472,20 @@ describeIf('OneDrive plugin integration', () => {
 		});
 
 		it('permissionsCreateLink interacts with API and DB', async () => {
-			if (!testItemId) return;
 			const setup = await createOnedriveClient();
 			const { corsair, testDb } = setup;
 
 			// Create a temp file to link — root drive items reject createLink with Bad Request
-			let fileId: string | undefined;
+			let fileId: string;
 			try {
 				const file = await corsair.onedrive.api.files.createTextFile({
 					name: `corsair_link_test_${Date.now()}.txt`,
 					content: 'corsair integration test',
 				});
-				fileId = file.id;
-			} catch {
+				fileId = requireEntityId(file.id, 'files.createTextFile');
+			} catch (error) {
 				testDb.cleanup();
-				return;
+				throw error;
 			}
 
 			const input = {
@@ -501,13 +498,12 @@ describeIf('OneDrive plugin integration', () => {
 			>;
 			try {
 				result = await corsair.onedrive.api.permissions.createLink(input);
-			} catch {
-				// createLink may be restricted by tenant sharing policy — skip
+			} catch (error) {
 				await corsair.onedrive.api.items
 					.delete({ item_id: fileId })
 					.catch(() => {});
 				testDb.cleanup();
-				return;
+				throw error;
 			}
 
 			expect(result).toBeDefined();
