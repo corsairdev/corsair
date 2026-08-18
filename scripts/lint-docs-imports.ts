@@ -10,7 +10,10 @@ const plugins = new Set(
 		.readdirSync(PACKAGES_DIR, { withFileTypes: true })
 		.filter(
 			(dirent) =>
-				dirent.isDirectory() && !IGNORED_PACKAGES.includes(dirent.name),
+				dirent.isDirectory() &&
+				!IGNORED_PACKAGES.includes(dirent.name) &&
+				// frpc-<platform>-<arch> are prebuilt binary shims, not integrations.
+				!dirent.name.startsWith('frpc-'),
 		)
 		.map((dirent) => dirent.name),
 );

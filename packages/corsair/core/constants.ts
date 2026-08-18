@@ -14,13 +14,14 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'abstract',
+	'activecampaign',
 	'activetrail',
 	'addresszen',
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agenty',
 	'agentql',
+	'agenty',
 	'ahrefs',
 	'aimlapi',
 	'airtable',
@@ -29,24 +30,39 @@ export const BaseProviders = [
 	'alphavantage',
 	'alttextai',
 	'amara',
-	'ambientweather',
 	'ambee',
+	'ambientweather',
 	'amcards',
 	'amplitude',
+	'apaleo',
 	'apibible',
 	'apify',
 	'apilabz',
+	'apininjas',
 	'apisports',
 	'asana',
+	'asindataapi',
 	'ayrshare',
+	'bitbucket',
+	'betterstack',
+	'bigmailer',
 	'bitwarden',
 	'bluesky',
 	'boloforms',
 	'box',
+	'cal',
+	'calendly',
+	'canva',
+	'cal',
+	'calendly',
+	'canva',
+	'bugsnag',
 	'canvas',
 	'cal',
 	'calendly',
 	'canva',
+	'circleci',
+	'canvas',
 	'cloudflare',
 	'cloudinary',
 	'confluence',
@@ -78,6 +94,7 @@ export const BaseProviders = [
 	'googlemeet',
 	'googlesheets',
 	'grafana',
+	'habitica',
 	'hackernews',
 	'harvest',
 	'hashnode',
@@ -92,8 +109,10 @@ export const BaseProviders = [
 	'linkedin',
 	'loyverse',
 	'mailchimp',
+	'mailtrap',
 	'monday',
 	'neon',
+	'nextdns',
 	'notion',
 	'ocrspace',
 	'ollama',
@@ -145,13 +164,14 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
+	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agenty: 'Agenty',
 	agentql: 'AgentQL',
+	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
@@ -160,24 +180,39 @@ export const ProviderDisplayNames = {
 	alphavantage: 'Alpha Vantage',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
-	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	apaleo: 'Apaleo',
 	apibible: 'API.Bible',
 	apify: 'Apify',
 	apilabz: 'API Labz',
+	apininjas: 'API Ninjas',
 	apisports: 'API-Sports',
 	asana: 'Asana',
+	asindataapi: 'ASIN Data API',
 	ayrshare: 'Ayrshare',
+	bitbucket: 'Bitbucket',
+	betterstack: 'Better Stack',
+	bigmailer: 'BigMailer',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	box: 'Box',
+	cal: 'Cal',
+	calendly: 'Calendly',
+	canva: 'Canva',
+	cal: 'Cal',
+	calendly: 'Calendly',
+	canva: 'Canva',
+	bugsnag: 'BugSnag',
 	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
 	canva: 'Canva',
+	circleci: 'CircleCI',
+	canvas: 'Canvas LMS',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
@@ -209,6 +244,7 @@ export const ProviderDisplayNames = {
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
+	habitica: 'Habitica',
 	hackernews: 'Hacker News',
 	harvest: 'Harvest',
 	hashnode: 'Hashnode',
@@ -223,8 +259,10 @@ export const ProviderDisplayNames = {
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
 	mailchimp: 'Mailchimp',
+	mailtrap: 'Mailtrap',
 	monday: 'Monday',
 	neon: 'Neon',
+	nextdns: 'NextDNS',
 	notion: 'Notion',
 	ocrspace: 'OCR.space',
 	ollama: 'Ollama',
@@ -283,13 +321,14 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'abstract'
+	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agenty'
 	| 'agentql'
+	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
 	| 'airtable'
@@ -298,24 +337,32 @@ export type AllProviders =
 	| 'alphavantage'
 	| 'alttextai'
 	| 'amara'
-	| 'ambientweather'
 	| 'ambee'
+	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
+	| 'apaleo'
 	| 'apibible'
 	| 'apify'
 	| 'apilabz'
+	| 'apininjas'
 	| 'apisports'
 	| 'asana'
+	| 'asindataapi'
 	| 'ayrshare'
+	| 'bitbucket'
+	| 'betterstack'
+	| 'bigmailer'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'boloforms'
 	| 'box'
+	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
-	| 'canvas'
 	| 'canva'
+	| 'circleci'
+	| 'canvas'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'confluence'
@@ -347,6 +394,7 @@ export type AllProviders =
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
+	| 'habitica'
 	| 'hackernews'
 	| 'harvest'
 	| 'hashnode'
@@ -361,8 +409,10 @@ export type AllProviders =
 	| 'linkedin'
 	| 'loyverse'
 	| 'mailchimp'
+	| 'mailtrap'
 	| 'monday'
 	| 'neon'
+	| 'nextdns'
 	| 'notion'
 	| 'ocrspace'
 	| 'ollama'
