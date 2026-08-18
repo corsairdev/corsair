@@ -16,8 +16,8 @@ export async function upsertEntity<T>(
 	if (!id || !store?.upsertByEntityId) return;
 	try {
 		await store.upsertByEntityId(id, data);
-	} catch {
-		// local cache is best-effort
+	} catch (error) {
+		console.warn(`[apaleo] failed to upsert ${id}:`, error);
 	}
 }
 
@@ -28,8 +28,8 @@ export async function evictEntity(
 	if (!id || !store?.deleteByEntityId) return;
 	try {
 		await store.deleteByEntityId(id);
-	} catch {
-		// local cache is best-effort
+	} catch (error) {
+		console.warn(`[apaleo] failed to evict ${id}:`, error);
 	}
 }
 

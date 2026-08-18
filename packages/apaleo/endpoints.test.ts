@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { ApaleoAPIError, makeApaleoRequest } from './client';
 import * as Properties from './endpoints/properties';
 import * as UnitAttributes from './endpoints/unit-attributes';
 import * as UnitGroups from './endpoints/unit-groups';
@@ -344,5 +345,41 @@ describe('Apaleo endpoints', () => {
 		await expect(
 			UnitAttributes.remove(ctx, { id: 'NEWATTR' }),
 		).resolves.toEqual({ ok: true });
+	});
+
+	it('maps Retry-After seconds and HTTP-date to milliseconds', async () => {
+		global.fetch = (async (_url: unknown, _init?: RequestInit) => ({
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			headers: new Headers({
+				'Retry-After': '2',
+				'Content-Type': 'application/json',
+			}),
+			json: async () => ({ message: 'slow' }),
+		})) as unknown as typeof global.fetch;
+		await expect(
+			makeApaleoRequest('/inventory/v1/properties', 't'),
+		).rejects.toMatchObject({ retryAfter: 2000 });
+
+		const until = new Date(Date.now() + 4000).toUTCString();
+		global.fetch = (async (_url: unknown, _init?: RequestInit) => ({
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			headers: new Headers({
+				'Retry-After': until,
+				'Content-Type': 'application/json',
+			}),
+			json: async () => ({ message: 'slow' }),
+		})) as unknown as typeof global.fetch;
+		try {
+			await makeApaleoRequest('/inventory/v1/properties', 't');
+			throw new Error('expected ApaleoAPIError');
+		} catch (error) {
+			expect(error).toBeInstanceOf(ApaleoAPIError);
+			expect((error as ApaleoAPIError).retryAfter).toBeGreaterThanOrEqual(0);
+			expect((error as ApaleoAPIError).retryAfter).toBeLessThanOrEqual(4000);
+		}
 	});
 });

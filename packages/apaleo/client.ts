@@ -201,7 +201,10 @@ function retryAfterMs(response: Response): number | undefined {
 	const header = response.headers.get('Retry-After');
 	if (!header) return undefined;
 	const seconds = Number.parseInt(header, 10);
-	return Number.isFinite(seconds) ? seconds * 1000 : undefined;
+	if (Number.isFinite(seconds)) return seconds * 1000;
+	const at = Date.parse(header);
+	if (Number.isNaN(at)) return undefined;
+	return Math.max(0, at - Date.now());
 }
 
 // unknown: JSON is untyped until the endpoint zod schema parses it
@@ -215,20 +218,32 @@ export async function makeApaleoRequest<T = unknown>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
-	const response = await fetch(withQuery(endpoint, query), {
-		method,
-		headers: {
-			Accept: 'application/json',
-			Authorization: `Bearer ${accessToken}`,
-			...(method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? { 'Content-Type': 'application/json' }
-				: {}),
-		},
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? JSON.stringify(body)
-				: undefined,
-	});
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), 20_000);
+	let response: Response;
+	try {
+		response = await fetch(withQuery(endpoint, query), {
+			method,
+			headers: {
+				Accept: 'application/json',
+				Authorization: `Bearer ${accessToken}`,
+				...(method === 'POST' || method === 'PUT' || method === 'PATCH'
+					? { 'Content-Type': 'application/json' }
+					: {}),
+			},
+			body:
+				method === 'POST' || method === 'PUT' || method === 'PATCH'
+					? JSON.stringify(body)
+					: undefined,
+			signal: controller.signal,
+		});
+	} catch (error) {
+		throw new ApaleoAPIError(
+			error instanceof Error ? error.message : 'Unknown error',
+		);
+	} finally {
+		clearTimeout(timer);
+	}
 
 	const contentType = response.headers.get('Content-Type') ?? '';
 	// unknown: fetch JSON is untyped; callers parse with zod
