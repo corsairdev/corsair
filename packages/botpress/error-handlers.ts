@@ -60,12 +60,15 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.status === 429) return true;
 			return error.message.toLowerCase().includes('too many requests');
 		},
-		handler: async (error) => {
+		handler: async (error, context) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 3, headersRetryAfterMs: retryAfterMs };
+			return {
+				maxRetries: isNonIdempotent(context.operation) ? 0 : 3,
+				headersRetryAfterMs: retryAfterMs,
+			};
 		},
 	},
 	AUTH_ERROR: {
