@@ -187,6 +187,16 @@ describe('audit payload: deny-by-default allow-list', () => {
 		expect(payload.fields).toEqual(expect.arrayContaining(['query']));
 	});
 
+	test('orderBy is recorded by name only, never by value', () => {
+		const payload = auditPayload({
+			pageIndex: 1,
+			orderBy: 'email,iban,siret',
+		});
+		expect(payload).not.toHaveProperty('orderBy');
+		expect(payload.pageIndex).toBe(1);
+		expect(payload.fields).toEqual(expect.arrayContaining(['orderBy']));
+	});
+
 	test('caller-chosen identifiers are recorded by name only, never by value', () => {
 		const payload = auditPayload({
 			customerId: 42,

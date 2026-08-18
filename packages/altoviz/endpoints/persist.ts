@@ -26,11 +26,17 @@ function describeError(error: unknown): string {
 	return 'unknown';
 }
 
-async function safely(operation: () => Promise<unknown>, what: string) {
+async function safely(
+	operation: () => Promise<unknown>,
+	action: 'cache' | 'evict',
+	what: string,
+) {
 	try {
 		await operation();
 	} catch (error) {
-		console.warn(`[ALTOVIZ] failed to cache ${what}: ${describeError(error)}`);
+		console.warn(
+			`[ALTOVIZ] failed to ${action} ${what}: ${describeError(error)}`,
+		);
 	}
 }
 
@@ -45,6 +51,7 @@ async function cacheParsed<T extends { id: number }>(
 	if (!parsed.success) return;
 	await safely(
 		() => store.upsertByEntityId(String(parsed.data.id), parsed.data),
+		'cache',
 		`${what} ${parsed.data.id}`,
 	);
 }
@@ -136,7 +143,7 @@ export async function evictEntity(
 ) {
 	const remove = store?.deleteByEntityId;
 	if (!remove) return;
-	await safely(() => remove(String(id)), `${what} ${id}`);
+	await safely(() => remove(String(id)), 'evict', `${what} ${id}`);
 }
 
 /**

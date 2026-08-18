@@ -46,11 +46,10 @@ const ALLOWED_FIELDS = new Set<string>([
 	'status',
 	'paymentMethod',
 	'riskLevel',
-	// paging and query shape - `query` is free-text search (customer names,
-	// emails, invoice numbers), so it is recorded by NAME only, never by value.
+	// paging and query shape - `query` and `orderBy` are free-text, so they
+	// are recorded by NAME only, never by value.
 	'pageIndex',
 	'pageSize',
-	'orderBy',
 	'from',
 	'to',
 	// booleans - describe shape, never carry content

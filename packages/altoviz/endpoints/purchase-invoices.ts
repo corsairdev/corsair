@@ -26,17 +26,18 @@ function decodeFileBase64(raw: string): Buffer {
  * The only multipart operation in the surface, and the only create with NO
  * delete anywhere in the API - not in the catalog and not in the OpenAPI
  * document. An uploaded document can only be removed in the Altoviz UI.
- * `fileBase64` is decoded to a `Blob` here because JSON-RPC-style plugin
+ * `fileBase64` is decoded to a `File` here because JSON-RPC-style plugin
  * inputs cannot carry a raw binary value; the shared transport's `formData`
  * option accepts string or Blob field values and builds the actual
- * `multipart/form-data` body.
+ * `multipart/form-data` body. `File` (not `Blob`) keeps `fileName` on
+ * Content-Disposition.
  */
 export const upload: AltovizEndpoints['purchaseInvoices']['upload'] = async (
 	ctx,
 	input,
 ) => {
 	const bytes = decodeFileBase64(input.fileBase64);
-	const file = new Blob([bytes], { type: input.mimeType });
+	const file = new File([bytes], input.fileName, { type: input.mimeType });
 
 	const result = await makeAltovizRequest<
 		AltovizEndpointOutputs['purchaseInvoicesUpload']

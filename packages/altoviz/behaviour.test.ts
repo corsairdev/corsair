@@ -385,4 +385,19 @@ describe('purchase invoice upload', () => {
 		).rejects.toThrow(/Base64/);
 		expect(recordedCalls()).toHaveLength(0);
 	});
+
+	test('sends fileName on the multipart File', async () => {
+		const { ctx } = makeCtx();
+		queueResponse({ id: 1 });
+		await PurchaseInvoices.upload(ctx, {
+			fileBase64: Buffer.from('hi').toString('base64'),
+			fileName: 'invoice-42.pdf',
+			mimeType: 'application/pdf',
+		});
+		const body = lastCall().init.body;
+		expect(body).toBeInstanceOf(FormData);
+		const file = (body as FormData).get('file');
+		expect(file).toBeInstanceOf(File);
+		expect((file as File).name).toBe('invoice-42.pdf');
+	});
 });
