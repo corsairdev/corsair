@@ -11,7 +11,14 @@ import type { SerpapiSearchResponse } from './types';
  */
 type SerpapiCallContext = { key: string };
 
-/** Issues a SerpApi request under the plugin's API key. */
+/**
+ * Issues a SerpApi request under the plugin's API key.
+ *
+ * `T` is intentionally unconstrained: every call site supplies its own
+ * precise response type (a per-operation output type, or
+ * `SerpapiSearchResponse` via `serpapiSearch` below), so a bound here would
+ * only narrow what callers are allowed to ask for without adding safety.
+ */
 export async function serpapiCall<T>(
 	ctx: SerpapiCallContext,
 	path: string,

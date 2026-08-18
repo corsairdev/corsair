@@ -99,6 +99,18 @@ describe('makeSerpapiRequest', () => {
 		expect(captured?.url).toContain('api_key=test-key');
 	});
 
+	it('never lets a caller-supplied api_key override the real one', async () => {
+		mockFetch({ body: {} });
+
+		await makeSerpapiRequest('/search', 'real-key', {
+			query: { engine: 'google', api_key: 'attacker-supplied-key' },
+		});
+
+		expect(new URL(captured?.url ?? '').searchParams.get('api_key')).toBe(
+			'real-key',
+		);
+	});
+
 	it('propagates a real ApiError with its status, not a generic wrapper', async () => {
 		mockFetch({
 			status: 401,

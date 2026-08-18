@@ -52,7 +52,7 @@ describe('errorHandlers', () => {
 		for (const def of Object.values(errorHandlers)) {
 			const error = apiError(500);
 			const strategy = await def.handler(error, context(error));
-			expect(strategy.maxRetries ?? 0).toBe(0);
+			expect(strategy.maxRetries).toBe(0);
 		}
 	});
 });

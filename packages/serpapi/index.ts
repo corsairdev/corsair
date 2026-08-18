@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Engines, Marketplace, Search, Utilities } from './endpoints';
 import type {
 	SerpapiEndpointInputs,
@@ -607,7 +608,8 @@ export function serpapi<const T extends SerpapiPluginOptions>(
 		keyBuilder: async (ctx: SerpapiKeyBuilderContext) => {
 			if (options.key) return options.key;
 			const res = await ctx.keys.get_api_key();
-			return res ?? '';
+			if (res) return res;
+			throw new AuthMissingError('serpapi', 'api_key');
 		},
 	} satisfies InternalSerpapiPlugin;
 }

@@ -37,7 +37,7 @@ export const searchArchive: SerpapiEndpoints['utilitiesSearchArchive'] = async (
 ) => {
 	const result = await serpapiCall<SerpapiSearchResponse>(
 		ctx,
-		`/searches/${input.search_id}.json`,
+		`/searches/${encodeURIComponent(input.search_id)}.json`,
 	);
 	await logEventFromContext(
 		ctx,

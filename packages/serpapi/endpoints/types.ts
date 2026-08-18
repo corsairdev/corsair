@@ -177,13 +177,22 @@ const PlayProductInputSchema = z.object({
 export type PlayProductInput = z.infer<typeof PlayProductInputSchema>;
 
 /** Confirmed live: needs `q`, `cites` or `cluster` - `q` covers the common case. */
-const ScholarSearchInputSchema = z.object({
-	q: z.string().optional(),
-	cites: z.string().optional(),
-	cluster: z.string().optional(),
-	hl: z.string().optional(),
-	start: z.number().optional(),
-});
+/** Confirmed live: needs `q`, `cites` or `cluster` - `{"error":"Missing query \`q\`, \`cites\` or \`cluster\` parameter."}` with none supplied. */
+const ScholarSearchInputSchema = z
+	.object({
+		q: z.string().optional(),
+		cites: z.string().optional(),
+		cluster: z.string().optional(),
+		hl: z.string().optional(),
+		start: z.number().optional(),
+	})
+	.refine(
+		(value) =>
+			value.q !== undefined ||
+			value.cites !== undefined ||
+			value.cluster !== undefined,
+		{ message: 'One of q, cites, or cluster is required' },
+	);
 export type ScholarSearchInput = z.infer<typeof ScholarSearchInputSchema>;
 
 const ScholarAuthorInputSchema = z.object({
@@ -199,13 +208,18 @@ const ScholarCiteInputSchema = z.object({
 export type ScholarCiteInput = z.infer<typeof ScholarCiteInputSchema>;
 
 /** Confirmed live: needs `q` or `category`. */
-const TrendsSearchInputSchema = z.object({
-	q: z.string().optional(),
-	category: z.string().optional(),
-	data_type: z.string().optional(),
-	geo: z.string().optional(),
-	date: z.string().optional(),
-});
+/** Confirmed live: needs `q` or `category` - `{"error":"Missing query \`q\` or \`category\` parameter."}` with neither supplied. */
+const TrendsSearchInputSchema = z
+	.object({
+		q: z.string().optional(),
+		category: z.string().optional(),
+		data_type: z.string().optional(),
+		geo: z.string().optional(),
+		date: z.string().optional(),
+	})
+	.refine((value) => value.q !== undefined || value.category !== undefined, {
+		message: 'Either q or category is required',
+	});
 export type TrendsSearchInput = z.infer<typeof TrendsSearchInputSchema>;
 
 const FinanceSearchInputSchema = z.object({
@@ -419,11 +433,16 @@ const EbaySearchInputSchema = z.object({
 export type EbaySearchInput = z.infer<typeof EbaySearchInputSchema>;
 
 /** Confirmed live: needs `query` or `cat_id`. */
-const WalmartSearchInputSchema = z.object({
-	query: z.string().optional(),
-	cat_id: z.string().optional(),
-	store_id: z.string().optional(),
-});
+/** Confirmed live: needs `query` or `cat_id` - `{"error":"Missing query \`query\` or \`cat_id\` parameter."}` with neither supplied. */
+const WalmartSearchInputSchema = z
+	.object({
+		query: z.string().optional(),
+		cat_id: z.string().optional(),
+		store_id: z.string().optional(),
+	})
+	.refine((value) => value.query !== undefined || value.cat_id !== undefined, {
+		message: 'Either query or cat_id is required',
+	});
 export type WalmartSearchInput = z.infer<typeof WalmartSearchInputSchema>;
 
 const WalmartProductReviewsInputSchema = z.object({
@@ -468,9 +487,18 @@ const LocationOptionsInputSchema = z.object({
 });
 export type LocationOptionsInput = z.infer<typeof LocationOptionsInputSchema>;
 
-/** Confirmed live: `GET /searches/{search_id}.json` - a fully distinct path, not `/search`. */
+/**
+ * Confirmed live: `GET /searches/{search_id}.json` - a fully distinct path,
+ * not `/search`. Every real search id captured during this build's recon
+ * (`search_metadata.id`) was a 24-character hex string (a MongoDB
+ * ObjectId shape) - constrained here so a malformed value 400s from schema
+ * validation with a clear message instead of building a broken or
+ * unexpected request path.
+ */
 const SearchArchiveInputSchema = z.object({
-	search_id: z.string(),
+	search_id: z
+		.string()
+		.regex(/^[0-9a-f]{24}$/i, 'Must be a 24-character hex search id'),
 });
 export type SearchArchiveInput = z.infer<typeof SearchArchiveInputSchema>;
 

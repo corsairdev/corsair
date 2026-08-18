@@ -327,7 +327,7 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 ];
 
 describe('operation routing (search-based operations)', () => {
-	for (const [name, invoke, expectedEngine] of OPERATIONS) {
+	for (const [name, invoke, expectedEngine, expectedParam] of OPERATIONS) {
 		it(`${name} issues GET /search with ${expectedEngine}`, async () => {
 			const ctx = makeCtx();
 			await invoke(ctx);
@@ -335,6 +335,7 @@ describe('operation routing (search-based operations)', () => {
 			expect(lastMethod).toBe('GET');
 			expect(lastUrl).toContain('/search');
 			expect(lastUrl).toContain(expectedEngine);
+			expect(lastUrl).toContain(expectedParam);
 		});
 	}
 });
@@ -454,7 +455,9 @@ describe('engine parameter name correctness', () => {
 	it('Google Lens uses url, not q', async () => {
 		const ctx = makeCtx();
 		await Search.lensSearch(ctx, { url: 'https://example.com/img.jpg' });
-		expect(lastUrl).toContain('url=');
+		expect(new URL(lastUrl).searchParams.get('url')).toBe(
+			'https://example.com/img.jpg',
+		);
 		expect(new URL(lastUrl).searchParams.get('q')).toBeNull();
 	});
 
@@ -539,6 +542,7 @@ describe('event log', () => {
 		const ctx = makeCtx();
 		await Search.search(ctx, { q: 'sensitive query text' });
 
+		expect(mockLogEvent).toHaveBeenCalled();
 		const payload = mockLogEvent.mock.calls[0]?.[2] as Record<string, unknown>;
 		expect(payload).not.toHaveProperty('q');
 		expect(JSON.stringify(payload)).not.toContain('sensitive query text');
@@ -548,6 +552,7 @@ describe('event log', () => {
 		const ctx = makeCtx();
 		await Search.lensSearch(ctx, { url: 'https://example.com/private.jpg' });
 
+		expect(mockLogEvent).toHaveBeenCalled();
 		const payload = mockLogEvent.mock.calls[0]?.[2] as Record<string, unknown>;
 		expect(JSON.stringify(payload)).not.toContain('private.jpg');
 	});
@@ -556,6 +561,7 @@ describe('event log', () => {
 		const ctx = makeCtx();
 		await Search.playProduct(ctx, { product_id: 'com.example.app' });
 
+		expect(mockLogEvent).toHaveBeenCalled();
 		const payload = mockLogEvent.mock.calls[0]?.[2] as Record<string, unknown>;
 		expect(payload).toEqual({ product_id: 'com.example.app' });
 	});
