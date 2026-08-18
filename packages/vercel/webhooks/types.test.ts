@@ -42,4 +42,37 @@ describe('verifyVercelWebhookSignature', () => {
 		);
 		expect(result).toBe(false);
 	});
+
+	it('returns false when the signature header is missing', () => {
+		const result = verifyVercelWebhookSignature(
+			{
+				rawBody: '{"type":"deployment.created"}',
+				headers: {},
+			},
+			's3cret',
+		);
+		expect(result).toBe(false);
+	});
+
+	it('returns false when the signature header is not a string', () => {
+		const result = verifyVercelWebhookSignature(
+			{
+				rawBody: '{"type":"deployment.created"}',
+				headers: { 'x-vercel-signature': ['abc'] },
+			},
+			's3cret',
+		);
+		expect(result).toBe(false);
+	});
+
+	it('returns false when the signature length differs from the digest', () => {
+		const result = verifyVercelWebhookSignature(
+			{
+				rawBody: '{"type":"deployment.created"}',
+				headers: { 'x-vercel-signature': 'deadbeef' },
+			},
+			's3cret',
+		);
+		expect(result).toBe(false);
+	});
 });
