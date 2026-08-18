@@ -217,6 +217,7 @@ function PluginsToolbar({
 						onChange={(e) =>
 							setScope(e.target.value === 'main' ? 'main' : 'tenant')
 						}
+						aria-label="Credential scope"
 						className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
 					>
 						<option value="main">Main (integration keys)</option>
@@ -225,6 +226,7 @@ function PluginsToolbar({
 					{scope === 'tenant' ? (
 						<select
 							value={activeTenant}
+							aria-label="Active tenant"
 							onChange={(e) => setActiveTenant(e.target.value)}
 							className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
 						>
@@ -242,6 +244,7 @@ function PluginsToolbar({
 					<Input
 						value={newTenant}
 						onChange={(e) => setNewTenant(e.target.value)}
+						aria-label="New tenant ID"
 						placeholder="tenant-id"
 					/>
 					<Button

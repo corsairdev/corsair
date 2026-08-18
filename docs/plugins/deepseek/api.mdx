@@ -1,0 +1,444 @@
+---
+title: API
+description: "API reference for Deepseek: every `deepseek.api.*` operation with input and output types."
+---
+
+Every `deepseek.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Anthropic
+
+### createMessage
+
+`anthropic.createMessage`
+
+Generate a response via DeepSeek's Anthropic-compatible Messages API, with support for system prompts, tool calling, and thinking mode
+
+**Risk:** `write`
+
+```ts
+await corsair.deepseek.api.anthropic.createMessage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `deepseek-chat \| deepseek-reasoner` | Yes | — |
+| `maxTokens` | `number` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `system` | `object[]` | No | — |
+| `stopSequences` | `string[]` | No | — |
+| `temperature` | `number` | No | — |
+| `topP` | `number` | No | — |
+| `topK` | `number` | No | — |
+| `tools` | `object[]` | No | — |
+| `toolChoice` | `object` | No | — |
+| `thinking` | `object` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: user | assistant,
+  content: string | (
+    {
+      type: text,
+      text: string
+    } | {
+      type: tool_use,
+      id: string,
+      name: string,
+      input: {
+      }
+    } | {
+      type: tool_result,
+      tool_use_id: string,
+      content?: string | {
+        type: text,
+        text: string
+      }[],
+      is_error?: boolean
+    } | {
+      type: thinking,
+      thinking: string,
+      signature: string
+    } | {
+      type: redacted_thinking,
+      data: string
+    }
+  )[]
+}[]
+```
+</Accordion>
+
+<Accordion title="system full type">
+
+```ts
+string | {
+  type: text,
+  text: string
+}[]
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  name: string,
+  description?: string,
+  input_schema: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="toolChoice full type">
+
+```ts
+{
+  type: auto,
+  disable_parallel_tool_use?: boolean
+} | {
+  type: any,
+  disable_parallel_tool_use?: boolean
+} | {
+  type: tool,
+  name: string,
+  disable_parallel_tool_use?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="thinking full type">
+
+```ts
+{
+  type: enabled,
+  budget_tokens: number
+} | {
+  type: disabled
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  user_id?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `type` | `message` | Yes | — |
+| `role` | `assistant` | Yes | — |
+| `model` | `string` | Yes | — |
+| `content` | `object[]` | Yes | — |
+| `stop_reason` | `end_turn \| max_tokens \| stop_sequence \| tool_use` | No | — |
+| `stop_sequence` | `string` | No | — |
+| `usage` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+(
+  {
+    type: text,
+    text: string
+  } | {
+    type: tool_use,
+    id: string,
+    name: string,
+    input: {
+    }
+  } | {
+    type: tool_result,
+    tool_use_id: string,
+    content?: string | {
+      type: text,
+      text: string
+    }[],
+    is_error?: boolean
+  } | {
+    type: thinking,
+    thinking: string,
+    signature: string
+  } | {
+    type: redacted_thinking,
+    data: string
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  input_tokens: number,
+  output_tokens: number,
+  cache_creation_input_tokens?: number | null,
+  cache_read_input_tokens?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Chat
+
+### createCompletion
+
+`chat.createCompletion`
+
+Generate an AI chat response using deepseek-chat or deepseek-reasoner, with support for temperature, tool calling, and structured output
+
+**Risk:** `write`
+
+```ts
+await corsair.deepseek.api.chat.createCompletion({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `deepseek-chat \| deepseek-reasoner` | Yes | — |
+| `messages` | `object[]` | Yes | — |
+| `frequencyPenalty` | `number` | No | — |
+| `maxTokens` | `number` | No | — |
+| `presencePenalty` | `number` | No | — |
+| `responseFormat` | `object` | No | — |
+| `stop` | `string \| string[]` | No | — |
+| `temperature` | `number` | No | — |
+| `topP` | `number` | No | — |
+| `tools` | `object[]` | No | — |
+| `toolChoice` | `object` | No | — |
+| `logprobs` | `boolean` | No | — |
+| `topLogprobs` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  role: system | user | assistant | tool,
+  content?: string | null,
+  name?: string,
+  tool_calls?: {
+    id: string,
+    type: function,
+    function: {
+      name: string,
+      arguments: string
+    }
+  }[],
+  tool_call_id?: string,
+  prefix?: boolean
+}[]
+```
+</Accordion>
+
+<Accordion title="responseFormat full type">
+
+```ts
+{
+  type: text
+} | {
+  type: json_object
+}
+```
+</Accordion>
+
+<Accordion title="tools full type">
+
+```ts
+{
+  type: function,
+  function: {
+    name: string,
+    description?: string,
+    parameters?: {
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="toolChoice full type">
+
+```ts
+none | auto | required | {
+  type: function,
+  function: {
+    name: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `object` | `chat.completion` | Yes | — |
+| `created` | `number` | Yes | — |
+| `model` | `string` | Yes | — |
+| `choices` | `object[]` | Yes | — |
+| `system_fingerprint` | `string` | No | — |
+| `usage` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="choices full type">
+
+```ts
+{
+  index: number,
+  message: {
+    role: assistant,
+    content?: string | null,
+    reasoning_content?: string | null,
+    tool_calls?: {
+      id: string,
+      type: function,
+      function: {
+        name: string,
+        arguments: string
+      }
+    }[]
+  },
+  logprobs?: {
+    content?: any[] | null
+  } | null,
+  finish_reason: stop | length | content_filter | tool_calls | insufficient_system_resource
+}[]
+```
+</Accordion>
+
+<Accordion title="usage full type">
+
+```ts
+{
+  prompt_tokens: number,
+  completion_tokens: number,
+  total_tokens: number,
+  prompt_cache_hit_tokens?: number,
+  prompt_cache_miss_tokens?: number,
+  completion_tokens_details?: {
+    reasoning_tokens?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### list
+
+`models.list`
+
+List the DeepSeek models currently available to the account
+
+**Risk:** `read`
+
+```ts
+await corsair.deepseek.api.models.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `object` | `list` | Yes | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  object: model,
+  owned_by: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## User
+
+### getBalance
+
+`user.getBalance`
+
+Get the current account balance, including granted and topped-up amounts broken down by currency
+
+**Risk:** `read`
+
+```ts
+await corsair.deepseek.api.user.getBalance({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `is_available` | `boolean` | Yes | — |
+| `balance_infos` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="balance_infos full type">
+
+```ts
+{
+  currency: CNY | USD,
+  total_balance: string,
+  granted_balance: string,
+  topped_up_balance: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
