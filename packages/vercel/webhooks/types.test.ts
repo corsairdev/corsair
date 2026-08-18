@@ -75,4 +75,30 @@ describe('verifyVercelWebhookSignature', () => {
 		);
 		expect(result).toBe(false);
 	});
+
+	it('returns false when secret is whitespace only', () => {
+		const body = '{"type":"deployment.created"}';
+		const secret = '   ';
+		const result = verifyVercelWebhookSignature(
+			{
+				rawBody: body,
+				headers: { 'x-vercel-signature': hmacSha1(secret, body) },
+			},
+			secret,
+		);
+		expect(result).toBe(false);
+	});
+
+	it('returns true for a matching signature when rawBody is a Buffer', () => {
+		const body = '{"type":"deployment.created"}';
+		const secret = 's3cret';
+		const result = verifyVercelWebhookSignature(
+			{
+				rawBody: Buffer.from(body),
+				headers: { 'x-vercel-signature': hmacSha1(secret, body) },
+			},
+			secret,
+		);
+		expect(result).toBe(true);
+	});
 });
