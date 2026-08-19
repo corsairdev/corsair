@@ -23,12 +23,14 @@ module.exports = {
 			'ts-jest',
 			{
 				useESM: true,
+				isolatedModules: true,
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
 					verbatimModuleSyntax: false,
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
+					isolatedModules: true,
 				},
 			},
 		],
