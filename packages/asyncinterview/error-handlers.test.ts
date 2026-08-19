@@ -12,6 +12,7 @@ function apiError(status: number, message = 'request failed') {
 			body: {},
 		},
 		message,
+		{ retryAfter: 5000 },
 	);
 }
 
@@ -29,6 +30,7 @@ describe('AsyncInterview error handlers', () => {
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
 		expect(result.maxRetries).toBe(5);
 		expect(result.retryStrategy).toBe('exponential_backoff');
+		expect(result.headersRetryAfterMs).toBe(5000);
 	});
 
 	it('classifies 401 as AUTH_ERROR', () => {

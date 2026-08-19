@@ -171,12 +171,23 @@ describe('AsyncInterview endpoints', () => {
 	});
 
 	it('accepts an empty PUT body as a job id fallback', async () => {
-		const { plugin, ctx } = makeCtx();
+		const { plugin, ctx, db } = makeCtx();
 		(request as jest.Mock).mockResolvedValueOnce(undefined);
 
 		const result = await plugin.endpoints!.jobs.update(ctx, { job_id: 1651 });
 
 		expect(result.id).toBe(1651);
+		expect(db.jobs.upsertByEntityId).toHaveBeenCalledWith('1651', result);
+	});
+
+	it('rejects a malformed non-empty PUT payload', async () => {
+		const { plugin, ctx, db } = makeCtx();
+		(request as jest.Mock).mockResolvedValueOnce({ title: 'no id' });
+
+		await expect(
+			plugin.endpoints!.jobs.update(ctx, { job_id: 1651, title: 'x' }),
+		).rejects.toThrow();
+		expect(db.jobs.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('deletes a job with DELETE /jobs/{job_id}', async () => {
@@ -263,6 +274,9 @@ describe('AsyncInterview endpoints', () => {
 
 	it('rejects a non-numeric job_id', () => {
 		expect(() => DeleteJobInputSchema.parse({ job_id: 'abc' })).toThrow();
+		expect(() =>
+			DeleteJobInputSchema.parse({ job_id: '9007199254740993' }),
+		).toThrow();
 		expect(DeleteJobInputSchema.parse({ job_id: '1651' }).job_id).toBe('1651');
 	});
 

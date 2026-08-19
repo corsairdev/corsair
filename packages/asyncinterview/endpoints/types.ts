@@ -10,7 +10,10 @@ import {
  */
 export const JobIdInput = z.union([
 	z.number().int(),
-	z.string().regex(/^\d+$/),
+	z
+		.string()
+		.regex(/^\d+$/)
+		.refine((s) => Number.isSafeInteger(Number(s))),
 ]);
 
 export const JobSchema = AsyncInterviewJobEntity;
@@ -87,6 +90,14 @@ export type UpdateJobInput = z.infer<typeof UpdateJobInputSchema>;
 
 export const UpdateJobOutputSchema = JobSchema;
 export type UpdateJobOutput = z.infer<typeof UpdateJobOutputSchema>;
+
+/** PUT /jobs/{id} may return 204/empty; we then echo the requested id. */
+export const EmptyUpdateResponseSchema = z.union([
+	z.undefined(),
+	z.null(),
+	z.literal(''),
+	z.object({}).strict(),
+]);
 
 export type AsyncInterviewEndpointInputs = {
 	'jobs.delete': DeleteJobInput;

@@ -14,6 +14,7 @@ import type {
 	UpdateJobOutput,
 } from './types';
 import {
+	EmptyUpdateResponseSchema,
 	ListJobsOutputSchema,
 	ListResponsesOutputSchema,
 	UpdateJobOutputSchema,
@@ -109,13 +110,12 @@ export async function updateJob(
 		},
 	);
 
-	const parsed = UpdateJobOutputSchema.safeParse(raw);
-	const result = parsed.success
-		? parsed.data
-		: AsyncInterviewJobEntity.parse({
+	const result = EmptyUpdateResponseSchema.safeParse(raw).success
+		? AsyncInterviewJobEntity.parse({
 				id: jobIdNumber(job_id),
 				...fields,
-			});
+			})
+		: UpdateJobOutputSchema.parse(raw);
 
 	await upsertEntity(ctx.db?.jobs, result.id, result);
 	await logEventFromContext(
