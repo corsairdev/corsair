@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import * as Generated from './generated';
 import {
 	assertPerson,
 	findRecord,
@@ -17,7 +18,7 @@ import {
 let loadedToken: string | undefined = undefined;
 try {
 	const envFile = fs.readFileSync(path.join(process.cwd(), '.env'), 'utf-8');
-	for (const line of envFile.split('\r\n')) {
+	for (const line of envFile.split(/\r?\n/)) {
 		const match = line.match(/^\s*ATTIO_TEST_TOKEN\s*=\s*(.*)?\s*$/);
 		if (match && match[1]) {
 			loadedToken = match[1].trim();
@@ -237,5 +238,20 @@ describe('Attio REST API verification', () => {
 				expect(res.options.method).toBe('POST');
 			}
 		});
+	});
+
+	describe('All generated operations coverage', () => {
+		const localMockCtx = {
+			key: 'mock-key',
+		} as any;
+
+		for (const [name, fn] of Object.entries(Generated)) {
+			if (typeof fn === 'function') {
+				it(`should invoke ${name} successfully under mock`, async () => {
+					const res = await fn(localMockCtx, {});
+					expect(res).toBeDefined();
+				});
+			}
+		}
 	});
 });
