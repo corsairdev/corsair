@@ -42,6 +42,7 @@ export const BaseProviders = [
 	'apisports',
 	'asana',
 	'asindataapi',
+	'attio',
 	'ayrshare',
 	'baselinker',
 	'betterstack',
@@ -188,6 +189,7 @@ export const ProviderDisplayNames = {
 	apisports: 'API-Sports',
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
+	attio: 'Attio',
 	ayrshare: 'Ayrshare',
 	baselinker: 'BaseLinker',
 	betterstack: 'Better Stack',
@@ -341,6 +343,7 @@ export type AllProviders =
 	| 'apisports'
 	| 'asana'
 	| 'asindataapi'
+	| 'attio'
 	| 'ayrshare'
 	| 'baselinker'
 	| 'betterstack'
