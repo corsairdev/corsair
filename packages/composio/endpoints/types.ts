@@ -211,12 +211,19 @@ export type ConnectionCreateResponse = z.infer<
 	typeof ConnectionCreateResponseSchema
 >;
 
-const ConnectionDeleteInputSchema = z.object({
-	connected_account_id: PathId.optional(),
-	/** @deprecated use connected_account_id */
-	connectionId: PathId.optional(),
-	revoke_on_delete: z.boolean().optional(),
-});
+const ConnectionDeleteInputSchema = z
+	.object({
+		connected_account_id: PathId.optional(),
+		/** @deprecated use connected_account_id */
+		connectionId: PathId.optional(),
+		revoke_on_delete: z.boolean().optional(),
+	})
+	.refine(
+		(data) =>
+			data.connected_account_id !== undefined ||
+			data.connectionId !== undefined,
+		{ message: 'Either connected_account_id or connectionId is required' },
+	);
 
 export type ConnectionDeleteInput = z.infer<typeof ConnectionDeleteInputSchema>;
 
