@@ -6,14 +6,13 @@ export const getCmaToken: ContentfulGraphqlEndpoints['getCmaToken'] = async (
 	ctx,
 	_input,
 ) => {
-	const [token, spaceId, environmentId] = await Promise.all([
-		ctx.keys.get_api_key(),
+	const [spaceId, environmentId] = await Promise.all([
 		ctx.keys.get_space_id(),
 		ctx.keys.get_environment_id(),
 	]);
 
 	const response: GetCmaTokenResponse = {
-		token: token ?? '',
+		token: ctx.key,
 		space_id: spaceId ?? '',
 		...(environmentId ? { environment_id: environmentId } : {}),
 	};
