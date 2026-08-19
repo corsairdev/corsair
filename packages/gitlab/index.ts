@@ -15,9 +15,11 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import {
 	getValidGitlabAccessToken,
 	gitlabOAuthTokenUrl,
+	isManagedGitlabHost,
 	normalizeGitlabBaseUrl,
 } from './client';
 import {
@@ -67,11 +69,14 @@ export const gitlabAuthConfig = {
 	oauth_2: {
 		account: ['project_id', 'group_id'] as const,
 	},
+	managed: {
+		account: ['project_id', 'group_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type GitlabPluginOptions = {
 	baseUrl?: string;
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalGitlabPlugin['hooks'];
@@ -822,6 +827,11 @@ export function gitlab<const T extends GitlabPluginOptions>(
 			}
 
 			if (source === 'webhook') {
+				if (ctx.authType === 'managed') {
+					throw new Error(
+						'[auth-missing:gitlab:managed]: webhook signature is not available in managed mode',
+					);
+				}
 				const res = await ctx.keys.get_webhook_signature();
 				return res ?? '';
 			}
@@ -912,6 +922,32 @@ export function gitlab<const T extends GitlabPluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return result.accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:gitlab:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				// Managed tokens are gitlab.com-only (Corsair's OAuth app); never send to a custom host.
+				if (!isManagedGitlabHost(baseUrl)) {
+					throw new Error(
+						'[auth-missing:gitlab:managed]: managed auth is only available on gitlab.com; use oauth_2 for a custom baseUrl',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'gitlab',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

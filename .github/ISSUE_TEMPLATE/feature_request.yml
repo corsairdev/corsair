@@ -1,5 +1,6 @@
 name: Feature request
 description: Share your ideas to improve Corsair
+labels: ["enhancement"]
 body:
   - type: markdown
     attributes:
@@ -7,9 +8,9 @@ body:
         Thanks for taking the time to suggest a new feature! 
 
         **Before submitting:**
-        - Check if a [similar feature request](https://github.com/corsair/corsair/issues) already exists. If it does, please add a 👍 reaction instead of creating a duplicate.
-        - If you're requesting a new integration, please use the [integration request template](https://github.com/corsair/corsair/issues/new?assignees=&labels=&projects=&template=integration_request.yml&title=) instead.
-        - If you're reporting a bug, please use the [bug report template](https://github.com/corsair/corsair/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml) instead.
+        - Check if a [similar feature request](https://github.com/corsairdev/corsair/issues) already exists. If it does, please add a 👍 reaction instead of creating a duplicate.
+        - If you're requesting a new integration, please use the [integration request template](https://github.com/corsairdev/corsair/issues/new?assignees=&labels=&projects=&template=integration_request.yml&title=) instead.
+        - If you're reporting a bug, please use the [bug report template](https://github.com/corsairdev/corsair/issues/new?assignees=&labels=bug&projects=&template=bug_report.yml) instead.
   - type: textarea
     attributes:
       label: What problem does this solve?

@@ -225,12 +225,13 @@ const sendRequest = async (
 	onCancel: OnCancel,
 ): Promise<Response> => {
 	const controller = new AbortController();
+	const timeout = config.TIMEOUT ?? 20_000;
 
 	const request: RequestInit = {
 		headers,
 		body: body ?? formData,
 		method: options.method,
-		signal: controller.signal,
+		signal: AbortSignal.any([controller.signal, AbortSignal.timeout(timeout)]),
 	};
 
 	if (config.WITH_CREDENTIALS) {

@@ -23,6 +23,7 @@ import {
 	FoldersEndpoints,
 	SearchEndpoints,
 	SharedDrivesEndpoints,
+	StorageEndpoints,
 } from './endpoints';
 import {
 	GoogleDriveEndpointInputSchemas,
@@ -78,6 +79,7 @@ export type GoogleDriveEndpoints = {
 	sharedDrivesUpdate: GoogleDriveEndpoint<'sharedDrivesUpdate'>;
 	sharedDrivesDelete: GoogleDriveEndpoint<'sharedDrivesDelete'>;
 	searchFilesAndFolders: GoogleDriveEndpoint<'searchFilesAndFolders'>;
+	storageGetQuota: GoogleDriveEndpoint<'storageGetQuota'>;
 };
 
 export type GoogleDriveBoundEndpoints = BindEndpoints<
@@ -130,6 +132,9 @@ const googleDriveEndpointsNested = {
 	},
 	search: {
 		filesAndFolders: SearchEndpoints.filesAndFolders,
+	},
+	storage: {
+		getQuota: StorageEndpoints.getQuota,
 	},
 } as const;
 
@@ -217,6 +222,10 @@ export const googledriveEndpointSchemas = {
 	'search.filesAndFolders': {
 		input: GoogleDriveEndpointInputSchemas.searchFilesAndFolders,
 		output: GoogleDriveEndpointOutputSchemas.searchFilesAndFolders,
+	},
+	'storage.getQuota': {
+		input: GoogleDriveEndpointInputSchemas.storageGetQuota,
+		output: GoogleDriveEndpointOutputSchemas.storageGetQuota,
 	},
 } as const;
 
@@ -338,6 +347,10 @@ const googleDriveEndpointMeta = {
 	'search.filesAndFolders': {
 		riskLevel: 'read',
 		description: 'Search for files and folders in Google Drive',
+	},
+	'storage.getQuota': {
+		riskLevel: 'read',
+		description: "Get the user's Google Drive storage quota and usage",
 	},
 } satisfies RequiredPluginEndpointMeta<typeof googleDriveEndpointsNested>;
 

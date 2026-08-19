@@ -1,0 +1,2667 @@
+---
+title: API
+description: "API reference for Insighto.ai: every `insightoai.api.*` operation with input and output types."
+---
+
+Every `insightoai.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agency
+
+### createAgency
+
+`agency.createAgency`
+
+Create a new agency with organization-specific branding and config
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.agency.createAgency({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | Yes | — |
+| `domain` | `object` | No | — |
+| `branding` | `object` | No | — |
+| `user_auth` | `object` | No | — |
+| `billing_plan` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="branding full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="user_auth full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="billing_plan full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAgencyBillingPlan
+
+`agency.getAgencyBillingPlan`
+
+View an agency billing plan limits for bots, queries, words, and voice seconds
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.agency.getAgencyBillingPlan({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `billing_plan_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAgencyBrandingById
+
+`agency.getAgencyBrandingById`
+
+Retrieve the branding configuration for an agency
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.agency.getAgencyBrandingById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agency_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAgentList
+
+`agency.getAgentList`
+
+Fetch a paginated list of team agents/users
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.agency.getAgentList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | Yes | — |
+| `size` | `number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPricingForUser
+
+`agency.getPricingForUser`
+
+Retrieve pricing tier information for LLM, voice, or transcription services
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.agency.getPricingForUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `llm_model_id` | `string` | No | — |
+| `voice_stt_id` | `string` | No | — |
+| `voice_tts_id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveUserMonthlyUsagesAggregation
+
+`agency.retrieveUserMonthlyUsagesAggregation`
+
+Retrieve monthly aggregated usage analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.agency.retrieveUserMonthlyUsagesAggregation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateUserProfile
+
+`agency.updateUserProfile`
+
+Modify user account details, contact information, or billing settings
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.agency.updateUserProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Assistants
+
+### addIntentToAssistant
+
+`assistants.addIntentToAssistant`
+
+Link an existing conversational intent to an assistant
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.assistants.addIntentToAssistant({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+| `intent_id` | `string` | Yes | — |
+| `attributes` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createIntent
+
+`assistants.createIntent`
+
+Create a new custom conversational intent
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.assistants.createIntent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `is_active` | `boolean` | No | — |
+| `attributes` | `object` | No | — |
+| `description` | `string` | No | — |
+| `intent_type` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### createPrompt
+
+`assistants.createPrompt`
+
+Create a new customizable AI prompt template with variable support
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.assistants.createPrompt({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `owner_type` | `string` | No | — |
+| `description` | `string` | No | — |
+| `prompt_template` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteAssistantById
+
+`assistants.deleteAssistantById`
+
+Permanently remove an assistant from the system
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.assistants.deleteAssistantById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deletePromptById
+
+`assistants.deletePromptById`
+
+Permanently delete a prompt template by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.assistants.deletePromptById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAssistantById
+
+`assistants.getAssistantById`
+
+Retrieve comprehensive details and configuration of a specific assistant
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.assistants.getAssistantById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getIntentById
+
+`assistants.getIntentById`
+
+Retrieve details of a specific intent by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.assistants.getIntentById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `intent_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPromptById
+
+`assistants.getPromptById`
+
+Retrieve details of a specific prompt template by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.assistants.getPromptById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `prompt_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### readIntentsList
+
+`assistants.readIntentsList`
+
+Retrieve a paginated list of all configured intents
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.assistants.readIntentsList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Contacts
+
+### createContactCustomField
+
+`contacts.createContactCustomField`
+
+Create a custom metadata field for contacts
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.contacts.createContactCustomField({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `org_id` | `string` | No | — |
+| `custom_field_name` | `string` | Yes | — |
+| `custom_field_type` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteContactsInBulk
+
+`contacts.deleteContactsInBulk`
+
+Delete multiple contacts simultaneously by UUIDs
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.contacts.deleteContactsInBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_ids` | `string[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getContactById
+
+`contacts.getContactById`
+
+Retrieve a comprehensive profile of a specific contact
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.contacts.getContactById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contact_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListOfContacts
+
+`contacts.getListOfContacts`
+
+Fetch a paginated list of contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.contacts.getListOfContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### readCampaignContactList
+
+`contacts.readCampaignContactList`
+
+Fetch all contacts enrolled in a specific campaign
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.contacts.readCampaignContactList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `campaign_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### readContactCustomFieldList
+
+`contacts.readContactCustomFieldList`
+
+Retrieve definitions of all contact custom fields
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.contacts.readContactCustomFieldList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### readContactSyncLogList
+
+`contacts.readContactSyncLogList`
+
+Retrieve audit history and logs of contact synchronization operations
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.contacts.readContactSyncLogList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### sendMessagesToContacts
+
+`contacts.sendMessagesToContacts`
+
+Send bulk broadcast messages to contacts via connected WhatsApp or SMS
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.contacts.sendMessagesToContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `message` | `string` | No | — |
+| `widget_id` | `string` | Yes | — |
+| `contact_ids` | `string[]` | Yes | — |
+| `start_new_conversation` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### upsertContactByEmailOrPhoneNumber
+
+`contacts.upsertContactByEmailOrPhoneNumber`
+
+Create or update a contact using email or phone number
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.contacts.upsertContactByEmailOrPhoneNumber({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `first_name` | `string` | Yes | — |
+| `last_name` | `string` | Yes | — |
+| `phone_number` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Datasources
+
+### createTag
+
+`datasources.createTag`
+
+Create a custom tag for categorizing contacts and conversations
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.datasources.createTag({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `attributes` | `object` | No | — |
+| `color_code` | `string` | Yes | — |
+| `description` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteLinkedAssistantDatasource
+
+`datasources.deleteLinkedAssistantDatasource`
+
+Unlink and remove a data source from an assistant's knowledge base
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.datasources.deleteLinkedAssistantDatasource({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assistant_id` | `string` | Yes | — |
+| `datasource_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteLinkTagEntityById
+
+`datasources.deleteLinkTagEntityById`
+
+Remove a specific tag association from an entity
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.datasources.deleteLinkTagEntityById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_tag_entity_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteTagById
+
+`datasources.deleteTagById`
+
+Permanently remove a tag by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.datasources.deleteTagById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getDatasourceById
+
+`datasources.getDatasourceById`
+
+Retrieve comprehensive details of a specific knowledge base data source
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.datasources.getDatasourceById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `datasource_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListOfDatasources
+
+`datasources.getListOfDatasources`
+
+Discover all available knowledge base data sources (text, URLs, files)
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.datasources.getListOfDatasources({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListOfDataSourcesLinkedToAssistantId
+
+`datasources.getListOfDataSourcesLinkedToAssistantId`
+
+List all data sources linked to an assistant
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.datasources.getListOfDataSourcesLinkedToAssistantId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `assistant_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### readTagList
+
+`datasources.readTagList`
+
+Fetch a paginated list of all available tags
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.datasources.readTagList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Forms
+
+### createForm
+
+`forms.createForm`
+
+Create a conversational AI-driven or traditional data capture form
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.forms.createForm({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `fields` | `object[]` | No | — |
+| `org_id` | `string` | No | — |
+| `form_type` | `natural \| simple` | Yes | — |
+| `attributes` | `object` | No | — |
+| `webhook_id` | `string` | No | — |
+| `trigger_tools` | `string[]` | No | — |
+| `contact_mapping` | `object` | No | — |
+| `trigger_instructions` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="fields full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="contact_mapping full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteBulkFormsByIds
+
+`forms.deleteBulkFormsByIds`
+
+Delete multiple forms in a single bulk operation
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.forms.deleteBulkFormsByIds({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_ids` | `string[]` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteFormById
+
+`forms.deleteFormById`
+
+Permanently remove a form by unique ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.forms.deleteFormById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getCapturedFormByFormId
+
+`forms.getCapturedFormByFormId`
+
+Fetch captured user form submissions with pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.forms.getCapturedFormByFormId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `form_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Providers
+
+### createProvider
+
+`providers.createProvider`
+
+Configure an AI provider (OpenAI, ElevenLabs, Azure Speech, Cartesia, PlayHT)
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.providers.createProvider({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `org_id` | `string` | No | — |
+| `status` | `boolean` | No | — |
+| `attributes` | `object` | No | — |
+| `provider_key` | `string` | Yes | — |
+| `provider_name` | `openai \| elevenlabs \| azure_speech \| cartesia \| playht` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteProviderById
+
+`providers.deleteProviderById`
+
+Permanently delete an AI provider configuration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.providers.deleteProviderById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getProviderById
+
+`providers.getProviderById`
+
+Retrieve configuration details of an AI provider
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.providers.getProviderById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `provider_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getSpeechtotextList
+
+`providers.getSpeechtotextList`
+
+Fetch a paginated list of available speech-to-text voice configurations
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.providers.getSpeechtotextList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveListOfUserCustomVoice
+
+`providers.retrieveListOfUserCustomVoice`
+
+Retrieve a paginated list of custom user voice models
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.providers.retrieveListOfUserCustomVoice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Tools
+
+### createToolfunction
+
+`tools.createToolfunction`
+
+Register a new tool function (SDK, CURL, or query index) for assistant workflows
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.tools.createToolfunction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `details` | `object` | No | — |
+| `tool_id` | `string` | No | — |
+| `is_enabled` | `boolean` | No | — |
+| `description` | `string` | Yes | — |
+| `tool_function_type` | `sdk \| curl \| query_index` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="details full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteToolById
+
+`tools.deleteToolById`
+
+Remove an entire tool integration by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.tools.deleteToolById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteToolfunctionById
+
+`tools.deleteToolfunctionById`
+
+Remove a tool function from the system
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.tools.deleteToolfunctionById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toolfunction_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### readToolFunctionInvokeLogList
+
+`tools.readToolFunctionInvokeLogList`
+
+Inspect execution history and audit logs of tool function calls
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.tools.readToolFunctionInvokeLogList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `conversation_id` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### readToolToolfunctionList
+
+`tools.readToolToolfunctionList`
+
+Fetch all tool functions associated with a specific tool ID
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.tools.readToolToolfunctionList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `tool_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveLinkedToolAndUser
+
+`tools.retrieveLinkedToolAndUser`
+
+Retrieve linked tool and user associations
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.tools.retrieveLinkedToolAndUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `tool_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateLinkToolUser
+
+`tools.updateLinkToolUser`
+
+Modify properties of a linked tool user integration
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.tools.updateLinkToolUser({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `link_tool_user_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `tool_id` | `string` | No | — |
+| `attributes` | `object` | No | — |
+| `credentials` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="credentials full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateToolById
+
+`tools.updateToolById`
+
+Modify general properties and enabled status of a tool
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.tools.updateToolById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tool_id` | `string` | Yes | — |
+| `sdk` | `object` | No | — |
+| `name` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `base_url` | `string` | No | — |
+| `category` | `string` | No | — |
+| `logo_url` | `string` | No | — |
+| `tool_type` | `string` | No | — |
+| `attributes` | `object` | No | — |
+| `description` | `string` | No | — |
+| `tool_provider` | `string` | No | — |
+| `authentication` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="sdk full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="authentication full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateToolfunctionById
+
+`tools.updateToolfunctionById`
+
+Modify the name, type, or enabled status of an existing tool function
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.tools.updateToolfunctionById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `toolfunction_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `details` | `object` | No | — |
+| `tool_id` | `string` | No | — |
+| `is_enabled` | `boolean` | No | — |
+| `description` | `string` | No | — |
+| `tool_function_type` | `sdk \| curl \| query_index` | No | — |
+
+<AccordionGroup>
+<Accordion title="details full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks Telephony
+
+### createWebhook
+
+`webhooksTelephony.createWebhook`
+
+Configure an outbound webhook URL for event notifications
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.webhooksTelephony.createWebhook({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `enabled` | `boolean` | No | — |
+| `endpoint` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteTwilioAuthById
+
+`webhooksTelephony.deleteTwilioAuthById`
+
+Remove a Twilio authentication integration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.webhooksTelephony.deleteTwilioAuthById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `twilio_auth_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteUserwhatsappById
+
+`webhooksTelephony.deleteUserwhatsappById`
+
+Remove a WhatsApp Business connection
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.webhooksTelephony.deleteUserwhatsappById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userwhatsapp_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteWebhookById
+
+`webhooksTelephony.deleteWebhookById`
+
+Permanently remove an outbound webhook configuration
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.webhooksTelephony.deleteWebhookById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### readTwilioAuthList
+
+`webhooksTelephony.readTwilioAuthList`
+
+Retrieve all configured Twilio authentication integrations
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.webhooksTelephony.readTwilioAuthList({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### retrieveWebhookLog
+
+`webhooksTelephony.retrieveWebhookLog`
+
+Inspect delivery status and debug logs for a specific webhook
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.webhooksTelephony.retrieveWebhookLog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `webhook_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateTwilioAuthById
+
+`webhooksTelephony.updateTwilioAuthById`
+
+Modify Twilio auth credentials or telephony settings
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.webhooksTelephony.updateTwilioAuthById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `twilio_auth_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `twilio_auth_token` | `string` | No | — |
+| `twilio_account_sid` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateUserwhatsappById
+
+`webhooksTelephony.updateUserwhatsappById`
+
+Modify WhatsApp Business API settings for a user
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.webhooksTelephony.updateUserwhatsappById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userwhatsapp_id` | `string` | Yes | — |
+| `phone_number_id` | `string` | No | — |
+| `phone_business_id` | `string` | No | — |
+| `facebook_app_secret` | `string` | No | — |
+| `whatsapp_access_token` | `string` | No | — |
+| `whatsapp_phone_number` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updateWebhookById
+
+`webhooksTelephony.updateWebhookById`
+
+Modify the endpoint URL, name, or enabled status of an outbound webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.webhooksTelephony.updateWebhookById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhook_id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `enabled` | `boolean` | No | — |
+| `endpoint` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Widgets
+
+### createWidget
+
+`widgets.createWidget`
+
+Create a new chat/voice widget for web or mobile embedding
+
+**Risk:** `write`
+
+```ts
+await corsair.insightoai.api.widgets.createWidget({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `org_id` | `string` | No | — |
+| `attributes` | `object` | No | — |
+| `bubble_text` | `string` | No | — |
+| `description` | `string` | No | — |
+| `widget_type` | `web_chat \| web_voice \| whatsapp \| sms \| messenger \| instagram \| telegram \| ghl_chat \| ghl_missed_call \| embedded_form \| popup \| inline \| floating_bubble \| voice_widget \| custom` | Yes | — |
+| `assistant_id` | `string` | No | — |
+| `bubble_color` | `string` | No | — |
+| `display_name` | `string` | No | — |
+| `header_color` | `string` | No | — |
+| `style_params` | `object` | No | — |
+| `intro_message` | `string` | No | — |
+| `action_buttons` | `object[]` | Yes | — |
+| `bot_icon_color` | `string` | No | — |
+| `ice_break_color` | `string` | No | — |
+| `remove_branding` | `boolean` | No | — |
+| `bot_message_color` | `string` | No | — |
+| `header_text_color` | `string` | No | — |
+| `user_message_color` | `string` | No | — |
+| `action_buttons_color` | `string` | No | — |
+| `textbox_default_text` | `string` | No | — |
+| `user_opening_messages` | `string[]` | Yes | — |
+| `bot_text_message_color` | `string` | No | — |
+| `user_text_message_color` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="attributes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="style_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="action_buttons full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deleteWidgetById
+
+`widgets.deleteWidgetById`
+
+Permanently remove a widget by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.insightoai.api.widgets.deleteWidgetById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListOfConversations
+
+`widgets.getListOfConversations`
+
+Retrieve filtered conversation metadata across date ranges
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.widgets.getListOfConversations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `date_to` | `string` | Yes | — |
+| `date_from` | `string` | Yes | — |
+| `intent_id` | `string` | No | — |
+| `assistant_id` | `string` | No | — |
+| `includes_voice` | `boolean` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getListOfWidgetsLinkedToAssistantId
+
+`widgets.getListOfWidgetsLinkedToAssistantId`
+
+Discover all widgets associated with a specific assistant
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.widgets.getListOfWidgetsLinkedToAssistantId({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+| `assistant_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getWidgetById
+
+`widgets.getWidgetById`
+
+Retrieve widget configuration and visual styling attributes
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.widgets.getWidgetById({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `widget_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listChannels
+
+`widgets.listChannels`
+
+Retrieve all available communication channels and configurations
+
+**Risk:** `read`
+
+```ts
+await corsair.insightoai.api.widgets.listChannels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `number` | No | — |
+| `size` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

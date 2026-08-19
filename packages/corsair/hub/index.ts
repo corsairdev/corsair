@@ -24,6 +24,17 @@
  */
 export { formatProviderDisplayName } from '../core/constants';
 export {
+	type AgentMessageRole,
+	type AgentReply,
+	type ChatMessage,
+	type ChatSummary,
+	type CreateChatResult,
+	createChat,
+	listChatMessages,
+	listChats,
+	postChatMessage,
+} from './chats';
+export {
 	buildClientBridgeBrowserDeliveryUrl,
 	type ClientBridgeDeliverySpec,
 	type ClientBridgeTransportResult,
@@ -39,6 +50,7 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export { startConnectLoop } from './connect/loop';
 export type {
 	ConnectCreateLinkDeliveryPayload,
 	ConnectCreateLinkDeliveryResult,
@@ -173,17 +185,6 @@ export {
 	encryptSyncManifest,
 	parseSyncDeliveryBody,
 } from './sync-payload';
-export {
-	type AgentMessageRole,
-	type AgentReply,
-	type CreateThreadResult,
-	createThread,
-	listThreadMessages,
-	listThreads,
-	postThreadMessage,
-	type ThreadMessage,
-	type ThreadSummary,
-} from './threads';
 export type {
 	CreateConnectSessionRequestBody,
 	CreatePermissionSessionRequestBody,

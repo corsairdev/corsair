@@ -10,8 +10,13 @@ jest.mock('../hub/report-connection-status', () => ({
 	reportPluginConnectionStatus: jest.fn().mockResolvedValue(undefined),
 }));
 
+jest.mock('../oauth/subscribe-report', () => ({
+	subscribeAndReport: jest.fn().mockResolvedValue(undefined),
+}));
+
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
 import { reportPluginConnectionStatus } from '../hub/report-connection-status';
+import { subscribeAndReport } from '../oauth/subscribe-report';
 
 const KEK = 'test-kek-managed-oauth';
 
@@ -29,6 +34,7 @@ describe('processManagedOAuthDelivery', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	afterEach(() => {
 		(reportPluginConnectionStatus as jest.Mock).mockClear();
+		(subscribeAndReport as jest.Mock).mockClear();
 		env?.cleanup?.();
 	});
 
@@ -62,5 +68,49 @@ describe('processManagedOAuthDelivery', () => {
 		const [, arg] = (reportPluginConnectionStatus as jest.Mock).mock.calls[0];
 		expect(arg.tenantId).toBe('default');
 		expect(arg.plugin.id).toBe('github');
+	});
+
+	it('arms the provider subscription after storing the token', async () => {
+		env = createTestDatabase();
+		const corsair = createCorsair({
+			plugins: [githubManaged],
+			database: env.db,
+			kek: KEK,
+		} as any);
+		await setupCorsair(corsair);
+
+		await processManagedOAuthDelivery(corsair, {
+			plugin: 'github',
+			tenantId: 'default',
+			accessToken: 'gho_delivered',
+			refreshToken: 'ghr_delivered',
+		});
+
+		expect(subscribeAndReport).toHaveBeenCalledTimes(1);
+		const [, plugin, tenantId] = (subscribeAndReport as jest.Mock).mock
+			.calls[0];
+		expect(plugin.id).toBe('github');
+		expect(tenantId).toBe('default');
+	});
+
+	it('a failing subscribe does not break the delivery', async () => {
+		env = createTestDatabase();
+		(subscribeAndReport as jest.Mock).mockRejectedValueOnce(
+			new Error('graph down'),
+		);
+		const corsair = createCorsair({
+			plugins: [githubManaged],
+			database: env.db,
+			kek: KEK,
+		} as any);
+		await setupCorsair(corsair);
+
+		await expect(
+			processManagedOAuthDelivery(corsair, {
+				plugin: 'github',
+				tenantId: 'default',
+				accessToken: 'gho_delivered',
+			}),
+		).resolves.toEqual({ plugin: 'github', tenantId: 'default' });
 	});
 });

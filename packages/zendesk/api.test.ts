@@ -19,10 +19,17 @@ const TEST_API_KEY = process.env.ZENDESK_API_KEY ?? '';
 const TEST_SUBDOMAIN = process.env.ZENDESK_SUBDOMAIN ?? '';
 const hasCredentials = TEST_API_KEY.length > 0 && TEST_SUBDOMAIN.length > 0;
 
-describe('Zendesk API Type Tests', () => {
+const describeIf = hasCredentials ? describe : describe.skip;
+
+if (!hasCredentials) {
+	console.warn(
+		'Skipping Zendesk API tests: ZENDESK_API_KEY or ZENDESK_SUBDOMAIN not set',
+	);
+}
+
+describeIf('Zendesk API Type Tests', () => {
 	describe('tickets', () => {
 		it('ticketsList returns correct type', async () => {
-			if (!hasCredentials) return;
 			const response = await makeZendeskRequest<TicketsListResponse>(
 				'tickets.json',
 				TEST_API_KEY,
@@ -34,7 +41,6 @@ describe('Zendesk API Type Tests', () => {
 		});
 
 		it('ticketsCreate returns correct type', async () => {
-			if (!hasCredentials) return;
 			const response = await makeZendeskRequest<TicketsCreateResponse>(
 				'tickets.json',
 				TEST_API_KEY,
@@ -66,7 +72,6 @@ describe('Zendesk API Type Tests', () => {
 		});
 
 		it('ticketsGet returns correct type', async () => {
-			if (!hasCredentials) return;
 			const created = await makeZendeskRequest<TicketsCreateResponse>(
 				'tickets.json',
 				TEST_API_KEY,
@@ -103,7 +108,6 @@ describe('Zendesk API Type Tests', () => {
 		});
 
 		it('ticketsUpdate returns correct type', async () => {
-			if (!hasCredentials) return;
 			const created = await makeZendeskRequest<TicketsCreateResponse>(
 				'tickets.json',
 				TEST_API_KEY,
@@ -147,7 +151,6 @@ describe('Zendesk API Type Tests', () => {
 		});
 
 		it('ticketsDelete returns correct type', async () => {
-			if (!hasCredentials) return;
 			const created = await makeZendeskRequest<TicketsCreateResponse>(
 				'tickets.json',
 				TEST_API_KEY,
@@ -179,7 +182,6 @@ describe('Zendesk API Type Tests', () => {
 
 	describe('users', () => {
 		it('usersList returns correct type', async () => {
-			if (!hasCredentials) return;
 			const response = await makeZendeskRequest<UsersListResponse>(
 				'users.json',
 				TEST_API_KEY,
@@ -191,7 +193,6 @@ describe('Zendesk API Type Tests', () => {
 		});
 
 		it('usersCreate returns correct type', async () => {
-			if (!hasCredentials) return;
 			const email = `corsair-test-${Date.now()}@example.com`;
 			const response = await makeZendeskRequest<UsersCreateResponse>(
 				'users.json',
@@ -223,7 +224,6 @@ describe('Zendesk API Type Tests', () => {
 		});
 
 		it('usersGet returns correct type', async () => {
-			if (!hasCredentials) return;
 			const email = `corsair-test-get-${Date.now()}@example.com`;
 			const created = await makeZendeskRequest<UsersCreateResponse>(
 				'users.json',
@@ -260,7 +260,6 @@ describe('Zendesk API Type Tests', () => {
 		});
 
 		it('usersUpdate returns correct type', async () => {
-			if (!hasCredentials) return;
 			const email = `corsair-test-update-${Date.now()}@example.com`;
 			const created = await makeZendeskRequest<UsersCreateResponse>(
 				'users.json',
@@ -304,7 +303,6 @@ describe('Zendesk API Type Tests', () => {
 		});
 
 		it('usersDelete returns correct type', async () => {
-			if (!hasCredentials) return;
 			const email = `corsair-test-delete-${Date.now()}@example.com`;
 			const created = await makeZendeskRequest<UsersCreateResponse>(
 				'users.json',
@@ -336,7 +334,6 @@ describe('Zendesk API Type Tests', () => {
 
 	describe('comments', () => {
 		it('commentsList returns correct type', async () => {
-			if (!hasCredentials) return;
 			const created = await makeZendeskRequest<TicketsCreateResponse>(
 				'tickets.json',
 				TEST_API_KEY,

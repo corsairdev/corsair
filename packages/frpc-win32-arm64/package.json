@@ -1,0 +1,24 @@
+{
+  "name": "@corsair-dev/frpc-win32-arm64",
+  "version": "0.1.117",
+  "description": "Prebuilt frpc binary for Corsair dev tunnels (win32 arm64). Installed automatically as an optional dependency of `corsair`.",
+  "license": "Apache-2.0",
+  "repository": "https://github.com/corsairdev/corsair",
+  "os": [
+    "win32"
+  ],
+  "cpu": [
+    "arm64"
+  ],
+  "files": [
+    "frpc.exe",
+    "LICENSE.frp",
+    "NOTICE"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "prepack": "node ../../scripts/prepare-frpc-packages.mjs win32-arm64"
+  }
+}

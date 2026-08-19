@@ -28,8 +28,10 @@ export const listChanged: SharepointWebhooks['listChanged'] = {
 			};
 		}
 
-		const clientState = ctx.options?.webhookClientState;
-		const verification = verifySharepointWebhookSignature(request, clientState);
+		// ctx.key resolves the plugin option first and then the Hub-stored webhook
+		// signature (see the keyBuilder in ../index.ts), matching the other Graph
+		// plugins. Reading the option directly missed Hub-managed subscriptions.
+		const verification = verifySharepointWebhookSignature(request, ctx.key);
 		if (!verification.valid) {
 			return {
 				success: false,

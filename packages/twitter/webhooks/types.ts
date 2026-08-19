@@ -87,11 +87,14 @@ export function verifyTwitterWebhookSignature(
 		| undefined;
 
 	if (!signature) {
-		if (!secret) return { valid: true };
 		return {
 			valid: false,
 			error: 'Missing x-twitter-webhooks-signature header',
 		};
+	}
+	// If no secret is configured, treat as invalid
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const rawBody = request.rawBody;

@@ -1,0 +1,267 @@
+---
+title: API
+description: "API reference for Confluence: every `confluence.api.*` operation with input and output types."
+---
+
+Every `confluence.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Pages
+
+### get
+
+`pages.get`
+
+List Confluence pages
+
+**Risk:** `read`
+
+```ts
+await corsair.confluence.api.pages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `space_id` | `string` | No | Filter by space ID |
+| `title` | `string` | No | Filter pages by title |
+| `status` | `current \| trashed \| draft` | No | Filter pages by content status |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Maximum number of pages to return |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id: string,
+  status?: string,
+  title: string,
+  spaceId?: string,
+  parentId?: string | null,
+  parentType?: string | null,
+  authorId?: string,
+  createdAt?: string,
+  version?: {
+    createdAt?: string,
+    message?: string,
+    number?: number,
+    minorEdit?: boolean,
+    authorId?: string
+  },
+  body?: {
+    storage?: {
+      value?: string,
+      representation?: string
+    },
+    atlas_doc_format?: {
+      value?: string,
+      representation?: string
+    }
+  },
+  _links?: {
+    webui?: string,
+    editui?: string,
+    tinyui?: string,
+    self?: string
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  next?: string,
+  base?: string,
+  self?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`pages.search`
+
+Search Confluence pages via CQL
+
+**Risk:** `read`
+
+```ts
+await corsair.confluence.api.pages.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cql` | `string` | Yes | Confluence Query Language (CQL) query string |
+| `cqlcontext` | `string` | No | Context for the CQL query |
+| `includeArchivedSpaces` | `boolean` | No | Include archived spaces in results |
+| `limit` | `number` | No | Maximum results |
+| `start` | `number` | No | Pagination offset for the first result |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `start` | `number` | Yes | — |
+| `limit` | `number` | Yes | — |
+| `size` | `number` | Yes | — |
+| `totalSize` | `number` | No | — |
+| `cqlQuery` | `string` | No | — |
+| `searchDuration` | `number` | No | — |
+| `archivedResultCount` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  content: {
+    id: string,
+    type: string,
+    status?: string,
+    title: string,
+    childTypes?: {
+    },
+    macroRenderedOutput?: {
+    },
+    restrictions?: {
+    },
+    _expandable?: {
+    },
+    _links?: {
+      webui?: string,
+      self?: string,
+      tinyui?: string
+    }
+  },
+  title: string,
+  excerpt?: string,
+  url?: string,
+  resultGlobalContainer?: {
+    title: string,
+    displayUrl: string
+  },
+  breadcrumbs?: any[],
+  entityType?: string,
+  iconCssClass?: string,
+  lastModified?: string,
+  friendlyLastModified?: string,
+  score?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+  base?: string,
+  context?: string,
+  self?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spaces
+
+### list
+
+`spaces.list`
+
+List Confluence spaces
+
+**Risk:** `read`
+
+```ts
+await corsair.confluence.api.spaces.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | No | Filter by space key |
+| `type` | `global \| personal` | No | Filter by space type |
+| `status` | `current \| archived` | No | Filter by space status |
+| `label` | `string` | No | Filter by space label |
+| `cursor` | `string` | No | Pagination cursor |
+| `limit` | `number` | No | Maximum number of spaces to return |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | Yes | — |
+| `start` | `number` | No | — |
+| `limit` | `number` | No | — |
+| `size` | `number` | No | — |
+| `_links` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  id?: string,
+  ari?: string,
+  key: string,
+  alias?: string,
+  name: string,
+  type?: string,
+  status?: string,
+  description?: any,
+  homepage?: any,
+  _expandable?: {
+  },
+  _links?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="_links full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
