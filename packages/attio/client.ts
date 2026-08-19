@@ -146,19 +146,15 @@ export async function makeAttioRequest<T>(
 
 	try {
 		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof ApiError) {
+	} catch (error: any) {
+		if (error && typeof error === 'object' && 'status' in error) {
 			throw error;
 		}
-		if (error instanceof Error) {
-			const status =
-				'status' in error &&
-				typeof (error as { status: unknown }).status === 'number'
-					? (error as { status: number }).status
-					: undefined;
-			throw new AttioAPIError(error.message, status);
-		}
-		throw new AttioAPIError('Unknown error');
+		const message =
+			error instanceof Error
+				? error.message
+				: error?.message || String(error || 'Unknown error');
+		throw new AttioAPIError(message, error?.status);
 	}
 }
 
