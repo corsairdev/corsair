@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
+import posthog from 'posthog-js';
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
@@ -76,6 +77,9 @@ export function ClaimIntegrationButton({
 
 		try {
 			await claimIntegration(integrationId);
+			posthog.capture('integration_claimed', {
+				integration_id: integrationId,
+			});
 			router.push(`/oss/${integrationSlug}?gettingStarted=1`);
 		} catch (err) {
 			setError(
