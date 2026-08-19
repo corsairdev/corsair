@@ -46,6 +46,7 @@ describe('resolveAttioOAuthWebhookTenantLink', () => {
 			'https://api.attio.com/v2/self',
 			expect.objectContaining({
 				headers: { Authorization: 'Bearer tok' },
+				signal: expect.any(AbortSignal),
 			}),
 		);
 	});
