@@ -93,14 +93,11 @@ describe('Attio REST API verification', () => {
 		testOrSkip(
 			'getDealRecord throws 404 for missing deal (but path parsing works)',
 			async () => {
-				try {
-					await getDealRecord(mockCtx, {
+				await expect(
+					getDealRecord(mockCtx, {
 						record_id: '11111111-1111-1111-1111-111111111111',
-					});
-					throw new Error('expected getDealRecord to reject');
-				} catch (e: unknown) {
-					expect(e).toMatchObject({ status: 404 });
-				}
+					}),
+				).rejects.toMatchObject({ status: 404 });
 			},
 		);
 
@@ -166,12 +163,13 @@ describe('Attio REST API verification', () => {
 						parent_record_id: '22222222-2222-2222-2222-222222222222',
 					},
 				};
-				try {
-					await putV2ListsListEntries(mockCtx, input);
-					throw new Error('expected putV2ListsListEntries to reject');
-				} catch (e: unknown) {
-					expect([400, 404]).toContain((e as { status?: number }).status);
-				}
+				const error = await putV2ListsListEntries(mockCtx, input).then(
+					() => {
+						throw new Error('expected putV2ListsListEntries to reject');
+					},
+					(e: unknown) => e,
+				);
+				expect([400, 404]).toContain((error as { status?: number }).status);
 			},
 		);
 	});
@@ -364,11 +362,46 @@ describe('Attio REST API verification', () => {
 			key: 'mock-key',
 		} as never;
 
+		const pathFixture = {
+			list: 'list-1',
+			list_id: 'list-1',
+			object: 'companies',
+			object_id: 'obj-1',
+			record_id: 'rec-1',
+			entry_id: 'ent-1',
+			list_entry_id: 'ent-1',
+			record_entries_id: 'ent-1',
+			record_attribute_values_id: 'rav-1',
+			attribute: 'email_addresses',
+			attribute_id: 'email_addresses',
+			option: 'opt-1',
+			status_id: 'st-1',
+			workspace_member_id: 'mem-1',
+			comment_id: 'cmt-1',
+			note_id: 'note-1',
+			task_id: 'task-1',
+			webhook_id: 'wh-1',
+			meeting_id: 'mtg-1',
+			thread_id: 'thr-1',
+		};
+
 		for (const [name, fn] of Object.entries(Generated)) {
 			if (typeof fn === 'function') {
-				it(`should invoke ${name} successfully under mock`, async () => {
-					const res = await fn(localMockCtx as never, {} as never);
+				it(`should invoke ${name} with a concrete Attio route`, async () => {
+					const res = (await fn(
+						localMockCtx as never,
+						pathFixture as never,
+					)) as MockCall;
 					expect(res).toBeDefined();
+					expect(res.url).toMatch(/^\/v2\//);
+					expect(res.url).not.toContain('{');
+					expect(res.url).not.toMatch(/\/\//);
+					expect(res.url).not.toMatch(
+						/unknown|objectss|attributess|companiess|\/lists\/list(?:\/|$)/,
+					);
+					expect(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']).toContain(
+						res.options.method,
+					);
 				});
 			}
 		}
