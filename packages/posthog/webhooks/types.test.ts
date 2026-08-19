@@ -5,6 +5,11 @@ import { verifyPostHogWebhookSignature } from './types';
 describe('verifyPostHogWebhookSignature', () => {
 	const secret = 'my-super-secret-token';
 
+	/**
+	 * Helper to create a minimal webhook request for signature verification testing.
+	 * We use `unknown` as the generic parameter for `WebhookRequest` because the actual
+	 * payload content type is irrelevant to the signature validation logic.
+	 */
 	const requestWith = (
 		headers: Record<string, string | string[]>,
 		rawBody = JSON.stringify({ event: 'event.captured', distinct_id: 'x' }),
@@ -14,8 +19,16 @@ describe('verifyPostHogWebhookSignature', () => {
 		rawBody,
 	});
 
-	it('should fail closed when webhook secret is missing', () => {
+	it('should fail closed when webhook secret is missing (empty string)', () => {
 		const result = verifyPostHogWebhookSignature(requestWith({}), '');
+		expect(result).toEqual({
+			valid: false,
+			error: 'Missing webhook secret',
+		});
+	});
+
+	it('should fail closed when webhook secret is missing (undefined)', () => {
+		const result = verifyPostHogWebhookSignature(requestWith({}));
 		expect(result).toEqual({
 			valid: false,
 			error: 'Missing webhook secret',
