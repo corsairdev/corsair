@@ -18,8 +18,6 @@ export class OpenWeatherMapAPIError extends Error {
 		super(message, options);
 		this.name = 'OpenWeatherMapAPIError';
 
-		// Preserve ApiError properties so error handlers can inspect status codes
-		// and rate-limit headers without needing instanceof ApiError checks.
 		if (options?.cause instanceof ApiError) {
 			this.status = options.cause.status;
 			this.statusText = options.cause.statusText;
@@ -32,51 +30,202 @@ export class OpenWeatherMapAPIError extends Error {
 	}
 }
 
-const OPENWEATHERMAP_API_BASE = 'https://api.openweathermap.org/data/3.0';
+export const OPENWEATHERMAP_ONE_CALL_3_BASE =
+	'https://api.openweathermap.org/data/3.0';
+export const OPENWEATHERMAP_DATA_25_BASE =
+	'https://api.openweathermap.org/data/2.5';
+export const OPENWEATHERMAP_GEO_BASE = 'https://api.openweathermap.org/geo/1.0';
+export const OPENWEATHERMAP_MAPS_2_BASE =
+	'https://maps.openweathermap.org/maps/2.0';
+
+export type OpenWeatherMapApi = 'oneCall3' | 'data25' | 'geo' | 'maps2';
+
+export function baseUrlFor(api: OpenWeatherMapApi): string {
+	switch (api) {
+		case 'data25':
+			return OPENWEATHERMAP_DATA_25_BASE;
+		case 'geo':
+			return OPENWEATHERMAP_GEO_BASE;
+		case 'maps2':
+			return OPENWEATHERMAP_MAPS_2_BASE;
+		default:
+			return OPENWEATHERMAP_ONE_CALL_3_BASE;
+	}
+}
+
+export function compactBody(
+	body: Record<string, unknown> | undefined,
+): Record<string, unknown> | undefined {
+	if (!body) return undefined;
+	const out: Record<string, unknown> = {};
+	for (const [key, value] of Object.entries(body)) {
+		if (value !== undefined) out[key] = value;
+	}
+	return Object.keys(out).length > 0 ? out : undefined;
+}
+
+export function compactQuery(
+	query: Record<string, string | number | boolean | undefined> | undefined,
+): Record<string, string | number | boolean> | undefined {
+	if (!query) return undefined;
+	const out: Record<string, string | number | boolean> = {};
+	for (const [key, value] of Object.entries(query)) {
+		if (value !== undefined) out[key] = value;
+	}
+	return Object.keys(out).length > 0 ? out : undefined;
+}
+
+export type OpenWeatherMapRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
+	api?: OpenWeatherMapApi;
+	body?: Record<string, unknown> | unknown[];
+	query?: Record<string, string | number | boolean | undefined>;
+	responseType?: 'json' | 'binary' | 'empty';
+	headers?: Record<string, string>;
+};
+
+function bufferToBase64(buffer: ArrayBuffer): string {
+	return Buffer.from(buffer).toString('base64');
+}
+
+async function fetchBinaryResponse(
+	url: string,
+	options: {
+		method: string;
+		headers: Record<string, string>;
+		body?: string;
+	},
+): Promise<ArrayBuffer> {
+	const response = await fetch(url, {
+		method: options.method,
+		headers: options.headers,
+		body: options.body,
+	});
+
+	if (!response.ok) {
+		let body: unknown;
+		try {
+			body = await response.json();
+		} catch {
+			body = await response.text();
+		}
+		throw new OpenWeatherMapAPIError(
+			typeof body === 'object' && body !== null && 'message' in body
+				? String((body as { message: unknown }).message)
+				: `HTTP ${response.status}: ${response.statusText}`,
+			response.status,
+		);
+	}
+
+	return await response.arrayBuffer();
+}
 
 /**
- * Performs a request to the OpenWeatherMap One Call API 3.0.
+ * Performs a request to the OpenWeatherMap API.
  *
- * Auth: API key passed as the `appid` query parameter (the only supported method).
- * All endpoints are GET-only.
+ * Auth: API key passed as the `appid` query parameter.
  */
 export async function makeOpenWeatherMapRequest<T>(
 	endpoint: string,
 	apiKey: string,
-	options: {
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: OpenWeatherMapRequestOptions = {},
 ): Promise<T> {
-	const { query = {} } = options;
+	const {
+		method = 'GET',
+		api = 'oneCall3',
+		body,
+		query = {},
+		responseType = 'json',
+		headers: extraHeaders,
+	} = options;
 
-	const config: OpenAPIConfig = {
-		BASE: OPENWEATHERMAP_API_BASE,
-		VERSION: '3.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		TOKEN: undefined,
-		HEADERS: {
-			'Content-Type': 'application/json',
-		},
-	};
-
-	// OpenWeatherMap authenticates via the `appid` query parameter
 	const queryWithAuth: Record<string, string | number | boolean | undefined> = {
 		...query,
 		appid: apiKey,
 	};
 
+	const config: OpenAPIConfig = {
+		BASE: baseUrlFor(api),
+		VERSION: api === 'oneCall3' ? '3.0' : '1.0',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		TOKEN: undefined,
+		HEADERS: {
+			'Content-Type': 'application/json',
+			...extraHeaders,
+		},
+	};
+
+	const urlPath = endpoint.startsWith('/') ? endpoint.slice(1) : endpoint;
+
+	if (responseType === 'binary') {
+		const baseUrl = config.BASE.endsWith('/')
+			? config.BASE.slice(0, -1)
+			: config.BASE;
+		const compacted = compactQuery(queryWithAuth);
+		const queryParts: string[] = [];
+		if (compacted) {
+			for (const [key, value] of Object.entries(compacted)) {
+				queryParts.push(
+					`${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`,
+				);
+			}
+		}
+		const url =
+			queryParts.length > 0
+				? `${baseUrl}/${urlPath}?${queryParts.join('&')}`
+				: `${baseUrl}/${urlPath}`;
+
+		try {
+			const buffer = await fetchBinaryResponse(url, {
+				method,
+				headers: {
+					Accept: 'image/png',
+					...extraHeaders,
+				},
+			});
+			return {
+				contentType: 'image/png',
+				dataBase64: bufferToBase64(buffer),
+			} as T;
+		} catch (error) {
+			if (error instanceof OpenWeatherMapAPIError) throw error;
+			if (error instanceof Error) {
+				throw new OpenWeatherMapAPIError(error.message, undefined, {
+					cause: error,
+				});
+			}
+			throw new OpenWeatherMapAPIError('Unknown error');
+		}
+	}
+
 	const requestOptions: ApiRequestOptions = {
-		method: 'GET',
-		url: endpoint,
-		query: queryWithAuth,
+		method,
+		url: urlPath,
+		query: compactQuery(queryWithAuth),
+		body:
+			method === 'POST' || method === 'PUT'
+				? (body as ApiRequestOptions['body'])
+				: undefined,
+		mediaType: 'application/json',
 	};
 
 	try {
-		const response = await request<T>(config, requestOptions);
-		return response;
+		const response = await request<T | undefined>(config, requestOptions);
+
+		if (
+			responseType === 'empty' ||
+			(response === undefined && method !== 'GET')
+		) {
+			return { success: true } as T;
+		}
+
+		return response as T;
 	} catch (error) {
 		if (error instanceof ApiError) {
+			if (responseType === 'empty' && error.status === 204) {
+				return { success: true } as T;
+			}
 			throw new OpenWeatherMapAPIError(error.message, error.status, {
 				cause: error,
 			});

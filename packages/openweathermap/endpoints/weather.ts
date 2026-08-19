@@ -10,7 +10,7 @@ import type { OpenWeatherMapEndpointOutputs } from './types';
  * API: GET /onecall
  * Docs: https://openweathermap.org/api/one-call-3#current
  */
-export const oneCall: OpenWeatherMapEndpoints['oneCall'] = async (
+export const oneCall: OpenWeatherMapEndpoints['weather']['oneCall'] = async (
 	ctx,
 	input,
 ) => {
@@ -34,3 +34,80 @@ export const oneCall: OpenWeatherMapEndpoints['oneCall'] = async (
 
 	return response;
 };
+
+/**
+ * Get current weather data for a location.
+ *
+ * API: GET /weather
+ * Docs: https://openweathermap.org/current
+ */
+export const current: OpenWeatherMapEndpoints['weather']['current'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeOpenWeatherMapRequest<
+		OpenWeatherMapEndpointOutputs['currentWeather']
+	>('weather', ctx.key, {
+		api: 'data25',
+		query: { ...input },
+	});
+
+	await logEventFromContext(
+		ctx,
+		'openweathermap.weather.current',
+		{ ...input },
+		'completed',
+	);
+
+	return response;
+};
+
+/**
+ * Get 5-day / 3-hour forecast for a location.
+ *
+ * API: GET /forecast
+ * Docs: https://openweathermap.org/forecast5
+ */
+export const forecast5Day: OpenWeatherMapEndpoints['weather']['forecast5Day'] =
+	async (ctx, input) => {
+		const response = await makeOpenWeatherMapRequest<
+			OpenWeatherMapEndpointOutputs['forecast5Day']
+		>('forecast', ctx.key, {
+			api: 'data25',
+			query: { ...input },
+		});
+
+		await logEventFromContext(
+			ctx,
+			'openweathermap.weather.forecast5Day',
+			{ ...input },
+			'completed',
+		);
+
+		return response;
+	};
+
+/**
+ * Get current weather for cities within a circle around a geographic point.
+ *
+ * API: GET /find
+ * Docs: https://openweathermap.org/current#other
+ */
+export const circleCity: OpenWeatherMapEndpoints['weather']['circleCity'] =
+	async (ctx, input) => {
+		const response = await makeOpenWeatherMapRequest<
+			OpenWeatherMapEndpointOutputs['circleCity']
+		>('find', ctx.key, {
+			api: 'data25',
+			query: { ...input },
+		});
+
+		await logEventFromContext(
+			ctx,
+			'openweathermap.weather.circleCity',
+			{ ...input },
+			'completed',
+		);
+
+		return response;
+	};
