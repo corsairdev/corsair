@@ -77,7 +77,10 @@ describe('Composio webhook verification', () => {
 		expect(result.error).toBe('Signature verification failed');
 	});
 
-	it('accepts when rawBodyPreserved is absent (older core)', () => {
+	it('rejects when rawBodyPreserved is missing (no provenance)', () => {
+		// A valid signature against the true bytes is still rejected because the
+		// caller did not prove the bytes are original. Core reconstructs rawBody
+		// for object deliveries, so we fail closed instead of hashing unverified bytes.
 		const signature = sign(secret, id, ts, body);
 		const result = verifyComposioWebhookSignature(
 			{
@@ -91,7 +94,8 @@ describe('Composio webhook verification', () => {
 			} as never,
 			secret,
 		);
-		expect(result.valid).toBe(true);
+		expect(result.valid).toBe(false);
+		expect(result.error).toBe('Signature verification failed');
 	});
 
 	it('verifies from raw string body before parse', () => {

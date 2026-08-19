@@ -44,8 +44,9 @@ export type ComposioWebhookOutputs = {
 };
 
 /**
- * Optional provenance until core processWebhook sets the flag (separate PR).
- * Rejects only when explicitly `false` (reconstructed body).
+ * Explicit raw-body provenance. `rawBody` must be the original inbound bytes —
+ * never a `JSON.stringify` reconstruction of a parsed object. Set it via
+ * `verifyComposioWebhookSignatureFromRaw` or when the caller has the raw bytes.
  */
 export type ComposioWebhookRequest = WebhookRequest<ComposioWebhookPayload> & {
 	rawBodyPreserved?: boolean;
@@ -130,8 +131,9 @@ const SIGNATURE_FAILED = 'Signature verification failed';
  * HMAC-SHA256 over `{webhook-id}.{webhook-timestamp}.{rawBody}`, digest base64.
  * Header `webhook-signature` looks like `v1,<base64>` (space-separated if multiple).
  *
- * Refuses when `rawBodyPreserved === false`. Until core sets the flag, a
- * string `rawBody` from adapters that pass the original request body is OK.
+ * Require `rawBodyPreserved === true`. Callers who have the original inbound
+ * bytes must set it (see `verifyComposioWebhookSignatureFromRaw`). Verification
+ * never runs against a `JSON.stringify` reconstruction of a parsed object.
  */
 export function verifyComposioWebhookSignature(
 	request: ComposioWebhookRequest,
@@ -139,7 +141,14 @@ export function verifyComposioWebhookSignature(
 ): { valid: boolean; error?: string } {
 	if (!secret) return { valid: false, error: SIGNATURE_FAILED };
 
-	if (request.rawBodyPreserved === false) {
+	// Do not infer provenance from JSON.stringify equality. Only verify when
+	// the caller explicitly marks the inbound bytes as original — matching the
+	// Databricks plugin pattern (never hash a reconstructed body).
+	if (
+		request.rawBodyPreserved !== true ||
+		typeof request.rawBody !== 'string' ||
+		request.rawBody.length === 0
+	) {
 		return { valid: false, error: SIGNATURE_FAILED };
 	}
 
