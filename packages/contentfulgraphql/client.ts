@@ -13,6 +13,7 @@ export class ContentfulGraphqlAPIError extends Error {
 	// Contentful returns GraphQL errors in the JSON body, so we carry the raw
 	// body as `unknown` and let callers narrow per-request.
 	public readonly body?: unknown;
+	public readonly retryAfter?: number | string;
 
 	constructor(message: string, options?: { code?: string; cause?: Error }) {
 		super(message, options);
@@ -22,6 +23,7 @@ export class ContentfulGraphqlAPIError extends Error {
 			this.status = options.cause.status;
 			this.statusText = options.cause.statusText;
 			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
 		}
 	}
 }
@@ -42,8 +44,10 @@ export function buildContentfulGraphqlPath(
 	spaceId: string,
 	environmentId?: string,
 ): string {
-	const base = `/content/v1/spaces/${spaceId}`;
-	return environmentId ? `${base}/environments/${environmentId}` : base;
+	const base = `/content/v1/spaces/${encodeURIComponent(spaceId)}`;
+	return environmentId
+		? `${base}/environments/${encodeURIComponent(environmentId)}`
+		: base;
 }
 
 export function sha256(input: string): string {
@@ -123,13 +127,15 @@ export async function makeContentfulGraphqlRequest<T>(
 		if (error instanceof ApiError) {
 			// Include the response body for richer error messages (e.g. GraphQL validation errors)
 			const bodyDetail =
-				typeof error.body === 'string'
-					? error.body
-					: JSON.stringify(error.body);
-			throw new ContentfulGraphqlAPIError(
-				`${error.statusText}: ${bodyDetail}`,
-				{ cause: error },
-			);
+				error.body == null
+					? ''
+					: typeof error.body === 'string'
+						? error.body
+						: JSON.stringify(error.body);
+			const message = bodyDetail
+				? `${error.statusText}: ${bodyDetail}`
+				: error.statusText || 'Unknown API Error';
+			throw new ContentfulGraphqlAPIError(message, { cause: error });
 		}
 		if (error instanceof Error) {
 			throw new ContentfulGraphqlAPIError(error.message, { cause: error });

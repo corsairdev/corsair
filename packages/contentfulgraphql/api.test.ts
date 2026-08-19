@@ -1,4 +1,4 @@
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import {
 	buildContentfulGraphqlPath,
 	ContentfulGraphqlAPIError,
@@ -40,7 +40,7 @@ const mockCtx = {
 		get_environment_id: jest.fn().mockResolvedValue('staging'),
 	},
 	logEvent: jest.fn(),
-	db: {},
+	database: {},
 } as unknown as ContentfulGraphqlContext;
 
 describe('Contentful GraphQL plugin shape', () => {
@@ -141,6 +141,35 @@ describe('Contentful GraphQL request client', () => {
 			name: 'ContentfulGraphqlAPIError',
 			message: 'ACCESS_TOKEN_INVALID',
 			code: 'ACCESS_TOKEN_INVALID',
+		});
+	});
+
+	it('preserves ApiError status, statusText, and body when rejecting', async () => {
+		const apiError = new ApiError(
+			{
+				method: 'POST',
+				url: 'https://graphql.contentful.com/content/v1/spaces/abc123',
+			},
+			{
+				ok: false,
+				url: 'https://graphql.contentful.com/content/v1/spaces/abc123',
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { message: 'Rate limit exceeded' },
+			},
+			'Too Many Requests',
+		);
+		mockRequest.mockRejectedValue(apiError);
+
+		await expect(
+			makeContentfulGraphqlRequest('/content/v1/spaces/abc123', 'key', {
+				query: '{}',
+			}),
+		).rejects.toMatchObject({
+			name: 'ContentfulGraphqlAPIError',
+			status: 429,
+			statusText: 'Too Many Requests',
+			body: { message: 'Rate limit exceeded' },
 		});
 	});
 });
@@ -250,7 +279,6 @@ describe('Contentful GraphQL endpoints', () => {
 		const response = await endpoints.getCmaToken(mockCtx, {});
 
 		expect(response).toEqual({
-			token: 'test-api-key',
 			space_id: 'test-space-id',
 			environment_id: 'staging',
 		});
@@ -271,7 +299,6 @@ describe('Contentful GraphQL endpoints', () => {
 		const response = await endpoints.getCmaToken(ctx, {});
 
 		expect(response).toEqual({
-			token: 'test-api-key',
 			space_id: 'test-space-id',
 		});
 	});

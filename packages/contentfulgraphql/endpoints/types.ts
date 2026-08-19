@@ -12,7 +12,6 @@ export const GetCmaTokenInputSchema = z.object({});
 export type GetCmaTokenInput = z.infer<typeof GetCmaTokenInputSchema>;
 
 export const GetCmaTokenResponseSchema = z.object({
-	token: z.string(),
 	space_id: z.string(),
 	environment_id: z.string().optional(),
 });

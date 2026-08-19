@@ -140,7 +140,7 @@ export const ProviderDisplayNames = {
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
-	contentfulgraphql: 'ContentfulGraphql',
+	contentfulgraphql: 'Contentful GraphQL',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
