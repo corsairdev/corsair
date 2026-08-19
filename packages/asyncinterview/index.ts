@@ -162,6 +162,9 @@ export function asyncinterview<const T extends AsyncInterviewPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				if (typeof ctx.keys?.get_api_key !== 'function') {
+					throw new AuthMissingError('asyncinterview', 'api_key');
+				}
 				try {
 					const res = await ctx.keys.get_api_key();
 					if (!res) {
@@ -170,7 +173,15 @@ export function asyncinterview<const T extends AsyncInterviewPluginOptions>(
 					return res;
 				} catch (error) {
 					if (error instanceof AuthMissingError) throw error;
-					throw new AuthMissingError('asyncinterview', 'api_key');
+					const msg = error instanceof Error ? error.message : '';
+					if (
+						msg.includes('Account not found') ||
+						(msg.includes('Integration "') && msg.includes('not found')) ||
+						msg.includes('No DEK found')
+					) {
+						throw new AuthMissingError('asyncinterview', 'api_key');
+					}
+					throw error;
 				}
 			}
 

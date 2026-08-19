@@ -265,6 +265,31 @@ describe('AsyncInterview endpoints', () => {
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 
+	it('does not treat decryption failures as missing auth', async () => {
+		const plugin = asyncinterview({});
+		const err = await Promise.resolve(
+			plugin.keyBuilder!(
+				{
+					authType: 'api_key',
+					keys: {
+						get_api_key: async () => {
+							throw new Error('Invalid encrypted DEK format');
+						},
+					},
+				} as never,
+				'endpoint',
+			),
+		).then(
+			() => {
+				throw new Error('expected throw');
+			},
+			(error: unknown) => error,
+		);
+		expect(err).toBeInstanceOf(Error);
+		expect(err).not.toBeInstanceOf(AuthMissingError);
+		expect((err as Error).message).toBe('Invalid encrypted DEK format');
+	});
+
 	it('throws AuthMissingError when the key manager is missing', async () => {
 		const plugin = asyncinterview({});
 		await expect(
