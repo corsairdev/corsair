@@ -12,9 +12,10 @@ import {
 export const EndpointInputSchemas = GeneratedEndpointInputSchemas;
 export const EndpointOutputSchemas = GeneratedEndpointOutputSchemas;
 
-export type AttioEndpoint<K extends keyof GeneratedEndpointInputSchemas> =
-	CorsairEndpoint<
-		AttioContext,
-		GeneratedEndpointInputs[K],
-		GeneratedEndpointOutputs[K]
-	>;
+export type AttioEndpoint<
+	K extends keyof typeof GeneratedEndpointInputSchemas,
+> = CorsairEndpoint<
+	AttioContext,
+	GeneratedEndpointInputs[K],
+	GeneratedEndpointOutputs[K]
+>;
