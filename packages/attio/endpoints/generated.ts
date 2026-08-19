@@ -1897,7 +1897,12 @@ export const createDealRecord: AttioEndpoint<'createDealRecord'> = async (
 };
 
 export const createEntry: AttioEndpoint<'createEntry'> = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/entrys', ctx, {
+	let resolvedPath = '/v2/lists/{list}/entries';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'POST',
 		body: input,
 	});
@@ -1976,7 +1981,13 @@ export const createStatus: AttioEndpoint<'createStatus'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/statuses', ctx, {
+	let resolvedPath = '/v2/objects/{object}/attributes/{attribute}/statuses';
+	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'POST',
 		body: input,
 	});
@@ -2073,7 +2084,11 @@ export const deleteDeal: AttioEndpoint<'deleteDeal'> = async (ctx, input) => {
 };
 
 export const deleteEntry: AttioEndpoint<'deleteEntry'> = async (ctx, input) => {
-	let resolvedPath = '/v2/entrys/{entry_id}';
+	let resolvedPath = '/v2/lists/{list}/entries/{entry_id}';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
 	resolvedPath = resolvedPath.replace(
 		'{entry_id}',
 		String(input.entry_id || ''),
@@ -2277,10 +2292,14 @@ export const getListEntry: AttioEndpoint<'getListEntry'> = async (
 	ctx,
 	input,
 ) => {
-	let resolvedPath = '/v2/list_entrys/{list_entry_id}';
+	let resolvedPath = '/v2/lists/{list}/entries/{entry_id}';
 	resolvedPath = resolvedPath.replace(
-		'{list_entry_id}',
-		String(input.list_entry_id || ''),
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
+	resolvedPath = resolvedPath.replace(
+		'{entry_id}',
+		String(input.entry_id || input.list_entry_id || ''),
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
@@ -2378,7 +2397,7 @@ export const getTask: AttioEndpoint<'getTask'> = async (ctx, input) => {
 export const getV2WorkspaceMembers: AttioEndpoint<
 	'getV2WorkspaceMembers'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/workspace/members', ctx, {
+	return await makeAuthenticatedAttioRequest('/v2/workspace_members', ctx, {
 		method: 'GET',
 		query: input as any,
 	});
@@ -2429,7 +2448,13 @@ export const getWorkspaceRecord: AttioEndpoint<'getWorkspaceRecord'> = async (
 export const listAttributeOptions: AttioEndpoint<
 	'listAttributeOptions'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/attribute_options', ctx, {
+	let resolvedPath = '/v2/objects/{object}/attributes/{attribute}/options';
+	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
 		query: input as any,
 	});
@@ -2438,7 +2463,13 @@ export const listAttributeOptions: AttioEndpoint<
 export const listAttributeStatuses: AttioEndpoint<
 	'listAttributeStatuses'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/attribute_statuses', ctx, {
+	let resolvedPath = '/v2/objects/{object}/attributes/{attribute}/statuses';
+	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
 		query: input as any,
 	});
@@ -2448,7 +2479,9 @@ export const listAttributes: AttioEndpoint<'listAttributes'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/attributes', ctx, {
+	let resolvedPath = '/v2/objects/{object}/attributes';
+	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
 		query: input as any,
 	});
@@ -2458,7 +2491,12 @@ export const listCallRecordings: AttioEndpoint<'listCallRecordings'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/call_recordings', ctx, {
+	let resolvedPath = '/v2/meetings/{meeting_id}/call_recordings';
+	resolvedPath = resolvedPath.replace(
+		'{meeting_id}',
+		String(input.meeting_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
 		query: input as any,
 	});
@@ -2468,43 +2506,59 @@ export const listCompanies: AttioEndpoint<'listCompanies'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/companies', ctx, {
-		method: 'GET',
-		query: input as any,
-	});
+	return await makeAuthenticatedAttioRequest(
+		'/v2/objects/companies/records/query',
+		ctx,
+		{
+			method: 'POST',
+			body: input,
+		},
+	);
 };
 
 export const listCompanyAttributeValues: AttioEndpoint<
 	'listCompanyAttributeValues'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/company_attribute_values',
-		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+	let resolvedPath =
+		'/v2/objects/companies/records/{record_id}/attributes/{attribute}/values';
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
 	);
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'GET',
+		query: input as any,
+	});
 };
 
 export const listCompanyRecordEntries: AttioEndpoint<
 	'listCompanyRecordEntries'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/company_record_entries',
-		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+	let resolvedPath = '/v2/objects/companies/records/{record_id}/entries';
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
 	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'GET',
+		query: input as any,
+	});
 };
 
 export const listDealEntries: AttioEndpoint<'listDealEntries'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/deal_entries', ctx, {
+	let resolvedPath = '/v2/objects/deals/records/{record_id}/entries';
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
 		query: input as any,
 	});
@@ -2513,14 +2567,20 @@ export const listDealEntries: AttioEndpoint<'listDealEntries'> = async (
 export const listDealRecordAttributeValues: AttioEndpoint<
 	'listDealRecordAttributeValues'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/deal_record_attribute_values',
-		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+	let resolvedPath =
+		'/v2/objects/deals/records/{record_id}/attributes/{attribute}/values';
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
 	);
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'GET',
+		query: input as any,
+	});
 };
 
 export const listDealRecords: AttioEndpoint<'listDealRecords'> = async (
@@ -2534,9 +2594,14 @@ export const listDealRecords: AttioEndpoint<'listDealRecords'> = async (
 };
 
 export const listEntries: AttioEndpoint<'listEntries'> = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/entries', ctx, {
-		method: 'GET',
-		query: input as any,
+	let resolvedPath = '/v2/lists/{list}/entries/query';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'POST',
+		body: input,
 	});
 };
 
@@ -2557,23 +2622,38 @@ export const listListEntries: AttioEndpoint<'listListEntries'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/entries', ctx, {
-		method: 'GET',
-		query: input as any,
+	let resolvedPath = '/v2/lists/{list}/entries/query';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'POST',
+		body: input,
 	});
 };
 
 export const listListEntryAttributeValues: AttioEndpoint<
 	'listListEntryAttributeValues'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/entry_attribute_values',
-		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+	let resolvedPath =
+		'/v2/lists/{list}/entries/{entry_id}/attributes/{attribute}/values';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
 	);
+	resolvedPath = resolvedPath.replace(
+		'{entry_id}',
+		String(input.entry_id || ''),
+	);
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'GET',
+		query: input as any,
+	});
 };
 
 export const listLists: AttioEndpoint<'listLists'> = async (ctx, input) => {
@@ -2610,20 +2690,31 @@ export const listObjects: AttioEndpoint<'listObjects'> = async (ctx, input) => {
 export const listPeopleAttributeValues: AttioEndpoint<
 	'listPeopleAttributeValues'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/people_attribute_values',
-		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+	let resolvedPath =
+		'/v2/objects/people/records/{record_id}/attributes/{attribute}/values';
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
 	);
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'GET',
+		query: input as any,
+	});
 };
 
 export const listPeopleRecordEntries: AttioEndpoint<
 	'listPeopleRecordEntries'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/people_record_entries', ctx, {
+	let resolvedPath = '/v2/objects/people/records/{record_id}/entries';
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
 		query: input as any,
 	});
@@ -2646,24 +2737,37 @@ export const peopleListPersons: AttioEndpoint<'peopleListPersons'> = async (
 export const listRecordAttributeValues: AttioEndpoint<
 	'listRecordAttributeValues'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/record_attribute_values',
-		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+	let resolvedPath =
+		'/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values';
+	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
 	);
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'GET',
+		query: input as any,
+	});
 };
 
 export const getRecordEntries: AttioEndpoint<'getRecordEntries'> = async (
 	ctx,
 	input,
 ) => {
-	let resolvedPath = '/v2/record_entries/{record_entries_id}';
+	let resolvedPath =
+		'/v2/objects/{object}/records/{record_id}/entries/{entry_id}';
+	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
 	resolvedPath = resolvedPath.replace(
-		'{record_entries_id}',
-		String(input.record_entries_id || ''),
+		'{record_id}',
+		String(input.record_id || ''),
+	);
+	resolvedPath = resolvedPath.replace(
+		'{entry_id}',
+		String(input.entry_id || input.record_entries_id || ''),
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
@@ -2675,7 +2779,13 @@ export const listRecordEntries: AttioEndpoint<'listRecordEntries'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/record_entries', ctx, {
+	let resolvedPath = '/v2/objects/{object}/records/{record_id}/entries';
+	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
 		query: input as any,
 	});
@@ -2718,7 +2828,12 @@ export const listThreads: AttioEndpoint<'listThreads'> = async (ctx, input) => {
 export const listUserRecordEntries: AttioEndpoint<
 	'listUserRecordEntries'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/user_record_entries', ctx, {
+	let resolvedPath = '/v2/objects/users/records/{record_id}/entries';
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
 		query: input as any,
 	});
@@ -2760,27 +2875,34 @@ export const listWorkspaceMembers: AttioEndpoint<
 export const listWorkspaceRecordAttributeValues: AttioEndpoint<
 	'listWorkspaceRecordAttributeValues'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/workspace_record_attribute_values',
-		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+	let resolvedPath =
+		'/v2/objects/workspaces/records/{record_id}/attributes/{attribute}/values';
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
 	);
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'GET',
+		query: input as any,
+	});
 };
 
 export const listWorkspaceRecordEntries: AttioEndpoint<
 	'listWorkspaceRecordEntries'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/workspace_record_entries',
-		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+	let resolvedPath = '/v2/objects/workspaces/records/{record_id}/entries';
+	resolvedPath = resolvedPath.replace(
+		'{record_id}',
+		String(input.record_id || ''),
 	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'GET',
+		query: input as any,
+	});
 };
 
 export const listWorkspaceRecords: AttioEndpoint<
@@ -2909,7 +3031,11 @@ export const updateDealRecord: AttioEndpoint<'updateDealRecord'> = async (
 };
 
 export const updateEntry: AttioEndpoint<'updateEntry'> = async (ctx, input) => {
-	let resolvedPath = '/v2/entrys/{entry_id}';
+	let resolvedPath = '/v2/lists/{list}/entries/{entry_id}';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
 	resolvedPath = resolvedPath.replace(
 		'{entry_id}',
 		String(input.entry_id || ''),
@@ -2932,7 +3058,11 @@ export const updateList: AttioEndpoint<'updateList'> = async (ctx, input) => {
 export const patchV2ListsListEntriesEntryId: AttioEndpoint<
 	'patchV2ListsListEntriesEntryId'
 > = async (ctx, input) => {
-	let resolvedPath = '/v2/lists/list/entries/{entry_id}';
+	let resolvedPath = '/v2/lists/{list}/entries/{entry_id}';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
 	resolvedPath = resolvedPath.replace(
 		'{entry_id}',
 		String(input.entry_id || ''),
@@ -2946,7 +3076,11 @@ export const patchV2ListsListEntriesEntryId: AttioEndpoint<
 export const putV2ListsListEntriesEntryId: AttioEndpoint<
 	'putV2ListsListEntriesEntryId'
 > = async (ctx, input) => {
-	let resolvedPath = '/v2/lists/list/entries/{entry_id}';
+	let resolvedPath = '/v2/lists/{list}/entries/{entry_id}';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
 	resolvedPath = resolvedPath.replace(
 		'{entry_id}',
 		String(input.entry_id || ''),
@@ -3022,7 +3156,13 @@ export const updateStatus: AttioEndpoint<'updateStatus'> = async (
 	ctx,
 	input,
 ) => {
-	let resolvedPath = '/v2/statuses/{status_id}';
+	let resolvedPath =
+		'/v2/objects/{object}/attributes/{attribute}/statuses/{status_id}';
+	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
+	resolvedPath = resolvedPath.replace(
+		'{attribute}',
+		String(input.attribute || ''),
+	);
 	resolvedPath = resolvedPath.replace(
 		'{status_id}',
 		String(input.status_id || ''),
