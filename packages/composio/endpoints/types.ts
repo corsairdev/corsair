@@ -88,11 +88,16 @@ export type ActionsListInput = z.infer<typeof ActionsListInputSchema>;
 
 export type ActionsListResponse = ToolsListResponse;
 
-const ActionGetInputSchema = z.object({
-	tool_slug: PathId.optional(),
-	/** @deprecated use tool_slug */
-	actionId: PathId.optional(),
-});
+const ActionGetInputSchema = z
+	.object({
+		tool_slug: PathId.optional(),
+		/** @deprecated use tool_slug */
+		actionId: PathId.optional(),
+	})
+	.refine(
+		(data) => data.tool_slug !== undefined || data.actionId !== undefined,
+		{ message: 'Either tool_slug or actionId is required' },
+	);
 
 export type ActionGetInput = z.infer<typeof ActionGetInputSchema>;
 
