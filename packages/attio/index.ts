@@ -37,6 +37,7 @@ import type {
 	RecordUpdatedEvent,
 } from './webhooks/types';
 import {
+	hasAttioSignatureHeader,
 	RecordCreatedEventSchema,
 	RecordDeletedEventSchema,
 	RecordUpdatedEventSchema,
@@ -895,12 +896,15 @@ export function attio<const T extends AttioPluginOptions>(
 			authUrl: ATTIO_OAUTH_AUTH_URL,
 			tokenUrl: ATTIO_OAUTH_TOKEN_URL,
 			scopes: [
-				'record_permission:read',
 				'record_permission:read-write',
-				'object_configuration:read',
+				'object_configuration:read-write',
 				'user_management:read',
-				'task:read',
-				'webhook:write',
+				'list_entry:read-write',
+				'list_configuration:read-write',
+				'comment:read-write',
+				'task:read-write',
+				'note:read-write',
+				'webhook:read-write',
 			],
 			authParams: { prompt: 'consent' },
 			tokenAuthMethod: 'body',
@@ -913,10 +917,7 @@ export function attio<const T extends AttioPluginOptions>(
 		endpointMeta: attioEndpointMeta,
 		endpointSchemas: attioEndpointSchemas,
 		webhookSchemas: attioWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'attio-signature' in headers || 'Attio-Signature' in headers;
-		},
+		pluginWebhookMatcher: (request) => hasAttioSignatureHeader(request.headers),
 		pluginTenantWebhookMatcher: matchAttioTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveAttioOAuthWebhookTenantLink,
 		errorHandlers: {
@@ -951,93 +952,16 @@ export function attio<const T extends AttioPluginOptions>(
 				return res;
 			}
 
-			// ── OAuth 2 auth (with token refresh) ─────────────────────────
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const creds = options.credentials;
-
-				const [storedAccessToken, expiresAt, storedRefreshToken] =
-					await Promise.all([
-						ctx.keys.get_access_token(),
-						ctx.keys.get_expires_at(),
-						ctx.keys.get_refresh_token(),
-					]);
-
+				const storedAccessToken = await ctx.keys.get_access_token();
 				const accessToken = storedAccessToken ?? creds?.accessToken ?? null;
-				const refreshToken = storedRefreshToken ?? creds?.refreshToken ?? null;
-
-				if (!refreshToken) {
-					// No refresh token — try to use the access token directly
-					if (accessToken) {
-						return accessToken;
-					}
+				try {
+					const result = await getValidAccessToken({ accessToken });
+					return result.accessToken;
+				} catch {
 					throw new AuthMissingError('attio', 'oauth_2');
 				}
-
-				const integrationCreds = await ctx.keys.get_integration_credentials();
-				const clientId =
-					integrationCreds.client_id ??
-					creds?.clientId ??
-					process.env.ATTIO_CLIENT_ID ??
-					undefined;
-				const clientSecret =
-					integrationCreds.client_secret ??
-					creds?.clientSecret ??
-					process.env.ATTIO_CLIENT_SECRET ??
-					undefined;
-
-				if (!clientId || !clientSecret) {
-					// Without client credentials, return the access token if available
-					if (accessToken) {
-						return accessToken;
-					}
-					throw new Error(
-						'[auth-missing:attio:client_credentials]: Attio client credentials are missing',
-					);
-				}
-
-				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
-				try {
-					result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId,
-						clientSecret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:attio] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await ctx.keys.set_access_token(result.accessToken);
-						await ctx.keys.set_expires_at(String(result.expiresAt));
-					} catch (error) {
-						throw new Error(
-							`[corsair:attio] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				// Expose a force-refresh function so endpoints can retry on 401
-				// without waiting for `expires_at` to lapse.
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId,
-						clientSecret,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
 			}
 
 			throw new AuthMissingError('attio', ctx.authType);
