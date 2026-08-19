@@ -8,7 +8,10 @@ import {
  * Integer job id as string or number.
  * https://docs.composio.dev/toolkits/async_interview
  */
-export const JobIdInput = z.union([z.number().int(), z.string().min(1)]);
+export const JobIdInput = z.union([
+	z.number().int(),
+	z.string().regex(/^\d+$/),
+]);
 
 export const JobSchema = AsyncInterviewJobEntity;
 export type Job = z.infer<typeof JobSchema>;

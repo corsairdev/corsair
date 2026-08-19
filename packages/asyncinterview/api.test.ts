@@ -1,5 +1,6 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ASYNCINTERVIEW_API_BASE } from './client';
+import { DeleteJobInputSchema } from './endpoints/types';
 import { asyncinterview } from './index';
 
 jest.mock('corsair/core', () => ({
@@ -199,6 +200,31 @@ describe('AsyncInterview endpoints', () => {
 		expect(mockLog).toHaveBeenCalled();
 	});
 
+	it('prefers options.key over stored-key lookup', async () => {
+		const plugin = asyncinterview({ key: 'options-key' });
+		const get_api_key = jest.fn(async () => 'stored-key');
+		await expect(
+			plugin.keyBuilder!(
+				{ authType: 'api_key', keys: { get_api_key } } as never,
+				'endpoint',
+			),
+		).resolves.toBe('options-key');
+		expect(get_api_key).not.toHaveBeenCalled();
+	});
+
+	it('returns the stored api key', async () => {
+		const plugin = asyncinterview({});
+		await expect(
+			plugin.keyBuilder!(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => 'stored-key' },
+				} as never,
+				'endpoint',
+			),
+		).resolves.toBe('stored-key');
+	});
+
 	it('throws AuthMissingError when no key is configured', async () => {
 		const plugin = asyncinterview({});
 		await expect(
@@ -207,6 +233,37 @@ describe('AsyncInterview endpoints', () => {
 				'endpoint',
 			),
 		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('throws AuthMissingError when stored-key lookup fails', async () => {
+		const plugin = asyncinterview({});
+		await expect(
+			plugin.keyBuilder!(
+				{
+					authType: 'api_key',
+					keys: {
+						get_api_key: async () => {
+							throw new Error(
+								'Account not found for tenant "default" and integration "asyncinterview". Make sure to create the account first.',
+							);
+						},
+					},
+				} as never,
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('throws AuthMissingError when the key manager is missing', async () => {
+		const plugin = asyncinterview({});
+		await expect(
+			plugin.keyBuilder!({ authType: 'api_key' } as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('rejects a non-numeric job_id', () => {
+		expect(() => DeleteJobInputSchema.parse({ job_id: 'abc' })).toThrow();
+		expect(DeleteJobInputSchema.parse({ job_id: '1651' }).job_id).toBe('1651');
 	});
 
 	it('rejects a job list payload that has no id', async () => {
