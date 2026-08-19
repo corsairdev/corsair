@@ -58,11 +58,12 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canva',
 	'canvas',
+	'canva',
 	'circleci',
 	'cloudflare',
 	'cloudinary',
+	'collegefootballdata',
 	'confluence',
 	'cursor',
 	'databricks',
@@ -208,11 +209,12 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canva: 'Canva',
 	canvas: 'Canvas LMS',
+	canva: 'Canva',
 	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
+	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
@@ -370,6 +372,7 @@ export type AllProviders =
 	| 'circleci'
 	| 'cloudflare'
 	| 'cloudinary'
+	| 'collegefootballdata'
 	| 'confluence'
 	| 'cursor'
 	| 'databricks'
