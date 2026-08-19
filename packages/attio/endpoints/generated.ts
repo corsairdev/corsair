@@ -2618,14 +2618,15 @@ export const listEntries: AttioEndpoint<'listEntries'> = async (ctx, input) => {
 export const postV2ListsListEntriesQuery: AttioEndpoint<
 	'postV2ListsListEntriesQuery'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/lists/list/entries/query',
-		ctx,
-		{
-			method: 'POST',
-			body: input,
-		},
+	let resolvedPath = '/v2/lists/{list}/entries/query';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
 	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+		method: 'POST',
+		body: input,
+	});
 };
 
 export const listListEntries: AttioEndpoint<'listListEntries'> = async (
