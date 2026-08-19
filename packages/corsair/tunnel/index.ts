@@ -100,6 +100,8 @@ export type WebhookTunnelPayload = {
 	linkType?: string;
 	externalId?: string;
 	tenantId?: string;
+	/** Hub already verified the provider signature before signing this delivery. */
+	hubVerified?: boolean;
 };
 
 export type OAuthCallbackTunnelPayload = {
@@ -263,7 +265,7 @@ async function handleWebhookTunnel(
 		query,
 		// Hub routed this by the plugin's own endpoint — dispatch exactly there,
 		// never by body shape (MS Graph siblings are indistinguishable).
-		payload.plugin ? { plugin: payload.plugin } : undefined,
+		{ plugin: payload.plugin, hubVerified: payload.hubVerified },
 	);
 
 	if (!result.plugin) {
