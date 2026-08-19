@@ -5,31 +5,33 @@ import type {
 	WebhookRequest,
 } from 'corsair/core';
 import { z } from 'zod';
-import { AttioRecord } from '../schema/database';
+
+export const AttioWebhookEventIdSchema = z.object({
+	workspace_id: z.string(),
+	object_id: z.string().optional(),
+	record_id: z.string(),
+});
 
 export const AttioWebhookPayloadSchema = z.object({
 	event_type: z.string(),
-	created_at: z.string(),
-	data: z.any(),
+	id: AttioWebhookEventIdSchema,
+	actor: z.unknown().optional(),
 });
 
 export type AttioWebhookPayload = z.infer<typeof AttioWebhookPayloadSchema>;
 
 export const RecordCreatedEventSchema = AttioWebhookPayloadSchema.extend({
 	event_type: z.literal('record.created'),
-	data: AttioRecord,
 });
 export type RecordCreatedEvent = z.infer<typeof RecordCreatedEventSchema>;
 
 export const RecordUpdatedEventSchema = AttioWebhookPayloadSchema.extend({
 	event_type: z.literal('record.updated'),
-	data: AttioRecord,
 });
 export type RecordUpdatedEvent = z.infer<typeof RecordUpdatedEventSchema>;
 
 export const RecordDeletedEventSchema = AttioWebhookPayloadSchema.extend({
 	event_type: z.literal('record.deleted'),
-	data: AttioRecord,
 });
 export type RecordDeletedEvent = z.infer<typeof RecordDeletedEventSchema>;
 
@@ -57,15 +59,65 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
+function headerValue(
+	headers: Record<string, string | string[] | undefined>,
+	names: string[],
+): string | undefined {
+	const entries = Object.entries(headers);
+	for (const name of names) {
+		const found = entries.find(([key]) => key.toLowerCase() === name);
+		if (!found) continue;
+		const value = found[1];
+		if (Array.isArray(value)) {
+			return value[0];
+		}
+		if (typeof value === 'string' && value.length > 0) {
+			return value;
+		}
+	}
+	return undefined;
+}
+
+export function hasAttioSignatureHeader(
+	headers: Record<string, string | string[] | undefined>,
+): boolean {
+	return Object.keys(headers).some((key) => {
+		const lower = key.toLowerCase();
+		return lower === 'attio-signature' || lower === 'x-attio-signature';
+	});
+}
+
+function eventTypesFrom(body: Record<string, unknown>): string[] {
+	const types: string[] = [];
+	if (typeof body.event_type === 'string') {
+		types.push(body.event_type);
+	}
+	if (Array.isArray(body.events)) {
+		for (const event of body.events) {
+			if (
+				event !== null &&
+				typeof event === 'object' &&
+				!Array.isArray(event) &&
+				typeof (event as { event_type?: unknown }).event_type === 'string'
+			) {
+				types.push((event as { event_type: string }).event_type);
+			}
+		}
+	}
+	return types;
+}
+
 export function createAttioMatch(eventType: string): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
-		return parsedBody !== null && parsedBody.event_type === eventType;
+		return (
+			parsedBody !== null && eventTypesFrom(parsedBody).includes(eventType)
+		);
 	};
 }
 
 export function verifyAttioWebhookSignature(
-	request: WebhookRequest<AttioWebhookPayload>,
+	request: WebhookRequest<unknown>,
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
@@ -75,41 +127,25 @@ export function verifyAttioWebhookSignature(
 		};
 	}
 
-	const signatureHeader = (request.headers['attio-signature'] ||
-		request.headers['Attio-Signature']) as string | undefined;
-	if (!signatureHeader) {
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const signature = headerValue(request.headers, [
+		'attio-signature',
+		'x-attio-signature',
+	]);
+	if (!signature) {
 		return { valid: false, error: 'Missing attio-signature header' };
 	}
 
-	const parts = signatureHeader.split(',');
-	let timestamp: string | undefined;
-	let signature: string | undefined;
-
-	for (const part of parts) {
-		const [key, val] = part.split('=');
-		if (key === 't') timestamp = val;
-		if (key === 'v1') signature = val;
-	}
-
-	if (!timestamp || !signature) {
-		return { valid: false, error: 'Invalid attio-signature format' };
-	}
-
-	const now = Math.floor(Date.now() / 1000);
-	const ts = parseInt(timestamp, 10);
-	if (Number.isNaN(ts) || Math.abs(now - ts) > 300) {
-		return { valid: false, error: 'Webhook timestamp too old or invalid' };
-	}
-
-	const rawBody =
-		typeof request.rawBody === 'string'
-			? request.rawBody
-			: JSON.stringify(request.payload);
-	const signaturePayload = `${timestamp}.${rawBody}`;
-
 	const expectedSignature = crypto
 		.createHmac('sha256', secret)
-		.update(signaturePayload)
+		.update(rawBody)
 		.digest('hex');
 
 	try {
@@ -122,7 +158,7 @@ export function verifyAttioWebhookSignature(
 			return { valid: false, error: 'Signature mismatch' };
 		}
 	} catch {
-		return { valid: false, error: 'Signature verification failed' };
+		return { valid: false, error: 'Signature mismatch' };
 	}
 
 	return { valid: true };
