@@ -57,7 +57,8 @@ export function bindWebhooksRecursively({
 					value.handler(callCtx, callRequest);
 
 				const key =
-					keyBuilder && !(request as { hubVerified?: boolean })?.hubVerified
+					keyBuilder &&
+					(request as { hubVerified?: boolean })?.hubVerified !== true
 						? await keyBuilder(ctx, 'webhook')
 						: undefined;
 

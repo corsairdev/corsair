@@ -909,7 +909,7 @@ export function verifySlackWebhookSignature(
 	request: WebhookRequest,
 	signingSecret?: string,
 ): { valid: boolean; error?: string } {
-	if (request.hubVerified) {
+	if (request.hubVerified === true) {
 		return { valid: true };
 	}
 	if (!signingSecret) {

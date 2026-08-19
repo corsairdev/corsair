@@ -2182,7 +2182,7 @@ export function verifyGithubWebhookSignature(
 	request: WebhookRequest<unknown>,
 	webhookSecret?: string,
 ): { valid: boolean; error?: string } {
-	if (request.hubVerified) {
+	if (request.hubVerified === true) {
 		return { valid: true };
 	}
 	if (!webhookSecret) {

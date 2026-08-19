@@ -56,27 +56,30 @@ describe('slack webhook — hubVerified skips app-side verification', () => {
 describe('slack webhook — unsigned tunnel must not trust hubVerified', () => {
 	it('drops caller-supplied hubVerified on an unsigned tunnel delivery', async () => {
 		const { corsair, testDb } = await buildCorsair();
-		const envelope = JSON.stringify({
-			type: 'webhook',
-			payload: {
-				plugin: 'slack',
-				headers: { 'content-type': 'application/json' },
-				body: challengeBody,
-				// Attacker-controlled: an unsigned envelope claiming Hub verification.
-				hubVerified: true,
-			},
-		});
+		try {
+			const envelope = JSON.stringify({
+				type: 'webhook',
+				payload: {
+					plugin: 'slack',
+					headers: { 'content-type': 'application/json' },
+					body: challengeBody,
+					// Attacker-controlled: an unsigned envelope claiming Hub verification.
+					hubVerified: true,
+				},
+			});
 
-		const ack = await processCorsair(
-			corsair,
-			{ headers: {}, body: envelope },
-			{ allowUnsignedTunnel: true },
-		);
+			const ack = await processCorsair(
+				corsair,
+				{ headers: {}, body: envelope },
+				{ allowUnsignedTunnel: true },
+			);
 
-		// The envelope is unauthenticated, so hubVerified is ignored and provider
-		// signature verification still runs — the forged event fails closed.
-		expect(ack.status).toBe('failed');
-		expect(String(ack.error)).toContain('webhook_signature');
-		testDb.cleanup();
+			// The envelope is unauthenticated, so hubVerified is ignored and provider
+			// signature verification still runs — the forged event fails closed.
+			expect(ack.status).toBe('failed');
+			expect(String(ack.error)).toContain('webhook_signature');
+		} finally {
+			testDb.cleanup();
+		}
 	});
 });
