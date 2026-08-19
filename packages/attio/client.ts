@@ -154,7 +154,7 @@ export async function makeAttioRequest<T>(
 			error instanceof Error
 				? error.message
 				: error?.message || String(error || 'Unknown error');
-		throw new AttioAPIError(message, error?.status);
+		throw new AttioAPIError(message, error?.status, error?.code);
 	}
 }
 
