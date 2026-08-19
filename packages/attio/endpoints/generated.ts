@@ -1785,7 +1785,12 @@ export const GeneratedEndpointMeta = {
 export const putV2ListsListEntries: AttioEndpoint<
 	'putV2ListsListEntries'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/lists/list/entries', ctx, {
+	let resolvedPath = '/v2/lists/{list}/entries';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'PUT',
 		body: input,
 	});
@@ -1918,7 +1923,12 @@ export const createList: AttioEndpoint<'createList'> = async (ctx, input) => {
 export const postV2ListsListEntries: AttioEndpoint<
 	'postV2ListsListEntries'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/lists/list/entries', ctx, {
+	let resolvedPath = '/v2/lists/{list}/entries';
+	resolvedPath = resolvedPath.replace(
+		'{list}',
+		String(input.list || input.list_id || ''),
+	);
+	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'POST',
 		body: input,
 	});
