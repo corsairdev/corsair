@@ -2,6 +2,7 @@ import * as Files from './files';
 import * as Folders from './folders';
 import * as Search from './search';
 import * as SharedDrives from './shared-drives';
+import * as Storage from './storage';
 
 export const FilesEndpoints = {
 	list: Files.list,
@@ -34,6 +35,10 @@ export const SharedDrivesEndpoints = {
 
 export const SearchEndpoints = {
 	filesAndFolders: Search.filesAndFolders,
+};
+
+export const StorageEndpoints = {
+	getQuota: Storage.getQuota,
 };
 
 export * from './types';

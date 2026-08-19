@@ -83,4 +83,45 @@ describe('renewAccounts (BYO subscription renewal)', () => {
 			failed: ['outlook/bad'],
 		});
 	});
+
+	it('primes a managed plugin with its authType AND hub, expiry forced', async () => {
+		const seen: Array<{
+			authType: string;
+			hasHub: boolean;
+			expiresAt: string;
+		}> = [];
+		const outlook = {
+			id: 'outlook',
+			options: { authType: 'managed' },
+			authConfig: { managed: { account: ['subscription_id', 'client_state'] } },
+			subscribe: async () => ({}),
+			keyBuilder: async (ctx: any) => {
+				// mirror the real managed keyBuilder branch, which throws without hub
+				if (ctx.authType === 'managed' && !ctx.hub) {
+					throw new Error('Hub config is required for managed auth');
+				}
+				seen.push({
+					authType: ctx.authType,
+					hasHub: !!ctx.hub,
+					expiresAt: await ctx.keys.get_expires_at(),
+				});
+				return 'tok';
+			},
+		};
+		const result = await renewAccounts({
+			corsair: {},
+			internal: {
+				...internalBase,
+				hub: { signingSecret: 's' },
+				plugins: [outlook],
+			},
+			rows: [{ tenantId: 't1', integrationName: 'outlook' }],
+			subscribeAndReport: async () => {},
+		});
+
+		expect(seen).toEqual([
+			{ authType: 'managed', hasHub: true, expiresAt: '0' },
+		]);
+		expect(result.renewed).toEqual(['outlook/t1']);
+	});
 });

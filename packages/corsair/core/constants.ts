@@ -14,21 +14,57 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'abstract',
+	'activecampaign',
 	'activetrail',
+	'addresszen',
+	'affinda',
+	'agencyzoom',
+	'agentmail',
 	'agentql',
+	'agenty',
 	'ahrefs',
+	'aimlapi',
 	'airtable',
+	'alchemy',
 	'algolia',
+	'alphavantage',
+	'altoviz',
+	'alttextai',
+	'amara',
+	'ambee',
+	'ambientweather',
+	'amcards',
 	'amplitude',
+	'apaleo',
+	'apibible',
+	'apify',
+	'apilabz',
+	'apininjas',
+	'apisports',
 	'asana',
+	'asindataapi',
+	'asyncinterview',
+	'ayrshare',
+	'baselinker',
+	'betterstack',
+	'bigmailer',
+	'bigml',
+	'bitbucket',
 	'bitwarden',
+	'blazemeter',
 	'bluesky',
+	'boloforms',
+	'botpress',
 	'box',
+	'bugsnag',
 	'cal',
 	'calendly',
+	'canvas',
 	'canva',
+	'circleci',
 	'cloudflare',
 	'cloudinary',
+	'collegefootballdata',
 	'composio',
 	'confluence',
 	'cursor',
@@ -37,8 +73,11 @@ export const BaseProviders = [
 	'deepseek',
 	'digitalocean',
 	'discord',
+	'dockerhub',
 	'dodopayments',
+	'doppler',
 	'dropbox',
+	'epicgames',
 	'exa',
 	'facebook',
 	'figma',
@@ -56,20 +95,27 @@ export const BaseProviders = [
 	'googlemeet',
 	'googlesheets',
 	'grafana',
+	'habitica',
 	'hackernews',
+	'harvest',
 	'hashnode',
 	'heygen',
 	'hubspot',
+	'huggingface',
 	'insightoai',
 	'instagram',
 	'intercom',
 	'jira',
 	'linear',
 	'linkedin',
+	'loyverse',
 	'mailchimp',
+	'mailtrap',
 	'monday',
 	'neon',
+	'nextdns',
 	'notion',
+	'ocrspace',
 	'ollama',
 	'onedrive',
 	'onepassword',
@@ -84,7 +130,9 @@ export const BaseProviders = [
 	'reddit',
 	'resend',
 	'retailed',
+	'salesforce',
 	'sentry',
+	'serpapi',
 	'sharepoint',
 	'slack',
 	'spotify',
@@ -96,15 +144,21 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'todoist',
+	'toggl',
 	'trello',
 	'twilio',
 	'twitter',
 	'twitterapiio',
+	'twochat',
 	'typeform',
 	'vapi',
 	'vercel',
+	'webflow',
 	'whatsapp',
+	'wiza',
+	'workday',
 	'xquik',
+	'youcom',
 	'youtube',
 	'zendesk',
 	'zohomail',
@@ -113,21 +167,57 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
+	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
+	addresszen: 'Addresszen',
+	affinda: 'Affinda',
+	agencyzoom: 'AgencyZoom',
+	agentmail: 'AgentMail',
 	agentql: 'AgentQL',
+	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
+	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
+	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	alphavantage: 'Alpha Vantage',
+	altoviz: 'Altoviz',
+	alttextai: 'AltText.ai',
+	amara: 'Amara',
+	ambee: 'Ambee',
+	ambientweather: 'Ambient Weather',
+	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	apaleo: 'Apaleo',
+	apibible: 'API.Bible',
+	apify: 'Apify',
+	apilabz: 'API Labz',
+	apininjas: 'API Ninjas',
+	apisports: 'API-Sports',
 	asana: 'Asana',
+	asindataapi: 'ASIN Data API',
+	asyncinterview: 'Async Interview',
+	ayrshare: 'Ayrshare',
+	baselinker: 'BaseLinker',
+	betterstack: 'Better Stack',
+	bigmailer: 'BigMailer',
+	bigml: 'BigML',
+	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
+	blazemeter: 'BlazeMeter',
 	bluesky: 'Bluesky',
+	boloforms: 'Boloforms',
+	botpress: 'Botpress',
 	box: 'Box',
+	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
+	collegefootballdata: 'College Football Data',
 	composio: 'Composio',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
@@ -136,8 +226,11 @@ export const ProviderDisplayNames = {
 	deepseek: 'DeepSeek',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
+	doppler: 'Doppler',
 	dropbox: 'Dropbox',
+	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
 	figma: 'Figma',
@@ -155,20 +248,27 @@ export const ProviderDisplayNames = {
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
+	habitica: 'Habitica',
 	hackernews: 'Hacker News',
+	harvest: 'Harvest',
 	hashnode: 'Hashnode',
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
+	huggingface: 'Hugging Face',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
+	loyverse: 'Loyverse',
 	mailchimp: 'Mailchimp',
+	mailtrap: 'Mailtrap',
 	monday: 'Monday',
 	neon: 'Neon',
+	nextdns: 'NextDNS',
 	notion: 'Notion',
+	ocrspace: 'OCR.space',
 	ollama: 'Ollama',
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
@@ -183,7 +283,9 @@ export const ProviderDisplayNames = {
 	reddit: 'Reddit',
 	resend: 'Resend',
 	retailed: 'Retailed',
+	salesforce: 'Salesforce',
 	sentry: 'Sentry',
+	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
 	spotify: 'Spotify',
@@ -195,15 +297,21 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	todoist: 'Todoist',
+	toggl: 'Toggl',
 	trello: 'Trello',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
+	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
+	webflow: 'Webflow',
 	whatsapp: 'WhatsApp',
+	wiza: 'Wiza',
+	workday: 'Workday',
 	xquik: 'XQuik',
+	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
@@ -219,21 +327,57 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'abstract'
+	| 'activecampaign'
 	| 'activetrail'
+	| 'addresszen'
+	| 'affinda'
+	| 'agencyzoom'
+	| 'agentmail'
 	| 'agentql'
+	| 'agenty'
 	| 'ahrefs'
+	| 'aimlapi'
 	| 'airtable'
+	| 'alchemy'
 	| 'algolia'
+	| 'alphavantage'
+	| 'altoviz'
+	| 'alttextai'
+	| 'amara'
+	| 'ambee'
+	| 'ambientweather'
+	| 'amcards'
 	| 'amplitude'
+	| 'apaleo'
+	| 'apibible'
+	| 'apify'
+	| 'apilabz'
+	| 'apininjas'
+	| 'apisports'
 	| 'asana'
+	| 'asindataapi'
+	| 'asyncinterview'
+	| 'ayrshare'
+	| 'baselinker'
+	| 'betterstack'
+	| 'bigmailer'
+	| 'bigml'
+	| 'bitbucket'
 	| 'bitwarden'
+	| 'blazemeter'
 	| 'bluesky'
+	| 'boloforms'
+	| 'botpress'
 	| 'box'
+	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
 	| 'canva'
+	| 'canvas'
+	| 'circleci'
 	| 'cloudflare'
 	| 'cloudinary'
+	| 'collegefootballdata'
 	| 'composio'
 	| 'confluence'
 	| 'cursor'
@@ -242,8 +386,11 @@ export type AllProviders =
 	| 'deepseek'
 	| 'digitalocean'
 	| 'discord'
+	| 'dockerhub'
 	| 'dodopayments'
+	| 'doppler'
 	| 'dropbox'
+	| 'epicgames'
 	| 'exa'
 	| 'facebook'
 	| 'figma'
@@ -261,20 +408,27 @@ export type AllProviders =
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
+	| 'habitica'
 	| 'hackernews'
+	| 'harvest'
 	| 'hashnode'
 	| 'heygen'
 	| 'hubspot'
+	| 'huggingface'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
 	| 'jira'
 	| 'linear'
 	| 'linkedin'
+	| 'loyverse'
 	| 'mailchimp'
+	| 'mailtrap'
 	| 'monday'
 	| 'neon'
+	| 'nextdns'
 	| 'notion'
+	| 'ocrspace'
 	| 'ollama'
 	| 'onedrive'
 	| 'onepassword'
@@ -289,7 +443,9 @@ export type AllProviders =
 	| 'reddit'
 	| 'resend'
 	| 'retailed'
+	| 'salesforce'
 	| 'sentry'
+	| 'serpapi'
 	| 'sharepoint'
 	| 'slack'
 	| 'spotify'
@@ -301,15 +457,21 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'todoist'
+	| 'toggl'
 	| 'trello'
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
+	| 'twochat'
 	| 'typeform'
 	| 'vapi'
 	| 'vercel'
+	| 'webflow'
 	| 'whatsapp'
+	| 'wiza'
+	| 'workday'
 	| 'xquik'
+	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'

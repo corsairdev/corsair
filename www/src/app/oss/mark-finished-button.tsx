@@ -1,6 +1,7 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
+import posthog from 'posthog-js';
 import { useState } from 'react';
 
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +31,9 @@ export function MarkReadyToReviewButton({
 
 		try {
 			await markIntegrationReadyToReview(integrationId);
+			posthog.capture('integration_ready_for_review', {
+				integration_id: integrationId,
+			});
 			router.refresh();
 		} catch (err) {
 			setError(
