@@ -99,12 +99,15 @@ describe('Composio webhook verification', () => {
 	});
 
 	it('verifies from raw string body before parse', () => {
-		const signature = sign(secret, id, ts, body);
+		// Distinct webhook-id so the replay cache (shared across the file) does
+		// not treat this as a duplicate of the earlier accepted delivery.
+		const rawId = 'msg_raw_1';
+		const signature = sign(secret, rawId, ts, body);
 		const result = verifyComposioWebhookSignatureFromRaw(
 			{
 				body,
 				headers: {
-					'webhook-id': id,
+					'webhook-id': rawId,
 					'webhook-timestamp': ts,
 					'webhook-signature': signature,
 				},
@@ -144,5 +147,63 @@ describe('Composio webhook verification', () => {
 				headers: { 'Webhook-Signature': 'v1,x' },
 			} as never),
 		).toBe(true);
+	});
+
+	it('rejects a replayed delivery with the same webhook-id and timestamp', () => {
+		const replayId = 'msg_replay_1';
+		const replayTs = String(Math.floor(Date.now() / 1000));
+		const signature = sign(secret, replayId, replayTs, body);
+		const request = {
+			rawBody: body,
+			rawBodyPreserved: true,
+			headers: {
+				'webhook-id': replayId,
+				'webhook-timestamp': replayTs,
+				'webhook-signature': signature,
+			},
+			payload: JSON.parse(body),
+		} as never;
+
+		// First delivery verifies and is recorded.
+		expect(verifyComposioWebhookSignature(request, secret).valid).toBe(true);
+		// Same id + timestamp re-sent = replay; must be rejected.
+		expect(verifyComposioWebhookSignature(request, secret).valid).toBe(false);
+	});
+
+	it('accepts the same webhook-id again with a fresh timestamp (not a replay)', () => {
+		const id = 'msg_fresh_ts';
+		const ts1 = String(Math.floor(Date.now() / 1000));
+		const ts2 = String(Math.floor(Date.now() / 1000) + 1);
+
+		const first = verifyComposioWebhookSignature(
+			{
+				rawBody: body,
+				rawBodyPreserved: true,
+				headers: {
+					'webhook-id': id,
+					'webhook-timestamp': ts1,
+					'webhook-signature': sign(secret, id, ts1, body),
+				},
+				payload: JSON.parse(body),
+			} as never,
+			secret,
+		);
+		expect(first.valid).toBe(true);
+
+		// A new timestamp is a distinct, legitimate delivery.
+		const second = verifyComposioWebhookSignature(
+			{
+				rawBody: body,
+				rawBodyPreserved: true,
+				headers: {
+					'webhook-id': id,
+					'webhook-timestamp': ts2,
+					'webhook-signature': sign(secret, id, ts2, body),
+				},
+				payload: JSON.parse(body),
+			} as never,
+			secret,
+		);
+		expect(second.valid).toBe(true);
 	});
 });

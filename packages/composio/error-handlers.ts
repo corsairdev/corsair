@@ -13,11 +13,13 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
+				// Respect an explicit Retry-After delay from the API.
+				return { maxRetries: 5, headersRetryAfterMs: error.retryAfter };
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			// No Retry-After header: back off exponentially instead of firing
+			// retries back-to-back against a throttled endpoint.
+			return { maxRetries: 5, retryStrategy: 'exponential_backoff' };
 		},
 	},
 	AUTH_ERROR: {

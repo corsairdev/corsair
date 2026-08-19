@@ -127,6 +127,38 @@ function hmacKeyFromSecret(secret: string): Buffer {
 const SIGNATURE_FAILED = 'Signature verification failed';
 
 /**
+ * Standard Webhooks replay protection. Remember the (webhook-id, timestamp)
+ * of deliveries accepted within the tolerance window so a captured request
+ * cannot be re-delivered to trigger duplicate downstream effects (e.g. re-firing
+ * a `composio.trigger.message` automation). Entries are evicted lazily once
+ * they fall outside the window, keeping the store bounded.
+ */
+const WEBHOOK_REPLAY_WINDOW_MS = 5 * 60 * 1000;
+const processedWebhookDeliveries = new Map<string, number>();
+let lastReplayEvictionMs = 0;
+
+function isWebhookReplayed(webhookId: string, webhookTimestamp: string): boolean {
+	const now = Date.now();
+
+	// Lazy, window-bounded eviction so the map does not grow unboundedly.
+	if (now - lastReplayEvictionMs > WEBHOOK_REPLAY_WINDOW_MS) {
+		for (const [key, seenAtMs] of processedWebhookDeliveries) {
+			if (now - seenAtMs > WEBHOOK_REPLAY_WINDOW_MS) {
+				processedWebhookDeliveries.delete(key);
+			}
+		}
+		lastReplayEvictionMs = now;
+	}
+
+	const deliveryKey = `${webhookId}:${webhookTimestamp}`;
+	if (processedWebhookDeliveries.has(deliveryKey)) {
+		return true;
+	}
+	processedWebhookDeliveries.set(deliveryKey, now);
+	return false;
+}
+
+/**
  * Composio signs with Standard Webhooks:
  * HMAC-SHA256 over `{webhook-id}.{webhook-timestamp}.{rawBody}`, digest base64.
  * Header `webhook-signature` looks like `v1,<base64>` (space-separated if multiple).
@@ -190,6 +222,13 @@ export function verifyComposioWebhookSignature(
 	});
 
 	if (!isValid) return { valid: false, error: SIGNATURE_FAILED };
+
+	// Reject a replay: the same (webhook-id, timestamp) already accepted within
+	// the tolerance window must not trigger duplicate downstream effects.
+	if (isWebhookReplayed(webhookId, webhookTimestamp)) {
+		return { valid: false, error: SIGNATURE_FAILED };
+	}
+
 	return { valid: true };
 }
 

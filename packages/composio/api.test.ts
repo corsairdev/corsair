@@ -50,6 +50,9 @@ describe('Composio v3 endpoint paths', () => {
 		await endpoints.tools?.get?.(ctx, { tool_slug: 'GMAIL_SEND_EMAIL' });
 		expect(lastUrl()).toBe('/v3/tools/GMAIL_SEND_EMAIL');
 
+		await endpoints.actions?.get?.(ctx, { tool_slug: 'GMAIL_SEND_EMAIL' });
+		expect(lastUrl()).toBe('/v3/tools/GMAIL_SEND_EMAIL');
+
 		mockRequest.mockResolvedValue({ successful: true, data: {} });
 		await endpoints.actions?.execute?.(ctx, {
 			tool_slug: 'GMAIL_SEND_EMAIL',
@@ -79,6 +82,7 @@ describe('Composio v3 endpoint paths', () => {
 		await endpoints.apps?.list?.(ctx, {});
 		await endpoints.tools?.list?.(ctx, {});
 		await endpoints.actions?.list?.(ctx, { toolkit_slug: 'github' });
+		await endpoints.actions?.get?.(ctx, { tool_slug: 'github' });
 		for (const call of mockRequest.mock.calls) {
 			const url = call?.[1]?.url as string;
 			expect(url.startsWith('/v1/')).toBe(false);
