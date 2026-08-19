@@ -134,7 +134,10 @@ export function createAsanaEventMatch(
 export function verifyAsanaWebhookSignature(
 	// any/unknown for payload and headers since they come from raw webhook request before parsing
 	request: { payload: unknown; headers: unknown },
-	secret: string,
+	// The secret comes from the webhook signing key, which is optional: an
+	// unset key is resolved as undefined. Allow the missing-value case in the
+	// type so callers and tests can pass it without a cast.
+	secret: string | undefined,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
 		return { valid: false, error: 'Missing webhook secret' };

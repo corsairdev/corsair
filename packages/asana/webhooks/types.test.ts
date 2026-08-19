@@ -30,7 +30,7 @@ describe('verifyAsanaWebhookSignature', () => {
 	it('returns error when secret is undefined', () => {
 		const result = verifyAsanaWebhookSignature(
 			{ payload, headers: { 'x-hook-signature': sign(secret) } },
-			undefined as unknown as string,
+			undefined,
 		);
 		expect(result).toEqual({
 			valid: false,
