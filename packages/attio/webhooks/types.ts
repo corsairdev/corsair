@@ -69,7 +69,10 @@ export function verifyAttioWebhookSignature(
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
+		return {
+			valid: false,
+			error: 'Missing webhook signing secret configuration',
+		};
 	}
 
 	const signatureHeader = (request.headers['attio-signature'] ||
