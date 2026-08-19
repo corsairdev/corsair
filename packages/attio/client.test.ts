@@ -1,5 +1,5 @@
 import { request } from 'corsair/http';
-import { AttioAPIError, makeAttioRequest } from './client';
+import { AttioAPIError, getValidAccessToken, makeAttioRequest } from './client';
 
 jest.mock('corsair/http', () => ({
 	request: jest.fn(),
@@ -8,7 +8,7 @@ jest.mock('corsair/http', () => ({
 describe('Attio HTTP Client Error Normalization', () => {
 	it('should pass the original error code to AttioAPIError when request fails with a coded error', async () => {
 		const codedError = new Error('Rate limit exceeded');
-		(codedError as any).code = 'RATE_LIMIT';
+		(codedError as { code?: string }).code = 'RATE_LIMIT';
 
 		(request as jest.Mock).mockRejectedValueOnce(codedError);
 
@@ -19,11 +19,63 @@ describe('Attio HTTP Client Error Normalization', () => {
 		(request as jest.Mock).mockRejectedValueOnce(codedError);
 		try {
 			await makeAttioRequest('/v2/test', 'test-key');
-		} catch (error: any) {
+			throw new Error('expected makeAttioRequest to reject');
+		} catch (error: unknown) {
 			expect(error).toBeInstanceOf(AttioAPIError);
-			expect(error.message).toBe('Rate limit exceeded');
-			expect(error.code).toBe('RATE_LIMIT');
-			expect(error.status).toBeUndefined();
+			expect(error).toMatchObject({
+				message: 'Rate limit exceeded',
+				code: 'RATE_LIMIT',
+				status: undefined,
+			});
 		}
+	});
+
+	it('rethrows errors that already have a status', async () => {
+		const statusError = Object.assign(new Error('unauthorized'), {
+			status: 401,
+		});
+		(request as jest.Mock).mockRejectedValueOnce(statusError);
+		await expect(makeAttioRequest('/v2/self', 'test-key')).rejects.toBe(
+			statusError,
+		);
+	});
+});
+
+describe('getValidAccessToken', () => {
+	const fetchSpy = jest.spyOn(globalThis, 'fetch');
+
+	afterEach(() => {
+		fetchSpy.mockReset();
+	});
+
+	afterAll(() => {
+		fetchSpy.mockRestore();
+	});
+
+	it('returns the existing access token without calling the token endpoint', async () => {
+		await expect(
+			getValidAccessToken({
+				accessToken: 'tok',
+				clientId: 'id',
+				clientSecret: 'secret',
+				refreshToken: 'refresh',
+			}),
+		).resolves.toEqual({
+			accessToken: 'tok',
+			refreshed: false,
+		});
+		expect(fetchSpy).not.toHaveBeenCalled();
+	});
+
+	it('throws when no access token is available', async () => {
+		await expect(
+			getValidAccessToken({
+				accessToken: null,
+				clientId: 'id',
+				clientSecret: 'secret',
+				refreshToken: 'refresh',
+			}),
+		).rejects.toThrow();
+		expect(fetchSpy).not.toHaveBeenCalled();
 	});
 });
