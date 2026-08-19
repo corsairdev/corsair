@@ -1,4 +1,4 @@
-import { processWebhook } from 'corsair';
+import { processCorsair, processWebhook } from 'corsair';
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
 import { slack } from './index';
@@ -46,10 +46,37 @@ describe('slack webhook — hubVerified skips app-side verification', () => {
 			{ plugin: 'slack', hubVerified: true },
 		);
 		expect(result.response?.success).toBe(true);
-		// ponytail: cast needed — returnToSender fields are merged at runtime but not in WebhookResponse type
 		expect((result.response as Record<string, unknown>)?.['challenge']).toBe(
 			'chal-123',
 		);
+		testDb.cleanup();
+	});
+});
+
+describe('slack webhook — unsigned tunnel must not trust hubVerified', () => {
+	it('drops caller-supplied hubVerified on an unsigned tunnel delivery', async () => {
+		const { corsair, testDb } = await buildCorsair();
+		const envelope = JSON.stringify({
+			type: 'webhook',
+			payload: {
+				plugin: 'slack',
+				headers: { 'content-type': 'application/json' },
+				body: challengeBody,
+				// Attacker-controlled: an unsigned envelope claiming Hub verification.
+				hubVerified: true,
+			},
+		});
+
+		const ack = await processCorsair(
+			corsair,
+			{ headers: {}, body: envelope },
+			{ allowUnsignedTunnel: true },
+		);
+
+		// The envelope is unauthenticated, so hubVerified is ignored and provider
+		// signature verification still runs — the forged event fails closed.
+		expect(ack.status).toBe('failed');
+		expect(String(ack.error)).toContain('webhook_signature');
 		testDb.cleanup();
 	});
 });
