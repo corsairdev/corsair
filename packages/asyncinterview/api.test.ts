@@ -1,29 +1,92 @@
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import { ASYNCINTERVIEW_API_BASE } from './client';
 import { asyncinterview } from './index';
 
-// Mock the network requests
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: jest.fn(async () => undefined),
+}));
+
 jest.mock('corsair/http', () => ({
+	...jest.requireActual('corsair/http'),
 	request: jest.fn(),
 }));
 
 import { request } from 'corsair/http';
 
-describe('AsyncInterview Plugin Endpoints', () => {
-	const mockPlugin = asyncinterview({ key: 'test-key' });
-	const mockContext = {
+const mockLog = logEventFromContext as jest.MockedFunction<
+	typeof logEventFromContext
+>;
+
+const LIVE_JOB = {
+	id: 1651,
+	title: 'Quick Start',
+	date: '2026-08-19',
+	time: '00:26:04',
+	datetime: '2026-08-19T00:26:04+00:00',
+};
+
+const LIVE_INTERVIEW = {
+	id: 2141,
+	title: 'Example Interview',
+	url: 'https://app.asyncinterview.ai/i/VYFudF',
+	job_id: 1651,
+	job: 'Quick Start',
+	date: '2026-08-19',
+	time: '00:26:04',
+	datetime: '2026-08-19T00:26:04+00:00',
+	questions: [
+		{
+			id: 11217,
+			stage_id: 2141,
+			title: 'Introduction',
+			created_at: '2026-08-19T00:26:04.000000Z',
+			updated_at: '2026-08-19T00:26:04.000000Z',
+			order: 1,
+		},
+	],
+	contacts: [] as unknown[],
+};
+
+function makeStore() {
+	return {
+		upsertByEntityId: jest.fn(async () => undefined),
+		deleteByEntityId: jest.fn(async () => true),
+	};
+}
+
+function makeCtx() {
+	const db = {
+		jobs: makeStore(),
+		interviews: makeStore(),
+	};
+	const plugin = asyncinterview({ key: 'test-key' });
+	const ctx = {
 		key: 'test-key',
-		plugin: mockPlugin,
-	} as any; // Type assertion since we only need the auth portion for these tests
+		plugin,
+		db,
+	} as unknown as Parameters<
+		NonNullable<typeof plugin.endpoints>['jobs']['list']
+	>[0];
+	return { plugin, ctx, db };
+}
 
-	it('should list jobs', async () => {
-		const mockResponse = [{ id: 'job1', title: 'Test Job' }];
-		(request as jest.Mock).mockResolvedValueOnce(mockResponse);
+describe('AsyncInterview endpoints', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
 
-		const result = await mockPlugin.endpoints!.jobs.list(mockContext, {});
+	it('lists jobs from GET /jobs with Bearer auth', async () => {
+		const { plugin, ctx, db } = makeCtx();
+		(request as jest.Mock).mockResolvedValueOnce([LIVE_JOB]);
 
-		expect(result).toEqual(mockResponse);
+		const result = await plugin.endpoints!.jobs.list(ctx, {});
+
+		expect(result).toEqual([LIVE_JOB]);
+		expect(db.jobs.upsertByEntityId).toHaveBeenCalledWith('1651', LIVE_JOB);
 		expect(request).toHaveBeenCalledWith(
 			expect.objectContaining({
-				BASE: 'https://app.asyncinterview.ai/api',
+				BASE: ASYNCINTERVIEW_API_BASE,
 				TOKEN: 'test-key',
 				HEADERS: expect.objectContaining({
 					Authorization: 'Bearer test-key',
@@ -36,74 +99,120 @@ describe('AsyncInterview Plugin Endpoints', () => {
 		);
 	});
 
-	it('should delete a job', async () => {
-		const mockResponse = { success: true };
-		(request as jest.Mock).mockResolvedValueOnce(mockResponse);
+	it('lists interviews from GET /interviews, not /jobs/{id}/responses', async () => {
+		const { plugin, ctx, db } = makeCtx();
+		(request as jest.Mock).mockResolvedValueOnce([LIVE_INTERVIEW]);
 
-		const result = await mockPlugin.endpoints!.jobs.delete(mockContext, {
-			id: 'job1',
+		const result = await plugin.endpoints!.jobs.listResponses(ctx, {
+			job_id: 1651,
 		});
 
-		expect(result).toEqual(mockResponse);
-		expect(request).toHaveBeenCalledWith(
-			expect.objectContaining({
-				TOKEN: 'test-key',
-			}),
-			expect.objectContaining({
-				method: 'DELETE',
-				url: '/jobs/job1',
-			}),
+		expect(result).toEqual([LIVE_INTERVIEW]);
+		expect(db.interviews.upsertByEntityId).toHaveBeenCalledWith(
+			'2141',
+			LIVE_INTERVIEW,
 		);
-	});
-
-	it('should list responses for a job', async () => {
-		const mockResponse = [{ id: 'resp1', candidate_name: 'John Doe' }];
-		(request as jest.Mock).mockResolvedValueOnce(mockResponse);
-
-		const result = await mockPlugin.endpoints!.jobs.listResponses(mockContext, {
-			jobId: 'job1',
-		});
-
-		expect(result).toEqual(mockResponse);
 		expect(request).toHaveBeenCalledWith(
-			expect.objectContaining({
-				TOKEN: 'test-key',
-			}),
+			expect.anything(),
 			expect.objectContaining({
 				method: 'GET',
-				url: '/jobs/job1/responses',
+				url: '/interviews',
+				query: { job_id: '1651' },
 			}),
 		);
 	});
 
-	it('should update a job', async () => {
-		const mockResponse = { id: 'job1', title: 'Updated Job' };
-		(request as jest.Mock).mockResolvedValueOnce(mockResponse);
+	it('lists all interviews when job_id is omitted', async () => {
+		const { plugin, ctx } = makeCtx();
+		(request as jest.Mock).mockResolvedValueOnce([LIVE_INTERVIEW]);
 
-		const result = await mockPlugin.endpoints!.jobs.update(mockContext, {
-			id: 'job1',
+		await plugin.endpoints!.jobs.listResponses(ctx, {});
+
+		expect(request).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/interviews',
+				query: undefined,
+			}),
+		);
+	});
+
+	it('updates a job with PUT /jobs/{job_id}', async () => {
+		const { plugin, ctx, db } = makeCtx();
+		const updated = { ...LIVE_JOB, title: 'Updated Job' };
+		(request as jest.Mock).mockResolvedValueOnce(updated);
+
+		const result = await plugin.endpoints!.jobs.update(ctx, {
+			job_id: '1651',
 			title: 'Updated Job',
+			is_public: false,
+			sub_title: 'tag',
+			description: 'role',
 		});
 
-		expect(result).toEqual(mockResponse);
+		expect(result.title).toBe('Updated Job');
+		expect(db.jobs.upsertByEntityId).toHaveBeenCalledWith('1651', updated);
 		expect(request).toHaveBeenCalledWith(
+			expect.anything(),
 			expect.objectContaining({
-				TOKEN: 'test-key',
-			}),
-			expect.objectContaining({
-				method: 'PATCH',
-				url: '/jobs/job1',
-				body: { title: 'Updated Job' },
+				method: 'PUT',
+				url: '/jobs/{job_id}',
+				path: { job_id: '1651' },
+				body: {
+					title: 'Updated Job',
+					is_public: false,
+					sub_title: 'tag',
+					description: 'role',
+				},
 			}),
 		);
 	});
 
-	it('should reject a malformed provider payload', async () => {
-		// id is required and must be a string; a numeric id fails output validation.
-		(request as jest.Mock).mockResolvedValueOnce({ id: 42 });
+	it('accepts an empty PUT body as a job id fallback', async () => {
+		const { plugin, ctx } = makeCtx();
+		(request as jest.Mock).mockResolvedValueOnce(undefined);
 
+		const result = await plugin.endpoints!.jobs.update(ctx, { job_id: 1651 });
+
+		expect(result.id).toBe(1651);
+	});
+
+	it('deletes a job with DELETE /jobs/{job_id}', async () => {
+		const { plugin, ctx, db } = makeCtx();
+		(request as jest.Mock).mockResolvedValueOnce({
+			message: 'Job Deleted Successfully!',
+		});
+
+		const result = await plugin.endpoints!.jobs.delete(ctx, { job_id: 1651 });
+
+		expect(result).toEqual({ job_id: 1651 });
+		expect(db.jobs.deleteByEntityId).toHaveBeenCalledWith('1651');
+		expect(request).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				method: 'DELETE',
+				url: '/jobs/{job_id}',
+				path: { job_id: '1651' },
+			}),
+		);
+		expect(mockLog).toHaveBeenCalled();
+	});
+
+	it('throws AuthMissingError when no key is configured', async () => {
+		const plugin = asyncinterview({});
 		await expect(
-			mockPlugin.endpoints!.jobs.update(mockContext, { id: 'job1' }),
-		).rejects.toThrow();
+			plugin.keyBuilder!(
+				{ authType: 'api_key', keys: undefined } as never,
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('rejects a job list payload that has no id', async () => {
+		const { plugin, ctx } = makeCtx();
+		(request as jest.Mock).mockResolvedValueOnce([{ title: 'no id' }]);
+
+		await expect(plugin.endpoints!.jobs.list(ctx, {})).rejects.toThrow();
 	});
 });

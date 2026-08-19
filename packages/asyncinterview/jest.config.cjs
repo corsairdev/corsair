@@ -10,6 +10,7 @@ module.exports = {
 	],
 	collectCoverageFrom: [
 		'**/*.ts',
+		'!**/*.test.ts',
 		'!**/*.d.ts',
 		'!**/node_modules/**',
 		'!**/dist/**',
@@ -50,6 +51,7 @@ module.exports = {
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
+	testPathIgnorePatterns: ['/node_modules/', 'integration\\.test\\.ts'],
 	testTimeout: 30000,
 	verbose: true,
 };

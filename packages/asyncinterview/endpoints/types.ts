@@ -1,67 +1,90 @@
 import { z } from 'zod';
+import {
+	AsyncInterviewInterviewEntity,
+	AsyncInterviewJobEntity,
+} from '../schema/database';
 
-// Shared Schemas
-export const JobSchema = z.object({
-	id: z.string(),
-	title: z.string().optional(),
-	description: z.string().optional(),
-	status: z.string().optional(),
-	created_at: z.string().optional(),
-});
+/**
+ * Integer job id as string or number.
+ * https://docs.composio.dev/toolkits/async_interview
+ */
+export const JobIdInput = z.union([z.number().int(), z.string().min(1)]);
+
+export const JobSchema = AsyncInterviewJobEntity;
 export type Job = z.infer<typeof JobSchema>;
 
-export const ResponseSchema = z.object({
-	id: z.string(),
-	job_id: z.string().optional(),
-	candidate_name: z.string().optional(),
-	candidate_email: z.string().optional(),
-	status: z.string().optional(),
-	submitted_at: z.string().optional(),
-});
-export type Response = z.infer<typeof ResponseSchema>;
+export const InterviewSchema = AsyncInterviewInterviewEntity;
+export type Interview = z.infer<typeof InterviewSchema>;
 
-// Delete Job
-export const DeleteJobInputSchema = z.object({
-	id: z.string().describe('The ID of the job to delete'),
-});
+/** ASYNC_INTERVIEW_DELETE_JOB — `job_id` required. */
+export const DeleteJobInputSchema = z
+	.object({
+		job_id: JobIdInput.describe(
+			'Unique identifier (integer ID) of the interview job to delete.',
+		),
+	})
+	.strict();
 export type DeleteJobInput = z.infer<typeof DeleteJobInputSchema>;
 
-export const DeleteJobOutputSchema = z.object({
-	success: z.boolean().optional(),
-});
+/** DELETE /jobs/{id} is 204/empty or a leftover body; we always return job_id. */
+export const DeleteJobOutputSchema = z
+	.object({
+		job_id: z.number().int(),
+	})
+	.strict();
 export type DeleteJobOutput = z.infer<typeof DeleteJobOutputSchema>;
 
-// List Interview Responses
-export const ListResponsesInputSchema = z.object({
-	jobId: z.string().describe('The ID of the job to list responses for'),
-});
+/**
+ * ASYNC_INTERVIEW_LIST_INTERVIEW_RESPONSES
+ * No required params. Optional `job_id` maps to GET /interviews?job_id=.
+ */
+export const ListResponsesInputSchema = z
+	.object({
+		job_id: JobIdInput.optional().describe(
+			'Filter interviews by job ID (GET /interviews?job_id=).',
+		),
+	})
+	.strict();
 export type ListResponsesInput = z.infer<typeof ListResponsesInputSchema>;
 
-export const ListResponsesOutputSchema = z.array(ResponseSchema);
+export const ListResponsesOutputSchema = z.array(InterviewSchema);
 export type ListResponsesOutput = z.infer<typeof ListResponsesOutputSchema>;
 
-// List Jobs
-export const ListJobsInputSchema = z.object({});
+/** ASYNC_INTERVIEW_LIST_JOBS — no params. */
+export const ListJobsInputSchema = z.object({}).strict();
 export type ListJobsInput = z.infer<typeof ListJobsInputSchema>;
 
 export const ListJobsOutputSchema = z.array(JobSchema);
 export type ListJobsOutput = z.infer<typeof ListJobsOutputSchema>;
 
-// Update Job
-export const UpdateJobInputSchema = z.object({
-	id: z.string().describe('The ID of the job to update'),
-	title: z.string().optional().describe('The new title for the job'),
-	description: z
-		.string()
-		.optional()
-		.describe('The new description for the job'),
-});
+/** ASYNC_INTERVIEW_UPDATE_JOB — PUT /jobs/{id} with documented body keys. */
+export const UpdateJobInputSchema = z
+	.object({
+		job_id: JobIdInput.describe(
+			'Unique identifier of the interview job to update (integer ID).',
+		),
+		title: z.string().optional().describe('New title for the job'),
+		is_public: z
+			.boolean()
+			.optional()
+			.describe(
+				'Whether the job is publicly visible (true to make public, false to make private)',
+			),
+		sub_title: z
+			.string()
+			.optional()
+			.describe('Subtitle or tagline for the job'),
+		description: z
+			.string()
+			.optional()
+			.describe('Detailed description of the job role'),
+	})
+	.strict();
 export type UpdateJobInput = z.infer<typeof UpdateJobInputSchema>;
 
 export const UpdateJobOutputSchema = JobSchema;
 export type UpdateJobOutput = z.infer<typeof UpdateJobOutputSchema>;
 
-// Mappings
 export type AsyncInterviewEndpointInputs = {
 	'jobs.delete': DeleteJobInput;
 	'jobs.listResponses': ListResponsesInput;

@@ -113,9 +113,7 @@ const asyncInterviewEndpointMeta = {
 >;
 
 export const asyncInterviewAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: { account: [] as const },
 } as const satisfies PluginAuthConfig;
 
 export type BaseAsyncInterviewPlugin<T extends AsyncInterviewPluginOptions> =
@@ -164,11 +162,16 @@ export function asyncinterview<const T extends AsyncInterviewPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				if (!res) {
+				try {
+					const res = await ctx.keys?.get_api_key();
+					if (!res) {
+						throw new AuthMissingError('asyncinterview', 'api_key');
+					}
+					return res;
+				} catch (error) {
+					if (error instanceof AuthMissingError) throw error;
 					throw new AuthMissingError('asyncinterview', 'api_key');
 				}
-				return res;
 			}
 
 			throw new AuthMissingError('asyncinterview', 'api_key');
