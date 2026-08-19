@@ -1,31 +1,42 @@
 import type { TokenResponse, WebhookTenantMatch } from 'corsair/core';
 import { toExternalId } from 'corsair/core';
 
-// TODO: Rename linkType 'tenant_external_id' to match pluginTenantWebhookMatcher.
-// Called after OAuth to store the routing id on corsair_accounts.config.
+/**
+ * After OAuth, resolve the external tenant ID from the token response.
+ * Called by the Corsair Hub to link a webhook route to this Attio workspace.
+ *
+ * Attio's token response includes a `workspace_id` which uniquely identifies
+ * the connected workspace. If the token response doesn't contain it, we
+ * fall back to calling the Attio self endpoint to resolve the workspace ID.
+ */
 export async function resolveAttioOAuthWebhookTenantLink(
 	tokens: TokenResponse,
 ): Promise<WebhookTenantMatch | null> {
-	// TODO: Read from token response when the provider includes a stable id.
-	// const externalId = toExternalId(asRecord(tokens.team)?.id);
-	const externalId = toExternalId(tokens.tenant_external_id);
-	if (externalId) {
-		return { linkType: 'tenant_external_id', externalId };
+	// 1) Try the token response first (workspace_id or tenant_external_id)
+	const directId = toExternalId(
+		tokens.workspace_id ?? tokens.tenant_external_id,
+	);
+	if (directId) {
+		return { linkType: 'tenant_external_id', externalId: directId };
 	}
 
+	// 2) Fall back to API call if access_token is available
 	const accessToken = tokens.access_token;
 	if (!accessToken) return null;
 
-	// TODO: Fetch from provider API when the token response omits the id.
-	// const response = await fetch('https://api.example.com/me', {
-	// 	headers: { Authorization: `Bearer ${accessToken}` },
-	// });
-	// if (!response.ok) return null;
-	// const payload = (await response.json()) as { id?: string };
-	// const fetchedId = toExternalId(payload.id);
-	// return fetchedId
-	// 	? { linkType: 'tenant_external_id', externalId: fetchedId }
-	// 	: null;
-
-	return null;
+	try {
+		const response = await fetch('https://api.attio.com/v2/self', {
+			headers: { Authorization: `Bearer ${accessToken}` },
+		});
+		if (!response.ok) return null;
+		const payload = (await response.json()) as {
+			data?: { workspace?: { id?: string } };
+		};
+		const fetchedId = toExternalId(payload.data?.workspace?.id);
+		return fetchedId
+			? { linkType: 'tenant_external_id', externalId: fetchedId }
+			: null;
+	} catch {
+		return null;
+	}
 }
