@@ -26,4 +26,16 @@ describe('verifySlackWebhookSignature', () => {
 			error: 'Missing x-slack-signature or x-slack-request-timestamp header',
 		});
 	});
+
+	it('returns valid when the delivery is hub-verified, even with no secret', () => {
+		const hubVerified: WebhookRequest = {
+			payload: {},
+			headers: {},
+			rawBody: '{}',
+			hubVerified: true,
+		};
+		expect(verifySlackWebhookSignature(hubVerified, undefined)).toEqual({
+			valid: true,
+		});
+	});
 });
