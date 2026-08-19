@@ -24,7 +24,7 @@ export const AttioRecord = z.object({
 			record_id: z.string(),
 		}),
 	]),
-	values: z.record(z.string(), z.any()).optional(),
+	values: z.record(z.string(), z.unknown()).optional(),
 	created_at: z.coerce.date().nullable().optional(),
 });
 export type AttioRecord = z.infer<typeof AttioRecord>;

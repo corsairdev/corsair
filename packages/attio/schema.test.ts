@@ -1,4 +1,5 @@
 import { AttioSchema } from './schema';
+import { AttioRecord, AttioWorkspaceMember } from './schema/database';
 
 describe('Attio schema', () => {
 	it('declares a semver version', () => {
@@ -14,7 +15,39 @@ describe('Attio schema', () => {
 			expect(entity).toBeDefined();
 		}
 	});
-});
 
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
+	it('parses a workspace member with a structured id', () => {
+		const parsed = AttioWorkspaceMember.parse({
+			id: {
+				workspace_id: 'ws-1',
+				workspace_member_id: 'mem-1',
+			},
+			email_address: 'ada@example.com',
+		});
+		expect(parsed.id).toEqual({
+			workspace_id: 'ws-1',
+			workspace_member_id: 'mem-1',
+		});
+		expect(parsed.email_address).toBe('ada@example.com');
+	});
+
+	it('parses a record with a structured id', () => {
+		const parsed = AttioRecord.parse({
+			id: {
+				workspace_id: 'ws-1',
+				object_id: 'obj-1',
+				record_id: 'rec-1',
+			},
+			values: { name: [{ value: 'Acme' }] },
+		});
+		expect(parsed.id).toEqual({
+			workspace_id: 'ws-1',
+			object_id: 'obj-1',
+			record_id: 'rec-1',
+		});
+	});
+
+	it('rejects a record without an id', () => {
+		expect(() => AttioRecord.parse({ values: {} })).toThrow();
+	});
+});
