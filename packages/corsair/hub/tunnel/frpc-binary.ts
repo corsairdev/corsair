@@ -79,9 +79,11 @@ export function frpcCacheBinary(): string {
 function ensureExecutable(bin: string): string {
 	if (process.platform === 'win32') return bin;
 	try {
-		const { mode } = statSync(bin);
-		const executable = mode | 0o111;
-		if (executable !== mode) chmodSync(bin, executable);
+		// Mask to the permission bits — fs.Stats.mode also carries file-type bits
+		// that must not be handed to chmod.
+		const perms = statSync(bin).mode & 0o777;
+		const executable = perms | 0o111;
+		if (executable !== perms) chmodSync(bin, executable);
 	} catch {
 		// A chmod failure on an already-executable binary is harmless; a
 		// genuinely missing bit surfaces as the existing spawn EACCES.
