@@ -23,7 +23,7 @@ export const graphQlContentApiPersistedQuery: ContentfulGraphqlEndpoints['graphQ
 
 		// When the caller only supplies the query, derive the SHA-256 hash so the
 		// request registers the persisted query with Contentful on the first call.
-		const sha256Hash = input.sha256Hash ?? sha256(input.query!);
+		const sha256Hash = input.sha256Hash || sha256(input.query!);
 
 		const path = buildContentfulGraphqlPath(
 			spaceId,
