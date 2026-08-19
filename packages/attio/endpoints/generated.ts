@@ -3,768 +3,813 @@ import { makeAuthenticatedAttioRequest } from '../client';
 import type { AttioEndpoint } from './types';
 
 // --- SCHEMAS ---
-const Putv2listslistentriesInputSchema = z.record(z.string(), z.any());
+const Putv2listslistentriesInputSchema = z.record(z.string(), z.unknown());
 export type Putv2listslistentriesInput = z.infer<
 	typeof Putv2listslistentriesInputSchema
 >;
-const Putv2listslistentriesResponseSchema = z.record(z.string(), z.any());
+const Putv2listslistentriesResponseSchema = z.record(z.string(), z.unknown());
 export type Putv2listslistentriesResponse = z.infer<
 	typeof Putv2listslistentriesResponseSchema
 >;
 
-const AssertpersonInputSchema = z.record(z.string(), z.any());
+const AssertpersonInputSchema = z.record(z.string(), z.unknown());
 export type AssertpersonInput = z.infer<typeof AssertpersonInputSchema>;
-const AssertpersonResponseSchema = z.record(z.string(), z.any());
+const AssertpersonResponseSchema = z.record(z.string(), z.unknown());
 export type AssertpersonResponse = z.infer<typeof AssertpersonResponseSchema>;
 
-const Putv2objectsobjectrecordsInputSchema = z.record(z.string(), z.any());
+const Putv2objectsobjectrecordsInputSchema = z.record(z.string(), z.unknown());
 export type Putv2objectsobjectrecordsInput = z.infer<
 	typeof Putv2objectsobjectrecordsInputSchema
 >;
-const Putv2objectsobjectrecordsResponseSchema = z.record(z.string(), z.any());
+const Putv2objectsobjectrecordsResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type Putv2objectsobjectrecordsResponse = z.infer<
 	typeof Putv2objectsobjectrecordsResponseSchema
 >;
 
-const AssertuserrecordInputSchema = z.record(z.string(), z.any());
+const AssertuserrecordInputSchema = z.record(z.string(), z.unknown());
 export type AssertuserrecordInput = z.infer<typeof AssertuserrecordInputSchema>;
-const AssertuserrecordResponseSchema = z.record(z.string(), z.any());
+const AssertuserrecordResponseSchema = z.record(z.string(), z.unknown());
 export type AssertuserrecordResponse = z.infer<
 	typeof AssertuserrecordResponseSchema
 >;
 
-const AssertworkspaceInputSchema = z.record(z.string(), z.any());
+const AssertworkspaceInputSchema = z.record(z.string(), z.unknown());
 export type AssertworkspaceInput = z.infer<typeof AssertworkspaceInputSchema>;
-const AssertworkspaceResponseSchema = z.record(z.string(), z.any());
+const AssertworkspaceResponseSchema = z.record(z.string(), z.unknown());
 export type AssertworkspaceResponse = z.infer<
 	typeof AssertworkspaceResponseSchema
 >;
 
-const CreateattributeInputSchema = z.record(z.string(), z.any());
+const CreateattributeInputSchema = z.record(z.string(), z.unknown());
 export type CreateattributeInput = z.infer<typeof CreateattributeInputSchema>;
-const CreateattributeResponseSchema = z.record(z.string(), z.any());
+const CreateattributeResponseSchema = z.record(z.string(), z.unknown());
 export type CreateattributeResponse = z.infer<
 	typeof CreateattributeResponseSchema
 >;
 
-const CreatecommentInputSchema = z.record(z.string(), z.any());
+const CreatecommentInputSchema = z.record(z.string(), z.unknown());
 export type CreatecommentInput = z.infer<typeof CreatecommentInputSchema>;
-const CreatecommentResponseSchema = z.record(z.string(), z.any());
+const CreatecommentResponseSchema = z.record(z.string(), z.unknown());
 export type CreatecommentResponse = z.infer<typeof CreatecommentResponseSchema>;
 
-const CreatecompanyInputSchema = z.record(z.string(), z.any());
+const CreatecompanyInputSchema = z.record(z.string(), z.unknown());
 export type CreatecompanyInput = z.infer<typeof CreatecompanyInputSchema>;
-const CreatecompanyResponseSchema = z.record(z.string(), z.any());
+const CreatecompanyResponseSchema = z.record(z.string(), z.unknown());
 export type CreatecompanyResponse = z.infer<typeof CreatecompanyResponseSchema>;
 
-const CreatedealrecordInputSchema = z.record(z.string(), z.any());
+const CreatedealrecordInputSchema = z.record(z.string(), z.unknown());
 export type CreatedealrecordInput = z.infer<typeof CreatedealrecordInputSchema>;
-const CreatedealrecordResponseSchema = z.record(z.string(), z.any());
+const CreatedealrecordResponseSchema = z.record(z.string(), z.unknown());
 export type CreatedealrecordResponse = z.infer<
 	typeof CreatedealrecordResponseSchema
 >;
 
-const CreateentryInputSchema = z.record(z.string(), z.any());
+const CreateentryInputSchema = z.record(z.string(), z.unknown());
 export type CreateentryInput = z.infer<typeof CreateentryInputSchema>;
-const CreateentryResponseSchema = z.record(z.string(), z.any());
+const CreateentryResponseSchema = z.record(z.string(), z.unknown());
 export type CreateentryResponse = z.infer<typeof CreateentryResponseSchema>;
 
-const CreatelistInputSchema = z.record(z.string(), z.any());
+const CreatelistInputSchema = z.record(z.string(), z.unknown());
 export type CreatelistInput = z.infer<typeof CreatelistInputSchema>;
-const CreatelistResponseSchema = z.record(z.string(), z.any());
+const CreatelistResponseSchema = z.record(z.string(), z.unknown());
 export type CreatelistResponse = z.infer<typeof CreatelistResponseSchema>;
 
-const Postv2listslistentriesInputSchema = z.record(z.string(), z.any());
+const Postv2listslistentriesInputSchema = z.record(z.string(), z.unknown());
 export type Postv2listslistentriesInput = z.infer<
 	typeof Postv2listslistentriesInputSchema
 >;
-const Postv2listslistentriesResponseSchema = z.record(z.string(), z.any());
+const Postv2listslistentriesResponseSchema = z.record(z.string(), z.unknown());
 export type Postv2listslistentriesResponse = z.infer<
 	typeof Postv2listslistentriesResponseSchema
 >;
 
-const CreatenoteInputSchema = z.record(z.string(), z.any());
+const CreatenoteInputSchema = z.record(z.string(), z.unknown());
 export type CreatenoteInput = z.infer<typeof CreatenoteInputSchema>;
-const CreatenoteResponseSchema = z.record(z.string(), z.any());
+const CreatenoteResponseSchema = z.record(z.string(), z.unknown());
 export type CreatenoteResponse = z.infer<typeof CreatenoteResponseSchema>;
 
-const CreateobjectInputSchema = z.record(z.string(), z.any());
+const CreateobjectInputSchema = z.record(z.string(), z.unknown());
 export type CreateobjectInput = z.infer<typeof CreateobjectInputSchema>;
-const CreateobjectResponseSchema = z.record(z.string(), z.any());
+const CreateobjectResponseSchema = z.record(z.string(), z.unknown());
 export type CreateobjectResponse = z.infer<typeof CreateobjectResponseSchema>;
 
-const CreatepersonInputSchema = z.record(z.string(), z.any());
+const CreatepersonInputSchema = z.record(z.string(), z.unknown());
 export type CreatepersonInput = z.infer<typeof CreatepersonInputSchema>;
-const CreatepersonResponseSchema = z.record(z.string(), z.any());
+const CreatepersonResponseSchema = z.record(z.string(), z.unknown());
 export type CreatepersonResponse = z.infer<typeof CreatepersonResponseSchema>;
 
-const CreaterecordInputSchema = z.record(z.string(), z.any());
+const CreaterecordInputSchema = z.record(z.string(), z.unknown());
 export type CreaterecordInput = z.infer<typeof CreaterecordInputSchema>;
-const CreaterecordResponseSchema = z.record(z.string(), z.any());
+const CreaterecordResponseSchema = z.record(z.string(), z.unknown());
 export type CreaterecordResponse = z.infer<typeof CreaterecordResponseSchema>;
 
-const CreateselectoptionInputSchema = z.record(z.string(), z.any());
+const CreateselectoptionInputSchema = z.record(z.string(), z.unknown());
 export type CreateselectoptionInput = z.infer<
 	typeof CreateselectoptionInputSchema
 >;
-const CreateselectoptionResponseSchema = z.record(z.string(), z.any());
+const CreateselectoptionResponseSchema = z.record(z.string(), z.unknown());
 export type CreateselectoptionResponse = z.infer<
 	typeof CreateselectoptionResponseSchema
 >;
 
-const CreatestatusInputSchema = z.record(z.string(), z.any());
+const CreatestatusInputSchema = z.record(z.string(), z.unknown());
 export type CreatestatusInput = z.infer<typeof CreatestatusInputSchema>;
-const CreatestatusResponseSchema = z.record(z.string(), z.any());
+const CreatestatusResponseSchema = z.record(z.string(), z.unknown());
 export type CreatestatusResponse = z.infer<typeof CreatestatusResponseSchema>;
 
-const CreatetaskInputSchema = z.record(z.string(), z.any());
+const CreatetaskInputSchema = z.record(z.string(), z.unknown());
 export type CreatetaskInput = z.infer<typeof CreatetaskInputSchema>;
-const CreatetaskResponseSchema = z.record(z.string(), z.any());
+const CreatetaskResponseSchema = z.record(z.string(), z.unknown());
 export type CreatetaskResponse = z.infer<typeof CreatetaskResponseSchema>;
 
-const CreateuserrecordInputSchema = z.record(z.string(), z.any());
+const CreateuserrecordInputSchema = z.record(z.string(), z.unknown());
 export type CreateuserrecordInput = z.infer<typeof CreateuserrecordInputSchema>;
-const CreateuserrecordResponseSchema = z.record(z.string(), z.any());
+const CreateuserrecordResponseSchema = z.record(z.string(), z.unknown());
 export type CreateuserrecordResponse = z.infer<
 	typeof CreateuserrecordResponseSchema
 >;
 
-const CreatewebhookInputSchema = z.record(z.string(), z.any());
+const CreatewebhookInputSchema = z.record(z.string(), z.unknown());
 export type CreatewebhookInput = z.infer<typeof CreatewebhookInputSchema>;
-const CreatewebhookResponseSchema = z.record(z.string(), z.any());
+const CreatewebhookResponseSchema = z.record(z.string(), z.unknown());
 export type CreatewebhookResponse = z.infer<typeof CreatewebhookResponseSchema>;
 
-const CreateworkspacerecordInputSchema = z.record(z.string(), z.any());
+const CreateworkspacerecordInputSchema = z.record(z.string(), z.unknown());
 export type CreateworkspacerecordInput = z.infer<
 	typeof CreateworkspacerecordInputSchema
 >;
-const CreateworkspacerecordResponseSchema = z.record(z.string(), z.any());
+const CreateworkspacerecordResponseSchema = z.record(z.string(), z.unknown());
 export type CreateworkspacerecordResponse = z.infer<
 	typeof CreateworkspacerecordResponseSchema
 >;
 
-const Postv2objectsobjectrecordsInputSchema = z.record(z.string(), z.any());
+const Postv2objectsobjectrecordsInputSchema = z.record(z.string(), z.unknown());
 export type Postv2objectsobjectrecordsInput = z.infer<
 	typeof Postv2objectsobjectrecordsInputSchema
 >;
-const Postv2objectsobjectrecordsResponseSchema = z.record(z.string(), z.any());
+const Postv2objectsobjectrecordsResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type Postv2objectsobjectrecordsResponse = z.infer<
 	typeof Postv2objectsobjectrecordsResponseSchema
 >;
 
-const DeletecommentInputSchema = z.record(z.string(), z.any());
+const DeletecommentInputSchema = z.record(z.string(), z.unknown());
 export type DeletecommentInput = z.infer<typeof DeletecommentInputSchema>;
-const DeletecommentResponseSchema = z.record(z.string(), z.any());
+const DeletecommentResponseSchema = z.record(z.string(), z.unknown());
 export type DeletecommentResponse = z.infer<typeof DeletecommentResponseSchema>;
 
-const DeletecompanyInputSchema = z.record(z.string(), z.any());
+const DeletecompanyInputSchema = z.record(z.string(), z.unknown());
 export type DeletecompanyInput = z.infer<typeof DeletecompanyInputSchema>;
-const DeletecompanyResponseSchema = z.record(z.string(), z.any());
+const DeletecompanyResponseSchema = z.record(z.string(), z.unknown());
 export type DeletecompanyResponse = z.infer<typeof DeletecompanyResponseSchema>;
 
-const DeletedealInputSchema = z.record(z.string(), z.any());
+const DeletedealInputSchema = z.record(z.string(), z.unknown());
 export type DeletedealInput = z.infer<typeof DeletedealInputSchema>;
-const DeletedealResponseSchema = z.record(z.string(), z.any());
+const DeletedealResponseSchema = z.record(z.string(), z.unknown());
 export type DeletedealResponse = z.infer<typeof DeletedealResponseSchema>;
 
-const DeleteentryInputSchema = z.record(z.string(), z.any());
+const DeleteentryInputSchema = z.record(z.string(), z.unknown());
 export type DeleteentryInput = z.infer<typeof DeleteentryInputSchema>;
-const DeleteentryResponseSchema = z.record(z.string(), z.any());
+const DeleteentryResponseSchema = z.record(z.string(), z.unknown());
 export type DeleteentryResponse = z.infer<typeof DeleteentryResponseSchema>;
 
-const DeletenoteInputSchema = z.record(z.string(), z.any());
+const DeletenoteInputSchema = z.record(z.string(), z.unknown());
 export type DeletenoteInput = z.infer<typeof DeletenoteInputSchema>;
-const DeletenoteResponseSchema = z.record(z.string(), z.any());
+const DeletenoteResponseSchema = z.record(z.string(), z.unknown());
 export type DeletenoteResponse = z.infer<typeof DeletenoteResponseSchema>;
 
-const DeletepersonInputSchema = z.record(z.string(), z.any());
+const DeletepersonInputSchema = z.record(z.string(), z.unknown());
 export type DeletepersonInput = z.infer<typeof DeletepersonInputSchema>;
-const DeletepersonResponseSchema = z.record(z.string(), z.any());
+const DeletepersonResponseSchema = z.record(z.string(), z.unknown());
 export type DeletepersonResponse = z.infer<typeof DeletepersonResponseSchema>;
 
-const DeleterecordInputSchema = z.record(z.string(), z.any());
+const DeleterecordInputSchema = z.record(z.string(), z.unknown());
 export type DeleterecordInput = z.infer<typeof DeleterecordInputSchema>;
-const DeleterecordResponseSchema = z.record(z.string(), z.any());
+const DeleterecordResponseSchema = z.record(z.string(), z.unknown());
 export type DeleterecordResponse = z.infer<typeof DeleterecordResponseSchema>;
 
-const DeleterecordbyidInputSchema = z.record(z.string(), z.any());
+const DeleterecordbyidInputSchema = z.record(z.string(), z.unknown());
 export type DeleterecordbyidInput = z.infer<typeof DeleterecordbyidInputSchema>;
-const DeleterecordbyidResponseSchema = z.record(z.string(), z.any());
+const DeleterecordbyidResponseSchema = z.record(z.string(), z.unknown());
 export type DeleterecordbyidResponse = z.infer<
 	typeof DeleterecordbyidResponseSchema
 >;
 
-const DeletetaskInputSchema = z.record(z.string(), z.any());
+const DeletetaskInputSchema = z.record(z.string(), z.unknown());
 export type DeletetaskInput = z.infer<typeof DeletetaskInputSchema>;
-const DeletetaskResponseSchema = z.record(z.string(), z.any());
+const DeletetaskResponseSchema = z.record(z.string(), z.unknown());
 export type DeletetaskResponse = z.infer<typeof DeletetaskResponseSchema>;
 
-const DeleteuserInputSchema = z.record(z.string(), z.any());
+const DeleteuserInputSchema = z.record(z.string(), z.unknown());
 export type DeleteuserInput = z.infer<typeof DeleteuserInputSchema>;
-const DeleteuserResponseSchema = z.record(z.string(), z.any());
+const DeleteuserResponseSchema = z.record(z.string(), z.unknown());
 export type DeleteuserResponse = z.infer<typeof DeleteuserResponseSchema>;
 
-const DeletewebhookInputSchema = z.record(z.string(), z.any());
+const DeletewebhookInputSchema = z.record(z.string(), z.unknown());
 export type DeletewebhookInput = z.infer<typeof DeletewebhookInputSchema>;
-const DeletewebhookResponseSchema = z.record(z.string(), z.any());
+const DeletewebhookResponseSchema = z.record(z.string(), z.unknown());
 export type DeletewebhookResponse = z.infer<typeof DeletewebhookResponseSchema>;
 
-const DeleteworkspacerecordInputSchema = z.record(z.string(), z.any());
+const DeleteworkspacerecordInputSchema = z.record(z.string(), z.unknown());
 export type DeleteworkspacerecordInput = z.infer<
 	typeof DeleteworkspacerecordInputSchema
 >;
-const DeleteworkspacerecordResponseSchema = z.record(z.string(), z.any());
+const DeleteworkspacerecordResponseSchema = z.record(z.string(), z.unknown());
 export type DeleteworkspacerecordResponse = z.infer<
 	typeof DeleteworkspacerecordResponseSchema
 >;
 
-const FindrecordInputSchema = z.record(z.string(), z.any());
+const FindrecordInputSchema = z.record(z.string(), z.unknown());
 export type FindrecordInput = z.infer<typeof FindrecordInputSchema>;
-const FindrecordResponseSchema = z.record(z.string(), z.any());
+const FindrecordResponseSchema = z.record(z.string(), z.unknown());
 export type FindrecordResponse = z.infer<typeof FindrecordResponseSchema>;
 
-const GetattributeInputSchema = z.record(z.string(), z.any());
+const GetattributeInputSchema = z.record(z.string(), z.unknown());
 export type GetattributeInput = z.infer<typeof GetattributeInputSchema>;
-const GetattributeResponseSchema = z.record(z.string(), z.any());
+const GetattributeResponseSchema = z.record(z.string(), z.unknown());
 export type GetattributeResponse = z.infer<typeof GetattributeResponseSchema>;
 
-const GetcommentInputSchema = z.record(z.string(), z.any());
+const GetcommentInputSchema = z.record(z.string(), z.unknown());
 export type GetcommentInput = z.infer<typeof GetcommentInputSchema>;
-const GetcommentResponseSchema = z.record(z.string(), z.any());
+const GetcommentResponseSchema = z.record(z.string(), z.unknown());
 export type GetcommentResponse = z.infer<typeof GetcommentResponseSchema>;
 
-const GetcompanyInputSchema = z.record(z.string(), z.any());
+const GetcompanyInputSchema = z.record(z.string(), z.unknown());
 export type GetcompanyInput = z.infer<typeof GetcompanyInputSchema>;
-const GetcompanyResponseSchema = z.record(z.string(), z.any());
+const GetcompanyResponseSchema = z.record(z.string(), z.unknown());
 export type GetcompanyResponse = z.infer<typeof GetcompanyResponseSchema>;
 
-const GetselfInputSchema = z.record(z.string(), z.any());
+const GetselfInputSchema = z.record(z.string(), z.unknown());
 export type GetselfInput = z.infer<typeof GetselfInputSchema>;
-const GetselfResponseSchema = z.record(z.string(), z.any());
+const GetselfResponseSchema = z.record(z.string(), z.unknown());
 export type GetselfResponse = z.infer<typeof GetselfResponseSchema>;
 
-const GetdealrecordInputSchema = z.record(z.string(), z.any());
+const GetdealrecordInputSchema = z.record(z.string(), z.unknown());
 export type GetdealrecordInput = z.infer<typeof GetdealrecordInputSchema>;
-const GetdealrecordResponseSchema = z.record(z.string(), z.any());
+const GetdealrecordResponseSchema = z.record(z.string(), z.unknown());
 export type GetdealrecordResponse = z.infer<typeof GetdealrecordResponseSchema>;
 
-const GetlistInputSchema = z.record(z.string(), z.any());
+const GetlistInputSchema = z.record(z.string(), z.unknown());
 export type GetlistInput = z.infer<typeof GetlistInputSchema>;
-const GetlistResponseSchema = z.record(z.string(), z.any());
+const GetlistResponseSchema = z.record(z.string(), z.unknown());
 export type GetlistResponse = z.infer<typeof GetlistResponseSchema>;
 
-const GetlistentryInputSchema = z.record(z.string(), z.any());
+const GetlistentryInputSchema = z.record(z.string(), z.unknown());
 export type GetlistentryInput = z.infer<typeof GetlistentryInputSchema>;
-const GetlistentryResponseSchema = z.record(z.string(), z.any());
+const GetlistentryResponseSchema = z.record(z.string(), z.unknown());
 export type GetlistentryResponse = z.infer<typeof GetlistentryResponseSchema>;
 
-const GetnoteInputSchema = z.record(z.string(), z.any());
+const GetnoteInputSchema = z.record(z.string(), z.unknown());
 export type GetnoteInput = z.infer<typeof GetnoteInputSchema>;
-const GetnoteResponseSchema = z.record(z.string(), z.any());
+const GetnoteResponseSchema = z.record(z.string(), z.unknown());
 export type GetnoteResponse = z.infer<typeof GetnoteResponseSchema>;
 
-const GetobjectInputSchema = z.record(z.string(), z.any());
+const GetobjectInputSchema = z.record(z.string(), z.unknown());
 export type GetobjectInput = z.infer<typeof GetobjectInputSchema>;
-const GetobjectResponseSchema = z.record(z.string(), z.any());
+const GetobjectResponseSchema = z.record(z.string(), z.unknown());
 export type GetobjectResponse = z.infer<typeof GetobjectResponseSchema>;
 
-const PeoplegetpersonInputSchema = z.record(z.string(), z.any());
+const PeoplegetpersonInputSchema = z.record(z.string(), z.unknown());
 export type PeoplegetpersonInput = z.infer<typeof PeoplegetpersonInputSchema>;
-const PeoplegetpersonResponseSchema = z.record(z.string(), z.any());
+const PeoplegetpersonResponseSchema = z.record(z.string(), z.unknown());
 export type PeoplegetpersonResponse = z.infer<
 	typeof PeoplegetpersonResponseSchema
 >;
 
-const GetrecordInputSchema = z.record(z.string(), z.any());
+const GetrecordInputSchema = z.record(z.string(), z.unknown());
 export type GetrecordInput = z.infer<typeof GetrecordInputSchema>;
-const GetrecordResponseSchema = z.record(z.string(), z.any());
+const GetrecordResponseSchema = z.record(z.string(), z.unknown());
 export type GetrecordResponse = z.infer<typeof GetrecordResponseSchema>;
 
-const GetrecordattributevaluesInputSchema = z.record(z.string(), z.any());
+const GetrecordattributevaluesInputSchema = z.record(z.string(), z.unknown());
 export type GetrecordattributevaluesInput = z.infer<
 	typeof GetrecordattributevaluesInputSchema
 >;
-const GetrecordattributevaluesResponseSchema = z.record(z.string(), z.any());
+const GetrecordattributevaluesResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type GetrecordattributevaluesResponse = z.infer<
 	typeof GetrecordattributevaluesResponseSchema
 >;
 
 const Getv2objectsobjectrecordsrecordidInputSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type Getv2objectsobjectrecordsrecordidInput = z.infer<
 	typeof Getv2objectsobjectrecordsrecordidInputSchema
 >;
 const Getv2objectsobjectrecordsrecordidResponseSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type Getv2objectsobjectrecordsrecordidResponse = z.infer<
 	typeof Getv2objectsobjectrecordsrecordidResponseSchema
 >;
 
-const GettaskInputSchema = z.record(z.string(), z.any());
+const GettaskInputSchema = z.record(z.string(), z.unknown());
 export type GettaskInput = z.infer<typeof GettaskInputSchema>;
-const GettaskResponseSchema = z.record(z.string(), z.any());
+const GettaskResponseSchema = z.record(z.string(), z.unknown());
 export type GettaskResponse = z.infer<typeof GettaskResponseSchema>;
 
-const Getv2workspacemembersInputSchema = z.record(z.string(), z.any());
+const Getv2workspacemembersInputSchema = z.record(z.string(), z.unknown());
 export type Getv2workspacemembersInput = z.infer<
 	typeof Getv2workspacemembersInputSchema
 >;
-const Getv2workspacemembersResponseSchema = z.record(z.string(), z.any());
+const Getv2workspacemembersResponseSchema = z.record(z.string(), z.unknown());
 export type Getv2workspacemembersResponse = z.infer<
 	typeof Getv2workspacemembersResponseSchema
 >;
 
-const GetwebhookInputSchema = z.record(z.string(), z.any());
+const GetwebhookInputSchema = z.record(z.string(), z.unknown());
 export type GetwebhookInput = z.infer<typeof GetwebhookInputSchema>;
-const GetwebhookResponseSchema = z.record(z.string(), z.any());
+const GetwebhookResponseSchema = z.record(z.string(), z.unknown());
 export type GetwebhookResponse = z.infer<typeof GetwebhookResponseSchema>;
 
-const GetworkspacememberInputSchema = z.record(z.string(), z.any());
+const GetworkspacememberInputSchema = z.record(z.string(), z.unknown());
 export type GetworkspacememberInput = z.infer<
 	typeof GetworkspacememberInputSchema
 >;
-const GetworkspacememberResponseSchema = z.record(z.string(), z.any());
+const GetworkspacememberResponseSchema = z.record(z.string(), z.unknown());
 export type GetworkspacememberResponse = z.infer<
 	typeof GetworkspacememberResponseSchema
 >;
 
-const GetworkspacerecordInputSchema = z.record(z.string(), z.any());
+const GetworkspacerecordInputSchema = z.record(z.string(), z.unknown());
 export type GetworkspacerecordInput = z.infer<
 	typeof GetworkspacerecordInputSchema
 >;
-const GetworkspacerecordResponseSchema = z.record(z.string(), z.any());
+const GetworkspacerecordResponseSchema = z.record(z.string(), z.unknown());
 export type GetworkspacerecordResponse = z.infer<
 	typeof GetworkspacerecordResponseSchema
 >;
 
-const ListattributeoptionsInputSchema = z.record(z.string(), z.any());
+const ListattributeoptionsInputSchema = z.record(z.string(), z.unknown());
 export type ListattributeoptionsInput = z.infer<
 	typeof ListattributeoptionsInputSchema
 >;
-const ListattributeoptionsResponseSchema = z.record(z.string(), z.any());
+const ListattributeoptionsResponseSchema = z.record(z.string(), z.unknown());
 export type ListattributeoptionsResponse = z.infer<
 	typeof ListattributeoptionsResponseSchema
 >;
 
-const ListattributestatusesInputSchema = z.record(z.string(), z.any());
+const ListattributestatusesInputSchema = z.record(z.string(), z.unknown());
 export type ListattributestatusesInput = z.infer<
 	typeof ListattributestatusesInputSchema
 >;
-const ListattributestatusesResponseSchema = z.record(z.string(), z.any());
+const ListattributestatusesResponseSchema = z.record(z.string(), z.unknown());
 export type ListattributestatusesResponse = z.infer<
 	typeof ListattributestatusesResponseSchema
 >;
 
-const ListattributesInputSchema = z.record(z.string(), z.any());
+const ListattributesInputSchema = z.record(z.string(), z.unknown());
 export type ListattributesInput = z.infer<typeof ListattributesInputSchema>;
-const ListattributesResponseSchema = z.record(z.string(), z.any());
+const ListattributesResponseSchema = z.record(z.string(), z.unknown());
 export type ListattributesResponse = z.infer<
 	typeof ListattributesResponseSchema
 >;
 
-const ListcallrecordingsInputSchema = z.record(z.string(), z.any());
+const ListcallrecordingsInputSchema = z.record(z.string(), z.unknown());
 export type ListcallrecordingsInput = z.infer<
 	typeof ListcallrecordingsInputSchema
 >;
-const ListcallrecordingsResponseSchema = z.record(z.string(), z.any());
+const ListcallrecordingsResponseSchema = z.record(z.string(), z.unknown());
 export type ListcallrecordingsResponse = z.infer<
 	typeof ListcallrecordingsResponseSchema
 >;
 
-const ListcompaniesInputSchema = z.record(z.string(), z.any());
+const ListcompaniesInputSchema = z.record(z.string(), z.unknown());
 export type ListcompaniesInput = z.infer<typeof ListcompaniesInputSchema>;
-const ListcompaniesResponseSchema = z.record(z.string(), z.any());
+const ListcompaniesResponseSchema = z.record(z.string(), z.unknown());
 export type ListcompaniesResponse = z.infer<typeof ListcompaniesResponseSchema>;
 
-const ListcompanyattributevaluesInputSchema = z.record(z.string(), z.any());
+const ListcompanyattributevaluesInputSchema = z.record(z.string(), z.unknown());
 export type ListcompanyattributevaluesInput = z.infer<
 	typeof ListcompanyattributevaluesInputSchema
 >;
-const ListcompanyattributevaluesResponseSchema = z.record(z.string(), z.any());
+const ListcompanyattributevaluesResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type ListcompanyattributevaluesResponse = z.infer<
 	typeof ListcompanyattributevaluesResponseSchema
 >;
 
-const ListcompanyrecordentriesInputSchema = z.record(z.string(), z.any());
+const ListcompanyrecordentriesInputSchema = z.record(z.string(), z.unknown());
 export type ListcompanyrecordentriesInput = z.infer<
 	typeof ListcompanyrecordentriesInputSchema
 >;
-const ListcompanyrecordentriesResponseSchema = z.record(z.string(), z.any());
+const ListcompanyrecordentriesResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type ListcompanyrecordentriesResponse = z.infer<
 	typeof ListcompanyrecordentriesResponseSchema
 >;
 
-const ListdealentriesInputSchema = z.record(z.string(), z.any());
+const ListdealentriesInputSchema = z.record(z.string(), z.unknown());
 export type ListdealentriesInput = z.infer<typeof ListdealentriesInputSchema>;
-const ListdealentriesResponseSchema = z.record(z.string(), z.any());
+const ListdealentriesResponseSchema = z.record(z.string(), z.unknown());
 export type ListdealentriesResponse = z.infer<
 	typeof ListdealentriesResponseSchema
 >;
 
-const ListdealrecordattributevaluesInputSchema = z.record(z.string(), z.any());
+const ListdealrecordattributevaluesInputSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type ListdealrecordattributevaluesInput = z.infer<
 	typeof ListdealrecordattributevaluesInputSchema
 >;
 const ListdealrecordattributevaluesResponseSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type ListdealrecordattributevaluesResponse = z.infer<
 	typeof ListdealrecordattributevaluesResponseSchema
 >;
 
-const ListdealrecordsInputSchema = z.record(z.string(), z.any());
+const ListdealrecordsInputSchema = z.record(z.string(), z.unknown());
 export type ListdealrecordsInput = z.infer<typeof ListdealrecordsInputSchema>;
-const ListdealrecordsResponseSchema = z.record(z.string(), z.any());
+const ListdealrecordsResponseSchema = z.record(z.string(), z.unknown());
 export type ListdealrecordsResponse = z.infer<
 	typeof ListdealrecordsResponseSchema
 >;
 
-const ListentriesInputSchema = z.record(z.string(), z.any());
+const ListentriesInputSchema = z.record(z.string(), z.unknown());
 export type ListentriesInput = z.infer<typeof ListentriesInputSchema>;
-const ListentriesResponseSchema = z.record(z.string(), z.any());
+const ListentriesResponseSchema = z.record(z.string(), z.unknown());
 export type ListentriesResponse = z.infer<typeof ListentriesResponseSchema>;
 
-const Postv2listslistentriesqueryInputSchema = z.record(z.string(), z.any());
+const Postv2listslistentriesqueryInputSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type Postv2listslistentriesqueryInput = z.infer<
 	typeof Postv2listslistentriesqueryInputSchema
 >;
-const Postv2listslistentriesqueryResponseSchema = z.record(z.string(), z.any());
+const Postv2listslistentriesqueryResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type Postv2listslistentriesqueryResponse = z.infer<
 	typeof Postv2listslistentriesqueryResponseSchema
 >;
 
-const ListlistentriesInputSchema = z.record(z.string(), z.any());
+const ListlistentriesInputSchema = z.record(z.string(), z.unknown());
 export type ListlistentriesInput = z.infer<typeof ListlistentriesInputSchema>;
-const ListlistentriesResponseSchema = z.record(z.string(), z.any());
+const ListlistentriesResponseSchema = z.record(z.string(), z.unknown());
 export type ListlistentriesResponse = z.infer<
 	typeof ListlistentriesResponseSchema
 >;
 
-const ListlistentryattributevaluesInputSchema = z.record(z.string(), z.any());
+const ListlistentryattributevaluesInputSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type ListlistentryattributevaluesInput = z.infer<
 	typeof ListlistentryattributevaluesInputSchema
 >;
 const ListlistentryattributevaluesResponseSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type ListlistentryattributevaluesResponse = z.infer<
 	typeof ListlistentryattributevaluesResponseSchema
 >;
 
-const ListlistsInputSchema = z.record(z.string(), z.any());
+const ListlistsInputSchema = z.record(z.string(), z.unknown());
 export type ListlistsInput = z.infer<typeof ListlistsInputSchema>;
-const ListlistsResponseSchema = z.record(z.string(), z.any());
+const ListlistsResponseSchema = z.record(z.string(), z.unknown());
 export type ListlistsResponse = z.infer<typeof ListlistsResponseSchema>;
 
-const ListmeetingsInputSchema = z.record(z.string(), z.any());
+const ListmeetingsInputSchema = z.record(z.string(), z.unknown());
 export type ListmeetingsInput = z.infer<typeof ListmeetingsInputSchema>;
-const ListmeetingsResponseSchema = z.record(z.string(), z.any());
+const ListmeetingsResponseSchema = z.record(z.string(), z.unknown());
 export type ListmeetingsResponse = z.infer<typeof ListmeetingsResponseSchema>;
 
-const ListnotesInputSchema = z.record(z.string(), z.any());
+const ListnotesInputSchema = z.record(z.string(), z.unknown());
 export type ListnotesInput = z.infer<typeof ListnotesInputSchema>;
-const ListnotesResponseSchema = z.record(z.string(), z.any());
+const ListnotesResponseSchema = z.record(z.string(), z.unknown());
 export type ListnotesResponse = z.infer<typeof ListnotesResponseSchema>;
 
-const ListobjectsInputSchema = z.record(z.string(), z.any());
+const ListobjectsInputSchema = z.record(z.string(), z.unknown());
 export type ListobjectsInput = z.infer<typeof ListobjectsInputSchema>;
-const ListobjectsResponseSchema = z.record(z.string(), z.any());
+const ListobjectsResponseSchema = z.record(z.string(), z.unknown());
 export type ListobjectsResponse = z.infer<typeof ListobjectsResponseSchema>;
 
-const ListpeopleattributevaluesInputSchema = z.record(z.string(), z.any());
+const ListpeopleattributevaluesInputSchema = z.record(z.string(), z.unknown());
 export type ListpeopleattributevaluesInput = z.infer<
 	typeof ListpeopleattributevaluesInputSchema
 >;
-const ListpeopleattributevaluesResponseSchema = z.record(z.string(), z.any());
+const ListpeopleattributevaluesResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type ListpeopleattributevaluesResponse = z.infer<
 	typeof ListpeopleattributevaluesResponseSchema
 >;
 
-const ListpeoplerecordentriesInputSchema = z.record(z.string(), z.any());
+const ListpeoplerecordentriesInputSchema = z.record(z.string(), z.unknown());
 export type ListpeoplerecordentriesInput = z.infer<
 	typeof ListpeoplerecordentriesInputSchema
 >;
-const ListpeoplerecordentriesResponseSchema = z.record(z.string(), z.any());
+const ListpeoplerecordentriesResponseSchema = z.record(z.string(), z.unknown());
 export type ListpeoplerecordentriesResponse = z.infer<
 	typeof ListpeoplerecordentriesResponseSchema
 >;
 
-const PeoplelistpersonsInputSchema = z.record(z.string(), z.any());
+const PeoplelistpersonsInputSchema = z.record(z.string(), z.unknown());
 export type PeoplelistpersonsInput = z.infer<
 	typeof PeoplelistpersonsInputSchema
 >;
-const PeoplelistpersonsResponseSchema = z.record(z.string(), z.any());
+const PeoplelistpersonsResponseSchema = z.record(z.string(), z.unknown());
 export type PeoplelistpersonsResponse = z.infer<
 	typeof PeoplelistpersonsResponseSchema
 >;
 
-const ListrecordattributevaluesInputSchema = z.record(z.string(), z.any());
+const ListrecordattributevaluesInputSchema = z.record(z.string(), z.unknown());
 export type ListrecordattributevaluesInput = z.infer<
 	typeof ListrecordattributevaluesInputSchema
 >;
-const ListrecordattributevaluesResponseSchema = z.record(z.string(), z.any());
+const ListrecordattributevaluesResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type ListrecordattributevaluesResponse = z.infer<
 	typeof ListrecordattributevaluesResponseSchema
 >;
 
-const GetrecordentriesInputSchema = z.record(z.string(), z.any());
+const GetrecordentriesInputSchema = z.record(z.string(), z.unknown());
 export type GetrecordentriesInput = z.infer<typeof GetrecordentriesInputSchema>;
-const GetrecordentriesResponseSchema = z.record(z.string(), z.any());
+const GetrecordentriesResponseSchema = z.record(z.string(), z.unknown());
 export type GetrecordentriesResponse = z.infer<
 	typeof GetrecordentriesResponseSchema
 >;
 
-const ListrecordentriesInputSchema = z.record(z.string(), z.any());
+const ListrecordentriesInputSchema = z.record(z.string(), z.unknown());
 export type ListrecordentriesInput = z.infer<
 	typeof ListrecordentriesInputSchema
 >;
-const ListrecordentriesResponseSchema = z.record(z.string(), z.any());
+const ListrecordentriesResponseSchema = z.record(z.string(), z.unknown());
 export type ListrecordentriesResponse = z.infer<
 	typeof ListrecordentriesResponseSchema
 >;
 
-const ListrecordsInputSchema = z.record(z.string(), z.any());
+const ListrecordsInputSchema = z.record(z.string(), z.unknown());
 export type ListrecordsInput = z.infer<typeof ListrecordsInputSchema>;
-const ListrecordsResponseSchema = z.record(z.string(), z.any());
+const ListrecordsResponseSchema = z.record(z.string(), z.unknown());
 export type ListrecordsResponse = z.infer<typeof ListrecordsResponseSchema>;
 
 const Postv2objectsobjectrecordsqueryInputSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type Postv2objectsobjectrecordsqueryInput = z.infer<
 	typeof Postv2objectsobjectrecordsqueryInputSchema
 >;
 const Postv2objectsobjectrecordsqueryResponseSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type Postv2objectsobjectrecordsqueryResponse = z.infer<
 	typeof Postv2objectsobjectrecordsqueryResponseSchema
 >;
 
-const Getv2tasksInputSchema = z.record(z.string(), z.any());
+const Getv2tasksInputSchema = z.record(z.string(), z.unknown());
 export type Getv2tasksInput = z.infer<typeof Getv2tasksInputSchema>;
-const Getv2tasksResponseSchema = z.record(z.string(), z.any());
+const Getv2tasksResponseSchema = z.record(z.string(), z.unknown());
 export type Getv2tasksResponse = z.infer<typeof Getv2tasksResponseSchema>;
 
-const ListthreadsInputSchema = z.record(z.string(), z.any());
+const ListthreadsInputSchema = z.record(z.string(), z.unknown());
 export type ListthreadsInput = z.infer<typeof ListthreadsInputSchema>;
-const ListthreadsResponseSchema = z.record(z.string(), z.any());
+const ListthreadsResponseSchema = z.record(z.string(), z.unknown());
 export type ListthreadsResponse = z.infer<typeof ListthreadsResponseSchema>;
 
-const ListuserrecordentriesInputSchema = z.record(z.string(), z.any());
+const ListuserrecordentriesInputSchema = z.record(z.string(), z.unknown());
 export type ListuserrecordentriesInput = z.infer<
 	typeof ListuserrecordentriesInputSchema
 >;
-const ListuserrecordentriesResponseSchema = z.record(z.string(), z.any());
+const ListuserrecordentriesResponseSchema = z.record(z.string(), z.unknown());
 export type ListuserrecordentriesResponse = z.infer<
 	typeof ListuserrecordentriesResponseSchema
 >;
 
-const ListuserrecordsInputSchema = z.record(z.string(), z.any());
+const ListuserrecordsInputSchema = z.record(z.string(), z.unknown());
 export type ListuserrecordsInput = z.infer<typeof ListuserrecordsInputSchema>;
-const ListuserrecordsResponseSchema = z.record(z.string(), z.any());
+const ListuserrecordsResponseSchema = z.record(z.string(), z.unknown());
 export type ListuserrecordsResponse = z.infer<
 	typeof ListuserrecordsResponseSchema
 >;
 
-const ListwebhooksInputSchema = z.record(z.string(), z.any());
+const ListwebhooksInputSchema = z.record(z.string(), z.unknown());
 export type ListwebhooksInput = z.infer<typeof ListwebhooksInputSchema>;
-const ListwebhooksResponseSchema = z.record(z.string(), z.any());
+const ListwebhooksResponseSchema = z.record(z.string(), z.unknown());
 export type ListwebhooksResponse = z.infer<typeof ListwebhooksResponseSchema>;
 
-const ListworkspacemembersInputSchema = z.record(z.string(), z.any());
+const ListworkspacemembersInputSchema = z.record(z.string(), z.unknown());
 export type ListworkspacemembersInput = z.infer<
 	typeof ListworkspacemembersInputSchema
 >;
-const ListworkspacemembersResponseSchema = z.record(z.string(), z.any());
+const ListworkspacemembersResponseSchema = z.record(z.string(), z.unknown());
 export type ListworkspacemembersResponse = z.infer<
 	typeof ListworkspacemembersResponseSchema
 >;
 
 const ListworkspacerecordattributevaluesInputSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type ListworkspacerecordattributevaluesInput = z.infer<
 	typeof ListworkspacerecordattributevaluesInputSchema
 >;
 const ListworkspacerecordattributevaluesResponseSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type ListworkspacerecordattributevaluesResponse = z.infer<
 	typeof ListworkspacerecordattributevaluesResponseSchema
 >;
 
-const ListworkspacerecordentriesInputSchema = z.record(z.string(), z.any());
+const ListworkspacerecordentriesInputSchema = z.record(z.string(), z.unknown());
 export type ListworkspacerecordentriesInput = z.infer<
 	typeof ListworkspacerecordentriesInputSchema
 >;
-const ListworkspacerecordentriesResponseSchema = z.record(z.string(), z.any());
+const ListworkspacerecordentriesResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type ListworkspacerecordentriesResponse = z.infer<
 	typeof ListworkspacerecordentriesResponseSchema
 >;
 
-const ListworkspacerecordsInputSchema = z.record(z.string(), z.any());
+const ListworkspacerecordsInputSchema = z.record(z.string(), z.unknown());
 export type ListworkspacerecordsInput = z.infer<
 	typeof ListworkspacerecordsInputSchema
 >;
-const ListworkspacerecordsResponseSchema = z.record(z.string(), z.any());
+const ListworkspacerecordsResponseSchema = z.record(z.string(), z.unknown());
 export type ListworkspacerecordsResponse = z.infer<
 	typeof ListworkspacerecordsResponseSchema
 >;
 
-const PatchrecordInputSchema = z.record(z.string(), z.any());
+const PatchrecordInputSchema = z.record(z.string(), z.unknown());
 export type PatchrecordInput = z.infer<typeof PatchrecordInputSchema>;
-const PatchrecordResponseSchema = z.record(z.string(), z.any());
+const PatchrecordResponseSchema = z.record(z.string(), z.unknown());
 export type PatchrecordResponse = z.infer<typeof PatchrecordResponseSchema>;
 
 const Putv2objectsobjectrecordsrecordidInputSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type Putv2objectsobjectrecordsrecordidInput = z.infer<
 	typeof Putv2objectsobjectrecordsrecordidInputSchema
 >;
 const Putv2objectsobjectrecordsrecordidResponseSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type Putv2objectsobjectrecordsrecordidResponse = z.infer<
 	typeof Putv2objectsobjectrecordsrecordidResponseSchema
 >;
 
-const QueryrecordsInputSchema = z.record(z.string(), z.any());
+const QueryrecordsInputSchema = z.record(z.string(), z.unknown());
 export type QueryrecordsInput = z.infer<typeof QueryrecordsInputSchema>;
-const QueryrecordsResponseSchema = z.record(z.string(), z.any());
+const QueryrecordsResponseSchema = z.record(z.string(), z.unknown());
 export type QueryrecordsResponse = z.infer<typeof QueryrecordsResponseSchema>;
 
-const SearchrecordsInputSchema = z.record(z.string(), z.any());
+const SearchrecordsInputSchema = z.record(z.string(), z.unknown());
 export type SearchrecordsInput = z.infer<typeof SearchrecordsInputSchema>;
-const SearchrecordsResponseSchema = z.record(z.string(), z.any());
+const SearchrecordsResponseSchema = z.record(z.string(), z.unknown());
 export type SearchrecordsResponse = z.infer<typeof SearchrecordsResponseSchema>;
 
-const Postv2objectsrecordssearchInputSchema = z.record(z.string(), z.any());
+const Postv2objectsrecordssearchInputSchema = z.record(z.string(), z.unknown());
 export type Postv2objectsrecordssearchInput = z.infer<
 	typeof Postv2objectsrecordssearchInputSchema
 >;
-const Postv2objectsrecordssearchResponseSchema = z.record(z.string(), z.any());
+const Postv2objectsrecordssearchResponseSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type Postv2objectsrecordssearchResponse = z.infer<
 	typeof Postv2objectsrecordssearchResponseSchema
 >;
 
-const UpdateattributeInputSchema = z.record(z.string(), z.any());
+const UpdateattributeInputSchema = z.record(z.string(), z.unknown());
 export type UpdateattributeInput = z.infer<typeof UpdateattributeInputSchema>;
-const UpdateattributeResponseSchema = z.record(z.string(), z.any());
+const UpdateattributeResponseSchema = z.record(z.string(), z.unknown());
 export type UpdateattributeResponse = z.infer<
 	typeof UpdateattributeResponseSchema
 >;
 
-const UpdatecompanyInputSchema = z.record(z.string(), z.any());
+const UpdatecompanyInputSchema = z.record(z.string(), z.unknown());
 export type UpdatecompanyInput = z.infer<typeof UpdatecompanyInputSchema>;
-const UpdatecompanyResponseSchema = z.record(z.string(), z.any());
+const UpdatecompanyResponseSchema = z.record(z.string(), z.unknown());
 export type UpdatecompanyResponse = z.infer<typeof UpdatecompanyResponseSchema>;
 
-const UpdatedealrecordInputSchema = z.record(z.string(), z.any());
+const UpdatedealrecordInputSchema = z.record(z.string(), z.unknown());
 export type UpdatedealrecordInput = z.infer<typeof UpdatedealrecordInputSchema>;
-const UpdatedealrecordResponseSchema = z.record(z.string(), z.any());
+const UpdatedealrecordResponseSchema = z.record(z.string(), z.unknown());
 export type UpdatedealrecordResponse = z.infer<
 	typeof UpdatedealrecordResponseSchema
 >;
 
-const UpdateentryInputSchema = z.record(z.string(), z.any());
+const UpdateentryInputSchema = z.record(z.string(), z.unknown());
 export type UpdateentryInput = z.infer<typeof UpdateentryInputSchema>;
-const UpdateentryResponseSchema = z.record(z.string(), z.any());
+const UpdateentryResponseSchema = z.record(z.string(), z.unknown());
 export type UpdateentryResponse = z.infer<typeof UpdateentryResponseSchema>;
 
-const UpdatelistInputSchema = z.record(z.string(), z.any());
+const UpdatelistInputSchema = z.record(z.string(), z.unknown());
 export type UpdatelistInput = z.infer<typeof UpdatelistInputSchema>;
-const UpdatelistResponseSchema = z.record(z.string(), z.any());
+const UpdatelistResponseSchema = z.record(z.string(), z.unknown());
 export type UpdatelistResponse = z.infer<typeof UpdatelistResponseSchema>;
 
-const Patchv2listslistentriesentryidInputSchema = z.record(z.string(), z.any());
+const Patchv2listslistentriesentryidInputSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type Patchv2listslistentriesentryidInput = z.infer<
 	typeof Patchv2listslistentriesentryidInputSchema
 >;
 const Patchv2listslistentriesentryidResponseSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type Patchv2listslistentriesentryidResponse = z.infer<
 	typeof Patchv2listslistentriesentryidResponseSchema
 >;
 
-const Putv2listslistentriesentryidInputSchema = z.record(z.string(), z.any());
+const Putv2listslistentriesentryidInputSchema = z.record(
+	z.string(),
+	z.unknown(),
+);
 export type Putv2listslistentriesentryidInput = z.infer<
 	typeof Putv2listslistentriesentryidInputSchema
 >;
 const Putv2listslistentriesentryidResponseSchema = z.record(
 	z.string(),
-	z.any(),
+	z.unknown(),
 );
 export type Putv2listslistentriesentryidResponse = z.infer<
 	typeof Putv2listslistentriesentryidResponseSchema
 >;
 
-const UpdateobjectInputSchema = z.record(z.string(), z.any());
+const UpdateobjectInputSchema = z.record(z.string(), z.unknown());
 export type UpdateobjectInput = z.infer<typeof UpdateobjectInputSchema>;
-const UpdateobjectResponseSchema = z.record(z.string(), z.any());
+const UpdateobjectResponseSchema = z.record(z.string(), z.unknown());
 export type UpdateobjectResponse = z.infer<typeof UpdateobjectResponseSchema>;
 
-const UpdatepersonInputSchema = z.record(z.string(), z.any());
+const UpdatepersonInputSchema = z.record(z.string(), z.unknown());
 export type UpdatepersonInput = z.infer<typeof UpdatepersonInputSchema>;
-const UpdatepersonResponseSchema = z.record(z.string(), z.any());
+const UpdatepersonResponseSchema = z.record(z.string(), z.unknown());
 export type UpdatepersonResponse = z.infer<typeof UpdatepersonResponseSchema>;
 
-const UpdaterecordInputSchema = z.record(z.string(), z.any());
+const UpdaterecordInputSchema = z.record(z.string(), z.unknown());
 export type UpdaterecordInput = z.infer<typeof UpdaterecordInputSchema>;
-const UpdaterecordResponseSchema = z.record(z.string(), z.any());
+const UpdaterecordResponseSchema = z.record(z.string(), z.unknown());
 export type UpdaterecordResponse = z.infer<typeof UpdaterecordResponseSchema>;
 
-const UpdateselectoptionInputSchema = z.record(z.string(), z.any());
+const UpdateselectoptionInputSchema = z.record(z.string(), z.unknown());
 export type UpdateselectoptionInput = z.infer<
 	typeof UpdateselectoptionInputSchema
 >;
-const UpdateselectoptionResponseSchema = z.record(z.string(), z.any());
+const UpdateselectoptionResponseSchema = z.record(z.string(), z.unknown());
 export type UpdateselectoptionResponse = z.infer<
 	typeof UpdateselectoptionResponseSchema
 >;
 
-const UpdatestatusInputSchema = z.record(z.string(), z.any());
+const UpdatestatusInputSchema = z.record(z.string(), z.unknown());
 export type UpdatestatusInput = z.infer<typeof UpdatestatusInputSchema>;
-const UpdatestatusResponseSchema = z.record(z.string(), z.any());
+const UpdatestatusResponseSchema = z.record(z.string(), z.unknown());
 export type UpdatestatusResponse = z.infer<typeof UpdatestatusResponseSchema>;
 
-const UpdatetaskInputSchema = z.record(z.string(), z.any());
+const UpdatetaskInputSchema = z.record(z.string(), z.unknown());
 export type UpdatetaskInput = z.infer<typeof UpdatetaskInputSchema>;
-const UpdatetaskResponseSchema = z.record(z.string(), z.any());
+const UpdatetaskResponseSchema = z.record(z.string(), z.unknown());
 export type UpdatetaskResponse = z.infer<typeof UpdatetaskResponseSchema>;
 
-const UpdateuserrecordInputSchema = z.record(z.string(), z.any());
+const UpdateuserrecordInputSchema = z.record(z.string(), z.unknown());
 export type UpdateuserrecordInput = z.infer<typeof UpdateuserrecordInputSchema>;
-const UpdateuserrecordResponseSchema = z.record(z.string(), z.any());
+const UpdateuserrecordResponseSchema = z.record(z.string(), z.unknown());
 export type UpdateuserrecordResponse = z.infer<
 	typeof UpdateuserrecordResponseSchema
 >;
 
-const UpdatewebhookInputSchema = z.record(z.string(), z.any());
+const UpdatewebhookInputSchema = z.record(z.string(), z.unknown());
 export type UpdatewebhookInput = z.infer<typeof UpdatewebhookInputSchema>;
-const UpdatewebhookResponseSchema = z.record(z.string(), z.any());
+const UpdatewebhookResponseSchema = z.record(z.string(), z.unknown());
 export type UpdatewebhookResponse = z.infer<typeof UpdatewebhookResponseSchema>;
 
-const UpdateworkspacerecordInputSchema = z.record(z.string(), z.any());
+const UpdateworkspacerecordInputSchema = z.record(z.string(), z.unknown());
 export type UpdateworkspacerecordInput = z.infer<
 	typeof UpdateworkspacerecordInputSchema
 >;
-const UpdateworkspacerecordResponseSchema = z.record(z.string(), z.any());
+const UpdateworkspacerecordResponseSchema = z.record(z.string(), z.unknown());
 export type UpdateworkspacerecordResponse = z.infer<
 	typeof UpdateworkspacerecordResponseSchema
 >;
@@ -1782,17 +1827,56 @@ export const GeneratedEndpointMeta = {
 } as const;
 
 // --- HANDLERS ---
+
+function pathValue(input: Record<string, unknown>, ...keys: string[]): string {
+	for (const key of keys) {
+		const value = input[key];
+		if (value !== undefined && value !== null && String(value).length > 0) {
+			return String(value);
+		}
+	}
+	return '';
+}
+
+function withoutKeys(
+	input: Record<string, unknown>,
+	keys: string[],
+): Record<string, unknown> {
+	const body = { ...input };
+	for (const key of keys) {
+		delete body[key];
+	}
+	return body;
+}
+
+function attributeBasePath(input: Record<string, unknown>): string {
+	const list = pathValue(input, 'list', 'list_id');
+	if (list) return `/v2/lists/${list}/attributes`;
+	return `/v2/objects/${pathValue(input, 'object')}/attributes`;
+}
+
+function asInput(input: unknown): Record<string, unknown> {
+	return (input ?? {}) as Record<string, unknown>;
+}
+
+function asQuery(
+	input: unknown,
+): Record<string, string | number | boolean | undefined> | undefined {
+	if (input === undefined) return undefined;
+	return input as unknown as Record<
+		string,
+		string | number | boolean | undefined
+	>;
+}
+
 export const putV2ListsListEntries: AttioEndpoint<
 	'putV2ListsListEntries'
 > = async (ctx, input) => {
-	let resolvedPath = '/v2/lists/{list}/entries';
-	resolvedPath = resolvedPath.replace(
-		'{list}',
-		String(input.list || input.list_id || ''),
-	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+	const data = asInput(input);
+	const list = pathValue(data, 'list', 'list_id');
+	return await makeAuthenticatedAttioRequest(`/v2/lists/${list}/entries`, ctx, {
 		method: 'PUT',
-		body: input,
+		body: withoutKeys(data, ['list', 'list_id']),
 	});
 };
 
@@ -1861,9 +1945,10 @@ export const createAttribute: AttioEndpoint<'createAttribute'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/attributes', ctx, {
+	const data = asInput(input);
+	return await makeAuthenticatedAttioRequest(attributeBasePath(data), ctx, {
 		method: 'POST',
-		body: input,
+		body: withoutKeys(data, ['object', 'list', 'list_id']),
 	});
 };
 
@@ -1902,14 +1987,11 @@ export const createDealRecord: AttioEndpoint<'createDealRecord'> = async (
 };
 
 export const createEntry: AttioEndpoint<'createEntry'> = async (ctx, input) => {
-	let resolvedPath = '/v2/lists/{list}/entries';
-	resolvedPath = resolvedPath.replace(
-		'{list}',
-		String(input.list || input.list_id || ''),
-	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+	const data = asInput(input);
+	const list = pathValue(data, 'list', 'list_id');
+	return await makeAuthenticatedAttioRequest(`/v2/lists/${list}/entries`, ctx, {
 		method: 'POST',
-		body: input,
+		body: withoutKeys(data, ['list', 'list_id']),
 	});
 };
 
@@ -1923,14 +2005,11 @@ export const createList: AttioEndpoint<'createList'> = async (ctx, input) => {
 export const postV2ListsListEntries: AttioEndpoint<
 	'postV2ListsListEntries'
 > = async (ctx, input) => {
-	let resolvedPath = '/v2/lists/{list}/entries';
-	resolvedPath = resolvedPath.replace(
-		'{list}',
-		String(input.list || input.list_id || ''),
-	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
+	const data = asInput(input);
+	const list = pathValue(data, 'list', 'list_id');
+	return await makeAuthenticatedAttioRequest(`/v2/lists/${list}/entries`, ctx, {
 		method: 'POST',
-		body: input,
+		body: withoutKeys(data, ['list', 'list_id']),
 	});
 };
 
@@ -1981,10 +2060,22 @@ export const createSelectOption: AttioEndpoint<'createSelectOption'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/select_options', ctx, {
-		method: 'POST',
-		body: input,
-	});
+	const data = asInput(input);
+	const attribute = pathValue(data, 'attribute', 'attribute_id');
+	return await makeAuthenticatedAttioRequest(
+		`${attributeBasePath(data)}/${attribute}/options`,
+		ctx,
+		{
+			method: 'POST',
+			body: withoutKeys(data, [
+				'object',
+				'list',
+				'list_id',
+				'attribute',
+				'attribute_id',
+			]),
+		},
+	);
 };
 
 export const createStatus: AttioEndpoint<'createStatus'> = async (
@@ -2230,15 +2321,13 @@ export const getAttribute: AttioEndpoint<'getAttribute'> = async (
 	ctx,
 	input,
 ) => {
-	let resolvedPath = '/v2/attributes/{attribute_id}';
-	resolvedPath = resolvedPath.replace(
-		'{attribute_id}',
-		String(input.attribute_id || ''),
+	const data = asInput(input);
+	const attribute = pathValue(data, 'attribute', 'attribute_id');
+	return await makeAuthenticatedAttioRequest(
+		`${attributeBasePath(data)}/${attribute}`,
+		ctx,
+		{ method: 'GET' },
 	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'GET',
-		query: input as any,
-	});
 };
 
 export const getComment: AttioEndpoint<'getComment'> = async (ctx, input) => {
@@ -2249,7 +2338,7 @@ export const getComment: AttioEndpoint<'getComment'> = async (ctx, input) => {
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2261,14 +2350,14 @@ export const getCompany: AttioEndpoint<'getCompany'> = async (ctx, input) => {
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
 export const getSelf: AttioEndpoint<'getSelf'> = async (ctx, input) => {
 	return await makeAuthenticatedAttioRequest('/v2/self', ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2285,7 +2374,7 @@ export const getDealRecord: AttioEndpoint<'getDealRecord'> = async (
 	queryPayload.record_id = undefined;
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: Object.keys(queryPayload).length ? queryPayload : undefined,
+		query: Object.keys(queryPayload).length ? asQuery(queryPayload) : undefined,
 	});
 };
 
@@ -2294,7 +2383,7 @@ export const getList: AttioEndpoint<'getList'> = async (ctx, input) => {
 	resolvedPath = resolvedPath.replace('{list_id}', String(input.list_id || ''));
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2313,7 +2402,7 @@ export const getListEntry: AttioEndpoint<'getListEntry'> = async (
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2322,7 +2411,7 @@ export const getNote: AttioEndpoint<'getNote'> = async (ctx, input) => {
 	resolvedPath = resolvedPath.replace('{note_id}', String(input.note_id || ''));
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2334,7 +2423,7 @@ export const getObject: AttioEndpoint<'getObject'> = async (ctx, input) => {
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2349,7 +2438,7 @@ export const peopleGetPerson: AttioEndpoint<'peopleGetPerson'> = async (
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2362,7 +2451,7 @@ export const getRecord: AttioEndpoint<'getRecord'> = async (ctx, input) => {
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2376,7 +2465,7 @@ export const getRecordAttributeValues: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2391,7 +2480,7 @@ export const getV2ObjectsObjectRecordsRecordId: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2400,7 +2489,7 @@ export const getTask: AttioEndpoint<'getTask'> = async (ctx, input) => {
 	resolvedPath = resolvedPath.replace('{task_id}', String(input.task_id || ''));
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2409,7 +2498,7 @@ export const getV2WorkspaceMembers: AttioEndpoint<
 > = async (ctx, input) => {
 	return await makeAuthenticatedAttioRequest('/v2/workspace_members', ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2421,7 +2510,7 @@ export const getWebhook: AttioEndpoint<'getWebhook'> = async (ctx, input) => {
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2429,15 +2518,13 @@ export const getWorkspaceMember: AttioEndpoint<'getWorkspaceMember'> = async (
 	ctx,
 	input,
 ) => {
-	let resolvedPath = '/v2/objects/workspace_members/records/{record_id}';
-	resolvedPath = resolvedPath.replace(
-		'{record_id}',
-		String(input.record_id || ''),
+	const data = asInput(input);
+	const memberId = pathValue(data, 'workspace_member_id', 'record_id');
+	return await makeAuthenticatedAttioRequest(
+		`/v2/workspace_members/${memberId}`,
+		ctx,
+		{ method: 'GET' },
 	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'GET',
-		query: input as any,
-	});
 };
 
 export const getWorkspaceRecord: AttioEndpoint<'getWorkspaceRecord'> = async (
@@ -2451,7 +2538,7 @@ export const getWorkspaceRecord: AttioEndpoint<'getWorkspaceRecord'> = async (
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2466,7 +2553,7 @@ export const listAttributeOptions: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2481,7 +2568,7 @@ export const listAttributeStatuses: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2493,7 +2580,7 @@ export const listAttributes: AttioEndpoint<'listAttributes'> = async (
 	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2508,7 +2595,7 @@ export const listCallRecordings: AttioEndpoint<'listCallRecordings'> = async (
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2541,7 +2628,7 @@ export const listCompanyAttributeValues: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2555,7 +2642,7 @@ export const listCompanyRecordEntries: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2570,7 +2657,7 @@ export const listDealEntries: AttioEndpoint<'listDealEntries'> = async (
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2589,7 +2676,7 @@ export const listDealRecordAttributeValues: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2597,10 +2684,11 @@ export const listDealRecords: AttioEndpoint<'listDealRecords'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/objects/deals/records', ctx, {
-		method: 'GET',
-		query: input as any,
-	});
+	return await makeAuthenticatedAttioRequest(
+		'/v2/objects/deals/records/query',
+		ctx,
+		{ method: 'POST', body: asInput(input) },
+	);
 };
 
 export const listEntries: AttioEndpoint<'listEntries'> = async (ctx, input) => {
@@ -2618,15 +2706,16 @@ export const listEntries: AttioEndpoint<'listEntries'> = async (ctx, input) => {
 export const postV2ListsListEntriesQuery: AttioEndpoint<
 	'postV2ListsListEntriesQuery'
 > = async (ctx, input) => {
-	let resolvedPath = '/v2/lists/{list}/entries/query';
-	resolvedPath = resolvedPath.replace(
-		'{list}',
-		String(input.list || input.list_id || ''),
+	const data = asInput(input);
+	const list = pathValue(data, 'list', 'list_id');
+	return await makeAuthenticatedAttioRequest(
+		`/v2/lists/${list}/entries/query`,
+		ctx,
+		{
+			method: 'POST',
+			body: withoutKeys(data, ['list', 'list_id']),
+		},
 	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'POST',
-		body: input,
-	});
 };
 
 export const listListEntries: AttioEndpoint<'listListEntries'> = async (
@@ -2663,14 +2752,14 @@ export const listListEntryAttributeValues: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
 export const listLists: AttioEndpoint<'listLists'> = async (ctx, input) => {
 	return await makeAuthenticatedAttioRequest('/v2/lists', ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2680,21 +2769,21 @@ export const listMeetings: AttioEndpoint<'listMeetings'> = async (
 ) => {
 	return await makeAuthenticatedAttioRequest('/v2/meetings', ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
 export const listNotes: AttioEndpoint<'listNotes'> = async (ctx, input) => {
 	return await makeAuthenticatedAttioRequest('/v2/notes', ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
 export const listObjects: AttioEndpoint<'listObjects'> = async (ctx, input) => {
 	return await makeAuthenticatedAttioRequest('/v2/objects', ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2713,7 +2802,7 @@ export const listPeopleAttributeValues: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2727,7 +2816,7 @@ export const listPeopleRecordEntries: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2736,12 +2825,9 @@ export const peopleListPersons: AttioEndpoint<'peopleListPersons'> = async (
 	input,
 ) => {
 	return await makeAuthenticatedAttioRequest(
-		'/v2/objects/people/records',
+		'/v2/objects/people/records/query',
 		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+		{ method: 'POST', body: asInput(input) },
 	);
 };
 
@@ -2761,7 +2847,7 @@ export const listRecordAttributeValues: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2782,7 +2868,7 @@ export const getRecordEntries: AttioEndpoint<'getRecordEntries'> = async (
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2798,17 +2884,18 @@ export const listRecordEntries: AttioEndpoint<'listRecordEntries'> = async (
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
 export const listRecords: AttioEndpoint<'listRecords'> = async (ctx, input) => {
-	let resolvedPath = '/v2/objects/{object}/records';
-	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'GET',
-		query: input as any,
-	});
+	const data = asInput(input);
+	const object = pathValue(data, 'object');
+	return await makeAuthenticatedAttioRequest(
+		`/v2/objects/${object}/records/query`,
+		ctx,
+		{ method: 'POST', body: withoutKeys(data, ['object']) },
+	);
 };
 
 export const postV2ObjectsObjectRecordsQuery: AttioEndpoint<
@@ -2825,14 +2912,14 @@ export const postV2ObjectsObjectRecordsQuery: AttioEndpoint<
 export const getV2Tasks: AttioEndpoint<'getV2Tasks'> = async (ctx, input) => {
 	return await makeAuthenticatedAttioRequest('/v2/tasks', ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
 export const listThreads: AttioEndpoint<'listThreads'> = async (ctx, input) => {
 	return await makeAuthenticatedAttioRequest('/v2/threads', ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2846,7 +2933,7 @@ export const listUserRecordEntries: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2854,10 +2941,11 @@ export const listUserRecords: AttioEndpoint<'listUserRecords'> = async (
 	ctx,
 	input,
 ) => {
-	return await makeAuthenticatedAttioRequest('/v2/objects/users/records', ctx, {
-		method: 'GET',
-		query: input as any,
-	});
+	return await makeAuthenticatedAttioRequest(
+		'/v2/objects/users/records/query',
+		ctx,
+		{ method: 'POST', body: asInput(input) },
+	);
 };
 
 export const listWebhooks: AttioEndpoint<'listWebhooks'> = async (
@@ -2866,21 +2954,17 @@ export const listWebhooks: AttioEndpoint<'listWebhooks'> = async (
 ) => {
 	return await makeAuthenticatedAttioRequest('/v2/webhooks', ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
 export const listWorkspaceMembers: AttioEndpoint<
 	'listWorkspaceMembers'
 > = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/objects/workspace_members/records',
-		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
-	);
+	return await makeAuthenticatedAttioRequest('/v2/workspace_members', ctx, {
+		method: 'GET',
+		query: asQuery(input),
+	});
 };
 
 export const listWorkspaceRecordAttributeValues: AttioEndpoint<
@@ -2898,7 +2982,7 @@ export const listWorkspaceRecordAttributeValues: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2912,7 +2996,7 @@ export const listWorkspaceRecordEntries: AttioEndpoint<
 	);
 	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
 		method: 'GET',
-		query: input as any,
+		query: asQuery(input),
 	});
 };
 
@@ -2920,12 +3004,9 @@ export const listWorkspaceRecords: AttioEndpoint<
 	'listWorkspaceRecords'
 > = async (ctx, input) => {
 	return await makeAuthenticatedAttioRequest(
-		'/v2/objects/workspaces/records',
+		'/v2/objects/workspaces/records/query',
 		ctx,
-		{
-			method: 'GET',
-			query: input as any,
-		},
+		{ method: 'POST', body: asInput(input) },
 	);
 };
 
@@ -3000,15 +3081,22 @@ export const updateAttribute: AttioEndpoint<'updateAttribute'> = async (
 	ctx,
 	input,
 ) => {
-	let resolvedPath = '/v2/attributes/{attribute_id}';
-	resolvedPath = resolvedPath.replace(
-		'{attribute_id}',
-		String(input.attribute_id || ''),
+	const data = asInput(input);
+	const attribute = pathValue(data, 'attribute', 'attribute_id');
+	return await makeAuthenticatedAttioRequest(
+		`${attributeBasePath(data)}/${attribute}`,
+		ctx,
+		{
+			method: 'PATCH',
+			body: withoutKeys(data, [
+				'object',
+				'list',
+				'list_id',
+				'attribute',
+				'attribute_id',
+			]),
+		},
 	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'PATCH',
-		body: input,
-	});
 };
 
 export const updateCompany: AttioEndpoint<'updateCompany'> = async (
@@ -3152,15 +3240,25 @@ export const updateSelectOption: AttioEndpoint<'updateSelectOption'> = async (
 	ctx,
 	input,
 ) => {
-	let resolvedPath = '/v2/select_options/{select_option_id}';
-	resolvedPath = resolvedPath.replace(
-		'{select_option_id}',
-		String(input.select_option_id || ''),
+	const data = asInput(input);
+	const attribute = pathValue(data, 'attribute', 'attribute_id');
+	const option = pathValue(data, 'option', 'select_option_id');
+	return await makeAuthenticatedAttioRequest(
+		`${attributeBasePath(data)}/${attribute}/options/${option}`,
+		ctx,
+		{
+			method: 'PATCH',
+			body: withoutKeys(data, [
+				'object',
+				'list',
+				'list_id',
+				'attribute',
+				'attribute_id',
+				'option',
+				'select_option_id',
+			]),
+		},
 	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'PATCH',
-		body: input,
-	});
 };
 
 export const updateStatus: AttioEndpoint<'updateStatus'> = async (
