@@ -136,6 +136,10 @@ export function verifyAsanaWebhookSignature(
 	request: { payload: unknown; headers: unknown },
 	secret: string,
 ): { valid: boolean; error?: string } {
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
 	const rawBody =
 		typeof request.payload === 'string'
 			? request.payload
