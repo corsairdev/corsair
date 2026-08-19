@@ -28,6 +28,7 @@ export const BaseProviders = [
 	'alchemy',
 	'algolia',
 	'alphavantage',
+	'altoviz',
 	'alttextai',
 	'amara',
 	'ambee',
@@ -176,6 +177,7 @@ export const ProviderDisplayNames = {
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
 	alphavantage: 'Alpha Vantage',
+	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
 	ambee: 'Ambee',
@@ -331,6 +333,7 @@ export type AllProviders =
 	| 'alchemy'
 	| 'algolia'
 	| 'alphavantage'
+	| 'altoviz'
 	| 'alttextai'
 	| 'amara'
 	| 'ambee'
