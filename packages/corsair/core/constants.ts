@@ -48,6 +48,7 @@ export const BaseProviders = [
 	'baselinker',
 	'betterstack',
 	'bigmailer',
+	'bigml',
 	'bitbucket',
 	'bitwarden',
 	'blazemeter',
@@ -199,6 +200,7 @@ export const ProviderDisplayNames = {
 	baselinker: 'BaseLinker',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
+	bigml: 'BigML',
 	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
 	blazemeter: 'BlazeMeter',
@@ -357,6 +359,7 @@ export type AllProviders =
 	| 'baselinker'
 	| 'betterstack'
 	| 'bigmailer'
+	| 'bigml'
 	| 'bitbucket'
 	| 'bitwarden'
 	| 'blazemeter'
