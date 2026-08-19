@@ -115,7 +115,7 @@ export function verifySharepointWebhookSignature(
 	const allMatch = notifications.every(
 		(n) =>
 			typeof n?.clientState === 'string' &&
-			n.clientState.length === clientState.length &&
+			Buffer.byteLength(n.clientState) === Buffer.byteLength(clientState) &&
 			timingSafeEqual(Buffer.from(n.clientState), Buffer.from(clientState)),
 	);
 	if (!allMatch) {
