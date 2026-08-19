@@ -1,6 +1,6 @@
+import { processWebhook } from 'corsair';
 import { createCorsair } from 'corsair/core';
 import { createIntegrationAndAccount, createTestDatabase } from 'corsair/tests';
-import { processWebhook } from 'corsair/webhooks';
 import { slack } from './index';
 
 async function buildCorsair() {

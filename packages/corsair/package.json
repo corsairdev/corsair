@@ -62,11 +62,6 @@
       "types": "./dist/tests.d.ts",
       "default": "./dist/tests.js"
     },
-    "./webhooks": {
-      "dev-source": "./webhooks.ts",
-      "types": "./dist/webhooks.d.ts",
-      "default": "./dist/webhooks.js"
-    },
     "./client/react": {
       "dev-source": "./client/react/index.ts",
       "types": "./dist/client/react/index.d.ts",
