@@ -137,6 +137,12 @@ async function fetchBinaryResponse(
 
 	const contentTypeHeader = response.headers.get('Content-Type') ?? 'image/png';
 	const contentType = contentTypeHeader.split(';')[0]?.trim() || 'image/png';
+	if (contentType !== 'image/png') {
+		throw new OpenWeatherMapAPIError(
+			`Expected image/png tile, received ${contentType}`,
+			response.status,
+		);
+	}
 	return { contentType, buffer: await response.arrayBuffer() };
 }
 

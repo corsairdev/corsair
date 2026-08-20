@@ -41,7 +41,7 @@ export const WeatherMapTileInputSchema = z.object({
 export type WeatherMapTileInput = z.infer<typeof WeatherMapTileInputSchema>;
 
 export const WeatherMapTileResponseSchema = z.object({
-	contentType: z.string().min(1),
+	contentType: z.literal('image/png'),
 	dataBase64: z.string().min(1),
 });
 

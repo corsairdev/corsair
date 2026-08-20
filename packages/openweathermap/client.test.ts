@@ -131,6 +131,22 @@ describe('makeOpenWeatherMapRequest', () => {
 		expect(response.dataBase64).toBe(Buffer.from([1, 2, 3]).toString('base64'));
 	});
 
+	it('rejects non-png map tiles', async () => {
+		mockFetch({
+			headers: { 'Content-Type': 'image/jpeg' },
+			arrayBuffer: new Uint8Array([1, 2, 3]).buffer,
+		});
+		await expect(
+			makeOpenWeatherMapRequest('weather/TA2/1/0/0', 'test-key', {
+				api: 'maps2',
+				responseType: 'binary',
+			}),
+		).rejects.toMatchObject({
+			name: 'OpenWeatherMapAPIError',
+			message: 'Expected image/png tile, received image/jpeg',
+		});
+	});
+
 	it('sets status on binary HTTP errors so rate-limit handlers match', async () => {
 		mockFetch({
 			ok: false,

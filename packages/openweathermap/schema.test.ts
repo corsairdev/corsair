@@ -9,6 +9,7 @@ import {
 	StationCreateInputSchema,
 	StationGetMeasurementsResponseSchema,
 	WeatherMapTileInputSchema,
+	WeatherMapTileResponseSchema,
 } from './endpoints/types';
 
 describe('OpenWeatherMap schema validation', () => {
@@ -72,6 +73,21 @@ describe('OpenWeatherMap schema validation', () => {
 			y: 0,
 		});
 		expect(parsed.layer).toBe('TA2');
+	});
+
+	it('requires map tiles to be image/png', () => {
+		expect(() =>
+			WeatherMapTileResponseSchema.parse({
+				contentType: 'image/jpeg',
+				dataBase64: 'abc',
+			}),
+		).toThrow();
+		expect(
+			WeatherMapTileResponseSchema.parse({
+				contentType: 'image/png',
+				dataBase64: 'abc',
+			}).contentType,
+		).toBe('image/png');
 	});
 
 	it('accepts station create input', () => {
