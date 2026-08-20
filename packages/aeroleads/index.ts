@@ -114,6 +114,7 @@ export type BaseAeroleadsPlugin<T extends AeroleadsPluginOptions> = CorsairPlugi
   typeof AeroleadsSchema,
   typeof aeroleadsEndpointsNested,
   typeof aeroleadsWebhooksNested,
+  T,
   typeof defaultAuthType
 >;
 
