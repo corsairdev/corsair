@@ -1,15 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ComposioEndpoints } from '..';
-import { makeComposioRequest } from '../client';
+import { makeComposioRequest, omitUndefined } from '../client';
 import type { ComposioEndpointOutputs } from './types';
-
-function omitUndefined(
-	query: Record<string, string | number | boolean | undefined>,
-): Record<string, string | number | boolean | undefined> {
-	return Object.fromEntries(
-		Object.entries(query).filter(([, v]) => v !== undefined),
-	);
-}
 
 export const list: ComposioEndpoints['actionsList'] = async (ctx, input) => {
 	const toolkitSlug = input.toolkit_slug ?? input.appName;

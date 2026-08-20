@@ -1,4 +1,5 @@
 import { request } from 'corsair/http';
+import { ComposioEndpointInputSchemas } from './endpoints/types';
 import { composio } from './index';
 
 jest.mock('corsair/http', () => {
@@ -105,5 +106,20 @@ describe('Composio v3 endpoint paths', () => {
 				headers: { 'x-composio-signature': 'x' },
 			} as never),
 		).toBe(false);
+	});
+
+	it('rejects actionExecute input missing both slug fields', () => {
+		// A bare {} must fail schema validation instead of reaching the handler
+		// and throwing an opaque Error.
+		const result = ComposioEndpointInputSchemas.actionExecute.safeParse({});
+		expect(result.success).toBe(false);
+	});
+
+	it('accepts actionExecute input with a tool_slug', () => {
+		const result = ComposioEndpointInputSchemas.actionExecute.safeParse({
+			tool_slug: 'GMAIL_SEND_EMAIL',
+			arguments: { to: 'a@b.com' },
+		});
+		expect(result.success).toBe(true);
 	});
 });
