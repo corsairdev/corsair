@@ -22,7 +22,7 @@ const LinkedinUrlSchema = z
         return false;
       }
     },
-    { message: 'linkedin_url must be a linkedin.com hostname' },
+    { error: 'linkedin_url must be a linkedin.com hostname' },
   );
 
 const GetDetailsFromLinkedinUrlInputSchema = z.object({
