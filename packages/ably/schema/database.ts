@@ -1,7 +1,3 @@
-/**
- * Ably does not currently persist provider entities locally.
- *
- * Messaging, presence, statistics, and push operations are handled directly
- * through the Ably REST API.
- */
-export {};
+// Ably has no persisted database entities — messaging, presence,
+// statistics, authentication, and push operations are stateless
+// REST API calls, so this plugin's schema declares an empty entity set.
