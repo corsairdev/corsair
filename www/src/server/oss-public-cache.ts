@@ -73,6 +73,12 @@ const getCachedIntegrationList = unstable_cache(
 	{ revalidate: 30, tags: [OSS_CACHE_TAGS.list] },
 );
 
+export const getCachedFeaturedAvailableSlugs = unstable_cache(
+	async () => createPublicCaller().integrations.featuredAvailable(),
+	['oss-featured-available'],
+	{ revalidate: 30, tags: [OSS_CACHE_TAGS.list] },
+);
+
 /** Cached list + one small query to mark the signed-in user's claims. */
 export async function getIntegrationListForPage(
 	page: number,
