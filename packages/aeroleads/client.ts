@@ -1,9 +1,11 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class AeroleadsAPIError extends Error {
   constructor(
     message: string,
+    public readonly status?: number,
+    public readonly retryAfter?: number,
     public readonly code?: string,
   ) {
     super(message);
@@ -49,6 +51,13 @@ export async function makeAeroleadsRequest<T>(
   try {
     return await request<T>(config, requestOptions);
   } catch (error) {
+    // Preserve ApiError metadata so the plugin's RATE_LIMIT_ERROR / AUTH_ERROR
+    // handlers (error-handlers.ts) can detect status 429/401 and read
+    // retryAfter. Without this, throwing a bare AeroleadsAPIError would strip
+    // the status code and the rate-limit retry path would never fire.
+    if (error instanceof ApiError) {
+      throw new AeroleadsAPIError(error.message, error.status, error.retryAfter);
+    }
     if (error instanceof Error) {
       throw new AeroleadsAPIError(error.message);
     }
