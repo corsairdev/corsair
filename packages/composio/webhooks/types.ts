@@ -137,35 +137,12 @@ const SIGNATURE_FAILED = 'Signature verification failed';
  * a `composio.trigger.message` automation). Entries are evicted lazily once
  * they fall outside the window, keeping the store bounded.
  *
- * Scope of this protection — and why it is intentionally process-local.
- *
- * This `Map` deduplicates within a single process, which is the same design the
- * framework itself uses for its hub delivery guard
- * (`packages/corsair/hub/internal/delivery-replay-guard.ts` documents the same
- * "process-local replay set … shared store (Redis/DB) for cross-replica replay
- * protection"). It is accurate for single-process deployments and for the unit
- * tests, but a replayed delivery can still hit a different worker/serverless
- * cold-start within the ±5-minute tolerance window.
- *
- * A fully distributed dedup layer cannot be implemented inside this plugin
- * package for two reasons:
- *
- *   1. Atomicity must be enforced by the store, not "check-then-insert". A plugin
- *      can write entities via `ctx.db`, but the entity client's upsert is a
- *      SELECT-then-INSERT without a unique constraint on `entity_id`, so two
- *      workers handling the same replay can both pass the SELECT and both INSERT.
- *      True atomic "claim" semantics require a database unique index on
- *      `(account_id, entity_type, entity_id)` in the core `corsair_entities`
- *      table — which lives outside this plugin's scope (see PLUGIN_PR_RULES R1).
- *
- *   2. Signature verification is synchronous and runs before the async webhook
- *      handler (and before `ctx`/`ctx.db`) is available, so it has no shared
- *      store to consult at verification time.
- *
- * To add cross-worker protection, migrate this to an atomic claim in a shared
- * store (e.g. Redis SET NX / Postgres INSERT … ON CONFLICT DO NOTHING / the
- * framework's Hub) keyed by `${webhookId}:${webhookTimestamp}`, and fail closed
- * when the claim already exists.
+ * WARNING: this cache is in-process only. Each OS process / serverless worker
+ * starts with an empty store, so it is NOT a distributed deduplication layer.
+ * In multi-worker or serverless deployments a captured delivery can be replayed
+ * to a different (cold) worker within the tolerance window. For cross-process
+ * protection, plug the deduplication into a shared store (e.g. Redis, Postgres,
+ * or the framework's Hub) keyed by `${webhookId}:${webhookTimestamp}`.
  */
 const WEBHOOK_REPLAY_WINDOW_MS = 5 * 60 * 1000;
 const processedWebhookDeliveries = new Map<string, number>();
