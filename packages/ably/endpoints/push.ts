@@ -15,6 +15,7 @@ export const publishPushNotificationsBatch: AblyEndpoints['publishPushNotificati
 		});
 
 		await logEventFromContext(ctx, 'ably.push.publishBatch', {}, 'completed');
+
 		return result;
 	};
 
@@ -30,9 +31,10 @@ export const deleteChannelSubscription: AblyEndpoints['deleteChannelSubscription
 		await logEventFromContext(
 			ctx,
 			'ably.push.deleteChannelSubscription',
-			input,
+			{ channel: input.channel },
 			'completed',
 		);
+
 		return result;
 	};
 
@@ -45,7 +47,8 @@ export const getPushDevice: AblyEndpoints['getPushDevice'] = async (
 		ctx.key,
 	);
 
-	await logEventFromContext(ctx, 'ably.push.getDevice', input, 'completed');
+	await logEventFromContext(ctx, 'ably.push.getDevice', {}, 'completed');
+
 	return result;
 };
 
@@ -60,9 +63,13 @@ export const listPushChannelSubscriptions: AblyEndpoints['listPushChannelSubscri
 		await logEventFromContext(
 			ctx,
 			'ably.push.listChannelSubscriptions',
-			input,
+			{
+				channel: input.channel,
+				limit: input.limit,
+			},
 			'completed',
 		);
+
 		return result;
 	};
 
@@ -78,7 +85,16 @@ export const listPushChannels: AblyEndpoints['listPushChannels'] = async (
 		},
 	);
 
-	await logEventFromContext(ctx, 'ably.push.listChannels', input, 'completed');
+	await logEventFromContext(
+		ctx,
+		'ably.push.listChannels',
+		{
+			prefix: input.prefix,
+			limit: input.limit,
+		},
+		'completed',
+	);
+
 	return result;
 };
 
@@ -90,7 +106,15 @@ export const listRegisteredPushDevices: AblyEndpoints['listRegisteredPushDevices
 			query: input,
 		});
 
-		await logEventFromContext(ctx, 'ably.push.listDevices', input, 'completed');
+		await logEventFromContext(
+			ctx,
+			'ably.push.listDevices',
+			{
+				limit: input.limit,
+			},
+			'completed',
+		);
+
 		return result;
 	};
 
@@ -105,12 +129,8 @@ export const patchPushDeviceRegistration: AblyEndpoints['patchPushDeviceRegistra
 			body,
 		});
 
-		await logEventFromContext(
-			ctx,
-			'ably.push.patchDevice',
-			{ deviceId },
-			'completed',
-		);
+		await logEventFromContext(ctx, 'ably.push.patchDevice', {}, 'completed');
+
 		return result;
 	};
 
@@ -124,6 +144,7 @@ export const publishPushNotification: AblyEndpoints['publishPushNotification'] =
 		});
 
 		await logEventFromContext(ctx, 'ably.push.publish', {}, 'completed');
+
 		return result;
 	};
 
@@ -139,6 +160,7 @@ export const registerPushDevice: AblyEndpoints['registerPushDevice'] = async (
 	});
 
 	await logEventFromContext(ctx, 'ably.push.registerDevice', {}, 'completed');
+
 	return result;
 };
 
@@ -154,9 +176,10 @@ export const unregisterAllPushDevices: AblyEndpoints['unregisterAllPushDevices']
 		await logEventFromContext(
 			ctx,
 			'ably.push.unregisterDevices',
-			input,
+			{},
 			'completed',
 		);
+
 		return result;
 	};
 
@@ -171,9 +194,10 @@ export const unregisterPushDevice: AblyEndpoints['unregisterPushDevice'] =
 		await logEventFromContext(
 			ctx,
 			'ably.push.unregisterDevice',
-			input,
+			{},
 			'completed',
 		);
+
 		return result;
 	};
 
@@ -195,11 +219,7 @@ export const updatePushDevice: AblyEndpoints['updatePushDevice'] = async (
 		},
 	);
 
-	await logEventFromContext(
-		ctx,
-		'ably.push.updateDevice',
-		{ deviceId: id },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'ably.push.updateDevice', {}, 'completed');
+
 	return result;
 };
