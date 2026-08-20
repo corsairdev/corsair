@@ -60,8 +60,8 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canva',
 	'canvas',
+	'canva',
 	'circleci',
 	'cloudflare',
 	'cloudinary',
@@ -213,8 +213,8 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canva: 'Canva',
 	canvas: 'Canvas LMS',
+	canva: 'Canva',
 	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
@@ -373,8 +373,8 @@ export type AllProviders =
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
-	| 'canva'
 	| 'canvas'
+	| 'canva'
 	| 'circleci'
 	| 'cloudflare'
 	| 'cloudinary'
