@@ -31,10 +31,13 @@ function mockFetch(response: MockResponse) {
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
 		captured = { url: String(url), method: init?.method ?? 'GET' };
 		const status = response.status ?? 200;
-		const headers = new Headers({
+		const headers = new Headers();
+		const rawHeaders = response.headers ?? {
 			'Content-Type': 'application/json',
-			...response.headers,
-		});
+		};
+		for (const [key, value] of Object.entries(rawHeaders)) {
+			headers.set(key, value);
+		}
 		const payload = response.body ?? {};
 		return {
 			ok: response.ok ?? status < 400,
@@ -113,7 +116,7 @@ describe('makeOpenWeatherMapRequest', () => {
 
 	it('returns map tiles as base64 with the response content type', async () => {
 		mockFetch({
-			headers: { 'Content-Type': 'image/png' },
+			headers: { 'Content-Type': 'image/png; charset=binary' },
 			arrayBuffer: new Uint8Array([1, 2, 3]).buffer,
 		});
 		const response = await makeOpenWeatherMapRequest<{
@@ -146,6 +149,29 @@ describe('makeOpenWeatherMapRequest', () => {
 			message: 'Expected image/png tile, received image/jpeg',
 		});
 	});
+
+	it.each([
+		['missing', {}, 'missing'],
+		['empty', { 'Content-Type': '' }, 'missing'],
+		['whitespace-only', { 'Content-Type': '   ' }, 'missing'],
+	] as const)(
+		'rejects %s Content-Type on map tiles',
+		async (_label, headers, received) => {
+			mockFetch({
+				headers,
+				arrayBuffer: new Uint8Array([1, 2, 3]).buffer,
+			});
+			await expect(
+				makeOpenWeatherMapRequest('weather/TA2/1/0/0', 'test-key', {
+					api: 'maps2',
+					responseType: 'binary',
+				}),
+			).rejects.toMatchObject({
+				name: 'OpenWeatherMapAPIError',
+				message: `Expected image/png tile, received ${received}`,
+			});
+		},
+	);
 
 	it('sets status on binary HTTP errors so rate-limit handlers match', async () => {
 		mockFetch({

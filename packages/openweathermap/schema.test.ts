@@ -146,5 +146,10 @@ describe('OpenWeatherMap schema validation', () => {
 				key.startsWith('uv'),
 			),
 		).toBe(false);
+		expect(
+			Object.keys(OpenWeatherMapEndpointOutputSchemas).some((key) =>
+				key.startsWith('uv'),
+			),
+		).toBe(false);
 	});
 });

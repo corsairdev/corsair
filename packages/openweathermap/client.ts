@@ -135,11 +135,11 @@ async function fetchBinaryResponse(
 		);
 	}
 
-	const contentTypeHeader = response.headers.get('Content-Type') ?? 'image/png';
-	const contentType = contentTypeHeader.split(';')[0]?.trim() || 'image/png';
+	const contentTypeHeader = response.headers.get('Content-Type');
+	const contentType = contentTypeHeader?.split(';')[0]?.trim() ?? '';
 	if (contentType !== 'image/png') {
 		throw new OpenWeatherMapAPIError(
-			`Expected image/png tile, received ${contentType}`,
+			`Expected image/png tile, received ${contentType || 'missing'}`,
 			response.status,
 		);
 	}
