@@ -365,20 +365,20 @@ export async function processOAuthCallback(
 
 	try {
 		const providerData = mergeOAuthProviderData(tokens, options.callbackParams);
-		const tenantLink = await resolveOAuthWebhookTenantLink(
+		const tenantLinks = await resolveOAuthWebhookTenantLink(
 			internal.plugins,
 			pluginId,
 			providerData,
 		);
-		if (tenantLink) {
+		const extraAccountFields = plugin.authConfig?.oauth_2?.account ?? [];
+		for (const link of tenantLinks) {
 			try {
-				const extraAccountFields = plugin.authConfig?.oauth_2?.account ?? [];
 				await setWebhookTenantLink({
 					database: internal.database,
 					kek: internal.kek,
 					pluginId,
 					tenantId,
-					link: tenantLink,
+					link,
 					authType: 'oauth_2',
 					extraAccountFields,
 				});
@@ -395,7 +395,7 @@ export async function processOAuthCallback(
 				void registerHubWebhookTenantLink(internal.hub, {
 					plugin: pluginId,
 					tenantId,
-					link: tenantLink,
+					link,
 					authType: 'oauth_2',
 				});
 			}

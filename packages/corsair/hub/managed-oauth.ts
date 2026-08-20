@@ -117,7 +117,7 @@ export async function processManagedOAuthDelivery(
 	}).catch(() => {});
 
 	try {
-		const tenantLink = await resolveOAuthWebhookTenantLink(
+		const tenantLinks = await resolveOAuthWebhookTenantLink(
 			internal.plugins,
 			pluginId,
 			{
@@ -126,15 +126,15 @@ export async function processManagedOAuthDelivery(
 				scope,
 			},
 		);
-		if (tenantLink) {
+		const extraAccountFields = plugin.authConfig?.managed?.account ?? [];
+		for (const link of tenantLinks) {
 			try {
-				const extraAccountFields = plugin.authConfig?.managed?.account ?? [];
 				await setWebhookTenantLink({
 					database: internal.database,
 					kek: internal.kek,
 					pluginId,
 					tenantId,
-					link: tenantLink,
+					link,
 					authType: 'managed',
 					extraAccountFields,
 				});
@@ -151,7 +151,7 @@ export async function processManagedOAuthDelivery(
 				void registerHubWebhookTenantLink(internal.hub, {
 					plugin: pluginId,
 					tenantId,
-					link: tenantLink,
+					link,
 					authType: 'managed',
 				});
 			}
