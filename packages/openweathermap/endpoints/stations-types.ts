@@ -15,6 +15,17 @@ export const StationSchema = z.looseObject({
 
 export type Station = z.infer<typeof StationSchema>;
 
+/** POST /stations returns uppercase `ID`; normalize to lowercase `id`. */
+export const StationCreateResponseSchema = z.preprocess((value) => {
+	if (typeof value !== 'object' || value === null) return value;
+	const record = value as Record<string, unknown>;
+	if (record.id !== undefined || typeof record.ID !== 'string') return value;
+	const { ID, ...rest } = record;
+	return { ...rest, id: ID };
+}, StationSchema);
+
+export type StationCreateResponse = z.infer<typeof StationCreateResponseSchema>;
+
 export const StationsListResponseSchema = z.array(StationSchema);
 export type StationsListResponse = z.infer<typeof StationsListResponseSchema>;
 

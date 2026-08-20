@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "demo": "node ./scripts/demo.mjs"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",

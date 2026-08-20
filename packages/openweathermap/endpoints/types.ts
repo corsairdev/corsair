@@ -47,6 +47,7 @@ import type {
 } from './stations-types';
 import {
 	StationCreateInputSchema,
+	StationCreateResponseSchema,
 	StationGetInputSchema,
 	StationGetMeasurementsInputSchema,
 	StationGetMeasurementsResponseSchema,
@@ -527,6 +528,7 @@ export type {
 export {
 	STATION_MEASUREMENT_TYPES,
 	StationCreateInputSchema,
+	StationCreateResponseSchema,
 	StationGetInputSchema,
 	StationGetMeasurementsInputSchema,
 	StationGetMeasurementsResponseSchema,
@@ -646,7 +648,7 @@ export const OpenWeatherMapEndpointOutputSchemas = {
 	weatherMapTile: WeatherMapTileResponseSchema,
 	stationsList: StationsListResponseSchema,
 	stationsGet: StationSchema,
-	stationsCreate: StationSchema,
+	stationsCreate: StationCreateResponseSchema,
 	stationsUpdate: StationSchema,
 	stationsRemove: StationRemoveResponseSchema,
 	stationsGetMeasurements: StationGetMeasurementsResponseSchema,

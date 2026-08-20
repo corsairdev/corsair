@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeOpenWeatherMapRequest } from '../client';
 import type { OpenWeatherMapEndpoints } from '../index';
+import { StationCreateResponseSchema } from './stations-types';
 import type { OpenWeatherMapEndpointOutputs } from './types';
 
 export const list: OpenWeatherMapEndpoints['stations']['list'] = async (
@@ -43,12 +44,13 @@ export const create: OpenWeatherMapEndpoints['stations']['create'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeOpenWeatherMapRequest<
-		OpenWeatherMapEndpointOutputs['stationsCreate']
-	>('stations', ctx.key, {
+	const raw = await makeOpenWeatherMapRequest<unknown>('stations', ctx.key, {
 		method: 'POST',
 		body: { ...input },
 	});
+	const response = StationCreateResponseSchema.parse(
+		raw,
+	) as OpenWeatherMapEndpointOutputs['stationsCreate'];
 
 	await logEventFromContext(
 		ctx,

@@ -11,6 +11,7 @@ import { errorHandlers } from './error-handlers';
 type Captured = {
 	url: string;
 	method: string;
+	body?: string;
 };
 
 let captured: Captured | undefined;
@@ -29,7 +30,11 @@ type MockResponse = {
 function mockFetch(response: MockResponse) {
 	captured = undefined;
 	global.fetch = (async (url: unknown, init?: RequestInit) => {
-		captured = { url: String(url), method: init?.method ?? 'GET' };
+		captured = {
+			url: String(url),
+			method: init?.method ?? 'GET',
+			body: init?.body as string | undefined,
+		};
 		const status = response.status ?? 200;
 		const headers = new Headers();
 		const rawHeaders = response.headers ?? {
@@ -132,6 +137,37 @@ describe('makeOpenWeatherMapRequest', () => {
 		expect(captured?.url).toContain('appid=test-key');
 		expect(response.contentType).toBe('image/png');
 		expect(response.dataBase64).toBe(Buffer.from([1, 2, 3]).toString('base64'));
+	});
+
+	it('accepts mixed-case PNG Content-Type on map tiles', async () => {
+		mockFetch({
+			headers: { 'Content-Type': 'IMAGE/PNG; charset=binary' },
+			arrayBuffer: new Uint8Array([1, 2, 3]).buffer,
+		});
+		const response = await makeOpenWeatherMapRequest<{
+			contentType: string;
+			dataBase64: string;
+		}>('weather/TA2/1/0/0', 'test-key', {
+			api: 'maps2',
+			responseType: 'binary',
+		});
+		expect(response.contentType).toBe('image/png');
+		expect(response.dataBase64).toBe(Buffer.from([1, 2, 3]).toString('base64'));
+	});
+
+	it('forwards JSON bodies on binary POST requests', async () => {
+		mockFetch({
+			headers: { 'Content-Type': 'image/png' },
+			arrayBuffer: new Uint8Array([1, 2, 3]).buffer,
+		});
+		await makeOpenWeatherMapRequest('weather/TA2/1/0/0', 'test-key', {
+			api: 'maps2',
+			method: 'POST',
+			body: { opacity: 0.5 },
+			responseType: 'binary',
+		});
+		expect(captured?.method).toBe('POST');
+		expect(captured?.body).toBe(JSON.stringify({ opacity: 0.5 }));
 	});
 
 	it('rejects non-png map tiles', async () => {

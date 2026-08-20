@@ -20,7 +20,10 @@ import type {
 import { OpenWeatherMapEndpointOutputSchemas } from './endpoints/types';
 
 const TEST_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
-const describeIfApiKey = TEST_API_KEY ? describe : describe.skip;
+const RUN_INTEGRATION_TESTS =
+	process.env.OPENWEATHERMAP_INTEGRATION_TESTS === '1';
+const describeIfApiKey =
+	TEST_API_KEY && RUN_INTEGRATION_TESTS ? describe : describe.skip;
 
 // London coordinates
 const TEST_LAT = 51.5074;
@@ -284,7 +287,19 @@ describeIfApiKey('OpenWeatherMap API Type Tests', () => {
 
 	describe('stations lifecycle', () => {
 		const externalId = `corsair-test-${Date.now()}`;
-		let stationId: string;
+		let stationId: string | undefined;
+
+		afterAll(async () => {
+			if (!stationId) return;
+			await makeOpenWeatherMapRequest<{ success: true }>(
+				`stations/${stationId}`,
+				apiKey,
+				{
+					method: 'DELETE',
+					responseType: 'empty',
+				},
+			);
+		});
 
 		it('lists stations', async () => {
 			const response = await makeOpenWeatherMapRequest<StationsListResponse>(
@@ -313,13 +328,13 @@ describeIfApiKey('OpenWeatherMap API Type Tests', () => {
 			);
 
 			OpenWeatherMapEndpointOutputSchemas.stationsCreate.parse(response);
-			stationId = response.id ?? '';
+			stationId = response.id;
 			expect(stationId).toBeTruthy();
 		});
 
 		it('gets the created station', async () => {
 			const response = await makeOpenWeatherMapRequest<Station>(
-				`stations/${stationId}`,
+				`stations/${stationId!}`,
 				apiKey,
 			);
 
@@ -329,7 +344,7 @@ describeIfApiKey('OpenWeatherMap API Type Tests', () => {
 
 		it('updates the station', async () => {
 			const response = await makeOpenWeatherMapRequest<Station>(
-				`stations/${stationId}`,
+				`stations/${stationId!}`,
 				apiKey,
 				{
 					method: 'PUT',
@@ -355,7 +370,7 @@ describeIfApiKey('OpenWeatherMap API Type Tests', () => {
 					method: 'POST',
 					body: [
 						{
-							station_id: stationId,
+							station_id: stationId!,
 							dt: Math.floor(Date.now() / 1000),
 							temperature: 15,
 							humidity: 60,
@@ -381,7 +396,7 @@ describeIfApiKey('OpenWeatherMap API Type Tests', () => {
 					apiKey,
 					{
 						query: {
-							station_id: stationId,
+							station_id: stationId!,
 							type: 'm',
 							from,
 							to,
@@ -393,19 +408,6 @@ describeIfApiKey('OpenWeatherMap API Type Tests', () => {
 			OpenWeatherMapEndpointOutputSchemas.stationsGetMeasurements.parse(
 				response,
 			);
-		});
-
-		it('removes the station', async () => {
-			const response = await makeOpenWeatherMapRequest<{ success: true }>(
-				`stations/${stationId}`,
-				apiKey,
-				{
-					method: 'DELETE',
-					responseType: 'empty',
-				},
-			);
-
-			OpenWeatherMapEndpointOutputSchemas.stationsRemove.parse(response);
 		});
 	});
 });

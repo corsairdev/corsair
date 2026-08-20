@@ -136,7 +136,8 @@ async function fetchBinaryResponse(
 	}
 
 	const contentTypeHeader = response.headers.get('Content-Type');
-	const contentType = contentTypeHeader?.split(';')[0]?.trim() ?? '';
+	const contentType =
+		contentTypeHeader?.split(';')[0]?.trim().toLowerCase() ?? '';
 	if (contentType !== 'image/png') {
 		throw new OpenWeatherMapAPIError(
 			`Expected image/png tile, received ${contentType || 'missing'}`,
@@ -203,12 +204,24 @@ export async function makeOpenWeatherMapRequest<T>(
 				: `${baseUrl}/${urlPath}`;
 
 		try {
+			const serializedBody =
+				method === 'POST' || method === 'PUT'
+					? body === undefined
+						? undefined
+						: JSON.stringify(
+								Array.isArray(body)
+									? body
+									: compactBody(body as Record<string, unknown>),
+							)
+					: undefined;
 			const { contentType, buffer } = await fetchBinaryResponse(url, {
 				method,
 				headers: {
 					Accept: 'image/png',
+					'Content-Type': 'application/json',
 					...extraHeaders,
 				},
+				body: serializedBody,
 			});
 			return {
 				contentType,

@@ -7,6 +7,7 @@ import {
 	OpenWeatherMapEndpointInputSchemas,
 	OpenWeatherMapEndpointOutputSchemas,
 	StationCreateInputSchema,
+	StationCreateResponseSchema,
 	StationGetMeasurementsResponseSchema,
 	WeatherMapTileInputSchema,
 	WeatherMapTileResponseSchema,
@@ -79,13 +80,18 @@ describe('OpenWeatherMap schema validation', () => {
 		expect(() =>
 			WeatherMapTileResponseSchema.parse({
 				contentType: 'image/jpeg',
-				dataBase64: 'abc',
+				dataBase64: 'YWJj',
+			}),
+		).toThrow();
+		expect(() =>
+			WeatherMapTileResponseSchema.parse({
+				dataBase64: 'YWJj',
 			}),
 		).toThrow();
 		expect(
 			WeatherMapTileResponseSchema.parse({
 				contentType: 'image/png',
-				dataBase64: 'abc',
+				dataBase64: 'YWJj',
 			}).contentType,
 		).toBe('image/png');
 	});
@@ -138,9 +144,45 @@ describe('OpenWeatherMap schema validation', () => {
 		expect(parsed).toHaveLength(1);
 	});
 
+	it('normalizes station create uppercase ID to id', () => {
+		const parsed = StationCreateResponseSchema.parse({
+			ID: '583436dd9643a9000196b8d6',
+		});
+		expect(parsed.id).toBe('583436dd9643a9000196b8d6');
+		expect('ID' in parsed).toBe(false);
+	});
+
 	it('registers schemas for all 21 endpoints', () => {
-		expect(Object.keys(OpenWeatherMapEndpointInputSchemas)).toHaveLength(21);
-		expect(Object.keys(OpenWeatherMapEndpointOutputSchemas)).toHaveLength(21);
+		const expectedEndpointKeys = [
+			'oneCall',
+			'timeMachine',
+			'daySummary',
+			'overview',
+			'currentWeather',
+			'forecast5Day',
+			'circleCity',
+			'airPollutionCurrent',
+			'airPollutionForecast',
+			'airPollutionHistory',
+			'geocodingDirect',
+			'geocodingReverse',
+			'geocodingByZip',
+			'weatherMapTile',
+			'stationsList',
+			'stationsGet',
+			'stationsCreate',
+			'stationsUpdate',
+			'stationsRemove',
+			'stationsGetMeasurements',
+			'stationsSubmitMeasurements',
+		] as const;
+
+		expect(Object.keys(OpenWeatherMapEndpointInputSchemas).sort()).toEqual(
+			[...expectedEndpointKeys].sort(),
+		);
+		expect(Object.keys(OpenWeatherMapEndpointOutputSchemas).sort()).toEqual(
+			[...expectedEndpointKeys].sort(),
+		);
 		expect(
 			Object.keys(OpenWeatherMapEndpointInputSchemas).some((key) =>
 				key.startsWith('uv'),
