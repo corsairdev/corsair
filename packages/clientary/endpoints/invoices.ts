@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import { getClientaryCredentials, makeClientaryRequest } from '../client';
 import type { ClientaryEndpoints } from '../index';
+import { cacheRecord, cacheRecords, evictEntity } from './persist';
 import type { ClientaryInvoice } from './types';
 import {
 	ClientaryDeleteResponseSchema,
@@ -30,6 +31,8 @@ export const list: ClientaryEndpoints['invoicesList'] = async (ctx, input) => {
 	});
 
 	const parsed = ClientaryEndpointOutputSchemas.invoicesList.parse(response);
+
+	await cacheRecords(ctx.db.invoices, parsed.invoices, 'invoice');
 
 	await logEventFromContext(
 		ctx,
@@ -62,6 +65,8 @@ export const listForClient: ClientaryEndpoints['invoicesListForClient'] =
 		const parsed =
 			ClientaryEndpointOutputSchemas.invoicesListForClient.parse(response);
 
+		await cacheRecords(ctx.db.invoices, parsed.invoices, 'invoice');
+
 		await logEventFromContext(
 			ctx,
 			'clientary.invoices.listForClient',
@@ -92,6 +97,8 @@ export const listForProject: ClientaryEndpoints['invoicesListForProject'] =
 
 		const parsed =
 			ClientaryEndpointOutputSchemas.invoicesListForProject.parse(response);
+
+		await cacheRecords(ctx.db.invoices, parsed.invoices, 'invoice');
 
 		await logEventFromContext(
 			ctx,
@@ -124,6 +131,8 @@ export const listForRecurring: ClientaryEndpoints['invoicesListForRecurring'] =
 		const parsed =
 			ClientaryEndpointOutputSchemas.invoicesListForRecurring.parse(response);
 
+		await cacheRecords(ctx.db.invoices, parsed.invoices, 'invoice');
+
 		await logEventFromContext(
 			ctx,
 			'clientary.invoices.listForRecurring',
@@ -150,13 +159,7 @@ export const get: ClientaryEndpoints['invoicesGet'] = async (ctx, input) => {
 
 	const parsed = ClientaryInvoiceSchema.parse(response);
 
-	if (ctx.db.invoices) {
-		try {
-			await ctx.db.invoices.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save invoice to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.invoices, parsed, 'invoice');
 
 	await logEventFromContext(
 		ctx,
@@ -188,13 +191,7 @@ export const create: ClientaryEndpoints['invoicesCreate'] = async (
 
 	const parsed = ClientaryInvoiceSchema.parse(response);
 
-	if (ctx.db.invoices) {
-		try {
-			await ctx.db.invoices.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save invoice to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.invoices, parsed, 'invoice');
 
 	await logEventFromContext(
 		ctx,
@@ -227,13 +224,7 @@ export const update: ClientaryEndpoints['invoicesUpdate'] = async (
 
 	const parsed = ClientaryInvoiceSchema.parse(response);
 
-	if (ctx.db.invoices) {
-		try {
-			await ctx.db.invoices.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save invoice to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.invoices, parsed, 'invoice');
 
 	await logEventFromContext(
 		ctx,
@@ -259,6 +250,8 @@ export const remove: ClientaryEndpoints['invoicesDelete'] = async (
 	await makeClientaryRequest<unknown>(`invoices/${input.id}`, apiKey, domain, {
 		method: 'DELETE',
 	});
+
+	await evictEntity(ctx.db.invoices, input.id, 'invoice');
 
 	const result = ClientaryDeleteResponseSchema.parse({
 		success: true,

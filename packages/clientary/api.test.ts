@@ -174,14 +174,18 @@ describeWhenCreds('Clientary API Type Tests', () => {
 				DOMAIN!,
 				{ method: 'POST', body: { client: { name: 'Corsair Test Client' } } },
 			);
-			ClientaryEndpointOutputSchemas.clientsCreate.parse(created);
-
-			await makeClientaryRequest<unknown>(
-				`clients/${created.id}`,
-				API_KEY!,
-				DOMAIN!,
-				{ method: 'DELETE' },
-			);
+			try {
+				ClientaryEndpointOutputSchemas.clientsCreate.parse(created);
+			} finally {
+				if (created.id) {
+					await makeClientaryRequest<unknown>(
+						`clients/${created.id}`,
+						API_KEY!,
+						DOMAIN!,
+						{ method: 'DELETE' },
+					);
+				}
+			}
 		});
 
 		itWhenWritable('tasksCreate + tasksDelete round-trip', async () => {
@@ -191,14 +195,18 @@ describeWhenCreds('Clientary API Type Tests', () => {
 				DOMAIN!,
 				{ method: 'POST', body: { task: { title: 'Corsair Test Task' } } },
 			);
-			ClientaryEndpointOutputSchemas.tasksCreate.parse(created);
-
-			await makeClientaryRequest<unknown>(
-				`tasks/${created.id}`,
-				API_KEY!,
-				DOMAIN!,
-				{ method: 'DELETE' },
-			);
+			try {
+				ClientaryEndpointOutputSchemas.tasksCreate.parse(created);
+			} finally {
+				if (created.id) {
+					await makeClientaryRequest<unknown>(
+						`tasks/${created.id}`,
+						API_KEY!,
+						DOMAIN!,
+						{ method: 'DELETE' },
+					);
+				}
+			}
 		});
 	});
 });

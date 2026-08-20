@@ -145,4 +145,21 @@ describe('Clientary error handlers', () => {
 		});
 		expect(matches.map(([name]) => name)).toEqual(['AUTH_ERROR']);
 	});
+
+	it('does not classify a 500 as NOT_FOUND just because the body mentions not found', () => {
+		const error = makeClientaryError(500, 'internal: widget not found');
+		expect(errorHandlers.NOT_FOUND_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+	});
+
+	it('does not classify a 500 as VALIDATION just because the body mentions unprocessable', () => {
+		const error = makeClientaryError(500, 'unprocessable downstream');
+		expect(errorHandlers.VALIDATION_ERROR.match(error)).toBe(false);
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+	});
+
+	it('still matches not found by message when no status is present', () => {
+		const error = makeClientaryError(undefined, 'record not found');
+		expect(errorHandlers.NOT_FOUND_ERROR.match(error)).toBe(true);
+	});
 });

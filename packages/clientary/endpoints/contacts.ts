@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import { getClientaryCredentials, makeClientaryRequest } from '../client';
 import type { ClientaryEndpoints } from '../index';
+import { cacheRecord, cacheRecords, evictEntity } from './persist';
 import type { ClientaryContact } from './types';
 import {
 	ClientaryContactSchema,
@@ -29,17 +30,7 @@ export const list: ClientaryEndpoints['contactsList'] = async (ctx, input) => {
 
 	const parsed = ClientaryEndpointOutputSchemas.contactsList.parse(response);
 
-	if (ctx.db.contacts) {
-		try {
-			for (const contact of parsed.contacts) {
-				await ctx.db.contacts.upsertByEntityId(String(contact.id), {
-					...contact,
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to save contacts to database:', error);
-		}
-	}
+	await cacheRecords(ctx.db.contacts, parsed.contacts, 'contact');
 
 	await logEventFromContext(
 		ctx,
@@ -72,17 +63,7 @@ export const listForClient: ClientaryEndpoints['contactsListForClient'] =
 		const parsed =
 			ClientaryEndpointOutputSchemas.contactsListForClient.parse(response);
 
-		if (ctx.db.contacts) {
-			try {
-				for (const contact of parsed.contacts) {
-					await ctx.db.contacts.upsertByEntityId(String(contact.id), {
-						...contact,
-					});
-				}
-			} catch (error) {
-				console.warn('Failed to save contacts to database:', error);
-			}
-		}
+		await cacheRecords(ctx.db.contacts, parsed.contacts, 'contact');
 
 		await logEventFromContext(
 			ctx,
@@ -110,13 +91,7 @@ export const get: ClientaryEndpoints['contactsGet'] = async (ctx, input) => {
 
 	const parsed = ClientaryContactSchema.parse(response);
 
-	if (ctx.db.contacts) {
-		try {
-			await ctx.db.contacts.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save contact to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.contacts, parsed, 'contact');
 
 	await logEventFromContext(
 		ctx,
@@ -149,13 +124,7 @@ export const create: ClientaryEndpoints['contactsCreate'] = async (
 
 	const parsed = ClientaryContactSchema.parse(response);
 
-	if (ctx.db.contacts) {
-		try {
-			await ctx.db.contacts.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save contact to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.contacts, parsed, 'contact');
 
 	await logEventFromContext(
 		ctx,
@@ -188,13 +157,7 @@ export const update: ClientaryEndpoints['contactsUpdate'] = async (
 
 	const parsed = ClientaryContactSchema.parse(response);
 
-	if (ctx.db.contacts) {
-		try {
-			await ctx.db.contacts.upsertByEntityId(String(parsed.id), { ...parsed });
-		} catch (error) {
-			console.warn('Failed to save contact to database:', error);
-		}
-	}
+	await cacheRecord(ctx.db.contacts, parsed, 'contact');
 
 	await logEventFromContext(
 		ctx,
@@ -220,6 +183,8 @@ export const remove: ClientaryEndpoints['contactsDelete'] = async (
 	await makeClientaryRequest<unknown>(`contacts/${input.id}`, apiKey, domain, {
 		method: 'DELETE',
 	});
+
+	await evictEntity(ctx.db.contacts, input.id, 'contact');
 
 	const result = ClientaryDeleteResponseSchema.parse({
 		success: true,

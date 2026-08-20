@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { z } from 'zod';
 import { getClientaryCredentials, makeClientaryRequest } from '../client';
 import type { ClientaryEndpoints } from '../index';
+import { cacheRecord, cacheRecords, evictEntity } from './persist';
 import type { ClientaryEstimate } from './types';
 import {
 	ClientaryDeleteResponseSchema,
@@ -26,6 +27,8 @@ export const list: ClientaryEndpoints['estimatesList'] = async (ctx, input) => {
 	});
 
 	const parsed = ClientaryEndpointOutputSchemas.estimatesList.parse(response);
+
+	await cacheRecords(ctx.db.estimates, parsed.estimates, 'estimate');
 
 	await logEventFromContext(
 		ctx,
@@ -58,6 +61,8 @@ export const listForClient: ClientaryEndpoints['estimatesListForClient'] =
 		const parsed =
 			ClientaryEndpointOutputSchemas.estimatesListForClient.parse(response);
 
+		await cacheRecords(ctx.db.estimates, parsed.estimates, 'estimate');
+
 		await logEventFromContext(
 			ctx,
 			'clientary.estimates.listForClient',
@@ -89,6 +94,8 @@ export const listForProject: ClientaryEndpoints['estimatesListForProject'] =
 		const parsed =
 			ClientaryEndpointOutputSchemas.estimatesListForProject.parse(response);
 
+		await cacheRecords(ctx.db.estimates, parsed.estimates, 'estimate');
+
 		await logEventFromContext(
 			ctx,
 			'clientary.estimates.listForProject',
@@ -114,6 +121,8 @@ export const get: ClientaryEndpoints['estimatesGet'] = async (ctx, input) => {
 	);
 
 	const parsed = ClientaryEstimateSchema.parse(response);
+
+	await cacheRecord(ctx.db.estimates, parsed, 'estimate');
 
 	await logEventFromContext(
 		ctx,
@@ -144,6 +153,8 @@ export const create: ClientaryEndpoints['estimatesCreate'] = async (
 	);
 
 	const parsed = ClientaryEstimateSchema.parse(response);
+
+	await cacheRecord(ctx.db.estimates, parsed, 'estimate');
 
 	await logEventFromContext(
 		ctx,
@@ -177,6 +188,8 @@ export const update: ClientaryEndpoints['estimatesUpdate'] = async (
 
 	const parsed = ClientaryEstimateSchema.parse(response);
 
+	await cacheRecord(ctx.db.estimates, parsed, 'estimate');
+
 	await logEventFromContext(
 		ctx,
 		'clientary.estimates.update',
@@ -201,6 +214,8 @@ export const remove: ClientaryEndpoints['estimatesDelete'] = async (
 	await makeClientaryRequest<unknown>(`estimates/${input.id}`, apiKey, domain, {
 		method: 'DELETE',
 	});
+
+	await evictEntity(ctx.db.estimates, input.id, 'estimate');
 
 	const result = ClientaryDeleteResponseSchema.parse({
 		success: true,

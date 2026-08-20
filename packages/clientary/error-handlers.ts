@@ -11,14 +11,28 @@ function isNonIdempotentWrite(operation: string): boolean {
  * and any error that exposes a numeric `status` property.
  */
 function getStatus(error: Error): number | undefined {
-	return (error as Partial<ClientaryAPIError>).status;
+	const status = (error as Partial<ClientaryAPIError>).status;
+	return status && status > 0 ? status : undefined;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	return (error as Partial<ClientaryAPIError>).retryAfter;
 }
 
 /**
- * Helper to extract the Retry-After value (in ms) from an error.
+ * Prefer the HTTP status when present. Fall back to message matching only
+ * for errors that carry no status, so a 500 body that mentions "not found"
+ * is not classified as NOT_FOUND.
  */
-function getRetryAfter(error: Error): number | undefined {
-	return (error as Partial<ClientaryAPIError>).retryAfter;
+function matchStatusOrMessage(
+	error: Error,
+	statusMatches: (status: number) => boolean,
+	needles: string[],
+): boolean {
+	const status = getStatus(error);
+	if (status !== undefined) return statusMatches(status);
+	const message = error.message.toLowerCase();
+	return needles.some((needle) => message.includes(needle));
 }
 
 /**
@@ -35,11 +49,11 @@ function getRetryAfter(error: Error): number | undefined {
  */
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (getStatus(error) === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('429') || msg.includes('rate limit');
-		},
+		match: (error: Error) =>
+			matchStatusOrMessage(error, (status) => status === 429, [
+				'429',
+				'rate limit',
+			]),
 		handler: async (error: Error, context: ErrorContext) => {
 			if (isNonIdempotentWrite(context.operation)) {
 				return { maxRetries: 0 };
@@ -52,15 +66,12 @@ export const errorHandlers = {
 		},
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (getStatus(error) === 401) return true;
-			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('unauthorized') ||
-				msg.includes('invalid api key') ||
-				msg.includes('401')
-			);
-		},
+		match: (error: Error) =>
+			matchStatusOrMessage(error, (status) => status === 401, [
+				'unauthorized',
+				'invalid api key',
+				'401',
+			]),
 		handler: async (error: Error) => {
 			console.warn(
 				'[CLIENTARY] Authentication failed — check that the API token is ' +
@@ -70,11 +81,11 @@ export const errorHandlers = {
 		},
 	},
 	FORBIDDEN_ERROR: {
-		match: (error: Error) => {
-			if (getStatus(error) === 403) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('403') || msg.includes('forbidden');
-		},
+		match: (error: Error) =>
+			matchStatusOrMessage(error, (status) => status === 403, [
+				'403',
+				'forbidden',
+			]),
 		handler: async (error: Error) => {
 			console.warn(
 				'[CLIENTARY] Request forbidden — the user behind the API token ' +
@@ -84,11 +95,11 @@ export const errorHandlers = {
 		},
 	},
 	NOT_FOUND_ERROR: {
-		match: (error: Error) => {
-			if (getStatus(error) === 404) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('404') || msg.includes('not found');
-		},
+		match: (error: Error) =>
+			matchStatusOrMessage(error, (status) => status === 404, [
+				'404',
+				'not found',
+			]),
 		handler: async (error: Error) => {
 			console.warn(
 				'[CLIENTARY] Resource not found — the requested record does not ' +
@@ -98,11 +109,11 @@ export const errorHandlers = {
 		},
 	},
 	VALIDATION_ERROR: {
-		match: (error: Error) => {
-			if (getStatus(error) === 422) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('422') || msg.includes('unprocessable');
-		},
+		match: (error: Error) =>
+			matchStatusOrMessage(error, (status) => status === 422, [
+				'422',
+				'unprocessable',
+			]),
 		handler: async (error: Error) => {
 			console.warn(
 				'[CLIENTARY] Request rejected — a field is missing, malformed, ' +
@@ -113,11 +124,11 @@ export const errorHandlers = {
 		},
 	},
 	PLAN_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (getStatus(error) === 426) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('426') || msg.includes('plan limit');
-		},
+		match: (error: Error) =>
+			matchStatusOrMessage(error, (status) => status === 426, [
+				'426',
+				'plan limit',
+			]),
 		handler: async (error: Error) => {
 			console.warn(
 				'[CLIENTARY] Request rejected — the operation exceeds the ' +
@@ -128,12 +139,11 @@ export const errorHandlers = {
 		},
 	},
 	SERVER_ERROR: {
-		match: (error: Error) => {
-			const status = getStatus(error);
-			if (status !== undefined && status >= 500) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('500') || msg.includes('internal server error');
-		},
+		match: (error: Error) =>
+			matchStatusOrMessage(error, (status) => status >= 500, [
+				'500',
+				'internal server error',
+			]),
 		handler: async (error: Error, context: ErrorContext) => {
 			void error;
 			if (isNonIdempotentWrite(context.operation)) {

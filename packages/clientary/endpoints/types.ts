@@ -1062,7 +1062,7 @@ export type ClientaryStaff = z.infer<typeof ClientaryStaffSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // TASKS — GET /tasks, GET /projects/:project_id/tasks,
-// GET/PUT/DELETE /tasks/:id, POST /tasks
+// GET/PUT/DELETE /tasks/:id, POST /task
 // Docs: https://www.clientary.com/api/tasks
 // ─────────────────────────────────────────────────────────────────────────────
 
