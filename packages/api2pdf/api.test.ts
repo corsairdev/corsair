@@ -1,13 +1,19 @@
 import 'dotenv/config';
-import {
-	ChromeEndpoints,
-	LibreOfficeEndpoints,
-	PdfSharpEndpoints,
-	UtilityEndpoints,
-	ZebraEndpoints,
-} from './endpoints';
 import { Api2PdfEndpointOutputSchemas } from './endpoints/types';
 import type { Api2PdfContext } from './index';
+
+/**
+ * Endpoints are imported lazily inside `beforeAll`. A static import would pull
+ * in `corsair/core` at module load, which cannot be evaluated under ESM jest —
+ * that would fail the file even when this suite is skipped.
+ */
+type Endpoints = typeof import('./endpoints');
+
+let ChromeEndpoints: Endpoints['ChromeEndpoints'];
+let LibreOfficeEndpoints: Endpoints['LibreOfficeEndpoints'];
+let PdfSharpEndpoints: Endpoints['PdfSharpEndpoints'];
+let UtilityEndpoints: Endpoints['UtilityEndpoints'];
+let ZebraEndpoints: Endpoints['ZebraEndpoints'];
 
 const TEST_API_KEY = process.env.API2PDF_API_KEY;
 const LIVE_TEST_FLAG =
@@ -32,6 +38,16 @@ function testCtx(): Api2PdfContext {
 const testSuite = TEST_API_KEY && LIVE_TEST_FLAG ? describe : describe.skip;
 
 testSuite('API2PDF live API', () => {
+	beforeAll(async () => {
+		({
+			ChromeEndpoints,
+			LibreOfficeEndpoints,
+			PdfSharpEndpoints,
+			UtilityEndpoints,
+			ZebraEndpoints,
+		} = await import('./endpoints'));
+	});
+
 	describe('utility', () => {
 		it('checkStatus returns a plain-text status', async () => {
 			const response = await UtilityEndpoints.checkStatus(testCtx(), {});

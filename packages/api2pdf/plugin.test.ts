@@ -116,6 +116,13 @@ describe('api2pdf plugin registration', () => {
 		expect(reads).toEqual(['utility.checkStatus']);
 	});
 
+	it('accepts negative extract-pages offsets in the input schema', () => {
+		const schema = api2pdfEndpointSchemas['pdfsharp.extractPages'].input;
+		expect(() =>
+			schema.parse({ url: 'https://example.com/a.pdf', start: -1, end: -1 }),
+		).not.toThrow();
+	});
+
 	it('declares api_key auth and registers no webhooks', () => {
 		expect(plugin.id).toBe('api2pdf');
 		expect(plugin.authConfig).toHaveProperty('api_key');

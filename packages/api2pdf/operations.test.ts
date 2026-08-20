@@ -260,6 +260,33 @@ describe('API2PDF endpoint routing', () => {
 		);
 	});
 
+	it('passes negative extract-pages offsets through unchanged', async () => {
+		requestMock.mockResolvedValueOnce(jobOk);
+
+		await call(PdfSharpEndpoints.extractPages, createContext(), {
+			url: SAMPLE_PDF,
+			start: -1,
+			end: -1,
+		});
+
+		expect(lastCall().options.body).toEqual({
+			inline: true,
+			url: SAMPLE_PDF,
+			start: -1,
+			end: -1,
+		});
+	});
+
+	it('omits extract-pages offsets that are not supplied', async () => {
+		requestMock.mockResolvedValueOnce(jobOk);
+
+		await call(PdfSharpEndpoints.extractPages, createContext(), {
+			url: SAMPLE_PDF,
+		});
+
+		expect(lastCall().options.body).toEqual({ inline: true, url: SAMPLE_PDF });
+	});
+
 	it('omits optional watermark styling fields when they are not supplied', async () => {
 		requestMock.mockResolvedValueOnce(jobOk);
 

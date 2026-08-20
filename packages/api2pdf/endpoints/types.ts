@@ -71,21 +71,29 @@ export const MergePdfsInputSchema = z.object({
 
 export type MergePdfsInput = z.infer<typeof MergePdfsInputSchema>;
 
-/** POST /pdfsharp/extract-pages — `Url`, `Start`, `End` */
+/**
+ * POST /pdfsharp/extract-pages — `Url`, `Start`, `End`.
+ *
+ * The spec types Start/End as plain integers with no minimum, and negative
+ * offsets count back from the end (-1 is the last page), so no lower bound is
+ * imposed here.
+ */
 export const ExtractPagesInputSchema = z.object({
 	url: z.string().url().describe('Public URL of the source PDF'),
 	start: z
 		.number()
 		.int()
-		.min(0)
 		.optional()
-		.describe('Zero-based index of the first page to extract'),
+		.describe(
+			'Zero-based index of the first page to extract; negative counts back from the end',
+		),
 	end: z
 		.number()
 		.int()
-		.min(0)
 		.optional()
-		.describe('Zero-based index of the last page to extract'),
+		.describe(
+			'Zero-based index of the last page to extract, inclusive; negative counts back from the end',
+		),
 	inline: inlineField,
 	fileName: fileNameField,
 });
