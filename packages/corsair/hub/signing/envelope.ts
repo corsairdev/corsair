@@ -8,7 +8,12 @@
 
 import { createHmac, randomUUID, timingSafeEqual } from 'node:crypto';
 import type { ConnectCreateLinkDeliveryResult } from '../connect-link-delivery';
-import type { TunnelEnvelope, TunnelType } from '../contracts/tunnel';
+import type {
+	ProbeResultPayload,
+	RunResultPayload,
+	TunnelEnvelope,
+	TunnelType,
+} from '../contracts/tunnel';
 import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../contracts/tunnel';
 
 /**
@@ -59,7 +64,29 @@ export type ServerDeliveryAckBody = {
 	sync?: {
 		encrypted: string;
 	};
+	/** Workflow execution outcome returned by `run` deliveries. */
+	run?: RunResultPayload;
+	/** Read-only script outcome returned by `probe` deliveries. */
+	probe?: ProbeResultPayload;
 };
+
+/**
+ * Reads the workflow run outcome from a parsed delivery ack body.
+ */
+export function extractRunFromDeliveryAck(
+	body: ServerDeliveryAckBody,
+): RunResultPayload | null {
+	return body.run ?? null;
+}
+
+/**
+ * Reads the read-only probe outcome from a parsed delivery ack body.
+ */
+export function extractProbeFromDeliveryAck(
+	body: ServerDeliveryAckBody,
+): ProbeResultPayload | null {
+	return body.probe ?? null;
+}
 
 function parseSignatureHeader(
 	value: string | null | undefined,

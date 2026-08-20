@@ -13,27 +13,51 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'abstract',
+	'activetrail',
+	'addresszen',
+	'affinda',
+	'agencyzoom',
+	'agentmail',
+	'agenty',
 	'agentql',
-	'algolia',
 	'ahrefs',
+	'aimlapi',
 	'airtable',
+	'algolia',
+	'alttextai',
+	'amara',
+	'ambientweather',
+	'ambee',
 	'amplitude',
 	'api2pdf',
+	'apibible',
+	'apify',
+	'apilabz',
+	'apisports',
 	'asana',
 	'bitwarden',
 	'bluesky',
 	'box',
+	'canvas',
 	'cal',
 	'calendly',
+	'canva',
 	'cloudflare',
+	'cloudinary',
 	'confluence',
 	'cursor',
+	'databricks',
 	'datadog',
 	'deepseek',
+	'digitalocean',
 	'discord',
+	'dockerhub',
 	'dodopayments',
 	'dropbox',
+	'epicgames',
 	'exa',
+	'facebook',
 	'figma',
 	'firecrawl',
 	'fireflies',
@@ -41,14 +65,19 @@ export const BaseProviders = [
 	'github',
 	'gitlab',
 	'gmail',
+	'googlebigquery',
 	'googlecalendar',
 	'googledocs',
 	'googledrive',
+	'googlemaps',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
 	'hackernews',
+	'hashnode',
+	'heygen',
 	'hubspot',
+	'huggingface',
 	'insightoai',
 	'instagram',
 	'intercom',
@@ -59,7 +88,9 @@ export const BaseProviders = [
 	'monday',
 	'neon',
 	'notion',
+	'ollama',
 	'onedrive',
+	'onepassword',
 	'openai',
 	'openweathermap',
 	'oura',
@@ -70,6 +101,7 @@ export const BaseProviders = [
 	'razorpay',
 	'reddit',
 	'resend',
+	'retailed',
 	'sentry',
 	'sharepoint',
 	'slack',
@@ -82,13 +114,19 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'todoist',
+	'toggl',
 	'trello',
 	'twilio',
 	'twitter',
 	'twitterapiio',
 	'typeform',
 	'vapi',
+	'vercel',
+	'whatsapp',
+	'wiza',
+	'workday',
 	'xquik',
+	'youcom',
 	'youtube',
 	'zendesk',
 	'zohomail',
@@ -96,27 +134,51 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	abstract: 'Abstract',
+	activetrail: 'Active Trail',
+	addresszen: 'Addresszen',
+	affinda: 'Affinda',
+	agencyzoom: 'AgencyZoom',
+	agentmail: 'AgentMail',
+	agenty: 'Agenty',
 	agentql: 'AgentQL',
-	algolia: 'Algolia',
 	ahrefs: 'Ahrefs',
+	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
+	algolia: 'Algolia',
+	alttextai: 'AltText.ai',
+	amara: 'Amara',
+	ambientweather: 'Ambient Weather',
+	ambee: 'Ambee',
 	amplitude: 'Amplitude',
 	api2pdf: 'API2PDF',
+	apibible: 'API.Bible',
+	apify: 'Apify',
+	apilabz: 'API Labz',
+	apisports: 'API-Sports',
 	asana: 'Asana',
 	bitwarden: 'Bitwarden',
 	bluesky: 'Bluesky',
 	box: 'Box',
+	canvas: 'Canvas LMS',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	canva: 'Canva',
 	cloudflare: 'Cloudflare',
+	cloudinary: 'Cloudinary',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
+	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
+	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
+	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
 	dropbox: 'Dropbox',
+	epicgames: 'Epic Games',
 	exa: 'Exa',
+	facebook: 'Facebook',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
@@ -124,14 +186,19 @@ export const ProviderDisplayNames = {
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
+	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
+	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
 	hackernews: 'Hacker News',
+	hashnode: 'Hashnode',
+	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
+	huggingface: 'Hugging Face',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -142,16 +209,20 @@ export const ProviderDisplayNames = {
 	monday: 'Monday',
 	neon: 'Neon',
 	notion: 'Notion',
+	ollama: 'Ollama',
 	onedrive: 'OneDrive',
+	onepassword: '1Password',
 	openai: 'OpenAI',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	resend: 'Resend',
+	retailed: 'Retailed',
 	sentry: 'Sentry',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
@@ -164,18 +235,23 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	todoist: 'Todoist',
+	toggl: 'Toggl',
 	trello: 'Trello',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
 	typeform: 'Typeform',
 	vapi: 'Vapi',
+	vercel: 'Vercel',
+	whatsapp: 'WhatsApp',
+	wiza: 'Wiza',
+	workday: 'Workday',
 	xquik: 'XQuik',
+	youcom: 'You.com',
 	youtube: 'YouTube',
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
-	perplexityai: 'Perplexity AI',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -186,27 +262,51 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'abstract'
+	| 'activetrail'
+	| 'addresszen'
+	| 'affinda'
+	| 'agencyzoom'
+	| 'agentmail'
+	| 'agenty'
 	| 'agentql'
-	| 'algolia'
 	| 'ahrefs'
+	| 'aimlapi'
 	| 'airtable'
+	| 'algolia'
+	| 'alttextai'
+	| 'amara'
+	| 'ambientweather'
+	| 'ambee'
 	| 'amplitude'
 	| 'api2pdf'
+	| 'apibible'
+	| 'apify'
+	| 'apilabz'
+	| 'apisports'
 	| 'asana'
 	| 'bitwarden'
 	| 'bluesky'
 	| 'box'
 	| 'cal'
 	| 'calendly'
+	| 'canvas'
+	| 'canva'
 	| 'cloudflare'
+	| 'cloudinary'
 	| 'confluence'
 	| 'cursor'
+	| 'databricks'
 	| 'datadog'
 	| 'deepseek'
+	| 'digitalocean'
 	| 'discord'
+	| 'dockerhub'
 	| 'dodopayments'
 	| 'dropbox'
+	| 'epicgames'
 	| 'exa'
+	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
@@ -214,14 +314,19 @@ export type AllProviders =
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
+	| 'googlebigquery'
 	| 'googlecalendar'
 	| 'googledocs'
 	| 'googledrive'
+	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
 	| 'hackernews'
+	| 'hashnode'
+	| 'heygen'
 	| 'hubspot'
+	| 'huggingface'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
@@ -232,7 +337,9 @@ export type AllProviders =
 	| 'monday'
 	| 'neon'
 	| 'notion'
+	| 'ollama'
 	| 'onedrive'
+	| 'onepassword'
 	| 'openai'
 	| 'openweathermap'
 	| 'oura'
@@ -243,6 +350,7 @@ export type AllProviders =
 	| 'razorpay'
 	| 'reddit'
 	| 'resend'
+	| 'retailed'
 	| 'sentry'
 	| 'sharepoint'
 	| 'slack'
@@ -255,13 +363,19 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'todoist'
+	| 'toggl'
 	| 'trello'
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
 	| 'typeform'
 	| 'vapi'
+	| 'vercel'
+	| 'whatsapp'
+	| 'wiza'
+	| 'workday'
 	| 'xquik'
+	| 'youcom'
 	| 'youtube'
 	| 'zendesk'
 	| 'zohomail'
