@@ -16,7 +16,7 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "NODE_OPTIONS=--experimental-vm-modules jest"
+    "test": "jest"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",

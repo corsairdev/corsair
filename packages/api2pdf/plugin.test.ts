@@ -1,23 +1,21 @@
 import { jest } from '@jest/globals';
+import { api2pdf, api2pdfEndpointSchemas } from './index';
 
 /**
  * `index.ts` only needs `AuthMissingError` from `corsair/core` at runtime.
- * Importing the real barrel pulls in the hub tunnel, which uses `__filename`
- * and cannot load under ESM jest.
+ * Loading the real barrel pulls in the hub tunnel, which cannot be evaluated
+ * inside jest.
  */
-class AuthMissingError extends Error {
-	constructor(plugin: string, authType: string) {
-		super(`Missing ${authType} auth for ${plugin}`);
-		this.name = 'AuthMissingError';
+jest.mock('corsair/core', () => {
+	class AuthMissingError extends Error {
+		constructor(plugin: string, authType: string) {
+			super(`Missing ${authType} auth for ${plugin}`);
+			this.name = 'AuthMissingError';
+		}
 	}
-}
 
-jest.unstable_mockModule('corsair/core', () => ({
-	AuthMissingError,
-	logEventFromContext: jest.fn(async () => undefined),
-}));
-
-const { api2pdf, api2pdfEndpointSchemas } = await import('./index');
+	return { AuthMissingError, logEventFromContext: jest.fn() };
+});
 
 /**
  * The plugin declares its operations in four places: the nested endpoint map,

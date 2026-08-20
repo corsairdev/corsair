@@ -1,58 +1,69 @@
 import { jest } from '@jest/globals';
-
-/**
- * Stand-in for `corsair/http`'s ApiError. The client narrows with `instanceof`,
- * so the mocked module must export a real constructor.
- */
-class MockApiError extends Error {
-	constructor(
-		public readonly status: number,
-		message: string,
-		public readonly statusText = '',
-		public readonly body: unknown = undefined,
-		public readonly retryAfter: number | undefined = undefined,
-	) {
-		super(message);
-		this.name = 'ApiError';
-	}
-}
-
-const requestMock =
-	jest.fn<(config: unknown, options: unknown) => Promise<unknown>>();
-
-jest.unstable_mockModule('corsair/http', () => ({
-	ApiError: MockApiError,
-	request: requestMock,
-}));
-
-jest.unstable_mockModule('corsair/core', () => ({
-	logEventFromContext: jest.fn(async () => undefined),
-}));
-
-const { logEventFromContext } = await import('corsair/core');
-const {
+import { logEventFromContext } from 'corsair/core';
+import { ApiError, request } from 'corsair/http';
+import {
 	ChromeEndpoints,
 	LibreOfficeEndpoints,
 	PdfSharpEndpoints,
 	UtilityEndpoints,
 	ZebraEndpoints,
-} = await import('./endpoints');
+} from './endpoints';
 
-const mockLog = jest.mocked(logEventFromContext);
+jest.mock('corsair/core', () => ({
+	logEventFromContext: jest.fn(),
+}));
 
 /**
  * Only the transport is mocked, so every assertion below exercises the real
  * client: auth header construction, `buildPostPayload` (including its
  * `inline: true` default and `options` mapping) and `assertApi2PdfSuccess`.
+ * The client narrows with `instanceof ApiError`, so the mock must export a
+ * real constructor.
  */
-type AnyEndpoint = unknown;
+jest.mock('corsair/http', () => {
+	class MockApiError extends Error {
+		status: number;
+		statusText: string;
+		body: unknown;
+		retryAfter: number | undefined;
+
+		constructor(
+			status: number,
+			message: string,
+			statusText = '',
+			body: unknown = undefined,
+			retryAfter: number | undefined = undefined,
+		) {
+			super(message);
+			this.name = 'ApiError';
+			this.status = status;
+			this.statusText = statusText;
+			this.body = body;
+			this.retryAfter = retryAfter;
+		}
+	}
+
+	return { ApiError: MockApiError, request: jest.fn() };
+});
+
+const requestMock = request as unknown as jest.Mock<
+	(config: unknown, options: unknown) => Promise<unknown>
+>;
+const mockLog = logEventFromContext as unknown as jest.Mock<
+	() => Promise<void>
+>;
+
+/** The mocked constructor, typed for the shape these tests build. */
+const ApiErrorCtor = ApiError as unknown as new (
+	status: number,
+	message: string,
+	statusText?: string,
+	body?: unknown,
+	retryAfter?: number,
+) => Error;
 
 /** Endpoint closures are strongly typed per-operation; this drives them uniformly. */
-function call(
-	fn: AnyEndpoint,
-	ctx: unknown,
-	input?: unknown,
-): Promise<unknown> {
+function call(fn: unknown, ctx: unknown, input?: unknown): Promise<unknown> {
 	return (fn as (c: unknown, i: unknown) => Promise<unknown>)(ctx, input);
 }
 
@@ -100,7 +111,7 @@ beforeEach(() => {
 describe('API2PDF endpoint routing', () => {
 	const cases: Array<{
 		name: string;
-		fn: AnyEndpoint;
+		fn: unknown;
 		input: Record<string, unknown>;
 		method: string;
 		url: string;
@@ -330,7 +341,7 @@ describe('API2PDF endpoint routing', () => {
 
 	it('wraps transport ApiError as Api2PdfAPIError, preserving status', async () => {
 		requestMock.mockRejectedValueOnce(
-			new MockApiError(429, 'Too Many Requests', 'Too Many Requests', null, 30),
+			new ApiErrorCtor(429, 'Too Many Requests', 'Too Many Requests', null, 30),
 		);
 
 		const error = (await call(PdfSharpEndpoints.mergePdfs, createContext(), {
