@@ -163,9 +163,7 @@ export const AblyEndpointInputSchemas = {
 		keyName: z.string().min(1),
 		clientId: z.string().optional(),
 		ttl: z.number().int().positive().optional(),
-		capability: z
-			.union([z.string(), z.record(z.string(), z.array(z.string()))])
-			.optional(),
+		capability: z.string().optional(),
 	}),
 
 	publishPushNotificationsBatch: z.object({
