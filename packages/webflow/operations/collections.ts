@@ -1,0 +1,45 @@
+import type { WebflowOperation } from '../endpoints/operation-types';
+
+export const collectionsOperations = [
+	{
+		key: 'listCollections',
+		group: 'collections',
+		name: 'listCollections',
+		method: 'GET',
+		path: '/sites/{site_id}/collections',
+		pathParams: ['site_id'],
+		riskLevel: 'read',
+		description: 'List all CMS collections for a site',
+	},
+	{
+		key: 'createCollection',
+		group: 'collections',
+		name: 'createCollection',
+		method: 'POST',
+		path: '/sites/{site_id}/collections',
+		pathParams: ['site_id'],
+		riskLevel: 'write',
+		description: 'Create a new CMS collection in a site',
+	},
+	{
+		key: 'getCollection',
+		group: 'collections',
+		name: 'getCollection',
+		method: 'GET',
+		path: '/collections/{collection_id}',
+		pathParams: ['collection_id'],
+		riskLevel: 'read',
+		description: 'Get a collection including its full field schema',
+	},
+	{
+		key: 'deleteCollection',
+		group: 'collections',
+		name: 'deleteCollection',
+		method: 'DELETE',
+		path: '/collections/{collection_id}',
+		pathParams: ['collection_id'],
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a collection and all its items',
+	},
+] as const satisfies readonly WebflowOperation[];

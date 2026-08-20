@@ -14,41 +14,57 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'abstract',
+	'activecampaign',
 	'activetrail',
 	'addresszen',
 	'affinda',
 	'agencyzoom',
 	'agentmail',
-	'agenty',
 	'agentql',
+	'agenty',
 	'ahrefs',
 	'aimlapi',
 	'airtable',
 	'alchemy',
 	'algolia',
 	'alphavantage',
+	'altoviz',
 	'alttextai',
 	'amara',
-	'ambientweather',
 	'ambee',
+	'ambientweather',
 	'amcards',
 	'amplitude',
+	'apaleo',
 	'apibible',
 	'apify',
 	'apilabz',
+	'apininjas',
 	'apisports',
 	'asana',
+	'asindataapi',
+	'asyncinterview',
 	'ayrshare',
+	'baselinker',
+	'betterstack',
+	'bigmailer',
+	'bigml',
+	'bitbucket',
 	'bitwarden',
+	'blazemeter',
 	'bluesky',
 	'boloforms',
+	'botpress',
 	'box',
-	'canvas',
+	'bugsnag',
 	'cal',
 	'calendly',
+	'canvas',
 	'canva',
+	'circleci',
 	'cloudflare',
 	'cloudinary',
+	'collegefootballdata',
 	'confluence',
 	'cursor',
 	'databricks',
@@ -58,6 +74,7 @@ export const BaseProviders = [
 	'discord',
 	'dockerhub',
 	'dodopayments',
+	'doppler',
 	'dropbox',
 	'epicgames',
 	'exa',
@@ -78,6 +95,7 @@ export const BaseProviders = [
 	'googlemeet',
 	'googlesheets',
 	'grafana',
+	'habitica',
 	'hackernews',
 	'harvest',
 	'hashnode',
@@ -92,8 +110,10 @@ export const BaseProviders = [
 	'linkedin',
 	'loyverse',
 	'mailchimp',
+	'mailtrap',
 	'monday',
 	'neon',
+	'nextdns',
 	'notion',
 	'ocrspace',
 	'ollama',
@@ -112,6 +132,7 @@ export const BaseProviders = [
 	'retailed',
 	'salesforce',
 	'sentry',
+	'serpapi',
 	'sharepoint',
 	'slack',
 	'spotify',
@@ -132,6 +153,7 @@ export const BaseProviders = [
 	'typeform',
 	'vapi',
 	'vercel',
+	'webflow',
 	'whatsapp',
 	'wiza',
 	'workday',
@@ -145,41 +167,57 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
+	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
-	agenty: 'Agenty',
 	agentql: 'AgentQL',
+	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
 	alphavantage: 'Alpha Vantage',
+	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
 	amara: 'Amara',
-	ambientweather: 'Ambient Weather',
 	ambee: 'Ambee',
+	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	apaleo: 'Apaleo',
 	apibible: 'API.Bible',
 	apify: 'Apify',
 	apilabz: 'API Labz',
+	apininjas: 'API Ninjas',
 	apisports: 'API-Sports',
 	asana: 'Asana',
+	asindataapi: 'ASIN Data API',
+	asyncinterview: 'Async Interview',
 	ayrshare: 'Ayrshare',
+	baselinker: 'BaseLinker',
+	betterstack: 'Better Stack',
+	bigmailer: 'BigMailer',
+	bigml: 'BigML',
+	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
+	blazemeter: 'BlazeMeter',
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
+	botpress: 'Botpress',
 	box: 'Box',
-	canvas: 'Canvas LMS',
+	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
+	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
+	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
@@ -189,6 +227,7 @@ export const ProviderDisplayNames = {
 	discord: 'Discord',
 	dockerhub: 'Docker Hub',
 	dodopayments: 'Dodo Payments',
+	doppler: 'Doppler',
 	dropbox: 'Dropbox',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
@@ -209,6 +248,7 @@ export const ProviderDisplayNames = {
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
+	habitica: 'Habitica',
 	hackernews: 'Hacker News',
 	harvest: 'Harvest',
 	hashnode: 'Hashnode',
@@ -223,8 +263,10 @@ export const ProviderDisplayNames = {
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
 	mailchimp: 'Mailchimp',
+	mailtrap: 'Mailtrap',
 	monday: 'Monday',
 	neon: 'Neon',
+	nextdns: 'NextDNS',
 	notion: 'Notion',
 	ocrspace: 'OCR.space',
 	ollama: 'Ollama',
@@ -243,6 +285,7 @@ export const ProviderDisplayNames = {
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
 	sentry: 'Sentry',
+	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
 	spotify: 'Spotify',
@@ -263,6 +306,7 @@ export const ProviderDisplayNames = {
 	typeform: 'Typeform',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
+	webflow: 'Webflow',
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
 	workday: 'Workday',
@@ -283,41 +327,57 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'abstract'
+	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
-	| 'agenty'
 	| 'agentql'
+	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
 	| 'alphavantage'
+	| 'altoviz'
 	| 'alttextai'
 	| 'amara'
-	| 'ambientweather'
 	| 'ambee'
+	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
+	| 'apaleo'
 	| 'apibible'
 	| 'apify'
 	| 'apilabz'
+	| 'apininjas'
 	| 'apisports'
 	| 'asana'
+	| 'asindataapi'
+	| 'asyncinterview'
 	| 'ayrshare'
+	| 'baselinker'
+	| 'betterstack'
+	| 'bigmailer'
+	| 'bigml'
+	| 'bitbucket'
 	| 'bitwarden'
+	| 'blazemeter'
 	| 'bluesky'
 	| 'boloforms'
+	| 'botpress'
 	| 'box'
+	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
-	| 'canvas'
 	| 'canva'
+	| 'canvas'
+	| 'circleci'
 	| 'cloudflare'
 	| 'cloudinary'
+	| 'collegefootballdata'
 	| 'confluence'
 	| 'cursor'
 	| 'databricks'
@@ -327,6 +387,7 @@ export type AllProviders =
 	| 'discord'
 	| 'dockerhub'
 	| 'dodopayments'
+	| 'doppler'
 	| 'dropbox'
 	| 'epicgames'
 	| 'exa'
@@ -347,6 +408,7 @@ export type AllProviders =
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
+	| 'habitica'
 	| 'hackernews'
 	| 'harvest'
 	| 'hashnode'
@@ -361,8 +423,10 @@ export type AllProviders =
 	| 'linkedin'
 	| 'loyverse'
 	| 'mailchimp'
+	| 'mailtrap'
 	| 'monday'
 	| 'neon'
+	| 'nextdns'
 	| 'notion'
 	| 'ocrspace'
 	| 'ollama'
@@ -381,6 +445,7 @@ export type AllProviders =
 	| 'retailed'
 	| 'salesforce'
 	| 'sentry'
+	| 'serpapi'
 	| 'sharepoint'
 	| 'slack'
 	| 'spotify'
@@ -401,6 +466,7 @@ export type AllProviders =
 	| 'typeform'
 	| 'vapi'
 	| 'vercel'
+	| 'webflow'
 	| 'whatsapp'
 	| 'wiza'
 	| 'workday'
