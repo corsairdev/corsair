@@ -12,10 +12,21 @@ import { managementHandler } from '../handler';
 //   const app = express();
 //   app.use('/api/corsair', toExpressHandler(corsair));
 //
-// Express's `req.url` is path-only and `req.body` is already-parsed when
-// `express.json()` is mounted upstream. We reconstruct a fetch Request,
-// dispatch to the vanilla handler, then stream the Response back onto
+// Express's `req.url` is path-only. `req.body` is whatever the upstream body
+// parser produced (or `undefined` if none is mounted). We reconstruct a fetch
+// Request, dispatch to the vanilla handler, then stream the Response back onto
 // Express's `res`.
+//
+// Body integrity matters: Hub signs its delivery POSTs with an HMAC over the
+// EXACT bytes it sent (see hub/signing/envelope.ts). So the adapter must pass
+// those bytes through verbatim. It handles, in order of preference:
+//   1. no parser  → `req.body` is undefined → we drain the raw stream ourselves
+//      (works with zero configuration, the recommended setup).
+//   2. `express.text({ type: '*/*' })` → `req.body` is the verbatim string.
+//   3. `express.raw({ type: '*/*' })`  → `req.body` is the verbatim Buffer.
+//   4. `express.json()` (lossy) → `req.body` is a parsed object; we re-serialize
+//      via JSON.stringify. Kept for backward-compat, but re-serialization can
+//      break signature verification, so it's the last resort.
 //
 // Types are declared structurally so we don't carry an `@types/express`
 // peer dep on the corsair package.
@@ -29,6 +40,9 @@ type ExpressLikeRequest = {
 	body?: unknown;
 	protocol?: string;
 	get?: (name: string) => string | undefined;
+	// Node's IncomingMessage is an async-iterable stream of Buffer chunks. Present
+	// when no body parser consumed it. Typed loosely to avoid a node types dep.
+	[Symbol.asyncIterator]?: () => AsyncIterator<unknown>;
 };
 
 type ExpressLikeResponse = {
@@ -45,7 +59,40 @@ export type ExpressHandler = (
 	next: ExpressLikeNext,
 ) => Promise<void>;
 
-function buildFetchRequest(req: ExpressLikeRequest): Request {
+// Drains an un-parsed Node request stream into a single Buffer of the raw bytes.
+async function drainRawBody(req: ExpressLikeRequest): Promise<Buffer> {
+	const chunks: Buffer[] = [];
+	for await (const chunk of req as AsyncIterable<unknown>) {
+		chunks.push(Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk as string));
+	}
+	return Buffer.concat(chunks);
+}
+
+// Resolves the request body to bytes/string suitable for a fetch Request,
+// preferring verbatim pass-through over any re-serialization. Returns undefined
+// when there is no body to send.
+async function resolveBody(
+	req: ExpressLikeRequest,
+): Promise<BodyInit | undefined> {
+	if (req.method === 'GET' || req.method === 'HEAD') return undefined;
+
+	// A parser already consumed the stream.
+	if (req.body !== undefined) {
+		// Verbatim: express.text() → string, express.raw() → Buffer.
+		if (typeof req.body === 'string') return req.body;
+		if (Buffer.isBuffer(req.body)) return new Uint8Array(req.body);
+		// express.json() gave a parsed object — re-serialize (lossy; breaks HMAC).
+		return JSON.stringify(req.body);
+	}
+
+	// No parser mounted: drain the raw stream ourselves and pass the bytes
+	// through verbatim. This is the zero-config path and preserves signatures.
+	if (typeof req[Symbol.asyncIterator] !== 'function') return undefined;
+	const buf = await drainRawBody(req);
+	return buf.length > 0 ? new Uint8Array(buf) : undefined;
+}
+
+async function buildFetchRequest(req: ExpressLikeRequest): Promise<Request> {
 	const host = req.get?.('host') ?? 'localhost';
 	const proto = req.protocol ?? 'http';
 	const path = req.originalUrl ?? req.url;
@@ -58,12 +105,10 @@ function buildFetchRequest(req: ExpressLikeRequest): Request {
 		else headers.set(k, v);
 	}
 
-	const hasBody = req.method !== 'GET' && req.method !== 'HEAD';
 	const init: RequestInit = { method: req.method, headers };
-	if (hasBody && req.body !== undefined) {
-		// `express.json()` parsed it; re-serialize.
-		init.body =
-			typeof req.body === 'string' ? req.body : JSON.stringify(req.body);
+	const body = await resolveBody(req);
+	if (body !== undefined) {
+		init.body = body;
 		if (!headers.has('content-type')) {
 			headers.set('content-type', 'application/json');
 		}
@@ -91,7 +136,7 @@ export function toExpressHandler(
 	const handler = managementHandler(corsair, opts);
 	return async (req, res, next) => {
 		try {
-			const fetchRes = await handler(buildFetchRequest(req));
+			const fetchRes = await handler(await buildFetchRequest(req));
 			await writeResponse(res, fetchRes);
 		} catch (err) {
 			next(err);
