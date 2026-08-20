@@ -4,9 +4,17 @@ import type { AddressInfo } from 'node:net';
 import { createCorsair } from '../core';
 import {
 	managementHandler,
+	toAstroHandler,
 	toExpressHandler,
+	toFastifyHandler,
 	toHonoHandler,
 	toNextJsHandler,
+	toNodeHandler,
+	toNuxtHandler,
+	toRemixHandler,
+	toSvelteKitHandler,
+	toTanStackHandler,
+	toWebHandler,
 } from '../core/management';
 import type { CorsairPlugin } from '../core/plugins';
 import { signDeliveryEnvelope } from '../hub/signing/envelope';
@@ -278,40 +286,23 @@ describe('body fidelity — Express', () => {
 	});
 });
 
-// ── Node raw http bridge → managementHandler ─────────────────────────────────
+// ── Node: first-class toNodeHandler on a REAL http server ────────────────────
 
-describe('body fidelity — Node (node:http raw-stream bridge)', () => {
+describe('body fidelity — toNodeHandler (real node:http server)', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	afterEach(() => env?.cleanup?.());
 
-	it('boots a real http server, delivers verbatim', async () => {
+	it('createServer(toNodeHandler) delivers the raw stream verbatim', async () => {
 		env = createTestDatabase();
-		const handler = managementHandler(makeCorsair(env), { basePath: BASE });
-
-		// The exact node.mdx bridge: drain req into a Buffer, build a Request.
-		const server = createServer(async (req, res) => {
-			const chunks: Buffer[] = [];
-			for await (const chunk of req) chunks.push(chunk as Buffer);
-			const rawBody = Buffer.concat(chunks);
-			const url = `http://${req.headers.host}${req.url}`;
-			const headers = new Headers();
-			for (const [k, v] of Object.entries(req.headers)) {
-				if (typeof v === 'string') headers.set(k, v);
-			}
-			const request = new Request(url, {
-				method: req.method,
-				headers,
-				body: req.method === 'POST' ? new Uint8Array(rawBody) : undefined,
-			});
-			const response = await handler(request);
-			res.statusCode = response.status;
-			res.end(Buffer.from(await response.arrayBuffer()));
-		});
+		// Mount exactly as documented: the adapter IS the request listener.
+		const server = createServer(
+			toNodeHandler(makeCorsair(env), { basePath: BASE }),
+		);
 
 		await new Promise<void>((r) => server.listen(0, r));
 		try {
 			const { port } = server.address() as AddressInfo;
-			const { body, headers } = makeSignedDelivery();
+			const { body, headers } = makeSignedNonCanonicalDelivery();
 			const res = await fetch(`http://127.0.0.1:${port}${BASE}`, {
 				method: 'POST',
 				headers,
@@ -325,31 +316,127 @@ describe('body fidelity — Node (node:http raw-stream bridge)', () => {
 	});
 });
 
-// ── Fastify raw-buffer bridge → managementHandler ────────────────────────────
-// Fastify isn't a dependency; we exercise the documented bridge shape (a
-// raw-buffer content-type parser hands the handler the untouched Buffer).
+// ── Fastify: first-class toFastifyHandler reading request.raw ────────────────
+// Fastify isn't a dependency; we drive the adapter with a structural double that
+// mirrors Fastify's shape (request.raw = Node stream, reply.raw = ServerResponse).
 
-describe('body fidelity — Fastify (raw-buffer bridge)', () => {
+describe('body fidelity — toFastifyHandler', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	afterEach(() => env?.cleanup?.());
 
-	it('raw Buffer body reaches managementHandler verbatim', async () => {
-		env = createTestDatabase();
-		const handler = managementHandler(makeCorsair(env), { basePath: BASE });
-		const { body, headers } = makeSignedDelivery();
-
-		// addContentTypeParser('*', { parseAs: 'buffer' }, ...) gives req.body as
-		// a Buffer; the route forwards it verbatim into a Request.
-		const rawBuffer = Buffer.from(body, 'utf-8');
-		const h = new Headers();
-		for (const [k, v] of Object.entries(headers)) h.set(k, v as string);
-		const request = new Request(`http://x${BASE}`, {
+	function makeFastify(body: string, headers: Record<string, string>) {
+		const rawReq: any = {
+			headers,
+			[Symbol.asyncIterator]: async function* () {
+				yield Buffer.from(body, 'utf-8');
+			},
+		};
+		const request: any = {
+			raw: rawReq,
 			method: 'POST',
-			headers: h,
-			body: new Uint8Array(rawBuffer),
-		});
-		const res = await handler(request);
-		const text = await res.text();
+			url: BASE,
+			headers,
+			protocol: 'http',
+		};
+		let out: Buffer | string | undefined;
+		let hijacked = false;
+		const reply: any = {
+			hijack: () => {
+				hijacked = true;
+			},
+			raw: {
+				statusCode: 200,
+				setHeader: () => {},
+				end: (b?: Buffer | string) => {
+					out = b;
+				},
+			},
+		};
+		return {
+			request,
+			reply,
+			read: () => ({
+				hijacked,
+				text: typeof out === 'string' ? out : (out?.toString('utf-8') ?? ''),
+			}),
+		};
+	}
+
+	it('reads request.raw (not the parsed body) and delivers verbatim', async () => {
+		env = createTestDatabase();
+		const handler = toFastifyHandler(makeCorsair(env), { basePath: BASE });
+		const { body, headers } = makeSignedNonCanonicalDelivery();
+		const { request, reply, read } = makeFastify(body, headers);
+		await handler(request, reply);
+		const { hijacked, text } = read();
+		expect(hijacked).toBe(true);
+		expect(text.includes('Invalid tunnel signature')).toBe(false);
+	});
+});
+
+// ── Web-standard first-class adapters ────────────────────────────────────────
+// SvelteKit / Remix / Astro / TanStack forward the native Request unchanged;
+// Nuxt bridges the Node request under event.node. toWebHandler is managementHandler.
+
+describe('body fidelity — web-standard adapters', () => {
+	let env: ReturnType<typeof createTestDatabase>;
+	afterEach(() => env?.cleanup?.());
+
+	it('SvelteKit / Remix / Astro / TanStack / Web forward the Request verbatim', async () => {
+		env = createTestDatabase();
+		const corsair = makeCorsair(env);
+
+		// Each entry mounts the real adapter and returns (Request) => Response.
+		const svelte = toSvelteKitHandler(corsair, { basePath: BASE });
+		const remix = toRemixHandler(corsair, { basePath: BASE });
+		const astro = toAstroHandler(corsair, { basePath: BASE });
+		const tanstack = toTanStackHandler(corsair, { basePath: BASE });
+		const web = toWebHandler(corsair, { basePath: BASE });
+
+		const cases: Record<string, (req: Request) => Promise<Response>> = {
+			'sveltekit.POST': (req) => svelte.POST({ request: req }),
+			'remix.action': (req) => remix.action({ request: req }),
+			'astro.POST': (req) => astro.POST({ request: req }),
+			'tanstack.POST': (req) => tanstack.POST({ request: req }),
+			'web (workers/bun/deno)': (req) => web(req),
+		};
+
+		for (const [framework, run] of Object.entries(cases)) {
+			const { body, headers } = makeSignedNonCanonicalDelivery();
+			const res = await run(
+				new Request(`http://x${BASE}`, { method: 'POST', headers, body }),
+			);
+			await assertVerbatim(res, framework);
+		}
+	});
+
+	it('toNuxtHandler bridges event.node request verbatim', async () => {
+		env = createTestDatabase();
+		const handler = toNuxtHandler(makeCorsair(env), { basePath: BASE });
+		const { body, headers } = makeSignedNonCanonicalDelivery();
+
+		let out: Buffer | string | undefined;
+		const event: any = {
+			node: {
+				req: {
+					method: 'POST',
+					url: BASE,
+					headers,
+					[Symbol.asyncIterator]: async function* () {
+						yield Buffer.from(body, 'utf-8');
+					},
+				},
+				res: {
+					statusCode: 200,
+					setHeader: () => {},
+					end: (b?: Buffer | string) => {
+						out = b;
+					},
+				},
+			},
+		};
+		await handler(event);
+		const text = typeof out === 'string' ? out : (out?.toString('utf-8') ?? '');
 		expect(text.includes('Invalid tunnel signature')).toBe(false);
 	});
 });
