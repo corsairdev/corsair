@@ -1,4 +1,5 @@
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import * as crypto from 'node:crypto';
 import { z } from 'zod';
 
 export const AeroleadsWebhookPayloadSchema = z.object({
@@ -53,6 +54,59 @@ export function verifyAeroleadsWebhookSignature(
 	request: WebhookRequest<AeroleadsWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	return { valid: true };
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const headers = request.headers;
+	const headerValue = Array.isArray(headers['x-aeroleads-signature'])
+		? headers['x-aeroleads-signature'][0]
+		: headers['x-aeroleads-signature'];
+
+	if (!headerValue) {
+		return {
+			valid: false,
+			error: 'Missing x-aeroleads-signature header',
+		};
+	}
+
+	// TODO(provider-doc-needed): Confirm the exact signature format with
+	// AeroLeads' public docs. The current implementation assumes HMAC-SHA256
+	// over the raw request body, with the signature transmitted as either a
+	// raw hex digest or `sha256=<hex>`. AeroLeads did not publish a public
+	// signing spec at scaffold time, so this is the conventional default and
+	// must be verified before production traffic.
+	const expectedHex = crypto
+		.createHmac('sha256', secret)
+		.update(rawBody)
+		.digest('hex');
+
+	const providedHex = String(headerValue)
+		.toLowerCase()
+		.replace(/^sha256=/, '')
+		.trim();
+
+	// timingSafeEqual requires equal-length buffers; short-circuit on length
+	// mismatch before comparing to avoid throwing inside the try block.
+	if (providedHex.length !== expectedHex.length) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
+	try {
+		const isValid = crypto.timingSafeEqual(
+			Buffer.from(providedHex, 'hex'),
+			Buffer.from(expectedHex, 'hex'),
+		);
+		return isValid ? { valid: true } : { valid: false, error: 'Invalid signature' };
+	} catch {
+		return { valid: false, error: 'Invalid signature' };
+	}
 }
