@@ -56,6 +56,29 @@ function records(value: unknown): Record<string, unknown>[] {
 	return [];
 }
 
+/**
+ * `lines_url` and `command_url` embed the chatbot key. Per the Basecamp docs,
+ * "possession of either URL is enough to use it" — anyone holding one can post
+ * as that chatbot — which is why Basecamp only returns them to administrators.
+ * The audit trail already drops them; the mirror must not keep them either, or
+ * a credential Basecamp hands out sparingly ends up sitting in the local cache.
+ * The rest of the row still identifies the chatbot, so it stays mirrored.
+ */
+const SECRET_BEARING_FIELDS: Record<string, readonly string[] | undefined> = {
+	chatbots: ['lines_url', 'command_url'],
+};
+
+function withoutSecrets(
+	storeName: string,
+	row: Record<string, unknown>,
+): Record<string, unknown> {
+	const secrets = SECRET_BEARING_FIELDS[storeName];
+	if (!secrets) return row;
+	const safe = { ...row };
+	for (const field of secrets) delete safe[field];
+	return safe;
+}
+
 async function safely(operation: () => Promise<unknown>, label: string) {
 	try {
 		await operation();
@@ -80,7 +103,7 @@ export async function mirrorBasecampResult(
 		const id = row.id;
 		if (typeof id !== 'string' && typeof id !== 'number') continue;
 		await safely(
-			() => store.upsertByEntityId(String(id), row),
+			() => store.upsertByEntityId(String(id), withoutSecrets(storeName, row)),
 			storeName + ' ' + String(id),
 		);
 	}

@@ -36,4 +36,49 @@ describe('Basecamp reference persistence', () => {
 		);
 		expect(deleteByEntityId).toHaveBeenCalledWith('42');
 	});
+
+	it('keeps the chatbot key out of the local store', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		// Verbatim chatbot payload from the Basecamp docs (sections/chatbots.md).
+		await mirrorBasecampResult(
+			{ chatbots: { upsertByEntityId } },
+			'GetChatbot',
+			{
+				id: 1049715953,
+				service_name: 'Capistrano',
+				url: 'https://3.basecampapi.com/195539477/buckets/2085958502/chats/1069478958/integrations/1049715953.json',
+				command_url: null,
+				lines_url:
+					'https://3.basecampapi.com/195539477/integrations/oneBqw5TTvLWcJJWLmuHPNC9/buckets/2085958502/chats/1069478958/lines',
+			},
+		);
+		const [entityId, stored] = upsertByEntityId.mock.calls[0];
+		expect(entityId).toBe('1049715953');
+		// Both key-bearing URLs are gone; the identifying fields survive.
+		expect(stored).not.toHaveProperty('lines_url');
+		expect(stored).not.toHaveProperty('command_url');
+		expect(JSON.stringify(stored)).not.toContain('oneBqw5TTvLWcJJWLmuHPNC9');
+		expect(stored).toMatchObject({
+			id: 1049715953,
+			service_name: 'Capistrano',
+		});
+	});
+
+	it('leaves non-chatbot rows untouched', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		await mirrorBasecampResult(
+			{ projects: { upsertByEntityId } },
+			'GetProject',
+			{
+				id: 42,
+				name: 'Test project',
+				url: 'https://3.basecampapi.com/1/projects/42.json',
+			},
+		);
+		expect(upsertByEntityId).toHaveBeenCalledWith('42', {
+			id: 42,
+			name: 'Test project',
+			url: 'https://3.basecampapi.com/1/projects/42.json',
+		});
+	});
 });

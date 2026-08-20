@@ -155,8 +155,9 @@ export const BasecampCampfire = z
  * A chatbot is labelled by `service_name`; it has no `name` field.
  *
  * `lines_url` and `command_url` embed the chatbot key, which is a bearer
- * credential on its own — see the note in the chatbots docs. Treat any mirrored
- * chatbot row as secret-bearing.
+ * credential on its own — see the note in the chatbots docs. They are modelled
+ * here because Basecamp returns them, but persist.ts strips both before a
+ * chatbot row reaches the mirror store.
  */
 export const BasecampChatbot = z
 	.object({
