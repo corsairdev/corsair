@@ -1,32 +1,38 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeApi2PdfRequest, makeApi2PdfTextRequest } from './client';
-import {
+export {};
+
+// @ts-expect-error
+jest.unstable_mockModule('corsair/core', () => ({
+	logEventFromContext: jest.fn().mockResolvedValue(undefined),
+}));
+
+// @ts-expect-error
+jest.unstable_mockModule('./client', () => {
+	return {
+		makeApi2PdfRequest: jest.fn(),
+		makeApi2PdfTextRequest: jest.fn(),
+		assertApi2PdfSuccess: (res: any) => {
+			if (res.Success === false) throw new Error(res.Error);
+			return res;
+		},
+		buildPostPayload: (base: any, opts: any) =>
+			JSON.stringify({ ...base, ...opts }),
+	};
+});
+
+const { logEventFromContext } = await import('corsair/core');
+const { makeApi2PdfRequest, makeApi2PdfTextRequest } = await import('./client');
+const {
 	ChromeEndpoints,
 	LibreOfficeEndpoints,
 	PdfSharpEndpoints,
 	UtilityEndpoints,
 	ZebraEndpoints,
-} from './endpoints';
-
-jest.mock('corsair/core', () => ({
-	logEventFromContext: jest.fn().mockResolvedValue(undefined),
-}));
-
-jest.mock('./client', () => {
-	const actual = jest.requireActual('./client') as typeof import('./client');
-	return {
-		...actual,
-		makeApi2PdfRequest: jest.fn(),
-		makeApi2PdfTextRequest: jest.fn(),
-	};
-});
+} = await import('./endpoints');
 
 const mockRequest = jest.mocked(makeApi2PdfRequest);
 const mockTextRequest = jest.mocked(makeApi2PdfTextRequest);
 const mockLog = jest.mocked(logEventFromContext);
 
-// Endpoint closures are heterogeneous; unknown avoids inventing a fake shared
-// Ctx/Input union just for the table-driven cases below.
 type AnyEndpoint = (ctx: unknown, input?: unknown) => Promise<unknown>;
 
 const SAMPLE_PDF =
@@ -61,13 +67,13 @@ describe('API2PDF endpoint routing', () => {
 	const cases: Array<{
 		name: string;
 		fn: AnyEndpoint;
-		// Table rows mix endpoint inputs; Record avoids a mega discriminated union.
 		input?: Record<string, unknown>;
 		path: string;
 		method: string;
 		text?: boolean;
-		// Mocked HTTP payloads differ per endpoint (text status vs job JSON).
 		response?: unknown;
+		expectedPayload?: any;
+		expectedQuery?: any;
 	}> = [
 		{
 			name: 'utility.checkStatus',
@@ -93,6 +99,7 @@ describe('API2PDF endpoint routing', () => {
 			path: '/pdfsharp/merge',
 			method: 'POST',
 			response: jobOk,
+			expectedPayload: JSON.stringify({ urls: [SAMPLE_PDF, SAMPLE_PDF] }),
 		},
 		{
 			name: 'pdfsharp.extractPages',
@@ -101,22 +108,7 @@ describe('API2PDF endpoint routing', () => {
 			path: '/pdfsharp/extract-pages',
 			method: 'POST',
 			response: jobOk,
-		},
-		{
-			name: 'pdfsharp.reorderPages',
-			fn: PdfSharpEndpoints.reorderPages as AnyEndpoint,
-			input: { url: SAMPLE_PDF, pages: [0] },
-			path: '/pdfsharp/reorder-pages',
-			method: 'POST',
-			response: jobOk,
-		},
-		{
-			name: 'pdfsharp.optimizePdf',
-			fn: PdfSharpEndpoints.optimizePdf as AnyEndpoint,
-			input: { url: SAMPLE_PDF },
-			path: '/pdfsharp/compress',
-			method: 'POST',
-			response: jobOk,
+			expectedPayload: JSON.stringify({ url: SAMPLE_PDF, start: 0, end: 1 }),
 		},
 		{
 			name: 'chrome.addHeaderFooter',
@@ -125,6 +117,7 @@ describe('API2PDF endpoint routing', () => {
 			path: '/chrome/pdf/html',
 			method: 'POST',
 			response: jobOk,
+			expectedPayload: JSON.stringify({ html: '<html><body>hi</body></html>' }),
 		},
 		{
 			name: 'libreoffice.thumbnail',
@@ -133,14 +126,16 @@ describe('API2PDF endpoint routing', () => {
 			path: '/libreoffice/thumbnail',
 			method: 'POST',
 			response: jobOk,
+			expectedPayload: JSON.stringify({ url: SAMPLE_PDF }),
 		},
 		{
-			name: 'libreoffice.pdfToHtml',
-			fn: LibreOfficeEndpoints.pdfToHtml as AnyEndpoint,
+			name: 'opendataloader.pdfToHtml',
+			fn: LibreOfficeEndpoints.opendataloaderPdfToHtml as AnyEndpoint,
 			input: { url: SAMPLE_PDF },
-			path: '/libreoffice/pdf-to-html',
+			path: '/opendataloader/html',
 			method: 'POST',
 			response: jobOk,
+			expectedPayload: JSON.stringify({ url: SAMPLE_PDF }),
 		},
 		{
 			name: 'zebra.generateBarcode',
@@ -149,12 +144,22 @@ describe('API2PDF endpoint routing', () => {
 			path: '/zebra',
 			method: 'GET',
 			response: jobOk,
+			expectedQuery: { format: 'QR_CODE', value: 'https://corsair.dev' },
 		},
 	];
 
 	it.each(cases)(
 		'$name drives the endpoint closure against $path',
-		async ({ fn, input, path, method, text, response }) => {
+		async ({
+			fn,
+			input,
+			path,
+			method,
+			text,
+			response,
+			expectedPayload,
+			expectedQuery,
+		}) => {
 			if (text) {
 				mockTextRequest.mockResolvedValueOnce(String(response));
 			} else {
@@ -171,12 +176,17 @@ describe('API2PDF endpoint routing', () => {
 				);
 				expect(result).toEqual({ status: 'OK' });
 			} else {
+				const expectedOptions: Record<string, any> = {
+					apiKey: ctx.key,
+					method,
+				};
+				if (expectedPayload) expectedOptions.body = expectedPayload;
+				if (expectedQuery)
+					expectedOptions.query = expect.objectContaining(expectedQuery);
+
 				expect(mockRequest).toHaveBeenCalledWith(
 					path,
-					expect.objectContaining({
-						apiKey: ctx.key,
-						method,
-					}),
+					expect.objectContaining(expectedOptions),
 				);
 				expect(result).toEqual(response);
 			}

@@ -71,40 +71,18 @@ export const ExtractPagesInputSchema = z.object({
 	start: z
 		.number()
 		.int()
-		.min(0)
 		.optional()
 		.describe('Zero-based start page index (inclusive)'),
 	end: z
 		.number()
 		.int()
-		.min(0)
 		.optional()
-		.describe('Zero-based end page index (exclusive)'),
+		.describe('Zero-based end page index (inclusive)'),
 	inline: z.boolean().optional(),
 	fileName: z.string().optional(),
 });
 
 export type ExtractPagesInput = z.infer<typeof ExtractPagesInputSchema>;
-
-export const ReorderPagesInputSchema = z.object({
-	url: z.string().url().describe('Public URL of the source PDF'),
-	pages: z
-		.array(z.number().int().min(0))
-		.min(1)
-		.describe('Zero-based page indices in desired order, e.g. [2,0,1]'),
-	inline: z.boolean().optional(),
-	fileName: z.string().optional(),
-});
-
-export type ReorderPagesInput = z.infer<typeof ReorderPagesInputSchema>;
-
-export const OptimizePdfInputSchema = z.object({
-	url: z.string().url().describe('Public URL of the PDF to compress'),
-	inline: z.boolean().optional(),
-	fileName: z.string().optional(),
-});
-
-export type OptimizePdfInput = z.infer<typeof OptimizePdfInputSchema>;
 
 export const GenerateBarcodeInputSchema = z.object({
 	format: z.string().min(1).describe('Barcode format (e.g. QR_CODE, CODE_128)'),
@@ -126,14 +104,14 @@ export type LibreOfficeThumbnailInput = z.infer<
 	typeof LibreOfficeThumbnailInputSchema
 >;
 
-export const LibreOfficePdfToHtmlInputSchema = z.object({
+export const OpendataloaderPdfToHtmlInputSchema = z.object({
 	url: z.string().url().describe('Public URL of the PDF to convert'),
 	inline: z.boolean().optional(),
 	fileName: z.string().optional(),
 });
 
-export type LibreOfficePdfToHtmlInput = z.infer<
-	typeof LibreOfficePdfToHtmlInputSchema
+export type OpendataloaderPdfToHtmlInput = z.infer<
+	typeof OpendataloaderPdfToHtmlInputSchema
 >;
 
 export type Api2PdfEndpointInputs = {
@@ -142,11 +120,9 @@ export type Api2PdfEndpointInputs = {
 	mergePdfs: MergePdfsInput;
 	addHeaderFooter: AddHeaderFooterInput;
 	extractPages: ExtractPagesInput;
-	reorderPages: ReorderPagesInput;
-	optimizePdf: OptimizePdfInput;
 	generateBarcode: GenerateBarcodeInput;
 	libreOfficeThumbnail: LibreOfficeThumbnailInput;
-	libreOfficePdfToHtml: LibreOfficePdfToHtmlInput;
+	opendataloaderPdfToHtml: OpendataloaderPdfToHtmlInput;
 };
 
 export type Api2PdfEndpointOutputs = {
@@ -155,11 +131,9 @@ export type Api2PdfEndpointOutputs = {
 	mergePdfs: Api2PdfJobResponse;
 	addHeaderFooter: Api2PdfJobResponse;
 	extractPages: Api2PdfJobResponse;
-	reorderPages: Api2PdfJobResponse;
-	optimizePdf: Api2PdfJobResponse;
 	generateBarcode: Api2PdfJobResponse;
 	libreOfficeThumbnail: Api2PdfJobResponse;
-	libreOfficePdfToHtml: Api2PdfJobResponse;
+	opendataloaderPdfToHtml: Api2PdfJobResponse;
 };
 
 export const Api2PdfEndpointInputSchemas = {
@@ -168,11 +142,9 @@ export const Api2PdfEndpointInputSchemas = {
 	mergePdfs: MergePdfsInputSchema,
 	addHeaderFooter: AddHeaderFooterInputSchema,
 	extractPages: ExtractPagesInputSchema,
-	reorderPages: ReorderPagesInputSchema,
-	optimizePdf: OptimizePdfInputSchema,
 	generateBarcode: GenerateBarcodeInputSchema,
 	libreOfficeThumbnail: LibreOfficeThumbnailInputSchema,
-	libreOfficePdfToHtml: LibreOfficePdfToHtmlInputSchema,
+	opendataloaderPdfToHtml: OpendataloaderPdfToHtmlInputSchema,
 } as const;
 
 export const Api2PdfEndpointOutputSchemas = {
@@ -181,9 +153,7 @@ export const Api2PdfEndpointOutputSchemas = {
 	mergePdfs: Api2PdfJobResponseSchema,
 	addHeaderFooter: Api2PdfJobResponseSchema,
 	extractPages: Api2PdfJobResponseSchema,
-	reorderPages: Api2PdfJobResponseSchema,
-	optimizePdf: Api2PdfJobResponseSchema,
 	generateBarcode: Api2PdfJobResponseSchema,
 	libreOfficeThumbnail: Api2PdfJobResponseSchema,
-	libreOfficePdfToHtml: Api2PdfJobResponseSchema,
+	opendataloaderPdfToHtml: Api2PdfJobResponseSchema,
 } as const;
