@@ -171,7 +171,7 @@ describe('Composio webhook verification', () => {
 	});
 
 	it('accepts the same webhook-id again with a fresh timestamp (not a replay)', () => {
-		const id = 'msg_fresh_ts';
+		const freshId = 'msg_fresh_ts';
 		const ts1 = String(Math.floor(Date.now() / 1000));
 		const ts2 = String(Math.floor(Date.now() / 1000) + 1);
 
@@ -180,9 +180,9 @@ describe('Composio webhook verification', () => {
 				rawBody: body,
 				rawBodyPreserved: true,
 				headers: {
-					'webhook-id': id,
+					'webhook-id': freshId,
 					'webhook-timestamp': ts1,
-					'webhook-signature': sign(secret, id, ts1, body),
+					'webhook-signature': sign(secret, freshId, ts1, body),
 				},
 				payload: JSON.parse(body),
 			} as never,
@@ -196,9 +196,9 @@ describe('Composio webhook verification', () => {
 				rawBody: body,
 				rawBodyPreserved: true,
 				headers: {
-					'webhook-id': id,
+					'webhook-id': freshId,
 					'webhook-timestamp': ts2,
-					'webhook-signature': sign(secret, id, ts2, body),
+					'webhook-signature': sign(secret, freshId, ts2, body),
 				},
 				payload: JSON.parse(body),
 			} as never,

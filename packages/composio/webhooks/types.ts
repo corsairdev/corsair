@@ -137,7 +137,10 @@ const WEBHOOK_REPLAY_WINDOW_MS = 5 * 60 * 1000;
 const processedWebhookDeliveries = new Map<string, number>();
 let lastReplayEvictionMs = 0;
 
-function isWebhookReplayed(webhookId: string, webhookTimestamp: string): boolean {
+function isWebhookReplayed(
+	webhookId: string,
+	webhookTimestamp: string,
+): boolean {
 	const now = Date.now();
 
 	// Lazy, window-bounded eviction so the map does not grow unboundedly.
