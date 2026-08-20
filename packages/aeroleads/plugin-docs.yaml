@@ -1,0 +1,6 @@
+displayName: AeroLeads
+description: AeroLeads plugin for Corsair — LinkedIn profile enrichment and email verification
+overviewNote: |
+  AeroLeads provides B2B contact data including business emails, phone numbers,
+  and company details from LinkedIn profile URLs. Use this plugin to enrich leads
+  and verify email deliverability.

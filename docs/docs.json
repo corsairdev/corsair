@@ -180,6 +180,15 @@
                 ]
               },
               {
+                "group": "AeroLeads",
+                "pages": [
+                  "plugins/aeroleads/overview",
+                  "plugins/aeroleads/get-credentials",
+                  "plugins/aeroleads/api",
+                  "plugins/aeroleads/database"
+                ]
+              },
+              {
                 "group": "AgentMail",
                 "pages": [
                   "plugins/agentmail/overview",

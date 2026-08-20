@@ -1,0 +1,112 @@
+---
+title: API
+description: "API reference for AeroLeads: every `aeroleads.api.*` operation with input and output types."
+---
+
+Every `aeroleads.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## LinkedIn
+
+### getDetails
+
+`linkedin.getDetails`
+
+Get full LinkedIn profile details including name, job, company, education, skills, and contact info
+
+**Risk:** `read`
+
+```ts
+await corsair.aeroleads.api.linkedin.getDetails({
+    linkedin_url: 'linkedin.com/in/satyanadella',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `linkedin_url` | `string` | Yes | LinkedIn profile URL of the prospect |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first_name` | `string` | No | First name of the prospect |
+| `full_name` | `string` | No | Full name of the prospect |
+| `last_name` | `string` | No | Last name of the prospect |
+| `gender` | `string` | No | Gender of the prospect |
+| `address` | `string` | No | Address of the prospect |
+| `city` | `string` | No | City of the prospect |
+| `country` | `string` | No | Country of the prospect |
+| `job_summary` | `string` | No | Job summary of the prospect |
+| `job_title_role` | `string` | No | Job title role |
+| `job_title_level` | `string` | No | Job title level |
+| `job_company_name` | `string` | No | Current company name |
+| `job_company_website` | `string` | No | Company website |
+| `job_description` | `string` | No | Job description |
+| `job_company_linkedin_url` | `string` | No | Company LinkedIn URL |
+| `education` | `string` | No | Education details |
+| `experience` | `string` | No | Work experience |
+| `interests` | `string` | No | Interests |
+| `skills` | `string` | No | Skills |
+| `languages` | `string` | No | Languages |
+| `emails` | `string` | No | Email addresses |
+| `phone_numbers` | `string` | No | Phone numbers |
+| `cb_rank` | `string` | No | Crunchbase rank |
+| `db_logo_url` | `string` | No | Database logo URL |
+| `profile_picture_url` | `string` | No | Profile picture URL |
+| `job_company_size` | `string` | No | Company size |
+| `industry` | `string` | No | Industry |
+
+
+
+---
+
+## Email
+
+### getCompanyEmail
+
+`email.getCompanyEmail`
+
+Verify an email address and get deliverability status
+
+**Risk:** `read`
+
+```ts
+await corsair.aeroleads.api.email.getCompanyEmail({
+    email: 'satya@microsoft.com',
+});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | Email address to verify |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | Email status |
+| `address` | `string` | No | Email address |
+| `type` | `string` | No | Email type |
+| `email_status` | `string` | No | Verification status |
+| `safe_to_send` | `string` | No | Whether it is safe to send |
+| `deliverable` | `string` | No | Whether the email is deliverable |
+| `catch_all` | `string` | No | Whether the domain is catch-all |
+| `domain_status` | `string` | No | Domain status |
+| `domain` | `string` | No | Domain name |
+| `disposable_domain` | `string` | No | Whether the domain is disposable |
+
+
+
+---

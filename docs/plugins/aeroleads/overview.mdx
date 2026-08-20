@@ -1,0 +1,139 @@
+---
+title: Overview
+description: "AeroLeads plugin for Corsair"
+---
+
+Use **AeroLeads** through Corsair: one client, typed API calls, and optional local DB sync.
+
+AeroLeads provides B2B contact data including business emails, phone numbers, and company details from LinkedIn profile URLs. Use this plugin to enrich leads and verify email deliverability.
+
+**What you get:**
+
+- 2 typed API operations
+- 1 database entity for caching enriched profiles
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/aeroleads
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { aeroleads } from '@corsair-dev/aeroleads';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [aeroleads()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { aeroleads } from '@corsair-dev/aeroleads';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [aeroleads()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/aeroleads/get-credentials) if you need help getting your API key.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=aeroleads
+```
+
+Use the key names documented in [Get Credentials](/plugins/aeroleads/get-credentials) (for example `api_key=`).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=aeroleads --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+aeroleads()
+```
+
+Store credentials with `pnpm corsair setup --plugin=aeroleads` (see [Get Credentials](/plugins/aeroleads/get-credentials) for field names).
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+## Query synced data
+
+Synced entities support `corsair.aeroleads.db.<entity>.search()` and `.list()`. See [Database](/plugins/aeroleads/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `linkedin.getDetails`
+
+```ts
+await corsair.aeroleads.api.linkedin.getDetails({
+    linkedin_url: 'linkedin.com/in/satyanadella',
+});
+```
+
+
+**Read-style (read):** `email.getCompanyEmail`
+
+```ts
+await corsair.aeroleads.api.email.getCompanyEmail({
+    email: 'satya@microsoft.com',
+});
+```
+
+
+See the full list on the [API](/plugins/aeroleads/api) page. Use `pnpm corsair list --plugin=aeroleads` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/aeroleads/api) |
+| Database | [Database](/plugins/aeroleads/database) |
+| Credentials | [Get credentials](/plugins/aeroleads/get-credentials) |
