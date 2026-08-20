@@ -6,6 +6,7 @@ export class AblyAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		public readonly statusCode?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'AblyAPIError';
@@ -25,7 +26,7 @@ export async function makeAblyRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: Record<string, unknown> | unknown[];
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
@@ -61,6 +62,7 @@ export async function makeAblyRequest<T>(
 		if (error instanceof Error) {
 			const apiError = error as {
 				status?: number;
+				retryAfter?: number;
 				body?: {
 					error?: {
 						message?: string;
@@ -76,6 +78,7 @@ export async function makeAblyRequest<T>(
 				ablyError?.message ?? error.message,
 				ablyError?.code === undefined ? undefined : String(ablyError.code),
 				ablyError?.statusCode ?? apiError.status,
+				apiError.retryAfter,
 			);
 		}
 
