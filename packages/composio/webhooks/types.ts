@@ -132,6 +132,13 @@ const SIGNATURE_FAILED = 'Signature verification failed';
  * cannot be re-delivered to trigger duplicate downstream effects (e.g. re-firing
  * a `composio.trigger.message` automation). Entries are evicted lazily once
  * they fall outside the window, keeping the store bounded.
+ *
+ * WARNING: this cache is in-process only. Each OS process / serverless worker
+ * starts with an empty store, so it is NOT a distributed deduplication layer.
+ * In multi-worker or serverless deployments a captured delivery can be replayed
+ * to a different (cold) worker within the tolerance window. For cross-process
+ * protection, plug the deduplication into a shared store (e.g. Redis, Postgres,
+ * or the framework's Hub) keyed by `${webhookId}:${webhookTimestamp}`.
  */
 const WEBHOOK_REPLAY_WINDOW_MS = 5 * 60 * 1000;
 const processedWebhookDeliveries = new Map<string, number>();
@@ -188,9 +195,6 @@ export function verifyComposioWebhookSignature(
 	}
 
 	const rawBody = request.rawBody;
-	if (typeof rawBody !== 'string' || rawBody.length === 0) {
-		return { valid: false, error: SIGNATURE_FAILED };
-	}
 	const webhookId = headerValue(request.headers, 'webhook-id');
 	const webhookTimestamp = headerValue(request.headers, 'webhook-timestamp');
 	const sigHeader = headerValue(request.headers, 'webhook-signature');
