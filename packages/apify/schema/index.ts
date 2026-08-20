@@ -1,7 +1,15 @@
 import {
+	ApifyActorBuild,
+	ApifyActorTask,
+	ApifyDataset,
+	ApifyKeyValueStore,
 	ApifyMcpActor,
 	ApifyMcpActorOutput,
 	ApifyMcpActorRun,
+	ApifyRequestQueue,
+	ApifySchedule,
+	ApifyUser,
+	ApifyWebhook,
 } from './database';
 
 export const ApifyMcpSchema = {
@@ -10,5 +18,13 @@ export const ApifyMcpSchema = {
 		actors: ApifyMcpActor,
 		actorRuns: ApifyMcpActorRun,
 		actorOutputs: ApifyMcpActorOutput,
+		actorBuilds: ApifyActorBuild,
+		actorTasks: ApifyActorTask,
+		datasets: ApifyDataset,
+		keyValueStores: ApifyKeyValueStore,
+		requestQueues: ApifyRequestQueue,
+		schedules: ApifySchedule,
+		webhooks: ApifyWebhook,
+		users: ApifyUser,
 	},
 } as const;
