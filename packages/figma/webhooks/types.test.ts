@@ -5,6 +5,7 @@ import { verifyFigmaWebhookPasscode } from './types';
 // length-mismatch catch and surfaced as a vague 'Invalid passcode'. The verifier
 // now fails closed with a clear configuration error.
 
+// type: unknown is used to simulate arbitrary payload shapes for testing
 function requestWith(payload: unknown) {
 	return { payload, headers: {} };
 }
@@ -23,6 +24,7 @@ describe('verifyFigmaWebhookPasscode', () => {
 	it('fails closed when the configured passcode is missing', () => {
 		const result = verifyFigmaWebhookPasscode(
 			requestWith({ event_type: 'PING', passcode }),
+			// type assertion: passing undefined to test runtime missing passcode guard
 			undefined as unknown as string,
 		);
 		expect(result).toEqual({ valid: false, error: 'Missing webhook passcode' });
