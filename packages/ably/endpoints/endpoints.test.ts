@@ -58,6 +58,7 @@ describe('Ably endpoints', () => {
 				keyName: 'app.key',
 				clientId: 'client-1',
 				ttl: 60000,
+				capability: '{"room":["publish","subscribe"]}',
 			});
 
 			expect(mockedRequest).toHaveBeenCalledWith(
@@ -68,6 +69,7 @@ describe('Ably endpoints', () => {
 					body: {
 						clientId: 'client-1',
 						ttl: 60000,
+						capability: '{"room":["publish","subscribe"]}',
 					},
 				},
 			);
@@ -76,7 +78,7 @@ describe('Ably endpoints', () => {
 
 	describe('channels', () => {
 		it('publishes batch messages using the top-level batch array', async () => {
-			mockedRequest.mockResolvedValue([]);
+			mockedRequest.mockResolvedValueOnce([]);
 
 			const messages = [
 				{
@@ -93,29 +95,22 @@ describe('Ably endpoints', () => {
 			});
 		});
 
-		it('publishes a message to a channel', async () => {
-			await Channels.publishMessageToChannel(ctx, {
+		it('gets channel details', async () => {
+			await Channels.getChannelDetails(ctx, {
 				channelId: 'room:one',
-				name: 'message',
-				data: 'hello',
 			});
 
 			expect(mockedRequest).toHaveBeenCalledWith(
-				'channels/room%3Aone/messages',
+				'channels/room%3Aone',
 				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						name: 'message',
-						data: 'hello',
-					},
-				},
 			);
 		});
 
 		it('gets channel history', async () => {
 			await Channels.getChannelHistory(ctx, {
 				channelId: 'room',
+				start: 1000,
+				end: 2000,
 				limit: 50,
 				direction: 'backwards',
 			});
@@ -125,6 +120,8 @@ describe('Ably endpoints', () => {
 				ctx.key,
 				{
 					query: {
+						start: 1000,
+						end: 2000,
 						limit: 50,
 						direction: 'backwards',
 					},
@@ -136,6 +133,7 @@ describe('Ably endpoints', () => {
 			await Channels.getChannelPresence(ctx, {
 				channelId: 'room',
 				clientId: 'user-1',
+				connectionId: 'connection-1',
 			});
 
 			expect(mockedRequest).toHaveBeenCalledWith(
@@ -144,6 +142,30 @@ describe('Ably endpoints', () => {
 				{
 					query: {
 						clientId: 'user-1',
+						connectionId: 'connection-1',
+					},
+				},
+			);
+		});
+
+		it('gets channel presence history', async () => {
+			await Channels.getPresenceHistory(ctx, {
+				channelId: 'room:one',
+				start: 1000,
+				end: 2000,
+				limit: 25,
+				direction: 'forwards',
+			});
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'channels/room%3Aone/presence/history',
+				ctx.key,
+				{
+					query: {
+						start: 1000,
+						end: 2000,
+						limit: 25,
+						direction: 'forwards',
 					},
 				},
 			);
@@ -160,11 +182,120 @@ describe('Ably endpoints', () => {
 				ctx.key,
 			);
 		});
+
+		it('lists channels with query parameters', async () => {
+			const input = {
+				prefix: 'room',
+				by: 'id',
+				limit: 20,
+			};
+
+			await Channels.listChannels(ctx, input);
+
+			expect(mockedRequest).toHaveBeenCalledWith('channels', ctx.key, {
+				query: input,
+			});
+		});
+
+		it('publishes a message to a channel', async () => {
+			await Channels.publishMessageToChannel(ctx, {
+				channelId: 'room:one',
+				name: 'message',
+				data: 'hello',
+				clientId: 'client-1',
+				extras: {
+					source: 'test',
+				},
+			});
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'channels/room%3Aone/messages',
+				ctx.key,
+				{
+					method: 'POST',
+					body: {
+						name: 'message',
+						data: 'hello',
+						clientId: 'client-1',
+						extras: {
+							source: 'test',
+						},
+					},
+				},
+			);
+		});
+
+		it('queries batch presence using the channels parameter', async () => {
+			mockedRequest.mockResolvedValueOnce([]);
+
+			await Channels.batchPresence(ctx, {
+				channels: ['room-a', 'room-b'],
+			});
+
+			expect(mockedRequest).toHaveBeenCalledWith('presence', ctx.key, {
+				query: {
+					channels: 'room-a,room-b',
+				},
+			});
+		});
+
+		it('gets presence history for each channel in a batch', async () => {
+			mockedRequest
+				.mockResolvedValueOnce([{ clientId: 'user-a' }])
+				.mockResolvedValueOnce([{ clientId: 'user-b' }]);
+
+			const result = await Channels.batchPresenceHistory(ctx, {
+				channels: ['room-a', 'room:b'],
+				start: 1000,
+				end: 2000,
+				limit: 10,
+				direction: 'backwards',
+			});
+
+			expect(mockedRequest).toHaveBeenNthCalledWith(
+				1,
+				'channels/room-a/presence/history',
+				ctx.key,
+				{
+					query: {
+						start: 1000,
+						end: 2000,
+						limit: 10,
+						direction: 'backwards',
+					},
+				},
+			);
+
+			expect(mockedRequest).toHaveBeenNthCalledWith(
+				2,
+				'channels/room%3Ab/presence/history',
+				ctx.key,
+				{
+					query: {
+						start: 1000,
+						end: 2000,
+						limit: 10,
+						direction: 'backwards',
+					},
+				},
+			);
+
+			expect(result).toEqual([
+				{
+					channelId: 'room-a',
+					history: [{ clientId: 'user-a' }],
+				},
+				{
+					channelId: 'room:b',
+					history: [{ clientId: 'user-b' }],
+				},
+			]);
+		});
 	});
 
 	describe('push', () => {
 		it('publishes batch push notifications using the batch endpoint', async () => {
-			mockedRequest.mockResolvedValue([]);
+			mockedRequest.mockResolvedValueOnce([]);
 
 			const notifications = [
 				{
@@ -180,7 +311,9 @@ describe('Ably endpoints', () => {
 				},
 			];
 
-			await Push.publishPushNotificationsBatch(ctx, { notifications });
+			await Push.publishPushNotificationsBatch(ctx, {
+				notifications,
+			});
 
 			expect(mockedRequest).toHaveBeenCalledWith(
 				'push/batch/publish',
@@ -188,36 +321,6 @@ describe('Ably endpoints', () => {
 				{
 					method: 'POST',
 					body: notifications,
-				},
-			);
-		});
-
-		it('gets a push device registration', async () => {
-			await Push.getPushDevice(ctx, {
-				deviceId: 'device:123',
-			});
-
-			expect(mockedRequest).toHaveBeenCalledWith(
-				'push/deviceRegistrations/device%3A123',
-				ctx.key,
-			);
-		});
-
-		it('registers a push device', async () => {
-			const input = {
-				id: 'device-1',
-				clientId: 'client-1',
-				platform: 'android',
-			};
-
-			await Push.registerPushDevice(ctx, input);
-
-			expect(mockedRequest).toHaveBeenCalledWith(
-				'push/deviceRegistrations',
-				ctx.key,
-				{
-					method: 'POST',
-					body: input,
 				},
 			);
 		});
@@ -240,16 +343,192 @@ describe('Ably endpoints', () => {
 			);
 		});
 
-		it('unregisters a single push device', async () => {
-			await Push.unregisterPushDevice(ctx, {
-				deviceId: 'device-1',
+		it('gets a push device registration', async () => {
+			await Push.getPushDevice(ctx, {
+				deviceId: 'device:123',
 			});
 
 			expect(mockedRequest).toHaveBeenCalledWith(
-				'push/deviceRegistrations/device-1',
+				'push/deviceRegistrations/device%3A123',
+				ctx.key,
+			);
+		});
+
+		it('lists push channel subscriptions', async () => {
+			const input = {
+				channel: 'news',
+				deviceId: 'device-1',
+				clientId: 'client-1',
+				limit: 50,
+			};
+
+			await Push.listPushChannelSubscriptions(ctx, input);
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'push/channelSubscriptions',
+				ctx.key,
+				{
+					query: input,
+				},
+			);
+		});
+
+		it('lists push channels', async () => {
+			const input = {
+				prefix: 'news',
+				limit: 25,
+			};
+
+			await Push.listPushChannels(ctx, input);
+
+			expect(mockedRequest).toHaveBeenCalledWith('push/channels', ctx.key, {
+				query: input,
+			});
+		});
+
+		it('lists registered push devices', async () => {
+			const input = {
+				deviceId: 'device-1',
+				clientId: 'client-1',
+				limit: 100,
+			};
+
+			await Push.listRegisteredPushDevices(ctx, input);
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'push/deviceRegistrations',
+				ctx.key,
+				{
+					query: input,
+				},
+			);
+		});
+
+		it('patches a push device registration', async () => {
+			await Push.patchPushDeviceRegistration(ctx, {
+				deviceId: 'device:1',
+				clientId: 'client-1',
+				metadata: {
+					environment: 'test',
+				},
+				push: {
+					state: 'active',
+				},
+			});
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'push/deviceRegistrations/device%3A1',
+				ctx.key,
+				{
+					method: 'PATCH',
+					body: {
+						clientId: 'client-1',
+						metadata: {
+							environment: 'test',
+						},
+						push: {
+							state: 'active',
+						},
+					},
+				},
+			);
+		});
+
+		it('publishes a push notification', async () => {
+			const input = {
+				recipient: {
+					deviceId: 'device-1',
+				},
+				data: {
+					type: 'example',
+				},
+				notification: {
+					title: 'Hello',
+					body: 'World',
+				},
+			};
+
+			await Push.publishPushNotification(ctx, input);
+
+			expect(mockedRequest).toHaveBeenCalledWith('push/publish', ctx.key, {
+				method: 'POST',
+				body: input,
+			});
+		});
+
+		it('registers a push device', async () => {
+			const input = {
+				id: 'device-1',
+				clientId: 'client-1',
+				platform: 'android',
+			};
+
+			await Push.registerPushDevice(ctx, input);
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'push/deviceRegistrations',
+				ctx.key,
+				{
+					method: 'POST',
+					body: input,
+				},
+			);
+		});
+
+		it('unregisters push devices using query parameters', async () => {
+			const input = {
+				clientId: 'client-1',
+			};
+
+			await Push.unregisterAllPushDevices(ctx, input);
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'push/deviceRegistrations',
 				ctx.key,
 				{
 					method: 'DELETE',
+					query: input,
+				},
+			);
+		});
+
+		it('unregisters a single push device', async () => {
+			await Push.unregisterPushDevice(ctx, {
+				deviceId: 'device:1',
+			});
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'push/deviceRegistrations/device%3A1',
+				ctx.key,
+				{
+					method: 'DELETE',
+				},
+			);
+		});
+
+		it('updates a push device registration', async () => {
+			await Push.updatePushDevice(ctx, {
+				id: 'device:1',
+				clientId: 'client-1',
+				platform: 'android',
+				metadata: {
+					version: '1.0',
+				},
+			});
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'push/deviceRegistrations/device%3A1',
+				ctx.key,
+				{
+					method: 'PUT',
+					body: {
+						id: 'device:1',
+						clientId: 'client-1',
+						platform: 'android',
+						metadata: {
+							version: '1.0',
+						},
+					},
 				},
 			);
 		});
