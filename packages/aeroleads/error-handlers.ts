@@ -36,6 +36,22 @@ export const errorHandlers = {
     },
     handler: async () => ({ maxRetries: 0 }),
   },
+  // AeroLeads returns 402 when the account's credit balance is exhausted.
+  // This is non-retryable: a retry will only burn another credit attempt
+  // and re-fail. Surface the error so the caller can top up.
+  CREDIT_LIMIT_ERROR: {
+    match: (error: Error) => {
+      if (error instanceof ApiError && error.status === 402) return true;
+      if (error instanceof AeroleadsAPIError && error.status === 402) return true;
+      const msg = error.message.toLowerCase();
+      return (
+        msg.includes('credit_limit') ||
+        msg.includes('credit limit') ||
+        msg.includes('402')
+      );
+    },
+    handler: async () => ({ maxRetries: 0 }),
+  },
   DEFAULT: {
     match: () => true,
     handler: async () => ({ maxRetries: 0 }),
