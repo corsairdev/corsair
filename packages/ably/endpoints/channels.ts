@@ -1,0 +1,199 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeAblyRequest } from '../client';
+import type { AblyEndpoints } from '../index';
+import type { AblyEndpointOutputs } from './types';
+
+const enc = encodeURIComponent;
+
+export const publishBatchMessages: AblyEndpoints['publishBatchMessages'] =
+	async (ctx, input) => {
+		const result = await makeAblyRequest<
+			AblyEndpointOutputs['publishBatchMessages']
+		>('messages', ctx.key, {
+			method: 'POST',
+			body: input,
+		});
+
+		await logEventFromContext(
+			ctx,
+			'ably.channels.publishBatchMessages',
+			{},
+			'completed',
+		);
+		return result;
+	};
+
+export const getChannelDetails: AblyEndpoints['getChannelDetails'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAblyRequest<
+		AblyEndpointOutputs['getChannelDetails']
+	>(`channels/${enc(input.channelId)}`, ctx.key);
+
+	await logEventFromContext(
+		ctx,
+		'ably.channels.getDetails',
+		input,
+		'completed',
+	);
+	return result;
+};
+
+export const getChannelHistory: AblyEndpoints['getChannelHistory'] = async (
+	ctx,
+	input,
+) => {
+	const { channelId, ...query } = input;
+
+	const result = await makeAblyRequest<
+		AblyEndpointOutputs['getChannelHistory']
+	>(`channels/${enc(channelId)}/messages`, ctx.key, { query });
+
+	await logEventFromContext(
+		ctx,
+		'ably.channels.getHistory',
+		input,
+		'completed',
+	);
+	return result;
+};
+
+export const getChannelPresence: AblyEndpoints['getChannelPresence'] = async (
+	ctx,
+	input,
+) => {
+	const { channelId, ...query } = input;
+
+	const result = await makeAblyRequest<
+		AblyEndpointOutputs['getChannelPresence']
+	>(`channels/${enc(channelId)}/presence`, ctx.key, { query });
+
+	await logEventFromContext(
+		ctx,
+		'ably.channels.getPresence',
+		input,
+		'completed',
+	);
+	return result;
+};
+
+export const getPresenceHistory: AblyEndpoints['getPresenceHistory'] = async (
+	ctx,
+	input,
+) => {
+	const { channelId, ...query } = input;
+
+	const result = await makeAblyRequest<
+		AblyEndpointOutputs['getPresenceHistory']
+	>(`channels/${enc(channelId)}/presence/history`, ctx.key, { query });
+
+	await logEventFromContext(
+		ctx,
+		'ably.channels.getPresenceHistory',
+		input,
+		'completed',
+	);
+	return result;
+};
+
+export const getMessageVersions: AblyEndpoints['getMessageVersions'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAblyRequest<
+		AblyEndpointOutputs['getMessageVersions']
+	>(
+		`channels/${enc(input.channelId)}/messages/${enc(input.serial)}/versions`,
+		ctx.key,
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ably.channels.getMessageVersions',
+		input,
+		'completed',
+	);
+	return result;
+};
+
+export const listChannels: AblyEndpoints['listChannels'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAblyRequest<AblyEndpointOutputs['listChannels']>(
+		'channels',
+		ctx.key,
+		{ query: input },
+	);
+
+	await logEventFromContext(ctx, 'ably.channels.list', input, 'completed');
+	return result;
+};
+
+export const publishMessageToChannel: AblyEndpoints['publishMessageToChannel'] =
+	async (ctx, input) => {
+		const { channelId, ...body } = input;
+
+		const result = await makeAblyRequest<
+			AblyEndpointOutputs['publishMessageToChannel']
+		>(`channels/${enc(channelId)}/messages`, ctx.key, {
+			method: 'POST',
+			body,
+		});
+
+		await logEventFromContext(
+			ctx,
+			'ably.channels.publishMessage',
+			{ channelId },
+			'completed',
+		);
+
+		return result;
+	};
+
+export const batchPresence: AblyEndpoints['batchPresence'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAblyRequest<AblyEndpointOutputs['batchPresence']>(
+		'presence',
+		ctx.key,
+		{
+			query: {
+				channel: input.channels.join(','),
+			},
+		},
+	);
+
+	await logEventFromContext(
+		ctx,
+		'ably.channels.batchPresence',
+		{},
+		'completed',
+	);
+	return result;
+};
+
+export const batchPresenceHistory: AblyEndpoints['batchPresenceHistory'] =
+	async (ctx, input) => {
+		const { channels, ...query } = input;
+
+		const result = await makeAblyRequest<
+			AblyEndpointOutputs['batchPresenceHistory']
+		>('presence/history', ctx.key, {
+			query: {
+				...query,
+				channel: channels.join(','),
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'ably.channels.batchPresenceHistory',
+			{},
+			'completed',
+		);
+
+		return result;
+	};

@@ -14,17 +14,25 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+
+import { Application, Channels, Push } from './endpoints';
+
 import type {
 	AblyEndpointInputs,
 	AblyEndpointOutputs,
 } from './endpoints/types';
+
 import {
 	AblyEndpointInputSchemas,
 	AblyEndpointOutputSchemas,
 } from './endpoints/types';
+
 import { errorHandlers } from './error-handlers';
 import { AblySchema } from './schema';
+
+/* -------------------------------------------------------------------------- */
+/* Plugin options                                                              */
+/* -------------------------------------------------------------------------- */
 
 export type AblyPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -50,25 +58,196 @@ type AblyEndpoint<K extends keyof AblyEndpointOutputs> = CorsairEndpoint<
 	AblyEndpointOutputs[K]
 >;
 
+/* -------------------------------------------------------------------------- */
+/* Endpoint types                                                              */
+/* -------------------------------------------------------------------------- */
+
 export type AblyEndpoints = {
-	exampleGet: AblyEndpoint<'exampleGet'>;
+	publishBatchMessages: AblyEndpoint<'publishBatchMessages'>;
+	getChannelDetails: AblyEndpoint<'getChannelDetails'>;
+	getChannelHistory: AblyEndpoint<'getChannelHistory'>;
+	getChannelPresence: AblyEndpoint<'getChannelPresence'>;
+	getPresenceHistory: AblyEndpoint<'getPresenceHistory'>;
+	getMessageVersions: AblyEndpoint<'getMessageVersions'>;
+	listChannels: AblyEndpoint<'listChannels'>;
+	publishMessageToChannel: AblyEndpoint<'publishMessageToChannel'>;
+	batchPresence: AblyEndpoint<'batchPresence'>;
+	batchPresenceHistory: AblyEndpoint<'batchPresenceHistory'>;
+
+	getServiceTime: AblyEndpoint<'getServiceTime'>;
+	getStats: AblyEndpoint<'getStats'>;
+	requestAccessToken: AblyEndpoint<'requestAccessToken'>;
+
+	publishPushNotificationsBatch: AblyEndpoint<'publishPushNotificationsBatch'>;
+	deleteChannelSubscription: AblyEndpoint<'deleteChannelSubscription'>;
+	getPushDevice: AblyEndpoint<'getPushDevice'>;
+	listPushChannelSubscriptions: AblyEndpoint<'listPushChannelSubscriptions'>;
+	listPushChannels: AblyEndpoint<'listPushChannels'>;
+	listRegisteredPushDevices: AblyEndpoint<'listRegisteredPushDevices'>;
+	patchPushDeviceRegistration: AblyEndpoint<'patchPushDeviceRegistration'>;
+	publishPushNotification: AblyEndpoint<'publishPushNotification'>;
+	registerPushDevice: AblyEndpoint<'registerPushDevice'>;
+	unregisterAllPushDevices: AblyEndpoint<'unregisterAllPushDevices'>;
+	unregisterPushDevice: AblyEndpoint<'unregisterPushDevice'>;
+	updatePushDevice: AblyEndpoint<'updatePushDevice'>;
 };
 
+/* -------------------------------------------------------------------------- */
+/* Webhooks                                                                    */
+/* -------------------------------------------------------------------------- */
+
 export type AblyWebhooks = Record<string, never>;
+
 export type AblyBoundWebhooks = BindWebhooks<AblyWebhooks>;
 
+/* -------------------------------------------------------------------------- */
+/* Endpoint tree                                                               */
+/* -------------------------------------------------------------------------- */
+
 const ablyEndpointsNested = {
-	example: {
-		get: Example.get,
+	application: {
+		getServiceTime: Application.getServiceTime,
+		getStats: Application.getStats,
+		requestAccessToken: Application.requestAccessToken,
+	},
+
+	channels: {
+		publishBatchMessages: Channels.publishBatchMessages,
+		getChannelDetails: Channels.getChannelDetails,
+		getChannelHistory: Channels.getChannelHistory,
+		getChannelPresence: Channels.getChannelPresence,
+		getPresenceHistory: Channels.getPresenceHistory,
+		getMessageVersions: Channels.getMessageVersions,
+		listChannels: Channels.listChannels,
+		publishMessageToChannel: Channels.publishMessageToChannel,
+		batchPresence: Channels.batchPresence,
+		batchPresenceHistory: Channels.batchPresenceHistory,
+	},
+
+	push: {
+		publishPushNotificationsBatch: Push.publishPushNotificationsBatch,
+		deleteChannelSubscription: Push.deleteChannelSubscription,
+		getPushDevice: Push.getPushDevice,
+		listPushChannelSubscriptions: Push.listPushChannelSubscriptions,
+		listPushChannels: Push.listPushChannels,
+		listRegisteredPushDevices: Push.listRegisteredPushDevices,
+		patchPushDeviceRegistration: Push.patchPushDeviceRegistration,
+		publishPushNotification: Push.publishPushNotification,
+		registerPushDevice: Push.registerPushDevice,
+		unregisterAllPushDevices: Push.unregisterAllPushDevices,
+		unregisterPushDevice: Push.unregisterPushDevice,
+		updatePushDevice: Push.updatePushDevice,
 	},
 } as const;
 
 const ablyWebhooksNested = {} as const;
 
+/* -------------------------------------------------------------------------- */
+/* Schemas                                                                     */
+/* -------------------------------------------------------------------------- */
+
 export const ablyEndpointSchemas = {
-	'example.get': {
-		input: AblyEndpointInputSchemas.exampleGet,
-		output: AblyEndpointOutputSchemas.exampleGet,
+	'application.getServiceTime': {
+		input: AblyEndpointInputSchemas.getServiceTime,
+		output: AblyEndpointOutputSchemas.getServiceTime,
+	},
+	'application.getStats': {
+		input: AblyEndpointInputSchemas.getStats,
+		output: AblyEndpointOutputSchemas.getStats,
+	},
+	'application.requestAccessToken': {
+		input: AblyEndpointInputSchemas.requestAccessToken,
+		output: AblyEndpointOutputSchemas.requestAccessToken,
+	},
+
+	'channels.publishBatchMessages': {
+		input: AblyEndpointInputSchemas.publishBatchMessages,
+		output: AblyEndpointOutputSchemas.publishBatchMessages,
+	},
+	'channels.getChannelDetails': {
+		input: AblyEndpointInputSchemas.getChannelDetails,
+		output: AblyEndpointOutputSchemas.getChannelDetails,
+	},
+	'channels.getChannelHistory': {
+		input: AblyEndpointInputSchemas.getChannelHistory,
+		output: AblyEndpointOutputSchemas.getChannelHistory,
+	},
+	'channels.getChannelPresence': {
+		input: AblyEndpointInputSchemas.getChannelPresence,
+		output: AblyEndpointOutputSchemas.getChannelPresence,
+	},
+	'channels.getPresenceHistory': {
+		input: AblyEndpointInputSchemas.getPresenceHistory,
+		output: AblyEndpointOutputSchemas.getPresenceHistory,
+	},
+	'channels.getMessageVersions': {
+		input: AblyEndpointInputSchemas.getMessageVersions,
+		output: AblyEndpointOutputSchemas.getMessageVersions,
+	},
+	'channels.listChannels': {
+		input: AblyEndpointInputSchemas.listChannels,
+		output: AblyEndpointOutputSchemas.listChannels,
+	},
+	'channels.publishMessageToChannel': {
+		input: AblyEndpointInputSchemas.publishMessageToChannel,
+		output: AblyEndpointOutputSchemas.publishMessageToChannel,
+	},
+	'channels.batchPresence': {
+		input: AblyEndpointInputSchemas.batchPresence,
+		output: AblyEndpointOutputSchemas.batchPresence,
+	},
+	'channels.batchPresenceHistory': {
+		input: AblyEndpointInputSchemas.batchPresenceHistory,
+		output: AblyEndpointOutputSchemas.batchPresenceHistory,
+	},
+
+	'push.publishPushNotificationsBatch': {
+		input: AblyEndpointInputSchemas.publishPushNotificationsBatch,
+		output: AblyEndpointOutputSchemas.publishPushNotificationsBatch,
+	},
+	'push.deleteChannelSubscription': {
+		input: AblyEndpointInputSchemas.deleteChannelSubscription,
+		output: AblyEndpointOutputSchemas.deleteChannelSubscription,
+	},
+	'push.getPushDevice': {
+		input: AblyEndpointInputSchemas.getPushDevice,
+		output: AblyEndpointOutputSchemas.getPushDevice,
+	},
+	'push.listPushChannelSubscriptions': {
+		input: AblyEndpointInputSchemas.listPushChannelSubscriptions,
+		output: AblyEndpointOutputSchemas.listPushChannelSubscriptions,
+	},
+	'push.listPushChannels': {
+		input: AblyEndpointInputSchemas.listPushChannels,
+		output: AblyEndpointOutputSchemas.listPushChannels,
+	},
+	'push.listRegisteredPushDevices': {
+		input: AblyEndpointInputSchemas.listRegisteredPushDevices,
+		output: AblyEndpointOutputSchemas.listRegisteredPushDevices,
+	},
+	'push.patchPushDeviceRegistration': {
+		input: AblyEndpointInputSchemas.patchPushDeviceRegistration,
+		output: AblyEndpointOutputSchemas.patchPushDeviceRegistration,
+	},
+	'push.publishPushNotification': {
+		input: AblyEndpointInputSchemas.publishPushNotification,
+		output: AblyEndpointOutputSchemas.publishPushNotification,
+	},
+	'push.registerPushDevice': {
+		input: AblyEndpointInputSchemas.registerPushDevice,
+		output: AblyEndpointOutputSchemas.registerPushDevice,
+	},
+	'push.unregisterAllPushDevices': {
+		input: AblyEndpointInputSchemas.unregisterAllPushDevices,
+		output: AblyEndpointOutputSchemas.unregisterAllPushDevices,
+	},
+	'push.unregisterPushDevice': {
+		input: AblyEndpointInputSchemas.unregisterPushDevice,
+		output: AblyEndpointOutputSchemas.unregisterPushDevice,
+	},
+	'push.updatePushDevice': {
+		input: AblyEndpointInputSchemas.updatePushDevice,
+		output: AblyEndpointOutputSchemas.updatePushDevice,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof ablyEndpointsNested>;
 
@@ -76,20 +255,130 @@ const ablyWebhookSchemas = {} as const satisfies RequiredPluginWebhookSchemas<
 	typeof ablyWebhooksNested
 >;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+/* -------------------------------------------------------------------------- */
+/* Endpoint metadata                                                           */
+/* -------------------------------------------------------------------------- */
 
 const ablyEndpointMeta = {
-	'example.get': {
+	'application.getServiceTime': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Get the current Ably service time.',
+	},
+	'application.getStats': {
+		riskLevel: 'read',
+		description: 'Retrieve application usage statistics.',
+	},
+	'application.requestAccessToken': {
+		riskLevel: 'write',
+		description: 'Request an Ably access token.',
+	},
+
+	'channels.publishBatchMessages': {
+		riskLevel: 'write',
+		description: 'Publish messages to multiple Ably channels.',
+	},
+	'channels.getChannelDetails': {
+		riskLevel: 'read',
+		description: 'Retrieve details for an active channel.',
+	},
+	'channels.getChannelHistory': {
+		riskLevel: 'read',
+		description: 'Retrieve message history for a channel.',
+	},
+	'channels.getChannelPresence': {
+		riskLevel: 'read',
+		description: 'Retrieve current channel presence members.',
+	},
+	'channels.getPresenceHistory': {
+		riskLevel: 'read',
+		description: 'Retrieve presence history for a channel.',
+	},
+	'channels.getMessageVersions': {
+		riskLevel: 'read',
+		description: 'Retrieve historical versions of a message.',
+	},
+	'channels.listChannels': {
+		riskLevel: 'read',
+		description: 'List active Ably channels.',
+	},
+	'channels.publishMessageToChannel': {
+		riskLevel: 'write',
+		description: 'Publish a message to an Ably channel.',
+	},
+	'channels.batchPresence': {
+		riskLevel: 'read',
+		description: 'Retrieve presence information for multiple channels.',
+	},
+	'channels.batchPresenceHistory': {
+		riskLevel: 'read',
+		description: 'Retrieve presence history for multiple channels.',
+	},
+
+	'push.publishPushNotificationsBatch': {
+		riskLevel: 'write',
+		description: 'Publish a batch of push notifications.',
+	},
+	'push.deleteChannelSubscription': {
+		riskLevel: 'destructive',
+		description: 'Delete matching push channel subscriptions.',
+	},
+	'push.getPushDevice': {
+		riskLevel: 'read',
+		description: 'Retrieve a push device registration.',
+	},
+	'push.listPushChannelSubscriptions': {
+		riskLevel: 'read',
+		description: 'List push channel subscriptions.',
+	},
+	'push.listPushChannels': {
+		riskLevel: 'read',
+		description: 'List channels with push subscribers.',
+	},
+	'push.listRegisteredPushDevices': {
+		riskLevel: 'read',
+		description: 'List registered push notification devices.',
+	},
+	'push.patchPushDeviceRegistration': {
+		riskLevel: 'write',
+		description: 'Partially update a push device registration.',
+	},
+	'push.publishPushNotification': {
+		riskLevel: 'write',
+		description: 'Publish a push notification.',
+	},
+	'push.registerPushDevice': {
+		riskLevel: 'write',
+		description: 'Register a device for push notifications.',
+	},
+	'push.unregisterAllPushDevices': {
+		riskLevel: 'destructive',
+		description: 'Delete matching push device registrations.',
+	},
+	'push.unregisterPushDevice': {
+		riskLevel: 'destructive',
+		description: 'Delete a push device registration.',
+	},
+	'push.updatePushDevice': {
+		riskLevel: 'write',
+		description: 'Create or replace a push device registration.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof ablyEndpointsNested>;
+
+/* -------------------------------------------------------------------------- */
+/* Authentication                                                              */
+/* -------------------------------------------------------------------------- */
+
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const ablyAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
+
+/* -------------------------------------------------------------------------- */
+/* Plugin                                                                      */
+/* -------------------------------------------------------------------------- */
 
 export type BaseAblyPlugin<T extends AblyPluginOptions> = CorsairPlugin<
 	'ably',
@@ -111,11 +400,12 @@ export function ably<const T extends AblyPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'ably',
 		authConfig: ablyAuthConfig,
 		schema: AblySchema,
-		options: options,
+		options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: ablyEndpointsNested,
@@ -124,10 +414,12 @@ export function ably<const T extends AblyPluginOptions>(
 		endpointSchemas: ablyEndpointSchemas,
 		webhookSchemas: ablyWebhookSchemas,
 		pluginWebhookMatcher: () => false,
+
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+
 		keyBuilder: async (ctx: AblyKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -144,8 +436,9 @@ export function ably<const T extends AblyPluginOptions>(
 }
 
 export type {
+	AblyDevice,
 	AblyEndpointInputs,
 	AblyEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	AblyMessage,
+	AblyPresenceMessage,
 } from './endpoints/types';

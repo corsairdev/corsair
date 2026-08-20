@@ -52,7 +52,7 @@ export async function makeAblyRequest<T>(
 		url: endpoint,
 		body: isWriteMethod ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: !isWriteMethod ? query : undefined,
+		query,
 	};
 
 	try {

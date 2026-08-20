@@ -1,7 +1,3 @@
-import { get as exampleGet } from './example';
-
-export const Example = {
-	get: exampleGet,
-};
-
-export * from './types';
+export * as Application from './application';
+export * as Channels from './channels';
+export * as Push from './push';
