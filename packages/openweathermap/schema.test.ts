@@ -7,6 +7,7 @@ import {
 	OpenWeatherMapEndpointInputSchemas,
 	OpenWeatherMapEndpointOutputSchemas,
 	StationCreateInputSchema,
+	StationGetMeasurementsResponseSchema,
 	WeatherMapTileInputSchema,
 } from './endpoints/types';
 
@@ -84,8 +85,50 @@ describe('OpenWeatherMap schema validation', () => {
 		expect(parsed.name).toBe('Test');
 	});
 
-	it('registers schemas for all 24 endpoints', () => {
-		expect(Object.keys(OpenWeatherMapEndpointInputSchemas)).toHaveLength(24);
-		expect(Object.keys(OpenWeatherMapEndpointOutputSchemas)).toHaveLength(24);
+	it('rejects empty city name as a location selector', () => {
+		expect(() => CurrentWeatherInputSchema.parse({ q: '' })).toThrow();
+		expect(() => CurrentWeatherInputSchema.parse({ q: '   ' })).toThrow();
+		expect(() => CurrentWeatherInputSchema.parse({ zip: '' })).toThrow();
+	});
+
+	it('does not forward xml or html weather modes', () => {
+		const current = CurrentWeatherInputSchema.parse({
+			lat: 51.5,
+			lon: -0.12,
+			mode: 'xml',
+		});
+		expect('mode' in current).toBe(false);
+		const forecast = Forecast5DayInputSchema.parse({
+			q: 'London',
+			mode: 'html',
+		});
+		expect('mode' in forecast).toBe(false);
+		const circle = CircleCityInputSchema.parse({
+			lat: 51.5,
+			lon: -0.12,
+			mode: 'xml',
+		});
+		expect('mode' in circle).toBe(false);
+	});
+
+	it('accepts hourly station measurements with nested aggregates', () => {
+		const parsed = StationGetMeasurementsResponseSchema.parse([
+			{
+				station_id: 'abc',
+				date: 1500000000,
+				temperature: { min: 1, max: 10, average: 5, weight: 2 },
+			},
+		]);
+		expect(parsed).toHaveLength(1);
+	});
+
+	it('registers schemas for all 21 endpoints', () => {
+		expect(Object.keys(OpenWeatherMapEndpointInputSchemas)).toHaveLength(21);
+		expect(Object.keys(OpenWeatherMapEndpointOutputSchemas)).toHaveLength(21);
+		expect(
+			Object.keys(OpenWeatherMapEndpointInputSchemas).some((key) =>
+				key.startsWith('uv'),
+			),
+		).toBe(false);
 	});
 });

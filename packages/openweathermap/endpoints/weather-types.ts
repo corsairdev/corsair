@@ -1,6 +1,5 @@
 import { z } from 'zod';
 import {
-	OPENWEATHERMAP_RESPONSE_MODES,
 	OPENWEATHERMAP_UNITS,
 	WeatherConditionSchema,
 	withExactlyOneLocation,
@@ -9,7 +8,6 @@ import {
 export const CurrentWeatherInputSchema = withExactlyOneLocation({
 	units: z.enum(OPENWEATHERMAP_UNITS).optional(),
 	lang: z.string().optional(),
-	mode: z.enum(OPENWEATHERMAP_RESPONSE_MODES).optional(),
 });
 
 export type CurrentWeatherInput = z.infer<typeof CurrentWeatherInputSchema>;
@@ -61,7 +59,13 @@ export type CurrentWeatherResponse = z.infer<
 export const Forecast5DayInputSchema = withExactlyOneLocation({
 	units: z.enum(OPENWEATHERMAP_UNITS).optional(),
 	lang: z.string().optional(),
-	mode: z.enum(OPENWEATHERMAP_RESPONSE_MODES).optional(),
+	cnt: z
+		.number()
+		.int()
+		.min(1)
+		.max(40)
+		.optional()
+		.describe('Number of timestamps to return (1-40)'),
 });
 
 export type Forecast5DayInput = z.infer<typeof Forecast5DayInputSchema>;
@@ -114,7 +118,6 @@ export const CircleCityInputSchema = z.object({
 		.describe('Number of cities to return (1-50, default 10)'),
 	units: z.enum(OPENWEATHERMAP_UNITS).optional(),
 	lang: z.string().optional(),
-	mode: z.enum(['json', 'xml']).optional(),
 });
 
 export type CircleCityInput = z.infer<typeof CircleCityInputSchema>;

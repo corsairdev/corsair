@@ -17,11 +17,6 @@ import {
 } from './stations';
 import { daySummary, overview } from './summary';
 import {
-	current as uvCurrent,
-	forecast as uvForecast,
-	history as uvHistory,
-} from './uv';
-import {
 	circleCity,
 	forecast5Day,
 	oneCall,
@@ -54,12 +49,6 @@ export const Geocoding = {
 	direct,
 	reverse,
 	byZip,
-};
-
-export const Uv = {
-	current: uvCurrent,
-	forecast: uvForecast,
-	history: uvHistory,
 };
 
 export const Maps = {

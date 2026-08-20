@@ -59,22 +59,6 @@ import {
 	StationUpdateInputSchema,
 } from './stations-types';
 import type {
-	UvCurrentInput,
-	UvCurrentResponse,
-	UvForecastInput,
-	UvForecastResponse,
-	UvHistoryInput,
-	UvHistoryResponse,
-} from './uv-types';
-import {
-	UvCurrentInputSchema,
-	UvCurrentResponseSchema,
-	UvForecastInputSchema,
-	UvForecastResponseSchema,
-	UvHistoryInputSchema,
-	UvHistoryResponseSchema,
-} from './uv-types';
-import type {
 	CircleCityInput,
 	CircleCityResponse,
 	CurrentWeatherInput,
@@ -557,23 +541,6 @@ export {
 } from './stations-types';
 
 export type {
-	UvCurrentInput,
-	UvCurrentResponse,
-	UvForecastInput,
-	UvForecastResponse,
-	UvHistoryInput,
-	UvHistoryResponse,
-} from './uv-types';
-export {
-	UvCurrentInputSchema,
-	UvCurrentResponseSchema,
-	UvForecastInputSchema,
-	UvForecastResponseSchema,
-	UvHistoryInputSchema,
-	UvHistoryResponseSchema,
-} from './uv-types';
-
-export type {
 	CircleCityInput,
 	CircleCityResponse,
 	CurrentWeatherInput,
@@ -604,9 +571,6 @@ export type OpenWeatherMapEndpointInputs = {
 	geocodingDirect: GeocodingDirectInput;
 	geocodingReverse: GeocodingReverseInput;
 	geocodingByZip: GeocodingByZipInput;
-	uvCurrent: UvCurrentInput;
-	uvForecast: UvForecastInput;
-	uvHistory: UvHistoryInput;
 	weatherMapTile: WeatherMapTileInput;
 	stationsList: Record<string, never>;
 	stationsGet: StationGetInput;
@@ -631,9 +595,6 @@ export type OpenWeatherMapEndpointOutputs = {
 	geocodingDirect: GeocodingDirectResponse;
 	geocodingReverse: GeocodingReverseResponse;
 	geocodingByZip: GeocodingByZipResponse;
-	uvCurrent: UvCurrentResponse;
-	uvForecast: UvForecastResponse;
-	uvHistory: UvHistoryResponse;
 	weatherMapTile: WeatherMapTileResponse;
 	stationsList: StationsListResponse;
 	stationsGet: Station;
@@ -658,9 +619,6 @@ export const OpenWeatherMapEndpointInputSchemas = {
 	geocodingDirect: GeocodingDirectInputSchema,
 	geocodingReverse: GeocodingReverseInputSchema,
 	geocodingByZip: GeocodingByZipInputSchema,
-	uvCurrent: UvCurrentInputSchema,
-	uvForecast: UvForecastInputSchema,
-	uvHistory: UvHistoryInputSchema,
 	weatherMapTile: WeatherMapTileInputSchema,
 	stationsList: z.object({}),
 	stationsGet: StationGetInputSchema,
@@ -685,9 +643,6 @@ export const OpenWeatherMapEndpointOutputSchemas = {
 	geocodingDirect: GeocodingDirectResponseSchema,
 	geocodingReverse: GeocodingReverseResponseSchema,
 	geocodingByZip: GeocodingByZipResponseSchema,
-	uvCurrent: UvCurrentResponseSchema,
-	uvForecast: UvForecastResponseSchema,
-	uvHistory: UvHistoryResponseSchema,
 	weatherMapTile: WeatherMapTileResponseSchema,
 	stationsList: StationsListResponseSchema,
 	stationsGet: StationSchema,

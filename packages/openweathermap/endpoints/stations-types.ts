@@ -38,8 +38,8 @@ export const StationUpdateInputSchema = z.object({
 	station_id: z.string().min(1).describe('Internal OpenWeather station ID'),
 	name: z.string().optional(),
 	external_id: z.string().optional(),
-	latitude: z.number().min(-90).max(90),
-	longitude: z.number().min(-180).max(180),
+	latitude: z.number().min(-90).max(90).optional(),
+	longitude: z.number().min(-180).max(180).optional(),
 	altitude: z.number().optional(),
 });
 
@@ -71,16 +71,30 @@ export type StationGetMeasurementsInput = z.infer<
 	typeof StationGetMeasurementsInputSchema
 >;
 
+const AggregatedMeasurementValueSchema = z.looseObject({
+	min: z.number().optional(),
+	max: z.number().optional(),
+	average: z.number().optional(),
+	weight: z.number().optional(),
+});
+
+const MeasurementValueSchema = z.union([
+	z.number(),
+	AggregatedMeasurementValueSchema,
+]);
+
 export const StationMeasurementSchema = z.looseObject({
 	station_id: z.string().optional(),
 	dt: z.number().optional(),
-	temperature: z.number().optional(),
-	wind_speed: z.number().optional(),
-	wind_gust: z.number().optional(),
-	wind_deg: z.number().optional(),
-	pressure: z.number().optional(),
-	humidity: z.number().optional(),
-	precipitation: z.number().optional(),
+	date: z.number().optional(),
+	temperature: MeasurementValueSchema.optional(),
+	temp: MeasurementValueSchema.optional(),
+	wind_speed: MeasurementValueSchema.optional(),
+	wind_gust: MeasurementValueSchema.optional(),
+	wind_deg: MeasurementValueSchema.optional(),
+	pressure: MeasurementValueSchema.optional(),
+	humidity: MeasurementValueSchema.optional(),
+	precipitation: MeasurementValueSchema.optional(),
 });
 
 export const StationGetMeasurementsResponseSchema = z.array(

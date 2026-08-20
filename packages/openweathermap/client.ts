@@ -13,7 +13,7 @@ export class OpenWeatherMapAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: number,
-		options?: { cause?: Error },
+		options?: { cause?: Error; retryAfter?: number; body?: unknown },
 	) {
 		super(message, options);
 		this.name = 'OpenWeatherMapAPIError';
@@ -26,6 +26,10 @@ export class OpenWeatherMapAPIError extends Error {
 			this.rateLimitReset = options.cause.rateLimitReset;
 			this.rateLimitRemaining = options.cause.rateLimitRemaining;
 			this.rateLimitLimit = options.cause.rateLimitLimit;
+		} else if (code !== undefined) {
+			this.status = code;
+			this.retryAfter = options?.retryAfter;
+			this.body = options?.body;
 		}
 	}
 }
@@ -84,6 +88,8 @@ export type OpenWeatherMapRequestOptions = {
 	headers?: Record<string, string>;
 };
 
+const REQUEST_TIMEOUT_MS = 20_000;
+
 function bufferToBase64(buffer: ArrayBuffer): string {
 	return Buffer.from(buffer).toString('base64');
 }
@@ -95,29 +101,43 @@ async function fetchBinaryResponse(
 		headers: Record<string, string>;
 		body?: string;
 	},
-): Promise<ArrayBuffer> {
+): Promise<{ contentType: string; buffer: ArrayBuffer }> {
 	const response = await fetch(url, {
 		method: options.method,
 		headers: options.headers,
 		body: options.body,
+		signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
 	});
 
 	if (!response.ok) {
-		let body: unknown;
+		const raw = await response.text();
+		let body: unknown = raw;
 		try {
-			body = await response.json();
+			body = JSON.parse(raw);
 		} catch {
-			body = await response.text();
+			body = raw;
 		}
+		const retryAfterHeader = response.headers.get('Retry-After');
+		const retryAfterSeconds = retryAfterHeader
+			? Number(retryAfterHeader)
+			: Number.NaN;
 		throw new OpenWeatherMapAPIError(
 			typeof body === 'object' && body !== null && 'message' in body
 				? String((body as { message: unknown }).message)
 				: `HTTP ${response.status}: ${response.statusText}`,
 			response.status,
+			{
+				body,
+				retryAfter: Number.isFinite(retryAfterSeconds)
+					? retryAfterSeconds * 1000
+					: undefined,
+			},
 		);
 	}
 
-	return await response.arrayBuffer();
+	const contentTypeHeader = response.headers.get('Content-Type') ?? 'image/png';
+	const contentType = contentTypeHeader.split(';')[0]?.trim() || 'image/png';
+	return { contentType, buffer: await response.arrayBuffer() };
 }
 
 /**
@@ -177,7 +197,7 @@ export async function makeOpenWeatherMapRequest<T>(
 				: `${baseUrl}/${urlPath}`;
 
 		try {
-			const buffer = await fetchBinaryResponse(url, {
+			const { contentType, buffer } = await fetchBinaryResponse(url, {
 				method,
 				headers: {
 					Accept: 'image/png',
@@ -185,7 +205,7 @@ export async function makeOpenWeatherMapRequest<T>(
 				},
 			});
 			return {
-				contentType: 'image/png',
+				contentType,
 				dataBase64: bufferToBase64(buffer),
 			} as T;
 		} catch (error) {
@@ -205,7 +225,9 @@ export async function makeOpenWeatherMapRequest<T>(
 		query: compactQuery(queryWithAuth),
 		body:
 			method === 'POST' || method === 'PUT'
-				? (body as ApiRequestOptions['body'])
+				? Array.isArray(body)
+					? body
+					: compactBody(body as Record<string, unknown>)
 				: undefined,
 		mediaType: 'application/json',
 	};

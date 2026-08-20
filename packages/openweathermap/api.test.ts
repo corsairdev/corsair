@@ -15,9 +15,6 @@ import type {
 	StationGetMeasurementsResponse,
 	StationsListResponse,
 	TimeMachineResponse,
-	UvCurrentResponse,
-	UvForecastResponse,
-	UvHistoryResponse,
 	WeatherMapTileResponse,
 } from './endpoints/types';
 import { OpenWeatherMapEndpointOutputSchemas } from './endpoints/types';
@@ -265,56 +262,6 @@ describeIfApiKey('OpenWeatherMap API Type Tests', () => {
 
 			OpenWeatherMapEndpointOutputSchemas.geocodingByZip.parse(response);
 			expect(response.lat).toBeDefined();
-		});
-	});
-
-	describe('uv', () => {
-		// Standalone UV API is deprecated; data may be sparse for some coordinates.
-		it('current UV index returns correct type', async () => {
-			const response = await makeOpenWeatherMapRequest<UvCurrentResponse>(
-				'uvi',
-				apiKey,
-				{
-					api: 'data25',
-					query: { lat: TEST_LAT, lon: TEST_LON },
-				},
-			);
-
-			OpenWeatherMapEndpointOutputSchemas.uvCurrent.parse(response);
-		});
-
-		it('UV forecast returns correct type', async () => {
-			const response = await makeOpenWeatherMapRequest<UvForecastResponse>(
-				'uvi/forecast',
-				apiKey,
-				{
-					api: 'data25',
-					query: { lat: TEST_LAT, lon: TEST_LON, cnt: 3 },
-				},
-			);
-
-			OpenWeatherMapEndpointOutputSchemas.uvForecast.parse(response);
-		});
-
-		it('UV history returns correct type', async () => {
-			const end = Math.floor(Date.now() / 1000);
-			const start = end - 7 * 86400;
-
-			const response = await makeOpenWeatherMapRequest<UvHistoryResponse>(
-				'uvi/history',
-				apiKey,
-				{
-					api: 'data25',
-					query: {
-						lat: TEST_LAT,
-						lon: TEST_LON,
-						start,
-						end,
-					},
-				},
-			);
-
-			OpenWeatherMapEndpointOutputSchemas.uvHistory.parse(response);
 		});
 	});
 

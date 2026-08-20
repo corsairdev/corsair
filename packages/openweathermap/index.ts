@@ -20,7 +20,6 @@ import {
 	Maps,
 	Stations,
 	Summary,
-	Uv,
 	Weather,
 } from './endpoints';
 import type {
@@ -101,11 +100,6 @@ export type OpenWeatherMapEndpoints = {
 		reverse: OpenWeatherMapEndpoint<'geocodingReverse'>;
 		byZip: OpenWeatherMapEndpoint<'geocodingByZip'>;
 	};
-	uv: {
-		current: OpenWeatherMapEndpoint<'uvCurrent'>;
-		forecast: OpenWeatherMapEndpoint<'uvForecast'>;
-		history: OpenWeatherMapEndpoint<'uvHistory'>;
-	};
 	maps: {
 		weatherMapTile: OpenWeatherMapEndpoint<'weatherMapTile'>;
 	};
@@ -143,11 +137,6 @@ const openWeatherMapEndpointsNested = {
 		direct: Geocoding.direct,
 		reverse: Geocoding.reverse,
 		byZip: Geocoding.byZip,
-	},
-	uv: {
-		current: Uv.current,
-		forecast: Uv.forecast,
-		history: Uv.history,
 	},
 	maps: {
 		weatherMapTile: Maps.weatherMapTile,
@@ -222,18 +211,6 @@ export const openWeatherMapEndpointSchemas = {
 	'geocoding.byZip': {
 		input: OpenWeatherMapEndpointInputSchemas.geocodingByZip,
 		output: OpenWeatherMapEndpointOutputSchemas.geocodingByZip,
-	},
-	'uv.current': {
-		input: OpenWeatherMapEndpointInputSchemas.uvCurrent,
-		output: OpenWeatherMapEndpointOutputSchemas.uvCurrent,
-	},
-	'uv.forecast': {
-		input: OpenWeatherMapEndpointInputSchemas.uvForecast,
-		output: OpenWeatherMapEndpointOutputSchemas.uvForecast,
-	},
-	'uv.history': {
-		input: OpenWeatherMapEndpointInputSchemas.uvHistory,
-		output: OpenWeatherMapEndpointOutputSchemas.uvHistory,
 	},
 	'maps.weatherMapTile': {
 		input: OpenWeatherMapEndpointInputSchemas.weatherMapTile,
@@ -337,19 +314,6 @@ const openWeatherMapEndpointMeta = {
 	'geocoding.byZip': {
 		riskLevel: 'read',
 		description: 'Convert a zip/post code into geographic coordinates',
-	},
-	'uv.current': {
-		riskLevel: 'read',
-		description: 'Get current UV index for a latitude/longitude pair',
-	},
-	'uv.forecast': {
-		riskLevel: 'read',
-		description: 'Get UV index forecast for a latitude/longitude pair',
-	},
-	'uv.history': {
-		riskLevel: 'read',
-		description:
-			'Get historical UV index data for a latitude/longitude pair and time range',
 	},
 	'maps.weatherMapTile': {
 		riskLevel: 'read',
@@ -521,12 +485,6 @@ export type {
 	StationUpdateInput,
 	TimeMachineInput,
 	TimeMachineResponse,
-	UvCurrentInput,
-	UvCurrentResponse,
-	UvForecastInput,
-	UvForecastResponse,
-	UvHistoryInput,
-	UvHistoryResponse,
 	WeatherAlert,
 	WeatherCondition,
 	WeatherMapLayer,
@@ -568,12 +526,6 @@ export {
 	StationUpdateInputSchema,
 	TimeMachineInputSchema,
 	TimeMachineResponseSchema,
-	UvCurrentInputSchema,
-	UvCurrentResponseSchema,
-	UvForecastInputSchema,
-	UvForecastResponseSchema,
-	UvHistoryInputSchema,
-	UvHistoryResponseSchema,
 	WEATHER_MAP_LAYERS,
 	WeatherMapTileInputSchema,
 	WeatherMapTileResponseSchema,
