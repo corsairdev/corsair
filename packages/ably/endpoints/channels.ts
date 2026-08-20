@@ -11,7 +11,7 @@ export const publishBatchMessages: AblyEndpoints['publishBatchMessages'] =
 			AblyEndpointOutputs['publishBatchMessages']
 		>('messages', ctx.key, {
 			method: 'POST',
-			body: input,
+			body: input.messages,
 		});
 
 		await logEventFromContext(

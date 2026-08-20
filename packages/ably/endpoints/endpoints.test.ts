@@ -75,6 +75,24 @@ describe('Ably endpoints', () => {
 	});
 
 	describe('channels', () => {
+		it('publishes batch messages using the top-level batch array', async () => {
+			mockedRequest.mockResolvedValue([]);
+
+			const messages = [
+				{
+					channels: ['channel-a', 'channel-b'],
+					messages: [{ name: 'event', data: 'hello' }],
+				},
+			];
+
+			await Channels.publishBatchMessages(ctx, { messages });
+
+			expect(mockedRequest).toHaveBeenCalledWith('messages', ctx.key, {
+				method: 'POST',
+				body: messages,
+			});
+		});
+
 		it('publishes a message to a channel', async () => {
 			await Channels.publishMessageToChannel(ctx, {
 				channelId: 'room:one',
@@ -145,6 +163,35 @@ describe('Ably endpoints', () => {
 	});
 
 	describe('push', () => {
+		it('publishes batch push notifications using the batch endpoint', async () => {
+			mockedRequest.mockResolvedValue([]);
+
+			const notifications = [
+				{
+					recipient: {
+						deviceId: 'device-1',
+					},
+					payload: {
+						notification: {
+							title: 'Hello',
+							body: 'World',
+						},
+					},
+				},
+			];
+
+			await Push.publishPushNotificationsBatch(ctx, { notifications });
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'push/batch/publish',
+				ctx.key,
+				{
+					method: 'POST',
+					body: notifications,
+				},
+			);
+		});
+
 		it('gets a push device registration', async () => {
 			await Push.getPushDevice(ctx, {
 				deviceId: 'device:123',

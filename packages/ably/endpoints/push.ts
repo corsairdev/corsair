@@ -9,9 +9,9 @@ export const publishPushNotificationsBatch: AblyEndpoints['publishPushNotificati
 	async (ctx, input) => {
 		const result = await makeAblyRequest<
 			AblyEndpointOutputs['publishPushNotificationsBatch']
-		>('push/admin/batch/publish', ctx.key, {
+		>('push/batch/publish', ctx.key, {
 			method: 'POST',
-			body: input,
+			body: input.notifications,
 		});
 
 		await logEventFromContext(ctx, 'ably.push.publishBatch', {}, 'completed');
