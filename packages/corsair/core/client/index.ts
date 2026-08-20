@@ -34,6 +34,8 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
+import type { CorsairRunsNamespace } from '../runs';
+import { buildRunsNamespace } from '../runs';
 import { ensureTenantProvisioned } from '../tenant-provision';
 import type { CorsairThreadsNamespace } from '../threads';
 import { buildThreadsNamespace } from '../threads';
@@ -44,6 +46,8 @@ import type {
 	WebhookTree,
 } from '../webhooks';
 import { bindWebhooksRecursively } from '../webhooks/bind';
+import type { CorsairWorkflowsNamespace } from '../workflows';
+import { buildWorkflowsNamespace } from '../workflows';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Entity Client Types
@@ -216,6 +220,16 @@ export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 		 * edit workflows. Requires `hub` to be configured on `createCorsair`.
 		 */
 		threads: CorsairThreadsNamespace;
+		/**
+		 * Read and act on this tenant's workflow runs — list/get history and
+		 * approve/deny/cancel a run. Requires `hub` to be configured.
+		 */
+		runs: CorsairRunsNamespace;
+		/**
+		 * List this tenant's workflows and trigger manual runs. Requires `hub`
+		 * to be configured.
+		 */
+		workflows: CorsairWorkflowsNamespace;
 	};
 
 /**
@@ -577,6 +591,14 @@ export function buildCorsairClient<
 	// Tenant-scoped chat interface to the Hub workflow agent. Attached to every
 	// client (single- and multi-tenant); throws on use if `hub` isn't configured.
 	(apiUnsafe as Record<string, unknown>).threads = buildThreadsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
+	(apiUnsafe as Record<string, unknown>).runs = buildRunsNamespace(
+		hubConfig,
+		effectiveTenantId,
+	);
+	(apiUnsafe as Record<string, unknown>).workflows = buildWorkflowsNamespace(
 		hubConfig,
 		effectiveTenantId,
 	);

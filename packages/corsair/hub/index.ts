@@ -39,6 +39,7 @@ export {
 	resolveHubOAuthCallbackUrl,
 } from './config';
 export { createHubConnectSession } from './connect';
+export { startConnectLoop } from './connect/loop';
 export type {
 	ConnectCreateLinkDeliveryPayload,
 	ConnectCreateLinkDeliveryResult,
@@ -137,6 +138,7 @@ export {
 	type ExpiringTokenPayload,
 	encodeConnectTokenForPath,
 	extractConnectLinkFromDeliveryAck,
+	extractProbeFromDeliveryAck,
 	extractRunFromDeliveryAck,
 	extractSyncFromDeliveryAck,
 	type FormatServerDeliveryErrorInput,
@@ -198,6 +200,8 @@ export type {
 	HubPermissionSessionInput,
 	HubPermissionSessionResult,
 	HubProjectConnection,
+	ProbeResultPayload,
+	ProbeTunnelPayload,
 	RunResultPayload,
 	RunStepResult,
 	RunTriggerType,

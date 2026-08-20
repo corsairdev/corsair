@@ -24,6 +24,10 @@ export async function createHubPermissionSession(
 		expiresAt: input.expiresAt,
 	};
 
+	if (hub.redirectURL) {
+		body.redirectUri = hub.redirectURL;
+	}
+
 	if (environmentSlug === 'development') {
 		body.deliveryUrl = resolveHubDeliveryUrl({
 			deliveryUrl: input.deliveryUrl,
