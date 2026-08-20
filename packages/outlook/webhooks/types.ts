@@ -99,21 +99,29 @@ export function createOutlookMatch(
 			typeof request.body === 'string'
 				? (JSON.parse(request.body) as unknown)
 				: request.body;
-		const payload = body as OutlookWebhookPayload;
-		return (
-			payload?.value?.some(
-				(notification) =>
-					notification.resource !== undefined &&
-					resourcePattern.test(notification.resource) &&
-					!(
-						options?.excludeResourcePatterns?.some((pattern) =>
-							pattern.test(notification.resource as string),
-						) ?? false
-					) &&
-					(notification.changeType === undefined ||
-						changeTypes.includes(notification.changeType)),
-			) ?? false
-		);
+		if (!body || typeof body !== 'object') return false;
+		const value = (body as Record<string, unknown>)['value'];
+		if (!Array.isArray(value)) return false;
+		return value.some((entry: unknown) => {
+			if (!entry || typeof entry !== 'object') return false;
+			const notification = entry as Record<string, unknown>;
+			const resource =
+				typeof notification['resource'] === 'string'
+					? notification['resource']
+					: undefined;
+			if (resource === undefined) return false;
+			return (
+				resourcePattern.test(resource) &&
+				!(
+					options?.excludeResourcePatterns?.some((pattern) =>
+						pattern.test(resource),
+					) ?? false
+				) &&
+				(notification['changeType'] === undefined ||
+					(typeof notification['changeType'] === 'string' &&
+						changeTypes.includes(notification['changeType'])))
+			);
+		});
 	};
 }
 
@@ -127,10 +135,19 @@ export function verifyOutlookWebhookSignature(
 		return { valid: false, error: 'Missing client state' };
 	}
 
-	const notifications = request.payload?.value ?? [];
-	const allMatch = notifications.every(
-		(n) => typeof n.clientState === 'string' && n.clientState === clientState,
-	);
+	// An empty array must not pass: [].every(...) is true, so a request that
+	// carried no notification -- and therefore no clientState -- would otherwise
+	// be reported as verified.
+	const notifications = request.payload?.value;
+	if (!Array.isArray(notifications) || notifications.length === 0) {
+		return { valid: false, error: 'Invalid payload: missing value array' };
+	}
+
+	const allMatch = notifications.every((n) => {
+		if (!n || typeof n !== 'object') return false;
+		const client = (n as OutlookChangeNotification).clientState;
+		return typeof client === 'string' && client === clientState;
+	});
 
 	if (!allMatch) {
 		return { valid: false, error: 'Client state mismatch' };
