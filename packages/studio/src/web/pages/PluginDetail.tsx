@@ -193,6 +193,7 @@ export function PluginDetail({
 									<Input
 										value={manualCode}
 										onChange={(e) => setManualCode(e.target.value)}
+										aria-label="OAuth code"
 										placeholder="OAuth code…"
 									/>
 									<Button

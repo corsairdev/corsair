@@ -56,7 +56,11 @@ export function bindWebhooksRecursively({
 				const call = (callCtx: Record<string, unknown>, callRequest: unknown) =>
 					value.handler(callCtx, callRequest);
 
-				const key = keyBuilder ? await keyBuilder(ctx, 'webhook') : undefined;
+				const key =
+					keyBuilder &&
+					(request as { hubVerified?: boolean })?.hubVerified !== true
+						? await keyBuilder(ctx, 'webhook')
+						: undefined;
 
 				if (!webhookHooks?.before && !webhookHooks?.after) {
 					return call({ ...ctx, key }, request);
