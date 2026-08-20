@@ -1,0 +1,10 @@
+```ts src/routes/api/corsair/[...path]/+server.ts
+import { managementHandler } from 'corsair';
+import { corsair } from '$lib/server/corsair';
+
+const handler = managementHandler(corsair, { basePath: '/api/corsair' });
+export const GET = ({ request }) => handler(request);
+export const POST = ({ request }) => handler(request);
+```
+
+<Note>SvelteKit endpoints speak the Fetch API, so they call `managementHandler` directly — no adapter needed.</Note>

@@ -1,0 +1,3 @@
+Corsair mounts **one** route. It serves Hub delivery — OAuth callbacks, connect pages, self-registration — and the [management API](/management/handler) in the same place. Every adapter wraps a single primitive, `managementHandler(corsair)`, which returns a `(request: Request) => Promise<Response>`.
+
+You need a configured `corsair` instance first — see [Getting Started](/getting-started/quick-start). The rest of your app is identical no matter which server you mount on.

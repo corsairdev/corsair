@@ -1,0 +1,67 @@
+---
+title: Triggering
+sidebarTitle: Triggering
+description: Start and list workflow runs from the corsair.workflows client, plus webhook and schedule triggers.
+---
+
+Once you've defined a workflow, your app reaches it through the `corsair.workflows` namespace. It's available on every client that has [Hub configured](/workflows/execution#turn-on-execution), and it's tenant-scoped like the rest of the SDK.
+
+## Run a workflow
+
+Get a handle by id, then call `run()`:
+
+```ts
+const { status, runId } = await corsair.workflows('wf_123').run({
+    payload: { channel: 'C0123', message: 'Ship it' },
+});
+```
+
+`run()` accepts:
+
+| Option | Type | Purpose |
+| --- | --- | --- |
+| `payload` | `unknown` | Data handed to the workflow as its `payload` argument. Optional. |
+| `idempotencyKey` | `string` | Collapses retried triggers into a single run. Optional. |
+
+It resolves to `{ status, runId? }` — `status` is `'ok'` when the run was accepted, and `runId` identifies it.
+
+<Tip>
+Pass an `idempotencyKey` whenever a trigger might fire more than once (a retried request, an at-least-once queue). Two `run()` calls with the same key produce one run, not two.
+</Tip>
+
+## Scope to a tenant
+
+In a multi-tenant app, resolve the tenant first — the run executes against that tenant's connected accounts:
+
+```ts
+await corsair.withTenant('acme').workflows('wf_123').run({ payload });
+```
+
+In a single-tenant app, `corsair.workflows(...)` runs against the default tenant.
+
+## List workflows
+
+```ts
+const workflows = await corsair.workflows.list();
+// [{ id, name, status, triggerType, createdAt, updatedAt }, ...]
+```
+
+Each entry is a `WorkflowSummary` — enough to render a list, show a status, and pick an id to `run()`.
+
+## Trigger types
+
+Manual `run()` is one of three ways a workflow starts. The other two are configured in Hub and need no call from you:
+
+<CardGroup cols={2}>
+  <Card title="Manual">
+    Your app calls `corsair.workflows(id).run({ payload })`. The payload is yours to shape.
+  </Card>
+  <Card title="Webhook">
+    An incoming [trigger](/concepts/webhooks) fires the workflow; the webhook body arrives as its `payload`.
+  </Card>
+  <Card title="Schedule">
+    A cron or cadence configured in Hub runs the workflow on a timer; `payload` is empty.
+  </Card>
+</CardGroup>
+
+However a run starts, it executes the same way — see [Execution & steps](/workflows/execution).

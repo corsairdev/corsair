@@ -1,0 +1,10 @@
+```ts app/routes/api.corsair.$.ts
+import { managementHandler } from 'corsair';
+import { corsair } from '~/server/corsair';
+
+const handler = managementHandler(corsair, { basePath: '/api/corsair' });
+export const loader = ({ request }) => handler(request);
+export const action = ({ request }) => handler(request);
+```
+
+<Note>Same on React Router v7 — `loader` and `action` receive a Web-standard `Request`, so they hand it straight to the handler.</Note>

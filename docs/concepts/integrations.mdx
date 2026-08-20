@@ -61,7 +61,7 @@ console.log(channel.name, channel.is_member, channel.num_members);
 
 ## No Database Bloat
 
-Adding more integrations doesn't add more tables. Corsair always uses the same four tables, no matter how many integrations you have.
+Adding more integrations doesn't add more tables. Corsair always uses the same five tables, no matter how many integrations you have.
 
 ```ts
 plugins: [
@@ -69,7 +69,7 @@ plugins: [
     linear({ ... }),
     github({ ... }),
     gmail({ ... }),
-    // 100 more integrations — still just 4 tables
+    // 100 more integrations — still just 5 tables
 ]
 ```
 

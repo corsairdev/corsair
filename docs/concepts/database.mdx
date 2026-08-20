@@ -1,6 +1,6 @@
 ---
 title: Database
-description: Four tables, always-fresh integration data, tenant-scoped by default.
+description: Five tables, always-fresh integration data, tenant-scoped by default.
 ---
 
 import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
@@ -133,6 +133,16 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     status TEXT,
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
+
+CREATE TABLE IF NOT EXISTS corsair_permissions (
+    id TEXT PRIMARY KEY,
+    created_at INTEGER NOT NULL,
+    updated_at INTEGER NOT NULL,
+    account_id TEXT NOT NULL,
+    endpoint TEXT NOT NULL,
+    status TEXT NOT NULL,
+    FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
+);
 ```
 
 </Accordion>
@@ -206,6 +216,15 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     payload JSONB NOT NULL DEFAULT '{}',
     status TEXT
 );
+
+CREATE TABLE IF NOT EXISTS corsair_permissions (
+    id TEXT PRIMARY KEY,
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    account_id TEXT NOT NULL REFERENCES corsair_accounts(id),
+    endpoint TEXT NOT NULL,
+    status TEXT NOT NULL
+);
 ```
 
 </Accordion>
@@ -278,6 +297,15 @@ export const corsairEvents = pgTable('corsair_events', {
     payload: jsonb('payload').notNull().default({}),
     status: text('status'),
 });
+
+export const corsairPermissions = pgTable('corsair_permissions', {
+    id: text('id').primaryKey(),
+    createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
+    updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
+    accountId: text('account_id').notNull().references(() => corsairAccounts.id),
+    endpoint: text('endpoint').notNull(),
+    status: text('status').notNull(),
+});
 ```
 
 </Accordion>
@@ -319,6 +347,7 @@ model CorsairAccount {
   integration   CorsairIntegration @relation(fields: [integrationId], references: [id])
   entities      CorsairEntity[]
   events        CorsairEvent[]
+  permissions   CorsairPermission[]
 
   @@map("corsair_accounts")
 }
@@ -348,6 +377,18 @@ model CorsairEvent {
   account   CorsairAccount @relation(fields: [accountId], references: [id])
 
   @@map("corsair_events")
+}
+
+model CorsairPermission {
+  id        String         @id
+  createdAt DateTime       @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime       @updatedAt @map("updated_at") @db.Timestamptz
+  accountId String         @map("account_id")
+  endpoint  String
+  status    String
+  account   CorsairAccount @relation(fields: [accountId], references: [id])
+
+  @@map("corsair_permissions")
 }
 ```
 
@@ -397,7 +438,7 @@ Use `*.api.*` to write or force a fresh read. Use `*.db.*` for lists, search, an
 
 ## Core tables
 
-Four tables for every integration — Slack, GitHub, Linear, and the rest all share the same schema.
+Five tables for every integration — Slack, GitHub, Linear, and the rest all share the same schema.
 
 | Table | Purpose |
 |-------|---------|
@@ -405,6 +446,7 @@ Four tables for every integration — Slack, GitHub, Linear, and the rest all sh
 | `corsair_accounts` | Per-tenant connection + encrypted credentials (`tenant_id`, `integration_id`) |
 | `corsair_entities` | Synced resources — messages, channels, issues, repos (`entity_id`, `entity_type`, `data`) |
 | `corsair_events` | Audit log of API calls and webhooks |
+| `corsair_permissions` | Approval state per account + endpoint for gated [permissions](/concepts/permissions) (`endpoint`, `status`) |
 
 ```sql
 -- corsair_entities example (a Slack message)
@@ -522,7 +564,7 @@ export const corsair = createCorsair({
 </Tab>
 <Tab title="Drizzle / Prisma">
 
-Define the four Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair — not the ORM client:
+Define the five Corsair tables in your ORM schema (see migration tabs above), run your normal migrations, and pass the **underlying connection** to Corsair — not the ORM client:
 
 ```ts
 const pool = new Pool({ connectionString: process.env.DATABASE_URL });

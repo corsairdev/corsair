@@ -1,0 +1,119 @@
+---
+title: TanStack Start
+sidebarTitle: TanStack Start
+description: Mount Corsair as a TanStack Start server route, read synced data in a server function or loader, and connect tenants with React hooks.
+icon: "/icons/tanstack.svg"
+---
+
+import ClientReact from '/snippets/frameworks/client-react.mdx';
+import Install from '/snippets/install-tabs.mdx';
+
+TanStack Start is full-stack React with no serialization seam you have to think about: a server function runs on the server, returns typed data, and the type flows straight into the component that called it. Corsair rides that all the way — call `.db` inside a server function or a route loader and the entity types land in your JSX without a hand-written API boundary.
+
+## Install
+
+The adapter ships in core. Each integration is its own package — add one per service you connect.
+
+<Install />
+
+Every service is its own `@corsair-dev/*` package — the full catalog with exact ids is in [Plugins](/guides/plugins).
+
+## Mount the handler
+
+Export the adapter from a splat server route.
+
+```ts src/routes/api/corsair/$.ts
+import { toTanStackHandler } from 'corsair';
+import { corsair } from '~/server/corsair';
+
+export const { GET, POST } = toTanStackHandler(corsair, { basePath: '/api/corsair' });
+```
+
+`~/server/corsair` is your `createCorsair({ ... })` instance — see [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+
+<Note>Server-route helpers have shifted across TanStack Start releases. If your version wraps routes differently, keep the shape: a splat route under `/api/corsair` whose `GET`/`POST` come from `toTanStackHandler`.</Note>
+
+## Resolve the tenant
+
+Every read and write is scoped to a tenant id — whatever stable id identifies the current user or org. A server function runs on the server, so read your session from its request context (however your auth works) and pass the id to `withTenant`.
+
+```tsx
+const getTenant = createServerFn().handler(async () => {
+    const tenantId = await getTenantId(); // getTenantId is YOUR code
+    return corsair.withTenant(tenantId);
+});
+```
+
+## Read and write
+
+Wrap the read in a server function so it runs on the server and its return type reaches the client. Load it from a route with `loader`, and the `.db` result is fully typed in the component.
+
+```tsx src/routes/issues.tsx
+import { createServerFn } from '@tanstack/react-start';
+import { createFileRoute } from '@tanstack/react-router';
+import { corsair } from '~/server/corsair';
+
+const getIssues = createServerFn().handler(async () => {
+    const tenantId = await getTenantId();
+    const tenant = corsair.withTenant(tenantId);
+    return tenant.github.db.issues.search({ data: { state: 'open' }, limit: 50 });
+});
+
+export const Route = createFileRoute('/issues')({
+    loader: () => getIssues(),
+    component: () => {
+        const issues = Route.useLoaderData();
+        return issues.map((i) => <li key={i.id}>{i.data.title} — {i.data.user?.login}</li>);
+    },
+});
+```
+
+To write, give a server function the mutation and call `.api` — e.g. `await tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title: '…' })`. Corsair upserts the response, so the next loader read reflects it. Entity fields live on `.data` in camelCase.
+
+## Refresh after a write
+
+The `.api` write already made `.db` current, so the loader just needs to run again. Call `router.invalidate()` after the mutating server function resolves and the route re-runs its loader with fresh `.db` data.
+
+```tsx
+const router = useRouter();
+
+async function close(number: number) {
+    await closeIssue({ data: { number } }); // server fn calling .api
+    await router.invalidate();
+}
+```
+
+## Connect a tenant
+
+The connect UI is plain React, so use the typed [React hooks](/adapters/react) client. Create it once and call the hooks from any route or component.
+
+<ClientReact />
+
+## Go green
+
+```bash
+npm run dev
+```
+
+The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
+
+## Deploy
+
+Deploy the TanStack Start app as usual — the server route ships with it. In production, `/api/corsair` at your deployed origin is the delivery URL Hub calls.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="React Hooks" icon="react" href="/adapters/react">
+    Every hook the client factory returns, with types and examples.
+  </Card>
+  <Card title="Connect / OAuth" icon="link" href="/management/connect">
+    The full connect flow, error codes, and retry.
+  </Card>
+  <Card title="Use with an agent" icon="robot" href="/mcp-adapters/vercel-ai">
+    Give an agent the Corsair tools and let it call any endpoint.
+  </Card>
+  <Card title="Multi-tenancy" icon="users" href="/concepts/multi-tenancy">
+    One flag and every user gets their own data and credentials.
+  </Card>
+</CardGroup>

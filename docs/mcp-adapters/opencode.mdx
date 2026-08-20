@@ -1,0 +1,105 @@
+---
+title: OpenCode
+icon: "/icons/opencode.svg"
+description: Connect Corsair to OpenCode via MCP, or use the Corsair CLI directly.
+---
+
+<Tabs>
+
+<Tab title="MCP">
+
+Use `runStdioMcpServer` to expose Corsair as a local MCP server that OpenCode spawns on demand.
+
+## Install
+
+```bash
+npm install @corsair-dev/mcp
+```
+
+## Create the server script
+
+```ts mcp-server.ts
+import 'dotenv/config';
+import { runStdioMcpServer } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+runStdioMcpServer({ corsair }).catch((err) => {
+    console.error('[corsair-mcp] Fatal:', err);
+    process.exit(1);
+});
+```
+
+## Configure OpenCode
+
+Add a local MCP server to your `opencode.json`. OpenCode reads it when you open the project.
+
+```json opencode.json
+{
+  "$schema": "https://opencode.ai/config.json",
+  "mcp": {
+    "corsair": {
+      "type": "local",
+      "command": ["npx", "tsx", "mcp-server.ts"],
+      "enabled": true
+    }
+  }
+}
+```
+
+If your credentials aren't loaded from a `.env` file, pass them under `environment`:
+
+```json opencode.json
+{
+  "mcp": {
+    "corsair": {
+      "type": "local",
+      "command": ["npx", "tsx", "mcp-server.ts"],
+      "enabled": true,
+      "environment": {
+        "CORSAIR_KEK": "your-key-here"
+      }
+    }
+  }
+}
+```
+
+Restart OpenCode after editing the config so it picks up the new server.
+
+## Usage
+
+Once connected, OpenCode can call Corsair tools directly:
+
+```
+Setup corsair, then list all Slack channels.
+```
+
+OpenCode calls `corsair_setup` first to check credentials, then `list_operations` to discover available endpoints, then `run_script` to execute.
+
+</Tab>
+
+<Tab title="CLI">
+
+<CodeGroup>
+```bash npm
+npm install @corsair-dev/cli
+```
+```bash yarn
+yarn add @corsair-dev/cli
+```
+```bash pnpm
+pnpm install @corsair-dev/cli
+```
+```bash bun
+bun add @corsair-dev/cli
+```
+</CodeGroup>
+
+Copy and paste this prompt into OpenCode to give it everything it needs to work with Corsair:
+
+```
+Run `pnpm corsair` to access Corsair's integrations.
+```
+
+</Tab>
+
+</Tabs>

@@ -1,0 +1,112 @@
+---
+title: Express
+sidebarTitle: Express
+description: Drop Corsair into the Express API you already run — one line of middleware, no body parser, then your own routes.
+icon: "/icons/express.svg"
+---
+
+import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
+import Install from '/snippets/install-tabs.mdx';
+
+Corsair is one `app.use` beside the routes you already have. It's middleware like any other, so it sits in the same file as your existing API and shares the same server. The adapter reads the raw request stream itself — you don't need `express.json()` in front of it, and mounting one doesn't break it either.
+
+## Install
+
+The adapter ships in core `corsair`. Add Express's types too, then a plugin package per service you integrate (`@corsair-dev/github`, and so on).
+
+<Install />
+
+## Mount the handler
+
+```ts server.ts
+import express from 'express';
+import { toExpressHandler } from 'corsair';
+import { corsair } from './corsair';
+
+const app = express();
+
+app.use('/api/corsair', toExpressHandler(corsair, { basePath: '/api/corsair' }));
+
+// your own routes live right here, same app
+app.get('/api/issues', listOpenIssues);
+
+app.listen(3000);
+```
+
+`./corsair` is your `createCorsair({ ... })` instance — see [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+
+<Note>Keep `basePath` in sync with the mount path so Corsair's sub-routes (delivery, connect, tenants) resolve correctly.</Note>
+
+## Resolve the tenant
+
+You bring your own auth. Whatever middleware sets `req.user` — Passport, a session, a JWT check — gives you the id to scope Corsair to. Read it per request rather than at module scope:
+
+```ts
+const tenant = corsair.withTenant(await getTenantId(req));
+```
+
+## Read and write
+
+Your Corsair routes are ordinary Express handlers. Reads go to `.db` — served from your own database, so they never hit a rate limit — and writes go to `.api`, which upserts the response so the next read is already current:
+
+```ts routes.ts
+import { corsair } from './corsair';
+
+// GET route reads from the database
+async function listOpenIssues(req, res) {
+    const tenant = corsair.withTenant(await getTenantId(req));
+    const issues = await tenant.github.db.issues.search({
+        data: { state: 'open' },
+        limit: 50,
+    });
+    res.json(issues.map((i) => i.data.title)); // .data holds the entity fields
+}
+
+// POST route writes through the live API
+async function createIssue(req, res) {
+    const tenant = corsair.withTenant(await getTenantId(req));
+    await tenant.github.api.issues.create({
+        owner: 'acme',
+        repo: 'app',
+        title: req.body.title,
+    });
+    res.sendStatus(201);
+}
+```
+
+## Connect a tenant
+
+Express is a backend, so use the vanilla client — from your frontend, a worker, or a script.
+
+<ClientVanilla />
+
+## Go green
+
+Start the server:
+
+```bash
+npx tsx server.ts
+```
+
+The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
+
+## Deploy
+
+Deploy the app however you already ship Express. In production, the same mounted `/api/corsair` route becomes the delivery URL Hub calls — it just needs to be reachable at your public origin.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Vanilla Client" icon="code" href="/adapters/client">
+    Every management-API method, fully typed.
+  </Card>
+  <Card title="Connect / OAuth" icon="link" href="/management/connect">
+    The full connect flow, error codes, and retry.
+  </Card>
+  <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">
+    The .db read / .api write pattern, end to end.
+  </Card>
+  <Card title="Multi-tenancy" icon="users" href="/concepts/multi-tenancy">
+    One flag and every user gets their own data and credentials.
+  </Card>
+</CardGroup>
