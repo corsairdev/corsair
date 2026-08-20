@@ -96,10 +96,18 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('500') || msg.includes('internal server error');
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (_error, context) => {
+			if (
+				context.operation === 'report.ip' ||
+				context.operation === 'address.clear'
+			) {
+				return { maxRetries: 0 };
+			}
+			return {
+				maxRetries: 2,
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	DEFAULT: {
 		match: () => true,

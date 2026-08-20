@@ -20,6 +20,16 @@ function matchedHandlerName(error: Error): string {
 	return name;
 }
 
+const serverErrorHandler = errorHandlers.SERVER_ERROR.handler as (
+	error: Error,
+	context: {
+		pluginId: string;
+		operation: string;
+		input: Record<string, unknown>;
+		originalError: Error;
+	},
+) => Promise<{ maxRetries?: number; retryStrategy?: string }>;
+
 describe('errorHandlers', () => {
 	it('classifies a 429 as RATE_LIMIT_ERROR', () => {
 		const error = apiErrorWithBody(429, {});
@@ -95,6 +105,42 @@ describe('errorHandlers', () => {
 			errors: [{ detail: 'Internal Server Error', status: 500 }],
 		});
 		expect(matchedHandlerName(error)).toBe('SERVER_ERROR');
+	});
+
+	it('retries read endpoints on 5xx', async () => {
+		const error = apiErrorWithBody(500, {});
+		const result = await serverErrorHandler(error, {
+			pluginId: 'abuseipdb',
+			operation: 'check.ip',
+			input: { ipAddress: '1.1.1.1' },
+			originalError: error,
+		});
+		expect(result).toEqual({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff',
+		});
+	});
+
+	it('does not retry report.ip on 5xx', async () => {
+		const error = apiErrorWithBody(500, {});
+		const result = await serverErrorHandler(error, {
+			pluginId: 'abuseipdb',
+			operation: 'report.ip',
+			input: { ip: '1.1.1.1', categories: [18] },
+			originalError: error,
+		});
+		expect(result).toEqual({ maxRetries: 0 });
+	});
+
+	it('does not retry address.clear on 5xx', async () => {
+		const error = apiErrorWithBody(500, {});
+		const result = await serverErrorHandler(error, {
+			pluginId: 'abuseipdb',
+			operation: 'address.clear',
+			input: { ipAddress: '1.1.1.1' },
+			originalError: error,
+		});
+		expect(result).toEqual({ maxRetries: 0 });
 	});
 
 	it('falls through to DEFAULT for anything else', () => {
