@@ -86,6 +86,7 @@ export const BaseProviders = [
 	'github',
 	'gitlab',
 	'gmail',
+	'googleanalytics',
 	'googlebigquery',
 	'googlecalendar',
 	'googledocs',
@@ -238,6 +239,7 @@ export const ProviderDisplayNames = {
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
+	googleanalytics: 'Google Analytics',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
 	googledocs: 'Google Docs',
@@ -397,6 +399,7 @@ export type AllProviders =
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
+	| 'googleanalytics'
 	| 'googlebigquery'
 	| 'googlecalendar'
 	| 'googledocs'
