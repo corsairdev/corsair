@@ -291,6 +291,45 @@ describe('Ably endpoints', () => {
 				},
 			]);
 		});
+
+		it('limits concurrent batch presence history requests', async () => {
+			const releases: Array<() => void> = [];
+
+			mockedRequest.mockImplementation(
+				() =>
+					new Promise((resolve) => {
+						releases.push(() => resolve([]));
+					}) as never,
+			);
+
+			const request = Channels.batchPresenceHistory(ctx, {
+				channels: ['room-1', 'room-2', 'room-3', 'room-4', 'room-5', 'room-6'],
+			});
+
+			await Promise.resolve();
+
+			expect(mockedRequest).toHaveBeenCalledTimes(5);
+
+			releases[0]!();
+
+			await Promise.resolve();
+			await Promise.resolve();
+
+			expect(mockedRequest).toHaveBeenCalledTimes(6);
+
+			for (const release of releases.slice(1)) {
+				release();
+			}
+
+			await expect(request).resolves.toEqual([
+				{ channelId: 'room-1', history: [] },
+				{ channelId: 'room-2', history: [] },
+				{ channelId: 'room-3', history: [] },
+				{ channelId: 'room-4', history: [] },
+				{ channelId: 'room-5', history: [] },
+				{ channelId: 'room-6', history: [] },
+			]);
+		});
 	});
 
 	describe('push', () => {

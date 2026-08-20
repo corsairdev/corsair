@@ -4,6 +4,7 @@ import type { AblyEndpoints } from '../index';
 import type { AblyEndpointOutputs } from './types';
 
 const enc = encodeURIComponent;
+const BATCH_PRESENCE_HISTORY_CONCURRENCY = 5;
 
 export const publishBatchMessages: AblyEndpoints['publishBatchMessages'] =
 	async (ctx, input) => {
@@ -195,20 +196,41 @@ export const batchPresenceHistory: AblyEndpoints['batchPresenceHistory'] =
 	async (ctx, input) => {
 		const { channels, ...query } = input;
 
-		const results = await Promise.all(
-			channels.map(async (channelId) => {
+		const results = new Array<
+			AblyEndpointOutputs['batchPresenceHistory'][number]
+		>(channels.length);
+
+		let nextIndex = 0;
+
+		const worker = async () => {
+			while (true) {
+				const index = nextIndex++;
+
+				if (index >= channels.length) {
+					return;
+				}
+
+				const channelId = channels[index]!;
+
 				const history = await makeAblyRequest<
 					AblyEndpointOutputs['getPresenceHistory']
 				>(`channels/${enc(channelId)}/presence/history`, ctx.key, {
 					query,
 				});
 
-				return {
+				results[index] = {
 					channelId,
 					history,
 				};
-			}),
+			}
+		};
+
+		const workerCount = Math.min(
+			BATCH_PRESENCE_HISTORY_CONCURRENCY,
+			channels.length,
 		);
+
+		await Promise.all(Array.from({ length: workerCount }, () => worker()));
 
 		await logEventFromContext(
 			ctx,
