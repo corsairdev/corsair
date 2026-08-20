@@ -20,6 +20,7 @@ export const publishBatchMessages: AblyEndpoints['publishBatchMessages'] =
 			{},
 			'completed',
 		);
+
 		return result;
 	};
 
@@ -34,9 +35,10 @@ export const getChannelDetails: AblyEndpoints['getChannelDetails'] = async (
 	await logEventFromContext(
 		ctx,
 		'ably.channels.getDetails',
-		input,
+		{ channelId: input.channelId },
 		'completed',
 	);
+
 	return result;
 };
 
@@ -48,14 +50,17 @@ export const getChannelHistory: AblyEndpoints['getChannelHistory'] = async (
 
 	const result = await makeAblyRequest<
 		AblyEndpointOutputs['getChannelHistory']
-	>(`channels/${enc(channelId)}/messages`, ctx.key, { query });
+	>(`channels/${enc(channelId)}/messages`, ctx.key, {
+		query,
+	});
 
 	await logEventFromContext(
 		ctx,
 		'ably.channels.getHistory',
-		input,
+		{ channelId },
 		'completed',
 	);
+
 	return result;
 };
 
@@ -67,14 +72,17 @@ export const getChannelPresence: AblyEndpoints['getChannelPresence'] = async (
 
 	const result = await makeAblyRequest<
 		AblyEndpointOutputs['getChannelPresence']
-	>(`channels/${enc(channelId)}/presence`, ctx.key, { query });
+	>(`channels/${enc(channelId)}/presence`, ctx.key, {
+		query,
+	});
 
 	await logEventFromContext(
 		ctx,
 		'ably.channels.getPresence',
-		input,
+		{ channelId },
 		'completed',
 	);
+
 	return result;
 };
 
@@ -86,14 +94,17 @@ export const getPresenceHistory: AblyEndpoints['getPresenceHistory'] = async (
 
 	const result = await makeAblyRequest<
 		AblyEndpointOutputs['getPresenceHistory']
-	>(`channels/${enc(channelId)}/presence/history`, ctx.key, { query });
+	>(`channels/${enc(channelId)}/presence/history`, ctx.key, {
+		query,
+	});
 
 	await logEventFromContext(
 		ctx,
 		'ably.channels.getPresenceHistory',
-		input,
+		{ channelId },
 		'completed',
 	);
+
 	return result;
 };
 
@@ -111,9 +122,10 @@ export const getMessageVersions: AblyEndpoints['getMessageVersions'] = async (
 	await logEventFromContext(
 		ctx,
 		'ably.channels.getMessageVersions',
-		input,
+		{ channelId: input.channelId },
 		'completed',
 	);
+
 	return result;
 };
 
@@ -124,10 +136,13 @@ export const listChannels: AblyEndpoints['listChannels'] = async (
 	const result = await makeAblyRequest<AblyEndpointOutputs['listChannels']>(
 		'channels',
 		ctx.key,
-		{ query: input },
+		{
+			query: input,
+		},
 	);
 
-	await logEventFromContext(ctx, 'ably.channels.list', input, 'completed');
+	await logEventFromContext(ctx, 'ably.channels.list', {}, 'completed');
+
 	return result;
 };
 
@@ -161,7 +176,7 @@ export const batchPresence: AblyEndpoints['batchPresence'] = async (
 		ctx.key,
 		{
 			query: {
-				channel: input.channels.join(','),
+				channels: input.channels.join(','),
 			},
 		},
 	);
@@ -172,6 +187,7 @@ export const batchPresence: AblyEndpoints['batchPresence'] = async (
 		{},
 		'completed',
 	);
+
 	return result;
 };
 
@@ -179,14 +195,20 @@ export const batchPresenceHistory: AblyEndpoints['batchPresenceHistory'] =
 	async (ctx, input) => {
 		const { channels, ...query } = input;
 
-		const result = await makeAblyRequest<
-			AblyEndpointOutputs['batchPresenceHistory']
-		>('presence/history', ctx.key, {
-			query: {
-				...query,
-				channel: channels.join(','),
-			},
-		});
+		const results = await Promise.all(
+			channels.map(async (channelId) => {
+				const history = await makeAblyRequest<
+					AblyEndpointOutputs['getPresenceHistory']
+				>(`channels/${enc(channelId)}/presence/history`, ctx.key, {
+					query,
+				});
+
+				return {
+					channelId,
+					history,
+				};
+			}),
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -195,5 +217,5 @@ export const batchPresenceHistory: AblyEndpoints['batchPresenceHistory'] =
 			'completed',
 		);
 
-		return result;
+		return results;
 	};
