@@ -39,7 +39,9 @@ describe('Basecamp reference persistence', () => {
 
 	it('keeps the chatbot key out of the local store', async () => {
 		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
-		// Verbatim chatbot payload from the Basecamp docs (sections/chatbots.md).
+		// Shaped like the chatbot payload in the docs (sections/chatbots.md), but
+		// with a synthetic key so no usable credential sits in source control.
+		const chatbotKey = 'test-chatbot-key';
 		await mirrorBasecampResult(
 			{ chatbots: { upsertByEntityId } },
 			'GetChatbot',
@@ -47,9 +49,8 @@ describe('Basecamp reference persistence', () => {
 				id: 1049715953,
 				service_name: 'Capistrano',
 				url: 'https://3.basecampapi.com/195539477/buckets/2085958502/chats/1069478958/integrations/1049715953.json',
-				command_url: null,
-				lines_url:
-					'https://3.basecampapi.com/195539477/integrations/oneBqw5TTvLWcJJWLmuHPNC9/buckets/2085958502/chats/1069478958/lines',
+				command_url: `https://example.invalid/integrations/${chatbotKey}/command`,
+				lines_url: `https://example.invalid/integrations/${chatbotKey}/lines`,
 			},
 		);
 		const [entityId, stored] = upsertByEntityId.mock.calls[0];
@@ -57,7 +58,7 @@ describe('Basecamp reference persistence', () => {
 		// Both key-bearing URLs are gone; the identifying fields survive.
 		expect(stored).not.toHaveProperty('lines_url');
 		expect(stored).not.toHaveProperty('command_url');
-		expect(JSON.stringify(stored)).not.toContain('oneBqw5TTvLWcJJWLmuHPNC9');
+		expect(JSON.stringify(stored)).not.toContain(chatbotKey);
 		expect(stored).toMatchObject({
 			id: 1049715953,
 			service_name: 'Capistrano',
