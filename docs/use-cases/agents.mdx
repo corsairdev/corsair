@@ -1,0 +1,154 @@
+---
+title: Agent
+description: Expose every integration as tools over MCP so an LLM can pick the operation from a plain-English instruction.
+---
+
+An agent is for when you don't know at build time which endpoint to call. The user writes "reply to issue #458 saying this is a duplicate, then close it and link them to the root issue" — that's four operations you never wired up.
+
+Instead of hardcoding calls, you expose Corsair over MCP and let the model discover and run them.
+
+**Pattern:** expose Corsair as MCP tools → LLM plans → tools execute against your Corsair instance.
+
+---
+
+## The four tools
+
+Every MCP adapter exposes the same four tools, regardless of how many plugins you've installed:
+
+| Tool | What it does |
+| --- | --- |
+| `corsair_setup` | Check auth status and get instructions for missing credentials |
+| `list_operations` | Discover every available endpoint |
+| `get_schema` | Inspect parameters for one endpoint |
+| `run_script` | Execute a JS snippet with `corsair` in scope |
+
+The model calls them in that order: check auth, discover, inspect, execute. This is why you don't register a tool per endpoint — adding `slack()` to your plugin list makes every Slack operation reachable with no code change and no redeploy of tool definitions.
+
+---
+
+## Pick your surface
+
+Two different things get called "an agent". They share the tool layer but the wiring differs.
+
+<Tabs>
+
+<Tab title="Chatbot in your app">
+
+A chat box inside your product, hitting your own model calls. Expose Corsair as an MCP endpoint, then connect to it from the AI framework you already use:
+
+```ts server.ts
+import express from 'express';
+import { createBaseMcpServer, createMcpRouter } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+const app = express();
+app.use(express.json());
+
+app.use('/mcp', createMcpRouter(() => createBaseMcpServer({ corsair })));
+
+app.listen(3000);
+```
+
+```ts agent.ts
+import { generateText, stepCountIs } from 'ai';
+import { anthropic } from '@ai-sdk/anthropic';
+import { createVercelAiMcpClient } from '@corsair-dev/mcp';
+
+const client = await createVercelAiMcpClient({ url: 'http://localhost:3000/mcp' });
+
+const { text } = await generateText({
+    model: anthropic('claude-sonnet-4-6'),
+    tools: await client.tools(),
+    prompt: 'Close issue #458 in acme/app as a duplicate of #12 and leave a comment.',
+    stopWhen: stepCountIs(10),
+});
+
+await client.close();
+```
+
+Adapters for [Vercel AI](/mcp-adapters/vercel-ai), [Anthropic](/mcp-adapters/anthropic-sdk), [OpenAI Agents](/mcp-adapters/openai), and [Mastra](/mcp-adapters/mastra) all take the same tools.
+
+</Tab>
+
+<Tab title="Coding agent harness">
+
+Cursor, Claude Code, or Codex calling your integrations while you work. No app code — this is a stdio MCP server entry in the harness config.
+
+Setup per harness is in [Coding agents](/mcp-adapters/coding-agents).
+
+</Tab>
+
+</Tabs>
+
+If the user asked for "a chatbot in my app", they want the first tab. Don't hand them a stdio config.
+
+---
+
+## Guardrails
+
+An agent picks its own operations, so the permission layer is the real control surface — not your prompt. Set a mode per plugin:
+
+```ts corsair.ts
+github({
+    permissions: {
+        mode: 'cautious',
+        overrides: {
+            'repositories.delete': 'deny',
+        },
+    },
+})
+```
+
+| Mode | Read | Write | Destructive |
+| --- | --- | --- | --- |
+| `open` | allow | allow | allow |
+| `cautious` | allow | allow | require_approval |
+| `strict` | allow | require_approval | deny |
+| `readonly` | allow | deny | deny |
+
+`cautious` is the right default for agent workloads: reads and writes flow, destructive calls block on a human. A `require_approval` call writes a pending row and waits, so you can approve from your own UI. Details in [Permissions](/concepts/permissions).
+
+<Warning>
+Prompt instructions are not a security boundary. If an operation must never happen, set it to `deny` — don't ask the model not to call it.
+</Warning>
+
+---
+
+## Sharing state with the rest of your app
+
+Use the same `corsair` instance you built for the dashboard. Because `run_script` executes against it, every action the agent takes upserts into the same `corsair_entities` rows your pages read — so a chat command is reflected on the dashboard on the next read, with no extra syncing.
+
+Scope the instance per tenant so a user's agent can only reach that user's connections:
+
+```ts
+const tenant = corsair.withTenant(session.user.orgId);
+```
+
+---
+
+## Checklist
+
+- The MCP server wraps your existing `corsair` instance, not a new one.
+- Permissions are set per plugin, with destructive endpoints denied or gated.
+- Tool calls are tenant-scoped.
+- The step cap is set (`stopWhen`), or tool-calling loops may never terminate.
+- The agent is told to call `corsair_setup` first when credentials may be missing.
+
+---
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="MCP adapters" href="/mcp-adapters/mcp-adapters">
+    Every framework adapter and the tools they expose.
+  </Card>
+  <Card title="Permissions" href="/concepts/permissions">
+    Modes, overrides, and the approval flow.
+  </Card>
+  <Card title="Pair it with a dashboard" href="/use-cases/dashboards">
+    Chat for the long tail, UI for the common actions.
+  </Card>
+  <Card title="Knowledge base" href="/use-cases/knowledge-base">
+    Give the agent synced data to search before it acts.
+  </Card>
+</CardGroup>

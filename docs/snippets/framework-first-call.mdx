@@ -1,0 +1,49 @@
+Onboard a user to an integration: create a connect link and redirect. Corsair Hub hosts the consent screen, runs the OAuth handshake, and delivers the encrypted tokens back to your route.
+
+<Tabs>
+  <Tab title="React">
+
+```tsx connect-github.tsx
+"use client";
+import { useConnectionStatus, useCreateConnectLink } from "./corsair-client";
+
+export function ConnectGitHub({ tenantId }: { tenantId: string }) {
+    const { mutate, loading } = useCreateConnectLink();
+    const { data: status } = useConnectionStatus({ tenantId });
+
+    if (status?.github === "connected") return <span>GitHub connected ✓</span>;
+
+    return (
+        <button
+            disabled={loading}
+            onClick={async () => {
+                const link = await mutate({ plugin: "github", tenantId });
+                if (link) window.location.href = link.connectUrl;
+            }}
+        >
+            Connect GitHub
+        </button>
+    );
+}
+```
+
+  </Tab>
+  <Tab title="Vanilla JS">
+
+```ts connect.ts
+// create a connect link and send the user to it
+const { connectUrl } = await client.connect.createLink({
+    plugin: "github",
+    tenantId: "acme",
+});
+window.location.href = connectUrl;
+
+// after they return, the status flips to "connected"
+const status = await client.connectionStatus.get({ tenantId: "acme" });
+// { github: 'connected', slack: 'not_connected', ... }
+```
+
+  </Tab>
+</Tabs>
+
+Swap `"github"` for any [plugin](/guides/plugins) you configured. The full flow and error codes are on the [Connect page](/management/connect).

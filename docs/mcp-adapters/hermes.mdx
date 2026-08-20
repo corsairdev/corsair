@@ -1,0 +1,88 @@
+---
+title: Hermes
+icon: "/icons/hermes.svg"
+description: Connect Corsair to the Hermes agent via MCP, or use the Corsair CLI directly.
+---
+
+<Tabs>
+
+<Tab title="MCP">
+
+Use `runStdioMcpServer` to expose Corsair as a local MCP server that Hermes spawns on demand. The Corsair side is identical to every other harness — the only difference is where you register the server in Hermes.
+
+## Install
+
+```bash
+npm install @corsair-dev/mcp
+```
+
+## Create the server script
+
+```ts mcp-server.ts
+import 'dotenv/config';
+import { runStdioMcpServer } from '@corsair-dev/mcp';
+import { corsair } from './corsair';
+
+runStdioMcpServer({ corsair }).catch((err) => {
+    console.error('[corsair-mcp] Fatal:', err);
+    process.exit(1);
+});
+```
+
+## Configure Hermes
+
+Register the server with Hermes using the standard stdio MCP shape — a `command` and its `args`:
+
+```json
+{
+  "mcpServers": {
+    "corsair": {
+      "command": "npx",
+      "args": ["tsx", "mcp-server.ts"]
+    }
+  }
+}
+```
+
+If your credentials aren't loaded from a `.env` file, add an `env` block with `CORSAIR_KEK`.
+
+<Note>Register this under Hermes's MCP configuration — check the Hermes docs for the exact config path, as it differs per version.</Note>
+
+## Usage
+
+Once connected, Hermes can call Corsair tools directly:
+
+```
+Setup corsair, then list all Slack channels.
+```
+
+Hermes calls `corsair_setup` first to check credentials, then `list_operations` to discover available endpoints, then `run_script` to execute.
+
+</Tab>
+
+<Tab title="CLI">
+
+<CodeGroup>
+```bash npm
+npm install @corsair-dev/cli
+```
+```bash yarn
+yarn add @corsair-dev/cli
+```
+```bash pnpm
+pnpm install @corsair-dev/cli
+```
+```bash bun
+bun add @corsair-dev/cli
+```
+</CodeGroup>
+
+Copy and paste this prompt into Hermes to give it everything it needs to work with Corsair:
+
+```
+Run `pnpm corsair` to access Corsair's integrations.
+```
+
+</Tab>
+
+</Tabs>

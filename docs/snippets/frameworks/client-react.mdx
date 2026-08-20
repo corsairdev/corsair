@@ -1,0 +1,72 @@
+<Steps>
+
+<Step title="Create the client">
+
+```tsx app/corsair-client.ts
+"use client";
+import { createCorsairReactClient } from "corsair/client/react";
+
+export const {
+    useConnectionStatus, useCreateConnectLink, useTenants,
+    client, // escape hatch — the vanilla client
+} = createCorsairReactClient({ baseURL: "/api/corsair" });
+```
+
+One factory call per app. Every hook is typed against your handler, so `useTenants()` knows it returns tenants. `client` is the escape hatch to the [vanilla client](/adapters/client) for imperative calls. The full hook list is on the [React Hooks](/adapters/react) reference.
+
+</Step>
+
+<Step title="Read what's connected">
+
+```tsx connections.tsx
+"use client";
+import { useConnectionStatus } from "./corsair-client";
+
+export function Connections({ tenantId }: { tenantId: string }) {
+    const { data } = useConnectionStatus({ tenantId });
+    if (!data) return null;
+    return (
+        <ul>
+            {Object.entries(data).map(([plugin, status]) => (
+                <li key={plugin}>{plugin}: {status === "connected" ? "✓" : "Connect →"}</li>
+            ))}
+        </ul>
+    );
+}
+```
+
+`useConnectionStatus` returns a map of plugin id → `connected | missing_credentials | not_connected`, so your UI knows what's live and what still needs a connect flow.
+
+</Step>
+
+<Step title="Mint a connect link">
+
+```tsx connect-github.tsx
+"use client";
+import { useConnectionStatus, useCreateConnectLink } from "./corsair-client";
+
+export function ConnectGitHub({ tenantId }: { tenantId: string }) {
+    const { mutate, loading } = useCreateConnectLink();
+    const { data: status } = useConnectionStatus({ tenantId });
+
+    if (status?.github === "connected") return <span>GitHub connected ✓</span>;
+
+    return (
+        <button
+            disabled={loading}
+            onClick={async () => {
+                const { connectUrl } = await mutate({ plugin: "github", tenantId });
+                window.location.href = connectUrl;
+            }}
+        >
+            Connect GitHub
+        </button>
+    );
+}
+```
+
+Hub hosts the consent screen and runs the OAuth handshake. When the user returns, the tokens are already encrypted in your own database — you never saw them, and neither did Hub. Swap `"github"` for any [plugin](/guides/plugins) you configured.
+
+</Step>
+
+</Steps>
