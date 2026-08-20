@@ -19,6 +19,7 @@ export async function cachePdfJob(
 			success: response.Success,
 			cost: response.Cost ?? null,
 			mbOut: response.MbOut ?? null,
+			seconds: response.Seconds ?? null,
 			updatedAt: new Date(),
 		});
 	} catch (error) {

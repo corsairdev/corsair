@@ -29,6 +29,10 @@ module.exports = {
 					verbatimModuleSyntax: false,
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
+					// Tests resolve `corsair/*` to workspace source, which sits outside
+					// this package. Widen rootDir so type-checking does not raise TS6059;
+					// the build still uses the package-scoped rootDir in tsconfig.json.
+					rootDir: '../..',
 				},
 			},
 		],

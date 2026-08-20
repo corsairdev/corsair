@@ -1,83 +1,118 @@
 import 'dotenv/config';
 import {
-	assertApi2PdfSuccess,
-	buildPostPayload,
-	makeApi2PdfRequest,
-	makeApi2PdfTextRequest,
-} from './client';
-import { UtilityEndpoints } from './endpoints';
-import type { Api2PdfJobResponse } from './endpoints/types';
+	ChromeEndpoints,
+	LibreOfficeEndpoints,
+	PdfSharpEndpoints,
+	UtilityEndpoints,
+	ZebraEndpoints,
+} from './endpoints';
 import { Api2PdfEndpointOutputSchemas } from './endpoints/types';
 import type { Api2PdfContext } from './index';
-
-/** Minimal plugin context for live endpoint-handler tests. */
-function testCtx(key: string): Api2PdfContext {
-	return {
-		key,
-		// logEventFromContext only needs enough of ctx to no-op safely in tests
-	} as Api2PdfContext;
-}
 
 const TEST_API_KEY = process.env.API2PDF_API_KEY;
 const LIVE_TEST_FLAG =
 	process.env.LIVE_TEST === '1' || process.env.LIVE_TEST === 'true';
 
-/** Public sample PDF for merge/extract/compress tests. */
+/** Public sample PDF used as input for the URL-based operations. */
 const SAMPLE_PDF =
 	'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
 
+/**
+ * Minimal plugin context. `pdfJobs` is left undefined so `cachePdfJob` short-
+ * circuits — these tests exercise the HTTP surface, not persistence.
+ */
+function testCtx(): Api2PdfContext {
+	return {
+		key: TEST_API_KEY,
+		options: { authType: 'api_key' },
+		db: {},
+	} as unknown as Api2PdfContext;
+}
+
 const testSuite = TEST_API_KEY && LIVE_TEST_FLAG ? describe : describe.skip;
 
-testSuite('API2PDF API Type Tests', () => {
+testSuite('API2PDF live API', () => {
 	describe('utility', () => {
-		it('checkStatus returns plain text status', async () => {
-			const status = await makeApi2PdfTextRequest('/status');
-			const response = { status: status.trim() };
+		it('checkStatus returns a plain-text status', async () => {
+			const response = await UtilityEndpoints.checkStatus(testCtx(), {});
 
 			Api2PdfEndpointOutputSchemas.checkStatus.parse(response);
 			expect(response.status.length).toBeGreaterThan(0);
 		});
+
+		it('deletePdf removes a PDF that was just generated', async () => {
+			const created = await PdfSharpEndpoints.mergePdfs(testCtx(), {
+				urls: [SAMPLE_PDF, SAMPLE_PDF],
+			});
+			expect(created.ResponseId).toBeTruthy();
+
+			const response = await UtilityEndpoints.deletePdf(testCtx(), {
+				responseId: created.ResponseId as string,
+			});
+
+			Api2PdfEndpointOutputSchemas.deletePdf.parse(response);
+		});
+
+		it('deletePdf rejects an unknown responseId', async () => {
+			await expect(
+				UtilityEndpoints.deletePdf(testCtx(), {
+					responseId: 'nonexistent-response-id',
+				}),
+			).rejects.toThrow();
+		});
 	});
 
-	describe('zebra', () => {
-		it('generateBarcode returns correct type', async () => {
-			const response = assertApi2PdfSuccess(
-				await makeApi2PdfRequest<Api2PdfJobResponse>('/zebra', {
-					apiKey: TEST_API_KEY!,
-					method: 'GET',
-					query: {
-						format: 'QR_CODE',
-						value: 'https://corsair.dev',
-						outputBinary: false,
-					},
-				}),
-			);
+	describe('pdfsharp', () => {
+		it('mergePdfs merges two PDFs', async () => {
+			const response = await PdfSharpEndpoints.mergePdfs(testCtx(), {
+				urls: [SAMPLE_PDF, SAMPLE_PDF],
+			});
 
-			Api2PdfEndpointOutputSchemas.generateBarcode.parse(response);
+			Api2PdfEndpointOutputSchemas.mergePdfs.parse(response);
+			expect(response.Success).toBe(true);
+			expect(response.FileUrl).toBeTruthy();
+		});
+
+		it('extractPages extracts the first page', async () => {
+			const response = await PdfSharpEndpoints.extractPages(testCtx(), {
+				url: SAMPLE_PDF,
+				start: 0,
+				end: 0,
+			});
+
+			Api2PdfEndpointOutputSchemas.extractPages.parse(response);
+			expect(response.Success).toBe(true);
+		});
+
+		it('optimizePdf compresses a PDF', async () => {
+			const response = await PdfSharpEndpoints.optimizePdf(testCtx(), {
+				url: SAMPLE_PDF,
+			});
+
+			Api2PdfEndpointOutputSchemas.optimizePdf.parse(response);
+			expect(response.Success).toBe(true);
+		});
+
+		it('watermarkPdf stamps text onto a PDF', async () => {
+			const response = await PdfSharpEndpoints.watermarkPdf(testCtx(), {
+				url: SAMPLE_PDF,
+				text: 'CORSAIR TEST',
+			});
+
+			Api2PdfEndpointOutputSchemas.watermarkPdf.parse(response);
 			expect(response.Success).toBe(true);
 		});
 	});
 
 	describe('chrome', () => {
-		it('addHeaderFooter renders HTML to PDF', async () => {
-			const response = assertApi2PdfSuccess(
-				await makeApi2PdfRequest<Api2PdfJobResponse>('/chrome/pdf/html', {
-					apiKey: TEST_API_KEY!,
-					method: 'POST',
-					body: buildPostPayload(
-						{ html: '<html><body><h1>Corsair API2PDF test</h1></body></html>' },
-						{
-							chromeOptions: {
-								displayHeaderFooter: true,
-								headerTemplate:
-									'<div style="font-size:10px;width:100%;text-align:center;">Header</div>',
-								footerTemplate:
-									'<div style="font-size:10px;width:100%;text-align:center;">Page <span class="pageNumber"></span></div>',
-							},
-						},
-					),
-				}),
-			);
+		it('addHeaderFooter renders HTML to PDF with a header and footer', async () => {
+			const response = await ChromeEndpoints.addHeaderFooter(testCtx(), {
+				html: '<html><body><h1>Corsair API2PDF test</h1></body></html>',
+				headerTemplate:
+					'<div style="font-size:10px;width:100%;text-align:center;">Header</div>',
+				footerTemplate:
+					'<div style="font-size:10px;width:100%;text-align:center;">Page <span class="pageNumber"></span></div>',
+			});
 
 			Api2PdfEndpointOutputSchemas.addHeaderFooter.parse(response);
 			expect(response.Success).toBe(true);
@@ -85,74 +120,36 @@ testSuite('API2PDF API Type Tests', () => {
 		});
 	});
 
-	describe('pdfsharp', () => {
-		it('mergePdfs merges two PDFs', async () => {
-			const response = assertApi2PdfSuccess(
-				await makeApi2PdfRequest<Api2PdfJobResponse>('/pdfsharp/merge', {
-					apiKey: TEST_API_KEY!,
-					method: 'POST',
-					body: buildPostPayload({ urls: [SAMPLE_PDF, SAMPLE_PDF] }),
-				}),
-			);
-
-			Api2PdfEndpointOutputSchemas.mergePdfs.parse(response);
-			expect(response.Success).toBe(true);
-		});
-
-		it('extractPages extracts pages including negative indices', async () => {
-			const response = assertApi2PdfSuccess(
-				await makeApi2PdfRequest<Api2PdfJobResponse>(
-					'/pdfsharp/extract-pages',
-					{
-						apiKey: TEST_API_KEY!,
-						method: 'POST',
-						body: buildPostPayload({ url: SAMPLE_PDF, start: -1, end: -1 }),
-					},
-				),
-			);
-
-			Api2PdfEndpointOutputSchemas.extractPages.parse(response);
-			expect(response.Success).toBe(true);
-		});
-	});
-
-	describe('utility.delete', () => {
-		it('deletePdf throws when Success is false for an unknown responseId', async () => {
-			// Drive the real endpoint so assertApi2PdfSuccess throws on Success:false
-			// instead of calling makeApi2PdfRequest directly (which bypasses it).
-			await expect(
-				UtilityEndpoints.deletePdf(testCtx(TEST_API_KEY!), {
-					responseId: 'nonexistent-response-id',
-				}),
-			).rejects.toThrow();
-		});
-	});
-
-	describe('libreoffice/opendataloader', () => {
-		it('thumbnail renders a thumbnail from a PDF', async () => {
-			const response = assertApi2PdfSuccess(
-				await makeApi2PdfRequest<Api2PdfJobResponse>('/libreoffice/thumbnail', {
-					apiKey: TEST_API_KEY!,
-					method: 'POST',
-					body: buildPostPayload({ url: SAMPLE_PDF }),
-				}),
-			);
+	describe('libreoffice', () => {
+		it('thumbnail renders a preview image of a PDF', async () => {
+			const response = await LibreOfficeEndpoints.thumbnail(testCtx(), {
+				url: SAMPLE_PDF,
+			});
 
 			Api2PdfEndpointOutputSchemas.libreOfficeThumbnail.parse(response);
 			expect(response.Success).toBe(true);
 		});
 
 		it('pdfToHtml converts a PDF to HTML', async () => {
-			const response = assertApi2PdfSuccess(
-				await makeApi2PdfRequest<Api2PdfJobResponse>('/opendataloader/html', {
-					apiKey: TEST_API_KEY!,
-					method: 'POST',
-					body: buildPostPayload({ url: SAMPLE_PDF }),
-				}),
-			);
+			const response = await LibreOfficeEndpoints.pdfToHtml(testCtx(), {
+				url: SAMPLE_PDF,
+			});
 
-			Api2PdfEndpointOutputSchemas.opendataloaderPdfToHtml.parse(response);
+			Api2PdfEndpointOutputSchemas.libreOfficePdfToHtml.parse(response);
 			expect(response.Success).toBe(true);
+		});
+	});
+
+	describe('zebra', () => {
+		it('generateBarcode returns a QR code file URL', async () => {
+			const response = await ZebraEndpoints.generateBarcode(testCtx(), {
+				format: 'QR_CODE',
+				value: 'https://corsair.dev',
+			});
+
+			Api2PdfEndpointOutputSchemas.generateBarcode.parse(response);
+			expect(response.Success).toBe(true);
+			expect(response.FileUrl).toBeTruthy();
 		});
 	});
 });

@@ -34,12 +34,12 @@ export const thumbnail: Api2PdfEndpoints['libreOfficeThumbnail'] = async (
 	return response;
 };
 
-export const pdfToHtml: Api2PdfEndpoints['opendataloaderPdfToHtml'] = async (
+export const pdfToHtml: Api2PdfEndpoints['libreOfficePdfToHtml'] = async (
 	ctx,
 	input,
 ) => {
 	const response = assertApi2PdfSuccess(
-		await makeApi2PdfRequest<Api2PdfJobResponse>('/opendataloader/html', {
+		await makeApi2PdfRequest<Api2PdfJobResponse>('/libreoffice/pdf-to-html', {
 			apiKey: ctx.key,
 			method: 'POST',
 			body: buildPostPayload(
@@ -49,10 +49,10 @@ export const pdfToHtml: Api2PdfEndpoints['opendataloaderPdfToHtml'] = async (
 		}),
 	);
 
-	await cachePdfJob(ctx, 'opendataloaderPdfToHtml', response);
+	await cachePdfJob(ctx, 'libreOfficePdfToHtml', response);
 	await logEventFromContext(
 		ctx,
-		'api2pdf.opendataloader.pdfToHtml',
+		'api2pdf.libreoffice.pdfToHtml',
 		{ url: input.url },
 		'completed',
 	);

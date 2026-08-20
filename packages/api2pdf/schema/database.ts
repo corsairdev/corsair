@@ -8,6 +8,7 @@ export const Api2PdfPdfJob = z.object({
 	success: z.boolean(),
 	cost: z.number().nullable().optional(),
 	mbOut: z.number().nullable().optional(),
+	seconds: z.number().nullable().optional(),
 	updatedAt: z.coerce.date().nullable().optional(),
 });
 

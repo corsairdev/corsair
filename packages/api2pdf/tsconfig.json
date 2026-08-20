@@ -9,8 +9,12 @@
     "rootDir": "./",
     "composite": true,
     "incremental": true,
-    "tsBuildInfoFile": "./dist/.tsbuildinfo"
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true
   },
-  "include": ["./**/*.ts"],
-  "exclude": ["dist", "node_modules", "**/*.test.ts"]
+  "include": ["./**/*"],
+  "exclude": ["dist", "node_modules"],
+  "references": []
 }

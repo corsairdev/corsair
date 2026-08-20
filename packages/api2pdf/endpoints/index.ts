@@ -12,6 +12,8 @@ export const UtilityEndpoints = {
 export const PdfSharpEndpoints = {
 	mergePdfs: PdfSharp.mergePdfs,
 	extractPages: PdfSharp.extractPages,
+	optimizePdf: PdfSharp.optimizePdf,
+	watermarkPdf: PdfSharp.watermarkPdf,
 };
 
 export const ChromeEndpoints = {
@@ -20,7 +22,7 @@ export const ChromeEndpoints = {
 
 export const LibreOfficeEndpoints = {
 	thumbnail: LibreOffice.thumbnail,
-	opendataloaderPdfToHtml: LibreOffice.pdfToHtml,
+	pdfToHtml: LibreOffice.pdfToHtml,
 };
 
 export const ZebraEndpoints = {

@@ -1,26 +1,35 @@
-export {};
+import { jest } from '@jest/globals';
 
-// @ts-expect-error
-jest.unstable_mockModule('corsair/core', () => ({
-	logEventFromContext: jest.fn().mockResolvedValue(undefined),
+/**
+ * Stand-in for `corsair/http`'s ApiError. The client narrows with `instanceof`,
+ * so the mocked module must export a real constructor.
+ */
+class MockApiError extends Error {
+	constructor(
+		public readonly status: number,
+		message: string,
+		public readonly statusText = '',
+		public readonly body: unknown = undefined,
+		public readonly retryAfter: number | undefined = undefined,
+	) {
+		super(message);
+		this.name = 'ApiError';
+	}
+}
+
+const requestMock =
+	jest.fn<(config: unknown, options: unknown) => Promise<unknown>>();
+
+jest.unstable_mockModule('corsair/http', () => ({
+	ApiError: MockApiError,
+	request: requestMock,
 }));
 
-// @ts-expect-error
-jest.unstable_mockModule('./client', () => {
-	return {
-		makeApi2PdfRequest: jest.fn(),
-		makeApi2PdfTextRequest: jest.fn(),
-		assertApi2PdfSuccess: (res: any) => {
-			if (res.Success === false) throw new Error(res.Error);
-			return res;
-		},
-		buildPostPayload: (base: any, opts: any) =>
-			JSON.stringify({ ...base, ...opts }),
-	};
-});
+jest.unstable_mockModule('corsair/core', () => ({
+	logEventFromContext: jest.fn(async () => undefined),
+}));
 
 const { logEventFromContext } = await import('corsair/core');
-const { makeApi2PdfRequest, makeApi2PdfTextRequest } = await import('./client');
 const {
 	ChromeEndpoints,
 	LibreOfficeEndpoints,
@@ -29,11 +38,23 @@ const {
 	ZebraEndpoints,
 } = await import('./endpoints');
 
-const mockRequest = jest.mocked(makeApi2PdfRequest);
-const mockTextRequest = jest.mocked(makeApi2PdfTextRequest);
 const mockLog = jest.mocked(logEventFromContext);
 
-type AnyEndpoint = (ctx: unknown, input?: unknown) => Promise<unknown>;
+/**
+ * Only the transport is mocked, so every assertion below exercises the real
+ * client: auth header construction, `buildPostPayload` (including its
+ * `inline: true` default and `options` mapping) and `assertApi2PdfSuccess`.
+ */
+type AnyEndpoint = unknown;
+
+/** Endpoint closures are strongly typed per-operation; this drives them uniformly. */
+function call(
+	fn: AnyEndpoint,
+	ctx: unknown,
+	input?: unknown,
+): Promise<unknown> {
+	return (fn as (c: unknown, i: unknown) => Promise<unknown>)(ctx, input);
+}
 
 const SAMPLE_PDF =
 	'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
@@ -44,169 +65,253 @@ const jobOk = {
 	ResponseId: 'resp-1',
 	Cost: 0.01,
 	MbOut: 0.1,
+	Seconds: 0.4,
 	Error: null,
 };
 
-function createContext() {
+const upsert = jest.fn(async () => undefined);
+
+function createContext(): unknown {
 	return {
 		key: 'test-api-key',
 		options: { authType: 'api_key' as const },
-		db: {
-			pdfJobs: {
-				upsertByEntityId: jest.fn().mockResolvedValue(undefined),
-			},
+		db: { pdfJobs: { upsertByEntityId: upsert } },
+	};
+}
+
+function lastCall() {
+	const call = requestMock.mock.calls.at(-1);
+	if (!call) throw new Error('request was never called');
+	return {
+		config: call[0] as { BASE: string; HEADERS: Record<string, string> },
+		options: call[1] as {
+			method: string;
+			url: string;
+			body?: Record<string, unknown>;
+			query?: Record<string, unknown>;
 		},
 	};
 }
 
-describe('API2PDF endpoint routing', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
+beforeEach(() => {
+	jest.clearAllMocks();
+});
 
+describe('API2PDF endpoint routing', () => {
 	const cases: Array<{
 		name: string;
 		fn: AnyEndpoint;
-		input?: Record<string, unknown>;
-		path: string;
+		input: Record<string, unknown>;
 		method: string;
-		text?: boolean;
-		response?: unknown;
-		expectedPayload?: any;
-		expectedQuery?: any;
+		url: string;
+		body?: Record<string, unknown>;
+		query?: Record<string, unknown>;
 	}> = [
 		{
-			name: 'utility.checkStatus',
-			fn: UtilityEndpoints.checkStatus as AnyEndpoint,
-			input: {},
-			path: '/status',
-			method: 'GET',
-			text: true,
-			response: 'OK\n',
-		},
-		{
 			name: 'utility.deletePdf',
-			fn: UtilityEndpoints.deletePdf as AnyEndpoint,
-			input: { responseId: 'resp-1' },
-			path: '/file/resp-1',
+			fn: UtilityEndpoints.deletePdf,
+			input: { responseId: 'resp 1/x' },
 			method: 'DELETE',
-			response: { Success: true },
+			url: '/file/resp%201%2Fx',
 		},
 		{
 			name: 'pdfsharp.mergePdfs',
-			fn: PdfSharpEndpoints.mergePdfs as AnyEndpoint,
+			fn: PdfSharpEndpoints.mergePdfs,
 			input: { urls: [SAMPLE_PDF, SAMPLE_PDF] },
-			path: '/pdfsharp/merge',
 			method: 'POST',
-			response: jobOk,
-			expectedPayload: JSON.stringify({ urls: [SAMPLE_PDF, SAMPLE_PDF] }),
+			url: '/pdfsharp/merge',
+			body: { inline: true, urls: [SAMPLE_PDF, SAMPLE_PDF] },
 		},
 		{
 			name: 'pdfsharp.extractPages',
-			fn: PdfSharpEndpoints.extractPages as AnyEndpoint,
+			fn: PdfSharpEndpoints.extractPages,
 			input: { url: SAMPLE_PDF, start: 0, end: 1 },
-			path: '/pdfsharp/extract-pages',
 			method: 'POST',
-			response: jobOk,
-			expectedPayload: JSON.stringify({ url: SAMPLE_PDF, start: 0, end: 1 }),
+			url: '/pdfsharp/extract-pages',
+			body: { inline: true, url: SAMPLE_PDF, start: 0, end: 1 },
+		},
+		{
+			name: 'pdfsharp.optimizePdf',
+			fn: PdfSharpEndpoints.optimizePdf,
+			input: { url: SAMPLE_PDF, fileName: 'small.pdf' },
+			method: 'POST',
+			url: '/pdfsharp/compress',
+			body: { inline: true, url: SAMPLE_PDF, fileName: 'small.pdf' },
+		},
+		{
+			name: 'pdfsharp.watermarkPdf',
+			fn: PdfSharpEndpoints.watermarkPdf,
+			input: { url: SAMPLE_PDF, text: 'DRAFT', opacity: 0.5, rotation: 45 },
+			method: 'POST',
+			url: '/pdfsharp/watermark',
+			body: {
+				inline: true,
+				url: SAMPLE_PDF,
+				text: 'DRAFT',
+				opacity: 0.5,
+				rotation: 45,
+			},
 		},
 		{
 			name: 'chrome.addHeaderFooter',
-			fn: ChromeEndpoints.addHeaderFooter as AnyEndpoint,
-			input: { html: '<html><body>hi</body></html>' },
-			path: '/chrome/pdf/html',
+			fn: ChromeEndpoints.addHeaderFooter,
+			input: { html: '<p>hi</p>', headerTemplate: '<b>H</b>' },
 			method: 'POST',
-			response: jobOk,
-			expectedPayload: JSON.stringify({ html: '<html><body>hi</body></html>' }),
+			url: '/chrome/pdf/html',
+			body: {
+				inline: true,
+				html: '<p>hi</p>',
+				options: { displayHeaderFooter: true, headerTemplate: '<b>H</b>' },
+			},
 		},
 		{
 			name: 'libreoffice.thumbnail',
-			fn: LibreOfficeEndpoints.thumbnail as AnyEndpoint,
+			fn: LibreOfficeEndpoints.thumbnail,
 			input: { url: SAMPLE_PDF },
-			path: '/libreoffice/thumbnail',
 			method: 'POST',
-			response: jobOk,
-			expectedPayload: JSON.stringify({ url: SAMPLE_PDF }),
+			url: '/libreoffice/thumbnail',
+			body: { inline: true, url: SAMPLE_PDF },
 		},
 		{
-			name: 'opendataloader.pdfToHtml',
-			fn: LibreOfficeEndpoints.opendataloaderPdfToHtml as AnyEndpoint,
+			name: 'libreoffice.pdfToHtml',
+			fn: LibreOfficeEndpoints.pdfToHtml,
 			input: { url: SAMPLE_PDF },
-			path: '/opendataloader/html',
 			method: 'POST',
-			response: jobOk,
-			expectedPayload: JSON.stringify({ url: SAMPLE_PDF }),
+			url: '/libreoffice/pdf-to-html',
+			body: { inline: true, url: SAMPLE_PDF },
 		},
 		{
 			name: 'zebra.generateBarcode',
-			fn: ZebraEndpoints.generateBarcode as AnyEndpoint,
-			input: { format: 'QR_CODE', value: 'https://corsair.dev' },
-			path: '/zebra',
+			fn: ZebraEndpoints.generateBarcode,
+			input: {
+				format: 'QR_CODE',
+				value: 'https://corsair.dev',
+				showLabel: true,
+			},
 			method: 'GET',
-			response: jobOk,
-			expectedQuery: { format: 'QR_CODE', value: 'https://corsair.dev' },
+			url: '/zebra',
+			query: {
+				format: 'QR_CODE',
+				value: 'https://corsair.dev',
+				showlabel: true,
+				outputBinary: false,
+			},
 		},
 	];
 
 	it.each(cases)(
-		'$name drives the endpoint closure against $path',
-		async ({
-			fn,
-			input,
-			path,
-			method,
-			text,
-			response,
-			expectedPayload,
-			expectedQuery,
-		}) => {
-			if (text) {
-				mockTextRequest.mockResolvedValueOnce(String(response));
-			} else {
-				mockRequest.mockResolvedValueOnce(response);
+		'$name calls $method $url with the documented payload',
+		async ({ fn, input, method, url, body, query }) => {
+			requestMock.mockResolvedValueOnce(jobOk);
+
+			const result = await call(fn, createContext(), input);
+			const sent = lastCall();
+
+			expect(sent.config.BASE).toBe('https://v2.api2pdf.com');
+			expect(sent.config.HEADERS.Authorization).toBe('test-api-key');
+			expect(sent.options.method).toBe(method);
+			expect(sent.options.url).toBe(url);
+
+			if (body) {
+				expect(sent.options.body).toEqual(body);
+			}
+			if (query) {
+				expect(sent.options.query).toMatchObject(query);
 			}
 
-			const ctx = createContext();
-			const result = await fn(ctx, input ?? {});
-
-			if (text) {
-				expect(mockTextRequest).toHaveBeenCalledWith(
-					path,
-					expect.objectContaining({ apiKey: ctx.key }),
-				);
-				expect(result).toEqual({ status: 'OK' });
-			} else {
-				const expectedOptions: Record<string, any> = {
-					apiKey: ctx.key,
-					method,
-				};
-				if (expectedPayload) expectedOptions.body = expectedPayload;
-				if (expectedQuery)
-					expectedOptions.query = expect.objectContaining(expectedQuery);
-
-				expect(mockRequest).toHaveBeenCalledWith(
-					path,
-					expect.objectContaining(expectedOptions),
-				);
-				expect(result).toEqual(response);
-			}
-
-			expect(mockLog).toHaveBeenCalled();
+			expect(result).toEqual(jobOk);
+			expect(mockLog).toHaveBeenCalledTimes(1);
 		},
 	);
 
-	it('utility.deletePdf throws when Success is false', async () => {
-		mockRequest.mockResolvedValueOnce({
+	it('utility.checkStatus hits /status and trims the plain-text body', async () => {
+		requestMock.mockResolvedValueOnce('OK\n');
+
+		const result = await call(
+			UtilityEndpoints.checkStatus,
+			createContext(),
+			{},
+		);
+
+		expect(lastCall().options.url).toBe('/status');
+		expect(lastCall().options.method).toBe('GET');
+		expect(result).toEqual({ status: 'OK' });
+		expect(mockLog).toHaveBeenCalledTimes(1);
+	});
+
+	it('caches every job response, including Seconds, keyed by ResponseId', async () => {
+		requestMock.mockResolvedValueOnce(jobOk);
+
+		await call(PdfSharpEndpoints.mergePdfs, createContext(), {
+			urls: [SAMPLE_PDF, SAMPLE_PDF],
+		});
+
+		expect(upsert).toHaveBeenCalledWith(
+			'resp-1',
+			expect.objectContaining({
+				operation: 'mergePdfs',
+				responseId: 'resp-1',
+				fileUrl: 'https://example.com/out.pdf',
+				success: true,
+				cost: 0.01,
+				mbOut: 0.1,
+				seconds: 0.4,
+			}),
+		);
+	});
+
+	it('omits optional watermark styling fields when they are not supplied', async () => {
+		requestMock.mockResolvedValueOnce(jobOk);
+
+		await call(PdfSharpEndpoints.watermarkPdf, createContext(), {
+			url: SAMPLE_PDF,
+			text: 'DRAFT',
+		});
+
+		expect(lastCall().options.body).toEqual({
+			inline: true,
+			url: SAMPLE_PDF,
+			text: 'DRAFT',
+		});
+	});
+
+	it('honours an explicit inline:false instead of forcing the default', async () => {
+		requestMock.mockResolvedValueOnce(jobOk);
+
+		await call(PdfSharpEndpoints.optimizePdf, createContext(), {
+			url: SAMPLE_PDF,
+			inline: false,
+		});
+
+		expect(lastCall().options.body).toMatchObject({ inline: false });
+	});
+
+	it('throws and skips logging when the API reports Success:false', async () => {
+		requestMock.mockResolvedValueOnce({
 			Success: false,
 			Error: 'file not found',
 		});
 
-		const ctx = createContext();
 		await expect(
-			(UtilityEndpoints.deletePdf as AnyEndpoint)(ctx, {
+			call(UtilityEndpoints.deletePdf, createContext(), {
 				responseId: 'missing-id',
 			}),
 		).rejects.toThrow('file not found');
+
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('wraps transport ApiError as Api2PdfAPIError, preserving status', async () => {
+		requestMock.mockRejectedValueOnce(
+			new MockApiError(429, 'Too Many Requests', 'Too Many Requests', null, 30),
+		);
+
+		const error = (await call(PdfSharpEndpoints.mergePdfs, createContext(), {
+			urls: [SAMPLE_PDF, SAMPLE_PDF],
+		}).catch((e: unknown) => e)) as Error & { status?: number };
+
+		expect(error.name).toBe('Api2PdfAPIError');
+		expect(error.status).toBe(429);
 		expect(mockLog).not.toHaveBeenCalled();
 	});
 });

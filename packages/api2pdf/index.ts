@@ -62,8 +62,8 @@ export type Api2PdfEndpoints = {
 	mergePdfs: Api2PdfEndpoint<'mergePdfs'>;
 	addHeaderFooter: Api2PdfEndpoint<'addHeaderFooter'>;
 	extractPages: Api2PdfEndpoint<'extractPages'>;
-	reorderPages: Api2PdfEndpoint<'reorderPages'>;
 	optimizePdf: Api2PdfEndpoint<'optimizePdf'>;
+	watermarkPdf: Api2PdfEndpoint<'watermarkPdf'>;
 	generateBarcode: Api2PdfEndpoint<'generateBarcode'>;
 	libreOfficeThumbnail: Api2PdfEndpoint<'libreOfficeThumbnail'>;
 	libreOfficePdfToHtml: Api2PdfEndpoint<'libreOfficePdfToHtml'>;
@@ -77,8 +77,8 @@ const api2pdfEndpointsNested = {
 	pdfsharp: {
 		mergePdfs: PdfSharpEndpoints.mergePdfs,
 		extractPages: PdfSharpEndpoints.extractPages,
-		reorderPages: PdfSharpEndpoints.reorderPages,
 		optimizePdf: PdfSharpEndpoints.optimizePdf,
+		watermarkPdf: PdfSharpEndpoints.watermarkPdf,
 	},
 	chrome: {
 		addHeaderFooter: ChromeEndpoints.addHeaderFooter,
@@ -115,9 +115,9 @@ export const api2pdfEndpointSchemas = {
 		input: Api2PdfEndpointInputSchemas.extractPages,
 		output: Api2PdfEndpointOutputSchemas.extractPages,
 	},
-	'pdfsharp.reorderPages': {
-		input: Api2PdfEndpointInputSchemas.reorderPages,
-		output: Api2PdfEndpointOutputSchemas.reorderPages,
+	'pdfsharp.watermarkPdf': {
+		input: Api2PdfEndpointInputSchemas.watermarkPdf,
+		output: Api2PdfEndpointOutputSchemas.watermarkPdf,
 	},
 	'pdfsharp.optimizePdf': {
 		input: Api2PdfEndpointInputSchemas.optimizePdf,
@@ -160,9 +160,9 @@ const api2pdfEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Extract a page range from a PDF',
 	},
-	'pdfsharp.reorderPages': {
+	'pdfsharp.watermarkPdf': {
 		riskLevel: 'write',
-		description: 'Reorder PDF pages by zero-based index list',
+		description: 'Stamp a text watermark onto every page of a PDF',
 	},
 	'pdfsharp.optimizePdf': {
 		riskLevel: 'write',
@@ -254,7 +254,7 @@ export type {
 	LibreOfficeThumbnailInput,
 	MergePdfsInput,
 	OptimizePdfInput,
-	ReorderPagesInput,
+	WatermarkPdfInput,
 } from './endpoints/types';
 
 export {
