@@ -21,6 +21,8 @@ export const TriggerMessageEventSchema = z.object({
 			user_id: z.string().optional(),
 		})
 		.passthrough(),
+	// Provider-specific event payload — shapes vary per trigger and evolve,
+	// so keep it loosely typed to avoid schema breakage on new trigger types.
 	data: z.record(z.string(), z.unknown()),
 });
 export type TriggerMessageEvent = z.infer<typeof TriggerMessageEventSchema>;
@@ -30,6 +32,8 @@ export const ProjectEventSchema = z
 	.object({
 		type: z.string(),
 		timestamp: z.string().optional(),
+		// Project-event payload/metadata are provider-defined and vary widely,
+		// so they are kept loosely typed (no fixed keys) rather than guessed.
 		data: z.record(z.string(), z.unknown()).optional(),
 		metadata: z.record(z.string(), z.unknown()).optional(),
 	})

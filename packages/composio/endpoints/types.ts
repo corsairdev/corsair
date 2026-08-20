@@ -132,6 +132,8 @@ const ActionExecuteResponseSchema = z
 		error: z.string().nullable().optional(),
 		successful: z.boolean().optional(),
 		log_id: z.string().optional(),
+		// Session metadata is an opaque, provider-defined descriptor whose shape
+		// is undocumented; keep it loosely typed rather than invent fields.
 		session_info: z.unknown().optional(),
 	})
 	.passthrough();
