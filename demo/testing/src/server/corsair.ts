@@ -2,6 +2,7 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
+import { aeroleads } from '@corsair-dev/aeroleads';
 import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
@@ -39,6 +40,9 @@ export const corsair = createCorsair({
 		signingSecret: hubSigningSecret,
 	},
 	plugins: [
+		aeroleads({
+			key: process.env.AEROLEADS_API_KEY,
+		}),
 		// github({ authType: 'managed' }),
 		slack({
 			permissions: {

@@ -18,7 +18,23 @@ async function setInstagramCredentials() {
 	}
 }
 
+async function testAeroLeads() {
+	console.log('--- AeroLeads: LinkedIn Profile Lookup ---');
+	const profile = await corsair.aeroleads.api.linkedin.getDetails({
+		linkedin_url: 'linkedin.com/in/satyanadella',
+	});
+	console.log('Profile:', JSON.stringify(profile, null, 2));
+
+	console.log('--- AeroLeads: Email Verification ---');
+	const emailResult = await corsair.aeroleads.api.email.getCompanyEmail({
+		email: 'satya@microsoft.com',
+	});
+	console.log('Email result:', JSON.stringify(emailResult, null, 2));
+}
+
 const main = async () => {
+	await testAeroLeads();
+
 	const res = await corsair.slack.api.messages.post({
 		channel: 'general',
 		text: 'hello',
