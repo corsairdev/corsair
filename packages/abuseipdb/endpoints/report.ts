@@ -34,6 +34,18 @@ export const report: AbuseIPDBEndpoints['reportIp'] = async (ctx, input) => {
 
 	const reportResult = ReportIpResponseSchema.parse(response.data);
 
+	if (ctx.db?.reports) {
+		try {
+			await ctx.db.reports.upsertByEntityId(reportResult.ipAddress, {
+				ipAddress: reportResult.ipAddress,
+				abuseConfidenceScore: reportResult.abuseConfidenceScore,
+				reportedAt: new Date(),
+			});
+		} catch (error) {
+			console.warn('Failed to save report to database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'abuseipdb.report.ip',
