@@ -547,6 +547,16 @@ export type CorsairPlugin<
 	 */
 	authConfig?: AuthConfig;
 	/**
+	 * Declares which stored entity fields hold third-party personal-data account
+	 * IDs (e.g. Atlassian accountIds). The platform's personal-data reporting
+	 * pass (see `oauth/personal-data-reporting.ts`) reads this to enumerate the
+	 * account IDs kept in the entity mirror, report them to the provider, and
+	 * erase rows the provider marks closed. Keys are entity_type; values are the
+	 * `data` fields on that entity that hold an account id. Absent for plugins
+	 * that store no personal data.
+	 */
+	personalData?: { entityAccountIdFields: Record<string, string[]> };
+	/**
 	 * Risk metadata for each endpoint in this plugin. Drives the permission system:
 	 * riskLevel against the active mode determines the policy (allow / deny / require_approval).
 	 * Also used by list_operations() and get_schema() to surface descriptions to the agent.
