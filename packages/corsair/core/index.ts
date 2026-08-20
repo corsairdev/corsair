@@ -239,6 +239,7 @@ export type {
 	BaseKeyManager,
 	IntegrationFieldNames,
 	IntegrationKeyManagerFor,
+	MigratedIntegration,
 	OAuth2IntegrationCredentials,
 	PluginAuthConfig,
 	TokenResponse,
@@ -260,6 +261,7 @@ export {
 	initializeAccountDEK,
 	initializeIntegrationDEK,
 	reEncryptConfig,
+	rewrapIntegrationRow,
 } from './auth';
 // Agent chats namespace
 export type {

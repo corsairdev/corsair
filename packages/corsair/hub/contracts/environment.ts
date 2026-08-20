@@ -24,11 +24,67 @@ export function usesBrowserDelivery(slug: HubEnvironmentSlug): boolean {
 	return resolveDeliveryTransport(slug) === 'browser';
 }
 
+function parseIpv4Octets(
+	host: string,
+): [number, number, number, number] | null {
+	const parts = host.split('.');
+	if (parts.length !== 4) return null;
+	const octets = parts.map((part) =>
+		/^\d{1,3}$/.test(part) ? Number(part) : Number.NaN,
+	);
+	if (octets.some((n) => Number.isNaN(n) || n < 0 || n > 255)) return null;
+	return octets as [number, number, number, number];
+}
+
+// Hosts the Hub must never deliver to: loopback, private, link-local, and
+// unspecified addresses. A production delivery URL that resolves to one of these
+// turns Hub's outbound POST into an SSRF probe (cloud metadata at
+// 169.254.169.254, internal services). ponytail: this is the literal-address
+// layer only — a hostname that DNS-resolves to a private IP is caught at
+// delivery time, not here (validation-time resolution can't stop rebinding).
+export function isPrivateOrLoopbackHost(hostname: string): boolean {
+	let host = hostname.toLowerCase();
+	if (host.endsWith('.')) host = host.slice(0, -1);
+	if (host === 'localhost') return true;
+
+	if (host.startsWith('[') && host.endsWith(']')) {
+		const v6 = host.slice(1, -1);
+		// Public IPv6 is global-unicast (2000::/3) and never starts with '::'.
+		// Every '::'-prefixed form is special-use — unspecified (::), loopback
+		// (::1), IPv4-mapped (::ffff:7f00:1) or IPv4-compatible (::7f00:1 =
+		// 127.0.0.1) — so reject them all.
+		if (v6.startsWith('::')) return true;
+		if (/^f[cd]/.test(v6)) return true; // fc00::/7 unique-local
+		if (/^fe[89ab]/.test(v6)) return true; // fe80::/10 link-local
+		return false;
+	}
+
+	const octets = parseIpv4Octets(host);
+	if (!octets) return false; // a resolvable public hostname
+	const [a, b] = octets;
+	if (a === 0) return true; // 0.0.0.0/8, incl. the unspecified address
+	if (a === 127) return true; // loopback 127.0.0.0/8
+	if (a === 10) return true; // private 10.0.0.0/8
+	if (a === 169 && b === 254) return true; // link-local, incl. cloud metadata
+	if (a === 172 && b >= 16 && b <= 31) return true; // private 172.16.0.0/12
+	if (a === 192 && b === 168) return true; // private 192.168.0.0/16
+	return false;
+}
+
 export function validateProductionDeliveryUrl(
 	deliveryUrl: string,
 ): string | null {
-	if (isLoopbackUrl(deliveryUrl)) {
-		return 'Production delivery URL must be a public URL, not localhost';
+	let parsed: URL;
+	try {
+		parsed = new URL(deliveryUrl);
+	} catch {
+		return 'Production delivery URL must be a full URL, e.g. https://your-app.com/api/corsair';
+	}
+	if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') {
+		return 'Production delivery URL must start with http:// or https://';
+	}
+	if (isPrivateOrLoopbackHost(parsed.hostname)) {
+		return 'Production delivery URL must be a public URL, not localhost or a private/internal address';
 	}
 	return null;
 }

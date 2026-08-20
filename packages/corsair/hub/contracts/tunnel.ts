@@ -17,6 +17,7 @@ export type TunnelType =
 	| 'integration.credentials'
 	| 'connect.create_link'
 	| 'connections.sync'
+	| 'credentials.migrate'
 	| 'run'
 	| 'probe';
 
@@ -31,6 +32,10 @@ export const INBOUND_TUNNEL_TYPES = new Set<TunnelType>([
 	'integration.credentials',
 	'connect.create_link',
 	'connections.sync',
+	// Dev→prod credential migration: the app receives already-encrypted
+	// integration rows (DEK re-wrapped for the prod KEK) and stores them as-is.
+	// Write-only — the app never reveals credentials back to the hub.
+	'credentials.migrate',
 	// Workflow execution. Only handled when the app opts in via
 	// processCorsair({ allowWorkflowExecution: true }); off by default.
 	'run',

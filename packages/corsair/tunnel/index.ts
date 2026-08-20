@@ -1,4 +1,5 @@
 import type { CorsairInternalConfig } from '../core';
+import type { MigratedIntegration } from '../core/auth/rewrap-integration';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { processConnectLinkDelivery } from '../hub/connect-link-delivery';
 import {
@@ -13,6 +14,7 @@ import type {
 } from '../hub/contracts/tunnel';
 import { SIGNED_TUNNEL_REPLAY_WINDOW_MS } from '../hub/contracts/tunnel';
 import { processAuthCredentialsDelivery } from '../hub/credentials-delivery';
+import { processCredentialsMigrateDelivery } from '../hub/credentials-migrate-delivery';
 import { processIntegrationCredentialsDelivery } from '../hub/integration-credentials-delivery';
 import { consumeDeliveryReplayKey } from '../hub/internal/delivery-replay-guard';
 import { processManagedOAuthDelivery } from '../hub/managed-oauth';
@@ -141,6 +143,10 @@ export type AuthCredentialsTunnelPayload = {
 export type IntegrationCredentialsTunnelPayload = {
 	plugin: string;
 	credentials: Record<string, string>;
+};
+
+export type CredentialsMigrateTunnelPayload = {
+	integrations: MigratedIntegration[];
 };
 
 export type ConnectCreateLinkTunnelPayload = {
@@ -464,6 +470,25 @@ async function handleIntegrationCredentialsTunnel(
 	}
 }
 
+async function handleCredentialsMigrateTunnel(
+	corsair: unknown,
+	payload: CredentialsMigrateTunnelPayload,
+): Promise<TunnelAck> {
+	try {
+		await processCredentialsMigrateDelivery(corsair, payload);
+		return { status: 'ok' };
+	} catch (error) {
+		return {
+			status: 'failed',
+			retryable: false,
+			error:
+				error instanceof Error
+					? error.message
+					: 'Credential migration delivery failed',
+		};
+	}
+}
+
 /**
  * Scopes the root Corsair instance to the run's tenant. Multi-tenant apps expose
  * plugin namespaces only via `withTenant(...)`; the root wrapper does not, so a
@@ -691,6 +716,21 @@ export async function processCorsair(
 				corsair,
 				envelope.payload as IntegrationCredentialsTunnelPayload,
 			);
+		case 'credentials.migrate': {
+			// A migration rewrites every delivered integration's sealed credentials,
+			// so never accept it on the unsigned local-development path.
+			if (!options.signingSecret?.trim()) {
+				return {
+					status: 'failed',
+					retryable: false,
+					error: 'Tunnel signing secret is required for credentials.migrate',
+				};
+			}
+			return handleCredentialsMigrateTunnel(
+				corsair,
+				envelope.payload as CredentialsMigrateTunnelPayload,
+			);
+		}
 		case 'connect.create_link':
 			return handleConnectCreateLinkTunnel(
 				corsair,

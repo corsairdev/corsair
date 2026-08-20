@@ -33,6 +33,9 @@ export {
 	type PluginAuthStatus,
 	type PluginAuthStatusLevel,
 } from './plugin-auth-status';
+// Dev→prod credential migration (DEK re-wrap)
+export type { MigratedIntegration } from './rewrap-integration';
+export { rewrapIntegrationRow } from './rewrap-integration';
 // Types
 export type {
 	AccountFieldNames,

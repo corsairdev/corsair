@@ -114,7 +114,13 @@ export function signDeliveryEnvelope(input: {
 		payload: input.payload,
 	} satisfies TunnelEnvelope);
 	const timestamp = Math.floor(Date.now() / 1000).toString();
-	const signature = createHmac('sha256', input.signingSecret.trim())
+	const signingSecret = (input.signingSecret ?? '').trim();
+	if (!signingSecret) {
+		throw new Error(
+			'Cannot sign delivery: hub.signingSecret is empty. Set it to this project’s signing secret from the Hub, then restart the app.',
+		);
+	}
+	const signature = createHmac('sha256', signingSecret)
 		.update(body)
 		.digest('hex');
 
@@ -142,7 +148,7 @@ export function verifyDeliveryEnvelope(input: {
 	timestampHeader: string | null | undefined;
 	signingSecret: string;
 }): boolean {
-	const signingSecret = input.signingSecret.trim();
+	const signingSecret = (input.signingSecret ?? '').trim();
 	if (!signingSecret) return false;
 
 	const signature = parseSignatureHeader(input.signatureHeader);
@@ -180,9 +186,13 @@ export function verifySignedTunnelDelivery(input: {
 	timestampHeader: string | undefined;
 	signingSecret: string;
 }): { ok: true } | { ok: false; error: string } {
-	const signingSecret = input.signingSecret.trim();
+	const signingSecret = (input.signingSecret ?? '').trim();
 	if (!signingSecret) {
-		return { ok: false, error: 'Tunnel signing secret is required' };
+		return {
+			ok: false,
+			error:
+				'This app has no hub.signingSecret configured, so Hub deliveries cannot be verified. Set hub.signingSecret to this project’s signing secret from the Hub, then restart.',
+		};
 	}
 
 	const signature = parseSignatureHeader(input.signatureHeader);

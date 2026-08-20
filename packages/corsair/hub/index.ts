@@ -88,6 +88,19 @@ export {
 	SIGNED_TUNNEL_REPLAY_WINDOW_MS,
 } from './contracts/tunnel';
 export {
+	buildMigrationPayload,
+	type DevIntegrationRow,
+	generateProdKek,
+	MIGRATE_HUB_PATH,
+	type MigrationPayload,
+	type MigrationResult,
+	postMigrationToHub,
+} from './credentials-migrate-client';
+export {
+	CredentialsMigrateDeliveryError,
+	processCredentialsMigrateDelivery,
+} from './credentials-migrate-delivery';
+export {
 	type HubDeliveryRequest,
 	type HubDeliveryResult,
 	handleHubDeliveryGet,
