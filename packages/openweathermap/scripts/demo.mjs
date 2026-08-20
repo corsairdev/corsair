@@ -21,11 +21,14 @@
  * Blur the terminal if the key is visible. Revoke after recording.
  */
 
-const API_KEY = process.env.OPENWEATHERMAP_API_KEY;
+const apiKey = process.env.OPENWEATHERMAP_API_KEY;
 const LAT = 51.5074;
 const LON = -0.1278;
 
-if (!API_KEY) {
+const OPENWEATHER_DATA_ORIGIN = 'https://api.openweathermap.org';
+const OPENWEATHER_MAPS_ORIGIN = 'https://maps.openweathermap.org';
+
+if (!apiKey) {
 	console.error(`
 ❌  OPENWEATHERMAP_API_KEY is not set.
 
@@ -38,6 +41,19 @@ Then re-run:
 	process.exit(1);
 }
 
+function authorizedUrl(origin, pathname, params = {}) {
+	const url = new URL(pathname, origin);
+	for (const [key, value] of Object.entries(params)) {
+		url.searchParams.set(key, String(value));
+	}
+	url.searchParams.set('appid', apiKey);
+	return url;
+}
+
+function requestLabel(url) {
+	return `${url.origin}${url.pathname}`;
+}
+
 async function getJson(url) {
 	const res = await fetch(url);
 	const text = await res.text();
@@ -48,7 +64,7 @@ async function getJson(url) {
 		json = { raw: text };
 	}
 	if (!res.ok) {
-		throw new Error(`GET ${url} → ${res.status}: ${text.slice(0, 500)}`);
+		throw new Error(`GET ${requestLabel(url)} → ${res.status}`);
 	}
 	return json;
 }
@@ -69,7 +85,11 @@ async function main() {
 
 	section('1/4  weather.current  (Weather 2.5 /weather)');
 	const weather = await getJson(
-		`https://api.openweathermap.org/data/2.5/weather?lat=${LAT}&lon=${LON}&units=metric&appid=${API_KEY}`,
+		authorizedUrl(OPENWEATHER_DATA_ORIGIN, '/data/2.5/weather', {
+			lat: LAT,
+			lon: LON,
+			units: 'metric',
+		}),
 	);
 	console.log('city:', weather.name);
 	console.log('temp °C:', weather.main?.temp);
@@ -77,26 +97,35 @@ async function main() {
 
 	section('2/4  geocoding.direct  (Geo 1.0 /direct)');
 	const geo = await getJson(
-		`https://api.openweathermap.org/geo/1.0/direct?q=London,UK&limit=1&appid=${API_KEY}`,
+		authorizedUrl(OPENWEATHER_DATA_ORIGIN, '/geo/1.0/direct', {
+			q: 'London,UK',
+			limit: 1,
+		}),
 	);
 	console.log('match:', geo[0]?.name, geo[0]?.country);
 	console.log('lat/lon:', geo[0]?.lat, geo[0]?.lon);
 
 	section('3/4  airPollution.current  (Air Pollution 2.5)');
 	const pollution = await getJson(
-		`https://api.openweathermap.org/data/2.5/air_pollution?lat=${LAT}&lon=${LON}&appid=${API_KEY}`,
+		authorizedUrl(OPENWEATHER_DATA_ORIGIN, '/data/2.5/air_pollution', {
+			lat: LAT,
+			lon: LON,
+		}),
 	);
 	const aqi = pollution.list?.[0]?.main?.aqi;
 	console.log('AQI index (1=best):', aqi);
 	console.log('components sample:', pollution.list?.[0]?.components);
 
 	section('4/4  maps.weatherMapTile  (Maps 2.0 PNG tile)');
-	const tileRes = await fetch(
-		`https://maps.openweathermap.org/maps/2.0/weather/TA2/1/0/0?appid=${API_KEY}`,
-		{ headers: { Accept: 'image/png' } },
+	const tileUrl = authorizedUrl(
+		OPENWEATHER_MAPS_ORIGIN,
+		'/maps/2.0/weather/TA2/1/0/0',
 	);
+	const tileRes = await fetch(tileUrl, {
+		headers: { Accept: 'image/png' },
+	});
 	if (!tileRes.ok) {
-		throw new Error(`map tile → ${tileRes.status}`);
+		throw new Error(`GET ${requestLabel(tileUrl)} → ${tileRes.status}`);
 	}
 	const contentType = tileRes.headers.get('Content-Type') ?? '';
 	const bytes = await tileRes.arrayBuffer();
@@ -112,6 +141,7 @@ async function main() {
 }
 
 main().catch((err) => {
-	console.error('\n❌  Demo failed:', err.message || err);
+	const message = err instanceof Error ? err.message : 'Unknown error';
+	console.error('\n❌  Demo failed:', message);
 	process.exit(1);
 });
