@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/apify",
   "version": "0.1.0",
-  "description": "Apify MCP plugin for Corsair",
+  "description": "Apify plugin for Corsair (MCP + REST API)",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -39,6 +39,7 @@
     "corsair",
     "apify",
     "mcp",
+    "rest",
     "plugin"
   ],
   "author": "",

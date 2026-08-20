@@ -1,0 +1,90 @@
+import type { WebflowOperation } from '../endpoints/operation-types';
+
+export const ecommerceOperations = [
+	{
+		key: 'listOrders',
+		group: 'ecommerce',
+		name: 'listOrders',
+		method: 'GET',
+		path: '/sites/{site_id}/orders',
+		pathParams: ['site_id'],
+		riskLevel: 'read',
+		description:
+			'List all orders for a site with status filtering and pagination',
+	},
+	{
+		key: 'getOrder',
+		group: 'ecommerce',
+		name: 'getOrder',
+		method: 'GET',
+		path: '/sites/{site_id}/orders/{order_id}',
+		pathParams: ['site_id', 'order_id'],
+		riskLevel: 'read',
+		description:
+			'Get detailed information about a specific order including customer, items, and payment status',
+	},
+	{
+		key: 'updateOrder',
+		group: 'ecommerce',
+		name: 'updateOrder',
+		method: 'PATCH',
+		path: '/sites/{site_id}/orders/{order_id}',
+		pathParams: ['site_id', 'order_id'],
+		riskLevel: 'write',
+		description:
+			'Update specific fields of an existing order such as fulfillment details and internal notes',
+	},
+	{
+		key: 'fulfillOrder',
+		group: 'ecommerce',
+		name: 'fulfillOrder',
+		method: 'POST',
+		path: '/sites/{site_id}/orders/{order_id}/fulfill',
+		pathParams: ['site_id', 'order_id'],
+		riskLevel: 'write',
+		description: 'Mark an order as fulfilled',
+	},
+	{
+		key: 'unfulfillOrder',
+		group: 'ecommerce',
+		name: 'unfulfillOrder',
+		method: 'POST',
+		path: '/sites/{site_id}/orders/{order_id}/unfulfill',
+		pathParams: ['site_id', 'order_id'],
+		riskLevel: 'write',
+		description: 'Mark a previously fulfilled order as unfulfilled',
+	},
+	{
+		key: 'refundOrder',
+		group: 'ecommerce',
+		name: 'refundOrder',
+		method: 'POST',
+		path: '/sites/{site_id}/orders/{order_id}/refund',
+		pathParams: ['site_id', 'order_id'],
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Refund an order, reversing the Stripe charge and setting the order status to refunded',
+	},
+	{
+		key: 'getItemInventory',
+		group: 'ecommerce',
+		name: 'getItemInventory',
+		method: 'GET',
+		path: '/collections/{collection_id}/items/{item_id}/inventory',
+		pathParams: ['collection_id', 'item_id'],
+		riskLevel: 'read',
+		description: 'Get current inventory levels for a SKU item',
+	},
+	{
+		key: 'updateItemInventory',
+		group: 'ecommerce',
+		name: 'updateItemInventory',
+		method: 'PATCH',
+		path: '/collections/{collection_id}/items/{item_id}/inventory',
+		pathParams: ['collection_id', 'item_id'],
+		riskLevel: 'write',
+		description:
+			'Update inventory levels for a SKU item, either directly or incrementally',
+	},
+] as const satisfies readonly WebflowOperation[];

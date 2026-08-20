@@ -14,6 +14,12 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { ActorsEndpoints, DocsEndpoints, RunsEndpoints } from './endpoints';
+import {
+	ApifyRestEndpoints,
+	apifyOperations,
+	buildApifyEndpointMeta,
+	buildApifyEndpointSchemas,
+} from './endpoints/rest';
 import type {
 	ApifyMcpEndpointInputs,
 	ApifyMcpEndpointOutputs,
@@ -65,11 +71,12 @@ const apifyEndpointsNested = {
 	actors: ActorsEndpoints,
 	runs: RunsEndpoints,
 	docs: DocsEndpoints,
+	...ApifyRestEndpoints,
 } as const;
 
 const apifyWebhooksNested = {} as const;
 
-export const apifyEndpointSchemas = {
+const mcpEndpointSchemas = {
 	'actors.searchActors': {
 		input: ApifyMcpEndpointInputSchemas.searchActors,
 		output: ApifyMcpEndpointOutputSchemas.searchActors,
@@ -102,11 +109,11 @@ export const apifyEndpointSchemas = {
 		input: ApifyMcpEndpointInputSchemas.fetchApifyDocs,
 		output: ApifyMcpEndpointOutputSchemas.fetchApifyDocs,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof apifyEndpointsNested>;
+} as const;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const apifyEndpointMeta = {
+const mcpEndpointMeta = {
 	'actors.searchActors': {
 		riskLevel: 'read',
 		description: 'Search for Actors in the Apify Store',
@@ -142,6 +149,16 @@ const apifyEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Fetch the full content of an Apify documentation page',
 	},
+} as const;
+
+export const apifyEndpointSchemas = {
+	...mcpEndpointSchemas,
+	...buildApifyEndpointSchemas(apifyOperations),
+} as const satisfies RequiredPluginEndpointSchemas<typeof apifyEndpointsNested>;
+
+const apifyEndpointMeta = {
+	...mcpEndpointMeta,
+	...buildApifyEndpointMeta(apifyOperations),
 } as const satisfies RequiredPluginEndpointMeta<typeof apifyEndpointsNested>;
 
 export const apifyAuthConfig = {
@@ -181,10 +198,14 @@ export function apify<const T extends ApifyMcpPluginOptions>(
 		endpointMeta: apifyEndpointMeta,
 		endpointSchemas: apifyEndpointSchemas,
 		pluginWebhookMatcher: undefined,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: ApifyMcpKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -203,6 +224,12 @@ export function apify<const T extends ApifyMcpPluginOptions>(
 	} satisfies InternalApifyMcpPlugin;
 }
 
+export type {
+	ApifyEndpointInputs,
+	ApifyEndpointOutputs,
+	ApifyOperationInput,
+	ApifyOperationOutput,
+} from './endpoints/rest-types';
 export type {
 	ApifyMcpEndpointInputs,
 	ApifyMcpEndpointOutputs,
