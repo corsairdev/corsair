@@ -1,29 +1,27 @@
 import { z } from 'zod';
 
-const ExampleGetInputSchema = z.object({
-	id: z.string(),
+const GetDetailsFromLinkedinUrlInputSchema = z.object({
+  linkedin_url: z.string().url(),
 });
 
-export type ExampleGetInput = z.infer<typeof ExampleGetInputSchema>;
+export type GetDetailsFromLinkedinUrlInput = z.infer<typeof GetDetailsFromLinkedinUrlInputSchema>;
 
-const ExampleGetResponseSchema = z.object({
-	id: z.string(),
-});
+const GetDetailsFromLinkedinUrlResponseSchema = z.record(z.string(), z.unknown());
 
-export type ExampleGetResponse = z.infer<typeof ExampleGetResponseSchema>;
+export type GetDetailsFromLinkedinUrlResponse = z.infer<typeof GetDetailsFromLinkedinUrlResponseSchema>;
 
 export type AeroleadsEndpointInputs = {
-	exampleGet: ExampleGetInput;
+  getDetailsFromLinkedinUrl: GetDetailsFromLinkedinUrlInput;
 };
 
 export type AeroleadsEndpointOutputs = {
-	exampleGet: ExampleGetResponse;
+  getDetailsFromLinkedinUrl: GetDetailsFromLinkedinUrlResponse;
 };
 
 export const AeroleadsEndpointInputSchemas = {
-	exampleGet: ExampleGetInputSchema,
+  getDetailsFromLinkedinUrl: GetDetailsFromLinkedinUrlInputSchema,
 } as const;
 
 export const AeroleadsEndpointOutputSchemas = {
-	exampleGet: ExampleGetResponseSchema,
+  getDetailsFromLinkedinUrl: GetDetailsFromLinkedinUrlResponseSchema,
 } as const;

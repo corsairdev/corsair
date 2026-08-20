@@ -1,7 +1,7 @@
-import { get as exampleGet } from './example';
+import { getDetailsFromLinkedinUrl } from './example';
 
-export const Example = {
-	get: exampleGet,
+export const Prospects = {
+  getDetailsFromLinkedinUrl,
 };
 
 export * from './types';
