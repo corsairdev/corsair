@@ -17,6 +17,7 @@ export const BaseProviders = [
 	'activecampaign',
 	'activetrail',
 	'addresszen',
+	'aeroleads',
 	'affinda',
 	'agencyzoom',
 	'agentmail',
@@ -59,8 +60,8 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canvas',
 	'canva',
+	'canvas',
 	'circleci',
 	'cloudflare',
 	'cloudinary',
@@ -169,6 +170,7 @@ export const ProviderDisplayNames = {
 	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	aeroleads: 'AeroLeads',
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
@@ -211,8 +213,8 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
@@ -328,6 +330,7 @@ export type AllProviders =
 	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
+	| 'aeroleads'
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
