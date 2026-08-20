@@ -162,41 +162,55 @@ export async function getCorsairInstance({
 		? [existsSync(configPath) ? configPath : path.join(cwd, configPath)]
 		: [...POSSIBLE_PATHS];
 
-	for (const candidatePath of candidatePaths) {
-		try {
-			const { config } = await loadConfig<{
-				corsair?: unknown;
-				default?: unknown;
-			}>({
-				configFile: candidatePath,
-				dotenv: true,
-				jitiOptions: jitiOptions(cwd),
-				cwd,
-			});
-			if ('corsair' in config && isCorsairInstance(config.corsair)) {
-				return config.corsair;
-			}
-			if ('default' in config && isCorsairInstance(config.default)) {
-				return config.default;
-			}
-			if (Object.keys(config).length > 0) {
+	// Loading the app config imports createCorsair, which would auto-start a dev
+	// tunnel and hang the CLI. Suppress the auto path during the import; the CLI
+	// drives the tunnel explicitly (setup verifies; `corsair http` runs it).
+	const priorTunnelFlag = process.env.CORSAIR_TUNNEL;
+	process.env.CORSAIR_TUNNEL = '0';
+	try {
+		for (const candidatePath of candidatePaths) {
+			try {
+				const { config } = await loadConfig<{
+					corsair?: unknown;
+					default?: unknown;
+				}>({
+					configFile: candidatePath,
+					dotenv: true,
+					jitiOptions: jitiOptions(cwd),
+					cwd,
+				});
+				if ('corsair' in config && isCorsairInstance(config.corsair)) {
+					return config.corsair;
+				}
+				if ('default' in config && isCorsairInstance(config.default)) {
+					return config.default;
+				}
+				if (Object.keys(config).length > 0) {
+					fail(
+						`Couldn't read your Corsair instance in ${candidatePath}. Export it as 'corsair' or default.`,
+						shouldThrowOnError,
+					);
+				}
+			} catch (error) {
 				fail(
-					`Couldn't read your Corsair instance in ${candidatePath}. Export it as 'corsair' or default.`,
+					`Error loading ${candidatePath}: ${parseLoadError(error)}`,
 					shouldThrowOnError,
 				);
 			}
-		} catch (error) {
-			fail(
-				`Error loading ${candidatePath}: ${parseLoadError(error)}`,
-				shouldThrowOnError,
-			);
+		}
+
+		fail(
+			"Couldn't find corsair.ts in your project. Add it in root or src/lib/server/app.",
+			shouldThrowOnError,
+		);
+	} finally {
+		if (priorTunnelFlag === undefined) {
+			// biome-ignore lint/performance/noDelete: env vars must be truly unset, not "undefined"
+			delete process.env.CORSAIR_TUNNEL;
+		} else {
+			process.env.CORSAIR_TUNNEL = priorTunnelFlag;
 		}
 	}
-
-	fail(
-		"Couldn't find corsair.ts in your project. Add it in root or src/lib/server/app.",
-		shouldThrowOnError,
-	);
 }
 
 export function resolveClient(
