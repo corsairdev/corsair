@@ -3,18 +3,18 @@ import type { AeroleadsEndpoints } from '..';
 import type { AeroleadsEndpointOutputs } from './types';
 import { makeAeroleadsRequest } from '../client';
 
+// AeroLeads LinkedIn API — see https://aeroleads.com/api
+// GET https://aeroleads.com/api/get_linkedin_details?api_key=KEY&linkedin_url=URL
+const AEROLEADS_GET_LINKEDIN_DETAILS = 'get_linkedin_details';
+
 export const getDetailsFromLinkedinUrl: AeroleadsEndpoints['getDetailsFromLinkedinUrl'] = async (ctx, input) => {
-  // TODO(provider-doc-needed): The endpoint path and request shape below are
-  // placeholders — AeroLeads did not publish a public API spec at scaffold
-  // time. Verify the path, query/body parameters, and response schema against
-  // the official docs before sending real traffic.
   const response = await makeAeroleadsRequest<AeroleadsEndpointOutputs['getDetailsFromLinkedinUrl']>(
-    '',
+    AEROLEADS_GET_LINKEDIN_DETAILS,
     ctx.key,
     {
       method: 'GET',
       query: {
-        url: input.linkedin_url,
+        linkedin_url: input.linkedin_url,
       },
     },
   );
