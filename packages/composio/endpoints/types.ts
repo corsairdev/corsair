@@ -103,21 +103,26 @@ export type ActionGetInput = z.infer<typeof ActionGetInputSchema>;
 
 export type ActionGetResponse = Tool;
 
-const ActionExecuteInputSchema = z.object({
-	tool_slug: PathId.optional(),
-	/** @deprecated use tool_slug */
-	actionId: PathId.optional(),
-	arguments: JsonObject.optional(),
-	/** @deprecated use arguments */
-	input: JsonObject.optional(),
-	text: z.string().optional(),
-	connected_account_id: PathId.optional(),
-	/** @deprecated use connected_account_id */
-	connectionId: PathId.optional(),
-	user_id: z.string().optional(),
-	version: z.string().optional(),
-	toolkit_versions: z.string().optional(),
-});
+const ActionExecuteInputSchema = z
+	.object({
+		tool_slug: PathId.optional(),
+		/** @deprecated use tool_slug */
+		actionId: PathId.optional(),
+		arguments: JsonObject.optional(),
+		/** @deprecated use arguments */
+		input: JsonObject.optional(),
+		text: z.string().optional(),
+		connected_account_id: PathId.optional(),
+		/** @deprecated use connected_account_id */
+		connectionId: PathId.optional(),
+		user_id: z.string().optional(),
+		version: z.string().optional(),
+		toolkit_versions: z.string().optional(),
+	})
+	.refine(
+		(data) => data.tool_slug !== undefined || data.actionId !== undefined,
+		{ message: 'Either tool_slug or actionId is required' },
+	);
 
 export type ActionExecuteInput = z.infer<typeof ActionExecuteInputSchema>;
 

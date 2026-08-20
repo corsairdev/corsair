@@ -5,6 +5,7 @@ export class ComposioAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'ComposioAPIError';
@@ -13,6 +14,18 @@ export class ComposioAPIError extends Error {
 
 /** Composio v3 API root. v1/v2 return 410. */
 export const COMPOSIO_API_BASE = 'https://backend.composio.dev/api';
+
+/**
+ * Drop undefined entries from a query object so they are not sent upstream.
+ * Shared by all endpoint modules.
+ */
+export function omitUndefined(
+	query: Record<string, string | number | boolean | undefined>,
+): Record<string, string | number | boolean | undefined> {
+	return Object.fromEntries(
+		Object.entries(query).filter(([, v]) => v !== undefined),
+	);
+}
 
 export async function makeComposioRequest<T>(
 	endpoint: string,
@@ -50,8 +63,10 @@ export async function makeComposioRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// Preserve status + retryAfter (ms) from ApiError so error handlers can
+		// match on structured fields and honor Retry-After delays.
 		if (error instanceof ApiError) {
-			throw new ComposioAPIError(error.message, error.status);
+			throw new ComposioAPIError(error.message, error.status, error.retryAfter);
 		}
 		if (error instanceof Error) {
 			throw new ComposioAPIError(error.message);
