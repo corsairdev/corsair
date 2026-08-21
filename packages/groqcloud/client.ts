@@ -10,7 +10,7 @@ export class GroqcloudAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
-		options?: { cause?: Error; status?: number },
+		options?: { cause?: Error; status?: number; retryAfterMs?: number },
 	) {
 		super(message);
 		this.name = 'GroqcloudAPIError';
@@ -26,6 +26,7 @@ export class GroqcloudAPIError extends Error {
 			this.body = cause.body;
 		} else if (options?.status !== undefined) {
 			this.status = options.status;
+			this.retryAfter = options.retryAfterMs;
 		}
 	}
 }
@@ -85,11 +86,24 @@ export type GroqcloudMultipartFieldValue = string | string[] | undefined;
  */
 const MULTIPART_TIMEOUT_MS = 120_000;
 
+/**
+ * `Retry-After` is sent in seconds; the retry policy expects milliseconds.
+ * The value may be fractional (e.g. "2.5").
+ */
+function parseRetryAfterMs(response: Response): number | undefined {
+	const header = response.headers.get('retry-after');
+	if (!header) return undefined;
+	const seconds = Number.parseFloat(header);
+	return Number.isFinite(seconds) && seconds >= 0
+		? Math.round(seconds * 1000)
+		: undefined;
+}
+
 function throwFromFetchResponse(response: Response, bodyText: string): never {
 	throw new GroqcloudAPIError(
 		`Generic Error: status: ${response.status}; status text: ${response.statusText}; body: "${bodyText}"`,
 		undefined,
-		{ status: response.status },
+		{ status: response.status, retryAfterMs: parseRetryAfterMs(response) },
 	);
 }
 

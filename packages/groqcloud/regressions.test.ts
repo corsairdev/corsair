@@ -1,5 +1,7 @@
 import { ApiError } from 'corsair/http';
+import * as clientModule from './client';
 import { GroqcloudAPIError } from './client';
+import { Endpoints } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { GroqcloudSchema } from './schema';
 import { audioSchemas } from './schema/audio';
@@ -223,5 +225,90 @@ describe('model ids keep their namespace segment', () => {
 				model: 'openai/gpt-oss-120b',
 			}),
 		).not.toThrow();
+	});
+});
+
+describe('streaming is blocked at runtime, not just in the schema', () => {
+	// The endpoint binder does not parse endpoint schemas, so the declared
+	// `stream: false` is metadata only — the guard has to live in the endpoint.
+	const ctx = { key: 'k', options: {}, db: {} } as never;
+
+	it('rejects stream:true even though the binder never validates input', async () => {
+		const spy = jest.spyOn(clientModule, 'makeGroqcloudRequest');
+
+		await expect(
+			Endpoints.chat.createCompletion(ctx, {
+				model: 'openai/gpt-oss-120b',
+				messages: [{ role: 'user', content: 'hi' }],
+				stream: true,
+			} as never),
+		).rejects.toThrow(/streaming is not supported/i);
+
+		// The request must never reach the transport.
+		expect(spy).not.toHaveBeenCalled();
+		spy.mockRestore();
+	});
+
+	it('allows a non-streaming call through', async () => {
+		const spy = jest
+			.spyOn(clientModule, 'makeGroqcloudRequest')
+			.mockResolvedValueOnce({ choices: [] } as never);
+
+		await Endpoints.chat.createCompletion(ctx, {
+			model: 'openai/gpt-oss-120b',
+			messages: [{ role: 'user', content: 'hi' }],
+		} as never);
+
+		expect(spy).toHaveBeenCalledTimes(1);
+		spy.mockRestore();
+	});
+});
+
+describe('multipart rate limits preserve Retry-After', () => {
+	function mockFetch(status: number, headers: Record<string, string>) {
+		return jest.fn(async () => ({
+			ok: status < 400,
+			status,
+			statusText: 'Too Many Requests',
+			headers: new Headers(headers),
+			text: async () => '{"error":{"message":"rate limited"}}',
+		})) as unknown as typeof fetch;
+	}
+
+	it('parses Retry-After seconds into milliseconds', async () => {
+		const original = global.fetch;
+		global.fetch = mockFetch(429, { 'retry-after': '2.5' });
+
+		const error = (await clientModule
+			.multipartGroqcloudRequest('audio/transcriptions', 'k', {
+				files: [{ field: 'file', file: 'x', fileName: 'a.wav' }],
+			})
+			.catch((e: unknown) => e)) as clientModule.GroqcloudAPIError;
+
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBe(2500);
+		// and the policy can now actually use it
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		expect(
+			(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).headersRetryAfterMs,
+		).toBe(2500);
+
+		global.fetch = original;
+	});
+
+	it('tolerates a missing Retry-After header', async () => {
+		const original = global.fetch;
+		global.fetch = mockFetch(429, {});
+
+		const error = (await clientModule
+			.multipartGroqcloudRequest('audio/transcriptions', 'k', {
+				files: [{ field: 'file', file: 'x', fileName: 'a.wav' }],
+			})
+			.catch((e: unknown) => e)) as clientModule.GroqcloudAPIError;
+
+		expect(error.status).toBe(429);
+		expect(error.retryAfter).toBeUndefined();
+
+		global.fetch = original;
 	});
 });
