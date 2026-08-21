@@ -44,6 +44,7 @@ export const BaseProviders = [
 	'asana',
 	'asindataapi',
 	'asyncinterview',
+	'autom',
 	'ayrshare',
 	'baselinker',
 	'betterstack',
@@ -59,8 +60,8 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canvas',
 	'canva',
+	'canvas',
 	'circleci',
 	'cloudflare',
 	'cloudinary',
@@ -196,6 +197,7 @@ export const ProviderDisplayNames = {
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
 	asyncinterview: 'Async Interview',
+	autom: 'Autom',
 	ayrshare: 'Ayrshare',
 	baselinker: 'BaseLinker',
 	betterstack: 'Better Stack',
@@ -211,8 +213,8 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
@@ -355,6 +357,7 @@ export type AllProviders =
 	| 'asana'
 	| 'asindataapi'
 	| 'asyncinterview'
+	| 'autom'
 	| 'ayrshare'
 	| 'baselinker'
 	| 'betterstack'
