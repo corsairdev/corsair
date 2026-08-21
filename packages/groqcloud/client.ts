@@ -1,13 +1,32 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class GroqcloudAPIError extends Error {
+	public readonly status?: number;
+	public readonly retryAfter?: number;
+	/** Error payload from Groq: `{ error: { message, type, code } }`. */
+	public readonly body?: unknown;
+
 	constructor(
 		message: string,
 		public readonly code?: string,
+		options?: { cause?: Error; status?: number },
 	) {
 		super(message);
 		this.name = 'GroqcloudAPIError';
+
+		// Carry the transport status and rate-limit metadata. Without this,
+		// `error-handlers.ts` can never match a 429: corsair throws it with the
+		// message "Too Many Requests", which contains neither "429" nor
+		// "rate_limited", so the text fallback never fires either.
+		const cause = options?.cause;
+		if (cause instanceof ApiError) {
+			this.status = cause.status;
+			this.retryAfter = cause.retryAfter;
+			this.body = cause.body;
+		} else if (options?.status !== undefined) {
+			this.status = options.status;
+		}
 	}
 }
 
@@ -51,7 +70,7 @@ export async function makeGroqcloudRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof Error) {
-			throw new GroqcloudAPIError(error.message);
+			throw new GroqcloudAPIError(error.message, undefined, { cause: error });
 		}
 		throw new GroqcloudAPIError('Unknown error');
 	}
@@ -59,10 +78,18 @@ export async function makeGroqcloudRequest<T>(
 
 export type GroqcloudMultipartFieldValue = string | string[] | undefined;
 
+/**
+ * Deadline for multipart uploads. This path uses `fetch` directly (the shared
+ * transport does not do multipart), so it needs its own timeout — otherwise a
+ * stalled upstream holds the request open until the runtime's network timeout.
+ */
+const MULTIPART_TIMEOUT_MS = 120_000;
+
 function throwFromFetchResponse(response: Response, bodyText: string): never {
 	throw new GroqcloudAPIError(
 		`Generic Error: status: ${response.status}; status text: ${response.statusText}; body: "${bodyText}"`,
 		undefined,
+		{ status: response.status },
 	);
 }
 
@@ -124,13 +151,31 @@ export async function multipartGroqcloudRequest<T>(
 		}
 	}
 
-	const response = await fetch(buildUrl(endpoint), {
-		method: 'POST',
-		headers: { Authorization: `Bearer ${apiKey}` },
-		body: formData,
-	});
+	const controller = new AbortController();
+	const timeout = setTimeout(() => controller.abort(), MULTIPART_TIMEOUT_MS);
 
-	const bodyText = await response.text();
+	let response: Response;
+	let bodyText: string;
+	try {
+		response = await fetch(buildUrl(endpoint), {
+			method: 'POST',
+			headers: { Authorization: `Bearer ${apiKey}` },
+			body: formData,
+			signal: controller.signal,
+		});
+		bodyText = await response.text();
+	} catch (error) {
+		if (error instanceof Error && error.name === 'AbortError') {
+			throw new GroqcloudAPIError(
+				`Request timed out after ${MULTIPART_TIMEOUT_MS}ms`,
+			);
+		}
+		throw error instanceof Error
+			? new GroqcloudAPIError(error.message)
+			: new GroqcloudAPIError('Unknown error');
+	} finally {
+		clearTimeout(timeout);
+	}
 
 	if (!response.ok) {
 		throwFromFetchResponse(response, bodyText);

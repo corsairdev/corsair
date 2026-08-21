@@ -88,14 +88,31 @@ describe('groqcloud plugin', () => {
 		});
 
 		it('chat.createResponse', async () => {
-			(client.makeGroqcloudRequest as jest.Mock).mockResolvedValueOnce({
-				choices: [],
-			});
+			// Shape captured from POST /openai/v1/responses: the reply is in
+			// output[], and `text` is the echoed format config.
+			const response = {
+				id: 'resp_1',
+				object: 'response',
+				model: 'openai/gpt-oss-120b',
+				status: 'completed',
+				output: [
+					{
+						type: 'message',
+						id: 'msg_1',
+						role: 'assistant',
+						content: [{ type: 'output_text', text: 'ok' }],
+					},
+				],
+				text: { format: { type: 'text' } },
+			};
+			(client.makeGroqcloudRequest as jest.Mock).mockResolvedValueOnce(
+				response,
+			);
 			const result = await Endpoints.chat.createResponse(mockCtx, {
-				model: 'llama3-8b-8192',
-				messages: [],
-			} as any);
-			expect(result).toEqual({ choices: [] });
+				model: 'openai/gpt-oss-120b',
+				input: 'say ok',
+			});
+			expect(result).toEqual(response);
 			expect(client.makeGroqcloudRequest).toHaveBeenCalledWith(
 				'responses',
 				'test_key',

@@ -17,9 +17,11 @@ export const audioSchemas = {
 				.optional()
 				.describe('An optional text to guide the model'),
 			response_format: z
-				.enum(['json', 'text', 'srt', 'verbose_json', 'vtt'])
+				.enum(['json', 'text', 'verbose_json'])
 				.optional()
-				.describe('The format of the transcript output'),
+				.describe(
+					'Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400.',
+				),
 			temperature: z.number().optional().describe('The sampling temperature'),
 		}),
 		output: z
@@ -41,9 +43,11 @@ export const audioSchemas = {
 				.optional()
 				.describe('An optional text to guide the model'),
 			response_format: z
-				.enum(['json', 'text', 'srt', 'verbose_json', 'vtt'])
+				.enum(['json', 'text', 'verbose_json'])
 				.optional()
-				.describe('The format of the transcript output'),
+				.describe(
+					'Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400.',
+				),
 			temperature: z.number().optional().describe('The sampling temperature'),
 		}),
 		output: z

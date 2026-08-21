@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/groqcloud",
   "version": "0.1.0",
-  "description": "Groqcloud plugin for Corsair",
+  "description": "GroqCloud plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
