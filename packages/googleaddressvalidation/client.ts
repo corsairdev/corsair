@@ -11,9 +11,6 @@ export class GoogleAddressValidationAPIError extends Error {
 		message: string,
 		public readonly code?: string,
 		options?: {
-			// Native `cause` chaining only — never the raw ApiError, since its
-			// `.url`/`.request.query` carry the API key (Google's auth is a query
-			// param, not a header). Use the fields below for ApiError metadata.
 			cause?: Error;
 			status?: number;
 			statusText?: string;
@@ -52,10 +49,10 @@ export async function makeGoogleAddressValidationRequest<T>(
 		CREDENTIALS: 'omit',
 		HEADERS: {
 			'Content-Type': 'application/json',
+			'X-Goog-Api-Key': apiKey,
 		},
 	};
 
-	// Google's API Key auth is a `key` query param, not an Authorization header.
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
@@ -64,7 +61,7 @@ export async function makeGoogleAddressValidationRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: { ...query, key: apiKey },
+		query,
 	};
 
 	try {

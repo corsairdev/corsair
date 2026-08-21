@@ -11,6 +11,32 @@ jest.mock('corsair/http', () => {
 
 const mockRequest = jest.mocked(request);
 
+describe('GoogleAddressValidation API client auth', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('sends the API key as X-Goog-Api-Key and omits the key query param', async () => {
+		mockRequest.mockResolvedValueOnce({});
+
+		await makeGoogleAddressValidationRequest(
+			'v1:validateAddress',
+			'secret-key',
+			{
+				method: 'POST',
+				body: {},
+			},
+		);
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [config, requestOptions] = mockRequest.mock.calls[0] ?? [];
+		expect(config?.HEADERS).toMatchObject({
+			'X-Goog-Api-Key': 'secret-key',
+		});
+		expect(requestOptions?.query?.key).toBeUndefined();
+	});
+});
+
 describe('GoogleAddressValidation API client error wrapping', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
