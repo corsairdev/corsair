@@ -16,12 +16,21 @@ describe('googledriveSubscribe (BYO)', () => {
 			return { ok: true, json: async () => ({ resourceId: 'res-1' }) };
 		}) as unknown as typeof fetch;
 
-		const ctx = { keys: { get_access_token: async () => 'tok' } };
+		const saved: string[] = [];
+		const ctx = {
+			keys: {
+				get_access_token: async () => 'tok',
+				set_changes_page_token: async (value: string | null) => {
+					if (value) saved.push(value);
+				},
+			},
+		};
 		const result = await googledriveSubscribe(ctx, {
 			webhookUrl: 'https://hub.example/webhooks/uuid',
 		});
 
 		expect(result!.webhookLink.linkType).toBe('channel_id');
+		expect(saved).toEqual(['77']);
 		expect(calls[0]!.url).toBe(
 			'https://www.googleapis.com/drive/v3/changes/startPageToken',
 		);

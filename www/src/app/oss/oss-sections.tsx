@@ -147,7 +147,6 @@ export async function OssIntegrationsSection({
 							integration={integration}
 							session={Boolean(session)}
 							index={startIndex + index + 1}
-							wipIntegrationName={integrationsData.wipIntegrationName}
 							claimBlockReason={integrationsData.claimBlockReason}
 						/>
 					))}

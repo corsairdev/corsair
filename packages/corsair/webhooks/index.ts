@@ -190,6 +190,8 @@ export async function processWebhook(
 		 * wildcards.
 		 */
 		plugin?: string;
+		/** Hub already verified the provider signature; skip app-side re-verify. */
+		hubVerified?: boolean;
 	},
 ): Promise<WebhookFilterResult> {
 	const normalizedHeaders = normalizeHeaders(headers);
@@ -255,6 +257,7 @@ export async function processWebhook(
 			headers: normalizedHeaders,
 			rawBody: typeof body === 'string' ? body : JSON.stringify(body),
 			...(query ? { query } : {}),
+			...(options?.hubVerified ? { hubVerified: true } : {}),
 		};
 
 		try {

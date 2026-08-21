@@ -1,0 +1,162 @@
+---
+title: Overview
+description: "Mailchimp plugin for Corsair"
+---
+
+Use **Mailchimp** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+
+**What you get:**
+
+- 56 typed API operations
+- 3 database entities synced for fast `.search()` / `.list()` queries
+- 4 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/mailchimp
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { mailchimp } from '@corsair-dev/mailchimp';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [mailchimp()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { mailchimp } from '@corsair-dev/mailchimp';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [mailchimp()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/mailchimp/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=mailchimp
+```
+
+Use the key names documented in [Get Credentials](/plugins/mailchimp/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=mailchimp --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="OAuth 2.0 (Default)">
+
+```ts corsair.ts
+mailchimp()
+```
+
+Store credentials with `pnpm corsair setup --plugin=mailchimp` (see [Get Credentials](/plugins/mailchimp/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+<Tab title="API Key">
+
+```ts corsair.ts
+mailchimp({
+    authType: 'api_key',
+})
+```
+
+Store credentials with `pnpm corsair setup --plugin=mailchimp` (see [Get Credentials](/plugins/mailchimp/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+## Webhooks
+
+This plugin registers **4** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/mailchimp/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.mailchimp.db.<entity>.search()` and `.list()`. See [Database](/plugins/mailchimp/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `account.ping`
+
+```ts
+await corsair.mailchimp.api.account.ping({});
+```
+
+
+**Write-style (write):** `campaigns.create`
+
+```ts
+await corsair.mailchimp.api.campaigns.create({});
+```
+
+
+See the full list on the [API](/plugins/mailchimp/api) page. Use `pnpm corsair list --plugin=mailchimp` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/mailchimp/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/mailchimp/api) |
+| Database | [Database](/plugins/mailchimp/database) |
+| Webhooks | [Webhooks](/plugins/mailchimp/webhooks) |
+| Credentials | [Get credentials](/plugins/mailchimp/get-credentials) |
+

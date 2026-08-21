@@ -55,6 +55,7 @@ export function IntegrationSearch({ defaultValue }: { defaultValue: string }) {
 			/>
 			<input
 				type="search"
+				aria-label="Search integrations"
 				value={value}
 				onChange={(event) => handleChange(event.target.value)}
 				placeholder="Search integrations..."

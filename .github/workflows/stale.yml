@@ -16,5 +16,5 @@ jobs:
           stale-pr-message: 'This pull request has been automatically marked as stale because it has not had recent activity. It will be closed if no further activity occurs. Thank you for your contributions.'
           days-before-stale: 90
           days-before-close: 30
-          exempt-issue-labels: 'pinned,security,help-wanted,good-first-issue'
-          exempt-pr-labels: 'pinned,dependencies,help-wanted,good-first-issue'
+          exempt-issue-labels: 'pinned,security,help wanted,good first issue'
+          exempt-pr-labels: 'pinned,dependencies,help wanted,good first issue'

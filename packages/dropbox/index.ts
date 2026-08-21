@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import { Files, Folders, Search } from './endpoints';
 import type {
@@ -188,7 +189,7 @@ const dropboxEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof dropboxEndpointsNested>;
 
 export type DropboxPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalDropboxPlugin['hooks'];
@@ -228,6 +229,9 @@ export type DropboxBoundWebhooks = BindWebhooks<DropboxWebhooks>;
 
 export const dropboxAuthConfig = {
 	oauth_2: {
+		account: ['account_id', 'user_id'] as const,
+	},
+	managed: {
 		account: ['account_id', 'user_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -297,6 +301,14 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			// See https://www.dropbox.com/developers/reference/webhooks
 			if (source === 'webhook') {
 				if (options.webhookSecret) return options.webhookSecret;
+				if (ctx.authType === 'managed') {
+					throw new Error(
+						'[auth-missing:dropbox:managed]: webhook signature is not available in managed mode',
+					);
+				}
+				if (ctx.authType !== 'oauth_2') {
+					throw new AuthMissingError('dropbox', 'oauth_2');
+				}
 				const creds = await ctx.keys.get_integration_credentials();
 				if (!creds.client_secret) {
 					throw new Error(
@@ -372,6 +384,25 @@ export function dropbox<const T extends DropboxPluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return result.accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:dropbox:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'dropbox',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

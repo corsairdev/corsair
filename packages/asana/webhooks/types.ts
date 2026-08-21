@@ -134,8 +134,12 @@ export function createAsanaEventMatch(
 export function verifyAsanaWebhookSignature(
 	// any/unknown for payload and headers since they come from raw webhook request before parsing
 	request: { payload: unknown; headers: unknown },
-	secret: string,
+	secret: string | undefined,
 ): { valid: boolean; error?: string } {
+	if (!secret?.trim()) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
 	const rawBody =
 		typeof request.payload === 'string'
 			? request.payload

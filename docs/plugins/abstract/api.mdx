@@ -1,0 +1,253 @@
+---
+title: API
+description: "API reference for Abstract: every `abstract.api.*` operation with input and output types."
+---
+
+Every `abstract.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Email
+
+### reputation
+
+`email.reputation`
+
+Assess email deliverability and quality: format, disposable/free/role detection, MX and SMTP validation
+
+**Risk:** `read`
+
+```ts
+await corsair.abstract.api.email.reputation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The email address to check the reputation of |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email_address` | `string` | Yes | — |
+| `suggested_correction` | `string` | No | — |
+| `email_deliverability` | `object` | Yes | — |
+| `email_quality` | `object` | Yes | — |
+| `email_sender` | `object` | Yes | — |
+| `email_domain` | `object` | Yes | — |
+| `email_risk` | `object` | Yes | — |
+| `email_breaches` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="email_deliverability full type">
+
+```ts
+{
+  status: string,
+  status_detail: string,
+  is_format_valid: boolean,
+  is_smtp_valid: boolean,
+  is_mx_valid: boolean,
+  mx_records?: string[] | null
+}
+```
+</Accordion>
+
+<Accordion title="email_quality full type">
+
+```ts
+{
+  score: number,
+  is_free_email: boolean,
+  is_username_suspicious: boolean,
+  is_disposable: boolean,
+  is_catchall: boolean,
+  is_subaddress: boolean,
+  is_role?: boolean,
+  is_dmarc_enforced?: boolean,
+  is_spf_strict?: boolean,
+  minimum_age?: number | null
+}
+```
+</Accordion>
+
+<Accordion title="email_sender full type">
+
+```ts
+{
+  first_name?: string | null,
+  last_name?: string | null,
+  email_provider_name?: string | null,
+  organization_name?: string | null,
+  organization_type?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="email_domain full type">
+
+```ts
+{
+  domain?: string | null,
+  domain_age?: number | null,
+  is_live_site?: boolean | null,
+  registrar?: string | null,
+  registrar_url?: string | null,
+  date_registered?: string | null,
+  date_last_renewed?: string | null,
+  date_expires?: string | null,
+  is_risky_tld?: boolean | null
+}
+```
+</Accordion>
+
+<Accordion title="email_risk full type">
+
+```ts
+{
+  address_risk_status?: string | null,
+  domain_risk_status?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="email_breaches full type">
+
+```ts
+{
+  total_breaches?: number | null,
+  date_first_breached?: string | null,
+  date_last_breached?: string | null,
+  breached_domains?: {
+    domain: string,
+    breach_date?: string | null
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validate
+
+`email.validate`
+
+Validate whether an email address is real, correctly formatted, and deliverable
+
+**Risk:** `read`
+
+```ts
+await corsair.abstract.api.email.validate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | The email address to validate |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `autocorrect` | `string` | Yes | — |
+| `deliverability` | `string` | Yes | — |
+| `quality_score` | `number` | Yes | — |
+| `is_valid_format` | `boolean` | Yes | — |
+| `is_free_email` | `boolean` | Yes | — |
+| `is_disposable_email` | `boolean` | Yes | — |
+| `is_role_email` | `boolean` | Yes | — |
+| `is_catchall_email` | `boolean` | Yes | — |
+| `is_mx_found` | `boolean` | Yes | — |
+| `is_smtp_valid` | `boolean` | Yes | — |
+
+
+
+---
+
+## Iban
+
+### validate
+
+`iban.validate`
+
+Validate the format and country code of an IBAN number
+
+**Risk:** `read`
+
+```ts
+await corsair.abstract.api.iban.validate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iban` | `string` | Yes | The IBAN to validate |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `iban` | `string` | Yes | — |
+| `is_valid` | `boolean` | Yes | — |
+
+
+
+---
+
+## Vat
+
+### getCategories
+
+`vat.getCategories`
+
+Get VAT rate categories (standard, reduced, special) for a country
+
+**Risk:** `read`
+
+```ts
+await corsair.abstract.api.vat.getCategories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `countryCode` | `string` | Yes | ISO 3166-1 alpha-2 country code, e.g. "DE" |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  country_code: string,
+  rate: string,
+  category: string,
+  description: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

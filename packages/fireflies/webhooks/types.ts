@@ -1,5 +1,8 @@
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
-import crypto from 'crypto';
+import {
+	verifyHmacSignature,
+	verifyHmacSignatureWithPrefix,
+} from 'corsair/http';
 import { z } from 'zod';
 
 export const FirefliesWebhookPayloadSchema = z.object({
@@ -81,6 +84,12 @@ export function createFirefliesMatch(eventType: string): CorsairWebhookMatcher {
 	};
 }
 
+export function hasFirefliesWebhookSignatureHeader(
+	headers: Record<string, string | string[] | undefined>,
+): boolean {
+	return 'x-hub-signature' in headers || 'x-fireflies-signature' in headers;
+}
+
 export function verifyFirefliesWebhookSignature(
 	request: {
 		rawBody?: string;
@@ -89,9 +98,14 @@ export function verifyFirefliesWebhookSignature(
 	},
 	secret: string,
 ): { valid: boolean; error?: string } {
-	const signatureHeader = request.headers['x-fireflies-signature'];
+	if (!secret?.trim()) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+	const signatureHeader =
+		request.headers['x-hub-signature'] ??
+		request.headers['x-fireflies-signature'];
 	if (!signatureHeader) {
-		return { valid: false, error: 'Missing x-fireflies-signature header' };
+		return { valid: false, error: 'Missing x-hub-signature header' };
 	}
 	const signature = Array.isArray(signatureHeader)
 		? signatureHeader[0]
@@ -99,18 +113,15 @@ export function verifyFirefliesWebhookSignature(
 	if (!signature) {
 		return { valid: false, error: 'Empty signature header' };
 	}
-	const body = request.rawBody ?? JSON.stringify(request.payload);
-	const expectedSignature = crypto
-		.createHmac('sha256', secret)
-		.update(body)
-		.digest('hex');
-	try {
-		const isValid = crypto.timingSafeEqual(
-			Buffer.from(signature),
-			Buffer.from(expectedSignature),
-		);
-		return { valid: isValid, error: isValid ? undefined : 'Invalid signature' };
-	} catch {
-		return { valid: false, error: 'Signature comparison failed' };
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
 	}
+	const isValid = signature.startsWith('sha256=')
+		? verifyHmacSignatureWithPrefix(rawBody, secret, signature, 'sha256=')
+		: verifyHmacSignature(rawBody, secret, signature);
+	return { valid: isValid, error: isValid ? undefined : 'Invalid signature' };
 }

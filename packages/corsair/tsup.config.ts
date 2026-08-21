@@ -21,6 +21,10 @@ const yamlPlugin = {
 export default defineConfig({
 	clean: true,
 	dts: { compilerOptions: { composite: false, incremental: false } },
+	// Injects the __filename/__dirname shim into the ESM output so frpc-binary.ts's
+	// createRequire(__filename) resolves. __filename (not import.meta.url) keeps that
+	// file parseable by ts-jest, which transpiles it to CJS.
+	shims: true,
 	format: ['esm'],
 	target: 'esnext',
 	platform: 'node',
@@ -48,6 +52,7 @@ export default defineConfig({
 		'oauth.ts',
 		'tunnel.ts',
 		'hub.ts',
+		'hub/tunnel/run-tunnel.ts',
 		'orm.ts',
 		'setup.ts',
 		'http.ts',

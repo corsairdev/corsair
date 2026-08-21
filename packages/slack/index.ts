@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { SlackEndpointInputs, SlackEndpointOutputs } from './endpoints';
 import {
 	Channels,
@@ -643,6 +644,9 @@ export const slackAuthConfig = {
 	oauth_2: {
 		account: ['team_id'] as const,
 	},
+	managed: {
+		account: ['team_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 /**
@@ -659,7 +663,7 @@ type SlackWebhook<K extends keyof SlackWebhookOutputs, TEvent> = CorsairWebhook<
 export type SlackBoundWebhooks = BindWebhooks<SlackWebhooks>;
 
 export type SlackPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	signingSecret?: string;
 	hooks?: InternalSlackPlugin['hooks'];
@@ -801,6 +805,25 @@ export function slack<const PluginOptions extends SlackPluginOptions>(
 				}
 
 				return res;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:slack:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'slack',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('slack', 'oauth_2');

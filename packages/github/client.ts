@@ -1,6 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
-import { convertKeysToCamelCase } from './utils';
+import { convertKeysToCamelCase, convertQueryKeysToSnakeCase } from './utils';
 
 export class GithubAPIError extends Error {
 	constructor(
@@ -61,7 +61,10 @@ async function makeGithubRequestWithToken<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json',
-		query: method === 'GET' ? query : undefined,
+		query:
+			method === 'GET' && query
+				? convertQueryKeysToSnakeCase(query)
+				: undefined,
 	};
 
 	try {

@@ -1,3 +1,5 @@
+import { timingSafeEqual } from 'node:crypto';
+
 export interface TelegramUpdate {
 	update_id: number;
 	message?: TelegramMessage;
@@ -265,8 +267,7 @@ export function verifyTelegramWebhookSignature(
 	secretToken: string,
 ): { valid: boolean; error?: string } {
 	if (!secretToken) {
-		// No secret configured — skip verification (valid deployment scenario)
-		return { valid: true };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
 	const headers = request.headers;
@@ -283,7 +284,16 @@ export function verifyTelegramWebhookSignature(
 		};
 	}
 
-	const isValid = providedToken === secretToken;
+	// Use a constant-time comparison to avoid leaking the secret via timing.
+	// Encode both tokens to UTF-8 buffers first and compare the *byte* lengths
+	// (not JS string code-unit lengths) so a non-ASCII token with the same
+	// string length but different byte length can't make timingSafeEqual throw
+	// and route an unauthenticated request through generic error handling.
+	const providedTokenBuffer = Buffer.from(providedToken);
+	const secretTokenBuffer = Buffer.from(secretToken);
+	const isValid =
+		providedTokenBuffer.length === secretTokenBuffer.length &&
+		timingSafeEqual(providedTokenBuffer, secretTokenBuffer);
 
 	return {
 		valid: isValid,

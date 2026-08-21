@@ -1,5 +1,6 @@
 name: Report an issue
 description: Help us fix bugs by providing detailed information
+labels: ["bug"]
 body:
   - type: markdown
     attributes:
@@ -7,9 +8,9 @@ body:
         Thank you for reporting an issue! The more details you provide, the faster we can help.
 
         **Before submitting:**
-        - Search [existing issues](https://github.com/corsair/corsair/issues) to see if this has already been reported. If so, please add a 👍 reaction or comment with additional details.
-        - For feature requests, please use the [feature request template](https://github.com/corsair/corsair/issues/new?assignees=&labels=&projects=&template=feature_request.yml&title=) instead.
-        - For integration requests, please use the [integration request template](https://github.com/corsair/corsair/issues/new?assignees=&labels=&projects=&template=integration_request.yml&title=) instead.
+        - Search [existing issues](https://github.com/corsairdev/corsair/issues) to see if this has already been reported. If so, please add a 👍 reaction or comment with additional details.
+        - For feature requests, please use the [feature request template](https://github.com/corsairdev/corsair/issues/new?assignees=&labels=&projects=&template=feature_request.yml&title=) instead.
+        - For integration requests, please use the [integration request template](https://github.com/corsairdev/corsair/issues/new?assignees=&labels=&projects=&template=integration_request.yml&title=) instead.
   - type: textarea
     attributes:
       label: Steps to reproduce

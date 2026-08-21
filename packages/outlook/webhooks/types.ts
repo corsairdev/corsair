@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -127,10 +128,16 @@ export function verifyOutlookWebhookSignature(
 		return { valid: false, error: 'Missing client state' };
 	}
 
+	const expected = Buffer.from(clientState);
 	const notifications = request.payload?.value ?? [];
-	const allMatch = notifications.every(
-		(n) => typeof n.clientState === 'string' && n.clientState === clientState,
-	);
+	const allMatch = notifications.every((n) => {
+		if (typeof n.clientState !== 'string') return false;
+		const actual = Buffer.from(n.clientState);
+		return (
+			actual.length === expected.length &&
+			crypto.timingSafeEqual(actual, expected)
+		);
+	});
 
 	if (!allMatch) {
 		return { valid: false, error: 'Client state mismatch' };

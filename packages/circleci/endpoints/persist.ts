@@ -1,0 +1,128 @@
+import type { z } from 'zod';
+
+/** Minimal structural view of a Corsair entity store. */
+type EntityStore<T> = {
+	upsertByEntityId: (entityId: string, data: T) => Promise<unknown>;
+};
+
+/** The eviction half of the same store, needed only by the delete operations. */
+type EntityEvictor = {
+	deleteByEntityId: (entityId: string) => Promise<unknown>;
+};
+
+/** Mirroring is best-effort: a plugin call must not fail because the local copy could not be written or removed. */
+async function safely(operation: () => Promise<unknown>, what: string) {
+	try {
+		await operation();
+	} catch (error) {
+		console.warn(`[CIRCLECI] ${what}:`, error);
+	}
+}
+
+const defaultEntityId = <T>(parsed: T): string | undefined => {
+	const id = (parsed as { id?: unknown }).id;
+	return typeof id === 'string' || typeof id === 'number'
+		? String(id)
+		: undefined;
+};
+
+/**
+ * Some CircleCI entities key by a field other than `id` - a project env var by
+ * `name`, a context env var by `variable`, a schedule's own `id` works but a
+ * project's own `id` is a UUID distinct from its human `slug`. Kept
+ * overridable per call site rather than assumed.
+ */
+type EntityIdOf<T> = (parsed: T) => string | undefined;
+
+type CacheOptions<T> = {
+	label: string;
+	entityId?: EntityIdOf<T>;
+	fields?: readonly string[];
+};
+
+function pickFields(record: unknown, fields: readonly string[]): unknown {
+	if (!record || typeof record !== 'object' || Array.isArray(record)) {
+		return record;
+	}
+	const src = record as Record<string, unknown>;
+	const out: Record<string, unknown> = {};
+	for (const field of fields) {
+		if (field in src) out[field] = src[field];
+	}
+	return out;
+}
+
+/** Mirrors one record. Skips (with a warning) anything the schema rejects. */
+export async function cacheEntity<Schema extends z.ZodType>(
+	store: EntityStore<z.infer<Schema>> | undefined,
+	schema: Schema,
+	record: unknown,
+	options: CacheOptions<z.infer<Schema>>,
+): Promise<void> {
+	if (!store || record == null) return;
+
+	const parsed = schema.safeParse(
+		options.fields ? pickFields(record, options.fields) : record,
+	);
+	if (!parsed.success) {
+		console.warn(
+			`[CIRCLECI] skipped caching a ${options.label} that does not match its schema:`,
+			parsed.error.issues,
+		);
+		return;
+	}
+
+	const entityId = (options.entityId ?? defaultEntityId)(parsed.data);
+	if (!entityId) return;
+
+	await safely(
+		() => store.upsertByEntityId(entityId, parsed.data),
+		`failed to cache ${options.label} ${entityId}`,
+	);
+}
+
+/** Mirrors many records, skipping any the schema rejects or that have no key. */
+export async function cacheEntities<Schema extends z.ZodType>(
+	store: EntityStore<z.infer<Schema>> | undefined,
+	schema: Schema,
+	records: readonly unknown[] | undefined | null,
+	options: CacheOptions<z.infer<Schema>>,
+): Promise<void> {
+	if (!store || !records || records.length === 0) return;
+	for (const record of records) {
+		await cacheEntity(store, schema, record, options);
+	}
+}
+
+/**
+ * Drops a record from the local mirror after CircleCI has deleted it.
+ *
+ * Pass `required: true` when leaving the row behind would breach something
+ * the plugin promises rather than merely leave the cache stale.
+ */
+export async function evictEntity(
+	store: EntityEvictor | undefined,
+	entityId: string | undefined | null,
+	label: string,
+	options: { required?: boolean } = {},
+): Promise<void> {
+	if (!store || entityId == null) return;
+
+	if (!options.required) {
+		await safely(
+			() => store.deleteByEntityId(entityId),
+			`failed to evict ${label} ${entityId}`,
+		);
+		return;
+	}
+
+	try {
+		await store.deleteByEntityId(entityId);
+	} catch (error) {
+		console.error(
+			`[CIRCLECI] required eviction of ${label} ${entityId} failed - the local mirror still holds it:`,
+			error,
+		);
+		throw error;
+	}
+}

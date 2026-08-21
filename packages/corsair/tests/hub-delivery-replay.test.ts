@@ -18,54 +18,44 @@ function signBrowserDeliveryToken(
 	return `${payloadBase64}.${signature}`;
 }
 
+function createReplayTestCorsair(env: ReturnType<typeof createTestDatabase>) {
+	return createCorsair({
+		plugins: [],
+		database: env.db,
+		kek: 'test-kek-hub-browser-delivery-replay-tests',
+		hub: {
+			projectApiKey: 'ck_dev_test_key',
+			signingSecret: 'signing-secret',
+		},
+	});
+}
+
 describe('hub browser delivery replay guard', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 
 	beforeEach(async () => {
 		resetDeliveryReplayGuardForTests();
 		env = createTestDatabase();
-		await setupCorsair(
-			createCorsair({
-				plugins: [],
-				database: env.db,
-				kek: 'test-kek-hub-browser-delivery-replay-tests',
-				hub: {
-					projectApiKey: 'ck_dev_test_key',
-					signingSecret: 'signing-secret',
-				},
-			} as any),
-			{ tenantId: 'default' },
-		);
+		await setupCorsair(createReplayTestCorsair(env), { tenantId: 'default' });
 	});
 
 	afterEach(() => env.cleanup());
 
-	// TODO(hub): connect.status is not a BrowserDeliveryMode and
-	// handleHubDeliveryGet has no branch for it (tunnel/index.ts says pull
-	// introspection was disabled in favor of POST /connections/report).
-	// Skipped until the hub owner decides: stale test vs unfinished feature.
-	it.skip('rejects replayed browser delivery tokens', async () => {
-		const corsair = createCorsair({
-			plugins: [],
-			database: env.db,
-			kek: 'test-kek-hub-browser-delivery-replay-tests',
-			hub: {
-				projectApiKey: 'ck_dev_test_key',
-				signingSecret: 'signing-secret',
-			},
-		} as any);
+	it('rejects replayed auth.credentials browser delivery tokens', async () => {
+		const corsair = createReplayTestCorsair(env);
 
 		const now = Math.floor(Date.now() / 1000);
 		const token = signBrowserDeliveryToken(
 			{
-				jti: 'browser-jti-1',
+				jti: 'browser-jti-credentials-1',
 				connectJti: 'connect-jti-1',
 				projectId: 'proj_test',
 				plugin: 'github',
 				tenantId: 'default',
 				hubSuccessUrl: 'http://localhost:3000/connect/success',
-				deliveryMode: 'connect.status',
-				statusPlugins: ['github'],
+				// Live BrowserDeliveryMode — not the retired connect.status pull path.
+				deliveryMode: 'auth.credentials',
+				// Missing credentials so the first request fails after the jti is burned.
 				iat: now,
 				exp: now + 60,
 			},
@@ -75,7 +65,50 @@ describe('hub browser delivery replay guard', () => {
 		const url = `http://localhost:3001/api/corsair?d=${encodeURIComponent(token)}`;
 
 		const first = await handleHubDeliveryGet(corsair, url);
-		expect(first.type).toBe('redirect');
+		if (first.type !== 'redirect') {
+			throw new Error(`Expected redirect, received ${first.type}`);
+		}
+		const error = new URL(first.url).searchParams.get('error');
+		expect(error).toBe('Credential delivery missing credentials');
+
+		const second = await handleHubDeliveryGet(corsair, url);
+		expect(second).toEqual({
+			type: 'json',
+			status: 400,
+			body: { error: 'Delivery request already consumed' },
+		});
+	});
+
+	it('rejects replayed connections.sync browser delivery tokens', async () => {
+		const corsair = createReplayTestCorsair(env);
+
+		const now = Math.floor(Date.now() / 1000);
+		const token = signBrowserDeliveryToken(
+			{
+				jti: 'browser-jti-sync-1',
+				connectJti: 'connect-jti-sync',
+				projectId: 'proj_test',
+				plugin: 'github',
+				tenantId: 'default',
+				hubSuccessUrl: 'http://localhost:3000/connect/success',
+				deliveryMode: 'connections.sync',
+				// Intentionally incomplete so the first request fails after consume.
+				iat: now,
+				exp: now + 60,
+			},
+			'signing-secret',
+		);
+
+		const url = `http://localhost:3001/api/corsair?d=${encodeURIComponent(token)}`;
+		const first = await handleHubDeliveryGet(corsair, url);
+		expect(first).toEqual({
+			type: 'json',
+			status: 400,
+			body: {
+				error:
+					'Connections sync delivery requires hubOrigin and requestId for client bridge',
+			},
+		});
 
 		const second = await handleHubDeliveryGet(corsair, url);
 		expect(second).toEqual({
@@ -86,15 +119,7 @@ describe('hub browser delivery replay guard', () => {
 	});
 
 	it('does not treat stray accessToken as managed OAuth delivery', async () => {
-		const corsair = createCorsair({
-			plugins: [],
-			database: env.db,
-			kek: 'test-kek-hub-browser-delivery-replay-tests',
-			hub: {
-				projectApiKey: 'ck_dev_test_key',
-				signingSecret: 'signing-secret',
-			},
-		} as any);
+		const corsair = createReplayTestCorsair(env);
 
 		const now = Math.floor(Date.now() / 1000);
 		const token = signBrowserDeliveryToken(

@@ -1,4 +1,5 @@
 import type { GithubWebhooks } from '../index';
+import { commentRecordFromWebhook } from '../persistence';
 import type { Comment } from './types';
 import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 
@@ -8,18 +9,10 @@ async function upsertComment(
 	deletedAt?: Date | null,
 ) {
 	if (!ctx.db.comments) return;
-	await ctx.db.comments.upsertByEntityId(comment.id.toString(), {
-		id: comment.id,
-		nodeId: comment.node_id,
-		url: comment.url,
-		htmlUrl: comment.html_url,
-		issueUrl: comment.issue_url,
-		body: comment.body,
-		authorAssociation: comment.author_association,
-		createdAt: comment.created_at ? new Date(comment.created_at) : null,
-		updatedAt: comment.updated_at ? new Date(comment.updated_at) : null,
-		deletedAt: deletedAt ?? null,
-	});
+	await ctx.db.comments.upsertByEntityId(
+		comment.id.toString(),
+		commentRecordFromWebhook(comment, { deletedAt }),
+	);
 }
 
 export const commentCreated: GithubWebhooks['commentCreated'] = {

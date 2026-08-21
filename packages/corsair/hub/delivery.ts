@@ -268,6 +268,11 @@ export async function handleHubDeliveryGet(
 			}
 			// Browser delivery token already verified above; Hub's `state` is an
 			// opaque session id it cannot sign, so trust the payload's plugin/tenant.
+			// No callbackParams here: for the connect (Hub-brokered) flow, the Hub
+			// records the webhook tenant link itself from the callback query
+			// (recordWebhookTenantLink), so installation_id routing doesn't depend
+			// on this path. Manual/BYO mode instead uses management.oauthCallback,
+			// which forwards callbackParams.
 			await processOAuthCallback(corsair, {
 				code: payload.code,
 				state: payload.state,

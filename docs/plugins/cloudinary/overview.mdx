@@ -1,0 +1,138 @@
+---
+title: Overview
+description: "Cloudinary plugin for Corsair"
+---
+
+Use **Cloudinary** through Corsair: one client, typed API calls, optional local DB sync, and incoming webhooks documented below.
+
+**What you get:**
+
+- 110 typed API operations
+- 10 database entities synced for fast `.search()` / `.list()` queries
+- 13 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/cloudinary
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { cloudinary } from '@corsair-dev/cloudinary';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [cloudinary()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { cloudinary } from '@corsair-dev/cloudinary';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [cloudinary()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/cloudinary/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=cloudinary
+```
+
+Use the key names documented in [Get Credentials](/plugins/cloudinary/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=cloudinary --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+See [Get Credentials](/plugins/cloudinary/get-credentials) for how to obtain and store secrets. Auth methods depend on how you configure `cloudinary({ ... })` — check the plugin source `*PluginOptions` type for supported `authType` values.
+
+- [API key authentication](/concepts/api-key)
+- [OAuth 2.0](/concepts/oauth)
+
+## Webhooks
+
+This plugin registers **13** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use `webhookHooks` in the plugin factory for custom logic.
+
+See [Webhooks](/plugins/cloudinary/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
+
+
+## Query synced data
+
+Synced entities support `corsair.cloudinary.db.<entity>.search()` and `.list()`. See [Database](/plugins/cloudinary/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `adaptive.getAdaptiveStreamingProfiles`
+
+```ts
+await corsair.cloudinary.api.adaptive.getAdaptiveStreamingProfiles({});
+```
+
+
+**Write-style (write):** `asset.createAssetRelationsByAssetId`
+
+```ts
+await corsair.cloudinary.api.asset.createAssetRelationsByAssetId({});
+```
+
+
+See the full list on the [API](/plugins/cloudinary/api) page. Use `pnpm corsair list --plugin=cloudinary` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and the [Webhooks](/plugins/cloudinary/webhooks) page for payload types.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/cloudinary/api) |
+| Database | [Database](/plugins/cloudinary/database) |
+| Webhooks | [Webhooks](/plugins/cloudinary/webhooks) |
+| Credentials | [Get credentials](/plugins/cloudinary/get-credentials) |
+

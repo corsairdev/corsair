@@ -1,0 +1,101 @@
+---
+title: API
+description: "API reference for You.com Web Search: every `youcom.api.*` operation with input and output types."
+---
+
+Every `youcom.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Yousearch
+
+### youSearch
+
+`yousearch.youSearch`
+
+Search the web using You.com's search API. Returns LLM-ready web results and news articles.
+
+**Risk:** `read`
+
+```ts
+await corsair.youcom.api.yousearch.youSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `count` | `number` | No | — |
+| `freshness` | `day \| week \| month \| year \| string` | No | — |
+| `offset` | `number` | No | — |
+| `country` | `AR \| AU \| AT \| BE \| BR \| CA \| CL \| DK \| FI \| FR \| DE \| HK \| IN \| ID \| IT \| JP \| KR \| MY \| MX \| NL \| NZ \| NO \| CN \| PL \| PT \| PH \| RU \| SA \| ZA \| ES \| SE \| CH \| TW \| TR \| GB \| US` | No | — |
+| `language` | `AR \| EU \| BN \| BG \| CA \| ZH-HANS \| ZH-HANT \| HR \| CS \| DA \| NL \| EN \| EN-GB \| ET \| FI \| FR \| GL \| DE \| EL \| GU \| HE \| HI \| HU \| IS \| IT \| JA \| KN \| KO \| LV \| LT \| MS \| ML \| MR \| NB \| PL \| PT-BR \| PT-PT \| PA \| RO \| RU \| SR \| SK \| SL \| ES \| SV \| TA \| TE \| TH \| TR \| UK \| VI` | No | — |
+| `safesearch` | `off \| moderate \| strict` | No | — |
+| `livecrawl` | `web \| news \| all` | No | — |
+| `livecrawl_formats` | `html \| markdown[]` | No | — |
+| `include_domains` | `string[]` | No | — |
+| `exclude_domains` | `string[]` | No | — |
+| `boost_domains` | `string[]` | No | — |
+| `crawl_timeout` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object` | Yes | — |
+| `metadata` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  web?: {
+    url: string,
+    title: string,
+    description?: string,
+    snippets?: string[],
+    thumbnail_url?: string,
+    page_age?: string,
+    contents?: {
+      html?: string,
+      markdown?: string
+    },
+    favicon_url?: string
+  }[],
+  news?: {
+    title: string,
+    description?: string,
+    page_age?: string,
+    thumbnail_url?: string,
+    url: string,
+    contents?: {
+      html?: string,
+      markdown?: string
+    }
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  search_uuid: string,
+  query: string,
+  latency: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

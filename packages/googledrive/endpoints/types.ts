@@ -5,6 +5,7 @@ import type {
 	Permission,
 	SharedDrive,
 	SharedDriveList,
+	StorageQuota,
 } from '../types';
 
 const FilesListInputSchema = z.object({
@@ -233,6 +234,8 @@ const SearchFilesAndFoldersInputSchema = z.object({
 	teamDriveId: z.string().optional(),
 });
 
+const StorageGetQuotaInputSchema = z.object({});
+
 export const GoogleDriveEndpointInputSchemas = {
 	filesList: FilesListInputSchema,
 	filesGet: FilesGetInputSchema,
@@ -255,6 +258,7 @@ export const GoogleDriveEndpointInputSchemas = {
 	sharedDrivesUpdate: SharedDrivesUpdateInputSchema,
 	sharedDrivesDelete: SharedDrivesDeleteInputSchema,
 	searchFilesAndFolders: SearchFilesAndFoldersInputSchema,
+	storageGetQuota: StorageGetQuotaInputSchema,
 } as const;
 
 export type GoogleDriveEndpointInputs = {
@@ -353,6 +357,13 @@ const SharedDriveListSchema = z.object({
 	drives: z.array(SharedDriveSchema).optional(),
 });
 
+const StorageQuotaSchema = z.object({
+	limit: z.string().optional(),
+	usage: z.string(),
+	usageInDrive: z.string(),
+	usageInDriveTrash: z.string(),
+});
+
 export const GoogleDriveEndpointOutputSchemas = {
 	filesList: FileListSchema,
 	filesGet: FileSchema,
@@ -375,6 +386,7 @@ export const GoogleDriveEndpointOutputSchemas = {
 	sharedDrivesUpdate: SharedDriveSchema,
 	sharedDrivesDelete: z.void(),
 	searchFilesAndFolders: FileListSchema,
+	storageGetQuota: StorageQuotaSchema,
 } as const;
 
 export type GoogleDriveEndpointOutputs = {
@@ -399,4 +411,5 @@ export type GoogleDriveEndpointOutputs = {
 	sharedDrivesUpdate: SharedDrive;
 	sharedDrivesDelete: void;
 	searchFilesAndFolders: FileList;
+	storageGetQuota: StorageQuota;
 };

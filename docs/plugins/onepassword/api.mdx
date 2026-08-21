@@ -1,0 +1,450 @@
+---
+title: API
+description: "API reference for OnePassword: every `onepassword.api.*` operation with input and output types."
+---
+
+Every `onepassword.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Items
+
+### create
+
+`items.create`
+
+Create a new item in a vault
+
+**Risk:** `write`
+
+```ts
+await corsair.onepassword.api.items.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vaultId` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `category` | `LOGIN \| PASSWORD \| SECURE_NOTE \| DATABASE \| CREDIT_CARD \| MEMBERSHIP \| PASSPORT \| SOFTWARE_LICENSE \| OUTDOOR_LICENSE \| API_CREDENTIAL` | Yes | — |
+| `urls` | `object[]` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="urls full type">
+
+```ts
+{
+  primary?: boolean,
+  href: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  label?: string,
+  type: string,
+  value?: string,
+  section?: {
+    id: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `vault` | `object` | Yes | — |
+| `category` | `string` | Yes | — |
+| `urls` | `object[]` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="vault full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  primary?: boolean,
+  href: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  label?: string,
+  type: string,
+  value?: string,
+  section?: {
+    id: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`items.delete`
+
+Delete an item from a vault [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.onepassword.api.items.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vaultId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`items.get`
+
+Get details of a vault item (e.g. login credentials, notes)
+
+**Risk:** `read`
+
+```ts
+await corsair.onepassword.api.items.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vaultId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `vault` | `object` | Yes | — |
+| `category` | `string` | Yes | — |
+| `urls` | `object[]` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="vault full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  primary?: boolean,
+  href: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  label?: string,
+  type: string,
+  value?: string,
+  section?: {
+    id: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`items.list`
+
+List all items inside a specific vault
+
+**Risk:** `read`
+
+```ts
+await corsair.onepassword.api.items.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vaultId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  vault: {
+    id: string
+  },
+  category: string,
+  urls?: {
+    primary?: boolean,
+    href: string
+  }[],
+  fields?: {
+    id?: string,
+    label?: string,
+    type: string,
+    value?: string,
+    section?: {
+      id: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### update
+
+`items.update`
+
+Update details of an existing vault item
+
+**Risk:** `write`
+
+```ts
+await corsair.onepassword.api.items.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `vaultId` | `string` | Yes | — |
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `category` | `LOGIN \| PASSWORD \| SECURE_NOTE \| DATABASE \| CREDIT_CARD \| MEMBERSHIP \| PASSPORT \| SOFTWARE_LICENSE \| OUTDOOR_LICENSE \| API_CREDENTIAL` | Yes | — |
+| `urls` | `object[]` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="urls full type">
+
+```ts
+{
+  primary?: boolean,
+  href: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  label?: string,
+  type: string,
+  value?: string,
+  section?: {
+    id: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `vault` | `object` | Yes | — |
+| `category` | `string` | Yes | — |
+| `urls` | `object[]` | No | — |
+| `fields` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="vault full type">
+
+```ts
+{
+  id: string
+}
+```
+</Accordion>
+
+<Accordion title="urls full type">
+
+```ts
+{
+  primary?: boolean,
+  href: string
+}[]
+```
+</Accordion>
+
+<Accordion title="fields full type">
+
+```ts
+{
+  id?: string,
+  label?: string,
+  type: string,
+  value?: string,
+  section?: {
+    id: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Vaults
+
+### get
+
+`vaults.get`
+
+Get details of a specific vault by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.onepassword.api.vaults.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `description` | `string` | No | — |
+| `attributeVersion` | `number` | No | — |
+| `contentVersion` | `number` | No | — |
+| `type` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`vaults.list`
+
+List all vaults the integration can access
+
+**Risk:** `read`
+
+```ts
+await corsair.onepassword.api.vaults.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  description?: string,
+  attributeVersion?: number,
+  contentVersion?: number,
+  type?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

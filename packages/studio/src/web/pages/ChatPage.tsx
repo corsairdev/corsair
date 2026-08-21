@@ -559,6 +559,7 @@ export function ChatPage({ tenant }: { tenant: string }) {
 							value={input}
 							onChange={(e) => setInput(e.target.value)}
 							onKeyDown={onKeyDown}
+							aria-label="Chat message"
 							placeholder="Ask about your integrations… (Ctrl+Enter to send)"
 							disabled={streaming || chatLoading}
 						/>

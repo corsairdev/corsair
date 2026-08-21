@@ -1,0 +1,2534 @@
+---
+title: API
+description: "API reference for Datadog: every `datadog.api.*` operation with input and output types."
+---
+
+Every `datadog.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Api Keys
+
+### list
+
+`apiKeys.list`
+
+List API key metadata
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.apiKeys.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageNumber` | `number` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Aws
+
+### list
+
+`aws.list`
+
+List AWS integration accounts
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.aws.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `accounts` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="accounts full type">
+
+```ts
+{
+  account_id?: string | null,
+  role_name?: string | null,
+  filter_tags?: string[],
+  host_tags?: string[],
+  metrics_collection_enabled?: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Dashboards
+
+### create
+
+`dashboards.create`
+
+Create a dashboard
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.dashboards.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `widgets` | `object[]` | Yes | — |
+| `layoutType` | `ordered \| free` | Yes | — |
+| `description` | `string` | No | — |
+| `notifyList` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="widgets full type">
+
+```ts
+{
+  id?: number,
+  definition: {
+  },
+  layout?: {
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `layout_type` | `string` | No | — |
+| `url` | `string` | No | — |
+| `author_handle` | `string` | No | — |
+| `is_read_only` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `widgets` | `object[]` | No | — |
+| `template_variables` | `object[]` | No | — |
+| `notify_list` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="widgets full type">
+
+```ts
+{
+  id?: number,
+  definition: {
+  },
+  layout?: {
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="template_variables full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`dashboards.delete`
+
+Delete a dashboard [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datadog.api.dashboards.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboardId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_dashboard_id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`dashboards.get`
+
+Get a dashboard with its widgets
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.dashboards.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboardId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `layout_type` | `string` | No | — |
+| `url` | `string` | No | — |
+| `author_handle` | `string` | No | — |
+| `is_read_only` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `widgets` | `object[]` | No | — |
+| `template_variables` | `object[]` | No | — |
+| `notify_list` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="widgets full type">
+
+```ts
+{
+  id?: number,
+  definition: {
+  },
+  layout?: {
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="template_variables full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`dashboards.list`
+
+List dashboards
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.dashboards.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filterShared` | `boolean` | No | — |
+| `filterDeleted` | `boolean` | No | — |
+| `count` | `number` | No | — |
+| `start` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dashboards` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="dashboards full type">
+
+```ts
+{
+  id?: string,
+  title?: string,
+  description?: string | null,
+  layout_type?: string,
+  url?: string,
+  author_handle?: string,
+  is_read_only?: boolean,
+  created_at?: string,
+  modified_at?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`dashboards.update`
+
+Update a dashboard
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.dashboards.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `widgets` | `object[]` | Yes | — |
+| `layoutType` | `ordered \| free` | Yes | — |
+| `description` | `string` | No | — |
+| `notifyList` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+| `dashboardId` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="widgets full type">
+
+```ts
+{
+  id?: number,
+  definition: {
+  },
+  layout?: {
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `layout_type` | `string` | No | — |
+| `url` | `string` | No | — |
+| `author_handle` | `string` | No | — |
+| `is_read_only` | `boolean` | No | — |
+| `created_at` | `string` | No | — |
+| `modified_at` | `string` | No | — |
+| `widgets` | `object[]` | No | — |
+| `template_variables` | `object[]` | No | — |
+| `notify_list` | `string[]` | No | — |
+| `tags` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="widgets full type">
+
+```ts
+{
+  id?: number,
+  definition: {
+  },
+  layout?: {
+    x: number,
+    y: number,
+    width: number,
+    height: number
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="template_variables full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Downtimes
+
+### create
+
+`downtimes.create`
+
+Schedule a downtime (suppresses monitor alerts)
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.downtimes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scope` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `monitorId` | `number` | No | — |
+| `start` | `string` | No | — |
+| `end` | `string` | No | — |
+| `timezone` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  attributes?: {
+    scope?: string,
+    status?: string,
+    message?: string | null,
+    created?: string,
+    modified?: string,
+    monitor_identifier?: {
+    },
+    schedule?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`downtimes.list`
+
+List downtimes
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.downtimes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `currentOnly` | `boolean` | No | — |
+| `pageOffset` | `number` | No | — |
+| `pageLimit` | `number` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data?: {
+    id?: string,
+    type?: string,
+    attributes?: {
+      scope?: string,
+      status?: string,
+      message?: string | null,
+      created?: string,
+      modified?: string,
+      monitor_identifier?: {
+      },
+      schedule?: {
+      }
+    }
+  }[]
+}& {
+  page?: {
+    total_count?: number,
+    total_filtered_count?: number,
+    after?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Events
+
+### create
+
+`events.create`
+
+Post an event
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.events.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `text` | `string` | Yes | — |
+| `tags` | `string[]` | No | — |
+| `alertType` | `error \| warning \| info \| success \| user_update \| recommendation \| snapshot` | No | — |
+| `priority` | `normal \| low` | No | — |
+| `host` | `string` | No | — |
+| `aggregationKey` | `string` | No | — |
+| `sourceTypeName` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `event` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="event full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  text?: string,
+  date_happened?: number,
+  priority?: string | null,
+  tags?: string[] | null,
+  alert_type?: string,
+  source?: string,
+  host?: string | null,
+  url?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`events.list`
+
+List events in a time window
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.events.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start` | `number` | Yes | — |
+| `end` | `number` | Yes | — |
+| `priority` | `normal \| low` | No | — |
+| `sources` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `events` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="events full type">
+
+```ts
+{
+  id?: number,
+  title?: string,
+  text?: string,
+  date_happened?: number,
+  priority?: string | null,
+  tags?: string[] | null,
+  alert_type?: string,
+  source?: string,
+  host?: string | null,
+  url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Hosts
+
+### list
+
+`hosts.list`
+
+List infrastructure hosts
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.hosts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `filter` | `string` | No | — |
+| `sortField` | `string` | No | — |
+| `sortDir` | `asc \| desc` | No | — |
+| `start` | `number` | No | — |
+| `count` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host_list` | `object[]` | No | — |
+| `total_matching` | `number` | No | — |
+| `total_returned` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="host_list full type">
+
+```ts
+{
+  name?: string,
+  host_name?: string,
+  id?: number,
+  aliases?: string[],
+  apps?: string[],
+  is_muted?: boolean,
+  last_reported_time?: number,
+  up?: boolean,
+  sources?: string[],
+  tags_by_source?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### totals
+
+`hosts.totals`
+
+Get host totals (active/up)
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.hosts.totals({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `total_active` | `number` | No | — |
+| `total_up` | `number` | No | — |
+
+
+
+---
+
+## Incidents
+
+### list
+
+`incidents.list`
+
+List incidents
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.incidents.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageOffset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Logs
+
+### aggregate
+
+`logs.aggregate`
+
+Aggregate log analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.logs.aggregate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `aggregation` | `string` | Yes | — |
+| `metric` | `string` | No | — |
+| `groupBy` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listIndexes
+
+`logs.listIndexes`
+
+List log indexes
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.logs.listIndexes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `indexes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="indexes full type">
+
+```ts
+{
+  name?: string,
+  filter?: {
+  },
+  is_rate_limited?: boolean,
+  daily_limit?: number | null,
+  num_retention_days?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`logs.search`
+
+Search logs
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.logs.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `indexes` | `string[]` | No | — |
+| `sort` | `timestamp \| -timestamp` | No | — |
+| `pageLimit` | `number` | No | — |
+| `pageCursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  attributes?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  page?: {
+    total_count?: number,
+    total_filtered_count?: number,
+    after?: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Metrics
+
+### listActive
+
+`metrics.listActive`
+
+List actively reporting metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.metrics.listActive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `from` | `number` | Yes | — |
+| `host` | `string` | No | — |
+| `tagFilter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `metrics` | `string[]` | No | — |
+| `from` | `string` | No | — |
+
+
+
+---
+
+### query
+
+`metrics.query`
+
+Query timeseries points
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.metrics.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `from` | `number` | Yes | — |
+| `to` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+| `query` | `string` | No | — |
+| `from_date` | `number` | No | — |
+| `to_date` | `number` | No | — |
+| `series` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="series full type">
+
+```ts
+{
+  metric?: string,
+  display_name?: string,
+  pointlist?: number | null[][],
+  scope?: string,
+  unit?: {
+  } | null[] | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### submit
+
+`metrics.submit`
+
+Submit metric series points
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.metrics.submit({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `series` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="series full type">
+
+```ts
+{
+  metric: string,
+  points: tuple[],
+  type?: gauge | count | rate,
+  host?: string,
+  tags?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | No | — |
+
+
+
+---
+
+## Monitors
+
+### create
+
+`monitors.create`
+
+Create a monitor
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.monitors.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `string` | Yes | — |
+| `query` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `message` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `query` | `string` | No | — |
+| `message` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `overall_state` | `string` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `creator` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string,
+  handle?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`monitors.delete`
+
+Delete a monitor [DESTRUCTIVE · IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.datadog.api.monitors.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitorId` | `number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleted_monitor_id` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`monitors.get`
+
+Get a monitor
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.monitors.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitorId` | `number` | Yes | — |
+| `groupStates` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `query` | `string` | No | — |
+| `message` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `overall_state` | `string` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `creator` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string,
+  handle?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`monitors.list`
+
+List monitors
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.monitors.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `tags` | `string` | No | — |
+| `monitorTags` | `string` | No | — |
+| `groupStates` | `string` | No | — |
+| `page` | `number` | No | — |
+| `pageSize` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  type?: string,
+  query?: string,
+  message?: string,
+  tags?: string[],
+  priority?: number | null,
+  overall_state?: string,
+  created?: string,
+  modified?: string,
+  creator?: {
+    name?: string | null,
+    email?: string,
+    handle?: string
+  },
+  options?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### mute
+
+`monitors.mute`
+
+Mute a monitor (suppresses alerting)
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.monitors.mute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitorId` | `number` | Yes | — |
+| `scope` | `string` | No | — |
+| `end` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `query` | `string` | No | — |
+| `message` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `overall_state` | `string` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `creator` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string,
+  handle?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`monitors.search`
+
+Search monitors
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.monitors.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `page` | `number` | No | — |
+| `perPage` | `number` | No | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitors` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="monitors full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  type?: string,
+  query?: string,
+  message?: string,
+  tags?: string[],
+  priority?: number | null,
+  overall_state?: string,
+  created?: string,
+  modified?: string,
+  creator?: {
+    name?: string | null,
+    email?: string,
+    handle?: string
+  },
+  options?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  total_count?: number,
+  page?: number,
+  page_count?: number,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unmute
+
+`monitors.unmute`
+
+Unmute a monitor
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.monitors.unmute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitorId` | `number` | Yes | — |
+| `scope` | `string` | No | — |
+| `allScopes` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `query` | `string` | No | — |
+| `message` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `overall_state` | `string` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `creator` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string,
+  handle?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`monitors.update`
+
+Update a monitor
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.monitors.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `monitorId` | `number` | Yes | — |
+| `name` | `string` | No | — |
+| `query` | `string` | No | — |
+| `message` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `query` | `string` | No | — |
+| `message` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `priority` | `number` | No | — |
+| `overall_state` | `string` | No | — |
+| `created` | `string` | No | — |
+| `modified` | `string` | No | — |
+| `creator` | `object` | No | — |
+| `options` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="creator full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string,
+  handle?: string
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Roles
+
+### list
+
+`roles.list`
+
+List roles
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.roles.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageNumber` | `number` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Services
+
+### listDefinitions
+
+`services.listDefinitions`
+
+List APM service definitions
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.services.listDefinitions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageNumber` | `number` | No | — |
+| `schemaVersion` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  id?: string,
+  attributes?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Slos
+
+### create
+
+`slos.create`
+
+Create an SLO
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.slos.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `type` | `metric \| monitor` | Yes | — |
+| `thresholds` | `object[]` | Yes | — |
+| `description` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `monitorIds` | `number[]` | No | — |
+| `query` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="thresholds full type">
+
+```ts
+{
+  timeframe: string,
+  target: number,
+  warning?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="query full type">
+
+```ts
+{
+  numerator: string,
+  denominator: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  type?: string,
+  description?: string | null,
+  tags?: string[],
+  thresholds?: {
+    timeframe: string,
+    target: number,
+    warning?: number
+  }[],
+  monitor_ids?: number[],
+  query?: {
+    numerator?: string,
+    denominator?: string
+  },
+  created_at?: number,
+  modified_at?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`slos.list`
+
+List SLOs
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.slos.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ids` | `string` | No | — |
+| `query` | `string` | No | — |
+| `tagsQuery` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `offset` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  type?: string,
+  description?: string | null,
+  tags?: string[],
+  thresholds?: {
+    timeframe: string,
+    target: number,
+    warning?: number
+  }[],
+  monitor_ids?: number[],
+  query?: {
+    numerator?: string,
+    denominator?: string
+  },
+  created_at?: number,
+  modified_at?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+  page?: {
+    total_count?: number,
+    total_filtered_count?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Spans
+
+### aggregate
+
+`spans.aggregate`
+
+Aggregate APM span analytics
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.spans.aggregate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `aggregation` | `string` | Yes | — |
+| `metric` | `string` | No | — |
+| `groupBy` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  type?: string,
+  attributes?: {
+  }
+} | {
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`spans.search`
+
+Search APM spans
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.spans.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `from` | `string` | Yes | — |
+| `to` | `string` | Yes | — |
+| `sort` | `string` | No | — |
+| `pageLimit` | `number` | No | — |
+| `pageCursor` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  data?: {
+    id?: string,
+    type?: string,
+    attributes?: {
+    }
+  }[],
+  meta?: {
+    page?: {
+      total_count?: number,
+      total_filtered_count?: number,
+      after?: string
+    }
+  }
+}& {
+  links?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Synthetics
+
+### createApiTest
+
+`synthetics.createApiTest`
+
+Create a synthetic API test
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.synthetics.createApiTest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `config` | `object` | Yes | — |
+| `locations` | `string[]` | Yes | — |
+| `options` | `object` | Yes | — |
+| `message` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `subtype` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `public_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `subtype` | `string` | No | — |
+| `status` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `locations` | `string[]` | No | — |
+| `config` | `object` | No | — |
+| `options` | `object` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getApiTest
+
+`synthetics.getApiTest`
+
+Get a synthetic API test
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.synthetics.getApiTest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publicId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `public_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `subtype` | `string` | No | — |
+| `status` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+| `locations` | `string[]` | No | — |
+| `config` | `object` | No | — |
+| `options` | `object` | No | — |
+| `message` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="config full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="options full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listLocations
+
+`synthetics.listLocations`
+
+List synthetic test locations
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.synthetics.listLocations({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `locations` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="locations full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  display_name?: string,
+  region?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listTests
+
+`synthetics.listTests`
+
+List synthetic tests
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.synthetics.listTests({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageNumber` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tests` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tests full type">
+
+```ts
+{
+  public_id?: string,
+  name?: string,
+  type?: string,
+  subtype?: string,
+  status?: string,
+  tags?: string[],
+  locations?: string[],
+  config?: {
+  },
+  options?: {
+  },
+  message?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### getHost
+
+`tags.getHost`
+
+Get tags for a host
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.tags.getHost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostName` | `string` | Yes | — |
+| `source` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+---
+
+### list
+
+`tags.list`
+
+List host tags
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.tags.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `source` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tags` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateHost
+
+`tags.updateHost`
+
+Replace tags for a host
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.tags.updateHost({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostName` | `string` | Yes | — |
+| `tags` | `string[]` | Yes | — |
+| `source` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+---
+
+## Usage
+
+### getSummary
+
+`usage.getSummary`
+
+Get usage summary across products
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.usage.getSummary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `startMonth` | `string` | Yes | — |
+| `endMonth` | `string` | No | — |
+| `includeOrgDetails` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `start_date` | `string` | No | — |
+| `end_date` | `string` | No | — |
+| `usage` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="usage full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### list
+
+`users.list`
+
+List organization users
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageNumber` | `number` | No | — |
+| `filter` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id?: string,
+  type?: string,
+  attributes?: {
+  },
+  relationships?: {
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a webhook integration
+
+**Risk:** `write`
+
+```ts
+await corsair.datadog.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `payload` | `string` | No | — |
+| `customHeaders` | `string` | No | — |
+| `encodeAs` | `json \| form` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `payload` | `string` | No | — |
+| `custom_headers` | `string` | No | — |
+| `encode_as` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Get a webhook integration by name
+
+**Risk:** `read`
+
+```ts
+await corsair.datadog.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookName` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `payload` | `string` | No | — |
+| `custom_headers` | `string` | No | — |
+| `encode_as` | `string` | No | — |
+
+
+
+---
+

@@ -16,7 +16,7 @@ import {
 	ok,
 	resolveConnect,
 } from './operations';
-import type { CreateConnectLinkInput } from './types';
+import type { CreateConnectLinkInput, OAuthCallbackInput } from './types';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Management HTTP handler — framework-agnostic (Request) => Promise<Response>.
@@ -146,7 +146,7 @@ const ROUTES: Route[] = [
 				await completeOAuthCallback(
 					corsair,
 					internal,
-					body as { code: string; state: string },
+					body as OAuthCallbackInput,
 				),
 			),
 	},

@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidLinearAccessToken } from './client';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams, Users } from './endpoints';
@@ -51,7 +52,7 @@ import {
 } from './webhooks/types';
 
 export type LinearPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalLinearPlugin['hooks'];
@@ -300,6 +301,9 @@ const defaultAuthType = 'api_key' as const;
 export const linearAuthConfig = {
 	api_key: { account: ['organization_id'] as const },
 	oauth_2: { account: ['organization_id'] as const },
+	managed: {
+		account: ['organization_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 /**
@@ -515,6 +519,25 @@ export function linear<const T extends LinearPluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return `Bearer ${result.accessToken}`;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:linear:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'linear',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return `Bearer ${result.accessToken}`;
 			}
 

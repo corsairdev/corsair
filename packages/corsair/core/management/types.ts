@@ -74,6 +74,10 @@ export type ResolvedConnectLink = {
 export type OAuthCallbackInput = {
 	code: string;
 	state: string;
+	// Extra provider query params from the callback URL (e.g. GitHub's
+	// installation_id) that aren't in the token body. Needed for correct webhook
+	// tenant routing in manual/BYO mode, where no Hub records the link server-side.
+	callbackParams?: Record<string, string>;
 };
 
 export type OAuthCallbackResult = {

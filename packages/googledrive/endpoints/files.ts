@@ -246,7 +246,12 @@ export const move: GoogleDriveEndpoints['filesMove'] = async (ctx, input) => {
 	>(`/files/${input.fileId}`, ctx, {
 		method: 'PATCH',
 		body: {},
-		query: input,
+		query: {
+			addParents: input.addParents,
+			removeParents: input.removeParents,
+			supportsAllDrives: input.supportsAllDrives,
+			supportsTeamDrives: input.supportsTeamDrives,
+		},
 	});
 
 	if (result.id) {

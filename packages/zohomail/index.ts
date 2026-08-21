@@ -13,6 +13,7 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { ZohoRegion } from './client';
 import {
 	getValidAccessToken,
@@ -49,6 +50,9 @@ import {
 /** Zoho Mail uses standard OAuth2; no plugin-specific integration fields. */
 export const zohoMailAuthConfig = {
 	oauth_2: {
+		account: ['zuid'] as const,
+	},
+	managed: {
 		account: ['zuid'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -191,7 +195,7 @@ const zohoMailWebhookSchemas = {
 } as const;
 
 export type ZohoMailPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	/** Zoho datacenter region. Selects the accounts.zoho.* and mail.zoho.* hosts. Default 'us'. */
 	region?: ZohoRegion;
 	key?: string;
@@ -339,6 +343,11 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 			}
 
 			if (source === 'webhook') {
+				if (ctx.authType === 'managed') {
+					throw new Error(
+						'[auth-missing:zohomail:managed]: webhook signature is not available in managed mode',
+					);
+				}
 				const res = await ctx.keys.get_webhook_signature();
 				return res ?? '';
 			}
@@ -424,6 +433,25 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return result.accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:zohomail:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'zohomail',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

@@ -35,10 +35,10 @@ test('round detection from markers', () => {
 
 test('decision table', () => {
 	assert.equal(decide(0, [f('P0')]), 'comment');
-	assert.equal(decide(1, [f('P1')]), 'fix');
-	assert.equal(decide(2, [f('P0')]), 'escalate');
+	assert.equal(decide(1, [f('P1')]), 'escalate');
+	assert.equal(decide(2, [f('P0')]), 'escalate'); // legacy round-2 marker still escalates
 	assert.equal(decide(0, []), 'done');
-	assert.equal(decide(1, [f('P2')]), 'done'); // P2s alone never trigger a fix round
+	assert.equal(decide(1, [f('P2')]), 'done'); // P2s alone never escalate
 	assert.equal(decide(3, [f('P0')]), 'done'); // pushes after escalation stay silent
 });
 

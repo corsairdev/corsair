@@ -1,0 +1,120 @@
+---
+title: Database
+description: "Addresszen local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Addresszen plugin syncs data locally. Use `corsair.addresszen.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Autocomplete Results
+
+Path: `addresszen.db.autocompleteResults.search`
+
+```ts
+const rows = await corsair.addresszen.db.autocompleteResults.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `query` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Key Availability
+
+Path: `addresszen.db.keyAvailability.search`
+
+```ts
+const rows = await corsair.addresszen.db.keyAvailability.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `available` | `boolean` | equals |
+| `context` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Resolved Addresses
+
+Path: `addresszen.db.resolvedAddresses.search`
+
+```ts
+const rows = await corsair.addresszen.db.resolvedAddresses.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `addressId` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Verified Addresses
+
+Path: `addresszen.db.verifiedAddresses.search`
+
+```ts
+const rows = await corsair.addresszen.db.verifiedAddresses.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `query` | `string` | equals, contains, startsWith, endsWith, in |
+| `city` | `string` | equals, contains, startsWith, endsWith, in |
+| `state` | `string` | equals, contains, startsWith, endsWith, in |
+| `zipCode` | `string` | equals, contains, startsWith, endsWith, in |
+| `context` | `string` | equals, contains, startsWith, endsWith, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `message` | `string` | equals, contains, startsWith, endsWith, in |
+| `updatedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

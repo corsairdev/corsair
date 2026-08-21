@@ -34,7 +34,10 @@ export interface GateResult {
 function pluginOf(file: string): string | null {
 	const name = file.match(/^packages\/([^/]+)\//)?.[1];
 	if (!name) return null;
-	return IGNORED_PACKAGES.includes(name) ? null : name;
+	// frpc-<platform>-<arch> are prebuilt binary shims for the dev tunnel,
+	// not integrations — the plugin rules (tests, demo video) don't apply.
+	if (IGNORED_PACKAGES.includes(name) || name.startsWith('frpc-')) return null;
+	return name;
 }
 
 /** The plugin a PR targets, or null if it touches no plugin packages. */

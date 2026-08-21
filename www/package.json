@@ -15,6 +15,7 @@
     "db:sync-show": "tsx src/db/sync-written-integration-show.ts",
     "db:seed-tags": "tsx src/db/seed-integration-tags.ts",
     "corsair": "tsx src/server/corsair.ts",
+    "test": "node --import tsx --test 'src/**/*.test.ts'",
     "sanity:schema": "sanity schema deploy",
     "sanity:deploy": "sanity deploy",
     "blog:migrate": "tsx scripts/migrate-blog-to-sanity.ts"
@@ -40,6 +41,7 @@
     "next": "^15.3.2",
     "next-sanity": "^11.6.13",
     "pg": "^8.20.0",
+    "posthog-js": "^1.407.2",
     "prettier": "^3.8.4",
     "radix-ui": "^1.4.3",
     "react": "^19.0.0",

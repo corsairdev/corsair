@@ -2,6 +2,10 @@ import type { CorsairDatabase } from '../db/kysely/database';
 import { createCorsairDatabase } from '../db/kysely/database';
 import type { HubConfig } from '../hub';
 import { normalizeHubConfig } from '../hub';
+import {
+	CORSAIR_TUNNEL_PATH,
+	CORSAIR_TUNNEL_ZONE,
+} from '../hub/tunnel/constants';
 import { createMissingConfigProxy } from './auth/errors';
 import type { CorsairSingleTenantClient, CorsairTenantWrapper } from './client';
 import { buildCorsairClient, buildIntegrationKeys } from './client';
@@ -97,7 +101,7 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 	const manage = buildManagementNamespace(internalConfig);
 
 	if (config.multiTenancy) {
-		return Object.assign(
+		const tenantWrapper = Object.assign(
 			{
 				withTenant: (tenantId: string) => {
 					if (!tenantId) {
@@ -125,6 +129,9 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 			},
 			{ [CORSAIR_INTERNAL]: internalConfig },
 		);
+		maybeStartConnectLoop(tenantWrapper, internalConfig.hub);
+		maybeStartTunnel(tenantWrapper, internalConfig.hub);
+		return tenantWrapper;
 	}
 
 	const client = buildCorsairClient(config.plugins, {
@@ -138,12 +145,84 @@ export function createCorsair<const Plugins extends readonly CorsairPlugin[]>(
 		internalConfig,
 	});
 
-	return Object.assign({}, client, {
+	const singleTenant = Object.assign({}, client, {
 		keys: integrationKeys,
 		permissions,
 		manage,
 		[CORSAIR_INTERNAL]: internalConfig,
 	}) as CorsairSingleTenantClient<Plugins>;
+	maybeStartConnectLoop(singleTenant, internalConfig.hub);
+	maybeStartTunnel(singleTenant, internalConfig.hub);
+	return singleTenant;
+}
+
+function maybeStartConnectLoop(
+	instance: unknown,
+	hub: HubConfig | undefined,
+): void {
+	// Only dev keys use connect; prod is out of scope. Delegate the execution-flag
+	// decision to startConnectLoop (the single owner of the "flag is off" warning) —
+	// short-circuiting on the flag here would swallow that warning silently.
+	if (!hub?.projectApiKey?.startsWith('ck_dev_')) {
+		return;
+	}
+	void import('../hub/connect/loop')
+		.then((m) => m.startConnectLoop(instance))
+		.catch(() => {});
+}
+
+export function shouldStartTunnel(hub: HubConfig | undefined): boolean {
+	if (!hub?.projectApiKey?.startsWith('ck_dev_')) return false;
+	// A `ck_dev_` key tunnels automatically (like Clerk's `pk_test_`). No config.
+	// Opt out with `tunnel: false` or CORSAIR_TUNNEL=0.
+	return hub.tunnel !== false && process.env.CORSAIR_TUNNEL !== '0';
+}
+
+const activeTunnels: Set<string> = ((
+	globalThis as typeof globalThis & {
+		__corsairTunnels?: Set<string>;
+	}
+).__corsairTunnels ??= new Set<string>());
+
+function maybeStartTunnel(
+	_instance: unknown,
+	hub: HubConfig | undefined,
+): void {
+	if (!shouldStartTunnel(hub)) return;
+	const key = hub!.projectApiKey;
+	if (activeTunnels.has(key)) return;
+	const port = Number(process.env.PORT);
+	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+		console.error(
+			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+		);
+		return;
+	}
+	activeTunnels.add(key);
+	// Everything below is internal Corsair infra, not dev config: the Hub owns
+	// the slug and the share host is a constant. `cfg`/env are advanced overrides.
+	const cfg = typeof hub!.tunnel === 'object' ? hub!.tunnel : {};
+	const shareHost =
+		process.env.CORSAIR_FRP_HOST ?? cfg.shareHost ?? CORSAIR_TUNNEL_ZONE;
+	void import('../hub/tunnel/run-tunnel')
+		.then((m) =>
+			m.runTunnel({
+				port,
+				apiUrl: hub!.apiUrl,
+				apiKey: key,
+				shareHost,
+				onClose: () => activeTunnels.delete(key),
+			}),
+		)
+		.then(({ url }) => {
+			console.log(`[corsair] tunnel active: ${url}${CORSAIR_TUNNEL_PATH}`);
+		})
+		.catch((err: unknown) => {
+			activeTunnels.delete(key);
+			console.warn(
+				`[corsair] tunnel failed to start: ${err instanceof Error ? err.message : String(err)}. Run \`corsair setup\` to enable your dev tunnel.`,
+			);
+		});
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -182,6 +261,16 @@ export {
 	initializeIntegrationDEK,
 	reEncryptConfig,
 } from './auth';
+// Agent chats namespace
+export type {
+	AgentMessageRole,
+	AgentReply,
+	ChatHandle,
+	ChatMessage,
+	ChatSummary,
+	CorsairChatsNamespace,
+	CreateChatResult,
+} from './chats';
 // Core types
 export type {
 	CorsairClient,
@@ -269,15 +358,13 @@ export type {
 	RequiredPluginWebhookSchemas,
 	WebhookHooks,
 } from './plugins';
-// Agent chat threads namespace
+// Workflow runs namespace
 export type {
-	AgentReply,
-	CorsairThreadsNamespace,
-	CreateThreadResult,
-	ThreadHandle,
-	ThreadMessage,
-	ThreadSummary,
-} from './threads';
+	CorsairRunsNamespace,
+	WorkflowRun,
+	WorkflowRunStatus,
+	WorkflowRunStep,
+} from './runs';
 // Utility types
 export type { Bivariant, UnionToIntersection } from './utils';
 // Webhook types
@@ -320,3 +407,10 @@ export {
 	readQueryParam,
 	toExternalId,
 } from './webhooks/tenant-match-utils';
+// Workflows namespace
+export type {
+	CorsairWorkflowsNamespace,
+	TriggerRunResult,
+	WorkflowStatus,
+	WorkflowSummary,
+} from './workflows';

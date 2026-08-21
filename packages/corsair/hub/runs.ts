@@ -4,10 +4,19 @@ import type { HubConfig } from './types';
 // ─────────────────────────────────────────────────────────────────────────────
 // Workflow runs (SDK client)
 //
-// Read a tenant's run history and act on a run (approve / deny / cancel) over the
-// Hub's `/runs` endpoints. Auth is the project API key (Bearer); the tenant is
-// sent in the query, matching the threads client.
+// Read a workflow's run history and act on a run (approve / deny / cancel) over
+// the Hub's `/workflows/:id/runs` and `/runs` endpoints. Auth is the project API
+// key (Bearer); the tenant is sent in the query, matching the chats client.
 // ─────────────────────────────────────────────────────────────────────────────
+
+export type WorkflowRunStatus =
+	| 'queued'
+	| 'running'
+	| 'sleeping'
+	| 'successful'
+	| 'error'
+	| 'cancelled'
+	| 'awaiting_approval';
 
 export type WorkflowRunStep = {
 	stepId: string;
@@ -21,7 +30,7 @@ export type WorkflowRunStep = {
 export type WorkflowRun = {
 	id: string;
 	workflowId: string;
-	status: string;
+	status: WorkflowRunStatus;
 	triggerType: string;
 	error: string | null;
 	attempt: number;
@@ -39,13 +48,28 @@ function asRecord(payload: unknown): Record<string, unknown> {
 
 export async function listRuns(
 	hub: HubConfig,
-	input: { tenantId: string; limit?: number },
+	input: { tenantId: string },
 ): Promise<WorkflowRun[]> {
-	const query = new URLSearchParams({ tenantId: input.tenantId });
-	if (input.limit != null) query.set('limit', String(input.limit));
 	return hubApiGet<WorkflowRun[]>({
 		hub,
-		path: `/runs?${query.toString()}`,
+		path: `/runs?tenantId=${encodeURIComponent(input.tenantId)}`,
+		parseResponse: (payload) => {
+			const runs = asRecord(payload).runs;
+			return Array.isArray(runs) ? (runs as WorkflowRun[]) : [];
+		},
+	});
+}
+
+export async function listWorkflowRuns(
+	hub: HubConfig,
+	input: { workflowId: string; tenantId: string },
+): Promise<WorkflowRun[]> {
+	return hubApiGet<WorkflowRun[]>({
+		hub,
+		path: `/workflows/${encodeURIComponent(input.workflowId)}/runs?tenantId=${encodeURIComponent(
+			input.tenantId,
+		)}`,
+		notFoundMessage: `Workflow "${input.workflowId}" not found`,
 		parseResponse: (payload) => {
 			const runs = asRecord(payload).runs;
 			return Array.isArray(runs) ? (runs as WorkflowRun[]) : [];

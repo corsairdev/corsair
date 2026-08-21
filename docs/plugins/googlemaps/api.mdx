@@ -1,0 +1,1055 @@
+---
+title: API
+description: "API reference for GoogleMaps: every `googlemaps.api.*` operation with input and output types."
+---
+
+Every `googlemaps.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Aerial
+
+### lookupAerialVideo
+
+`aerial.lookupAerialVideo`
+
+Tool to look up an aerial view video by address or video ID. Returns video metadata including state and URIs for playback. Use when you need to retrieve a previously rendered aerial video or check the status of a video render request. Note that receiving a video is a billable event.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.aerial.lookupAerialVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | No | US postal address. |
+| `videoId` | `string` | No | Video ID. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `state` | `string` | No | PROCESSING, ACTIVE, FAILED. |
+| `uris` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="uris full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### renderAerialVideo
+
+`aerial.renderAerialVideo`
+
+Starts rendering an aerial view video for a US postal address. Returns a video ID that can be used with lookupVideo to retrieve the video once rendering completes. Rendering typically takes up to a few hours.
+
+**Risk:** `write`
+
+```ts
+await corsair.googlemaps.api.aerial.renderAerialVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | US postal address to render aerial view video for. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `state` | `string` | No | — |
+| `metadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+  videoId: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geocoding
+
+### geocodeAddress
+
+`geocoding.geocodeAddress`
+
+DEPRECATED: Legacy API to convert street addresses into geographic coordinates (latitude and longitude). This API works best with API key authentication. For OAuth connections without an API key, use geocoding.geocodeAddressWithQuery or geocoding.geocodingApi instead. Use when you need to geocode an address or location to get its precise latitude/longitude coordinates.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.geocoding.geocodeAddress({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | Street address to geocode. |
+| `bounds` | `string` | No | Bounding box bias. |
+| `language` | `string` | No | Language code. |
+| `region` | `string` | No | Region code. |
+| `key` | `string` | No | API key override. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### geocodeAddressWithQuery
+
+`geocoding.geocodeAddressWithQuery`
+
+Tool to map addresses to geographic coordinates with query parameter. Use when you need to convert a textual address into latitude/longitude coordinates using the modern v4beta API. Results may match multiple places — always verify formattedAddress, region, and addressComponents in the response before using returned coordinates.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.geocoding.geocodeAddressWithQuery({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | Yes | Address to geocode or validate. |
+| `regionCode` | `string` | No | Two-character region code. |
+| `locality` | `string` | No | Locality/City. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### geocodeDestinations
+
+`geocoding.geocodeDestinations`
+
+Tool to perform destination lookup and return detailed destination information including primary place, containing places, sub-destinations, landmarks, entrances, and navigation points. Use when you need comprehensive destination data for an address, place ID, or geographic coordinates.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.geocoding.geocodeDestinations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | No | Street address query. |
+| `placeId` | `string` | No | Place ID query. |
+| `latlng` | `string` | No | Latitude,longitude query. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### geocodePlace
+
+`geocoding.geocodePlace`
+
+Tool to perform geocode lookup using a place identifier to retrieve address and coordinates. Use when you need to get detailed geographic information for a specific Google Place ID.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.geocoding.geocodePlace({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place_id` | `string` | Yes | Google Place ID. |
+| `language` | `string` | No | Language code. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### geocodingApi
+
+`geocoding.geocodingApi`
+
+Convert addresses into geographic coordinates (latitude and longitude) and vice versa (reverse geocoding), or get an address for a Place ID. Uses the Geocoding API v4 (v4beta) which supports OAuth2 authentication. Exactly one of address, latlng, or place_id must be provided per request; omitting all three or mixing incompatible combinations yields no useful results.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.geocoding.geocodingApi({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `address` | `string` | No | Street address to geocode. |
+| `latlng` | `string` | No | Coordinates for reverse geocoding. |
+| `place_id` | `string` | No | Place ID. |
+| `language` | `string` | No | Language. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### reverseGeocodeLocation
+
+`geocoding.reverseGeocodeLocation`
+
+Tool to convert geographic coordinates (latitude and longitude) to human-readable addresses using reverse geocoding. Use when you need to find the address or place name for a given set of coordinates. A single coordinate pair may return multiple results; verify formattedAddress, region, and addressComponents before committing to a result.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.geocoding.reverseGeocodeLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `latlng` | `string` | Yes | Latitude and longitude string (e.g. "37.422,-122.084"). |
+| `language` | `string` | No | Language code. |
+| `result_type` | `string` | No | Filter by result types. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `results` | `object[]` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geolocation
+
+### geolocate
+
+`geolocation.geolocate`
+
+Tool to determine location based on cell towers and WiFi access points. Use when you need to find the geographic location of a device using network infrastructure data.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.geolocation.geolocate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `homeMobileCountryCode` | `number` | No | MCC for home network. |
+| `homeMobileNetworkCode` | `number` | No | MNC for home network. |
+| `radioType` | `string` | No | lte, gsm, cdma, wcdma. |
+| `carrier` | `string` | No | Carrier name. |
+| `cellTowers` | `object[]` | No | Cell tower objects. |
+| `wifiAccessPoints` | `object[]` | No | WiFi access point objects. |
+
+<AccordionGroup>
+<Accordion title="cellTowers full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="wifiAccessPoints full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `location` | `object` | Yes | — |
+| `accuracy` | `number` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+  lat: number,
+  lng: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Places
+
+### autocomplete
+
+`places.autocomplete`
+
+Returns place and query predictions for text input. Use when implementing as-you-type autocomplete functionality for place searches. Returns up to five predictions ordered by relevance.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.places.autocomplete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `input` | `string` | Yes | Text query to get predictions for. |
+| `locationBias` | `object` | No | Location bias area. |
+| `includedPrimaryTypes` | `string[]` | No | Primary place types. |
+| `languageCode` | `string` | No | Language code. |
+| `regionCode` | `string` | No | Region code. |
+
+<AccordionGroup>
+<Accordion title="locationBias full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `suggestions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="suggestions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlaceDetails
+
+`places.getPlaceDetails`
+
+Retrieves comprehensive details for a place using its resource name (places/{place_id} format). Use when you need detailed information about a specific place.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.places.getPlaceDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `place_id` | `string` | Yes | Place ID (or resource name places/{place_id}). |
+| `fields` | `string` | No | Field mask for response fields. |
+| `languageCode` | `string` | No | Language code. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `formattedAddress` | `string` | No | — |
+| `location` | `object` | No | — |
+| `rating` | `number` | No | — |
+| `types` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="location full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPlacePhoto
+
+`places.getPlacePhoto`
+
+Retrieves high quality photographic content from the Google Maps Places database. Use when you need to download a place photo using a photo_reference obtained from Place Details, Nearby Search, or Text Search requests. Images are scaled proportionally to fit within specified dimensions.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.places.getPlacePhoto({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `photo_reference` | `string` | Yes | Photo reference identifier. |
+| `maxwidth` | `number` | No | Max width in pixels. |
+| `maxheight` | `number` | No | Max height in pixels. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `photoUrl` | `string` | Yes | Public photo URL or image resource link. |
+
+
+
+---
+
+### nearbySearch
+
+`places.nearbySearch`
+
+Searches for places (e.g., restaurants, parks) within a specified circular area, with options to filter by place types and customize the returned fields and number of results.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.places.nearbySearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `includedTypes` | `string[]` | No | Included place types. |
+| `excludedTypes` | `string[]` | No | Excluded place types. |
+| `maxResultCount` | `number` | No | Max results (1-20). |
+| `locationRestriction` | `object` | Yes | Center circle restriction. |
+
+<AccordionGroup>
+<Accordion title="locationRestriction full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### textSearch
+
+`places.textSearch`
+
+Searches for places on Google Maps using a textual query (e.g., "restaurants in London", "Eiffel Tower"). Results may include CLOSED_PERMANENTLY or TEMPORARILY_CLOSED places — filter by businessStatus=OPERATIONAL. Include city/region and business type in textQuery to avoid empty or irrelevant results. Deduplicate using id or formattedAddress, not name alone. Throttle to ~1 req/s; OVER_QUERY_LIMIT (HTTP 429) requires exponential backoff.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.places.textSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `textQuery` | `string` | Yes | Text search query string. |
+| `includedType` | `string` | No | Primary place type filter. |
+| `locationBias` | `object` | No | Location bias circle or rectangle. |
+| `minRating` | `number` | No | Minimum place rating filter. |
+| `openNow` | `boolean` | No | Filter currently open places. |
+| `maxResultCount` | `number` | No | Max result count. |
+
+<AccordionGroup>
+<Accordion title="locationBias full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `places` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="places full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Routes
+
+### computeRouteMatrix
+
+`routes.computeRouteMatrix`
+
+Calculates travel distance and duration matrix between multiple origins and destinations using the modern Routes API; supports OAuth2 authentication and various travel modes. Matrix is capped at 625 elements (e.g., 25×25); chunk larger sets to avoid RESOURCE_EXHAUSTED errors. Response elements may be returned out of input order — always use originIndex and destinationIndex to map results. Only use elements where condition='ROUTE_EXISTS'; the matrix may be incomplete.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.routes.computeRouteMatrix({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origins` | `object[]` | Yes | List of origin waypoints. |
+| `destinations` | `object[]` | Yes | List of destination waypoints. |
+| `travelMode` | `string` | No | DRIVE, BICYCLE, WALK, TWO_WHEELER, TRANSIT. |
+| `routingPreference` | `string` | No | TRAFFIC_UNAWARE, TRAFFIC_AWARE, TRAFFIC_AWARE_OPTIMAL. |
+| `departureTime` | `string` | No | Departure timestamp. |
+
+<AccordionGroup>
+<Accordion title="origins full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+
+<Accordion title="destinations full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `originIndex` | `number` | No | — |
+| `destinationIndex` | `number` | No | — |
+| `status` | `object` | No | — |
+| `condition` | `string` | No | — |
+| `distanceMeters` | `number` | No | — |
+| `duration` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### distanceMatrix
+
+`routes.distanceMatrix`
+
+DEPRECATED: Legacy API that calculates travel distance and time for a matrix of origins and destinations. This API only works with API keys (no OAuth2 support). Use the modern 'Compute Route Matrix' action instead, which supports OAuth2 authentication. Supports different modes of transportation and options like departure/arrival times. Capped at 100 elements per request (elements = origins × destinations count); split large sets into batches.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.routes.distanceMatrix({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origins` | `string \| string[]` | Yes | Origins addresses or coordinates. |
+| `destinations` | `string \| string[]` | Yes | Destinations addresses or coordinates. |
+| `mode` | `string` | No | driving, walking, bicycling, transit. |
+| `units` | `string` | No | metric, imperial. |
+| `departure_time` | `string` | No | Departure time. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin_addresses` | `string[]` | No | — |
+| `destination_addresses` | `string[]` | No | — |
+| `rows` | `object[]` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="rows full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDirection
+
+`routes.getDirection`
+
+Fetches detailed directions between an origin and a destination, supporting intermediate waypoints and various travel modes. Automatically uses the modern Routes API with OAuth2 when available, falling back to legacy API with API key if provided.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.routes.getDirection({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `string` | Yes | Origin location address or lat,lng. |
+| `destination` | `string` | Yes | Destination location address or lat,lng. |
+| `mode` | `string` | No | driving, walking, bicycling, transit. |
+| `waypoints` | `string \| string[]` | No | Intermediate waypoints. |
+| `avoid` | `string` | No | tolls, highways, ferries. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `routes` | `object[]` | No | — |
+| `status` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="routes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getRoute
+
+`routes.getRoute`
+
+Calculates one or more routes between two specified locations. Uses various travel modes and preferences; addresses must be resolvable by Google Maps. Response duration is a string with 's' suffix (e.g., "4557s"); parse before displaying.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.routes.getRoute({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `origin` | `object` | Yes | Origin waypoint object. |
+| `destination` | `object` | Yes | Destination waypoint object. |
+| `travelMode` | `string` | No | DRIVE, BICYCLE, WALK, TWO_WHEELER, TRANSIT. |
+| `routingPreference` | `string` | No | TRAFFIC_UNAWARE, TRAFFIC_AWARE. |
+
+<AccordionGroup>
+<Accordion title="origin full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="destination full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `routes` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="routes full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tiles
+
+### createTilesSession
+
+`tiles.createTilesSession`
+
+Tool to create a session token required for accessing 2D Tiles and Street View imagery. Use when you need to initialize tile-based map rendering or street view display. The session token is valid for approximately two weeks and must be included in all subsequent tile requests. Each call consumes quota — cache and reuse the returned token across all tile requests within its validity window rather than creating a new session per request.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.tiles.createTilesSession({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mapType` | `string` | Yes | roadmap, satellite, terrain, or streetview. |
+| `language` | `string` | No | BCP-47 language tag. |
+| `region` | `string` | No | ccTLD two-character region code. |
+| `imageFormat` | `string` | No | png, jpeg, webp. |
+| `scale` | `string` | No | scale factor. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session` | `string` | Yes | Session token for subsequent tile requests. |
+| `expiry` | `string` | No | Expiration timestamp. |
+| `tileWidth` | `number` | No | — |
+| `tileHeight` | `number` | No | — |
+| `imageFormat` | `string` | No | — |
+
+
+
+---
+
+### embedMap
+
+`tiles.embedMap`
+
+Tool to generate an embeddable Google Map URL and HTML iframe code. Use when you need to display a map (place, view, directions, street view, search) on a webpage without JavaScript. Note: This API only works with API keys (no OAuth2 support). It generates embed URLs and does not make direct API calls. Generated embed URLs are publicly accessible; avoid passing sensitive or internal location queries.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.tiles.embedMap({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `mode` | `place \| view \| directions \| streetview \| search` | Yes | Map embed mode. |
+| `q` | `string` | No | Location or search query. |
+| `origin` | `string` | No | Origin for directions mode. |
+| `destination` | `string` | No | Destination for directions mode. |
+| `center` | `string` | No | Center lat,lng. |
+| `zoom` | `number` | No | Zoom level. |
+| `maptype` | `string` | No | roadmap or satellite. |
+| `location` | `string` | No | Lat,lng location for streetview mode. |
+| `pano` | `string` | No | Panorama ID for streetview mode. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embedUrl` | `string` | Yes | Embeddable map URL. |
+| `iframeHtml` | `string` | Yes | HTML iframe code snippet for embedding. |
+
+
+
+---
+
+### get2dTile
+
+`tiles.get2dTile`
+
+Tool to retrieve a 2D map tile image at specified coordinates for building custom map visualizations. Use when you need to download individual map tile images for roadmap, satellite, or terrain views. Requires a valid session token from the createSession endpoint.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.tiles.get2dTile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `session` | `string` | Yes | Valid session token from CreateTilesSession. |
+| `z` | `number` | Yes | Zoom level. |
+| `x` | `number` | Yes | X coordinate. |
+| `y` | `number` | Yes | Y coordinate. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tileUrl` | `string` | Yes | URL to fetch 2D tile image. |
+| `content` | `string` | No | Base64 tile data if requested. |
+
+
+
+---
+
+### get3dTilesRoot
+
+`tiles.get3dTilesRoot`
+
+Tool to retrieve the 3D Tiles tileset root configuration for photorealistic 3D map rendering. Use when you need to initialize a 3D renderer with Google's photorealistic tiles following the OGC 3D Tiles specification. The Map Tiles API is billable per request; cache the root response client-side and avoid repeated calls.
+
+**Risk:** `read`
+
+```ts
+await corsair.googlemaps.api.tiles.get3dTilesRoot({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `key` | `string` | No | Optional API key override. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset` | `object` | No | — |
+| `geometricError` | `number` | No | — |
+| `root` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="root full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -118,7 +118,7 @@ export async function makeGoogleDriveRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	const response = await request<T>(config, requestOptions);
