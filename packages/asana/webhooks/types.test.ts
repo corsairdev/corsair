@@ -38,6 +38,17 @@ describe('verifyAsanaWebhookSignature', () => {
 		});
 	});
 
+	it('returns error when secret is whitespace-only', () => {
+		const result = verifyAsanaWebhookSignature(
+			{ payload, headers: { 'x-hook-signature': sign(secret) } },
+			'   ',
+		);
+		expect(result).toEqual({
+			valid: false,
+			error: 'Missing webhook secret',
+		});
+	});
+
 	it('returns error when x-hook-signature header is missing', () => {
 		const result = verifyAsanaWebhookSignature(
 			{ payload, headers: {} },
