@@ -150,13 +150,13 @@ function containsCycle(root: unknown): boolean {
 		const frame = stack[stack.length - 1];
 		if (frame === undefined) break;
 		const [node, children] = frame;
-		const child = children.pop();
-		if (child === undefined) {
+		if (children.length === 0) {
 			// Frame exhausted — node leaves the current path.
 			path.delete(node);
 			stack.pop();
 			continue;
 		}
+		const child = children.pop();
 		if (!isRecord(child)) continue;
 		if (path.has(child)) return true;
 		path.add(child);
