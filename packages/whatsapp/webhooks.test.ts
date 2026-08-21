@@ -61,7 +61,12 @@ describe('WhatsApp Webhooks', () => {
 	});
 
 	describe('Challenge Verification', () => {
-		const challengeQuery = (overrides: Record<string, unknown> = {}) => ({
+		// Mirrors the query param type verifyWhatsappWebhookChallenge accepts, so
+		// overrides can drop a param (undefined) or repeat one (string[]).
+		type ChallengeQuery = Record<string, string | string[] | undefined>;
+		const challengeQuery = (
+			overrides: ChallengeQuery = {},
+		): ChallengeQuery => ({
 			'hub.mode': 'subscribe',
 			'hub.verify_token': 'my-verify-token',
 			'hub.challenge': '1234567890',
