@@ -69,6 +69,7 @@ export const BaseProviders = [
 	'cloudinary',
 	'collegefootballdata',
 	'confluence',
+	'contentfulgraphql',
 	'cursor',
 	'databricks',
 	'datadog',
@@ -224,6 +225,7 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
+	contentfulgraphql: 'Contentful GraphQL',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
@@ -386,6 +388,7 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'collegefootballdata'
 	| 'confluence'
+	| 'contentfulgraphql'
 	| 'cursor'
 	| 'databricks'
 	| 'datadog'
