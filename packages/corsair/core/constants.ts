@@ -69,6 +69,7 @@ export const BaseProviders = [
 	'canvas',
 	'canva',
 	'circleci',
+	'clientary',
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
@@ -233,6 +234,7 @@ export const ProviderDisplayNames = {
 	canvas: 'Canvas LMS',
 	canva: 'Canva',
 	circleci: 'CircleCI',
+	clientary: 'Clientary',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
@@ -404,6 +406,7 @@ export type AllProviders =
 	| 'canva'
 	| 'canvas'
 	| 'circleci'
+	| 'clientary'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
