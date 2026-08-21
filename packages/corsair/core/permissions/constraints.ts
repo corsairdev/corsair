@@ -15,6 +15,11 @@ import type { PermissionConstraint, PermissionPolicy } from '../plugins';
 
 /**
  * Reads a dot-notation path out of an endpoint's argument object.
+ *
+ * Only own properties are traversed: an inherited member such as `toString`
+ * is not an argument the agent passed, and letting a path resolve to one would
+ * mean a constraint judged something other than the actual call.
+ *
  * Returns undefined if any segment is missing, so a constraint on an absent
  * field fails closed rather than matching by accident.
  */
@@ -22,6 +27,7 @@ export function resolveArgPath(args: unknown, path: string): unknown {
 	let current = args;
 	for (const segment of path.split('.')) {
 		if (current === null || typeof current !== 'object') return undefined;
+		if (!Object.hasOwn(current, segment)) return undefined;
 		current = (current as Record<string, unknown>)[segment];
 	}
 	return current;
@@ -41,32 +47,67 @@ function sameValue(a: unknown, b: unknown): boolean {
 	return false;
 }
 
+/** The operators a constraint may carry. Anything else is not a constraint. */
+const OPERATORS = ['match', 'equals', 'in', 'notIn'] as const;
+
+type Operator = (typeof OPERATORS)[number];
+
+/**
+ * Extracts the single operator from a constraint.
+ *
+ * Returns null when there is not exactly one. Zero means the shape is
+ * unrecognized; more than one is ambiguous, and silently honouring whichever
+ * we happened to check first would leave the developer believing both were
+ * enforced while only one actually gated the call.
+ */
+function soleOperator(
+	constraint: PermissionConstraint,
+): { op: Operator; operand: unknown } | null {
+	if (constraint === null || typeof constraint !== 'object') return null;
+	const present = OPERATORS.filter((op) => Object.hasOwn(constraint, op));
+	if (present.length !== 1) return null;
+	const op = present[0] as Operator;
+	return { op, operand: (constraint as Record<string, unknown>)[op] };
+}
+
 /**
  * Evaluates one constraint against one resolved argument value.
- * An unrecognized constraint shape returns false — an unenforceable rule must
- * never read as satisfied.
+ *
+ * Everything unusable returns false — an absent argument, a malformed or
+ * ambiguous constraint, an operand of the wrong type. An unenforceable rule must
+ * never read as satisfied, because a satisfied constraint applies the
+ * (typically looser) configured policy.
  */
 export function matchesConstraint(
 	value: unknown,
 	constraint: PermissionConstraint,
 ): boolean {
-	if ('match' in constraint) {
-		// Only strings can match a pattern; a number or object never does.
-		if (typeof value !== 'string') return false;
+	// An unresolved path and an explicitly-undefined argument are
+	// indistinguishable here, and neither should grant access.
+	if (value === undefined) return false;
+
+	const parsed = soleOperator(constraint);
+	if (parsed === null) return false;
+	const { op, operand } = parsed;
+
+	if (op === 'match') {
+		// Only a string pattern may test a string value.
+		if (typeof operand !== 'string' || typeof value !== 'string') return false;
 		try {
-			return new RegExp(constraint.match).test(value);
+			return new RegExp(operand).test(value);
 		} catch {
 			// An invalid pattern is a config bug. Fail closed rather than
 			// silently widening what the agent is allowed to do.
 			return false;
 		}
 	}
-	if ('equals' in constraint) return sameValue(value, constraint.equals);
-	if ('in' in constraint) return constraint.in.some((c) => sameValue(value, c));
-	if ('notIn' in constraint) {
-		return !constraint.notIn.some((c) => sameValue(value, c));
-	}
-	return false;
+	if (op === 'equals') return sameValue(value, operand);
+	// A non-array operand would throw on .some(); reject it as malformed so a
+	// config mistake cannot surface as an exception mid-call. `notIn` fails
+	// closed here too — an unusable denylist must not read as "not denied".
+	if (!Array.isArray(operand)) return false;
+	if (op === 'in') return operand.some((c) => sameValue(value, c));
+	return !operand.some((c) => sameValue(value, c));
 }
 
 /**

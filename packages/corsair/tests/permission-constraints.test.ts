@@ -61,6 +61,54 @@ describe('matchesConstraint', () => {
 	});
 });
 
+describe('matchesConstraint — fails closed on unusable rules', () => {
+	it('rejects an absent argument under every operator, notIn included', () => {
+		// notIn is the trap: "undefined is not in the denylist" reads as satisfied,
+		// which would apply the (looser) configured policy to a call that simply
+		// omitted the field.
+		expect(matchesConstraint(undefined, { notIn: ['bad@example.com'] })).toBe(
+			false,
+		);
+		expect(matchesConstraint(undefined, { in: ['a'] })).toBe(false);
+		expect(matchesConstraint(undefined, { equals: 'a' })).toBe(false);
+		expect(matchesConstraint(undefined, { match: '.*' })).toBe(false);
+	});
+
+	it('rejects a constraint carrying more than one operator', () => {
+		// Honouring whichever we checked first would leave the developer believing
+		// both were enforced.
+		expect(
+			matchesConstraint('abc', { match: '^abc$', equals: 'ZZZ' } as never),
+		).toBe(false);
+	});
+
+	it('rejects operands of the wrong type instead of throwing', () => {
+		expect(() => matchesConstraint('a', { in: 'nope' } as never)).not.toThrow();
+		expect(matchesConstraint('a', { in: 'nope' } as never)).toBe(false);
+		expect(matchesConstraint('a', { notIn: 'nope' } as never)).toBe(false);
+		// A number operand would silently become the pattern /123/.
+		expect(matchesConstraint('123', { match: 123 } as never)).toBe(false);
+	});
+});
+
+describe('resolveArgPath — own properties only', () => {
+	it('does not resolve inherited members', () => {
+		// `toString` exists on every object; treating it as an argument would let a
+		// constraint judge something the agent never passed.
+		expect(resolveArgPath({}, 'toString')).toBeUndefined();
+		expect(resolveArgPath({}, 'constructor')).toBeUndefined();
+		expect(resolveArgPath({}, 'constructor.name')).toBeUndefined();
+		expect(resolveArgPath({}, '__proto__')).toBeUndefined();
+	});
+
+	it('still resolves own properties, including array indices', () => {
+		expect(resolveArgPath({ a: { b: 1 } }, 'a.b')).toBe(1);
+		expect(resolveArgPath({ list: ['x'] }, 'list.0')).toBe('x');
+		// An own property that shadows an inherited name still resolves.
+		expect(resolveArgPath({ toString: 'mine' }, 'toString')).toBe('mine');
+	});
+});
+
 describe('constraintsSatisfied', () => {
 	const args = { channel: '#general', to: 'sarah@corsair.dev' };
 
@@ -226,5 +274,25 @@ describe('enforcePermission honours argument constraints', () => {
 		// enforcePermission falls back to a policy block rather than a pending row.
 		expect(res.result).toBe('blocked');
 		expect(res.reason).toBe('policy');
+	});
+});
+
+describe('constraints cannot be bypassed by omitting the argument', () => {
+	it('does not allow a notIn-guarded call when the agent omits the field', () => {
+		// Regression: `notIn` previously read as satisfied for a missing path, so
+		// dropping `to` from the arguments turned an allowlist into an open door.
+		const override: PermissionOverride = {
+			policy: 'allow',
+			constraints: { to: { notIn: ['external@evil.com'] } },
+		};
+
+		expect(evaluatePermission('write', 'strict', override, {})).toBe(
+			'require_approval',
+		);
+		expect(
+			evaluatePermission('write', 'strict', override, {
+				to: 'sarah@corsair.dev',
+			}),
+		).toBe('allow');
 	});
 });

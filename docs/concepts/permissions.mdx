@@ -297,13 +297,17 @@ When the constraints do not hold, the mode matrix decides — unless you set `ot
 
 ### Rules fail closed
 
-Constraints only ever loosen or tighten a decision you already configured; they never grant access the mode matrix wouldn't. A constraint is **not** satisfied when:
+A constraint that **is** satisfied applies the override's `policy`, replacing whatever the mode matrix said — including allowing an operation the matrix would have sent for approval. That is the point of the feature: under `strict`, the `#general` example above runs immediately even though `strict` escalates writes.
 
-- the argument is missing, or is the wrong type for the operator (a number never matches a regex)
-- the regex is invalid — a malformed pattern is a config bug, not an open door
+The fail-closed behaviour applies to constraints that **cannot be evaluated or do not match**. A constraint is not satisfied when:
+
+- the argument is missing, or resolves only through an inherited property rather than one the agent passed
+- the argument is the wrong type for the operator (a number never matches a regex)
+- the regex is invalid, or the operand is the wrong type — `in` and `notIn` need an array
+- the constraint carries more than one operator, or none this version recognizes
 - the constraints object is empty
 
-In each case the override contributes nothing and evaluation falls back to `otherwise` or the mode matrix.
+In each of these cases the override contributes nothing and evaluation falls back to `otherwise` or the mode matrix. Note this includes `notIn`: an absent argument does **not** count as "not in the denylist", so omitting a field can never satisfy a constraint.
 
 <Note>
 Constraint patterns are authored by you in the corsair config, but the values they test come from the agent. Keep patterns anchored and simple — a pattern with catastrophic backtracking can be made slow by a hostile argument value.
