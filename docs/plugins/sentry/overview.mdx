@@ -117,14 +117,26 @@ Synced entities support `corsair.sentry.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `events.get`
 
 ```ts
-await corsair.sentry.api.events.get({});
+await corsair.sentry.api.events.get({
+    organizationSlug: 'example',
+    projectSlug: 'example',
+    eventId: 'example',
+});
 ```
 
 
 **Write-style (destructive):** `issues.delete`
 
+
+		<Warning>
+This is a destructive operation. Review [Permissions](/concepts/permissions) and [Hooks](/concepts/hooks) before invoking it.
+</Warning>
+
+
 ```ts
-await corsair.sentry.api.issues.delete({});
+await corsair.sentry.api.issues.delete({
+    issueId: 'example',
+});
 ```
 
 

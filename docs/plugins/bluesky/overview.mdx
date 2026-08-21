@@ -116,8 +116,12 @@ await corsair.bluesky.api.feeds.getTimeline({});
 
 **Write-style (write):** `posts.create`
 
+
+
 ```ts
-await corsair.bluesky.api.posts.create({});
+await corsair.bluesky.api.posts.create({
+    text: 'example',
+});
 ```
 
 

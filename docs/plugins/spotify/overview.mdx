@@ -123,14 +123,20 @@ Synced entities support `corsair.spotify.db.<entity>.search()` and `.list()`. Se
 **Read-style (read):** `albums.get`
 
 ```ts
-await corsair.spotify.api.albums.get({});
+await corsair.spotify.api.albums.get({
+    id: 'example',
+});
 ```
 
 
 **Write-style (write):** `player.addToQueue`
 
+
+
 ```ts
-await corsair.spotify.api.player.addToQueue({});
+await corsair.spotify.api.player.addToQueue({
+    uri: 'example',
+});
 ```
 
 

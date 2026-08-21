@@ -117,14 +117,20 @@ Synced entities support `corsair.trello.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `boards.get`
 
 ```ts
-await corsair.trello.api.boards.get({});
+await corsair.trello.api.boards.get({
+    boardId: 'example',
+});
 ```
 
 
 **Write-style (write):** `boards.create`
 
+
+
 ```ts
-await corsair.trello.api.boards.create({});
+await corsair.trello.api.boards.create({
+    name: 'example',
+});
 ```
 
 

@@ -110,7 +110,9 @@ Synced entities support `corsair.abstract.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `email.reputation`
 
 ```ts
-await corsair.abstract.api.email.reputation({});
+await corsair.abstract.api.email.reputation({
+    email: 'example',
+});
 ```
 
 

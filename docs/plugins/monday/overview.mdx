@@ -117,14 +117,20 @@ Synced entities support `corsair.monday.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `boards.get`
 
 ```ts
-await corsair.monday.api.boards.get({});
+await corsair.monday.api.boards.get({
+    board_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `boards.archive`
 
+
+
 ```ts
-await corsair.monday.api.boards.archive({});
+await corsair.monday.api.boards.archive({
+    board_id: 'example',
+});
 ```
 
 

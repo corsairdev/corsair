@@ -130,14 +130,21 @@ Synced entities support `corsair.notion.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `blocks.getManyChildBlocks`
 
 ```ts
-await corsair.notion.api.blocks.getManyChildBlocks({});
+await corsair.notion.api.blocks.getManyChildBlocks({
+    block_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `blocks.appendBlock`
 
+
+
 ```ts
-await corsair.notion.api.blocks.appendBlock({});
+await corsair.notion.api.blocks.appendBlock({
+    block_id: 'example',
+    children: [],
+});
 ```
 
 

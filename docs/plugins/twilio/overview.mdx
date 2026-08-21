@@ -117,14 +117,21 @@ Synced entities support `corsair.twilio.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `calls.get`
 
 ```ts
-await corsair.twilio.api.calls.get({});
+await corsair.twilio.api.calls.get({
+    callSid: 'example',
+});
 ```
 
 
 **Write-style (write):** `calls.create`
 
+
+
 ```ts
-await corsair.twilio.api.calls.create({});
+await corsair.twilio.api.calls.create({
+    To: 'example',
+    From: 'example',
+});
 ```
 
 

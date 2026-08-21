@@ -119,14 +119,20 @@ Synced entities support `corsair.googledocs.db.<entity>.search()` and `.list()`.
 **Read-style (read):** `documents.exportDocumentAsPdf`
 
 ```ts
-await corsair.googledocs.api.documents.exportDocumentAsPdf({});
+await corsair.googledocs.api.documents.exportDocumentAsPdf({
+    fileId: 'example',
+});
 ```
 
 
 **Write-style (write):** `documents.copyDocument`
 
+
+
 ```ts
-await corsair.googledocs.api.documents.copyDocument({});
+await corsair.googledocs.api.documents.copyDocument({
+    fileId: 'example',
+});
 ```
 
 

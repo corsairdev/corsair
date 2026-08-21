@@ -123,8 +123,13 @@ await corsair.amplitude.api.annotations.list({});
 
 **Write-style (write):** `annotations.create`
 
+
+
 ```ts
-await corsair.amplitude.api.annotations.create({});
+await corsair.amplitude.api.annotations.create({
+    date: 'example',
+    label: 'example',
+});
 ```
 
 

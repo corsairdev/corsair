@@ -124,8 +124,13 @@ await corsair.ollama.api.models.listModels({});
 
 **Write-style (write):** `chat.chat`
 
+
+
 ```ts
-await corsair.ollama.api.chat.chat({});
+await corsair.ollama.api.chat.chat({
+    model: 'example',
+    messages: [],
+});
 ```
 
 

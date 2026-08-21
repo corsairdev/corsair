@@ -116,8 +116,12 @@ await corsair.openai.api.assistants.list({});
 
 **Write-style (write):** `assistants.create`
 
+
+
 ```ts
-await corsair.openai.api.assistants.create({});
+await corsair.openai.api.assistants.create({
+    model: 'example',
+});
 ```
 
 

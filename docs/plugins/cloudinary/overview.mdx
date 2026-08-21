@@ -112,8 +112,12 @@ await corsair.cloudinary.api.adaptive.getAdaptiveStreamingProfiles({});
 
 **Write-style (write):** `asset.createAssetRelationsByAssetId`
 
+
+
 ```ts
-await corsair.cloudinary.api.asset.createAssetRelationsByAssetId({});
+await corsair.cloudinary.api.asset.createAssetRelationsByAssetId({
+    asset_id: 'example',
+});
 ```
 
 

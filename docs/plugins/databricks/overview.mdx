@@ -123,14 +123,22 @@ Synced entities support `corsair.databricks.db.<entity>.search()` and `.list()`.
 **Read-style (read):** `catalog.checkTableExists`
 
 ```ts
-await corsair.databricks.api.catalog.checkTableExists({});
+await corsair.databricks.api.catalog.checkTableExists({
+    catalog_name: 'example',
+    schema_name: 'example',
+    table_name: 'example',
+});
 ```
 
 
 **Write-style (write):** `apps.createDatabricksApp`
 
+
+
 ```ts
-await corsair.databricks.api.apps.createDatabricksApp({});
+await corsair.databricks.api.apps.createDatabricksApp({
+    name: 'example',
+});
 ```
 
 

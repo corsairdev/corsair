@@ -117,14 +117,20 @@ Synced entities support `corsair.resend.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `domains.get`
 
 ```ts
-await corsair.resend.api.domains.get({});
+await corsair.resend.api.domains.get({
+    id: 'example',
+});
 ```
 
 
 **Write-style (write):** `domains.create`
 
+
+
 ```ts
-await corsair.resend.api.domains.create({});
+await corsair.resend.api.domains.create({
+    name: 'example',
+});
 ```
 
 

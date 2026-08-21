@@ -130,14 +130,21 @@ Synced entities support `corsair.asana.db.<entity>.search()` and `.list()`. See 
 **Read-style (read):** `projects.get`
 
 ```ts
-await corsair.asana.api.projects.get({});
+await corsair.asana.api.projects.get({
+    project_gid: 'example',
+});
 ```
 
 
 **Write-style (write):** `projects.addFollowers`
 
+
+
 ```ts
-await corsair.asana.api.projects.addFollowers({});
+await corsair.asana.api.projects.addFollowers({
+    project_gid: 'example',
+    followers: [],
+});
 ```
 
 

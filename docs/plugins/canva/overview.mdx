@@ -110,14 +110,24 @@ Synced entities support `corsair.canva.db.<entity>.search()` and `.list()`. See 
 **Read-style (read):** `assets.get`
 
 ```ts
-await corsair.canva.api.assets.get({});
+await corsair.canva.api.assets.get({
+    assetId: 'example',
+});
 ```
 
 
 **Write-style (destructive):** `assets.delete`
 
+
+		<Warning>
+This is a destructive operation. Review [Permissions](/concepts/permissions) and [Hooks](/concepts/hooks) before invoking it.
+</Warning>
+
+
 ```ts
-await corsair.canva.api.assets.delete({});
+await corsair.canva.api.assets.delete({
+    assetId: 'example',
+});
 ```
 
 

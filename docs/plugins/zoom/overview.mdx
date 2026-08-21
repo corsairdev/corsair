@@ -123,8 +123,14 @@ await corsair.zoom.api.archiveFiles.list({});
 
 **Write-style (write):** `meetings.addRegistrant`
 
+
+
 ```ts
-await corsair.zoom.api.meetings.addRegistrant({});
+await corsair.zoom.api.meetings.addRegistrant({
+    meetingId: 'example',
+    email: 'example',
+    first_name: 'example',
+});
 ```
 
 
