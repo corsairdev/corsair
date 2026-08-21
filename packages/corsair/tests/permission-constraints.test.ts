@@ -190,6 +190,22 @@ describe('matchesConstraint — exotic objects are not structurally equal', () =
 		expect(matchesConstraint(a1, { equals: b })).toBe(false);
 	});
 
+	it('does not conflate a two-node cycle with a one-node cycle (same key)', () => {
+		// Exact Greptile counterexample: both sides have only key "x",
+		// so the key-count check passes. The cycle guard must detect that
+		// (a1, b) is revisited at a different structural depth.
+		const a1: Record<string, unknown> = {};
+		const a2: Record<string, unknown> = {};
+		a1.x = a2;
+		a2.x = a1;
+
+		const b: Record<string, unknown> = {};
+		b.x = b;
+
+		// Different cycle topologies via same key — not equal
+		expect(matchesConstraint(a1, { equals: b })).toBe(false);
+	});
+
 	it('does not treat structurally equal values with shared references as different', () => {
 		// Two aliased empty objects in an array should still compare equal
 		// to two separate empty objects (value equality, not reference).
