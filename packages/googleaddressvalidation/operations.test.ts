@@ -124,4 +124,34 @@ describe('GoogleAddressValidation endpoint routing', () => {
 		).rejects.toThrow();
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
+
+	it('address.validate rejects a missing addressLines before calling the RPC', async () => {
+		const ctx = createContext();
+
+		await expect(
+			validate(ctx, { address: { regionCode: 'US' } }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('address.provideFeedback rejects VALIDATION_CONCLUSION_UNSPECIFIED before calling the RPC', async () => {
+		const ctx = createContext();
+
+		await expect(
+			provideFeedback(ctx, {
+				conclusion: 'VALIDATION_CONCLUSION_UNSPECIFIED',
+				responseId: 'response-id-1',
+			}),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('address.provideFeedback treats an empty 200 body as {}', async () => {
+		mockRequest.mockResolvedValueOnce(undefined);
+		const ctx = createContext();
+
+		await expect(provideFeedback(ctx, provideFeedbackInput)).resolves.toEqual(
+			{},
+		);
+	});
 });
