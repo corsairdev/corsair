@@ -356,7 +356,7 @@ const googleDriveEndpointMeta = {
 
 export const googledriveAuthConfig = {
 	oauth_2: {
-		account: ['channel_id'] as const,
+		account: ['channel_id', 'changes_page_token'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
