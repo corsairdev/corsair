@@ -1,4 +1,4 @@
-import { mkdtempSync, writeFileSync } from 'node:fs';
+import { chmodSync, mkdtempSync, statSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { frpcPlatformKey, resolveFrpcBinary } from '../hub/tunnel/frpc-binary';
@@ -19,6 +19,19 @@ describe('resolveFrpcBinary', () => {
 		writeFileSync(fake, '#!/bin/sh\n');
 		process.env.CORSAIR_FRP_BIN = fake;
 		expect(resolveFrpcBinary()).toBe(fake);
+	});
+
+	it('adds the executable bit to a resolved binary that lacks it', () => {
+		// Windows frpc.exe needs no execute bit.
+		if (process.platform === 'win32') return;
+
+		const bin = join(mkdtempSync(join(tmpdir(), 'frpc-')), 'frpc');
+		writeFileSync(bin, '#!/bin/sh\nexit 0\n');
+		chmodSync(bin, 0o644); // no execute bits
+		process.env.CORSAIR_FRP_BIN = bin;
+
+		expect(resolveFrpcBinary()).toBe(bin);
+		expect(statSync(bin).mode & 0o111).not.toBe(0);
 	});
 
 	it('ignores a CORSAIR_FRP_BIN that does not exist', () => {
