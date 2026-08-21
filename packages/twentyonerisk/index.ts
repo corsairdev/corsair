@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Organizations } from './endpoints';
 import type {
 	TwentyOneRiskEndpointInputs,
@@ -127,16 +128,18 @@ export function twentyonerisk<const T extends TwentyOneRiskPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TwentyOneRiskKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			// Fail closed. Returning an empty string here would send a bare
+			// `Bearer ` header, which the service answers with an opaque error
+			// instead of Corsair surfacing its disconnected-auth flow.
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('twentyonerisk', 'api_key');
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+			if (options.key) return options.key;
+			const res = await ctx.keys?.get_api_key();
+			if (!res) {
+				throw new AuthMissingError('twentyonerisk', 'api_key');
 			}
-
-			return '';
+			return res;
 		},
 	} satisfies InternalTwentyOneRiskPlugin;
 }

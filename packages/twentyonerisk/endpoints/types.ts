@@ -35,8 +35,12 @@ const ODataQuerySchema = z.object({
 	/** Related entities to inline, e.g. `Site`. */
 	$expand: z.string().optional(),
 	/**
-	 * Server-driven paging cursor. The service returns the next cursor inside
-	 * `@odata.nextLink`; pass it back here to continue a large result set.
+	 * Server-driven paging cursor.
+	 *
+	 * This is the value of the `$skiptoken` query parameter, not the whole
+	 * `@odata.nextLink` URI. Continue a result set by parsing that link and
+	 * passing the parameter it carries, e.g.
+	 * `new URL(res['@odata.nextLink']).searchParams.get('$skiptoken')`.
 	 */
 	$skiptoken: z.string().optional(),
 	/**

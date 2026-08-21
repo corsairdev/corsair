@@ -145,6 +145,82 @@ describe('TwentyOneRisk organizations.get', () => {
 	});
 });
 
+describe('TwentyOneRisk auth fails closed', () => {
+	/** Drives the plugin's own keyBuilder the way the binder does. */
+	function keyBuilderOf(opts: Parameters<typeof twentyonerisk>[0] = {}) {
+		const plugin = twentyonerisk(opts);
+		return plugin.keyBuilder as (
+			ctx: unknown,
+			source: string,
+		) => Promise<string>;
+	}
+
+	const ctxWithNoStoredKey = {
+		authType: 'api_key',
+		keys: { get_api_key: async () => undefined },
+	};
+
+	it('throws instead of returning an empty Bearer credential', async () => {
+		await expect(
+			keyBuilderOf()(ctxWithNoStoredKey, 'endpoint'),
+		).rejects.toThrow(/twentyonerisk/i);
+	});
+
+	it('returns the configured key when one is supplied', async () => {
+		await expect(
+			keyBuilderOf({ key: '21RISK.ND.configured' })(
+				ctxWithNoStoredKey,
+				'endpoint',
+			),
+		).resolves.toBe('21RISK.ND.configured');
+	});
+
+	it('returns the stored key when the account has one', async () => {
+		const ctx = {
+			authType: 'api_key',
+			keys: { get_api_key: async () => '21RISK.ND.stored' },
+		};
+		await expect(keyBuilderOf()(ctx, 'endpoint')).resolves.toBe(
+			'21RISK.ND.stored',
+		);
+	});
+
+	it('throws for a non-endpoint source, since the API has no webhooks', async () => {
+		await expect(
+			keyBuilderOf({ key: 'k' })(ctxWithNoStoredKey, 'webhook'),
+		).rejects.toThrow(/twentyonerisk/i);
+	});
+});
+
+describe('TwentyOneRisk input validation at the endpoint', () => {
+	it('rejects a non-positive $top before calling the API', async () => {
+		await expect(
+			Organizations.get(testCtx('k'), { $top: 0 } as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects a negative $skip before calling the API', async () => {
+		await expect(
+			Organizations.get(testCtx('k'), { $skip: -1 } as never),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('applies declared coercions to the outgoing query', async () => {
+		mockRequest.mockResolvedValue(sampleResponse);
+		await Organizations.get(testCtx('k'), {
+			$top: '25',
+			$count: 'false',
+		} as never);
+		// Strings in, parsed values out: $count=false must not become true.
+		expect(mockRequest.mock.calls[0]?.[2]?.query).toEqual({
+			$top: 25,
+			$count: false,
+		});
+	});
+});
+
 describe('TwentyOneRisk error handlers', () => {
 	function apiError(status: number, message: string) {
 		return new ApiError(
