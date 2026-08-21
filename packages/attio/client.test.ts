@@ -9,13 +9,11 @@ describe('Attio HTTP Client Error Normalization', () => {
 	it('should pass the original error code to AttioAPIError when request fails with a coded error', async () => {
 		const codedError = new Error('Rate limit exceeded');
 		(codedError as { code?: string }).code = 'RATE_LIMIT';
-
 		(request as jest.Mock).mockRejectedValueOnce(codedError);
 
 		await expect(makeAttioRequest('/v2/test', 'test-key')).rejects.toThrow(
 			new AttioAPIError('Rate limit exceeded', undefined, 'RATE_LIMIT'),
 		);
-
 		(request as jest.Mock).mockRejectedValueOnce(codedError);
 		try {
 			await makeAttioRequest('/v2/test', 'test-key');
@@ -56,9 +54,6 @@ describe('getValidAccessToken', () => {
 		await expect(
 			getValidAccessToken({
 				accessToken: 'tok',
-				clientId: 'id',
-				clientSecret: 'secret',
-				refreshToken: 'refresh',
 			}),
 		).resolves.toEqual({
 			accessToken: 'tok',
@@ -71,9 +66,6 @@ describe('getValidAccessToken', () => {
 		await expect(
 			getValidAccessToken({
 				accessToken: null,
-				clientId: 'id',
-				clientSecret: 'secret',
-				refreshToken: 'refresh',
 			}),
 		).rejects.toThrow();
 		expect(fetchSpy).not.toHaveBeenCalled();

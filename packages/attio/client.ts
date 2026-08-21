@@ -21,11 +21,6 @@ export async function getValidAccessToken({
 	accessToken,
 }: {
 	accessToken?: string | null;
-	expiresAt?: string | null;
-	clientId?: string;
-	clientSecret?: string;
-	refreshToken?: string;
-	forceRefresh?: boolean;
 }): Promise<{ accessToken: string; refreshed: boolean }> {
 	if (!accessToken) {
 		throw new AttioAPIError('Missing Attio access token');
