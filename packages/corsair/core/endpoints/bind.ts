@@ -20,7 +20,7 @@ import type {
 	EndpointHooks,
 	EndpointMetaEntry,
 	PermissionMode,
-	PermissionPolicy,
+	PermissionOverride,
 } from '../plugins';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -80,7 +80,7 @@ export function bindEndpointsRecursively({
 	/** Permission mode + per-endpoint overrides from plugin options. When set, every call is gated. */
 	permissionsConfig?: {
 		mode: PermissionMode;
-		overrides?: Record<string, PermissionPolicy>;
+		overrides?: Record<string, PermissionOverride>;
 	};
 	/** Risk level metadata per dot-notation endpoint path. Defaults riskLevel to 'write' when missing. */
 	endpointMeta?: Record<string, EndpointMetaEntry>;
