@@ -12,7 +12,7 @@ export class AnonyflowAPIError extends Error {
 }
 
 // TODO: Update with your API base URL
-const ANONYFLOW_API_BASE = 'https://anonyflow.com/api/v1';
+const ANONYFLOW_API_BASE = 'https://api.anonyflow.com';
 
 export async function makeAnonyflowRequest<T>(
 	endpoint: string,

@@ -1,8 +1,8 @@
 import * as http from 'corsair/http';
+import type { AnonyflowContext, AnonyflowEndpointInputs } from './index';
 import { anonyflow } from './index';
 import { AnonyflowSchema } from './schema';
 
-// 1. Mock the HTTP client using Jest instead of Vitest
 jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
 	request: jest.fn(),
@@ -17,39 +17,48 @@ describe('Anonyflow schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof AnonyflowSchema.entities).toBe('object');
 		expect(AnonyflowSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(AnonyflowSchema.entities))).toBe(true);
+
+		expect(Object.keys(AnonyflowSchema.entities)).not.toHaveLength(0);
+
 		for (const entity of Object.values(AnonyflowSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
 	});
 });
 
-// Per .github/PLUGIN_PR_RULES.md (R2)
 describe('Anonyflow endpoints', () => {
 	it('executes the anonymize endpoint correctly', async () => {
 		const mockRequest = http.request as jest.Mock;
 
-		// We tell the fake HTTP client what to return when called
 		mockRequest.mockResolvedValueOnce({
 			anonymized_text: 'My name is [PERSON]',
 		});
 
 		const plugin = anonyflow({ key: 'test-secret-key' });
 
-		// We simulate the context Corsair passes to endpoints
 		const ctx = {
 			authType: 'api_key',
 			keys: { get_api_key: async () => 'test-secret-key' },
-		} as any;
+		} as unknown as AnonyflowContext;
 
-		// 2. We use '!' to tell TS endpoints exists, and 'as any' to bypass strict input types
-		const result = await plugin.endpoints!.core.anonymize(ctx, {
+		const input: AnonyflowEndpointInputs['anonymize'] = {
 			text: 'My name is Athish',
-			entities: ['person'],
-		} as any);
+		};
 
-		// We assert that your endpoint correctly returned the mocked data
+		const result = await plugin.endpoints!.core.anonymize(ctx, input);
+
 		expect(result).toEqual({ anonymized_text: 'My name is [PERSON]' });
-		expect(mockRequest).toHaveBeenCalled();
+
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				TOKEN: 'test-secret-key',
+				BASE: 'https://api.anonyflow.com',
+			}),
+			expect.objectContaining({
+				method: 'POST',
+				url: '/anony-value',
+				body: input,
+			}),
+		);
 	});
 });
