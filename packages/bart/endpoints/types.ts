@@ -14,8 +14,8 @@ const CDataOrStringSchema = z.union([
 
 export const AdvisoriesListInputSchema = z
 	.object({
-		orig: z.string().optional(),
-		date: z.string().optional(),
+		orig: z.string().trim().min(1).optional(),
+		date: z.string().trim().min(1).optional(),
 	})
 	.optional();
 export type AdvisoriesListInput = z.infer<typeof AdvisoriesListInputSchema>;
@@ -46,8 +46,8 @@ export type AdvisoriesListResponse = z.infer<
 
 export const AdvisoriesElevatorsInputSchema = z
 	.object({
-		orig: z.string().optional(),
-		date: z.string().optional(),
+		orig: z.string().trim().min(1).optional(),
+		date: z.string().trim().min(1).optional(),
 	})
 	.optional();
 export type AdvisoriesElevatorsInput = z.infer<
@@ -86,9 +86,9 @@ export type AdvisoriesTrainCountResponse = z.infer<
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const EtdStationInputSchema = z.object({
-	orig: z.string().min(1),
-	plat: z.union([z.string(), z.number()]).optional(),
-	dir: z.string().optional(),
+	orig: z.string().trim().min(1),
+	plat: z.union([z.string().trim().min(1), z.number()]).optional(),
+	dir: z.string().trim().min(1).optional(),
 });
 export type EtdStationInput = z.infer<typeof EtdStationInputSchema>;
 
@@ -145,8 +145,8 @@ export type EtdStationResponse = z.infer<typeof EtdStationResponseSchema>;
 
 export const RoutesListInputSchema = z
 	.object({
-		sched: z.union([z.string(), z.number()]).optional(),
-		date: z.string().optional(),
+		sched: z.union([z.string().trim().min(1), z.number()]).optional(),
+		date: z.string().trim().min(1).optional(),
 	})
 	.optional();
 export type RoutesListInput = z.infer<typeof RoutesListInputSchema>;
@@ -176,9 +176,9 @@ export const RoutesListResponseSchema = z
 export type RoutesListResponse = z.infer<typeof RoutesListResponseSchema>;
 
 export const RoutesInfoInputSchema = z.object({
-	route: z.union([z.string().min(1), z.number()]),
-	sched: z.union([z.string(), z.number()]).optional(),
-	date: z.string().optional(),
+	route: z.union([z.string().trim().min(1), z.number()]),
+	sched: z.union([z.string().trim().min(1), z.number()]).optional(),
+	date: z.string().trim().min(1).optional(),
 });
 export type RoutesInfoInput = z.infer<typeof RoutesInfoInputSchema>;
 
@@ -253,7 +253,7 @@ export const StationsListResponseSchema = z
 export type StationsListResponse = z.infer<typeof StationsListResponseSchema>;
 
 export const StationsInfoInputSchema = z.object({
-	orig: z.string().min(1),
+	orig: z.string().trim().min(1),
 });
 export type StationsInfoInput = z.infer<typeof StationsInfoInputSchema>;
 
@@ -314,8 +314,8 @@ export const StationsInfoResponseSchema = z
 export type StationsInfoResponse = z.infer<typeof StationsInfoResponseSchema>;
 
 export const StationsAccessInputSchema = z.object({
-	orig: z.string().min(1),
-	l: z.union([z.string(), z.number()]).optional(),
+	orig: z.string().trim().min(1),
+	l: z.union([z.string().trim().min(1), z.number()]).optional(),
 });
 export type StationsAccessInput = z.infer<typeof StationsAccessInputSchema>;
 
@@ -361,13 +361,13 @@ export type StationsAccessResponse = z.infer<
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const SchedulesDeparturesInputSchema = z.object({
-	orig: z.string().min(1),
-	dest: z.string().min(1),
-	time: z.string().optional(),
-	date: z.string().optional(),
-	b: z.union([z.string(), z.number()]).optional(),
-	a: z.union([z.string(), z.number()]).optional(),
-	l: z.union([z.string(), z.number()]).optional(),
+	orig: z.string().trim().min(1),
+	dest: z.string().trim().min(1),
+	time: z.string().trim().min(1).optional(),
+	date: z.string().trim().min(1).optional(),
+	b: z.union([z.string().trim().min(1), z.number()]).optional(),
+	a: z.union([z.string().trim().min(1), z.number()]).optional(),
+	l: z.union([z.string().trim().min(1), z.number()]).optional(),
 });
 export type SchedulesDeparturesInput = z.infer<
 	typeof SchedulesDeparturesInputSchema
@@ -467,13 +467,13 @@ export type SchedulesDeparturesResponse = z.infer<
 >;
 
 export const SchedulesArrivalsInputSchema = z.object({
-	orig: z.string().min(1),
-	dest: z.string().min(1),
-	time: z.string().optional(),
-	date: z.string().optional(),
-	b: z.union([z.string(), z.number()]).optional(),
-	a: z.union([z.string(), z.number()]).optional(),
-	l: z.union([z.string(), z.number()]).optional(),
+	orig: z.string().trim().min(1),
+	dest: z.string().trim().min(1),
+	time: z.string().trim().min(1).optional(),
+	date: z.string().trim().min(1).optional(),
+	b: z.union([z.string().trim().min(1), z.number()]).optional(),
+	a: z.union([z.string().trim().min(1), z.number()]).optional(),
+	l: z.union([z.string().trim().min(1), z.number()]).optional(),
 });
 export type SchedulesArrivalsInput = z.infer<
 	typeof SchedulesArrivalsInputSchema
@@ -492,10 +492,10 @@ export type SchedulesArrivalsResponse = z.infer<
 >;
 
 export const SchedulesRoutesInputSchema = z.object({
-	route: z.union([z.string().min(1), z.number()]),
-	time: z.string().optional(),
-	date: z.string().optional(),
-	l: z.union([z.string(), z.number()]).optional(),
+	route: z.union([z.string().trim().min(1), z.number()]),
+	time: z.string().trim().min(1).optional(),
+	date: z.string().trim().min(1).optional(),
+	l: z.union([z.string().trim().min(1), z.number()]).optional(),
 });
 export type SchedulesRoutesInput = z.infer<typeof SchedulesRoutesInputSchema>;
 
@@ -538,7 +538,7 @@ export type SchedulesRoutesResponse = z.infer<
 
 export const SchedulesSpecialInputSchema = z
 	.object({
-		date: z.string().optional(),
+		date: z.string().trim().min(1).optional(),
 	})
 	.optional();
 export type SchedulesSpecialInput = z.infer<typeof SchedulesSpecialInputSchema>;
@@ -570,10 +570,10 @@ export type SchedulesSpecialResponse = z.infer<
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const FaresCalculateInputSchema = z.object({
-	orig: z.string().min(1),
-	dest: z.string().min(1),
-	date: z.string().optional(),
-	sched: z.union([z.string(), z.number()]).optional(),
+	orig: z.string().trim().min(1),
+	dest: z.string().trim().min(1),
+	date: z.string().trim().min(1).optional(),
+	sched: z.union([z.string().trim().min(1), z.number()]).optional(),
 });
 export type FaresCalculateInput = z.infer<typeof FaresCalculateInputSchema>;
 

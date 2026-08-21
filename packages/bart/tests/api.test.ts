@@ -96,6 +96,14 @@ describe('BART API Endpoints', () => {
 			expect(mockUpsertAdvisory).toHaveBeenCalledTimes(1);
 		});
 
+		it('advisories.list rejects whitespace-only origin before HTTP dispatch', async () => {
+			await expect(
+				Advisories.list(mockContext, { orig: '   ' }),
+			).rejects.toThrow(ZodError);
+
+			expect(mockMakeRequest).not.toHaveBeenCalled();
+		});
+
 		it('advisories.elevators fetches elevator advisories', async () => {
 			const mockPayload = {
 				date: '08/21/2026',
@@ -168,8 +176,12 @@ describe('BART API Endpoints', () => {
 			expect(result.station).toHaveLength(1);
 		});
 
-		it('etd.station rejects invalid inputs before HTTP dispatch', async () => {
+		it('etd.station rejects empty and whitespace-only inputs before HTTP dispatch', async () => {
 			await expect(Etd.station(mockContext, { orig: '' })).rejects.toThrow(
+				ZodError,
+			);
+
+			await expect(Etd.station(mockContext, { orig: '   ' })).rejects.toThrow(
 				ZodError,
 			);
 
@@ -241,8 +253,12 @@ describe('BART API Endpoints', () => {
 			);
 		});
 
-		it('routes.info rejects invalid route parameter before HTTP dispatch', async () => {
+		it('routes.info rejects empty and whitespace-only route parameter before HTTP dispatch', async () => {
 			await expect(Routes.info(mockContext, { route: '' })).rejects.toThrow(
+				ZodError,
+			);
+
+			await expect(Routes.info(mockContext, { route: '   ' })).rejects.toThrow(
 				ZodError,
 			);
 
@@ -305,8 +321,12 @@ describe('BART API Endpoints', () => {
 			expect(mockUpsertStation).toHaveBeenCalledWith('12TH', expect.anything());
 		});
 
-		it('stations.info rejects empty station abbreviation before HTTP dispatch', async () => {
+		it('stations.info rejects empty and whitespace-only station abbreviation before HTTP dispatch', async () => {
 			await expect(Stations.info(mockContext, { orig: '' })).rejects.toThrow(
+				ZodError,
+			);
+
+			await expect(Stations.info(mockContext, { orig: '   ' })).rejects.toThrow(
 				ZodError,
 			);
 
@@ -372,9 +392,13 @@ describe('BART API Endpoints', () => {
 			expect(result.schedule?.trip).toBeDefined();
 		});
 
-		it('schedules.departures rejects missing dest before HTTP dispatch', async () => {
+		it('schedules.departures rejects empty and whitespace-only destinations before HTTP dispatch', async () => {
 			await expect(
 				Schedules.departures(mockContext, { orig: '12TH', dest: '' }),
+			).rejects.toThrow(ZodError);
+
+			await expect(
+				Schedules.departures(mockContext, { orig: '12TH', dest: '   ' }),
 			).rejects.toThrow(ZodError);
 
 			await expect(
@@ -485,13 +509,21 @@ describe('BART API Endpoints', () => {
 			expect(result.fares?.fare).toHaveLength(2);
 		});
 
-		it('fares.calculate rejects missing origin or destination before HTTP dispatch', async () => {
+		it('fares.calculate rejects empty and whitespace-only origins/destinations before HTTP dispatch', async () => {
 			await expect(
 				Fares.calculate(mockContext, { orig: '', dest: 'EMBR' }),
 			).rejects.toThrow(ZodError);
 
 			await expect(
+				Fares.calculate(mockContext, { orig: '   ', dest: 'EMBR' }),
+			).rejects.toThrow(ZodError);
+
+			await expect(
 				Fares.calculate(mockContext, { orig: '12TH', dest: '' }),
+			).rejects.toThrow(ZodError);
+
+			await expect(
+				Fares.calculate(mockContext, { orig: '12TH', dest: '   ' }),
 			).rejects.toThrow(ZodError);
 
 			expect(mockMakeRequest).not.toHaveBeenCalled();
