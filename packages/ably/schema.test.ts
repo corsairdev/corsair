@@ -36,4 +36,26 @@ describe('Ably schema', () => {
 			]),
 		).toEqual([{ channelId: 'room-a', status: { isActive: true } }]);
 	});
+	it('requires exactly one unregisterAllPushDevices filter', () => {
+		expect(
+			AblyEndpointInputSchemas.unregisterAllPushDevices.parse({
+				deviceId: 'device-1',
+			}),
+		).toEqual({ deviceId: 'device-1' });
+		expect(
+			AblyEndpointInputSchemas.unregisterAllPushDevices.parse({
+				clientId: 'client-1',
+			}),
+		).toEqual({ clientId: 'client-1' });
+		expect(
+			AblyEndpointInputSchemas.unregisterAllPushDevices.safeParse({}).success,
+		).toBe(false);
+		expect(
+			AblyEndpointInputSchemas.unregisterAllPushDevices.safeParse({
+				deviceId: 'device-1',
+				clientId: 'client-1',
+			}).success,
+		).toBe(false);
+	});
+
 });

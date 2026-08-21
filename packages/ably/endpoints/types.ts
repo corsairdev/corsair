@@ -210,10 +210,17 @@ export const AblyEndpointInputSchemas = {
 
 	registerPushDevice: DeviceSchema,
 
-	unregisterAllPushDevices: z.object({
-		deviceId: z.string().optional(),
-		clientId: z.string().optional(),
-	}),
+	unregisterAllPushDevices: z
+		.object({
+			deviceId: z.string().min(1).optional(),
+			clientId: z.string().min(1).optional(),
+		})
+		.refine(
+			(value) =>
+				Number(value.deviceId !== undefined) +
+					Number(value.clientId !== undefined) ===
+				1,
+		),
 
 	unregisterPushDevice: z.object({
 		deviceId: z.string().min(1),
