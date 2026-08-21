@@ -167,7 +167,7 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
-	accrediblecertificates: 'AccredibleCertificates',
+	accrediblecertificates: 'Accredible Certificates',
 	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',

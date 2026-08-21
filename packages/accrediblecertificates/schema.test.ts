@@ -6,6 +6,12 @@ describe('AccredibleCertificates schema', () => {
 		expect(AccredibleCertificatesSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
+	it('declares the credentials entity', () => {
+		expect(Object.keys(AccredibleCertificatesSchema.entities)).toEqual([
+			'credentials',
+		]);
+	});
+
 	it('declares an entities map', () => {
 		expect(typeof AccredibleCertificatesSchema.entities).toBe('object');
 		expect(AccredibleCertificatesSchema.entities).not.toBeNull();
@@ -17,6 +23,3 @@ describe('AccredibleCertificates schema', () => {
 		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
