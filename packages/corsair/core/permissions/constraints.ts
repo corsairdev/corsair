@@ -85,6 +85,7 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
  */
 function deepEqual(a: unknown, b: unknown): boolean {
 	if (Object.is(a, b)) return true;
+	const compared = new WeakMap<object, WeakSet<object>>();
 	const stack: [unknown, unknown][] = [[a, b]];
 	while (stack.length > 0) {
 		const pair = stack.pop();
@@ -93,6 +94,11 @@ function deepEqual(a: unknown, b: unknown): boolean {
 		if (Object.is(x, y)) continue;
 		if (x === null || y === null) return false;
 		if (typeof x !== 'object' || typeof y !== 'object') return false;
+
+		const partners = compared.get(x);
+		if (partners?.has(y)) continue;
+		if (partners === undefined) compared.set(x, new WeakSet([y]));
+		else partners.add(y);
 
 		// Dates were the one exotic type the previous JSON comparison handled
 		// meaningfully; keep them comparing by value rather than by identity.
@@ -142,6 +148,7 @@ function deepEqual(a: unknown, b: unknown): boolean {
 function containsCycle(root: unknown): boolean {
 	if (!isRecord(root)) return false;
 	const path = new Set<object>();
+	const completed = new WeakSet<object>();
 	// Each frame is one node plus its remaining child values to traverse.
 	// A node enters `path` when its frame is pushed and leaves when the frame
 	// is exhausted — the same enter/leave discipline as a recursive DFS.
@@ -155,13 +162,16 @@ function containsCycle(root: unknown): boolean {
 		// and popping it must not be mistaken for an empty frame — otherwise
 		// any cyclic sibling still queued after it would never be visited.
 		if (children.length === 0) {
-			// Frame exhausted — node leaves the current path.
+			// Frame exhausted — node leaves the current path. Once completed, its
+			// descendants cannot form a cycle with a later branch, so shared DAG
+			// nodes need not be traversed again.
 			path.delete(node);
+			completed.add(node);
 			stack.pop();
 			continue;
 		}
 		const child = children.pop();
-		if (!isRecord(child)) continue;
+		if (!isRecord(child) || completed.has(child)) continue;
 		if (path.has(child)) return true;
 		path.add(child);
 		stack.push([child, Object.values(child)]);

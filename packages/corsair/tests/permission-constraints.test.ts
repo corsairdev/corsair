@@ -783,6 +783,34 @@ describe('cyclic values fail closed under every operator', () => {
 			),
 		).toBe(true);
 	});
+
+	it('visits shared DAG nodes once rather than once per path', () => {
+		let reads = 0;
+		function sharedDag(depth: number): Record<string, unknown> {
+			let node: Record<string, unknown> = { value: 1 };
+			for (let i = 0; i < depth; i++) {
+				const child = node;
+				node = {};
+				for (const key of ['left', 'right']) {
+					Object.defineProperty(node, key, {
+						enumerable: true,
+						get: () => {
+							reads++;
+							return child;
+						},
+					});
+				}
+			}
+			return node;
+		}
+
+		const value = sharedDag(30);
+		const operand = sharedDag(30);
+		expect(matchesConstraint(value, { equals: operand })).toBe(true);
+		// Each graph is scanned once and each object pair is compared once. Without
+		// completed-node/pair memoization, 30 binary levels require billions of reads.
+		expect(reads).toBeLessThan(500);
+	});
 });
 
 describe('deeply nested structures never crash the permission check', () => {
