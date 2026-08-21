@@ -47,12 +47,5 @@ export async function makeClockifyRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new ClockifyAPIError(error.message);
-		}
-		throw new ClockifyAPIError('Unknown error');
-	}
+	return await request<T>(config, requestOptions);
 }

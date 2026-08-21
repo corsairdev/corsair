@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Projects, Tasks, TimeEntries, Workspaces } from './endpoints';
 import type {
@@ -26,18 +23,10 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ClockifySchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveClockifyOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchClockifyTenantWebhook } from './webhooks/tenant-matcher';
-import type { ClockifyWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type ClockifyPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
-	hooks?: InternalClockifyPlugin['hooks'];
-	webhookHooks?: InternalClockifyPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof clockifyEndpointsNested>;
 };
@@ -69,17 +58,6 @@ export type ClockifyEndpoints = {
 	timeEntriesList: ClockifyEndpoint<'timeEntriesList'>;
 };
 
-type ClockifyWebhook<
-	K extends keyof ClockifyWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<ClockifyContext, TEvent, ClockifyWebhookOutputs[K]>;
-
-export type ClockifyWebhooks = {
-	example: ClockifyWebhook<'example', ExampleEvent>;
-};
-
-export type ClockifyBoundWebhooks = BindWebhooks<ClockifyWebhooks>;
-
 const clockifyEndpointsNested = {
 	workspaces: {
 		list: Workspaces.list,
@@ -93,12 +71,6 @@ const clockifyEndpointsNested = {
 	timeEntries: {
 		create: TimeEntries.create,
 		list: TimeEntries.list,
-	},
-} as const;
-
-const clockifyWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -127,16 +99,6 @@ export const clockifyEndpointSchemas = {
 	typeof clockifyEndpointsNested
 >;
 
-const clockifyWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof clockifyWebhooksNested
->;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const clockifyEndpointMeta = {
@@ -163,19 +125,14 @@ const clockifyEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof clockifyEndpointsNested>;
 
 export const clockifyAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseClockifyPlugin<T extends ClockifyPluginOptions> = CorsairPlugin<
 	'clockify',
 	typeof ClockifySchema,
 	typeof clockifyEndpointsNested,
-	typeof clockifyWebhooksNested,
+	{},
 	T,
 	typeof defaultAuthType
 >;
@@ -197,44 +154,24 @@ export function clockify<const T extends ClockifyPluginOptions>(
 		authConfig: clockifyAuthConfig,
 		schema: ClockifySchema,
 		options: options,
-		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: clockifyEndpointsNested,
-		webhooks: clockifyWebhooksNested,
+		webhooks: {},
 		endpointMeta: clockifyEndpointMeta,
 		endpointSchemas: clockifyEndpointSchemas,
-		webhookSchemas: clockifyWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-clockify-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchClockifyTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveClockifyOAuthWebhookTenantLink,
+		webhookSchemas: {},
+		pluginWebhookMatcher: () => false,
+		pluginTenantWebhookMatcher: () => null,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: ClockifyKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
@@ -257,7 +194,3 @@ export type {
 	WorkspacesListInput,
 	WorkspacesListOutput,
 } from './endpoints/types';
-export type {
-	ClockifyWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';

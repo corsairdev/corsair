@@ -1,12 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ClockifyEndpoints } from '..';
 import { makeClockifyRequest } from '../client';
-import type { ClockifyEndpointOutputs } from './types';
+import { ClockifyEndpointOutputSchemas } from './types';
 
 export const list: ClockifyEndpoints['workspacesList'] = async (ctx, input) => {
-	const response = await makeClockifyRequest<
-		ClockifyEndpointOutputs['workspacesList']
-	>('workspaces', ctx.key, { method: 'GET' });
+	const response = await makeClockifyRequest<unknown>('workspaces', ctx.key, {
+		method: 'GET',
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -14,5 +14,5 @@ export const list: ClockifyEndpoints['workspacesList'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return ClockifyEndpointOutputSchemas.workspacesList.parse(response);
 };

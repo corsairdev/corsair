@@ -1,19 +1,21 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ClockifyEndpoints } from '..';
 import { makeClockifyRequest } from '../client';
-import type { ClockifyEndpointOutputs } from './types';
+import { ClockifyEndpointOutputSchemas } from './types';
 
 export const create: ClockifyEndpoints['timeEntriesCreate'] = async (
 	ctx,
 	input,
 ) => {
 	const { workspaceId, ...body } = input;
-	const response = await makeClockifyRequest<
-		ClockifyEndpointOutputs['timeEntriesCreate']
-	>(`workspaces/${workspaceId}/time-entries`, ctx.key, {
-		method: 'POST',
-		body: body as Record<string, unknown>,
-	});
+	const response = await makeClockifyRequest<unknown>(
+		`workspaces/${workspaceId}/time-entries`,
+		ctx.key,
+		{
+			method: 'POST',
+			body: body as Record<string, unknown>,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -21,7 +23,7 @@ export const create: ClockifyEndpoints['timeEntriesCreate'] = async (
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return ClockifyEndpointOutputSchemas.timeEntriesCreate.parse(response);
 };
 
 export const list: ClockifyEndpoints['timeEntriesList'] = async (
@@ -29,12 +31,14 @@ export const list: ClockifyEndpoints['timeEntriesList'] = async (
 	input,
 ) => {
 	const { workspaceId, ...query } = input;
-	const response = await makeClockifyRequest<
-		ClockifyEndpointOutputs['timeEntriesList']
-	>(`workspaces/${workspaceId}/time-entries`, ctx.key, {
-		method: 'GET',
-		query: query as Record<string, string | number | boolean | undefined>,
-	});
+	const response = await makeClockifyRequest<unknown>(
+		`workspaces/${workspaceId}/time-entries`,
+		ctx.key,
+		{
+			method: 'GET',
+			query: query as Record<string, string | number | boolean | undefined>,
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -42,5 +46,5 @@ export const list: ClockifyEndpoints['timeEntriesList'] = async (
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return ClockifyEndpointOutputSchemas.timeEntriesList.parse(response);
 };
