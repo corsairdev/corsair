@@ -242,12 +242,17 @@ export function bindEndpointsRecursively({
 								}
 
 								await new Promise((resolve) => setTimeout(resolve, delayMs));
-								await call(newAttempt, callCtx, callArgs);
 
 								console.log(
 									`[corsair:${pluginId}:${operationPath}] Retry strategy:`,
 									retryStrategy,
 								);
+
+								// Return the retry's result. Previously this awaited the recursive
+								// call without returning it and then fell through to `throw error`,
+								// so a request that succeeded on retry still surfaced the original
+								// failure to the caller.
+								return await call(newAttempt, callCtx, callArgs);
 							}
 						}
 						throw error;
