@@ -29,7 +29,10 @@ const ABYSSALE_API_BASE = 'https://api.abyssale.com';
 /** Attempts for a server-error GET (1 initial + 1 retry). */
 const MAX_ATTEMPTS = 2;
 
-/** Cap on an honoured `Retry-After`, so a hostile header cannot stall a caller. */
+/**
+ * Cap on the backoff between server-error retries. Rate limits are handled by
+ * the transport, so `Retry-After` is honoured there, not here.
+ */
 const MAX_RETRY_DELAY_MS = 30_000;
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
