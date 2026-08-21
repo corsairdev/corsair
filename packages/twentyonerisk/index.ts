@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Organizations } from './endpoints';
 import type {
@@ -26,21 +23,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TwentyOneRiskSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveTwentyOneRiskOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchTwentyOneRiskTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	ExampleEvent,
-	TwentyOneRiskWebhookOutputs,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type TwentyOneRiskPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalTwentyOneRiskPlugin['hooks'];
-	webhookHooks?: InternalTwentyOneRiskPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof twentyOneRiskEndpointsNested>;
 };
@@ -68,30 +55,9 @@ export type TwentyOneRiskEndpoints = {
 	organizationsGet: TwentyOneRiskEndpoint<'organizationsGet'>;
 };
 
-type TwentyOneRiskWebhook<
-	K extends keyof TwentyOneRiskWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<
-	TwentyOneRiskContext,
-	TEvent,
-	TwentyOneRiskWebhookOutputs[K]
->;
-
-export type TwentyOneRiskWebhooks = {
-	example: TwentyOneRiskWebhook<'example', ExampleEvent>;
-};
-
-export type TwentyOneRiskBoundWebhooks = BindWebhooks<TwentyOneRiskWebhooks>;
-
 const twentyOneRiskEndpointsNested = {
 	organizations: {
 		get: Organizations.get,
-	},
-} as const;
-
-const twentyOneRiskWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -102,16 +68,6 @@ export const twentyOneRiskEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof twentyOneRiskEndpointsNested
->;
-
-const twentyOneRiskWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof twentyOneRiskWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -128,10 +84,7 @@ const twentyOneRiskEndpointMeta = {
 
 export const twentyOneRiskAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: [] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -140,7 +93,7 @@ export type BaseTwentyOneRiskPlugin<T extends TwentyOneRiskPluginOptions> =
 		'twentyonerisk',
 		typeof TwentyOneRiskSchema,
 		typeof twentyOneRiskEndpointsNested,
-		typeof twentyOneRiskWebhooksNested,
+		Record<string, never>,
 		T,
 		typeof defaultAuthType
 	>;
@@ -165,44 +118,21 @@ export function twentyonerisk<const T extends TwentyOneRiskPluginOptions>(
 		schema: TwentyOneRiskSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: twentyOneRiskEndpointsNested,
-		webhooks: twentyOneRiskWebhooksNested,
+		webhooks: {},
 		endpointMeta: twentyOneRiskEndpointMeta,
 		endpointSchemas: twentyOneRiskEndpointSchemas,
-		webhookSchemas: twentyOneRiskWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-twentyonerisk-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchTwentyOneRiskTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveTwentyOneRiskOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TwentyOneRiskKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
@@ -217,7 +147,3 @@ export type {
 	TwentyOneRiskEndpointInputs,
 	TwentyOneRiskEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	TwentyOneRiskWebhookOutputs,
-} from './webhooks/types';
