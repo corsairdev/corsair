@@ -1,9 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ClockifyEndpoints } from '..';
 import { makeClockifyRequest } from '../client';
-import { ClockifyEndpointOutputSchemas } from './types';
+import {
+	ClockifyEndpointInputSchemas,
+	ClockifyEndpointOutputSchemas,
+} from './types';
 
 export const list: ClockifyEndpoints['workspacesList'] = async (ctx, input) => {
+	const parsedInput = ClockifyEndpointInputSchemas.workspacesList.parse(input);
 	const response = await makeClockifyRequest<unknown>('workspaces', ctx.key, {
 		method: 'GET',
 	});
@@ -12,7 +16,7 @@ export const list: ClockifyEndpoints['workspacesList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'clockify.workspaces.list',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return parsed;

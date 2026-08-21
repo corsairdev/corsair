@@ -1,15 +1,19 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ClockifyEndpoints } from '..';
 import { clockifyQuery, makeClockifyRequest } from '../client';
-import { ClockifyEndpointOutputSchemas } from './types';
+import {
+	ClockifyEndpointInputSchemas,
+	ClockifyEndpointOutputSchemas,
+} from './types';
 
 export const list: ClockifyEndpoints['tasksList'] = async (ctx, input) => {
+	const parsedInput = ClockifyEndpointInputSchemas.tasksList.parse(input);
 	const query = clockifyQuery({
-		page: input.page,
-		'page-size': input.pageSize,
+		page: parsedInput.page,
+		'page-size': parsedInput.pageSize,
 	});
 	const response = await makeClockifyRequest<unknown>(
-		`workspaces/${input.workspaceId}/projects/${input.projectId}/tasks`,
+		`workspaces/${parsedInput.workspaceId}/projects/${parsedInput.projectId}/tasks`,
 		ctx.key,
 		{
 			method: 'GET',
@@ -21,7 +25,7 @@ export const list: ClockifyEndpoints['tasksList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'clockify.tasks.list',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return parsed;
