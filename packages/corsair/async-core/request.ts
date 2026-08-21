@@ -91,7 +91,11 @@ const getUrl = (config: OpenAPIConfig, options: ApiRequestOptions): string => {
 
 	let path = options.url
 		.replace('{api-version}', config.VERSION)
-		.replace(/{(.*?)}/g, (substring: string, group: string) => {
+		// `[^{}]*` instead of a lazy `.*?`: the lazy form backtracks from every
+		// `{` in the string, which is quadratic on input like `"{a".repeat(n)`
+		// (~20s at n=200k). Excluding braces makes the scan linear and matches
+		// the same well-formed `{placeholder}` tokens.
+		.replace(/\{([^{}]*)\}/g, (substring: string, group: string) => {
 			if (options.path?.hasOwnProperty(group)) {
 				return encoder(String(options.path[group]));
 			}
