@@ -1,0 +1,123 @@
+---
+title: APIpie API Endpoints
+description: Reference for the APIpie operations exposed by Corsair.
+---
+
+These methods are available under `corsair.apipie.api`. Inputs and outputs are validated against the plugin schemas. See [authentication](/concepts/auth) and [error handling](/concepts/error-handling) for shared Corsair behavior.
+
+## Models
+
+### List models
+
+`models.list` lists models and supports optional filters.
+
+```typescript
+const result = await corsair.apipie.api.models.list({
+  type: 'image',
+  provider: 'openai',
+});
+```
+
+| Input | Type | Required |
+| --- | --- | --- |
+| `type` | `string` | No |
+| `subtype` | `string` | No |
+| `provider` | `string` | No |
+| `model` | `string` | No |
+| `enabled` | `number` | No |
+
+Returns an array of model records or an object containing `data`, where each item includes at least an `id`.
+
+### List detailed models
+
+`models.listDetailed` returns model capabilities, limits, modalities, and pricing metadata.
+
+```typescript
+const result = await corsair.apipie.api.models.listDetailed({
+  provider: 'openai',
+});
+```
+
+| Input | Type | Required |
+| --- | --- | --- |
+| `type` | `string` | No |
+| `provider` | `string` | No |
+| `model` | `string` | No |
+
+Returns `{ object?: string, data: DetailedModel[] }`.
+
+## Chat
+
+### Create a completion
+
+`chat.createCompletion` generates a completion using the selected model.
+
+```typescript
+const result = await corsair.apipie.api.chat.createCompletion({
+  model: 'openai/gpt-4o-mini',
+  messages: [{ role: 'user', content: 'Write a one-line status update.' }],
+  temperature: 0.2,
+});
+```
+
+| Input | Type | Required |
+| --- | --- | --- |
+| `model` | `string` | Yes |
+| `messages` | `{ role: string; content: string }[]` | Yes |
+| `provider` | `string` | No |
+| `routing` | `'price' \| 'perf' \| 'perf_avg'` | No |
+| `maxTokens`, `temperature`, `topP`, `topK` | `number` | No |
+| `frequencyPenalty`, `presencePenalty`, `n` | `number` | No |
+| `stop` | `string \| string[]` | No |
+| `memory`, `memExpire`, `memClear`, `integrity` | `number` | No |
+| `memSession`, `integrityModel` | `string` | No |
+
+Returns an OpenAI-compatible completion with `choices`, and optional `id`, `model`, and `usage` fields.
+
+## Embeddings
+
+### Create embeddings
+
+`embeddings.create` creates vectors for one or more input strings.
+
+```typescript
+const result = await corsair.apipie.api.embeddings.create({
+  model: 'openai/text-embedding-3-small',
+  input: ['first document', 'second document'],
+});
+```
+
+| Input | Type | Required |
+| --- | --- | --- |
+| `model` | `string` | Yes |
+| `input` | `string \| string[]` | Yes |
+| `user` | `string` | No |
+
+Returns `{ object?: string, model?: string, data: Embedding[] }` with at least one embedding.
+
+## Images
+
+### Generate images
+
+`images.generate` creates one or more images from a prompt. Generated image URLs are mirrored in the local `images` entity when a database is configured.
+
+```typescript
+const result = await corsair.apipie.api.images.generate({
+  model: 'openai/dall-e-3',
+  prompt: 'A technical illustration of a mountain observatory',
+  size: '1024x1024',
+  responseFormat: 'url',
+});
+```
+
+| Input | Type | Required |
+| --- | --- | --- |
+| `model` | `string` | Yes |
+| `prompt` | `string` | Yes |
+| `n`, `size`, `quality`, `style`, `responseFormat`, `user` | `number \| string` | No |
+
+Returns `{ created?: number, data: Image[] }`. Each image contains either `url` or `b64_json`, and may include `revised_prompt`.
+
+## Retries and errors
+
+The transport retries HTTP 429 responses according to its rate-limit policy and honors `Retry-After`. Corsair does not automatically retry APIpie 400, 401, 402, 403, 404, 409, or 5xx responses. This avoids replaying billable chat, embedding, and image-generation requests; inspect the classified error and decide whether a retry is safe.
