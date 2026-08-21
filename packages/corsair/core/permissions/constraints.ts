@@ -78,35 +78,53 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
  * "close enough" guard on cyclic input has proven to have a non-isomorphic
  * counterexample. JSON cannot express cycles, so legitimate config operands and
  * MCP/HTTP arguments are always acyclic and never reach that path.
+ *
+ * Iterative with an explicit pair stack rather than recursive: an
+ * agent-controlled argument can be nested arbitrarily deep, and a recursive
+ * comparator would overflow the call stack on deep acyclic structures.
  */
 function deepEqual(a: unknown, b: unknown): boolean {
 	if (Object.is(a, b)) return true;
-	if (a === null || b === null) return false;
-	if (typeof a !== 'object' || typeof b !== 'object') return false;
+	const stack: [unknown, unknown][] = [[a, b]];
+	while (stack.length > 0) {
+		const pair = stack.pop();
+		if (pair === undefined) break;
+		const [x, y] = pair;
+		if (Object.is(x, y)) continue;
+		if (x === null || y === null) return false;
+		if (typeof x !== 'object' || typeof y !== 'object') return false;
 
-	// Dates were the one exotic type the previous JSON comparison handled
-	// meaningfully; keep them comparing by value rather than by identity.
-	if (a instanceof Date || b instanceof Date) {
-		return (
-			a instanceof Date && b instanceof Date && a.getTime() === b.getTime()
-		);
+		// Dates were the one exotic type the previous JSON comparison handled
+		// meaningfully; keep them comparing by value rather than by identity.
+		if (x instanceof Date || y instanceof Date) {
+			if (x instanceof Date && y instanceof Date && x.getTime() === y.getTime())
+				continue;
+			return false;
+		}
+
+		// An array and a non-array are never the same value.
+		if (isUnknownArray(x) !== isUnknownArray(y)) return false;
+		if (isUnknownArray(x) && isUnknownArray(y)) {
+			if (x.length !== y.length) return false;
+			for (let i = 0; i < x.length; i++) {
+				stack.push([x[i], y[i]]);
+			}
+			continue;
+		}
+		// Both values must be plain objects (or null-prototype) for
+		// enumerable-key comparison. Exotic built-ins (RegExp, Map, Set)
+		// and class instances have type-specific semantics that have no
+		// representation through enumerable own keys, so Object.is returning
+		// false means they are definitely not equal.
+		if (!isPlainObject(x) || !isPlainObject(y)) return false;
+		const keys = Object.keys(x);
+		if (keys.length !== Object.keys(y).length) return false;
+		if (!keys.every((k) => Object.hasOwn(y, k))) return false;
+		for (const key of keys) {
+			stack.push([x[key], y[key]]);
+		}
 	}
-
-	// An array and a non-array are never the same value.
-	if (isUnknownArray(a) !== isUnknownArray(b)) return false;
-
-	if (isUnknownArray(a) && isUnknownArray(b)) {
-		return a.length === b.length && a.every((v, i) => deepEqual(v, b[i]));
-	}
-	// Both values must be plain objects (or null-prototype) for
-	// enumerable-key comparison. Exotic built-ins (RegExp, Map, Set)
-	// and class instances have type-specific semantics that have no
-	// representation through enumerable own keys, so Object.is returning
-	// false means they are definitely not equal.
-	if (!isPlainObject(a) || !isPlainObject(b)) return false;
-	const keys = Object.keys(a);
-	if (keys.length !== Object.keys(b).length) return false;
-	return keys.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
+	return true;
 }
 
 /**
@@ -116,24 +134,39 @@ function deepEqual(a: unknown, b: unknown): boolean {
  * Path-based rather than global: a node counts as cyclic only when it appears
  * twice on the *current* path, so a value legitimately shared across branches
  * (`{p: shared, q: shared}`) is not a cycle and still compares by value.
+ *
+ * Iterative with an explicit stack rather than recursive: an agent-controlled
+ * argument can be nested arbitrarily deep, and a recursive scan would overflow
+ * the call stack on deep acyclic structures before reaching any comparison.
  */
 function containsCycle(root: unknown): boolean {
 	if (!isRecord(root)) return false;
 	const path = new Set<object>();
-	const visit = (v: unknown): boolean => {
-		if (!isRecord(v)) return false;
-		if (path.has(v)) return true;
-		path.add(v);
-		for (const key of Object.keys(v)) {
-			if (visit(v[key])) return true;
+	// Each frame is one node plus its remaining child values to traverse.
+	// A node enters `path` when its frame is pushed and leaves when the frame
+	// is exhausted — the same enter/leave discipline as a recursive DFS.
+	const stack: [object, unknown[]][] = [[root, Object.values(root)]];
+	while (stack.length > 0) {
+		const frame = stack[stack.length - 1];
+		if (frame === undefined) break;
+		const [node, children] = frame;
+		const child = children.pop();
+		if (child === undefined) {
+			// Frame exhausted — node leaves the current path.
+			path.delete(node);
+			stack.pop();
+			continue;
 		}
-		path.delete(v);
-		return false;
-	};
-	return visit(root);
+		if (!isRecord(child)) continue;
+		if (path.has(child)) return true;
+		path.add(child);
+		stack.push([child, Object.values(child)]);
+	}
+	return false;
 }
 
-/** The operators a constraint may carry. Anything else is not a constraint. */
+/**
+ * The operators a constraint may carry. Anything else is not a constraint. */
 const OPERATORS = ['match', 'equals', 'in', 'notIn'] as const;
 
 type Operator = (typeof OPERATORS)[number];

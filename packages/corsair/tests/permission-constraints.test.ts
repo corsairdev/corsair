@@ -760,6 +760,56 @@ describe('cyclic values fail closed under every operator', () => {
 	});
 });
 
+describe('deeply nested structures never crash the permission check', () => {
+	function deepObject(n: number): Record<string, unknown> {
+		let cur: Record<string, unknown> = { v: 1 };
+		for (let i = 0; i < n; i++) cur = { next: cur };
+		return cur;
+	}
+	function deepArray(n: number): unknown[] {
+		let cur: unknown[] = [1];
+		for (let i = 0; i < n; i++) cur = [cur];
+		return cur;
+	}
+
+	it('compares deeply nested values without overflowing the stack', () => {
+		// Regression: the recursive cycle scan threw RangeError on deep acyclic
+		// structures, so the endpoint call rejected instead of failing closed.
+		// The scan is now iterative; only the comparator may overflow, and that
+		// is caught and read as uncomparable (constraint unsatisfied).
+		const depth = 20000;
+		expect(() =>
+			matchesConstraint(deepObject(depth), { equals: deepObject(depth) }),
+		).not.toThrow();
+		expect(() =>
+			matchesConstraint(deepArray(depth), { equals: deepArray(depth) }),
+		).not.toThrow();
+	});
+
+	it('compares deep structures correctly, so notIn cannot invert them', () => {
+		// With a fully iterative comparator, deep values compare by value —
+		// no overflow can silently produce a false that notIn would invert
+		// into a satisfied constraint.
+		const depth = 20000;
+		expect(
+			matchesConstraint(deepObject(depth), { equals: deepObject(depth) }),
+		).toBe(true);
+		expect(matchesConstraint(deepObject(depth), { notIn: ['x'] })).toBe(true);
+	});
+
+	it('still compares structures deep enough to be meaningful', () => {
+		// Positive control: normal nesting depth compares correctly, so the
+		// iterative scan did not weaken legitimate comparisons.
+		const depth = 1000;
+		expect(
+			matchesConstraint(deepObject(depth), { equals: deepObject(depth) }),
+		).toBe(true);
+		expect(
+			matchesConstraint(deepArray(depth), { equals: deepArray(depth) }),
+		).toBe(true);
+	});
+});
+
 describe('operator operand edge cases', () => {
 	it('requires a string pattern even when a RegExp instance is supplied', () => {
 		// A RegExp would work if coerced, but coercion hides config mistakes;

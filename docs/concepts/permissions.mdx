@@ -308,6 +308,8 @@ The fail-closed behaviour applies to constraints that **cannot be evaluated or d
 - the constraints object is empty
 - either side of the comparison is a cyclic object — possible only from hand-written JavaScript, since JSON cannot express cycles; cyclic structures are rejected outright rather than compared, which also means a cyclic argument never reads as "not in" a denylist
 
+Deeply nested structures are safe too: the comparator and the cycle scan are iterative, so an unusually deep argument cannot overflow the call stack or crash the permission check — it simply compares by value like any other structure.
+
 In each of these cases the override contributes nothing and evaluation falls back to `otherwise` or the mode matrix. Note this includes `notIn`: an absent argument does **not** count as "not in the denylist", so omitting a field can never satisfy a constraint.
 
 <Note>
