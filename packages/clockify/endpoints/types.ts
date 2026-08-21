@@ -35,7 +35,7 @@ const TimeEntrySchema = z.object({
 	workspaceId: z.string(),
 	projectId: z.string().nullable().optional(),
 	taskId: z.string().nullable().optional(),
-	timeInterval: TimeIntervalSchema,
+	timeInterval: TimeIntervalSchema.nullable(),
 });
 
 export type TimeEntry = z.infer<typeof TimeEntrySchema>;
@@ -88,7 +88,7 @@ const TimeEntriesListInputSchema = z.object({
 	workspaceId: z.string(),
 	userId: z.string(),
 	description: z.string().optional(),
-	projectId: z.string().optional(),
+	project: z.string().optional(),
 	page: z.number().int().min(1).optional(),
 	pageSize: z.number().int().min(1).optional(),
 });
