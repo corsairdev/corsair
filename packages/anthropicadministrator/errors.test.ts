@@ -116,6 +116,48 @@ describe('client-side retry returns the successful attempt', () => {
 	});
 });
 
+describe('request path bounds', () => {
+	it('rejects an over-long path before it reaches the transport', async () => {
+		const huge = `/v1/organizations/users/${'a'.repeat(600)}`;
+
+		await expect(makeAnthropicAdministratorRequest(huge, 'k')).rejects.toThrow(
+			'exceeds 512 characters',
+		);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('never forwards unmatched braces to the transport', async () => {
+		// Paths are built by interpolating percent-encoded IDs, so a brace can
+		// never survive into the request path.
+		mockRequest.mockResolvedValueOnce({});
+		const { anthropicAdministratorEndpointsNested: ops } = await import(
+			'./index'
+		);
+		const groups = ops as unknown as Record<
+			string,
+			Record<string, (c: unknown, i: unknown) => Promise<unknown>>
+		>;
+
+		const getUser = groups.users?.getUser;
+		if (!getUser) throw new Error('missing endpoint');
+		await getUser(
+			{ key: 'k', options: {}, db: {} },
+			{ user_id: '{a'.repeat(50) },
+		);
+
+		const url = mockRequest.mock.calls[0]?.[1]?.url as string;
+		expect(url).not.toContain('{');
+		expect(url).not.toContain('}');
+	});
+
+	it('accepts a normal path', async () => {
+		mockRequest.mockResolvedValueOnce({});
+		await expect(
+			makeAnthropicAdministratorRequest('/v1/organizations/me', 'k'),
+		).resolves.toEqual({});
+	});
+});
+
 describe('error classification', () => {
 	it('classifies a 429 by status, not by message text', () => {
 		// corsair throws 429 with the literal message "Too Many Requests" — it

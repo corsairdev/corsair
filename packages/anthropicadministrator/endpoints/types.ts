@@ -168,14 +168,18 @@ export const ListUsersInputSchema = z.object({
 		.describe('Filter to users whose role matches any supplied value'),
 });
 
-export const GetUserInputSchema = z.object({ user_id: z.string().min(1) });
+export const GetUserInputSchema = z.object({
+	user_id: z.string().min(1).max(256),
+});
 
 export const UpdateUserInputSchema = z.object({
-	user_id: z.string().min(1),
+	user_id: z.string().min(1).max(256),
 	role: AssignableOrganizationRoleSchema.describe('New organization role'),
 });
 
-export const RemoveUserInputSchema = z.object({ user_id: z.string().min(1) });
+export const RemoveUserInputSchema = z.object({
+	user_id: z.string().min(1).max(256),
+});
 
 export const RemoveUserResponseSchema = z
 	.object({ id: z.string(), type: z.literal('user_deleted') })
@@ -196,10 +200,12 @@ export const CreateInviteInputSchema = z.object({
 	rbac_group_ids: z.array(z.string()).optional(),
 });
 
-export const GetInviteInputSchema = z.object({ invite_id: z.string().min(1) });
+export const GetInviteInputSchema = z.object({
+	invite_id: z.string().min(1).max(256),
+});
 
 export const DeleteInviteInputSchema = z.object({
-	invite_id: z.string().min(1),
+	invite_id: z.string().min(1).max(256),
 });
 
 export const DeleteInviteResponseSchema = z
@@ -224,11 +230,11 @@ export const CreateWorkspaceInputSchema = z.object({
 });
 
 export const GetWorkspaceInputSchema = z.object({
-	workspace_id: z.string().min(1),
+	workspace_id: z.string().min(1).max(256),
 });
 
 export const UpdateWorkspaceInputSchema = z.object({
-	workspace_id: z.string().min(1),
+	workspace_id: z.string().min(1).max(256),
 	name: z.string().optional(),
 	data_residency: z.record(z.string(), z.unknown()).nullable().optional(),
 	external_key_id: z.string().optional(),
@@ -236,19 +242,19 @@ export const UpdateWorkspaceInputSchema = z.object({
 });
 
 export const ArchiveWorkspaceInputSchema = z.object({
-	workspace_id: z.string().min(1),
+	workspace_id: z.string().min(1).max(256),
 });
 
 // ── workspace members ────────────────────────────────────────────────────────
 
 export const ListWorkspaceMembersInputSchema = z.object({
-	workspace_id: z.string().min(1),
+	workspace_id: z.string().min(1).max(256),
 	...paginationFields,
 });
 
 export const CreateWorkspaceMemberInputSchema = z.object({
-	workspace_id: z.string().min(1),
-	user_id: z.string().min(1),
+	workspace_id: z.string().min(1).max(256),
+	user_id: z.string().min(1).max(256),
 	workspace_role: z.enum([
 		'workspace_admin',
 		'workspace_developer',
@@ -258,19 +264,19 @@ export const CreateWorkspaceMemberInputSchema = z.object({
 });
 
 export const GetWorkspaceMemberInputSchema = z.object({
-	workspace_id: z.string().min(1),
-	user_id: z.string().min(1),
+	workspace_id: z.string().min(1).max(256),
+	user_id: z.string().min(1).max(256),
 });
 
 export const UpdateWorkspaceMemberInputSchema = z.object({
-	workspace_id: z.string().min(1),
-	user_id: z.string().min(1),
+	workspace_id: z.string().min(1).max(256),
+	user_id: z.string().min(1).max(256),
 	workspace_role: WorkspaceRoleSchema,
 });
 
 export const DeleteWorkspaceMemberInputSchema = z.object({
-	workspace_id: z.string().min(1),
-	user_id: z.string().min(1),
+	workspace_id: z.string().min(1).max(256),
+	user_id: z.string().min(1).max(256),
 });
 
 export const DeleteWorkspaceMemberResponseSchema = z
@@ -291,11 +297,11 @@ export const ListApiKeysInputSchema = z.object({
 });
 
 export const GetApiKeyInputSchema = z.object({
-	api_key_id: z.string().min(1),
+	api_key_id: z.string().min(1).max(256),
 });
 
 export const UpdateApiKeyInputSchema = z.object({
-	api_key_id: z.string().min(1),
+	api_key_id: z.string().min(1).max(256),
 	name: z.string().nullable().optional(),
 	status: z.enum(['active', 'archived', 'inactive']).nullable().optional(),
 });

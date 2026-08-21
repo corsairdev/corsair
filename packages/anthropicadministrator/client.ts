@@ -85,6 +85,20 @@ export type AnthropicAdministratorRequestOptions = {
  * are provisioned by organization admins and are distinct from standard API
  * keys.
  */
+/**
+ * Upper bound on a request path.
+ *
+ * Every path this plugin builds is a short literal prefix (at most
+ * `/v1/organizations/workspaces`) plus one or two percent-encoded resource
+ * IDs, so this is far above anything legitimate.
+ *
+ * It also bounds the work done by the `{placeholder}` substitution in
+ * `corsair/http`, whose regex is polynomial in the number of unmatched `{`
+ * characters (CodeQL `js/polynomial-redos`). Capping the input length is the
+ * documented mitigation when the regex itself is not owned here.
+ */
+const MAX_ENDPOINT_LENGTH = 512;
+
 /** Total attempts for a retryable failure (1 initial + 2 retries). */
 const MAX_ATTEMPTS = 3;
 
@@ -135,6 +149,14 @@ export async function makeAnthropicAdministratorRequest<T>(
 	options: AnthropicAdministratorRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query, authType = 'api_key' } = options;
+
+	if (endpoint.length > MAX_ENDPOINT_LENGTH) {
+		throw new AnthropicAdministratorAPIError(
+			`Request path exceeds ${MAX_ENDPOINT_LENGTH} characters`,
+			{ method },
+		);
+	}
+
 	const isWrite = method === 'POST';
 
 	const credential: Record<string, string> =
