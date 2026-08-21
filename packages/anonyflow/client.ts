@@ -13,7 +13,7 @@ export class AnonyflowAPIError extends Error {
 }
 
 // TODO: Update with your API base URL
-const ANONYFLOW_API_BASE = 'https://api.example.com';
+const ANONYFLOW_API_BASE = 'https://api.anonyflow.com/v1';
 
 export async function makeAnonyflowRequest<T>(
 	endpoint: string,
@@ -34,8 +34,7 @@ export async function makeAnonyflowRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'Authorization': `Bearer ${apiKey}`
 		},
 	};
 
@@ -51,11 +50,15 @@ export async function makeAnonyflowRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new AnonyflowAPIError(error.message);
-		}
-		throw new AnonyflowAPIError('Unknown error');
-	}
+        return await request<T>(config, requestOptions);
+    } catch (error) {
+        // Let standard API errors (like 429 Rate Limits) pass through to Corsair's handler
+        if (error && typeof error === 'object' && 'status' in error) {
+            throw error;
+        }
+        if (error instanceof Error) {
+            throw new AnonyflowAPIError(error.message);
+        }
+        throw new AnonyflowAPIError('Unknown error');
+    }
 }
