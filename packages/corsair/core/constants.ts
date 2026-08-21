@@ -35,6 +35,7 @@ export const BaseProviders = [
 	'ambientweather',
 	'amcards',
 	'amplitude',
+	'anonyflow',
 	'apaleo',
 	'apibible',
 	'apify',
@@ -59,8 +60,8 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canvas',
 	'canva',
+	'canvas',
 	'circleci',
 	'cloudflare',
 	'cloudinary',
@@ -187,6 +188,7 @@ export const ProviderDisplayNames = {
 	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	anonyflow: 'Anonyflow',
 	apaleo: 'Apaleo',
 	apibible: 'API.Bible',
 	apify: 'Apify',
@@ -211,8 +213,8 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
@@ -346,6 +348,7 @@ export type AllProviders =
 	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
+	| 'anonyflow'
 	| 'apaleo'
 	| 'apibible'
 	| 'apify'
