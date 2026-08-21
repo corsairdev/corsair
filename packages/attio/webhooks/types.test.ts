@@ -3,6 +3,7 @@ import type { RawWebhookRequest, WebhookRequest } from 'corsair/core';
 import {
 	createAttioMatch,
 	hasAttioSignatureHeader,
+	recordEventsFromPayload,
 	verifyAttioWebhookSignature,
 } from './types';
 
@@ -182,6 +183,29 @@ describe('createAttioMatch', () => {
 				body: { event_type: 'record.updated', id: recordCreated.id },
 			}),
 		).toBe(false);
+	});
+});
+
+describe('recordEventsFromPayload', () => {
+	it('returns the top-level event when it matches', () => {
+		expect(recordEventsFromPayload(recordCreated, 'record.created')).toEqual([
+			recordCreated,
+		]);
+	});
+
+	it('unpacks matching events from an Attio envelope', () => {
+		expect(
+			recordEventsFromPayload(
+				{
+					webhook_id: 'wh-1',
+					events: [
+						recordCreated,
+						{ event_type: 'record.updated', id: recordCreated.id },
+					],
+				},
+				'record.created',
+			),
+		).toEqual([recordCreated]);
 	});
 });
 

@@ -41,6 +41,26 @@ export type AttioWebhookOutputs = {
 	recordDeleted: RecordDeletedEvent;
 };
 
+export function recordEventsFromPayload(
+	payload: unknown,
+	eventType: string,
+): AttioWebhookPayload[] {
+	if (payload === null || typeof payload !== 'object') return [];
+
+	const body = payload as Record<string, unknown>;
+	const candidates = Array.isArray(body.events) ? body.events : [payload];
+	const matched: AttioWebhookPayload[] = [];
+
+	for (const candidate of candidates) {
+		const parsed = AttioWebhookPayloadSchema.safeParse(candidate);
+		if (parsed.success && parsed.data.event_type === eventType) {
+			matched.push(parsed.data);
+		}
+	}
+
+	return matched;
+}
+
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {

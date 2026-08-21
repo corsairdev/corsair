@@ -69,6 +69,76 @@ describe('attio record webhooks', () => {
 		);
 	});
 
+	it('upserts every matching event from an Attio events envelope', async () => {
+		const upsert = jest.fn().mockResolvedValue({ id: 'rec-1' });
+		const envelope = {
+			webhook_id: 'wh-1',
+			events: [
+				event,
+				{
+					event_type: 'record.created',
+					id: {
+						workspace_id: 'ws-1',
+						object_id: 'obj-1',
+						record_id: 'rec-2',
+					},
+				},
+				{
+					event_type: 'record.updated',
+					id: {
+						workspace_id: 'ws-1',
+						object_id: 'obj-1',
+						record_id: 'rec-3',
+					},
+				},
+			],
+		};
+		const result = await created.handler(
+			makeCtx({ upsert }),
+			makeRequest(envelope as never),
+		);
+		expect(result.success).toBe(true);
+		expect(result.corsairEntityId).toBe('rec-1');
+		expect(upsert).toHaveBeenCalledTimes(2);
+		expect(upsert).toHaveBeenNthCalledWith(
+			1,
+			'rec-1',
+			expect.objectContaining({ id: event.id }),
+		);
+		expect(upsert).toHaveBeenNthCalledWith(
+			2,
+			'rec-2',
+			expect.objectContaining({
+				id: {
+					workspace_id: 'ws-1',
+					object_id: 'obj-1',
+					record_id: 'rec-2',
+				},
+			}),
+		);
+	});
+
+	it('returns 400 when the envelope has no matching record events', async () => {
+		const result = await created.handler(
+			makeCtx(),
+			makeRequest({
+				webhook_id: 'wh-1',
+				events: [
+					{
+						event_type: 'record.updated',
+						id: event.id,
+					},
+				],
+			} as never),
+		);
+		expect(result).toEqual(
+			expect.objectContaining({
+				success: false,
+				statusCode: 400,
+			}),
+		);
+	});
+
 	it('returns 401 when the signature is invalid', async () => {
 		const result = await created.handler(
 			makeCtx(),
