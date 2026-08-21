@@ -15,7 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { Organizations } from './endpoints';
 import type {
 	TwentyOneRiskEndpointInputs,
 	TwentyOneRiskEndpointOutputs,
@@ -65,7 +65,7 @@ type TwentyOneRiskEndpoint<K extends keyof TwentyOneRiskEndpointOutputs> =
 	>;
 
 export type TwentyOneRiskEndpoints = {
-	exampleGet: TwentyOneRiskEndpoint<'exampleGet'>;
+	organizationsGet: TwentyOneRiskEndpoint<'organizationsGet'>;
 };
 
 type TwentyOneRiskWebhook<
@@ -84,8 +84,8 @@ export type TwentyOneRiskWebhooks = {
 export type TwentyOneRiskBoundWebhooks = BindWebhooks<TwentyOneRiskWebhooks>;
 
 const twentyOneRiskEndpointsNested = {
-	example: {
-		get: Example.get,
+	organizations: {
+		get: Organizations.get,
 	},
 } as const;
 
@@ -96,9 +96,9 @@ const twentyOneRiskWebhooksNested = {
 } as const;
 
 export const twentyOneRiskEndpointSchemas = {
-	'example.get': {
-		input: TwentyOneRiskEndpointInputSchemas.exampleGet,
-		output: TwentyOneRiskEndpointOutputSchemas.exampleGet,
+	'organizations.get': {
+		input: TwentyOneRiskEndpointInputSchemas.organizationsGet,
+		output: TwentyOneRiskEndpointOutputSchemas.organizationsGet,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof twentyOneRiskEndpointsNested
@@ -117,9 +117,10 @@ const twentyOneRiskWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const twentyOneRiskEndpointMeta = {
-	'example.get': {
+	'organizations.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description:
+			'Retrieve organizations from the 21RISK OData API with optional filtering and pagination',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof twentyOneRiskEndpointsNested
@@ -211,8 +212,8 @@ export function twentyonerisk<const T extends TwentyOneRiskPluginOptions>(
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
+	OrganizationsGetInput,
+	OrganizationsGetResponse,
 	TwentyOneRiskEndpointInputs,
 	TwentyOneRiskEndpointOutputs,
 } from './endpoints/types';

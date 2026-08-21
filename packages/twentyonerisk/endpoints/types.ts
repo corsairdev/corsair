@@ -1,29 +1,41 @@
 import { z } from 'zod';
 
-const ExampleGetInputSchema = z.object({
-	id: z.string(),
+const ODataQuerySchema = z.object({
+	$filter: z.string().optional(),
+	$top: z.coerce.number().int().positive().optional(),
+	$skip: z.coerce.number().int().nonnegative().optional(),
+	$select: z.string().optional(),
+	$orderby: z.string().optional(),
+	$count: z.coerce.boolean().optional(),
 });
 
-export type ExampleGetInput = z.infer<typeof ExampleGetInputSchema>;
+export type ODataQuery = z.infer<typeof ODataQuerySchema>;
 
-const ExampleGetResponseSchema = z.object({
-	id: z.string(),
+const OrganizationsGetInputSchema = ODataQuerySchema;
+
+export type OrganizationsGetInput = z.infer<typeof OrganizationsGetInputSchema>;
+
+const OrganizationsGetResponseSchema = z.object({
+	value: z.array(z.record(z.string(), z.unknown())),
+	'@odata.count': z.number().optional(),
 });
 
-export type ExampleGetResponse = z.infer<typeof ExampleGetResponseSchema>;
+export type OrganizationsGetResponse = z.infer<
+	typeof OrganizationsGetResponseSchema
+>;
 
 export type TwentyOneRiskEndpointInputs = {
-	exampleGet: ExampleGetInput;
+	organizationsGet: OrganizationsGetInput;
 };
 
 export type TwentyOneRiskEndpointOutputs = {
-	exampleGet: ExampleGetResponse;
+	organizationsGet: OrganizationsGetResponse;
 };
 
 export const TwentyOneRiskEndpointInputSchemas = {
-	exampleGet: ExampleGetInputSchema,
+	organizationsGet: OrganizationsGetInputSchema,
 } as const;
 
 export const TwentyOneRiskEndpointOutputSchemas = {
-	exampleGet: ExampleGetResponseSchema,
+	organizationsGet: OrganizationsGetResponseSchema,
 } as const;

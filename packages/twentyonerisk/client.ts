@@ -12,7 +12,7 @@ export class TwentyOneRiskAPIError extends Error {
 }
 
 // TODO: Update with your API base URL
-const TWENTYONERISK_API_BASE = 'https://api.example.com';
+const TWENTYONERISK_API_BASE = 'https://www.21risk.com/odata/v5';
 
 export async function makeTwentyOneRiskRequest<T>(
 	endpoint: string,
@@ -33,8 +33,7 @@ export async function makeTwentyOneRiskRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 

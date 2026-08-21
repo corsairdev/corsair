@@ -1,7 +1,7 @@
-import { get as exampleGet } from './example';
+import { get as organizationsGet } from './organizations';
 
-export const Example = {
-	get: exampleGet,
+export const Organizations = {
+	get: organizationsGet,
 };
 
 export * from './types';

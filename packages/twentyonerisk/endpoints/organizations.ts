@@ -3,16 +3,23 @@ import type { TwentyOneRiskEndpoints } from '..';
 import { makeTwentyOneRiskRequest } from '../client';
 import type { TwentyOneRiskEndpointOutputs } from './types';
 
-export const get: TwentyOneRiskEndpoints['exampleGet'] = async (ctx, input) => {
+export const get: TwentyOneRiskEndpoints['organizationsGet'] = async (
+	ctx,
+	input,
+) => {
 	const response = await makeTwentyOneRiskRequest<
-		TwentyOneRiskEndpointOutputs['exampleGet']
-	>(`example/${input.id}`, ctx.key, { method: 'GET' });
+		TwentyOneRiskEndpointOutputs['organizationsGet']
+	>('organizations', ctx.key, {
+		method: 'GET',
+		query: input,
+	});
 
 	await logEventFromContext(
 		ctx,
-		'twentyonerisk.example.get',
+		'twentyonerisk.organizations.get',
 		{ ...input },
 		'completed',
 	);
+
 	return response;
 };
