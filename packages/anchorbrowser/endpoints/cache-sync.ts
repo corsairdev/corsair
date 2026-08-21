@@ -34,16 +34,30 @@ function isRecord(value: unknown): value is Record<string, unknown> {
 	return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
 
+/**
+ * Anchor Browser wraps almost every response in a `data` envelope
+ * (`{ data: { sessions: [...] } }`, `{ data: { session_id, ... } }`), while a
+ * few legacy routes return the collection bare (`{ tasks: [...] }`). Unwrap the
+ * envelope first so both shapes reach the same list/entity extraction below.
+ */
+function unwrapEnvelope(response: unknown): unknown {
+	if (!isRecord(response)) return response;
+	const data = response.data;
+	if (Array.isArray(data) || isRecord(data)) return data;
+	return response;
+}
+
 function cacheItems(response: unknown, rule: CacheRule) {
-	if (Array.isArray(response)) return response.filter(isRecord);
-	if (!isRecord(response)) return [];
+	const payload = unwrapEnvelope(response);
+	if (Array.isArray(payload)) return payload.filter(isRecord);
+	if (!isRecord(payload)) return [];
 
 	for (const key of rule.listKeys ?? []) {
-		const value = response[key];
+		const value = payload[key];
 		if (Array.isArray(value)) return value.filter(isRecord);
 	}
 
-	return [response];
+	return [payload];
 }
 
 function cacheEntityId(item: Record<string, unknown>, rule: CacheRule) {

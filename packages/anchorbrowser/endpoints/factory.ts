@@ -98,7 +98,16 @@ function requestBody(
 	input: AnchorBrowserEndpointInput,
 ) {
 	if ('body' in input && input.body !== undefined) return input.body;
-	const pathParams = new Set(route.pathParams ?? []);
+	// Strip every accepted spelling of a path param (declared name, snake_case
+	// form and registered aliases) so an identifier consumed by the URL can
+	// never also be posted in the request body.
+	const pathParams = new Set(
+		(route.pathParams ?? []).flatMap((key) => [
+			key,
+			camelToSnake(key),
+			...(PATH_PARAM_ALIASES[key] ?? []),
+		]),
+	);
 	const queryParams = new Set(
 		(route.queryParams ?? []).flatMap((key) => [key, camelToSnake(key)]),
 	);

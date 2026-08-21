@@ -22,7 +22,7 @@ const ClickMouseInputSchema = z.object({
 	x: z.number().int(),
 	y: z.number().int(),
 	button: z.string().optional(),
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -33,7 +33,7 @@ export type ClickMouseResponse = z.infer<typeof ClickMouseResponseSchema>;
 
 // copySelectedText
 const CopySelectedTextInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -64,7 +64,7 @@ export type CreateIntegrationResponse = z.infer<
 // createOrUpdateTaskDraft
 const CreateOrUpdateTaskDraftInputSchema = z.object({
 	code: z.string(),
-	task_id: z.string(),
+	taskId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -122,7 +122,7 @@ export type DeleteExtensionResponse = z.infer<
 
 // deleteIntegration
 const DeleteIntegrationInputSchema = z.object({
-	integration_id: z.string(),
+	integrationId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -148,7 +148,7 @@ export type DeleteProfileResponse = z.infer<typeof DeleteProfileResponseSchema>;
 
 // deleteTask
 const DeleteTaskInputSchema = z.object({
-	task_id: z.string(),
+	taskId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -159,8 +159,8 @@ export type DeleteTaskResponse = z.infer<typeof DeleteTaskResponseSchema>;
 
 // deleteTaskVersion
 const DeleteTaskVersionInputSchema = z.object({
-	task_id: z.string(),
-	version: z.string(),
+	taskId: z.string(),
+	taskVersion: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -232,7 +232,7 @@ export type EndAllSessionsResponse = z.infer<
 
 // endBrowserSession
 const EndBrowserSessionInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -247,7 +247,7 @@ export type EndBrowserSessionResponse = z.infer<
 
 // getBatchSessionStatus
 const GetBatchSessionStatusInputSchema = z.object({
-	batch_id: z.string(),
+	batchId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -262,7 +262,7 @@ export type GetBatchSessionStatusResponse = z.infer<
 
 // getBrowserSession
 const GetBrowserSessionInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -277,7 +277,7 @@ export type GetBrowserSessionResponse = z.infer<
 
 // getClipboardContent
 const GetClipboardContentInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -318,7 +318,7 @@ export type GetProfileResponse = z.infer<typeof GetProfileResponseSchema>;
 
 // getSessionPages
 const GetSessionPagesInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -331,7 +331,7 @@ export type GetSessionPagesResponse = z.infer<
 
 // getTaskDraft
 const GetTaskDraftInputSchema = z.object({
-	task_id: z.string(),
+	taskId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -342,8 +342,8 @@ export type GetTaskDraftResponse = z.infer<typeof GetTaskDraftResponseSchema>;
 
 // getTaskExecutionResult
 const GetTaskExecutionResultInputSchema = z.object({
-	task_id: z.string(),
-	execution_id: z.string(),
+	taskId: z.string(),
+	executionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -358,7 +358,7 @@ export type GetTaskExecutionResultResponse = z.infer<
 
 // getTaskMetadata
 const GetTaskMetadataInputSchema = z.object({
-	task_id: z.string(),
+	taskId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -371,8 +371,8 @@ export type GetTaskMetadataResponse = z.infer<
 
 // getTaskVersion
 const GetTaskVersionInputSchema = z.object({
-	task_id: z.string(),
-	version: z.string(),
+	taskId: z.string(),
+	taskVersion: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -406,7 +406,7 @@ export type GetWebpageContentResponse = z.infer<
 
 // listAgentResources
 const ListAgentResourcesInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -455,7 +455,7 @@ export type ListProfilesResponse = z.infer<typeof ListProfilesResponseSchema>;
 
 // listSessionDownloads
 const ListSessionDownloadsInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -470,7 +470,7 @@ export type ListSessionDownloadsResponse = z.infer<
 
 // listSessionRecordings
 const ListSessionRecordingsInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -526,7 +526,7 @@ export type ListTasksResponse = z.infer<typeof ListTasksResponseSchema>;
 
 // listTaskVersions
 const ListTaskVersionsInputSchema = z.object({
-	task_id: z.string(),
+	taskId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -541,7 +541,7 @@ export type ListTaskVersionsResponse = z.infer<
 const MoveMouseInputSchema = z.object({
 	x: z.number().int(),
 	y: z.number().int(),
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -553,7 +553,7 @@ export type MoveMouseResponse = z.infer<typeof MoveMouseResponseSchema>;
 // navigateToUrl
 const NavigateToUrlInputSchema = z.object({
 	url: z.string(),
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -565,7 +565,7 @@ export type NavigateToUrlResponse = z.infer<typeof NavigateToUrlResponseSchema>;
 // pasteText
 const PasteTextInputSchema = z.object({
 	text: z.string(),
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -576,7 +576,7 @@ export type PasteTextResponse = z.infer<typeof PasteTextResponseSchema>;
 
 // pauseAgent
 const PauseAgentInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -587,7 +587,7 @@ export type PauseAgentResponse = z.infer<typeof PauseAgentResponseSchema>;
 
 // pauseSessionRecording
 const PauseSessionRecordingInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -604,7 +604,7 @@ export type PauseSessionRecordingResponse = z.infer<
 const PerformKeyboardShortcutInputSchema = z.object({
 	keys: AnchorBrowserBatchItemsSchema,
 	hold_time: z.number().int().optional(),
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -647,7 +647,7 @@ const PressMouseButtonInputSchema = z.object({
 	x: z.number().int(),
 	y: z.number().int(),
 	button: z.string().optional(),
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -683,7 +683,7 @@ const ReleaseMouseButtonInputSchema = z.object({
 	x: z.number().int(),
 	y: z.number().int(),
 	button: z.string().optional(),
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -698,7 +698,7 @@ export type ReleaseMouseButtonResponse = z.infer<
 
 // resumeAgent
 const ResumeAgentInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -709,7 +709,7 @@ export type ResumeAgentResponse = z.infer<typeof ResumeAgentResponseSchema>;
 
 // resumeSessionRecording
 const ResumeSessionRecordingInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -797,7 +797,7 @@ export type ScrollSessionResponse = z.infer<typeof ScrollSessionResponseSchema>;
 // setClipboardContent
 const SetClipboardContentInputSchema = z.object({
 	text: z.string(),
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -813,7 +813,7 @@ export type SetClipboardContentResponse = z.infer<
 // signalEvent
 const SignalEventInputSchema = z.object({
 	data: AnchorBrowserLooseRecordSchema,
-	event_name: z.string(),
+	eventName: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -842,7 +842,7 @@ export type StartBrowserSessionResponse = z.infer<
 
 // takeScreenshot
 const TakeScreenshotInputSchema = z.object({
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -857,7 +857,7 @@ export type TakeScreenshotResponse = z.infer<
 const TypeTextInputSchema = z.object({
 	text: z.string(),
 	delay: z.number().int().optional(),
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -883,7 +883,7 @@ export type UpdateProfileResponse = z.infer<typeof UpdateProfileResponseSchema>;
 // updateTaskMetadata
 const UpdateTaskMetadataInputSchema = z.object({
 	name: z.string().optional(),
-	task_id: z.string(),
+	taskId: z.string(),
 	description: z.string().optional(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
@@ -916,7 +916,7 @@ export type UploadExtensionResponse = z.infer<
 // uploadFile
 const UploadFileInputSchema = z.object({
 	file: AnchorBrowserLooseRecordSchema,
-	session_id: z.string(),
+	sessionId: z.string(),
 	file_content_base64: z.string().optional(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
@@ -929,7 +929,7 @@ export type UploadFileResponse = z.infer<typeof UploadFileResponseSchema>;
 // uploadFilesToSession
 const UploadFilesToSessionInputSchema = z.object({
 	file: AnchorBrowserLooseRecordSchema,
-	session_id: z.string(),
+	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),
@@ -945,7 +945,7 @@ export type UploadFilesToSessionResponse = z.infer<
 // waitForEvent
 const WaitForEventInputSchema = z.object({
 	timeoutMs: z.number().int().optional(),
-	event_name: z.string(),
+	eventName: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),

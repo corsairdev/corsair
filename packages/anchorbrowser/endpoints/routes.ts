@@ -24,7 +24,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/mouse/click',
 		description:
 			'Tool to perform a mouse click at specified coordinates within a browser session. Use when you need to interact with page elements by clicking at specific x/y positions. The click is executed in the context of the specified browser session.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -36,7 +36,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/copy',
 		description:
 			'Tool to copy currently selected text in a browser session to the clipboard. Use when you need to extract text that the user or automation has selected in the browser.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -60,7 +60,7 @@ export const anchorBrowserRoutes = [
 		path: '/task/{taskId}/draft',
 		description:
 			'Tool to create or update the draft version of a task. Draft versions are used for development and testing before publishing. Use when you need to save task code changes without creating a published version.',
-		pathParams: ['task_id'],
+		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -110,7 +110,7 @@ export const anchorBrowserRoutes = [
 		path: '/integrations/{integrationId}',
 		description:
 			'Tool to delete an existing integration and remove its stored credentials. Use after confirming the integration ID exists.',
-		pathParams: ['integration_id'],
+		pathParams: ['integrationId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
@@ -136,7 +136,7 @@ export const anchorBrowserRoutes = [
 		path: '/task/{taskId}',
 		description:
 			'Tool to soft delete a task and all its versions. Use after confirming the task exists.',
-		pathParams: ['task_id'],
+		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
@@ -149,7 +149,7 @@ export const anchorBrowserRoutes = [
 		path: '/task/{taskId}/{taskVersion}',
 		description:
 			'Tool to soft delete a specific version of a task. The version will no longer be accessible but data is preserved for recovery. Use when you need to remove a specific task version.',
-		pathParams: ['task_id', 'version'],
+		pathParams: ['taskId', 'taskVersion'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
@@ -211,7 +211,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{session_id}',
 		description:
 			'Tool to end a specific browser session by ID. Use after confirming the session ID you want to terminate.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
 		irreversible: true,
@@ -224,7 +224,7 @@ export const anchorBrowserRoutes = [
 		path: '/batch-sessions/{batch_id}',
 		description:
 			'Tool to retrieve detailed status information for a specific batch including progress and errors. Use when you need to check the status of a batch session creation request.',
-		pathParams: ['batch_id'],
+		pathParams: ['batchId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -236,7 +236,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{session_id}',
 		description:
 			'Tool to retrieve detailed information about a specific browser session. Use when you need to check the status, configuration, or execution details of a browser session.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -248,7 +248,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/clipboard',
 		description:
 			'Tool to retrieve the current content of the clipboard from a browser session. Use when you need to read clipboard data from an active session.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -284,7 +284,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{session_id}/pages',
 		description:
 			'Tool to retrieve all pages associated with a specific browser session. Use when you need to list all open tabs or pages in an active or completed session.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -296,7 +296,7 @@ export const anchorBrowserRoutes = [
 		path: '/task/{taskId}/draft',
 		description:
 			"Tool to retrieve the draft version of a task, including the full Base64 encoded code content. Use when you need to access the current draft of a task that hasn't been published yet.",
-		pathParams: ['task_id'],
+		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -308,7 +308,7 @@ export const anchorBrowserRoutes = [
 		path: '/task/{taskId}/executions/{executionId}',
 		description:
 			'Tool to retrieve a single task execution result by its ID. Use when you need to check the status, output, or error details of a specific task execution.',
-		pathParams: ['task_id', 'execution_id'],
+		pathParams: ['taskId', 'executionId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -320,7 +320,7 @@ export const anchorBrowserRoutes = [
 		path: '/task/{taskId}',
 		description:
 			'Tool to retrieve task metadata without downloading the full task code. Use when you need task information such as status, creation time, or language without the code content.',
-		pathParams: ['task_id'],
+		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -332,7 +332,7 @@ export const anchorBrowserRoutes = [
 		path: '/task/{taskId}/{taskVersion}',
 		description:
 			'Tool to retrieve a specific version of a task, including the full code content. Use when you need to access the complete task code for a particular version (draft, latest, or specific version number).',
-		pathParams: ['task_id', 'version'],
+		pathParams: ['taskId', 'taskVersion'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -356,7 +356,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/agent/files',
 		description:
 			'List all agent resources (files) uploaded to a browser session. Returns metadata for each file including name, size, file type, and last modified timestamp. Requires an active running session - use START_BROWSER_SESSION first. Files can be uploaded using UPLOAD_FILE action.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -404,7 +404,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{session_id}/downloads',
 		description:
 			'Tool to retrieve metadata of files downloaded during a browser session. Use after confirming the session ID.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -416,7 +416,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{session_id}/recordings',
 		description:
 			'Tool to list all recordings for a specific browser session. Use after confirming the session ID.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -464,7 +464,7 @@ export const anchorBrowserRoutes = [
 		path: '/task/{taskId}/versions',
 		description:
 			'Tool to retrieve all versions of a specific task, including draft and published versions. Use when you need to view the version history of a task or select a specific version for deployment or execution.',
-		pathParams: ['task_id'],
+		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -476,7 +476,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/mouse/move',
 		description:
 			'Tool to move the mouse cursor to specified coordinates within a browser session. Use when you need to simulate mouse movement at the OS level.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -488,7 +488,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/goto',
 		description:
 			'Tool to navigate a browser session to a specified URL. Use when you need to direct an existing session to a new webpage.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -500,7 +500,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/paste',
 		description:
 			'Tool to paste text at the current cursor position in a browser session. Use when you need to insert text into an active form field or text area.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -512,7 +512,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{session_id}/agent/pause',
 		description:
 			'Tool to pause the AI agent for a specific browser session. Use when you need to temporarily halt autonomous agent execution while keeping the session active.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -524,7 +524,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{session_id}/recordings/pause',
 		description:
 			'Tool to pause the video recording for a specific browser session. Use when you need to temporarily stop recording without ending the session.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -536,7 +536,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/keyboard/shortcut',
 		description:
 			'Tool to perform a keyboard shortcut using specified keys in a browser session. Use when you need to simulate keyboard input like copy (Control+C), paste (Control+V), or any other key combination.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -560,7 +560,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/mouse/down',
 		description:
 			'Tool to perform a mouse button down action at specified coordinates within a browser session. Use when you need to simulate pressing and holding a mouse button at a specific screen position.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -584,7 +584,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/mouse/up',
 		description:
 			'Tool to release a mouse button at specified coordinates within a browser session. Use when automating mouse interactions that require button release events, such as completing drag operations or simulating natural mouse behavior.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -596,7 +596,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{session_id}/agent/resume',
 		description:
 			'Tool to resume the AI agent for a specific browser session. Use when you need to restart agent execution after it has been paused or stopped.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -608,7 +608,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{session_id}/recordings/resume',
 		description:
 			'Tool to resume video recording for a specific browser session. Use when recording was previously paused and needs to be restarted.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -668,7 +668,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/clipboard',
 		description:
 			'Tool to set the content of the clipboard in a browser session. Use when you need to programmatically copy text to the clipboard for automated workflows.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -680,7 +680,7 @@ export const anchorBrowserRoutes = [
 		path: '/events/{event_name}',
 		description:
 			'Tool to signal a specific event to be received by other processes or sessions. Use when you need real-time coordination across browser sessions after verifying session is active.',
-		pathParams: ['event_name'],
+		pathParams: ['eventName'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -704,7 +704,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/screenshot',
 		description:
 			'Tool to take a screenshot of the current browser session and return it as an image. Use when you need a visual snapshot of an active browser session.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'read' as const,
 	},
@@ -716,7 +716,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/keyboard/type',
 		description:
 			'Tool to type specified text with optional delay between keystrokes. Use when you need to input text into a browser session, such as filling forms or entering search queries.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -741,7 +741,7 @@ export const anchorBrowserRoutes = [
 		path: '/task/{taskId}',
 		description:
 			'Updates task metadata (name and description). This does not affect the task code or versions. Use when you need to update task information without modifying the implementation.',
-		pathParams: ['task_id'],
+		pathParams: ['taskId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -765,7 +765,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/agent/files',
 		description:
 			'Tool to upload a file to a browser session as an agent resource. Use after starting or referencing a session when you need to provide file inputs (single files or ZIP archives) for web forms or AI-driven tasks. Supports direct base64-encoded content or S3 key references from other actions.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -777,7 +777,7 @@ export const anchorBrowserRoutes = [
 		path: '/sessions/{sessionId}/uploads',
 		description:
 			'Tool to upload files directly to a browser session for use with web forms and file inputs. Use when you need to provide file inputs to web forms during automated browser sessions.',
-		pathParams: ['session_id'],
+		pathParams: ['sessionId'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
@@ -789,7 +789,7 @@ export const anchorBrowserRoutes = [
 		path: '/events/{event_name}/wait',
 		description:
 			'Blocks execution until a specific named event is signaled or the timeout expires. Used for cross-session coordination, MFA handling, and workflow synchronization. The event must first be signaled using the Signal Event action. Returns the data payload that was sent with the signal. Events are user-scoped.',
-		pathParams: ['event_name'],
+		pathParams: ['eventName'],
 		queryParams: [],
 		riskLevel: 'write' as const,
 	},
