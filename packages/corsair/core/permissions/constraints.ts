@@ -52,18 +52,6 @@ export function resolveArgPath(args: unknown, path: string): unknown {
 }
 
 /**
- * Compares two constraint operands. Non-primitives compare structurally.
- *
- * Deliberately not JSON.stringify: serialized comparison makes equality depend
- * on key insertion order, so `{a,b}` and `{b,a}` read as different values. For
- * `notIn` that inverts into a bypass — a reordered object is "not in the
- * denylist" — and it throws outright on a circular argument.
- */
-function sameValue(a: unknown, b: unknown): boolean {
-	return deepEqual(a, b, new Set(), new Map(), new Map());
-}
-
-/**
  * Returns true only for plain objects (including null-prototype objects),
  * narrowing the value to a record view for enumerable-key comparison.
  * Exotic built-ins (RegExp, Map, Set, Promise, Error) and class instances
@@ -77,44 +65,21 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
 }
 
 /**
- * Stable numeric identity for tracked objects. Used by the cycle guard to
- * produce a combined key for each visited (a, b) pair, ensuring that two
- * structurally distinct cyclic graphs with the same b reference are not
- * conflated.
+ * Structural comparison for constraint operands.
+ *
+ * Deliberately not JSON.stringify: serialized comparison makes equality depend
+ * on key insertion order, so `{a,b}` and `{b,a}` read as different values. For
+ * `notIn` that inverts into a bypass — a reordered object is "not in the
+ * denylist" — and it throws outright on a circular argument.
+ *
+ * Both operands are guaranteed acyclic by matchesConstraint, which rejects any
+ * cyclic structure before comparing (see containsCycle). Comparing cyclic
+ * graphs correctly requires graph isomorphism, not value equality — and every
+ * "close enough" guard on cyclic input has proven to have a non-isomorphic
+ * counterexample. JSON cannot express cycles, so legitimate config operands and
+ * MCP/HTTP arguments are always acyclic and never reach that path.
  */
-const objectIds = new WeakMap<object, number>();
-let nextObjectId = 0;
-
-function objectId(v: object): number {
-	let id = objectIds.get(v);
-	if (id === undefined) {
-		id = nextObjectId++;
-		objectIds.set(v, id);
-	}
-	return id;
-}
-
-/** Combined key for an (a, b) pair being compared. Both are objects here. */
-function pairKey(a: object, b: object): string {
-	return `${objectId(a)}:${objectId(b)}`;
-}
-
-/**
- * Set tracks each (a, b) pair currently being compared. When the same pair
- * recurs the comparison is cyclic. Two tables track the pairing in both
- * directions: which left-hand object each right-hand object is paired with,
- * and vice versa. On revisit the pair guard returns true only when the
- * pairing is consistent in both directions — if either side's partner has
- * changed within the current chain, the two graphs have different cycle
- * topology and are not structurally equal.
- */
-function deepEqual(
-	a: unknown,
-	b: unknown,
-	visited: Set<string>,
-	rightPartner: Map<unknown, unknown>,
-	leftPartner: Map<unknown, unknown>,
-): boolean {
+function deepEqual(a: unknown, b: unknown): boolean {
 	if (Object.is(a, b)) return true;
 	if (a === null || b === null) return false;
 	if (typeof a !== 'object' || typeof b !== 'object') return false;
@@ -130,57 +95,42 @@ function deepEqual(
 	// An array and a non-array are never the same value.
 	if (isUnknownArray(a) !== isUnknownArray(b)) return false;
 
-	const key = pairKey(a, b);
-	if (visited.has(key)) {
-		// Cyclic revisit. The pairing must be consistent in *both*
-		// directions: if either this left-hand object or this right-hand
-		// object has been paired with a *different* counterpart in the
-		// current chain, the graphs have non-isomorphic cycle topology.
-		return rightPartner.get(b) === a && leftPartner.get(a) === b;
+	if (isUnknownArray(a) && isUnknownArray(b)) {
+		return a.length === b.length && a.every((v, i) => deepEqual(v, b[i]));
 	}
-	visited.add(key);
-	const prevRight = rightPartner.get(b);
-	const prevLeft = leftPartner.get(a);
-	rightPartner.set(b, a);
-	leftPartner.set(a, b);
-	try {
-		if (isUnknownArray(a) && isUnknownArray(b)) {
-			return (
-				a.length === b.length &&
-				a.every((v, i) =>
-					deepEqual(v, b[i], visited, rightPartner, leftPartner),
-				)
-			);
+	// Both values must be plain objects (or null-prototype) for
+	// enumerable-key comparison. Exotic built-ins (RegExp, Map, Set)
+	// and class instances have type-specific semantics that have no
+	// representation through enumerable own keys, so Object.is returning
+	// false means they are definitely not equal.
+	if (!isPlainObject(a) || !isPlainObject(b)) return false;
+	const keys = Object.keys(a);
+	if (keys.length !== Object.keys(b).length) return false;
+	return keys.every((k) => Object.hasOwn(b, k) && deepEqual(a[k], b[k]));
+}
+
+/**
+ * Detects a reference cycle reachable through a value's own enumerable string
+ * keys — exactly the keys deepEqual traverses.
+ *
+ * Path-based rather than global: a node counts as cyclic only when it appears
+ * twice on the *current* path, so a value legitimately shared across branches
+ * (`{p: shared, q: shared}`) is not a cycle and still compares by value.
+ */
+function containsCycle(root: unknown): boolean {
+	if (!isRecord(root)) return false;
+	const path = new Set<object>();
+	const visit = (v: unknown): boolean => {
+		if (!isRecord(v)) return false;
+		if (path.has(v)) return true;
+		path.add(v);
+		for (const key of Object.keys(v)) {
+			if (visit(v[key])) return true;
 		}
-		// Both values must be plain objects (or null-prototype) for
-		// enumerable-key comparison. Exotic built-ins (RegExp, Map, Set)
-		// and class instances have type-specific semantics that have no
-		// representation through enumerable own keys, so Object.is returning
-		// false means they are definitely not equal.
-		if (!isPlainObject(a) || !isPlainObject(b)) return false;
-		const keys = Object.keys(a);
-		if (keys.length !== Object.keys(b).length) return false;
-		return keys.every(
-			(k) =>
-				Object.hasOwn(b, k) &&
-				deepEqual(a[k], b[k], visited, rightPartner, leftPartner),
-		);
-	} finally {
-		// Restore to the state before this call so that a value
-		// legitimately repeated in two branches is compared each
-		// time rather than short-circuiting.
-		visited.delete(key);
-		if (prevRight === undefined) {
-			rightPartner.delete(b);
-		} else {
-			rightPartner.set(b, prevRight);
-		}
-		if (prevLeft === undefined) {
-			leftPartner.delete(a);
-		} else {
-			leftPartner.set(a, prevLeft);
-		}
-	}
+		path.delete(v);
+		return false;
+	};
+	return visit(root);
 }
 
 /** The operators a constraint may carry. Anything else is not a constraint. */
@@ -239,6 +189,16 @@ export function matchesConstraint(
 	if (parsed === null) return false;
 	const { op, operand } = parsed;
 
+	// Cyclic structures fail closed, on either side of the comparison.
+	// JSON cannot express cycles, so a cyclic value here can only be a
+	// hand-crafted JavaScript object — and correctly comparing cyclic graphs
+	// requires graph isomorphism, not value equality. Rather than accept a
+	// "close enough" guard with known non-isomorphic counterexamples, the
+	// constraint is simply unsatisfied and evaluation falls back to
+	// `otherwise` or the mode matrix. This also closes the `notIn` inversion:
+	// an uncomparable cyclic value must not read as "not in the denylist".
+	if (containsCycle(value) || containsCycle(operand)) return false;
+
 	if (op === 'match') {
 		// Only a string pattern may test a string value.
 		if (typeof operand !== 'string' || typeof value !== 'string') return false;
@@ -250,13 +210,13 @@ export function matchesConstraint(
 			return false;
 		}
 	}
-	if (op === 'equals') return sameValue(value, operand);
+	if (op === 'equals') return deepEqual(value, operand);
 	// A non-array operand would throw on .some(); reject it as malformed so a
 	// config mistake cannot surface as an exception mid-call. `notIn` fails
 	// closed here too — an unusable denylist must not read as "not denied".
 	if (!isUnknownArray(operand)) return false;
-	if (op === 'in') return operand.some((c) => sameValue(value, c));
-	return !operand.some((c) => sameValue(value, c));
+	if (op === 'in') return operand.some((c) => deepEqual(value, c));
+	return !operand.some((c) => deepEqual(value, c));
 }
 
 /**

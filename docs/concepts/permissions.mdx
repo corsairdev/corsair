@@ -306,6 +306,7 @@ The fail-closed behaviour applies to constraints that **cannot be evaluated or d
 - the regex is invalid, or the operand is the wrong type — `in` and `notIn` need an array
 - the constraint carries more than one operator, or none this version recognizes
 - the constraints object is empty
+- either side of the comparison is a cyclic object — possible only from hand-written JavaScript, since JSON cannot express cycles; cyclic structures are rejected outright rather than compared, which also means a cyclic argument never reads as "not in" a denylist
 
 In each of these cases the override contributes nothing and evaluation falls back to `otherwise` or the mode matrix. Note this includes `notIn`: an absent argument does **not** count as "not in the denylist", so omitting a field can never satisfy a constraint.
 

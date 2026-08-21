@@ -104,12 +104,14 @@ describe('matchesConstraint', () => {
 
 		expect(matchesConstraint(circular, { equals: { self: {} } })).toBe(false);
 
-		// Two genuinely isomorphic cyclic values still compare equal.
+		// Even genuinely isomorphic cyclic values fail closed: comparing cyclic
+		// graphs correctly requires graph isomorphism, and JSON cannot express
+		// cycles, so no legitimate config or MCP argument is ever cyclic.
 		const x: Record<string, unknown> = { k: 1 };
 		x.self = x;
 		const y: Record<string, unknown> = { k: 1 };
 		y.self = y;
-		expect(matchesConstraint(x, { equals: y })).toBe(true);
+		expect(matchesConstraint(x, { equals: y })).toBe(false);
 	});
 
 	it('does not treat a value repeated in two branches as equal', () => {
@@ -567,12 +569,16 @@ describe('cyclic graphs with different topology never compare equal', () => {
 		expect(matchesConstraint(ringA, { equals: oneRing })).toBe(false);
 	});
 
-	it('still accepts cyclic graphs whose topology matches', () => {
+	it('fails closed on any cyclic value, isomorphic or not', () => {
+		// Cyclic graphs are rejected outright, regardless of topology: correct
+		// comparison requires graph isomorphism, not value equality, and every
+		// incremental pairing guard has had a non-isomorphic counterexample.
+		// JSON cannot produce cycles, so legitimate values are never affected.
 		const argLoop: Record<string, unknown> = {};
 		argLoop.x = argLoop;
 		const cfgLoop: Record<string, unknown> = {};
 		cfgLoop.x = cfgLoop;
-		expect(matchesConstraint(argLoop, { equals: cfgLoop })).toBe(true);
+		expect(matchesConstraint(argLoop, { equals: cfgLoop })).toBe(false);
 
 		const argA: Record<string, unknown> = {};
 		const argB: Record<string, unknown> = {};
@@ -582,7 +588,7 @@ describe('cyclic graphs with different topology never compare equal', () => {
 		const cfgB: Record<string, unknown> = {};
 		cfgA.x = cfgB;
 		cfgB.x = cfgA;
-		expect(matchesConstraint(argA, { equals: cfgA })).toBe(true);
+		expect(matchesConstraint(argA, { equals: cfgA })).toBe(false);
 	});
 });
 
@@ -672,13 +678,13 @@ describe('structural comparison edge cases', () => {
 });
 
 describe('cycle handling across arrays and nesting', () => {
-	it('compares isomorphic cyclic arrays as equal', () => {
+	it('fails closed on cyclic arrays', () => {
 		const argCycle: unknown[] = [];
 		argCycle[0] = argCycle;
 		const cfgCycle: unknown[] = [];
 		cfgCycle[0] = cfgCycle;
 
-		expect(matchesConstraint(argCycle, { equals: cfgCycle })).toBe(true);
+		expect(matchesConstraint(argCycle, { equals: cfgCycle })).toBe(false);
 		expect(matchesConstraint(argCycle, { equals: [] })).toBe(false);
 	});
 
@@ -692,21 +698,65 @@ describe('cycle handling across arrays and nesting', () => {
 		expect(matchesConstraint(objCycle, { equals: arrCycle })).toBe(false);
 	});
 
-	it('resolves cycles nested below the top level in both directions', () => {
+	it('fails closed on cycles nested below the top level', () => {
 		const argInner: Record<string, unknown> = {};
 		argInner.self = argInner;
 		const cfgInner: Record<string, unknown> = {};
 		cfgInner.self = cfgInner;
 		expect(
 			matchesConstraint({ outer: argInner }, { equals: { outer: cfgInner } }),
-		).toBe(true);
+		).toBe(false);
 
-		// Same shape, different key name: not isomorphic.
+		// Same shape, different key name: also rejected — all cycles are.
 		const otherInner: Record<string, unknown> = {};
 		otherInner.next = otherInner;
 		expect(
 			matchesConstraint({ outer: argInner }, { equals: { outer: otherInner } }),
 		).toBe(false);
+	});
+});
+
+describe('cyclic values fail closed under every operator', () => {
+	it('rejects a cyclic argument under notIn, closing the inversion hole', () => {
+		// `notIn` inverts a failed comparison into a satisfied constraint.
+		// Without the cycle precheck, an uncomparable cyclic argument would
+		// read as "not in the denylist" and apply the constrained policy.
+		const cyclic: Record<string, unknown> = {};
+		cyclic.self = cyclic;
+		expect(matchesConstraint(cyclic, { notIn: ['anything'] })).toBe(false);
+		expect(matchesConstraint(cyclic, { in: [cyclic] })).toBe(false);
+		expect(matchesConstraint(cyclic, { equals: cyclic })).toBe(false);
+	});
+
+	it('rejects cyclic operands, whichever side they come from', () => {
+		// The operand is config-authored; a cyclic operand is only possible in
+		// hand-written JavaScript config and is rejected like any other exotic
+		// structure.
+		const cyclicOperand: Record<string, unknown> = {};
+		cyclicOperand.self = cyclicOperand;
+		expect(matchesConstraint('plain', { equals: cyclicOperand })).toBe(false);
+
+		// A cyclic entry inside an in/notIn list rejects the whole constraint,
+		// rather than reading the value as (not) present by accident.
+		expect(matchesConstraint('a', { in: ['a', cyclicOperand] })).toBe(false);
+		expect(matchesConstraint('a', { notIn: ['b', cyclicOperand] })).toBe(false);
+	});
+
+	it('still compares values shared across branches (DAG, not cycle)', () => {
+		// Sharing is not cycling: containsCycle is path-based, so a node
+		// referenced from two branches does not trip it.
+		const shared = { k: 1 };
+		expect(
+			matchesConstraint([shared, shared], { equals: [{ k: 1 }, { k: 1 }] }),
+		).toBe(true);
+		expect(
+			matchesConstraint(
+				{ p: shared, q: shared },
+				{
+					equals: { p: { k: 1 }, q: { k: 1 } },
+				},
+			),
+		).toBe(true);
 	});
 });
 
