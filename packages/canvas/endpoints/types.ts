@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { CanvasOperation, CanvasOperationName } from './operations';
 import { canvasOperations } from './operations';
 import type { CanvasEndpointOutputs } from './response-schemas';
+import { CanvasEndpointOutputSchemas } from './response-schemas';
 
 export type {
 	CanvasAccount,
