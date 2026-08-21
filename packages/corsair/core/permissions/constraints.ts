@@ -46,6 +46,18 @@ function sameValue(a: unknown, b: unknown): boolean {
 }
 
 /**
+ * Returns true only for plain objects (including null-prototype objects).
+ * Exotic built-ins (RegExp, Map, Set, Promise, Error) and class instances
+ * have type-specific semantics that never match their enumerable own keys,
+ * so comparing them structurally would equate distinct instances.
+ */
+function isPlainObject(v: unknown): boolean {
+	if (typeof v !== 'object' || v === null) return false;
+	const proto = Object.getPrototypeOf(v);
+	return proto === null || proto === Object.prototype;
+}
+
+/**
  * `path` maps each left-hand object currently being compared to the right-hand
  * object it was paired with, so cycles terminate without conflating structures
  * that merely recurse at the same point.
@@ -84,6 +96,12 @@ function deepEqual(
 				left.every((v, i) => deepEqual(v, right[i], path))
 			);
 		}
+		// Both values must be plain objects (or null-prototype) for
+		// enumerable-key comparison. Exotic built-ins (RegExp, Map, Set)
+		// and class instances have type-specific semantics that have no
+		// representation through enumerable own keys, so Object.is returning
+		// false means they are definitely not equal.
+		if (!isPlainObject(a) || !isPlainObject(b)) return false;
 		const left = a as Record<string, unknown>;
 		const right = b as Record<string, unknown>;
 		const keys = Object.keys(left);
