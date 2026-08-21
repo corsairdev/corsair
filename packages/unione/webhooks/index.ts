@@ -1,9 +1,9 @@
-import { example } from './example';
+import { emailStatus, spamBlock } from './handlers';
 
-export const ExampleWebhooks = {
-	example: example,
+export const UnioneInboundWebhooks = {
+	emailStatus,
+	spamBlock,
 };
 
-export * from './oauth-tenant-link';
 export * from './tenant-matcher';
 export * from './types';

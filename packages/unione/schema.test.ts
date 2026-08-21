@@ -9,7 +9,17 @@ describe('Unione schema', () => {
 	it('declares an entities map', () => {
 		expect(typeof UnioneSchema.entities).toBe('object');
 		expect(UnioneSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(UnioneSchema.entities))).toBe(true);
+		expect(Object.keys(UnioneSchema.entities)).toEqual(
+			expect.arrayContaining([
+				'templates',
+				'webhooks',
+				'suppressions',
+				'eventDumps',
+				'domains',
+				'tags',
+				'account',
+			]),
+		);
 		for (const entity of Object.values(UnioneSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
