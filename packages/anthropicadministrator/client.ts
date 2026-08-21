@@ -85,6 +85,50 @@ export type AnthropicAdministratorRequestOptions = {
  * are provisioned by organization admins and are distinct from standard API
  * keys.
  */
+/** Total attempts for a retryable failure (1 initial + 2 retries). */
+const MAX_ATTEMPTS = 3;
+
+/** Upper bound on an honoured `Retry-After`, so a hostile header cannot stall a caller. */
+const MAX_RETRY_DELAY_MS = 30_000;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * Whether a failed attempt may be replayed.
+ *
+ * A 429 is safe for any method: the request was rejected before being applied.
+ * A 5xx may have been applied server-side, and the Admin API documents no
+ * idempotency key, so only GET is replayed.
+ */
+function isRetryable(
+	status: number | undefined,
+	method: AnthropicAdministratorMethod,
+): boolean {
+	if (status === 429) return true;
+	if (status !== undefined && status >= 500) return method === 'GET';
+	return false;
+}
+
+function retryDelayMs(error: ApiError, attempt: number): number {
+	const retryAfter = error.retryAfter;
+	if (typeof retryAfter === 'number' && retryAfter > 0) {
+		return Math.min(retryAfter, MAX_RETRY_DELAY_MS);
+	}
+	return Math.min(2 ** (attempt - 1) * 1000, MAX_RETRY_DELAY_MS);
+}
+
+/**
+ * Performs a request against the Anthropic Admin API.
+ *
+ * Auth: an Admin API key (`sk-ant-admin…`) in the `x-api-key` header, or an
+ * OAuth token with the `org:admin` scope in `authorization: Bearer`. Admin keys
+ * are provisioned by organization admins and are distinct from standard API
+ * keys.
+ *
+ * Retries are performed here rather than delegated to the shared endpoint
+ * binder, so a request that succeeds on retry returns that result to the
+ * caller instead of surfacing the first failure.
+ */
 export async function makeAnthropicAdministratorRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -119,15 +163,31 @@ export async function makeAnthropicAdministratorRequest<T>(
 		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new AnthropicAdministratorAPIError(error.message, {
-				cause: error,
-				method,
-			});
+	let lastError: unknown;
+
+	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+		try {
+			return await request<T>(config, requestOptions);
+		} catch (error) {
+			lastError = error;
+
+			const status = error instanceof ApiError ? error.status : undefined;
+			const canRetry =
+				error instanceof ApiError &&
+				attempt < MAX_ATTEMPTS &&
+				isRetryable(status, method);
+
+			if (!canRetry) break;
+
+			await sleep(retryDelayMs(error as ApiError, attempt));
 		}
-		throw new AnthropicAdministratorAPIError('Unknown error', { method });
 	}
+
+	if (lastError instanceof Error) {
+		throw new AnthropicAdministratorAPIError(lastError.message, {
+			cause: lastError,
+			method,
+		});
+	}
+	throw new AnthropicAdministratorAPIError('Unknown error', { method });
 }

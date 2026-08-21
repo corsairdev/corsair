@@ -2,34 +2,30 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { AnthropicAdministratorAPIError } from './client';
 
 /**
- * Handlers match on the status carried by `AnthropicAdministratorAPIError`
- * rather than on message text. corsair throws a 429 with the message
- * "Too Many Requests" — which contains neither "429" nor "rate_limited" — so a
- * text-matching policy would never fire.
+ * Handlers classify failures for logging and policy; they deliberately do not
+ * ask the shared endpoint binder to retry.
+ *
+ * Retries are performed inside `client.ts`, which returns the successful
+ * attempt's result. Delegating them here instead would route a retry through
+ * the binder, which awaits the recursive attempt without returning it and then
+ * rethrows the original error — so a request that succeeded on retry would
+ * still be reported to the caller as a rate-limit failure, leaving mutation
+ * outcomes ambiguous.
+ *
+ * Matching is on the HTTP status carried by `AnthropicAdministratorAPIError`
+ * rather than on message text: corsair throws a 429 with the message
+ * "Too Many Requests", which contains neither "429" nor "rate_limited".
  */
 function asApiError(error: Error): AnthropicAdministratorAPIError | undefined {
 	return error instanceof AnthropicAdministratorAPIError ? error : undefined;
 }
 
-/**
- * Only GET is safe to replay. A 5xx can be returned after the server already
- * applied a write (a member removed, a workspace archived), and the Admin API
- * documents no idempotency key, so mutations are never retried.
- */
-function isSafeToReplay(error: Error): boolean {
-	const method = asApiError(error)?.method;
-	return method === undefined || method === 'GET';
-}
-
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		// Safe to retry for any method: a 429 was rejected before being applied.
+		// Already retried in the client (safe for any method — a 429 is rejected
+		// before being applied). By the time it surfaces here the budget is spent.
 		match: (error: Error) => asApiError(error)?.status === 429,
-		handler: async (error: Error) => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-			headersRetryAfterMs: asApiError(error)?.retryAfter,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
@@ -56,14 +52,13 @@ export const errorHandlers = {
 		handler: async () => ({ maxRetries: 0 }),
 	},
 	SERVER_ERROR: {
+		// GET is retried in the client; mutations are never replayed because the
+		// Admin API documents no idempotency key.
 		match: (error: Error) => {
 			const status = asApiError(error)?.status;
 			return status !== undefined && status >= 500;
 		},
-		handler: async (error: Error) => {
-			if (!isSafeToReplay(error)) return { maxRetries: 0 };
-			return { maxRetries: 2, retryStrategy: 'exponential_backoff' as const };
-		},
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
 		match: () => true,
