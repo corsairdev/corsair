@@ -121,6 +121,18 @@ describe('WhatsApp Webhooks', () => {
 				valid: false,
 				statusCode: 403,
 			});
+
+			expect(
+				verifyWhatsappWebhookChallenge(
+					challengeQuery({ 'hub.verify_token': '   ' }),
+					'my-verify-token',
+				),
+			).toEqual({ valid: false, statusCode: 403 });
+
+			expect(verifyWhatsappWebhookChallenge(challengeQuery(), '   ')).toEqual({
+				valid: false,
+				statusCode: 403,
+			});
 		});
 
 		it('should still reject a non-subscribe mode or missing challenge', () => {

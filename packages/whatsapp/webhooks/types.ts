@@ -228,7 +228,12 @@ export function verifyWhatsappWebhookChallenge(
 	const mode = value('hub.mode');
 	const token = value('hub.verify_token');
 	const challenge = value('hub.challenge');
-	if (mode !== 'subscribe' || !verifyToken || !token || !challenge) {
+	if (
+		mode !== 'subscribe' ||
+		!verifyToken.trim() ||
+		!token?.trim() ||
+		!challenge
+	) {
 		return { valid: false, statusCode: 403 };
 	}
 	// Constant-time compare so a mismatch can't be narrowed byte-by-byte from
