@@ -186,9 +186,6 @@ importers:
       '@corsair-dev/googlesheets':
         specifier: workspace:*
         version: link:../../packages/googlesheets
-      '@corsair-dev/groqcloud':
-        specifier: workspace:*
-        version: link:../../packages/groqcloud
       '@corsair-dev/hubspot':
         specifier: workspace:^
         version: link:../../packages/hubspot
