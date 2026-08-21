@@ -2048,12 +2048,16 @@ export const createRecord: AttioEndpoint<'createRecord'> = async (
 	ctx,
 	input,
 ) => {
-	let resolvedPath = '/v2/objects/{object}/records';
-	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'POST',
-		body: input,
-	});
+	const data = asInput(input);
+	const object = pathValue(data, 'object');
+	return await makeAuthenticatedAttioRequest(
+		`/v2/objects/${object}/records`,
+		ctx,
+		{
+			method: 'POST',
+			body: withoutKeys(data, ['object']),
+		},
+	);
 };
 
 export const createSelectOption: AttioEndpoint<'createSelectOption'> = async (
@@ -2458,31 +2462,31 @@ export const getRecord: AttioEndpoint<'getRecord'> = async (ctx, input) => {
 export const getRecordAttributeValues: AttioEndpoint<
 	'getRecordAttributeValues'
 > = async (ctx, input) => {
-	let resolvedPath = '/v2/record_attribute_values/{record_attribute_values_id}';
-	resolvedPath = resolvedPath.replace(
-		'{record_attribute_values_id}',
-		String(input.record_attribute_values_id || ''),
+	const data = asInput(input);
+	const object = pathValue(data, 'object');
+	const recordId = pathValue(data, 'record_id');
+	const attribute = pathValue(data, 'attribute', 'attribute_id');
+	return await makeAuthenticatedAttioRequest(
+		`/v2/objects/${object}/records/${recordId}/attributes/${attribute}/values`,
+		ctx,
+		{
+			method: 'GET',
+			query: asQuery(
+				withoutKeys(data, [
+					'object',
+					'record_id',
+					'attribute',
+					'attribute_id',
+					'record_attribute_values_id',
+				]),
+			),
+		},
 	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'GET',
-		query: asQuery(input),
-	});
 };
 
 export const getV2ObjectsObjectRecordsRecordId: AttioEndpoint<
 	'getV2ObjectsObjectRecordsRecordId'
-> = async (ctx, input) => {
-	let resolvedPath = '/v2/objects/{object}/records/{record_id}';
-	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
-	resolvedPath = resolvedPath.replace(
-		'{record_id}',
-		String(input.record_id || ''),
-	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'GET',
-		query: asQuery(input),
-	});
-};
+> = async (ctx, input) => getRecord(ctx, input);
 
 export const getTask: AttioEndpoint<'getTask'> = async (ctx, input) => {
 	let resolvedPath = '/v2/tasks/{task_id}';
@@ -2833,23 +2837,7 @@ export const peopleListPersons: AttioEndpoint<'peopleListPersons'> = async (
 
 export const listRecordAttributeValues: AttioEndpoint<
 	'listRecordAttributeValues'
-> = async (ctx, input) => {
-	let resolvedPath =
-		'/v2/objects/{object}/records/{record_id}/attributes/{attribute}/values';
-	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
-	resolvedPath = resolvedPath.replace(
-		'{record_id}',
-		String(input.record_id || ''),
-	);
-	resolvedPath = resolvedPath.replace(
-		'{attribute}',
-		String(input.attribute || ''),
-	);
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'GET',
-		query: asQuery(input),
-	});
-};
+> = async (ctx, input) => getRecordAttributeValues(ctx, input);
 
 export const getRecordEntries: AttioEndpoint<'getRecordEntries'> = async (
 	ctx,
@@ -2960,12 +2948,7 @@ export const listWebhooks: AttioEndpoint<'listWebhooks'> = async (
 
 export const listWorkspaceMembers: AttioEndpoint<
 	'listWorkspaceMembers'
-> = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest('/v2/workspace_members', ctx, {
-		method: 'GET',
-		query: asQuery(input),
-	});
-};
+> = async (ctx, input) => getV2WorkspaceMembers(ctx, input);
 
 export const listWorkspaceRecordAttributeValues: AttioEndpoint<
 	'listWorkspaceRecordAttributeValues'
@@ -3042,40 +3025,26 @@ export const queryRecords: AttioEndpoint<'queryRecords'> = async (
 	ctx,
 	input,
 ) => {
-	let resolvedPath = '/v2/objects/{object}/records/query';
-	resolvedPath = resolvedPath.replace('{object}', String(input.object || ''));
-	return await makeAuthenticatedAttioRequest(resolvedPath, ctx, {
-		method: 'POST',
-		body: input,
-	});
+	const data = asInput(input);
+	const object = pathValue(data, 'object');
+	return await makeAuthenticatedAttioRequest(
+		`/v2/objects/${object}/records/query`,
+		ctx,
+		{
+			method: 'POST',
+			body: withoutKeys(data, ['object']),
+		},
+	);
 };
 
 export const searchRecords: AttioEndpoint<'searchRecords'> = async (
 	ctx,
 	input,
-) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/objects/records/search',
-		ctx,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
-};
+) => queryRecords(ctx, input);
 
 export const postV2ObjectsRecordsSearch: AttioEndpoint<
 	'postV2ObjectsRecordsSearch'
-> = async (ctx, input) => {
-	return await makeAuthenticatedAttioRequest(
-		'/v2/objects/records/search',
-		ctx,
-		{
-			method: 'POST',
-			body: input,
-		},
-	);
-};
+> = async (ctx, input) => queryRecords(ctx, input);
 
 export const updateAttribute: AttioEndpoint<'updateAttribute'> = async (
 	ctx,

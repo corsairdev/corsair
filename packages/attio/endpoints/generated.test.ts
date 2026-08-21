@@ -229,8 +229,10 @@ describe('Attio REST API verification', () => {
 		});
 
 		it('searchRecords searches records', async () => {
-			const res = (await searchRecords(localMockCtx, {})) as MockCall;
-			expect(res.url).toBe('/v2/objects/records/search');
+			const res = (await searchRecords(localMockCtx, {
+				object: 'companies',
+			})) as MockCall;
+			expect(res.url).toBe('/v2/objects/companies/records/query');
 			expect(res.options.method).toBe('POST');
 		});
 	});
@@ -456,6 +458,7 @@ describe('Attio REST API verification', () => {
 			createRecord: {
 				url: '/v2/objects/companies/records',
 				method: 'POST',
+				omitFromBody: ['object'],
 			},
 			createSelectOption: {
 				url: '/v2/lists/list-1/attributes/email_addresses/options',
@@ -589,7 +592,7 @@ describe('Attio REST API verification', () => {
 				method: 'GET',
 			},
 			getRecordAttributeValues: {
-				url: '/v2/record_attribute_values/rav-1',
+				url: '/v2/objects/companies/records/rec-1/attributes/email_addresses/values',
 				method: 'GET',
 			},
 			getV2ObjectsObjectRecordsRecordId: {
@@ -769,14 +772,17 @@ describe('Attio REST API verification', () => {
 			queryRecords: {
 				url: '/v2/objects/companies/records/query',
 				method: 'POST',
+				omitFromBody: ['object'],
 			},
 			searchRecords: {
-				url: '/v2/objects/records/search',
+				url: '/v2/objects/companies/records/query',
 				method: 'POST',
+				omitFromBody: ['object'],
 			},
 			postV2ObjectsRecordsSearch: {
-				url: '/v2/objects/records/search',
+				url: '/v2/objects/companies/records/query',
 				method: 'POST',
+				omitFromBody: ['object'],
 			},
 			updateAttribute: {
 				url: '/v2/lists/list-1/attributes/email_addresses',
