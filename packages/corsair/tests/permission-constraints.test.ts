@@ -55,6 +55,58 @@ describe('matchesConstraint', () => {
 		expect(matchesConstraint({ a: 1 }, { equals: { a: 2 } })).toBe(false);
 	});
 
+	it('compares objects structurally, independent of key order', () => {
+		expect(matchesConstraint({ b: 2, a: 1 }, { equals: { a: 1, b: 2 } })).toBe(
+			true,
+		);
+		expect(
+			matchesConstraint(
+				{ outer: { b: 2, a: 1 } },
+				{ equals: { outer: { a: 1, b: 2 } } },
+			),
+		).toBe(true);
+		expect(matchesConstraint({ a: 1 }, { equals: { a: 1, b: 2 } })).toBe(false);
+	});
+
+	it('keeps array comparison order-sensitive', () => {
+		// Key order is not meaningful; element order is.
+		expect(matchesConstraint([1, 2], { equals: [1, 2] })).toBe(true);
+		expect(matchesConstraint([2, 1], { equals: [1, 2] })).toBe(false);
+		expect(matchesConstraint([1], { equals: [1, 2] })).toBe(false);
+		// An array and an object are never the same value.
+		expect(matchesConstraint([], { equals: {} })).toBe(false);
+	});
+
+	it('compares dates by value', () => {
+		expect(matchesConstraint(new Date(1000), { equals: new Date(1000) })).toBe(
+			true,
+		);
+		expect(matchesConstraint(new Date(1000), { equals: new Date(2000) })).toBe(
+			false,
+		);
+	});
+
+	it('handles a circular argument without throwing', () => {
+		const circular: Record<string, unknown> = { x: 1 };
+		circular.self = circular;
+
+		expect(() =>
+			matchesConstraint(circular, { equals: { x: 1 } }),
+		).not.toThrow();
+		expect(matchesConstraint(circular, { equals: { x: 1 } })).toBe(false);
+	});
+
+	it('does not treat a value repeated in two branches as equal', () => {
+		// The cycle guard must not short-circuit a legitimately shared subobject.
+		const shared = { k: 1 };
+		expect(
+			matchesConstraint(
+				{ p: shared, q: shared },
+				{ equals: { p: { k: 1 }, q: { k: 2 } } },
+			),
+		).toBe(false);
+	});
+
 	it('rejects an unrecognized constraint shape', () => {
 		// An unenforceable rule must never read as satisfied.
 		expect(matchesConstraint('anything', { nope: true } as never)).toBe(false);
@@ -332,5 +384,28 @@ describe('a misspelled operator cannot silently drop a denylist', () => {
 		expect(
 			evaluatePermission('write', 'strict', override, { to: 'bad@evil.com' }),
 		).toBe('require_approval');
+	});
+});
+
+describe('reordering object keys cannot bypass a denylist', () => {
+	it('still denies a structurally equal argument written in another key order', () => {
+		// Regression: serialized comparison made {b,a} differ from {a,b}, so a
+		// reordered payload read as "not in the denylist" and was allowed.
+		const override: PermissionOverride = {
+			policy: 'allow',
+			constraints: { payload: { notIn: [{ a: 1, b: 2 }] } },
+		};
+
+		expect(
+			evaluatePermission('write', 'strict', override, {
+				payload: { b: 2, a: 1 },
+			}),
+		).toBe('require_approval');
+		// A genuinely different payload is still allowed.
+		expect(
+			evaluatePermission('write', 'strict', override, {
+				payload: { a: 9, b: 9 },
+			}),
+		).toBe('allow');
 	});
 });

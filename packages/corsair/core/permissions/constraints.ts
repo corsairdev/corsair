@@ -33,18 +33,60 @@ export function resolveArgPath(args: unknown, path: string): unknown {
 	return current;
 }
 
-/** Compares two constraint operands. Non-primitives compare structurally. */
+/**
+ * Compares two constraint operands. Non-primitives compare structurally.
+ *
+ * Deliberately not JSON.stringify: serialized comparison makes equality depend
+ * on key insertion order, so `{a,b}` and `{b,a}` read as different values. For
+ * `notIn` that inverts into a bypass — a reordered object is "not in the
+ * denylist" — and it throws outright on a circular argument.
+ */
 function sameValue(a: unknown, b: unknown): boolean {
+	return deepEqual(a, b, new Set());
+}
+
+/** `path` holds the objects currently being compared, so cycles terminate. */
+function deepEqual(a: unknown, b: unknown, path: Set<unknown>): boolean {
 	if (Object.is(a, b)) return true;
-	if (
-		a !== null &&
-		b !== null &&
-		typeof a === 'object' &&
-		typeof b === 'object'
-	) {
-		return JSON.stringify(a) === JSON.stringify(b);
+	if (a === null || b === null) return false;
+	if (typeof a !== 'object' || typeof b !== 'object') return false;
+
+	// Dates were the one exotic type the previous JSON comparison handled
+	// meaningfully; keep them comparing by value rather than by identity.
+	if (a instanceof Date || b instanceof Date) {
+		return (
+			a instanceof Date && b instanceof Date && a.getTime() === b.getTime()
+		);
 	}
-	return false;
+
+	const isArray = Array.isArray(a);
+	if (isArray !== Array.isArray(b)) return false;
+
+	// Revisiting an object already on the path means the structures recurse in
+	// the same shape; the pair is equal as far as this branch can determine.
+	if (path.has(a)) return true;
+	path.add(a);
+	try {
+		if (isArray) {
+			const left = a as unknown[];
+			const right = b as unknown[];
+			return (
+				left.length === right.length &&
+				left.every((v, i) => deepEqual(v, right[i], path))
+			);
+		}
+		const left = a as Record<string, unknown>;
+		const right = b as Record<string, unknown>;
+		const keys = Object.keys(left);
+		if (keys.length !== Object.keys(right).length) return false;
+		return keys.every(
+			(k) => Object.hasOwn(right, k) && deepEqual(left[k], right[k], path),
+		);
+	} finally {
+		// Removed on the way out so a value legitimately repeated in two
+		// branches is compared each time rather than short-circuiting to true.
+		path.delete(a);
+	}
 }
 
 /** The operators a constraint may carry. Anything else is not a constraint. */
