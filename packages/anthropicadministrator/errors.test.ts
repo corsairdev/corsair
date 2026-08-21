@@ -30,6 +30,13 @@ function wrapped(
 }
 
 describe('error handling survives the client wrapper', () => {
+	// AUTH_ERROR intentionally logs guidance about Admin keys; keep test output clean.
+	let consoleError: jest.SpyInstance;
+	beforeAll(() => {
+		consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
+	});
+	afterAll(() => consoleError.mockRestore());
+
 	it('matches a 429 after wrapping, despite the message being "Too Many Requests"', async () => {
 		// corsair throws 429 with the literal message "Too Many Requests" — it
 		// contains neither "429" nor "rate_limited", so status must be preserved.
