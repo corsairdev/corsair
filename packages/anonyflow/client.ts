@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class AnonyflowAPIError extends Error {
@@ -34,7 +33,7 @@ export async function makeAnonyflowRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			'Authorization': `Bearer ${apiKey}`
+			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
@@ -50,15 +49,15 @@ export async function makeAnonyflowRequest<T>(
 	};
 
 	try {
-        return await request<T>(config, requestOptions);
-    } catch (error) {
-        // Let standard API errors (like 429 Rate Limits) pass through to Corsair's handler
-        if (error && typeof error === 'object' && 'status' in error) {
-            throw error;
-        }
-        if (error instanceof Error) {
-            throw new AnonyflowAPIError(error.message);
-        }
-        throw new AnonyflowAPIError('Unknown error');
-    }
+		return await request<T>(config, requestOptions);
+	} catch (error) {
+		// Let standard API errors (like 429 Rate Limits) pass through to Corsair's handler
+		if (error && typeof error === 'object' && 'status' in error) {
+			throw error;
+		}
+		if (error instanceof Error) {
+			throw new AnonyflowAPIError(error.message);
+		}
+		throw new AnonyflowAPIError('Unknown error');
+	}
 }
