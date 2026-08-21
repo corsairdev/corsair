@@ -141,6 +141,39 @@ describe('matchesConstraint', () => {
 	});
 });
 
+describe('matchesConstraint — exotic objects are not structurally equal', () => {
+	it('does not equate two different RegExp instances', () => {
+		// RegExp has no enumerable own properties, so Object.keys returns [].
+		// Without a plain-object guard, deepEqual would compare them as equal
+		// even when they are different patterns or flags.
+		const patternA = /foo/;
+		const patternB = /bar/;
+		// Different source → not equal
+		expect(matchesConstraint(patternA, { equals: patternB })).toBe(false);
+		// Same source and flags → still different instances, not equal
+		expect(matchesConstraint(/foo/gi, { equals: /foo/gi })).toBe(false);
+	});
+
+	it('does not equate two class instances with no enumerable keys', () => {
+		// eslint-disable-next-line @typescript-eslint/no-extraneous-class -- test helper
+		class Empty {}
+		const a = new Empty();
+		const b = new Empty();
+		// Same constructor, same empty shape — but exotic objects are never
+		// structurally equal by enumerable keys.
+		expect(matchesConstraint(a, { equals: b })).toBe(false);
+	});
+
+	it('does not equate a Map and a plain object', () => {
+		const map = new Map([['k', 1]]);
+		const obj = { k: 1 };
+		// A Map's entries are not own enumerable properties, so enumerable-key
+		// comparison would wrongly find them equal.
+		expect(matchesConstraint(map, { equals: obj })).toBe(false);
+		expect(matchesConstraint(obj, { equals: map })).toBe(false);
+	});
+});
+
 describe('matchesConstraint — fails closed on unusable rules', () => {
 	it('rejects an absent argument under every operator, notIn included', () => {
 		// notIn is the trap: "undefined is not in the denylist" reads as satisfied,
