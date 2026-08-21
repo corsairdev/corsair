@@ -1,4 +1,4 @@
-import type { PermissionOverride } from '../core';
+import type { PermissionOverride, PermissionPolicy } from '../core';
 import {
 	constraintsSatisfied,
 	enforcePermission,
@@ -8,6 +8,18 @@ import {
 	resolveOverridePolicy,
 } from '../core/permissions';
 
+/**
+ * Wrapper that accepts null so runtime edge cases from unsafe JS/JSON config
+ * can be tested without a type assertion. resolveOverridePolicy's parameter
+ * type omits null because TypeScript configs are statically checked, but
+ * runtime values from external config can be null.
+ */
+function resolveOverrideNullable(
+	value: PermissionOverride | null | undefined,
+	args: unknown,
+): PermissionPolicy | undefined {
+	return resolveOverridePolicy(value, args);
+}
 describe('resolveArgPath', () => {
 	it('reads top-level and nested paths', () => {
 		const args = { channel: '#general', message: { to: 'a@corsair.dev' } };
@@ -232,6 +244,7 @@ describe('resolveOverridePolicy', () => {
 	it('passes a flat policy through unchanged', () => {
 		expect(resolveOverridePolicy('deny', {})).toBe('deny');
 		expect(resolveOverridePolicy(undefined, {})).toBeUndefined();
+		expect(resolveOverrideNullable(null, {})).toBeUndefined();
 	});
 
 	it('applies the policy when constraints hold', () => {
