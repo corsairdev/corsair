@@ -150,6 +150,10 @@ function containsCycle(root: unknown): boolean {
 		const frame = stack[stack.length - 1];
 		if (frame === undefined) break;
 		const [node, children] = frame;
+		// Frame exhaustion is checked by length, not by the popped value: an
+		// own enumerable property whose value is `undefined` is a real child,
+		// and popping it must not be mistaken for an empty frame — otherwise
+		// any cyclic sibling still queued after it would never be visited.
 		if (children.length === 0) {
 			// Frame exhausted — node leaves the current path.
 			path.delete(node);

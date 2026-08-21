@@ -742,6 +742,31 @@ describe('cyclic values fail closed under every operator', () => {
 		expect(matchesConstraint('a', { notIn: ['b', cyclicOperand] })).toBe(false);
 	});
 
+	it('finds a cycle hidden behind an undefined-valued sibling property', () => {
+		// Regression: the iterative scan used the popped child value to detect
+		// frame exhaustion. An own enumerable property whose value is undefined
+		// is a real child — popping it must not be mistaken for an exhausted
+		// frame, or any cyclic sibling queued after it is never visited.
+		// Both key orders are covered: Object.values order is insertion order,
+		// while the frame stack pops children in reverse.
+		function makeUndefinedFirst(): Record<string, unknown> {
+			const cyclic: Record<string, unknown> = {};
+			cyclic.self = cyclic;
+			return { b: undefined, a: cyclic };
+		}
+		function makeCyclicFirst(): Record<string, unknown> {
+			const cyclic: Record<string, unknown> = {};
+			cyclic.self = cyclic;
+			return { a: cyclic, b: undefined };
+		}
+
+		expect(matchesConstraint(makeUndefinedFirst(), { notIn: ['x'] })).toBe(
+			false,
+		);
+		expect(matchesConstraint(makeCyclicFirst(), { notIn: ['x'] })).toBe(false);
+		expect(matchesConstraint(makeUndefinedFirst(), { equals: {} })).toBe(false);
+	});
+
 	it('still compares values shared across branches (DAG, not cycle)', () => {
 		// Sharing is not cycling: containsCycle is path-based, so a node
 		// referenced from two branches does not trip it.
