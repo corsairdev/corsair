@@ -36,6 +36,7 @@ export const BaseProviders = [
 	'ambientweather',
 	'amcards',
 	'amplitude',
+	'anthropicadministrator',
 	'apaleo',
 	'api2pdf',
 	'apibible',
@@ -192,6 +193,7 @@ export const ProviderDisplayNames = {
 	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	anthropicadministrator: 'Anthropic Administrator',
 	apaleo: 'Apaleo',
 	api2pdf: 'API2PDF',
 	apibible: 'API.Bible',
@@ -355,6 +357,7 @@ export type AllProviders =
 	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
+	| 'anthropicadministrator'
 	| 'apaleo'
 	| 'api2pdf'
 	| 'apibible'
