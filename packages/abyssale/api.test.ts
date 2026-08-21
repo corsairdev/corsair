@@ -23,10 +23,10 @@ type Ops = Record<
 	Record<string, (c: AbyssaleContext, i: unknown) => Promise<unknown>>
 >;
 
-function op(group: string, name: string) {
-	const fn = (abyssale({ key: KEY }).endpoints as unknown as Ops)[group]?.[
-		name
-	];
+function op(group: string, name: string, key: string | undefined = KEY) {
+	// The key must reach the factory, not just the ctx, so the rejection test
+	// exercises a genuinely unauthenticated client.
+	const fn = (abyssale({ key }).endpoints as unknown as Ops)[group]?.[name];
 	if (!fn) throw new Error(`missing endpoint ${group}.${name}`);
 	return fn;
 }
@@ -55,6 +55,10 @@ suite('Abyssale live API', () => {
 			type: 'google',
 		})) as unknown[];
 		expect(google.length).toBeGreaterThan(0);
+		// Fail if the endpoint returns fonts of another type.
+		for (const font of google.slice(0, 50)) {
+			expect(AbyssaleFont.parse(font).type).toBe('google');
+		}
 	});
 
 	it('getDesigns returns designs matching the entity schema', async () => {
@@ -70,6 +74,9 @@ suite('Abyssale live API', () => {
 			type: 'static',
 		})) as unknown[];
 		expect(Array.isArray(res)).toBe(true);
+		for (const design of res.slice(0, 25)) {
+			expect(AbyssaleDesign.parse(design).type).toBe('static');
+		}
 	});
 
 	it('rejects an invalid API key', async () => {
@@ -78,7 +85,9 @@ suite('Abyssale live API', () => {
 			options: {},
 			db: {},
 		} as unknown as AbyssaleContext;
-		await expect(op('auth', 'test')(badCtx, {})).rejects.toThrow();
+		await expect(
+			op('auth', 'test', 'invalid-key')(badCtx, {}),
+		).rejects.toThrow();
 	});
 });
 

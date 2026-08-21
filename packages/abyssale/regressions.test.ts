@@ -34,39 +34,40 @@ function transportError(status: number, message: string, retryAfter?: number) {
 
 beforeEach(() => mockRequest.mockReset());
 
-describe('a successful retry returns its result', () => {
-	// Retrying via the shared binder would discard the successful attempt and
-	// rethrow the original error, so the retry lives in client.ts.
-	it('returns the retry result after a 429', async () => {
-		mockRequest
-			.mockRejectedValueOnce(transportError(429, 'Too Many Requests', 1))
-			.mockResolvedValueOnce([]);
+describe('retry budgets do not compound', () => {
+	it('does not re-retry a 429 — corsair/http already does', async () => {
+		// The transport retries rate limits internally (maxRetries: 3) and
+		// returns the successful attempt. Retrying again here would multiply the
+		// two budgets: up to twelve requests for one operation.
+		mockRequest.mockRejectedValue(transportError(429, 'Too Many Requests', 1));
 
-		await expect(Designs.getDesigns(ctx, {})).resolves.toEqual([]);
-		expect(mockRequest).toHaveBeenCalledTimes(2);
+		await expect(Designs.getDesigns(ctx, {})).rejects.toThrow();
+		expect(mockRequest).toHaveBeenCalledTimes(1);
 	});
 
-	it('retries a 429 on a mutation too', async () => {
-		mockRequest
-			.mockRejectedValueOnce(transportError(429, 'Too Many Requests', 1))
-			.mockResolvedValueOnce({
-				id: '08eafd16-9d61-11f1-b748-06b6ae795cdb',
-				name: 'n',
-				created_at_ts: 1,
-			});
-
-		await expect(
-			Projects.createProject(ctx, { name: 'demo' }),
-		).resolves.toMatchObject({ id: '08eafd16-9d61-11f1-b748-06b6ae795cdb' });
-	});
-
-	it('never replays a 5xx on a mutation', async () => {
+	it('never replays a non-idempotent POST', async () => {
 		mockRequest.mockRejectedValue(transportError(503, 'Service Unavailable'));
 
 		await expect(
 			Projects.createProject(ctx, { name: 'demo' }),
 		).rejects.toThrow();
 		expect(mockRequest).toHaveBeenCalledTimes(1);
+	});
+
+	it('retries a 5xx on GET, which the transport does not cover', async () => {
+		mockRequest
+			.mockRejectedValueOnce(transportError(500, 'Internal Server Error'))
+			.mockResolvedValueOnce([]);
+
+		await expect(Designs.getDesigns(ctx, {})).resolves.toEqual([]);
+		expect(mockRequest).toHaveBeenCalledTimes(2);
+	});
+
+	it('bounds the GET retry budget', async () => {
+		mockRequest.mockRejectedValue(transportError(500, 'Internal Server Error'));
+
+		await expect(Designs.getDesigns(ctx, {})).rejects.toThrow();
+		expect(mockRequest).toHaveBeenCalledTimes(2);
 	});
 
 	it('asks the binder for no retries', async () => {

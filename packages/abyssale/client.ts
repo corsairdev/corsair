@@ -26,8 +26,8 @@ export class AbyssaleAPIError extends Error {
 
 const ABYSSALE_API_BASE = 'https://api.abyssale.com';
 
-/** Total attempts for a retryable failure (1 initial + 2 retries). */
-const MAX_ATTEMPTS = 3;
+/** Attempts for a server-error GET (1 initial + 1 retry). */
+const MAX_ATTEMPTS = 2;
 
 /** Cap on an honoured `Retry-After`, so a hostile header cannot stall a caller. */
 const MAX_RETRY_DELAY_MS = 30_000;
@@ -35,12 +35,17 @@ const MAX_RETRY_DELAY_MS = 30_000;
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
- * A 429 is safe to replay for any method — it was rejected before being
- * applied. A 5xx may have been applied server-side and Abyssale documents no
- * idempotency key, so only GET is replayed.
+ * Rate limits are deliberately NOT handled here: `corsair/http` already retries
+ * them internally (`DEFAULT_RATE_LIMIT_CONFIG.maxRetries = 3`, honouring
+ * `Retry-After`) and returns the successful attempt. Retrying 429 again at this
+ * layer would multiply the two budgets — up to twelve requests for one
+ * operation, including repeated non-idempotent `POST /projects`.
+ *
+ * The transport does not retry 5xx, so that gap is covered here, and only for
+ * GET: a 5xx may have been applied server-side and Abyssale documents no
+ * idempotency key.
  */
 function isRetryable(status: number | undefined, method: string): boolean {
-	if (status === 429) return true;
 	if (status !== undefined && status >= 500) return method === 'GET';
 	return false;
 }
