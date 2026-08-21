@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeApipieRequest } from '../client';
 import type { ApipieEndpoints } from '../index';
+import { cacheImage } from './persist';
 import type { ApipieEndpointOutputs } from './types';
 import { ApipieEndpointOutputSchemas } from './types';
 
@@ -24,6 +25,17 @@ export const generate: ApipieEndpoints['imagesGenerate'] = async (
 			user: input.user,
 		},
 	});
+
+	await Promise.all(
+		response.data.map((image, index) =>
+			cacheImage(ctx.db?.images, image, {
+				created: response.created,
+				index,
+				model: input.model,
+				prompt: input.prompt,
+			}),
+		),
+	);
 
 	await logEventFromContext(
 		ctx,

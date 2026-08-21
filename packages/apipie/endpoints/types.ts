@@ -7,17 +7,40 @@ const ModelMessageSchema = z
 	})
 	.loose();
 
+/**
+ * One entry from `GET /v1/models`.
+ *
+ * Verified against a live response covering all 1217 catalogue entries. Every
+ * field below is returned on every item; nullability marks the ones observed
+ * null. Fields stay optional so a future API change degrades to a missing
+ * value rather than failing the call, since `makeApipieRequest` parses.
+ *
+ * Note the string-typed numerics: `avg_cost`, `input_cost`, `output_cost`,
+ * `latency` and `query_count` come back as numeric strings, not numbers.
+ */
 const ModelListItemSchema = z
 	.object({
 		id: z.string(),
-		type: z.string().nullable().optional(),
-		subtype: z.string().nullable().optional(),
-		name: z.string().nullable().optional(),
-		provider: z.string().nullable().optional(),
-		/** APIpie returns 0/1 flags for some models. */
-		enabled: z.union([z.boolean(), z.number()]).nullable().optional(),
-		description: z.string().nullable().optional(),
-		metadata: z.record(z.string(), z.unknown()).optional(),
+		/** Provider-qualified name, e.g. `openai/gpt-4o`. */
+		model: z.string().nullish(),
+		provider: z.string().nullish(),
+		type: z.string().nullish(),
+		subtype: z.string().nullish(),
+		route: z.string().nullish(),
+		description: z.string().nullish(),
+		/** APIpie returns 0/1 flags rather than booleans. */
+		enabled: z.union([z.boolean(), z.number()]).nullish(),
+		available: z.union([z.boolean(), z.number()]).nullish(),
+		avg_cost: z.string().nullish(),
+		input_cost: z.string().nullish(),
+		output_cost: z.string().nullish(),
+		price_type: z.string().nullish(),
+		img_price: z.unknown().nullish(),
+		img_json: z.record(z.string(), z.unknown()).nullish(),
+		latency: z.string().nullish(),
+		query_count: z.string().nullish(),
+		max_tokens: z.number().nullish(),
+		max_response_tokens: z.number().nullish(),
 	})
 	.loose();
 
@@ -31,20 +54,47 @@ const ModelsListResponseSchema = z.union([
 		.loose(),
 ]);
 
+/**
+ * One entry from `GET /v1/models/detailed`, verified against a live response
+ * across all 1217 entries. This is a different, richer shape than the plain
+ * list: it carries modality, capacity and quality fields the list omits.
+ */
 const DetailedModelListItemSchema = z
 	.object({
-		id: z.string().nullable().optional(),
-		model: z.string().nullable().optional(),
-		name: z.string().nullable().optional(),
-		provider: z.string().nullable().optional(),
-		type: z.string().nullable().optional(),
-		/** APIpie returns 0/1 flags for some models. */
-		enabled: z.union([z.boolean(), z.number()]).nullable().optional(),
-		capabilities: z.unknown().optional(),
-		limits: z.unknown().optional(),
-		pricing: z.unknown().optional(),
-		supported_input_parameters: z.record(z.string(), z.unknown()).optional(),
-		metadata: z.record(z.string(), z.unknown()).optional(),
+		id: z.string(),
+		model: z.string().nullish(),
+		provider: z.string().nullish(),
+		type: z.string().nullish(),
+		subtype: z.string().nullish(),
+		route: z.string().nullish(),
+		description: z.string().nullish(),
+		/** APIpie returns 0/1 flags rather than booleans. */
+		enabled: z.union([z.boolean(), z.number()]).nullish(),
+		available: z.union([z.boolean(), z.number()]).nullish(),
+		abortable: z.boolean().nullish(),
+		moderationRequired: z.boolean().nullish(),
+		supports_multipart: z.boolean().nullish(),
+		input_modalities: z.array(z.string()).nullish(),
+		output_modalities: z.array(z.string()).nullish(),
+		instruct_type: z.string().nullish(),
+		quantization: z.string().nullish(),
+		pool: z.string().nullish(),
+		/** MMLU benchmark score; present for only a handful of models. */
+		mmlu: z.number().nullish(),
+		output_vector_size: z.number().nullish(),
+		max_tokens: z.number().nullish(),
+		max_response_tokens: z.number().nullish(),
+		max_images_per_prompt: z.number().nullish(),
+		max_audio_per_prompt: z.number().nullish(),
+		max_audio_length_hours: z.number().nullish(),
+		max_videos_per_prompt: z.number().nullish(),
+		max_video_length: z.number().nullish(),
+		max_pdf_size_mb: z.number().nullish(),
+		/** Numeric strings, not numbers. */
+		latency: z.string().nullish(),
+		query_count: z.string().nullish(),
+		pricing: z.record(z.string(), z.unknown()).nullish(),
+		supported_input_parameters: z.record(z.string(), z.unknown()).nullish(),
 	})
 	.loose();
 

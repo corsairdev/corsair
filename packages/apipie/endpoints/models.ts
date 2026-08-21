@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeApipieRequest } from '../client';
 import type { ApipieEndpoints } from '../index';
+import { cacheModels } from './persist';
 import type { ApipieEndpointOutputs } from './types';
 import { ApipieEndpointOutputSchemas } from './types';
 
@@ -21,15 +22,14 @@ export const list: ApipieEndpoints['modelsList'] = async (ctx, input) => {
 		},
 	);
 
+	const items = Array.isArray(response) ? response : (response?.data ?? []);
+	await cacheModels(ctx.db?.models, items);
+
 	await logEventFromContext(
 		ctx,
 		'apipie.api.models.list',
 		{
-			resultCount: Array.isArray(response)
-				? response.length
-				: Array.isArray(response?.data)
-					? response.data.length
-					: 0,
+			resultCount: items.length,
 		},
 		'completed',
 	);
@@ -52,6 +52,8 @@ export const listDetailed: ApipieEndpoints['modelsListDetailed'] = async (
 			model: input.model,
 		},
 	});
+
+	await cacheModels(ctx.db?.models, response?.data ?? []);
 
 	await logEventFromContext(
 		ctx,
