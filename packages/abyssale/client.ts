@@ -26,6 +26,33 @@ export class AbyssaleAPIError extends Error {
 
 const ABYSSALE_API_BASE = 'https://api.abyssale.com';
 
+/** Total attempts for a retryable failure (1 initial + 2 retries). */
+const MAX_ATTEMPTS = 3;
+
+/** Cap on an honoured `Retry-After`, so a hostile header cannot stall a caller. */
+const MAX_RETRY_DELAY_MS = 30_000;
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/**
+ * A 429 is safe to replay for any method — it was rejected before being
+ * applied. A 5xx may have been applied server-side and Abyssale documents no
+ * idempotency key, so only GET is replayed.
+ */
+function isRetryable(status: number | undefined, method: string): boolean {
+	if (status === 429) return true;
+	if (status !== undefined && status >= 500) return method === 'GET';
+	return false;
+}
+
+function retryDelayMs(error: ApiError, attempt: number): number {
+	const retryAfter = error.retryAfter;
+	if (typeof retryAfter === 'number' && retryAfter > 0) {
+		return Math.min(retryAfter, MAX_RETRY_DELAY_MS);
+	}
+	return Math.min(2 ** (attempt - 1) * 1000, MAX_RETRY_DELAY_MS);
+}
+
 export async function makeAbyssaleRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -60,15 +87,33 @@ export async function makeAbyssaleRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new AbyssaleAPIError(error.message, undefined, { cause: error });
+	// Retries happen here rather than in the shared endpoint binder: the binder
+	// awaits a successful recursive attempt without returning it and then
+	// rethrows the original error, so a call that succeeded on retry would still
+	// be reported to the caller as a failure.
+	let lastError: unknown;
+
+	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+		try {
+			return await request<T>(config, requestOptions);
+		} catch (error) {
+			lastError = error;
+			const canRetry =
+				error instanceof ApiError &&
+				attempt < MAX_ATTEMPTS &&
+				isRetryable(error.status, method);
+			if (!canRetry) break;
+			await sleep(retryDelayMs(error as ApiError, attempt));
 		}
-		if (error instanceof Error) {
-			throw new AbyssaleAPIError(error.message);
-		}
-		throw new AbyssaleAPIError('Unknown error');
 	}
+
+	if (lastError instanceof ApiError) {
+		throw new AbyssaleAPIError(lastError.message, undefined, {
+			cause: lastError,
+		});
+	}
+	if (lastError instanceof Error) {
+		throw new AbyssaleAPIError(lastError.message);
+	}
+	throw new AbyssaleAPIError('Unknown error');
 }

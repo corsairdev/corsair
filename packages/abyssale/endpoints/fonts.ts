@@ -1,26 +1,30 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AbyssaleEndpoints } from '..';
 import { makeAbyssaleRequest } from '../client';
-import { cacheEntities } from './shared';
+import { cacheEntities, parseInput, parseOutput } from './shared';
 import type { AbyssaleEndpointOutputs } from './types';
 
 export const getFonts: AbyssaleEndpoints['getFonts'] = async (ctx, input) => {
+	const args = parseInput('getFonts', input);
+
 	const response = await makeAbyssaleRequest<
 		AbyssaleEndpointOutputs['getFonts']
 	>('fonts', ctx.key, {
 		method: 'GET',
 		query: {
-			type: input.type,
+			type: args.type,
 		},
 	});
 
-	await cacheEntities(ctx, 'fonts', response);
+	const result = parseOutput('getFonts', response);
+
+	await cacheEntities(ctx, 'fonts', result);
 
 	await logEventFromContext(
 		ctx,
 		'abyssale.fonts.list',
-		{ type: input.type },
+		{ type: args.type },
 		'completed',
 	);
-	return response;
+	return result;
 };

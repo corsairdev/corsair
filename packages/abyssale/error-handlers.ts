@@ -21,9 +21,10 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error: Error) => {
-			return { maxRetries: 5, headersRetryAfterMs: getRetryAfter(error) };
-		},
+		// Already retried in `client.ts`, which returns the successful attempt.
+		// Asking the binder to retry would route the call through a path that
+		// discards a successful retry and rethrows the original error.
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
