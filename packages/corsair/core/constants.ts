@@ -16,6 +16,7 @@ export const BaseProviders = [
 	'ably',
 	'abstract',
 	'abyssale',
+	'accrediblecertificates',
 	'activecampaign',
 	'anchorbrowser',
 	'activetrail',
@@ -67,8 +68,8 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canvas',
 	'canva',
+	'canvas',
 	'circleci',
 	'clientary',
 	'cloudflare',
@@ -182,6 +183,7 @@ export const ProviderDisplayNames = {
 	ably: 'Ably',
 	abstract: 'Abstract',
 	abyssale: 'Abyssale',
+	accrediblecertificates: 'Accredible Certificates',
 	activecampaign: 'ActiveCampaign',
 	anchorbrowser: 'Anchor Browser',
 	activetrail: 'Active Trail',
@@ -233,8 +235,8 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	cloudflare: 'Cloudflare',
@@ -355,6 +357,7 @@ export type AllProviders =
 	| 'ably'
 	| 'abstract'
 	| 'abyssale'
+	| 'accrediblecertificates'
 	| 'activecampaign'
 	| 'anchorbrowser'
 	| 'activetrail'
