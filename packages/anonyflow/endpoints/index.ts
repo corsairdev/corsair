@@ -19,7 +19,7 @@ async function anonymize(
 	input: AnonymizeInput,
 ): Promise<AnonymizeOutput> {
 	const apiKey = (await context.keys.get_api_key()) ?? '';
-	return makeAnonyflowRequest<AnonymizeOutput>('/anonymize', apiKey, {
+	return makeAnonyflowRequest<AnonymizeOutput>('/anony-value', apiKey, {
 		method: 'POST',
 		body: input,
 	});
@@ -31,7 +31,7 @@ async function deanonymize(
 	input: DeanonymizeInput,
 ): Promise<DeanonymizeOutput> {
 	const apiKey = (await context.keys.get_api_key()) ?? '';
-	return makeAnonyflowRequest<DeanonymizeOutput>('/deanonymize', apiKey, {
+	return makeAnonyflowRequest<DeanonymizeOutput>('/deanony-value', apiKey, {
 		method: 'POST',
 		body: input,
 	});
@@ -43,7 +43,7 @@ async function analyze(
 	input: AnalyzeInput,
 ): Promise<AnalyzeOutput> {
 	const apiKey = (await context.keys.get_api_key()) ?? '';
-	return makeAnonyflowRequest<AnalyzeOutput>('/analyze', apiKey, {
+	return makeAnonyflowRequest<AnalyzeOutput>('/anony-packet', apiKey, {
 		method: 'POST',
 		body: input,
 	});
@@ -55,7 +55,7 @@ async function listEntities(
 	_input: ListEntitiesInput,
 ): Promise<ListEntitiesOutput> {
 	const apiKey = (await context.keys.get_api_key()) ?? '';
-	return makeAnonyflowRequest<ListEntitiesOutput>('/entities', apiKey, {
+	return makeAnonyflowRequest<ListEntitiesOutput>('/deanony-packet', apiKey, {
 		method: 'GET',
 	});
 }
@@ -66,7 +66,7 @@ async function getStatus(
 	_input: GetStatusInput,
 ): Promise<GetStatusOutput> {
 	const apiKey = (await context.keys.get_api_key()) ?? '';
-	return makeAnonyflowRequest<GetStatusOutput>('/status', apiKey, {
+	return makeAnonyflowRequest<GetStatusOutput>('/test', apiKey, {
 		method: 'GET',
 	});
 }

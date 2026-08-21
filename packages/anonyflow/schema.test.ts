@@ -18,7 +18,8 @@ describe('Anonyflow schema', () => {
 		expect(typeof AnonyflowSchema.entities).toBe('object');
 		expect(AnonyflowSchema.entities).not.toBeNull();
 
-		expect(Object.keys(AnonyflowSchema.entities)).not.toHaveLength(0);
+		// The entities map should be empty as this plugin does not cache database entities
+		expect(Object.keys(AnonyflowSchema.entities)).toHaveLength(0);
 
 		for (const entity of Object.values(AnonyflowSchema.entities)) {
 			expect(entity).toBeDefined();
