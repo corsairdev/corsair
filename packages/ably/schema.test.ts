@@ -1,8 +1,8 @@
-import { AblySchema } from './schema';
 import {
 	AblyEndpointInputSchemas,
 	AblyEndpointOutputSchemas,
 } from './endpoints/types';
+import { AblySchema } from './schema';
 
 describe('Ably schema', () => {
 	it('declares a semver version', () => {
@@ -109,5 +109,4 @@ describe('Ably schema', () => {
 			}).success,
 		).toBe(false);
 	});
-
 });

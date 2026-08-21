@@ -163,9 +163,7 @@ export async function makeAblyListRequest<T>(
 			ablyError?.message ?? `HTTP ${response.status}: ${response.statusText}`,
 			ablyError?.code === undefined ? undefined : String(ablyError.code),
 			ablyError?.statusCode ?? response.status,
-			Number.isFinite(retryAfterSeconds)
-				? retryAfterSeconds * 1000
-				: undefined,
+			Number.isFinite(retryAfterSeconds) ? retryAfterSeconds * 1000 : undefined,
 		);
 	}
 

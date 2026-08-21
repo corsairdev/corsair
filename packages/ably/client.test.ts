@@ -31,8 +31,7 @@ function mockFetchSequence(responses: MockResponse[]) {
 		}
 
 		captured = { url: String(url), method: init?.method ?? 'GET', headers };
-		const response =
-			responses[Math.min(attempts, responses.length - 1)] ?? {};
+		const response = responses[Math.min(attempts, responses.length - 1)] ?? {};
 		attempts += 1;
 		const status = response.status ?? 200;
 		const payload = response.body ?? [];
@@ -154,9 +153,7 @@ describe('makeAblyRequest', () => {
 			body: { error: { message: 'unauthorized', statusCode: 401 } },
 		});
 
-		await expect(
-			makeAblyRequest('channels', 'bad-key'),
-		).rejects.toMatchObject({
+		await expect(makeAblyRequest('channels', 'bad-key')).rejects.toMatchObject({
 			name: 'AblyAPIError',
 			statusCode: 401,
 			message: 'unauthorized',

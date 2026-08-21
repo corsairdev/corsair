@@ -6,12 +6,12 @@ describe('errorHandlers', () => {
 		const error = new AblyAPIError('rate limited', '42900', 429, 1500);
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-		await expect(errorHandlers.RATE_LIMIT_ERROR.handler(error)).resolves.toEqual(
-			{
-				maxRetries: 5,
-				headersRetryAfterMs: 1500,
-			},
-		);
+		await expect(
+			errorHandlers.RATE_LIMIT_ERROR.handler(error),
+		).resolves.toEqual({
+			maxRetries: 5,
+			headersRetryAfterMs: 1500,
+		});
 	});
 
 	it('does not retry 401', async () => {
@@ -24,8 +24,6 @@ describe('errorHandlers', () => {
 	});
 
 	it('ignores non-429 messages that are not AblyAPIError 429', () => {
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(new Error('429'))).toBe(
-			false,
-		);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(new Error('429'))).toBe(false);
 	});
 });
