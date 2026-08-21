@@ -74,6 +74,29 @@ describe('matchesConstraint — fails closed on unusable rules', () => {
 		expect(matchesConstraint(undefined, { match: '.*' })).toBe(false);
 	});
 
+	it('rejects a valid operator accompanied by an unknown key', () => {
+		// Inert-looking, but not inert: a misspelled operator is silently dropped,
+		// so the developer's intended condition never gates the call.
+		expect(
+			matchesConstraint('abc', {
+				match: '^abc$',
+				caseInsensitive: true,
+			} as never),
+		).toBe(false);
+		expect(
+			matchesConstraint('bad@evil.com', {
+				match: '.*',
+				notin: ['bad@evil.com'],
+			} as never),
+		).toBe(false);
+	});
+
+	it('rejects a symbol-keyed constraint', () => {
+		expect(matchesConstraint('abc', { [Symbol('match')]: '.*' } as never)).toBe(
+			false,
+		);
+	});
+
 	it('rejects a constraint carrying more than one operator', () => {
 		// Honouring whichever we checked first would leave the developer believing
 		// both were enforced.
@@ -294,5 +317,20 @@ describe('constraints cannot be bypassed by omitting the argument', () => {
 				to: 'sarah@corsair.dev',
 			}),
 		).toBe('allow');
+	});
+});
+
+describe('a misspelled operator cannot silently drop a denylist', () => {
+	it('does not allow a call the dropped condition was meant to block', () => {
+		// Regression: `notin` (lowercase i) was ignored, leaving `match: '.*'` to
+		// satisfy the constraint and allow exactly the address it denied.
+		const override = {
+			policy: 'allow',
+			constraints: { to: { match: '.*', notin: ['bad@evil.com'] } },
+		} as unknown as PermissionOverride;
+
+		expect(
+			evaluatePermission('write', 'strict', override, { to: 'bad@evil.com' }),
+		).toBe('require_approval');
 	});
 });

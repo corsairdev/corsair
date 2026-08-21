@@ -55,18 +55,25 @@ type Operator = (typeof OPERATORS)[number];
 /**
  * Extracts the single operator from a constraint.
  *
- * Returns null when there is not exactly one. Zero means the shape is
- * unrecognized; more than one is ambiguous, and silently honouring whichever
- * we happened to check first would leave the developer believing both were
- * enforced while only one actually gated the call.
+ * Requires exactly one own key, and that key to be a supported operator.
+ * Anything else is null: zero recognized keys means the shape is unrecognized,
+ * and any extra key — a second operator or a misspelled one — is ambiguous.
+ *
+ * The misspelling is the case that matters. `{ match: '.*', notin: [...] }`
+ * would otherwise enforce only `match`, silently discarding the denylist the
+ * developer meant to apply and allowing exactly what they tried to block.
  */
 function soleOperator(
 	constraint: PermissionConstraint,
 ): { op: Operator; operand: unknown } | null {
 	if (constraint === null || typeof constraint !== 'object') return null;
-	const present = OPERATORS.filter((op) => Object.hasOwn(constraint, op));
-	if (present.length !== 1) return null;
-	const op = present[0] as Operator;
+	// ownKeys rather than hasOwn per operator, so an unrecognized key is seen
+	// rather than skipped over. Symbol keys are never operators.
+	const keys = Reflect.ownKeys(constraint);
+	const [key] = keys;
+	if (keys.length !== 1 || typeof key !== 'string') return null;
+	if (!OPERATORS.includes(key as Operator)) return null;
+	const op = key as Operator;
 	return { op, operand: (constraint as Record<string, unknown>)[op] };
 }
 
