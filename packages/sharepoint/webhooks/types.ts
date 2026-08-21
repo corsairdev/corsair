@@ -100,7 +100,7 @@ export function verifySharepointWebhookSignature(
 	request: WebhookRequest<SharepointListChangedPayload>,
 	clientState?: string,
 ): { valid: boolean; error?: string } {
-	if (!clientState) {
+	if (!clientState?.trim()) {
 		return { valid: false, error: 'Missing client state' };
 	}
 

@@ -100,4 +100,12 @@ describe('verifySharepointWebhookSignature', () => {
 		);
 		expect(result).toEqual({ valid: false, error: 'Missing client state' });
 	});
+
+	it('errors when the expected clientState is whitespace-only', () => {
+		const result = verifySharepointWebhookSignature(
+			requestWith(notification(CLIENT_STATE)),
+			'   ',
+		);
+		expect(result).toEqual({ valid: false, error: 'Missing client state' });
+	});
 });
