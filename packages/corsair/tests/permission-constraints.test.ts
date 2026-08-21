@@ -96,6 +96,22 @@ describe('matchesConstraint', () => {
 		expect(matchesConstraint(circular, { equals: { x: 1 } })).toBe(false);
 	});
 
+	it('does not equate cyclic values that are not isomorphic', () => {
+		// The cycle guard must pair a with b: `circular.self` is circular (one key)
+		// while the other side's `self` is empty, so these are not equal.
+		const circular: Record<string, unknown> = {};
+		circular.self = circular;
+
+		expect(matchesConstraint(circular, { equals: { self: {} } })).toBe(false);
+
+		// Two genuinely isomorphic cyclic values still compare equal.
+		const x: Record<string, unknown> = { k: 1 };
+		x.self = x;
+		const y: Record<string, unknown> = { k: 1 };
+		y.self = y;
+		expect(matchesConstraint(x, { equals: y })).toBe(true);
+	});
+
 	it('does not treat a value repeated in two branches as equal', () => {
 		// The cycle guard must not short-circuit a legitimately shared subobject.
 		const shared = { k: 1 };
@@ -407,5 +423,23 @@ describe('reordering object keys cannot bypass a denylist', () => {
 				payload: { a: 9, b: 9 },
 			}),
 		).toBe('allow');
+	});
+});
+
+describe('a cyclic argument cannot satisfy a non-matching constraint', () => {
+	it('does not apply an allow override to a structurally different cyclic value', () => {
+		// Regression: the cycle guard tracked only the left-hand object, so any
+		// repeat returned true and a circular argument matched anything.
+		const circular: Record<string, unknown> = {};
+		circular.self = circular;
+
+		expect(
+			evaluatePermission(
+				'write',
+				'strict',
+				{ policy: 'allow', constraints: { p: { equals: { self: {} } } } },
+				{ p: circular },
+			),
+		).toBe('require_approval');
 	});
 });

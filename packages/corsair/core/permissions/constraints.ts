@@ -42,11 +42,19 @@ export function resolveArgPath(args: unknown, path: string): unknown {
  * denylist" — and it throws outright on a circular argument.
  */
 function sameValue(a: unknown, b: unknown): boolean {
-	return deepEqual(a, b, new Set());
+	return deepEqual(a, b, new Map());
 }
 
-/** `path` holds the objects currently being compared, so cycles terminate. */
-function deepEqual(a: unknown, b: unknown, path: Set<unknown>): boolean {
+/**
+ * `path` maps each left-hand object currently being compared to the right-hand
+ * object it was paired with, so cycles terminate without conflating structures
+ * that merely recurse at the same point.
+ */
+function deepEqual(
+	a: unknown,
+	b: unknown,
+	path: Map<unknown, unknown>,
+): boolean {
 	if (Object.is(a, b)) return true;
 	if (a === null || b === null) return false;
 	if (typeof a !== 'object' || typeof b !== 'object') return false;
@@ -62,10 +70,11 @@ function deepEqual(a: unknown, b: unknown, path: Set<unknown>): boolean {
 	const isArray = Array.isArray(a);
 	if (isArray !== Array.isArray(b)) return false;
 
-	// Revisiting an object already on the path means the structures recurse in
-	// the same shape; the pair is equal as far as this branch can determine.
-	if (path.has(a)) return true;
-	path.add(a);
+	// Revisiting `a` only proves equality if it recurs against the same `b` it
+	// was paired with. Checking `a` alone would let a circular value match a
+	// structurally different one — `{self: <cycle>}` against `{self: {}}`.
+	if (path.has(a)) return path.get(a) === b;
+	path.set(a, b);
 	try {
 		if (isArray) {
 			const left = a as unknown[];
