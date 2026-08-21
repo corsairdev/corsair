@@ -65,15 +65,15 @@ export async function cacheEntity(
  * Mirrors a `{ data: [...] }` list page into the cache. Tolerates a missing or
  * malformed `data` field so a caching concern can never fail the API call.
  */
-export async function cacheList(
+export async function cacheList<T>(
 	ctx: AnthropicAdministratorContext,
 	entity: CacheEntity,
-	items: readonly unknown[] | undefined,
-	idOf: (item: never) => string | undefined,
+	items: readonly T[] | undefined,
+	idOf: (item: T) => string | undefined,
 ): Promise<void> {
 	if (!Array.isArray(items)) return;
 	for (const item of items) {
-		await cacheEntity(ctx, entity, idOf(item as never), item);
+		await cacheEntity(ctx, entity, idOf(item), item);
 	}
 }
 
@@ -106,18 +106,23 @@ export async function callAdminApi<T>(
 	options: AnthropicAdministratorRequestOptions = {},
 	logPayload: Record<string, unknown> = {},
 ): Promise<T> {
-	const response = await makeAnthropicAdministratorRequest<T>(
-		path,
-		ctx.key,
-		options,
-	);
+	const response = await makeAnthropicAdministratorRequest<T>(path, ctx.key, {
+		...options,
+		authType: ctx.options?.authType,
+	});
 
-	await logEventFromContext(
-		ctx,
-		`anthropicadministrator.${operation}`,
-		logPayload,
-		'completed',
-	);
+	// The remote call already succeeded; a telemetry failure must not turn that
+	// into a thrown error for the caller.
+	try {
+		await logEventFromContext(
+			ctx,
+			`anthropicadministrator.${operation}`,
+			logPayload,
+			'completed',
+		);
+	} catch (error) {
+		console.warn(`[anthropicadministrator] failed to log ${operation}:`, error);
+	}
 
 	return response;
 }

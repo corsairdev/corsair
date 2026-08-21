@@ -30,13 +30,6 @@ function wrapped(
 }
 
 describe('error handling survives the client wrapper', () => {
-	// AUTH_ERROR intentionally logs guidance about Admin keys; keep test output clean.
-	let consoleError: jest.SpyInstance;
-	beforeAll(() => {
-		consoleError = jest.spyOn(console, 'error').mockImplementation(() => {});
-	});
-	afterAll(() => consoleError.mockRestore());
-
 	it('matches a 429 after wrapping, despite the message being "Too Many Requests"', async () => {
 		// corsair throws 429 with the literal message "Too Many Requests" — it
 		// contains neither "429" nor "rate_limited", so status must be preserved.
@@ -58,6 +51,12 @@ describe('error handling survives the client wrapper', () => {
 	});
 
 	it('does not retry auth failures', async () => {
+		// AUTH_ERROR intentionally logs guidance about Admin keys; silence it here
+		// only, so the rest of the suite still surfaces unexpected output.
+		const consoleError = jest
+			.spyOn(console, 'error')
+			.mockImplementation(() => {});
+
 		for (const status of [401, 403]) {
 			const error = wrapped(status, 'Unauthorized');
 			expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);

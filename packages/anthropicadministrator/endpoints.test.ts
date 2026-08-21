@@ -123,6 +123,38 @@ describe('Admin API transport', () => {
 		expect(sent().options.url).toBe('/v1/organizations/me');
 	});
 
+	it('sends an oauth token as a bearer credential, not x-api-key', async () => {
+		const plugin = anthropicadministrator({
+			key: 'oauth-access-token',
+			authType: 'oauth_2',
+		});
+		const groups = plugin.endpoints as unknown as Record<
+			string,
+			Record<
+				string,
+				(
+					c: AnthropicAdministratorContext,
+					i: Record<string, unknown>,
+				) => Promise<unknown>
+			>
+		>;
+		const oauthCtx = {
+			key: 'oauth-access-token',
+			options: { authType: 'oauth_2' },
+			db: {},
+		} as unknown as AnthropicAdministratorContext;
+
+		const fn = groups.organization?.getOrganization;
+		if (!fn) throw new Error('missing endpoint');
+		await fn(oauthCtx, {});
+
+		expect(sent().config.HEADERS).toMatchObject({
+			authorization: 'Bearer oauth-access-token',
+			'anthropic-version': '2023-06-01',
+		});
+		expect(sent().config.HEADERS['x-api-key']).toBeUndefined();
+	});
+
 	it('never sends a body on GET or DELETE', async () => {
 		await call('users', 'listUsers', {});
 		expect(sent().options.body).toBeUndefined();

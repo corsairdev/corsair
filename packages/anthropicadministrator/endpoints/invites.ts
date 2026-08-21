@@ -1,5 +1,11 @@
 import type { AnthropicAdministratorEndpoints } from '../index';
-import { cacheEntity, cacheList, callAdminApi, evictEntity } from './shared';
+import {
+	cacheEntity,
+	cacheList,
+	callAdminApi,
+	compact,
+	evictEntity,
+} from './shared';
 import type {
 	Invite,
 	AnthropicAdministratorEndpointOutputs as Outputs,
@@ -40,13 +46,11 @@ export const createInvite: AnthropicAdministratorEndpoints['createInvite'] =
 			BASE,
 			{
 				method: 'POST',
-				body: {
+				body: compact({
 					email: input.email,
 					role: input.role,
-					...(input.rbac_group_ids
-						? { rbac_group_ids: input.rbac_group_ids }
-						: {}),
-				},
+					rbac_group_ids: input.rbac_group_ids,
+				}),
 			},
 			{ role: input.role },
 		);

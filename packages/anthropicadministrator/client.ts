@@ -58,8 +58,16 @@ const ANTHROPIC_API_BASE = 'https://api.anthropic.com';
  */
 const ANTHROPIC_VERSION = '2023-06-01';
 
+/**
+ * Which credential `apiKey` holds. Admin API keys authenticate with `x-api-key`;
+ * OAuth tokens carrying the `org:admin` scope use `authorization: Bearer`.
+ * https://platform.claude.com/docs/en/manage-claude/admin-api
+ */
+export type AnthropicAdministratorAuthType = 'api_key' | 'oauth_2';
+
 export type AnthropicAdministratorRequestOptions = {
 	method?: AnthropicAdministratorMethod;
+	authType?: AnthropicAdministratorAuthType;
 	/** Request payloads differ per operation; validated by per-op zod schemas. */
 	body?: Record<string, unknown>;
 	/**
@@ -72,17 +80,23 @@ export type AnthropicAdministratorRequestOptions = {
 /**
  * Performs a request against the Anthropic Admin API.
  *
- * Auth: an Admin API key (`sk-ant-admin…`) in the `x-api-key` header. Admin
- * keys are provisioned by organization admins and are distinct from standard
- * API keys.
+ * Auth: an Admin API key (`sk-ant-admin…`) in the `x-api-key` header, or an
+ * OAuth token with the `org:admin` scope in `authorization: Bearer`. Admin keys
+ * are provisioned by organization admins and are distinct from standard API
+ * keys.
  */
 export async function makeAnthropicAdministratorRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: AnthropicAdministratorRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, authType = 'api_key' } = options;
 	const isWrite = method === 'POST';
+
+	const credential: Record<string, string> =
+		authType === 'oauth_2'
+			? { authorization: `Bearer ${apiKey}` }
+			: { 'x-api-key': apiKey };
 
 	const config: OpenAPIConfig = {
 		BASE: ANTHROPIC_API_BASE,
@@ -91,7 +105,7 @@ export async function makeAnthropicAdministratorRequest<T>(
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
 		HEADERS: {
-			'x-api-key': apiKey,
+			...credential,
 			'anthropic-version': ANTHROPIC_VERSION,
 			...(isWrite ? { 'content-type': 'application/json' } : {}),
 		},
