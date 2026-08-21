@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Domain } from './endpoints';
 import type {
@@ -26,14 +23,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { SecuritytrailsSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveSecuritytrailsOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchSecuritytrailsTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	ExampleEvent,
-	SecuritytrailsWebhookOutputs,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type SecuritytrailsPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -68,35 +57,15 @@ export type SecuritytrailsEndpoints = {
 	domainGet: SecuritytrailsEndpoint<'domainGet'>;
 };
 
-type SecuritytrailsWebhook<
-	K extends keyof SecuritytrailsWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<
-	SecuritytrailsContext,
-	TEvent,
-	SecuritytrailsWebhookOutputs[K]
->;
-
-export type SecuritytrailsWebhooks = {
-	example: SecuritytrailsWebhook<'example', ExampleEvent>;
-};
-
-export type SecuritytrailsBoundWebhooks = BindWebhooks<SecuritytrailsWebhooks>;
-
 const securitytrailsEndpointsNested = {
-	example: {
+	domain: {
 		get: Domain.get,
 	},
 } as const;
 
-const securitytrailsWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
-
+const securitytrailsWebhooksNested = {} as const;
 export const securitytrailsEndpointSchemas = {
-	'example.get': {
+	'domain.get': {
 		input: SecuritytrailsEndpointInputSchemas.domainGet,
 		output: SecuritytrailsEndpointOutputSchemas.domainGet,
 	},
@@ -104,20 +73,10 @@ export const securitytrailsEndpointSchemas = {
 	typeof securitytrailsEndpointsNested
 >;
 
-const securitytrailsWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof securitytrailsWebhooksNested
->;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const securitytrailsEndpointMeta = {
-	'example.get': {
+	'domain.get': {
 		riskLevel: 'read',
 		description: 'Get an example resource by ID',
 	},
@@ -165,33 +124,14 @@ export function securitytrails<const T extends SecuritytrailsPluginOptions>(
 		schema: SecuritytrailsSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: securitytrailsEndpointsNested,
-		webhooks: securitytrailsWebhooksNested,
 		endpointMeta: securitytrailsEndpointMeta,
 		endpointSchemas: securitytrailsEndpointSchemas,
-		webhookSchemas: securitytrailsWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-securitytrails-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchSecuritytrailsTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveSecuritytrailsOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: SecuritytrailsKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -217,7 +157,3 @@ export type {
 	SecuritytrailsEndpointInputs,
 	SecuritytrailsEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	SecuritytrailsWebhookOutputs,
-} from './webhooks/types';
