@@ -20,6 +20,7 @@ export const BaseProviders = [
 	'anchorbrowser',
 	'activetrail',
 	'addresszen',
+	'aeroleads',
 	'affinda',
 	'agencyzoom',
 	'agentmail',
@@ -185,6 +186,7 @@ export const ProviderDisplayNames = {
 	anchorbrowser: 'Anchor Browser',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	aeroleads: 'Aeroleads',
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
@@ -357,6 +359,7 @@ export type AllProviders =
 	| 'anchorbrowser'
 	| 'activetrail'
 	| 'addresszen'
+	| 'aeroleads'
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
