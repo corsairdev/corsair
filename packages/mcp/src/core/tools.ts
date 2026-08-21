@@ -1,6 +1,6 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { AnyCorsairInstance } from 'corsair';
-import { listOperations, runReadonly } from 'corsair';
+import { assertReadonlyAllowed, listOperations, runReadonly } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 import { formatGetSchemaResponse } from './schema-format.js';
@@ -32,8 +32,60 @@ function createScopedCorsairProxy(corsair: any): any {
 
 	return new Proxy(corsair, {
 		get(target, prop) {
-			if (prop === 'manage' || prop === 'keys' || prop === 'permissions') {
+			if (prop === 'permissions') {
 				return undefined;
+			}
+
+			if (prop === 'manage') {
+				const manageVal = target[prop as keyof typeof target];
+				if (!manageVal) return manageVal;
+				return new Proxy(manageVal as object, {
+					get(manageTarget, manageProp) {
+						if (manageProp === 'connect') {
+							return new Proxy(
+								{},
+								{
+									get(t, connectProp) {
+										if (
+											connectProp === 'toString' ||
+											connectProp === 'valueOf' ||
+											connectProp === Symbol.toPrimitive ||
+											connectProp === 'toJSON' ||
+											connectProp === Symbol.toStringTag
+										) {
+											return () => `[Blocked connect namespace]`;
+										}
+										return () => {
+											throw new Error(
+												'manage.connect is not available in run_script.',
+											);
+										};
+									},
+								},
+							);
+						}
+						if (manageProp === 'tenants') {
+							const tenantsVal =
+								manageTarget[manageProp as keyof typeof manageTarget];
+							if (!tenantsVal) return tenantsVal;
+							return new Proxy(tenantsVal as object, {
+								get(tenantsTarget, tenantsProp) {
+									if (tenantsProp === 'create') {
+										return () => {
+											throw new Error(
+												'manage.tenants.create is not available in run_script.',
+											);
+										};
+									}
+									return tenantsTarget[
+										tenantsProp as keyof typeof tenantsTarget
+									];
+								},
+							});
+						}
+						return manageTarget[manageProp as keyof typeof manageTarget];
+					},
+				});
 			}
 
 			if (prop === 'withTenant') {
@@ -42,12 +94,13 @@ function createScopedCorsairProxy(corsair: any): any {
 					return (tenantId: string) =>
 						createScopedCorsairProxy(original.call(target, tenantId));
 				}
+				return original;
 			}
 
 			const val = target[prop as keyof typeof target];
 
 			// Top-level properties that are objects (like plugins) get a nested proxy
-			// to block .db and .keys
+			// to block .db writes and .keys
 			if (
 				typeof prop === 'string' &&
 				val &&
@@ -56,37 +109,71 @@ function createScopedCorsairProxy(corsair: any): any {
 			) {
 				return new Proxy(val as object, {
 					get(pluginTarget, pluginProp) {
-						if (pluginProp === 'keys' || pluginProp === 'db') {
-							return undefined;
+						if (pluginProp === 'keys') {
+							return new Proxy(
+								{},
+								{
+									get(t, keyProp) {
+										if (
+											keyProp === 'toString' ||
+											keyProp === 'valueOf' ||
+											keyProp === Symbol.toPrimitive ||
+											keyProp === 'toJSON' ||
+											keyProp === Symbol.toStringTag
+										) {
+											return () => `[Blocked keys namespace for ${prop}]`;
+										}
+										throw new Error(
+											`Credential access (keys) not available in run_script. Use corsair.${prop}.api.* endpoints instead.`,
+										);
+									},
+								},
+							);
+						}
+						if (pluginProp === 'db') {
+							const dbVal =
+								pluginTarget[pluginProp as keyof typeof pluginTarget];
+							if (!dbVal) return dbVal;
+							return new Proxy(dbVal as object, {
+								get(dbTarget, entityProp) {
+									const entityVal =
+										dbTarget[entityProp as keyof typeof dbTarget];
+									if (!entityVal) return entityVal;
+									return new Proxy(entityVal as object, {
+										get(entityTarget, methodProp) {
+											if (
+												methodProp === 'upsertByEntityId' ||
+												methodProp === 'deleteById' ||
+												methodProp === 'deleteByEntityId'
+											) {
+												return (...args: any[]) => {
+													assertReadonlyAllowed(
+														`db.${methodProp as string}`,
+														'write',
+													);
+													// enforcePermission cannot be called here due to architectural limitations,
+													// so granular permissions will not apply to db writes in run_script.
+													return (
+														entityTarget[
+															methodProp as keyof typeof entityTarget
+														] as Function
+													).apply(entityTarget, args);
+												};
+											}
+											return entityTarget[
+												methodProp as keyof typeof entityTarget
+											];
+										},
+									});
+								},
+							});
 						}
 						return pluginTarget[pluginProp as keyof typeof pluginTarget];
-					},
-					ownKeys(pluginTarget) {
-						return Reflect.ownKeys(pluginTarget).filter(
-							(k) => k !== 'keys' && k !== 'db',
-						);
-					},
-					getOwnPropertyDescriptor(pluginTarget, pluginProp) {
-						if (pluginProp === 'keys' || pluginProp === 'db') {
-							return undefined;
-						}
-						return Reflect.getOwnPropertyDescriptor(pluginTarget, pluginProp);
 					},
 				});
 			}
 
 			return val;
-		},
-		ownKeys(target) {
-			return Reflect.ownKeys(target).filter(
-				(k) => k !== 'manage' && k !== 'keys' && k !== 'permissions',
-			);
-		},
-		getOwnPropertyDescriptor(target, prop) {
-			if (prop === 'manage' || prop === 'keys' || prop === 'permissions') {
-				return undefined;
-			}
-			return Reflect.getOwnPropertyDescriptor(target, prop);
 		},
 	});
 }

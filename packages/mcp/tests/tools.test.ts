@@ -18,9 +18,18 @@ describe('run_script tool', () => {
 				},
 			},
 			slack: {
-				db: { messages: { upsertByEntityId: () => 'upserted' } },
+				db: {
+					messages: {
+						upsertByEntityId: () => 'upserted',
+						search: () => ['msg1'],
+					},
+				},
 			},
-			manage: { listPlugins: () => [] },
+			manage: {
+				plugins: { list: () => [] },
+				tenants: { create: () => 'created' },
+				connect: { createLink: () => 'link' },
+			},
 		};
 
 		const tools = buildCorsairToolDefs({
@@ -35,23 +44,40 @@ describe('run_script tool', () => {
 			code: 'return corsair.github.keys.get_access_token();',
 		});
 		expect(resultKeys.content[0].text).toMatch(
-			/TypeError: Cannot read properties of undefined|TypeError: .* is not a function/,
+			/Credential access \(keys\) not available/,
 		);
 
-		// Try to access db
-		const resultDb = await runScriptTool.handler({
+		// Try to access db write
+		const resultDbWrite = await runScriptTool.handler({
 			code: 'return corsair.slack.db.messages.upsertByEntityId();',
 		});
-		expect(resultDb.content[0].text).toMatch(
-			/TypeError: Cannot read properties of undefined|TypeError: .* is not a function/,
+		expect(resultDbWrite.content[0].text).toMatch(/ReadonlyForbiddenError/);
+
+		// Try to access db read
+		const resultDbRead = await runScriptTool.handler({
+			code: 'return corsair.slack.db.messages.search();',
+		});
+		expect(resultDbRead.content[0].text).toContain('msg1');
+
+		// Try to access manage reads
+		const resultManageRead = await runScriptTool.handler({
+			code: 'return corsair.manage.plugins.list();',
+		});
+		expect(resultManageRead.content[0].text).toMatch(/\[\]/);
+
+		// Try to access manage writes
+		const resultManageWrite1 = await runScriptTool.handler({
+			code: 'return corsair.manage.tenants.create({});',
+		});
+		expect(resultManageWrite1.content[0].text).toMatch(
+			/Error: manage.tenants.create is not available/,
 		);
 
-		// Try to access manage
-		const resultManage = await runScriptTool.handler({
-			code: 'return corsair.manage.listPlugins();',
+		const resultManageWrite2 = await runScriptTool.handler({
+			code: 'return corsair.manage.connect.createLink({});',
 		});
-		expect(resultManage.content[0].text).toMatch(
-			/TypeError: Cannot read properties of undefined|TypeError: .* is not a function/,
+		expect(resultManageWrite2.content[0].text).toMatch(
+			/Error: manage.connect is not available/,
 		);
 
 		// Valid API read
@@ -67,9 +93,14 @@ describe('run_script tool', () => {
 				keys: { get_refresh_token: () => 'token' },
 			},
 			github: {
-				db: { issues: { update: () => 'updated' } },
+				db: {
+					issues: {
+						upsertByEntityId: () => 'updated',
+						search: () => ['issue1'],
+					},
+				},
 			},
-			manage: { listTenants: () => [] },
+			manage: { tenants: { list: () => [] } },
 			linear: {
 				api: { issues: { list: () => [] } },
 			},
@@ -86,22 +117,24 @@ describe('run_script tool', () => {
 			code: 'return corsair.slack.keys.get_refresh_token();',
 		});
 		expect(resultKeys.content[0].text).toMatch(
-			/TypeError: Cannot read properties of undefined|TypeError: .* is not a function/,
+			/Credential access \(keys\) not available/,
 		);
 
-		const resultDb = await runScriptTool.handler({
-			code: 'return corsair.github.db.issues.update();',
+		// DB write proceeds in strict mode because enforcePermission is not called for DB in tools.ts
+		const resultDbWrite = await runScriptTool.handler({
+			code: 'return corsair.github.db.issues.upsertByEntityId();',
 		});
-		expect(resultDb.content[0].text).toMatch(
-			/TypeError: Cannot read properties of undefined|TypeError: .* is not a function/,
-		);
+		expect(resultDbWrite.content[0].text).toContain('updated');
+
+		const resultDbRead = await runScriptTool.handler({
+			code: 'return corsair.github.db.issues.search();',
+		});
+		expect(resultDbRead.content[0].text).toContain('issue1');
 
 		const resultManage = await runScriptTool.handler({
-			code: 'return corsair.manage.listTenants();',
+			code: 'return corsair.manage.tenants.list();',
 		});
-		expect(resultManage.content[0].text).toMatch(
-			/TypeError: Cannot read properties of undefined|TypeError: .* is not a function/,
-		);
+		expect(resultManage.content[0].text).toMatch(/\[\]/);
 
 		const resultApi = await runScriptTool.handler({
 			code: 'return corsair.linear.api.issues.list();',
