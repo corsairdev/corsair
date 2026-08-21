@@ -76,6 +76,16 @@ describe('Clockify endpoints', () => {
 		);
 	});
 
+	it('rejects invalid list input before calling Clockify', async () => {
+		await expect(
+			Projects.list(mockContext, {
+				workspaceId: 'w1',
+				page: 0,
+			}),
+		).rejects.toThrow();
+		expect(makeClockifyRequest).not.toHaveBeenCalled();
+	});
+
 	it('lists tasks', async () => {
 		const mockResponse = [{ id: 't1', name: 'Task 1', projectId: 'p1' }];
 		(makeClockifyRequest as jest.Mock).mockResolvedValue(mockResponse);
@@ -144,9 +154,28 @@ describe('Clockify endpoints', () => {
 					projectId: 'p1',
 					taskId: 't1',
 				},
+				retries: false,
 			},
 		);
 		expect(result).toEqual(mockResponse);
+	});
+
+	it('accepts a Clockify time entry with a null timeInterval', async () => {
+		const mockResponse = {
+			id: 'te1',
+			description: 'Testing entry',
+			workspaceId: 'w1',
+			timeInterval: null,
+		};
+		(makeClockifyRequest as jest.Mock).mockResolvedValue(mockResponse);
+
+		await expect(
+			TimeEntries.create(mockContext, {
+				workspaceId: 'w1',
+				description: 'Testing entry',
+				start: '2026-08-21T10:00:00Z',
+			}),
+		).resolves.toEqual(mockResponse);
 	});
 
 	it('lists time entries for a user on the Clockify user path', async () => {
@@ -168,7 +197,7 @@ describe('Clockify endpoints', () => {
 		const result = await TimeEntries.list(mockContext, {
 			workspaceId: 'w1',
 			userId: 'u1',
-			projectId: 'p1',
+			project: 'p1',
 		});
 		expect(makeClockifyRequest).toHaveBeenCalledWith(
 			'workspaces/w1/user/u1/time-entries',
