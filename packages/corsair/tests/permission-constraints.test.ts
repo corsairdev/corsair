@@ -172,6 +172,32 @@ describe('matchesConstraint — exotic objects are not structurally equal', () =
 		expect(matchesConstraint(map, { equals: obj })).toBe(false);
 		expect(matchesConstraint(obj, { equals: map })).toBe(false);
 	});
+
+	it('does not conflate a two-node cycle with a one-node cycle', () => {
+		// Regression: the cycle guard must use a combined key for each (a, b) pair.
+		// When a two-node graph {a1↔a2} is compared against a one-node graph {b↔b}, both
+		// a1 and a2 map to the same b, which would trigger a false cycle return.
+		const a1: Record<string, unknown> = {};
+		const a2: Record<string, unknown> = {};
+		a1.x = a2;
+		a2.y = a1;
+
+		const b: Record<string, unknown> = {};
+		b.x = b;
+		b.y = b;
+
+		// Different cycle topologies — not equal
+		expect(matchesConstraint(a1, { equals: b })).toBe(false);
+	});
+
+	it('does not treat structurally equal values with shared references as different', () => {
+		// Two aliased empty objects in an array should still compare equal
+		// to two separate empty objects (value equality, not reference).
+		const shared = {};
+		expect(matchesConstraint([shared, shared], { equals: [{}, {}] })).toBe(
+			true,
+		);
+	});
 });
 
 describe('matchesConstraint — fails closed on unusable rules', () => {

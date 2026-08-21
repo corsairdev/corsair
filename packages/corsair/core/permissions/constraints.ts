@@ -42,7 +42,7 @@ export function resolveArgPath(args: unknown, path: string): unknown {
  * denylist" — and it throws outright on a circular argument.
  */
 function sameValue(a: unknown, b: unknown): boolean {
-	return deepEqual(a, b, new Map());
+	return deepEqual(a, b, new Set());
 }
 
 /**
@@ -58,15 +58,36 @@ function isPlainObject(v: unknown): boolean {
 }
 
 /**
- * `path` maps each left-hand object currently being compared to the right-hand
- * object it was paired with, so cycles terminate without conflating structures
- * that merely recurse at the same point.
+ * Stable numeric identity for tracked objects. Used by the cycle guard to
+ * produce a combined key for each visited (a, b) pair, ensuring that two
+ * structurally distinct cyclic graphs with the same b reference are not
+ * conflated.
  */
-function deepEqual(
-	a: unknown,
-	b: unknown,
-	path: Map<unknown, unknown>,
-): boolean {
+const objectIds = new WeakMap<object, number>();
+let nextObjectId = 0;
+
+function objectId(v: object): number {
+	let id = objectIds.get(v);
+	if (id === undefined) {
+		id = nextObjectId++;
+		objectIds.set(v, id);
+	}
+	return id;
+}
+
+/** Combined key for an (a, b) pair being compared. */
+function pairKey(a: unknown, b: unknown): string {
+	return `${objectId(a as object)}:${objectId(b as object)}`;
+}
+
+/**
+ * Set tracks each (a, b) pair currently being compared so that when cycles
+ * recur the same pair returns true (isomorphic) while a recurring a paired
+ * with a different b returns false (non-isomorphic). Both sides are tracked
+ * via the combined key, which prevents a two-node cycle {a1,a2} and a
+ * one-node cycle {b} from comparing equal when both map to the same b.
+ */
+function deepEqual(a: unknown, b: unknown, visited: Set<string>): boolean {
 	if (Object.is(a, b)) return true;
 	if (a === null || b === null) return false;
 	if (typeof a !== 'object' || typeof b !== 'object') return false;
@@ -82,18 +103,23 @@ function deepEqual(
 	const isArray = Array.isArray(a);
 	if (isArray !== Array.isArray(b)) return false;
 
-	// Revisiting `a` only proves equality if it recurs against the same `b` it
-	// was paired with. Checking `a` alone would let a circular value match a
-	// structurally different one — `{self: <cycle>}` against `{self: {}}`.
-	if (path.has(a)) return path.get(a) === b;
-	path.set(a, b);
+	// When a pair (a, b) has already been entered, the structure is cyclic
+	// and we
+	// have already validated (or are in the process of validating) that
+	// everything reachable from this pair is equal — return true for
+	// isomorphism. Using a combined key ensures that {a1→b, a2→b} are
+	// tracked as separate entries, so a recurring (a1, b) does not match
+	// if the path went a2→b before returning to a1.
+	const key = pairKey(a, b);
+	if (visited.has(key)) return true;
+	visited.add(key);
 	try {
 		if (isArray) {
 			const left = a as unknown[];
 			const right = b as unknown[];
 			return (
 				left.length === right.length &&
-				left.every((v, i) => deepEqual(v, right[i], path))
+				left.every((v, i) => deepEqual(v, right[i], visited))
 			);
 		}
 		// Both values must be plain objects (or null-prototype) for
@@ -107,12 +133,12 @@ function deepEqual(
 		const keys = Object.keys(left);
 		if (keys.length !== Object.keys(right).length) return false;
 		return keys.every(
-			(k) => Object.hasOwn(right, k) && deepEqual(left[k], right[k], path),
+			(k) => Object.hasOwn(right, k) && deepEqual(left[k], right[k], visited),
 		);
 	} finally {
 		// Removed on the way out so a value legitimately repeated in two
 		// branches is compared each time rather than short-circuiting to true.
-		path.delete(a);
+		visited.delete(key);
 	}
 }
 
