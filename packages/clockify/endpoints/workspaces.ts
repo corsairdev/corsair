@@ -8,11 +8,12 @@ export const list: ClockifyEndpoints['workspacesList'] = async (ctx, input) => {
 		method: 'GET',
 	});
 
+	const parsed = ClockifyEndpointOutputSchemas.workspacesList.parse(response);
 	await logEventFromContext(
 		ctx,
 		'clockify.workspaces.list',
 		{ ...input },
 		'completed',
 	);
-	return ClockifyEndpointOutputSchemas.workspacesList.parse(response);
+	return parsed;
 };

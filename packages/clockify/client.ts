@@ -1,17 +1,16 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
-export class ClockifyAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'ClockifyAPIError';
-	}
-}
-
 const CLOCKIFY_API_BASE = 'https://api.clockify.me/api/v1';
+
+export function clockifyQuery(
+	query: Record<string, string | number | boolean | undefined>,
+): Record<string, string | number | boolean | undefined> | undefined {
+	const defined = Object.fromEntries(
+		Object.entries(query).filter(([, value]) => value !== undefined),
+	);
+	return Object.keys(defined).length > 0 ? defined : undefined;
+}
 
 export async function makeClockifyRequest<T>(
 	endpoint: string,
@@ -29,7 +28,7 @@ export async function makeClockifyRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			'X-Api-Key': apiKey,

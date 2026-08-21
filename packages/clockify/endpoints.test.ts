@@ -1,9 +1,14 @@
+import { logEventFromContext } from 'corsair/core';
 import { makeClockifyRequest } from './client';
 import { Projects, Tasks, TimeEntries, Workspaces } from './endpoints';
 
-jest.mock('./client', () => ({
-	makeClockifyRequest: jest.fn(),
-}));
+jest.mock('./client', () => {
+	const actual = jest.requireActual('./client') as typeof import('./client');
+	return {
+		...actual,
+		makeClockifyRequest: jest.fn(),
+	};
+});
 
 jest.mock('corsair/core', () => ({
 	...jest.requireActual('corsair/core'),
@@ -32,6 +37,13 @@ describe('Clockify endpoints', () => {
 			{ method: 'GET' },
 		);
 		expect(result).toEqual(mockResponse);
+		expect(logEventFromContext).toHaveBeenCalled();
+	});
+
+	it('does not log completion when workspace output fails validation', async () => {
+		(makeClockifyRequest as jest.Mock).mockResolvedValue([{ id: 1 }]);
+		await expect(Workspaces.list(mockContext, {})).rejects.toThrow();
+		expect(logEventFromContext).not.toHaveBeenCalled();
 	});
 
 	it('lists projects', async () => {
@@ -45,6 +57,23 @@ describe('Clockify endpoints', () => {
 			{ method: 'GET' },
 		);
 		expect(result).toEqual(mockResponse);
+	});
+
+	it('forwards Clockify page and page-size on projects.list', async () => {
+		(makeClockifyRequest as jest.Mock).mockResolvedValue([]);
+		await Projects.list(mockContext, {
+			workspaceId: 'w1',
+			page: 2,
+			pageSize: 100,
+		});
+		expect(makeClockifyRequest).toHaveBeenCalledWith(
+			'workspaces/w1/projects',
+			'test-api-key',
+			{
+				method: 'GET',
+				query: { page: 2, 'page-size': 100 },
+			},
+		);
 	});
 
 	it('lists tasks', async () => {
@@ -61,6 +90,24 @@ describe('Clockify endpoints', () => {
 			{ method: 'GET' },
 		);
 		expect(result).toEqual(mockResponse);
+	});
+
+	it('forwards Clockify page and page-size on tasks.list', async () => {
+		(makeClockifyRequest as jest.Mock).mockResolvedValue([]);
+		await Tasks.list(mockContext, {
+			workspaceId: 'w1',
+			projectId: 'p1',
+			page: 3,
+			pageSize: 25,
+		});
+		expect(makeClockifyRequest).toHaveBeenCalledWith(
+			'workspaces/w1/projects/p1/tasks',
+			'test-api-key',
+			{
+				method: 'GET',
+				query: { page: 3, 'page-size': 25 },
+			},
+		);
 	});
 
 	it('creates time entry', async () => {
@@ -102,7 +149,7 @@ describe('Clockify endpoints', () => {
 		expect(result).toEqual(mockResponse);
 	});
 
-	it('lists time entries', async () => {
+	it('lists time entries for a user on the Clockify user path', async () => {
 		const mockResponse = [
 			{
 				id: 'te1',
@@ -120,16 +167,35 @@ describe('Clockify endpoints', () => {
 
 		const result = await TimeEntries.list(mockContext, {
 			workspaceId: 'w1',
+			userId: 'u1',
 			projectId: 'p1',
 		});
 		expect(makeClockifyRequest).toHaveBeenCalledWith(
-			'workspaces/w1/time-entries',
+			'workspaces/w1/user/u1/time-entries',
 			'test-api-key',
 			{
 				method: 'GET',
-				query: { projectId: 'p1' },
+				query: { project: 'p1' },
 			},
 		);
 		expect(result).toEqual(mockResponse);
+	});
+
+	it('forwards Clockify page and page-size on timeEntries.list', async () => {
+		(makeClockifyRequest as jest.Mock).mockResolvedValue([]);
+		await TimeEntries.list(mockContext, {
+			workspaceId: 'w1',
+			userId: 'u1',
+			page: 1,
+			pageSize: 50,
+		});
+		expect(makeClockifyRequest).toHaveBeenCalledWith(
+			'workspaces/w1/user/u1/time-entries',
+			'test-api-key',
+			{
+				method: 'GET',
+				query: { page: 1, 'page-size': 50 },
+			},
+		);
 	});
 });

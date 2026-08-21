@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ClockifyEndpoints } from '..';
-import { makeClockifyRequest } from '../client';
+import { clockifyQuery, makeClockifyRequest } from '../client';
 import { ClockifyEndpointOutputSchemas } from './types';
 
 export const create: ClockifyEndpoints['timeEntriesCreate'] = async (
@@ -17,34 +17,43 @@ export const create: ClockifyEndpoints['timeEntriesCreate'] = async (
 		},
 	);
 
+	const parsed =
+		ClockifyEndpointOutputSchemas.timeEntriesCreate.parse(response);
 	await logEventFromContext(
 		ctx,
 		'clockify.timeEntries.create',
 		{ ...input },
 		'completed',
 	);
-	return ClockifyEndpointOutputSchemas.timeEntriesCreate.parse(response);
+	return parsed;
 };
 
 export const list: ClockifyEndpoints['timeEntriesList'] = async (
 	ctx,
 	input,
 ) => {
-	const { workspaceId, ...query } = input;
+	const { workspaceId, userId, projectId, page, pageSize, description } = input;
+	const query = clockifyQuery({
+		description,
+		project: projectId,
+		page,
+		'page-size': pageSize,
+	});
 	const response = await makeClockifyRequest<unknown>(
-		`workspaces/${workspaceId}/time-entries`,
+		`workspaces/${workspaceId}/user/${userId}/time-entries`,
 		ctx.key,
 		{
 			method: 'GET',
-			query: query as Record<string, string | number | boolean | undefined>,
+			...(query ? { query } : {}),
 		},
 	);
 
+	const parsed = ClockifyEndpointOutputSchemas.timeEntriesList.parse(response);
 	await logEventFromContext(
 		ctx,
 		'clockify.timeEntries.list',
 		{ ...input },
 		'completed',
 	);
-	return ClockifyEndpointOutputSchemas.timeEntriesList.parse(response);
+	return parsed;
 };

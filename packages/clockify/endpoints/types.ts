@@ -48,6 +48,8 @@ export type WorkspacesListOutput = z.infer<typeof WorkspacesListOutputSchema>;
 
 const ProjectsListInputSchema = z.object({
 	workspaceId: z.string(),
+	page: z.number().int().min(1).optional(),
+	pageSize: z.number().int().min(1).optional(),
 });
 export type ProjectsListInput = z.infer<typeof ProjectsListInputSchema>;
 
@@ -57,6 +59,8 @@ export type ProjectsListOutput = z.infer<typeof ProjectsListOutputSchema>;
 const TasksListInputSchema = z.object({
 	workspaceId: z.string(),
 	projectId: z.string(),
+	page: z.number().int().min(1).optional(),
+	pageSize: z.number().int().min(1).optional(),
 });
 export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
@@ -82,8 +86,11 @@ export type TimeEntriesCreateOutput = z.infer<
 
 const TimeEntriesListInputSchema = z.object({
 	workspaceId: z.string(),
+	userId: z.string(),
 	description: z.string().optional(),
 	projectId: z.string().optional(),
+	page: z.number().int().min(1).optional(),
+	pageSize: z.number().int().min(1).optional(),
 });
 export type TimeEntriesListInput = z.infer<typeof TimeEntriesListInputSchema>;
 
