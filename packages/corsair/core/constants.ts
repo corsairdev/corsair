@@ -37,6 +37,7 @@ export const BaseProviders = [
 	'amplitude',
 	'apaleo',
 	'apibible',
+	'apipie',
 	'apify',
 	'apilabz',
 	'apininjas',
@@ -189,6 +190,7 @@ export const ProviderDisplayNames = {
 	amplitude: 'Amplitude',
 	apaleo: 'Apaleo',
 	apibible: 'API.Bible',
+	apipie: 'APIpie AI',
 	apify: 'Apify',
 	apilabz: 'API Labz',
 	apininjas: 'API Ninjas',
@@ -348,6 +350,7 @@ export type AllProviders =
 	| 'amplitude'
 	| 'apaleo'
 	| 'apibible'
+	| 'apipie'
 	| 'apify'
 	| 'apilabz'
 	| 'apininjas'
