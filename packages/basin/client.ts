@@ -42,14 +42,18 @@ export const BASIN_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 export type BasinQuery = Record<string, string | number | boolean | undefined>;
 
+export type BasinRequestBody = Record<string, unknown> | readonly unknown[];
+
+export type BasinRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	body?: BasinRequestBody;
+	query?: BasinQuery;
+};
+
 export async function makeBasinRequest<T>(
 	endpoint: string,
 	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown> | unknown[];
-		query?: BasinQuery;
-	} = {},
+	options: BasinRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 

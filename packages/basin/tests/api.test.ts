@@ -535,6 +535,71 @@ describe('Basin Endpoints', () => {
 		});
 	});
 
+	describe('Input Validation', () => {
+		it('forms.get throws on missing id and does not call API', async () => {
+			await expect(Forms.get(mockContext, {} as any)).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('forms.delete throws on missing id and does not call API', async () => {
+			await expect(Forms.delete(mockContext, {} as any)).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('submissions.get throws on missing id and does not call API', async () => {
+			await expect(Submissions.get(mockContext, {} as any)).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('submissions.delete throws on missing id and does not call API', async () => {
+			await expect(
+				Submissions.delete(mockContext, {} as any),
+			).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('submissions.refireWebhooks throws on missing id and does not call API', async () => {
+			await expect(
+				Submissions.refireWebhooks(mockContext, {} as any),
+			).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('submissions.refireWebhooksBulk throws on invalid submission_ids and does not call API', async () => {
+			await expect(
+				Submissions.refireWebhooksBulk(mockContext, {
+					submission_ids: 'not-an-array' as any,
+				}),
+			).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('projects.get throws on missing id and does not call API', async () => {
+			await expect(Projects.get(mockContext, {} as any)).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('projects.delete throws on missing id and does not call API', async () => {
+			await expect(Projects.delete(mockContext, {} as any)).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('webhooks.get throws on missing id and does not call API', async () => {
+			await expect(Webhooks.get(mockContext, {} as any)).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('webhooks.delete throws on missing id and does not call API', async () => {
+			await expect(Webhooks.delete(mockContext, {} as any)).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+
+		it('formViews.get throws on missing id and does not call API', async () => {
+			await expect(FormViews.get(mockContext, {} as any)).rejects.toThrow();
+			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
+		});
+	});
+
 	describe('Plugin Factory & Config', () => {
 		it('initializes basin plugin properly with endpoints and empty webhooks', () => {
 			const plugin = basin({ key: 'test-key' }) as any;

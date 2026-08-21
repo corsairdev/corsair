@@ -1,12 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BasinEndpoints } from '..';
 import { makeBasinRequest } from '../client';
-import { BasinEndpointOutputSchemas } from './types';
+import { BasinEndpointInputSchemas, BasinEndpointOutputSchemas } from './types';
 
 export const list: BasinEndpoints['projectsList'] = async (ctx, input) => {
+	const validated = BasinEndpointInputSchemas.projectsList.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input?.page !== undefined) query.page = input.page;
-	if (input?.query !== undefined) query.query = input.query;
+	if (validated.page !== undefined) query.page = validated.page;
+	if (validated.query !== undefined) query.query = validated.query;
 
 	const res = await makeBasinRequest<unknown>('projects', ctx.key, {
 		method: 'GET',
@@ -16,28 +17,34 @@ export const list: BasinEndpoints['projectsList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.projects.list',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
 };
 
 export const get: BasinEndpoints['projectsGet'] = async (ctx, input) => {
-	const res = await makeBasinRequest<unknown>(`projects/${input.id}`, ctx.key, {
-		method: 'GET',
-	});
+	const validated = BasinEndpointInputSchemas.projectsGet.parse(input);
+	const res = await makeBasinRequest<unknown>(
+		`projects/${validated.id}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	const response = BasinEndpointOutputSchemas.projectsGet.parse(res);
 	await logEventFromContext(
 		ctx,
 		'basin.projects.get',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
 };
 
 export const create: BasinEndpoints['projectsCreate'] = async (ctx, input) => {
-	const { project, name } = input;
+	const validated = BasinEndpointInputSchemas.projectsCreate.parse(input);
+	const { project, name } = validated;
 	const body = project ? { project } : { project: { name: name ?? '' } };
 
 	const res = await makeBasinRequest<unknown>('projects', ctx.key, {
@@ -48,14 +55,15 @@ export const create: BasinEndpoints['projectsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.projects.create',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
 };
 
 export const update: BasinEndpoints['projectsUpdate'] = async (ctx, input) => {
-	const { id, project, name } = input;
+	const validated = BasinEndpointInputSchemas.projectsUpdate.parse(input);
+	const { id, project, name } = validated;
 	const body = project ? { project } : { project: { name: name ?? '' } };
 
 	const res = await makeBasinRequest<unknown>(`projects/${id}`, ctx.key, {
@@ -66,7 +74,7 @@ export const update: BasinEndpoints['projectsUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.projects.update',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
@@ -76,14 +84,19 @@ export const deleteProject: BasinEndpoints['projectsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeBasinRequest<unknown>(`projects/${input.id}`, ctx.key, {
-		method: 'DELETE',
-	});
+	const validated = BasinEndpointInputSchemas.projectsDelete.parse(input);
+	const res = await makeBasinRequest<unknown>(
+		`projects/${validated.id}`,
+		ctx.key,
+		{
+			method: 'DELETE',
+		},
+	);
 	const response = BasinEndpointOutputSchemas.projectsDelete.parse(res);
 	await logEventFromContext(
 		ctx,
 		'basin.projects.delete',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;

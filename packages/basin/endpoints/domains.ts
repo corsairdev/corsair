@@ -1,12 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BasinEndpoints } from '..';
 import { makeBasinRequest } from '../client';
-import { BasinEndpointOutputSchemas } from './types';
+import { BasinEndpointInputSchemas, BasinEndpointOutputSchemas } from './types';
 
 export const list: BasinEndpoints['domainsList'] = async (ctx, input) => {
+	const validated = BasinEndpointInputSchemas.domainsList.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input?.page !== undefined) query.page = input.page;
-	if (input?.query !== undefined) query.query = input.query;
+	if (validated.page !== undefined) query.page = validated.page;
+	if (validated.query !== undefined) query.query = validated.query;
 
 	const res = await makeBasinRequest<unknown>('domains', ctx.key, {
 		method: 'GET',
@@ -16,7 +17,7 @@ export const list: BasinEndpoints['domainsList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.domains.list',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;

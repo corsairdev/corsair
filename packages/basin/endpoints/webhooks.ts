@@ -1,12 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BasinEndpoints } from '..';
 import { makeBasinRequest } from '../client';
-import { BasinEndpointOutputSchemas } from './types';
+import { BasinEndpointInputSchemas, BasinEndpointOutputSchemas } from './types';
 
 export const list: BasinEndpoints['webhooksList'] = async (ctx, input) => {
+	const validated = BasinEndpointInputSchemas.webhooksList.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input?.page !== undefined) query.page = input.page;
-	if (input?.query !== undefined) query.query = input.query;
+	if (validated.page !== undefined) query.page = validated.page;
+	if (validated.query !== undefined) query.query = validated.query;
 
 	const res = await makeBasinRequest<unknown>('form_webhooks', ctx.key, {
 		method: 'GET',
@@ -16,15 +17,16 @@ export const list: BasinEndpoints['webhooksList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.webhooks.list',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
 };
 
 export const get: BasinEndpoints['webhooksGet'] = async (ctx, input) => {
+	const validated = BasinEndpointInputSchemas.webhooksGet.parse(input);
 	const res = await makeBasinRequest<unknown>(
-		`form_webhooks/${input.id}`,
+		`form_webhooks/${validated.id}`,
 		ctx.key,
 		{
 			method: 'GET',
@@ -34,14 +36,15 @@ export const get: BasinEndpoints['webhooksGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.webhooks.get',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
 };
 
 export const create: BasinEndpoints['webhooksCreate'] = async (ctx, input) => {
-	const { form_webhook, ...rest } = input;
+	const validated = BasinEndpointInputSchemas.webhooksCreate.parse(input);
+	const { form_webhook, ...rest } = validated;
 	const body = form_webhook ? { form_webhook } : { form_webhook: rest };
 
 	const res = await makeBasinRequest<unknown>('form_webhooks', ctx.key, {
@@ -52,14 +55,15 @@ export const create: BasinEndpoints['webhooksCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.webhooks.create',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
 };
 
 export const update: BasinEndpoints['webhooksUpdate'] = async (ctx, input) => {
-	const { id, form_webhook, ...rest } = input;
+	const validated = BasinEndpointInputSchemas.webhooksUpdate.parse(input);
+	const { id, form_webhook, ...rest } = validated;
 	const body = form_webhook ? { form_webhook } : { form_webhook: rest };
 
 	const res = await makeBasinRequest<unknown>(`form_webhooks/${id}`, ctx.key, {
@@ -70,7 +74,7 @@ export const update: BasinEndpoints['webhooksUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.webhooks.update',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
@@ -80,8 +84,9 @@ export const deleteWebhook: BasinEndpoints['webhooksDelete'] = async (
 	ctx,
 	input,
 ) => {
+	const validated = BasinEndpointInputSchemas.webhooksDelete.parse(input);
 	const res = await makeBasinRequest<unknown>(
-		`form_webhooks/${input.id}`,
+		`form_webhooks/${validated.id}`,
 		ctx.key,
 		{
 			method: 'DELETE',
@@ -91,7 +96,7 @@ export const deleteWebhook: BasinEndpoints['webhooksDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'basin.webhooks.delete',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;

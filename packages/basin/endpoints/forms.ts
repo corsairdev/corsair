@@ -1,33 +1,50 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BasinEndpoints } from '..';
 import { makeBasinRequest } from '../client';
-import { BasinEndpointOutputSchemas } from './types';
+import { BasinEndpointInputSchemas, BasinEndpointOutputSchemas } from './types';
 
 export const list: BasinEndpoints['formsList'] = async (ctx, input) => {
+	const validated = BasinEndpointInputSchemas.formsList.parse(input);
 	const query: Record<string, string | number | boolean | undefined> = {};
-	if (input?.page !== undefined) query.page = input.page;
-	if (input?.query !== undefined) query.query = input.query;
+	if (validated.page !== undefined) query.page = validated.page;
+	if (validated.query !== undefined) query.query = validated.query;
 
 	const res = await makeBasinRequest<unknown>('forms', ctx.key, {
 		method: 'GET',
 		query,
 	});
 	const response = BasinEndpointOutputSchemas.formsList.parse(res);
-	await logEventFromContext(ctx, 'basin.forms.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'basin.forms.list',
+		{ ...validated },
+		'completed',
+	);
 	return response;
 };
 
 export const get: BasinEndpoints['formsGet'] = async (ctx, input) => {
-	const res = await makeBasinRequest<unknown>(`forms/${input.id}`, ctx.key, {
-		method: 'GET',
-	});
+	const validated = BasinEndpointInputSchemas.formsGet.parse(input);
+	const res = await makeBasinRequest<unknown>(
+		`forms/${validated.id}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 	const response = BasinEndpointOutputSchemas.formsGet.parse(res);
-	await logEventFromContext(ctx, 'basin.forms.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'basin.forms.get',
+		{ ...validated },
+		'completed',
+	);
 	return response;
 };
 
 export const create: BasinEndpoints['formsCreate'] = async (ctx, input) => {
-	const { form, ...rest } = input;
+	const validated = BasinEndpointInputSchemas.formsCreate.parse(input);
+	const { form, ...rest } = validated;
 	const body = form ? { form } : { form: rest };
 
 	const res = await makeBasinRequest<unknown>('forms', ctx.key, {
@@ -38,14 +55,15 @@ export const create: BasinEndpoints['formsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.forms.create',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
 };
 
 export const update: BasinEndpoints['formsUpdate'] = async (ctx, input) => {
-	const { id, form, ...rest } = input;
+	const validated = BasinEndpointInputSchemas.formsUpdate.parse(input);
+	const { id, form, ...rest } = validated;
 	const body = form ? { form } : { form: rest };
 
 	const res = await makeBasinRequest<unknown>(`forms/${id}`, ctx.key, {
@@ -56,21 +74,26 @@ export const update: BasinEndpoints['formsUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'basin.forms.update',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
 };
 
 export const deleteForm: BasinEndpoints['formsDelete'] = async (ctx, input) => {
-	const res = await makeBasinRequest<unknown>(`forms/${input.id}`, ctx.key, {
-		method: 'DELETE',
-	});
+	const validated = BasinEndpointInputSchemas.formsDelete.parse(input);
+	const res = await makeBasinRequest<unknown>(
+		`forms/${validated.id}`,
+		ctx.key,
+		{
+			method: 'DELETE',
+		},
+	);
 	const response = BasinEndpointOutputSchemas.formsDelete.parse(res);
 	await logEventFromContext(
 		ctx,
 		'basin.forms.delete',
-		{ ...input },
+		{ ...validated },
 		'completed',
 	);
 	return response;
