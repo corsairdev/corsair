@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'ably',
 	'abstract',
 	'abyssale',
 	'activecampaign',
@@ -173,6 +174,7 @@ export const BaseProviders = [
 ] as const;
 
 export const ProviderDisplayNames = {
+	ably: 'Ably',
 	abstract: 'Abstract',
 	abyssale: 'Abyssale',
 	activecampaign: 'ActiveCampaign',
@@ -340,6 +342,7 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'ably'
 	| 'abstract'
 	| 'abyssale'
 	| 'activecampaign'
