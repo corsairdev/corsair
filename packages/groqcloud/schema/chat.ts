@@ -1,0 +1,110 @@
+import { z } from 'zod';
+
+const messageSchema = z
+	.object({
+		role: z.enum(['system', 'user', 'assistant', 'tool']),
+		content: z.string().or(z.array(z.any())),
+		name: z.string().optional(),
+		tool_call_id: z.string().optional(),
+	})
+	.passthrough();
+
+export const chatSchemas = {
+	chatCreateCompletion: {
+		input: z
+			.object({
+				model: z.string().describe('The ID of the model to use'),
+				messages: z
+					.array(messageSchema)
+					.describe('A list of messages comprising the conversation so far'),
+				temperature: z.number().optional().describe('Sampling temperature'),
+				max_completion_tokens: z
+					.number()
+					.optional()
+					.describe('The maximum number of tokens to generate'),
+				top_p: z.number().optional().describe('Nucleus sampling parameter'),
+				stop: z
+					.union([z.string(), z.array(z.string())])
+					.optional()
+					.describe(
+						'Up to 4 sequences where the API will stop generating further tokens',
+					),
+				stream: z
+					.boolean()
+					.optional()
+					.describe('Whether to stream the response'),
+				response_format: z
+					.object({ type: z.string() })
+					.passthrough()
+					.optional()
+					.describe('Response format object'),
+				tools: z
+					.array(z.any())
+					.optional()
+					.describe('A list of tools the model may call'),
+				tool_choice: z
+					.any()
+					.optional()
+					.describe('Controls which tool is called by the model'),
+			})
+			.passthrough(),
+		output: z
+			.object({
+				id: z.string(),
+				object: z.string(),
+				created: z.number(),
+				model: z.string(),
+				choices: z.array(
+					z
+						.object({
+							index: z.number(),
+							message: messageSchema,
+							finish_reason: z.string().nullable(),
+						})
+						.passthrough(),
+				),
+				usage: z.any().optional(),
+			})
+			.passthrough(),
+	},
+
+	chatCreateResponse: {
+		input: z
+			.object({
+				model: z.string().describe('The ID of the model to use'),
+				input: z
+					.union([z.string(), z.array(z.any())])
+					.describe('The input for the model response'),
+				instructions: z
+					.string()
+					.optional()
+					.describe('Optional instructions to guide the response'),
+				max_output_tokens: z
+					.number()
+					.optional()
+					.describe('Maximum number of output tokens'),
+				tools: z.array(z.any()).optional().describe('A list of tools'),
+			})
+			.passthrough(),
+		output: z
+			.object({
+				text: z.string().optional(),
+				tool_calls: z.array(z.any()).optional(),
+			})
+			.passthrough(),
+	},
+};
+
+export type ChatCreateCompletionInput = z.infer<
+	typeof chatSchemas.chatCreateCompletion.input
+>;
+export type ChatCreateCompletionResponse = z.infer<
+	typeof chatSchemas.chatCreateCompletion.output
+>;
+
+export type ChatCreateResponseInput = z.infer<
+	typeof chatSchemas.chatCreateResponse.input
+>;
+export type ChatCreateResponseOutput = z.infer<
+	typeof chatSchemas.chatCreateResponse.output
+>;

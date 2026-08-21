@@ -6,6 +6,7 @@ import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
+import { groqcloud } from '@corsair-dev/groqcloud';
 import { hubspot } from '@corsair-dev/hubspot';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
@@ -57,6 +58,9 @@ export const corsair = createCorsair({
 		hubspot(),
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
+		}),
+		groqcloud({
+			key: process.env.GROQCLOUD_API_KEY,
 		}),
 		twilio(),
 		vapi({
