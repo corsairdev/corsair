@@ -1,5 +1,8 @@
 import { z } from 'zod';
 
+const ClockifyId = z.string().trim().min(1);
+const ClockifyTimestamp = z.iso.datetime({ offset: true });
+
 const WorkspaceSchema = z.object({
 	id: z.string(),
 	name: z.string(),
@@ -47,7 +50,7 @@ const WorkspacesListOutputSchema = z.array(WorkspaceSchema);
 export type WorkspacesListOutput = z.infer<typeof WorkspacesListOutputSchema>;
 
 const ProjectsListInputSchema = z.object({
-	workspaceId: z.string(),
+	workspaceId: ClockifyId,
 	page: z.number().int().min(1).optional(),
 	pageSize: z.number().int().min(1).optional(),
 });
@@ -57,8 +60,8 @@ const ProjectsListOutputSchema = z.array(ProjectSchema);
 export type ProjectsListOutput = z.infer<typeof ProjectsListOutputSchema>;
 
 const TasksListInputSchema = z.object({
-	workspaceId: z.string(),
-	projectId: z.string(),
+	workspaceId: ClockifyId,
+	projectId: ClockifyId,
 	page: z.number().int().min(1).optional(),
 	pageSize: z.number().int().min(1).optional(),
 });
@@ -68,12 +71,12 @@ const TasksListOutputSchema = z.array(TaskSchema);
 export type TasksListOutput = z.infer<typeof TasksListOutputSchema>;
 
 const TimeEntriesCreateInputSchema = z.object({
-	workspaceId: z.string(),
+	workspaceId: ClockifyId,
 	description: z.string(),
-	start: z.string(),
-	end: z.string().optional(),
-	projectId: z.string().optional(),
-	taskId: z.string().optional(),
+	start: ClockifyTimestamp,
+	end: ClockifyTimestamp.optional(),
+	projectId: ClockifyId.optional(),
+	taskId: ClockifyId.optional(),
 });
 export type TimeEntriesCreateInput = z.infer<
 	typeof TimeEntriesCreateInputSchema
@@ -85,10 +88,10 @@ export type TimeEntriesCreateOutput = z.infer<
 >;
 
 const TimeEntriesListInputSchema = z.object({
-	workspaceId: z.string(),
-	userId: z.string(),
+	workspaceId: ClockifyId,
+	userId: ClockifyId,
 	description: z.string().optional(),
-	project: z.string().optional(),
+	project: ClockifyId.optional(),
 	page: z.number().int().min(1).optional(),
 	pageSize: z.number().int().min(1).optional(),
 });

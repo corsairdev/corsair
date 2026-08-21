@@ -86,6 +86,26 @@ describe('Clockify endpoints', () => {
 		expect(makeClockifyRequest).not.toHaveBeenCalled();
 	});
 
+	it('rejects empty identifiers and malformed timestamps', async () => {
+		await expect(
+			Projects.list(mockContext, { workspaceId: '   ' }),
+		).rejects.toThrow();
+		await expect(
+			TimeEntries.list(mockContext, {
+				workspaceId: 'w1',
+				userId: '',
+			}),
+		).rejects.toThrow();
+		await expect(
+			TimeEntries.create(mockContext, {
+				workspaceId: 'w1',
+				description: 'Testing entry',
+				start: 'not-a-timestamp',
+			}),
+		).rejects.toThrow();
+		expect(makeClockifyRequest).not.toHaveBeenCalled();
+	});
+
 	it('lists tasks', async () => {
 		const mockResponse = [{ id: 't1', name: 'Task 1', projectId: 'p1' }];
 		(makeClockifyRequest as jest.Mock).mockResolvedValue(mockResponse);
