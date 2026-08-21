@@ -1,3 +1,5 @@
+import { ZodError } from 'zod';
+import { unwrapCData } from './endpoints/types';
 import {
 	BartAdvisory,
 	BartRoute,
@@ -27,8 +29,7 @@ describe('Bart schema & entities', () => {
 		expect(parsedValid && !Number.isNaN(parsedValid.getTime())).toBe(true);
 
 		const invalidDateStr = 'not-a-real-date';
-		const parsedInvalid = safeDateSchema.parse(invalidDateStr);
-		expect(parsedInvalid).toBeUndefined();
+		expect(() => safeDateSchema.parse(invalidDateStr)).toThrow(ZodError);
 
 		expect(safeDateSchema.parse(null)).toBeNull();
 		expect(safeDateSchema.parse(undefined)).toBeUndefined();
@@ -86,5 +87,15 @@ describe('Bart schema & entities', () => {
 		expect(parsed.id).toBe('SYSTEM-1');
 		expect(parsed.type).toBe('DELAY');
 		expect(parsed.posted).toBeInstanceOf(Date);
+	});
+
+	it('validates unwrapCData helper correctly handles strings, CDATA objects, and undefined', () => {
+		expect(unwrapCData('Simple string')).toBe('Simple string');
+		expect(unwrapCData({ '#cdata-section': 'CDATA content' })).toBe(
+			'CDATA content',
+		);
+		expect(unwrapCData(undefined)).toBeUndefined();
+		expect(unwrapCData(null)).toBeUndefined();
+		expect(unwrapCData({} as any)).toBeUndefined();
 	});
 });

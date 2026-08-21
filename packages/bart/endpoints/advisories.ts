@@ -1,7 +1,11 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeBartRequest } from '../client';
 import type { BartEndpoints } from '../index';
-import { BartEndpointInputSchemas, BartEndpointOutputSchemas } from './types';
+import {
+	BartEndpointInputSchemas,
+	BartEndpointOutputSchemas,
+	unwrapCData,
+} from './types';
 
 export const list: BartEndpoints['advisoriesList'] = async (ctx, input) => {
 	const parsedInput = BartEndpointInputSchemas.advisoriesList.parse(input);
@@ -19,20 +23,15 @@ export const list: BartEndpoints['advisoriesList'] = async (ctx, input) => {
 		const bsaArray = Array.isArray(response.bsa)
 			? response.bsa
 			: [response.bsa];
-		for (const [idx, item] of bsaArray.entries()) {
-			const id = `${item.station || 'SYSTEM'}-${item.posted || response.date || idx}`;
-			const desc =
-				typeof item.description === 'object' && item.description !== null
-					? item.description['#cdata-section']
-					: typeof item.description === 'string'
-						? item.description
-						: undefined;
-			const sms =
-				typeof item.sms_text === 'object' && item.sms_text !== null
-					? item.sms_text['#cdata-section']
-					: typeof item.sms_text === 'string'
-						? item.sms_text
-						: undefined;
+		for (const item of bsaArray) {
+			const desc = unwrapCData(item.description);
+			const sms = unwrapCData(item.sms_text);
+			const stationKey = item.station || 'SYSTEM';
+			const timeKey = item.posted || response.date;
+			const fallbackContent = desc
+				? desc.trim().slice(0, 40)
+				: item.type || 'advisory';
+			const id = `${stationKey}-${timeKey || fallbackContent}`;
 
 			try {
 				await ctx.db.advisories.upsertByEntityId(id, {

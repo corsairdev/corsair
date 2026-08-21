@@ -1,12 +1,28 @@
 import { z } from 'zod';
 
 // CDATA or string text helper schema
-const CDataOrStringSchema = z.union([
+export const CDataOrStringSchema = z.union([
 	z.string(),
 	z.object({
 		'#cdata-section': z.string().optional(),
 	}),
 ]);
+export type CDataOrString = z.infer<typeof CDataOrStringSchema>;
+
+export function unwrapCData(
+	value: CDataOrString | undefined | null,
+): string | undefined {
+	if (value === undefined || value === null) return undefined;
+	if (typeof value === 'string') return value;
+	if (
+		typeof value === 'object' &&
+		'#cdata-section' in value &&
+		typeof value['#cdata-section'] === 'string'
+	) {
+		return value['#cdata-section'];
+	}
+	return undefined;
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 1. Advisories (bsa)

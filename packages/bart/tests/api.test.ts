@@ -94,6 +94,37 @@ describe('BART API Endpoints', () => {
 			);
 			expect(result.bsa).toBeDefined();
 			expect(mockUpsertAdvisory).toHaveBeenCalledTimes(1);
+			expect(mockUpsertAdvisory).toHaveBeenCalledWith(
+				'12TH-Fri Aug 21 2026 12:00 PM PDT',
+				expect.objectContaining({
+					id: '12TH-Fri Aug 21 2026 12:00 PM PDT',
+					description: '10 minute delay at 12th St',
+					sms_text: '10 min delay',
+				}),
+			);
+		});
+
+		it('advisories.list generates stable entity ID from description fallback when timestamps are absent', async () => {
+			const mockPayload = {
+				bsa: [
+					{
+						station: '12TH',
+						type: 'DELAY',
+						description: 'Track maintenance delay',
+					},
+				],
+			};
+			mockMakeRequest.mockResolvedValueOnce(mockPayload);
+
+			await Advisories.list(mockContext, { orig: '12TH' });
+
+			expect(mockUpsertAdvisory).toHaveBeenCalledWith(
+				'12TH-Track maintenance delay',
+				expect.objectContaining({
+					id: '12TH-Track maintenance delay',
+					description: 'Track maintenance delay',
+				}),
+			);
 		});
 
 		it('advisories.list rejects whitespace-only origin before HTTP dispatch', async () => {

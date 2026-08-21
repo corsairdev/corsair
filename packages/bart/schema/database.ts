@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 export const safeDateSchema = z.preprocess((arg) => {
+	if (arg === undefined) return undefined;
 	if (arg === null) return null;
 	if (
 		typeof arg === 'string' ||
@@ -8,9 +9,9 @@ export const safeDateSchema = z.preprocess((arg) => {
 		arg instanceof Date
 	) {
 		const d = new Date(arg);
-		return !Number.isNaN(d.getTime()) ? d : undefined;
+		return !Number.isNaN(d.getTime()) ? d : arg;
 	}
-	return undefined;
+	return arg;
 }, z.date().nullable().optional());
 
 export const BartStation = z.object({
