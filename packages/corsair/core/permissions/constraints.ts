@@ -197,7 +197,7 @@ export function resolveOverridePolicy(
 		| undefined,
 	args: unknown,
 ): PermissionPolicy | undefined {
-	if (override === undefined) return undefined;
+	if (override === undefined || override === null) return undefined;
 	if (typeof override === 'string') return override;
 	if (constraintsSatisfied(override.constraints, args)) return override.policy;
 	// Constraints did not hold. `otherwise` if the developer specified one,
