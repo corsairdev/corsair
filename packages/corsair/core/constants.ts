@@ -47,6 +47,7 @@ export const BaseProviders = [
 	'asindataapi',
 	'asyncinterview',
 	'ayrshare',
+	'basecamp',
 	'baselinker',
 	'betterstack',
 	'bigmailer',
@@ -201,6 +202,7 @@ export const ProviderDisplayNames = {
 	asindataapi: 'ASIN Data API',
 	asyncinterview: 'Async Interview',
 	ayrshare: 'Ayrshare',
+	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
@@ -362,6 +364,7 @@ export type AllProviders =
 	| 'asindataapi'
 	| 'asyncinterview'
 	| 'ayrshare'
+	| 'basecamp'
 	| 'baselinker'
 	| 'betterstack'
 	| 'bigmailer'
