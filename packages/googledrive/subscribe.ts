@@ -27,6 +27,12 @@ export async function googledriveSubscribe(
 	};
 	if (!startPageToken) return null;
 
+	await (
+		ctx.keys as {
+			set_changes_page_token?: (value: string | null) => Promise<void>;
+		}
+	).set_changes_page_token?.(startPageToken);
+
 	return googleChannelSubscribe(ctx, {
 		webhookUrl: input.webhookUrl,
 		watchUrl: `${GOOGLE_DRIVE_API_BASE}/changes/watch?pageToken=${encodeURIComponent(startPageToken)}`,

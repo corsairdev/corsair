@@ -10,50 +10,48 @@ import type { OpenWeatherMapEndpointOutputs } from './types';
  * API: GET /onecall/day_summary
  * Docs: https://openweathermap.org/api/one-call-3#day_summary
  */
-export const daySummary: OpenWeatherMapEndpoints['daySummary'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeOpenWeatherMapRequest<
-		OpenWeatherMapEndpointOutputs['daySummary']
-	>('onecall/day_summary', ctx.key, { query: { ...input } });
+export const daySummary: OpenWeatherMapEndpoints['summary']['daySummary'] =
+	async (ctx, input) => {
+		const response = await makeOpenWeatherMapRequest<
+			OpenWeatherMapEndpointOutputs['daySummary']
+		>('onecall/day_summary', ctx.key, { query: { ...input } });
 
-	if (ctx.db.daySummaries) {
-		try {
-			const entityId = `${input.lat}_${input.lon}_${input.date}`;
-			await ctx.db.daySummaries.upsertByEntityId(entityId, {
-				lat: response.lat,
-				lon: response.lon,
-				date: response.date,
-				tz: response.tz,
-				units: response.units,
-				temperatureMin: response.temperature.min,
-				temperatureMax: response.temperature.max,
-				temperatureAfternoon: response.temperature.afternoon,
-				temperatureMorning: response.temperature.morning,
-				temperatureEvening: response.temperature.evening,
-				temperatureNight: response.temperature.night,
-				precipitationTotal: response.precipitation.total,
-				windMaxSpeed: response.wind.max.speed,
-				windMaxDirection: response.wind.max.direction,
-				cloudCoverAfternoon: response.cloud_cover.afternoon,
-				humidityAfternoon: response.humidity.afternoon,
-				pressureAfternoon: response.pressure.afternoon,
-			});
-		} catch (error) {
-			console.warn('Failed to save day summary to database:', error);
+		if (ctx.db.daySummaries) {
+			try {
+				const entityId = `${input.lat}_${input.lon}_${input.date}`;
+				await ctx.db.daySummaries.upsertByEntityId(entityId, {
+					lat: response.lat,
+					lon: response.lon,
+					date: response.date,
+					tz: response.tz,
+					units: response.units,
+					temperatureMin: response.temperature.min,
+					temperatureMax: response.temperature.max,
+					temperatureAfternoon: response.temperature.afternoon,
+					temperatureMorning: response.temperature.morning,
+					temperatureEvening: response.temperature.evening,
+					temperatureNight: response.temperature.night,
+					precipitationTotal: response.precipitation.total,
+					windMaxSpeed: response.wind.max.speed,
+					windMaxDirection: response.wind.max.direction,
+					cloudCoverAfternoon: response.cloud_cover.afternoon,
+					humidityAfternoon: response.humidity.afternoon,
+					pressureAfternoon: response.pressure.afternoon,
+				});
+			} catch (error) {
+				console.warn('Failed to save day summary to database:', error);
+			}
 		}
-	}
 
-	await logEventFromContext(
-		ctx,
-		'openweathermap.summary.daySummary',
-		{ ...input },
-		'completed',
-	);
+		await logEventFromContext(
+			ctx,
+			'openweathermap.summary.daySummary',
+			{ ...input },
+			'completed',
+		);
 
-	return response;
-};
+		return response;
+	};
 
 /**
  * Get a human-readable weather overview for a location.
@@ -62,7 +60,7 @@ export const daySummary: OpenWeatherMapEndpoints['daySummary'] = async (
  * API: GET /onecall/overview
  * Docs: https://openweathermap.org/api/one-call-3#overview
  */
-export const overview: OpenWeatherMapEndpoints['overview'] = async (
+export const overview: OpenWeatherMapEndpoints['summary']['overview'] = async (
 	ctx,
 	input,
 ) => {

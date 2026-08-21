@@ -1,4 +1,5 @@
 import type { GithubWebhooks } from '../index';
+import { issueRecordFromWebhook } from '../persistence';
 import type { Issue } from './types';
 import { createGithubEventMatch, verifyGithubWebhookSignature } from './types';
 
@@ -8,23 +9,10 @@ async function upsertIssue(
 	deletedAt?: Date | null,
 ) {
 	if (!ctx.db.issues) return;
-	await ctx.db.issues.upsertByEntityId(issue.id.toString(), {
-		id: issue.id,
-		nodeId: issue.node_id,
-		url: issue.url,
-		repositoryUrl: issue.repository_url,
-		htmlUrl: issue.html_url,
-		number: issue.number,
-		state: issue.state,
-		title: issue.title,
-		body: issue.body,
-		locked: issue.locked,
-		comments: issue.comments,
-		createdAt: issue.created_at ? new Date(issue.created_at) : null,
-		updatedAt: issue.updated_at ? new Date(issue.updated_at) : null,
-		closedAt: issue.closed_at ? new Date(issue.closed_at) : null,
-		deletedAt: deletedAt ?? null,
-	});
+	await ctx.db.issues.upsertByEntityId(
+		issue.id.toString(),
+		issueRecordFromWebhook(issue, { deletedAt }),
+	);
 }
 
 export const issueOpened: GithubWebhooks['issueOpened'] = {

@@ -7,6 +7,7 @@ export type OpenAPIConfig = {
 	BASE: string;
 	VERSION: string;
 	WITH_CREDENTIALS: boolean;
+	TIMEOUT?: number;
 	CREDENTIALS: 'include' | 'omit' | 'same-origin';
 	TOKEN?: string | Resolver<string> | undefined;
 	USERNAME?: string | Resolver<string> | undefined;
