@@ -1,4 +1,8 @@
 import { AblySchema } from './schema';
+import {
+	AblyEndpointInputSchemas,
+	AblyEndpointOutputSchemas,
+} from './endpoints/types';
 
 describe('Ably schema', () => {
 	it('declares a semver version', () => {
@@ -14,7 +18,22 @@ describe('Ably schema', () => {
 			expect(entity).toBeDefined();
 		}
 	});
-});
 
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
+	it('accepts listChannels by=id names and by=value details', () => {
+		expect(
+			AblyEndpointInputSchemas.listChannels.parse({ by: 'id', limit: 10 }),
+		).toEqual({ by: 'id', limit: 10 });
+		expect(
+			AblyEndpointInputSchemas.listChannels.safeParse({ by: 'occupancy' })
+				.success,
+		).toBe(false);
+		expect(
+			AblyEndpointOutputSchemas.listChannels.parse(['room-a', 'room-b']),
+		).toEqual(['room-a', 'room-b']);
+		expect(
+			AblyEndpointOutputSchemas.listChannels.parse([
+				{ channelId: 'room-a', status: { isActive: true } },
+			]),
+		).toEqual([{ channelId: 'room-a', status: { isActive: true } }]);
+	});
+});

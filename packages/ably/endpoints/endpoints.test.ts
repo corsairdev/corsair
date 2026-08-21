@@ -186,7 +186,7 @@ describe('Ably endpoints', () => {
 		it('lists channels with query parameters', async () => {
 			const input = {
 				prefix: 'room',
-				by: 'id',
+				by: 'id' as const,
 				limit: 20,
 			};
 

@@ -132,7 +132,7 @@ export const AblyEndpointInputSchemas = {
 
 	listChannels: PaginationSchema.extend({
 		prefix: z.string().optional(),
-		by: z.string().optional(),
+		by: z.enum(['id', 'value']).optional(),
 	}),
 
 	publishMessageToChannel: z.object({
@@ -233,7 +233,7 @@ export const AblyEndpointOutputSchemas = {
 	getChannelPresence: z.array(PresenceMessageSchema),
 	getPresenceHistory: z.array(PresenceMessageSchema),
 	getMessageVersions: z.array(MessageSchema),
-	listChannels: z.array(ChannelDetailsSchema),
+	listChannels: z.array(z.union([z.string(), ChannelDetailsSchema])),
 	publishMessageToChannel: EmptyResponseSchema,
 	batchPresence: z.array(z.unknown()),
 	batchPresenceHistory: z.array(z.unknown()),
