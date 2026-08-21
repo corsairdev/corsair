@@ -327,8 +327,9 @@ describeIfApiKey('OpenWeatherMap API Type Tests', () => {
 				},
 			);
 
-			OpenWeatherMapEndpointOutputSchemas.stationsCreate.parse(response);
-			stationId = response.id;
+			const created =
+				OpenWeatherMapEndpointOutputSchemas.stationsCreate.parse(response);
+			stationId = created.id;
 			expect(stationId).toBeTruthy();
 		});
 
