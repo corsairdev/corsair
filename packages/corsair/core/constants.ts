@@ -14,6 +14,7 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'abstract',
+	'abyssale',
 	'activecampaign',
 	'anchorbrowser',
 	'activetrail',
@@ -172,6 +173,7 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
+	abyssale: 'Abyssale',
 	activecampaign: 'ActiveCampaign',
 	anchorbrowser: 'Anchor Browser',
 	activetrail: 'Active Trail',
@@ -337,6 +339,7 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'abstract'
+	| 'abyssale'
 	| 'activecampaign'
 	| 'anchorbrowser'
 	| 'activetrail'
