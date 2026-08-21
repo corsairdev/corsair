@@ -112,6 +112,51 @@ describe('AnchorBrowser route wiring', () => {
 	});
 });
 
+describe('AnchorBrowser list pagination', () => {
+	it('sends page and limit as query parameters on listSessions', async () => {
+		const route = allRoutes.find((r) => r.name === 'listSessions');
+		if (!route) throw new Error('listSessions route missing');
+
+		await endpointFor(route)(mockCtx, { page: 2, limit: 25 });
+
+		const sent = mockRequest.mock.calls[0]?.[1];
+		expect(sent.url).toBe('/sessions');
+		expect(sent.query).toMatchObject({ page: 2, limit: 25 });
+		// Query params must not also be posted in the body.
+		expect(sent.body).toBeUndefined();
+	});
+
+	it('passes documented listSessions filters through as query parameters', async () => {
+		const route = allRoutes.find((r) => r.name === 'listSessions');
+		if (!route) throw new Error('listSessions route missing');
+
+		await endpointFor(route)(mockCtx, {
+			status: 'running',
+			sort_by: 'created_at',
+			sort_order: 'desc',
+			profile_name: 'demo',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[1]?.query).toMatchObject({
+			status: 'running',
+			sort_by: 'created_at',
+			sort_order: 'desc',
+			profile_name: 'demo',
+		});
+	});
+
+	it('declares pagination on every list route the API documents it for', () => {
+		const paginated = ['listSessions', 'listTasks', 'listTaskExecutions'];
+		for (const name of paginated) {
+			const route = allRoutes.find((r) => r.name === name);
+			if (!route) throw new Error(`${name} route missing`);
+			const declared = (route as { queryParams?: readonly string[] })
+				.queryParams;
+			expect(declared).toEqual(expect.arrayContaining(['page', 'limit']));
+		}
+	});
+});
+
 describe('AnchorBrowser public input naming', () => {
 	it('uses a single camelCase spelling for every path parameter', () => {
 		const snake = allRoutes.flatMap((route) =>
@@ -132,14 +177,17 @@ describe('AnchorBrowser public input naming', () => {
 		]);
 	});
 
-	it('declares exactly one path parameter per placeholder on every route', () => {
+	it('names every path placeholder after its declared path parameter', () => {
 		const mismatched = allRoutes
+			.map((route) => ({
+				id: `${route.group}.${route.name}`,
+				placeholders: [...route.path.matchAll(/\{([^}]+)\}/g)].map((m) => m[1]),
+				declared: [...(route.pathParams ?? [])],
+			}))
 			.filter(
-				(route) =>
-					(route.path.match(/\{[^}]+\}/g)?.length ?? 0) !==
-					(route.pathParams?.length ?? 0),
+				(r) => JSON.stringify(r.placeholders) !== JSON.stringify(r.declared),
 			)
-			.map((route) => `${route.group}.${route.name}`);
+			.map((r) => `${r.id}: ${r.placeholders} vs ${r.declared}`);
 
 		expect(mismatched).toEqual([]);
 	});

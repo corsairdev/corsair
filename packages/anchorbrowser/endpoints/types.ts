@@ -485,6 +485,23 @@ export type ListSessionRecordingsResponse = z.infer<
 
 // listSessions
 const ListSessionsInputSchema = z.object({
+	// Documented query parameters for GET /v1/sessions (pagination + filters).
+	page: z.number().int().positive().optional(),
+	limit: z.number().int().positive().optional(),
+	sort_by: z.string().optional(),
+	sort_order: z.string().optional(),
+	search: z.string().optional(),
+	status: z.string().optional(),
+	tags: z.string().optional(),
+	domains: z.string().optional(),
+	created_from: z.string().optional(),
+	created_to: z.string().optional(),
+	batch_id: z.string().optional(),
+	task_initiated: z.boolean().optional(),
+	playground: z.boolean().optional(),
+	proxy: z.boolean().optional(),
+	extra_stealth: z.boolean().optional(),
+	profile_name: z.string().optional(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
 	headers: z.record(z.string(), z.string()).optional(),

@@ -66,28 +66,24 @@ export function resolvePath(
 	route?: Pick<AnchorBrowserRoute, 'pathParams'>,
 ): string {
 	const pathOnly = path.split('?')[0] ?? path;
-	// `pathParams` is positional: entry N fills placeholder N. The upstream API
-	// spells the same identifier differently across groups (`{session_id}` on
-	// browser-session routes, `{sessionId}` on OS-level ones), so the names
-	// cannot be matched literally. Fail loudly if the two ever fall out of
-	// sync rather than silently substituting the wrong segment.
+	// Every `{placeholder}` is named after the input field that fills it and is
+	// listed in `route.pathParams`, so resolution is by name — reordering a path
+	// segment cannot silently substitute the wrong value. The arity check keeps
+	// the two definitions from drifting apart unnoticed.
 	if (route?.pathParams) {
-		const placeholders = pathOnly.match(/\{[^}]+\}/g)?.length ?? 0;
-		if (placeholders !== route.pathParams.length) {
+		const placeholders = pathOnly.match(/\{[^}]+\}/g) ?? [];
+		if (placeholders.length !== route.pathParams.length) {
 			throw new Error(
-				`[anchorbrowser] route ${pathOnly} declares ${route.pathParams.length} path params but has ${placeholders} placeholders`,
+				`[anchorbrowser] route ${pathOnly} declares ${route.pathParams.length} path params but has ${placeholders.length} placeholders`,
 			);
 		}
 	}
-	let index = 0;
+
 	return pathOnly.replace(/\{([^}]+)\}/g, (_, placeholder: string) => {
-		const mappedKey = route?.pathParams?.[index];
-		index += 1;
-		if (mappedKey !== undefined) {
-			const direct = input[mappedKey] ?? input[camelToSnake(mappedKey)];
-			if (direct !== undefined) {
-				return encodePathPart(direct);
-			}
+		if (route?.pathParams && !route.pathParams.includes(placeholder)) {
+			throw new Error(
+				`[anchorbrowser] route ${pathOnly} has placeholder {${placeholder}} that is not a declared path param`,
+			);
 		}
 		return encodePathPart(resolvePathParam(input, placeholder));
 	});

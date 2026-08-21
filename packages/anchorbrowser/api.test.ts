@@ -79,6 +79,18 @@ testSuite('AnchorBrowser live API', () => {
 		}
 	});
 
+	it('listSessions accepts the documented pagination parameters', async () => {
+		const response = await op('sessions', 'listSessions')(testCtx(), {
+			page: 1,
+			limit: 10,
+		});
+
+		const data = (response as { data?: Record<string, unknown> }).data;
+		expect(data).toBeDefined();
+		expect(typeof data?.page).toBe('number');
+		expect(typeof data?.total_pages).toBe('number');
+	});
+
 	it('listProfiles returns profiles matching the entity schema', async () => {
 		const response = await op('profiles', 'listProfiles')(testCtx(), {});
 

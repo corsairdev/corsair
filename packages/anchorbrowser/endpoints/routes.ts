@@ -197,7 +197,7 @@ export const anchorBrowserRoutes = [
 		method: 'DELETE',
 		path: '/sessions/all',
 		description:
-			'Tool to terminate all active browser sessions at once. Use when you need to immediately close every browser session for the authenticated user, such as during cleanup operations or security concerns. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+			'Tool to terminate all active browser sessions at once. Use when you need to immediately close every browser session for the authenticated user, such as during cleanup operations or security concerns.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'destructive' as const,
@@ -208,7 +208,7 @@ export const anchorBrowserRoutes = [
 		group: 'sessions',
 		name: 'endBrowserSession',
 		method: 'DELETE',
-		path: '/sessions/{session_id}',
+		path: '/sessions/{sessionId}',
 		description:
 			'Tool to end a specific browser session by ID. Use after confirming the session ID you want to terminate.',
 		pathParams: ['sessionId'],
@@ -221,7 +221,7 @@ export const anchorBrowserRoutes = [
 		group: 'batchSessions',
 		name: 'getBatchSessionStatus',
 		method: 'GET',
-		path: '/batch-sessions/{batch_id}',
+		path: '/batch-sessions/{batchId}',
 		description:
 			'Tool to retrieve detailed status information for a specific batch including progress and errors. Use when you need to check the status of a batch session creation request.',
 		pathParams: ['batchId'],
@@ -233,7 +233,7 @@ export const anchorBrowserRoutes = [
 		group: 'sessions',
 		name: 'getBrowserSession',
 		method: 'GET',
-		path: '/sessions/{session_id}',
+		path: '/sessions/{sessionId}',
 		description:
 			'Tool to retrieve detailed information about a specific browser session. Use when you need to check the status, configuration, or execution details of a browser session.',
 		pathParams: ['sessionId'],
@@ -281,7 +281,7 @@ export const anchorBrowserRoutes = [
 		group: 'pages',
 		name: 'getSessionPages',
 		method: 'GET',
-		path: '/sessions/{session_id}/pages',
+		path: '/sessions/{sessionId}/pages',
 		description:
 			'Tool to retrieve all pages associated with a specific browser session. Use when you need to list all open tabs or pages in an active or completed session.',
 		pathParams: ['sessionId'],
@@ -367,7 +367,7 @@ export const anchorBrowserRoutes = [
 		method: 'GET',
 		path: '/extensions',
 		description:
-			'Retrieves all browser extensions uploaded by the authenticated user. Use this to view available extensions that can be attached to browser sessions for automation tasks. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+			'Retrieves all browser extensions uploaded by the authenticated user. Use this to view available extensions that can be attached to browser sessions for automation tasks.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -379,7 +379,7 @@ export const anchorBrowserRoutes = [
 		method: 'GET',
 		path: '/integrations',
 		description:
-			'Tool to retrieve all integrations for the authenticated team. Use when you need to view available integrations that can be used with browser sessions. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+			'Tool to retrieve all integrations for the authenticated team. Use when you need to view available integrations that can be used with browser sessions.',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -391,7 +391,7 @@ export const anchorBrowserRoutes = [
 		method: 'GET',
 		path: '/profiles',
 		description:
-			'Tool to fetch all stored browser profiles. Use when you need an overview of all profiles available to the authenticated user (e.g., after creating or deleting profiles). #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+			'Tool to fetch all stored browser profiles. Use when you need an overview of all profiles available to the authenticated user (e.g., after creating or deleting profiles).',
 		pathParams: [],
 		queryParams: [],
 		riskLevel: 'read' as const,
@@ -401,7 +401,7 @@ export const anchorBrowserRoutes = [
 		group: 'downloads',
 		name: 'listSessionDownloads',
 		method: 'GET',
-		path: '/sessions/{session_id}/downloads',
+		path: '/sessions/{sessionId}/downloads',
 		description:
 			'Tool to retrieve metadata of files downloaded during a browser session. Use after confirming the session ID.',
 		pathParams: ['sessionId'],
@@ -413,7 +413,7 @@ export const anchorBrowserRoutes = [
 		group: 'recordings',
 		name: 'listSessionRecordings',
 		method: 'GET',
-		path: '/sessions/{session_id}/recordings',
+		path: '/sessions/{sessionId}/recordings',
 		description:
 			'Tool to list all recordings for a specific browser session. Use after confirming the session ID.',
 		pathParams: ['sessionId'],
@@ -427,9 +427,26 @@ export const anchorBrowserRoutes = [
 		method: 'GET',
 		path: '/sessions',
 		description:
-			'Tool to list all browser sessions. Use when you need to retrieve both active and inactive sessions. #### Output | Parameter | Type | Required | Description | |-----------|------|----------|-------------| | `data` | string | Yes | Data from the action execution | | `error` | string | No | Error if any occurred during the execution of the action | | `successful` | boolean | Yes | Whether or not the action execution was successful or not |',
+			'Tool to list all browser sessions. Use when you need to retrieve both active and inactive sessions.',
 		pathParams: [],
-		queryParams: [],
+		queryParams: [
+			'page',
+			'limit',
+			'sort_by',
+			'sort_order',
+			'search',
+			'status',
+			'tags',
+			'domains',
+			'created_from',
+			'created_to',
+			'batch_id',
+			'task_initiated',
+			'playground',
+			'proxy',
+			'extra_stealth',
+			'profile_name',
+		],
 		riskLevel: 'read' as const,
 	},
 	{
@@ -509,7 +526,7 @@ export const anchorBrowserRoutes = [
 		group: 'agent',
 		name: 'pauseAgent',
 		method: 'POST',
-		path: '/sessions/{session_id}/agent/pause',
+		path: '/sessions/{sessionId}/agent/pause',
 		description:
 			'Tool to pause the AI agent for a specific browser session. Use when you need to temporarily halt autonomous agent execution while keeping the session active.',
 		pathParams: ['sessionId'],
@@ -521,7 +538,7 @@ export const anchorBrowserRoutes = [
 		group: 'recordings',
 		name: 'pauseSessionRecording',
 		method: 'POST',
-		path: '/sessions/{session_id}/recordings/pause',
+		path: '/sessions/{sessionId}/recordings/pause',
 		description:
 			'Tool to pause the video recording for a specific browser session. Use when you need to temporarily stop recording without ending the session.',
 		pathParams: ['sessionId'],
@@ -593,7 +610,7 @@ export const anchorBrowserRoutes = [
 		group: 'agent',
 		name: 'resumeAgent',
 		method: 'POST',
-		path: '/sessions/{session_id}/agent/resume',
+		path: '/sessions/{sessionId}/agent/resume',
 		description:
 			'Tool to resume the AI agent for a specific browser session. Use when you need to restart agent execution after it has been paused or stopped.',
 		pathParams: ['sessionId'],
@@ -605,7 +622,7 @@ export const anchorBrowserRoutes = [
 		group: 'recordings',
 		name: 'resumeSessionRecording',
 		method: 'POST',
-		path: '/sessions/{session_id}/recordings/resume',
+		path: '/sessions/{sessionId}/recordings/resume',
 		description:
 			'Tool to resume video recording for a specific browser session. Use when recording was previously paused and needs to be restarted.',
 		pathParams: ['sessionId'],
@@ -677,7 +694,7 @@ export const anchorBrowserRoutes = [
 		group: 'events',
 		name: 'signalEvent',
 		method: 'POST',
-		path: '/events/{event_name}',
+		path: '/events/{eventName}',
 		description:
 			'Tool to signal a specific event to be received by other processes or sessions. Use when you need real-time coordination across browser sessions after verifying session is active.',
 		pathParams: ['eventName'],
@@ -786,7 +803,7 @@ export const anchorBrowserRoutes = [
 		group: 'events',
 		name: 'waitForEvent',
 		method: 'POST',
-		path: '/events/{event_name}/wait',
+		path: '/events/{eventName}/wait',
 		description:
 			'Blocks execution until a specific named event is signaled or the timeout expires. Used for cross-session coordination, MFA handling, and workflow synchronization. The event must first be signaled using the Signal Event action. Returns the data payload that was sent with the signal. Events are user-scoped.',
 		pathParams: ['eventName'],
