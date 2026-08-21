@@ -19,9 +19,11 @@ export type {
 	CreateConnectLinkInput,
 	CreateTenantInput,
 	ExpressHandler,
+	FastifyHandler,
 	HonoHandler,
 	ManagementHandlerOptions,
 	ManagementOk,
+	NodeHandler,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
 	PermissionLookupInput,
@@ -33,9 +35,17 @@ export type {
 } from './core/management';
 export {
 	managementHandler,
+	toAstroHandler,
 	toExpressHandler,
+	toFastifyHandler,
 	toHonoHandler,
 	toNextJsHandler,
+	toNodeHandler,
+	toNuxtHandler,
+	toRemixHandler,
+	toSvelteKitHandler,
+	toTanStackHandler,
+	toWebHandler,
 } from './core/management';
 export type {
 	CorsairManualConfig,
