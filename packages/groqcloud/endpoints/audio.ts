@@ -14,14 +14,19 @@ export const createTranscription: GroqcloudEndpoints['audioCreateTranscription']
 				'audio/transcriptions',
 				ctx.key,
 				{
-					files: [
-						{
-							field: 'file',
-							file: input.file,
-							fileName: input.fileName,
-						},
-					],
+					// Either an uploaded file or a `url` Groq fetches server-side;
+					// the input schema guarantees exactly one is present.
+					files: input.file
+						? [
+								{
+									field: 'file',
+									file: input.file,
+									fileName: input.fileName ?? 'audio',
+								},
+							]
+						: [],
 					fields: {
+						url: input.url,
 						model: input.model,
 						language: input.language,
 						prompt: input.prompt,
@@ -48,14 +53,19 @@ export const createTranslation: GroqcloudEndpoints['audioCreateTranslation'] =
 				'audio/translations',
 				ctx.key,
 				{
-					files: [
-						{
-							field: 'file',
-							file: input.file,
-							fileName: input.fileName,
-						},
-					],
+					// Either an uploaded file or a `url` Groq fetches server-side;
+					// the input schema guarantees exactly one is present.
+					files: input.file
+						? [
+								{
+									field: 'file',
+									file: input.file,
+									fileName: input.fileName ?? 'audio',
+								},
+							]
+						: [],
 					fields: {
+						url: input.url,
 						model: input.model,
 						prompt: input.prompt,
 						response_format: input.response_format,

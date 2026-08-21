@@ -31,7 +31,7 @@ describe('groqcloud plugin', () => {
 				text: 'transcription',
 			});
 			const result = await Endpoints.audio.createTranscription(mockCtx, {
-				file: 'dummy_file_content',
+				file: new Blob(['dummy_file_content']),
 				fileName: 'test.wav',
 				model: 'whisper-large-v3',
 			});
@@ -53,7 +53,7 @@ describe('groqcloud plugin', () => {
 				text: 'translation',
 			});
 			const result = await Endpoints.audio.createTranslation(mockCtx, {
-				file: 'dummy_file_content',
+				file: new Blob(['dummy_file_content']),
 				fileName: 'test.wav',
 				model: 'whisper-large-v3',
 			});

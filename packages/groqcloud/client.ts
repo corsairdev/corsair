@@ -143,11 +143,12 @@ export async function multipartGroqcloudRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
-		files: Array<{ field: string; file: Blob | string; fileName: string }>;
+		/** Empty when the request instead points Groq at a `url` field. */
+		files?: Array<{ field: string; file: Blob | string; fileName: string }>;
 		fields?: Record<string, GroqcloudMultipartFieldValue>;
 	},
 ): Promise<T> {
-	const { files, fields = {} } = options;
+	const { files = [], fields = {} } = options;
 
 	const formData = new FormData();
 	for (const { field, file, fileName } of files) {

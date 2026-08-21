@@ -2,28 +2,47 @@ import { z } from 'zod';
 
 export const audioSchemas = {
 	audioCreateTranscription: {
-		input: z.object({
-			file: z
-				.union([z.string(), z.instanceof(Blob)])
-				.describe('The audio file to transcribe'),
-			fileName: z.string().describe('The name of the audio file'),
-			model: z.string().describe('The ID of the model to use'),
-			language: z
-				.string()
-				.optional()
-				.describe('The language of the input audio'),
-			prompt: z
-				.string()
-				.optional()
-				.describe('An optional text to guide the model'),
-			response_format: z
-				.enum(['json', 'text', 'verbose_json'])
-				.optional()
-				.describe(
-					'Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400.',
-				),
-			temperature: z.number().optional().describe('The sampling temperature'),
-		}),
+		input: z
+			.object({
+				// Groq accepts either an uploaded file or a `url` it fetches
+				// server-side. A plain string is uploaded as literal UTF-8 bytes and
+				// rejected with "could not process file - is it a valid media file?",
+				// so it is not accepted here.
+				file: z
+					.instanceof(Blob)
+					.optional()
+					.describe('The audio data to transcribe'),
+				fileName: z
+					.string()
+					.optional()
+					.describe('File name for the uploaded audio; required with `file`'),
+				url: z
+					.string()
+					.optional()
+					.describe('Publicly reachable URL of the audio to transcribe'),
+				model: z.string().describe('The ID of the model to use'),
+				language: z
+					.string()
+					.optional()
+					.describe('The language of the input audio'),
+				prompt: z
+					.string()
+					.optional()
+					.describe('An optional text to guide the model'),
+				response_format: z
+					.enum(['json', 'text', 'verbose_json'])
+					.optional()
+					.describe(
+						'Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400.',
+					),
+				temperature: z.number().optional().describe('The sampling temperature'),
+			})
+			.refine((v) => Boolean(v.file) !== Boolean(v.url), {
+				message: 'Provide exactly one of `file` or `url`',
+			})
+			.refine((v) => !v.file || Boolean(v.fileName), {
+				message: '`fileName` is required when `file` is provided',
+			}),
 		output: z
 			.object({
 				text: z.string().describe('The transcribed text'),
@@ -32,24 +51,43 @@ export const audioSchemas = {
 	},
 
 	audioCreateTranslation: {
-		input: z.object({
-			file: z
-				.union([z.string(), z.instanceof(Blob)])
-				.describe('The audio file to translate'),
-			fileName: z.string().describe('The name of the audio file'),
-			model: z.string().describe('The ID of the model to use'),
-			prompt: z
-				.string()
-				.optional()
-				.describe('An optional text to guide the model'),
-			response_format: z
-				.enum(['json', 'text', 'verbose_json'])
-				.optional()
-				.describe(
-					'Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400.',
-				),
-			temperature: z.number().optional().describe('The sampling temperature'),
-		}),
+		input: z
+			.object({
+				// Groq accepts either an uploaded file or a `url` it fetches
+				// server-side. A plain string is uploaded as literal UTF-8 bytes and
+				// rejected with "could not process file - is it a valid media file?",
+				// so it is not accepted here.
+				file: z
+					.instanceof(Blob)
+					.optional()
+					.describe('The audio data to translate'),
+				fileName: z
+					.string()
+					.optional()
+					.describe('File name for the uploaded audio; required with `file`'),
+				url: z
+					.string()
+					.optional()
+					.describe('Publicly reachable URL of the audio to translate'),
+				model: z.string().describe('The ID of the model to use'),
+				prompt: z
+					.string()
+					.optional()
+					.describe('An optional text to guide the model'),
+				response_format: z
+					.enum(['json', 'text', 'verbose_json'])
+					.optional()
+					.describe(
+						'Transcript output format. Groq accepts only json, text and verbose_json — srt and vtt are rejected with HTTP 400.',
+					),
+				temperature: z.number().optional().describe('The sampling temperature'),
+			})
+			.refine((v) => Boolean(v.file) !== Boolean(v.url), {
+				message: 'Provide exactly one of `file` or `url`',
+			})
+			.refine((v) => !v.file || Boolean(v.fileName), {
+				message: '`fileName` is required when `file` is provided',
+			}),
 		output: z
 			.object({
 				text: z.string().describe('The translated text'),

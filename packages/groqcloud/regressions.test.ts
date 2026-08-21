@@ -162,7 +162,7 @@ describe('audio request schema matches the API', () => {
 		for (const fmt of ['json', 'text', 'verbose_json']) {
 			expect(() =>
 				audioSchemas.audioCreateTranscription.input.parse({
-					file: 'x',
+					file: new Blob(['x']),
 					fileName: 'a.wav',
 					model: 'whisper-large-v3-turbo',
 					response_format: fmt,
@@ -173,7 +173,7 @@ describe('audio request schema matches the API', () => {
 		for (const fmt of ['srt', 'vtt']) {
 			expect(() =>
 				audioSchemas.audioCreateTranscription.input.parse({
-					file: 'x',
+					file: new Blob(['x']),
 					fileName: 'a.wav',
 					model: 'whisper-large-v3-turbo',
 					response_format: fmt,
@@ -185,7 +185,7 @@ describe('audio request schema matches the API', () => {
 	it('applies the same formats to translation', () => {
 		expect(() =>
 			audioSchemas.audioCreateTranslation.input.parse({
-				file: 'x',
+				file: new Blob(['x']),
 				fileName: 'a.wav',
 				model: 'whisper-large-v3',
 				response_format: 'srt',
@@ -235,32 +235,36 @@ describe('streaming is blocked at runtime, not just in the schema', () => {
 
 	it('rejects stream:true even though the binder never validates input', async () => {
 		const spy = jest.spyOn(clientModule, 'makeGroqcloudRequest');
+		try {
+			await expect(
+				Endpoints.chat.createCompletion(ctx, {
+					model: 'openai/gpt-oss-120b',
+					messages: [{ role: 'user', content: 'hi' }],
+					stream: true,
+				} as never),
+			).rejects.toThrow(/streaming is not supported/i);
 
-		await expect(
-			Endpoints.chat.createCompletion(ctx, {
-				model: 'openai/gpt-oss-120b',
-				messages: [{ role: 'user', content: 'hi' }],
-				stream: true,
-			} as never),
-		).rejects.toThrow(/streaming is not supported/i);
-
-		// The request must never reach the transport.
-		expect(spy).not.toHaveBeenCalled();
-		spy.mockRestore();
+			// The request must never reach the transport.
+			expect(spy).not.toHaveBeenCalled();
+		} finally {
+			spy.mockRestore();
+		}
 	});
 
 	it('allows a non-streaming call through', async () => {
 		const spy = jest
 			.spyOn(clientModule, 'makeGroqcloudRequest')
 			.mockResolvedValueOnce({ choices: [] } as never);
+		try {
+			await Endpoints.chat.createCompletion(ctx, {
+				model: 'openai/gpt-oss-120b',
+				messages: [{ role: 'user', content: 'hi' }],
+			} as never);
 
-		await Endpoints.chat.createCompletion(ctx, {
-			model: 'openai/gpt-oss-120b',
-			messages: [{ role: 'user', content: 'hi' }],
-		} as never);
-
-		expect(spy).toHaveBeenCalledTimes(1);
-		spy.mockRestore();
+			expect(spy).toHaveBeenCalledTimes(1);
+		} finally {
+			spy.mockRestore();
+		}
 	});
 });
 
@@ -278,37 +282,103 @@ describe('multipart rate limits preserve Retry-After', () => {
 	it('parses Retry-After seconds into milliseconds', async () => {
 		const original = global.fetch;
 		global.fetch = mockFetch(429, { 'retry-after': '2.5' });
+		try {
+			const error = (await clientModule
+				.multipartGroqcloudRequest('audio/transcriptions', 'k', {
+					files: [{ field: 'file', file: 'x', fileName: 'a.wav' }],
+				})
+				.catch((e: unknown) => e)) as clientModule.GroqcloudAPIError;
 
-		const error = (await clientModule
-			.multipartGroqcloudRequest('audio/transcriptions', 'k', {
-				files: [{ field: 'file', file: 'x', fileName: 'a.wav' }],
-			})
-			.catch((e: unknown) => e)) as clientModule.GroqcloudAPIError;
-
-		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBe(2500);
-		// and the policy can now actually use it
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-		expect(
-			(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).headersRetryAfterMs,
-		).toBe(2500);
-
-		global.fetch = original;
+			expect(error.status).toBe(429);
+			expect(error.retryAfter).toBe(2500);
+			// and the policy can now actually use it
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+			expect(
+				(await errorHandlers.RATE_LIMIT_ERROR.handler(error))
+					.headersRetryAfterMs,
+			).toBe(2500);
+		} finally {
+			global.fetch = original;
+		}
 	});
 
 	it('tolerates a missing Retry-After header', async () => {
 		const original = global.fetch;
 		global.fetch = mockFetch(429, {});
+		try {
+			const error = (await clientModule
+				.multipartGroqcloudRequest('audio/transcriptions', 'k', {
+					files: [{ field: 'file', file: 'x', fileName: 'a.wav' }],
+				})
+				.catch((e: unknown) => e)) as clientModule.GroqcloudAPIError;
 
-		const error = (await clientModule
-			.multipartGroqcloudRequest('audio/transcriptions', 'k', {
-				files: [{ field: 'file', file: 'x', fileName: 'a.wav' }],
-			})
-			.catch((e: unknown) => e)) as clientModule.GroqcloudAPIError;
+			expect(error.status).toBe(429);
+			expect(error.retryAfter).toBeUndefined();
+		} finally {
+			global.fetch = original;
+		}
+	});
+});
 
-		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBeUndefined();
+describe('audio input accepts a file or a url, never both', () => {
+	const base = { model: 'whisper-large-v3-turbo' };
 
-		global.fetch = original;
+	it('accepts an uploaded file with a name', () => {
+		expect(() =>
+			audioSchemas.audioCreateTranscription.input.parse({
+				...base,
+				file: new Blob(['x']),
+				fileName: 'a.wav',
+			}),
+		).not.toThrow();
+	});
+
+	it('accepts a url with no file', () => {
+		// Live-verified: Groq fetches `url` server-side. A bogus field returns
+		// "unknown param", whereas `url` produces a media-retrieval error.
+		expect(() =>
+			audioSchemas.audioCreateTranscription.input.parse({
+				...base,
+				url: 'https://example.com/a.wav',
+			}),
+		).not.toThrow();
+	});
+
+	it('rejects a plain string as file', () => {
+		// A string is uploaded as literal UTF-8 bytes; the API answers
+		// "could not process file - is it a valid media file?".
+		expect(() =>
+			audioSchemas.audioCreateTranscription.input.parse({
+				...base,
+				file: 'not-audio',
+				fileName: 'a.wav',
+			}),
+		).toThrow();
+	});
+
+	it('rejects both file and url together', () => {
+		expect(() =>
+			audioSchemas.audioCreateTranscription.input.parse({
+				...base,
+				file: new Blob(['x']),
+				fileName: 'a.wav',
+				url: 'https://example.com/a.wav',
+			}),
+		).toThrow();
+	});
+
+	it('rejects neither file nor url', () => {
+		expect(() =>
+			audioSchemas.audioCreateTranscription.input.parse(base),
+		).toThrow();
+	});
+
+	it('requires fileName alongside file', () => {
+		expect(() =>
+			audioSchemas.audioCreateTranscription.input.parse({
+				...base,
+				file: new Blob(['x']),
+			}),
+		).toThrow();
 	});
 });
