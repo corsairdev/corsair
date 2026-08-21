@@ -499,7 +499,14 @@ describe('Ably endpoints', () => {
 			const input = {
 				id: 'device-1',
 				clientId: 'client-1',
-				platform: 'android',
+				platform: 'android' as const,
+				formFactor: 'phone' as const,
+				push: {
+					recipient: {
+						transportType: 'fcm' as const,
+						registrationToken: 'token',
+					},
+				},
 			};
 
 			await Push.registerPushDevice(ctx, input);
@@ -550,8 +557,15 @@ describe('Ably endpoints', () => {
 				id: 'device:1',
 				clientId: 'client-1',
 				platform: 'android',
+				formFactor: 'phone',
 				metadata: {
 					version: '1.0',
+				},
+				push: {
+					recipient: {
+						transportType: 'fcm',
+						registrationToken: 'token',
+					},
 				},
 			});
 
@@ -564,8 +578,15 @@ describe('Ably endpoints', () => {
 						id: 'device:1',
 						clientId: 'client-1',
 						platform: 'android',
+						formFactor: 'phone',
 						metadata: {
 							version: '1.0',
+						},
+						push: {
+							recipient: {
+								transportType: 'fcm',
+								registrationToken: 'token',
+							},
 						},
 					},
 				},

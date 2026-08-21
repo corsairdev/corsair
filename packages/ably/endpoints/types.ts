@@ -79,6 +79,30 @@ const DeviceSchema = z
 	})
 	.loose();
 
+const DeviceRegistrationInputSchema = z.object({
+	id: z.string().min(1),
+	clientId: z.string().optional(),
+	platform: z.enum(['ios', 'android', 'browser']),
+	formFactor: z.enum([
+		'phone',
+		'tablet',
+		'desktop',
+		'tv',
+		'watch',
+		'car',
+		'embedded',
+	]),
+	metadata: z.record(z.string(), z.unknown()).optional(),
+	updateToken: z.string().optional(),
+	push: z.object({
+		recipient: z
+			.object({
+				transportType: z.enum(['fcm', 'apns', 'web']),
+			})
+			.loose(),
+	}),
+});
+
 const SubscriptionSchema = z
 	.object({
 		channel: z.string(),
@@ -208,7 +232,7 @@ export const AblyEndpointInputSchemas = {
 		notification: z.record(z.string(), z.unknown()).optional(),
 	}),
 
-	registerPushDevice: DeviceSchema,
+	registerPushDevice: DeviceRegistrationInputSchema,
 
 	unregisterAllPushDevices: z
 		.object({
@@ -226,7 +250,7 @@ export const AblyEndpointInputSchemas = {
 		deviceId: z.string().min(1),
 	}),
 
-	updatePushDevice: DeviceSchema,
+	updatePushDevice: DeviceRegistrationInputSchema,
 } as const;
 
 /* -------------------------------------------------------------------------- */

@@ -58,4 +58,29 @@ describe('Ably schema', () => {
 		).toBe(false);
 	});
 
+	it('requires Ably device registration fields', () => {
+		const valid = {
+			id: 'device-1',
+			platform: 'android' as const,
+			formFactor: 'phone' as const,
+			push: {
+				recipient: {
+					transportType: 'fcm' as const,
+					registrationToken: 'token',
+				},
+			},
+		};
+		expect(AblyEndpointInputSchemas.registerPushDevice.parse(valid)).toEqual(
+			valid,
+		);
+		expect(AblyEndpointInputSchemas.updatePushDevice.parse(valid)).toEqual(
+			valid,
+		);
+		expect(
+			AblyEndpointInputSchemas.registerPushDevice.safeParse({
+				id: 'device-1',
+			}).success,
+		).toBe(false);
+	});
+
 });
