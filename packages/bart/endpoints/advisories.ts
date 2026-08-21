@@ -1,0 +1,101 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeBartRequest } from '../client';
+import type { BartEndpoints } from '../index';
+import { BartEndpointOutputSchemas } from './types';
+
+export const list: BartEndpoints['advisoriesList'] = async (ctx, input) => {
+	const raw = await makeBartRequest<unknown>('bsa.aspx', ctx.key, {
+		query: {
+			cmd: 'bsa',
+			orig: input?.orig,
+			date: input?.date,
+		},
+	});
+
+	const response = BartEndpointOutputSchemas.advisoriesList.parse(raw);
+
+	if (ctx.db.advisories && response.bsa) {
+		const bsaArray = Array.isArray(response.bsa)
+			? response.bsa
+			: [response.bsa];
+		for (const [idx, item] of bsaArray.entries()) {
+			const id = `${item.station || 'SYSTEM'}-${item.posted || response.date || idx}`;
+			const desc =
+				typeof item.description === 'object' && item.description !== null
+					? item.description['#cdata-section']
+					: typeof item.description === 'string'
+						? item.description
+						: undefined;
+			const sms =
+				typeof item.sms_text === 'object' && item.sms_text !== null
+					? item.sms_text['#cdata-section']
+					: typeof item.sms_text === 'string'
+						? item.sms_text
+						: undefined;
+
+			try {
+				await ctx.db.advisories.upsertByEntityId(id, {
+					id,
+					station: item.station,
+					type: item.type,
+					description: desc,
+					sms_text: sms,
+					posted: item.posted,
+					expires: item.expires,
+				});
+			} catch (error) {
+				console.warn('Failed to persist advisory to database:', error);
+			}
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'bart.advisories.list',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const elevators: BartEndpoints['advisoriesElevators'] = async (
+	ctx,
+	input,
+) => {
+	const raw = await makeBartRequest<unknown>('bsa.aspx', ctx.key, {
+		query: {
+			cmd: 'elev',
+			orig: input?.orig,
+			date: input?.date,
+		},
+	});
+
+	const response = BartEndpointOutputSchemas.advisoriesElevators.parse(raw);
+	await logEventFromContext(
+		ctx,
+		'bart.advisories.elevators',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const trainCount: BartEndpoints['advisoriesTrainCount'] = async (
+	ctx,
+	input,
+) => {
+	const raw = await makeBartRequest<unknown>('bsa.aspx', ctx.key, {
+		query: {
+			cmd: 'count',
+		},
+	});
+
+	const response = BartEndpointOutputSchemas.advisoriesTrainCount.parse(raw);
+	await logEventFromContext(
+		ctx,
+		'bart.advisories.trainCount',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
