@@ -15,6 +15,7 @@ export type AllErrors =
 export const BaseProviders = [
 	'abstract',
 	'activecampaign',
+	'anchorbrowser',
 	'activetrail',
 	'addresszen',
 	'affinda',
@@ -37,6 +38,7 @@ export const BaseProviders = [
 	'amplitude',
 	'anthropicadministrator',
 	'apaleo',
+	'api2pdf',
 	'apibible',
 	'apify',
 	'apilabz',
@@ -46,6 +48,7 @@ export const BaseProviders = [
 	'asindataapi',
 	'asyncinterview',
 	'ayrshare',
+	'basecamp',
 	'baselinker',
 	'betterstack',
 	'bigmailer',
@@ -67,6 +70,7 @@ export const BaseProviders = [
 	'cloudinary',
 	'collegefootballdata',
 	'confluence',
+	'contentfulgraphql',
 	'cursor',
 	'databricks',
 	'datadog',
@@ -168,6 +172,7 @@ export const BaseProviders = [
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
 	activecampaign: 'ActiveCampaign',
+	anchorbrowser: 'Anchor Browser',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
 	affinda: 'Affinda',
@@ -190,6 +195,7 @@ export const ProviderDisplayNames = {
 	amplitude: 'Amplitude',
 	anthropicadministrator: 'Anthropic Administrator',
 	apaleo: 'Apaleo',
+	api2pdf: 'API2PDF',
 	apibible: 'API.Bible',
 	apify: 'Apify',
 	apilabz: 'API Labz',
@@ -199,6 +205,7 @@ export const ProviderDisplayNames = {
 	asindataapi: 'ASIN Data API',
 	asyncinterview: 'Async Interview',
 	ayrshare: 'Ayrshare',
+	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
@@ -220,6 +227,7 @@ export const ProviderDisplayNames = {
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
+	contentfulgraphql: 'Contentful GraphQL',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
@@ -328,6 +336,7 @@ export function formatProviderDisplayName(plugin: string): string {
 export type AllProviders =
 	| 'abstract'
 	| 'activecampaign'
+	| 'anchorbrowser'
 	| 'activetrail'
 	| 'addresszen'
 	| 'affinda'
@@ -350,6 +359,7 @@ export type AllProviders =
 	| 'amplitude'
 	| 'anthropicadministrator'
 	| 'apaleo'
+	| 'api2pdf'
 	| 'apibible'
 	| 'apify'
 	| 'apilabz'
@@ -359,6 +369,7 @@ export type AllProviders =
 	| 'asindataapi'
 	| 'asyncinterview'
 	| 'ayrshare'
+	| 'basecamp'
 	| 'baselinker'
 	| 'betterstack'
 	| 'bigmailer'
@@ -380,6 +391,7 @@ export type AllProviders =
 	| 'cloudinary'
 	| 'collegefootballdata'
 	| 'confluence'
+	| 'contentfulgraphql'
 	| 'cursor'
 	| 'databricks'
 	| 'datadog'
