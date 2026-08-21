@@ -23,7 +23,7 @@ export const provideFeedback: GoogleAddressValidationEndpoints['provideValidatio
 
 		const parsed =
 			GoogleAddressValidationEndpointOutputSchemas.provideValidationFeedback.parse(
-				response,
+				response === undefined ? {} : response,
 			);
 
 		await logEventFromContext(
