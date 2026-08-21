@@ -31,7 +31,7 @@ function createContext() {
 		options: {
 			authType: 'api_key' as const,
 		},
-	} as any;
+	} as never;
 }
 
 describe('Autom endpoint behavior', () => {

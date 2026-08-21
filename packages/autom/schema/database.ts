@@ -1,9 +1,2 @@
-import { z } from 'zod';
-
-// TODO: Define your database entities here
-// export const AutomExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type AutomExample = z.infer<typeof AutomExample>;
+// Database entities are not required for the stateless Autom.dev search API.
+export {};

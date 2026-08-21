@@ -1,13 +1,22 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class AutomAPIError extends Error {
+	public readonly status?: number;
+	public readonly retryAfter?: number;
+
 	constructor(
 		message: string,
 		public readonly code?: string,
+		options?: { cause?: Error },
 	) {
-		super(message);
+		super(message, options);
 		this.name = 'AutomAPIError';
+
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.retryAfter = options.cause.retryAfter;
+		}
 	}
 }
 
@@ -49,8 +58,13 @@ export async function makeAutomRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new AutomAPIError(error.message, String(error.status), {
+				cause: error,
+			});
+		}
 		if (error instanceof Error) {
-			throw new AutomAPIError(error.message);
+			throw new AutomAPIError(error.message, undefined, { cause: error });
 		}
 		throw new AutomAPIError('Unknown error');
 	}
