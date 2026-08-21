@@ -43,7 +43,6 @@
     "@types/node": "^24.9.2",
     "bumpp": "^10.3.1",
     "lint-staged": "^17.0.8",
-    "node-gyp": "^13.0.1",
     "simple-git-hooks": "^2.13.1",
     "tinyglobby": "^0.2.15",
     "tsx": "^4.20.6",
