@@ -1,4 +1,8 @@
-import type { ApipieImageEntity, ApipieModelEntity } from '../schema/database';
+import type {
+	ApipieImageEntity,
+	ApipieModelDetailEntity,
+	ApipieModelEntity,
+} from '../schema/database';
 
 /**
  * Minimal structural view of a Corsair entity store. Only the operation the
@@ -85,21 +89,64 @@ export async function cacheModels(
 	}
 }
 
+/** Fields carried by a `GET /v1/models/detailed` entry. */
+type CacheableModelDetail = Omit<
+	ApipieModelDetailEntity,
+	'id' | keyof Record<string, never>
+> & { id?: string | null };
+
+/**
+ * Mirrors one detailed catalogue entry.
+ *
+ * Written to its own table rather than shared with `cacheModel`: the entity
+ * store replaces the stored payload wholesale, so writing this narrower field
+ * set over a plain-list row would erase that row's cost columns.
+ */
+export async function cacheModelDetail(
+	store: EntityStore<ApipieModelDetailEntity> | undefined,
+	model: CacheableModelDetail | undefined | null,
+) {
+	if (!store || !model?.id) return;
+	const id = model.id;
+	await safely(
+		() => store.upsertByEntityId(id, { ...model, id }),
+		`model ${id}`,
+	);
+}
+
+/** Mirrors a page of detailed catalogue entries, one row per model. */
+export async function cacheModelDetails(
+	store: EntityStore<ApipieModelDetailEntity> | undefined,
+	models: readonly (CacheableModelDetail | undefined | null)[] | undefined,
+) {
+	if (!store || !models?.length) return;
+	for (const model of models) {
+		await cacheModelDetail(store, model);
+	}
+}
+
 /**
  * Mirrors one generated image.
  *
- * The API returns no identifier per image, so the row is keyed by the
- * generation timestamp and the image's index within the batch. `created` is
- * optional in the response; when it is absent the entry is skipped rather
- * than filed under a key that would collide across generations.
+ * The API returns no identifier per image, so rows are keyed by a generation
+ * id minted once per request plus the image's index within the batch. The
+ * response timestamp is deliberately not used for this: it has one-second
+ * resolution, so two generations finishing in the same second would collide
+ * and the later one would overwrite the earlier.
  */
 export async function cacheImage(
 	store: EntityStore<ApipieImageEntity> | undefined,
 	image: { url?: string; revised_prompt?: string } | undefined | null,
-	context: { created?: number; index: number; model?: string; prompt?: string },
+	context: {
+		generationId: string;
+		index: number;
+		created?: number;
+		model?: string;
+		prompt?: string;
+	},
 ) {
-	if (!store || !image || context.created === undefined) return;
-	const id = `${context.created}:${context.index}`;
+	if (!store || !image) return;
+	const id = `${context.generationId}:${context.index}`;
 	await safely(
 		() =>
 			store.upsertByEntityId(id, {

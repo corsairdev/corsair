@@ -24,9 +24,6 @@ function testCtx(key: string): ApipieContext {
 	} as ApipieContext;
 }
 
-const TEST_API_KEY = process.env.APIPIE_API_KEY;
-const describeIfApiKey = TEST_API_KEY ? describe : describe.skip;
-
 describe('Apipie endpoint input schemas', () => {
 	it('validates models.list input', () => {
 		expect(ApipieEndpointInputSchemas.modelsList.safeParse({}).success).toBe(
@@ -409,6 +406,58 @@ describe('apipie plugin factory', () => {
 	});
 });
 
+describe('Apipie models list response shapes', () => {
+	it('accepts an empty bare array as a valid empty catalogue', () => {
+		// A filter that matches nothing is a legitimate result, not an error.
+		const parsed = ApipieEndpointOutputSchemas.modelsList.safeParse([]);
+		expect(parsed.success).toBe(true);
+	});
+
+	it('accepts an empty wrapped catalogue', () => {
+		const parsed = ApipieEndpointOutputSchemas.modelsList.safeParse({
+			object: 'list',
+			data: [],
+		});
+		expect(parsed.success).toBe(true);
+	});
+});
+
+describe('Apipie streaming rejection', () => {
+	const mockRequest = makeApipieRequest as jest.MockedFunction<
+		typeof makeApipieRequest
+	>;
+
+	beforeEach(() => {
+		mockRequest.mockClear();
+	});
+
+	it('rejects a forced stream instead of sending it upstream', async () => {
+		// The transport buffers the response and parses it as one JSON object,
+		// so an event stream would come back as unparseable text.
+		await expect(
+			Chat.createCompletion(testCtx('test_key'), {
+				model: 'openai/gpt-4o',
+				messages: [{ role: 'user', content: 'hi' }],
+				stream: true,
+			} as never),
+		).rejects.toThrow(/streaming is not supported/i);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('never puts stream in the request body', async () => {
+		mockRequest.mockResolvedValue({ choices: [] });
+		await Chat.createCompletion(testCtx('test_key'), {
+			model: 'openai/gpt-4o',
+			messages: [{ role: 'user', content: 'hi' }],
+		});
+		const call = mockRequest.mock.calls[0];
+		expect(call).toBeDefined();
+		const body = call?.[2]?.body as Record<string, unknown>;
+		expect(body).toBeDefined();
+		expect('stream' in body).toBe(false);
+	});
+});
+
 describe('Apipie entity caching', () => {
 	const mockRequest = makeApipieRequest as jest.MockedFunction<
 		typeof makeApipieRequest
@@ -417,6 +466,7 @@ describe('Apipie entity caching', () => {
 	/** Context carrying an in-memory stand-in for the entity store. */
 	function ctxWithDb() {
 		const models = new Map<string, unknown>();
+		const modelDetails = new Map<string, unknown>();
 		const images = new Map<string, unknown>();
 		const ctx = {
 			key: 'test_key',
@@ -426,6 +476,11 @@ describe('Apipie entity caching', () => {
 						models.set(id, data);
 					}),
 				},
+				modelDetails: {
+					upsertByEntityId: jest.fn(async (id: string, data: unknown) => {
+						modelDetails.set(id, data);
+					}),
+				},
 				images: {
 					upsertByEntityId: jest.fn(async (id: string, data: unknown) => {
 						images.set(id, data);
@@ -433,7 +488,7 @@ describe('Apipie entity caching', () => {
 				},
 			},
 		} as unknown as ApipieContext;
-		return { ctx, models, images };
+		return { ctx, models, modelDetails, images };
 	}
 
 	beforeEach(() => {
@@ -472,8 +527,8 @@ describe('Apipie entity caching', () => {
 		});
 	});
 
-	it('mirrors detailed models into the same table', async () => {
-		const { ctx, models } = ctxWithDb();
+	it('mirrors detailed models into their own table', async () => {
+		const { ctx, modelDetails } = ctxWithDb();
 		mockRequest.mockResolvedValue({
 			object: 'list',
 			data: [{ id: 'anthropic/claude-3', provider: 'anthropic', type: 'llm' }],
@@ -481,9 +536,36 @@ describe('Apipie entity caching', () => {
 
 		await Models.listDetailed(ctx, {});
 
-		expect(models.get('anthropic/claude-3')).toMatchObject({
+		expect(modelDetails.get('anthropic/claude-3')).toMatchObject({
 			id: 'anthropic/claude-3',
 			provider: 'anthropic',
+		});
+	});
+
+	it('keeps a detailed refresh from erasing cached pricing', async () => {
+		const { ctx, models, modelDetails } = ctxWithDb();
+
+		mockRequest.mockResolvedValue({
+			object: 'list',
+			data: [{ id: 'openai/gpt-4o', avg_cost: '0.005', price_type: 'per_1k' }],
+		});
+		await Models.list(ctx, {});
+
+		// The detailed response carries no cost fields. Because the entity store
+		// replaces the stored payload wholesale, writing it over the same row
+		// would drop them — so it goes to a separate table instead.
+		mockRequest.mockResolvedValue({
+			object: 'list',
+			data: [{ id: 'openai/gpt-4o', max_tokens: 128000 }],
+		});
+		await Models.listDetailed(ctx, {});
+
+		expect(models.get('openai/gpt-4o')).toMatchObject({
+			avg_cost: '0.005',
+			price_type: 'per_1k',
+		});
+		expect(modelDetails.get('openai/gpt-4o')).toMatchObject({
+			max_tokens: 128000,
 		});
 	});
 
@@ -499,7 +581,7 @@ describe('Apipie entity caching', () => {
 		expect(models.size).toBe(0);
 	});
 
-	it('keys generated images by timestamp and batch index', async () => {
+	it('keys generated images uniquely per request and batch index', async () => {
 		const { ctx, images } = ctxWithDb();
 		mockRequest.mockResolvedValue({
 			created: 1700000000,
@@ -512,8 +594,10 @@ describe('Apipie entity caching', () => {
 		await Images.generate(ctx, { model: 'dall-e-3', prompt: 'a cube' });
 
 		expect(images.size).toBe(2);
-		expect(images.get('1700000000:1')).toMatchObject({
-			id: '1700000000:1',
+		const secondKey = [...images.keys()][1];
+		expect(secondKey).toBeDefined();
+		expect(images.get(secondKey ?? '')).toMatchObject({
+			id: secondKey,
 			model: 'dall-e-3',
 			prompt: 'a cube',
 			url: 'https://example.com/b.png',
@@ -522,7 +606,7 @@ describe('Apipie entity caching', () => {
 		});
 	});
 
-	it('does not cache images when the API returns no timestamp', async () => {
+	it('caches images even when the API returns no timestamp', async () => {
 		const { ctx, images } = ctxWithDb();
 		mockRequest.mockResolvedValue({
 			data: [{ url: 'https://example.com/a.png' }],
@@ -530,9 +614,27 @@ describe('Apipie entity caching', () => {
 
 		await Images.generate(ctx, { model: 'dall-e-3', prompt: 'a cube' });
 
-		// Without `created` there is no collision-free key, so filing the row
-		// would overwrite an unrelated generation.
-		expect(images.size).toBe(0);
+		expect(images.size).toBe(1);
+	});
+
+	it('does not let two generations in the same second collide', async () => {
+		const { ctx, images } = ctxWithDb();
+		const payload = {
+			created: 1700000000,
+			data: [{ url: 'https://example.com/a.png' }],
+		};
+
+		mockRequest.mockResolvedValue(payload);
+		await Images.generate(ctx, { model: 'dall-e-3', prompt: 'first' });
+		await Images.generate(ctx, { model: 'dall-e-3', prompt: 'second' });
+
+		// Keyed on the response timestamp alone these would share an id and the
+		// second would overwrite the first.
+		expect(images.size).toBe(2);
+		const prompts = [...images.values()].map(
+			(row) => (row as { prompt?: string }).prompt,
+		);
+		expect(prompts).toEqual(expect.arrayContaining(['first', 'second']));
 	});
 
 	it('never fails the call when the cache write throws', async () => {

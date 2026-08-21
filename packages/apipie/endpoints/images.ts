@@ -1,3 +1,4 @@
+import { randomUUID } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import { makeApipieRequest } from '../client';
 import type { ApipieEndpoints } from '../index';
@@ -26,11 +27,15 @@ export const generate: ApipieEndpoints['imagesGenerate'] = async (
 		},
 	});
 
+	// Minted once per request so images from separate generations can never
+	// share an entity id, even when they complete in the same second.
+	const generationId = randomUUID();
 	await Promise.all(
 		response.data.map((image, index) =>
 			cacheImage(ctx.db?.images, image, {
-				created: response.created,
+				generationId,
 				index,
+				created: response.created,
 				model: input.model,
 				prompt: input.prompt,
 			}),

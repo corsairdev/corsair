@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApipieRequest } from '../client';
+import { ApipieAPIError, makeApipieRequest } from '../client';
 import type { ApipieEndpoints } from '../index';
 import type { ApipieEndpointOutputs } from './types';
 import { ApipieEndpointOutputSchemas } from './types';
@@ -8,6 +8,16 @@ export const createCompletion: ApipieEndpoints['chatCreateCompletion'] = async (
 	ctx,
 	input,
 ) => {
+	// The shared transport buffers the whole response and parses it as one JSON
+	// object, so a server-sent event stream would arrive as unparseable text.
+	// `stream` is not part of this endpoint's input schema; reject it here too,
+	// because endpoint inputs are not validated at the binder.
+	if ((input as { stream?: unknown }).stream) {
+		throw new ApipieAPIError(
+			'Streaming is not supported by chat.createCompletion. Omit `stream` to receive a single completion.',
+		);
+	}
+
 	const response = await makeApipieRequest<
 		ApipieEndpointOutputs['chatCreateCompletion']
 	>(`/v1/chat/completions`, ctx.key, {
@@ -25,7 +35,6 @@ export const createCompletion: ApipieEndpoints['chatCreateCompletion'] = async (
 			frequency_penalty: input.frequencyPenalty,
 			presence_penalty: input.presencePenalty,
 			stop: input.stop,
-			stream: input.stream,
 			n: input.n,
 			memory: input.memory,
 			mem_session: input.memSession,

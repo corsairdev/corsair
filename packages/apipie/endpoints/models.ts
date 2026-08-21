@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeApipieRequest } from '../client';
 import type { ApipieEndpoints } from '../index';
-import { cacheModels } from './persist';
+import { cacheModelDetails, cacheModels } from './persist';
 import type { ApipieEndpointOutputs } from './types';
 import { ApipieEndpointOutputSchemas } from './types';
 
@@ -53,7 +53,7 @@ export const listDetailed: ApipieEndpoints['modelsListDetailed'] = async (
 		},
 	});
 
-	await cacheModels(ctx.db?.models, response?.data ?? []);
+	await cacheModelDetails(ctx.db?.modelDetails, response?.data ?? []);
 
 	await logEventFromContext(
 		ctx,

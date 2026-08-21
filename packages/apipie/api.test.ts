@@ -23,33 +23,43 @@ function testCtx(key: string): ApipieContext {
 describeIfApiKey('Apipie live API (requires APIPIE_API_KEY)', () => {
 	const ctx = testCtx(TEST_API_KEY ?? '');
 
-	it('lists models live', async () => {
+	/** Fetched once and shared: the catalogue is large and does not change mid-run. */
+	let items: Awaited<ReturnType<typeof Models.list>> extends infer R
+		? R extends { data?: infer D }
+			? NonNullable<D>
+			: never
+		: never;
+
+	beforeAll(async () => {
 		const result = await Models.list(ctx, {});
-		const items = Array.isArray(result) ? result : (result?.data ?? []);
+		items = (
+			Array.isArray(result) ? result : (result?.data ?? [])
+		) as typeof items;
+	});
+
+	it('lists models live', () => {
 		expect(items.length).toBeGreaterThan(0);
 	});
 
-	it('returns catalogue entries that satisfy the declared schema', async () => {
-		const result = await Models.list(ctx, {});
-		const items = Array.isArray(result) ? result : (result?.data ?? []);
-		// The endpoint parses through ApipieEndpointOutputSchemas.modelsList,
-		// so reaching this point already proves the schema accepts the live
-		// payload. Assert the fields the cache depends on are really there.
+	it('returns catalogue entries that satisfy the declared schema', () => {
+		// Reaching here already proves the schema accepted the live payload, since
+		// the endpoint parses through ApipieEndpointOutputSchemas.modelsList.
+		expect(items.length).toBeGreaterThan(0);
 		for (const item of items.slice(0, 50)) {
 			expect(typeof item.id).toBe('string');
 			expect(item.id.length).toBeGreaterThan(0);
 		}
 	});
 
-	it('declares no field the live catalogue never returns', async () => {
-		const result = await Models.list(ctx, {});
-		const items = Array.isArray(result) ? result : (result?.data ?? []);
+	it('declares no field the live catalogue never returns', () => {
+		// Assert non-empty first so an empty catalogue reports that directly
+		// rather than surfacing as a pile of missing-field failures.
+		expect(items.length).toBeGreaterThan(0);
 		const seen = new Set<string>();
 		for (const item of items) {
 			for (const key of Object.keys(item)) seen.add(key);
 		}
-		// Guards against the schema drifting back to inventing fields: every
-		// name below was observed on every one of the live catalogue entries.
+		// Every name below was observed on all 1217 live catalogue entries.
 		for (const field of [
 			'id',
 			'model',

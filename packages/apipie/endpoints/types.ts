@@ -45,7 +45,7 @@ const ModelListItemSchema = z
 	.loose();
 
 const ModelsListResponseSchema = z.union([
-	z.array(ModelListItemSchema).min(1),
+	z.array(ModelListItemSchema),
 	z
 		.object({
 			object: z.string().optional(),
@@ -190,7 +190,6 @@ const ChatCreateCompletionInputSchema = z
 		frequencyPenalty: z.number().optional(),
 		presencePenalty: z.number().optional(),
 		stop: z.union([z.string(), z.array(z.string())]).optional(),
-		stream: z.boolean().optional(),
 		n: z.number().optional(),
 		memory: z.number().optional(),
 		memSession: z.string().optional(),
