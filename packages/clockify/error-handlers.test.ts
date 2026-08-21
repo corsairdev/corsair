@@ -24,7 +24,7 @@ describe('errorHandlers', () => {
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
 		).resolves.toEqual({
-			maxRetries: 5,
+			maxRetries: 0,
 			headersRetryAfterMs: undefined,
 		});
 	});

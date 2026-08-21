@@ -13,7 +13,8 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			// bind.ts rethrows the original error after a successful retry.
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
