@@ -1,4 +1,4 @@
-import { handleCorsairError } from '../core/errors/handler';
+import { bindEndpointsRecursively } from '../core/endpoints/bind';
 
 /**
  * Regression cover for the shared endpoint binder's retry path.
@@ -13,116 +13,114 @@ import { handleCorsairError } from '../core/errors/handler';
  * still surfaced the original failure to the caller. For mutations that made
  * the outcome ambiguous: the write had actually landed.
  *
- * `call` is private to `bindEndpoints`, so this reproduces its control flow
- * exactly and asserts the corrected behaviour.
+ * These tests drive the real binder rather than a copy of its control flow, so
+ * they fail if the discarded-result behaviour comes back.
  */
 
-type Attempt = (n: number) => Promise<string>;
+/** Retry immediately: `headersRetryAfterMs` short-circuits the backoff table. */
+const retryHandlers = {
+	RETRYABLE: {
+		match: (error: Error) => error.message === 'Too Many Requests',
+		handler: async () => ({ maxRetries: 3, headersRetryAfterMs: 1 }),
+	},
+	DEFAULT: {
+		match: () => true,
+		handler: async () => ({ maxRetries: 0 }),
+	},
+} as never;
 
-/** The binder's retry loop, with the fix applied. */
-async function callWithRetry(
-	attemptNumber: number,
-	run: Attempt,
-	maxRetries: number,
-	onRetry?: () => void,
-): Promise<string> {
-	try {
-		return await run(attemptNumber);
-	} catch (error) {
-		if (error instanceof Error) {
-			if (attemptNumber < maxRetries) {
-				const newAttempt = attemptNumber + 1;
-				onRetry?.();
-				return await callWithRetry(newAttempt, run, maxRetries, onRetry);
-			}
-		}
-		throw error;
-	}
+/** Binds a single endpoint through the real binder and returns the bound fn. */
+function bind(
+	endpoint: (ctx: unknown, args: unknown) => Promise<unknown>,
+	errorHandlers: unknown = retryHandlers,
+) {
+	const tree: Record<string, unknown> = {};
+	bindEndpointsRecursively({
+		endpoints: { run: endpoint },
+		hooks: undefined,
+		ctx: {},
+		tree,
+		pluginId: 'test',
+		errorHandlers: errorHandlers as never,
+		currentPath: [],
+		keyBuilder: undefined,
+		database: {} as never,
+	});
+	return tree.run as (args?: unknown) => Promise<unknown>;
 }
 
 describe('endpoint binder retry semantics', () => {
 	it('returns the result when a retry succeeds', async () => {
 		let calls = 0;
-		const run: Attempt = async () => {
+		const run = bind(async () => {
 			calls += 1;
 			if (calls === 1) throw new Error('Too Many Requests');
 			return 'succeeded-on-retry';
-		};
+		});
 
-		await expect(callWithRetry(0, run, 3)).resolves.toBe('succeeded-on-retry');
+		await expect(run({})).resolves.toBe('succeeded-on-retry');
 		expect(calls).toBe(2);
 	});
 
 	it('does not surface the original error after a successful retry', async () => {
 		let calls = 0;
-		const run: Attempt = async () => {
+		const run = bind(async () => {
 			calls += 1;
 			if (calls < 3) throw new Error('Too Many Requests');
-			return 'ok';
-		};
+			return 'eventually-ok';
+		});
 
-		// Two failures then success, within the retry budget.
-		await expect(callWithRetry(0, run, 3)).resolves.toBe('ok');
-	});
-
-	it('still throws when every attempt fails', async () => {
-		let calls = 0;
-		const run: Attempt = async () => {
-			calls += 1;
-			throw new Error('Too Many Requests');
-		};
-
-		await expect(callWithRetry(0, run, 2)).rejects.toThrow('Too Many Requests');
-		expect(calls).toBe(3); // initial attempt + 2 retries
-	});
-
-	it('throws immediately when the policy allows no retries', async () => {
-		let calls = 0;
-		const run: Attempt = async () => {
-			calls += 1;
-			throw new Error('Unauthorized');
-		};
-
-		await expect(callWithRetry(0, run, 0)).rejects.toThrow('Unauthorized');
-		expect(calls).toBe(1);
+		await expect(run({})).resolves.toBe('eventually-ok');
+		expect(calls).toBe(3);
 	});
 
 	it('stops retrying as soon as an attempt succeeds', async () => {
 		let calls = 0;
-		let retries = 0;
-		const run: Attempt = async () => {
+		const run = bind(async () => {
 			calls += 1;
 			if (calls === 1) throw new Error('Too Many Requests');
 			return 'ok';
-		};
-
-		await callWithRetry(0, run, 5, () => {
-			retries += 1;
 		});
 
+		await run({});
+		// One failure plus one success — the remaining budget goes unused.
 		expect(calls).toBe(2);
-		expect(retries).toBe(1);
 	});
-});
 
-describe('rate-limit errors resolve to a retrying policy', () => {
-	it('a 429 handler yields maxRetries > 0', async () => {
-		const handlers = {
-			RATE_LIMIT_ERROR: {
-				match: (error: Error) => error.message === 'Too Many Requests',
-				handler: async () => ({ maxRetries: 3 }),
-			},
-			DEFAULT: { match: () => true, handler: async () => ({ maxRetries: 0 }) },
-		};
+	it('still throws when every attempt fails', async () => {
+		let calls = 0;
+		const run = bind(async () => {
+			calls += 1;
+			throw new Error('Too Many Requests');
+		});
 
-		const strategy = await handleCorsairError(
-			new Error('Too Many Requests'),
-			'testplugin',
-			'group.operation',
-			{},
-			handlers,
-		);
+		await expect(run({})).rejects.toThrow('Too Many Requests');
+		// Initial attempt plus the three the policy allows.
+		expect(calls).toBe(4);
+	});
 
-		expect(strategy.maxRetries).toBe(3);
+	it('throws immediately when the policy allows no retries', async () => {
+		let calls = 0;
+		const run = bind(async () => {
+			calls += 1;
+			throw new Error('Unauthorized');
+		});
+
+		await expect(run({})).rejects.toThrow('Unauthorized');
+		expect(calls).toBe(1);
+	});
+
+	it('passes the caller arguments through to the retried attempt', async () => {
+		const seen: unknown[] = [];
+		let calls = 0;
+		const run = bind(async (_ctx, args) => {
+			calls += 1;
+			seen.push(args);
+			if (calls === 1) throw new Error('Too Many Requests');
+			return 'ok';
+		});
+
+		await run({ id: 'abc' });
+		expect(seen).toEqual([{ id: 'abc' }, { id: 'abc' }]);
 	});
 });
