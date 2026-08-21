@@ -1,9 +1,10 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeBartRequest } from '../client';
 import type { BartEndpoints } from '../index';
-import { BartEndpointOutputSchemas } from './types';
+import { BartEndpointInputSchemas, BartEndpointOutputSchemas } from './types';
 
 export const list: BartEndpoints['stationsList'] = async (ctx, input) => {
+	const parsedInput = BartEndpointInputSchemas.stationsList.parse(input);
 	const raw = await makeBartRequest<unknown>('stn.aspx', ctx.key, {
 		query: {
 			cmd: 'stns',
@@ -40,17 +41,18 @@ export const list: BartEndpoints['stationsList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'bart.stations.list',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;
 };
 
 export const info: BartEndpoints['stationsInfo'] = async (ctx, input) => {
+	const parsedInput = BartEndpointInputSchemas.stationsInfo.parse(input);
 	const raw = await makeBartRequest<unknown>('stn.aspx', ctx.key, {
 		query: {
 			cmd: 'stninfo',
-			orig: input.orig,
+			orig: parsedInput.orig,
 		},
 	});
 
@@ -84,18 +86,19 @@ export const info: BartEndpoints['stationsInfo'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'bart.stations.info',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;
 };
 
 export const access: BartEndpoints['stationsAccess'] = async (ctx, input) => {
+	const parsedInput = BartEndpointInputSchemas.stationsAccess.parse(input);
 	const raw = await makeBartRequest<unknown>('stn.aspx', ctx.key, {
 		query: {
 			cmd: 'stnaccess',
-			orig: input.orig,
-			l: input.l,
+			orig: parsedInput.orig,
+			l: parsedInput.l,
 		},
 	});
 
@@ -103,7 +106,7 @@ export const access: BartEndpoints['stationsAccess'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'bart.stations.access',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;

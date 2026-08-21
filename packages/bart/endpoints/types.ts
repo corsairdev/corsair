@@ -86,7 +86,7 @@ export type AdvisoriesTrainCountResponse = z.infer<
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const EtdStationInputSchema = z.object({
-	orig: z.string(),
+	orig: z.string().min(1),
 	plat: z.union([z.string(), z.number()]).optional(),
 	dir: z.string().optional(),
 });
@@ -176,7 +176,7 @@ export const RoutesListResponseSchema = z
 export type RoutesListResponse = z.infer<typeof RoutesListResponseSchema>;
 
 export const RoutesInfoInputSchema = z.object({
-	route: z.union([z.string(), z.number()]),
+	route: z.union([z.string().min(1), z.number()]),
 	sched: z.union([z.string(), z.number()]).optional(),
 	date: z.string().optional(),
 });
@@ -253,7 +253,7 @@ export const StationsListResponseSchema = z
 export type StationsListResponse = z.infer<typeof StationsListResponseSchema>;
 
 export const StationsInfoInputSchema = z.object({
-	orig: z.string(),
+	orig: z.string().min(1),
 });
 export type StationsInfoInput = z.infer<typeof StationsInfoInputSchema>;
 
@@ -314,7 +314,7 @@ export const StationsInfoResponseSchema = z
 export type StationsInfoResponse = z.infer<typeof StationsInfoResponseSchema>;
 
 export const StationsAccessInputSchema = z.object({
-	orig: z.string(),
+	orig: z.string().min(1),
 	l: z.union([z.string(), z.number()]).optional(),
 });
 export type StationsAccessInput = z.infer<typeof StationsAccessInputSchema>;
@@ -361,8 +361,8 @@ export type StationsAccessResponse = z.infer<
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const SchedulesDeparturesInputSchema = z.object({
-	orig: z.string(),
-	dest: z.string(),
+	orig: z.string().min(1),
+	dest: z.string().min(1),
 	time: z.string().optional(),
 	date: z.string().optional(),
 	b: z.union([z.string(), z.number()]).optional(),
@@ -391,6 +391,16 @@ export const TripLegSchema = z
 	.passthrough();
 export type TripLeg = z.infer<typeof TripLegSchema>;
 
+export const FareItemSchema = z
+	.object({
+		'@amount': z.string().optional(),
+		'@class': z.string().optional(),
+		'@name': z.string().optional(),
+		'@type': z.string().optional(),
+	})
+	.passthrough();
+export type FareItem = z.infer<typeof FareItemSchema>;
+
 export const TripItemSchema = z
 	.object({
 		'@origin': z.string().optional(),
@@ -403,10 +413,22 @@ export const TripItemSchema = z
 		'@tripTime': z.string().optional(),
 		'@clipper': z.string().optional(),
 		leg: z.union([z.array(TripLegSchema), TripLegSchema]).optional(),
-		fares: z.record(z.string(), z.unknown()).optional(),
+		fares: z
+			.object({
+				fare: z.union([z.array(FareItemSchema), FareItemSchema]).optional(),
+			})
+			.passthrough()
+			.optional(),
 	})
 	.passthrough();
 export type TripItem = z.infer<typeof TripItemSchema>;
+
+export const ScheduleTripRequestSchema = z
+	.object({
+		trip: z.record(z.string(), z.string()).optional(),
+	})
+	.passthrough();
+export type ScheduleTripRequest = z.infer<typeof ScheduleTripRequestSchema>;
 
 export const SchedulePlanSchema = z
 	.object({
@@ -414,18 +436,30 @@ export const SchedulePlanSchema = z
 		time: z.string().optional(),
 		before: z.string().optional(),
 		after: z.string().optional(),
-		request: z.record(z.string(), z.unknown()).optional(),
+		request: ScheduleTripRequestSchema.optional(),
 		trip: z.union([z.array(TripItemSchema), TripItemSchema]).optional(),
 	})
 	.passthrough();
 export type SchedulePlan = z.infer<typeof SchedulePlanSchema>;
+
+export const ScheduleFilesSchema = z
+	.object({
+		file: z
+			.union([
+				z.array(z.record(z.string(), z.string())),
+				z.record(z.string(), z.string()),
+			])
+			.optional(),
+	})
+	.passthrough();
+export type ScheduleFiles = z.infer<typeof ScheduleFilesSchema>;
 
 export const SchedulesDeparturesResponseSchema = z
 	.object({
 		origin: z.string().optional(),
 		destination: z.string().optional(),
 		schedule: SchedulePlanSchema.optional(),
-		schedule_files: z.record(z.string(), z.unknown()).optional(),
+		schedule_files: ScheduleFilesSchema.optional(),
 	})
 	.passthrough();
 export type SchedulesDeparturesResponse = z.infer<
@@ -433,8 +467,8 @@ export type SchedulesDeparturesResponse = z.infer<
 >;
 
 export const SchedulesArrivalsInputSchema = z.object({
-	orig: z.string(),
-	dest: z.string(),
+	orig: z.string().min(1),
+	dest: z.string().min(1),
 	time: z.string().optional(),
 	date: z.string().optional(),
 	b: z.union([z.string(), z.number()]).optional(),
@@ -450,7 +484,7 @@ export const SchedulesArrivalsResponseSchema = z
 		origin: z.string().optional(),
 		destination: z.string().optional(),
 		schedule: SchedulePlanSchema.optional(),
-		schedule_files: z.record(z.string(), z.unknown()).optional(),
+		schedule_files: ScheduleFilesSchema.optional(),
 	})
 	.passthrough();
 export type SchedulesArrivalsResponse = z.infer<
@@ -458,7 +492,7 @@ export type SchedulesArrivalsResponse = z.infer<
 >;
 
 export const SchedulesRoutesInputSchema = z.object({
-	route: z.union([z.string(), z.number()]),
+	route: z.union([z.string().min(1), z.number()]),
 	time: z.string().optional(),
 	date: z.string().optional(),
 	l: z.union([z.string(), z.number()]).optional(),
@@ -536,22 +570,12 @@ export type SchedulesSpecialResponse = z.infer<
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const FaresCalculateInputSchema = z.object({
-	orig: z.string(),
-	dest: z.string(),
+	orig: z.string().min(1),
+	dest: z.string().min(1),
 	date: z.string().optional(),
 	sched: z.union([z.string(), z.number()]).optional(),
 });
 export type FaresCalculateInput = z.infer<typeof FaresCalculateInputSchema>;
-
-export const FareItemSchema = z
-	.object({
-		'@amount': z.string().optional(),
-		'@class': z.string().optional(),
-		'@name': z.string().optional(),
-		'@type': z.string().optional(),
-	})
-	.passthrough();
-export type FareItem = z.infer<typeof FareItemSchema>;
 
 export const FaresCalculateResponseSchema = z
 	.object({

@@ -1,14 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeBartRequest } from '../client';
 import type { BartEndpoints } from '../index';
-import { BartEndpointOutputSchemas } from './types';
+import { BartEndpointInputSchemas, BartEndpointOutputSchemas } from './types';
 
 export const list: BartEndpoints['advisoriesList'] = async (ctx, input) => {
+	const parsedInput = BartEndpointInputSchemas.advisoriesList.parse(input);
 	const raw = await makeBartRequest<unknown>('bsa.aspx', ctx.key, {
 		query: {
 			cmd: 'bsa',
-			orig: input?.orig,
-			date: input?.date,
+			orig: parsedInput?.orig,
+			date: parsedInput?.date,
 		},
 	});
 
@@ -52,7 +53,7 @@ export const list: BartEndpoints['advisoriesList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'bart.advisories.list',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;
@@ -62,11 +63,12 @@ export const elevators: BartEndpoints['advisoriesElevators'] = async (
 	ctx,
 	input,
 ) => {
+	const parsedInput = BartEndpointInputSchemas.advisoriesElevators.parse(input);
 	const raw = await makeBartRequest<unknown>('bsa.aspx', ctx.key, {
 		query: {
 			cmd: 'elev',
-			orig: input?.orig,
-			date: input?.date,
+			orig: parsedInput?.orig,
+			date: parsedInput?.date,
 		},
 	});
 
@@ -74,7 +76,7 @@ export const elevators: BartEndpoints['advisoriesElevators'] = async (
 	await logEventFromContext(
 		ctx,
 		'bart.advisories.elevators',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;
@@ -84,6 +86,8 @@ export const trainCount: BartEndpoints['advisoriesTrainCount'] = async (
 	ctx,
 	input,
 ) => {
+	const parsedInput =
+		BartEndpointInputSchemas.advisoriesTrainCount.parse(input);
 	const raw = await makeBartRequest<unknown>('bsa.aspx', ctx.key, {
 		query: {
 			cmd: 'count',
@@ -94,7 +98,7 @@ export const trainCount: BartEndpoints['advisoriesTrainCount'] = async (
 	await logEventFromContext(
 		ctx,
 		'bart.advisories.trainCount',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;

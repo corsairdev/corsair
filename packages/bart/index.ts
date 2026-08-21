@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { BART_PUBLIC_API_KEY } from './client';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Advisories,
 	Etd,
@@ -308,11 +308,24 @@ export function bart<const T extends BartPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
-		keyBuilder: async (_ctx: BartKeyBuilderContext, _source) => {
-			if (options.key && options.key.trim().length > 0) {
-				return options.key;
+		keyBuilder: async (ctx: BartKeyBuilderContext, source) => {
+			if (
+				source === 'endpoint' &&
+				options.key &&
+				options.key.trim().length > 0
+			) {
+				return options.key.trim();
 			}
-			return BART_PUBLIC_API_KEY;
+
+			if (source === 'endpoint' && ctx.authType === 'api_key') {
+				const key = await ctx.keys.get_api_key();
+				if (!key || key.trim().length === 0) {
+					throw new AuthMissingError('bart', 'api_key');
+				}
+				return key.trim();
+			}
+
+			throw new AuthMissingError('bart', 'api_key');
 		},
 	} satisfies InternalBartPlugin;
 }
@@ -341,6 +354,7 @@ export type {
 	RoutesInfoResponse,
 	RoutesListInput,
 	RoutesListResponse,
+	ScheduleFiles,
 	SchedulePlan,
 	SchedulesArrivalsInput,
 	SchedulesArrivalsResponse,
@@ -350,6 +364,7 @@ export type {
 	SchedulesRoutesResponse,
 	SchedulesSpecialInput,
 	SchedulesSpecialResponse,
+	ScheduleTripRequest,
 	StationAccessDetail,
 	StationDetail,
 	StationListItem,

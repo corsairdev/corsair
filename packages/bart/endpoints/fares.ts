@@ -1,19 +1,20 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeBartRequest } from '../client';
 import type { BartEndpoints } from '../index';
-import { BartEndpointOutputSchemas } from './types';
+import { BartEndpointInputSchemas, BartEndpointOutputSchemas } from './types';
 
 export const calculate: BartEndpoints['faresCalculate'] = async (
 	ctx,
 	input,
 ) => {
+	const parsedInput = BartEndpointInputSchemas.faresCalculate.parse(input);
 	const raw = await makeBartRequest<unknown>('sched.aspx', ctx.key, {
 		query: {
 			cmd: 'fare',
-			orig: input.orig,
-			dest: input.dest,
-			date: input.date,
-			sched: input.sched,
+			orig: parsedInput.orig,
+			dest: parsedInput.dest,
+			date: parsedInput.date,
+			sched: parsedInput.sched,
 		},
 	});
 
@@ -21,7 +22,7 @@ export const calculate: BartEndpoints['faresCalculate'] = async (
 	await logEventFromContext(
 		ctx,
 		'bart.fares.calculate',
-		{ ...input },
+		{ ...parsedInput },
 		'completed',
 	);
 	return response;

@@ -2,7 +2,6 @@ import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export const BART_API_BASE = 'https://api.bart.gov/api';
-export const BART_PUBLIC_API_KEY = 'MW9S-E7SL-26DU-VV8V';
 
 export class BartAPIError extends Error {
 	public readonly status?: number;
@@ -91,12 +90,13 @@ export async function makeBartRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', query = {}, body, headers: extraHeaders } = options;
 
-	const effectiveKey =
-		apiKey && apiKey.trim().length > 0 ? apiKey : BART_PUBLIC_API_KEY;
+	if (!apiKey || apiKey.trim().length === 0) {
+		throw new BartAPIError('API key is required for BART API requests', 401);
+	}
 
 	const queryWithAuth: Record<string, string | number | boolean | undefined> = {
 		...query,
-		key: effectiveKey,
+		key: apiKey.trim(),
 		json: 'y',
 	};
 

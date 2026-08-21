@@ -1,7 +1,6 @@
 import { ApiError, request } from 'corsair/http';
 import {
 	BART_API_BASE,
-	BART_PUBLIC_API_KEY,
 	BartAPIError,
 	compactQuery,
 	makeBartRequest,
@@ -22,7 +21,21 @@ describe('BART Client', () => {
 		jest.clearAllMocks();
 	});
 
-	it('uses default public API key when no key provided', async () => {
+	it('throws 401 BartAPIError when API key is missing or empty', async () => {
+		await expect(
+			makeBartRequest('bsa.aspx', undefined, { query: { cmd: 'count' } }),
+		).rejects.toThrow('API key is required for BART API requests');
+
+		await expect(
+			makeBartRequest('bsa.aspx', '', { query: { cmd: 'count' } }),
+		).rejects.toThrow('API key is required for BART API requests');
+
+		await expect(
+			makeBartRequest('bsa.aspx', '   ', { query: { cmd: 'count' } }),
+		).rejects.toThrow('API key is required for BART API requests');
+	});
+
+	it('uses explicit API key in request options', async () => {
 		mockRequest.mockResolvedValueOnce({
 			root: {
 				date: '08/21/2026',
@@ -33,7 +46,7 @@ describe('BART Client', () => {
 
 		const res = await makeBartRequest<{ traincount: string }>(
 			'bsa.aspx',
-			undefined,
+			'MY-EXPLICIT-KEY',
 			{
 				query: { cmd: 'count' },
 			},
@@ -46,31 +59,10 @@ describe('BART Client', () => {
 		expect(callConfig?.BASE).toBe(BART_API_BASE);
 		expect(callOptions?.query).toEqual({
 			cmd: 'count',
-			key: BART_PUBLIC_API_KEY,
+			key: 'MY-EXPLICIT-KEY',
 			json: 'y',
 		});
 		expect(res.traincount).toBe('42');
-	});
-
-	it('uses custom API key when provided', async () => {
-		mockRequest.mockResolvedValueOnce({
-			root: {
-				traincount: '50',
-			},
-		});
-
-		const res = await makeBartRequest<{ traincount: string }>(
-			'bsa.aspx',
-			'MY-CUSTOM-KEY',
-			{
-				query: { cmd: 'count' },
-			},
-		);
-
-		expect(mockRequest).toHaveBeenCalledTimes(1);
-		const callOptions = mockRequest.mock.calls[0]?.[1];
-		expect(callOptions?.query?.key).toBe('MY-CUSTOM-KEY');
-		expect(res.traincount).toBe('50');
 	});
 
 	it('unwraps root object from BART response', async () => {
@@ -83,7 +75,7 @@ describe('BART Client', () => {
 
 		const res = await makeBartRequest<{
 			station: Array<{ name: string; abbr: string }>;
-		}>('stn.aspx', undefined, { query: { cmd: 'stns' } });
+		}>('stn.aspx', 'TEST-KEY', { query: { cmd: 'stns' } });
 
 		expect(res.station).toHaveLength(1);
 		expect(res.station?.[0]?.abbr).toBe('12TH');
@@ -101,7 +93,7 @@ describe('BART Client', () => {
 		});
 
 		await expect(
-			makeBartRequest('stn.aspx', undefined, {
+			makeBartRequest('stn.aspx', 'TEST-KEY', {
 				query: { cmd: 'stninfo', orig: 'INVALID' },
 			}),
 		).rejects.toThrow('Invalid origin station specified');
@@ -117,7 +109,7 @@ describe('BART Client', () => {
 		});
 
 		await expect(
-			makeBartRequest('bsa.aspx', undefined, { query: { cmd: 'badcmd' } }),
+			makeBartRequest('bsa.aspx', 'TEST-KEY', { query: { cmd: 'badcmd' } }),
 		).rejects.toThrow('Command not found');
 	});
 
@@ -143,7 +135,9 @@ describe('BART Client', () => {
 		mockRequest.mockRejectedValueOnce(apiError);
 
 		try {
-			await makeBartRequest('bsa.aspx', undefined, { query: { cmd: 'bsa' } });
+			await makeBartRequest('bsa.aspx', 'TEST-KEY', {
+				query: { cmd: 'bsa' },
+			});
 			fail('Expected makeBartRequest to throw');
 		} catch (error) {
 			expect(error).toBeInstanceOf(BartAPIError);

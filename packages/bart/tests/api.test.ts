@@ -1,3 +1,4 @@
+import { ZodError } from 'zod';
 import { makeBartRequest } from '../client';
 import {
 	Advisories,
@@ -44,6 +45,12 @@ describe('BART API Endpoints', () => {
 		mockContext = {
 			key: 'TEST_KEY',
 			authType: 'api_key',
+			$getAccountId: jest.fn().mockResolvedValue('test-account-id'),
+			database: {
+				events: {
+					create: jest.fn().mockResolvedValue(undefined),
+				},
+			},
 			db: {
 				stations: {
 					upsertByEntityId: mockUpsertStation,
@@ -160,6 +167,18 @@ describe('BART API Endpoints', () => {
 			);
 			expect(result.station).toHaveLength(1);
 		});
+
+		it('etd.station rejects invalid inputs before HTTP dispatch', async () => {
+			await expect(Etd.station(mockContext, { orig: '' })).rejects.toThrow(
+				ZodError,
+			);
+
+			await expect(Etd.station(mockContext, {} as any)).rejects.toThrow(
+				ZodError,
+			);
+
+			expect(mockMakeRequest).not.toHaveBeenCalled();
+		});
 	});
 
 	describe('Routes Endpoints', () => {
@@ -221,6 +240,18 @@ describe('BART API Endpoints', () => {
 				expect.anything(),
 			);
 		});
+
+		it('routes.info rejects invalid route parameter before HTTP dispatch', async () => {
+			await expect(Routes.info(mockContext, { route: '' })).rejects.toThrow(
+				ZodError,
+			);
+
+			await expect(Routes.info(mockContext, {} as any)).rejects.toThrow(
+				ZodError,
+			);
+
+			expect(mockMakeRequest).not.toHaveBeenCalled();
+		});
 	});
 
 	describe('Stations Endpoints', () => {
@@ -272,6 +303,14 @@ describe('BART API Endpoints', () => {
 			const result = await Stations.info(mockContext, { orig: '12TH' });
 			expect(result.stations?.station).toBeDefined();
 			expect(mockUpsertStation).toHaveBeenCalledWith('12TH', expect.anything());
+		});
+
+		it('stations.info rejects empty station abbreviation before HTTP dispatch', async () => {
+			await expect(Stations.info(mockContext, { orig: '' })).rejects.toThrow(
+				ZodError,
+			);
+
+			expect(mockMakeRequest).not.toHaveBeenCalled();
 		});
 
 		it('stations.access fetches station access information', async () => {
@@ -331,6 +370,18 @@ describe('BART API Endpoints', () => {
 
 			expect(result.origin).toBe('12TH');
 			expect(result.schedule?.trip).toBeDefined();
+		});
+
+		it('schedules.departures rejects missing dest before HTTP dispatch', async () => {
+			await expect(
+				Schedules.departures(mockContext, { orig: '12TH', dest: '' }),
+			).rejects.toThrow(ZodError);
+
+			await expect(
+				Schedules.departures(mockContext, { orig: '12TH' } as any),
+			).rejects.toThrow(ZodError);
+
+			expect(mockMakeRequest).not.toHaveBeenCalled();
 		});
 
 		it('schedules.arrivals fetches arrival schedule', async () => {
@@ -432,6 +483,18 @@ describe('BART API Endpoints', () => {
 			expect(result.origin).toBe('12TH');
 			expect(result.destination).toBe('EMBR');
 			expect(result.fares?.fare).toHaveLength(2);
+		});
+
+		it('fares.calculate rejects missing origin or destination before HTTP dispatch', async () => {
+			await expect(
+				Fares.calculate(mockContext, { orig: '', dest: 'EMBR' }),
+			).rejects.toThrow(ZodError);
+
+			await expect(
+				Fares.calculate(mockContext, { orig: '12TH', dest: '' }),
+			).rejects.toThrow(ZodError);
+
+			expect(mockMakeRequest).not.toHaveBeenCalled();
 		});
 	});
 });

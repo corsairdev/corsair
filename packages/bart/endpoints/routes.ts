@@ -1,14 +1,15 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeBartRequest } from '../client';
 import type { BartEndpoints } from '../index';
-import { BartEndpointOutputSchemas } from './types';
+import { BartEndpointInputSchemas, BartEndpointOutputSchemas } from './types';
 
 export const list: BartEndpoints['routesList'] = async (ctx, input) => {
+	const parsedInput = BartEndpointInputSchemas.routesList.parse(input);
 	const raw = await makeBartRequest<unknown>('route.aspx', ctx.key, {
 		query: {
 			cmd: 'routes',
-			sched: input?.sched,
-			date: input?.date,
+			sched: parsedInput?.sched,
+			date: parsedInput?.date,
 		},
 	});
 
@@ -36,17 +37,23 @@ export const list: BartEndpoints['routesList'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'bart.routes.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'bart.routes.list',
+		{ ...parsedInput },
+		'completed',
+	);
 	return response;
 };
 
 export const info: BartEndpoints['routesInfo'] = async (ctx, input) => {
+	const parsedInput = BartEndpointInputSchemas.routesInfo.parse(input);
 	const raw = await makeBartRequest<unknown>('route.aspx', ctx.key, {
 		query: {
 			cmd: 'routeinfo',
-			route: input.route,
-			sched: input.sched,
-			date: input.date,
+			route: parsedInput.route,
+			sched: parsedInput.sched,
+			date: parsedInput.date,
 		},
 	});
 
@@ -78,6 +85,11 @@ export const info: BartEndpoints['routesInfo'] = async (ctx, input) => {
 		}
 	}
 
-	await logEventFromContext(ctx, 'bart.routes.info', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'bart.routes.info',
+		{ ...parsedInput },
+		'completed',
+	);
 	return response;
 };
