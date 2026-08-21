@@ -1,0 +1,121 @@
+---
+title: Database
+description: "AmbientWeather local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The AmbientWeather plugin syncs data locally. Use `corsair.ambientweather.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Devices
+
+Path: `ambientweather.db.devices.search`
+
+```ts
+const rows = await corsair.ambientweather.db.devices.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `macAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `location` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateutc` | `number` | equals, gt, gte, lt, lte, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `tz` | `string` | equals, contains, startsWith, endsWith, in |
+| `winddir` | `number` | equals, gt, gte, lt, lte, in |
+| `windspeedmph` | `number` | equals, gt, gte, lt, lte, in |
+| `windgustmph` | `number` | equals, gt, gte, lt, lte, in |
+| `maxdailygust` | `number` | equals, gt, gte, lt, lte, in |
+| `windgustdir` | `number` | equals, gt, gte, lt, lte, in |
+| `winddir_avg2m` | `number` | equals, gt, gte, lt, lte, in |
+| `windspdmph_avg2m` | `number` | equals, gt, gte, lt, lte, in |
+| `winddir_avg10m` | `number` | equals, gt, gte, lt, lte, in |
+| `windspdmph_avg10m` | `number` | equals, gt, gte, lt, lte, in |
+| `tempf` | `number` | equals, gt, gte, lt, lte, in |
+| `humidity` | `number` | equals, gt, gte, lt, lte, in |
+| `baromrelin` | `number` | equals, gt, gte, lt, lte, in |
+| `baromabsin` | `number` | equals, gt, gte, lt, lte, in |
+| `tempinf` | `number` | equals, gt, gte, lt, lte, in |
+| `humidityin` | `number` | equals, gt, gte, lt, lte, in |
+| `hourlyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `dailyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `weeklyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `monthlyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `yearlyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `eventrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `totalrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `uv` | `number` | equals, gt, gte, lt, lte, in |
+| `solarradiation` | `number` | equals, gt, gte, lt, lte, in |
+| `feelsLike` | `number` | equals, gt, gte, lt, lte, in |
+| `dewPoint` | `number` | equals, gt, gte, lt, lte, in |
+| `lastRain` | `string` | equals, contains, startsWith, endsWith, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Readings
+
+Path: `ambientweather.db.readings.search`
+
+```ts
+const rows = await corsair.ambientweather.db.readings.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `macAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `dateutc` | `number` | equals, gt, gte, lt, lte, in |
+| `date` | `string` | equals, contains, startsWith, endsWith, in |
+| `tz` | `string` | equals, contains, startsWith, endsWith, in |
+| `winddir` | `number` | equals, gt, gte, lt, lte, in |
+| `windspeedmph` | `number` | equals, gt, gte, lt, lte, in |
+| `windgustmph` | `number` | equals, gt, gte, lt, lte, in |
+| `maxdailygust` | `number` | equals, gt, gte, lt, lte, in |
+| `windgustdir` | `number` | equals, gt, gte, lt, lte, in |
+| `winddir_avg2m` | `number` | equals, gt, gte, lt, lte, in |
+| `windspdmph_avg2m` | `number` | equals, gt, gte, lt, lte, in |
+| `winddir_avg10m` | `number` | equals, gt, gte, lt, lte, in |
+| `windspdmph_avg10m` | `number` | equals, gt, gte, lt, lte, in |
+| `tempf` | `number` | equals, gt, gte, lt, lte, in |
+| `humidity` | `number` | equals, gt, gte, lt, lte, in |
+| `baromrelin` | `number` | equals, gt, gte, lt, lte, in |
+| `baromabsin` | `number` | equals, gt, gte, lt, lte, in |
+| `tempinf` | `number` | equals, gt, gte, lt, lte, in |
+| `humidityin` | `number` | equals, gt, gte, lt, lte, in |
+| `hourlyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `dailyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `weeklyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `monthlyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `yearlyrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `eventrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `totalrainin` | `number` | equals, gt, gte, lt, lte, in |
+| `uv` | `number` | equals, gt, gte, lt, lte, in |
+| `solarradiation` | `number` | equals, gt, gte, lt, lte, in |
+| `feelsLike` | `number` | equals, gt, gte, lt, lte, in |
+| `dewPoint` | `number` | equals, gt, gte, lt, lte, in |
+| `lastRain` | `string` | equals, contains, startsWith, endsWith, in |
+| `checkedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

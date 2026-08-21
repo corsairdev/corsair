@@ -1,0 +1,167 @@
+---
+title: Database
+description: "Alchemy local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Alchemy plugin syncs data locally. Use `corsair.alchemy.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Alchemy Nft
+
+Path: `alchemy.db.AlchemyNft.search`
+
+```ts
+const rows = await corsair.alchemy.db.AlchemyNft.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `contractAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenId` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenType` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenUri` | `string` | equals, contains, startsWith, endsWith, in |
+| `imageUrl` | `string` | equals, contains, startsWith, endsWith, in |
+| `collectionSlug` | `string` | equals, contains, startsWith, endsWith, in |
+| `ownerAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `balance` | `string` | equals, contains, startsWith, endsWith, in |
+| `isSpam` | `boolean` | equals |
+| `timeLastUpdated` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Alchemy Nft Contract
+
+Path: `alchemy.db.AlchemyNftContract.search`
+
+```ts
+const rows = await corsair.alchemy.db.AlchemyNftContract.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `totalSupply` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenType` | `string` | equals, contains, startsWith, endsWith, in |
+| `contractDeployer` | `string` | equals, contains, startsWith, endsWith, in |
+| `deployedBlockNumber` | `number` | equals, gt, gte, lt, lte, in |
+| `collectionName` | `string` | equals, contains, startsWith, endsWith, in |
+| `collectionSlug` | `string` | equals, contains, startsWith, endsWith, in |
+| `floorPrice` | `number` | equals, gt, gte, lt, lte, in |
+| `isSpam` | `boolean` | equals |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Alchemy Token
+
+Path: `alchemy.db.AlchemyToken.search`
+
+```ts
+const rows = await corsair.alchemy.db.AlchemyToken.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `contractAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `decimals` | `number` | equals, gt, gte, lt, lte, in |
+| `logo` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Alchemy Token Balance
+
+Path: `alchemy.db.AlchemyTokenBalance.search`
+
+```ts
+const rows = await corsair.alchemy.db.AlchemyTokenBalance.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `walletAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenAddress` | `string` | equals, contains, startsWith, endsWith, in |
+| `tokenBalance` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Alchemy Token Price
+
+Path: `alchemy.db.AlchemyTokenPrice.search`
+
+```ts
+const rows = await corsair.alchemy.db.AlchemyTokenPrice.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `symbol` | `string` | equals, contains, startsWith, endsWith, in |
+| `network` | `string` | equals, contains, startsWith, endsWith, in |
+| `address` | `string` | equals, contains, startsWith, endsWith, in |
+| `currency` | `string` | equals, contains, startsWith, endsWith, in |
+| `value` | `string` | equals, contains, startsWith, endsWith, in |
+| `lastUpdatedAt` | `string` | equals, contains, startsWith, endsWith, in |
+| `fetchedAt` | `date` | equals, before, after, between |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
