@@ -32,6 +32,18 @@ const ODataQuerySchema = z.object({
 	$orderby: z.string().optional(),
 	/** Ask the service to include the total row count in the response. */
 	$count: ODataBoolean.optional(),
+	/** Related entities to inline, e.g. `Site`. */
+	$expand: z.string().optional(),
+	/**
+	 * Server-driven paging cursor. The service returns the next cursor inside
+	 * `@odata.nextLink`; pass it back here to continue a large result set.
+	 */
+	$skiptoken: z.string().optional(),
+	/**
+	 * Caps the size of a single response page, in megabytes. A 21RISK extension
+	 * rather than an OData system option, so it carries no `$` prefix.
+	 */
+	maxPageSizeInMb: z.coerce.number().positive().optional(),
 });
 
 export type ODataQuery = z.infer<typeof ODataQuerySchema>;

@@ -66,6 +66,21 @@ describe('TwentyOneRisk OData query schema', () => {
 		expect(schema.parse({ $count: 'true' }).$count).toBe(true);
 	});
 
+	it('accepts the paging and expansion options 21RISK documents', () => {
+		const parsed = schema.safeParse({
+			$expand: 'Site',
+			$skiptoken: 'abc123',
+			maxPageSizeInMb: 4,
+		});
+		expect(parsed.success).toBe(true);
+	});
+
+	it('treats maxPageSizeInMb as an unprefixed 21RISK extension', () => {
+		// It is not an OData system query option, so it carries no `$`.
+		const parsed = schema.parse({ maxPageSizeInMb: '8' });
+		expect(parsed.maxPageSizeInMb).toBe(8);
+	});
+
 	it('coerces numeric paging options', () => {
 		const parsed = schema.parse({ $top: '25', $skip: '5' });
 		expect(parsed.$top).toBe(25);
