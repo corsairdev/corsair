@@ -59,4 +59,28 @@ describe('makeClockifyRequest', () => {
 		await makeClockifyRequest('workspaces', 'test-api-key');
 		expect(captured?.url).toBe('https://api.clockify.me/api/v1/workspaces');
 	});
+	it('does not retry a 429 on POST when retries is false', async () => {
+		let attempts = 0;
+		global.fetch = (async (url: unknown) => {
+			attempts += 1;
+			return {
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				url: String(url),
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => ({ message: 'rate limited' }),
+				text: async () => JSON.stringify({ message: 'rate limited' }),
+			};
+		}) as unknown as typeof global.fetch;
+
+		await expect(
+			makeClockifyRequest('workspaces/w1/time-entries', 'test-api-key', {
+				method: 'POST',
+				body: { start: '2026-08-21T10:00:00Z' },
+				retries: false,
+			}),
+		).rejects.toMatchObject({ name: 'ApiError', status: 429 });
+		expect(attempts).toBe(1);
+	});
 });

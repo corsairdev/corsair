@@ -1,7 +1,21 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 const CLOCKIFY_API_BASE = 'https://api.clockify.me/api/v1';
+
+const NO_RETRY: RateLimitConfig = {
+	enabled: false,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
 
 export function clockifyQuery(
 	query: Record<string, string | number | boolean | undefined>,
@@ -19,9 +33,10 @@ export async function makeClockifyRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		retries?: boolean;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, retries = true } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: CLOCKIFY_API_BASE,
@@ -46,5 +61,9 @@ export async function makeClockifyRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	return await request<T>(config, requestOptions);
+	return await request<T>(
+		config,
+		requestOptions,
+		retries ? undefined : { rateLimitConfig: NO_RETRY },
+	);
 }
