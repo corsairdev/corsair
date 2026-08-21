@@ -157,6 +157,7 @@ export const AblyEndpointInputSchemas = {
 	listChannels: PaginationSchema.extend({
 		prefix: z.string().optional(),
 		by: z.enum(['id', 'value']).optional(),
+		next: z.record(z.string(), z.string()).optional(),
 	}),
 
 	publishMessageToChannel: z.object({
@@ -221,15 +222,18 @@ export const AblyEndpointInputSchemas = {
 		channel: z.string().optional(),
 		deviceId: z.string().optional(),
 		clientId: z.string().optional(),
+		next: z.record(z.string(), z.string()).optional(),
 	}),
 
 	listPushChannels: PaginationSchema.extend({
 		prefix: z.string().optional(),
+		next: z.record(z.string(), z.string()).optional(),
 	}),
 
 	listRegisteredPushDevices: PaginationSchema.extend({
 		deviceId: z.string().optional(),
 		clientId: z.string().optional(),
+		next: z.record(z.string(), z.string()).optional(),
 	}),
 
 	patchPushDeviceRegistration: z.object({
@@ -277,7 +281,10 @@ export const AblyEndpointOutputSchemas = {
 	getChannelPresence: z.array(PresenceMessageSchema),
 	getPresenceHistory: z.array(PresenceMessageSchema),
 	getMessageVersions: z.array(MessageSchema),
-	listChannels: z.array(z.union([z.string(), ChannelDetailsSchema])),
+	listChannels: z.object({
+		items: z.array(z.union([z.string(), ChannelDetailsSchema])),
+		next: z.record(z.string(), z.string()).optional(),
+	}),
 	publishMessageToChannel: EmptyResponseSchema,
 	batchPresence: z.array(z.unknown()),
 	batchPresenceHistory: z.array(z.unknown()),
@@ -298,9 +305,18 @@ export const AblyEndpointOutputSchemas = {
 	deleteChannelSubscription: EmptyResponseSchema,
 	createPushChannelSubscription: EmptyResponseSchema,
 	getPushDevice: DeviceSchema,
-	listPushChannelSubscriptions: z.array(SubscriptionSchema),
-	listPushChannels: z.array(z.string()),
-	listRegisteredPushDevices: z.array(DeviceSchema),
+	listPushChannelSubscriptions: z.object({
+		items: z.array(SubscriptionSchema),
+		next: z.record(z.string(), z.string()).optional(),
+	}),
+	listPushChannels: z.object({
+		items: z.array(z.string()),
+		next: z.record(z.string(), z.string()).optional(),
+	}),
+	listRegisteredPushDevices: z.object({
+		items: z.array(DeviceSchema),
+		next: z.record(z.string(), z.string()).optional(),
+	}),
 	patchPushDeviceRegistration: DeviceSchema,
 	publishPushNotification: EmptyResponseSchema,
 	registerPushDevice: DeviceSchema,

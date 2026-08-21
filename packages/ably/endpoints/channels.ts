@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAblyRequest } from '../client';
+import { makeAblyListRequest, makeAblyRequest } from '../client';
 import type { AblyEndpoints } from '../index';
 import type { AblyEndpointOutputs } from './types';
 
@@ -134,13 +134,15 @@ export const listChannels: AblyEndpoints['listChannels'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeAblyRequest<AblyEndpointOutputs['listChannels']>(
-		'channels',
-		ctx.key,
-		{
-			query: input,
+	const { next, ...query } = input;
+	const result = await makeAblyListRequest<
+		AblyEndpointOutputs['listChannels']['items'][number]
+	>('channels', ctx.key, {
+		query: {
+			...query,
+			...next,
 		},
-	);
+	});
 
 	await logEventFromContext(ctx, 'ably.channels.list', {}, 'completed');
 

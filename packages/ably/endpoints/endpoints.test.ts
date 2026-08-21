@@ -13,10 +13,15 @@ jest.mock('corsair/core', () => {
 
 jest.mock('../client', () => ({
 	makeAblyRequest: jest.fn(),
+	makeAblyListRequest: jest.fn(),
 }));
 
 const mockedRequest = client.makeAblyRequest as jest.MockedFunction<
 	typeof client.makeAblyRequest
+>;
+
+const mockedListRequest = client.makeAblyListRequest as jest.MockedFunction<
+	typeof client.makeAblyListRequest
 >;
 
 const ctx = {
@@ -28,6 +33,7 @@ describe('Ably endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 		mockedRequest.mockResolvedValue({} as never);
+		mockedListRequest.mockResolvedValue({ items: [] });
 	});
 
 	describe('application', () => {
@@ -192,8 +198,30 @@ describe('Ably endpoints', () => {
 
 			await Channels.listChannels(ctx, input);
 
-			expect(mockedRequest).toHaveBeenCalledWith('channels', ctx.key, {
-				query: input,
+			expect(mockedListRequest).toHaveBeenCalledWith('channels', ctx.key, {
+				query: {
+					prefix: 'room',
+					by: 'id',
+					limit: 20,
+				},
+			});
+		});
+
+		it('merges listChannels next query and omits the envelope', async () => {
+			await Channels.listChannels(ctx, {
+				prefix: 'room',
+				next: {
+					limit: '100',
+					by: 'id',
+				},
+			});
+
+			expect(mockedListRequest).toHaveBeenCalledWith('channels', ctx.key, {
+				query: {
+					prefix: 'room',
+					limit: '100',
+					by: 'id',
+				},
 			});
 		});
 
@@ -421,7 +449,7 @@ describe('Ably endpoints', () => {
 
 			await Push.listPushChannelSubscriptions(ctx, input);
 
-			expect(mockedRequest).toHaveBeenCalledWith(
+			expect(mockedListRequest).toHaveBeenCalledWith(
 				'push/channelSubscriptions',
 				ctx.key,
 				{
@@ -438,7 +466,7 @@ describe('Ably endpoints', () => {
 
 			await Push.listPushChannels(ctx, input);
 
-			expect(mockedRequest).toHaveBeenCalledWith('push/channels', ctx.key, {
+			expect(mockedListRequest).toHaveBeenCalledWith('push/channels', ctx.key, {
 				query: input,
 			});
 		});
@@ -452,7 +480,7 @@ describe('Ably endpoints', () => {
 
 			await Push.listRegisteredPushDevices(ctx, input);
 
-			expect(mockedRequest).toHaveBeenCalledWith(
+			expect(mockedListRequest).toHaveBeenCalledWith(
 				'push/deviceRegistrations',
 				ctx.key,
 				{

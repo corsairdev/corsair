@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeAblyRequest } from '../client';
+import { makeAblyListRequest, makeAblyRequest } from '../client';
 import type { AblyEndpoints } from '../index';
 import type { AblyEndpointOutputs } from './types';
 
@@ -74,10 +74,14 @@ export const getPushDevice: AblyEndpoints['getPushDevice'] = async (
 
 export const listPushChannelSubscriptions: AblyEndpoints['listPushChannelSubscriptions'] =
 	async (ctx, input) => {
-		const result = await makeAblyRequest<
-			AblyEndpointOutputs['listPushChannelSubscriptions']
+		const { next, ...query } = input;
+		const result = await makeAblyListRequest<
+			AblyEndpointOutputs['listPushChannelSubscriptions']['items'][number]
 		>('push/channelSubscriptions', ctx.key, {
-			query: input,
+			query: {
+				...query,
+				...next,
+			},
 		});
 
 		await logEventFromContext(
@@ -97,13 +101,15 @@ export const listPushChannels: AblyEndpoints['listPushChannels'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await makeAblyRequest<AblyEndpointOutputs['listPushChannels']>(
-		'push/channels',
-		ctx.key,
-		{
-			query: input,
+	const { next, ...query } = input;
+	const result = await makeAblyListRequest<
+		AblyEndpointOutputs['listPushChannels']['items'][number]
+	>('push/channels', ctx.key, {
+		query: {
+			...query,
+			...next,
 		},
-	);
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -120,10 +126,14 @@ export const listPushChannels: AblyEndpoints['listPushChannels'] = async (
 
 export const listRegisteredPushDevices: AblyEndpoints['listRegisteredPushDevices'] =
 	async (ctx, input) => {
-		const result = await makeAblyRequest<
-			AblyEndpointOutputs['listRegisteredPushDevices']
+		const { next, ...query } = input;
+		const result = await makeAblyListRequest<
+			AblyEndpointOutputs['listRegisteredPushDevices']['items'][number]
 		>('push/deviceRegistrations', ctx.key, {
-			query: input,
+			query: {
+				...query,
+				...next,
+			},
 		});
 
 		await logEventFromContext(

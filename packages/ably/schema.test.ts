@@ -28,13 +28,19 @@ describe('Ably schema', () => {
 				.success,
 		).toBe(false);
 		expect(
-			AblyEndpointOutputSchemas.listChannels.parse(['room-a', 'room-b']),
-		).toEqual(['room-a', 'room-b']);
+			AblyEndpointOutputSchemas.listChannels.parse({
+				items: ['room-a', 'room-b'],
+			}),
+		).toEqual({ items: ['room-a', 'room-b'] });
 		expect(
-			AblyEndpointOutputSchemas.listChannels.parse([
-				{ channelId: 'room-a', status: { isActive: true } },
-			]),
-		).toEqual([{ channelId: 'room-a', status: { isActive: true } }]);
+			AblyEndpointOutputSchemas.listChannels.parse({
+				items: [{ channelId: 'room-a', status: { isActive: true } }],
+				next: { limit: '10', by: 'id' },
+			}),
+		).toEqual({
+			items: [{ channelId: 'room-a', status: { isActive: true } }],
+			next: { limit: '10', by: 'id' },
+		});
 	});
 	it('requires exactly one unregisterAllPushDevices filter', () => {
 		expect(
