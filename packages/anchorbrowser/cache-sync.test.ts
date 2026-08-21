@@ -52,6 +52,7 @@ function createCtx() {
 			r.deletes.push(id);
 			return true;
 		},
+		list: async () => r.upserts.map(([id]) => ({ entity_id: id })),
 	});
 
 	const ctx = {
@@ -130,6 +131,46 @@ describe('AnchorBrowser cache sync', () => {
 		);
 
 		expect(rec.sessions.deletes).toEqual(['sess-9']);
+	});
+
+	it('clears the whole collection on a bulk delete such as endAllSessions', async () => {
+		const { ctx, rec } = createCtx();
+		// Seed the cache, then run DELETE /sessions/all (no path params).
+		await syncAnchorBrowserOperationCache(
+			ctx,
+			{ group: 'sessions', method: 'GET' },
+			{},
+			LIVE_PAYLOADS.sessionList,
+		);
+		expect(rec.sessions.upserts).toHaveLength(1);
+
+		await syncAnchorBrowserOperationCache(
+			ctx,
+			{ group: 'sessions', method: 'DELETE', pathParams: [] },
+			{},
+			{ data: { success: true } },
+		);
+
+		expect(rec.sessions.deletes).toEqual(['sess-1']);
+	});
+
+	it('does not clear the collection when a single delete has an identifier', async () => {
+		const { ctx, rec } = createCtx();
+		await syncAnchorBrowserOperationCache(
+			ctx,
+			{ group: 'sessions', method: 'GET' },
+			{},
+			LIVE_PAYLOADS.sessionList,
+		);
+
+		await syncAnchorBrowserOperationCache(
+			ctx,
+			{ group: 'sessions', method: 'DELETE', pathParams: ['sessionId'] },
+			{ sessionId: 'sess-other' },
+			{ data: { success: true } },
+		);
+
+		expect(rec.sessions.deletes).toEqual(['sess-other']);
 	});
 
 	it('ignores groups that are not cached', async () => {

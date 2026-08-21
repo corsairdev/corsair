@@ -66,6 +66,19 @@ export function resolvePath(
 	route?: Pick<AnchorBrowserRoute, 'pathParams'>,
 ): string {
 	const pathOnly = path.split('?')[0] ?? path;
+	// `pathParams` is positional: entry N fills placeholder N. The upstream API
+	// spells the same identifier differently across groups (`{session_id}` on
+	// browser-session routes, `{sessionId}` on OS-level ones), so the names
+	// cannot be matched literally. Fail loudly if the two ever fall out of
+	// sync rather than silently substituting the wrong segment.
+	if (route?.pathParams) {
+		const placeholders = pathOnly.match(/\{[^}]+\}/g)?.length ?? 0;
+		if (placeholders !== route.pathParams.length) {
+			throw new Error(
+				`[anchorbrowser] route ${pathOnly} declares ${route.pathParams.length} path params but has ${placeholders} placeholders`,
+			);
+		}
+	}
 	let index = 0;
 	return pathOnly.replace(/\{([^}]+)\}/g, (_, placeholder: string) => {
 		const mappedKey = route?.pathParams?.[index];

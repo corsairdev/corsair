@@ -80,7 +80,7 @@ function cacheDeleteEntityId(input: Record<string, unknown>, rule: CacheRule) {
 
 export async function syncAnchorBrowserOperationCache(
 	ctx: AnchorBrowserContext,
-	route: Pick<AnchorBrowserRoute, 'method' | 'group'>,
+	route: Pick<AnchorBrowserRoute, 'method' | 'group' | 'pathParams'>,
 	input: AnchorBrowserEndpointInput,
 	response: unknown,
 ) {
@@ -96,6 +96,8 @@ export async function syncAnchorBrowserOperationCache(
 							data: Record<string, unknown>,
 						) => Promise<unknown>;
 						deleteByEntityId?: (entityId: string) => Promise<boolean>;
+						/** Used to drop every cached row on a collection-level delete. */
+						list?: () => Promise<Array<{ entity_id: string }>>;
 				  }
 				| undefined
 		  >
@@ -108,6 +110,16 @@ export async function syncAnchorBrowserOperationCache(
 			const entityId = cacheDeleteEntityId(input, rule);
 			if (entityId && client.deleteByEntityId) {
 				await client.deleteByEntityId(entityId);
+				return;
+			}
+
+			// Collection-level delete such as `endAllSessions`
+			// (DELETE /sessions/all): there is no identifier to target, so every
+			// cached row for the group is now stale and must be dropped.
+			if (!route.pathParams?.length && client.list && client.deleteByEntityId) {
+				for (const row of await client.list()) {
+					await client.deleteByEntityId(row.entity_id);
+				}
 			}
 			return;
 		}

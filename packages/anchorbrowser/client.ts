@@ -7,10 +7,16 @@ export class AnchorBrowserAPIError extends Error {
 	public readonly statusText?: string;
 	// body is unknown because Anchor Browser error payloads vary by endpoint and are not schema-validated here.
 	public readonly body?: unknown;
+	/** HTTP method of the failed request, so retry policy can tell safe reads from mutations. */
+	public readonly method?: AnchorBrowserMethod;
 
-	constructor(message: string, options?: { cause?: Error }) {
+	constructor(
+		message: string,
+		options?: { cause?: Error; method?: AnchorBrowserMethod },
+	) {
 		super(message, options);
 		this.name = 'AnchorBrowserAPIError';
+		this.method = options?.method;
 		if (options?.cause instanceof ApiError) {
 			this.status = options.cause.status;
 			this.statusText = options.cause.statusText;
@@ -61,12 +67,9 @@ export async function makeAnchorBrowserRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		if (error instanceof ApiError) {
-			throw new AnchorBrowserAPIError(error.message, { cause: error });
-		}
 		if (error instanceof Error) {
-			throw new AnchorBrowserAPIError(error.message, { cause: error });
+			throw new AnchorBrowserAPIError(error.message, { cause: error, method });
 		}
-		throw new AnchorBrowserAPIError('Unknown error');
+		throw new AnchorBrowserAPIError('Unknown error', { method });
 	}
 }

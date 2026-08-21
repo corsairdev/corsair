@@ -93,7 +93,8 @@ testSuite('AnchorBrowser live API', () => {
 		const items = itemsOf(response, 'tasks', 'items');
 		for (const item of items) {
 			expect(() => AnchorBrowserTask.parse(item)).not.toThrow();
-			expect(isRecord(item) && typeof item.id).toBe('string');
+			expect(isRecord(item)).toBe(true);
+			expect(typeof (item as Record<string, unknown>).id).toBe('string');
 		}
 	});
 

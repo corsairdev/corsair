@@ -132,6 +132,18 @@ describe('AnchorBrowser public input naming', () => {
 		]);
 	});
 
+	it('declares exactly one path parameter per placeholder on every route', () => {
+		const mismatched = allRoutes
+			.filter(
+				(route) =>
+					(route.path.match(/\{[^}]+\}/g)?.length ?? 0) !==
+					(route.pathParams?.length ?? 0),
+			)
+			.map((route) => `${route.group}.${route.name}`);
+
+		expect(mismatched).toEqual([]);
+	});
+
 	it('declares every path parameter as a field on the operation input schema', () => {
 		const schemas = AnchorBrowserEndpointInputSchemas as unknown as Record<
 			string,

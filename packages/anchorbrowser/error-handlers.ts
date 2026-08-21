@@ -8,8 +8,21 @@ function getStatus(error: Error): number | undefined {
 	return undefined;
 }
 
+/**
+ * Only GET requests are safe to replay. A 5xx can be returned after the server
+ * already applied a mutation (a session started, a task deployed, a profile
+ * deleted), so retrying a non-GET risks performing it twice. Anchor Browser
+ * documents no idempotency key, so mutations are not retried.
+ */
+function isRetryableMethod(error: Error): boolean {
+	if (!(error instanceof AnchorBrowserAPIError)) return false;
+	return error.method === undefined || error.method === 'GET';
+}
+
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
+		// Safe to retry for any method: a 429 means the request was rejected
+		// before it was applied.
 		match: (error: Error) => getStatus(error) === 429,
 		handler: async () => ({
 			maxRetries: 3,
@@ -39,10 +52,15 @@ export const errorHandlers = {
 			const status = getStatus(error);
 			return status !== undefined && status >= 500;
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async (error: Error) => {
+			if (!isRetryableMethod(error)) {
+				return { maxRetries: 0 };
+			}
+			return {
+				maxRetries: 2,
+				retryStrategy: 'exponential_backoff' as const,
+			};
+		},
 	},
 	DEFAULT: {
 		match: () => true,

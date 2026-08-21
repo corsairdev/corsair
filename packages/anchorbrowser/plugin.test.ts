@@ -1,5 +1,6 @@
 import { request } from 'corsair/http';
-import { makeAnchorBrowserRequest } from './client';
+import { AnchorBrowserAPIError, makeAnchorBrowserRequest } from './client';
+import { errorHandlers } from './error-handlers';
 import { anchorBrowserEndpointSchemas, anchorbrowser } from './index';
 import { AnchorBrowserSchema } from './schema';
 import {
@@ -182,5 +183,46 @@ describe('AnchorBrowser database schema', () => {
 			brand_new_field: 42,
 		});
 		expect(parsed).toHaveProperty('brand_new_field', 42);
+	});
+});
+
+describe('AnchorBrowser error handling', () => {
+	function apiError(status: number, method?: 'GET' | 'POST' | 'DELETE') {
+		const error = new AnchorBrowserAPIError(`status ${status}`, { method });
+		// `status` is derived from the ApiError cause; set it directly here.
+		Object.defineProperty(error, 'status', { value: status });
+		return error;
+	}
+
+	it('retries rate limits regardless of method', async () => {
+		for (const method of ['GET', 'POST', 'DELETE'] as const) {
+			const error = apiError(429, method);
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+			const result = await errorHandlers.RATE_LIMIT_ERROR.handler();
+			expect(result.maxRetries).toBeGreaterThan(0);
+		}
+	});
+
+	it('retries a 5xx on GET', async () => {
+		const error = apiError(500, 'GET');
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+		expect((await errorHandlers.SERVER_ERROR.handler(error)).maxRetries).toBe(
+			2,
+		);
+	});
+
+	it('never replays a 5xx on a mutating request', async () => {
+		for (const method of ['POST', 'DELETE'] as const) {
+			const error = apiError(503, method);
+			expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+			expect((await errorHandlers.SERVER_ERROR.handler(error)).maxRetries).toBe(
+				0,
+			);
+		}
+	});
+
+	it('does not retry auth or not-found errors', async () => {
+		expect((await errorHandlers.AUTH_ERROR.handler()).maxRetries).toBe(0);
+		expect((await errorHandlers.NOT_FOUND_ERROR.handler()).maxRetries).toBe(0);
 	});
 });

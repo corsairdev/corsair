@@ -190,8 +190,8 @@ export type DeployTaskResponse = z.infer<typeof DeployTaskResponseSchema>;
 
 // doubleClickMouse
 const DoubleClickMouseInputSchema = z.object({
-	x: z.number().int().optional(),
-	y: z.number().int().optional(),
+	x: z.number().int(),
+	y: z.number().int(),
 	sessionId: z.string(),
 	body: AnchorBrowserOptionalBodySchema,
 	query: AnchorBrowserQueryParamsSchema,
