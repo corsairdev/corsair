@@ -16,6 +16,10 @@ const PostalAddressSchema = z.object({
 	organization: z.string().optional(),
 });
 
+const PostalAddressInputSchema = PostalAddressSchema.extend({
+	addressLines: z.array(z.string().min(1)).min(1),
+});
+
 const GranularitySchema = z.enum([
 	'GRANULARITY_UNSPECIFIED',
 	'SUB_PREMISE',
@@ -61,10 +65,12 @@ const AddressComponentSchema = z
 // Both fields are optional: proto3 JSON serialization omits fields left at
 // their zero value, so a location exactly on the equator/prime meridian
 // would otherwise fail to parse.
-const LatLngSchema = z.object({
-	latitude: z.number().optional(),
-	longitude: z.number().optional(),
-});
+const LatLngSchema = z
+	.object({
+		latitude: z.number().optional(),
+		longitude: z.number().optional(),
+	})
+	.passthrough();
 
 const AddressResultSchema = z
 	.object({
@@ -132,7 +138,7 @@ const UspsDataSchema = z
 	.passthrough();
 
 const ValidateAddressInputSchema = z.object({
-	address: PostalAddressSchema,
+	address: PostalAddressInputSchema,
 	previousResponseId: z.string().optional(),
 	enableUspsCass: z.boolean().optional(),
 	languageOptions: z
@@ -140,7 +146,10 @@ const ValidateAddressInputSchema = z.object({
 			returnEnglishLatinAddress: z.boolean().optional(),
 		})
 		.optional(),
-	sessionToken: z.string().optional(),
+	sessionToken: z
+		.string()
+		.regex(/^[A-Za-z0-9_-]{1,36}$/)
+		.optional(),
 });
 
 export type ValidateAddressInput = z.infer<typeof ValidateAddressInputSchema>;
@@ -161,6 +170,7 @@ const ValidateAddressResponseSchema = z
 						hasSpellCorrectedComponents: z.boolean().optional(),
 						possibleNextAction: PossibleNextActionSchema.optional(),
 					})
+					.passthrough()
 					.optional(),
 				address: AddressResultSchema.optional(),
 				geocode: z
@@ -171,17 +181,20 @@ const ValidateAddressResponseSchema = z
 								globalCode: z.string().optional(),
 								compoundCode: z.string().optional(),
 							})
+							.passthrough()
 							.optional(),
 						bounds: z
 							.object({
 								low: LatLngSchema.optional(),
 								high: LatLngSchema.optional(),
 							})
+							.passthrough()
 							.optional(),
 						featureSizeMeters: z.number().optional(),
 						placeId: z.string().optional(),
 						placeTypes: z.array(z.string()).optional(),
 					})
+					.passthrough()
 					.optional(),
 				metadata: z
 					.object({
@@ -189,6 +202,7 @@ const ValidateAddressResponseSchema = z
 						poBox: z.boolean().optional(),
 						residential: z.boolean().optional(),
 					})
+					.passthrough()
 					.optional(),
 				uspsData: UspsDataSchema.optional(),
 				englishLatinAddress: AddressResultSchema.optional(),
@@ -204,13 +218,12 @@ export type ValidateAddressResponse = z.infer<
 
 const ProvideValidationFeedbackInputSchema = z.object({
 	conclusion: z.enum([
-		'VALIDATION_CONCLUSION_UNSPECIFIED',
 		'VALIDATED_VERSION_USED',
 		'USER_VERSION_USED',
 		'UNVALIDATED_VERSION_USED',
 		'UNUSED',
 	]),
-	responseId: z.string(),
+	responseId: z.string().min(1),
 });
 
 export type ProvideValidationFeedbackInput = z.infer<
