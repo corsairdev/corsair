@@ -177,6 +177,7 @@ export function constraintsSatisfied(
 	constraints: Record<string, PermissionConstraint>,
 	args: unknown,
 ): boolean {
+	if (constraints === null || typeof constraints !== 'object') return false;
 	const entries = Object.entries(constraints);
 	if (entries.length === 0) return false;
 	return entries.every(([path, constraint]) =>
