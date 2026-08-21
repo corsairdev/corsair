@@ -147,6 +147,21 @@ describe('WhatsApp Webhooks', () => {
 
 			expect(result).toEqual({ valid: true, challenge: '1234567890' });
 		});
+
+		it('should reject when a repeated verify token matches only after the first value', () => {
+			// Parameter-pollution guard: reading anything but index 0 — switching
+			// value() to raw.find()/includes(), say — would let an appended query
+			// param smuggle a valid token past verification. Both entries are the
+			// same length, so this exercises timingSafeEqual, not the length check.
+			const result = verifyWhatsappWebhookChallenge(
+				challengeQuery({
+					'hub.verify_token': ['wrong-token-val', 'my-verify-token'],
+				}),
+				'my-verify-token',
+			);
+
+			expect(result).toEqual({ valid: false, statusCode: 403 });
+		});
 	});
 
 	describe('Message Handler', () => {
