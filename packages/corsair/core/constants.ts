@@ -59,8 +59,8 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canvas',
 	'canva',
+	'canvas',
 	'circleci',
 	'cloudflare',
 	'cloudinary',
@@ -137,6 +137,7 @@ export const BaseProviders = [
 	'spotify',
 	'strava',
 	'stripe',
+	'studiobyai21labs',
 	'supabase',
 	'tally',
 	'tavily',
@@ -211,8 +212,8 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
@@ -289,6 +290,7 @@ export const ProviderDisplayNames = {
 	spotify: 'Spotify',
 	strava: 'Strava',
 	stripe: 'Stripe',
+	studiobyai21labs: 'StudioByAI21Labs',
 	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
@@ -448,6 +450,7 @@ export type AllProviders =
 	| 'spotify'
 	| 'strava'
 	| 'stripe'
+	| 'studiobyai21labs'
 	| 'supabase'
 	| 'tally'
 	| 'tavily'
