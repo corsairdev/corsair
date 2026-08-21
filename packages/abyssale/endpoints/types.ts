@@ -6,11 +6,15 @@ const CreateProjectInputSchema = z.object({
 });
 export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
 
-const CreateProjectResponseSchema = z.object({
-	id: z.string().uuid(),
-	name: z.string(),
-	created_at_ts: z.number(),
-});
+const CreateProjectResponseSchema = z
+	.object({
+		id: z.string().uuid(),
+		name: z.string(),
+		created_at_ts: z.number(),
+		// Undocumented but returned by the API.
+		version: z.string().optional(),
+	})
+	.loose();
 export type CreateProjectResponse = z.infer<typeof CreateProjectResponseSchema>;
 
 // Get Designs
@@ -22,16 +26,29 @@ const GetDesignsInputSchema = z.object({
 });
 export type GetDesignsInput = z.infer<typeof GetDesignsInputSchema>;
 
-const DesignSchema = z.object({
-	id: z.string().uuid(),
-	name: z.string(),
-	type: z.string(),
-	project_id: z.string().uuid(),
-	project_name: z.string(),
-	created_at: z.number().optional(),
-	updated_at: z.number().optional(),
-	preview_url: z.string().optional(),
-});
+/**
+ * A design object from `GET /designs`.
+ *
+ * Fields follow the Abyssale REST reference. `template_id`, `category_id` and
+ * `category_name` are documented as deprecated aliases but are still returned,
+ * so they are modelled rather than silently dropped.
+ */
+const DesignSchema = z
+	.object({
+		id: z.string().uuid(),
+		template_id: z.string().uuid().optional(),
+		name: z.string(),
+		type: z.string(),
+		project_id: z.string().uuid(),
+		project_name: z.string(),
+		category_id: z.string().uuid().optional(),
+		category_name: z.string().optional(),
+		version: z.string().optional(),
+		created_at: z.number().optional(),
+		updated_at: z.number().optional(),
+		preview_url: z.string().optional(),
+	})
+	.loose();
 const GetDesignsResponseSchema = z.array(DesignSchema);
 export type GetDesignsResponse = z.infer<typeof GetDesignsResponseSchema>;
 
@@ -41,12 +58,19 @@ const GetFontsInputSchema = z.object({
 });
 export type GetFontsInput = z.infer<typeof GetFontsInputSchema>;
 
-const FontSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	type: z.enum(['google', 'custom']),
-	available_weights: z.array(z.union([z.number(), z.string()])),
-});
+/**
+ * A font object from `GET /fonts`. The reference types `available_weights` as
+ * integers, but the API also returns italic variants as strings
+ * (e.g. `[400, '400-italic']`), so both are accepted.
+ */
+const FontSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		type: z.enum(['google', 'custom']),
+		available_weights: z.array(z.union([z.number(), z.string()])),
+	})
+	.loose();
 const GetFontsResponseSchema = z.array(FontSchema);
 export type GetFontsResponse = z.infer<typeof GetFontsResponseSchema>;
 
@@ -54,9 +78,13 @@ export type GetFontsResponse = z.infer<typeof GetFontsResponseSchema>;
 const TestAuthInputSchema = z.object({});
 export type TestAuthInput = z.infer<typeof TestAuthInputSchema>;
 
-const TestAuthResponseSchema = z.object({
-	company: z.string(),
-});
+/** `POST /auth` confirms the key is valid and returns the workspace. */
+const TestAuthResponseSchema = z
+	.object({
+		company: z.string(),
+		version: z.string().optional(),
+	})
+	.loose();
 export type TestAuthResponse = z.infer<typeof TestAuthResponseSchema>;
 
 export type AbyssaleEndpointInputs = {

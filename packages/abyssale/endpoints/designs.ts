@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AbyssaleEndpoints } from '..';
 import { makeAbyssaleRequest } from '../client';
+import { cacheEntities } from './shared';
 import type { AbyssaleEndpointOutputs } from './types';
 
 export const getDesigns: AbyssaleEndpoints['getDesigns'] = async (
@@ -16,6 +17,8 @@ export const getDesigns: AbyssaleEndpoints['getDesigns'] = async (
 			type: input.type,
 		},
 	});
+
+	await cacheEntities(ctx, 'designs', response);
 
 	await logEventFromContext(
 		ctx,

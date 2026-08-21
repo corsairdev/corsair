@@ -1,2 +1,0 @@
-// Leftover scaffold file
-export {};

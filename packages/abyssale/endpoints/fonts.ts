@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AbyssaleEndpoints } from '..';
 import { makeAbyssaleRequest } from '../client';
+import { cacheEntities } from './shared';
 import type { AbyssaleEndpointOutputs } from './types';
 
 export const getFonts: AbyssaleEndpoints['getFonts'] = async (ctx, input) => {
@@ -12,6 +13,8 @@ export const getFonts: AbyssaleEndpoints['getFonts'] = async (ctx, input) => {
 			type: input.type,
 		},
 	});
+
+	await cacheEntities(ctx, 'fonts', response);
 
 	await logEventFromContext(
 		ctx,

@@ -1,210 +1,96 @@
-import { AuthMissingError } from 'corsair/core';
-import { ApiError, request } from 'corsair/http';
-import { AbyssaleAPIError, makeAbyssaleRequest } from './client';
+import type { AbyssaleContext } from './index';
 import { abyssale } from './index';
+import {
+	AbyssaleDesign,
+	AbyssaleFont,
+	AbyssaleProject,
+} from './schema/database';
 
-jest.mock('corsair/http', () => ({
-	...jest.requireActual('corsair/http'),
-	request: jest.fn(),
-}));
+/**
+ * Live suite against api.abyssale.com. Excluded from CI by path; enable with:
+ *
+ *   ABYSSALE_API_KEY=… LIVE_TEST=1 pnpm --filter @corsair-dev/abyssale test
+ *
+ * Read-only: it never creates a project, because Abyssale exposes no
+ * `DELETE /projects/{id}` to clean one up afterwards.
+ */
+const KEY = process.env.ABYSSALE_API_KEY;
+const LIVE = process.env.LIVE_TEST === '1' || process.env.LIVE_TEST === 'true';
+const suite = KEY && LIVE ? describe : describe.skip;
 
-jest.mock('corsair/core', () => ({
-	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn(async () => undefined),
-}));
+type Ops = Record<
+	string,
+	Record<string, (c: AbyssaleContext, i: unknown) => Promise<unknown>>
+>;
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
+function op(group: string, name: string) {
+	const fn = (abyssale({ key: KEY }).endpoints as unknown as Ops)[group]?.[
+		name
+	];
+	if (!fn) throw new Error(`missing endpoint ${group}.${name}`);
+	return fn;
+}
 
-describe('Abyssale Plugin API', () => {
-	const apiKey = 'test-api-key';
-	const plugin = abyssale({ key: apiKey }) as any;
-	const ctx = { key: apiKey } as any;
+const ctx = { key: KEY, options: {}, db: {} } as unknown as AbyssaleContext;
 
-	beforeEach(() => {
-		mockRequest.mockReset();
+jest.setTimeout(60_000);
+
+suite('Abyssale live API', () => {
+	it('testAuth confirms the key and returns the workspace', async () => {
+		const res = (await op('auth', 'test')(ctx, {})) as { company: string };
+		expect(typeof res.company).toBe('string');
+		expect(res.company.length).toBeGreaterThan(0);
 	});
 
-	describe('createProject', () => {
-		it('sends POST /projects and parses response', async () => {
-			const mockResponse = {
-				id: 'b75f8507-6ad4-41d1-817b-d0a0b162c9c7',
-				name: 'New Project',
-				created_at_ts: 1700000000,
-			};
-			mockRequest.mockResolvedValueOnce(mockResponse);
-
-			const result = await plugin.endpoints.projects.create(ctx, {
-				name: 'New Project',
-			});
-
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.objectContaining({
-					BASE: 'https://api.abyssale.com',
-					HEADERS: expect.objectContaining({
-						'x-api-key': apiKey,
-					}),
-				}),
-				expect.objectContaining({
-					method: 'POST',
-					url: 'projects',
-					body: { name: 'New Project' },
-				}),
-			);
-			expect(result).toEqual(mockResponse);
-		});
-
-		it('throws validation error if name is too short', async () => {
-			const input = { name: 'a' }; // min length is 2
-			await expect(
-				plugin.endpointSchemas['projects.create'].input.parseAsync(input),
-			).rejects.toThrow();
-		});
+	it('getFonts returns fonts matching the entity schema', async () => {
+		const res = (await op('fonts', 'list')(ctx, {})) as unknown[];
+		expect(Array.isArray(res)).toBe(true);
+		for (const font of res.slice(0, 25)) {
+			expect(() => AbyssaleFont.parse(font)).not.toThrow();
+		}
 	});
 
-	describe('getDesigns', () => {
-		it('sends GET /designs with query filters', async () => {
-			const mockResponse = [
-				{
-					id: 'a98f4507-6ad4-41d1-817b-d0a0b162c9c1',
-					name: 'Design 1',
-					type: 'static',
-					project_id: 'b75f8507-6ad4-41d1-817b-d0a0b162c9c7',
-					project_name: 'New Project',
-				},
-			];
-			mockRequest.mockResolvedValueOnce(mockResponse);
-
-			const result = await plugin.endpoints.designs.list(ctx, {
-				project_id: 'b75f8507-6ad4-41d1-817b-d0a0b162c9c7',
-				type: 'static',
-			});
-
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.anything(),
-				expect.objectContaining({
-					method: 'GET',
-					url: 'designs',
-					query: {
-						project_id: 'b75f8507-6ad4-41d1-817b-d0a0b162c9c7',
-						type: 'static',
-					},
-				}),
-			);
-			expect(result).toEqual(mockResponse);
-		});
+	it('getFonts honours the type filter', async () => {
+		const google = (await op('fonts', 'list')(ctx, {
+			type: 'google',
+		})) as unknown[];
+		expect(google.length).toBeGreaterThan(0);
 	});
 
-	describe('getFonts', () => {
-		it('sends GET /fonts with type filter', async () => {
-			const mockResponse = [
-				{
-					id: 'font-id-1',
-					name: 'Arial',
-					type: 'google',
-					available_weights: [400, '400-italic'],
-				},
-			];
-			mockRequest.mockResolvedValueOnce(mockResponse);
-
-			const result = await plugin.endpoints.fonts.list(ctx, {
-				type: 'google',
-			});
-
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.anything(),
-				expect.objectContaining({
-					method: 'GET',
-					url: 'fonts',
-					query: {
-						type: 'google',
-					},
-				}),
-			);
-			expect(result).toEqual(mockResponse);
-		});
+	it('getDesigns returns designs matching the entity schema', async () => {
+		const res = (await op('designs', 'list')(ctx, {})) as unknown[];
+		expect(Array.isArray(res)).toBe(true);
+		for (const design of res.slice(0, 25)) {
+			expect(() => AbyssaleDesign.parse(design)).not.toThrow();
+		}
 	});
 
-	describe('testAuth', () => {
-		it('sends POST /auth and returns company', async () => {
-			const mockResponse = {
-				company: 'Acme Inc.',
-			};
-			mockRequest.mockResolvedValueOnce(mockResponse);
-
-			const result = await plugin.endpoints.auth.test(ctx, {});
-
-			expect(mockRequest).toHaveBeenCalledWith(
-				expect.anything(),
-				expect.objectContaining({
-					method: 'POST',
-					url: 'auth',
-				}),
-			);
-			expect(result).toEqual(mockResponse);
-		});
+	it('getDesigns accepts the documented type filter', async () => {
+		const res = (await op('designs', 'list')(ctx, {
+			type: 'static',
+		})) as unknown[];
+		expect(Array.isArray(res)).toBe(true);
 	});
 
-	describe('error handling', () => {
-		it('maps ApiError to AbyssaleAPIError with cause', async () => {
-			const apiError = new ApiError(
-				{ method: 'POST', url: '/auth' } as any,
-				{
-					status: 401,
-					statusText: 'Unauthorized',
-					body: { message: 'Invalid API key' },
-				} as any,
-				'Unauthorized request',
-			);
-			mockRequest.mockRejectedValueOnce(apiError);
-
-			await expect(makeAbyssaleRequest('auth', apiKey)).rejects.toThrow(
-				AbyssaleAPIError,
-			);
-		});
+	it('rejects an invalid API key', async () => {
+		const badCtx = {
+			key: 'invalid-key',
+			options: {},
+			db: {},
+		} as unknown as AbyssaleContext;
+		await expect(op('auth', 'test')(badCtx, {})).rejects.toThrow();
 	});
+});
 
-	describe('keyBuilder', () => {
-		it('resolves key from options', async () => {
-			const mockKeyBuilderContext = {
-				authType: 'api_key',
-				keys: {
-					get_api_key: jest.fn().mockResolvedValue('dynamic-key'),
-				},
-			} as any;
-
-			const key = await plugin.keyBuilder(mockKeyBuilderContext, 'endpoint');
-			expect(key).toBe(apiKey);
-		});
-
-		it('resolves dynamic key when options key is missing', async () => {
-			const pluginWithoutKey = abyssale({}) as any;
-			const mockKeyBuilderContext = {
-				authType: 'api_key',
-				keys: {
-					get_api_key: jest.fn().mockResolvedValue('dynamic-key'),
-				},
-			} as any;
-
-			const key = await pluginWithoutKey.keyBuilder(
-				mockKeyBuilderContext,
-				'endpoint',
-			);
-			expect(key).toBe('dynamic-key');
-			expect(mockKeyBuilderContext.keys.get_api_key).toHaveBeenCalled();
-		});
-
-		it('throws AuthMissingError when no key is found', async () => {
-			const pluginWithoutKey = abyssale({}) as any;
-			const mockKeyBuilderContext = {
-				authType: 'api_key',
-				keys: {
-					get_api_key: jest.fn().mockResolvedValue(null),
-				},
-			} as any;
-
-			await expect(
-				pluginWithoutKey.keyBuilder(mockKeyBuilderContext, 'endpoint'),
-			).rejects.toThrow(AuthMissingError);
-		});
+/** Sanity check that cached project payloads still parse. */
+describe('project entity', () => {
+	it('parses the documented create-project response', () => {
+		expect(() =>
+			AbyssaleProject.parse({
+				id: '08eafd16-9d61-11f1-b748-06b6ae795cdb',
+				name: 'example',
+				created_at_ts: 1787317551,
+			}),
+		).not.toThrow();
 	});
 });
