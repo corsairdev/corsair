@@ -63,8 +63,11 @@ describe('Abyssale database schema', () => {
 	});
 
 	it('accepts newer fields without rejecting the response', () => {
-		expect(() =>
-			AbyssaleProject.parse({ id: 'p', name: 'n', brand_new_field: 1 }),
-		).not.toThrow();
+		const parsed = AbyssaleProject.parse({
+			id: 'p',
+			name: 'n',
+			brand_new_field: 1,
+		});
+		expect(parsed.brand_new_field).toBe(1);
 	});
 });
