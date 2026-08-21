@@ -364,6 +364,24 @@ describe('Ably endpoints', () => {
 			);
 		});
 
+		it('creates a push channel subscription', async () => {
+			const input = {
+				channel: 'news',
+				deviceId: 'device-1',
+			};
+
+			await Push.createPushChannelSubscription(ctx, input);
+
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'push/channelSubscriptions',
+				ctx.key,
+				{
+					method: 'POST',
+					body: input,
+				},
+			);
+		});
+
 		it('deletes a push channel subscription using query parameters', async () => {
 			const input = {
 				channel: 'news',

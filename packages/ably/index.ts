@@ -80,6 +80,7 @@ export type AblyEndpoints = {
 
 	publishPushNotificationsBatch: AblyEndpoint<'publishPushNotificationsBatch'>;
 	deleteChannelSubscription: AblyEndpoint<'deleteChannelSubscription'>;
+	createPushChannelSubscription: AblyEndpoint<'createPushChannelSubscription'>;
 	getPushDevice: AblyEndpoint<'getPushDevice'>;
 	listPushChannelSubscriptions: AblyEndpoint<'listPushChannelSubscriptions'>;
 	listPushChannels: AblyEndpoint<'listPushChannels'>;
@@ -127,6 +128,7 @@ const ablyEndpointsNested = {
 	push: {
 		publishPushNotificationsBatch: Push.publishPushNotificationsBatch,
 		deleteChannelSubscription: Push.deleteChannelSubscription,
+		createPushChannelSubscription: Push.createPushChannelSubscription,
 		getPushDevice: Push.getPushDevice,
 		listPushChannelSubscriptions: Push.listPushChannelSubscriptions,
 		listPushChannels: Push.listPushChannels,
@@ -208,6 +210,10 @@ export const ablyEndpointSchemas = {
 	'push.deleteChannelSubscription': {
 		input: AblyEndpointInputSchemas.deleteChannelSubscription,
 		output: AblyEndpointOutputSchemas.deleteChannelSubscription,
+	},
+	'push.createPushChannelSubscription': {
+		input: AblyEndpointInputSchemas.createPushChannelSubscription,
+		output: AblyEndpointOutputSchemas.createPushChannelSubscription,
 	},
 	'push.getPushDevice': {
 		input: AblyEndpointInputSchemas.getPushDevice,
@@ -321,6 +327,10 @@ const ablyEndpointMeta = {
 	'push.deleteChannelSubscription': {
 		riskLevel: 'destructive',
 		description: 'Delete matching push channel subscriptions.',
+	},
+	'push.createPushChannelSubscription': {
+		riskLevel: 'write',
+		description: 'Subscribe a device or client to a push channel.',
 	},
 	'push.getPushDevice': {
 		riskLevel: 'read',

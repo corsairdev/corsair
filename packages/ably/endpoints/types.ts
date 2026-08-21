@@ -200,6 +200,19 @@ export const AblyEndpointInputSchemas = {
 		clientId: z.string().optional(),
 	}),
 
+	createPushChannelSubscription: z
+		.object({
+			channel: z.string().min(1),
+			deviceId: z.string().min(1).optional(),
+			clientId: z.string().min(1).optional(),
+		})
+		.refine(
+			(value) =>
+				Number(value.deviceId !== undefined) +
+					Number(value.clientId !== undefined) ===
+				1,
+		),
+
 	getPushDevice: z.object({
 		deviceId: z.string().min(1),
 	}),
@@ -283,6 +296,7 @@ export const AblyEndpointOutputSchemas = {
 
 	publishPushNotificationsBatch: z.array(z.unknown()),
 	deleteChannelSubscription: EmptyResponseSchema,
+	createPushChannelSubscription: EmptyResponseSchema,
 	getPushDevice: DeviceSchema,
 	listPushChannelSubscriptions: z.array(SubscriptionSchema),
 	listPushChannels: z.array(z.string()),

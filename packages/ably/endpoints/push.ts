@@ -38,6 +38,26 @@ export const deleteChannelSubscription: AblyEndpoints['deleteChannelSubscription
 		return result;
 	};
 
+
+export const createPushChannelSubscription: AblyEndpoints['createPushChannelSubscription'] =
+	async (ctx, input) => {
+		const result = await makeAblyRequest<
+			AblyEndpointOutputs['createPushChannelSubscription']
+		>('push/channelSubscriptions', ctx.key, {
+			method: 'POST',
+			body: input,
+		});
+
+		await logEventFromContext(
+			ctx,
+			'ably.push.createChannelSubscription',
+			{ channel: input.channel },
+			'completed',
+		);
+
+		return result;
+	};
+
 export const getPushDevice: AblyEndpoints['getPushDevice'] = async (
 	ctx,
 	input,

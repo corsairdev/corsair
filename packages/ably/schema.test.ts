@@ -83,4 +83,25 @@ describe('Ably schema', () => {
 		).toBe(false);
 	});
 
+	it('requires channel plus one createPushChannelSubscription target', () => {
+		expect(
+			AblyEndpointInputSchemas.createPushChannelSubscription.parse({
+				channel: 'news',
+				deviceId: 'device-1',
+			}),
+		).toEqual({ channel: 'news', deviceId: 'device-1' });
+		expect(
+			AblyEndpointInputSchemas.createPushChannelSubscription.safeParse({
+				channel: 'news',
+			}).success,
+		).toBe(false);
+		expect(
+			AblyEndpointInputSchemas.createPushChannelSubscription.safeParse({
+				channel: 'news',
+				deviceId: 'device-1',
+				clientId: 'client-1',
+			}).success,
+		).toBe(false);
+	});
+
 });
