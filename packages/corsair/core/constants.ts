@@ -14,6 +14,7 @@ export type AllErrors =
 
 export const BaseProviders = [
 	'abstract',
+	'accrediblecertificates',
 	'activecampaign',
 	'activetrail',
 	'addresszen',
@@ -59,8 +60,8 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canvas',
 	'canva',
+	'canvas',
 	'circleci',
 	'cloudflare',
 	'cloudinary',
@@ -166,6 +167,7 @@ export const BaseProviders = [
 
 export const ProviderDisplayNames = {
 	abstract: 'Abstract',
+	accrediblecertificates: 'AccredibleCertificates',
 	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
@@ -211,8 +213,8 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	circleci: 'CircleCI',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
@@ -325,6 +327,7 @@ export function formatProviderDisplayName(plugin: string): string {
 
 export type AllProviders =
 	| 'abstract'
+	| 'accrediblecertificates'
 	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
