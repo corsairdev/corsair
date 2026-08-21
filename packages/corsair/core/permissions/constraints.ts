@@ -14,6 +14,24 @@ import type { PermissionConstraint, PermissionPolicy } from '../plugins';
 // ─────────────────────────────────────────────────────────────────────────────
 
 /**
+ * True for any non-null value, narrowing it to a string-keyed record view.
+ *
+ * Unknown is justified here rather than a concrete type: these functions sit on
+ * the untrusted-config boundary where values arrive from JSON.parse output or
+ * unchecked JavaScript, so the static annotation cannot be trusted. The
+ * predicate itself is sound — every non-null object supports string-keyed
+ * access yielding unknown; indexing may yield undefined, which unknown admits.
+ */
+function isRecord(v: unknown): v is Record<string, unknown> {
+	return typeof v === 'object' && v !== null;
+}
+
+/** True when the value is an array, narrowed so elements read as unknown. */
+function isUnknownArray(v: unknown): v is readonly unknown[] {
+	return Array.isArray(v);
+}
+
+/**
  * Reads a dot-notation path out of an endpoint's argument object.
  *
  * Only own properties are traversed: an inherited member such as `toString`
@@ -24,11 +42,11 @@ import type { PermissionConstraint, PermissionPolicy } from '../plugins';
  * field fails closed rather than matching by accident.
  */
 export function resolveArgPath(args: unknown, path: string): unknown {
-	let current = args;
+	let current: unknown = args;
 	for (const segment of path.split('.')) {
-		if (current === null || typeof current !== 'object') return undefined;
+		if (!isRecord(current)) return undefined;
 		if (!Object.hasOwn(current, segment)) return undefined;
-		current = (current as Record<string, unknown>)[segment];
+		current = current[segment];
 	}
 	return current;
 }
@@ -42,18 +60,19 @@ export function resolveArgPath(args: unknown, path: string): unknown {
  * denylist" — and it throws outright on a circular argument.
  */
 function sameValue(a: unknown, b: unknown): boolean {
-	return deepEqual(a, b, new Set(), new Map());
+	return deepEqual(a, b, new Set(), new Map(), new Map());
 }
 
 /**
- * Returns true only for plain objects (including null-prototype objects).
+ * Returns true only for plain objects (including null-prototype objects),
+ * narrowing the value to a record view for enumerable-key comparison.
  * Exotic built-ins (RegExp, Map, Set, Promise, Error) and class instances
  * have type-specific semantics that never match their enumerable own keys,
  * so comparing them structurally would equate distinct instances.
  */
-function isPlainObject(v: unknown): boolean {
-	if (typeof v !== 'object' || v === null) return false;
-	const proto = Object.getPrototypeOf(v);
+function isPlainObject(v: unknown): v is Record<string, unknown> {
+	if (!isRecord(v)) return false;
+	const proto: unknown = Object.getPrototypeOf(v);
 	return proto === null || proto === Object.prototype;
 }
 
@@ -75,25 +94,26 @@ function objectId(v: object): number {
 	return id;
 }
 
-/** Combined key for an (a, b) pair being compared. */
-function pairKey(a: unknown, b: unknown): string {
-	return `${objectId(a as object)}:${objectId(b as object)}`;
+/** Combined key for an (a, b) pair being compared. Both are objects here. */
+function pairKey(a: object, b: object): string {
+	return `${objectId(a)}:${objectId(b)}`;
 }
 
 /**
  * Set tracks each (a, b) pair currently being compared. When the same pair
- * recurs the comparison is cyclic; a second table tracks which right-hand
- * object each left-hand object is currently paired with. On revisit the
- * pair guard returns true only when the right-hand partner has not changed
- * — if the same right-side node was paired with a different left-side node
- * in the current chain, the two graphs have different topology and are not
- * structurally equal.
+ * recurs the comparison is cyclic. Two tables track the pairing in both
+ * directions: which left-hand object each right-hand object is paired with,
+ * and vice versa. On revisit the pair guard returns true only when the
+ * pairing is consistent in both directions — if either side's partner has
+ * changed within the current chain, the two graphs have different cycle
+ * topology and are not structurally equal.
  */
 function deepEqual(
 	a: unknown,
 	b: unknown,
 	visited: Set<string>,
 	rightPartner: Map<unknown, unknown>,
+	leftPartner: Map<unknown, unknown>,
 ): boolean {
 	if (Object.is(a, b)) return true;
 	if (a === null || b === null) return false;
@@ -107,27 +127,28 @@ function deepEqual(
 		);
 	}
 
-	const isArray = Array.isArray(a);
-	if (isArray !== Array.isArray(b)) return false;
+	// An array and a non-array are never the same value.
+	if (isUnknownArray(a) !== isUnknownArray(b)) return false;
 
 	const key = pairKey(a, b);
 	if (visited.has(key)) {
-		// Cyclic revisit. Check that the right-hand object has not been
-		// paired with a *different* left-hand object in this chain —
-		// if it has, the graphs have non-isomorphic cycle topology.
-		return rightPartner.get(b) === a;
+		// Cyclic revisit. The pairing must be consistent in *both*
+		// directions: if either this left-hand object or this right-hand
+		// object has been paired with a *different* counterpart in the
+		// current chain, the graphs have non-isomorphic cycle topology.
+		return rightPartner.get(b) === a && leftPartner.get(a) === b;
 	}
 	visited.add(key);
-	const prevPartner = rightPartner.get(b);
+	const prevRight = rightPartner.get(b);
+	const prevLeft = leftPartner.get(a);
 	rightPartner.set(b, a);
+	leftPartner.set(a, b);
 	try {
-		if (isArray) {
-			const leftArr = a as unknown[];
-			const rightArr = b as unknown[];
+		if (isUnknownArray(a) && isUnknownArray(b)) {
 			return (
-				leftArr.length === rightArr.length &&
-				leftArr.every((v, i) =>
-					deepEqual(v, rightArr[i], visited, rightPartner),
+				a.length === b.length &&
+				a.every((v, i) =>
+					deepEqual(v, b[i], visited, rightPartner, leftPartner),
 				)
 			);
 		}
@@ -137,24 +158,27 @@ function deepEqual(
 		// representation through enumerable own keys, so Object.is returning
 		// false means they are definitely not equal.
 		if (!isPlainObject(a) || !isPlainObject(b)) return false;
-		const left = a as Record<string, unknown>;
-		const right = b as Record<string, unknown>;
-		const keys = Object.keys(left);
-		if (keys.length !== Object.keys(right).length) return false;
+		const keys = Object.keys(a);
+		if (keys.length !== Object.keys(b).length) return false;
 		return keys.every(
 			(k) =>
-				Object.hasOwn(right, k) &&
-				deepEqual(left[k], right[k], visited, rightPartner),
+				Object.hasOwn(b, k) &&
+				deepEqual(a[k], b[k], visited, rightPartner, leftPartner),
 		);
 	} finally {
 		// Restore to the state before this call so that a value
 		// legitimately repeated in two branches is compared each
 		// time rather than short-circuiting.
 		visited.delete(key);
-		if (prevPartner === undefined) {
+		if (prevRight === undefined) {
 			rightPartner.delete(b);
 		} else {
-			rightPartner.set(b, prevPartner);
+			rightPartner.set(b, prevRight);
+		}
+		if (prevLeft === undefined) {
+			leftPartner.delete(a);
+		} else {
+			leftPartner.set(a, prevLeft);
 		}
 	}
 }
@@ -174,32 +198,38 @@ type Operator = (typeof OPERATORS)[number];
  * The misspelling is the case that matters. `{ match: '.*', notin: [...] }`
  * would otherwise enforce only `match`, silently discarding the denylist the
  * developer meant to apply and allowing exactly what they tried to block.
+ *
+ * The constraint arrives as unknown because runtime config can violate the
+ * compiled PermissionConstraint shape (JSON.parse output, hand-written JS);
+ * validation happens here rather than trusting the annotation.
  */
 function soleOperator(
-	constraint: PermissionConstraint,
+	constraint: unknown,
 ): { op: Operator; operand: unknown } | null {
-	if (constraint === null || typeof constraint !== 'object') return null;
+	if (!isRecord(constraint)) return null;
 	// ownKeys rather than hasOwn per operator, so an unrecognized key is seen
 	// rather than skipped over. Symbol keys are never operators.
 	const keys = Reflect.ownKeys(constraint);
 	const [key] = keys;
 	if (keys.length !== 1 || typeof key !== 'string') return null;
-	if (!OPERATORS.includes(key as Operator)) return null;
-	const op = key as Operator;
-	return { op, operand: (constraint as Record<string, unknown>)[op] };
+	const op = OPERATORS.find((candidate) => candidate === key);
+	if (op === undefined) return null;
+	return { op, operand: constraint[key] };
 }
 
 /**
  * Evaluates one constraint against one resolved argument value.
  *
- * Everything unusable returns false — an absent argument, a malformed or
- * ambiguous constraint, an operand of the wrong type. An unenforceable rule must
- * never read as satisfied, because a satisfied constraint applies the
- * (typically looser) configured policy.
+ * The constraint is accepted as unknown for the same reason soleOperator
+ * validates at runtime: this is the boundary for config that may have bypassed
+ * compile-time types. Everything unusable returns false — an absent argument,
+ * a malformed or ambiguous constraint, an operand of the wrong type. An
+ * unenforceable rule must never read as satisfied, because a satisfied
+ * constraint applies the (typically looser) configured policy.
  */
 export function matchesConstraint(
 	value: unknown,
-	constraint: PermissionConstraint,
+	constraint: unknown,
 ): boolean {
 	// An unresolved path and an explicitly-undefined argument are
 	// indistinguishable here, and neither should grant access.
@@ -224,21 +254,23 @@ export function matchesConstraint(
 	// A non-array operand would throw on .some(); reject it as malformed so a
 	// config mistake cannot surface as an exception mid-call. `notIn` fails
 	// closed here too — an unusable denylist must not read as "not denied".
-	if (!Array.isArray(operand)) return false;
+	if (!isUnknownArray(operand)) return false;
 	if (op === 'in') return operand.some((c) => sameValue(value, c));
 	return !operand.some((c) => sameValue(value, c));
 }
 
 /**
- * True only when every constraint holds. An empty constraint map is treated as
+ * True only when every constraint holds. The constraint map is accepted as
+ * unknown because it reaches this boundary from parsed config; anything that
+ * is not a record fails closed. An empty constraint map is treated as
  * unsatisfied: it is almost certainly a config mistake, and reading it as
  * "matches everything" would silently apply the constrained policy to every call.
  */
 export function constraintsSatisfied(
-	constraints: Record<string, PermissionConstraint>,
+	constraints: unknown,
 	args: unknown,
 ): boolean {
-	if (constraints === null || typeof constraints !== 'object') return false;
+	if (!isRecord(constraints)) return false;
 	const entries = Object.entries(constraints);
 	if (entries.length === 0) return false;
 	return entries.every(([path, constraint]) =>
@@ -246,7 +278,12 @@ export function constraintsSatisfied(
 	);
 }
 
-/** Narrows a possibly-constrained override to a concrete policy, or undefined. */
+/** Narrows a possibly-constrained override to a concrete policy, or undefined.
+ *
+ * Accepts null as well as undefined: overrides reach here from parsed config,
+ * where a JSON `null` is possible even though the TypeScript config types make
+ * it unlikely. Null fails closed to undefined, same as a missing override.
+ */
 export function resolveOverridePolicy(
 	override:
 		| PermissionPolicy
@@ -255,6 +292,7 @@ export function resolveOverridePolicy(
 				constraints: Record<string, PermissionConstraint>;
 				otherwise?: PermissionPolicy;
 		  }
+		| null
 		| undefined,
 	args: unknown,
 ): PermissionPolicy | undefined {

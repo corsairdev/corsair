@@ -1,4 +1,4 @@
-import type { PermissionOverride, PermissionPolicy } from '../core';
+import type { PermissionOverride } from '../core';
 import {
 	constraintsSatisfied,
 	enforcePermission,
@@ -8,18 +8,6 @@ import {
 	resolveOverridePolicy,
 } from '../core/permissions';
 
-/**
- * Wrapper that accepts null so runtime edge cases from unsafe JS/JSON config
- * can be tested without a type assertion. resolveOverridePolicy's parameter
- * type omits null because TypeScript configs are statically checked, but
- * runtime values from external config can be null.
- */
-function resolveOverrideNullable(
-	value: PermissionOverride | null | undefined,
-	args: unknown,
-): PermissionPolicy | undefined {
-	return resolveOverridePolicy(value, args);
-}
 describe('resolveArgPath', () => {
 	it('reads top-level and nested paths', () => {
 		const args = { channel: '#general', message: { to: 'a@corsair.dev' } };
@@ -137,7 +125,7 @@ describe('matchesConstraint', () => {
 
 	it('rejects an unrecognized constraint shape', () => {
 		// An unenforceable rule must never read as satisfied.
-		expect(matchesConstraint('anything', { nope: true } as never)).toBe(false);
+		expect(matchesConstraint('anything', { nope: true })).toBe(false);
 	});
 });
 
@@ -231,41 +219,51 @@ describe('matchesConstraint — fails closed on unusable rules', () => {
 
 	it('rejects a valid operator accompanied by an unknown key', () => {
 		// Inert-looking, but not inert: a misspelled operator is silently dropped,
-		// so the developer's intended condition never gates the call.
+		// so the developer's intended condition never gates the call. The
+		// malformed shapes below cannot be expressed with PermissionConstraint's
+		// union — that is the point: they come from JSON/JS config that bypassed
+		// the types, which is why matchesConstraint validates at runtime.
 		expect(
 			matchesConstraint('abc', {
 				match: '^abc$',
 				caseInsensitive: true,
-			} as never),
+			}),
 		).toBe(false);
 		expect(
 			matchesConstraint('bad@evil.com', {
 				match: '.*',
 				notin: ['bad@evil.com'],
-			} as never),
+			}),
 		).toBe(false);
 	});
 
 	it('rejects a symbol-keyed constraint', () => {
-		expect(matchesConstraint('abc', { [Symbol('match')]: '.*' } as never)).toBe(
-			false,
-		);
+		expect(matchesConstraint('abc', { [Symbol('match')]: '.*' })).toBe(false);
 	});
 
 	it('rejects a constraint carrying more than one operator', () => {
 		// Honouring whichever we checked first would leave the developer believing
 		// both were enforced.
-		expect(
-			matchesConstraint('abc', { match: '^abc$', equals: 'ZZZ' } as never),
-		).toBe(false);
+		expect(matchesConstraint('abc', { match: '^abc$', equals: 'ZZZ' })).toBe(
+			false,
+		);
 	});
 
 	it('rejects operands of the wrong type instead of throwing', () => {
-		expect(() => matchesConstraint('a', { in: 'nope' } as never)).not.toThrow();
-		expect(matchesConstraint('a', { in: 'nope' } as never)).toBe(false);
-		expect(matchesConstraint('a', { notIn: 'nope' } as never)).toBe(false);
+		expect(() => matchesConstraint('a', { in: 'nope' })).not.toThrow();
+		expect(matchesConstraint('a', { in: 'nope' })).toBe(false);
+		expect(matchesConstraint('a', { notIn: 'nope' })).toBe(false);
 		// A number operand would silently become the pattern /123/.
-		expect(matchesConstraint('123', { match: 123 } as never)).toBe(false);
+		expect(matchesConstraint('123', { match: 123 })).toBe(false);
+	});
+
+	it('rejects constraints that are not objects at all', () => {
+		// Runtime values from JSON or unchecked JS can be anything.
+		expect(matchesConstraint('a', null)).toBe(false);
+		expect(matchesConstraint('a', undefined)).toBe(false);
+		expect(matchesConstraint('a', 'match')).toBe(false);
+		expect(matchesConstraint('a', 42)).toBe(false);
+		expect(matchesConstraint('a', ['match'])).toBe(false);
 	});
 });
 
@@ -319,7 +317,7 @@ describe('resolveOverridePolicy', () => {
 	it('passes a flat policy through unchanged', () => {
 		expect(resolveOverridePolicy('deny', {})).toBe('deny');
 		expect(resolveOverridePolicy(undefined, {})).toBeUndefined();
-		expect(resolveOverrideNullable(null, {})).toBeUndefined();
+		expect(resolveOverridePolicy(null, {})).toBeUndefined();
 	});
 
 	it('applies the policy when constraints hold', () => {
@@ -477,17 +475,34 @@ describe('constraints cannot be bypassed by omitting the argument', () => {
 });
 
 describe('a misspelled operator cannot silently drop a denylist', () => {
-	it('does not allow a call the dropped condition was meant to block', () => {
+	it('fails the constraint when a typo key accompanies the real operator', () => {
 		// Regression: `notin` (lowercase i) was ignored, leaving `match: '.*'` to
 		// satisfy the constraint and allow exactly the address it denied.
-		const override = {
-			policy: 'allow',
-			constraints: { to: { match: '.*', notin: ['bad@evil.com'] } },
-		} as unknown as PermissionOverride;
-
+		//
+		// The malformed rule is built as a plain record because the misspelling
+		// is precisely the shape PermissionConstraint's union forbids at compile
+		// time — this mistake only arises from config that bypassed the types,
+		// so `unknown` (not an assertion) is the honest way to express it.
+		const malformedEntries: [string, unknown][] = [
+			['match', '.*'],
+			['notin', ['bad@evil.com']],
+		];
+		const malformedRule: unknown = Object.fromEntries(malformedEntries);
 		expect(
-			evaluatePermission('write', 'strict', override, { to: 'bad@evil.com' }),
-		).toBe('require_approval');
+			constraintsSatisfied({ to: malformedRule }, { to: 'bad@evil.com' }),
+		).toBe(false);
+
+		// Control: the same rule spelled correctly is enforced, not discarded.
+		const wellFormedEntries: [string, unknown][] = [
+			['notIn', ['bad@evil.com']],
+		];
+		const wellFormedRule: unknown = Object.fromEntries(wellFormedEntries);
+		expect(
+			constraintsSatisfied({ to: wellFormedRule }, { to: 'good@corsair.dev' }),
+		).toBe(true);
+		expect(
+			constraintsSatisfied({ to: wellFormedRule }, { to: 'bad@evil.com' }),
+		).toBe(false);
 	});
 });
 
@@ -529,5 +544,248 @@ describe('a cyclic argument cannot satisfy a non-matching constraint', () => {
 				{ p: circular },
 			),
 		).toBe('require_approval');
+	});
+});
+
+describe('cyclic graphs with different topology never compare equal', () => {
+	it('rejects a one-node cycle against a two-node ring in either direction', () => {
+		// Regression: the cycle guard tracked pairing only from the right-hand
+		// side, so a single left node could pair with two different right nodes
+		// within one comparison. A self-loop then read as equal to a two-node
+		// ring, letting an `equals` allow override apply to a structurally
+		// different argument.
+		const oneRing: Record<string, unknown> = {};
+		oneRing.x = oneRing;
+		const ringA: Record<string, unknown> = {};
+		const ringB: Record<string, unknown> = {};
+		ringA.x = ringB;
+		ringB.x = ringA;
+
+		// The agent-supplied value is the one-node cycle.
+		expect(matchesConstraint(oneRing, { equals: ringA })).toBe(false);
+		// Mirror image: the configured operand is the one-node cycle.
+		expect(matchesConstraint(ringA, { equals: oneRing })).toBe(false);
+	});
+
+	it('still accepts cyclic graphs whose topology matches', () => {
+		const argLoop: Record<string, unknown> = {};
+		argLoop.x = argLoop;
+		const cfgLoop: Record<string, unknown> = {};
+		cfgLoop.x = cfgLoop;
+		expect(matchesConstraint(argLoop, { equals: cfgLoop })).toBe(true);
+
+		const argA: Record<string, unknown> = {};
+		const argB: Record<string, unknown> = {};
+		argA.x = argB;
+		argB.x = argA;
+		const cfgA: Record<string, unknown> = {};
+		const cfgB: Record<string, unknown> = {};
+		cfgA.x = cfgB;
+		cfgB.x = cfgA;
+		expect(matchesConstraint(argA, { equals: cfgA })).toBe(true);
+	});
+});
+
+describe('primitive comparison edge cases', () => {
+	it('treats NaN as equal to itself under Object.is semantics', () => {
+		expect(matchesConstraint(Number.NaN, { equals: Number.NaN })).toBe(true);
+		expect(matchesConstraint(Number.NaN, { equals: 0 })).toBe(false);
+		expect(matchesConstraint(Number.NaN, { notIn: [Number.NaN] })).toBe(false);
+	});
+
+	it('distinguishes -0 from 0 like Object.is does', () => {
+		expect(matchesConstraint(-0, { equals: 0 })).toBe(false);
+		expect(matchesConstraint(0, { equals: 0 })).toBe(true);
+	});
+
+	it('never crosses primitive type boundaries', () => {
+		expect(matchesConstraint('1', { equals: 1 })).toBe(false);
+		expect(matchesConstraint(1, { equals: '1' })).toBe(false);
+		expect(matchesConstraint(true, { equals: 'true' })).toBe(false);
+		expect(matchesConstraint(1, { equals: true })).toBe(false);
+		expect(matchesConstraint(10n, { equals: 10 })).toBe(false);
+	});
+
+	it('compares bigints by value within their own type', () => {
+		expect(matchesConstraint(10n, { equals: 10n })).toBe(true);
+		expect(matchesConstraint(10n, { equals: 11n })).toBe(false);
+	});
+
+	it('compares symbols and functions by reference only', () => {
+		const sym = Symbol('channel');
+		expect(matchesConstraint(sym, { equals: sym })).toBe(true);
+		expect(
+			matchesConstraint(Symbol('channel'), { equals: Symbol('channel') }),
+		).toBe(false);
+
+		const fn = () => 'post';
+		expect(matchesConstraint(fn, { equals: fn })).toBe(true);
+		expect(matchesConstraint(() => 'post', { equals: () => 'post' })).toBe(
+			false,
+		);
+	});
+});
+
+describe('structural comparison edge cases', () => {
+	it('compares explicit null and undefined members exactly', () => {
+		expect(matchesConstraint({ a: null }, { equals: { a: null } })).toBe(true);
+		expect(matchesConstraint({ a: null }, { equals: { a: 1 } })).toBe(false);
+		// A present-but-null member is not an absent one.
+		expect(matchesConstraint({ a: null }, { equals: {} })).toBe(false);
+		expect(
+			matchesConstraint({ a: undefined }, { equals: { a: undefined } }),
+		).toBe(true);
+		expect(matchesConstraint({ a: undefined }, { equals: {} })).toBe(false);
+	});
+
+	it('compares nested arrays and objects structurally', () => {
+		expect(
+			matchesConstraint([[1, { a: 2 }]], { equals: [[1, { a: 2 }]] }),
+		).toBe(true);
+		expect(
+			matchesConstraint([[1, { a: 2 }]], { equals: [[1, { a: 3 }]] }),
+		).toBe(false);
+		// An array wrapped in an object differs from the bare array.
+		expect(matchesConstraint([{ a: [1] }], { equals: { a: [1] } })).toBe(false);
+	});
+
+	it('does not equate an array with an object carrying index keys', () => {
+		expect(matchesConstraint(['x'], { equals: { 0: 'x' } })).toBe(false);
+		expect(matchesConstraint({ 0: 'x' }, { equals: ['x'] })).toBe(false);
+	});
+
+	it('compares a Date only against another Date with the same instant', () => {
+		expect(
+			matchesConstraint(new Date(1000), { equals: '1970-01-01T00:00:01.000Z' }),
+		).toBe(false);
+		expect(matchesConstraint(new Date(1000), { equals: 1000 })).toBe(false);
+	});
+
+	it('compares null-prototype objects structurally like plain objects', () => {
+		const nullProto: Record<string, unknown> = Object.assign(
+			Object.create(null),
+			{ a: 1 },
+		);
+		expect(matchesConstraint(nullProto, { equals: { a: 1 } })).toBe(true);
+		expect(matchesConstraint({ a: 1 }, { equals: nullProto })).toBe(true);
+	});
+});
+
+describe('cycle handling across arrays and nesting', () => {
+	it('compares isomorphic cyclic arrays as equal', () => {
+		const argCycle: unknown[] = [];
+		argCycle[0] = argCycle;
+		const cfgCycle: unknown[] = [];
+		cfgCycle[0] = cfgCycle;
+
+		expect(matchesConstraint(argCycle, { equals: cfgCycle })).toBe(true);
+		expect(matchesConstraint(argCycle, { equals: [] })).toBe(false);
+	});
+
+	it('does not equate an array cycle with an object cycle', () => {
+		const arrCycle: unknown[] = [];
+		arrCycle[0] = arrCycle;
+		const objCycle: Record<string, unknown> = {};
+		objCycle['0'] = objCycle;
+
+		expect(matchesConstraint(arrCycle, { equals: objCycle })).toBe(false);
+		expect(matchesConstraint(objCycle, { equals: arrCycle })).toBe(false);
+	});
+
+	it('resolves cycles nested below the top level in both directions', () => {
+		const argInner: Record<string, unknown> = {};
+		argInner.self = argInner;
+		const cfgInner: Record<string, unknown> = {};
+		cfgInner.self = cfgInner;
+		expect(
+			matchesConstraint({ outer: argInner }, { equals: { outer: cfgInner } }),
+		).toBe(true);
+
+		// Same shape, different key name: not isomorphic.
+		const otherInner: Record<string, unknown> = {};
+		otherInner.next = otherInner;
+		expect(
+			matchesConstraint({ outer: argInner }, { equals: { outer: otherInner } }),
+		).toBe(false);
+	});
+});
+
+describe('operator operand edge cases', () => {
+	it('requires a string pattern even when a RegExp instance is supplied', () => {
+		// A RegExp would work if coerced, but coercion hides config mistakes;
+		// the operator documents a string pattern.
+		expect(matchesConstraint('#general', { match: new RegExp('^#gen') })).toBe(
+			false,
+		);
+	});
+
+	it('handles empty membership lists', () => {
+		expect(matchesConstraint('a', { in: [] })).toBe(false);
+		// An empty denylist genuinely excludes nothing.
+		expect(matchesConstraint('a', { notIn: [] })).toBe(true);
+	});
+
+	it('finds NaN inside a membership list', () => {
+		expect(matchesConstraint(Number.NaN, { in: [1, Number.NaN] })).toBe(true);
+		expect(matchesConstraint(1, { in: [Number.NaN] })).toBe(false);
+	});
+
+	it('does not equate a defined value with an undefined operand', () => {
+		expect(matchesConstraint('x', { equals: undefined })).toBe(false);
+		expect(matchesConstraint('x', { in: [undefined] })).toBe(false);
+	});
+});
+
+describe('resolveArgPath — degenerate and hostile paths', () => {
+	it('returns undefined for paths with empty segments', () => {
+		expect(resolveArgPath({ a: { b: 1 } }, 'a..b')).toBeUndefined();
+		expect(resolveArgPath({ a: 1 }, 'a.')).toBeUndefined();
+	});
+
+	it('stops at primitives reached mid-path', () => {
+		expect(resolveArgPath({ a: 'text' }, 'a.length')).toBeUndefined();
+		expect(resolveArgPath({ a: 42 }, 'a.toFixed')).toBeUndefined();
+	});
+
+	it('returns undefined when the chain passes through null', () => {
+		expect(resolveArgPath({ a: { b: null } }, 'a.b.c')).toBeUndefined();
+	});
+
+	it('returns undefined for an absent array index', () => {
+		expect(resolveArgPath({ list: ['x'] }, 'list.5')).toBeUndefined();
+	});
+
+	it('reads own properties of class instances but not prototype members', () => {
+		class Base {
+			baseMethod(): string {
+				return 'base';
+			}
+		}
+		class Args extends Base {
+			visible = 'yes';
+		}
+
+		expect(resolveArgPath(new Args(), 'visible')).toBe('yes');
+		// Methods live on the prototype; a constraint must not judge them.
+		expect(resolveArgPath(new Args(), 'baseMethod')).toBeUndefined();
+	});
+});
+
+describe('constraintsSatisfied — unusable containers fail closed', () => {
+	const args = { channel: '#general' };
+
+	it('rejects constraint maps that are not plain records', () => {
+		expect(constraintsSatisfied(null, args)).toBe(false);
+		expect(constraintsSatisfied(undefined, args)).toBe(false);
+		expect(constraintsSatisfied(42, args)).toBe(false);
+		expect(constraintsSatisfied('constraints', args)).toBe(false);
+		expect(constraintsSatisfied(true, args)).toBe(false);
+		expect(constraintsSatisfied([], args)).toBe(false);
+	});
+
+	it('rejects entries whose value cannot express any operator', () => {
+		const entries: [string, unknown][] = [['channel', 'allow']];
+		const constraints: unknown = Object.fromEntries(entries);
+		expect(constraintsSatisfied(constraints, args)).toBe(false);
 	});
 });
