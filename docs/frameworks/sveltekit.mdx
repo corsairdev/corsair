@@ -1,0 +1,143 @@
+---
+title: SvelteKit
+sidebarTitle: SvelteKit
+description: Read synced data in a load function, render it in +page.svelte, and mutate through form actions.
+icon: "/icons/sveltekit.svg"
+---
+
+import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
+import Install from '/snippets/install-tabs.mdx';
+
+SvelteKit keeps server work in `+page.server.ts`: a `load` function fetches, `+page.svelte` renders, and form actions mutate. Corsair drops straight into that flow — `load` reads from `.db`, form actions write through `.api` — with the handler itself living in a Web-standard endpoint.
+
+## Install
+
+<Install />
+
+The adapters ship inside core `corsair`; add one plugin package per service you connect.
+
+## Project layout
+
+```
+src/
+  hooks.server.ts                    # populates event.locals.user
+  routes/api/corsair/[...rest]/+server.ts   # the handler
+  routes/issues/+page.server.ts      # load reads .db, action writes .api
+  routes/issues/+page.svelte         # renders data.issues
+  lib/server/corsair.ts              # createCorsair instance
+```
+
+## Mount the handler
+
+An endpoint receives a `Request` and returns a `Response`, which is exactly the adapter's shape. Add a rest-parameter route and export the pair.
+
+```ts src/routes/api/corsair/[...rest]/+server.ts
+import { toSvelteKitHandler } from 'corsair';
+import { corsair } from '$lib/server/corsair';
+
+export const { GET, POST } = toSvelteKitHandler(corsair, {
+    basePath: '/api/corsair',
+});
+```
+
+`$lib/server/corsair` is your `createCorsair({ ... })` instance. The `[...rest]` segment catches `/api/corsair` and every path beneath it.
+
+## Resolve the tenant
+
+Set the signed-in user on `event.locals` in `hooks.server.ts` — your auth's job, not Corsair's. Then `load` and form actions read it off `locals` and hand the id to `withTenant`.
+
+```ts
+// in load / actions — event.locals.user comes from hooks.server.ts
+const tenant = corsair.withTenant(await getTenantId(locals));
+```
+
+## Read and write
+
+`load` reads `.db` and hands the data to the page — no network on navigation. A form action writes through `.api`; because Corsair upserts the response into your database as part of the call, the next `load` sees the row already current.
+
+```ts src/routes/issues/+page.server.ts
+import { corsair } from '$lib/server/corsair';
+
+export async function load({ locals }) {
+    const tenant = corsair.withTenant(await getTenantId(locals));
+    const issues = await tenant.github.db.issues.search({
+        data: { state: 'open' },
+        limit: 50,
+    });
+    return { issues };
+}
+
+export const actions = {
+    close: async ({ locals, request }) => {
+        const tenant = corsair.withTenant(await getTenantId(locals));
+        const number = Number((await request.formData()).get('number'));
+        await tenant.github.api.issues.update({
+            owner: 'acme', repo: 'app', issueNumber: number, state: 'closed',
+        });
+    },
+};
+```
+
+The page renders `data.issues` and posts to the action. Entity fields live on `.data` in camelCase:
+
+```svelte src/routes/issues/+page.svelte
+<script lang="ts">
+    export let data;
+</script>
+
+<ul>
+    {#each data.issues as issue (issue.id)}
+        <li>
+            {issue.data.title}
+            <form method="POST" action="?/close">
+                <input type="hidden" name="number" value={issue.data.number} />
+                <button>Close</button>
+            </form>
+        </li>
+    {/each}
+</ul>
+```
+
+## Refresh after a write
+
+A form action that returns nothing makes SvelteKit re-run the page's `load`, so the closed issue drops off on its own. When a write happens outside a form — a button handler, a websocket message — call `invalidate` to re-run `load` yourself; the `.api` upsert means the re-read is already current.
+
+```ts
+import { invalidateAll } from '$app/navigation';
+await invalidateAll();   // re-runs load; .db already reflects the write
+```
+
+## Connect a tenant
+
+A tenant connects GitHub before `load` has anything to read. Svelte isn't React, so use the vanilla client — from a component, a `load` function, or a script.
+
+<ClientVanilla />
+
+## Go green
+
+```bash
+npm run dev
+```
+
+The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
+
+## Deploy
+
+Pick the SvelteKit adapter for your target (`adapter-node`, `adapter-vercel`, and so on) and deploy as usual. The endpoint runs server-side under every adapter, so in production `/api/corsair` is the delivery URL Hub calls.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">
+    The `.db` read / `.api` write pattern in full, with refresh and webhooks.
+  </Card>
+  <Card title="Vanilla Client" icon="code" href="/adapters/client">
+    Every management-API method the client exposes, fully typed.
+  </Card>
+  <Card title="Connect / OAuth" icon="link" href="/management/connect">
+    The full connect flow, error codes, and retry.
+  </Card>
+  <Card title="Multi-tenancy" icon="users" href="/concepts/multi-tenancy">
+    One flag and every user gets their own data and credentials.
+  </Card>
+</CardGroup>

@@ -35,7 +35,7 @@ const tenant = corsair.withTenant('user_abc123');
 await tenant.github.api.repositories.list({ type: 'owner' });
 
 // Database queries return only that user's data
-const repos = await tenant.github.db.repositories.findAll();
+const repos = await tenant.github.db.repositories.search({});
 
 // Credentials are stored per-user
 await tenant.github.keys.set_api_key(userGithubToken);
