@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class StudioByAI21LabsAPIError extends Error {
 	constructor(
@@ -11,8 +11,7 @@ export class StudioByAI21LabsAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const STUDIOBYAI21LABS_API_BASE = 'https://api.ai21.com/studio/v1';
+export const STUDIOBYAI21LABS_API_BASE = 'https://api.ai21.com/studio/v1';
 
 export async function makeStudioByAI21LabsRequest<T>(
 	endpoint: string,
@@ -27,7 +26,7 @@ export async function makeStudioByAI21LabsRequest<T>(
 
 	const config: OpenAPIConfig = {
 		BASE: STUDIOBYAI21LABS_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: 'v1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
@@ -45,12 +44,15 @@ export async function makeStudioByAI21LabsRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new StudioByAI21LabsAPIError(error.message);
 		}
@@ -94,29 +96,8 @@ export async function uploadStudioByAI21LabsFile<T>(
 		const text = await response.text();
 		throw new StudioByAI21LabsAPIError(
 			`Upload failed: status ${response.status}; body: ${text}`,
-			undefined,
 		);
 	}
 
 	return response.json() as Promise<T>;
-}
-
-export async function downloadStudioByAI21LabsFile(
-	endpoint: string,
-	apiKey: string,
-): Promise<string> {
-	const response = await fetch(buildUrl(endpoint), {
-		method: 'GET',
-		headers: { Authorization: `Bearer ${apiKey}` },
-	});
-
-	if (!response.ok) {
-		const text = await response.text();
-		throw new StudioByAI21LabsAPIError(
-			`Download failed: status ${response.status}; body: ${text}`,
-			undefined,
-		);
-	}
-
-	return response.text();
 }
