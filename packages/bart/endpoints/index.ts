@@ -10,7 +10,6 @@ import {
 	arrivals as schedulesArrivals,
 	departures as schedulesDepartures,
 	routes as schedulesRoutes,
-	special as schedulesSpecial,
 } from './schedules';
 import {
 	access as stationsAccess,
@@ -43,7 +42,6 @@ export const Schedules = {
 	departures: schedulesDepartures,
 	arrivals: schedulesArrivals,
 	routes: schedulesRoutes,
-	special: schedulesSpecial,
 };
 
 export const Fares = {

@@ -80,25 +80,3 @@ export const routes: BartEndpoints['schedulesRoutes'] = async (ctx, input) => {
 	);
 	return response;
 };
-
-export const special: BartEndpoints['schedulesSpecial'] = async (
-	ctx,
-	input,
-) => {
-	const parsedInput = BartEndpointInputSchemas.schedulesSpecial.parse(input);
-	const raw = await makeBartRequest<unknown>('sched.aspx', ctx.key, {
-		query: {
-			cmd: 'holiday',
-			date: parsedInput?.date,
-		},
-	});
-
-	const response = BartEndpointOutputSchemas.schedulesSpecial.parse(raw);
-	await logEventFromContext(
-		ctx,
-		'bart.schedules.special',
-		{ ...parsedInput },
-		'completed',
-	);
-	return response;
-};

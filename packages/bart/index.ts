@@ -95,10 +95,6 @@ export type BartEndpoints = {
 		'schedulesRoutes',
 		BartEndpointInputs['schedulesRoutes']
 	>;
-	schedulesSpecial: BartEndpoint<
-		'schedulesSpecial',
-		BartEndpointInputs['schedulesSpecial']
-	>;
 	faresCalculate: BartEndpoint<
 		'faresCalculate',
 		BartEndpointInputs['faresCalculate']
@@ -129,7 +125,6 @@ const bartEndpointsNested = {
 		departures: Schedules.departures,
 		arrivals: Schedules.arrivals,
 		routes: Schedules.routes,
-		special: Schedules.special,
 	},
 	fares: {
 		calculate: Fares.calculate,
@@ -187,10 +182,6 @@ export const bartEndpointSchemas = {
 	'schedules.routes': {
 		input: BartEndpointInputSchemas.schedulesRoutes,
 		output: BartEndpointOutputSchemas.schedulesRoutes,
-	},
-	'schedules.special': {
-		input: BartEndpointInputSchemas.schedulesSpecial,
-		output: BartEndpointOutputSchemas.schedulesSpecial,
 	},
 	'fares.calculate': {
 		input: BartEndpointInputSchemas.faresCalculate,
@@ -253,11 +244,6 @@ const bartEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Get the full timetable and stop schedule for a specific BART route',
-	},
-	'schedules.special': {
-		riskLevel: 'read',
-		description:
-			'Get holiday and special schedule information for BART service',
 	},
 	'fares.calculate': {
 		riskLevel: 'read',
@@ -347,7 +333,7 @@ export type {
 	FareItem,
 	FaresCalculateInput,
 	FaresCalculateResponse,
-	HolidayItem,
+	FareTrip,
 	RouteDetail,
 	RouteListItem,
 	RoutesInfoInput,
@@ -362,8 +348,6 @@ export type {
 	SchedulesDeparturesResponse,
 	SchedulesRoutesInput,
 	SchedulesRoutesResponse,
-	SchedulesSpecialInput,
-	SchedulesSpecialResponse,
 	ScheduleTripRequest,
 	StationAccessDetail,
 	StationDetail,
