@@ -16,14 +16,8 @@ export class ChatbotkitAPIError extends Error {
 	}
 }
 
-// https://chatbotkit.com/manuals/spec-introduction — v1 REST API, secret-key
-// bearer auth (`sk-...`), envelope response shape `{ success, data, meta }`.
-const CHATBOTKIT_API_BASE = 'https://api.chatbotkit.com/api/v1';
-
-export type ChatbotkitEnvelope<TData> = {
-	data: TData;
-	meta?: Record<string, unknown>;
-};
+// https://chatbotkit.com/docs/api — v1 REST API, secret-key bearer auth (`sk-...`).
+const CHATBOTKIT_API_BASE = 'https://api.chatbotkit.com/v1';
 
 export async function makeChatbotkitRequest<TData>(
 	endpoint: string,
@@ -33,7 +27,7 @@ export async function makeChatbotkitRequest<TData>(
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
-): Promise<ChatbotkitEnvelope<TData>> {
+): Promise<TData> {
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -60,21 +54,7 @@ export async function makeChatbotkitRequest<TData>(
 	};
 
 	try {
-		const envelope = await request<{
-			success: boolean;
-			data?: TData;
-			meta?: Record<string, unknown>;
-			error?: string;
-		}>(config, requestOptions);
-
-		if (!envelope.success) {
-			throw new ChatbotkitAPIError(
-				envelope.error ?? 'Chatbotkit request failed',
-				{ body: envelope },
-			);
-		}
-
-		return { data: envelope.data as TData, meta: envelope.meta };
+		return await request<TData>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError || error instanceof ChatbotkitAPIError) {
 			throw error;

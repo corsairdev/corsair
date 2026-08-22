@@ -81,11 +81,11 @@ const defaultAuthType = 'api_key' as const;
 const chatbotkitEndpointMeta = {
 	'bots.list': {
 		riskLevel: 'read',
-		description: 'List bots on the Chatbotkit account, cursor-paginated',
+		description: 'List bots on the ChatBotKit account, cursor-paginated',
 	},
 	'bots.get': {
 		riskLevel: 'read',
-		description: 'Fetch a single bot by ID',
+		description: 'Fetch a single bot by ID or alias',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof chatbotkitEndpointsNested
@@ -164,3 +164,11 @@ export type {
 	ChatbotkitEndpointInputs,
 	ChatbotkitEndpointOutputs,
 } from './endpoints/types';
+
+export type {
+	ChatbotkitBlueprint,
+	ChatbotkitBot,
+	ChatbotkitDataset,
+	ChatbotkitSecret,
+	ChatbotkitSkillset,
+} from './schema/database';

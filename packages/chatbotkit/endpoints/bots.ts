@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ChatbotkitEndpoints } from '..';
 import { makeChatbotkitRequest } from '../client';
-import type { Bot } from './types';
+import type { BotsGetResponse, BotsListResponse } from './types';
 
 function compactQuery(
 	query: Record<string, string | number | boolean | undefined>,
@@ -12,14 +12,18 @@ function compactQuery(
 }
 
 export const list: ChatbotkitEndpoints['botsList'] = async (ctx, input) => {
-	const envelope = await makeChatbotkitRequest<Bot[]>('bot/list', ctx.key, {
-		method: 'GET',
-		query: compactQuery({
-			cursor: input.cursor,
-			limit: input.limit,
-			order: input.order,
-		}),
-	});
+	const response = await makeChatbotkitRequest<BotsListResponse>(
+		'bot/list',
+		ctx.key,
+		{
+			method: 'GET',
+			query: compactQuery({
+				cursor: input.cursor,
+				limit: input.limit,
+				order: input.order,
+			}),
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -27,11 +31,11 @@ export const list: ChatbotkitEndpoints['botsList'] = async (ctx, input) => {
 		{ cursor: input.cursor, limit: input.limit, order: input.order },
 		'completed',
 	);
-	return { data: envelope.data ?? [], meta: envelope.meta };
+	return { items: response.items ?? [], cursor: response.cursor };
 };
 
 export const get: ChatbotkitEndpoints['botsGet'] = async (ctx, input) => {
-	const envelope = await makeChatbotkitRequest<Bot>(
+	const response = await makeChatbotkitRequest<BotsGetResponse>(
 		`bot/${encodeURIComponent(input.id)}/fetch`,
 		ctx.key,
 		{ method: 'GET' },
@@ -43,5 +47,5 @@ export const get: ChatbotkitEndpoints['botsGet'] = async (ctx, input) => {
 		{ id: input.id },
 		'completed',
 	);
-	return envelope.data;
+	return response;
 };

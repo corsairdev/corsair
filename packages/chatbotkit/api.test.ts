@@ -1,14 +1,29 @@
 import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
-import { ChatbotkitAPIError, makeChatbotkitRequest } from './client';
+import { makeChatbotkitRequest } from './client';
+import {
+	BotSchema,
+	BotsGetInputSchema,
+	BotsGetResponseSchema,
+	BotsListInputSchema,
+	BotsListResponseSchema,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { ChatbotkitContext } from './index';
 import { chatbotkit, chatbotkitEndpointSchemas } from './index';
 
-jest.mock('corsair/core', () => ({
-	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn(),
-}));
+jest.mock('corsair/core', () => {
+	class AuthMissingError extends Error {
+		constructor(plugin: string, authType: string) {
+			super(`Missing ${authType} for ${plugin}`);
+			this.name = 'AuthMissingError';
+		}
+	}
+	return {
+		AuthMissingError,
+		logEventFromContext: jest.fn(),
+	};
+});
 
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
@@ -51,7 +66,16 @@ const mockCtx = {
 	keyBuilder: async () => 'sk-test-api-key',
 } as unknown as ChatbotkitContext;
 
-const bot = { id: 'bot_1', name: 'Support Bot', description: 'A test bot' };
+const botFixture = {
+	id: 'bot_1',
+	name: 'Support Bot',
+	description: 'A test bot',
+	model: 'gpt-4o',
+	backstory: 'Helpful support agent',
+	visibility: 'private',
+	createdAt: 1787397742217,
+	updatedAt: 1787397742217,
+};
 
 type BotsList = (
 	ctx: ChatbotkitContext,
@@ -79,9 +103,9 @@ function classify(error: Error): string {
 
 function httpError(status: number, message: string): ApiError {
 	return new ApiError(
-		{ method: 'GET', url: 'https://api.chatbotkit.com/api/v1/bot/list' },
+		{ method: 'GET', url: 'https://api.chatbotkit.com/v1/bot/list' },
 		{
-			url: 'https://api.chatbotkit.com/api/v1/bot/list',
+			url: 'https://api.chatbotkit.com/v1/bot/list',
 			ok: false,
 			status,
 			statusText: 'Error',
@@ -90,6 +114,62 @@ function httpError(status: number, message: string): ApiError {
 		message,
 	);
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Schema Unit Tests
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('ChatBotKit Zod Schemas', () => {
+	it('validates a complete Bot object', () => {
+		const parsed = BotSchema.safeParse(botFixture);
+		expect(parsed.success).toBe(true);
+	});
+
+	it('validates minimal Bot object with only required fields', () => {
+		const parsed = BotSchema.safeParse({ id: 'b_123', name: 'Bot' });
+		expect(parsed.success).toBe(true);
+	});
+
+	it('rejects Bot missing required id or name', () => {
+		expect(BotSchema.safeParse({ name: 'Bot' }).success).toBe(false);
+		expect(BotSchema.safeParse({ id: 'b_123' }).success).toBe(false);
+	});
+
+	it('validates BotsListInputSchema options', () => {
+		expect(BotsListInputSchema.safeParse({}).success).toBe(true);
+		expect(
+			BotsListInputSchema.safeParse({
+				cursor: 'c_1',
+				limit: 50,
+				order: 'asc',
+			}).success,
+		).toBe(true);
+		expect(BotsListInputSchema.safeParse({ limit: 0 }).success).toBe(false);
+		expect(BotsListInputSchema.safeParse({ limit: 101 }).success).toBe(false);
+	});
+
+	it('validates BotsListResponseSchema with items and cursor', () => {
+		const parsed = BotsListResponseSchema.safeParse({
+			items: [botFixture],
+			cursor: 'c_next',
+		});
+		expect(parsed.success).toBe(true);
+		if (parsed.success) {
+			expect(parsed.data.items).toHaveLength(1);
+			expect(parsed.data.cursor).toBe('c_next');
+		}
+	});
+
+	it('validates BotsGetInputSchema and BotsGetResponseSchema', () => {
+		expect(BotsGetInputSchema.safeParse({ id: 'bot_1' }).success).toBe(true);
+		expect(BotsGetInputSchema.safeParse({}).success).toBe(false);
+		expect(BotsGetResponseSchema.safeParse(botFixture).success).toBe(true);
+	});
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Plugin Structure Tests
+// ─────────────────────────────────────────────────────────────────────────────
 
 describe('Chatbotkit plugin shape', () => {
 	it('exposes the implemented operations with schemas and no webhooks', () => {
@@ -113,10 +193,14 @@ describe('Chatbotkit plugin shape', () => {
 	});
 });
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Request Client Tests
+// ─────────────────────────────────────────────────────────────────────────────
+
 describe('Chatbotkit request client', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ success: true, data: bot });
+		mockRequest.mockResolvedValue(botFixture);
 	});
 
 	it('sends a bearer Authorization header and the v1 base URL', async () => {
@@ -126,7 +210,7 @@ describe('Chatbotkit request client', () => {
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
-				BASE: 'https://api.chatbotkit.com/api/v1',
+				BASE: 'https://api.chatbotkit.com/v1',
 				TOKEN: 'sk-test-api-key',
 				HEADERS: expect.objectContaining({
 					Authorization: 'Bearer sk-test-api-key',
@@ -136,20 +220,18 @@ describe('Chatbotkit request client', () => {
 		);
 	});
 
-	it('unwraps a successful envelope into { data, meta }', async () => {
-		await expect(
-			makeChatbotkitRequest('bot/bot_1/fetch', 'sk-test-api-key'),
-		).resolves.toEqual({ data: bot, meta: undefined });
-	});
-
-	it('throws on an unsuccessful envelope', async () => {
-		mockRequest.mockResolvedValue({ success: false, error: 'Bot not found' });
+	it('passes through ApiError directly for error classification', async () => {
+		mockRequest.mockRejectedValue(httpError(404, 'Bot not found'));
 
 		await expect(
 			makeChatbotkitRequest('bot/missing/fetch', 'sk-test-api-key'),
-		).rejects.toBeInstanceOf(ChatbotkitAPIError);
+		).rejects.toBeInstanceOf(ApiError);
 	});
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Mock Tests
+// ─────────────────────────────────────────────────────────────────────────────
 
 describe('Chatbotkit bots endpoints', () => {
 	beforeEach(() => {
@@ -159,9 +241,8 @@ describe('Chatbotkit bots endpoints', () => {
 
 	it('lists bots with cursor pagination query params', async () => {
 		mockRequest.mockResolvedValue({
-			success: true,
-			data: [bot],
-			meta: { cursor: 'next-page' },
+			items: [botFixture],
+			cursor: 'next-page',
 		});
 
 		const result = await getEndpoints().list(mockCtx, {
@@ -178,7 +259,7 @@ describe('Chatbotkit bots endpoints', () => {
 				query: { cursor: 'abc', limit: 10, order: 'desc' },
 			}),
 		);
-		expect(result).toEqual({ data: [bot], meta: { cursor: 'next-page' } });
+		expect(result).toEqual({ items: [botFixture], cursor: 'next-page' });
 		expect(mockLog).toHaveBeenCalledWith(
 			mockCtx,
 			'chatbotkit.bots.list',
@@ -188,7 +269,7 @@ describe('Chatbotkit bots endpoints', () => {
 	});
 
 	it('omits undefined query params when listing without filters', async () => {
-		mockRequest.mockResolvedValue({ success: true, data: [] });
+		mockRequest.mockResolvedValue({ items: [] });
 
 		await getEndpoints().list(mockCtx, {});
 
@@ -199,7 +280,7 @@ describe('Chatbotkit bots endpoints', () => {
 	});
 
 	it('fetches a single bot by id', async () => {
-		mockRequest.mockResolvedValue({ success: true, data: bot });
+		mockRequest.mockResolvedValue(botFixture);
 
 		const result = await getEndpoints().get(mockCtx, { id: 'bot_1' });
 
@@ -207,7 +288,7 @@ describe('Chatbotkit bots endpoints', () => {
 			expect.anything(),
 			expect.objectContaining({ method: 'GET', url: 'bot/bot_1/fetch' }),
 		);
-		expect(result).toMatchObject(bot);
+		expect(result).toMatchObject(botFixture);
 		expect(mockLog).toHaveBeenCalledWith(
 			mockCtx,
 			'chatbotkit.bots.get',
@@ -217,7 +298,7 @@ describe('Chatbotkit bots endpoints', () => {
 	});
 
 	it('URL-encodes the bot id path segment', async () => {
-		mockRequest.mockResolvedValue({ success: true, data: bot });
+		mockRequest.mockResolvedValue(botFixture);
 
 		await getEndpoints().get(mockCtx, { id: 'bot/weird id' });
 
@@ -226,16 +307,11 @@ describe('Chatbotkit bots endpoints', () => {
 			expect.objectContaining({ url: 'bot/bot%2Fweird%20id/fetch' }),
 		);
 	});
-
-	it('propagates a not-found error without logging completion', async () => {
-		mockRequest.mockResolvedValue({ success: false, error: 'Bot not found' });
-
-		await expect(
-			getEndpoints().get(mockCtx, { id: 'missing' }),
-		).rejects.toBeInstanceOf(ChatbotkitAPIError);
-		expect(mockLog).not.toHaveBeenCalled();
-	});
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Error Handler Tests
+// ─────────────────────────────────────────────────────────────────────────────
 
 describe('error handler classification', () => {
 	it('classifies auth, rate-limit, and not-found responses', () => {
@@ -257,4 +333,60 @@ describe('error handler classification', () => {
 			).maxRetries,
 		).toBeGreaterThan(0);
 	});
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Integration: Live API Tests (gated on CHATBOTKIT_API_KEY)
+// ─────────────────────────────────────────────────────────────────────────────
+
+const TEST_API_KEY = process.env.CHATBOTKIT_API_KEY ?? '';
+const describeIfKey = TEST_API_KEY ? describe : describe.skip;
+
+describeIfKey('ChatBotKit Live API integration', () => {
+	const unmockedHttp = jest.requireActual('corsair/http');
+	const liveCtx = {
+		...mockCtx,
+		key: TEST_API_KEY,
+	};
+
+	beforeEach(() => {
+		mockRequest.mockImplementation(unmockedHttp.request);
+	});
+
+	it('fetches bots list from real ChatBotKit API', async () => {
+		const plugin = chatbotkit({ key: TEST_API_KEY });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			bots: { list: BotsList; get: BotsGet };
+		};
+
+		const result = (await endpoints.bots.list(liveCtx, {
+			limit: 10,
+		})) as { items: unknown[] };
+
+		expect(result).toBeDefined();
+		expect(Array.isArray(result.items)).toBe(true);
+		expect(BotsListResponseSchema.safeParse(result).success).toBe(true);
+	}, 20000);
+
+	it('fetches single bot by ID from real ChatBotKit API', async () => {
+		const plugin = chatbotkit({ key: TEST_API_KEY });
+		const endpoints = plugin.endpoints as NonNullable<
+			typeof plugin.endpoints
+		> & {
+			bots: { list: BotsList; get: BotsGet };
+		};
+
+		const listRes = (await endpoints.bots.list(liveCtx, { limit: 1 })) as {
+			items: Array<{ id: string }>;
+		};
+
+		const firstBot = listRes.items?.[0];
+		if (firstBot) {
+			const botRes = await endpoints.bots.get(liveCtx, { id: firstBot.id });
+			expect(botRes).toBeDefined();
+			expect(BotsGetResponseSchema.safeParse(botRes).success).toBe(true);
+		}
+	}, 20000);
 });

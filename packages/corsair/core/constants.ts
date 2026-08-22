@@ -238,7 +238,7 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
-	chatbotkit: 'Chatbotkit',
+	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	cloudflare: 'Cloudflare',

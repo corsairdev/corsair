@@ -6,15 +6,21 @@ describe('Chatbotkit schema', () => {
 		expect(ChatbotkitSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('declares all required database entities', () => {
 		expect(typeof ChatbotkitSchema.entities).toBe('object');
 		expect(ChatbotkitSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(ChatbotkitSchema.entities))).toBe(true);
+		const entityKeys = Object.keys(ChatbotkitSchema.entities);
+		expect(entityKeys).toContain('bots');
+		expect(entityKeys).toContain('datasets');
+		expect(entityKeys).toContain('skillsets');
+		expect(entityKeys).toContain('blueprints');
+		expect(entityKeys).toContain('secrets');
 		for (const entity of Object.values(ChatbotkitSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
 	});
-});
 
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
+	it('schema version is 1.0.0', () => {
+		expect(ChatbotkitSchema.version).toBe('1.0.0');
+	});
+});
