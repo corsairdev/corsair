@@ -12,6 +12,10 @@ import type {
 	GetStatusInput,
 	GetStatusOutput,
 } from './types';
+import {
+	AnonyflowEndpointInputSchemas,
+	AnonyflowEndpointOutputSchemas,
+} from './types';
 
 /**
  * Anonymizes a single text value using Anonyflow's value-based anonymization API.
@@ -25,17 +29,19 @@ async function anonymize(
 	context: AnonyflowContext,
 	input: AnonymizeInput,
 ): Promise<AnonymizeOutput> {
+	const validatedInput = AnonyflowEndpointInputSchemas.anonymize.parse(input);
 	const apiKey = context.key ?? '';
 	const response = await makeAnonyflowRequest<{
 		status: boolean;
 		value: string[];
 	}>('/anony-value', apiKey, {
 		method: 'POST',
-		body: { data: [input.text] },
+		body: { data: [validatedInput.text] },
 	});
-	return {
+	const output: AnonymizeOutput = {
 		anonymizedText: response.value[0] ?? '',
 	};
+	return AnonyflowEndpointOutputSchemas.anonymize.parse(output);
 }
 
 /**
@@ -50,17 +56,19 @@ async function deanonymize(
 	context: AnonyflowContext,
 	input: DeanonymizeInput,
 ): Promise<DeanonymizeOutput> {
+	const validatedInput = AnonyflowEndpointInputSchemas.deanonymize.parse(input);
 	const apiKey = context.key ?? '';
 	const response = await makeAnonyflowRequest<{
 		status: boolean;
 		value: string[];
 	}>('/deanony-value', apiKey, {
 		method: 'POST',
-		body: { data: [input.anonymizedText] },
+		body: { data: [validatedInput.anonymizedText] },
 	});
-	return {
+	const output: DeanonymizeOutput = {
 		originalText: response.value[0] ?? '',
 	};
+	return AnonyflowEndpointOutputSchemas.deanonymize.parse(output);
 }
 
 /**
@@ -74,14 +82,21 @@ async function anonymizePacket(
 	context: AnonyflowContext,
 	input: AnonymizePacketInput,
 ): Promise<AnonymizePacketOutput> {
+	const validatedInput =
+		AnonyflowEndpointInputSchemas.anonymizePacket.parse(input);
 	const apiKey = context.key ?? '';
-	return makeAnonyflowRequest<AnonymizePacketOutput>('/anony-packet', apiKey, {
-		method: 'POST',
-		body: {
-			data: input.data,
-			keys: input.keys,
+	const response = await makeAnonyflowRequest<unknown>(
+		'/anony-packet',
+		apiKey,
+		{
+			method: 'POST',
+			body: {
+				data: validatedInput.data,
+				keys: validatedInput.keys,
+			},
 		},
-	});
+	);
+	return AnonyflowEndpointOutputSchemas.anonymizePacket.parse(response);
 }
 
 /**
@@ -95,18 +110,21 @@ async function deanonymizePacket(
 	context: AnonyflowContext,
 	input: DeanonymizePacketInput,
 ): Promise<DeanonymizePacketOutput> {
+	const validatedInput =
+		AnonyflowEndpointInputSchemas.deanonymizePacket.parse(input);
 	const apiKey = context.key ?? '';
-	return makeAnonyflowRequest<DeanonymizePacketOutput>(
+	const response = await makeAnonyflowRequest<unknown>(
 		'/deanony-packet',
 		apiKey,
 		{
 			method: 'POST',
 			body: {
-				data: input.data,
-				keys: input.keys,
+				data: validatedInput.data,
+				keys: validatedInput.keys,
 			},
 		},
 	);
+	return AnonyflowEndpointOutputSchemas.deanonymizePacket.parse(response);
 }
 
 /**
@@ -115,17 +133,19 @@ async function deanonymizePacket(
  * Verified: Returns a boolean status matching the Composio/Metorial action signature.
  *
  * @param context The Corsair plugin context.
- * @param _input Unused request options.
+ * @param input The status check request options.
  * @returns A promise resolving to the API status response.
  */
 async function getStatus(
 	context: AnonyflowContext,
-	_input: GetStatusInput,
+	input: GetStatusInput,
 ): Promise<GetStatusOutput> {
+	const validatedInput = AnonyflowEndpointInputSchemas.getStatus.parse(input);
 	const apiKey = context.key ?? '';
-	return makeAnonyflowRequest<GetStatusOutput>('/test', apiKey, {
+	const response = await makeAnonyflowRequest<unknown>('/test', apiKey, {
 		method: 'GET',
 	});
+	return AnonyflowEndpointOutputSchemas.getStatus.parse(response);
 }
 
 /**
