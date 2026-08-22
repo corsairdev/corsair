@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import { makeConvexRequest } from './client';
 import {
@@ -12,6 +13,14 @@ jest.mock('corsair/http', () => {
 	return {
 		...original,
 		request: jest.fn(),
+	};
+});
+
+jest.mock('corsair/core', () => {
+	const original = jest.requireActual('corsair/core');
+	return {
+		...original,
+		logEventFromContext: jest.fn().mockResolvedValue(null),
 	};
 });
 
@@ -348,8 +357,8 @@ describe('Convex endpoints', () => {
 				group: 'deployment',
 				name: 'getQueryTimestamp',
 				input: { deployKey: 'prod:deploy-key' },
-				method: 'GET',
-				url: '/query_timestamp',
+				method: 'POST',
+				url: '/query_ts',
 				baseUrl: 'https://acoustic-panther-728.convex.cloud/api',
 				auth: 'Convex prod:deploy-key',
 			},
@@ -806,6 +815,7 @@ describe('Convex endpoints', () => {
 		const plugin = convex({ key: 'test-token' });
 		const endpoints = plugin.endpoints as unknown as TestEndpoints;
 		const deleteDeployment = jest.fn();
+		const deleteKey = jest.fn();
 		const ctxWithDb = {
 			...mockCtx,
 			db: {
@@ -827,6 +837,19 @@ describe('Convex endpoints', () => {
 						},
 					]),
 				},
+				deployKeys: {
+					deleteByEntityId: deleteKey,
+					list: jest.fn().mockResolvedValue([
+						{
+							entity_id: 'key-1',
+							data: { deploymentName: 'happy-otter-123' },
+						},
+						{
+							entity_id: 'key-2',
+							data: { deploymentName: 'other-project-dep' },
+						},
+					]),
+				},
 			},
 		} as unknown as ConvexContext;
 
@@ -841,6 +864,8 @@ describe('Convex endpoints', () => {
 		expect(deleteDeployment).toHaveBeenCalledWith('happy-otter-123');
 		expect(deleteDeployment).toHaveBeenCalledWith('brave-bear-456');
 		expect(deleteDeployment).not.toHaveBeenCalledWith('other-project-dep');
+		expect(deleteKey).toHaveBeenCalledWith('key-1');
+		expect(deleteKey).not.toHaveBeenCalledWith('key-2');
 	});
 
 	it('cleans up cached deploy keys when a deployment is deleted', async () => {
@@ -877,6 +902,183 @@ describe('Convex endpoints', () => {
 
 		expect(deleteKey).toHaveBeenCalledWith('key-1');
 		expect(deleteKey).not.toHaveBeenCalledWith('key-2');
+	});
+
+	it('builds regional convex.cloud hosts from multi-label subdomains', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+
+		await getEndpoint(
+			endpoints,
+			'deployment',
+			'getQueryTimestamp',
+		)(mockCtx, {
+			subdomain: 'calm-cow-456.eu-west-1',
+			deployKey: 'prod:deploy-key',
+		});
+
+		expect(mockRequest.mock.calls[0]?.[0].BASE).toBe(
+			'https://calm-cow-456.eu-west-1.convex.cloud/api',
+		);
+		expect(mockRequest.mock.calls[0]?.[1]).toMatchObject({
+			method: 'POST',
+			url: '/query_ts',
+		});
+	});
+
+	it('accepts an explicit convex.cloud deployment URL', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+
+		await getEndpoint(
+			endpoints,
+			'deployment',
+			'executeQueryBatch',
+		)(mockCtx, {
+			deploymentUrl: 'https://calm-cow-456.eu-west-1.convex.cloud',
+			deployKey: 'prod:deploy-key',
+			queries: [{ path: 'messages:list', args: {} }],
+		});
+
+		expect(mockRequest.mock.calls[0]?.[0].BASE).toBe(
+			'https://calm-cow-456.eu-west-1.convex.cloud/api',
+		);
+	});
+
+	it('rejects deployment URLs that are not convex.cloud hosts', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+
+		await expect(
+			getEndpoint(
+				endpoints,
+				'deployment',
+				'getQueryTimestamp',
+			)(mockCtx, {
+				deploymentUrl: 'https://attacker.example/api',
+				deployKey: 'prod:deploy-key',
+			}),
+		).rejects.toThrow('deployment URL');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects management path segments that can escape the route', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+
+		await expect(
+			getEndpoint(
+				endpoints,
+				'deployments',
+				'get',
+			)(mockCtx, {
+				deployment_name: 'happy-otter-123/../other',
+			}),
+		).rejects.toThrow('path');
+		expect(mockRequest).not.toHaveBeenCalled();
+
+		expect(
+			ConvexEndpointInputSchemas.deploymentGet.safeParse({
+				deployment_name: 'happy-otter-123/../other',
+			}).success,
+		).toBe(false);
+		expect(
+			ConvexEndpointInputSchemas.projectsList.safeParse({
+				team_id: '41/../0',
+			}).success,
+		).toBe(false);
+	});
+
+	it('parses official integer Management API payloads', () => {
+		expect(
+			ConvexEndpointOutputSchemas.projectsList.safeParse({
+				items: [
+					{
+						id: 123,
+						name: 'Demo',
+						slug: 'demo',
+						teamId: 41,
+						teamSlug: 'acme',
+						createTime: 1710000000000,
+						prodDeploymentName: 'happy-otter-123',
+						devDeploymentName: null,
+					},
+				],
+				pagination: { hasMore: false },
+			}).success,
+		).toBe(true);
+
+		expect(
+			ConvexEndpointOutputSchemas.projectCreate.safeParse({
+				projectId: 123,
+				id: 123,
+				slug: 'demo',
+				deploymentName: 'happy-otter-123',
+				deploymentUrl: 'https://happy-otter-123.convex.cloud',
+			}).success,
+		).toBe(true);
+
+		expect(
+			ConvexEndpointOutputSchemas.deploymentGet.safeParse({
+				id: 7,
+				name: 'happy-otter-123',
+				createTime: 1710000000000,
+				lastDeployTime: null,
+				deploymentType: 'prod',
+				projectId: 123,
+				region: 'aws-us-east-1',
+				isDefault: true,
+				reference: 'prod',
+				deploymentUrl: 'https://happy-otter-123.convex.cloud',
+				class: 'convex',
+				kind: 'cloud',
+			}).success,
+		).toBe(true);
+
+		expect(
+			ConvexEndpointOutputSchemas.deployKeysList.safeParse([
+				{
+					id: 99,
+					name: 'ci',
+					creationTime: 1710000000000,
+					lastUsedTime: null,
+					expiresAt: null,
+					allowedActions: ['deployment:deploy'],
+				},
+			]).success,
+		).toBe(true);
+
+		expect(
+			ConvexEndpointOutputSchemas.tokenDetails.safeParse({
+				id: 1,
+				teamId: 41,
+				name: 'local',
+				createTime: 1710000000000,
+				type: 'teamToken',
+			}).success,
+		).toBe(true);
+	});
+
+	it('does not persist deploy keys in completion events', async () => {
+		const plugin = convex({ key: 'test-token' });
+		const endpoints = plugin.endpoints as unknown as TestEndpoints;
+		const mockLogEvent = logEventFromContext as jest.Mock;
+		mockLogEvent.mockClear();
+
+		await getEndpoint(
+			endpoints,
+			'deployment',
+			'getQueryTimestamp',
+		)(mockCtx, {
+			deployKey: 'prod:deploy-key',
+		});
+
+		expect(mockLogEvent).toHaveBeenCalled();
+		const payload = mockLogEvent.mock.calls[0]?.[2];
+		expect(payload).not.toEqual(
+			expect.objectContaining({ deployKey: 'prod:deploy-key' }),
+		);
+		expect(JSON.stringify(payload)).not.toContain('prod:deploy-key');
 	});
 });
 
