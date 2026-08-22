@@ -41,15 +41,20 @@ export const SecuritytrailsDomain = z.object({
 export type SecuritytrailsDomain = z.infer<typeof SecuritytrailsDomain>;
 
 /**
- * `GET /v1/domain/{hostname}/ssl` — one row per certificate record.
+ * `GET /v1/domain/{hostname}/ssl` — one row per (hostname, certificate) pair.
+ *
+ * A single SAN certificate covers many hostnames, and `hostname` records which
+ * lookup produced the row rather than anything about the certificate itself.
+ * Keying on the fingerprint alone would therefore make a second lookup
+ * overwrite the first row's `hostname`, so the entity id is scoped by host.
  *
  * `not_before` / `not_after` arrive as Unix **seconds**; the endpoint converts
  * them to milliseconds before writing, so these are real dates here.
  */
 export const SecuritytrailsCertificate = z.object({
-	/** SHA-256 fingerprint, which is the certificate's stable identity. */
+	/** `${hostname}:${sha256}` — see the note above on why it is composite. */
 	id: z.string(),
-	/** Hostname the lookup was performed for. */
+	/** Hostname the lookup was performed for, not a property of the cert. */
 	hostname: z.string(),
 	dns_names: z.array(z.string()).nullable().optional(),
 	sha1: z.string().nullable().optional(),

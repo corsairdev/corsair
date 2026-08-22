@@ -178,20 +178,48 @@ describe('SecurityTrails endpoints', () => {
 			expect(url).toContain('page=2');
 		});
 
-		it('keys certificates by SHA-256 and converts Unix seconds to dates', async () => {
+		it('keys certificates by hostname and SHA-256, and converts Unix seconds to dates', async () => {
 			harness.queue({ body: sslBody });
 			const { ctx, upserts } = createContext();
 
 			await Domain.ssl(ctx, { hostname: 'stackoverflow.com' });
 
 			const stored = upserts.certificates?.[0];
-			expect(stored?.entityId).toBe('C19C');
+			expect(stored?.entityId).toBe('stackoverflow.com:C19C');
 			expect(stored?.data.hostname).toBe('stackoverflow.com');
 			expect(stored?.data.issuer_common_name).toBe(
 				"Let's Encrypt Authority X3",
 			);
 			expect(stored?.data.not_after).toEqual(new Date(1587482583 * 1000));
 			expect(stored?.data.not_before).toEqual(new Date(1579706583 * 1000));
+		});
+
+		// One SAN certificate covers many hostnames — the documented example for
+		// stackoverflow.com/ssl lists 26 in `dns_names`. Keyed on the fingerprint
+		// alone, a second lookup would overwrite the first row's `hostname` and
+		// destroy the association, because upsertByEntityId replaces the stored
+		// data wholesale. Scoping the id by hostname keeps both observations.
+		it('keeps one row per hostname when a shared certificate is seen twice', async () => {
+			harness.queue({ body: sslBody }, { body: sslBody });
+			const { ctx, upserts } = createContext();
+
+			await Domain.ssl(ctx, { hostname: 'stackoverflow.com' });
+			await Domain.ssl(ctx, { hostname: 'askubuntu.com' });
+
+			expect(upserts.certificates).toHaveLength(2);
+			expect(upserts.certificates?.map((row) => row.entityId)).toEqual([
+				'stackoverflow.com:C19C',
+				'askubuntu.com:C19C',
+			]);
+			// Both rows keep their own hostname; neither was clobbered.
+			expect(upserts.certificates?.map((row) => row.data.hostname)).toEqual([
+				'stackoverflow.com',
+				'askubuntu.com',
+			]);
+			// The certificate's own identity is still recorded on both.
+			expect(
+				upserts.certificates?.every((row) => row.data.sha256 === 'C19C'),
+			).toBe(true);
 		});
 
 		it('skips certificate records that carry no SHA-256 fingerprint', async () => {

@@ -90,8 +90,10 @@ export const ssl: SecuritytrailsEndpoints['domainSsl'] = async (ctx, input) => {
 
 	if (response?.records?.length && ctx.db.certificates) {
 		for (const record of response.records) {
-			// The SHA-256 fingerprint is the certificate's identity. Without it
-			// there is no stable key, so skip rather than invent one.
+			// Without a fingerprint there is no stable key, so skip rather than
+			// invent one. The id is scoped by hostname because one SAN
+			// certificate serves many hosts and each lookup is its own
+			// observation; see SecuritytrailsCertificate in ../schema/database.
 			const fingerprint = record.fingerprints?.sha256;
 			if (!fingerprint) continue;
 
