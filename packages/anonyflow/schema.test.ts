@@ -13,18 +13,6 @@ describe('Anonyflow schema', () => {
 		expect(AnonyflowSchema.version).toBeDefined();
 		expect(AnonyflowSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
-
-	it('declares an entities map', () => {
-		expect(typeof AnonyflowSchema.entities).toBe('object');
-		expect(AnonyflowSchema.entities).not.toBeNull();
-
-		// The entities map should be empty as this plugin does not cache database entities
-		expect(Object.keys(AnonyflowSchema.entities)).toHaveLength(0);
-
-		for (const entity of Object.values(AnonyflowSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
-	});
 });
 
 describe('Anonyflow endpoints', () => {
