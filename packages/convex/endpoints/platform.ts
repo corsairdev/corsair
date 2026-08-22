@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest } from '../client';
+import { makeConvexRequest, managementPath } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 
 export const getTokenDetails: ConvexEndpoints['tokenDetails'] = async (
@@ -24,9 +24,13 @@ export const listDeploymentClasses: ConvexEndpoints['deploymentClassesList'] =
 	async (ctx, input) => {
 		const response = await makeConvexRequest<
 			ConvexEndpointOutputs['deploymentClassesList']
-		>(`/teams/${input.team_id}/list_deployment_classes`, ctx.key, {
-			method: 'GET',
-		});
+		>(
+			`/teams/${managementPath(input.team_id)}/list_deployment_classes`,
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -41,9 +45,13 @@ export const listDeploymentRegions: ConvexEndpoints['deploymentRegionsList'] =
 	async (ctx, input) => {
 		const response = await makeConvexRequest<
 			ConvexEndpointOutputs['deploymentRegionsList']
-		>(`/teams/${input.team_id}/list_deployment_regions`, ctx.key, {
-			method: 'GET',
-		});
+		>(
+			`/teams/${managementPath(input.team_id)}/list_deployment_regions`,
+			ctx.key,
+			{
+				method: 'GET',
+			},
+		);
 
 		await logEventFromContext(
 			ctx,

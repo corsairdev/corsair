@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest, tryCacheWrite } from '../client';
+import { makeConvexRequest, managementPath, tryCacheWrite } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 
 export const list: ConvexEndpoints['deploymentsList'] = async (ctx, input) => {
@@ -15,7 +15,7 @@ export const list: ConvexEndpoints['deploymentsList'] = async (ctx, input) => {
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deploymentsList']
-	>(`/projects/${input.project_id}/list_deployments`, ctx.key, {
+	>(`/projects/${managementPath(input.project_id)}/list_deployments`, ctx.key, {
 		method: 'GET',
 		query,
 	});
@@ -43,7 +43,9 @@ export const list: ConvexEndpoints['deploymentsList'] = async (ctx, input) => {
 export const get: ConvexEndpoints['deploymentGet'] = async (ctx, input) => {
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deploymentGet']
-	>(`/deployments/${input.deployment_name}`, ctx.key, { method: 'GET' });
+	>(`/deployments/${managementPath(input.deployment_name)}`, ctx.key, {
+		method: 'GET',
+	});
 
 	const deployments = ctx.db.deployments;
 	if (response && deployments) {
@@ -73,10 +75,14 @@ export const create: ConvexEndpoints['deploymentCreate'] = async (
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deploymentCreate']
-	>(`/projects/${input.project_id}/create_deployment`, ctx.key, {
-		method: 'POST',
-		body,
-	});
+	>(
+		`/projects/${managementPath(input.project_id)}/create_deployment`,
+		ctx.key,
+		{
+			method: 'POST',
+			body,
+		},
+	);
 
 	// The deployment was created upstream — a cache failure must not turn this
 	// successful non-idempotent call into an endpoint error.
@@ -109,7 +115,7 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deploymentUpdate']
-	>(`/deployments/${input.deployment_name}`, ctx.key, {
+	>(`/deployments/${managementPath(input.deployment_name)}`, ctx.key, {
 		method: 'PATCH',
 		body,
 	});
@@ -123,7 +129,7 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 		try {
 			const refreshed = await makeConvexRequest<
 				ConvexEndpointOutputs['deploymentGet']
-			>(`/deployments/${input.deployment_name}`, ctx.key, {
+			>(`/deployments/${managementPath(input.deployment_name)}`, ctx.key, {
 				method: 'GET',
 			});
 			if (refreshed.name) {
@@ -133,12 +139,7 @@ export const update: ConvexEndpoints['deploymentUpdate'] = async (
 					}),
 				);
 			}
-		} catch (error) {
-			console.warn(
-				'[corsair:convex] Failed to refresh deployment cache after update:',
-				error,
-			);
-		}
+		} catch {}
 	}
 
 	await logEventFromContext(
@@ -156,7 +157,7 @@ export const deleteDeployment: ConvexEndpoints['deploymentDelete'] = async (
 ) => {
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['deploymentDelete']
-	>(`/deployments/${input.deployment_name}/delete`, ctx.key, {
+	>(`/deployments/${managementPath(input.deployment_name)}/delete`, ctx.key, {
 		method: 'POST',
 	});
 
