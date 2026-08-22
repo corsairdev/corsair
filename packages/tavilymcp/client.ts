@@ -1,13 +1,36 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class TavilyMcpAPIError extends Error {
+	public readonly status?: number;
+	public readonly statusText?: string;
+	// Using unknown because Tavily error response bodies vary by endpoint and
+	// error type, making a strict type infeasible without per-endpoint handling.
+	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+	public readonly rateLimitReset?: number;
+	public readonly rateLimitRemaining?: number;
+	public readonly rateLimitLimit?: number;
+
 	constructor(
 		message: string,
 		public readonly code?: string,
+		options?: { cause?: Error },
 	) {
-		super(message);
+		super(message, options);
 		this.name = 'TavilyMcpAPIError';
+
+		// Carry the transport-level rate limit and status metadata forward so
+		// the plugin error handlers can still see it after the wrap.
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+			this.rateLimitReset = options.cause.rateLimitReset;
+			this.rateLimitRemaining = options.cause.rateLimitRemaining;
+			this.rateLimitLimit = options.cause.rateLimitLimit;
+		}
 	}
 }
 
@@ -56,8 +79,8 @@ export async function makeTavilyMcpRequest<T>(
 		return response;
 	} catch (error) {
 		if (error instanceof Error) {
-			throw new TavilyMcpAPIError(error.message);
+			throw new TavilyMcpAPIError(error.message, undefined, { cause: error });
 		}
-		throw new TavilyMcpAPIError('Unknown error');
+		throw new TavilyMcpAPIError('Unknown Tavily API error');
 	}
 }

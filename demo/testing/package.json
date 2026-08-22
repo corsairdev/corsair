@@ -42,6 +42,7 @@
     "@corsair-dev/outlook": "workspace:*",
     "@corsair-dev/reddit": "workspace:*",
     "@corsair-dev/sharepoint": "workspace:*",
+    "@corsair-dev/tavilymcp": "workspace:*",
     "@corsair-dev/slack": "workspace:*",
     "@corsair-dev/teams": "workspace:*",
     "@corsair-dev/twilio": "workspace:*",

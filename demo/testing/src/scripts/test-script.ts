@@ -18,11 +18,48 @@ async function setInstagramCredentials() {
 	}
 }
 
-const main = async () => {
-	const res = await corsair.slack.api.messages.post({
-		channel: 'general',
-		text: 'hello',
+async function testTavilySearch() {
+	console.log('\n=== TAVILY_MCP_TAVILY_SEARCH ===');
+
+	const res = await corsair.tavilymcp.api.tavily.search({
+		query: 'What is the Model Context Protocol?',
+		max_results: 3,
+		include_answer: true,
 	});
+
+	console.log(`query:         ${res.query}`);
+	console.log(`answer:        ${res.answer ?? '(none)'}`);
+	console.log(`results:       ${res.results.length}`);
+	console.log(`response_time: ${res.response_time}s`);
+
+	for (const [i, result] of res.results.entries()) {
+		console.log(`\n  ${i + 1}. ${result.title}`);
+		console.log(`     ${result.url}`);
+		console.log(`     score: ${result.score}`);
+		console.log(`     ${result.content.slice(0, 160)}...`);
+	}
+}
+
+async function testTavilyMap() {
+	console.log('\n=== TAVILY_MCP_TAVILY_MAP ===');
+
+	const res = await corsair.tavilymcp.api.tavily.map({
+		url: 'https://docs.tavily.com',
+		max_depth: 1,
+		limit: 10,
+	});
+
+	console.log(`base_url: ${res.base_url}`);
+	console.log(`urls:     ${res.results.length}`);
+	for (const url of res.results.slice(0, 10)) {
+		console.log(`  - ${url}`);
+	}
+}
+
+const main = async () => {
+	await testTavilySearch();
+	await testTavilyMap();
+	console.log('\nDone.');
 };
 
 main().catch((err) => {
