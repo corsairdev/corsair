@@ -3,16 +3,25 @@ import type { AsticaAiEndpoints } from '..';
 import { makeAsticaAiRequest } from '../client';
 import type { AsticaAiEndpointOutputs } from './types';
 
-export const get: AsticaAiEndpoints['exampleGet'] = async (ctx, input) => {
+export const read: AsticaAiEndpoints['readText'] = async (ctx, input) => {
 	const response = await makeAsticaAiRequest<
-		AsticaAiEndpointOutputs['exampleGet']
-	>(`example/${input.id}`, ctx.key, { method: 'GET' });
+		AsticaAiEndpointOutputs['readText']
+	>('/describe', ctx.key, {
+		baseUrl: 'https://vision.astica.ai',
+		method: 'POST',
+		body: {
+			input: input.input,
+			modelVersion: input.modelVersion,
+			visionParams: 'text_read',
+		},
+	});
 
 	await logEventFromContext(
 		ctx,
-		'asticaai.example.get',
+		'asticaai.read_text',
 		{ ...input },
 		'completed',
 	);
+
 	return response;
 };

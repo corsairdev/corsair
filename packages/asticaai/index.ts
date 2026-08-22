@@ -1,21 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AnalyzeAudio, ReadText } from './endpoints';
 import type {
 	AsticaAiEndpointInputs,
 	AsticaAiEndpointOutputs,
@@ -26,18 +23,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { AsticaAiSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveAsticaAiOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchAsticaAiTenantWebhook } from './webhooks/tenant-matcher';
-import type { AsticaAiWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type AsticaAiPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalAsticaAiPlugin['hooks'];
-	webhookHooks?: InternalAsticaAiPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof asticaAiEndpointsNested>;
 };
@@ -62,65 +52,49 @@ type AsticaAiEndpoint<K extends keyof AsticaAiEndpointOutputs> =
 	>;
 
 export type AsticaAiEndpoints = {
-	exampleGet: AsticaAiEndpoint<'exampleGet'>;
+	readText: AsticaAiEndpoint<'readText'>;
+	analyzeAudio: AsticaAiEndpoint<'analyzeAudio'>;
 };
-
-type AsticaAiWebhook<
-	K extends keyof AsticaAiWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<AsticaAiContext, TEvent, AsticaAiWebhookOutputs[K]>;
-
-export type AsticaAiWebhooks = {
-	example: AsticaAiWebhook<'example', ExampleEvent>;
-};
-
-export type AsticaAiBoundWebhooks = BindWebhooks<AsticaAiWebhooks>;
 
 const asticaAiEndpointsNested = {
-	example: {
-		get: Example.get,
+	readText: {
+		read: ReadText.read,
+	},
+	analyzeAudio: {
+		analyze: AnalyzeAudio.analyze,
 	},
 } as const;
 
-const asticaAiWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const asticaAiWebhooksNested = {} as const;
 
 export const asticaAiEndpointSchemas = {
-	'example.get': {
-		input: AsticaAiEndpointInputSchemas.exampleGet,
-		output: AsticaAiEndpointOutputSchemas.exampleGet,
+	'readText.read': {
+		input: AsticaAiEndpointInputSchemas.readText,
+		output: AsticaAiEndpointOutputSchemas.readText,
+	},
+	'analyzeAudio.analyze': {
+		input: AsticaAiEndpointInputSchemas.analyzeAudio,
+		output: AsticaAiEndpointOutputSchemas.analyzeAudio,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof asticaAiEndpointsNested
 >;
 
-const asticaAiWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof asticaAiWebhooksNested
->;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const asticaAiEndpointMeta = {
-	'example.get': {
+	'readText.read': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Extract text from an image using Astica OCR.',
+	},
+	'analyzeAudio.analyze': {
+		riskLevel: 'read',
+		description: 'Transcribe audio using Astica speech-to-text.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof asticaAiEndpointsNested>;
 
 export const asticaAiAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -152,44 +126,21 @@ export function asticaai<const T extends AsticaAiPluginOptions>(
 		schema: AsticaAiSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: asticaAiEndpointsNested,
 		webhooks: asticaAiWebhooksNested,
 		endpointMeta: asticaAiEndpointMeta,
 		endpointSchemas: asticaAiEndpointSchemas,
-		webhookSchemas: asticaAiWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-asticaai-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchAsticaAiTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveAsticaAiOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AsticaAiKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
@@ -201,10 +152,4 @@ export function asticaai<const T extends AsticaAiPluginOptions>(
 export type {
 	AsticaAiEndpointInputs,
 	AsticaAiEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
-export type {
-	AsticaAiWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
