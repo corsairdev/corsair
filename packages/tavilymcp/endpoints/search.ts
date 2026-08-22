@@ -5,8 +5,12 @@ import type { TavilySearchResponse } from './types';
 import { TavilySearchRequestSchema, TavilySearchResponseSchema } from './types';
 
 // Scoped by query: the same URL scores differently per query, and keying on the
-// URL alone would let a later search overwrite an earlier one.
-const searchResultEntityId = (query: string, url: string) => `${query}:${url}`;
+// URL alone would let a later search overwrite an earlier one. Both halves are
+// encoded so the separator cannot occur inside either: a raw `${query}:${url}`
+// lets ('read mailto:foo', 'https://a.com') and ('read mailto',
+// 'foo:https://a.com') collide, and both of those URLs pass z.string().url().
+const searchResultEntityId = (query: string, url: string) =>
+	`${encodeURIComponent(query)}:${encodeURIComponent(url)}`;
 
 export const search: TavilyMcpEndpoints['search'] = async (ctx, input) => {
 	const query = TavilySearchRequestSchema.parse(input);

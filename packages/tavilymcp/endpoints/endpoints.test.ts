@@ -139,7 +139,7 @@ describe('search', () => {
 		expect(upserts.searchResults).toHaveBeenCalledTimes(2);
 		expect(upserts.searchResults).toHaveBeenNthCalledWith(
 			1,
-			'model context protocol:https://modelcontextprotocol.io/introduction',
+			'model%20context%20protocol:https%3A%2F%2Fmodelcontextprotocol.io%2Fintroduction',
 			expect.objectContaining({
 				url: 'https://modelcontextprotocol.io/introduction',
 				title: 'Introduction',
@@ -162,11 +162,45 @@ describe('search', () => {
 		const keys = upserts.searchResults.mock.calls.map(([key]) => key);
 		expect(new Set(keys).size).toBe(keys.length);
 		expect(keys).toContain(
-			'model context protocol:https://modelcontextprotocol.io/introduction',
+			'model%20context%20protocol:https%3A%2F%2Fmodelcontextprotocol.io%2Fintroduction',
 		);
 		expect(keys).toContain(
-			'mcp spec:https://modelcontextprotocol.io/introduction',
+			'mcp%20spec:https%3A%2F%2Fmodelcontextprotocol.io%2Fintroduction',
 		);
+	});
+
+	it('keeps the key unique when the query contains the separator', async () => {
+		const hit = (url: string): TavilySearchResponse => ({
+			query: 'q',
+			images: [],
+			results: [{ title: 'T', url, content: 'c', score: 0.5 }],
+			response_time: 0.1,
+		});
+
+		// Both pairs collapse to `read mailto:foo:https://a.com` when the raw
+		// values are joined, and both URLs are valid.
+		mockedRequest
+			.mockResolvedValueOnce(hit('https://a.com'))
+			.mockResolvedValueOnce(hit('foo:https://a.com'));
+
+		await Tavily.search(ctx, { query: 'read mailto:foo' });
+		await Tavily.search(ctx, { query: 'read mailto' });
+
+		const keys = upserts.searchResults.mock.calls.map(([key]) => key);
+		expect(keys).toHaveLength(2);
+		expect(keys[0]).not.toBe(keys[1]);
+	});
+
+	it('builds the same key for the same query and url', async () => {
+		mockedRequest
+			.mockResolvedValueOnce(response)
+			.mockResolvedValueOnce(response);
+
+		await Tavily.search(ctx, { query: 'model context protocol' });
+		await Tavily.search(ctx, { query: 'model context protocol' });
+
+		const keys = upserts.searchResults.mock.calls.map(([key]) => key);
+		expect(keys.slice(0, 2)).toEqual(keys.slice(2, 4));
 	});
 
 	it('still returns results when persistence fails', async () => {

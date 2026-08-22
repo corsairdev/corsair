@@ -3,7 +3,7 @@ import { z } from 'zod';
 // upsertByEntityId replaces the data column wholesale, so each entity notes the
 // key it is stored under.
 
-/** Keyed `${query}:${url}`. */
+/** Keyed by the URI-encoded query and url, joined with `:`. */
 export const TavilyMcpSearchResult = z.object({
 	url: z.string(),
 	title: z.string(),

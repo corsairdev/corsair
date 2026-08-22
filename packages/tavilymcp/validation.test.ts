@@ -97,6 +97,34 @@ describe('input validation', () => {
 		).toBe(true);
 	});
 
+	it('rejects a research file whose contents are not base64', () => {
+		expect(
+			TavilyResearchRequestSchema.safeParse({
+				input: 'q',
+				files: [{ name: 'a.md', data: 'not base64!', type: 'base64' }],
+			}).success,
+		).toBe(false);
+	});
+
+	it('rejects a research file with an extension Tavily cannot read', () => {
+		const file = (name: string) => ({
+			input: 'q',
+			files: [{ name, data: 'aGk=', type: 'base64' }],
+		});
+
+		expect(TavilyResearchRequestSchema.safeParse(file('a.pdf')).success).toBe(
+			false,
+		);
+		expect(TavilyResearchRequestSchema.safeParse(file('noext')).success).toBe(
+			false,
+		);
+		for (const name of ['a.txt', 'a.md', 'a.json']) {
+			expect(TavilyResearchRequestSchema.safeParse(file(name)).success).toBe(
+				true,
+			);
+		}
+	});
+
 	it('caps research domain lists at the documented 20 entries', () => {
 		const domains = Array.from({ length: 21 }, (_, i) => `d${i}.com`);
 		expect(

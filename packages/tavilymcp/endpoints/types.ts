@@ -400,10 +400,13 @@ export type TavilyResearchStatus = (typeof TAVILY_RESEARCH_STATUS)[number];
  * to 5 files and 80,000 words each.
  */
 export const TavilyResearchFileSchema = z.object({
-	/** File name, including extension. */
-	name: z.string().min(1),
+	/** File name, including one of the three extensions Tavily reads. */
+	name: z
+		.string()
+		.min(1)
+		.regex(/\.(txt|md|json)$/i, 'must end in .txt, .md or .json'),
 	/** Base64-encoded file contents. */
-	data: z.string().min(1),
+	data: z.string().min(1).base64(),
 	/** Encoding discriminator; Tavily currently accepts only 'base64'. */
 	type: z.literal('base64'),
 });

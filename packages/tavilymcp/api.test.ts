@@ -47,9 +47,11 @@ describe('Tavily live API', () => {
 		expect(response.results.length).toBeGreaterThan(0);
 		expect(response.query).toBeTruthy();
 		expect(upserts).toHaveLength(response.results.length);
-		// Persisted rows are scoped by query, so two searches cannot collide.
+		// Rows are scoped by query, with both halves URI-encoded.
+		const prefix = `${encodeURIComponent('what is the model context protocol')}:`;
 		for (const [id] of upserts) {
-			expect(id.startsWith('what is the model context protocol:')).toBe(true);
+			expect(id.startsWith(prefix)).toBe(true);
+			expect(decodeURIComponent(id.slice(prefix.length))).toMatch(/^https?:/);
 		}
 	}, 60_000);
 
