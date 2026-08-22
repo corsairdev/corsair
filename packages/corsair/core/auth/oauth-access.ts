@@ -66,7 +66,7 @@ export async function getOAuthAccessToken(
 		};
 		(ctx as Record<string, unknown>)._refreshAuth = () =>
 			singleFlightRefresh(
-				flightKey,
+				`${flightKey}:force`,
 				async () =>
 					(await getHubAccessToken(hubContext, { forceRefresh: true }))
 						.accessToken,
@@ -80,8 +80,12 @@ export async function getOAuthAccessToken(
 	const clientSecret = credentials.client_secret;
 	const clientId = credentials.client_id;
 
-	const doRefresh = (): Promise<string> =>
-		singleFlightRefresh(flightKey, async () => {
+	// force ⇒ a 401 retry: the token can look locally fresh but be revoked at the
+	// provider, so skip the freshness re-check and mint unconditionally. A distinct
+	// flight key keeps a force from deduping onto an in-flight non-force refresh
+	// (which could hand back the stale token).
+	const runRefresh = (force: boolean): Promise<string> =>
+		singleFlightRefresh(force ? `${flightKey}:force` : flightKey, async () => {
 			const [currentAccess, expiresAt, refreshToken] = await Promise.all([
 				ctx.keys.get_access_token(),
 				ctx.keys.get_expires_at(),
@@ -89,7 +93,10 @@ export async function getOAuthAccessToken(
 			]);
 			// Re-check under the single-flight: a concurrent caller may have just
 			// refreshed and persisted a token while we waited.
-			if (isAccessTokenFresh({ accessToken: currentAccess, expiresAt })) {
+			if (
+				!force &&
+				isAccessTokenFresh({ accessToken: currentAccess, expiresAt })
+			) {
 				return currentAccess as string;
 			}
 			if (!refreshToken) {
@@ -108,7 +115,7 @@ export async function getOAuthAccessToken(
 			return tokens.access_token;
 		});
 
-	(ctx as Record<string, unknown>)._refreshAuth = doRefresh;
+	(ctx as Record<string, unknown>)._refreshAuth = () => runRefresh(true);
 
 	const [accessToken, expiresAt] = await Promise.all([
 		ctx.keys.get_access_token(),
@@ -117,5 +124,5 @@ export async function getOAuthAccessToken(
 	if (isAccessTokenFresh({ accessToken, expiresAt })) {
 		return accessToken as string;
 	}
-	return doRefresh();
+	return runRefresh(false);
 }

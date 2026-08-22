@@ -227,6 +227,52 @@ describe('getOAuthAccessToken switchboard', () => {
 		}
 	});
 
+	it('_refreshAuth force-refreshes even when the local token still looks fresh', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const farFuture = String(Math.floor(Date.now() / 1000) + 3600);
+			await seed(
+				database,
+				{ client_id: 'cid', client_secret: 'csecret' },
+				{
+					access_token: 'revoked-but-unexpired',
+					expires_at: farFuture,
+					refresh_token: 'rt',
+				},
+			);
+
+			let calls = 0;
+			global.fetch = (async () => {
+				calls += 1;
+				return jsonResponse({
+					access_token: 'force-minted',
+					refresh_token: 'rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			const keys = makeKeys(database);
+			const ctx = { keys, tenantId: 'default' } as Record<string, unknown>;
+			const first = await getOAuthAccessToken(
+				ctx as { keys: typeof keys; tenantId: string },
+				{ plugin: 'linear', tokenUrl: 'https://api.linear.app/oauth/token' },
+			);
+			// Locally fresh → returned as-is, no network.
+			expect(first).toBe('revoked-but-unexpired');
+			expect(calls).toBe(0);
+
+			// Provider revoked it early: the 401 retry must mint a NEW token, not
+			// replay the still-unexpired one.
+			const refreshAuth = ctx._refreshAuth as () => Promise<string>;
+			const forced = await refreshAuth();
+			expect(forced).toBe('force-minted');
+			expect(calls).toBe(1);
+			expect(await keys.get_access_token()).toBe('force-minted');
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('throws AuthMissing when there is neither a local secret nor a hub', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
