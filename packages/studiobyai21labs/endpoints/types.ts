@@ -265,7 +265,7 @@ const CreateMaestroRunInputSchema = z.object({
 	system_prompt: z.string().optional(),
 	requirements: z.array(MaestroRequirementSchema).max(10).optional(),
 	tools: z.array(MaestroToolSchema).optional(),
-	models: z.string().optional(),
+	models: z.array(z.string()).optional(),
 	budget: z.enum(['low', 'medium', 'high']).optional(),
 	include: z.array(z.enum(['data_sources', 'requirements_result'])).optional(),
 	response_language: z

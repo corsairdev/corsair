@@ -178,8 +178,15 @@ describe('StudioByAI21Labs schemas', () => {
 		expect(
 			StudioByAI21LabsEndpointInputSchemas.createMaestroRun.safeParse({
 				input: 'Summarize the market',
+				models: ['jamba-mini'],
 			}).success,
 		).toBe(true);
+		expect(
+			StudioByAI21LabsEndpointInputSchemas.createMaestroRun.safeParse({
+				input: 'Summarize the market',
+				models: 'jamba-mini',
+			}).success,
+		).toBe(false);
 		expect(
 			StudioByAI21LabsEndpointOutputSchemas.createMaestroRun.safeParse({
 				id: 'run-1',
