@@ -31,18 +31,20 @@ type TokenCacheKeys = {
 };
 
 // Persists rotated tokens to the account and returns the new absolute expiry
-// (seconds). Falls back to the previous expiry when the provider omits
-// expires_in, and to a one-hour default when neither is known.
+// (seconds). When the provider omits expires_in, keeps the previous expiry only
+// if it is still in the future, else falls back to one hour — never a past
+// expiry, which would make the freshly minted token read stale on the next call.
 export async function cacheRefreshedTokens(
 	keys: TokenCacheKeys,
 	tokens: RefreshedTokens,
 	prevExpiresAt?: string | null,
 ): Promise<number> {
 	const now = Math.floor(Date.now() / 1000);
+	const prev = prevExpiresAt ? Number(prevExpiresAt) : Number.NaN;
 	const nextExpiresAt = tokens.expires_in
 		? now + tokens.expires_in
-		: prevExpiresAt
-			? Number(prevExpiresAt)
+		: Number.isFinite(prev) && prev > now
+			? prev
 			: now + 3600;
 
 	await keys.set_access_token(tokens.access_token);
