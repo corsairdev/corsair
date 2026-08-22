@@ -46,7 +46,7 @@ export async function refreshOAuthTokensLocal(
 		...extraParams,
 	};
 
-	const headers: Record<string, string> = {};
+	const headers: Record<string, string> = { Accept: 'application/json' };
 	if (tokenAuthMethod === 'basic') {
 		headers.Authorization = `Basic ${Buffer.from(`${clientId ?? ''}:${clientSecret}`).toString('base64')}`;
 	} else if (tokenAuthMethod === 'basic_secret_only') {
