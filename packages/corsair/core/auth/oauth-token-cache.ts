@@ -41,11 +41,12 @@ export async function cacheRefreshedTokens(
 ): Promise<number> {
 	const now = Math.floor(Date.now() / 1000);
 	const prev = prevExpiresAt ? Number(prevExpiresAt) : Number.NaN;
-	const nextExpiresAt = tokens.expires_in
-		? now + tokens.expires_in
-		: Number.isFinite(prev) && prev > now
-			? prev
-			: now + 3600;
+	const nextExpiresAt =
+		typeof tokens.expires_in === 'number'
+			? now + tokens.expires_in
+			: Number.isFinite(prev) && prev > now
+				? prev
+				: now + 3600;
 
 	await keys.set_access_token(tokens.access_token);
 	await keys.set_expires_at(String(nextExpiresAt));

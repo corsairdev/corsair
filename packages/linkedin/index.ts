@@ -369,7 +369,6 @@ export function linkedin<const T extends LinkedInPluginOptions>(
 			authUrl: 'https://www.linkedin.com/oauth/v2/authorization',
 			tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
 			tokenAuthMethod: 'body',
-			tokenAuthMethod: 'body',
 			scopes: [
 				'openid',
 				'profile',
@@ -407,6 +406,7 @@ export function linkedin<const T extends LinkedInPluginOptions>(
 			return getOAuthAccessToken(ctx, {
 				plugin: 'linkedin',
 				tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
+				tokenAuthMethod: 'body',
 			});
 		},
 	} satisfies InternalLinkedInPlugin;

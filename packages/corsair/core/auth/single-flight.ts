@@ -17,7 +17,7 @@ export function singleFlight<T>(
 		flightsByStore.set(store, flights);
 	}
 	const existing = flights.get(key) as Promise<T> | undefined;
-	if (existing) return existing;
+	if (existing !== undefined) return existing;
 	const pending = run().finally(() => {
 		flights.delete(key);
 	});
