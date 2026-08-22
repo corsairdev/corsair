@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class BunnycdnAPIError extends Error {
@@ -51,8 +50,11 @@ export async function makeBunnycdnRequest<T>(
     try {
         return await request<T>(config, requestOptions);
     } catch (error) {
+        if (error && typeof error === 'object' && 'status' in error) {
+            throw error;
+        }
         if (error instanceof Error) {
-            throw new BunnycdnAPIError(error.message);
+            throw new BunnycdnAPIError(`BunnyCDN API Error: ${error.message}`);
         }
         throw new BunnycdnAPIError('Unknown error');
     }

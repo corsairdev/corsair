@@ -27,7 +27,6 @@ import { BunnycdnSchema } from './schema';
 import { ExampleWebhooks } from './webhooks';
 import { errorHandlers } from './error-handlers';
 import { matchBunnycdnTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveBunnycdnOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 
 export type BunnycdnPluginOptions = {
     authType?: PickAuth<'api_key'>;
@@ -161,7 +160,6 @@ export function bunnycdn<const T extends BunnycdnPluginOptions>(
             return 'x-bunnycdn-signature' in headers;
         },
         pluginTenantWebhookMatcher: matchBunnycdnTenantWebhook,
-        oauthWebhookTenantLinkResolver: resolveBunnycdnOAuthWebhookTenantLink,
         errorHandlers: {
             ...errorHandlers,
             ...options.errorHandlers,

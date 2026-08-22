@@ -1,25 +1,12 @@
-import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
-import { asRecord, firstString, readBodyRecord } from 'corsair/core';
+import type { WebhookTenantMatch } from 'corsair/core';
 
-// TODO: Rename linkType 'tenant_external_id' to match the provider field
-// (e.g. team_id, installation_id, organization_id). Must match authConfig.account
-// and oauthWebhookTenantLinkResolver.
-// Return null for URL verification / handshake payloads that have no tenant id.
-export function matchBunnycdnTenantWebhook(
-	request: RawWebhookRequest,
-): WebhookTenantMatch | null {
-	const body = readBodyRecord(request);
-	if (!body) return null;
+export function matchBunnycdnTenantWebhook(body: any): WebhookTenantMatch | null {
+    const tenantCode = body?.tenant?.code || body?.payload?.tenant?.code;
 
-	// TODO: Extract the stable external id from the webhook payload.
-	// Example:
-	// const externalId = firstString([body.tenant_external_id, asRecord(body.data)?.id]);
-	const externalId = firstString([
-		body.tenant_external_id,
-		asRecord(body.data)?.tenant_external_id,
-	]);
+    if (!tenantCode) return null;
 
-	if (!externalId) return null;
-
-	return { linkType: 'tenant_external_id', externalId };
+    return { 
+        linkType: 'account' as const, 
+        externalId: String(tenantCode)
+    };
 }
