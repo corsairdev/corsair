@@ -44,7 +44,7 @@ export function normalizeWorkdayHost(host: string): string {
 		value = url.host;
 	}
 
-	// ponytail: no /\/+$/ — CodeQL flags ReDoS on uncontrolled host input
+	// no /\/+$/ — CodeQL flags ReDoS on uncontrolled host input
 	while (value.endsWith('/')) {
 		value = value.slice(0, -1);
 	}
