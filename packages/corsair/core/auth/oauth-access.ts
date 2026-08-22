@@ -23,6 +23,25 @@ export type OAuthAccessOptions = {
 	extraParams?: Record<string, string>;
 };
 
+// Concurrent refreshes for the same (plugin, tenant) share one exchange:
+// rotating providers invalidate the old refresh_token on use, so a second
+// in-flight refresh with the stale token would fail. Best-effort, in-process —
+// the hub single-flights its own side too.
+const inFlightRefreshes = new Map<string, Promise<string>>();
+
+function singleFlightRefresh(
+	key: string,
+	run: () => Promise<string>,
+): Promise<string> {
+	const existing = inFlightRefreshes.get(key);
+	if (existing) return existing;
+	const pending = run().finally(() => {
+		inFlightRefreshes.delete(key);
+	});
+	inFlightRefreshes.set(key, pending);
+	return pending;
+}
+
 // Single acquisition path for an oauth_2 access token. Dispatches on where the
 // client_secret lives: absent locally ⇒ the secret is in the hub (BYO+Hub), so
 // refresh round-trips the refresh_token through the hub; present ⇒ inline/no-Hub,
@@ -33,6 +52,7 @@ export async function getOAuthAccessToken(
 	opts: OAuthAccessOptions,
 ): Promise<string> {
 	const credentials = await ctx.keys.get_integration_credentials();
+	const flightKey = `${opts.plugin}:${ctx.tenantId}`;
 
 	if (!credentials.client_secret) {
 		if (!ctx.hub) {
@@ -44,37 +64,51 @@ export async function getOAuthAccessToken(
 			plugin: opts.plugin,
 			tenantId: ctx.tenantId,
 		};
-		const result = await getHubAccessToken(hubContext);
-		(ctx as Record<string, unknown>)._refreshAuth = async () =>
-			(await getHubAccessToken(hubContext, { forceRefresh: true })).accessToken;
-		return result.accessToken;
+		(ctx as Record<string, unknown>)._refreshAuth = () =>
+			singleFlightRefresh(
+				flightKey,
+				async () =>
+					(await getHubAccessToken(hubContext, { forceRefresh: true }))
+						.accessToken,
+			);
+		return singleFlightRefresh(
+			flightKey,
+			async () => (await getHubAccessToken(hubContext)).accessToken,
+		);
 	}
 
 	const clientSecret = credentials.client_secret;
 	const clientId = credentials.client_id;
 
-	const refresh = async (): Promise<string> => {
-		const [refreshToken, expiresAt] = await Promise.all([
-			ctx.keys.get_refresh_token(),
-			ctx.keys.get_expires_at(),
-		]);
-		if (!refreshToken) {
-			throw new AuthMissingError(opts.plugin, 'oauth_2');
-		}
-		const tokens = await refreshOAuthTokensLocal({
-			tokenUrl: opts.tokenUrl,
-			tokenAuthMethod: opts.tokenAuthMethod,
-			bodyFormat: opts.bodyFormat,
-			extraParams: opts.extraParams,
-			clientId,
-			clientSecret,
-			refreshToken,
+	const doRefresh = (): Promise<string> =>
+		singleFlightRefresh(flightKey, async () => {
+			const [currentAccess, expiresAt, refreshToken] = await Promise.all([
+				ctx.keys.get_access_token(),
+				ctx.keys.get_expires_at(),
+				ctx.keys.get_refresh_token(),
+			]);
+			// Re-check under the single-flight: a concurrent caller may have just
+			// refreshed and persisted a token while we waited.
+			if (isAccessTokenFresh({ accessToken: currentAccess, expiresAt })) {
+				return currentAccess as string;
+			}
+			if (!refreshToken) {
+				throw new AuthMissingError(opts.plugin, 'oauth_2');
+			}
+			const tokens = await refreshOAuthTokensLocal({
+				tokenUrl: opts.tokenUrl,
+				tokenAuthMethod: opts.tokenAuthMethod,
+				bodyFormat: opts.bodyFormat,
+				extraParams: opts.extraParams,
+				clientId,
+				clientSecret,
+				refreshToken,
+			});
+			await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
+			return tokens.access_token;
 		});
-		await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
-		return tokens.access_token;
-	};
 
-	(ctx as Record<string, unknown>)._refreshAuth = refresh;
+	(ctx as Record<string, unknown>)._refreshAuth = doRefresh;
 
 	const [accessToken, expiresAt] = await Promise.all([
 		ctx.keys.get_access_token(),
@@ -83,5 +117,5 @@ export async function getOAuthAccessToken(
 	if (isAccessTokenFresh({ accessToken, expiresAt })) {
 		return accessToken as string;
 	}
-	return refresh();
+	return doRefresh();
 }

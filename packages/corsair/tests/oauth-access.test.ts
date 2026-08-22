@@ -187,6 +187,46 @@ describe('getOAuthAccessToken switchboard', () => {
 		}
 	});
 
+	it('single-flights concurrent refreshes into one network call', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seed(
+				database,
+				{ client_id: 'cid', client_secret: 'csecret' },
+				{ access_token: 'stale', expires_at: '1', refresh_token: 'rot-rt' },
+			);
+
+			let calls = 0;
+			global.fetch = (async () => {
+				calls += 1;
+				// Rotating provider: the refresh_token is invalidated after first use,
+				// so a second concurrent POST with the same token would fail.
+				return jsonResponse({
+					access_token: 'rotated',
+					refresh_token: 'rot-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			const keys = makeKeys(database);
+			const ctx = { keys, tenantId: 'default' };
+			const opts = {
+				plugin: 'linear',
+				tokenUrl: 'https://api.linear.app/oauth/token',
+			};
+			const [a, b] = await Promise.all([
+				getOAuthAccessToken(ctx, opts),
+				getOAuthAccessToken(ctx, opts),
+			]);
+
+			expect(a).toBe('rotated');
+			expect(b).toBe('rotated');
+			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('throws AuthMissing when there is neither a local secret nor a hub', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
