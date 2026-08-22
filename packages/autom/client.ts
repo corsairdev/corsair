@@ -24,11 +24,18 @@ export async function makeAutomRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
+	if (!apiKey.trim()) {
+		throw new AutomAPIError('Autom API key is required');
+	}
+
 	const config: OpenAPIConfig = {
 		BASE: AUTOM_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// Unset on purpose: `request()` injects `Authorization: Bearer` when TOKEN
+		// is set. Autom authenticates with `x-api-key` only.
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			'x-api-key': apiKey,

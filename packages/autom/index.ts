@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Google } from './endpoints';
 import type {
 	AutomEndpointInputs,
@@ -149,16 +150,16 @@ export function autom<const T extends AutomPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AutomKeyBuilderContext, source) => {
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (source === 'endpoint' && options.key?.trim()) {
+				return options.key.trim();
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (res?.trim()) return res.trim();
 			}
 
-			return '';
+			throw new AuthMissingError('autom', 'api_key');
 		},
 	} satisfies InternalAutomPlugin;
 }
