@@ -49,33 +49,62 @@ export type ListVoicesResponse = z.infer<typeof ListVoicesResponseSchema>;
 // All array params use the PHP-style `param[]` naming convention.
 // ─────────────────────────────────────────────────────────────────────────────
 
-export const CreateAudioInputSchema = z.object({
-	/** Voice IDs to use, one per text segment. Must match transcribe_text length. */
-	voice_id: z.array(z.string()).min(1),
-	/** Text segments to synthesise, one per voice. */
-	transcribe_text: z.array(z.string().min(1)).min(1),
-	/**
-	 * Pitch rate adjustments per segment.
-	 * Integer in [-50, 50] or "default". Omit to use provider default.
-	 */
-	transcribe_ssml_pitch_rate: z
-		.array(z.union([z.number().int().min(-50).max(50), z.literal('default')]))
-		.optional(),
-	/**
-	 * Speaking rate per segment.
-	 * Integer in [20, 200] (percent) or "default". Omit to use provider default.
-	 */
-	transcribe_ssml_spk_rate: z
-		.array(z.union([z.number().int().min(20).max(200), z.literal('default')]))
-		.optional(),
-	/**
-	 * Volume adjustments per segment.
-	 * Integer in [-40, 40] (dB) or "default". Omit to use provider default.
-	 */
-	transcribe_ssml_volume: z
-		.array(z.union([z.number().int().min(-40).max(40), z.literal('default')]))
-		.optional(),
-});
+export const CreateAudioInputSchema = z
+	.object({
+		/** Voice IDs to use — must be the same length as transcribe_text. */
+		voice_id: z.array(z.string()).min(1),
+		/** Text segments to synthesise — one per voice entry. */
+		transcribe_text: z.array(z.string().min(1)).min(1),
+		/**
+		 * Pitch rate adjustments per segment.
+		 * Integer in [-50, 50] or "default". Must match transcribe_text length when supplied.
+		 */
+		transcribe_ssml_pitch_rate: z
+			.array(z.union([z.number().int().min(-50).max(50), z.literal('default')]))
+			.optional(),
+		/**
+		 * Speaking rate per segment.
+		 * Integer in [20, 200] (percent) or "default". Must match transcribe_text length when supplied.
+		 */
+		transcribe_ssml_spk_rate: z
+			.array(z.union([z.number().int().min(20).max(200), z.literal('default')]))
+			.optional(),
+		/**
+		 * Volume adjustments per segment.
+		 * Integer in [-40, 40] (dB) or "default". Must match transcribe_text length when supplied.
+		 */
+		transcribe_ssml_volume: z
+			.array(z.union([z.number().int().min(-40).max(40), z.literal('default')]))
+			.optional(),
+	})
+	.superRefine((val, ctx) => {
+		const n = val.transcribe_text.length;
+
+		if (val.voice_id.length !== n) {
+			ctx.addIssue({
+				code: z.ZodIssueCode.custom,
+				path: ['voice_id'],
+				message: `voice_id must have the same length as transcribe_text (expected ${n}, got ${val.voice_id.length})`,
+			});
+		}
+
+		const ssmlFields = [
+			'transcribe_ssml_pitch_rate',
+			'transcribe_ssml_spk_rate',
+			'transcribe_ssml_volume',
+		] as const;
+
+		for (const field of ssmlFields) {
+			const arr = val[field];
+			if (arr !== undefined && arr.length !== n) {
+				ctx.addIssue({
+					code: z.ZodIssueCode.custom,
+					path: [field],
+					message: `${field} must have the same length as transcribe_text (expected ${n}, got ${arr.length})`,
+				});
+			}
+		}
+	});
 
 export type CreateAudioInput = z.infer<typeof CreateAudioInputSchema>;
 

@@ -1,9 +1,10 @@
 /**
  * Aivoov API endpoint tests.
  *
- * These tests verify:
- *  1. Input/output Zod schemas parse correctly (unit)
- *  2. Live API call to GET /voices returns a well-shaped response (integration)
+ * Tests:
+ *  1. Input/output Zod schema unit tests (including array-length invariants)
+ *  2. Live API integration tests — gated on AIVOOV_API_KEY env var
+ *     (the en-US response is fetched once in beforeAll and reused)
  *
  * Per PLUGIN_PR_RULES.md R2, every implemented endpoint must have a test.
  */
@@ -18,7 +19,7 @@ import {
 } from '../endpoints/types';
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Unit: Schema validation
+// Unit: ListVoicesInputSchema
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('ListVoicesInputSchema', () => {
@@ -41,6 +42,10 @@ describe('ListVoicesInputSchema', () => {
 	});
 });
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Unit: VoiceSchema
+// ─────────────────────────────────────────────────────────────────────────────
+
 describe('VoiceSchema', () => {
 	const validVoice = {
 		voice_id: 'c9568120-ee25-4860-9038-219f0710a691',
@@ -61,6 +66,10 @@ describe('VoiceSchema', () => {
 		expect(() => VoiceSchema.parse(rest)).toThrow();
 	});
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Unit: ListVoicesResponseSchema
+// ─────────────────────────────────────────────────────────────────────────────
 
 describe('ListVoicesResponseSchema', () => {
 	const validResponse = {
@@ -95,6 +104,10 @@ describe('ListVoicesResponseSchema', () => {
 		).toThrow();
 	});
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Unit: CreateAudioInputSchema — field validation + array-length invariants
+// ─────────────────────────────────────────────────────────────────────────────
 
 describe('CreateAudioInputSchema', () => {
 	const validInput = {
@@ -153,7 +166,76 @@ describe('CreateAudioInputSchema', () => {
 			CreateAudioInputSchema.parse({ ...validInput, transcribe_text: [] }),
 		).toThrow();
 	});
+
+	// ── Array-length invariant tests ──────────────────────────────────────────
+
+	it('rejects voice_id with length mismatching transcribe_text', () => {
+		const result = CreateAudioInputSchema.safeParse({
+			voice_id: ['id-1', 'id-2'],
+			transcribe_text: ['Hello'],
+		});
+		expect(result.success).toBe(false);
+		if (!result.success) {
+			const paths = result.error.issues.map((i) => i.path[0]);
+			expect(paths).toContain('voice_id');
+		}
+	});
+
+	it('rejects transcribe_ssml_pitch_rate with length mismatching transcribe_text', () => {
+		const result = CreateAudioInputSchema.safeParse({
+			voice_id: ['id-1'],
+			transcribe_text: ['Hello'],
+			transcribe_ssml_pitch_rate: [0, 10],
+		});
+		expect(result.success).toBe(false);
+		if (!result.success) {
+			const paths = result.error.issues.map((i) => i.path[0]);
+			expect(paths).toContain('transcribe_ssml_pitch_rate');
+		}
+	});
+
+	it('rejects transcribe_ssml_spk_rate with length mismatching transcribe_text', () => {
+		const result = CreateAudioInputSchema.safeParse({
+			voice_id: ['id-1'],
+			transcribe_text: ['Hello'],
+			transcribe_ssml_spk_rate: [100, 120],
+		});
+		expect(result.success).toBe(false);
+		if (!result.success) {
+			const paths = result.error.issues.map((i) => i.path[0]);
+			expect(paths).toContain('transcribe_ssml_spk_rate');
+		}
+	});
+
+	it('rejects transcribe_ssml_volume with length mismatching transcribe_text', () => {
+		const result = CreateAudioInputSchema.safeParse({
+			voice_id: ['id-1'],
+			transcribe_text: ['Hello'],
+			transcribe_ssml_volume: [0, 5],
+		});
+		expect(result.success).toBe(false);
+		if (!result.success) {
+			const paths = result.error.issues.map((i) => i.path[0]);
+			expect(paths).toContain('transcribe_ssml_volume');
+		}
+	});
+
+	it('accepts multi-segment input where all arrays match length', () => {
+		expect(() =>
+			CreateAudioInputSchema.parse({
+				voice_id: ['id-1', 'id-2'],
+				transcribe_text: ['Hello', 'World'],
+				transcribe_ssml_pitch_rate: [0, 'default'],
+				transcribe_ssml_spk_rate: [100, 120],
+				transcribe_ssml_volume: ['default', 5],
+			}),
+		).not.toThrow();
+	});
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Unit: CreateAudioResponseSchema
+// ─────────────────────────────────────────────────────────────────────────────
 
 describe('CreateAudioResponseSchema', () => {
 	it('parses a valid audio creation response', () => {
@@ -174,8 +256,9 @@ describe('CreateAudioResponseSchema', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Integration: Live API call (voices.list)
-// Rate limit: 20 calls/day — these tests guard schema accuracy.
+// Integration: Live API — voices.list
+// Rate limit: 20 calls/day.
+// The en-US response is fetched ONCE in beforeAll and shared across tests.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const TEST_API_KEY = process.env.AIVOOV_API_KEY ?? '';
@@ -183,7 +266,7 @@ const TEST_API_KEY = process.env.AIVOOV_API_KEY ?? '';
 const describeIfKey = TEST_API_KEY ? describe : describe.skip;
 
 describeIfKey('Live API — voices.list', () => {
-	it('returns a valid response for all voices', async () => {
+	it('returns a valid response for all voices (unfiltered)', async () => {
 		const response = await makeAivoovRequest<unknown>('/voices', TEST_API_KEY, {
 			method: 'GET',
 		});
@@ -197,28 +280,32 @@ describeIfKey('Live API — voices.list', () => {
 		}
 	}, 30000);
 
-	it('returns filtered voices for a valid language_code', async () => {
-		const response = await makeAivoovRequest<unknown>('/voices', TEST_API_KEY, {
-			method: 'GET',
-			query: { language_code: 'en-US' },
-		});
+	// Fetch en-US voices once and reuse across the remaining two tests.
+	let cachedEnUsResponse: unknown;
 
-		const parsed = ListVoicesResponseSchema.safeParse(response);
+	beforeAll(async () => {
+		cachedEnUsResponse = await makeAivoovRequest<unknown>(
+			'/voices',
+			TEST_API_KEY,
+			{
+				method: 'GET',
+				query: { language_code: 'en-US' },
+			},
+		);
+	}, 30000);
+
+	it('returns only en-US voices when filtered by language_code', () => {
+		const parsed = ListVoicesResponseSchema.safeParse(cachedEnUsResponse);
 		expect(parsed.success).toBe(true);
 		if (parsed.success) {
 			expect(parsed.data.data.every((v) => v.language_code === 'en-US')).toBe(
 				true,
 			);
 		}
-	}, 30000);
+	});
 
-	it('each voice includes voice_id usable for audio creation', async () => {
-		const response = await makeAivoovRequest<unknown>('/voices', TEST_API_KEY, {
-			method: 'GET',
-			query: { language_code: 'en-US' },
-		});
-
-		const parsed = ListVoicesResponseSchema.safeParse(response);
+	it('each voice includes a non-empty voice_id usable for audio creation', () => {
+		const parsed = ListVoicesResponseSchema.safeParse(cachedEnUsResponse);
 		expect(parsed.success).toBe(true);
 		if (parsed.success) {
 			for (const voice of parsed.data.data.slice(0, 5)) {
@@ -226,5 +313,5 @@ describeIfKey('Live API — voices.list', () => {
 				expect(voice.voice_id.length).toBeGreaterThan(0);
 			}
 		}
-	}, 30000);
+	});
 });
