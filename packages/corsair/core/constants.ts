@@ -194,7 +194,7 @@ export const ProviderDisplayNames = {
 	agentmail: 'AgentMail',
 	agentql: 'AgentQL',
 	agenty: 'Agenty',
-	agilitycms: 'AgilityCms',
+	agilitycms: 'Agility CMS',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',

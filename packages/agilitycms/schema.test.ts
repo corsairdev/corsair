@@ -1,20 +1,28 @@
 import { AgilityCmsSchema } from './schema';
 
-describe('AgilityCms schema', () => {
+describe('Agility CMS schema', () => {
 	it('declares a semver version', () => {
 		expect(AgilityCmsSchema.version).toBeDefined();
 		expect(AgilityCmsSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('declares all 7 database entities', () => {
 		expect(typeof AgilityCmsSchema.entities).toBe('object');
 		expect(AgilityCmsSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(AgilityCmsSchema.entities))).toBe(true);
+		const entityKeys = Object.keys(AgilityCmsSchema.entities);
+		expect(entityKeys).toContain('contentItems');
+		expect(entityKeys).toContain('pages');
+		expect(entityKeys).toContain('contentModels');
+		expect(entityKeys).toContain('pageModules');
+		expect(entityKeys).toContain('sitemapNodes');
+		expect(entityKeys).toContain('syncItems');
+		expect(entityKeys).toContain('syncPages');
 		for (const entity of Object.values(AgilityCmsSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
 	});
-});
 
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
+	it('schema version is 1.0.0', () => {
+		expect(AgilityCmsSchema.version).toBe('1.0.0');
+	});
+});
