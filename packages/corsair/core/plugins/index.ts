@@ -38,6 +38,20 @@ import type {
 export type EndpointRiskLevel = 'read' | 'write' | 'destructive';
 
 /**
+ * Usage limit configuration for rate limiting and budget quotas.
+ */
+export type UsageLimit = {
+	/** The maximum number of tool calls allowed within the time window. */
+	max: number;
+	/** The time window for the limit, e.g., '1m' for a minute, '1d' for a day. */
+	window: string;
+	/** Dictates the 'blocked' reason returned when the limit is exceeded. */
+	type: 'rate_limit' | 'budget';
+	/** Optional filter to restrict the limit to a specific risk level. */
+	riskLevel?: EndpointRiskLevel;
+};
+
+/**
  * Permission mode controlling what the AI agent is allowed to do by default.
  *
  * | mode     | read  | write            | destructive         |
@@ -158,6 +172,10 @@ export type PluginPermissionsConfig<T extends EndpointTree = EndpointTree> = {
 	 * Only valid paths for this specific plugin compile — typos are type errors.
 	 */
 	overrides?: Partial<Record<EndpointPathsOf<T>, PermissionPolicy>>;
+	/**
+	 * Limits applied to calls made to this plugin.
+	 */
+	limits?: UsageLimit[];
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -737,6 +755,10 @@ export type CorsairPermissionsOptions = {
 		| 'synchronous'
 		| 'asynchronous'
 		| (() => 'synchronous' | 'asynchronous');
+	/**
+	 * Global usage limits applied to all calls across all plugins.
+	 */
+	limits?: (UsageLimit & { scope?: 'global' | 'tenant' })[];
 	/**
 	 * @deprecated Use `manual.onApprovalRequired` instead. TODO: delete ~April 2026.
 	 */

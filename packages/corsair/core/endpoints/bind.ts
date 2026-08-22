@@ -81,6 +81,7 @@ export function bindEndpointsRecursively({
 	permissionsConfig?: {
 		mode: PermissionMode;
 		overrides?: Record<string, PermissionPolicy>;
+		limits?: import('../plugins').UsageLimit[];
 	};
 	/** Risk level metadata per dot-notation endpoint path. Defaults riskLevel to 'write' when missing. */
 	endpointMeta?: Record<string, EndpointMetaEntry>;
@@ -146,6 +147,8 @@ export function bindEndpointsRecursively({
 							: undefined,
 						tenantId,
 						approvalMode: permissionsOptions?.mode,
+						globalLimits: permissionsOptions?.limits,
+						pluginLimits: permissionsConfig.limits,
 					});
 					if (permResult === 'blocked') {
 						let msg: string;
@@ -153,6 +156,10 @@ export function bindEndpointsRecursively({
 							msg = `Action '${operationPath}' was denied by the user. Await further instructions before proceeding.`;
 						} else if (permReason === 'policy') {
 							msg = `Action '${operationPath}' is blocked by the permission policy. Update the corsair config to allow it.`;
+						} else if (permReason === 'rate_limit_exceeded') {
+							msg = `Action '${operationPath}' is currently rate limited. Please wait before trying again.`;
+						} else if (permReason === 'budget_exhausted') {
+							msg = `Action '${operationPath}' has exhausted its configured budget quota.`;
 						} else if (permReason === 'timeout') {
 							msg = `Action '${operationPath}' timed out waiting for approval.`;
 						} else if (permToken && permId) {
