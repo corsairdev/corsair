@@ -322,13 +322,10 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'dropbox',
-						tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'dropbox',
+					tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
+				});
 			}
 
 			if (ctx.authType === 'managed') {

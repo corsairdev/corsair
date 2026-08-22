@@ -410,13 +410,10 @@ export function googledrive<const T extends GoogleDrivePluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'googledrive',
-						tokenUrl: 'https://oauth2.googleapis.com/token',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googledrive',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('googledrive', 'oauth_2');

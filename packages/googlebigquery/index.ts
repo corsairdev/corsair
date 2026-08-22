@@ -799,13 +799,10 @@ export function googlebigquery<const T extends GoogleBigqueryPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'googlebigquery',
-						tokenUrl: 'https://oauth2.googleapis.com/token',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googlebigquery',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('googlebigquery', 'oauth_2');

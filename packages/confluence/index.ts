@@ -203,14 +203,11 @@ export function confluence<const T extends ConfluencePluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const accessToken = await getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'confluence',
-						tokenUrl: 'https://auth.atlassian.com/oauth/token',
-						bodyFormat: 'json',
-					},
-				);
+				const accessToken = await getOAuthAccessToken(ctx, {
+					plugin: 'confluence',
+					tokenUrl: 'https://auth.atlassian.com/oauth/token',
+					bodyFormat: 'json',
+				});
 
 				// Atlassian Cloud API calls are keyed by the site's cloud_id — resolve
 				// and persist it once, or when the configured site changes.

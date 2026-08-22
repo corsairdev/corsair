@@ -311,13 +311,10 @@ export function googlemeet<const T extends GoogleMeetPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'googlemeet',
-						tokenUrl: 'https://oauth2.googleapis.com/token',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googlemeet',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('googlemeet', 'oauth_2');

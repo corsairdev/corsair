@@ -846,16 +846,13 @@ export function gitlab<const T extends GitlabPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const creds = await ctx.keys.get_integration_credentials();
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'gitlab',
-						tokenUrl: gitlabOAuthTokenUrl(ctx.options.baseUrl),
-						extraParams: creds.redirect_url
-							? { redirect_uri: creds.redirect_url }
-							: undefined,
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'gitlab',
+					tokenUrl: gitlabOAuthTokenUrl(ctx.options.baseUrl),
+					extraParams: creds.redirect_url
+						? { redirect_uri: creds.redirect_url }
+						: undefined,
+				});
 			}
 
 			if (ctx.authType === 'managed') {

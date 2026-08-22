@@ -1401,14 +1401,11 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'sharepoint',
-						tokenUrl:
-							'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'sharepoint',
+					tokenUrl:
+						'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+				});
 			}
 
 			// The webhook path above is terminal, so source is 'endpoint' here; this

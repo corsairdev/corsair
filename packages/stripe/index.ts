@@ -518,14 +518,11 @@ export function stripe<const T extends StripePluginOptions>(
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				// Stripe sends the secret key as HTTP Basic username with an empty
 				// password (no client_id in the exchange).
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'stripe',
-						tokenUrl: 'https://api.stripe.com/v1/oauth/token',
-						tokenAuthMethod: 'basic_secret_only',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'stripe',
+					tokenUrl: 'https://api.stripe.com/v1/oauth/token',
+					tokenAuthMethod: 'basic_secret_only',
+				});
 			}
 
 			throw new AuthMissingError('stripe', 'oauth_2');

@@ -1085,14 +1085,11 @@ export function bitbucket<const T extends BitbucketPluginOptions>(
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source !== 'endpoint' || ctx.authType !== 'oauth_2')
 				throw new AuthMissingError('bitbucket', 'oauth_2');
-			return getOAuthAccessToken(
-				{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-				{
-					plugin: 'bitbucket',
-					tokenUrl: 'https://bitbucket.org/site/oauth2/access_token',
-					tokenAuthMethod: 'basic',
-				},
-			);
+			return getOAuthAccessToken(ctx, {
+				plugin: 'bitbucket',
+				tokenUrl: 'https://bitbucket.org/site/oauth2/access_token',
+				tokenAuthMethod: 'basic',
+			});
 		},
 	} satisfies InternalBitbucketPlugin;
 }

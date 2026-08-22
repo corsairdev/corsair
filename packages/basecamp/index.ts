@@ -1564,13 +1564,10 @@ export function basecamp<const T extends BasecampPluginOptions>(
 			if (source !== 'endpoint' || ctx.authType !== 'oauth_2') {
 				throw new AuthMissingError('basecamp', 'oauth_2');
 			}
-			return getOAuthAccessToken(
-				{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-				{
-					plugin: 'basecamp',
-					tokenUrl: 'https://launchpad.37signals.com/authorization/token',
-				},
-			);
+			return getOAuthAccessToken(ctx, {
+				plugin: 'basecamp',
+				tokenUrl: 'https://launchpad.37signals.com/authorization/token',
+			});
 		},
 	} satisfies InternalBasecampPlugin;
 }

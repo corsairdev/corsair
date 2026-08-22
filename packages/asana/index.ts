@@ -1036,10 +1036,10 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{ plugin: 'asana', tokenUrl: 'https://app.asana.com/-/oauth_token' },
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'asana',
+					tokenUrl: 'https://app.asana.com/-/oauth_token',
+				});
 			}
 
 			if (ctx.authType === 'managed') {

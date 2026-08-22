@@ -561,13 +561,10 @@ export function spotify<const T extends SpotifyPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'spotify',
-						tokenUrl: 'https://accounts.spotify.com/api/token',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'spotify',
+					tokenUrl: 'https://accounts.spotify.com/api/token',
+				});
 			}
 
 			if (ctx.authType === 'managed') {

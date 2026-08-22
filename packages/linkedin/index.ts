@@ -403,13 +403,10 @@ export function linkedin<const T extends LinkedInPluginOptions>(
 				throw new AuthMissingError('linkedin', 'oauth_2');
 			}
 
-			return getOAuthAccessToken(
-				{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-				{
-					plugin: 'linkedin',
-					tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
-				},
-			);
+			return getOAuthAccessToken(ctx, {
+				plugin: 'linkedin',
+				tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
+			});
 		},
 	} satisfies InternalLinkedInPlugin;
 }

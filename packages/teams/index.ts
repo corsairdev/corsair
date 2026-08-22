@@ -485,14 +485,11 @@ export function teams<const T extends TeamsPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'teams',
-						tokenUrl:
-							'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'teams',
+					tokenUrl:
+						'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+				});
 			}
 
 			if (ctx.authType === 'managed') {

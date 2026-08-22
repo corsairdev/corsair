@@ -364,13 +364,10 @@ export function googledocs<const T extends GoogleDocsPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'googledocs',
-						tokenUrl: 'https://oauth2.googleapis.com/token',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googledocs',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('googledocs', 'oauth_2');

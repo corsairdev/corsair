@@ -354,13 +354,10 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'zohomail',
-						tokenUrl: zohoOAuthTokenUrl(ctx.options.region),
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'zohomail',
+					tokenUrl: zohoOAuthTokenUrl(ctx.options.region),
+				});
 			}
 
 			if (ctx.authType === 'managed') {

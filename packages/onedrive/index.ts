@@ -833,14 +833,11 @@ export function onedrive<const PluginOptions extends OnedrivePluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{
-						plugin: 'onedrive',
-						tokenUrl:
-							'https://login.microsoftonline.com/common/oauth2/v2.0/token',
-					},
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'onedrive',
+					tokenUrl:
+						'https://login.microsoftonline.com/common/oauth2/v2.0/token',
+				});
 			}
 
 			if (ctx.authType === 'managed') {

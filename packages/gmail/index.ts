@@ -454,10 +454,10 @@ export function gmail<const T extends GmailPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				return getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{ plugin: 'gmail', tokenUrl: 'https://oauth2.googleapis.com/token' },
-				);
+				return getOAuthAccessToken(ctx, {
+					plugin: 'gmail',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('gmail', 'oauth_2');

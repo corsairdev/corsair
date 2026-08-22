@@ -456,10 +456,10 @@ export function linear<const T extends LinearPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const accessToken = await getOAuthAccessToken(
-					{ keys: ctx.keys, hub: ctx.hub, tenantId: ctx.tenantId },
-					{ plugin: 'linear', tokenUrl: 'https://api.linear.app/oauth/token' },
-				);
+				const accessToken = await getOAuthAccessToken(ctx, {
+					plugin: 'linear',
+					tokenUrl: 'https://api.linear.app/oauth/token',
+				});
 				return `Bearer ${accessToken}`;
 			}
 
