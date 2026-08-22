@@ -15,8 +15,8 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(async () => undefined),
 }));
 
-const SECRET =
-	'whsec_2f1a8c4e6b9d0a7c3e5f8b1d4a6c9e2f0b3d5a7c1e4f6b8d0a2c5e7f9b1d3a5c';
+// Clearly-fake signing material for tests only; never a real credential.
+const SECRET = 'test-abyssale-signing-secret';
 
 function sign(
 	body: string,
@@ -82,7 +82,7 @@ describe('verifyAbyssaleWebhookSignature', () => {
 			'NEW_BANNER',
 			{ id: BANNER_ID },
 			{
-				secret: 'whsec_wrong',
+				secret: 'test-wrong-secret',
 			},
 		);
 		expect(verifyAbyssaleWebhookSignature(request, SECRET)).toEqual({
@@ -106,12 +106,15 @@ describe('verifyAbyssaleWebhookSignature', () => {
 
 	it('checks every v1 during a rotation', () => {
 		const rawBody = JSON.stringify({ event_type: 'NEW_BANNER', id: BANNER_ID });
-		const rotatedSecret = 'whsec_rotated';
+		const rotatedSecret = 'test-rotated-signing-secret';
+		// Read the clock once so both v1 hashes sign the same timestamp even if
+		// the wall clock crosses a second boundary mid-test.
+		const timestamp = Math.floor(Date.now() / 1000);
 		const header =
-			`${sign(rawBody, SECRET)},v1=` +
+			`${sign(rawBody, SECRET, timestamp)},v1=` +
 			crypto
 				.createHmac('sha256', rotatedSecret)
-				.update(`v1:webhook:${Math.floor(Date.now() / 1000)}.${rawBody}`)
+				.update(`v1:webhook:${timestamp}.${rawBody}`)
 				.digest('hex');
 
 		// The first v1 was minted with the old secret and must verify too.
@@ -168,15 +171,15 @@ describe('verifyAbyssaleWebhookSignature', () => {
 		});
 	});
 
-	it('accepts an unsigned delivery only while no secret is configured', () => {
+	it('rejects an unsigned delivery whether or not a secret is configured', () => {
 		const request = signedRequest(
 			'NEW_BANNER',
 			{ id: BANNER_ID },
 			{ header: null },
 		);
-		expect(verifyAbyssaleWebhookSignature(request, undefined)).toEqual({
-			valid: true,
-		});
+		const unconfigured = verifyAbyssaleWebhookSignature(request, undefined);
+		expect(unconfigured.valid).toBe(false);
+		expect(unconfigured.error).toContain('no webhook secret is configured');
 		expect(verifyAbyssaleWebhookSignature(request, SECRET).valid).toBe(false);
 	});
 
@@ -365,12 +368,28 @@ describe('webhook handlers', () => {
 		expect(response.corsairEntityId).toBe('corsair-entity-1');
 	});
 
+	it('newBannerBatch omits corsairEntityId when no banner was cached', async () => {
+		const plugin = abyssale({ key: 'k', webhookSecret: SECRET }) as any;
+		const handler = plugin.webhooks.banners.batchCompleted.handler;
+		const response = await handler(
+			makeCtx(SECRET),
+			signedRequest('NEW_BANNER_BATCH', {
+				generation_request_id: REQUEST_ID,
+				banners: [],
+				errors: [],
+			}),
+		);
+
+		expect(response.success).toBe(true);
+		expect(response.corsairEntityId).toBeUndefined();
+	});
+
 	it('returns 401 when the signature is invalid', async () => {
 		const plugin = abyssale({ key: 'k', webhookSecret: SECRET }) as any;
 		const handler = plugin.webhooks.banners.created.handler;
 		const response = await handler(
 			makeCtx(SECRET),
-			signedRequest('NEW_BANNER', { id: BANNER_ID }, { secret: 'whsec_other' }),
+			signedRequest('NEW_BANNER', { id: BANNER_ID }, { secret: 'test-other-secret' }),
 		);
 
 		expect(response.success).toBe(false);
@@ -406,22 +425,24 @@ describe('webhook handlers', () => {
 	});
 
 	it('resolves the webhook secret through keyBuilder', async () => {
-		const plugin = abyssale({ webhookSecret: 'whsec_from_options' }) as any;
+		const plugin = abyssale({ webhookSecret: 'test-options-secret' }) as any;
 		const key = await plugin.keyBuilder(
 			{ authType: 'api_key', keys: { get_webhook_signature: jest.fn() } },
 			'webhook',
 		);
-		expect(key).toBe('whsec_from_options');
+		expect(key).toBe('test-options-secret');
 
 		const dynamicPlugin = abyssale({}) as any;
 		const dynamicCtx = {
 			authType: 'api_key',
 			keys: {
-				get_webhook_signature: jest.fn().mockResolvedValue('whsec_stored'),
+				get_webhook_signature: jest
+					.fn()
+					.mockResolvedValue('test-stored-secret'),
 			},
 		};
 		await expect(dynamicPlugin.keyBuilder(dynamicCtx, 'webhook')).resolves.toBe(
-			'whsec_stored',
+			'test-stored-secret',
 		);
 	});
 });

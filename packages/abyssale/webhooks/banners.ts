@@ -5,32 +5,28 @@ import {
 	createAbyssaleMatch,
 	NewBannerBatchEventSchema,
 	NewBannerEventSchema,
-	verifyAbyssaleWebhookSignature,
+	verifyAndParseEvent,
 } from './types';
 
 export const created: AbyssaleWebhooks['newBanner'] = {
 	match: createAbyssaleMatch('NEW_BANNER'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyAbyssaleWebhookSignature(request, ctx.key);
-		if (!verification.valid) {
+		const guard = verifyAndParseEvent(
+			request,
+			ctx.key,
+			NewBannerEventSchema,
+			'NEW_BANNER',
+		);
+		if (!guard.ok) {
 			return {
 				success: false,
-				statusCode: 401,
-				error: verification.error || 'Signature verification failed',
+				statusCode: guard.statusCode,
+				error: guard.error,
 			};
 		}
 
-		const parsed = NewBannerEventSchema.safeParse(request.payload);
-		if (!parsed.success) {
-			return {
-				success: false,
-				statusCode: 400,
-				error: 'Invalid NEW_BANNER payload',
-			};
-		}
-
-		const event = parsed.data;
+		const event = guard.event;
 		const corsairEntityId = await cacheBanner(ctx, {
 			id: event.id,
 			version: event.version,
@@ -63,30 +59,25 @@ export const batchCompleted: AbyssaleWebhooks['newBannerBatch'] = {
 	match: createAbyssaleMatch('NEW_BANNER_BATCH'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyAbyssaleWebhookSignature(request, ctx.key);
-		if (!verification.valid) {
+		const guard = verifyAndParseEvent(
+			request,
+			ctx.key,
+			NewBannerBatchEventSchema,
+			'NEW_BANNER_BATCH',
+		);
+		if (!guard.ok) {
 			return {
 				success: false,
-				statusCode: 401,
-				error: verification.error || 'Signature verification failed',
+				statusCode: guard.statusCode,
+				error: guard.error,
 			};
 		}
 
-		const parsed = NewBannerBatchEventSchema.safeParse(request.payload);
-		if (!parsed.success) {
-			return {
-				success: false,
-				statusCode: 400,
-				error: 'Invalid NEW_BANNER_BATCH payload',
-			};
-		}
-
-		const event = parsed.data;
-		let firstEntityId = '';
-		for (const banner of event.banners) {
-			const entityId = await cacheBanner(ctx, banner);
-			if (!firstEntityId) firstEntityId = entityId;
-		}
+		const event = guard.event;
+		const entityIds = await Promise.all(
+			event.banners.map((banner) => cacheBanner(ctx, banner)),
+		);
+		const firstEntityId = entityIds.find(Boolean);
 
 		await logEventFromContext(
 			ctx,
@@ -99,10 +90,8 @@ export const batchCompleted: AbyssaleWebhooks['newBannerBatch'] = {
 			'completed',
 		);
 
-		return {
-			success: true,
-			corsairEntityId: firstEntityId,
-			data: event,
-		};
+		return firstEntityId
+			? { success: true, corsairEntityId: firstEntityId, data: event }
+			: { success: true, data: event };
 	},
 };

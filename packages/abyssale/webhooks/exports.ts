@@ -3,32 +3,28 @@ import type { AbyssaleWebhooks } from '../index';
 import {
 	createAbyssaleMatch,
 	NewExportEventSchema,
-	verifyAbyssaleWebhookSignature,
+	verifyAndParseEvent,
 } from './types';
 
 export const completed: AbyssaleWebhooks['newExport'] = {
 	match: createAbyssaleMatch('NEW_EXPORT'),
 
 	handler: async (ctx, request) => {
-		const verification = verifyAbyssaleWebhookSignature(request, ctx.key);
-		if (!verification.valid) {
+		const guard = verifyAndParseEvent(
+			request,
+			ctx.key,
+			NewExportEventSchema,
+			'NEW_EXPORT',
+		);
+		if (!guard.ok) {
 			return {
 				success: false,
-				statusCode: 401,
-				error: verification.error || 'Signature verification failed',
+				statusCode: guard.statusCode,
+				error: guard.error,
 			};
 		}
 
-		const parsed = NewExportEventSchema.safeParse(request.payload);
-		if (!parsed.success) {
-			return {
-				success: false,
-				statusCode: 400,
-				error: 'Invalid NEW_EXPORT payload',
-			};
-		}
-
-		const event = parsed.data;
+		const event = guard.event;
 
 		await logEventFromContext(
 			ctx,

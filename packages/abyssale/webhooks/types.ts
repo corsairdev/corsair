@@ -28,9 +28,9 @@ export type AbyssaleWebhookPayload = z.infer<
 >;
 
 const BannerEventFields = {
-	id: z.string().uuid(),
+	id: z.uuid(),
 	version: z.number().optional(),
-	sharing_id: z.string().uuid().optional(),
+	sharing_id: z.uuid().optional(),
 	file: AbyssaleBannerFile.optional(),
 	format: AbyssaleBannerFormat.optional(),
 	template: AbyssaleBannerTemplate.optional(),
@@ -46,7 +46,7 @@ export type NewBannerEvent = z.infer<typeof NewBannerEventSchema>;
 /** `NEW_BANNER_BATCH` — an asynchronous batch generation request completed. */
 export const NewBannerBatchEventSchema = AbyssaleWebhookPayloadSchema.extend({
 	event_type: z.literal('NEW_BANNER_BATCH'),
-	generation_request_id: z.string().uuid(),
+	generation_request_id: z.uuid(),
 	banners: z.array(AbyssaleBanner),
 	errors: z.array(
 		z
@@ -62,8 +62,8 @@ export type NewBannerBatchEvent = z.infer<typeof NewBannerBatchEventSchema>;
 /** `NEW_EXPORT` — a workspace-wide export (ZIP) finished processing. */
 export const NewExportEventSchema = AbyssaleWebhookPayloadSchema.extend({
 	event_type: z.literal('NEW_EXPORT'),
-	export_id: z.string().uuid(),
-	archive_url: z.string(),
+	export_id: z.uuid(),
+	archive_url: z.url(),
 	requested_at: z.number().optional(),
 	generated_at: z.number().optional(),
 });
@@ -76,7 +76,7 @@ export type NewExportEvent = z.infer<typeof NewExportEventSchema>;
  */
 export const TemplateStatusEventSchema = AbyssaleWebhookPayloadSchema.extend({
 	event_type: z.literal('TEMPLATE_STATUS'),
-	id: z.string().uuid(),
+	id: z.uuid(),
 	name: z.string().optional(),
 	status: z.string(),
 	created_at: z.number().optional(),
@@ -125,15 +125,13 @@ export function parseBody(body: unknown): Record<string, unknown> | null {
 }
 
 export function createAbyssaleMatch(eventType: string): CorsairWebhookMatcher {
+	const handled = HANDLED_EVENT_TYPES.includes(
+		eventType as (typeof HANDLED_EVENT_TYPES)[number],
+	);
 	return (request: RawWebhookRequest) => {
+		if (!handled) return false;
 		const parsedBody = parseBody(request.body);
-		return (
-			parsedBody !== null &&
-			parsedBody.event_type === eventType &&
-			HANDLED_EVENT_TYPES.includes(
-				eventType as (typeof HANDLED_EVENT_TYPES)[number],
-			)
-		);
+		return parsedBody !== null && parsedBody.event_type === eventType;
 	};
 }
 
@@ -198,16 +196,17 @@ export function verifyAbyssaleWebhookSignature(
 
 	const signatureHeader = getHeader(request.headers, 'x-abyssale-signature');
 
-	// Signing is opt-in provider-side: a workspace that never created a signing
-	// secret keeps receiving unsigned deliveries. When no secret is configured
-	// and the delivery is unsigned there is nothing to check; when one exists
-	// but the delivery carries no header we cannot prove authenticity.
+	// Fail closed: an unauthenticated delivery must never reach the handlers,
+	// so a delivery without a signature header is only accepted when the Hub
+	// already verified it. Abyssale signing is opt-in provider-side, which only
+	// means operators must create a signing secret and configure it here before
+	// webhooks can be received.
 	if (!signatureHeader) {
-		if (!secret) return { valid: true };
 		return {
 			valid: false,
-			error:
-				'Missing x-abyssale-signature header but a webhook secret is configured',
+			error: secret
+				? 'Missing x-abyssale-signature header but a webhook secret is configured'
+				: 'Unsigned delivery received but no webhook secret is configured (set options.webhookSecret or the webhook_signature key)',
 		};
 	}
 	if (!secret) {
@@ -262,4 +261,38 @@ export function verifyAbyssaleWebhookSignature(
 	}
 
 	return { valid: false, error: 'Invalid signature' };
+}
+
+/**
+ * Shared webhook guard: verifies the delivery signature, then validates the
+ * payload against the event schema. Keeps the 401/400 semantics identical
+ * across every handler.
+ */
+export function verifyAndParseEvent<S extends z.ZodType>(
+	request: WebhookRequest<unknown>,
+	secret: string | undefined,
+	schema: S,
+	eventName: string,
+):
+	| { ok: true; event: z.output<S> }
+	| { ok: false; statusCode: number; error: string } {
+	const verification = verifyAbyssaleWebhookSignature(request, secret);
+	if (!verification.valid) {
+		return {
+			ok: false,
+			statusCode: 401,
+			error: verification.error || 'Signature verification failed',
+		};
+	}
+
+	const parsed = schema.safeParse(request.payload);
+	if (!parsed.success) {
+		return {
+			ok: false,
+			statusCode: 400,
+			error: `Invalid ${eventName} payload`,
+		};
+	}
+
+	return { ok: true, event: parsed.data };
 }
