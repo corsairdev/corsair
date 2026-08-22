@@ -29,7 +29,7 @@ export async function makeGoogleCloudVisionRequest<T>(
 		body,
 		query,
 		baseUrl = GOOGLECLOUDVISION_API_BASE,
-		authType = 'api_key',
+		authType = apiKey.startsWith('ya29.') ? 'oauth_2' : 'api_key',
 	} = options;
 
 	const config: OpenAPIConfig = {
@@ -54,7 +54,7 @@ export async function makeGoogleCloudVisionRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
 	try {
