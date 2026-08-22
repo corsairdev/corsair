@@ -18,7 +18,6 @@ export const BaseProviders = [
 	'abyssale',
 	'accrediblecertificates',
 	'activecampaign',
-	'anchorbrowser',
 	'activetrail',
 	'addresszen',
 	'aeroleads',
@@ -40,14 +39,15 @@ export const BaseProviders = [
 	'ambientweather',
 	'amcards',
 	'amplitude',
+	'anchorbrowser',
 	'anthropicadministrator',
 	'apaleo',
 	'api2pdf',
 	'apibible',
-	'apipie',
 	'apify',
 	'apilabz',
 	'apininjas',
+	'apipie',
 	'apisports',
 	'asana',
 	'asindataapi',
@@ -92,8 +92,8 @@ export const BaseProviders = [
 	'facebook',
 	'figma',
 	'firecrawl',
-	'formbricks',
 	'fireflies',
+	'formbricks',
 	'gemini',
 	'github',
 	'gitlab',
@@ -171,6 +171,7 @@ export const BaseProviders = [
 	'whatsapp',
 	'wiza',
 	'workday',
+	'xata',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -185,7 +186,6 @@ export const ProviderDisplayNames = {
 	abyssale: 'Abyssale',
 	accrediblecertificates: 'Accredible Certificates',
 	activecampaign: 'ActiveCampaign',
-	anchorbrowser: 'Anchor Browser',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
 	aeroleads: 'Aeroleads',
@@ -207,14 +207,15 @@ export const ProviderDisplayNames = {
 	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	anchorbrowser: 'Anchor Browser',
 	anthropicadministrator: 'Anthropic Administrator',
 	apaleo: 'Apaleo',
 	api2pdf: 'API2PDF',
 	apibible: 'API.Bible',
-	apipie: 'APIpie AI',
 	apify: 'Apify',
 	apilabz: 'API Labz',
 	apininjas: 'API Ninjas',
+	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
@@ -259,8 +260,8 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
-	formbricks: 'Formbricks',
 	fireflies: 'Fireflies',
+	formbricks: 'Formbricks',
 	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
@@ -338,6 +339,7 @@ export const ProviderDisplayNames = {
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
 	workday: 'Workday',
+	xata: 'Xata',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -359,7 +361,6 @@ export type AllProviders =
 	| 'abyssale'
 	| 'accrediblecertificates'
 	| 'activecampaign'
-	| 'anchorbrowser'
 	| 'activetrail'
 	| 'addresszen'
 	| 'aeroleads'
@@ -381,14 +382,15 @@ export type AllProviders =
 	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
+	| 'anchorbrowser'
 	| 'anthropicadministrator'
 	| 'apaleo'
 	| 'api2pdf'
 	| 'apibible'
-	| 'apipie'
 	| 'apify'
 	| 'apilabz'
 	| 'apininjas'
+	| 'apipie'
 	| 'apisports'
 	| 'asana'
 	| 'asindataapi'
@@ -433,8 +435,8 @@ export type AllProviders =
 	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
-	| 'formbricks'
 	| 'fireflies'
+	| 'formbricks'
 	| 'gemini'
 	| 'github'
 	| 'gitlab'
@@ -512,6 +514,7 @@ export type AllProviders =
 	| 'whatsapp'
 	| 'wiza'
 	| 'workday'
+	| 'xata'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
