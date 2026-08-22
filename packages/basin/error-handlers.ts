@@ -33,7 +33,14 @@ export const errorHandlers = {
 		},
 		handler: async (error: Error) => {
 			const retryAfterMs = getRetryAfter(error);
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			// No binder-level retry, deliberately. `makeBasinRequest` already hands
+			// the transport a BASIN_RATE_LIMIT_CONFIG that retries 429s and honours
+			// Retry-After, so a 429 has been retried before it reaches here. The
+			// binder's retry path also discards the value a successful retry
+			// returns and rethrows the original error, so retrying again cannot
+			// recover the call — it only replays requests, including writes.
+			// Retry-After is still surfaced so callers can back off.
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {

@@ -67,7 +67,11 @@ export async function makeBasinRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		// Deliberately no TOKEN. The shared transport turns TOKEN into an
+		// `Authorization: Bearer …` header and applies it *after* config.HEADERS,
+		// so setting it here overwrites the scheme Basin actually requires.
+		// Basin accepts `Authorization: Token <key>` and answers `Bearer` with
+		// 401 invalid_token, which made every request fail.
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json',

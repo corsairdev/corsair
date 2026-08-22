@@ -1,660 +1,197 @@
+/**
+ * Live Basin API coverage.
+ *
+ * CI excludes this file by filename (`--testPathIgnorePatterns="api\.test\.ts"`),
+ * so it only runs when a real key is supplied:
+ *
+ *   BASIN_API_KEY=… npx jest tests/api.test.ts
+ *
+ * Without the key every block is skipped rather than failed, so the suite stays
+ * green for contributors with no account. Nothing here is mocked — the mocked
+ * handler coverage lives in `endpoints.test.ts`, which CI does run.
+ *
+ * The write blocks create a project, a form and a webhook, then delete all
+ * three in `afterAll`, so a completed run leaves the account as it found it.
+ */
 import { makeBasinRequest } from '../client';
-import {
-	Domains,
-	Forms,
-	FormViews,
-	Projects,
-	Submissions,
-	Webhooks,
-} from '../endpoints';
-import type { BasinContext } from '../index';
-import { basin } from '../index';
 
-jest.mock('../client', () => {
-	const actual = jest.requireActual('../client');
-	return {
-		...actual,
-		makeBasinRequest: jest.fn(),
-	};
-});
+const API_KEY = process.env.BASIN_API_KEY;
+const describeLive = API_KEY ? describe : describe.skip;
 
-const mockedMakeBasinRequest = makeBasinRequest as jest.MockedFunction<
-	typeof makeBasinRequest
->;
+type Listing<K extends string> = Record<K, unknown[]> & {
+	meta?: Record<string, unknown>;
+};
 
-const mockContext = {
-	key: 'test-api-key',
-	options: {},
-	endpoints: {} as any,
-	$getAccountId: jest.fn().mockResolvedValue('acc_123'),
-} as unknown as BasinContext;
+describeLive('Basin live API', () => {
+	const key = API_KEY as string;
 
-describe('Basin Endpoints', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
+	// Basin authenticates with `Authorization: Token <key>`. It answers a Bearer
+	// header with 401 invalid_token, which is why the client must not set
+	// OpenAPIConfig.TOKEN — the transport would overwrite the scheme.
+	it('authenticates with the Token scheme', async () => {
+		const result = await makeBasinRequest<Listing<'projects'>>(
+			'projects',
+			key,
+			{ method: 'GET' },
+		);
+
+		expect(Array.isArray(result.projects)).toBe(true);
 	});
 
-	describe('Forms endpoints', () => {
-		it('forms.list sends GET request and parses response', async () => {
-			const mockForms = [
-				{
-					id: 1,
-					name: 'Contact Us',
-					created_at: '2026-08-22T00:00:00Z',
-				},
-				{
-					id: 2,
-					name: 'Newsletter',
-					created_at: '2026-08-22T00:00:00Z',
-				},
+	it('rejects a Bearer-style credential', async () => {
+		await expect(
+			makeBasinRequest('projects', `Bearer ${key}`, { method: 'GET' }),
+		).rejects.toMatchObject({ status: 401 });
+	});
+
+	describe('list endpoints', () => {
+		const resources = [
+			['projects', 'projects'],
+			['forms', 'forms'],
+			['submissions', 'submissions'],
+			['form_webhooks', 'form_webhooks'],
+			['form_views', 'form_views'],
+			['domains', 'domains'],
+		] as const;
+
+		it.each(resources)(
+			'GET %s returns a %s array with pagination meta',
+			async (path, collection) => {
+				const result = await makeBasinRequest<Listing<typeof collection>>(
+					path,
+					key,
+					{ method: 'GET' },
+				);
+
+				expect(Array.isArray(result[collection])).toBe(true);
+				expect(result.meta).toBeDefined();
+			},
+		);
+
+		it('accepts the documented page parameter', async () => {
+			const result = await makeBasinRequest<Listing<'forms'>>('forms', key, {
+				method: 'GET',
+				query: { page: 1 },
+			});
+
+			expect(Array.isArray(result.forms)).toBe(true);
+		});
+	});
+
+	describe('project, form and webhook lifecycle', () => {
+		const stamp = Date.now();
+		let projectId: number | undefined;
+		let formId: number | undefined;
+		let webhookId: number | undefined;
+
+		afterAll(async () => {
+			// Delete children before parents; ignore failures so one bad teardown
+			// cannot mask the others.
+			const cleanup: Array<[string, number | undefined]> = [
+				['form_webhooks', webhookId],
+				['forms', formId],
+				['projects', projectId],
 			];
-			mockedMakeBasinRequest.mockResolvedValueOnce(mockForms);
-
-			const result = await Forms.list(mockContext, {
-				page: 1,
-				query: 'Contact',
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'forms',
-				'test-api-key',
-				{ method: 'GET', query: { page: 1, query: 'Contact' } },
-			);
-			expect(result).toHaveLength(2);
-			expect(result[0]!.name).toBe('Contact Us');
+			for (const [resource, id] of cleanup) {
+				if (!id) continue;
+				await makeBasinRequest(`${resource}/${id}`, key, {
+					method: 'DELETE',
+				}).catch(() => undefined);
+			}
 		});
 
-		it('forms.get sends GET request with form ID', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 10,
-				name: 'Lead Gen',
-				use_ajax: true,
-			});
-
-			const result = await Forms.get(mockContext, { id: 10 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'forms/10',
-				'test-api-key',
-				{ method: 'GET' },
-			);
-			expect(result.id).toBe(10);
-			expect(result.use_ajax).toBe(true);
-		});
-
-		it('forms.create sends POST request with form payload', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 15,
-				name: 'New Form',
-				project_id: 2,
-			});
-
-			const result = await Forms.create(mockContext, {
-				name: 'New Form',
-				project_id: 2,
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'forms',
-				'test-api-key',
-				{
-					method: 'POST',
-					body: { form: { name: 'New Form', project_id: 2 } },
-				},
-			);
-			expect(result.id).toBe(15);
-		});
-
-		it('forms.update sends PUT request with updated payload', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 15,
-				name: 'Renamed Form',
-			});
-
-			const result = await Forms.update(mockContext, {
-				id: 15,
-				name: 'Renamed Form',
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'forms/15',
-				'test-api-key',
-				{
-					method: 'PUT',
-					body: { form: { name: 'Renamed Form' } },
-				},
-			);
-			expect(result.name).toBe('Renamed Form');
-		});
-
-		it('forms.delete sends DELETE request with ID', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({ success: true });
-
-			const result = await Forms.delete(mockContext, { id: 15 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'forms/15',
-				'test-api-key',
-				{ method: 'DELETE' },
-			);
-			expect(result).toEqual({ success: true });
-		});
-	});
-
-	describe('Submissions endpoints', () => {
-		it('submissions.list sends GET request with filters', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{
-					id: 101,
-					email: 'john@example.com',
-					spam: false,
-				},
-			]);
-
-			const result = await Submissions.list(mockContext, {
-				form_id: 10,
-				filter_by: 'new',
-				page: 1,
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'submissions',
-				'test-api-key',
-				{
-					method: 'GET',
-					query: { form_id: 10, filter_by: 'new', page: 1 },
-				},
-			);
-			expect(result).toHaveLength(1);
-			expect(result[0]!.email).toBe('john@example.com');
-		});
-
-		it('submissions.get sends GET request with submission ID', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 101,
-				email: 'john@example.com',
-				spam: false,
-			});
-
-			const result = await Submissions.get(mockContext, { id: 101 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'submissions/101',
-				'test-api-key',
-				{ method: 'GET' },
-			);
-			expect(result.id).toBe(101);
-		});
-
-		it('submissions.delete sends DELETE request', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({ success: true });
-
-			const result = await Submissions.delete(mockContext, { id: 101 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'submissions/101',
-				'test-api-key',
-				{ method: 'DELETE' },
-			);
-			expect(result).toEqual({ success: true });
-		});
-
-		it('submissions.update sends PATCH request', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 101,
-				read: true,
-			});
-
-			const result = await Submissions.update(mockContext, {
-				id: 101,
-				read: true,
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'submissions/101',
-				'test-api-key',
-				{
-					method: 'PATCH',
-					body: { submission: { read: true } },
-				},
-			);
-			expect(result.id).toBe(101);
-		});
-
-		it('submissions.markSpam marks submission as spam', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 101,
-				spam: true,
-			});
-
-			const result = await Submissions.markSpam(mockContext, { id: 101 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'submissions/101',
-				'test-api-key',
-				{
-					method: 'PATCH',
-					body: { submission: { spam: true } },
-				},
-			);
-			expect(result.spam).toBe(true);
-		});
-
-		it('submissions.markHam marks submission as ham', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 101,
-				spam: false,
-			});
-
-			const result = await Submissions.markHam(mockContext, { id: 101 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'submissions/101',
-				'test-api-key',
-				{
-					method: 'PATCH',
-					body: { submission: { spam: false } },
-				},
-			);
-			expect(result.spam).toBe(false);
-		});
-
-		it('submissions.refireWebhooks sends POST to refire endpoint', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				success: true,
-				message: 'Webhooks queued',
-			});
-
-			const result = await Submissions.refireWebhooks(mockContext, { id: 101 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'submissions/101/refire_webhooks',
-				'test-api-key',
-				{ method: 'POST' },
-			);
-			expect(result.success).toBe(true);
-		});
-
-		it('submissions.refireWebhooksBulk sends POST to bulk refire endpoint', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				success: true,
-				message: 'Bulk webhooks queued',
-			});
-
-			const result = await Submissions.refireWebhooksBulk(mockContext, {
-				submission_ids: [101, 102],
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'submissions/refire_webhooks',
-				'test-api-key',
-				{
-					method: 'POST',
-					body: { submission_ids: [101, 102] },
-				},
-			);
-			expect(result.success).toBe(true);
-		});
-	});
-
-	describe('Projects endpoints', () => {
-		it('projects.list retrieves all projects', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{ id: 1, name: 'Default Project' },
-			]);
-
-			const result = await Projects.list(mockContext, {});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
+		it('creates, reads, updates and deletes a project', async () => {
+			const created = await makeBasinRequest<{ id: number; name: string }>(
 				'projects',
-				'test-api-key',
-				{ method: 'GET', query: {} },
+				key,
+				{ method: 'POST', body: { name: `corsair-live-${stamp}` } },
 			);
-			expect(result).toHaveLength(1);
-			expect(result[0]!.name).toBe('Default Project');
-		});
+			expect(typeof created.id).toBe('number');
+			projectId = created.id;
 
-		it('projects.get retrieves a project by ID', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 1,
-				name: 'Default Project',
-			});
-
-			const result = await Projects.get(mockContext, { id: 1 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'projects/1',
-				'test-api-key',
+			const fetched = await makeBasinRequest<{ id: number; name: string }>(
+				`projects/${created.id}`,
+				key,
 				{ method: 'GET' },
 			);
-			expect(result.id).toBe(1);
-		});
+			expect(fetched.id).toBe(created.id);
+			expect(fetched.name).toBe(`corsair-live-${stamp}`);
 
-		it('projects.create creates a new project', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 2,
-				name: 'New Project',
-			});
-
-			const result = await Projects.create(mockContext, {
-				name: 'New Project',
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'projects',
-				'test-api-key',
-				{ method: 'POST', body: { project: { name: 'New Project' } } },
+			const updated = await makeBasinRequest<{ name: string }>(
+				`projects/${created.id}`,
+				key,
+				{ method: 'PUT', body: { name: `corsair-live-${stamp}-renamed` } },
 			);
-			expect(result.id).toBe(2);
+			expect(updated.name).toBe(`corsair-live-${stamp}-renamed`);
 		});
 
-		it('projects.update updates project name', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 2,
-				name: 'Updated Project',
-			});
+		it('creates a form inside the project and updates it', async () => {
+			expect(projectId).toBeDefined();
 
-			const result = await Projects.update(mockContext, {
-				id: 2,
-				name: 'Updated Project',
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'projects/2',
-				'test-api-key',
-				{ method: 'PUT', body: { project: { name: 'Updated Project' } } },
-			);
-			expect(result.name).toBe('Updated Project');
-		});
-
-		it('projects.delete removes a project', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({ success: true });
-
-			const result = await Projects.delete(mockContext, { id: 2 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'projects/2',
-				'test-api-key',
-				{ method: 'DELETE' },
-			);
-			expect(result).toEqual({ success: true });
-		});
-	});
-
-	describe('Webhooks endpoints', () => {
-		it('webhooks.list lists all form webhooks', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{ id: 1, form_id: 10, url: 'https://webhook.site/test' },
-			]);
-
-			const result = await Webhooks.list(mockContext, {});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'form_webhooks',
-				'test-api-key',
-				{ method: 'GET', query: {} },
-			);
-			expect(result).toHaveLength(1);
-		});
-
-		it('webhooks.get retrieves a webhook by ID', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 1,
-				form_id: 10,
-				url: 'https://webhook.site/test',
-			});
-
-			const result = await Webhooks.get(mockContext, { id: 1 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'form_webhooks/1',
-				'test-api-key',
-				{ method: 'GET' },
-			);
-			expect(result.id).toBe(1);
-		});
-
-		it('webhooks.create creates a webhook', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 2,
-				form_id: 10,
-				name: 'Slack Hook',
-				url: 'https://hooks.slack.com/services/xxx',
-			});
-
-			const result = await Webhooks.create(mockContext, {
-				form_id: 10,
-				name: 'Slack Hook',
-				url: 'https://hooks.slack.com/services/xxx',
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'form_webhooks',
-				'test-api-key',
+			const created = await makeBasinRequest<{ id: number; uuid: string }>(
+				'forms',
+				key,
 				{
 					method: 'POST',
 					body: {
-						form_webhook: {
-							form_id: 10,
-							name: 'Slack Hook',
-							url: 'https://hooks.slack.com/services/xxx',
-						},
+						name: `corsair-live-form-${stamp}`,
+						project_id: projectId,
+						timezone: 'UTC',
 					},
 				},
 			);
-			expect(result.id).toBe(2);
+			expect(typeof created.id).toBe('number');
+			expect(typeof created.uuid).toBe('string');
+			formId = created.id;
+
+			const updated = await makeBasinRequest<{ name: string }>(
+				`forms/${created.id}`,
+				key,
+				{ method: 'PUT', body: { name: `corsair-live-form-${stamp}-v2` } },
+			);
+			expect(updated.name).toBe(`corsair-live-form-${stamp}-v2`);
 		});
 
-		it('webhooks.update updates a webhook', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 2,
-				enabled: false,
-			});
+		it('creates, reads and updates a webhook on the form', async () => {
+			expect(formId).toBeDefined();
 
-			const result = await Webhooks.update(mockContext, {
-				id: 2,
-				enabled: false,
-			});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'form_webhooks/2',
-				'test-api-key',
+			const created = await makeBasinRequest<{ id: number; url: string }>(
+				'form_webhooks',
+				key,
 				{
-					method: 'PUT',
-					body: { form_webhook: { enabled: false } },
+					method: 'POST',
+					body: {
+						form_id: formId,
+						url: 'https://example.com/corsair-live-test',
+						name: 'corsair-live',
+					},
 				},
 			);
-			expect(result.enabled).toBe(false);
-		});
+			expect(typeof created.id).toBe('number');
+			webhookId = created.id;
 
-		it('webhooks.delete deletes a webhook', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({ success: true });
-
-			const result = await Webhooks.delete(mockContext, { id: 2 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'form_webhooks/2',
-				'test-api-key',
-				{ method: 'DELETE' },
-			);
-			expect(result).toEqual({ success: true });
-		});
-	});
-
-	describe('Form Views endpoints', () => {
-		it('formViews.list lists form views', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{ id: 1, form_id: 10, status: 'published' },
-			]);
-
-			const result = await FormViews.list(mockContext, {});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'form_views',
-				'test-api-key',
-				{ method: 'GET', query: {} },
-			);
-			expect(result).toHaveLength(1);
-			expect(result[0]!.status).toBe('published');
-		});
-
-		it('formViews.get retrieves a form view by ID', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce({
-				id: 1,
-				form_id: 10,
-				name: 'Embedded Form',
-				status: 'published',
-			});
-
-			const result = await FormViews.get(mockContext, { id: 1 });
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'form_views/1',
-				'test-api-key',
+			const fetched = await makeBasinRequest<{ id: number; url: string }>(
+				`form_webhooks/${created.id}`,
+				key,
 				{ method: 'GET' },
 			);
-			expect(result.name).toBe('Embedded Form');
+			expect(fetched.id).toBe(created.id);
+			expect(fetched.url).toBe('https://example.com/corsair-live-test');
+
+			const updated = await makeBasinRequest<{ name: string }>(
+				`form_webhooks/${created.id}`,
+				key,
+				{ method: 'PUT', body: { name: 'corsair-live-renamed' } },
+			);
+			expect(updated.name).toBe('corsair-live-renamed');
 		});
 	});
 
-	describe('Custom Domains endpoints', () => {
-		it('domains.list lists domains', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{ id: 1, name: 'forms.example.com' },
-			]);
-
-			const result = await Domains.list(mockContext, {});
-
-			expect(mockedMakeBasinRequest).toHaveBeenCalledWith(
-				'domains',
-				'test-api-key',
-				{ method: 'GET', query: {} },
-			);
-			expect(result).toHaveLength(1);
-			expect(result[0]!.name).toBe('forms.example.com');
-		});
-	});
-
-	describe('Input Validation', () => {
-		it('forms.get throws on missing id and does not call API', async () => {
-			await expect(Forms.get(mockContext, {} as any)).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('forms.delete throws on missing id and does not call API', async () => {
-			await expect(Forms.delete(mockContext, {} as any)).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('submissions.get throws on missing id and does not call API', async () => {
-			await expect(Submissions.get(mockContext, {} as any)).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('submissions.delete throws on missing id and does not call API', async () => {
+	describe('error surfaces', () => {
+		it('reports 404 for an unknown project id', async () => {
 			await expect(
-				Submissions.delete(mockContext, {} as any),
-			).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('submissions.refireWebhooks throws on missing id and does not call API', async () => {
-			await expect(
-				Submissions.refireWebhooks(mockContext, {} as any),
-			).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('submissions.refireWebhooksBulk throws on invalid submission_ids and does not call API', async () => {
-			await expect(
-				Submissions.refireWebhooksBulk(mockContext, {
-					submission_ids: 'not-an-array' as any,
-				}),
-			).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('projects.get throws on missing id and does not call API', async () => {
-			await expect(Projects.get(mockContext, {} as any)).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('projects.delete throws on missing id and does not call API', async () => {
-			await expect(Projects.delete(mockContext, {} as any)).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('webhooks.get throws on missing id and does not call API', async () => {
-			await expect(Webhooks.get(mockContext, {} as any)).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('webhooks.delete throws on missing id and does not call API', async () => {
-			await expect(Webhooks.delete(mockContext, {} as any)).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-
-		it('formViews.get throws on missing id and does not call API', async () => {
-			await expect(FormViews.get(mockContext, {} as any)).rejects.toThrow();
-			expect(mockedMakeBasinRequest).not.toHaveBeenCalled();
-		});
-	});
-
-	describe('Plugin Factory & Config', () => {
-		it('initializes basin plugin properly with endpoints and empty webhooks', () => {
-			const plugin = basin({ key: 'test-key' }) as any;
-
-			expect(plugin.id).toBe('basin');
-			expect(plugin.endpoints).toBeDefined();
-			expect(plugin.webhooks).toEqual({});
-			expect(plugin.pluginWebhookMatcher({ headers: {} })).toBe(false);
-			expect(plugin.pluginTenantWebhookMatcher({ headers: {} })).toBeNull();
-		});
-
-		it('keyBuilder resolves key from options or key manager', async () => {
-			const plugin = basin({ key: 'explicit-key' }) as any;
-			const resolved = await plugin.keyBuilder(
-				{
-					authType: 'api_key',
-					options: { key: 'explicit-key' },
-					keys: { get_api_key: jest.fn() },
-					tenantId: 'default',
-				},
-				'endpoint',
-			);
-			expect(resolved).toBe('explicit-key');
-		});
-
-		it('keyBuilder calls get_api_key when option key is omitted', async () => {
-			const plugin = basin({}) as any;
-			const getApiKeyMock = jest.fn().mockResolvedValue('stored-api-key');
-			const resolved = await plugin.keyBuilder(
-				{
-					authType: 'api_key',
-					options: {},
-					keys: { get_api_key: getApiKeyMock },
-					tenantId: 'default',
-				},
-				'endpoint',
-			);
-			expect(getApiKeyMock).toHaveBeenCalled();
-			expect(resolved).toBe('stored-api-key');
-		});
-
-		it('keyBuilder throws AuthMissingError when no key is found', async () => {
-			const plugin = basin({}) as any;
-			const getApiKeyMock = jest.fn().mockResolvedValue(null);
-			await expect(
-				plugin.keyBuilder(
-					{
-						authType: 'api_key',
-						options: {},
-						keys: { get_api_key: getApiKeyMock },
-						tenantId: 'default',
-					},
-					'endpoint',
-				),
-			).rejects.toThrow();
+				makeBasinRequest('projects/999999999', key, { method: 'GET' }),
+			).rejects.toMatchObject({ status: 404 });
 		});
 	});
 });

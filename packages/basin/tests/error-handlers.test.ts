@@ -56,18 +56,39 @@ describe('Basin error handlers', () => {
 			expect(matchHandler(error)).toBe('RATE_LIMIT_ERROR');
 		});
 
-		it('extracts retryAfter from ApiError', async () => {
+		// Retry-After is surfaced so callers can back off, but the handler asks
+		// for no binder-level retry: the transport already retried the 429 via
+		// BASIN_RATE_LIMIT_CONFIG, and the binder discards a successful retry's
+		// value anyway, so retrying again would only replay requests.
+		it('surfaces retryAfter from ApiError without re-driving the call', async () => {
 			const error = makeApiError(429, 'Too Many Requests', 10000);
 			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-			expect(result.maxRetries).toBe(5);
 			expect(result.headersRetryAfterMs).toBe(10000);
+			expect(result.maxRetries).toBe(0);
 		});
 
-		it('extracts retryAfter from BasinAPIError', async () => {
+		it('surfaces retryAfter from BasinAPIError without re-driving the call', async () => {
 			const error = makeBasinApiError(429, 'Too Many Requests', 5000);
 			const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-			expect(result.maxRetries).toBe(5);
 			expect(result.headersRetryAfterMs).toBe(5000);
+			expect(result.maxRetries).toBe(0);
+		});
+
+		it('never asks the binder to retry, for any handler', async () => {
+			// Handlers differ in arity: most take a context, RATE_LIMIT_ERROR does
+			// not. Call them through a common shape so the guard covers all of them.
+			type AnyHandler = (
+				error: Error,
+				context: { operation: string },
+			) => Promise<{ maxRetries: number }>;
+
+			for (const [name, entry] of Object.entries(errorHandlers)) {
+				const handler = entry.handler as AnyHandler;
+				const result = await handler(new Error('boom'), {
+					operation: 'forms.list',
+				});
+				expect([name, result.maxRetries]).toEqual([name, 0]);
+			}
 		});
 	});
 
