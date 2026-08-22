@@ -65,43 +65,42 @@ export async function getOAuthAccessToken(
 	const clientId = credentials.client_id;
 
 	// force ⇒ a 401 retry: the token can look locally fresh but be revoked at the
-	// provider, so skip the freshness re-check and mint unconditionally. A distinct
-	// flight key keeps a force from deduping onto an in-flight non-force refresh
-	// (which could hand back the stale token).
+	// provider, so skip the freshness re-check and mint unconditionally. Force and
+	// routine share ONE flight key: a 401 retry racing an expiry refresh must not
+	// both spend the same rotating refresh_token. Safe because the freshness
+	// shortcut below only fires when the flight's creator was routine — and a
+	// routine creator only got here after its own freshness check failed, so a
+	// shortcut hit means a concurrent refresh already minted a fresh token.
 	const runRefresh = (force: boolean): Promise<string> =>
-		singleFlight(
-			ctx.keys,
-			force ? `${flightKey}:force` : flightKey,
-			async () => {
-				const [currentAccess, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-				// Re-check under the single-flight: a concurrent caller may have just
-				// refreshed and persisted a token while we waited.
-				if (
-					!force &&
-					isAccessTokenFresh({ accessToken: currentAccess, expiresAt })
-				) {
-					return currentAccess as string;
-				}
-				if (!refreshToken) {
-					throw new AuthMissingError(opts.plugin, 'oauth_2');
-				}
-				const tokens = await refreshOAuthTokensLocal({
-					tokenUrl: opts.tokenUrl,
-					tokenAuthMethod: opts.tokenAuthMethod,
-					bodyFormat: opts.bodyFormat,
-					extraParams: opts.extraParams,
-					clientId,
-					clientSecret,
-					refreshToken,
-				});
-				await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
-				return tokens.access_token;
-			},
-		);
+		singleFlight(ctx.keys, flightKey, async () => {
+			const [currentAccess, expiresAt, refreshToken] = await Promise.all([
+				ctx.keys.get_access_token(),
+				ctx.keys.get_expires_at(),
+				ctx.keys.get_refresh_token(),
+			]);
+			// Re-check under the single-flight: a concurrent caller may have just
+			// refreshed and persisted a token while we waited.
+			if (
+				!force &&
+				isAccessTokenFresh({ accessToken: currentAccess, expiresAt })
+			) {
+				return currentAccess as string;
+			}
+			if (!refreshToken) {
+				throw new AuthMissingError(opts.plugin, 'oauth_2');
+			}
+			const tokens = await refreshOAuthTokensLocal({
+				tokenUrl: opts.tokenUrl,
+				tokenAuthMethod: opts.tokenAuthMethod,
+				bodyFormat: opts.bodyFormat,
+				extraParams: opts.extraParams,
+				clientId,
+				clientSecret,
+				refreshToken,
+			});
+			await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
+			return tokens.access_token;
+		});
 
 	(ctx as Record<string, unknown>)._refreshAuth = () => runRefresh(true);
 

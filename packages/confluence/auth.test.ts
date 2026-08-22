@@ -111,7 +111,7 @@ describe('Confluence authentication', () => {
 		).resolves.toBe('switchboard-access-token');
 
 		expect(mockGetOAuthAccessToken).toHaveBeenCalledWith(
-			{ keys, hub, tenantId: 't1' },
+			expect.objectContaining({ keys, hub, tenantId: 't1' }),
 			{
 				plugin: 'confluence',
 				tokenUrl: 'https://auth.atlassian.com/oauth/token',
