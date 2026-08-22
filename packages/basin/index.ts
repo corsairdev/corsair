@@ -32,7 +32,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BasinSchema } from './schema';
-import { matchBasinTenantWebhook } from './webhooks/tenant-matcher';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Plugin Options & Context
@@ -421,7 +420,11 @@ export function basin<const T extends BasinPluginOptions>(
 		endpointMeta: basinEndpointMeta,
 		endpointSchemas: basinEndpointSchemas,
 		pluginWebhookMatcher: () => false,
-		pluginTenantWebhookMatcher: matchBasinTenantWebhook,
+		// Basin is REST-only: it delivers form submissions to *your* webhook URLs
+		// and has no inbound events for Corsair to route, so there is no tenant to
+		// match. The field is optional; a stub matcher that always returns null
+		// would only claim a capability the plugin does not have.
+		pluginTenantWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

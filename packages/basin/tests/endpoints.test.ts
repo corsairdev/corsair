@@ -608,7 +608,9 @@ describe('Basin Endpoints', () => {
 			expect(plugin.endpoints).toBeDefined();
 			expect(plugin.webhooks).toEqual({});
 			expect(plugin.pluginWebhookMatcher({ headers: {} })).toBe(false);
-			expect(plugin.pluginTenantWebhookMatcher({ headers: {} })).toBeNull();
+			// Basin is REST-only, so it declares no tenant matcher at all rather
+			// than a stub that always returns null. The field is optional.
+			expect(plugin.pluginTenantWebhookMatcher).toBeUndefined();
 		});
 
 		it('keyBuilder resolves key from options or key manager', async () => {

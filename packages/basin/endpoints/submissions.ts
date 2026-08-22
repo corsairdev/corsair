@@ -76,25 +76,31 @@ export const update: BasinEndpoints['submissionsUpdate'] = async (
 ) => {
 	const validated = BasinEndpointInputSchemas.submissionsUpdate.parse(input);
 	const { id, submission, spam, read, trash } = validated;
-	const body = submission
-		? { submission }
-		: {
-				submission: {
-					...(spam !== undefined ? { spam } : {}),
-					...(read !== undefined ? { read } : {}),
-					...(trash !== undefined ? { trash } : {}),
-				},
-			};
+	// The schema allows the flags at the top level *and* inside `submission`.
+	// Sending only `submission` when both are present would silently drop the
+	// top-level flags, so merge them, with the explicit `submission` object
+	// taking precedence.
+	const body = {
+		submission: {
+			...(spam !== undefined ? { spam } : {}),
+			...(read !== undefined ? { read } : {}),
+			...(trash !== undefined ? { trash } : {}),
+			...(submission ?? {}),
+		},
+	};
 
 	const res = await makeBasinRequest<unknown>(`submissions/${id}`, ctx.key, {
 		method: 'PATCH',
 		body: body as Record<string, unknown>,
 	});
 	const response = BasinEndpointOutputSchemas.submissionsUpdate.parse(res);
+	// A submission body carries whatever the form collected — names, email
+	// addresses, uploaded file references. Log the id and which fields were
+	// touched, never the payload itself.
 	await logEventFromContext(
 		ctx,
 		'basin.submissions.update',
-		{ ...validated },
+		{ id, fields: Object.keys(body.submission ?? {}) },
 		'completed',
 	);
 	return response;

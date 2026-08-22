@@ -52,10 +52,15 @@ export const create: BasinEndpoints['webhooksCreate'] = async (ctx, input) => {
 		body: body as Record<string, unknown>,
 	});
 	const response = BasinEndpointOutputSchemas.webhooksCreate.parse(res);
+	// A webhook URL can embed a token or signing secret in its path or query,
+	// so log the identifiers and which fields were set, never the URL.
 	await logEventFromContext(
 		ctx,
 		'basin.webhooks.create',
-		{ ...validated },
+		{
+			form_id: validated.form_id ?? validated.form_webhook?.form_id,
+			fields: Object.keys(body.form_webhook ?? {}),
+		},
 		'completed',
 	);
 	return response;
@@ -71,10 +76,11 @@ export const update: BasinEndpoints['webhooksUpdate'] = async (ctx, input) => {
 		body: body as Record<string, unknown>,
 	});
 	const response = BasinEndpointOutputSchemas.webhooksUpdate.parse(res);
+	// Same reasoning as create: identifiers and field names only.
 	await logEventFromContext(
 		ctx,
 		'basin.webhooks.update',
-		{ ...validated },
+		{ id, fields: Object.keys(body.form_webhook ?? {}) },
 		'completed',
 	);
 	return response;

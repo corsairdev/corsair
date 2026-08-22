@@ -276,7 +276,15 @@ export const FormsCreateInputSchema = z
 		contribute_to_spam_training: z.boolean().optional(),
 		form: z.record(z.string(), z.unknown()).optional(),
 	})
-	.passthrough();
+	.passthrough()
+	// An empty input produces `{ form: {} }`, which Basin rejects with 422
+	// "param is missing or the value is empty or invalid: form".
+	.refine(
+		(value) =>
+			Object.keys(value.form ?? {}).length > 0 ||
+			Object.keys(value).some((key) => key !== 'form'),
+		{ message: 'Provide at least one form field to create a form' },
+	);
 export type FormsCreateInput = z.infer<typeof FormsCreateInputSchema>;
 
 export const FormsCreateResponseSchema = BasinFormSchema;
@@ -458,7 +466,8 @@ export type SubmissionsRefireWebhooksResponse = z.infer<
 >;
 
 export const SubmissionsRefireWebhooksBulkInputSchema = z.object({
-	submission_ids: z.array(z.number()),
+	// An empty array would spend a request that re-fires nothing.
+	submission_ids: z.array(z.number()).min(1),
 });
 export type SubmissionsRefireWebhooksBulkInput = z.infer<
 	typeof SubmissionsRefireWebhooksBulkInputSchema
@@ -501,7 +510,16 @@ export const ProjectsCreateInputSchema = z
 			.passthrough()
 			.optional(),
 	})
-	.passthrough();
+	.passthrough()
+	// The handler falls back to `{ project: { name: '' } }` when no name is
+	// given, and Basin answers that with 422 "Name can't be blank". Reject it
+	// here so the caller gets a clear error instead of a wasted request.
+	.refine(
+		(value) =>
+			(value.name?.trim().length ?? 0) > 0 ||
+			(value.project?.name?.trim().length ?? 0) > 0,
+		{ message: 'A project name is required' },
+	);
 export type ProjectsCreateInput = z.infer<typeof ProjectsCreateInputSchema>;
 
 export const ProjectsCreateResponseSchema = BasinProjectSchema;
@@ -579,7 +597,15 @@ export const WebhooksCreateInputSchema = z
 			.passthrough()
 			.optional(),
 	})
-	.passthrough();
+	.passthrough()
+	// Basin rejects an empty `form_webhook` payload with 422; a webhook without
+	// a form_id and url could never be delivered anyway.
+	.refine(
+		(value) =>
+			Object.keys(value.form_webhook ?? {}).length > 0 ||
+			Object.keys(value).some((key) => key !== 'form_webhook'),
+		{ message: 'Provide at least one webhook field to create a webhook' },
+	);
 export type WebhooksCreateInput = z.infer<typeof WebhooksCreateInputSchema>;
 
 export const WebhooksCreateResponseSchema = BasinFormWebhookSchema;

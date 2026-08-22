@@ -1,6 +1,9 @@
 import { z } from 'zod';
 
 export const safeDate = z.preprocess((val) => {
+	// `0` is a valid numeric timestamp (the Unix epoch) and must survive the
+	// falsy guard below, which exists to drop null, undefined and ''.
+	if (val === 0) return new Date(0);
 	if (!val) return undefined;
 	if (val instanceof Date) return !isNaN(val.getTime()) ? val : undefined;
 	if (typeof val === 'string' || typeof val === 'number') {

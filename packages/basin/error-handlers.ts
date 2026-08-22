@@ -2,8 +2,17 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { BasinAPIError } from './client';
 
-const hasNoStatus = (error: unknown): boolean =>
-	!(error instanceof ApiError) && !(error instanceof BasinAPIError);
+/**
+ * True when no HTTP status is available, so a handler may fall back to matching
+ * on the message. `makeBasinRequest` wraps *every* failure in a BasinAPIError,
+ * including transport errors that never reached Basin and therefore carry no
+ * status — those must stay matchable by message.
+ */
+const hasNoStatus = (error: unknown): boolean => {
+	if (error instanceof ApiError) return error.status === undefined;
+	if (error instanceof BasinAPIError) return error.status === undefined;
+	return true;
+};
 
 const getStatus = (error: unknown): number | undefined => {
 	if (error instanceof ApiError) return error.status;
