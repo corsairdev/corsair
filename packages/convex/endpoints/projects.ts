@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { ConvexEndpoints } from '..';
-import { makeConvexRequest, tryCacheWrite } from '../client';
+import { makeConvexRequest, managementPath, tryCacheWrite } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 
 export const list: ConvexEndpoints['projectsList'] = async (ctx, input) => {
@@ -11,7 +11,7 @@ export const list: ConvexEndpoints['projectsList'] = async (ctx, input) => {
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectsList']
-	>(`/teams/${input.team_id}/projects`, ctx.key, {
+	>(`/teams/${managementPath(input.team_id)}/projects`, ctx.key, {
 		method: 'GET',
 		query,
 	});
@@ -40,7 +40,9 @@ export const getById: ConvexEndpoints['projectGetById'] = async (
 ) => {
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectGetById']
-	>(`/projects/${input.project_id}`, ctx.key, { method: 'GET' });
+	>(`/projects/${managementPath(input.project_id)}`, ctx.key, {
+		method: 'GET',
+	});
 
 	const projects = ctx.db.projects;
 	if (response && projects) {
@@ -64,9 +66,13 @@ export const getBySlug: ConvexEndpoints['projectGetBySlug'] = async (
 ) => {
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectGetBySlug']
-	>(`/teams/${input.team_id_or_slug}/projects/${input.project_slug}`, ctx.key, {
-		method: 'GET',
-	});
+	>(
+		`/teams/${managementPath(input.team_id_or_slug)}/projects/${managementPath(input.project_slug)}`,
+		ctx.key,
+		{
+			method: 'GET',
+		},
+	);
 
 	const projects = ctx.db.projects;
 	if (response && projects) {
@@ -98,7 +104,7 @@ export const create: ConvexEndpoints['projectCreate'] = async (ctx, input) => {
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectCreate']
-	>(`/teams/${input.team_id}/create_project`, ctx.key, {
+	>(`/teams/${managementPath(input.team_id)}/create_project`, ctx.key, {
 		method: 'POST',
 		body,
 	});
@@ -128,21 +134,29 @@ export const deleteProject: ConvexEndpoints['projectDelete'] = async (
 ) => {
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['projectDelete']
-	>(`/projects/${input.project_id}/delete`, ctx.key, { method: 'POST' });
+	>(`/projects/${managementPath(input.project_id)}/delete`, ctx.key, {
+		method: 'POST',
+	});
 
-	// The project was deleted upstream — best-effort cache cleanup only. Also
-	// remove cached deployments that belonged to this project, since deleting a
-	// project deletes all of its deployments.
-	const { projects, deployments } = ctx.db;
+	const { projects, deployments, deployKeys } = ctx.db;
 	if (projects) {
 		await tryCacheWrite(() => projects.deleteByEntityId(input.project_id));
 	}
 	if (deployments) {
 		await tryCacheWrite(async () => {
 			const cached = await deployments.list();
+			const removedNames: string[] = [];
 			for (const deployment of cached) {
-				if (deployment.data.projectId === input.project_id) {
+				if (String(deployment.data.projectId) === String(input.project_id)) {
+					removedNames.push(deployment.entity_id);
 					await deployments.deleteByEntityId(deployment.entity_id);
+				}
+			}
+			if (!deployKeys) return;
+			const keys = await deployKeys.list();
+			for (const key of keys) {
+				if (removedNames.includes(String(key.data.deploymentName))) {
+					await deployKeys.deleteByEntityId(key.entity_id);
 				}
 			}
 		});
