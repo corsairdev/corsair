@@ -1,0 +1,3215 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides", "pnpm.onlyBuiltDependencies". See https://pnpm.io/settings for the new home of each setting.
+
+> @corsair/root@ test /Users/kathir/corsair-apilio
+> turbo --filter "./packages/*" test
+
+turbo 2.6.1
+
+• Packages in scope: @corsair-dev/ably, @corsair-dev/abstract, @corsair-dev/abyssale, @corsair-dev/accrediblecertificates, @corsair-dev/activecampaign, @corsair-dev/activetrail, @corsair-dev/addresszen, @corsair-dev/aeroleads, @corsair-dev/affinda, @corsair-dev/agencyzoom, @corsair-dev/agentmail, @corsair-dev/agentql, @corsair-dev/agenty, @corsair-dev/ahrefs, @corsair-dev/aimlapi, @corsair-dev/airtable, @corsair-dev/alchemy, @corsair-dev/algolia, @corsair-dev/alphavantage, @corsair-dev/altoviz, @corsair-dev/alttextai, @corsair-dev/amara, @corsair-dev/ambee, @corsair-dev/ambientweather, @corsair-dev/amcards, @corsair-dev/amplitude, @corsair-dev/anchorbrowser, @corsair-dev/anthropicadministrator, @corsair-dev/apaleo, @corsair-dev/api2pdf, @corsair-dev/apibible, @corsair-dev/apify, @corsair-dev/apilabz, @corsair-dev/apilio, @corsair-dev/apininjas, @corsair-dev/apipie, @corsair-dev/apisports, @corsair-dev/app, @corsair-dev/asana, @corsair-dev/asindataapi, @corsair-dev/asyncinterview, @corsair-dev/ayrshare, @corsair-dev/basecamp, @corsair-dev/baselinker, @corsair-dev/betterstack, @corsair-dev/bigmailer, @corsair-dev/bigml, @corsair-dev/bitbucket, @corsair-dev/bitwarden, @corsair-dev/blazemeter, @corsair-dev/bluesky, @corsair-dev/boloforms, @corsair-dev/botpress, @corsair-dev/box, @corsair-dev/bugsnag, @corsair-dev/cal, @corsair-dev/calendly, @corsair-dev/canva, @corsair-dev/canvas, @corsair-dev/circleci, @corsair-dev/cli, @corsair-dev/clientary, @corsair-dev/cloudflare, @corsair-dev/cloudinary, @corsair-dev/collegefootballdata, @corsair-dev/confluence, @corsair-dev/contentfulgraphql, @corsair-dev/cursor, @corsair-dev/databricks, @corsair-dev/datadog, @corsair-dev/deepseek, @corsair-dev/digitalocean, @corsair-dev/discord, @corsair-dev/dockerhub, @corsair-dev/dodopayments, @corsair-dev/doppler, @corsair-dev/dropbox, @corsair-dev/epicgames, @corsair-dev/exa, @corsair-dev/facebook, @corsair-dev/figma, @corsair-dev/firecrawl, @corsair-dev/fireflies, @corsair-dev/formbricks, @corsair-dev/frpc-darwin-arm64, @corsair-dev/frpc-darwin-x64, @corsair-dev/frpc-linux-arm64, @corsair-dev/frpc-linux-x64, @corsair-dev/frpc-win32-arm64, @corsair-dev/frpc-win32-x64, @corsair-dev/gemini, @corsair-dev/github, @corsair-dev/gitlab, @corsair-dev/gmail, @corsair-dev/googleaddressvalidation, @corsair-dev/googlebigquery, @corsair-dev/googlecalendar, @corsair-dev/googledocs, @corsair-dev/googledrive, @corsair-dev/googlemaps, @corsair-dev/googlemeet, @corsair-dev/googlesheets, @corsair-dev/grafana, @corsair-dev/groqcloud, @corsair-dev/habitica, @corsair-dev/hackernews, @corsair-dev/harvest, @corsair-dev/hashnode, @corsair-dev/heygen, @corsair-dev/hubspot, @corsair-dev/huggingface, @corsair-dev/insightoai, @corsair-dev/instagram, @corsair-dev/intercom, @corsair-dev/jira, @corsair-dev/kaggle, @corsair-dev/linear, @corsair-dev/linkedin, @corsair-dev/loyverse, @corsair-dev/mailchimp, @corsair-dev/mailtrap, @corsair-dev/mcp, @corsair-dev/monday, @corsair-dev/neon, @corsair-dev/nextdns, @corsair-dev/notion, @corsair-dev/ocrspace, @corsair-dev/ollama, @corsair-dev/onedrive, @corsair-dev/onepassword, @corsair-dev/openai, @corsair-dev/openweathermap, @corsair-dev/oura, @corsair-dev/outlook, @corsair-dev/pagerduty, @corsair-dev/perplexityai, @corsair-dev/posthog, @corsair-dev/razorpay, @corsair-dev/reddit, @corsair-dev/resend, @corsair-dev/retailed, @corsair-dev/salesforce, @corsair-dev/sentry, @corsair-dev/serpapi, @corsair-dev/sharepoint, @corsair-dev/slack, @corsair-dev/spotify, @corsair-dev/strava, @corsair-dev/stripe, @corsair-dev/studio, @corsair-dev/supabase, @corsair-dev/tally, @corsair-dev/tavily, @corsair-dev/teams, @corsair-dev/telegram, @corsair-dev/todoist, @corsair-dev/toggl, @corsair-dev/trello, @corsair-dev/twilio, @corsair-dev/twitter, @corsair-dev/twitterapiio, @corsair-dev/twochat, @corsair-dev/typeform, @corsair-dev/ui, @corsair-dev/vapi, @corsair-dev/vercel, @corsair-dev/webflow, @corsair-dev/whatsapp, @corsair-dev/wiza, @corsair-dev/workday, @corsair-dev/xquik, @corsair-dev/youcom, @corsair-dev/youtube, @corsair-dev/zendesk, @corsair-dev/zohomail, @corsair-dev/zoom, corsair
+• Running test in 177 packages
+• Remote caching disabled
+corsair:test: cache miss, executing c4a8bb531ff9be5e
+corsair:build: cache hit, replaying logs 56657604aea767e1
+corsair:build: 
+corsair:build: 
+corsair:build: > corsair@0.1.119 build /Users/kathir/corsair-apilio/packages/corsair
+corsair:build: > tsup
+corsair:build: 
+corsair:build: [34mCLI[39m Building entry: core.ts, db.ts, http.ts, hub.ts, index.ts, oauth.ts, orm.ts, setup.ts, tests.ts, tunnel.ts, client/react/index.ts, hub/tunnel/run-tunnel.ts
+corsair:build: [34mCLI[39m Using tsconfig: tsconfig.json
+corsair:build: [34mCLI[39m tsup v8.5.1
+corsair:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/corsair/tsup.config.ts
+corsair:build: [34mCLI[39m Target: esnext
+corsair:build: [34mCLI[39m Cleaning output folder
+corsair:build: [34mESM[39m Build start
+corsair:build: [32mESM[39m [1mdist/hub/tunnel/run-tunnel.js     [22m[32m5.62 KB[39m
+corsair:build: [32mESM[39m [1mdist/tunnel.js                    [22m[32m671.00 B[39m
+corsair:build: [32mESM[39m [1mdist/tests.js                     [22m[32m1.67 KB[39m
+corsair:build: [32mESM[39m [1mdist/client/react/index.js        [22m[32m1.80 KB[39m
+corsair:build: [32mESM[39m [1mdist/setup-23CXMCSY.js            [22m[32m241.00 B[39m
+corsair:build: [32mESM[39m [1mdist/core.js                      [22m[32m1.56 KB[39m
+corsair:build: [32mESM[39m [1mdist/setup-introspect-A25DWQIV.js [22m[32m359.00 B[39m
+corsair:build: [32mESM[39m [1mdist/connect-GWDZR5X4.js          [22m[32m300.00 B[39m
+corsair:build: [32mESM[39m [1mdist/db.js                        [22m[32m326.00 B[39m
+corsair:build: [32mESM[39m [1mdist/index.js                     [22m[32m3.66 KB[39m
+corsair:build: [32mESM[39m [1mdist/loop-OQ2BH4OH.js             [22m[32m257.00 B[39m
+corsair:build: [32mESM[39m [1mdist/http.js                      [22m[32m8.57 KB[39m
+corsair:build: [32mESM[39m [1mdist/oauth.js                     [22m[32m436.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-RQ5QHONV.js            [22m[32m1.42 KB[39m
+corsair:build: [32mESM[39m [1mdist/orm.js                       [22m[32m418.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-SI2MXDD3.js            [22m[32m45.00 B[39m
+corsair:build: [32mESM[39m [1mdist/hub.js                       [22m[32m3.00 KB[39m
+corsair:build: [32mESM[39m [1mdist/chunk-3TC2WIUS.js            [22m[32m1.43 KB[39m
+corsair:build: [32mESM[39m [1mdist/setup.js                     [22m[32m241.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-Z2KT4F2U.js            [22m[32m503.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-F2EV3CHK.js            [22m[32m2.83 KB[39m
+corsair:build: [32mESM[39m [1mdist/chunk-SOY77BN4.js            [22m[32m111.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-O4HEZ3MW.js            [22m[32m134.79 KB[39m
+corsair:build: [32mESM[39m [1mdist/chunk-VOH7OVWP.js            [22m[32m15.48 KB[39m
+corsair:build: [32mESM[39m ⚡️ Build success in 61ms
+corsair:build: DTS Build start
+corsair:build: Export "CorsairSingleTenantClient" of module "core/client/index.ts" was reexported through module "core/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+corsair:build: Either change the import in "inspect.ts" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
+corsair:build: Export "CorsairPlugin" of module "core/plugins/index.ts" was reexported through module "core/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+corsair:build: Either change the import in "inspect.ts" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
+corsair:build: Export "CorsairTenantWrapper" of module "core/client/index.ts" was reexported through module "core/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+corsair:build: Either change the import in "inspect.ts" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
+corsair:build: Export "CorsairClient" of module "core/client/index.ts" was reexported through module "core/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+corsair:build: Either change the import in "inspect.ts" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
+corsair:build: DTS ⚡️ Build success in 3160ms
+corsair:build: DTS dist/client/react/index.d.ts          2.41 KB
+corsair:build: DTS dist/hub/tunnel/run-tunnel.d.ts       1.19 KB
+corsair:build: DTS dist/tests.d.ts                       561.00 B
+corsair:build: DTS dist/tunnel.d.ts                      3.57 KB
+corsair:build: DTS dist/oauth.d.ts                       4.51 KB
+corsair:build: DTS dist/core.d.ts                        11.80 KB
+corsair:build: DTS dist/index.d.ts                       11.53 KB
+corsair:build: DTS dist/http.d.ts                        4.71 KB
+corsair:build: DTS dist/hub.d.ts                         25.62 KB
+corsair:build: DTS dist/db.d.ts                          1.72 KB
+corsair:build: DTS dist/orm.d.ts                         23.41 KB
+corsair:build: DTS dist/setup.d.ts                       3.71 KB
+corsair:build: DTS dist/index-DYD8VbaE.d.ts              1.78 KB
+corsair:build: DTS dist/browser-delivery-Cr9Fj6_b.d.ts   1.64 KB
+corsair:build: DTS dist/types-BSFPVOIW.d.ts              1.70 KB
+corsair:build: DTS dist/index-eydqYIn0.d.ts              6.12 KB
+corsair:build: DTS dist/types-CrX_V8-f.d.ts              12.58 KB
+corsair:build: DTS dist/index-DE06GtJ-.d.ts              10.64 KB
+corsair:build: DTS dist/tenant-match-utils-B9QCZQQE.d.ts 9.54 KB
+corsair:build: DTS dist/index-B8HNndHq.d.ts              68.50 KB
+@corsair-dev/exa:test: cache miss, executing 1ecb1961351a7fe6
+@corsair-dev/asana:test: cache miss, executing 1687595422587499
+@corsair-dev/mailchimp:test: cache miss, executing d1244f71b26d0a13
+@corsair-dev/grafana:test: cache miss, executing f6657039eca15756
+@corsair-dev/notion:test: cache miss, executing 3cd5661137d4aaf0
+@corsair-dev/alchemy:test: cache miss, executing 7eadd66dbbf615f9
+@corsair-dev/googledocs:test: cache miss, executing 78efd951944a56a5
+@corsair-dev/dockerhub:test: cache miss, executing bad5445f333f274d
+@corsair-dev/twitterapiio:test: cache miss, executing 8708c9f21f8d9068
+corsair:test: 
+corsair:test: > corsair@0.1.119 test /Users/kathir/corsair-apilio/packages/corsair
+corsair:test: > jest
+corsair:test: 
+@corsair-dev/asana:test: 
+@corsair-dev/asana:test: > @corsair-dev/asana@0.1.4 test /Users/kathir/corsair-apilio/packages/asana
+@corsair-dev/asana:test: > jest
+@corsair-dev/asana:test: 
+@corsair-dev/grafana:test: 
+@corsair-dev/grafana:test: > @corsair-dev/grafana@0.1.3 test /Users/kathir/corsair-apilio/packages/grafana
+@corsair-dev/grafana:test: > jest
+@corsair-dev/grafana:test: 
+@corsair-dev/exa:test: 
+@corsair-dev/exa:test: > @corsair-dev/exa@0.1.3 test /Users/kathir/corsair-apilio/packages/exa
+@corsair-dev/exa:test: > jest
+@corsair-dev/exa:test: 
+@corsair-dev/mailchimp:test: 
+@corsair-dev/mailchimp:test: > @corsair-dev/mailchimp@0.1.0 test /Users/kathir/corsair-apilio/packages/mailchimp
+@corsair-dev/mailchimp:test: > jest
+@corsair-dev/mailchimp:test: 
+@corsair-dev/dockerhub:test: 
+@corsair-dev/dockerhub:test: > @corsair-dev/dockerhub@0.1.0 test /Users/kathir/corsair-apilio/packages/dockerhub
+@corsair-dev/dockerhub:test: > jest
+@corsair-dev/dockerhub:test: 
+@corsair-dev/twitterapiio:test: 
+@corsair-dev/twitterapiio:test: > @corsair-dev/twitterapiio@0.1.3 test /Users/kathir/corsair-apilio/packages/twitterapiio
+@corsair-dev/twitterapiio:test: > jest
+@corsair-dev/twitterapiio:test: 
+@corsair-dev/notion:test: 
+@corsair-dev/notion:test: > @corsair-dev/notion@0.1.5 test /Users/kathir/corsair-apilio/packages/notion
+@corsair-dev/notion:test: > jest
+@corsair-dev/notion:test: 
+@corsair-dev/googledocs:test: 
+@corsair-dev/googledocs:test: > @corsair-dev/googledocs@0.1.1 test /Users/kathir/corsair-apilio/packages/googledocs
+@corsair-dev/googledocs:test: > jest
+@corsair-dev/googledocs:test: 
+@corsair-dev/alchemy:test: 
+@corsair-dev/alchemy:test: > @corsair-dev/alchemy@0.1.1 test /Users/kathir/corsair-apilio/packages/alchemy
+@corsair-dev/alchemy:test: > jest
+@corsair-dev/alchemy:test: 
+corsair:test: ts-jest[config] (WARN) 
+corsair:test:     The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /Users/kathir/corsair-apilio/packages/corsair/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+corsair:test:   
+corsair:test: ts-jest[config] (WARN) 
+corsair:test:     The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /Users/kathir/corsair-apilio/packages/corsair/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+corsair:test:   
+corsair:test: ts-jest[config] (WARN) 
+corsair:test:     The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /Users/kathir/corsair-apilio/packages/corsair/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+corsair:test:   
+corsair:test: ts-jest[config] (WARN) 
+corsair:test:     The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /Users/kathir/corsair-apilio/packages/corsair/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+corsair:test:   
+corsair:test: ts-jest[config] (WARN) 
+corsair:test:     The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /Users/kathir/corsair-apilio/packages/corsair/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+corsair:test:   
+corsair:test: ts-jest[config] (WARN) 
+corsair:test:     The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /Users/kathir/corsair-apilio/packages/corsair/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+corsair:test:   
+corsair:test: ts-jest[config] (WARN) 
+corsair:test:     The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /Users/kathir/corsair-apilio/packages/corsair/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+corsair:test:   
+corsair:test: ts-jest[config] (WARN) 
+corsair:test:     The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /Users/kathir/corsair-apilio/packages/corsair/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+corsair:test:   
+corsair:test: ts-jest[config] (WARN) 
+corsair:test:     The "ts-jest" config option "isolatedModules" is deprecated and will be removed in v30.0.0. Please use "isolatedModules: true" in /Users/kathir/corsair-apilio/packages/corsair/tsconfig.json instead, see https://www.typescriptlang.org/tsconfig/#isolatedModules
+corsair:test:   
+corsair:test: PASS tests/connect-link.test.ts (7.049 s)
+corsair:test:   AuthMissingError
+corsair:test:     ✓ sets name, pluginId, authType, and default message (52 ms)
+corsair:test:     ✓ accepts a custom message
+corsair:test:   OAuth state utilities
+corsair:test:     ✓ round-trips encode/decode (3 ms)
+corsair:test:     ✓ signs and verifies state (6 ms)
+corsair:test:     ✓ rejects tampered state (1 ms)
+corsair:test:     ✓ returns null for invalid state
+corsair:test:     ✓ rejects expired state (1 ms)
+corsair:test:   connect-link generation in endpoint binding
+corsair:test:     ✓ does not generate connect link when keyBuilder returns empty string (1 ms)
+corsair:test:     ✓ throws connect link message when keyBuilder throws AuthMissingError (40 ms)
+corsair:test:     ✓ propagates non-AuthMissingError from keyBuilder even with manualConfig (2 ms)
+corsair:test:     ✓ uses custom onAuthMissing callback (3 ms)
+corsair:test:     ✓ does not intercept errors when manualConfig is not set (2 ms)
+corsair:test:     ✓ does not intercept errors when plugin has no oauthConfig (1 ms)
+corsair:test:     ✓ does not intercept unrelated errors when manualConfig is set (1 ms)
+corsair:test:     ✓ does not generate connect link for api_key AuthMissingError in manual mode (167 ms)
+corsair:test:     ✓ throws hub connect link message when keyBuilder throws AuthMissingError (28 ms)
+corsair:test:     ✓ throws hub connect link message for managed AuthMissingError (61 ms)
+corsair:test:     ✓ throws hub connect link message for api_key AuthMissingError (7 ms)
+corsair:test:     ✓ throws plain auth-missing tag when hub config is missing (150 ms)
+corsair:test: 
+corsair:test: PASS tests/management-react-client.test.ts (7.2 s)
+corsair:test:   useTenants
+corsair:test:     ✓ starts loading, resolves with data (357 ms)
+corsair:test:     ✓ transitions to error when fetch fails (61 ms)
+corsair:test:     ✓ refetch re-runs the request (176 ms)
+corsair:test:   useTenant
+corsair:test:     ✓ fetches by id and resolves (57 ms)
+corsair:test:     ✓ re-fetches when id changes (193 ms)
+corsair:test:   useCreateTenant
+corsair:test:     ✓ starts idle, mutate resolves and sets data (29 ms)
+corsair:test:     ✓ mutate rejects and sets error (17 ms)
+corsair:test:   usePlugins
+corsair:test:     ✓ returns plugin list (176 ms)
+corsair:test:   usePlugin
+corsair:test:     ✓ fetches single plugin by id (55 ms)
+corsair:test:   useConnectionStatus
+corsair:test:     ✓ returns connection status map (93 ms)
+corsair:test:     ✓ re-fetches when tenantId changes (131 ms)
+corsair:test:   usePermission
+corsair:test:     ✓ fetches permission by id (77 ms)
+corsair:test:     ✓ fetches permission by token (98 ms)
+corsair:test:   useCreateConnectLink
+corsair:test:     ✓ starts idle (21 ms)
+corsair:test:     ✓ mutate returns connect link (14 ms)
+corsair:test:   useOAuthCallback
+corsair:test:     ✓ mutate completes OAuth and returns plugin + tenantId (14 ms)
+corsair:test: 
+corsair:test: PASS tests/execute.test.ts
+corsair:test:   executeWorkflowRun — happy path
+corsair:test:     ✓ runs a step and reports it completed (33 ms)
+corsair:test:     ✓ gives distinct stepIds to reused names (loops) but stable ones across attempts (38 ms)
+corsair:test:     ✓ passes calls through the membrane and hardens the result (51 ms)
+corsair:test:   executeWorkflowRun — sandbox isolation
+corsair:test:     ✓ blocks the constructor.constructor escape on host objects (24 ms)
+corsair:test:     ✓ has no host globals in scope (12 ms)
+corsair:test:     ✓ rejects require() (19 ms)
+corsair:test:   executeWorkflowRun — replay / memoization
+corsair:test:     ✓ replays memoized steps without re-running them, keeping seq stable (37 ms)
+corsair:test:     ✓ reports the failed step name (18 ms)
+corsair:test:   executeWorkflowRun — sleep
+corsair:test:     ✓ unwinds on step.sleep and resumes past it on the next attempt (33 ms)
+corsair:test:     ✓ does not crash on a non-finite sleep duration (B3) (17 ms)
+corsair:test:     ✓ still pauses when a broad try/catch swallows the sleep and more steps follow (52 ms)
+corsair:test:     ✓ still pauses when the sleep is swallowed and main returns normally (73 ms)
+corsair:test:   executeWorkflowRun — resource limits (B1)
+corsair:test:     ✓ aborts a synchronous runaway via the vm timeout (130 ms)
+corsair:test:     ✓ aborts a hung workflow via the wall-clock cap (175 ms)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] hub did not record delivery d1 (already timed out); the run may be retried
+corsair:test: 
+corsair:test:       62 | 			if (resp.ok) {
+corsair:test:       63 | 				if (!(await ackConfirmed(resp))) {
+corsair:test:     > 64 | 					console.warn(
+corsair:test:          | 					        ^
+corsair:test:       65 | 						`[corsair] hub did not record delivery ${payload.deliveryId} (already timed out); the run may be retried`,
+corsair:test:       66 | 					);
+corsair:test:       67 | 				}
+corsair:test: 
+corsair:test:       at postAck (hub/connect/loop.ts:64:14)
+corsair:test:       at pollOnce (hub/connect/loop.ts:109:20)
+corsair:test:       at Object.<anonymous> (tests/connect-loop.test.ts:125:15)
+corsair:test: 
+corsair:test: PASS tests/tunnel.test.ts (12.48 s)
+corsair:test:   connectLinkAck (backward compat)
+corsair:test:     ✓ populates both the deprecated connectLink alias and webhookResponse (23 ms)
+corsair:test:   processCorsair
+corsair:test:     ✓ rejects unsigned tunnel requests by default (1 ms)
+corsair:test:     ✓ rejects tunnel requests when signingSecret is empty or whitespace
+corsair:test:     ✓ accepts signed tunnel requests when signingSecret is provided (19 ms)
+corsair:test:     ✓ rejects replayed tunnel nonces (1 ms)
+corsair:test:     ✓ rejects signed requests without a nonce header
+corsair:test:     ✓ rejects signed requests without a timestamp header (1 ms)
+corsair:test:     ✓ rejects signed requests with an expired timestamp
+corsair:test:     ✓ allows unsigned requests when allowUnsignedTunnel is enabled (1 ms)
+corsair:test:   processCorsair — permission decisions
+corsair:test:     ✓ approves a pending permission via permission.approve tunnel (338 ms)
+corsair:test:     ✓ denies a pending permission via permission.deny tunnel (10 ms)
+corsair:test:   processCorsair — probe tunnel
+corsair:test:     ✓ is gated behind allowWorkflowExecution (off by default) (24 ms)
+corsair:test:     ✓ runs the read-only script and returns its value when enabled (66 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] failed to acknowledge delivery d1 after 3 attempts; the run may be retried
+corsair:test: 
+corsair:test:       73 | 		if (attempt < ACK_MAX_ATTEMPTS) await sleep(ACK_RETRY_MS);
+corsair:test:       74 | 	}
+corsair:test:     > 75 | 	console.warn(
+corsair:test:          | 	        ^
+corsair:test:       76 | 		`[corsair] failed to acknowledge delivery ${payload.deliveryId} after ${ACK_MAX_ATTEMPTS} attempts; the run may be retried`,
+corsair:test:       77 | 	);
+corsair:test:       78 | 	return false;
+corsair:test: 
+corsair:test:       at postAck (hub/connect/loop.ts:75:10)
+corsair:test:       at pollOnce (hub/connect/loop.ts:109:20)
+corsair:test:       at Object.<anonymous> (tests/connect-loop.test.ts:152:15)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/connect-loop.test.ts (6.566 s)
+corsair:test:   deriveAck
+corsair:test:     ✓ maps a run success to its webhookResponse (11 ms)
+corsair:test:     ✓ maps a failure to 502 with the error
+corsair:test:   pollOnce
+corsair:test:     ✓ returns idle on 204 and does not call process (1 ms)
+corsair:test:     ✓ processes an envelope and posts the ack (8 ms)
+corsair:test:     ✓ returns error on a non-204/2xx pull
+corsair:test:     ✓ treats a stale ack (ok:false) as handled without retrying (514 ms)
+corsair:test:     ✓ retries a transiently failed ack and succeeds (292 ms)
+corsair:test:     ✓ returns error when the ack never lands (609 ms)
+corsair:test:   startConnectLoop
+corsair:test:     ✓ is a no-op when the hub is not configured (1 ms)
+corsair:test:     ✓ does not start the loop for a non-dev (prod) key (1 ms)
+corsair:test:     ✓ warns and does not poll for a dev key with execution disabled (11 ms)
+corsair:test:     ✓ polls while running and halts on stop() (224 ms)
+corsair:test:     ✓ does not spawn a second loop for the same project key (220 ms)
+corsair:test:     ✓ frees the key on stop so an immediate restart runs exactly one loop (64 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at Object.<anonymous> (tests/connections-sync.test.ts:112:32)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at Object.<anonymous> (tests/management-adapters.test.ts:81:32)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test: PASS tests/management-adapters.test.ts
+corsair:test:   toNextJsHandler
+corsair:test:     ✓ exposes GET, POST, and OPTIONS that share the same handler (597 ms)
+corsair:test:   managementHandler — hub delivery at base path
+corsair:test:     ✓ returns hub health check at the delivery URL (156 ms)
+corsair:test:     ✓ returns 503 when hub is not configured (2 ms)
+corsair:test:   toHonoHandler
+corsair:test:     ✓ dispatches c.req.raw to the vanilla handler (21 ms)
+corsair:test:   toExpressHandler
+corsair:test:     ✓ bridges Express req → fetch Request, writes the Response back (295 ms)
+corsair:test:     ✓ re-serializes a parsed JSON body for POST (6 ms)
+corsair:test:     ✓ forwards adapter-level errors to next() (1 ms)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [SLACK:channels.list] Authentication failed - check your bot token
+corsair:test: 
+corsair:test:       38 | 		},
+corsair:test:       39 | 		handler: async (error, context) => {
+corsair:test:     > 40 | 			console.warn(
+corsair:test:          | 			        ^
+corsair:test:       41 | 				`[SLACK:${context.operation}] Authentication failed - check your bot token`,
+corsair:test:       42 | 			);
+corsair:test:       43 |
+corsair:test: 
+corsair:test:       at handler (../slack/error-handlers.ts:40:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:166:43)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [SLACK:channels.list] Permission denied: missing_scope
+corsair:test: 
+corsair:test:       63 | 		},
+corsair:test:       64 | 		handler: async (error, context) => {
+corsair:test:     > 65 | 			console.warn(
+corsair:test:          | 			        ^
+corsair:test:       66 | 				`[SLACK:${context.operation}] Permission denied: ${error.message}`,
+corsair:test:       67 | 			);
+corsair:test:       68 |
+corsair:test: 
+corsair:test:       at handler (../slack/error-handlers.ts:65:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:180:43)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [SLACK:channels.list] Network error: ECONNREFUSED network error
+corsair:test: 
+corsair:test:       86 | 		},
+corsair:test:       87 | 		handler: async (error, context) => {
+corsair:test:     > 88 | 			console.warn(
+corsair:test:          | 			        ^
+corsair:test:       89 | 				`[SLACK:${context.operation}] Network error: ${error.message}`,
+corsair:test:       90 | 			);
+corsair:test:       91 |
+corsair:test: 
+corsair:test:       at handler (../slack/error-handlers.ts:88:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:194:43)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [SLACK:channels.list] Unhandled error: Unknown error type
+corsair:test: 
+corsair:test:       120 | 		},
+corsair:test:       121 | 		handler: async (error, context) => {
+corsair:test:     > 122 | 			console.error(
+corsair:test:           | 			        ^
+corsair:test:       123 | 				`[SLACK:${context.operation}] Unhandled error: ${error.message}`,
+corsair:test:       124 | 			);
+corsair:test:       125 |
+corsair:test: 
+corsair:test:       at handler (../slack/error-handlers.ts:122:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:208:43)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [LINEAR:issues.list] Rate limit exceeded
+corsair:test: 
+corsair:test:       at handler (../linear/error-handlers.ts:20:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [LINEAR:issues.list] Authentication failed - check your API key
+corsair:test: 
+corsair:test:       at handler (../linear/error-handlers.ts:51:12)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [LINEAR:issues.list] Permission denied: permission denied
+corsair:test: 
+corsair:test:       101 | 		},
+corsair:test:       102 | 		handler: async (error, context) => {
+corsair:test:     > 103 | 			console.warn(
+corsair:test:           | 			        ^
+corsair:test:       104 | 				`[LINEAR:${context.operation}] Permission denied: ${error.message}`,
+corsair:test:       105 | 			);
+corsair:test:       106 |
+corsair:test: 
+corsair:test:       at handler (../linear/error-handlers.ts:103:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:253:43)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [LINEAR:issues.list] Network error: ENOTFOUND connection failed
+corsair:test: 
+corsair:test:       124 | 		},
+corsair:test:       125 | 		handler: async (error, context) => {
+corsair:test:     > 126 | 			console.warn(
+corsair:test:           | 			        ^
+corsair:test:       127 | 				`[LINEAR:${context.operation}] Network error: ${error.message}`,
+corsair:test:       128 | 			);
+corsair:test:       129 |
+corsair:test: 
+corsair:test:       at handler (../linear/error-handlers.ts:126:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:267:43)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [LINEAR:issues.list] Unhandled error: Unexpected error
+corsair:test: 
+corsair:test:       163 | 		},
+corsair:test:       164 | 		handler: async (error, context) => {
+corsair:test:     > 165 | 			console.error(
+corsair:test:           | 			        ^
+corsair:test:       166 | 				`[LINEAR:${context.operation}] Unhandled error: ${error.message}`,
+corsair:test:       167 | 			);
+corsair:test:       168 |
+corsair:test: 
+corsair:test:       at handler (../linear/error-handlers.ts:165:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:281:43)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [SLACK:channels.list] Unhandled error: Some unknown error type
+corsair:test: 
+corsair:test:       120 | 		},
+corsair:test:       121 | 		handler: async (error, context) => {
+corsair:test:     > 122 | 			console.error(
+corsair:test:           | 			        ^
+corsair:test:       123 | 				`[SLACK:${context.operation}] Unhandled error: ${error.message}`,
+corsair:test:       124 | 			);
+corsair:test:       125 |
+corsair:test: 
+corsair:test:       at handler (../slack/error-handlers.ts:122:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:311:43)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [LINEAR:issues.list] Rate limit exceeded
+corsair:test: 
+corsair:test:       at handler (../linear/error-handlers.ts:20:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [LINEAR:issues.list] Authentication failed - check your API key
+corsair:test: 
+corsair:test:       at handler (../linear/error-handlers.ts:51:12)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [SLACK:channels.list] Permission denied: Forbidden
+corsair:test: 
+corsair:test:       63 | 		},
+corsair:test:       64 | 		handler: async (error, context) => {
+corsair:test:     > 65 | 			console.warn(
+corsair:test:          | 			        ^
+corsair:test:       66 | 				`[SLACK:${context.operation}] Permission denied: ${error.message}`,
+corsair:test:       67 | 			);
+corsair:test:       68 |
+corsair:test: 
+corsair:test:       at handler (../slack/error-handlers.ts:65:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:355:43)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [SLACK:channels.list] Network error: ETIMEDOUT connection timeout
+corsair:test: 
+corsair:test:       86 | 		},
+corsair:test:       87 | 		handler: async (error, context) => {
+corsair:test:     > 88 | 			console.warn(
+corsair:test:          | 			        ^
+corsair:test:       89 | 				`[SLACK:${context.operation}] Network error: ${error.message}`,
+corsair:test:       90 | 			);
+corsair:test:       91 |
+corsair:test: 
+corsair:test:       at handler (../slack/error-handlers.ts:88:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:369:43)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [SLACK:channels.list] Unhandled error: Unknown error
+corsair:test: 
+corsair:test:       120 | 		},
+corsair:test:       121 | 		handler: async (error, context) => {
+corsair:test:     > 122 | 			console.error(
+corsair:test:           | 			        ^
+corsair:test:       123 | 				`[SLACK:${context.operation}] Unhandled error: ${error.message}`,
+corsair:test:       124 | 			);
+corsair:test:       125 |
+corsair:test: 
+corsair:test:       at handler (../slack/error-handlers.ts:122:12)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:548:44)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     Postgres not reachable at postgresql://user:password@localhost:5432/db_name; postgres-js tests skipped
+corsair:test: 
+corsair:test:        98 | 		if (!connectable) {
+corsair:test:        99 | 			// eslint-disable-next-line no-console
+corsair:test:     > 100 | 			console.warn(
+corsair:test:           | 			        ^
+corsair:test:       101 | 				`Postgres not reachable at ${PG_URL}; postgres-js tests skipped`,
+corsair:test:       102 | 			);
+corsair:test:       103 | 			return;
+corsair:test: 
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:100:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/management-handler.test.ts (19.294 s)
+corsair:test:   managementHandler — /ok
+corsair:test:     ✓ returns { ok: true } (196 ms)
+corsair:test:     ✓ honors a custom basePath (4 ms)
+corsair:test:     ✓ returns 404 for an unknown path (3 ms)
+corsair:test:   managementHandler — /plugins
+corsair:test:     ✓ lists all plugins with auth + oauth metadata (6 ms)
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test:     ✓ reports configured=true once client_id and client_secret are set (4264 ms)
+corsair:test:     ✓ 404s when plugin id does not exist (32 ms)
+corsair:test:   managementHandler — /tenants
+corsair:test:     ✓ returns [default] when DB has no accounts (111 ms)
+corsair:test:     ✓ lists distinct tenant ids from accounts (always including default) (6 ms)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:     ✓ POST /tenants returns the implicit tenant; rejects empty id (25 ms)
+corsair:test:     ✓ GET /tenants/:id returns derived shape (no 404 for empty tenant) (7 ms)
+corsair:test:   managementHandler — /connection-status
+corsair:test:     ✓ reports missing_credentials when integration creds are unset (9 ms)
+corsair:test:     ✓ reports not_connected when creds present but no account for tenant (2123 ms)
+corsair:test:     ✓ defaults to tenantId=default when query is absent (121 ms)
+corsair:test:   managementHandler — /permissions
+corsair:test:     ✓ returns permission by id and by token, 404s on unknown (264 ms)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair:slack:channels.list] { error: 'Any error', input: {} }
+corsair:test: 
+corsair:test:        7 |
+corsair:test:        8 | const defaultErrorHandler: ErrorHandler = async (error, context) => {
+corsair:test:     >  9 | 	console.error(`[corsair:${context.pluginId}:${context.operation}]`, {
+corsair:test:          | 	        ^
+corsair:test:       10 | 		error: error.message,
+corsair:test:       11 | 		input: context.input,
+corsair:test:       12 | 	});
+corsair:test: 
+corsair:test:       at defaultErrorHandler (core/errors/handler.ts:9:10)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:565:44)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair:slack:channels.list] { error: 'Some other error', input: {} }
+corsair:test: 
+corsair:test:        7 |
+corsair:test:        8 | const defaultErrorHandler: ErrorHandler = async (error, context) => {
+corsair:test:     >  9 | 	console.error(`[corsair:${context.pluginId}:${context.operation}]`, {
+corsair:test:          | 	        ^
+corsair:test:       10 | 		error: error.message,
+corsair:test:       11 | 		input: context.input,
+corsair:test:       12 | 	});
+corsair:test: 
+corsair:test:       at defaultErrorHandler (core/errors/handler.ts:9:10)
+corsair:test:       at handleCorsairError (core/errors/handler.ts:50:15)
+corsair:test:       at Object.<anonymous> (tests/error-handlers.test.ts:585:44)
+corsair:test: 
+corsair:test: PASS tests/error-handlers.test.ts (19.416 s)
+corsair:test:   Error Handlers
+corsair:test:     Slack Plugin Error Handlers
+corsair:test:       ✓ should handle AUTH_ERROR (920 ms)
+corsair:test:       ✓ should handle PERMISSION_ERROR (18 ms)
+corsair:test:       ✓ should handle NETWORK_ERROR (3 ms)
+corsair:test:       ✓ should handle DEFAULT error handler (2 ms)
+corsair:test:       RATE_LIMIT_ERROR with retry-after headers
+corsair:test:         ✓ should extract retryAfter from ApiError and set headersRetryAfterMs (204 ms)
+corsair:test:         ✓ should handle different retryAfter values (1 ms)
+corsair:test:         ✓ should set headersRetryAfterMs to undefined when retryAfter is not provided (7 ms)
+corsair:test:         ✓ should not set headersRetryAfterMs when error is not an ApiError instance (1 ms)
+corsair:test:         ✓ should handle rate limit error with "ratelimited" message (10 ms)
+corsair:test:         ✓ should handle rate limit error with "429" in message (3 ms)
+corsair:test:         ✓ should handle rate limit error with zero retryAfter (1 ms)
+corsair:test:     Linear Plugin Error Handlers
+corsair:test:       ✓ should handle RATE_LIMIT_ERROR (6 ms)
+corsair:test:       ✓ should handle AUTH_ERROR (2 ms)
+corsair:test:       ✓ should handle PERMISSION_ERROR (4 ms)
+corsair:test:       ✓ should handle NETWORK_ERROR (4 ms)
+corsair:test:       ✓ should handle DEFAULT error handler (3 ms)
+corsair:test:     Error Handler Priority
+corsair:test:       ✓ should prioritize specific error handlers over DEFAULT
+corsair:test:       ✓ should fall back to DEFAULT when no specific handler matches (3 ms)
+corsair:test:     Error Handler Matching
+corsair:test:       ✓ should match RATE_LIMIT_ERROR by status code (4 ms)
+corsair:test:       ✓ should match AUTH_ERROR by status code (3 ms)
+corsair:test:       ✓ should match PERMISSION_ERROR by status code (2 ms)
+corsair:test:       ✓ should match NETWORK_ERROR by error message (2 ms)
+corsair:test:     Error Handler Hierarchy
+corsair:test:       Plugin-specific handlers override root handlers
+corsair:test:         ✓ should use plugin-specific RATE_LIMIT_ERROR handler over root handler
+corsair:test:         ✓ should use plugin-specific DEFAULT handler over root DEFAULT handler (1 ms)
+corsair:test:       Root handlers override package default handlers
+corsair:test:         ✓ should use root RATE_LIMIT_ERROR handler over package default when no plugin handler exists
+corsair:test:         ✓ should use root DEFAULT handler over package DEFAULT when no plugin handler exists (1 ms)
+corsair:test:       Package default handlers are used as fallback
+corsair:test:         ✓ should use package default RATE_LIMIT_ERROR handler when no root or plugin handlers exist
+corsair:test:         ✓ should use package default DEFAULT handler when no root or plugin handlers exist (6 ms)
+corsair:test:       System default handler is used when no handlers match
+corsair:test:         ✓ should use system default handler when no handlers are provided (800 ms)
+corsair:test:         ✓ should use system default handler when no handlers match the error (22 ms)
+corsair:test:       Specific error handlers take priority over DEFAULT
+corsair:test:         ✓ should use specific RATE_LIMIT_ERROR handler over DEFAULT handler (1 ms)
+corsair:test:         ✓ should use DEFAULT handler when specific handler does not match
+corsair:test:       Complete hierarchy: Plugin > Root > Package Default > System Default
+corsair:test:         ✓ should follow complete hierarchy for RATE_LIMIT_ERROR
+corsair:test:         ✓ should fall back to DEFAULT when plugin handler does not match (1 ms)
+corsair:test:         ✓ should fall back to DEFAULT when root handler does not match (2 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: linear
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at Object.<anonymous> (tests/connections-sync.test.ts:158:32)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test: FAIL tests/postgres-js-database.test.ts (20.465 s)
+corsair:test:   postgres-js database integration
+corsair:test:     createCorsairDatabase input dispatch
+corsair:test:       ✕ wraps a postgres.js Sql into a Kysely instance (243 ms)
+corsair:test:       ✕ accepts a Kysely instance as-is (pass-through) (4 ms)
+corsair:test:       ✓ throws for unsupported inputs (40 ms)
+corsair:test:     corsair_integrations field types
+corsair:test:       ✕ round-trips text, jsonb, timestamptz and nullable text
+corsair:test:       ✕ updates jsonb and nullable columns
+corsair:test:       ✕ deletes rows and returns affected count (1 ms)
+corsair:test:     corsair_accounts field types
+corsair:test:       ✕ stores tenant/integration references and jsonb config (2 ms)
+corsair:test:     corsair_entities field types
+corsair:test:       ✕ stores jsonb data with mixed primitive and nested values (1 ms)
+corsair:test:       ✕ supports jsonb predicates via sql tagged template (1 ms)
+corsair:test:     corsair_events field types
+corsair:test:       ✕ serializes payloads and enum-like nullable status (134 ms)
+corsair:test:     corsair_permissions field types
+corsair:test:       ✕ stores JSON-stringified args and string timestamps (expires_at) (21 ms)
+corsair:test:     withParamSerialization
+corsair:test:       ✕ serializes Date params to ISO string on the wire (via Kysely + unsafe) (1 ms)
+corsair:test:       ✕ serializes plain-object params to JSON for JSONB columns (4 ms)
+corsair:test:       ✕ passes through string, number, boolean, null params unchanged (1 ms)
+corsair:test:     createCorsairOrm on postgres.js
+corsair:test:       ✕ performs full CRUD (findById / findMany / create / update / delete / count) (61 ms)
+corsair:test:       ✕ plugin entity client existsByEntityId and findIdByEntityId (1 ms)
+corsair:test:       ✕ filters with in/like operators (8 ms)
+corsair:test:     slack plugin end-to-end against postgres.js
+corsair:test:       ○ skipped posts/updates/deletes a message and logs events+entities
+corsair:test:       ○ skipped channels.list writes an event through postgres.js
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test:   ● postgres-js database integration › createCorsairDatabase input dispatch › wraps a postgres.js Sql into a Kysely instance
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'selectFrom')
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: 
+corsair:test:       172 | ): input is Kysely<CorsairKyselyDatabase> {
+corsair:test:       173 | 	return (
+corsair:test:     > 174 | 		typeof (input as Kysely<CorsairKyselyDatabase>).selectFrom === 'function'
+corsair:test:           | 		                                                ^
+corsair:test:       175 | 	);
+corsair:test:       176 | }
+corsair:test:       177 |
+corsair:test: 
+corsair:test:       at isKysely (db/kysely/database.ts:174:51)
+corsair:test:       at createCorsairDatabase (db/kysely/database.ts:181:6)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:169:40)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › createCorsairDatabase input dispatch › accepts a Kysely instance as-is (pass-through)
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'selectFrom')
+corsair:test: 
+corsair:test:       172 | ): input is Kysely<CorsairKyselyDatabase> {
+corsair:test:       173 | 	return (
+corsair:test:     > 174 | 		typeof (input as Kysely<CorsairKyselyDatabase>).selectFrom === 'function'
+corsair:test:           | 		                                                ^
+corsair:test:       175 | 	);
+corsair:test:       176 | }
+corsair:test:       177 |
+corsair:test: 
+corsair:test:       at isKysely (db/kysely/database.ts:174:51)
+corsair:test:       at createCorsairDatabase (db/kysely/database.ts:181:6)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:174:41)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_integrations field types › round-trips text, jsonb, timestamptz and nullable text
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       203 | 				};
+corsair:test:       204 | 				await kdb
+corsair:test:     > 205 | 					.insertInto('corsair_integrations')
+corsair:test:           | 					 ^
+corsair:test:       206 | 					.values({
+corsair:test:       207 | 						id: 'int-1',
+corsair:test:       208 | 						created_at: now,
+corsair:test: 
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:205:7)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_integrations field types › updates jsonb and nullable columns
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       233 | 		gated()('updates jsonb and nullable columns', async () => {
+corsair:test:       234 | 			await kdb
+corsair:test:     > 235 | 				.insertInto('corsair_integrations')
+corsair:test:           | 				 ^
+corsair:test:       236 | 				.values({
+corsair:test:       237 | 					id: 'int-2',
+corsair:test:       238 | 					created_at: new Date(),
+corsair:test: 
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:235:6)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_integrations field types › deletes rows and returns affected count
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       266 | 		gated()('deletes rows and returns affected count', async () => {
+corsair:test:       267 | 			await kdb
+corsair:test:     > 268 | 				.insertInto('corsair_integrations')
+corsair:test:           | 				 ^
+corsair:test:       269 | 				.values({
+corsair:test:       270 | 					id: 'int-del',
+corsair:test:       271 | 					created_at: new Date(),
+corsair:test: 
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:268:6)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_accounts field types › stores tenant/integration references and jsonb config
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:297:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_entities field types › stores jsonb data with mixed primitive and nested values
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:339:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_entities field types › supports jsonb predicates via sql tagged template
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:379:37)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_events field types › serializes payloads and enum-like nullable status
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:418:37)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_permissions field types › stores JSON-stringified args and string timestamps (expires_at)
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       469 | 				const expiresAt = new Date(Date.now() + 60_000).toISOString();
+corsair:test:       470 | 				await kdb
+corsair:test:     > 471 | 					.insertInto('corsair_permissions')
+corsair:test:           | 					 ^
+corsair:test:       472 | 					.values({
+corsair:test:       473 | 						id: 'perm-1',
+corsair:test:       474 | 						created_at: new Date(),
+corsair:test: 
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:471:7)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › withParamSerialization › serializes Date params to ISO string on the wire (via Kysely + unsafe)
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:523:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › withParamSerialization › serializes plain-object params to JSON for JSONB columns
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:553:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › withParamSerialization › passes through string, number, boolean, null params unchanged
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:580:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › createCorsairOrm on postgres.js › performs full CRUD (findById / findMany / create / update / delete / count)
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       338 | 		getDb().db.selectFrom(tableName) as unknown as SelectBuilder;
+corsair:test:       339 | 	const insertIntoTable = () =>
+corsair:test:     > 340 | 		getDb().db.insertInto(tableName) as unknown as InsertBuilder;
+corsair:test:           | 		          ^
+corsair:test:       341 | 	const updateTable = () =>
+corsair:test:       342 | 		getDb().db.updateTable(tableName) as unknown as UpdateBuilder;
+corsair:test:       343 | 	const deleteFromTable = () =>
+corsair:test: 
+corsair:test:       at insertIntoTable (db/orm.ts:340:13)
+corsair:test:       at Object.create (db/orm.ts:398:22)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:654:44)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › createCorsairOrm on postgres.js › plugin entity client existsByEntityId and findIdByEntityId
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:728:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › createCorsairOrm on postgres.js › filters with in/like operators
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:754:37)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/chats-workflows-runs.test.ts
+corsair:test:   chats / workflows / runs SDK surface
+corsair:test:     ✓ createChat maps {thread, reply:{threadId}} → {chat, reply:{chatId}} (13 ms)
+corsair:test:     ✓ postChatMessage maps {threadId,...} → {chatId,...} (12 ms)
+corsair:test:     ✓ listChats reads the `threads` array (135 ms)
+corsair:test:     ✓ workflows.get(id) calls GET /workflows/:id and returns the workflow (9 ms)
+corsair:test:     ✓ workflows.run(id, opts) posts payload + idempotencyKey to /workflows/:id/run (10 ms)
+corsair:test:     ✓ workflows.runs.list({ workflowId }) calls /workflows/:id/runs and returns the runs array (4 ms)
+corsair:test:     ✓ disable/enable/archive/unarchive map to POST /workflows/:id/status (31 ms)
+corsair:test:     ✓ workflows.rename(id, name) posts the name to /workflows/:id/rename (2 ms)
+corsair:test:     ✓ runs.list() calls GET /runs tenant-wide (17 ms)
+corsair:test:     ✓ runs.get(id) calls GET /runs/:id (10 ms)
+corsair:test:     ✓ runs.approve/deny/cancel POST to /runs/:id/:action (17 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: linear
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: linear
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/probe.test.ts
+corsair:test:   runReadonlyProbe
+corsair:test:     ✓ returns the script value, reading through the client (23 ms)
+corsair:test:     ✓ runs the client calls inside a readonly scope (16 ms)
+corsair:test:     ✓ has no host globals in scope (14 ms)
+corsair:test:     ✓ returns an error instead of throwing when the script fails (12 ms)
+corsair:test:     ✓ returns an error when the script attempts a write (32 ms)
+corsair:test:     ✓ times out an async probe that never settles (294 ms)
+corsair:test:     ✓ surfaces a write attempted by toJSON during serialization as an error (14 ms)
+corsair:test:     ✓ keeps readonly on a continuation that resumes after the timeout (60 ms)
+corsair:test:   clampProbeTimeout
+corsair:test:     ✓ caps a too-large timeout at the default max (8 ms)
+corsair:test:     ✓ keeps a valid in-range timeout (1 ms)
+corsair:test:     ✓ falls back to the default for non-positive / non-finite values (35 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: linear
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'linear' (api_key) needs credentials. Call:
+corsair:test:       await corsair.linear.keys.set_api_key(value)
+corsair:test:       await corsair.linear.keys.set_organization_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/path-guard.test.ts
+corsair:test:   path-guard
+corsair:test:     ✓ forwards /api/corsair to the app (484 ms)
+corsair:test:     ✓ forwards /api/corsair subpaths (51 ms)
+corsair:test:     ✓ passes query strings through on the corsair path (26 ms)
+corsair:test:     ✓ allows percent-encoded slashes in the query string (only the path is guarded) (13 ms)
+corsair:test:     ✓ 404s any other route — the app is never hit (31 ms)
+corsair:test:     ✓ 404s look-alike prefixes like /api/corsair-evil (24 ms)
+corsair:test:     ✓ blocks raw path traversal — /api/corsair/../secret 404s, app never hit (5 ms)
+corsair:test:     ✓ blocks encoded-slash traversal — /api/corsair/..%2fadmin 400s (17 ms)
+corsair:test:     ✓ blocks protocol-relative //api/corsair (resolves off-path) → 404 (21 ms)
+corsair:test:     ✓ strips client-controlled host + x-forwarded-* before forwarding (16 ms)
+corsair:test:   path-guard with a custom basePath
+corsair:test:     ✓ forwards the custom delivery path to the app (398 ms)
+corsair:test:     ✓ 404s the default /api/corsair when a custom path is configured (7 ms)
+corsair:test: 
+corsair:test: PASS tests/run-tunnel.test.ts
+corsair:test:   fetchTunnelConfig
+corsair:test:     ✓ returns the frp server address, port, slug, caCert and serverName, bounded by a signal (5 ms)
+corsair:test:     ✓ rejects an invalid slug returned by the Hub (145 ms)
+corsair:test:     ✓ returns null caCert and undefined serverName when absent (7 ms)
+corsair:test:     ✓ rejects a caCert that does not begin with the PEM header (4 ms)
+corsair:test:     ✓ rejects a serverName that could inject frpc toml (quote/newline)
+corsair:test:     ✓ rejects a serverAddr that could inject frpc toml (quote/newline) (1 ms)
+corsair:test:     ✓ throws on a non-2xx response (4 ms)
+corsair:test:   pingTunnelLive
+corsair:test:     ✓ POSTs to /api/dev/register with Bearer auth, no URL body, bounded by a signal (9 ms)
+corsair:test:     ✓ throws on a non-2xx response (5 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at Object.<anonymous> (tests/connections-sync.test.ts:188:32)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/api-error.test.ts
+corsair:test:   ApiError Redaction
+corsair:test:     ✓ should redact sensitive query parameters from both URL and request query (49 ms)
+corsair:test:     ✓ should handle case-insensitive query parameter matching (1 ms)
+corsair:test:     ✓ should handle relative URLs and no query params without crashing (5 ms)
+corsair:test:     ✓ should redact sensitive params embedded in request.url (5 ms)
+corsair:test:     ✓ should redact sensitive params from malformed response URLs (6 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/hub-environment.test.ts
+corsair:test:   hub environment delivery
+corsair:test:     ✓ resolves transport from environment slug (42 ms)
+corsair:test:     ✓ detects loopback URLs (8 ms)
+corsair:test:     ✓ rejects loopback production delivery URLs (12 ms)
+corsair:test:     ✓ auto-detects localhost delivery URL from PORT (6 ms)
+corsair:test:     ✓ uses CORSAIR_DELIVERY_URL as a full endpoint without appending the path (3 ms)
+corsair:test:     ✓ strips trailing slash from CORSAIR_DELIVERY_URL (3 ms)
+corsair:test:     ✓ does not double-prefix uppercase schemes (1 ms)
+corsair:test:     ✓ ignores APP_URL — CORSAIR_DELIVERY_URL is the only env knob
+corsair:test:     ✓ strips trailing slash from explicit oauthCallbackUrl
+corsair:test:     ✓ does not double-slash default oauth callback when apiUrl has trailing slash (4 ms)
+corsair:test:     ✓ normalizes callback URLs when resolveHubOAuthCallbackUrl is called directly (8 ms)
+corsair:test:     ✓ normalizes default callback path when apiUrl is unnormalized
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at Object.<anonymous> (tests/connections-sync.test.ts:214:32)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at Object.<anonymous> (tests/connections-sync.test.ts:244:32)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test: PASS tests/auth-missing-message.test.ts
+corsair:test:   formatDefaultAuthMissingMessage
+corsair:test:     ✓ includes plugin id and connect URL (11 ms)
+corsair:test:   resolveAuthMissingConnectUrl
+corsair:test:     ✓ creates a hub connect session scoped to tenant and plugin (18 ms)
+corsair:test:     ✓ returns null when hub is not configured (1 ms)
+corsair:test:   resolveAuthMissingConnectMessage
+corsair:test:     ✓ returns a connect link message when hub is configured (9 ms)
+corsair:test:     ✓ calls manual.onAuthMissing when configured (19 ms)
+corsair:test:     ✓ returns fallback message when hub session creation fails (8 ms)
+corsair:test: 
+corsair:test: PASS tests/management-client.test.ts
+corsair:test:   createCorsairClient — round-trip
+corsair:test:     ✓ ok() returns { ok: true } (121 ms)
+corsair:test:     ✓ plugins.list and plugins.get pass through (256 ms)
+corsair:test:     ✓ tenants.create + tenants.list + tenants.get (14 ms)
+corsair:test:     ✓ throws CorsairClientError on bad request, preserving missingFields (22 ms)
+corsair:test:     ✓ connectionStatus.get sends tenantId as a query param (24 ms)
+corsair:test:     ✓ permissions.get 404 surfaces as a CorsairClientError (34 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/approval-message.test.ts
+corsair:test:   usesManualApprovalConfig
+corsair:test:     ✓ is true when approvalBaseUrl or onApprovalRequired is set (12 ms)
+corsair:test:   buildManualApprovalUrl
+corsair:test:     ✓ joins base URL and token without duplicate slashes (2 ms)
+corsair:test:   resolveApprovalUrl
+corsair:test:     ✓ prefers manual approvalBaseUrl over hub (3 ms)
+corsair:test:     ✓ uses hub when manual approval is not configured (1 ms)
+corsair:test:   resolveAsyncApprovalMessage
+corsair:test:     ✓ returns setup hint when manual approval is preferred but URL cannot be built (2 ms)
+corsair:test:     ✓ calls manual.onApprovalRequired with approvalUrl object (2 ms)
+corsair:test:     ✓ uses hub message when hub is configured and manual approval is not
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [dotenv@17.2.3] injecting env (0) from .env -- tip: ⚙️  write to custom object with { processEnv: myObject }
+corsair:test: 
+corsair:test:       at _log (../../node_modules/.pnpm/dotenv@17.2.3/node_modules/dotenv/lib/main.js:142:11)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [backfill.test] Skipping — SLACK_BOT_TOKEN or CORSAIR_KEK not set
+corsair:test: 
+corsair:test:       at Object.<anonymous> (setup/backfill.test.ts:98:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [backfill.test] Skipping — LINEAR_API_KEY or CORSAIR_KEK not set
+corsair:test: 
+corsair:test:       at Object.<anonymous> (setup/backfill.test.ts:148:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [backfill.test] Skipping — SLACK_BOT_TOKEN, LINEAR_API_KEY, or CORSAIR_KEK not set
+corsair:test: 
+corsair:test:       at Object.<anonymous> (setup/backfill.test.ts:202:12)
+corsair:test: 
+corsair:test: PASS setup/backfill.test.ts (8.548 s)
+corsair:test:   setupCorsair backfill
+corsair:test:     ✓ backfills slack channels and users into the DB (5 ms)
+corsair:test:     ✓ backfills linear projects and issues into the DB (1 ms)
+corsair:test:     ✓ backfills both slack and linear when both keys are present (1 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at createReplayTestCorsair (tests/hub-delivery-replay.test.ts:22:22)
+corsair:test:       at Object.<anonymous> (tests/hub-delivery-replay.test.ts:39:22)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at createReplayTestCorsair (tests/hub-delivery-replay.test.ts:22:22)
+corsair:test:       at Object.<anonymous> (tests/hub-delivery-replay.test.ts:45:19)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.withTenant("acme").slack.keys.set_api_key(value)
+corsair:test:       await corsair.withTenant("acme").slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at createReplayTestCorsair (tests/hub-delivery-replay.test.ts:22:22)
+corsair:test:       at Object.<anonymous> (tests/hub-delivery-replay.test.ts:39:22)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at createReplayTestCorsair (tests/hub-delivery-replay.test.ts:22:22)
+corsair:test:       at Object.<anonymous> (tests/hub-delivery-replay.test.ts:83:19)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at createReplayTestCorsair (tests/hub-delivery-replay.test.ts:22:22)
+corsair:test:       at Object.<anonymous> (tests/hub-delivery-replay.test.ts:39:22)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at createReplayTestCorsair (tests/hub-delivery-replay.test.ts:22:22)
+corsair:test:       at Object.<anonymous> (tests/hub-delivery-replay.test.ts:122:19)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test: PASS tests/hub-delivery-replay.test.ts (5.347 s)
+corsair:test:   hub browser delivery replay guard
+corsair:test:     ✓ rejects replayed auth.credentials browser delivery tokens (502 ms)
+corsair:test:     ✓ rejects replayed connections.sync browser delivery tokens (46 ms)
+corsair:test:     ✓ does not treat stray accessToken as managed OAuth delivery (322 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'github' (managed) is not connected yet. Use Connect in your app — Corsair Hub delivers OAuth tokens after authorization.
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair:renewal] re-subscribe failed for 'outlook/bad': Error: provider 500
+corsair:test:         at subscribeAndReport (/Users/kathir/corsair-apilio/packages/corsair/tests/subscription-renewal.test.ts:77:35)
+corsair:test:         at renewAccounts (/Users/kathir/corsair-apilio/packages/corsair/oauth/renewal.ts:61:10)
+corsair:test:         at Object.<anonymous> (/Users/kathir/corsair-apilio/packages/corsair/tests/subscription-renewal.test.ts:69:37)
+corsair:test:         at Promise.then.completed (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+corsair:test:         at new Promise (<anonymous>)
+corsair:test:         at callAsyncCircusFn (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+corsair:test:         at _callCircusTest (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+corsair:test:         at processTicksAndRejections (node:internal/process/task_queues:104:5)
+corsair:test:         at _runTest (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+corsair:test:         at _runTestsForDescribeBlock (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+corsair:test:         at _runTestsForDescribeBlock (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+corsair:test:         at run (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+corsair:test:         at runAndTransformResultsToJestFormat (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+corsair:test:         at jestAdapter (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+corsair:test:         at runTestInternal (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+corsair:test:         at runTest (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+corsair:test:         at Object.worker (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/testWorker.js:106:12)
+corsair:test: 
+corsair:test:       62 | 			renewed.push(label);
+corsair:test:       63 | 		} catch (error) {
+corsair:test:     > 64 | 			console.warn(
+corsair:test:          | 			        ^
+corsair:test:       65 | 				`[corsair:renewal] re-subscribe failed for '${label}':`,
+corsair:test:       66 | 				error,
+corsair:test:       67 | 			);
+corsair:test: 
+corsair:test:       at renewAccounts (oauth/renewal.ts:64:12)
+corsair:test:       at Object.<anonymous> (tests/subscription-renewal.test.ts:69:18)
+corsair:test: 
+corsair:test: PASS tests/subscription-renewal.test.ts
+corsair:test:   renewAccounts (BYO subscription renewal)
+corsair:test:     ✓ re-subscribes every account whose plugin has subscribe, skips the rest (11 ms)
+corsair:test:     ✓ primes the plugin keyBuilder before subscribing so expired tokens refresh (1 ms)
+corsair:test:     ✓ isolates per-account failures and tallies them (146 ms)
+corsair:test:     ✓ primes a managed plugin with its authType AND hub, expiry forced (1 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/ms-graph-subscribe.test.ts
+corsair:test:   msGraphSubscribe (shared BYO Graph subscribe)
+corsair:test:     ✓ POSTs the Graph subscription for the given resource/changeType and returns link + clientState (223 ms)
+corsair:test:     ✓ deletes prior subscriptions pointing at the same Hub URL before creating (14 ms)
+corsair:test:     ✓ returns null when there is no access token (1 ms)
+corsair:test:     ✓ throws on a non-ok Graph response (319 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: test-oauth
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/connections-sync.test.ts (30.187 s)
+corsair:test:   sync-payload
+corsair:test:     ✓ round-trips manifest encryption (1704 ms)
+corsair:test:     ✓ parses sync delivery body through the ack contract (917 ms)
+corsair:test:   isConnectionsSyncRetryableError
+corsair:test:     ✓ marks configuration errors as non-retryable (2 ms)
+corsair:test:     ✓ marks InvalidCorsairInstanceError as non-retryable (25 ms)
+corsair:test:     ✓ marks setupCorsair invalid-instance errors as non-retryable (11 ms)
+corsair:test:     ✓ marks transient failures as retryable
+corsair:test:   processCorsair — connections.sync
+corsair:test:     ✓ returns encrypted manifest via webhookResponse ack contract (5572 ms)
+corsair:test:     ✓ surfaces sync payload through handleHubDeliveryPost (3296 ms)
+corsair:test:     ✓ rejects unsigned connections.sync requests (2120 ms)
+corsair:test:     ✓ marks missing database configuration as non-retryable (91 ms)
+corsair:test:     ✓ returns encrypted manifest via browser delivery client bridge (6430 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: test-oauth
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: test-oauth
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/hooks.test.ts (32.967 s)
+corsair:test:   Endpoint Hooks
+corsair:test:     Before Hook
+corsair:test:       ✓ should modify args in before hook and pass modified args to endpoint (2819 ms)
+corsair:test:       ✓ should modify multiple args in before hook (1638 ms)
+corsair:test:       ✓ should allow before hook to add new properties to args (1382 ms)
+corsair:test:     After Hook
+corsair:test:       ✓ should modify response in after hook (2054 ms)
+corsair:test:       ✓ should allow after hook to modify multiple response properties (2105 ms)
+corsair:test:     Before and After Hooks Together
+corsair:test:       ✓ should execute before hook, then endpoint, then after hook in correct order (1596 ms)
+corsair:test:       ✓ should allow both hooks to modify their respective data (2041 ms)
+corsair:test:     Nested Endpoint Hooks
+corsair:test:       ✓ should work with nested endpoint paths (1764 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: test-oauth
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS setup/setup.test.ts (21.965 s)
+corsair:test:   setupCorsair
+corsair:test:     ✓ creates integration and account rows for each plugin (3654 ms)
+corsair:test:     ✓ issues DEKs for integrations and accounts (1449 ms)
+corsair:test:     ✓ is idempotent — running twice does not create duplicate rows (2561 ms)
+corsair:test:     ✓ warns (not throws) when a required table is missing (2088 ms)
+corsair:test:     ✓ creates account rows for an explicit tenant on multi-tenant instances (1404 ms)
+corsair:test:     ✓ auto-provisions account rows when accessing a new tenant without setupCorsair (2607 ms)
+corsair:test:     ✓ rejects tenant-scoped writes to integration-level credentials (2541 ms)
+corsair:test: 
+corsair:test: PASS tests/hub-delivery-errors.test.ts
+corsair:test:   signDeliveryEnvelope
+corsair:test:     ✓ signs the body and sets the standard x-corsair headers (19 ms)
+corsair:test:   describeDeliveryNetworkError
+corsair:test:     ✓ explains connection refused without environment-specific hints
+corsair:test:   formatServerDeliveryError
+corsair:test:     ✓ returns preformatted network errors from deliverSignedEnvelope
+corsair:test:     ✓ formats app-side auth failures with signing-secret remediation (6 ms)
+corsair:test:     ✓ formats missing delivery route (3 ms)
+corsair:test:     ✓ formats structured 404 errors with delivery-url guidance (1 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/post-hub-connect-session.test.ts (5.692 s)
+corsair:test:   postHubConnectSession
+corsair:test:     ✓ includes auto-detected deliveryUrl for development keys (201 ms)
+corsair:test:     ✓ omits deliveryUrl for production keys (14 ms)
+corsair:test:     ✓ includes redirectUri when hub config sets redirectURL (10 ms)
+corsair:test:     ✓ omits redirectUri when redirectURL is unset (12 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/frpc-config.test.ts
+corsair:test:   buildFrpcConfig
+corsair:test:     ✓ carries the server address, port, key, slug, and local port (2 ms)
+corsair:test:     ✓ exits on login failure and never bakes in a path (Hub injects locations) (2 ms)
+corsair:test:     ✓ emits no TLS lines when caCertPath is absent (1 ms)
+corsair:test:     ✓ omits metadatas.path when no deliveryPath is given
+corsair:test:     deliveryPath
+corsair:test:       ✓ declares a custom deliveryPath via metadatas.path (1 ms)
+corsair:test:       ✓ throws on a deliveryPath that is not a safe absolute path (288 ms)
+corsair:test:     TLS verification
+corsair:test:       ✓ enables TLS with trustedCaFile and serverName when caCertPath is set (10 ms)
+corsair:test:       ✓ falls back to serverAddr for serverName when serverName is omitted (5 ms)
+corsair:test: 
+corsair:test: PASS tests/tenant-links.test.ts (9.156 s)
+corsair:test:   webhook tenant links
+corsair:test:     ✓ resolves tenant by decrypting the plugin link field on corsair_accounts (8248 ms)
+corsair:test: 
+corsair:test: PASS tests/client-bridge-delivery.test.ts
+corsair:test:   client-bridge-delivery
+corsair:test:     ✓ builds a connections.sync browser delivery URL (2 ms)
+corsair:test:     ✓ builds a connect.create_link browser delivery URL (1 ms)
+corsair:test:     ✓ uses browser transport in development (150 ms)
+corsair:test:     ✓ uses server transport in production (1 ms)
+corsair:test:     ✓ normalizes hubOrigin to an origin for postMessage (7 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/browser-delivery-mode-guards.test.ts
+corsair:test:   isAuthCredentialsBrowserDelivery
+corsair:test:     ✓ auth.credentials -> true (7 ms)
+corsair:test:     ✓ connections.sync -> false (6 ms)
+corsair:test:     ✓ connect.create_link -> false (3 ms)
+corsair:test:     ✓ permission.approve -> false (2 ms)
+corsair:test:     ✓ permission.deny -> false (9 ms)
+corsair:test:     ✓ oauth.tokens -> false (5 ms)
+corsair:test:     ✓ oauth.callback -> false (3 ms)
+corsair:test:   isConnectionsSyncBrowserDelivery
+corsair:test:     ✓ auth.credentials -> false (2 ms)
+corsair:test:     ✓ connections.sync -> true (2 ms)
+corsair:test:     ✓ connect.create_link -> false (6 ms)
+corsair:test:     ✓ permission.approve -> false (2 ms)
+corsair:test:     ✓ permission.deny -> false (1 ms)
+corsair:test:     ✓ oauth.tokens -> false (4 ms)
+corsair:test:     ✓ oauth.callback -> false (1 ms)
+corsair:test:   isConnectCreateLinkBrowserDelivery
+corsair:test:     ✓ auth.credentials -> false (1 ms)
+corsair:test:     ✓ connections.sync -> false
+corsair:test:     ✓ connect.create_link -> true
+corsair:test:     ✓ permission.approve -> false (1 ms)
+corsair:test:     ✓ permission.deny -> false (1 ms)
+corsair:test:     ✓ oauth.tokens -> false
+corsair:test:     ✓ oauth.callback -> false
+corsair:test:   isPermissionBrowserDelivery
+corsair:test:     ✓ auth.credentials -> false (6 ms)
+corsair:test:     ✓ connections.sync -> false
+corsair:test:     ✓ connect.create_link -> false
+corsair:test:     ✓ permission.approve -> true (2 ms)
+corsair:test:     ✓ permission.deny -> true (4 ms)
+corsair:test:     ✓ oauth.tokens -> false (5 ms)
+corsair:test:     ✓ oauth.callback -> false (1 ms)
+corsair:test:   isManagedBrowserDelivery
+corsair:test:     ✓ auth.credentials -> false (1 ms)
+corsair:test:     ✓ connections.sync -> false
+corsair:test:     ✓ connect.create_link -> false
+corsair:test:     ✓ permission.approve -> false (192 ms)
+corsair:test:     ✓ permission.deny -> false (1 ms)
+corsair:test:     ✓ oauth.tokens -> true (4 ms)
+corsair:test:     ✓ oauth.callback -> false (1 ms)
+corsair:test:   isByoOAuthBrowserDelivery
+corsair:test:     ✓ auth.credentials -> false (2 ms)
+corsair:test:     ✓ connections.sync -> false (1 ms)
+corsair:test:     ✓ connect.create_link -> false (1 ms)
+corsair:test:     ✓ permission.approve -> false (2 ms)
+corsair:test:     ✓ permission.deny -> false (1 ms)
+corsair:test:     ✓ oauth.tokens -> false (2 ms)
+corsair:test:     ✓ oauth.callback -> true
+corsair:test:     ✓ falls back to true when deliveryMode is undefined and no other guard matches (1 ms)
+corsair:test: 
+corsair:test: PASS tests/google-channel-subscribe.test.ts
+corsair:test:   googleChannelSubscribe (shared BYO channel watch)
+corsair:test:     ✓ POSTs the watch request and returns channel_id link + token secret (30 ms)
+corsair:test:     ✓ merges extra body fields into the watch request (1 ms)
+corsair:test:     ✓ returns null when there is no access token (1 ms)
+corsair:test:     ✓ throws on a non-ok watch response (13 ms)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at Object.<anonymous> (tests/management-connect.test.ts:387:32)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/delivery-replay-guard.test.ts
+corsair:test:   delivery replay guard
+corsair:test:     ✓ rejects blank replay keys (23 ms)
+corsair:test:     ✓ accepts a key once and rejects immediate replay (2 ms)
+corsair:test:     ✓ allows distinct keys independently
+corsair:test:     ✓ reclaims a key after its TTL expires (4 ms)
+corsair:test:     ✓ rejects non-positive TTLs (45 ms)
+corsair:test:     ✓ trims surrounding whitespace before storing keys (1 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/process-webhook-plugin-hint.test.ts
+corsair:test:   processWebhook plugin hint (hub-verified deliveries)
+corsair:test:     ✓ dispatches to the hinted plugin instead of shape-matching (22 ms)
+corsair:test:     ✓ does not fall back to other plugins when the hinted one has no match (6 ms)
+corsair:test:     ✓ keeps shape-matching for direct (non-hub) webhooks (4 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'github' (managed) is not connected yet. Use Connect in your app — Corsair Hub delivers OAuth tokens after authorization.
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at Object.<anonymous> (tests/connect-link-browser-delivery.test.ts:44:32)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test: PASS tests/token-exchange-parse.test.ts
+corsair:test:   parseTokenResponse
+corsair:test:     ✓ parses a JSON token response with numeric fields intact (6 ms)
+corsair:test:     ✓ parses GitHub form-urlencoded responses and coerces numeric fields (397 ms)
+corsair:test:     ✓ parses a form-urlencoded error response (1 ms)
+corsair:test:     ✓ returns null for a non-token body (e.g. an HTML error page) (1 ms)
+corsair:test:     ✓ coerces string numeric fields in JSON responses too
+corsair:test:     ✓ drops non-numeric expires_in instead of storing NaN (2 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/tenant-provision.test.ts (14.975 s)
+corsair:test:   ensureTenantProvisioned
+corsair:test:     ✓ deduplicates concurrent provisioning per Corsair instance (4287 ms)
+corsair:test:     ✓ deduplicates concurrent connect provisioning from fresh manifest contexts (1543 ms)
+corsair:test:     ✓ does not share in-flight provisioning across Corsair instances (2425 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'github' (managed) is not connected yet. Use Connect in your app — Corsair Hub delivers OAuth tokens after authorization.
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/oauth-callback-params.test.ts (5.008 s)
+corsair:test:   OAuth callback param propagation to tenant-link resolution
+corsair:test:     ✓ resolves github installation_id present only in callback params (29 ms)
+corsair:test:     ✓ leaves slack (team.id in token body) unchanged (11 ms)
+corsair:test:     ✓ token body wins over a colliding callback param (2 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/mcp-tool-result.test.ts (6.077 s)
+corsair:test:   isAgentFacingActionMessage
+corsair:test:     ✓ detects auth-missing and approval messages (20 ms)
+corsair:test:     ✓ ignores normal API payloads (1 ms)
+corsair:test:   formatRunScriptResult
+corsair:test:     ✓ marks approval-required return values as MCP errors
+corsair:test:   formatRunScriptError
+corsair:test:     ✓ marks PermissionRequiredError as an MCP error without verbose wrapping (6 ms)
+corsair:test:     ✓ marks AuthMissingError as an MCP error without verbose wrapping
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'github' (managed) is not connected yet. Use Connect in your app — Corsair Hub delivers OAuth tokens after authorization.
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (oauth_2) needs credentials. Call:
+corsair:test:       await corsair.keys.slack.set_client_id(value)
+corsair:test:       await corsair.keys.slack.set_client_secret(value)
+corsair:test:       await corsair.slack.keys.set_access_token(value)
+corsair:test:       await corsair.slack.keys.set_refresh_token(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/key-manager-concurrent-writes.test.ts
+corsair:test:   account key manager concurrent field writes
+corsair:test:     ✓ does not lose one field when two setters run in parallel (953 ms)
+corsair:test: 
+corsair:test:   console.error
+corsair:test:     [corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.
+corsair:test: 
+corsair:test:       194 | 	const port = Number(process.env.PORT);
+corsair:test:       195 | 	if (!Number.isInteger(port) || port < 1 || port > 65535) {
+corsair:test:     > 196 | 		console.error(
+corsair:test:           | 		        ^
+corsair:test:       197 | 			'[corsair] PORT is not set — dev tunnel skipped. Set PORT to your app port, or run `corsair http <port>`.',
+corsair:test:       198 | 		);
+corsair:test:       199 | 		return;
+corsair:test: 
+corsair:test:       at maybeStartTunnel (core/index.ts:196:11)
+corsair:test:       at createCorsair (core/index.ts:155:2)
+corsair:test:       at Object.<anonymous> (tests/management-connect.test.ts:433:32)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair] workflow executions not enabled. Please set hub: { ..., allowWorkflowExecution: true }
+corsair:test: 
+corsair:test:       155 | 	}
+corsair:test:       156 | 	if (!hub.allowWorkflowExecution) {
+corsair:test:     > 157 | 		console.warn(
+corsair:test:           | 		        ^
+corsair:test:       158 | 			'[corsair] workflow executions not enabled. ' +
+corsair:test:       159 | 				'Please set hub: { ..., allowWorkflowExecution: true }',
+corsair:test:       160 | 		);
+corsair:test: 
+corsair:test:       at Object.startConnectLoop (hub/connect/loop.ts:157:11)
+corsair:test:       at core/index.ts:170:18
+corsair:test: 
+corsair:test: PASS tests/management-connect.test.ts (45.695 s)
+corsair:test:   managementHandler — POST /connect/links
+corsair:test:     ✓ returns a signed connect URL when credentials are configured (4077 ms)
+corsair:test:     ✓ returns 400 missing_credentials when client creds are unset (2476 ms)
+corsair:test:     ✓ 400s when plugin field is missing (26 ms)
+corsair:test:     ✓ 400s when the plugin has no oauthConfig (2 ms)
+corsair:test:     ✓ 500s when createCorsair was not given a connect config (112 ms)
+corsair:test:     ✓ 500s with connect_misconfigured when baseUrl is not a valid URL (3786 ms)
+corsair:test:   managementHandler — GET /connect/resolve
+corsair:test:     ✓ decodes a valid state and returns the OAuth URL (2970 ms)
+corsair:test:     ✓ 400s on a tampered state, without echoing the state value (2640 ms)
+corsair:test:     ✓ 400s when state is absent (40 ms)
+corsair:test:     ✓ 500s with connect_not_configured when createCorsair was not given a connect config (21 ms)
+corsair:test:   managementHandler — POST /connect/oauth/callback
+corsair:test:     ✓ 400s when code or state is missing (49 ms)
+corsair:test:     ✓ 400s on a tampered state (2587 ms)
+corsair:test:     ✓ 500s when createCorsair was not given a connect config (11 ms)
+corsair:test:   corsair.manage.connect — in-process parity
+corsair:test:     ✓ createLink returns the same shape as the HTTP route (3297 ms)
+corsair:test:     ✓ resolve decodes a state without hitting HTTP (4337 ms)
+corsair:test:   corsair.manage.connect — hub mode
+corsair:test:     ✓ createLink delegates to hub when hub config is set (7126 ms)
+corsair:test:     ✓ resolve returns hub_mode when only hub config is set (137 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/frpc-binary.test.ts
+corsair:test:   resolveFrpcBinary
+corsair:test:     ✓ returns CORSAIR_FRP_BIN when it points to an existing file (6 ms)
+corsair:test:     ✓ adds the executable bit to a resolved binary that lacks it (1 ms)
+corsair:test:     ✓ ignores a CORSAIR_FRP_BIN that does not exist (5 ms)
+corsair:test:     ✓ reports a platform-arch key (1 ms)
+corsair:test: 
+corsair:test: PASS tests/connect-link-browser-delivery.test.ts (13.779 s)
+corsair:test:   connect.create_link browser delivery
+corsair:test:     ✓ returns a connect link via the client bridge (7094 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/oauth-authorize-url.test.ts
+corsair:test:   buildOAuthAuthorizeUrl
+corsair:test:     ✓ builds a provider authorize URL with encoded query params (24 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created integration: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: github
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'github' (managed) is not connected yet. Use Connect in your app — Corsair Hub delivers OAuth tokens after authorization.
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued integration DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Created account: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/webhook-utils.test.ts
+corsair:test:   verifyHmacSha256Signature
+corsair:test:     ✓ rejects a signature when the secret is empty (10 ms)
+corsair:test:     ✓ accepts a signature generated with the configured secret (1 ms)
+corsair:test:     ✓ makes the Slack signature alias fail closed on an empty secret (1 ms)
+corsair:test: 
+corsair:test: PASS tests/integration-credential-fields-surfaces.test.ts (5.823 s)
+corsair:test:   integration credential field surfaces
+corsair:test:     ✓ tenant connect manifest excludes integration-level fields (33 ms)
+corsair:test:     ✓ connections sync manifest carries integrationCredentialFields (1607 ms)
+corsair:test: 
+corsair:test: PASS tests/request-timeout.test.ts
+corsair:test:   Request timeout Tests
+corsair:test:     ✓ passes a timeout-aware abort signal to fetch (2152 ms)
+corsair:test:     ✓ still supports caller cancellation (47 ms)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/resolve-root-permissions.test.ts
+corsair:test:   resolveRootPermissionsConfig
+corsair:test:     ✓ returns permissions when set (118 ms)
+corsair:test:     ✓ falls back to deprecated approval with a console warning (20 ms)
+corsair:test:     ✓ throws when both permissions and approval are set (193 ms)
+corsair:test: 
+corsair:test: PASS tests/oauth-callback-management.test.ts
+corsair:test:   completeOAuthCallback (management)
+corsair:test:     ✓ forwards callbackParams (e.g. installation_id) to processOAuthCallback (18 ms)
+corsair:test:     ✓ omits callbackParams when the caller supplies none (1 ms)
+corsair:test: 
+corsair:test:   console.warn
+corsair:test:     [corsair:managed-oauth] subscribe failed for 'github' tenant 'default': Error: graph down
+corsair:test:         at Object.<anonymous> (/Users/kathir/corsair-apilio/packages/corsair/tests/managed-oauth-report.test.ts:99:4)
+corsair:test:         at Promise.then.completed (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:298:28)
+corsair:test:         at new Promise (<anonymous>)
+corsair:test:         at callAsyncCircusFn (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/utils.js:231:10)
+corsair:test:         at _callCircusTest (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:316:40)
+corsair:test:         at _runTest (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:252:3)
+corsair:test:         at _runTestsForDescribeBlock (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:126:9)
+corsair:test:         at _runTestsForDescribeBlock (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:121:9)
+corsair:test:         at run (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/run.js:71:3)
+corsair:test:         at runAndTransformResultsToJestFormat (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapterInit.js:122:21)
+corsair:test:         at jestAdapter (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-circus@29.7.0/node_modules/jest-circus/build/legacy-code-todo-rewrite/jestAdapter.js:79:19)
+corsair:test:         at runTestInternal (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:367:16)
+corsair:test:         at runTest (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/runTest.js:444:34)
+corsair:test:         at Object.worker (/Users/kathir/corsair-apilio/node_modules/.pnpm/jest-runner@29.7.0/node_modules/jest-runner/build/testWorker.js:106:12)
+corsair:test: 
+corsair:test:       166 | 	await subscribeAndReport(corsair, plugin, tenantId, accountKm).catch(
+corsair:test:       167 | 		(error) => {
+corsair:test:     > 168 | 			console.warn(
+corsair:test:           | 			        ^
+corsair:test:       169 | 				`[corsair:managed-oauth] subscribe failed for '${pluginId}' tenant '${tenantId}':`,
+corsair:test:       170 | 				error,
+corsair:test:       171 | 			);
+corsair:test: 
+corsair:test:       at hub/managed-oauth.ts:168:12
+corsair:test:       at processManagedOAuthDelivery (hub/managed-oauth.ts:166:2)
+corsair:test:       at Object.<anonymous> (tests/managed-oauth-report.test.ts:108:3)
+corsair:test: 
+corsair:test: PASS tests/managed-oauth-report.test.ts (17.247 s)
+corsair:test:   processManagedOAuthDelivery
+corsair:test:     ✓ stores the token and acks connected back to Hub without a webhook link (4657 ms)
+corsair:test:     ✓ arms the provider subscription after storing the token (2837 ms)
+corsair:test:     ✓ a failing subscribe does not break the delivery (2905 ms)
+corsair:test: 
+corsair:test: PASS tests/hub-webhook-link.test.ts
+corsair:test:   buildWebhookLinkReport
+corsair:test:     ✓ carries the webhookLink and marks the connection ready/connected/verified (7 ms)
+corsair:test:     ✓ lets the caller override authType (defaults to oauth_2) (14 ms)
+corsair:test: 
+corsair:test: PASS tests/should-start-tunnel.test.ts
+corsair:test:   shouldStartTunnel
+corsair:test:     ✓ returns false for a non-dev key (14 ms)
+corsair:test:     ✓ returns true for a dev key by default — no config needed (3 ms)
+corsair:test:     ✓ opts out with tunnel: false (4 ms)
+corsair:test:     ✓ opts out with CORSAIR_TUNNEL=0 (5 ms)
+corsair:test:     ✓ returns false when hub is undefined (7 ms)
+corsair:test:     ✓ is on by default when routed through normalizeHubConfig (8 ms)
+corsair:test:     ✓ honors a tunnel: false opt-out through normalizeHubConfig
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] Issued account DEK: slack
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test:   console.log
+corsair:test:     [corsair:setup] 'slack' (api_key) needs credentials. Call:
+corsair:test:       await corsair.slack.keys.set_api_key(value)
+corsair:test:       await corsair.slack.keys.set_team_id(value)
+corsair:test: 
+corsair:test:       at log (setup/index.ts:152:12)
+corsair:test: 
+corsair:test: PASS tests/plugin-auth-status.test.ts (37.526 s)
+corsair:test:   getPluginAuthStatus
+corsair:test:     ✓ reports partial but connected when core api_key is set (5550 ms)
+corsair:test:     ✓ reports ready when all required account fields are set (3999 ms)
+corsair:test:     ✓ reports partial but connected when oauth tokens are set without extras (4185 ms)
+corsair:test:     ✓ treats oauth_2 as connected with an access_token but no refresh_token (bot tokens do not rotate) (3960 ms)
+corsair:test:     ✓ requires refresh_token for a rotating oauth_2 provider (access token expires) (4391 ms)
+corsair:test:     ✓ requires refresh_token for a rotating managed provider (3646 ms)
+corsair:test:     ✓ is connected when a rotating oauth_2 provider also has a refresh_token (3043 ms)
+corsair:test:     ✓ does not treat provisioned DEKs alone as connected (1943 ms)
+corsair:test:   parseConnectStatusResponse
+corsair:test:     ✓ parses field-level connect status payloads (27 ms)
+corsair:test: 
+corsair:test: PASS tests/plugin-auth.test.ts
+corsair:test:   plugin-auth
+corsair:test:     ✓ recognizes managed as a valid auth type (4 ms)
+corsair:test:     ✓ returns managed from getPluginAuthType (2 ms)
+corsair:test: 
+corsair:test: PASS tests/format-provider-display-name.test.ts
+corsair:test:   formatProviderDisplayName
+corsair:test:     ✓ returns the mapped display name for a known provider (slack) (43 ms)
+corsair:test:     ✓ returns the mapped display name for a known provider (github) (2 ms)
+corsair:test:     ✓ capitalises the first letter as fallback for an unknown provider (1 ms)
+corsair:test: 
+corsair:test: PASS tests/manual-connect.test.ts
+corsair:test:   hasManualConnectConfig
+corsair:test:     ✓ is true when baseUrl and redirectUri are set (3 ms)
+corsair:test:     ✓ is false for permissions-only manual config (2 ms)
+corsair:test: 
+corsair:test: PASS tests/credentials-delivery-report.test.ts (12.994 s)
+corsair:test:   processAuthCredentialsDelivery
+corsair:test:     ✓ stores the credential and acks connected back to Hub (4039 ms)
+corsair:test:     ✓ does not ack when no credential field is stored (2507 ms)
+corsair:test: 
+corsair:test: PASS tests/signed-token-path.test.ts
+corsair:test:   encodeTokenForPath
+corsair:test:     ✓ encodes the payload/signature separator dot for Next.js path segments (18 ms)
+corsair:test:     ✓ round-trips through decodeTokenFromPath (3 ms)
+corsair:test: 
+corsair:test: A worker process has failed to exit gracefully and has been force exited. This is likely caused by tests leaking due to improper teardown. Try running with --detectOpenHandles to find leaks. Active timers can also cause this, ensure that .unref() was called on them.
+corsair:test: Summary of all failing tests
+corsair:test: FAIL tests/postgres-js-database.test.ts (20.465 s)
+corsair:test:   ● postgres-js database integration › createCorsairDatabase input dispatch › wraps a postgres.js Sql into a Kysely instance
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'selectFrom')
+corsair:test: 
+corsair:test:       172 | ): input is Kysely<CorsairKyselyDatabase> {
+corsair:test:       173 | 	return (
+corsair:test:     > 174 | 		typeof (input as Kysely<CorsairKyselyDatabase>).selectFrom === 'function'
+corsair:test:           | 		                                                ^
+corsair:test:       175 | 	);
+corsair:test:       176 | }
+corsair:test:       177 |
+corsair:test: 
+corsair:test:       at isKysely (db/kysely/database.ts:174:51)
+corsair:test:       at createCorsairDatabase (db/kysely/database.ts:181:6)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:169:40)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › createCorsairDatabase input dispatch › accepts a Kysely instance as-is (pass-through)
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'selectFrom')
+corsair:test: 
+corsair:test:       172 | ): input is Kysely<CorsairKyselyDatabase> {
+corsair:test:       173 | 	return (
+corsair:test:     > 174 | 		typeof (input as Kysely<CorsairKyselyDatabase>).selectFrom === 'function'
+corsair:test:           | 		                                                ^
+corsair:test:       175 | 	);
+corsair:test:       176 | }
+corsair:test:       177 |
+corsair:test: 
+corsair:test:       at isKysely (db/kysely/database.ts:174:51)
+corsair:test:       at createCorsairDatabase (db/kysely/database.ts:181:6)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:174:41)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_integrations field types › round-trips text, jsonb, timestamptz and nullable text
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       203 | 				};
+corsair:test:       204 | 				await kdb
+corsair:test:     > 205 | 					.insertInto('corsair_integrations')
+corsair:test:           | 					 ^
+corsair:test:       206 | 					.values({
+corsair:test:       207 | 						id: 'int-1',
+corsair:test:       208 | 						created_at: now,
+corsair:test: 
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:205:7)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_integrations field types › updates jsonb and nullable columns
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       233 | 		gated()('updates jsonb and nullable columns', async () => {
+corsair:test:       234 | 			await kdb
+corsair:test:     > 235 | 				.insertInto('corsair_integrations')
+corsair:test:           | 				 ^
+corsair:test:       236 | 				.values({
+corsair:test:       237 | 					id: 'int-2',
+corsair:test:       238 | 					created_at: new Date(),
+corsair:test: 
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:235:6)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_integrations field types › deletes rows and returns affected count
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       266 | 		gated()('deletes rows and returns affected count', async () => {
+corsair:test:       267 | 			await kdb
+corsair:test:     > 268 | 				.insertInto('corsair_integrations')
+corsair:test:           | 				 ^
+corsair:test:       269 | 				.values({
+corsair:test:       270 | 					id: 'int-del',
+corsair:test:       271 | 					created_at: new Date(),
+corsair:test: 
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:268:6)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_accounts field types › stores tenant/integration references and jsonb config
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:297:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_entities field types › stores jsonb data with mixed primitive and nested values
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:339:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_entities field types › supports jsonb predicates via sql tagged template
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:379:37)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_events field types › serializes payloads and enum-like nullable status
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:418:37)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › corsair_permissions field types › stores JSON-stringified args and string timestamps (expires_at)
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       469 | 				const expiresAt = new Date(Date.now() + 60_000).toISOString();
+corsair:test:       470 | 				await kdb
+corsair:test:     > 471 | 					.insertInto('corsair_permissions')
+corsair:test:           | 					 ^
+corsair:test:       472 | 					.values({
+corsair:test:       473 | 						id: 'perm-1',
+corsair:test:       474 | 						created_at: new Date(),
+corsair:test: 
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:471:7)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › withParamSerialization › serializes Date params to ISO string on the wire (via Kysely + unsafe)
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:523:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › withParamSerialization › serializes plain-object params to JSON for JSONB columns
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:553:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › withParamSerialization › passes through string, number, boolean, null params unchanged
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:580:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › createCorsairOrm on postgres.js › performs full CRUD (findById / findMany / create / update / delete / count)
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       338 | 		getDb().db.selectFrom(tableName) as unknown as SelectBuilder;
+corsair:test:       339 | 	const insertIntoTable = () =>
+corsair:test:     > 340 | 		getDb().db.insertInto(tableName) as unknown as InsertBuilder;
+corsair:test:           | 		          ^
+corsair:test:       341 | 	const updateTable = () =>
+corsair:test:       342 | 		getDb().db.updateTable(tableName) as unknown as UpdateBuilder;
+corsair:test:       343 | 	const deleteFromTable = () =>
+corsair:test: 
+corsair:test:       at insertIntoTable (db/orm.ts:340:13)
+corsair:test:       at Object.create (db/orm.ts:398:22)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:654:44)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › createCorsairOrm on postgres.js › plugin entity client existsByEntityId and findIdByEntityId
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:728:38)
+corsair:test: 
+corsair:test:   ● postgres-js database integration › createCorsairOrm on postgres.js › filters with in/like operators
+corsair:test: 
+corsair:test:     TypeError: Cannot read properties of undefined (reading 'insertInto')
+corsair:test: 
+corsair:test:       12 |
+corsair:test:       13 | 	return db
+corsair:test:     > 14 | 		.insertInto('corsair_integrations')
+corsair:test:          | 		 ^
+corsair:test:       15 | 		.values({
+corsair:test:       16 | 			id: integrationId,
+corsair:test:       17 | 			created_at: now,
+corsair:test: 
+corsair:test:       at createIntegrationAndAccount (tests/plugins-test-utils.ts:14:4)
+corsair:test:       at Object.<anonymous> (tests/postgres-js-database.test.ts:754:37)
+corsair:test: 
+corsair:test: 
+corsair:test: Test Suites: 1 failed, 1 skipped, 56 passed, 57 of 58 total
+corsair:test: Tests:       16 failed, 3 skipped, 417 passed, 436 total
+corsair:test: Snapshots:   0 total
+corsair:test: Time:        53.411 s
+corsair:test: Ran all test suites.
+corsair:test:  ELIFECYCLE  Test failed. See above for more details.
+corsair:test: ERROR: command finished with error: command (/Users/kathir/corsair-apilio/packages/corsair) /Users/kathir/Library/pnpm/store/v11/links/@/pnpm/10.20.0/22836824a4dd047a1fd499a1e56c6d7d0106a3a0e2c6f76644391aee5a242b9f/bin/pnpm run test exited (1)
+@corsair-dev/cursor:test: cache miss, executing e22a110f78a93323
+@corsair-dev/googlemaps:test: cache miss, executing 66cca828f2a65217
+@corsair-dev/apilabz:test: cache miss, executing 39d1d8e0b40dea45
+@corsair-dev/teams:test: cache miss, executing 4493e85aa8f23047
+@corsair-dev/dodopayments:test: cache miss, executing 9986bce83e85d4f3
+@corsair-dev/serpapi:test: cache miss, executing 9df3dfaf5f98a23c
+@corsair-dev/loyverse:test: cache miss, executing d2d47b9b50b5673d
+@corsair-dev/todoist:test: cache miss, executing e5f85eea7b40fcfa
+@corsair-dev/trello:test: cache miss, executing 789762566ec997ff
+@corsair-dev/perplexityai:test: cache miss, executing d2695d8ad06acb1f
+@corsair-dev/openweathermap:test: cache miss, executing 0e7ce6818d8162de
+@corsair-dev/pagerduty:test: cache miss, executing 3384bbef34e8acee
+@corsair-dev/calendly:test: cache miss, executing 00c0d1c6ab013f32
+@corsair-dev/bluesky:test: cache miss, executing 9aec8087f9c89e29
+@corsair-dev/amplitude:test: cache miss, executing 3276f8f9790963c3
+@corsair-dev/linear:test: cache miss, executing 31fa47264ab0da99
+@corsair-dev/abstract:test: cache miss, executing 6b871a185967ee3d
+@corsair-dev/addresszen:test: cache miss, executing 380164123585018d
+@corsair-dev/toggl:test: cache miss, executing 64aae6870361a571
+@corsair-dev/gemini:test: cache miss, executing ef5dd72a93f61bff
+@corsair-dev/apisports:test: cache miss, executing 7e57280c12e09d18
+@corsair-dev/wiza:test: cache miss, executing df28082d3c0e5d9e
+@corsair-dev/alphavantage:test: cache miss, executing efea4e8cecf2fbd1
+@corsair-dev/ayrshare:test: cache miss, executing ac4c027a29b586fb
+@corsair-dev/huggingface:test: cache miss, executing c0be752f9fa17eb1
+@corsair-dev/resend:test: cache miss, executing 59a8eaae2dad4420
+@corsair-dev/amara:test: cache miss, executing eed17956c440b350
+@corsair-dev/cli:test: cache miss, executing 0572e504bf6463f0
+@corsair-dev/razorpay:test: cache miss, executing d419a38b51b55369
+@corsair-dev/workday:test: cache miss, executing 654a0117472efe2e
+@corsair-dev/twochat:test: cache miss, executing b0e1c0821e52a9ac
+@corsair-dev/abyssale:test: cache miss, executing e2486b000ce25620
+@corsair-dev/agencyzoom:test: cache miss, executing f9312fcb4db6dab4
+@corsair-dev/zoom:test: cache miss, executing 644367cda1d2e990
+@corsair-dev/baselinker:test: cache miss, executing 011cf627d5c76a96
+@corsair-dev/linear:build: cache hit, replaying logs 4fedd8a27708d8e1
+@corsair-dev/linear:build: 
+@corsair-dev/linear:build: 
+@corsair-dev/linear:build: > @corsair-dev/linear@0.1.5 build /Users/kathir/corsair-apilio/packages/linear
+@corsair-dev/linear:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/linear:build: 
+@corsair-dev/linear:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/linear:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/linear:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/linear:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/linear/tsup.config.ts
+@corsair-dev/linear:build: [34mCLI[39m Target: esnext
+@corsair-dev/linear:build: [34mESM[39m Build start
+@corsair-dev/linear:build: [32mESM[39m [1mdist/index.js [22m[32m53.92 KB[39m
+@corsair-dev/linear:build: [32mESM[39m ⚡️ Build success in 30ms
+@corsair-dev/algolia:test: cache miss, executing a68ff7849144b3ee
+@corsair-dev/canva:test: cache miss, executing 23223d9167b26e3f
+@corsair-dev/apipie:test: cache miss, executing ac5b8a4f92b676c1
+@corsair-dev/databricks:test: cache miss, executing 1a953b562fa94a3a
+@corsair-dev/ambientweather:test: cache miss, executing 722567cb45b0b731
+@corsair-dev/linkedin:test: cache miss, executing 7b8bab5862dc2e65
+@corsair-dev/googlesheets:test: cache miss, executing 251d5bb9f0559908
+@corsair-dev/facebook:test: cache miss, executing a556899a5dc88254
+@corsair-dev/gmail:test: cache miss, executing 7c1574ccc183c065
+@corsair-dev/basecamp:test: cache miss, executing 9cb4843baef0d985
+@corsair-dev/sentry:test: cache miss, executing 22ee1a9bc61c82af
+@corsair-dev/apibible:test: cache miss, executing a1ca216679d0bbb7
+@corsair-dev/agenty:test: cache miss, executing 5369c0a817a9730c
+@corsair-dev/deepseek:test: cache miss, executing 7409f7dea272160e
+@corsair-dev/asindataapi:test: cache miss, executing 38836a87dd3dbd9a
+@corsair-dev/vercel:test: cache miss, executing d77f0173ff7762af
+@corsair-dev/instagram:test: cache miss, executing 6fdccf643b502a2e
+@corsair-dev/apaleo:test: cache miss, executing 6d277b19fdd17256
+@corsair-dev/tally:test: cache miss, executing 3dbd41f64e31f159
+@corsair-dev/insightoai:test: cache miss, executing 93a9ad6617013110
+@corsair-dev/jira:test: cache miss, executing b9f71c3d5828db5d
+@corsair-dev/ahrefs:test: cache miss, executing 37500b277ecba529
+@corsair-dev/gitlab:test: cache miss, executing a8d99561538c8afd
+@corsair-dev/bugsnag:test: cache miss, executing 7b6472fcab2264ee
+@corsair-dev/strava:test: cache miss, executing 8f22d76b91981aba
+@corsair-dev/ollama:test: cache miss, executing 14d3a40041e6392b
+@corsair-dev/googlebigquery:test: cache miss, executing 69bbf4e2fc134fee
+@corsair-dev/kaggle:test: cache miss, executing 938462cff68ca008
+@corsair-dev/intercom:test: cache miss, executing 13c41f1e9800128f
+@corsair-dev/hashnode:test: cache miss, executing 1281074352413969
+@corsair-dev/supabase:test: cache miss, executing cff0660d6206080d
+@corsair-dev/neon:test: cache miss, executing 935de36f6a87d8a9
+@corsair-dev/affinda:test: cache miss, executing f98c1977a712b0d9
+@corsair-dev/sharepoint:test: cache miss, executing 956c707c14400dd9
+@corsair-dev/googlemeet:test: cache miss, executing 4919aa387bae9d65
+@corsair-dev/aeroleads:test: cache miss, executing 9fbd9f274b4bad64
+@corsair-dev/retailed:test: cache miss, executing e99ed48ac50574e8
+@corsair-dev/googledrive:test: cache miss, executing bce36a646f1500fb
+@corsair-dev/googlecalendar:test: cache miss, executing aa240b7cce89615a
+@corsair-dev/amcards:test: cache miss, executing b6fd3ee0ff9aaa17
+@corsair-dev/datadog:test: cache miss, executing 956dfa506b24bfe5
+@corsair-dev/blazemeter:test: cache miss, executing b7b7a7e1622fabc8
+@corsair-dev/bigmailer:test: cache miss, executing ad5823608a78ec86
+@corsair-dev/webflow:test: cache miss, executing 1d3ca86f0782f45c
+@corsair-dev/epicgames:test: cache miss, executing c438b54363f1725f
+@corsair-dev/posthog:test: cache miss, executing e8a1caf6e615130b
+@corsair-dev/alttextai:test: cache miss, executing 5bc2c0f1b49bc3e0
+@corsair-dev/cloudflare:test: cache miss, executing a3e86b6385f596c4
+@corsair-dev/canvas:test: cache miss, executing 7942641b0356010b
+@corsair-dev/cal:test: cache miss, executing 6fe5e96c9b6cd28d
+@corsair-dev/asyncinterview:test: cache miss, executing bc32bc50044be7d1
+@corsair-dev/typeform:test: cache miss, executing acd89bde14fb8382
+@corsair-dev/activecampaign:test: cache miss, executing 16d8fcc40cedf84e
+@corsair-dev/bigml:test: cache miss, executing 840f6508fa31a963
+@corsair-dev/fireflies:test: cache miss, executing d1fa2b758fba22a5
+@corsair-dev/ably:test: cache miss, executing 5b1bb2b7275f002a
+@corsair-dev/contentfulgraphql:test: cache miss, executing 1ac8ed98a0e0c251
+@corsair-dev/youtube:test: cache miss, executing b428aa039ed4e34d
+@corsair-dev/collegefootballdata:test: cache miss, executing d38b0876a86210e9
+@corsair-dev/aimlapi:test: cache miss, executing b3de0162806d6464
+@corsair-dev/formbricks:test: cache miss, executing 8e5d165ed8bf2a9b
+@corsair-dev/zendesk:test: cache miss, executing b91f07d605c3a631
+@corsair-dev/github:test: cache miss, executing 8c9ed83183bfc3a1
+@corsair-dev/habitica:test: cache miss, executing b3fdd9c69c543c07
+@corsair-dev/outlook:test: cache miss, executing fa343ac2ccc647fe
+@corsair-dev/activetrail:test: cache miss, executing 0df7770f0d1385e1
+@corsair-dev/cli:build: cache hit, replaying logs 0c23b6aa38432620
+@corsair-dev/cli:build: 
+@corsair-dev/cli:build: 
+@corsair-dev/cli:build: > @corsair-dev/cli@0.1.20 build /Users/kathir/corsair-apilio/packages/cli
+@corsair-dev/cli:build: > tsup && tsc -p tsconfig.build.json
+@corsair-dev/cli:build: 
+@corsair-dev/cli:build: [34mCLI[39m Building entry: src/index.ts
+@corsair-dev/cli:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/cli:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/cli:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/cli/tsup.config.ts
+@corsair-dev/cli:build: [34mCLI[39m Target: esnext
+@corsair-dev/cli:build: [34mCLI[39m Cleaning output folder
+@corsair-dev/cli:build: [34mESM[39m Build start
+@corsair-dev/cli:build: [32mESM[39m [1mdist/index.js [22m[32m95.37 KB[39m
+@corsair-dev/cli:build: [32mESM[39m ⚡️ Build success in 122ms
+@corsair-dev/circleci:test: cache miss, executing 126c4f278e41a51f
+@corsair-dev/onedrive:test: cache miss, executing 9f67ce19f77dc396
+@corsair-dev/groqcloud:test: cache miss, executing 9449ed71d9b4d2ae
+@corsair-dev/hubspot:test: cache miss, executing a7465af22c2807ae
+@corsair-dev/digitalocean:test: cache miss, executing bbf6dcf01f2d4e94
+@corsair-dev/reddit:test: cache miss, executing 62454855a282a13f
+@corsair-dev/anchorbrowser:test: cache miss, executing d32109e1bb6c85b8
+@corsair-dev/spotify:test: cache miss, executing 8bd38c7b8eeacefa
+@corsair-dev/discord:test: cache miss, executing 7b99e1fabfd17563
+@corsair-dev/mailtrap:test: cache miss, executing 26dab9149325db6e
+@corsair-dev/xquik:test: cache miss, executing b149700b9c068dcc
+@corsair-dev/cloudinary:test: cache miss, executing e1368bf9c523cfc7
+@corsair-dev/accrediblecertificates:test: cache miss, executing c2dd75bb617fecf8
+@corsair-dev/altoviz:test: cache miss, executing 30ab5ffa0b4bf453
+@corsair-dev/stripe:test: cache miss, executing f24d75c513854b89
+@corsair-dev/apilio:test: cache miss, executing dc34e57a896163c9
+@corsair-dev/twilio:test: cache miss, executing 347f36c0a91b23ad
+@corsair-dev/nextdns:test: cache miss, executing d75b672a5686a2c1
+@corsair-dev/dropbox:test: cache miss, executing d7dc756020551f0f
+@corsair-dev/heygen:test: cache miss, executing 191895bbdcdd5f48
+@corsair-dev/harvest:test: cache miss, executing 5182dd8be16f133b
+@corsair-dev/mcp:build: cache hit, replaying logs 1d2382349d502fc9
+@corsair-dev/mcp:build: 
+@corsair-dev/mcp:build: 
+@corsair-dev/mcp:build: > @corsair-dev/mcp@0.1.26 build /Users/kathir/corsair-apilio/packages/mcp
+@corsair-dev/mcp:build: > tsup && tsc -p tsconfig.build.json
+@corsair-dev/mcp:build: 
+@corsair-dev/mcp:build: [34mCLI[39m Building entry: src/index.ts
+@corsair-dev/mcp:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/mcp:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/mcp:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/mcp/tsup.config.ts
+@corsair-dev/mcp:build: [34mCLI[39m Target: esnext
+@corsair-dev/mcp:build: [34mCLI[39m Cleaning output folder
+@corsair-dev/mcp:build: [34mESM[39m Build start
+@corsair-dev/mcp:build: [32mESM[39m [1mdist/index.js [22m[32m137.09 KB[39m
+@corsair-dev/mcp:build: [32mESM[39m ⚡️ Build success in 48ms
+@corsair-dev/apininjas:test: cache miss, executing bc0532a68ac32f5b
+@corsair-dev/openai:test: cache miss, executing c7113fc865d7317d
+@corsair-dev/googleaddressvalidation:test: cache miss, executing 15f6d8b3a4a11021
+@corsair-dev/twitter:test: cache miss, executing dedfac626187f49d
+@corsair-dev/bitbucket:test: cache miss, executing 310476f2a2142d35
+@corsair-dev/oura:test: cache miss, executing 99d55b862bd13d9b
+@corsair-dev/monday:test: cache miss, executing b9140d182e587642
+@corsair-dev/googlecalendar:build: cache hit, replaying logs 6ba945ebb8f1cdee
+@corsair-dev/googlecalendar:build: 
+@corsair-dev/googlecalendar:build: 
+@corsair-dev/googlecalendar:build: > @corsair-dev/googlecalendar@0.1.5 build /Users/kathir/corsair-apilio/packages/googlecalendar
+@corsair-dev/googlecalendar:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/googlecalendar:build: 
+@corsair-dev/googlecalendar:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/googlecalendar:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/googlecalendar:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/apify:test: cache miss, executing 3a6431989638247b
+@corsair-dev/googlecalendar:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/googlecalendar/tsup.config.ts
+@corsair-dev/googlecalendar:build: [34mCLI[39m Target: esnext
+@corsair-dev/googlecalendar:build: [34mESM[39m Build start
+@corsair-dev/googlecalendar:build: [32mESM[39m [1mdist/index.js [22m[32m21.60 KB[39m
+@corsair-dev/googlecalendar:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/bitwarden:test: cache miss, executing bd514810083c2bc4
+@corsair-dev/ocrspace:test: cache miss, executing 15b2387df14175db
+@corsair-dev/box:test: cache miss, executing 456724bd755fff3a
+@corsair-dev/firecrawl:test: cache miss, executing 56614352f32b642a
+@corsair-dev/cal:build: cache hit, replaying logs 9d52686879760da5
+@corsair-dev/cal:build: 
+@corsair-dev/cal:build: 
+@corsair-dev/cal:build: > @corsair-dev/cal@0.1.3 build /Users/kathir/corsair-apilio/packages/cal
+@corsair-dev/cal:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/cal:build: 
+@corsair-dev/cal:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/cal:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/cal:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/cal:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/cal/tsup.config.ts
+@corsair-dev/cal:build: [34mCLI[39m Target: esnext
+@corsair-dev/cal:build: [34mESM[39m Build start
+@corsair-dev/cal:build: [32mESM[39m [1mdist/index.js [22m[32m16.49 KB[39m
+@corsair-dev/cal:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/anthropicadministrator:test: cache miss, executing 8f40d8e410898da6
+@corsair-dev/telegram:test: cache miss, executing 7c7ac9799e84ec4a
+@corsair-dev/agentql:test: cache miss, executing 09b088b43c0bb374
+@corsair-dev/agentmail:test: cache miss, executing df10942713c8633a
+@corsair-dev/slack:test: cache miss, executing 2f9da462cc629857
+@corsair-dev/airtable:test: cache miss, executing 41d4749bfddb4809
+@corsair-dev/onepassword:test: cache miss, executing b52d1cb36d862085
+@corsair-dev/vapi:test: cache miss, executing d8306307e3bc1856
+@corsair-dev/ambee:test: cache miss, executing 02c95bd204ec6e4c
+@corsair-dev/youcom:test: cache miss, executing b6dcc877363312c7
+@corsair-dev/clientary:test: cache miss, executing 0d12911c2192d397
+@corsair-dev/api2pdf:test: cache miss, executing de264703a20c9b10
+@corsair-dev/whatsapp:test: cache miss, executing 4c0baa1827d7cc5a
+@corsair-dev/slack:build: cache hit, replaying logs d937be08a93c1102
+@corsair-dev/slack:build: 
+@corsair-dev/slack:build: 
+@corsair-dev/slack:build: > @corsair-dev/slack@0.1.7 build /Users/kathir/corsair-apilio/packages/slack
+@corsair-dev/slack:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/slack:build: 
+@corsair-dev/slack:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/slack:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/slack:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/slack:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/slack/tsup.config.ts
+@corsair-dev/slack:build: [34mCLI[39m Target: esnext
+@corsair-dev/slack:build: [34mESM[39m Build start
+@corsair-dev/slack:build: [32mESM[39m [1mdist/index.js [22m[32m67.07 KB[39m
+@corsair-dev/slack:build: [32mESM[39m ⚡️ Build success in 28ms
+@corsair-dev/zohomail:test: cache miss, executing b81c5115b9792d83
+@corsair-dev/boloforms:test: cache miss, executing bf316f4091393abc
+@corsair-dev/hackernews:test: cache miss, executing 27e8cba6f6751c9c
+@corsair-dev/figma:test: cache miss, executing 0bf63732d2e5f370
+@corsair-dev/gmail:build: cache hit, replaying logs 8624ead862bd1381
+@corsair-dev/gmail:build: 
+@corsair-dev/gmail:build: 
+@corsair-dev/gmail:build: > @corsair-dev/gmail@0.1.4 build /Users/kathir/corsair-apilio/packages/gmail
+@corsair-dev/gmail:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/gmail:build: 
+@corsair-dev/gmail:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/gmail:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/gmail:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/gmail:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/gmail/tsup.config.ts
+@corsair-dev/gmail:build: [34mCLI[39m Target: esnext
+@corsair-dev/gmail:build: [34mESM[39m Build start
+@corsair-dev/gmail:build: [32mESM[39m [1mdist/index.js [22m[32m34.44 KB[39m
+@corsair-dev/gmail:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/tavily:test: cache miss, executing ab25af81940d6907
+@corsair-dev/botpress:test: cache miss, executing 1ab2917778fa636e
+@corsair-dev/betterstack:test: cache miss, executing f9635ae49e2a4b0e
+@corsair-dev/doppler:test: cache miss, executing bf5d9c26d870f4b5
+@corsair-dev/salesforce:test: cache miss, executing 503b7c078b18bbf4
+@corsair-dev/confluence:test: cache miss, executing 5aaae15b90767954
+corsair#test: command (/Users/kathir/corsair-apilio/packages/corsair) /Users/kathir/Library/pnpm/store/v11/links/@/pnpm/10.20.0/22836824a4dd047a1fd499a1e56c6d7d0106a3a0e2c6f76644391aee5a242b9f/bin/pnpm run test exited (1)
+
+ Tasks:    8 successful, 175 total
+Cached:    8 cached, 175 total
+  Time:    58.877s 
+Failed:    corsair#test
+
+ ERROR  run failed: command  exited (1)
+ ELIFECYCLE  Test failed. See above for more details.

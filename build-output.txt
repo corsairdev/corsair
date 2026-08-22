@@ -1,0 +1,2516 @@
+[WARN] The "pnpm" field in package.json is no longer read by pnpm. The following keys were ignored: "pnpm.overrides", "pnpm.onlyBuiltDependencies". See https://pnpm.io/settings for the new home of each setting.
+
+> @corsair/root@ build /Users/kathir/corsair-apilio
+> turbo --filter "./packages/*" build
+
+turbo 2.6.1
+
+• Packages in scope: @corsair-dev/ably, @corsair-dev/abstract, @corsair-dev/abyssale, @corsair-dev/accrediblecertificates, @corsair-dev/activecampaign, @corsair-dev/activetrail, @corsair-dev/addresszen, @corsair-dev/aeroleads, @corsair-dev/affinda, @corsair-dev/agencyzoom, @corsair-dev/agentmail, @corsair-dev/agentql, @corsair-dev/agenty, @corsair-dev/ahrefs, @corsair-dev/aimlapi, @corsair-dev/airtable, @corsair-dev/alchemy, @corsair-dev/algolia, @corsair-dev/alphavantage, @corsair-dev/altoviz, @corsair-dev/alttextai, @corsair-dev/amara, @corsair-dev/ambee, @corsair-dev/ambientweather, @corsair-dev/amcards, @corsair-dev/amplitude, @corsair-dev/anchorbrowser, @corsair-dev/anthropicadministrator, @corsair-dev/apaleo, @corsair-dev/api2pdf, @corsair-dev/apibible, @corsair-dev/apify, @corsair-dev/apilabz, @corsair-dev/apilio, @corsair-dev/apininjas, @corsair-dev/apipie, @corsair-dev/apisports, @corsair-dev/app, @corsair-dev/asana, @corsair-dev/asindataapi, @corsair-dev/asyncinterview, @corsair-dev/ayrshare, @corsair-dev/basecamp, @corsair-dev/baselinker, @corsair-dev/betterstack, @corsair-dev/bigmailer, @corsair-dev/bigml, @corsair-dev/bitbucket, @corsair-dev/bitwarden, @corsair-dev/blazemeter, @corsair-dev/bluesky, @corsair-dev/boloforms, @corsair-dev/botpress, @corsair-dev/box, @corsair-dev/bugsnag, @corsair-dev/cal, @corsair-dev/calendly, @corsair-dev/canva, @corsair-dev/canvas, @corsair-dev/circleci, @corsair-dev/cli, @corsair-dev/clientary, @corsair-dev/cloudflare, @corsair-dev/cloudinary, @corsair-dev/collegefootballdata, @corsair-dev/confluence, @corsair-dev/contentfulgraphql, @corsair-dev/cursor, @corsair-dev/databricks, @corsair-dev/datadog, @corsair-dev/deepseek, @corsair-dev/digitalocean, @corsair-dev/discord, @corsair-dev/dockerhub, @corsair-dev/dodopayments, @corsair-dev/doppler, @corsair-dev/dropbox, @corsair-dev/epicgames, @corsair-dev/exa, @corsair-dev/facebook, @corsair-dev/figma, @corsair-dev/firecrawl, @corsair-dev/fireflies, @corsair-dev/formbricks, @corsair-dev/frpc-darwin-arm64, @corsair-dev/frpc-darwin-x64, @corsair-dev/frpc-linux-arm64, @corsair-dev/frpc-linux-x64, @corsair-dev/frpc-win32-arm64, @corsair-dev/frpc-win32-x64, @corsair-dev/gemini, @corsair-dev/github, @corsair-dev/gitlab, @corsair-dev/gmail, @corsair-dev/googleaddressvalidation, @corsair-dev/googlebigquery, @corsair-dev/googlecalendar, @corsair-dev/googledocs, @corsair-dev/googledrive, @corsair-dev/googlemaps, @corsair-dev/googlemeet, @corsair-dev/googlesheets, @corsair-dev/grafana, @corsair-dev/groqcloud, @corsair-dev/habitica, @corsair-dev/hackernews, @corsair-dev/harvest, @corsair-dev/hashnode, @corsair-dev/heygen, @corsair-dev/hubspot, @corsair-dev/huggingface, @corsair-dev/insightoai, @corsair-dev/instagram, @corsair-dev/intercom, @corsair-dev/jira, @corsair-dev/kaggle, @corsair-dev/linear, @corsair-dev/linkedin, @corsair-dev/loyverse, @corsair-dev/mailchimp, @corsair-dev/mailtrap, @corsair-dev/mcp, @corsair-dev/monday, @corsair-dev/neon, @corsair-dev/nextdns, @corsair-dev/notion, @corsair-dev/ocrspace, @corsair-dev/ollama, @corsair-dev/onedrive, @corsair-dev/onepassword, @corsair-dev/openai, @corsair-dev/openweathermap, @corsair-dev/oura, @corsair-dev/outlook, @corsair-dev/pagerduty, @corsair-dev/perplexityai, @corsair-dev/posthog, @corsair-dev/razorpay, @corsair-dev/reddit, @corsair-dev/resend, @corsair-dev/retailed, @corsair-dev/salesforce, @corsair-dev/sentry, @corsair-dev/serpapi, @corsair-dev/sharepoint, @corsair-dev/slack, @corsair-dev/spotify, @corsair-dev/strava, @corsair-dev/stripe, @corsair-dev/studio, @corsair-dev/supabase, @corsair-dev/tally, @corsair-dev/tavily, @corsair-dev/teams, @corsair-dev/telegram, @corsair-dev/todoist, @corsair-dev/toggl, @corsair-dev/trello, @corsair-dev/twilio, @corsair-dev/twitter, @corsair-dev/twitterapiio, @corsair-dev/twochat, @corsair-dev/typeform, @corsair-dev/ui, @corsair-dev/vapi, @corsair-dev/vercel, @corsair-dev/webflow, @corsair-dev/whatsapp, @corsair-dev/wiza, @corsair-dev/workday, @corsair-dev/xquik, @corsair-dev/youcom, @corsair-dev/youtube, @corsair-dev/zendesk, @corsair-dev/zohomail, @corsair-dev/zoom, corsair
+• Running build in 177 packages
+• Remote caching disabled
+@corsair-dev/app:build: cache hit, replaying logs 6fa1d5d399f2e4db
+@corsair-dev/app:build: 
+@corsair-dev/app:build: 
+@corsair-dev/app:build: > @corsair-dev/app@0.1.1 build /Users/kathir/corsair-apilio/packages/app
+@corsair-dev/app:build: > tsup && tsc -p tsconfig.build.json
+@corsair-dev/app:build: 
+@corsair-dev/app:build: [34mCLI[39m Building entry: src/index.ts
+@corsair-dev/app:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/app:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/app:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/app/tsup.config.ts
+@corsair-dev/app:build: [34mCLI[39m Target: esnext
+@corsair-dev/app:build: [34mCLI[39m Cleaning output folder
+@corsair-dev/app:build: [34mESM[39m Build start
+@corsair-dev/app:build: [32mESM[39m [1mdist/index.js [22m[32m774.76 KB[39m
+@corsair-dev/app:build: [32mESM[39m ⚡️ Build success in 75ms
+corsair:build: cache hit, replaying logs 56657604aea767e1
+corsair:build: 
+corsair:build: 
+corsair:build: > corsair@0.1.119 build /Users/kathir/corsair-apilio/packages/corsair
+corsair:build: > tsup
+corsair:build: 
+corsair:build: [34mCLI[39m Building entry: core.ts, db.ts, http.ts, hub.ts, index.ts, oauth.ts, orm.ts, setup.ts, tests.ts, tunnel.ts, client/react/index.ts, hub/tunnel/run-tunnel.ts
+corsair:build: [34mCLI[39m Using tsconfig: tsconfig.json
+corsair:build: [34mCLI[39m tsup v8.5.1
+corsair:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/corsair/tsup.config.ts
+corsair:build: [34mCLI[39m Target: esnext
+corsair:build: [34mCLI[39m Cleaning output folder
+corsair:build: [34mESM[39m Build start
+corsair:build: [32mESM[39m [1mdist/hub/tunnel/run-tunnel.js     [22m[32m5.62 KB[39m
+corsair:build: [32mESM[39m [1mdist/tunnel.js                    [22m[32m671.00 B[39m
+corsair:build: [32mESM[39m [1mdist/tests.js                     [22m[32m1.67 KB[39m
+corsair:build: [32mESM[39m [1mdist/client/react/index.js        [22m[32m1.80 KB[39m
+corsair:build: [32mESM[39m [1mdist/setup-23CXMCSY.js            [22m[32m241.00 B[39m
+corsair:build: [32mESM[39m [1mdist/core.js                      [22m[32m1.56 KB[39m
+corsair:build: [32mESM[39m [1mdist/setup-introspect-A25DWQIV.js [22m[32m359.00 B[39m
+corsair:build: [32mESM[39m [1mdist/connect-GWDZR5X4.js          [22m[32m300.00 B[39m
+corsair:build: [32mESM[39m [1mdist/db.js                        [22m[32m326.00 B[39m
+corsair:build: [32mESM[39m [1mdist/index.js                     [22m[32m3.66 KB[39m
+corsair:build: [32mESM[39m [1mdist/loop-OQ2BH4OH.js             [22m[32m257.00 B[39m
+corsair:build: [32mESM[39m [1mdist/http.js                      [22m[32m8.57 KB[39m
+corsair:build: [32mESM[39m [1mdist/oauth.js                     [22m[32m436.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-RQ5QHONV.js            [22m[32m1.42 KB[39m
+corsair:build: [32mESM[39m [1mdist/orm.js                       [22m[32m418.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-SI2MXDD3.js            [22m[32m45.00 B[39m
+corsair:build: [32mESM[39m [1mdist/hub.js                       [22m[32m3.00 KB[39m
+corsair:build: [32mESM[39m [1mdist/chunk-3TC2WIUS.js            [22m[32m1.43 KB[39m
+corsair:build: [32mESM[39m [1mdist/setup.js                     [22m[32m241.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-Z2KT4F2U.js            [22m[32m503.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-F2EV3CHK.js            [22m[32m2.83 KB[39m
+corsair:build: [32mESM[39m [1mdist/chunk-SOY77BN4.js            [22m[32m111.00 B[39m
+corsair:build: [32mESM[39m [1mdist/chunk-O4HEZ3MW.js            [22m[32m134.79 KB[39m
+corsair:build: [32mESM[39m [1mdist/chunk-VOH7OVWP.js            [22m[32m15.48 KB[39m
+corsair:build: [32mESM[39m ⚡️ Build success in 61ms
+corsair:build: DTS Build start
+corsair:build: Export "CorsairSingleTenantClient" of module "core/client/index.ts" was reexported through module "core/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+corsair:build: Either change the import in "inspect.ts" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
+corsair:build: Export "CorsairPlugin" of module "core/plugins/index.ts" was reexported through module "core/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+corsair:build: Either change the import in "inspect.ts" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
+corsair:build: Export "CorsairTenantWrapper" of module "core/client/index.ts" was reexported through module "core/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+corsair:build: Either change the import in "inspect.ts" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
+corsair:build: Export "CorsairClient" of module "core/client/index.ts" was reexported through module "core/index.ts" while both modules are dependencies of each other and will end up in different chunks by current Rollup settings. This scenario is not well supported at the moment as it will produce a circular dependency between chunks and will likely lead to broken execution order.
+corsair:build: Either change the import in "inspect.ts" to point directly to the exporting module or reconfigure "output.manualChunks" to ensure these modules end up in the same chunk.
+corsair:build: DTS ⚡️ Build success in 3160ms
+corsair:build: DTS dist/client/react/index.d.ts          2.41 KB
+corsair:build: DTS dist/hub/tunnel/run-tunnel.d.ts       1.19 KB
+corsair:build: DTS dist/tests.d.ts                       561.00 B
+corsair:build: DTS dist/tunnel.d.ts                      3.57 KB
+corsair:build: DTS dist/oauth.d.ts                       4.51 KB
+corsair:build: DTS dist/core.d.ts                        11.80 KB
+corsair:build: DTS dist/index.d.ts                       11.53 KB
+corsair:build: DTS dist/http.d.ts                        4.71 KB
+corsair:build: DTS dist/hub.d.ts                         25.62 KB
+corsair:build: DTS dist/db.d.ts                          1.72 KB
+corsair:build: DTS dist/orm.d.ts                         23.41 KB
+corsair:build: DTS dist/setup.d.ts                       3.71 KB
+corsair:build: DTS dist/index-DYD8VbaE.d.ts              1.78 KB
+corsair:build: DTS dist/browser-delivery-Cr9Fj6_b.d.ts   1.64 KB
+corsair:build: DTS dist/types-BSFPVOIW.d.ts              1.70 KB
+corsair:build: DTS dist/index-eydqYIn0.d.ts              6.12 KB
+corsair:build: DTS dist/types-CrX_V8-f.d.ts              12.58 KB
+corsair:build: DTS dist/index-DE06GtJ-.d.ts              10.64 KB
+corsair:build: DTS dist/tenant-match-utils-B9QCZQQE.d.ts 9.54 KB
+corsair:build: DTS dist/index-B8HNndHq.d.ts              68.50 KB
+@corsair-dev/youcom:build: cache hit, replaying logs e5b386e39af0978a
+@corsair-dev/youcom:build: 
+@corsair-dev/youcom:build: 
+@corsair-dev/youcom:build: > @corsair-dev/youcom@0.1.0 build /Users/kathir/corsair-apilio/packages/youcom
+@corsair-dev/youcom:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/youcom:build: 
+@corsair-dev/youcom:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/youcom:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/youcom:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/youcom:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/youcom/tsup.config.ts
+@corsair-dev/youcom:build: [34mCLI[39m Target: esnext
+@corsair-dev/youcom:build: [34mESM[39m Build start
+@corsair-dev/youcom:build: [32mESM[39m [1mdist/index.js [22m[32m7.33 KB[39m
+@corsair-dev/youcom:build: [32mESM[39m ⚡️ Build success in 13ms
+@corsair-dev/accrediblecertificates:build: cache hit, replaying logs fbfd5d1ecf6e81e8
+@corsair-dev/accrediblecertificates:build: 
+@corsair-dev/accrediblecertificates:build: 
+@corsair-dev/accrediblecertificates:build: > @corsair-dev/accrediblecertificates@0.1.0 build /Users/kathir/corsair-apilio/packages/accrediblecertificates
+@corsair-dev/accrediblecertificates:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/accrediblecertificates:build: 
+@corsair-dev/accrediblecertificates:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/accrediblecertificates:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/accrediblecertificates:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/accrediblecertificates:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/accrediblecertificates/tsup.config.ts
+@corsair-dev/accrediblecertificates:build: [34mCLI[39m Target: esnext
+@corsair-dev/accrediblecertificates:build: [34mESM[39m Build start
+@corsair-dev/accrediblecertificates:build: [32mESM[39m [1mdist/index.js [22m[32m6.82 KB[39m
+@corsair-dev/accrediblecertificates:build: [32mESM[39m ⚡️ Build success in 13ms
+@corsair-dev/mcp:build: cache hit, replaying logs 1d2382349d502fc9
+@corsair-dev/mcp:build: 
+@corsair-dev/mcp:build: 
+@corsair-dev/mcp:build: > @corsair-dev/mcp@0.1.26 build /Users/kathir/corsair-apilio/packages/mcp
+@corsair-dev/mcp:build: > tsup && tsc -p tsconfig.build.json
+@corsair-dev/mcp:build: 
+@corsair-dev/mcp:build: [34mCLI[39m Building entry: src/index.ts
+@corsair-dev/mcp:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/mcp:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/mcp:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/mcp/tsup.config.ts
+@corsair-dev/mcp:build: [34mCLI[39m Target: esnext
+@corsair-dev/mcp:build: [34mCLI[39m Cleaning output folder
+@corsair-dev/mcp:build: [34mESM[39m Build start
+@corsair-dev/mcp:build: [32mESM[39m [1mdist/index.js [22m[32m137.09 KB[39m
+@corsair-dev/mcp:build: [32mESM[39m ⚡️ Build success in 48ms
+@corsair-dev/ollama:build: cache hit, replaying logs 490d9577edcbc62e
+@corsair-dev/ollama:build: 
+@corsair-dev/ollama:build: 
+@corsair-dev/ollama:build: > @corsair-dev/ollama@0.1.0 build /Users/kathir/corsair-apilio/packages/ollama
+@corsair-dev/ollama:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/ollama:build: 
+@corsair-dev/ollama:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/ollama:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/ollama:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/ollama:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/ollama/tsup.config.ts
+@corsair-dev/ollama:build: [34mCLI[39m Target: esnext
+@corsair-dev/ollama:build: [34mESM[39m Build start
+@corsair-dev/ollama:build: [32mESM[39m [1mdist/index.js [22m[32m13.83 KB[39m
+@corsair-dev/ollama:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/cursor:build: cache hit, replaying logs 8948f352cde86d9a
+@corsair-dev/cursor:build: 
+@corsair-dev/cursor:build: 
+@corsair-dev/cursor:build: > @corsair-dev/cursor@0.1.3 build /Users/kathir/corsair-apilio/packages/cursor
+@corsair-dev/cursor:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/cursor:build: 
+@corsair-dev/cursor:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/cursor:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/cursor:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/cursor:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/cursor/tsup.config.ts
+@corsair-dev/cursor:build: [34mCLI[39m Target: esnext
+@corsair-dev/cursor:build: [34mESM[39m Build start
+@corsair-dev/cursor:build: [32mESM[39m [1mdist/index.js [22m[32m8.24 KB[39m
+@corsair-dev/cursor:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/asyncinterview:build: cache hit, replaying logs 434895224b6db440
+@corsair-dev/asyncinterview:build: 
+@corsair-dev/asyncinterview:build: 
+@corsair-dev/asyncinterview:build: > @corsair-dev/asyncinterview@0.1.0 build /Users/kathir/corsair-apilio/packages/asyncinterview
+@corsair-dev/asyncinterview:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/asyncinterview:build: 
+@corsair-dev/asyncinterview:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/asyncinterview:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/asyncinterview:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/asyncinterview:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/asyncinterview/tsup.config.ts
+@corsair-dev/asyncinterview:build: [34mCLI[39m Target: esnext
+@corsair-dev/asyncinterview:build: [34mESM[39m Build start
+@corsair-dev/asyncinterview:build: [32mESM[39m [1mdist/index.js [22m[32m6.74 KB[39m
+@corsair-dev/asyncinterview:build: [32mESM[39m ⚡️ Build success in 12ms
+@corsair-dev/contentfulgraphql:build: cache hit, replaying logs 23c3cdb0661eeb3e
+@corsair-dev/contentfulgraphql:build: 
+@corsair-dev/contentfulgraphql:build: 
+@corsair-dev/contentfulgraphql:build: > @corsair-dev/contentfulgraphql@0.1.0 build /Users/kathir/corsair-apilio/packages/contentfulgraphql
+@corsair-dev/contentfulgraphql:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/contentfulgraphql:build: 
+@corsair-dev/contentfulgraphql:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/contentfulgraphql:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/contentfulgraphql:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/contentfulgraphql:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/contentfulgraphql/tsup.config.ts
+@corsair-dev/contentfulgraphql:build: [34mCLI[39m Target: esnext
+@corsair-dev/contentfulgraphql:build: [34mESM[39m Build start
+@corsair-dev/contentfulgraphql:build: [32mESM[39m [1mdist/index.js [22m[32m6.73 KB[39m
+@corsair-dev/contentfulgraphql:build: [32mESM[39m ⚡️ Build success in 13ms
+@corsair-dev/harvest:build: cache hit, replaying logs 6205f6ec4165c44c
+@corsair-dev/harvest:build: 
+@corsair-dev/harvest:build: 
+@corsair-dev/harvest:build: > @corsair-dev/harvest@0.1.0 build /Users/kathir/corsair-apilio/packages/harvest
+@corsair-dev/harvest:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/harvest:build: 
+@corsair-dev/harvest:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/harvest:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/harvest:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/harvest:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/harvest/tsup.config.ts
+@corsair-dev/harvest:build: [34mCLI[39m Target: esnext
+@corsair-dev/harvest:build: [34mESM[39m Build start
+@corsair-dev/harvest:build: [32mESM[39m [1mdist/index.js [22m[32m53.52 KB[39m
+@corsair-dev/harvest:build: [32mESM[39m ⚡️ Build success in 31ms
+@corsair-dev/abstract:build: cache hit, replaying logs c69a54a55ab71ccd
+@corsair-dev/abstract:build: 
+@corsair-dev/abstract:build: 
+@corsair-dev/abstract:build: > @corsair-dev/abstract@0.1.0 build /Users/kathir/corsair-apilio/packages/abstract
+@corsair-dev/abstract:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/abstract:build: 
+@corsair-dev/abstract:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/abstract:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/abstract:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/abstract:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/abstract/tsup.config.ts
+@corsair-dev/abstract:build: [34mCLI[39m Target: esnext
+@corsair-dev/abstract:build: [34mESM[39m Build start
+@corsair-dev/abstract:build: [32mESM[39m [1mdist/index.js [22m[32m12.15 KB[39m
+@corsair-dev/abstract:build: [32mESM[39m ⚡️ Build success in 23ms
+@corsair-dev/teams:build: cache hit, replaying logs cac8aaf3879d78e2
+@corsair-dev/calendly:build: cache hit, replaying logs 5545bd7513f65cc5
+@corsair-dev/apify:build: cache hit, replaying logs 91f46b834895a808
+@corsair-dev/calendly:build: 
+@corsair-dev/calendly:build: 
+@corsair-dev/calendly:build: > @corsair-dev/calendly@0.1.3 build /Users/kathir/corsair-apilio/packages/calendly
+@corsair-dev/calendly:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/calendly:build: 
+@corsair-dev/calendly:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/calendly:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/calendly:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/calendly:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/calendly/tsup.config.ts
+@corsair-dev/calendly:build: [34mCLI[39m Target: esnext
+@corsair-dev/calendly:build: [34mESM[39m Build start
+@corsair-dev/calendly:build: [32mESM[39m [1mdist/index.js [22m[32m66.19 KB[39m
+@corsair-dev/calendly:build: [32mESM[39m ⚡️ Build success in 25ms
+@corsair-dev/apify:build: 
+@corsair-dev/apify:build: 
+@corsair-dev/apify:build: > @corsair-dev/apify@0.1.0 build /Users/kathir/corsair-apilio/packages/apify
+@corsair-dev/apify:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/apify:build: 
+@corsair-dev/apify:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/apify:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/apify:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/apify:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/apify/tsup.config.ts
+@corsair-dev/apify:build: [34mCLI[39m Target: esnext
+@corsair-dev/apify:build: [34mESM[39m Build start
+@corsair-dev/apify:build: [32mESM[39m [1mdist/index.js [22m[32m60.25 KB[39m
+@corsair-dev/apify:build: [32mESM[39m ⚡️ Build success in 66ms
+@corsair-dev/bitbucket:build: cache hit, replaying logs f63c24c6b890925a
+@corsair-dev/teams:build: 
+@corsair-dev/teams:build: 
+@corsair-dev/teams:build: > @corsair-dev/teams@0.1.5 build /Users/kathir/corsair-apilio/packages/teams
+@corsair-dev/teams:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/teams:build: 
+@corsair-dev/teams:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/teams:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/teams:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/teams:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/teams/tsup.config.ts
+@corsair-dev/teams:build: [34mCLI[39m Target: esnext
+@corsair-dev/teams:build: [34mESM[39m Build start
+@corsair-dev/teams:build: [32mESM[39m [1mdist/index.js [22m[32m36.85 KB[39m
+@corsair-dev/teams:build: [32mESM[39m ⚡️ Build success in 23ms
+@corsair-dev/bitbucket:build: 
+@corsair-dev/bitbucket:build: 
+@corsair-dev/bitbucket:build: > @corsair-dev/bitbucket@0.1.0 build /Users/kathir/corsair-apilio/packages/bitbucket
+@corsair-dev/bitbucket:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/bitbucket:build: 
+@corsair-dev/bitbucket:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/bitbucket:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/bitbucket:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/bitbucket:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/bitbucket/tsup.config.ts
+@corsair-dev/bitbucket:build: [34mCLI[39m Target: esnext
+@corsair-dev/bitbucket:build: [34mESM[39m Build start
+@corsair-dev/bitbucket:build: [32mESM[39m [1mdist/index.js [22m[32m162.76 KB[39m
+@corsair-dev/bitbucket:build: [32mESM[39m ⚡️ Build success in 35ms
+@corsair-dev/hashnode:build: cache hit, replaying logs eef9eebf6e13f087
+@corsair-dev/hashnode:build: 
+@corsair-dev/hashnode:build: 
+@corsair-dev/hashnode:build: > @corsair-dev/hashnode@0.1.0 build /Users/kathir/corsair-apilio/packages/hashnode
+@corsair-dev/hashnode:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/hashnode:build: 
+@corsair-dev/hashnode:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/hashnode:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/hashnode:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/hashnode:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/hashnode/tsup.config.ts
+@corsair-dev/hashnode:build: [34mCLI[39m Target: esnext
+@corsair-dev/hashnode:build: [34mESM[39m Build start
+@corsair-dev/hashnode:build: [32mESM[39m [1mdist/index.js [22m[32m31.00 KB[39m
+@corsair-dev/hashnode:build: [32mESM[39m ⚡️ Build success in 96ms
+@corsair-dev/telegram:build: cache hit, replaying logs 0b571b887384a7b4
+@corsair-dev/telegram:build: 
+@corsair-dev/telegram:build: 
+@corsair-dev/telegram:build: > @corsair-dev/telegram@0.1.4 build /Users/kathir/corsair-apilio/packages/telegram
+@corsair-dev/telegram:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/telegram:build: 
+@corsair-dev/telegram:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/telegram:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/telegram:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/telegram:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/telegram/tsup.config.ts
+@corsair-dev/telegram:build: [34mCLI[39m Target: esnext
+@corsair-dev/telegram:build: [34mESM[39m Build start
+@corsair-dev/telegram:build: [32mESM[39m [1mdist/index.js [22m[32m38.43 KB[39m
+@corsair-dev/telegram:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/amplitude:build: cache hit, replaying logs 72d4a1400ae8afba
+@corsair-dev/amplitude:build: 
+@corsair-dev/amplitude:build: 
+@corsair-dev/amplitude:build: > @corsair-dev/amplitude@0.1.3 build /Users/kathir/corsair-apilio/packages/amplitude
+@corsair-dev/amplitude:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/amplitude:build: 
+@corsair-dev/amplitude:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/amplitude:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/amplitude:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/amplitude:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/amplitude/tsup.config.ts
+@corsair-dev/amplitude:build: [34mCLI[39m Target: esnext
+@corsair-dev/amplitude:build: [34mESM[39m Build start
+@corsair-dev/amplitude:build: [32mESM[39m [1mdist/index.js [22m[32m28.58 KB[39m
+@corsair-dev/amplitude:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/gemini:build: cache hit, replaying logs 8353d2c76568bf05
+@corsair-dev/gemini:build: 
+@corsair-dev/gemini:build: 
+@corsair-dev/gemini:build: > @corsair-dev/gemini@0.1.0 build /Users/kathir/corsair-apilio/packages/gemini
+@corsair-dev/gemini:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/gemini:build: 
+@corsair-dev/gemini:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/gemini:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/gemini:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/gemini:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/gemini/tsup.config.ts
+@corsair-dev/gemini:build: [34mCLI[39m Target: esnext
+@corsair-dev/gemini:build: [34mESM[39m Build start
+@corsair-dev/gemini:build: [32mESM[39m [1mdist/index.js [22m[32m13.72 KB[39m
+@corsair-dev/gemini:build: [32mESM[39m ⚡️ Build success in 32ms
+@corsair-dev/dropbox:build: cache hit, replaying logs 285cb06a5ffd7749
+@corsair-dev/dropbox:build: 
+@corsair-dev/dropbox:build: 
+@corsair-dev/dropbox:build: > @corsair-dev/dropbox@0.1.4 build /Users/kathir/corsair-apilio/packages/dropbox
+@corsair-dev/dropbox:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/dropbox:build: 
+@corsair-dev/dropbox:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/dropbox:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/dropbox:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/dropbox:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/dropbox/tsup.config.ts
+@corsair-dev/dropbox:build: [34mCLI[39m Target: esnext
+@corsair-dev/dropbox:build: [34mESM[39m Build start
+@corsair-dev/dropbox:build: [32mESM[39m [1mdist/index.js [22m[32m21.82 KB[39m
+@corsair-dev/dropbox:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/api2pdf:build: cache hit, replaying logs 7aabedc59662e54c
+@corsair-dev/api2pdf:build: 
+@corsair-dev/api2pdf:build: 
+@corsair-dev/api2pdf:build: > @corsair-dev/api2pdf@0.1.0 build /Users/kathir/corsair-apilio/packages/api2pdf
+@corsair-dev/api2pdf:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/api2pdf:build: 
+@corsair-dev/api2pdf:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/api2pdf:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/api2pdf:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/api2pdf:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/api2pdf/tsup.config.ts
+@corsair-dev/api2pdf:build: [34mCLI[39m Target: esnext
+@corsair-dev/api2pdf:build: [34mESM[39m Build start
+@corsair-dev/api2pdf:build: [32mESM[39m [1mdist/index.js [22m[32m12.10 KB[39m
+@corsair-dev/api2pdf:build: [32mESM[39m ⚡️ Build success in 112ms
+@corsair-dev/formbricks:build: cache hit, replaying logs 3500669970de8107
+@corsair-dev/formbricks:build: 
+@corsair-dev/formbricks:build: 
+@corsair-dev/formbricks:build: > @corsair-dev/formbricks@0.1.0 build /Users/kathir/corsair-apilio/packages/formbricks
+@corsair-dev/formbricks:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/formbricks:build: 
+@corsair-dev/formbricks:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/formbricks:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/formbricks:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/formbricks:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/formbricks/tsup.config.ts
+@corsair-dev/formbricks:build: [34mCLI[39m Target: esnext
+@corsair-dev/formbricks:build: [34mESM[39m Build start
+@corsair-dev/formbricks:build: [32mESM[39m [1mdist/index.js [22m[32m37.02 KB[39m
+@corsair-dev/formbricks:build: [32mESM[39m ⚡️ Build success in 29ms
+@corsair-dev/botpress:build: cache hit, replaying logs 1d8998e71d561558
+@corsair-dev/botpress:build: 
+@corsair-dev/botpress:build: 
+@corsair-dev/botpress:build: > @corsair-dev/botpress@0.1.1 build /Users/kathir/corsair-apilio/packages/botpress
+@corsair-dev/botpress:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/botpress:build: 
+@corsair-dev/botpress:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/botpress:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/botpress:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/botpress:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/botpress/tsup.config.ts
+@corsair-dev/botpress:build: [34mCLI[39m Target: esnext
+@corsair-dev/botpress:build: [34mESM[39m Build start
+@corsair-dev/botpress:build: [32mESM[39m [1mdist/index.js [22m[32m51.29 KB[39m
+@corsair-dev/botpress:build: [32mESM[39m ⚡️ Build success in 64ms
+@corsair-dev/apaleo:build: cache hit, replaying logs 7600571098d24052
+@corsair-dev/apaleo:build: 
+@corsair-dev/apaleo:build: 
+@corsair-dev/apaleo:build: > @corsair-dev/apaleo@0.1.0 build /Users/kathir/corsair-apilio/packages/apaleo
+@corsair-dev/apaleo:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/apaleo:build: 
+@corsair-dev/apaleo:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/apaleo:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/apaleo:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/apaleo:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/apaleo/tsup.config.ts
+@corsair-dev/apaleo:build: [34mCLI[39m Target: esnext
+@corsair-dev/apaleo:build: [34mESM[39m Build start
+@corsair-dev/apaleo:build: [32mESM[39m [1mdist/index.js [22m[32m24.47 KB[39m
+@corsair-dev/apaleo:build: [32mESM[39m ⚡️ Build success in 30ms
+@corsair-dev/insightoai:build: cache hit, replaying logs 2e80e99c3d18aaa7
+@corsair-dev/insightoai:build: 
+@corsair-dev/insightoai:build: 
+@corsair-dev/insightoai:build: > @corsair-dev/insightoai@0.1.0 build /Users/kathir/corsair-apilio/packages/insightoai
+@corsair-dev/insightoai:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/insightoai:build: 
+@corsair-dev/insightoai:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/insightoai:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/insightoai:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/insightoai:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/insightoai/tsup.config.ts
+@corsair-dev/insightoai:build: [34mCLI[39m Target: esnext
+@corsair-dev/insightoai:build: [34mESM[39m Build start
+@corsair-dev/insightoai:build: [32mESM[39m [1mdist/index.js [22m[32m46.12 KB[39m
+@corsair-dev/insightoai:build: [32mESM[39m ⚡️ Build success in 36ms
+@corsair-dev/kaggle:build: cache hit, replaying logs 21dec4450d7ff4a1
+@corsair-dev/kaggle:build: 
+@corsair-dev/kaggle:build: 
+@corsair-dev/kaggle:build: > @corsair-dev/kaggle@0.1.0 build /Users/kathir/corsair-apilio/packages/kaggle
+@corsair-dev/kaggle:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/kaggle:build: 
+@corsair-dev/kaggle:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/kaggle:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/kaggle:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/kaggle:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/kaggle/tsup.config.ts
+@corsair-dev/kaggle:build: [34mCLI[39m Target: esnext
+@corsair-dev/kaggle:build: [34mESM[39m Build start
+@corsair-dev/kaggle:build: [32mESM[39m [1mdist/index.js [22m[32m25.40 KB[39m
+@corsair-dev/kaggle:build: [32mESM[39m ⚡️ Build success in 52ms
+@corsair-dev/digitalocean:build: cache hit, replaying logs 62245b47240ff301
+@corsair-dev/digitalocean:build: 
+@corsair-dev/digitalocean:build: 
+@corsair-dev/digitalocean:build: > @corsair-dev/digitalocean@0.1.0 build /Users/kathir/corsair-apilio/packages/digitalocean
+@corsair-dev/digitalocean:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/digitalocean:build: 
+@corsair-dev/digitalocean:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/digitalocean:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/digitalocean:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/digitalocean:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/digitalocean/tsup.config.ts
+@corsair-dev/digitalocean:build: [34mCLI[39m Target: esnext
+@corsair-dev/digitalocean:build: [34mESM[39m Build start
+@corsair-dev/digitalocean:build: [32mESM[39m [1mdist/index.js [22m[32m43.17 KB[39m
+@corsair-dev/digitalocean:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/xquik:build: cache hit, replaying logs d460f663b7fac990
+@corsair-dev/xquik:build: 
+@corsair-dev/xquik:build: 
+@corsair-dev/xquik:build: > @corsair-dev/xquik@0.1.1 build /Users/kathir/corsair-apilio/packages/xquik
+@corsair-dev/xquik:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/xquik:build: 
+@corsair-dev/xquik:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/xquik:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/xquik:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/xquik:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/xquik/tsup.config.ts
+@corsair-dev/xquik:build: [34mCLI[39m Target: esnext
+@corsair-dev/xquik:build: [34mESM[39m Build start
+@corsair-dev/xquik:build: [32mESM[39m [1mdist/index.js [22m[32m24.60 KB[39m
+@corsair-dev/xquik:build: [32mESM[39m ⚡️ Build success in 27ms
+@corsair-dev/agentmail:build: cache hit, replaying logs e75b0d497e57e91f
+@corsair-dev/agentmail:build: 
+@corsair-dev/agentmail:build: 
+@corsair-dev/agentmail:build: > @corsair-dev/agentmail@0.1.0 build /Users/kathir/corsair-apilio/packages/agentmail
+@corsair-dev/agentmail:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/agentmail:build: 
+@corsair-dev/agentmail:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/agentmail:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/agentmail:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/agentmail:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/agentmail/tsup.config.ts
+@corsair-dev/agentmail:build: [34mCLI[39m Target: esnext
+@corsair-dev/agentmail:build: [34mESM[39m Build start
+@corsair-dev/agentmail:build: [32mESM[39m [1mdist/index.js [22m[32m10.60 KB[39m
+@corsair-dev/agentmail:build: [32mESM[39m ⚡️ Build success in 42ms
+@corsair-dev/cli:build: cache hit, replaying logs 0c23b6aa38432620
+@corsair-dev/cli:build: 
+@corsair-dev/cli:build: 
+@corsair-dev/cli:build: > @corsair-dev/cli@0.1.20 build /Users/kathir/corsair-apilio/packages/cli
+@corsair-dev/cli:build: > tsup && tsc -p tsconfig.build.json
+@corsair-dev/cli:build: 
+@corsair-dev/cli:build: [34mCLI[39m Building entry: src/index.ts
+@corsair-dev/cli:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/cli:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/cli:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/cli/tsup.config.ts
+@corsair-dev/cli:build: [34mCLI[39m Target: esnext
+@corsair-dev/cli:build: [34mCLI[39m Cleaning output folder
+@corsair-dev/cli:build: [34mESM[39m Build start
+@corsair-dev/cli:build: [32mESM[39m [1mdist/index.js [22m[32m95.37 KB[39m
+@corsair-dev/cli:build: [32mESM[39m ⚡️ Build success in 122ms
+@corsair-dev/github:build: cache hit, replaying logs 77530e3961ba53da
+@corsair-dev/github:build: 
+@corsair-dev/github:build: 
+@corsair-dev/github:build: > @corsair-dev/github@0.1.18 build /Users/kathir/corsair-apilio/packages/github
+@corsair-dev/github:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/github:build: 
+@corsair-dev/github:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/github:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/github:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/github:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/github/tsup.config.ts
+@corsair-dev/github:build: [34mCLI[39m Target: esnext
+@corsair-dev/github:build: [34mESM[39m Build start
+@corsair-dev/github:build: [32mESM[39m [1mdist/index.js [22m[32m147.11 KB[39m
+@corsair-dev/github:build: [32mESM[39m ⚡️ Build success in 54ms
+@corsair-dev/alphavantage:build: cache hit, replaying logs eed3dd019a59249d
+@corsair-dev/alphavantage:build: 
+@corsair-dev/alphavantage:build: 
+@corsair-dev/alphavantage:build: > @corsair-dev/alphavantage@0.1.0 build /Users/kathir/corsair-apilio/packages/alphavantage
+@corsair-dev/alphavantage:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/alphavantage:build: 
+@corsair-dev/alphavantage:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/alphavantage:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/alphavantage:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/alphavantage:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/alphavantage/tsup.config.ts
+@corsair-dev/alphavantage:build: [34mCLI[39m Target: esnext
+@corsair-dev/alphavantage:build: [34mESM[39m Build start
+@corsair-dev/alphavantage:build: [32mESM[39m [1mdist/index.js [22m[32m42.80 KB[39m
+@corsair-dev/alphavantage:build: [32mESM[39m ⚡️ Build success in 21ms
+@corsair-dev/ayrshare:build: cache hit, replaying logs 9db3686f33bb8c28
+@corsair-dev/ayrshare:build: 
+@corsair-dev/ayrshare:build: 
+@corsair-dev/ayrshare:build: > @corsair-dev/ayrshare@0.1.1 build /Users/kathir/corsair-apilio/packages/ayrshare
+@corsair-dev/ayrshare:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/ayrshare:build: 
+@corsair-dev/ayrshare:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/ayrshare:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/ayrshare:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/ayrshare:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/ayrshare/tsup.config.ts
+@corsair-dev/ayrshare:build: [34mCLI[39m Target: esnext
+@corsair-dev/ayrshare:build: [34mESM[39m Build start
+@corsair-dev/ayrshare:build: [32mESM[39m [1mdist/index.js [22m[32m10.77 KB[39m
+@corsair-dev/ayrshare:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/zendesk:build: cache hit, replaying logs 42f5627423fa1b9a
+@corsair-dev/zendesk:build: 
+@corsair-dev/zendesk:build: 
+@corsair-dev/zendesk:build: > @corsair-dev/zendesk@0.1.1 build /Users/kathir/corsair-apilio/packages/zendesk
+@corsair-dev/zendesk:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/zendesk:build: 
+@corsair-dev/zendesk:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/zendesk:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/zendesk:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/zendesk:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/zendesk/tsup.config.ts
+@corsair-dev/zendesk:build: [34mCLI[39m Target: esnext
+@corsair-dev/zendesk:build: [34mESM[39m Build start
+@corsair-dev/zendesk:build: [32mESM[39m [1mdist/index.js [22m[32m20.04 KB[39m
+@corsair-dev/zendesk:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/aeroleads:build: cache hit, replaying logs 593bc51336f35f19
+@corsair-dev/aeroleads:build: 
+@corsair-dev/aeroleads:build: 
+@corsair-dev/aeroleads:build: > @corsair-dev/aeroleads@0.1.0 build /Users/kathir/corsair-apilio/packages/aeroleads
+@corsair-dev/aeroleads:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/aeroleads:build: 
+@corsair-dev/aeroleads:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/aeroleads:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/aeroleads:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/aeroleads:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/aeroleads/tsup.config.ts
+@corsair-dev/aeroleads:build: [34mCLI[39m Target: esnext
+@corsair-dev/aeroleads:build: [34mESM[39m Build start
+@corsair-dev/aeroleads:build: [32mESM[39m [1mdist/index.js [22m[32m5.92 KB[39m
+@corsair-dev/aeroleads:build: [32mESM[39m ⚡️ Build success in 12ms
+@corsair-dev/bigml:build: cache hit, replaying logs d2cd851e2d92f81f
+@corsair-dev/bigml:build: 
+@corsair-dev/bigml:build: 
+@corsair-dev/bigml:build: > @corsair-dev/bigml@0.1.0 build /Users/kathir/corsair-apilio/packages/bigml
+@corsair-dev/bigml:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/bigml:build: 
+@corsair-dev/bigml:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/bigml:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/bigml:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/bigml:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/bigml/tsup.config.ts
+@corsair-dev/bigml:build: [34mCLI[39m Target: esnext
+@corsair-dev/bigml:build: [34mESM[39m Build start
+@corsair-dev/bigml:build: [32mESM[39m [1mdist/index.js [22m[32m24.97 KB[39m
+@corsair-dev/bigml:build: [32mESM[39m ⚡️ Build success in 84ms
+@corsair-dev/monday:build: cache hit, replaying logs 775b37a04eeb3749
+@corsair-dev/monday:build: 
+@corsair-dev/monday:build: 
+@corsair-dev/monday:build: > @corsair-dev/monday@0.1.3 build /Users/kathir/corsair-apilio/packages/monday
+@corsair-dev/monday:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/monday:build: 
+@corsair-dev/monday:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/monday:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/monday:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/monday:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/monday/tsup.config.ts
+@corsair-dev/monday:build: [34mCLI[39m Target: esnext
+@corsair-dev/monday:build: [34mESM[39m Build start
+@corsair-dev/monday:build: [32mESM[39m [1mdist/index.js [22m[32m32.20 KB[39m
+@corsair-dev/monday:build: [32mESM[39m ⚡️ Build success in 29ms
+@corsair-dev/openweathermap:build: cache hit, replaying logs 0ba5645228c9a4fa
+@corsair-dev/openweathermap:build: 
+@corsair-dev/openweathermap:build: 
+@corsair-dev/openweathermap:build: > @corsair-dev/openweathermap@0.1.3 build /Users/kathir/corsair-apilio/packages/openweathermap
+@corsair-dev/openweathermap:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/openweathermap:build: 
+@corsair-dev/openweathermap:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/openweathermap:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/openweathermap:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/openweathermap:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/openweathermap/tsup.config.ts
+@corsair-dev/openweathermap:build: [34mCLI[39m Target: esnext
+@corsair-dev/openweathermap:build: [34mESM[39m Build start
+@corsair-dev/openweathermap:build: [32mESM[39m [1mdist/index.js [22m[32m30.19 KB[39m
+@corsair-dev/openweathermap:build: [32mESM[39m ⚡️ Build success in 17ms
+@corsair-dev/huggingface:build: cache hit, replaying logs fbec44e3f6c3f285
+@corsair-dev/huggingface:build: 
+@corsair-dev/huggingface:build: 
+@corsair-dev/huggingface:build: > @corsair-dev/huggingface@0.1.0 build /Users/kathir/corsair-apilio/packages/huggingface
+@corsair-dev/huggingface:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/huggingface:build: 
+@corsair-dev/huggingface:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/huggingface:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/huggingface:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/huggingface:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/huggingface/tsup.config.ts
+@corsair-dev/huggingface:build: [34mCLI[39m Target: esnext
+@corsair-dev/huggingface:build: [34mESM[39m Build start
+@corsair-dev/huggingface:build: [32mESM[39m [1mdist/index.js [22m[32m90.48 KB[39m
+@corsair-dev/huggingface:build: [32mESM[39m ⚡️ Build success in 35ms
+@corsair-dev/amcards:build: cache hit, replaying logs 60891733805eaa39
+@corsair-dev/amcards:build: 
+@corsair-dev/amcards:build: 
+@corsair-dev/amcards:build: > @corsair-dev/amcards@0.1.0 build /Users/kathir/corsair-apilio/packages/amcards
+@corsair-dev/amcards:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/amcards:build: 
+@corsair-dev/amcards:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/amcards:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/amcards:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/amcards:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/amcards/tsup.config.ts
+@corsair-dev/amcards:build: [34mCLI[39m Target: esnext
+@corsair-dev/amcards:build: [34mESM[39m Build start
+@corsair-dev/amcards:build: [32mESM[39m [1mdist/index.js [22m[32m9.75 KB[39m
+@corsair-dev/amcards:build: [32mESM[39m ⚡️ Build success in 12ms
+@corsair-dev/oura:build: cache hit, replaying logs bbc64988c76557b0
+@corsair-dev/oura:build: 
+@corsair-dev/oura:build: 
+@corsair-dev/oura:build: > @corsair-dev/oura@0.1.3 build /Users/kathir/corsair-apilio/packages/oura
+@corsair-dev/oura:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/oura:build: 
+@corsair-dev/oura:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/oura:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/oura:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/oura:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/oura/tsup.config.ts
+@corsair-dev/oura:build: [34mCLI[39m Target: esnext
+@corsair-dev/oura:build: [34mESM[39m Build start
+@corsair-dev/oura:build: [32mESM[39m [1mdist/index.js [22m[32m11.50 KB[39m
+@corsair-dev/oura:build: [32mESM[39m ⚡️ Build success in 25ms
+@corsair-dev/heygen:build: cache hit, replaying logs 122d313cc3b68fea
+@corsair-dev/heygen:build: 
+@corsair-dev/heygen:build: 
+@corsair-dev/heygen:build: > @corsair-dev/heygen@0.1.0 build /Users/kathir/corsair-apilio/packages/heygen
+@corsair-dev/heygen:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/heygen:build: 
+@corsair-dev/heygen:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/heygen:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/heygen:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/heygen:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/heygen/tsup.config.ts
+@corsair-dev/heygen:build: [34mCLI[39m Target: esnext
+@corsair-dev/heygen:build: [34mESM[39m Build start
+@corsair-dev/heygen:build: [32mESM[39m [1mdist/index.js [22m[32m94.83 KB[39m
+@corsair-dev/heygen:build: [32mESM[39m ⚡️ Build success in 48ms
+@corsair-dev/googledrive:build: cache hit, replaying logs 4a5188b0d726a5cd
+@corsair-dev/googledrive:build: 
+@corsair-dev/googledrive:build: 
+@corsair-dev/googledrive:build: > @corsair-dev/googledrive@0.1.3 build /Users/kathir/corsair-apilio/packages/googledrive
+@corsair-dev/googledrive:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/googledrive:build: 
+@corsair-dev/googledrive:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/googledrive:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/googledrive:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/googledrive:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/googledrive/tsup.config.ts
+@corsair-dev/googledrive:build: [34mCLI[39m Target: esnext
+@corsair-dev/googledrive:build: [34mESM[39m Build start
+@corsair-dev/googledrive:build: [32mESM[39m [1mdist/index.js [22m[32m37.19 KB[39m
+@corsair-dev/googledrive:build: [32mESM[39m ⚡️ Build success in 17ms
+@corsair-dev/jira:build: cache hit, replaying logs a304ae3f4c7c47da
+@corsair-dev/jira:build: 
+@corsair-dev/jira:build: 
+@corsair-dev/jira:build: > @corsair-dev/jira@0.1.4 build /Users/kathir/corsair-apilio/packages/jira
+@corsair-dev/jira:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/jira:build: 
+@corsair-dev/jira:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/jira:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/jira:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/jira:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/jira/tsup.config.ts
+@corsair-dev/jira:build: [34mCLI[39m Target: esnext
+@corsair-dev/jira:build: [34mESM[39m Build start
+@corsair-dev/jira:build: [32mESM[39m [1mdist/index.js [22m[32m45.61 KB[39m
+@corsair-dev/jira:build: [32mESM[39m ⚡️ Build success in 23ms
+@corsair-dev/canvas:build: cache hit, replaying logs b2d721fd39c5a987
+@corsair-dev/canvas:build: 
+@corsair-dev/canvas:build: 
+@corsair-dev/canvas:build: > @corsair-dev/canvas@0.1.0 build /Users/kathir/corsair-apilio/packages/canvas
+@corsair-dev/canvas:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/canvas:build: 
+@corsair-dev/canvas:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/canvas:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/canvas:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/canvas:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/canvas/tsup.config.ts
+@corsair-dev/canvas:build: [34mCLI[39m Target: esnext
+@corsair-dev/canvas:build: [34mESM[39m Build start
+@corsair-dev/canvas:build: [32mESM[39m [1mdist/index.js [22m[32m69.85 KB[39m
+@corsair-dev/canvas:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/zohomail:build: cache hit, replaying logs da1bc2dc2dffc79e
+@corsair-dev/zohomail:build: 
+@corsair-dev/zohomail:build: 
+@corsair-dev/zohomail:build: > @corsair-dev/zohomail@0.1.1 build /Users/kathir/corsair-apilio/packages/zohomail
+@corsair-dev/zohomail:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/zohomail:build: 
+@corsair-dev/zohomail:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/zohomail:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/zohomail:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/zohomail:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/zohomail/tsup.config.ts
+@corsair-dev/zohomail:build: [34mCLI[39m Target: esnext
+@corsair-dev/zohomail:build: [34mESM[39m Build start
+@corsair-dev/zohomail:build: [32mESM[39m [1mdist/index.js [22m[32m21.75 KB[39m
+@corsair-dev/zohomail:build: [32mESM[39m ⚡️ Build success in 25ms
+@corsair-dev/bigmailer:build: cache hit, replaying logs bf305b61963a358b
+@corsair-dev/bigmailer:build: 
+@corsair-dev/bigmailer:build: 
+@corsair-dev/bigmailer:build: > @corsair-dev/bigmailer@0.1.0 build /Users/kathir/corsair-apilio/packages/bigmailer
+@corsair-dev/bigmailer:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/bigmailer:build: 
+@corsair-dev/bigmailer:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/bigmailer:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/bigmailer:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/bigmailer:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/bigmailer/tsup.config.ts
+@corsair-dev/bigmailer:build: [34mCLI[39m Target: esnext
+@corsair-dev/bigmailer:build: [34mESM[39m Build start
+@corsair-dev/bigmailer:build: [32mESM[39m [1mdist/index.js [22m[32m46.36 KB[39m
+@corsair-dev/bigmailer:build: [32mESM[39m ⚡️ Build success in 30ms
+@corsair-dev/cloudinary:build: cache hit, replaying logs 0c659dde31e2bfab
+@corsair-dev/cloudinary:build: 
+@corsair-dev/cloudinary:build: 
+@corsair-dev/cloudinary:build: > @corsair-dev/cloudinary@0.1.0 build /Users/kathir/corsair-apilio/packages/cloudinary
+@corsair-dev/cloudinary:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/cloudinary:build: 
+@corsair-dev/cloudinary:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/cloudinary:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/cloudinary:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/cloudinary:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/cloudinary/tsup.config.ts
+@corsair-dev/cloudinary:build: [34mCLI[39m Target: esnext
+@corsair-dev/cloudinary:build: [34mESM[39m Build start
+@corsair-dev/cloudinary:build: [32mESM[39m [1mdist/index.js [22m[32m67.26 KB[39m
+@corsair-dev/cloudinary:build: [32mESM[39m ⚡️ Build success in 81ms
+@corsair-dev/outlook:build: cache hit, replaying logs 7191c37bfb8d9c3b
+@corsair-dev/outlook:build: 
+@corsair-dev/outlook:build: 
+@corsair-dev/outlook:build: > @corsair-dev/outlook@0.1.5 build /Users/kathir/corsair-apilio/packages/outlook
+@corsair-dev/outlook:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/outlook:build: 
+@corsair-dev/outlook:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/outlook:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/outlook:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/outlook:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/outlook/tsup.config.ts
+@corsair-dev/outlook:build: [34mCLI[39m Target: esnext
+@corsair-dev/outlook:build: [34mESM[39m Build start
+@corsair-dev/outlook:build: [32mESM[39m [1mdist/index.js [22m[32m62.32 KB[39m
+@corsair-dev/outlook:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/googledocs:build: cache hit, replaying logs 056b6cfee808d990
+@corsair-dev/googledocs:build: 
+@corsair-dev/googledocs:build: 
+@corsair-dev/googledocs:build: > @corsair-dev/googledocs@0.1.1 build /Users/kathir/corsair-apilio/packages/googledocs
+@corsair-dev/googledocs:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/googledocs:build: 
+@corsair-dev/googledocs:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/googledocs:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/googledocs:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/googledocs:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/googledocs/tsup.config.ts
+@corsair-dev/googledocs:build: [34mCLI[39m Target: esnext
+@corsair-dev/googledocs:build: [34mESM[39m Build start
+@corsair-dev/googledocs:build: [32mESM[39m [1mdist/index.js [22m[32m36.00 KB[39m
+@corsair-dev/googledocs:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/agentql:build: cache hit, replaying logs c7942cd92f9ba16a
+@corsair-dev/agentql:build: 
+@corsair-dev/agentql:build: 
+@corsair-dev/agentql:build: > @corsair-dev/agentql@0.1.0 build /Users/kathir/corsair-apilio/packages/agentql
+@corsair-dev/agentql:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/agentql:build: 
+@corsair-dev/agentql:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/agentql:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/agentql:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/agentql:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/agentql/tsup.config.ts
+@corsair-dev/agentql:build: [34mCLI[39m Target: esnext
+@corsair-dev/agentql:build: [34mESM[39m Build start
+@corsair-dev/agentql:build: [32mESM[39m [1mdist/index.js [22m[32m10.95 KB[39m
+@corsair-dev/agentql:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/ambee:build: cache hit, replaying logs fa9b0534963e920d
+@corsair-dev/ambee:build: 
+@corsair-dev/ambee:build: 
+@corsair-dev/ambee:build: > @corsair-dev/ambee@0.1.0 build /Users/kathir/corsair-apilio/packages/ambee
+@corsair-dev/ambee:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/ambee:build: 
+@corsair-dev/ambee:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/ambee:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/ambee:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/ambee:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/ambee/tsup.config.ts
+@corsair-dev/ambee:build: [34mCLI[39m Target: esnext
+@corsair-dev/ambee:build: [34mESM[39m Build start
+@corsair-dev/ambee:build: [32mESM[39m [1mdist/index.js [22m[32m33.42 KB[39m
+@corsair-dev/ambee:build: [32mESM[39m ⚡️ Build success in 23ms
+@corsair-dev/twitter:build: cache hit, replaying logs 828017c299c03ad6
+@corsair-dev/twitter:build: 
+@corsair-dev/twitter:build: 
+@corsair-dev/twitter:build: > @corsair-dev/twitter@0.1.3 build /Users/kathir/corsair-apilio/packages/twitter
+@corsair-dev/twitter:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/twitter:build: 
+@corsair-dev/twitter:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/twitter:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/twitter:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/twitter:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/twitter/tsup.config.ts
+@corsair-dev/twitter:build: [34mCLI[39m Target: esnext
+@corsair-dev/twitter:build: [34mESM[39m Build start
+@corsair-dev/twitter:build: [32mESM[39m [1mdist/index.js [22m[32m5.56 KB[39m
+@corsair-dev/twitter:build: [32mESM[39m ⚡️ Build success in 17ms
+@corsair-dev/salesforce:build: cache hit, replaying logs 0fdd7cf601fc787c
+@corsair-dev/salesforce:build: 
+@corsair-dev/salesforce:build: 
+@corsair-dev/salesforce:build: > @corsair-dev/salesforce@0.1.0 build /Users/kathir/corsair-apilio/packages/salesforce
+@corsair-dev/salesforce:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/salesforce:build: 
+@corsair-dev/salesforce:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/salesforce:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/salesforce:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/salesforce:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/salesforce/tsup.config.ts
+@corsair-dev/salesforce:build: [34mCLI[39m Target: esnext
+@corsair-dev/salesforce:build: [34mESM[39m Build start
+@corsair-dev/salesforce:build: [32mESM[39m [1mdist/index.js [22m[32m159.44 KB[39m
+@corsair-dev/salesforce:build: [32mESM[39m ⚡️ Build success in 35ms
+@corsair-dev/wiza:build: cache hit, replaying logs 69388d53680f7157
+@corsair-dev/wiza:build: 
+@corsair-dev/wiza:build: 
+@corsair-dev/wiza:build: > @corsair-dev/wiza@0.1.0 build /Users/kathir/corsair-apilio/packages/wiza
+@corsair-dev/wiza:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/wiza:build: 
+@corsair-dev/wiza:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/wiza:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/wiza:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/wiza:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/wiza/tsup.config.ts
+@corsair-dev/wiza:build: [34mCLI[39m Target: esnext
+@corsair-dev/wiza:build: [34mESM[39m Build start
+@corsair-dev/wiza:build: [32mESM[39m [1mdist/index.js [22m[32m10.24 KB[39m
+@corsair-dev/wiza:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/tally:build: cache hit, replaying logs df3aa47f37e2b3ca
+@corsair-dev/tally:build: 
+@corsair-dev/tally:build: 
+@corsair-dev/tally:build: > @corsair-dev/tally@0.1.1 build /Users/kathir/corsair-apilio/packages/tally
+@corsair-dev/tally:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/tally:build: 
+@corsair-dev/tally:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/tally:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/tally:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/tally:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/tally/tsup.config.ts
+@corsair-dev/tally:build: [34mCLI[39m Target: esnext
+@corsair-dev/tally:build: [34mESM[39m Build start
+@corsair-dev/tally:build: [32mESM[39m [1mdist/index.js [22m[32m22.92 KB[39m
+@corsair-dev/tally:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/openai:build: cache hit, replaying logs 08c3d5be355f2bf6
+@corsair-dev/openai:build: 
+@corsair-dev/openai:build: 
+@corsair-dev/openai:build: > @corsair-dev/openai@0.1.0 build /Users/kathir/corsair-apilio/packages/openai
+@corsair-dev/openai:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/openai:build: 
+@corsair-dev/openai:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/openai:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/openai:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/openai:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/openai/tsup.config.ts
+@corsair-dev/openai:build: [34mCLI[39m Target: esnext
+@corsair-dev/openai:build: [34mESM[39m Build start
+@corsair-dev/openai:build: [32mESM[39m [1mdist/index.js [22m[32m102.22 KB[39m
+@corsair-dev/openai:build: [32mESM[39m ⚡️ Build success in 87ms
+@corsair-dev/dodopayments:build: cache hit, replaying logs fad0f3388141a5bb
+@corsair-dev/dodopayments:build: 
+@corsair-dev/dodopayments:build: 
+@corsair-dev/dodopayments:build: > @corsair-dev/dodopayments@0.1.4 build /Users/kathir/corsair-apilio/packages/dodopayments
+@corsair-dev/dodopayments:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/dodopayments:build: 
+@corsair-dev/dodopayments:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/dodopayments:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/dodopayments:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/dodopayments:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/dodopayments/tsup.config.ts
+@corsair-dev/dodopayments:build: [34mCLI[39m Target: esnext
+@corsair-dev/dodopayments:build: [34mESM[39m Build start
+@corsair-dev/dodopayments:build: [32mESM[39m [1mdist/index.js [22m[32m14.77 KB[39m
+@corsair-dev/dodopayments:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/googleaddressvalidation:build: cache hit, replaying logs 00f09a6c0d9bd2fa
+@corsair-dev/googleaddressvalidation:build: 
+@corsair-dev/googleaddressvalidation:build: 
+@corsair-dev/googleaddressvalidation:build: > @corsair-dev/googleaddressvalidation@0.1.0 build /Users/kathir/corsair-apilio/packages/googleaddressvalidation
+@corsair-dev/googleaddressvalidation:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/googleaddressvalidation:build: 
+@corsair-dev/googleaddressvalidation:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/googleaddressvalidation:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/googleaddressvalidation:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/googleaddressvalidation:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/googleaddressvalidation/tsup.config.ts
+@corsair-dev/googleaddressvalidation:build: [34mCLI[39m Target: esnext
+@corsair-dev/googleaddressvalidation:build: [34mESM[39m Build start
+@corsair-dev/googleaddressvalidation:build: [32mESM[39m [1mdist/index.js [22m[32m8.02 KB[39m
+@corsair-dev/googleaddressvalidation:build: [32mESM[39m ⚡️ Build success in 14ms
+@corsair-dev/ocrspace:build: cache hit, replaying logs 0a4e43eb69a7abe9
+@corsair-dev/ocrspace:build: 
+@corsair-dev/ocrspace:build: 
+@corsair-dev/ocrspace:build: > @corsair-dev/ocrspace@0.1.0 build /Users/kathir/corsair-apilio/packages/ocrspace
+@corsair-dev/ocrspace:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/ocrspace:build: 
+@corsair-dev/ocrspace:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/ocrspace:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/ocrspace:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/ocrspace:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/ocrspace/tsup.config.ts
+@corsair-dev/ocrspace:build: [34mCLI[39m Target: esnext
+@corsair-dev/ocrspace:build: [34mESM[39m Build start
+@corsair-dev/ocrspace:build: [32mESM[39m [1mdist/index.js [22m[32m11.84 KB[39m
+@corsair-dev/ocrspace:build: [32mESM[39m ⚡️ Build success in 26ms
+@corsair-dev/basecamp:build: cache hit, replaying logs ec4c6df0e8285141
+@corsair-dev/alchemy:build: cache hit, replaying logs 784bf3111714542b
+@corsair-dev/basecamp:build: 
+@corsair-dev/basecamp:build: 
+@corsair-dev/basecamp:build: > @corsair-dev/basecamp@0.1.0 build /Users/kathir/corsair-apilio/packages/basecamp
+@corsair-dev/basecamp:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/basecamp:build: 
+@corsair-dev/basecamp:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/basecamp:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/basecamp:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/basecamp:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/basecamp/tsup.config.ts
+@corsair-dev/basecamp:build: [34mCLI[39m Target: esnext
+@corsair-dev/basecamp:build: [34mESM[39m Build start
+@corsair-dev/basecamp:build: [32mESM[39m [1mdist/index.js [22m[32m510.87 KB[39m
+@corsair-dev/basecamp:build: [32mESM[39m ⚡️ Build success in 48ms
+@corsair-dev/alchemy:build: 
+@corsair-dev/alchemy:build: 
+@corsair-dev/alchemy:build: > @corsair-dev/alchemy@0.1.1 build /Users/kathir/corsair-apilio/packages/alchemy
+@corsair-dev/alchemy:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/alchemy:build: 
+@corsair-dev/alchemy:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/alchemy:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/alchemy:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/alchemy:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/alchemy/tsup.config.ts
+@corsair-dev/alchemy:build: [34mCLI[39m Target: esnext
+@corsair-dev/alchemy:build: [34mESM[39m Build start
+@corsair-dev/alchemy:build: [32mESM[39m [1mdist/index.js [22m[32m37.91 KB[39m
+@corsair-dev/alchemy:build: [32mESM[39m ⚡️ Build success in 23ms
+@corsair-dev/ambientweather:build: cache hit, replaying logs 325f172d52389aa8
+@corsair-dev/ambientweather:build: 
+@corsair-dev/ambientweather:build: 
+@corsair-dev/ambientweather:build: > @corsair-dev/ambientweather@0.1.0 build /Users/kathir/corsair-apilio/packages/ambientweather
+@corsair-dev/ambientweather:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/ambientweather:build: 
+@corsair-dev/ambientweather:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/ambientweather:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/ambientweather:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/ambientweather:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/ambientweather/tsup.config.ts
+@corsair-dev/ambientweather:build: [34mCLI[39m Target: esnext
+@corsair-dev/ambientweather:build: [34mESM[39m Build start
+@corsair-dev/ambientweather:build: [32mESM[39m [1mdist/index.js [22m[32m7.23 KB[39m
+@corsair-dev/ambientweather:build: [32mESM[39m ⚡️ Build success in 11ms
+@corsair-dev/onedrive:build: cache hit, replaying logs 209aaa89f6c1cb10
+@corsair-dev/onedrive:build: 
+@corsair-dev/onedrive:build: 
+@corsair-dev/onedrive:build: > @corsair-dev/onedrive@0.1.6 build /Users/kathir/corsair-apilio/packages/onedrive
+@corsair-dev/onedrive:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/onedrive:build: 
+@corsair-dev/onedrive:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/onedrive:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/onedrive:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/onedrive:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/onedrive/tsup.config.ts
+@corsair-dev/onedrive:build: [34mCLI[39m Target: esnext
+@corsair-dev/onedrive:build: [34mESM[39m Build start
+@corsair-dev/onedrive:build: [32mESM[39m [1mdist/index.js [22m[32m74.53 KB[39m
+@corsair-dev/onedrive:build: [32mESM[39m ⚡️ Build success in 35ms
+@corsair-dev/boloforms:build: cache hit, replaying logs 71b56d5a2fa05c4c
+@corsair-dev/boloforms:build: 
+@corsair-dev/boloforms:build: 
+@corsair-dev/boloforms:build: > @corsair-dev/boloforms@0.1.0 build /Users/kathir/corsair-apilio/packages/boloforms
+@corsair-dev/boloforms:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/boloforms:build: 
+@corsair-dev/boloforms:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/boloforms:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/boloforms:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/boloforms:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/boloforms/tsup.config.ts
+@corsair-dev/boloforms:build: [34mCLI[39m Target: esnext
+@corsair-dev/boloforms:build: [34mESM[39m Build start
+@corsair-dev/boloforms:build: [32mESM[39m [1mdist/index.js [22m[32m3.92 KB[39m
+@corsair-dev/boloforms:build: [32mESM[39m ⚡️ Build success in 13ms
+@corsair-dev/mailtrap:build: cache hit, replaying logs 1236777a054e117f
+@corsair-dev/mailtrap:build: 
+@corsair-dev/mailtrap:build: 
+@corsair-dev/mailtrap:build: > @corsair-dev/mailtrap@0.1.0 build /Users/kathir/corsair-apilio/packages/mailtrap
+@corsair-dev/mailtrap:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/mailtrap:build: 
+@corsair-dev/mailtrap:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/mailtrap:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/mailtrap:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/mailtrap:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/mailtrap/tsup.config.ts
+@corsair-dev/mailtrap:build: [34mCLI[39m Target: esnext
+@corsair-dev/mailtrap:build: [34mESM[39m Build start
+@corsair-dev/mailtrap:build: [32mESM[39m [1mdist/index.js [22m[32m38.37 KB[39m
+@corsair-dev/mailtrap:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/apisports:build: cache hit, replaying logs bb4551647df3f7e1
+@corsair-dev/apisports:build: 
+@corsair-dev/apisports:build: 
+@corsair-dev/apisports:build: > @corsair-dev/apisports@0.1.0 build /Users/kathir/corsair-apilio/packages/apisports
+@corsair-dev/apisports:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/apisports:build: 
+@corsair-dev/apisports:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/apisports:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/apisports:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/apisports:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/apisports/tsup.config.ts
+@corsair-dev/apisports:build: [34mCLI[39m Target: esnext
+@corsair-dev/apisports:build: [34mESM[39m Build start
+@corsair-dev/apisports:build: [32mESM[39m [1mdist/index.js [22m[32m36.73 KB[39m
+@corsair-dev/apisports:build: [32mESM[39m ⚡️ Build success in 42ms
+@corsair-dev/addresszen:build: cache hit, replaying logs f16c7cd1c7c8de7e
+@corsair-dev/addresszen:build: 
+@corsair-dev/addresszen:build: 
+@corsair-dev/addresszen:build: > @corsair-dev/addresszen@0.1.0 build /Users/kathir/corsair-apilio/packages/addresszen
+@corsair-dev/addresszen:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/addresszen:build: 
+@corsair-dev/addresszen:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/addresszen:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/addresszen:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/addresszen:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/addresszen/tsup.config.ts
+@corsair-dev/addresszen:build: [34mCLI[39m Target: esnext
+@corsair-dev/addresszen:build: [34mESM[39m Build start
+@corsair-dev/addresszen:build: [32mESM[39m [1mdist/index.js [22m[32m9.13 KB[39m
+@corsair-dev/addresszen:build: [32mESM[39m ⚡️ Build success in 13ms
+@corsair-dev/grafana:build: cache hit, replaying logs 05f852f3d886c6e8
+@corsair-dev/grafana:build: 
+@corsair-dev/grafana:build: 
+@corsair-dev/grafana:build: > @corsair-dev/grafana@0.1.3 build /Users/kathir/corsair-apilio/packages/grafana
+@corsair-dev/grafana:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/grafana:build: 
+@corsair-dev/grafana:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/grafana:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/grafana:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/grafana:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/grafana/tsup.config.ts
+@corsair-dev/grafana:build: [34mCLI[39m Target: esnext
+@corsair-dev/grafana:build: [34mESM[39m Build start
+@corsair-dev/grafana:build: [32mESM[39m [1mdist/index.js [22m[32m20.82 KB[39m
+@corsair-dev/grafana:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/abyssale:build: cache hit, replaying logs 57e561f2640954f6
+@corsair-dev/abyssale:build: 
+@corsair-dev/abyssale:build: 
+@corsair-dev/abyssale:build: > @corsair-dev/abyssale@0.1.0 build /Users/kathir/corsair-apilio/packages/abyssale
+@corsair-dev/abyssale:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/abyssale:build: 
+@corsair-dev/abyssale:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/abyssale:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/abyssale:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/abyssale:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/abyssale/tsup.config.ts
+@corsair-dev/abyssale:build: [34mCLI[39m Target: esnext
+@corsair-dev/abyssale:build: [34mESM[39m Build start
+@corsair-dev/abyssale:build: [32mESM[39m [1mdist/index.js [22m[32m6.47 KB[39m
+@corsair-dev/abyssale:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/ably:build: cache hit, replaying logs 20c08b1a3115d335
+@corsair-dev/ably:build: 
+@corsair-dev/ably:build: 
+@corsair-dev/ably:build: > @corsair-dev/ably@0.1.0 build /Users/kathir/corsair-apilio/packages/ably
+@corsair-dev/ably:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/ably:build: 
+@corsair-dev/ably:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/ably:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/ably:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/ably:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/ably/tsup.config.ts
+@corsair-dev/ably:build: [34mCLI[39m Target: esnext
+@corsair-dev/ably:build: [34mESM[39m Build start
+@corsair-dev/ably:build: [32mESM[39m [1mdist/index.js [22m[32m19.96 KB[39m
+@corsair-dev/ably:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/sharepoint:build: cache hit, replaying logs c1a35a981d3344de
+@corsair-dev/sharepoint:build: 
+@corsair-dev/sharepoint:build: 
+@corsair-dev/sharepoint:build: > @corsair-dev/sharepoint@0.1.6 build /Users/kathir/corsair-apilio/packages/sharepoint
+@corsair-dev/sharepoint:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/sharepoint:build: 
+@corsair-dev/sharepoint:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/sharepoint:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/sharepoint:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/sharepoint:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/sharepoint/tsup.config.ts
+@corsair-dev/sharepoint:build: [34mCLI[39m Target: esnext
+@corsair-dev/sharepoint:build: [34mESM[39m Build start
+@corsair-dev/sharepoint:build: [32mESM[39m [1mdist/index.js [22m[32m80.36 KB[39m
+@corsair-dev/sharepoint:build: [32mESM[39m ⚡️ Build success in 33ms
+@corsair-dev/confluence:build: cache hit, replaying logs e9cfe3e2faa55ae2
+@corsair-dev/confluence:build: 
+@corsair-dev/confluence:build: 
+@corsair-dev/confluence:build: > @corsair-dev/confluence@0.1.0 build /Users/kathir/corsair-apilio/packages/confluence
+@corsair-dev/confluence:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/confluence:build: 
+@corsair-dev/confluence:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/confluence:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/confluence:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/confluence:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/confluence/tsup.config.ts
+@corsair-dev/confluence:build: [34mCLI[39m Target: esnext
+@corsair-dev/confluence:build: [34mESM[39m Build start
+@corsair-dev/confluence:build: [32mESM[39m [1mdist/index.js [22m[32m11.48 KB[39m
+@corsair-dev/confluence:build: [32mESM[39m ⚡️ Build success in 12ms
+@corsair-dev/deepseek:build: cache hit, replaying logs c8ef2e8e5da43966
+@corsair-dev/deepseek:build: 
+@corsair-dev/deepseek:build: 
+@corsair-dev/deepseek:build: > @corsair-dev/deepseek@0.1.0 build /Users/kathir/corsair-apilio/packages/deepseek
+@corsair-dev/deepseek:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/deepseek:build: 
+@corsair-dev/deepseek:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/deepseek:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/deepseek:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/deepseek:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/deepseek/tsup.config.ts
+@corsair-dev/deepseek:build: [34mCLI[39m Target: esnext
+@corsair-dev/deepseek:build: [34mESM[39m Build start
+@corsair-dev/deepseek:build: [32mESM[39m [1mdist/index.js [22m[32m9.49 KB[39m
+@corsair-dev/deepseek:build: [32mESM[39m ⚡️ Build success in 75ms
+@corsair-dev/alttextai:build: cache hit, replaying logs bcd684d5ea4acaab
+@corsair-dev/alttextai:build: 
+@corsair-dev/alttextai:build: 
+@corsair-dev/alttextai:build: > @corsair-dev/alttextai@0.1.0 build /Users/kathir/corsair-apilio/packages/alttextai
+@corsair-dev/alttextai:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/alttextai:build: 
+@corsair-dev/alttextai:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/alttextai:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/alttextai:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/alttextai:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/alttextai/tsup.config.ts
+@corsair-dev/alttextai:build: [34mCLI[39m Target: esnext
+@corsair-dev/alttextai:build: [34mESM[39m Build start
+@corsair-dev/alttextai:build: [32mESM[39m [1mdist/index.js [22m[32m12.50 KB[39m
+@corsair-dev/alttextai:build: [32mESM[39m ⚡️ Build success in 14ms
+@corsair-dev/hubspot:build: cache hit, replaying logs 30c40cd267e95d75
+@corsair-dev/hubspot:build: 
+@corsair-dev/hubspot:build: 
+@corsair-dev/hubspot:build: > @corsair-dev/hubspot@0.1.7 build /Users/kathir/corsair-apilio/packages/hubspot
+@corsair-dev/hubspot:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/hubspot:build: 
+@corsair-dev/hubspot:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/hubspot:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/hubspot:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/hubspot:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/hubspot/tsup.config.ts
+@corsair-dev/hubspot:build: [34mCLI[39m Target: esnext
+@corsair-dev/hubspot:build: [34mESM[39m Build start
+@corsair-dev/hubspot:build: [32mESM[39m [1mdist/index.js [22m[32m44.45 KB[39m
+@corsair-dev/hubspot:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/workday:build: cache hit, replaying logs ba24d4fb428cc97d
+@corsair-dev/workday:build: 
+@corsair-dev/workday:build: 
+@corsair-dev/workday:build: > @corsair-dev/workday@0.1.0 build /Users/kathir/corsair-apilio/packages/workday
+@corsair-dev/workday:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/workday:build: 
+@corsair-dev/workday:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/workday:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/workday:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/workday:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/workday/tsup.config.ts
+@corsair-dev/workday:build: [34mCLI[39m Target: esnext
+@corsair-dev/workday:build: [34mESM[39m Build start
+@corsair-dev/workday:build: [32mESM[39m [1mdist/index.js [22m[32m89.69 KB[39m
+@corsair-dev/workday:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/googlesheets:build: cache hit, replaying logs 35878e50733743fc
+@corsair-dev/googlesheets:build: 
+@corsair-dev/googlesheets:build: 
+@corsair-dev/googlesheets:build: > @corsair-dev/googlesheets@0.1.6 build /Users/kathir/corsair-apilio/packages/googlesheets
+@corsair-dev/googlesheets:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/googlesheets:build: 
+@corsair-dev/googlesheets:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/googlesheets:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/googlesheets:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/googlesheets:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/googlesheets/tsup.config.ts
+@corsair-dev/googlesheets:build: [34mCLI[39m Target: esnext
+@corsair-dev/googlesheets:build: [34mESM[39m Build start
+@corsair-dev/googlesheets:build: [32mESM[39m [1mdist/index.js [22m[32m19.89 KB[39m
+@corsair-dev/googlesheets:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/asindataapi:build: cache hit, replaying logs d8d3e93be11b34f6
+@corsair-dev/asindataapi:build: 
+@corsair-dev/asindataapi:build: 
+@corsair-dev/asindataapi:build: > @corsair-dev/asindataapi@0.1.0 build /Users/kathir/corsair-apilio/packages/asindataapi
+@corsair-dev/asindataapi:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/asindataapi:build: 
+@corsair-dev/asindataapi:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/asindataapi:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/asindataapi:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/asindataapi:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/asindataapi/tsup.config.ts
+@corsair-dev/asindataapi:build: [34mCLI[39m Target: esnext
+@corsair-dev/asindataapi:build: [34mESM[39m Build start
+@corsair-dev/asindataapi:build: [32mESM[39m [1mdist/index.js [22m[32m31.65 KB[39m
+@corsair-dev/asindataapi:build: [32mESM[39m ⚡️ Build success in 46ms
+@corsair-dev/apininjas:build: cache hit, replaying logs 362cb529e5b0b93a
+@corsair-dev/apininjas:build: 
+@corsair-dev/apininjas:build: 
+@corsair-dev/apininjas:build: > @corsair-dev/apininjas@0.1.0 build /Users/kathir/corsair-apilio/packages/apininjas
+@corsair-dev/apininjas:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/apininjas:build: 
+@corsair-dev/apininjas:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/apininjas:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/apininjas:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/apininjas:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/apininjas/tsup.config.ts
+@corsair-dev/apininjas:build: [34mCLI[39m Target: esnext
+@corsair-dev/apininjas:build: [34mESM[39m Build start
+@corsair-dev/apininjas:build: [32mESM[39m [1mdist/index.js [22m[32m168.41 KB[39m
+@corsair-dev/apininjas:build: [32mESM[39m ⚡️ Build success in 31ms
+@corsair-dev/groqcloud:build: cache hit, replaying logs 62720050fa342fed
+@corsair-dev/groqcloud:build: 
+@corsair-dev/groqcloud:build: 
+@corsair-dev/groqcloud:build: > @corsair-dev/groqcloud@0.1.0 build /Users/kathir/corsair-apilio/packages/groqcloud
+@corsair-dev/groqcloud:build: > node -e "fs.rmSync('dist', { recursive: true, force: true })" && tsc --build --force && tsup
+@corsair-dev/groqcloud:build: 
+@corsair-dev/groqcloud:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/groqcloud:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/groqcloud:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/groqcloud:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/groqcloud/tsup.config.ts
+@corsair-dev/groqcloud:build: [34mCLI[39m Target: esnext
+@corsair-dev/groqcloud:build: [34mESM[39m Build start
+@corsair-dev/groqcloud:build: [32mESM[39m [1mdist/index.js [22m[32m13.81 KB[39m
+@corsair-dev/groqcloud:build: [32mESM[39m ⚡️ Build success in 56ms
+@corsair-dev/collegefootballdata:build: cache hit, replaying logs 3f8962206e48a111
+@corsair-dev/collegefootballdata:build: 
+@corsair-dev/collegefootballdata:build: 
+@corsair-dev/collegefootballdata:build: > @corsair-dev/collegefootballdata@0.1.0 build /Users/kathir/corsair-apilio/packages/collegefootballdata
+@corsair-dev/collegefootballdata:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/collegefootballdata:build: 
+@corsair-dev/collegefootballdata:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/collegefootballdata:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/collegefootballdata:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/collegefootballdata:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/collegefootballdata/tsup.config.ts
+@corsair-dev/collegefootballdata:build: [34mCLI[39m Target: esnext
+@corsair-dev/collegefootballdata:build: [34mESM[39m Build start
+@corsair-dev/collegefootballdata:build: [32mESM[39m [1mdist/index.js [22m[32m50.96 KB[39m
+@corsair-dev/collegefootballdata:build: [32mESM[39m ⚡️ Build success in 26ms
+@corsair-dev/fireflies:build: cache hit, replaying logs d9d03af3abf154bc
+@corsair-dev/fireflies:build: 
+@corsair-dev/fireflies:build: 
+@corsair-dev/fireflies:build: > @corsair-dev/fireflies@0.1.3 build /Users/kathir/corsair-apilio/packages/fireflies
+@corsair-dev/fireflies:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/fireflies:build: 
+@corsair-dev/fireflies:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/fireflies:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/fireflies:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/fireflies:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/fireflies/tsup.config.ts
+@corsair-dev/fireflies:build: [34mCLI[39m Target: esnext
+@corsair-dev/fireflies:build: [34mESM[39m Build start
+@corsair-dev/fireflies:build: [32mESM[39m [1mdist/index.js [22m[32m25.62 KB[39m
+@corsair-dev/fireflies:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/epicgames:build: cache hit, replaying logs e422141ef4bdadd2
+@corsair-dev/epicgames:build: 
+@corsair-dev/epicgames:build: 
+@corsair-dev/epicgames:build: > @corsair-dev/epicgames@0.1.0 build /Users/kathir/corsair-apilio/packages/epicgames
+@corsair-dev/epicgames:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/epicgames:build: 
+@corsair-dev/epicgames:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/epicgames:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/epicgames:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/epicgames:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/epicgames/tsup.config.ts
+@corsair-dev/epicgames:build: [34mCLI[39m Target: esnext
+@corsair-dev/epicgames:build: [34mESM[39m Build start
+@corsair-dev/epicgames:build: [32mESM[39m [1mdist/index.js [22m[32m20.01 KB[39m
+@corsair-dev/epicgames:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/bugsnag:build: cache hit, replaying logs 6bf37be7976995dc
+@corsair-dev/bugsnag:build: 
+@corsair-dev/bugsnag:build: 
+@corsair-dev/bugsnag:build: > @corsair-dev/bugsnag@0.1.0 build /Users/kathir/corsair-apilio/packages/bugsnag
+@corsair-dev/bugsnag:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/bugsnag:build: 
+@corsair-dev/bugsnag:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/bugsnag:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/bugsnag:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/bugsnag:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/bugsnag/tsup.config.ts
+@corsair-dev/bugsnag:build: [34mCLI[39m Target: esnext
+@corsair-dev/bugsnag:build: [34mESM[39m Build start
+@corsair-dev/bugsnag:build: [32mESM[39m [1mdist/index.js [22m[32m53.81 KB[39m
+@corsair-dev/bugsnag:build: [32mESM[39m ⚡️ Build success in 24ms
+@corsair-dev/facebook:build: cache hit, replaying logs 360d56cd164e37b5
+@corsair-dev/facebook:build: 
+@corsair-dev/facebook:build: 
+@corsair-dev/facebook:build: > @corsair-dev/facebook@0.1.0 build /Users/kathir/corsair-apilio/packages/facebook
+@corsair-dev/facebook:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/facebook:build: 
+@corsair-dev/facebook:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/facebook:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/facebook:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/facebook:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/facebook/tsup.config.ts
+@corsair-dev/facebook:build: [34mCLI[39m Target: esnext
+@corsair-dev/facebook:build: [34mESM[39m Build start
+@corsair-dev/facebook:build: [32mESM[39m [1mdist/index.js [22m[32m47.83 KB[39m
+@corsair-dev/facebook:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/whatsapp:build: cache hit, replaying logs 5d4b10d4b2f99879
+@corsair-dev/whatsapp:build: 
+@corsair-dev/whatsapp:build: 
+@corsair-dev/whatsapp:build: > @corsair-dev/whatsapp@0.1.0 build /Users/kathir/corsair-apilio/packages/whatsapp
+@corsair-dev/whatsapp:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/whatsapp:build: 
+@corsair-dev/whatsapp:build: [34mCLI[39m Building entry: {"index":"index.ts","error-handlers":"error-handlers.ts"}
+@corsair-dev/whatsapp:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/whatsapp:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/whatsapp:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/whatsapp/tsup.config.ts
+@corsair-dev/whatsapp:build: [34mCLI[39m Target: esnext
+@corsair-dev/whatsapp:build: [34mESM[39m Build start
+@corsair-dev/whatsapp:build: [32mESM[39m [1mdist/index.js          [22m[32m19.92 KB[39m
+@corsair-dev/whatsapp:build: [32mESM[39m [1mdist/error-handlers.js [22m[32m68.00 B[39m
+@corsair-dev/whatsapp:build: [32mESM[39m [1mdist/chunk-MYTSXDSC.js [22m[32m2.79 KB[39m
+@corsair-dev/whatsapp:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/anthropicadministrator:build: cache hit, replaying logs 63da4dd49f3ec767
+@corsair-dev/anthropicadministrator:build: 
+@corsair-dev/anthropicadministrator:build: 
+@corsair-dev/anthropicadministrator:build: > @corsair-dev/anthropicadministrator@0.1.0 build /Users/kathir/corsair-apilio/packages/anthropicadministrator
+@corsair-dev/anthropicadministrator:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/anthropicadministrator:build: 
+@corsair-dev/anthropicadministrator:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/anthropicadministrator:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/anthropicadministrator:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/anthropicadministrator:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/anthropicadministrator/tsup.config.ts
+@corsair-dev/anthropicadministrator:build: [34mCLI[39m Target: esnext
+@corsair-dev/anthropicadministrator:build: [34mESM[39m Build start
+@corsair-dev/anthropicadministrator:build: [32mESM[39m [1mdist/index.js [22m[32m19.11 KB[39m
+@corsair-dev/anthropicadministrator:build: [32mESM[39m ⚡️ Build success in 136ms
+@corsair-dev/canva:build: cache hit, replaying logs 51f339be3ba06fe6
+@corsair-dev/apibible:build: cache hit, replaying logs 8d9b48015a631f3c
+@corsair-dev/canva:build: 
+@corsair-dev/canva:build: 
+@corsair-dev/canva:build: > @corsair-dev/canva@0.1.0 build /Users/kathir/corsair-apilio/packages/canva
+@corsair-dev/canva:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/canva:build: 
+@corsair-dev/canva:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/canva:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/canva:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/canva:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/canva/tsup.config.ts
+@corsair-dev/canva:build: [34mCLI[39m Target: esnext
+@corsair-dev/canva:build: [34mESM[39m Build start
+@corsair-dev/canva:build: [32mESM[39m [1mdist/index.js [22m[32m36.66 KB[39m
+@corsair-dev/canva:build: [32mESM[39m ⚡️ Build success in 35ms
+@corsair-dev/apibible:build: 
+@corsair-dev/apibible:build: 
+@corsair-dev/apibible:build: > @corsair-dev/apibible@0.1.0 build /Users/kathir/corsair-apilio/packages/apibible
+@corsair-dev/apibible:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/apibible:build: 
+@corsair-dev/apibible:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/apibible:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/apibible:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/apibible:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/apibible/tsup.config.ts
+@corsair-dev/apibible:build: [34mCLI[39m Target: esnext
+@corsair-dev/apibible:build: [34mESM[39m Build start
+@corsair-dev/apibible:build: [32mESM[39m [1mdist/index.js [22m[32m18.92 KB[39m
+@corsair-dev/apibible:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/googlemeet:build: cache hit, replaying logs 8bcaa9c0ea22b4a4
+@corsair-dev/twochat:build: cache hit, replaying logs 40abe46ae2bf69c1
+@corsair-dev/googlemeet:build: 
+@corsair-dev/googlemeet:build: 
+@corsair-dev/googlemeet:build: > @corsair-dev/googlemeet@0.1.0 build /Users/kathir/corsair-apilio/packages/googlemeet
+@corsair-dev/twochat:build: 
+@corsair-dev/twochat:build: 
+@corsair-dev/twochat:build: > @corsair-dev/twochat@0.1.0 build /Users/kathir/corsair-apilio/packages/twochat
+@corsair-dev/twochat:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/twochat:build: 
+@corsair-dev/twochat:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/twochat:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/twochat:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/twochat:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/twochat/tsup.config.ts
+@corsair-dev/twochat:build: [34mCLI[39m Target: esnext
+@corsair-dev/twochat:build: [34mESM[39m Build start
+@corsair-dev/twochat:build: [32mESM[39m [1mdist/index.js [22m[32m10.69 KB[39m
+@corsair-dev/twochat:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/googlemeet:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/googlemeet:build: 
+@corsair-dev/googlemeet:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/googlemeet:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/googlemeet:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/googlemeet:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/googlemeet/tsup.config.ts
+@corsair-dev/googlemeet:build: [34mCLI[39m Target: esnext
+@corsair-dev/googlemeet:build: [34mESM[39m Build start
+@corsair-dev/googlemeet:build: [32mESM[39m [1mdist/index.js [22m[32m20.51 KB[39m
+@corsair-dev/googlemeet:build: [32mESM[39m ⚡️ Build success in 21ms
+@corsair-dev/baselinker:build: cache hit, replaying logs f8b4b1ddd5641e94
+@corsair-dev/baselinker:build: 
+@corsair-dev/baselinker:build: 
+@corsair-dev/baselinker:build: > @corsair-dev/baselinker@0.1.0 build /Users/kathir/corsair-apilio/packages/baselinker
+@corsair-dev/baselinker:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/baselinker:build: 
+@corsair-dev/baselinker:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/baselinker:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/baselinker:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/baselinker:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/baselinker/tsup.config.ts
+@corsair-dev/baselinker:build: [34mCLI[39m Target: esnext
+@corsair-dev/baselinker:build: [34mESM[39m Build start
+@corsair-dev/baselinker:build: [32mESM[39m [1mdist/index.js [22m[32m139.77 KB[39m
+@corsair-dev/baselinker:build: [32mESM[39m ⚡️ Build success in 42ms
+@corsair-dev/bluesky:build: cache hit, replaying logs 89e5fb93e26b35d2
+@corsair-dev/bluesky:build: 
+@corsair-dev/bluesky:build: 
+@corsair-dev/bluesky:build: > @corsair-dev/bluesky@0.1.1 build /Users/kathir/corsair-apilio/packages/bluesky
+@corsair-dev/bluesky:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/bluesky:build: 
+@corsair-dev/bluesky:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/bluesky:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/bluesky:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/bluesky:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/bluesky/tsup.config.ts
+@corsair-dev/bluesky:build: [34mCLI[39m Target: esnext
+@corsair-dev/bluesky:build: [34mESM[39m Build start
+@corsair-dev/bluesky:build: [32mESM[39m [1mdist/index.js [22m[32m8.41 KB[39m
+@corsair-dev/bluesky:build: [32mESM[39m ⚡️ Build success in 13ms
+@corsair-dev/activecampaign:build: cache hit, replaying logs e74f7fef98898a7f
+@corsair-dev/activecampaign:build: 
+@corsair-dev/activecampaign:build: 
+@corsair-dev/activecampaign:build: > @corsair-dev/activecampaign@0.1.0 build /Users/kathir/corsair-apilio/packages/activecampaign
+@corsair-dev/activecampaign:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/activecampaign:build: 
+@corsair-dev/activecampaign:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/activecampaign:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/activecampaign:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/activecampaign:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/activecampaign/tsup.config.ts
+@corsair-dev/activecampaign:build: [34mCLI[39m Target: esnext
+@corsair-dev/activecampaign:build: [34mESM[39m Build start
+@corsair-dev/activecampaign:build: [32mESM[39m [1mdist/index.js [22m[32m179.30 KB[39m
+@corsair-dev/activecampaign:build: [32mESM[39m ⚡️ Build success in 33ms
+@corsair-dev/onepassword:build: cache hit, replaying logs 7773c617435b3f91
+@corsair-dev/dockerhub:build: cache hit, replaying logs e4ceb5ea546733b4
+@corsair-dev/onepassword:build: 
+@corsair-dev/onepassword:build: 
+@corsair-dev/onepassword:build: > @corsair-dev/onepassword@0.1.0 build /Users/kathir/corsair-apilio/packages/onepassword
+@corsair-dev/onepassword:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/onepassword:build: 
+@corsair-dev/onepassword:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/onepassword:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/onepassword:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/onepassword:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/onepassword/tsup.config.ts
+@corsair-dev/onepassword:build: [34mCLI[39m Target: esnext
+@corsair-dev/onepassword:build: [34mESM[39m Build start
+@corsair-dev/onepassword:build: [32mESM[39m [1mdist/index.js [22m[32m7.15 KB[39m
+@corsair-dev/onepassword:build: [32mESM[39m ⚡️ Build success in 12ms
+@corsair-dev/dockerhub:build: 
+@corsair-dev/dockerhub:build: 
+@corsair-dev/dockerhub:build: > @corsair-dev/dockerhub@0.1.0 build /Users/kathir/corsair-apilio/packages/dockerhub
+@corsair-dev/dockerhub:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/dockerhub:build: 
+@corsair-dev/dockerhub:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/dockerhub:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/dockerhub:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/dockerhub:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/dockerhub/tsup.config.ts
+@corsair-dev/dockerhub:build: [34mCLI[39m Target: esnext
+@corsair-dev/dockerhub:build: [34mESM[39m Build start
+@corsair-dev/dockerhub:build: [32mESM[39m [1mdist/index.js [22m[32m22.10 KB[39m
+@corsair-dev/dockerhub:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/googlemaps:build: cache hit, replaying logs 3b14b73a097b75cf
+@corsair-dev/googlemaps:build: 
+@corsair-dev/googlemaps:build: 
+@corsair-dev/googlemaps:build: > @corsair-dev/googlemaps@0.1.0 build /Users/kathir/corsair-apilio/packages/googlemaps
+@corsair-dev/googlemaps:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/googlemaps:build: 
+@corsair-dev/googlemaps:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/googlemaps:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/googlemaps:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/googlemaps:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/googlemaps/tsup.config.ts
+@corsair-dev/googlemaps:build: [34mCLI[39m Target: esnext
+@corsair-dev/googlemaps:build: [34mESM[39m Build start
+@corsair-dev/googlemaps:build: [32mESM[39m [1mdist/index.js [22m[32m34.54 KB[39m
+@corsair-dev/googlemaps:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/spotify:build: cache hit, replaying logs 8eb72ab799ca7359
+@corsair-dev/spotify:build: 
+@corsair-dev/spotify:build: 
+@corsair-dev/spotify:build: > @corsair-dev/spotify@0.1.4 build /Users/kathir/corsair-apilio/packages/spotify
+@corsair-dev/spotify:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/spotify:build: 
+@corsair-dev/spotify:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/spotify:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/spotify:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/spotify:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/spotify/tsup.config.ts
+@corsair-dev/spotify:build: [34mCLI[39m Target: esnext
+@corsair-dev/spotify:build: [34mESM[39m Build start
+@corsair-dev/spotify:build: [32mESM[39m [1mdist/index.js [22m[32m33.76 KB[39m
+@corsair-dev/spotify:build: [32mESM[39m ⚡️ Build success in 27ms
+@corsair-dev/figma:build: cache hit, replaying logs ced471f1a1e0a086
+@corsair-dev/figma:build: 
+@corsair-dev/figma:build: 
+@corsair-dev/figma:build: > @corsair-dev/figma@0.1.3 build /Users/kathir/corsair-apilio/packages/figma
+@corsair-dev/figma:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/figma:build: 
+@corsair-dev/figma:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/figma:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/figma:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/figma:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/figma/tsup.config.ts
+@corsair-dev/figma:build: [34mCLI[39m Target: esnext
+@corsair-dev/figma:build: [34mESM[39m Build start
+@corsair-dev/figma:build: [32mESM[39m [1mdist/index.js [22m[32m54.66 KB[39m
+@corsair-dev/figma:build: [32mESM[39m ⚡️ Build success in 33ms
+@corsair-dev/apipie:build: cache hit, replaying logs 8aae4ffb8fbbd2fb
+@corsair-dev/apipie:build: 
+@corsair-dev/apipie:build: 
+@corsair-dev/apipie:build: > @corsair-dev/apipie@0.1.0 build /Users/kathir/corsair-apilio/packages/apipie
+@corsair-dev/apipie:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/apipie:build: 
+@corsair-dev/apipie:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/apipie:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/apipie:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/apipie:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/apipie/tsup.config.ts
+@corsair-dev/apipie:build: [34mCLI[39m Target: esnext
+@corsair-dev/apipie:build: [34mESM[39m Build start
+@corsair-dev/apipie:build: [32mESM[39m [1mdist/index.js [22m[32m14.36 KB[39m
+@corsair-dev/apipie:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/amara:build: cache hit, replaying logs 15b718b8fbc8fd35
+@corsair-dev/amara:build: 
+@corsair-dev/amara:build: 
+@corsair-dev/amara:build: > @corsair-dev/amara@0.1.1 build /Users/kathir/corsair-apilio/packages/amara
+@corsair-dev/amara:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/amara:build: 
+@corsair-dev/amara:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/amara:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/amara:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/amara:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/amara/tsup.config.ts
+@corsair-dev/amara:build: [34mCLI[39m Target: esnext
+@corsair-dev/amara:build: [34mESM[39m Build start
+@corsair-dev/amara:build: [32mESM[39m [1mdist/index.js [22m[32m29.26 KB[39m
+@corsair-dev/amara:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/box:build: cache hit, replaying logs 191d348403965ad6
+@corsair-dev/box:build: 
+@corsair-dev/box:build: 
+@corsair-dev/box:build: > @corsair-dev/box@0.1.3 build /Users/kathir/corsair-apilio/packages/box
+@corsair-dev/box:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/box:build: 
+@corsair-dev/box:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/box:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/box:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/box:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/box/tsup.config.ts
+@corsair-dev/box:build: [34mCLI[39m Target: esnext
+@corsair-dev/box:build: [34mESM[39m Build start
+@corsair-dev/box:build: [32mESM[39m [1mdist/index.js [22m[32m38.55 KB[39m
+@corsair-dev/box:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/pagerduty:build: cache hit, replaying logs 8bc094577036f511
+@corsair-dev/strava:build: cache hit, replaying logs 7d13be75a9767162
+@corsair-dev/pagerduty:build: 
+@corsair-dev/pagerduty:build: 
+@corsair-dev/pagerduty:build: > @corsair-dev/pagerduty@0.1.3 build /Users/kathir/corsair-apilio/packages/pagerduty
+@corsair-dev/pagerduty:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/pagerduty:build: 
+@corsair-dev/pagerduty:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/pagerduty:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/pagerduty:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/pagerduty:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/pagerduty/tsup.config.ts
+@corsair-dev/pagerduty:build: [34mCLI[39m Target: esnext
+@corsair-dev/pagerduty:build: [34mESM[39m Build start
+@corsair-dev/pagerduty:build: [32mESM[39m [1mdist/index.js [22m[32m18.41 KB[39m
+@corsair-dev/pagerduty:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/strava:build: 
+@corsair-dev/strava:build: 
+@corsair-dev/strava:build: > @corsair-dev/strava@0.1.3 build /Users/kathir/corsair-apilio/packages/strava
+@corsair-dev/strava:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/strava:build: 
+@corsair-dev/strava:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/strava:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/strava:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/strava:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/strava/tsup.config.ts
+@corsair-dev/strava:build: [34mCLI[39m Target: esnext
+@corsair-dev/strava:build: [34mESM[39m Build start
+@corsair-dev/strava:build: [32mESM[39m [1mdist/index.js [22m[32m32.90 KB[39m
+@corsair-dev/strava:build: [32mESM[39m ⚡️ Build success in 27ms
+@corsair-dev/perplexityai:build: cache hit, replaying logs a09a56585dcb7e10
+@corsair-dev/toggl:build: cache hit, replaying logs 6a3999877c119ac2
+@corsair-dev/asana:build: cache hit, replaying logs 9dd5a0ae05f6512c
+@corsair-dev/perplexityai:build: 
+@corsair-dev/perplexityai:build: 
+@corsair-dev/perplexityai:build: > @corsair-dev/perplexityai@0.1.0 build /Users/kathir/corsair-apilio/packages/perplexityai
+@corsair-dev/perplexityai:build: > node -e "require('fs').rmSync('dist', {recursive:true, force:true})" && tsc --build --force && tsup
+@corsair-dev/perplexityai:build: 
+@corsair-dev/perplexityai:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/perplexityai:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/perplexityai:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/perplexityai:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/perplexityai/tsup.config.ts
+@corsair-dev/perplexityai:build: [34mCLI[39m Target: esnext
+@corsair-dev/perplexityai:build: [34mESM[39m Build start
+@corsair-dev/perplexityai:build: [32mESM[39m [1mdist/index.js [22m[32m3.74 KB[39m
+@corsair-dev/perplexityai:build: [32mESM[39m ⚡️ Build success in 10ms
+@corsair-dev/toggl:build: 
+@corsair-dev/toggl:build: 
+@corsair-dev/toggl:build: > @corsair-dev/toggl@0.1.0 build /Users/kathir/corsair-apilio/packages/toggl
+@corsair-dev/toggl:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/toggl:build: 
+@corsair-dev/toggl:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/toggl:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/toggl:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/toggl:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/toggl/tsup.config.ts
+@corsair-dev/toggl:build: [34mCLI[39m Target: esnext
+@corsair-dev/asana:build: 
+@corsair-dev/vercel:build: cache hit, replaying logs 5b8ee4d219f20a18
+@corsair-dev/vapi:build: cache hit, replaying logs 312e514cfe65e62f
+@corsair-dev/asana:build: 
+@corsair-dev/asana:build: > @corsair-dev/asana@0.1.4 build /Users/kathir/corsair-apilio/packages/asana
+@corsair-dev/asana:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/asana:build: 
+@corsair-dev/asana:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/asana:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/asana:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/asana:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/asana/tsup.config.ts
+@corsair-dev/asana:build: [34mCLI[39m Target: esnext
+@corsair-dev/asana:build: [34mESM[39m Build start
+@corsair-dev/asana:build: [32mESM[39m [1mdist/index.js [22m[32m87.50 KB[39m
+@corsair-dev/asana:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/vercel:build: 
+@corsair-dev/vercel:build: 
+@corsair-dev/vercel:build: > @corsair-dev/vercel@0.1.2 build /Users/kathir/corsair-apilio/packages/vercel
+@corsair-dev/vercel:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/vercel:build: 
+@corsair-dev/vercel:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/vercel:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/vercel:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/vercel:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/vercel/tsup.config.ts
+@corsair-dev/vercel:build: [34mCLI[39m Target: esnext
+@corsair-dev/vercel:build: [34mCLI[39m Cleaning output folder
+@corsair-dev/vercel:build: [34mESM[39m Build start
+@corsair-dev/vercel:build: [32mESM[39m [1mdist/index.js [22m[32m22.58 KB[39m
+@corsair-dev/vercel:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/vapi:build: 
+@corsair-dev/vapi:build: 
+@corsair-dev/vapi:build: > @corsair-dev/vapi@0.1.3 build /Users/kathir/corsair-apilio/packages/vapi
+@corsair-dev/vapi:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/vapi:build: 
+@corsair-dev/vapi:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/vapi:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/vapi:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/vapi:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/vapi/tsup.config.ts
+@corsair-dev/vapi:build: [34mCLI[39m Target: esnext
+@corsair-dev/vapi:build: [34mESM[39m Build start
+@corsair-dev/vapi:build: [32mESM[39m [1mdist/index.js [22m[32m29.23 KB[39m
+@corsair-dev/vapi:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/toggl:build: [34mESM[39m Build start
+@corsair-dev/toggl:build: [32mESM[39m [1mdist/index.js [22m[32m54.80 KB[39m
+@corsair-dev/toggl:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/todoist:build: cache hit, replaying logs 5c78da3cc0c01bf4
+@corsair-dev/todoist:build: 
+@corsair-dev/todoist:build: 
+@corsair-dev/todoist:build: > @corsair-dev/todoist@0.1.3 build /Users/kathir/corsair-apilio/packages/todoist
+@corsair-dev/todoist:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/todoist:build: 
+@corsair-dev/todoist:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/todoist:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/todoist:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/todoist:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/todoist/tsup.config.ts
+@corsair-dev/todoist:build: [34mCLI[39m Target: esnext
+@corsair-dev/todoist:build: [34mESM[39m Build start
+@corsair-dev/todoist:build: [32mESM[39m [1mdist/index.js [22m[32m33.29 KB[39m
+@corsair-dev/todoist:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/youtube:build: cache hit, replaying logs cb44386cc2b96c7f
+@corsair-dev/youtube:build: 
+@corsair-dev/youtube:build: 
+@corsair-dev/youtube:build: > @corsair-dev/youtube@0.1.3 build /Users/kathir/corsair-apilio/packages/youtube
+@corsair-dev/youtube:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/youtube:build: 
+@corsair-dev/youtube:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/youtube:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/youtube:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/youtube:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/youtube/tsup.config.ts
+@corsair-dev/youtube:build: [34mCLI[39m Target: esnext
+@corsair-dev/youtube:build: [34mESM[39m Build start
+@corsair-dev/youtube:build: [32mESM[39m [1mdist/index.js [22m[32m68.67 KB[39m
+@corsair-dev/youtube:build: [32mESM[39m ⚡️ Build success in 23ms
+@corsair-dev/agenty:build: cache hit, replaying logs e4abbf60c1090227
+@corsair-dev/agenty:build: 
+@corsair-dev/agenty:build: 
+@corsair-dev/agenty:build: > @corsair-dev/agenty@0.1.0 build /Users/kathir/corsair-apilio/packages/agenty
+@corsair-dev/agenty:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/agenty:build: 
+@corsair-dev/agenty:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/agenty:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/agenty:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/agenty:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/agenty/tsup.config.ts
+@corsair-dev/agenty:build: [34mCLI[39m Target: esnext
+@corsair-dev/agenty:build: [34mESM[39m Build start
+@corsair-dev/agenty:build: [32mESM[39m [1mdist/index.js [22m[32m63.24 KB[39m
+@corsair-dev/agenty:build: [32mESM[39m ⚡️ Build success in 52ms
+@corsair-dev/googlecalendar:build: cache hit, replaying logs 6ba945ebb8f1cdee
+@corsair-dev/googlecalendar:build: 
+@corsair-dev/googlecalendar:build: 
+@corsair-dev/googlecalendar:build: > @corsair-dev/googlecalendar@0.1.5 build /Users/kathir/corsair-apilio/packages/googlecalendar
+@corsair-dev/googlecalendar:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/googlecalendar:build: 
+@corsair-dev/googlecalendar:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/googlecalendar:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/googlecalendar:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/googlecalendar:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/googlecalendar/tsup.config.ts
+@corsair-dev/googlecalendar:build: [34mCLI[39m Target: esnext
+@corsair-dev/googlecalendar:build: [34mESM[39m Build start
+@corsair-dev/googlecalendar:build: [32mESM[39m [1mdist/index.js [22m[32m21.60 KB[39m
+@corsair-dev/googlecalendar:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/intercom:build: cache hit, replaying logs 73b257a1c17155de
+@corsair-dev/intercom:build: 
+@corsair-dev/intercom:build: 
+@corsair-dev/intercom:build: > @corsair-dev/intercom@0.1.3 build /Users/kathir/corsair-apilio/packages/intercom
+@corsair-dev/intercom:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/intercom:build: 
+@corsair-dev/intercom:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/intercom:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/intercom:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/intercom:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/intercom/tsup.config.ts
+@corsair-dev/intercom:build: [34mCLI[39m Target: esnext
+@corsair-dev/intercom:build: [34mESM[39m Build start
+@corsair-dev/intercom:build: [32mESM[39m [1mdist/index.js [22m[32m47.67 KB[39m
+@corsair-dev/intercom:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/notion:build: cache hit, replaying logs 7b374c98b467d90b
+@corsair-dev/notion:build: 
+@corsair-dev/notion:build: 
+@corsair-dev/notion:build: > @corsair-dev/notion@0.1.5 build /Users/kathir/corsair-apilio/packages/notion
+@corsair-dev/notion:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/notion:build: 
+@corsair-dev/notion:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/notion:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/notion:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/notion:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/notion/tsup.config.ts
+@corsair-dev/notion:build: [34mCLI[39m Target: esnext
+@corsair-dev/notion:build: [34mESM[39m Build start
+@corsair-dev/notion:build: [32mESM[39m [1mdist/index.js [22m[32m27.45 KB[39m
+@corsair-dev/notion:build: [32mESM[39m ⚡️ Build success in 21ms
+@corsair-dev/sentry:build: cache hit, replaying logs d5e24755a2e2dcbf
+@corsair-dev/cloudflare:build: cache hit, replaying logs 1a3eb27bd5b090b3
+@corsair-dev/sentry:build: 
+@corsair-dev/sentry:build: 
+@corsair-dev/sentry:build: > @corsair-dev/sentry@0.1.3 build /Users/kathir/corsair-apilio/packages/sentry
+@corsair-dev/sentry:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/sentry:build: 
+@corsair-dev/sentry:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/sentry:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/sentry:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/sentry:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/sentry/tsup.config.ts
+@corsair-dev/sentry:build: [34mCLI[39m Target: esnext
+@corsair-dev/sentry:build: [34mESM[39m Build start
+@corsair-dev/sentry:build: [32mESM[39m [1mdist/index.js [22m[32m38.97 KB[39m
+@corsair-dev/sentry:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/cloudflare:build: 
+@corsair-dev/cloudflare:build: 
+@corsair-dev/cloudflare:build: > @corsair-dev/cloudflare@0.1.2 build /Users/kathir/corsair-apilio/packages/cloudflare
+@corsair-dev/cloudflare:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/cloudflare:build: 
+@corsair-dev/cloudflare:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/cloudflare:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/cloudflare:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/cloudflare:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/cloudflare/tsup.config.ts
+@corsair-dev/cloudflare:build: [34mCLI[39m Target: esnext
+@corsair-dev/cloudflare:build: [34mESM[39m Build start
+@corsair-dev/cloudflare:build: [32mESM[39m [1mdist/index.js [22m[32m19.66 KB[39m
+@corsair-dev/cloudflare:build: [32mESM[39m ⚡️ Build success in 21ms
+@corsair-dev/activetrail:build: cache hit, replaying logs 16cd12db1e25e9b6
+@corsair-dev/activetrail:build: 
+@corsair-dev/activetrail:build: 
+@corsair-dev/activetrail:build: > @corsair-dev/activetrail@0.1.0 build /Users/kathir/corsair-apilio/packages/activetrail
+@corsair-dev/activetrail:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/activetrail:build: 
+@corsair-dev/activetrail:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/activetrail:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/activetrail:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/activetrail:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/activetrail/tsup.config.ts
+@corsair-dev/activetrail:build: [34mCLI[39m Target: esnext
+@corsair-dev/activetrail:build: [34mESM[39m Build start
+@corsair-dev/activetrail:build: [32mESM[39m [1mdist/index.js [22m[32m143.41 KB[39m
+@corsair-dev/activetrail:build: [32mESM[39m ⚡️ Build success in 66ms
+@corsair-dev/databricks:build: cache hit, replaying logs 4632f8122581a66b
+@corsair-dev/databricks:build: 
+@corsair-dev/databricks:build: 
+@corsair-dev/databricks:build: > @corsair-dev/databricks@0.1.0 build /Users/kathir/corsair-apilio/packages/databricks
+@corsair-dev/databricks:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/databricks:build: 
+@corsair-dev/databricks:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/databricks:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/databricks:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/databricks:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/databricks/tsup.config.ts
+@corsair-dev/databricks:build: [34mCLI[39m Target: esnext
+@corsair-dev/databricks:build: [34mESM[39m Build start
+@corsair-dev/databricks:build: [32mESM[39m [1mdist/index.js [22m[32m82.72 KB[39m
+@corsair-dev/databricks:build: [32mESM[39m ⚡️ Build success in 33ms
+@corsair-dev/circleci:build: cache hit, replaying logs d6af74b2ba9d27fe
+@corsair-dev/googlebigquery:build: cache hit, replaying logs 42a82d4294b883ee
+@corsair-dev/circleci:build: 
+@corsair-dev/circleci:build: 
+@corsair-dev/circleci:build: > @corsair-dev/circleci@0.1.0 build /Users/kathir/corsair-apilio/packages/circleci
+@corsair-dev/circleci:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/circleci:build: 
+@corsair-dev/circleci:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/circleci:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/circleci:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/circleci:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/circleci/tsup.config.ts
+@corsair-dev/circleci:build: [34mCLI[39m Target: esnext
+@corsair-dev/circleci:build: [34mESM[39m Build start
+@corsair-dev/circleci:build: [32mESM[39m [1mdist/index.js [22m[32m48.17 KB[39m
+@corsair-dev/circleci:build: [32mESM[39m ⚡️ Build success in 49ms
+@corsair-dev/googlebigquery:build: 
+@corsair-dev/googlebigquery:build: 
+@corsair-dev/googlebigquery:build: > @corsair-dev/googlebigquery@0.1.0 build /Users/kathir/corsair-apilio/packages/googlebigquery
+@corsair-dev/googlebigquery:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/googlebigquery:build: 
+@corsair-dev/googlebigquery:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/googlebigquery:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/googlebigquery:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/googlebigquery:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/googlebigquery/tsup.config.ts
+@corsair-dev/googlebigquery:build: [34mCLI[39m Target: esnext
+@corsair-dev/googlebigquery:build: [34mESM[39m Build start
+@corsair-dev/googlebigquery:build: [32mESM[39m [1mdist/index.js [22m[32m65.76 KB[39m
+@corsair-dev/googlebigquery:build: [32mESM[39m ⚡️ Build success in 23ms
+@corsair-dev/resend:build: cache hit, replaying logs b712422d5b9ad5dc
+@corsair-dev/resend:build: 
+@corsair-dev/resend:build: 
+@corsair-dev/resend:build: > @corsair-dev/resend@0.1.3 build /Users/kathir/corsair-apilio/packages/resend
+@corsair-dev/resend:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/resend:build: 
+@corsair-dev/resend:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/resend:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/resend:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/resend:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/resend/tsup.config.ts
+@corsair-dev/resend:build: [34mCLI[39m Target: esnext
+@corsair-dev/resend:build: [34mESM[39m Build start
+@corsair-dev/resend:build: [32mESM[39m [1mdist/index.js [22m[32m17.72 KB[39m
+@corsair-dev/resend:build: [32mESM[39m ⚡️ Build success in 33ms
+@corsair-dev/blazemeter:build: cache hit, replaying logs 3f33f3ea7924b1b8
+@corsair-dev/blazemeter:build: 
+@corsair-dev/blazemeter:build: 
+@corsair-dev/blazemeter:build: > @corsair-dev/blazemeter@0.1.0 build /Users/kathir/corsair-apilio/packages/blazemeter
+@corsair-dev/blazemeter:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/blazemeter:build: 
+@corsair-dev/blazemeter:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/blazemeter:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/blazemeter:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/blazemeter:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/blazemeter/tsup.config.ts
+@corsair-dev/blazemeter:build: [34mCLI[39m Target: esnext
+@corsair-dev/blazemeter:build: [34mESM[39m Build start
+@corsair-dev/blazemeter:build: [32mESM[39m [1mdist/index.js     [22m[32m69.02 KB[39m
+@corsair-dev/blazemeter:build: [32mESM[39m [1mdist/index.js.map [22m[32m136.29 KB[39m
+@corsair-dev/blazemeter:build: [32mESM[39m ⚡️ Build success in 119ms
+@corsair-dev/instagram:build: cache hit, replaying logs 18833de87b8ff264
+@corsair-dev/instagram:build: 
+@corsair-dev/instagram:build: 
+@corsair-dev/instagram:build: > @corsair-dev/instagram@0.1.0 build /Users/kathir/corsair-apilio/packages/instagram
+@corsair-dev/instagram:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/instagram:build: 
+@corsair-dev/instagram:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/instagram:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/instagram:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/instagram:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/instagram/tsup.config.ts
+@corsair-dev/instagram:build: [34mCLI[39m Target: esnext
+@corsair-dev/instagram:build: [34mESM[39m Build start
+@corsair-dev/instagram:build: [32mESM[39m [1mdist/index.js [22m[32m52.18 KB[39m
+@corsair-dev/instagram:build: [32mESM[39m ⚡️ Build success in 34ms
+@corsair-dev/clientary:build: cache hit, replaying logs 1e0cb0eb449249e7
+@corsair-dev/clientary:build: 
+@corsair-dev/clientary:build: 
+@corsair-dev/clientary:build: > @corsair-dev/clientary@0.1.0 build /Users/kathir/corsair-apilio/packages/clientary
+@corsair-dev/clientary:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/clientary:build: 
+@corsair-dev/clientary:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/clientary:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/clientary:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/clientary:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/clientary/tsup.config.ts
+@corsair-dev/clientary:build: [34mCLI[39m Target: esnext
+@corsair-dev/clientary:build: [34mESM[39m Build start
+@corsair-dev/clientary:build: [32mESM[39m [1mdist/index.js [22m[32m57.25 KB[39m
+@corsair-dev/clientary:build: [32mESM[39m ⚡️ Build success in 24ms
+@corsair-dev/apilabz:build: cache hit, replaying logs d143a3bda6f15faa
+@corsair-dev/apilabz:build: 
+@corsair-dev/apilabz:build: 
+@corsair-dev/apilabz:build: > @corsair-dev/apilabz@0.1.0 build /Users/kathir/corsair-apilio/packages/apilabz
+@corsair-dev/apilabz:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/apilabz:build: 
+@corsair-dev/apilabz:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/apilabz:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/apilabz:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/apilabz:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/apilabz/tsup.config.ts
+@corsair-dev/apilabz:build: [34mCLI[39m Target: esnext
+@corsair-dev/apilabz:build: [34mESM[39m Build start
+@corsair-dev/apilabz:build: [32mESM[39m [1mdist/index.js [22m[32m5.65 KB[39m
+@corsair-dev/apilabz:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/razorpay:build: cache hit, replaying logs 45f4c7ba9e59318b
+@corsair-dev/razorpay:build: 
+@corsair-dev/razorpay:build: 
+@corsair-dev/razorpay:build: > @corsair-dev/razorpay@0.1.4 build /Users/kathir/corsair-apilio/packages/razorpay
+@corsair-dev/razorpay:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/razorpay:build: 
+@corsair-dev/razorpay:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/razorpay:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/razorpay:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/razorpay:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/razorpay/tsup.config.ts
+@corsair-dev/razorpay:build: [34mCLI[39m Target: esnext
+@corsair-dev/razorpay:build: [34mESM[39m Build start
+@corsair-dev/razorpay:build: [32mESM[39m [1mdist/index.js [22m[32m29.54 KB[39m
+@corsair-dev/razorpay:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/apilio:build: cache hit, replaying logs f8affb5547281248
+@corsair-dev/apilio:build: 
+@corsair-dev/apilio:build: 
+@corsair-dev/apilio:build: > @corsair-dev/apilio@0.1.0 build /Users/kathir/corsair-apilio/packages/apilio
+@corsair-dev/apilio:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/apilio:build: 
+@corsair-dev/apilio:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/apilio:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/apilio:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/apilio:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/apilio/tsup.config.ts
+@corsair-dev/apilio:build: [34mCLI[39m Target: esnext
+@corsair-dev/apilio:build: [34mESM[39m Build start
+@corsair-dev/apilio:build: [32mESM[39m [1mdist/index.js [22m[32m3.84 KB[39m
+@corsair-dev/apilio:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/retailed:build: cache hit, replaying logs 073c231a3fdb1ac1
+@corsair-dev/zoom:build: cache hit, replaying logs e04cd9817e8e0989
+@corsair-dev/zoom:build: 
+@corsair-dev/zoom:build: 
+@corsair-dev/zoom:build: > @corsair-dev/zoom@0.1.3 build /Users/kathir/corsair-apilio/packages/zoom
+@corsair-dev/zoom:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/zoom:build: 
+@corsair-dev/zoom:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/zoom:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/zoom:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/zoom:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/zoom/tsup.config.ts
+@corsair-dev/zoom:build: [34mCLI[39m Target: esnext
+@corsair-dev/zoom:build: [34mESM[39m Build start
+@corsair-dev/zoom:build: [32mESM[39m [1mdist/index.js [22m[32m35.20 KB[39m
+@corsair-dev/zoom:build: [32mESM[39m ⚡️ Build success in 25ms
+@corsair-dev/retailed:build: 
+@corsair-dev/retailed:build: 
+@corsair-dev/retailed:build: > @corsair-dev/retailed@0.1.0 build /Users/kathir/corsair-apilio/packages/retailed
+@corsair-dev/retailed:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/retailed:build: 
+@corsair-dev/retailed:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/retailed:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/retailed:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/retailed:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/retailed/tsup.config.ts
+@corsair-dev/retailed:build: [34mCLI[39m Target: esnext
+@corsair-dev/retailed:build: [34mESM[39m Build start
+@corsair-dev/retailed:build: [32mESM[39m [1mdist/index.js [22m[32m6.85 KB[39m
+@corsair-dev/retailed:build: [32mESM[39m ⚡️ Build success in 31ms
+@corsair-dev/posthog:build: cache hit, replaying logs c269aa613d484c5f
+@corsair-dev/posthog:build: 
+@corsair-dev/posthog:build: 
+@corsair-dev/posthog:build: > @corsair-dev/posthog@0.1.3 build /Users/kathir/corsair-apilio/packages/posthog
+@corsair-dev/posthog:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/posthog:build: 
+@corsair-dev/posthog:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/posthog:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/posthog:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/posthog:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/posthog/tsup.config.ts
+@corsair-dev/posthog:build: [34mCLI[39m Target: esnext
+@corsair-dev/posthog:build: [34mESM[39m Build start
+@corsair-dev/posthog:build: [32mESM[39m [1mdist/index.js [22m[32m8.22 KB[39m
+@corsair-dev/posthog:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/anchorbrowser:build: cache hit, replaying logs 367fbfe346be53b5
+@corsair-dev/anchorbrowser:build: 
+@corsair-dev/anchorbrowser:build: 
+@corsair-dev/anchorbrowser:build: > @corsair-dev/anchorbrowser@0.1.0 build /Users/kathir/corsair-apilio/packages/anchorbrowser
+@corsair-dev/anchorbrowser:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/anchorbrowser:build: 
+@corsair-dev/anchorbrowser:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/anchorbrowser:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/anchorbrowser:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/anchorbrowser:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/anchorbrowser/tsup.config.ts
+@corsair-dev/anchorbrowser:build: [34mCLI[39m Target: esnext
+@corsair-dev/anchorbrowser:build: [34mESM[39m Build start
+@corsair-dev/anchorbrowser:build: [32mESM[39m [1mdist/index.js [22m[32m47.91 KB[39m
+@corsair-dev/anchorbrowser:build: [32mESM[39m ⚡️ Build success in 34ms
+@corsair-dev/stripe:build: cache hit, replaying logs af62927745dc0d41
+@corsair-dev/stripe:build: 
+@corsair-dev/stripe:build: 
+@corsair-dev/stripe:build: > @corsair-dev/stripe@0.1.4 build /Users/kathir/corsair-apilio/packages/stripe
+@corsair-dev/stripe:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/stripe:build: 
+@corsair-dev/stripe:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/stripe:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/stripe:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/stripe:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/stripe/tsup.config.ts
+@corsair-dev/stripe:build: [34mCLI[39m Target: esnext
+@corsair-dev/stripe:build: [34mESM[39m Build start
+@corsair-dev/stripe:build: [32mESM[39m [1mdist/index.js [22m[32m38.46 KB[39m
+@corsair-dev/stripe:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/nextdns:build: cache hit, replaying logs b42c23b30e8891e2
+@corsair-dev/nextdns:build: 
+@corsair-dev/nextdns:build: 
+@corsair-dev/nextdns:build: > @corsair-dev/nextdns@0.1.0 build /Users/kathir/corsair-apilio/packages/nextdns
+@corsair-dev/nextdns:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/nextdns:build: 
+@corsair-dev/nextdns:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/nextdns:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/nextdns:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/nextdns:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/nextdns/tsup.config.ts
+@corsair-dev/nextdns:build: [34mCLI[39m Target: esnext
+@corsair-dev/nextdns:build: [34mESM[39m Build start
+@corsair-dev/nextdns:build: [32mESM[39m [1mdist/index.js [22m[32m43.73 KB[39m
+@corsair-dev/nextdns:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/neon:build: cache hit, replaying logs 3b95c295a251997a
+@corsair-dev/neon:build: 
+@corsair-dev/neon:build: 
+@corsair-dev/neon:build: > @corsair-dev/neon@0.1.0 build /Users/kathir/corsair-apilio/packages/neon
+@corsair-dev/neon:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/neon:build: 
+@corsair-dev/neon:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/neon:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/neon:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/neon:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/neon/tsup.config.ts
+@corsair-dev/neon:build: [34mCLI[39m Target: esnext
+@corsair-dev/neon:build: [34mESM[39m Build start
+@corsair-dev/neon:build: [32mESM[39m [1mdist/index.js [22m[32m52.70 KB[39m
+@corsair-dev/neon:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/linear:build: cache hit, replaying logs 4fedd8a27708d8e1
+@corsair-dev/linear:build: 
+@corsair-dev/linear:build: 
+@corsair-dev/linear:build: > @corsair-dev/linear@0.1.5 build /Users/kathir/corsair-apilio/packages/linear
+@corsair-dev/linear:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/linear:build: 
+@corsair-dev/linear:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/linear:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/linear:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/linear:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/linear/tsup.config.ts
+@corsair-dev/linear:build: [34mCLI[39m Target: esnext
+@corsair-dev/linear:build: [34mESM[39m Build start
+@corsair-dev/linear:build: [32mESM[39m [1mdist/index.js [22m[32m53.92 KB[39m
+@corsair-dev/linear:build: [32mESM[39m ⚡️ Build success in 30ms
+@corsair-dev/gmail:build: cache hit, replaying logs 8624ead862bd1381
+@corsair-dev/gmail:build: 
+@corsair-dev/gmail:build: 
+@corsair-dev/gmail:build: > @corsair-dev/gmail@0.1.4 build /Users/kathir/corsair-apilio/packages/gmail
+@corsair-dev/gmail:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/gmail:build: 
+@corsair-dev/gmail:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/gmail:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/gmail:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/gmail:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/gmail/tsup.config.ts
+@corsair-dev/gmail:build: [34mCLI[39m Target: esnext
+@corsair-dev/gmail:build: [34mESM[39m Build start
+@corsair-dev/gmail:build: [32mESM[39m [1mdist/index.js [22m[32m34.44 KB[39m
+@corsair-dev/gmail:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/twilio:build: cache hit, replaying logs 73d6d07647e7e0c2
+@corsair-dev/twilio:build: 
+@corsair-dev/twilio:build: 
+@corsair-dev/twilio:build: > @corsair-dev/twilio@0.1.0 build /Users/kathir/corsair-apilio/packages/twilio
+@corsair-dev/twilio:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/twilio:build: 
+@corsair-dev/twilio:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/twilio:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/twilio:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/twilio:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/twilio/tsup.config.ts
+@corsair-dev/twilio:build: [34mCLI[39m Target: esnext
+@corsair-dev/twilio:build: [34mESM[39m Build start
+@corsair-dev/twilio:build: [32mESM[39m [1mdist/index.js [22m[32m14.06 KB[39m
+@corsair-dev/twilio:build: [32mESM[39m ⚡️ Build success in 26ms
+@corsair-dev/slack:build: cache hit, replaying logs d937be08a93c1102
+@corsair-dev/slack:build: 
+@corsair-dev/slack:build: 
+@corsair-dev/slack:build: > @corsair-dev/slack@0.1.7 build /Users/kathir/corsair-apilio/packages/slack
+@corsair-dev/slack:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/slack:build: 
+@corsair-dev/slack:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/slack:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/slack:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/slack:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/slack/tsup.config.ts
+@corsair-dev/slack:build: [34mCLI[39m Target: esnext
+@corsair-dev/slack:build: [34mESM[39m Build start
+@corsair-dev/slack:build: [32mESM[39m [1mdist/index.js [22m[32m67.07 KB[39m
+@corsair-dev/slack:build: [32mESM[39m ⚡️ Build success in 28ms
+@corsair-dev/betterstack:build: cache hit, replaying logs 6556d352e144162d
+@corsair-dev/betterstack:build: 
+@corsair-dev/betterstack:build: 
+@corsair-dev/betterstack:build: > @corsair-dev/betterstack@0.1.0 build /Users/kathir/corsair-apilio/packages/betterstack
+@corsair-dev/betterstack:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/betterstack:build: 
+@corsair-dev/betterstack:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/betterstack:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/betterstack:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/betterstack:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/betterstack/tsup.config.ts
+@corsair-dev/betterstack:build: [34mCLI[39m Target: esnext
+@corsair-dev/betterstack:build: [34mESM[39m Build start
+@corsair-dev/betterstack:build: [32mESM[39m [1mdist/index.js [22m[32m150.43 KB[39m
+@corsair-dev/betterstack:build: [32mESM[39m ⚡️ Build success in 54ms
+@corsair-dev/agencyzoom:build: cache hit, replaying logs 9c979c5275e57064
+@corsair-dev/agencyzoom:build: 
+@corsair-dev/agencyzoom:build: 
+@corsair-dev/agencyzoom:build: > @corsair-dev/agencyzoom@0.1.0 build /Users/kathir/corsair-apilio/packages/agencyzoom
+@corsair-dev/agencyzoom:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/agencyzoom:build: 
+@corsair-dev/agencyzoom:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/agencyzoom:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/agencyzoom:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/agencyzoom:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/agencyzoom/tsup.config.ts
+@corsair-dev/agencyzoom:build: [34mCLI[39m Target: esnext
+@corsair-dev/agencyzoom:build: [34mESM[39m Build start
+@corsair-dev/agencyzoom:build: [32mESM[39m [1mdist/index.js [22m[32m85.87 KB[39m
+@corsair-dev/agencyzoom:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/webflow:build: cache hit, replaying logs 9be0b88b1f5b5a1c
+@corsair-dev/firecrawl:build: cache hit, replaying logs 3ba74b4342209e8d
+@corsair-dev/webflow:build: 
+@corsair-dev/webflow:build: 
+@corsair-dev/webflow:build: > @corsair-dev/webflow@0.1.0 build /Users/kathir/corsair-apilio/packages/webflow
+@corsair-dev/webflow:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/webflow:build: 
+@corsair-dev/webflow:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/webflow:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/webflow:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/webflow:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/webflow/tsup.config.ts
+@corsair-dev/webflow:build: [34mCLI[39m Target: esnext
+@corsair-dev/webflow:build: [34mESM[39m Build start
+@corsair-dev/webflow:build: [32mESM[39m [1mdist/index.js [22m[32m34.69 KB[39m
+@corsair-dev/webflow:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/ahrefs:build: cache hit, replaying logs edc6ebeae1fce118
+@corsair-dev/firecrawl:build: 
+@corsair-dev/firecrawl:build: 
+@corsair-dev/firecrawl:build: > @corsair-dev/firecrawl@0.1.3 build /Users/kathir/corsair-apilio/packages/firecrawl
+@corsair-dev/firecrawl:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/firecrawl:build: 
+@corsair-dev/firecrawl:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/firecrawl:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/firecrawl:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/firecrawl:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/firecrawl/tsup.config.ts
+@corsair-dev/firecrawl:build: [34mCLI[39m Target: esnext
+@corsair-dev/firecrawl:build: [34mESM[39m Build start
+@corsair-dev/firecrawl:build: [32mESM[39m [1mdist/index.js [22m[32m30.74 KB[39m
+@corsair-dev/firecrawl:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/ahrefs:build: 
+@corsair-dev/ahrefs:build: 
+@corsair-dev/ahrefs:build: > @corsair-dev/ahrefs@0.1.0 build /Users/kathir/corsair-apilio/packages/ahrefs
+@corsair-dev/ahrefs:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/ahrefs:build: 
+@corsair-dev/ahrefs:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/ahrefs:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/ahrefs:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/ahrefs:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/ahrefs/tsup.config.ts
+@corsair-dev/ahrefs:build: [34mCLI[39m Target: esnext
+@corsair-dev/ahrefs:build: [34mESM[39m Build start
+@corsair-dev/ahrefs:build: [32mESM[39m [1mdist/index.js [22m[32m20.49 KB[39m
+@corsair-dev/ahrefs:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/datadog:build: cache hit, replaying logs d3776ddd951a21e9
+@corsair-dev/datadog:build: 
+@corsair-dev/datadog:build: 
+@corsair-dev/datadog:build: > @corsair-dev/datadog@0.1.0 build /Users/kathir/corsair-apilio/packages/datadog
+@corsair-dev/datadog:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/datadog:build: 
+@corsair-dev/datadog:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/datadog:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/datadog:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/datadog:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/datadog/tsup.config.ts
+@corsair-dev/datadog:build: [34mCLI[39m Target: esnext
+@corsair-dev/datadog:build: [34mESM[39m Build start
+@corsair-dev/datadog:build: [32mESM[39m [1mdist/index.js [22m[32m39.08 KB[39m
+@corsair-dev/datadog:build: [32mESM[39m ⚡️ Build success in 21ms
+@corsair-dev/reddit:build: cache hit, replaying logs 237648bdecdb4819
+@corsair-dev/reddit:build: 
+@corsair-dev/reddit:build: 
+@corsair-dev/reddit:build: > @corsair-dev/reddit@0.1.2 build /Users/kathir/corsair-apilio/packages/reddit
+@corsair-dev/reddit:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/reddit:build: 
+@corsair-dev/reddit:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/reddit:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/reddit:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/reddit:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/reddit/tsup.config.ts
+@corsair-dev/reddit:build: [34mCLI[39m Target: esnext
+@corsair-dev/reddit:build: [34mESM[39m Build start
+@corsair-dev/reddit:build: [32mESM[39m [1mdist/index.js [22m[32m19.76 KB[39m
+@corsair-dev/reddit:build: [32mESM[39m ⚡️ Build success in 27ms
+@corsair-dev/exa:build: cache hit, replaying logs a5ab9dfa99e8db45
+@corsair-dev/exa:build: 
+@corsair-dev/exa:build: 
+@corsair-dev/exa:build: > @corsair-dev/exa@0.1.3 build /Users/kathir/corsair-apilio/packages/exa
+@corsair-dev/exa:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/exa:build: 
+@corsair-dev/exa:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/exa:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/exa:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/exa:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/exa/tsup.config.ts
+@corsair-dev/exa:build: [34mCLI[39m Target: esnext
+@corsair-dev/exa:build: [34mESM[39m Build start
+@corsair-dev/exa:build: [32mESM[39m [1mdist/index.js [22m[32m24.66 KB[39m
+@corsair-dev/exa:build: [32mESM[39m ⚡️ Build success in 24ms
+@corsair-dev/aimlapi:build: cache hit, replaying logs a064d50fd67a8b65
+@corsair-dev/aimlapi:build: 
+@corsair-dev/aimlapi:build: 
+@corsair-dev/aimlapi:build: > @corsair-dev/aimlapi@0.1.0 build /Users/kathir/corsair-apilio/packages/aimlapi
+@corsair-dev/aimlapi:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/aimlapi:build: 
+@corsair-dev/aimlapi:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/aimlapi:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/aimlapi:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/aimlapi:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/aimlapi/tsup.config.ts
+@corsair-dev/aimlapi:build: [34mCLI[39m Target: esnext
+@corsair-dev/aimlapi:build: [34mESM[39m Build start
+@corsair-dev/aimlapi:build: [32mESM[39m [1mdist/index.js [22m[32m24.03 KB[39m
+@corsair-dev/aimlapi:build: [32mESM[39m ⚡️ Build success in 14ms
+@corsair-dev/supabase:build: cache hit, replaying logs 36b7099316dfcee0
+@corsair-dev/supabase:build: 
+@corsair-dev/supabase:build: 
+@corsair-dev/supabase:build: > @corsair-dev/supabase@0.1.0 build /Users/kathir/corsair-apilio/packages/supabase
+@corsair-dev/supabase:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/supabase:build: 
+@corsair-dev/supabase:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/supabase:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/supabase:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/supabase:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/supabase/tsup.config.ts
+@corsair-dev/supabase:build: [34mCLI[39m Target: esnext
+@corsair-dev/supabase:build: [34mESM[39m Build start
+@corsair-dev/supabase:build: [32mESM[39m [1mdist/index.js [22m[32m54.67 KB[39m
+@corsair-dev/supabase:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/linkedin:build: cache hit, replaying logs a2d1a75ef55d4847
+@corsair-dev/linkedin:build: 
+@corsair-dev/linkedin:build: 
+@corsair-dev/linkedin:build: > @corsair-dev/linkedin@0.1.0 build /Users/kathir/corsair-apilio/packages/linkedin
+@corsair-dev/linkedin:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/linkedin:build: 
+@corsair-dev/linkedin:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/linkedin:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/linkedin:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/linkedin:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/linkedin/tsup.config.ts
+@corsair-dev/linkedin:build: [34mCLI[39m Target: esnext
+@corsair-dev/linkedin:build: [34mESM[39m Build start
+@corsair-dev/linkedin:build: [32mESM[39m [1mdist/index.js [22m[32m32.45 KB[39m
+@corsair-dev/linkedin:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/typeform:build: cache hit, replaying logs 968f84c27ee7fafe
+@corsair-dev/typeform:build: 
+@corsair-dev/typeform:build: 
+@corsair-dev/typeform:build: > @corsair-dev/typeform@0.1.3 build /Users/kathir/corsair-apilio/packages/typeform
+@corsair-dev/typeform:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/typeform:build: 
+@corsair-dev/typeform:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/typeform:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/typeform:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/typeform:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/typeform/tsup.config.ts
+@corsair-dev/typeform:build: [34mCLI[39m Target: esnext
+@corsair-dev/typeform:build: [34mESM[39m Build start
+@corsair-dev/typeform:build: [32mESM[39m [1mdist/index.js [22m[32m40.58 KB[39m
+@corsair-dev/typeform:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/algolia:build: cache hit, replaying logs a74a02fff818ca32
+@corsair-dev/algolia:build: 
+@corsair-dev/algolia:build: 
+@corsair-dev/algolia:build: > @corsair-dev/algolia@0.1.0 build /Users/kathir/corsair-apilio/packages/algolia
+@corsair-dev/algolia:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/algolia:build: 
+@corsair-dev/algolia:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/algolia:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/algolia:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/algolia:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/algolia/tsup.config.ts
+@corsair-dev/algolia:build: [34mCLI[39m Target: esnext
+@corsair-dev/algolia:build: [34mESM[39m Build start
+@corsair-dev/algolia:build: [32mESM[39m [1mdist/index.js [22m[32m112.87 KB[39m
+@corsair-dev/algolia:build: [32mESM[39m ⚡️ Build success in 30ms
+@corsair-dev/habitica:build: cache hit, replaying logs 3a1ee0b72c03271e
+@corsair-dev/habitica:build: 
+@corsair-dev/habitica:build: 
+@corsair-dev/habitica:build: > @corsair-dev/habitica@0.1.0 build /Users/kathir/corsair-apilio/packages/habitica
+@corsair-dev/habitica:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/habitica:build: 
+@corsair-dev/habitica:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/habitica:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/habitica:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/habitica:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/habitica/tsup.config.ts
+@corsair-dev/habitica:build: [34mCLI[39m Target: esnext
+@corsair-dev/habitica:build: [34mESM[39m Build start
+@corsair-dev/habitica:build: [32mESM[39m [1mdist/index.js [22m[32m46.58 KB[39m
+@corsair-dev/habitica:build: [32mESM[39m ⚡️ Build success in 19ms
+@corsair-dev/discord:build: cache hit, replaying logs e9ca5ef76a0c5931
+@corsair-dev/discord:build: 
+@corsair-dev/discord:build: 
+@corsair-dev/discord:build: > @corsair-dev/discord@0.1.3 build /Users/kathir/corsair-apilio/packages/discord
+@corsair-dev/discord:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/discord:build: 
+@corsair-dev/discord:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/discord:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/discord:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/discord:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/discord/tsup.config.ts
+@corsair-dev/discord:build: [34mCLI[39m Target: esnext
+@corsair-dev/discord:build: [34mESM[39m Build start
+@corsair-dev/discord:build: [32mESM[39m [1mdist/index.js [22m[32m23.53 KB[39m
+@corsair-dev/discord:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/trello:build: cache hit, replaying logs 8c1660d50e5d7dc4
+@corsair-dev/trello:build: 
+@corsair-dev/trello:build: 
+@corsair-dev/trello:build: > @corsair-dev/trello@0.1.3 build /Users/kathir/corsair-apilio/packages/trello
+@corsair-dev/trello:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/trello:build: 
+@corsair-dev/trello:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/trello:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/trello:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/trello:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/trello/tsup.config.ts
+@corsair-dev/trello:build: [34mCLI[39m Target: esnext
+@corsair-dev/trello:build: [34mESM[39m Build start
+@corsair-dev/trello:build: [32mESM[39m [1mdist/index.js [22m[32m33.62 KB[39m
+@corsair-dev/trello:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/hackernews:build: cache hit, replaying logs 14cce87109d784b6
+@corsair-dev/hackernews:build: 
+@corsair-dev/hackernews:build: 
+@corsair-dev/hackernews:build: > @corsair-dev/hackernews@0.1.2 build /Users/kathir/corsair-apilio/packages/hackernews
+@corsair-dev/hackernews:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/hackernews:build: 
+@corsair-dev/hackernews:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/hackernews:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/hackernews:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/hackernews:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/hackernews/tsup.config.ts
+@corsair-dev/hackernews:build: [34mCLI[39m Target: esnext
+@corsair-dev/hackernews:build: [34mESM[39m Build start
+@corsair-dev/hackernews:build: [32mESM[39m [1mdist/index.js [22m[32m17.59 KB[39m
+@corsair-dev/hackernews:build: [32mESM[39m ⚡️ Build success in 18ms
+@corsair-dev/cal:build: cache hit, replaying logs 9d52686879760da5
+@corsair-dev/cal:build: 
+@corsair-dev/cal:build: 
+@corsair-dev/cal:build: > @corsair-dev/cal@0.1.3 build /Users/kathir/corsair-apilio/packages/cal
+@corsair-dev/cal:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/cal:build: 
+@corsair-dev/cal:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/cal:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/cal:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/cal:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/cal/tsup.config.ts
+@corsair-dev/cal:build: [34mCLI[39m Target: esnext
+@corsair-dev/cal:build: [34mESM[39m Build start
+@corsair-dev/cal:build: [32mESM[39m [1mdist/index.js [22m[32m16.49 KB[39m
+@corsair-dev/cal:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/gitlab:build: cache hit, replaying logs c2c48c3d7f38ffc8
+@corsair-dev/gitlab:build: 
+@corsair-dev/gitlab:build: 
+@corsair-dev/gitlab:build: > @corsair-dev/gitlab@0.1.4 build /Users/kathir/corsair-apilio/packages/gitlab
+@corsair-dev/gitlab:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/gitlab:build: 
+@corsair-dev/gitlab:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/gitlab:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/gitlab:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/gitlab:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/gitlab/tsup.config.ts
+@corsair-dev/gitlab:build: [34mCLI[39m Target: esnext
+@corsair-dev/gitlab:build: [34mESM[39m Build start
+@corsair-dev/gitlab:build: [32mESM[39m [1mdist/index.js [22m[32m65.05 KB[39m
+@corsair-dev/gitlab:build: [32mESM[39m ⚡️ Build success in 69ms
+@corsair-dev/altoviz:build: cache hit, replaying logs 2e076359c42dd5fc
+@corsair-dev/altoviz:build: 
+@corsair-dev/altoviz:build: 
+@corsair-dev/altoviz:build: > @corsair-dev/altoviz@0.1.1 build /Users/kathir/corsair-apilio/packages/altoviz
+@corsair-dev/altoviz:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/altoviz:build: 
+@corsair-dev/altoviz:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/altoviz:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/altoviz:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/altoviz:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/altoviz/tsup.config.ts
+@corsair-dev/altoviz:build: [34mCLI[39m Target: esnext
+@corsair-dev/altoviz:build: [34mESM[39m Build start
+@corsair-dev/altoviz:build: [32mESM[39m [1mdist/index.js [22m[32m67.62 KB[39m
+@corsair-dev/altoviz:build: [32mESM[39m ⚡️ Build success in 26ms
+@corsair-dev/tavily:build: cache hit, replaying logs e7d289d9de8a6fad
+@corsair-dev/bitwarden:build: cache hit, replaying logs a7f67241458f113c
+@corsair-dev/tavily:build: 
+@corsair-dev/tavily:build: 
+@corsair-dev/tavily:build: > @corsair-dev/tavily@0.1.4 build /Users/kathir/corsair-apilio/packages/tavily
+@corsair-dev/tavily:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/tavily:build: 
+@corsair-dev/tavily:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/tavily:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/tavily:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/tavily:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/tavily/tsup.config.ts
+@corsair-dev/tavily:build: [34mCLI[39m Target: esnext
+@corsair-dev/tavily:build: [34mESM[39m Build start
+@corsair-dev/tavily:build: [32mESM[39m [1mdist/index.js [22m[32m9.52 KB[39m
+@corsair-dev/tavily:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/bitwarden:build: 
+@corsair-dev/bitwarden:build: 
+@corsair-dev/bitwarden:build: > @corsair-dev/bitwarden@0.1.1 build /Users/kathir/corsair-apilio/packages/bitwarden
+@corsair-dev/bitwarden:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/bitwarden:build: 
+@corsair-dev/bitwarden:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/bitwarden:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/bitwarden:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/bitwarden:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/bitwarden/tsup.config.ts
+@corsair-dev/bitwarden:build: [34mCLI[39m Target: esnext
+@corsair-dev/bitwarden:build: [34mESM[39m Build start
+@corsair-dev/bitwarden:build: [32mESM[39m [1mdist/index.js [22m[32m8.52 KB[39m
+@corsair-dev/bitwarden:build: [32mESM[39m ⚡️ Build success in 16ms
+@corsair-dev/twitterapiio:build: cache hit, replaying logs 53aa88546fed6473
+@corsair-dev/twitterapiio:build: 
+@corsair-dev/twitterapiio:build: 
+@corsair-dev/twitterapiio:build: > @corsair-dev/twitterapiio@0.1.3 build /Users/kathir/corsair-apilio/packages/twitterapiio
+@corsair-dev/twitterapiio:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/twitterapiio:build: 
+@corsair-dev/twitterapiio:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/twitterapiio:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/twitterapiio:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/twitterapiio:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/twitterapiio/tsup.config.ts
+@corsair-dev/twitterapiio:build: [34mCLI[39m Target: esnext
+@corsair-dev/twitterapiio:build: [34mESM[39m Build start
+@corsair-dev/twitterapiio:build: [32mESM[39m [1mdist/index.js [22m[32m46.02 KB[39m
+@corsair-dev/twitterapiio:build: [32mESM[39m ⚡️ Build success in 21ms
+@corsair-dev/airtable:build: cache hit, replaying logs fab59819d2deb896
+@corsair-dev/airtable:build: 
+@corsair-dev/airtable:build: 
+@corsair-dev/airtable:build: > @corsair-dev/airtable@0.1.4 build /Users/kathir/corsair-apilio/packages/airtable
+@corsair-dev/airtable:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/airtable:build: 
+@corsair-dev/airtable:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/airtable:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/airtable:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/airtable:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/airtable/tsup.config.ts
+@corsair-dev/airtable:build: [34mCLI[39m Target: esnext
+@corsair-dev/airtable:build: [34mESM[39m Build start
+@corsair-dev/airtable:build: [32mESM[39m [1mdist/index.js [22m[32m15.31 KB[39m
+@corsair-dev/airtable:build: [32mESM[39m ⚡️ Build success in 15ms
+@corsair-dev/serpapi:build: cache hit, replaying logs d674877335cca440
+@corsair-dev/serpapi:build: 
+@corsair-dev/serpapi:build: 
+@corsair-dev/serpapi:build: > @corsair-dev/serpapi@0.1.1 build /Users/kathir/corsair-apilio/packages/serpapi
+@corsair-dev/serpapi:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/serpapi:build: 
+@corsair-dev/serpapi:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/serpapi:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/serpapi:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/serpapi:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/serpapi/tsup.config.ts
+@corsair-dev/serpapi:build: [34mCLI[39m Target: esnext
+@corsair-dev/serpapi:build: [34mESM[39m Build start
+@corsair-dev/serpapi:build: [32mESM[39m [1mdist/index.js [22m[32m27.64 KB[39m
+@corsair-dev/serpapi:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/ui:build: cache hit, replaying logs 293d9a27a5c78f1f
+@corsair-dev/doppler:build: cache hit, replaying logs 908a6fb4706540b9
+@corsair-dev/ui:build: 
+@corsair-dev/ui:build: 
+@corsair-dev/ui:build: > @corsair-dev/ui@0.1.4 build /Users/kathir/corsair-apilio/packages/ui
+@corsair-dev/ui:build: > tsup && tsc -p tsconfig.build.json
+@corsair-dev/ui:build: 
+@corsair-dev/ui:build: [34mCLI[39m Building entry: src/index.ts
+@corsair-dev/ui:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/ui:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/ui:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/ui/tsup.config.ts
+@corsair-dev/ui:build: [34mCLI[39m Target: esnext
+@corsair-dev/ui:build: [34mCLI[39m Cleaning output folder
+@corsair-dev/ui:build: [34mESM[39m Build start
+@corsair-dev/ui:build: [32mESM[39m [1mdist/index.js [22m[32m29.08 KB[39m
+@corsair-dev/ui:build: [32mESM[39m ⚡️ Build success in 20ms
+@corsair-dev/ui:build: DTS Build start
+@corsair-dev/ui:build: DTS ⚡️ Build success in 3577ms
+@corsair-dev/ui:build: DTS dist/index.d.ts 905.00 B
+@corsair-dev/doppler:build: 
+@corsair-dev/doppler:build: 
+@corsair-dev/doppler:build: > @corsair-dev/doppler@0.1.0 build /Users/kathir/corsair-apilio/packages/doppler
+@corsair-dev/doppler:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/doppler:build: 
+@corsair-dev/doppler:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/doppler:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/doppler:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/doppler:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/doppler/tsup.config.ts
+@corsair-dev/doppler:build: [34mCLI[39m Target: esnext
+@corsair-dev/doppler:build: [34mESM[39m Build start
+@corsair-dev/doppler:build: [32mESM[39m [1mdist/index.js [22m[32m42.93 KB[39m
+@corsair-dev/doppler:build: [32mESM[39m ⚡️ Build success in 105ms
+@corsair-dev/loyverse:build: cache hit, replaying logs e98d97970d344968
+@corsair-dev/loyverse:build: 
+@corsair-dev/loyverse:build: 
+@corsair-dev/loyverse:build: > @corsair-dev/loyverse@0.1.0 build /Users/kathir/corsair-apilio/packages/loyverse
+@corsair-dev/loyverse:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/loyverse:build: 
+@corsair-dev/loyverse:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/loyverse:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/loyverse:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/loyverse:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/loyverse/tsup.config.ts
+@corsair-dev/loyverse:build: [34mCLI[39m Target: esnext
+@corsair-dev/loyverse:build: [34mESM[39m Build start
+@corsair-dev/loyverse:build: [32mESM[39m [1mdist/index.js [22m[32m49.09 KB[39m
+@corsair-dev/loyverse:build: [32mESM[39m ⚡️ Build success in 24ms
+@corsair-dev/mailchimp:build: cache hit, replaying logs 34660522e24f1053
+@corsair-dev/studio:build: cache hit, replaying logs c8d0295eade4ecc1
+@corsair-dev/mailchimp:build: 
+@corsair-dev/mailchimp:build: 
+@corsair-dev/mailchimp:build: > @corsair-dev/mailchimp@0.1.0 build /Users/kathir/corsair-apilio/packages/mailchimp
+@corsair-dev/mailchimp:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/mailchimp:build: 
+@corsair-dev/mailchimp:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/mailchimp:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/mailchimp:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/mailchimp:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/mailchimp/tsup.config.ts
+@corsair-dev/mailchimp:build: [34mCLI[39m Target: esnext
+@corsair-dev/mailchimp:build: [34mESM[39m Build start
+@corsair-dev/mailchimp:build: [32mESM[39m [1mdist/index.js [22m[32m41.93 KB[39m
+@corsair-dev/mailchimp:build: [32mESM[39m ⚡️ Build success in 30ms
+@corsair-dev/studio:build: 
+@corsair-dev/studio:build: 
+@corsair-dev/studio:build: > @corsair-dev/studio@0.1.6 build /Users/kathir/corsair-apilio/packages/studio
+@corsair-dev/studio:build: > pnpm run build:web && pnpm run build:server
+@corsair-dev/studio:build: 
+@corsair-dev/studio:build: ../../demo/testing                       | [43m[30m WARN [39m[49m The field "pnpm.onlyBuiltDependencies" was found in /Users/kathir/corsair-apilio/demo/testing/package.json. This will not take effect. You should configure "pnpm.onlyBuiltDependencies" at the root of the workspace instead.
+@corsair-dev/studio:build: ../frpc-darwin-x64                       | [43m[30m WARN [39m[49m Unsupported platform: wanted: {"cpu":["x64"],"os":["darwin"],"libc":["any"]} (current: {"os":"darwin","cpu":"arm64","libc":"unknown"})
+@corsair-dev/studio:build: ../frpc-linux-arm64                      | [43m[30m WARN [39m[49m Unsupported platform: wanted: {"cpu":["arm64"],"os":["linux"],"libc":["any"]} (current: {"os":"darwin","cpu":"arm64","libc":"unknown"})
+@corsair-dev/studio:build: ../frpc-linux-x64                        | [43m[30m WARN [39m[49m Unsupported platform: wanted: {"cpu":["x64"],"os":["linux"],"libc":["any"]} (current: {"os":"darwin","cpu":"arm64","libc":"unknown"})
+@corsair-dev/studio:build: ../frpc-win32-arm64                      | [43m[30m WARN [39m[49m Unsupported platform: wanted: {"cpu":["arm64"],"os":["win32"],"libc":["any"]} (current: {"os":"darwin","cpu":"arm64","libc":"unknown"})
+@corsair-dev/studio:build: [43m[30m WARN [39m[49m 1 other warnings
+@corsair-dev/studio:build: 
+@corsair-dev/studio:build: > @corsair-dev/studio@0.1.6 build:web /Users/kathir/corsair-apilio/packages/studio
+@corsair-dev/studio:build: > vite build
+@corsair-dev/studio:build: 
+@corsair-dev/studio:build: [36mvite v6.4.2 [32mbuilding for production...[36m[39m
+@corsair-dev/studio:build: [2K[1Gtransforming (1) [2mmain.tsx[22m[2K[1Gtransforming (7) [2m../../../../node_modules/.pnpm/react@19.2.5/node_modules/react/jsx-runtime.js[22m[2K[1Gtransforming (11) [2m../../ commonjsHelpers.js[22m[2K[1G[33m[plugin vite:esbuild] src/web/pages/ScriptPage.tsx: [33mDuplicate "aria-label" attribute in JSX element[33m
+@corsair-dev/studio:build: 84 |  							onChange={(e) => setActiveTenant(e.target.value)}
+@corsair-dev/studio:build: 85 |  							className="h-8 px-2 rounded-md text-xs bg-[var(--color-bg)] border border-[var(--color-border)] focus:outline-none focus:border-[var(--color-accent-dim)]"
+@corsair-dev/studio:build: 86 |  							aria-label="Active Tenant"
+@corsair-dev/studio:build:    |         ^
+@corsair-dev/studio:build: 87 |  						>
+@corsair-dev/studio:build: 88 |  							<option value="">Select tenant</option>
+@corsair-dev/studio:build: [39m
+@corsair-dev/studio:build: [2K[1G[33m[plugin vite:esbuild] src/web/pages/ScriptPage.tsx: [33mDuplicate "aria-label" attribute in JSX element[33m
+@corsair-dev/studio:build: 115|  						aria-label="Script"
+@corsair-dev/studio:build: 116|  						spellCheck={false}
+@corsair-dev/studio:build: 117|  						aria-label="Script Source"
+@corsair-dev/studio:build:    |        ^
+@corsair-dev/studio:build: 118|  					/>
+@corsair-dev/studio:build: 119|  				</Card>
+@corsair-dev/studio:build: [39m
+@corsair-dev/studio:build: [2K[1Gtransforming (26) [2mcomponents/Primitives.tsx[22m[2K[1Gtransforming (33) [2m../../../../node_modules/.pnpm/react-dom@19.2.5_react@19.2.5/node_modules/react-dom/client.js[22[2K[1G[32m✓[39m 40 modules transformed.
+@corsair-dev/studio:build: [2K[1Grendering chunks (1)...[2K[1G[2K[1Gcomputing gzip size (0)...[2K[1Gcomputing gzip size (1)...[2K[1Gcomputing gzip size (2)...[2K[1Gcomputing gzip size (3)...[2K[1G[2m../../dist/web/[22m[32mindex.html                 [39m[1m[2m  0.56 kB[22m[1m[22m[2m │ gzip:  0.38 kB[22m
+@corsair-dev/studio:build: [2m../../dist/web/[22m[2massets/[22m[35mindex-Dryhlyve.css  [39m[1m[2m 21.18 kB[22m[1m[22m[2m │ gzip:  4.79 kB[22m
+@corsair-dev/studio:build: [2m../../dist/web/[22m[2massets/[22m[36mindex-BkR9qC-P.js   [39m[1m[2m246.71 kB[22m[1m[22m[2m │ gzip: 74.30 kB[22m[2m │ map: 1,077.79 kB[22m
+@corsair-dev/studio:build: [32m✓ built in 1.89s[39m
+@corsair-dev/studio:build: ../../demo/testing                       | [43m[30m WARN [39m[49m The field "pnpm.onlyBuiltDependencies" was found in /Users/kathir/corsair-apilio/demo/testing/package.json. This will not take effect. You should configure "pnpm.onlyBuiltDependencies" at the root of the workspace instead.
+@corsair-dev/studio:build: ../frpc-darwin-x64                       | [43m[30m WARN [39m[49m Unsupported platform: wanted: {"cpu":["x64"],"os":["darwin"],"libc":["any"]} (current: {"os":"darwin","cpu":"arm64","libc":"unknown"})
+@corsair-dev/studio:build: ../frpc-linux-arm64                      | [43m[30m WARN [39m[49m Unsupported platform: wanted: {"cpu":["arm64"],"os":["linux"],"libc":["any"]} (current: {"os":"darwin","cpu":"arm64","libc":"unknown"})
+@corsair-dev/studio:build: ../frpc-linux-x64                        | [43m[30m WARN [39m[49m Unsupported platform: wanted: {"cpu":["x64"],"os":["linux"],"libc":["any"]} (current: {"os":"darwin","cpu":"arm64","libc":"unknown"})
+@corsair-dev/studio:build: ../frpc-win32-arm64                      | [43m[30m WARN [39m[49m Unsupported platform: wanted: {"cpu":["arm64"],"os":["win32"],"libc":["any"]} (current: {"os":"darwin","cpu":"arm64","libc":"unknown"})
+@corsair-dev/studio:build: [43m[30m WARN [39m[49m 1 other warnings
+@corsair-dev/studio:build: 
+@corsair-dev/studio:build: > @corsair-dev/studio@0.1.6 build:server /Users/kathir/corsair-apilio/packages/studio
+@corsair-dev/studio:build: > tsup && tsc -p tsconfig.build.json
+@corsair-dev/studio:build: 
+@corsair-dev/studio:build: [34mCLI[39m Building entry: {"index":"src/server/index.ts"}
+@corsair-dev/studio:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/studio:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/studio:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/studio/tsup.config.ts
+@corsair-dev/studio:build: [34mCLI[39m Target: esnext
+@corsair-dev/studio:build: [34mESM[39m Build start
+@corsair-dev/studio:build: [32mESM[39m [1mdist/server/index.js [22m[32m66.80 KB[39m
+@corsair-dev/studio:build: [32mESM[39m ⚡️ Build success in 22ms
+@corsair-dev/affinda:build: cache hit, replaying logs 99ed32b6b87d6639
+@corsair-dev/affinda:build: 
+@corsair-dev/affinda:build: 
+@corsair-dev/affinda:build: > @corsair-dev/affinda@0.1.0 build /Users/kathir/corsair-apilio/packages/affinda
+@corsair-dev/affinda:build: > rm -rf dist && tsc --build --force && tsup
+@corsair-dev/affinda:build: 
+@corsair-dev/affinda:build: [34mCLI[39m Building entry: index.ts
+@corsair-dev/affinda:build: [34mCLI[39m Using tsconfig: tsconfig.json
+@corsair-dev/affinda:build: [34mCLI[39m tsup v8.5.1
+@corsair-dev/affinda:build: [34mCLI[39m Using tsup config: /Users/kathir/corsair-apilio/packages/affinda/tsup.config.ts
+@corsair-dev/affinda:build: [34mCLI[39m Target: esnext
+@corsair-dev/affinda:build: [34mESM[39m Build start
+@corsair-dev/affinda:build: [32mESM[39m [1mdist/index.js [22m[32m96.16 KB[39m
+@corsair-dev/affinda:build: [32mESM[39m ⚡️ Build success in 37ms
+
+ Tasks:    171 successful, 171 total
+Cached:    171 cached, 171 total
+  Time:    2.751s >>> FULL TURBO
+
