@@ -71,6 +71,14 @@ export async function makeXataDataRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
+
+	if (!/^[a-zA-Z0-9-]+$/.test(workspaceId)) {
+		throw new XataAPIError('Invalid workspaceId provided to data request');
+	}
+	if (!/^[a-zA-Z0-9-]+$/.test(region)) {
+		throw new XataAPIError('Invalid region provided to data request');
+	}
+
 	const dataApiBase = `https://${workspaceId}.${region}.xata.sh`;
 
 	const config: OpenAPIConfig = {

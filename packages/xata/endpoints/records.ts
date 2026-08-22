@@ -45,10 +45,11 @@ export const create: XataEndpoints['recordsCreate'] = async (ctx, input) => {
 		},
 	);
 
+	const { data, ...safeInput } = input;
 	await logEventFromContext(
 		ctx,
 		'xata.records.create',
-		{ ...input },
+		{ ...safeInput },
 		'completed',
 	);
 	return response;
@@ -85,10 +86,11 @@ export const update: XataEndpoints['recordsUpdate'] = async (ctx, input) => {
 		},
 	);
 
+	const { data, ...safeInput } = input;
 	await logEventFromContext(
 		ctx,
 		'xata.records.update',
-		{ ...input },
+		{ ...safeInput },
 		'completed',
 	);
 	return response;
@@ -139,10 +141,11 @@ export const query: XataEndpoints['recordsQuery'] = async (ctx, input) => {
 		},
 	);
 
+	const { filter, sort, columns, page, ...safeInput } = input;
 	await logEventFromContext(
 		ctx,
 		'xata.records.query',
-		{ ...input },
+		{ ...safeInput },
 		'completed',
 	);
 	return response;

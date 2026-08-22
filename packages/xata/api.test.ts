@@ -150,3 +150,67 @@ describe('Xata Plugin Interface Tests', () => {
 		expect(isNotFound).toBe(true);
 	});
 });
+
+jest.mock('./client', () => ({
+	...jest.requireActual('./client'),
+	makeXataManagementRequest: jest.fn(),
+	makeXataDataRequest: jest.fn(),
+}));
+
+import { makeXataDataRequest, makeXataManagementRequest } from './client';
+
+describe('Xata Endpoint Behavioral Tests', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	const mockCtx = {
+		key: 'test_api_key',
+		options: {
+			workspaceId: 'ws_123',
+			region: 'eu-west-1',
+		},
+		plugin: { id: 'xata' },
+		$getAccountId: () => 'acc_test',
+		database: {} as any,
+	} as any;
+
+	it('organizations.list calls Management API', async () => {
+		const mockResponse = { workspaces: [] };
+		(makeXataManagementRequest as jest.Mock).mockResolvedValue(mockResponse);
+
+		const result = await xata({ key: 'test' }).endpoints!.organizations.list(
+			mockCtx,
+			{},
+		);
+
+		expect(makeXataManagementRequest).toHaveBeenCalledWith(
+			'/organizations',
+			'test_api_key',
+		);
+		expect(result).toBe(mockResponse);
+	});
+
+	it('records.create calls Data API and omits data payload from logs', async () => {
+		const mockResponse = { id: 'rec_1', xata: { version: 1 } };
+		(makeXataDataRequest as jest.Mock).mockResolvedValue(mockResponse);
+
+		const result = await xata({ key: 'test' }).endpoints!.records.create(
+			mockCtx,
+			{
+				dbName: 'test_db',
+				tableName: 'users',
+				data: { name: 'Alice' },
+			},
+		);
+
+		expect(makeXataDataRequest).toHaveBeenCalledWith(
+			'db/test_db:main/tables/users/data',
+			'test_api_key',
+			'ws_123',
+			'eu-west-1',
+			{ method: 'POST', body: { name: 'Alice' } },
+		);
+		expect(result).toBe(mockResponse);
+	});
+});
