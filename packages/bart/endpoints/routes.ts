@@ -22,7 +22,9 @@ export const list: BartEndpoints['routesList'] = async (ctx, input) => {
 
 		for (const r of routesArray) {
 			try {
+				const existing = await ctx.db.routes.findByEntityId(r.routeID);
 				await ctx.db.routes.upsertByEntityId(r.routeID, {
+					...existing?.data,
 					id: r.routeID,
 					routeID: r.routeID,
 					number: r.number,
