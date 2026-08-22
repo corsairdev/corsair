@@ -97,7 +97,7 @@ export async function makeDeepwikiMcpRequest<T>(
 		return response.result;
 	} catch (error) {
 		if (error instanceof Error) {
-			throw new DeepwikiMcpAPIError(error.message);
+			throw error;
 		}
 		throw new DeepwikiMcpAPIError('Unknown error');
 	}

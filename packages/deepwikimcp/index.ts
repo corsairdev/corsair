@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Wiki } from './endpoints';
 import type {
@@ -26,18 +23,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DeepwikiMcpSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveDeepwikiMcpOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchDeepwikiMcpTenantWebhook } from './webhooks/tenant-matcher';
-import type { DeepwikiMcpWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type DeepwikiMcpPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalDeepwikiMcpPlugin['hooks'];
-	webhookHooks?: InternalDeepwikiMcpPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof deepwikiMcpEndpointsNested>;
 };
@@ -65,26 +55,12 @@ export type DeepwikiMcpEndpoints = {
 	readWikiStructure: DeepwikiMcpEndpoint<'readWikiStructure'>;
 };
 
-type DeepwikiMcpWebhook<
-	K extends keyof DeepwikiMcpWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<DeepwikiMcpContext, TEvent, DeepwikiMcpWebhookOutputs[K]>;
-
-export type DeepwikiMcpWebhooks = {
-	example: DeepwikiMcpWebhook<'example', ExampleEvent>;
-};
-export type DeepwikiMcpBoundWebhooks = BindWebhooks<DeepwikiMcpWebhooks>;
-
 const deepwikiMcpEndpointsNested = {
 	wiki: {
 		askQuestion: Wiki.askQuestion,
 		readWikiContents: Wiki.readWikiContents,
 		readWikiStructure: Wiki.readWikiStructure,
 	},
-} as const;
-
-const deepwikiMcpWebhooksNested = {
-	example: { example: ExampleWebhooks.example },
 } as const;
 
 export const deepwikiMcpEndpointSchemas = {
@@ -102,16 +78,6 @@ export const deepwikiMcpEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof deepwikiMcpEndpointsNested
->;
-
-const deepwikiMcpWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof deepwikiMcpWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -143,7 +109,7 @@ export type BaseDeepwikiMcpPlugin<T extends DeepwikiMcpPluginOptions> =
 		'deepwikimcp',
 		typeof DeepwikiMcpSchema,
 		typeof deepwikiMcpEndpointsNested,
-		typeof deepwikiMcpWebhooksNested,
+		{},
 		T,
 		typeof defaultAuthType
 	>;
@@ -166,21 +132,12 @@ export function deepwikimcp<const T extends DeepwikiMcpPluginOptions>(
 		schema: DeepwikiMcpSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: deepwikiMcpEndpointsNested,
-		webhooks: deepwikiMcpWebhooksNested,
+		webhooks: {},
 		endpointMeta: deepwikiMcpEndpointMeta,
 		endpointSchemas: deepwikiMcpEndpointSchemas,
-		pluginWebhookMatcher: (request) =>
-			'x-deepwikimcp-signature' in request.headers,
-		pluginTenantWebhookMatcher: matchDeepwikiMcpTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveDeepwikiMcpOAuthWebhookTenantLink,
 		errorHandlers: { ...errorHandlers, ...options.errorHandlers },
 		keyBuilder: async (ctx: DeepwikiMcpKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret)
-				return options.webhookSecret;
-			if (source === 'webhook')
-				return (await ctx.keys.get_webhook_signature()) ?? '';
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key')
 				return (await ctx.keys.get_api_key()) ?? '';
@@ -199,4 +156,3 @@ export type {
 	ReadWikiContentsInput,
 	ReadWikiStructureInput,
 } from './endpoints/types';
-export type { DeepwikiMcpWebhookOutputs, ExampleEvent } from './webhooks/types';
