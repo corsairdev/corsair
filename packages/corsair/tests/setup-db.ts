@@ -55,6 +55,12 @@ export function createTestDatabase(): {
 			payload TEXT NOT NULL,
 			status TEXT
 		);
+
+		CREATE TABLE IF NOT EXISTS corsair_usage_counters (
+			key TEXT PRIMARY KEY,
+			count INTEGER NOT NULL DEFAULT 1,
+			expires_at TEXT NOT NULL
+		);
 	`);
 
 	const db = new Kysely<CorsairKyselyDatabase>({
