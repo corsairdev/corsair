@@ -1,11 +1,13 @@
 import { z } from 'zod';
 
+const ConvexIdSchema = z.coerce.string().min(1);
+
 export const ConvexProjectSchema = z
 	.object({
-		id: z.string(),
+		id: ConvexIdSchema,
 		name: z.string().optional(),
 		slug: z.string().optional(),
-		teamId: z.string().optional(),
+		teamId: ConvexIdSchema.optional(),
 		teamSlug: z.string().nullable().optional(),
 		createTime: z.number().optional(),
 		prodDeploymentName: z.string().nullable().optional(),
@@ -17,11 +19,11 @@ export type ConvexProject = z.infer<typeof ConvexProjectSchema>;
 
 export const ConvexDeploymentSchema = z
 	.object({
-		id: z.string(),
+		id: ConvexIdSchema.optional(),
 		name: z.string().optional(),
 		createTime: z.number().optional(),
 		deploymentType: z.string().optional(),
-		projectId: z.string().optional(),
+		projectId: ConvexIdSchema.optional(),
 		region: z.string().nullable().optional(),
 		isDefault: z.boolean().optional(),
 		reference: z.string().nullable().optional(),
@@ -33,7 +35,7 @@ export type ConvexDeployment = z.infer<typeof ConvexDeploymentSchema>;
 
 export const ConvexDeployKeySchema = z
 	.object({
-		id: z.string().optional(),
+		id: ConvexIdSchema.optional(),
 		deploymentName: z.string().optional(),
 		name: z.string().optional(),
 		creationTime: z.number().optional(),

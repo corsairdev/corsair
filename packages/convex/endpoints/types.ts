@@ -10,16 +10,36 @@ import { z } from 'zod';
  * from redirecting an authenticated request to another host.
  */
 export const CONVEX_SUBDOMAIN_PATTERN =
-	/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?$/;
+	/^[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?(?:\.[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?)*$/;
+
+const ConvexIdSchema = z.coerce.string().min(1);
+
+const SafePathSegmentSchema = z.coerce
+	.string()
+	.min(1)
+	.refine((value) => !/[/\\?#]/.test(value) && !value.includes('..'), {
+		message: 'Invalid path segment',
+	});
+
+const DeploymentUrlSchema = z.string().url().optional();
+
+const DeploymentScopedLocationSchema = {
+	subdomain: z
+		.string()
+		.regex(CONVEX_SUBDOMAIN_PATTERN, 'Invalid Convex deployment name')
+		.optional(),
+	deploymentUrl: DeploymentUrlSchema,
+	deployKey: z.string().min(1).optional(),
+};
 
 // ── Common resource schemas ──────────────────────────────────────────────────
 
 export const ProjectSchema = z
 	.object({
-		id: z.string(),
+		id: ConvexIdSchema,
 		name: z.string(),
 		slug: z.string(),
-		teamId: z.string(),
+		teamId: ConvexIdSchema,
 		teamSlug: z.string().nullable().optional(),
 		createTime: z.number(),
 		prodDeploymentName: z.string().nullable().optional(),
@@ -30,14 +50,14 @@ export type Project = z.infer<typeof ProjectSchema>;
 
 export const DeploymentSchema = z
 	.object({
-		id: z.string(),
+		id: ConvexIdSchema.optional(),
 		name: z.string(),
 		createTime: z.number(),
 		lastDeployTime: z.number().nullable().optional(),
 		deploymentType: z.string(),
-		projectId: z.string(),
+		projectId: ConvexIdSchema,
 		region: z.string().nullable().optional(),
-		isDefault: z.boolean(),
+		isDefault: z.boolean().optional(),
 		reference: z.string().nullable().optional(),
 		deploymentUrl: z.string().nullable().optional(),
 		url: z.string().nullable().optional(),
@@ -50,7 +70,7 @@ export type Deployment = z.infer<typeof DeploymentSchema>;
 
 export const DeployKeySchema = z
 	.object({
-		id: z.string(),
+		id: ConvexIdSchema,
 		name: z.string(),
 		creationTime: z.number(),
 		lastUsedTime: z.number().nullable().optional(),
@@ -63,7 +83,7 @@ export type DeployKey = z.infer<typeof DeployKeySchema>;
 export const PaginationMetadataSchema = z
 	.object({
 		hasMore: z.boolean(),
-		nextCursor: z.string().nullable(),
+		nextCursor: z.string().nullable().optional(),
 	})
 	.passthrough();
 
@@ -89,23 +109,23 @@ const RequestDestinationSchema = z.enum(['convexCloud', 'convexSite']);
 // ── Input schemas ────────────────────────────────────────────────────────────
 
 const ProjectsListInputSchema = z.object({
-	team_id: z.string().min(1),
+	team_id: SafePathSegmentSchema,
 	cursor: z.string().optional(),
 	limit: z.number().int().min(1).max(100).optional(),
 	q: z.string().optional(),
 });
 
 const ProjectGetByIdInputSchema = z.object({
-	project_id: z.string().min(1),
+	project_id: SafePathSegmentSchema,
 });
 
 const ProjectGetBySlugInputSchema = z.object({
-	team_id_or_slug: z.string().min(1),
-	project_slug: z.string().min(1),
+	team_id_or_slug: SafePathSegmentSchema,
+	project_slug: SafePathSegmentSchema,
 });
 
 const ProjectCreateInputSchema = z.object({
-	team_id: z.string().min(1),
+	team_id: SafePathSegmentSchema,
 	projectName: z.string().min(1),
 	deploymentType: CreateDeploymentTypeSchema.nullable().optional(),
 	deploymentClass: z.string().nullable().optional(),
@@ -113,22 +133,22 @@ const ProjectCreateInputSchema = z.object({
 });
 
 const ProjectDeleteInputSchema = z.object({
-	project_id: z.string().min(1),
+	project_id: SafePathSegmentSchema,
 });
 
 const DeploymentsListInputSchema = z.object({
-	project_id: z.string().min(1),
+	project_id: SafePathSegmentSchema,
 	includeLocal: z.boolean().optional(),
 	isDefault: z.boolean().nullable().optional(),
 	deploymentType: z.string().optional(),
 });
 
 const DeploymentGetInputSchema = z.object({
-	deployment_name: z.string().min(1),
+	deployment_name: SafePathSegmentSchema,
 });
 
 const DeploymentCreateInputSchema = z.object({
-	project_id: z.string().min(1),
+	project_id: SafePathSegmentSchema,
 	type: CreateDeploymentTypeSchema,
 	class: z.string().nullable().optional(),
 	region: z.string().nullable().optional(),
@@ -137,29 +157,29 @@ const DeploymentCreateInputSchema = z.object({
 });
 
 const DeploymentUpdateInputSchema = z.object({
-	deployment_name: z.string().min(1),
+	deployment_name: SafePathSegmentSchema,
 	reference: z.string().nullable().optional(),
 	dashboardEditConfirmation: z.boolean().nullable().optional(),
 	expiresAt: z.number().int().nullable().optional(),
 });
 
 const DeploymentDeleteInputSchema = z.object({
-	deployment_name: z.string().min(1),
+	deployment_name: SafePathSegmentSchema,
 });
 
 const DeployKeyCreateInputSchema = z.object({
-	deployment_name: z.string().min(1),
+	deployment_name: SafePathSegmentSchema,
 	name: z.string().min(1),
 	allowedActions: z.array(z.string()).optional(),
 	expiresAt: z.number().int().nullable().optional(),
 });
 
 const DeployKeysListInputSchema = z.object({
-	deployment_name: z.string().min(1),
+	deployment_name: SafePathSegmentSchema,
 });
 
 const CustomDomainDeleteInputSchema = z.object({
-	deployment_name: z.string().min(1),
+	deployment_name: SafePathSegmentSchema,
 	requestDestination: RequestDestinationSchema,
 	domain: z.string().min(1),
 });
@@ -167,11 +187,11 @@ const CustomDomainDeleteInputSchema = z.object({
 const TokenDetailsInputSchema = z.object({});
 
 const DeploymentClassesListInputSchema = z.object({
-	team_id: z.string().min(1),
+	team_id: SafePathSegmentSchema,
 });
 
 const DeploymentRegionsListInputSchema = z.object({
-	team_id: z.string().min(1),
+	team_id: SafePathSegmentSchema,
 });
 
 const QueryBatchItemSchema = z.object({
@@ -181,34 +201,13 @@ const QueryBatchItemSchema = z.object({
 });
 
 const ExecuteQueryBatchInputSchema = z.object({
-	subdomain: z
-		.string()
-		.regex(CONVEX_SUBDOMAIN_PATTERN, 'Invalid Convex deployment name')
-		.optional(),
-	/**
-	 * Deployment admin deploy key for the deployment-scoped API
-	 * (`Authorization: Convex <key>`). Falls back to the deploy key stored on
-	 * the connection; Management API access tokens are never valid deploy keys.
-	 */
-	deployKey: z.string().min(1).optional(),
+	...DeploymentScopedLocationSchema,
 	format: z.enum(['json']).optional(),
 	queries: z.array(QueryBatchItemSchema).min(1),
 });
-const QueryTimestampInputSchema = z.object({
-	subdomain: z
-		.string()
-		.regex(CONVEX_SUBDOMAIN_PATTERN, 'Invalid Convex deployment name')
-		.optional(),
-	deployKey: z.string().min(1).optional(),
-});
+const QueryTimestampInputSchema = z.object(DeploymentScopedLocationSchema);
 
-const LogStreamsListInputSchema = z.object({
-	subdomain: z
-		.string()
-		.regex(CONVEX_SUBDOMAIN_PATTERN, 'Invalid Convex deployment name')
-		.optional(),
-	deployKey: z.string().min(1).optional(),
-});
+const LogStreamsListInputSchema = z.object(DeploymentScopedLocationSchema);
 
 // ── Output schemas ───────────────────────────────────────────────────────────
 
@@ -223,8 +222,8 @@ const ProjectGetResponseSchema = ProjectSchema;
 
 const ProjectCreateResponseSchema = z
 	.object({
-		projectId: z.string(),
-		id: z.string(),
+		projectId: ConvexIdSchema,
+		id: ConvexIdSchema,
 		slug: z.string(),
 		deploymentName: z.string().nullable().optional(),
 		deploymentUrl: z.string().nullable().optional(),
@@ -263,9 +262,9 @@ const CustomDomainDeleteResponseSchema = z
 
 const TokenDetailsResponseSchema = z
 	.object({
-		id: z.string().optional(),
-		teamId: z.string().optional(),
-		projectId: z.string().optional(),
+		id: ConvexIdSchema.optional(),
+		teamId: ConvexIdSchema.optional(),
+		projectId: ConvexIdSchema.optional(),
 		name: z.string().optional(),
 		createTime: z.number().optional(),
 		type: z.string().optional(),
@@ -298,8 +297,9 @@ const ExecuteQueryBatchResponseSchema = z.array(QueryBatchResultSchema);
 
 export const QueryTimestampResponseSchema = z
 	.object({
-		status: z.enum(['success', 'error']),
+		status: z.enum(['success', 'error']).optional(),
 		value: z.unknown().optional(),
+		ts: z.unknown().optional(),
 		errorMessage: z.string().optional(),
 		logLines: z.array(z.string()).optional(),
 	})
@@ -307,7 +307,7 @@ export const QueryTimestampResponseSchema = z
 
 export const LogStreamSchema = z
 	.object({
-		id: z.string(),
+		id: ConvexIdSchema,
 		destination: z.string().optional(),
 		config: z.record(z.string(), z.unknown()).optional(),
 	})
