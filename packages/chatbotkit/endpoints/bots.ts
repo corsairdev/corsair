@@ -46,7 +46,7 @@ export const list = async (
 			method: 'GET',
 			query: compactQuery({
 				cursor: input.cursor,
-				limit: input.limit,
+				take: input.limit,
 				order: input.order,
 			}),
 		},

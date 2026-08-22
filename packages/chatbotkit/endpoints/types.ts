@@ -987,7 +987,7 @@ export const FileSchema = z.object({
 		.optional()
 		.describe('Last updated timestamp in milliseconds'),
 });
-export type File = z.infer<typeof FileSchema>;
+export type ChatbotkitFile = z.infer<typeof FileSchema>;
 
 export const FilesListInputSchema = ListQueryInputSchema;
 export type FilesListInput = z.infer<typeof FilesListInputSchema>;

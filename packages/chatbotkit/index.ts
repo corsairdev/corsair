@@ -664,6 +664,8 @@ export type {
 	BotsUpvoteResponse,
 	ChatbotkitEndpointInputs,
 	ChatbotkitEndpointOutputs,
+	// Files
+	ChatbotkitFile,
 	// Conversations
 	Conversation,
 	ConversationCompletionResponse,
@@ -693,8 +695,6 @@ export type {
 	DatasetsSearchResponse,
 	DatasetsUpdateInput,
 	DatasetsUpdateResponse,
-	// Files
-	File,
 	FilesCreateInput,
 	FilesCreateResponse,
 	FilesDeleteInput,
