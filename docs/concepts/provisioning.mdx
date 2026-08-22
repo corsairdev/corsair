@@ -3,6 +3,8 @@ title: Provisioning
 description: Initialize integrations, accounts, and tenants with setupCorsair at runtime or the corsair CLI in ops.
 ---
 
+import InstallCorsairCli from '/snippets/install-corsair-cli.mdx';
+
 Provisioning creates the database rows, DEKs, and credential slots Corsair needs before a tenant can connect. The same logic runs two ways: `setupCorsair` from your backend (on signup, in production) and `pnpm corsair setup` from the CLI (local and ops). Both are idempotent — they skip rows that already exist.
 
 ## Data model
@@ -60,6 +62,8 @@ It returns a log string and skips existing rows.
 ## CLI
 
 Same provisioning from the terminal — for local setup and ops:
+
+<InstallCorsairCli />
 
 ```bash
 # Single-tenant

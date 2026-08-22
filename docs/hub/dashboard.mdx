@@ -41,7 +41,11 @@ You can generate a link for **unverified plugins only** or for **all plugins** o
 
 ### Corsair-managed integrations
 
-If you use plugins with `authType: 'managed'`, Corsair can host the OAuth app for eligible integrations in production. In development, all configured managed plugins are available.
+If you use plugins with `authType: 'managed'`, Corsair can host the OAuth app for **eligible** integrations. Eligibility depends on the provider and your plan — the Connections tab shows which integrations your project can have Corsair manage.
+
+<Note>
+**Managed connect shows a provider error or 404?** If a managed connect link sends the user to the provider's OAuth page and it returns an error (for example a GitHub 404), that provider is not available as a Corsair-managed OAuth app for your project. Switch to [bring-your-own OAuth](#byo-credentials-from-the-dashboard) — register your own OAuth app with the provider and supply its client id and secret.
+</Note>
 
 If your plan limits how many integrations Corsair manages in production, the Connections tab asks you to **select which ones** you want Corsair to manage. Save your selection before going live — integrations not selected use bring-your-own OAuth (you supply client id and secret via the dashboard or your app).
 

@@ -38,6 +38,10 @@ bun add corsair @corsair-dev/github
 `@corsair-dev/github` is one plugin. Every service is its own `@corsair-dev/*` package — find the one you need, and its exact install id, in the [**Plugins**](/guides/plugins) catalog.
 </Tip>
 
+<Note>
+Make sure `corsair` lands in your `package.json` as a **direct dependency** (under `dependencies`), not only as a transitive dependency of something else. Your code imports from `corsair`, so it must be declared there.
+</Note>
+
 </Step>
 
 <Step>
@@ -179,6 +183,10 @@ export const corsair = createCorsair({
 });
 ```
 
+<Warning>
+Pass a database **connection** to `createCorsair`, not an ORM client. The `database` field accepts a `pg` `Pool`, a `better-sqlite3` instance, a `postgres.js` `Sql`, or a typed `Kysely` instance — **not** a `PrismaClient`. If you use Prisma for your own tables, Prisma keeps its own internal pool, so create a `pg` `Pool` and pass that here (never the `PrismaClient`); to reuse one connection across both, use Prisma's driver adapter (`@prisma/adapter-pg`). See [Database](/concepts/database).
+</Warning>
+
 Mount the handler once — it serves Hub delivery and the management API. In development, Hub auto-detects your localhost delivery URL:
 
 <MountHandlerNextjs />
@@ -200,6 +208,10 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 });
 // redirect the user's browser to connectUrl
 ```
+
+<Note>
+`tenantId` is only required in [multi-tenant](/concepts/multi-tenancy) apps. In single-tenant mode it is optional and defaults to `"default"`.
+</Note>
 
 Once connected, call any endpoint. Responses are also cached in your database for instant reads:
 

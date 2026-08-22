@@ -1,0 +1,24 @@
+The `corsair` command lives in a separate package. Install it first:
+
+<CodeGroup>
+```bash npm
+npm install @corsair-dev/cli
+```
+```bash yarn
+yarn add @corsair-dev/cli
+```
+```bash pnpm
+pnpm install @corsair-dev/cli
+```
+```bash bun
+bun add @corsair-dev/cli
+```
+</CodeGroup>
+
+<Note>
+The `corsair` command comes from the `@corsair-dev/cli` package, not the `corsair` SDK package (the SDK is library-only and ships no binary). If `corsair setup` fails with `could not determine executable to run`, this package is not installed.
+</Note>
+
+<Warning>
+Don't pass secrets inline as `corsair setup` arguments — command-line values can leak through shell history, process listings, or CI logs. For production, provision credentials from a secret manager or environment variables with [`setupCorsair`](/concepts/provisioning#credentials) (or `corsair.keys.<plugin>.set_client_id` / `set_client_secret`).
+</Warning>

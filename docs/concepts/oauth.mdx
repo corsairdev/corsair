@@ -4,6 +4,8 @@ sidebarTitle: OAuth 2.0
 description: Connect user accounts with OAuth 2.0 flows in Corsair plugins.
 ---
 
+import InstallCorsairCli from '/snippets/install-corsair-cli.mdx';
+
 OAuth 2.0 lets users authorize your application to act on their behalf. Corsair handles the entire flow — minting connect links, processing callbacks, storing tokens encrypted, and refreshing them automatically when they expire.
 
 ## How it works
@@ -42,6 +44,8 @@ export const corsair = createCorsair({
 ```
 
 Store your OAuth app credentials, then start the flow:
+
+<InstallCorsairCli />
 
 ```bash
 pnpm corsair setup --plugin=gmail client_id=your-client-id client_secret=your-client-secret
