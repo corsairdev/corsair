@@ -186,9 +186,6 @@ importers:
       '@corsair-dev/googlesheets':
         specifier: workspace:*
         version: link:../../packages/googlesheets
-      '@corsair-dev/griptape':
-        specifier: workspace:*
-        version: link:../../packages/griptape
       '@corsair-dev/hubspot':
         specifier: workspace:^
         version: link:../../packages/hubspot
@@ -211,7 +208,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/openweathermap
       '@corsair-dev/outlook':
-        specifier: workspace:*
+        specifier: workspace:s*
         version: link:../../packages/outlook
       '@corsair-dev/reddit':
         specifier: workspace:*
