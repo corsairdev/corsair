@@ -1,4 +1,5 @@
 import { matchUnioneWebhook } from './index';
+import { emailStatus, spamBlock } from './webhooks/handlers';
 import { matchUnioneTenantWebhook } from './webhooks/tenant-matcher';
 import {
 	createUnioneMatch,
@@ -40,6 +41,17 @@ describe('Unione webhooks', () => {
 		expect(
 			verifyUnioneWebhookAuth({ payload, headers: {} }, 'wrong').valid,
 		).toBe(false);
+	});
+
+	it('accepts a hub-verified delivery, which carries no plugin key', () => {
+		// processWebhook already checked the provider signature and bind.ts
+		// deliberately builds no key for these, so `secret` is undefined here.
+		expect(
+			verifyUnioneWebhookAuth(
+				{ payload, headers: {}, hubVerified: true },
+				undefined,
+			),
+		).toEqual({ valid: true });
 	});
 
 	it('fails closed when no webhook secret is configured', () => {
@@ -92,5 +104,42 @@ describe('Unione webhooks', () => {
 				body: { id: 'evt_1', type: 'charge.succeeded' },
 			}),
 		).toBe(false);
+	});
+
+	it('handles a hub-verified delivery instead of returning 401', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		// bind.ts passes `key: undefined` when hubVerified is true.
+		const ctx = {
+			key: undefined,
+			options: {},
+			db: { eventDumps: { upsertByEntityId } },
+		} as never;
+		const request = { payload, headers: {}, hubVerified: true } as never;
+
+		const status = await emailStatus.handler(ctx, request);
+		expect(status.success).toBe(true);
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'job-1',
+			expect.objectContaining({ dump_status: 'delivered' }),
+		);
+
+		const spam = await spamBlock.handler(ctx, request);
+		expect(spam.success).toBe(true);
+	});
+
+	it('still rejects an unverified delivery that carries no key', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		const ctx = {
+			key: undefined,
+			options: {},
+			db: { eventDumps: { upsertByEntityId } },
+		} as never;
+		const result = await emailStatus.handler(ctx, {
+			payload,
+			headers: {},
+		} as never);
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(401);
+		expect(upsertByEntityId).not.toHaveBeenCalled();
 	});
 });

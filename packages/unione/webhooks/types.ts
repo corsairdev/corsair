@@ -99,11 +99,17 @@ export function createUnioneMatch(eventName: string): CorsairWebhookMatcher {
 
 export function verifyUnioneWebhookAuth(
 	request: WebhookRequest<UnioneWebhookPayload>,
-	secret: string,
+	secret: string | undefined,
 ): { valid: boolean; error?: string } {
-	// Fail closed. With no secret there is nothing to check `payload.auth`
-	// against, and an accepted event persists caller-controlled job status to
-	// the mirror. Set `webhookSecret`, or store a webhook signature key.
+	// The Hub already checked the provider signature on this delivery and
+	// deliberately builds no plugin key for it, so `secret` is undefined by
+	// design here - re-checking would reject an authenticated request.
+	if (request.hubVerified === true) {
+		return { valid: true };
+	}
+	// Otherwise fail closed. With no secret there is nothing to check
+	// `payload.auth` against, and an accepted event persists caller-controlled
+	// job status to the mirror. Set `webhookSecret`, or store a signature key.
 	if (!secret) {
 		return {
 			valid: false,
