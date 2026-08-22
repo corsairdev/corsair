@@ -1,4 +1,5 @@
 import type { CorsairInternalConfig } from '../core';
+import type { AuthTypes } from '../core/constants';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { processConnectLinkDelivery } from '../hub/connect-link-delivery';
 import {
@@ -126,6 +127,7 @@ export type OAuthTokensTunnelPayload = {
 	refreshToken?: string;
 	expiresIn?: number;
 	scope?: string;
+	authType?: AuthTypes;
 };
 
 export type PermissionDecisionTunnelPayload = {
@@ -345,6 +347,7 @@ async function handleOAuthTokensTunnel(
 		refreshToken: payload.refreshToken,
 		expiresIn: payload.expiresIn,
 		scope: payload.scope,
+		authType: payload.authType,
 	});
 	return { status: 'ok' };
 }

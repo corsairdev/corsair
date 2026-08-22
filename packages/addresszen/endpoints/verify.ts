@@ -25,7 +25,7 @@ export const address: AddresszenEndpoints['verifyAddress'] = async (
 
 	if (ctx.db.verifiedAddresses) {
 		try {
-			// ponytail: JSON key avoids `|` collisions in free-form address inputs
+			// JSON key avoids `|` collisions in free-form address inputs
 			const entityId = JSON.stringify([
 				input.query,
 				input.city ?? null,

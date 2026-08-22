@@ -252,6 +252,7 @@ export async function handleHubDeliveryGet(
 				refreshToken: payload.refreshToken,
 				expiresIn: payload.expiresIn,
 				scope: payload.scope,
+				authType: payload.authType,
 			});
 		} else {
 			if (

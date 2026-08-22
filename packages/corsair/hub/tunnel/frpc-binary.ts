@@ -45,7 +45,7 @@ function binName(): string {
 /**
  * Where the postinstall step drops the downloaded frpc. Kept in lockstep with
  * `scripts/postinstall-frpc.mjs` — both derive it from homedir + FRPC_VERSION.
- * ponytail: duplicated in that standalone install script (it can't import TS);
+ * duplicated in that standalone install script (it can't import TS);
  * a shared frpc-version.json is the upgrade path if this drifts.
  */
 export function frpcCacheBinary(): string {
