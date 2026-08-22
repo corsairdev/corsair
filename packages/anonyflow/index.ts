@@ -24,6 +24,9 @@ import {
 import { errorHandlers } from './error-handlers';
 import { AnonyflowSchema } from './schema';
 
+/**
+ * Options for configuring the Anonyflow plugin.
+ */
 export type AnonyflowPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
@@ -32,14 +35,23 @@ export type AnonyflowPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof anonyflowEndpointsNested>;
 };
 
+/**
+ * Corsair plugin context specialized for the Anonyflow plugin.
+ */
 export type AnonyflowContext = CorsairPluginContext<
 	typeof AnonyflowSchema,
 	AnonyflowPluginOptions
 >;
 
+/**
+ * Key builder context for the Anonyflow plugin.
+ */
 export type AnonyflowKeyBuilderContext =
 	KeyBuilderContext<AnonyflowPluginOptions>;
 
+/**
+ * Bound endpoints type representing all core operations.
+ */
 export type AnonyflowBoundEndpoints = BindEndpoints<
 	typeof anonyflowEndpointsNested
 >;
@@ -51,11 +63,14 @@ type AnonyflowEndpoint<K extends keyof AnonyflowEndpointOutputs> =
 		AnonyflowEndpointOutputs[K]
 	>;
 
+/**
+ * Exposed API endpoints for the Anonyflow plugin.
+ */
 export type AnonyflowEndpoints = {
 	anonymize: AnonyflowEndpoint<'anonymize'>;
 	deanonymize: AnonyflowEndpoint<'deanonymize'>;
-	analyze: AnonyflowEndpoint<'analyze'>;
-	listEntities: AnonyflowEndpoint<'listEntities'>;
+	anonymizePacket: AnonyflowEndpoint<'anonymizePacket'>;
+	deanonymizePacket: AnonyflowEndpoint<'deanonymizePacket'>;
 	getStatus: AnonyflowEndpoint<'getStatus'>;
 };
 
@@ -63,8 +78,8 @@ const anonyflowEndpointsNested = {
 	core: {
 		anonymize: AnonyflowOperations.anonymize,
 		deanonymize: AnonyflowOperations.deanonymize,
-		analyze: AnonyflowOperations.analyze,
-		listEntities: AnonyflowOperations.listEntities,
+		anonymizePacket: AnonyflowOperations.anonymizePacket,
+		deanonymizePacket: AnonyflowOperations.deanonymizePacket,
 		getStatus: AnonyflowOperations.getStatus,
 	},
 } as const;
@@ -72,6 +87,9 @@ const anonyflowEndpointsNested = {
 // Webhooks removed: Anonyflow does not use webhooks
 const anonyflowWebhooksNested = {} as const;
 
+/**
+ * Endpoint schemas for each core Anonyflow operation.
+ */
 export const anonyflowEndpointSchemas = {
 	'core.anonymize': {
 		input: AnonyflowEndpointInputSchemas.anonymize,
@@ -81,13 +99,13 @@ export const anonyflowEndpointSchemas = {
 		input: AnonyflowEndpointInputSchemas.deanonymize,
 		output: AnonyflowEndpointOutputSchemas.deanonymize,
 	},
-	'core.analyze': {
-		input: AnonyflowEndpointInputSchemas.analyze,
-		output: AnonyflowEndpointOutputSchemas.analyze,
+	'core.anonymizePacket': {
+		input: AnonyflowEndpointInputSchemas.anonymizePacket,
+		output: AnonyflowEndpointOutputSchemas.anonymizePacket,
 	},
-	'core.listEntities': {
-		input: AnonyflowEndpointInputSchemas.listEntities,
-		output: AnonyflowEndpointOutputSchemas.listEntities,
+	'core.deanonymizePacket': {
+		input: AnonyflowEndpointInputSchemas.deanonymizePacket,
+		output: AnonyflowEndpointOutputSchemas.deanonymizePacket,
 	},
 	'core.getStatus': {
 		input: AnonyflowEndpointInputSchemas.getStatus,
@@ -110,17 +128,17 @@ const anonyflowEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Restore original text from anonymized mapping',
 	},
-	'core.analyze': {
-		riskLevel: 'read',
-		description: 'Analyze text for PII entities',
+	'core.anonymizePacket': {
+		riskLevel: 'write',
+		description: 'Encrypt field values within a data packet based on keys',
 	},
-	'core.listEntities': {
+	'core.deanonymizePacket': {
 		riskLevel: 'read',
-		description: 'List supported PII entities',
+		description: 'Decrypt field values within a data packet based on keys',
 	},
 	'core.getStatus': {
 		riskLevel: 'read',
-		description: 'Get API status and remaining credits',
+		description: 'Get API key connectivity status',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof anonyflowEndpointsNested
@@ -133,6 +151,9 @@ export const anonyflowAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
+/**
+ * Base plugin type helper for Anonyflow.
+ */
 export type BaseAnonyflowPlugin<T extends AnonyflowPluginOptions> =
 	CorsairPlugin<
 		'anonyflow',
@@ -143,12 +164,25 @@ export type BaseAnonyflowPlugin<T extends AnonyflowPluginOptions> =
 		typeof defaultAuthType
 	>;
 
+/**
+ * Internal plugin type for Anonyflow.
+ */
 export type InternalAnonyflowPlugin =
 	BaseAnonyflowPlugin<AnonyflowPluginOptions>;
 
+/**
+ * External plugin type for Anonyflow.
+ */
 export type ExternalAnonyflowPlugin<T extends AnonyflowPluginOptions> =
 	BaseAnonyflowPlugin<T>;
 
+/**
+ * Instantiates the Anonyflow plugin with configuration options.
+ *
+ * @template T Type of options extending AnonyflowPluginOptions.
+ * @param incomingOptions Configuration options including API key and authType.
+ * @returns The constructed Anonyflow plugin instance.
+ */
 export function anonyflow<const T extends AnonyflowPluginOptions>(
 	incomingOptions: AnonyflowPluginOptions & T = {} as AnonyflowPluginOptions &
 		T,
@@ -172,11 +206,17 @@ export function anonyflow<const T extends AnonyflowPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		/**
+		 * Resolves the API key for endpoints or webhooks based on integration options and context.
+		 *
+		 * @param ctx The builder context containing connection keys.
+		 * @param source The calling source ('endpoint' or 'webhook').
+		 * @returns A promise resolving to the API key string.
+		 */
 		keyBuilder: async (
 			ctx: AnonyflowKeyBuilderContext,
 			source: 'endpoint' | 'webhook',
 		) => {
-			// Simplified strictly for API Key resolution
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
