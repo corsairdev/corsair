@@ -150,7 +150,7 @@ export async function makeBartRequest<T>(
 	const errorMessage =
 		extractErrorMessage(data) ?? extractErrorMessage(rawResponse);
 	if (errorMessage) {
-		throw new BartAPIError(errorMessage, 400, { body: rawResponse });
+		throw new BartAPIError(errorMessage, undefined, { body: rawResponse });
 	}
 
 	return data as T;

@@ -8,11 +8,7 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.status === 429) return true;
 			if (error instanceof BartAPIError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return (
-				msg.includes('rate_limit') ||
-				msg.includes('rate limit') ||
-				msg.includes('429')
-			);
+			return msg.includes('rate_limit') || msg.includes('rate limit');
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
@@ -21,7 +17,7 @@ export const errorHandlers = {
 			} else if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
