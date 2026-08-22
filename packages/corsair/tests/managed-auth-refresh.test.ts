@@ -110,6 +110,42 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 		}
 	});
 
+	it('collapses concurrent refreshes on one store into a single Hub mint', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedManagedAccount(database, {
+				access_token: 'stale',
+				expires_at: '1',
+				refresh_token: 'managed-rt',
+			});
+
+			let calls = 0;
+			global.fetch = (async () => {
+				calls += 1;
+				// Rotating provider: a second concurrent mint with the same
+				// refresh_token would fail, so both callers must share one flight.
+				return jsonResponse({
+					access_token: 'rotated',
+					refresh_token: 'managed-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			const keys = managedKeys(database);
+			const ctx = { keys, hub, plugin: 'linear', tenantId: 'default' };
+			const [a, b] = await Promise.all([
+				getManagedAccessToken(ctx),
+				getManagedAccessToken(ctx),
+			]);
+
+			expect(a.accessToken).toBe('rotated');
+			expect(b.accessToken).toBe('rotated');
+			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('omits refresh_token for a legacy account that has none (Hub reads managed_connection)', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {

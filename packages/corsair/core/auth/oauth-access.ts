@@ -7,6 +7,7 @@ import type {
 } from './oauth-refresh-local';
 import { refreshOAuthTokensLocal } from './oauth-refresh-local';
 import { cacheRefreshedTokens, isAccessTokenFresh } from './oauth-token-cache';
+import { singleFlight } from './single-flight';
 import type { AccountKeyManagerFor } from './types';
 
 export type OAuthAccessContext = {
@@ -22,25 +23,6 @@ export type OAuthAccessOptions = {
 	bodyFormat?: OAuthBodyFormat;
 	extraParams?: Record<string, string>;
 };
-
-// Concurrent refreshes for the same (plugin, tenant) share one exchange:
-// rotating providers invalidate the old refresh_token on use, so a second
-// in-flight refresh with the stale token would fail. Best-effort, in-process —
-// the hub single-flights its own side too.
-const inFlightRefreshes = new Map<string, Promise<string>>();
-
-function singleFlightRefresh(
-	key: string,
-	run: () => Promise<string>,
-): Promise<string> {
-	const existing = inFlightRefreshes.get(key);
-	if (existing) return existing;
-	const pending = run().finally(() => {
-		inFlightRefreshes.delete(key);
-	});
-	inFlightRefreshes.set(key, pending);
-	return pending;
-}
 
 // Single acquisition path for an oauth_2 access token. Dispatches on where the
 // client_secret lives: absent locally ⇒ the secret is in the hub (BYO+Hub), so
@@ -65,13 +47,15 @@ export async function getOAuthAccessToken(
 			tenantId: ctx.tenantId,
 		};
 		(ctx as Record<string, unknown>)._refreshAuth = () =>
-			singleFlightRefresh(
+			singleFlight(
+				ctx.keys,
 				`${flightKey}:force`,
 				async () =>
 					(await getHubAccessToken(hubContext, { forceRefresh: true }))
 						.accessToken,
 			);
-		return singleFlightRefresh(
+		return singleFlight(
+			ctx.keys,
 			flightKey,
 			async () => (await getHubAccessToken(hubContext)).accessToken,
 		);
@@ -85,35 +69,39 @@ export async function getOAuthAccessToken(
 	// flight key keeps a force from deduping onto an in-flight non-force refresh
 	// (which could hand back the stale token).
 	const runRefresh = (force: boolean): Promise<string> =>
-		singleFlightRefresh(force ? `${flightKey}:force` : flightKey, async () => {
-			const [currentAccess, expiresAt, refreshToken] = await Promise.all([
-				ctx.keys.get_access_token(),
-				ctx.keys.get_expires_at(),
-				ctx.keys.get_refresh_token(),
-			]);
-			// Re-check under the single-flight: a concurrent caller may have just
-			// refreshed and persisted a token while we waited.
-			if (
-				!force &&
-				isAccessTokenFresh({ accessToken: currentAccess, expiresAt })
-			) {
-				return currentAccess as string;
-			}
-			if (!refreshToken) {
-				throw new AuthMissingError(opts.plugin, 'oauth_2');
-			}
-			const tokens = await refreshOAuthTokensLocal({
-				tokenUrl: opts.tokenUrl,
-				tokenAuthMethod: opts.tokenAuthMethod,
-				bodyFormat: opts.bodyFormat,
-				extraParams: opts.extraParams,
-				clientId,
-				clientSecret,
-				refreshToken,
-			});
-			await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
-			return tokens.access_token;
-		});
+		singleFlight(
+			ctx.keys,
+			force ? `${flightKey}:force` : flightKey,
+			async () => {
+				const [currentAccess, expiresAt, refreshToken] = await Promise.all([
+					ctx.keys.get_access_token(),
+					ctx.keys.get_expires_at(),
+					ctx.keys.get_refresh_token(),
+				]);
+				// Re-check under the single-flight: a concurrent caller may have just
+				// refreshed and persisted a token while we waited.
+				if (
+					!force &&
+					isAccessTokenFresh({ accessToken: currentAccess, expiresAt })
+				) {
+					return currentAccess as string;
+				}
+				if (!refreshToken) {
+					throw new AuthMissingError(opts.plugin, 'oauth_2');
+				}
+				const tokens = await refreshOAuthTokensLocal({
+					tokenUrl: opts.tokenUrl,
+					tokenAuthMethod: opts.tokenAuthMethod,
+					bodyFormat: opts.bodyFormat,
+					extraParams: opts.extraParams,
+					clientId,
+					clientSecret,
+					refreshToken,
+				});
+				await cacheRefreshedTokens(ctx.keys, tokens, expiresAt);
+				return tokens.access_token;
+			},
+		);
 
 	(ctx as Record<string, unknown>)._refreshAuth = () => runRefresh(true);
 
