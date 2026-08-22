@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import { AnalyzeAudio, ReadText } from './endpoints';
 import type { AsticaAiContext } from './index';
@@ -13,6 +14,9 @@ jest.mock('corsair/core', () => ({
 }));
 
 const mockRequest = request as jest.MockedFunction<typeof request>;
+const mockLogEvent = logEventFromContext as jest.MockedFunction<
+	typeof logEventFromContext
+>;
 const TEST_API_KEY = 'test-api-key';
 
 type UpsertMock = jest.Mock<Promise<void>, [string, Record<string, unknown>]>;
@@ -23,6 +27,7 @@ let warnSpy: jest.SpyInstance;
 
 beforeEach(() => {
 	mockRequest.mockReset();
+	mockLogEvent.mockClear();
 	const makeUpsert = (): UpsertMock =>
 		jest.fn<Promise<void>, [string, Record<string, unknown>]>(
 			async () => undefined,
@@ -253,5 +258,41 @@ describe('large inline inputs', () => {
 
 		const ids = upserts.readTextResults.mock.calls.map(([id]) => id);
 		expect(ids[0]).not.toBe(ids[1]);
+	});
+});
+
+// Base64 audio is voice data and URLs can carry signed query parameters, so the
+// event payload must never contain the raw input.
+describe('event payloads', () => {
+	const base64Audio = `data:audio/wav;base64,${'Q'.repeat(4000)}`;
+
+	it('logs OCR metadata without the image itself', async () => {
+		mockRequest.mockResolvedValueOnce(okOcr);
+		const signed = `${IMAGE}?token=super-secret-signature`;
+
+		await ReadText.read(ctx, { input: signed });
+
+		const [, , payload] = mockLogEvent.mock.calls[0] ?? [];
+		expect(JSON.stringify(payload)).not.toContain('super-secret-signature');
+		expect(payload).toEqual({
+			inputKind: 'url',
+			inputLength: signed.length,
+			modelVersion: '2.5_full',
+			pageCount: 1,
+		});
+	});
+
+	it('logs audio metadata without the recording itself', async () => {
+		mockRequest.mockResolvedValueOnce({ status: 'success', text: 'Hello' });
+
+		await AnalyzeAudio.analyze(ctx, { input: base64Audio });
+
+		const [, , payload] = mockLogEvent.mock.calls[0] ?? [];
+		expect(JSON.stringify(payload)).not.toContain('QQQQ');
+		expect(payload).toMatchObject({
+			inputKind: 'inline',
+			inputLength: base64Audio.length,
+			deferred: false,
+		});
 	});
 });
