@@ -51,6 +51,7 @@ export const BaseProviders = [
 	'apisports',
 	'asana',
 	'asindataapi',
+	'asticaai',
 	'asyncinterview',
 	'ayrshare',
 	'basecamp',
@@ -218,6 +219,7 @@ export const ProviderDisplayNames = {
 	apisports: 'API-Sports',
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
+	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
 	ayrshare: 'Ayrshare',
 	basecamp: 'Basecamp',
@@ -392,6 +394,7 @@ export type AllProviders =
 	| 'apisports'
 	| 'asana'
 	| 'asindataapi'
+	| 'asticaai'
 	| 'asyncinterview'
 	| 'ayrshare'
 	| 'basecamp'
