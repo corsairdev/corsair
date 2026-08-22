@@ -1,4 +1,5 @@
 import { createAccountKeyManager } from '../core';
+import type { AuthTypes } from '../core/constants';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
@@ -35,6 +36,7 @@ export type ProcessManagedOAuthDeliveryOptions = {
 	refreshToken?: string;
 	expiresIn?: number;
 	scope?: string;
+	authType?: AuthTypes;
 };
 
 export type ProcessManagedOAuthDeliveryResult = {
@@ -54,6 +56,7 @@ export async function processManagedOAuthDelivery(
 		refreshToken,
 		expiresIn,
 		scope,
+		authType = 'managed',
 	} = options;
 
 	if (!accessToken.trim()) {
@@ -88,7 +91,7 @@ export async function processManagedOAuthDelivery(
 	await ensureCorsairProvisionedForTenant(corsair, tenantId);
 
 	const accountKm = createAccountKeyManager({
-		authType: 'managed',
+		authType,
 		integrationName: pluginId,
 		tenantId,
 		kek: internal.kek,
@@ -128,14 +131,14 @@ export async function processManagedOAuthDelivery(
 		);
 		if (tenantLink) {
 			try {
-				const extraAccountFields = plugin.authConfig?.managed?.account ?? [];
+				const extraAccountFields = plugin.authConfig?.[authType]?.account ?? [];
 				await setWebhookTenantLink({
 					database: internal.database,
 					kek: internal.kek,
 					pluginId,
 					tenantId,
 					link: tenantLink,
-					authType: 'managed',
+					authType,
 					extraAccountFields,
 				});
 			} catch (error) {
@@ -152,7 +155,7 @@ export async function processManagedOAuthDelivery(
 					plugin: pluginId,
 					tenantId,
 					link: tenantLink,
-					authType: 'managed',
+					authType,
 				});
 			}
 		}
