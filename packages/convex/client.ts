@@ -13,6 +13,14 @@ export class ConvexAPIError extends Error {
 	}
 }
 
+export function managementPath(segment: string): string {
+	const value = String(segment);
+	if (!value || /[/\\?#]/.test(value) || value.includes('..')) {
+		throw new ConvexAPIError('Invalid Convex path parameter');
+	}
+	return encodeURIComponent(value);
+}
+
 // The Convex Management API. Deployment-scoped endpoints (execute query batch,
 // query timestamp, log streams) use `https://<deployment>.convex.cloud/api`
 // instead — pass `baseUrl` per request for those.
