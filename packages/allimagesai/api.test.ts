@@ -88,7 +88,7 @@ describeLive('All Images AI live API', () => {
 				`api-keys/webhook/unsubscribe/${encodeURIComponent(webhookId)}`,
 				key,
 				{ method: 'DELETE', expectEmptyBody: true },
-			).catch(() => undefined);
+			);
 		});
 
 		it('subscribes, reads back, and never leaks the API key', async () => {
