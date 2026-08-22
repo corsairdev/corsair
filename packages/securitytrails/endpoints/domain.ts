@@ -95,9 +95,10 @@ export const ssl: SecuritytrailsEndpoints['domainSsl'] = async (ctx, input) => {
 			const fingerprint = record.fingerprints?.sha256;
 			if (!fingerprint) continue;
 
-			await safely(`certificate ${fingerprint}`, () =>
-				ctx.db.certificates.upsertByEntityId(fingerprint, {
-					id: fingerprint,
+			const entityId = `${query.hostname}:${fingerprint}`;
+			await safely(`certificate ${entityId}`, () =>
+				ctx.db.certificates.upsertByEntityId(entityId, {
+					id: entityId,
 					hostname: query.hostname,
 					dns_names: record.dns_names,
 					sha1: record.fingerprints?.sha1 ?? null,
