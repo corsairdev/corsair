@@ -3,11 +3,17 @@ import { z } from 'zod';
 // CDATA or string text helper schema
 export const CDataOrStringSchema = z.union([
 	z.string(),
-	z.object({
-		'#cdata-section': z.string().optional(),
-	}),
+	z
+		.object({
+			'#cdata-section': z.string(),
+		})
+		.strict(),
 ]);
 export type CDataOrString = z.infer<typeof CDataOrStringSchema>;
+
+export const BartMessageSchema = z
+	.union([z.string(), z.record(z.string(), z.unknown())])
+	.optional();
 
 export function unwrapCData(
 	value: CDataOrString | undefined | null,
@@ -22,6 +28,27 @@ export function unwrapCData(
 		return value['#cdata-section'];
 	}
 	return undefined;
+}
+
+export function advisoryEntityId(
+	item: {
+		station?: string;
+		type?: string;
+		posted?: string;
+		expires?: string;
+		description?: CDataOrString;
+		sms_text?: CDataOrString;
+	},
+	responseDate?: string,
+): string {
+	const stationKey = item.station?.trim() || 'SYSTEM';
+	const timeKey = item.posted?.trim() || responseDate?.trim() || '';
+	const typeKey = item.type?.trim() || '';
+	const expiresKey = item.expires?.trim() || '';
+	const desc = unwrapCData(item.description)?.trim() || '';
+	const sms = unwrapCData(item.sms_text)?.trim() || '';
+	const content = [desc, sms].filter(Boolean).join('|') || 'advisory';
+	return [stationKey, timeKey, typeKey, expiresKey, content].join('::');
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -53,7 +80,7 @@ export const AdvisoriesListResponseSchema = z
 		date: z.string().optional(),
 		time: z.string().optional(),
 		bsa: z.union([z.array(BsaItemSchema), BsaItemSchema]).optional(),
-		message: z.string().optional(),
+		message: BartMessageSchema,
 	})
 	.passthrough();
 export type AdvisoriesListResponse = z.infer<
@@ -150,7 +177,7 @@ export const EtdStationResponseSchema = z
 		date: z.string().optional(),
 		time: z.string().optional(),
 		station: z.union([z.array(EtdStationItemSchema), EtdStationItemSchema]),
-		message: z.string().optional(),
+		message: BartMessageSchema,
 	})
 	.passthrough();
 export type EtdStationResponse = z.infer<typeof EtdStationResponseSchema>;
@@ -552,34 +579,13 @@ export type SchedulesRoutesResponse = z.infer<
 	typeof SchedulesRoutesResponseSchema
 >;
 
-export const SchedulesSpecialInputSchema = z
+export const FareTripSchema = z
 	.object({
-		date: z.string().trim().min(1).optional(),
-	})
-	.optional();
-export type SchedulesSpecialInput = z.infer<typeof SchedulesSpecialInputSchema>;
-
-export const HolidayItemSchema = z
-	.object({
-		name: z.string(),
-		date: z.string(),
-		schedule: z.string().optional(),
+		fare: z.string().optional(),
+		discount: z.record(z.string(), z.string()).optional(),
 	})
 	.passthrough();
-export type HolidayItem = z.infer<typeof HolidayItemSchema>;
-
-export const SchedulesSpecialResponseSchema = z
-	.object({
-		holidays: z
-			.object({
-				holiday: z.union([z.array(HolidayItemSchema), HolidayItemSchema]),
-			})
-			.passthrough(),
-	})
-	.passthrough();
-export type SchedulesSpecialResponse = z.infer<
-	typeof SchedulesSpecialResponseSchema
->;
+export type FareTrip = z.infer<typeof FareTripSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // 6. Fares (fare)
@@ -598,7 +604,8 @@ export const FaresCalculateResponseSchema = z
 		origin: z.string().optional(),
 		destination: z.string().optional(),
 		sched: z.string().optional(),
-		trip: TripItemSchema.optional(),
+		sched_num: z.string().optional(),
+		trip: FareTripSchema.optional(),
 		fares: z
 			.object({
 				fare: z.union([z.array(FareItemSchema), FareItemSchema]).optional(),
@@ -628,7 +635,6 @@ export type BartEndpointInputs = {
 	schedulesDepartures: SchedulesDeparturesInput;
 	schedulesArrivals: SchedulesArrivalsInput;
 	schedulesRoutes: SchedulesRoutesInput;
-	schedulesSpecial: SchedulesSpecialInput;
 	faresCalculate: FaresCalculateInput;
 };
 
@@ -645,7 +651,6 @@ export type BartEndpointOutputs = {
 	schedulesDepartures: SchedulesDeparturesResponse;
 	schedulesArrivals: SchedulesArrivalsResponse;
 	schedulesRoutes: SchedulesRoutesResponse;
-	schedulesSpecial: SchedulesSpecialResponse;
 	faresCalculate: FaresCalculateResponse;
 };
 
@@ -662,7 +667,6 @@ export const BartEndpointInputSchemas = {
 	schedulesDepartures: SchedulesDeparturesInputSchema,
 	schedulesArrivals: SchedulesArrivalsInputSchema,
 	schedulesRoutes: SchedulesRoutesInputSchema,
-	schedulesSpecial: SchedulesSpecialInputSchema,
 	faresCalculate: FaresCalculateInputSchema,
 } as const;
 
@@ -679,6 +683,5 @@ export const BartEndpointOutputSchemas = {
 	schedulesDepartures: SchedulesDeparturesResponseSchema,
 	schedulesArrivals: SchedulesArrivalsResponseSchema,
 	schedulesRoutes: SchedulesRoutesResponseSchema,
-	schedulesSpecial: SchedulesSpecialResponseSchema,
 	faresCalculate: FaresCalculateResponseSchema,
 } as const;
