@@ -468,9 +468,9 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		return decryptConfig(config, dek);
 	};
 
-	// Serialize config writes — same lost-update hazard as the integration
-	// manager above (this is what silently dropped Outlook's refreshed token
-	// when its keyBuilder persisted via Promise.all).
+	// Serialize config writes on this manager instance (same lost-update hazard
+	// that dropped Outlook's refreshed token under Promise.all). Cross-manager
+	// races use optimistic CAS on the opaque encrypted config blob below.
 	let configWriteChain: Promise<void> = Promise.resolve();
 	const updateConfig = (
 		updates: Record<string, string | null>,
@@ -480,62 +480,210 @@ export function createAccountKeyManager<T extends AuthTypes>(
 		return run;
 	};
 
+	type AccountConfigRow = {
+		id: string;
+		config: unknown;
+		dek: string | null | undefined;
+	};
+
+	const loadFreshAccountConfig = async (): Promise<{
+		row: AccountConfigRow;
+		dek: string;
+		currentConfig: Record<string, string>;
+	}> => {
+		cachedAccount = null;
+		cachedDek = null;
+
+		const account = await ctx.getAccount();
+		const row = await database.db
+			.selectFrom('corsair_accounts')
+			.selectAll()
+			.where('id', '=', account.id)
+			.executeTakeFirstOrThrow();
+
+		if (!row.dek) {
+			throw new Error(
+				`No DEK found for account (tenant: "${tenantId}", integration: "${integrationName}"). Initialize the account first.`,
+			);
+		}
+
+		const dek = await decryptDEK(row.dek, kek);
+		const rawConfig = parseConfig(row.config) as Record<string, string>;
+		let currentConfig: Record<string, string>;
+		try {
+			currentConfig =
+				!rawConfig || Object.keys(rawConfig).length === 0
+					? {}
+					: decryptConfig(rawConfig, dek);
+		} catch (err) {
+			console.error(
+				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"):`,
+				err,
+			);
+			// Never CAS-write from a failed decrypt — that would wipe real secrets.
+			throw err;
+		}
+
+		return { row, dek, currentConfig };
+	};
+
+	const casWriteAccountConfig = async (
+		row: AccountConfigRow,
+		encryptedConfig: Record<string, string>,
+		encryptedDek?: string,
+	): Promise<boolean> => {
+		let query = database.db
+			.updateTable('corsair_accounts')
+			.set({
+				config: encryptedConfig,
+				...(encryptedDek !== undefined ? { dek: encryptedDek } : {}),
+				updated_at: new Date(),
+			})
+			.where('id', '=', row.id)
+			.where('config', '=', row.config as any);
+
+		// DEK rotation also locks on the prior dek so a concurrent config write
+		// (or another rotator) forces a clean re-read instead of a blind overwrite.
+		if (encryptedDek !== undefined) {
+			query =
+				row.dek == null
+					? query.where('dek', 'is', null)
+					: query.where('dek', '=', row.dek);
+		}
+
+		const result = await query.executeTakeFirst();
+
+		cachedAccount = null;
+		cachedDek = null;
+
+		return result.numUpdatedRows !== undefined && result.numUpdatedRows > 0n;
+	};
+
 	const doUpdateConfig = async (
 		updates: Record<string, string | null>,
 	): Promise<void> => {
-		const dek = await getDecryptedDek();
-		let currentConfig: Record<string, string>;
-		try {
-			currentConfig = await getDecryptedConfig();
-		} catch (err) {
-			console.error(
-				`[corsair] Failed to decrypt config for account (tenant: "${tenantId}", integration: "${integrationName}"), starting fresh:`,
-				err,
-			);
-			currentConfig = {};
-		}
+		for (let attempt = 0; attempt < 5; attempt++) {
+			const { row, dek, currentConfig } = await loadFreshAccountConfig();
 
-		const newConfig = { ...currentConfig };
-		for (const [key, value] of Object.entries(updates)) {
-			if (value === null) {
-				delete newConfig[key];
-			} else {
-				newConfig[key] = value;
+			const newConfig = { ...currentConfig };
+			for (const [key, value] of Object.entries(updates)) {
+				if (value === null) {
+					delete newConfig[key];
+				} else {
+					newConfig[key] = value;
+				}
+			}
+
+			const encryptedConfig = encryptConfig(newConfig, dek);
+			if (await casWriteAccountConfig(row, encryptedConfig)) {
+				return;
 			}
 		}
 
-		const encryptedConfig = encryptConfig(newConfig, dek);
-		await ctx.updateAccount({ config: encryptedConfig });
+		throw new Error(
+			`Failed to update account config atomically (tenant: "${tenantId}", integration: "${integrationName}")`,
+		);
+	};
+
+	const setWebhookSignatureIfAbsent = (
+		value: string,
+	): Promise<{ created: boolean }> => {
+		// Trim only for emptiness — store the exact value handlers echo/compare.
+		if (!value.trim()) {
+			return Promise.reject(new Error('Webhook signature cannot be empty'));
+		}
+		const normalized = value;
+
+		// Share the write chain with set_* on this manager. Cross-manager races
+		// reuse the same optimistic config CAS as doUpdateConfig.
+		const run = configWriteChain.then(async () => {
+			for (let attempt = 0; attempt < 5; attempt++) {
+				const { row, dek, currentConfig } = await loadFreshAccountConfig();
+
+				const existing = currentConfig.webhook_signature;
+				if (existing) {
+					if (existing !== normalized) {
+						throw new Error('Webhook signature already configured');
+					}
+					return { created: false };
+				}
+
+				const encryptedConfig = encryptConfig(
+					{ ...currentConfig, webhook_signature: normalized },
+					dek,
+				);
+
+				if (await casWriteAccountConfig(row, encryptedConfig)) {
+					return { created: true };
+				}
+			}
+
+			throw new Error('Failed to set webhook signature atomically');
+		});
+
+		configWriteChain = run.then(
+			() => undefined,
+			() => undefined,
+		);
+		return run;
+	};
+
+	const issueNewDek = (): Promise<string> => {
+		const run = configWriteChain.then(async () => {
+			for (let attempt = 0; attempt < 5; attempt++) {
+				cachedAccount = null;
+				cachedDek = null;
+
+				const account = await ctx.getAccount();
+				const row = await database.db
+					.selectFrom('corsair_accounts')
+					.selectAll()
+					.where('id', '=', account.id)
+					.executeTakeFirstOrThrow();
+
+				const newDek = generateDEK();
+				const config = parseConfig(row.config) as Record<string, string>;
+				const hasConfig = !!config && Object.keys(config).length > 0;
+				let newConfig: Record<string, string> = {};
+
+				if (row.dek) {
+					if (hasConfig) {
+						const oldDek = await decryptDEK(row.dek, kek);
+						newConfig = reEncryptConfig(config, oldDek, newDek);
+					}
+				} else if (hasConfig) {
+					// Config without a DEK is unreadable — refuse rather than wipe it.
+					throw new Error(
+						`Account has encrypted config but no DEK (tenant: "${tenantId}", integration: "${integrationName}"). Recover the DEK before rotating.`,
+					);
+				}
+
+				const encryptedNewDek = await encryptDEK(newDek, kek);
+				if (await casWriteAccountConfig(row, newConfig, encryptedNewDek)) {
+					cachedDek = newDek;
+					return newDek;
+				}
+			}
+
+			throw new Error(
+				`Failed to rotate account DEK atomically (tenant: "${tenantId}", integration: "${integrationName}")`,
+			);
+		});
+
+		configWriteChain = run.then(
+			() => undefined,
+			() => undefined,
+		);
+		return run;
 	};
 
 	// Build the key manager
 	const manager: Record<string, unknown> = {
 		get_dek: getDecryptedDek,
 
-		issue_new_dek: async () => {
-			const account = await ctx.getAccount();
-			const newDek = generateDEK();
+		issue_new_dek: issueNewDek,
 
-			// If there's an existing DEK, re-encrypt config; otherwise start fresh
-			let newConfig: Record<string, string> = {};
-			if (account.dek) {
-				const oldDek = await decryptDEK(account.dek, kek);
-				const config = account.config as Record<string, string>;
-				if (config && Object.keys(config).length > 0) {
-					newConfig = reEncryptConfig(config, oldDek, newDek);
-				}
-			}
-
-			const encryptedNewDek = await encryptDEK(newDek, kek);
-
-			await ctx.updateAccount({
-				config: newConfig,
-				dek: encryptedNewDek,
-			});
-
-			cachedDek = newDek;
-			return newDek;
-		},
+		set_webhook_signature_if_absent: setWebhookSignatureIfAbsent,
 
 		// Auto-generated field accessors
 		...createFieldAccessors(getDecryptedConfig, updateConfig, allFields),

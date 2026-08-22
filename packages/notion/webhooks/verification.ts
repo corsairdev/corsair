@@ -1,39 +1,15 @@
+import crypto from 'crypto';
 import type { NotionWebhooks } from '../index';
 import { createNotionMatch } from './types';
 
-type WebhookKeys = {
-	get_webhook_signature: () => Promise<string | null>;
-	set_webhook_signature: (value: string) => Promise<void>;
-};
-
-// Serialize verification handshakes so concurrent handlers in this process
-// can't both observe an empty signature and last-write-win.
-let registrationChain: Promise<void> = Promise.resolve();
-
-async function ensureWebhookSignature(
-	keys: WebhookKeys,
-	token: string,
-): Promise<void> {
-	const run = registrationChain.then(async () => {
-		const existing = await keys.get_webhook_signature();
-		if (existing) {
-			if (existing !== token) {
-				throw new Error('Invalid verification token');
-			}
-			return;
-		}
-
-		await keys.set_webhook_signature(token);
-
-		// Another writer (or cross-process race) may have replaced it — reject
-		// rather than treat a foreign token as a successful handshake.
-		const stored = await keys.get_webhook_signature();
-		if (stored !== token) {
-			throw new Error('Invalid verification token');
-		}
-	});
-	registrationChain = run.catch(() => {});
-	await run;
+/** Constant-time compare. Length may short-circuit; length is not sensitive. */
+function secretsMatch(a: string, b: string): boolean {
+	const aBuf = Buffer.from(a);
+	const bBuf = Buffer.from(b);
+	if (aBuf.length !== bBuf.length) {
+		return false;
+	}
+	return crypto.timingSafeEqual(aBuf, bBuf);
 }
 
 export const verification: NotionWebhooks['verification'] = {
@@ -45,12 +21,37 @@ export const verification: NotionWebhooks['verification'] = {
 		) {
 			return {
 				success: false,
+				statusCode: 400,
+				error: 'Missing verification_token',
 				data: undefined,
 			};
 		}
 
 		const token = request.payload.verification_token;
-		await ensureWebhookSignature(ctx.keys, token);
+
+		try {
+			await ctx.keys.set_webhook_signature_if_absent(token);
+		} catch (error) {
+			const existing = await ctx.keys.get_webhook_signature();
+			if (existing && !secretsMatch(existing, token)) {
+				return {
+					success: false,
+					statusCode: 401,
+					error: 'Invalid verification token',
+				};
+			}
+			if (!existing) {
+				console.warn(
+					'[corsair:notion] Failed to persist verification token:',
+					error instanceof Error ? error.message : String(error),
+				);
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to persist verification token',
+				};
+			}
+		}
 
 		console.log('Notion webhook verification request received');
 

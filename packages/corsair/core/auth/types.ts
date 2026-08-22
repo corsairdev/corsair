@@ -210,8 +210,16 @@ export type AccountKeyManagerFor<
 	T extends AuthTypes,
 	Config extends PluginAuthConfig | undefined = undefined,
 > = BaseKeyManager &
-	AllFieldAccessors<AccountFieldNames<T, Config>> &
-	(T extends 'oauth_2'
+	AllFieldAccessors<AccountFieldNames<T, Config>> & {
+		/**
+		 * Persist webhook_signature only when unset. If another value is already
+		 * stored, rejects. Use this for unauthenticated handshake registration
+		 * (Notion url_verification, Asana X-Hook-Secret, etc.).
+		 */
+		set_webhook_signature_if_absent: (
+			value: string,
+		) => Promise<{ created: boolean }>;
+	} & (T extends 'oauth_2'
 		? {
 				/**
 				 * Get the integration-level OAuth2 credentials (client_id, client_secret, redirect_url).
