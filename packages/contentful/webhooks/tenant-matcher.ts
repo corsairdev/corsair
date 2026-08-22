@@ -1,6 +1,7 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
 import { asRecord, readBodyRecord } from 'corsair/core';
 
+/** Extracts the space ID from a Contentful webhook payload to resolve the target tenant account. */
 export function matchContentfulTenantWebhook(
 	request: RawWebhookRequest,
 ): WebhookTenantMatch | null {

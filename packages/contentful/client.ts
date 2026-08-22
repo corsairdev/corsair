@@ -14,6 +14,7 @@ export class ContentfulAPIError extends Error {
 
 const CONTENTFUL_API_BASE = 'https://api.contentful.com';
 
+/** Executes an authenticated request to the Contentful Content Management API. */
 export async function makeContentfulRequest<T>(
 	endpoint: string,
 	apiKey: string,
