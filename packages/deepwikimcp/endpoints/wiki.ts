@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DeepwikiMcpEndpoints } from '..';
 import { makeDeepwikiMcpRequest } from '../client';
+import type { DeepwikiMcpEndpoints } from '../index';
 import type { DeepwikiMcpEndpointOutputs } from './types';
 
 async function callTool<T>(
