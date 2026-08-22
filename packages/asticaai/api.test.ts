@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { AnalyzeAudio, ReadText } from './endpoints';
 import type { AsticaAiContext } from './index';
 
@@ -43,7 +44,11 @@ describe('Astica live API', () => {
 		expect(response.status).toBe('success');
 		expect(typeof response.readResult?.content).toBe('string');
 		expect(upserts).toHaveLength(1);
-		expect(upserts[0]?.[0]).toBe(encodeURIComponent(SAMPLE_IMAGE));
+		expect(upserts[0]?.[0]).toBe(
+			createHash('sha256').update(SAMPLE_IMAGE).digest('hex'),
+		);
+		// The submitted input is never persisted.
+		expect(upserts[0]?.[1]).not.toHaveProperty('input');
 	}, 120_000);
 
 	it('analyzeAudio returns a transcript matching the output schema', async () => {

@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import { AnalyzeAudio, ReadText } from './endpoints';
@@ -50,6 +51,9 @@ afterEach(() => warnSpy.mockRestore());
 
 const IMAGE = 'https://www.astica.org/inputs/analyze_3.jpg';
 const AUDIO = 'https://astica.ai/example/asticaListen_sample.wav';
+
+const sha256 = (value: string) =>
+	createHash('sha256').update(value).digest('hex');
 
 const okOcr = {
 	status: 'success',
@@ -108,9 +112,11 @@ describe('readText', () => {
 		await ReadText.read(ctx, { input: IMAGE });
 
 		expect(upserts.readTextResults).toHaveBeenCalledWith(
-			encodeURIComponent(IMAGE),
+			sha256(IMAGE),
 			expect.objectContaining({
-				input: IMAGE,
+				inputFingerprint: sha256(IMAGE),
+				inputKind: 'url',
+				inputLength: IMAGE.length,
 				content: 'Detected text',
 				pageCount: 1,
 				lineCount: 2,
@@ -176,8 +182,13 @@ describe('analyzeAudio', () => {
 		await AnalyzeAudio.analyze(ctx, { input: AUDIO });
 
 		expect(upserts.audioTranscripts).toHaveBeenCalledWith(
-			encodeURIComponent(AUDIO),
-			expect.objectContaining({ input: AUDIO, text: 'Hello', resultURI: null }),
+			sha256(AUDIO),
+			expect.objectContaining({
+				inputFingerprint: sha256(AUDIO),
+				inputKind: 'url',
+				text: 'Hello',
+				resultURI: null,
+			}),
 		);
 	});
 
@@ -238,26 +249,58 @@ describe('in-body error reporting', () => {
 });
 
 describe('large inline inputs', () => {
-	const base64 = 'A'.repeat(5000);
-
 	it('keeps the entity id bounded instead of keying on the whole blob', async () => {
 		mockRequest.mockResolvedValueOnce(okOcr);
 
-		await ReadText.read(ctx, { input: base64 });
+		await ReadText.read(ctx, { input: 'A'.repeat(5000) });
 
 		const [id] = upserts.readTextResults.mock.calls[0] ?? [];
-		expect(id).toBeDefined();
-		expect((id as string).length).toBeLessThan(200);
+		expect(id).toHaveLength(64);
 	});
 
-	it('distinguishes two different blobs of the same length', async () => {
+	// Same-format payloads share a long prefix, so truncating the input would
+	// collide; every base64 JPEG opens with the same header.
+	it('distinguishes blobs that share a long prefix and a length', async () => {
 		mockRequest.mockResolvedValueOnce(okOcr).mockResolvedValueOnce(okOcr);
+		const header =
+			'/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsL';
 
-		await ReadText.read(ctx, { input: `${'A'.repeat(4999)}X` });
-		await ReadText.read(ctx, { input: `${'B'.repeat(4999)}Y` });
+		await ReadText.read(ctx, { input: `${header}${'A'.repeat(4000)}X` });
+		await ReadText.read(ctx, { input: `${header}${'A'.repeat(4000)}Y` });
 
 		const ids = upserts.readTextResults.mock.calls.map(([id]) => id);
 		expect(ids[0]).not.toBe(ids[1]);
+	});
+
+	it('reuses the same id for the same input', async () => {
+		mockRequest.mockResolvedValueOnce(okOcr).mockResolvedValueOnce(okOcr);
+
+		await ReadText.read(ctx, { input: IMAGE });
+		await ReadText.read(ctx, { input: IMAGE });
+
+		const ids = upserts.readTextResults.mock.calls.map(([id]) => id);
+		expect(ids[0]).toBe(ids[1]);
+	});
+
+	it('never writes the submitted input into the stored row', async () => {
+		mockRequest.mockResolvedValueOnce({ status: 'success', text: 'Hi' });
+		const secretAudio = `data:audio/wav;base64,${'Z'.repeat(3000)}`;
+
+		await AnalyzeAudio.analyze(ctx, { input: secretAudio });
+
+		const [, row] = upserts.audioTranscripts.mock.calls[0] ?? [];
+		expect(JSON.stringify(row)).not.toContain('ZZZZ');
+		expect(row).not.toHaveProperty('input');
+	});
+
+	it('never writes a signed url into the stored row', async () => {
+		mockRequest.mockResolvedValueOnce(okOcr);
+
+		await ReadText.read(ctx, { input: `${IMAGE}?sig=super-secret-signature` });
+
+		const [, row] = upserts.readTextResults.mock.calls[0] ?? [];
+		expect(JSON.stringify(row)).not.toContain('super-secret-signature');
+		expect(row).not.toHaveProperty('input');
 	});
 });
 

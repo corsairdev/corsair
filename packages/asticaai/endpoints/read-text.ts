@@ -1,7 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AsticaAiEndpoints } from '..';
 import { ASTICAAI_VISION_API_BASE, makeAsticaAiRequest } from '../client';
-import { assertAsticaOk, describeInput, inputEntityId } from './shared';
+import {
+	assertAsticaOk,
+	describeInput,
+	inputEntityId,
+	inputFingerprint,
+} from './shared';
 import type { AsticaReadTextOutput } from './types';
 import { AsticaReadTextInputSchema, AsticaReadTextOutputSchema } from './types';
 
@@ -25,7 +30,8 @@ export const read: AsticaAiEndpoints['readText'] = async (ctx, input) => {
 
 	try {
 		await ctx.db.readTextResults.upsertByEntityId(inputEntityId(query.input), {
-			input: query.input,
+			inputFingerprint: inputFingerprint(query.input),
+			...describeInput(query.input),
 			modelVersion: query.modelVersion,
 			content: response.readResult?.content ?? null,
 			pageCount: pages.length,

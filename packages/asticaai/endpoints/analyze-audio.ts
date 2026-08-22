@@ -1,7 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AsticaAiEndpoints } from '..';
 import { ASTICAAI_LISTEN_API_BASE, makeAsticaAiRequest } from '../client';
-import { assertAsticaOk, describeInput, inputEntityId } from './shared';
+import {
+	assertAsticaOk,
+	describeInput,
+	inputEntityId,
+	inputFingerprint,
+} from './shared';
 import type { AnalyzeAudioOutput } from './types';
 import { AnalyzeAudioInputSchema, AnalyzeAudioOutputSchema } from './types';
 
@@ -27,7 +32,8 @@ export const analyze: AsticaAiEndpoints['analyzeAudio'] = async (
 
 	try {
 		await ctx.db.audioTranscripts.upsertByEntityId(inputEntityId(query.input), {
-			input: query.input,
+			inputFingerprint: inputFingerprint(query.input),
+			...describeInput(query.input),
 			modelVersion: query.modelVersion,
 			text: response.text ?? null,
 			resultURI: response.resultURI ?? null,

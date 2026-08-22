@@ -1,12 +1,15 @@
 import { z } from 'zod';
 
 // Fields mirror the documented Astica responses in ../endpoints/types.
-// upsertByEntityId replaces the data column wholesale, so each entity notes the
-// key it is stored under.
+// The submitted input is never persisted: inline inputs are the image or the
+// recording itself, and URL inputs can carry a signed query string. Rows record
+// a sha256 fingerprint of the input plus its shape, which is also the entity id.
 
-/** Keyed by the URI-encoded `input` (image URL or base64 digest). */
+/** Keyed by inputFingerprint. */
 export const AsticaAiReadTextResult = z.object({
-	input: z.string(),
+	inputFingerprint: z.string(),
+	inputKind: z.enum(['url', 'inline']),
+	inputLength: z.number().int(),
 	modelVersion: z.string(),
 	/** Flattened from readResult.content. */
 	content: z.string().nullable().optional(),
@@ -15,9 +18,11 @@ export const AsticaAiReadTextResult = z.object({
 	readAt: z.coerce.date().optional(),
 });
 
-/** Keyed by the URI-encoded `input` (audio URL or base64 digest). */
+/** Keyed by inputFingerprint. */
 export const AsticaAiAudioTranscript = z.object({
-	input: z.string(),
+	inputFingerprint: z.string(),
+	inputKind: z.enum(['url', 'inline']),
+	inputLength: z.number().int(),
 	modelVersion: z.string(),
 	text: z.string().nullable().optional(),
 	/** Present instead of `text` when the job was queued with low_priority. */
