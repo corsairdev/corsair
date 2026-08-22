@@ -1,10 +1,12 @@
 import { AuthMissingError } from '../core/auth/errors/auth-missing';
+import {
+	cacheRefreshedTokens,
+	isAccessTokenFresh,
+} from '../core/auth/oauth-token-cache';
 import type { AccountKeyManagerFor } from '../core/auth/types';
 import { hubApiPost } from './client/http';
 import { parseOAuthRefreshResponse } from './contracts/connect-api';
 import type { HubConfig } from './types';
-
-const TOKEN_REFRESH_BUFFER_SECONDS = 5 * 60;
 
 export type HubOAuthContext = {
 	keys: AccountKeyManagerFor<'oauth_2'>;
@@ -28,7 +30,6 @@ export async function getHubAccessToken(
 	options?: { forceRefresh?: boolean },
 ): Promise<HubOAuthAccessTokenResult> {
 	const { keys, hub, plugin, tenantId } = ctx;
-	const forceRefresh = options?.forceRefresh ?? false;
 
 	const [accessToken, expiresAt, refreshToken] = await Promise.all([
 		keys.get_access_token(),
@@ -36,15 +37,15 @@ export async function getHubAccessToken(
 		keys.get_refresh_token(),
 	]);
 
-	const now = Math.floor(Date.now() / 1000);
 	if (
-		!forceRefresh &&
-		accessToken &&
-		expiresAt &&
-		Number(expiresAt) > now + TOKEN_REFRESH_BUFFER_SECONDS
+		isAccessTokenFresh({
+			accessToken,
+			expiresAt,
+			forceRefresh: options?.forceRefresh,
+		})
 	) {
 		return {
-			accessToken,
+			accessToken: accessToken as string,
 			expiresAt: Number(expiresAt),
 			refreshed: false,
 		};
@@ -61,20 +62,7 @@ export async function getHubAccessToken(
 		parseResponse: parseOAuthRefreshResponse,
 	});
 
-	const nextExpiresAt = tokens.expires_in
-		? now + tokens.expires_in
-		: expiresAt
-			? Number(expiresAt)
-			: now + 3600;
-
-	await keys.set_access_token(tokens.access_token);
-	await keys.set_expires_at(String(nextExpiresAt));
-	if (tokens.refresh_token) {
-		await keys.set_refresh_token(tokens.refresh_token);
-	}
-	if (tokens.scope) {
-		await keys.set_scope(tokens.scope);
-	}
+	const nextExpiresAt = await cacheRefreshedTokens(keys, tokens, expiresAt);
 
 	return {
 		accessToken: tokens.access_token,

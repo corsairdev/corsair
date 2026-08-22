@@ -1,0 +1,209 @@
+import {
+	encryptConfig,
+	encryptDEK,
+	generateDEK,
+} from '../core/auth/encryption';
+import { createAccountKeyManager } from '../core/auth/key-manager';
+import { getOAuthAccessToken } from '../core/auth/oauth-access';
+import type { HubConfig } from '../hub/types';
+import { createTestDatabase } from './setup-db';
+
+const KEK = 'test-kek-with-at-least-32-characters!!';
+
+const hub: HubConfig = {
+	apiUrl: 'https://hub.test',
+	projectApiKey: 'ck_prod_test',
+	signingSecret: 'sec',
+};
+
+async function seed(
+	database: ReturnType<typeof createTestDatabase>['database'],
+	integrationConfig: Record<string, string>,
+	accountConfig: Record<string, string>,
+) {
+	const now = new Date();
+	const dek = generateDEK();
+	const encryptedDek = await encryptDEK(dek, KEK);
+
+	await database.db
+		.insertInto('corsair_integrations')
+		.values({
+			id: 'integration-linear',
+			created_at: now,
+			updated_at: now,
+			name: 'linear',
+			config: encryptConfig(integrationConfig, dek),
+			dek: encryptedDek,
+		})
+		.execute();
+
+	await database.db
+		.insertInto('corsair_accounts')
+		.values({
+			id: 'account-default',
+			created_at: now,
+			updated_at: now,
+			tenant_id: 'default',
+			integration_id: 'integration-linear',
+			config: encryptConfig(accountConfig, dek),
+			dek: encryptedDek,
+		})
+		.execute();
+}
+
+function makeKeys(database: ReturnType<typeof createTestDatabase>['database']) {
+	return createAccountKeyManager({
+		authType: 'oauth_2',
+		integrationName: 'linear',
+		tenantId: 'default',
+		kek: KEK,
+		database,
+	});
+}
+
+function jsonResponse(body: unknown) {
+	return {
+		ok: true,
+		status: 200,
+		headers: { get: () => 'application/json' },
+		text: async () => JSON.stringify(body),
+	} as unknown as Response;
+}
+
+describe('getOAuthAccessToken switchboard', () => {
+	const realFetch = global.fetch;
+	afterEach(() => {
+		global.fetch = realFetch;
+	});
+
+	it('BYO+Hub (no local client_secret): refreshes through the hub', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seed(
+				database,
+				{}, // no client_secret stored locally → BYO+Hub
+				{ access_token: 'stale', expires_at: '1', refresh_token: 'byo-rt' },
+			);
+
+			let sentUrl = '';
+			let sentBody: Record<string, unknown> | null = null;
+			global.fetch = (async (url: string, init: RequestInit) => {
+				sentUrl = url;
+				sentBody = JSON.parse(String(init.body));
+				return jsonResponse({ access_token: 'hub-rotated', expires_in: 3600 });
+			}) as unknown as typeof fetch;
+
+			const keys = makeKeys(database);
+			const ctx = { keys, hub, tenantId: 'default' };
+			const token = await getOAuthAccessToken(ctx, {
+				plugin: 'linear',
+				tokenUrl: 'https://api.linear.app/oauth/token',
+			});
+
+			expect(token).toBe('hub-rotated');
+			expect(sentUrl).toBe('https://hub.test/oauth/refresh');
+			expect(sentBody).toEqual({
+				plugin: 'linear',
+				tenantId: 'default',
+				refresh_token: 'byo-rt',
+			});
+			expect(typeof (ctx as Record<string, unknown>)._refreshAuth).toBe(
+				'function',
+			);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('inline (local client_secret present): refreshes at the provider', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seed(
+				database,
+				{ client_id: 'cid', client_secret: 'csecret' },
+				{ access_token: 'stale', expires_at: '1', refresh_token: 'local-rt' },
+			);
+
+			let sentUrl = '';
+			let sentBody: Record<string, string> = {};
+			global.fetch = (async (url: string, init: RequestInit) => {
+				sentUrl = url;
+				sentBody = Object.fromEntries(new URLSearchParams(String(init.body)));
+				return jsonResponse({
+					access_token: 'provider-rotated',
+					refresh_token: 'local-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			const keys = makeKeys(database);
+			const ctx = { keys, tenantId: 'default' };
+			const token = await getOAuthAccessToken(ctx, {
+				plugin: 'linear',
+				tokenUrl: 'https://api.linear.app/oauth/token',
+			});
+
+			expect(token).toBe('provider-rotated');
+			expect(sentUrl).toBe('https://api.linear.app/oauth/token');
+			expect(sentBody).toEqual({
+				grant_type: 'refresh_token',
+				refresh_token: 'local-rt',
+				client_id: 'cid',
+				client_secret: 'csecret',
+			});
+			expect(await keys.get_access_token()).toBe('provider-rotated');
+			expect(await keys.get_refresh_token()).toBe('local-rt-2');
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('inline: returns the cached token without a refresh when still valid', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			const farFuture = String(Math.floor(Date.now() / 1000) + 3600);
+			await seed(
+				database,
+				{ client_id: 'cid', client_secret: 'csecret' },
+				{ access_token: 'good', expires_at: farFuture, refresh_token: 'rt' },
+			);
+
+			let called = false;
+			global.fetch = (async () => {
+				called = true;
+				return jsonResponse({ access_token: 'unused' });
+			}) as unknown as typeof fetch;
+
+			const keys = makeKeys(database);
+			const token = await getOAuthAccessToken(
+				{ keys, tenantId: 'default' },
+				{ plugin: 'linear', tokenUrl: 'https://api.linear.app/oauth/token' },
+			);
+
+			expect(token).toBe('good');
+			expect(called).toBe(false);
+		} finally {
+			cleanup();
+		}
+	});
+
+	it('throws AuthMissing when there is neither a local secret nor a hub', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seed(
+				database,
+				{},
+				{ access_token: 'stale', expires_at: '1', refresh_token: 'rt' },
+			);
+			const keys = makeKeys(database);
+			await expect(
+				getOAuthAccessToken(
+					{ keys, tenantId: 'default' },
+					{ plugin: 'linear', tokenUrl: 'https://api.linear.app/oauth/token' },
+				),
+			).rejects.toThrow(/linear/);
+		} finally {
+			cleanup();
+		}
+	});
+});
