@@ -70,7 +70,12 @@ export async function getManagedAccessToken(
 		}
 	}
 
-	const tokens = await refreshManagedTokensFromHub(hub, plugin, tenantId);
+	const tokens = await refreshManagedTokensFromHub(
+		hub,
+		plugin,
+		tenantId,
+		refreshToken,
+	);
 
 	const nextExpiresAt = tokens.expires_in
 		? now + tokens.expires_in
@@ -105,12 +110,18 @@ async function refreshManagedTokensFromHub(
 	hub: HubConfig,
 	plugin: string,
 	tenantId: string,
+	refreshToken?: string | null,
 ) {
 	try {
 		return await hubApiPost({
 			hub,
 			path: '/oauth/refresh',
-			body: { plugin, tenantId },
+			// Send the SDK's own refresh_token when it has one so Hub mints
+			// statelessly; without it, Hub falls back to the managed_connection it
+			// still holds for legacy connections.
+			body: refreshToken
+				? { plugin, tenantId, refresh_token: refreshToken }
+				: { plugin, tenantId },
 			parseResponse: parseOAuthRefreshResponse,
 		});
 	} catch (error) {
