@@ -1,4 +1,9 @@
 import { ConvexSchema } from './schema';
+import {
+	ConvexDeployKeySchema,
+	ConvexDeploymentSchema,
+	ConvexProjectSchema,
+} from './schema/database';
 
 describe('Convex schema', () => {
 	it('declares a semver version', () => {
@@ -14,7 +19,32 @@ describe('Convex schema', () => {
 			expect(entity).toBeDefined();
 		}
 	});
-});
 
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
+	it('accepts official integer identifiers on cached entities', () => {
+		expect(
+			ConvexProjectSchema.safeParse({
+				id: 123,
+				name: 'Demo',
+				slug: 'demo',
+				teamId: 41,
+				createTime: 1710000000000,
+			}).success,
+		).toBe(true);
+		expect(
+			ConvexDeploymentSchema.safeParse({
+				id: 7,
+				name: 'happy-otter-123',
+				projectId: 123,
+				createTime: 1710000000000,
+			}).success,
+		).toBe(true);
+		expect(
+			ConvexDeployKeySchema.safeParse({
+				id: 99,
+				deploymentName: 'happy-otter-123',
+				name: 'ci',
+				creationTime: 1710000000000,
+			}).success,
+		).toBe(true);
+	});
+});
