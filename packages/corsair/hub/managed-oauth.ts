@@ -1,5 +1,4 @@
 import { createAccountKeyManager } from '../core';
-import type { AuthTypes } from '../core/constants';
 import {
 	getCorsairInternal,
 	requireCorsairPlugin,
@@ -36,7 +35,7 @@ export type ProcessManagedOAuthDeliveryOptions = {
 	refreshToken?: string;
 	expiresIn?: number;
 	scope?: string;
-	authType?: AuthTypes;
+	authType?: 'managed' | 'oauth_2';
 };
 
 export type ProcessManagedOAuthDeliveryResult = {

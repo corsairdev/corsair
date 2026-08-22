@@ -1,5 +1,4 @@
 import type { CorsairInternalConfig } from '../core';
-import type { AuthTypes } from '../core/constants';
 import { getCorsairInternal } from '../core/utils/corsair-instance';
 import { processConnectLinkDelivery } from '../hub/connect-link-delivery';
 import {
@@ -127,7 +126,7 @@ export type OAuthTokensTunnelPayload = {
 	refreshToken?: string;
 	expiresIn?: number;
 	scope?: string;
-	authType?: AuthTypes;
+	authType?: 'managed' | 'oauth_2';
 };
 
 export type PermissionDecisionTunnelPayload = {

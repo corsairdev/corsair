@@ -2,8 +2,6 @@
  * Shared wire-format types for hub ↔ app delivery (browser and server transports).
  */
 
-import type { AuthTypes } from '../../core/constants';
-
 /**
  * Discriminator for server POST envelope bodies (`{ type, payload }`).
  *
@@ -201,7 +199,7 @@ export type BrowserDeliveryPayload = {
 	/** OAuth scopes granted. */
 	scope?: string;
 	/** Auth type the delivered tokens belong to — `managed` (default) or `oauth_2` (BYO). */
-	authType?: AuthTypes;
+	authType?: 'managed' | 'oauth_2';
 	/** SDK permission token to approve or deny (`deliveryMode: permission.*`). */
 	permissionToken?: string;
 	/** Hub page origin for iframe postMessage replies (legacy client bridge). */
