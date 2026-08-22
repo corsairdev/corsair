@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeBartRequest } from '../client';
 import type { BartEndpoints } from '../index';
 import {
+	advisoryEntityId,
 	BartEndpointInputSchemas,
 	BartEndpointOutputSchemas,
 	unwrapCData,
@@ -26,12 +27,7 @@ export const list: BartEndpoints['advisoriesList'] = async (ctx, input) => {
 		for (const item of bsaArray) {
 			const desc = unwrapCData(item.description);
 			const sms = unwrapCData(item.sms_text);
-			const stationKey = item.station || 'SYSTEM';
-			const timeKey = item.posted || response.date;
-			const fallbackContent = desc
-				? desc.trim().slice(0, 40)
-				: item.type || 'advisory';
-			const id = `${stationKey}-${timeKey || fallbackContent}`;
+			const id = advisoryEntityId(item, response.date);
 
 			try {
 				await ctx.db.advisories.upsertByEntityId(id, {
