@@ -1,4 +1,4 @@
-import { manage } from './domain';
+import { remove as domainDelete, manage } from './domain';
 import {
 	list,
 	schedule,
@@ -85,6 +85,7 @@ export const Suppression = {
 
 export const Domain = {
 	manage,
+	delete: domainDelete,
 };
 
 export const System = {

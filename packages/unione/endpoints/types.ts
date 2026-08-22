@@ -65,7 +65,10 @@ const WebhookEventsSchema = z
 const WebhookObjectSchema = z
 	.object({
 		id: z.union([z.string(), z.number()]).nullable().optional(),
-		url: z.string().nullable().optional(),
+		// `url` is the webhook's identity - UniOne addresses them by URL and the
+		// mirror keys on it - so it stays required and non-nullable even though
+		// the surrounding settings are permissive.
+		url: z.string(),
 		status: z.string().nullable().optional(),
 		event_format: z.string().nullable().optional(),
 		delivery_info: z.number().nullable().optional(),
@@ -289,9 +292,12 @@ const DomainManageInputSchema = z.object({
 		'validate_verification',
 		'validate_dkim',
 		'list',
-		'delete',
 	]),
 	domain: z.string().optional(),
+});
+
+const DomainDeleteInputSchema = z.object({
+	domain: z.string(),
 });
 
 // --- outputs ---
@@ -441,6 +447,7 @@ export type UnioneEndpointInputs = {
 	suppressionList: z.infer<typeof SuppressionListInputSchema>;
 	suppressionDelete: z.infer<typeof SuppressionDeleteInputSchema>;
 	domainManage: z.infer<typeof DomainManageInputSchema>;
+	domainDelete: z.infer<typeof DomainDeleteInputSchema>;
 	systemInfo: z.infer<typeof EmptyInputSchema>;
 	systemPing: z.infer<typeof EmptyInputSchema>;
 };
@@ -473,6 +480,7 @@ export type UnioneEndpointOutputs = {
 	suppressionList: z.infer<typeof SuppressionListResponseSchema>;
 	suppressionDelete: z.infer<typeof SuccessResponseSchema>;
 	domainManage: z.infer<typeof DomainManageResponseSchema>;
+	domainDelete: z.infer<typeof SuccessResponseSchema>;
 	systemInfo: z.infer<typeof SystemInfoResponseSchema>;
 	systemPing: z.infer<typeof SystemPingResponseSchema>;
 };
@@ -505,6 +513,7 @@ export const UnioneEndpointInputSchemas = {
 	suppressionList: SuppressionListInputSchema,
 	suppressionDelete: SuppressionDeleteInputSchema,
 	domainManage: DomainManageInputSchema,
+	domainDelete: DomainDeleteInputSchema,
 	systemInfo: EmptyInputSchema,
 	systemPing: EmptyInputSchema,
 } as const;
@@ -537,6 +546,7 @@ export const UnioneEndpointOutputSchemas = {
 	suppressionList: SuppressionListResponseSchema,
 	suppressionDelete: SuccessResponseSchema,
 	domainManage: DomainManageResponseSchema,
+	domainDelete: SuccessResponseSchema,
 	systemInfo: SystemInfoResponseSchema,
 	systemPing: SystemPingResponseSchema,
 } as const;

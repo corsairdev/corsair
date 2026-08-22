@@ -120,6 +120,7 @@ export type UnioneEndpoints = {
 	};
 	domain: {
 		manage: UnioneEndpoint<'domainManage'>;
+		delete: UnioneEndpoint<'domainDelete'>;
 	};
 	system: {
 		info: UnioneEndpoint<'systemInfo'>;
@@ -182,6 +183,7 @@ const unioneEndpointsNested = {
 	},
 	domain: {
 		manage: Domain.manage,
+		delete: Domain.delete,
 	},
 	system: {
 		info: System.info,
@@ -302,6 +304,10 @@ export const unioneEndpointSchemas = {
 	'domain.manage': {
 		input: UnioneEndpointInputSchemas.domainManage,
 		output: UnioneEndpointOutputSchemas.domainManage,
+	},
+	'domain.delete': {
+		input: UnioneEndpointInputSchemas.domainDelete,
+		output: UnioneEndpointOutputSchemas.domainDelete,
 	},
 	'system.info': {
 		input: UnioneEndpointInputSchemas.systemInfo,
@@ -463,11 +469,15 @@ const unioneEndpointMeta = {
 			'Tool to remove an email from the suppression list. Use when you need to re-enable sending emails to an address that was previously unsubscribed or suppressed.',
 	},
 	'domain.manage': {
-		// `action: 'delete'` removes a sender domain, so the whole operation
-		// carries destructive risk regardless of which action a caller picks.
-		riskLevel: 'destructive',
+		riskLevel: 'write',
 		description:
-			'Tool to manage sender domains in UniOne. Use when you need DNS records for verification, trigger verification or DKIM checks, list domains, or delete a domain.',
+			'Tool to inspect and verify sender domains: fetch DNS records, trigger a verification or DKIM check, or list domains. Deleting a domain is a separate tool.',
+	},
+	'domain.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Tool to delete a sender domain from the account. Use only when you are certain: the domain must be re-added and re-verified to send from it again.',
 	},
 	'system.info': {
 		riskLevel: 'read',
@@ -508,8 +518,9 @@ export type ExternalUnionePlugin<T extends UnionePluginOptions> =
  * `events_by_user` carrying one of the documented event names.
  */
 export function matchUnioneWebhook(request: RawWebhookRequest): boolean {
-	if (request.headers['x-unione-auth']) return true;
-
+	// No header shortcut: `x-unione-auth` is trivially set by any caller, so
+	// treating it as sufficient would let unrelated traffic be claimed here and
+	// never reach the plugin it belongs to. The body shape is the only signal.
 	const body = request.body;
 	const parsed =
 		typeof body === 'string'

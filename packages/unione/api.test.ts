@@ -1,6 +1,9 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeUnioneRequest, UnioneAPIError } from './client';
-import { manage as domainManage } from './endpoints/domain';
+import {
+	remove as domainDelete,
+	manage as domainManage,
+} from './endpoints/domain';
 import {
 	list,
 	schedule,
@@ -302,8 +305,31 @@ describe('Unione endpoints', () => {
 		);
 		await domainManage(makeCtx(), { action: 'list' });
 		expect(mockRequest.mock.calls.at(-1)?.[0]).toBe('domain/list.json');
-		await domainManage(makeCtx(), { action: 'delete', domain: 'example.com' });
+	});
+
+	it('deletes a domain through its own destructive endpoint', async () => {
+		await domainDelete(makeCtx(), { domain: 'example.com' });
 		expect(mockRequest.mock.calls.at(-1)?.[0]).toBe('domain/delete.json');
+		expect(mockRequest.mock.calls.at(-1)?.[2]?.body).toEqual({
+			domain: 'example.com',
+		});
+	});
+
+	it('keeps from_name out of the subscribe audit payload', async () => {
+		await subscribe(makeCtx(), {
+			from_email: 'sender@example.com',
+			to_email: 'user@example.com',
+			from_name: 'Jane Doe',
+		});
+		const payload = mockLogEvent.mock.calls.at(-1)?.[2] as Record<
+			string,
+			unknown
+		>;
+		expect(payload).toEqual({
+			from_email: 's***@example.com',
+			to_email: 'u***@example.com',
+		});
+		expect(JSON.stringify(payload)).not.toContain('Jane');
 	});
 
 	it('loads account balance from system/info.json', async () => {

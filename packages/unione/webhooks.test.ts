@@ -85,5 +85,12 @@ describe('Unione webhooks', () => {
 			}),
 		).toBe(false);
 		expect(matchUnioneWebhook({ headers: {}, body: 'not json' })).toBe(false);
+		// The header alone is trivially spoofable and must not claim a request.
+		expect(
+			matchUnioneWebhook({
+				headers: { 'x-unione-auth': 'anything' },
+				body: { id: 'evt_1', type: 'charge.succeeded' },
+			}),
+		).toBe(false);
 	});
 });

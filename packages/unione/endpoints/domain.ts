@@ -9,7 +9,6 @@ const ACTION_PATH = {
 	validate_verification: 'domain/validate-verification-record.json',
 	validate_dkim: 'domain/validate-dkim.json',
 	list: 'domain/list.json',
-	delete: 'domain/delete.json',
 } as const;
 
 export const manage: UnioneEndpoints['domain']['manage'] = async (
@@ -49,6 +48,28 @@ export const manage: UnioneEndpoints['domain']['manage'] = async (
 		ctx,
 		'unione.domain.manage',
 		{ action: input.action, domain: input.domain },
+		'completed',
+	);
+	return response;
+};
+
+/**
+ * Kept out of `manage` so deleting a sender domain carries its own destructive
+ * classification - folding it into the multiplexed operation would force the
+ * read actions (list, DNS records, verification checks) to inherit it.
+ */
+export const remove: UnioneEndpoints['domain']['delete'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeUnioneRequest<
+		UnioneEndpointOutputs['domainDelete']
+	>('domain/delete.json', ctx.key, { body: { domain: input.domain } });
+
+	await logEventFromContext(
+		ctx,
+		'unione.domain.delete',
+		{ ...input },
 		'completed',
 	);
 	return response;

@@ -129,11 +129,13 @@ export const subscribe: UnioneEndpoints['email']['subscribe'] = async (
 		UnioneEndpointOutputs['emailSubscribe']
 	>('email/subscribe.json', ctx.key, { body: { ...input } });
 
+	// Allowlisted rather than spread: `from_name` is a person's name and has no
+	// place in a persisted audit row, and spreading would carry along any field
+	// added to EmailSubscribeInputSchema later without review.
 	await logEventFromContext(
 		ctx,
 		'unione.email.subscribe',
 		{
-			...input,
 			to_email: redactEmail(input.to_email),
 			from_email: redactEmail(input.from_email),
 		},

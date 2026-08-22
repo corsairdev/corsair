@@ -132,6 +132,18 @@ describe('Unione database schemas accept live API shapes', () => {
 		expect(nulled.objects).toHaveLength(3);
 		expect(nulled.objects?.[0]?.events?.email_status).toBeNull();
 	});
+
+	it('rejects a webhook object with a missing or null url', () => {
+		// url is the webhook's identity, so it stays required even though the
+		// surrounding settings tolerate null.
+		const parse = (object: unknown) =>
+			UnioneEndpointOutputSchemas.webhookList.parse({
+				status: 'success',
+				objects: [object],
+			});
+		expect(() => parse({ status: 'active' })).toThrow();
+		expect(() => parse({ url: null, status: 'active' })).toThrow();
+	});
 });
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
