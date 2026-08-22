@@ -52,6 +52,7 @@ export const BaseProviders = [
 	'asana',
 	'asindataapi',
 	'asyncinterview',
+	'autom',
 	'ayrshare',
 	'basecamp',
 	'baselinker',
@@ -219,6 +220,7 @@ export const ProviderDisplayNames = {
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
 	asyncinterview: 'Async Interview',
+	autom: 'Autom',
 	ayrshare: 'Ayrshare',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
@@ -393,6 +395,7 @@ export type AllProviders =
 	| 'asana'
 	| 'asindataapi'
 	| 'asyncinterview'
+	| 'autom'
 	| 'ayrshare'
 	| 'basecamp'
 	| 'baselinker'
