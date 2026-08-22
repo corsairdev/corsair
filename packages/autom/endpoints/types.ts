@@ -1,7 +1,11 @@
 import { z } from 'zod';
 
+const AutomQuery = z.string().trim().min(1);
+const AutomPage = z.number().int().min(1).optional();
+const AutomLocale = z.string().trim().min(1).optional();
+
 const GoogleCountriesInputSchema = z.object({
-	query: z.string(),
+	query: AutomQuery,
 });
 const GoogleCountriesResponseSchema = z.array(
 	z
@@ -13,7 +17,7 @@ const GoogleCountriesResponseSchema = z.array(
 );
 
 const GoogleLanguagesInputSchema = z.object({
-	query: z.string(),
+	query: AutomQuery,
 });
 const GoogleLanguagesResponseSchema = z.array(
 	z
@@ -25,7 +29,7 @@ const GoogleLanguagesResponseSchema = z.array(
 );
 
 const GoogleLocationsInputSchema = z.object({
-	query: z.string(),
+	query: AutomQuery,
 });
 const GoogleLocationsResponseSchema = z.array(
 	z
@@ -43,10 +47,10 @@ const GoogleLocationsResponseSchema = z.array(
 );
 
 const GoogleImagesInputSchema = z.object({
-	query: z.string(),
-	page: z.number().optional(),
-	gl: z.string().optional(),
-	hl: z.string().optional(),
+	query: AutomQuery,
+	page: AutomPage,
+	gl: AutomLocale,
+	hl: AutomLocale,
 });
 const GoogleImagesResponseSchema = z
 	.object({
