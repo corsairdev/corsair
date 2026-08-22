@@ -45,8 +45,7 @@ export const createAudio: AivoovEndpoints['createAudio'] = async (
 			input.transcribe_ssml_spk_rate.map(String);
 	}
 	if (input.transcribe_ssml_volume) {
-		form['transcribe_ssml_volume[]'] =
-			input.transcribe_ssml_volume.map(String);
+		form['transcribe_ssml_volume[]'] = input.transcribe_ssml_volume.map(String);
 	}
 
 	const response = await makeAivoovRequest<
