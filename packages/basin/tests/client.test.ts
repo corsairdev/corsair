@@ -81,19 +81,28 @@ describe('Basin client', () => {
 			expect(result).toEqual({ id: 1, name: 'Form 1' });
 		});
 
-		it('preserves Bearer or Token prefix in apiKey if already present', async () => {
+		// Basin accepts only `Token <key>`; a Bearer header returns 401
+		// invalid_token. A key pasted in with either prefix is normalised so a
+		// stored credential like "Bearer abc" cannot fail every request.
+		it('normalises a prefixed apiKey to the Token scheme', async () => {
 			mockedRequest.mockResolvedValueOnce({ id: 2 });
 
 			await makeBasinRequest('forms', 'Bearer bearer-token-123');
 			const call0 = mockedRequest.mock.calls[0] as [OpenAPIConfig, any, any];
 			expect((call0[0].HEADERS as Record<string, string>)?.Authorization).toBe(
-				'Bearer bearer-token-123',
+				'Token bearer-token-123',
 			);
 
 			await makeBasinRequest('forms', 'Token token-456');
 			const call1 = mockedRequest.mock.calls[1] as [OpenAPIConfig, any, any];
 			expect((call1[0].HEADERS as Record<string, string>)?.Authorization).toBe(
 				'Token token-456',
+			);
+
+			await makeBasinRequest('forms', 'plain-key-789');
+			const call2 = mockedRequest.mock.calls[2] as [OpenAPIConfig, any, any];
+			expect((call2[0].HEADERS as Record<string, string>)?.Authorization).toBe(
+				'Token plain-key-789',
 			);
 		});
 

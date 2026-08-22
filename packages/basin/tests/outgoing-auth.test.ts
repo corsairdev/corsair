@@ -97,6 +97,24 @@ describe('Basin outgoing Authorization header', () => {
 		expect(headerOf()).toBe('Token already-prefixed');
 	});
 
+	// A credential stored as "Bearer <key>" would otherwise be sent verbatim and
+	// 401 on every call, since Basin rejects the Bearer scheme outright.
+	it('rewrites a Bearer-prefixed key to the Token scheme on the wire', async () => {
+		await makeBasinRequest('projects', 'Bearer pasted-with-prefix', {
+			method: 'GET',
+		});
+
+		expect(headerOf()).toBe('Token pasted-with-prefix');
+	});
+
+	it('is case-insensitive about the prefix it strips', async () => {
+		await makeBasinRequest('projects', 'bearer lowercase-prefix', {
+			method: 'GET',
+		});
+
+		expect(headerOf()).toBe('Token lowercase-prefix');
+	});
+
 	it('keeps the scheme on write requests too', async () => {
 		await makeBasinRequest('projects', 'test-key', {
 			method: 'POST',

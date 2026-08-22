@@ -57,10 +57,12 @@ export async function makeBasinRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
-	const authHeader =
-		apiKey.startsWith('Bearer ') || apiKey.startsWith('Token ')
-			? apiKey
-			: `Token ${apiKey}`;
+	// Basin accepts exactly one scheme: `Authorization: Token <key>`. It answers
+	// a Bearer header with 401 invalid_token. Strip either prefix a caller may
+	// have pasted in with the key and always emit the Token form, so a stored
+	// credential like "Bearer abc" cannot silently fail every request.
+	const bareKey = apiKey.replace(/^(?:Bearer|Token)\s+/i, '');
+	const authHeader = `Token ${bareKey}`;
 
 	const config: OpenAPIConfig = {
 		BASE: BASIN_API_BASE,

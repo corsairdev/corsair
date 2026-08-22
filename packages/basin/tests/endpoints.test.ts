@@ -48,7 +48,10 @@ describe('Basin Endpoints', () => {
 					created_at: '2026-08-22T00:00:00Z',
 				},
 			];
-			mockedMakeBasinRequest.mockResolvedValueOnce(mockForms);
+			mockedMakeBasinRequest.mockResolvedValueOnce({
+				forms: mockForms,
+				meta: { count: 2, page: 1, per_page: 100 },
+			});
 
 			const result = await Forms.list(mockContext, {
 				page: 1,
@@ -60,8 +63,10 @@ describe('Basin Endpoints', () => {
 				'test-api-key',
 				{ method: 'GET', query: { page: 1, query: 'Contact' } },
 			);
-			expect(result).toHaveLength(2);
-			expect(result[0]!.name).toBe('Contact Us');
+			expect(result.forms).toHaveLength(2);
+			expect(result.forms[0]!.name).toBe('Contact Us');
+			// Pagination metadata travels with every list response.
+			expect(result.meta?.count).toBe(2);
 		});
 
 		it('forms.get sends GET request with form ID', async () => {
@@ -143,13 +148,25 @@ describe('Basin Endpoints', () => {
 
 	describe('Submissions endpoints', () => {
 		it('submissions.list sends GET request with filters', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{
-					id: 101,
-					email: 'john@example.com',
-					spam: false,
+			mockedMakeBasinRequest.mockResolvedValueOnce({
+				submissions: [
+					{
+						id: 101,
+						email: 'john@example.com',
+						spam: false,
+					},
+				],
+				// The submissions list carries extra counters alongside the
+				// standard pagination fields.
+				meta: {
+					count: 1,
+					page: 1,
+					per_page: 100,
+					inbox_count: 1,
+					spam_count: 0,
+					trash_count: 0,
 				},
-			]);
+			});
 
 			const result = await Submissions.list(mockContext, {
 				form_id: 10,
@@ -165,8 +182,10 @@ describe('Basin Endpoints', () => {
 					query: { form_id: 10, filter_by: 'new', page: 1 },
 				},
 			);
-			expect(result).toHaveLength(1);
-			expect(result[0]!.email).toBe('john@example.com');
+			expect(result.submissions).toHaveLength(1);
+			expect(result.submissions[0]!.email).toBe('john@example.com');
+			// The submissions list adds its own counters to meta.
+			expect(result.meta?.inbox_count).toBe(1);
 		});
 
 		it('submissions.get sends GET request with submission ID', async () => {
@@ -299,9 +318,10 @@ describe('Basin Endpoints', () => {
 
 	describe('Projects endpoints', () => {
 		it('projects.list retrieves all projects', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{ id: 1, name: 'Default Project' },
-			]);
+			mockedMakeBasinRequest.mockResolvedValueOnce({
+				projects: [{ id: 1, name: 'Default Project' }],
+				meta: { count: 1, page: 1, per_page: 100 },
+			});
 
 			const result = await Projects.list(mockContext, {});
 
@@ -310,8 +330,9 @@ describe('Basin Endpoints', () => {
 				'test-api-key',
 				{ method: 'GET', query: {} },
 			);
-			expect(result).toHaveLength(1);
-			expect(result[0]!.name).toBe('Default Project');
+			expect(result.projects).toHaveLength(1);
+			expect(result.projects[0]!.name).toBe('Default Project');
+			expect(result.meta?.count).toBe(1);
 		});
 
 		it('projects.get retrieves a project by ID', async () => {
@@ -383,9 +404,12 @@ describe('Basin Endpoints', () => {
 
 	describe('Webhooks endpoints', () => {
 		it('webhooks.list lists all form webhooks', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{ id: 1, form_id: 10, url: 'https://webhook.site/test' },
-			]);
+			mockedMakeBasinRequest.mockResolvedValueOnce({
+				form_webhooks: [
+					{ id: 1, form_id: 10, url: 'https://webhook.site/test' },
+				],
+				meta: { count: 1, page: 1, per_page: 100 },
+			});
 
 			const result = await Webhooks.list(mockContext, {});
 
@@ -394,7 +418,8 @@ describe('Basin Endpoints', () => {
 				'test-api-key',
 				{ method: 'GET', query: {} },
 			);
-			expect(result).toHaveLength(1);
+			expect(result.form_webhooks).toHaveLength(1);
+			expect(result.form_webhooks[0]!.url).toBe('https://webhook.site/test');
 		});
 
 		it('webhooks.get retrieves a webhook by ID', async () => {
@@ -483,9 +508,10 @@ describe('Basin Endpoints', () => {
 
 	describe('Form Views endpoints', () => {
 		it('formViews.list lists form views', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{ id: 1, form_id: 10, status: 'published' },
-			]);
+			mockedMakeBasinRequest.mockResolvedValueOnce({
+				form_views: [{ id: 1, form_id: 10, status: 'published' }],
+				meta: { count: 1, page: 1, per_page: 100 },
+			});
 
 			const result = await FormViews.list(mockContext, {});
 
@@ -494,8 +520,8 @@ describe('Basin Endpoints', () => {
 				'test-api-key',
 				{ method: 'GET', query: {} },
 			);
-			expect(result).toHaveLength(1);
-			expect(result[0]!.status).toBe('published');
+			expect(result.form_views).toHaveLength(1);
+			expect(result.form_views[0]!.status).toBe('published');
 		});
 
 		it('formViews.get retrieves a form view by ID', async () => {
@@ -519,9 +545,10 @@ describe('Basin Endpoints', () => {
 
 	describe('Custom Domains endpoints', () => {
 		it('domains.list lists domains', async () => {
-			mockedMakeBasinRequest.mockResolvedValueOnce([
-				{ id: 1, name: 'forms.example.com' },
-			]);
+			mockedMakeBasinRequest.mockResolvedValueOnce({
+				domains: [{ id: 1, name: 'forms.example.com' }],
+				meta: { count: 1, page: 1, per_page: 100 },
+			});
 
 			const result = await Domains.list(mockContext, {});
 
@@ -530,8 +557,8 @@ describe('Basin Endpoints', () => {
 				'test-api-key',
 				{ method: 'GET', query: {} },
 			);
-			expect(result).toHaveLength(1);
-			expect(result[0]!.name).toBe('forms.example.com');
+			expect(result.domains).toHaveLength(1);
+			expect(result.domains[0]!.name).toBe('forms.example.com');
 		});
 	});
 

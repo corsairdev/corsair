@@ -20,6 +20,16 @@ const getStatus = (error: unknown): number | undefined => {
 	return undefined;
 };
 
+/** Serialised response body, where Basin puts its human-readable detail. */
+const getBodyText = (error: unknown): string => {
+	const body =
+		error instanceof ApiError || error instanceof BasinAPIError
+			? error.body
+			: undefined;
+	if (body === undefined || body === null) return '';
+	return typeof body === 'string' ? body : JSON.stringify(body);
+};
+
 const getRetryAfter = (error: unknown): number | undefined => {
 	if (error instanceof ApiError) return error.retryAfter;
 	if (error instanceof BasinAPIError) return error.retryAfter;
@@ -56,6 +66,16 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			const status = getStatus(error);
 			if (status === 401) return true;
+			// Basin reports a bad or missing API key as 400, not 401, and puts the
+			// detail in the body while `message` is only "Bad Request". Without
+			// this, an auth failure is classified as a validation error and the
+			// caller never sees the "check your API key" guidance below.
+			if (
+				status === 400 &&
+				getBodyText(error).toLowerCase().includes('api key')
+			) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
 			return (
 				hasNoStatus(error) &&

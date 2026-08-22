@@ -7,7 +7,10 @@
  */
 import { BasinAPIError, makeBasinRequest } from '../client';
 import { Submissions, Webhooks } from '../endpoints';
-import { BasinEndpointInputSchemas as Inputs } from '../endpoints/types';
+import {
+	BasinEndpointInputSchemas as Inputs,
+	BasinEndpointOutputSchemas as Outputs,
+} from '../endpoints/types';
 import { errorHandlers } from '../error-handlers';
 import type { BasinContext } from '../index';
 import { safeDate } from '../schema/database';
@@ -220,6 +223,67 @@ describe('review regression guards', () => {
 			const logged = loggedPayloads[0];
 			expect(logged).toEqual({ form_id: 1, fields: ['form_id', 'url'] });
 			expect(JSON.stringify(logged)).not.toContain('super-secret');
+		});
+	});
+
+	describe('list schemas model the real response envelope', () => {
+		// Verified live: every list endpoint returns
+		// `{ <collection>: [...], meta: { count, page, per_page } }`.
+		// The schemas previously declared a bare array, so all six threw ZodError
+		// against the real API. The published spec documents these responses only
+		// as "Success", so the wire is the only source of truth.
+		const cases = [
+			['formsList', 'forms'],
+			['submissionsList', 'submissions'],
+			['projectsList', 'projects'],
+			['webhooksList', 'form_webhooks'],
+			['formViewsList', 'form_views'],
+			['domainsList', 'domains'],
+		] as const;
+
+		it.each(cases)(
+			'%s accepts the envelope and rejects a bare array',
+			(schema, collection) => {
+				const envelope = {
+					[collection]: [],
+					meta: { count: 0, page: 1, per_page: 100 },
+				};
+				expect(Outputs[schema].safeParse(envelope).success).toBe(true);
+				expect(Outputs[schema].safeParse([]).success).toBe(false);
+			},
+		);
+
+		it('keeps the extra counters the submissions list adds to meta', () => {
+			const parsed = Outputs.submissionsList.parse({
+				submissions: [],
+				meta: { count: 0, page: 1, per_page: 100, spam_count: 3 },
+			});
+			expect(parsed.meta?.spam_count).toBe(3);
+		});
+	});
+
+	describe('a bad API key is classified as an auth failure', () => {
+		// Basin answers a bad key with 400, not 401, and puts the detail in the
+		// body while `message` is only "Bad Request".
+		it('matches AUTH_ERROR rather than VALIDATION_ERROR', () => {
+			const error = new BasinAPIError('Bad Request');
+			Object.assign(error, {
+				status: 400,
+				body: { error: 'Bad API key or user does not exist.' },
+			});
+
+			expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+		});
+
+		it('leaves a genuine 400 validation error alone', () => {
+			const error = new BasinAPIError('Bad Request');
+			Object.assign(error, {
+				status: 400,
+				body: { error: 'param is missing or the value is empty: project' },
+			});
+
+			expect(errorHandlers.AUTH_ERROR.match(error)).toBe(false);
+			expect(errorHandlers.VALIDATION_ERROR.match(error)).toBe(true);
 		});
 	});
 

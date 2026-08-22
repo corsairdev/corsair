@@ -180,6 +180,24 @@ export const BasinDomainSchema = z
 	.passthrough();
 export type BasinDomain = z.infer<typeof BasinDomainSchema>;
 
+/**
+ * Pagination envelope returned by every list endpoint.
+ *
+ * Verified against the live API: all six lists return
+ * `{ <collection>: [...], meta: { count, page, per_page } }`. The submissions
+ * list adds `form_name`, `inbox_count`, `spam_count` and `trash_count`, so the
+ * shape stays open. The published spec documents these responses only as
+ * "Success", so the wire is the source of truth here.
+ */
+export const BasinListMetaSchema = z
+	.object({
+		count: z.number().optional(),
+		page: z.number().optional(),
+		per_page: z.number().optional(),
+	})
+	.passthrough();
+export type BasinListMeta = z.infer<typeof BasinListMetaSchema>;
+
 export const BasinSuccessMessageSchema = z
 	.object({
 		success: z.boolean().optional(),
@@ -208,7 +226,12 @@ export const FormsListInputSchema = z.object({
 });
 export type FormsListInput = z.infer<typeof FormsListInputSchema>;
 
-export const FormsListResponseSchema = z.array(BasinFormSchema);
+export const FormsListResponseSchema = z
+	.object({
+		forms: z.array(BasinFormSchema),
+		meta: BasinListMetaSchema.optional(),
+	})
+	.passthrough();
 export type FormsListResponse = z.infer<typeof FormsListResponseSchema>;
 
 export const FormsGetInputSchema = z.object({
@@ -376,7 +399,12 @@ export const SubmissionsListInputSchema = z.object({
 });
 export type SubmissionsListInput = z.infer<typeof SubmissionsListInputSchema>;
 
-export const SubmissionsListResponseSchema = z.array(BasinSubmissionSchema);
+export const SubmissionsListResponseSchema = z
+	.object({
+		submissions: z.array(BasinSubmissionSchema),
+		meta: BasinListMetaSchema.optional(),
+	})
+	.passthrough();
 export type SubmissionsListResponse = z.infer<
 	typeof SubmissionsListResponseSchema
 >;
@@ -489,7 +517,12 @@ export const ProjectsListInputSchema = z.object({
 });
 export type ProjectsListInput = z.infer<typeof ProjectsListInputSchema>;
 
-export const ProjectsListResponseSchema = z.array(BasinProjectSchema);
+export const ProjectsListResponseSchema = z
+	.object({
+		projects: z.array(BasinProjectSchema),
+		meta: BasinListMetaSchema.optional(),
+	})
+	.passthrough();
 export type ProjectsListResponse = z.infer<typeof ProjectsListResponseSchema>;
 
 export const ProjectsGetInputSchema = z.object({
@@ -566,7 +599,12 @@ export const WebhooksListInputSchema = z.object({
 });
 export type WebhooksListInput = z.infer<typeof WebhooksListInputSchema>;
 
-export const WebhooksListResponseSchema = z.array(BasinFormWebhookSchema);
+export const WebhooksListResponseSchema = z
+	.object({
+		form_webhooks: z.array(BasinFormWebhookSchema),
+		meta: BasinListMetaSchema.optional(),
+	})
+	.passthrough();
 export type WebhooksListResponse = z.infer<typeof WebhooksListResponseSchema>;
 
 export const WebhooksGetInputSchema = z.object({
@@ -662,7 +700,12 @@ export const FormViewsListInputSchema = z.object({
 });
 export type FormViewsListInput = z.infer<typeof FormViewsListInputSchema>;
 
-export const FormViewsListResponseSchema = z.array(BasinFormViewSchema);
+export const FormViewsListResponseSchema = z
+	.object({
+		form_views: z.array(BasinFormViewSchema),
+		meta: BasinListMetaSchema.optional(),
+	})
+	.passthrough();
 export type FormViewsListResponse = z.infer<typeof FormViewsListResponseSchema>;
 
 export const FormViewsGetInputSchema = z.object({
@@ -683,7 +726,12 @@ export const DomainsListInputSchema = z.object({
 });
 export type DomainsListInput = z.infer<typeof DomainsListInputSchema>;
 
-export const DomainsListResponseSchema = z.array(BasinDomainSchema);
+export const DomainsListResponseSchema = z
+	.object({
+		domains: z.array(BasinDomainSchema),
+		meta: BasinListMetaSchema.optional(),
+	})
+	.passthrough();
 export type DomainsListResponse = z.infer<typeof DomainsListResponseSchema>;
 
 // ─────────────────────────────────────────────────────────────────────────────
