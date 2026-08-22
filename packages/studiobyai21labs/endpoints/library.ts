@@ -1,7 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { StudioByAI21LabsEndpoints } from '..';
 import {
-	downloadStudioByAI21LabsFile,
 	makeStudioByAI21LabsRequest,
 	uploadStudioByAI21LabsFile,
 } from '../client';
@@ -11,14 +10,27 @@ export const list: StudioByAI21LabsEndpoints['listLibraryFiles'] = async (
 	ctx,
 	input,
 ) => {
+	const label = Array.isArray(input.label)
+		? input.label.join(',')
+		: input.label;
 	const response = await makeStudioByAI21LabsRequest<
 		StudioByAI21LabsEndpointOutputs['listLibraryFiles']
-	>('library/files', ctx.key, { method: 'GET', query: input });
+	>('library/files', ctx.key, {
+		method: 'GET',
+		query: {
+			name: input.name,
+			path: input.path,
+			status: input.status,
+			label,
+			offset: input.offset,
+			limit: input.limit,
+		},
+	});
 
 	await logEventFromContext(
 		ctx,
 		'studiobyai21labs.library.list',
-		{ ...input },
+		{ name: input.name, path: input.path, status: input.status },
 		'completed',
 	);
 	return response;
@@ -28,22 +40,44 @@ export const upload: StudioByAI21LabsEndpoints['uploadWorkspaceFile'] = async (
 	ctx,
 	input,
 ) => {
-	const { file, fileName, ...fields } = input;
-	const stringFields: Record<string, string> = {};
-	if (fields.labels) stringFields.labels = JSON.stringify(fields.labels); // Wait, AI21 might expect repeated keys or stringified JSON. I will pass it stringified for now, but usually it's comma separated or repeated. Let's pass as comma separated if it's an array, or just JSON. Actually, I'll join them.
-	// Actually, the client handles array appending if I modify client.ts, but my uploadStudioByAI21LabsFile currently expects Record<string, string | undefined>.
-	// I'll join labels by comma as a reasonable default for standard REST forms, or stringify. Let's just stringify.
-	if (fields.labels) stringFields.labels = JSON.stringify(fields.labels);
-	if (fields.publicUrl) stringFields.publicUrl = fields.publicUrl;
+	const { file, fileName, path, labels, publicUrl } = input;
 
-	const response = await uploadStudioByAI21LabsFile<
+	if (file !== undefined) {
+		const fields: Record<string, string | undefined> = {
+			path,
+			publicUrl,
+			labels: labels ? JSON.stringify(labels) : undefined,
+		};
+		const response = await uploadStudioByAI21LabsFile<
+			StudioByAI21LabsEndpointOutputs['uploadWorkspaceFile']
+		>('library/files', ctx.key, {
+			file,
+			fileName: fileName ?? 'upload',
+			fields,
+		});
+		await logEventFromContext(
+			ctx,
+			'studiobyai21labs.library.upload',
+			{ fileName: fileName ?? 'upload', path, publicUrl },
+			'completed',
+		);
+		return response;
+	}
+
+	const response = await makeStudioByAI21LabsRequest<
 		StudioByAI21LabsEndpointOutputs['uploadWorkspaceFile']
-	>('library/files', ctx.key, { file, fileName, fields: stringFields });
-
+	>('library/files', ctx.key, {
+		method: 'POST',
+		body: {
+			path,
+			labels,
+			publicUrl,
+		},
+	});
 	await logEventFromContext(
 		ctx,
 		'studiobyai21labs.library.upload',
-		{ fileName, publicUrl: fields.publicUrl },
+		{ path, publicUrl },
 		'completed',
 	);
 	return response;
@@ -60,7 +94,7 @@ export const get: StudioByAI21LabsEndpoints['getWorkspaceFile'] = async (
 	await logEventFromContext(
 		ctx,
 		'studiobyai21labs.library.get',
-		{ ...input },
+		{ file_id: input.file_id },
 		'completed',
 	);
 	return response;
@@ -70,48 +104,51 @@ export const update: StudioByAI21LabsEndpoints['updateFile'] = async (
 	ctx,
 	input,
 ) => {
-	const { file_id, ...body } = input;
-	const response = await makeStudioByAI21LabsRequest<
-		StudioByAI21LabsEndpointOutputs['updateFile']
-	>(`library/files/${file_id}`, ctx.key, { method: 'PUT', body });
+	const { file_id, publicUrl, labels } = input;
+	await makeStudioByAI21LabsRequest<undefined>(
+		`library/files/${file_id}`,
+		ctx.key,
+		{ method: 'PUT', body: { publicUrl, labels } },
+	);
 
 	await logEventFromContext(
 		ctx,
 		'studiobyai21labs.library.update',
-		{ ...input },
+		{ file_id },
 		'completed',
 	);
-	return response;
+	return undefined;
 };
 
 export const deleteFile: StudioByAI21LabsEndpoints['deleteFile'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeStudioByAI21LabsRequest<
-		StudioByAI21LabsEndpointOutputs['deleteFile']
-	>(`library/files/${input.file_id}`, ctx.key, { method: 'DELETE' });
+	await makeStudioByAI21LabsRequest<undefined>(
+		`library/files/${input.file_id}`,
+		ctx.key,
+		{ method: 'DELETE' },
+	);
 
 	await logEventFromContext(
 		ctx,
 		'studiobyai21labs.library.delete',
-		{ ...input },
+		{ file_id: input.file_id },
 		'completed',
 	);
-	return response;
+	return undefined;
 };
 
 export const download: StudioByAI21LabsEndpoints['getFileDownloadLink'] =
 	async (ctx, input) => {
-		const response = await downloadStudioByAI21LabsFile(
-			`library/files/${input.file_id}/download`,
-			ctx.key,
-		);
+		const response = await makeStudioByAI21LabsRequest<
+			StudioByAI21LabsEndpointOutputs['getFileDownloadLink']
+		>(`library/files/${input.file_id}/download`, ctx.key, { method: 'GET' });
 
 		await logEventFromContext(
 			ctx,
 			'studiobyai21labs.library.download',
-			{ ...input },
+			{ file_id: input.file_id },
 			'completed',
 		);
 		return response;
