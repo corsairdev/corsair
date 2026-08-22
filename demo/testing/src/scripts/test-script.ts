@@ -35,7 +35,9 @@ const main = async () => {
 		});
 		console.log('Contentful Space:', contentfulRes.name);
 	} else {
-		console.log('Skipping Contentful demo test: missing CONTENTFUL_API_KEY or CONTENTFUL_SPACE_ID in .env');
+		console.log(
+			'Skipping Contentful demo test: missing CONTENTFUL_API_KEY or CONTENTFUL_SPACE_ID in .env',
+		);
 	}
 
 	// Keep existing slack test to not break other things
