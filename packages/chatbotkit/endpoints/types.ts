@@ -47,12 +47,12 @@ export const BotSchema = z.object({
 		.optional()
 		.describe('Custom metadata attached to the bot'),
 	createdAt: z
-		.union([z.number(), z.string(), z.coerce.date()])
+		.number()
 		.nullable()
 		.optional()
 		.describe('Creation timestamp in milliseconds'),
 	updatedAt: z
-		.union([z.number(), z.string(), z.coerce.date()])
+		.number()
 		.nullable()
 		.optional()
 		.describe('Last updated timestamp in milliseconds'),

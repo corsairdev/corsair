@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { ChatbotkitEndpoints } from '..';
 import { makeChatbotkitRequest } from '../client';
 import type { BotsGetResponse, BotsListResponse } from './types';
+import { BotsGetResponseSchema, BotsListResponseSchema } from './types';
 
 function compactQuery(
 	query: Record<string, string | number | boolean | undefined>,
@@ -25,13 +26,15 @@ export const list: ChatbotkitEndpoints['botsList'] = async (ctx, input) => {
 		},
 	);
 
+	const parsed = BotsListResponseSchema.parse(response);
+
 	await logEventFromContext(
 		ctx,
 		'chatbotkit.bots.list',
 		{ cursor: input.cursor, limit: input.limit, order: input.order },
 		'completed',
 	);
-	return { items: response.items ?? [], cursor: response.cursor };
+	return parsed;
 };
 
 export const get: ChatbotkitEndpoints['botsGet'] = async (ctx, input) => {
@@ -41,11 +44,13 @@ export const get: ChatbotkitEndpoints['botsGet'] = async (ctx, input) => {
 		{ method: 'GET' },
 	);
 
+	const parsed = BotsGetResponseSchema.parse(response);
+
 	await logEventFromContext(
 		ctx,
 		'chatbotkit.bots.get',
 		{ id: input.id },
 		'completed',
 	);
-	return response;
+	return parsed;
 };
