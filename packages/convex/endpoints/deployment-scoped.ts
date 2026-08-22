@@ -4,27 +4,55 @@ import { ConvexAPIError, makeConvexRequest } from '../client';
 import type { ConvexEndpointOutputs } from './types';
 import { CONVEX_SUBDOMAIN_PATTERN } from './types';
 
-/**
- * Normalizes and validates a Convex deployment name (subdomain) before it is
- * interpolated into a deployment-scoped base URL. Only DNS-label characters
- * (lowercase letters, digits, hyphens) are accepted so crafted values such as
- * `attacker.example:443/` cannot redirect the authenticated request — which
- * carries `Authorization: Convex <deploy-key>` — to another host.
- */
 function normalizeSubdomain(subdomain: string): string {
 	const normalized = subdomain.toLowerCase();
 	if (!CONVEX_SUBDOMAIN_PATTERN.test(normalized)) {
 		throw new ConvexAPIError(
-			`Invalid Convex deployment name "${subdomain}": only lowercase letters, digits, and hyphens are allowed`,
+			`Invalid Convex deployment name "${subdomain}": only lowercase letters, digits, hyphens, and dots are allowed`,
 		);
 	}
 	return normalized;
 }
 
+function resolveConvexCloudUrl(raw: string): string {
+	let parsed: URL;
+	try {
+		parsed = new URL(raw);
+	} catch {
+		throw new ConvexAPIError('Invalid Convex deployment URL');
+	}
+	if (parsed.protocol !== 'https:') {
+		throw new ConvexAPIError('Invalid Convex deployment URL');
+	}
+	if (parsed.username || parsed.password || parsed.port) {
+		throw new ConvexAPIError('Invalid Convex deployment URL');
+	}
+	if (parsed.search || parsed.hash) {
+		throw new ConvexAPIError('Invalid Convex deployment URL');
+	}
+	const hostname = parsed.hostname.toLowerCase();
+	if (!hostname.endsWith('.convex.cloud')) {
+		throw new ConvexAPIError('Invalid Convex deployment URL');
+	}
+	const labels = hostname.slice(0, -'.convex.cloud'.length);
+	if (!CONVEX_SUBDOMAIN_PATTERN.test(labels)) {
+		throw new ConvexAPIError('Invalid Convex deployment URL');
+	}
+	const path = parsed.pathname.replace(/\/+$/, '');
+	if (path !== '' && path !== '/api') {
+		throw new ConvexAPIError('Invalid Convex deployment URL');
+	}
+	return `https://${hostname}/api`;
+}
+
 async function resolveDeploymentUrl(
 	ctx: ConvexContext,
 	inputSubdomain: string | undefined,
+	inputDeploymentUrl?: string,
 ): Promise<string> {
+	if (inputDeploymentUrl) {
+		return resolveConvexCloudUrl(inputDeploymentUrl);
+	}
 	const subdomain =
 		inputSubdomain ??
 		ctx.options.subdomain ??
@@ -38,13 +66,6 @@ async function resolveDeploymentUrl(
 	return `https://${normalizeSubdomain(subdomain)}.convex.cloud/api`;
 }
 
-/**
- * Resolves the deploy key for a deployment-scoped operation. Deployment-scoped
- * endpoints authenticate as `Authorization: Convex <key>` and require a
- * deployment admin deploy key — the plugin credential (a Management API access
- * token) is never a valid deploy key. One may be supplied per call via
- * `deployKey` or stored on the connection as `deploy_key`.
- */
 async function resolveDeployKey(
 	ctx: ConvexContext,
 	inputDeployKey: string | undefined,
@@ -62,7 +83,11 @@ export const executeQueryBatch: ConvexEndpoints['executeQueryBatch'] = async (
 	ctx,
 	input,
 ) => {
-	const baseUrl = await resolveDeploymentUrl(ctx, input.subdomain);
+	const baseUrl = await resolveDeploymentUrl(
+		ctx,
+		input.subdomain,
+		input.deploymentUrl,
+	);
 	const deployKey = await resolveDeployKey(ctx, input.deployKey);
 
 	const response = await makeConvexRequest<
@@ -94,19 +119,21 @@ export const getQueryTimestamp: ConvexEndpoints['queryTimestamp'] = async (
 	ctx,
 	input,
 ) => {
-	const baseUrl = await resolveDeploymentUrl(ctx, input.subdomain);
+	const baseUrl = await resolveDeploymentUrl(
+		ctx,
+		input.subdomain,
+		input.deploymentUrl,
+	);
 	const deployKey = await resolveDeployKey(ctx, input.deployKey);
 
 	const response = await makeConvexRequest<
 		ConvexEndpointOutputs['queryTimestamp']
-	>('/query_timestamp', deployKey, {
-		method: 'GET',
+	>('/query_ts', deployKey, {
+		method: 'POST',
 		baseUrl,
 		authScheme: 'convex',
 	});
 
-	// Never spread the full input here: it contains the plaintext `deployKey`,
-	// which must not be persisted into event records.
 	await logEventFromContext(
 		ctx,
 		'convex.deployment.queryTimestamp',
@@ -120,7 +147,11 @@ export const listLogStreams: ConvexEndpoints['logStreamsList'] = async (
 	ctx,
 	input,
 ) => {
-	const baseUrl = await resolveDeploymentUrl(ctx, input.subdomain);
+	const baseUrl = await resolveDeploymentUrl(
+		ctx,
+		input.subdomain,
+		input.deploymentUrl,
+	);
 	const deployKey = await resolveDeployKey(ctx, input.deployKey);
 
 	const response = await makeConvexRequest<
@@ -131,8 +162,6 @@ export const listLogStreams: ConvexEndpoints['logStreamsList'] = async (
 		authScheme: 'convex',
 	});
 
-	// Never spread the full input here: it contains the plaintext `deployKey`,
-	// which must not be persisted into event records.
 	await logEventFromContext(
 		ctx,
 		'convex.deployment.logStreams',
