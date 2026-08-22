@@ -10,20 +10,18 @@ import type { OpenWeatherMapEndpointOutputs } from './types';
  * API: GET /onecall/timemachine
  * Docs: https://openweathermap.org/api/one-call-3#history
  */
-export const timeMachine: OpenWeatherMapEndpoints['timeMachine'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeOpenWeatherMapRequest<
-		OpenWeatherMapEndpointOutputs['timeMachine']
-	>('onecall/timemachine', ctx.key, { query: { ...input } });
+export const timeMachine: OpenWeatherMapEndpoints['history']['timeMachine'] =
+	async (ctx, input) => {
+		const response = await makeOpenWeatherMapRequest<
+			OpenWeatherMapEndpointOutputs['timeMachine']
+		>('onecall/timemachine', ctx.key, { query: { ...input } });
 
-	await logEventFromContext(
-		ctx,
-		'openweathermap.history.timeMachine',
-		{ ...input },
-		'completed',
-	);
+		await logEventFromContext(
+			ctx,
+			'openweathermap.history.timeMachine',
+			{ ...input },
+			'completed',
+		);
 
-	return response;
-};
+		return response;
+	};

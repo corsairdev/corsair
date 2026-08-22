@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeGithubRequest } from '../client';
 import type { GithubBoundEndpoints, GithubEndpoints } from '../index';
+import { commentRecordFromApi } from '../persistence';
 import type {
 	CommentCreateResponse,
 	IssueCreateResponse,
@@ -124,16 +125,10 @@ export const createComment: GithubEndpoints['issuesCreateComment'] = async (
 		try {
 			// Save the comment itself
 			if (ctx.db.comments) {
-				await ctx.db.comments.upsertByEntityId(result.id.toString(), {
-					id: result.id,
-					nodeId: result.nodeId,
-					url: result.url,
-					htmlUrl: result.htmlUrl,
-					issueUrl: result.issueUrl,
-					body: result.body,
-					createdAt: result.createdAt ? new Date(result.createdAt) : null,
-					updatedAt: result.updatedAt ? new Date(result.updatedAt) : null,
-				});
+				await ctx.db.comments.upsertByEntityId(
+					result.id.toString(),
+					commentRecordFromApi(result),
+				);
 			}
 
 			// Refresh the parent issue comment count
