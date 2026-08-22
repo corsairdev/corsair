@@ -564,6 +564,7 @@ export function spotify<const T extends SpotifyPluginOptions>(
 				return getOAuthAccessToken(ctx, {
 					plugin: 'spotify',
 					tokenUrl: 'https://accounts.spotify.com/api/token',
+					tokenAuthMethod: 'basic',
 				});
 			}
 

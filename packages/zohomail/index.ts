@@ -357,6 +357,7 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 				return getOAuthAccessToken(ctx, {
 					plugin: 'zohomail',
 					tokenUrl: zohoOAuthTokenUrl(ctx.options.region),
+					tokenAuthMethod: 'body',
 				});
 			}
 

@@ -849,6 +849,7 @@ export function gitlab<const T extends GitlabPluginOptions>(
 				return getOAuthAccessToken(ctx, {
 					plugin: 'gitlab',
 					tokenUrl: gitlabOAuthTokenUrl(ctx.options.baseUrl),
+					tokenAuthMethod: 'body',
 					extraParams: creds.redirect_url
 						? { redirect_uri: creds.redirect_url }
 						: undefined,
