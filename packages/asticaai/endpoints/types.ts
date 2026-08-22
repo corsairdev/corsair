@@ -109,10 +109,10 @@ export const AnalyzeAudioOutputSchema = z
 		/** 'success' or 'error'. Astica reports failures with HTTP 200. */
 		status: z.string().optional(),
 		error: z.string().optional(),
-		/** The transcript. Absent when low_priority defers the work. */
-		text: z.string().optional(),
+		/** The transcript. Absent or null when low_priority defers the work. */
+		text: z.string().nullable().optional(),
 		/** Returned instead of `text` when low_priority is 1; poll it for results. */
-		resultURI: z.string().optional(),
+		resultURI: z.string().nullable().optional(),
 	})
 	.passthrough();
 

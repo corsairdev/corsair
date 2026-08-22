@@ -49,7 +49,7 @@ export const analyze: AsticaAiEndpoints['analyzeAudio'] = async (
 		{
 			...describeInput(query.input),
 			modelVersion: query.modelVersion,
-			deferred: response.resultURI !== undefined,
+			deferred: response.resultURI != null,
 		},
 		'completed',
 	);
