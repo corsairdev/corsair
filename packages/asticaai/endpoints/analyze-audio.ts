@@ -1,29 +1,50 @@
 import { logEventFromContext } from 'corsair/core';
 import type { AsticaAiEndpoints } from '..';
-import { makeAsticaAiRequest } from '../client';
-import type { AsticaAiEndpointOutputs } from './types';
+import { ASTICAAI_LISTEN_API_BASE, makeAsticaAiRequest } from '../client';
+import { assertAsticaOk, describeInput, inputEntityId } from './shared';
+import type { AnalyzeAudioOutput } from './types';
+import { AnalyzeAudioInputSchema, AnalyzeAudioOutputSchema } from './types';
 
 export const analyze: AsticaAiEndpoints['analyzeAudio'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeAsticaAiRequest<
-		AsticaAiEndpointOutputs['analyzeAudio']
-	>('/transcribe', ctx.key, {
-		baseUrl: 'https://listen.astica.ai',
-		method: 'POST',
-		body: {
-			input: input.input,
-			modelVersion: input.modelVersion,
-			doStream: input.doStream,
-			low_priority: input.low_priority,
-		},
-	});
+	const query = AnalyzeAudioInputSchema.parse(input);
+
+	const response = AnalyzeAudioOutputSchema.parse(
+		await makeAsticaAiRequest<AnalyzeAudioOutput>('/transcribe', ctx.key, {
+			baseUrl: ASTICAAI_LISTEN_API_BASE,
+			body: {
+				input: query.input,
+				modelVersion: query.modelVersion,
+				doStream: query.doStream,
+				low_priority: query.low_priority,
+			},
+		}),
+	);
+
+	assertAsticaOk(response);
+
+	try {
+		await ctx.db.audioTranscripts.upsertByEntityId(inputEntityId(query.input), {
+			input: query.input,
+			modelVersion: query.modelVersion,
+			text: response.text ?? null,
+			resultURI: response.resultURI ?? null,
+			transcribedAt: new Date(),
+		});
+	} catch (error) {
+		console.warn('[asticaai] Failed to save transcript:', error);
+	}
 
 	await logEventFromContext(
 		ctx,
 		'asticaai.analyze_audio',
-		{ ...input },
+		{
+			...describeInput(query.input),
+			modelVersion: query.modelVersion,
+			deferred: response.resultURI !== undefined,
+		},
 		'completed',
 	);
 

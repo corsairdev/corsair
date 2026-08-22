@@ -1,100 +1,79 @@
-import { request } from 'corsair/http';
 import { AnalyzeAudio, ReadText } from './endpoints';
-import type { AsticaAiEndpointOutputs } from './endpoints/types';
 import type { AsticaAiContext } from './index';
 
-jest.mock('corsair/http', () => ({
-	...jest.requireActual('corsair/http'),
-	request: jest.fn(),
-}));
+/**
+ * Live suite. Excluded from CI by filename; run with a real key:
+ *   ASTICA_API_KEY=... pnpm test:live
+ *
+ * These call the endpoint handlers rather than the client, so a run exercises
+ * input parsing, the request body, the in-body `status:'error'` check and
+ * output-schema validation against real Astica responses.
+ */
 
-jest.mock('corsair/core', () => ({
-	...jest.requireActual('corsair/core'),
-	logEventFromContext: jest.fn().mockResolvedValue(null),
-}));
+const TEST_API_KEY = process.env.ASTICA_API_KEY;
 
-const mockRequest = request as jest.MockedFunction<typeof request>;
-const TEST_API_KEY = 'test-api-key';
-const TEST_CONTEXT = { key: TEST_API_KEY } as unknown as AsticaAiContext;
+const upserts: Array<[string, Record<string, unknown>]> = [];
 
-describe('Astica AI API endpoints', () => {
-	beforeEach(() => {
-		mockRequest.mockReset();
-	});
+const makeEntity = () => ({
+	upsertByEntityId: async (id: string, data: Record<string, unknown>) => {
+		upserts.push([id, data]);
+	},
+});
 
-	it('readText sends the OCR request and returns the response', async () => {
-		const mockResponse: AsticaAiEndpointOutputs['readText'] = {
-			readResult: {
-				content: 'Detected text',
-				pages: [],
-			},
-		};
-		mockRequest.mockResolvedValueOnce(mockResponse);
+const ctx = {
+	key: TEST_API_KEY,
+	db: {
+		readTextResults: makeEntity(),
+		audioTranscripts: makeEntity(),
+	},
+} as unknown as AsticaAiContext;
 
-		const response = await ReadText.read(TEST_CONTEXT, {
-			input: 'https://www.astica.org/inputs/analyze_3.jpg',
-			modelVersion: '2.5_full',
-		});
+beforeEach(() => {
+	upserts.length = 0;
+});
 
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.objectContaining({
-				BASE: 'https://vision.astica.ai',
-			}),
-			expect.objectContaining({
-				method: 'POST',
-				url: '/describe',
-				body: {
-					input: 'https://www.astica.org/inputs/analyze_3.jpg',
-					modelVersion: '2.5_full',
-					visionParams: 'text_read',
-					tkn: TEST_API_KEY,
-				},
-			}),
-		);
-		expect(response).toEqual(mockResponse);
-	});
+// Sample assets published by Astica in their own documentation.
+const SAMPLE_IMAGE = 'https://www.astica.org/inputs/analyze_3.jpg';
+const SAMPLE_AUDIO = 'https://astica.ai/example/asticaListen_sample.wav';
 
-	it('analyzeAudio sends the transcription request and returns the response', async () => {
-		const mockResponse = {
-			status: 'success',
-			text: 'Transcribed audio',
-		};
-		mockRequest.mockResolvedValueOnce(mockResponse);
+describe('Astica live API', () => {
+	it('readText returns an OCR result matching the output schema', async () => {
+		const response = await ReadText.read(ctx, { input: SAMPLE_IMAGE });
 
-		const response = await AnalyzeAudio.analyze(TEST_CONTEXT, {
-			input: 'https://astica.ai/example/asticaListen_sample.wav',
-			modelVersion: '1.0_full',
-			doStream: 0,
-			low_priority: 0,
-		});
+		expect(response.status).toBe('success');
+		expect(typeof response.readResult?.content).toBe('string');
+		expect(upserts).toHaveLength(1);
+		expect(upserts[0]?.[0]).toBe(encodeURIComponent(SAMPLE_IMAGE));
+	}, 120_000);
 
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.objectContaining({
-				BASE: 'https://listen.astica.ai',
-			}),
-			expect.objectContaining({
-				method: 'POST',
-				url: '/transcribe',
-				body: {
-					input: 'https://astica.ai/example/asticaListen_sample.wav',
-					modelVersion: '1.0_full',
-					doStream: 0,
-					low_priority: 0,
-					tkn: TEST_API_KEY,
-				},
-			}),
-		);
-		expect(response).toEqual(mockResponse);
-	});
+	it('analyzeAudio returns a transcript matching the output schema', async () => {
+		const response = await AnalyzeAudio.analyze(ctx, { input: SAMPLE_AUDIO });
 
-	it('converts a failed API request into AsticaAiAPIError', async () => {
-		mockRequest.mockRejectedValueOnce(new Error('API request failed'));
+		expect(response.status).toBe('success');
+		expect(response.text ?? response.resultURI).toBeTruthy();
+		expect(upserts).toHaveLength(1);
+	}, 120_000);
+
+	// Astica answers a bad key with HTTP 200 and status:'error', which is why
+	// the handlers check the body rather than relying on the status code.
+	it('surfaces an invalid key as a thrown error, not a success', async () => {
+		const badCtx = { ...ctx, key: 'not-a-real-astica-key' };
 
 		await expect(
-			ReadText.read(TEST_CONTEXT, {
-				input: 'https://www.astica.org/inputs/analyze_3.jpg',
-				modelVersion: '2.5_full',
-			}),
-		).rejects.toThrow('API request failed');
-	});
+			ReadText.read(badCtx as AsticaAiContext, { input: SAMPLE_IMAGE }),
+		).rejects.toThrow();
+	}, 120_000);
+
+	it('does not leak the api key when the request fails', async () => {
+		const badCtx = { ...ctx, key: 'not-a-real-astica-key' };
+
+		try {
+			await ReadText.read(badCtx as AsticaAiContext, { input: SAMPLE_IMAGE });
+		} catch (error) {
+			expect(JSON.stringify(error)).not.toContain('not-a-real-astica-key');
+			expect((error as Error).message).not.toContain('not-a-real-astica-key');
+			return;
+		}
+		throw new Error('expected the request to reject');
+	}, 120_000);
 });

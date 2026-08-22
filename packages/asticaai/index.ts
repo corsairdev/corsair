@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { AnalyzeAudio, ReadText } from './endpoints';
 import type {
 	AsticaAiEndpointInputs,
@@ -140,11 +141,16 @@ export function asticaai<const T extends AsticaAiPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const key = await ctx.keys.get_api_key();
+
+				if (!key) {
+					throw new AuthMissingError('asticaai', 'api_key');
+				}
+
+				return key;
 			}
 
-			return '';
+			throw new AuthMissingError('asticaai', 'api_key');
 		},
 	} satisfies InternalAsticaAiPlugin;
 }
