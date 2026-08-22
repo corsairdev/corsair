@@ -17,7 +17,6 @@ export const BaseProviders = [
 	'abstract',
 	'abyssale',
 	'activecampaign',
-	'anchorbrowser',
 	'activetrail',
 	'addresszen',
 	'aeroleads',
@@ -39,14 +38,15 @@ export const BaseProviders = [
 	'ambientweather',
 	'amcards',
 	'amplitude',
+	'anchorbrowser',
 	'anthropicadministrator',
 	'apaleo',
 	'api2pdf',
 	'apibible',
-	'apipie',
 	'apify',
 	'apilabz',
 	'apininjas',
+	'apipie',
 	'apisports',
 	'asana',
 	'asindataapi',
@@ -67,8 +67,8 @@ export const BaseProviders = [
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canvas',
 	'canva',
+	'canvas',
 	'circleci',
 	'clientary',
 	'cloudflare',
@@ -91,8 +91,8 @@ export const BaseProviders = [
 	'facebook',
 	'figma',
 	'firecrawl',
-	'formbricks',
 	'fireflies',
+	'formbricks',
 	'gemini',
 	'github',
 	'gitlab',
@@ -170,6 +170,7 @@ export const BaseProviders = [
 	'whatsapp',
 	'wiza',
 	'workday',
+	'xata',
 	'xquik',
 	'youcom',
 	'youtube',
@@ -183,7 +184,6 @@ export const ProviderDisplayNames = {
 	abstract: 'Abstract',
 	abyssale: 'Abyssale',
 	activecampaign: 'ActiveCampaign',
-	anchorbrowser: 'Anchor Browser',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
 	aeroleads: 'Aeroleads',
@@ -205,14 +205,15 @@ export const ProviderDisplayNames = {
 	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	anchorbrowser: 'Anchor Browser',
 	anthropicadministrator: 'Anthropic Administrator',
 	apaleo: 'Apaleo',
 	api2pdf: 'API2PDF',
 	apibible: 'API.Bible',
-	apipie: 'APIpie AI',
 	apify: 'Apify',
 	apilabz: 'API Labz',
 	apininjas: 'API Ninjas',
+	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
@@ -233,8 +234,8 @@ export const ProviderDisplayNames = {
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	cloudflare: 'Cloudflare',
@@ -257,8 +258,8 @@ export const ProviderDisplayNames = {
 	facebook: 'Facebook',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
-	formbricks: 'Formbricks',
 	fireflies: 'Fireflies',
+	formbricks: 'Formbricks',
 	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
@@ -336,6 +337,7 @@ export const ProviderDisplayNames = {
 	whatsapp: 'WhatsApp',
 	wiza: 'Wiza',
 	workday: 'Workday',
+	xata: 'Xata',
 	xquik: 'XQuik',
 	youcom: 'You.com',
 	youtube: 'YouTube',
@@ -356,7 +358,6 @@ export type AllProviders =
 	| 'abstract'
 	| 'abyssale'
 	| 'activecampaign'
-	| 'anchorbrowser'
 	| 'activetrail'
 	| 'addresszen'
 	| 'aeroleads'
@@ -378,14 +379,15 @@ export type AllProviders =
 	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
+	| 'anchorbrowser'
 	| 'anthropicadministrator'
 	| 'apaleo'
 	| 'api2pdf'
 	| 'apibible'
-	| 'apipie'
 	| 'apify'
 	| 'apilabz'
 	| 'apininjas'
+	| 'apipie'
 	| 'apisports'
 	| 'asana'
 	| 'asindataapi'
@@ -430,8 +432,8 @@ export type AllProviders =
 	| 'facebook'
 	| 'figma'
 	| 'firecrawl'
-	| 'formbricks'
 	| 'fireflies'
+	| 'formbricks'
 	| 'gemini'
 	| 'github'
 	| 'gitlab'
@@ -509,6 +511,7 @@ export type AllProviders =
 	| 'whatsapp'
 	| 'wiza'
 	| 'workday'
+	| 'xata'
 	| 'xquik'
 	| 'youcom'
 	| 'youtube'
