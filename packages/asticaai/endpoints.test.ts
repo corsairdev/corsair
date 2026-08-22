@@ -1,6 +1,7 @@
 import { createHash } from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
+import { ASTICA_RATE_LIMIT_CONFIG } from './client';
 import { AnalyzeAudio, ReadText } from './endpoints';
 import type { AsticaAiContext } from './index';
 
@@ -82,6 +83,9 @@ describe('readText', () => {
 					tkn: TEST_API_KEY,
 				},
 			}),
+			expect.objectContaining({
+				rateLimitConfig: ASTICA_RATE_LIMIT_CONFIG,
+			}),
 		);
 	});
 
@@ -159,6 +163,9 @@ describe('analyzeAudio', () => {
 					low_priority: 0,
 					tkn: TEST_API_KEY,
 				},
+			}),
+			expect.objectContaining({
+				rateLimitConfig: ASTICA_RATE_LIMIT_CONFIG,
 			}),
 		);
 	});

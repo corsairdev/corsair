@@ -1,8 +1,9 @@
 import { ApiError, request } from 'corsair/http';
 import {
+	ASTICA_RATE_LIMIT_CONFIG,
 	AsticaAiAPIError,
+	bodyReportsRateLimit,
 	makeAsticaAiRequest,
-	RATE_LIMIT_MAX_ATTEMPTS,
 } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -60,19 +61,28 @@ describe('makeAsticaAiRequest', () => {
 		expect(options?.body).toEqual({ input: 'x', tkn: KEY });
 	});
 
-	it('carries status and retryAfter across the wrap once retries run out', async () => {
-		for (let i = 0; i < RATE_LIMIT_MAX_ATTEMPTS; i++) {
-			mockRequest.mockRejectedValueOnce(
-				buildApiError(429, 'Too Many Requests', 5),
-			);
-		}
+	it('carries status and retryAfter across the wrap', async () => {
+		mockRequest.mockRejectedValueOnce(
+			buildApiError(429, 'Too Many Requests', 9000),
+		);
 
 		const error = await captureError(makeAsticaAiRequest('/describe', KEY));
 
-		expect(mockRequest).toHaveBeenCalledTimes(RATE_LIMIT_MAX_ATTEMPTS);
 		expect(error).toBeInstanceOf(AsticaAiAPIError);
 		expect(error.status).toBe(429);
-		expect(error.retryAfter).toBe(5);
+		expect(error.retryAfter).toBe(9000);
+	});
+
+	// One retry loop only. The transport already backs off on 429, so a second
+	// loop here would multiply one operation into transport x local attempts.
+	it('issues exactly one transport call and delegates retries to it', async () => {
+		mockRequest.mockResolvedValueOnce({ status: 'success' });
+
+		await makeAsticaAiRequest('/describe', KEY);
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		const [, , requestOptions] = mockRequest.mock.calls[0] ?? [];
+		expect(requestOptions?.rateLimitConfig).toBe(ASTICA_RATE_LIMIT_CONFIG);
 	});
 
 	// The core redactor scrubs the URL and query only, so an ApiError kept as
@@ -110,55 +120,6 @@ describe('makeAsticaAiRequest', () => {
 		);
 	});
 
-	it('recovers when a retried 429 succeeds', async () => {
-		mockRequest
-			.mockRejectedValueOnce(buildApiError(429, 'Too Many Requests', 5))
-			.mockResolvedValueOnce({ status: 'success', text: 'done' });
-
-		await expect(makeAsticaAiRequest('/transcribe', KEY)).resolves.toEqual({
-			status: 'success',
-			text: 'done',
-		});
-		expect(mockRequest).toHaveBeenCalledTimes(2);
-	});
-
-	// Astica can report a rate limit as HTTP 200 with status:'error', which
-	// never reaches the transport's error path.
-	it('recovers when a body-reported rate limit clears', async () => {
-		mockRequest
-			.mockResolvedValueOnce({ status: 'error', error: 'rate limit exceeded' })
-			.mockResolvedValueOnce({ status: 'success', text: 'done' });
-
-		await expect(makeAsticaAiRequest('/transcribe', KEY)).resolves.toEqual({
-			status: 'success',
-			text: 'done',
-		});
-		expect(mockRequest).toHaveBeenCalledTimes(2);
-	});
-
-	it('gives up on a body-reported rate limit after the attempt cap', async () => {
-		const limited = { status: 'error', error: 'rate limit exceeded' };
-		for (let i = 0; i < RATE_LIMIT_MAX_ATTEMPTS; i++) {
-			mockRequest.mockResolvedValueOnce(limited);
-		}
-
-		await expect(makeAsticaAiRequest('/transcribe', KEY)).resolves.toEqual(
-			limited,
-		);
-		expect(mockRequest).toHaveBeenCalledTimes(RATE_LIMIT_MAX_ATTEMPTS);
-	});
-
-	it('does not retry a non-rate-limit body error', async () => {
-		mockRequest.mockResolvedValueOnce({
-			status: 'error',
-			error: 'invalid api token',
-		});
-
-		await makeAsticaAiRequest('/describe', KEY);
-
-		expect(mockRequest).toHaveBeenCalledTimes(1);
-	});
-
 	it('does not retry a 401', async () => {
 		mockRequest.mockRejectedValueOnce(buildApiError(401, 'Unauthorized'));
 
@@ -170,17 +131,15 @@ describe('makeAsticaAiRequest', () => {
 
 describe('errorHandlers', () => {
 	it('matches a 429 carried across the wrap and forwards the delay', async () => {
-		for (let i = 0; i < RATE_LIMIT_MAX_ATTEMPTS; i++) {
-			mockRequest.mockRejectedValueOnce(
-				buildApiError(429, 'Too Many Requests', 5),
-			);
-		}
+		mockRequest.mockRejectedValueOnce(
+			buildApiError(429, 'Too Many Requests', 9000),
+		);
 		const error = await captureError(makeAsticaAiRequest('/describe', KEY));
 
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
-		).resolves.toEqual({ maxRetries: 0, headersRetryAfterMs: 5 });
+		).resolves.toEqual({ maxRetries: 0, headersRetryAfterMs: 9000 });
 	});
 
 	it('matches a 401 carried across the wrap', async () => {
@@ -217,5 +176,40 @@ describe('errorHandlers', () => {
 		await expect(errorHandlers.SERVER_ERROR.handler()).resolves.toEqual({
 			maxRetries: 0,
 		});
+	});
+});
+
+describe('rate-limit matcher', () => {
+	const matches = (status: number, body: unknown) =>
+		ASTICA_RATE_LIMIT_CONFIG.isRateLimitError?.(status, body) ?? false;
+
+	it('keeps the transport default of retrying a 429', () => {
+		expect(matches(429, {})).toBe(true);
+	});
+
+	// The transport's built-in matcher only sees the status code, so without
+	// this a body-reported rate limit would never be retried.
+	it('retries a rate limit reported in an HTTP 200 body', () => {
+		expect(
+			matches(200, { status: 'error', error: 'rate limit exceeded' }),
+		).toBe(true);
+		expect(matches(200, { status: 'error', error: 'Too Many Requests' })).toBe(
+			true,
+		);
+	});
+
+	it('does not retry other body errors', () => {
+		expect(matches(200, { status: 'error', error: 'invalid api token' })).toBe(
+			false,
+		);
+		expect(matches(200, { status: 'success', text: 'hello' })).toBe(false);
+		expect(matches(200, null)).toBe(false);
+		expect(matches(401, {})).toBe(false);
+	});
+
+	it('ignores a rate-limit phrase on a successful body', () => {
+		expect(
+			bodyReportsRateLimit({ status: 'success', text: 'rate limit explained' }),
+		).toBe(false);
 	});
 });

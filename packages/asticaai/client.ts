@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export type AsticaAiErrorMeta = {
@@ -28,17 +32,13 @@ export class AsticaAiAPIError extends Error {
 export const ASTICAAI_VISION_API_BASE = 'https://vision.astica.ai';
 export const ASTICAAI_LISTEN_API_BASE = 'https://listen.astica.ai';
 
-/** Total attempts for a rate-limited call, including the first one. */
-export const RATE_LIMIT_MAX_ATTEMPTS = 3;
-const MAX_RETRY_DELAY_MS = 30_000;
-
 const RATE_LIMIT_TEXT = /rate.?limit|too many requests|\b429\b/i;
 
 /**
- * Astica reports most failures as HTTP 200 with `{status:'error'}`, so a rate
- * limit can arrive either as a 429 or in the body.
+ * Astica reports failures as HTTP 200 with `{status:'error'}`, so a rate limit
+ * can arrive in the body rather than as a 429.
  */
-function bodyReportsRateLimit(body: unknown): boolean {
+export function bodyReportsRateLimit(body: unknown): boolean {
 	if (typeof body !== 'object' || body === null) return false;
 	const { status, error } = body as { status?: unknown; error?: unknown };
 	if (typeof status !== 'string' || status.toLowerCase() !== 'error') {
@@ -47,12 +47,28 @@ function bodyReportsRateLimit(body: unknown): boolean {
 	return typeof error === 'string' && RATE_LIMIT_TEXT.test(error);
 }
 
-function retryDelayMs(attempt: number, retryAfter?: number): number {
-	const delay = retryAfter ?? 2 ** (attempt - 1) * 1000;
-	return Math.min(delay, MAX_RETRY_DELAY_MS);
-}
-
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+/**
+ * Retries stay in the transport, which already backs off on 429 and honours
+ * Retry-After. Only the matcher is widened, so a body-reported rate limit is
+ * retried by the same loop; adding a second loop here would multiply one
+ * operation into transport attempts × local attempts against a throttled API.
+ *
+ * Values mirror the transport defaults, which corsair/http does not export.
+ */
+export const ASTICA_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+	isRateLimitError: (status, body) =>
+		status === 429 || bodyReportsRateLimit(body),
+};
 
 /** Astica echoes the submitted body in some failures; keep the key out of it. */
 function redactKey(message: string, apiKey: string): string {
@@ -65,11 +81,6 @@ function redactKey(message: string, apiKey: string): string {
  * failure the key sits in ApiError.request.body. The core redactor only scrubs
  * the URL and query string, never the body, so the ApiError is deliberately not
  * kept as `cause` here — only status, statusText and retryAfter cross over.
- *
- * Rate limits are retried here rather than through the endpoint binder: the
- * binder awaits its retry, discards the result and rethrows the original error
- * (core/endpoints/bind.ts, the `await call(newAttempt, …)` before `throw
- * error`), so a retry driven from there can never return a success.
  */
 export async function makeAsticaAiRequest<T>(
 	endpoint: string,
@@ -98,38 +109,21 @@ export async function makeAsticaAiRequest<T>(
 		mediaType: 'application/json; charset=utf-8',
 	};
 
-	for (let attempt = 1; ; attempt++) {
-		const canRetry = attempt < RATE_LIMIT_MAX_ATTEMPTS;
-
-		try {
-			const result = await request<T>(config, requestOptions);
-
-			if (canRetry && bodyReportsRateLimit(result)) {
-				await sleep(retryDelayMs(attempt));
-				continue;
-			}
-
-			return result;
-		} catch (error) {
-			if (error instanceof ApiError) {
-				if (canRetry && error.status === 429) {
-					await sleep(retryDelayMs(attempt, error.retryAfter));
-					continue;
-				}
-				throw new AsticaAiAPIError(
-					redactKey(error.message, apiKey),
-					undefined,
-					{
-						status: error.status,
-						statusText: error.statusText,
-						retryAfter: error.retryAfter,
-					},
-				);
-			}
-			if (error instanceof Error) {
-				throw new AsticaAiAPIError(redactKey(error.message, apiKey));
-			}
-			throw new AsticaAiAPIError('Unknown Astica AI API error');
+	try {
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: ASTICA_RATE_LIMIT_CONFIG,
+		});
+	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new AsticaAiAPIError(redactKey(error.message, apiKey), undefined, {
+				status: error.status,
+				statusText: error.statusText,
+				retryAfter: error.retryAfter,
+			});
 		}
+		if (error instanceof Error) {
+			throw new AsticaAiAPIError(redactKey(error.message, apiKey));
+		}
+		throw new AsticaAiAPIError('Unknown Astica AI API error');
 	}
 }
