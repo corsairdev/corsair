@@ -125,8 +125,11 @@ describe('errorHandlers', () => {
 	});
 
 	// Astica reports a bad key as HTTP 200 with status:'error', so the handler
-	// only ever sees the message.
-	it('classifies an in-body auth failure by message', () => {
+	// only ever sees the message. Both hosts return exactly this string.
+	it('classifies the live invalid-key message as an auth failure', () => {
+		expect(errorHandlers.AUTH_ERROR.match(new Error('invalid api token'))).toBe(
+			true,
+		);
 		expect(
 			errorHandlers.AUTH_ERROR.match(new Error('Invalid API key provided')),
 		).toBe(true);

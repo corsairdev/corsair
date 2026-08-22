@@ -35,14 +35,15 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			const status = getStatus(error);
 			if (status === 401 || status === 403) return true;
-			// Astica reports a bad key as HTTP 200 with status:'error', which the
-			// handlers surface as a plain message.
+			// Astica reports a bad key as HTTP 200 with status:'error', so the only
+			// signal is the message. Both hosts answer a bad key with exactly
+			// "invalid api token"; the rest are defensive.
 			const msg = error.message.toLowerCase();
 			return (
+				msg.includes('invalid api token') ||
 				msg.includes('unauthorized') ||
 				msg.includes('invalid_auth') ||
 				msg.includes('invalid api key') ||
-				msg.includes('invalid token') ||
 				msg.includes('authentication')
 			);
 		},
