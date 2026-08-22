@@ -177,4 +177,34 @@ describe('Autom endpoint behavior', () => {
 		);
 		expect(result).toEqual(mockResponse);
 	});
+
+	it('rejects an empty or whitespace query before calling the API', async () => {
+		const ctx = createContext();
+
+		await expect(Google.countries(ctx, { query: '' })).rejects.toThrow();
+		await expect(Google.countries(ctx, { query: '   ' })).rejects.toThrow();
+		await expect(Google.images(ctx, { query: '', page: 1 })).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
+
+	it('rejects a non-positive page before calling the API', async () => {
+		const ctx = createContext();
+
+		await expect(
+			Google.images(ctx, { query: 'lion', page: 0 }),
+		).rejects.toThrow();
+		await expect(
+			Google.images(ctx, { query: 'lion', page: -1 }),
+		).rejects.toThrow();
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('does not log completed when the response fails output validation', async () => {
+		mockRequest.mockResolvedValueOnce({ not: 'an image payload' });
+		const ctx = createContext();
+
+		await expect(Google.images(ctx, { query: 'lion' })).rejects.toThrow();
+		expect(mockLog).not.toHaveBeenCalled();
+	});
 });
