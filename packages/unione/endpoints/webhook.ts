@@ -6,14 +6,17 @@ import type { UnioneEndpointOutputs } from './types';
 import { EMAIL_STATUS_TYPES } from './types';
 
 type WebhookRow = {
-	url?: string;
-	status?: string;
-	event_format?: string;
-	delivery_info?: number;
-	single_event?: number;
-	max_parallel?: number;
-	updated_at?: string;
-	events?: { email_status?: string[]; spam_block?: string[] };
+	url?: string | null;
+	status?: string | null;
+	event_format?: string | null;
+	delivery_info?: number | null;
+	single_event?: number | null;
+	max_parallel?: number | null;
+	updated_at?: string | null;
+	events?: {
+		email_status?: string[] | null;
+		spam_block?: string[] | null;
+	} | null;
 };
 
 /** UniOne keys webhooks by URL, so the mirror does too. */

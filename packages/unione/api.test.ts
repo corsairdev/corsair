@@ -173,19 +173,57 @@ describe('Unione endpoints', () => {
 		expect(mockRequest.mock.calls[0]?.[0]).toBe('email-validation/single.json');
 	});
 
-	it('records a failed address instead of failing the whole batch', async () => {
+	it('propagates a UniOne failure instead of reporting it per address', async () => {
 		mockRequest
 			.mockResolvedValueOnce({ status: 'success', email: 'a@example.com' })
-			.mockRejectedValueOnce(new UnioneAPIError('rate limited', 429))
-			.mockResolvedValueOnce({ status: 'success', email: 'c@example.com' });
-		const response = await batch(makeCtx(), {
-			emails: ['a@example.com', 'b@example.com', 'c@example.com'],
+			.mockRejectedValueOnce(new UnioneAPIError('Invalid API key', 401));
+		// A 401 applies to the batch, not to one address; reporting it as a
+		// per-address verdict would read as "these addresses are invalid".
+		await expect(
+			batch(makeCtx(), { emails: ['a@example.com', 'b@example.com'] }),
+		).rejects.toBeInstanceOf(UnioneAPIError);
+	});
+
+	it('anchors the default dump window to end_time, never inverting the range', async () => {
+		await eventDumpCreateForJob(makeCtx(), {
+			job_id: 'job-1',
+			end_time: '2020-06-01 00:00:00',
 		});
-		expect(response.status).toBe('partial');
-		expect(response.results).toHaveLength(3);
-		expect(response.results[1]).toEqual(
-			expect.objectContaining({ status: 'error', email: 'b@example.com' }),
-		);
+		const body = mockRequest.mock.calls[0]?.[2]?.body as {
+			start_time: string;
+			end_time: string;
+		};
+		expect(body.start_time < body.end_time).toBe(true);
+		expect(body.start_time.startsWith('2020-05')).toBe(true);
+	});
+
+	it('keys suppressions per project so one email keeps both rows', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValueOnce({
+			status: 'success',
+			suppressions: [
+				{ email: 'user@example.com', project_id: 'p1', cause: 'unsubscribed' },
+				{ email: 'user@example.com', project_id: 'p2', cause: 'spam' },
+			],
+		});
+		const ctx = {
+			key: 'test-key',
+			options: {},
+			db: { suppressions: { upsertByEntityId } },
+		} as unknown as UnioneContext;
+
+		await suppressionGet(ctx, {
+			email: 'user@example.com',
+			all_projects: true,
+		});
+		const keys = upsertByEntityId.mock.calls.map((call) => call[0]);
+		expect(keys).toEqual(['user@example.com:p1', 'user@example.com:p2']);
+	});
+
+	it('redacts the address in the suppression audit payload', async () => {
+		await suppressionGet(makeCtx(), { email: 'user@example.com' });
+		const payload = mockLogEvent.mock.calls.at(-1)?.[2] as { email: string };
+		expect(payload.email).toBe('u***@example.com');
 	});
 
 	it('creates, gets, lists, and deletes event dumps', async () => {

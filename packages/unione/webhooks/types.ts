@@ -5,6 +5,12 @@ import type {
 } from 'corsair/core';
 import { z } from 'zod';
 
+/** The event names UniOne sends, per the callback-format docs. */
+export const UNIONE_EVENT_NAMES = [
+	'transactional_email_status',
+	'transactional_spam_block',
+] as const;
+
 export const UnioneWebhookEventSchema = z
 	.object({
 		event_name: z.string(),
@@ -95,8 +101,15 @@ export function verifyUnioneWebhookAuth(
 	request: WebhookRequest<UnioneWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
+	// Fail closed. With no secret there is nothing to check `payload.auth`
+	// against, and an accepted event persists caller-controlled job status to
+	// the mirror. Set `webhookSecret`, or store a webhook signature key.
 	if (!secret) {
-		return { valid: true };
+		return {
+			valid: false,
+			error:
+				'No UniOne webhook secret configured; refusing unauthenticated payload',
+		};
 	}
 	const provided = request.payload.auth;
 	if (!provided) {

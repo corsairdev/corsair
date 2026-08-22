@@ -109,6 +109,29 @@ describe('Unione database schemas accept live API shapes', () => {
 		expect(parsed.cursor).toBeNull();
 		expect(parsed.count).toBe(0);
 	});
+
+	it('accepts null and omitted webhook fields, including nested events', () => {
+		const nulled = UnioneEndpointOutputSchemas.webhookList.parse({
+			status: 'success',
+			objects: [
+				{
+					url: 'https://example.com/hook',
+					status: null,
+					event_format: null,
+					delivery_info: null,
+					single_event: null,
+					max_parallel: null,
+					updated_at: null,
+					events: { email_status: null, spam_block: null },
+				},
+				// Same webhook with every optional field omitted instead.
+				{ url: 'https://example.com/hook2' },
+				{ url: 'https://example.com/hook3', events: null },
+			],
+		});
+		expect(nulled.objects).toHaveLength(3);
+		expect(nulled.objects?.[0]?.events?.email_status).toBeNull();
+	});
 });
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint

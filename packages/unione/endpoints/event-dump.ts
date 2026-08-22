@@ -15,9 +15,11 @@ export const create: UnioneEndpoints['eventDump']['create'] = async (
 
 	// `event-dump/create` returns only dump_id; the status is unknown until
 	// event-dump/get reports it, so no status is recorded here.
-	await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
-		dump_id: response.dump_id ?? '',
-	});
+	if (response.dump_id) {
+		await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
+			dump_id: response.dump_id,
+		});
+	}
 	await logEventFromContext(
 		ctx,
 		'unione.eventDump.create',
@@ -42,15 +44,18 @@ export const createForJob: UnioneEndpoints['eventDump']['createForJob'] =
 			UnioneEndpointOutputs['eventDumpCreateForJob']
 		>('event-dump/create.json', ctx.key, {
 			body: {
-				start_time: input.start_time ?? defaultEventDumpStartTime(),
+				start_time:
+					input.start_time ?? defaultEventDumpStartTime(input.end_time),
 				end_time: input.end_time,
 				filter,
 			},
 		});
 
-		await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
-			dump_id: response.dump_id ?? '',
-		});
+		if (response.dump_id) {
+			await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
+				dump_id: response.dump_id,
+			});
+		}
 		await logEventFromContext(
 			ctx,
 			'unione.eventDump.createForJob',

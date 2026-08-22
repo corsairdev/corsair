@@ -44,7 +44,10 @@ import type {
 	UnioneWebhookOutputs,
 	UnioneWebhookPayload,
 } from './webhooks/types';
-import { UnioneWebhookPayloadSchema } from './webhooks/types';
+import {
+	UNIONE_EVENT_NAMES,
+	UnioneWebhookPayloadSchema,
+} from './webhooks/types';
 
 export type UnionePluginOptions = {
 	/** Authentication method. Only api_key is supported. */
@@ -460,7 +463,9 @@ const unioneEndpointMeta = {
 			'Tool to remove an email from the suppression list. Use when you need to re-enable sending emails to an address that was previously unsubscribed or suppressed.',
 	},
 	'domain.manage': {
-		riskLevel: 'write',
+		// `action: 'delete'` removes a sender domain, so the whole operation
+		// carries destructive risk regardless of which action a caller picks.
+		riskLevel: 'destructive',
 		description:
 			'Tool to manage sender domains in UniOne. Use when you need DNS records for verification, trigger verification or DKIM checks, list domains, or delete a domain.',
 	},
@@ -496,17 +501,47 @@ export type InternalUnionePlugin = BaseUnionePlugin<UnionePluginOptions>;
 export type ExternalUnionePlugin<T extends UnionePluginOptions> =
 	BaseUnionePlugin<T>;
 
-function matchUnioneWebhook(request: RawWebhookRequest): boolean {
-	const headers = request.headers;
-	if ('x-unione-auth' in headers) return true;
+/**
+ * A bare `auth` field is far too generic to claim a request by - other
+ * providers send one too, and claiming it here would swallow their traffic
+ * before their own plugin sees it. Match only on the UniOne envelope:
+ * `events_by_user` carrying one of the documented event names.
+ */
+export function matchUnioneWebhook(request: RawWebhookRequest): boolean {
+	if (request.headers['x-unione-auth']) return true;
+
 	const body = request.body;
-	if (typeof body === 'string') {
-		return body.includes('events_by_user') || body.includes('"auth"');
+	const parsed =
+		typeof body === 'string'
+			? (() => {
+					try {
+						return JSON.parse(body) as unknown;
+					} catch {
+						return null;
+					}
+				})()
+			: body;
+
+	if (parsed === null || typeof parsed !== 'object' || Array.isArray(parsed)) {
+		return false;
 	}
-	if (body !== null && typeof body === 'object' && !Array.isArray(body)) {
-		return 'events_by_user' in body || 'auth' in body;
-	}
-	return false;
+	const users = (parsed as { events_by_user?: unknown }).events_by_user;
+	if (!Array.isArray(users)) return false;
+
+	return users.some(
+		(user) =>
+			user !== null &&
+			typeof user === 'object' &&
+			Array.isArray((user as { events?: unknown }).events) &&
+			(user as { events: unknown[] }).events.some(
+				(event) =>
+					event !== null &&
+					typeof event === 'object' &&
+					(UNIONE_EVENT_NAMES as readonly string[]).includes(
+						(event as { event_name?: string }).event_name ?? '',
+					),
+			),
+	);
 }
 
 export function unione<const T extends UnionePluginOptions>(

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { UnioneEndpoints } from '..';
-import { makeUnioneRequest, UnioneAPIError } from '../client';
+import { makeUnioneRequest, redactEmail, UnioneAPIError } from '../client';
 import { maybeUpsert } from '../db';
 import type { UnioneEndpointOutputs } from './types';
 
@@ -79,9 +79,11 @@ export const list: UnioneEndpoints['email']['list'] = async (ctx, input) => {
 		},
 	);
 
-	await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
-		dump_id: response.dump_id ?? '',
-	});
+	if (response.dump_id) {
+		await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
+			dump_id: response.dump_id,
+		});
+	}
 	await logEventFromContext(
 		ctx,
 		'unione.email.list',
@@ -105,9 +107,11 @@ export const statistics: UnioneEndpoints['email']['statistics'] = async (
 		},
 	});
 
-	await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
-		dump_id: response.dump_id ?? '',
-	});
+	if (response.dump_id) {
+		await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
+			dump_id: response.dump_id,
+		});
+	}
 	await logEventFromContext(
 		ctx,
 		'unione.email.statistics',
@@ -128,7 +132,11 @@ export const subscribe: UnioneEndpoints['email']['subscribe'] = async (
 	await logEventFromContext(
 		ctx,
 		'unione.email.subscribe',
-		{ ...input },
+		{
+			...input,
+			to_email: redactEmail(input.to_email),
+			from_email: redactEmail(input.from_email),
+		},
 		'completed',
 	);
 	return response;
@@ -158,7 +166,7 @@ export const unsubscribe: UnioneEndpoints['email']['unsubscribe'] = async (
 	await logEventFromContext(
 		ctx,
 		'unione.email.unsubscribe',
-		{ ...input },
+		{ ...input, email: redactEmail(input.email) },
 		'completed',
 	);
 	return response;

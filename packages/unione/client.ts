@@ -46,6 +46,17 @@ export class UnioneAPIError extends Error {
 
 export const UNIONE_API_BASE = 'https://api.unione.io/en/transactional/api/v1';
 
+/**
+ * Redacts an email address for event logs (`logEventFromContext` persists its
+ * payload to `corsair_events`) - keeps the first character and the domain so a
+ * suppression or send stays traceable, without storing the full address.
+ */
+export function redactEmail(email: string): string {
+	const atIndex = email.indexOf('@');
+	if (atIndex <= 0) return '***';
+	return `${email[0]}***${email.slice(atIndex)}`;
+}
+
 export function compactBody(
 	body: Record<string, unknown> | undefined,
 ): Record<string, unknown> {

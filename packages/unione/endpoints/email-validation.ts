@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { UnioneEndpoints } from '..';
-import { makeUnioneRequest, mapPool, UnioneAPIError } from '../client';
+import { makeUnioneRequest, mapPool } from '../client';
 import type { UnioneEndpointOutputs } from './types';
 
 /**
@@ -17,38 +17,28 @@ export const batch: UnioneEndpoints['emailValidation']['batch'] = async (
 	ctx,
 	input,
 ) => {
-	// A failure on one address must not discard the addresses that succeeded,
-	// so each rejection is recorded in place rather than failing the batch.
+	// A transport failure or a non-2xx from UniOne (a bad key, an exhausted
+	// quota, a rate limit) applies to the whole batch, not to one address, so
+	// it propagates. Only per-address verdicts carried in a successful response
+	// belong in `results` - swallowing a 401 here would report every address as
+	// merely "invalid".
 	const results = await mapPool<string, ValidationResult>(
 		input.emails,
 		VALIDATION_CONCURRENCY,
-		async (email) => {
-			try {
-				return await makeUnioneRequest<ValidationResult>(
-					'email-validation/single.json',
-					ctx.key,
-					{ body: { email } },
-				);
-			} catch (error) {
-				return {
-					status: 'error',
-					email,
-					cause:
-						error instanceof UnioneAPIError || error instanceof Error
-							? error.message
-							: 'Unknown validation error',
-				};
-			}
-		},
+		(email) =>
+			makeUnioneRequest<ValidationResult>(
+				'email-validation/single.json',
+				ctx.key,
+				{ body: { email } },
+			),
 	);
 
-	const failed = results.filter((result) => result.status === 'error').length;
 	await logEventFromContext(
 		ctx,
 		'unione.emailValidation.batch',
-		{ count: input.emails.length, failed },
+		{ count: input.emails.length },
 		'completed',
 	);
 
-	return { status: failed === 0 ? 'success' : 'partial', results };
+	return { status: 'success', results };
 };

@@ -54,22 +54,25 @@ const EventDumpObjectSchema = z
 
 const WebhookEventsSchema = z
 	.object({
-		spam_block: z.array(z.string()).optional(),
-		email_status: z.array(z.string()).optional(),
+		spam_block: z.array(z.string()).nullable().optional(),
+		email_status: z.array(z.string()).nullable().optional(),
 	})
 	.loose();
 
+// UniOne omits unset webhook settings from some responses and sends them as
+// null in others - the same split that made a non-nullable `cursor` reject an
+// ordinary suppression page. Every optional field therefore accepts null.
 const WebhookObjectSchema = z
 	.object({
-		id: z.union([z.string(), z.number()]).optional(),
-		url: z.string().optional(),
-		status: z.string().optional(),
-		event_format: z.string().optional(),
-		delivery_info: z.number().optional(),
-		single_event: z.number().optional(),
-		max_parallel: z.number().optional(),
-		updated_at: z.string().optional(),
-		events: WebhookEventsSchema.optional(),
+		id: z.union([z.string(), z.number()]).nullable().optional(),
+		url: z.string().nullable().optional(),
+		status: z.string().nullable().optional(),
+		event_format: z.string().nullable().optional(),
+		delivery_info: z.number().nullable().optional(),
+		single_event: z.number().nullable().optional(),
+		max_parallel: z.number().nullable().optional(),
+		updated_at: z.string().nullable().optional(),
+		events: WebhookEventsSchema.nullable().optional(),
 	})
 	.loose();
 
