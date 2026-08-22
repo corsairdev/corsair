@@ -208,10 +208,12 @@ describe('errorHandlers', () => {
 
 		try {
 			await makeTavilyMcpRequest('search', 'tvly-test-key', { method: 'POST' });
-			throw new Error('expected the request to reject');
 		} catch (error) {
 			return error as TavilyMcpAPIError;
 		}
+
+		// Outside the try, so this sentinel cannot be swallowed by the catch above.
+		throw new Error('expected the request to reject');
 	}
 
 	it('matches a wrapped 429 and forwards the provider retry delay', async () => {
