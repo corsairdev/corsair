@@ -1,8 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
-const AGILITYCMS_API_BASE = 'https://api.aglty.io';
-
 export async function makeAgilityCmsRequest<T>(
 	instanceGuid: string,
 	apiKey: string,
@@ -12,12 +10,18 @@ export async function makeAgilityCmsRequest<T>(
 		method?: 'GET' | 'POST';
 		query?: Record<string, string | number | boolean | undefined>;
 		body?: Record<string, unknown>;
+		apiBaseUrl?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', query, body } = options;
+	const {
+		method = 'GET',
+		query,
+		body,
+		apiBaseUrl = 'https://api.aglty.io',
+	} = options;
 
 	const config: OpenAPIConfig = {
-		BASE: `${AGILITYCMS_API_BASE}/${instanceGuid}/${apiType}`,
+		BASE: `${apiBaseUrl.replace(/\/$/, '')}/${instanceGuid}/${apiType}`,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

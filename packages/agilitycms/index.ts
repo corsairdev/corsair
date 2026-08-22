@@ -27,6 +27,7 @@ import { AgilityCmsSchema } from './schema';
 export type AgilityCmsPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	apiBaseUrl?: string;
 	hooks?: InternalAgilityCmsPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof agilitycmsEndpointsNested>;

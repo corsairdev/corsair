@@ -1,9 +1,5 @@
 import { z } from 'zod';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Common Schemas
-// ─────────────────────────────────────────────────────────────────────────────
-
 export const ContentItemPropertiesSchema = z.object({
 	state: z.number().int().optional().describe('Publish state code of the item'),
 	modified: z.string().optional().describe('Last modified ISO timestamp'),
@@ -156,10 +152,6 @@ export const SyncPageSchema = z.object({
 });
 export type SyncPage = z.infer<typeof SyncPageSchema>;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 1. Get Page
-// ─────────────────────────────────────────────────────────────────────────────
-
 export const GetPageInputSchema = z.object({
 	instanceGuid: z.string().min(1).describe('Agility CMS instance GUID'),
 	locale: z.string().min(1).describe('Language locale code (e.g. en-us)'),
@@ -172,8 +164,9 @@ export const GetPageInputSchema = z.object({
 		.number()
 		.int()
 		.min(0)
+		.max(5)
 		.optional()
-		.describe('Depth of linked content items to expand'),
+		.describe('Depth of linked content items to expand (0-5)'),
 	expandAllContentLinks: z
 		.boolean()
 		.optional()
@@ -183,10 +176,6 @@ export type GetPageInput = z.infer<typeof GetPageInputSchema>;
 
 export const GetPageResponseSchema = PageSchema;
 export type GetPageResponse = z.infer<typeof GetPageResponseSchema>;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 2. Get Content Item
-// ─────────────────────────────────────────────────────────────────────────────
 
 export const GetItemInputSchema = z.object({
 	instanceGuid: z.string().min(1).describe('Agility CMS instance GUID'),
@@ -204,8 +193,9 @@ export const GetItemInputSchema = z.object({
 		.number()
 		.int()
 		.min(0)
+		.max(5)
 		.optional()
-		.describe('Depth of linked content items to expand'),
+		.describe('Depth of linked content items to expand (0-5)'),
 	expandAllContentLinks: z
 		.boolean()
 		.optional()
@@ -215,10 +205,6 @@ export type GetItemInput = z.infer<typeof GetItemInputSchema>;
 
 export const GetItemResponseSchema = ContentItemSchema;
 export type GetItemResponse = z.infer<typeof GetItemResponseSchema>;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 3. Get Content List
-// ─────────────────────────────────────────────────────────────────────────────
 
 export const GetListInputSchema = z.object({
 	instanceGuid: z.string().min(1).describe('Agility CMS instance GUID'),
@@ -235,8 +221,9 @@ export const GetListInputSchema = z.object({
 		.number()
 		.int()
 		.min(0)
+		.max(5)
 		.optional()
-		.describe('Depth of linked content items to expand'),
+		.describe('Depth of linked content items to expand (0-5)'),
 	expandAllContentLinks: z
 		.boolean()
 		.optional()
@@ -281,10 +268,6 @@ export const GetListResponseSchema = z.object({
 });
 export type GetListResponse = z.infer<typeof GetListResponseSchema>;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 4. Get Content Models
-// ─────────────────────────────────────────────────────────────────────────────
-
 export const GetContentModelsInputSchema = z.object({
 	instanceGuid: z.string().min(1).describe('Agility CMS instance GUID'),
 	locale: z.string().min(1).describe('Language locale code (e.g. en-us)'),
@@ -300,10 +283,6 @@ export type GetContentModelsResponse = z.infer<
 	typeof GetContentModelsResponseSchema
 >;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 5. Get Page Modules
-// ─────────────────────────────────────────────────────────────────────────────
-
 export const GetPageModulesInputSchema = z.object({
 	instanceGuid: z.string().min(1).describe('Agility CMS instance GUID'),
 	locale: z.string().min(1).describe('Language locale code (e.g. en-us)'),
@@ -318,10 +297,6 @@ export const GetPageModulesResponseSchema = z.array(PageModuleSchema);
 export type GetPageModulesResponse = z.infer<
 	typeof GetPageModulesResponseSchema
 >;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 6. Get Sitemap Flat
-// ─────────────────────────────────────────────────────────────────────────────
 
 export const GetSitemapFlatInputSchema = z.object({
 	instanceGuid: z.string().min(1).describe('Agility CMS instance GUID'),
@@ -344,10 +319,6 @@ export const GetSitemapFlatResponseSchema = z.record(
 export type GetSitemapFlatResponse = z.infer<
 	typeof GetSitemapFlatResponseSchema
 >;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// 7. Get Logs (Content Sync)
-// ─────────────────────────────────────────────────────────────────────────────
 
 export const GetLogsInputSchema = z.object({
 	instanceGuid: z.string().min(1).describe('Agility CMS instance GUID'),
@@ -385,10 +356,6 @@ export const GetLogsResponseSchema = z.object({
 });
 export type GetLogsResponse = z.infer<typeof GetLogsResponseSchema>;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 8. Sync Pages
-// ─────────────────────────────────────────────────────────────────────────────
-
 export const SyncPagesInputSchema = z.object({
 	instanceGuid: z.string().min(1).describe('Agility CMS instance GUID'),
 	locale: z.string().min(1).describe('Language locale code (e.g. en-us)'),
@@ -423,15 +390,8 @@ export const SyncPagesResponseSchema = z.object({
 });
 export type SyncPagesResponse = z.infer<typeof SyncPagesResponseSchema>;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// 9. Get API Types
-// ─────────────────────────────────────────────────────────────────────────────
-
 export const GetApiTypesInputSchema = z.object({
-	instanceGuid: z
-		.string()
-		.optional()
-		.describe('Optional Agility CMS instance GUID'),
+	instanceGuid: z.string().min(1).describe('Agility CMS instance GUID'),
 	locale: z
 		.string()
 		.optional()
@@ -449,10 +409,6 @@ export const GetApiTypesResponseSchema = z.record(
 	z.array(z.string()).or(z.record(z.string(), z.unknown())),
 );
 export type GetApiTypesResponse = z.infer<typeof GetApiTypesResponseSchema>;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Endpoint Input/Output Maps
-// ─────────────────────────────────────────────────────────────────────────────
 
 export type AgilityCmsEndpointInputs = {
 	getPage: GetPageInput;

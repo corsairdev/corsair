@@ -18,6 +18,7 @@ import type {
 	GetPageResponse,
 	GetSitemapFlatInput,
 	GetSitemapFlatResponse,
+	PageModule,
 	SyncPagesInput,
 	SyncPagesResponse,
 } from './types';
@@ -51,6 +52,7 @@ export const getPage = async (
 		input.apiType,
 		`${input.locale}/page/${input.pageId}`,
 		{
+			apiBaseUrl: ctx.options?.apiBaseUrl,
 			query: compactQuery({
 				contentLinkDepth: input.contentLinkDepth,
 				expandAllContentLinks: input.expandAllContentLinks,
@@ -80,6 +82,7 @@ export const getItem = async (
 		input.apiType,
 		`${input.locale}/item/${input.contentId}`,
 		{
+			apiBaseUrl: ctx.options?.apiBaseUrl,
 			query: compactQuery({
 				contentLinkDepth: input.contentLinkDepth,
 				expandAllContentLinks: input.expandAllContentLinks,
@@ -109,6 +112,7 @@ export const getList = async (
 		input.apiType,
 		`${input.locale}/list/${input.referenceName}`,
 		{
+			apiBaseUrl: ctx.options?.apiBaseUrl,
 			query: compactQuery({
 				contentLinkDepth: input.contentLinkDepth,
 				expandAllContentLinks: input.expandAllContentLinks,
@@ -142,6 +146,9 @@ export const getContentModels = async (
 		ctx.key,
 		input.apiType,
 		`${input.locale}/models`,
+		{
+			apiBaseUrl: ctx.options?.apiBaseUrl,
+		},
 	);
 
 	const parsed = GetContentModelsResponseSchema.parse(response);
@@ -160,14 +167,21 @@ export const getPageModules = async (
 	ctx: AgilityCmsContext,
 	input: GetPageModulesInput,
 ): Promise<GetPageModulesResponse> => {
-	const response = await makeAgilityCmsRequest<GetPageModulesResponse>(
+	const response = await makeAgilityCmsRequest<PageModule[]>(
 		input.instanceGuid,
 		ctx.key,
 		input.apiType,
 		`${input.locale}/models`,
+		{
+			apiBaseUrl: ctx.options?.apiBaseUrl,
+		},
 	);
 
-	const parsed = GetPageModulesResponseSchema.parse(response);
+	const filtered = (Array.isArray(response) ? response : []).filter(
+		(item) => !item.referenceName || item.referenceName.trim() === '',
+	);
+
+	const parsed = GetPageModulesResponseSchema.parse(filtered);
 
 	await logEventFromContext(
 		ctx,
@@ -188,6 +202,9 @@ export const getSitemapFlat = async (
 		ctx.key,
 		input.apiType,
 		`${input.locale}/sitemap/flat/${input.channelName}`,
+		{
+			apiBaseUrl: ctx.options?.apiBaseUrl,
+		},
 	);
 
 	const parsed = GetSitemapFlatResponseSchema.parse(response);
@@ -212,6 +229,7 @@ export const getLogs = async (
 		input.apiType,
 		`${input.locale}/sync/items`,
 		{
+			apiBaseUrl: ctx.options?.apiBaseUrl,
 			query: compactQuery({
 				syncToken: input.syncToken ?? '0',
 				pageSize: input.pageSize,
@@ -241,6 +259,7 @@ export const syncPages = async (
 		input.apiType,
 		`${input.locale}/sync/pages`,
 		{
+			apiBaseUrl: ctx.options?.apiBaseUrl,
 			query: compactQuery({
 				syncToken: input.syncToken ?? '0',
 				pageSize: input.pageSize,
@@ -264,12 +283,14 @@ export const getApiTypes = async (
 	ctx: AgilityCmsContext,
 	input: GetApiTypesInput,
 ): Promise<GetApiTypesResponse> => {
-	const instanceGuid = input.instanceGuid ?? 'types';
 	const response = await makeAgilityCmsRequest<GetApiTypesResponse>(
-		instanceGuid,
+		input.instanceGuid,
 		ctx.key,
 		input.apiType,
 		`${input.locale ?? 'en-us'}/types`,
+		{
+			apiBaseUrl: ctx.options?.apiBaseUrl,
+		},
 	);
 
 	const parsed = GetApiTypesResponseSchema.parse(response);
