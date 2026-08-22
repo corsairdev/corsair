@@ -24,6 +24,10 @@ export const ChatbotkitBot = z.object({
 	backstory: z.string().nullable().optional(),
 	/** AI model configured for the bot (e.g. gpt-4o, claude-3-5-sonnet). */
 	model: z.string().nullable().optional(),
+	/** Whether PII protection and anonymization is enabled. */
+	privacy: z.boolean().nullable().optional(),
+	/** Whether content safety and filtering is active. */
+	moderation: z.boolean().nullable().optional(),
 	/** Access visibility level: private, protected, or public. */
 	visibility: z.string().nullable().optional(),
 	/** Custom key-value metadata attached to the bot. */
@@ -166,3 +170,96 @@ export const ChatbotkitSecret = z.object({
 	updatedAt: z.coerce.date().nullable().optional(),
 });
 export type ChatbotkitSecret = z.infer<typeof ChatbotkitSecret>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ChatbotkitConversation
+// Verified against official ChatBotKit API: GET /v1/conversation/{conversationId}/fetch
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ChatbotkitConversation = z.object({
+	/** Unique identifier of the conversation session. */
+	id: z.string(),
+	/** Custom alias assigned to the conversation. */
+	alias: z.string().nullable().optional(),
+	/** Display name of the conversation session. */
+	name: z.string().nullable().optional(),
+	/** Brief summary of the conversation purpose. */
+	description: z.string().nullable().optional(),
+	/** Identifier of the associated bot. */
+	botId: z.string().nullable().optional(),
+	/** System instructions override for this conversation. */
+	backstory: z.string().nullable().optional(),
+	/** AI model override for this conversation. */
+	model: z.string().nullable().optional(),
+	/** Dataset ID override for this conversation. */
+	datasetId: z.string().nullable().optional(),
+	/** Skillset ID override for this conversation. */
+	skillsetId: z.string().nullable().optional(),
+	/** Identifier of the associated blueprint. */
+	blueprintId: z.string().nullable().optional(),
+	/** Access visibility level: private, protected, or public. */
+	visibility: z.string().nullable().optional(),
+	/** Custom key-value metadata attached to the conversation. */
+	meta: z.record(z.string(), z.unknown()).nullable().optional(),
+	/** Resource creation timestamp. */
+	createdAt: z.coerce.date().nullable().optional(),
+	/** Resource last updated timestamp. */
+	updatedAt: z.coerce.date().nullable().optional(),
+});
+export type ChatbotkitConversation = z.infer<typeof ChatbotkitConversation>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ChatbotkitFile
+// Verified against official ChatBotKit API: GET /v1/file/{fileId}/fetch
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ChatbotkitFile = z.object({
+	/** Unique identifier of the file resource. */
+	id: z.string(),
+	/** Original name of the uploaded file. */
+	name: z.string(),
+	/** Description of the file contents. */
+	description: z.string().nullable().optional(),
+	/** MIME type of the file. */
+	mimeType: z.string().nullable().optional(),
+	/** File size in bytes. */
+	size: z.number().nullable().optional(),
+	/** Access visibility level: private, protected, or public. */
+	visibility: z.string().nullable().optional(),
+	/** Custom key-value metadata attached to the file. */
+	meta: z.record(z.string(), z.unknown()).nullable().optional(),
+	/** Resource creation timestamp. */
+	createdAt: z.coerce.date().nullable().optional(),
+	/** Resource last updated timestamp. */
+	updatedAt: z.coerce.date().nullable().optional(),
+});
+export type ChatbotkitFile = z.infer<typeof ChatbotkitFile>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// ChatbotkitTask
+// Verified against official ChatBotKit API: GET /v1/task/{taskId}/fetch
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ChatbotkitTask = z.object({
+	/** Unique identifier of the task. */
+	id: z.string(),
+	/** Descriptive name of the task. */
+	name: z.string(),
+	/** Description of the background task operation. */
+	description: z.string().nullable().optional(),
+	/** Identifier of the bot executing this task. */
+	botId: z.string().nullable().optional(),
+	/** Cron schedule expression for automated execution. */
+	schedule: z.string().nullable().optional(),
+	/** Current task execution status. */
+	status: z.string().nullable().optional(),
+	/** Access visibility level: private, protected, or public. */
+	visibility: z.string().nullable().optional(),
+	/** Custom key-value metadata attached to the task. */
+	meta: z.record(z.string(), z.unknown()).nullable().optional(),
+	/** Resource creation timestamp. */
+	createdAt: z.coerce.date().nullable().optional(),
+	/** Resource last updated timestamp. */
+	updatedAt: z.coerce.date().nullable().optional(),
+});
+export type ChatbotkitTask = z.infer<typeof ChatbotkitTask>;

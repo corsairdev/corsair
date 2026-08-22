@@ -15,6 +15,9 @@ describe('Chatbotkit schema', () => {
 		expect(entityKeys).toContain('skillsets');
 		expect(entityKeys).toContain('blueprints');
 		expect(entityKeys).toContain('secrets');
+		expect(entityKeys).toContain('conversations');
+		expect(entityKeys).toContain('files');
+		expect(entityKeys).toContain('tasks');
 		for (const entity of Object.values(ChatbotkitSchema.entities)) {
 			expect(entity).toBeDefined();
 		}

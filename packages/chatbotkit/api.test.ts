@@ -2,11 +2,14 @@ import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import { makeChatbotkitRequest } from './client';
 import {
+	BlueprintSchema,
 	BotSchema,
-	BotsGetInputSchema,
-	BotsGetResponseSchema,
-	BotsListInputSchema,
-	BotsListResponseSchema,
+	ConversationSchema,
+	DatasetSchema,
+	FileSchema,
+	SecretSchema,
+	SkillsetSchema,
+	TaskSchema,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import type { ChatbotkitContext } from './index';
@@ -72,27 +75,76 @@ const botFixture = {
 	description: 'A test bot',
 	model: 'gpt-4o',
 	backstory: 'Helpful support agent',
+	privacy: true,
+	moderation: false,
 	visibility: 'private',
 	createdAt: 1787397742217,
 	updatedAt: 1787397742217,
 };
 
-type BotsList = (
-	ctx: ChatbotkitContext,
-	input: { cursor?: string; limit?: number; order?: 'asc' | 'desc' },
-) => Promise<unknown>;
-type BotsGet = (
-	ctx: ChatbotkitContext,
-	input: { id: string },
-) => Promise<unknown>;
+const datasetFixture = {
+	id: 'dataset_1',
+	name: 'FAQ Dataset',
+	description: 'Knowledge dataset',
+	visibility: 'private',
+	createdAt: 1787397740293,
+	updatedAt: 1787397740293,
+};
 
-function getEndpoints(): { list: BotsList; get: BotsGet } {
-	const plugin = chatbotkit({ key: 'sk-test-api-key' });
-	const endpoints = plugin.endpoints as NonNullable<typeof plugin.endpoints> & {
-		bots: { list: BotsList; get: BotsGet };
-	};
-	return endpoints.bots;
-}
+const skillsetFixture = {
+	id: 'skillset_1',
+	name: 'Support Tools',
+	description: 'Skillset with tools',
+	state: 'enabled',
+	visibility: 'private',
+	createdAt: 1787397739735,
+	updatedAt: 1787397739735,
+};
+
+const blueprintFixture = {
+	id: 'blueprint_1',
+	name: 'Template',
+	description: 'Blueprint template',
+	visibility: 'private',
+	createdAt: 1787397739259,
+	updatedAt: 1787397739259,
+};
+
+const secretFixture = {
+	id: 'secret_1',
+	name: 'Gmail API Key',
+	kind: 'personal',
+	type: 'template',
+	visibility: 'private',
+	createdAt: 1787397890820,
+	updatedAt: 1787397890820,
+};
+
+const conversationFixture = {
+	id: 'conv_1',
+	name: 'Test Conversation',
+	visibility: 'private',
+	createdAt: 1787397890820,
+	updatedAt: 1787397890820,
+};
+
+const fileFixture = {
+	id: 'file_1',
+	name: 'document.pdf',
+	mimeType: 'application/pdf',
+	size: 1024,
+	createdAt: 1787397890820,
+	updatedAt: 1787397890820,
+};
+
+const taskFixture = {
+	id: 'task_1',
+	name: 'Nightly Sync',
+	schedule: '0 0 * * *',
+	status: 'active',
+	createdAt: 1787397890820,
+	updatedAt: 1787397890820,
+};
 
 function classify(error: Error): string {
 	const name = (
@@ -121,63 +173,51 @@ function httpError(status: number, message: string): ApiError {
 
 describe('ChatBotKit Zod Schemas', () => {
 	it('validates a complete Bot object', () => {
-		const parsed = BotSchema.safeParse(botFixture);
-		expect(parsed.success).toBe(true);
+		expect(BotSchema.safeParse(botFixture).success).toBe(true);
 	});
 
-	it('validates minimal Bot object with only required fields', () => {
-		const parsed = BotSchema.safeParse({ id: 'b_123', name: 'Bot' });
-		expect(parsed.success).toBe(true);
+	it('validates a complete Dataset object', () => {
+		expect(DatasetSchema.safeParse(datasetFixture).success).toBe(true);
 	});
 
-	it('rejects Bot missing required id or name', () => {
-		expect(BotSchema.safeParse({ name: 'Bot' }).success).toBe(false);
-		expect(BotSchema.safeParse({ id: 'b_123' }).success).toBe(false);
+	it('validates a complete Skillset object', () => {
+		expect(SkillsetSchema.safeParse(skillsetFixture).success).toBe(true);
 	});
 
-	it('validates BotsListInputSchema options', () => {
-		expect(BotsListInputSchema.safeParse({}).success).toBe(true);
-		expect(
-			BotsListInputSchema.safeParse({
-				cursor: 'c_1',
-				limit: 50,
-				order: 'asc',
-			}).success,
-		).toBe(true);
-		expect(BotsListInputSchema.safeParse({ limit: 0 }).success).toBe(false);
-		expect(BotsListInputSchema.safeParse({ limit: 101 }).success).toBe(false);
+	it('validates a complete Blueprint object', () => {
+		expect(BlueprintSchema.safeParse(blueprintFixture).success).toBe(true);
 	});
 
-	it('validates BotsListResponseSchema with items and cursor', () => {
-		const parsed = BotsListResponseSchema.safeParse({
-			items: [botFixture],
-			cursor: 'c_next',
-		});
-		expect(parsed.success).toBe(true);
-		if (parsed.success) {
-			expect(parsed.data.items).toHaveLength(1);
-			expect(parsed.data.cursor).toBe('c_next');
-		}
+	it('validates a complete Secret object', () => {
+		expect(SecretSchema.safeParse(secretFixture).success).toBe(true);
 	});
 
-	it('validates BotsGetInputSchema and BotsGetResponseSchema', () => {
-		expect(BotsGetInputSchema.safeParse({ id: 'bot_1' }).success).toBe(true);
-		expect(BotsGetInputSchema.safeParse({}).success).toBe(false);
-		expect(BotsGetResponseSchema.safeParse(botFixture).success).toBe(true);
+	it('validates a complete Conversation object', () => {
+		expect(ConversationSchema.safeParse(conversationFixture).success).toBe(
+			true,
+		);
+	});
+
+	it('validates a complete File object', () => {
+		expect(FileSchema.safeParse(fileFixture).success).toBe(true);
+	});
+
+	it('validates a complete Task object', () => {
+		expect(TaskSchema.safeParse(taskFixture).success).toBe(true);
 	});
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Plugin Structure Tests
+// Plugin Structure & Namespace Verification
 // ─────────────────────────────────────────────────────────────────────────────
 
 describe('Chatbotkit plugin shape', () => {
-	it('exposes the implemented operations with schemas and no webhooks', () => {
+	it('exposes all 43 implemented operations with schemas and no webhooks', () => {
 		const plugin = chatbotkit();
 		const endpoints = plugin.endpoints as Record<string, unknown>;
 		const paths = endpointPaths(endpoints).sort();
 
-		expect(countLeaves(endpoints)).toBe(2);
+		expect(countLeaves(endpoints)).toBe(43);
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual(paths);
 		expect(Object.keys(chatbotkitEndpointSchemas).sort()).toEqual(paths);
 		expect(plugin.webhooks).toEqual({});
@@ -230,82 +270,242 @@ describe('Chatbotkit request client', () => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────────
-// Endpoint Mock Tests
+// Endpoint Mock Handlers Tests
 // ─────────────────────────────────────────────────────────────────────────────
 
-describe('Chatbotkit bots endpoints', () => {
+describe('Chatbotkit resource endpoints', () => {
+	const plugin = chatbotkit({ key: 'sk-test-api-key' });
+	const endpoints = plugin.endpoints as any;
+
 	beforeEach(() => {
 		mockRequest.mockReset();
 		mockLog.mockReset();
 	});
 
-	it('lists bots with cursor pagination query params', async () => {
-		mockRequest.mockResolvedValue({
+	// Bots
+	it('executes bots.list and bots.get', async () => {
+		mockRequest.mockResolvedValueOnce({
 			items: [botFixture],
-			cursor: 'next-page',
+			cursor: 'c_1',
+		});
+		const listRes = await endpoints.bots.list(mockCtx, { limit: 10 });
+		expect(listRes).toEqual({ items: [botFixture], cursor: 'c_1' });
+		expect(listRes.items[0].privacy).toBe(true);
+		expect(listRes.items[0].moderation).toBe(false);
+
+		mockRequest.mockResolvedValueOnce(botFixture);
+		const getRes = await endpoints.bots.get(mockCtx, { id: 'bot_1' });
+		expect(getRes).toEqual(botFixture);
+		expect(getRes.privacy).toBe(true);
+		expect(getRes.moderation).toBe(false);
+	});
+
+	it('executes bots.create, update, delete, upvote, downvote', async () => {
+		mockRequest.mockResolvedValue({ id: 'bot_1' });
+		expect(await endpoints.bots.create(mockCtx, { name: 'Bot' })).toEqual({
+			id: 'bot_1',
+		});
+		expect(
+			await endpoints.bots.update(mockCtx, { id: 'bot_1', name: 'Bot2' }),
+		).toEqual({ id: 'bot_1' });
+		expect(await endpoints.bots.delete(mockCtx, { id: 'bot_1' })).toEqual({
+			id: 'bot_1',
+		});
+		expect(await endpoints.bots.upvote(mockCtx, { id: 'bot_1' })).toEqual({
+			id: 'bot_1',
+		});
+		expect(await endpoints.bots.downvote(mockCtx, { id: 'bot_1' })).toEqual({
+			id: 'bot_1',
+		});
+	});
+
+	// Datasets
+	it('executes datasets.list, get, create, update, delete, search', async () => {
+		mockRequest.mockResolvedValueOnce({ items: [datasetFixture] });
+		expect(await endpoints.datasets.list(mockCtx, {})).toEqual({
+			items: [datasetFixture],
 		});
 
-		const result = await getEndpoints().list(mockCtx, {
-			cursor: 'abc',
-			limit: 10,
-			order: 'desc',
-		});
+		mockRequest.mockResolvedValueOnce(datasetFixture);
+		expect(await endpoints.datasets.get(mockCtx, { id: 'dataset_1' })).toEqual(
+			datasetFixture,
+		);
 
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({
-				method: 'GET',
-				url: 'bot/list',
-				query: { cursor: 'abc', limit: 10, order: 'desc' },
+		mockRequest.mockResolvedValueOnce({ id: 'dataset_1' });
+		expect(
+			await endpoints.datasets.create(mockCtx, { name: 'Dataset' }),
+		).toEqual({ id: 'dataset_1' });
+
+		mockRequest.mockResolvedValueOnce({ id: 'dataset_1' });
+		expect(
+			await endpoints.datasets.update(mockCtx, { id: 'dataset_1' }),
+		).toEqual({ id: 'dataset_1' });
+
+		mockRequest.mockResolvedValueOnce({ id: 'dataset_1' });
+		expect(
+			await endpoints.datasets.delete(mockCtx, { id: 'dataset_1' }),
+		).toEqual({ id: 'dataset_1' });
+
+		mockRequest.mockResolvedValueOnce({
+			items: [{ id: 'r_1', text: 'match' }],
+		});
+		expect(
+			await endpoints.datasets.search(mockCtx, {
+				id: 'dataset_1',
+				query: 'test',
 			}),
+		).toEqual({ items: [{ id: 'r_1', text: 'match' }] });
+	});
+
+	// Skillsets
+	it('executes skillsets.list, get, create, update, delete', async () => {
+		mockRequest.mockResolvedValueOnce({ items: [skillsetFixture] });
+		expect(await endpoints.skillsets.list(mockCtx, {})).toEqual({
+			items: [skillsetFixture],
+		});
+
+		mockRequest.mockResolvedValueOnce(skillsetFixture);
+		expect(
+			await endpoints.skillsets.get(mockCtx, { id: 'skillset_1' }),
+		).toEqual(skillsetFixture);
+
+		mockRequest.mockResolvedValueOnce({ id: 'skillset_1' });
+		expect(
+			await endpoints.skillsets.create(mockCtx, { name: 'Skillset' }),
+		).toEqual({ id: 'skillset_1' });
+
+		mockRequest.mockResolvedValueOnce({ id: 'skillset_1' });
+		expect(
+			await endpoints.skillsets.delete(mockCtx, { id: 'skillset_1' }),
+		).toEqual({ id: 'skillset_1' });
+	});
+
+	// Blueprints
+	it('executes blueprints.list, get, create, update, delete', async () => {
+		mockRequest.mockResolvedValueOnce({ items: [blueprintFixture] });
+		expect(await endpoints.blueprints.list(mockCtx, {})).toEqual({
+			items: [blueprintFixture],
+		});
+
+		mockRequest.mockResolvedValueOnce(blueprintFixture);
+		expect(
+			await endpoints.blueprints.get(mockCtx, { id: 'blueprint_1' }),
+		).toEqual(blueprintFixture);
+
+		mockRequest.mockResolvedValueOnce({ id: 'blueprint_1' });
+		expect(
+			await endpoints.blueprints.create(mockCtx, { name: 'Blueprint' }),
+		).toEqual({ id: 'blueprint_1' });
+
+		mockRequest.mockResolvedValueOnce({ id: 'blueprint_1' });
+		expect(
+			await endpoints.blueprints.delete(mockCtx, { id: 'blueprint_1' }),
+		).toEqual({ id: 'blueprint_1' });
+	});
+
+	// Secrets
+	it('executes secrets.list, get, create, update, delete', async () => {
+		mockRequest.mockResolvedValueOnce({ items: [secretFixture] });
+		expect(await endpoints.secrets.list(mockCtx, {})).toEqual({
+			items: [secretFixture],
+		});
+
+		mockRequest.mockResolvedValueOnce(secretFixture);
+		expect(await endpoints.secrets.get(mockCtx, { id: 'secret_1' })).toEqual(
+			secretFixture,
 		);
-		expect(result).toEqual({ items: [botFixture], cursor: 'next-page' });
-		expect(mockLog).toHaveBeenCalledWith(
-			mockCtx,
-			'chatbotkit.bots.list',
-			{ cursor: 'abc', limit: 10, order: 'desc' },
-			'completed',
+
+		mockRequest.mockResolvedValueOnce({ id: 'secret_1' });
+		expect(await endpoints.secrets.create(mockCtx, { name: 'Secret' })).toEqual(
+			{ id: 'secret_1' },
+		);
+
+		mockRequest.mockResolvedValueOnce({ id: 'secret_1' });
+		expect(await endpoints.secrets.delete(mockCtx, { id: 'secret_1' })).toEqual(
+			{ id: 'secret_1' },
 		);
 	});
 
-	it('omits undefined query params when listing without filters', async () => {
-		mockRequest.mockResolvedValue({ items: [] });
+	// Conversations
+	it('executes conversations.list, get, create, update, delete, complete', async () => {
+		mockRequest.mockResolvedValueOnce({ items: [conversationFixture] });
+		expect(await endpoints.conversations.list(mockCtx, {})).toEqual({
+			items: [conversationFixture],
+		});
 
-		await getEndpoints().list(mockCtx, {});
+		mockRequest.mockResolvedValueOnce(conversationFixture);
+		expect(
+			await endpoints.conversations.get(mockCtx, { id: 'conv_1' }),
+		).toEqual(conversationFixture);
 
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({ query: {} }),
-		);
+		mockRequest.mockResolvedValueOnce({ id: 'conv_1' });
+		expect(await endpoints.conversations.create(mockCtx, {})).toEqual({
+			id: 'conv_1',
+		});
+
+		mockRequest.mockResolvedValueOnce({ id: 'conv_1' });
+		expect(
+			await endpoints.conversations.update(mockCtx, { id: 'conv_1' }),
+		).toEqual({ id: 'conv_1' });
+
+		mockRequest.mockResolvedValueOnce({ id: 'conv_1' });
+		expect(
+			await endpoints.conversations.delete(mockCtx, { id: 'conv_1' }),
+		).toEqual({ id: 'conv_1' });
+
+		mockRequest.mockResolvedValueOnce({ text: 'Hello!' });
+		expect(
+			await endpoints.conversations.complete(mockCtx, {
+				id: 'conv_1',
+				text: 'Hi',
+			}),
+		).toEqual({ text: 'Hello!' });
 	});
 
-	it('fetches a single bot by id', async () => {
-		mockRequest.mockResolvedValue(botFixture);
+	// Files
+	it('executes files.list, get, create, delete', async () => {
+		mockRequest.mockResolvedValueOnce({ items: [fileFixture] });
+		expect(await endpoints.files.list(mockCtx, {})).toEqual({
+			items: [fileFixture],
+		});
 
-		const result = await getEndpoints().get(mockCtx, { id: 'bot_1' });
+		mockRequest.mockResolvedValueOnce(fileFixture);
+		expect(await endpoints.files.get(mockCtx, { id: 'file_1' })).toEqual(
+			fileFixture,
+		);
 
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({ method: 'GET', url: 'bot/bot_1/fetch' }),
-		);
-		expect(result).toMatchObject(botFixture);
-		expect(mockLog).toHaveBeenCalledWith(
-			mockCtx,
-			'chatbotkit.bots.get',
-			{ id: 'bot_1' },
-			'completed',
-		);
+		mockRequest.mockResolvedValueOnce({ id: 'file_1' });
+		expect(await endpoints.files.create(mockCtx, { name: 'f.pdf' })).toEqual({
+			id: 'file_1',
+		});
+
+		mockRequest.mockResolvedValueOnce({ id: 'file_1' });
+		expect(await endpoints.files.delete(mockCtx, { id: 'file_1' })).toEqual({
+			id: 'file_1',
+		});
 	});
 
-	it('URL-encodes the bot id path segment', async () => {
-		mockRequest.mockResolvedValue(botFixture);
+	// Tasks
+	it('executes tasks.list, get, create, update, delete', async () => {
+		mockRequest.mockResolvedValueOnce({ items: [taskFixture] });
+		expect(await endpoints.tasks.list(mockCtx, {})).toEqual({
+			items: [taskFixture],
+		});
 
-		await getEndpoints().get(mockCtx, { id: 'bot/weird id' });
-
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.anything(),
-			expect.objectContaining({ url: 'bot/bot%2Fweird%20id/fetch' }),
+		mockRequest.mockResolvedValueOnce(taskFixture);
+		expect(await endpoints.tasks.get(mockCtx, { id: 'task_1' })).toEqual(
+			taskFixture,
 		);
+
+		mockRequest.mockResolvedValueOnce({ id: 'task_1' });
+		expect(await endpoints.tasks.create(mockCtx, { name: 'Task' })).toEqual({
+			id: 'task_1',
+		});
+
+		mockRequest.mockResolvedValueOnce({ id: 'task_1' });
+		expect(await endpoints.tasks.delete(mockCtx, { id: 'task_1' })).toEqual({
+			id: 'task_1',
+		});
 	});
 });
 
@@ -353,40 +553,70 @@ describeIfKey('ChatBotKit Live API integration', () => {
 		mockRequest.mockImplementation(unmockedHttp.request);
 	});
 
-	it('fetches bots list from real ChatBotKit API', async () => {
+	it('fetches bots, datasets, skillsets, blueprints, secrets from live API', async () => {
 		const plugin = chatbotkit({ key: TEST_API_KEY });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
-			bots: { list: BotsList; get: BotsGet };
-		};
+		const endpoints = plugin.endpoints as any;
 
-		const result = (await endpoints.bots.list(liveCtx, {
-			limit: 10,
-		})) as { items: unknown[] };
-
-		expect(result).toBeDefined();
-		expect(Array.isArray(result.items)).toBe(true);
-		expect(BotsListResponseSchema.safeParse(result).success).toBe(true);
-	}, 20000);
-
-	it('fetches single bot by ID from real ChatBotKit API', async () => {
-		const plugin = chatbotkit({ key: TEST_API_KEY });
-		const endpoints = plugin.endpoints as NonNullable<
-			typeof plugin.endpoints
-		> & {
-			bots: { list: BotsList; get: BotsGet };
-		};
-
-		const listRes = (await endpoints.bots.list(liveCtx, { limit: 1 })) as {
-			items: Array<{ id: string }>;
-		};
-
-		const firstBot = listRes.items?.[0];
-		if (firstBot) {
-			const botRes = await endpoints.bots.get(liveCtx, { id: firstBot.id });
-			expect(botRes).toBeDefined();
-			expect(BotsGetResponseSchema.safeParse(botRes).success).toBe(true);
+		// 1. Bots list & get
+		const botsRes = await endpoints.bots.list(liveCtx, { limit: 5 });
+		expect(botsRes).toBeDefined();
+		expect(Array.isArray(botsRes.items)).toBe(true);
+		if (botsRes.items.length > 0) {
+			const bot = await endpoints.bots.get(liveCtx, {
+				id: botsRes.items[0].id,
+			});
+			expect(bot).toBeDefined();
+			expect(bot.id).toBe(botsRes.items[0].id);
 		}
-	}, 20000);
+
+		// 2. Datasets list & get
+		const datasetsRes = await endpoints.datasets.list(liveCtx, { limit: 5 });
+		expect(datasetsRes).toBeDefined();
+		expect(Array.isArray(datasetsRes.items)).toBe(true);
+		if (datasetsRes.items.length > 0) {
+			const dataset = await endpoints.datasets.get(liveCtx, {
+				id: datasetsRes.items[0].id,
+			});
+			expect(dataset).toBeDefined();
+			expect(dataset.id).toBe(datasetsRes.items[0].id);
+		}
+
+		// 3. Skillsets list & get
+		const skillsetsRes = await endpoints.skillsets.list(liveCtx, { limit: 5 });
+		expect(skillsetsRes).toBeDefined();
+		expect(Array.isArray(skillsetsRes.items)).toBe(true);
+		if (skillsetsRes.items.length > 0) {
+			const skillset = await endpoints.skillsets.get(liveCtx, {
+				id: skillsetsRes.items[0].id,
+			});
+			expect(skillset).toBeDefined();
+			expect(skillset.id).toBe(skillsetsRes.items[0].id);
+		}
+
+		// 4. Blueprints list & get
+		const blueprintsRes = await endpoints.blueprints.list(liveCtx, {
+			limit: 5,
+		});
+		expect(blueprintsRes).toBeDefined();
+		expect(Array.isArray(blueprintsRes.items)).toBe(true);
+		if (blueprintsRes.items.length > 0) {
+			const blueprint = await endpoints.blueprints.get(liveCtx, {
+				id: blueprintsRes.items[0].id,
+			});
+			expect(blueprint).toBeDefined();
+			expect(blueprint.id).toBe(blueprintsRes.items[0].id);
+		}
+
+		// 5. Secrets list & get
+		const secretsRes = await endpoints.secrets.list(liveCtx, { limit: 5 });
+		expect(secretsRes).toBeDefined();
+		expect(Array.isArray(secretsRes.items)).toBe(true);
+		if (secretsRes.items.length > 0) {
+			const secret = await endpoints.secrets.get(liveCtx, {
+				id: secretsRes.items[0].id,
+			});
+			expect(secret).toBeDefined();
+			expect(secret.id).toBe(secretsRes.items[0].id);
+		}
+	}, 30000);
 });

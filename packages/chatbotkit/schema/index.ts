@@ -1,9 +1,12 @@
 import {
 	ChatbotkitBlueprint,
 	ChatbotkitBot,
+	ChatbotkitConversation,
 	ChatbotkitDataset,
+	ChatbotkitFile,
 	ChatbotkitSecret,
 	ChatbotkitSkillset,
+	ChatbotkitTask,
 } from './database';
 
 export const ChatbotkitSchema = {
@@ -14,5 +17,8 @@ export const ChatbotkitSchema = {
 		skillsets: ChatbotkitSkillset,
 		blueprints: ChatbotkitBlueprint,
 		secrets: ChatbotkitSecret,
+		conversations: ChatbotkitConversation,
+		files: ChatbotkitFile,
+		tasks: ChatbotkitTask,
 	},
 } as const;
