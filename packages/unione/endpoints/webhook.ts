@@ -5,6 +5,33 @@ import { maybeUpsert } from '../db';
 import type { UnioneEndpointOutputs } from './types';
 import { EMAIL_STATUS_TYPES } from './types';
 
+type WebhookRow = {
+	url?: string;
+	status?: string;
+	event_format?: string;
+	delivery_info?: number;
+	single_event?: number;
+	max_parallel?: number;
+	updated_at?: string;
+	events?: { email_status?: string[]; spam_block?: string[] };
+};
+
+/** UniOne keys webhooks by URL, so the mirror does too. */
+function webhookRow(object: WebhookRow | undefined, fallbackUrl?: string) {
+	const url = object?.url ?? fallbackUrl;
+	if (!url) return undefined;
+	return {
+		url,
+		status: object?.status,
+		event_format: object?.event_format,
+		delivery_info: object?.delivery_info,
+		single_event: object?.single_event,
+		max_parallel: object?.max_parallel,
+		events: object?.events,
+		updated_at: object?.updated_at,
+	};
+}
+
 export const set: UnioneEndpoints['webhook']['set'] = async (ctx, input) => {
 	const response = await makeUnioneRequest<UnioneEndpointOutputs['webhookSet']>(
 		'webhook/set.json',
@@ -12,15 +39,8 @@ export const set: UnioneEndpoints['webhook']['set'] = async (ctx, input) => {
 		{ body: { ...input } },
 	);
 
-	const object = response.object;
-	if (object?.id !== undefined) {
-		await maybeUpsert(ctx.db.webhooks, object.id, {
-			id: object.id,
-			url: object.url ?? input.url,
-			status: object.status,
-			events: object.events,
-		});
-	}
+	const row = webhookRow(response.object, input.url);
+	if (row) await maybeUpsert(ctx.db.webhooks, row.url, row);
 	await logEventFromContext(
 		ctx,
 		'unione.webhook.set',
@@ -37,21 +57,27 @@ export const get: UnioneEndpoints['webhook']['get'] = async (ctx, input) => {
 		{ body: { url: input.url } },
 	);
 
-	const object = response.object;
-	if (object?.id !== undefined) {
-		await maybeUpsert(ctx.db.webhooks, object.id, {
-			id: object.id,
-			url: object.url ?? input.url,
-			status: object.status,
-			events: object.events,
-		});
-	}
+	const row = webhookRow(response.object, input.url);
+	if (row) await maybeUpsert(ctx.db.webhooks, row.url, row);
 	await logEventFromContext(
 		ctx,
 		'unione.webhook.get',
 		{ ...input },
 		'completed',
 	);
+	return response;
+};
+
+export const list: UnioneEndpoints['webhook']['list'] = async (ctx) => {
+	const response = await makeUnioneRequest<
+		UnioneEndpointOutputs['webhookList']
+	>('webhook/list.json', ctx.key, { body: {} });
+
+	for (const object of response.objects ?? []) {
+		const row = webhookRow(object);
+		if (row) await maybeUpsert(ctx.db.webhooks, row.url, row);
+	}
+	await logEventFromContext(ctx, 'unione.webhook.list', {}, 'completed');
 	return response;
 };
 
@@ -72,6 +98,10 @@ export const remove: UnioneEndpoints['webhook']['delete'] = async (
 	return response;
 };
 
+/**
+ * The event names UniOne accepts in `webhook.set`. UniOne publishes no method
+ * for these, so the list is local and mirrors the callback-format docs.
+ */
 export const types: UnioneEndpoints['webhook']['types'] = async (ctx) => {
 	const response: UnioneEndpointOutputs['webhookTypes'] = {
 		email_status: [...EMAIL_STATUS_TYPES],

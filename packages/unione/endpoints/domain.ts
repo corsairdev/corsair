@@ -34,7 +34,9 @@ export const manage: UnioneEndpoints['domain']['manage'] = async (
 			await maybeUpsert(ctx.db.domains, domain.domain, {
 				domain: domain.domain,
 				verification_status: domain['verification-record']?.status,
+				verification_value: domain['verification-record']?.value,
 				dkim_status: domain.dkim?.status,
+				dkim_key: domain.dkim?.key,
 			});
 		}
 	} else if (input.domain) {

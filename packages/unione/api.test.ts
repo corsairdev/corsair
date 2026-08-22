@@ -2,21 +2,17 @@ import { logEventFromContext } from 'corsair/core';
 import { makeUnioneRequest, UnioneAPIError } from './client';
 import { manage as domainManage } from './endpoints/domain';
 import {
-	cancel,
-	eventGet,
-	get,
 	list,
-	resend,
-	resume,
 	schedule,
-	smtp,
+	send,
 	statistics,
 	subscribe,
 	unsubscribe,
 } from './endpoints/email';
-import { batch, retry } from './endpoints/email-validation';
+import { batch } from './endpoints/email-validation';
 import {
 	create as eventDumpCreate,
+	createForJob as eventDumpCreateForJob,
 	remove as eventDumpDelete,
 	get as eventDumpGet,
 	list as eventDumpList,
@@ -26,7 +22,7 @@ import {
 	get as suppressionGet,
 	list as suppressionList,
 } from './endpoints/suppression';
-import { info } from './endpoints/system';
+import { info, ping } from './endpoints/system';
 import { remove as tagDelete, list as tagList } from './endpoints/tag';
 import {
 	remove as templateDelete,
@@ -37,6 +33,7 @@ import {
 import {
 	remove as webhookDelete,
 	get as webhookGet,
+	list as webhookList,
 	set as webhookSet,
 	types as webhookTypes,
 } from './endpoints/webhook';
@@ -97,8 +94,8 @@ describe('Unione endpoints', () => {
 		);
 	});
 
-	it('gets a send job by creating an event dump filtered by job_id', async () => {
-		await get(makeCtx(), { job_id: '1ZymBc-00041N-9X' });
+	it('exports one job by creating an event dump filtered by job_id', async () => {
+		await eventDumpCreateForJob(makeCtx(), { job_id: '1ZymBc-00041N-9X' });
 		expect(mockRequest.mock.calls[0]?.[0]).toBe('event-dump/create.json');
 		expect(mockRequest.mock.calls[0]?.[2]?.body).toEqual(
 			expect.objectContaining({
@@ -107,8 +104,8 @@ describe('Unione endpoints', () => {
 		);
 	});
 
-	it('gets an email event via event-dump/create.json', async () => {
-		await eventGet(makeCtx(), {
+	it('carries email and status into the job dump filter', async () => {
+		await eventDumpCreateForJob(makeCtx(), {
 			job_id: 'job-1',
 			email: 'user@example.com',
 			status: 'delivered',
@@ -125,19 +122,6 @@ describe('Unione endpoints', () => {
 		);
 	});
 
-	it('throws for cancel, resume, and resend', async () => {
-		await expect(cancel(makeCtx(), { job_id: 'j1' })).rejects.toBeInstanceOf(
-			UnioneAPIError,
-		);
-		await expect(resume(makeCtx(), { job_id: 'j1' })).rejects.toBeInstanceOf(
-			UnioneAPIError,
-		);
-		await expect(resend(makeCtx(), { job_id: 'j1' })).rejects.toBeInstanceOf(
-			UnioneAPIError,
-		);
-		expect(mockRequest).not.toHaveBeenCalled();
-	});
-
 	it('exports events via event-dump/create.json', async () => {
 		await list(makeCtx(), { start_time: '2026-01-01 00:00:00' });
 		expect(mockRequest.mock.calls[0]?.[0]).toBe('event-dump/create.json');
@@ -148,18 +132,6 @@ describe('Unione endpoints', () => {
 		expect(mockRequest.mock.calls[0]?.[2]?.body).toEqual(
 			expect.objectContaining({ aggregate: 'day_status' }),
 		);
-	});
-
-	it('returns SMTP settings from system/info.json without echoing the API key', async () => {
-		mockRequest.mockResolvedValueOnce({
-			status: 'success',
-			user_id: 11344,
-			email: 'acct@example.com',
-		});
-		const response = await smtp(makeCtx(), { region: 'us1' });
-		expect(mockRequest.mock.calls[0]?.[0]).toBe('system/info.json');
-		expect(response.hosts).toEqual(['smtp.us1.unione.io']);
-		expect(JSON.stringify(response)).not.toContain('test-key');
 	});
 
 	it('resubscribes via email/subscribe.json', async () => {
@@ -201,9 +173,19 @@ describe('Unione endpoints', () => {
 		expect(mockRequest.mock.calls[0]?.[0]).toBe('email-validation/single.json');
 	});
 
-	it('retries validation via email-validation/single.json', async () => {
-		await retry(makeCtx(), { email: 'user@example.com' });
-		expect(mockRequest.mock.calls[0]?.[0]).toBe('email-validation/single.json');
+	it('records a failed address instead of failing the whole batch', async () => {
+		mockRequest
+			.mockResolvedValueOnce({ status: 'success', email: 'a@example.com' })
+			.mockRejectedValueOnce(new UnioneAPIError('rate limited', 429))
+			.mockResolvedValueOnce({ status: 'success', email: 'c@example.com' });
+		const response = await batch(makeCtx(), {
+			emails: ['a@example.com', 'b@example.com', 'c@example.com'],
+		});
+		expect(response.status).toBe('partial');
+		expect(response.results).toHaveLength(3);
+		expect(response.results[1]).toEqual(
+			expect.objectContaining({ status: 'error', email: 'b@example.com' }),
+		);
 	});
 
 	it('creates, gets, lists, and deletes event dumps', async () => {
@@ -290,5 +272,58 @@ describe('Unione endpoints', () => {
 		await info(makeCtx(), {});
 		expect(mockRequest.mock.calls[0]?.[0]).toBe('system/info.json');
 		expect(mockLogEvent).toHaveBeenCalled();
+	});
+
+	it('pings via system/ping.json', async () => {
+		await ping(makeCtx(), {});
+		expect(mockRequest.mock.calls[0]?.[0]).toBe('system/ping.json');
+	});
+
+	it('sends immediately via email/send.json with no send_at', async () => {
+		await send(makeCtx(), {
+			recipients: [{ email: 'user@example.com' }],
+			from_email: 'from@example.com',
+			subject: 'Hello',
+			body: { plaintext: 'Hi' },
+		});
+		const body = mockRequest.mock.calls[0]?.[2]?.body as {
+			message: Record<string, unknown>;
+		};
+		expect(mockRequest.mock.calls[0]?.[0]).toBe('email/send.json');
+		expect(body.message).not.toHaveProperty('options');
+	});
+
+	it('rejects a message carrying neither body nor template_id', async () => {
+		await expect(
+			send(makeCtx(), {
+				recipients: [{ email: 'user@example.com' }],
+				from_email: 'from@example.com',
+				subject: 'Hello',
+			}),
+		).rejects.toBeInstanceOf(UnioneAPIError);
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
+	it('lists webhooks and mirrors them keyed by url, not id', async () => {
+		const upsertByEntityId = jest.fn().mockResolvedValue(undefined);
+		mockRequest.mockResolvedValueOnce({
+			status: 'success',
+			objects: [{ url: 'https://example.com/hook', status: 'active' }],
+		});
+		const ctx = {
+			key: 'test-key',
+			options: {},
+			db: { webhooks: { upsertByEntityId } },
+		} as unknown as UnioneContext;
+
+		await webhookList(ctx, {});
+		expect(mockRequest.mock.calls[0]?.[0]).toBe('webhook/list.json');
+		expect(upsertByEntityId).toHaveBeenCalledWith(
+			'https://example.com/hook',
+			expect.objectContaining({
+				url: 'https://example.com/hook',
+				status: 'active',
+			}),
+		);
 	});
 });

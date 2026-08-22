@@ -46,9 +46,6 @@ export class UnioneAPIError extends Error {
 
 export const UNIONE_API_BASE = 'https://api.unione.io/en/transactional/api/v1';
 
-export const UNSUPPORTED_JOB_CONTROL_MESSAGE =
-	'UniOne Web API does not support cancel, resume, or resend of a send job by job_id. Use event-dump methods to inspect delivery, or email/send to send a new message.';
-
 export function compactBody(
 	body: Record<string, unknown> | undefined,
 ): Record<string, unknown> {
@@ -67,8 +64,10 @@ export type UnioneRequestOptions = {
 /**
  * Performs a request to the UniOne transactional Web API.
  *
- * All methods are HTTPS POST JSON. Auth: `X-API-KEY` (official) plus
- * `Authorization: Bearer` via Corsair TOKEN (OpenAPI client).
+ * All methods are HTTPS POST JSON. UniOne authenticates with the `X-API-KEY`
+ * header and documents no bearer scheme, so the key is sent once, in that
+ * header only - `TOKEN` is deliberately unset to keep the credential off the
+ * `Authorization` header, where UniOne would ignore it anyway.
  */
 export async function makeUnioneRequest<T>(
 	endpoint: string,
@@ -82,7 +81,6 @@ export async function makeUnioneRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			Accept: 'application/json',
 			'Content-Type': 'application/json',

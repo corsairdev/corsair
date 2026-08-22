@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { UnioneEndpoints } from '..';
 import { makeUnioneRequest } from '../client';
 import { maybeUpsert } from '../db';
+import { defaultEventDumpStartTime } from './time';
 import type { UnioneEndpointOutputs } from './types';
 
 export const create: UnioneEndpoints['eventDump']['create'] = async (
@@ -12,9 +13,10 @@ export const create: UnioneEndpoints['eventDump']['create'] = async (
 		UnioneEndpointOutputs['eventDumpCreate']
 	>('event-dump/create.json', ctx.key, { body: { ...input } });
 
+	// `event-dump/create` returns only dump_id; the status is unknown until
+	// event-dump/get reports it, so no status is recorded here.
 	await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
 		dump_id: response.dump_id ?? '',
-		dump_status: 'queued',
 	});
 	await logEventFromContext(
 		ctx,
@@ -24,6 +26,39 @@ export const create: UnioneEndpoints['eventDump']['create'] = async (
 	);
 	return response;
 };
+
+/**
+ * UniOne has no "fetch this send job" method. Delivery history for a job_id is
+ * reachable only by exporting the matching events, so this creates a filtered
+ * dump and returns its dump_id for the caller to poll with `get`.
+ */
+export const createForJob: UnioneEndpoints['eventDump']['createForJob'] =
+	async (ctx, input) => {
+		const filter: Record<string, string> = { job_id: input.job_id };
+		if (input.email) filter.email = input.email;
+		if (input.status) filter.status = input.status;
+
+		const response = await makeUnioneRequest<
+			UnioneEndpointOutputs['eventDumpCreateForJob']
+		>('event-dump/create.json', ctx.key, {
+			body: {
+				start_time: input.start_time ?? defaultEventDumpStartTime(),
+				end_time: input.end_time,
+				filter,
+			},
+		});
+
+		await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
+			dump_id: response.dump_id ?? '',
+		});
+		await logEventFromContext(
+			ctx,
+			'unione.eventDump.createForJob',
+			{ ...input },
+			'completed',
+		);
+		return response;
+	};
 
 export const get: UnioneEndpoints['eventDump']['get'] = async (ctx, input) => {
 	const response = await makeUnioneRequest<

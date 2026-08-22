@@ -76,24 +76,19 @@ type UnioneEndpoint<K extends keyof UnioneEndpointOutputs> = CorsairEndpoint<
 
 export type UnioneEndpoints = {
 	email: {
+		send: UnioneEndpoint<'emailSend'>;
 		schedule: UnioneEndpoint<'emailSchedule'>;
-		get: UnioneEndpoint<'emailGet'>;
-		eventGet: UnioneEndpoint<'emailEventGet'>;
-		cancel: UnioneEndpoint<'emailCancel'>;
-		resume: UnioneEndpoint<'emailResume'>;
-		resend: UnioneEndpoint<'emailResend'>;
 		list: UnioneEndpoint<'emailList'>;
 		statistics: UnioneEndpoint<'emailStatistics'>;
-		smtp: UnioneEndpoint<'emailSmtp'>;
 		subscribe: UnioneEndpoint<'emailSubscribe'>;
 		unsubscribe: UnioneEndpoint<'emailUnsubscribe'>;
 	};
 	emailValidation: {
 		batch: UnioneEndpoint<'emailValidateBatch'>;
-		retry: UnioneEndpoint<'emailValidateRetry'>;
 	};
 	eventDump: {
 		create: UnioneEndpoint<'eventDumpCreate'>;
+		createForJob: UnioneEndpoint<'eventDumpCreateForJob'>;
 		get: UnioneEndpoint<'eventDumpGet'>;
 		list: UnioneEndpoint<'eventDumpList'>;
 		delete: UnioneEndpoint<'eventDumpDelete'>;
@@ -111,6 +106,7 @@ export type UnioneEndpoints = {
 	webhook: {
 		set: UnioneEndpoint<'webhookSet'>;
 		get: UnioneEndpoint<'webhookGet'>;
+		list: UnioneEndpoint<'webhookList'>;
 		delete: UnioneEndpoint<'webhookDelete'>;
 		types: UnioneEndpoint<'webhookTypes'>;
 	};
@@ -124,6 +120,7 @@ export type UnioneEndpoints = {
 	};
 	system: {
 		info: UnioneEndpoint<'systemInfo'>;
+		ping: UnioneEndpoint<'systemPing'>;
 	};
 };
 
@@ -141,24 +138,19 @@ export type UnioneBoundWebhooks = BindWebhooks<UnioneWebhooks>;
 
 const unioneEndpointsNested = {
 	email: {
+		send: Email.send,
 		schedule: Email.schedule,
-		get: Email.get,
-		eventGet: Email.eventGet,
-		cancel: Email.cancel,
-		resume: Email.resume,
-		resend: Email.resend,
 		list: Email.list,
 		statistics: Email.statistics,
-		smtp: Email.smtp,
 		subscribe: Email.subscribe,
 		unsubscribe: Email.unsubscribe,
 	},
 	emailValidation: {
 		batch: EmailValidation.batch,
-		retry: EmailValidation.retry,
 	},
 	eventDump: {
 		create: EventDump.create,
+		createForJob: EventDump.createForJob,
 		get: EventDump.get,
 		list: EventDump.list,
 		delete: EventDump.delete,
@@ -176,6 +168,7 @@ const unioneEndpointsNested = {
 	webhook: {
 		set: Webhook.set,
 		get: Webhook.get,
+		list: Webhook.list,
 		delete: Webhook.delete,
 		types: Webhook.types,
 	},
@@ -189,6 +182,7 @@ const unioneEndpointsNested = {
 	},
 	system: {
 		info: System.info,
+		ping: System.ping,
 	},
 } as const;
 
@@ -198,29 +192,13 @@ const unioneWebhooksNested = {
 } as const;
 
 export const unioneEndpointSchemas = {
+	'email.send': {
+		input: UnioneEndpointInputSchemas.emailSend,
+		output: UnioneEndpointOutputSchemas.emailSend,
+	},
 	'email.schedule': {
 		input: UnioneEndpointInputSchemas.emailSchedule,
 		output: UnioneEndpointOutputSchemas.emailSchedule,
-	},
-	'email.get': {
-		input: UnioneEndpointInputSchemas.emailGet,
-		output: UnioneEndpointOutputSchemas.emailGet,
-	},
-	'email.eventGet': {
-		input: UnioneEndpointInputSchemas.emailEventGet,
-		output: UnioneEndpointOutputSchemas.emailEventGet,
-	},
-	'email.cancel': {
-		input: UnioneEndpointInputSchemas.emailCancel,
-		output: UnioneEndpointOutputSchemas.emailCancel,
-	},
-	'email.resume': {
-		input: UnioneEndpointInputSchemas.emailResume,
-		output: UnioneEndpointOutputSchemas.emailResume,
-	},
-	'email.resend': {
-		input: UnioneEndpointInputSchemas.emailResend,
-		output: UnioneEndpointOutputSchemas.emailResend,
 	},
 	'email.list': {
 		input: UnioneEndpointInputSchemas.emailList,
@@ -229,10 +207,6 @@ export const unioneEndpointSchemas = {
 	'email.statistics': {
 		input: UnioneEndpointInputSchemas.emailStatistics,
 		output: UnioneEndpointOutputSchemas.emailStatistics,
-	},
-	'email.smtp': {
-		input: UnioneEndpointInputSchemas.emailSmtp,
-		output: UnioneEndpointOutputSchemas.emailSmtp,
 	},
 	'email.subscribe': {
 		input: UnioneEndpointInputSchemas.emailSubscribe,
@@ -246,13 +220,13 @@ export const unioneEndpointSchemas = {
 		input: UnioneEndpointInputSchemas.emailValidateBatch,
 		output: UnioneEndpointOutputSchemas.emailValidateBatch,
 	},
-	'emailValidation.retry': {
-		input: UnioneEndpointInputSchemas.emailValidateRetry,
-		output: UnioneEndpointOutputSchemas.emailValidateRetry,
-	},
 	'eventDump.create': {
 		input: UnioneEndpointInputSchemas.eventDumpCreate,
 		output: UnioneEndpointOutputSchemas.eventDumpCreate,
+	},
+	'eventDump.createForJob': {
+		input: UnioneEndpointInputSchemas.eventDumpCreateForJob,
+		output: UnioneEndpointOutputSchemas.eventDumpCreateForJob,
 	},
 	'eventDump.get': {
 		input: UnioneEndpointInputSchemas.eventDumpGet,
@@ -298,6 +272,10 @@ export const unioneEndpointSchemas = {
 		input: UnioneEndpointInputSchemas.webhookGet,
 		output: UnioneEndpointOutputSchemas.webhookGet,
 	},
+	'webhook.list': {
+		input: UnioneEndpointInputSchemas.webhookList,
+		output: UnioneEndpointOutputSchemas.webhookList,
+	},
 	'webhook.delete': {
 		input: UnioneEndpointInputSchemas.webhookDelete,
 		output: UnioneEndpointOutputSchemas.webhookDelete,
@@ -326,6 +304,10 @@ export const unioneEndpointSchemas = {
 		input: UnioneEndpointInputSchemas.systemInfo,
 		output: UnioneEndpointOutputSchemas.systemInfo,
 	},
+	'system.ping': {
+		input: UnioneEndpointInputSchemas.systemPing,
+		output: UnioneEndpointOutputSchemas.systemPing,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof unioneEndpointsNested
 >;
@@ -346,50 +328,25 @@ const unioneWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const unioneEndpointMeta = {
+	'email.send': {
+		riskLevel: 'write',
+		description:
+			'Tool to send a transactional email immediately. Requires recipients, from_email, subject, and either a body or a template_id.',
+	},
 	'email.schedule': {
 		riskLevel: 'write',
 		description:
-			'Tool to schedule a transactional email up to 24 hours ahead. Use when you need to send an email at a specific future time.',
-	},
-	'email.get': {
-		riskLevel: 'read',
-		description:
-			'Tool to retrieve detailed information about a specific email send job. Use when you need its delivery metrics and history.',
-	},
-	'email.eventGet': {
-		riskLevel: 'read',
-		description:
-			'Tool to retrieve details of a specific email event by its ID. Use when you need event information for auditing or diagnostics.',
-	},
-	'email.cancel': {
-		riskLevel: 'destructive',
-		description:
-			'Tool to cancel a scheduled transactional email by its job ID. Use when you need to stop a pending email send before it is dispatched.',
-	},
-	'email.resume': {
-		riskLevel: 'write',
-		description:
-			'Tool to resume a paused transactional email by its job ID. Use when you need to restart a paused pending email send.',
-	},
-	'email.resend': {
-		riskLevel: 'write',
-		description:
-			'Tool to resend a previously sent email by its job ID. Use when you need to trigger a resend of an email that has already been sent and you have the original job ID.',
+			'Tool to send a transactional email at a future time, at most 24 hours ahead. Same as email.send plus a send_at timestamp.',
 	},
 	'email.list': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
-			'Tool to export email events within a specified time frame. It creates an asynchronous event dump which can later be downloaded and parsed using eventDump.get.',
+			'Tool to start an export of email events in a time range. Creates an asynchronous event dump and returns a dump_id; poll eventDump.get for the download URLs. It does not return events directly.',
 	},
 	'email.statistics': {
-		riskLevel: 'read',
+		riskLevel: 'write',
 		description:
-			'Tool to retrieve email sending statistics over a specified time range. This action uses UniOne event-dump aggregate API under the hood to compute daily statistics.',
-	},
-	'email.smtp': {
-		riskLevel: 'read',
-		description:
-			'Tool to retrieve SMTP server details and credentials. Use when you need to configure your mail client or library for SMTP sending.',
+			'Tool to start a per-day aggregate export of send statistics. Creates an asynchronous event dump and returns a dump_id; poll eventDump.get for the result. It does not return statistics directly.',
 	},
 	'email.subscribe': {
 		riskLevel: 'write',
@@ -404,17 +361,17 @@ const unioneEndpointMeta = {
 	'emailValidation.batch': {
 		riskLevel: 'read',
 		description:
-			'Tool to validate multiple email addresses in a batch. Use when you need to verify deliverability for a list of emails at once.',
-	},
-	'emailValidation.retry': {
-		riskLevel: 'read',
-		description:
-			'Tool to retry an email validation request. Re-runs validation via the official single validation endpoint using the provided email address.',
+			'Tool to validate a list of email addresses. UniOne has no bulk method, so each address costs one validation from the account quota. Addresses that fail are returned with status "error" rather than failing the whole batch.',
 	},
 	'eventDump.create': {
 		riskLevel: 'write',
 		description:
 			'Tool to create an asynchronous CSV event dump. Use when you need to export transactional email events for a specified time window.',
+	},
+	'eventDump.createForJob': {
+		riskLevel: 'write',
+		description:
+			'Tool to export the delivery events of one send job. UniOne has no method that reads a job directly, so this creates an event dump filtered by job_id and returns a dump_id to poll with eventDump.get.',
 	},
 	'eventDump.get': {
 		riskLevel: 'read',
@@ -472,6 +429,11 @@ const unioneEndpointMeta = {
 		description:
 			'Tool to retrieve webhook configuration by its URL. Use when you need to check the current settings of an event notification handler.',
 	},
+	'webhook.list': {
+		riskLevel: 'read',
+		description:
+			'Tool to list every webhook configured on the account. Use when you need to see all event notification handlers and their settings.',
+	},
 	'webhook.delete': {
 		riskLevel: 'destructive',
 		description:
@@ -480,7 +442,7 @@ const unioneEndpointMeta = {
 	'webhook.types': {
 		riskLevel: 'read',
 		description:
-			'Tool to retrieve supported email webhook event types. Use when configuring your webhook callbacks.',
+			'Tool to list the event names accepted by webhook.set. Returns a static list published in the UniOne callback docs; it makes no API call.',
 	},
 	'suppression.get': {
 		riskLevel: 'read',
@@ -505,7 +467,12 @@ const unioneEndpointMeta = {
 	'system.info': {
 		riskLevel: 'read',
 		description:
-			'Tool to retrieve current account balance. Use when you need to check your email usage and limits before sending large campaigns.',
+			'Tool to retrieve account details and the current billing period: emails included and sent, validations included and used. Use before sending large campaigns.',
+	},
+	'system.ping': {
+		riskLevel: 'read',
+		description:
+			'Tool to check API connectivity and that the API key is accepted. Use as a health check before a batch of operations.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof unioneEndpointsNested>;
 

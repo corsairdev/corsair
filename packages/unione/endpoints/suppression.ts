@@ -17,10 +17,12 @@ export const get: UnioneEndpoints['suppression']['get'] = async (
 	for (const item of response.suppressions ?? []) {
 		await maybeUpsert(ctx.db.suppressions, input.email, {
 			email: input.email,
+			project_id: item.project_id,
 			cause: item.cause,
 			source: item.source,
 			is_deletable: item.is_deletable,
 			created: item.created,
+			created_at: item.created,
 		});
 	}
 	await logEventFromContext(
@@ -44,10 +46,12 @@ export const list: UnioneEndpoints['suppression']['list'] = async (
 		if (item.email) {
 			await maybeUpsert(ctx.db.suppressions, item.email, {
 				email: item.email,
+				project_id: item.project_id,
 				cause: item.cause,
 				source: item.source,
 				is_deletable: item.is_deletable,
 				created: item.created,
+				created_at: item.created,
 			});
 		}
 	}

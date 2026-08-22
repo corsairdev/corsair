@@ -65,11 +65,13 @@ describe('makeUnioneRequest', () => {
 		expect(captured?.body).toContain('"subject":"Hi"');
 	});
 
-	it('sends X-API-KEY and Bearer token', async () => {
+	it('sends the API key only in X-API-KEY', async () => {
 		mockFetch({ body: { status: 'success' } });
 		await makeUnioneRequest('system/info.json', 'secret-key', { body: {} });
 		expect(captured?.headers?.get('X-API-KEY')).toBe('secret-key');
-		expect(captured?.headers?.get('Authorization')).toBe('Bearer secret-key');
+		// UniOne documents no bearer scheme, so the key must not be duplicated
+		// onto Authorization, where it would be sent but never used.
+		expect(captured?.headers?.get('Authorization')).toBeNull();
 	});
 
 	it('omits undefined body fields', async () => {

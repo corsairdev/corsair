@@ -1,20 +1,16 @@
 import { manage } from './domain';
 import {
-	cancel,
-	eventGet,
-	get,
 	list,
-	resend,
-	resume,
 	schedule,
-	smtp,
+	send,
 	statistics,
 	subscribe,
 	unsubscribe,
 } from './email';
-import { batch, retry } from './email-validation';
+import { batch } from './email-validation';
 import {
 	create as eventDumpCreate,
+	createForJob as eventDumpCreateForJob,
 	remove as eventDumpDelete,
 	get as eventDumpGet,
 	list as eventDumpList,
@@ -24,7 +20,7 @@ import {
 	get as suppressionGet,
 	list as suppressionList,
 } from './suppression';
-import { info as systemInfo } from './system';
+import { info as systemInfo, ping as systemPing } from './system';
 import { remove as tagDelete, list as tagList } from './tag';
 import {
 	remove as templateDelete,
@@ -35,31 +31,27 @@ import {
 import {
 	remove as webhookDelete,
 	get as webhookGet,
+	list as webhookList,
 	set as webhookSet,
 	types as webhookTypes,
 } from './webhook';
 
 export const Email = {
+	send,
 	schedule,
-	get,
-	eventGet,
-	cancel,
-	resume,
-	resend,
 	list,
 	statistics,
-	smtp,
 	subscribe,
 	unsubscribe,
 };
 
 export const EmailValidation = {
 	batch,
-	retry,
 };
 
 export const EventDump = {
 	create: eventDumpCreate,
+	createForJob: eventDumpCreateForJob,
 	get: eventDumpGet,
 	list: eventDumpList,
 	delete: eventDumpDelete,
@@ -80,6 +72,7 @@ export const Template = {
 export const Webhook = {
 	set: webhookSet,
 	get: webhookGet,
+	list: webhookList,
 	delete: webhookDelete,
 	types: webhookTypes,
 };
@@ -96,6 +89,7 @@ export const Domain = {
 
 export const System = {
 	info: systemInfo,
+	ping: systemPing,
 };
 
 export * from './types';

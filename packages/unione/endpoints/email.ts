@@ -1,119 +1,65 @@
 import { logEventFromContext } from 'corsair/core';
 import type { UnioneEndpoints } from '..';
-import {
-	makeUnioneRequest,
-	UNSUPPORTED_JOB_CONTROL_MESSAGE,
-	UnioneAPIError,
-} from '../client';
+import { makeUnioneRequest, UnioneAPIError } from '../client';
 import { maybeUpsert } from '../db';
-import { defaultEventDumpStartTime } from './time';
 import type { UnioneEndpointOutputs } from './types';
 
-function throwUnsupported(jobId: string): never {
-	throw new UnioneAPIError(
-		`${UNSUPPORTED_JOB_CONTROL_MESSAGE} job_id=${jobId}`,
-	);
+type MessageInput = {
+	recipients: unknown;
+	body?: { html?: string; plaintext?: string; amp?: string };
+	template_id?: string;
+};
+
+/**
+ * UniOne rejects a message that carries neither a body nor a template. Failing
+ * here keeps the error actionable instead of surfacing as a generic API 400.
+ */
+function buildMessage<T extends MessageInput>(
+	input: T,
+	extra?: Record<string, unknown>,
+): Record<string, unknown> {
+	if (!input.body && !input.template_id) {
+		throw new UnioneAPIError(
+			'Provide body (html, plaintext or amp) or template_id: UniOne cannot send an empty message.',
+		);
+	}
+	return extra ? { ...input, ...extra } : { ...input };
 }
+
+export const send: UnioneEndpoints['email']['send'] = async (ctx, input) => {
+	const response = await makeUnioneRequest<UnioneEndpointOutputs['emailSend']>(
+		'email/send.json',
+		ctx.key,
+		{ body: { message: buildMessage(input) } },
+	);
+
+	await logEventFromContext(
+		ctx,
+		'unione.email.send',
+		{ recipients: input.recipients.length },
+		'completed',
+	);
+	return response;
+};
 
 export const schedule: UnioneEndpoints['email']['schedule'] = async (
 	ctx,
 	input,
 ) => {
-	const { send_at, recipients, body, ...rest } = input;
+	const { send_at, ...message } = input;
 	const response = await makeUnioneRequest<
 		UnioneEndpointOutputs['emailSchedule']
 	>('email/send.json', ctx.key, {
-		body: {
-			message: {
-				...rest,
-				recipients,
-				body: body ?? { plaintext: ' ' },
-				options: { send_at },
-			},
-		},
+		body: { message: buildMessage(message, { options: { send_at } }) },
 	});
 
 	await logEventFromContext(
 		ctx,
 		'unione.email.schedule',
-		{ ...input },
+		{ recipients: input.recipients.length, send_at },
 		'completed',
 	);
 	return response;
-};
-
-async function createJobDump(
-	ctx: Parameters<UnioneEndpoints['email']['get']>[0],
-	input: {
-		job_id: string;
-		start_time?: string;
-		end_time?: string;
-		email?: string;
-		status?: string;
-	},
-): Promise<UnioneEndpointOutputs['emailGet']> {
-	const filter: Record<string, string> = { job_id: input.job_id };
-	if (input.email) filter.email = input.email;
-	if (input.status) filter.status = input.status;
-
-	const response = await makeUnioneRequest<UnioneEndpointOutputs['emailGet']>(
-		'event-dump/create.json',
-		ctx.key,
-		{
-			body: {
-				start_time: input.start_time ?? defaultEventDumpStartTime(),
-				end_time: input.end_time,
-				filter,
-			},
-		},
-	);
-
-	await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
-		dump_id: response.dump_id ?? input.job_id,
-		dump_status: 'queued',
-	});
-	return response;
-}
-
-export const get: UnioneEndpoints['email']['get'] = async (ctx, input) => {
-	const response = await createJobDump(ctx, input);
-	await logEventFromContext(ctx, 'unione.email.get', { ...input }, 'completed');
-	return response;
-};
-
-export const eventGet: UnioneEndpoints['email']['eventGet'] = async (
-	ctx,
-	input,
-) => {
-	const response = await createJobDump(ctx, input);
-	await logEventFromContext(
-		ctx,
-		'unione.email.eventGet',
-		{ ...input },
-		'completed',
-	);
-	return response;
-};
-
-export const cancel: UnioneEndpoints['email']['cancel'] = async (
-	_ctx,
-	input,
-) => {
-	throwUnsupported(input.job_id);
-};
-
-export const resume: UnioneEndpoints['email']['resume'] = async (
-	_ctx,
-	input,
-) => {
-	throwUnsupported(input.job_id);
-};
-
-export const resend: UnioneEndpoints['email']['resend'] = async (
-	_ctx,
-	input,
-) => {
-	throwUnsupported(input.job_id);
 };
 
 export const list: UnioneEndpoints['email']['list'] = async (ctx, input) => {
@@ -135,7 +81,6 @@ export const list: UnioneEndpoints['email']['list'] = async (ctx, input) => {
 
 	await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
 		dump_id: response.dump_id ?? '',
-		dump_status: 'queued',
 	});
 	await logEventFromContext(
 		ctx,
@@ -162,40 +107,10 @@ export const statistics: UnioneEndpoints['email']['statistics'] = async (
 
 	await maybeUpsert(ctx.db.eventDumps, response.dump_id, {
 		dump_id: response.dump_id ?? '',
-		dump_status: 'queued',
 	});
 	await logEventFromContext(
 		ctx,
 		'unione.email.statistics',
-		{ ...input },
-		'completed',
-	);
-	return response;
-};
-
-export const smtp: UnioneEndpoints['email']['smtp'] = async (ctx, input) => {
-	const info = await makeUnioneRequest<UnioneEndpointOutputs['systemInfo']>(
-		'system/info.json',
-		ctx.key,
-		{ body: {} },
-	);
-
-	const region = input.region ?? 'eu1';
-	const response: UnioneEndpointOutputs['emailSmtp'] = {
-		hosts: [`smtp.${region}.unione.io`],
-		ports: [587, 465, 25],
-		encryption: 'TLS 1.2+',
-		login: info.project_id ?? info.user_id,
-		project_id: info.project_id,
-		password_hint:
-			'Use your UniOne API key as the SMTP password. It is not returned here.',
-		notes:
-			'Only encrypted TLS connections are supported. Port 25 unencrypted and SSL are not supported.',
-	};
-
-	await logEventFromContext(
-		ctx,
-		'unione.email.smtp',
 		{ ...input },
 		'completed',
 	);
@@ -237,6 +152,8 @@ export const unsubscribe: UnioneEndpoints['email']['unsubscribe'] = async (
 		email: input.email,
 		cause: 'unsubscribed',
 		source: 'user',
+		created: input.created,
+		created_at: input.created,
 	});
 	await logEventFromContext(
 		ctx,

@@ -154,11 +154,10 @@ const EventDumpFilterSchema = z.object({
 
 // --- inputs ---
 
-const EmailScheduleInputSchema = z.object({
+const EmailSendInputSchema = z.object({
 	recipients: z.array(RecipientSchema).min(1),
 	from_email: z.string().email(),
 	subject: z.string(),
-	send_at: z.string(),
 	from_name: z.string().optional(),
 	reply_to: z.string().optional(),
 	reply_to_name: z.string().optional(),
@@ -172,24 +171,17 @@ const EmailScheduleInputSchema = z.object({
 	track_read: z.number().optional(),
 });
 
-const EmailJobInputSchema = z.object({
+/** `send_at` defers the send. UniOne accepts at most 24 hours ahead. */
+const EmailScheduleInputSchema = EmailSendInputSchema.extend({
+	send_at: z.string(),
+});
+
+const EventDumpForJobInputSchema = z.object({
 	job_id: z.string(),
 	start_time: z.string().optional(),
 	end_time: z.string().optional(),
 	email: z.string().email().optional(),
 	status: z.string().optional(),
-});
-
-const EmailEventGetInputSchema = z.object({
-	job_id: z.string(),
-	start_time: z.string().optional(),
-	end_time: z.string().optional(),
-	email: z.string().email().optional(),
-	status: z.string().optional(),
-});
-
-const JobIdInputSchema = z.object({
-	job_id: z.string(),
 });
 
 const EmailListInputSchema = z.object({
@@ -207,10 +199,6 @@ const EmailStatisticsInputSchema = z.object({
 	end_time: z.string().optional(),
 });
 
-const EmailSmtpInputSchema = z.object({
-	region: z.enum(['eu1', 'us1']).optional(),
-});
-
 const EmailSubscribeInputSchema = z.object({
 	from_email: z.string().email(),
 	to_email: z.string().email(),
@@ -224,10 +212,6 @@ const EmailUnsubscribeInputSchema = z.object({
 
 const EmailValidateBatchInputSchema = z.object({
 	emails: z.array(z.string().email()).min(1),
-});
-
-const EmailValidateRetryInputSchema = z.object({
-	email: z.string().email(),
 });
 
 const EventDumpCreateInputSchema = z.object({
@@ -329,26 +313,9 @@ const DumpListResponseSchema = StatusSchema.extend({
 
 const SuccessResponseSchema = StatusSchema.loose();
 
-const SmtpResponseSchema = z
-	.object({
-		hosts: z.array(z.string()),
-		ports: z.array(z.number()),
-		encryption: z.string(),
-		login: z.union([z.string(), z.number()]).optional(),
-		project_id: z.string().optional(),
-		password_hint: z.string(),
-		notes: z.string(),
-	})
-	.loose();
-
 const SubscribeResponseSchema = StatusSchema.loose();
 
 const UnsubscribeResponseSchema = StatusSchema.loose();
-
-const UnsupportedJobResponseSchema = z.object({
-	job_id: z.string(),
-	message: z.string(),
-});
 
 const ValidateBatchResponseSchema = z
 	.object({
@@ -386,6 +353,12 @@ const WebhookGetResponseSchema = StatusSchema.extend({
 	object: WebhookObjectSchema.optional(),
 }).loose();
 
+const WebhookListResponseSchema = StatusSchema.extend({
+	objects: z.array(WebhookObjectSchema).optional(),
+}).loose();
+
+const SystemPingResponseSchema = StatusSchema.loose();
+
 const WebhookTypesResponseSchema = z.object({
 	email_status: z.array(z.string()),
 	spam_block: z.array(z.string()),
@@ -397,8 +370,11 @@ const SuppressionGetResponseSchema = StatusSchema.extend({
 }).loose();
 
 const SuppressionListResponseSchema = StatusSchema.extend({
+	count: z.number().optional(),
 	suppressions: z.array(SuppressionItemSchema).optional(),
-	cursor: z.string().optional(),
+	// UniOne sends `"cursor": null` once there is no further page, including on
+	// an empty list, so a non-nullable cursor rejects an ordinary response.
+	cursor: z.string().nullable().optional(),
 }).loose();
 
 const DomainManageResponseSchema = StatusSchema.extend({
@@ -427,25 +403,22 @@ const SystemInfoResponseSchema = StatusSchema.extend({
 			period_end: z.string().optional(),
 			emails_included: z.number().optional(),
 			emails_sent: z.number().optional(),
+			validations_included: z.number().optional(),
+			validations_used: z.number().optional(),
 		})
 		.loose()
 		.optional(),
 }).loose();
 
 export type UnioneEndpointInputs = {
+	emailSend: z.infer<typeof EmailSendInputSchema>;
 	emailSchedule: z.infer<typeof EmailScheduleInputSchema>;
-	emailGet: z.infer<typeof EmailJobInputSchema>;
-	emailEventGet: z.infer<typeof EmailEventGetInputSchema>;
-	emailCancel: z.infer<typeof JobIdInputSchema>;
-	emailResume: z.infer<typeof JobIdInputSchema>;
-	emailResend: z.infer<typeof JobIdInputSchema>;
 	emailList: z.infer<typeof EmailListInputSchema>;
 	emailStatistics: z.infer<typeof EmailStatisticsInputSchema>;
-	emailSmtp: z.infer<typeof EmailSmtpInputSchema>;
 	emailSubscribe: z.infer<typeof EmailSubscribeInputSchema>;
 	emailUnsubscribe: z.infer<typeof EmailUnsubscribeInputSchema>;
 	emailValidateBatch: z.infer<typeof EmailValidateBatchInputSchema>;
-	emailValidateRetry: z.infer<typeof EmailValidateRetryInputSchema>;
+	eventDumpCreateForJob: z.infer<typeof EventDumpForJobInputSchema>;
 	eventDumpCreate: z.infer<typeof EventDumpCreateInputSchema>;
 	eventDumpGet: z.infer<typeof DumpIdInputSchema>;
 	eventDumpList: z.infer<typeof EmptyInputSchema>;
@@ -458,6 +431,7 @@ export type UnioneEndpointInputs = {
 	templateDelete: z.infer<typeof TemplateIdInputSchema>;
 	webhookSet: z.infer<typeof WebhookSetInputSchema>;
 	webhookGet: z.infer<typeof WebhookUrlInputSchema>;
+	webhookList: z.infer<typeof EmptyInputSchema>;
 	webhookDelete: z.infer<typeof WebhookUrlInputSchema>;
 	webhookTypes: z.infer<typeof EmptyInputSchema>;
 	suppressionGet: z.infer<typeof SuppressionGetInputSchema>;
@@ -465,22 +439,18 @@ export type UnioneEndpointInputs = {
 	suppressionDelete: z.infer<typeof SuppressionDeleteInputSchema>;
 	domainManage: z.infer<typeof DomainManageInputSchema>;
 	systemInfo: z.infer<typeof EmptyInputSchema>;
+	systemPing: z.infer<typeof EmptyInputSchema>;
 };
 
 export type UnioneEndpointOutputs = {
+	emailSend: z.infer<typeof EmailSendResponseSchema>;
 	emailSchedule: z.infer<typeof EmailSendResponseSchema>;
-	emailGet: z.infer<typeof DumpCreateResponseSchema>;
-	emailEventGet: z.infer<typeof DumpCreateResponseSchema>;
-	emailCancel: z.infer<typeof UnsupportedJobResponseSchema>;
-	emailResume: z.infer<typeof UnsupportedJobResponseSchema>;
-	emailResend: z.infer<typeof UnsupportedJobResponseSchema>;
 	emailList: z.infer<typeof DumpCreateResponseSchema>;
 	emailStatistics: z.infer<typeof DumpCreateResponseSchema>;
-	emailSmtp: z.infer<typeof SmtpResponseSchema>;
 	emailSubscribe: z.infer<typeof SubscribeResponseSchema>;
 	emailUnsubscribe: z.infer<typeof UnsubscribeResponseSchema>;
 	emailValidateBatch: z.infer<typeof ValidateBatchResponseSchema>;
-	emailValidateRetry: z.infer<typeof ValidationResultSchema>;
+	eventDumpCreateForJob: z.infer<typeof DumpCreateResponseSchema>;
 	eventDumpCreate: z.infer<typeof DumpCreateResponseSchema>;
 	eventDumpGet: z.infer<typeof DumpGetResponseSchema>;
 	eventDumpList: z.infer<typeof DumpListResponseSchema>;
@@ -493,6 +463,7 @@ export type UnioneEndpointOutputs = {
 	templateDelete: z.infer<typeof SuccessResponseSchema>;
 	webhookSet: z.infer<typeof WebhookGetResponseSchema>;
 	webhookGet: z.infer<typeof WebhookGetResponseSchema>;
+	webhookList: z.infer<typeof WebhookListResponseSchema>;
 	webhookDelete: z.infer<typeof SuccessResponseSchema>;
 	webhookTypes: z.infer<typeof WebhookTypesResponseSchema>;
 	suppressionGet: z.infer<typeof SuppressionGetResponseSchema>;
@@ -500,22 +471,18 @@ export type UnioneEndpointOutputs = {
 	suppressionDelete: z.infer<typeof SuccessResponseSchema>;
 	domainManage: z.infer<typeof DomainManageResponseSchema>;
 	systemInfo: z.infer<typeof SystemInfoResponseSchema>;
+	systemPing: z.infer<typeof SystemPingResponseSchema>;
 };
 
 export const UnioneEndpointInputSchemas = {
+	emailSend: EmailSendInputSchema,
 	emailSchedule: EmailScheduleInputSchema,
-	emailGet: EmailJobInputSchema,
-	emailEventGet: EmailEventGetInputSchema,
-	emailCancel: JobIdInputSchema,
-	emailResume: JobIdInputSchema,
-	emailResend: JobIdInputSchema,
 	emailList: EmailListInputSchema,
 	emailStatistics: EmailStatisticsInputSchema,
-	emailSmtp: EmailSmtpInputSchema,
 	emailSubscribe: EmailSubscribeInputSchema,
 	emailUnsubscribe: EmailUnsubscribeInputSchema,
 	emailValidateBatch: EmailValidateBatchInputSchema,
-	emailValidateRetry: EmailValidateRetryInputSchema,
+	eventDumpCreateForJob: EventDumpForJobInputSchema,
 	eventDumpCreate: EventDumpCreateInputSchema,
 	eventDumpGet: DumpIdInputSchema,
 	eventDumpList: EmptyInputSchema,
@@ -528,6 +495,7 @@ export const UnioneEndpointInputSchemas = {
 	templateDelete: TemplateIdInputSchema,
 	webhookSet: WebhookSetInputSchema,
 	webhookGet: WebhookUrlInputSchema,
+	webhookList: EmptyInputSchema,
 	webhookDelete: WebhookUrlInputSchema,
 	webhookTypes: EmptyInputSchema,
 	suppressionGet: SuppressionGetInputSchema,
@@ -535,22 +503,18 @@ export const UnioneEndpointInputSchemas = {
 	suppressionDelete: SuppressionDeleteInputSchema,
 	domainManage: DomainManageInputSchema,
 	systemInfo: EmptyInputSchema,
+	systemPing: EmptyInputSchema,
 } as const;
 
 export const UnioneEndpointOutputSchemas = {
+	emailSend: EmailSendResponseSchema,
 	emailSchedule: EmailSendResponseSchema,
-	emailGet: DumpCreateResponseSchema,
-	emailEventGet: DumpCreateResponseSchema,
-	emailCancel: UnsupportedJobResponseSchema,
-	emailResume: UnsupportedJobResponseSchema,
-	emailResend: UnsupportedJobResponseSchema,
 	emailList: DumpCreateResponseSchema,
 	emailStatistics: DumpCreateResponseSchema,
-	emailSmtp: SmtpResponseSchema,
 	emailSubscribe: SubscribeResponseSchema,
 	emailUnsubscribe: UnsubscribeResponseSchema,
 	emailValidateBatch: ValidateBatchResponseSchema,
-	emailValidateRetry: ValidationResultSchema,
+	eventDumpCreateForJob: DumpCreateResponseSchema,
 	eventDumpCreate: DumpCreateResponseSchema,
 	eventDumpGet: DumpGetResponseSchema,
 	eventDumpList: DumpListResponseSchema,
@@ -563,6 +527,7 @@ export const UnioneEndpointOutputSchemas = {
 	templateDelete: SuccessResponseSchema,
 	webhookSet: WebhookGetResponseSchema,
 	webhookGet: WebhookGetResponseSchema,
+	webhookList: WebhookListResponseSchema,
 	webhookDelete: SuccessResponseSchema,
 	webhookTypes: WebhookTypesResponseSchema,
 	suppressionGet: SuppressionGetResponseSchema,
@@ -570,6 +535,7 @@ export const UnioneEndpointOutputSchemas = {
 	suppressionDelete: SuccessResponseSchema,
 	domainManage: DomainManageResponseSchema,
 	systemInfo: SystemInfoResponseSchema,
+	systemPing: SystemPingResponseSchema,
 } as const;
 
 export { EventDumpFilterSchema, ValidationResultSchema };
