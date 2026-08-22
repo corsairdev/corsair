@@ -92,11 +92,19 @@ describe('BART Client', () => {
 			},
 		});
 
-		await expect(
-			makeBartRequest('stn.aspx', 'TEST-KEY', {
+		try {
+			await makeBartRequest('stn.aspx', 'TEST-KEY', {
 				query: { cmd: 'stninfo', orig: 'INVALID' },
-			}),
-		).rejects.toThrow('Invalid origin station specified');
+			});
+			fail('Expected makeBartRequest to throw');
+		} catch (error) {
+			expect(error).toBeInstanceOf(BartAPIError);
+			expect((error as BartAPIError).message).toBe(
+				'Invalid origin station specified',
+			);
+			expect((error as BartAPIError).status).toBeUndefined();
+			expect((error as BartAPIError).code).toBeUndefined();
+		}
 	});
 
 	it('detects in-body error messages from root.error and throws BartAPIError', async () => {

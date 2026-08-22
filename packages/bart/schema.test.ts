@@ -1,5 +1,9 @@
 import { ZodError } from 'zod';
-import { unwrapCData } from './endpoints/types';
+import {
+	advisoryEntityId,
+	CDataOrStringSchema,
+	unwrapCData,
+} from './endpoints/types';
 import {
 	BartAdvisory,
 	BartRoute,
@@ -97,5 +101,26 @@ describe('Bart schema & entities', () => {
 		expect(unwrapCData(undefined)).toBeUndefined();
 		expect(unwrapCData(null)).toBeUndefined();
 		expect(unwrapCData({} as any)).toBeUndefined();
+	});
+
+	it('rejects empty and unrelated objects as CDATA', () => {
+		expect(() => CDataOrStringSchema.parse({})).toThrow(ZodError);
+		expect(() => CDataOrStringSchema.parse({ other: 'x' })).toThrow(ZodError);
+	});
+
+	it('builds unique advisory ids for same-station items without posted times', () => {
+		const first = advisoryEntityId(
+			{ station: 'BART', type: 'DELAY', description: 'Yellow line delay' },
+			'08/21/2026',
+		);
+		const second = advisoryEntityId(
+			{
+				station: 'BART',
+				type: 'DELAY',
+				description: 'Elevator out at Embarcadero',
+			},
+			'08/21/2026',
+		);
+		expect(first).not.toBe(second);
 	});
 });

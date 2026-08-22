@@ -9,15 +9,18 @@ describe('BART Error Handlers', () => {
 			expect(handler.match(new Error('Rate limited by BART server'))).toBe(
 				true,
 			);
-			expect(handler.match(new Error('429 Too Many Requests'))).toBe(true);
+			expect(handler.match(new Error('429 Too Many Requests'))).toBe(false);
+			expect(handler.match(new Error('Station 429 does not exist'))).toBe(
+				false,
+			);
 			expect(handler.match(new Error('Station not found'))).toBe(false);
 		});
 
-		it('extracts retryAfter from error', async () => {
+		it('extracts retryAfter from error and does not retry at the endpoint layer', async () => {
 			const handler = errorHandlers.RATE_LIMIT_ERROR;
-			const err = new BartAPIError('429', 429, { retryAfter: 30000 });
+			const err = new BartAPIError('rate limit', 429, { retryAfter: 30000 });
 			const res = await handler.handler(err);
-			expect(res.maxRetries).toBe(5);
+			expect(res.maxRetries).toBe(0);
 			expect(res.headersRetryAfterMs).toBe(30000);
 		});
 	});

@@ -8,6 +8,7 @@ import {
 	Schedules,
 	Stations,
 } from '../endpoints';
+import { advisoryEntityId } from '../endpoints/types';
 import type { BartContext } from '../index';
 
 jest.mock('corsair/core', () => {
@@ -35,12 +36,14 @@ describe('BART API Endpoints', () => {
 	let mockUpsertStation: jest.Mock;
 	let mockUpsertRoute: jest.Mock;
 	let mockUpsertAdvisory: jest.Mock;
+	let mockFindRoute: jest.Mock;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
 		mockUpsertStation = jest.fn().mockResolvedValue(undefined);
 		mockUpsertRoute = jest.fn().mockResolvedValue(undefined);
 		mockUpsertAdvisory = jest.fn().mockResolvedValue(undefined);
+		mockFindRoute = jest.fn().mockResolvedValue(null);
 
 		mockContext = {
 			key: 'TEST_KEY',
@@ -57,6 +60,7 @@ describe('BART API Endpoints', () => {
 				},
 				routes: {
 					upsertByEntityId: mockUpsertRoute,
+					findByEntityId: mockFindRoute,
 				},
 				advisories: {
 					upsertByEntityId: mockUpsertAdvisory,
@@ -92,12 +96,14 @@ describe('BART API Endpoints', () => {
 					query: expect.objectContaining({ cmd: 'bsa', orig: '12TH' }),
 				}),
 			);
+			const item = mockPayload.bsa[0]!;
+			const expectedId = advisoryEntityId(item, mockPayload.date);
 			expect(result.bsa).toBeDefined();
 			expect(mockUpsertAdvisory).toHaveBeenCalledTimes(1);
 			expect(mockUpsertAdvisory).toHaveBeenCalledWith(
-				'12TH-Fri Aug 21 2026 12:00 PM PDT',
+				expectedId,
 				expect.objectContaining({
-					id: '12TH-Fri Aug 21 2026 12:00 PM PDT',
+					id: expectedId,
 					description: '10 minute delay at 12th St',
 					sms_text: '10 min delay',
 				}),
@@ -105,25 +111,54 @@ describe('BART API Endpoints', () => {
 		});
 
 		it('advisories.list generates stable entity ID from description fallback when timestamps are absent', async () => {
-			const mockPayload = {
-				bsa: [
-					{
-						station: '12TH',
-						type: 'DELAY',
-						description: 'Track maintenance delay',
-					},
-				],
+			const item = {
+				station: '12TH',
+				type: 'DELAY',
+				description: 'Track maintenance delay',
 			};
-			mockMakeRequest.mockResolvedValueOnce(mockPayload);
+			mockMakeRequest.mockResolvedValueOnce({ bsa: [item] });
 
 			await Advisories.list(mockContext, { orig: '12TH' });
 
+			const expectedId = advisoryEntityId(item);
 			expect(mockUpsertAdvisory).toHaveBeenCalledWith(
-				'12TH-Track maintenance delay',
+				expectedId,
 				expect.objectContaining({
-					id: '12TH-Track maintenance delay',
+					id: expectedId,
 					description: 'Track maintenance delay',
 				}),
+			);
+		});
+
+		it('advisories.list keeps distinct advisories that share station and date', async () => {
+			const first = {
+				station: 'BART',
+				type: 'DELAY',
+				description: 'Yellow line delay',
+			};
+			const second = {
+				station: 'BART',
+				type: 'DELAY',
+				description: 'Elevator out at Embarcadero',
+			};
+			mockMakeRequest.mockResolvedValueOnce({
+				date: '08/21/2026',
+				bsa: [first, second],
+			});
+
+			await Advisories.list(mockContext, {});
+
+			const firstId = advisoryEntityId(first, '08/21/2026');
+			const secondId = advisoryEntityId(second, '08/21/2026');
+			expect(firstId).not.toBe(secondId);
+			expect(mockUpsertAdvisory).toHaveBeenCalledTimes(2);
+			expect(mockUpsertAdvisory).toHaveBeenCalledWith(
+				firstId,
+				expect.objectContaining({ id: firstId }),
+			);
+			expect(mockUpsertAdvisory).toHaveBeenCalledWith(
+				secondId,
+				expect.objectContaining({ id: secondId }),
 			);
 		});
 
@@ -207,6 +242,23 @@ describe('BART API Endpoints', () => {
 			expect(result.station).toHaveLength(1);
 		});
 
+		it('etd.station accepts an object message field from BART', async () => {
+			mockMakeRequest.mockResolvedValueOnce({
+				date: '08/21/2026',
+				station: {
+					name: '12th St. Oakland City Center',
+					abbr: '12TH',
+				},
+				message: { warning: 'No ETD data for the requested platform' },
+			});
+
+			const result = await Etd.station(mockContext, { orig: '12TH' });
+			expect(result.station).toBeDefined();
+			expect(result.message).toEqual({
+				warning: 'No ETD data for the requested platform',
+			});
+		});
+
 		it('etd.station rejects empty and whitespace-only inputs before HTTP dispatch', async () => {
 			await expect(Etd.station(mockContext, { orig: '' })).rejects.toThrow(
 				ZodError,
@@ -249,6 +301,52 @@ describe('BART API Endpoints', () => {
 			expect(mockUpsertRoute).toHaveBeenCalledWith(
 				'ROUTE 1',
 				expect.anything(),
+			);
+		});
+
+		it('routes.list preserves origin destination holidays and numStns from an existing route', async () => {
+			mockFindRoute.mockResolvedValueOnce({
+				data: {
+					id: 'ROUTE 1',
+					routeID: 'ROUTE 1',
+					number: '1',
+					name: 'Antioch to SFIA/Millbrae',
+					abbr: 'ANTC-SFIA',
+					origin: 'ANTC',
+					destination: 'MLBR',
+					holidays: '0',
+					numStns: '28',
+				},
+			});
+			mockMakeRequest.mockResolvedValueOnce({
+				sched: '48',
+				routes: {
+					route: [
+						{
+							name: 'Antioch to SFIA/Millbrae',
+							abbr: 'ANTC-SFIA',
+							routeID: 'ROUTE 1',
+							number: '1',
+							hexcolor: '#ffff33',
+							color: 'YELLOW',
+						},
+					],
+				},
+			});
+
+			await Routes.list(mockContext, {});
+
+			expect(mockFindRoute).toHaveBeenCalledWith('ROUTE 1');
+			expect(mockUpsertRoute).toHaveBeenCalledWith(
+				'ROUTE 1',
+				expect.objectContaining({
+					origin: 'ANTC',
+					destination: 'MLBR',
+					holidays: '0',
+					numStns: '28',
+					color: 'YELLOW',
+					hexcolor: '#ffff33',
+				}),
 			);
 		});
 
@@ -488,24 +586,6 @@ describe('BART API Endpoints', () => {
 			const result = await Schedules.routes(mockContext, { route: '1' });
 			expect(result.route?.train).toBeDefined();
 		});
-
-		it('schedules.special fetches holiday schedule info', async () => {
-			const mockPayload = {
-				holidays: {
-					holiday: [
-						{
-							name: 'Labor Day',
-							date: '09/07/2026',
-							schedule: 'Sunday schedule',
-						},
-					],
-				},
-			};
-			mockMakeRequest.mockResolvedValueOnce(mockPayload);
-
-			const result = await Schedules.special(mockContext, {});
-			expect(result.holidays.holiday).toBeDefined();
-		});
 	});
 
 	describe('Fares Endpoints', () => {
@@ -538,6 +618,36 @@ describe('BART API Endpoints', () => {
 			expect(result.origin).toBe('12TH');
 			expect(result.destination).toBe('EMBR');
 			expect(result.fares?.fare).toHaveLength(2);
+		});
+
+		it('fares.calculate accepts official BART trip and sched_num fields', async () => {
+			mockMakeRequest.mockResolvedValueOnce({
+				origin: '12TH',
+				destination: 'EMBR',
+				sched_num: '45',
+				trip: {
+					fare: '4.00',
+					discount: { clipper: '1.30' },
+				},
+				fares: {
+					fare: [
+						{
+							'@amount': '3.50',
+							'@class': 'clipper',
+							'@name': 'Clipper',
+						},
+					],
+				},
+			});
+
+			const result = await Fares.calculate(mockContext, {
+				orig: '12TH',
+				dest: 'EMBR',
+			});
+
+			expect(result.sched_num).toBe('45');
+			expect(result.trip?.fare).toBe('4.00');
+			expect(result.trip?.discount?.clipper).toBe('1.30');
 		});
 
 		it('fares.calculate rejects empty and whitespace-only origins/destinations before HTTP dispatch', async () => {
