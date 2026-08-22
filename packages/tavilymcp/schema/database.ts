@@ -1,5 +1,9 @@
 import { z } from 'zod';
 
+// upsertByEntityId replaces the data column wholesale, so each entity notes the
+// key it is stored under.
+
+/** Keyed `${query}:${url}`. */
 export const TavilyMcpSearchResult = z.object({
 	url: z.string(),
 	title: z.string(),
@@ -7,18 +11,31 @@ export const TavilyMcpSearchResult = z.object({
 	score: z.number(),
 	raw_content: z.string().nullable().optional(),
 	favicon: z.string().nullable().optional(),
+	images: z
+		.array(
+			z.object({
+				url: z.string(),
+				description: z.string().nullable().optional(),
+			}),
+		)
+		.nullable()
+		.optional(),
+	id: z.string().optional(),
 	query: z.string(),
 	searchedAt: z.coerce.date().optional(),
 });
 
+/** Keyed by url. */
 export const TavilyMcpExtractResult = z.object({
 	url: z.string(),
 	raw_content: z.string(),
+	title: z.string().nullable().optional(),
 	images: z.array(z.string()).optional(),
 	favicon: z.string().nullable().optional(),
 	extractedAt: z.coerce.date().optional(),
 });
 
+/** Keyed by url. */
 export const TavilyMcpCrawlResult = z.object({
 	url: z.string(),
 	raw_content: z.string(),
@@ -28,12 +45,14 @@ export const TavilyMcpCrawlResult = z.object({
 	crawledAt: z.coerce.date().optional(),
 });
 
+/** Keyed by url. */
 export const TavilyMcpMapResult = z.object({
 	url: z.string(),
 	baseUrl: z.string(),
 	mappedAt: z.coerce.date().optional(),
 });
 
+/** Keyed by requestId. */
 export const TavilyMcpResearchResult = z.object({
 	requestId: z.string(),
 	input: z.string(),

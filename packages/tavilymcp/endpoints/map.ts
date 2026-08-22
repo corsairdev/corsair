@@ -2,15 +2,16 @@ import { logEventFromContext } from 'corsair/core';
 import { makeTavilyMcpRequest } from '../client';
 import type { TavilyMcpEndpoints } from '../index';
 import type { TavilyMapResponse } from './types';
+import { TavilyMapRequestSchema, TavilyMapResponseSchema } from './types';
 
 export const map: TavilyMcpEndpoints['map'] = async (ctx, input) => {
-	const response = await makeTavilyMcpRequest<TavilyMapResponse>(
-		'map',
-		ctx.key,
-		{
+	const query = TavilyMapRequestSchema.parse(input);
+
+	const response = TavilyMapResponseSchema.parse(
+		await makeTavilyMcpRequest<TavilyMapResponse>('map', ctx.key, {
 			method: 'POST',
-			body: input,
-		},
+			body: query,
+		}),
 	);
 
 	for (const url of response.results) {
@@ -28,7 +29,7 @@ export const map: TavilyMcpEndpoints['map'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'tavilymcp.tavily.map',
-		{ baseUrl: input.url, resultCount: response.results.length },
+		{ baseUrl: query.url, resultCount: response.results.length },
 		'completed',
 	);
 

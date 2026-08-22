@@ -13,6 +13,9 @@ function getRetryAfter(error: Error): number | undefined {
 	return (error as Partial<TavilyMcpAPIError>).retryAfter;
 }
 
+// maxRetries is 0 throughout: bind.ts discards the retried call's result and
+// rethrows the original error, so retries only add backoff sleeps before the
+// same failure surfaces. Callers retry using the metadata preserved on the error.
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
@@ -26,8 +29,7 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error) => ({
-			maxRetries: 5,
-			retryStrategy: 'exponential_backoff' as const,
+			maxRetries: 0,
 			headersRetryAfterMs: getRetryAfter(error),
 		}),
 	},
@@ -51,10 +53,7 @@ export const errorHandlers = {
 			const message = error.message.toLowerCase();
 			return message.includes('500') || message.includes('server error');
 		},
-		handler: async () => ({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff' as const,
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
 		match: () => true,

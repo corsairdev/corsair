@@ -24,7 +24,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TavilyMcpSchema } from './schema';
-import { matchTavilyMcpTenantWebhook } from './webhooks/tenant-matcher';
 
 export type TavilyMcpPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -167,8 +166,9 @@ export function tavilymcp<const T extends TavilyMcpPluginOptions>(
 		webhooks: {},
 		endpointMeta: tavilyMcpEndpointMeta,
 		endpointSchemas: tavilyMcpEndpointSchemas,
+		// Tavily has no outgoing webhooks.
 		pluginWebhookMatcher: () => false,
-		pluginTenantWebhookMatcher: matchTavilyMcpTenantWebhook,
+		pluginTenantWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

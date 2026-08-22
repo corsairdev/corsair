@@ -2,15 +2,19 @@ import { logEventFromContext } from 'corsair/core';
 import { makeTavilyMcpRequest } from '../client';
 import type { TavilyMcpEndpoints } from '../index';
 import type { TavilyExtractResponse } from './types';
+import {
+	TavilyExtractRequestSchema,
+	TavilyExtractResponseSchema,
+} from './types';
 
 export const extract: TavilyMcpEndpoints['extract'] = async (ctx, input) => {
-	const response = await makeTavilyMcpRequest<TavilyExtractResponse>(
-		'extract',
-		ctx.key,
-		{
+	const query = TavilyExtractRequestSchema.parse(input);
+
+	const response = TavilyExtractResponseSchema.parse(
+		await makeTavilyMcpRequest<TavilyExtractResponse>('extract', ctx.key, {
 			method: 'POST',
-			body: input,
-		},
+			body: query,
+		}),
 	);
 
 	for (const result of response.results) {

@@ -65,19 +65,15 @@ describe('makeTavilyMcpRequest', () => {
 			const [config] = firstCallArgs();
 			expect(config.BASE).toBe('https://api.tavily.com');
 			expect(config.TOKEN).toBe('tvly-test-key');
-			expect(config.HEADERS).toMatchObject({
-				Authorization: 'Bearer tvly-test-key',
-				'Content-Type': 'application/json',
-			});
+			expect(config.HEADERS).toEqual({ 'Content-Type': 'application/json' });
 		});
 
-		it('sends a body for POST and omits query', async () => {
+		it('sends a body for POST', async () => {
 			mockedRequest.mockResolvedValueOnce({ results: [] });
 
 			await makeTavilyMcpRequest('search', 'tvly-test-key', {
 				method: 'POST',
 				body: { query: 'hello' },
-				query: { ignored: 'yes' },
 			});
 
 			const [, options] = firstCallArgs();
@@ -86,15 +82,13 @@ describe('makeTavilyMcpRequest', () => {
 				url: 'search',
 				body: { query: 'hello' },
 			});
-			expect(options.query).toBeUndefined();
 		});
 
-		it('sends a query for GET and omits body', async () => {
+		it('omits the body for GET', async () => {
 			mockedRequest.mockResolvedValueOnce({ status: 'completed' });
 
 			await makeTavilyMcpRequest('research/abc-123', 'tvly-test-key', {
 				method: 'GET',
-				query: { verbose: true },
 				body: { ignored: 'yes' },
 			});
 
@@ -102,7 +96,6 @@ describe('makeTavilyMcpRequest', () => {
 			expect(options).toMatchObject({
 				method: 'GET',
 				url: 'research/abc-123',
-				query: { verbose: true },
 			});
 			expect(options.body).toBeUndefined();
 		});
@@ -224,9 +217,8 @@ describe('errorHandlers', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 		await expect(
 			errorHandlers.RATE_LIMIT_ERROR.handler(error),
-		).resolves.toMatchObject({
-			maxRetries: 5,
-			retryStrategy: 'exponential_backoff',
+		).resolves.toEqual({
+			maxRetries: 0,
 			headersRetryAfterMs: 12_000,
 		});
 	});
@@ -252,13 +244,12 @@ describe('errorHandlers', () => {
 		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
 	});
 
-	it('retries server errors with backoff', async () => {
+	it('does not retry server errors', async () => {
 		const error = await wrapError(buildApiError(503, 'Service Unavailable'));
 
 		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
-		await expect(errorHandlers.SERVER_ERROR.handler()).resolves.toMatchObject({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
+		await expect(errorHandlers.SERVER_ERROR.handler()).resolves.toEqual({
+			maxRetries: 0,
 		});
 	});
 

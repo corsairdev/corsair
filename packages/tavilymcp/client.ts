@@ -44,34 +44,30 @@ export async function makeTavilyMcpRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		method?: 'GET' | 'POST';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: TAVILYMCP_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
+		// request.ts derives `Authorization: Bearer <key>` from TOKEN and applies
+		// it after config.HEADERS, so setting the header here too is dead weight.
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		body: method === 'POST' ? body : undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
 	};
 
 	try {

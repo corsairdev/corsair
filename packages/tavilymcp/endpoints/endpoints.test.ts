@@ -5,6 +5,7 @@ import type {
 	TavilyCrawlResponse,
 	TavilyExtractResponse,
 	TavilyMapResponse,
+	TavilyResearchRequest,
 	TavilyResearchResponse,
 	TavilySearchResponse,
 } from './types';
@@ -130,7 +131,7 @@ describe('search', () => {
 		expect(result).toEqual(response);
 	});
 
-	it('persists every result keyed by url, stamped with the query', async () => {
+	it('persists every result keyed by query and url', async () => {
 		mockedRequest.mockResolvedValueOnce(response);
 
 		await Tavily.search(ctx, { query: 'model context protocol' });
@@ -138,7 +139,7 @@ describe('search', () => {
 		expect(upserts.searchResults).toHaveBeenCalledTimes(2);
 		expect(upserts.searchResults).toHaveBeenNthCalledWith(
 			1,
-			'https://modelcontextprotocol.io/introduction',
+			'model context protocol:https://modelcontextprotocol.io/introduction',
 			expect.objectContaining({
 				url: 'https://modelcontextprotocol.io/introduction',
 				title: 'Introduction',
@@ -146,6 +147,25 @@ describe('search', () => {
 				query: 'model context protocol',
 				searchedAt: expect.any(Date),
 			}),
+		);
+	});
+
+	it('keeps one row per query when two queries return the same url', async () => {
+		mockedRequest.mockResolvedValueOnce(response).mockResolvedValueOnce({
+			...response,
+			query: 'mcp spec',
+		});
+
+		await Tavily.search(ctx, { query: 'model context protocol' });
+		await Tavily.search(ctx, { query: 'mcp spec' });
+
+		const keys = upserts.searchResults.mock.calls.map(([key]) => key);
+		expect(new Set(keys).size).toBe(keys.length);
+		expect(keys).toContain(
+			'model context protocol:https://modelcontextprotocol.io/introduction',
+		);
+		expect(keys).toContain(
+			'mcp spec:https://modelcontextprotocol.io/introduction',
 		);
 	});
 
@@ -402,12 +422,39 @@ describe('research', () => {
 		response_time: 42,
 	};
 
-	const fastPolling = { max_wait_ms: 60_000, poll_interval_ms: 1 };
+	const fastPolling = { max_wait_ms: 60_000, poll_interval_ms: 1_000 };
+
+	beforeEach(() => jest.useFakeTimers());
+	afterEach(() => jest.useRealTimers());
+
+	// The handler sleeps poll_interval_ms between status checks. Driving fake
+	// timers lets these run at the real minimum interval without the wait.
+	async function runResearch(input: TavilyResearchRequest) {
+		let settled = false;
+		const outcome = Tavily.research(ctx, input).then(
+			(value) => {
+				settled = true;
+				return { ok: true as const, value };
+			},
+			(error: unknown) => {
+				settled = true;
+				return { ok: false as const, error };
+			},
+		);
+
+		for (let tick = 0; !settled && tick < 50; tick++) {
+			await jest.advanceTimersByTimeAsync(fastPolling.poll_interval_ms);
+		}
+
+		const settledOutcome = await outcome;
+		if (!settledOutcome.ok) throw settledOutcome.error;
+		return settledOutcome.value;
+	}
 
 	it('queues the task without leaking polling controls into the body', async () => {
 		mockedRequest.mockResolvedValueOnce(completed);
 
-		await Tavily.research(ctx, {
+		await runResearch({
 			input: 'state of MCP adoption',
 			model: 'pro',
 			...fastPolling,
@@ -429,7 +476,7 @@ describe('research', () => {
 			.mockResolvedValueOnce({ ...queued, status: 'in_progress' })
 			.mockResolvedValueOnce(completed);
 
-		const result = await Tavily.research(ctx, {
+		const result = await runResearch({
 			input: 'state of MCP adoption',
 			...fastPolling,
 		});
@@ -452,7 +499,7 @@ describe('research', () => {
 			.mockResolvedValueOnce(queued)
 			.mockResolvedValueOnce(completed);
 
-		const result = await Tavily.research(ctx, {
+		const result = await runResearch({
 			input: 'state of MCP adoption',
 			...fastPolling,
 		});
@@ -466,7 +513,7 @@ describe('research', () => {
 	it('does not poll when the create call already completed', async () => {
 		mockedRequest.mockResolvedValueOnce(completed);
 
-		await Tavily.research(ctx, { input: 'x', ...fastPolling });
+		await runResearch({ input: 'x', ...fastPolling });
 
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 	});
@@ -474,7 +521,7 @@ describe('research', () => {
 	it('stops at the wait deadline and returns the last known status', async () => {
 		mockedRequest.mockResolvedValueOnce(queued);
 
-		const result = await Tavily.research(ctx, {
+		const result = await runResearch({
 			input: 'state of MCP adoption',
 			max_wait_ms: 0,
 			poll_interval_ms: 1_000,
@@ -488,7 +535,7 @@ describe('research', () => {
 	it('persists a completed report keyed by request id', async () => {
 		mockedRequest.mockResolvedValueOnce(completed);
 
-		await Tavily.research(ctx, {
+		await runResearch({
 			input: 'state of MCP adoption',
 			...fastPolling,
 		});
@@ -512,7 +559,7 @@ describe('research', () => {
 			content: { summary: 'growing', confidence: 0.9 },
 		} satisfies TavilyResearchResponse);
 
-		await Tavily.research(ctx, { input: 'x', ...fastPolling });
+		await runResearch({ input: 'x', ...fastPolling });
 
 		const [, row] = upserts.researchResults.mock.calls[0] ?? [];
 		expect(row?.content).toBe('{"summary":"growing","confidence":0.9}');
@@ -524,7 +571,7 @@ describe('research', () => {
 			content: null,
 		} satisfies TavilyResearchResponse);
 
-		await Tavily.research(ctx, { input: 'x', ...fastPolling });
+		await runResearch({ input: 'x', ...fastPolling });
 
 		const [, row] = upserts.researchResults.mock.calls[0] ?? [];
 		expect(row?.content).toBeNull();
@@ -537,7 +584,7 @@ describe('research', () => {
 			response_time: 3,
 		} satisfies TavilyResearchResponse);
 
-		const result = await Tavily.research(ctx, {
+		const result = await runResearch({
 			input: 'x',
 			...fastPolling,
 		});
@@ -550,7 +597,7 @@ describe('research', () => {
 		mockedRequest.mockResolvedValueOnce(completed);
 		upserts.researchResults.mockRejectedValue(new Error('db offline'));
 
-		const result = await Tavily.research(ctx, {
+		const result = await runResearch({
 			input: 'x',
 			...fastPolling,
 		});
@@ -564,8 +611,8 @@ describe('research', () => {
 			.mockResolvedValueOnce(queued)
 			.mockRejectedValueOnce(new Error('Too Many Requests'));
 
-		await expect(
-			Tavily.research(ctx, { input: 'x', ...fastPolling }),
-		).rejects.toThrow('Too Many Requests');
+		await expect(runResearch({ input: 'x', ...fastPolling })).rejects.toThrow(
+			'Too Many Requests',
+		);
 	});
 });

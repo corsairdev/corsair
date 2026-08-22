@@ -2,15 +2,16 @@ import { logEventFromContext } from 'corsair/core';
 import { makeTavilyMcpRequest } from '../client';
 import type { TavilyMcpEndpoints } from '../index';
 import type { TavilyCrawlResponse } from './types';
+import { TavilyCrawlRequestSchema, TavilyCrawlResponseSchema } from './types';
 
 export const crawl: TavilyMcpEndpoints['crawl'] = async (ctx, input) => {
-	const response = await makeTavilyMcpRequest<TavilyCrawlResponse>(
-		'crawl',
-		ctx.key,
-		{
+	const query = TavilyCrawlRequestSchema.parse(input);
+
+	const response = TavilyCrawlResponseSchema.parse(
+		await makeTavilyMcpRequest<TavilyCrawlResponse>('crawl', ctx.key, {
 			method: 'POST',
-			body: input,
-		},
+			body: query,
+		}),
 	);
 
 	for (const result of response.results) {
@@ -31,7 +32,7 @@ export const crawl: TavilyMcpEndpoints['crawl'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'tavilymcp.tavily.crawl',
-		{ baseUrl: input.url, resultCount: response.results.length },
+		{ baseUrl: query.url, resultCount: response.results.length },
 		'completed',
 	);
 

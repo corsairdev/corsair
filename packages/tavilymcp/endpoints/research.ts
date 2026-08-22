@@ -2,6 +2,10 @@ import { logEventFromContext } from 'corsair/core';
 import { makeTavilyMcpRequest } from '../client';
 import type { TavilyMcpEndpoints } from '../index';
 import type { TavilyResearchResponse } from './types';
+import {
+	TavilyResearchRequestSchema,
+	TavilyResearchResponseSchema,
+} from './types';
 
 const DEFAULT_MAX_WAIT_MS = 300_000;
 const DEFAULT_POLL_INTERVAL_MS = 5_000;
@@ -17,15 +21,13 @@ export const research: TavilyMcpEndpoints['research'] = async (ctx, input) => {
 		max_wait_ms = DEFAULT_MAX_WAIT_MS,
 		poll_interval_ms = DEFAULT_POLL_INTERVAL_MS,
 		...body
-	} = input;
+	} = TavilyResearchRequestSchema.parse(input);
 
-	const created = await makeTavilyMcpRequest<TavilyResearchResponse>(
-		'research',
-		ctx.key,
-		{
+	const created = TavilyResearchResponseSchema.parse(
+		await makeTavilyMcpRequest<TavilyResearchResponse>('research', ctx.key, {
 			method: 'POST',
 			body: { ...body, stream: false },
-		},
+		}),
 	);
 
 	const deadline = Date.now() + max_wait_ms;
@@ -37,10 +39,12 @@ export const research: TavilyMcpEndpoints['research'] = async (ctx, input) => {
 		Date.now() + poll_interval_ms <= deadline
 	) {
 		await new Promise((resolve) => setTimeout(resolve, poll_interval_ms));
-		task = await makeTavilyMcpRequest<TavilyResearchResponse>(
-			`research/${created.request_id}`,
-			ctx.key,
-			{ method: 'GET' },
+		task = TavilyResearchResponseSchema.parse(
+			await makeTavilyMcpRequest<TavilyResearchResponse>(
+				`research/${created.request_id}`,
+				ctx.key,
+				{ method: 'GET' },
+			),
 		);
 	}
 
