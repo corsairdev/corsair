@@ -14,7 +14,11 @@ describe('Aivoov schema', () => {
 			expect(entity).toBeDefined();
 		}
 	});
+
+	it('schema version is 1.1.0', () => {
+		expect(AivoovSchema.version).toBe('1.1.0');
+	});
 });
 
 // Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
+// needs a corresponding test — see tests/api.test.ts for endpoint tests.

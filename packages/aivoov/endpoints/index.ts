@@ -1,2 +1,3 @@
-export { createAudio, getVoices } from './example';
+export { createAudio } from './audio';
 export * from './types';
+export { listVoices } from './voices';

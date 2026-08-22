@@ -1,29 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeAivoovRequest } from '../client';
 import type { AivoovEndpoints } from '../index';
-import type { AivoovEndpointOutputs, CreateAudioInput } from './types';
-
-export const getVoices: AivoovEndpoints['getVoices'] = async (ctx, input) => {
-	const response = await makeAivoovRequest<AivoovEndpointOutputs['getVoices']>(
-		'/voices',
-		ctx.key,
-		{
-			method: 'GET',
-			query: {
-				language_code: input.language_code,
-			},
-		},
-	);
-
-	await logEventFromContext(
-		ctx,
-		'aivoov.voices.list',
-		{ ...input },
-		'completed',
-	);
-
-	return response;
-};
+import type { AivoovEndpointOutputs } from './types';
 
 export const createAudio: AivoovEndpoints['createAudio'] = async (
 	ctx,
@@ -32,11 +10,23 @@ export const createAudio: AivoovEndpoints['createAudio'] = async (
 	const form: Record<string, string | string[] | undefined> = {
 		'voice_id[]': input.voice_id,
 		'transcribe_text[]': input.transcribe_text,
-		'transcribe_ssml_pitch_rate[]':
-			input.transcribe_ssml_pitch_rate?.map(String),
-		'transcribe_ssml_spk_rate[]': input.transcribe_ssml_spk_rate?.map(String),
-		'transcribe_ssml_volume[]': input.transcribe_ssml_volume?.map(String),
+		'transcribe_ssml_pitch_rate[]': input.transcribe_ssml_pitch_rate?.map(
+			(v) => (typeof v === 'number' ? String(v) : v),
+		),
+		'transcribe_ssml_spk_rate[]': input.transcribe_ssml_spk_rate?.map((v) =>
+			typeof v === 'number' ? String(v) : v,
+		),
+		'transcribe_ssml_volume[]': input.transcribe_ssml_volume?.map((v) =>
+			typeof v === 'number' ? String(v) : v,
+		),
 	};
+
+	// Remove undefined entries to keep the form payload clean
+	for (const key of Object.keys(form)) {
+		if (form[key] === undefined) {
+			delete form[key];
+		}
+	}
 
 	const response = await makeAivoovRequest<
 		AivoovEndpointOutputs['createAudio']

@@ -6,16 +6,15 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { createAudio, getVoices } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { createAudio, listVoices } from './endpoints';
 import type {
 	AivoovEndpointInputs,
 	AivoovEndpointOutputs,
@@ -26,18 +25,17 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { AivoovSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveAivoovOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchAivoovTenantWebhook } from './webhooks/tenant-matcher';
-import type { AivoovWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Plugin Options & Context
+// ─────────────────────────────────────────────────────────────────────────────
 
 export type AivoovPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	/** Auth scheme — AiVOOV only supports API key authentication. */
+	authType?: PickAuth<'api_key'>;
+	/** Inline API key (overrides stored credential). */
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalAivoovPlugin['hooks'];
-	webhookHooks?: InternalAivoovPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof aivoovEndpointsNested>;
 };
@@ -51,6 +49,10 @@ export type AivoovKeyBuilderContext = KeyBuilderContext<AivoovPluginOptions>;
 
 export type AivoovBoundEndpoints = BindEndpoints<typeof aivoovEndpointsNested>;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Type Map
+// ─────────────────────────────────────────────────────────────────────────────
+
 type AivoovEndpoint<K extends keyof AivoovEndpointOutputs> = CorsairEndpoint<
 	AivoovContext,
 	AivoovEndpointInputs[K],
@@ -58,63 +60,51 @@ type AivoovEndpoint<K extends keyof AivoovEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type AivoovEndpoints = {
-	getVoices: AivoovEndpoint<'getVoices'>;
+	listVoices: AivoovEndpoint<'listVoices'>;
 	createAudio: AivoovEndpoint<'createAudio'>;
 };
 
-type AivoovWebhook<
-	K extends keyof AivoovWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<AivoovContext, TEvent, AivoovWebhookOutputs[K]>;
+// ─────────────────────────────────────────────────────────────────────────────
+// Webhooks (AiVOOV has no inbound webhooks)
+// ─────────────────────────────────────────────────────────────────────────────
 
-export type AivoovWebhooks = {
-	example: AivoovWebhook<'example', ExampleEvent>;
-};
-
+export type AivoovWebhooks = {};
 export type AivoovBoundWebhooks = BindWebhooks<AivoovWebhooks>;
 
-/**
- * Aivoov endpoint tree.
- *
- * Available endpoints:
- * - voices.get
- * - audio.create
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// Nested Endpoint Tree
+//
+// Available endpoints:
+//   voices.list  — AIVOOV_LIST_VOICES
+//   audio.create — AIVOOV_CREATE_AUDIO
+// ─────────────────────────────────────────────────────────────────────────────
+
 const aivoovEndpointsNested = {
 	voices: {
-		get: getVoices,
+		list: listVoices,
 	},
 	audio: {
 		create: createAudio,
 	},
 } as const;
 
-const aivoovWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const aivoovWebhooksNested = {} as const;
 
-/**
- * Endpoint schemas.
- *
- * IMPORTANT:
- * The keys must exactly match the endpoint paths above.
- *
- * voices.get
- * audio.create
- */
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
 export const aivoovEndpointSchemas: RequiredPluginEndpointSchemas<{
 	voices: {
-		get: AivoovEndpoints['getVoices'];
+		list: AivoovEndpoints['listVoices'];
 	};
 	audio: {
 		create: AivoovEndpoints['createAudio'];
 	};
 }> = {
-	'voices.get': {
-		input: AivoovEndpointInputSchemas.getVoices,
-		output: AivoovEndpointOutputSchemas.getVoices,
+	'voices.list': {
+		input: AivoovEndpointInputSchemas.listVoices,
+		output: AivoovEndpointOutputSchemas.listVoices,
 	},
 	'audio.create': {
 		input: AivoovEndpointInputSchemas.createAudio,
@@ -122,36 +112,31 @@ export const aivoovEndpointSchemas: RequiredPluginEndpointSchemas<{
 	},
 };
 
-const aivoovWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<{
-	example: {
-		example: AivoovWebhooks['example'];
-	};
-}>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+// ─────────────────────────────────────────────────────────────────────────────
+// Endpoint Meta
+// ─────────────────────────────────────────────────────────────────────────────
 
 const aivoovEndpointMeta = {
-	'voices.get': {
+	'voices.list': {
 		riskLevel: 'read',
-		description: 'Get available AiVOOV voices',
+		description:
+			'Retrieves available text-to-speech voices from AiVOOV. Returns voice details including voice_id (required for audio creation), name, gender, and language information. Rate limited to 20 daily calls — consider caching results.',
 	},
 	'audio.create': {
 		riskLevel: 'write',
-		description: 'Generate audio from text using AiVOOV',
+		description:
+			'Generates audio from text using AiVOOV. Accepts an array of voice IDs and text segments with optional SSML parameters (pitch, speaking rate, volume).',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof aivoovEndpointsNested>;
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Auth Config & Plugin Definition
+// ─────────────────────────────────────────────────────────────────────────────
+
+const defaultAuthType: AuthTypes = 'api_key' as const;
+
 export const aivoovAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -162,7 +147,8 @@ export type BaseAivoovPlugin<T extends AivoovPluginOptions> = CorsairPlugin<
 	typeof aivoovEndpointsNested,
 	typeof aivoovWebhooksNested,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof aivoovAuthConfig
 >;
 
 export type InternalAivoovPlugin = BaseAivoovPlugin<AivoovPluginOptions>;
@@ -184,24 +170,14 @@ export function aivoov<const T extends AivoovPluginOptions>(
 		schema: AivoovSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: aivoovEndpointsNested,
 		webhooks: aivoovWebhooksNested,
 		endpointMeta: aivoovEndpointMeta,
 		endpointSchemas: aivoovEndpointSchemas,
-		webhookSchemas: aivoovWebhookSchemas,
 
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-
-			// TODO: Update this when the actual Aivoov
-			// webhook signature header is confirmed.
-			return 'x-aivoov-signature' in headers;
-		},
-
-		pluginTenantWebhookMatcher: matchAivoovTenantWebhook,
-
-		oauthWebhookTenantLinkResolver: resolveAivoovOAuthWebhookTenantLink,
+		// AiVOOV does not send inbound webhooks to Corsair.
+		pluginWebhookMatcher: () => false,
+		pluginTenantWebhookMatcher: undefined,
 
 		errorHandlers: {
 			...errorHandlers,
@@ -209,42 +185,35 @@ export function aivoov<const T extends AivoovPluginOptions>(
 		},
 
 		keyBuilder: async (ctx: AivoovKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('aivoov', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('aivoov', 'api_key');
 		},
 	} satisfies InternalAivoovPlugin;
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Type Exports
+// ─────────────────────────────────────────────────────────────────────────────
+
 export type {
 	AivoovEndpointInputs,
 	AivoovEndpointOutputs,
+	CreateAudioInput,
+	CreateAudioResponse,
+	ListVoicesInput,
+	ListVoicesResponse,
+	Voice,
 } from './endpoints/types';
-export type {
-	AivoovWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
+
+export type { AivoovAudio, AivoovVoice } from './schema/database';
