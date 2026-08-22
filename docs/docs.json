@@ -224,15 +224,6 @@
                 ]
               },
               {
-                "group": "APIpie",
-                "pages": [
-                  "plugins/apipie/overview",
-                  "plugins/apipie/api",
-                  "plugins/apipie/database",
-                  "plugins/apipie/webhooks"
-                ]
-              },
-              {
                 "group": "Amplitude",
                 "pages": [
                   "plugins/amplitude/overview",

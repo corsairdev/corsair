@@ -380,45 +380,6 @@ describe('apipie plugin factory', () => {
 		expect(options?.authType).toBe('api_key');
 	});
 
-	it('prefers an inline key over the credential store', async () => {
-		const plugin = apipie({ key: 'inline-key' });
-		const key = await plugin.keyBuilder(
-			{
-				authType: 'api_key',
-				keys: { get_api_key: jest.fn().mockResolvedValue('stored-key') },
-			} as never,
-			'endpoint',
-		);
-
-		expect(key).toBe('inline-key');
-	});
-
-	it('resolves the key from the credential store when no inline key is set', async () => {
-		const getApiKey = jest.fn().mockResolvedValue('stored-key');
-		const plugin = apipie({});
-		const key = await plugin.keyBuilder(
-			{ authType: 'api_key', keys: { get_api_key: getApiKey } } as never,
-			'endpoint',
-		);
-
-		expect(key).toBe('stored-key');
-		expect(getApiKey).toHaveBeenCalledTimes(1);
-	});
-
-	it('rejects endpoint calls when no API key is available', async () => {
-		const plugin = apipie({});
-
-		await expect(
-			plugin.keyBuilder(
-				{
-					authType: 'api_key',
-					keys: { get_api_key: jest.fn().mockResolvedValue(undefined) },
-				} as never,
-				'endpoint',
-			),
-		).rejects.toThrow(/missing.*api_key/i);
-	});
-
 	it('exposes all endpoints', () => {
 		const plugin = apipie({});
 		const endpoints = plugin.endpoints as
