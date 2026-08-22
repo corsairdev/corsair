@@ -331,6 +331,104 @@ export const TeamLanguagesSchema = z
 
 export type TeamLanguages = z.infer<typeof TeamLanguagesSchema>;
 
+export const TeamProjectSchema = z
+	.object({
+		name: z.string().optional(),
+		slug: z.string().optional(),
+		description: z.string().nullable().optional(),
+		guidelines: z.string().nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+		workflow_enabled: z.boolean().optional(),
+		resource_uri: z.string().optional(),
+	})
+	.loose();
+
+export type TeamProject = z.infer<typeof TeamProjectSchema>;
+
+export const TeamProjectListResponseSchema = z
+	.object({
+		meta: PaginationMetaSchema.optional(),
+		objects: z.array(TeamProjectSchema).optional(),
+	})
+	.loose();
+
+export type TeamProjectListResponse = z.infer<
+	typeof TeamProjectListResponseSchema
+>;
+
+export const TeamMemberSchema = z
+	.object({
+		user: z.union([UserSchema, z.string()]).optional(),
+		role: z.string().optional(),
+		languages_managed: z.array(z.string()).optional(),
+		resource_uri: z.string().optional(),
+	})
+	.loose();
+
+export type TeamMember = z.infer<typeof TeamMemberSchema>;
+
+export const TeamMemberListResponseSchema = z
+	.object({
+		meta: PaginationMetaSchema.optional(),
+		objects: z.array(TeamMemberSchema).optional(),
+	})
+	.loose();
+
+export type TeamMemberListResponse = z.infer<
+	typeof TeamMemberListResponseSchema
+>;
+
+export const TeamTaskSchema = z
+	.object({
+		id: z.union([z.number(), z.string()]).optional(),
+		video_id: z.string().optional(),
+		language: z.string().optional(),
+		type: z.string().optional(),
+		priority: z.number().optional(),
+		assignee: z.union([UserSchema, z.string()]).nullable().optional(),
+		completed: z.union([z.string(), z.boolean()]).nullable().optional(),
+		created: z.string().nullable().optional(),
+		modified: z.string().nullable().optional(),
+		resource_uri: z.string().optional(),
+	})
+	.loose();
+
+export type TeamTask = z.infer<typeof TeamTaskSchema>;
+
+export const TeamTaskListResponseSchema = z
+	.object({
+		meta: PaginationMetaSchema.optional(),
+		objects: z.array(TeamTaskSchema).optional(),
+	})
+	.loose();
+
+export type TeamTaskListResponse = z.infer<typeof TeamTaskListResponseSchema>;
+
+export const TeamApplicationSchema = z
+	.object({
+		id: z.union([z.number(), z.string()]).optional(),
+		user: z.union([UserSchema, z.string()]).optional(),
+		status: z.string().optional(),
+		created: z.string().nullable().optional(),
+		message: z.string().nullable().optional(),
+		resource_uri: z.string().optional(),
+	})
+	.loose();
+
+export type TeamApplication = z.infer<typeof TeamApplicationSchema>;
+
+export const TeamApplicationListResponseSchema = z
+	.object({
+		meta: PaginationMetaSchema.optional(),
+		objects: z.array(TeamApplicationSchema).optional(),
+	})
+	.loose();
+
+export type TeamApplicationListResponse = z.infer<
+	typeof TeamApplicationListResponseSchema
+>;
+
 export const LanguagesListResponseSchema = z
 	.object({
 		languages: z.record(z.string(), z.string()),
@@ -588,6 +686,131 @@ export type TeamsGetLanguagesInput = z.infer<
 	typeof TeamsGetLanguagesInputSchema
 >;
 
+export const TeamsListProjectsInputSchema = z.object({
+	team_slug: z.string().min(1),
+	...PaginationInput,
+});
+export type TeamsListProjectsInput = z.infer<
+	typeof TeamsListProjectsInputSchema
+>;
+
+export const TeamsGetProjectInputSchema = z.object({
+	team_slug: z.string().min(1),
+	project_slug: z.string().min(1),
+});
+export type TeamsGetProjectInput = z.infer<typeof TeamsGetProjectInputSchema>;
+
+export const TeamsCreateProjectInputSchema = z.object({
+	team_slug: z.string().min(1),
+	name: z.string().min(1),
+	slug: z.string().min(1),
+	description: z.string().optional(),
+	guidelines: z.string().optional(),
+});
+export type TeamsCreateProjectInput = z.infer<
+	typeof TeamsCreateProjectInputSchema
+>;
+
+export const TeamsUpdateProjectInputSchema = z.object({
+	team_slug: z.string().min(1),
+	project_slug: z.string().min(1),
+	name: z.string().optional(),
+	description: z.string().optional(),
+	guidelines: z.string().optional(),
+});
+export type TeamsUpdateProjectInput = z.infer<
+	typeof TeamsUpdateProjectInputSchema
+>;
+
+export const TeamsDeleteProjectInputSchema = z.object({
+	team_slug: z.string().min(1),
+	project_slug: z.string().min(1),
+});
+export type TeamsDeleteProjectInput = z.infer<
+	typeof TeamsDeleteProjectInputSchema
+>;
+
+export const TeamsListMembersInputSchema = z.object({
+	team_slug: z.string().min(1),
+	...PaginationInput,
+});
+export type TeamsListMembersInput = z.infer<typeof TeamsListMembersInputSchema>;
+
+export const TeamsGetMemberInputSchema = z.object({
+	team_slug: z.string().min(1),
+	username: z.string().min(1),
+});
+export type TeamsGetMemberInput = z.infer<typeof TeamsGetMemberInputSchema>;
+
+export const TeamsAddMemberInputSchema = z.object({
+	team_slug: z.string().min(1),
+	user: z.string().min(1),
+	role: z
+		.enum([
+			'owner',
+			'admin',
+			'manager',
+			'contributor',
+			'proj_lang_manager',
+			'limited_contributor',
+		])
+		.optional(),
+});
+export type TeamsAddMemberInput = z.infer<typeof TeamsAddMemberInputSchema>;
+
+export const TeamsUpdateMemberInputSchema = z.object({
+	team_slug: z.string().min(1),
+	username: z.string().min(1),
+	role: z.enum([
+		'owner',
+		'admin',
+		'manager',
+		'contributor',
+		'proj_lang_manager',
+		'limited_contributor',
+	]),
+});
+export type TeamsUpdateMemberInput = z.infer<
+	typeof TeamsUpdateMemberInputSchema
+>;
+
+export const TeamsRemoveMemberInputSchema = z.object({
+	team_slug: z.string().min(1),
+	username: z.string().min(1),
+});
+export type TeamsRemoveMemberInput = z.infer<
+	typeof TeamsRemoveMemberInputSchema
+>;
+
+export const TeamsListTasksInputSchema = z.object({
+	team_slug: z.string().min(1),
+	assignee: z.string().optional(),
+	priority: z.number().optional(),
+	type: z.string().optional(),
+	video_id: z.string().optional(),
+	completed: z.union([z.string(), z.boolean()]).optional(),
+	open: z.union([z.string(), z.boolean()]).optional(),
+	order_by: z.string().optional(),
+	...PaginationInput,
+});
+export type TeamsListTasksInput = z.infer<typeof TeamsListTasksInputSchema>;
+
+export const TeamsGetTaskInputSchema = z.object({
+	team_slug: z.string().min(1),
+	task_id: z.union([z.string(), z.number()]),
+});
+export type TeamsGetTaskInput = z.infer<typeof TeamsGetTaskInputSchema>;
+
+export const TeamsListApplicationsInputSchema = z.object({
+	team_slug: z.string().min(1),
+	status: z.string().optional(),
+	user: z.string().optional(),
+	...PaginationInput,
+});
+export type TeamsListApplicationsInput = z.infer<
+	typeof TeamsListApplicationsInputSchema
+>;
+
 export const ActivityListInputSchema = z.object({
 	team: z.string().optional(),
 	type: z.union([z.string(), z.number()]).optional(),
@@ -654,6 +877,19 @@ export type AmaraEndpointInputs = {
 	teamsList: TeamsListInput;
 	teamsGetDetails: TeamsGetDetailsInput;
 	teamsGetLanguages: TeamsGetLanguagesInput;
+	teamsListProjects: TeamsListProjectsInput;
+	teamsGetProject: TeamsGetProjectInput;
+	teamsCreateProject: TeamsCreateProjectInput;
+	teamsUpdateProject: TeamsUpdateProjectInput;
+	teamsDeleteProject: TeamsDeleteProjectInput;
+	teamsListMembers: TeamsListMembersInput;
+	teamsGetMember: TeamsGetMemberInput;
+	teamsAddMember: TeamsAddMemberInput;
+	teamsUpdateMember: TeamsUpdateMemberInput;
+	teamsRemoveMember: TeamsRemoveMemberInput;
+	teamsListTasks: TeamsListTasksInput;
+	teamsGetTask: TeamsGetTaskInput;
+	teamsListApplications: TeamsListApplicationsInput;
 	activityList: ActivityListInput;
 	activityGet: ActivityGetInput;
 	languagesListAvailable: LanguagesListAvailableInput;
@@ -687,6 +923,19 @@ export type AmaraEndpointOutputs = {
 	teamsList: TeamListResponse;
 	teamsGetDetails: Team;
 	teamsGetLanguages: TeamLanguages;
+	teamsListProjects: TeamProjectListResponse;
+	teamsGetProject: TeamProject;
+	teamsCreateProject: TeamProject;
+	teamsUpdateProject: TeamProject;
+	teamsDeleteProject: EmptyOk;
+	teamsListMembers: TeamMemberListResponse;
+	teamsGetMember: TeamMember;
+	teamsAddMember: TeamMember;
+	teamsUpdateMember: TeamMember;
+	teamsRemoveMember: EmptyOk;
+	teamsListTasks: TeamTaskListResponse;
+	teamsGetTask: TeamTask;
+	teamsListApplications: TeamApplicationListResponse;
 	activityList: ActivityListResponse;
 	activityGet: Activity;
 	languagesListAvailable: LanguagesListResponse;
@@ -720,6 +969,19 @@ export const AmaraEndpointInputSchemas = {
 	teamsList: TeamsListInputSchema,
 	teamsGetDetails: TeamsGetDetailsInputSchema,
 	teamsGetLanguages: TeamsGetLanguagesInputSchema,
+	teamsListProjects: TeamsListProjectsInputSchema,
+	teamsGetProject: TeamsGetProjectInputSchema,
+	teamsCreateProject: TeamsCreateProjectInputSchema,
+	teamsUpdateProject: TeamsUpdateProjectInputSchema,
+	teamsDeleteProject: TeamsDeleteProjectInputSchema,
+	teamsListMembers: TeamsListMembersInputSchema,
+	teamsGetMember: TeamsGetMemberInputSchema,
+	teamsAddMember: TeamsAddMemberInputSchema,
+	teamsUpdateMember: TeamsUpdateMemberInputSchema,
+	teamsRemoveMember: TeamsRemoveMemberInputSchema,
+	teamsListTasks: TeamsListTasksInputSchema,
+	teamsGetTask: TeamsGetTaskInputSchema,
+	teamsListApplications: TeamsListApplicationsInputSchema,
 	activityList: ActivityListInputSchema,
 	activityGet: ActivityGetInputSchema,
 	languagesListAvailable: LanguagesListAvailableInputSchema,
@@ -753,6 +1015,19 @@ export const AmaraEndpointOutputSchemas = {
 	teamsList: TeamListResponseSchema,
 	teamsGetDetails: TeamSchema,
 	teamsGetLanguages: TeamLanguagesSchema,
+	teamsListProjects: TeamProjectListResponseSchema,
+	teamsGetProject: TeamProjectSchema,
+	teamsCreateProject: TeamProjectSchema,
+	teamsUpdateProject: TeamProjectSchema,
+	teamsDeleteProject: EmptyOkSchema,
+	teamsListMembers: TeamMemberListResponseSchema,
+	teamsGetMember: TeamMemberSchema,
+	teamsAddMember: TeamMemberSchema,
+	teamsUpdateMember: TeamMemberSchema,
+	teamsRemoveMember: EmptyOkSchema,
+	teamsListTasks: TeamTaskListResponseSchema,
+	teamsGetTask: TeamTaskSchema,
+	teamsListApplications: TeamApplicationListResponseSchema,
 	activityList: ActivityListResponseSchema,
 	activityGet: ActivitySchema,
 	languagesListAvailable: LanguagesListResponseSchema,
