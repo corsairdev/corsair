@@ -31,32 +31,29 @@ export const createAudio: AivoovEndpoints['createAudio'] = async (
 		}
 	}
 
-	const params = new URLSearchParams();
-	for (const id of input.voice_id) params.append('voice_id[]', id);
-	for (const text of input.transcribe_text)
-		params.append('transcribe_text[]', text);
+	const form: Record<string, string | string[]> = {
+		'voice_id[]': input.voice_id,
+		'transcribe_text[]': input.transcribe_text,
+	};
 
 	if (input.transcribe_ssml_pitch_rate) {
-		for (const v of input.transcribe_ssml_pitch_rate) {
-			params.append('transcribe_ssml_pitch_rate[]', String(v));
-		}
+		form['transcribe_ssml_pitch_rate[]'] =
+			input.transcribe_ssml_pitch_rate.map(String);
 	}
 	if (input.transcribe_ssml_spk_rate) {
-		for (const v of input.transcribe_ssml_spk_rate) {
-			params.append('transcribe_ssml_spk_rate[]', String(v));
-		}
+		form['transcribe_ssml_spk_rate[]'] =
+			input.transcribe_ssml_spk_rate.map(String);
 	}
 	if (input.transcribe_ssml_volume) {
-		for (const v of input.transcribe_ssml_volume) {
-			params.append('transcribe_ssml_volume[]', String(v));
-		}
+		form['transcribe_ssml_volume[]'] =
+			input.transcribe_ssml_volume.map(String);
 	}
 
 	const response = await makeAivoovRequest<
 		AivoovEndpointOutputs['createAudio']
 	>('/create', ctx.key, {
 		method: 'POST',
-		form: Object.fromEntries(params) as Record<string, string>,
+		form,
 	});
 
 	await logEventFromContext(
