@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class UniswapApiAPIError extends Error {
 	constructor(
@@ -51,9 +51,34 @@ export async function makeUniswapApiRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			// UniswapApi error responses use { errorCode, detail } instead of the
+			// generic { code, message } shape — extract those fields explicitly,
+			// falling back to error.message / error.status if the body doesn't match.
+			const body = error.body;
+
+			const message =
+				typeof body === 'object' &&
+				body !== null &&
+				'detail' in body &&
+				typeof body.detail === 'string'
+					? body.detail
+					: error.message;
+
+			const code =
+				typeof body === 'object' &&
+				body !== null &&
+				'errorCode' in body &&
+				typeof body.errorCode === 'string'
+					? body.errorCode
+					: error.status?.toString();
+			throw new UniswapApiAPIError(message, code);
+		}
+
 		if (error instanceof Error) {
 			throw new UniswapApiAPIError(error.message);
 		}
+
 		throw new UniswapApiAPIError('Unknown error');
 	}
 }
