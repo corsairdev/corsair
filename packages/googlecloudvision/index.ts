@@ -411,10 +411,7 @@ export function googlecloudvision<
 				}
 				return res;
 			}
-			throw new AuthMissingError(
-				'googlecloudvision',
-				ctx.authType ?? defaultAuthType,
-			);
+			throw new AuthMissingError('googlecloudvision', ctx.authType);
 		},
 	} satisfies InternalGoogleCloudVisionPlugin;
 }

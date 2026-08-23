@@ -457,6 +457,19 @@ describe('keyBuilder', () => {
 			),
 		).resolves.toBe('static-key');
 	});
+
+	it('loads the access token when authType is oauth_2', async () => {
+		const plugin = googlecloudvision({ authType: 'oauth_2' });
+		await expect(
+			plugin.keyBuilder!(
+				{
+					authType: 'oauth_2',
+					keys: { get_access_token: async () => 'opaque-oauth-token' },
+				} as never,
+				'endpoint',
+			),
+		).resolves.toBe('opaque-oauth-token');
+	});
 });
 
 describe('input schemas', () => {

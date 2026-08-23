@@ -22,7 +22,14 @@ export type GoogleCloudVisionAuthType = 'api_key' | 'oauth_2';
 export type GoogleCloudVisionRequestContext = {
 	key?: string;
 	authType?: GoogleCloudVisionAuthType;
+	options?: { authType?: GoogleCloudVisionAuthType };
 };
+
+export function resolveGoogleCloudVisionAuthType(
+	ctx: GoogleCloudVisionRequestContext,
+): GoogleCloudVisionAuthType {
+	return ctx.authType ?? ctx.options?.authType ?? 'api_key';
+}
 
 export type GoogleCloudVisionRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
@@ -59,10 +66,7 @@ export async function makeGoogleCloudVisionRequest<T>(
 		baseUrl = GOOGLECLOUDVISION_API_BASE,
 	} = options;
 	const credential = ctx.key ?? '';
-	const authType =
-		ctx.authType === 'oauth_2' || credential.startsWith('ya29.')
-			? 'oauth_2'
-			: 'api_key';
+	const authType = resolveGoogleCloudVisionAuthType(ctx);
 
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json',

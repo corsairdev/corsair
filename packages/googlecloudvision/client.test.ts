@@ -48,16 +48,54 @@ describe('makeGoogleCloudVisionRequest', () => {
 		expect(config?.HEADERS).not.toHaveProperty('Authorization');
 	});
 
-	it('treats ya29 tokens as oauth when authType is omitted', async () => {
+	it('defaults omitted authType to api_key for opaque credentials', async () => {
 		await makeGoogleCloudVisionRequest('images:annotate', {
-			key: 'ya29.access',
+			key: 'opaque-oauth-token',
 		});
 
 		const config = mockedRequest.mock.calls[0]?.[0];
 		expect(config?.HEADERS).toMatchObject({
-			Authorization: 'Bearer ya29.access',
+			'x-goog-api-key': 'opaque-oauth-token',
+		});
+		expect(config?.HEADERS).not.toHaveProperty('Authorization');
+	});
+
+	it('sends opaque oauth tokens as Bearer when authType is oauth_2', async () => {
+		await makeGoogleCloudVisionRequest('images:annotate', {
+			key: 'opaque-oauth-token',
+			authType: 'oauth_2',
+		});
+
+		const config = mockedRequest.mock.calls[0]?.[0];
+		expect(config?.HEADERS).toMatchObject({
+			Authorization: 'Bearer opaque-oauth-token',
 		});
 		expect(config?.HEADERS).not.toHaveProperty('x-goog-api-key');
+	});
+
+	it('reads oauth_2 from ctx.options when authType is omitted', async () => {
+		await makeGoogleCloudVisionRequest('images:annotate', {
+			key: 'opaque-oauth-token',
+			options: { authType: 'oauth_2' },
+		});
+
+		const config = mockedRequest.mock.calls[0]?.[0];
+		expect(config?.HEADERS).toMatchObject({
+			Authorization: 'Bearer opaque-oauth-token',
+		});
+	});
+
+	it('does not treat token prefixes as oauth', async () => {
+		await makeGoogleCloudVisionRequest('images:annotate', {
+			key: 'ya29.access',
+			authType: 'api_key',
+		});
+
+		const config = mockedRequest.mock.calls[0]?.[0];
+		expect(config?.HEADERS).toMatchObject({
+			'x-goog-api-key': 'ya29.access',
+		});
+		expect(config?.HEADERS).not.toHaveProperty('Authorization');
 	});
 
 	it('disables corsair/http transport retries', async () => {
