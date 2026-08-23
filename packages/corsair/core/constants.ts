@@ -72,6 +72,7 @@ export const BaseProviders = [
 	'calendly',
 	'canva',
 	'canvas',
+	'chatbotkit',
 	'circleci',
 	'clientary',
 	'cloudflare',
@@ -244,6 +245,7 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
+	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	cloudflare: 'Cloudflare',
@@ -423,6 +425,7 @@ export type AllProviders =
 	| 'calendly'
 	| 'canva'
 	| 'canvas'
+	| 'chatbotkit'
 	| 'circleci'
 	| 'clientary'
 	| 'cloudflare'
