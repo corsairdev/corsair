@@ -59,8 +59,24 @@ export async function makeWitAiRequest<T>(
 		string | number | boolean | undefined
 	> = {
 		v: WITAI_API_VERSION,
-		...(method === 'GET' ? query : {}),
 	};
+
+	if (method === 'GET' && query) {
+		for (const [key, val] of Object.entries(query)) {
+			if (val !== undefined) {
+				queryWithVersion[key] = val;
+			}
+		}
+	}
+
+	console.log(
+		`[WitAi Request] Calling: ${method} ${WITAI_API_BASE}/${endpoint}`,
+	);
+	console.log(`[WitAi Request] Query:`, queryWithVersion);
+	console.log(`[WitAi Request] Headers:`, {
+		...config.HEADERS,
+		Authorization: `Bearer ${apiKey ? apiKey.substring(0, 5) + '...' : 'undefined'}`,
+	});
 
 	const requestOptions: ApiRequestOptions = {
 		method,

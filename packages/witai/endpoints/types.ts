@@ -344,7 +344,9 @@ const ExportAppOutputSchema = z.object({ uri: z.string() });
 const ListAppTagsOutputSchema = z.array(WitAiTagSchema);
 
 const GetMessageOutputSchema = WitAiMessageResponseSchema;
-const DetectLanguageOutputSchema = z.array(WitAiDetectedLocaleSchema);
+const DetectLanguageOutputSchema = z.object({
+	detected_locales: z.array(WitAiDetectedLocaleSchema),
+});
 
 const ListIntentsOutputSchema = z.array(WitAiIntentSchema);
 const GetIntentOutputSchema = WitAiIntentSchema;
