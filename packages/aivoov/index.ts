@@ -156,7 +156,7 @@ export function aivoov<const T extends AivoovPluginOptions>(
 	} satisfies InternalAivoovPlugin;
 }
 
-export { AivoovAPIError, makeAivoovRequest } from './client';
+export { AivoovAPIError } from './client';
 export type {
 	AivoovEndpointInputs,
 	AivoovEndpointOutputs,

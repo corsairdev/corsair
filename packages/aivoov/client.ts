@@ -64,8 +64,15 @@ const AIVOOV_RATE_LIMIT_CONFIG: RateLimitConfig = {
 
 export type AivoovQueryValue = string | number | boolean | undefined;
 
+/**
+ * The only two paths this plugin calls. Typing the parameter as a literal
+ * union (rather than `string`) keeps caller-supplied data out of the shared
+ * request layer's `{param}` path-template substitution.
+ */
+export type AivoovEndpointPath = '/voices' | '/create';
+
 export async function makeAivoovRequest<T>(
-	endpoint: string,
+	endpoint: AivoovEndpointPath,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST';
