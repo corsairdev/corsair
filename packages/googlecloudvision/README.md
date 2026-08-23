@@ -6,6 +6,8 @@ Corsair plugin for the [Google Cloud Vision API](https://docs.cloud.google.com/v
 
 API key (`x-goog-api-key`) or OAuth 2.0 (`Authorization: Bearer`). Missing credentials throw `AuthMissingError`.
 
+If `authType` is omitted, keys starting with `AIza` are sent as API keys. Any other explicit key is sent as a Bearer token.
+
 Product Search writes typically need OAuth with `https://www.googleapis.com/auth/cloud-vision` or `cloud-platform`.
 
 ## Endpoints
