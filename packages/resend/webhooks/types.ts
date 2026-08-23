@@ -158,6 +158,37 @@ export const EmailSentEventSchema = z.object({
 });
 export type EmailSentEvent = z.infer<typeof EmailSentEventSchema>;
 
+export const EmailScheduledEventSchema = z.object({
+	type: z.literal('email.scheduled'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailScheduledEvent = z.infer<typeof EmailScheduledEventSchema>;
+
+export const EmailSuppressedEventSchema = z.object({
+	type: z.literal('email.suppressed'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+			reason: z.string().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailSuppressedEvent = z.infer<typeof EmailSuppressedEventSchema>;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Domain event schemas
 // ─────────────────────────────────────────────────────────────────────────────
@@ -168,6 +199,9 @@ const DomainStatusSchema = z.enum([
 	'scheduled',
 	'ready',
 	'error',
+	'verified',
+	'pending',
+	'failed',
 ]);
 
 export const DomainCreatedEventSchema = z.object({
@@ -198,6 +232,66 @@ export const DomainUpdatedEventSchema = z.object({
 });
 export type DomainUpdatedEvent = z.infer<typeof DomainUpdatedEventSchema>;
 
+export const DomainDeletedEventSchema = z.object({
+	type: z.literal('domain.deleted'),
+	created_at: z.string(),
+	data: z
+		.object({
+			domain_id: z.string(),
+			name: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type DomainDeletedEvent = z.infer<typeof DomainDeletedEventSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Contact event schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ContactCreatedEventSchema = z.object({
+	type: z.literal('contact.created'),
+	created_at: z.string(),
+	data: z
+		.object({
+			contact_id: z.string(),
+			email: z.string(),
+			first_name: z.string().nullable().optional(),
+			last_name: z.string().nullable().optional(),
+			created_at: z.string(),
+			unsubscribed: z.boolean().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type ContactCreatedEvent = z.infer<typeof ContactCreatedEventSchema>;
+
+export const ContactUpdatedEventSchema = z.object({
+	type: z.literal('contact.updated'),
+	created_at: z.string(),
+	data: z
+		.object({
+			contact_id: z.string(),
+			email: z.string(),
+			first_name: z.string().nullable().optional(),
+			last_name: z.string().nullable().optional(),
+			created_at: z.string(),
+			unsubscribed: z.boolean().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type ContactUpdatedEvent = z.infer<typeof ContactUpdatedEventSchema>;
+
+export const ContactDeletedEventSchema = z.object({
+	type: z.literal('contact.deleted'),
+	created_at: z.string(),
+	data: z
+		.object({
+			contact_id: z.string(),
+			email: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type ContactDeletedEvent = z.infer<typeof ContactDeletedEventSchema>;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Union and map types
 // ─────────────────────────────────────────────────────────────────────────────
@@ -211,8 +305,14 @@ export const ResendWebhookEventSchema = z.union([
 	EmailOpenedEventSchema,
 	EmailReceivedEventSchema,
 	EmailSentEventSchema,
+	EmailScheduledEventSchema,
+	EmailSuppressedEventSchema,
 	DomainCreatedEventSchema,
 	DomainUpdatedEventSchema,
+	DomainDeletedEventSchema,
+	ContactCreatedEventSchema,
+	ContactUpdatedEventSchema,
+	ContactDeletedEventSchema,
 ]);
 export type ResendWebhookEvent = z.infer<typeof ResendWebhookEventSchema>;
 
@@ -225,8 +325,14 @@ export type ResendEventName =
 	| 'email.opened'
 	| 'email.received'
 	| 'email.sent'
+	| 'email.scheduled'
+	| 'email.suppressed'
 	| 'domain.created'
-	| 'domain.updated';
+	| 'domain.updated'
+	| 'domain.deleted'
+	| 'contact.created'
+	| 'contact.updated'
+	| 'contact.deleted';
 
 export interface ResendEventMap {
 	'email.bounced': EmailBouncedEvent;
@@ -237,8 +343,14 @@ export interface ResendEventMap {
 	'email.opened': EmailOpenedEvent;
 	'email.received': EmailReceivedEvent;
 	'email.sent': EmailSentEvent;
+	'email.scheduled': EmailScheduledEvent;
+	'email.suppressed': EmailSuppressedEvent;
 	'domain.created': DomainCreatedEvent;
 	'domain.updated': DomainUpdatedEvent;
+	'domain.deleted': DomainDeletedEvent;
+	'contact.created': ContactCreatedEvent;
+	'contact.updated': ContactUpdatedEvent;
+	'contact.deleted': ContactDeletedEvent;
 }
 
 export type ResendWebhookOutputs = {
@@ -250,8 +362,14 @@ export type ResendWebhookOutputs = {
 	emailOpened: EmailOpenedEvent;
 	emailReceived: EmailReceivedEvent;
 	emailSent: EmailSentEvent;
+	emailScheduled: EmailScheduledEvent;
+	emailSuppressed: EmailSuppressedEvent;
 	domainCreated: DomainCreatedEvent;
 	domainUpdated: DomainUpdatedEvent;
+	domainDeleted: DomainDeletedEvent;
+	contactCreated: ContactCreatedEvent;
+	contactUpdated: ContactUpdatedEvent;
+	contactDeleted: ContactDeletedEvent;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────

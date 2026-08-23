@@ -2,8 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import type { ResendWebhooks } from '../index';
 import { createResendMatch, verifyResendWebhookSignature } from './types';
 
-export const domainCreated: ResendWebhooks['domainCreated'] = {
-	match: createResendMatch('domain.created'),
+export const contactCreated: ResendWebhooks['contactCreated'] = {
+	match: createResendMatch('contact.created'),
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
@@ -18,41 +18,40 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 
 		const event = request.payload;
 
-		if (event.type !== 'domain.created') {
+		if (event.type !== 'contact.created') {
 			return {
 				success: true,
 				data: undefined,
 			};
 		}
 
-		console.log('🌐 Resend Domain Created Event:', {
-			domain_id: event.data.domain_id,
-			name: event.data.name,
-			status: event.data.status,
+		console.log('👤 Resend Contact Created Event:', {
+			contact_id: event.data.contact_id,
+			email: event.data.email,
 		});
 
 		let corsairEntityId = '';
 
-		if (ctx.db.domains && event.data.domain_id) {
+		if (ctx.db.contacts && event.data.contact_id) {
 			try {
-				const entity = await ctx.db.domains.upsertByEntityId(
-					event.data.domain_id,
+				const entity = await ctx.db.contacts.upsertByEntityId(
+					event.data.contact_id,
 					{
 						...event.data,
-						id: event.data.domain_id,
+						id: event.data.contact_id,
 						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);
 
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
-				console.warn('Failed to save domain to database:', error);
+				console.warn('Failed to save contact to database:', error);
 			}
 		}
 
 		await logEventFromContext(
 			ctx,
-			'resend.webhook.domainCreated',
+			'resend.webhook.contactCreated',
 			{ ...event },
 			'completed',
 		);
@@ -65,8 +64,8 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 	},
 };
 
-export const domainUpdated: ResendWebhooks['domainUpdated'] = {
-	match: createResendMatch('domain.updated'),
+export const contactUpdated: ResendWebhooks['contactUpdated'] = {
+	match: createResendMatch('contact.updated'),
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
@@ -81,41 +80,40 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 
 		const event = request.payload;
 
-		if (event.type !== 'domain.updated') {
+		if (event.type !== 'contact.updated') {
 			return {
 				success: true,
 				data: undefined,
 			};
 		}
 
-		console.log('🔄 Resend Domain Updated Event:', {
-			domain_id: event.data.domain_id,
-			name: event.data.name,
-			status: event.data.status,
+		console.log('🔄 Resend Contact Updated Event:', {
+			contact_id: event.data.contact_id,
+			email: event.data.email,
 		});
 
 		let corsairEntityId = '';
 
-		if (ctx.db.domains && event.data.domain_id) {
+		if (ctx.db.contacts && event.data.contact_id) {
 			try {
-				const entity = await ctx.db.domains.upsertByEntityId(
-					event.data.domain_id,
+				const entity = await ctx.db.contacts.upsertByEntityId(
+					event.data.contact_id,
 					{
 						...event.data,
-						id: event.data.domain_id,
+						id: event.data.contact_id,
 						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);
 
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
-				console.warn('Failed to update domain in database:', error);
+				console.warn('Failed to update contact in database:', error);
 			}
 		}
 
 		await logEventFromContext(
 			ctx,
-			'resend.webhook.domainUpdated',
+			'resend.webhook.contactUpdated',
 			{ ...event },
 			'completed',
 		);
@@ -128,8 +126,8 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 	},
 };
 
-export const domainDeleted: ResendWebhooks['domainDeleted'] = {
-	match: createResendMatch('domain.deleted'),
+export const contactDeleted: ResendWebhooks['contactDeleted'] = {
+	match: createResendMatch('contact.deleted'),
 
 	handler: async (ctx, request) => {
 		const webhookSecret = ctx.key;
@@ -144,29 +142,29 @@ export const domainDeleted: ResendWebhooks['domainDeleted'] = {
 
 		const event = request.payload;
 
-		if (event.type !== 'domain.deleted') {
+		if (event.type !== 'contact.deleted') {
 			return {
 				success: true,
 				data: undefined,
 			};
 		}
 
-		console.log('🗑️ Resend Domain Deleted Event:', {
-			domain_id: event.data.domain_id,
-			name: event.data.name,
+		console.log('🗑️ Resend Contact Deleted Event:', {
+			contact_id: event.data.contact_id,
+			email: event.data.email,
 		});
 
-		if (ctx.db.domains && event.data.domain_id) {
+		if (ctx.db.contacts && event.data.contact_id) {
 			try {
-				await ctx.db.domains.deleteByEntityId(event.data.domain_id);
+				await ctx.db.contacts.deleteByEntityId(event.data.contact_id);
 			} catch (error) {
-				console.warn('Failed to delete domain from database:', error);
+				console.warn('Failed to delete contact from database:', error);
 			}
 		}
 
 		await logEventFromContext(
 			ctx,
-			'resend.webhook.domainDeleted',
+			'resend.webhook.contactDeleted',
 			{ ...event },
 			'completed',
 		);
