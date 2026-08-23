@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Extract, Search } from './endpoints';
 import type {
@@ -26,18 +23,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DiffbotSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveDiffbotOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchDiffbotTenantWebhook } from './webhooks/tenant-matcher';
-import type { DiffbotWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type DiffbotPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalDiffbotPlugin['hooks'];
-	webhookHooks?: InternalDiffbotPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof diffbotEndpointsNested>;
 };
@@ -67,19 +57,6 @@ export type DiffbotEndpoints = {
 	searchDql: DiffbotEndpoint<'searchDql'>;
 };
 
-type DiffbotWebhook<
-	K extends keyof DiffbotWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<DiffbotContext, TEvent, DiffbotWebhookOutputs[K]>;
-
-export type DiffbotWebhooks = {
-	// Diffbot does not have a native webhook system.
-	// This placeholder webhook is kept for Corsair plugin structure compliance.
-	example: DiffbotWebhook<'example', ExampleEvent>;
-};
-
-export type DiffbotBoundWebhooks = BindWebhooks<DiffbotWebhooks>;
-
 const diffbotEndpointsNested = {
 	extract: {
 		article: Extract.article,
@@ -89,12 +66,6 @@ const diffbotEndpointsNested = {
 	search: {
 		web: Search.web,
 		dql: Search.dql,
-	},
-} as const;
-
-const diffbotWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -122,15 +93,6 @@ export const diffbotEndpointSchemas = {
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof diffbotEndpointsNested
 >;
-
-const diffbotWebhookSchemas = {
-	'example.example': {
-		description:
-			'Placeholder webhook event (Diffbot does not have a native webhook system)',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof diffbotWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -172,7 +134,7 @@ export type BaseDiffbotPlugin<T extends DiffbotPluginOptions> = CorsairPlugin<
 	'diffbot',
 	typeof DiffbotSchema,
 	typeof diffbotEndpointsNested,
-	typeof diffbotWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -195,33 +157,15 @@ export function diffbot<const T extends DiffbotPluginOptions>(
 		schema: DiffbotSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: diffbotEndpointsNested,
-		webhooks: diffbotWebhooksNested,
+		webhooks: {},
 		endpointMeta: diffbotEndpointMeta,
 		endpointSchemas: diffbotEndpointSchemas,
-		webhookSchemas: diffbotWebhookSchemas,
-		// Diffbot does not use webhook signatures — this is a no-op matcher
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-diffbot-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchDiffbotTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveDiffbotOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: DiffbotKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -250,7 +194,3 @@ export type {
 	WebSearchInput,
 	WebSearchResponse,
 } from './endpoints/types';
-export type {
-	DiffbotWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';

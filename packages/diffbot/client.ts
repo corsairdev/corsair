@@ -74,9 +74,13 @@ export async function makeDiffbotRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		// Re-throw ApiError directly so errorHandlers can inspect .status and .retryAfter
 		if (error instanceof ApiError) {
-			throw error;
+			throw new DiffbotAPIError(
+				error.message,
+				undefined,
+				error.status,
+				error.retryAfter,
+			);
 		}
 		if (error instanceof Error) {
 			throw new DiffbotAPIError(error.message);

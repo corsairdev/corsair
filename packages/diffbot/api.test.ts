@@ -1,3 +1,5 @@
+import { makeDiffbotRequest } from './client';
+import { Extract, Search } from './endpoints';
 import {
 	AnalyzeInputSchema,
 	AnalyzeResponseSchema,
@@ -10,6 +12,20 @@ import {
 	WebSearchInputSchema,
 	WebSearchResponseSchema,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+
+// Mock the client request module
+jest.mock('./client', () => ({
+	makeDiffbotRequest: jest.fn(),
+}));
+
+const mockRequest = makeDiffbotRequest as jest.MockedFunction<
+	typeof makeDiffbotRequest
+>;
+
+const mockCtx = {
+	key: 'test-token',
+} as any;
 
 // ---------------------------------------------------------------------------
 // Extract Article
@@ -262,5 +278,121 @@ describe('search.dql — response schema', () => {
 	it('parses an empty result set', () => {
 		const result = DqlSearchResponseSchema.safeParse({ data: [], hits: 0 });
 		expect(result.success).toBe(true);
+	});
+});
+
+// ---------------------------------------------------------------------------
+// Endpoint Handler Verification (Mocked requests)
+// ---------------------------------------------------------------------------
+
+describe('Diffbot endpoint handlers (mocked request mapping)', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+	});
+
+	it('extractArticle invokes client correctly', async () => {
+		mockRequest.mockResolvedValueOnce({ objects: [] });
+		await Extract.article(mockCtx, {
+			url: 'https://example.com/article',
+			fields: 'meta,links',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith('article', 'test-token', {
+			method: 'GET',
+			query: {
+				url: 'https://example.com/article',
+				fields: 'meta,links',
+			},
+		});
+	});
+
+	it('extractProduct invokes client correctly', async () => {
+		mockRequest.mockResolvedValueOnce({ objects: [] });
+		await Extract.product(mockCtx, {
+			url: 'https://example.com/product',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith('product', 'test-token', {
+			method: 'GET',
+			query: {
+				url: 'https://example.com/product',
+			},
+		});
+	});
+
+	it('extractAnalyze invokes client correctly', async () => {
+		mockRequest.mockResolvedValueOnce({ type: 'article' });
+		await Extract.analyze(mockCtx, {
+			url: 'https://example.com/page',
+			fallback: 'article',
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith('analyze', 'test-token', {
+			method: 'GET',
+			query: {
+				url: 'https://example.com/page',
+				fallback: 'article',
+			},
+		});
+	});
+
+	it('searchWeb invokes client correctly', async () => {
+		mockRequest.mockResolvedValueOnce({ results: [] });
+		await Search.web(mockCtx, {
+			query: 'AI news',
+			num: 5,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith('search', 'test-token', {
+			method: 'GET',
+			query: {
+				query: 'AI news',
+				num: 5,
+			},
+		});
+	});
+
+	it('searchDql invokes client correctly and routes to Knowledge Graph base URL', async () => {
+		mockRequest.mockResolvedValueOnce({ data: [] });
+		await Search.dql(mockCtx, {
+			query: 'name:"OpenAI"',
+			entityType: 'Organization',
+			queryType: 'query',
+			size: 10,
+		});
+
+		expect(mockRequest).toHaveBeenCalledWith('dql', 'test-token', {
+			method: 'GET',
+			useKgBase: true,
+			query: {
+				query: 'type:Organization name:"OpenAI"',
+				type: 'query',
+				size: 10,
+			},
+		});
+	});
+});
+
+describe('Diffbot error handlers', () => {
+	it('recognizes rate limits and preserves retry timing', async () => {
+		const error = Object.assign(new Error('Too many requests'), {
+			status: 429,
+			retryAfter: 12_000,
+		});
+
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toEqual({
+			maxRetries: 5,
+			headersRetryAfterMs: 12_000,
+		});
+	});
+
+	it('does not retry authentication failures', async () => {
+		const error = Object.assign(new Error('Unauthorized'), { status: 401 });
+
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+		expect(await errorHandlers.AUTH_ERROR.handler()).toEqual({
+			maxRetries: 0,
+		});
 	});
 });
