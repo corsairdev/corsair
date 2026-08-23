@@ -13,6 +13,7 @@ import {
 	WebSearchResponseSchema,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import type { DiffbotContext } from './index';
 
 // Mock the client request module
 jest.mock('./client', () => ({
@@ -25,7 +26,7 @@ const mockRequest = makeDiffbotRequest as jest.MockedFunction<
 
 const mockCtx = {
 	key: 'test-token',
-} as any;
+} as DiffbotContext;
 
 // ---------------------------------------------------------------------------
 // Extract Article
