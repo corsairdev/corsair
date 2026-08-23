@@ -227,6 +227,40 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 		testDb.cleanup();
 	});
 
+	it('cannot overwrite existing secret with a signature keyed by the new secret', async () => {
+		const { corsair, testDb } = await buildCorsair({
+			webhookSecret: undefined,
+		});
+		const handshake = corsair.zohomail.webhooks.challenge.handshake;
+
+		const initialSecret = 'initial-secret';
+		await handshake.handler({
+			payload: {},
+			headers: { 'x-hook-secret': initialSecret },
+		});
+		expect(await corsair.zohomail.keys.get_webhook_signature()).toBe(
+			initialSecret,
+		);
+
+		const newSecret = 'new-secret-attempt';
+		const rawBody = eventBody();
+		const response = await handshake.handler({
+			payload: JSON.parse(rawBody),
+			headers: {
+				'x-hook-secret': newSecret,
+				'x-hook-signature': sign(rawBody, newSecret),
+			},
+			rawBody,
+		});
+
+		expect(response.success).toBe(false);
+		expect(await corsair.zohomail.keys.get_webhook_signature()).toBe(
+			initialSecret,
+		);
+
+		testDb.cleanup();
+	});
+
 	it('cannot overwrite existing secret with an invalid signature', async () => {
 		const { corsair, testDb } = await buildCorsair({
 			webhookSecret: undefined,
