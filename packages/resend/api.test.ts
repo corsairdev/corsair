@@ -258,7 +258,7 @@ describe('Resend API Type Tests', () => {
 			const result = response;
 
 			ResendEndpointOutputSchemas.contactsCreate.parse(result);
-			expect(result.email).toBe(testContactEmail);
+			expect(result.id).toBe(testContactEmail);
 
 			// Cleanup: delete the contact we just created so the suite is
 			// idempotent across runs.

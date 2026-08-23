@@ -38,8 +38,17 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 				const entity = await ctx.db.domains.upsertByEntityId(
 					event.data.domain_id,
 					{
-						...event.data,
 						id: event.data.domain_id,
+						name: event.data.name,
+						status: event.data.status as
+							| 'not_started'
+							| 'validation'
+							| 'scheduled'
+							| 'ready'
+							| 'error'
+							| 'verified'
+							| 'pending'
+							| 'failed',
 						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);
@@ -101,15 +110,24 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 				const entity = await ctx.db.domains.upsertByEntityId(
 					event.data.domain_id,
 					{
-						...event.data,
 						id: event.data.domain_id,
+						name: event.data.name,
+						status: event.data.status as
+							| 'not_started'
+							| 'validation'
+							| 'scheduled'
+							| 'ready'
+							| 'error'
+							| 'verified'
+							| 'pending'
+							| 'failed',
 						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);
 
 				corsairEntityId = entity?.id || '';
 			} catch (error) {
-				console.warn('Failed to update domain in database:', error);
+				console.warn('Failed to update domain to database:', error);
 			}
 		}
 
@@ -152,13 +170,12 @@ export const domainDeleted: ResendWebhooks['domainDeleted'] = {
 		}
 
 		console.log('🗑️ Resend Domain Deleted Event:', {
-			domain_id: event.data.domain_id,
-			name: event.data.name,
+			id: event.data.id,
 		});
 
-		if (ctx.db.domains && event.data.domain_id) {
+		if (ctx.db.domains && event.data.id) {
 			try {
-				await ctx.db.domains.deleteByEntityId(event.data.domain_id);
+				await ctx.db.domains.deleteByEntityId(event.data.id);
 			} catch (error) {
 				console.warn('Failed to delete domain from database:', error);
 			}
@@ -167,7 +184,7 @@ export const domainDeleted: ResendWebhooks['domainDeleted'] = {
 		await logEventFromContext(
 			ctx,
 			'resend.webhook.domainDeleted',
-			{ ...event },
+			{ id: event.data.id },
 			'completed',
 		);
 

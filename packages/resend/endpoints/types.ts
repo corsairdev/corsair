@@ -65,8 +65,14 @@ const DomainsVerifyInputSchema = z.object({
 	id: z.string(),
 });
 
+// Resend's /emails/batch endpoint does not support attachments and accepts at
+// most 100 emails per request.
+const EmailsBatchItemSchema = EmailsSendInputSchema.omit({
+	attachments: true,
+});
+
 const EmailsBatchInputSchema = z.object({
-	emails: z.array(EmailsSendInputSchema).max(100),
+	emails: z.array(EmailsBatchItemSchema).max(100),
 });
 
 const EmailsCancelInputSchema = z.object({
@@ -164,6 +170,8 @@ const DomainSchema = z.object({
 		'verified',
 		'pending',
 		'failed',
+		'partially_verified',
+		'partially_failed',
 	]),
 	created_at: z.coerce.date().nullable().optional(),
 	region: z.string().optional(),
@@ -227,7 +235,12 @@ const ContactSchema = z.object({
 	unsubscribed: z.boolean().optional(),
 });
 
-const ContactsCreateResponseSchema = ContactSchema.loose();
+// Create and update return only the object discriminator and id; fetch the
+// full contact via contacts.get before persisting it.
+const ContactsMutationResponseSchema = z.object({
+	object: z.string(),
+	id: z.string(),
+});
 
 const ContactsGetResponseSchema = ContactSchema.loose();
 
@@ -254,7 +267,7 @@ export const ResendEndpointOutputSchemas = {
 	domainsList: ListDomainsResponseSchema,
 	domainsDelete: DeleteDomainResponseSchema,
 	domainsVerify: VerifyDomainResponseSchema,
-	contactsCreate: ContactsCreateResponseSchema,
+	contactsCreate: ContactsMutationResponseSchema,
 	contactsGet: ContactsGetResponseSchema,
 	contactsList: ContactsListResponseSchema,
 	contactsUpdate: ContactsUpdateResponseSchema,

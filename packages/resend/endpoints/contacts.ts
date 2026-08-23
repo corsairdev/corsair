@@ -24,7 +24,8 @@ export const create: ResendEndpoints['contactsCreate'] = async (ctx, input) => {
 	if (response.id && ctx.db.contacts) {
 		try {
 			await ctx.db.contacts.upsertByEntityId(response.id, {
-				...response,
+				id: response.id,
+				email: '' as string,
 			});
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
@@ -50,7 +51,8 @@ export const get: ResendEndpoints['contactsGet'] = async (ctx, input) => {
 	if (response.id && ctx.db.contacts) {
 		try {
 			await ctx.db.contacts.upsertByEntityId(response.id, {
-				...response,
+				id: response.id,
+				email: '' as string,
 			});
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
@@ -112,7 +114,8 @@ export const update: ResendEndpoints['contactsUpdate'] = async (ctx, input) => {
 	if (response.id && ctx.db.contacts) {
 		try {
 			await ctx.db.contacts.upsertByEntityId(response.id, {
-				...response,
+				id: response.id,
+				email: '' as string,
 			});
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);

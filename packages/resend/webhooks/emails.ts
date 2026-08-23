@@ -441,7 +441,7 @@ export const emailSuppressed: ResendWebhooks['emailSuppressed'] = {
 
 		console.log('🚫 Resend Email Suppressed Event:', {
 			email_id: event.data.email_id,
-			reason: event.data.reason,
+			suppressed_type: event.data.suppressed?.type,
 		});
 
 		await logEventFromContext(
