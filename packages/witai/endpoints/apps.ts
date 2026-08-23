@@ -38,13 +38,26 @@ export const createApp: WitAiEndpoints['appsCreateApp'] = async (
 	ctx,
 	input,
 ) => {
-	const { ...body } = input;
+	const { private: isPrivate, ...rest } = input;
+	const body: Record<string, unknown> = {
+		...rest,
+		...(isPrivate !== undefined
+			? {
+					private:
+						typeof isPrivate === 'boolean'
+							? isPrivate
+								? 'true'
+								: 'false'
+							: isPrivate,
+				}
+			: {}),
+	};
 	const result = await makeWitAiRequest<WitAiEndpointOutputs['appsCreateApp']>(
 		'apps',
 		ctx.key,
 		{
 			method: 'POST',
-			body: body as Record<string, unknown>,
+			body,
 		},
 	);
 	await logEventFromContext(
@@ -60,13 +73,26 @@ export const updateApp: WitAiEndpoints['appsUpdateApp'] = async (
 	ctx,
 	input,
 ) => {
-	const { app_id, ...body } = input;
+	const { app_id, private: isPrivate, ...rest } = input;
+	const body: Record<string, unknown> = {
+		...rest,
+		...(isPrivate !== undefined
+			? {
+					private:
+						typeof isPrivate === 'boolean'
+							? isPrivate
+								? 'true'
+								: 'false'
+							: isPrivate,
+				}
+			: {}),
+	};
 	const result = await makeWitAiRequest<WitAiEndpointOutputs['appsUpdateApp']>(
 		`apps/${app_id}`,
 		ctx.key,
 		{
 			method: 'PUT',
-			body: body as Record<string, unknown>,
+			body,
 		},
 	);
 	await logEventFromContext(

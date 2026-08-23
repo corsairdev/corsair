@@ -39,15 +39,17 @@ export const createEntity: WitAiEndpoints['entitiesCreateEntity'] = async (
 	ctx,
 	input,
 ) => {
-	const { name, roles } = input;
+	const { name, roles, lookups } = input;
+	const body: Record<string, unknown> = {
+		name,
+		...(roles !== undefined ? { roles } : {}),
+		...(lookups !== undefined ? { lookups } : {}),
+	};
 	const result = await makeWitAiRequest<
 		WitAiEndpointOutputs['entitiesCreateEntity']
 	>('entities', ctx.key, {
 		method: 'POST',
-		body: { name, roles: roles?.map((r) => ({ name: r })) } as Record<
-			string,
-			unknown
-		>,
+		body,
 	});
 	await logEventFromContext(
 		ctx,
@@ -157,7 +159,7 @@ export const deleteRole: WitAiEndpoints['entitiesDeleteRole'] = async (
 	const { entity, role } = input;
 	const result = await makeWitAiRequest<
 		WitAiEndpointOutputs['entitiesDeleteRole']
-	>(`entities/${entity}/roles/${role}`, ctx.key, { method: 'DELETE' });
+	>(`entities/${entity}:${role}`, ctx.key, { method: 'DELETE' });
 	await logEventFromContext(
 		ctx,
 		'witai.entities.deleteRole',

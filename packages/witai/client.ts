@@ -38,7 +38,7 @@ export async function makeWitAiRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
@@ -61,7 +61,7 @@ export async function makeWitAiRequest<T>(
 		string | number | boolean | undefined
 	> = {
 		v: WITAI_API_VERSION,
-		...(method === 'GET' ? query : {}),
+		...query,
 	};
 
 	const requestOptions: ApiRequestOptions = {

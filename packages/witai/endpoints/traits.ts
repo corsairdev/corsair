@@ -37,14 +37,15 @@ export const createTrait: WitAiEndpoints['traitsCreateTrait'] = async (
 	input,
 ) => {
 	const { name, values } = input;
+	const body: Record<string, unknown> = {
+		name,
+		...(values !== undefined ? { values } : {}),
+	};
 	const result = await makeWitAiRequest<
 		WitAiEndpointOutputs['traitsCreateTrait']
 	>('traits', ctx.key, {
 		method: 'POST',
-		body: { name, values: values?.map((v) => ({ value: v })) } as Record<
-			string,
-			unknown
-		>,
+		body,
 	});
 	await logEventFromContext(
 		ctx,

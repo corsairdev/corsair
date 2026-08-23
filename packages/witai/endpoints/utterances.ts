@@ -26,11 +26,17 @@ export const listUtterances: WitAiEndpoints['utterancesListUtterances'] =
 
 export const createUtterances: WitAiEndpoints['utterancesCreateUtterances'] =
 	async (ctx, input) => {
+		const payload = input.utterances.map((u) => ({
+			text: u.text,
+			...(u.intent !== undefined ? { intent: u.intent } : {}),
+			entities: u.entities ?? [],
+			traits: u.traits ?? [],
+		}));
 		const result = await makeWitAiRequest<
 			WitAiEndpointOutputs['utterancesCreateUtterances']
 		>('utterances', ctx.key, {
 			method: 'POST',
-			body: input.utterances as unknown as Record<string, unknown>,
+			body: payload,
 		});
 		await logEventFromContext(
 			ctx,
