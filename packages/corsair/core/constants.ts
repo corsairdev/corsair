@@ -29,6 +29,7 @@ export const BaseProviders = [
 	'agenty',
 	'ahrefs',
 	'aimlapi',
+	'allimagesai',
 	'airtable',
 	'alchemy',
 	'algolia',
@@ -198,6 +199,7 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
+	allimagesai: 'All Images AI',
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
@@ -374,6 +376,7 @@ export type AllProviders =
 	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
+	| 'allimagesai'
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
