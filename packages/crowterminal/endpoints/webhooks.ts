@@ -1,101 +1,106 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeCrowterminalRequest } from '../client';
-import type { CrowterminalEndpoints } from '../index';
-import type { CrowterminalEndpointOutputs } from './types';
+import type { CrowterminalContext } from '..';
+import { pathSegment } from '../client';
+import { callCrowterminal } from './shared';
+import type {
+	CrowterminalEndpointInputs,
+	CrowterminalEndpointOutputs,
+} from './types';
+import {
+	CreateWebhookInputSchema,
+	CreateWebhookResponseSchema,
+	DeleteWebhookInputSchema,
+	DeleteWebhookResponseSchema,
+	ListWebhooksInputSchema,
+	ListWebhooksResponseSchema,
+	TestWebhookInputSchema,
+	TestWebhookResponseSchema,
+	UpdateWebhookInputSchema,
+	UpdateWebhookResponseSchema,
+} from './types';
 
-export const create: CrowterminalEndpoints['webhooksCreate'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeCrowterminalRequest<
-		CrowterminalEndpointOutputs['webhooksCreate']
-	>('/api/agent/webhooks', ctx.key, {
-		method: 'POST',
-		body: input,
-	});
+const webhookPath = (webhookId: string) =>
+	`/api/agent/webhooks/${pathSegment(webhookId)}`;
 
-	await logEventFromContext(
+/** The response carries the signing secret, generated if none was supplied. */
+export const create = (
+	ctx: CrowterminalContext,
+	input: CrowterminalEndpointInputs['webhooksCreate'],
+): Promise<CrowterminalEndpointOutputs['webhooksCreate']> =>
+	callCrowterminal(
 		ctx,
-		'crowterminal.webhooks.create',
-		{ ...input },
-		'completed',
+		{
+			event: 'crowterminal.webhooks.create',
+			method: 'POST',
+			inputSchema: CreateWebhookInputSchema,
+			outputSchema: CreateWebhookResponseSchema,
+			path: () => '/api/agent/webhooks',
+			body: (i) => ({ ...i }),
+		},
+		input,
 	);
-	return response;
-};
 
-export const list: CrowterminalEndpoints['webhooksList'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeCrowterminalRequest<
-		CrowterminalEndpointOutputs['webhooksList']
-	>('/api/agent/webhooks', ctx.key);
-
-	await logEventFromContext(
+export const list = (
+	ctx: CrowterminalContext,
+	input: CrowterminalEndpointInputs['webhooksList'],
+): Promise<CrowterminalEndpointOutputs['webhooksList']> =>
+	callCrowterminal(
 		ctx,
-		'crowterminal.webhooks.list',
-		{ ...input },
-		'completed',
+		{
+			event: 'crowterminal.webhooks.list',
+			inputSchema: ListWebhooksInputSchema,
+			outputSchema: ListWebhooksResponseSchema,
+			path: () => '/api/agent/webhooks',
+		},
+		input,
 	);
-	return response;
-};
 
-export const update: CrowterminalEndpoints['webhooksUpdate'] = async (
-	ctx,
-	input,
-) => {
-	const { webhookId, ...body } = input;
-	const response = await makeCrowterminalRequest<
-		CrowterminalEndpointOutputs['webhooksUpdate']
-	>(`/api/agent/webhooks/${webhookId}`, ctx.key, {
-		method: 'PATCH',
-		body,
-	});
-
-	await logEventFromContext(
+export const update = (
+	ctx: CrowterminalContext,
+	input: CrowterminalEndpointInputs['webhooksUpdate'],
+): Promise<CrowterminalEndpointOutputs['webhooksUpdate']> =>
+	callCrowterminal(
 		ctx,
-		'crowterminal.webhooks.update',
-		{ ...input },
-		'completed',
+		{
+			event: 'crowterminal.webhooks.update',
+			method: 'PATCH',
+			inputSchema: UpdateWebhookInputSchema,
+			outputSchema: UpdateWebhookResponseSchema,
+			path: (i) => webhookPath(i.webhookId),
+			body: ({ webhookId: _webhookId, ...rest }) => ({ ...rest }),
+		},
+		input,
 	);
-	return response;
-};
 
-export const deleteWebhook: CrowterminalEndpoints['webhooksDelete'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeCrowterminalRequest<
-		CrowterminalEndpointOutputs['webhooksDelete']
-	>(`/api/agent/webhooks/${input.webhookId}`, ctx.key, {
-		method: 'DELETE',
-	});
-
-	await logEventFromContext(
+export const deleteWebhook = (
+	ctx: CrowterminalContext,
+	input: CrowterminalEndpointInputs['webhooksDelete'],
+): Promise<CrowterminalEndpointOutputs['webhooksDelete']> =>
+	callCrowterminal(
 		ctx,
-		'crowterminal.webhooks.delete',
-		{ ...input },
-		'completed',
+		{
+			event: 'crowterminal.webhooks.delete',
+			method: 'DELETE',
+			inputSchema: DeleteWebhookInputSchema,
+			outputSchema: DeleteWebhookResponseSchema,
+			path: (i) => webhookPath(i.webhookId),
+		},
+		input,
 	);
-	return response;
-};
 
-export const test: CrowterminalEndpoints['webhooksTest'] = async (
-	ctx,
-	input,
-) => {
-	const response = await makeCrowterminalRequest<
-		CrowterminalEndpointOutputs['webhooksTest']
-	>('/api/agent/webhooks/test', ctx.key, {
-		method: 'POST',
-		body: input,
-	});
-
-	await logEventFromContext(
+/** Sends a test payload to a URL that need not be registered yet. */
+export const test = (
+	ctx: CrowterminalContext,
+	input: CrowterminalEndpointInputs['webhooksTest'],
+): Promise<CrowterminalEndpointOutputs['webhooksTest']> =>
+	callCrowterminal(
 		ctx,
-		'crowterminal.webhooks.test',
-		{ ...input },
-		'completed',
+		{
+			event: 'crowterminal.webhooks.test',
+			method: 'POST',
+			inputSchema: TestWebhookInputSchema,
+			outputSchema: TestWebhookResponseSchema,
+			path: () => '/api/agent/webhooks/test',
+			body: (i) => ({ ...i }),
+		},
+		input,
 	);
-	return response;
-};

@@ -13,7 +13,16 @@ export class CrowterminalAPIError extends Error {
 	}
 }
 
-const CROWTERMINAL_API_BASE = 'https://api.crowterminal.com';
+export const CROWTERMINAL_API_BASE = 'https://api.crowterminal.com';
+
+/**
+ * Escapes a value being spliced into a request path. Without this a clientId of
+ * `../status` retargets the credentialed request at a different endpoint, and
+ * one containing `?` appends a query string.
+ */
+export function pathSegment(value: string): string {
+	return encodeURIComponent(value);
+}
 
 export async function makeCrowterminalRequest<T>(
 	endpoint: string,
@@ -22,43 +31,42 @@ export async function makeCrowterminalRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		baseUrl?: string;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		baseUrl = CROWTERMINAL_API_BASE,
+	} = options;
 
 	const config: OpenAPIConfig = {
-		BASE: CROWTERMINAL_API_BASE,
+		BASE: baseUrl,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		HEADERS: {
-			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
-		},
+		// request.ts applies TOKEN after HEADERS, so the bearer goes here rather
+		// than being set twice.
+		TOKEN: apiKey,
+		HEADERS: { 'Content-Type': 'application/json' },
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		body: method === 'GET' || method === 'DELETE' ? undefined : body,
+		mediaType: 'application/json',
+		query,
 	};
 
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
-		// Preserve HTTP status and Retry-After metadata so Corsair's error
-		// handlers can classify authentication and rate-limit failures.
-		if (error instanceof ApiError) {
-			throw error;
-		}
-		if (error instanceof Error) {
-			throw new CrowterminalAPIError(error.message);
-		}
+		// ApiError carries status and retryAfter, which error-handlers.ts needs to
+		// classify auth and rate-limit failures. Rewrapping would strip both.
+		if (error instanceof ApiError) throw error;
+		if (error instanceof Error) throw new CrowterminalAPIError(error.message);
 		throw new CrowterminalAPIError('Unknown error');
 	}
 }
