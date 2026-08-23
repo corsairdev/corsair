@@ -2,8 +2,20 @@ import { execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { isAlreadyPublished } from './npm-publish-errors.mjs';
+import { orderForPublish } from './publish-order.mjs';
 
 const PACKAGES_DIR = 'packages';
+
+// Runtime deps declared with the workspace protocol get their spec rewritten to
+// a fixed version on publish, so a dependent must not ship before its dependency
+// lands on npm. peer/dev deps don't affect a consumer's install, so ignore them.
+function workspaceDeps(pkg) {
+	return Object.entries(pkg.dependencies ?? {})
+		.filter(
+			([, spec]) => typeof spec === 'string' && spec.startsWith('workspace:'),
+		)
+		.map(([name]) => name);
+}
 
 function getPublishedVersion(name) {
 	try {
@@ -39,7 +51,12 @@ for (const dir of dirs) {
 	console.log(
 		`QUEUE ${pkg.name}@${pkg.version} (npm has ${published ?? 'nothing'})`,
 	);
-	toPublish.push({ dir, name: pkg.name, version: pkg.version });
+	toPublish.push({
+		dir,
+		name: pkg.name,
+		version: pkg.version,
+		workspaceDeps: workspaceDeps(pkg),
+	});
 }
 
 if (toPublish.length === 0) {
@@ -47,27 +64,46 @@ if (toPublish.length === 0) {
 	process.exit(0);
 }
 
-console.log(`\nBuilding ${toPublish.length} package(s)...`);
-for (const { name } of toPublish) {
+// Only deps published in this same run need ordering — anything already on npm
+// is available regardless of order.
+const publishNames = new Set(toPublish.map((p) => p.name));
+for (const p of toPublish) {
+	p.deps = p.workspaceDeps.filter((d) => publishNames.has(d));
+}
+const ordered = orderForPublish(toPublish);
+
+console.log(`\nBuilding ${ordered.length} package(s)...`);
+for (const { name } of ordered) {
 	console.log(`  Building ${name}...`);
 	execSync(`pnpm --filter ${name} build`, { stdio: 'inherit' });
 }
 
-console.log(`\nPublishing ${toPublish.length} package(s)...`);
+console.log(`\nPublishing ${ordered.length} package(s)...`);
 
 const npmToken = process.env.NPM_TOKEN;
 const corsairDevToken = process.env.NPM_CORSAIR_DEV_TOKEN;
 
 let publishedCount = 0;
-const failures = [];
+const failed = new Set();
 
-for (const { name, version } of toPublish) {
+for (const { name, version, deps } of ordered) {
+	// Never publish a dependent whose in-release dependency failed — its
+	// rewritten version wouldn't exist on npm, so the release would be broken.
+	const blockedBy = deps.filter((d) => failed.has(d));
+	if (blockedBy.length > 0) {
+		console.error(
+			`  FAILED ${name}@${version} — dependency failed: ${blockedBy.join(', ')}`,
+		);
+		failed.add(name);
+		continue;
+	}
+
 	const token = name === 'corsair' ? npmToken : corsairDevToken;
 	if (!token) {
 		console.error(
 			`  FAILED ${name} — missing token (${name === 'corsair' ? 'NPM_TOKEN' : 'NPM_CORSAIR_DEV_TOKEN'})`,
 		);
-		failures.push(name);
+		failed.add(name);
 		continue;
 	}
 
@@ -93,13 +129,13 @@ for (const { name, version } of toPublish) {
 			continue;
 		}
 		console.error(`  FAILED ${name}@${version}`);
-		failures.push(name);
+		failed.add(name);
 	}
 }
 
-if (failures.length > 0) {
+if (failed.size > 0) {
 	console.error(
-		`\nFailed to publish ${failures.length}: ${failures.join(', ')}`,
+		`\nFailed to publish ${failed.size}: ${[...failed].join(', ')}`,
 	);
 	process.exit(1);
 }
