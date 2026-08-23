@@ -16,6 +16,9 @@ module.exports = {
 		'!jest.config.ts',
 		'!tests/**',
 	],
+	// api.test.ts hits the real ZoomInfo API and needs credentials; `pnpm
+	// test:live` runs it explicitly. CI ignores the same filename.
+	testPathIgnorePatterns: ['/node_modules/', '/dist/', 'api\\.test\\.ts'],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
 	transform: {
 		'^.+\\.yaml$': '<rootDir>/../corsair/jest-yaml-transform.cjs',

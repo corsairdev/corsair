@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/zoominfo",
   "version": "0.1.0",
-  "description": "Zoominfo plugin for Corsair",
+  "description": "ZoomInfo plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -16,7 +16,8 @@
   "scripts": {
     "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
-    "test": "jest"
+    "test": "jest",
+    "test:live": "jest --testPathIgnorePatterns=/node_modules/ --testPathPattern=api\\.test\\.ts"
   },
   "peerDependencies": {
     "corsair": ">=0.1.0",
@@ -34,7 +35,9 @@
   "keywords": [
     "corsair",
     "zoominfo",
-    "plugin"
+    "plugin",
+    "sales-intelligence",
+    "b2b-data"
   ],
   "author": "",
   "license": "Apache-2.0",
