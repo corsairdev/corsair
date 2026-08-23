@@ -14,16 +14,6 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import { Account, Contacts, Webhooks } from './endpoints';
 import type {
-	CreateContactInput,
-	CreateContactResponse,
-	GetApiUsageInfoInput,
-	GetApiUsageInfoResponse,
-	ListContactsInput,
-	ListContactsResponse,
-	ListWebhooksInput,
-	ListWebhooksResponse,
-	TestApiKeyInput,
-	TestApiKeyResponse,
 	TwoChatEndpointInputs,
 	TwoChatEndpointOutputs,
 } from './endpoints/types';
