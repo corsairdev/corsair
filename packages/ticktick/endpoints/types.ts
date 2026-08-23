@@ -49,6 +49,7 @@ export const TickTickColumnSchema = z.object({
 	name: z.string(),
 	sortOrder: z.number().nullable().optional(),
 });
+export type TickTickColumn = z.infer<typeof TickTickColumnSchema>;
 
 // --- Endpoint Input/Output Schemas ---
 

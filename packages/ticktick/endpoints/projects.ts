@@ -5,6 +5,9 @@ import type {
 	CreateProjectResponse,
 	GetProjectResponse,
 	GetUserProjectsResponse,
+	TickTickColumn,
+	TickTickProject,
+	TickTickTask,
 	UpdateProjectResponse,
 } from './types';
 
@@ -92,29 +95,36 @@ export const getMany: TickTickEndpoints['getUserProjects'] = async (
 	return response;
 };
 
+type ProjectDataResponse = {
+	project: TickTickProject;
+	tasks: TickTickTask[];
+	columns?: TickTickColumn[];
+};
+
 export const getData: TickTickEndpoints['getProjectWithData'] = async (
 	ctx,
 	input,
 ) => {
-	const allTasks: any[] = [];
+	const allTasks: TickTickTask[] = [];
 	const taskIds = new Set<string>();
 	let page = 1;
 	let hasMore = true;
-	let project: any = null;
-	let columns: any = undefined;
+	let project: TickTickProject | null = null;
+	let columns: TickTickColumn[] | undefined = undefined;
 
 	while (hasMore) {
-		const response = await makeAuthenticatedTickTickRequest<any>(
-			`project/${input.projectId}/data`,
-			ctx,
-			{
-				method: 'GET',
-				query: {
-					page: page,
-					limit: 100,
+		const response =
+			await makeAuthenticatedTickTickRequest<ProjectDataResponse>(
+				`project/${input.projectId}/data`,
+				ctx,
+				{
+					method: 'GET',
+					query: {
+						page: page,
+						limit: 100,
+					},
 				},
-			},
-		);
+			);
 
 		if (!project && response?.project) {
 			project = response.project;
@@ -142,6 +152,10 @@ export const getData: TickTickEndpoints['getProjectWithData'] = async (
 		} else {
 			hasMore = false;
 		}
+	}
+
+	if (!project) {
+		throw new Error(`Project ${input.projectId} could not be retrieved`);
 	}
 
 	await logEventFromContext(
