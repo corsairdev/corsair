@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { ImgBBImage, ImgBBImageVariant } from '../schema/database';
 
 // ── auth.getApiKey ──────────────────────────────────────────────────────────
 
@@ -39,37 +40,12 @@ export const UploadImageInputSchema = z.object({
 });
 export type UploadImageInput = z.infer<typeof UploadImageInputSchema>;
 
-// Mirrors the ImgBB API response field names (snake_case) rather than
-// remapping to camelCase, so the shape stays predictable against the ImgBB docs.
-const ImgBBImageVariantSchema = z
-	.object({
-		filename: z.string().optional(),
-		name: z.string().optional(),
-		mime: z.string().optional(),
-		extension: z.string().optional(),
-		url: z.string(),
-	})
-	.loose();
+// Re-export entity schemas aligned with official ImgBB API documentation
+export const ImgBBImageVariantSchema = ImgBBImageVariant;
+export type ImgBBImageVariantType = ImgBBImageVariant;
 
-export const UploadImageResponseSchema = z
-	.object({
-		id: z.string(),
-		title: z.string().optional(),
-		url_viewer: z.string().optional(),
-		url: z.string(),
-		display_url: z.string().optional(),
-		width: z.coerce.number().optional(),
-		height: z.coerce.number().optional(),
-		size: z.coerce.number().optional(),
-		time: z.coerce.number().optional(),
-		expiration: z.coerce.number().optional(),
-		image: ImgBBImageVariantSchema.optional(),
-		thumb: ImgBBImageVariantSchema.optional(),
-		medium: ImgBBImageVariantSchema.optional(),
-		delete_url: z.string().optional(),
-	})
-	.loose();
-export type UploadImageResponse = z.infer<typeof UploadImageResponseSchema>;
+export const UploadImageResponseSchema = ImgBBImage;
+export type UploadImageResponse = ImgBBImage;
 
 // ImgBB wraps every upload response in this envelope.
 export const ImgBBUploadEnvelopeSchema = z.object({
@@ -100,3 +76,5 @@ export const ImgBBEndpointOutputSchemas = {
 	getApiKey: GetApiKeyResponseSchema,
 	upload: UploadImageResponseSchema,
 } as const;
+
+export { ImgBBImage, ImgBBImageVariant };

@@ -164,7 +164,11 @@ export {
 	GetApiKeyResponseSchema,
 	ImgBBEndpointInputSchemas,
 	ImgBBEndpointOutputSchemas,
+	ImgBBImage,
+	ImgBBImageVariant,
 	ImgBBUploadEnvelopeSchema,
 	UploadImageInputSchema,
 	UploadImageResponseSchema,
 } from './endpoints/types';
+
+export { ImgBBSchema } from './schema';

@@ -31,7 +31,26 @@ const IMGBB_API_BASE = 'https://api.imgbb.com';
 // before rethrowing as ImgBBAPIError.
 async function handleRequestError(error: unknown): Promise<never> {
 	if (error instanceof ApiError) {
-		throw new ImgBBAPIError(error.message, error.status, { cause: error });
+		let message = error.message;
+		let code = error.status;
+
+		if (
+			error.body &&
+			typeof error.body === 'object' &&
+			'error' in error.body &&
+			error.body.error &&
+			typeof error.body.error === 'object'
+		) {
+			const errObj = error.body.error as { message?: string; code?: number };
+			if (errObj.message) {
+				message = errObj.message;
+			}
+			if (errObj.code !== undefined) {
+				code = errObj.code;
+			}
+		}
+
+		throw new ImgBBAPIError(message, code, { cause: error });
 	}
 	if (error instanceof Error) {
 		throw new ImgBBAPIError(error.message, undefined, { cause: error });

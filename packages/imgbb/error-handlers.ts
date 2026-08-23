@@ -1,25 +1,39 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { ImgBBAPIError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
+			if (
+				error instanceof ImgBBAPIError &&
+				(error.status === 429 || error.code === 429)
+			) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return (
+				msg.includes('rate_limited') ||
+				msg.includes('rate limit') ||
+				msg.includes('429') ||
+				msg.includes('too many requests')
+			);
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
+			} else if (
+				error instanceof ImgBBAPIError &&
+				error.retryAfter !== undefined
+			) {
 				retryAfterMs = error.retryAfter;
 			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
-		// ImgBB's public docs don't pin down an exact status code for a bad key,
-		// so this matches on status (401/403, in case it's ever used) as well as
-		// the message text ImgBB is known to return for a rejected key.
 		match: (error: Error) => {
 			if (
 				error instanceof ApiError &&
@@ -27,13 +41,35 @@ export const errorHandlers = {
 			) {
 				return true;
 			}
+			if (
+				error instanceof ImgBBAPIError &&
+				(error.status === 401 || error.status === 403 || error.code === 100)
+			) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid api key');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('forbidden') ||
+				msg.includes('invalid api') ||
+				msg.includes('invalid api key') ||
+				msg.includes('invalid api v1 key') ||
+				msg.includes('missing api key')
+			);
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error?: Error) => ({ maxRetries: 0 }),
+	},
+	BAD_REQUEST_ERROR: {
+		match: (error: Error) => {
+			if (error instanceof ApiError && error.status === 400) return true;
+			if (error instanceof ImgBBAPIError && error.status === 400) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('bad request') || msg.includes('400');
+		},
+		handler: async (_error?: Error) => ({ maxRetries: 0 }),
 	},
 	DEFAULT: {
-		match: () => true,
-		handler: async () => ({ maxRetries: 0 }),
+		match: (_error?: Error) => true,
+		handler: async (_error?: Error) => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;
