@@ -2,6 +2,7 @@ import { AuthMissingError } from 'corsair/core';
 import * as client from '../client';
 import { googlecloudvision } from '../index';
 import {
+	FilesAnnotateInputSchema,
 	FilesAsyncBatchAnnotateInputSchema,
 	ImagesAnnotateInputSchema,
 	ImagesAsyncBatchAnnotateInputSchema,
@@ -238,11 +239,18 @@ describe('Google Cloud Vision Endpoints', () => {
 	});
 
 	it('productSets.listProducts', async () => {
-		await endpoints!.productSets.listProducts(ctx as never, { name: 'ps' });
+		await endpoints!.productSets.listProducts(ctx as never, {
+			name: 'ps',
+			pageSize: 10,
+			pageToken: 'n',
+		});
 		expect(request).toHaveBeenCalledWith(
 			'ps/products',
 			ctx,
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				query: { pageSize: 10, pageToken: 'n' },
+			}),
 		);
 	});
 
@@ -273,11 +281,18 @@ describe('Google Cloud Vision Endpoints', () => {
 	});
 
 	it('products.list', async () => {
-		await endpoints!.products.list(ctx as never, { parent: 'p' });
+		await endpoints!.products.list(ctx as never, {
+			parent: 'p',
+			pageSize: 10,
+			pageToken: 'n',
+		});
 		expect(request).toHaveBeenCalledWith(
 			'p/products',
 			ctx,
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				query: { pageSize: 10, pageToken: 'n' },
+			}),
 		);
 	});
 
@@ -362,11 +377,18 @@ describe('Google Cloud Vision Endpoints', () => {
 	});
 
 	it('referenceImages.list', async () => {
-		await endpoints!.referenceImages.list(ctx as never, { parent: 'p' });
+		await endpoints!.referenceImages.list(ctx as never, {
+			parent: 'p',
+			pageSize: 10,
+			pageToken: 'n',
+		});
 		expect(request).toHaveBeenCalledWith(
 			'p/referenceImages',
 			ctx,
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				query: { pageSize: 10, pageToken: 'n' },
+			}),
 		);
 	});
 
@@ -380,11 +402,19 @@ describe('Google Cloud Vision Endpoints', () => {
 	});
 
 	it('operations.list', async () => {
-		await endpoints!.operations.list(ctx as never, { name: 'p' });
+		await endpoints!.operations.list(ctx as never, {
+			name: 'p',
+			filter: 'done=true',
+			pageSize: 10,
+			pageToken: 'n',
+		});
 		expect(request).toHaveBeenCalledWith(
 			'p/operations',
 			ctx,
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				query: { filter: 'done=true', pageSize: 10, pageToken: 'n' },
+			}),
 		);
 	});
 
@@ -393,7 +423,7 @@ describe('Google Cloud Vision Endpoints', () => {
 		expect(request).toHaveBeenCalledWith(
 			'op:cancel',
 			ctx,
-			expect.objectContaining({ method: 'POST' }),
+			expect.objectContaining({ method: 'POST', body: {} }),
 		);
 	});
 
@@ -407,11 +437,19 @@ describe('Google Cloud Vision Endpoints', () => {
 	});
 
 	it('locations.list', async () => {
-		await endpoints!.locations.list(ctx as never, { name: 'projects/p' });
+		await endpoints!.locations.list(ctx as never, {
+			name: 'projects/p',
+			filter: 'displayName=us',
+			pageSize: 10,
+			pageToken: 'n',
+		});
 		expect(request).toHaveBeenCalledWith(
 			'projects/p/locations',
 			ctx,
-			expect.objectContaining({ method: 'GET' }),
+			expect.objectContaining({
+				method: 'GET',
+				query: { filter: 'displayName=us', pageSize: 10, pageToken: 'n' },
+			}),
 		);
 	});
 
@@ -538,6 +576,19 @@ describe('input schemas', () => {
 		expect(
 			ImagesAnnotateInputSchema.safeParse({
 				requests: [{ image: {}, features: [{ type: 'LABEL_DETECTION' }] }],
+			}).success,
+		).toBe(false);
+	});
+
+	it('requires file content or a gcsSource URI', () => {
+		expect(
+			FilesAnnotateInputSchema.safeParse({
+				requests: [
+					{
+						inputConfig: { mimeType: 'application/pdf' },
+						features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],
+					},
+				],
 			}).success,
 		).toBe(false);
 	});
