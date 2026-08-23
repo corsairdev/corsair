@@ -1,6 +1,7 @@
 import { execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { isAlreadyPublished } from './npm-publish-errors.mjs';
 
 const PACKAGES_DIR = 'packages';
 
@@ -57,23 +58,50 @@ console.log(`\nPublishing ${toPublish.length} package(s)...`);
 const npmToken = process.env.NPM_TOKEN;
 const corsairDevToken = process.env.NPM_CORSAIR_DEV_TOKEN;
 
-for (const { name } of toPublish) {
+let publishedCount = 0;
+const failures = [];
+
+for (const { name, version } of toPublish) {
 	const token = name === 'corsair' ? npmToken : corsairDevToken;
 	if (!token) {
 		console.error(
-			`  SKIP ${name} — missing token (${name === 'corsair' ? 'NPM_TOKEN' : 'NPM_CORSAIR_DEV_TOKEN'})`,
+			`  FAILED ${name} — missing token (${name === 'corsair' ? 'NPM_TOKEN' : 'NPM_CORSAIR_DEV_TOKEN'})`,
 		);
+		failures.push(name);
 		continue;
 	}
 
-	console.log(`  Publishing ${name}...`);
-	execSync(
-		`pnpm --filter ${name} publish --provenance --access public --no-git-checks`,
-		{
-			stdio: 'inherit',
-			env: { ...process.env, NODE_AUTH_TOKEN: token },
-		},
-	);
+	console.log(`  Publishing ${name}@${version}...`);
+	try {
+		// npm writes errors to stderr but execSync only returns stdout, so redirect
+		// stderr into stdout to capture the failure text for classification below.
+		const out = execSync(
+			`pnpm --filter ${name} publish --provenance --access public --no-git-checks 2>&1`,
+			{
+				encoding: 'utf-8',
+				maxBuffer: 10 * 1024 * 1024,
+				env: { ...process.env, NODE_AUTH_TOKEN: token },
+			},
+		);
+		process.stdout.write(out);
+		publishedCount++;
+	} catch (err) {
+		const out = err.stdout ?? '';
+		process.stdout.write(out);
+		if (isAlreadyPublished(out)) {
+			console.log(`  SKIP ${name}@${version} (already on npm)`);
+			continue;
+		}
+		console.error(`  FAILED ${name}@${version}`);
+		failures.push(name);
+	}
 }
 
-console.log(`\nDone. Published ${toPublish.length} package(s).`);
+if (failures.length > 0) {
+	console.error(
+		`\nFailed to publish ${failures.length}: ${failures.join(', ')}`,
+	);
+	process.exit(1);
+}
+
+console.log(`\nDone. Published ${publishedCount} package(s).`);
