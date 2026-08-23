@@ -96,7 +96,9 @@ export const CreateAudioResponseSchema = z.object({
 	status: z.boolean(),
 	message: z.string().optional(),
 	// Base64-encoded audio, decodable with any standard Base64 decoder.
-	audio: z.string(),
+	// Validated as Base64 so a malformed payload is caught before a consumer
+	// tries to decode it.
+	audio: z.base64().min(1),
 });
 
 export type CreateAudioResponse = z.infer<typeof CreateAudioResponseSchema>;

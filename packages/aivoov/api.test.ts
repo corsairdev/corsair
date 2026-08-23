@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import {
 	AivoovAPIError,
 	assertAivoovSuccess,
@@ -230,6 +231,36 @@ describe('Aivoov error handlers', () => {
 			{ operation: 'audio.create' } as never,
 		);
 		expect(result.maxRetries).toBe(0);
+	});
+
+	// Regression: AivoovAPIError used to be constructed message-only, which
+	// dropped ApiError's status and Retry-After. A 429 then missed
+	// RATE_LIMIT_ERROR and fell through to DEFAULT with no backoff delay.
+	it('carries ApiError rate-limit metadata through the wrapper', async () => {
+		const apiError = new ApiError(
+			{ method: 'GET', url: '/voices' },
+			{
+				url: 'https://aivoov.com/api/v8/voices',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: { status: false, error: 'Rate limit exceeded' },
+			},
+			'Rate limit exceeded',
+			{ retryAfter: 30_000 },
+		);
+
+		const wrapped = new AivoovAPIError(apiError.message, apiError.status, {
+			cause: apiError,
+		});
+
+		expect(wrapped.status).toBe(429);
+		expect(wrapped.retryAfter).toBe(30_000);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrapped)).toBe(true);
+
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(wrapped);
+		expect(result.headersRetryAfterMs).toBe(30_000);
+		expect(result.maxRetries).toBe(3);
 	});
 
 	it('retries server errors with backoff', async () => {
