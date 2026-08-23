@@ -15,8 +15,12 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(async () => undefined),
 }));
 
-// Clearly-fake signing material for tests only; never a real credential.
-const SECRET = 'test-abyssale-signing-secret';
+const SECRET = crypto.randomBytes(32).toString('hex');
+const WRONG_SECRET = crypto.randomBytes(32).toString('hex');
+const ROTATED_SECRET = crypto.randomBytes(32).toString('hex');
+const OTHER_SECRET = crypto.randomBytes(32).toString('hex');
+const OPTIONS_SECRET = crypto.randomBytes(32).toString('hex');
+const STORED_SECRET = crypto.randomBytes(32).toString('hex');
 
 function sign(
 	body: string,
@@ -82,7 +86,7 @@ describe('verifyAbyssaleWebhookSignature', () => {
 			'NEW_BANNER',
 			{ id: BANNER_ID },
 			{
-				secret: 'test-wrong-secret',
+				secret: WRONG_SECRET,
 			},
 		);
 		expect(verifyAbyssaleWebhookSignature(request, SECRET)).toEqual({
@@ -106,7 +110,7 @@ describe('verifyAbyssaleWebhookSignature', () => {
 
 	it('checks every v1 during a rotation', () => {
 		const rawBody = JSON.stringify({ event_type: 'NEW_BANNER', id: BANNER_ID });
-		const rotatedSecret = 'test-rotated-signing-secret';
+		const rotatedSecret = ROTATED_SECRET;
 		// Read the clock once so both v1 hashes sign the same timestamp even if
 		// the wall clock crosses a second boundary mid-test.
 		const timestamp = Math.floor(Date.now() / 1000);
@@ -234,6 +238,18 @@ describe('event schemas', () => {
 			],
 		});
 		expect(parsed.success).toBe(true);
+	});
+
+	it('parses a successful NEW_BANNER_BATCH that omits errors', () => {
+		const parsed = NewBannerBatchEventSchema.safeParse({
+			event_type: 'NEW_BANNER_BATCH',
+			generation_request_id: REQUEST_ID,
+			banners: [{ id: BANNER_ID }],
+		});
+		expect(parsed.success).toBe(true);
+		if (parsed.success) {
+			expect(parsed.data.errors).toEqual([]);
+		}
 	});
 
 	it('parses NEW_EXPORT and TEMPLATE_STATUS payloads', () => {
@@ -368,6 +384,37 @@ describe('webhook handlers', () => {
 		expect(response.corsairEntityId).toBe('corsair-entity-1');
 	});
 
+	it('newBannerBatch caches banners when the payload omits errors', async () => {
+		const plugin = abyssale({ key: 'k', webhookSecret: SECRET }) as any;
+		const handler = plugin.webhooks.banners.batchCompleted.handler;
+		const response = await handler(
+			makeCtx(SECRET),
+			signedRequest('NEW_BANNER_BATCH', {
+				generation_request_id: REQUEST_ID,
+				banners: [{ id: BANNER_ID }],
+			}),
+		);
+
+		expect(response.success).toBe(true);
+		expect(upsert).toHaveBeenCalledWith(
+			BANNER_ID,
+			expect.objectContaining({ id: BANNER_ID }),
+		);
+	});
+
+	it('newBanner omits corsairEntityId when caching is unavailable', async () => {
+		upsert.mockResolvedValueOnce(null);
+		const plugin = abyssale({ key: 'k', webhookSecret: SECRET }) as any;
+		const handler = plugin.webhooks.banners.created.handler;
+		const response = await handler(
+			makeCtx(SECRET),
+			signedRequest('NEW_BANNER', { id: BANNER_ID }),
+		);
+
+		expect(response.success).toBe(true);
+		expect(response.corsairEntityId).toBeUndefined();
+	});
+
 	it('newBannerBatch omits corsairEntityId when no banner was cached', async () => {
 		const plugin = abyssale({ key: 'k', webhookSecret: SECRET }) as any;
 		const handler = plugin.webhooks.banners.batchCompleted.handler;
@@ -389,7 +436,7 @@ describe('webhook handlers', () => {
 		const handler = plugin.webhooks.banners.created.handler;
 		const response = await handler(
 			makeCtx(SECRET),
-			signedRequest('NEW_BANNER', { id: BANNER_ID }, { secret: 'test-other-secret' }),
+			signedRequest('NEW_BANNER', { id: BANNER_ID }, { secret: OTHER_SECRET }),
 		);
 
 		expect(response.success).toBe(false);
@@ -425,24 +472,22 @@ describe('webhook handlers', () => {
 	});
 
 	it('resolves the webhook secret through keyBuilder', async () => {
-		const plugin = abyssale({ webhookSecret: 'test-options-secret' }) as any;
+		const plugin = abyssale({ webhookSecret: OPTIONS_SECRET }) as any;
 		const key = await plugin.keyBuilder(
 			{ authType: 'api_key', keys: { get_webhook_signature: jest.fn() } },
 			'webhook',
 		);
-		expect(key).toBe('test-options-secret');
+		expect(key).toBe(OPTIONS_SECRET);
 
 		const dynamicPlugin = abyssale({}) as any;
 		const dynamicCtx = {
 			authType: 'api_key',
 			keys: {
-				get_webhook_signature: jest
-					.fn()
-					.mockResolvedValue('test-stored-secret'),
+				get_webhook_signature: jest.fn().mockResolvedValue(STORED_SECRET),
 			},
 		};
 		await expect(dynamicPlugin.keyBuilder(dynamicCtx, 'webhook')).resolves.toBe(
-			'test-stored-secret',
+			STORED_SECRET,
 		);
 	});
 });
