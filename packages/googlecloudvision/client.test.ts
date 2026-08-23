@@ -48,6 +48,35 @@ describe('makeGoogleCloudVisionRequest', () => {
 		expect(config?.HEADERS).not.toHaveProperty('Authorization');
 	});
 
+	it('treats ya29 tokens as oauth when authType is omitted', async () => {
+		await makeGoogleCloudVisionRequest('images:annotate', {
+			key: 'ya29.access',
+		});
+
+		const config = mockedRequest.mock.calls[0]?.[0];
+		expect(config?.HEADERS).toMatchObject({
+			Authorization: 'Bearer ya29.access',
+		});
+		expect(config?.HEADERS).not.toHaveProperty('x-goog-api-key');
+	});
+
+	it('disables corsair/http transport retries', async () => {
+		await makeGoogleCloudVisionRequest('ps', {
+			key: 'vision-key',
+			authType: 'api_key',
+		});
+
+		expect(mockedRequest.mock.calls[0]?.[2]).toEqual({
+			rateLimitConfig: {
+				enabled: false,
+				maxRetries: 0,
+				initialRetryDelay: 1000,
+				backoffMultiplier: 2,
+				headerNames: {},
+			},
+		});
+	});
+
 	it('sends oauth tokens as Bearer and does not set TOKEN', async () => {
 		await makeGoogleCloudVisionRequest(
 			'images:annotate',

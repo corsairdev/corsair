@@ -59,7 +59,10 @@ export async function makeGoogleCloudVisionRequest<T>(
 		baseUrl = GOOGLECLOUDVISION_API_BASE,
 	} = options;
 	const credential = ctx.key ?? '';
-	const authType = ctx.authType ?? 'api_key';
+	const authType =
+		ctx.authType === 'oauth_2' || credential.startsWith('ya29.')
+			? 'oauth_2'
+			: 'api_key';
 
 	const headers: Record<string, string> = {
 		'Content-Type': 'application/json',
@@ -92,7 +95,15 @@ export async function makeGoogleCloudVisionRequest<T>(
 	let lastError: unknown;
 	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
 		try {
-			return await request<T>(config, requestOptions);
+			return await request<T>(config, requestOptions, {
+				rateLimitConfig: {
+					enabled: false,
+					maxRetries: 0,
+					initialRetryDelay: 1000,
+					backoffMultiplier: 2,
+					headerNames: {},
+				},
+			});
 		} catch (error) {
 			lastError = error;
 			const canRetry =
