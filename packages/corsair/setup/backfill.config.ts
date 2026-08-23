@@ -114,14 +114,6 @@ const backfillConfig = {
 			getMany: {},
 		},
 	},
-	ticktick: {
-		projects: {
-			getMany: {},
-		},
-		tasks: {
-			listAll: {},
-		},
-	},
 	cal: {
 		bookings: {
 			list: {},
