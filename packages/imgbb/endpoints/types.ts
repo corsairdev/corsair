@@ -20,13 +20,21 @@ export type GetApiKeyResponse = z.infer<typeof GetApiKeyResponseSchema>;
 
 // ── images.upload ───────────────────────────────────────────────────────────
 
+export const BinaryImageInputSchema = z.union([
+	z.string().min(1).describe('Base64-encoded image data or an image URL'),
+	z.instanceof(Blob).describe('Binary Blob or File instance'),
+	z.instanceof(Uint8Array).describe('Binary Uint8Array byte array'),
+	z.custom<Buffer>(
+		(val) => typeof Buffer !== 'undefined' && Buffer.isBuffer(val),
+		{ message: 'Expected Buffer' },
+	),
+]);
+export type BinaryImageInput = z.infer<typeof BinaryImageInputSchema>;
+
 export const UploadImageInputSchema = z.object({
-	image: z
-		.string()
-		.min(1)
-		.describe(
-			'Base64-encoded image data or an image URL (binary uploads up to 32 MB per the ImgBB API)',
-		),
+	image: BinaryImageInputSchema.describe(
+		'Base64-encoded image data, image URL, or binary data (Blob, File, Buffer, Uint8Array) up to 32 MB per the ImgBB API',
+	),
 	name: z.string().optional().describe('Optional display name for the file'),
 	expiration: z
 		.number()

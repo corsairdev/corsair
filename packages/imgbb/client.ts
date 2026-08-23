@@ -72,8 +72,8 @@ function buildConfig(): OpenAPIConfig {
 export type ImgBBUploadParams = {
 	/** The ImgBB API key. Sent as a query parameter per the ImgBB API. */
 	apiKey: string;
-	/** Binary data, base64-encoded data, or an image URL (up to 32 MB). */
-	image: string;
+	/** Binary data (Blob, File, Buffer, Uint8Array), base64-encoded string, or an image URL (up to 32 MB). */
+	image: string | Blob | Uint8Array | Buffer;
 	/** Optional display name for the uploaded file. */
 	name?: string;
 	/** Optional auto-delete window in seconds (60-15552000). */

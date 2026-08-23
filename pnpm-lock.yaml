@@ -189,9 +189,6 @@ importers:
       '@corsair-dev/hubspot':
         specifier: workspace:^
         version: link:../../packages/hubspot
-      '@corsair-dev/imgbb':
-        specifier: workspace:*
-        version: link:../../packages/imgbb
       '@corsair-dev/instagram':
         specifier: workspace:*
         version: link:../../packages/instagram

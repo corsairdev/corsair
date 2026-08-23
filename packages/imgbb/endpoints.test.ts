@@ -2,6 +2,7 @@ import { jest } from '@jest/globals';
 import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import { Auth, Images } from './endpoints';
+import { UploadImageInputSchema } from './endpoints/types';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(),
@@ -152,6 +153,39 @@ describe('Images.upload', () => {
 			image: 'base64data==',
 			name: 'my-photo',
 		});
+	});
+
+	it('supports binary image upload with Blob/Buffer/Uint8Array', async () => {
+		requestMock.mockResolvedValueOnce(envelope);
+
+		const binaryBlob = new Blob([new Uint8Array([0x89, 0x50, 0x4e, 0x47])], {
+			type: 'image/png',
+		});
+
+		// Validate schema accepts Blob
+		const validatedInput = UploadImageInputSchema.parse({
+			image: binaryBlob,
+			name: 'binary-photo',
+		});
+		expect(validatedInput.image).toBe(binaryBlob);
+
+		await call(Images.upload, createContext('my-key'), {
+			image: binaryBlob,
+			name: 'binary-photo',
+		});
+
+		const { options } = lastCall();
+		expect(options.formData).toEqual({
+			image: binaryBlob,
+			name: 'binary-photo',
+		});
+
+		// Also validate Buffer / Uint8Array acceptance in schema
+		const uint8 = new Uint8Array([1, 2, 3]);
+		expect(UploadImageInputSchema.parse({ image: uint8 }).image).toBe(uint8);
+
+		const buffer = Buffer.from('fake-image-bytes');
+		expect(UploadImageInputSchema.parse({ image: buffer }).image).toBe(buffer);
 	});
 
 	it('passes expiration as a query param when provided', async () => {
