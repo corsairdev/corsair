@@ -47,11 +47,9 @@ export const created: AbyssaleWebhooks['newBanner'] = {
 			'completed',
 		);
 
-		return {
-			success: true,
-			corsairEntityId,
-			data: event,
-		};
+		return corsairEntityId
+			? { success: true, corsairEntityId, data: event }
+			: { success: true, data: event };
 	},
 };
 
@@ -74,9 +72,13 @@ export const batchCompleted: AbyssaleWebhooks['newBannerBatch'] = {
 		}
 
 		const event = guard.event;
-		const entityIds = await Promise.all(
-			event.banners.map((banner) => cacheBanner(ctx, banner)),
-		);
+		const entityIds: string[] = [];
+		for (let i = 0; i < event.banners.length; i += 8) {
+			const chunk = event.banners.slice(i, i + 8);
+			entityIds.push(
+				...(await Promise.all(chunk.map((banner) => cacheBanner(ctx, banner)))),
+			);
+		}
 		const firstEntityId = entityIds.find(Boolean);
 
 		await logEventFromContext(
