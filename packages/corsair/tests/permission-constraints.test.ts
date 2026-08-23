@@ -977,3 +977,66 @@ describe('constraintsSatisfied — unusable containers fail closed', () => {
 		expect(constraintsSatisfied(constraints, args)).toBe(false);
 	});
 });
+
+describe('throwing accessors fail closed', () => {
+	function withThrowingGetter(key: string): Record<string, unknown> {
+		const obj: Record<string, unknown> = {};
+		Object.defineProperty(obj, key, {
+			enumerable: true,
+			configurable: true,
+			get() {
+				throw new Error('accessor');
+			},
+		});
+		return obj;
+	}
+
+	it('does not throw when an argument path getter throws', () => {
+		expect(() => resolveArgPath(withThrowingGetter('to'), 'to')).not.toThrow();
+		expect(resolveArgPath(withThrowingGetter('to'), 'to')).toBeUndefined();
+	});
+
+	it('does not throw when a constraint operand getter throws', () => {
+		expect(() =>
+			matchesConstraint('#general', withThrowingGetter('equals')),
+		).not.toThrow();
+		expect(matchesConstraint('#general', withThrowingGetter('equals'))).toBe(
+			false,
+		);
+	});
+
+	it('does not throw when Object.values hits a throwing getter', () => {
+		const value = withThrowingGetter('nested');
+		expect(() =>
+			matchesConstraint(value, { equals: { nested: 1 } }),
+		).not.toThrow();
+		expect(matchesConstraint(value, { equals: { nested: 1 } })).toBe(false);
+		expect(matchesConstraint(value, { notIn: ['x'] })).toBe(false);
+	});
+
+	it('does not throw when the constraint map getter throws', () => {
+		expect(() =>
+			constraintsSatisfied(withThrowingGetter('channel'), {
+				channel: '#general',
+			}),
+		).not.toThrow();
+		expect(
+			constraintsSatisfied(withThrowingGetter('channel'), {
+				channel: '#general',
+			}),
+		).toBe(false);
+	});
+
+	it('falls back to the mode matrix when an override accessor throws', () => {
+		const override = withThrowingGetter('constraints') as {
+			policy: 'allow';
+			constraints: Record<string, { equals: string }>;
+		};
+		expect(() =>
+			evaluatePermission('write', 'strict', override, { channel: '#general' }),
+		).not.toThrow();
+		expect(
+			evaluatePermission('write', 'strict', override, { channel: '#general' }),
+		).toBe('require_approval');
+	});
+});
