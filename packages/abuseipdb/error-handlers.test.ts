@@ -62,8 +62,7 @@ describe('errorHandlers', () => {
 			originalError: error,
 		});
 		expect(result).toEqual({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff',
+			maxRetries: 0,
 			headersRetryAfterMs: 60_000,
 		});
 	});
@@ -107,7 +106,7 @@ describe('errorHandlers', () => {
 		expect(matchedHandlerName(error)).toBe('SERVER_ERROR');
 	});
 
-	it('retries read endpoints on 5xx', async () => {
+	it('does not retry read endpoints on 5xx at the binder', async () => {
 		const error = apiErrorWithBody(500, {});
 		const result = await serverErrorHandler(error, {
 			pluginId: 'abuseipdb',
@@ -115,10 +114,7 @@ describe('errorHandlers', () => {
 			input: { ipAddress: '1.1.1.1' },
 			originalError: error,
 		});
-		expect(result).toEqual({
-			maxRetries: 2,
-			retryStrategy: 'exponential_backoff',
-		});
+		expect(result).toEqual({ maxRetries: 0 });
 	});
 
 	it('does not retry report.ip on 5xx', async () => {
