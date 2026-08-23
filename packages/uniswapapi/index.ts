@@ -226,10 +226,10 @@ export function uniswapapi<const T extends UniswapApiPluginOptions>(
 				return res ?? '';
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
+			// if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+			// 	const res = await ctx.keys.get_access_token();
+			// 	return res ?? '';
+			// }
 
 			return '';
 		},
