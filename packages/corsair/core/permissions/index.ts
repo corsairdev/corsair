@@ -348,61 +348,6 @@ export async function enforcePermission(
 
 	const tenantId = opts.tenantId ?? 'default';
 
-	// Evaluate limits
-	const applicableLimits = [
-		...(opts.globalLimits || []).map((l) => ({
-			...l,
-			// global configs default to 'global' scope
-			resolvedScope: l.scope === 'tenant' ? `tenant:${tenantId}` : `global`,
-		})),
-		...(opts.pluginLimits || []).map((l) => ({
-			...l,
-			// plugin configs natively apply to the plugin
-			resolvedScope: `plugin:${opts.pluginId}`,
-		})),
-	].filter((l) => !l.riskLevel || l.riskLevel === opts.riskLevel);
-
-	if (applicableLimits.length > 0) {
-		const { sql } = await import('kysely');
-		const nowTs = Date.now();
-		for (const limit of applicableLimits) {
-			const windowMs = parseDurationMs(limit.window);
-			const epoch = Math.floor(nowTs / windowMs);
-			// Hash properties to create a stable limit bucket
-			const limitFingerprint = `${limit.type}_${limit.max}_${limit.window}`;
-			const key = `usage:${limit.resolvedScope}:${limitFingerprint}:${epoch}`;
-			const expiresAt = new Date(nowTs + windowMs).toISOString();
-
-			const res = await opts.db.db
-				.insertInto('corsair_usage_counters')
-				.values({ key, count: 1, expires_at: expiresAt })
-				.onConflict((oc) =>
-					oc
-						.column('key')
-						.doUpdateSet({ count: sql`corsair_usage_counters.count + 1` }),
-				)
-				.returning('count')
-				.executeTakeFirst();
-
-			if (res && res.count > limit.max) {
-				console.log(
-					`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — ${limit.type} exceeded.`,
-					`\n  Action: ${description}`,
-					`\n  Limit: ${limit.max} per ${limit.window}`,
-				);
-				return {
-					result: 'blocked',
-					reason:
-						limit.type === 'budget'
-							? 'budget_exhausted'
-							: 'rate_limit_exceeded',
-				};
-			}
-		}
-	}
-
-	if (policy === 'allow') return { result: 'allow' };
-
 	const argsJson = JSON.stringify(opts.args);
 	const now = new Date().toISOString();
 
@@ -469,6 +414,61 @@ export async function enforcePermission(
 			expiresAt: existing.expires_at,
 		};
 	}
+
+	// Evaluate limits
+	const applicableLimits = [
+		...(opts.globalLimits || []).map((l) => ({
+			...l,
+			// global configs default to 'global' scope
+			resolvedScope: l.scope === 'tenant' ? `tenant:${tenantId}` : `global`,
+		})),
+		...(opts.pluginLimits || []).map((l) => ({
+			...l,
+			// plugin configs natively apply to the plugin
+			resolvedScope: `plugin:${opts.pluginId}`,
+		})),
+	].filter((l) => !l.riskLevel || l.riskLevel === opts.riskLevel);
+
+	if (applicableLimits.length > 0) {
+		const { sql } = await import('kysely');
+		const nowTs = Date.now();
+		for (const limit of applicableLimits) {
+			const windowMs = parseDurationMs(limit.window);
+			const epoch = Math.floor(nowTs / windowMs);
+			// Hash properties to create a stable limit bucket
+			const limitFingerprint = `${limit.type}_${limit.max}_${limit.window}`;
+			const key = `usage:${limit.resolvedScope}:${limitFingerprint}:${epoch}`;
+			const expiresAt = new Date(nowTs + windowMs).toISOString();
+
+			const res = await opts.db.db
+				.insertInto('corsair_usage_counters')
+				.values({ key, count: 1, expires_at: expiresAt })
+				.onConflict((oc) =>
+					oc
+						.column('key')
+						.doUpdateSet({ count: sql`corsair_usage_counters.count + 1` }),
+				)
+				.returning('count')
+				.executeTakeFirst();
+
+			if (res && res.count > limit.max) {
+				console.log(
+					`[corsair/${opts.pluginId}] '${opts.endpointPath}' blocked — ${limit.type} exceeded.`,
+					`\n  Action: ${description}`,
+					`\n  Limit: ${limit.max} per ${limit.window}`,
+				);
+				return {
+					result: 'blocked',
+					reason:
+						limit.type === 'budget'
+							? 'budget_exhausted'
+							: 'rate_limit_exceeded',
+				};
+			}
+		}
+	}
+
+	if (policy === 'allow') return { result: 'allow' };
 
 	// No existing actionable record — create a new pending approval request
 	const id = uuidv4();

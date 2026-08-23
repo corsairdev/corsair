@@ -123,7 +123,7 @@ export function bindEndpointsRecursively({
 
 				// ── Permission guard ────────────────────────────────────────────────────────────────
 				let onPermissionComplete: (() => Promise<void>) | undefined;
-				if (permissionsConfig) {
+				if (permissionsConfig || permissionsOptions?.limits?.length) {
 					const meta = endpointMetaEntry;
 					const {
 						result: permResult,
@@ -136,8 +136,8 @@ export function bindEndpointsRecursively({
 						pluginId,
 						endpointPath: operationPath,
 						args,
-						mode: permissionsConfig.mode,
-						override: permissionsConfig.overrides?.[operationPath],
+						mode: permissionsConfig?.mode ?? 'open',
+						override: permissionsConfig?.overrides?.[operationPath],
 						// Default to 'write' when no meta declared — conservative fallback
 						riskLevel: meta?.riskLevel ?? 'write',
 						meta,
@@ -148,7 +148,7 @@ export function bindEndpointsRecursively({
 						tenantId,
 						approvalMode: permissionsOptions?.mode,
 						globalLimits: permissionsOptions?.limits,
-						pluginLimits: permissionsConfig.limits,
+						pluginLimits: permissionsConfig?.limits,
 					});
 					if (permResult === 'blocked') {
 						let msg: string;

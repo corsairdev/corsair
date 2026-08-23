@@ -185,4 +185,57 @@ describe('enforcePermission - Rate Limits and Budget', () => {
 
 		expect(allowedRes.result).toBe('allow');
 	});
+	it('does not double-charge quota when an approved request is replayed', async () => {
+		const limits = [{ max: 1, window: '1m', type: 'rate_limit' as const }];
+		const args = { data: 'test' };
+
+		// 1. Initial request: should hit limit check, consume 1 quota, and return blocked (pending)
+		const initialRes = await enforcePermission({
+			pluginId: 'test-plugin',
+			endpointPath: 'test.endpoint',
+			args,
+			mode: 'open',
+			override: 'require_approval', // Triggers pending record creation
+			riskLevel: 'write',
+			db: testDb.database,
+			pluginLimits: limits,
+			approvalMode: 'asynchronous', // Return immediately
+		});
+
+		expect(initialRes.result).toBe('blocked');
+		expect(initialRes.reason).toBe('pending');
+		const token = initialRes.token!;
+		const id = initialRes.id!;
+
+		// 2. Simulate human approval
+		await testDb.database.db
+			.updateTable('corsair_permissions')
+			.set({ status: 'approved', updated_at: new Date() })
+			.where('id', '=', id)
+			.execute();
+
+		// 3. Replay the request (simulate executePermission or client retry)
+		const replayRes = await enforcePermission({
+			pluginId: 'test-plugin',
+			endpointPath: 'test.endpoint',
+			args,
+			mode: 'open',
+			override: 'require_approval',
+			riskLevel: 'write',
+			db: testDb.database,
+			pluginLimits: limits,
+		});
+
+		// It should be allowed, because the existing approved record bypasses the limits check!
+		expect(replayRes.result).toBe('allow');
+
+		// 4. Verify that the quota was NOT double-charged
+		// If it were double-charged, the counter would be 2. Let's check the database.
+		const usage = await testDb.database.db
+			.selectFrom('corsair_usage_counters')
+			.selectAll()
+			.executeTakeFirst();
+
+		expect(usage?.count).toBe(1); // Still 1!
+	});
 });
