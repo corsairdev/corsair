@@ -15,6 +15,8 @@ export const DeepwikiMcpWikiContents = z.object({
 
 export const DeepwikiMcpWikiStructure = z.object({
 	repoName: z.string(),
+	// DeepWiki returns free-form outline entries whose exact shape is
+	// provider-defined (plain strings and nested items), hence `unknown`.
 	topics: z.array(z.unknown()).optional(),
 	createdAt: z.coerce.date().nullable().optional(),
 });
