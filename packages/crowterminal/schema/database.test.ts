@@ -25,6 +25,26 @@ describe('data point ids', () => {
 		expect(row.id).toBe('c1:YOUTUBE:follower_growth:');
 	});
 
+	// A raw join lets these two distinct points share one id, because the
+	// separator can fall inside dataType or videoId. platform is an enum, so
+	// the ambiguity has to come from the free-text fields.
+	it('does not collide when a field contains the separator', () => {
+		const a = CrowterminalDataPoint.parse({
+			clientId: 'c1',
+			platform: 'TIKTOK',
+			dataType: 'a',
+			videoId: 'b:c',
+		});
+		const b = CrowterminalDataPoint.parse({
+			clientId: 'c1',
+			platform: 'TIKTOK',
+			dataType: 'a:b',
+			videoId: 'c',
+		});
+
+		expect(a.id).not.toBe(b.id);
+	});
+
 	it('gives the same id for the same point twice', () => {
 		const input = {
 			clientId: 'c1',
@@ -63,6 +83,19 @@ describe('incident ids', () => {
 		});
 
 		expect(row.id).toBe('2026-08-22T15:00:51.198Z');
+		expect(row.startedAt).toEqual(new Date('2026-08-22T15:00:51.198Z'));
+	});
+
+	// zod strips the unrecognised `timestamp`, so normalising has to happen even
+	// when the incident already carries an id.
+	it('keeps the start time when the incident also has an id', () => {
+		const row = CrowterminalIncident.parse({
+			id: 'inc_1',
+			timestamp: '2026-08-22T15:00:51.198Z',
+			status: 'degraded',
+		});
+
+		expect(row.id).toBe('inc_1');
 		expect(row.startedAt).toEqual(new Date('2026-08-22T15:00:51.198Z'));
 	});
 

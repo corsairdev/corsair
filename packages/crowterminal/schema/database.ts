@@ -42,7 +42,12 @@ export const CrowterminalDataPoint = z.preprocess(
 		if (typeof row.id === 'string' && row.id.length > 0) return row;
 		const parts = [row.clientId, row.platform, row.dataType, row.videoId ?? ''];
 		if (parts.slice(0, 3).some((p) => typeof p !== 'string')) return row;
-		return { ...row, id: JSON.stringify(parts) };
+		// Each part is escaped before joining: a raw join lets ('a:b', 'TIKTOK')
+		// and ('a', 'b:TIKTOK') produce the same id.
+		return {
+			...row,
+			id: parts.map((p) => encodeURIComponent(String(p))).join(':'),
+		};
 	},
 	z.object({
 		/** clientId:platform:dataType:videoId when the provider supplies none. */
@@ -78,10 +83,15 @@ export const CrowterminalIncident = z.preprocess(
 	(value) => {
 		if (typeof value !== 'object' || value === null) return value;
 		const row = value as Record<string, unknown>;
-		if (typeof row.id === 'string' && row.id.length > 0) return row;
+		// Normalise timestamp -> startedAt first: zod strips the unrecognised
+		// `timestamp`, so doing this only when the id is missing would drop the
+		// start time from any incident that already carries an id.
 		const startedAt = row.startedAt ?? row.timestamp;
-		if (typeof startedAt !== 'string') return row;
-		return { ...row, id: startedAt, startedAt };
+		const normalised =
+			typeof startedAt === 'string' ? { ...row, startedAt } : row;
+		if (typeof row.id === 'string' && row.id.length > 0) return normalised;
+		if (typeof startedAt !== 'string') return normalised;
+		return { ...normalised, id: startedAt };
 	},
 	z.object({
 		/** The incident start time, which is what identifies it. */
