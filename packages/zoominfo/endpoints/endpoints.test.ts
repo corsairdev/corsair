@@ -3,6 +3,7 @@ import * as client from '../client';
 import {
 	enrichCompany,
 	enrichContact,
+	enrichIntent,
 	enrichLocation,
 	enrichTechnology,
 } from './enrichments';
@@ -210,6 +211,67 @@ describe('output validation', () => {
 		requestSpy.mockResolvedValue({ companies: [{ id: 1 }] });
 
 		await expect(searchCompanies(makeCtx(), {})).rejects.toThrow();
+	});
+
+	it('returns a contact enrichment in the match-result envelope', async () => {
+		// /enrich/contact answers with { success, data: { outputFields, result } }
+		// rather than the paged envelope the searches use.
+		requestSpy.mockResolvedValue({
+			success: true,
+			data: {
+				outputFields: [['id', 'firstName']],
+				result: [
+					{
+						input: { firstname: 'henry', lastname: 'schuck' },
+						data: [{ id: 1260398587, firstName: 'Henry' }],
+					},
+				],
+			},
+		});
+
+		const result = await enrichContact(makeCtx(), {
+			matchPersonInput: [{ firstName: 'Henry', lastName: 'Schuck' }],
+		});
+
+		expect(requestSpy).toHaveBeenCalledWith(
+			'enrich/contact',
+			'test-jwt',
+			expect.objectContaining({ method: 'POST' }),
+		);
+		expect(result.data.result).toHaveLength(1);
+	});
+
+	it('returns intent signals for a company', async () => {
+		requestSpy.mockResolvedValue({
+			maxResults: 8,
+			totalResults: 8,
+			currentPage: 1,
+			data: [
+				{
+					id: '3e706b1e-97ab-42cc-95f6-1a8d5176c6c7',
+					topic: 'Mobile / Wireless',
+					signalScore: 82,
+					audienceStrength: 'A',
+				},
+			],
+		});
+
+		const result = await enrichIntent(makeCtx(), {
+			companyId: '344589814',
+		});
+
+		expect(requestSpy).toHaveBeenCalledWith(
+			'enrich/intent',
+			'test-jwt',
+			expect.objectContaining({ method: 'POST' }),
+		);
+		expect(result.data[0]).toMatchObject({ signalScore: 82 });
+	});
+
+	it('rejects an intent enrichment with no company identifier', async () => {
+		await expect(enrichIntent(makeCtx(), { rpp: 5 })).rejects.toThrow();
+
+		expect(requestSpy).not.toHaveBeenCalled();
 	});
 });
 

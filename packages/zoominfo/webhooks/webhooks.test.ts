@@ -65,6 +65,28 @@ describe('verification token', () => {
 			).valid,
 		).toBe(false);
 	});
+
+	// bind.ts skips keyBuilder when the hub has already verified the delivery,
+	// so ctx.key is undefined by the time the handler runs. Failing closed on
+	// that would 401 every hub-forwarded webhook.
+	it('accepts a hub-verified delivery that carries no token', () => {
+		const request = requestWith(
+			{},
+		) as WebhookRequest<ZoominfoWebhookPayload> & {
+			hubVerified: boolean;
+		};
+		request.hubVerified = true;
+
+		expect(verifyZoominfoWebhookSignature(request, undefined)).toEqual({
+			valid: true,
+		});
+	});
+
+	it('still rejects an unverified delivery with no token', () => {
+		expect(
+			verifyZoominfoWebhookSignature(requestWith({}), undefined).valid,
+		).toBe(false);
+	});
 });
 
 describe('event routing', () => {

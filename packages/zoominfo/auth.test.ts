@@ -210,3 +210,54 @@ describe('authenticate', () => {
 		).rejects.toThrow(ZoominfoAPIError);
 	});
 });
+
+describe('trailing-slash trim', () => {
+	const fetchMock = jest.fn();
+	const originalFetch = global.fetch;
+
+	beforeAll(() => {
+		global.fetch = fetchMock as unknown as typeof fetch;
+	});
+	afterAll(() => {
+		global.fetch = originalFetch;
+	});
+
+	it('strips trailing slashes without quadratic backtracking', async () => {
+		fetchMock.mockReset().mockResolvedValue({
+			ok: true,
+			statusText: 'OK',
+			text: async () => JSON.stringify({ jwt: 'the-token' }),
+		});
+
+		// The slow input for `/\/+$/` is a long run of slashes followed by a
+		// non-slash: the engine consumes them all, fails `$`, then backs off one
+		// at a time. A run that ends the string matches immediately and is fast,
+		// so it would not exercise the bug at all.
+		const baseUrl = `https://api.zoominfo.com${'/'.repeat(100_000)}x`;
+		const started = Date.now();
+
+		await authenticateZoominfo(
+			{ kind: 'basic', username: 'u', password: 'p' },
+			{ baseUrl },
+		);
+
+		expect(Date.now() - started).toBeLessThan(1000);
+	});
+
+	it('still trims the trailing slashes it is meant to trim', async () => {
+		fetchMock.mockReset().mockResolvedValue({
+			ok: true,
+			statusText: 'OK',
+			text: async () => JSON.stringify({ jwt: 'the-token' }),
+		});
+
+		await authenticateZoominfo(
+			{ kind: 'basic', username: 'u', password: 'p' },
+			{ baseUrl: 'https://api.zoominfo.com///' },
+		);
+
+		expect(fetchMock.mock.calls[0][0]).toBe(
+			'https://api.zoominfo.com/authenticate',
+		);
+	});
+});

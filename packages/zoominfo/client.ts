@@ -40,6 +40,16 @@ export function isTokenUsable(
 	return expiry - REFRESH_SKEW_MS > now;
 }
 
+/**
+ * Linear trim. `/\/+$/` backtracks quadratically on a long run of slashes,
+ * which CodeQL flags as a polynomial regular expression.
+ */
+function trimTrailingSlashes(url: string): string {
+	let end = url.length;
+	while (end > 0 && url.charCodeAt(end - 1) === 47) end--;
+	return url.slice(0, end);
+}
+
 function base64url(value: string | Buffer): string {
 	return Buffer.from(value)
 		.toString('base64')
@@ -121,7 +131,7 @@ export async function authenticateZoominfo(
 		})}`;
 	}
 
-	const response = await fetch(`${baseUrl.replace(/\/+$/, '')}/authenticate`, {
+	const response = await fetch(`${trimTrailingSlashes(baseUrl)}/authenticate`, {
 		method: 'POST',
 		headers,
 		body,

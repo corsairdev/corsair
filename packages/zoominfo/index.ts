@@ -309,6 +309,12 @@ export type InternalZoominfoPlugin = BaseZoominfoPlugin<ZoominfoPluginOptions>;
 export type ExternalZoominfoPlugin<T extends ZoominfoPluginOptions> =
 	BaseZoominfoPlugin<T>;
 
+/**
+ * In-flight /authenticate calls, keyed by tenant. Only deduplicates within one
+ * process; the persisted token is what stops repeat work across processes.
+ */
+const inFlightAuth = new Map<string, Promise<string>>();
+
 /** Picks whichever of the two documented auth flows the account is set up for. */
 export function selectZoominfoCredentials(credentials: {
 	[key: string]: string | null | undefined;
@@ -394,24 +400,39 @@ export function zoominfo<const T extends ZoominfoPluginOptions>(
 				throw new AuthMissingError('zoominfo', 'oauth_2');
 			}
 
-			const token = await authenticateZoominfo(selected, {
-				baseUrl: options.baseUrl,
-			});
+			// Concurrent requests that all find the token expired would each mint
+			// their own JWT, which is what ZoomInfo asks callers not to do. The
+			// first one through does the work and the rest await its result.
+			const pending = inFlightAuth.get(ctx.tenantId);
+			if (pending) return pending;
 
+			const attempt = (async () => {
+				const token = await authenticateZoominfo(selected, {
+					baseUrl: options.baseUrl,
+				});
+
+				try {
+					await Promise.all([
+						ctx.keys.set_access_token(token.accessToken),
+						ctx.keys.set_expires_at(String(token.expiresAt)),
+					]);
+				} catch (error) {
+					console.warn(
+						`[corsair:zoominfo] Obtained a JWT but failed to persist it: ${
+							error instanceof Error ? error.message : String(error)
+						}`,
+					);
+				}
+
+				return token.accessToken;
+			})();
+
+			inFlightAuth.set(ctx.tenantId, attempt);
 			try {
-				await Promise.all([
-					ctx.keys.set_access_token(token.accessToken),
-					ctx.keys.set_expires_at(String(token.expiresAt)),
-				]);
-			} catch (error) {
-				console.warn(
-					`[corsair:zoominfo] Obtained a JWT but failed to persist it: ${
-						error instanceof Error ? error.message : String(error)
-					}`,
-				);
+				return await attempt;
+			} finally {
+				inFlightAuth.delete(ctx.tenantId);
 			}
-
-			return token.accessToken;
 		},
 	} satisfies InternalZoominfoPlugin;
 }

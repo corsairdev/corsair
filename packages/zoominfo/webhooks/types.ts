@@ -125,8 +125,14 @@ function headerValue(
  */
 export function verifyZoominfoWebhookSignature(
 	request: WebhookRequest<ZoominfoWebhookPayload>,
-	secret: string,
+	secret?: string,
 ): { valid: boolean; error?: string } {
+	// The hub verifies the delivery before forwarding it, and bind.ts then skips
+	// keyBuilder entirely, so there is no token here to compare against.
+	if (request.hubVerified === true) {
+		return { valid: true };
+	}
+
 	if (!secret) {
 		return { valid: false, error: 'No ZoomInfo verification token configured' };
 	}
