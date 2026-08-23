@@ -56,8 +56,8 @@ export async function makeDiffbotRequest<T>(
 	// Diffbot auth: token is a query parameter, not a header
 	const queryWithToken: Record<string, string | number | boolean | undefined> =
 		{
-			token,
 			...query,
+			token,
 		};
 
 	const requestOptions: ApiRequestOptions = {
