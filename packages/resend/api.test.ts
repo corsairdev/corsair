@@ -112,8 +112,8 @@ describe('Resend API Type Tests', () => {
 			// endpoint only accepts scheduled emails, and the per-email
 			// cancel endpoint uses POST /emails/{id}/cancel.
 			const scheduledBody: Record<string, unknown> = {
-				from: 'test@example.com',
-				to: ['recipient@example.com'],
+				from: TEST_FROM_EMAIL,
+				to: [TEST_TO_EMAIL],
 				subject: 'Test scheduled email',
 				html: '<p>Test</p>',
 				text: 'Test',
