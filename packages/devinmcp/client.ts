@@ -1,15 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
-
-export class DevinMcpAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'DevinMcpAPIError';
-	}
-}
+import { ApiError, request } from 'corsair/http';
 
 const DEVINMCP_API_BASE = 'https://api.devin.ai';
 
@@ -26,13 +16,12 @@ export async function makeDevinMcpRequest<T>(
 
 	const config: OpenAPIConfig = {
 		BASE: DEVINMCP_API_BASE,
-		VERSION: '1.0.0',
+		VERSION: '3.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
@@ -44,8 +33,18 @@ export async function makeDevinMcpRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
-	return await request<T>(config, requestOptions);
+	try {
+		return await request<T>(config, requestOptions);
+	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
+		if (error instanceof Error) {
+			throw error;
+		}
+		throw new Error('Unknown error');
+	}
 }

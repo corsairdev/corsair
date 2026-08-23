@@ -1,63 +1,86 @@
 import { z } from 'zod';
 
+const nullableString = z.string().nullable().optional();
+
+const SessionPullRequestSchema = z
+	.object({
+		url: z.string().optional(),
+	})
+	.loose();
+
+export const SessionResponseSchema = z
+	.object({
+		session_id: z.string(),
+		url: z.string(),
+		status: z.string(),
+		tags: z.array(z.string()),
+		org_id: z.string(),
+		created_at: z.number(),
+		updated_at: z.number(),
+		acus_consumed: z.number(),
+		pull_requests: z.array(SessionPullRequestSchema),
+		title: nullableString,
+		user_id: nullableString,
+		status_detail: nullableString,
+		structured_output: z.record(z.string(), z.unknown()).nullable().optional(),
+		playbook_id: nullableString,
+		parent_session_id: nullableString,
+	})
+	.loose();
+
+export type SessionResponse = z.infer<typeof SessionResponseSchema>;
+
+const PaginatedSessionsSchema = z
+	.object({
+		items: z.array(SessionResponseSchema),
+		end_cursor: nullableString,
+		has_next_page: z.boolean().optional(),
+		total: z.number().nullable().optional(),
+	})
+	.loose();
+
 const CreateSessionInputSchema = z.object({
+	org_id: z.string(),
 	prompt: z.string(),
-	idempotent: z.boolean().optional(),
+	create_as_user_id: z.string().optional(),
 	playbook_id: z.string().optional(),
 	title: z.string().optional(),
 	tags: z.array(z.string()).optional(),
+	knowledge_ids: z.array(z.string()).optional(),
+	max_acu_limit: z.number().optional(),
+	snapshot_id: z.string().optional(),
+	idempotent: z.boolean().optional(),
+	unlisted: z.boolean().optional(),
+	structured_output_schema: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateSessionInput = z.infer<typeof CreateSessionInputSchema>;
-
-const CreateSessionResponseSchema = z.object({
-	session_id: z.string(),
-	url: z.string(),
-	is_new_session: z.boolean(),
-});
-export type CreateSessionResponse = z.infer<typeof CreateSessionResponseSchema>;
+export type CreateSessionResponse = SessionResponse;
 
 const GetSessionInputSchema = z.object({
+	org_id: z.string(),
 	session_id: z.string(),
 });
 export type GetSessionInput = z.infer<typeof GetSessionInputSchema>;
-
-const GetSessionResponseSchema = z.object({
-	session_id: z.string(),
-	status_enum: z.string(),
-	title: z.string().optional(),
-	structured_output: z.unknown().optional(),
-});
-export type GetSessionResponse = z.infer<typeof GetSessionResponseSchema>;
+export type GetSessionResponse = SessionResponse;
 
 const ListSessionsInputSchema = z.object({
-	limit: z.number().optional(),
-	offset: z.number().optional(),
+	org_id: z.string(),
+	first: z.number().optional(),
+	after: z.string().optional(),
+	tags: z.array(z.string()).optional(),
+	user_ids: z.array(z.string()).optional(),
+	session_ids: z.array(z.string()).optional(),
 });
 export type ListSessionsInput = z.infer<typeof ListSessionsInputSchema>;
-
-const ListSessionsResponseSchema = z.object({
-	sessions: z.array(
-		z.object({
-			session_id: z.string(),
-			status_enum: z.string(),
-			title: z.string().optional(),
-		}),
-	),
-});
-export type ListSessionsResponse = z.infer<typeof ListSessionsResponseSchema>;
+export type ListSessionsResponse = z.infer<typeof PaginatedSessionsSchema>;
 
 const SendMessageInputSchema = z.object({
+	org_id: z.string(),
 	session_id: z.string(),
 	message: z.string(),
 });
 export type SendMessageInput = z.infer<typeof SendMessageInputSchema>;
-
-const SendMessageResponseSchema = z
-	.object({
-		detail: z.string(),
-	})
-	.nullable();
-export type SendMessageResponse = z.infer<typeof SendMessageResponseSchema>;
+export type SendMessageResponse = SessionResponse;
 
 export type DevinMcpEndpointInputs = {
 	createSession: CreateSessionInput;
@@ -81,8 +104,8 @@ export const DevinMcpEndpointInputSchemas = {
 } as const;
 
 export const DevinMcpEndpointOutputSchemas = {
-	createSession: CreateSessionResponseSchema,
-	getSession: GetSessionResponseSchema,
-	listSessions: ListSessionsResponseSchema,
-	sendMessage: SendMessageResponseSchema,
+	createSession: SessionResponseSchema,
+	getSession: SessionResponseSchema,
+	listSessions: PaginatedSessionsSchema,
+	sendMessage: SessionResponseSchema,
 } as const;
