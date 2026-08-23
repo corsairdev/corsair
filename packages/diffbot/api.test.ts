@@ -199,20 +199,44 @@ describe('search.web — response schema', () => {
 // ---------------------------------------------------------------------------
 
 describe('search.dql — input schema', () => {
-	it('accepts a DQL query', () => {
+	it('accepts a DQL query with entityType filter', () => {
 		const result = DqlSearchInputSchema.safeParse({
 			query: 'name:"OpenAI"',
-			type: 'Organization',
+			entityType: 'Organization',
 			size: 5,
 		});
 		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.entityType).toBe('Organization');
+		}
 	});
 
-	it('accepts a query without optional type', () => {
+	it('accepts a query without optional entityType', () => {
 		const result = DqlSearchInputSchema.safeParse({
 			query: 'diffbot',
 		});
 		expect(result.success).toBe(true);
+	});
+
+	it('accepts crawl queryType with collection', () => {
+		const result = DqlSearchInputSchema.safeParse({
+			query: 'type:Article',
+			queryType: 'crawl',
+			col: 'my_collection',
+		});
+		expect(result.success).toBe(true);
+		if (result.success) {
+			expect(result.data.queryType).toBe('crawl');
+			expect(result.data.col).toBe('my_collection');
+		}
+	});
+
+	it('rejects invalid queryType', () => {
+		const result = DqlSearchInputSchema.safeParse({
+			query: 'test',
+			queryType: 'invalid_mode',
+		});
+		expect(result.success).toBe(false);
 	});
 
 	it('rejects missing query', () => {

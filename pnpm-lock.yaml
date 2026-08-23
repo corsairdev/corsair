@@ -171,6 +171,9 @@ importers:
       '@corsair-dev/cursor':
         specifier: workspace:*
         version: link:../../packages/cursor
+      '@corsair-dev/diffbot':
+        specifier: workspace:*
+        version: link:../../packages/diffbot
       '@corsair-dev/firecrawl':
         specifier: workspace:*
         version: link:../../packages/firecrawl

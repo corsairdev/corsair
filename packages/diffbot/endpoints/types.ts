@@ -271,11 +271,21 @@ export type WebSearchResponse = z.infer<typeof WebSearchResponseSchema>;
 export const DqlSearchInputSchema = z.object({
 	query: z
 		.string()
-		.describe('DQL query string (e.g. "type:Organization name:\"Google\"")'),
-	type: z
+		.describe(
+			"DQL query string (e.g. 'name:\"OpenAI\"'). Do NOT include a 'type:' prefix here — use entityType instead.",
+		),
+	entityType: z
 		.string()
 		.optional()
-		.describe('Entity type filter (e.g. "Organization", "Person", "Article")'),
+		.describe(
+			'Entity type filter prepended to the DQL query (e.g. "Organization", "Person", "Article")',
+		),
+	queryType: z
+		.enum(['query', 'text', 'queryTextFallback', 'crawl'])
+		.optional()
+		.describe(
+			'Execution mode for the DQL request. Use "crawl" with col to search crawl collections.',
+		),
 	size: z
 		.number()
 		.optional()
@@ -286,7 +296,7 @@ export const DqlSearchInputSchema = z.object({
 	col: z
 		.string()
 		.optional()
-		.describe('Collection name for querying crawl/bulk data'),
+		.describe('Crawl collection name — only valid when queryType is "crawl"'),
 });
 
 export type DqlSearchInput = z.infer<typeof DqlSearchInputSchema>;

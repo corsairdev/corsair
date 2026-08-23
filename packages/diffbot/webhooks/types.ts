@@ -57,6 +57,16 @@ export function verifyDiffbotWebhookSignature(
 	request: WebhookRequest<DiffbotWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	return { valid: true };
+	// Diffbot does not provide a native webhook signature mechanism.
+	// Accept only events that have been verified by Corsair Hub (hubVerified flag).
+	// This prevents unauthenticated callers from forging webhook events by
+	// setting an x-diffbot-signature header on arbitrary payloads.
+	if (request.hubVerified) {
+		return { valid: true };
+	}
+	return {
+		valid: false,
+		error:
+			'Diffbot webhook authentication is not configured. Hub verification is required.',
+	};
 }
