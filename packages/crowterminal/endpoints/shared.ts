@@ -72,25 +72,28 @@ export async function callCrowterminal<
 	input: z.input<TInput>,
 ): Promise<z.infer<TOutput>> {
 	const parsedInput = inputSchema.parse(input);
+	const described = describeInput(parsedInput);
 
-	const raw = await makeCrowterminalRequest<unknown>(
-		path(parsedInput),
-		ctx.key,
-		{
-			method,
-			body: body?.(parsedInput),
-			query: query?.(parsedInput),
-		},
-	);
+	let parsed: z.infer<TOutput>;
+	try {
+		const raw = await makeCrowterminalRequest<unknown>(
+			path(parsedInput),
+			ctx.key,
+			{
+				method,
+				body: body?.(parsedInput),
+				query: query?.(parsedInput),
+			},
+		);
+		parsed = outputSchema.parse(raw);
+	} catch (error) {
+		// Record the attempt before rethrowing, so a failed call leaves a trace
+		// rather than a silent gap in the event log.
+		await logEventFromContext(ctx, event, described, 'failed');
+		throw error;
+	}
 
-	const parsed = outputSchema.parse(raw);
-
-	await logEventFromContext(
-		ctx,
-		event,
-		describeInput(parsedInput),
-		'completed',
-	);
+	await logEventFromContext(ctx, event, described, 'completed');
 
 	return parsed;
 }

@@ -69,6 +69,11 @@ describe('request routing', () => {
 		['intelGetByok', '/api/agent/byok/platform-intel', getByokPlatform],
 		['sandboxGetClient', '/api/agent/sandbox/client', sandboxClient],
 		['sandboxGetMemory', '/api/agent/sandbox/memory', sandboxMemory],
+		[
+			'sandboxEngagement',
+			'/api/agent/sandbox/engagement-analysis',
+			sandboxEngagement,
+		],
 		['webhooksList', '/api/agent/webhooks', listWebhooks],
 	])('routes %s to %s', async (_name, path, endpoint) => {
 		requestSpy.mockResolvedValue({
@@ -169,6 +174,24 @@ describe('path segment encoding', () => {
 		).rejects.toThrow();
 
 		expect(requestSpy).not.toHaveBeenCalled();
+	});
+
+	// encodeURIComponent leaves dots alone, so `..` survives escaping and URL
+	// normalisation collapses the path onto a different route.
+	it('rejects bare dot segments that encoding cannot neutralise', async () => {
+		await expect(getMemory(ctx(), { clientId: '..' })).rejects.toThrow();
+		await expect(getChangelog(ctx(), { clientId: '.' })).rejects.toThrow();
+		await expect(deleteWebhook(ctx(), { webhookId: '..' })).rejects.toThrow();
+
+		expect(requestSpy).not.toHaveBeenCalled();
+	});
+
+	it('still accepts ids that merely contain dots', async () => {
+		requestSpy.mockResolvedValue({ success: true, changelog: [] });
+
+		await getChangelog(ctx(), { clientId: 'a..b' });
+
+		expect(lastCall()?.[0]).toBe('/api/agent/memory/a..b/changelog');
 	});
 
 	it('percent-encodes characters that are legal but reserved', async () => {
@@ -381,5 +404,66 @@ describe('event logging', () => {
 			proposedChangesCount: 1,
 			secretPresent: true,
 		});
+	});
+});
+
+describe('sandbox engagement analysis', () => {
+	it('omits agentMd from the body when the caller sends none', async () => {
+		requestSpy.mockResolvedValue({ success: true });
+
+		await sandboxEngagement(ctx(), {});
+
+		expect(lastCall()?.[0]).toBe('/api/agent/sandbox/engagement-analysis');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual({});
+	});
+
+	it('sends agentMd when the caller supplies it', async () => {
+		requestSpy.mockResolvedValue({ success: true, versionsAnalyzed: 47 });
+
+		const result = await sandboxEngagement(ctx(), {
+			agentMd: { hookPatterns: ['confession'] },
+		});
+
+		expect(lastCall()?.[2]?.body).toEqual({
+			agentMd: { hookPatterns: ['confession'] },
+		});
+		expect(result.versionsAnalyzed).toBe(47);
+	});
+});
+
+describe('failure logging', () => {
+	it('records a failed event when the request throws', async () => {
+		requestSpy.mockRejectedValue(new Error('502 upstream'));
+
+		await expect(getStatus(ctx(), {})).rejects.toThrow('502 upstream');
+
+		const [, event, , status] = logEventFromContext.mock.calls[0];
+		expect(event).toBe('crowterminal.status.get');
+		expect(status).toBe('failed');
+	});
+
+	it('records a failed event when the response fails its schema', async () => {
+		requestSpy.mockResolvedValue({ currentStatus: 'operational' });
+
+		await expect(getStatus(ctx(), {})).rejects.toThrow();
+
+		expect(logEventFromContext.mock.calls[0][3]).toBe('failed');
+	});
+
+	it('redacts the same fields on a failed call', async () => {
+		requestSpy.mockRejectedValue(new Error('boom'));
+
+		await expect(
+			createWebhook(ctx(), {
+				url: 'https://example.com/hook',
+				events: ['skill.updated'],
+				secret: 'leaky-secret',
+			}),
+		).rejects.toThrow();
+
+		const [, , payload, status] = logEventFromContext.mock.calls[0];
+		expect(status).toBe('failed');
+		expect(JSON.stringify(payload)).not.toContain('leaky-secret');
 	});
 });

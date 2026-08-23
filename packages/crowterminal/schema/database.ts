@@ -27,19 +27,36 @@ export const CrowterminalSkill = z.object({
 });
 export type CrowterminalSkill = z.infer<typeof CrowterminalSkill>;
 
-/** One analytics point pushed to CrowTerminal for a creator. */
-export const CrowterminalDataPoint = z.object({
-	/** clientId:platform:dataType:videoId, since the API returns no point id. */
-	id: z.string(),
-	clientId: z.string(),
-	platform: z.enum(['TIKTOK', 'INSTAGRAM', 'YOUTUBE']),
-	dataType: z.string(),
-	/** Absent for channel-level rather than video-level data. */
-	videoId: z.string().nullable().optional(),
-	/** 0-1 as accepted by the ingest endpoint. */
-	confidence: z.number().nullable().optional(),
-	ingestedAt: z.coerce.date().nullable().optional(),
-});
+/**
+ * One analytics point pushed to CrowTerminal for a creator.
+ *
+ * The ingest endpoints return no per-point id, so one is derived from the
+ * fields that identify the point. Deriving it here rather than at the call site
+ * means a raw provider record validates as-is and the same point always lands
+ * on the same row.
+ */
+export const CrowterminalDataPoint = z.preprocess(
+	(value) => {
+		if (typeof value !== 'object' || value === null) return value;
+		const row = value as Record<string, unknown>;
+		if (typeof row.id === 'string' && row.id.length > 0) return row;
+		const parts = [row.clientId, row.platform, row.dataType, row.videoId ?? ''];
+		if (parts.slice(0, 3).some((p) => typeof p !== 'string')) return row;
+		return { ...row, id: parts.join(':') };
+	},
+	z.object({
+		/** clientId:platform:dataType:videoId when the provider supplies none. */
+		id: z.string(),
+		clientId: z.string(),
+		platform: z.enum(['TIKTOK', 'INSTAGRAM', 'YOUTUBE']),
+		dataType: z.string(),
+		/** Absent for channel-level rather than video-level data. */
+		videoId: z.string().nullable().optional(),
+		/** 0-1 as accepted by the ingest endpoint. */
+		confidence: z.number().nullable().optional(),
+		ingestedAt: z.coerce.date().nullable().optional(),
+	}),
+);
 export type CrowterminalDataPoint = z.infer<typeof CrowterminalDataPoint>;
 
 /** A registered webhook subscription. The signing secret is never stored. */
@@ -52,13 +69,27 @@ export const CrowterminalWebhook = z.object({
 });
 export type CrowterminalWebhook = z.infer<typeof CrowterminalWebhook>;
 
-/** A service incident from the status endpoints. */
-export const CrowterminalIncident = z.object({
-	/** Incidents carry no id; the start timestamp identifies them. */
-	id: z.string(),
-	status: z.string().nullable().optional(),
-	duration: z.string().nullable().optional(),
-	components: z.array(z.string()).nullable().optional(),
-	startedAt: z.coerce.date().nullable().optional(),
-});
+/**
+ * A service incident from the status endpoints. Incidents carry no id, and the
+ * status endpoints name the start time `timestamp`, so both are accepted and
+ * the id is derived from whichever is present.
+ */
+export const CrowterminalIncident = z.preprocess(
+	(value) => {
+		if (typeof value !== 'object' || value === null) return value;
+		const row = value as Record<string, unknown>;
+		if (typeof row.id === 'string' && row.id.length > 0) return row;
+		const startedAt = row.startedAt ?? row.timestamp;
+		if (typeof startedAt !== 'string') return row;
+		return { ...row, id: startedAt, startedAt };
+	},
+	z.object({
+		/** The incident start time, which is what identifies it. */
+		id: z.string(),
+		status: z.string().nullable().optional(),
+		duration: z.string().nullable().optional(),
+		components: z.array(z.string()).nullable().optional(),
+		startedAt: z.coerce.date().nullable().optional(),
+	}),
+);
 export type CrowterminalIncident = z.infer<typeof CrowterminalIncident>;

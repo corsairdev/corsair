@@ -6,15 +6,21 @@ import { z } from 'zod';
 // what a plan is entitled to.
 
 /**
- * Ids are spliced into request paths. `/`, `?` and `#` would retarget the
- * request at a different endpoint, so they are rejected rather than escaped
- * only at the call site.
+ * Ids are spliced into request paths, so anything that could retarget the
+ * request is rejected here rather than only escaped at the call site.
+ *
+ * `.` and `..` need their own check: encodeURIComponent leaves dots alone, so
+ * a bare `..` survives encoding and URL normalisation then collapses
+ * `/api/agent/memory/../changelog` down to `/api/agent/changelog`.
  */
 const IdSchema = z
 	.string()
 	.min(1)
 	.refine((v) => !/[/?#]/.test(v), {
 		message: 'must not contain /, ? or #',
+	})
+	.refine((v) => v !== '.' && v !== '..', {
+		message: 'must not be a . or .. path segment',
 	});
 
 export const CrowterminalPlatformSchema = z.enum([
@@ -345,7 +351,7 @@ export const RegisterAgentResponseSchema = z.looseObject({
 // ── Webhooks ────────────────────────────────────────────────────────────────
 
 export const CreateWebhookInputSchema = z.object({
-	url: z.string().url(),
+	url: z.url(),
 	events: z.array(CrowterminalWebhookEventNameSchema).min(1),
 	secret: z.string().min(1).optional(),
 });
@@ -364,7 +370,7 @@ export const ListWebhooksResponseSchema = z.looseObject({
 
 export const UpdateWebhookInputSchema = z.object({
 	webhookId: IdSchema,
-	url: z.string().url().optional(),
+	url: z.url().optional(),
 	events: z.array(CrowterminalWebhookEventNameSchema).min(1).optional(),
 	isActive: z.boolean().optional(),
 });
@@ -374,7 +380,7 @@ export const DeleteWebhookInputSchema = z.object({ webhookId: IdSchema });
 export const DeleteWebhookResponseSchema = z.looseObject({ success: ok });
 
 export const TestWebhookInputSchema = z.object({
-	url: z.string().url(),
+	url: z.url(),
 	secret: z.string().min(1).optional(),
 });
 export const TestWebhookResponseSchema = z.looseObject({ success: ok });
