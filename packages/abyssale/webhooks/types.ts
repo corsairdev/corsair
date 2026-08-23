@@ -48,14 +48,17 @@ export const NewBannerBatchEventSchema = AbyssaleWebhookPayloadSchema.extend({
 	event_type: z.literal('NEW_BANNER_BATCH'),
 	generation_request_id: z.uuid(),
 	banners: z.array(AbyssaleBanner),
-	errors: z.array(
-		z
-			.object({
-				template_format_name: z.string(),
-				reason: z.string(),
-			})
-			.loose(),
-	),
+	errors: z
+		.array(
+			z
+				.object({
+					template_format_name: z.string(),
+					reason: z.string(),
+				})
+				.loose(),
+		)
+		.optional()
+		.default([]),
 });
 export type NewBannerBatchEvent = z.infer<typeof NewBannerBatchEventSchema>;
 

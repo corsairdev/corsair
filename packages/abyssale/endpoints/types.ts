@@ -178,14 +178,17 @@ const GetGenerationRequestResponseSchema = z
 		is_finalized: z.boolean(),
 		id: z.string().uuid(),
 		banners: z.array(AbyssaleBanner),
-		errors: z.array(
-			z
-				.object({
-					template_format_name: z.string(),
-					reason: z.string(),
-				})
-				.loose(),
-		),
+		errors: z
+			.array(
+				z
+					.object({
+						template_format_name: z.string(),
+						reason: z.string(),
+					})
+					.loose(),
+			)
+			.optional()
+			.default([]),
 	})
 	.loose();
 export type GetGenerationRequestResponse = z.infer<
