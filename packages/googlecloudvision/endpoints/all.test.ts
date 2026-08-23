@@ -464,7 +464,10 @@ describe('input schemas', () => {
 		const parsed = ImagesAsyncBatchAnnotateInputSchema.safeParse({
 			requests: [
 				{
-					image: { content: 'abc' },
+					image: {
+						content: 'abc',
+						source: { gcsImageUri: 'gs://bucket/x.jpg' },
+					},
 					features: [{ type: 'LABEL_DETECTION' }],
 				},
 			],
@@ -473,12 +476,27 @@ describe('input schemas', () => {
 		expect(parsed.success).toBe(false);
 	});
 
+	it('rejects async image requests without gcsImageUri', () => {
+		expect(
+			ImagesAsyncBatchAnnotateInputSchema.safeParse({
+				requests: [
+					{
+						image: { source: { imageUri: 'https://example.com/x.jpg' } },
+						features: [{ type: 'LABEL_DETECTION' }],
+					},
+				],
+				outputConfig: { gcsDestination: { uri: 'gs://out/' } },
+			}).success,
+		).toBe(false);
+	});
+
 	it('rejects async file requests with inline content', () => {
 		const parsed = FilesAsyncBatchAnnotateInputSchema.safeParse({
 			requests: [
 				{
 					inputConfig: {
 						content: 'abc',
+						gcsSource: { uri: 'gs://bucket/doc.pdf' },
 						mimeType: 'application/pdf',
 					},
 					features: [{ type: 'DOCUMENT_TEXT_DETECTION' }],

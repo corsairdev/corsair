@@ -33,10 +33,9 @@ const ImageSchema = z
 		{ message: 'image requires content or a source URI' },
 	);
 
-const GcsImageSchema = z.object({
-	source: z.object({
-		gcsImageUri: z.string().optional(),
-		imageUri: z.string().optional(),
+const GcsImageSchema = z.strictObject({
+	source: z.strictObject({
+		gcsImageUri: z.string(),
 	}),
 });
 
@@ -86,7 +85,7 @@ const AnnotateFileRequestSchema = z.object({
 });
 
 const AsyncAnnotateFileRequestSchema = z.object({
-	inputConfig: z.object({
+	inputConfig: z.strictObject({
 		gcsSource: z.object({ uri: z.string() }),
 		mimeType: z.string(),
 	}),
