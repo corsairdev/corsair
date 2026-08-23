@@ -48,7 +48,7 @@ export const cancel: GoogleCloudVisionEndpoints['operationsCancel'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['operationsCancel']
-	>(`${input.name}:cancel`, ctx, { method: 'POST' });
+	>(`${input.name}:cancel`, ctx, { method: 'POST', body: {} });
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.operations.cancel',
