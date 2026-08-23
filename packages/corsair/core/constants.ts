@@ -28,10 +28,10 @@ export const BaseProviders = [
 	'agenty',
 	'ahrefs',
 	'aimlapi',
-	'allimagesai',
 	'airtable',
 	'alchemy',
 	'algolia',
+	'allimagesai',
 	'alphavantage',
 	'altoviz',
 	'alttextai',
@@ -179,6 +179,7 @@ export const BaseProviders = [
 	'vercel',
 	'webflow',
 	'whatsapp',
+	'witai',
 	'wiza',
 	'workday',
 	'xquik',
@@ -205,10 +206,10 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
-	allimagesai: 'All Images AI',
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
@@ -356,6 +357,7 @@ export const ProviderDisplayNames = {
 	vercel: 'Vercel',
 	webflow: 'Webflow',
 	whatsapp: 'WhatsApp',
+	witai: 'WitAi',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	xquik: 'XQuik',
@@ -389,10 +391,10 @@ export type AllProviders =
 	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
-	| 'allimagesai'
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
+	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
 	| 'alttextai'
@@ -540,6 +542,7 @@ export type AllProviders =
 	| 'vercel'
 	| 'webflow'
 	| 'whatsapp'
+	| 'witai'
 	| 'wiza'
 	| 'workday'
 	| 'xquik'
