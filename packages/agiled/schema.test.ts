@@ -6,15 +6,7 @@ describe('Agiled schema', () => {
 		expect(AgiledSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof AgiledSchema.entities).toBe('object');
-		expect(AgiledSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(AgiledSchema.entities))).toBe(true);
-		for (const entity of Object.values(AgiledSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares an empty entities map', () => {
+		expect(AgiledSchema.entities).toEqual({});
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
