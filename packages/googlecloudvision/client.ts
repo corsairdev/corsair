@@ -46,7 +46,6 @@ export type GoogleCloudVisionRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
-	baseUrl?: string;
 };
 
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
@@ -70,12 +69,7 @@ export async function makeGoogleCloudVisionRequest<T>(
 	ctx: GoogleCloudVisionRequestContext,
 	options: GoogleCloudVisionRequestOptions = {},
 ): Promise<T> {
-	const {
-		method = 'GET',
-		body,
-		query,
-		baseUrl = GOOGLECLOUDVISION_API_BASE,
-	} = options;
+	const { method = 'GET', body, query } = options;
 	const credential = ctx.key ?? '';
 	const authType = resolveGoogleCloudVisionAuthType(ctx);
 
@@ -89,7 +83,7 @@ export async function makeGoogleCloudVisionRequest<T>(
 	}
 
 	const config: OpenAPIConfig = {
-		BASE: baseUrl,
+		BASE: GOOGLECLOUDVISION_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

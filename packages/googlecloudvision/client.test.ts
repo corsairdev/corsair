@@ -41,6 +41,7 @@ describe('makeGoogleCloudVisionRequest', () => {
 
 		expect(mockedRequest).toHaveBeenCalledTimes(1);
 		const config = mockedRequest.mock.calls[0]?.[0];
+		expect(config?.BASE).toBe('https://vision.googleapis.com/v1');
 		expect(config?.TOKEN).toBeUndefined();
 		expect(config?.HEADERS).toMatchObject({
 			'x-goog-api-key': 'vision-key',
