@@ -5,7 +5,7 @@ description: Integrate Corsair Hub from any language over plain HTTP — no SDK 
 
 The Corsair SDK is TypeScript-only, but Hub itself is a plain HTTP service. A Go, Python, or Ruby backend integrates by calling these endpoints directly. Credentials are still delivered to **your** endpoint and stored in **your** database — Hub stores none.
 
-Every request authenticates with your project API key:
+Every request authenticates with your environment API key (`ck_dev_…` locally, `ck_prod_…` in production):
 
 ```http
 Authorization: Bearer ck_dev_...
@@ -16,7 +16,7 @@ Authorization: Bearer ck_dev_...
 <CodeGroup>
 ```bash cURL
 curl -X POST https://auth.corsair.dev/connect/sessions \
-  -H "Authorization: Bearer $CORSAIR_DEV_API_KEY" \
+  -H "Authorization: Bearer $CORSAIR_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
     "tenantId": "user_123",
@@ -29,7 +29,7 @@ curl -X POST https://auth.corsair.dev/connect/sessions \
 const res = await fetch("https://auth.corsair.dev/connect/sessions", {
     method: "POST",
     headers: {
-        Authorization: `Bearer ${process.env.CORSAIR_DEV_API_KEY}`,
+        Authorization: `Bearer ${process.env.CORSAIR_API_KEY}`,
         "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -46,7 +46,7 @@ import os, requests
 
 res = requests.post(
     "https://auth.corsair.dev/connect/sessions",
-    headers={"Authorization": f"Bearer {os.environ['CORSAIR_DEV_API_KEY']}"},
+    headers={"Authorization": f"Bearer {os.environ['CORSAIR_API_KEY']}"},
     json={
         "tenantId": "user_123",
         "deliveryUrl": "https://yourapp.com/api/corsair",
@@ -63,7 +63,7 @@ payload, _ := json.Marshal(map[string]any{
     "plugins":     []map[string]string{{"plugin": "github", "oauthMode": "managed"}},
 })
 req, _ := http.NewRequest("POST", "https://auth.corsair.dev/connect/sessions", bytes.NewReader(payload))
-req.Header.Set("Authorization", "Bearer "+os.Getenv("CORSAIR_DEV_API_KEY"))
+req.Header.Set("Authorization", "Bearer "+os.Getenv("CORSAIR_API_KEY"))
 req.Header.Set("Content-Type", "application/json")
 res, _ := http.DefaultClient.Do(req)
 ```
@@ -130,11 +130,11 @@ Only after `verify` passes: parse the body, exchange or store the credential, an
 ## List connections
 
 ```bash cURL
-curl https://auth.corsair.dev/projects/{projectId}/connections \
-  -H "Authorization: Bearer $CORSAIR_DEV_API_KEY"
+curl https://auth.corsair.dev/projects/connections \
+  -H "Authorization: Bearer $CORSAIR_API_KEY"
 ```
 
-Returns an array of `{ tenantId, plugin, status, authKind, connectedAt, expiresAt }`, deduplicated by `tenantId:plugin`.
+Returns an array of `{ tenantId, plugin, status, authType, connected, verified, missingFields, reportedAt }`, deduplicated by `tenantId:plugin`.
 
 ## Rate limits
 
