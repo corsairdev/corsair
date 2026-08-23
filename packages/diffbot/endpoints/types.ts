@@ -268,36 +268,46 @@ export type WebSearchResponse = z.infer<typeof WebSearchResponseSchema>;
 // DQL (Knowledge Graph Search)
 // ---------------------------------------------------------------------------
 
-export const DqlSearchInputSchema = z.object({
-	query: z
-		.string()
-		.describe(
-			"DQL query string (e.g. 'name:\"OpenAI\"'). Do NOT include a 'type:' prefix here — use entityType instead.",
-		),
-	entityType: z
-		.string()
-		.optional()
-		.describe(
-			'Entity type filter prepended to the DQL query (e.g. "Organization", "Person", "Article")',
-		),
-	queryType: z
-		.enum(['query', 'text', 'queryTextFallback', 'crawl'])
-		.optional()
-		.describe(
-			'Execution mode for the DQL request. Use "crawl" with col to search crawl collections.',
-		),
-	size: z
-		.number()
-		.optional()
-		.describe(
-			'Number of results to return (default 5, max 100 or 1000 for articles)',
-		),
-	from: z.number().optional().describe('Zero-indexed offset for pagination'),
-	col: z
-		.string()
-		.optional()
-		.describe('Crawl collection name — only valid when queryType is "crawl"'),
-});
+export const DqlSearchInputSchema = z
+	.object({
+		query: z
+			.string()
+			.describe(
+				"DQL query string (e.g. 'name:\"OpenAI\"'). Do NOT include a 'type:' prefix here — use entityType instead.",
+			),
+		entityType: z
+			.string()
+			.optional()
+			.describe(
+				'Entity type filter prepended to the DQL query (e.g. "Organization", "Person", "Article")',
+			),
+		queryType: z
+			.enum(['query', 'text', 'queryTextFallback', 'crawl'])
+			.optional()
+			.describe(
+				'Execution mode for the DQL request. Use "crawl" with col to search crawl collections.',
+			),
+		size: z
+			.number()
+			.optional()
+			.describe(
+				'Number of results to return (default 5, max 100 or 1000 for articles)',
+			),
+		from: z.number().optional().describe('Zero-indexed offset for pagination'),
+		col: z
+			.string()
+			.optional()
+			.describe('Crawl collection name — only valid when queryType is "crawl"'),
+	})
+	.superRefine((input, ctx) => {
+		if (input.col !== undefined && input.queryType !== 'crawl') {
+			ctx.addIssue({
+				code: 'custom',
+				path: ['col'],
+				message: 'col is only valid when queryType is "crawl"',
+			});
+		}
+	});
 
 export type DqlSearchInput = z.infer<typeof DqlSearchInputSchema>;
 

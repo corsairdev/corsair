@@ -248,6 +248,23 @@ describe('search.dql — input schema', () => {
 		}
 	});
 
+	it('rejects collection without crawl queryType', () => {
+		const result = DqlSearchInputSchema.safeParse({
+			query: 'type:Article',
+			col: 'my_collection',
+		});
+		expect(result.success).toBe(false);
+	});
+
+	it('rejects collection for non-crawl queryType', () => {
+		const result = DqlSearchInputSchema.safeParse({
+			query: 'type:Article',
+			queryType: 'query',
+			col: 'my_collection',
+		});
+		expect(result.success).toBe(false);
+	});
+
 	it('rejects invalid queryType', () => {
 		const result = DqlSearchInputSchema.safeParse({
 			query: 'test',
