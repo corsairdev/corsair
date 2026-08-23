@@ -2,123 +2,166 @@ import { z } from 'zod';
 
 // ─── Shared sub-schemas ───────────────────────────────────────────────────────
 
-const WitAiRoleSchema = z.object({
-	name: z.string(),
-});
+export const WitAiRoleSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string(),
+	})
+	.catchall(z.unknown());
 
-const WitAiKeywordSchema = z.object({
-	keyword: z.string(),
-	synonyms: z.array(z.string()).optional(),
-});
+export const WitAiKeywordSchema = z
+	.object({
+		keyword: z.string(),
+		synonyms: z.array(z.string()).optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiEntityRefSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	role: z.string().optional(),
-	start: z.number().optional(),
-	end: z.number().optional(),
-	body: z.string().optional(),
-	confidence: z.number().optional(),
-	entities: z.array(z.unknown()).optional(),
-	value: z.unknown().optional(),
-	type: z.string().optional(),
-});
+export const WitAiEntityRefSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		role: z.string().optional(),
+		start: z.number().optional(),
+		end: z.number().optional(),
+		body: z.string().optional(),
+		confidence: z.number().optional(),
+		entities: z.array(z.unknown()).optional(),
+		value: z.unknown().optional(),
+		type: z.string().optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiTraitValueSchema = z.object({
-	id: z.string(),
-	value: z.string(),
-});
+export const WitAiTraitValueSchema = z
+	.object({
+		id: z.string().optional(),
+		value: z.string(),
+	})
+	.catchall(z.unknown());
 
-const WitAiTraitRefSchema = z.object({
-	id: z.string(),
-	value: z.string(),
-	confidence: z.number().optional(),
-});
+export const WitAiTraitRefSchema = z
+	.object({
+		id: z.string().optional(),
+		value: z.string(),
+		confidence: z.number().optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiIntentRefSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	confidence: z.number().optional(),
-});
+export const WitAiIntentRefSchema = z
+	.object({
+		id: z.string().optional(),
+		name: z.string(),
+		confidence: z.number().optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiAppSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	lang: z.string().optional(),
-	private: z.boolean().optional(),
-	timezone: z.string().optional(),
-	desc: z.string().optional(),
-	will_train_at: z.string().nullable().optional(),
-	last_trained_at: z.string().nullable().optional(),
-	training_status: z.string().optional(),
-	created_at: z.string().optional(),
-});
+export const WitAiAppSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		lang: z.string().optional(),
+		private: z.union([z.boolean(), z.string()]).optional(),
+		timezone: z.string().optional(),
+		desc: z.string().optional(),
+		will_train_at: z.string().nullable().optional(),
+		last_trained_at: z.string().nullable().optional(),
+		last_training_duration_secs: z.number().optional(),
+		training_status: z.string().optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiEntitySchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	roles: z.array(WitAiRoleSchema).optional(),
-	lookups: z.array(z.string()).optional(),
-	keywords: z.array(WitAiKeywordSchema).optional(),
-});
+export const WitAiEntitySchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		roles: z.array(WitAiRoleSchema).optional(),
+		lookups: z.array(z.string()).optional(),
+		keywords: z.array(WitAiKeywordSchema).optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiIntentSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	entities: z.array(WitAiEntityRefSchema).optional(),
-});
+export const WitAiIntentSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		entities: z.array(WitAiEntityRefSchema).optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiTraitSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	values: z.array(WitAiTraitValueSchema).optional(),
-});
+export const WitAiTraitSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		values: z.array(WitAiTraitValueSchema).optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiUtteranceSchema = z.object({
-	text: z.string(),
-	intent: z.object({ id: z.string(), name: z.string() }).nullable().optional(),
-	entities: z.array(WitAiEntityRefSchema).optional(),
-	traits: z.array(WitAiTraitRefSchema).optional(),
-});
+export const WitAiUtteranceSchema = z
+	.object({
+		id: z.string().optional(),
+		text: z.string(),
+		intent: z
+			.object({ id: z.string().optional(), name: z.string() })
+			.nullable()
+			.optional(),
+		entities: z.array(WitAiEntityRefSchema).optional(),
+		traits: z.array(WitAiTraitRefSchema).optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiVoiceStyleSchema = z.object({
-	name: z.string(),
-	speed: z.array(z.string()).optional(),
-	pitch: z.array(z.string()).optional(),
-});
+export const WitAiVoiceStyleSchema = z
+	.object({
+		name: z.string(),
+		speed: z.array(z.string()).optional(),
+		pitch: z.array(z.string()).optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiVoiceSchema = z.object({
-	name: z.string(),
-	locale: z.string().optional(),
-	gender: z.string().optional(),
-	styles: z.array(WitAiVoiceStyleSchema).optional(),
-});
+export const WitAiVoiceSchema = z
+	.object({
+		name: z.string(),
+		locale: z.string().optional(),
+		gender: z.string().optional(),
+		styles: z.array(WitAiVoiceStyleSchema).optional(),
+		supported_features: z.array(z.string()).optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiMessageResponseSchema = z.object({
-	text: z.string(),
-	intents: z.array(WitAiIntentRefSchema).optional(),
-	entities: z.record(z.string(), z.array(WitAiEntityRefSchema)).optional(),
-	traits: z.record(z.string(), z.array(WitAiTraitRefSchema)).optional(),
-});
+export const WitAiMessageResponseSchema = z
+	.object({
+		text: z.string(),
+		intents: z.array(WitAiIntentRefSchema).optional(),
+		entities: z.record(z.string(), z.array(WitAiEntityRefSchema)).optional(),
+		traits: z.record(z.string(), z.array(WitAiTraitRefSchema)).optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiTagSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	desc: z.string().nullable().optional(),
-	created_at: z.string().optional(),
-	updated_at: z.string().optional(),
-});
+export const WitAiTagSchema = z
+	.object({
+		id: z.string(),
+		name: z.string(),
+		desc: z.string().nullable().optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiSuccessSchema = z.object({
-	sent: z.boolean().optional(),
-	n: z.number().optional(),
-	deleted: z.number().optional(),
-});
+export const WitAiSuccessSchema = z
+	.object({
+		sent: z.boolean().optional(),
+		n: z.number().optional(),
+		deleted: z.union([z.string(), z.number()]).optional(),
+		success: z.boolean().optional(),
+	})
+	.catchall(z.unknown());
 
-const WitAiDetectedLocaleSchema = z.object({
-	locale: z.string(),
-	confidence: z.number().optional(),
-});
+export const WitAiDetectedLocaleSchema = z
+	.object({
+		locale: z.string(),
+		confidence: z.number().optional(),
+	})
+	.catchall(z.unknown());
 
 // ─── Input schemas ────────────────────────────────────────────────────────────
 
@@ -141,7 +184,10 @@ const GetAppInputSchema = z.object({
 const CreateAppInputSchema = z.object({
 	name: z.string().describe('Name of the app'),
 	lang: z.string().describe('Language code, e.g. "en"'),
-	private: z.boolean().optional().describe('Whether the app is private'),
+	private: z
+		.union([z.boolean(), z.string()])
+		.optional()
+		.describe('Whether the app is private'),
 	timezone: z
 		.string()
 		.optional()
@@ -153,7 +199,10 @@ const UpdateAppInputSchema = z.object({
 	app_id: z.string().describe('The Wit.ai app ID to update'),
 	name: z.string().optional().describe('New name'),
 	lang: z.string().optional().describe('Language code'),
-	private: z.boolean().optional().describe('Whether the app is private'),
+	private: z
+		.union([z.boolean(), z.string()])
+		.optional()
+		.describe('Whether the app is private'),
 	timezone: z.string().optional().describe('Timezone'),
 	desc: z.string().optional().describe('Description'),
 });
@@ -218,6 +267,10 @@ const CreateEntityInputSchema = z.object({
 		.array(z.string())
 		.optional()
 		.describe('Optional role names for the entity'),
+	lookups: z
+		.array(z.string())
+		.optional()
+		.describe('Optional lookup strategies (e.g. keywords, free-text)'),
 });
 
 const DeleteEntityInputSchema = z.object({
@@ -334,19 +387,30 @@ const GetVoiceInputSchema = z.object({
 
 const ListAppsOutputSchema = z.array(WitAiAppSchema);
 const GetAppOutputSchema = WitAiAppSchema;
-const CreateAppOutputSchema = z.object({
-	app_id: z.string(),
-	access_token: z.string().optional(),
-});
-const UpdateAppOutputSchema = WitAiAppSchema;
-const DeleteAppOutputSchema = z.object({ app_id: z.string() });
-const ExportAppOutputSchema = z.object({ uri: z.string() });
+const CreateAppOutputSchema = z
+	.object({
+		app_id: z.string(),
+		access_token: z.string().optional(),
+	})
+	.catchall(z.unknown());
+const UpdateAppOutputSchema = WitAiSuccessSchema;
+const DeleteAppOutputSchema = z
+	.object({
+		app_id: z.string().optional(),
+		success: z.boolean().optional(),
+	})
+	.catchall(z.unknown());
+const ExportAppOutputSchema = z
+	.object({ uri: z.string().optional() })
+	.catchall(z.unknown());
 const ListAppTagsOutputSchema = z.array(WitAiTagSchema);
 
 const GetMessageOutputSchema = WitAiMessageResponseSchema;
-const DetectLanguageOutputSchema = z.object({
-	detected_locales: z.array(WitAiDetectedLocaleSchema),
-});
+const DetectLanguageOutputSchema = z
+	.object({
+		detected_locales: z.array(WitAiDetectedLocaleSchema),
+	})
+	.catchall(z.unknown());
 
 const ListIntentsOutputSchema = z.array(WitAiIntentSchema);
 const GetIntentOutputSchema = WitAiIntentSchema;
@@ -358,10 +422,12 @@ const GetEntityOutputSchema = WitAiEntitySchema;
 const CreateEntityOutputSchema = WitAiEntitySchema;
 const DeleteEntityOutputSchema = WitAiSuccessSchema;
 const AddEntityKeywordOutputSchema = WitAiEntitySchema;
-const DeleteEntityKeywordOutputSchema = WitAiEntitySchema;
+const DeleteEntityKeywordOutputSchema =
+	WitAiSuccessSchema.or(WitAiEntitySchema);
 const AddKeywordSynonymOutputSchema = WitAiEntitySchema;
-const DeleteKeywordSynonymOutputSchema = WitAiEntitySchema;
-const DeleteEntityRoleOutputSchema = WitAiEntitySchema;
+const DeleteKeywordSynonymOutputSchema =
+	WitAiSuccessSchema.or(WitAiEntitySchema);
+const DeleteEntityRoleOutputSchema = WitAiSuccessSchema.or(WitAiEntitySchema);
 
 const ListTraitsOutputSchema = z.array(WitAiTraitSchema);
 const GetTraitOutputSchema = WitAiTraitSchema;
