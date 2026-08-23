@@ -458,6 +458,20 @@ describe('keyBuilder', () => {
 		).resolves.toBe('static-key');
 	});
 
+	it('does not default an explicit key to api_key', () => {
+		const plugin = googlecloudvision({ key: 'opaque-oauth-token' });
+		expect(plugin.options).not.toEqual(
+			expect.objectContaining({ authType: 'api_key' }),
+		);
+	});
+
+	it('defaults authType to api_key when no explicit key is provided', () => {
+		const plugin = googlecloudvision();
+		expect(plugin.options).toEqual(
+			expect.objectContaining({ authType: 'api_key' }),
+		);
+	});
+
 	it('loads the access token when authType is oauth_2', async () => {
 		const plugin = googlecloudvision({ authType: 'oauth_2' });
 		await expect(

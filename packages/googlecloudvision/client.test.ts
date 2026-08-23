@@ -48,14 +48,26 @@ describe('makeGoogleCloudVisionRequest', () => {
 		expect(config?.HEADERS).not.toHaveProperty('Authorization');
 	});
 
-	it('defaults omitted authType to api_key for opaque credentials', async () => {
+	it('sends an explicit key as Bearer when authType is omitted', async () => {
 		await makeGoogleCloudVisionRequest('images:annotate', {
 			key: 'opaque-oauth-token',
 		});
 
 		const config = mockedRequest.mock.calls[0]?.[0];
 		expect(config?.HEADERS).toMatchObject({
-			'x-goog-api-key': 'opaque-oauth-token',
+			Authorization: 'Bearer opaque-oauth-token',
+		});
+		expect(config?.HEADERS).not.toHaveProperty('x-goog-api-key');
+	});
+
+	it('sends omitted-authType Google API keys via x-goog-api-key', async () => {
+		await makeGoogleCloudVisionRequest('images:annotate', {
+			key: 'AIzaSyExplicitApiKey',
+		});
+
+		const config = mockedRequest.mock.calls[0]?.[0];
+		expect(config?.HEADERS).toMatchObject({
+			'x-goog-api-key': 'AIzaSyExplicitApiKey',
 		});
 		expect(config?.HEADERS).not.toHaveProperty('Authorization');
 	});

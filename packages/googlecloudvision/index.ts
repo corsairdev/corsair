@@ -376,7 +376,11 @@ export function googlecloudvision<
 ): ExternalGoogleCloudVisionPlugin<T> {
 	const options = {
 		...incomingOptions,
-		authType: incomingOptions.authType ?? defaultAuthType,
+		...(incomingOptions.authType !== undefined
+			? { authType: incomingOptions.authType }
+			: incomingOptions.key
+				? {}
+				: { authType: defaultAuthType }),
 	};
 	return {
 		id: 'googlecloudvision',

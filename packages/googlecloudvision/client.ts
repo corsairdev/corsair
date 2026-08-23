@@ -25,10 +25,21 @@ export type GoogleCloudVisionRequestContext = {
 	options?: { authType?: GoogleCloudVisionAuthType };
 };
 
+const GOOGLE_API_KEY_PREFIX = 'AIza';
+
 export function resolveGoogleCloudVisionAuthType(
 	ctx: GoogleCloudVisionRequestContext,
 ): GoogleCloudVisionAuthType {
-	return ctx.authType ?? ctx.options?.authType ?? 'api_key';
+	const declared = ctx.authType ?? ctx.options?.authType;
+	if (declared) return declared;
+	const credential = ctx.key ?? '';
+	if (credential.startsWith(GOOGLE_API_KEY_PREFIX)) {
+		return 'api_key';
+	}
+	if (credential) {
+		return 'oauth_2';
+	}
+	return 'api_key';
 }
 
 export type GoogleCloudVisionRequestOptions = {
