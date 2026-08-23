@@ -9,7 +9,7 @@ export const create: GoogleCloudVisionEndpoints['productsCreate'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['productsCreate']
-	>(`${input.parent}/products`, ctx.key, {
+	>(`${input.parent}/products`, ctx, {
 		method: 'POST',
 		body: input.product,
 		query: { productId: input.productId },
@@ -17,7 +17,7 @@ export const create: GoogleCloudVisionEndpoints['productsCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.products.create',
-		{ ...input },
+		{ parent: input.parent, productId: input.productId },
 		'completed',
 	);
 	return response;
@@ -29,11 +29,30 @@ export const get: GoogleCloudVisionEndpoints['productsGet'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['productsGet']
-	>(input.name, ctx.key, { method: 'GET' });
+	>(input.name, ctx, { method: 'GET' });
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.products.get',
-		{ ...input },
+		{ name: input.name },
+		'completed',
+	);
+	return response;
+};
+
+export const list: GoogleCloudVisionEndpoints['productsList'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeGoogleCloudVisionRequest<
+		GoogleCloudVisionEndpointOutputs['productsList']
+	>(`${input.parent}/products`, ctx, {
+		method: 'GET',
+		query: { pageSize: input.pageSize, pageToken: input.pageToken },
+	});
+	await logEventFromContext(
+		ctx,
+		'googlecloudvision.products.list',
+		{ parent: input.parent },
 		'completed',
 	);
 	return response;
@@ -45,7 +64,7 @@ export const update: GoogleCloudVisionEndpoints['productsUpdate'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['productsUpdate']
-	>(input.name, ctx.key, {
+	>(input.name, ctx, {
 		method: 'PATCH',
 		body: input.product,
 		query: { updateMask: input.updateMask },
@@ -53,7 +72,7 @@ export const update: GoogleCloudVisionEndpoints['productsUpdate'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.products.update',
-		{ ...input },
+		{ name: input.name, updateMask: input.updateMask },
 		'completed',
 	);
 	return response;
@@ -63,11 +82,11 @@ export const deleteProduct: GoogleCloudVisionEndpoints['productsDelete'] =
 	async (ctx, input) => {
 		const response = await makeGoogleCloudVisionRequest<
 			GoogleCloudVisionEndpointOutputs['productsDelete']
-		>(input.name, ctx.key, { method: 'DELETE' });
+		>(input.name, ctx, { method: 'DELETE' });
 		await logEventFromContext(
 			ctx,
 			'googlecloudvision.products.delete',
-			{ ...input },
+			{ name: input.name },
 			'completed',
 		);
 		return response;
@@ -79,7 +98,7 @@ export const purge: GoogleCloudVisionEndpoints['productsPurge'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['productsPurge']
-	>(`${input.parent}/products:purge`, ctx.key, {
+	>(`${input.parent}/products:purge`, ctx, {
 		method: 'POST',
 		body: {
 			productSetPurgeConfig: input.productSetPurgeConfig,
@@ -90,7 +109,11 @@ export const purge: GoogleCloudVisionEndpoints['productsPurge'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.products.purge',
-		{ ...input },
+		{
+			parent: input.parent,
+			productSetId: input.productSetPurgeConfig?.productSetId,
+			deleteOrphanProducts: input.deleteOrphanProducts,
+		},
 		'completed',
 	);
 	return response;

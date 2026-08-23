@@ -1,6 +1,5 @@
 import { z } from 'zod';
 
-// --- Shared Schemas ---
 const EmptyResponseSchema = z.object({});
 const OperationSchema = z.object({
 	name: z.string(),
@@ -10,26 +9,45 @@ const OperationSchema = z.object({
 	response: z.record(z.string(), z.unknown()).optional(),
 });
 
-// --- 1. Images & Files ---
-
 const FeatureSchema = z.object({
 	type: z.string(),
 	maxResults: z.number().optional(),
 	model: z.string().optional(),
 });
 
-const ImageSchema = z.object({
-	content: z.string().optional(),
-	source: z
-		.object({
-			gcsImageUri: z.string().optional(),
-			imageUri: z.string().optional(),
-		})
-		.optional(),
+const ImageSchema = z
+	.object({
+		content: z.string().optional(),
+		source: z
+			.object({
+				gcsImageUri: z.string().optional(),
+				imageUri: z.string().optional(),
+			})
+			.optional(),
+	})
+	.refine(
+		(image) =>
+			Boolean(image.content) ||
+			Boolean(image.source?.gcsImageUri) ||
+			Boolean(image.source?.imageUri),
+		{ message: 'image requires content or a source URI' },
+	);
+
+const GcsImageSchema = z.object({
+	source: z.object({
+		gcsImageUri: z.string().optional(),
+		imageUri: z.string().optional(),
+	}),
 });
 
 const AnnotateImageRequestSchema = z.object({
 	image: ImageSchema,
+	features: z.array(FeatureSchema),
+	imageContext: z.record(z.string(), z.unknown()).optional(),
+});
+
+const AsyncAnnotateImageRequestSchema = z.object({
+	image: GcsImageSchema,
 	features: z.array(FeatureSchema),
 	imageContext: z.record(z.string(), z.unknown()).optional(),
 });
@@ -42,7 +60,7 @@ export const ImagesAnnotateOutputSchema = z.object({
 });
 
 export const ImagesAsyncBatchAnnotateInputSchema = z.object({
-	requests: z.array(AnnotateImageRequestSchema),
+	requests: z.array(AsyncAnnotateImageRequestSchema),
 	outputConfig: z.object({
 		gcsDestination: z.object({ uri: z.string() }),
 		batchSize: z.number().optional(),
@@ -67,6 +85,19 @@ const AnnotateFileRequestSchema = z.object({
 	pages: z.array(z.number()).optional(),
 });
 
+const AsyncAnnotateFileRequestSchema = z.object({
+	inputConfig: z.object({
+		gcsSource: z.object({ uri: z.string() }),
+		mimeType: z.string(),
+	}),
+	features: z.array(FeatureSchema),
+	imageContext: z.record(z.string(), z.unknown()).optional(),
+	outputConfig: z.object({
+		gcsDestination: z.object({ uri: z.string() }),
+		batchSize: z.number().optional(),
+	}),
+});
+
 export const FilesAnnotateInputSchema = z.object({
 	requests: z.array(AnnotateFileRequestSchema),
 });
@@ -75,21 +106,9 @@ export const FilesAnnotateOutputSchema = z.object({
 });
 
 export const FilesAsyncBatchAnnotateInputSchema = z.object({
-	requests: z.array(
-		z.object({
-			inputConfig: AnnotateFileRequestSchema.shape.inputConfig,
-			features: z.array(FeatureSchema),
-			imageContext: z.record(z.string(), z.unknown()).optional(),
-			outputConfig: z.object({
-				gcsDestination: z.object({ uri: z.string() }),
-				batchSize: z.number().optional(),
-			}),
-		}),
-	),
+	requests: z.array(AsyncAnnotateFileRequestSchema),
 });
 export const FilesAsyncBatchAnnotateOutputSchema = OperationSchema;
-
-// --- 2. Product Sets ---
 
 export const ProductSetSchema = z.object({
 	name: z.string().optional(),
@@ -109,6 +128,16 @@ export const ProductSetsGetInputSchema = z.object({
 	name: z.string(),
 });
 export const ProductSetsGetOutputSchema = ProductSetSchema;
+
+export const ProductSetsListInputSchema = z.object({
+	parent: z.string(),
+	pageSize: z.number().optional(),
+	pageToken: z.string().optional(),
+});
+export const ProductSetsListOutputSchema = z.object({
+	productSets: z.array(ProductSetSchema).optional(),
+	nextPageToken: z.string().optional(),
+});
 
 export const ProductSetsUpdateInputSchema = z.object({
 	name: z.string(),
@@ -152,8 +181,6 @@ export const ProductSetsListProductsOutputSchema = z.object({
 	nextPageToken: z.string().optional(),
 });
 
-// --- 3. Products ---
-
 export const ProductSchema = z.object({
 	name: z.string().optional(),
 	displayName: z.string(),
@@ -176,6 +203,16 @@ export const ProductsGetInputSchema = z.object({
 });
 export const ProductsGetOutputSchema = ProductSchema;
 
+export const ProductsListInputSchema = z.object({
+	parent: z.string(),
+	pageSize: z.number().optional(),
+	pageToken: z.string().optional(),
+});
+export const ProductsListOutputSchema = z.object({
+	products: z.array(ProductSchema).optional(),
+	nextPageToken: z.string().optional(),
+});
+
 export const ProductsUpdateInputSchema = z.object({
 	name: z.string(),
 	product: ProductSchema,
@@ -188,15 +225,23 @@ export const ProductsDeleteInputSchema = z.object({
 });
 export const ProductsDeleteOutputSchema = EmptyResponseSchema;
 
-export const ProductsPurgeInputSchema = z.object({
-	parent: z.string(),
-	productSetPurgeConfig: z.object({ productSetId: z.string() }).optional(),
-	deleteOrphanProducts: z.boolean().optional(),
-	force: z.boolean().optional(),
-});
+export const ProductsPurgeInputSchema = z
+	.object({
+		parent: z.string(),
+		productSetPurgeConfig: z.object({ productSetId: z.string() }).optional(),
+		deleteOrphanProducts: z.boolean().optional(),
+		force: z.literal(true),
+	})
+	.refine(
+		(value) =>
+			Boolean(value.productSetPurgeConfig) !==
+			Boolean(value.deleteOrphanProducts),
+		{
+			message:
+				'exactly one of productSetPurgeConfig or deleteOrphanProducts is required',
+		},
+	);
 export const ProductsPurgeOutputSchema = OperationSchema;
-
-// --- 4. Reference Images ---
 
 export const ReferenceImageSchema = z.object({
 	name: z.string().optional(),
@@ -232,15 +277,13 @@ export const ReferenceImagesListOutputSchema = z.object({
 	pageSize: z.number().optional(),
 });
 
-// --- 5. Operations ---
-
 export const OperationsGetInputSchema = z.object({
 	name: z.string(),
 });
 export const OperationsGetOutputSchema = OperationSchema;
 
 export const OperationsListInputSchema = z.object({
-	name: z.string(), // The parent like "projects/x/locations/y"
+	name: z.string(),
 	filter: z.string().optional(),
 	pageSize: z.number().optional(),
 	pageToken: z.string().optional(),
@@ -259,8 +302,6 @@ export const OperationsDeleteInputSchema = z.object({
 	name: z.string(),
 });
 export const OperationsDeleteOutputSchema = EmptyResponseSchema;
-
-// --- 6. Discovery ---
 
 export const LocationsListInputSchema = z.object({
 	name: z.string(),
@@ -282,38 +323,6 @@ export const LocationsListOutputSchema = z.object({
 	nextPageToken: z.string().optional(),
 });
 
-export const ProjectsListInputSchema = z.object({
-	parent: z.string().optional(),
-	pageToken: z.string().optional(),
-	pageSize: z.number().optional(),
-	showDeleted: z.boolean().optional(),
-});
-export const ProjectsListOutputSchema = z.object({
-	projects: z
-		.array(
-			z.object({
-				name: z.string(),
-				projectId: z.string(),
-				state: z.string().optional(),
-				displayName: z.string().optional(),
-			}),
-		)
-		.optional(),
-	nextPageToken: z.string().optional(),
-});
-
-export const IndexEndpointsListInputSchema = z.object({
-	parent: z.string(),
-	pageSize: z.number().optional(),
-	pageToken: z.string().optional(),
-	filter: z.string().optional(),
-});
-export const IndexEndpointsListOutputSchema = z.object({
-	indexEndpoints: z.array(z.record(z.string(), z.unknown())).optional(),
-	nextPageToken: z.string().optional(),
-});
-
-// --- Exports ---
 export type GoogleCloudVisionEndpointInputs = {
 	imagesAnnotate: z.infer<typeof ImagesAnnotateInputSchema>;
 	imagesAsyncBatchAnnotate: z.infer<typeof ImagesAsyncBatchAnnotateInputSchema>;
@@ -322,6 +331,7 @@ export type GoogleCloudVisionEndpointInputs = {
 	filesAsyncBatchAnnotate: z.infer<typeof FilesAsyncBatchAnnotateInputSchema>;
 	productSetsCreate: z.infer<typeof ProductSetsCreateInputSchema>;
 	productSetsGet: z.infer<typeof ProductSetsGetInputSchema>;
+	productSetsList: z.infer<typeof ProductSetsListInputSchema>;
 	productSetsUpdate: z.infer<typeof ProductSetsUpdateInputSchema>;
 	productSetsDelete: z.infer<typeof ProductSetsDeleteInputSchema>;
 	productSetsImport: z.infer<typeof ProductSetsImportInputSchema>;
@@ -330,6 +340,7 @@ export type GoogleCloudVisionEndpointInputs = {
 	productSetsListProducts: z.infer<typeof ProductSetsListProductsInputSchema>;
 	productsCreate: z.infer<typeof ProductsCreateInputSchema>;
 	productsGet: z.infer<typeof ProductsGetInputSchema>;
+	productsList: z.infer<typeof ProductsListInputSchema>;
 	productsUpdate: z.infer<typeof ProductsUpdateInputSchema>;
 	productsDelete: z.infer<typeof ProductsDeleteInputSchema>;
 	productsPurge: z.infer<typeof ProductsPurgeInputSchema>;
@@ -342,8 +353,6 @@ export type GoogleCloudVisionEndpointInputs = {
 	operationsCancel: z.infer<typeof OperationsCancelInputSchema>;
 	operationsDelete: z.infer<typeof OperationsDeleteInputSchema>;
 	locationsList: z.infer<typeof LocationsListInputSchema>;
-	projectsList: z.infer<typeof ProjectsListInputSchema>;
-	indexEndpointsList: z.infer<typeof IndexEndpointsListInputSchema>;
 };
 
 export type GoogleCloudVisionEndpointOutputs = {
@@ -356,6 +365,7 @@ export type GoogleCloudVisionEndpointOutputs = {
 	filesAsyncBatchAnnotate: z.infer<typeof FilesAsyncBatchAnnotateOutputSchema>;
 	productSetsCreate: z.infer<typeof ProductSetsCreateOutputSchema>;
 	productSetsGet: z.infer<typeof ProductSetsGetOutputSchema>;
+	productSetsList: z.infer<typeof ProductSetsListOutputSchema>;
 	productSetsUpdate: z.infer<typeof ProductSetsUpdateOutputSchema>;
 	productSetsDelete: z.infer<typeof ProductSetsDeleteOutputSchema>;
 	productSetsImport: z.infer<typeof ProductSetsImportOutputSchema>;
@@ -366,6 +376,7 @@ export type GoogleCloudVisionEndpointOutputs = {
 	productSetsListProducts: z.infer<typeof ProductSetsListProductsOutputSchema>;
 	productsCreate: z.infer<typeof ProductsCreateOutputSchema>;
 	productsGet: z.infer<typeof ProductsGetOutputSchema>;
+	productsList: z.infer<typeof ProductsListOutputSchema>;
 	productsUpdate: z.infer<typeof ProductsUpdateOutputSchema>;
 	productsDelete: z.infer<typeof ProductsDeleteOutputSchema>;
 	productsPurge: z.infer<typeof ProductsPurgeOutputSchema>;
@@ -378,8 +389,6 @@ export type GoogleCloudVisionEndpointOutputs = {
 	operationsCancel: z.infer<typeof OperationsCancelOutputSchema>;
 	operationsDelete: z.infer<typeof OperationsDeleteOutputSchema>;
 	locationsList: z.infer<typeof LocationsListOutputSchema>;
-	projectsList: z.infer<typeof ProjectsListOutputSchema>;
-	indexEndpointsList: z.infer<typeof IndexEndpointsListOutputSchema>;
 };
 
 export const GoogleCloudVisionEndpointInputSchemas = {
@@ -390,6 +399,7 @@ export const GoogleCloudVisionEndpointInputSchemas = {
 	filesAsyncBatchAnnotate: FilesAsyncBatchAnnotateInputSchema,
 	productSetsCreate: ProductSetsCreateInputSchema,
 	productSetsGet: ProductSetsGetInputSchema,
+	productSetsList: ProductSetsListInputSchema,
 	productSetsUpdate: ProductSetsUpdateInputSchema,
 	productSetsDelete: ProductSetsDeleteInputSchema,
 	productSetsImport: ProductSetsImportInputSchema,
@@ -398,6 +408,7 @@ export const GoogleCloudVisionEndpointInputSchemas = {
 	productSetsListProducts: ProductSetsListProductsInputSchema,
 	productsCreate: ProductsCreateInputSchema,
 	productsGet: ProductsGetInputSchema,
+	productsList: ProductsListInputSchema,
 	productsUpdate: ProductsUpdateInputSchema,
 	productsDelete: ProductsDeleteInputSchema,
 	productsPurge: ProductsPurgeInputSchema,
@@ -410,8 +421,6 @@ export const GoogleCloudVisionEndpointInputSchemas = {
 	operationsCancel: OperationsCancelInputSchema,
 	operationsDelete: OperationsDeleteInputSchema,
 	locationsList: LocationsListInputSchema,
-	projectsList: ProjectsListInputSchema,
-	indexEndpointsList: IndexEndpointsListInputSchema,
 } as const;
 
 export const GoogleCloudVisionEndpointOutputSchemas = {
@@ -422,6 +431,7 @@ export const GoogleCloudVisionEndpointOutputSchemas = {
 	filesAsyncBatchAnnotate: FilesAsyncBatchAnnotateOutputSchema,
 	productSetsCreate: ProductSetsCreateOutputSchema,
 	productSetsGet: ProductSetsGetOutputSchema,
+	productSetsList: ProductSetsListOutputSchema,
 	productSetsUpdate: ProductSetsUpdateOutputSchema,
 	productSetsDelete: ProductSetsDeleteOutputSchema,
 	productSetsImport: ProductSetsImportOutputSchema,
@@ -430,6 +440,7 @@ export const GoogleCloudVisionEndpointOutputSchemas = {
 	productSetsListProducts: ProductSetsListProductsOutputSchema,
 	productsCreate: ProductsCreateOutputSchema,
 	productsGet: ProductsGetOutputSchema,
+	productsList: ProductsListOutputSchema,
 	productsUpdate: ProductsUpdateOutputSchema,
 	productsDelete: ProductsDeleteOutputSchema,
 	productsPurge: ProductsPurgeOutputSchema,
@@ -442,6 +453,4 @@ export const GoogleCloudVisionEndpointOutputSchemas = {
 	operationsCancel: OperationsCancelOutputSchema,
 	operationsDelete: OperationsDeleteOutputSchema,
 	locationsList: LocationsListOutputSchema,
-	projectsList: ProjectsListOutputSchema,
-	indexEndpointsList: IndexEndpointsListOutputSchema,
 } as const;

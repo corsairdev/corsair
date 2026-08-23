@@ -9,11 +9,11 @@ export const get: GoogleCloudVisionEndpoints['operationsGet'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['operationsGet']
-	>(input.name, ctx.key, { method: 'GET' });
+	>(input.name, ctx, { method: 'GET' });
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.operations.get',
-		{ ...input },
+		{ name: input.name },
 		'completed',
 	);
 	return response;
@@ -25,7 +25,7 @@ export const list: GoogleCloudVisionEndpoints['operationsList'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['operationsList']
-	>(`${input.name}/operations`, ctx.key, {
+	>(`${input.name}/operations`, ctx, {
 		method: 'GET',
 		query: {
 			filter: input.filter,
@@ -36,7 +36,7 @@ export const list: GoogleCloudVisionEndpoints['operationsList'] = async (
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.operations.list',
-		{ ...input },
+		{ name: input.name },
 		'completed',
 	);
 	return response;
@@ -48,11 +48,11 @@ export const cancel: GoogleCloudVisionEndpoints['operationsCancel'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['operationsCancel']
-	>(`${input.name}:cancel`, ctx.key, { method: 'POST' });
+	>(`${input.name}:cancel`, ctx, { method: 'POST' });
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.operations.cancel',
-		{ ...input },
+		{ name: input.name },
 		'completed',
 	);
 	return response;
@@ -62,11 +62,11 @@ export const deleteOperation: GoogleCloudVisionEndpoints['operationsDelete'] =
 	async (ctx, input) => {
 		const response = await makeGoogleCloudVisionRequest<
 			GoogleCloudVisionEndpointOutputs['operationsDelete']
-		>(input.name, ctx.key, { method: 'DELETE' });
+		>(input.name, ctx, { method: 'DELETE' });
 		await logEventFromContext(
 			ctx,
 			'googlecloudvision.operations.delete',
-			{ ...input },
+			{ name: input.name },
 			'completed',
 		);
 		return response;

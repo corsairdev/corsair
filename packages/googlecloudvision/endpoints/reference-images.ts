@@ -7,7 +7,7 @@ export const create: GoogleCloudVisionEndpoints['referenceImagesCreate'] =
 	async (ctx, input) => {
 		const response = await makeGoogleCloudVisionRequest<
 			GoogleCloudVisionEndpointOutputs['referenceImagesCreate']
-		>(`${input.parent}/referenceImages`, ctx.key, {
+		>(`${input.parent}/referenceImages`, ctx, {
 			method: 'POST',
 			body: input.referenceImage,
 			query: { referenceImageId: input.referenceImageId },
@@ -15,7 +15,7 @@ export const create: GoogleCloudVisionEndpoints['referenceImagesCreate'] =
 		await logEventFromContext(
 			ctx,
 			'googlecloudvision.referenceImages.create',
-			{ ...input },
+			{ parent: input.parent, referenceImageId: input.referenceImageId },
 			'completed',
 		);
 		return response;
@@ -27,11 +27,11 @@ export const get: GoogleCloudVisionEndpoints['referenceImagesGet'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['referenceImagesGet']
-	>(input.name, ctx.key, { method: 'GET' });
+	>(input.name, ctx, { method: 'GET' });
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.referenceImages.get',
-		{ ...input },
+		{ name: input.name },
 		'completed',
 	);
 	return response;
@@ -41,11 +41,11 @@ export const deleteImage: GoogleCloudVisionEndpoints['referenceImagesDelete'] =
 	async (ctx, input) => {
 		const response = await makeGoogleCloudVisionRequest<
 			GoogleCloudVisionEndpointOutputs['referenceImagesDelete']
-		>(input.name, ctx.key, { method: 'DELETE' });
+		>(input.name, ctx, { method: 'DELETE' });
 		await logEventFromContext(
 			ctx,
 			'googlecloudvision.referenceImages.delete',
-			{ ...input },
+			{ name: input.name },
 			'completed',
 		);
 		return response;
@@ -57,14 +57,14 @@ export const list: GoogleCloudVisionEndpoints['referenceImagesList'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['referenceImagesList']
-	>(`${input.parent}/referenceImages`, ctx.key, {
+	>(`${input.parent}/referenceImages`, ctx, {
 		method: 'GET',
 		query: { pageSize: input.pageSize, pageToken: input.pageToken },
 	});
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.referenceImages.list',
-		{ ...input },
+		{ parent: input.parent },
 		'completed',
 	);
 	return response;

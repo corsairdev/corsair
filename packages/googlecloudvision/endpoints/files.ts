@@ -9,11 +9,11 @@ export const annotate: GoogleCloudVisionEndpoints['filesAnnotate'] = async (
 ) => {
 	const response = await makeGoogleCloudVisionRequest<
 		GoogleCloudVisionEndpointOutputs['filesAnnotate']
-	>('files:annotate', ctx.key, { method: 'POST', body: input });
+	>('files:annotate', ctx, { method: 'POST', body: input });
 	await logEventFromContext(
 		ctx,
 		'googlecloudvision.files.annotate',
-		{ ...input },
+		{ requestCount: input.requests.length },
 		'completed',
 	);
 	return response;
@@ -23,11 +23,11 @@ export const asyncBatchAnnotate: GoogleCloudVisionEndpoints['filesAsyncBatchAnno
 	async (ctx, input) => {
 		const response = await makeGoogleCloudVisionRequest<
 			GoogleCloudVisionEndpointOutputs['filesAsyncBatchAnnotate']
-		>('files:asyncBatchAnnotate', ctx.key, { method: 'POST', body: input });
+		>('files:asyncBatchAnnotate', ctx, { method: 'POST', body: input });
 		await logEventFromContext(
 			ctx,
 			'googlecloudvision.files.asyncBatchAnnotate',
-			{ ...input },
+			{ requestCount: input.requests.length },
 			'completed',
 		);
 		return response;

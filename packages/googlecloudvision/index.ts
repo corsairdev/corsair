@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import * as Discovery from './endpoints/discovery';
 import * as Files from './endpoints/files';
 import * as Images from './endpoints/images';
@@ -68,6 +69,7 @@ export type GoogleCloudVisionEndpoints = {
 	filesAsyncBatchAnnotate: GoogleCloudVisionEndpoint<'filesAsyncBatchAnnotate'>;
 	productSetsCreate: GoogleCloudVisionEndpoint<'productSetsCreate'>;
 	productSetsGet: GoogleCloudVisionEndpoint<'productSetsGet'>;
+	productSetsList: GoogleCloudVisionEndpoint<'productSetsList'>;
 	productSetsUpdate: GoogleCloudVisionEndpoint<'productSetsUpdate'>;
 	productSetsDelete: GoogleCloudVisionEndpoint<'productSetsDelete'>;
 	productSetsImport: GoogleCloudVisionEndpoint<'productSetsImport'>;
@@ -76,6 +78,7 @@ export type GoogleCloudVisionEndpoints = {
 	productSetsListProducts: GoogleCloudVisionEndpoint<'productSetsListProducts'>;
 	productsCreate: GoogleCloudVisionEndpoint<'productsCreate'>;
 	productsGet: GoogleCloudVisionEndpoint<'productsGet'>;
+	productsList: GoogleCloudVisionEndpoint<'productsList'>;
 	productsUpdate: GoogleCloudVisionEndpoint<'productsUpdate'>;
 	productsDelete: GoogleCloudVisionEndpoint<'productsDelete'>;
 	productsPurge: GoogleCloudVisionEndpoint<'productsPurge'>;
@@ -88,8 +91,6 @@ export type GoogleCloudVisionEndpoints = {
 	operationsCancel: GoogleCloudVisionEndpoint<'operationsCancel'>;
 	operationsDelete: GoogleCloudVisionEndpoint<'operationsDelete'>;
 	locationsList: GoogleCloudVisionEndpoint<'locationsList'>;
-	projectsList: GoogleCloudVisionEndpoint<'projectsList'>;
-	indexEndpointsList: GoogleCloudVisionEndpoint<'indexEndpointsList'>;
 };
 
 const googleCloudVisionEndpointsNested = {
@@ -105,6 +106,7 @@ const googleCloudVisionEndpointsNested = {
 	productSets: {
 		create: ProductSets.create,
 		get: ProductSets.get,
+		list: ProductSets.list,
 		update: ProductSets.update,
 		delete: ProductSets.deleteSet,
 		import: ProductSets.importSets,
@@ -115,6 +117,7 @@ const googleCloudVisionEndpointsNested = {
 	products: {
 		create: Products.create,
 		get: Products.get,
+		list: Products.list,
 		update: Products.update,
 		delete: Products.deleteProduct,
 		purge: Products.purge,
@@ -133,12 +136,6 @@ const googleCloudVisionEndpointsNested = {
 	},
 	locations: {
 		list: Discovery.listLocations,
-	},
-	projects: {
-		list: Discovery.listProjects,
-	},
-	indexEndpoints: {
-		list: Discovery.listIndexEndpoints,
 	},
 } as const;
 
@@ -171,6 +168,10 @@ export const googleCloudVisionEndpointSchemas = {
 		input: GoogleCloudVisionEndpointInputSchemas.productSetsGet,
 		output: GoogleCloudVisionEndpointOutputSchemas.productSetsGet,
 	},
+	'productSets.list': {
+		input: GoogleCloudVisionEndpointInputSchemas.productSetsList,
+		output: GoogleCloudVisionEndpointOutputSchemas.productSetsList,
+	},
 	'productSets.update': {
 		input: GoogleCloudVisionEndpointInputSchemas.productSetsUpdate,
 		output: GoogleCloudVisionEndpointOutputSchemas.productSetsUpdate,
@@ -202,6 +203,10 @@ export const googleCloudVisionEndpointSchemas = {
 	'products.get': {
 		input: GoogleCloudVisionEndpointInputSchemas.productsGet,
 		output: GoogleCloudVisionEndpointOutputSchemas.productsGet,
+	},
+	'products.list': {
+		input: GoogleCloudVisionEndpointInputSchemas.productsList,
+		output: GoogleCloudVisionEndpointOutputSchemas.productsList,
 	},
 	'products.update': {
 		input: GoogleCloudVisionEndpointInputSchemas.productsUpdate,
@@ -251,15 +256,9 @@ export const googleCloudVisionEndpointSchemas = {
 		input: GoogleCloudVisionEndpointInputSchemas.locationsList,
 		output: GoogleCloudVisionEndpointOutputSchemas.locationsList,
 	},
-	'projects.list': {
-		input: GoogleCloudVisionEndpointInputSchemas.projectsList,
-		output: GoogleCloudVisionEndpointOutputSchemas.projectsList,
-	},
-	'indexEndpoints.list': {
-		input: GoogleCloudVisionEndpointInputSchemas.indexEndpointsList,
-		output: GoogleCloudVisionEndpointOutputSchemas.indexEndpointsList,
-	},
-} as any;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof googleCloudVisionEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -283,6 +282,7 @@ const googleCloudVisionEndpointMeta = {
 		description: 'Create Product Set',
 	},
 	'productSets.get': { riskLevel: 'read', description: 'Get Product Set' },
+	'productSets.list': { riskLevel: 'read', description: 'List Product Sets' },
 	'productSets.update': {
 		riskLevel: 'write',
 		description: 'Update Product Set',
@@ -309,9 +309,14 @@ const googleCloudVisionEndpointMeta = {
 	},
 	'products.create': { riskLevel: 'write', description: 'Create Product' },
 	'products.get': { riskLevel: 'read', description: 'Get Product' },
+	'products.list': { riskLevel: 'read', description: 'List Products' },
 	'products.update': { riskLevel: 'write', description: 'Update Product' },
 	'products.delete': { riskLevel: 'write', description: 'Delete Product' },
-	'products.purge': { riskLevel: 'write', description: 'Purge Products' },
+	'products.purge': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Purge Products',
+	},
 	'referenceImages.create': {
 		riskLevel: 'write',
 		description: 'Create Reference Image',
@@ -333,11 +338,6 @@ const googleCloudVisionEndpointMeta = {
 	'operations.cancel': { riskLevel: 'write', description: 'Cancel Operation' },
 	'operations.delete': { riskLevel: 'write', description: 'Delete Operation' },
 	'locations.list': { riskLevel: 'read', description: 'List Locations' },
-	'projects.list': { riskLevel: 'read', description: 'List Projects' },
-	'indexEndpoints.list': {
-		riskLevel: 'read',
-		description: 'List Index Endpoints',
-	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof googleCloudVisionEndpointsNested
 >;
@@ -384,10 +384,10 @@ export function googlecloudvision<
 		schema: GoogleCloudVisionSchema,
 		options: options,
 		hooks: options.hooks,
-		endpoints: googleCloudVisionEndpointsNested as any,
+		endpoints: googleCloudVisionEndpointsNested,
 		webhooks: {},
-		endpointMeta: googleCloudVisionEndpointMeta as any,
-		endpointSchemas: googleCloudVisionEndpointSchemas as any,
+		endpointMeta: googleCloudVisionEndpointMeta,
+		endpointSchemas: googleCloudVisionEndpointSchemas,
 		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
@@ -399,13 +399,22 @@ export function googlecloudvision<
 			}
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('googlecloudvision', 'api_key');
+				}
+				return res;
 			}
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('googlecloudvision', 'oauth_2');
+				}
+				return res;
 			}
-			return '';
+			throw new AuthMissingError(
+				'googlecloudvision',
+				ctx.authType ?? defaultAuthType,
+			);
 		},
 	} satisfies InternalGoogleCloudVisionPlugin;
 }
