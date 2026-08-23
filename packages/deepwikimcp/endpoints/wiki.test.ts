@@ -1,20 +1,21 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeDeepwikiMcpRequest } from '../client';
+import { callDeepwikiMcpTool } from '../client';
+import { DeepwikiMcpEndpointOutputSchemas } from './types';
 import { askQuestion, readWikiContents, readWikiStructure } from './wiki';
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn(),
 }));
 jest.mock('../client', () => ({
-	makeDeepwikiMcpRequest: jest.fn(),
+	callDeepwikiMcpTool: jest.fn(),
 }));
 
-const requestMock = jest.mocked(makeDeepwikiMcpRequest);
+const callMock = jest.mocked(callDeepwikiMcpTool);
 const logMock = jest.mocked(logEventFromContext);
 const context = { key: 'test-key' } as Parameters<typeof askQuestion>[0];
 
 beforeEach(() => {
-	requestMock.mockResolvedValue({
+	callMock.mockResolvedValue({
 		content: [{ type: 'text', text: 'result' }],
 	});
 });
@@ -28,16 +29,11 @@ describe('DeepWiki endpoints', () => {
 		const input = { repoName: 'facebook/react', question: 'What is React?' };
 		await askQuestion(context, input);
 
-		expect(requestMock).toHaveBeenCalledWith(
-			'mcp',
+		expect(callMock).toHaveBeenCalledWith(
+			'ask_question',
+			input,
 			'test-key',
-			expect.objectContaining({
-				method: 'POST',
-				body: expect.objectContaining({
-					method: 'tools/call',
-					params: { name: 'ask_question', arguments: input },
-				}),
-			}),
+			DeepwikiMcpEndpointOutputSchemas.askQuestion,
 		);
 		expect(logMock).toHaveBeenCalledWith(
 			context,
@@ -51,14 +47,11 @@ describe('DeepWiki endpoints', () => {
 		const input = { repoName: 'facebook/react' };
 		await readWikiContents(context, input);
 
-		expect(requestMock).toHaveBeenCalledWith(
-			'mcp',
+		expect(callMock).toHaveBeenCalledWith(
+			'read_wiki_contents',
+			input,
 			'test-key',
-			expect.objectContaining({
-				body: expect.objectContaining({
-					params: { name: 'read_wiki_contents', arguments: input },
-				}),
-			}),
+			DeepwikiMcpEndpointOutputSchemas.readWikiContents,
 		);
 		expect(logMock).toHaveBeenCalledWith(
 			context,
@@ -72,14 +65,11 @@ describe('DeepWiki endpoints', () => {
 		const input = { repoName: 'facebook/react' };
 		await readWikiStructure(context, input);
 
-		expect(requestMock).toHaveBeenCalledWith(
-			'mcp',
+		expect(callMock).toHaveBeenCalledWith(
+			'read_wiki_structure',
+			input,
 			'test-key',
-			expect.objectContaining({
-				body: expect.objectContaining({
-					params: { name: 'read_wiki_structure', arguments: input },
-				}),
-			}),
+			DeepwikiMcpEndpointOutputSchemas.readWikiStructure,
 		);
 		expect(logMock).toHaveBeenCalledWith(
 			context,
