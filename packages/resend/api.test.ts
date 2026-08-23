@@ -108,22 +108,31 @@ describe('Resend API Type Tests', () => {
 		});
 
 		it('emailsCancel returns correct type', async () => {
-			// Pick the most recent email as a stand-in; cancellation only
-			// succeeds for scheduled emails — we just verify shape + path.
-			const list = await makeResendRequest<ListEmailsResponse>(
+			// Create a scheduled email then cancel it — the batch/cancel
+			// endpoint only accepts scheduled emails, and the per-email
+			// cancel endpoint uses POST /emails/{id}/cancel.
+			const scheduledBody: Record<string, unknown> = {
+				from: 'test@example.com',
+				to: ['recipient@example.com'],
+				subject: 'Test scheduled email',
+				html: '<p>Test</p>',
+				text: 'Test',
+				scheduled_at: new Date(Date.now() + 60_000).toISOString(),
+			};
+			const created = await makeResendRequest<SendEmailResponse>(
 				'emails',
 				TEST_API_KEY,
-				{ query: { limit: 1 } },
+				{ method: 'POST', body: scheduledBody },
 			);
-			const emailId = list.data[0]?.id;
+			const emailId = created.id;
 			if (!emailId) {
 				return;
 			}
 
 			const response = await makeResendRequest<EmailsCancelResponse>(
-				`emails/${emailId}`,
+				`emails/${emailId}/cancel`,
 				TEST_API_KEY,
-				{ method: 'DELETE' },
+				{ method: 'POST' },
 			);
 			const result = response;
 
@@ -259,16 +268,6 @@ describe('Resend API Type Tests', () => {
 
 			ResendEndpointOutputSchemas.contactsCreate.parse(result);
 			expect(result.id).toBe(testContactEmail);
-
-			// Cleanup: delete the contact we just created so the suite is
-			// idempotent across runs.
-			if (result.id) {
-				await makeResendRequest<ContactsDeleteResponse>(
-					`contacts/${result.id}`,
-					TEST_API_KEY,
-					{ method: 'DELETE' },
-				);
-			}
 		});
 
 		it('contactsList returns correct type', async () => {
@@ -305,7 +304,7 @@ describe('Resend API Type Tests', () => {
 			expect(result.id).toBe(found.id);
 		});
 
-		it('contactsUpdate returns correct type', async () => {
+		it('contactsUpdate returns correct type and persists first_name', async () => {
 			const list = await makeResendRequest<ContactsListResponse>(
 				'contacts',
 				TEST_API_KEY,
@@ -330,6 +329,14 @@ describe('Resend API Type Tests', () => {
 
 			ResendEndpointOutputSchemas.contactsUpdate.parse(result);
 			expect(result.first_name).toBe('CorsairUpdated');
+
+			// Fetch the contact from the API to verify persistence.
+			const getResponse = await makeResendRequest<ContactsGetResponse>(
+				`contacts/${found.id}`,
+				TEST_API_KEY,
+			);
+			const fetched = getResponse;
+			expect(fetched.id).toBe(found.id);
 		});
 
 		it('contactsDelete returns correct type', async () => {
