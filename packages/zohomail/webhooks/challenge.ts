@@ -16,6 +16,17 @@ function secretsMatch(a: string, b: string): boolean {
 	return crypto.timingSafeEqual(aBuf, bBuf);
 }
 
+let handshakeClaim: Promise<void> = Promise.resolve();
+
+function withHandshakeClaim<T>(fn: () => Promise<T>): Promise<T> {
+	const run = handshakeClaim.then(fn, fn);
+	handshakeClaim = run.then(
+		() => undefined,
+		() => undefined,
+	);
+	return run;
+}
+
 /**
  * Zoho delivers `x-hook-secret` on the first POST when an outgoing webhook is
  * saved. That value becomes the HMAC key for `x-hook-signature` on all
@@ -37,39 +48,41 @@ export const handshake: ZohoMailWebhooks['handshake'] = {
 			};
 		}
 
-		let existingSecret: string | undefined;
-		try {
-			existingSecret = (await ctx.keys.get_webhook_signature()) ?? undefined;
-		} catch (error) {
-			console.warn(
-				'[corsair:zohomail] Failed to retrieve existing webhook secret:',
-				error,
-			);
-			return {
-				success: false,
-				statusCode: 500,
-				error: 'Failed to retrieve existing webhook secret',
-			};
-		}
+		return withHandshakeClaim(async () => {
+			let existingSecret: string | undefined;
+			try {
+				existingSecret = (await ctx.keys.get_webhook_signature()) ?? undefined;
+			} catch (error) {
+				console.warn(
+					'[corsair:zohomail] Failed to retrieve existing webhook secret:',
+					error,
+				);
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to retrieve existing webhook secret',
+				};
+			}
 
-		if (existingSecret && secretsMatch(existingSecret, hookSecret)) {
-			return {
-				success: true,
-				data: { hookSecret },
-			};
-		}
+			if (existingSecret && secretsMatch(existingSecret, hookSecret)) {
+				return {
+					success: true,
+					data: { hookSecret },
+				};
+			}
 
-		const signature = getZohoWebhookSignature(headers);
+			const signature = getZohoWebhookSignature(headers);
+			const rawBody = request.rawBody;
 
-		if (existingSecret) {
 			if (!signature) {
 				return {
 					success: false,
 					statusCode: 401,
-					error: 'Cannot overwrite existing secret without a valid signature',
+					error: existingSecret
+						? 'Cannot overwrite existing secret without a valid signature'
+						: 'Cannot persist a new secret without a valid signature',
 				};
 			}
-			const rawBody = request.rawBody;
 			if (!rawBody) {
 				return {
 					success: false,
@@ -77,50 +90,86 @@ export const handshake: ZohoMailWebhooks['handshake'] = {
 					error: 'Missing raw body for signature verification',
 				};
 			}
-			if (!verifyZohoWebhookSignature(rawBody, existingSecret, signature)) {
+
+			const verifySecret = existingSecret ?? hookSecret;
+			if (!verifyZohoWebhookSignature(rawBody, verifySecret, signature)) {
 				return {
 					success: false,
 					statusCode: 401,
 					error: 'Invalid signature',
 				};
 			}
-		} else {
-			if (signature) {
-				const rawBody = request.rawBody;
-				if (!rawBody) {
+
+			if (!existingSecret) {
+				let claimedSecret: string | undefined;
+				try {
+					claimedSecret = (await ctx.keys.get_webhook_signature()) ?? undefined;
+				} catch (error) {
+					console.warn(
+						'[corsair:zohomail] Failed to retrieve existing webhook secret:',
+						error,
+					);
 					return {
 						success: false,
-						statusCode: 401,
-						error: 'Missing raw body for signature verification',
+						statusCode: 500,
+						error: 'Failed to retrieve existing webhook secret',
 					};
 				}
-				if (!verifyZohoWebhookSignature(rawBody, hookSecret, signature)) {
+				if (claimedSecret) {
+					if (secretsMatch(claimedSecret, hookSecret)) {
+						return {
+							success: true,
+							data: { hookSecret },
+						};
+					}
 					return {
 						success: false,
 						statusCode: 401,
-						error: 'Invalid signature',
+						error: 'Cannot overwrite existing secret without a valid signature',
 					};
 				}
 			}
-		}
 
-		try {
-			await ctx.keys.set_webhook_signature(hookSecret);
-		} catch (error) {
-			console.warn(
-				'[corsair:zohomail] Failed to persist webhook secret:',
-				error,
-			);
+			try {
+				await ctx.keys.set_webhook_signature(hookSecret);
+			} catch (error) {
+				console.warn(
+					'[corsair:zohomail] Failed to persist webhook secret:',
+					error,
+				);
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to persist webhook secret',
+				};
+			}
+
+			try {
+				const storedSecret =
+					(await ctx.keys.get_webhook_signature()) ?? undefined;
+				if (!storedSecret || !secretsMatch(storedSecret, hookSecret)) {
+					return {
+						success: false,
+						statusCode: 401,
+						error: 'Cannot overwrite existing secret without a valid signature',
+					};
+				}
+			} catch (error) {
+				console.warn(
+					'[corsair:zohomail] Failed to retrieve existing webhook secret:',
+					error,
+				);
+				return {
+					success: false,
+					statusCode: 500,
+					error: 'Failed to retrieve existing webhook secret',
+				};
+			}
+
 			return {
-				success: false,
-				statusCode: 500,
-				error: 'Failed to persist webhook secret',
+				success: true,
+				data: { hookSecret },
 			};
-		}
-
-		return {
-			success: true,
-			data: { hookSecret },
-		};
+		});
 	},
 };
