@@ -28,10 +28,10 @@ export const BaseProviders = [
 	'agenty',
 	'ahrefs',
 	'aimlapi',
-	'allimagesai',
 	'airtable',
 	'alchemy',
 	'algolia',
+	'allimagesai',
 	'alphavantage',
 	'altoviz',
 	'alttextai',
@@ -68,6 +68,7 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'botpress',
+	'bouncer',
 	'box',
 	'bugsnag',
 	'cal',
@@ -205,10 +206,10 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
-	allimagesai: 'All Images AI',
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
@@ -245,6 +246,7 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	botpress: 'Botpress',
+	bouncer: 'Bouncer',
 	box: 'Box',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
@@ -389,10 +391,10 @@ export type AllProviders =
 	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
-	| 'allimagesai'
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
+	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
 	| 'alttextai'
@@ -429,6 +431,7 @@ export type AllProviders =
 	| 'bluesky'
 	| 'boloforms'
 	| 'botpress'
+	| 'bouncer'
 	| 'box'
 	| 'bugsnag'
 	| 'cal'
