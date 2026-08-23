@@ -40,7 +40,7 @@ jest.mock('corsair/http', () => {
 });
 
 const requestMock = request as unknown as jest.Mock<
-	(config: unknown, options: unknown) => Promise<unknown>
+	(config: unknown, options: unknown, extra?: unknown) => Promise<unknown>
 >;
 const mockLog = logEventFromContext as unknown as jest.Mock<
 	() => Promise<void>
@@ -73,6 +73,9 @@ function lastCall() {
 			query?: Record<string, unknown>;
 			formData?: Record<string, unknown>;
 		},
+		extra: invocation[2] as
+			| { rateLimitConfig?: { maxRetries?: number } }
+			| undefined,
 	};
 }
 
@@ -96,6 +99,49 @@ describe('Auth.getApiKey', () => {
 	it('never returns the full key, even when it is short', async () => {
 		const result = await call(Auth.getApiKey, createContext('ab'));
 		expect(result).toEqual({ configured: true, keyPreview: '**' });
+	});
+});
+
+describe('Images.upload Input Validation', () => {
+	it('accepts valid HTTP and HTTPS URLs', () => {
+		expect(
+			UploadImageInputSchema.safeParse({
+				image: 'https://example.com/photo.png',
+			}).success,
+		).toBe(true);
+		expect(
+			UploadImageInputSchema.safeParse({
+				image: 'http://example.com/photo.jpg',
+			}).success,
+		).toBe(true);
+	});
+
+	it('accepts valid base64 data URIs', () => {
+		expect(
+			UploadImageInputSchema.safeParse({
+				image:
+					'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==',
+			}).success,
+		).toBe(true);
+	});
+
+	it('accepts valid raw base64 strings', () => {
+		expect(
+			UploadImageInputSchema.safeParse({
+				image: 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
+			}).success,
+		).toBe(true);
+	});
+
+	it('rejects invalid or arbitrary strings and whitespace', () => {
+		expect(UploadImageInputSchema.safeParse({ image: '' }).success).toBe(false);
+		expect(UploadImageInputSchema.safeParse({ image: '   ' }).success).toBe(
+			false,
+		);
+		expect(
+			UploadImageInputSchema.safeParse({ image: 'not a valid image or url!' })
+				.success,
+		).toBe(false);
 	});
 });
 
@@ -129,7 +175,7 @@ describe('Images.upload', () => {
 		requestMock.mockResolvedValueOnce(envelope);
 
 		const result = await call(Images.upload, createContext('my-key'), {
-			image: 'base64data==',
+			image: 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
 			name: 'my-photo',
 		});
 
@@ -144,48 +190,43 @@ describe('Images.upload', () => {
 			expiration: 0,
 		});
 
-		const { config, options } = lastCall();
+		const { config, options, extra } = lastCall();
 		expect(config.BASE).toBe('https://api.imgbb.com');
 		expect(options.method).toBe('POST');
 		expect(options.url).toBe('/1/upload');
 		expect(options.query).toEqual({ key: 'my-key' });
 		expect(options.formData).toEqual({
-			image: 'base64data==',
+			image: 'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7',
 			name: 'my-photo',
 		});
+		expect(extra?.rateLimitConfig?.maxRetries).toBe(0);
 	});
 
-	it('supports binary image upload with Blob/Buffer/Uint8Array', async () => {
-		requestMock.mockResolvedValueOnce(envelope);
+	it('forwards Blob, Buffer, and Uint8Array instances through Images.upload', async () => {
+		requestMock.mockResolvedValue(envelope);
 
 		const binaryBlob = new Blob([new Uint8Array([0x89, 0x50, 0x4e, 0x47])], {
 			type: 'image/png',
 		});
-
-		// Validate schema accepts Blob
-		const validatedInput = UploadImageInputSchema.parse({
-			image: binaryBlob,
-			name: 'binary-photo',
-		});
-		expect(validatedInput.image).toBe(binaryBlob);
-
 		await call(Images.upload, createContext('my-key'), {
 			image: binaryBlob,
-			name: 'binary-photo',
+			name: 'blob-upload',
 		});
+		expect(lastCall().options.formData?.image).toBe(binaryBlob);
 
-		const { options } = lastCall();
-		expect(options.formData).toEqual({
-			image: binaryBlob,
-			name: 'binary-photo',
+		const uint8 = new Uint8Array([1, 2, 3, 4]);
+		await call(Images.upload, createContext('my-key'), {
+			image: uint8,
+			name: 'uint8-upload',
 		});
-
-		// Also validate Buffer / Uint8Array acceptance in schema
-		const uint8 = new Uint8Array([1, 2, 3]);
-		expect(UploadImageInputSchema.parse({ image: uint8 }).image).toBe(uint8);
+		expect(lastCall().options.formData?.image).toBe(uint8);
 
 		const buffer = Buffer.from('fake-image-bytes');
-		expect(UploadImageInputSchema.parse({ image: buffer }).image).toBe(buffer);
+		await call(Images.upload, createContext('my-key'), {
+			image: buffer,
+			name: 'buffer-upload',
+		});
+		expect(lastCall().options.formData?.image).toBe(buffer);
 	});
 
 	it('passes expiration as a query param when provided', async () => {
@@ -200,12 +241,12 @@ describe('Images.upload', () => {
 		expect(options.query).toEqual({ key: 'my-key', expiration: 600 });
 	});
 
-	it('rejects a malformed response instead of returning it as-is', async () => {
-		requestMock.mockResolvedValueOnce({ success: false });
+	it('rejects a malformed response or success: false instead of returning it as-is', async () => {
+		requestMock.mockResolvedValueOnce({ success: false, data: envelope.data });
 
 		await expect(
 			call(Images.upload, createContext('my-key'), {
-				image: 'base64data==',
+				image: 'https://example.com/photo.png',
 			}),
 		).rejects.toThrow();
 	});
@@ -215,10 +256,14 @@ describe('Images.upload', () => {
 			new ApiErrorCtor(401, 'Unauthorized', 'Unauthorized'),
 		);
 
-		await expect(
-			call(Images.upload, createContext('my-secret-key'), {
-				image: 'base64data==',
-			}),
-		).rejects.toThrow(/Unauthorized/);
+		try {
+			await call(Images.upload, createContext('my-secret-key-12345'), {
+				image: 'https://example.com/photo.png',
+			});
+			fail('Expected Images.upload to throw');
+		} catch (err: any) {
+			expect(err.message).toMatch(/Unauthorized/);
+			expect(err.message).not.toContain('my-secret-key-12345');
+		}
 	});
 });

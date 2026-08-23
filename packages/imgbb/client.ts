@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class ImgBBAPIError extends Error {
@@ -26,6 +30,19 @@ export class ImgBBAPIError extends Error {
 }
 
 const IMGBB_API_BASE = 'https://api.imgbb.com';
+
+const IMGBB_NO_TRANSPORT_RETRIES: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'retry-after',
+		resetTime: 'x-ratelimit-reset',
+		remaining: 'x-ratelimit-remaining',
+		limit: 'x-ratelimit-limit',
+	},
+};
 
 // Catch values are untyped at runtime; unknown forces narrowing to ApiError/Error
 // before rethrowing as ImgBBAPIError.
@@ -112,7 +129,9 @@ export async function uploadImageToImgBB<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: IMGBB_NO_TRANSPORT_RETRIES,
+		});
 	} catch (error) {
 		return handleRequestError(error);
 	}

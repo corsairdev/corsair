@@ -20,8 +20,27 @@ export type GetApiKeyResponse = z.infer<typeof GetApiKeyResponseSchema>;
 
 // ── images.upload ───────────────────────────────────────────────────────────
 
+const URL_PATTERN = /^https?:\/\/.+/i;
+const DATA_URI_PATTERN =
+	/^data:image\/[a-zA-Z0-9.+_-]+;base64,[A-Za-z0-9+/=]+$/i;
+const BASE64_PATTERN = /^[A-Za-z0-9+/=]+$/;
+
 export const BinaryImageInputSchema = z.union([
-	z.string().min(1).describe('Base64-encoded image data or an image URL'),
+	z
+		.string()
+		.trim()
+		.min(1)
+		.refine(
+			(val) =>
+				URL_PATTERN.test(val) ||
+				DATA_URI_PATTERN.test(val) ||
+				(BASE64_PATTERN.test(val) && val.length % 4 === 0),
+			{
+				message:
+					'Image string must be a valid http(s) URL, a base64 data URI, or a valid base64-encoded string',
+			},
+		)
+		.describe('Base64-encoded image data, image data URI, or image URL'),
 	z.instanceof(Blob).describe('Binary Blob or File instance'),
 	z.instanceof(Uint8Array).describe('Binary Uint8Array byte array'),
 	z.custom<Buffer>(
@@ -58,7 +77,7 @@ export type UploadImageResponse = ImgBBImage;
 // ImgBB wraps every upload response in this envelope.
 export const ImgBBUploadEnvelopeSchema = z.object({
 	data: UploadImageResponseSchema,
-	success: z.boolean(),
+	success: z.literal(true),
 	status: z.number(),
 });
 export type ImgBBUploadEnvelope = z.infer<typeof ImgBBUploadEnvelopeSchema>;
