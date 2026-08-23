@@ -7,7 +7,7 @@
  * fixtures are copied from real API responses, so a schema that drifts from
  * the wire format fails here.
  */
-import { BOUNCER_API_BASE } from './client';
+import { BOUNCER_API_BASE, redactEmail } from './client';
 import {
 	BouncerEndpointInputSchemas as Inputs,
 	BouncerEndpointOutputSchemas as Outputs,
@@ -113,6 +113,28 @@ describe('Bouncer API', () => {
 			const parsed = Outputs.verifyEmail.parse(result);
 			expect(parsed.status).toBe('undeliverable');
 			expect(parsed.domain?.acceptAll).toBe('no');
+		});
+
+		it('logs a redacted address, never the raw one', async () => {
+			mockFetch(EMAIL_RECORD);
+			const logged: unknown[] = [];
+			const loggingCtx = {
+				key: TEST_KEY,
+				authType: 'api_key',
+				$getAccountId: async () => 'acct-1',
+				database: {
+					create: async (payload: unknown) => {
+						logged.push(payload);
+						return payload;
+					},
+				},
+			} as never;
+			const input = Inputs.verifyEmail.parse({ email: 'john@usebouncer.com' });
+
+			await plugin.endpoints!.email.verifyEmail(loggingCtx, input);
+
+			const serialised = JSON.stringify(logged);
+			expect(serialised).not.toContain('john@usebouncer.com');
 		});
 
 		it('verifyEmail omits timeout when it was not supplied', async () => {
@@ -466,6 +488,111 @@ describe('Bouncer API', () => {
 				`${BOUNCER_API_BASE}/v1.1/credits`,
 			);
 			expect(Outputs.getCredits.parse(result).credits).toBe(100);
+		});
+	});
+
+	describe('output validation', () => {
+		it('rejects a response that violates the declared schema', async () => {
+			// `status` is a documented enum; "bounced" is not one of its values.
+			mockFetch({ ...EMAIL_RECORD, status: 'bounced' });
+			const input = Inputs.verifyEmail.parse({ email: 'a@b.com' });
+
+			await expect(
+				plugin.endpoints!.email.verifyEmail(ctx, input),
+			).rejects.toThrow();
+		});
+
+		it('rejects a response missing a required field', async () => {
+			const { reason, ...withoutReason } = EMAIL_RECORD;
+			mockFetch(withoutReason);
+			const input = Inputs.verifyEmail.parse({ email: 'a@b.com' });
+
+			await expect(
+				plugin.endpoints!.email.verifyEmail(ctx, input),
+			).rejects.toThrow();
+		});
+
+		it('rejects batch results that are not an array', async () => {
+			mockFetch({ batchId: 'b1', results: [] });
+			const input = Inputs.getBatchResults.parse({ batchId: 'b1' });
+
+			await expect(
+				plugin.endpoints!.email.getBatchResults(ctx, input),
+			).rejects.toThrow();
+		});
+
+		// Fixtures captured from api.usebouncer.com; each exercises a different
+		// combination of the optional blocks.
+		it.each([
+			[
+				'a syntax error with didYouMean and no domain block',
+				{
+					email: 'john1234 @gnail.com.',
+					status: 'undeliverable',
+					reason: 'invalid_email',
+					didYouMean: 'john1234@gmail.com',
+					score: 0,
+					toxic: 'unknown',
+				},
+			],
+			[
+				'an unresolvable domain with a recordless dns block',
+				{
+					email: 'nobody@thisdomaindoesnotexist12345.tld',
+					status: 'undeliverable',
+					reason: 'invalid_domain',
+					domain: {
+						name: 'thisdomaindoesnotexist12345.tld',
+						acceptAll: 'unknown',
+						disposable: 'no',
+						free: 'no',
+					},
+					account: { role: 'yes', disabled: 'unknown', fullMailbox: 'unknown' },
+					dns: { type: 'unknown' },
+					provider: 'other',
+					score: 0,
+					toxic: 'unknown',
+					toxicity: 0,
+				},
+			],
+			[
+				'a risky free-provider address scoring high toxicity',
+				{
+					email: 'test@gmail.com',
+					status: 'risky',
+					reason: 'low_quality',
+					domain: {
+						name: 'gmail.com',
+						acceptAll: 'no',
+						disposable: 'no',
+						free: 'yes',
+					},
+					account: { role: 'yes', disabled: 'unknown', fullMailbox: 'unknown' },
+					dns: { type: 'MX', record: 'gmail-smtp-in.l.google.com.' },
+					provider: 'google.com',
+					score: 10,
+					toxic: 'no',
+					toxicity: 4,
+				},
+			],
+		])('accepts %s', async (_label, fixture) => {
+			mockFetch(fixture);
+			const input = Inputs.verifyEmail.parse({ email: 'a@b.com' });
+
+			const result = await plugin.endpoints!.email.verifyEmail(ctx, input);
+
+			expect(result.email).toBe(fixture.email);
+		});
+	});
+
+	describe('redactEmail', () => {
+		it('keeps the first character and the domain', () => {
+			expect(redactEmail('john@usebouncer.com')).toBe('j***@usebouncer.com');
+		});
+
+		it('fully masks a value with no local part', () => {
+			expect(redactEmail('@usebouncer.com')).toBe('***');
+			expect(redactEmail('not-an-email')).toBe('***');
 		});
 	});
 

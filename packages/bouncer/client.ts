@@ -39,6 +39,17 @@ export class BouncerAPIError extends Error {
  */
 export const BOUNCER_API_BASE = 'https://api.usebouncer.com';
 
+/**
+ * Redacts an email address for event logs (`logEventFromContext` persists its
+ * payload to `corsair_events`) — keeps the first character and the domain for
+ * debugging/correlation without storing the full address in plaintext.
+ */
+export function redactEmail(email: string): string {
+	const atIndex = email.indexOf('@');
+	if (atIndex <= 0) return '***';
+	return `${email[0]}***${email.slice(atIndex)}`;
+}
+
 export async function makeBouncerRequest<T>(
 	endpoint: string,
 	apiKey: string,
