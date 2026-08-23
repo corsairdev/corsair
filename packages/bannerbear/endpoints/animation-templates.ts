@@ -3,58 +3,56 @@ import type { BannerbearEndpoints } from '..';
 import { encodeBannerbearUid, makeBannerbearRequest } from '../client';
 import type { BannerbearEndpointOutputs } from './types';
 
-export const list: BannerbearEndpoints['listAnimations'] = async (
+export const list: BannerbearEndpoints['listAnimationTemplates'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await makeBannerbearRequest<
-		BannerbearEndpointOutputs['listAnimations']
-	>('/v5/animations', ctx.key, {
+		BannerbearEndpointOutputs['listAnimationTemplates']
+	>('/v5/animation_templates', ctx.key, {
 		method: 'GET',
 		query: { page: input.page },
 	});
 	await logEventFromContext(
 		ctx,
-		'bannerbear.animations.list',
+		'bannerbear.animation_templates.list',
 		{ ...input },
 		'completed',
 	);
 	return response;
 };
 
-export const get: BannerbearEndpoints['getAnimation'] = async (ctx, input) => {
-	const response = await makeBannerbearRequest<
-		BannerbearEndpointOutputs['getAnimation']
-	>(`/v5/animations/${encodeBannerbearUid(input.uid)}`, ctx.key, {
-		method: 'GET',
-	});
-	await logEventFromContext(
-		ctx,
-		'bannerbear.animations.get',
-		{ ...input },
-		'completed',
-	);
-	return response;
-};
-
-export const create: BannerbearEndpoints['createAnimation'] = async (
+export const get: BannerbearEndpoints['getAnimationTemplate'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await makeBannerbearRequest<
-		BannerbearEndpointOutputs['createAnimation']
-	>('/v5/animations', ctx.key, {
-		method: 'POST',
-		body: {
-			template: input.template,
-			modifications: input.modifications,
-			formats: input.formats,
-			metadata: input.metadata,
-		},
+		BannerbearEndpointOutputs['getAnimationTemplate']
+	>(`/v5/animation_templates/${encodeBannerbearUid(input.uid)}`, ctx.key, {
+		method: 'GET',
 	});
 	await logEventFromContext(
 		ctx,
-		'bannerbear.animations.create',
+		'bannerbear.animation_templates.get',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const create: BannerbearEndpoints['createAnimationTemplate'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeBannerbearRequest<
+		BannerbearEndpointOutputs['createAnimationTemplate']
+	>('/v5/animation_templates', ctx.key, {
+		method: 'POST',
+		body: { ...input },
+	});
+	await logEventFromContext(
+		ctx,
+		'bannerbear.animation_templates.create',
 		{ ...input },
 		'completed',
 	);

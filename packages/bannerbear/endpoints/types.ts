@@ -1,85 +1,40 @@
 import { z } from 'zod';
 import {
 	BannerbearAccount,
-	BannerbearAnimatedGif,
-	BannerbearCollection,
-	BannerbearEffect,
-	BannerbearFont,
+	BannerbearAnimation,
+	BannerbearAnimationTemplate,
 	BannerbearImage,
+	BannerbearInstantUrl,
 	BannerbearPdfJoin,
-	BannerbearProject,
-	BannerbearScreenshot,
-	BannerbearSignedBase,
 	BannerbearTemplate,
-	BannerbearTemplateSet,
-	BannerbearVideo,
-	BannerbearVideoTemplate,
 	BannerbearWebhookObj,
 	BannerbearWorkflow,
 	BannerbearWorkflowRun,
 } from '../schema/database';
 
-// ─── Pagination helper ───────────────────────────────────────
-const PaginationInput = z.object({
+const PageInput = z.object({
 	page: z.number().optional(),
-	limit: z.number().optional(),
-	project_id: z.string().optional(),
 });
 
-// ─── Account ─────────────────────────────────────────────────
-const GetAccountInfoInputSchema = z.object({
-	project_id: z.string().optional(),
-});
+const GetAccountInfoInputSchema = z.object({});
 export type GetAccountInfoInput = z.infer<typeof GetAccountInfoInputSchema>;
 const GetAccountInfoResponseSchema = BannerbearAccount;
 export type GetAccountInfoResponse = z.infer<
 	typeof GetAccountInfoResponseSchema
 >;
 
-const GetAuthInputSchema = z.object({
-	project_id: z.string().optional(),
-});
+const GetAuthInputSchema = z.object({});
 export type GetAuthInput = z.infer<typeof GetAuthInputSchema>;
 const GetAuthResponseSchema = BannerbearAccount;
 export type GetAuthResponse = z.infer<typeof GetAuthResponseSchema>;
 
-// ─── Projects ────────────────────────────────────────────────
-const ListProjectsInputSchema = PaginationInput.pick({ page: true });
-export type ListProjectsInput = z.infer<typeof ListProjectsInputSchema>;
-const ListProjectsResponseSchema = z.array(BannerbearProject);
-export type ListProjectsResponse = z.infer<typeof ListProjectsResponseSchema>;
-
-const GetProjectInputSchema = z.object({ uid: z.string() });
-export type GetProjectInput = z.infer<typeof GetProjectInputSchema>;
-const GetProjectResponseSchema = BannerbearProject;
-export type GetProjectResponse = z.infer<typeof GetProjectResponseSchema>;
-
-const CreateProjectInputSchema = z.object({
-	name: z.string(),
-});
-export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
-const CreateProjectResponseSchema = BannerbearProject;
-export type CreateProjectResponse = z.infer<typeof CreateProjectResponseSchema>;
-
-const HydrateProjectInputSchema = z.object({
-	uid: z.string(),
-	source_project: z.string(),
-});
-export type HydrateProjectInput = z.infer<typeof HydrateProjectInputSchema>;
-const HydrateProjectResponseSchema = BannerbearProject;
-export type HydrateProjectResponse = z.infer<
-	typeof HydrateProjectResponseSchema
->;
-
-// ─── Templates ───────────────────────────────────────────────
-const ListTemplatesInputSchema = PaginationInput;
+const ListTemplatesInputSchema = PageInput;
 export type ListTemplatesInput = z.infer<typeof ListTemplatesInputSchema>;
 const ListTemplatesResponseSchema = z.array(BannerbearTemplate);
 export type ListTemplatesResponse = z.infer<typeof ListTemplatesResponseSchema>;
 
 const GetTemplateInputSchema = z.object({
 	uid: z.string(),
-	project_id: z.string().optional(),
 });
 export type GetTemplateInput = z.infer<typeof GetTemplateInputSchema>;
 const GetTemplateResponseSchema = BannerbearTemplate;
@@ -87,9 +42,11 @@ export type GetTemplateResponse = z.infer<typeof GetTemplateResponseSchema>;
 
 const CreateTemplateInputSchema = z.object({
 	name: z.string(),
+	description: z.string().optional(),
 	width: z.number().optional(),
 	height: z.number().optional(),
-	project_id: z.string().optional(),
+	tags: z.array(z.string()).optional(),
+	config: z.record(z.string(), z.unknown()).optional(),
 });
 export type CreateTemplateInput = z.infer<typeof CreateTemplateInputSchema>;
 const CreateTemplateResponseSchema = BannerbearTemplate;
@@ -99,7 +56,6 @@ export type CreateTemplateResponse = z.infer<
 
 const DeleteTemplateInputSchema = z.object({
 	uid: z.string(),
-	project_id: z.string().optional(),
 });
 export type DeleteTemplateInput = z.infer<typeof DeleteTemplateInputSchema>;
 const DeleteTemplateResponseSchema = z.object({ success: z.boolean() });
@@ -109,7 +65,6 @@ export type DeleteTemplateResponse = z.infer<
 
 const ImportTemplateInputSchema = z.object({
 	publication_id: z.string(),
-	project_id: z.string().optional(),
 });
 export type ImportTemplateInput = z.infer<typeof ImportTemplateInputSchema>;
 const ImportTemplateResponseSchema = BannerbearTemplate;
@@ -117,173 +72,135 @@ export type ImportTemplateResponse = z.infer<
 	typeof ImportTemplateResponseSchema
 >;
 
-// ─── Template Sets ───────────────────────────────────────────
-const ListTemplateSetsInputSchema = PaginationInput;
-export type ListTemplateSetsInput = z.infer<typeof ListTemplateSetsInputSchema>;
-const ListTemplateSetsResponseSchema = z.array(BannerbearTemplateSet);
-export type ListTemplateSetsResponse = z.infer<
-	typeof ListTemplateSetsResponseSchema
->;
-
-const GetTemplateSetInputSchema = z.object({
-	uid: z.string(),
-	project_id: z.string().optional(),
-});
-export type GetTemplateSetInput = z.infer<typeof GetTemplateSetInputSchema>;
-const GetTemplateSetResponseSchema = BannerbearTemplateSet;
-export type GetTemplateSetResponse = z.infer<
-	typeof GetTemplateSetResponseSchema
->;
-
-const CreateTemplateSetInputSchema = z.object({
-	name: z.string(),
-	templates: z.array(z.string()),
-	project_id: z.string().optional(),
-});
-export type CreateTemplateSetInput = z.infer<
-	typeof CreateTemplateSetInputSchema
->;
-const CreateTemplateSetResponseSchema = BannerbearTemplateSet;
-export type CreateTemplateSetResponse = z.infer<
-	typeof CreateTemplateSetResponseSchema
->;
-
-const UpdateTemplateSetInputSchema = z.object({
-	uid: z.string(),
-	templates: z.array(z.string()),
-	project_id: z.string().optional(),
-});
-export type UpdateTemplateSetInput = z.infer<
-	typeof UpdateTemplateSetInputSchema
->;
-const UpdateTemplateSetResponseSchema = BannerbearTemplateSet;
-export type UpdateTemplateSetResponse = z.infer<
-	typeof UpdateTemplateSetResponseSchema
->;
-
-// ─── Images ──────────────────────────────────────────────────
-const ListImagesInputSchema = PaginationInput;
+const ListImagesInputSchema = PageInput;
 export type ListImagesInput = z.infer<typeof ListImagesInputSchema>;
 const ListImagesResponseSchema = z.array(BannerbearImage);
 export type ListImagesResponse = z.infer<typeof ListImagesResponseSchema>;
 
 const GetImageInputSchema = z.object({
 	uid: z.string(),
-	project_id: z.string().optional(),
 });
 export type GetImageInput = z.infer<typeof GetImageInputSchema>;
 const GetImageResponseSchema = BannerbearImage;
 export type GetImageResponse = z.infer<typeof GetImageResponseSchema>;
 
-// ─── Videos ──────────────────────────────────────────────────
-const ListVideosInputSchema = PaginationInput;
-export type ListVideosInput = z.infer<typeof ListVideosInputSchema>;
-const ListVideosResponseSchema = z.array(BannerbearVideo);
-export type ListVideosResponse = z.infer<typeof ListVideosResponseSchema>;
+const CreateImageInputSchema = z.object({
+	template: z.string(),
+	modifications: z.record(z.string(), z.unknown()),
+	metadata: z.string().optional(),
+});
+export type CreateImageInput = z.infer<typeof CreateImageInputSchema>;
+const CreateImageResponseSchema = BannerbearImage;
+export type CreateImageResponse = z.infer<typeof CreateImageResponseSchema>;
 
-const ListVideoTemplatesInputSchema = PaginationInput;
-export type ListVideoTemplatesInput = z.infer<
-	typeof ListVideoTemplatesInputSchema
->;
-const ListVideoTemplatesResponseSchema = z.array(BannerbearVideoTemplate);
-export type ListVideoTemplatesResponse = z.infer<
-	typeof ListVideoTemplatesResponseSchema
+const ListAnimationsInputSchema = PageInput;
+export type ListAnimationsInput = z.infer<typeof ListAnimationsInputSchema>;
+const ListAnimationsResponseSchema = z.array(BannerbearAnimation);
+export type ListAnimationsResponse = z.infer<
+	typeof ListAnimationsResponseSchema
 >;
 
-const CreateVideoTemplateInputSchema = z.object({
+const GetAnimationInputSchema = z.object({
+	uid: z.string(),
+});
+export type GetAnimationInput = z.infer<typeof GetAnimationInputSchema>;
+const GetAnimationResponseSchema = BannerbearAnimation;
+export type GetAnimationResponse = z.infer<typeof GetAnimationResponseSchema>;
+
+const CreateAnimationInputSchema = z.object({
+	template: z.string(),
+	modifications: z.record(z.string(), z.unknown()),
+	formats: z.array(z.enum(['mp4', 'mov'])).optional(),
+	metadata: z.string().optional(),
+});
+export type CreateAnimationInput = z.infer<typeof CreateAnimationInputSchema>;
+const CreateAnimationResponseSchema = BannerbearAnimation;
+export type CreateAnimationResponse = z.infer<
+	typeof CreateAnimationResponseSchema
+>;
+
+const ListAnimationTemplatesInputSchema = PageInput;
+export type ListAnimationTemplatesInput = z.infer<
+	typeof ListAnimationTemplatesInputSchema
+>;
+const ListAnimationTemplatesResponseSchema = z.array(
+	BannerbearAnimationTemplate,
+);
+export type ListAnimationTemplatesResponse = z.infer<
+	typeof ListAnimationTemplatesResponseSchema
+>;
+
+const GetAnimationTemplateInputSchema = z.object({
+	uid: z.string(),
+});
+export type GetAnimationTemplateInput = z.infer<
+	typeof GetAnimationTemplateInputSchema
+>;
+const GetAnimationTemplateResponseSchema = BannerbearAnimationTemplate;
+export type GetAnimationTemplateResponse = z.infer<
+	typeof GetAnimationTemplateResponseSchema
+>;
+
+const CreateAnimationTemplateInputSchema = z.object({
+	name: z.string(),
+	description: z.string().optional(),
+	tags: z.array(z.string()).optional(),
+	width: z.number().optional(),
+	height: z.number().optional(),
+	frame_rate: z.union([z.literal(24), z.literal(30), z.literal(60)]).optional(),
+});
+export type CreateAnimationTemplateInput = z.infer<
+	typeof CreateAnimationTemplateInputSchema
+>;
+const CreateAnimationTemplateResponseSchema = BannerbearAnimationTemplate;
+export type CreateAnimationTemplateResponse = z.infer<
+	typeof CreateAnimationTemplateResponseSchema
+>;
+
+const ListInstantUrlsInputSchema = PageInput;
+export type ListInstantUrlsInput = z.infer<typeof ListInstantUrlsInputSchema>;
+const ListInstantUrlsResponseSchema = z.array(BannerbearInstantUrl);
+export type ListInstantUrlsResponse = z.infer<
+	typeof ListInstantUrlsResponseSchema
+>;
+
+const CreateInstantUrlInputSchema = z.object({
 	name: z.string(),
 	template: z.string(),
-	project_id: z.string().optional(),
-	input_media_url: z.string().optional(),
-	frames: z.array(z.record(z.string(), z.unknown())).optional(),
-	soundtrack_url: z.string().optional(),
-	transition: z.string().optional(),
-	transcription: z.record(z.string(), z.unknown()).optional(),
+	mode: z.enum(['encoded', 'named_params']).optional(),
+	security: z.enum(['signed', 'open']).optional(),
+	status: z.enum(['active', 'disabled']).optional(),
+	scale: z
+		.union([z.literal(1), z.literal(2), z.literal(3), z.literal(4)])
+		.optional(),
+	rate_limit: z.boolean().optional(),
+	template_version: z.number().nullable().optional(),
+	max_renders: z.number().nullable().optional(),
+	expires_at: z.string().nullable().optional(),
 });
-export type CreateVideoTemplateInput = z.infer<
-	typeof CreateVideoTemplateInputSchema
->;
-const CreateVideoTemplateResponseSchema = BannerbearVideoTemplate;
-export type CreateVideoTemplateResponse = z.infer<
-	typeof CreateVideoTemplateResponseSchema
+export type CreateInstantUrlInput = z.infer<typeof CreateInstantUrlInputSchema>;
+const CreateInstantUrlResponseSchema = BannerbearInstantUrl;
+export type CreateInstantUrlResponse = z.infer<
+	typeof CreateInstantUrlResponseSchema
 >;
 
-// ─── Animated GIFs ───────────────────────────────────────────
-const ListAnimatedGifsInputSchema = PaginationInput;
-export type ListAnimatedGifsInput = z.infer<typeof ListAnimatedGifsInputSchema>;
-const ListAnimatedGifsResponseSchema = z.array(BannerbearAnimatedGif);
-export type ListAnimatedGifsResponse = z.infer<
-	typeof ListAnimatedGifsResponseSchema
->;
-
-const GetAnimatedGifInputSchema = z.object({
-	uid: z.string(),
-	project_id: z.string().optional(),
-});
-export type GetAnimatedGifInput = z.infer<typeof GetAnimatedGifInputSchema>;
-const GetAnimatedGifResponseSchema = BannerbearAnimatedGif;
-export type GetAnimatedGifResponse = z.infer<
-	typeof GetAnimatedGifResponseSchema
->;
-
-// ─── Collections ─────────────────────────────────────────────
-const ListCollectionsInputSchema = PaginationInput;
-export type ListCollectionsInput = z.infer<typeof ListCollectionsInputSchema>;
-const ListCollectionsResponseSchema = z.array(BannerbearCollection);
-export type ListCollectionsResponse = z.infer<
-	typeof ListCollectionsResponseSchema
->;
-
-// ─── Screenshots ─────────────────────────────────────────────
-const ListScreenshotsInputSchema = PaginationInput;
-export type ListScreenshotsInput = z.infer<typeof ListScreenshotsInputSchema>;
-const ListScreenshotsResponseSchema = z.array(BannerbearScreenshot);
-export type ListScreenshotsResponse = z.infer<
-	typeof ListScreenshotsResponseSchema
->;
-
-const GetScreenshotInputSchema = z.object({
-	uid: z.string(),
-	project_id: z.string().optional(),
-});
-export type GetScreenshotInput = z.infer<typeof GetScreenshotInputSchema>;
-const GetScreenshotResponseSchema = BannerbearScreenshot;
-export type GetScreenshotResponse = z.infer<typeof GetScreenshotResponseSchema>;
-
-// ─── Signed URLs ─────────────────────────────────────────────
-const GetSignedBasesInputSchema = z.object({
-	uid: z.string(),
-	project_id: z.string().optional(),
-});
-export type GetSignedBasesInput = z.infer<typeof GetSignedBasesInputSchema>;
-const GetSignedBasesResponseSchema = z.array(BannerbearSignedBase);
-export type GetSignedBasesResponse = z.infer<
-	typeof GetSignedBasesResponseSchema
->;
-
-const CreateSignedBaseInputSchema = z.object({
-	uid: z.string(),
-	project_id: z.string().optional(),
-});
-export type CreateSignedBaseInput = z.infer<typeof CreateSignedBaseInputSchema>;
-const CreateSignedBaseResponseSchema = BannerbearSignedBase;
-export type CreateSignedBaseResponse = z.infer<
-	typeof CreateSignedBaseResponseSchema
->;
-
-// ─── Webhooks API ────────────────────────────────────────────
 const GetWebhookInputSchema = z.object({
 	uid: z.string(),
-	project_id: z.string().optional(),
 });
 export type GetWebhookInput = z.infer<typeof GetWebhookInputSchema>;
 const GetWebhookResponseSchema = BannerbearWebhookObj;
 export type GetWebhookResponse = z.infer<typeof GetWebhookResponseSchema>;
 
 const CreateWebhookInputSchema = z.object({
+	name: z.string(),
 	url: z.string(),
-	event: z.string().optional(),
-	project_id: z.string().optional(),
+	resource: z
+		.enum(['image', 'batch', 'tool_job', 'workflow_run', 'animation'])
+		.optional(),
+	event: z.enum(['all_events', 'completed', 'failed']).optional(),
+	status: z.enum(['active', 'disabled']).optional(),
+	scope: z.enum(['all_templates', 'specific_templates']).optional(),
+	templates: z.array(z.string()).optional(),
 });
 export type CreateWebhookInput = z.infer<typeof CreateWebhookInputSchema>;
 const CreateWebhookResponseSchema = BannerbearWebhookObj;
@@ -291,35 +208,20 @@ export type CreateWebhookResponse = z.infer<typeof CreateWebhookResponseSchema>;
 
 const DeleteWebhookInputSchema = z.object({
 	uid: z.string(),
-	project_id: z.string().optional(),
 });
 export type DeleteWebhookInput = z.infer<typeof DeleteWebhookInputSchema>;
 const DeleteWebhookResponseSchema = z.object({ success: z.boolean() });
 export type DeleteWebhookResponse = z.infer<typeof DeleteWebhookResponseSchema>;
 
-// ─── Misc ────────────────────────────────────────────────────
-const GetFontsInputSchema = z.object({});
-export type GetFontsInput = z.infer<typeof GetFontsInputSchema>;
-const GetFontsResponseSchema = z.array(BannerbearFont);
-export type GetFontsResponse = z.infer<typeof GetFontsResponseSchema>;
-
-const ListEffectsInputSchema = z.object({});
-export type ListEffectsInput = z.infer<typeof ListEffectsInputSchema>;
-const ListEffectsResponseSchema = z.array(BannerbearEffect);
-export type ListEffectsResponse = z.infer<typeof ListEffectsResponseSchema>;
-
 const JoinPdfsInputSchema = z.object({
-	pdf_urls: z.array(z.string()),
-	project_id: z.string().optional(),
-	webhook_url: z.string().optional(),
+	urls: z.array(z.string()),
 	metadata: z.string().optional(),
 });
 export type JoinPdfsInput = z.infer<typeof JoinPdfsInputSchema>;
 const JoinPdfsResponseSchema = BannerbearPdfJoin;
 export type JoinPdfsResponse = z.infer<typeof JoinPdfsResponseSchema>;
 
-// ─── Workflows ───────────────────────────────────────────────
-const ListWorkflowsInputSchema = PaginationInput.pick({ page: true });
+const ListWorkflowsInputSchema = PageInput;
 export type ListWorkflowsInput = z.infer<typeof ListWorkflowsInputSchema>;
 const ListWorkflowsResponseSchema = z.array(BannerbearWorkflow);
 export type ListWorkflowsResponse = z.infer<typeof ListWorkflowsResponseSchema>;
@@ -332,7 +234,6 @@ export type GetWorkflowResponse = z.infer<typeof GetWorkflowResponseSchema>;
 const CreateWorkflowRunInputSchema = z.object({
 	workflow: z.string(),
 	inputs: z.record(z.string(), z.unknown()).optional(),
-	webhook_url: z.string().optional(),
 });
 export type CreateWorkflowRunInput = z.infer<
 	typeof CreateWorkflowRunInputSchema
@@ -349,47 +250,35 @@ export type GetWorkflowRunResponse = z.infer<
 	typeof GetWorkflowRunResponseSchema
 >;
 
-const ListWorkflowRunsInputSchema = PaginationInput.pick({ page: true });
+const ListWorkflowRunsInputSchema = PageInput;
 export type ListWorkflowRunsInput = z.infer<typeof ListWorkflowRunsInputSchema>;
 const ListWorkflowRunsResponseSchema = z.array(BannerbearWorkflowRun);
 export type ListWorkflowRunsResponse = z.infer<
 	typeof ListWorkflowRunsResponseSchema
 >;
 
-// ─── Aggregate types ─────────────────────────────────────────
 export type BannerbearEndpointInputs = {
 	getAccountInfo: GetAccountInfoInput;
 	getAuth: GetAuthInput;
-	listProjects: ListProjectsInput;
-	getProject: GetProjectInput;
-	createProject: CreateProjectInput;
-	hydrateProject: HydrateProjectInput;
 	listTemplates: ListTemplatesInput;
 	getTemplate: GetTemplateInput;
 	createTemplate: CreateTemplateInput;
 	deleteTemplate: DeleteTemplateInput;
 	importTemplate: ImportTemplateInput;
-	listTemplateSets: ListTemplateSetsInput;
-	getTemplateSet: GetTemplateSetInput;
-	createTemplateSet: CreateTemplateSetInput;
-	updateTemplateSet: UpdateTemplateSetInput;
 	listImages: ListImagesInput;
 	getImage: GetImageInput;
-	listVideos: ListVideosInput;
-	listVideoTemplates: ListVideoTemplatesInput;
-	createVideoTemplate: CreateVideoTemplateInput;
-	listAnimatedGifs: ListAnimatedGifsInput;
-	getAnimatedGif: GetAnimatedGifInput;
-	listCollections: ListCollectionsInput;
-	listScreenshots: ListScreenshotsInput;
-	getScreenshot: GetScreenshotInput;
-	getSignedBases: GetSignedBasesInput;
-	createSignedBase: CreateSignedBaseInput;
+	createImage: CreateImageInput;
+	listAnimations: ListAnimationsInput;
+	getAnimation: GetAnimationInput;
+	createAnimation: CreateAnimationInput;
+	listAnimationTemplates: ListAnimationTemplatesInput;
+	getAnimationTemplate: GetAnimationTemplateInput;
+	createAnimationTemplate: CreateAnimationTemplateInput;
+	listInstantUrls: ListInstantUrlsInput;
+	createInstantUrl: CreateInstantUrlInput;
 	getWebhook: GetWebhookInput;
 	createWebhook: CreateWebhookInput;
 	deleteWebhook: DeleteWebhookInput;
-	getFonts: GetFontsInput;
-	listEffects: ListEffectsInput;
 	joinPdfs: JoinPdfsInput;
 	listWorkflows: ListWorkflowsInput;
 	getWorkflow: GetWorkflowInput;
@@ -401,36 +290,25 @@ export type BannerbearEndpointInputs = {
 export type BannerbearEndpointOutputs = {
 	getAccountInfo: GetAccountInfoResponse;
 	getAuth: GetAuthResponse;
-	listProjects: ListProjectsResponse;
-	getProject: GetProjectResponse;
-	createProject: CreateProjectResponse;
-	hydrateProject: HydrateProjectResponse;
 	listTemplates: ListTemplatesResponse;
 	getTemplate: GetTemplateResponse;
 	createTemplate: CreateTemplateResponse;
 	deleteTemplate: DeleteTemplateResponse;
 	importTemplate: ImportTemplateResponse;
-	listTemplateSets: ListTemplateSetsResponse;
-	getTemplateSet: GetTemplateSetResponse;
-	createTemplateSet: CreateTemplateSetResponse;
-	updateTemplateSet: UpdateTemplateSetResponse;
 	listImages: ListImagesResponse;
 	getImage: GetImageResponse;
-	listVideos: ListVideosResponse;
-	listVideoTemplates: ListVideoTemplatesResponse;
-	createVideoTemplate: CreateVideoTemplateResponse;
-	listAnimatedGifs: ListAnimatedGifsResponse;
-	getAnimatedGif: GetAnimatedGifResponse;
-	listCollections: ListCollectionsResponse;
-	listScreenshots: ListScreenshotsResponse;
-	getScreenshot: GetScreenshotResponse;
-	getSignedBases: GetSignedBasesResponse;
-	createSignedBase: CreateSignedBaseResponse;
+	createImage: CreateImageResponse;
+	listAnimations: ListAnimationsResponse;
+	getAnimation: GetAnimationResponse;
+	createAnimation: CreateAnimationResponse;
+	listAnimationTemplates: ListAnimationTemplatesResponse;
+	getAnimationTemplate: GetAnimationTemplateResponse;
+	createAnimationTemplate: CreateAnimationTemplateResponse;
+	listInstantUrls: ListInstantUrlsResponse;
+	createInstantUrl: CreateInstantUrlResponse;
 	getWebhook: GetWebhookResponse;
 	createWebhook: CreateWebhookResponse;
 	deleteWebhook: DeleteWebhookResponse;
-	getFonts: GetFontsResponse;
-	listEffects: ListEffectsResponse;
 	joinPdfs: JoinPdfsResponse;
 	listWorkflows: ListWorkflowsResponse;
 	getWorkflow: GetWorkflowResponse;
@@ -442,36 +320,25 @@ export type BannerbearEndpointOutputs = {
 export const BannerbearEndpointInputSchemas = {
 	getAccountInfo: GetAccountInfoInputSchema,
 	getAuth: GetAuthInputSchema,
-	listProjects: ListProjectsInputSchema,
-	getProject: GetProjectInputSchema,
-	createProject: CreateProjectInputSchema,
-	hydrateProject: HydrateProjectInputSchema,
 	listTemplates: ListTemplatesInputSchema,
 	getTemplate: GetTemplateInputSchema,
 	createTemplate: CreateTemplateInputSchema,
 	deleteTemplate: DeleteTemplateInputSchema,
 	importTemplate: ImportTemplateInputSchema,
-	listTemplateSets: ListTemplateSetsInputSchema,
-	getTemplateSet: GetTemplateSetInputSchema,
-	createTemplateSet: CreateTemplateSetInputSchema,
-	updateTemplateSet: UpdateTemplateSetInputSchema,
 	listImages: ListImagesInputSchema,
 	getImage: GetImageInputSchema,
-	listVideos: ListVideosInputSchema,
-	listVideoTemplates: ListVideoTemplatesInputSchema,
-	createVideoTemplate: CreateVideoTemplateInputSchema,
-	listAnimatedGifs: ListAnimatedGifsInputSchema,
-	getAnimatedGif: GetAnimatedGifInputSchema,
-	listCollections: ListCollectionsInputSchema,
-	listScreenshots: ListScreenshotsInputSchema,
-	getScreenshot: GetScreenshotInputSchema,
-	getSignedBases: GetSignedBasesInputSchema,
-	createSignedBase: CreateSignedBaseInputSchema,
+	createImage: CreateImageInputSchema,
+	listAnimations: ListAnimationsInputSchema,
+	getAnimation: GetAnimationInputSchema,
+	createAnimation: CreateAnimationInputSchema,
+	listAnimationTemplates: ListAnimationTemplatesInputSchema,
+	getAnimationTemplate: GetAnimationTemplateInputSchema,
+	createAnimationTemplate: CreateAnimationTemplateInputSchema,
+	listInstantUrls: ListInstantUrlsInputSchema,
+	createInstantUrl: CreateInstantUrlInputSchema,
 	getWebhook: GetWebhookInputSchema,
 	createWebhook: CreateWebhookInputSchema,
 	deleteWebhook: DeleteWebhookInputSchema,
-	getFonts: GetFontsInputSchema,
-	listEffects: ListEffectsInputSchema,
 	joinPdfs: JoinPdfsInputSchema,
 	listWorkflows: ListWorkflowsInputSchema,
 	getWorkflow: GetWorkflowInputSchema,
@@ -483,36 +350,25 @@ export const BannerbearEndpointInputSchemas = {
 export const BannerbearEndpointOutputSchemas = {
 	getAccountInfo: GetAccountInfoResponseSchema,
 	getAuth: GetAuthResponseSchema,
-	listProjects: ListProjectsResponseSchema,
-	getProject: GetProjectResponseSchema,
-	createProject: CreateProjectResponseSchema,
-	hydrateProject: HydrateProjectResponseSchema,
 	listTemplates: ListTemplatesResponseSchema,
 	getTemplate: GetTemplateResponseSchema,
 	createTemplate: CreateTemplateResponseSchema,
 	deleteTemplate: DeleteTemplateResponseSchema,
 	importTemplate: ImportTemplateResponseSchema,
-	listTemplateSets: ListTemplateSetsResponseSchema,
-	getTemplateSet: GetTemplateSetResponseSchema,
-	createTemplateSet: CreateTemplateSetResponseSchema,
-	updateTemplateSet: UpdateTemplateSetResponseSchema,
 	listImages: ListImagesResponseSchema,
 	getImage: GetImageResponseSchema,
-	listVideos: ListVideosResponseSchema,
-	listVideoTemplates: ListVideoTemplatesResponseSchema,
-	createVideoTemplate: CreateVideoTemplateResponseSchema,
-	listAnimatedGifs: ListAnimatedGifsResponseSchema,
-	getAnimatedGif: GetAnimatedGifResponseSchema,
-	listCollections: ListCollectionsResponseSchema,
-	listScreenshots: ListScreenshotsResponseSchema,
-	getScreenshot: GetScreenshotResponseSchema,
-	getSignedBases: GetSignedBasesResponseSchema,
-	createSignedBase: CreateSignedBaseResponseSchema,
+	createImage: CreateImageResponseSchema,
+	listAnimations: ListAnimationsResponseSchema,
+	getAnimation: GetAnimationResponseSchema,
+	createAnimation: CreateAnimationResponseSchema,
+	listAnimationTemplates: ListAnimationTemplatesResponseSchema,
+	getAnimationTemplate: GetAnimationTemplateResponseSchema,
+	createAnimationTemplate: CreateAnimationTemplateResponseSchema,
+	listInstantUrls: ListInstantUrlsResponseSchema,
+	createInstantUrl: CreateInstantUrlResponseSchema,
 	getWebhook: GetWebhookResponseSchema,
 	createWebhook: CreateWebhookResponseSchema,
 	deleteWebhook: DeleteWebhookResponseSchema,
-	getFonts: GetFontsResponseSchema,
-	listEffects: ListEffectsResponseSchema,
 	joinPdfs: JoinPdfsResponseSchema,
 	listWorkflows: ListWorkflowsResponseSchema,
 	getWorkflow: GetWorkflowResponseSchema,

@@ -1,12 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BannerbearWebhooks } from '..';
 import {
-	createBannerbearVideoCompletedMatch,
+	createBannerbearAnimationCompletedMatch,
 	verifyBannerbearWebhookSignature,
 } from './types';
 
-export const videoCompleted: BannerbearWebhooks['videoCompleted'] = {
-	match: createBannerbearVideoCompletedMatch(),
+export const animationCompleted: BannerbearWebhooks['animationCompleted'] = {
+	match: createBannerbearAnimationCompletedMatch(),
 
 	handler: async (ctx, request) => {
 		const verification = verifyBannerbearWebhookSignature(request, ctx.key);
@@ -25,7 +25,7 @@ export const videoCompleted: BannerbearWebhooks['videoCompleted'] = {
 
 		await logEventFromContext(
 			ctx,
-			'bannerbear.webhook.video_completed',
+			'bannerbear.webhook.animation_completed',
 			{ uid: event.uid },
 			'completed',
 		);

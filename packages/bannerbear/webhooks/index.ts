@@ -1,12 +1,12 @@
+import { animationCompleted } from './animation-completed';
 import { imageCompleted } from './image-completed';
-import { videoCompleted } from './video-completed';
 
 export const ImageWebhooks = {
 	imageCompleted,
 };
 
-export const VideoWebhooks = {
-	videoCompleted,
+export const AnimationWebhooks = {
+	animationCompleted,
 };
 
 export * from './tenant-matcher';

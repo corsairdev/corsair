@@ -3,38 +3,38 @@ import type { BannerbearEndpoints } from '..';
 import { makeBannerbearRequest } from '../client';
 import type { BannerbearEndpointOutputs } from './types';
 
-export const getSignedBases: BannerbearEndpoints['getSignedBases'] = async (
+export const list: BannerbearEndpoints['listInstantUrls'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await makeBannerbearRequest<
-		BannerbearEndpointOutputs['getSignedBases']
-	>(`/v5/templates/${input.uid}/signed_bases`, ctx.key, {
+		BannerbearEndpointOutputs['listInstantUrls']
+	>('/v5/instant_urls', ctx.key, {
 		method: 'GET',
-		query: { project_id: input.project_id },
+		query: { page: input.page },
 	});
 	await logEventFromContext(
 		ctx,
-		'bannerbear.signed_bases.get',
+		'bannerbear.instant_urls.list',
 		{ ...input },
 		'completed',
 	);
 	return response;
 };
 
-export const createSignedBase: BannerbearEndpoints['createSignedBase'] = async (
+export const create: BannerbearEndpoints['createInstantUrl'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await makeBannerbearRequest<
-		BannerbearEndpointOutputs['createSignedBase']
-	>(`/v5/templates/${input.uid}/signed_bases`, ctx.key, {
+		BannerbearEndpointOutputs['createInstantUrl']
+	>('/v5/instant_urls', ctx.key, {
 		method: 'POST',
-		body: { project_id: input.project_id },
+		body: { ...input },
 	});
 	await logEventFromContext(
 		ctx,
-		'bannerbear.signed_bases.create',
+		'bannerbear.instant_urls.create',
 		{ ...input },
 		'completed',
 	);

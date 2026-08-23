@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BannerbearEndpoints } from '..';
-import { makeBannerbearRequest } from '../client';
+import { encodeBannerbearUid, makeBannerbearRequest } from '../client';
 import type { BannerbearEndpointOutputs } from './types';
 
 export const listWorkflows: BannerbearEndpoints['listWorkflows'] = async (
@@ -25,7 +25,9 @@ export const getWorkflow: BannerbearEndpoints['getWorkflow'] = async (
 ) => {
 	const response = await makeBannerbearRequest<
 		BannerbearEndpointOutputs['getWorkflow']
-	>(`/v5/workflows/${input.uid}`, ctx.key, { method: 'GET' });
+	>(`/v5/workflows/${encodeBannerbearUid(input.uid)}`, ctx.key, {
+		method: 'GET',
+	});
 	await logEventFromContext(
 		ctx,
 		'bannerbear.workflows.get',
@@ -44,7 +46,6 @@ export const createWorkflowRun: BannerbearEndpoints['createWorkflowRun'] =
 			body: {
 				workflow: input.workflow,
 				inputs: input.inputs,
-				webhook_url: input.webhook_url,
 			},
 		});
 		await logEventFromContext(
@@ -62,7 +63,9 @@ export const getWorkflowRun: BannerbearEndpoints['getWorkflowRun'] = async (
 ) => {
 	const response = await makeBannerbearRequest<
 		BannerbearEndpointOutputs['getWorkflowRun']
-	>(`/v5/workflow_runs/${input.uid}`, ctx.key, { method: 'GET' });
+	>(`/v5/workflow_runs/${encodeBannerbearUid(input.uid)}`, ctx.key, {
+		method: 'GET',
+	});
 	await logEventFromContext(
 		ctx,
 		'bannerbear.workflow_runs.get',

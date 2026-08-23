@@ -1,14 +1,13 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BannerbearEndpoints } from '..';
-import { makeBannerbearRequest } from '../client';
+import { encodeBannerbearUid, makeBannerbearRequest } from '../client';
 import type { BannerbearEndpointOutputs } from './types';
 
 export const get: BannerbearEndpoints['getWebhook'] = async (ctx, input) => {
 	const response = await makeBannerbearRequest<
 		BannerbearEndpointOutputs['getWebhook']
-	>(`/v5/webhooks/${input.uid}`, ctx.key, {
+	>(`/v5/webhooks/${encodeBannerbearUid(input.uid)}`, ctx.key, {
 		method: 'GET',
-		query: { project_id: input.project_id },
 	});
 	await logEventFromContext(
 		ctx,
@@ -27,7 +26,7 @@ export const create: BannerbearEndpoints['createWebhook'] = async (
 		BannerbearEndpointOutputs['createWebhook']
 	>('/v5/webhooks', ctx.key, {
 		method: 'POST',
-		body: { url: input.url, event: input.event, project_id: input.project_id },
+		body: { ...input },
 	});
 	await logEventFromContext(
 		ctx,
@@ -42,10 +41,11 @@ export const deleteWebhook: BannerbearEndpoints['deleteWebhook'] = async (
 	ctx,
 	input,
 ) => {
-	await makeBannerbearRequest<void>(`/v5/webhooks/${input.uid}`, ctx.key, {
-		method: 'DELETE',
-		query: { project_id: input.project_id },
-	});
+	await makeBannerbearRequest<void>(
+		`/v5/webhooks/${encodeBannerbearUid(input.uid)}`,
+		ctx.key,
+		{ method: 'DELETE' },
+	);
 	await logEventFromContext(
 		ctx,
 		'bannerbear.webhooks.delete',

@@ -1,6 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BannerbearEndpoints } from '..';
-import { makeBannerbearRequest } from '../client';
+import { encodeBannerbearUid, makeBannerbearRequest } from '../client';
 import type { BannerbearEndpointOutputs } from './types';
 
 export const list: BannerbearEndpoints['listTemplates'] = async (
@@ -9,13 +9,9 @@ export const list: BannerbearEndpoints['listTemplates'] = async (
 ) => {
 	const response = await makeBannerbearRequest<
 		BannerbearEndpointOutputs['listTemplates']
-	>('/v5/templates', ctx.key, {
+	>('/v5/image_templates', ctx.key, {
 		method: 'GET',
-		query: {
-			page: input.page,
-			limit: input.limit,
-			project_id: input.project_id,
-		},
+		query: { page: input.page },
 	});
 	await logEventFromContext(
 		ctx,
@@ -29,9 +25,8 @@ export const list: BannerbearEndpoints['listTemplates'] = async (
 export const get: BannerbearEndpoints['getTemplate'] = async (ctx, input) => {
 	const response = await makeBannerbearRequest<
 		BannerbearEndpointOutputs['getTemplate']
-	>(`/v5/templates/${input.uid}`, ctx.key, {
+	>(`/v5/image_templates/${encodeBannerbearUid(input.uid)}`, ctx.key, {
 		method: 'GET',
-		query: { project_id: input.project_id },
 	});
 	await logEventFromContext(
 		ctx,
@@ -46,12 +41,11 @@ export const create: BannerbearEndpoints['createTemplate'] = async (
 	ctx,
 	input,
 ) => {
-	const { project_id, ...body } = input;
 	const response = await makeBannerbearRequest<
 		BannerbearEndpointOutputs['createTemplate']
-	>('/v5/templates', ctx.key, {
+	>('/v5/image_templates', ctx.key, {
 		method: 'POST',
-		body: { ...body, project_id },
+		body: { ...input },
 	});
 	await logEventFromContext(
 		ctx,
@@ -66,10 +60,11 @@ export const deleteTemplate: BannerbearEndpoints['deleteTemplate'] = async (
 	ctx,
 	input,
 ) => {
-	await makeBannerbearRequest<void>(`/v5/templates/${input.uid}`, ctx.key, {
-		method: 'DELETE',
-		query: { project_id: input.project_id },
-	});
+	await makeBannerbearRequest<void>(
+		`/v5/image_templates/${encodeBannerbearUid(input.uid)}`,
+		ctx.key,
+		{ method: 'DELETE' },
+	);
 	await logEventFromContext(
 		ctx,
 		'bannerbear.templates.delete',
@@ -85,13 +80,11 @@ export const importTemplate: BannerbearEndpoints['importTemplate'] = async (
 ) => {
 	const response = await makeBannerbearRequest<
 		BannerbearEndpointOutputs['importTemplate']
-	>('/v5/templates/import', ctx.key, {
-		method: 'POST',
-		body: {
-			publication_id: input.publication_id,
-			project_id: input.project_id,
-		},
-	});
+	>(
+		`/v5/publications/${encodeBannerbearUid(input.publication_id)}/install`,
+		ctx.key,
+		{ method: 'POST', body: {} },
+	);
 	await logEventFromContext(
 		ctx,
 		'bannerbear.templates.import',

@@ -15,18 +15,15 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Account,
 	Animations,
-	Collections,
+	AnimationTemplates,
 	Images,
+	InstantUrls,
 	Misc,
-	Projects,
-	Screenshots,
-	SignedUrls,
-	TemplateSets,
 	Templates,
-	Videos,
 	WebhooksApi,
 	Workflows,
 } from './endpoints';
@@ -40,16 +37,17 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BannerbearSchema } from './schema';
-import { ImageWebhooks, VideoWebhooks } from './webhooks';
+import { AnimationWebhooks, ImageWebhooks } from './webhooks';
 import { matchBannerbearTenantWebhook } from './webhooks/tenant-matcher';
 import type {
+	AnimationCompletedEvent,
 	BannerbearWebhookOutputs,
 	ImageCompletedEvent,
-	VideoCompletedEvent,
 } from './webhooks/types';
 import {
+	AnimationCompletedEventSchema,
 	ImageCompletedEventSchema,
-	VideoCompletedEventSchema,
+	isBannerbearCompletionPayload,
 } from './webhooks/types';
 
 export type BannerbearPluginOptions = {
@@ -82,52 +80,28 @@ type BannerbearEndpoint<K extends keyof BannerbearEndpointOutputs> =
 	>;
 
 export type BannerbearEndpoints = {
-	// Account
 	getAccountInfo: BannerbearEndpoint<'getAccountInfo'>;
 	getAuth: BannerbearEndpoint<'getAuth'>;
-	// Projects
-	listProjects: BannerbearEndpoint<'listProjects'>;
-	getProject: BannerbearEndpoint<'getProject'>;
-	createProject: BannerbearEndpoint<'createProject'>;
-	hydrateProject: BannerbearEndpoint<'hydrateProject'>;
-	// Templates
 	listTemplates: BannerbearEndpoint<'listTemplates'>;
 	getTemplate: BannerbearEndpoint<'getTemplate'>;
 	createTemplate: BannerbearEndpoint<'createTemplate'>;
 	deleteTemplate: BannerbearEndpoint<'deleteTemplate'>;
 	importTemplate: BannerbearEndpoint<'importTemplate'>;
-	// Template Sets
-	listTemplateSets: BannerbearEndpoint<'listTemplateSets'>;
-	getTemplateSet: BannerbearEndpoint<'getTemplateSet'>;
-	createTemplateSet: BannerbearEndpoint<'createTemplateSet'>;
-	updateTemplateSet: BannerbearEndpoint<'updateTemplateSet'>;
-	// Images
 	listImages: BannerbearEndpoint<'listImages'>;
 	getImage: BannerbearEndpoint<'getImage'>;
-	// Videos
-	listVideos: BannerbearEndpoint<'listVideos'>;
-	listVideoTemplates: BannerbearEndpoint<'listVideoTemplates'>;
-	createVideoTemplate: BannerbearEndpoint<'createVideoTemplate'>;
-	// Animated GIFs
-	listAnimatedGifs: BannerbearEndpoint<'listAnimatedGifs'>;
-	getAnimatedGif: BannerbearEndpoint<'getAnimatedGif'>;
-	// Collections
-	listCollections: BannerbearEndpoint<'listCollections'>;
-	// Screenshots
-	listScreenshots: BannerbearEndpoint<'listScreenshots'>;
-	getScreenshot: BannerbearEndpoint<'getScreenshot'>;
-	// Signed URLs
-	getSignedBases: BannerbearEndpoint<'getSignedBases'>;
-	createSignedBase: BannerbearEndpoint<'createSignedBase'>;
-	// Webhooks API
+	createImage: BannerbearEndpoint<'createImage'>;
+	listAnimations: BannerbearEndpoint<'listAnimations'>;
+	getAnimation: BannerbearEndpoint<'getAnimation'>;
+	createAnimation: BannerbearEndpoint<'createAnimation'>;
+	listAnimationTemplates: BannerbearEndpoint<'listAnimationTemplates'>;
+	getAnimationTemplate: BannerbearEndpoint<'getAnimationTemplate'>;
+	createAnimationTemplate: BannerbearEndpoint<'createAnimationTemplate'>;
+	listInstantUrls: BannerbearEndpoint<'listInstantUrls'>;
+	createInstantUrl: BannerbearEndpoint<'createInstantUrl'>;
 	getWebhook: BannerbearEndpoint<'getWebhook'>;
 	createWebhook: BannerbearEndpoint<'createWebhook'>;
 	deleteWebhook: BannerbearEndpoint<'deleteWebhook'>;
-	// Misc
-	getFonts: BannerbearEndpoint<'getFonts'>;
-	listEffects: BannerbearEndpoint<'listEffects'>;
 	joinPdfs: BannerbearEndpoint<'joinPdfs'>;
-	// Workflows
 	listWorkflows: BannerbearEndpoint<'listWorkflows'>;
 	getWorkflow: BannerbearEndpoint<'getWorkflow'>;
 	createWorkflowRun: BannerbearEndpoint<'createWorkflowRun'>;
@@ -142,7 +116,10 @@ type BannerbearWebhook<
 
 export type BannerbearWebhooks = {
 	imageCompleted: BannerbearWebhook<'imageCompleted', ImageCompletedEvent>;
-	videoCompleted: BannerbearWebhook<'videoCompleted', VideoCompletedEvent>;
+	animationCompleted: BannerbearWebhook<
+		'animationCompleted',
+		AnimationCompletedEvent
+	>;
 };
 
 export type BannerbearBoundWebhooks = BindWebhooks<BannerbearWebhooks>;
@@ -152,12 +129,6 @@ const bannerbearEndpointsNested = {
 		getAccountInfo: Account.getAccountInfo,
 		getAuth: Account.getAuth,
 	},
-	projects: {
-		list: Projects.list,
-		get: Projects.get,
-		create: Projects.create,
-		hydrate: Projects.hydrate,
-	},
 	templates: {
 		list: Templates.list,
 		get: Templates.get,
@@ -165,35 +136,24 @@ const bannerbearEndpointsNested = {
 		delete: Templates.deleteTemplate,
 		import: Templates.importTemplate,
 	},
-	templateSets: {
-		list: TemplateSets.list,
-		get: TemplateSets.get,
-		create: TemplateSets.create,
-		update: TemplateSets.update,
-	},
 	images: {
 		list: Images.list,
 		get: Images.get,
-	},
-	videos: {
-		listVideos: Videos.listVideos,
-		listVideoTemplates: Videos.listVideoTemplates,
-		createVideoTemplate: Videos.createVideoTemplate,
+		create: Images.create,
 	},
 	animations: {
 		list: Animations.list,
 		get: Animations.get,
+		create: Animations.create,
 	},
-	collections: {
-		list: Collections.list,
+	animationTemplates: {
+		list: AnimationTemplates.list,
+		get: AnimationTemplates.get,
+		create: AnimationTemplates.create,
 	},
-	screenshots: {
-		list: Screenshots.list,
-		get: Screenshots.get,
-	},
-	signedUrls: {
-		getSignedBases: SignedUrls.getSignedBases,
-		createSignedBase: SignedUrls.createSignedBase,
+	instantUrls: {
+		list: InstantUrls.list,
+		create: InstantUrls.create,
 	},
 	webhooksApi: {
 		get: WebhooksApi.get,
@@ -201,8 +161,6 @@ const bannerbearEndpointsNested = {
 		delete: WebhooksApi.deleteWebhook,
 	},
 	misc: {
-		getFonts: Misc.getFonts,
-		listEffects: Misc.listEffects,
 		joinPdfs: Misc.joinPdfs,
 	},
 	workflows: {
@@ -218,8 +176,8 @@ const bannerbearWebhooksNested = {
 	image: {
 		imageCompleted: ImageWebhooks.imageCompleted,
 	},
-	video: {
-		videoCompleted: VideoWebhooks.videoCompleted,
+	animation: {
+		animationCompleted: AnimationWebhooks.animationCompleted,
 	},
 } as const;
 
@@ -231,22 +189,6 @@ export const bannerbearEndpointSchemas = {
 	'account.getAuth': {
 		input: BannerbearEndpointInputSchemas.getAuth,
 		output: BannerbearEndpointOutputSchemas.getAuth,
-	},
-	'projects.list': {
-		input: BannerbearEndpointInputSchemas.listProjects,
-		output: BannerbearEndpointOutputSchemas.listProjects,
-	},
-	'projects.get': {
-		input: BannerbearEndpointInputSchemas.getProject,
-		output: BannerbearEndpointOutputSchemas.getProject,
-	},
-	'projects.create': {
-		input: BannerbearEndpointInputSchemas.createProject,
-		output: BannerbearEndpointOutputSchemas.createProject,
-	},
-	'projects.hydrate': {
-		input: BannerbearEndpointInputSchemas.hydrateProject,
-		output: BannerbearEndpointOutputSchemas.hydrateProject,
 	},
 	'templates.list': {
 		input: BannerbearEndpointInputSchemas.listTemplates,
@@ -268,22 +210,6 @@ export const bannerbearEndpointSchemas = {
 		input: BannerbearEndpointInputSchemas.importTemplate,
 		output: BannerbearEndpointOutputSchemas.importTemplate,
 	},
-	'templateSets.list': {
-		input: BannerbearEndpointInputSchemas.listTemplateSets,
-		output: BannerbearEndpointOutputSchemas.listTemplateSets,
-	},
-	'templateSets.get': {
-		input: BannerbearEndpointInputSchemas.getTemplateSet,
-		output: BannerbearEndpointOutputSchemas.getTemplateSet,
-	},
-	'templateSets.create': {
-		input: BannerbearEndpointInputSchemas.createTemplateSet,
-		output: BannerbearEndpointOutputSchemas.createTemplateSet,
-	},
-	'templateSets.update': {
-		input: BannerbearEndpointInputSchemas.updateTemplateSet,
-		output: BannerbearEndpointOutputSchemas.updateTemplateSet,
-	},
 	'images.list': {
 		input: BannerbearEndpointInputSchemas.listImages,
 		output: BannerbearEndpointOutputSchemas.listImages,
@@ -292,45 +218,41 @@ export const bannerbearEndpointSchemas = {
 		input: BannerbearEndpointInputSchemas.getImage,
 		output: BannerbearEndpointOutputSchemas.getImage,
 	},
-	'videos.listVideos': {
-		input: BannerbearEndpointInputSchemas.listVideos,
-		output: BannerbearEndpointOutputSchemas.listVideos,
-	},
-	'videos.listVideoTemplates': {
-		input: BannerbearEndpointInputSchemas.listVideoTemplates,
-		output: BannerbearEndpointOutputSchemas.listVideoTemplates,
-	},
-	'videos.createVideoTemplate': {
-		input: BannerbearEndpointInputSchemas.createVideoTemplate,
-		output: BannerbearEndpointOutputSchemas.createVideoTemplate,
+	'images.create': {
+		input: BannerbearEndpointInputSchemas.createImage,
+		output: BannerbearEndpointOutputSchemas.createImage,
 	},
 	'animations.list': {
-		input: BannerbearEndpointInputSchemas.listAnimatedGifs,
-		output: BannerbearEndpointOutputSchemas.listAnimatedGifs,
+		input: BannerbearEndpointInputSchemas.listAnimations,
+		output: BannerbearEndpointOutputSchemas.listAnimations,
 	},
 	'animations.get': {
-		input: BannerbearEndpointInputSchemas.getAnimatedGif,
-		output: BannerbearEndpointOutputSchemas.getAnimatedGif,
+		input: BannerbearEndpointInputSchemas.getAnimation,
+		output: BannerbearEndpointOutputSchemas.getAnimation,
 	},
-	'collections.list': {
-		input: BannerbearEndpointInputSchemas.listCollections,
-		output: BannerbearEndpointOutputSchemas.listCollections,
+	'animations.create': {
+		input: BannerbearEndpointInputSchemas.createAnimation,
+		output: BannerbearEndpointOutputSchemas.createAnimation,
 	},
-	'screenshots.list': {
-		input: BannerbearEndpointInputSchemas.listScreenshots,
-		output: BannerbearEndpointOutputSchemas.listScreenshots,
+	'animationTemplates.list': {
+		input: BannerbearEndpointInputSchemas.listAnimationTemplates,
+		output: BannerbearEndpointOutputSchemas.listAnimationTemplates,
 	},
-	'screenshots.get': {
-		input: BannerbearEndpointInputSchemas.getScreenshot,
-		output: BannerbearEndpointOutputSchemas.getScreenshot,
+	'animationTemplates.get': {
+		input: BannerbearEndpointInputSchemas.getAnimationTemplate,
+		output: BannerbearEndpointOutputSchemas.getAnimationTemplate,
 	},
-	'signedUrls.getSignedBases': {
-		input: BannerbearEndpointInputSchemas.getSignedBases,
-		output: BannerbearEndpointOutputSchemas.getSignedBases,
+	'animationTemplates.create': {
+		input: BannerbearEndpointInputSchemas.createAnimationTemplate,
+		output: BannerbearEndpointOutputSchemas.createAnimationTemplate,
 	},
-	'signedUrls.createSignedBase': {
-		input: BannerbearEndpointInputSchemas.createSignedBase,
-		output: BannerbearEndpointOutputSchemas.createSignedBase,
+	'instantUrls.list': {
+		input: BannerbearEndpointInputSchemas.listInstantUrls,
+		output: BannerbearEndpointOutputSchemas.listInstantUrls,
+	},
+	'instantUrls.create': {
+		input: BannerbearEndpointInputSchemas.createInstantUrl,
+		output: BannerbearEndpointOutputSchemas.createInstantUrl,
 	},
 	'webhooksApi.get': {
 		input: BannerbearEndpointInputSchemas.getWebhook,
@@ -343,14 +265,6 @@ export const bannerbearEndpointSchemas = {
 	'webhooksApi.delete': {
 		input: BannerbearEndpointInputSchemas.deleteWebhook,
 		output: BannerbearEndpointOutputSchemas.deleteWebhook,
-	},
-	'misc.getFonts': {
-		input: BannerbearEndpointInputSchemas.getFonts,
-		output: BannerbearEndpointOutputSchemas.getFonts,
-	},
-	'misc.listEffects': {
-		input: BannerbearEndpointInputSchemas.listEffects,
-		output: BannerbearEndpointOutputSchemas.listEffects,
 	},
 	'misc.joinPdfs': {
 		input: BannerbearEndpointInputSchemas.joinPdfs,
@@ -386,10 +300,10 @@ const bannerbearWebhookSchemas = {
 		payload: ImageCompletedEventSchema,
 		response: ImageCompletedEventSchema,
 	},
-	'video.videoCompleted': {
-		description: 'Fires when a Bannerbear video finishes rendering',
-		payload: VideoCompletedEventSchema,
-		response: VideoCompletedEventSchema,
+	'animation.animationCompleted': {
+		description: 'Fires when a Bannerbear animation finishes rendering',
+		payload: AnimationCompletedEventSchema,
+		response: AnimationCompletedEventSchema,
 	},
 } as const satisfies RequiredPluginWebhookSchemas<
 	typeof bannerbearWebhooksNested
@@ -404,107 +318,71 @@ const bannerbearEndpointMeta = {
 	},
 	'account.getAuth': {
 		riskLevel: 'read',
-		description: 'Verify API authentication and check project context',
-	},
-	'projects.list': {
-		riskLevel: 'read',
-		description: 'List all projects in the account',
-	},
-	'projects.get': {
-		riskLevel: 'read',
-		description: 'Get a project by UID',
-	},
-	'projects.create': {
-		riskLevel: 'write',
-		description: 'Create a new project',
-	},
-	'projects.hydrate': {
-		riskLevel: 'write',
-		description: 'Hydrate a project by copying templates from another project',
+		description: 'Verify API authentication against the current account',
 	},
 	'templates.list': {
 		riskLevel: 'read',
-		description: 'List all templates in a project',
+		description: 'List image templates',
 	},
 	'templates.get': {
 		riskLevel: 'read',
-		description: 'Get a template by UID with layer defaults',
+		description: 'Get an image template by UID',
 	},
 	'templates.create': {
 		riskLevel: 'write',
-		description: 'Create a new blank template',
+		description: 'Create an image template',
 	},
 	'templates.delete': {
 		riskLevel: 'write',
-		description: 'Delete a template by UID',
+		description: 'Delete an image template by UID',
 	},
 	'templates.import': {
 		riskLevel: 'write',
-		description: 'Import a template from the Bannerbear template library',
-	},
-	'templateSets.list': {
-		riskLevel: 'read',
-		description: 'List all template sets in a project',
-	},
-	'templateSets.get': {
-		riskLevel: 'read',
-		description: 'Get a template set by UID',
-	},
-	'templateSets.create': {
-		riskLevel: 'write',
-		description: 'Create a new template set',
-	},
-	'templateSets.update': {
-		riskLevel: 'write',
-		description: 'Update a template set',
+		description: 'Install a publication as an image template',
 	},
 	'images.list': {
 		riskLevel: 'read',
-		description: 'List all images in a project',
+		description: 'List generated images',
 	},
 	'images.get': {
 		riskLevel: 'read',
 		description: 'Get an image by UID',
 	},
-	'videos.listVideos': {
-		riskLevel: 'read',
-		description: 'List all videos in a project',
-	},
-	'videos.listVideoTemplates': {
-		riskLevel: 'read',
-		description: 'List all video templates in a project',
-	},
-	'videos.createVideoTemplate': {
+	'images.create': {
 		riskLevel: 'write',
-		description: 'Create a new video template',
+		description: 'Generate an image from a template',
 	},
 	'animations.list': {
 		riskLevel: 'read',
-		description: 'List all animated GIFs in a project',
+		description: 'List generated animations',
 	},
 	'animations.get': {
 		riskLevel: 'read',
-		description: 'Get an animated GIF by UID',
+		description: 'Get an animation by UID',
 	},
-	'collections.list': {
-		riskLevel: 'read',
-		description: 'List all collections in a project',
-	},
-	'screenshots.list': {
-		riskLevel: 'read',
-		description: 'List all screenshots in a project',
-	},
-	'screenshots.get': {
-		riskLevel: 'read',
-		description: 'Get a screenshot by UID',
-	},
-	'signedUrls.getSignedBases': {
-		riskLevel: 'read',
-		description: 'Get signed URL bases for a template',
-	},
-	'signedUrls.createSignedBase': {
+	'animations.create': {
 		riskLevel: 'write',
-		description: 'Create a signed URL base for a template',
+		description: 'Generate an animation from a template',
+	},
+	'animationTemplates.list': {
+		riskLevel: 'read',
+		description: 'List animation templates',
+	},
+	'animationTemplates.get': {
+		riskLevel: 'read',
+		description: 'Get an animation template by UID',
+	},
+	'animationTemplates.create': {
+		riskLevel: 'write',
+		description: 'Create an animation template',
+	},
+	'instantUrls.list': {
+		riskLevel: 'read',
+		description: 'List Instant URLs',
+	},
+	'instantUrls.create': {
+		riskLevel: 'write',
+		description: 'Create an Instant URL for an image template',
 	},
 	'webhooksApi.get': {
 		riskLevel: 'read',
@@ -512,27 +390,19 @@ const bannerbearEndpointMeta = {
 	},
 	'webhooksApi.create': {
 		riskLevel: 'write',
-		description: 'Create a project-level webhook',
+		description: 'Create a webhook',
 	},
 	'webhooksApi.delete': {
 		riskLevel: 'write',
 		description: 'Delete a webhook by UID',
 	},
-	'misc.getFonts': {
-		riskLevel: 'read',
-		description: 'Get all available fonts',
-	},
-	'misc.listEffects': {
-		riskLevel: 'read',
-		description: 'List all available image effects',
-	},
 	'misc.joinPdfs': {
 		riskLevel: 'write',
-		description: 'Merge multiple PDF files into one',
+		description: 'Merge image or PDF URLs into one PDF',
 	},
 	'workflows.listWorkflows': {
 		riskLevel: 'read',
-		description: 'List all workflows in the workspace',
+		description: 'List workflows in the workspace',
 	},
 	'workflows.getWorkflow': {
 		riskLevel: 'read',
@@ -548,7 +418,7 @@ const bannerbearEndpointMeta = {
 	},
 	'workflows.listWorkflowRuns': {
 		riskLevel: 'read',
-		description: 'List all workflow runs',
+		description: 'List workflow runs',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof bannerbearEndpointsNested
@@ -597,12 +467,8 @@ export function bannerbear<const T extends BannerbearPluginOptions>(
 		endpointSchemas: bannerbearEndpointSchemas,
 		webhookSchemas: bannerbearWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// Bannerbear webhooks are identified by having a uid field in the body
-			// and coming from Bannerbear's servers. There's no signature header.
-			// We check for the presence of the body having uid + status fields.
-			if ('x-bannerbear-signature' in headers) return true;
-			// Fallback: check body structure for Bannerbear-like payloads
+			if ('x-bannerbear-signature' in request.headers) return true;
+			if ('x-webhook-signature' in request.headers) return true;
 			const body =
 				typeof request.body === 'string'
 					? (() => {
@@ -613,12 +479,7 @@ export function bannerbear<const T extends BannerbearPluginOptions>(
 							}
 						})()
 					: request.body;
-			return (
-				body !== null &&
-				typeof body === 'object' &&
-				'uid' in body &&
-				'status' in body
-			);
+			return isBannerbearCompletionPayload(body);
 		},
 		pluginTenantWebhookMatcher: matchBannerbearTenantWebhook,
 		errorHandlers: {
@@ -632,7 +493,10 @@ export function bannerbear<const T extends BannerbearPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('bannerbear', 'webhook_signature');
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && options.key) {
@@ -641,10 +505,13 @@ export function bannerbear<const T extends BannerbearPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('bannerbear', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('bannerbear', 'api_key');
 		},
 	} satisfies InternalBannerbearPlugin;
 }
@@ -652,16 +519,16 @@ export function bannerbear<const T extends BannerbearPluginOptions>(
 export type {
 	BannerbearEndpointInputs,
 	BannerbearEndpointOutputs,
-	CreateProjectInput,
-	CreateProjectResponse,
-	CreateSignedBaseInput,
-	CreateSignedBaseResponse,
+	CreateAnimationInput,
+	CreateAnimationResponse,
+	CreateAnimationTemplateInput,
+	CreateAnimationTemplateResponse,
+	CreateImageInput,
+	CreateImageResponse,
+	CreateInstantUrlInput,
+	CreateInstantUrlResponse,
 	CreateTemplateInput,
 	CreateTemplateResponse,
-	CreateTemplateSetInput,
-	CreateTemplateSetResponse,
-	CreateVideoTemplateInput,
-	CreateVideoTemplateResponse,
 	CreateWebhookInput,
 	CreateWebhookResponse,
 	CreateWorkflowRunInput,
@@ -672,65 +539,43 @@ export type {
 	DeleteWebhookResponse,
 	GetAccountInfoInput,
 	GetAccountInfoResponse,
-	GetAnimatedGifInput,
-	GetAnimatedGifResponse,
+	GetAnimationInput,
+	GetAnimationResponse,
+	GetAnimationTemplateInput,
+	GetAnimationTemplateResponse,
 	GetAuthInput,
 	GetAuthResponse,
-	GetFontsInput,
-	GetFontsResponse,
 	GetImageInput,
 	GetImageResponse,
-	GetProjectInput,
-	GetProjectResponse,
-	GetScreenshotInput,
-	GetScreenshotResponse,
-	GetSignedBasesInput,
-	GetSignedBasesResponse,
 	GetTemplateInput,
 	GetTemplateResponse,
-	GetTemplateSetInput,
-	GetTemplateSetResponse,
 	GetWebhookInput,
 	GetWebhookResponse,
 	GetWorkflowInput,
 	GetWorkflowResponse,
 	GetWorkflowRunInput,
 	GetWorkflowRunResponse,
-	HydrateProjectInput,
-	HydrateProjectResponse,
 	ImportTemplateInput,
 	ImportTemplateResponse,
 	JoinPdfsInput,
 	JoinPdfsResponse,
-	ListAnimatedGifsInput,
-	ListAnimatedGifsResponse,
-	ListCollectionsInput,
-	ListCollectionsResponse,
-	ListEffectsInput,
-	ListEffectsResponse,
+	ListAnimationsInput,
+	ListAnimationsResponse,
+	ListAnimationTemplatesInput,
+	ListAnimationTemplatesResponse,
 	ListImagesInput,
 	ListImagesResponse,
-	ListProjectsInput,
-	ListProjectsResponse,
-	ListScreenshotsInput,
-	ListScreenshotsResponse,
-	ListTemplateSetsInput,
-	ListTemplateSetsResponse,
+	ListInstantUrlsInput,
+	ListInstantUrlsResponse,
 	ListTemplatesInput,
 	ListTemplatesResponse,
-	ListVideosInput,
-	ListVideosResponse,
-	ListVideoTemplatesInput,
-	ListVideoTemplatesResponse,
 	ListWorkflowRunsInput,
 	ListWorkflowRunsResponse,
 	ListWorkflowsInput,
 	ListWorkflowsResponse,
-	UpdateTemplateSetInput,
-	UpdateTemplateSetResponse,
 } from './endpoints/types';
 export type {
+	AnimationCompletedEvent,
 	BannerbearWebhookOutputs,
 	ImageCompletedEvent,
-	VideoCompletedEvent,
 } from './webhooks/types';

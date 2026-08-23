@@ -5,35 +5,23 @@ import type { BannerbearEndpointOutputs } from './types';
 
 export const getAccountInfo: BannerbearEndpoints['getAccountInfo'] = async (
 	ctx,
-	input,
+	_input,
 ) => {
 	const response = await makeBannerbearRequest<
 		BannerbearEndpointOutputs['getAccountInfo']
 	>('/v5/account', ctx.key, {
 		method: 'GET',
-		query: { project_id: input.project_id },
 	});
-	await logEventFromContext(
-		ctx,
-		'bannerbear.account.get',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'bannerbear.account.get', {}, 'completed');
 	return response;
 };
 
-export const getAuth: BannerbearEndpoints['getAuth'] = async (ctx, input) => {
+export const getAuth: BannerbearEndpoints['getAuth'] = async (ctx, _input) => {
 	const response = await makeBannerbearRequest<
 		BannerbearEndpointOutputs['getAuth']
 	>('/v5/account', ctx.key, {
 		method: 'GET',
-		query: { project_id: input.project_id },
 	});
-	await logEventFromContext(
-		ctx,
-		'bannerbear.auth.get',
-		{ ...input },
-		'completed',
-	);
+	await logEventFromContext(ctx, 'bannerbear.auth.get', {}, 'completed');
 	return response;
 };
