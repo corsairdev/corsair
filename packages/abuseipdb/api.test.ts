@@ -1,4 +1,3 @@
-import 'dotenv/config';
 import { makeAbuseIPDBRequest } from './client';
 import type {
 	CheckBlockResponse,
@@ -103,7 +102,8 @@ describeOrSkip('AbuseIPDB API Type Tests', () => {
 // Write operations mutate a real AbuseIPDB account (clear-address deletes
 // every report filed against the IP), so they only run when explicitly
 // opted in via ABUSEIPDB_WRITE_ENABLED=true.
-const describeWriteOrSkip = ABUSEIPDB_WRITE_ENABLED ? describe : describe.skip;
+const describeWriteOrSkip =
+	ABUSEIPDB_API_KEY && ABUSEIPDB_WRITE_ENABLED ? describe : describe.skip;
 
 describeWriteOrSkip('AbuseIPDB API write tests', () => {
 	it('report accepts a report for a well-known test IP', async () => {
