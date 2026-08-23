@@ -28,10 +28,10 @@ export const BaseProviders = [
 	'agenty',
 	'ahrefs',
 	'aimlapi',
-	'allimagesai',
 	'airtable',
 	'alchemy',
 	'algolia',
+	'allimagesai',
 	'alphavantage',
 	'altoviz',
 	'alttextai',
@@ -50,6 +50,7 @@ export const BaseProviders = [
 	'apininjas',
 	'apipie',
 	'apisports',
+	'appdrag',
 	'asana',
 	'asindataapi',
 	'asticaai',
@@ -131,6 +132,7 @@ export const BaseProviders = [
 	'mailchimp',
 	'mailtrap',
 	'monday',
+	'myfirstplugin',
 	'neon',
 	'nextdns',
 	'notion',
@@ -205,10 +207,10 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
-	allimagesai: 'All Images AI',
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
@@ -227,6 +229,7 @@ export const ProviderDisplayNames = {
 	apininjas: 'API Ninjas',
 	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
+	appdrag: 'Appdrag',
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
 	asticaai: 'Astica AI',
@@ -308,6 +311,7 @@ export const ProviderDisplayNames = {
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
 	monday: 'Monday',
+	myfirstplugin: 'MyFirstPlugin',
 	neon: 'Neon',
 	nextdns: 'NextDNS',
 	notion: 'Notion',
@@ -389,10 +393,10 @@ export type AllProviders =
 	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
-	| 'allimagesai'
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
+	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
 	| 'alttextai'
@@ -411,6 +415,7 @@ export type AllProviders =
 	| 'apininjas'
 	| 'apipie'
 	| 'apisports'
+	| 'appdrag'
 	| 'asana'
 	| 'asindataapi'
 	| 'asticaai'
@@ -492,6 +497,7 @@ export type AllProviders =
 	| 'mailchimp'
 	| 'mailtrap'
 	| 'monday'
+	| 'myfirstplugin'
 	| 'neon'
 	| 'nextdns'
 	| 'notion'
