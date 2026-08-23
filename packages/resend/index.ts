@@ -318,7 +318,7 @@ const resendWebhookSchemas = {
 		payload: ContactCreatedEventSchema,
 		response: ContactCreatedEventSchema,
 	},
-	'contacts.update': {
+	'contacts.updated': {
 		description: 'A contact was updated',
 		payload: ContactUpdatedEventSchema,
 		response: ContactUpdatedEventSchema,

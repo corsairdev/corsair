@@ -25,15 +25,29 @@ export const contactCreated: ResendWebhooks['contactCreated'] = {
 			};
 		}
 
-		console.log('👤 Resend Contact Created Event:', {
-			contact_id: event.data.contact_id,
-			email: event.data.email,
-		});
-
+		// Reject if contact already exists (stale event after deletion)
 		let corsairEntityId = '';
 
 		if (ctx.db.contacts && event.data.contact_id) {
 			try {
+				// Check if contact was previously deleted (tombstone check).
+				// `data.deleted` is not part of the typed schema — Resend's
+				// contact payload may carry it on stale events — so we read it
+				// through an unknown narrow.
+				const previouslyDeleted = await ctx.db.contacts.findByEntityId(
+					event.data.contact_id,
+				);
+				const tombstoneDeleted = Boolean(
+					(previouslyDeleted?.data as { deleted?: unknown } | undefined)
+						?.deleted,
+				);
+				if (previouslyDeleted && tombstoneDeleted) {
+					// Contact was deleted, don't recreate
+					return {
+						success: true,
+						data: event,
+					};
+				}
 				const entity = await ctx.db.contacts.upsertByEntityId(
 					event.data.contact_id,
 					{
@@ -87,15 +101,26 @@ export const contactUpdated: ResendWebhooks['contactUpdated'] = {
 			};
 		}
 
-		console.log('🔄 Resend Contact Updated Event:', {
-			contact_id: event.data.contact_id,
-			email: event.data.email,
-		});
-
+		// Reject if contact was previously deleted (stale event after deletion)
 		let corsairEntityId = '';
 
 		if (ctx.db.contacts && event.data.contact_id) {
 			try {
+				// Check if contact was previously deleted (tombstone check).
+				const previouslyDeleted = await ctx.db.contacts.findByEntityId(
+					event.data.contact_id,
+				);
+				const tombstoneDeleted = Boolean(
+					(previouslyDeleted?.data as { deleted?: unknown } | undefined)
+						?.deleted,
+				);
+				if (previouslyDeleted && tombstoneDeleted) {
+					// Contact was deleted, don't update
+					return {
+						success: true,
+						data: event,
+					};
+				}
 				const entity = await ctx.db.contacts.upsertByEntityId(
 					event.data.contact_id,
 					{
@@ -149,10 +174,23 @@ export const contactDeleted: ResendWebhooks['contactDeleted'] = {
 			};
 		}
 
-		console.log('🗑️ Resend Contact Deleted Event:', {
-			contact_id: event.data.contact_id,
-			email: event.data.email,
-		});
+		// Persist deletion state (tombstone) to prevent stale recreate events.
+		// The `deleted` flag lives outside the typed ResendContact schema, so
+		// we round-trip it via an unknown narrow.
+		if (ctx.db.contacts && event.data.contact_id) {
+			try {
+				const tombstone = {
+					...(event.data as Record<string, unknown>),
+					id: event.data.contact_id,
+					deleted: true,
+				} as unknown as Parameters<
+					typeof ctx.db.contacts.upsertByEntityId
+				>[1];
+				await ctx.db.contacts.upsertByEntityId(event.data.contact_id, tombstone);
+			} catch (error) {
+				console.warn('Failed to persist deletion tombstone:', error);
+			}
+		}
 
 		if (ctx.db.contacts && event.data.contact_id) {
 			try {

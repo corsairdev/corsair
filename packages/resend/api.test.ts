@@ -1,8 +1,15 @@
 import 'dotenv/config';
 import { makeResendRequest } from './client';
 import type {
+	ContactsCreateResponse,
+	ContactsDeleteResponse,
+	ContactsGetResponse,
+	ContactsListResponse,
+	ContactsUpdateResponse,
 	CreateDomainResponse,
 	DeleteDomainResponse,
+	EmailsBatchResponse,
+	EmailsCancelResponse,
 	GetDomainResponse,
 	GetEmailResponse,
 	ListDomainsResponse,
@@ -68,6 +75,59 @@ describe('Resend API Type Tests', () => {
 			const result = response;
 
 			ResendEndpointOutputSchemas.emailsGet.parse(result);
+		});
+
+		it('emailsBatch returns correct type', async () => {
+			const response = await makeResendRequest<EmailsBatchResponse>(
+				'emails/batch',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						emails: [
+							{
+								from: TEST_FROM_EMAIL,
+								to: [TEST_TO_EMAIL],
+								subject: `Batch test ${Date.now()}-1`,
+								html: '<p>batch 1</p>',
+							},
+							{
+								from: TEST_FROM_EMAIL,
+								to: [TEST_TO_EMAIL],
+								subject: `Batch test ${Date.now()}-2`,
+								html: '<p>batch 2</p>',
+							},
+						],
+					},
+				},
+			);
+			const result = response;
+
+			ResendEndpointOutputSchemas.emailsBatch.parse(result);
+			expect(Array.isArray(result.data)).toBe(true);
+		});
+
+		it('emailsCancel returns correct type', async () => {
+			// Pick the most recent email as a stand-in; cancellation only
+			// succeeds for scheduled emails — we just verify shape + path.
+			const list = await makeResendRequest<ListEmailsResponse>(
+				'emails',
+				TEST_API_KEY,
+				{ query: { limit: 1 } },
+			);
+			const emailId = list.data[0]?.id;
+			if (!emailId) {
+				return;
+			}
+
+			const response = await makeResendRequest<EmailsCancelResponse>(
+				`emails/${emailId}`,
+				TEST_API_KEY,
+				{ method: 'DELETE' },
+			);
+			const result = response;
+
+			ResendEndpointOutputSchemas.emailsCancel.parse(result);
 		});
 	});
 
@@ -173,6 +233,125 @@ describe('Resend API Type Tests', () => {
 			const result = response;
 
 			ResendEndpointOutputSchemas.domainsDelete.parse(result);
+		});
+	});
+
+	describe('contacts', () => {
+		// Use a unique email per run so re-runs don't collide on the
+		// Resend-side "contact already exists" path.
+		const testContactEmail = `corsair-test+${Date.now()}@example.com`;
+
+		it('contactsCreate returns correct type', async () => {
+			const response = await makeResendRequest<ContactsCreateResponse>(
+				'contacts',
+				TEST_API_KEY,
+				{
+					method: 'POST',
+					body: {
+						email: testContactEmail,
+						first_name: 'Corsair',
+						last_name: 'Test',
+						unsubscribed: false,
+					},
+				},
+			);
+			const result = response;
+
+			ResendEndpointOutputSchemas.contactsCreate.parse(result);
+			expect(result.email).toBe(testContactEmail);
+
+			// Cleanup: delete the contact we just created so the suite is
+			// idempotent across runs.
+			if (result.id) {
+				await makeResendRequest<ContactsDeleteResponse>(
+					`contacts/${result.id}`,
+					TEST_API_KEY,
+					{ method: 'DELETE' },
+				);
+			}
+		});
+
+		it('contactsList returns correct type', async () => {
+			const response = await makeResendRequest<ContactsListResponse>(
+				'contacts',
+				TEST_API_KEY,
+				{ query: { limit: 10 } },
+			);
+			const result = response;
+
+			ResendEndpointOutputSchemas.contactsList.parse(result);
+			expect(Array.isArray(result.data)).toBe(true);
+		});
+
+		it('contactsGet returns correct type', async () => {
+			// Find the contact we just created via list, by email match.
+			const list = await makeResendRequest<ContactsListResponse>(
+				'contacts',
+				TEST_API_KEY,
+				{ query: { limit: 100 } },
+			);
+			const found = list.data.find((c) => c.email === testContactEmail);
+			if (!found) {
+				return;
+			}
+
+			const response = await makeResendRequest<ContactsGetResponse>(
+				`contacts/${found.id}`,
+				TEST_API_KEY,
+			);
+			const result = response;
+
+			ResendEndpointOutputSchemas.contactsGet.parse(result);
+			expect(result.id).toBe(found.id);
+		});
+
+		it('contactsUpdate returns correct type', async () => {
+			const list = await makeResendRequest<ContactsListResponse>(
+				'contacts',
+				TEST_API_KEY,
+				{ query: { limit: 100 } },
+			);
+			const found = list.data.find((c) => c.email === testContactEmail);
+			if (!found) {
+				return;
+			}
+
+			const response = await makeResendRequest<ContactsUpdateResponse>(
+				`contacts/${found.id}`,
+				TEST_API_KEY,
+				{
+					method: 'PATCH',
+					body: {
+						first_name: 'CorsairUpdated',
+					},
+				},
+			);
+			const result = response;
+
+			ResendEndpointOutputSchemas.contactsUpdate.parse(result);
+			expect(result.first_name).toBe('CorsairUpdated');
+		});
+
+		it('contactsDelete returns correct type', async () => {
+			const list = await makeResendRequest<ContactsListResponse>(
+				'contacts',
+				TEST_API_KEY,
+				{ query: { limit: 100 } },
+			);
+			const found = list.data.find((c) => c.email === testContactEmail);
+			if (!found) {
+				return;
+			}
+
+			const response = await makeResendRequest<ContactsDeleteResponse>(
+				`contacts/${found.id}`,
+				TEST_API_KEY,
+				{ method: 'DELETE' },
+			);
+			const result = response;
+
+			ResendEndpointOutputSchemas.contactsDelete.parse(result);
+			expect(result.deleted).toBe(true);
 		});
 	});
 });

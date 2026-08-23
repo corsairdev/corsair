@@ -66,7 +66,7 @@ const DomainsVerifyInputSchema = z.object({
 });
 
 const EmailsBatchInputSchema = z.object({
-	emails: z.array(EmailsSendInputSchema),
+	emails: z.array(EmailsSendInputSchema).max(100),
 });
 
 const EmailsCancelInputSchema = z.object({
