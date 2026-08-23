@@ -1,9 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-/**
- * Custom error class representing API errors specific to Anonyflow integration.
- */
 export class AnonyflowAPIError extends Error {
 	constructor(
 		message: string,
@@ -16,18 +13,6 @@ export class AnonyflowAPIError extends Error {
 
 const ANONYFLOW_API_BASE = 'https://api.anonyflow.com';
 
-/**
- * Dispatches an HTTP request to the Anonyflow API, handling header-based
- * x-api-key authentication and wrapping generic errors.
- *
- * @template T The expected response payload type.
- * @param endpoint The API endpoint path (e.g. '/anony-value').
- * @param apiKey The secret API key used in x-api-key authentication.
- * @param options Configurable options for the request including method, query, and body.
- * @returns A promise resolving to the API response.
- * @throws {ApiError} Rethrows standard Corsair ApiError instances.
- * @throws {AnonyflowAPIError} For other unexpected standard errors.
- */
 export async function makeAnonyflowRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -37,6 +22,10 @@ export async function makeAnonyflowRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	if (!apiKey.trim()) {
+		throw new AnonyflowAPIError('Anonyflow API key is required');
+	}
+
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -44,7 +33,7 @@ export async function makeAnonyflowRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			'x-api-key': apiKey,
