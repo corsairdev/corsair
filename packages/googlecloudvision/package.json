@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/googlecloudvision",
   "version": "0.1.0",
-  "description": "GoogleCloudVision plugin for Corsair",
+  "description": "Google Cloud Vision plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
