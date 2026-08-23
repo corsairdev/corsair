@@ -28,10 +28,10 @@ export const BaseProviders = [
 	'agenty',
 	'ahrefs',
 	'aimlapi',
-	'allimagesai',
 	'airtable',
 	'alchemy',
 	'algolia',
+	'allimagesai',
 	'alphavantage',
 	'altoviz',
 	'alttextai',
@@ -120,6 +120,7 @@ export const BaseProviders = [
 	'heygen',
 	'hubspot',
 	'huggingface',
+	'imgbb',
 	'insightoai',
 	'instagram',
 	'intercom',
@@ -205,10 +206,10 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
-	allimagesai: 'All Images AI',
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
@@ -297,6 +298,7 @@ export const ProviderDisplayNames = {
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
+	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -389,10 +391,10 @@ export type AllProviders =
 	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
-	| 'allimagesai'
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
+	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
 	| 'alttextai'
@@ -481,6 +483,7 @@ export type AllProviders =
 	| 'heygen'
 	| 'hubspot'
 	| 'huggingface'
+	| 'imgbb'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'

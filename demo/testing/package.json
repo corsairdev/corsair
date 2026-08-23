@@ -34,6 +34,7 @@
     "@corsair-dev/googlecalendar": "workspace:*",
     "@corsair-dev/googlesheets": "workspace:*",
     "@corsair-dev/hubspot": "workspace:^",
+    "@corsair-dev/imgbb": "workspace:*",
     "@corsair-dev/linear": "workspace:*",
     "@corsair-dev/mcp": "workspace:*",
     "@corsair-dev/notion": "workspace:*",
