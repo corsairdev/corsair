@@ -28,10 +28,10 @@ export const BaseProviders = [
 	'agenty',
 	'ahrefs',
 	'aimlapi',
-	'allimagesai',
 	'airtable',
 	'alchemy',
 	'algolia',
+	'allimagesai',
 	'alphavantage',
 	'altoviz',
 	'alttextai',
@@ -78,6 +78,7 @@ export const BaseProviders = [
 	'circleci',
 	'clientary',
 	'cloudflare',
+	'cloudflarebrowserrendering',
 	'cloudinary',
 	'collegefootballdata',
 	'confluence',
@@ -206,10 +207,10 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
-	allimagesai: 'All Images AI',
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
@@ -256,6 +257,7 @@ export const ProviderDisplayNames = {
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	cloudflare: 'Cloudflare',
+	cloudflarebrowserrendering: 'CloudflareBrowserRendering',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
@@ -391,10 +393,10 @@ export type AllProviders =
 	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
-	| 'allimagesai'
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
+	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
 	| 'alttextai'
@@ -441,6 +443,7 @@ export type AllProviders =
 	| 'circleci'
 	| 'clientary'
 	| 'cloudflare'
+	| 'cloudflarebrowserrendering'
 	| 'cloudinary'
 	| 'collegefootballdata'
 	| 'confluence'
