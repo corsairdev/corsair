@@ -1,4 +1,4 @@
-import { makeAnonyflowRequest } from '../client';
+import { AnonyflowAPIError, makeAnonyflowRequest } from '../client';
 import type { AnonyflowContext } from '../index';
 import type {
 	AnonymizeInput,
@@ -9,85 +9,99 @@ import type {
 	DeanonymizeOutput,
 	DeanonymizePacketInput,
 	DeanonymizePacketOutput,
-	GetStatusInput,
-	GetStatusOutput,
 } from './types';
 import {
 	AnonyflowEndpointInputSchemas,
 	AnonyflowEndpointOutputSchemas,
 } from './types';
 
-/**
- * Anonymizes a single text value using Anonyflow's value-based anonymization API.
- * Maps input to the correct request body format and extracts the response value.
- *
- * @param context The Corsair plugin context.
- * @param input The text input to anonymize.
- * @returns A promise resolving to the anonymized text value.
- */
+function extractValue(response: unknown): string {
+	if (typeof response === 'string' && response.length > 0) {
+		return response;
+	}
+	if (response === null || typeof response !== 'object') {
+		throw new AnonyflowAPIError('Anonyflow returned an empty or invalid value');
+	}
+
+	const payload = response as Record<string, unknown>;
+	if (payload.status === false) {
+		throw new AnonyflowAPIError('Anonyflow rejected the request');
+	}
+
+	const value = payload.value;
+	if (typeof value === 'string' && value.length > 0) {
+		return value;
+	}
+	if (
+		Array.isArray(value) &&
+		typeof value[0] === 'string' &&
+		value[0].length > 0
+	) {
+		return value[0];
+	}
+
+	throw new AnonyflowAPIError('Anonyflow returned an empty or invalid value');
+}
+
+function requirePacketSuccess(response: unknown): {
+	status: true;
+	value: Record<string, unknown>;
+} {
+	if (
+		response !== null &&
+		typeof response === 'object' &&
+		(response as { status?: unknown }).status === false
+	) {
+		throw new AnonyflowAPIError('Anonyflow rejected the request');
+	}
+	return response as { status: true; value: Record<string, unknown> };
+}
+
 async function anonymize(
 	context: AnonyflowContext,
 	input: AnonymizeInput,
 ): Promise<AnonymizeOutput> {
 	const validatedInput = AnonyflowEndpointInputSchemas.anonymize.parse(input);
-	const apiKey = context.key ?? '';
-	const response = await makeAnonyflowRequest<{
-		status: boolean;
-		value: string[];
-	}>('/anony-value', apiKey, {
-		method: 'POST',
-		body: { data: [validatedInput.text] },
+	const response = await makeAnonyflowRequest<unknown>(
+		'/anony-value',
+		context.key ?? '',
+		{
+			method: 'POST',
+			body: { data: validatedInput.text },
+		},
+	);
+	return AnonyflowEndpointOutputSchemas.anonymize.parse({
+		anonymizedText: extractValue(response),
 	});
-	const output: AnonymizeOutput = {
-		anonymizedText: response.value[0] ?? '',
-	};
-	return AnonyflowEndpointOutputSchemas.anonymize.parse(output);
 }
 
-/**
- * Deanonymizes a single text value using Anonyflow's value-based deanonymization API.
- * Maps input to the correct request body format and extracts the decrypted value.
- *
- * @param context The Corsair plugin context.
- * @param input The anonymized text to deanonymize.
- * @returns A promise resolving to the original text.
- */
 async function deanonymize(
 	context: AnonyflowContext,
 	input: DeanonymizeInput,
 ): Promise<DeanonymizeOutput> {
 	const validatedInput = AnonyflowEndpointInputSchemas.deanonymize.parse(input);
-	const apiKey = context.key ?? '';
-	const response = await makeAnonyflowRequest<{
-		status: boolean;
-		value: string[];
-	}>('/deanony-value', apiKey, {
-		method: 'POST',
-		body: { data: [validatedInput.anonymizedText] },
+	const response = await makeAnonyflowRequest<unknown>(
+		'/deanony-value',
+		context.key ?? '',
+		{
+			method: 'POST',
+			body: { data: validatedInput.anonymizedText },
+		},
+	);
+	return AnonyflowEndpointOutputSchemas.deanonymize.parse({
+		originalText: extractValue(response),
 	});
-	const output: DeanonymizeOutput = {
-		originalText: response.value[0] ?? '',
-	};
-	return AnonyflowEndpointOutputSchemas.deanonymize.parse(output);
 }
 
-/**
- * Anonymizes a JSON data packet (object) by applying encryption to specific keys.
- *
- * @param context The Corsair plugin context.
- * @param input The data packet and keys to anonymize.
- * @returns A promise resolving to the anonymized packet response.
- */
 async function anonymizePacket(
 	context: AnonyflowContext,
 	input: AnonymizePacketInput,
 ): Promise<AnonymizePacketOutput> {
 	const validatedInput =
 		AnonyflowEndpointInputSchemas.anonymizePacket.parse(input);
-	const apiKey = context.key ?? '';
 	const response = await makeAnonyflowRequest<unknown>(
 		'/anony-packet',
-		apiKey,
+		context.key ?? '',
 		{
 			method: 'POST',
 			body: {
@@ -96,26 +110,20 @@ async function anonymizePacket(
 			},
 		},
 	);
-	return AnonyflowEndpointOutputSchemas.anonymizePacket.parse(response);
+	return AnonyflowEndpointOutputSchemas.anonymizePacket.parse(
+		requirePacketSuccess(response),
+	);
 }
 
-/**
- * Deanonymizes a JSON data packet (object) by applying decryption to specific keys.
- *
- * @param context The Corsair plugin context.
- * @param input The anonymized data packet and keys to decrypt.
- * @returns A promise resolving to the deanonymized packet response.
- */
 async function deanonymizePacket(
 	context: AnonyflowContext,
 	input: DeanonymizePacketInput,
 ): Promise<DeanonymizePacketOutput> {
 	const validatedInput =
 		AnonyflowEndpointInputSchemas.deanonymizePacket.parse(input);
-	const apiKey = context.key ?? '';
 	const response = await makeAnonyflowRequest<unknown>(
 		'/deanony-packet',
-		apiKey,
+		context.key ?? '',
 		{
 			method: 'POST',
 			body: {
@@ -124,37 +132,14 @@ async function deanonymizePacket(
 			},
 		},
 	);
-	return AnonyflowEndpointOutputSchemas.deanonymizePacket.parse(response);
+	return AnonyflowEndpointOutputSchemas.deanonymizePacket.parse(
+		requirePacketSuccess(response),
+	);
 }
 
-/**
- * Retrieves the connection status of the Anonyflow API key.
- * Note: The GET /test endpoint returns a status object.
- * Verified: Returns a boolean status matching the Composio/Metorial action signature.
- *
- * @param context The Corsair plugin context.
- * @param input The status check request options.
- * @returns A promise resolving to the API status response.
- */
-async function getStatus(
-	context: AnonyflowContext,
-	input: GetStatusInput,
-): Promise<GetStatusOutput> {
-	const validatedInput = AnonyflowEndpointInputSchemas.getStatus.parse(input);
-	const apiKey = context.key ?? '';
-	const response = await makeAnonyflowRequest<unknown>('/test', apiKey, {
-		method: 'GET',
-	});
-	return AnonyflowEndpointOutputSchemas.getStatus.parse(response);
-}
-
-/**
- * Exported core operations for the Anonyflow plugin.
- */
 export const AnonyflowOperations = {
 	anonymize,
 	deanonymize,
 	anonymizePacket,
 	deanonymizePacket,
-	getStatus,
 };
