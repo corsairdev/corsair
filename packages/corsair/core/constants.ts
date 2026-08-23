@@ -28,10 +28,10 @@ export const BaseProviders = [
 	'agenty',
 	'ahrefs',
 	'aimlapi',
-	'allimagesai',
 	'airtable',
 	'alchemy',
 	'algolia',
+	'allimagesai',
 	'alphavantage',
 	'altoviz',
 	'alttextai',
@@ -56,6 +56,7 @@ export const BaseProviders = [
 	'asyncinterview',
 	'attio',
 	'ayrshare',
+	'bannerbear',
 	'basecamp',
 	'baselinker',
 	'basin',
@@ -205,10 +206,10 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
-	allimagesai: 'All Images AI',
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
@@ -233,6 +234,7 @@ export const ProviderDisplayNames = {
 	asyncinterview: 'Async Interview',
 	attio: 'Attio',
 	ayrshare: 'Ayrshare',
+	bannerbear: 'Bannerbear',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
@@ -389,10 +391,10 @@ export type AllProviders =
 	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
-	| 'allimagesai'
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
+	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
 	| 'alttextai'
@@ -417,6 +419,7 @@ export type AllProviders =
 	| 'asyncinterview'
 	| 'attio'
 	| 'ayrshare'
+	| 'bannerbear'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
