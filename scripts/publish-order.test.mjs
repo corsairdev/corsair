@@ -32,11 +32,15 @@ assert.deepEqual(
 	['attio', 'openrouter'],
 );
 
-// A cycle must not hang and must still emit every node exactly once.
-const cyc = order([
-	{ name: 'a', deps: ['b'] },
-	{ name: 'b', deps: ['a'] },
-]);
-assert.deepEqual([...cyc].sort(), ['a', 'b']);
+// A dependency cycle is a malformed release graph — reject it loudly rather
+// than linearize, which would let a member publish before another member fails.
+assert.throws(
+	() =>
+		orderForPublish([
+			{ name: 'a', deps: ['b'] },
+			{ name: 'b', deps: ['a'] },
+		]),
+	/cycle/i,
+);
 
 console.log('publish-order: all assertions passed');

@@ -6,11 +6,15 @@ import { orderForPublish } from './publish-order.mjs';
 
 const PACKAGES_DIR = 'packages';
 
-// Runtime deps declared with the workspace protocol get their spec rewritten to
-// a fixed version on publish, so a dependent must not ship before its dependency
-// lands on npm. peer/dev deps don't affect a consumer's install, so ignore them.
+// Deps declared with the workspace protocol get their spec rewritten to a fixed
+// version on publish, so a dependent must not ship before its dependency lands
+// on npm. Covers runtime deps and optional deps (corsair's platform-gated frpc
+// binaries); peer/dev deps don't affect a consumer's install, so skip them.
 function workspaceDeps(pkg) {
-	return Object.entries(pkg.dependencies ?? {})
+	return Object.entries({
+		...(pkg.dependencies ?? {}),
+		...(pkg.optionalDependencies ?? {}),
+	})
 		.filter(
 			([, spec]) => typeof spec === 'string' && spec.startsWith('workspace:'),
 		)
