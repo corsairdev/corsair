@@ -1,7 +1,3 @@
-// TODO: Define your database entities here
-// export const GriptapeExample = z.object({
-// 	id: z.string(),
-// 	name: z.string(),
-// 	created_at: z.coerce.date().nullable().optional(),
-// });
-// export type GriptapeExample = z.infer<typeof GriptapeExample>;
+// Griptape has no persisted database entities yet. Assistant metadata is
+// fetched live from the Griptape Cloud API on each call, so this plugin's
+// schema declares an empty entity set.

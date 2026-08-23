@@ -1,27 +1,24 @@
 import { z } from 'zod';
 
-const UUID_REGEX =
-	/^[0-9(a-f|A-F)]{8}-[0-9(a-f|A-F)]{4}-4[0-9(a-f|A-F)]{3}-[89ab][0-9(a-f|A-F)]{3}-[0-9(a-f|A-F)]{12}$/;
-
 export const AssistantDetailSchema = z.object({
-	assistant_id: z.string().regex(UUID_REGEX),
+	assistant_id: z.uuid(),
 	created_at: z.string().datetime(),
 	created_by: z.string(),
 	description: z.string(),
 	input: z.string().optional(),
-	knowledge_base_ids: z.array(z.string().regex(UUID_REGEX)),
+	knowledge_base_ids: z.array(z.uuid()),
 	model: z.string().optional(),
 	name: z.string(),
-	organization_id: z.string().regex(UUID_REGEX),
-	retriever_ids: z.array(z.string().regex(UUID_REGEX)),
-	ruleset_ids: z.array(z.string().regex(UUID_REGEX)),
-	structure_ids: z.array(z.string().regex(UUID_REGEX)),
-	tool_ids: z.array(z.string().regex(UUID_REGEX)),
+	organization_id: z.uuid(),
+	retriever_ids: z.array(z.uuid()),
+	ruleset_ids: z.array(z.uuid()),
+	structure_ids: z.array(z.uuid()),
+	tool_ids: z.array(z.uuid()),
 	updated_at: z.string().datetime(),
 });
 
 const AssistantGetInputSchema = z.object({
-	assistant_id: z.string().regex(UUID_REGEX),
+	assistant_id: z.uuid(),
 });
 
 const AssistantGetResponseSchema = AssistantDetailSchema;

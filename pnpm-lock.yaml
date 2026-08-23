@@ -208,7 +208,7 @@ importers:
         specifier: workspace:*
         version: link:../../packages/openweathermap
       '@corsair-dev/outlook':
-        specifier: workspace:s*
+        specifier: workspace:*
         version: link:../../packages/outlook
       '@corsair-dev/reddit':
         specifier: workspace:*

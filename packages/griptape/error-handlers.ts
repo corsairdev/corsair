@@ -1,7 +1,9 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 
-export const errorHandlers = {
+// Annotated (not `satisfies`) so match/handler keep the full canonical
+// signature — callers and tests pass the error through uniformly.
+export const errorHandlers: CorsairErrorHandler = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
@@ -28,4 +30,4 @@ export const errorHandlers = {
 		match: () => true,
 		handler: async () => ({ maxRetries: 0 }),
 	},
-} satisfies CorsairErrorHandler;
+};
