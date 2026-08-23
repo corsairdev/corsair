@@ -32,9 +32,10 @@ export async function getManagedAccessToken(
 
 	// Dedupe concurrent calls on this store into one flight. Keyed before any
 	// async read so two callers share a single execution — and, when a refresh is
-	// needed, one stateless Hub mint (a second concurrent mint would double-spend
-	// a rotating refresh_token). Forced (401) refreshes get their own key.
-	const flightKey = `managed:${plugin}:${tenantId}${forceRefresh ? ':force' : ''}`;
+	// needed, one stateless Hub mint. Forced (401) refreshes share the same key as
+	// routine ones so a 401 retry racing an expiry refresh can't spend a rotating
+	// refresh_token twice.
+	const flightKey = `managed:${plugin}:${tenantId}`;
 	return singleFlight(keys, flightKey, async () => {
 		const [accessToken, expiresAt, refreshToken] = await Promise.all([
 			keys.get_access_token(),

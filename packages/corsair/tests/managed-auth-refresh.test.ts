@@ -146,6 +146,42 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 		}
 	});
 
+	it('collapses a concurrent forced (401) refresh and a routine refresh into one Hub mint', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seedManagedAccount(database, {
+				access_token: 'stale',
+				expires_at: '1',
+				refresh_token: 'managed-rt',
+			});
+
+			let calls = 0;
+			global.fetch = (async () => {
+				calls += 1;
+				return jsonResponse({
+					access_token: 'rotated',
+					refresh_token: 'managed-rt-2',
+					expires_in: 3600,
+				});
+			}) as unknown as typeof fetch;
+
+			const keys = managedKeys(database);
+			const ctx = { keys, hub, plugin: 'linear', tenantId: 'default' };
+			// A 401 retry (forceRefresh) racing an expiry refresh must not spend the
+			// rotating refresh_token twice — they share one flight.
+			const [routine, forced] = await Promise.all([
+				getManagedAccessToken(ctx),
+				getManagedAccessToken(ctx, { forceRefresh: true }),
+			]);
+
+			expect(routine.accessToken).toBe('rotated');
+			expect(forced.accessToken).toBe('rotated');
+			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('omits refresh_token for a legacy account that has none (Hub reads managed_connection)', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
