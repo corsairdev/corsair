@@ -110,7 +110,10 @@ Synced entities support `corsair.ahrefs.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `keywordsExplorer.overview`
 
 ```ts
-await corsair.ahrefs.api.keywordsExplorer.overview({});
+await corsair.ahrefs.api.keywordsExplorer.overview({
+    select: 'example',
+    country: 'example',
+});
 ```
 
 

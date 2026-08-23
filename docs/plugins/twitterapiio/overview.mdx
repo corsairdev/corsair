@@ -123,8 +123,14 @@ await corsair.twitterapiio.api.api.webhooks.getRules({});
 
 **Write-style (write):** `api.webhooks.addRule`
 
+
+
 ```ts
-await corsair.twitterapiio.api.api.webhooks.addRule({});
+await corsair.twitterapiio.api.api.webhooks.addRule({
+    tag: 'example',
+    value: 'example',
+    intervalSeconds: 0,
+});
 ```
 
 

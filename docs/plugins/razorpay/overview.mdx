@@ -117,14 +117,20 @@ Synced entities support `corsair.razorpay.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `customers.get`
 
 ```ts
-await corsair.razorpay.api.customers.get({});
+await corsair.razorpay.api.customers.get({
+    id: 'example',
+});
 ```
 
 
 **Write-style (write):** `customers.create`
 
+
+
 ```ts
-await corsair.razorpay.api.customers.create({});
+await corsair.razorpay.api.customers.create({
+    name: 'example',
+});
 ```
 
 

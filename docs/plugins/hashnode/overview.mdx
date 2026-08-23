@@ -105,14 +105,21 @@ More: [API Key](/concepts/api-key)
 **Read-style (read):** `comments.list`
 
 ```ts
-await corsair.hashnode.api.comments.list({});
+await corsair.hashnode.api.comments.list({
+    postId: 'example',
+    first: 0,
+});
 ```
 
 
 **Write-style (write):** `drafts.create`
 
+
+
 ```ts
-await corsair.hashnode.api.drafts.create({});
+await corsair.hashnode.api.drafts.create({
+    publicationId: 'example',
+});
 ```
 
 

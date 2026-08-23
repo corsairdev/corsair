@@ -129,14 +129,20 @@ Synced entities support `corsair.zohomail.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `folders.get`
 
 ```ts
-await corsair.zohomail.api.folders.get({});
+await corsair.zohomail.api.folders.get({
+    folderId: 'example',
+});
 ```
 
 
 **Write-style (write):** `folders.create`
 
+
+
 ```ts
-await corsair.zohomail.api.folders.create({});
+await corsair.zohomail.api.folders.create({
+    folderName: 'example',
+});
 ```
 
 

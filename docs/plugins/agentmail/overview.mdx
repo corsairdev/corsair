@@ -117,14 +117,21 @@ Synced entities support `corsair.agentmail.db.<entity>.search()` and `.list()`. 
 **Read-style (read):** `messages.get`
 
 ```ts
-await corsair.agentmail.api.messages.get({});
+await corsair.agentmail.api.messages.get({
+    inbox_id: 'example',
+    message_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `messages.send`
 
+
+
 ```ts
-await corsair.agentmail.api.messages.send({});
+await corsair.agentmail.api.messages.send({
+    inbox_id: 'example',
+});
 ```
 
 

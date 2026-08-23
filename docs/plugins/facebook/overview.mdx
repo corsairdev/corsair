@@ -110,14 +110,21 @@ Synced entities support `corsair.facebook.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `comments.get`
 
 ```ts
-await corsair.facebook.api.comments.get({});
+await corsair.facebook.api.comments.get({
+    comment_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `comments.create`
 
+
+
 ```ts
-await corsair.facebook.api.comments.create({});
+await corsair.facebook.api.comments.create({
+    object_id: 'example',
+    message: 'example',
+});
 ```
 
 

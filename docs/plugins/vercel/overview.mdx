@@ -123,8 +123,13 @@ await corsair.vercel.api.aliases.getAliases({});
 
 **Write-style (write):** `aliases.assignAlias`
 
+
+
 ```ts
-await corsair.vercel.api.aliases.assignAlias({});
+await corsair.vercel.api.aliases.assignAlias({
+    deploymentId: 'example',
+    alias: 'example',
+});
 ```
 
 

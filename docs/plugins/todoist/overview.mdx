@@ -117,14 +117,20 @@ Synced entities support `corsair.todoist.db.<entity>.search()` and `.list()`. Se
 **Read-style (read):** `comments.get`
 
 ```ts
-await corsair.todoist.api.comments.get({});
+await corsair.todoist.api.comments.get({
+    id: 'example',
+});
 ```
 
 
 **Write-style (write):** `comments.create`
 
+
+
 ```ts
-await corsair.todoist.api.comments.create({});
+await corsair.todoist.api.comments.create({
+    content: 'example',
+});
 ```
 
 

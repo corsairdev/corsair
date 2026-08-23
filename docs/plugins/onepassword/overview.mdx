@@ -110,14 +110,23 @@ Synced entities support `corsair.onepassword.db.<entity>.search()` and `.list()`
 **Read-style (read):** `items.get`
 
 ```ts
-await corsair.onepassword.api.items.get({});
+await corsair.onepassword.api.items.get({
+    vaultId: 'example',
+    id: 'example',
+});
 ```
 
 
 **Write-style (write):** `items.create`
 
+
+
 ```ts
-await corsair.onepassword.api.items.create({});
+await corsair.onepassword.api.items.create({
+    vaultId: 'example',
+    title: 'example',
+    category: 'LOGIN',
+});
 ```
 
 

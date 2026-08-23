@@ -117,14 +117,21 @@ Synced entities support `corsair.exa.db.<entity>.search()` and `.list()`. See [D
 **Read-style (read):** `answer.get`
 
 ```ts
-await corsair.exa.api.answer.get({});
+await corsair.exa.api.answer.get({
+    query: 'example',
+});
 ```
 
 
 **Write-style (write):** `imports.create`
 
+
+
 ```ts
-await corsair.exa.api.imports.create({});
+await corsair.exa.api.imports.create({
+    websetId: 'example',
+    urls: [],
+});
 ```
 
 

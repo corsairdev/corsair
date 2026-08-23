@@ -136,8 +136,13 @@ await corsair.stripe.api.balance.get({});
 
 **Write-style (write):** `charges.create`
 
+
+
 ```ts
-await corsair.stripe.api.charges.create({});
+await corsair.stripe.api.charges.create({
+    amount: 0,
+    currency: 'example',
+});
 ```
 
 
