@@ -1,62 +1,55 @@
 import { logEventFromContext } from 'corsair/core';
-import type { DiffbotEndpoints } from '..';
 import { makeDiffbotRequest } from '../client';
-import type { DiffbotEndpointOutputs } from './types';
+import type { DiffbotEndpoints } from '../index';
 
-/**
- * Search the web and return structured results with article metadata.
- * Docs: https://docs.diffbot.com/reference/search-search
- */
-export const web: DiffbotEndpoints['searchWeb'] = async (ctx, input) => {
-	const { query, col, num, start } = input;
+export const search: DiffbotEndpoints['search'] = async (ctx, input) => {
+	const dqlQuery = input.entityType
+		? `type:${input.entityType} ${input.query}`
+		: input.query;
 
 	const response = await makeDiffbotRequest<
-		DiffbotEndpointOutputs['searchWeb']
-	>('search', ctx.key, {
-		method: 'GET',
-		query: { query, col, num, start },
-	});
-
-	await logEventFromContext(ctx, 'diffbot.search.web', { query }, 'completed');
-	return response;
-};
-
-/**
- * Query the Diffbot Knowledge Graph using DQL (Diffbot Query Language).
- * Docs: https://docs.diffbot.com/reference/dqlget
- *
- * Uses the Knowledge Graph host: https://kg.diffbot.com/kg/v3/dql
- *
- * - `entityType`: optional DQL entity filter prepended to the query string (e.g. "Organization")
- * - `queryType`: optional HTTP `type` parameter selecting the execution mode
- *   ("query" | "text" | "queryTextFallback" | "crawl"). Defaults to "query".
- */
-export const dql: DiffbotEndpoints['searchDql'] = async (ctx, input) => {
-	const { query, entityType, queryType, size, from, col } = input;
-
-	// Build the DQL query string with optional entity type prefix
-	const fullQuery = entityType ? `type:${entityType} ${query}` : query;
-
-	const response = await makeDiffbotRequest<
-		DiffbotEndpointOutputs['searchDql']
+		Awaited<ReturnType<DiffbotEndpoints['search']>>
 	>('dql', ctx.key, {
 		method: 'GET',
-		// Route to Knowledge Graph host (kg.diffbot.com/kg/v3)
 		useKgBase: true,
 		query: {
-			query: fullQuery,
-			// HTTP `type` controls execution mode (query/text/crawl etc.)
-			type: queryType,
-			size,
-			from,
-			col,
+			query: dqlQuery,
+			type: input.queryType,
+			size: input.size,
+			from: input.from,
+			col: input.col,
 		},
 	});
 
 	await logEventFromContext(
 		ctx,
-		'diffbot.search.dql',
-		{ query: fullQuery },
+		'diffbot.search.search',
+		{ query: input.query, entityType: input.entityType },
+		'completed',
+	);
+	return response;
+};
+
+export const searchCrawlData: DiffbotEndpoints['searchCrawlData'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeDiffbotRequest<
+		Awaited<ReturnType<DiffbotEndpoints['searchCrawlData']>>
+	>('search', ctx.key, {
+		method: 'GET',
+		query: {
+			col: input.col,
+			query: input.query,
+			num: input.num,
+			start: input.start,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'diffbot.search.searchCrawlData',
+		{ col: input.col, query: input.query },
 		'completed',
 	);
 	return response;

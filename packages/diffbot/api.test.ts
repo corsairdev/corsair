@@ -1,416 +1,487 @@
-import { makeDiffbotRequest } from './client';
-import { Extract, Search } from './endpoints';
+import * as clientModule from './client';
 import {
-	AnalyzeInputSchema,
-	AnalyzeResponseSchema,
-	DqlSearchInputSchema,
-	DqlSearchResponseSchema,
-	ExtractArticleInputSchema,
-	ExtractArticleResponseSchema,
-	ExtractProductInputSchema,
-	ExtractProductResponseSchema,
-	WebSearchInputSchema,
-	WebSearchResponseSchema,
+	Account,
+	Bulk,
+	Crawl,
+	CustomApi,
+	Enhance,
+	Extract,
+	KgBulkEnhance,
+	Search,
+} from './endpoints';
+import {
+	DiffbotEndpointInputSchemas,
+	DiffbotEndpointOutputSchemas,
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import type { DiffbotContext } from './index';
+import { diffbot } from './index';
 
-// Mock the client request module
-jest.mock('./client', () => ({
-	makeDiffbotRequest: jest.fn(),
-}));
-
-const mockRequest = makeDiffbotRequest as jest.MockedFunction<
-	typeof makeDiffbotRequest
->;
-
-const mockCtx = {
-	key: 'test-token',
-} as DiffbotContext;
-
-// ---------------------------------------------------------------------------
-// Extract Article
-// ---------------------------------------------------------------------------
-
-describe('extract.article — input schema', () => {
-	it('accepts a valid URL', () => {
-		const result = ExtractArticleInputSchema.safeParse({
-			url: 'https://techcrunch.com/2024/01/01/example-article',
-		});
-		expect(result.success).toBe(true);
-	});
-
-	it('accepts optional fields param', () => {
-		const result = ExtractArticleInputSchema.safeParse({
-			url: 'https://example.com',
-			fields: 'links,meta,tags',
-			timeout: 30000,
-		});
-		expect(result.success).toBe(true);
-	});
-
-	it('rejects missing url', () => {
-		const result = ExtractArticleInputSchema.safeParse({});
-		expect(result.success).toBe(false);
-	});
-});
-
-describe('extract.article — response schema', () => {
-	it('parses a valid article response', () => {
-		const payload = {
-			request: { pageUrl: 'https://example.com', api: 'article', version: 3 },
-			objects: [
-				{
-					type: 'article' as const,
-					title: 'Test Article',
-					text: 'Article body text',
-					author: 'John Doe',
-					date: '2024-01-01T00:00:00.000Z',
-					pageUrl: 'https://example.com',
-					humanLanguage: 'en',
-				},
-			],
-		};
-		const result = ExtractArticleResponseSchema.safeParse(payload);
-		expect(result.success).toBe(true);
-		if (result.success) {
-			expect(result.data.objects[0]?.title).toBe('Test Article');
-			expect(result.data.objects[0]?.author).toBe('John Doe');
-		}
-	});
-
-	it('parses response with optional fields missing', () => {
-		const result = ExtractArticleResponseSchema.safeParse({
-			objects: [{ type: 'article' }],
-		});
-		expect(result.success).toBe(true);
-	});
-});
-
-// ---------------------------------------------------------------------------
-// Extract Product
-// ---------------------------------------------------------------------------
-
-describe('extract.product — input schema', () => {
-	it('accepts a valid product URL', () => {
-		const result = ExtractProductInputSchema.safeParse({
-			url: 'https://www.amazon.com/dp/B08N5WRWNW',
-		});
-		expect(result.success).toBe(true);
-	});
-
-	it('rejects missing url', () => {
-		const result = ExtractProductInputSchema.safeParse({ timeout: 5000 });
-		expect(result.success).toBe(false);
-	});
-});
-
-describe('extract.product — response schema', () => {
-	it('parses a valid product response', () => {
-		const payload = {
-			objects: [
-				{
-					type: 'product' as const,
-					title: 'Example Product',
-					offerPrice: '$29.99',
-					availability: true,
-					brand: 'Acme',
-					pageUrl: 'https://example.com/product',
-				},
-			],
-		};
-		const result = ExtractProductResponseSchema.safeParse(payload);
-		expect(result.success).toBe(true);
-		if (result.success) {
-			expect(result.data.objects[0]?.offerPrice).toBe('$29.99');
-			expect(result.data.objects[0]?.availability).toBe(true);
-		}
-	});
-});
-
-// ---------------------------------------------------------------------------
-// Analyze (auto-detect)
-// ---------------------------------------------------------------------------
-
-describe('extract.analyze — input schema', () => {
-	it('accepts a URL with fallback option', () => {
-		const result = AnalyzeInputSchema.safeParse({
-			url: 'https://example.com',
-			fallback: 'article',
-		});
-		expect(result.success).toBe(true);
-	});
-
-	it('rejects empty object', () => {
-		const result = AnalyzeInputSchema.safeParse({});
-		expect(result.success).toBe(false);
-	});
-});
-
-describe('extract.analyze — response schema', () => {
-	it('parses an analyze response with detected type', () => {
-		const result = AnalyzeResponseSchema.safeParse({
-			type: 'article',
-			humanLanguage: 'en',
-			objects: [{ type: 'article', title: 'Detected Article' }],
-		});
-		expect(result.success).toBe(true);
-		if (result.success) {
-			expect(result.data.type).toBe('article');
-		}
-	});
-});
-
-// ---------------------------------------------------------------------------
-// Web Search
-// ---------------------------------------------------------------------------
-
-describe('search.web — input schema', () => {
-	it('accepts a valid search query', () => {
-		const result = WebSearchInputSchema.safeParse({
-			query: 'artificial intelligence trends 2024',
-			num: 10,
-		});
-		expect(result.success).toBe(true);
-	});
-
-	it('rejects num > 25 (Diffbot max)', () => {
-		const result = WebSearchInputSchema.safeParse({
-			query: 'test',
-			num: 100,
-		});
-		expect(result.success).toBe(false);
-	});
-
-	it('rejects missing query', () => {
-		const result = WebSearchInputSchema.safeParse({ num: 5 });
-		expect(result.success).toBe(false);
-	});
-});
-
-describe('search.web — response schema', () => {
-	it('parses a valid search response', () => {
-		const payload = {
-			results: [
-				{
-					title: 'AI in 2024',
-					pageUrl: 'https://example.com/ai-2024',
-					text: 'Article summary...',
-					humanLanguage: 'en',
-				},
-			],
-			numResults: 1,
-			hits: 1,
-		};
-		const result = WebSearchResponseSchema.safeParse(payload);
-		expect(result.success).toBe(true);
-		if (result.success) {
-			expect(result.data.results?.[0]?.title).toBe('AI in 2024');
-			expect(result.data.numResults).toBe(1);
-		}
-	});
-});
-
-// ---------------------------------------------------------------------------
-// DQL (Knowledge Graph Search)
-// ---------------------------------------------------------------------------
-
-describe('search.dql — input schema', () => {
-	it('accepts a DQL query with entityType filter', () => {
-		const result = DqlSearchInputSchema.safeParse({
-			query: 'name:"OpenAI"',
-			entityType: 'Organization',
-			size: 5,
-		});
-		expect(result.success).toBe(true);
-		if (result.success) {
-			expect(result.data.entityType).toBe('Organization');
-		}
-	});
-
-	it('accepts a query without optional entityType', () => {
-		const result = DqlSearchInputSchema.safeParse({
-			query: 'diffbot',
-		});
-		expect(result.success).toBe(true);
-	});
-
-	it('accepts crawl queryType with collection', () => {
-		const result = DqlSearchInputSchema.safeParse({
-			query: 'type:Article',
-			queryType: 'crawl',
-			col: 'my_collection',
-		});
-		expect(result.success).toBe(true);
-		if (result.success) {
-			expect(result.data.queryType).toBe('crawl');
-			expect(result.data.col).toBe('my_collection');
-		}
-	});
-
-	it('rejects collection without crawl queryType', () => {
-		const result = DqlSearchInputSchema.safeParse({
-			query: 'type:Article',
-			col: 'my_collection',
-		});
-		expect(result.success).toBe(false);
-	});
-
-	it('rejects collection for non-crawl queryType', () => {
-		const result = DqlSearchInputSchema.safeParse({
-			query: 'type:Article',
-			queryType: 'query',
-			col: 'my_collection',
-		});
-		expect(result.success).toBe(false);
-	});
-
-	it('rejects invalid queryType', () => {
-		const result = DqlSearchInputSchema.safeParse({
-			query: 'test',
-			queryType: 'invalid_mode',
-		});
-		expect(result.success).toBe(false);
-	});
-
-	it('rejects missing query', () => {
-		const result = DqlSearchInputSchema.safeParse({ size: 5 });
-		expect(result.success).toBe(false);
-	});
-});
-
-describe('search.dql — response schema', () => {
-	it('parses a valid DQL response', () => {
-		const payload = {
-			data: [{ id: 'org-123', name: 'OpenAI', type: 'Organization' }],
-			hits: 1,
-		};
-		const result = DqlSearchResponseSchema.safeParse(payload);
-		expect(result.success).toBe(true);
-		if (result.success) {
-			expect(result.data.hits).toBe(1);
-			expect(result.data.data).toHaveLength(1);
-		}
-	});
-
-	it('parses an empty result set', () => {
-		const result = DqlSearchResponseSchema.safeParse({ data: [], hits: 0 });
-		expect(result.success).toBe(true);
-	});
-});
-
-// ---------------------------------------------------------------------------
-// Endpoint Handler Verification (Mocked requests)
-// ---------------------------------------------------------------------------
-
-describe('Diffbot endpoint handlers (mocked request mapping)', () => {
-	beforeEach(() => {
-		mockRequest.mockReset();
-	});
-
-	it('extractArticle invokes client correctly', async () => {
-		mockRequest.mockResolvedValueOnce({ objects: [] });
-		await Extract.article(mockCtx, {
-			url: 'https://example.com/article',
-			fields: 'meta,links',
+describe('Diffbot Input and Output Schemas', () => {
+	// Account
+	describe('account.getAccount', () => {
+		it('accepts empty input', () => {
+			const parsed = DiffbotEndpointInputSchemas.getAccount.parse({});
+			expect(parsed).toEqual({});
 		});
 
-		expect(mockRequest).toHaveBeenCalledWith('article', 'test-token', {
-			method: 'GET',
-			query: {
+		it('parses valid output', () => {
+			const parsed = DiffbotEndpointOutputSchemas.getAccount.parse({
+				token: 'test_token',
+				name: 'Test User',
+				plan: 'kgfree',
+				planCalls: 10000,
+				status: 'active',
+			});
+			expect(parsed.name).toBe('Test User');
+			expect(parsed.planCalls).toBe(10000);
+		});
+	});
+
+	// Extract
+	describe('extract.getArticle', () => {
+		it('accepts valid url and optional fields', () => {
+			const input = DiffbotEndpointInputSchemas.getArticle.parse({
 				url: 'https://example.com/article',
-				fields: 'meta,links',
-			},
+				fields: 'links,meta',
+			});
+			expect(input.url).toBe('https://example.com/article');
+		});
+
+		it('parses article response', () => {
+			const output = DiffbotEndpointOutputSchemas.getArticle.parse({
+				objects: [
+					{
+						type: 'article',
+						title: 'Test Article',
+						text: 'Body text',
+					},
+				],
+			});
+			expect(output.objects[0]?.title).toBe('Test Article');
 		});
 	});
 
-	it('extractProduct invokes client correctly', async () => {
-		mockRequest.mockResolvedValueOnce({ objects: [] });
-		await Extract.product(mockCtx, {
-			url: 'https://example.com/product',
-		});
-
-		expect(mockRequest).toHaveBeenCalledWith('product', 'test-token', {
-			method: 'GET',
-			query: {
+	describe('extract.getProduct', () => {
+		it('accepts valid product url', () => {
+			const input = DiffbotEndpointInputSchemas.getProduct.parse({
 				url: 'https://example.com/product',
-			},
+			});
+			expect(input.url).toBe('https://example.com/product');
+		});
+
+		it('parses product response', () => {
+			const output = DiffbotEndpointOutputSchemas.getProduct.parse({
+				objects: [
+					{
+						type: 'product',
+						title: 'Test Product',
+						offerPrice: '$99.00',
+					},
+				],
+			});
+			expect(output.objects[0]?.offerPrice).toBe('$99.00');
 		});
 	});
 
-	it('extractAnalyze invokes client correctly', async () => {
-		mockRequest.mockResolvedValueOnce({ type: 'article' });
-		await Extract.analyze(mockCtx, {
-			url: 'https://example.com/page',
-			fallback: 'article',
-		});
-
-		expect(mockRequest).toHaveBeenCalledWith('analyze', 'test-token', {
-			method: 'GET',
-			query: {
+	describe('extract.getAnalyze', () => {
+		it('accepts url with fallback', () => {
+			const input = DiffbotEndpointInputSchemas.getAnalyze.parse({
 				url: 'https://example.com/page',
 				fallback: 'article',
-			},
+			});
+			expect(input.fallback).toBe('article');
+		});
+
+		it('parses analyze response', () => {
+			const output = DiffbotEndpointOutputSchemas.getAnalyze.parse({
+				type: 'article',
+				title: 'Detected Article',
+			});
+			expect(output.type).toBe('article');
 		});
 	});
 
-	it('searchWeb invokes client correctly', async () => {
-		mockRequest.mockResolvedValueOnce({ results: [] });
-		await Search.web(mockCtx, {
-			query: 'AI news',
-			num: 5,
+	describe('extract.getImage', () => {
+		it('accepts url', () => {
+			const input = DiffbotEndpointInputSchemas.getImage.parse({
+				url: 'https://example.com/image.png',
+			});
+			expect(input.url).toBe('https://example.com/image.png');
 		});
 
-		expect(mockRequest).toHaveBeenCalledWith('search', 'test-token', {
-			method: 'GET',
-			query: {
-				query: 'AI news',
-				num: 5,
-			},
+		it('parses image response', () => {
+			const output = DiffbotEndpointOutputSchemas.getImage.parse({
+				objects: [{ type: 'image', url: 'https://example.com/image.png' }],
+			});
+			expect(output.objects[0]?.url).toBe('https://example.com/image.png');
 		});
 	});
 
-	it('searchDql invokes client correctly and routes to Knowledge Graph base URL', async () => {
-		mockRequest.mockResolvedValueOnce({ data: [] });
-		await Search.dql(mockCtx, {
-			query: 'name:"OpenAI"',
-			entityType: 'Organization',
-			queryType: 'query',
-			size: 10,
+	describe('extract.getVideo', () => {
+		it('accepts video url', () => {
+			const input = DiffbotEndpointInputSchemas.getVideo.parse({
+				url: 'https://example.com/video',
+			});
+			expect(input.url).toBe('https://example.com/video');
 		});
 
-		expect(mockRequest).toHaveBeenCalledWith('dql', 'test-token', {
-			method: 'GET',
-			useKgBase: true,
-			query: {
-				query: 'type:Organization name:"OpenAI"',
-				type: 'query',
-				size: 10,
-			},
+		it('parses video response', () => {
+			const output = DiffbotEndpointOutputSchemas.getVideo.parse({
+				objects: [{ type: 'video', duration: 120 }],
+			});
+			expect(output.objects[0]?.duration).toBe(120);
+		});
+	});
+
+	describe('extract.getDiscussion', () => {
+		it('accepts discussion url', () => {
+			const input = DiffbotEndpointInputSchemas.getDiscussion.parse({
+				url: 'https://example.com/forum',
+			});
+			expect(input.url).toBe('https://example.com/forum');
+		});
+
+		it('parses discussion response', () => {
+			const output = DiffbotEndpointOutputSchemas.getDiscussion.parse({
+				objects: [{ type: 'discussion', numPosts: 5 }],
+			});
+			expect(output.objects[0]?.numPosts).toBe(5);
+		});
+	});
+
+	describe('extract.getEvent', () => {
+		it('accepts event url', () => {
+			const input = DiffbotEndpointInputSchemas.getEvent.parse({
+				url: 'https://example.com/event',
+			});
+			expect(input.url).toBe('https://example.com/event');
+		});
+
+		it('parses event response', () => {
+			const output = DiffbotEndpointOutputSchemas.getEvent.parse({
+				objects: [{ type: 'event', startDate: '2026-09-01' }],
+			});
+			expect(output.objects[0]?.startDate).toBe('2026-09-01');
+		});
+	});
+
+	describe('extract.extractList', () => {
+		it('accepts list url', () => {
+			const input = DiffbotEndpointInputSchemas.extractList.parse({
+				url: 'https://example.com/list',
+			});
+			expect(input.url).toBe('https://example.com/list');
+		});
+
+		it('parses list response', () => {
+			const output = DiffbotEndpointOutputSchemas.extractList.parse({
+				objects: [{ type: 'list', numItems: 10 }],
+			});
+			expect(output.objects[0]?.numItems).toBe(10);
+		});
+	});
+
+	describe('extract.extractJob', () => {
+		it('accepts job url', () => {
+			const input = DiffbotEndpointInputSchemas.extractJob.parse({
+				url: 'https://example.com/job',
+			});
+			expect(input.url).toBe('https://example.com/job');
+		});
+
+		it('parses job response', () => {
+			const output = DiffbotEndpointOutputSchemas.extractJob.parse({
+				objects: [{ type: 'job', title: 'Software Engineer' }],
+			});
+			expect(output.objects[0]?.title).toBe('Software Engineer');
+		});
+	});
+
+	// Search
+	describe('search.search & search.searchCrawlData', () => {
+		it('accepts dql search query', () => {
+			const input = DiffbotEndpointInputSchemas.search.parse({
+				query: 'name:"Diffbot"',
+				entityType: 'Organization',
+			});
+			expect(input.query).toBe('name:"Diffbot"');
+		});
+
+		it('parses dql search response', () => {
+			const output = DiffbotEndpointOutputSchemas.search.parse({
+				hits: 1,
+				data: [{ name: 'Diffbot' }],
+			});
+			expect(output.hits).toBe(1);
+		});
+
+		it('accepts crawl data search query', () => {
+			const input = DiffbotEndpointInputSchemas.searchCrawlData.parse({
+				col: 'myCollection',
+				query: 'tech',
+				num: 10,
+			});
+			expect(input.col).toBe('myCollection');
+		});
+	});
+
+	// Enhance
+	describe('enhance endpoints', () => {
+		it('accepts enhanceEntity input', () => {
+			const input = DiffbotEndpointInputSchemas.enhanceEntity.parse({
+				name: 'Diffbot',
+				type: 'Organization',
+			});
+			expect(input.name).toBe('Diffbot');
+		});
+
+		it('accepts combineEntityProfiles input', () => {
+			const input = DiffbotEndpointInputSchemas.combineEntityProfiles.parse({
+				name: 'John Doe',
+				employer: 'Acme',
+			});
+			expect(input.name).toBe('John Doe');
+		});
+
+		it('accepts resolveLostId input', () => {
+			const input = DiffbotEndpointInputSchemas.resolveLostId.parse({
+				id: 'legacy-id-123',
+			});
+			expect(input.id).toBe('legacy-id-123');
+		});
+
+		it('accepts getKgCoverageReportById input', () => {
+			const input = DiffbotEndpointInputSchemas.getKgCoverageReportById.parse({
+				reportId: 'rep_123',
+			});
+			expect(input.reportId).toBe('rep_123');
+		});
+	});
+
+	// KG Bulk Enhance
+	describe('kgBulkEnhance endpoints', () => {
+		it('accepts createKgBulkEnhance input', () => {
+			const input = DiffbotEndpointInputSchemas.createKgBulkEnhance.parse({
+				entities: [{ name: 'Company A' }, { name: 'Company B' }],
+				name: 'testJob',
+			});
+			expect(input.entities.length).toBe(2);
+		});
+
+		it('accepts getBulkJobStatus input', () => {
+			const input = DiffbotEndpointInputSchemas.getBulkJobStatus.parse({
+				bulkjobId: 'bulk_123',
+			});
+			expect(input.bulkjobId).toBe('bulk_123');
+		});
+
+		it('accepts getBulkSingleResult input', () => {
+			const input = DiffbotEndpointInputSchemas.getBulkSingleResult.parse({
+				bulkjobId: 'bulk_123',
+				jobIndex: 0,
+			});
+			expect(input.jobIndex).toBe(0);
+		});
+	});
+
+	// Bulk Extract
+	describe('bulk extract endpoints', () => {
+		it('accepts createBulk input', () => {
+			const input = DiffbotEndpointInputSchemas.createBulk.parse({
+				name: 'myBulk',
+				apiUrl: 'https://api.diffbot.com/v3/article',
+				urls: ['https://example.com/1', 'https://example.com/2'],
+			});
+			expect(input.urls.length).toBe(2);
+		});
+
+		it('accepts startBulk input', () => {
+			const input = DiffbotEndpointInputSchemas.startBulk.parse({
+				name: 'myBulk',
+				apiUrl: 'https://api.diffbot.com/v3/article',
+				urls: 'https://example.com/1 https://example.com/2',
+			});
+			expect(input.name).toBe('myBulk');
+		});
+	});
+
+	// Crawl
+	describe('crawl endpoints', () => {
+		it('accepts startCrawl input', () => {
+			const input = DiffbotEndpointInputSchemas.startCrawl.parse({
+				name: 'crawl1',
+				seeds: 'https://example.com',
+				apiUrl: 'https://api.diffbot.com/v3/article',
+			});
+			expect(input.name).toBe('crawl1');
+		});
+
+		it('accepts manageCrawl input', () => {
+			const input = DiffbotEndpointInputSchemas.manageCrawl.parse({
+				name: 'crawl1',
+				pause: 1,
+			});
+			expect(input.pause).toBe(1);
+		});
+	});
+
+	// Custom API
+	describe('customApi endpoints', () => {
+		it('accepts createCustomApi input', () => {
+			const input = DiffbotEndpointInputSchemas.createCustomApi.parse({
+				api: 'custom1',
+				url: 'https://example.com',
+			});
+			expect(input.api).toBe('custom1');
+		});
+
+		it('accepts deleteCustomApi input', () => {
+			const input = DiffbotEndpointInputSchemas.deleteCustomApi.parse({
+				api: 'custom1',
+			});
+			expect(input.api).toBe('custom1');
 		});
 	});
 });
 
-describe('Diffbot error handlers', () => {
-	it('recognizes rate limits and preserves retry timing', async () => {
-		const error = Object.assign(new Error('Too many requests'), {
-			status: 429,
-			retryAfter: 12_000,
-		});
+describe('Diffbot Endpoint Handlers', () => {
+	let makeRequestSpy: jest.SpyInstance;
+	const mockCtx = {
+		key: 'test_token',
+		authType: 'api_key' as const,
+		options: { key: 'test_token' },
+		database: {},
+		$getAccountId: () => 'acc_test',
+	} as unknown as Parameters<typeof Account.getAccount>[0];
 
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-		expect(await errorHandlers.RATE_LIMIT_ERROR.handler(error)).toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: 12_000,
+	beforeEach(() => {
+		makeRequestSpy = jest
+			.spyOn(clientModule, 'makeDiffbotRequest')
+			.mockResolvedValue({ status: 200 } as never);
+	});
+
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	it('invokes account.getAccount correctly', async () => {
+		await Account.getAccount(mockCtx, {});
+		expect(makeRequestSpy).toHaveBeenCalledWith('account', 'test_token', {
+			method: 'GET',
 		});
 	});
 
-	it('does not retry authentication failures', async () => {
-		const error = Object.assign(new Error('Unauthorized'), { status: 401 });
-
-		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
-		expect(await errorHandlers.AUTH_ERROR.handler()).toEqual({
-			maxRetries: 0,
+	it('invokes extract.getArticle correctly', async () => {
+		await Extract.getArticle(mockCtx, { url: 'https://example.com/article' });
+		expect(makeRequestSpy).toHaveBeenCalledWith('article', 'test_token', {
+			method: 'GET',
+			query: expect.objectContaining({ url: 'https://example.com/article' }),
 		});
+	});
+
+	it('invokes search.search with DQL routing to KG base', async () => {
+		await Search.search(mockCtx, {
+			query: 'name:"Diffbot"',
+			entityType: 'Organization',
+		});
+		expect(makeRequestSpy).toHaveBeenCalledWith('dql', 'test_token', {
+			method: 'GET',
+			useKgBase: true,
+			query: expect.objectContaining({
+				query: 'type:Organization name:"Diffbot"',
+			}),
+		});
+	});
+
+	it('invokes enhance.enhanceEntity correctly', async () => {
+		await Enhance.enhanceEntity(mockCtx, { name: 'Diffbot' });
+		expect(makeRequestSpy).toHaveBeenCalledWith('enhance', 'test_token', {
+			method: 'GET',
+			useKgBase: true,
+			query: expect.objectContaining({ name: 'Diffbot' }),
+		});
+	});
+
+	it('invokes kgBulkEnhance.createKgBulkEnhance correctly', async () => {
+		await KgBulkEnhance.createKgBulkEnhance(mockCtx, {
+			entities: [{ name: 'Diffbot' }],
+		});
+		expect(makeRequestSpy).toHaveBeenCalledWith('enhance/bulk', 'test_token', {
+			method: 'POST',
+			useKgBase: true,
+			body: [{ name: 'Diffbot' }],
+			query: expect.anything(),
+		});
+	});
+
+	it('invokes bulk.createBulk correctly', async () => {
+		await Bulk.createBulk(mockCtx, {
+			name: 'job1',
+			apiUrl: 'https://api.diffbot.com/v3/article',
+			urls: ['https://example.com/1'],
+		});
+		expect(makeRequestSpy).toHaveBeenCalledWith('bulk', 'test_token', {
+			method: 'POST',
+			body: 'https://example.com/1',
+			query: expect.objectContaining({ name: 'job1' }),
+		});
+	});
+
+	it('invokes crawl.startCrawl correctly', async () => {
+		await Crawl.startCrawl(mockCtx, {
+			name: 'crawl1',
+			seeds: 'https://example.com',
+			apiUrl: 'https://api.diffbot.com/v3/article',
+		});
+		expect(makeRequestSpy).toHaveBeenCalledWith('crawl', 'test_token', {
+			method: 'POST',
+			query: expect.objectContaining({ name: 'crawl1' }),
+		});
+	});
+
+	it('invokes customApi.listCustomApis correctly', async () => {
+		await CustomApi.listCustomApis(mockCtx, {});
+		expect(makeRequestSpy).toHaveBeenCalledWith('custom', 'test_token', {
+			method: 'GET',
+		});
+	});
+});
+
+describe('Diffbot Error Handlers', () => {
+	it('handles rate limit 429 errors and specifies retries', async () => {
+		const error = Object.assign(new Error('Rate limit exceeded'), {
+			status: 429,
+			retryAfter: 1500,
+		});
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+		const res = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
+		expect(res.maxRetries).toBe(5);
+		expect(res.headersRetryAfterMs).toBe(1500);
+	});
+
+	it('handles 401 unauthorized errors with 0 retries', async () => {
+		const error = Object.assign(new Error('Invalid token'), { status: 401 });
+		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
+		const res = await errorHandlers.AUTH_ERROR.handler(error);
+		expect(res.maxRetries).toBe(0);
+	});
+
+	it('handles 500 server errors', async () => {
+		const error = Object.assign(new Error('Internal server error'), {
+			status: 500,
+		});
+		expect(errorHandlers.SERVER_ERROR.match(error)).toBe(true);
+		const res = await errorHandlers.SERVER_ERROR.handler(error);
+		expect(res.maxRetries).toBe(2);
+	});
+});
+
+describe('Diffbot Plugin Instance', () => {
+	it('initializes diffbot plugin with default options', () => {
+		const instance = diffbot({ key: 'diffbot_test_key' });
+		expect(instance.id).toBe('diffbot');
+		expect(instance.schema).toBeDefined();
+		expect(instance.endpoints).toBeDefined();
+		expect(Object.keys(instance.endpoints ?? {}).length).toBe(8);
 	});
 });

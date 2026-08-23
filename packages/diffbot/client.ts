@@ -13,11 +13,21 @@ export class DiffbotAPIError extends Error {
 	}
 }
 
-// Diffbot API v3 base URL (extract/search)
+// Diffbot API v3 base URL (extract, crawl, bulk, custom, account)
 const DIFFBOT_API_BASE = 'https://api.diffbot.com/v3';
 
-// Diffbot Knowledge Graph base URL (DQL)
+// Diffbot Knowledge Graph base URL (DQL, enhance, kg-bulk)
 const DIFFBOT_KG_BASE = 'https://kg.diffbot.com/kg/v3';
+
+export type DiffbotRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	body?: unknown;
+	query?: Record<string, string | number | boolean | undefined>;
+	headers?: Record<string, string>;
+	useKgBase?: boolean;
+	customBase?: string;
+	timeout?: number;
+};
 
 /**
  * Make a request to the Diffbot API.
@@ -25,35 +35,45 @@ const DIFFBOT_KG_BASE = 'https://kg.diffbot.com/kg/v3';
  * Diffbot authenticates via `?token=<api-key>` as a query parameter —
  * NOT via an Authorization header. The token is injected automatically here.
  *
- * @param endpoint - The API endpoint path (e.g. 'analyze', 'dql')
+ * @param endpoint - The API endpoint path (e.g. 'article', 'dql', 'enhance')
  * @param token - The Diffbot API key
  * @param options - Request options including method, body, query params
- * @param useKgBase - If true, routes request to the Knowledge Graph host (kg.diffbot.com)
  */
 export async function makeDiffbotRequest<T>(
 	endpoint: string,
 	token: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-		useKgBase?: boolean;
-	} = {},
+	options: DiffbotRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, useKgBase = false } = options;
+	if (!token?.trim()) {
+		throw new Error('Diffbot API token is required');
+	}
+
+	const {
+		method = 'GET',
+		body,
+		query,
+		headers,
+		useKgBase = false,
+		customBase,
+		timeout,
+	} = options;
+
+	const baseUrl =
+		customBase ?? (useKgBase ? DIFFBOT_KG_BASE : DIFFBOT_API_BASE);
 
 	const config: OpenAPIConfig = {
-		BASE: useKgBase ? DIFFBOT_KG_BASE : DIFFBOT_API_BASE,
+		BASE: baseUrl,
 		VERSION: '3',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
+		TIMEOUT: timeout,
 		HEADERS: {
 			Accept: 'application/json',
+			...headers,
 		},
 	};
 
-	// Diffbot auth: token is a query parameter, not a header
 	const queryWithToken: Record<string, string | number | boolean | undefined> =
 		{
 			...query,
@@ -64,10 +84,13 @@ export async function makeDiffbotRequest<T>(
 		method,
 		url: endpoint,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			method === 'POST' ||
+			method === 'PUT' ||
+			method === 'PATCH' ||
+			method === 'DELETE'
 				? body
 				: undefined,
-		mediaType: 'application/json',
+		mediaType: typeof body === 'string' ? 'text/plain' : 'application/json',
 		query: queryWithToken,
 	};
 
