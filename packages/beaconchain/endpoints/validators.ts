@@ -1,18 +1,19 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainRequest } from '../client';
+import { makeBeaconchainV2Request } from '../client';
 import type { BeaconchainEndpoints } from '../index';
 import type { BeaconchainBaseResponse } from './types';
 
 export const getValidatorsProposalLuck: BeaconchainEndpoints['getValidatorsProposalLuck'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			'validators/proposal_luck',
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/validators/proposal-luck',
 			ctx.key,
 			{
-				method: 'GET',
-				query: {
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
 					...(input.validators?.length
-						? { validators: input.validators.join(',') }
+						? { validator: { validator_identifiers: input.validators } }
 						: {}),
 				},
 			},
@@ -28,10 +29,15 @@ export const getValidatorsProposalLuck: BeaconchainEndpoints['getValidatorsPropo
 
 export const getValidatorsQueue: BeaconchainEndpoints['getValidatorsQueue'] =
 	async (ctx, _input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			'validators/queue',
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/validators/queues',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -44,10 +50,16 @@ export const getValidatorsQueue: BeaconchainEndpoints['getValidatorsQueue'] =
 
 export const getValidatorsByDepositAddress: BeaconchainEndpoints['getValidatorsByDepositAddress'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`validators/deposit_address/${input.address}`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/validators',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					deposit_address: input.address,
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -60,10 +72,16 @@ export const getValidatorsByDepositAddress: BeaconchainEndpoints['getValidatorsB
 
 export const getValidatorsByWithdrawalCredentials: BeaconchainEndpoints['getValidatorsByWithdrawalCredentials'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`validators/withdrawal_credentials/${input.credentials}`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/validators',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					withdrawal_credentials: input.credentials,
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -78,13 +96,16 @@ export const postValidators: BeaconchainEndpoints['postValidators'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-		'validators',
+	const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+		'ethereum/validators',
 		ctx.key,
 		{
 			method: 'POST',
 			body: {
-				indicesOrPubkeys: input.indicesOrPubkeys,
+				chain: 'mainnet',
+				validator: {
+					validator_identifiers: input.indicesOrPubkeys,
+				},
 			},
 		},
 	);

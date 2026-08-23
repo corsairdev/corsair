@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainRequest } from '../client';
+import { makeBeaconchainV2Request } from '../client';
 import type { BeaconchainEndpoints } from '../index';
 import type { BeaconchainBaseResponse } from './types';
 
@@ -7,10 +7,16 @@ export const getEpoch: BeaconchainEndpoints['getEpoch'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-		`epoch/${input.epochId}`,
+	const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+		'ethereum/epoch',
 		ctx.key,
-		{ method: 'GET' },
+		{
+			method: 'POST',
+			body: {
+				chain: 'mainnet',
+				epoch: input.epochId,
+			},
+		},
 	);
 	await logEventFromContext(
 		ctx,

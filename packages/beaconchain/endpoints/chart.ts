@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainRequest } from '../client';
+import { makeBeaconchainV1Request } from '../client';
 import type { BeaconchainEndpoints } from '../index';
 import type { BeaconchainBaseResponse } from './types';
 
@@ -7,7 +7,7 @@ export const getChart: BeaconchainEndpoints['getChart'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
+	const res = await makeBeaconchainV1Request<BeaconchainBaseResponse>(
 		`chart/${input.chartName}`,
 		ctx.key,
 		{ method: 'GET' },

@@ -1,14 +1,20 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainRequest } from '../client';
+import { makeBeaconchainV2Request } from '../client';
 import type { BeaconchainEndpoints } from '../index';
 import type { BeaconchainBaseResponse } from './types';
 
 export const getExecutionAddressErc20Tokens: BeaconchainEndpoints['getExecutionAddressErc20Tokens'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`execution/address/${input.address}/erc20`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/execution/address/erc20',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					address: input.address,
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -21,10 +27,16 @@ export const getExecutionAddressErc20Tokens: BeaconchainEndpoints['getExecutionA
 
 export const getExecutionBlock: BeaconchainEndpoints['getExecutionBlock'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`execution/block/${input.blockId}`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/execution/block',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					block: input.blockId,
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -37,10 +49,16 @@ export const getExecutionBlock: BeaconchainEndpoints['getExecutionBlock'] =
 
 export const getExecutionProducedBlocks: BeaconchainEndpoints['getExecutionProducedBlocks'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`execution/produced/${input.address}`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/execution/produced',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					address: input.address,
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,

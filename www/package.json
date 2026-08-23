@@ -21,7 +21,6 @@
     "blog:migrate": "tsx scripts/migrate-blog-to-sanity.ts"
   },
   "dependencies": {
-    "@corsair-dev/beaconchain": "workspace:*",
     "@corsair-dev/github": "workspace:*",
     "@corsair-dev/slack": "workspace:^",
     "@next/third-parties": "15.3.2",

@@ -1,14 +1,22 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainRequest } from '../client';
+import { makeBeaconchainV2Request } from '../client';
 import type { BeaconchainEndpoints } from '../index';
 import type { BeaconchainBaseResponse } from './types';
 
 export const getRocketpoolValidator: BeaconchainEndpoints['getRocketpoolValidator'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`rocketpool/validator/${input.indexOrPubkey}`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/rocketpool/validator',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					validator: {
+						validator_identifiers: [input.indexOrPubkey],
+					},
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,

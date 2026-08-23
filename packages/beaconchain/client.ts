@@ -11,21 +11,25 @@ export class BeaconchainAPIError extends Error {
 	}
 }
 
-const BEACONCHAIN_API_BASE = 'https://beaconcha.in/api/v2';
+const BEACONCHAIN_API_V1_BASE = 'https://beaconcha.in/api/v1';
+const BEACONCHAIN_API_V2_BASE = 'https://beaconcha.in/api/v2';
 
-export async function makeBeaconchainRequest<T>(
+interface MakeRequestOptions {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+}
+
+async function makeRequest<T>(
+	baseUrl: string,
 	endpoint: string,
 	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+	options: MakeRequestOptions = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: BEACONCHAIN_API_BASE,
+		BASE: baseUrl,
 		VERSION: '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -58,4 +62,30 @@ export async function makeBeaconchainRequest<T>(
 		}
 		throw new BeaconchainAPIError('Unknown error');
 	}
+}
+
+export async function makeBeaconchainV1Request<T>(
+	endpoint: string,
+	apiKey: string,
+	options: MakeRequestOptions = {},
+): Promise<T> {
+	return makeRequest<T>(BEACONCHAIN_API_V1_BASE, endpoint, apiKey, options);
+}
+
+export async function makeBeaconchainV2Request<T>(
+	endpoint: string,
+	apiKey: string,
+	options: MakeRequestOptions = {},
+): Promise<T> {
+	return makeRequest<T>(BEACONCHAIN_API_V2_BASE, endpoint, apiKey, options);
+}
+
+// Legacy function for backward compatibility
+export async function makeBeaconchainRequest<T>(
+	endpoint: string,
+	apiKey: string,
+	options: MakeRequestOptions = {},
+): Promise<T> {
+	// Default to V2 for backward compatibility
+	return makeBeaconchainV2Request<T>(endpoint, apiKey, options);
 }

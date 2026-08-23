@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainRequest } from '../client';
+import { makeBeaconchainV1Request } from '../client';
 import type { BeaconchainEndpoints } from '../index';
 import type { BeaconchainBaseResponse } from './types';
 
@@ -7,8 +7,8 @@ export const resolveEns: BeaconchainEndpoints['resolveEns'] = async (
 	ctx,
 	input,
 ) => {
-	const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-		`ens/resolve/${input.name}`,
+	const res = await makeBeaconchainV1Request<BeaconchainBaseResponse>(
+		`ens/lookup/${input.name}`,
 		ctx.key,
 		{ method: 'GET' },
 	);

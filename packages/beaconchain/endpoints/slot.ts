@@ -1,13 +1,19 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconchainRequest } from '../client';
+import { makeBeaconchainV2Request } from '../client';
 import type { BeaconchainEndpoints } from '../index';
 import type { BeaconchainBaseResponse } from './types';
 
 export const getSlot: BeaconchainEndpoints['getSlot'] = async (ctx, input) => {
-	const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-		`slot/${input.slotId}`,
+	const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+		'ethereum/slot',
 		ctx.key,
-		{ method: 'GET' },
+		{
+			method: 'POST',
+			body: {
+				chain: 'mainnet',
+				slot: input.slotId,
+			},
+		},
 	);
 	await logEventFromContext(
 		ctx,
@@ -20,10 +26,16 @@ export const getSlot: BeaconchainEndpoints['getSlot'] = async (ctx, input) => {
 
 export const getSlotAttestations: BeaconchainEndpoints['getSlotAttestations'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`slot/${input.slotId}/attestations`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/slot/attestation-duties',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					slot: input.slotId,
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -36,10 +48,16 @@ export const getSlotAttestations: BeaconchainEndpoints['getSlotAttestations'] =
 
 export const getSlotAttesterSlashings: BeaconchainEndpoints['getSlotAttesterSlashings'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`slot/${input.slotId}/attester_slashings`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/slot/attester-slashings',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					slot: input.slotId,
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -52,10 +70,16 @@ export const getSlotAttesterSlashings: BeaconchainEndpoints['getSlotAttesterSlas
 
 export const getSlotProposerSlashings: BeaconchainEndpoints['getSlotProposerSlashings'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`slot/${input.slotId}/proposer_slashings`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/slot/proposer-slashings',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					slot: input.slotId,
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,
@@ -68,10 +92,16 @@ export const getSlotProposerSlashings: BeaconchainEndpoints['getSlotProposerSlas
 
 export const getSlotVoluntaryExits: BeaconchainEndpoints['getSlotVoluntaryExits'] =
 	async (ctx, input) => {
-		const res = await makeBeaconchainRequest<BeaconchainBaseResponse>(
-			`slot/${input.slotId}/voluntary_exits`,
+		const res = await makeBeaconchainV2Request<BeaconchainBaseResponse>(
+			'ethereum/slot/voluntary-exits',
 			ctx.key,
-			{ method: 'GET' },
+			{
+				method: 'POST',
+				body: {
+					chain: 'mainnet',
+					slot: input.slotId,
+				},
+			},
 		);
 		await logEventFromContext(
 			ctx,
