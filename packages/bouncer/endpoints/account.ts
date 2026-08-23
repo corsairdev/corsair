@@ -9,7 +9,7 @@ export const getCredits: BouncerEndpoints['getCredits'] = async (
 ) => {
 	const response = await makeBouncerRequest<
 		BouncerEndpointOutputs['getCredits']
-	>('credits', ctx.key, {
+	>('v1.1/credits', ctx.key, {
 		method: 'GET',
 	});
 

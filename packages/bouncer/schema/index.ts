@@ -3,6 +3,7 @@ import {
 	BouncerDomainVerification,
 	BouncerEmailVerification,
 	BouncerToxicityJob,
+	BouncerToxicityResult,
 } from './database';
 
 export const BouncerSchema = {
@@ -12,6 +13,7 @@ export const BouncerSchema = {
 		domainVerifications: BouncerDomainVerification,
 		batchVerifications: BouncerBatchVerification,
 		toxicityJobs: BouncerToxicityJob,
+		toxicityResults: BouncerToxicityResult,
 	},
 } as const;
 

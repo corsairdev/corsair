@@ -71,11 +71,13 @@ export type BouncerEndpoints = {
 	verifyEmail: BouncerEndpoint<'verifyEmail'>;
 	verifyDomain: BouncerEndpoint<'verifyDomain'>;
 	createBatchRequest: BouncerEndpoint<'createBatchRequest'>;
+	getBatchStatus: BouncerEndpoint<'getBatchStatus'>;
 	getBatchResults: BouncerEndpoint<'getBatchResults'>;
 	finishBatch: BouncerEndpoint<'finishBatch'>;
 	deleteBatchRequest: BouncerEndpoint<'deleteBatchRequest'>;
 	createToxicityListJob: BouncerEndpoint<'createToxicityListJob'>;
 	checkToxicityListJobStatus: BouncerEndpoint<'checkToxicityListJobStatus'>;
+	getToxicityListResults: BouncerEndpoint<'getToxicityListResults'>;
 	deleteToxicityListJob: BouncerEndpoint<'deleteToxicityListJob'>;
 	getCredits: BouncerEndpoint<'getCredits'>;
 };
@@ -89,6 +91,7 @@ const bouncerEndpointsNested = {
 		verifyEmail: Email.verifyEmail,
 		verifyDomain: Email.verifyDomain,
 		createBatchRequest: Email.createBatchRequest,
+		getBatchStatus: Email.getBatchStatus,
 		getBatchResults: Email.getBatchResults,
 		finishBatch: Email.finishBatch,
 		deleteBatchRequest: Email.deleteBatchRequest,
@@ -96,6 +99,7 @@ const bouncerEndpointsNested = {
 	toxicity: {
 		createToxicityListJob: Toxicity.createToxicityListJob,
 		checkToxicityListJobStatus: Toxicity.checkToxicityListJobStatus,
+		getToxicityListResults: Toxicity.getToxicityListResults,
 		deleteToxicityListJob: Toxicity.deleteToxicityListJob,
 	},
 	account: {
@@ -122,6 +126,10 @@ export const bouncerEndpointSchemas = {
 		input: BouncerEndpointInputSchemas.createBatchRequest,
 		output: BouncerEndpointOutputSchemas.createBatchRequest,
 	},
+	'email.getBatchStatus': {
+		input: BouncerEndpointInputSchemas.getBatchStatus,
+		output: BouncerEndpointOutputSchemas.getBatchStatus,
+	},
 	'email.getBatchResults': {
 		input: BouncerEndpointInputSchemas.getBatchResults,
 		output: BouncerEndpointOutputSchemas.getBatchResults,
@@ -141,6 +149,10 @@ export const bouncerEndpointSchemas = {
 	'toxicity.checkToxicityListJobStatus': {
 		input: BouncerEndpointInputSchemas.checkToxicityListJobStatus,
 		output: BouncerEndpointOutputSchemas.checkToxicityListJobStatus,
+	},
+	'toxicity.getToxicityListResults': {
+		input: BouncerEndpointInputSchemas.getToxicityListResults,
+		output: BouncerEndpointOutputSchemas.getToxicityListResults,
 	},
 	'toxicity.deleteToxicityListJob': {
 		input: BouncerEndpointInputSchemas.deleteToxicityListJob,
@@ -171,6 +183,11 @@ const bouncerEndpointMeta = {
 		riskLevel: 'write',
 		description: 'Initiate an asynchronous batch email verification request',
 	},
+	'email.getBatchStatus': {
+		riskLevel: 'read',
+		description:
+			'Check the processing status of a batch, optionally with per-status stats',
+	},
 	'email.getBatchResults': {
 		riskLevel: 'read',
 		description: 'Retrieve the results of a batch email verification process',
@@ -192,6 +209,10 @@ const bouncerEndpointMeta = {
 	'toxicity.checkToxicityListJobStatus': {
 		riskLevel: 'read',
 		description: 'Check the status and results of a toxicity list job',
+	},
+	'toxicity.getToxicityListResults': {
+		riskLevel: 'read',
+		description: 'Download the per-address toxicity scores of a completed job',
 	},
 	'toxicity.deleteToxicityListJob': {
 		riskLevel: 'destructive',
@@ -282,9 +303,12 @@ export function bouncer<const T extends BouncerPluginOptions>(
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	AccountInfo,
 	BatchRecipient,
+	BatchStats,
 	BouncerEndpointInputs,
 	BouncerEndpointOutputs,
+	BouncerFlag,
 	CheckToxicityListJobStatusInput,
 	CheckToxicityListJobStatusResponse,
 	CreateBatchRequestInput,
@@ -295,12 +319,23 @@ export type {
 	DeleteBatchRequestResponse,
 	DeleteToxicityListJobInput,
 	DeleteToxicityListJobResponse,
+	DnsInfo,
+	DomainInfo,
+	EmailReason,
+	EmailRecord,
+	EmailStatus,
 	FinishBatchInput,
 	FinishBatchResponse,
 	GetBatchResultsInput,
 	GetBatchResultsResponse,
+	GetBatchStatusInput,
+	GetBatchStatusResponse,
 	GetCreditsInput,
 	GetCreditsResponse,
+	GetToxicityListResultsInput,
+	GetToxicityListResultsResponse,
+	ToxicityListJob,
+	ToxicityRecord,
 	VerifyDomainInput,
 	VerifyDomainResponse,
 	VerifyEmailInput,
@@ -308,9 +343,12 @@ export type {
 } from './endpoints/types';
 
 export {
+	AccountInfoSchema,
 	BatchRecipientSchema,
+	BatchStatsSchema,
 	BouncerEndpointInputSchemas,
 	BouncerEndpointOutputSchemas,
+	BouncerFlagSchema,
 	CheckToxicityListJobStatusInputSchema,
 	CheckToxicityListJobStatusResponseSchema,
 	CreateBatchRequestInputSchema,
@@ -321,12 +359,23 @@ export {
 	DeleteBatchRequestResponseSchema,
 	DeleteToxicityListJobInputSchema,
 	DeleteToxicityListJobResponseSchema,
+	DnsInfoSchema,
+	DomainInfoSchema,
+	EmailReasonSchema,
+	EmailRecordSchema,
+	EmailStatusSchema,
 	FinishBatchInputSchema,
 	FinishBatchResponseSchema,
 	GetBatchResultsInputSchema,
 	GetBatchResultsResponseSchema,
+	GetBatchStatusInputSchema,
+	GetBatchStatusResponseSchema,
 	GetCreditsInputSchema,
 	GetCreditsResponseSchema,
+	GetToxicityListResultsInputSchema,
+	GetToxicityListResultsResponseSchema,
+	ToxicityListJobSchema,
+	ToxicityRecordSchema,
 	VerifyDomainInputSchema,
 	VerifyDomainResponseSchema,
 	VerifyEmailInputSchema,

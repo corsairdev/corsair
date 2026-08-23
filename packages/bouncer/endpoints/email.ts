@@ -7,16 +7,14 @@ export const verifyEmail: BouncerEndpoints['verifyEmail'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | boolean | undefined> = {
-		email: input.email,
-		timeout: input.timeout,
-	};
-
 	const response = await makeBouncerRequest<
 		BouncerEndpointOutputs['verifyEmail']
-	>('email/verify', ctx.key, {
+	>('v1.1/email/verify', ctx.key, {
 		method: 'GET',
-		query,
+		query: {
+			email: input.email,
+			timeout: input.timeout,
+		},
 	});
 
 	await logEventFromContext(
@@ -32,16 +30,11 @@ export const verifyDomain: BouncerEndpoints['verifyDomain'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | boolean | undefined> = {
-		domain: input.domain,
-		timeout: input.timeout,
-	};
-
 	const response = await makeBouncerRequest<
 		BouncerEndpointOutputs['verifyDomain']
-	>('domain/verify', ctx.key, {
+	>('v1.1/domain', ctx.key, {
 		method: 'GET',
-		query,
+		query: { domain: input.domain },
 	});
 
 	await logEventFromContext(
@@ -55,42 +48,61 @@ export const verifyDomain: BouncerEndpoints['verifyDomain'] = async (
 
 export const createBatchRequest: BouncerEndpoints['createBatchRequest'] =
 	async (ctx, input) => {
-		const body = Array.isArray(input.recipients)
-			? input.recipients.map((r) => (typeof r === 'string' ? { email: r } : r))
-			: input;
+		// Bouncer rejects bare strings here, so the shorthand form is expanded.
+		const body = input.recipients.map((recipient) =>
+			typeof recipient === 'string' ? { email: recipient } : recipient,
+		);
 
 		const response = await makeBouncerRequest<
 			BouncerEndpointOutputs['createBatchRequest']
-		>('email/verify/batch', ctx.key, {
+		>('v1.1/email/verify/batch', ctx.key, {
 			method: 'POST',
-			body: body as unknown as Record<string, unknown>,
+			body,
+			// `callback` is a query parameter, not part of the request body.
+			query: { callback: input.callback },
 		});
 
 		await logEventFromContext(
 			ctx,
 			'bouncer.email.createBatchRequest',
-			{ count: Array.isArray(input.recipients) ? input.recipients.length : 0 },
+			{ count: input.recipients.length },
 			'completed',
 		);
 		return response;
 	};
 
+export const getBatchStatus: BouncerEndpoints['getBatchStatus'] = async (
+	ctx,
+	input,
+) => {
+	const response = await makeBouncerRequest<
+		BouncerEndpointOutputs['getBatchStatus']
+	>(`v1.1/email/verify/batch/${encodeURIComponent(input.batchId)}`, ctx.key, {
+		method: 'GET',
+		query: { 'with-stats': input.withStats },
+	});
+
+	await logEventFromContext(
+		ctx,
+		'bouncer.email.getBatchStatus',
+		{ batchId: input.batchId },
+		'completed',
+	);
+	return response;
+};
+
 export const getBatchResults: BouncerEndpoints['getBatchResults'] = async (
 	ctx,
 	input,
 ) => {
-	const query: Record<string, string | number | boolean | undefined> = {
-		download: input.download,
-	};
-
 	const response = await makeBouncerRequest<
 		BouncerEndpointOutputs['getBatchResults']
 	>(
-		`email/verify/batch/${encodeURIComponent(input.batchId)}/download`,
+		`v1.1/email/verify/batch/${encodeURIComponent(input.batchId)}/download`,
 		ctx.key,
 		{
 			method: 'GET',
-			query,
+			query: { download: input.download },
 		},
 	);
 
@@ -107,11 +119,14 @@ export const finishBatch: BouncerEndpoints['finishBatch'] = async (
 	ctx,
 	input,
 ) => {
+	// Bouncer answers 202 with an empty body, so there is nothing to decode.
 	const response = await makeBouncerRequest<
-		BouncerEndpointOutputs['finishBatch']
-	>(`email/verify/batch/${encodeURIComponent(input.batchId)}/finish`, ctx.key, {
-		method: 'POST',
-	});
+		BouncerEndpointOutputs['finishBatch'] | undefined
+	>(
+		`v1.1/email/verify/batch/${encodeURIComponent(input.batchId)}/finish`,
+		ctx.key,
+		{ method: 'POST' },
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -119,14 +134,15 @@ export const finishBatch: BouncerEndpoints['finishBatch'] = async (
 		{ batchId: input.batchId },
 		'completed',
 	);
-	return response;
+	return response ?? {};
 };
 
 export const deleteBatchRequest: BouncerEndpoints['deleteBatchRequest'] =
 	async (ctx, input) => {
+		// Bouncer answers 200 with an empty body, so there is nothing to decode.
 		const response = await makeBouncerRequest<
-			BouncerEndpointOutputs['deleteBatchRequest']
-		>(`email/verify/batch/${encodeURIComponent(input.batchId)}`, ctx.key, {
+			BouncerEndpointOutputs['deleteBatchRequest'] | undefined
+		>(`v1.1/email/verify/batch/${encodeURIComponent(input.batchId)}`, ctx.key, {
 			method: 'DELETE',
 		});
 
@@ -136,5 +152,5 @@ export const deleteBatchRequest: BouncerEndpoints['deleteBatchRequest'] =
 			{ batchId: input.batchId },
 			'completed',
 		);
-		return response;
+		return response ?? {};
 	};

@@ -30,7 +30,14 @@ export class BouncerAPIError extends Error {
 	}
 }
 
-export const BOUNCER_API_BASE = 'https://api.usebouncer.com/v1.1';
+/**
+ * Bouncer serves its surface from a single host but two API versions:
+ * email/domain/credits live under `v1.1`, the toxicity list jobs under `v1`.
+ * The version therefore belongs to the endpoint path, not the base URL.
+ *
+ * https://docs.usebouncer.com/llms.txt
+ */
+export const BOUNCER_API_BASE = 'https://api.usebouncer.com';
 
 export async function makeBouncerRequest<T>(
 	endpoint: string,
@@ -43,12 +50,14 @@ export async function makeBouncerRequest<T>(
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
 
+	// Bouncer authenticates with the `x-api-key` header only, so `TOKEN` is
+	// deliberately unset: it would add a redundant `Authorization: Bearer`
+	// carrying the same secret.
 	const config: OpenAPIConfig = {
 		BASE: BOUNCER_API_BASE,
 		VERSION: '1.1.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			'x-api-key': apiKey,
@@ -65,7 +74,7 @@ export async function makeBouncerRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' || method === 'DELETE' ? query : undefined,
+		query,
 	};
 
 	try {

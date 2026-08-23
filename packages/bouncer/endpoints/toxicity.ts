@@ -3,23 +3,24 @@ import type { BouncerEndpoints } from '..';
 import { makeBouncerRequest } from '../client';
 import type { BouncerEndpointOutputs } from './types';
 
+// The toxicity list surface is served from `v1`, not the `v1.1` used by the
+// email, domain and credits endpoints.
+// https://docs.usebouncer.com/api-reference/toxicity/toxicity-create
+
 export const createToxicityListJob: BouncerEndpoints['createToxicityListJob'] =
 	async (ctx, input) => {
-		const body = Array.isArray(input.emails)
-			? input.emails.map((e) => (typeof e === 'string' ? { email: e } : e))
-			: input;
-
 		const response = await makeBouncerRequest<
 			BouncerEndpointOutputs['createToxicityListJob']
-		>('toxicity', ctx.key, {
+		>('v1/toxicity/list', ctx.key, {
 			method: 'POST',
-			body: body as unknown as Record<string, unknown>,
+			// A bare array of address strings: objects are rejected here.
+			body: input.emails,
 		});
 
 		await logEventFromContext(
 			ctx,
 			'bouncer.toxicity.createToxicityListJob',
-			{ count: Array.isArray(input.emails) ? input.emails.length : 0 },
+			{ count: input.emails.length },
 			'completed',
 		);
 		return response;
@@ -29,7 +30,7 @@ export const checkToxicityListJobStatus: BouncerEndpoints['checkToxicityListJobS
 	async (ctx, input) => {
 		const response = await makeBouncerRequest<
 			BouncerEndpointOutputs['checkToxicityListJobStatus']
-		>(`toxicity/${encodeURIComponent(input.jobId)}`, ctx.key, {
+		>(`v1/toxicity/list/${encodeURIComponent(input.jobId)}`, ctx.key, {
 			method: 'GET',
 		});
 
@@ -42,11 +43,29 @@ export const checkToxicityListJobStatus: BouncerEndpoints['checkToxicityListJobS
 		return response;
 	};
 
-export const deleteToxicityListJob: BouncerEndpoints['deleteToxicityListJob'] =
+export const getToxicityListResults: BouncerEndpoints['getToxicityListResults'] =
 	async (ctx, input) => {
 		const response = await makeBouncerRequest<
-			BouncerEndpointOutputs['deleteToxicityListJob']
-		>(`toxicity/${encodeURIComponent(input.jobId)}`, ctx.key, {
+			BouncerEndpointOutputs['getToxicityListResults']
+		>(`v1/toxicity/list/${encodeURIComponent(input.jobId)}/data`, ctx.key, {
+			method: 'GET',
+		});
+
+		await logEventFromContext(
+			ctx,
+			'bouncer.toxicity.getToxicityListResults',
+			{ jobId: input.jobId },
+			'completed',
+		);
+		return response;
+	};
+
+export const deleteToxicityListJob: BouncerEndpoints['deleteToxicityListJob'] =
+	async (ctx, input) => {
+		// Bouncer answers 200 with an empty body, so there is nothing to decode.
+		const response = await makeBouncerRequest<
+			BouncerEndpointOutputs['deleteToxicityListJob'] | undefined
+		>(`v1/toxicity/list/${encodeURIComponent(input.jobId)}`, ctx.key, {
 			method: 'DELETE',
 		});
 
@@ -56,5 +75,5 @@ export const deleteToxicityListJob: BouncerEndpoints['deleteToxicityListJob'] =
 			{ jobId: input.jobId },
 			'completed',
 		);
-		return response;
+		return response ?? {};
 	};
