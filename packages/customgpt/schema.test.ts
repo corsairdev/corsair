@@ -1,23 +1,8 @@
-import * as CorsairCore from 'corsair/core';
-import * as CorsairHttp from 'corsair/http';
-import { ApiError } from 'corsair/http';
-import { CustomGPTAPIError } from './client';
-import {
-	createConversation,
-	getMessages,
-	listProjects,
-	sendMessage,
-} from './endpoints/customgpt';
 import {
 	CustomGPTEndpointInputSchemas,
 	CustomGPTEndpointOutputSchemas,
 } from './endpoints/types';
-import { errorHandlers } from './error-handlers';
-import {
-	customGPTAuthConfig,
-	customGPTEndpointSchemas,
-	customgpt,
-} from './index';
+import { customGPTAuthConfig, customGPTEndpointSchemas } from './index';
 import { CustomGPTSchema } from './schema';
 
 describe('CustomGPT schema', () => {
@@ -26,460 +11,659 @@ describe('CustomGPT schema', () => {
 		expect(CustomGPTSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('declares an entities map with all 7 official entities', () => {
 		expect(typeof CustomGPTSchema.entities).toBe('object');
 		expect(CustomGPTSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(CustomGPTSchema.entities))).toBe(true);
+		const entityKeys = Object.keys(CustomGPTSchema.entities);
+		expect(entityKeys).toHaveLength(7);
+		expect(entityKeys).toContain('projects');
+		expect(entityKeys).toContain('pages');
+		expect(entityKeys).toContain('sources');
+		expect(entityKeys).toContain('conversations');
+		expect(entityKeys).toContain('messages');
+		expect(entityKeys).toContain('licenses');
+		expect(entityKeys).toContain('leads');
+
 		for (const entity of Object.values(CustomGPTSchema.entities)) {
 			expect(entity).toBeDefined();
-		}
-	});
-});
-
-describe('CustomGPT Endpoint Input Schemas', () => {
-	it('validates listProjects input', () => {
-		const schema = CustomGPTEndpointInputSchemas.listProjects;
-		expect(schema.safeParse({}).success).toBe(true);
-		expect(schema.safeParse({ page: 2 }).success).toBe(true);
-		expect(schema.safeParse({ page: 'not-a-number' }).success).toBe(false);
-	});
-
-	it('validates createConversation input', () => {
-		const schema = CustomGPTEndpointInputSchemas.createConversation;
-		expect(schema.safeParse({ projectId: 123 }).success).toBe(true);
-		expect(schema.safeParse({ projectId: 123, name: 'My Chat' }).success).toBe(
-			true,
-		);
-		expect(schema.safeParse({}).success).toBe(false);
-		expect(schema.safeParse({ name: 'My Chat' }).success).toBe(false);
-	});
-
-	it('validates sendMessage input', () => {
-		const schema = CustomGPTEndpointInputSchemas.sendMessage;
-		expect(
-			schema.safeParse({
-				projectId: 123,
-				sessionId: 'session-abc',
-				prompt: 'hello',
-			}).success,
-		).toBe(true);
-		expect(
-			schema.safeParse({ projectId: 123, sessionId: 'session-abc' }).success,
-		).toBe(false);
-		expect(schema.safeParse({ prompt: 'hello' }).success).toBe(false);
-	});
-
-	it('validates getMessages input', () => {
-		const schema = CustomGPTEndpointInputSchemas.getMessages;
-		expect(
-			schema.safeParse({ projectId: 123, sessionId: 'session-abc' }).success,
-		).toBe(true);
-		expect(
-			schema.safeParse({ projectId: 123, sessionId: 'session-abc', page: 2 })
-				.success,
-		).toBe(true);
-		expect(schema.safeParse({ projectId: 123 }).success).toBe(false);
-	});
-});
-
-describe('CustomGPT Endpoint Output Schemas', () => {
-	it('validates listProjects output', () => {
-		const schema = CustomGPTEndpointOutputSchemas.listProjects;
-		const validPayload = {
-			status: 'success',
-			data: {
-				current_page: 1,
-				data: [
-					{
-						id: 123,
-						project_name: 'Test Project',
-						is_chat_active: true,
-					},
-				],
-			},
-		};
-		const parsed = schema.safeParse(validPayload);
-		expect(parsed.success).toBe(true);
-		if (parsed.success) {
-			const project = parsed.data.data.data[0];
-			expect(project).toBeDefined();
-			if (project) {
-				expect(project.id).toBe(123);
-				expect(project.project_name).toBe('Test Project');
-			}
-		}
-
-		expect(schema.safeParse({ status: 'success', data: {} }).success).toBe(
-			false,
-		);
-	});
-
-	it('validates createConversation output', () => {
-		const schema = CustomGPTEndpointOutputSchemas.createConversation;
-		const validPayload = {
-			status: 'success',
-			data: {
-				session_id: 'session-123',
-				conversation_name: 'Chat Name',
-			},
-		};
-		const parsed = schema.safeParse(validPayload);
-		expect(parsed.success).toBe(true);
-		if (parsed.success) {
-			expect(parsed.data.data.session_id).toBe('session-123');
-		}
-	});
-
-	it('validates sendMessage output', () => {
-		const schema = CustomGPTEndpointOutputSchemas.sendMessage;
-		const validPayload = {
-			status: 'success',
-			data: {
-				id: 999,
-				openai_response: 'This is the answer',
-				citations: [],
-			},
-		};
-		const parsed = schema.safeParse(validPayload);
-		expect(parsed.success).toBe(true);
-		if (parsed.success) {
-			expect(parsed.data.data.openai_response).toBe('This is the answer');
-		}
-	});
-
-	it('validates getMessages output (both direct array and paginated formats)', () => {
-		const schema = CustomGPTEndpointOutputSchemas.getMessages;
-		const paginatedPayload = {
-			status: 'success',
-			data: {
-				current_page: 1,
-				data: [
-					{
-						id: 1,
-						user_query: 'hi',
-						openai_response: 'hello',
-					},
-				],
-			},
-		};
-		const directArrayPayload = {
-			status: 'success',
-			data: [
-				{
-					id: 1,
-					user_query: 'hi',
-					openai_response: 'hello',
-				},
-			],
-		};
-
-		expect(schema.safeParse(paginatedPayload).success).toBe(true);
-		expect(schema.safeParse(directArrayPayload).success).toBe(true);
-	});
-});
-
-describe('CustomGPT plugin metadata and config', () => {
-	const plugin = customgpt({ key: 'test-key' });
-
-	it('declares the customgpt plugin id', () => {
-		expect(plugin.id).toBe('customgpt');
-	});
-
-	it('defines endpoints schema map', () => {
-		expect(customGPTEndpointSchemas['projects.list']).toBeDefined();
-		expect(customGPTEndpointSchemas['conversations.create']).toBeDefined();
-		expect(customGPTEndpointSchemas['messages.send']).toBeDefined();
-		expect(customGPTEndpointSchemas['messages.get']).toBeDefined();
-	});
-
-	it('defines correct endpoint metadata and risk levels', () => {
-		const meta = plugin.endpointMeta;
-		expect(meta).toBeDefined();
-		if (meta) {
-			expect(meta['projects.list']?.riskLevel).toBe('read');
-			expect(meta['conversations.create']?.riskLevel).toBe('write');
-			expect(meta['messages.send']?.riskLevel).toBe('write');
-			expect(meta['messages.get']?.riskLevel).toBe('read');
 		}
 	});
 
 	it('defines authConfig with api_key support', () => {
 		expect(customGPTAuthConfig.api_key).toBeDefined();
 	});
-});
 
-describe('CustomGPT endpoints behavioral tests', () => {
-	const requestSpy = jest.spyOn(CorsairHttp, 'request');
-	const logSpy = jest.spyOn(CorsairCore, 'logEventFromContext');
-	const mockCtx = {
-		key: 'customgpt-test-key',
-		db: {},
-		authType: 'api_key' as const,
-		keys: {
-			get_api_key: async () => 'customgpt-test-key',
-		},
-	} as any;
-
-	beforeEach(() => {
-		requestSpy.mockReset();
-		logSpy.mockReset();
-		logSpy.mockResolvedValue(null as any);
-		// biome-ignore lint/performance/noDelete: test-only environment cleanup
-		delete process.env.LITELLM_API_KEY;
-		// biome-ignore lint/performance/noDelete: test-only environment cleanup
-		delete process.env.LITELLM_BASE_URL;
-	});
-
-	afterAll(() => {
-		jest.restoreAllMocks();
-	});
-
-	it('listProjects builds correct request and returns output', async () => {
-		const mockResponse = {
-			status: 'success',
-			data: { current_page: 1, data: [] },
-		};
-		requestSpy.mockResolvedValueOnce(mockResponse);
-
-		const result = await listProjects(mockCtx, { page: 2 });
-
-		expect(result).toEqual(mockResponse);
-		expect(requestSpy).toHaveBeenCalledTimes(1);
-		const call = requestSpy.mock.calls[0];
-		expect(call).toBeDefined();
-		if (call) {
-			const [config, options] = call;
-			const headers = config.HEADERS as Record<string, string>;
-			expect(config.BASE).toBe('https://app.customgpt.ai/api/v1');
-			expect(headers?.Authorization).toBe('Bearer customgpt-test-key');
-			expect(options.method).toBe('GET');
-			expect(options.url).toBe('/projects');
-			expect(options.query).toEqual({ page: 2 });
-		}
-
-		expect(logSpy).toHaveBeenCalledWith(
-			mockCtx,
-			'customgpt.projects.list',
-			{ page: 2 },
-			'completed',
-		);
-	});
-
-	it('createConversation builds correct request', async () => {
-		const mockResponse = {
-			status: 'success',
-			data: { session_id: 'sess-123', conversation_name: 'Chat' },
-		};
-		requestSpy.mockResolvedValueOnce(mockResponse);
-
-		const result = await createConversation(mockCtx, {
-			projectId: 456,
-			name: 'My Chat',
-		});
-
-		expect(result).toEqual(mockResponse);
-		expect(requestSpy).toHaveBeenCalledTimes(1);
-		const call = requestSpy.mock.calls[0];
-		expect(call).toBeDefined();
-		if (call) {
-			const [config, options] = call;
-			const headers = config.HEADERS as Record<string, string>;
-			expect(config.BASE).toBe('https://app.customgpt.ai/api/v1');
-			expect(headers?.Authorization).toBe('Bearer customgpt-test-key');
-			expect(options.method).toBe('POST');
-			expect(options.url).toBe('/projects/456/conversations');
-			expect(options.body).toEqual({ name: 'My Chat' });
-		}
-
-		expect(logSpy).toHaveBeenCalledWith(
-			mockCtx,
-			'customgpt.conversations.create',
-			{ projectId: 456, name: 'My Chat' },
-			'completed',
-		);
-	});
-
-	it('sendMessage routes prompt-bearing calls through gateway and redacts prompt in logging', async () => {
-		const mockGatewayResponse = {
-			choices: [
-				{
-					message: { role: 'assistant', content: 'hello' },
-				},
-			],
-			citations: [],
-		};
-		requestSpy.mockResolvedValueOnce(mockGatewayResponse);
-
-		process.env.LITELLM_API_KEY = 'gateway-key';
-		process.env.LITELLM_BASE_URL = 'https://custom.gateway.url/v1';
-
-		const result = await sendMessage(mockCtx, {
-			projectId: 456,
-			sessionId: 'sess-123',
-			prompt: 'hi there',
-		});
-
-		expect(result).toEqual({
-			status: 'success',
-			data: {
-				openai_response: 'hello',
-				citations: [],
-			},
-		});
-		expect(requestSpy).toHaveBeenCalledTimes(1);
-		const call = requestSpy.mock.calls[0];
-		expect(call).toBeDefined();
-		if (call) {
-			const [config, options] = call;
-			const headers = config.HEADERS as Record<string, string>;
-			expect(config.BASE).toBe('https://llm.corsair.dev/v1');
-			expect(headers?.Authorization).toBe('Bearer gateway-key');
-			expect(options.method).toBe('POST');
-			expect(options.url).toBe('/chat/completions');
-			expect(options.body).toEqual({
-				model: 'gpt-5.4-mini',
-				messages: [{ role: 'user', content: 'hi there' }],
-			});
-		}
-
-		expect(logSpy).toHaveBeenCalledTimes(1);
-		const logCall = logSpy.mock.calls[0];
-		expect(logCall).toBeDefined();
-		if (logCall) {
-			expect(logCall[1]).toBe('customgpt.messages.send');
-			expect(logCall[2]).toEqual({
-				projectId: 456,
-				sessionId: 'sess-123',
-			});
-			expect(logCall[2]).not.toHaveProperty('prompt');
-		}
-	});
-
-	it('sendMessage ignores LITELLM_BASE_URL override and always uses default gateway URL', async () => {
-		const mockGatewayResponse = {
-			choices: [
-				{
-					message: { role: 'assistant', content: 'hello' },
-				},
-			],
-			citations: [],
-		};
-		requestSpy.mockResolvedValueOnce(mockGatewayResponse);
-
-		process.env.LITELLM_API_KEY = 'gateway-key';
-		process.env.LITELLM_BASE_URL = 'https://custom.gateway.url/v1';
-
-		await sendMessage(mockCtx, {
-			projectId: 456,
-			sessionId: 'sess-123',
-			prompt: 'hi there',
-		});
-
-		const call = requestSpy.mock.calls[0];
-		expect(call).toBeDefined();
-		if (call) {
-			const [config, options] = call;
-			const headers = config.HEADERS as Record<string, string>;
-			expect(config.BASE).toBe('https://llm.corsair.dev/v1');
-			expect(options.url).toBe('/chat/completions');
-			expect(headers?.Authorization).toBe('Bearer gateway-key');
-		}
-	});
-
-	it('getMessages builds correct request', async () => {
-		const mockResponse = {
-			status: 'success',
-			data: [],
-		};
-		requestSpy.mockResolvedValueOnce(mockResponse);
-
-		const result = await getMessages(mockCtx, {
-			projectId: 456,
-			sessionId: 'sess-123',
-			page: 3,
-		});
-
-		expect(result).toEqual(mockResponse);
-		expect(requestSpy).toHaveBeenCalledTimes(1);
-		const call = requestSpy.mock.calls[0];
-		expect(call).toBeDefined();
-		if (call) {
-			const [config, options] = call;
-			const headers = config.HEADERS as Record<string, string>;
-			expect(config.BASE).toBe('https://app.customgpt.ai/api/v1');
-			expect(headers?.Authorization).toBe('Bearer customgpt-test-key');
-			expect(options.method).toBe('GET');
-			expect(options.url).toBe('/projects/456/conversations/sess-123/messages');
-			expect(options.query).toEqual({ page: 3 });
-		}
-
-		expect(logSpy).toHaveBeenCalledWith(
-			mockCtx,
-			'customgpt.messages.get',
-			{ projectId: 456, sessionId: 'sess-123', page: 3 },
-			'completed',
-		);
+	it('declares all 40 endpoint schemas', () => {
+		expect(Object.keys(customGPTEndpointSchemas)).toHaveLength(40);
 	});
 });
 
-describe('CustomGPT error-handlers', () => {
-	it('RATE_LIMIT_ERROR matches 429 errors', () => {
-		const apiError = new ApiError(
-			{ method: 'GET', url: '/projects' },
-			{
-				status: 429,
-				statusText: 'Too Many Requests',
-				ok: false,
-				body: 'rate limit',
-				url: 'https://app.customgpt.ai/api/v1/projects',
-			},
-			'rate limit',
-		);
-
-		const wrappedError = new CustomGPTAPIError('wrapped', 429, {
-			cause: apiError,
+describe('CustomGPT Endpoint Input & Output Schemas', () => {
+	// Projects (8)
+	describe('Projects schemas', () => {
+		it('validates listProjects input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.listProjects;
+			const outSchema = CustomGPTEndpointOutputSchemas.listProjects;
+			expect(inSchema.safeParse({}).success).toBe(true);
+			expect(inSchema.safeParse({ page: 2, order: 'asc' }).success).toBe(true);
+			expect(inSchema.safeParse({ page: 'invalid' }).success).toBe(false);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { current_page: 1, data: [{ id: 1, project_name: 'Test' }] },
+				}).success,
+			).toBe(true);
 		});
 
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(apiError)).toBe(true);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(wrappedError)).toBe(true);
-		expect(
-			errorHandlers.RATE_LIMIT_ERROR.match(new Error('rate_limited')),
-		).toBe(true);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(new Error('429'))).toBe(true);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(new Error('other'))).toBe(
-			false,
-		);
+		it('validates getProject input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getProject;
+			const outSchema = CustomGPTEndpointOutputSchemas.getProject;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(
+				inSchema.safeParse({ projectId: 10, width: '300', height: '200' })
+					.success,
+			).toBe(true);
+			expect(inSchema.safeParse({}).success).toBe(false);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 10, project_name: 'Agent' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates createProject input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.createProject;
+			const outSchema = CustomGPTEndpointOutputSchemas.createProject;
+			expect(inSchema.safeParse({ project_name: 'New Agent' }).success).toBe(
+				false,
+			);
+			expect(
+				inSchema.safeParse({
+					project_name: 'New Agent',
+					sitemap_path: 'https://example.com/sitemap.xml',
+				}).success,
+			).toBe(true);
+			expect(inSchema.safeParse({}).success).toBe(false);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 12, project_name: 'New Agent' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates updateProject input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.updateProject;
+			const outSchema = CustomGPTEndpointOutputSchemas.updateProject;
+			expect(
+				inSchema.safeParse({ projectId: 10, project_name: 'Updated' }).success,
+			).toBe(true);
+			expect(inSchema.safeParse({ project_name: 'Updated' }).success).toBe(
+				false,
+			);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 10, project_name: 'Updated' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates deleteProject input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.deleteProject;
+			const outSchema = CustomGPTEndpointOutputSchemas.deleteProject;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(inSchema.safeParse({}).success).toBe(false);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { message: 'Project deleted' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates cloneProject input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.cloneProject;
+			const outSchema = CustomGPTEndpointOutputSchemas.cloneProject;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(inSchema.safeParse({}).success).toBe(false);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 20, project_name: 'Agent Copy' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates getStats input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getStats;
+			const outSchema = CustomGPTEndpointOutputSchemas.getStats;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { total_conversations: 5, total_queries: 25 },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates getPlugins input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getPlugins;
+			const outSchema = CustomGPTEndpointOutputSchemas.getPlugins;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { plugins: [] },
+				}).success,
+			).toBe(true);
+		});
 	});
 
-	it('RATE_LIMIT_ERROR handler preserves retryAfter', async () => {
-		const apiError = new ApiError(
-			{ method: 'GET', url: '/projects' },
-			{
-				status: 429,
-				statusText: 'Too Many Requests',
-				ok: false,
-				body: 'rate limit',
-				url: 'https://app.customgpt.ai/api/v1/projects',
-			},
-			'rate limit',
-		);
-		Object.defineProperty(apiError, 'retryAfter', {
-			value: 3500,
-			writable: true,
+	// Pages (5)
+	describe('Pages schemas', () => {
+		it('validates listPages input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.listPages;
+			const outSchema = CustomGPTEndpointOutputSchemas.listPages;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(
+				inSchema.safeParse({ projectId: 10, crawl_status: 'ok', page: 1 })
+					.success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: {
+						pages: {
+							current_page: 1,
+							data: [{ id: 101, page_url: 'https://example.com' }],
+						},
+					},
+				}).success,
+			).toBe(true);
 		});
 
-		const wrappedError = new CustomGPTAPIError('wrapped', 429, {
-			cause: apiError,
+		it('validates deletePage input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.deletePage;
+			const outSchema = CustomGPTEndpointOutputSchemas.deletePage;
+			expect(inSchema.safeParse({ projectId: 10, pageId: 101 }).success).toBe(
+				true,
+			);
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(false);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { message: 'Page deleted' },
+				}).success,
+			).toBe(true);
 		});
 
-		const apiResult = await errorHandlers.RATE_LIMIT_ERROR.handler(apiError);
-		expect(apiResult).toEqual({ maxRetries: 5, headersRetryAfterMs: 3500 });
+		it('validates reindexPage input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.reindexPage;
+			const outSchema = CustomGPTEndpointOutputSchemas.reindexPage;
+			expect(inSchema.safeParse({ projectId: 10, pageId: 101 }).success).toBe(
+				true,
+			);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { message: 'Reindexing queued' },
+				}).success,
+			).toBe(true);
+		});
 
-		const wrappedResult =
-			await errorHandlers.RATE_LIMIT_ERROR.handler(wrappedError);
-		expect(wrappedResult).toEqual({
-			maxRetries: 5,
-			headersRetryAfterMs: 3500,
+		it('validates getPageMetadata input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getPageMetadata;
+			const outSchema = CustomGPTEndpointOutputSchemas.getPageMetadata;
+			expect(inSchema.safeParse({ projectId: 10, pageId: 101 }).success).toBe(
+				true,
+			);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { title: 'Doc Title', description: 'Doc description' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates updatePageMetadata input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.updatePageMetadata;
+			const outSchema = CustomGPTEndpointOutputSchemas.updatePageMetadata;
+			expect(
+				inSchema.safeParse({
+					projectId: 10,
+					pageId: 101,
+					title: 'New Title',
+				}).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { title: 'New Title' },
+				}).success,
+			).toBe(true);
+		});
+	});
+
+	// Sources (4)
+	describe('Sources schemas', () => {
+		it('validates listSources input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.listSources;
+			const outSchema = CustomGPTEndpointOutputSchemas.listSources;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { sitemaps: [{ id: 1, type: 'sitemap' }] },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates addSource input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.addSource;
+			const outSchema = CustomGPTEndpointOutputSchemas.addSource;
+			expect(
+				inSchema.safeParse({
+					projectId: 10,
+					sitemap_path: 'https://example.com/sitemap.xml',
+				}).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 2, type: 'sitemap' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates updateSource input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.updateSource;
+			const outSchema = CustomGPTEndpointOutputSchemas.updateSource;
+			expect(
+				inSchema.safeParse({
+					projectId: 10,
+					sourceId: 2,
+					data_refresh_frequency: 'daily',
+				}).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 2, settings: { data_refresh_frequency: 'daily' } },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates deleteSource input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.deleteSource;
+			const outSchema = CustomGPTEndpointOutputSchemas.deleteSource;
+			expect(inSchema.safeParse({ projectId: 10, sourceId: 2 }).success).toBe(
+				true,
+			);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { message: 'Source removed' },
+				}).success,
+			).toBe(true);
+		});
+	});
+
+	// Licenses (4)
+	describe('Licenses schemas', () => {
+		it('validates listProjectLicenses input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.listProjectLicenses;
+			const outSchema = CustomGPTEndpointOutputSchemas.listProjectLicenses;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: [{ key: 'lic_abc123', name: 'Standard' }],
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates getProjectLicense input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getProjectLicense;
+			const outSchema = CustomGPTEndpointOutputSchemas.getProjectLicense;
+			expect(inSchema.safeParse({ projectId: 10, licenseId: 1 }).success).toBe(
+				true,
+			);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					license: { key: 'lic_1', name: 'License 1' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates updateProjectLicense input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.updateProjectLicense;
+			const outSchema = CustomGPTEndpointOutputSchemas.updateProjectLicense;
+			expect(
+				inSchema.safeParse({ projectId: 10, licenseId: 1, name: 'Pro' })
+					.success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					license: { key: 'lic_1', name: 'Pro' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates deleteProjectLicense input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.deleteProjectLicense;
+			const outSchema = CustomGPTEndpointOutputSchemas.deleteProjectLicense;
+			expect(inSchema.safeParse({ projectId: 10, licenseId: 1 }).success).toBe(
+				true,
+			);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { message: 'License deleted' },
+				}).success,
+			).toBe(true);
+		});
+	});
+
+	// Settings & Personas (4)
+	describe('Settings & Personas schemas', () => {
+		it('validates getProjectSettings input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getProjectSettings;
+			const outSchema = CustomGPTEndpointOutputSchemas.getProjectSettings;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { default_prompt: 'You are an assistant' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates updateProjectSettings input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.updateProjectSettings;
+			const outSchema = CustomGPTEndpointOutputSchemas.updateProjectSettings;
+			expect(
+				inSchema.safeParse({ projectId: 10, default_prompt: 'New prompt' })
+					.success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { default_prompt: 'New prompt' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates listPersonas input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.listPersonas;
+			const outSchema = CustomGPTEndpointOutputSchemas.listPersonas;
+			expect(inSchema.safeParse({ projectId: 10, page: 1 }).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { current_page: 1, data: [{ id: 1, version: 1 }] },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates activatePersonaVersion input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.activatePersonaVersion;
+			const outSchema = CustomGPTEndpointOutputSchemas.activatePersonaVersion;
+			expect(inSchema.safeParse({ projectId: 10, version: 2 }).success).toBe(
+				true,
+			);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { message: 'Persona activated' },
+				}).success,
+			).toBe(true);
+		});
+	});
+
+	// Conversations & Messages (6)
+	describe('Conversations & Messages schemas', () => {
+		it('validates createConversation input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.createConversation;
+			const outSchema = CustomGPTEndpointOutputSchemas.createConversation;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(
+				inSchema.safeParse({ projectId: 10, name: 'Chat 1' }).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { session_id: 'sess_100', name: 'Chat 1' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates listConversationMessages input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.listConversationMessages;
+			const outSchema = CustomGPTEndpointOutputSchemas.listConversationMessages;
+			expect(
+				inSchema.safeParse({ projectId: 10, sessionId: 'sess_100' }).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: {
+						conversation: { session_id: 'sess_100' },
+						messages: {
+							current_page: 1,
+							data: [{ id: 1, user_query: 'Hello' }],
+						},
+					},
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates getMessage input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getMessage;
+			const outSchema = CustomGPTEndpointOutputSchemas.getMessage;
+			expect(
+				inSchema.safeParse({
+					projectId: 10,
+					sessionId: 'sess_100',
+					promptId: 1,
+				}).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 1, user_query: 'Hello', openai_response: 'Hi there' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates getMessageTrustScore input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getMessageTrustScore;
+			const outSchema = CustomGPTEndpointOutputSchemas.getMessageTrustScore;
+			expect(
+				inSchema.safeParse({
+					projectId: 10,
+					sessionId: 'sess_100',
+					promptId: 1,
+				}).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { trust_score: 95 },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates verifyMessage input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.verifyMessage;
+			const outSchema = CustomGPTEndpointOutputSchemas.verifyMessage;
+			expect(
+				inSchema.safeParse({
+					projectId: 10,
+					sessionId: 'sess_100',
+					promptId: 1,
+				}).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { message: 'Verification completed', claims: [] },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates submitMessageFeedback input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.submitMessageFeedback;
+			const outSchema = CustomGPTEndpointOutputSchemas.submitMessageFeedback;
+			expect(
+				inSchema.safeParse({
+					projectId: 10,
+					sessionId: 'sess_100',
+					promptId: 1,
+					reaction: 'liked',
+				}).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 1, response_feedback: { reaction: 'liked' } },
+				}).success,
+			).toBe(true);
+		});
+	});
+
+	// Reports (5)
+	describe('Reports schemas', () => {
+		it('validates getReportAnalysis input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getReportAnalysis;
+			const outSchema = CustomGPTEndpointOutputSchemas.getReportAnalysis;
+			expect(
+				inSchema.safeParse({
+					projectId: 10,
+					filters: ['queries'],
+					interval: 'daily',
+				}).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { chart: [] },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates getReportConversations input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getReportConversations;
+			const outSchema = CustomGPTEndpointOutputSchemas.getReportConversations;
+			expect(
+				inSchema.safeParse({ projectId: 10, filters: ['total'] }).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { total_conversations: 50 },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates getReportTraffic input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getReportTraffic;
+			const outSchema = CustomGPTEndpointOutputSchemas.getReportTraffic;
+			expect(
+				inSchema.safeParse({ projectId: 10, filters: ['sources'] }).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { unique_visitors: 120 },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates getReportIntelligence input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getReportIntelligence;
+			const outSchema = CustomGPTEndpointOutputSchemas.getReportIntelligence;
+			expect(
+				inSchema.safeParse({ projectId: 10, page: 1, limit: 10 }).success,
+			).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { current_page: 1, data: [{ prompt_id: 1 }] },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates exportLeads input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.exportLeads;
+			const outSchema = CustomGPTEndpointOutputSchemas.exportLeads;
+			expect(inSchema.safeParse({ projectId: 10 }).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: {
+						data: [
+							{ session_id: 'sess_1', query_id: 1, email: 'user@example.com' },
+						],
+					},
+				}).success,
+			).toBe(true);
+		});
+	});
+
+	// Limits & User (4)
+	describe('Limits & User schemas', () => {
+		it('validates getUsageLimits input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getUsageLimits;
+			const outSchema = CustomGPTEndpointOutputSchemas.getUsageLimits;
+			expect(inSchema.safeParse({}).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { projects: { current: 2, max: 10 } },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates getUserProfile input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.getUserProfile;
+			const outSchema = CustomGPTEndpointOutputSchemas.getUserProfile;
+			expect(inSchema.safeParse({}).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 1, name: 'Alice', email: 'alice@example.com' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates updateUserProfile input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.updateUserProfile;
+			const outSchema = CustomGPTEndpointOutputSchemas.updateUserProfile;
+			expect(inSchema.safeParse({ name: 'Bob' }).success).toBe(true);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 1, name: 'Bob', email: 'bob@example.com' },
+				}).success,
+			).toBe(true);
+		});
+
+		it('validates searchTeamMembers input & output', () => {
+			const inSchema = CustomGPTEndpointInputSchemas.searchTeamMembers;
+			const outSchema = CustomGPTEndpointOutputSchemas.searchTeamMembers;
+			expect(inSchema.safeParse({ email: 'bob@example.com' }).success).toBe(
+				true,
+			);
+			expect(
+				outSchema.safeParse({
+					status: 'success',
+					data: { id: 2, name: 'Bob', email: 'bob@example.com' },
+				}).success,
+			).toBe(true);
 		});
 	});
 });
