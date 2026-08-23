@@ -274,6 +274,8 @@ Under `strict`, a write normally escalates to `require_approval`. With the const
 | `in` | The argument is one of these values |
 | `notIn` | The argument is none of these values |
 
+An empty `in: []` matches nothing. An empty `notIn: []` matches every defined argument — it excludes nothing, so it will apply the override policy to any call that supplies that field.
+
 Constraint keys are dot-notation paths into the endpoint's arguments, so nested fields work too:
 
 ```ts
@@ -307,6 +309,7 @@ The fail-closed behaviour applies to constraints that **cannot be evaluated or d
 - the constraint carries more than one operator, or none this version recognizes
 - the constraints object is empty
 - either side of the comparison is a cyclic object — possible only from hand-written JavaScript, since JSON cannot express cycles; cyclic structures are rejected outright rather than compared, which also means a cyclic argument never reads as "not in" a denylist
+- either side is an exotic object (`Map`, `Set`, `RegExp`, class instance, boxed primitive) — these also fail closed under `notIn`, so a value that cannot be compared never reads as "not in the denylist"
 
 Deeply nested structures are safe too: the comparator and the cycle scan are iterative, so an unusually deep argument cannot overflow the call stack or crash the permission check — it simply compares by value like any other structure.
 
