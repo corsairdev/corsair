@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/aivoov",
   "version": "0.1.0",
-  "description": "Aivoov plugin for Corsair",
+  "description": "AiVOOV text-to-speech plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -34,6 +34,9 @@
   "keywords": [
     "corsair",
     "aivoov",
+    "text-to-speech",
+    "tts",
+    "voice",
     "plugin"
   ],
   "author": "",

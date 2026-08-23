@@ -1,7 +1,12 @@
-import { get as exampleGet } from './example';
+import { create } from './audio';
+import { list } from './voices';
 
-export const Example = {
-	get: exampleGet,
+export const Voices = {
+	list,
+};
+
+export const Audio = {
+	create,
 };
 
 export * from './types';
