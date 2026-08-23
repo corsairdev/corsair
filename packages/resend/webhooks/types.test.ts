@@ -7,7 +7,7 @@ import { verifyResendWebhookSignature } from './types';
 const TIMESTAMP = Math.floor(Date.now() / 1000);
 const RECENT_TIMESTAMP = String(TIMESTAMP);
 
-const secret = 'whsec_testsecret123';
+const secret = 'whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2gAqNLy';
 const payload: ResendWebhookPayload = {
 	type: 'email.sent',
 	created_at: '2026-01-01T00:00:00.000Z',
@@ -50,7 +50,7 @@ describe('verifyResendWebhookSignature', () => {
 		});
 	});
 
-	it('returns error when rawBody is missing', () => {
+	it('returns error when raw body is missing', () => {
 		const result = verifyResendWebhookSignature(
 			requestWith({ 'svix-signature': signSvix(secret) }, null),
 			secret,
@@ -70,18 +70,11 @@ describe('verifyResendWebhookSignature', () => {
 	});
 
 	it('returns valid for a correctly signed request using svix-signature', () => {
-		const signedContent = `test-id.${RECENT_TIMESTAMP}.${rawBody}`;
-		const hmac = crypto
-			.createHmac('sha256', secret)
-			.update(signedContent)
-			.digest('base64');
-		const svixSignature = `v1,${hmac}`;
-
 		const result = verifyResendWebhookSignature(
 			requestWith({
 				'svix-id': 'test-id',
 				'svix-timestamp': RECENT_TIMESTAMP,
-				'svix-signature': svixSignature,
+				'svix-signature': signSvix(secret),
 			}),
 			secret,
 		);
@@ -93,7 +86,7 @@ describe('verifyResendWebhookSignature', () => {
 			requestWith({
 				'svix-id': 'test-id',
 				'svix-timestamp': RECENT_TIMESTAMP,
-				'svix-signature': signSvix('a-different-secret'),
+				'svix-signature': signSvix('whsec_YW5vdGhlci1zZWNyZXQ='),
 			}),
 			secret,
 		);
@@ -105,9 +98,13 @@ describe('verifyResendWebhookSignature', () => {
 });
 
 function signSvix(key: string): string {
+	const secretMaterial = key.startsWith('whsec_')
+		? key.slice('whsec_'.length)
+		: key;
+	const signingKey = Buffer.from(secretMaterial, 'base64');
 	const signedContent = `test-id.${RECENT_TIMESTAMP}.${rawBody}`;
 	const hmac = crypto
-		.createHmac('sha256', key)
+		.createHmac('sha256', signingKey)
 		.update(signedContent)
 		.digest('base64');
 	return `v1,${hmac}`;
