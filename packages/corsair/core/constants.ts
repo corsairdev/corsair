@@ -106,6 +106,7 @@ export const BaseProviders = [
 	'googleaddressvalidation',
 	'googlebigquery',
 	'googlecalendar',
+	'googlecloudvision',
 	'googledocs',
 	'googledrive',
 	'googlemaps',
@@ -283,6 +284,7 @@ export const ProviderDisplayNames = {
 	googleaddressvalidation: 'Google Address Validation',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googlecloudvision: 'Google Cloud Vision',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
 	googlemaps: 'Google Maps',
@@ -467,6 +469,7 @@ export type AllProviders =
 	| 'googleaddressvalidation'
 	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googlecloudvision'
 	| 'googledocs'
 	| 'googledrive'
 	| 'googlemaps'
