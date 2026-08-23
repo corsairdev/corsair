@@ -3,8 +3,8 @@ import * as crypto from 'crypto';
 import type { BannerbearContext } from './index';
 import { bannerbear } from './index';
 import {
+	createBannerbearAnimationCompletedMatch,
 	createBannerbearImageCompletedMatch,
-	createBannerbearVideoCompletedMatch,
 	verifyBannerbearWebhookSignature,
 } from './webhooks/types';
 
@@ -112,7 +112,7 @@ describe('Bannerbear webhooks verification and handlers', () => {
 		const result = verifyBannerbearWebhookSignature(request, secret);
 		expect(result.valid).toBe(false);
 		expect(result.error).toBe(
-			'Missing Authorization or x-bannerbear-signature header',
+			'Missing Authorization or webhook signature header',
 		);
 	});
 
@@ -149,18 +149,21 @@ describe('Bannerbear webhooks verification and handlers', () => {
 		expect(res.statusCode).toBe(401);
 	});
 
-	it('processes videoCompleted webhook handler with valid signature', async () => {
+	it('processes animationCompleted webhook handler with valid signature', async () => {
 		const webhookCtx = { ...mockCtx, key: secret };
 		const payload = {
-			uid: 'vid_123',
+			uid: 'an_123',
 			status: 'completed' as const,
-			video_url: 'https://cdn.bannerbear.com/sample.mp4',
+			files: { mp4: 'https://cdn.bannerbear.com/sample.mp4' },
 		};
 		const req = createSignedWebhookRequest(payload) as unknown as Parameters<
-			typeof webhooks.video.videoCompleted.handler
+			typeof webhooks.animation.animationCompleted.handler
 		>[1];
 
-		const res = await webhooks.video.videoCompleted.handler(webhookCtx, req);
+		const res = await webhooks.animation.animationCompleted.handler(
+			webhookCtx,
+			req,
+		);
 		expect(res.success).toBe(true);
 		expect(res.data).toEqual(payload);
 	});
@@ -186,29 +189,29 @@ describe('Bannerbear webhooks verification and handlers', () => {
 			}),
 		};
 
-		const videoPayload: RawWebhookRequest = {
+		const animationPayload: RawWebhookRequest = {
 			headers: {},
 			body: JSON.stringify({
-				uid: 'vid_123',
+				uid: 'an_123',
 				status: 'completed',
-				video_url: 'https://cdn.bannerbear.com/sample.mp4',
+				files: { mp4: 'https://cdn.bannerbear.com/sample.mp4' },
 			}),
 		};
 
 		expect(matcher(validImagePayload)).toBe(true);
 		expect(matcher(pendingPayload)).toBe(false);
-		expect(matcher(videoPayload)).toBe(false);
+		expect(matcher(animationPayload)).toBe(false);
 	});
 
-	it('matches video completed webhook payloads', () => {
-		const matcher = createBannerbearVideoCompletedMatch();
+	it('matches animation completed webhook payloads', () => {
+		const matcher = createBannerbearAnimationCompletedMatch();
 
-		const validVideoPayload: RawWebhookRequest = {
+		const validAnimationPayload: RawWebhookRequest = {
 			headers: {},
 			body: JSON.stringify({
-				uid: 'vid_123',
+				uid: 'an_123',
 				status: 'completed',
-				video_url: 'https://cdn.bannerbear.com/sample.mp4',
+				files: { mp4: 'https://cdn.bannerbear.com/sample.mp4' },
 			}),
 		};
 
@@ -221,7 +224,16 @@ describe('Bannerbear webhooks verification and handlers', () => {
 			}),
 		};
 
-		expect(matcher(validVideoPayload)).toBe(true);
+		expect(matcher(validAnimationPayload)).toBe(true);
 		expect(matcher(imagePayload)).toBe(false);
+	});
+
+	it('does not treat a generic uid/status body as Bannerbear', () => {
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: {},
+				body: JSON.stringify({ uid: 'other_1', status: 'completed' }),
+			}),
+		).toBe(false);
 	});
 });
