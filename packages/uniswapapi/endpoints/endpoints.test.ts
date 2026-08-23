@@ -24,10 +24,30 @@ const ctx = {
 	db: {},
 } as any;
 
+const validResponse = {
+	requestId: 'request-123',
+	approval: null,
+	quote: { quoteId: 'quote-123' },
+	routing: 'CLASSIC',
+	swap: {
+		to: '0x1234567890abcdef1234567890abcdef12345678',
+		data: '0x1234',
+		value: '0',
+		chainId: 1,
+	},
+	status: 'SUCCESS',
+	orderStatus: 'filled',
+	delegations: [{ chainId: 1, delegated: true }],
+	to: '0x1234567890abcdef1234567890abcdef12345678',
+	data: '0x1234',
+	value: '0',
+	chainId: 1,
+};
+
 describe('Uniswap API endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		mockedRequest.mockResolvedValue({} as never);
+		mockedRequest.mockResolvedValue(validResponse as never);
 	});
 
 	describe('approval', () => {

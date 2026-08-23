@@ -1,13 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
-import type { UniswapApiEndpoints } from '..';
 import { makeUniswapApiRequest } from '../client';
-import type { UniswapApiEndpointOutputs } from './types';
+import type {
+	UniswapApiEndpointContext,
+	UniswapApiEndpointInputs,
+	UniswapApiEndpointOutputs,
+} from './types';
 import { UniswapApiEndpointOutputSchemas } from './types';
 
-export const check: UniswapApiEndpoints['delegationCheck'] = async (
-	ctx,
-	input,
-) => {
+export const check = async (
+	ctx: UniswapApiEndpointContext,
+	input: UniswapApiEndpointInputs['delegationCheck'],
+): Promise<UniswapApiEndpointOutputs['delegationCheck']> => {
 	const response = await makeUniswapApiRequest<
 		UniswapApiEndpointOutputs['delegationCheck']
 	>('/v1/check_delegation', ctx.key, {

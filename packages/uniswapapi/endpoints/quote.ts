@@ -1,10 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
-import type { UniswapApiEndpoints } from '..';
 import { makeUniswapApiRequest } from '../client';
-import type { UniswapApiEndpointOutputs } from './types';
+import type {
+	UniswapApiEndpointContext,
+	UniswapApiEndpointInputs,
+	UniswapApiEndpointOutputs,
+} from './types';
 import { UniswapApiEndpointOutputSchemas } from './types';
 
-export const get: UniswapApiEndpoints['quoteGet'] = async (ctx, input) => {
+export const get = async (
+	ctx: UniswapApiEndpointContext,
+	input: UniswapApiEndpointInputs['quoteGet'],
+): Promise<UniswapApiEndpointOutputs['quoteGet']> => {
 	const response = await makeUniswapApiRequest<
 		UniswapApiEndpointOutputs['quoteGet']
 	>('/v1/quote', ctx.key, {

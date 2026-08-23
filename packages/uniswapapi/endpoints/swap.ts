@@ -1,10 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
-import type { UniswapApiEndpoints } from '..';
 import { makeUniswapApiRequest } from '../client';
-import type { UniswapApiEndpointOutputs } from './types';
+import type {
+	UniswapApiEndpointContext,
+	UniswapApiEndpointInputs,
+	UniswapApiEndpointOutputs,
+} from './types';
 import { UniswapApiEndpointOutputSchemas } from './types';
 
-export const create: UniswapApiEndpoints['swapCreate'] = async (ctx, input) => {
+export const create = async (
+	ctx: UniswapApiEndpointContext,
+	input: UniswapApiEndpointInputs['swapCreate'],
+): Promise<UniswapApiEndpointOutputs['swapCreate']> => {
 	const response = await makeUniswapApiRequest<
 		UniswapApiEndpointOutputs['swapCreate']
 	>('/v1/swap', ctx.key, {
@@ -27,10 +33,10 @@ export const create: UniswapApiEndpoints['swapCreate'] = async (ctx, input) => {
 	return parsedResponse;
 };
 
-export const getStatus: UniswapApiEndpoints['swapGetStatus'] = async (
-	ctx,
-	input,
-) => {
+export const getStatus = async (
+	ctx: UniswapApiEndpointContext,
+	input: UniswapApiEndpointInputs['swapGetStatus'],
+): Promise<UniswapApiEndpointOutputs['swapGetStatus']> => {
 	const response = await makeUniswapApiRequest<
 		UniswapApiEndpointOutputs['swapGetStatus']
 	>('/v1/swap_status', ctx.key, {

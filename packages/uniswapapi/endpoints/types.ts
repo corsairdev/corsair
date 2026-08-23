@@ -1,4 +1,27 @@
+import type { EventLoggingContext } from 'corsair/core';
 import { z } from 'zod';
+
+const TransactionDataSchema = z
+	.string()
+	.min(1)
+	.refine((data) => data !== '0x', {
+		message: 'Transaction calldata must not be empty',
+	});
+
+const TransactionRequestSchema = z
+	.object({
+		to: z.string().min(1),
+		data: TransactionDataSchema,
+		value: z.string(),
+		chainId: z.number(),
+	})
+	.passthrough();
+
+const NonEmptyObjectSchema = z
+	.record(z.string(), z.unknown())
+	.refine((value) => Object.keys(value).length > 0, {
+		message: 'Expected result object to include provider data',
+	});
 
 // ═══════════════════════════════════════════════════════════════════
 // 1. Check Approval — POST /v1/check_approval
@@ -13,16 +36,11 @@ export type CheckApprovalInput = z.infer<typeof CheckApprovalInputSchema>;
 
 const CheckApprovalResponseSchema = z
 	.object({
-		approval: z
-			.object({
-				tokenAddress: z.string().optional(),
-				amount: z.string().optional(),
-				spender: z.string().optional(),
-			})
-			.passthrough()
-			.optional(),
+		requestId: z.string(),
+		approval: TransactionRequestSchema.nullable(),
+		cancel: TransactionRequestSchema.nullable().optional(),
 		gasFee: z.string().optional(),
-		requestId: z.string().optional(),
+		cancelGasFee: z.string().optional(),
 	})
 	.passthrough();
 export type CheckApprovalResponse = z.infer<typeof CheckApprovalResponseSchema>;
@@ -56,7 +74,9 @@ export type GetQuoteInput = z.infer<typeof GetQuoteInputSchema>;
 
 const GetQuoteResponseSchema = z
 	.object({
-		requestId: z.string().optional(),
+		requestId: z.string(),
+		routing: z.string(),
+		quote: NonEmptyObjectSchema,
 		quoteId: z.string().optional(),
 		tokenIn: z.string().optional(),
 		tokenOut: z.string().optional(),
@@ -68,7 +88,6 @@ const GetQuoteResponseSchema = z
 		gasFeeUSD: z.string().optional(),
 		route: z.array(z.array(z.record(z.string(), z.unknown()))).optional(),
 		routeString: z.string().optional(),
-		quote: z.record(z.string(), z.unknown()).optional(),
 		permitData: z.record(z.string(), z.unknown()).optional(),
 	})
 	.passthrough();
@@ -95,13 +114,14 @@ export type CreateSwapInput = z.infer<typeof CreateSwapInputSchema>;
 
 const CreateSwapResponseSchema = z
 	.object({
-		swap: z.record(z.string(), z.unknown()).optional(),
+		requestId: z.string(),
+		swap: TransactionRequestSchema,
 		to: z.string().optional(),
-		data: z.string().optional(),
+		data: TransactionDataSchema.optional(),
 		value: z.string().optional(),
 		gasLimit: z.string().optional(),
+		gasFee: z.string().optional(),
 		chainId: z.number().optional(),
-		requestId: z.string().optional(),
 	})
 	.passthrough();
 export type CreateSwapResponse = z.infer<typeof CreateSwapResponseSchema>;
@@ -117,7 +137,7 @@ export type GetSwapStatusInput = z.infer<typeof GetSwapStatusInputSchema>;
 
 const GetSwapStatusResponseSchema = z
 	.object({
-		status: z.string().optional(),
+		status: z.string(),
 		txHash: z.string().optional(),
 		chainId: z.number().optional(),
 	})
@@ -134,7 +154,7 @@ export type GetOrderStatusInput = z.infer<typeof GetOrderStatusInputSchema>;
 
 const GetOrderStatusResponseSchema = z
 	.object({
-		orderStatus: z.string().optional(),
+		orderStatus: z.string(),
 		orderId: z.string().optional(),
 		orderHash: z.string().optional(),
 		chainId: z.number().optional(),
@@ -161,13 +181,13 @@ const CheckDelegationResponseSchema = z
 			.array(
 				z
 					.object({
-						chainId: z.number().optional(),
-						delegated: z.boolean().optional(),
+						chainId: z.number(),
+						delegated: z.boolean(),
 						delegateAddress: z.string().optional(),
 					})
 					.passthrough(),
 			)
-			.optional(),
+			.min(1),
 	})
 	.passthrough();
 export type CheckDelegationResponse = z.infer<
@@ -198,10 +218,10 @@ export type Encode7702TransactionInput = z.infer<
 
 const Encode7702TransactionResponseSchema = z
 	.object({
-		to: z.string().optional(),
-		data: z.string().optional(),
-		value: z.string().optional(),
-		chainId: z.number().optional(),
+		to: z.string().min(1),
+		data: TransactionDataSchema,
+		value: z.string(),
+		chainId: z.number(),
 	})
 	.passthrough();
 export type Encode7702TransactionResponse = z.infer<
@@ -211,6 +231,8 @@ export type Encode7702TransactionResponse = z.infer<
 // ═══════════════════════════════════════════════════════════════════
 // Aggregate types
 // ═══════════════════════════════════════════════════════════════════
+
+export type UniswapApiEndpointContext = EventLoggingContext & { key: string };
 
 export type UniswapApiEndpointInputs = {
 	approvalCheck: CheckApprovalInput;

@@ -1,13 +1,16 @@
 import { logEventFromContext } from 'corsair/core';
-import type { UniswapApiEndpoints } from '..';
 import { makeUniswapApiRequest } from '../client';
-import type { UniswapApiEndpointOutputs } from './types';
+import type {
+	UniswapApiEndpointContext,
+	UniswapApiEndpointInputs,
+	UniswapApiEndpointOutputs,
+} from './types';
 import { UniswapApiEndpointOutputSchemas } from './types';
 
-export const getStatus: UniswapApiEndpoints['orderGetStatus'] = async (
-	ctx,
-	input,
-) => {
+export const getStatus = async (
+	ctx: UniswapApiEndpointContext,
+	input: UniswapApiEndpointInputs['orderGetStatus'],
+): Promise<UniswapApiEndpointOutputs['orderGetStatus']> => {
 	const response = await makeUniswapApiRequest<
 		UniswapApiEndpointOutputs['orderGetStatus']
 	>('/v1/orders', ctx.key, {
