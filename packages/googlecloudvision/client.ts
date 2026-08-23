@@ -1,10 +1,12 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class GoogleCloudVisionAPIError extends Error {
 	constructor(
 		message: string,
+		public readonly status?: number,
 		public readonly code?: string,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'GoogleCloudVisionAPIError';
@@ -12,38 +14,68 @@ export class GoogleCloudVisionAPIError extends Error {
 }
 
 const GOOGLECLOUDVISION_API_BASE = 'https://vision.googleapis.com/v1';
+const MAX_ATTEMPTS = 3;
+const MAX_RETRY_DELAY_MS = 30_000;
+
+export type GoogleCloudVisionAuthType = 'api_key' | 'oauth_2';
+
+export type GoogleCloudVisionRequestContext = {
+	key?: string;
+	authType?: GoogleCloudVisionAuthType;
+};
+
+export type GoogleCloudVisionRequestOptions = {
+	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+	body?: Record<string, unknown>;
+	query?: Record<string, string | number | boolean | undefined>;
+	baseUrl?: string;
+};
+
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+function isRetryable(status: number | undefined, method: string): boolean {
+	if (status === 429) return method === 'GET';
+	if (status !== undefined && status >= 500) return method === 'GET';
+	return false;
+}
+
+function retryDelayMs(error: ApiError, attempt: number): number {
+	const retryAfter = error.retryAfter;
+	if (typeof retryAfter === 'number' && retryAfter > 0) {
+		return Math.min(retryAfter, MAX_RETRY_DELAY_MS);
+	}
+	return Math.min(2 ** (attempt - 1) * 1000, MAX_RETRY_DELAY_MS);
+}
 
 export async function makeGoogleCloudVisionRequest<T>(
 	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-		baseUrl?: string;
-		authType?: 'api_key' | 'oauth_2';
-	} = {},
+	ctx: GoogleCloudVisionRequestContext,
+	options: GoogleCloudVisionRequestOptions = {},
 ): Promise<T> {
 	const {
 		method = 'GET',
 		body,
 		query,
 		baseUrl = GOOGLECLOUDVISION_API_BASE,
-		authType = apiKey.startsWith('ya29.') ? 'oauth_2' : 'api_key',
 	} = options;
+	const credential = ctx.key ?? '';
+	const authType = ctx.authType ?? 'api_key';
+
+	const headers: Record<string, string> = {
+		'Content-Type': 'application/json',
+	};
+	if (authType === 'oauth_2') {
+		headers.Authorization = `Bearer ${credential}`;
+	} else {
+		headers['x-goog-api-key'] = credential;
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			...(authType === 'api_key'
-				? { 'x-goog-api-key': apiKey }
-				: { Authorization: `Bearer ${apiKey}` }),
-		},
+		HEADERS: headers,
 	};
 
 	const requestOptions: ApiRequestOptions = {
@@ -57,12 +89,26 @@ export async function makeGoogleCloudVisionRequest<T>(
 		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new GoogleCloudVisionAPIError(error.message);
+	let lastError: unknown;
+	for (let attempt = 1; attempt <= MAX_ATTEMPTS; attempt++) {
+		try {
+			return await request<T>(config, requestOptions);
+		} catch (error) {
+			lastError = error;
+			const canRetry =
+				error instanceof ApiError &&
+				attempt < MAX_ATTEMPTS &&
+				isRetryable(error.status, method);
+			if (!canRetry) break;
+			await sleep(retryDelayMs(error, attempt));
 		}
-		throw new GoogleCloudVisionAPIError('Unknown error');
 	}
+
+	if (lastError instanceof ApiError) {
+		throw lastError;
+	}
+	if (lastError instanceof Error) {
+		throw new GoogleCloudVisionAPIError(lastError.message);
+	}
+	throw new GoogleCloudVisionAPIError('Unknown error');
 }
