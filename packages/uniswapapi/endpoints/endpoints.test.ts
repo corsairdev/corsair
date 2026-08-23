@@ -171,12 +171,26 @@ describe('Uniswap API endpoints', () => {
 
 			await Order.getStatus(ctx, input);
 
-			expect(mockedRequest).toHaveBeenCalledWith('/v1/order_status', ctx.key, {
+			expect(mockedRequest).toHaveBeenCalledWith('/v1/orders', ctx.key, {
 				method: 'GET',
 				query: {
 					orderId: 'order-abc-123',
 				},
 			});
+		});
+	});
+
+	describe('output validation', () => {
+		it('rejects malformed provider output before returning', async () => {
+			mockedRequest.mockResolvedValueOnce({ chainId: '1' } as never);
+
+			await expect(
+				Swap.getStatus(ctx, {
+					txHash:
+						'0xabcdef1234567890abcdef1234567890abcdef1234567890abcdef1234567890',
+					chainId: 1,
+				}),
+			).rejects.toThrow();
 		});
 	});
 

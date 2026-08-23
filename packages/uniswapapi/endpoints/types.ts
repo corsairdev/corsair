@@ -125,7 +125,7 @@ const GetSwapStatusResponseSchema = z
 export type GetSwapStatusResponse = z.infer<typeof GetSwapStatusResponseSchema>;
 
 // ═══════════════════════════════════════════════════════════════════
-// 5. Get Gasless Order Status — GET /v1/order_status
+// 5. Get Gasless Order Status — GET /v1/orders
 // ═══════════════════════════════════════════════════════════════════
 const GetOrderStatusInputSchema = z.object({
 	orderId: z.string().describe('UniswapX order ID'),

@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { UniswapApiEndpoints } from '..';
 import { makeUniswapApiRequest } from '../client';
 import type { UniswapApiEndpointOutputs } from './types';
+import { UniswapApiEndpointOutputSchemas } from './types';
 
 export const encode7702: UniswapApiEndpoints['transactionEncode7702'] = async (
 	ctx,
@@ -17,6 +18,8 @@ export const encode7702: UniswapApiEndpoints['transactionEncode7702'] = async (
 			chainId: input.chainId,
 		},
 	});
+	const parsedResponse =
+		UniswapApiEndpointOutputSchemas.transactionEncode7702.parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -24,5 +27,5 @@ export const encode7702: UniswapApiEndpoints['transactionEncode7702'] = async (
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return parsedResponse;
 };

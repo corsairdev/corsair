@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { UniswapApiEndpoints } from '..';
 import { makeUniswapApiRequest } from '../client';
 import type { UniswapApiEndpointOutputs } from './types';
+import { UniswapApiEndpointOutputSchemas } from './types';
 
 export const create: UniswapApiEndpoints['swapCreate'] = async (ctx, input) => {
 	const response = await makeUniswapApiRequest<
@@ -19,9 +20,11 @@ export const create: UniswapApiEndpoints['swapCreate'] = async (ctx, input) => {
 			}),
 		},
 	});
+	const parsedResponse =
+		UniswapApiEndpointOutputSchemas.swapCreate.parse(response);
 
 	await logEventFromContext(ctx, 'uniswapapi.swap.create', {}, 'completed');
-	return response;
+	return parsedResponse;
 };
 
 export const getStatus: UniswapApiEndpoints['swapGetStatus'] = async (
@@ -37,6 +40,8 @@ export const getStatus: UniswapApiEndpoints['swapGetStatus'] = async (
 			chainId: input.chainId,
 		},
 	});
+	const parsedResponse =
+		UniswapApiEndpointOutputSchemas.swapGetStatus.parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -44,5 +49,5 @@ export const getStatus: UniswapApiEndpoints['swapGetStatus'] = async (
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return parsedResponse;
 };

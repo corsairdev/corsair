@@ -1,13 +1,39 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
+type UniswapApiErrorOptions = {
+	cause?: Error;
+	status?: number;
+	statusText?: string;
+	body?: unknown;
+	retryAfter?: number;
+};
+
 export class UniswapApiAPIError extends Error {
+	public readonly status?: number;
+	public readonly statusText?: string;
+	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+
 	constructor(
 		message: string,
 		public readonly code?: string,
+		options: UniswapApiErrorOptions = {},
 	) {
-		super(message);
+		super(message, options);
 		this.name = 'UniswapApiAPIError';
+
+		if (options.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+		} else {
+			this.status = options.status;
+			this.statusText = options.statusText;
+			this.body = options.body;
+			this.retryAfter = options.retryAfter;
+		}
 	}
 }
 
@@ -72,7 +98,7 @@ export async function makeUniswapApiRequest<T>(
 				typeof body.errorCode === 'string'
 					? body.errorCode
 					: error.status?.toString();
-			throw new UniswapApiAPIError(message, code);
+			throw new UniswapApiAPIError(message, code, { cause: error });
 		}
 
 		if (error instanceof Error) {

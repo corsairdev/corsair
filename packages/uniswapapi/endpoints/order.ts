@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { UniswapApiEndpoints } from '..';
 import { makeUniswapApiRequest } from '../client';
 import type { UniswapApiEndpointOutputs } from './types';
+import { UniswapApiEndpointOutputSchemas } from './types';
 
 export const getStatus: UniswapApiEndpoints['orderGetStatus'] = async (
 	ctx,
@@ -9,12 +10,14 @@ export const getStatus: UniswapApiEndpoints['orderGetStatus'] = async (
 ) => {
 	const response = await makeUniswapApiRequest<
 		UniswapApiEndpointOutputs['orderGetStatus']
-	>('/v1/order_status', ctx.key, {
+	>('/v1/orders', ctx.key, {
 		method: 'GET',
 		query: {
 			orderId: input.orderId,
 		},
 	});
+	const parsedResponse =
+		UniswapApiEndpointOutputSchemas.orderGetStatus.parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -22,5 +25,5 @@ export const getStatus: UniswapApiEndpoints['orderGetStatus'] = async (
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return parsedResponse;
 };

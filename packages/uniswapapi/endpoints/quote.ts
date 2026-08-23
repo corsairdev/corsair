@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { UniswapApiEndpoints } from '..';
 import { makeUniswapApiRequest } from '../client';
 import type { UniswapApiEndpointOutputs } from './types';
+import { UniswapApiEndpointOutputSchemas } from './types';
 
 export const get: UniswapApiEndpoints['quoteGet'] = async (ctx, input) => {
 	const response = await makeUniswapApiRequest<
@@ -24,6 +25,8 @@ export const get: UniswapApiEndpoints['quoteGet'] = async (ctx, input) => {
 			...(input.protocols && { protocols: input.protocols }),
 		},
 	});
+	const parsedResponse =
+		UniswapApiEndpointOutputSchemas.quoteGet.parse(response);
 
 	await logEventFromContext(
 		ctx,
@@ -31,5 +34,5 @@ export const get: UniswapApiEndpoints['quoteGet'] = async (ctx, input) => {
 		{ ...input },
 		'completed',
 	);
-	return response;
+	return parsedResponse;
 };
