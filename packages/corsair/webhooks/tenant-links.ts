@@ -235,3 +235,28 @@ export async function resolveTenantFromWebhookLink(options: {
 		externalId: options.match.externalId,
 	});
 }
+
+/**
+ * Resolves ordered candidate links with precedence: the first match (most
+ * specific first, e.g. a Slack user link before the workspace link) that finds
+ * a tenant wins. Lets same-workspace tenants route individually while workspace
+ * events still fall back to the team link.
+ */
+export async function resolveTenantIdFromWebhookMatches(options: {
+	database: CorsairDatabase;
+	kek: string;
+	pluginId: string;
+	matches: readonly WebhookTenantMatch[];
+}): Promise<string | null> {
+	for (const match of options.matches) {
+		const tenantId = await resolveTenantIdFromWebhookLink({
+			database: options.database,
+			kek: options.kek,
+			pluginId: options.pluginId,
+			linkType: match.linkType,
+			externalId: match.externalId,
+		});
+		if (tenantId) return tenantId;
+	}
+	return null;
+}

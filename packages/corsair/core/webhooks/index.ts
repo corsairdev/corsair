@@ -89,15 +89,20 @@ export type WebhookTenantMatch = {
  */
 export type CorsairWebhookTenantMatcher = (
 	request: RawWebhookRequest,
-) => WebhookTenantMatch | null;
+) => WebhookTenantMatch | WebhookTenantMatch[] | null;
 
 /**
- * Resolves the webhook tenant link field after OAuth completes.
- * Return null when the provider does not expose a stable external id.
+ * Resolves the webhook tenant link field(s) after OAuth completes. Most plugins
+ * yield one link; Slack yields the workspace link plus a user-scoped one. Return
+ * null/[] when the provider does not expose a stable external id.
  */
 export type CorsairOAuthWebhookTenantLinkResolver = (
 	tokens: import('../auth/exchange').TokenResponse,
-) => WebhookTenantMatch | null | Promise<WebhookTenantMatch | null>;
+) =>
+	| WebhookTenantMatch
+	| WebhookTenantMatch[]
+	| null
+	| Promise<WebhookTenantMatch | WebhookTenantMatch[] | null>;
 
 /**
  * Bivariance hack for webhook function types to ensure proper type inference.
