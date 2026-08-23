@@ -11,7 +11,6 @@ describe('Bouncer client', () => {
 
 	beforeEach(() => {
 		calls = [];
-		global.fetch = realFetch;
 	});
 
 	afterEach(() => {
@@ -40,61 +39,97 @@ describe('Bouncer client', () => {
 		}) as unknown as typeof global.fetch;
 	}
 
-	it('configures base URL and x-api-key correctly for GET requests', async () => {
+	it('builds a versionless base so callers choose v1 or v1.1', () => {
+		expect(BOUNCER_API_BASE).toBe('https://api.usebouncer.com');
+	});
+
+	it('authenticates with x-api-key only', async () => {
 		mockFetch(200, { credits: 100 });
 
 		const result = await makeBouncerRequest<{ credits: number }>(
-			'credits',
+			'v1.1/credits',
 			'test-api-key',
-			{ method: 'GET', query: { timeout: 10 } },
 		);
 
-		expect(calls.length).toBe(1);
-		expect(calls[0]?.url).toContain(`${BOUNCER_API_BASE}/credits?timeout=10`);
+		expect(calls).toHaveLength(1);
+		expect(calls[0]?.url).toBe(`${BOUNCER_API_BASE}/v1.1/credits`);
 		const headers = new Headers(calls[0]?.init?.headers);
 		expect(headers.get('x-api-key')).toBe('test-api-key');
+		// A bearer header would leak the same secret a second time.
+		expect(headers.get('authorization')).toBeNull();
 		expect(result).toEqual({ credits: 100 });
 	});
 
-	it('sends POST body correctly for batch requests', async () => {
+	it('tolerates a leading slash on the endpoint', async () => {
+		mockFetch(200, {});
+
+		await makeBouncerRequest('/v1.1/credits', 'k');
+
+		expect(calls[0]?.url).toBe(`${BOUNCER_API_BASE}/v1.1/credits`);
+	});
+
+	it('sends a JSON body on POST', async () => {
 		mockFetch(200, { batchId: 'batch-123' });
 
 		const body = [{ email: 'test@example.com' }];
-		const result = await makeBouncerRequest<{ batchId: string }>(
-			'/email/verify/batch',
-			'test-api-key',
-			{ method: 'POST', body },
-		);
+		await makeBouncerRequest('v1.1/email/verify/batch', 'k', {
+			method: 'POST',
+			body,
+		});
 
-		expect(calls.length).toBe(1);
-		expect(calls[0]?.url).toBe(`${BOUNCER_API_BASE}/email/verify/batch`);
 		expect(calls[0]?.init?.method).toBe('POST');
 		expect(JSON.parse(calls[0]?.init?.body as string)).toEqual(body);
-		expect(result).toEqual({ batchId: 'batch-123' });
 	});
 
-	it('wraps 400 error in BouncerAPIError preserving status', async () => {
-		mockFetch(400, { message: 'Bad Request' });
+	it('sends query parameters alongside a POST body', async () => {
+		mockFetch(200, {});
 
-		await expect(
-			makeBouncerRequest('email/verify', 'key', { method: 'GET' }),
-		).rejects.toThrow(BouncerAPIError);
+		await makeBouncerRequest('v1.1/email/verify/batch', 'k', {
+			method: 'POST',
+			body: [{ email: 'a@b.com' }],
+			query: { callback: 'https://example.com/hook' },
+		});
+
+		expect(new URL(calls[0]!.url).searchParams.get('callback')).toBe(
+			'https://example.com/hook',
+		);
+	});
+
+	it('drops undefined query parameters', async () => {
+		mockFetch(200, {});
+
+		await makeBouncerRequest('v1.1/email/verify', 'k', {
+			query: { email: 'a@b.com', timeout: undefined },
+		});
+
+		expect(calls[0]?.url).toBe(
+			`${BOUNCER_API_BASE}/v1.1/email/verify?email=a%40b.com`,
+		);
+	});
+
+	it('wraps an HTTP error in BouncerAPIError preserving status', async () => {
+		mockFetch(402, { status: '402', error: 'Payment Required' });
+
+		await expect(makeBouncerRequest('v1.1/credits', 'k')).rejects.toThrow(
+			BouncerAPIError,
+		);
 
 		try {
-			await makeBouncerRequest('email/verify', 'key', { method: 'GET' });
-		} catch (err: any) {
+			await makeBouncerRequest('v1.1/credits', 'k');
+			throw new Error('expected a rejection');
+		} catch (err) {
 			expect(err).toBeInstanceOf(BouncerAPIError);
-			expect(err.status).toBe(400);
+			expect((err as BouncerAPIError).status).toBe(402);
 		}
 	});
 
-	it('wraps generic Network Error in BouncerAPIError', async () => {
+	it('wraps a network failure in BouncerAPIError', async () => {
 		global.fetch = (async () => {
 			throw new Error('Network timeout');
 		}) as unknown as typeof global.fetch;
 
-		await expect(
-			makeBouncerRequest('credits', 'key', { method: 'GET' }),
-		).rejects.toThrow(BouncerAPIError);
+		await expect(makeBouncerRequest('v1.1/credits', 'k')).rejects.toThrow(
+			BouncerAPIError,
+		);
 	});
 });
