@@ -18,10 +18,16 @@ const mockRequest = request as jest.MockedFunction<typeof request>;
 describe('Abyssale Plugin API', () => {
 	const apiKey = 'test-api-key';
 	const plugin = abyssale({ key: apiKey }) as any;
-	const ctx = { key: apiKey } as any;
+	const upsert = jest.fn();
+	const ctx = {
+		key: apiKey,
+		db: { banners: { upsertByEntityId: upsert } },
+	} as any;
 
 	beforeEach(() => {
 		mockRequest.mockReset();
+		upsert.mockReset();
+		upsert.mockResolvedValue({ id: 'corsair-entity-1' });
 	});
 
 	describe('createProject', () => {
@@ -192,6 +198,10 @@ describe('Abyssale Plugin API', () => {
 				}),
 			);
 			expect(result).toEqual(mockResponse);
+			expect(upsert).toHaveBeenCalledWith(
+				mockResponse.id,
+				expect.objectContaining({ id: mockResponse.id }),
+			);
 		});
 
 		it('rejects a non-uuid design id before calling the API', async () => {
@@ -277,6 +287,7 @@ describe('Abyssale Plugin API', () => {
 				}),
 			);
 			expect(result.is_finalized).toBe(false);
+			expect(upsert).not.toHaveBeenCalled();
 		});
 
 		it('returns per-format errors alongside finished banners', async () => {
@@ -303,6 +314,32 @@ describe('Abyssale Plugin API', () => {
 
 			expect(result.banners).toEqual([banner]);
 			expect(result.errors).toHaveLength(1);
+			expect(upsert).toHaveBeenCalledWith(
+				banner.id,
+				expect.objectContaining({ id: banner.id }),
+			);
+		});
+
+		it('accepts a finalized payload that omits errors and caches banners', async () => {
+			const banner = {
+				id: 'ec3a9fcd-f209-4077-b5ea-037d4bdfa9f2',
+				file: { type: 'jpeg', url: 'https://cdn.abyssale.com/a.jpeg' },
+			};
+			mockRequest.mockResolvedValueOnce({
+				is_finalized: true,
+				id: requestId,
+				banners: [banner],
+			});
+
+			const result = await plugin.endpoints.generation.status(ctx, {
+				generationRequestId: requestId,
+			});
+
+			expect(result.errors).toEqual([]);
+			expect(upsert).toHaveBeenCalledWith(
+				banner.id,
+				expect.objectContaining({ id: banner.id }),
+			);
 		});
 	});
 
