@@ -9,6 +9,8 @@ import type {
 	DeanonymizeOutput,
 	DeanonymizePacketInput,
 	DeanonymizePacketOutput,
+	TestConnectionInput,
+	TestConnectionOutput,
 } from './types';
 import {
 	AnonyflowEndpointInputSchemas,
@@ -137,9 +139,34 @@ async function deanonymizePacket(
 	);
 }
 
+async function testConnection(
+	context: AnonyflowContext,
+	input: TestConnectionInput,
+): Promise<TestConnectionOutput> {
+	AnonyflowEndpointInputSchemas.testConnection.parse(input);
+	const response = await makeAnonyflowRequest<unknown>(
+		'/test',
+		context.key ?? '',
+		{
+			method: 'GET',
+		},
+	);
+
+	if (
+		response !== null &&
+		typeof response === 'object' &&
+		(response as { status?: unknown }).status === false
+	) {
+		throw new AnonyflowAPIError('Anonyflow rejected the request');
+	}
+
+	return AnonyflowEndpointOutputSchemas.testConnection.parse(response);
+}
+
 export const AnonyflowOperations = {
 	anonymize,
 	deanonymize,
 	anonymizePacket,
 	deanonymizePacket,
+	testConnection,
 };

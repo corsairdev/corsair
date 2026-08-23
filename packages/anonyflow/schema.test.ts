@@ -38,10 +38,20 @@ describe('Anonyflow permissions', () => {
 		);
 	});
 
-	it('does not expose the unverified GET /test status operation', () => {
+	it('exposes testConnection as the fifth core operation', () => {
+		expect(Object.keys(plugin.endpoints?.core ?? {})).toEqual([
+			'anonymize',
+			'deanonymize',
+			'anonymizePacket',
+			'deanonymizePacket',
+			'testConnection',
+		]);
 		expect(plugin.endpoints?.core).not.toHaveProperty('getStatus');
-		expect(plugin.endpointMeta).not.toHaveProperty('core.getStatus');
-		expect(plugin.endpointSchemas).not.toHaveProperty('core.getStatus');
+		expect(plugin.endpoints?.core).not.toHaveProperty('analyze');
+		expect(plugin.endpoints?.core).not.toHaveProperty('listEntities');
+		expect(plugin.endpointMeta?.['core.testConnection']?.riskLevel).toBe(
+			'read',
+		);
 	});
 });
 
@@ -276,5 +286,39 @@ describe('Anonyflow endpoints', () => {
 		await expect(
 			plugin.keyBuilder!(ctx as never, 'endpoint'),
 		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('executes the testConnection endpoint correctly', async () => {
+		const mockRequest = http.request as jest.Mock;
+		mockRequest.mockResolvedValueOnce({ status: true });
+
+		const plugin = anonyflow({ key: 'test-secret-key' });
+		const result = await plugin.endpoints!.core.testConnection(context(), {});
+
+		expect(result).toEqual({ status: true });
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://api.anonyflow.com',
+				TOKEN: undefined,
+				HEADERS: expect.objectContaining({
+					'x-api-key': 'test-secret-key',
+				}),
+			}),
+			expect.objectContaining({
+				method: 'GET',
+				url: '/test',
+				body: undefined,
+			}),
+		);
+	});
+
+	it('rejects testConnection when Anonyflow returns status false', async () => {
+		const mockRequest = http.request as jest.Mock;
+		mockRequest.mockResolvedValueOnce({ status: false });
+
+		const plugin = anonyflow({ key: 'test-secret-key' });
+		await expect(
+			plugin.endpoints!.core.testConnection(context(), {}),
+		).rejects.toThrow(/rejected/i);
 	});
 });

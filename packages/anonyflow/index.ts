@@ -57,6 +57,7 @@ export type AnonyflowEndpoints = {
 	deanonymize: AnonyflowEndpoint<'deanonymize'>;
 	anonymizePacket: AnonyflowEndpoint<'anonymizePacket'>;
 	deanonymizePacket: AnonyflowEndpoint<'deanonymizePacket'>;
+	testConnection: AnonyflowEndpoint<'testConnection'>;
 };
 
 const anonyflowEndpointsNested = {
@@ -65,6 +66,7 @@ const anonyflowEndpointsNested = {
 		deanonymize: AnonyflowOperations.deanonymize,
 		anonymizePacket: AnonyflowOperations.anonymizePacket,
 		deanonymizePacket: AnonyflowOperations.deanonymizePacket,
+		testConnection: AnonyflowOperations.testConnection,
 	},
 } as const;
 
@@ -86,6 +88,10 @@ export const anonyflowEndpointSchemas = {
 	'core.deanonymizePacket': {
 		input: AnonyflowEndpointInputSchemas.deanonymizePacket,
 		output: AnonyflowEndpointOutputSchemas.deanonymizePacket,
+	},
+	'core.testConnection': {
+		input: AnonyflowEndpointInputSchemas.testConnection,
+		output: AnonyflowEndpointOutputSchemas.testConnection,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof anonyflowEndpointsNested
@@ -109,6 +115,10 @@ const anonyflowEndpointMeta = {
 	'core.deanonymizePacket': {
 		riskLevel: 'write',
 		description: 'Decrypt field values within a data packet based on keys',
+	},
+	'core.testConnection': {
+		riskLevel: 'read',
+		description: 'Verify API key and connectivity',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof anonyflowEndpointsNested

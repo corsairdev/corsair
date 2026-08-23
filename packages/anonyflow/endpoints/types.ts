@@ -56,11 +56,20 @@ export type DeanonymizePacketOutput = z.infer<
 	typeof DeanonymizePacketOutputSchema
 >;
 
+const TestConnectionInputSchema = z.object({});
+export type TestConnectionInput = z.infer<typeof TestConnectionInputSchema>;
+
+const TestConnectionOutputSchema = z.object({
+	status: z.literal(true),
+});
+export type TestConnectionOutput = z.infer<typeof TestConnectionOutputSchema>;
+
 export type AnonyflowEndpointInputs = {
 	anonymize: AnonymizeInput;
 	deanonymize: DeanonymizeInput;
 	anonymizePacket: AnonymizePacketInput;
 	deanonymizePacket: DeanonymizePacketInput;
+	testConnection: TestConnectionInput;
 };
 
 export type AnonyflowEndpointOutputs = {
@@ -68,6 +77,7 @@ export type AnonyflowEndpointOutputs = {
 	deanonymize: DeanonymizeOutput;
 	anonymizePacket: AnonymizePacketOutput;
 	deanonymizePacket: DeanonymizePacketOutput;
+	testConnection: TestConnectionOutput;
 };
 
 export const AnonyflowEndpointInputSchemas = {
@@ -75,6 +85,7 @@ export const AnonyflowEndpointInputSchemas = {
 	deanonymize: DeanonymizeInputSchema,
 	anonymizePacket: AnonymizePacketInputSchema,
 	deanonymizePacket: DeanonymizePacketInputSchema,
+	testConnection: TestConnectionInputSchema,
 } as const;
 
 export const AnonyflowEndpointOutputSchemas = {
@@ -82,4 +93,5 @@ export const AnonyflowEndpointOutputSchemas = {
 	deanonymize: DeanonymizeOutputSchema,
 	anonymizePacket: AnonymizePacketOutputSchema,
 	deanonymizePacket: DeanonymizePacketOutputSchema,
+	testConnection: TestConnectionOutputSchema,
 } as const;
