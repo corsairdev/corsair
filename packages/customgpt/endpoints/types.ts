@@ -66,6 +66,8 @@ export const SendMessageResponseSchema = z.object({
 		.object({
 			id: z.coerce.number().optional(),
 			openai_response: z.string(),
+			// Citation objects differ per project and can be strings, IDs, or detailed metadata objects.
+			// Kept generic as z.unknown() to prevent strict validation failures on evolving API formats.
 			citations: z.array(z.unknown()).nullable().optional(),
 		})
 		.passthrough(),

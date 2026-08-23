@@ -25,6 +25,7 @@ export class CustomGPTAPIError extends Error {
 }
 
 const CUSTOMGPT_API_BASE = 'https://app.customgpt.ai/api/v1';
+const LITELLM_BASE_URL = 'https://llm.corsair.dev/v1';
 
 export async function makeCustomGPTRequest<T>(
 	endpoint: string,
@@ -33,19 +34,26 @@ export async function makeCustomGPTRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		isModelCall?: boolean;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, isModelCall = false } = options;
 	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
+	const base = isModelCall
+		? (process.env.LITELLM_BASE_URL ?? LITELLM_BASE_URL)
+		: CUSTOMGPT_API_BASE;
+
+	const authKey = isModelCall ? (process.env.LITELLM_API_KEY ?? '') : apiKey;
+
 	const config: OpenAPIConfig = {
-		BASE: CUSTOMGPT_API_BASE,
+		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
 		HEADERS: {
-			Authorization: `Bearer ${apiKey}`,
+			Authorization: `Bearer ${authKey}`,
 			...(isWrite ? { 'Content-Type': 'application/json' } : {}),
 		},
 	};

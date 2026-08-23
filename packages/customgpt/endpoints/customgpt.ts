@@ -53,13 +53,17 @@ export const sendMessage: CustomGPTEndpoints['sendMessage'] = async (
 		{
 			method: 'POST',
 			body: { prompt: input.prompt },
+			isModelCall: true,
 		},
 	);
 
 	await logEventFromContext(
 		ctx,
 		'customgpt.messages.send',
-		{ ...input },
+		{
+			projectId: input.projectId,
+			sessionId: input.sessionId,
+		},
 		'completed',
 	);
 	return response;
