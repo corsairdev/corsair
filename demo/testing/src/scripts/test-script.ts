@@ -18,37 +18,11 @@ async function setInstagramCredentials() {
 	}
 }
 
-// A 1x1 transparent GIF, used only as a small, deterministic upload payload.
-const TINY_GIF_BASE64 =
-	'R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-
-/**
- * Exercises the ImgBB plugin end-to-end. Gated on IMGBB_API_KEY so this
- * script still runs for contributors who haven't set one up.
- */
-async function testImgBB() {
-	if (!process.env.IMGBB_API_KEY) {
-		console.log('[imgbb] Skipping — IMGBB_API_KEY not set');
-		return;
-	}
-
-	const keyStatus = await corsair.imgbb.api.auth.getApiKey({});
-	console.log('[imgbb] auth.getApiKey ->', keyStatus);
-
-	const uploaded = await corsair.imgbb.api.images.upload({
-		image: TINY_GIF_BASE64,
-		name: 'corsair-imgbb-smoke-test',
-	});
-	console.log('[imgbb] images.upload ->', uploaded.url);
-}
-
 const main = async () => {
 	const res = await corsair.slack.api.messages.post({
 		channel: 'general',
 		text: 'hello',
 	});
-
-	await testImgBB();
 };
 
 main().catch((err) => {
