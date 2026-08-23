@@ -7,10 +7,9 @@ import { asRecord, firstString, readBodyRecord } from 'corsair/core';
  * the only stable per-tenant value in the request, so it is what accounts are
  * linked on.
  *
- * ZoomInfo has no OAuth callback to derive that id from, so a multi-tenant
- * deployment sets the account's `tenant_external_id` to the id returned by
- * POST /webhooks when the subscription is created. Single-tenant deployments
- * need nothing: the id simply will not resolve and delivery falls back.
+ * `subscribe` is what puts that id on the account: it creates the webhook via
+ * POST /webhooks at connect time and returns the id as the account's
+ * `tenant_external_id`. ZoomInfo has no OAuth callback to derive it from.
  */
 export function matchZoominfoTenantWebhook(
 	request: RawWebhookRequest,

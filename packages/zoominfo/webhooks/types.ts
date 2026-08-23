@@ -153,3 +153,36 @@ export function verifyZoominfoWebhookSignature(
 
 	return { valid: true };
 }
+
+// ── Monitoring API ──────────────────────────────────────────────────────────
+// Shapes returned by the webhook-management endpoints that `subscribe` drives:
+// POST /webhooks, GET /webhooks and POST /webhooks/{id}/token.
+
+export const ZoominfoWebhookSubscriptionSchema = z.looseObject({
+	subscriptionId: z.string().optional(),
+	eventType: z.string().optional(),
+	objectType: z.string().optional(),
+	fullPayload: z.boolean().optional(),
+});
+
+export const ZoominfoWebhookRecordSchema = z.looseObject({
+	id: z.string(),
+	/** Absent on webhooks created before a title was required. */
+	title: z.string().optional(),
+	enabled: z.boolean().optional(),
+	targetUrl: z.string(),
+	createdDate: z.string().optional(),
+	/** Returned only by create; generating a new one revokes the previous. */
+	verificationToken: z.string().optional(),
+	subscriptions: z.array(ZoominfoWebhookSubscriptionSchema).optional(),
+});
+
+export type ZoominfoWebhookRecord = z.infer<typeof ZoominfoWebhookRecordSchema>;
+
+export const ZoominfoWebhookListSchema = z.looseObject({
+	webhooks: z.array(ZoominfoWebhookRecordSchema),
+});
+
+export const ZoominfoWebhookTokenSchema = z.looseObject({
+	verificationToken: z.string(),
+});

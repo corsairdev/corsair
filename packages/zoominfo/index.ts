@@ -16,8 +16,8 @@ import type {
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import type { ZoominfoCredentials } from './client';
-import { authenticateZoominfo, isTokenUsable } from './client';
+import type { ZoominfoAuthContext } from './auth';
+import { resolveZoominfoToken } from './auth';
 import { Zoominfo } from './endpoints';
 import type {
 	ZoominfoEndpointInputs,
@@ -30,6 +30,7 @@ import {
 import { errorHandlers } from './error-handlers';
 import { ZoominfoSchema } from './schema';
 import { ZoominfoWebhookHandlers } from './webhooks';
+import { zoominfoSubscribe } from './webhooks/subscribe';
 import { matchZoominfoTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	CompanyUpdateEvent,
@@ -309,39 +310,6 @@ export type InternalZoominfoPlugin = BaseZoominfoPlugin<ZoominfoPluginOptions>;
 export type ExternalZoominfoPlugin<T extends ZoominfoPluginOptions> =
 	BaseZoominfoPlugin<T>;
 
-/**
- * In-flight /authenticate calls, keyed by tenant. Only deduplicates within one
- * process; the persisted token is what stops repeat work across processes.
- */
-const inFlightAuth = new Map<string, Promise<string>>();
-
-/** Picks whichever of the two documented auth flows the account is set up for. */
-export function selectZoominfoCredentials(credentials: {
-	[key: string]: string | null | undefined;
-}): ZoominfoCredentials | null {
-	const username = credentials.zoominfo_username;
-	if (!username) return null;
-
-	if (credentials.zoominfo_client_id && credentials.zoominfo_private_key) {
-		return {
-			kind: 'pki',
-			username,
-			clientId: credentials.zoominfo_client_id,
-			privateKey: credentials.zoominfo_private_key,
-		};
-	}
-
-	if (credentials.zoominfo_password) {
-		return {
-			kind: 'basic',
-			username,
-			password: credentials.zoominfo_password,
-		};
-	}
-
-	return null;
-}
-
 export function zoominfo<const T extends ZoominfoPluginOptions>(
 	incomingOptions: ZoominfoPluginOptions & T = {} as ZoominfoPluginOptions & T,
 ): ExternalZoominfoPlugin<T> {
@@ -367,8 +335,10 @@ export function zoominfo<const T extends ZoominfoPluginOptions>(
 			),
 		pluginTenantWebhookMatcher: matchZoominfoTenantWebhook,
 		// ZoomInfo has no OAuth authorization-code flow, so there is no token
-		// response to derive a tenant id from; the webhook payload carries it.
+		// response to derive a tenant id from. `subscribe` creates the webhook
+		// instead and reports back the id every delivery repeats.
 		oauthWebhookTenantLinkResolver: undefined,
+		subscribe: zoominfoSubscribe,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -383,62 +353,14 @@ export function zoominfo<const T extends ZoominfoPluginOptions>(
 
 			if (options.key) return options.key;
 
-			const [accessToken, expiresAt, credentials] = await Promise.all([
-				ctx.keys.get_access_token(),
-				ctx.keys.get_expires_at(),
-				ctx.keys.get_integration_credentials(),
-			]);
-
-			// The JWT lasts an hour and ZoomInfo asks callers not to mint a new one
-			// per request, so a cached token is reused until it is nearly expired.
-			if (isTokenUsable(accessToken, expiresAt) && accessToken) {
-				return accessToken;
-			}
-
-			const selected = selectZoominfoCredentials(credentials);
-			if (!selected) {
-				throw new AuthMissingError('zoominfo', 'oauth_2');
-			}
-
-			// Concurrent requests that all find the token expired would each mint
-			// their own JWT, which is what ZoomInfo asks callers not to do. The
-			// first one through does the work and the rest await its result.
-			const pending = inFlightAuth.get(ctx.tenantId);
-			if (pending) return pending;
-
-			const attempt = (async () => {
-				const token = await authenticateZoominfo(selected, {
-					baseUrl: options.baseUrl,
-				});
-
-				try {
-					// Written in this order, and not concurrently: if the expiry
-					// landed while the token write failed, the old token would look
-					// fresh for an hour. This way a failure leaves the old expiry,
-					// which at worst costs one extra /authenticate call.
-					await ctx.keys.set_access_token(token.accessToken);
-					await ctx.keys.set_expires_at(String(token.expiresAt));
-				} catch (error) {
-					console.warn(
-						`[corsair:zoominfo] Obtained a JWT but failed to persist it: ${
-							error instanceof Error ? error.message : String(error)
-						}`,
-					);
-				}
-
-				return token.accessToken;
-			})();
-
-			inFlightAuth.set(ctx.tenantId, attempt);
-			try {
-				return await attempt;
-			} finally {
-				inFlightAuth.delete(ctx.tenantId);
-			}
+			return resolveZoominfoToken(ctx as unknown as ZoominfoAuthContext, {
+				baseUrl: options.baseUrl,
+			});
 		},
 	} satisfies InternalZoominfoPlugin;
 }
 
+export { selectZoominfoCredentials } from './auth';
 export type {
 	SearchCompaniesInput,
 	SearchCompaniesResponse,

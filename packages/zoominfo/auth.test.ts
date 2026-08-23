@@ -7,6 +7,11 @@ import {
 } from './client';
 import { selectZoominfoCredentials, zoominfo } from './index';
 
+type KeyBuilderFn = (
+	ctx: Record<string, unknown>,
+	source: 'endpoint' | 'webhook',
+) => Promise<string>;
+
 const NOW = 1_700_000_000_000;
 const HOUR = 60 * 60 * 1000;
 
@@ -288,11 +293,11 @@ describe('keyBuilder token persistence', () => {
 	}
 
 	const buildKey = (keys: ReturnType<typeof makeKeys>, tenantId = 't1') =>
-		// biome-ignore lint/suspicious/noExplicitAny: narrowing the full key-manager union is not what this test is about
-		(zoominfo().keyBuilder as any)(
+		// The key-manager union is wider than this test needs to model.
+		(zoominfo().keyBuilder as unknown as KeyBuilderFn)(
 			{ authType: 'oauth_2', tenantId, keys, options: {} },
 			'endpoint',
-		) as Promise<string>;
+		);
 
 	beforeEach(() => {
 		fetchMock.mockReset().mockResolvedValue({
