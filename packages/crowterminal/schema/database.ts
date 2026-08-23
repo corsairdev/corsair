@@ -42,7 +42,7 @@ export const CrowterminalDataPoint = z.preprocess(
 		if (typeof row.id === 'string' && row.id.length > 0) return row;
 		const parts = [row.clientId, row.platform, row.dataType, row.videoId ?? ''];
 		if (parts.slice(0, 3).some((p) => typeof p !== 'string')) return row;
-		return { ...row, id: parts.join(':') };
+		return { ...row, id: JSON.stringify(parts) };
 	},
 	z.object({
 		/** clientId:platform:dataType:videoId when the provider supplies none. */
