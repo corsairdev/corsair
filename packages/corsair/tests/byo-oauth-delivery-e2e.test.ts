@@ -73,4 +73,60 @@ describe('BYO oauth.tokens delivery — end to end over the tunnel', () => {
 		expect(await km.get_access_token()).toBe(deliveredToken);
 		expect(await km.get_refresh_token()).toBe('rand-refresh-token-11b7');
 	});
+
+	// Proves the provider-identity path end to end: a signed delivery carrying
+	// providerData reaches the plugin's real resolver, which reads the token-body
+	// identity and lands it on the account (Slack team_id → the field the plugin
+	// requires; was silently dropped before providerData was forwarded).
+	it('forwards providerData so the resolver lands team_id on the account', async () => {
+		env = createTestDatabase();
+		const slackManaged = {
+			id: 'slack',
+			options: { authType: 'managed' as const },
+			authConfig: { managed: { account: ['team_id'] as const } },
+			oauthWebhookTenantLinkResolver: (tokens: { team?: { id?: string } }) =>
+				tokens?.team?.id
+					? { linkType: 'team_id', externalId: tokens.team.id }
+					: null,
+		} as unknown as CorsairPlugin;
+		const corsair = createCorsair({
+			plugins: [slackManaged],
+			database: env.db,
+			kek: KEK,
+		} as any);
+		await setupCorsair(corsair);
+
+		const { body, headers } = signDeliveryEnvelope({
+			projectId: 'proj_e2e',
+			signingSecret: SIGNING_SECRET,
+			type: 'oauth.tokens',
+			payload: {
+				plugin: 'slack',
+				tenantId: 'default',
+				accessToken: 'xoxb-e2e',
+				authType: 'managed',
+				providerData: { team: { id: 'T-E2E' } },
+			},
+		});
+
+		const ack = await processCorsair(
+			corsair,
+			{ headers, body },
+			{ signingSecret: SIGNING_SECRET },
+		);
+		expect(ack.status).toBe('ok');
+
+		const km = createAccountKeyManager({
+			authType: 'managed',
+			integrationName: 'slack',
+			tenantId: 'default',
+			kek: KEK,
+			database: getCorsairInternal(corsair).database!,
+			extraAccountFields: ['team_id'],
+		});
+		expect(await km.get_access_token()).toBe('xoxb-e2e');
+		expect(
+			await (km as Record<string, () => Promise<string | null>>).get_team_id(),
+		).toBe('T-E2E');
+	});
 });
