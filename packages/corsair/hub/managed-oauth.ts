@@ -36,6 +36,9 @@ export type ProcessManagedOAuthDeliveryOptions = {
 	expiresIn?: number;
 	scope?: string;
 	authType?: 'managed' | 'oauth_2';
+	// Provider token-body identity (Slack team, Notion workspace_id, …) the Hub
+	// forwards so the tenant-link resolver can read it. Absent = API-call class.
+	providerData?: Record<string, unknown>;
 };
 
 export type ProcessManagedOAuthDeliveryResult = {
@@ -56,6 +59,7 @@ export async function processManagedOAuthDelivery(
 		expiresIn,
 		scope,
 		authType = 'managed',
+		providerData,
 	} = options;
 
 	if (!accessToken.trim()) {
@@ -126,6 +130,7 @@ export async function processManagedOAuthDelivery(
 				access_token: accessToken,
 				refresh_token: refreshToken,
 				scope,
+				...providerData,
 			},
 		);
 		if (tenantLink) {

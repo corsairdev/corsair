@@ -253,6 +253,7 @@ export async function handleHubDeliveryGet(
 				expiresIn: payload.expiresIn,
 				scope: payload.scope,
 				authType: payload.authType,
+				providerData: payload.providerData,
 			});
 		} else {
 			if (

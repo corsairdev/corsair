@@ -70,6 +70,31 @@ describe('processManagedOAuthDelivery — BYO (oauth_2) mode', () => {
 		expect(await km.get_refresh_token()).toBe('lin_rt');
 	});
 
+	it('forwards providerData to the resolver so token-body identity resolves', async () => {
+		(resolveOAuthWebhookTenantLink as jest.Mock).mockResolvedValue(null);
+		env = createTestDatabase();
+		const corsair = makeCorsair(env);
+		await setupCorsair(corsair);
+
+		await processManagedOAuthDelivery(corsair, {
+			plugin: 'linear',
+			tenantId: 'default',
+			accessToken: 'lin_at',
+			authType: 'oauth_2',
+			providerData: { team: { id: 'T123' }, workspace_id: 'W1' },
+		});
+
+		expect(resolveOAuthWebhookTenantLink).toHaveBeenCalledWith(
+			expect.anything(),
+			'linear',
+			expect.objectContaining({
+				access_token: 'lin_at',
+				team: { id: 'T123' },
+				workspace_id: 'W1',
+			}),
+		);
+	});
+
 	it('registers the webhook tenant link under oauth_2, not managed', async () => {
 		(resolveOAuthWebhookTenantLink as jest.Mock).mockResolvedValue({
 			linkType: 'organization_id',

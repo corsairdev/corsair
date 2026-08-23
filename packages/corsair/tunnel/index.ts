@@ -127,6 +127,9 @@ export type OAuthTokensTunnelPayload = {
 	expiresIn?: number;
 	scope?: string;
 	authType?: 'managed' | 'oauth_2';
+	// Provider token-body identity (team, workspace_id, …) forwarded so the SDK
+	// resolver can read it — secrets stripped Hub-side.
+	providerData?: Record<string, unknown>;
 };
 
 export type PermissionDecisionTunnelPayload = {
@@ -347,6 +350,7 @@ async function handleOAuthTokensTunnel(
 		expiresIn: payload.expiresIn,
 		scope: payload.scope,
 		authType: payload.authType,
+		providerData: payload.providerData,
 	});
 	return { status: 'ok' };
 }
