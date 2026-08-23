@@ -203,7 +203,7 @@ const OPERATIONS: [string, (ctx: Ctx) => Promise<unknown>, string, string][] = [
 		'entities.deleteRole',
 		(c) => Entities.deleteRole(c, { entity: 'city', role: 'origin' }),
 		'DELETE',
-		'/entities/city/roles/origin',
+		'/entities/city:origin',
 	],
 	['traits.listTraits', (c) => Traits.listTraits(c, {}), 'GET', '/traits'],
 	[
