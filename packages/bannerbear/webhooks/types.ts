@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
 
 // Bannerbear webhook payloads are the completed resource objects themselves.
@@ -104,10 +105,59 @@ export function createBannerbearVideoCompletedMatch(): CorsairWebhookMatcher {
 }
 
 export function verifyBannerbearWebhookSignature(
-	_request: WebhookRequest<BannerbearWebhookPayload>,
-	_secret: string,
+	request: WebhookRequest<unknown>,
+	webhookSecret?: string,
 ): { valid: boolean; error?: string } {
-	// Bannerbear does not use webhook signature verification.
-	// Webhooks are secured by keeping the webhook URL secret.
-	return { valid: true };
+	if (request.hubVerified) {
+		return { valid: true };
+	}
+
+	if (!webhookSecret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const headers = request.headers;
+
+	// 1. Check Bannerbear Webhook Key in Authorization header (Bannerbear native)
+	const authHeader = Array.isArray(headers.authorization)
+		? headers.authorization[0]
+		: headers.authorization;
+
+	if (authHeader) {
+		const token = authHeader.startsWith('Bearer ')
+			? authHeader.slice(7).trim()
+			: authHeader.trim();
+		if (token === webhookSecret) {
+			return { valid: true };
+		}
+	}
+
+	// 2. Check HMAC signature header (x-bannerbear-signature / signature)
+	const signature = Array.isArray(headers['x-bannerbear-signature'])
+		? headers['x-bannerbear-signature'][0]
+		: headers['x-bannerbear-signature'] ||
+			(Array.isArray(headers.signature)
+				? headers.signature[0]
+				: headers.signature);
+
+	if (signature && request.rawBody) {
+		const isValid = verifyHmacSignature(
+			request.rawBody,
+			webhookSecret,
+			signature,
+			'sha256',
+		);
+		if (isValid) {
+			return { valid: true };
+		}
+	}
+
+	if (!authHeader && !signature) {
+		return {
+			valid: false,
+			error: 'Missing Authorization or x-bannerbear-signature header',
+		};
+	}
+
+	return { valid: false, error: 'Invalid webhook credentials or signature' };
 }
