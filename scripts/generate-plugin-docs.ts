@@ -341,6 +341,122 @@ function pickExampleEndpoints(api: DocsApiEndpoint[]): {
 	return { read, write };
 }
 
+function isObjectLikeType(type: string): boolean {
+	const t = type.trim();
+	return (
+		t === 'object' ||
+		t.startsWith('{') ||
+		t.startsWith('Record<') ||
+		t.startsWith('Record ')
+	);
+}
+
+function exampleValueForField(type: string, key?: string): string {
+	const t = type.trim();
+	const lowerKey = key?.toLowerCase() ?? '';
+
+	// Use the first quoted literal value when the type contains one.
+	const literal = t.match(/['"]([^'"]+)['"]/);
+	if (literal?.[1]) {
+		return `'${literal[1]}'`;
+	}
+
+	// Unquoted enum union like "deepseek-chat | deepseek-reasoner" — pick first member.
+	if (
+		t.includes(' | ') &&
+		!t.includes('{') &&
+		!t.includes('string') &&
+		!t.includes('number') &&
+		!t.includes('boolean')
+	) {
+		const first = t.split(' | ')[0].trim();
+		if (first) return `'${first}'`;
+	}
+
+	// Array check must come before scalar substring checks (string[], Array<string>, etc.)
+	if (t.endsWith('[]') || t.startsWith('Array<') || t.startsWith('array')) {
+		return '[]';
+	}
+
+	const isStringType =
+		t === 'string' || t.includes('| string') || t.includes('string |');
+
+	if (isStringType && lowerKey.includes('url')) {
+		return "'https://example.com'";
+	}
+
+	if (isStringType && lowerKey.includes('email')) {
+		return "'user@example.com'";
+	}
+
+	if (t === 'string' || t === 'string | number' || t === 'number | string') {
+		return "'example'";
+	}
+
+	if (t.includes('| string') || t.includes('string |')) {
+		return "'example'";
+	}
+
+	if (t === 'number') {
+		return '1';
+	}
+
+	if (t === 'boolean') {
+		return 'true';
+	}
+
+	if (t === 'Date') {
+		return 'new Date()';
+	}
+
+	// Inline object type like "{ id: string, name?: string }" — generate a literal.
+	if (t.startsWith('{') && t.endsWith('}')) {
+		const inner = t.slice(1, -1).trim();
+		if (inner) {
+			const pairs = inner.split(',').map((s) => s.trim());
+			const required = pairs
+				.filter((p) => !p.includes('?:'))
+				.map((p) => {
+					const colon = p.indexOf(':');
+					if (colon === -1) return null;
+					const k = p.slice(0, colon).trim();
+					const v = p.slice(colon + 1).trim();
+					return `${k}: ${exampleValueForField(v, k)}`;
+				})
+				.filter(Boolean);
+			if (required.length > 0) {
+				return `{ ${required.join(', ')} }`;
+			}
+		}
+	}
+
+	return '{}';
+}
+
+function buildExampleInput(shape: DocSchemaShape): string {
+	if (shape.kind === 'inline') {
+		return isObjectLikeType(shape.type)
+			? '{}'
+			: exampleValueForField(shape.type);
+	}
+	if (shape.fields.length === 0) {
+		return '{}';
+	}
+	const requiredFields = shape.fields.filter((field) => !field.optional);
+	if (requiredFields.length === 0) {
+		return '{}';
+	}
+
+	return `{
+${requiredFields
+	.map(
+		(field) =>
+			`    ${field.key}: ${exampleValueForField(field.type, field.key)},`,
+	)
+	.join('\n')}
+}`;
+}
+
 function buildMainMdx(opts: {
 	pluginId: string;
 	title: string;
@@ -447,14 +563,24 @@ Synced entities support \`corsair.${pluginId}.db.<entity>.search()\` and \`.list
 
 	const exampleRead = exRead
 		? `\`\`\`ts
-await corsair.${pluginId}.api.${exRead.shortPath}({});
+await corsair.${pluginId}.api.${exRead.shortPath}(${buildExampleInput(exRead.input)});
 \`\`\`
 `
 		: '_No read-style endpoint inferred; pick any operation from the reference below._\n';
 
 	const exampleWrite = exWrite
-		? `\`\`\`ts
-await corsair.${pluginId}.api.${exWrite.shortPath}({});
+		? `${
+				exWrite.riskLevel === 'destructive' ||
+				exWrite.irreversible ||
+				/delete/i.test(exWrite.shortPath)
+					? `<Warning>
+This is a destructive operation. Review [Permissions](/concepts/permissions) and [Hooks](/concepts/hooks) before invoking it.
+</Warning>
+
+`
+					: ''
+			}\`\`\`ts
+await corsair.${pluginId}.api.${exWrite.shortPath}(${buildExampleInput(exWrite.input)});
 \`\`\`
 `
 		: '_No write-style endpoint inferred; pick any operation from the reference below._\n';
@@ -586,11 +712,6 @@ function escapeCell(s: string | undefined): string {
 		.replace(/\\/g, '\\\\')
 		.replace(/\|/g, '\\|')
 		.replace(/\r?\n/g, '<br />');
-}
-
-/** Inline Zod→TS strings use `{ ... }` for objects; used to simplify table cells. */
-function isObjectLikeType(type: string): boolean {
-	return type.includes('{');
 }
 
 /** Table "Type" column: primitives stay literal; object shapes become `object` / `object[]`. */
