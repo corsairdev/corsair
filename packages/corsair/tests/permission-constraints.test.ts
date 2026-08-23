@@ -206,6 +206,41 @@ describe('matchesConstraint — exotic objects are not structurally equal', () =
 	});
 });
 
+describe('matchesConstraint — exotic values fail closed under notIn', () => {
+	it('does not treat a boxed string as absent from a string denylist', () => {
+		expect(
+			matchesConstraint(new String('evil@x.com'), { notIn: ['evil@x.com'] }),
+		).toBe(false);
+		expect(
+			matchesConstraint(new String('evil@x.com'), { in: ['evil@x.com'] }),
+		).toBe(false);
+	});
+
+	it('does not treat a Map as absent from an object denylist', () => {
+		expect(matchesConstraint(new Map([['k', 1]]), { notIn: [{ k: 1 }] })).toBe(
+			false,
+		);
+		expect(matchesConstraint({ k: 1 }, { notIn: [new Map([['k', 1]])] })).toBe(
+			false,
+		);
+	});
+
+	it('does not treat a Set as absent from an array denylist', () => {
+		expect(matchesConstraint(new Set([1]), { notIn: [[1]] })).toBe(false);
+	});
+
+	it('does not apply an allow override when notIn cannot compare the argument', () => {
+		expect(
+			evaluatePermission(
+				'write',
+				'strict',
+				{ policy: 'allow', constraints: { to: { notIn: ['evil@x.com'] } } },
+				{ to: new String('evil@x.com') },
+			),
+		).toBe('require_approval');
+	});
+});
+
 describe('matchesConstraint — fails closed on unusable rules', () => {
 	it('rejects an absent argument under every operator, notIn included', () => {
 		// notIn is the trap: "undefined is not in the denylist" reads as satisfied,
