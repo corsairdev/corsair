@@ -64,6 +64,25 @@ function isPlainObject(v: unknown): v is Record<string, unknown> {
 	return proto === null || proto === Object.prototype;
 }
 
+function isComparableValue(root: unknown): boolean {
+	const stack: unknown[] = [root];
+	const seen = new WeakSet<object>();
+	while (stack.length > 0) {
+		const v = stack.pop();
+		if (v === null || typeof v !== 'object') continue;
+		if (seen.has(v)) continue;
+		seen.add(v);
+		if (v instanceof Date) continue;
+		if (isUnknownArray(v)) {
+			for (const item of v) stack.push(item);
+			continue;
+		}
+		if (!isPlainObject(v)) return false;
+		for (const child of Object.values(v)) stack.push(child);
+	}
+	return true;
+}
+
 /**
  * Structural comparison for constraint operands.
  *
@@ -245,6 +264,7 @@ export function matchesConstraint(
 	// `otherwise` or the mode matrix. This also closes the `notIn` inversion:
 	// an uncomparable cyclic value must not read as "not in the denylist".
 	if (containsCycle(value) || containsCycle(operand)) return false;
+	if (!isComparableValue(value) || !isComparableValue(operand)) return false;
 
 	if (op === 'match') {
 		// Only a string pattern may test a string value.
