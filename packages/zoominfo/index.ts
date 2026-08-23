@@ -412,10 +412,12 @@ export function zoominfo<const T extends ZoominfoPluginOptions>(
 				});
 
 				try {
-					await Promise.all([
-						ctx.keys.set_access_token(token.accessToken),
-						ctx.keys.set_expires_at(String(token.expiresAt)),
-					]);
+					// Written in this order, and not concurrently: if the expiry
+					// landed while the token write failed, the old token would look
+					// fresh for an hour. This way a failure leaves the old expiry,
+					// which at worst costs one extra /authenticate call.
+					await ctx.keys.set_access_token(token.accessToken);
+					await ctx.keys.set_expires_at(String(token.expiresAt));
 				} catch (error) {
 					console.warn(
 						`[corsair:zoominfo] Obtained a JWT but failed to persist it: ${

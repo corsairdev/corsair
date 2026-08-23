@@ -5,7 +5,7 @@ import {
 	isTokenUsable,
 	ZoominfoAPIError,
 } from './client';
-import { selectZoominfoCredentials } from './index';
+import { selectZoominfoCredentials, zoominfo } from './index';
 
 const NOW = 1_700_000_000_000;
 const HOUR = 60 * 60 * 1000;
@@ -259,5 +259,90 @@ describe('trailing-slash trim', () => {
 		expect(fetchMock.mock.calls[0][0]).toBe(
 			'https://api.zoominfo.com/authenticate',
 		);
+	});
+});
+
+describe('keyBuilder token persistence', () => {
+	const fetchMock = jest.fn();
+	const originalFetch = global.fetch;
+
+	beforeAll(() => {
+		global.fetch = fetchMock as unknown as typeof fetch;
+	});
+	afterAll(() => {
+		global.fetch = originalFetch;
+	});
+
+	function makeKeys(overrides: Record<string, unknown> = {}) {
+		return {
+			get_access_token: jest.fn().mockResolvedValue(null),
+			get_expires_at: jest.fn().mockResolvedValue(null),
+			get_integration_credentials: jest.fn().mockResolvedValue({
+				zoominfo_username: 'u',
+				zoominfo_password: 'p',
+			}),
+			set_access_token: jest.fn().mockResolvedValue(undefined),
+			set_expires_at: jest.fn().mockResolvedValue(undefined),
+			...overrides,
+		};
+	}
+
+	const buildKey = (keys: ReturnType<typeof makeKeys>, tenantId = 't1') =>
+		// biome-ignore lint/suspicious/noExplicitAny: narrowing the full key-manager union is not what this test is about
+		(zoominfo().keyBuilder as any)(
+			{ authType: 'oauth_2', tenantId, keys, options: {} },
+			'endpoint',
+		) as Promise<string>;
+
+	beforeEach(() => {
+		fetchMock.mockReset().mockResolvedValue({
+			ok: true,
+			statusText: 'OK',
+			text: async () => JSON.stringify({ jwt: 'fresh-token' }),
+		});
+	});
+
+	it('mints and persists a token when none is cached', async () => {
+		const keys = makeKeys();
+
+		await expect(buildKey(keys)).resolves.toBe('fresh-token');
+		expect(keys.set_access_token).toHaveBeenCalledWith('fresh-token');
+		expect(keys.set_expires_at).toHaveBeenCalled();
+	});
+
+	// Writing the expiry when the token write failed would pair a fresh
+	// one-hour expiry with the stale token, hiding the failure for an hour.
+	it('does not write the expiry when the token write fails', async () => {
+		const keys = makeKeys({
+			set_access_token: jest.fn().mockRejectedValue(new Error('db down')),
+		});
+
+		await expect(buildKey(keys)).resolves.toBe('fresh-token');
+		expect(keys.set_expires_at).not.toHaveBeenCalled();
+	});
+
+	it('authenticates once for concurrent callers on the same tenant', async () => {
+		const keys = makeKeys();
+
+		const results = await Promise.all([
+			buildKey(keys, 'same'),
+			buildKey(keys, 'same'),
+			buildKey(keys, 'same'),
+		]);
+
+		expect(results).toEqual(['fresh-token', 'fresh-token', 'fresh-token']);
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+	});
+
+	it('reuses a cached token that is still valid', async () => {
+		const keys = makeKeys({
+			get_access_token: jest.fn().mockResolvedValue('cached-token'),
+			get_expires_at: jest
+				.fn()
+				.mockResolvedValue(String(Date.now() + 30 * 60 * 1000)),
+		});
+
+		await expect(buildKey(keys)).resolves.toBe('cached-token');
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });

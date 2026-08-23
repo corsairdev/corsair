@@ -5,10 +5,15 @@ import {
 	enrichContact,
 	enrichIntent,
 	enrichLocation,
+	enrichNews,
+	enrichScoop,
 	enrichTechnology,
 } from './enrichments';
 import {
 	getCompanySearchInputFields,
+	getContactSearchInputFields,
+	getIntentSearchInputFields,
+	getNewsSearchInputFields,
 	getScoopSearchInputFields,
 } from './input-fields';
 import {
@@ -81,41 +86,58 @@ describe('request construction', () => {
 		);
 	});
 
-	it('sends the technology enrichment to enrich/tech', async () => {
+	// The five company-scoped enrichments share a request shape, so they are
+	// covered together; company and contact take match-input lists instead and
+	// are exercised separately below.
+	it.each([
+		['enrichIntent', 'enrich/intent', enrichIntent],
+		['enrichLocation', 'enrich/location', enrichLocation],
+		['enrichNews', 'enrich/news', enrichNews],
+		['enrichScoop', 'enrich/scoop', enrichScoop],
+		['enrichTechnology', 'enrich/tech', enrichTechnology],
+	])('routes %s to %s', async (_name, path, endpoint) => {
 		requestSpy.mockResolvedValue({ currentPage: 1, data: [] });
 
-		await enrichTechnology(makeCtx(), { companyId: '344589814' });
+		await (endpoint as (c: ZoominfoContext, i: unknown) => Promise<unknown>)(
+			makeCtx(),
+			{ companyId: '344589814' },
+		);
 
 		expect(requestSpy).toHaveBeenCalledWith(
-			'enrich/tech',
+			path,
 			'test-jwt',
 			expect.objectContaining({ method: 'POST' }),
 		);
 	});
 
-	it('fetches input fields over GET with no body', async () => {
-		requestSpy.mockResolvedValue([{ fieldName: 'companyName' }]);
-
-		await getCompanySearchInputFields(makeCtx(), {});
-
-		expect(requestSpy).toHaveBeenCalledWith(
+	it.each([
+		[
+			'company',
 			'lookup/inputfields/company/search',
-			'test-jwt',
-			expect.objectContaining({ method: 'GET', body: undefined }),
-		);
-	});
+			getCompanySearchInputFields,
+		],
+		[
+			'contact',
+			'lookup/inputfields/contact/search',
+			getContactSearchInputFields,
+		],
+		['intent', 'lookup/inputfields/intent/search', getIntentSearchInputFields],
+		['news', 'lookup/inputfields/news/search', getNewsSearchInputFields],
+		['scoop', 'lookup/inputfields/scoop/search', getScoopSearchInputFields],
+	])(
+		'fetches %s input fields over GET with no body',
+		async (_resource, path, endpoint) => {
+			requestSpy.mockResolvedValue([{ fieldName: 'companyName' }]);
 
-	it('points each input-field lookup at its own resource', async () => {
-		requestSpy.mockResolvedValue([]);
+			await endpoint(makeCtx(), {});
 
-		await getScoopSearchInputFields(makeCtx(), {});
-
-		expect(requestSpy).toHaveBeenCalledWith(
-			'lookup/inputfields/scoop/search',
-			'test-jwt',
-			expect.anything(),
-		);
-	});
+			expect(requestSpy).toHaveBeenCalledWith(
+				path,
+				'test-jwt',
+				expect.objectContaining({ method: 'GET', body: undefined }),
+			);
+		},
+	);
 
 	it('forwards only the caller fields that were set', async () => {
 		requestSpy.mockResolvedValue(companySearchBody);
@@ -272,6 +294,131 @@ describe('output validation', () => {
 		await expect(enrichIntent(makeCtx(), { rpp: 5 })).rejects.toThrow();
 
 		expect(requestSpy).not.toHaveBeenCalled();
+	});
+
+	it('returns news articles for a company', async () => {
+		requestSpy.mockResolvedValue({
+			maxResults: 48,
+			totalResults: 5,
+			currentPage: 1,
+			data: [
+				{
+					domain: 'www.businesswire.com',
+					title: 'Arvind Krishna Elected IBM Chairman',
+					pageDate: '2020-12-16T09:11:00.000Z',
+					categories: ['PERSON'],
+					company: [{ id: 18579882, name: 'IBM' }],
+				},
+			],
+		});
+
+		const result = await enrichNews(makeCtx(), { companyId: '18579882' });
+
+		expect(result.data[0]).toMatchObject({ domain: 'www.businesswire.com' });
+	});
+
+	it('returns scoops for a company', async () => {
+		requestSpy.mockResolvedValue({
+			maxResults: 9,
+			totalResults: 9,
+			currentPage: 1,
+			data: [
+				{
+					id: 1258709,
+					publishedDate: '12/4/2018 12:00 AM',
+					description: 'recognized as a Top Place to Work',
+					types: [{ id: 6, type: 'Award' }],
+					company: { id: 344589814, name: 'ZoomInfo' },
+				},
+			],
+		});
+
+		const result = await enrichScoop(makeCtx(), { companyId: '344589814' });
+
+		expect(result.data[0]).toMatchObject({ id: 1258709 });
+	});
+
+	it('returns company locations', async () => {
+		requestSpy.mockResolvedValue({
+			maxResults: 36,
+			totalResults: 36,
+			currentPage: 1,
+			data: [
+				{
+					street: '805 Broadway St Ste 900',
+					city: 'Vancouver',
+					state: 'Washington',
+					company: { id: 346572700, addressStatus: 'DEFUNCT' },
+				},
+			],
+		});
+
+		const result = await enrichLocation(makeCtx(), {
+			companyId: '346572700',
+		});
+
+		expect(result.data[0]).toMatchObject({ city: 'Vancouver' });
+	});
+
+	it('returns a company enrichment in the match-result envelope', async () => {
+		requestSpy.mockResolvedValue({
+			success: true,
+			data: {
+				outputFields: ['id', 'name', 'website'],
+				result: [
+					{
+						input: { companyId: 344589814 },
+						data: { id: 344589814, name: 'ZoomInfo' },
+					},
+				],
+			},
+		});
+
+		const result = await enrichCompany(makeCtx(), {
+			matchCompanyInput: [{ companyId: 344589814 }],
+		});
+
+		expect(result.data.result).toHaveLength(1);
+	});
+
+	it('returns the technology stack for a company', async () => {
+		requestSpy.mockResolvedValue({
+			maxResults: 174,
+			totalResults: 174,
+			currentPage: 1,
+			data: [
+				{
+					tag: '25420',
+					vendor: 'Google LLC',
+					product: 'Google Compute Engine',
+					attribute: '334.194.1',
+				},
+			],
+		});
+
+		const result = await enrichTechnology(makeCtx(), {
+			companyId: '344589814',
+		});
+
+		expect(result.data[0]).toMatchObject({ product: 'Google Compute Engine' });
+	});
+
+	it('returns the input-field listing for a search', async () => {
+		requestSpy.mockResolvedValue([
+			{
+				fieldName: 'companyName',
+				fieldType: 'String',
+				description: 'Company name',
+				accessGranted: 'true',
+			},
+		]);
+
+		const fields = await getCompanySearchInputFields(makeCtx(), {});
+
+		expect(fields[0]).toMatchObject({
+			fieldName: 'companyName',
+			accessGranted: 'true',
+		});
 	});
 });
 
