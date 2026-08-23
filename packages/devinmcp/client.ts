@@ -47,12 +47,5 @@ export async function makeDevinMcpRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new DevinMcpAPIError(error.message);
-		}
-		throw new DevinMcpAPIError('Unknown error');
-	}
+	return await request<T>(config, requestOptions);
 }

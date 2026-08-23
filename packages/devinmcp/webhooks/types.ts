@@ -59,6 +59,11 @@ export function verifyDevinMcpWebhookSignature(
 	request: WebhookRequest<DevinMcpWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	return { valid: true };
+	// Devin MCP has no real webhook events (0 triggers per the OSS catalog).
+	// This verifier intentionally always fails closed so no request is ever
+	// treated as authenticated.
+	return {
+		valid: false,
+		error: 'Webhook verification is not supported for this plugin',
+	};
 }

@@ -57,7 +57,7 @@ export const sendMessage: DevinMcpEndpoints['sendMessage'] = async (
 ) => {
 	const response = await makeDevinMcpRequest<
 		DevinMcpEndpointOutputs['sendMessage']
-	>(`v1/session/${input.session_id}/message`, ctx.key, {
+	>(`v1/sessions/${encodeURIComponent(input.session_id)}/message`, ctx.key, {
 		method: 'POST',
 		body: { message: input.message },
 	});

@@ -33,7 +33,7 @@ import type { DevinMcpWebhookOutputs, ExampleEvent } from './webhooks/types';
 import { ExampleEventSchema } from './webhooks/types';
 
 export type DevinMcpPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalDevinMcpPlugin['hooks'];
@@ -150,9 +150,6 @@ export const devinMcpAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseDevinMcpPlugin<T extends DevinMcpPluginOptions> = CorsairPlugin<
@@ -214,11 +211,6 @@ export function devinmcp<const T extends DevinMcpPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 

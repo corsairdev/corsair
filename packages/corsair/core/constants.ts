@@ -264,7 +264,7 @@ export const ProviderDisplayNames = {
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
-	devinmcp: 'DevinMcp',
+	devinmcp: 'Devin MCP',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dockerhub: 'Docker Hub',

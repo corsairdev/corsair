@@ -52,9 +52,11 @@ const SendMessageInputSchema = z.object({
 });
 export type SendMessageInput = z.infer<typeof SendMessageInputSchema>;
 
-const SendMessageResponseSchema = z.object({
-	success: z.boolean(),
-});
+const SendMessageResponseSchema = z
+	.object({
+		detail: z.string(),
+	})
+	.nullable();
 export type SendMessageResponse = z.infer<typeof SendMessageResponseSchema>;
 
 export type DevinMcpEndpointInputs = {
