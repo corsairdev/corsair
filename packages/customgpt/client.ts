@@ -25,7 +25,6 @@ export class CustomGPTAPIError extends Error {
 }
 
 const CUSTOMGPT_API_BASE = 'https://app.customgpt.ai/api/v1';
-const LITELLM_BASE_URL = 'https://llm.corsair.dev/v1';
 
 export async function makeCustomGPTRequest<T>(
 	endpoint: string,
@@ -38,22 +37,69 @@ export async function makeCustomGPTRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query, isModelCall = false } = options;
+
+	if (isModelCall) {
+		const prompt = body?.prompt as string;
+		const model = process.env.LITELLM_MODEL ?? 'gpt-5.4-mini';
+		const chatBody = {
+			model,
+			messages: [{ role: 'user', content: prompt }],
+		};
+
+		const config: OpenAPIConfig = {
+			BASE: 'https://llm.corsair.dev/v1',
+			VERSION: '1.0.0',
+			WITH_CREDENTIALS: false,
+			CREDENTIALS: 'omit',
+			TOKEN: undefined,
+			HEADERS: {
+				Authorization: `Bearer ${process.env.LITELLM_API_KEY ?? ''}`,
+				'Content-Type': 'application/json',
+			},
+		};
+
+		const requestOptions: ApiRequestOptions = {
+			method: 'POST',
+			url: '/chat/completions',
+			body: chatBody,
+			mediaType: 'application/json; charset=utf-8',
+		};
+
+		try {
+			const res = await request<any>(config, requestOptions);
+			const mapped = {
+				status: 'success',
+				data: {
+					openai_response: res.choices?.[0]?.message?.content ?? '',
+					citations: res.citations ?? [],
+				},
+			};
+			return mapped as unknown as T;
+		} catch (error) {
+			if (error instanceof ApiError) {
+				throw new CustomGPTAPIError(error.message, error.status, {
+					cause: error,
+				});
+			}
+			if (error instanceof Error) {
+				throw new CustomGPTAPIError(error.message, undefined, {
+					cause: error,
+				});
+			}
+			throw new CustomGPTAPIError('Unknown error');
+		}
+	}
+
 	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
-	const base = isModelCall
-		? (process.env.LITELLM_BASE_URL ?? LITELLM_BASE_URL)
-		: CUSTOMGPT_API_BASE;
-
-	const authKey = isModelCall ? (process.env.LITELLM_API_KEY ?? '') : apiKey;
-
 	const config: OpenAPIConfig = {
-		BASE: base,
+		BASE: CUSTOMGPT_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
 		HEADERS: {
-			Authorization: `Bearer ${authKey}`,
+			Authorization: `Bearer ${apiKey}`,
 			...(isWrite ? { 'Content-Type': 'application/json' } : {}),
 		},
 	};

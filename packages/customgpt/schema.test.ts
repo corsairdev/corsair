@@ -300,11 +300,15 @@ describe('CustomGPT endpoints behavioral tests', () => {
 	});
 
 	it('sendMessage routes prompt-bearing calls through gateway and redacts prompt in logging', async () => {
-		const mockResponse = {
-			status: 'success',
-			data: { id: 789, openai_response: 'hello', citations: [] },
+		const mockGatewayResponse = {
+			choices: [
+				{
+					message: { role: 'assistant', content: 'hello' },
+				},
+			],
+			citations: [],
 		};
-		requestSpy.mockResolvedValueOnce(mockResponse);
+		requestSpy.mockResolvedValueOnce(mockGatewayResponse);
 
 		process.env.LITELLM_API_KEY = 'gateway-key';
 		process.env.LITELLM_BASE_URL = 'https://custom.gateway.url/v1';
@@ -315,18 +319,27 @@ describe('CustomGPT endpoints behavioral tests', () => {
 			prompt: 'hi there',
 		});
 
-		expect(result).toEqual(mockResponse);
+		expect(result).toEqual({
+			status: 'success',
+			data: {
+				openai_response: 'hello',
+				citations: [],
+			},
+		});
 		expect(requestSpy).toHaveBeenCalledTimes(1);
 		const call = requestSpy.mock.calls[0];
 		expect(call).toBeDefined();
 		if (call) {
 			const [config, options] = call;
 			const headers = config.HEADERS as Record<string, string>;
-			expect(config.BASE).toBe('https://custom.gateway.url/v1');
+			expect(config.BASE).toBe('https://llm.corsair.dev/v1');
 			expect(headers?.Authorization).toBe('Bearer gateway-key');
 			expect(options.method).toBe('POST');
-			expect(options.url).toBe('/projects/456/conversations/sess-123/messages');
-			expect(options.body).toEqual({ prompt: 'hi there' });
+			expect(options.url).toBe('/chat/completions');
+			expect(options.body).toEqual({
+				model: 'gpt-5.4-mini',
+				messages: [{ role: 'user', content: 'hi there' }],
+			});
 		}
 
 		expect(logSpy).toHaveBeenCalledTimes(1);
@@ -342,14 +355,19 @@ describe('CustomGPT endpoints behavioral tests', () => {
 		}
 	});
 
-	it('sendMessage falls back to default gateway URL if LITELLM_BASE_URL is not set', async () => {
-		const mockResponse = {
-			status: 'success',
-			data: { id: 789, openai_response: 'hello', citations: [] },
+	it('sendMessage ignores LITELLM_BASE_URL override and always uses default gateway URL', async () => {
+		const mockGatewayResponse = {
+			choices: [
+				{
+					message: { role: 'assistant', content: 'hello' },
+				},
+			],
+			citations: [],
 		};
-		requestSpy.mockResolvedValueOnce(mockResponse);
+		requestSpy.mockResolvedValueOnce(mockGatewayResponse);
 
 		process.env.LITELLM_API_KEY = 'gateway-key';
+		process.env.LITELLM_BASE_URL = 'https://custom.gateway.url/v1';
 
 		await sendMessage(mockCtx, {
 			projectId: 456,
@@ -360,9 +378,10 @@ describe('CustomGPT endpoints behavioral tests', () => {
 		const call = requestSpy.mock.calls[0];
 		expect(call).toBeDefined();
 		if (call) {
-			const [config] = call;
+			const [config, options] = call;
 			const headers = config.HEADERS as Record<string, string>;
 			expect(config.BASE).toBe('https://llm.corsair.dev/v1');
+			expect(options.url).toBe('/chat/completions');
 			expect(headers?.Authorization).toBe('Bearer gateway-key');
 		}
 	});
