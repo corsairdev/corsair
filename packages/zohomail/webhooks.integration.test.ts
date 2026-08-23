@@ -26,6 +26,18 @@ async function buildCorsair(options: { webhookSecret?: string } = {}) {
 	return { corsair, testDb };
 }
 
+function firstTimeRequest(secret: string) {
+	const rawBody = '{}';
+	return {
+		payload: {},
+		headers: {
+			'x-hook-secret': secret,
+			'x-hook-signature': sign(rawBody, secret),
+		},
+		rawBody,
+	};
+}
+
 const eventBody = () =>
 	JSON.stringify({
 		messageId: '1450530000000099001',
@@ -128,10 +140,7 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 			}),
 		).toBe(true);
 
-		const response = await handshake.handler({
-			payload: {},
-			headers: { 'x-hook-secret': hookSecret },
-		});
+		const response = await handshake.handler(firstTimeRequest(hookSecret));
 		expect(response.success).toBe(true);
 		expect(response.data?.hookSecret).toBe(hookSecret);
 
@@ -201,10 +210,7 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 
 		// 1. Establish first-time secret
 		const initialSecret = 'initial-secret';
-		await handshake.handler({
-			payload: {},
-			headers: { 'x-hook-secret': initialSecret },
-		});
+		await handshake.handler(firstTimeRequest(initialSecret));
 		expect(await corsair.zohomail.keys.get_webhook_signature()).toBe(
 			initialSecret,
 		);
@@ -234,10 +240,7 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 		const handshake = corsair.zohomail.webhooks.challenge.handshake;
 
 		const initialSecret = 'initial-secret';
-		await handshake.handler({
-			payload: {},
-			headers: { 'x-hook-secret': initialSecret },
-		});
+		await handshake.handler(firstTimeRequest(initialSecret));
 		expect(await corsair.zohomail.keys.get_webhook_signature()).toBe(
 			initialSecret,
 		);
@@ -269,10 +272,7 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 
 		// 1. Establish first-time secret
 		const initialSecret = 'initial-secret';
-		await handshake.handler({
-			payload: {},
-			headers: { 'x-hook-secret': initialSecret },
-		});
+		await handshake.handler(firstTimeRequest(initialSecret));
 		expect(await corsair.zohomail.keys.get_webhook_signature()).toBe(
 			initialSecret,
 		);
@@ -305,10 +305,7 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 
 		// 1. Establish first-time secret
 		const initialSecret = 'initial-secret';
-		await handshake.handler({
-			payload: {},
-			headers: { 'x-hook-secret': initialSecret },
-		});
+		await handshake.handler(firstTimeRequest(initialSecret));
 		expect(await corsair.zohomail.keys.get_webhook_signature()).toBe(
 			initialSecret,
 		);
@@ -339,10 +336,9 @@ describe('Zoho Mail webhook — full bound pipeline', () => {
 
 		// 1. Establish first-time secret
 		const initialSecret = 'initial-secret';
-		const firstResponse = await handshake.handler({
-			payload: {},
-			headers: { 'x-hook-secret': initialSecret },
-		});
+		const firstResponse = await handshake.handler(
+			firstTimeRequest(initialSecret),
+		);
 		expect(firstResponse.success).toBe(true);
 		expect(await corsair.zohomail.keys.get_webhook_signature()).toBe(
 			initialSecret,
