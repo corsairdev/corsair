@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Projects, Tasks, TimeEntries, Workspaces } from './endpoints';
 import type {
 	ClockifyEndpointInputs,
@@ -171,11 +172,14 @@ export function clockify<const T extends ClockifyPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const res = await ctx.keys?.get_api_key();
+				if (!res) {
+					throw new AuthMissingError('clockify', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('clockify', 'api_key');
 		},
 	} satisfies InternalClockifyPlugin;
 }

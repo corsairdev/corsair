@@ -1,5 +1,6 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { clockify } from '.';
 import { makeClockifyRequest } from './client';
 import { Projects, Tasks, TimeEntries, Workspaces } from './endpoints';
 
@@ -323,5 +324,40 @@ describe('Clockify endpoints', () => {
 				query: { page: 1, 'page-size': 50 },
 			},
 		);
+	});
+});
+
+describe('clockify keyBuilder', () => {
+	type KeyBuilder = (
+		ctx: unknown,
+		source: 'endpoint' | 'webhook',
+	) => Promise<string>;
+	const keyBuilderOf = (plugin: { keyBuilder?: unknown }) =>
+		plugin.keyBuilder as KeyBuilder;
+	const keyContext = (key?: string) =>
+		({
+			authType: 'api_key',
+			keys: { get_api_key: async () => key },
+		}) as any;
+
+	it('returns the configured key', async () => {
+		const plugin = clockify({ key: 'inline-key' });
+		await expect(keyBuilderOf(plugin)(keyContext(), 'endpoint')).resolves.toBe(
+			'inline-key',
+		);
+	});
+
+	it('returns the stored api key', async () => {
+		const plugin = clockify();
+		await expect(
+			keyBuilderOf(plugin)(keyContext('stored-key'), 'endpoint'),
+		).resolves.toBe('stored-key');
+	});
+
+	it('throws AuthMissingError when no key is available', async () => {
+		const plugin = clockify();
+		await expect(
+			keyBuilderOf(plugin)(keyContext(), 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });
