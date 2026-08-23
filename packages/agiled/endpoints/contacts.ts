@@ -1,17 +1,17 @@
+import type { AgiledEndpoints } from '..';
 import { makeAgiledRequest } from '../client';
-import type { AgiledContext } from '../index';
-import type { ListContactsInput, ListContactsResponse } from './types';
+import type { AgiledEndpointOutputs } from './types';
 
-export const Contacts = {
-	list: async (
-		ctx: AgiledContext,
-		input: ListContactsInput,
-	): Promise<ListContactsResponse> => {
-		const apiKey = await ctx.key;
-
-		return makeAgiledRequest<ListContactsResponse>('/contacts', apiKey, {
+export const list: AgiledEndpoints['listContacts'] = async (ctx, input) => {
+	return makeAgiledRequest<AgiledEndpointOutputs['listContacts']>(
+		'/contacts',
+		ctx.key,
+		{
 			method: 'GET',
-			query: input as Record<string, string | number | boolean | undefined>,
-		});
-	},
+			query: {
+				page: input.page,
+				limit: input.limit,
+			},
+		},
+	);
 };
