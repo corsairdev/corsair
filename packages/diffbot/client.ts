@@ -29,11 +29,22 @@ export type DiffbotRequestOptions = {
 	timeout?: number;
 };
 
+function compactQuery(
+	query: Record<string, string | number | boolean | undefined>,
+): Record<string, string | number | boolean> {
+	const compacted: Record<string, string | number | boolean> = {};
+	for (const [key, value] of Object.entries(query)) {
+		if (value !== undefined) {
+			compacted[key] = value;
+		}
+	}
+	return compacted;
+}
+
 /**
  * Make a request to the Diffbot API.
  *
- * Diffbot authenticates via `?token=<api-key>` as a query parameter —
- * NOT via an Authorization header. The token is injected automatically here.
+ * Diffbot authenticates via `?token=<api-key>` as a query parameter.
  *
  * @param endpoint - The API endpoint path (e.g. 'article', 'dql', 'enhance')
  * @param token - The Diffbot API key
@@ -51,7 +62,7 @@ export async function makeDiffbotRequest<T>(
 	const {
 		method = 'GET',
 		body,
-		query,
+		query = {},
 		headers,
 		useKgBase = false,
 		customBase,
@@ -74,11 +85,10 @@ export async function makeDiffbotRequest<T>(
 		},
 	};
 
-	const queryWithToken: Record<string, string | number | boolean | undefined> =
-		{
-			...query,
-			token,
-		};
+	const queryWithToken = compactQuery({
+		...query,
+		token,
+	});
 
 	const requestOptions: ApiRequestOptions = {
 		method,

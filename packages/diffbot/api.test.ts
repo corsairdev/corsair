@@ -350,7 +350,7 @@ describe('Diffbot Endpoint Handlers — All 35 Operations Request Mapping', () =
 		key: 'test_token',
 		authType: 'api_key' as const,
 		options: { key: 'test_token' },
-		database: {},
+		database: undefined,
 		$getAccountId: () => 'acc_test',
 	} as unknown as Parameters<typeof Account.getAccount>[0];
 
