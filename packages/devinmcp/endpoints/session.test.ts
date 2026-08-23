@@ -73,7 +73,7 @@ describe('DevinMcp session endpoints', () => {
 		expect(result).toEqual(fakeResponse);
 	});
 
-	it('sendMessage calls POST /v1/session/{id}/message and returns the response', async () => {
+	it('sendMessage calls POST /v1/sessions/{id}/message and returns the response', async () => {
 		const fakeResponse = { success: true };
 		mockedRequest.mockResolvedValueOnce(fakeResponse);
 
@@ -83,7 +83,7 @@ describe('DevinMcp session endpoints', () => {
 		});
 
 		expect(mockedRequest).toHaveBeenCalledWith(
-			'v1/session/devin-123/message',
+			'v1/sessions/devin-123/message',
 			'test-api-key',
 			{ method: 'POST', body: { message: 'Please proceed' } },
 		);
