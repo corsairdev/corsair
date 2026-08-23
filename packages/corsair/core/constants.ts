@@ -56,6 +56,7 @@ export const BaseProviders = [
 	'ayrshare',
 	'basecamp',
 	'baselinker',
+	'basin',
 	'betterstack',
 	'bigmailer',
 	'bigml',
@@ -226,6 +227,7 @@ export const ProviderDisplayNames = {
 	ayrshare: 'Ayrshare',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
+	basin: 'Basin',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
@@ -403,6 +405,7 @@ export type AllProviders =
 	| 'ayrshare'
 	| 'basecamp'
 	| 'baselinker'
+	| 'basin'
 	| 'betterstack'
 	| 'bigmailer'
 	| 'bigml'
