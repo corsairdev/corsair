@@ -3,12 +3,14 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class WitAiAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly status?: number,
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'WitAiAPIError';
@@ -59,30 +61,17 @@ export async function makeWitAiRequest<T>(
 		string | number | boolean | undefined
 	> = {
 		v: WITAI_API_VERSION,
+		...(method === 'GET' ? query : {}),
 	};
-
-	if (method === 'GET' && query) {
-		for (const [key, val] of Object.entries(query)) {
-			if (val !== undefined) {
-				queryWithVersion[key] = val;
-			}
-		}
-	}
-
-	console.log(
-		`[WitAi Request] Calling: ${method} ${WITAI_API_BASE}/${endpoint}`,
-	);
-	console.log(`[WitAi Request] Query:`, queryWithVersion);
-	console.log(`[WitAi Request] Headers:`, {
-		...config.HEADERS,
-		Authorization: `Bearer ${apiKey ? apiKey.substring(0, 5) + '...' : 'undefined'}`,
-	});
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			method === 'POST' ||
+			method === 'PUT' ||
+			method === 'PATCH' ||
+			method === 'DELETE'
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
@@ -94,6 +83,12 @@ export async function makeWitAiRequest<T>(
 			rateLimitConfig: WITAI_RATE_LIMIT_CONFIG,
 		});
 	} catch (error) {
+		// Preserve ApiError as-is so status/retryAfter stay available to
+		// error-handlers.ts (e.g. the 429 rate-limit matcher relies on
+		// `error instanceof ApiError` and `error.status`/`error.retryAfter`).
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new WitAiAPIError(error.message);
 		}
