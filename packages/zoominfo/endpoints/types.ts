@@ -139,22 +139,66 @@ function searchEnvelope<T extends z.ZodTypeAny>(item: T) {
 
 /**
  * The envelope used by the company and contact enrichments, which report a
- * per-input match rather than a result page.
+ * per-input match rather than a result page. `outputFields` is a list of field
+ * lists and each match carries an array of records, both per ZoomInfo's
+ * documented /enrich/company and /enrich/contact responses.
  */
 function matchEnvelope<T extends z.ZodTypeAny>(item: T) {
 	return z.looseObject({
 		success: z.boolean().optional(),
 		data: z.looseObject({
-			outputFields: z.array(z.unknown()).optional(),
+			outputFields: z.array(z.array(z.string())).optional(),
 			result: z.array(
 				z.looseObject({
-					input: z.unknown().optional(),
-					data: item,
+					/** ZoomInfo echoes the match input back with lowercased keys. */
+					input: z.record(z.string(), z.unknown()).optional(),
+					data: z.array(item),
 				}),
 			),
 		}),
 	});
 }
+
+/**
+ * Enrichment returns only the output fields the request asked for and the
+ * subscription is entitled to, so every field is optional and the object stays
+ * loose. The ones named here are the identity fields worth having typed.
+ */
+const EnrichedCompanySchema = z.looseObject({
+	id: z.number().optional(),
+	name: z.string().optional(),
+	website: z.string().optional(),
+	ticker: z.string().optional(),
+	domainList: z.array(z.string()).optional(),
+	logo: z.string().optional(),
+	/** Thousands of USD. */
+	revenue: z.number().optional(),
+	employeeCount: z.number().optional(),
+	phone: z.string().optional(),
+	street: z.string().optional(),
+	city: z.string().optional(),
+	state: z.string().optional(),
+	zipCode: z.string().optional(),
+	country: z.string().optional(),
+	companyStatus: z.string().optional(),
+});
+
+const EnrichedContactSchema = z.looseObject({
+	id: z.number().optional(),
+	firstName: z.string().optional(),
+	middleName: z.string().optional(),
+	lastName: z.string().optional(),
+	email: z.string().optional(),
+	phone: z.string().optional(),
+	mobilePhone: z.string().optional(),
+	jobTitle: z.string().optional(),
+	contactAccuracyScore: z.number().optional(),
+	lastUpdatedDate: z.string().optional(),
+	validDate: z.string().optional(),
+	companyId: z.number().optional(),
+	companyName: z.string().optional(),
+	companyWebsite: z.string().optional(),
+});
 
 /** Row shape returned by every /lookup/inputfields/<resource>/search endpoint. */
 export const ZoominfoInputFieldSchema = z.looseObject({
@@ -416,7 +460,7 @@ export const EnrichCompanyInputSchema = z.object({
 	outputFields: z.array(z.string()).optional(),
 });
 
-export const EnrichCompanyResponseSchema = matchEnvelope(z.unknown());
+export const EnrichCompanyResponseSchema = matchEnvelope(EnrichedCompanySchema);
 
 // ── Contact enrich ──────────────────────────────────────────────────────────
 
@@ -448,7 +492,7 @@ export const EnrichContactInputSchema = z.object({
 	outputFields: z.array(z.string()).optional(),
 });
 
-export const EnrichContactResponseSchema = matchEnvelope(z.unknown());
+export const EnrichContactResponseSchema = matchEnvelope(EnrichedContactSchema);
 
 // ── Location enrich ─────────────────────────────────────────────────────────
 

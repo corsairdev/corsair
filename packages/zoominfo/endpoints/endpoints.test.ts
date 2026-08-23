@@ -261,6 +261,10 @@ describe('output validation', () => {
 			expect.objectContaining({ method: 'POST' }),
 		);
 		expect(result.data.result).toHaveLength(1);
+		expect(result.data.result[0]?.data[0]).toMatchObject({
+			id: 1260398587,
+			firstName: 'Henry',
+		});
 	});
 
 	it('returns intent signals for a company', async () => {
@@ -364,11 +368,13 @@ describe('output validation', () => {
 		requestSpy.mockResolvedValue({
 			success: true,
 			data: {
-				outputFields: ['id', 'name', 'website'],
+				outputFields: [['id', 'name', 'website']],
 				result: [
 					{
-						input: { companyId: 344589814 },
-						data: { id: 344589814, name: 'ZoomInfo' },
+						input: { companyid: 344589814 },
+						data: [
+							{ id: 344589814, name: 'ZoomInfo', website: 'zoominfo.com' },
+						],
 					},
 				],
 			},
@@ -379,6 +385,22 @@ describe('output validation', () => {
 		});
 
 		expect(result.data.result).toHaveLength(1);
+		expect(result.data.result[0]?.data[0]).toMatchObject({ name: 'ZoomInfo' });
+	});
+
+	// ZoomInfo nests each match's records in an array; a bare object is the
+	// shape this endpoint does not return, and parsing has to say so.
+	it('rejects a company enrichment whose match data is not an array', async () => {
+		requestSpy.mockResolvedValue({
+			success: true,
+			data: {
+				result: [{ input: {}, data: { id: 344589814 } }],
+			},
+		});
+
+		await expect(
+			enrichCompany(makeCtx(), { matchCompanyInput: [{ companyId: 1 }] }),
+		).rejects.toThrow();
 	});
 
 	it('returns the technology stack for a company', async () => {

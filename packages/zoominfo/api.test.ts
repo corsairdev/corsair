@@ -2,6 +2,8 @@ import type { ZoominfoCredentials } from './client';
 import { authenticateZoominfo } from './client';
 import {
 	enrichCompany,
+	enrichContact,
+	enrichIntent,
 	enrichLocation,
 	enrichNews,
 	enrichScoop,
@@ -140,9 +142,30 @@ describeLive('ZoomInfo API', () => {
 			});
 
 			expect(result.data.result.length).toBeGreaterThan(0);
+			expect(result.data.result[0]?.data[0]).toHaveProperty('name');
+		});
+
+		// Contact enrich charges a credit, so this redeems one contact the search
+		// already found rather than guessing at an id.
+		it('enriches a contact found by search', async () => {
+			const found = await searchContacts(ctx, {
+				companyId: ZOOMINFO_COMPANY_ID,
+				rpp: 1,
+			});
+			const personId = found.data[0]?.id;
+			expect(personId).toEqual(expect.any(Number));
+
+			const result = await enrichContact(ctx, {
+				matchPersonInput: [{ personId }],
+				outputFields: ['id', 'firstName', 'lastName', 'jobTitle'],
+			});
+
+			expect(result.data.result.length).toBeGreaterThan(0);
+			expect(result.data.result[0]?.data[0]).toHaveProperty('id');
 		});
 
 		it.each([
+			['intent signals', enrichIntent],
 			['locations', enrichLocation],
 			['news', enrichNews],
 			['scoops', enrichScoop],
