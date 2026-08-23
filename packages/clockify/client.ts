@@ -3,12 +3,13 @@ import type {
 	OpenAPIConfig,
 	RateLimitConfig,
 } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 const CLOCKIFY_API_BASE = 'https://api.clockify.me/api/v1';
+const READ_MAX_ATTEMPTS = 6;
 
 const NO_RETRY: RateLimitConfig = {
-	enabled: false,
+	enabled: true,
 	maxRetries: 0,
 	initialRetryDelay: 0,
 	backoffMultiplier: 1,
@@ -16,6 +17,17 @@ const NO_RETRY: RateLimitConfig = {
 		retryAfter: 'retry-after',
 	},
 };
+
+function isRateLimited(error: unknown): error is ApiError {
+	return error instanceof ApiError && error.status === 429;
+}
+
+function rateLimitDelayMs(error: ApiError, attempt: number): number {
+	if (typeof error.retryAfter === 'number' && error.retryAfter >= 0) {
+		return error.retryAfter;
+	}
+	return 2 ** attempt * 1000;
+}
 
 export function clockifyQuery(
 	query: Record<string, string | number | boolean | undefined>,
@@ -61,9 +73,26 @@ export async function makeClockifyRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	return await request<T>(
-		config,
-		requestOptions,
-		retries ? undefined : { rateLimitConfig: NO_RETRY },
-	);
+	const send = () =>
+		request<T>(config, requestOptions, { rateLimitConfig: NO_RETRY });
+
+	if (!retries) {
+		return await send();
+	}
+
+	let lastError: unknown;
+	for (let attempt = 0; attempt < READ_MAX_ATTEMPTS; attempt++) {
+		try {
+			return await send();
+		} catch (error) {
+			lastError = error;
+			if (!isRateLimited(error) || attempt === READ_MAX_ATTEMPTS - 1) {
+				throw error;
+			}
+			await new Promise((resolve) =>
+				setTimeout(resolve, rateLimitDelayMs(error, attempt)),
+			);
+		}
+	}
+	throw lastError;
 }

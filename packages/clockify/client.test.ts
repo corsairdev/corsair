@@ -83,4 +83,63 @@ describe('makeClockifyRequest', () => {
 		).rejects.toMatchObject({ name: 'ApiError', status: 429 });
 		expect(attempts).toBe(1);
 	});
+
+	it('retries a 429 on GET then returns the body', async () => {
+		let attempts = 0;
+		global.fetch = (async (url: unknown) => {
+			attempts += 1;
+			if (attempts < 3) {
+				return {
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					url: String(url),
+					headers: new Headers({
+						'Content-Type': 'application/json',
+						'retry-after': '0',
+					}),
+					json: async () => ({ message: 'rate limited' }),
+					text: async () => JSON.stringify({ message: 'rate limited' }),
+				};
+			}
+			return {
+				ok: true,
+				status: 200,
+				statusText: 'OK',
+				url: String(url),
+				headers: new Headers({ 'Content-Type': 'application/json' }),
+				json: async () => [{ id: 'w1', name: 'Workspace 1' }],
+				text: async () => JSON.stringify([{ id: 'w1', name: 'Workspace 1' }]),
+			};
+		}) as unknown as typeof global.fetch;
+
+		await expect(
+			makeClockifyRequest('workspaces', 'test-api-key'),
+		).resolves.toEqual([{ id: 'w1', name: 'Workspace 1' }]);
+		expect(attempts).toBe(3);
+	});
+
+	it('rethrows after exhausting GET 429 retries', async () => {
+		let attempts = 0;
+		global.fetch = (async (url: unknown) => {
+			attempts += 1;
+			return {
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				url: String(url),
+				headers: new Headers({
+					'Content-Type': 'application/json',
+					'retry-after': '0',
+				}),
+				json: async () => ({ message: 'rate limited' }),
+				text: async () => JSON.stringify({ message: 'rate limited' }),
+			};
+		}) as unknown as typeof global.fetch;
+
+		await expect(
+			makeClockifyRequest('workspaces', 'test-api-key'),
+		).rejects.toMatchObject({ name: 'ApiError', status: 429 });
+		expect(attempts).toBe(6);
+	});
 });
