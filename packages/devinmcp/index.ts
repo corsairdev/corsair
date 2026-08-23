@@ -1,20 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Session } from './endpoints';
 import type {
 	DevinMcpEndpointInputs,
@@ -26,18 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { DevinMcpSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveDevinMcpOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchDevinMcpTenantWebhook } from './webhooks/tenant-matcher';
-import type { DevinMcpWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type DevinMcpPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalDevinMcpPlugin['hooks'];
-	webhookHooks?: InternalDevinMcpPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof devinMcpEndpointsNested>;
 };
@@ -68,29 +59,12 @@ export type DevinMcpEndpoints = {
 	sendMessage: DevinMcpEndpoint<'sendMessage'>;
 };
 
-type DevinMcpWebhook<
-	K extends keyof DevinMcpWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<DevinMcpContext, TEvent, DevinMcpWebhookOutputs[K]>;
-
-export type DevinMcpWebhooks = {
-	example: DevinMcpWebhook<'example', ExampleEvent>;
-};
-
-export type DevinMcpBoundWebhooks = BindWebhooks<DevinMcpWebhooks>;
-
 const devinMcpEndpointsNested = {
 	session: {
 		create: Session.create,
 		get: Session.get,
 		list: Session.list,
 		sendMessage: Session.sendMessage,
-	},
-} as const;
-
-const devinMcpWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -113,16 +87,6 @@ export const devinMcpEndpointSchemas = {
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof devinMcpEndpointsNested
->;
-
-const devinMcpWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof devinMcpWebhooksNested
 >;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
@@ -148,7 +112,7 @@ const devinMcpEndpointMeta = {
 
 export const devinMcpAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -156,9 +120,10 @@ export type BaseDevinMcpPlugin<T extends DevinMcpPluginOptions> = CorsairPlugin<
 	'devinmcp',
 	typeof DevinMcpSchema,
 	typeof devinMcpEndpointsNested,
-	typeof devinMcpWebhooksNested,
+	{},
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof devinMcpAuthConfig
 >;
 
 export type InternalDevinMcpPlugin = BaseDevinMcpPlugin<DevinMcpPluginOptions>;
@@ -177,44 +142,35 @@ export function devinmcp<const T extends DevinMcpPluginOptions>(
 		id: 'devinmcp',
 		authConfig: devinMcpAuthConfig,
 		schema: DevinMcpSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: devinMcpEndpointsNested,
-		webhooks: devinMcpWebhooksNested,
+		webhooks: {},
 		endpointMeta: devinMcpEndpointMeta,
 		endpointSchemas: devinMcpEndpointSchemas,
-		webhookSchemas: devinMcpWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-devinmcp-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchDevinMcpTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveDevinMcpOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		pluginWebhookMatcher: () => false,
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: DevinMcpKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const key = await ctx.keys.get_api_key();
+				if (!key) {
+					throw new AuthMissingError('devinmcp', 'api_key');
+				}
+				return key;
 			}
 
-			return '';
+			throw new AuthMissingError('devinmcp', 'api_key');
 		},
 	} satisfies InternalDevinMcpPlugin;
 }
@@ -230,8 +186,5 @@ export type {
 	ListSessionsResponse,
 	SendMessageInput,
 	SendMessageResponse,
+	SessionResponse,
 } from './endpoints/types';
-export type {
-	DevinMcpWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
