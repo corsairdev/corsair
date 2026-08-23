@@ -197,16 +197,8 @@ describe('Clockify endpoints', () => {
 		expect(result).toEqual(mockResponse);
 	});
 
-	it('returns the created time entry after a 429 retry', async () => {
-		const mockResponse = {
-			id: 'te1',
-			description: 'Testing entry',
-			workspaceId: 'w1',
-			timeInterval: null,
-		};
-		(makeClockifyRequest as jest.Mock)
-			.mockRejectedValueOnce(rateLimitError())
-			.mockResolvedValueOnce(mockResponse);
+	it('does not retry a 429 on timeEntries.create', async () => {
+		(makeClockifyRequest as jest.Mock).mockRejectedValue(rateLimitError());
 
 		await expect(
 			TimeEntries.create(mockContext, {
@@ -214,9 +206,9 @@ describe('Clockify endpoints', () => {
 				description: 'Testing entry',
 				start: '2026-08-21T10:00:00Z',
 			}),
-		).resolves.toEqual(mockResponse);
-		expect(makeClockifyRequest).toHaveBeenCalledTimes(2);
-		expect(logEventFromContext).toHaveBeenCalled();
+		).rejects.toMatchObject({ status: 429 });
+		expect(makeClockifyRequest).toHaveBeenCalledTimes(1);
+		expect(logEventFromContext).not.toHaveBeenCalled();
 	});
 
 	it('does not retry a non-429 create failure', async () => {
@@ -241,20 +233,6 @@ describe('Clockify endpoints', () => {
 			}),
 		).rejects.toMatchObject({ status: 400 });
 		expect(makeClockifyRequest).toHaveBeenCalledTimes(1);
-		expect(logEventFromContext).not.toHaveBeenCalled();
-	});
-
-	it('rethrows after exhausting create 429 retries', async () => {
-		(makeClockifyRequest as jest.Mock).mockRejectedValue(rateLimitError());
-
-		await expect(
-			TimeEntries.create(mockContext, {
-				workspaceId: 'w1',
-				description: 'Testing entry',
-				start: '2026-08-21T10:00:00Z',
-			}),
-		).rejects.toMatchObject({ status: 429 });
-		expect(makeClockifyRequest).toHaveBeenCalledTimes(6);
 		expect(logEventFromContext).not.toHaveBeenCalled();
 	});
 
