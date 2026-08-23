@@ -74,11 +74,17 @@ export const ImagesLocationAnnotateInputSchema = z.object({
 export const ImagesLocationAnnotateOutputSchema = ImagesAnnotateOutputSchema;
 
 const AnnotateFileRequestSchema = z.object({
-	inputConfig: z.object({
-		gcsSource: z.object({ uri: z.string() }).optional(),
-		content: z.string().optional(),
-		mimeType: z.string(),
-	}),
+	inputConfig: z
+		.object({
+			gcsSource: z.object({ uri: z.string() }).optional(),
+			content: z.string().optional(),
+			mimeType: z.string(),
+		})
+		.refine(
+			(inputConfig) =>
+				Boolean(inputConfig.content) || Boolean(inputConfig.gcsSource?.uri),
+			{ message: 'inputConfig requires content or a gcsSource URI' },
+		),
 	features: z.array(FeatureSchema),
 	imageContext: z.record(z.string(), z.unknown()).optional(),
 	pages: z.array(z.number()).optional(),
