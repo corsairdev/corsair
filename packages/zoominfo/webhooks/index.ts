@@ -1,9 +1,9 @@
-import { example } from './example';
+import { companyUpdate, contactUpdate } from './updates';
 
-export const ExampleWebhooks = {
-	example: example,
+export const ZoominfoWebhookHandlers = {
+	contactUpdate,
+	companyUpdate,
 };
 
-export * from './oauth-tenant-link';
 export * from './tenant-matcher';
 export * from './types';
