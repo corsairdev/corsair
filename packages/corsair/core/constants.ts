@@ -159,6 +159,7 @@ export const BaseProviders = [
 	'supabase',
 	'tally',
 	'tavily',
+	'tavilymcp',
 	'teams',
 	'telegram',
 	'todoist',
@@ -332,6 +333,7 @@ export const ProviderDisplayNames = {
 	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
+	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
 	todoist: 'Todoist',
@@ -512,6 +514,7 @@ export type AllProviders =
 	| 'supabase'
 	| 'tally'
 	| 'tavily'
+	| 'tavilymcp'
 	| 'teams'
 	| 'telegram'
 	| 'todoist'
