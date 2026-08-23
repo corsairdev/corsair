@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import type { ZohoMailWebhooks } from '../index';
 import {
 	createZohoMailHandshakeMatch,
@@ -5,6 +6,15 @@ import {
 	getZohoWebhookSignature,
 	verifyZohoWebhookSignature,
 } from './types';
+
+function secretsMatch(a: string, b: string): boolean {
+	const aBuf = Buffer.from(a);
+	const bBuf = Buffer.from(b);
+	if (aBuf.length !== bBuf.length) {
+		return false;
+	}
+	return crypto.timingSafeEqual(aBuf, bBuf);
+}
 
 /**
  * Zoho delivers `x-hook-secret` on the first POST when an outgoing webhook is
@@ -42,7 +52,7 @@ export const handshake: ZohoMailWebhooks['handshake'] = {
 			};
 		}
 
-		if (existingSecret === hookSecret) {
+		if (existingSecret && secretsMatch(existingSecret, hookSecret)) {
 			return {
 				success: true,
 				data: { hookSecret },
