@@ -1,6 +1,29 @@
-import { ingest } from './data';
-import { engagementAnalysis, get as getMemory } from './memory';
-import { get as getStatus } from './status';
+import { register } from './agent';
+import { getTypes, ingest, ingestBulk } from './data';
+import { getByokPlatform, getPlatform } from './intelligence';
+import {
+	compareMd,
+	engagementAnalysis,
+	getBulk as getBulkMemory,
+	getChangelog,
+	get as getMemory,
+	getPattern,
+	validateChanges,
+} from './memory';
+import {
+	engagementAnalysis as sandboxEngagementAnalysis,
+	getClient as sandboxGetClient,
+	getMemory as sandboxGetMemory,
+	validate as sandboxValidate,
+} from './sandbox';
+import {
+	getComponents,
+	getHistory,
+	getIncidents,
+	get as getStatus,
+	getUptime,
+	ping,
+} from './status';
 import {
 	create as createWebhook,
 	deleteWebhook,
@@ -11,15 +34,43 @@ import {
 
 export const Memory = {
 	get: getMemory,
+	getBulk: getBulkMemory,
+	getChangelog,
+	getPattern,
 	engagementAnalysis,
+	compareMd,
+	validateChanges,
 };
 
 export const Data = {
 	ingest,
+	ingestBulk,
+	getTypes,
+};
+
+export const Intelligence = {
+	getPlatform,
+	getByokPlatform,
 };
 
 export const Status = {
 	get: getStatus,
+	ping,
+	getComponents,
+	getIncidents,
+	getHistory,
+	getUptime,
+};
+
+export const Sandbox = {
+	getClient: sandboxGetClient,
+	getMemory: sandboxGetMemory,
+	engagementAnalysis: sandboxEngagementAnalysis,
+	validate: sandboxValidate,
+};
+
+export const Agent = {
+	register,
 };
 
 export const Webhooks = {

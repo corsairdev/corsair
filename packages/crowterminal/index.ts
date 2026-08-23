@@ -15,7 +15,16 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Data, Memory, Status, Webhooks } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import {
+	Agent,
+	Data,
+	Intelligence,
+	Memory,
+	Sandbox,
+	Status,
+	Webhooks,
+} from './endpoints';
 import type {
 	CrowterminalEndpointInputs,
 	CrowterminalEndpointOutputs,
@@ -69,9 +78,28 @@ type CrowterminalEndpoint<K extends keyof CrowterminalEndpointOutputs> =
 
 export type CrowterminalEndpoints = {
 	memoryGet: CrowterminalEndpoint<'memoryGet'>;
+	memoryGetBulk: CrowterminalEndpoint<'memoryGetBulk'>;
+	memoryGetChangelog: CrowterminalEndpoint<'memoryGetChangelog'>;
+	memoryGetPattern: CrowterminalEndpoint<'memoryGetPattern'>;
 	memoryEngagementAnalysis: CrowterminalEndpoint<'memoryEngagementAnalysis'>;
+	memoryCompareMd: CrowterminalEndpoint<'memoryCompareMd'>;
+	memoryValidateChanges: CrowterminalEndpoint<'memoryValidateChanges'>;
 	dataIngest: CrowterminalEndpoint<'dataIngest'>;
+	dataIngestBulk: CrowterminalEndpoint<'dataIngestBulk'>;
+	dataGetTypes: CrowterminalEndpoint<'dataGetTypes'>;
+	intelGetPlatform: CrowterminalEndpoint<'intelGetPlatform'>;
+	intelGetByokPlatform: CrowterminalEndpoint<'intelGetByokPlatform'>;
 	statusGet: CrowterminalEndpoint<'statusGet'>;
+	statusPing: CrowterminalEndpoint<'statusPing'>;
+	statusGetComponents: CrowterminalEndpoint<'statusGetComponents'>;
+	statusGetIncidents: CrowterminalEndpoint<'statusGetIncidents'>;
+	statusGetHistory: CrowterminalEndpoint<'statusGetHistory'>;
+	statusGetUptime: CrowterminalEndpoint<'statusGetUptime'>;
+	sandboxGetClient: CrowterminalEndpoint<'sandboxGetClient'>;
+	sandboxGetMemory: CrowterminalEndpoint<'sandboxGetMemory'>;
+	sandboxEngagementAnalysis: CrowterminalEndpoint<'sandboxEngagementAnalysis'>;
+	sandboxValidate: CrowterminalEndpoint<'sandboxValidate'>;
+	agentRegister: CrowterminalEndpoint<'agentRegister'>;
 	webhooksCreate: CrowterminalEndpoint<'webhooksCreate'>;
 	webhooksList: CrowterminalEndpoint<'webhooksList'>;
 	webhooksUpdate: CrowterminalEndpoint<'webhooksUpdate'>;
@@ -116,13 +144,38 @@ export type CrowterminalBoundWebhooks = BindWebhooks<CrowterminalWebhooks>;
 const crowterminalEndpointsNested = {
 	memory: {
 		get: Memory.get,
+		getBulk: Memory.getBulk,
+		getChangelog: Memory.getChangelog,
+		getPattern: Memory.getPattern,
 		engagementAnalysis: Memory.engagementAnalysis,
+		compareMd: Memory.compareMd,
+		validateChanges: Memory.validateChanges,
 	},
 	data: {
 		ingest: Data.ingest,
+		ingestBulk: Data.ingestBulk,
+		getTypes: Data.getTypes,
+	},
+	intelligence: {
+		getPlatform: Intelligence.getPlatform,
+		getByokPlatform: Intelligence.getByokPlatform,
 	},
 	status: {
 		get: Status.get,
+		ping: Status.ping,
+		getComponents: Status.getComponents,
+		getIncidents: Status.getIncidents,
+		getHistory: Status.getHistory,
+		getUptime: Status.getUptime,
+	},
+	sandbox: {
+		getClient: Sandbox.getClient,
+		getMemory: Sandbox.getMemory,
+		engagementAnalysis: Sandbox.engagementAnalysis,
+		validate: Sandbox.validate,
+	},
+	agent: {
+		register: Agent.register,
 	},
 	webhooks: {
 		create: Webhooks.create,
@@ -155,17 +208,93 @@ export const crowterminalEndpointSchemas = {
 		input: CrowterminalEndpointInputSchemas.memoryGet,
 		output: CrowterminalEndpointOutputSchemas.memoryGet,
 	},
+	'memory.getBulk': {
+		input: CrowterminalEndpointInputSchemas.memoryGetBulk,
+		output: CrowterminalEndpointOutputSchemas.memoryGetBulk,
+	},
+	'memory.getChangelog': {
+		input: CrowterminalEndpointInputSchemas.memoryGetChangelog,
+		output: CrowterminalEndpointOutputSchemas.memoryGetChangelog,
+	},
+	'memory.getPattern': {
+		input: CrowterminalEndpointInputSchemas.memoryGetPattern,
+		output: CrowterminalEndpointOutputSchemas.memoryGetPattern,
+	},
 	'memory.engagementAnalysis': {
 		input: CrowterminalEndpointInputSchemas.memoryEngagementAnalysis,
 		output: CrowterminalEndpointOutputSchemas.memoryEngagementAnalysis,
+	},
+	'memory.compareMd': {
+		input: CrowterminalEndpointInputSchemas.memoryCompareMd,
+		output: CrowterminalEndpointOutputSchemas.memoryCompareMd,
+	},
+	'memory.validateChanges': {
+		input: CrowterminalEndpointInputSchemas.memoryValidateChanges,
+		output: CrowterminalEndpointOutputSchemas.memoryValidateChanges,
 	},
 	'data.ingest': {
 		input: CrowterminalEndpointInputSchemas.dataIngest,
 		output: CrowterminalEndpointOutputSchemas.dataIngest,
 	},
+	'data.ingestBulk': {
+		input: CrowterminalEndpointInputSchemas.dataIngestBulk,
+		output: CrowterminalEndpointOutputSchemas.dataIngestBulk,
+	},
+	'data.getTypes': {
+		input: CrowterminalEndpointInputSchemas.dataGetTypes,
+		output: CrowterminalEndpointOutputSchemas.dataGetTypes,
+	},
+	'intelligence.getPlatform': {
+		input: CrowterminalEndpointInputSchemas.intelGetPlatform,
+		output: CrowterminalEndpointOutputSchemas.intelGetPlatform,
+	},
+	'intelligence.getByokPlatform': {
+		input: CrowterminalEndpointInputSchemas.intelGetByokPlatform,
+		output: CrowterminalEndpointOutputSchemas.intelGetByokPlatform,
+	},
 	'status.get': {
 		input: CrowterminalEndpointInputSchemas.statusGet,
 		output: CrowterminalEndpointOutputSchemas.statusGet,
+	},
+	'status.ping': {
+		input: CrowterminalEndpointInputSchemas.statusPing,
+		output: CrowterminalEndpointOutputSchemas.statusPing,
+	},
+	'status.getComponents': {
+		input: CrowterminalEndpointInputSchemas.statusGetComponents,
+		output: CrowterminalEndpointOutputSchemas.statusGetComponents,
+	},
+	'status.getIncidents': {
+		input: CrowterminalEndpointInputSchemas.statusGetIncidents,
+		output: CrowterminalEndpointOutputSchemas.statusGetIncidents,
+	},
+	'status.getHistory': {
+		input: CrowterminalEndpointInputSchemas.statusGetHistory,
+		output: CrowterminalEndpointOutputSchemas.statusGetHistory,
+	},
+	'status.getUptime': {
+		input: CrowterminalEndpointInputSchemas.statusGetUptime,
+		output: CrowterminalEndpointOutputSchemas.statusGetUptime,
+	},
+	'sandbox.getClient': {
+		input: CrowterminalEndpointInputSchemas.sandboxGetClient,
+		output: CrowterminalEndpointOutputSchemas.sandboxGetClient,
+	},
+	'sandbox.getMemory': {
+		input: CrowterminalEndpointInputSchemas.sandboxGetMemory,
+		output: CrowterminalEndpointOutputSchemas.sandboxGetMemory,
+	},
+	'sandbox.engagementAnalysis': {
+		input: CrowterminalEndpointInputSchemas.sandboxEngagementAnalysis,
+		output: CrowterminalEndpointOutputSchemas.sandboxEngagementAnalysis,
+	},
+	'sandbox.validate': {
+		input: CrowterminalEndpointInputSchemas.sandboxValidate,
+		output: CrowterminalEndpointOutputSchemas.sandboxValidate,
+	},
+	'agent.register': {
+		input: CrowterminalEndpointInputSchemas.agentRegister,
+		output: CrowterminalEndpointOutputSchemas.agentRegister,
 	},
 	'webhooks.create': {
 		input: CrowterminalEndpointInputSchemas.webhooksCreate,
@@ -231,19 +360,95 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 const crowterminalEndpointMeta = {
 	'memory.get': {
 		riskLevel: 'read',
-		description: 'Get the latest version of a client skill',
+		description: 'Get the stored skill for one client',
+	},
+	'memory.getBulk': {
+		riskLevel: 'read',
+		description: 'Read stored skills for up to 50 clients',
+	},
+	'memory.getChangelog': {
+		riskLevel: 'read',
+		description: 'Read the change history of a client skill',
+	},
+	'memory.getPattern': {
+		riskLevel: 'read',
+		description: 'Trend one skill field across stored versions',
 	},
 	'memory.engagementAnalysis': {
 		riskLevel: 'read',
-		description: 'Analyze a client skill against historical engagement',
+		description: 'Correlate every agent field with historical engagement',
+	},
+	'memory.compareMd': {
+		riskLevel: 'read',
+		description: 'Diff an agent markdown against all stored versions',
+	},
+	'memory.validateChanges': {
+		riskLevel: 'read',
+		description: 'Check proposed edits against historical outcomes',
 	},
 	'data.ingest': {
 		riskLevel: 'write',
-		description: 'Ingest a platform data point for a client',
+		description: 'Ingest one platform analytics data point',
+	},
+	'data.ingestBulk': {
+		riskLevel: 'write',
+		description: 'Ingest up to 50 analytics data points at once',
+	},
+	'data.getTypes': {
+		riskLevel: 'read',
+		description: 'List the analytics data types each platform accepts',
+	},
+	'intelligence.getPlatform': {
+		riskLevel: 'read',
+		description: 'Get TikTok, Instagram and YouTube algorithm insights',
+	},
+	'intelligence.getByokPlatform': {
+		riskLevel: 'read',
+		description: 'Get raw algorithm context without LLM inference charges',
 	},
 	'status.get': {
 		riskLevel: 'read',
 		description: 'Get CrowTerminal service health',
+	},
+	'status.ping': {
+		riskLevel: 'read',
+		description: 'Check that CrowTerminal is responding',
+	},
+	'status.getComponents': {
+		riskLevel: 'read',
+		description: 'Get per-component health and latency',
+	},
+	'status.getIncidents': {
+		riskLevel: 'read',
+		description: 'List recent incidents and affected components',
+	},
+	'status.getHistory': {
+		riskLevel: 'read',
+		description: 'Get seven days of uptime points for charting',
+	},
+	'status.getUptime': {
+		riskLevel: 'read',
+		description: 'Get 24h and 7d uptime percentages',
+	},
+	'sandbox.getClient': {
+		riskLevel: 'read',
+		description: 'Get mock client data for testing',
+	},
+	'sandbox.getMemory': {
+		riskLevel: 'read',
+		description: 'Get mock skill data for testing',
+	},
+	'sandbox.engagementAnalysis': {
+		riskLevel: 'read',
+		description: 'Run a mock engagement analysis',
+	},
+	'sandbox.validate': {
+		riskLevel: 'read',
+		description: 'Run a mock validation',
+	},
+	'agent.register': {
+		riskLevel: 'write',
+		description: 'Self-register an agent and receive a new API key',
 	},
 	'webhooks.create': {
 		riskLevel: 'write',
@@ -322,44 +527,28 @@ export function crowterminal<const T extends CrowterminalPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('crowterminal', 'webhook_signature');
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			if (source === 'endpoint') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			return '';
+			const res = await ctx.keys.get_api_key();
+			if (!res) throw new AuthMissingError('crowterminal', 'api_key');
+			return res;
 		},
 	} satisfies InternalCrowterminalPlugin;
 }
 
 export type {
-	CreateWebhookInput,
-	CreateWebhookResponse,
 	CrowterminalEndpointInputs,
 	CrowterminalEndpointOutputs,
-	DeleteWebhookInput,
-	DeleteWebhookResponse,
-	EngagementAnalysisInput,
-	EngagementAnalysisResponse,
-	GetMemoryInput,
-	GetMemoryResponse,
-	GetStatusInput,
-	GetStatusResponse,
-	IngestDataInput,
-	IngestDataResponse,
-	ListWebhooksInput,
-	ListWebhooksResponse,
-	TestWebhookInput,
-	TestWebhookResponse,
-	UpdateWebhookInput,
-	UpdateWebhookResponse,
+	CrowterminalSkill,
+	CrowterminalWebhookEventName,
 } from './endpoints/types';
 export type {
 	CrowterminalWebhookOutputs,

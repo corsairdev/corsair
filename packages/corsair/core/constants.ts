@@ -245,7 +245,7 @@ export const ProviderDisplayNames = {
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	contentfulgraphql: 'Contentful GraphQL',
-	crowterminal: 'Crowterminal',
+	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
