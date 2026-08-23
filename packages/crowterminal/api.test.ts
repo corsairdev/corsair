@@ -1,5 +1,5 @@
 import { getTypes } from './endpoints/data';
-import { getByokPlatform, getPlatform } from './endpoints/intelligence';
+import { getByokPlatform } from './endpoints/intelligence';
 import { getBulk as getBulkMemory, getChangelog } from './endpoints/memory';
 import {
 	getClient as sandboxClient,
@@ -68,20 +68,9 @@ describeLive('CrowTerminal API', () => {
 			);
 		}, 30_000);
 
-		it.each([
-			['platform intel', getPlatform],
-			['byok platform intel', getByokPlatform],
-		])(
-			'returns %s',
-			async (_name, endpoint) => {
-				await expect(
-					(
-						endpoint as (c: CrowterminalContext, i: unknown) => Promise<unknown>
-					)(ctx(), {}),
-				).resolves.toBeDefined();
-			},
-			30_000,
-		);
+		it('returns platform intel without LLM inference charges', async () => {
+			await expect(getByokPlatform(ctx(), {})).resolves.toBeDefined();
+		}, 30_000);
 	});
 
 	describe('sandbox', () => {

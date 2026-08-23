@@ -49,7 +49,22 @@ const requestSpy = jest.spyOn(client, 'makeCrowterminalRequest');
 const ctx = () => ({ key: 'ct_test_key' }) as unknown as CrowterminalContext;
 
 beforeEach(() => {
-	requestSpy.mockReset().mockResolvedValue({ success: true });
+	requestSpy.mockReset().mockResolvedValue({
+		success: true,
+		status: 'ok',
+		pong: true,
+		webhooks: [],
+		components: [],
+		incidents: [],
+		dataPoints: [],
+		uptime: {},
+		dataTypes: {},
+		changelog: [],
+		clients: [],
+		warnings: [],
+		recommendations: [],
+		id: 'c1',
+	});
 	logEventFromContext.mockClear();
 });
 
@@ -58,24 +73,26 @@ const lastCall = () => requestSpy.mock.calls[0];
 describe('request routing', () => {
 	// Paths below were confirmed against live api.crowterminal.com.
 	it.each([
-		['statusGet', '/api/agent/status', getStatus],
-		['statusPing', '/api/agent/status/ping', ping],
-		['statusGetComponents', '/api/agent/status/components', getComponents],
-		['statusGetIncidents', '/api/agent/status/incidents', getIncidents],
-		['statusGetHistory', '/api/agent/status/history', getHistory],
-		['statusGetUptime', '/api/agent/status/uptime', getUptime],
-		['dataGetTypes', '/api/agent/data/types', getTypes],
-		['intelGetPlatform', '/api/agent/platform-intel', getPlatform],
-		['intelGetByok', '/api/agent/byok/platform-intel', getByokPlatform],
-		['sandboxGetClient', '/api/agent/sandbox/client', sandboxClient],
-		['sandboxGetMemory', '/api/agent/sandbox/memory', sandboxMemory],
+		['statusGet', '/api/agent/status', getStatus, {}],
+		['statusPing', '/api/agent/status/ping', ping, {}],
+		['statusGetComponents', '/api/agent/status/components', getComponents, {}],
+		['statusGetIncidents', '/api/agent/status/incidents', getIncidents, {}],
+		['statusGetHistory', '/api/agent/status/history', getHistory, {}],
+		['statusGetUptime', '/api/agent/status/uptime', getUptime, {}],
+		['dataGetTypes', '/api/agent/data/types', getTypes, {}],
+		['intelGetPlatform', '/api/agent/platform-intel', getPlatform, {}],
+		['intelGetByok', '/api/agent/byok/platform-intel', getByokPlatform, {}],
+		['sandboxGetClient', '/api/agent/sandbox/client', sandboxClient, {}],
+		['sandboxGetMemory', '/api/agent/sandbox/memory', sandboxMemory, {}],
+		['webhooksList', '/api/agent/webhooks', listWebhooks, {}],
+		['memoryGet', '/api/agent/memory/c1', getMemory, { clientId: 'c1' }],
 		[
-			'sandboxEngagement',
-			'/api/agent/sandbox/engagement-analysis',
-			sandboxEngagement,
+			'memoryGetChangelog',
+			'/api/agent/memory/c1/changelog',
+			getChangelog,
+			{ clientId: 'c1' },
 		],
-		['webhooksList', '/api/agent/webhooks', listWebhooks],
-	])('routes %s to %s', async (_name, path, endpoint) => {
+	])('routes %s to %s via GET', async (_name, path, endpoint, input) => {
 		requestSpy.mockResolvedValue({
 			success: true,
 			status: 'ok',
@@ -86,61 +103,148 @@ describe('request routing', () => {
 			dataPoints: [],
 			uptime: {},
 			dataTypes: {},
+			changelog: [],
+			id: 'c1',
 		});
 
 		await (
 			endpoint as (c: CrowterminalContext, i: unknown) => Promise<unknown>
-		)(ctx(), {});
+		)(ctx(), input);
 
 		expect(lastCall()?.[0]).toBe(path);
 		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('GET');
+		expect(lastCall()?.[2]?.body).toBeUndefined();
 	});
 
-	it('routes the client-scoped memory reads', async () => {
-		requestSpy.mockResolvedValue({ success: true, changelog: [] });
-		await getChangelog(ctx(), { clientId: 'c1' });
-		expect(lastCall()?.[0]).toBe('/api/agent/memory/c1/changelog');
-	});
-
-	it('sends the pattern field as a query parameter', async () => {
+	it('sends the pattern field as a query parameter via GET', async () => {
 		requestSpy.mockResolvedValue({ success: true, dataPoints: [] });
 
 		await getPattern(ctx(), { clientId: 'c1', field: 'primaryNiche' });
 
 		expect(lastCall()?.[0]).toBe('/api/agent/memory/c1/pattern');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('GET');
 		expect(lastCall()?.[2]?.query).toEqual({ field: 'primaryNiche' });
+		expect(lastCall()?.[2]?.body).toBeUndefined();
+	});
+
+	it('routes memoryGetBulk via POST with clientIds body', async () => {
+		await getBulkMemory(ctx(), { clientIds: ['c1', 'c2'] });
+
+		expect(lastCall()?.[0]).toBe('/api/agent/memory/bulk');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual({ clientIds: ['c1', 'c2'] });
+	});
+
+	it('routes memoryEngagementAnalysis via POST with agentMd body', async () => {
+		await engagementAnalysis(ctx(), {
+			clientId: 'c1',
+			agentMd: { hookPatterns: ['confession'] },
+		});
+
+		expect(lastCall()?.[0]).toBe('/api/agent/memory/c1/engagement-analysis');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual({
+			agentMd: { hookPatterns: ['confession'] },
+		});
 	});
 
 	it('posts compare-md to the documented hyphenated path', async () => {
 		await compareMd(ctx(), { clientId: 'c1', agentMd: { a: 1 } });
 
 		expect(lastCall()?.[0]).toBe('/api/agent/memory/c1/compare-md');
-		expect(lastCall()?.[2]).toMatchObject({
-			method: 'POST',
-			body: { agentMd: { a: 1 } },
-		});
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual({ agentMd: { a: 1 } });
+	});
+
+	it('routes memoryValidateChanges via POST with proposedChanges body', async () => {
+		const proposedChanges = [
+			{ field: 'hookPatterns', oldValue: 'story', newValue: 'tutorial' },
+		];
+		await validateChanges(ctx(), { clientId: 'c1', proposedChanges });
+
+		expect(lastCall()?.[0]).toBe('/api/agent/memory/c1/validate');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual({ proposedChanges });
+	});
+
+	it('routes dataIngest via POST with full body', async () => {
+		const input = {
+			clientId: 'c1',
+			platform: 'TIKTOK' as const,
+			dataType: 'retention' as const,
+			videoId: 'v9',
+			data: { avgWatchTime: 12 },
+			confidence: 0.9,
+		};
+		await ingest(ctx(), input);
+
+		expect(lastCall()?.[0]).toBe('/api/agent/data/ingest');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual(input);
 	});
 
 	it('names the bulk ingest array items, as the API requires', async () => {
-		await ingestBulk(ctx(), {
-			items: [
-				{
-					clientId: 'c1',
-					platform: 'TIKTOK',
-					dataType: 'retention',
-					data: { avgWatchTime: 12 },
-				},
-			],
-		});
+		const items = [
+			{
+				clientId: 'c1',
+				platform: 'TIKTOK' as const,
+				dataType: 'retention' as const,
+				data: { avgWatchTime: 12 },
+			},
+		];
+		await ingestBulk(ctx(), { items });
 
 		expect(lastCall()?.[0]).toBe('/api/agent/data/ingest/bulk');
-		expect(Object.keys(lastCall()?.[2]?.body ?? {})).toEqual(['items']);
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual({ items });
+	});
+
+	it('routes sandboxValidate via POST with proposedChanges body', async () => {
+		const proposedChanges = [{ field: 'hookPatterns', newValue: 'tutorial' }];
+		await sandboxValidate(ctx(), { proposedChanges });
+
+		expect(lastCall()?.[0]).toBe('/api/agent/sandbox/validate');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual({ proposedChanges });
+	});
+
+	it('registers an agent against the documented path', async () => {
+		await register(ctx(), { agentName: 'MyBot' });
+
+		expect(lastCall()?.[0]).toBe('/api/agent/register');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual({ agentName: 'MyBot' });
+	});
+
+	it('routes webhooksCreate via POST with create body', async () => {
+		const input = {
+			url: 'https://example.com/hook',
+			events: ['skill.updated'] as ['skill.updated'],
+			secret: 'sec_123',
+		};
+		await createWebhook(ctx(), input);
+
+		expect(lastCall()?.[0]).toBe('/api/agent/webhooks');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
+		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual(input);
 	});
 
 	it('drops webhookId from the update body and puts it in the path', async () => {
 		await updateWebhook(ctx(), { webhookId: 'wh_1', isActive: false });
 
 		expect(lastCall()?.[0]).toBe('/api/agent/webhooks/wh_1');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
 		expect(lastCall()?.[2]?.method).toBe('PATCH');
 		expect(lastCall()?.[2]?.body).toEqual({ isActive: false });
 	});
@@ -149,15 +253,22 @@ describe('request routing', () => {
 		await deleteWebhook(ctx(), { webhookId: 'wh_1' });
 
 		expect(lastCall()?.[0]).toBe('/api/agent/webhooks/wh_1');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
 		expect(lastCall()?.[2]?.method).toBe('DELETE');
 		expect(lastCall()?.[2]?.body).toBeUndefined();
 	});
 
-	it('registers an agent against the documented path', async () => {
-		await register(ctx(), { agentName: 'MyBot' });
+	it('routes webhooksTest via POST with test payload body', async () => {
+		const input = {
+			url: 'https://example.com/hook',
+			secret: 'sec_123',
+		};
+		await testWebhook(ctx(), input);
 
-		expect(lastCall()?.[0]).toBe('/api/agent/register');
+		expect(lastCall()?.[0]).toBe('/api/agent/webhooks/test');
+		expect(lastCall()?.[1]).toBe('ct_test_key');
 		expect(lastCall()?.[2]?.method).toBe('POST');
+		expect(lastCall()?.[2]?.body).toEqual(input);
 	});
 });
 
