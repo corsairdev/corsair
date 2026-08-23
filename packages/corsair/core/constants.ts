@@ -16,6 +16,7 @@ export const BaseProviders = [
 	'ably',
 	'abstract',
 	'abyssale',
+	'accrediblecertificates',
 	'activecampaign',
 	'activetrail',
 	'addresszen',
@@ -27,6 +28,7 @@ export const BaseProviders = [
 	'agenty',
 	'ahrefs',
 	'aimlapi',
+	'allimagesai',
 	'airtable',
 	'alchemy',
 	'algolia',
@@ -50,10 +52,13 @@ export const BaseProviders = [
 	'apisports',
 	'asana',
 	'asindataapi',
+	'asticaai',
 	'asyncinterview',
+	'attio',
 	'ayrshare',
 	'basecamp',
 	'baselinker',
+	'basin',
 	'betterstack',
 	'bigmailer',
 	'bigml',
@@ -69,6 +74,7 @@ export const BaseProviders = [
 	'calendly',
 	'canva',
 	'canvas',
+	'chatbotkit',
 	'circleci',
 	'clientary',
 	'cloudflare',
@@ -134,6 +140,7 @@ export const BaseProviders = [
 	'onedrive',
 	'onepassword',
 	'openai',
+	'openrouter',
 	'openweathermap',
 	'oura',
 	'outlook',
@@ -145,6 +152,7 @@ export const BaseProviders = [
 	'resend',
 	'retailed',
 	'salesforce',
+	'securitytrails',
 	'sentry',
 	'serpapi',
 	'sharepoint',
@@ -155,16 +163,19 @@ export const BaseProviders = [
 	'supabase',
 	'tally',
 	'tavily',
+	'tavilymcp',
 	'teams',
 	'telegram',
 	'todoist',
 	'toggl',
 	'trello',
+	'twentyonerisk',
 	'twilio',
 	'twitter',
 	'twitterapiio',
 	'twochat',
 	'typeform',
+	'unione',
 	'vapi',
 	'vercel',
 	'webflow',
@@ -183,6 +194,7 @@ export const ProviderDisplayNames = {
 	ably: 'Ably',
 	abstract: 'Abstract',
 	abyssale: 'Abyssale',
+	accrediblecertificates: 'Accredible Certificates',
 	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
@@ -194,6 +206,7 @@ export const ProviderDisplayNames = {
 	agenty: 'Agenty',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
+	allimagesai: 'All Images AI',
 	airtable: 'Airtable',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
@@ -217,10 +230,13 @@ export const ProviderDisplayNames = {
 	apisports: 'API-Sports',
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
+	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
+	attio: 'Attio',
 	ayrshare: 'Ayrshare',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
+	basin: 'Basin',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
@@ -236,6 +252,7 @@ export const ProviderDisplayNames = {
 	calendly: 'Calendly',
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
+	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	cloudflare: 'Cloudflare',
@@ -301,6 +318,7 @@ export const ProviderDisplayNames = {
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
 	openai: 'OpenAI',
+	openrouter: 'OpenRouter',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
@@ -312,6 +330,7 @@ export const ProviderDisplayNames = {
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
+	securitytrails: 'SecurityTrails',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
@@ -322,16 +341,19 @@ export const ProviderDisplayNames = {
 	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
+	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
+	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
+	unione: 'Unione',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	webflow: 'Webflow',
@@ -357,6 +379,7 @@ export type AllProviders =
 	| 'ably'
 	| 'abstract'
 	| 'abyssale'
+	| 'accrediblecertificates'
 	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
@@ -368,6 +391,7 @@ export type AllProviders =
 	| 'agenty'
 	| 'ahrefs'
 	| 'aimlapi'
+	| 'allimagesai'
 	| 'airtable'
 	| 'alchemy'
 	| 'algolia'
@@ -391,10 +415,13 @@ export type AllProviders =
 	| 'apisports'
 	| 'asana'
 	| 'asindataapi'
+	| 'asticaai'
 	| 'asyncinterview'
+	| 'attio'
 	| 'ayrshare'
 	| 'basecamp'
 	| 'baselinker'
+	| 'basin'
 	| 'betterstack'
 	| 'bigmailer'
 	| 'bigml'
@@ -410,6 +437,7 @@ export type AllProviders =
 	| 'calendly'
 	| 'canva'
 	| 'canvas'
+	| 'chatbotkit'
 	| 'circleci'
 	| 'clientary'
 	| 'cloudflare'
@@ -475,6 +503,7 @@ export type AllProviders =
 	| 'onedrive'
 	| 'onepassword'
 	| 'openai'
+	| 'openrouter'
 	| 'openweathermap'
 	| 'oura'
 	| 'outlook'
@@ -486,6 +515,7 @@ export type AllProviders =
 	| 'resend'
 	| 'retailed'
 	| 'salesforce'
+	| 'securitytrails'
 	| 'sentry'
 	| 'serpapi'
 	| 'sharepoint'
@@ -496,16 +526,19 @@ export type AllProviders =
 	| 'supabase'
 	| 'tally'
 	| 'tavily'
+	| 'tavilymcp'
 	| 'teams'
 	| 'telegram'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
+	| 'twentyonerisk'
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
 	| 'twochat'
 	| 'typeform'
+	| 'unione'
 	| 'vapi'
 	| 'vercel'
 	| 'webflow'
