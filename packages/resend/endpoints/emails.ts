@@ -81,8 +81,8 @@ export const batch: ResendEndpoints['emailsBatch'] = async (ctx, input) => {
 export const cancel: ResendEndpoints['emailsCancel'] = async (ctx, input) => {
 	const response = await makeResendRequest<
 		ResendEndpointOutputs['emailsCancel']
-	>(`emails/${input.id}`, ctx.key, {
-		method: 'DELETE',
+	>(`emails/${input.id}/cancel`, ctx.key, {
+		method: 'POST',
 	});
 
 	if (response.cancelled && ctx.db.emails) {

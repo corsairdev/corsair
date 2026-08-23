@@ -20,6 +20,8 @@ export const ResendDomain = z.object({
 		'verified',
 		'pending',
 		'failed',
+		'partially_verified',
+		'partially_failed',
 	]),
 	created_at: z.coerce.date().nullable().optional(),
 	region: z.string().optional(),

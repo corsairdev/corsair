@@ -248,7 +248,7 @@ const ContactsListResponseSchema = z.object({
 	data: z.array(ContactSchema),
 });
 
-const ContactsUpdateResponseSchema = ContactSchema.loose();
+const ContactsUpdateResponseSchema = ContactsMutationResponseSchema;
 
 const ContactsDeleteResponseSchema = z.object({
 	id: z.string(),

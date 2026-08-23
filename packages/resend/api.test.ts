@@ -137,6 +137,7 @@ describe('Resend API Type Tests', () => {
 			const result = response;
 
 			ResendEndpointOutputSchemas.emailsCancel.parse(result);
+			expect(result.cancelled).toBe(true);
 		});
 	});
 
@@ -267,7 +268,8 @@ describe('Resend API Type Tests', () => {
 			const result = response;
 
 			ResendEndpointOutputSchemas.contactsCreate.parse(result);
-			expect(result.id).toBe(testContactEmail);
+			// Resend returns only { object, id }; store the ID for cleanup.
+			expect(result.id).toMatch(/^contact_/);
 		});
 
 		it('contactsList returns correct type', async () => {
@@ -328,7 +330,9 @@ describe('Resend API Type Tests', () => {
 			const result = response;
 
 			ResendEndpointOutputSchemas.contactsUpdate.parse(result);
-			expect(result.first_name).toBe('CorsairUpdated');
+			// PATCH returns only { object, id }; verify the id round-trips
+			// and then fetch the full contact to verify first_name.
+			expect(result.id).toBe(found.id);
 
 			// Fetch the contact from the API to verify persistence.
 			const getResponse = await makeResendRequest<ContactsGetResponse>(
@@ -337,6 +341,7 @@ describe('Resend API Type Tests', () => {
 			);
 			const fetched = getResponse;
 			expect(fetched.id).toBe(found.id);
+			expect(fetched.first_name).toBe('CorsairUpdated');
 		});
 
 		it('contactsDelete returns correct type', async () => {

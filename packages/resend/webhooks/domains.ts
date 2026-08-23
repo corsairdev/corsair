@@ -48,7 +48,9 @@ export const domainCreated: ResendWebhooks['domainCreated'] = {
 							| 'error'
 							| 'verified'
 							| 'pending'
-							| 'failed',
+							| 'failed'
+							| 'partially_verified'
+							| 'partially_failed',
 						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);
@@ -120,7 +122,9 @@ export const domainUpdated: ResendWebhooks['domainUpdated'] = {
 							| 'error'
 							| 'verified'
 							| 'pending'
-							| 'failed',
+							| 'failed'
+							| 'partially_verified'
+							| 'partially_failed',
 						created_at: new Date(event.data.created_at ?? ''),
 					},
 				);

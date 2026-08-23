@@ -23,9 +23,18 @@ export const create: ResendEndpoints['contactsCreate'] = async (ctx, input) => {
 
 	if (response.id && ctx.db.contacts) {
 		try {
+			// POST /contacts returns only { object, id }; fetch the full
+			// contact before upserting so the persisted row has email/etc.
+			const fetched = await makeResendRequest<
+				ResendEndpointOutputs['contactsGet']
+			>(`contacts/${response.id}`, ctx.key, { method: 'GET' });
 			await ctx.db.contacts.upsertByEntityId(response.id, {
-				id: response.id,
-				email: '' as string,
+				id: fetched.id,
+				email: fetched.email,
+				first_name: fetched.first_name ?? null,
+				last_name: fetched.last_name ?? null,
+				created_at: fetched.created_at ?? null,
+				unsubscribed: fetched.unsubscribed,
 			});
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
@@ -35,7 +44,7 @@ export const create: ResendEndpoints['contactsCreate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'resend.contacts.create',
-		{ ...input },
+		{ id: response.id },
 		'completed',
 	);
 	return response;
@@ -52,7 +61,11 @@ export const get: ResendEndpoints['contactsGet'] = async (ctx, input) => {
 		try {
 			await ctx.db.contacts.upsertByEntityId(response.id, {
 				id: response.id,
-				email: '' as string,
+				email: response.email,
+				first_name: response.first_name ?? null,
+				last_name: response.last_name ?? null,
+				created_at: response.created_at ?? null,
+				unsubscribed: response.unsubscribed,
 			});
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
@@ -62,7 +75,7 @@ export const get: ResendEndpoints['contactsGet'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'resend.contacts.get',
-		{ ...input },
+		{ id: response.id },
 		'completed',
 	);
 	return response;
@@ -95,7 +108,7 @@ export const list: ResendEndpoints['contactsList'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'resend.contacts.list',
-		{ ...input },
+		input ? { limit: input.limit, cursor: input.cursor } : {},
 		'completed',
 	);
 	return response;
@@ -113,9 +126,19 @@ export const update: ResendEndpoints['contactsUpdate'] = async (ctx, input) => {
 
 	if (response.id && ctx.db.contacts) {
 		try {
+			// PATCH /contacts/:id returns only { object, id }; fetch the full
+			// contact before upserting so the persisted row reflects the
+			// updated email/name fields.
+			const fetched = await makeResendRequest<
+				ResendEndpointOutputs['contactsGet']
+			>(`contacts/${response.id}`, ctx.key, { method: 'GET' });
 			await ctx.db.contacts.upsertByEntityId(response.id, {
-				id: response.id,
-				email: '' as string,
+				id: fetched.id,
+				email: fetched.email,
+				first_name: fetched.first_name ?? null,
+				last_name: fetched.last_name ?? null,
+				created_at: fetched.created_at ?? null,
+				unsubscribed: fetched.unsubscribed,
 			});
 		} catch (error) {
 			console.warn('Failed to save contact to database:', error);
@@ -125,7 +148,7 @@ export const update: ResendEndpoints['contactsUpdate'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'resend.contacts.update',
-		{ ...input },
+		{ id: response.id },
 		'completed',
 	);
 	return response;
@@ -152,7 +175,7 @@ export const deleteContact: ResendEndpoints['contactsDelete'] = async (
 	await logEventFromContext(
 		ctx,
 		'resend.contacts.delete',
-		{ ...input },
+		{ id: input.id },
 		'completed',
 	);
 	return response;
