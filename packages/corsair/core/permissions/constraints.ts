@@ -31,6 +31,33 @@ function isUnknownArray(v: unknown): v is readonly unknown[] {
 	return Array.isArray(v);
 }
 
+function tryRead(
+	obj: object,
+	key: PropertyKey,
+): { ok: true; value: unknown } | { ok: false } {
+	try {
+		return { ok: true, value: (obj as Record<PropertyKey, unknown>)[key] };
+	} catch {
+		return { ok: false };
+	}
+}
+
+function tryOwnValues(obj: object): unknown[] | null {
+	try {
+		return Object.values(obj);
+	} catch {
+		return null;
+	}
+}
+
+function tryOwnEntries(obj: object): [string, unknown][] | null {
+	try {
+		return Object.entries(obj);
+	} catch {
+		return null;
+	}
+}
+
 /**
  * Reads a dot-notation path out of an endpoint's argument object.
  *
@@ -42,13 +69,19 @@ function isUnknownArray(v: unknown): v is readonly unknown[] {
  * field fails closed rather than matching by accident.
  */
 export function resolveArgPath(args: unknown, path: string): unknown {
-	let current: unknown = args;
-	for (const segment of path.split('.')) {
-		if (!isRecord(current)) return undefined;
-		if (!Object.hasOwn(current, segment)) return undefined;
-		current = current[segment];
+	try {
+		let current: unknown = args;
+		for (const segment of path.split('.')) {
+			if (!isRecord(current)) return undefined;
+			if (!Object.hasOwn(current, segment)) return undefined;
+			const read = tryRead(current, segment);
+			if (!read.ok) return undefined;
+			current = read.value;
+		}
+		return current;
+	} catch {
+		return undefined;
 	}
-	return current;
 }
 
 /**
@@ -74,11 +107,17 @@ function isComparableValue(root: unknown): boolean {
 		seen.add(v);
 		if (v instanceof Date) continue;
 		if (isUnknownArray(v)) {
-			for (const item of v) stack.push(item);
+			for (let i = 0; i < v.length; i++) {
+				const item = tryRead(v, i);
+				if (!item.ok) return false;
+				stack.push(item.value);
+			}
 			continue;
 		}
 		if (!isPlainObject(v)) return false;
-		for (const child of Object.values(v)) stack.push(child);
+		const children = tryOwnValues(v);
+		if (children === null) return false;
+		for (const child of children) stack.push(child);
 	}
 	return true;
 }
@@ -132,7 +171,10 @@ function deepEqual(a: unknown, b: unknown): boolean {
 		if (isUnknownArray(x) && isUnknownArray(y)) {
 			if (x.length !== y.length) return false;
 			for (let i = 0; i < x.length; i++) {
-				stack.push([x[i], y[i]]);
+				const xv = tryRead(x, i);
+				const yv = tryRead(y, i);
+				if (!xv.ok || !yv.ok) return false;
+				stack.push([xv.value, yv.value]);
 			}
 			continue;
 		}
@@ -146,7 +188,10 @@ function deepEqual(a: unknown, b: unknown): boolean {
 		if (keys.length !== Object.keys(y).length) return false;
 		if (!keys.every((k) => Object.hasOwn(y, k))) return false;
 		for (const key of keys) {
-			stack.push([x[key], y[key]]);
+			const xv = tryRead(x, key);
+			const yv = tryRead(y, key);
+			if (!xv.ok || !yv.ok) return false;
+			stack.push([xv.value, yv.value]);
 		}
 	}
 	return true;
@@ -171,7 +216,9 @@ function containsCycle(root: unknown): boolean {
 	// Each frame is one node plus its remaining child values to traverse.
 	// A node enters `path` when its frame is pushed and leaves when the frame
 	// is exhausted — the same enter/leave discipline as a recursive DFS.
-	const stack: [object, unknown[]][] = [[root, Object.values(root)]];
+	const rootValues = tryOwnValues(root);
+	if (rootValues === null) return true;
+	const stack: [object, unknown[]][] = [[root, rootValues]];
 	while (stack.length > 0) {
 		const frame = stack[stack.length - 1];
 		if (frame === undefined) break;
@@ -193,7 +240,9 @@ function containsCycle(root: unknown): boolean {
 		if (!isRecord(child) || completed.has(child)) continue;
 		if (path.has(child)) return true;
 		path.add(child);
-		stack.push([child, Object.values(child)]);
+		const childValues = tryOwnValues(child);
+		if (childValues === null) return true;
+		stack.push([child, childValues]);
 	}
 	return false;
 }
@@ -230,7 +279,9 @@ function soleOperator(
 	if (keys.length !== 1 || typeof key !== 'string') return null;
 	const op = OPERATORS.find((candidate) => candidate === key);
 	if (op === undefined) return null;
-	return { op, operand: constraint[key] };
+	const operand = tryRead(constraint, key);
+	if (!operand.ok) return null;
+	return { op, operand: operand.value };
 }
 
 /**
@@ -247,6 +298,14 @@ export function matchesConstraint(
 	value: unknown,
 	constraint: unknown,
 ): boolean {
+	try {
+		return matchConstraintInner(value, constraint);
+	} catch {
+		return false;
+	}
+}
+
+function matchConstraintInner(value: unknown, constraint: unknown): boolean {
 	// An unresolved path and an explicitly-undefined argument are
 	// indistinguishable here, and neither should grant access.
 	if (value === undefined) return false;
@@ -297,12 +356,17 @@ export function constraintsSatisfied(
 	constraints: unknown,
 	args: unknown,
 ): boolean {
-	if (!isRecord(constraints)) return false;
-	const entries = Object.entries(constraints);
-	if (entries.length === 0) return false;
-	return entries.every(([path, constraint]) =>
-		matchesConstraint(resolveArgPath(args, path), constraint),
-	);
+	try {
+		if (!isRecord(constraints)) return false;
+		const entries = tryOwnEntries(constraints);
+		if (entries === null) return false;
+		if (entries.length === 0) return false;
+		return entries.every(([path, constraint]) =>
+			matchesConstraint(resolveArgPath(args, path), constraint),
+		);
+	} catch {
+		return false;
+	}
 }
 
 /** Narrows a possibly-constrained override to a concrete policy, or undefined.
@@ -323,10 +387,21 @@ export function resolveOverridePolicy(
 		| undefined,
 	args: unknown,
 ): PermissionPolicy | undefined {
-	if (override === undefined || override === null) return undefined;
-	if (typeof override === 'string') return override;
-	if (constraintsSatisfied(override.constraints, args)) return override.policy;
-	// Constraints did not hold. `otherwise` if the developer specified one,
-	// else undefined so the caller falls back to the mode matrix.
-	return override.otherwise;
+	try {
+		if (override === undefined || override === null) return undefined;
+		if (typeof override === 'string') return override;
+		if (!isRecord(override)) return undefined;
+		const constraints = tryRead(override, 'constraints');
+		if (!constraints.ok) return undefined;
+		if (constraintsSatisfied(constraints.value, args)) {
+			const policy = tryRead(override, 'policy');
+			if (!policy.ok) return undefined;
+			return policy.value as PermissionPolicy;
+		}
+		const otherwise = tryRead(override, 'otherwise');
+		if (!otherwise.ok) return undefined;
+		return otherwise.value as PermissionPolicy | undefined;
+	} catch {
+		return undefined;
+	}
 }
