@@ -33,8 +33,7 @@ export async function makeAivoovRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			'X-API-KEY': apiKey,
 		},
 	};
 
