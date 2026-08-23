@@ -46,19 +46,30 @@ export async function getOAuthAccessToken(
 			plugin: opts.plugin,
 			tenantId: ctx.tenantId,
 		};
-		(ctx as Record<string, unknown>)._refreshAuth = () =>
+		// Force (401 retry) and routine refresh share ONE flight key: the hub is
+		// stateless (it mints with the stored client_secret but persists nothing),
+		// so two concurrent /oauth/refresh calls would spend the same rotating
+		// refresh_token and the second would fail. The freshness guard below means a
+		// routine flight only exists while it is actually minting, so a forced
+		// joiner never inherits a stale token.
+		const runHubRefresh = (force: boolean): Promise<string> =>
 			singleFlight(
 				ctx.keys,
-				`${flightKey}:force`,
+				flightKey,
 				async () =>
-					(await getHubAccessToken(hubContext, { forceRefresh: true }))
+					(await getHubAccessToken(hubContext, { forceRefresh: force }))
 						.accessToken,
 			);
-		return singleFlight(
-			ctx.keys,
-			flightKey,
-			async () => (await getHubAccessToken(hubContext)).accessToken,
-		);
+		(ctx as Record<string, unknown>)._refreshAuth = () => runHubRefresh(true);
+
+		const [accessToken, expiresAt] = await Promise.all([
+			ctx.keys.get_access_token(),
+			ctx.keys.get_expires_at(),
+		]);
+		if (isAccessTokenFresh({ accessToken, expiresAt })) {
+			return accessToken as string;
+		}
+		return runHubRefresh(false);
 	}
 
 	const clientSecret = credentials.client_secret;

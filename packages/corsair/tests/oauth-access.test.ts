@@ -318,6 +318,47 @@ describe('getOAuthAccessToken switchboard', () => {
 		}
 	});
 
+	it('BYO+Hub: a forced 401 refresh and a routine refresh share one flight (no double-spend)', async () => {
+		const { database, cleanup } = createTestDatabase();
+		try {
+			await seed(
+				database,
+				{}, // no client_secret → BYO+Hub
+				{ access_token: 'stale', expires_at: '1', refresh_token: 'byo-rt' },
+			);
+
+			const keys = makeKeys(database);
+			const ctx = { keys, hub, tenantId: 'default' } as Record<string, unknown>;
+			const opts = {
+				plugin: 'linear',
+				tokenUrl: 'https://api.linear.app/oauth/token',
+			};
+
+			let calls = 0;
+			let forced: Promise<string> | undefined;
+			global.fetch = (async () => {
+				calls += 1;
+				// The routine hub refresh is in flight. A concurrent 401 fires the
+				// forced refresh: it must JOIN this flight, not POST the same rotating
+				// refresh_token to the hub a second time.
+				if (!forced) {
+					forced = (ctx._refreshAuth as () => Promise<string>)();
+				}
+				return jsonResponse({ access_token: 'hub-rotated', expires_in: 3600 });
+			}) as unknown as typeof fetch;
+
+			await getOAuthAccessToken(
+				ctx as { keys: typeof keys; hub: typeof hub; tenantId: string },
+				opts,
+			);
+			await forced;
+
+			expect(calls).toBe(1);
+		} finally {
+			cleanup();
+		}
+	});
+
 	it('throws AuthMissing when there is neither a local secret nor a hub', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
