@@ -54,6 +54,7 @@ export const BaseProviders = [
 	'asindataapi',
 	'asticaai',
 	'asyncinterview',
+	'attio',
 	'ayrshare',
 	'basecamp',
 	'baselinker',
@@ -229,6 +230,7 @@ export const ProviderDisplayNames = {
 	asindataapi: 'ASIN Data API',
 	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
+	attio: 'Attio',
 	ayrshare: 'Ayrshare',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
@@ -411,6 +413,7 @@ export type AllProviders =
 	| 'asindataapi'
 	| 'asticaai'
 	| 'asyncinterview'
+	| 'attio'
 	| 'ayrshare'
 	| 'basecamp'
 	| 'baselinker'
