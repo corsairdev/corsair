@@ -3,6 +3,7 @@ import { check as delegationCheck } from './delegation';
 import { getStatus as orderGetStatus } from './order';
 import { get as quoteGet } from './quote';
 import { create as swapCreate, getStatus as swapGetStatus } from './swap';
+import { get as swappableTokensGet } from './swappable-tokens';
 import { encode7702 as transactionEncode7702 } from './transaction';
 
 export const Approval = {
@@ -28,6 +29,10 @@ export const Delegation = {
 
 export const Transaction = {
 	encode7702: transactionEncode7702,
+};
+
+export const SwappableTokens = {
+	get: swappableTokensGet,
 };
 
 export * from './types';

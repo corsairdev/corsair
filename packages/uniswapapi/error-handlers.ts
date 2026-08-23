@@ -1,15 +1,17 @@
 import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import type { UniswapApiAPIError } from './client';
+import { UniswapApiAPIError } from './client';
 
 function getStatus(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.status;
-	return (error as Partial<UniswapApiAPIError>).status;
+	if (error instanceof UniswapApiAPIError) return error.status;
+	return undefined;
 }
 
 function getRetryAfter(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.retryAfter;
-	return (error as Partial<UniswapApiAPIError>).retryAfter;
+	if (error instanceof UniswapApiAPIError) return error.retryAfter;
+	return undefined;
 }
 
 export const errorHandlers = {

@@ -7,25 +7,25 @@ import type {
 } from './types';
 import { UniswapApiEndpointOutputSchemas } from './types';
 
-export const check = async (
+export const get = async (
 	ctx: UniswapApiEndpointContext,
-	input: UniswapApiEndpointInputs['delegationCheck'],
-): Promise<UniswapApiEndpointOutputs['delegationCheck']> => {
+	input: UniswapApiEndpointInputs['swappableTokensGet'],
+): Promise<UniswapApiEndpointOutputs['swappableTokensGet']> => {
 	const response = await makeUniswapApiRequest<
-		UniswapApiEndpointOutputs['delegationCheck']
-	>('/v1/wallet/check_delegation', ctx.key, {
-		method: 'POST',
-		body: {
-			walletAddresses: input.walletAddresses,
-			chainIds: input.chainIds,
+		UniswapApiEndpointOutputs['swappableTokensGet']
+	>('/v1/swappable_tokens', ctx.key, {
+		method: 'GET',
+		query: {
+			tokenIn: input.tokenIn,
+			tokenInChainId: input.tokenInChainId,
 		},
 	});
 	const parsedResponse =
-		UniswapApiEndpointOutputSchemas.delegationCheck.parse(response);
+		UniswapApiEndpointOutputSchemas.swappableTokensGet.parse(response);
 
 	await logEventFromContext(
 		ctx,
-		'uniswapapi.delegation.check',
+		'uniswapapi.swappableTokens.get',
 		{ ...input },
 		'completed',
 	);

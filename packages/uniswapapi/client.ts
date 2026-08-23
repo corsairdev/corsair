@@ -45,7 +45,12 @@ export async function makeUniswapApiRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		// Arrays serialize as repeated query params (e.g. txHashes=0x..&txHashes=0x..),
+		// which is how the Trading API expects list filters.
+		query?: Record<
+			string,
+			string | number | boolean | (string | number | boolean)[] | undefined
+		>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;

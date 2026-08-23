@@ -26,6 +26,7 @@ export const get = async (
 			...(input.slippageTolerance !== undefined && {
 				slippageTolerance: input.slippageTolerance,
 			}),
+			...(input.autoSlippage && { autoSlippage: input.autoSlippage }),
 			...(input.urgency && { urgency: input.urgency }),
 			...(input.recipient && { recipient: input.recipient }),
 			...(input.protocols && { protocols: input.protocols }),

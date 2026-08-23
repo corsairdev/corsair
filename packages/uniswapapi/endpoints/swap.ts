@@ -17,7 +17,10 @@ export const create = async (
 		method: 'POST',
 		body: {
 			quote: input.quote,
+			// The API requires signature and permitData to be sent together
+			// (or both omitted); the input schema enforces that pairing.
 			...(input.signature && { signature: input.signature }),
+			...(input.permitData && { permitData: input.permitData }),
 			...(input.refreshGasPrice !== undefined && {
 				refreshGasPrice: input.refreshGasPrice,
 			}),
@@ -39,11 +42,13 @@ export const getStatus = async (
 ): Promise<UniswapApiEndpointOutputs['swapGetStatus']> => {
 	const response = await makeUniswapApiRequest<
 		UniswapApiEndpointOutputs['swapGetStatus']
-	>('/v1/swap_status', ctx.key, {
+	>('/v1/swaps', ctx.key, {
 		method: 'GET',
 		query: {
-			txHash: input.txHash,
+			txHashes: input.txHashes,
+			userOpHashes: input.userOpHashes,
 			chainId: input.chainId,
+			swapper: input.swapper,
 		},
 	});
 	const parsedResponse =

@@ -18,6 +18,7 @@ import {
 	Order,
 	Quote,
 	Swap,
+	SwappableTokens,
 	Transaction,
 } from './endpoints';
 import type {
@@ -66,6 +67,7 @@ export type UniswapApiEndpoints = {
 	orderGetStatus: UniswapApiEndpoint<'orderGetStatus'>;
 	delegationCheck: UniswapApiEndpoint<'delegationCheck'>;
 	transactionEncode7702: UniswapApiEndpoint<'transactionEncode7702'>;
+	swappableTokensGet: UniswapApiEndpoint<'swappableTokensGet'>;
 };
 
 const uniswapApiEndpointsNested = {
@@ -87,6 +89,9 @@ const uniswapApiEndpointsNested = {
 	},
 	transaction: {
 		encode7702: Transaction.encode7702,
+	},
+	swappableTokens: {
+		get: SwappableTokens.get,
 	},
 } as const;
 
@@ -122,13 +127,17 @@ export const uniswapApiEndpointSchemas = {
 		input: UniswapApiEndpointInputSchemas.transactionEncode7702,
 		output: UniswapApiEndpointOutputSchemas.transactionEncode7702,
 	},
+	'swappableTokens.get': {
+		input: UniswapApiEndpointInputSchemas.swappableTokensGet,
+		output: UniswapApiEndpointOutputSchemas.swappableTokensGet,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof uniswapApiEndpointsNested
 >;
 
 const uniswapApiWebhookSchemas = {} as const;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'api_key';
 
 const uniswapApiEndpointMeta = {
 	'approval.check': {
@@ -162,6 +171,11 @@ const uniswapApiEndpointMeta = {
 		riskLevel: 'write',
 		description:
 			'Batch transactions into one for EIP-7702 smart contract wallet execution',
+	},
+	'swappableTokens.get': {
+		riskLevel: 'read',
+		description:
+			'List tokens and chains a source token can be swapped or bridged to',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof uniswapApiEndpointsNested
@@ -226,11 +240,6 @@ export function uniswapapi<const T extends UniswapApiPluginOptions>(
 				return res ?? '';
 			}
 
-			// if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-			// 	const res = await ctx.keys.get_access_token();
-			// 	return res ?? '';
-			// }
-
 			return '';
 		},
 	} satisfies InternalUniswapApiPlugin;
@@ -249,6 +258,8 @@ export type {
 	GetOrderStatusResponse,
 	GetQuoteInput,
 	GetQuoteResponse,
+	GetSwappableTokensInput,
+	GetSwappableTokensResponse,
 	GetSwapStatusInput,
 	GetSwapStatusResponse,
 	UniswapApiEndpointInputs,

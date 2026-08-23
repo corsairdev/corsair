@@ -53,6 +53,43 @@ describe('makeUniswapApiRequest', () => {
 		expect(error.retryAfter).toBe(2500);
 		expect(error.code).toBe('TOO_MANY_REQUESTS');
 	});
+
+	it('falls back to the HTTP status as code when no errorCode is present', async () => {
+		mockedRequest.mockRejectedValueOnce(
+			new ApiError(
+				{ method: 'GET', url: '/v1/orders' },
+				{
+					url: 'https://trade-api.gateway.uniswap.org/v1/orders',
+					ok: false,
+					status: 500,
+					statusText: 'Internal Server Error',
+					body: { detail: 'Something went wrong.' },
+				},
+				'Something went wrong.',
+			),
+		);
+
+		const error = await captureError(
+			makeUniswapApiRequest('/v1/orders', 'key'),
+		);
+
+		expect(error.status).toBe(500);
+		expect(error.message).toBe('Something went wrong.');
+		expect(error.code).toBe('500');
+	});
+
+	it('wraps non-HTTP errors while keeping their message', async () => {
+		mockedRequest.mockRejectedValueOnce(new Error('network down'));
+
+		const error = await captureError(
+			makeUniswapApiRequest('/v1/orders', 'key'),
+		);
+
+		expect(error).toBeInstanceOf(UniswapApiAPIError);
+		expect(error.status).toBeUndefined();
+		expect(error.retryAfter).toBeUndefined();
+		expect(error.message).toBe('network down');
+	});
 });
 
 describe('errorHandlers', () => {

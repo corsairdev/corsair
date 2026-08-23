@@ -17,6 +17,13 @@ export const getStatus = async (
 		method: 'GET',
 		query: {
 			orderId: input.orderId,
+			orderIds: input.orderIds,
+			orderStatus: input.orderStatus,
+			swapper: input.swapper,
+			filler: input.filler,
+			limit: input.limit,
+			cursor: input.cursor,
+			sortKey: input.sortKey,
 		},
 	});
 	const parsedResponse =

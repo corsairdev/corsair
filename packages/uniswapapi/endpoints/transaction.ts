@@ -13,12 +13,12 @@ export const encode7702 = async (
 ): Promise<UniswapApiEndpointOutputs['transactionEncode7702']> => {
 	const response = await makeUniswapApiRequest<
 		UniswapApiEndpointOutputs['transactionEncode7702']
-	>('/v1/encode_7702_transaction', ctx.key, {
+	>('/v1/wallet/encode_7702', ctx.key, {
 		method: 'POST',
 		body: {
-			transactions: input.transactions,
+			calls: input.calls,
+			smartContractDelegationAddress: input.smartContractDelegationAddress,
 			walletAddress: input.walletAddress,
-			chainId: input.chainId,
 		},
 	});
 	const parsedResponse =
