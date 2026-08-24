@@ -83,6 +83,7 @@ export const BaseProviders = [
 	'collegefootballdata',
 	'confluence',
 	'contentfulgraphql',
+	'crowterminal',
 	'cursor',
 	'databricks',
 	'datadog',
@@ -263,6 +264,7 @@ export const ProviderDisplayNames = {
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	contentfulgraphql: 'Contentful GraphQL',
+	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
@@ -450,6 +452,7 @@ export type AllProviders =
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'contentfulgraphql'
+	| 'crowterminal'
 	| 'cursor'
 	| 'databricks'
 	| 'datadog'
