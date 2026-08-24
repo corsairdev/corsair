@@ -87,6 +87,7 @@ export const BaseProviders = [
 	'contentfulgraphql',
 	'crowterminal',
 	'cursor',
+	'customgpt',
 	'databricks',
 	'datadog',
 	'deepseek',
@@ -271,6 +272,7 @@ export const ProviderDisplayNames = {
 	contentfulgraphql: 'Contentful GraphQL',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
+	customgpt: 'CustomGPT',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
@@ -462,6 +464,7 @@ export type AllProviders =
 	| 'contentfulgraphql'
 	| 'crowterminal'
 	| 'cursor'
+	| 'customgpt'
 	| 'databricks'
 	| 'datadog'
 	| 'deepseek'
