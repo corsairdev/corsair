@@ -1,194 +1,198 @@
 import { logEventFromContext } from 'corsair/core';
 import { makePdfMonkeyRequest } from '../client';
 import type { PDFMonkeyEndpoints } from '../index';
-import type {
-	PDFMonkeyEndpointInputs,
-	PDFMonkeyEndpointOutputs,
+import {
+	CreateDocumentInputSchema,
+	CreateDocumentSyncInputSchema,
+	DeleteDocumentInputSchema,
+	DocumentCardResponseSchema,
+	DocumentResponseSchema,
+	GetDocumentCardInputSchema,
+	GetDocumentInputSchema,
+	ListDocumentCardsInputSchema,
+	ListDocumentCardsOutputSchema,
+	PDFMonkeyEndpointOutputSchemas,
+	UpdateDocumentInputSchema,
 } from './types';
 
-/** Create a document (async, queues for generation) */
 export const createDocument: PDFMonkeyEndpoints['createDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makePdfMonkeyRequest<
-		PDFMonkeyEndpointOutputs['createDocument']
-	>('/api/v1/documents', {
+	const parsed = CreateDocumentInputSchema.parse(input);
+	const response = await makePdfMonkeyRequest<unknown>('/api/v1/documents', {
 		apiKey: ctx.key,
 		method: 'POST',
 		body: {
-			document: {
-				document_template_id: input.document.document_template_id,
-				status: input.document.status,
-				payload: input.document.payload,
-				meta: input.document.meta,
-			},
+			document: parsed.document,
 		},
 	});
+
+	const document = DocumentResponseSchema.parse(response).document;
 
 	await logEventFromContext(
 		ctx,
 		'pdfmonkey.documents.createDocument',
 		{
-			document_template_id: input.document.document_template_id,
-			status: input.document.status,
+			document_template_id: parsed.document.document_template_id,
+			status: parsed.document.status,
 		},
 		'completed',
 	);
 
-	return response;
+	return document;
 };
 
-/** Create a document synchronously (waits for generation to complete) */
 export const createDocumentSync: PDFMonkeyEndpoints['createDocumentSync'] =
 	async (ctx, input) => {
-		const response = await makePdfMonkeyRequest<
-			PDFMonkeyEndpointOutputs['createDocumentSync']
-		>('/api/v1/documents/sync', {
-			apiKey: ctx.key,
-			method: 'POST',
-			body: {
-				document: {
-					document_template_id: input.document.document_template_id,
-					status: input.document.status,
-					payload: input.document.payload,
-					meta: input.document.meta,
+		const parsed = CreateDocumentSyncInputSchema.parse(input);
+		const response = await makePdfMonkeyRequest<unknown>(
+			'/api/v1/documents/sync',
+			{
+				apiKey: ctx.key,
+				method: 'POST',
+				body: {
+					document: parsed.document,
 				},
 			},
-		});
+		);
+
+		const documentCard =
+			DocumentCardResponseSchema.parse(response).document_card;
 
 		await logEventFromContext(
 			ctx,
 			'pdfmonkey.documents.createDocumentSync',
 			{
-				document_template_id: input.document.document_template_id,
-				status: input.document.status,
+				document_template_id: parsed.document.document_template_id,
+				status: parsed.document.status,
 			},
 			'completed',
 		);
 
-		return response;
+		return documentCard;
 	};
 
-/** Get a document card (status + download URL) */
 export const getDocumentCard: PDFMonkeyEndpoints['getDocumentCard'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makePdfMonkeyRequest<
-		PDFMonkeyEndpointOutputs['getDocumentCard']
-	>('/api/v1/document_cards/' + input.id, {
-		apiKey: ctx.key,
-		method: 'GET',
-	});
+	const parsed = GetDocumentCardInputSchema.parse(input);
+	const response = await makePdfMonkeyRequest<unknown>(
+		'/api/v1/document_cards/' + parsed.id,
+		{
+			apiKey: ctx.key,
+			method: 'GET',
+		},
+	);
+
+	const documentCard = DocumentCardResponseSchema.parse(response).document_card;
 
 	await logEventFromContext(
 		ctx,
 		'pdfmonkey.documents.getDocumentCard',
-		{ id: input.id },
+		{ id: parsed.id },
 		'completed',
 	);
 
-	return response;
+	return documentCard;
 };
 
-/** List document cards (paginated with filters) */
 export const listDocumentCards: PDFMonkeyEndpoints['listDocumentCards'] =
 	async (ctx, input) => {
-		const response = await makePdfMonkeyRequest<
-			PDFMonkeyEndpointOutputs['listDocumentCards']
-		>('/api/v1/document_cards', {
-			apiKey: ctx.key,
-			method: 'GET',
-			query: {
-				page: input.page,
-				q_document_template_id: input.q_document_template_id,
-				q_status: input.q_status,
-				q_workspace_id: input.q_workspace_id,
-				q_updated_since: input.q_updated_since,
-				q_search: input.q_search,
+		const parsed = ListDocumentCardsInputSchema.parse(input);
+		const response = await makePdfMonkeyRequest<unknown>(
+			'/api/v1/document_cards',
+			{
+				apiKey: ctx.key,
+				method: 'GET',
+				query: {
+					page: { number: parsed.page },
+					q: {
+						document_template_id: parsed.q?.document_template_id,
+						status: parsed.q?.status,
+						workspace_id: parsed.q?.workspace_id,
+						updated_since: parsed.q?.updated_since,
+						search: parsed.q?.search,
+					},
+				},
 			},
-		});
+		);
+
+		const output = ListDocumentCardsOutputSchema.parse(response);
 
 		await logEventFromContext(
 			ctx,
 			'pdfmonkey.documents.listDocumentCards',
 			{
-				page: input.page,
-				q_status: input.q_status,
+				page: parsed.page,
+				status: parsed.q?.status,
 			},
 			'completed',
 		);
 
-		return response;
+		return output;
 	};
 
-/** Get a full document (with payload and generation logs) */
 export const getDocument: PDFMonkeyEndpoints['getDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makePdfMonkeyRequest<
-		PDFMonkeyEndpointOutputs['getDocument']
-	>('/api/v1/documents/' + input.id, {
-		apiKey: ctx.key,
-		method: 'GET',
-	});
+	const parsed = GetDocumentInputSchema.parse(input);
+	const response = await makePdfMonkeyRequest<unknown>(
+		'/api/v1/documents/' + parsed.id,
+		{
+			apiKey: ctx.key,
+			method: 'GET',
+		},
+	);
+
+	const document = DocumentResponseSchema.parse(response).document;
 
 	await logEventFromContext(
 		ctx,
 		'pdfmonkey.documents.getDocument',
-		{ id: input.id },
+		{ id: parsed.id },
 		'completed',
 	);
 
-	return response;
+	return document;
 };
 
-/** Update a document */
 export const updateDocument: PDFMonkeyEndpoints['updateDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const document = input.document;
-	if (!document) {
-		throw new Error('document is required for update');
-	}
-	const body: Record<string, unknown> = {};
-	if (document.document_template_id !== undefined)
-		body.document_template_id = document.document_template_id;
-	if (document.status !== undefined) body.status = document.status;
-	if (document.payload !== undefined) body.payload = document.payload;
-	if (document.meta !== undefined) body.meta = document.meta;
-
-	const response = await makePdfMonkeyRequest<
-		PDFMonkeyEndpointOutputs['updateDocument']
-	>('/api/v1/documents/' + input.document_id, {
-		apiKey: ctx.key,
-		method: 'PUT',
-		body: {
-			document: body,
+	const parsed = UpdateDocumentInputSchema.parse(input);
+	const response = await makePdfMonkeyRequest<unknown>(
+		'/api/v1/documents/' + parsed.document_id,
+		{
+			apiKey: ctx.key,
+			method: 'PUT',
+			body: {
+				document: parsed.document,
+			},
 		},
-	});
+	);
+
+	const document = DocumentResponseSchema.parse(response).document;
 
 	await logEventFromContext(
 		ctx,
 		'pdfmonkey.documents.updateDocument',
-		{ document_id: input.document_id },
+		{ document_id: parsed.document_id },
 		'completed',
 	);
 
-	return response;
+	return document;
 };
 
-/** Delete a document */
 export const deleteDocument: PDFMonkeyEndpoints['deleteDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makePdfMonkeyRequest<
-		PDFMonkeyEndpointOutputs['deleteDocument']
-	>('/api/v1/documents/' + input.id, {
+	const parsed = DeleteDocumentInputSchema.parse(input);
+	await makePdfMonkeyRequest<unknown>('/api/v1/documents/' + parsed.id, {
 		apiKey: ctx.key,
 		method: 'DELETE',
 	});
@@ -196,9 +200,9 @@ export const deleteDocument: PDFMonkeyEndpoints['deleteDocument'] = async (
 	await logEventFromContext(
 		ctx,
 		'pdfmonkey.documents.deleteDocument',
-		{ id: input.id },
+		{ id: parsed.id },
 		'completed',
 	);
 
-	return response;
+	return PDFMonkeyEndpointOutputSchemas.deleteDocument.parse({ success: true });
 };

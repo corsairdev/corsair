@@ -1,6 +1,5 @@
 import * as Documents from './documents';
 import * as Templates from './templates';
-import * as Types from './types';
 
 export const Template = {
 	listTemplateCards: Templates.listTemplateCards,
