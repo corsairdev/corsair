@@ -7,7 +7,9 @@ import { verifyResendWebhookSignature } from './types';
 const TIMESTAMP = Math.floor(Date.now() / 1000);
 const RECENT_TIMESTAMP = String(TIMESTAMP);
 
-const secret = 'whsec_MfKQ9r8GKYqrTwjUPD8ILPZIo2gAqNLy';
+const secret =
+	'whsec_' +
+	Buffer.from('test_secret_for_mock_webhook_verification').toString('base64');
 const payload: ResendWebhookPayload = {
 	type: 'email.sent',
 	created_at: '2026-01-01T00:00:00.000Z',
