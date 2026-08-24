@@ -75,6 +75,13 @@ export async function getManagedAccessToken(
 			}
 		}
 
+		// Without a local refresh_token the Hub has nothing to mint from either —
+		// it no longer stores managed tokens — so a refresh is impossible. Surface
+		// it as a reconnect instead of a doomed token-less Hub call.
+		if (!refreshToken) {
+			throw new AuthMissingError(plugin, 'managed');
+		}
+
 		const tokens = await refreshManagedTokensFromHub(
 			hub,
 			plugin,
@@ -101,18 +108,14 @@ async function refreshManagedTokensFromHub(
 	hub: HubConfig,
 	plugin: string,
 	tenantId: string,
-	refreshToken?: string | null,
+	refreshToken: string,
 ) {
 	try {
 		return await hubApiPost({
 			hub,
 			path: '/oauth/refresh',
-			// Send the SDK's own refresh_token when it has one so Hub mints
-			// statelessly; without it, Hub falls back to the managed_connection it
-			// still holds for legacy connections.
-			body: refreshToken
-				? { plugin, tenantId, refresh_token: refreshToken }
-				: { plugin, tenantId },
+			// The SDK holds the token; Hub mints statelessly from its client_secret.
+			body: { plugin, tenantId, refresh_token: refreshToken },
 			parseResponse: parseOAuthRefreshResponse,
 		});
 	} catch (error) {
