@@ -27,12 +27,14 @@ export const BaseProviders = [
 	'agentmail',
 	'agentql',
 	'agenty',
+	'agilitycms',
 	'ahrefs',
 	'aimlapi',
-	'allimagesai',
 	'airtable',
+	'aivoov',
 	'alchemy',
 	'algolia',
+	'allimagesai',
 	'alphavantage',
 	'altoviz',
 	'alttextai',
@@ -69,6 +71,7 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'botpress',
+	'bouncer',
 	'box',
 	'bugsnag',
 	'cal',
@@ -83,10 +86,14 @@ export const BaseProviders = [
 	'collegefootballdata',
 	'confluence',
 	'contentfulgraphql',
+	'crowterminal',
 	'cursor',
+	'customgpt',
 	'databricks',
 	'datadog',
 	'deepseek',
+	'devinmcp',
+	'diffbot',
 	'digitalocean',
 	'discord',
 	'dockerhub',
@@ -107,6 +114,7 @@ export const BaseProviders = [
 	'googleaddressvalidation',
 	'googlebigquery',
 	'googlecalendar',
+	'googlecloudvision',
 	'googledocs',
 	'googledrive',
 	'googlemaps',
@@ -121,6 +129,7 @@ export const BaseProviders = [
 	'heygen',
 	'hubspot',
 	'huggingface',
+	'imgbb',
 	'insightoai',
 	'instagram',
 	'intercom',
@@ -180,6 +189,7 @@ export const BaseProviders = [
 	'vercel',
 	'webflow',
 	'whatsapp',
+	'witai',
 	'wiza',
 	'workday',
 	'xquik',
@@ -188,6 +198,7 @@ export const BaseProviders = [
 	'zendesk',
 	'zohomail',
 	'zoom',
+	'zoominfo',
 ] as const;
 
 export const ProviderDisplayNames = {
@@ -205,12 +216,14 @@ export const ProviderDisplayNames = {
 	agentmail: 'AgentMail',
 	agentql: 'AgentQL',
 	agenty: 'Agenty',
+	agilitycms: 'Agility CMS',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
-	allimagesai: 'All Images AI',
 	airtable: 'Airtable',
+	aivoov: 'AiVOOV',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
@@ -247,6 +260,7 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	botpress: 'Botpress',
+	bouncer: 'Bouncer',
 	box: 'Box',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
@@ -261,10 +275,14 @@ export const ProviderDisplayNames = {
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	contentfulgraphql: 'Contentful GraphQL',
+	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
+	customgpt: 'CustomGPT',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
+	devinmcp: 'Devin MCP',
+	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dockerhub: 'Docker Hub',
@@ -285,6 +303,7 @@ export const ProviderDisplayNames = {
 	googleaddressvalidation: 'Google Address Validation',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googlecloudvision: 'Google Cloud Vision',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
 	googlemaps: 'Google Maps',
@@ -299,6 +318,7 @@ export const ProviderDisplayNames = {
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
+	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -358,6 +378,7 @@ export const ProviderDisplayNames = {
 	vercel: 'Vercel',
 	webflow: 'Webflow',
 	whatsapp: 'WhatsApp',
+	witai: 'WitAi',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	xquik: 'XQuik',
@@ -366,6 +387,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
+	zoominfo: 'ZoomInfo',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -390,12 +412,14 @@ export type AllProviders =
 	| 'agentmail'
 	| 'agentql'
 	| 'agenty'
+	| 'agilitycms'
 	| 'ahrefs'
 	| 'aimlapi'
-	| 'allimagesai'
 	| 'airtable'
+	| 'aivoov'
 	| 'alchemy'
 	| 'algolia'
+	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
 	| 'alttextai'
@@ -432,6 +456,7 @@ export type AllProviders =
 	| 'bluesky'
 	| 'boloforms'
 	| 'botpress'
+	| 'bouncer'
 	| 'box'
 	| 'bugsnag'
 	| 'cal'
@@ -446,10 +471,14 @@ export type AllProviders =
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'contentfulgraphql'
+	| 'crowterminal'
 	| 'cursor'
+	| 'customgpt'
 	| 'databricks'
 	| 'datadog'
 	| 'deepseek'
+	| 'devinmcp'
+	| 'diffbot'
 	| 'digitalocean'
 	| 'discord'
 	| 'dockerhub'
@@ -470,6 +499,7 @@ export type AllProviders =
 	| 'googleaddressvalidation'
 	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googlecloudvision'
 	| 'googledocs'
 	| 'googledrive'
 	| 'googlemaps'
@@ -484,6 +514,7 @@ export type AllProviders =
 	| 'heygen'
 	| 'hubspot'
 	| 'huggingface'
+	| 'imgbb'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
@@ -543,6 +574,7 @@ export type AllProviders =
 	| 'vercel'
 	| 'webflow'
 	| 'whatsapp'
+	| 'witai'
 	| 'wiza'
 	| 'workday'
 	| 'xquik'
@@ -551,6 +583,7 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zohomail'
 	| 'zoom'
+	| 'zoominfo'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
