@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { createHmac } from 'crypto';
 import { z } from 'zod';
 
 export const PDFMonkeyWebhookPayloadSchema = z.object({
@@ -59,14 +60,34 @@ export function verifyPDFMonkeyWebhookSignature(
 	request: WebhookRequest<PDFMonkeyWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	const signature = request.headers['x-signature'];
-	if (!signature) {
-		return { valid: false, error: 'Missing signature header' };
+	const svixId = request.headers['svix-id'];
+	const svixTimestamp = request.headers['svix-timestamp'];
+	const svixSignature = request.headers['svix-signature'];
+
+	if (!svixId || !svixTimestamp || !svixSignature) {
+		return { valid: false, error: 'Missing Svix webhook headers' };
 	}
-	// TODO: Implement proper HMAC-SHA256 signature verification using the secret
-	// For now, reject since verification is not implemented
-	return {
-		valid: false,
-		error: 'Webhook signature verification not implemented',
-	};
+
+	const payload = parseBody(request);
+	const message = `${svixTimestamp}.${svixId}`;
+
+	const hmac = createHmac('sha256', secret);
+	hmac.update(message);
+	const digest = hmac.digest('hex');
+
+	const signatures = Array.isArray(svixSignature)
+		? svixSignature
+		: svixSignature.split(',');
+	const isValid = signatures.some((signature) => {
+		const signatureParts = String(signature).split('=');
+		const key = signatureParts[0];
+		const value = signatureParts.slice(1).join('=').trim();
+		return key === 't' ? value === digest : false;
+	});
+
+	if (!isValid) {
+		return { valid: false, error: 'Invalid webhook signature' };
+	}
+
+	return { valid: true };
 }
