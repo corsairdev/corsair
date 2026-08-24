@@ -43,7 +43,7 @@ function buildConfig(apiKey?: string, isWrite = false): OpenAPIConfig {
 		CREDENTIALS: 'omit',
 		TOKEN: undefined,
 		HEADERS: {
-			...(apiKey ? { Authorization: apiKey } : {}),
+			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
 			...(isWrite ? { 'Content-Type': 'application/json' } : {}),
 		},
 	};
