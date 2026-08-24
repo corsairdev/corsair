@@ -18,8 +18,14 @@ export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (getStatus(error) === 429) return true;
+			if (error instanceof UniswapApiAPIError) {
+				const code = error.code?.toLowerCase();
+				if (code === 'too_many_requests' || code === 'rate_limited') {
+					return true;
+				}
+			}
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return msg.includes('rate_limited') || msg.includes('too many requests');
 		},
 		handler: async (error: Error) => {
 			return { maxRetries: 5, headersRetryAfterMs: getRetryAfter(error) };
