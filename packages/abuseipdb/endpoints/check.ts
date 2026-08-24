@@ -32,7 +32,7 @@ export const check: AbuseIPDBEndpoints['checkIp'] = async (ctx, input) => {
 	// runtime before returning it.
 	const checkResult = CheckIpResponseSchema.parse(response.data);
 
-	if (ctx.db.ipChecks) {
+	if (ctx.db?.ipChecks) {
 		try {
 			await ctx.db.ipChecks.upsertByEntityId(checkResult.ipAddress, {
 				ipAddress: checkResult.ipAddress,

@@ -27,6 +27,21 @@ export const clear: AbuseIPDBEndpoints['clearAddress'] = async (ctx, input) => {
 
 	const clearResult = ClearAddressResponseSchema.parse(response.data);
 
+	if (ctx.db?.reports) {
+		try {
+			await ctx.db.reports.deleteByEntityId(input.ipAddress);
+		} catch (error) {
+			console.warn('Failed to remove report from database:', error);
+		}
+	}
+	if (ctx.db?.ipChecks) {
+		try {
+			await ctx.db.ipChecks.deleteByEntityId(input.ipAddress);
+		} catch (error) {
+			console.warn('Failed to remove IP check from database:', error);
+		}
+	}
+
 	await logEventFromContext(
 		ctx,
 		'abuseipdb.address.clear',

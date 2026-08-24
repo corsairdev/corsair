@@ -43,7 +43,7 @@ describeOrSkip('AbuseIPDB API Type Tests', () => {
 		const response = await makeAbuseIPDBRequest<{ data: CheckIpResponse }>(
 			'check',
 			ABUSEIPDB_API_KEY!,
-			{ query: { ipAddress: TEST_IP, verbose: true } },
+			{ query: { ipAddress: TEST_IP, verbose: '' } },
 		);
 
 		const parsed = AbuseIPDBEndpointOutputSchemas.checkIp.parse(response.data);

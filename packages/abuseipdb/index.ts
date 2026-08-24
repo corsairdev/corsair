@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { tryGetStoredKey } from './client';
 import {
 	Blacklist,
@@ -258,17 +259,16 @@ export function abuseipdb<const T extends AbuseIPDBPluginOptions>(
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: AbuseIPDBKeyBuilderContext, source) => {
-			// Direct shared key from options takes priority.
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
-			// Fall back to the key stored in the account key manager. A
-			// database-less/KEK-less setup only using `options.key` has no
-			// DEK, so tryGetStoredKey resolves that to "no stored key".
 			if (source === 'endpoint') {
 				const res = await tryGetStoredKey(() => ctx.keys?.get_api_key());
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('abuseipdb', 'api_key');
+				}
+				return res;
 			}
 
 			return '';

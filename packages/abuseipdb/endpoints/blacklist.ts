@@ -44,21 +44,6 @@ export const get: AbuseIPDBEndpoints['getBlacklist'] = async (ctx, input) => {
 		entries: response.data,
 	});
 
-	if (ctx.db?.blacklistEntries) {
-		try {
-			for (const entry of blacklistResult.entries) {
-				await ctx.db.blacklistEntries.upsertByEntityId(entry.ipAddress, {
-					ipAddress: entry.ipAddress,
-					abuseConfidenceScore: entry.abuseConfidenceScore,
-					lastReportedAt: entry.lastReportedAt ?? null,
-					countryCode: entry.countryCode ?? null,
-				});
-			}
-		} catch (error) {
-			console.warn('Failed to save blacklist entries to database:', error);
-		}
-	}
-
 	await logEventFromContext(
 		ctx,
 		'abuseipdb.blacklist.get',

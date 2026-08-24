@@ -8,6 +8,7 @@ import {
 	ReportIp,
 	Reports,
 } from './endpoints';
+import { ReportIpInputSchema } from './endpoints/types';
 
 jest.mock('corsair/core', () => {
 	const original = jest.requireActual('corsair/core');
@@ -34,12 +35,11 @@ function createContext() {
 		db: {
 			ipChecks: {
 				upsertByEntityId: jest.fn(async () => undefined),
+				deleteByEntityId: jest.fn(async () => true),
 			},
 			reports: {
 				upsertByEntityId: jest.fn(async () => undefined),
-			},
-			blacklistEntries: {
-				upsertByEntityId: jest.fn(async () => undefined),
+				deleteByEntityId: jest.fn(async () => true),
 			},
 		},
 	};
@@ -148,7 +148,7 @@ describe('AbuseIPDB endpoint operations', () => {
 		expect(result.results).toHaveLength(1);
 	});
 
-	it('blacklist.get flattens meta/data and persists each entry', async () => {
+	it('blacklist.get flattens meta/data without persisting entries', async () => {
 		mockRequest.mockResolvedValue({
 			meta: { generatedAt: '2024-03-22T00:00:00+00:00' },
 			data: [
@@ -197,14 +197,8 @@ describe('AbuseIPDB endpoint operations', () => {
 				},
 			],
 		});
-		expect(ctx.db.blacklistEntries.upsertByEntityId).toHaveBeenCalledTimes(2);
-		expect(ctx.db.blacklistEntries.upsertByEntityId).toHaveBeenCalledWith(
-			'118.25.6.39',
-			expect.objectContaining({
-				ipAddress: '118.25.6.39',
-				abuseConfidenceScore: 100,
-			}),
-		);
+		expect(ctx.db.ipChecks.upsertByEntityId).not.toHaveBeenCalled();
+		expect(ctx.db.reports.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('report.ip POSTs form fields and persists the report', async () => {
@@ -264,7 +258,7 @@ describe('AbuseIPDB endpoint operations', () => {
 		expect(result.networkAddress).toBe('118.25.6.0');
 	});
 
-	it('address.clear DELETEs with the IP query', async () => {
+	it('address.clear DELETEs with the IP query and drops local cache rows', async () => {
 		mockRequest.mockResolvedValue({ data: { numReportsDeleted: 4 } });
 		const ctx = createContext();
 
@@ -276,6 +270,27 @@ describe('AbuseIPDB endpoint operations', () => {
 			method: 'DELETE',
 			query: { ipAddress: '118.25.6.39' },
 		});
+		expect(ctx.db.reports.deleteByEntityId).toHaveBeenCalledWith('118.25.6.39');
+		expect(ctx.db.ipChecks.deleteByEntityId).toHaveBeenCalledWith(
+			'118.25.6.39',
+		);
 		expect(result.numReportsDeleted).toBe(4);
+	});
+
+	it('rejects a report timestamp that is not ISO-8601', () => {
+		expect(() =>
+			ReportIpInputSchema.parse({
+				ip: '118.25.6.39',
+				categories: [18],
+				timestamp: 'tomorrow',
+			}),
+		).toThrow();
+		expect(() =>
+			ReportIpInputSchema.parse({
+				ip: '118.25.6.39',
+				categories: [18],
+				timestamp: '2024-03-22T10:09:09+00:00',
+			}),
+		).not.toThrow();
 	});
 });

@@ -105,18 +105,21 @@ const NO_RETRY: RateLimitConfig = {
 	},
 };
 
+const MAX_RETRY_DELAY_MS = 30_000;
+
 function isRetryableAbuseError(error: unknown): error is AbuseIPDBAPIError {
 	if (!(error instanceof AbuseIPDBAPIError) || error.status === undefined) {
 		return false;
 	}
-	return error.status === 429 || error.status >= 500;
+	return error.status >= 500;
 }
 
 function retryDelayMs(error: AbuseIPDBAPIError, attempt: number): number {
-	if (typeof error.retryAfter === 'number' && error.retryAfter >= 0) {
-		return error.retryAfter;
-	}
-	return 2 ** attempt * 1000;
+	const fromHeader =
+		typeof error.retryAfter === 'number' && error.retryAfter >= 0
+			? error.retryAfter
+			: 2 ** attempt * 1000;
+	return Math.min(fromHeader, MAX_RETRY_DELAY_MS);
 }
 
 export async function makeAbuseIPDBRequest<T>(

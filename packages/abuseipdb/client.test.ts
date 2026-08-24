@@ -164,16 +164,14 @@ describe('makeAbuseIPDBRequest', () => {
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 	});
 
-	it('retries a 429 on GET then returns the body', async () => {
-		mockRequest
-			.mockRejectedValueOnce(apiError(429, 0))
-			.mockRejectedValueOnce(apiError(429, 0))
-			.mockResolvedValueOnce({ data: { ipAddress: '1.1.1.1' } });
+	it('does not retry a 429 on GET', async () => {
+		mockRequest.mockRejectedValue(apiError(429, 0));
 
-		await expect(makeAbuseIPDBRequest('check', 'k')).resolves.toEqual({
-			data: { ipAddress: '1.1.1.1' },
+		await expect(makeAbuseIPDBRequest('check', 'k')).rejects.toMatchObject({
+			name: 'AbuseIPDBAPIError',
+			status: 429,
 		});
-		expect(mockRequest).toHaveBeenCalledTimes(3);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
 	});
 
 	it('retries a 5xx on GET then returns the body', async () => {
@@ -211,12 +209,12 @@ describe('makeAbuseIPDBRequest', () => {
 		expect(mockRequest).toHaveBeenCalledTimes(1);
 	});
 
-	it('rethrows after exhausting GET 429 retries', async () => {
-		mockRequest.mockRejectedValue(apiError(429, 0));
+	it('rethrows after exhausting GET 5xx retries', async () => {
+		mockRequest.mockRejectedValue(apiError(500, 0));
 
 		await expect(makeAbuseIPDBRequest('check', 'k')).rejects.toMatchObject({
 			name: 'AbuseIPDBAPIError',
-			status: 429,
+			status: 500,
 		});
 		expect(mockRequest).toHaveBeenCalledTimes(6);
 	});

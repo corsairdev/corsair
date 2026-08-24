@@ -195,8 +195,8 @@ export const ReportIpInputSchema = z.object({
 		.optional()
 		.describe('Descriptive text of the attack; avoid any PII'),
 	/** ISO 8601 datetime of the attack, defaults to now */
-	timestamp: z
-		.string()
+	timestamp: z.iso
+		.datetime({ offset: true })
 		.optional()
 		.describe('ISO 8601 datetime of the attack, defaults to now'),
 });
