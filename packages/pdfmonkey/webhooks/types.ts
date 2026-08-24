@@ -59,6 +59,14 @@ export function verifyPDFMonkeyWebhookSignature(
 	request: WebhookRequest<PDFMonkeyWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	return { valid: true };
+	const signature = request.headers['x-signature'];
+	if (!signature) {
+		return { valid: false, error: 'Missing signature header' };
+	}
+	// TODO: Implement proper HMAC-SHA256 signature verification using the secret
+	// For now, reject since verification is not implemented
+	return {
+		valid: false,
+		error: 'Webhook signature verification not implemented',
+	};
 }

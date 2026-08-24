@@ -24,7 +24,7 @@ export type DocumentTemplateCard = z.infer<typeof DocumentTemplateCardSchema>;
 export const ListTemplateCardsInputSchema = z.object({
 	q_workspace_id: z.string(),
 	q_folders: z.string().optional(),
-	page: z.number().int().positive().default(1),
+	page: z.number().int().nonnegative().default(1),
 	sort: z.string().optional(),
 });
 
@@ -36,9 +36,9 @@ export const ListTemplateCardsOutputSchema = z.object({
 	document_template_cards: z.array(DocumentTemplateCardSchema),
 	meta: z
 		.object({
-			page: z.number().int().positive(),
-			total: z.number().int().positive(),
-			totalPages: z.number().int().positive(),
+			page: z.number().int().nonnegative(),
+			total: z.number().int().nonnegative(),
+			totalPages: z.number().int().nonnegative(),
 		})
 		.optional(),
 });
@@ -212,8 +212,8 @@ export type DocumentCreateResponse = z.infer<
 	typeof DocumentCreateResponseSchema
 >;
 
-/** Document sync response (same as create, waits for generation) */
-export const DocumentSyncResponseSchema = DocumentSchema;
+/** Document sync response — document card after generation completes */
+export const DocumentSyncResponseSchema = DocumentCardSchema;
 
 export type DocumentSyncResponse = z.infer<typeof DocumentSyncResponseSchema>;
 
@@ -231,7 +231,7 @@ export type GetDocumentCardInput = z.infer<typeof GetDocumentCardInputSchema>;
 
 /** Input for listing document cards */
 export const ListDocumentCardsInputSchema = z.object({
-	page: z.number().int().positive().default(1),
+	page: z.number().int().nonnegative().default(1),
 	q_document_template_id: z.string().optional(),
 	q_status: z
 		.enum(['draft', 'pending', 'generating', 'success', 'failure'])
@@ -249,9 +249,9 @@ export const ListDocumentCardsOutputSchema = z.object({
 	document_cards: z.array(DocumentCardSchema),
 	meta: z
 		.object({
-			page: z.number().int().positive(),
-			total: z.number().int().positive(),
-			totalPages: z.number().int().positive(),
+			page: z.number().int().nonnegative(),
+			total: z.number().int().nonnegative(),
+			totalPages: z.number().int().nonnegative(),
 		})
 		.optional(),
 });

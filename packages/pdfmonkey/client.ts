@@ -27,7 +27,7 @@ export class Api2PdfAPIError extends Error {
 
 const API2PDF_API_BASE = 'https://api.pdfmonkey.io';
 
-export type Api2PdfRequestOptions = {
+export type PdfMonkeyRequestOptions = {
 	apiKey?: string;
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	// Endpoint payloads differ per operation; Record keeps the client generic.
@@ -52,6 +52,9 @@ function buildConfig(apiKey?: string, isWrite = false): OpenAPIConfig {
 // Catch values are untyped at runtime; unknown forces narrowing to ApiError/Error
 // before rethrowing as Api2PdfAPIError.
 async function handleRequestError(error: unknown): Promise<never> {
+	if (error instanceof Api2PdfAPIError) {
+		throw error;
+	}
 	if (error instanceof ApiError) {
 		throw new Api2PdfAPIError(error.message, error.status, {
 			cause: error,
@@ -64,14 +67,14 @@ async function handleRequestError(error: unknown): Promise<never> {
 }
 
 /**
- * Performs a request to the API2PDF REST API.
+ * Performs a request to the PDFMonkey REST API.
  *
- * Auth: API key via the `Authorization` header (raw key string per official SDKs).
+ * Auth: API key via the `Authorization` header using `Bearer <secret_key>`.
  * The `/status` health check does not require authentication.
  */
-export async function makeApi2PdfRequest<T>(
+export async function makePdfMonkeyRequest<T>(
 	endpoint: string,
-	options: Api2PdfRequestOptions = {},
+	options: PdfMonkeyRequestOptions = {},
 ): Promise<T> {
 	const { apiKey, method = 'GET', body, query = {} } = options;
 	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
@@ -94,9 +97,9 @@ export async function makeApi2PdfRequest<T>(
 }
 
 /** Plain-text health check (returns e.g. "OK"). */
-export async function makeApi2PdfTextRequest(
+export async function makePdfMonkeyTextRequest(
 	endpoint: string,
-	options: Pick<Api2PdfRequestOptions, 'apiKey' | 'method' | 'query'> = {},
+	options: Pick<PdfMonkeyRequestOptions, 'apiKey' | 'method' | 'query'> = {},
 ): Promise<string> {
 	const { apiKey, method = 'GET', query = {} } = options;
 	const config = buildConfig(apiKey);

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeApi2PdfRequest } from '../client';
+import { makePdfMonkeyRequest } from '../client';
 import type { PDFMonkeyEndpoints } from '../index';
 import type {
 	PDFMonkeyEndpointInputs,
@@ -11,7 +11,7 @@ export const createDocument: PDFMonkeyEndpoints['createDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeApi2PdfRequest<
+	const response = await makePdfMonkeyRequest<
 		PDFMonkeyEndpointOutputs['createDocument']
 	>('/api/v1/documents', {
 		apiKey: ctx.key,
@@ -42,7 +42,7 @@ export const createDocument: PDFMonkeyEndpoints['createDocument'] = async (
 /** Create a document synchronously (waits for generation to complete) */
 export const createDocumentSync: PDFMonkeyEndpoints['createDocumentSync'] =
 	async (ctx, input) => {
-		const response = await makeApi2PdfRequest<
+		const response = await makePdfMonkeyRequest<
 			PDFMonkeyEndpointOutputs['createDocumentSync']
 		>('/api/v1/documents/sync', {
 			apiKey: ctx.key,
@@ -75,7 +75,7 @@ export const getDocumentCard: PDFMonkeyEndpoints['getDocumentCard'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeApi2PdfRequest<
+	const response = await makePdfMonkeyRequest<
 		PDFMonkeyEndpointOutputs['getDocumentCard']
 	>('/api/v1/document_cards/' + input.id, {
 		apiKey: ctx.key,
@@ -95,7 +95,7 @@ export const getDocumentCard: PDFMonkeyEndpoints['getDocumentCard'] = async (
 /** List document cards (paginated with filters) */
 export const listDocumentCards: PDFMonkeyEndpoints['listDocumentCards'] =
 	async (ctx, input) => {
-		const response = await makeApi2PdfRequest<
+		const response = await makePdfMonkeyRequest<
 			PDFMonkeyEndpointOutputs['listDocumentCards']
 		>('/api/v1/document_cards', {
 			apiKey: ctx.key,
@@ -128,7 +128,7 @@ export const getDocument: PDFMonkeyEndpoints['getDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeApi2PdfRequest<
+	const response = await makePdfMonkeyRequest<
 		PDFMonkeyEndpointOutputs['getDocument']
 	>('/api/v1/documents/' + input.id, {
 		apiKey: ctx.key,
@@ -150,7 +150,10 @@ export const updateDocument: PDFMonkeyEndpoints['updateDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const document = input.document!;
+	const document = input.document;
+	if (!document) {
+		throw new Error('document is required for update');
+	}
 	const body: Record<string, unknown> = {};
 	if (document.document_template_id !== undefined)
 		body.document_template_id = document.document_template_id;
@@ -158,7 +161,7 @@ export const updateDocument: PDFMonkeyEndpoints['updateDocument'] = async (
 	if (document.payload !== undefined) body.payload = document.payload;
 	if (document.meta !== undefined) body.meta = document.meta;
 
-	const response = await makeApi2PdfRequest<
+	const response = await makePdfMonkeyRequest<
 		PDFMonkeyEndpointOutputs['updateDocument']
 	>('/api/v1/documents/' + input.document_id, {
 		apiKey: ctx.key,
@@ -183,7 +186,7 @@ export const deleteDocument: PDFMonkeyEndpoints['deleteDocument'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeApi2PdfRequest<
+	const response = await makePdfMonkeyRequest<
 		PDFMonkeyEndpointOutputs['deleteDocument']
 	>('/api/v1/documents/' + input.id, {
 		apiKey: ctx.key,
