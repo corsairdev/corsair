@@ -1,4 +1,5 @@
 import { UniswapApiSchema } from './schema';
+import { UniswapSwapStatus } from './schema/database';
 
 describe('UniswapApi schema', () => {
 	it('declares a semver version', () => {
@@ -13,6 +14,23 @@ describe('UniswapApi schema', () => {
 		for (const entity of Object.values(UniswapApiSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
+	});
+
+	it('accepts live Trading API swap statuses', () => {
+		expect(
+			UniswapSwapStatus.safeParse({
+				txHash: '0xdead',
+				chainId: 1,
+				status: 'SUCCESS',
+			}).success,
+		).toBe(true);
+		expect(
+			UniswapSwapStatus.safeParse({
+				txHash: '0xdead',
+				chainId: 1,
+				status: 'confirmed',
+			}).success,
+		).toBe(false);
 	});
 });
 

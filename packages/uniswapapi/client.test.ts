@@ -1,6 +1,8 @@
+import { AuthMissingError } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import { makeUniswapApiRequest, UniswapApiAPIError } from './client';
 import { errorHandlers } from './error-handlers';
+import { uniswapapi } from './index';
 
 jest.mock('corsair/http', () => ({
 	...jest.requireActual('corsair/http'),
@@ -90,6 +92,22 @@ describe('makeUniswapApiRequest', () => {
 		expect(error.retryAfter).toBeUndefined();
 		expect(error.message).toBe('network down');
 	});
+
+	it('authenticates with x-api-key and does not set a bearer TOKEN', async () => {
+		mockedRequest.mockResolvedValueOnce({ requestId: 'req-1' });
+
+		await makeUniswapApiRequest('/v1/orders', 'test-api-key');
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				TOKEN: undefined,
+				HEADERS: expect.objectContaining({
+					'x-api-key': 'test-api-key',
+				}),
+			}),
+			expect.anything(),
+		);
+	});
 });
 
 describe('errorHandlers', () => {
@@ -108,5 +126,58 @@ describe('errorHandlers', () => {
 			maxRetries: 5,
 			headersRetryAfterMs: 2500,
 		});
+	});
+
+	it('does not treat an unrelated message that mentions 429 as a rate limit', () => {
+		const error = new UniswapApiAPIError('order 429 is not a valid status');
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(false);
+	});
+});
+
+describe('keyBuilder', () => {
+	function getKeyBuilder(plugin: ReturnType<typeof uniswapapi>) {
+		return plugin.keyBuilder as (
+			ctx: unknown,
+			source: string,
+		) => Promise<string>;
+	}
+
+	it('returns an explicit option key', async () => {
+		const keyBuilder = getKeyBuilder(uniswapapi({ key: 'explicit-key' }));
+		await expect(
+			keyBuilder(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: jest.fn() },
+				},
+				'endpoint',
+			),
+		).resolves.toBe('explicit-key');
+	});
+
+	it('returns the stored api key', async () => {
+		const keyBuilder = getKeyBuilder(uniswapapi());
+		await expect(
+			keyBuilder(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => 'stored-key' },
+				},
+				'endpoint',
+			),
+		).resolves.toBe('stored-key');
+	});
+
+	it('throws AuthMissingError when no key is available', async () => {
+		const keyBuilder = getKeyBuilder(uniswapapi());
+		await expect(
+			keyBuilder(
+				{
+					authType: 'api_key',
+					keys: { get_api_key: async () => undefined },
+				},
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
 	});
 });

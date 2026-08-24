@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import * as client from '../client';
 import {
 	Approval,
@@ -196,6 +197,12 @@ describe('Uniswap API endpoints', () => {
 					quote,
 				},
 			});
+			expect(logEventFromContext).toHaveBeenCalledWith(
+				ctx,
+				'uniswapapi.swap.create',
+				{ quote },
+				'completed',
+			);
 		});
 
 		it('sends permitData together with its signature', async () => {
