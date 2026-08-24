@@ -1,9 +1,9 @@
+import { createHmac } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
-import { verifyHmacSignatureWithPrefix } from 'corsair/http';
 import { z } from 'zod';
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -158,6 +158,42 @@ export const EmailSentEventSchema = z.object({
 });
 export type EmailSentEvent = z.infer<typeof EmailSentEventSchema>;
 
+export const EmailScheduledEventSchema = z.object({
+	type: z.literal('email.scheduled'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailScheduledEvent = z.infer<typeof EmailScheduledEventSchema>;
+
+export const EmailSuppressedEventSchema = z.object({
+	type: z.literal('email.suppressed'),
+	created_at: z.string(),
+	data: z
+		.object({
+			email_id: z.string(),
+			from: z.string(),
+			to: z.array(z.string()),
+			subject: z.string().optional(),
+			created_at: z.string(),
+			suppressed: z
+				.object({
+					message: z.string().optional(),
+					type: z.string().optional(),
+				})
+				.optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type EmailSuppressedEvent = z.infer<typeof EmailSuppressedEventSchema>;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Domain event schemas
 // ─────────────────────────────────────────────────────────────────────────────
@@ -168,6 +204,11 @@ const DomainStatusSchema = z.enum([
 	'scheduled',
 	'ready',
 	'error',
+	'verified',
+	'pending',
+	'failed',
+	'partially_verified',
+	'partially_failed',
 ]);
 
 export const DomainCreatedEventSchema = z.object({
@@ -198,6 +239,66 @@ export const DomainUpdatedEventSchema = z.object({
 });
 export type DomainUpdatedEvent = z.infer<typeof DomainUpdatedEventSchema>;
 
+export const DomainDeletedEventSchema = z.object({
+	type: z.literal('domain.deleted'),
+	created_at: z.string(),
+	data: z
+		.object({
+			id: z.string(),
+			name: z.string().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type DomainDeletedEvent = z.infer<typeof DomainDeletedEventSchema>;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Contact event schemas
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const ContactCreatedEventSchema = z.object({
+	type: z.literal('contact.created'),
+	created_at: z.string(),
+	data: z
+		.object({
+			id: z.string(),
+			email: z.string().optional(),
+			first_name: z.string().nullable().optional(),
+			last_name: z.string().nullable().optional(),
+			created_at: z.string().optional(),
+			unsubscribed: z.boolean().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type ContactCreatedEvent = z.infer<typeof ContactCreatedEventSchema>;
+
+export const ContactUpdatedEventSchema = z.object({
+	type: z.literal('contact.updated'),
+	created_at: z.string(),
+	data: z
+		.object({
+			id: z.string(),
+			email: z.string().optional(),
+			first_name: z.string().nullable().optional(),
+			last_name: z.string().nullable().optional(),
+			created_at: z.string().optional(),
+			unsubscribed: z.boolean().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type ContactUpdatedEvent = z.infer<typeof ContactUpdatedEventSchema>;
+
+export const ContactDeletedEventSchema = z.object({
+	type: z.literal('contact.deleted'),
+	created_at: z.string(),
+	data: z
+		.object({
+			id: z.string(),
+			email: z.string().optional(),
+		})
+		.catchall(z.unknown()),
+});
+export type ContactDeletedEvent = z.infer<typeof ContactDeletedEventSchema>;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // Union and map types
 // ─────────────────────────────────────────────────────────────────────────────
@@ -211,8 +312,14 @@ export const ResendWebhookEventSchema = z.union([
 	EmailOpenedEventSchema,
 	EmailReceivedEventSchema,
 	EmailSentEventSchema,
+	EmailScheduledEventSchema,
+	EmailSuppressedEventSchema,
 	DomainCreatedEventSchema,
 	DomainUpdatedEventSchema,
+	DomainDeletedEventSchema,
+	ContactCreatedEventSchema,
+	ContactUpdatedEventSchema,
+	ContactDeletedEventSchema,
 ]);
 export type ResendWebhookEvent = z.infer<typeof ResendWebhookEventSchema>;
 
@@ -225,8 +332,14 @@ export type ResendEventName =
 	| 'email.opened'
 	| 'email.received'
 	| 'email.sent'
+	| 'email.scheduled'
+	| 'email.suppressed'
 	| 'domain.created'
-	| 'domain.updated';
+	| 'domain.updated'
+	| 'domain.deleted'
+	| 'contact.created'
+	| 'contact.updated'
+	| 'contact.deleted';
 
 export interface ResendEventMap {
 	'email.bounced': EmailBouncedEvent;
@@ -237,8 +350,14 @@ export interface ResendEventMap {
 	'email.opened': EmailOpenedEvent;
 	'email.received': EmailReceivedEvent;
 	'email.sent': EmailSentEvent;
+	'email.scheduled': EmailScheduledEvent;
+	'email.suppressed': EmailSuppressedEvent;
 	'domain.created': DomainCreatedEvent;
 	'domain.updated': DomainUpdatedEvent;
+	'domain.deleted': DomainDeletedEvent;
+	'contact.created': ContactCreatedEvent;
+	'contact.updated': ContactUpdatedEvent;
+	'contact.deleted': ContactDeletedEvent;
 }
 
 export type ResendWebhookOutputs = {
@@ -250,8 +369,14 @@ export type ResendWebhookOutputs = {
 	emailOpened: EmailOpenedEvent;
 	emailReceived: EmailReceivedEvent;
 	emailSent: EmailSentEvent;
+	emailScheduled: EmailScheduledEvent;
+	emailSuppressed: EmailSuppressedEvent;
 	domainCreated: DomainCreatedEvent;
 	domainUpdated: DomainUpdatedEvent;
+	domainDeleted: DomainDeletedEvent;
+	contactCreated: ContactCreatedEvent;
+	contactUpdated: ContactUpdatedEvent;
+	contactDeleted: ContactDeletedEvent;
 };
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -262,6 +387,27 @@ function parseBody(body: unknown): unknown {
 	return typeof body === 'string' ? JSON.parse(body) : body;
 }
 
+const SVIX_TIMESTAMP_TOLERANCE_SECONDS = 5 * 60;
+
+function firstHeader(
+	headers: Record<string, unknown>,
+	name: string,
+): string | undefined {
+	const value = headers[name];
+	return Array.isArray(value) ? value[0] : (value as string | undefined);
+}
+
+/**
+ * Verify a Resend webhook request using Svix-compatible signatures.
+ *
+ * Resend delivers webhooks through Svix. A request carries `svix-id`,
+ * `svix-timestamp`, and `svix-signature` headers, and the signing secret is a
+ * Base64-encoded key with a `whsec_` prefix. The signed content is
+ * `${id}.${timestamp}.${rawBody}` and valid signatures appear as space
+ * separated `v1,<base64>` entries in the `svix-signature` header.
+ *
+ * See https://resend.com/docs/webhooks/verify-webhooks-requests
+ */
 export function verifyResendWebhookSignature(
 	request: WebhookRequest<unknown>,
 	webhookSecret?: string,
@@ -279,31 +425,91 @@ export function verifyResendWebhookSignature(
 	}
 
 	const headers = request.headers;
-	const signature = Array.isArray(headers['svix-signature'])
-		? headers['svix-signature'][0]
-		: headers['svix-signature'] ||
-			(Array.isArray(headers['x-resend-signature'])
-				? headers['x-resend-signature'][0]
-				: headers['x-resend-signature']);
+	const id = firstHeader(headers, 'svix-id');
+	const timestamp = firstHeader(headers, 'svix-timestamp');
+	const signatureHeader = firstHeader(headers, 'svix-signature');
 
-	if (!signature) {
+	if (!id || !timestamp || !signatureHeader) {
 		return {
 			valid: false,
-			error: 'Missing svix-signature or x-resend-signature header',
+			error: 'Missing svix-id, svix-timestamp, or svix-signature header',
 		};
 	}
 
-	const isValid = verifyHmacSignatureWithPrefix(
-		rawBody,
-		webhookSecret,
-		signature,
-		'sha256=',
-	);
-	if (!isValid) {
-		return { valid: false, error: 'Invalid signature' };
+	const timestampSeconds = Number.parseInt(timestamp, 10);
+	if (!Number.isFinite(timestampSeconds)) {
+		return { valid: false, error: 'Invalid svix-timestamp header' };
 	}
 
-	return { valid: true };
+	const nowSeconds = Math.floor(Date.now() / 1000);
+	if (
+		Math.abs(nowSeconds - timestampSeconds) > SVIX_TIMESTAMP_TOLERANCE_SECONDS
+	) {
+		return { valid: false, error: 'Webhook timestamp outside tolerance' };
+	}
+
+	let signingKey: Buffer;
+	try {
+		const secretMaterial = webhookSecret.startsWith('whsec_')
+			? webhookSecret.slice('whsec_'.length)
+			: webhookSecret;
+		signingKey = Buffer.from(secretMaterial, 'base64');
+	} catch {
+		return { valid: false, error: 'Invalid webhook secret encoding' };
+	}
+
+	const signedContent = `${id}.${timestamp}.${rawBody}`;
+	const expected = createHmac('sha256', signingKey)
+		.update(signedContent)
+		.digest('base64');
+
+	const providedSignatures = signatureHeader
+		.split(' ')
+		.map((entry) => entry.trim())
+		.filter(Boolean);
+
+	for (const entry of providedSignatures) {
+		const [version, value] = entry.split(',');
+		if (version !== 'v1' || !value) {
+			// Also accept old sha256= format for backwards compatibility
+			if (entry.startsWith('sha256=')) {
+				const oldHex = entry.slice('sha256='.length);
+				const oldKey = webhookSecret.startsWith('whsec_')
+					? webhookSecret.slice('whsec_'.length)
+					: webhookSecret;
+				const oldExpected = createHmac('sha256', Buffer.from(oldKey, 'base64'))
+					.update(signedContent)
+					.digest('hex');
+				if (timingSafeEqualHex(oldHex, oldExpected)) {
+					return { valid: true };
+				}
+			}
+			continue;
+		}
+		if (timingSafeEqualBase64(value, expected)) {
+			return { valid: true };
+		}
+	}
+
+	return { valid: false, error: 'Invalid signature' };
+}
+
+function timingSafeEqualBase64(a: string, b: string): boolean {
+	const bufA = Buffer.from(a);
+	const bufB = Buffer.from(b);
+	if (bufA.length !== bufB.length) {
+		return false;
+	}
+	return bufA.equals(bufB);
+}
+
+function timingSafeEqualHex(a: string, b: string): boolean {
+	const bufA = Buffer.from(a, 'hex');
+	const bufB = Buffer.from(b, 'hex');
+	if (bufA.length !== bufB.length) {
+		return false;
+	}
+	return bufA.equals(bufB);
 }
 
 export function createResendEventMatch(type: string): CorsairWebhookMatcher {

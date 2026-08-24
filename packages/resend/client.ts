@@ -1,5 +1,10 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { BaseWebhookHandler, request, verifyHmacSignature } from 'corsair/http';
+import {
+	ApiError,
+	BaseWebhookHandler,
+	request,
+	verifyHmacSignature,
+} from 'corsair/http';
 import type {
 	ResendEventMap,
 	ResendEventName,
@@ -10,6 +15,8 @@ export class ResendAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly status?: number,
+		public readonly body?: unknown,
 	) {
 		super(message);
 		this.name = 'ResendAPIError';
@@ -23,7 +30,7 @@ export async function makeResendRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: unknown;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
@@ -54,7 +61,19 @@ export async function makeResendRequest<T>(
 	try {
 		const response = await request<T>(config, requestOptions);
 		return response;
-	} catch (error) {
+	} catch (error: any) {
+		if (error instanceof ApiError) {
+			const msg =
+				typeof error.body === 'object' && error.body && 'message' in error.body
+					? String((error.body as any).message)
+					: error.message;
+			throw new ResendAPIError(
+				msg || error.message,
+				(error.body as any)?.name || (error.body as any)?.code,
+				error.status,
+				error.body,
+			);
+		}
 		if (error instanceof Error) {
 			throw new ResendAPIError(error.message);
 		}
