@@ -127,6 +127,7 @@ export const BaseProviders = [
 	'heygen',
 	'hubspot',
 	'huggingface',
+	'imgbb',
 	'insightoai',
 	'instagram',
 	'intercom',
@@ -312,6 +313,7 @@ export const ProviderDisplayNames = {
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
+	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
@@ -504,6 +506,7 @@ export type AllProviders =
 	| 'heygen'
 	| 'hubspot'
 	| 'huggingface'
+	| 'imgbb'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
