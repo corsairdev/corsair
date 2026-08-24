@@ -53,6 +53,7 @@ export const BaseProviders = [
 	'apipie',
 	'apisports',
 	'asana',
+	'ashby',
 	'asindataapi',
 	'asticaai',
 	'asyncinterview',
@@ -241,6 +242,7 @@ export const ProviderDisplayNames = {
 	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
 	asana: 'Asana',
+	ashby: 'Ashby',
 	asindataapi: 'ASIN Data API',
 	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
@@ -436,6 +438,7 @@ export type AllProviders =
 	| 'apipie'
 	| 'apisports'
 	| 'asana'
+	| 'ashby'
 	| 'asindataapi'
 	| 'asticaai'
 	| 'asyncinterview'
