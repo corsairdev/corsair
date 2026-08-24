@@ -14,7 +14,7 @@
   "appearance": {
     "default": "light"
   },
-  "description": "Corsair is the open-source integration layer for AI agents. Add any integration in minutes — OAuth, webhooks, MCP tools, and multi-tenant credentials included.",
+  "description": "Open-source SDK for adding OAuth, webhooks, and MCP tools to AI agents. Credentials stay in your database.",
   "seo": {
     "metatags": {
       "og:site_name": "Corsair Docs",
