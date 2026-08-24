@@ -121,7 +121,7 @@ const clockifyEndpointMeta = {
 	},
 	'timeEntries.list': {
 		riskLevel: 'read',
-		description: 'List time entries in a workspace',
+		description: 'List time entries for a user in a workspace',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof clockifyEndpointsNested>;
 
