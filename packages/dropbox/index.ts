@@ -12,9 +12,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
-import { getValidAccessToken } from './client';
 import { Files, Folders, Search } from './endpoints';
 import type {
 	DropboxEndpointInputs,
@@ -323,68 +322,10 @@ export function dropbox<const T extends DropboxPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('dropbox', 'oauth_2');
-				}
-
-				const creds = await ctx.keys.get_integration_credentials();
-				if (!creds.client_id || !creds.client_secret) {
-					throw new Error(
-						'[auth-missing:dropbox:client_credentials]: Dropbox client credentials are missing',
-					);
-				}
-
-				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
-				try {
-					result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: creds.client_id,
-						clientSecret: creds.client_secret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:dropbox] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await Promise.all([
-							ctx.keys.set_access_token(result.accessToken),
-							ctx.keys.set_expires_at(String(result.expiresAt)),
-						]);
-					} catch (error) {
-						throw new Error(
-							`[corsair:dropbox] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				// Expose a force-refresh function on the context so endpoints can
-				// retry on 401 without waiting for `expires_at` to lapse.
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId: creds.client_id!,
-						clientSecret: creds.client_secret!,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
+				return getOAuthAccessToken(ctx, {
+					plugin: 'dropbox',
+					tokenUrl: 'https://api.dropboxapi.com/oauth2/token',
+				});
 			}
 
 			if (ctx.authType === 'managed') {
