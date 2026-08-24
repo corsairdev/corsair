@@ -1,9 +1,9 @@
-import { example } from './example';
+import { generationFailure, generationSuccess } from './documents';
 
-export const ExampleWebhooks = {
-	example: example,
+export const DocumentWebhooks = {
+	generationSuccess,
+	generationFailure,
 };
 
-export * from './oauth-tenant-link';
 export * from './tenant-matcher';
 export * from './types';

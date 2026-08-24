@@ -15,6 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Document, Template } from './endpoints';
 import type {
 	PDFMonkeyEndpointInputs,
@@ -26,14 +27,21 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { PDFMonkeySchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolvePDFMonkeyOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { DocumentWebhooks } from './webhooks';
 import { matchPDFMonkeyTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, PDFMonkeyWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+import type {
+	DocumentGenerationFailureEvent,
+	DocumentGenerationSuccessEvent,
+	PDFMonkeyWebhookOutputs,
+} from './webhooks/types';
+import {
+	DocumentGenerationFailureEventSchema,
+	DocumentGenerationSuccessEventSchema,
+	matchPDFMonkeyPluginWebhook,
+} from './webhooks/types';
 
 export type PDFMonkeyPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalPDFMonkeyPlugin['hooks'];
@@ -82,7 +90,14 @@ type PDFMonkeyWebhook<
 > = CorsairWebhook<PDFMonkeyContext, TEvent, PDFMonkeyWebhookOutputs[K]>;
 
 export type PDFMonkeyWebhooks = {
-	example: PDFMonkeyWebhook<'example', ExampleEvent>;
+	generationSuccess: PDFMonkeyWebhook<
+		'generationSuccess',
+		DocumentGenerationSuccessEvent
+	>;
+	generationFailure: PDFMonkeyWebhook<
+		'generationFailure',
+		DocumentGenerationFailureEvent
+	>;
 };
 
 export type PDFMonkeyBoundWebhooks = BindWebhooks<PDFMonkeyWebhooks>;
@@ -158,16 +173,22 @@ export const pDFMonkeyEndpointSchemas = {
 } satisfies RequiredPluginEndpointSchemas<typeof pDFMonkeyEndpointsNested>;
 
 const pDFMonkeyWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	documents: {
+		generationSuccess: DocumentWebhooks.generationSuccess,
+		generationFailure: DocumentWebhooks.generationFailure,
 	},
 } as const;
 
 export const pDFMonkeyWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'documents.generationSuccess': {
+		description: 'A document finished generating successfully',
+		payload: DocumentGenerationSuccessEventSchema,
+		response: DocumentGenerationSuccessEventSchema,
+	},
+	'documents.generationFailure': {
+		description: 'A document failed to generate',
+		payload: DocumentGenerationFailureEventSchema,
+		response: DocumentGenerationFailureEventSchema,
 	},
 } as const satisfies RequiredPluginWebhookSchemas<
 	typeof pDFMonkeyWebhooksNested
@@ -232,9 +253,6 @@ export const pDFMonkeyAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BasePDFMonkeyPlugin<T extends PDFMonkeyPluginOptions> =
@@ -273,17 +291,16 @@ export function pdfmonkey<const T extends PDFMonkeyPluginOptions>(
 		endpointMeta: pDFMonkeyEndpointMeta,
 		endpointSchemas: pDFMonkeyEndpointSchemas,
 		webhookSchemas: pDFMonkeyWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-pdfmonkey-signature' in headers;
-		},
+		pluginWebhookMatcher: matchPDFMonkeyPluginWebhook,
 		pluginTenantWebhookMatcher: matchPDFMonkeyTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolvePDFMonkeyOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: PDFMonkeyKeyBuilderContext, source) => {
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
@@ -291,7 +308,12 @@ export function pdfmonkey<const T extends PDFMonkeyPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new Error(
+						'[auth-missing:pdfmonkey:webhook_signature]: PDFMonkey webhook signature is missing',
+					);
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && options.key) {
@@ -300,15 +322,13 @@ export function pdfmonkey<const T extends PDFMonkeyPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('pdfmonkey', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('pdfmonkey', 'api_key');
 		},
 	} satisfies InternalPDFMonkeyPlugin;
 }
@@ -318,6 +338,7 @@ export type {
 	PDFMonkeyEndpointOutputs,
 } from './endpoints/types';
 export type {
-	ExampleEvent,
+	DocumentGenerationFailureEvent,
+	DocumentGenerationSuccessEvent,
 	PDFMonkeyWebhookOutputs,
 } from './webhooks/types';
