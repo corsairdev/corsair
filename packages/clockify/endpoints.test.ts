@@ -100,6 +100,12 @@ describe('Clockify endpoints', () => {
 				page: 0,
 			}),
 		).rejects.toThrow();
+		await expect(
+			Projects.list(mockContext, {
+				workspaceId: 'w1',
+				pageSize: 5001,
+			}),
+		).rejects.toThrow();
 		expect(makeClockifyRequest).not.toHaveBeenCalled();
 	});
 

@@ -52,7 +52,7 @@ export type WorkspacesListOutput = z.infer<typeof WorkspacesListOutputSchema>;
 const ProjectsListInputSchema = z.object({
 	workspaceId: ClockifyId,
 	page: z.number().int().min(1).optional(),
-	pageSize: z.number().int().min(1).optional(),
+	pageSize: z.number().int().min(1).max(5000).optional(),
 });
 export type ProjectsListInput = z.infer<typeof ProjectsListInputSchema>;
 
@@ -63,7 +63,7 @@ const TasksListInputSchema = z.object({
 	workspaceId: ClockifyId,
 	projectId: ClockifyId,
 	page: z.number().int().min(1).optional(),
-	pageSize: z.number().int().min(1).optional(),
+	pageSize: z.number().int().min(1).max(5000).optional(),
 });
 export type TasksListInput = z.infer<typeof TasksListInputSchema>;
 
@@ -72,7 +72,7 @@ export type TasksListOutput = z.infer<typeof TasksListOutputSchema>;
 
 const TimeEntriesCreateInputSchema = z.object({
 	workspaceId: ClockifyId,
-	description: z.string(),
+	description: z.string().max(3000),
 	start: ClockifyTimestamp,
 	end: ClockifyTimestamp.optional(),
 	projectId: ClockifyId.optional(),
@@ -93,7 +93,7 @@ const TimeEntriesListInputSchema = z.object({
 	description: z.string().optional(),
 	project: ClockifyId.optional(),
 	page: z.number().int().min(1).optional(),
-	pageSize: z.number().int().min(1).optional(),
+	pageSize: z.number().int().min(1).max(5000).optional(),
 });
 export type TimeEntriesListInput = z.infer<typeof TimeEntriesListInputSchema>;
 
