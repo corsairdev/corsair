@@ -17,6 +17,8 @@ import type {
 	IntegrationKeyManagerFor,
 	PluginAuthConfig,
 } from '../auth/types';
+import type { CorsairChatsNamespace } from '../chats';
+import { buildChatsNamespace } from '../chats';
 import type { AuthTypes } from '../constants';
 import type { BindEndpoints, EndpointTree } from '../endpoints';
 import { bindEndpointsRecursively } from '../endpoints/bind';
@@ -34,11 +36,7 @@ import type {
 	PermissionMode,
 	PermissionPolicy,
 } from '../plugins';
-import type { CorsairRunsNamespace } from '../runs';
-import { buildRunsNamespace } from '../runs';
 import { ensureTenantProvisioned } from '../tenant-provision';
-import type { CorsairThreadsNamespace } from '../threads';
-import { buildThreadsNamespace } from '../threads';
 import type {
 	BindWebhooks,
 	CorsairWebhookTenantMatcher,
@@ -216,18 +214,14 @@ export type CorsairClient<Plugins extends readonly CorsairPlugin[]> =
 	InferPluginNamespaces<Plugins> & {
 		/**
 		 * Chat interface over the Hub-hosted workflow agent, scoped to this
-		 * client's tenant. Create/list threads and send messages that author or
+		 * client's tenant. Create/list chats and send messages that author or
 		 * edit workflows. Requires `hub` to be configured on `createCorsair`.
 		 */
-		threads: CorsairThreadsNamespace;
+		chats: CorsairChatsNamespace;
 		/**
-		 * Read and act on this tenant's workflow runs — list/get history and
-		 * approve/deny/cancel a run. Requires `hub` to be configured.
-		 */
-		runs: CorsairRunsNamespace;
-		/**
-		 * List this tenant's workflows and trigger manual runs. Requires `hub`
-		 * to be configured.
+		 * Manage this tenant's workflows — list/get, run, its runs under
+		 * `workflows.runs` (feed or one workflow's), pause/resume (disable/enable),
+		 * archive/unarchive, rename. Requires `hub` to be configured.
 		 */
 		workflows: CorsairWorkflowsNamespace;
 	};
@@ -407,7 +401,7 @@ export function buildCorsairClient<
 
 	// Canonical tenant scope for this client. Single-tenant clients pass no
 	// tenantId → 'default', which is Hub's own single-tenant convention. Used
-	// identically for provisioning, plugin operations, and the threads API so a
+	// identically for provisioning, plugin operations, and the chats API so a
 	// client's scope is the same everywhere.
 	const effectiveTenantId = tenantId ?? 'default';
 
@@ -590,11 +584,7 @@ export function buildCorsairClient<
 
 	// Tenant-scoped chat interface to the Hub workflow agent. Attached to every
 	// client (single- and multi-tenant); throws on use if `hub` isn't configured.
-	(apiUnsafe as Record<string, unknown>).threads = buildThreadsNamespace(
-		hubConfig,
-		effectiveTenantId,
-	);
-	(apiUnsafe as Record<string, unknown>).runs = buildRunsNamespace(
+	(apiUnsafe as Record<string, unknown>).chats = buildChatsNamespace(
 		hubConfig,
 		effectiveTenantId,
 	);
@@ -602,7 +592,6 @@ export function buildCorsairClient<
 		hubConfig,
 		effectiveTenantId,
 	);
-
 	return apiUnsafe as CorsairClient<Plugins>;
 }
 

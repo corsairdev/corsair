@@ -1,147 +1,148 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
-import { z } from 'zod';
+import { timingSafeEqual } from 'node:crypto'
+import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core'
+import { z } from 'zod'
 
 // ── Graph API Notification Schemas ────────────────────────────────────────────
 
 export const TeamsResourceDataSchema = z
-	.object({
-		'@odata.type': z.string().optional(),
-		'@odata.id': z.string().optional(),
-		'@odata.etag': z.string().optional(),
-		id: z.string(),
-	})
-	.loose();
+  .object({
+    '@odata.type': z.string().optional(),
+    '@odata.id': z.string().optional(),
+    '@odata.etag': z.string().optional(),
+    'id': z.string(),
+  })
+  .loose()
 
 export const TeamsNotificationSchema = z.object({
-	subscriptionId: z.string(),
-	subscriptionExpirationDateTime: z.string().optional(),
-	clientState: z.string().optional(),
-	changeType: z.enum(['created', 'updated', 'deleted']),
-	resource: z.string(),
-	tenantId: z.string().optional(),
-	resourceData: TeamsResourceDataSchema.optional(),
-});
+  subscriptionId: z.string(),
+  subscriptionExpirationDateTime: z.string().optional(),
+  clientState: z.string().optional(),
+  changeType: z.enum(['created', 'updated', 'deleted']),
+  resource: z.string(),
+  tenantId: z.string().optional(),
+  resourceData: TeamsResourceDataSchema.optional(),
+})
 
 export const TeamsWebhookNotificationPayloadSchema = z.object({
-	value: z.array(TeamsNotificationSchema),
-});
+  value: z.array(TeamsNotificationSchema),
+})
 
-export type TeamsNotification = z.infer<typeof TeamsNotificationSchema>;
+export type TeamsNotification = z.infer<typeof TeamsNotificationSchema>
 export type TeamsWebhookNotificationPayload = z.infer<
-	typeof TeamsWebhookNotificationPayloadSchema
->;
+  typeof TeamsWebhookNotificationPayloadSchema
+>
 
 // ── Channel Message Event ─────────────────────────────────────────────────────
 
 export const TeamsChannelMessageEventSchema = z.object({
-	subscriptionId: z.string(),
-	changeType: z.enum(['created', 'updated', 'deleted']),
-	resource: z.string(),
-	tenantId: z.string().optional(),
-	clientState: z.string().optional(),
-	resourceData: z
-		.object({
-			'@odata.type': z.literal('#Microsoft.Graph.chatMessage').optional(),
-			'@odata.id': z.string().optional(),
-			id: z.string(),
-		})
-		.loose()
-		.optional(),
-});
+  subscriptionId: z.string(),
+  changeType: z.enum(['created', 'updated', 'deleted']),
+  resource: z.string(),
+  tenantId: z.string().optional(),
+  clientState: z.string().optional(),
+  resourceData: z
+    .object({
+      '@odata.type': z.literal('#Microsoft.Graph.chatMessage').optional(),
+      '@odata.id': z.string().optional(),
+      'id': z.string(),
+    })
+    .loose()
+    .optional(),
+})
 export type TeamsChannelMessageEvent = z.infer<
-	typeof TeamsChannelMessageEventSchema
->;
+  typeof TeamsChannelMessageEventSchema
+>
 
 // ── Chat Message Event ────────────────────────────────────────────────────────
 
 export const TeamsChatMessageEventSchema = z.object({
-	subscriptionId: z.string(),
-	changeType: z.enum(['created', 'updated', 'deleted']),
-	resource: z.string(),
-	tenantId: z.string().optional(),
-	clientState: z.string().optional(),
-	resourceData: z
-		.object({
-			'@odata.type': z.literal('#Microsoft.Graph.chatMessage').optional(),
-			'@odata.id': z.string().optional(),
-			id: z.string(),
-		})
-		.loose()
-		.optional(),
-});
-export type TeamsChatMessageEvent = z.infer<typeof TeamsChatMessageEventSchema>;
+  subscriptionId: z.string(),
+  changeType: z.enum(['created', 'updated', 'deleted']),
+  resource: z.string(),
+  tenantId: z.string().optional(),
+  clientState: z.string().optional(),
+  resourceData: z
+    .object({
+      '@odata.type': z.literal('#Microsoft.Graph.chatMessage').optional(),
+      '@odata.id': z.string().optional(),
+      'id': z.string(),
+    })
+    .loose()
+    .optional(),
+})
+export type TeamsChatMessageEvent = z.infer<typeof TeamsChatMessageEventSchema>
 
 // ── Channel Created Event ─────────────────────────────────────────────────────
 
 export const TeamsChannelCreatedEventSchema = z.object({
-	subscriptionId: z.string(),
-	changeType: z.enum(['created', 'updated', 'deleted']),
-	resource: z.string(),
-	tenantId: z.string().optional(),
-	clientState: z.string().optional(),
-	resourceData: z
-		.object({
-			'@odata.type': z.literal('#Microsoft.Graph.channel').optional(),
-			'@odata.id': z.string().optional(),
-			id: z.string(),
-		})
-		.loose()
-		.optional(),
-});
+  subscriptionId: z.string(),
+  changeType: z.enum(['created', 'updated', 'deleted']),
+  resource: z.string(),
+  tenantId: z.string().optional(),
+  clientState: z.string().optional(),
+  resourceData: z
+    .object({
+      '@odata.type': z.literal('#Microsoft.Graph.channel').optional(),
+      '@odata.id': z.string().optional(),
+      'id': z.string(),
+    })
+    .loose()
+    .optional(),
+})
 export type TeamsChannelCreatedEvent = z.infer<
-	typeof TeamsChannelCreatedEventSchema
->;
+  typeof TeamsChannelCreatedEventSchema
+>
 
 // ── Membership Changed Event ──────────────────────────────────────────────────
 
 export const TeamsMembershipChangedEventSchema = z.object({
-	subscriptionId: z.string(),
-	changeType: z.enum(['created', 'updated', 'deleted']),
-	resource: z.string(),
-	tenantId: z.string().optional(),
-	clientState: z.string().optional(),
-	resourceData: z
-		.object({
-			'@odata.type': z
-				.literal('#Microsoft.Graph.aadUserConversationMember')
-				.optional(),
-			'@odata.id': z.string().optional(),
-			id: z.string(),
-		})
-		.loose()
-		.optional(),
-});
+  subscriptionId: z.string(),
+  changeType: z.enum(['created', 'updated', 'deleted']),
+  resource: z.string(),
+  tenantId: z.string().optional(),
+  clientState: z.string().optional(),
+  resourceData: z
+    .object({
+      '@odata.type': z
+        .literal('#Microsoft.Graph.aadUserConversationMember')
+        .optional(),
+      '@odata.id': z.string().optional(),
+      'id': z.string(),
+    })
+    .loose()
+    .optional(),
+})
 export type TeamsMembershipChangedEvent = z.infer<
-	typeof TeamsMembershipChangedEventSchema
->;
+  typeof TeamsMembershipChangedEventSchema
+>
 
 // ── Webhook Payload Wrapper ───────────────────────────────────────────────────
 
 export type TeamsWebhookPayload<TEvent> = {
-	value: TEvent[];
-};
+  value: TEvent[]
+}
 
 // ── Webhook Outputs Map ───────────────────────────────────────────────────────
 
 export type TeamsWebhookOutputs = {
-	channelMessage: TeamsChannelMessageEvent;
-	chatMessage: TeamsChatMessageEvent;
-	channelCreated: TeamsChannelCreatedEvent;
-	membershipChanged: TeamsMembershipChangedEvent;
-};
+  channelMessage: TeamsChannelMessageEvent
+  chatMessage: TeamsChatMessageEvent
+  channelCreated: TeamsChannelCreatedEvent
+  membershipChanged: TeamsMembershipChangedEvent
+}
 
 // ── Match Helpers ─────────────────────────────────────────────────────────────
 
 // body arrives as an opaque value from the raw HTTP request; unknown forces callers to narrow before use
 function parseBody(body: unknown): unknown {
-	if (typeof body === 'string') {
-		try {
-			return JSON.parse(body);
-		} catch {
-			return {};
-		}
-	}
-	return body ?? {};
+  if (typeof body === 'string') {
+    try {
+      return JSON.parse(body)
+    } catch {
+      return {}
+    }
+  }
+  return body ?? {}
 }
 
 /**
@@ -150,84 +151,87 @@ function parseBody(body: unknown): unknown {
  * Falls back to the raw segment if it doesn't match the OData pattern.
  */
 export function extractODataId(segment: string): string {
-	const match = segment.match(/\('([^']+)'\)/);
-	return match?.[1] ?? segment;
+  const match = segment.match(/\('([^']+)'\)/)
+  return match?.[1] ?? segment
 }
 
 export function createTeamsNotificationMatch(
-	resourcePattern: RegExp,
-	odataType?: string,
+  resourcePattern: RegExp,
+  odataType?: string
 ): CorsairWebhookMatcher {
-	return (request: RawWebhookRequest) => {
-		// parseBody returns unknown; cast to access top-level keys before array validation below
-		const parsed = parseBody(request.body) as Record<string, unknown>;
-		const value = parsed['value'];
-		if (!Array.isArray(value)) {
-			return false;
-		}
-		// Array elements from parsed JSON are unknown until individually type-narrowed
-		return value.some((n: unknown) => {
-			if (!n || typeof n !== 'object') return false;
-			// Safe after the null + typeof object guard above
-			const notification = n as Record<string, unknown>;
-			const resource =
-				typeof notification['resource'] === 'string'
-					? notification['resource']
-					: '';
-			if (!resourcePattern.test(resource)) return false;
-			if (odataType === undefined) return true;
-			const resourceData = notification['resourceData'];
-			if (!resourceData || typeof resourceData !== 'object') return false;
-			// Safe after the null + typeof object guard above
-			return (
-				(resourceData as Record<string, unknown>)['@odata.type'] === odataType
-			);
-		});
-	};
+  return (request: RawWebhookRequest) => {
+    // parseBody returns unknown; cast to access top-level keys before array validation below
+    const parsed = parseBody(request.body) as Record<string, unknown>
+    const value = parsed['value']
+    if (!Array.isArray(value)) {
+      return false
+    }
+    // Array elements from parsed JSON are unknown until individually type-narrowed
+    return value.some((n: unknown) => {
+      if (!n || typeof n !== 'object') return false
+      // Safe after the null + typeof object guard above
+      const notification = n as Record<string, unknown>
+      const resource =
+        typeof notification['resource'] === 'string'
+          ? notification['resource']
+          : ''
+      if (!resourcePattern.test(resource)) return false
+      if (odataType === undefined) return true
+      const resourceData = notification['resourceData']
+      if (!resourceData || typeof resourceData !== 'object') return false
+      // Safe after the null + typeof object guard above
+      return (
+        (resourceData as Record<string, unknown>)['@odata.type'] === odataType
+      )
+    })
+  }
 }
 
 // ── Client State Validation ───────────────────────────────────────────────────
 
 export function verifyTeamsClientState(
-	payload: TeamsWebhookPayload<TeamsNotification>,
-	expectedClientState: string,
+  payload: TeamsWebhookPayload<TeamsNotification>,
+  expectedClientState: string
 ): { valid: boolean; error?: string } {
-	if (!expectedClientState) {
-		return { valid: false, error: 'clientState is required' };
-	}
+  if (!expectedClientState) {
+    return { valid: false, error: 'clientState is required' }
+  }
 
-	// An empty array must not pass: [].every(...) is true, so a request that
-	// carried no notification -- and therefore no clientState -- would otherwise
-	// be reported as verified.
-	const notifications = payload?.value;
-	if (!Array.isArray(notifications) || notifications.length === 0) {
-		return { valid: false, error: 'Invalid payload: missing value array' };
-	}
+  const notifications = payload?.value
+  if (!Array.isArray(notifications) || notifications.length === 0) {
+    return { valid: false, error: 'Invalid payload: missing value array' }
+  }
 
-	const allMatch = notifications.every((n) => {
-		if (!n || typeof n !== 'object') return false;
-		return (n as TeamsNotification).clientState === expectedClientState;
-	});
-	if (!allMatch) {
-		return { valid: false, error: 'clientState mismatch' };
-	}
-	return { valid: true };
+  const expected = Buffer.from(expectedClientState)
+  const allMatch = notifications.every(n => {
+    if (!n || typeof n !== 'object') return false
+    const clientState = (n as TeamsNotification).clientState
+    if (typeof clientState !== 'string') return false
+    const actual = Buffer.from(clientState)
+    return (
+      actual.length === expected.length && timingSafeEqual(actual, expected)
+    )
+  })
+  if (!allMatch) {
+    return { valid: false, error: 'clientState mismatch' }
+  }
+  return { valid: true }
 }
 
 // ── Payload Schemas for Index ─────────────────────────────────────────────────
 
 export const TeamsChannelMessagePayloadSchema = z.object({
-	value: z.array(TeamsChannelMessageEventSchema),
-});
+  value: z.array(TeamsChannelMessageEventSchema),
+})
 
 export const TeamsChatMessagePayloadSchema = z.object({
-	value: z.array(TeamsChatMessageEventSchema),
-});
+  value: z.array(TeamsChatMessageEventSchema),
+})
 
 export const TeamsChannelCreatedPayloadSchema = z.object({
-	value: z.array(TeamsChannelCreatedEventSchema),
-});
+  value: z.array(TeamsChannelCreatedEventSchema),
+})
 
 export const TeamsMembershipChangedPayloadSchema = z.object({
-	value: z.array(TeamsMembershipChangedEventSchema),
-});
+  value: z.array(TeamsMembershipChangedEventSchema),
+})

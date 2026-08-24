@@ -23,12 +23,9 @@ import {
 	getLatestStatusForIntegration,
 	getUserActiveDeadlineClaim,
 	getUserClaimEligibility,
-	ISSUE_DEADLINE_MS,
 	insertIntegrationStatus,
 	isIntegrationActivelyClaimed,
-	isIntegrationAvailable,
 	legacyStatusFromPhase,
-	MAX_USER_BUILT_INTEGRATIONS,
 	PR_DEADLINE_MS,
 	releaseIntegrationClaim,
 } from '@/db/integration-status';
@@ -60,6 +57,7 @@ import {
 	sendIssueLinkedEvent,
 	sendPrLinkedEvent,
 } from '@/server/inngest/events';
+import { claimIntegrationAtomically } from '@/server/integrations/claim-integration';
 
 import { createTRPCRouter, protectedProcedure, publicProcedure } from '../trpc';
 
@@ -577,7 +575,6 @@ export const integrationsRouter = createTRPCRouter({
 				totalPages: Math.max(1, Math.ceil(total / PAGE_SIZE)),
 				q: input.q?.trim() ?? '',
 				tags: input.tags ?? [],
-				wipIntegrationName: claimEligibility?.wipIntegrationName ?? null,
 				claimBlockReason: claimEligibility?.blockReason ?? null,
 			};
 		}),
@@ -925,7 +922,6 @@ export const integrationsRouter = createTRPCRouter({
 				authSchemes: authSchemeRows,
 				...claimFields,
 				canClaimAnother: claimEligibility?.canClaim ?? true,
-				wipIntegrationName: claimEligibility?.wipIntegrationName ?? null,
 				claimBlockReason: claimEligibility?.blockReason ?? null,
 				claimExpiredForCurrentUser,
 				timeline: statusHistory.map((event) => ({
@@ -1055,84 +1051,31 @@ export const integrationsRouter = createTRPCRouter({
 	claim: protectedProcedure
 		.input(z.object({ integrationId: z.string().min(1) }))
 		.mutation(async ({ ctx, input }) => {
-			const claimEligibility = await getUserClaimEligibility(
-				ctx.db,
-				ctx.user.id,
-			);
-
-			if (!claimEligibility.canClaim) {
-				if (claimEligibility.blockReason === 'limit_reached') {
-					throw new TRPCError({
-						code: 'PRECONDITION_FAILED',
-						message: `You've built the maximum of ${MAX_USER_BUILT_INTEGRATIONS} integrations and can't claim another`,
-					});
-				}
-
-				throw new TRPCError({
-					code: 'PRECONDITION_FAILED',
-					message:
-						'Finish your current integration or mark it ready to review before claiming another',
-				});
-			}
-
-			const [integration] = await ctx.db
-				.select({ id: integrations.id, slug: integrations.slug })
-				.from(integrations)
-				.where(
-					and(
-						eq(integrations.id, input.integrationId),
-						eq(integrations.show, true),
-					),
-				)
-				.limit(1);
-
-			if (!integration) {
-				throw new TRPCError({
-					code: 'NOT_FOUND',
-					message: 'Integration not found',
-				});
-			}
-
-			const latestStatus = await getLatestStatusForIntegration(
-				ctx.db,
-				input.integrationId,
-			);
-
-			if (latestStatus && !isIntegrationAvailable(latestStatus.phase)) {
-				if (latestStatus.userId === ctx.user.id) {
-					return {
-						integrationId: input.integrationId,
-						slug: integration.slug,
-						phase: latestStatus.phase,
-					};
-				}
-
-				throw new TRPCError({
-					code: 'CONFLICT',
-					message: 'This integration has already been claimed',
-				});
-			}
-
-			const issueDeadlineAt = new Date(Date.now() + ISSUE_DEADLINE_MS);
-			const status = await insertIntegrationStatus(ctx.db, {
+			const result = await claimIntegrationAtomically(ctx.db, {
 				integrationId: input.integrationId,
 				userId: ctx.user.id,
-				phase: 'awaiting_issue',
-				issueDeadlineAt,
 			});
 
+			if (result.kind === 'already_owned') {
+				return {
+					integrationId: result.integrationId,
+					slug: result.slug,
+					phase: result.phase,
+				};
+			}
+
 			await sendClaimCreatedEvent({
-				statusId: status.id,
-				integrationId: input.integrationId,
-				userId: ctx.user.id,
-				slug: integration.slug,
+				statusId: result.statusId,
+				integrationId: result.integrationId,
+				userId: result.userId,
+				slug: result.slug,
 			});
 
 			return {
-				integrationId: input.integrationId,
-				slug: integration.slug,
-				phase: status.phase,
-				issueDeadlineAt: status.issueDeadlineAt,
+				integrationId: result.integrationId,
+				slug: result.slug,
+				phase: result.phase,
+				issueDeadlineAt: result.issueDeadlineAt,
 			};
 		}),
 

@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import {
 	Albums,
@@ -53,7 +54,7 @@ import { ExampleEventSchema } from './webhooks/types';
  * - webhookSecret: Optional webhook secret for signature verification
  */
 export type SpotifyPluginOptions = {
-	authType?: PickAuth<'oauth_2' | 'api_key'>;
+	authType?: PickAuth<'oauth_2' | 'api_key' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalSpotifyPlugin['hooks'];
@@ -607,6 +608,25 @@ export function spotify<const T extends SpotifyPluginOptions>(
 						`[corsair:spotify] Failed to get access token: ${error instanceof Error ? error.message : String(error)}`,
 					);
 				}
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:spotify:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'spotify',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('spotify', 'oauth_2');

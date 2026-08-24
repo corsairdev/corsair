@@ -8,6 +8,7 @@ import {
 	getSetupRawArgs,
 	parseSetupCredentials,
 } from '../lib/setup-credentials';
+import { enrollDevTunnel } from '../lib/tunnel-setup';
 import { extractInternalConfig } from '../utils/corsair';
 import { getCorsairInstance } from '../utils/corsair-instance';
 import BaseCommand from './base.command';
@@ -71,6 +72,13 @@ export default class SetupCommand extends BaseCommand {
 			credentials,
 			caller: 'cli',
 		});
+
+		if (internal.hub) {
+			await enrollDevTunnel({
+				apiUrl: internal.hub.apiUrl,
+				projectApiKey: internal.hub.projectApiKey,
+			});
+		}
 	}
 
 	private hasLegacyBackfillFlag(): boolean {

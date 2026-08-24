@@ -217,12 +217,22 @@ export type ProcessOAuthCallbackOptions = {
 	/** Required when `trusted` is true. Ignored otherwise (state is decoded). */
 	plugin?: string;
 	tenantId?: string;
+	// Provider callback params (e.g. GitHub's installation_id) absent from the token body.
+	callbackParams?: Record<string, string>;
 };
 
 export type ProcessOAuthCallbackResult = {
 	plugin: string;
 	tenantId: string;
 };
+
+// Token body wins on collision; callback params only fill gaps.
+export function mergeOAuthProviderData(
+	tokens: Record<string, unknown>,
+	callbackParams?: Record<string, string>,
+): Record<string, unknown> {
+	return { ...(callbackParams ?? {}), ...tokens };
+}
 
 /**
  * Completes the OAuth flow by exchanging the authorization code for tokens
@@ -354,10 +364,11 @@ export async function processOAuthCallback(
 	}).catch(() => {});
 
 	try {
+		const providerData = mergeOAuthProviderData(tokens, options.callbackParams);
 		const tenantLink = await resolveOAuthWebhookTenantLink(
 			internal.plugins,
 			pluginId,
-			tokens,
+			providerData,
 		);
 		if (tenantLink) {
 			try {

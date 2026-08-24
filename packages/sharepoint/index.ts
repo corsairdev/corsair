@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidSharepointAccessToken } from './client';
 import {
 	ContentTypes,
@@ -65,10 +66,13 @@ export const sharepointAuthConfig = {
 		// site_id is the Graph API site identifier e.g. "tenant.sharepoint.com:/sites/MySite"
 		account: ['site_id', 'subscription_id', 'client_state'] as const,
 	},
+	managed: {
+		account: ['site_id', 'subscription_id', 'client_state'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type SharepointPluginOptions = {
-	authType?: PickAuth<'oauth_2'>;
+	authType?: PickAuth<'oauth_2' | 'managed'>;
 	siteId?: string;
 	key?: string;
 	webhookClientState?: string;
@@ -1373,8 +1377,24 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 		keyBuilder: async (ctx: SharepointKeyBuilderContext, source) => {
 			const authType = ctx.authType;
 
-			if (source === 'webhook' && options.webhookClientState) {
-				return options.webhookClientState;
+			if (source === 'webhook') {
+				if (options.webhookClientState) {
+					return options.webhookClientState;
+				}
+				// Hub-managed subscriptions: msGraphSubscribe persists the clientState
+				// through set_webhook_signature, so read it back rather than falling
+				// through to the OAuth branch below (which would hand the webhook an
+				// access token and make every clientState comparison fail).
+				//
+				// Deliberately returns '' rather than throwing when absent, which is
+				// where this differs from the outlook/onedrive key builders: SharePoint
+				// answers the Graph validation handshake inside the webhook handler, and
+				// the key is resolved eagerly before that handler runs, so throwing here
+				// would make subscription creation impossible — the handshake arrives
+				// before set_webhook_signature has been called. An empty key lets the
+				// handshake through and still fails closed on a real notification,
+				// because the verifier rejects an absent clientState.
+				return (await ctx.keys.get_webhook_signature()) ?? '';
 			}
 
 			if (source === 'endpoint' && options.key) {
@@ -1449,6 +1469,27 @@ export function sharepoint<const T extends SharepointPluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return result.accessToken;
+			}
+
+			// The webhook path above is terminal, so source is 'endpoint' here; this
+			// stays scoped as a defensive guard — a webhook must never fetch a Hub token.
+			if (source === 'endpoint' && ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:sharepoint:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'sharepoint',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

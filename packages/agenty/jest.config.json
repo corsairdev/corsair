@@ -1,0 +1,23 @@
+{
+  "preset": "ts-jest",
+  "testEnvironment": "node",
+  "transform": {
+    "^.+\\.[tj]sx?$": [
+      "ts-jest",
+      {
+        "tsconfig": {
+          "verbatimModuleSyntax": false,
+          "allowJs": true
+        }
+      }
+    ]
+  },
+  "transformIgnorePatterns": ["node_modules/(?!.*uuid)"],
+  "moduleNameMapper": {
+    "^corsair/(.*)$": [
+      "<rootDir>/../corsair/$1.ts",
+      "<rootDir>/../corsair/$1/index.ts"
+    ],
+    "^(\\.{1,2}/.*)\\.js$": "$1"
+  }
+}

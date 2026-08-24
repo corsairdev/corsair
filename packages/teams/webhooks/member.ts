@@ -1,79 +1,84 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeTeamsRequest } from '../client';
-import type { TeamsEndpointOutputs } from '../endpoints/types';
-import type { TeamsWebhooks } from '../index';
+import { logEventFromContext } from 'corsair/core'
+import { makeTeamsRequest } from '../client'
+import type { TeamsEndpointOutputs } from '../endpoints/types'
+import type { TeamsWebhooks } from '../index'
 import {
-	createTeamsNotificationMatch,
-	extractODataId,
-	verifyTeamsClientState,
-} from './types';
+  createTeamsNotificationMatch,
+  extractODataId,
+  verifyTeamsClientState,
+} from './types'
 
 export const membershipChanged: TeamsWebhooks['membershipChanged'] = {
-	match: createTeamsNotificationMatch(
-		/teams\([^)]+\)\/members/,
-		'#Microsoft.Graph.aadUserConversationMember',
-	),
+  match: createTeamsNotificationMatch(
+    /teams\([^)]+\)\/members/,
+    '#Microsoft.Graph.aadUserConversationMember'
+  ),
 
-	handler: async (ctx, request) => {
-		const clientState = ctx.key;
-		const verification = verifyTeamsClientState(request.payload, clientState);
-		if (!verification.valid) {
-			return {
-				success: false,
-				statusCode: 401,
-				error: verification.error || 'clientState verification failed',
-			};
-		}
+  handler: async (ctx, request) => {
+    const clientState = ctx.key
+    const verification = verifyTeamsClientState(request.payload, clientState)
+    if (!verification.valid) {
+      return {
+        success: false,
+        statusCode: 401,
+        error: verification.error || 'clientState verification failed',
+      }
+    }
 
-		const notifications = request.payload.value;
-		let corsairEntityId = '';
+    const notifications = request.payload.value
+    if (!notifications[0]) {
+      return {
+        success: false,
+        statusCode: 401,
+        error: 'Invalid payload: missing notification',
+      }
+    }
 
-		const accessToken = await ctx.keys.get_access_token();
+    let corsairEntityId = ''
 
-		if (ctx.db.members) {
-			try {
-				for (const notification of notifications) {
-					const membershipId = notification.resourceData?.id;
-					if (!membershipId) continue;
+    const accessToken = await ctx.keys.get_access_token()
 
-					// resource format: teams('teamId')/members('membershipId')
-					const teamId = extractODataId(
-						notification.resource.split('/')[0] ?? '',
-					);
+    if (ctx.db.members) {
+      try {
+        for (const notification of notifications) {
+          const membershipId = notification.resourceData?.id
+          if (!membershipId) continue
 
-					if (notification.changeType === 'deleted') {
-						await ctx.db.members.deleteByEntityId(membershipId);
-					} else if (accessToken) {
-						const fullMember = await makeTeamsRequest<
-							TeamsEndpointOutputs['membersGet']
-						>(`teams/${teamId}/members/${membershipId}`, accessToken);
-						const entity = await ctx.db.members.upsertByEntityId(membershipId, {
-							...fullMember,
-							id: membershipId,
-							teamId,
-						});
-						corsairEntityId = entity?.id || '';
-					}
-				}
-			} catch (error) {
-				console.warn(
-					'Failed to process membership webhook in database:',
-					error,
-				);
-			}
-		}
+          // resource format: teams('teamId')/members('membershipId')
+          const teamId = extractODataId(
+            notification.resource.split('/')[0] ?? ''
+          )
 
-		await logEventFromContext(
-			ctx,
-			'teams.webhook.membershipChanged',
-			{ notificationCount: notifications.length },
-			'completed',
-		);
+          if (notification.changeType === 'deleted') {
+            await ctx.db.members.deleteByEntityId(membershipId)
+          } else if (accessToken) {
+            const fullMember = await makeTeamsRequest<
+              TeamsEndpointOutputs['membersGet']
+            >(`teams/${teamId}/members/${membershipId}`, accessToken)
+            const entity = await ctx.db.members.upsertByEntityId(membershipId, {
+              ...fullMember,
+              id: membershipId,
+              teamId,
+            })
+            corsairEntityId = entity?.id || ''
+          }
+        }
+      } catch (error) {
+        console.warn('Failed to process membership webhook in database:', error)
+      }
+    }
 
-		return {
-			success: true,
-			corsairEntityId,
-			data: notifications[0],
-		};
-	},
-};
+    await logEventFromContext(
+      ctx,
+      'teams.webhook.membershipChanged',
+      { notificationCount: notifications.length },
+      'completed'
+    )
+
+    return {
+      success: true,
+      corsairEntityId,
+      data: notifications[0],
+    }
+  },
+}

@@ -3704,6 +3704,69 @@ await corsair.github.api.repositories.listCommits({});
 
 ---
 
+### listStargazers
+
+`repositories.listStargazers`
+
+List users who have starred a repository
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.repositories.listStargazers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `owner` | `string` | Yes | — |
+| `repo` | `string` | Yes | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  starredAt: Date,
+  user: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: Date | null,
+    userViewType?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ### listStarred
 
 `repositories.listStarred`
@@ -3834,6 +3897,372 @@ await corsair.github.api.repositories.unstar({});
 
 
 **Output:** `boolean`
+
+
+---
+
+## Search
+
+### issues
+
+`search.issues`
+
+Search GitHub issues and pull requests
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.search.issues({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `sort` | `comments \| reactions \| reactions-+1 \| reactions--1 \| reactions-smile \| reactions-thinking_face \| reactions-heart \| reactions-tada \| interactions \| created \| updated` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+| `advancedSearch` | `boolean` | No | — |
+| `searchType` | `semantic \| hybrid` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalCount` | `number` | Yes | — |
+| `incompleteResults` | `boolean` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  url?: string,
+  repositoryUrl?: string,
+  labelsUrl?: string,
+  commentsUrl?: string,
+  eventsUrl?: string,
+  htmlUrl?: string,
+  number: number,
+  state: string,
+  stateReason?: completed | reopened | not_planned | duplicate | null,
+  title: string,
+  body?: string | null,
+  user?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: Date | null,
+    userViewType?: string
+  } | null,
+  labels?: (
+    string | {
+      id?: number,
+      nodeId?: string,
+      url?: string,
+      name?: string,
+      description?: string | null,
+      color?: string | null,
+      default?: boolean
+    }
+  )[],
+  assignee?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: Date | null,
+    userViewType?: string
+  } | null,
+  assignees?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: Date | null,
+    userViewType?: string
+  }[] | null,
+  locked?: boolean,
+  comments?: number,
+  createdAt?: Date | null,
+  updatedAt?: Date | null,
+  closedAt?: Date | null,
+  score: number,
+  pullRequest?: {
+    url?: string,
+    htmlUrl?: string,
+    diffUrl?: string,
+    patchUrl?: string,
+    mergedAt?: Date | null
+  },
+  repository?: {
+    id: number,
+    nodeId?: string,
+    name: string,
+    fullName?: string,
+    private?: boolean,
+    htmlUrl?: string,
+    description?: string | null,
+    fork?: boolean,
+    url?: string,
+    createdAt?: Date | null,
+    updatedAt?: Date | null,
+    pushedAt?: Date | null,
+    defaultBranch?: string,
+    language?: string | null,
+    stargazersCount?: number,
+    watchersCount?: number,
+    forksCount?: number,
+    openIssuesCount?: number,
+    archived?: boolean,
+    disabled?: boolean,
+    owner?: {
+      name?: string | null,
+      email?: string | null,
+      login: string,
+      id: number,
+      nodeId?: string,
+      avatarUrl?: string,
+      gravatarId?: string | null,
+      url?: string,
+      htmlUrl?: string,
+      followersUrl?: string,
+      followingUrl?: string,
+      gistsUrl?: string,
+      starredUrl?: string,
+      subscriptionsUrl?: string,
+      organizationsUrl?: string,
+      reposUrl?: string,
+      eventsUrl?: string,
+      receivedEventsUrl?: string,
+      type?: string,
+      siteAdmin?: boolean,
+      starredAt?: Date | null,
+      userViewType?: string
+    }
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### repositories
+
+`search.repositories`
+
+Search GitHub repositories
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.search.repositories({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `sort` | `stars \| forks \| help-wanted-issues \| updated` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalCount` | `number` | Yes | — |
+| `incompleteResults` | `boolean` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: number,
+  nodeId?: string,
+  name: string,
+  fullName?: string,
+  private?: boolean,
+  htmlUrl?: string,
+  description?: string | null,
+  fork?: boolean,
+  url?: string,
+  createdAt?: Date | null,
+  updatedAt?: Date | null,
+  pushedAt?: Date | null,
+  defaultBranch?: string,
+  language?: string | null,
+  stargazersCount?: number,
+  watchersCount?: number,
+  forksCount?: number,
+  openIssuesCount?: number,
+  archived?: boolean,
+  disabled?: boolean,
+  owner?: {
+    name?: string | null,
+    email?: string | null,
+    login: string,
+    id: number,
+    nodeId?: string,
+    avatarUrl?: string,
+    gravatarId?: string | null,
+    url?: string,
+    htmlUrl?: string,
+    followersUrl?: string,
+    followingUrl?: string,
+    gistsUrl?: string,
+    starredUrl?: string,
+    subscriptionsUrl?: string,
+    organizationsUrl?: string,
+    reposUrl?: string,
+    eventsUrl?: string,
+    receivedEventsUrl?: string,
+    type?: string,
+    siteAdmin?: boolean,
+    starredAt?: Date | null,
+    userViewType?: string
+  },
+  score: number,
+  watchers?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### users
+
+`search.users`
+
+Search GitHub users and organizations
+
+**Risk:** `read`
+
+```ts
+await corsair.github.api.search.users({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `sort` | `followers \| repositories \| joined` | No | — |
+| `order` | `asc \| desc` | No | — |
+| `perPage` | `number` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalCount` | `number` | Yes | — |
+| `incompleteResults` | `boolean` | Yes | — |
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  name?: string | null,
+  email?: string | null,
+  login: string,
+  id: number,
+  nodeId?: string,
+  avatarUrl?: string,
+  gravatarId?: string | null,
+  url?: string,
+  htmlUrl?: string,
+  followersUrl?: string,
+  followingUrl?: string,
+  gistsUrl?: string,
+  starredUrl?: string,
+  subscriptionsUrl?: string,
+  organizationsUrl?: string,
+  reposUrl?: string,
+  eventsUrl?: string,
+  receivedEventsUrl?: string,
+  type?: string,
+  siteAdmin?: boolean,
+  starredAt?: Date | null,
+  userViewType?: string,
+  score: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
 
 
 ---
@@ -4364,7 +4793,6 @@ await corsair.github.api.workflows.list({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `totalCount` | `number` | No | — |
-| `total_count` | `number` | No | — |
 | `workflows` | `object[]` | No | — |
 
 <AccordionGroup>
@@ -4428,37 +4856,10 @@ await corsair.github.api.workflows.listRuns({});
 | Name | Type | Required | Description |
 |------|------|----------|-------------|
 | `totalCount` | `number` | No | — |
-| `total_count` | `number` | No | — |
 | `workflowRuns` | `object[]` | No | — |
-| `workflow_runs` | `object[]` | No | — |
 
 <AccordionGroup>
 <Accordion title="workflowRuns full type">
-
-```ts
-{
-  id: number,
-  nodeId?: string,
-  name?: string | null,
-  headBranch?: string | null,
-  headSha?: string,
-  path?: string,
-  runNumber?: number,
-  runAttempt?: number,
-  event?: string,
-  status?: string | null,
-  conclusion?: string | null,
-  workflowId?: number,
-  url?: string,
-  htmlUrl?: string,
-  createdAt?: Date | null,
-  updatedAt?: Date | null,
-  displayTitle?: string
-}[]
-```
-</Accordion>
-
-<Accordion title="workflow_runs full type">
 
 ```ts
 {

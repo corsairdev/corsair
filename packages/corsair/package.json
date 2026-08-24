@@ -1,6 +1,6 @@
 {
   "name": "corsair",
-  "version": "0.1.110",
+  "version": "0.1.119",
   "description": "",
   "type": "module",
   "main": "./dist/index.js",
@@ -52,6 +52,11 @@
       "types": "./dist/hub.d.ts",
       "default": "./dist/hub.js"
     },
+    "./hub/tunnel/run-tunnel": {
+      "dev-source": "./hub/tunnel/run-tunnel.ts",
+      "types": "./dist/hub/tunnel/run-tunnel.d.ts",
+      "default": "./dist/hub/tunnel/run-tunnel.js"
+    },
     "./tests": {
       "dev-source": "./tests.ts",
       "types": "./dist/tests.d.ts",
@@ -78,6 +83,7 @@
     "test:api": "jest --testPathPattern=api\\.test\\.ts",
     "build": "tsup",
     "build:watch": "tsup --watch",
+    "postinstall": "node scripts/postinstall-frpc.mjs",
     "typecheck": "tsc --noEmit && tsc --noEmit -p tsconfig.test.json",
     "ind": "tsx index.ts"
   },
@@ -86,6 +92,14 @@
     "kysely-postgres-js": "^3.0.0",
     "uuid": "^13.0.0",
     "zod": "^4.1.13"
+  },
+  "optionalDependencies": {
+    "@corsair-dev/frpc-darwin-arm64": "workspace:*",
+    "@corsair-dev/frpc-darwin-x64": "workspace:*",
+    "@corsair-dev/frpc-linux-arm64": "workspace:*",
+    "@corsair-dev/frpc-linux-x64": "workspace:*",
+    "@corsair-dev/frpc-win32-arm64": "workspace:*",
+    "@corsair-dev/frpc-win32-x64": "workspace:*"
   },
   "devDependencies": {
     "@testing-library/react": "^16.3.2",
@@ -117,6 +131,8 @@
   "license": "Apache-2.0",
   "packageManager": "pnpm@10.20.0",
   "files": [
-    "dist"
+    "dist",
+    "scripts/postinstall-frpc.mjs",
+    "scripts/frpc-release.json"
   ]
 }

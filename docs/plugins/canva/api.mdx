@@ -1,0 +1,2256 @@
+---
+title: API
+description: "API reference for Canva: every `canva.api.*` operation with input and output types."
+---
+
+Every `canva.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Assets
+
+### delete
+
+`assets.delete`
+
+Delete an asset [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.canva.api.assets.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`assets.get`
+
+Get metadata for an asset
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.assets.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assetId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+  type: image | video,
+  id: string,
+  name: string,
+  tags: string[],
+  created_at: number,
+  updated_at: number,
+  owner?: {
+    user_id: string,
+    team_id: string
+  },
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`assets.update`
+
+Update an asset name or tags
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.assets.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `assetId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `tags` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `asset` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="asset full type">
+
+```ts
+{
+  type: image | video,
+  id: string,
+  name: string,
+  tags: string[],
+  created_at: number,
+  updated_at: number,
+  owner?: {
+    user_id: string,
+    team_id: string
+  },
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Asset Uploads
+
+### create
+
+`assetUploads.create`
+
+Start a job to upload an asset from binary content
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.assetUploads.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `contentBase64` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  asset?: {
+    type: image | video,
+    id: string,
+    name: string,
+    tags: string[],
+    created_at: number,
+    updated_at: number,
+    owner?: {
+      user_id: string,
+      team_id: string
+    },
+    thumbnail?: {
+      width: number,
+      height: number,
+      url: string
+    }
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromUrl
+
+`assetUploads.createFromUrl`
+
+Start a job to upload an asset from a URL
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.assetUploads.createFromUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  asset?: {
+    type: image | video,
+    id: string,
+    name: string,
+    tags: string[],
+    created_at: number,
+    updated_at: number,
+    owner?: {
+      user_id: string,
+      team_id: string
+    },
+    thumbnail?: {
+      width: number,
+      height: number,
+      url: string
+    }
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`assetUploads.get`
+
+Get the status of an asset upload job
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.assetUploads.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  asset?: {
+    type: image | video,
+    id: string,
+    name: string,
+    tags: string[],
+    created_at: number,
+    updated_at: number,
+    owner?: {
+      user_id: string,
+      team_id: string
+    },
+    thumbnail?: {
+      width: number,
+      height: number,
+      url: string
+    }
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFromUrl
+
+`assetUploads.getFromUrl`
+
+Get the status of a URL asset upload job
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.assetUploads.getFromUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  asset?: {
+    type: image | video,
+    id: string,
+    name: string,
+    tags: string[],
+    created_at: number,
+    updated_at: number,
+    owner?: {
+      user_id: string,
+      team_id: string
+    },
+    thumbnail?: {
+      width: number,
+      height: number,
+      url: string
+    }
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Autofills
+
+### create
+
+`autofills.create`
+
+Start a job to autofill a brand template with data
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.autofills.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand_template_id` | `string` | Yes | — |
+| `data` | `object` | Yes | — |
+| `title` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  result?: {
+    type?: string,
+    design?: {
+      id: string,
+      title?: string,
+      url?: string,
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      },
+      current_page_index?: number
+    }
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`autofills.get`
+
+Get the status of a design autofill job
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.autofills.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  result?: {
+    type?: string,
+    design?: {
+      id: string,
+      title?: string,
+      url?: string,
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      },
+      current_page_index?: number
+    }
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Brand Templates
+
+### get
+
+`brandTemplates.get`
+
+Get metadata for a brand template
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.brandTemplates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandTemplateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brand_template` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="brand_template full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  view_url?: string,
+  create_url?: string,
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  },
+  created_at?: number,
+  updated_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getDataset
+
+`brandTemplates.getDataset`
+
+Get the autofill dataset definition for a brand template
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.brandTemplates.getDataset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandTemplateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `dataset` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="dataset full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`brandTemplates.list`
+
+List the user's brand templates
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.brandTemplates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `continuation` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `ownership` | `any \| owned \| shared` | No | — |
+| `sort_by` | `relevance \| modified_descending \| modified_ascending \| title_descending \| title_ascending` | No | — |
+| `dataset` | `any \| non_empty` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `continuation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  view_url?: string,
+  create_url?: string,
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  },
+  created_at?: number,
+  updated_at?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Comments
+
+### createReply
+
+`comments.createReply`
+
+Reply to a comment thread on a design
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.comments.createReply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+| `threadId` | `string` | Yes | — |
+| `message_plaintext` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reply` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reply full type">
+
+```ts
+{
+  id: string,
+  design_id?: string,
+  thread_id?: string,
+  author?: {
+    id: string,
+    display_name?: string
+  },
+  content?: {
+    plaintext?: string,
+    markdown?: string
+  },
+  created_at?: number,
+  updated_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createThread
+
+`comments.createThread`
+
+Create a new comment thread on a design
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.comments.createThread({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+| `message_plaintext` | `string` | Yes | — |
+| `assignee_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="thread full type">
+
+```ts
+{
+  id: string,
+  design_id?: string,
+  thread_type?: {
+    type?: string,
+    content?: {
+      plaintext?: string,
+      markdown?: string
+    }
+  },
+  author?: {
+    id: string,
+    display_name?: string
+  },
+  assignee?: {
+    id: string,
+    display_name?: string
+  },
+  created_at?: number,
+  updated_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getReply
+
+`comments.getReply`
+
+Get a reply to a comment thread on a design
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.comments.getReply({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+| `threadId` | `string` | Yes | — |
+| `replyId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `reply` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="reply full type">
+
+```ts
+{
+  id: string,
+  design_id?: string,
+  thread_id?: string,
+  author?: {
+    id: string,
+    display_name?: string
+  },
+  content?: {
+    plaintext?: string,
+    markdown?: string
+  },
+  created_at?: number,
+  updated_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getThread
+
+`comments.getThread`
+
+Get a comment thread on a design
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.comments.getThread({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+| `threadId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `thread` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="thread full type">
+
+```ts
+{
+  id: string,
+  design_id?: string,
+  thread_type?: {
+    type?: string,
+    content?: {
+      plaintext?: string,
+      markdown?: string
+    }
+  },
+  author?: {
+    id: string,
+    display_name?: string
+  },
+  assignee?: {
+    id: string,
+    display_name?: string
+  },
+  created_at?: number,
+  updated_at?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listReplies
+
+`comments.listReplies`
+
+List replies to a comment thread on a design
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.comments.listReplies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+| `threadId` | `string` | Yes | — |
+| `continuation` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `continuation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  design_id?: string,
+  thread_id?: string,
+  author?: {
+    id: string,
+    display_name?: string
+  },
+  content?: {
+    plaintext?: string,
+    markdown?: string
+  },
+  created_at?: number,
+  updated_at?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Designs
+
+### create
+
+`designs.create`
+
+Create a new Canva design
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.designs.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `type_and_asset` | No | — |
+| `design_type` | `object` | No | — |
+| `asset_id` | `string` | No | — |
+| `title` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="design_type full type">
+
+```ts
+{
+  type: preset,
+  name: doc | email | presentation | whiteboard
+} | {
+  type: custom,
+  width: number,
+  height: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `design` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="design full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  owner: {
+    user_id: string,
+    team_id: string
+  },
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  },
+  urls: {
+    edit_url: string,
+    view_url: string
+  },
+  created_at: number,
+  updated_at: number,
+  page_count?: number,
+  design_types?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`designs.get`
+
+Get metadata for a design
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.designs.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `design` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="design full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  owner: {
+    user_id: string,
+    team_id: string
+  },
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  },
+  urls: {
+    edit_url: string,
+    view_url: string
+  },
+  created_at: number,
+  updated_at: number,
+  page_count?: number,
+  design_types?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getExportFormats
+
+`designs.getExportFormats`
+
+Get the export formats available for a design
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.designs.getExportFormats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `formats` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="formats full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getPages
+
+`designs.getPages`
+
+Get pages for a design
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.designs.getPages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `designId` | `string` | Yes | — |
+| `offset` | `number` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id?: string,
+  index?: number,
+  page_number?: number,
+  design_type?: string,
+  dimensions?: {
+    width: number,
+    height: number
+  },
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`designs.list`
+
+List designs in the user projects
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.designs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `continuation` | `string` | No | — |
+| `ownership` | `any \| owned \| shared` | No | — |
+| `sort_by` | `relevance \| modified_descending \| modified_ascending \| title_descending \| title_ascending` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `continuation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  title?: string,
+  owner: {
+    user_id: string,
+    team_id: string
+  },
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  },
+  urls: {
+    edit_url: string,
+    view_url: string
+  },
+  created_at: number,
+  updated_at: number,
+  page_count?: number,
+  design_types?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Exports
+
+### create
+
+`exports.create`
+
+Start a design export job
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.exports.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `design_id` | `string` | Yes | — |
+| `format` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="format full type">
+
+```ts
+{
+  type: pdf,
+  size?: a4 | a3 | letter | legal,
+  pages?: number[],
+  export_quality?: regular | pro
+} | {
+  type: jpg,
+  quality: number,
+  width?: number,
+  height?: number,
+  pages?: number[],
+  export_quality?: regular | pro
+} | {
+  type: png,
+  width?: number,
+  height?: number,
+  pages?: number[],
+  lossless?: boolean,
+  transparent_background?: boolean,
+  as_single_image?: boolean,
+  export_quality?: regular | pro
+} | {
+  type: gif,
+  width?: number,
+  height?: number,
+  pages?: number[],
+  export_quality?: regular | pro
+} | {
+  type: pptx,
+  pages?: number[]
+} | {
+  type: mp4,
+  quality?: horizontal_480p | horizontal_720p | horizontal_1080p | horizontal_4k | vertical_480p | vertical_720p | vertical_1080p | vertical_4k
+} | {
+  type: html_bundle,
+  pages?: number[]
+} | {
+  type: html_standalone,
+  pages?: number[]
+} | {
+  type: csv,
+  pages?: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  urls?: string[],
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`exports.get`
+
+Get the status of an export job
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.exports.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `exportId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  urls?: string[],
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Folders
+
+### create
+
+`folders.create`
+
+Create a folder
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.folders.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `parent_folder_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="folder full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  created_at: number,
+  updated_at: number,
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`folders.delete`
+
+Delete a folder [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.canva.api.folders.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### get
+
+`folders.get`
+
+Get metadata for a folder
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.folders.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="folder full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  created_at: number,
+  updated_at: number,
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listItems
+
+`folders.listItems`
+
+List items in a folder
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.folders.listItems({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | — |
+| `continuation` | `string` | No | — |
+| `limit` | `number` | No | — |
+| `item_types` | `design \| folder \| image \| brand_template[]` | No | — |
+| `sort_by` | `created_ascending \| created_descending \| modified_ascending \| modified_descending \| title_ascending \| title_descending` | No | — |
+| `pin_status` | `any \| pinned` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `continuation` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+(
+  {
+    type: folder,
+    folder: {
+      id: string,
+      name: string,
+      created_at: number,
+      updated_at: number,
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      }
+    }
+  } | {
+    type: design,
+    design: {
+      id: string,
+      title?: string,
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      },
+      urls: {
+        edit_url: string,
+        view_url: string
+      },
+      created_at: number,
+      updated_at: number,
+      page_count?: number,
+      design_types?: string[],
+      owner?: {
+        user_id: string,
+        team_id: string
+      },
+      url?: string
+    }
+  } | {
+    type: image,
+    image: {
+      type: image | video,
+      id: string,
+      name: string,
+      tags: string[],
+      created_at: number,
+      updated_at: number,
+      owner?: {
+        user_id: string,
+        team_id: string
+      },
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      }
+    }
+  } | {
+    type: brand_template,
+    brand_template: {
+      id: string,
+      title?: string,
+      view_url?: string,
+      create_url?: string,
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      },
+      created_at?: number,
+      updated_at?: number
+    }
+  }
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### moveItem
+
+`folders.moveItem`
+
+Move an item to another folder
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.folders.moveItem({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `to_folder_id` | `string` | Yes | — |
+| `item_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | Yes | — |
+
+
+
+---
+
+### update
+
+`folders.update`
+
+Update a folder name
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.folders.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folderId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `folder` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="folder full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  created_at: number,
+  updated_at: number,
+  thumbnail?: {
+    width: number,
+    height: number,
+    url: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Imports
+
+### create
+
+`imports.create`
+
+Start a job to import a design from binary content
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.imports.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `contentBase64` | `string` | Yes | — |
+| `mime_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  result?: {
+    designs: {
+      id: string,
+      title?: string,
+      url?: string,
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      }
+    }[]
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createFromUrl
+
+`imports.createFromUrl`
+
+Start a job to import a design from a URL
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.imports.createFromUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `mime_type` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  result?: {
+    designs: {
+      id: string,
+      title?: string,
+      url?: string,
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      }
+    }[]
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`imports.get`
+
+Get the status of a design import job
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.imports.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  result?: {
+    designs: {
+      id: string,
+      title?: string,
+      url?: string,
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      }
+    }[]
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getFromUrl
+
+`imports.getFromUrl`
+
+Get the status of a URL design import job
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.imports.getFromUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  result?: {
+    designs: {
+      id: string,
+      title?: string,
+      url?: string,
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      }
+    }[]
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Resizes
+
+### create
+
+`resizes.create`
+
+Start a job to resize a design
+
+**Risk:** `write`
+
+```ts
+await corsair.canva.api.resizes.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `design_id` | `string` | Yes | — |
+| `design_type` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="design_type full type">
+
+```ts
+{
+  type: preset,
+  name: doc | email | presentation | whiteboard
+} | {
+  type: custom,
+  width: number,
+  height: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  result?: {
+    design: {
+      id: string,
+      title?: string,
+      owner: {
+        user_id: string,
+        team_id: string
+      },
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      },
+      urls: {
+        edit_url: string,
+        view_url: string
+      },
+      created_at: number,
+      updated_at: number,
+      page_count?: number,
+      design_types?: string[]
+    }
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`resizes.get`
+
+Get the status of a design resize job
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.resizes.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `job` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="job full type">
+
+```ts
+{
+  id: string,
+  status: in_progress | success | failed,
+  result?: {
+    design: {
+      id: string,
+      title?: string,
+      owner: {
+        user_id: string,
+        team_id: string
+      },
+      thumbnail?: {
+        width: number,
+        height: number,
+        url: string
+      },
+      urls: {
+        edit_url: string,
+        view_url: string
+      },
+      created_at: number,
+      updated_at: number,
+      page_count?: number,
+      design_types?: string[]
+    }
+  },
+  error?: {
+    code: string,
+    message: string
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getCapabilities
+
+`users.getCapabilities`
+
+Get the authenticated user's capabilities
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.users.getCapabilities({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `capabilities` | `string[]` | Yes | — |
+
+
+
+---
+
+### getMe
+
+`users.getMe`
+
+Get the authenticated user ID and team ID
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.users.getMe({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team_user` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="team_user full type">
+
+```ts
+{
+  user_id: string,
+  team_id: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getProfile
+
+`users.getProfile`
+
+Get the authenticated user profile
+
+**Risk:** `read`
+
+```ts
+await corsair.canva.api.users.getProfile({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="profile full type">
+
+```ts
+{
+  display_name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

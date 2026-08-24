@@ -57,6 +57,17 @@ test('draft plugin PR is skipped', () => {
 	assert.equal(r.isPluginPr, false);
 });
 
+test('frpc binary-shim packages are not plugins', () => {
+	const r = runGate({
+		...goodInput,
+		changedFiles: [
+			'packages/frpc-darwin-arm64/package.json',
+			'packages/frpc-linux-x64/package.json',
+		],
+	});
+	assert.equal(r.isPluginPr, false);
+});
+
 test('R1: out-of-scope file fails', () => {
 	const r = runGate({
 		...goodInput,

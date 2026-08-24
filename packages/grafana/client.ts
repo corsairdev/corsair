@@ -25,10 +25,28 @@ const GRAFANA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+/** Strip trailing slashes and reject non-HTTPS base URLs before sending a bearer token. */
+function assertHttpsGrafanaBaseUrl(baseUrl: string): string {
+	const cleanBaseUrl = baseUrl.replace(/\/+$/, '');
+	let protocol: string;
+	try {
+		protocol = new URL(cleanBaseUrl).protocol;
+	} catch {
+		throw new GrafanaAPIError(`Invalid Grafana baseUrl: ${baseUrl}`);
+	}
+	if (protocol !== 'https:') {
+		throw new GrafanaAPIError(
+			`Refusing to send Grafana bearer token to non-HTTPS baseUrl: ${baseUrl}`,
+		);
+	}
+	return cleanBaseUrl;
+}
+
 /**
  * Makes a JSON request to the Grafana REST API.
  * bearerToken is the Grafana Service Account Token.
  * baseUrl is the Grafana instance domain (e.g. https://example.grafana.net).
+ * baseUrl must be https:// — non-HTTPS URLs are rejected before the bearer token is sent.
  */
 export async function makeGrafanaRequest<T>(
 	endpoint: string,
@@ -41,9 +59,10 @@ export async function makeGrafanaRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
+	const cleanBaseUrl = assertHttpsGrafanaBaseUrl(baseUrl);
 
 	const config: OpenAPIConfig = {
-		BASE: baseUrl,
+		BASE: cleanBaseUrl,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -77,6 +96,8 @@ export async function makeGrafanaRequest<T>(
  * Makes a raw (text/HTML) request to the Grafana API.
  * Used for endpoints that return HTML pages (ring status, HA tracker, etc.).
  * Returns an object with content and content_type.
+ * A trailing slash on baseUrl is stripped automatically. baseUrl must be
+ * https:// — non-HTTPS URLs are rejected before the bearer token is sent.
  */
 export async function makeGrafanaRawRequest(
 	endpoint: string,
@@ -90,8 +111,8 @@ export async function makeGrafanaRawRequest(
 	} = {},
 ): Promise<{ content: string; content_type: string; status_code: number }> {
 	const { method = 'GET', body, contentType = 'application/json' } = options;
-
-	const url = `${baseUrl}${endpoint}`;
+	const cleanBaseUrl = assertHttpsGrafanaBaseUrl(baseUrl);
+	const url = `${cleanBaseUrl}${endpoint}`;
 
 	const headers: Record<string, string> = {
 		Authorization: `Bearer ${bearerToken}`,
