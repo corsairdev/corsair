@@ -96,10 +96,15 @@ export function createOutlookMatch(
 	options?: { excludeResourcePatterns?: RegExp[] },
 ): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
-		const body =
-			typeof request.body === 'string'
-				? (JSON.parse(request.body) as unknown)
-				: request.body;
+		let body: unknown;
+		try {
+			body =
+				typeof request.body === 'string'
+					? (JSON.parse(request.body) as unknown)
+					: request.body;
+		} catch {
+			return false;
+		}
 		if (!body || typeof body !== 'object') return false;
 		const value = (body as Record<string, unknown>)['value'];
 		if (!Array.isArray(value)) return false;
