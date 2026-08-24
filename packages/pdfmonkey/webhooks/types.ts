@@ -143,7 +143,8 @@ export function verifyPDFMonkeyWebhookSignature(
 		return { valid: false, error: 'Malformed webhook secret' };
 	}
 	const secretBase64 = secret.slice('whsec_'.length);
-	if (!secretBase64) {
+	const secretKey = Buffer.from(secretBase64, 'base64');
+	if (!secretBase64 || secretKey.length === 0) {
 		return { valid: false, error: 'Malformed webhook secret' };
 	}
 
@@ -153,7 +154,7 @@ export function verifyPDFMonkeyWebhookSignature(
 	}
 
 	const signedContent = `${svixId}.${svixTimestamp}.${rawBody}`;
-	const expected = createHmac('sha256', Buffer.from(secretBase64, 'base64'))
+	const expected = createHmac('sha256', secretKey)
 		.update(signedContent)
 		.digest();
 

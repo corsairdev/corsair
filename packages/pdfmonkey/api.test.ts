@@ -129,6 +129,25 @@ describe('PDFMonkey plugin shape', () => {
 			),
 		).rejects.toBeInstanceOf(AuthMissingError);
 	});
+
+	it('throws AuthMissingError when the webhook signature is missing', async () => {
+		const plugin = pdfmonkey();
+		await expect(
+			plugin.keyBuilder?.(
+				{
+					authType: 'api_key',
+					keys: {
+						get_webhook_signature: async () => undefined,
+					},
+				} as never,
+				'webhook',
+			),
+		).rejects.toMatchObject({
+			name: 'AuthMissingError',
+			pluginId: 'pdfmonkey',
+			authType: 'webhook_signature',
+		});
+	});
 });
 
 describe('PDFMonkey endpoints', () => {

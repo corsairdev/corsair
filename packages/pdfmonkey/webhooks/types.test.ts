@@ -87,6 +87,19 @@ describe('verifyPDFMonkeyWebhookSignature', () => {
 		});
 	});
 
+	it('rejects a malformed webhook secret that would decode to an empty key', () => {
+		expect(
+			verifyPDFMonkeyWebhookSignature(
+				requestWith({
+					'svix-id': SVIX_ID,
+					'svix-timestamp': timestamp,
+					'svix-signature': sign(SVIX_ID, timestamp, rawBody),
+				}),
+				'whsec_!!!!',
+			),
+		).toEqual({ valid: false, error: 'Malformed webhook secret' });
+	});
+
 	it('rejects a stale timestamp', () => {
 		const stale = String(Math.floor(Date.now() / 1000) - 10 * 60);
 		expect(

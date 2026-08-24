@@ -309,9 +309,7 @@ export function pdfmonkey<const T extends PDFMonkeyPluginOptions>(
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
 				if (!res) {
-					throw new Error(
-						'[auth-missing:pdfmonkey:webhook_signature]: PDFMonkey webhook signature is missing',
-					);
+					throw new AuthMissingError('pdfmonkey', 'webhook_signature');
 				}
 				return res;
 			}
