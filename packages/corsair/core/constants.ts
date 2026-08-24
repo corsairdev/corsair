@@ -191,6 +191,7 @@ export const BaseProviders = [
 	'zendesk',
 	'zohomail',
 	'zoom',
+	'zoominfo',
 ] as const;
 
 export const ProviderDisplayNames = {
@@ -372,6 +373,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
+	zoominfo: 'ZoomInfo',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -560,6 +562,7 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zohomail'
 	| 'zoom'
+	| 'zoominfo'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
