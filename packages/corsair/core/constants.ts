@@ -85,6 +85,7 @@ export const BaseProviders = [
 	'collegefootballdata',
 	'confluence',
 	'contentfulgraphql',
+	'convoloai',
 	'crowterminal',
 	'cursor',
 	'customgpt',
@@ -273,6 +274,7 @@ export const ProviderDisplayNames = {
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
 	contentfulgraphql: 'Contentful GraphQL',
+	convoloai: 'ConvoloAi',
 	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
 	customgpt: 'CustomGPT',
@@ -468,6 +470,7 @@ export type AllProviders =
 	| 'collegefootballdata'
 	| 'confluence'
 	| 'contentfulgraphql'
+	| 'convoloai'
 	| 'crowterminal'
 	| 'cursor'
 	| 'customgpt'
