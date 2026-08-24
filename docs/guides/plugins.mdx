@@ -1,9 +1,7 @@
 ---
 title: Plugins
-description: "Browse all available Corsair integrations. Each plugin gives your AI agent typed API access, webhook handling, and data sync."
-keywords: ["Corsair plugins", "AI agent Slack integration", "AI agent Gmail", "GitHub integration", "Linear integration", "AI integrations catalog"]
-"og:title": "All Corsair Plugins"
-"og:description": "Slack, Gmail, GitHub, HubSpot, Stripe, Linear — see the full integration catalog."
+description: "Corsair plugin catalog. Each package adds typed API calls, optional webhooks, and a local database layer."
+keywords: ["corsair plugins", "slack", "github", "gmail"]
 ---
 
 Corsair integrations ship as **npm packages** under `@corsair-dev/<plugin>`. Each plugin adds typed API calls, optional webhooks, and a local database layer for that provider.
@@ -35,7 +33,7 @@ export const corsair = createCorsair({
 });
 ```
 
-Then configure credentials for each integration (CLI, env, or your app’s setup flow). For a full walkthrough—integrations, accounts, tenants, and `setupCorsair`—see [Provisioning](/concepts/provisioning).
+Then configure credentials for each integration (CLI, env, or your app’s setup flow). For a full walkthrough (integrations, accounts, tenants, and `setupCorsair`), see [Provisioning](/concepts/provisioning).
 
 ## Find a specific integration
 
