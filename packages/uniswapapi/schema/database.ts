@@ -34,7 +34,9 @@ export type UniswapQuote = z.infer<typeof UniswapQuote>;
 export const UniswapSwapStatus = z.object({
 	txHash: z.string(),
 	chainId: z.number(),
-	status: z.enum(['pending', 'confirmed', 'failed']).optional(),
+	status: z
+		.enum(['PENDING', 'SUCCESS', 'NOT_FOUND', 'FAILED', 'EXPIRED'])
+		.optional(),
 });
 export type UniswapSwapStatus = z.infer<typeof UniswapSwapStatus>;
 
