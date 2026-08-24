@@ -186,5 +186,26 @@ describe('run_script tool - scoped proxy', () => {
 				/ReadonlyForbiddenError/,
 			);
 		});
+
+		it('isolates readonly state across concurrent async executions', async () => {
+			const readonlyTool = getRunScriptTool(true);
+			const unrestrictedTool = getRunScriptTool(false);
+
+			const [readonlyResult, unrestrictedResult] = await Promise.all([
+				readonlyTool.handler({
+					code: 'await new Promise((r) => setTimeout(r, 10)); return corsair.github.db.issues.upsertByEntityId({});',
+				}),
+				unrestrictedTool.handler({
+					code: 'await new Promise((r) => setTimeout(r, 10)); return corsair.github.db.issues.upsertByEntityId({});',
+				}),
+			]);
+
+			expect((readonlyResult.content[0] as { text: string }).text).toMatch(
+				/readonly|ReadonlyForbidden/i,
+			);
+			expect(
+				(unrestrictedResult.content[0] as { text: string }).text,
+			).toContain('upserted');
+		});
 	});
 });

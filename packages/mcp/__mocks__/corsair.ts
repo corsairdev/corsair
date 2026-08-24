@@ -1,13 +1,9 @@
-let isReadonlyScopeActive = false;
+import { AsyncLocalStorage } from 'node:async_hooks';
 
-export const runReadonly = async (fn: () => any) => {
-	const prev = isReadonlyScopeActive;
-	isReadonlyScopeActive = true;
-	try {
-		return await fn();
-	} finally {
-		isReadonlyScopeActive = prev;
-	}
+const readonlyScope = new AsyncLocalStorage<true>();
+
+export const runReadonly = <T>(fn: () => T): T => {
+	return readonlyScope.run(true, fn);
 };
 
 export class AuthMissingError extends Error {}
@@ -19,8 +15,8 @@ export class ReadonlyForbiddenError extends Error {
 	}
 }
 
-export const assertReadonlyAllowed = (path: string, type: string) => {
-	if (isReadonlyScopeActive) {
+export const assertReadonlyAllowed = (_path: string, _type: string) => {
+	if (readonlyScope.getStore()) {
 		throw new ReadonlyForbiddenError();
 	}
 };
