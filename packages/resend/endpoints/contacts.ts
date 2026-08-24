@@ -21,14 +21,14 @@ export const create: ResendEndpoints['contactsCreate'] = async (ctx, input) => {
 		body,
 	});
 
-	if (response.id && ctx.db.contacts) {
+	if (response.id && ctx.db?.contacts) {
 		try {
 			// POST /contacts returns only { object, id }; fetch the full
 			// contact before upserting so the persisted row has email/etc.
 			const fetched = await makeResendRequest<
 				ResendEndpointOutputs['contactsGet']
 			>(`contacts/${response.id}`, ctx.key, { method: 'GET' });
-			await ctx.db.contacts.upsertByEntityId(response.id, {
+			await ctx.db?.contacts.upsertByEntityId(response.id, {
 				id: fetched.id,
 				email: fetched.email,
 				first_name: fetched.first_name ?? null,
@@ -57,9 +57,9 @@ export const get: ResendEndpoints['contactsGet'] = async (ctx, input) => {
 		method: 'GET',
 	});
 
-	if (response.id && ctx.db.contacts) {
+	if (response.id && ctx.db?.contacts) {
 		try {
-			await ctx.db.contacts.upsertByEntityId(response.id, {
+			await ctx.db?.contacts.upsertByEntityId(response.id, {
 				id: response.id,
 				email: response.email,
 				first_name: response.first_name ?? null,
@@ -93,10 +93,10 @@ export const list: ResendEndpoints['contactsList'] = async (ctx, input) => {
 		query,
 	});
 
-	if (response.data && ctx.db.contacts) {
+	if (response.data && ctx.db?.contacts) {
 		try {
 			for (const contact of response.data) {
-				await ctx.db.contacts.upsertByEntityId(contact.id, {
+				await ctx.db?.contacts.upsertByEntityId(contact.id, {
 					...contact,
 				});
 			}
@@ -124,7 +124,7 @@ export const update: ResendEndpoints['contactsUpdate'] = async (ctx, input) => {
 		body,
 	});
 
-	if (response.id && ctx.db.contacts) {
+	if (response.id && ctx.db?.contacts) {
 		try {
 			// PATCH /contacts/:id returns only { object, id }; fetch the full
 			// contact before upserting so the persisted row reflects the
@@ -132,7 +132,7 @@ export const update: ResendEndpoints['contactsUpdate'] = async (ctx, input) => {
 			const fetched = await makeResendRequest<
 				ResendEndpointOutputs['contactsGet']
 			>(`contacts/${response.id}`, ctx.key, { method: 'GET' });
-			await ctx.db.contacts.upsertByEntityId(response.id, {
+			await ctx.db?.contacts.upsertByEntityId(response.id, {
 				id: fetched.id,
 				email: fetched.email,
 				first_name: fetched.first_name ?? null,
@@ -164,9 +164,9 @@ export const deleteContact: ResendEndpoints['contactsDelete'] = async (
 		method: 'DELETE',
 	});
 
-	if (response.deleted && ctx.db.contacts) {
+	if (response.deleted && ctx.db?.contacts) {
 		try {
-			await ctx.db.contacts.deleteByEntityId(input.id);
+			await ctx.db?.contacts.deleteByEntityId(input.id);
 		} catch (error) {
 			console.warn('Failed to delete contact from database:', error);
 		}

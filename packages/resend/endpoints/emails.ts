@@ -85,9 +85,9 @@ export const cancel: ResendEndpoints['emailsCancel'] = async (ctx, input) => {
 		method: 'POST',
 	});
 
-	if (response.cancelled && ctx.db.emails) {
+	if ((response.cancelled || response.id) && ctx.db?.emails) {
 		try {
-			await ctx.db.emails.deleteByEntityId(input.id);
+			await ctx.db?.emails.deleteByEntityId(input.id);
 		} catch (error) {
 			console.warn('Failed to delete email from database:', error);
 		}
@@ -111,9 +111,9 @@ export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 		},
 	);
 
-	if (response.id && ctx.db.emails) {
+	if (response.id && ctx.db?.emails) {
 		try {
-			await ctx.db.emails.upsertByEntityId(response.id, {
+			await ctx.db?.emails.upsertByEntityId(response.id, {
 				...response,
 			});
 		} catch (error) {
@@ -144,10 +144,10 @@ export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 		},
 	);
 
-	if (response.data && ctx.db.emails) {
+	if (response.data && ctx.db?.emails) {
 		try {
 			for (const email of response.data) {
-				await ctx.db.emails.upsertByEntityId(email.id, {
+				await ctx.db?.emails.upsertByEntityId(email.id, {
 					...email,
 				});
 			}

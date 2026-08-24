@@ -39,9 +39,9 @@ export const get: ResendEndpoints['domainsGet'] = async (ctx, input) => {
 		},
 	);
 
-	if (response.id && ctx.db.domains) {
+	if (response.id && ctx.db?.domains) {
 		try {
-			await ctx.db.domains.upsertByEntityId(response.id, {
+			await ctx.db?.domains.upsertByEntityId(response.id, {
 				id: response.id,
 				name: response.name,
 				status: response.status as
@@ -84,10 +84,10 @@ export const list: ResendEndpoints['domainsList'] = async (ctx, input) => {
 		query,
 	});
 
-	if (response.data && ctx.db.domains) {
+	if (response.data && ctx.db?.domains) {
 		try {
 			for (const domain of response.data) {
-				await ctx.db.domains.upsertByEntityId(domain.id, {
+				await ctx.db?.domains.upsertByEntityId(domain.id, {
 					id: domain.id,
 					name: domain.name,
 					status: domain.status as
@@ -129,9 +129,9 @@ export const deleteDomain: ResendEndpoints['domainsDelete'] = async (
 		method: 'DELETE',
 	});
 
-	if (response.deleted && ctx.db.domains) {
+	if (response.deleted && ctx.db?.domains) {
 		try {
-			await ctx.db.domains.deleteByEntityId(input.id);
+			await ctx.db?.domains.deleteByEntityId(input.id);
 		} catch (error) {
 			console.warn('Failed to delete domain from database:', error);
 		}
