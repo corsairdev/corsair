@@ -121,6 +121,16 @@ describe('createOutlookMatch', () => {
 		expect(matchMessages(request)).toBe(false);
 	});
 
+	it('should not throw when the body is invalid JSON', () => {
+		const request = {
+			body: '{not-json',
+			headers: {},
+			rawBody: '{not-json',
+		} as never;
+		expect(() => matchMessages(request)).not.toThrow();
+		expect(matchMessages(request)).toBe(false);
+	});
+
 	it('should match a created message notification', () => {
 		expect(
 			matchMessages({
