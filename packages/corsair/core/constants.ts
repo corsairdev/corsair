@@ -72,6 +72,7 @@ export const BaseProviders = [
 	'botpress',
 	'bouncer',
 	'box',
+	'browserai',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -260,6 +261,7 @@ export const ProviderDisplayNames = {
 	botpress: 'Botpress',
 	bouncer: 'Bouncer',
 	box: 'Box',
+	browserai: 'Browserai',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -455,6 +457,7 @@ export type AllProviders =
 	| 'botpress'
 	| 'bouncer'
 	| 'box'
+	| 'browserai'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
