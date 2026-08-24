@@ -19,10 +19,14 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
-	const res = await corsair.slack.api.messages.post({
-		channel: 'general',
-		text: 'hello',
-	});
+        const res = await corsair.slack.api.messages.post({
+                channel: 'general',
+                text: 'hello',
+        });
+
+        const projects = await corsair.webvizio.api.projects.list({});
+
+        console.log('Webvizio projects:', projects);
 };
 
 main().catch((err) => {
