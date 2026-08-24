@@ -20,5 +20,9 @@ describe('verifyGithubWebhookSignature', () => {
 			valid: false,
 			error: 'Missing webhook secret',
 		});
+		expect(verifyGithubWebhookSignature(request, '')).toEqual({
+			valid: false,
+			error: 'Missing webhook secret',
+		});
 	});
 });
