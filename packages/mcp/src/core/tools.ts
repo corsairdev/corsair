@@ -1,6 +1,6 @@
 import type { CallToolResult } from '@modelcontextprotocol/sdk/types.js';
 import type { AnyCorsairInstance } from 'corsair';
-import { listOperations, runReadonly } from 'corsair';
+import { assertReadonlyAllowed, listOperations, runReadonly } from 'corsair';
 import { z } from 'zod';
 import type { BaseMcpOptions } from './adapters.js';
 import { formatGetSchemaResponse } from './schema-format.js';
@@ -21,6 +21,165 @@ export type CorsairToolDef = {
 	shape: z.ZodRawShape;
 	handler: (args: Record<string, unknown>) => Promise<CallToolResult>;
 };
+
+export function createScopedCorsairProxy(corsairObj: any): any {
+	if (!corsairObj || typeof corsairObj !== 'object') return corsairObj;
+
+	return new Proxy(corsairObj, {
+		get(target, prop, receiver) {
+			const value = Reflect.get(target, prop, receiver);
+
+			if (prop === 'withTenant' && typeof value === 'function') {
+				return function (...args: any[]) {
+					const tenantClient = value.apply(target, args);
+					return createScopedCorsairProxy(tenantClient);
+				};
+			}
+
+			if (prop === 'manage') {
+				if (!value) return value;
+				return new Proxy(value, {
+					get(manageTarget, manageProp, manageReceiver) {
+						const manageValue = Reflect.get(
+							manageTarget,
+							manageProp,
+							manageReceiver,
+						);
+
+						if (manageProp === 'tenants') {
+							if (!manageValue) return manageValue;
+							return new Proxy(manageValue, {
+								get(tTarget, tProp, tReceiver) {
+									if (tProp === 'create') {
+										return function () {
+											throw new Error(
+												'manage.tenants.create is not available in run_script.',
+											);
+										};
+									}
+									return Reflect.get(tTarget, tProp, tReceiver);
+								},
+							});
+						}
+
+						if (manageProp === 'connect') {
+							if (!manageValue) return manageValue;
+							return new Proxy(manageValue, {
+								get(cTarget, cProp, cReceiver) {
+									if (cProp === 'createLink') {
+										return function () {
+											throw new Error(
+												'manage.connect.createLink is not available in run_script.',
+											);
+										};
+									}
+									if (cProp === 'oauthCallback') {
+										return function () {
+											throw new Error(
+												'manage.connect.oauthCallback is not available in run_script.',
+											);
+										};
+									}
+									return Reflect.get(cTarget, cProp, cReceiver);
+								},
+							});
+						}
+
+						return manageValue;
+					},
+				});
+			}
+
+			if (prop === 'permissions') {
+				return undefined;
+			}
+
+			if (prop === 'keys') {
+				return new Proxy(value || {}, {
+					get() {
+						throw new Error(
+							'Credential access (keys) not available in run_script. Use corsair.<plugin>.api.* endpoints instead.',
+						);
+					},
+				});
+			}
+
+			if (value && typeof value === 'object') {
+				return new Proxy(value, {
+					get(pluginTarget, pluginProp, pluginReceiver) {
+						const pluginValue = Reflect.get(
+							pluginTarget,
+							pluginProp,
+							pluginReceiver,
+						);
+
+						if (pluginProp === 'keys') {
+							return new Proxy(pluginValue || {}, {
+								get() {
+									throw new Error(
+										'Credential access (keys) not available in run_script. Use corsair.<plugin>.api.* endpoints instead.',
+									);
+								},
+							});
+						}
+
+						if (pluginProp === 'db') {
+							if (!pluginValue) return pluginValue;
+							return new Proxy(pluginValue, {
+								get(dbTarget, dbProp, dbReceiver) {
+									const entityValue = Reflect.get(dbTarget, dbProp, dbReceiver);
+									if (entityValue && typeof entityValue === 'object') {
+										return new Proxy(entityValue, {
+											get(eTarget, eProp, eReceiver) {
+												const methodValue = Reflect.get(
+													eTarget,
+													eProp,
+													eReceiver,
+												);
+												if (typeof methodValue === 'function') {
+													if (eProp === 'upsertByEntityId') {
+														return function (...args: any[]) {
+															assertReadonlyAllowed(
+																'db.upsertByEntityId',
+																'write',
+															);
+															return methodValue.apply(eTarget, args);
+														};
+													}
+													if (eProp === 'deleteById') {
+														return function (...args: any[]) {
+															assertReadonlyAllowed('db.deleteById', 'write');
+															return methodValue.apply(eTarget, args);
+														};
+													}
+													if (eProp === 'deleteByEntityId') {
+														return function (...args: any[]) {
+															assertReadonlyAllowed(
+																'db.deleteByEntityId',
+																'write',
+															);
+															return methodValue.apply(eTarget, args);
+														};
+													}
+												}
+												return methodValue;
+											},
+										});
+									}
+									return entityValue;
+								},
+							});
+						}
+
+						return pluginValue;
+					},
+				});
+			}
+
+			return value;
+		},
+	});
+}
 
 export function buildCorsairToolDefs(
 	options: BaseMcpOptions,
@@ -87,12 +246,13 @@ export function buildCorsairToolDefs(
 			handler: async ({ code }) => {
 				const readonly = runOptions?.readonly || false;
 				try {
+					const scopedCorsair = createScopedCorsairProxy(corsair);
 					const fn = new Function(
 						'corsair',
 						`return (async () => { ${code} })()`,
 					);
 					const invoke = () =>
-						(fn as (c: unknown) => Promise<unknown>)(corsair);
+						(fn as (c: unknown) => Promise<unknown>)(scopedCorsair);
 					// When readonly is required, run the whole script inside a readonly
 					// scope that takes precedence over the developer's permission config.
 					// Any write/destructive endpoint throws and aborts the script.
