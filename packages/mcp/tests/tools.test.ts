@@ -1,4 +1,3 @@
-import { describe, expect, it } from 'vitest';
 import { buildCorsairToolDefs } from '../src/core/tools';
 
 describe('run_script tool - scoped proxy', () => {
