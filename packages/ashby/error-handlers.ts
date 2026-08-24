@@ -19,14 +19,12 @@ export const errorHandlers = {
 			);
 		},
 		handler: async (error) => {
-			let retryAfter = 1;
-			if (error instanceof ApiError && error.retryAfter) {
-				retryAfter = error.retryAfter;
-			}
+			const headersRetryAfterMs =
+				error instanceof ApiError ? error.retryAfter : undefined;
 
 			return {
-				maxRetries: 3,
-				backoffMs: retryAfter * 1000,
+				maxRetries: 0,
+				headersRetryAfterMs,
 			};
 		},
 	},
@@ -149,7 +147,6 @@ export const errorHandlers = {
 		handler: async (error, context) => {
 			console.error(`[corsair:${context.pluginId}:${context.operation}]`, {
 				error: error.message,
-				input: context.input,
 			});
 
 			return {
