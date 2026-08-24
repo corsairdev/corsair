@@ -85,11 +85,14 @@ export const cancel: ResendEndpoints['emailsCancel'] = async (ctx, input) => {
 		method: 'POST',
 	});
 
-	if ((response.cancelled || response.id) && ctx.db?.emails) {
+	if (response.id && ctx.endpoints) {
 		try {
-			await ctx.db?.emails.deleteByEntityId(input.id);
+			const endpoints = ctx.endpoints as ResendBoundEndpoints;
+			if (endpoints.emails?.get) {
+				await endpoints.emails.get({ id: response.id });
+			}
 		} catch (error) {
-			console.warn('Failed to delete email from database:', error);
+			console.warn('Failed to refresh cancelled email in database:', error);
 		}
 	}
 

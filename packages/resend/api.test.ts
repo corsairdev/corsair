@@ -253,6 +253,7 @@ describeLive('Resend API Type Tests', () => {
 
 	describe('contacts', () => {
 		const testContactEmail = `corsair-test+${Date.now()}@example.com`;
+		let createdContactId: string;
 
 		it('contactsCreate returns correct type', async () => {
 			const response = await makeResendRequest<ContactsCreateResponse>(
@@ -273,6 +274,7 @@ describeLive('Resend API Type Tests', () => {
 			ResendEndpointOutputSchemas.contactsCreate.parse(result);
 			expect(typeof result.id).toBe('string');
 			expect(result.id.length).toBeGreaterThan(0);
+			createdContactId = result.id;
 		});
 
 		it('contactsList returns correct type', async () => {
@@ -288,39 +290,24 @@ describeLive('Resend API Type Tests', () => {
 		});
 
 		it('contactsGet returns correct type', async () => {
-			const list = await makeResendRequest<ContactsListResponse>(
-				'contacts',
-				TEST_API_KEY!,
-				{ query: { limit: 100 } },
-			);
-			const found = list.data.find((c) => c.email === testContactEmail);
-			if (!found) {
-				return;
-			}
+			expect(createdContactId).toBeDefined();
 
 			const response = await makeResendRequest<ContactsGetResponse>(
-				`contacts/${found.id}`,
+				`contacts/${createdContactId}`,
 				TEST_API_KEY!,
 			);
 			const result = response;
 
 			ResendEndpointOutputSchemas.contactsGet.parse(result);
-			expect(result.id).toBe(found.id);
+			expect(result.id).toBe(createdContactId);
+			expect(result.email).toBe(testContactEmail);
 		});
 
 		it('contactsUpdate returns correct type and persists first_name', async () => {
-			const list = await makeResendRequest<ContactsListResponse>(
-				'contacts',
-				TEST_API_KEY!,
-				{ query: { limit: 100 } },
-			);
-			const found = list.data.find((c) => c.email === testContactEmail);
-			if (!found) {
-				return;
-			}
+			expect(createdContactId).toBeDefined();
 
 			const response = await makeResendRequest<ContactsUpdateResponse>(
-				`contacts/${found.id}`,
+				`contacts/${createdContactId}`,
 				TEST_API_KEY!,
 				{
 					method: 'PATCH',
@@ -334,27 +321,19 @@ describeLive('Resend API Type Tests', () => {
 			ResendEndpointOutputSchemas.contactsUpdate.parse(result);
 
 			const getResponse = await makeResendRequest<ContactsGetResponse>(
-				`contacts/${found.id}`,
+				`contacts/${createdContactId}`,
 				TEST_API_KEY!,
 			);
 			const fetched = getResponse;
-			expect(fetched.id).toBe(found.id);
+			expect(fetched.id).toBe(createdContactId);
 			expect(fetched.first_name).toBe('CorsairUpdated');
 		});
 
 		it('contactsDelete returns correct type', async () => {
-			const list = await makeResendRequest<ContactsListResponse>(
-				'contacts',
-				TEST_API_KEY!,
-				{ query: { limit: 100 } },
-			);
-			const found = list.data.find((c) => c.email === testContactEmail);
-			if (!found) {
-				return;
-			}
+			expect(createdContactId).toBeDefined();
 
 			const response = await makeResendRequest<ContactsDeleteResponse>(
-				`contacts/${found.id}`,
+				`contacts/${createdContactId}`,
 				TEST_API_KEY!,
 				{ method: 'DELETE' },
 			);
