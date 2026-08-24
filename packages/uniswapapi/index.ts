@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	Approval,
 	Delegation,
@@ -146,8 +147,7 @@ const uniswapApiEndpointMeta = {
 	},
 	'quote.get': {
 		riskLevel: 'read',
-		description:
-			'Get a swap/bridge/wrap quote with route, estimated gas, and unsigned tx data',
+		description: 'Get a swap/bridge/wrap quote with route and estimated gas',
 	},
 	'swap.create': {
 		riskLevel: 'write',
@@ -156,7 +156,7 @@ const uniswapApiEndpointMeta = {
 	'swap.getStatus': {
 		riskLevel: 'read',
 		description:
-			'Get the status of a swap (pending/confirmed/failed) by transaction hash',
+			'Get swap status (PENDING, SUCCESS, NOT_FOUND, FAILED, EXPIRED) by tx or userOp hash',
 	},
 	'order.getStatus': {
 		riskLevel: 'read',
@@ -237,10 +237,10 @@ export function uniswapapi<const T extends UniswapApiPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (res) return res;
 			}
 
-			return '';
+			throw new AuthMissingError('uniswapapi', 'api_key');
 		},
 	} satisfies InternalUniswapApiPlugin;
 }
