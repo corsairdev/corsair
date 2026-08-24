@@ -32,7 +32,12 @@ export const create = async (
 	const parsedResponse =
 		UniswapApiEndpointOutputSchemas.swapCreate.parse(response);
 
-	await logEventFromContext(ctx, 'uniswapapi.swap.create', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'uniswapapi.swap.create',
+		{ ...input },
+		'completed',
+	);
 	return parsedResponse;
 };
 
