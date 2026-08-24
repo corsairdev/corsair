@@ -3,6 +3,7 @@ import {
 	encryptDEK,
 	generateDEK,
 } from '../core/auth/encryption';
+import { AuthMissingError } from '../core/auth/errors/auth-missing';
 import { createAccountKeyManager } from '../core/auth/key-manager';
 import { getManagedAccessToken } from '../hub/managed-auth';
 import type { HubConfig } from '../hub/types';
@@ -182,7 +183,7 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 		}
 	});
 
-	it('omits refresh_token for a legacy account that has none (Hub reads managed_connection)', async () => {
+	it('throws AuthMissingError when a refresh is needed but no refresh_token exists (Hub stores no managed tokens)', async () => {
 		const { database, cleanup } = createTestDatabase();
 		try {
 			await seedManagedAccount(database, {
@@ -190,21 +191,21 @@ describe('getManagedAccessToken — stateless refresh (B4)', () => {
 				expires_at: '1',
 			});
 
-			let sentBody: Record<string, unknown> | null = null;
-			global.fetch = (async (_url: string, init: RequestInit) => {
-				sentBody = JSON.parse(String(init.body));
+			let called = false;
+			global.fetch = (async () => {
+				called = true;
 				return jsonResponse({ access_token: 'rotated', expires_in: 3600 });
 			}) as unknown as typeof fetch;
 
-			const result = await getManagedAccessToken({
-				keys: managedKeys(database),
-				hub,
-				plugin: 'linear',
-				tenantId: 'default',
-			});
-
-			expect(result.accessToken).toBe('rotated');
-			expect(sentBody).toEqual({ plugin: 'linear', tenantId: 'default' });
+			await expect(
+				getManagedAccessToken({
+					keys: managedKeys(database),
+					hub,
+					plugin: 'linear',
+					tenantId: 'default',
+				}),
+			).rejects.toBeInstanceOf(AuthMissingError);
+			expect(called).toBe(false);
 		} finally {
 			cleanup();
 		}
