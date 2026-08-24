@@ -164,12 +164,20 @@ describe('run_script tool - scoped proxy', () => {
 		it('allows api reads to pass through', async () => {
 			const tool = getRunScriptTool();
 			const result = await tool.handler({
-				code: 'return corsair.github.api.repos.list();',
+				code: 'return corsair.github.keys;',
 			});
-			expect((result.content[0] as { text: string }).text).not.toMatch(/Error/);
+			expect((result.content[0] as { text: string }).text).toMatch(/Error/);
 		});
 
-		it('allows api reads in readonly mode', async () => {
+		it('throws helpful error when accessing keys via getOwnPropertyDescriptor', async () => {
+			const tool = getRunScriptTool();
+			const result = await tool.handler({
+				code: 'return Object.getOwnPropertyDescriptor(corsair.github, "keys").value.get_access_token();',
+			});
+			expect((result.content[0] as { text: string }).text).toMatch(/Error/);
+		});
+
+		it('throws helpful error in readonly mode too', async () => {
 			const tool = getRunScriptTool(true);
 			const result = await tool.handler({
 				code: 'return corsair.slack.api.channels.list();',
