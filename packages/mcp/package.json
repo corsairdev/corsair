@@ -19,7 +19,8 @@
   "scripts": {
     "build": "tsup && tsc -p tsconfig.build.json",
     "build:watch": "tsup --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
   },
   "dependencies": {
     "@ai-sdk/mcp": "^1.0.0",
@@ -57,7 +58,8 @@
     "@types/express": "^4.17.21",
     "@types/node": "^22.0.0",
     "tsup": "^8.0.1",
-    "typescript": "^5.8.0"
+    "typescript": "^5.8.0",
+    "vitest": "^4.1.11"
   },
   "files": [
     "dist"
