@@ -99,6 +99,15 @@ export function bindEndpointsRecursively({
 	allPlugins?: readonly CorsairPlugin[];
 	multiTenancy?: boolean;
 }): void {
+	if (
+		(permissionsOptions?.limits?.length || permissionsConfig?.limits?.length) &&
+		!database
+	) {
+		throw new Error(
+			'Cannot enable usage limits without a database connection. Please configure a database or remove the limits configuration.',
+		);
+	}
+
 	for (const [key, value] of Object.entries(endpoints)) {
 		// we have to retype this now because it's nested webhooks
 		const nodeHooks = hooks?.[key] as Record<string, unknown> | undefined;
