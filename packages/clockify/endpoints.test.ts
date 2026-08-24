@@ -1,8 +1,8 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { clockify } from '.';
 import { makeClockifyRequest } from './client';
 import { Projects, Tasks, TimeEntries, Workspaces } from './endpoints';
+import { clockify } from './index';
 
 function rateLimitError(retryAfter = 0): ApiError {
 	return new ApiError(
