@@ -257,6 +257,7 @@ export {
 	encryptWithDEK,
 	exchangeCodeForTokens,
 	generateDEK,
+	getOAuthAccessToken,
 	initializeAccountDEK,
 	initializeIntegrationDEK,
 	reEncryptConfig,

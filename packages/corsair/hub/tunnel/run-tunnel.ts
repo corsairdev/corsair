@@ -190,7 +190,7 @@ export async function runTunnel(opts: {
 			cleanup();
 		};
 
-		// ponytail: SIGINT/SIGTERM don't trigger 'exit' — without this, frpc is
+		// SIGINT/SIGTERM don't trigger 'exit' — without this, frpc is
 		// orphaned and the 0600 toml lingers. Re-raise so the process terminates
 		// normally after cleanup.
 		const sigHandler = (sig: NodeJS.Signals): void => {

@@ -35,7 +35,7 @@ function subtitlesPath(videoId: string, languageCode: string): string {
 export const list: AmaraEndpoints['videosList'] = async (ctx, input) => {
 	const raw = await makeAmaraRequest('videos/', ctx.key, {
 		query: compactQuery({
-			// ponytail: Composio calls this `sort`; Amara docs use `order_by`
+			// Composio calls this `sort`; Amara docs use `order_by`
 			order_by: input.sort,
 			team: input.team,
 			limit: input.limit,

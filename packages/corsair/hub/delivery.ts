@@ -252,6 +252,8 @@ export async function handleHubDeliveryGet(
 				refreshToken: payload.refreshToken,
 				expiresIn: payload.expiresIn,
 				scope: payload.scope,
+				authType: payload.authType,
+				providerData: payload.providerData,
 			});
 		} else {
 			if (
