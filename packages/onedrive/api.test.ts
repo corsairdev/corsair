@@ -27,41 +27,47 @@ import type {
 } from './endpoints/types';
 import { OnedriveEndpointOutputSchemas } from './endpoints/types';
 
-const TEST_TOKEN = process.env.ONEDRIVE_ACCESS_TOKEN!;
+const TEST_TOKEN = process.env.ONEDRIVE_ACCESS_TOKEN?.trim() ?? '';
+const hasCredentials = TEST_TOKEN.length > 0;
+const describeIf = hasCredentials ? describe : describe.skip;
+
+if (!hasCredentials) {
+	console.warn('Skipping OneDrive API tests: ONEDRIVE_ACCESS_TOKEN not set');
+}
+
 let TEST_DRIVE_ID: string | undefined;
 let TEST_ITEM_ID: string | undefined;
 let TEST_SITE_ID: string | undefined;
 
-beforeAll(async () => {
-	const driveResult = await makeOnedriveRequest<DriveGetQuotaResponse>(
-		'me/drive',
-		TEST_TOKEN,
-		{ method: 'GET' },
-	);
-	TEST_DRIVE_ID = driveResult.id;
+describeIf('OneDrive API Type Tests', () => {
+	beforeAll(async () => {
+		const driveResult = await makeOnedriveRequest<DriveGetQuotaResponse>(
+			'me/drive',
+			TEST_TOKEN,
+			{ method: 'GET' },
+		);
+		TEST_DRIVE_ID = driveResult.id;
 
-	const rootResult = await makeOnedriveRequest<{
-		value: Array<{ id: string }>;
-	}>('me/drive/root/children', TEST_TOKEN, {
-		method: 'GET',
-		query: { $top: 1 },
-	});
-	TEST_ITEM_ID = rootResult.value[0]?.id;
-
-	try {
-		const sitesResult = await makeOnedriveRequest<{
+		const rootResult = await makeOnedriveRequest<{
 			value: Array<{ id: string }>;
-		}>('sites', TEST_TOKEN, {
+		}>('me/drive/root/children', TEST_TOKEN, {
 			method: 'GET',
-			query: { search: '*', $top: 1 },
+			query: { $top: 1 },
 		});
-		TEST_SITE_ID = sitesResult.value[0]?.id;
-	} catch {
-		// SharePoint may not be available for all users
-	}
-});
+		TEST_ITEM_ID = rootResult.value[0]?.id;
 
-describe('OneDrive API Type Tests', () => {
+		try {
+			const sitesResult = await makeOnedriveRequest<{
+				value: Array<{ id: string }>;
+			}>('sites', TEST_TOKEN, {
+				method: 'GET',
+				query: { search: '*', $top: 1 },
+			});
+			TEST_SITE_ID = sitesResult.value[0]?.id;
+		} catch {
+			// SharePoint may not be available for all users
+		}
+	});
 	describe('drive', () => {
 		it('driveGetQuota returns correct type', async () => {
 			const response = await makeOnedriveRequest<DriveGetQuotaResponse>(

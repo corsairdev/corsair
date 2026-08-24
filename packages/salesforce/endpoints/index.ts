@@ -1,0 +1,31 @@
+import * as accounts from './accounts';
+import * as analyticsReports from './analytics-reports';
+import * as campaigns from './campaigns';
+import * as composite from './composite';
+import * as contacts from './contacts';
+import * as files from './files';
+import * as jobs from './jobs';
+import * as leads from './leads';
+import * as metadata from './metadata';
+import * as notes from './notes';
+import * as opportunities from './opportunities';
+import * as soqlSosl from './soql-sosl';
+import * as tasks from './tasks';
+import * as uiApi from './ui-api';
+
+export const Accounts = accounts;
+export const Contacts = contacts;
+export const Leads = leads;
+export const Opportunities = opportunities;
+export const Campaigns = campaigns;
+export const Notes = notes;
+export const Tasks = tasks;
+export const Jobs = jobs;
+export const SoqlSosl = soqlSosl;
+export const Composite = composite;
+export const Metadata = metadata;
+export const UiApi = uiApi;
+export const Files = files;
+export const AnalyticsReports = analyticsReports;
+
+export * from './types';

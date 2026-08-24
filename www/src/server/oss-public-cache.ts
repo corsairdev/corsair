@@ -96,7 +96,6 @@ export async function getIntegrationListForPage(
 
 		return {
 			...list,
-			wipIntegrationName: claimEligibility.wipIntegrationName,
 			claimBlockReason: claimEligibility.blockReason,
 			items: list.items.map((item) => ({
 				...item,
@@ -109,7 +108,6 @@ export async function getIntegrationListForPage(
 		// Fail safe: disable claim buttons rather than showing stale public-cache state.
 		return {
 			...list,
-			wipIntegrationName: null,
 			claimBlockReason: null,
 			items: list.items.map((item) => ({
 				...item,

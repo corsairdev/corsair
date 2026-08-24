@@ -13,6 +13,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { getValidAccessToken } from './client';
 import {
 	Projects,
@@ -898,6 +899,9 @@ export const asanaAuthConfig = {
 	oauth_2: {
 		account: ['workspace_gid', 'project_gid'] as const,
 	},
+	managed: {
+		account: ['workspace_gid', 'project_gid'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 type AsanaEndpoint<K extends keyof AsanaEndpointOutputs> = CorsairEndpoint<
@@ -921,7 +925,7 @@ export type AsanaWebhooks = {
 export type AsanaBoundWebhooks = BindWebhooks<AsanaWebhooks>;
 
 export type AsanaPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalAsanaPlugin['hooks'];
@@ -1094,6 +1098,25 @@ export function asana<const PluginOptions extends AsanaPluginOptions>(
 					return freshResult.accessToken;
 				};
 
+				return result.accessToken;
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:asana:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'asana',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
 				return result.accessToken;
 			}
 

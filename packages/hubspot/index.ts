@@ -14,6 +14,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import { z } from 'zod';
 import type {
 	HubSpotEndpointInputs,
@@ -430,6 +431,9 @@ const defaultAuthType = 'api_key' as const;
 export const hubspotAuthConfig = {
 	api_key: { account: ['portal_id'] as const },
 	oauth_2: { account: ['portal_id'] as const },
+	managed: {
+		account: ['portal_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 /**
@@ -559,7 +563,7 @@ const hubspotEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof hubspotEndpointsNested>;
 
 export type HubSpotPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key' | 'oauth_2' | 'managed'>;
 	credentials?: HubSpotCredentials;
 	webhookSecret?: string;
 	hooks?: InternalHubSpotPlugin['hooks'];
@@ -680,6 +684,25 @@ export function hubspot<const PluginOptions extends HubSpotPluginOptions>(
 
 					return res;
 				}
+			}
+
+			if (ctx.authType === 'managed') {
+				if (!ctx.hub) {
+					throw new Error(
+						'[auth-missing:hubspot:managed]: Hub config is required for managed auth. Pass hub: { ... } to createCorsair().',
+					);
+				}
+
+				const managedContext = {
+					keys: ctx.keys,
+					hub: ctx.hub,
+					plugin: 'hubspot',
+					tenantId: ctx.tenantId,
+				};
+
+				const result = await getManagedAccessToken(managedContext);
+				await attachManagedRefreshAuth(ctx, managedContext);
+				return result.accessToken;
 			}
 
 			throw new AuthMissingError('hubspot', 'oauth_2');

@@ -1,9 +1,24 @@
+import { createHmac, timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
 import { z } from 'zod';
+
+// Mixer only — not an auth key. HMAC both sides so timingSafeEqual always
+// sees 32-byte digests and never short-circuits on the secret's length.
+const TOKEN_COMPARE_KEY = Buffer.from('corsair-gitlab-webhook-token-v1');
+
+function tokensMatch(token: string, secret: string): boolean {
+	const tokenDigest = createHmac('sha256', TOKEN_COMPARE_KEY)
+		.update(token, 'utf8')
+		.digest();
+	const secretDigest = createHmac('sha256', TOKEN_COMPARE_KEY)
+		.update(secret, 'utf8')
+		.digest();
+	return timingSafeEqual(tokenDigest, secretDigest);
+}
 
 // ============================================================================
 // Base webhook payload
@@ -34,16 +49,17 @@ export function verifyGitlabWebhookSignature(
 	secret: string,
 ): { valid: boolean; error?: string } {
 	if (!secret) {
-		return { valid: true };
+		return { valid: false, error: 'Missing webhook secret' };
 	}
 
-	const token = request.headers['x-gitlab-token'];
+	const rawToken = request.headers['x-gitlab-token'];
+	const token = Array.isArray(rawToken) ? rawToken[0] : rawToken;
 
 	if (!token) {
 		return { valid: false, error: 'Missing X-Gitlab-Token header' };
 	}
 
-	if (token !== secret) {
+	if (!tokensMatch(token, secret)) {
 		return {
 			valid: false,
 			error: 'X-Gitlab-Token does not match configured secret',

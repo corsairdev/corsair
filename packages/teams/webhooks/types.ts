@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import { z } from 'zod';
 
@@ -195,9 +196,13 @@ export function verifyTeamsClientState(
 	if (!expectedClientState) {
 		return { valid: false, error: 'clientState is required' };
 	}
-	const allMatch = payload.value.every(
-		(n) => n.clientState === expectedClientState,
-	);
+	const expected = Buffer.from(expectedClientState);
+	const allMatch = payload.value.every((n) => {
+		const actual = Buffer.from(n.clientState ?? '');
+		return (
+			actual.length === expected.length && timingSafeEqual(actual, expected)
+		);
+	});
 	if (!allMatch) {
 		return { valid: false, error: 'clientState mismatch' };
 	}

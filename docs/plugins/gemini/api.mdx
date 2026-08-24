@@ -1,0 +1,600 @@
+---
+title: API
+description: "API reference for Gemini: every `gemini.api.*` operation with input and output types."
+---
+
+Every `gemini.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Content
+
+### countTokens
+
+`content.countTokens`
+
+Count tokens in text using Gemini tokenization, for cost estimation and input limit checks
+
+**Risk:** `read`
+
+```ts
+await corsair.gemini.api.content.countTokens({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Gemini model to count tokens against, e.g. gemini-2.5-flash, gemini-2.5-pro |
+| `contents` | `object[]` | Yes | The content to count tokens for |
+
+<AccordionGroup>
+<Accordion title="contents full type">
+
+```ts
+{
+  role?: user | model,
+  parts: {
+    text?: string,
+    inlineData?: {
+      mimeType: string,
+      data: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `totalTokens` | `number` | Yes | — |
+| `cachedContentTokenCount` | `number` | No | — |
+
+
+
+---
+
+### embedContent
+
+`content.embedContent`
+
+Generate a numerical vector embedding for text, for semantic search and similarity comparison
+
+**Risk:** `read`
+
+```ts
+await corsair.gemini.api.content.embedContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Gemini embedding model, e.g. gemini-embedding-001 |
+| `content` | `object` | Yes | The content to embed |
+| `taskType` | `string` | No | Optional task type hint, e.g. SEMANTIC_SIMILARITY, RETRIEVAL_QUERY, RETRIEVAL_DOCUMENT, CLASSIFICATION, CLUSTERING |
+| `title` | `string` | No | Optional title, used with RETRIEVAL_DOCUMENT taskType |
+
+<AccordionGroup>
+<Accordion title="content full type">
+
+```ts
+{
+  role?: user | model,
+  parts: {
+    text?: string,
+    inlineData?: {
+      mimeType: string,
+      data: string
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `embedding` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="embedding full type">
+
+```ts
+{
+  values: number[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### generateContent
+
+`content.generateContent`
+
+Generate text or speech audio from a prompt using a Gemini Flash/Pro model
+
+**Risk:** `read`
+
+```ts
+await corsair.gemini.api.content.generateContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Gemini model to generate with, e.g. gemini-2.5-flash, gemini-2.5-pro |
+| `contents` | `object[]` | Yes | Conversation contents to generate a response for |
+| `generationConfig` | `object` | No | — |
+| `safetySettings` | `object[]` | No | — |
+| `systemInstruction` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="contents full type">
+
+```ts
+{
+  role?: user | model,
+  parts: {
+    text?: string,
+    inlineData?: {
+      mimeType: string,
+      data: string
+    }
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="generationConfig full type">
+
+```ts
+{
+  temperature?: number,
+  topP?: number,
+  topK?: number,
+  candidateCount?: number,
+  maxOutputTokens?: number,
+  stopSequences?: string[],
+  responseModalities?: TEXT | IMAGE | AUDIO[]
+}
+```
+</Accordion>
+
+<Accordion title="safetySettings full type">
+
+```ts
+{
+  category: string,
+  threshold: string
+}[]
+```
+</Accordion>
+
+<Accordion title="systemInstruction full type">
+
+```ts
+{
+  role?: user | model,
+  parts: {
+    text?: string,
+    inlineData?: {
+      mimeType: string,
+      data: string
+    }
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `candidates` | `object[]` | No | — |
+| `usageMetadata` | `object` | No | — |
+| `text` | `string` | No | Convenience field: first candidate text with markdown code fences stripped |
+
+<AccordionGroup>
+<Accordion title="candidates full type">
+
+```ts
+{
+  content?: {
+    role?: user | model,
+    parts: {
+      text?: string,
+      inlineData?: {
+        mimeType: string,
+        data: string
+      }
+    }[]
+  },
+  finishReason?: string,
+  index?: number,
+  safetyRatings?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="usageMetadata full type">
+
+```ts
+{
+  promptTokenCount?: number,
+  candidatesTokenCount?: number,
+  totalTokenCount?: number,
+  cachedContentTokenCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### generateImage
+
+`images.generateImage`
+
+Generate a raster image (JPG/PNG/WebP) from a prompt using a Nano Banana image model
+
+**Risk:** `write`
+
+```ts
+await corsair.gemini.api.images.generateImage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Nano Banana image model, e.g. gemini-2.5-flash-image, gemini-3-pro-image-preview, gemini-2.0-flash-exp-image-generation |
+| `prompt` | `string` | Yes | Text prompt describing the image to generate |
+| `referenceImages` | `object[]` | No | Optional reference/input images for image editing or composition |
+| `generationConfig` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="referenceImages full type">
+
+```ts
+{
+  mimeType: string,
+  data: string
+}[]
+```
+</Accordion>
+
+<Accordion title="generationConfig full type">
+
+```ts
+{
+  temperature?: number,
+  topP?: number,
+  topK?: number,
+  candidateCount?: number,
+  maxOutputTokens?: number,
+  stopSequences?: string[],
+  responseModalities?: TEXT | IMAGE | AUDIO[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `images` | `object[]` | Yes | — |
+| `candidates` | `object[]` | No | — |
+| `usageMetadata` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="images full type">
+
+```ts
+{
+  mimeType: string,
+  contentBase64: string
+}[]
+```
+</Accordion>
+
+<Accordion title="candidates full type">
+
+```ts
+{
+  content?: {
+    role?: user | model,
+    parts: {
+      text?: string,
+      inlineData?: {
+        mimeType: string,
+        data: string
+      }
+    }[]
+  },
+  finishReason?: string,
+  index?: number,
+  safetyRatings?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="usageMetadata full type">
+
+```ts
+{
+  promptTokenCount?: number,
+  candidatesTokenCount?: number,
+  totalTokenCount?: number,
+  cachedContentTokenCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Models
+
+### listModels
+
+`models.listModels`
+
+List available Gemini and Veo models and their capabilities/limits
+
+**Risk:** `read`
+
+```ts
+await corsair.gemini.api.models.listModels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pageSize` | `number` | No | — |
+| `pageToken` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `models` | `object[]` | Yes | — |
+| `nextPageToken` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="models full type">
+
+```ts
+{
+  name: string,
+  baseModelId?: string,
+  version?: string,
+  displayName?: string,
+  description?: string,
+  inputTokenLimit?: number,
+  outputTokenLimit?: number,
+  supportedGenerationMethods?: string[],
+  temperature?: number,
+  topP?: number,
+  topK?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Videos
+
+### generateVideos
+
+`videos.generateVideos`
+
+Generate a text-to-video clip using a Veo model; returns an operation name for status tracking
+
+**Risk:** `write`
+
+```ts
+await corsair.gemini.api.videos.generateVideos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `model` | `string` | Yes | Veo video model, e.g. veo-2.0-generate-001 |
+| `prompt` | `string` | Yes | Text prompt describing the video to generate |
+| `image` | `object` | No | — |
+| `parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="image full type">
+
+```ts
+{
+  bytesBase64Encoded: string,
+  mimeType: string
+}
+```
+</Accordion>
+
+<Accordion title="parameters full type">
+
+```ts
+{
+  aspectRatio?: string,
+  personGeneration?: string,
+  numberOfVideos?: number,
+  durationSeconds?: number,
+  negativePrompt?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operationName` | `string` | Yes | Pass to GEMINI_GET_VIDEOS_OPERATION or GEMINI_WAIT_FOR_VIDEO |
+| `done` | `boolean` | No | — |
+
+
+
+---
+
+### getVideosOperation
+
+`videos.getVideosOperation`
+
+(Deprecated — use videos.waitForVideo) Check the status of a Veo video generation operation
+
+**Risk:** `read`
+
+```ts
+await corsair.gemini.api.videos.getVideosOperation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operationName` | `string` | Yes | The operation name returned by GEMINI_GENERATE_VIDEOS |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `done` | `boolean` | No | — |
+| `metadata` | `any` | No | — |
+| `error` | `object` | No | — |
+| `response` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="error full type">
+
+```ts
+{
+  code?: number,
+  message?: string
+}
+```
+</Accordion>
+
+<Accordion title="response full type">
+
+```ts
+{
+  generateVideoResponse?: {
+    generatedSamples?: {
+      video?: {
+        uri?: string
+      }
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### waitForVideo
+
+`videos.waitForVideo`
+
+Poll a Veo video generation operation until it completes and return the generated video
+
+**Risk:** `write`
+
+```ts
+await corsair.gemini.api.videos.waitForVideo({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operationName` | `string` | Yes | The operation name returned by GEMINI_GENERATE_VIDEOS |
+| `pollIntervalMs` | `number` | Yes | Delay between status checks |
+| `timeoutMs` | `number` | Yes | Give up and return done=false after this long |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `operationName` | `string` | Yes | — |
+| `done` | `boolean` | Yes | — |
+| `data` | `object` | No | — |
+| `error` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  video_file?: {
+    mimeType: string,
+    contentBase64: string
+  }
+}
+```
+</Accordion>
+
+<Accordion title="error full type">
+
+```ts
+{
+  code?: number,
+  message?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

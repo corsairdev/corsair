@@ -19,9 +19,9 @@
     "generate:plugin": "node --experimental-strip-types scripts/generate-plugin.ts",
     "generate:plugin-from-json": "node --experimental-strip-types scripts/generate-plugin-from-json.ts",
     "generate:labeler-config": "node scripts/generate-labeler-config.mjs",
-    "generate:docs": "tsx scripts/generate-plugin-docs.ts",
-    "generate:docs:all": "tsx scripts/generate-plugin-docs.ts --all",
-    "build:explorer-catalog": "tsx scripts/build-explorer-catalog.ts",
+    "generate:docs": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts",
+    "generate:docs:all": "tsx --conditions=dev-source scripts/generate-plugin-docs.ts --all",
+    "build:explorer-catalog": "tsx --conditions=dev-source scripts/build-explorer-catalog.ts",
     "validate:plugins": "tsx scripts/validate-plugins.ts",
     "validate:docs": "tsx scripts/lint-docs-imports.ts",
     "prepare": "simple-git-hooks"

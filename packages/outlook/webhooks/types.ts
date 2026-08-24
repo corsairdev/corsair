@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -135,18 +136,21 @@ export function verifyOutlookWebhookSignature(
 		return { valid: false, error: 'Missing client state' };
 	}
 
-	// An empty array must not pass: [].every(...) is true, so a request that
-	// carried no notification -- and therefore no clientState -- would otherwise
-	// be reported as verified.
 	const notifications = request.payload?.value;
 	if (!Array.isArray(notifications) || notifications.length === 0) {
 		return { valid: false, error: 'Invalid payload: missing value array' };
 	}
 
+	const expected = Buffer.from(clientState);
 	const allMatch = notifications.every((n) => {
 		if (!n || typeof n !== 'object') return false;
 		const client = (n as OutlookChangeNotification).clientState;
-		return typeof client === 'string' && client === clientState;
+		if (typeof client !== 'string') return false;
+		const actual = Buffer.from(client);
+		return (
+			actual.length === expected.length &&
+			crypto.timingSafeEqual(actual, expected)
+		);
 	});
 
 	if (!allMatch) {

@@ -67,4 +67,39 @@ describe('cloudflareErrorFromApiErrorBody', () => {
 		expect(err).toBeInstanceOf(CloudflareAPIError);
 		expect(err?.message).toContain('Unauthorized');
 	});
+
+	it('maps non-envelope single error', () => {
+		const err = cloudflareErrorFromApiErrorBody({
+			errors: [{ code: 10000, message: 'Authentication error' }],
+		});
+		expect(err).toBeInstanceOf(CloudflareAPIError);
+		expect(err?.message).toBe('Authentication error');
+		expect(err?.code).toBe(10000);
+	});
+
+	it('joins multiple non-envelope error messages', () => {
+		const err = cloudflareErrorFromApiErrorBody({
+			errors: [
+				{ code: 10000, message: 'Authentication error' },
+				{ code: 10001, message: 'Invalid API token' },
+			],
+		});
+		expect(err).toBeInstanceOf(CloudflareAPIError);
+		expect(err?.message).toBe('Authentication error; Invalid API token');
+		expect(err?.code).toBe(10000);
+	});
+
+	it('gives null for non-envelope empty errors', () => {
+		const err = cloudflareErrorFromApiErrorBody({
+			errors: [],
+		});
+		expect(err).toBeNull();
+	});
+
+	it('gives null for non-envelope unrelated body', () => {
+		const err = cloudflareErrorFromApiErrorBody({
+			random: [],
+		});
+		expect(err).toBeNull();
+	});
 });

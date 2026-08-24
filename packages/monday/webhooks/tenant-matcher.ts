@@ -7,9 +7,8 @@ function readJwtPayload(
 	const authorization = getHeader(request.headers, 'authorization');
 	if (!authorization) return null;
 
-	const token = authorization.startsWith('Bearer ')
-		? authorization.slice('Bearer '.length)
-		: authorization;
+	// RFC 9110: auth scheme token is case-insensitive ("Bearer" / "bearer" / …).
+	const token = authorization.replace(/^Bearer\s+/i, '');
 	const parts = token.split('.');
 	const payloadSegment = parts[1];
 	if (!payloadSegment) return null;

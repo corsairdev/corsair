@@ -1,0 +1,2216 @@
+---
+title: API
+description: "API reference for Hashnode: every `hashnode.api.*` operation with input and output types."
+---
+
+Every `hashnode.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Comments
+
+### list
+
+`comments.list`
+
+List comments on a post
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.comments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `postId` | `string` | Yes | — |
+| `first` | `number` | Yes | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  comments: {
+    edges: {
+      node: {
+        id: string,
+        content: {
+          html?: string,
+          markdown?: string,
+          text?: string
+        },
+        author?: {
+          id: string,
+          name: string,
+          username: string,
+          profilePicture?: string | null,
+          coverImage?: string | null,
+          bio?: {
+            text?: string | null,
+            html?: string,
+            markdown?: string
+          } | null,
+          socialMediaLinks?: {
+            twitter?: string | null,
+            github?: string | null,
+            linkedin?: string | null,
+            website?: string | null
+          } | null,
+          location?: string | null,
+          dateJoined?: string | null
+        } | null,
+        totalReactions: number,
+        dateAdded: string
+      },
+      cursor: string
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      endCursor?: string | null
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Drafts
+
+### create
+
+`drafts.create`
+
+Create a new draft
+
+**Risk:** `write`
+
+```ts
+await corsair.hashnode.api.drafts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publicationId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `subtitle` | `string` | No | — |
+| `contentMarkdown` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `tags` | `object[]` | No | — |
+| `seriesId` | `string` | No | — |
+| `disableComments` | `boolean` | No | — |
+| `originalArticleURL` | `string` | No | — |
+| `publishedAt` | `string` | No | — |
+| `settings` | `object` | No | — |
+| `metaTags` | `object` | No | — |
+| `coverImageOptions` | `object` | No | — |
+| `publishAs` | `string` | No | — |
+| `coAuthors` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  slug: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  enableTableOfContent?: boolean,
+  delist?: boolean,
+  activateNewsletter?: boolean,
+  slugOverridden?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="metaTags full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  image?: string
+}
+```
+</Accordion>
+
+<Accordion title="coverImageOptions full type">
+
+```ts
+{
+  coverImageURL?: string,
+  coverImageAttribution?: string,
+  coverImagePhotographer?: string,
+  isCoverAttributionHidden?: boolean,
+  stickCoverToBottom?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createDraft` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="createDraft full type">
+
+```ts
+{
+  draft: {
+    id: string,
+    title?: string | null,
+    subtitle?: string | null,
+    slug?: string | null,
+    content?: {
+      markdown?: string,
+      html?: string,
+      text?: string
+    } | null,
+    author?: {
+      id: string,
+      name: string,
+      username: string,
+      profilePicture?: string | null,
+      coverImage?: string | null,
+      bio?: {
+        text?: string | null,
+        html?: string,
+        markdown?: string
+      } | null,
+      socialMediaLinks?: {
+        twitter?: string | null,
+        github?: string | null,
+        linkedin?: string | null,
+        website?: string | null
+      } | null,
+      location?: string | null,
+      dateJoined?: string | null
+    } | null,
+    coverImage?: {
+      url?: string | null,
+      attribution?: string | null
+    } | null,
+    tags?: {
+      id: string,
+      name: string,
+      slug: string
+    }[] | null,
+    publication?: {
+      id: string,
+      title: string
+    } | null,
+    series?: {
+      id: string,
+      name: string,
+      slug: string
+    } | null,
+    updatedAt: string,
+    scheduledDate?: string | null,
+    readTimeInMinutes?: number,
+    isSubmittedForReview?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`drafts.delete`
+
+Delete a draft [DESTRUCTIVE - IRREVERSIBLE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.hashnode.api.drafts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `draftId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deleteDraft` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="deleteDraft full type">
+
+```ts
+{
+  draft?: {
+    id: string
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`drafts.get`
+
+Get a draft by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.drafts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `draft` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="draft full type">
+
+```ts
+{
+  id: string,
+  title?: string | null,
+  subtitle?: string | null,
+  slug?: string | null,
+  content?: {
+    markdown?: string,
+    html?: string,
+    text?: string
+  } | null,
+  author?: {
+    id: string,
+    name: string,
+    username: string,
+    profilePicture?: string | null,
+    coverImage?: string | null,
+    bio?: {
+      text?: string | null,
+      html?: string,
+      markdown?: string
+    } | null,
+    socialMediaLinks?: {
+      twitter?: string | null,
+      github?: string | null,
+      linkedin?: string | null,
+      website?: string | null
+    } | null,
+    location?: string | null,
+    dateJoined?: string | null
+  } | null,
+  coverImage?: {
+    url?: string | null,
+    attribution?: string | null
+  } | null,
+  tags?: {
+    id: string,
+    name: string,
+    slug: string
+  }[] | null,
+  publication?: {
+    id: string,
+    title: string
+  } | null,
+  series?: {
+    id: string,
+    name: string,
+    slug: string
+  } | null,
+  updatedAt: string,
+  scheduledDate?: string | null,
+  readTimeInMinutes?: number,
+  isSubmittedForReview?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`drafts.publish`
+
+Publish a draft as a post
+
+**Risk:** `write`
+
+```ts
+await corsair.hashnode.api.drafts.publish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `draftId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publishDraft` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="publishDraft full type">
+
+```ts
+{
+  post: {
+    id: string,
+    title: string,
+    subtitle?: string | null,
+    slug: string,
+    brief: string,
+    url: string,
+    coverImage?: {
+      url?: string | null,
+      isPortrait?: boolean,
+      attribution?: string | null
+    } | null,
+    author?: {
+      id: string,
+      name: string,
+      username: string,
+      profilePicture?: string | null,
+      coverImage?: string | null,
+      bio?: {
+        text?: string | null,
+        html?: string,
+        markdown?: string
+      } | null,
+      socialMediaLinks?: {
+        twitter?: string | null,
+        github?: string | null,
+        linkedin?: string | null,
+        website?: string | null
+      } | null,
+      location?: string | null,
+      dateJoined?: string | null
+    } | null,
+    publication?: {
+      id: string,
+      title: string,
+      url?: string | null,
+      displayTitle?: string | null
+    } | null,
+    tags?: {
+      id: string,
+      name: string,
+      slug: string
+    }[] | null,
+    content?: {
+      html?: string,
+      markdown?: string,
+      text?: string
+    } | null,
+    seo?: {
+      title?: string | null,
+      description?: string | null
+    } | null,
+    ogMetaData?: {
+      image?: string | null
+    } | null,
+    publishedAt: string,
+    updatedAt?: string | null,
+    readTimeInMinutes: number,
+    reactionCount: number,
+    responseCount: number,
+    replyCount?: number,
+    series?: {
+      id: string,
+      name: string,
+      slug: string
+    } | null,
+    featured?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`drafts.update`
+
+Update an existing draft
+
+**Risk:** `write`
+
+```ts
+await corsair.hashnode.api.drafts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `draftId` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `subtitle` | `string` | No | — |
+| `contentMarkdown` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `tags` | `object[]` | No | — |
+| `seriesId` | `string` | No | — |
+| `disableComments` | `boolean` | No | — |
+| `originalArticleURL` | `string` | No | — |
+| `publishedAt` | `string` | No | — |
+| `settings` | `object` | No | — |
+| `metaTags` | `object` | No | — |
+| `coverImageOptions` | `object` | No | — |
+| `publishAs` | `string` | No | — |
+| `coAuthors` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  slug: string,
+  name?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="settings full type">
+
+```ts
+{
+  enableTableOfContent?: boolean,
+  delist?: boolean,
+  activateNewsletter?: boolean,
+  slugOverridden?: boolean
+}
+```
+</Accordion>
+
+<Accordion title="metaTags full type">
+
+```ts
+{
+  title?: string,
+  description?: string,
+  image?: string
+}
+```
+</Accordion>
+
+<Accordion title="coverImageOptions full type">
+
+```ts
+{
+  coverImageURL?: string,
+  coverImageAttribution?: string,
+  coverImagePhotographer?: string,
+  isCoverAttributionHidden?: boolean,
+  stickCoverToBottom?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updateDraft` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="updateDraft full type">
+
+```ts
+{
+  draft: {
+    id: string,
+    title?: string | null,
+    subtitle?: string | null,
+    slug?: string | null,
+    content?: {
+      markdown?: string,
+      html?: string,
+      text?: string
+    } | null,
+    author?: {
+      id: string,
+      name: string,
+      username: string,
+      profilePicture?: string | null,
+      coverImage?: string | null,
+      bio?: {
+        text?: string | null,
+        html?: string,
+        markdown?: string
+      } | null,
+      socialMediaLinks?: {
+        twitter?: string | null,
+        github?: string | null,
+        linkedin?: string | null,
+        website?: string | null
+      } | null,
+      location?: string | null,
+      dateJoined?: string | null
+    } | null,
+    coverImage?: {
+      url?: string | null,
+      attribution?: string | null
+    } | null,
+    tags?: {
+      id: string,
+      name: string,
+      slug: string
+    }[] | null,
+    publication?: {
+      id: string,
+      title: string
+    } | null,
+    series?: {
+      id: string,
+      name: string,
+      slug: string
+    } | null,
+    updatedAt: string,
+    scheduledDate?: string | null,
+    readTimeInMinutes?: number,
+    isSubmittedForReview?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Feed
+
+### list
+
+`feed.list`
+
+Get the global feed of posts
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.feed.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | Yes | — |
+| `after` | `string` | No | — |
+| `filter` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  tags?: string[],
+  excludeTags?: string[],
+  publications?: string[],
+  excludePublications?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `feed` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="feed full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id: string,
+      title: string,
+      subtitle?: string | null,
+      slug: string,
+      brief: string,
+      url: string,
+      coverImage?: {
+        url?: string | null,
+        isPortrait?: boolean,
+        attribution?: string | null
+      } | null,
+      author?: {
+        id: string,
+        name: string,
+        username: string,
+        profilePicture?: string | null,
+        coverImage?: string | null,
+        bio?: {
+          text?: string | null,
+          html?: string,
+          markdown?: string
+        } | null,
+        socialMediaLinks?: {
+          twitter?: string | null,
+          github?: string | null,
+          linkedin?: string | null,
+          website?: string | null
+        } | null,
+        location?: string | null,
+        dateJoined?: string | null
+      } | null,
+      publication?: {
+        id: string,
+        title: string,
+        url?: string | null,
+        displayTitle?: string | null
+      } | null,
+      tags?: {
+        id: string,
+        name: string,
+        slug: string
+      }[] | null,
+      content?: {
+        html?: string,
+        markdown?: string,
+        text?: string
+      } | null,
+      seo?: {
+        title?: string | null,
+        description?: string | null
+      } | null,
+      ogMetaData?: {
+        image?: string | null
+      } | null,
+      publishedAt: string,
+      updatedAt?: string | null,
+      readTimeInMinutes: number,
+      reactionCount: number,
+      responseCount: number,
+      replyCount?: number,
+      series?: {
+        id: string,
+        name: string,
+        slug: string
+      } | null,
+      featured?: boolean
+    },
+    cursor: string
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    endCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Images
+
+### createUploadURL
+
+`images.createUploadURL`
+
+Create a presigned image upload URL
+
+**Risk:** `write`
+
+```ts
+await corsair.hashnode.api.images.createUploadURL({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `createImageUploadURL` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="createImageUploadURL full type">
+
+```ts
+{
+  presignedPost: {
+    url: string,
+    fields: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Me
+
+### me
+
+`me`
+
+Get the current authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `me` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="me full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  username: string,
+  email: string,
+  profilePicture?: string | null,
+  coverImage?: string | null,
+  bio?: {
+    text?: string | null,
+    html?: string,
+    markdown?: string
+  } | null,
+  socialMediaLinks?: {
+    twitter?: string | null,
+    github?: string | null,
+    linkedin?: string | null,
+    website?: string | null
+  } | null,
+  location?: string | null,
+  dateJoined?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Pages
+
+### get
+
+`pages.get`
+
+Get a static page by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.pages.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publication` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="publication full type">
+
+```ts
+{
+  staticPage?: {
+    id: string,
+    title: string,
+    slug: string,
+    content?: {
+      html?: string,
+      markdown?: string,
+      text?: string
+    } | null,
+    hidden?: boolean,
+    ogMetaData?: {
+      image?: string | null
+    } | null,
+    seo?: {
+      title?: string | null,
+      description?: string | null
+    } | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`pages.list`
+
+List static pages in a publication
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.pages.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `first` | `number` | Yes | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publication` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="publication full type">
+
+```ts
+{
+  staticPages: {
+    edges: {
+      node: {
+        id: string,
+        title: string,
+        slug: string,
+        content?: {
+          html?: string,
+          markdown?: string,
+          text?: string
+        } | null,
+        hidden?: boolean,
+        ogMetaData?: {
+          image?: string | null
+        } | null,
+        seo?: {
+          title?: string | null,
+          description?: string | null
+        } | null
+      },
+      cursor: string
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      endCursor?: string | null
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Posts
+
+### get
+
+`posts.get`
+
+Get a single post by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.posts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `post` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="post full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  subtitle?: string | null,
+  slug: string,
+  brief: string,
+  url: string,
+  coverImage?: {
+    url?: string | null,
+    isPortrait?: boolean,
+    attribution?: string | null
+  } | null,
+  author?: {
+    id: string,
+    name: string,
+    username: string,
+    profilePicture?: string | null,
+    coverImage?: string | null,
+    bio?: {
+      text?: string | null,
+      html?: string,
+      markdown?: string
+    } | null,
+    socialMediaLinks?: {
+      twitter?: string | null,
+      github?: string | null,
+      linkedin?: string | null,
+      website?: string | null
+    } | null,
+    location?: string | null,
+    dateJoined?: string | null
+  } | null,
+  publication?: {
+    id: string,
+    title: string,
+    url?: string | null,
+    displayTitle?: string | null
+  } | null,
+  tags?: {
+    id: string,
+    name: string,
+    slug: string
+  }[] | null,
+  content?: {
+    html?: string,
+    markdown?: string,
+    text?: string
+  } | null,
+  seo?: {
+    title?: string | null,
+    description?: string | null
+  } | null,
+  ogMetaData?: {
+    image?: string | null
+  } | null,
+  publishedAt: string,
+  updatedAt?: string | null,
+  readTimeInMinutes: number,
+  reactionCount: number,
+  responseCount: number,
+  replyCount?: number,
+  series?: {
+    id: string,
+    name: string,
+    slug: string
+  } | null,
+  featured?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBySlug
+
+`posts.getBySlug`
+
+Get a post by publication host and slug
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.posts.getBySlug({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publication` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="publication full type">
+
+```ts
+{
+  post?: {
+    id: string,
+    title: string,
+    subtitle?: string | null,
+    slug: string,
+    brief: string,
+    url: string,
+    coverImage?: {
+      url?: string | null,
+      isPortrait?: boolean,
+      attribution?: string | null
+    } | null,
+    author?: {
+      id: string,
+      name: string,
+      username: string,
+      profilePicture?: string | null,
+      coverImage?: string | null,
+      bio?: {
+        text?: string | null,
+        html?: string,
+        markdown?: string
+      } | null,
+      socialMediaLinks?: {
+        twitter?: string | null,
+        github?: string | null,
+        linkedin?: string | null,
+        website?: string | null
+      } | null,
+      location?: string | null,
+      dateJoined?: string | null
+    } | null,
+    publication?: {
+      id: string,
+      title: string,
+      url?: string | null,
+      displayTitle?: string | null
+    } | null,
+    tags?: {
+      id: string,
+      name: string,
+      slug: string
+    }[] | null,
+    content?: {
+      html?: string,
+      markdown?: string,
+      text?: string
+    } | null,
+    seo?: {
+      title?: string | null,
+      description?: string | null
+    } | null,
+    ogMetaData?: {
+      image?: string | null
+    } | null,
+    publishedAt: string,
+    updatedAt?: string | null,
+    readTimeInMinutes: number,
+    reactionCount: number,
+    responseCount: number,
+    replyCount?: number,
+    series?: {
+      id: string,
+      name: string,
+      slug: string
+    } | null,
+    featured?: boolean
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`posts.list`
+
+List posts in a publication
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.posts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `first` | `number` | Yes | — |
+| `after` | `string` | No | — |
+| `filter` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  tagSlugs?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publication` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="publication full type">
+
+```ts
+{
+  posts: {
+    edges: {
+      node: {
+        id: string,
+        title: string,
+        subtitle?: string | null,
+        slug: string,
+        brief: string,
+        url: string,
+        coverImage?: {
+          url?: string | null,
+          isPortrait?: boolean,
+          attribution?: string | null
+        } | null,
+        author?: {
+          id: string,
+          name: string,
+          username: string,
+          profilePicture?: string | null,
+          coverImage?: string | null,
+          bio?: {
+            text?: string | null,
+            html?: string,
+            markdown?: string
+          } | null,
+          socialMediaLinks?: {
+            twitter?: string | null,
+            github?: string | null,
+            linkedin?: string | null,
+            website?: string | null
+          } | null,
+          location?: string | null,
+          dateJoined?: string | null
+        } | null,
+        publication?: {
+          id: string,
+          title: string,
+          url?: string | null,
+          displayTitle?: string | null
+        } | null,
+        tags?: {
+          id: string,
+          name: string,
+          slug: string
+        }[] | null,
+        content?: {
+          html?: string,
+          markdown?: string,
+          text?: string
+        } | null,
+        seo?: {
+          title?: string | null,
+          description?: string | null
+        } | null,
+        ogMetaData?: {
+          image?: string | null
+        } | null,
+        publishedAt: string,
+        updatedAt?: string | null,
+        readTimeInMinutes: number,
+        reactionCount: number,
+        responseCount: number,
+        replyCount?: number,
+        series?: {
+          id: string,
+          name: string,
+          slug: string
+        } | null,
+        featured?: boolean
+      },
+      cursor: string
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      endCursor?: string | null
+    },
+    totalDocuments?: number
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publish
+
+`posts.publish`
+
+Publish a new post
+
+**Risk:** `write`
+
+```ts
+await corsair.hashnode.api.posts.publish({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `title` | `string` | Yes | — |
+| `publicationId` | `string` | Yes | — |
+| `contentMarkdown` | `string` | Yes | — |
+| `subtitle` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `coverImage` | `string` | No | — |
+| `tags` | `object[]` | No | — |
+| `originalArticleURL` | `string` | No | — |
+| `metaTitle` | `string` | No | — |
+| `metaDescription` | `string` | No | — |
+| `ogImage` | `string` | No | — |
+| `disableComments` | `boolean` | No | — |
+| `isDelisted` | `boolean` | No | — |
+| `enableToc` | `boolean` | No | — |
+| `publishAs` | `string` | No | — |
+| `coAuthors` | `string[]` | No | — |
+| `seriesId` | `string` | No | — |
+| `publishedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  slug: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publishPost` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="publishPost full type">
+
+```ts
+{
+  post: {
+    id: string,
+    title: string,
+    subtitle?: string | null,
+    slug: string,
+    brief: string,
+    url: string,
+    coverImage?: {
+      url?: string | null,
+      isPortrait?: boolean,
+      attribution?: string | null
+    } | null,
+    author?: {
+      id: string,
+      name: string,
+      username: string,
+      profilePicture?: string | null,
+      coverImage?: string | null,
+      bio?: {
+        text?: string | null,
+        html?: string,
+        markdown?: string
+      } | null,
+      socialMediaLinks?: {
+        twitter?: string | null,
+        github?: string | null,
+        linkedin?: string | null,
+        website?: string | null
+      } | null,
+      location?: string | null,
+      dateJoined?: string | null
+    } | null,
+    publication?: {
+      id: string,
+      title: string,
+      url?: string | null,
+      displayTitle?: string | null
+    } | null,
+    tags?: {
+      id: string,
+      name: string,
+      slug: string
+    }[] | null,
+    content?: {
+      html?: string,
+      markdown?: string,
+      text?: string
+    } | null,
+    seo?: {
+      title?: string | null,
+      description?: string | null
+    } | null,
+    ogMetaData?: {
+      image?: string | null
+    } | null,
+    publishedAt: string,
+    updatedAt?: string | null,
+    readTimeInMinutes: number,
+    reactionCount: number,
+    responseCount: number,
+    replyCount?: number,
+    series?: {
+      id: string,
+      name: string,
+      slug: string
+    } | null,
+    featured?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`posts.search`
+
+Search posts within a publication
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.posts.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | Yes | — |
+| `after` | `string` | No | — |
+| `sortBy` | `DATE_PUBLISHED_ASC \| DATE_PUBLISHED_DESC` | No | — |
+| `filter` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="filter full type">
+
+```ts
+{
+  query?: string,
+  publicationId: string,
+  deletedOnly?: boolean,
+  authorIds?: string[],
+  tagIds?: string[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `searchPostsOfPublication` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="searchPostsOfPublication full type">
+
+```ts
+{
+  edges: {
+    node: {
+      id: string,
+      title: string,
+      subtitle?: string | null,
+      slug: string,
+      brief: string,
+      url: string,
+      coverImage?: {
+        url?: string | null,
+        isPortrait?: boolean,
+        attribution?: string | null
+      } | null,
+      author?: {
+        id: string,
+        name: string,
+        username: string,
+        profilePicture?: string | null,
+        coverImage?: string | null,
+        bio?: {
+          text?: string | null,
+          html?: string,
+          markdown?: string
+        } | null,
+        socialMediaLinks?: {
+          twitter?: string | null,
+          github?: string | null,
+          linkedin?: string | null,
+          website?: string | null
+        } | null,
+        location?: string | null,
+        dateJoined?: string | null
+      } | null,
+      publication?: {
+        id: string,
+        title: string,
+        url?: string | null,
+        displayTitle?: string | null
+      } | null,
+      tags?: {
+        id: string,
+        name: string,
+        slug: string
+      }[] | null,
+      content?: {
+        html?: string,
+        markdown?: string,
+        text?: string
+      } | null,
+      seo?: {
+        title?: string | null,
+        description?: string | null
+      } | null,
+      ogMetaData?: {
+        image?: string | null
+      } | null,
+      publishedAt: string,
+      updatedAt?: string | null,
+      readTimeInMinutes: number,
+      reactionCount: number,
+      responseCount: number,
+      replyCount?: number,
+      series?: {
+        id: string,
+        name: string,
+        slug: string
+      } | null,
+      featured?: boolean
+    },
+    cursor: string
+  }[],
+  pageInfo: {
+    hasNextPage: boolean,
+    endCursor?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`posts.update`
+
+Update an existing post
+
+**Risk:** `write`
+
+```ts
+await corsair.hashnode.api.posts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `subtitle` | `string` | No | — |
+| `contentMarkdown` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `coverImage` | `string` | No | — |
+| `tags` | `object[]` | No | — |
+| `originalArticleURL` | `string` | No | — |
+| `metaTitle` | `string` | No | — |
+| `metaDescription` | `string` | No | — |
+| `ogImage` | `string` | No | — |
+| `disableComments` | `boolean` | No | — |
+| `isDelisted` | `boolean` | No | — |
+| `enableToc` | `boolean` | No | — |
+| `publishAs` | `string` | No | — |
+| `coAuthors` | `string[]` | No | — |
+| `seriesId` | `string` | No | — |
+| `publishedAt` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="tags full type">
+
+```ts
+{
+  slug: string,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `updatePost` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="updatePost full type">
+
+```ts
+{
+  post: {
+    id: string,
+    title: string,
+    subtitle?: string | null,
+    slug: string,
+    brief: string,
+    url: string,
+    coverImage?: {
+      url?: string | null,
+      isPortrait?: boolean,
+      attribution?: string | null
+    } | null,
+    author?: {
+      id: string,
+      name: string,
+      username: string,
+      profilePicture?: string | null,
+      coverImage?: string | null,
+      bio?: {
+        text?: string | null,
+        html?: string,
+        markdown?: string
+      } | null,
+      socialMediaLinks?: {
+        twitter?: string | null,
+        github?: string | null,
+        linkedin?: string | null,
+        website?: string | null
+      } | null,
+      location?: string | null,
+      dateJoined?: string | null
+    } | null,
+    publication?: {
+      id: string,
+      title: string,
+      url?: string | null,
+      displayTitle?: string | null
+    } | null,
+    tags?: {
+      id: string,
+      name: string,
+      slug: string
+    }[] | null,
+    content?: {
+      html?: string,
+      markdown?: string,
+      text?: string
+    } | null,
+    seo?: {
+      title?: string | null,
+      description?: string | null
+    } | null,
+    ogMetaData?: {
+      image?: string | null
+    } | null,
+    publishedAt: string,
+    updatedAt?: string | null,
+    readTimeInMinutes: number,
+    reactionCount: number,
+    responseCount: number,
+    replyCount?: number,
+    series?: {
+      id: string,
+      name: string,
+      slug: string
+    } | null,
+    featured?: boolean
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Publications
+
+### get
+
+`publications.get`
+
+Get a publication by host
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.publications.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publication` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="publication full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  displayTitle?: string | null,
+  url?: string | null,
+  favicon?: string | null,
+  about?: {
+    text?: string | null,
+    html?: string,
+    markdown?: string
+  } | null,
+  seo?: {
+    title?: string | null,
+    description?: string | null
+  } | null,
+  author?: {
+    id: string,
+    name: string,
+    username: string,
+    profilePicture?: string | null,
+    coverImage?: string | null,
+    bio?: {
+      text?: string | null,
+      html?: string,
+      markdown?: string
+    } | null,
+    socialMediaLinks?: {
+      twitter?: string | null,
+      github?: string | null,
+      linkedin?: string | null,
+      website?: string | null
+    } | null,
+    location?: string | null,
+    dateJoined?: string | null
+  } | null,
+  ogMetaData?: {
+    image?: string | null
+  } | null,
+  isTeam?: boolean,
+  links?: {
+    twitter?: string | null,
+    github?: string | null,
+    linkedin?: string | null,
+    website?: string | null
+  } | null,
+  followersCount?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`publications.list`
+
+List publications for the authenticated user
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.publications.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | Yes | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `me` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="me full type">
+
+```ts
+{
+  publications: {
+    edges: {
+      node: {
+        id: string,
+        title: string,
+        displayTitle?: string | null,
+        url?: string | null,
+        favicon?: string | null,
+        about?: {
+          text?: string | null,
+          html?: string,
+          markdown?: string
+        } | null,
+        seo?: {
+          title?: string | null,
+          description?: string | null
+        } | null,
+        author?: {
+          id: string,
+          name: string,
+          username: string,
+          profilePicture?: string | null,
+          coverImage?: string | null,
+          bio?: {
+            text?: string | null,
+            html?: string,
+            markdown?: string
+          } | null,
+          socialMediaLinks?: {
+            twitter?: string | null,
+            github?: string | null,
+            linkedin?: string | null,
+            website?: string | null
+          } | null,
+          location?: string | null,
+          dateJoined?: string | null
+        } | null,
+        ogMetaData?: {
+          image?: string | null
+        } | null,
+        isTeam?: boolean,
+        links?: {
+          twitter?: string | null,
+          github?: string | null,
+          linkedin?: string | null,
+          website?: string | null
+        } | null,
+        followersCount?: number | null
+      },
+      cursor: string
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      endCursor?: string | null
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Series
+
+### get
+
+`series.get`
+
+Get a series by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.series.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `series` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="series full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  slug: string,
+  description?: {
+    text?: string | null,
+    html?: string,
+    markdown?: string
+  } | null,
+  coverImage?: string | null,
+  author?: {
+    id: string,
+    name: string,
+    username: string,
+    profilePicture?: string | null,
+    coverImage?: string | null,
+    bio?: {
+      text?: string | null,
+      html?: string,
+      markdown?: string
+    } | null,
+    socialMediaLinks?: {
+      twitter?: string | null,
+      github?: string | null,
+      linkedin?: string | null,
+      website?: string | null
+    } | null,
+    location?: string | null,
+    dateJoined?: string | null
+  } | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`series.list`
+
+List series in a publication
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.series.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `host` | `string` | Yes | — |
+| `first` | `number` | Yes | — |
+| `after` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `publication` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="publication full type">
+
+```ts
+{
+  seriesList: {
+    edges: {
+      node: {
+        id: string,
+        name: string,
+        slug: string,
+        description?: {
+          text?: string | null,
+          html?: string,
+          markdown?: string
+        } | null,
+        coverImage?: string | null,
+        author?: {
+          id: string,
+          name: string,
+          username: string,
+          profilePicture?: string | null,
+          coverImage?: string | null,
+          bio?: {
+            text?: string | null,
+            html?: string,
+            markdown?: string
+          } | null,
+          socialMediaLinks?: {
+            twitter?: string | null,
+            github?: string | null,
+            linkedin?: string | null,
+            website?: string | null
+          } | null,
+          location?: string | null,
+          dateJoined?: string | null
+        } | null
+      },
+      cursor: string
+    }[],
+    pageInfo: {
+      hasNextPage: boolean,
+      endCursor?: string | null
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Tags
+
+### get
+
+`tags.get`
+
+Get a tag by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.tags.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `tag` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="tag full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  slug: string,
+  tagline?: string | null,
+  logo?: string | null,
+  postsCount?: number,
+  followersCount?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### get
+
+`users.get`
+
+Get a user by username
+
+**Risk:** `read`
+
+```ts
+await corsair.hashnode.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  username: string,
+  profilePicture?: string | null,
+  coverImage?: string | null,
+  bio?: {
+    text?: string | null,
+    html?: string,
+    markdown?: string
+  } | null,
+  socialMediaLinks?: {
+    twitter?: string | null,
+    github?: string | null,
+    linkedin?: string | null,
+    website?: string | null
+  } | null,
+  location?: string | null,
+  dateJoined?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

@@ -1,8 +1,25 @@
 import { execSync } from 'node:child_process';
 import { existsSync, readdirSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import { isAlreadyPublished } from './npm-publish-errors.mjs';
+import { orderForPublish } from './publish-order.mjs';
 
 const PACKAGES_DIR = 'packages';
+
+// Deps declared with the workspace protocol get their spec rewritten to a fixed
+// version on publish, so a dependent must not ship before its dependency lands
+// on npm. Covers runtime deps and optional deps (corsair's platform-gated frpc
+// binaries); peer/dev deps don't affect a consumer's install, so skip them.
+function workspaceDeps(pkg) {
+	return Object.entries({
+		...(pkg.dependencies ?? {}),
+		...(pkg.optionalDependencies ?? {}),
+	})
+		.filter(
+			([, spec]) => typeof spec === 'string' && spec.startsWith('workspace:'),
+		)
+		.map(([name]) => name);
+}
 
 function getPublishedVersion(name) {
 	try {
@@ -38,7 +55,12 @@ for (const dir of dirs) {
 	console.log(
 		`QUEUE ${pkg.name}@${pkg.version} (npm has ${published ?? 'nothing'})`,
 	);
-	toPublish.push({ dir, name: pkg.name, version: pkg.version });
+	toPublish.push({
+		dir,
+		name: pkg.name,
+		version: pkg.version,
+		workspaceDeps: workspaceDeps(pkg),
+	});
 }
 
 if (toPublish.length === 0) {
@@ -46,34 +68,80 @@ if (toPublish.length === 0) {
 	process.exit(0);
 }
 
-console.log(`\nBuilding ${toPublish.length} package(s)...`);
-for (const { name } of toPublish) {
+// Only deps published in this same run need ordering — anything already on npm
+// is available regardless of order.
+const publishNames = new Set(toPublish.map((p) => p.name));
+for (const p of toPublish) {
+	p.deps = p.workspaceDeps.filter((d) => publishNames.has(d));
+}
+const ordered = orderForPublish(toPublish);
+
+console.log(`\nBuilding ${ordered.length} package(s)...`);
+for (const { name } of ordered) {
 	console.log(`  Building ${name}...`);
 	execSync(`pnpm --filter ${name} build`, { stdio: 'inherit' });
 }
 
-console.log(`\nPublishing ${toPublish.length} package(s)...`);
+console.log(`\nPublishing ${ordered.length} package(s)...`);
 
 const npmToken = process.env.NPM_TOKEN;
 const corsairDevToken = process.env.NPM_CORSAIR_DEV_TOKEN;
 
-for (const { name } of toPublish) {
-	const token = name === 'corsair' ? npmToken : corsairDevToken;
-	if (!token) {
+let publishedCount = 0;
+const failed = new Set();
+
+for (const { name, version, deps } of ordered) {
+	// Never publish a dependent whose in-release dependency failed — its
+	// rewritten version wouldn't exist on npm, so the release would be broken.
+	const blockedBy = deps.filter((d) => failed.has(d));
+	if (blockedBy.length > 0) {
 		console.error(
-			`  SKIP ${name} — missing token (${name === 'corsair' ? 'NPM_TOKEN' : 'NPM_CORSAIR_DEV_TOKEN'})`,
+			`  FAILED ${name}@${version} — dependency failed: ${blockedBy.join(', ')}`,
 		);
+		failed.add(name);
 		continue;
 	}
 
-	console.log(`  Publishing ${name}...`);
-	execSync(
-		`pnpm --filter ${name} publish --provenance --access public --no-git-checks`,
-		{
-			stdio: 'inherit',
-			env: { ...process.env, NODE_AUTH_TOKEN: token },
-		},
-	);
+	const token = name === 'corsair' ? npmToken : corsairDevToken;
+	if (!token) {
+		console.error(
+			`  FAILED ${name} — missing token (${name === 'corsair' ? 'NPM_TOKEN' : 'NPM_CORSAIR_DEV_TOKEN'})`,
+		);
+		failed.add(name);
+		continue;
+	}
+
+	console.log(`  Publishing ${name}@${version}...`);
+	try {
+		// npm writes errors to stderr but execSync only returns stdout, so redirect
+		// stderr into stdout to capture the failure text for classification below.
+		const out = execSync(
+			`pnpm --filter ${name} publish --provenance --access public --no-git-checks 2>&1`,
+			{
+				encoding: 'utf-8',
+				maxBuffer: 10 * 1024 * 1024,
+				env: { ...process.env, NODE_AUTH_TOKEN: token },
+			},
+		);
+		process.stdout.write(out);
+		publishedCount++;
+	} catch (err) {
+		const out = err.stdout ?? '';
+		process.stdout.write(out);
+		if (isAlreadyPublished(out)) {
+			console.log(`  SKIP ${name}@${version} (already on npm)`);
+			continue;
+		}
+		console.error(`  FAILED ${name}@${version}`);
+		failed.add(name);
+	}
 }
 
-console.log(`\nDone. Published ${toPublish.length} package(s).`);
+if (failed.size > 0) {
+	console.error(
+		`\nFailed to publish ${failed.size}: ${[...failed].join(', ')}`,
+	);
+	process.exit(1);
+}
+
+console.log(`\nDone. Published ${publishedCount} package(s).`);
