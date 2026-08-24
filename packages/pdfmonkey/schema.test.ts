@@ -1,5 +1,6 @@
 import {
 	CreateDocumentInputSchema,
+	CreateDocumentSyncInputSchema,
 	CreateTemplateInputSchema,
 	DeleteDocumentInputSchema,
 	DeleteTemplateInputSchema,
@@ -11,39 +12,30 @@ import {
 	ListDocumentCardsInputSchema,
 	ListTemplateCardsInputSchema,
 	PDFMonkeyEndpointInputSchemas,
+	PDFMonkeyEndpointOutputSchemas,
 	UpdateDocumentInputSchema,
 	UpdateTemplateInputSchema,
 } from './endpoints/types';
 import { PDFMonkeySchema } from './schema';
 
 describe('PDFMonkey schema', () => {
-	it('declares a semver version', () => {
-		expect(PDFMonkeySchema.version).toBeDefined();
+	it('declares a semver version and empty entities', () => {
 		expect(PDFMonkeySchema.version).toMatch(/^\d+\.\d+\.\d+$/);
-	});
-
-	it('declares an entities map', () => {
-		expect(typeof PDFMonkeySchema.entities).toBe('object');
-		expect(PDFMonkeySchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(PDFMonkeySchema.entities))).toBe(true);
-		for (const entity of Object.values(PDFMonkeySchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		expect(PDFMonkeySchema.entities).toEqual({});
 	});
 
 	it('validates DocumentTemplateCardSchema', () => {
-		const obj = {
+		const result = DocumentTemplateCardSchema.safeParse({
 			id: 'test-id',
 			app_id: 'test-app',
 			created_at: '2024-01-01',
 			updated_at: '2024-01-01',
-		};
-		const result = DocumentTemplateCardSchema.safeParse(obj);
+		});
 		expect(result.success).toBe(true);
 	});
 
 	it('validates DocumentCardSchema', () => {
-		const obj = {
+		const result = DocumentCardSchema.safeParse({
 			id: 'doc-id',
 			app_id: 'test-app',
 			status: 'draft',
@@ -52,19 +44,17 @@ describe('PDFMonkey schema', () => {
 			public_share_link: null,
 			created_at: '2024-01-01',
 			updated_at: '2024-01-01',
-		};
-		const result = DocumentCardSchema.safeParse(obj);
+		});
 		expect(result.success).toBe(true);
 	});
 
 	it('validates DocumentSchema', () => {
-		const obj = {
+		const result = DocumentSchema.safeParse({
 			id: 'doc-id',
 			app_id: 'test-app',
 			document_template_id: 'template-id',
-			document_template_identifier: 'temp-ident',
 			status: 'pending',
-			payload: null,
+			payload: { clientName: 'Ada' },
 			meta: null,
 			filename: null,
 			download_url: null,
@@ -75,113 +65,120 @@ describe('PDFMonkey schema', () => {
 			failure_cause: null,
 			created_at: '2024-01-01',
 			updated_at: '2024-01-01',
-		};
-		const result = DocumentSchema.safeParse(obj);
+		});
 		expect(result.success).toBe(true);
 	});
 
-	it('validates ListTemplateCardsInputSchema', () => {
-		const obj = {
-			q_workspace_id: 'ws-123',
+	it('validates nested list query inputs', () => {
+		expect(
+			ListTemplateCardsInputSchema.parse({
+				q: { workspace_id: 'ws-123' },
+			}),
+		).toMatchObject({
 			page: 1,
-		};
-		const result = ListTemplateCardsInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
+			q: { workspace_id: 'ws-123' },
+		});
+		expect(
+			ListDocumentCardsInputSchema.parse({
+				page: 2,
+				q: { status: 'pending' },
+			}),
+		).toMatchObject({
+			page: 2,
+			q: { status: 'pending' },
+		});
 	});
 
-	it('validates ListDocumentCardsInputSchema', () => {
-		const obj = {
-			page: 1,
-			q_status: 'pending',
-		};
-		const result = ListDocumentCardsInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
+	it('rejects list template cards without workspace_id', () => {
+		expect(ListTemplateCardsInputSchema.safeParse({ page: 1 }).success).toBe(
+			false,
+		);
 	});
 
-	it('validates GetTemplateInputSchema', () => {
-		const obj = { id: 'template-123' };
-		const result = GetTemplateInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
-	});
-
-	it('validates GetDocumentCardInputSchema', () => {
-		const obj = { id: 'doc-456' };
-		const result = GetDocumentCardInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
-	});
-
-	it('validates CreateTemplateInputSchema', () => {
-		const obj = {
-			document_template: {
-				app_id: 'app-1',
-				identifier: 'my-template',
-				body: '<h1>Hello</h1>',
-			},
-		};
-		const result = CreateTemplateInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
-	});
-
-	it('validates CreateDocumentInputSchema', () => {
-		const obj = {
-			document: {
+	it('requires update bodies', () => {
+		expect(
+			UpdateTemplateInputSchema.safeParse({
 				document_template_id: 'temp-1',
-				status: 'pending',
-			},
-		};
-		const result = CreateDocumentInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
+			}).success,
+		).toBe(false);
+		expect(
+			UpdateDocumentInputSchema.safeParse({ document_id: 'doc-1' }).success,
+		).toBe(false);
+		expect(
+			UpdateTemplateInputSchema.parse({
+				document_template_id: 'temp-1',
+				document_template: { identifier: 'updated' },
+			}),
+		).toMatchObject({
+			document_template: { identifier: 'updated' },
+		});
+		expect(
+			UpdateDocumentInputSchema.parse({
+				document_id: 'doc-1',
+				document: { status: 'pending' },
+			}),
+		).toMatchObject({
+			document: { status: 'pending' },
+		});
 	});
 
-	it('validates UpdateTemplateInputSchema', () => {
-		const obj = {
-			document_template_id: 'temp-1',
-			document_template: {
-				identifier: 'updated',
-			},
-		};
-		const result = UpdateTemplateInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
+	it('defaults createDocumentSync status to pending', () => {
+		expect(
+			CreateDocumentSyncInputSchema.parse({
+				document: { document_template_id: 'temp-1' },
+			}),
+		).toMatchObject({
+			document: { document_template_id: 'temp-1', status: 'pending' },
+		});
 	});
 
-	it('validates UpdateDocumentInputSchema', () => {
-		const obj = {
-			document_id: 'doc-1',
-			document: {
-				status: 'pending',
-			},
-		};
-		const result = UpdateDocumentInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
+	it('validates remaining input schemas', () => {
+		expect(GetTemplateInputSchema.parse({ id: 'template-123' }).id).toBe(
+			'template-123',
+		);
+		expect(GetDocumentCardInputSchema.parse({ id: 'doc-456' }).id).toBe(
+			'doc-456',
+		);
+		expect(
+			CreateTemplateInputSchema.parse({
+				document_template: {
+					app_id: 'app-1',
+					identifier: 'my-template',
+					body: '<h1>Hello</h1>',
+				},
+			}).document_template.identifier,
+		).toBe('my-template');
+		expect(
+			CreateDocumentInputSchema.parse({
+				document: {
+					document_template_id: 'temp-1',
+					status: 'pending',
+				},
+			}).document.document_template_id,
+		).toBe('temp-1');
+		expect(DeleteTemplateInputSchema.parse({ id: 'temp-1' }).id).toBe('temp-1');
+		expect(DeleteDocumentInputSchema.parse({ id: 'doc-1' }).id).toBe('doc-1');
 	});
 
-	it('validates DeleteTemplateInputSchema', () => {
-		const obj = { id: 'temp-1' };
-		const result = DeleteTemplateInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
-	});
+	it('registers input and output schemas for every operation', () => {
+		const operations = [
+			'listTemplateCards',
+			'getTemplate',
+			'createTemplate',
+			'updateTemplate',
+			'deleteTemplate',
+			'createDocument',
+			'createDocumentSync',
+			'getDocumentCard',
+			'listDocumentCards',
+			'getDocument',
+			'updateDocument',
+			'deleteDocument',
+		] as const;
 
-	it('validates DeleteDocumentInputSchema', () => {
-		const obj = { id: 'doc-1' };
-		const result = DeleteDocumentInputSchema.safeParse(obj);
-		expect(result.success).toBe(true);
-	});
-
-	it('PDFMonkeyEndpointInputSchemas contains required template and document schemas', () => {
-		expect(PDFMonkeyEndpointInputSchemas.listTemplateCards).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.getTemplate).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.createTemplate).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.updateTemplate).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.deleteTemplate).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.createDocument).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.createDocumentSync).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.getDocumentCard).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.listDocumentCards).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.getDocument).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.updateDocument).toBeDefined();
-		expect(PDFMonkeyEndpointInputSchemas.deleteDocument).toBeDefined();
+		for (const operation of operations) {
+			expect(PDFMonkeyEndpointInputSchemas[operation]).toBeDefined();
+			expect(PDFMonkeyEndpointOutputSchemas[operation]).toBeDefined();
+		}
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
