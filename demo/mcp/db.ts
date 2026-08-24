@@ -22,6 +22,10 @@ sqlite.exec(`
 		dek TEXT NULL
 	);
 
+	-- Account lookup runs before every entity op; index its access pattern.
+	CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
+		ON corsair_accounts (tenant_id, integration_id);
+
 	CREATE TABLE IF NOT EXISTS corsair_entities (
 		id TEXT PRIMARY KEY,
 		created_at TEXT NOT NULL,
