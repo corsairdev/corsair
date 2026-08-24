@@ -18,6 +18,7 @@ describe('verifyGithubWebhookSignature', () => {
 		const request: WebhookRequest = { payload: {}, headers: {}, rawBody: '{}' };
 		expect(verifyGithubWebhookSignature(request, undefined)).toEqual({
 			valid: false,
+			error: 'Missing webhook secret',
 		});
 	});
 });
