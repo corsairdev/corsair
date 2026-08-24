@@ -92,6 +92,7 @@ export const BaseProviders = [
 	'datadog',
 	'deepseek',
 	'devinmcp',
+	'diffbot',
 	'digitalocean',
 	'discord',
 	'dockerhub',
@@ -279,6 +280,7 @@ export const ProviderDisplayNames = {
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
 	devinmcp: 'Devin MCP',
+	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dockerhub: 'Docker Hub',
@@ -473,6 +475,7 @@ export type AllProviders =
 	| 'datadog'
 	| 'deepseek'
 	| 'devinmcp'
+	| 'diffbot'
 	| 'digitalocean'
 	| 'discord'
 	| 'dockerhub'
