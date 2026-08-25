@@ -2,6 +2,7 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import {
 	getValidAccessToken,
 	makeAuthenticatedTickTickRequest,
+	TickTickAPIError,
 } from './client';
 import { OAuth, Projects, Tasks } from './endpoints';
 import { ticktick } from './index';
@@ -18,10 +19,14 @@ jest.mock('corsair/core', () => ({
 	},
 }));
 
-jest.mock('./client', () => ({
-	makeAuthenticatedTickTickRequest: jest.fn(),
-	getValidAccessToken: jest.fn(),
-}));
+jest.mock('./client', () => {
+	const actual = jest.requireActual('./client');
+	return {
+		...actual,
+		makeAuthenticatedTickTickRequest: jest.fn(),
+		getValidAccessToken: jest.fn(),
+	};
+});
 
 const mockRequest = jest.mocked(makeAuthenticatedTickTickRequest);
 const mockLog = jest.mocked(logEventFromContext);
@@ -543,6 +548,25 @@ describe('TickTick endpoint routing', () => {
 				'endpoint',
 			),
 		).rejects.toThrow(/Failed to obtain valid access token: token expired$/);
+	});
+
+	it('keyBuilder rethrows TickTickAPIError so 429 metadata is kept', async () => {
+		const pluginInstance = ticktick();
+		const fixture = buildFixture();
+		mockGetValidAccessToken.mockRejectedValueOnce(
+			new TickTickAPIError('[429] Too Many Requests', '429', 2500),
+		);
+
+		await expect(
+			pluginInstance.keyBuilder?.(
+				fixture as unknown as KeyBuilderCtx,
+				'endpoint',
+			),
+		).rejects.toMatchObject({
+			name: 'TickTickAPIError',
+			code: '429',
+			retryAfter: 2500,
+		});
 	});
 
 	it('keyBuilder reports persist failures distinctly', async () => {

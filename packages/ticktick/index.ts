@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { getValidAccessToken, TickTickAPIError } from './client';
 import { OAuth, Projects, Tasks } from './endpoints';
 import type {
 	TickTickEndpointInputs,
@@ -165,7 +165,7 @@ const tickTickEndpointMeta = {
 	},
 	'projects.getMany': {
 		riskLevel: 'read',
-		description: 'Get all user projects',
+		description: 'Get user projects (TickTick omits Inbox)',
 	},
 	'projects.getData': {
 		riskLevel: 'read',
@@ -197,7 +197,7 @@ const tickTickEndpointMeta = {
 	},
 	'tasks.listAll': {
 		riskLevel: 'read',
-		description: 'List all open tasks across all user projects',
+		description: 'List open tasks across listed user projects (excludes Inbox)',
 	},
 	'oauth.generateAuthUrl': {
 		riskLevel: 'read',
@@ -316,6 +316,9 @@ export function ticktick<const T extends TickTickPluginOptions>(
 						clientSecret,
 					});
 				} catch (error) {
+					if (error instanceof TickTickAPIError) {
+						throw error;
+					}
 					throw new Error(
 						`[corsair:ticktick] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
 					);
@@ -337,7 +340,6 @@ export function ticktick<const T extends TickTickPluginOptions>(
 						);
 					}
 				}
-
 				// ctx's public type doesn't declare _refreshAuth; this side-channel
 				// callback is how core forces a re-auth after a 401 (same pattern as
 				// googlemeet/googlecalendar and other OAuth plugins)
