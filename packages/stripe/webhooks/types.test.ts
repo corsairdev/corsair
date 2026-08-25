@@ -18,14 +18,13 @@ describe('verifyStripeWebhookSignature', () => {
 				amount: 2000,
 				currency: 'usd',
 				status: 'succeeded',
+				description: 'café au lait',
 			},
 		},
 	};
 
-	/** Pretty-printed (2-space indent) — matches what Stripe actually sends over the wire. */
 	const stripeEventBody = JSON.stringify(stripeEvent, null, 2);
 
-	// unknown: the webhook payload type is generic at this layer; callers receive a typed payload after schema parsing
 	const requestWith = (
 		headers: Record<string, string | string[]>,
 		rawBody?: string,
@@ -41,10 +40,7 @@ describe('verifyStripeWebhookSignature', () => {
 			'',
 		);
 
-		expect(result).toEqual({
-			valid: false,
-			error: 'Missing webhook secret',
-		});
+		expect(result).toEqual({ valid: false, error: 'Missing webhook secret' });
 	});
 
 	it('should fail when rawBody is missing', () => {
@@ -83,6 +79,25 @@ describe('verifyStripeWebhookSignature', () => {
 		});
 	});
 
+	it('should use first element when stripe-signature is an array', () => {
+		const timestamp = Math.floor(Date.now() / 1000);
+
+		const sig = crypto
+			.createHmac('sha256', secret)
+			.update(`${timestamp}.${stripeEventBody}`)
+			.digest('hex');
+
+		const result = verifyStripeWebhookSignature(
+			requestWith(
+				{ 'stripe-signature': [`t=${timestamp},v1=${sig}`, 'ignored'] },
+				stripeEventBody,
+			),
+			secret,
+		);
+
+		expect(result).toEqual({ valid: true });
+	});
+
 	it('should fail for malformed stripe-signature header (no t= or v1=)', () => {
 		const result = verifyStripeWebhookSignature(
 			requestWith(
@@ -103,31 +118,26 @@ describe('verifyStripeWebhookSignature', () => {
 
 		const result = verifyStripeWebhookSignature(
 			requestWith(
-				{
-					'stripe-signature': `t=${timestamp},v1=wrong-v1`,
-				},
+				{ 'stripe-signature': `t=${timestamp},v1=wrong-v1` },
 				stripeEventBody,
 			),
 			secret,
 		);
 
-		expect(result).toEqual({
-			valid: false,
-			error: 'Invalid signature',
-		});
+		expect(result).toEqual({ valid: false, error: 'Invalid signature' });
 	});
 
-	it('should return valid with correct t=<unix>,v1=<hex> over ${timestamp}.${rawBody} with a fresh timestamp', () => {
+	it('should return valid with correct t=<unix>,v1=<hex> and a fresh timestamp', () => {
 		const timestamp = Math.floor(Date.now() / 1000);
 
-		const expectedSignature = crypto
+		const sig = crypto
 			.createHmac('sha256', secret)
 			.update(`${timestamp}.${stripeEventBody}`)
 			.digest('hex');
 
 		const result = verifyStripeWebhookSignature(
 			requestWith(
-				{ 'stripe-signature': `t=${timestamp},v1=${expectedSignature}` },
+				{ 'stripe-signature': `t=${timestamp},v1=${sig}` },
 				stripeEventBody,
 			),
 			secret,
@@ -136,22 +146,39 @@ describe('verifyStripeWebhookSignature', () => {
 		expect(result).toEqual({ valid: true });
 	});
 
-	it('should still validate when framework re-stringifies body to compact form (pretty-print fallback)', () => {
+	it('should accept any matching v1 when multiple v1= tokens are present', () => {
 		const timestamp = Math.floor(Date.now() / 1000);
 
-		// Stripe signs over the pretty-printed body
-		const signature = crypto
+		const goodSig = crypto
 			.createHmac('sha256', secret)
 			.update(`${timestamp}.${stripeEventBody}`)
 			.digest('hex');
 
-		// Framework parsed and re-stringified to compact form
+		const result = verifyStripeWebhookSignature(
+			requestWith(
+				{ 'stripe-signature': `t=${timestamp},v1=oldinvalidsig,v1=${goodSig}` },
+				stripeEventBody,
+			),
+			secret,
+		);
+
+		expect(result).toEqual({ valid: true });
+	});
+
+	it('should still validate when framework re-stringifies body to compact form', () => {
+		const timestamp = Math.floor(Date.now() / 1000);
+
+		const sig = crypto
+			.createHmac('sha256', secret)
+			.update(`${timestamp}.${stripeEventBody}`)
+			.digest('hex');
+
 		const compactBody = JSON.stringify(stripeEvent);
 
 		const result = verifyStripeWebhookSignature(
 			requestWith(
 				{
-					'stripe-signature': `t=${timestamp},v1=${signature}`,
+					'stripe-signature': `t=${timestamp},v1=${sig}`,
 					'content-length': String(stripeEventBody.length),
 				},
 				compactBody,
@@ -163,18 +190,16 @@ describe('verifyStripeWebhookSignature', () => {
 	});
 
 	it('should reject a timestamp outside the 5-minute tolerance', () => {
-		const staleTimestamp = Math.floor(Date.now() / 1000) - 600; // 10 minutes ago
+		const staleTimestamp = Math.floor(Date.now() / 1000) - 600;
 
-		const signature = crypto
+		const sig = crypto
 			.createHmac('sha256', secret)
 			.update(`${staleTimestamp}.${stripeEventBody}`)
 			.digest('hex');
 
 		const result = verifyStripeWebhookSignature(
 			requestWith(
-				{
-					'stripe-signature': `t=${staleTimestamp},v1=${signature}`,
-				},
+				{ 'stripe-signature': `t=${staleTimestamp},v1=${sig}` },
 				stripeEventBody,
 			),
 			secret,
