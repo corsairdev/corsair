@@ -211,6 +211,7 @@ function makeExpressRes() {
 	};
 	return {
 		res,
+		statusCode: () => statusCode,
 		text: () =>
 			typeof body === 'string' ? body : (body?.toString('utf-8') ?? ''),
 	};
@@ -584,9 +585,168 @@ describe('body fidelity — web-standard adapters', () => {
 		await handler(event);
 		expect(text().includes('Invalid tunnel signature')).toBe(true);
 	});
+
+	it('toNuxtHandler answers 413 on an oversized stream AND discards the unread remainder', async () => {
+		env = createTestDatabase();
+		const handler = toNuxtHandler(makeCorsair(env), { basePath: BASE });
+		// One chunk past the cap: the bridge must reject it, answer corsair's
+		// own 413 envelope (not h3's HTML 500), and RESUME the underlying
+		// IncomingMessage so the abandoned upload can't poison the socket.
+		const big = Buffer.alloc(DEFAULT_MAX_BODY_BYTES + 1, 0x78);
+		const resume = jest.fn();
+		let out: Buffer | string | undefined;
+		const event: any = {
+			node: {
+				req: {
+					method: 'POST',
+					url: BASE,
+					headers: { host: 'x', 'content-type': 'application/json' },
+					resume,
+					[Symbol.asyncIterator]: async function* () {
+						yield big;
+					},
+				},
+				res: {
+					statusCode: 200,
+					setHeader: () => {},
+					end: (b?: Buffer | string) => {
+						out = b;
+					},
+				},
+			},
+		};
+		await handler(event);
+		const text = typeof out === 'string' ? out : (out?.toString('utf-8') ?? '');
+		expect(text).toContain('payload_too_large');
+		expect(resume).toHaveBeenCalled();
+	});
 });
 
-// ── Negative control: prove the oracle actually catches corruption ───────────
+// ── Body limits on Web-native reads ──────────────────────────────────────────
+// The advisory content-length gate cannot see chunked bodies (no declared
+// length) — these pin the BYTE-COUNTING reads that bound them, plus the
+// idle-gap watchdog for senders who stall just under the size cap.
+
+// Builds a POST Request whose body streams lazily-produced chunks with NO
+// content-length (undici strips that header for stream bodies) and counts how
+// many chunks the stream PRODUCED before the read aborted.
+function makeChunkedRequest(opts: {
+	url?: string;
+	headers?: Record<string, string>;
+	chunkSize: number;
+	maxChunks: number; // the sender "has" this much data queued up
+	neverYields?: boolean;
+}) {
+	let pulled = 0;
+	const body = new ReadableStream<Uint8Array>({
+		pull(controller) {
+			if (opts.neverYields) return; // stalled sender: never enqueues, never closes
+			if (pulled >= opts.maxChunks) {
+				controller.close();
+				return;
+			}
+			controller.enqueue(new Uint8Array(opts.chunkSize).fill(0x78));
+			pulled += 1;
+		},
+	});
+	// `as RequestInit`: some lib.dom revisions lack `duplex`, but undici requires
+	// it at runtime whenever a Request body is a stream.
+	const req = new Request(`http://x${opts.url ?? BASE}`, {
+		method: 'POST',
+		headers: opts.headers ?? { 'content-type': 'application/json' },
+		body,
+		duplex: 'half',
+	} as RequestInit);
+	return { req, pulledCount: () => pulled };
+}
+
+describe('body limits — web-native chunked and stalled bodies', () => {
+	let env: ReturnType<typeof createTestDatabase>;
+	afterEach(() => env?.cleanup?.());
+
+	it('chunked oversized body WITHOUT content-length gets 413 — without buffering it all', async () => {
+		env = createTestDatabase();
+		const handler = managementHandler(makeCorsair(env), { basePath: BASE });
+		// Sender offers 64 × 512KiB = 32 MiB chunked with no declared length.
+		// The byte-counting read must abort around the 1 MiB cap — a few chunks
+		// past it at most (the stream may prefetch one ahead of the reader).
+		const { req, pulledCount } = makeChunkedRequest({
+			chunkSize: 512 * 1024,
+			maxChunks: 64,
+		});
+
+		const res = await handler(req);
+
+		expect(res.status).toBe(413);
+		expect(await res.text()).toContain('payload_too_large');
+		expect(pulledCount()).toBeLessThanOrEqual(6);
+	});
+
+	it('hub delivery POST with an oversized chunked body gets 413 too', async () => {
+		env = createTestDatabase();
+		// Base path → hub-delivery branch: its reader runs BEFORE signature
+		// verification, so this is the first thing a delivery hits.
+		const handler = managementHandler(makeCorsair(env), { basePath: BASE });
+		const { req } = makeChunkedRequest({
+			url: `${BASE}`,
+			headers: { 'content-type': 'text/plain' }, // any content-type is read here
+			chunkSize: 512 * 1024,
+			maxChunks: 64,
+		});
+
+		const res = await handler(req);
+
+		expect(res.status).toBe(413);
+		expect(await res.text()).toContain('payload_too_large');
+	});
+
+	it('a stalled body read answers 408 request_timeout instead of hanging', async () => {
+		env = createTestDatabase();
+		const handler = managementHandler(makeCorsair(env), {
+			basePath: BASE,
+			bodyStallTimeoutMs: 25,
+		});
+		const { req } = makeChunkedRequest({
+			chunkSize: 1024,
+			maxChunks: 8,
+			neverYields: true,
+		});
+
+		const res = await handler(req);
+
+		expect(res.status).toBe(408);
+		expect(await res.text()).toContain('request_timeout');
+	});
+
+	it('a stalled node-stream drain gets the 408 envelope through the express adapter', async () => {
+		env = createTestDatabase();
+		const handler = toExpressHandler(makeCorsair(env), {
+			basePath: BASE,
+			bodyStallTimeoutMs: 25,
+		});
+		// No parser mounted, no body/rawBody captured: the adapter drains a
+		// stream whose next() never settles — the slowloris shape on hosts
+		// without their own request deadline (Fastify ships requestTimeout: 0).
+		const stalledReq: any = {
+			method: 'POST',
+			originalUrl: BASE,
+			url: BASE,
+			protocol: 'http',
+			headers: { host: 'example.com', 'content-type': 'application/json' },
+			get: (n: string) =>
+				n.toLowerCase() === 'host' ? 'example.com' : undefined,
+			[Symbol.asyncIterator]: () => ({
+				next: () => new Promise<IteratorResult<Buffer>>(() => {}),
+			}),
+		};
+		const { res, statusCode, text } = makeExpressRes();
+
+		await handler(stalledReq, res, () => {});
+
+		expect(statusCode()).toBe(408);
+		expect(text()).toContain('request_timeout');
+	});
+});
 
 describe('body fidelity — oracle sanity (mangled body is rejected)', () => {
 	let env: ReturnType<typeof createTestDatabase>;

@@ -115,7 +115,9 @@ export {
 	toWebHandler,
 } from './adapters';
 export {
+	DEFAULT_BODY_STALL_TIMEOUT_MS,
 	DEFAULT_MAX_BODY_BYTES,
+	resolveBodyStallTimeoutMs,
 	resolveMaxBodyBytes,
 } from './body-limit';
 export type { ManagementHandlerOptions } from './handler';

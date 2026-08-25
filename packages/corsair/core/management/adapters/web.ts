@@ -157,6 +157,7 @@ export function toNuxtHandler(
 			const fetchRes = await handler(
 				await nodeRequestToFetchRequest(nodeReq, {
 					maxBodyBytes: opts?.maxBodyBytes,
+					bodyStallTimeoutMs: opts?.bodyStallTimeoutMs,
 				}),
 			);
 			await writeFetchResponseToNode(event.node.res, fetchRes);
@@ -169,6 +170,10 @@ export function toNuxtHandler(
 				event.node.res.headersSent !== true
 			) {
 				await writeFetchResponseToNode(event.node.res, errorResponse(err));
+				// The 413 may have aborted mid-upload: discard whatever bytes are
+				// still in flight so the socket closes cleanly (same hygiene as the
+				// node/express/fastify adapters).
+				discardRequestBody(nodeReq);
 				return;
 			}
 			discardRequestBody(nodeReq);

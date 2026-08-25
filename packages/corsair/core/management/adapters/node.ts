@@ -40,6 +40,7 @@ export function toNodeHandler(
 			const fetchRes = await handler(
 				await nodeRequestToFetchRequest(req, {
 					maxBodyBytes: opts?.maxBodyBytes,
+					bodyStallTimeoutMs: opts?.bodyStallTimeoutMs,
 				}),
 			);
 			await writeFetchResponseToNode(res, fetchRes);

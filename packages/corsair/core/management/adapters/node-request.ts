@@ -11,7 +11,12 @@
 // `node:http` peer deps.
 // ─────────────────────────────────────────────────────────────────────────────
 
-import { bodyTooLargeError, resolveMaxBodyBytes } from '../body-limit';
+import {
+	bodyTooLargeError,
+	resolveBodyStallTimeoutMs,
+	resolveMaxBodyBytes,
+	withBodyStallTimeout,
+} from '../body-limit';
 
 export type NodeLikeRequest = {
 	method?: string;
@@ -58,6 +63,14 @@ export type NodeRequestBridgeOptions = {
 	 * express.raw(), NestJS rawBody). Defaults to DEFAULT_MAX_BODY_BYTES.
 	 */
 	maxBodyBytes?: number;
+	/**
+	 * Max idle gap between chunks while draining a raw stream. Hosts without
+	 * their own request deadline (Fastify ships `requestTimeout: 0`) would
+	 * otherwise let a trickling sub-cap upload pin the connection forever.
+	 * Between-chunks like nginx client_body_timeout; 0 disables; defaults to
+	 * DEFAULT_BODY_STALL_TIMEOUT_MS.
+	 */
+	bodyStallTimeoutMs?: number;
 };
 
 function headerValue(req: NodeLikeRequest, name: string): string | undefined {
@@ -101,23 +114,42 @@ function chunkToBuffer(chunk: unknown): Buffer {
 // bytes. Refuses to buffer more than maxBytes — without this cap any client
 // that can open the mount path could accumulate unbounded memory before
 // routing or signature checks run (the framework parsers we bypass normally
-// enforce exactly this limit).
+// enforce exactly this limit). Each chunk wait is also raced against the
+// stall watchdog: size alone doesn't bound a sender that trickles forever
+// just under the cap on hosts with no request deadline of their own.
 async function drainRawBody(
 	iterate: () => AsyncIterator<unknown>,
 	maxBytes: number,
+	stallTimeoutMs: number,
 ): Promise<Buffer> {
 	const chunks: Buffer[] = [];
 	let total = 0;
 	const iterator = iterate();
-	let result = await iterator.next();
-	while (result.done !== true) {
-		const chunk = chunkToBuffer(result.value);
-		total += chunk.byteLength;
-		if (total > maxBytes) throw bodyTooLargeError(maxBytes);
-		chunks.push(chunk);
-		result = await iterator.next();
+	try {
+		let result = await withBodyStallTimeout(
+			() => iterator.next(),
+			stallTimeoutMs,
+		);
+		while (result.done !== true) {
+			const chunk = chunkToBuffer(result.value);
+			total += chunk.byteLength;
+			if (total > maxBytes) throw bodyTooLargeError(maxBytes);
+			chunks.push(chunk);
+			result = await withBodyStallTimeout(
+				() => iterator.next(),
+				stallTimeoutMs,
+			);
+		}
+		return Buffer.concat(chunks);
+	} catch (err) {
+		// Signal early termination so the underlying stream is destroyed rather
+		// than left paused mid-upload (the adapters' discardRequestBody covers
+		// the response side; this covers the stream side). Fire-and-forget:
+		// awaiting return() could hang on exactly the hostile streams this
+		// cleanup exists for.
+		void Promise.resolve(iterator.return?.()).catch(() => {});
+		throw err;
 	}
-	return Buffer.concat(chunks);
 }
 
 // Emitted once per process: a parsed-object body can only be forwarded by
@@ -145,6 +177,7 @@ async function resolveBody(
 	const method = (req.method ?? 'GET').toUpperCase();
 	if (method === 'GET' || method === 'HEAD') return undefined;
 	const maxBytes = resolveMaxBodyBytes(opts.maxBodyBytes);
+	const stallTimeoutMs = resolveBodyStallTimeoutMs(opts.bodyStallTimeoutMs);
 
 	let resolved: string | Uint8Array | undefined;
 
@@ -170,7 +203,7 @@ async function resolveBody(
 		// No parser mounted: drain the raw stream ourselves, bytes verbatim.
 		const iterate = req[Symbol.asyncIterator];
 		if (typeof iterate !== 'function') return undefined;
-		const buf = await drainRawBody(iterate.bind(req), maxBytes);
+		const buf = await drainRawBody(iterate.bind(req), maxBytes, stallTimeoutMs);
 		if (buf.length > 0) resolved = buf;
 	}
 

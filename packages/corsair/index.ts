@@ -36,9 +36,11 @@ export type {
 	Tenant,
 } from './core/management';
 export {
+	DEFAULT_BODY_STALL_TIMEOUT_MS,
 	DEFAULT_MAX_BODY_BYTES,
 	managementHandler,
 	registerCorsairRawBodyParser,
+	resolveBodyStallTimeoutMs,
 	resolveMaxBodyBytes,
 	toAstroHandler,
 	toExpressHandler,

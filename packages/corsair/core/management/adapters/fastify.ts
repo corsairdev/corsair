@@ -194,6 +194,7 @@ export function toFastifyHandler(
 			const fetchRes = await handler(
 				await nodeRequestToFetchRequest(nodeReq, {
 					maxBodyBytes: opts?.maxBodyBytes,
+					bodyStallTimeoutMs: opts?.bodyStallTimeoutMs,
 				}),
 			);
 			// Take over the response so Fastify doesn't try to serialize it, then

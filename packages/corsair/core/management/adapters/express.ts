@@ -84,6 +84,7 @@ export function toExpressHandler(
 			const fetchRes = await handler(
 				await nodeRequestToFetchRequest(req, {
 					maxBodyBytes: opts?.maxBodyBytes,
+					bodyStallTimeoutMs: opts?.bodyStallTimeoutMs,
 				}),
 			);
 			await writeFetchResponseToNode(res, fetchRes);
@@ -98,6 +99,10 @@ export function toExpressHandler(
 				discardRequestBody(req);
 				return;
 			}
+			// Mirror the Fastify adapter's rethrow path: a non-ManagementApiError
+			// may also have aborted mid-drain, so discard the in-flight bytes
+			// before handing the stream back to Express.
+			discardRequestBody(req);
 			next(err);
 		}
 	};
