@@ -5,6 +5,9 @@ export class TickTickAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		// milliseconds; carried over from ApiError so the rate-limit handler can
+		// honor the provider's Retry-After instead of Corsair's default delay
+		public readonly retryAfter?: number,
 	) {
 		super(message);
 		this.name = 'TickTickAPIError';
@@ -21,6 +24,8 @@ async function refreshAccessToken(
 ) {
 	const response = await fetch(TICKTICK_TOKEN_URL, {
 		method: 'POST',
+		// Fail fast if the token endpoint stalls instead of blocking keyBuilder
+		signal: AbortSignal.timeout(20_000),
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
 		},
@@ -40,10 +45,12 @@ async function refreshAccessToken(
 		);
 	}
 
+	// response.json() is untyped; the token endpoint returns a fixed OAuth2 shape
 	const json = (await response.json()) as {
 		access_token: string;
 		expires_in: number;
-		token_type: string;
+		token_type?: string;
+		refresh_token?: string;
 	};
 	return json;
 }
@@ -62,7 +69,12 @@ export async function getValidAccessToken({
 	expiresAt?: string | null;
 	refreshToken: string;
 	forceRefresh?: boolean;
-}): Promise<{ accessToken: string; expiresAt: number; refreshed: boolean }> {
+}): Promise<{
+	accessToken: string;
+	expiresAt: number;
+	refreshed: boolean;
+	newRefreshToken?: string;
+}> {
 	const now = Math.floor(Date.now() / 1000);
 	const bufferSeconds = 5 * 60;
 
@@ -84,15 +96,16 @@ export async function getValidAccessToken({
 		accessToken: tokenData.access_token,
 		expiresAt: now + tokenData.expires_in,
 		refreshed: true,
+		// TickTick does not document refresh-token rotation; persist the new token
+		// only when the server actually returns one
+		newRefreshToken: tokenData.refresh_token,
 	};
 }
 
 function extractTickTickError(error: ApiError): string {
-	const body = error.body as
-		| Record<string, unknown>
-		| string
-		| undefined
-		| null;
+	// ApiError.body is typed as any upstream; treat it as unknown and narrow
+	// conditionally instead of asserting a shape
+	const body: unknown = error.body;
 	if (!body) return `[${error.status}] ${error.message}`;
 
 	if (typeof body === 'string') {
@@ -100,11 +113,19 @@ function extractTickTickError(error: ApiError): string {
 		return `[${error.status}] ${preview}`;
 	}
 
-	if (typeof body.error === 'string') {
+	if (
+		typeof body === 'object' &&
+		'error' in body &&
+		typeof body.error === 'string'
+	) {
 		return `[${error.status}] ${body.error}`;
 	}
 
-	if (typeof body.errorMessage === 'string') {
+	if (
+		typeof body === 'object' &&
+		'errorMessage' in body &&
+		typeof body.errorMessage === 'string'
+	) {
 		return `[${error.status}] ${body.errorMessage}`;
 	}
 
@@ -152,10 +173,16 @@ export async function makeTickTickRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// Already carrying provider status/retryAfter metadata; re-wrapping
+		// would strip it
+		if (error instanceof TickTickAPIError) {
+			throw error;
+		}
 		if (error instanceof ApiError) {
 			throw new TickTickAPIError(
 				extractTickTickError(error),
 				String(error.status),
+				error.retryAfter,
 			);
 		}
 		if (error instanceof Error) {
@@ -166,14 +193,9 @@ export async function makeTickTickRequest<T>(
 }
 
 function isUnauthorizedError(error: unknown): boolean {
-	if (error instanceof TickTickAPIError) {
-		return error.code === '401';
-	}
-	return (
-		error instanceof Error &&
-		'status' in error &&
-		(error as { status: number }).status === 401
-	);
+	// makeTickTickRequest wraps every failure in TickTickAPIError, so the code
+	// field is authoritative here
+	return error instanceof TickTickAPIError && error.code === '401';
 }
 
 export async function makeAuthenticatedTickTickRequest<T>(

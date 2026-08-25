@@ -95,7 +95,12 @@ export const update: TickTickEndpoints['updateTask'] = async (ctx, input) => {
 		ctx,
 		{
 			method: 'POST',
-			body: body,
+			body: {
+				// id is a required body field on the official endpoint; projectId
+				// rides along in the rest payload as the schema requires it
+				id: taskId,
+				...body,
+			},
 		},
 	);
 
@@ -112,7 +117,6 @@ export const listAll: TickTickEndpoints['listAllTasks'] = async (
 	ctx,
 	input,
 ) => {
-	// 1. Get all projects
 	const projects = await makeAuthenticatedTickTickRequest<TickTickProject[]>(
 		'project',
 		ctx,
@@ -121,25 +125,20 @@ export const listAll: TickTickEndpoints['listAllTasks'] = async (
 		},
 	);
 
-	// 2. Fetch tasks for each project
+	// Fetched sequentially so an account with many projects does not burst past
+	// the provider's rate limit; failures propagate to the error handlers
+	// instead of returning a partial list that looks complete
 	const allTasks: TickTickTask[] = [];
-	const fetchPromises = projects.map(async (project) => {
-		try {
-			const projectData = await makeAuthenticatedTickTickRequest<{
-				tasks: TickTickTask[];
-			}>(`project/${project.id}/data`, ctx, {
-				method: 'GET',
-			});
-			if (projectData && Array.isArray(projectData.tasks)) {
-				allTasks.push(...projectData.tasks);
-			}
-		} catch (error) {
-			// Silently capture errors for individual projects if one fails (e.g. permission/deleted)
-			console.error(`Failed to fetch tasks for project ${project.id}:`, error);
+	for (const project of projects) {
+		const projectData = await makeAuthenticatedTickTickRequest<{
+			tasks: TickTickTask[];
+		}>(`project/${project.id}/data`, ctx, {
+			method: 'GET',
+		});
+		if (projectData && Array.isArray(projectData.tasks)) {
+			allTasks.push(...projectData.tasks);
 		}
-	});
-
-	await Promise.all(fetchPromises);
+	}
 
 	await logEventFromContext(
 		ctx,

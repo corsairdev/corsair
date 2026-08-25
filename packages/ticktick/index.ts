@@ -271,20 +271,28 @@ export function ticktick<const T extends TickTickPluginOptions>(
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();
-				if (!creds.client_id || !creds.client_secret) {
+				// Hoisted into narrowed locals so the guard below keeps them non-null
+				// inside both async closures without non-null assertions
+				const clientId = creds.client_id;
+				const clientSecret = creds.client_secret;
+				if (!clientId || !clientSecret) {
 					throw new Error(
 						'[auth-missing:ticktick:client_credentials]: TickTick client credentials are missing',
 					);
 				}
+
+				// Tracked separately so a rotated refresh token returned by TickTick
+				// replaces the original for every subsequent refresh
+				let currentRefreshToken = refreshToken;
 
 				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
 				try {
 					result = await getValidAccessToken({
 						accessToken,
 						expiresAt,
-						refreshToken,
-						clientId: creds.client_id,
-						clientSecret: creds.client_secret,
+						refreshToken: currentRefreshToken,
+						clientId,
+						clientSecret,
 					});
 				} catch (error) {
 					throw new Error(
@@ -298,6 +306,10 @@ export function ticktick<const T extends TickTickPluginOptions>(
 							ctx.keys.set_access_token(result.accessToken),
 							ctx.keys.set_expires_at(String(result.expiresAt)),
 						]);
+						if (result.newRefreshToken) {
+							currentRefreshToken = result.newRefreshToken;
+							await ctx.keys.set_refresh_token(currentRefreshToken);
+						}
 					} catch (error) {
 						throw new Error(
 							`[corsair:ticktick] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
@@ -305,17 +317,24 @@ export function ticktick<const T extends TickTickPluginOptions>(
 					}
 				}
 
+				// ctx's public type doesn't declare _refreshAuth; this side-channel
+				// callback is how core forces a re-auth after a 401 (same pattern as
+				// googlemeet/googlecalendar and other OAuth plugins)
 				(ctx as Record<string, unknown>)._refreshAuth = async () => {
 					const freshResult = await getValidAccessToken({
 						accessToken: null,
 						expiresAt: null,
-						refreshToken,
-						clientId: creds.client_id!,
-						clientSecret: creds.client_secret!,
+						refreshToken: currentRefreshToken,
+						clientId,
+						clientSecret,
 						forceRefresh: true,
 					});
 					await ctx.keys.set_access_token(freshResult.accessToken);
 					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
+					if (freshResult.newRefreshToken) {
+						currentRefreshToken = freshResult.newRefreshToken;
+						await ctx.keys.set_refresh_token(currentRefreshToken);
+					}
 					return freshResult.accessToken;
 				};
 

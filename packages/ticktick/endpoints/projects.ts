@@ -105,56 +105,17 @@ export const getData: TickTickEndpoints['getProjectWithData'] = async (
 	ctx,
 	input,
 ) => {
-	const allTasks: TickTickTask[] = [];
-	const taskIds = new Set<string>();
-	let page = 1;
-	let hasMore = true;
-	let project: TickTickProject | null = null;
-	let columns: TickTickColumn[] | undefined = undefined;
+	// The official endpoint takes no pagination parameters and returns the
+	// project plus all of its undone tasks in a single response
+	const response = await makeAuthenticatedTickTickRequest<ProjectDataResponse>(
+		`project/${input.projectId}/data`,
+		ctx,
+		{
+			method: 'GET',
+		},
+	);
 
-	while (hasMore) {
-		const response =
-			await makeAuthenticatedTickTickRequest<ProjectDataResponse>(
-				`project/${input.projectId}/data`,
-				ctx,
-				{
-					method: 'GET',
-					query: {
-						page: page,
-						limit: 100,
-					},
-				},
-			);
-
-		if (!project && response?.project) {
-			project = response.project;
-		}
-		if (response?.columns) {
-			columns = response.columns;
-		}
-
-		if (
-			response &&
-			Array.isArray(response.tasks) &&
-			response.tasks.length > 0
-		) {
-			for (const task of response.tasks) {
-				if (!taskIds.has(task.id)) {
-					taskIds.add(task.id);
-					allTasks.push(task);
-				}
-			}
-			if (response.tasks.length < 100) {
-				hasMore = false;
-			} else {
-				page++;
-			}
-		} else {
-			hasMore = false;
-		}
-	}
-
-	if (!project) {
+	if (!response?.project) {
 		throw new Error(`Project ${input.projectId} could not be retrieved`);
 	}
 
@@ -165,9 +126,9 @@ export const getData: TickTickEndpoints['getProjectWithData'] = async (
 		'completed',
 	);
 	return {
-		project,
-		tasks: allTasks,
-		columns,
+		project: response.project,
+		tasks: Array.isArray(response.tasks) ? response.tasks : [],
+		columns: response.columns,
 	};
 };
 

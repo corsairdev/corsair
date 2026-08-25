@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import {
 	getValidAccessToken,
 	makeAuthenticatedTickTickRequest,
@@ -29,25 +29,43 @@ const mockGetValidAccessToken = jest.mocked(getValidAccessToken);
 
 type AnyEndpoint = (ctx: unknown, input?: unknown) => Promise<unknown>;
 
-function createContext() {
+// Endpoints under test only read key/options/keys off the context; the fixture
+// cannot satisfy the full CorsairPluginContext, so a single narrow assertion at
+// this boundary keeps every call site type-checked.
+type EndpointCtx = Parameters<typeof Projects.get>[0];
+
+function buildFixture(credentials: Record<string, unknown> = {}) {
 	return {
 		key: 'test-token',
 		options: { authType: 'oauth_2' as const },
+		authType: 'oauth_2',
 		keys: {
 			get_access_token: jest.fn().mockResolvedValue('access-token'),
 			get_expires_at: jest.fn().mockResolvedValue('1700000000'),
 			get_refresh_token: jest.fn().mockResolvedValue('refresh-token'),
 			set_access_token: jest.fn(),
 			set_expires_at: jest.fn(),
+			set_refresh_token: jest.fn(),
 			get_integration_credentials: jest.fn().mockResolvedValue({
 				client_id: 'client-id',
 				client_secret: 'client-secret',
 				redirect_url: 'https://redirect.com',
+				...credentials,
 			}),
 		},
-		authType: 'oauth_2',
+		_refreshAuth: undefined as (() => Promise<string>) | undefined,
 	};
 }
+
+function createContext(credentials?: Record<string, unknown>): EndpointCtx {
+	return buildFixture(credentials) as unknown as EndpointCtx;
+}
+
+// keyBuilder takes a narrower context than the endpoints; the fixture satisfies
+// it the same way, so a single alias keeps the casts at each call site minimal
+type KeyBuilderCtx = Parameters<
+	NonNullable<ReturnType<typeof ticktick>['keyBuilder']>
+>[0];
 
 describe('TickTick endpoint routing', () => {
 	beforeEach(() => {
@@ -119,11 +137,11 @@ describe('TickTick endpoint routing', () => {
 		{
 			name: 'tasks.create',
 			fn: Tasks.create as AnyEndpoint,
-			input: { title: 'My Task', priority: 3 },
+			input: { title: 'My Task', projectId: 'proj-1', priority: 3 },
 			path: 'task',
 			method: 'POST',
 			response: { id: 'task-1', title: 'My Task' },
-			expectedBody: { title: 'My Task', priority: 3 },
+			expectedBody: { title: 'My Task', projectId: 'proj-1', priority: 3 },
 		},
 		{
 			name: 'tasks.complete',
@@ -156,7 +174,11 @@ describe('TickTick endpoint routing', () => {
 			path: 'task/task-1',
 			method: 'POST',
 			response: { id: 'task-1', title: 'Updated Task' },
-			expectedBody: { projectId: 'proj-1', title: 'Updated Task' },
+			expectedBody: {
+				id: 'task-1',
+				projectId: 'proj-1',
+				title: 'Updated Task',
+			},
 		},
 	];
 
@@ -168,7 +190,7 @@ describe('TickTick endpoint routing', () => {
 
 			const result = await fn(ctx, input);
 
-			const expectedOptions: Record<string, any> = { method };
+			const expectedOptions: Record<string, unknown> = { method };
 			if (expectedBody !== undefined) {
 				expectedOptions.body = expectedBody;
 			}
@@ -187,41 +209,149 @@ describe('TickTick endpoint routing', () => {
 		},
 	);
 
-	it('oauth.generateAuthUrl creates correct authorization step 1 URL', async () => {
+	it('oauth.generateAuthUrl builds the authorization step 1 URL with a per-call state', async () => {
 		const ctx = createContext();
-		const result = await OAuth.generateAuthUrl(ctx as any, {});
+		const result = await OAuth.generateAuthUrl(ctx, {});
 
 		expect(result.url).toContain('https://ticktick.com/oauth/authorize');
 		expect(result.url).toContain('client_id=client-id');
 		expect(result.url).toContain('scope=tasks%3Aread+tasks%3Awrite');
 		expect(result.url).toContain('redirect_uri=https%3A%2F%2Fredirect.com');
+
+		const stateParam = new URL(result.url).searchParams.get('state');
+		expect(stateParam).toBe(result.state);
+		// A constant state would defeat CSRF protection on the redirect
+		expect(stateParam).not.toBe('state');
 	});
 
-	it('tasks.listAll aggregates tasks across projects', async () => {
+	it('oauth.generateAuthUrl throws when redirect_url is not configured', async () => {
+		const ctx = createContext({ redirect_url: undefined });
+
+		await expect(OAuth.generateAuthUrl(ctx, {})).rejects.toThrow(
+			'redirect_url is not configured',
+		);
+	});
+
+	it('oauth.generateAuthUrl throws when client_id is not configured', async () => {
+		const ctx = createContext({ client_id: undefined });
+
+		await expect(OAuth.generateAuthUrl(ctx, {})).rejects.toThrow(
+			'client_id is not configured',
+		);
+	});
+
+	it('tasks.listAll aggregates tasks across projects sequentially', async () => {
 		const ctx = createContext();
 
 		mockRequest.mockResolvedValueOnce([
 			{ id: 'proj-1', name: 'Project 1' },
 			{ id: 'proj-2', name: 'Project 2' },
 		]);
-
 		mockRequest.mockResolvedValueOnce({
 			tasks: [{ id: 'task-1', title: 'Task 1' }],
 		});
-
 		mockRequest.mockResolvedValueOnce({
 			tasks: [{ id: 'task-2', title: 'Task 2' }],
 		});
 
-		const result = await Tasks.listAll(ctx as any, {});
+		const result = await Tasks.listAll(ctx, {});
 
+		expect(mockRequest).toHaveBeenNthCalledWith(1, 'project', ctx, {
+			method: 'GET',
+		});
+		expect(mockRequest).toHaveBeenNthCalledWith(2, 'project/proj-1/data', ctx, {
+			method: 'GET',
+		});
+		expect(mockRequest).toHaveBeenNthCalledWith(3, 'project/proj-2/data', ctx, {
+			method: 'GET',
+		});
 		expect(result).toEqual([
 			{ id: 'task-1', title: 'Task 1' },
 			{ id: 'task-2', title: 'Task 2' },
 		]);
 	});
 
-	it('keyBuilder retrieves and refreshes access token', async () => {
+	it('tasks.listAll propagates a failed project fetch instead of returning partial results', async () => {
+		const ctx = createContext();
+
+		mockRequest.mockResolvedValueOnce([
+			{ id: 'proj-1', name: 'Project 1' },
+			{ id: 'proj-2', name: 'Project 2' },
+		]);
+		mockRequest.mockResolvedValueOnce({
+			tasks: [{ id: 'task-1', title: 'Task 1' }],
+		});
+		mockRequest.mockRejectedValueOnce(new Error('[403] forbidden'));
+
+		await expect(Tasks.listAll(ctx, {})).rejects.toThrow('forbidden');
+	});
+
+	it('tasks.listAll returns an empty array when there are no projects', async () => {
+		const ctx = createContext();
+
+		mockRequest.mockResolvedValueOnce([]);
+
+		await expect(Tasks.listAll(ctx, {})).resolves.toEqual([]);
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+	});
+
+	it('tasks.listAll skips project payloads without a tasks array', async () => {
+		const ctx = createContext();
+
+		mockRequest.mockResolvedValueOnce([{ id: 'proj-1', name: 'Project 1' }]);
+		mockRequest.mockResolvedValueOnce({});
+
+		await expect(Tasks.listAll(ctx, {})).resolves.toEqual([]);
+	});
+
+	it('projects.getData fetches everything in a single undocumented-pagination-free request', async () => {
+		const ctx = createContext();
+		const columns = [{ id: 'col-1', name: 'To Do', sortOrder: 0 }];
+		mockRequest.mockResolvedValueOnce({
+			project: { id: 'proj-1', name: 'My Project' },
+			tasks: Array.from({ length: 105 }, (_, i) => ({
+				id: `task-${i + 1}`,
+				title: `Task ${i + 1}`,
+			})),
+			columns,
+		});
+
+		const result = await Projects.getData(ctx, { projectId: 'proj-1' });
+
+		expect(mockRequest).toHaveBeenCalledTimes(1);
+		expect(mockRequest).toHaveBeenCalledWith('project/proj-1/data', ctx, {
+			method: 'GET',
+		});
+		expect(result.project).toEqual({ id: 'proj-1', name: 'My Project' });
+		expect(result.tasks).toHaveLength(105);
+		expect(result.columns).toEqual(columns);
+	});
+
+	it('projects.getData returns an empty task list when the project has no undone tasks', async () => {
+		const ctx = createContext();
+
+		mockRequest.mockResolvedValueOnce({
+			project: { id: 'proj-1', name: 'Empty Project' },
+			tasks: [],
+		});
+
+		const result = await Projects.getData(ctx, { projectId: 'proj-1' });
+
+		expect(result.tasks).toEqual([]);
+		expect(result.columns).toBeUndefined();
+	});
+
+	it('projects.getData throws when the project could not be retrieved', async () => {
+		const ctx = createContext();
+
+		mockRequest.mockResolvedValueOnce({ tasks: [] });
+
+		await expect(
+			Projects.getData(ctx, { projectId: 'missing-project' }),
+		).rejects.toThrow('could not be retrieved');
+	});
+
+	it('keyBuilder retrieves and persists a refreshed access token', async () => {
 		const pluginInstance = ticktick();
 		const ctx = createContext();
 		mockGetValidAccessToken.mockResolvedValueOnce({
@@ -230,54 +360,137 @@ describe('TickTick endpoint routing', () => {
 			refreshed: true,
 		});
 
-		const result = await pluginInstance.keyBuilder?.(ctx as any, 'endpoint');
+		const result = await pluginInstance.keyBuilder?.(
+			ctx as unknown as KeyBuilderCtx,
+			'endpoint',
+		);
 
 		expect(result).toBe('fresh-token');
 		expect(ctx.keys.set_access_token).toHaveBeenCalledWith('fresh-token');
 		expect(ctx.keys.set_expires_at).toHaveBeenCalledWith('1800000000');
+		expect(ctx.keys.set_refresh_token).not.toHaveBeenCalled();
 	});
 
-	it('projects.getData paginates and deduplicates tasks by id', async () => {
+	it('keyBuilder persists a rotated refresh token when the provider returns one', async () => {
+		const pluginInstance = ticktick();
 		const ctx = createContext();
-
-		const page1Tasks = Array.from({ length: 100 }, (_, i) => ({
-			id: `task-${i + 1}`,
-			title: `Task ${i + 1}`,
-		}));
-		mockRequest.mockResolvedValueOnce({
-			project: { id: 'proj-1', name: 'My Project' },
-			tasks: page1Tasks,
+		mockGetValidAccessToken.mockResolvedValueOnce({
+			accessToken: 'fresh-token',
+			expiresAt: 1800000000,
+			refreshed: true,
+			newRefreshToken: 'rotated-token',
 		});
 
-		mockRequest.mockResolvedValueOnce({
-			project: { id: 'proj-1', name: 'My Project' },
-			tasks: [
-				{ id: 'task-100', title: 'Task 100' },
-				{ id: 'task-101', title: 'Task 101' },
-			],
+		await pluginInstance.keyBuilder?.(
+			ctx as unknown as KeyBuilderCtx,
+			'endpoint',
+		);
+
+		expect(ctx.keys.set_refresh_token).toHaveBeenCalledWith('rotated-token');
+	});
+
+	it('keyBuilder reuses a cached token without writing anything', async () => {
+		const pluginInstance = ticktick();
+		const ctx = createContext();
+		mockGetValidAccessToken.mockResolvedValueOnce({
+			accessToken: 'cached-token',
+			expiresAt: 1800000000,
+			refreshed: false,
 		});
 
-		const result = await Projects.getData(ctx as any, { projectId: 'proj-1' });
-
-		expect(mockRequest).toHaveBeenCalledTimes(2);
-		expect(mockRequest).toHaveBeenNthCalledWith(
-			1,
-			'project/proj-1/data',
-			ctx,
-			expect.objectContaining({
-				query: { page: 1, limit: 100 },
-			}),
-		);
-		expect(mockRequest).toHaveBeenNthCalledWith(
-			2,
-			'project/proj-1/data',
-			ctx,
-			expect.objectContaining({
-				query: { page: 2, limit: 100 },
-			}),
+		const result = await pluginInstance.keyBuilder?.(
+			ctx as unknown as KeyBuilderCtx,
+			'endpoint',
 		);
 
-		expect(result.tasks.length).toBe(101);
-		expect(result.tasks[100]).toEqual({ id: 'task-101', title: 'Task 101' });
+		expect(result).toBe('cached-token');
+		expect(ctx.keys.set_access_token).not.toHaveBeenCalled();
+		expect(ctx.keys.set_expires_at).not.toHaveBeenCalled();
+	});
+
+	it('keyBuilder attaches _refreshAuth that forces a refresh and persists rotation', async () => {
+		const pluginInstance = ticktick();
+		const fixture = buildFixture();
+		const ctx = fixture as unknown as KeyBuilderCtx;
+
+		mockGetValidAccessToken
+			.mockResolvedValueOnce({
+				accessToken: 'cached-token',
+				expiresAt: 1800000000,
+				refreshed: false,
+			})
+			.mockResolvedValueOnce({
+				accessToken: 'forced-token',
+				expiresAt: 1900000000,
+				refreshed: true,
+				newRefreshToken: 'rotated-token',
+			});
+
+		await pluginInstance.keyBuilder?.(ctx, 'endpoint');
+		expect(fixture._refreshAuth).toBeDefined();
+
+		const token = await fixture._refreshAuth?.();
+
+		expect(token).toBe('forced-token');
+		expect(ctx.keys.set_access_token).toHaveBeenCalledWith('forced-token');
+		expect(ctx.keys.set_refresh_token).toHaveBeenCalledWith('rotated-token');
+		const forceCall = mockGetValidAccessToken.mock.calls[1]?.[0];
+		expect(forceCall?.forceRefresh).toBe(true);
+	});
+
+	it('keyBuilder throws AuthMissingError when no refresh token is stored', async () => {
+		const pluginInstance = ticktick();
+		const fixture = buildFixture();
+		fixture.keys.get_refresh_token.mockResolvedValue(null);
+
+		await expect(
+			pluginInstance.keyBuilder?.(
+				fixture as unknown as KeyBuilderCtx,
+				'endpoint',
+			),
+		).rejects.toThrow(AuthMissingError);
+	});
+
+	it('keyBuilder throws when client credentials are missing', async () => {
+		const pluginInstance = ticktick();
+		const fixture = buildFixture({ client_id: undefined });
+
+		await expect(
+			pluginInstance.keyBuilder?.(
+				fixture as unknown as KeyBuilderCtx,
+				'endpoint',
+			),
+		).rejects.toThrow('[auth-missing:ticktick:client_credentials]');
+	});
+
+	it('keyBuilder wraps refresh failures with a recognizable prefix', async () => {
+		const pluginInstance = ticktick();
+		const fixture = buildFixture();
+		mockGetValidAccessToken.mockRejectedValueOnce(new Error('token expired'));
+
+		await expect(
+			pluginInstance.keyBuilder?.(
+				fixture as unknown as KeyBuilderCtx,
+				'endpoint',
+			),
+		).rejects.toThrow(/Failed to obtain valid access token: token expired$/);
+	});
+
+	it('keyBuilder reports persist failures distinctly', async () => {
+		const pluginInstance = ticktick();
+		const fixture = buildFixture();
+		fixture.keys.set_access_token.mockRejectedValueOnce(new Error('db down'));
+		mockGetValidAccessToken.mockResolvedValueOnce({
+			accessToken: 'fresh-token',
+			expiresAt: 1800000000,
+			refreshed: true,
+		});
+
+		await expect(
+			pluginInstance.keyBuilder?.(
+				fixture as unknown as KeyBuilderCtx,
+				'endpoint',
+			),
+		).rejects.toThrow('failed to persist new credentials');
 	});
 });

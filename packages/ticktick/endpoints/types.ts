@@ -8,8 +8,10 @@ export const TickTickProjectSchema = z.object({
 	color: z.string().nullable().optional(),
 	sortOrder: z.number().nullable().optional(),
 	closed: z.boolean().nullable().optional(),
-	viewMode: z.enum(['list', 'kanban']).nullable().optional(),
-	kind: z.enum(['text', 'note']).nullable().optional(),
+	viewMode: z.enum(['list', 'kanban', 'timeline']).nullable().optional(),
+	kind: z.enum(['TASK', 'NOTE']).nullable().optional(),
+	groupId: z.string().nullable().optional(),
+	permission: z.string().nullable().optional(),
 });
 export type TickTickProject = z.infer<typeof TickTickProjectSchema>;
 
@@ -26,6 +28,7 @@ export const TickTickTaskSchema = z.object({
 	projectId: z.string().nullable().optional(),
 	title: z.string(),
 	content: z.string().nullable().optional(),
+	desc: z.string().nullable().optional(),
 	priority: z
 		.number()
 		.describe('0 (None), 1 (Low), 3 (Medium), 5 (High)')
@@ -33,13 +36,20 @@ export const TickTickTaskSchema = z.object({
 		.optional(),
 	status: z
 		.number()
-		.describe('0 (Undone), 2 (Completed)')
+		.describe('-1 (Abandoned), 0 (Undone), 2 (Completed)')
 		.nullable()
 		.optional(),
 	dueDate: z.string().nullable().optional(),
+	startDate: z.string().nullable().optional(),
+	completedTime: z.string().nullable().optional(),
 	timeZone: z.string().nullable().optional(),
 	isAllDay: z.boolean().nullable().optional(),
 	columnId: z.string().nullable().optional(),
+	parentId: z.string().nullable().optional(),
+	sortOrder: z.number().nullable().optional(),
+	reminders: z.array(z.string()).nullable().optional(),
+	tags: z.array(z.string()).nullable().optional(),
+	repeatFlag: z.string().nullable().optional(),
 	items: z.array(TickTickChecklistItemSchema).nullable().optional(),
 });
 export type TickTickTask = z.infer<typeof TickTickTaskSchema>;
@@ -69,8 +79,9 @@ export type CompleteTaskResponse = z.infer<typeof CompleteTaskResponseSchema>;
 export const CreateProjectInputSchema = z.object({
 	name: z.string(),
 	color: z.string().optional(),
-	viewMode: z.enum(['list', 'kanban']).optional(),
-	kind: z.enum(['text', 'note']).optional(),
+	sortOrder: z.number().optional(),
+	viewMode: z.enum(['list', 'kanban', 'timeline']).optional(),
+	kind: z.enum(['TASK', 'NOTE']).optional(),
 });
 export type CreateProjectInput = z.infer<typeof CreateProjectInputSchema>;
 
@@ -80,16 +91,22 @@ export type CreateProjectResponse = z.infer<typeof CreateProjectResponseSchema>;
 // 3. Create Task
 export const CreateTaskInputSchema = z.object({
 	title: z.string(),
+	// Required by the official Create Task endpoint; GET /project does not list
+	// the Inbox, so callers must resolve the target project id themselves
+	projectId: z.string(),
 	content: z.string().optional(),
 	priority: z
 		.number()
 		.describe('0 (None), 1 (Low), 3 (Medium), 5 (High)')
 		.optional(),
-	dueDate: z.string().optional().describe('ISO 8601 date string'),
+	dueDate: z
+		.string()
+		.optional()
+		.describe("ISO 8601 datetime, e.g. '2019-11-13T03:00:00+0000'"),
+	startDate: z.string().optional(),
 	timeZone: z.string().optional(),
 	isAllDay: z.boolean().optional(),
-	projectId: z.string().optional(),
-	columnId: z.string().optional(),
+	tags: z.array(z.string()).optional(),
 	items: z.array(TickTickChecklistItemSchema).optional(),
 });
 export type CreateTaskInput = z.infer<typeof CreateTaskInputSchema>;
@@ -128,6 +145,9 @@ export type GenerateOAuth2UrlInput = z.infer<
 
 export const GenerateOAuth2UrlResponseSchema = z.object({
 	url: z.string(),
+	// Unguessable per-call value; compare it against the state query param on
+	// the OAuth redirect to defend against CSRF
+	state: z.string(),
 });
 export type GenerateOAuth2UrlResponse = z.infer<
 	typeof GenerateOAuth2UrlResponseSchema
@@ -190,8 +210,9 @@ export const UpdateProjectInputSchema = z.object({
 	projectId: z.string(),
 	name: z.string().optional(),
 	color: z.string().optional(),
-	viewMode: z.enum(['list', 'kanban']).optional(),
-	kind: z.enum(['text', 'note']).optional(),
+	sortOrder: z.number().optional(),
+	viewMode: z.enum(['list', 'kanban', 'timeline']).optional(),
+	kind: z.enum(['TASK', 'NOTE']).optional(),
 });
 export type UpdateProjectInput = z.infer<typeof UpdateProjectInputSchema>;
 
@@ -208,7 +229,10 @@ export const UpdateTaskInputSchema = z.object({
 		.number()
 		.describe('0 (None), 1 (Low), 3 (Medium), 5 (High)')
 		.optional(),
-	status: z.number().describe('0 (Undone), 2 (Completed)').optional(),
+	status: z
+		.number()
+		.describe('-1 (Abandoned), 0 (Undone), 2 (Completed)')
+		.optional(),
 	dueDate: z.string().optional(),
 	timeZone: z.string().optional(),
 	isAllDay: z.boolean().optional(),
