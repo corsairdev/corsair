@@ -137,6 +137,7 @@ export const BaseProviders = [
 	'insightoai',
 	'instagram',
 	'intercom',
+	'jigsawstack',
 	'jira',
 	'kaggle',
 	'linear',
@@ -332,6 +333,7 @@ export const ProviderDisplayNames = {
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
+	jigsawstack: 'Jigsawstack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
 	linear: 'Linear',
@@ -534,6 +536,7 @@ export type AllProviders =
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
+	| 'jigsawstack'
 	| 'jira'
 	| 'kaggle'
 	| 'linear'
