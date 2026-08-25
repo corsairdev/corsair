@@ -58,6 +58,7 @@ export const BaseProviders = [
 	'asyncinterview',
 	'attio',
 	'ayrshare',
+	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
@@ -247,6 +248,7 @@ export const ProviderDisplayNames = {
 	asyncinterview: 'Async Interview',
 	attio: 'Attio',
 	ayrshare: 'Ayrshare',
+	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
@@ -443,6 +445,7 @@ export type AllProviders =
 	| 'asyncinterview'
 	| 'attio'
 	| 'ayrshare'
+	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
