@@ -14,4 +14,10 @@ describe('formatCliError', () => {
 	it('stringifies a nullish rejection', () => {
 		expect(formatCliError(undefined)).toBe('[#corsair]: undefined');
 	});
+
+	it('collapses a multiline error message onto one line', () => {
+		expect(formatCliError(new Error('line one\n  line two'))).toBe(
+			'[#corsair]: line one line two',
+		);
+	});
 });
