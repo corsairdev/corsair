@@ -127,3 +127,126 @@ export const insights: InstagramEndpoints['GetMediaInsights'] = async (
 
 	return result;
 };
+
+export const createMediaContainer: InstagramEndpoints['CreateMediaContainer'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedInstagramRequest<
+			InstagramEndpointOutputs['CreateMediaContainer']
+		>(`/${input.ig_id}/media`, ctx, {
+			method: 'POST',
+			body: {
+				image_url: input.image_url,
+				video_url: input.video_url,
+				media_type: input.media_type,
+				caption: input.caption,
+				is_carousel_item: input.is_carousel_item,
+				user_tags: input.user_tags
+					? JSON.stringify(input.user_tags)
+					: undefined,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'instagram.media.createMediaContainer',
+			{ ...input },
+			'completed',
+		);
+
+		return result;
+	};
+
+export const children: InstagramEndpoints['GetIgMediaChildren'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['GetIgMediaChildren']
+	>(`/${input.media_id}/children`, ctx, {
+		method: 'GET',
+		query: {
+			fields: input.fields,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.media.children',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const comments: InstagramEndpoints['GetIgMediaComments'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['GetIgMediaComments']
+	>(`/${input.media_id}/comments`, ctx, {
+		method: 'GET',
+		query: {
+			fields: input.fields,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.media.comments',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const getMediaInsights: InstagramEndpoints['GetIgMediaInsights'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedInstagramRequest<
+			InstagramEndpointOutputs['GetIgMediaInsights']
+		>(`/${input.media_id}/insights`, ctx, {
+			method: 'GET',
+			query: {
+				metric: input.metrics.join(','),
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'instagram.media.getMediaInsights',
+			{ ...input },
+			'completed',
+		);
+
+		return result;
+	};
+
+export const postIgUserMedia: InstagramEndpoints['PostIgUserMedia'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['PostIgUserMedia']
+	>(`/${input.ig_id}/media`, ctx, {
+		method: 'POST',
+		body: {
+			image_url: input.image_url,
+			video_url: input.video_url,
+			media_type: input.media_type,
+			caption: input.caption,
+			is_carousel_item: input.is_carousel_item,
+			user_tags: input.user_tags ? JSON.stringify(input.user_tags) : undefined,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.media.postIgUserMedia',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};

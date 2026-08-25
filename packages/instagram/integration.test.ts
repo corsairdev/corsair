@@ -22,12 +22,13 @@ const IG_MESSAGE_ID = process.env.IG_MESSAGE_ID ?? '';
 const IG_RECIPIENT_ID = process.env.IG_RECIPIENT_ID ?? '';
 const IG_CONVERSATION_ID = process.env.IG_CONVERSATION_ID ?? '';
 
-describe('Instagram Integration Test', () => {
-	async function createInstagramClient() {
-		const appId = process.env.FACEBOOK_APP_ID;
-		const appSecret = process.env.FACEBOOK_APP_SECRET;
-		const accessToken = process.env.IG_ACCESS_TOKEN;
+const appId = process.env.FACEBOOK_APP_ID;
+const appSecret = process.env.FACEBOOK_APP_SECRET;
+const accessToken = process.env.IG_ACCESS_TOKEN;
+const hasEnv = !!(appId && appSecret && accessToken);
 
+(hasEnv ? describe : describe.skip)('Instagram Integration Test', () => {
+	async function createInstagramClient() {
 		if (!appId || !appSecret || !accessToken) {
 			throw new Error('Missing environment variables');
 		}

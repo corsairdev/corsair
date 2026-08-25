@@ -102,3 +102,110 @@ export const send: InstagramEndpoints['SendMessage'] = async (ctx, input) => {
 
 	return result;
 };
+
+export const listAll: InstagramEndpoints['ListAllMessages'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['ListAllMessages']
+	>(`/${input.conversation_id}/messages`, ctx, {
+		method: 'GET',
+		query: {
+			fields: input.fields,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.messages.listAll',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const markSeen: InstagramEndpoints['MarkSeen'] = async (ctx, input) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['MarkSeen']
+	>(`/me/messages`, ctx, {
+		method: 'POST',
+		body: {
+			recipient: {
+				id: input.recipient_id,
+			},
+			sender_action: 'mark_seen',
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.messages.markSeen',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const sendImage: InstagramEndpoints['SendImage'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['SendImage']
+	>(`/me/messages`, ctx, {
+		method: 'POST',
+		body: {
+			recipient: {
+				id: input.recipient_id,
+			},
+			message: {
+				attachment: {
+					type: 'image',
+					payload: {
+						url: input.image_url,
+					},
+				},
+			},
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.messages.sendImage',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const sendTextMessage: InstagramEndpoints['SendTextMessage'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['SendTextMessage']
+	>(`/me/messages`, ctx, {
+		method: 'POST',
+		body: {
+			recipient: {
+				id: input.recipient_id,
+			},
+			message: {
+				text: input.message,
+			},
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.messages.sendTextMessage',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};

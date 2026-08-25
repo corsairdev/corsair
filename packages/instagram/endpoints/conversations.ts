@@ -112,3 +112,70 @@ export const get: InstagramEndpoints['GetConversationMessages'] = async (
 
 	return result;
 };
+
+export const getConversation: InstagramEndpoints['GetConversation'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['GetConversation']
+	>(`/${input.conversation_id}`, ctx, {
+		method: 'GET',
+		query: {
+			fields: input.fields,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.conversations.getConversation',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const pageConversations: InstagramEndpoints['GetPageConversations'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedInstagramRequest<
+			InstagramEndpointOutputs['GetPageConversations']
+		>(`/${input.page_id}/conversations`, ctx, {
+			method: 'GET',
+			query: {
+				platform: input.platform ?? 'instagram',
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'instagram.conversations.pageConversations',
+			{ ...input },
+			'completed',
+		);
+
+		return result;
+	};
+
+export const listAll: InstagramEndpoints['ListAllConversations'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['ListAllConversations']
+	>(`/${input.ig_id}/conversations`, ctx, {
+		method: 'GET',
+		query: {
+			platform: 'instagram',
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.conversations.listAll',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};

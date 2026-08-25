@@ -32,3 +32,47 @@ export const publish: InstagramEndpoints['PublishInstagramMedia'] = async (
 
 	return result;
 };
+
+export const createPost: InstagramEndpoints['CreatePost'] = async (
+	ctx,
+	input,
+) => {
+	const result = await makeAuthenticatedInstagramRequest<
+		InstagramEndpointOutputs['CreatePost']
+	>(`/${input.ig_id}/media_publish`, ctx, {
+		method: 'POST',
+		body: {
+			creation_id: input.creation_id,
+		},
+	});
+
+	await logEventFromContext(
+		ctx,
+		'instagram.publish.createPost',
+		{ ...input },
+		'completed',
+	);
+
+	return result;
+};
+
+export const publishIgUserMedia: InstagramEndpoints['PublishIgUserMedia'] =
+	async (ctx, input) => {
+		const result = await makeAuthenticatedInstagramRequest<
+			InstagramEndpointOutputs['PublishIgUserMedia']
+		>(`/${input.ig_id}/media_publish`, ctx, {
+			method: 'POST',
+			body: {
+				creation_id: input.creation_id,
+			},
+		});
+
+		await logEventFromContext(
+			ctx,
+			'instagram.publish.publishIgUserMedia',
+			{ ...input },
+			'completed',
+		);
+
+		return result;
+	};
