@@ -15,6 +15,7 @@ export type AllErrors =
 export const BaseProviders = [
 	'ably',
 	'abstract',
+	'abuseipdb',
 	'abyssale',
 	'accrediblecertificates',
 	'activecampaign',
@@ -207,6 +208,7 @@ export const BaseProviders = [
 export const ProviderDisplayNames = {
 	ably: 'Ably',
 	abstract: 'Abstract',
+	abuseipdb: 'AbuseIPDB',
 	abyssale: 'Abyssale',
 	accrediblecertificates: 'Accredible Certificates',
 	activecampaign: 'ActiveCampaign',
@@ -406,6 +408,7 @@ export function formatProviderDisplayName(plugin: string): string {
 export type AllProviders =
 	| 'ably'
 	| 'abstract'
+	| 'abuseipdb'
 	| 'abyssale'
 	| 'accrediblecertificates'
 	| 'activecampaign'
