@@ -148,7 +148,7 @@ export const tickTickEndpointSchemas = {
 	typeof tickTickEndpointsNested
 >;
 
-const defaultAuthType: AuthTypes = 'oauth_2' as const;
+const defaultAuthType = 'oauth_2' as const satisfies AuthTypes;
 
 const tickTickEndpointMeta = {
 	'projects.create': {
@@ -266,8 +266,25 @@ export function ticktick<const T extends TickTickPluginOptions>(
 					ctx.keys.get_refresh_token(),
 				]);
 
+				// Live finding: TickTick's authorization_code grant can issue no
+				// refresh_token at all (verified against a real app on 2026-08-25;
+				// access tokens last ~180 days), so a stored refresh token cannot
+				// be assumed
+				const now = Math.floor(Date.now() / 1000);
+				const bufferSeconds = 5 * 60;
+
 				if (!refreshToken) {
-					throw new AuthMissingError('ticktick', 'oauth_2');
+					// Token-only mode: serve the cached access token while it is still
+					// inside the expiry buffer; once expired, re-authorization is the
+					// only recovery because there is nothing to refresh with
+					if (
+						!accessToken ||
+						!expiresAt ||
+						Number(expiresAt) <= now + bufferSeconds
+					) {
+						throw new AuthMissingError('ticktick', 'oauth_2');
+					}
+					return accessToken;
 				}
 
 				const creds = await ctx.keys.get_integration_credentials();

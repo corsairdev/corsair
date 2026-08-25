@@ -1,1 +1,1 @@
-export type TickTickWebhookOutputs = {};
+export type TickTickWebhookOutputs = Record<string, never>;

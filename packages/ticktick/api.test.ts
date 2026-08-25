@@ -34,7 +34,10 @@ type AnyEndpoint = (ctx: unknown, input?: unknown) => Promise<unknown>;
 // this boundary keeps every call site type-checked.
 type EndpointCtx = Parameters<typeof Projects.get>[0];
 
-function buildFixture(credentials: Record<string, unknown> = {}) {
+function buildFixture(
+	credentials: Record<string, unknown> = {},
+	keyOverrides: Record<string, unknown> = {},
+) {
 	return {
 		key: 'test-token',
 		options: { authType: 'oauth_2' as const },
@@ -52,6 +55,7 @@ function buildFixture(credentials: Record<string, unknown> = {}) {
 				redirect_url: 'https://redirect.com',
 				...credentials,
 			}),
+			...keyOverrides,
 		},
 		_refreshAuth: undefined as (() => Promise<string>) | undefined,
 	};
@@ -438,18 +442,78 @@ describe('TickTick endpoint routing', () => {
 		expect(forceCall?.forceRefresh).toBe(true);
 	});
 
-	it('keyBuilder throws AuthMissingError when no refresh token is stored', async () => {
+	it('keyBuilder serves a cached access token when TickTick issued no refresh token', async () => {
 		const pluginInstance = ticktick();
-		const fixture = buildFixture();
-		fixture.keys.get_refresh_token.mockResolvedValue(null);
+		const fixture = buildFixture(
+			{},
+			{
+				get_refresh_token: jest.fn().mockResolvedValue(null),
+				get_expires_at: jest
+					.fn()
+					.mockResolvedValue(String(Math.floor(Date.now() / 1000) + 3600)),
+			},
+		);
+
+		const result = await pluginInstance.keyBuilder?.(
+			fixture as unknown as KeyBuilderCtx,
+			'endpoint',
+		);
+
+		expect(result).toBe('access-token');
+		expect(mockGetValidAccessToken).not.toHaveBeenCalled();
+		expect(fixture.keys.set_access_token).not.toHaveBeenCalled();
+		expect(fixture.keys.set_expires_at).not.toHaveBeenCalled();
+	});
+
+	it('keyBuilder does not require client credentials when no refresh token exists', async () => {
+		const pluginInstance = ticktick();
+		const fixture = buildFixture(
+			{ client_id: undefined, client_secret: undefined },
+			{
+				get_refresh_token: jest.fn().mockResolvedValue(null),
+				get_expires_at: jest
+					.fn()
+					.mockResolvedValue(String(Math.floor(Date.now() / 1000) + 3600)),
+			},
+		);
 
 		await expect(
 			pluginInstance.keyBuilder?.(
 				fixture as unknown as KeyBuilderCtx,
 				'endpoint',
 			),
-		).rejects.toThrow(AuthMissingError);
+		).resolves.toBe('access-token');
 	});
+
+	it.each([
+		{
+			name: 'no stored token',
+			accessToken: null,
+			expiresAt: String(Math.floor(Date.now() / 1000) + 3600),
+		},
+		{ name: 'an expired token', accessToken: 'stale-token', expiresAt: '1000' },
+		{ name: 'a missing expiry', accessToken: 'access-token', expiresAt: null },
+	])(
+		'keyBuilder throws AuthMissingError with no refresh token and $name',
+		async ({ accessToken, expiresAt }) => {
+			const pluginInstance = ticktick();
+			const fixture = buildFixture(
+				{},
+				{
+					get_refresh_token: jest.fn().mockResolvedValue(null),
+					get_access_token: jest.fn().mockResolvedValue(accessToken),
+					get_expires_at: jest.fn().mockResolvedValue(expiresAt),
+				},
+			);
+
+			await expect(
+				pluginInstance.keyBuilder?.(
+					fixture as unknown as KeyBuilderCtx,
+					'endpoint',
+				),
+			).rejects.toThrow(AuthMissingError);
+		},
+	);
 
 	it('keyBuilder throws when client credentials are missing', async () => {
 		const pluginInstance = ticktick();
