@@ -9,8 +9,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import * as AnalyticsHubEndpoints from './endpoints/analytics-hub';
 import * as ConnectionsEndpoints from './endpoints/connections';
 import * as DatasetsEndpoints from './endpoints/datasets';
@@ -800,61 +799,10 @@ export function googlebigquery<const T extends GoogleBigqueryPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('googlebigquery', 'oauth_2');
-				}
-
-				const res = await ctx.keys.get_integration_credentials();
-
-				if (!res.client_id || !res.client_secret) {
-					throw new Error(
-						'[corsair:googlebigquery] No client id or client secret',
-					);
-				}
-
-				try {
-					const result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: res.client_id,
-						clientSecret: res.client_secret,
-					});
-
-					if (result.refreshed) {
-						await Promise.all([
-							ctx.keys.set_access_token(result.accessToken),
-							ctx.keys.set_expires_at(String(result.expiresAt)),
-						]);
-					}
-
-					// ctx type doesn't declare _refreshAuth; cast to attach side-channel callback for token refresh
-					(ctx as Record<string, unknown>)._refreshAuth = async () => {
-						const freshResult = await getValidAccessToken({
-							accessToken: null,
-							expiresAt: null,
-							refreshToken,
-							clientId: res.client_id!,
-							clientSecret: res.client_secret!,
-							forceRefresh: true,
-						});
-						await ctx.keys.set_access_token(freshResult.accessToken);
-						await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-						return freshResult.accessToken;
-					};
-
-					return result.accessToken;
-				} catch (error) {
-					throw new Error(
-						`[corsair:googlebigquery] Failed to get valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googlebigquery',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('googlebigquery', 'oauth_2');
