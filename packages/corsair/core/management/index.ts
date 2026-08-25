@@ -97,8 +97,11 @@ export type {
 	FastifyHandler,
 	HonoHandler,
 	NodeHandler,
+	NodeLikeRequest,
+	NodeLikeResponse,
 } from './adapters';
 export {
+	registerCorsairRawBodyParser,
 	toAstroHandler,
 	toExpressHandler,
 	toFastifyHandler,
@@ -111,6 +114,10 @@ export {
 	toTanStackHandler,
 	toWebHandler,
 } from './adapters';
+export {
+	DEFAULT_MAX_BODY_BYTES,
+	resolveMaxBodyBytes,
+} from './body-limit';
 export type { ManagementHandlerOptions } from './handler';
 export { managementHandler } from './handler';
 export type {

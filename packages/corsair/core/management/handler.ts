@@ -1,6 +1,7 @@
 import { respondToHubDeliveryFromRequest } from '../../hub/delivery';
 import type { CorsairInternalConfig } from '..';
 import { getCorsairInternal } from '../utils/corsair-instance';
+import { bodyTooLargeError, resolveMaxBodyBytes } from './body-limit';
 import { errorResponse, json, ManagementApiError, notFound } from './errors';
 import {
 	completeOAuthCallback,
@@ -28,7 +29,20 @@ import type { CreateConnectLinkInput, OAuthCallbackInput } from './types';
 export type ManagementHandlerOptions = {
 	/** Path prefix the handler is mounted at, e.g. '/api/corsair'. Stripped before dispatch. */
 	basePath?: string;
-	/** Override the default error response. Return undefined to fall through. */
+	/**
+	 * Upper bound for inbound request bodies in bytes. Defaults to
+	 * DEFAULT_MAX_BODY_BYTES (see body-limit.ts). Enforced as an advisory
+	 * content-length gate before ANY routing (including base-path Hub delivery)
+	 * and, on the Node adapters, against every forwarded body regardless of who
+	 * buffered it.
+	 */
+	maxBodyBytes?: number;
+	/**
+	 * Override the default error response. Return undefined to fall through.
+	 * Covers errors raised inside the handler; adapter-stage failures thrown
+	 * before a Request exists (e.g. a 413 from body draining) are answered with
+	 * the built-in envelope and do not reach this hook.
+	 */
 	onError?: (
 		err: unknown,
 		req: Request,
@@ -224,6 +238,7 @@ export function managementHandler(
 	opts: ManagementHandlerOptions = {},
 ): (req: Request) => Promise<Response> {
 	const basePath = opts.basePath ?? DEFAULT_BASE_PATH;
+	const maxBodyBytes = resolveMaxBodyBytes(opts.maxBodyBytes);
 	const internal = getCorsairInternal(
 		corsair,
 		() =>
@@ -234,6 +249,17 @@ export function managementHandler(
 
 	return async (req: Request): Promise<Response> => {
 		try {
+			// Size gate BEFORE any routing or body read: covers the management
+			// routes below AND the base-path Hub delivery branch, whose POST
+			// reader does an unbounded `await request.text()` — on Web-Request
+			// runtimes (Workers/Bun/Deno/Next/Hono) a declared content-length is
+			// the only cheap gate available. Chunked bodies without a declared
+			// length are enforced by the Node bridge instead (resolveBody).
+			const contentLength = req.headers.get('content-length');
+			if (contentLength !== null && Number(contentLength) > maxBodyBytes) {
+				throw bodyTooLargeError(maxBodyBytes);
+			}
+
 			const url = new URL(req.url);
 			const pathname = stripBasePath(url.pathname, basePath);
 			const method = req.method.toUpperCase();

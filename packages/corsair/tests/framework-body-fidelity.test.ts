@@ -3,6 +3,7 @@ import { createServer } from 'node:http';
 import type { AddressInfo } from 'node:net';
 import { createCorsair } from '../core';
 import {
+	DEFAULT_MAX_BODY_BYTES,
 	managementHandler,
 	toAstroHandler,
 	toExpressHandler,
@@ -44,6 +45,11 @@ import { createTestDatabase } from './setup-db';
 //   - Fastify raw-buffer bridge → Buffer → managementHandler.
 //
 // The one lossy path, express.json(), is asserted to FAIL, documenting the trap.
+//
+// Casts: `as unknown as CorsairPlugin` on the fixture, `as any` on the
+// createCorsair call and the framework doubles — see management-handler.test.ts
+// for the rationale; the doubles only touch fields the adapters read, which is
+// exactly what keeps them framework-dependency-free.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const slack = {
@@ -127,8 +133,6 @@ describe('body fidelity — Web Request forwarded verbatim', () => {
 
 	// Each entry mounts the documented handler and returns a (Request)=>Response.
 	function transports(corsair: unknown) {
-		const web = (req: Request) =>
-			managementHandler(corsair, { basePath: BASE })(req);
 		return {
 			// toNextJsHandler fans POST to the shared handler.
 			nextjs: (req: Request) =>
@@ -136,17 +140,16 @@ describe('body fidelity — Web Request forwarded verbatim', () => {
 			// toHonoHandler passes c.req.raw straight through.
 			hono: (req: Request) =>
 				toHonoHandler(corsair, { basePath: BASE })({ req: { raw: req } }),
-			// Web-standard frameworks all forward `request` unchanged to managementHandler.
-			sveltekit: web,
-			remix: web,
-			astro: web,
-			nuxt: web,
-			tanstack: web,
-			workers: web,
+			// Baseline: managementHandler itself. SvelteKit / Remix / Astro /
+			// TanStack / Nuxt / Workers are each exercised through their REAL
+			// adapter further down ("web-standard adapters") — aliasing them here
+			// used to run the same code path six times under six names.
+			baseline: (req: Request) =>
+				managementHandler(corsair, { basePath: BASE })(req),
 		};
 	}
 
-	it('delivers verbatim across Next.js, Hono, and every web-standard runtime', async () => {
+	it('delivers verbatim across Next.js, Hono, and the shared baseline', async () => {
 		env = createTestDatabase();
 		const corsair = makeCorsair(env);
 		const t = transports(corsair);
@@ -199,8 +202,8 @@ function makeExpressRes() {
 			statusCode = c;
 			return res;
 		},
-		setHeader: (n: string, v: string) => {
-			headers[n.toLowerCase()] = v;
+		setHeader: (n: string, v: string | string[]) => {
+			headers[n.toLowerCase()] = Array.isArray(v) ? v.join(', ') : v;
 		},
 		send: (b: Buffer | string) => {
 			body = b;
@@ -269,6 +272,22 @@ describe('body fidelity — Express', () => {
 		expect(text().includes('Invalid tunnel signature')).toBe(false);
 	});
 
+	it('captured Buffer beyond maxBodyBytes gets 413 — the cap covers host-captured bodies too', async () => {
+		env = createTestDatabase();
+		const handler = toExpressHandler(makeCorsair(env), { basePath: BASE });
+		// express.raw() already buffered an oversized body; forwarding must still
+		// be gated (a host capture must not bypass the documented limit).
+		const oversized = `{"pad":"${'x'.repeat(DEFAULT_MAX_BODY_BYTES + 1)}"}`;
+		const req = makeExpressReq({
+			method: 'POST',
+			body: Buffer.from(oversized, 'utf-8'),
+			headers: { 'content-type': 'application/json' },
+		});
+		const { res, text } = makeExpressRes();
+		await handler(req, res, () => {});
+		expect(text()).toContain('payload_too_large');
+	});
+
 	it('express.json() (lossy): re-serialized body FAILS signature — documents the trap', async () => {
 		env = createTestDatabase();
 		const handler = toExpressHandler(makeCorsair(env), { basePath: BASE });
@@ -281,8 +300,18 @@ describe('body fidelity — Express', () => {
 			headers,
 		});
 		const { res, text } = makeExpressRes();
-		await handler(req, res, () => {});
-		expect(text().includes('Invalid tunnel signature')).toBe(true);
+		// The adapter must tell the operator WHY deliveries are failing. The warn
+		// fires once per process; this is the first lossy-path test in the file,
+		// so it owns the assertion. Assertions stay inside try — mockRestore()
+		// resets mock.calls.
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		try {
+			await handler(req, res, () => {});
+			expect(text().includes('Invalid tunnel signature')).toBe(true);
+			expect(warn.mock.calls[0]?.[0]).toContain('[corsair]');
+		} finally {
+			warn.mockRestore();
+		}
 	});
 });
 
@@ -316,28 +345,42 @@ describe('body fidelity — toNodeHandler (real node:http server)', () => {
 	});
 });
 
-// ── Fastify: first-class toFastifyHandler reading request.raw ────────────────
-// Fastify isn't a dependency; we drive the adapter with a structural double that
-// mirrors Fastify's shape (request.raw = Node stream, reply.raw = ServerResponse).
+// ── Fastify: first-class toFastifyHandler over the shared bridge ─────────────
+// Fastify isn't a dependency; we drive the adapter with structural doubles that
+// mirror its shape (request.raw = Node stream, request.body = parser output,
+// reply.raw = ServerResponse). Two stream states matter:
+//   - 'fresh':  request.raw still yields the body. Real Fastify NEVER hands an
+//     application/json POST to a handler in this state — its built-in parser
+//     drains request.raw first (the real-server suite proves that). Kept to pin
+//     the bridge's drain path for genuinely parser-less mounts.
+//   - 'consumed': request.raw yields NOTHING and the parsed body arrives via
+//     request.body — the state of every real Fastify JSON delivery.
 
 describe('body fidelity — toFastifyHandler', () => {
 	let env: ReturnType<typeof createTestDatabase>;
 	afterEach(() => env?.cleanup?.());
 
-	function makeFastify(body: string, headers: Record<string, string>) {
-		const rawReq: any = {
-			headers,
-			[Symbol.asyncIterator]: async function* () {
-				yield Buffer.from(body, 'utf-8');
-			},
-		};
+	function makeFastify(opts: {
+		headers: Record<string, string>;
+		body?: unknown;
+		rawStream?: string;
+	}) {
+		const rawReq: any = { headers: opts.headers };
+		if (opts.rawStream !== undefined) {
+			rawReq[Symbol.asyncIterator] = async function* () {
+				if (opts.rawStream!.length > 0) {
+					yield Buffer.from(opts.rawStream!, 'utf-8');
+				}
+			};
+		}
 		const request: any = {
 			raw: rawReq,
 			method: 'POST',
 			url: BASE,
-			headers,
+			headers: opts.headers,
 			protocol: 'http',
 		};
+		if (opts.body !== undefined) request.body = opts.body;
 		let out: Buffer | string | undefined;
 		let hijacked = false;
 		const reply: any = {
@@ -362,15 +405,52 @@ describe('body fidelity — toFastifyHandler', () => {
 		};
 	}
 
-	it('reads request.raw (not the parsed body) and delivers verbatim', async () => {
+	it('drains an UNREAD request.raw verbatim (parser-less mount)', async () => {
 		env = createTestDatabase();
 		const handler = toFastifyHandler(makeCorsair(env), { basePath: BASE });
 		const { body, headers } = makeSignedNonCanonicalDelivery();
-		const { request, reply, read } = makeFastify(body, headers);
+		const { request, reply, read } = makeFastify({
+			headers,
+			rawStream: body,
+		});
 		await handler(request, reply);
 		const { hijacked, text } = read();
 		expect(hijacked).toBe(true);
 		expect(text.includes('Invalid tunnel signature')).toBe(false);
+	});
+
+	it('reads the preserved Buffer from request.body when the raw stream is already drained', async () => {
+		env = createTestDatabase();
+		const handler = toFastifyHandler(makeCorsair(env), { basePath: BASE });
+		// Host registered the raw-buffer parser (registerCorsairRawBodyParser):
+		// Fastify consumed request.raw and handed us the untouched bytes as
+		// request.body. The empty iterator models that exhausted stream.
+		const { body, headers } = makeSignedNonCanonicalDelivery();
+		const { request, reply, read } = makeFastify({
+			headers,
+			body: Buffer.from(body, 'utf-8'),
+			rawStream: '',
+		});
+		await handler(request, reply);
+		const { hijacked, text } = read();
+		expect(hijacked).toBe(true);
+		expect(text.includes('Invalid tunnel signature')).toBe(false);
+	});
+
+	it('parsed-object body from the DEFAULT json parser stays lossy — documents the trap', async () => {
+		env = createTestDatabase();
+		const handler = toFastifyHandler(makeCorsair(env), { basePath: BASE });
+		// No raw-buffer parser: the default parser drained request.raw AND parsed
+		// it, so only a lossy re-serialization is possible → signature must fail.
+		const { body, headers } = makeSignedNonCanonicalDelivery();
+		const { request, reply, read } = makeFastify({
+			headers,
+			body: JSON.parse(body),
+			rawStream: '',
+		});
+		await handler(request, reply);
+		const { text } = read();
+		expect(text.includes('Invalid tunnel signature')).toBe(true);
 	});
 });
 
@@ -438,6 +518,71 @@ describe('body fidelity — web-standard adapters', () => {
 		await handler(event);
 		const text = typeof out === 'string' ? out : (out?.toString('utf-8') ?? '');
 		expect(text.includes('Invalid tunnel signature')).toBe(false);
+	});
+
+	// h3 caches bytes consumed by EARLIER middleware on the EVENT — readRawBody
+	// leaves the untouched text on `_rawBody`, readBody leaves its parsed value
+	// on `_body` — never on node.req. Without consulting those caches every
+	// delivery behind a body-reading middleware would drain an exhausted stream
+	// and die on Hub's signature check (the live-Nuxt regression this pins).
+	function makeNuxtEventWithCache(opts: {
+		headers: Record<string, string>;
+		rawBody?: string;
+		parsedBody?: unknown;
+	}) {
+		let out: Buffer | string | undefined;
+		const event: any = {
+			_rawBody: opts.rawBody,
+			_body: opts.parsedBody,
+			node: {
+				req: {
+					method: 'POST',
+					url: BASE,
+					headers: opts.headers,
+					// The middleware already consumed the stream: nothing left.
+					[Symbol.asyncIterator]: async function* () {},
+				},
+				res: {
+					statusCode: 200,
+					setHeader: () => {},
+					end: (b?: Buffer | string) => {
+						out = b;
+					},
+				},
+			},
+		};
+		return {
+			event,
+			text: () =>
+				typeof out === 'string' ? out : (out?.toString('utf-8') ?? ''),
+		};
+	}
+
+	it('toNuxtHandler recovers h3 _rawBody when earlier middleware used readRawBody', async () => {
+		env = createTestDatabase();
+		const handler = toNuxtHandler(makeCorsair(env), { basePath: BASE });
+		const { body, headers } = makeSignedNonCanonicalDelivery();
+		const { event, text } = makeNuxtEventWithCache({
+			headers,
+			rawBody: body, // readRawBody(event) cached the untouched text
+		});
+		await handler(event);
+		expect(text().includes('Invalid tunnel signature')).toBe(false);
+	});
+
+	it('toNuxtHandler falls back lossily for h3 _body when only readBody ran', async () => {
+		env = createTestDatabase();
+		const handler = toNuxtHandler(makeCorsair(env), { basePath: BASE });
+		// readBody(event) PARSED the JSON; raw bytes are unrecoverable, so the
+		// re-serialized body must fail the non-canonical signature — same trap
+		// as express.json(), now at least with a deterministic outcome.
+		const { body, headers } = makeSignedNonCanonicalDelivery();
+		const { event, text } = makeNuxtEventWithCache({
+			headers,
+			parsedBody: JSON.parse(body),
+		});
+		await handler(event);
+		expect(text().includes('Invalid tunnel signature')).toBe(true);
 	});
 });
 

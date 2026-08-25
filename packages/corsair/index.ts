@@ -24,6 +24,8 @@ export type {
 	ManagementHandlerOptions,
 	ManagementOk,
 	NodeHandler,
+	NodeLikeRequest,
+	NodeLikeResponse,
 	OAuthCallbackInput,
 	OAuthCallbackResult,
 	PermissionLookupInput,
@@ -34,7 +36,10 @@ export type {
 	Tenant,
 } from './core/management';
 export {
+	DEFAULT_MAX_BODY_BYTES,
 	managementHandler,
+	registerCorsairRawBodyParser,
+	resolveMaxBodyBytes,
 	toAstroHandler,
 	toExpressHandler,
 	toFastifyHandler,
