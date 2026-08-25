@@ -1,3 +1,4 @@
+import * as crypto from 'node:crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest } from 'corsair/core';
 import { z } from 'zod';
 
@@ -185,7 +186,15 @@ export function verifyOnedriveClientState(
 	if (!notification.clientState) {
 		return { valid: false, error: 'Missing clientState in notification' };
 	}
-	const isValid = notification.clientState === expectedClientState;
+	if (typeof notification.clientState !== 'string') {
+		return { valid: false, error: 'clientState mismatch' };
+	}
+	const aBuf = Buffer.from(notification.clientState);
+	const bBuf = Buffer.from(expectedClientState);
+	if (aBuf.length !== bBuf.length) {
+		return { valid: false, error: 'clientState mismatch' };
+	}
+	const isValid = crypto.timingSafeEqual(aBuf, bBuf);
 	return {
 		valid: isValid,
 		error: isValid ? undefined : 'clientState mismatch',
