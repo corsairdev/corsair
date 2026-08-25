@@ -1,4 +1,4 @@
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 import {
 	getValidAccessToken,
 	makeAuthenticatedTickTickRequest,
@@ -124,6 +124,58 @@ describe('TickTick OAuth client', () => {
 			});
 		});
 
+		it('forwards Retry-After from a 429 refresh response', async () => {
+			fetchMock.mockResolvedValueOnce(
+				new Response('rate limited', {
+					status: 429,
+					headers: { 'Retry-After': '2' },
+				}),
+			);
+
+			await expect(
+				getValidAccessToken({
+					clientId: 'client',
+					clientSecret: 'secret',
+					refreshToken: 'refresh',
+				}),
+			).rejects.toMatchObject({
+				name: 'TickTickAPIError',
+				code: '429',
+				retryAfter: 2000,
+			});
+		});
+
+		it('rejects a 200 token payload that is missing access_token', async () => {
+			fetchMock.mockResolvedValueOnce(okJson({ expires_in: 3600 }));
+
+			await expect(
+				getValidAccessToken({
+					clientId: 'client',
+					clientSecret: 'secret',
+					refreshToken: 'refresh',
+				}),
+			).rejects.toMatchObject({
+				name: 'TickTickAPIError',
+				code: 'INVALID_TOKEN_RESPONSE',
+			});
+		});
+
+		it('rejects a 200 token payload with a non-finite expires_in', async () => {
+			fetchMock.mockResolvedValueOnce(
+				okJson({ access_token: 'fresh', expires_in: 'never' }),
+			);
+
+			await expect(
+				getValidAccessToken({
+					clientId: 'client',
+					clientSecret: 'secret',
+					refreshToken: 'refresh',
+				}),
+			).rejects.toMatchObject({
+				code: 'INVALID_TOKEN_RESPONSE',
+			});
+		});
+
 		it('sends the refresh grant as form fields with a timeout signal', async () => {
 			fetchMock.mockResolvedValueOnce(
 				okJson({ access_token: 'fresh', expires_in: 3600 }),
@@ -229,9 +281,9 @@ describe('TickTick OAuth client', () => {
 
 			const [config] = mockRequest.mock.calls[0] ?? [];
 			expect(config?.BASE).toBe('https://api.ticktick.com/open/v1');
-			// HEADERS is typed as a Headers instance upstream; the client sets a plain map
+			expect(config?.TOKEN).toBe('tok');
 			const headers = config?.HEADERS as Record<string, string> | undefined;
-			expect(headers?.Authorization).toBe('Bearer tok');
+			expect(headers?.Authorization).toBeUndefined();
 		});
 
 		it('omits the body on GET and passes it through on POST', async () => {
@@ -248,6 +300,32 @@ describe('TickTick OAuth client', () => {
 
 			const [, postOptions] = mockRequest.mock.calls[1] ?? [];
 			expect(postOptions?.body).toEqual({ name: 'New Project' });
+		});
+
+		it('keeps ApiError status and retryAfter on TickTickAPIError', async () => {
+			mockRequest.mockRejectedValueOnce(
+				new ApiError(
+					{ method: 'GET', url: 'project' },
+					{
+						url: 'https://api.ticktick.com/open/v1/project',
+						ok: false,
+						status: 429,
+						statusText: 'Too Many Requests',
+						body: { error: 'Too Many Requests' },
+					},
+					'Too Many Requests',
+					{ retryAfter: 2500 },
+				),
+			);
+
+			await expect(
+				makeTickTickRequest('project', 'tok', { method: 'GET' }),
+			).rejects.toMatchObject({
+				name: 'TickTickAPIError',
+				code: '429',
+				retryAfter: 2500,
+				message: '[429] Too Many Requests',
+			});
 		});
 	});
 });

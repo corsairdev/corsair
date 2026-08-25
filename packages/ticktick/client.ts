@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import { z } from 'zod';
 
 export class TickTickAPIError extends Error {
 	constructor(
@@ -17,6 +18,21 @@ export class TickTickAPIError extends Error {
 const TICKTICK_API_BASE = 'https://api.ticktick.com/open/v1';
 const TICKTICK_TOKEN_URL = 'https://ticktick.com/oauth/token';
 
+const TokenResponseSchema = z.object({
+	access_token: z.string().min(1),
+	expires_in: z.coerce.number().finite().positive(),
+	token_type: z.string().optional(),
+	refresh_token: z.string().optional(),
+});
+
+function retryAfterMsFromResponse(response: Response): number | undefined {
+	const retryAfter = response.headers.get('retry-after');
+	if (!retryAfter) return undefined;
+	const seconds = Number.parseInt(retryAfter, 10);
+	if (!Number.isFinite(seconds) || seconds < 0) return undefined;
+	return seconds * 1000;
+}
+
 async function refreshAccessToken(
 	clientId: string,
 	clientSecret: string,
@@ -24,7 +40,6 @@ async function refreshAccessToken(
 ) {
 	const response = await fetch(TICKTICK_TOKEN_URL, {
 		method: 'POST',
-		// Fail fast if the token endpoint stalls instead of blocking keyBuilder
 		signal: AbortSignal.timeout(20_000),
 		headers: {
 			'Content-Type': 'application/x-www-form-urlencoded',
@@ -42,17 +57,18 @@ async function refreshAccessToken(
 		throw new TickTickAPIError(
 			`Failed to refresh access token: ${error}`,
 			String(response.status),
+			retryAfterMsFromResponse(response),
 		);
 	}
 
-	// response.json() is untyped; the token endpoint returns a fixed OAuth2 shape
-	const json = (await response.json()) as {
-		access_token: string;
-		expires_in: number;
-		token_type?: string;
-		refresh_token?: string;
-	};
-	return json;
+	const parsed = TokenResponseSchema.safeParse(await response.json());
+	if (!parsed.success) {
+		throw new TickTickAPIError(
+			'Failed to refresh access token: invalid token response',
+			'INVALID_TOKEN_RESPONSE',
+		);
+	}
+	return parsed.data;
 }
 
 export async function getValidAccessToken({
@@ -155,7 +171,6 @@ export async function makeTickTickRequest<T>(
 		TOKEN: accessToken,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${accessToken}`,
 		},
 	};
 
