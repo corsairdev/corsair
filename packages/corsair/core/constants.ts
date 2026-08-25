@@ -13,20 +13,27 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'ably',
 	'abstract',
+	'abyssale',
+	'accrediblecertificates',
 	'activecampaign',
 	'activetrail',
 	'addresszen',
+	'aeroleads',
 	'affinda',
 	'agencyzoom',
 	'agentmail',
 	'agentql',
 	'agenty',
+	'agilitycms',
 	'ahrefs',
 	'aimlapi',
 	'airtable',
+	'aivoov',
 	'alchemy',
 	'algolia',
+	'allimagesai',
 	'alphavantage',
 	'altoviz',
 	'alttextai',
@@ -35,17 +42,25 @@ export const BaseProviders = [
 	'ambientweather',
 	'amcards',
 	'amplitude',
+	'anchorbrowser',
+	'anthropicadministrator',
 	'apaleo',
+	'api2pdf',
 	'apibible',
 	'apify',
 	'apilabz',
 	'apininjas',
+	'apipie',
 	'apisports',
 	'asana',
 	'asindataapi',
+	'asticaai',
 	'asyncinterview',
+	'attio',
 	'ayrshare',
+	'basecamp',
 	'baselinker',
+	'basin',
 	'betterstack',
 	'bigmailer',
 	'bigml',
@@ -55,21 +70,29 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'botpress',
+	'bouncer',
 	'box',
 	'bugsnag',
 	'cal',
 	'calendly',
-	'canvas',
 	'canva',
+	'canvas',
+	'chatbotkit',
 	'circleci',
+	'clientary',
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
 	'confluence',
+	'contentfulgraphql',
+	'crowterminal',
 	'cursor',
+	'customgpt',
 	'databricks',
 	'datadog',
 	'deepseek',
+	'devinmcp',
+	'diffbot',
 	'digitalocean',
 	'discord',
 	'dockerhub',
@@ -82,18 +105,22 @@ export const BaseProviders = [
 	'figma',
 	'firecrawl',
 	'fireflies',
+	'formbricks',
 	'gemini',
 	'github',
 	'gitlab',
 	'gmail',
+	'googleaddressvalidation',
 	'googlebigquery',
 	'googlecalendar',
+	'googlecloudvision',
 	'googledocs',
 	'googledrive',
 	'googlemaps',
 	'googlemeet',
 	'googlesheets',
 	'grafana',
+	'groqcloud',
 	'habitica',
 	'hackernews',
 	'harvest',
@@ -101,10 +128,12 @@ export const BaseProviders = [
 	'heygen',
 	'hubspot',
 	'huggingface',
+	'imgbb',
 	'insightoai',
 	'instagram',
 	'intercom',
 	'jira',
+	'kaggle',
 	'linear',
 	'linkedin',
 	'loyverse',
@@ -119,6 +148,7 @@ export const BaseProviders = [
 	'onedrive',
 	'onepassword',
 	'openai',
+	'openrouter',
 	'openweathermap',
 	'oura',
 	'outlook',
@@ -130,6 +160,7 @@ export const BaseProviders = [
 	'resend',
 	'retailed',
 	'salesforce',
+	'securitytrails',
 	'sentry',
 	'serpapi',
 	'sharepoint',
@@ -140,20 +171,24 @@ export const BaseProviders = [
 	'supabase',
 	'tally',
 	'tavily',
+	'tavilymcp',
 	'teams',
 	'telegram',
 	'todoist',
 	'toggl',
 	'trello',
+	'twentyonerisk',
 	'twilio',
 	'twitter',
 	'twitterapiio',
 	'twochat',
 	'typeform',
+	'unione',
 	'vapi',
 	'vercel',
 	'webflow',
 	'whatsapp',
+	'witai',
 	'wiza',
 	'workday',
 	'xquik',
@@ -162,23 +197,31 @@ export const BaseProviders = [
 	'zendesk',
 	'zohomail',
 	'zoom',
+	'zoominfo',
 ] as const;
 
 export const ProviderDisplayNames = {
+	ably: 'Ably',
 	abstract: 'Abstract',
+	abyssale: 'Abyssale',
+	accrediblecertificates: 'Accredible Certificates',
 	activecampaign: 'ActiveCampaign',
 	activetrail: 'Active Trail',
 	addresszen: 'Addresszen',
+	aeroleads: 'Aeroleads',
 	affinda: 'Affinda',
 	agencyzoom: 'AgencyZoom',
 	agentmail: 'AgentMail',
 	agentql: 'AgentQL',
 	agenty: 'Agenty',
+	agilitycms: 'Agility CMS',
 	ahrefs: 'Ahrefs',
 	aimlapi: 'AI/ML API',
 	airtable: 'Airtable',
+	aivoov: 'AiVOOV',
 	alchemy: 'Alchemy',
 	algolia: 'Algolia',
+	allimagesai: 'All Images AI',
 	alphavantage: 'Alpha Vantage',
 	altoviz: 'Altoviz',
 	alttextai: 'AltText.ai',
@@ -187,17 +230,25 @@ export const ProviderDisplayNames = {
 	ambientweather: 'Ambient Weather',
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
+	anchorbrowser: 'Anchor Browser',
+	anthropicadministrator: 'Anthropic Administrator',
 	apaleo: 'Apaleo',
+	api2pdf: 'API2PDF',
 	apibible: 'API.Bible',
 	apify: 'Apify',
 	apilabz: 'API Labz',
 	apininjas: 'API Ninjas',
+	apipie: 'APIpie AI',
 	apisports: 'API-Sports',
 	asana: 'Asana',
 	asindataapi: 'ASIN Data API',
+	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
+	attio: 'Attio',
 	ayrshare: 'Ayrshare',
+	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
+	basin: 'Basin',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
@@ -207,21 +258,29 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	botpress: 'Botpress',
+	bouncer: 'Bouncer',
 	box: 'Box',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
-	canvas: 'Canvas LMS',
 	canva: 'Canva',
+	canvas: 'Canvas LMS',
+	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
+	clientary: 'Clientary',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
 	confluence: 'Confluence',
+	contentfulgraphql: 'Contentful GraphQL',
+	crowterminal: 'CrowTerminal',
 	cursor: 'Cursor',
+	customgpt: 'CustomGPT',
 	databricks: 'Databricks',
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
+	devinmcp: 'Devin MCP',
+	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
 	dockerhub: 'Docker Hub',
@@ -234,18 +293,22 @@ export const ProviderDisplayNames = {
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
+	formbricks: 'Formbricks',
 	gemini: 'Gemini',
 	github: 'GitHub',
 	gitlab: 'GitLab',
 	gmail: 'Gmail',
+	googleaddressvalidation: 'Google Address Validation',
 	googlebigquery: 'Google BigQuery',
 	googlecalendar: 'Google Calendar',
+	googlecloudvision: 'Google Cloud Vision',
 	googledocs: 'Google Docs',
 	googledrive: 'Google Drive',
 	googlemaps: 'Google Maps',
 	googlemeet: 'Google Meet',
 	googlesheets: 'Google Sheets',
 	grafana: 'Grafana',
+	groqcloud: 'GroqCloud',
 	habitica: 'Habitica',
 	hackernews: 'Hacker News',
 	harvest: 'Harvest',
@@ -253,10 +316,12 @@ export const ProviderDisplayNames = {
 	heygen: 'HeyGen',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
+	imgbb: 'ImgBB',
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
 	jira: 'Jira',
+	kaggle: 'Kaggle',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
@@ -271,6 +336,7 @@ export const ProviderDisplayNames = {
 	onedrive: 'OneDrive',
 	onepassword: '1Password',
 	openai: 'OpenAI',
+	openrouter: 'OpenRouter',
 	openweathermap: 'OpenWeatherMap',
 	oura: 'Oura',
 	outlook: 'Outlook',
@@ -282,6 +348,7 @@ export const ProviderDisplayNames = {
 	resend: 'Resend',
 	retailed: 'Retailed',
 	salesforce: 'Salesforce',
+	securitytrails: 'SecurityTrails',
 	sentry: 'Sentry',
 	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
@@ -292,20 +359,24 @@ export const ProviderDisplayNames = {
 	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
+	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
+	twentyonerisk: 'TwentyOneRisk',
 	twilio: 'Twilio',
 	twitter: 'Twitter',
 	twitterapiio: 'Twitter API IO',
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
+	unione: 'Unione',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	webflow: 'Webflow',
 	whatsapp: 'WhatsApp',
+	witai: 'WitAi',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	xquik: 'XQuik',
@@ -314,6 +385,7 @@ export const ProviderDisplayNames = {
 	zendesk: 'Zendesk',
 	zohomail: 'Zoho Mail',
 	zoom: 'Zoom',
+	zoominfo: 'ZoomInfo',
 } as const satisfies Record<(typeof BaseProviders)[number], string>;
 
 export function formatProviderDisplayName(plugin: string): string {
@@ -324,20 +396,27 @@ export function formatProviderDisplayName(plugin: string): string {
 }
 
 export type AllProviders =
+	| 'ably'
 	| 'abstract'
+	| 'abyssale'
+	| 'accrediblecertificates'
 	| 'activecampaign'
 	| 'activetrail'
 	| 'addresszen'
+	| 'aeroleads'
 	| 'affinda'
 	| 'agencyzoom'
 	| 'agentmail'
 	| 'agentql'
 	| 'agenty'
+	| 'agilitycms'
 	| 'ahrefs'
 	| 'aimlapi'
 	| 'airtable'
+	| 'aivoov'
 	| 'alchemy'
 	| 'algolia'
+	| 'allimagesai'
 	| 'alphavantage'
 	| 'altoviz'
 	| 'alttextai'
@@ -346,17 +425,25 @@ export type AllProviders =
 	| 'ambientweather'
 	| 'amcards'
 	| 'amplitude'
+	| 'anchorbrowser'
+	| 'anthropicadministrator'
 	| 'apaleo'
+	| 'api2pdf'
 	| 'apibible'
 	| 'apify'
 	| 'apilabz'
 	| 'apininjas'
+	| 'apipie'
 	| 'apisports'
 	| 'asana'
 	| 'asindataapi'
+	| 'asticaai'
 	| 'asyncinterview'
+	| 'attio'
 	| 'ayrshare'
+	| 'basecamp'
 	| 'baselinker'
+	| 'basin'
 	| 'betterstack'
 	| 'bigmailer'
 	| 'bigml'
@@ -366,21 +453,29 @@ export type AllProviders =
 	| 'bluesky'
 	| 'boloforms'
 	| 'botpress'
+	| 'bouncer'
 	| 'box'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
 	| 'canva'
 	| 'canvas'
+	| 'chatbotkit'
 	| 'circleci'
+	| 'clientary'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
 	| 'confluence'
+	| 'contentfulgraphql'
+	| 'crowterminal'
 	| 'cursor'
+	| 'customgpt'
 	| 'databricks'
 	| 'datadog'
 	| 'deepseek'
+	| 'devinmcp'
+	| 'diffbot'
 	| 'digitalocean'
 	| 'discord'
 	| 'dockerhub'
@@ -393,18 +488,22 @@ export type AllProviders =
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
+	| 'formbricks'
 	| 'gemini'
 	| 'github'
 	| 'gitlab'
 	| 'gmail'
+	| 'googleaddressvalidation'
 	| 'googlebigquery'
 	| 'googlecalendar'
+	| 'googlecloudvision'
 	| 'googledocs'
 	| 'googledrive'
 	| 'googlemaps'
 	| 'googlemeet'
 	| 'googlesheets'
 	| 'grafana'
+	| 'groqcloud'
 	| 'habitica'
 	| 'hackernews'
 	| 'harvest'
@@ -412,10 +511,12 @@ export type AllProviders =
 	| 'heygen'
 	| 'hubspot'
 	| 'huggingface'
+	| 'imgbb'
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
 	| 'jira'
+	| 'kaggle'
 	| 'linear'
 	| 'linkedin'
 	| 'loyverse'
@@ -430,6 +531,7 @@ export type AllProviders =
 	| 'onedrive'
 	| 'onepassword'
 	| 'openai'
+	| 'openrouter'
 	| 'openweathermap'
 	| 'oura'
 	| 'outlook'
@@ -441,6 +543,7 @@ export type AllProviders =
 	| 'resend'
 	| 'retailed'
 	| 'salesforce'
+	| 'securitytrails'
 	| 'sentry'
 	| 'serpapi'
 	| 'sharepoint'
@@ -451,20 +554,24 @@ export type AllProviders =
 	| 'supabase'
 	| 'tally'
 	| 'tavily'
+	| 'tavilymcp'
 	| 'teams'
 	| 'telegram'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
+	| 'twentyonerisk'
 	| 'twilio'
 	| 'twitter'
 	| 'twitterapiio'
 	| 'twochat'
 	| 'typeform'
+	| 'unione'
 	| 'vapi'
 	| 'vercel'
 	| 'webflow'
 	| 'whatsapp'
+	| 'witai'
 	| 'wiza'
 	| 'workday'
 	| 'xquik'
@@ -473,6 +580,7 @@ export type AllProviders =
 	| 'zendesk'
 	| 'zohomail'
 	| 'zoom'
+	| 'zoominfo'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';

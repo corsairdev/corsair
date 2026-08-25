@@ -13,6 +13,7 @@ export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
 		cc,
 		bcc,
 		reply_to,
+		scheduled_at,
 		attachments,
 		tags,
 		headers,
@@ -29,6 +30,7 @@ export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
 	if (cc) body.cc = Array.isArray(cc) ? cc : [cc];
 	if (bcc) body.bcc = Array.isArray(bcc) ? bcc : [bcc];
 	if (reply_to) body.reply_to = Array.isArray(reply_to) ? reply_to : [reply_to];
+	if (scheduled_at) body.scheduled_at = scheduled_at;
 	if (attachments) body.attachments = attachments;
 	if (tags) body.tags = tags;
 	if (headers) body.headers = headers;
@@ -56,6 +58,53 @@ export const send: ResendEndpoints['emailsSend'] = async (ctx, input) => {
 	return response;
 };
 
+export const batch: ResendEndpoints['emailsBatch'] = async (ctx, input) => {
+	const response = await makeResendRequest<
+		ResendEndpointOutputs['emailsBatch']
+	>('emails/batch', ctx.key, {
+		method: 'POST',
+		body: input.emails as unknown as Record<string, unknown>,
+	});
+
+	// Batch response only returns IDs, not full email objects
+	// Individual emails can be fetched via emails.get if needed
+
+	await logEventFromContext(
+		ctx,
+		'resend.emails.batch',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
+export const cancel: ResendEndpoints['emailsCancel'] = async (ctx, input) => {
+	const response = await makeResendRequest<
+		ResendEndpointOutputs['emailsCancel']
+	>(`emails/${input.id}/cancel`, ctx.key, {
+		method: 'POST',
+	});
+
+	if (response.id && ctx.endpoints) {
+		try {
+			const endpoints = ctx.endpoints as ResendBoundEndpoints;
+			if (endpoints.emails?.get) {
+				await endpoints.emails.get({ id: response.id });
+			}
+		} catch (error) {
+			console.warn('Failed to refresh cancelled email in database:', error);
+		}
+	}
+
+	await logEventFromContext(
+		ctx,
+		'resend.emails.cancel',
+		{ ...input },
+		'completed',
+	);
+	return response;
+};
+
 export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 	const response = await makeResendRequest<ResendEndpointOutputs['emailsGet']>(
 		`emails/${input.id}`,
@@ -65,9 +114,9 @@ export const get: ResendEndpoints['emailsGet'] = async (ctx, input) => {
 		},
 	);
 
-	if (response.id && ctx.db.emails) {
+	if (response.id && ctx.db?.emails) {
 		try {
-			await ctx.db.emails.upsertByEntityId(response.id, {
+			await ctx.db?.emails.upsertByEntityId(response.id, {
 				...response,
 			});
 		} catch (error) {
@@ -98,10 +147,10 @@ export const list: ResendEndpoints['emailsList'] = async (ctx, input) => {
 		},
 	);
 
-	if (response.data && ctx.db.emails) {
+	if (response.data && ctx.db?.emails) {
 		try {
 			for (const email of response.data) {
-				await ctx.db.emails.upsertByEntityId(email.id, {
+				await ctx.db?.emails.upsertByEntityId(email.id, {
 					...email,
 				});
 			}
