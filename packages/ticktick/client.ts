@@ -25,6 +25,9 @@ const TokenResponseSchema = z.object({
 	refresh_token: z.string().optional(),
 });
 
+const REFRESH_RATE_LIMIT_ATTEMPTS = 6;
+const REFRESH_RATE_LIMIT_DEFAULT_MS = 1000;
+
 function retryAfterMsFromResponse(response: Response): number | undefined {
 	const retryAfter = response.headers.get('retry-after');
 	if (!retryAfter) return undefined;
@@ -38,37 +41,49 @@ async function refreshAccessToken(
 	clientSecret: string,
 	refreshToken: string,
 ) {
-	const response = await fetch(TICKTICK_TOKEN_URL, {
-		method: 'POST',
-		signal: AbortSignal.timeout(20_000),
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
-		body: new URLSearchParams({
-			grant_type: 'refresh_token',
-			refresh_token: refreshToken,
-			client_id: clientId,
-			client_secret: clientSecret,
-		}),
-	});
+	let lastError: TickTickAPIError | undefined;
+	for (let attempt = 0; attempt < REFRESH_RATE_LIMIT_ATTEMPTS; attempt++) {
+		const response = await fetch(TICKTICK_TOKEN_URL, {
+			method: 'POST',
+			signal: AbortSignal.timeout(20_000),
+			headers: {
+				'Content-Type': 'application/x-www-form-urlencoded',
+			},
+			body: new URLSearchParams({
+				grant_type: 'refresh_token',
+				refresh_token: refreshToken,
+				client_id: clientId,
+				client_secret: clientSecret,
+			}),
+		});
 
-	if (!response.ok) {
+		if (response.ok) {
+			const parsed = TokenResponseSchema.safeParse(await response.json());
+			if (!parsed.success) {
+				throw new TickTickAPIError(
+					'Failed to refresh access token: invalid token response',
+					'INVALID_TOKEN_RESPONSE',
+				);
+			}
+			return parsed.data;
+		}
+
 		const error = await response.text();
-		throw new TickTickAPIError(
+		const retryAfter = retryAfterMsFromResponse(response);
+		lastError = new TickTickAPIError(
 			`Failed to refresh access token: ${error}`,
 			String(response.status),
-			retryAfterMsFromResponse(response),
+			retryAfter,
 		);
+		if (response.status === 429 && attempt < REFRESH_RATE_LIMIT_ATTEMPTS - 1) {
+			await new Promise((resolve) =>
+				setTimeout(resolve, retryAfter ?? REFRESH_RATE_LIMIT_DEFAULT_MS),
+			);
+			continue;
+		}
+		throw lastError;
 	}
-
-	const parsed = TokenResponseSchema.safeParse(await response.json());
-	if (!parsed.success) {
-		throw new TickTickAPIError(
-			'Failed to refresh access token: invalid token response',
-			'INVALID_TOKEN_RESPONSE',
-		);
-	}
-	return parsed.data;
+	throw lastError ?? new TickTickAPIError('Failed to refresh access token');
 }
 
 export async function getValidAccessToken({

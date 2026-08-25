@@ -124,12 +124,36 @@ describe('TickTick OAuth client', () => {
 			});
 		});
 
-		it('forwards Retry-After from a 429 refresh response', async () => {
-			fetchMock.mockResolvedValueOnce(
-				new Response('rate limited', {
-					status: 429,
-					headers: { 'Retry-After': '2' },
-				}),
+		it('retries a 429 refresh using Retry-After then returns the token', async () => {
+			fetchMock
+				.mockResolvedValueOnce(
+					new Response('rate limited', {
+						status: 429,
+						headers: { 'Retry-After': '0' },
+					}),
+				)
+				.mockResolvedValueOnce(
+					okJson({ access_token: 'fresh', expires_in: 3600 }),
+				);
+
+			const result = await getValidAccessToken({
+				clientId: 'client',
+				clientSecret: 'secret',
+				refreshToken: 'refresh',
+			});
+
+			expect(result.accessToken).toBe('fresh');
+			expect(fetchMock).toHaveBeenCalledTimes(2);
+		});
+
+		it('gives up after repeated 429 refresh responses and keeps Retry-After', async () => {
+			fetchMock.mockImplementation(() =>
+				Promise.resolve(
+					new Response('rate limited', {
+						status: 429,
+						headers: { 'Retry-After': '0' },
+					}),
+				),
 			);
 
 			await expect(
@@ -141,8 +165,9 @@ describe('TickTick OAuth client', () => {
 			).rejects.toMatchObject({
 				name: 'TickTickAPIError',
 				code: '429',
-				retryAfter: 2000,
+				retryAfter: 0,
 			});
+			expect(fetchMock).toHaveBeenCalledTimes(6);
 		});
 
 		it('rejects a 200 token payload that is missing access_token', async () => {
