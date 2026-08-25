@@ -10,9 +10,8 @@ export class JigsawstackAPIError extends Error {
 		this.name = 'JigsawstackAPIError';
 	}
 }
-
-// TODO: Update with your API base URL
-const JIGSAWSTACK_API_BASE = 'https://api.example.com';
+// Change this line (around line 14)
+const JIGSAWSTACK_API_BASE = 'https://api.jigsawstack.com/v1';
 
 export async function makeJigsawstackRequest<T>(
 	endpoint: string,
