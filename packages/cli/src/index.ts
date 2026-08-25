@@ -19,6 +19,7 @@ import {
 	findCorsairConfigPath,
 	getCorsairInstance,
 } from './utils/corsair-instance';
+import { formatCliError } from './utils/format-cli-error';
 
 function createProgram(): Command {
 	const program = new Command();
@@ -70,7 +71,12 @@ function detectIsMainModule(): boolean {
 }
 
 if (detectIsMainModule()) {
-	createProgram().parse(normalizeLegacyArgs(process.argv));
+	createProgram()
+		.parseAsync(normalizeLegacyArgs(process.argv))
+		.catch((err: unknown) => {
+			console.error(formatCliError(err));
+			process.exit(1);
+		});
 }
 
 export { createProgram, findCorsairConfigPath, getCorsairInstance };
