@@ -58,6 +58,7 @@ export const BaseProviders = [
 	'asticaai',
 	'asyncinterview',
 	'attio',
+	'autom',
 	'ayrshare',
 	'bart',
 	'basecamp',
@@ -249,6 +250,7 @@ export const ProviderDisplayNames = {
 	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
 	attio: 'Attio',
+	autom: 'Autom',
 	ayrshare: 'Ayrshare',
 	bart: 'BART',
 	basecamp: 'Basecamp',
@@ -447,6 +449,7 @@ export type AllProviders =
 	| 'asticaai'
 	| 'asyncinterview'
 	| 'attio'
+	| 'autom'
 	| 'ayrshare'
 	| 'bart'
 	| 'basecamp'
