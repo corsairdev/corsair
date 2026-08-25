@@ -51,8 +51,9 @@ export async function makeBrandfetchRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// Preserve ApiError for proper error handling in error-handlers.ts
 		if (error instanceof Error) {
-			throw new BrandfetchAPIError(error.message);
+			throw error;
 		}
 		throw new BrandfetchAPIError('Unknown error');
 	}

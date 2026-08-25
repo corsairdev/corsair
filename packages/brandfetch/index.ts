@@ -15,7 +15,16 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import {
+	BrandsEndpoints,
+	CompaniesEndpoints,
+	EventsEndpoints,
+	GraphqlEndpoints,
+	LogosEndpoints,
+	TaxonomiesEndpoints,
+	TransactionsEndpoints,
+	WebhooksEndpoints,
+} from './endpoints';
 import type {
 	BrandfetchEndpointInputs,
 	BrandfetchEndpointOutputs,
@@ -63,6 +72,14 @@ type BrandfetchEndpoint<K extends keyof BrandfetchEndpointOutputs> =
 
 export type BrandfetchEndpoints = {
 	getBrandInfo: BrandfetchEndpoint<'getBrandInfo'>;
+	searchBrands: BrandfetchEndpoint<'searchBrands'>;
+	getCdnLogo: BrandfetchEndpoint<'getCdnLogo'>;
+	getCompanyInfo: BrandfetchEndpoint<'getCompanyInfo'>;
+	getTransactionInfo: BrandfetchEndpoint<'getTransactionInfo'>;
+	getTaxonomy: BrandfetchEndpoint<'getTaxonomy'>;
+	getGraphqlVersion: BrandfetchEndpoint<'getGraphqlVersion'>;
+	listSubscribableEvents: BrandfetchEndpoint<'listSubscribableEvents'>;
+	listWebhooks: BrandfetchEndpoint<'listWebhooks'>;
 };
 
 type BrandfetchWebhook<
@@ -77,9 +94,14 @@ export type BrandfetchWebhooks = {
 export type BrandfetchBoundWebhooks = BindWebhooks<BrandfetchWebhooks>;
 
 const brandfetchEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
+	brands: BrandsEndpoints,
+	logos: LogosEndpoints,
+	companies: CompaniesEndpoints,
+	transactions: TransactionsEndpoints,
+	taxonomies: TaxonomiesEndpoints,
+	graphql: GraphqlEndpoints,
+	events: EventsEndpoints,
+	webhooks: WebhooksEndpoints,
 } as const;
 
 const brandfetchWebhooksNested = {
@@ -89,9 +111,41 @@ const brandfetchWebhooksNested = {
 } as const;
 
 export const brandfetchEndpointSchemas = {
-	'example.get': {
+	'brands.get': {
 		input: BrandfetchEndpointInputSchemas.getBrandInfo,
 		output: BrandfetchEndpointOutputSchemas.getBrandInfo,
+	},
+	'brands.search': {
+		input: BrandfetchEndpointInputSchemas.searchBrands,
+		output: BrandfetchEndpointOutputSchemas.searchBrands,
+	},
+	'logos.get': {
+		input: BrandfetchEndpointInputSchemas.getCdnLogo,
+		output: BrandfetchEndpointOutputSchemas.getCdnLogo,
+	},
+	'companies.get': {
+		input: BrandfetchEndpointInputSchemas.getCompanyInfo,
+		output: BrandfetchEndpointOutputSchemas.getCompanyInfo,
+	},
+	'transactions.get': {
+		input: BrandfetchEndpointInputSchemas.getTransactionInfo,
+		output: BrandfetchEndpointOutputSchemas.getTransactionInfo,
+	},
+	'taxonomies.get': {
+		input: BrandfetchEndpointInputSchemas.getTaxonomy,
+		output: BrandfetchEndpointOutputSchemas.getTaxonomy,
+	},
+	'graphql.getVersion': {
+		input: BrandfetchEndpointInputSchemas.getGraphqlVersion,
+		output: BrandfetchEndpointOutputSchemas.getGraphqlVersion,
+	},
+	'events.listSubscribable': {
+		input: BrandfetchEndpointInputSchemas.listSubscribableEvents,
+		output: BrandfetchEndpointOutputSchemas.listSubscribableEvents,
+	},
+	'webhooks.list': {
+		input: BrandfetchEndpointInputSchemas.listWebhooks,
+		output: BrandfetchEndpointOutputSchemas.listWebhooks,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof brandfetchEndpointsNested
@@ -110,9 +164,41 @@ const brandfetchWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const brandfetchEndpointMeta = {
-	'example.get': {
+	'brands.get': {
 		riskLevel: 'read',
 		description: 'Get brand information by domain',
+	},
+	'brands.search': {
+		riskLevel: 'read',
+		description: 'Search for brands by query',
+	},
+	'logos.get': {
+		riskLevel: 'read',
+		description: 'Get CDN logo URL for a domain',
+	},
+	'companies.get': {
+		riskLevel: 'read',
+		description: 'Get company information by domain',
+	},
+	'transactions.get': {
+		riskLevel: 'read',
+		description: 'Get transaction information by label',
+	},
+	'taxonomies.get': {
+		riskLevel: 'read',
+		description: 'Get Brandfetch taxonomy',
+	},
+	'graphql.getVersion': {
+		riskLevel: 'read',
+		description: 'Get GraphQL API version',
+	},
+	'events.listSubscribable': {
+		riskLevel: 'read',
+		description: 'List subscribable webhook events',
+	},
+	'webhooks.list': {
+		riskLevel: 'read',
+		description: 'List configured webhooks',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof brandfetchEndpointsNested

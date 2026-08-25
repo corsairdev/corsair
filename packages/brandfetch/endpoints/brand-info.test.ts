@@ -1,5 +1,5 @@
 import { makeBrandfetchRequest } from '../client';
-import { getBrandInfo } from './brandInfo';
+import { getBrandInfo } from './brand-info';
 
 jest.mock('../client', () => ({
 	makeBrandfetchRequest: jest.fn(),
@@ -29,6 +29,16 @@ describe('Brandfetch getBrandInfo endpoint', () => {
 
 		const ctx = {
 			key: 'test-api-key',
+			$getAccountId: async () => 'test-account-id',
+			database: {
+				db: {
+					insertInto: () => ({
+						values: () => ({
+							execute: async () => undefined,
+						}),
+					}),
+				},
+			},
 		} as any;
 
 		const input = {

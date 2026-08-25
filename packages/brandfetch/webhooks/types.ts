@@ -3,6 +3,7 @@ import type {
 	RawWebhookRequest,
 	WebhookRequest,
 } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
 
 export const BrandfetchWebhookPayloadSchema = z.object({
@@ -61,6 +62,31 @@ export function verifyBrandfetchWebhookSignature(
 	request: WebhookRequest<BrandfetchWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const rawBody = request.rawBody;
+	if (!rawBody) {
+		return {
+			valid: false,
+			error: 'Missing raw body for signature verification',
+		};
+	}
+
+	const headers = request.headers;
+	const signature = Array.isArray(headers['x-brandfetch-signature'])
+		? headers['x-brandfetch-signature'][0]
+		: headers['x-brandfetch-signature'];
+
+	if (!signature) {
+		return { valid: false, error: 'Missing x-brandfetch-signature header' };
+	}
+
+	const isValid = verifyHmacSignature(rawBody, secret, signature);
+	if (!isValid) {
+		return { valid: false, error: 'Invalid signature' };
+	}
+
 	return { valid: true };
 }
