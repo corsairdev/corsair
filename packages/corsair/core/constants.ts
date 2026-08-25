@@ -43,6 +43,7 @@ export const BaseProviders = [
 	'amcards',
 	'amplitude',
 	'anchorbrowser',
+	'anonyflow',
 	'anthropicadministrator',
 	'apaleo',
 	'api2pdf',
@@ -233,6 +234,7 @@ export const ProviderDisplayNames = {
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	anchorbrowser: 'Anchor Browser',
+	anonyflow: 'Anonyflow',
 	anthropicadministrator: 'Anthropic Administrator',
 	apaleo: 'Apaleo',
 	api2pdf: 'API2PDF',
@@ -430,6 +432,7 @@ export type AllProviders =
 	| 'amcards'
 	| 'amplitude'
 	| 'anchorbrowser'
+	| 'anonyflow'
 	| 'anthropicadministrator'
 	| 'apaleo'
 	| 'api2pdf'
