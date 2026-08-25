@@ -184,6 +184,7 @@ export const BaseProviders = [
 	'twochat',
 	'typeform',
 	'unione',
+	'uniswapapi',
 	'vapi',
 	'vercel',
 	'webflow',
@@ -372,6 +373,7 @@ export const ProviderDisplayNames = {
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	unione: 'Unione',
+	uniswapapi: 'Uniswap',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	webflow: 'Webflow',
@@ -567,6 +569,7 @@ export type AllProviders =
 	| 'twochat'
 	| 'typeform'
 	| 'unione'
+	| 'uniswapapi'
 	| 'vapi'
 	| 'vercel'
 	| 'webflow'
