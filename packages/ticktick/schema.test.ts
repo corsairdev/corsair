@@ -53,6 +53,14 @@ describe('TickTick schema', () => {
 		}
 	});
 
+	it('rejects undocumented task statuses', () => {
+		for (const status of [1, 3, 2.5]) {
+			expect(() =>
+				TickTickTaskSchema.parse({ id: 'task-1', title: 'Any', status }),
+			).toThrow();
+		}
+	});
+
 	it('accepts every documented project view mode and kind', () => {
 		for (const viewMode of ['list', 'kanban', 'timeline'] as const) {
 			expect(

@@ -35,7 +35,7 @@ export const TickTickTaskSchema = z.object({
 		.nullable()
 		.optional(),
 	status: z
-		.number()
+		.union([z.literal(-1), z.literal(0), z.literal(2)])
 		.describe('-1 (Abandoned), 0 (Undone), 2 (Completed)')
 		.nullable()
 		.optional(),

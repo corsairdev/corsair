@@ -277,10 +277,14 @@ export function ticktick<const T extends TickTickPluginOptions>(
 					// Token-only mode: serve the cached access token while it is still
 					// inside the expiry buffer; once expired, re-authorization is the
 					// only recovery because there is nothing to refresh with
+					const parsedExpiresAt = Number(expiresAt);
 					if (
 						!accessToken ||
 						!expiresAt ||
-						Number(expiresAt) <= now + bufferSeconds
+						// Non-numeric values parse to NaN, and every NaN comparison is
+						// false, so finiteness must be checked explicitly
+						!Number.isFinite(parsedExpiresAt) ||
+						parsedExpiresAt <= now + bufferSeconds
 					) {
 						throw new AuthMissingError('ticktick', 'oauth_2');
 					}

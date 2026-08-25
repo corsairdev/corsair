@@ -492,6 +492,11 @@ describe('TickTick endpoint routing', () => {
 			expiresAt: String(Math.floor(Date.now() / 1000) + 3600),
 		},
 		{ name: 'an expired token', accessToken: 'stale-token', expiresAt: '1000' },
+		{
+			name: 'a non-numeric expiry',
+			accessToken: 'access-token',
+			expiresAt: 'invalid-expiry',
+		},
 		{ name: 'a missing expiry', accessToken: 'access-token', expiresAt: null },
 	])(
 		'keyBuilder throws AuthMissingError with no refresh token and $name',
