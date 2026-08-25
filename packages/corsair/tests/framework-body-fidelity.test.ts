@@ -638,6 +638,7 @@ function makeChunkedRequest(opts: {
 	neverYields?: boolean;
 }) {
 	let pulled = 0;
+	let cancelled = false;
 	const body = new ReadableStream<Uint8Array>({
 		pull(controller) {
 			if (opts.neverYields) return; // stalled sender: never enqueues, never closes
@@ -648,6 +649,9 @@ function makeChunkedRequest(opts: {
 			controller.enqueue(new Uint8Array(opts.chunkSize).fill(0x78));
 			pulled += 1;
 		},
+		cancel() {
+			cancelled = true;
+		},
 	});
 	// `as RequestInit`: some lib.dom revisions lack `duplex`, but undici requires
 	// it at runtime whenever a Request body is a stream.
@@ -657,7 +661,7 @@ function makeChunkedRequest(opts: {
 		body,
 		duplex: 'half',
 	} as RequestInit);
-	return { req, pulledCount: () => pulled };
+	return { req, pulledCount: () => pulled, cancelCalled: () => cancelled };
 }
 
 describe('body limits — web-native chunked and stalled bodies', () => {
@@ -670,7 +674,7 @@ describe('body limits — web-native chunked and stalled bodies', () => {
 		// Sender offers 64 × 512KiB = 32 MiB chunked with no declared length.
 		// The byte-counting read must abort around the 1 MiB cap — a few chunks
 		// past it at most (the stream may prefetch one ahead of the reader).
-		const { req, pulledCount } = makeChunkedRequest({
+		const { req, pulledCount, cancelCalled } = makeChunkedRequest({
 			chunkSize: 512 * 1024,
 			maxChunks: 64,
 		});
@@ -680,6 +684,8 @@ describe('body limits — web-native chunked and stalled bodies', () => {
 		expect(res.status).toBe(413);
 		expect(await res.text()).toContain('payload_too_large');
 		expect(pulledCount()).toBeLessThanOrEqual(6);
+		// The aborted body must be RELEASED, not left open until the sender finishes.
+		expect(cancelCalled()).toBe(true);
 	});
 
 	it('hub delivery POST with an oversized chunked body gets 413 too', async () => {
@@ -687,7 +693,7 @@ describe('body limits — web-native chunked and stalled bodies', () => {
 		// Base path → hub-delivery branch: its reader runs BEFORE signature
 		// verification, so this is the first thing a delivery hits.
 		const handler = managementHandler(makeCorsair(env), { basePath: BASE });
-		const { req } = makeChunkedRequest({
+		const { req, cancelCalled } = makeChunkedRequest({
 			url: `${BASE}`,
 			headers: { 'content-type': 'text/plain' }, // any content-type is read here
 			chunkSize: 512 * 1024,
@@ -698,15 +704,16 @@ describe('body limits — web-native chunked and stalled bodies', () => {
 
 		expect(res.status).toBe(413);
 		expect(await res.text()).toContain('payload_too_large');
+		expect(cancelCalled()).toBe(true);
 	});
 
-	it('a stalled body read answers 408 request_timeout instead of hanging', async () => {
+	it('a stalled body read answers 408 request_timeout — and releases the stream', async () => {
 		env = createTestDatabase();
 		const handler = managementHandler(makeCorsair(env), {
 			basePath: BASE,
 			bodyStallTimeoutMs: 25,
 		});
-		const { req } = makeChunkedRequest({
+		const { req, cancelCalled } = makeChunkedRequest({
 			chunkSize: 1024,
 			maxChunks: 8,
 			neverYields: true,
@@ -716,6 +723,9 @@ describe('body limits — web-native chunked and stalled bodies', () => {
 
 		expect(res.status).toBe(408);
 		expect(await res.text()).toContain('request_timeout');
+		// The watchdog abort must ALSO cancel the reader — a stalled upload that
+		// keeps its stream open pins the connection even after the 408.
+		expect(cancelCalled()).toBe(true);
 	});
 
 	it('a stalled node-stream drain gets the 408 envelope through the express adapter', async () => {

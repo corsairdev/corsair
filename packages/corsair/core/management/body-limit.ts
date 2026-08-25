@@ -108,7 +108,7 @@ export type CappedReadOptions = {
  * watchdog — the Web-runtime counterpart of the Node bridge's drainRawBody,
  * which such adapters bypass entirely. Byte counting (rather than trusting
  * content-length) is what bounds chunked bodies that declare no length at
- * all; reader.cancel() on overflow mirrors discardRequestBody so the
+ * all; reader.cancel() on EVERY error path mirrors discardRequestBody so the
  * connection is released instead of pinned until the sender finishes.
  */
 export async function readRequestBodyTextCapped(
@@ -117,33 +117,37 @@ export async function readRequestBodyTextCapped(
 ): Promise<string> {
 	if (req.body === null) return '';
 	const reader = req.body.getReader();
-	const chunks: Uint8Array[] = [];
-	let total = 0;
-	for (;;) {
-		const { done, value } = await withBodyStallTimeout(
-			() => reader.read(),
-			limits.bodyStallTimeoutMs,
-		);
-		if (done) break;
-		total += value.byteLength;
-		if (total > limits.maxBodyBytes) {
-			try {
-				await reader.cancel();
-			} catch {
-				// The stream may already be closed or errored — cancel is hygiene
-				// here, not control flow; the 413 below is the real answer.
-			}
-			throw bodyTooLargeError(limits.maxBodyBytes);
+	try {
+		const chunks: Uint8Array[] = [];
+		let total = 0;
+		for (;;) {
+			const { done, value } = await withBodyStallTimeout(
+				() => reader.read(),
+				limits.bodyStallTimeoutMs,
+			);
+			if (done) break;
+			total += value.byteLength;
+			if (total > limits.maxBodyBytes)
+				throw bodyTooLargeError(limits.maxBodyBytes);
+			chunks.push(value);
 		}
-		chunks.push(value);
+		// Decode once over the concatenated bytes: per-chunk decoding would split
+		// multi-byte UTF-8 characters across chunk boundaries.
+		const full = new Uint8Array(total);
+		let offset = 0;
+		for (const chunk of chunks) {
+			full.set(chunk, offset);
+			offset += chunk.byteLength;
+		}
+		return new TextDecoder().decode(full);
+	} catch (err) {
+		// Release the stream on EVERY abort path — size overflow AND a stalled
+		// read the watchdog rejected — mirroring drainRawBody's iterator.return().
+		// Per WHATWG streams, cancel() settles any pending read() with
+		// { done: true }, so the raced read never dangles. Fire-and-forget:
+		// awaiting could hang on exactly the hostile sources this cleanup
+		// exists for; rejections are impossible to observe meaningfully here.
+		void reader.cancel().catch(() => {});
+		throw err;
 	}
-	// Decode once over the concatenated bytes: per-chunk decoding would split
-	// multi-byte UTF-8 characters across chunk boundaries.
-	const full = new Uint8Array(total);
-	let offset = 0;
-	for (const chunk of chunks) {
-		full.set(chunk, offset);
-		offset += chunk.byteLength;
-	}
-	return new TextDecoder().decode(full);
 }

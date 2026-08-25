@@ -146,8 +146,13 @@ async function drainRawBody(
 		// than left paused mid-upload (the adapters' discardRequestBody covers
 		// the response side; this covers the stream side). Fire-and-forget:
 		// awaiting return() could hang on exactly the hostile streams this
-		// cleanup exists for.
-		void Promise.resolve(iterator.return?.()).catch(() => {});
+		// cleanup exists for. The sync guard keeps a misbehaving source's
+		// return() from masking the real error with a 500.
+		try {
+			void Promise.resolve(iterator.return?.()).catch(() => {});
+		} catch {
+			// Cleanup is hygiene here, not control flow — err below is the answer.
+		}
 		throw err;
 	}
 }
