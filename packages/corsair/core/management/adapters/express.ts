@@ -23,7 +23,7 @@ import {
 // With no parser it drains the raw stream; with express.text()/raw() it passes
 // the value through.
 //
-// ⚠️ express.json() BEFORE this handler breaks Hub signatures. A global
+//  express.json() BEFORE this handler breaks Hub signatures. A global
 // `app.use(express.json())` parses the body into a JS object; the original
 // bytes are gone (Node streams can't be rewound), so re-serialization is lossy
 // and HMAC verification fails with "Invalid tunnel signature" — often only for
@@ -42,7 +42,7 @@ import {
 //      The bridge prefers `req.rawBody` verbatim (NestJS `rawBody: true`
 //      follows the same convention).
 //
-// ⚠️ Do NOT key anything off req._body — body-parser 2.x / Express 5 removed it.
+//  Do NOT key anything off req._body — body-parser 2.x / Express 5 removed it.
 // ─────────────────────────────────────────────────────────────────────────────
 
 type ExpressLikeRequest = NodeLikeRequest & {
