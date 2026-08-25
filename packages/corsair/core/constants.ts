@@ -84,6 +84,7 @@ export const BaseProviders = [
 	'chatbotkit',
 	'circleci',
 	'clientary',
+	'clockify',
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
@@ -277,6 +278,7 @@ export const ProviderDisplayNames = {
 	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
+	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
@@ -477,6 +479,7 @@ export type AllProviders =
 	| 'chatbotkit'
 	| 'circleci'
 	| 'clientary'
+	| 'clockify'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
