@@ -1,13 +1,27 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+
+import { ApiError, request } from 'corsair/http';
 
 export class CountdownApiAPIError extends Error {
+	public readonly status?: number;
+	public readonly statusText?: string;
+	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+
 	constructor(
 		message: string,
-		public readonly code?: string,
+		public readonly code?: number,
+		options?: { cause?: Error },
 	) {
-		super(message);
+		super(message, options);
 		this.name = 'CountdownApiAPIError';
+
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+		}
 	}
 }
 
@@ -40,8 +54,16 @@ export async function makeCountdownApiRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new CountdownApiAPIError(error.message, error.status, {
+				cause: error,
+			});
+		}
+
 		if (error instanceof Error) {
-			throw new CountdownApiAPIError(error.message);
+			throw new CountdownApiAPIError(error.message, undefined, {
+				cause: error,
+			});
 		}
 
 		throw new CountdownApiAPIError('Unknown Countdown API error');

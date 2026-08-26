@@ -8,7 +8,7 @@ export const get: CountdownApiEndpoints['autocomplete'] = async (
 ) => {
 	const response = await makeCountdownApiRequest('/request', ctx.key, {
 		type: 'autocomplete',
-		query: input.query,
+		search_term: input.query,
 		ebay_domain: input.ebay_domain,
 	});
 
