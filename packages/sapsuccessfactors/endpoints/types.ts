@@ -12,11 +12,12 @@ const ApproveCalibrationSessionResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type ApproveCalibrationSessionResponse = z.infer<
@@ -37,11 +38,12 @@ const GetCalibrationSessionByIdResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetCalibrationSessionByIdResponse = z.infer<
@@ -65,11 +67,12 @@ const GetCalibrationSessionsResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetCalibrationSessionsResponse = z.infer<
@@ -86,11 +89,12 @@ const GetOdataMetadataCalibSessionServiceResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetOdataMetadataCalibSessionServiceResponse = z.infer<
@@ -111,11 +115,12 @@ const GetCalibrationSubjectByIdResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetCalibrationSubjectByIdResponse = z.infer<
@@ -140,11 +145,12 @@ const GetCalibrationSubjectRatingsResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetCalibrationSubjectRatingsResponse = z.infer<
@@ -164,11 +170,12 @@ const UpdateCalibrationSubjectRatingsResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type UpdateCalibrationSubjectRatingsResponse = z.infer<
@@ -185,11 +192,12 @@ const CreateOnboardeeResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type CreateOnboardeeResponse = z.infer<
@@ -211,11 +219,12 @@ const GetOnb2ProcessResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetOnb2ProcessResponse = z.infer<
@@ -232,11 +241,12 @@ const GetOdataMetadataOnboardingAddlResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetOdataMetadataOnboardingAddlResponse = z.infer<
@@ -256,11 +266,12 @@ const UpdateInternalUsernameNewHiresAfterResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type UpdateInternalUsernameNewHiresAfterResponse = z.infer<
@@ -279,11 +290,12 @@ const CreateAFeedbackRequestResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type CreateAFeedbackRequestResponse = z.infer<
@@ -307,11 +319,12 @@ const GetFeedbackRecordsServiceAvailableResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFeedbackRecordsServiceAvailableResponse = z.infer<
@@ -335,11 +348,12 @@ const GetPendingFeedbackRequestsFeedbackResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetPendingFeedbackRequestsFeedbackResponse = z.infer<
@@ -358,11 +372,12 @@ const GiveFeedbackOrRespondToAFeedbackRequestResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GiveFeedbackOrRespondToAFeedbackRequestResponse = z.infer<
@@ -379,11 +394,12 @@ const RefreshMetadataContFeedbackServiceResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type RefreshMetadataContFeedbackServiceResponse = z.infer<
@@ -402,11 +418,12 @@ const CreateUpdateSuccessorNominationResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type CreateUpdateSuccessorNominationResponse = z.infer<
@@ -425,11 +442,12 @@ const DeleteNominationPositionTalentPoolResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type DeleteNominationPositionTalentPoolResponse = z.infer<
@@ -446,11 +464,12 @@ const GetOdataMetadataForNominationServiceResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetOdataMetadataForNominationServiceResponse = z.infer<
@@ -472,11 +491,12 @@ const GetTalentPoolResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetTalentPoolResponse = z.infer<typeof GetTalentPoolResponseSchema>;
@@ -498,11 +518,12 @@ const GetApplicationInterviewResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetApplicationInterviewResponse = z.infer<
@@ -526,11 +547,12 @@ const GetInterviewOverallAssessmentResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetInterviewOverallAssessmentResponse = z.infer<
@@ -554,11 +576,12 @@ const GetJobApplicationResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetJobApplicationResponse = z.infer<
@@ -582,11 +605,12 @@ const GetJobRequisitionResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetJobRequisitionResponse = z.infer<
@@ -610,11 +634,12 @@ const GetJobReqScreeningQuestionResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetJobReqScreeningQuestionResponse = z.infer<
@@ -636,11 +661,12 @@ const ListCandidatesResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type ListCandidatesResponse = z.infer<
@@ -664,11 +690,12 @@ const GetFoBusinessUnitResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFoBusinessUnitResponse = z.infer<
@@ -690,11 +717,12 @@ const GetFoCompanyResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFoCompanyResponse = z.infer<typeof GetFoCompanyResponseSchema>;
@@ -714,11 +742,12 @@ const GetFoCostCenterResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFoCostCenterResponse = z.infer<
@@ -740,11 +769,12 @@ const GetFoDepartmentResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFoDepartmentResponse = z.infer<
@@ -766,11 +796,12 @@ const GetFoJobCodeResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFoJobCodeResponse = z.infer<typeof GetFoJobCodeResponseSchema>;
@@ -790,11 +821,12 @@ const GetFoJobFunctionResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFoJobFunctionResponse = z.infer<
@@ -816,11 +848,12 @@ const GetFoLocationResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFoLocationResponse = z.infer<typeof GetFoLocationResponseSchema>;
@@ -840,11 +873,12 @@ const GetFoPayGroupResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFoPayGroupResponse = z.infer<typeof GetFoPayGroupResponseSchema>;
@@ -864,11 +898,12 @@ const GetPositionResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetPositionResponse = z.infer<typeof GetPositionResponseSchema>;
@@ -891,11 +926,12 @@ const GetCustomMdfObjectResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetCustomMdfObjectResponse = z.infer<
@@ -917,11 +953,12 @@ const GetPicklistResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetPicklistResponse = z.infer<typeof GetPicklistResponseSchema>;
@@ -943,11 +980,12 @@ const GetPicklistOptionResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetPicklistOptionResponse = z.infer<
@@ -965,11 +1003,12 @@ const GetCurrentUserResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetCurrentUserResponse = z.infer<
@@ -986,11 +1025,12 @@ const GetOdataUserMetadataResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetOdataUserMetadataResponse = z.infer<
@@ -1012,11 +1052,12 @@ const ListUsersResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type ListUsersResponse = z.infer<typeof ListUsersResponseSchema>;
@@ -1033,11 +1074,12 @@ const GetPerPersonByIdResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetPerPersonByIdResponse = z.infer<
@@ -1059,11 +1101,12 @@ const ListPerPersonResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type ListPerPersonResponse = z.infer<typeof ListPerPersonResponseSchema>;
@@ -1083,11 +1126,12 @@ const GetPerPersonalResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetPerPersonalResponse = z.infer<
@@ -1111,11 +1155,12 @@ const GetBackgroundEducationResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetBackgroundEducationResponse = z.infer<
@@ -1139,11 +1184,12 @@ const GetBackgroundMobilityResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetBackgroundMobilityResponse = z.infer<
@@ -1167,11 +1213,12 @@ const ListEmpEmploymentResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type ListEmpEmploymentResponse = z.infer<
@@ -1195,11 +1242,12 @@ const GetEmpEmploymentTerminationResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetEmpEmploymentTerminationResponse = z.infer<
@@ -1221,11 +1269,12 @@ const GetWorkOrderResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetWorkOrderResponse = z.infer<typeof GetWorkOrderResponseSchema>;
@@ -1247,11 +1296,12 @@ const GetEmpPayCompRecurringResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetEmpPayCompRecurringResponse = z.infer<
@@ -1275,11 +1325,12 @@ const GetEmpPayCompNonRecurringResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetEmpPayCompNonRecurringResponse = z.infer<
@@ -1303,11 +1354,12 @@ const GetGoalPlanTemplateResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetGoalPlanTemplateResponse = z.infer<
@@ -1330,11 +1382,12 @@ const GetGoalsByPlanResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetGoalsByPlanResponse = z.infer<
@@ -1356,11 +1409,12 @@ const GetFormContentResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetFormContentResponse = z.infer<
@@ -1379,11 +1433,12 @@ const CreateLearningActivitiesBulkResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type CreateLearningActivitiesBulkResponse = z.infer<
@@ -1400,11 +1455,12 @@ const GetCdpLearningMetadataResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetCdpLearningMetadataResponse = z.infer<
@@ -1421,11 +1477,12 @@ const RefreshCdpLearningMetadataResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type RefreshCdpLearningMetadataResponse = z.infer<
@@ -1447,11 +1504,12 @@ const GetEmployeeTimeResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetEmployeeTimeResponse = z.infer<
@@ -1475,11 +1533,12 @@ const GetEmployeeTimesheetResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetEmployeeTimesheetResponse = z.infer<
@@ -1503,11 +1562,12 @@ const GetTemporaryTimeInformationResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetTemporaryTimeInformationResponse = z.infer<
@@ -1531,11 +1591,12 @@ const GetTimeAccountSnapshotResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetTimeAccountSnapshotResponse = z.infer<
@@ -1552,11 +1613,12 @@ const GetOdataMetadataClockInclockOutResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type GetOdataMetadataClockInclockOutResponse = z.infer<
@@ -1580,11 +1642,12 @@ const QueryAllAvailableClockClockOutResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type QueryAllAvailableClockClockOutResponse = z.infer<
@@ -1605,11 +1668,12 @@ const QueryClockClockOutGroupCodeTimeResponseSchema = z
 	.object({
 		d: z
 			.object({
-				results: z.array(z.unknown()),
-				id: z.string(),
-				status: z.string(),
+				results: z.array(z.unknown()).optional(),
+				id: z.string().optional(),
+				status: z.string().optional(),
 			})
-			.catchall(z.unknown()),
+			.catchall(z.unknown())
+			.optional(),
 	})
 	.passthrough();
 export type QueryClockClockOutGroupCodeTimeResponse = z.infer<

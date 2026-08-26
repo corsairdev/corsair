@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -7,12 +6,9 @@ import type {
 	CorsairPlugin,
 	CorsairPluginContext,
 	KeyBuilderContext,
-	PickAuth,
-	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
 import {
 	A,
 	Application,
@@ -64,10 +60,8 @@ import { SapsuccessfactorsSchema } from './schema';
 
 export type SapsuccessfactorsPluginOptions = {
 	/** Cloud-based human capital management software covering Employee Central, Recruiting, Performance & Goals, Learning, Compensation, and more. */
-	authType?: PickAuth<'api_key'>;
 	key?: string;
 	apiBaseUrl?: string;
-	webhookSecret?: string;
 	hooks?: InternalSapsuccessfactorsPlugin['hooks'];
 	webhookHooks?: InternalSapsuccessfactorsPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
@@ -605,8 +599,6 @@ export const sapsuccessfactorsEndpointSchemas = {
 	},
 } as const;
 
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
 const sapsuccessfactorsEndpointMeta = {
 	'approve.approveCalibrationSession': {
 		riskLevel: 'write',
@@ -867,12 +859,6 @@ const sapsuccessfactorsEndpointMeta = {
 	},
 } satisfies RequiredPluginEndpointMeta<typeof sapsuccessfactorsEndpointsNested>;
 
-export const sapsuccessfactorsAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
 export type BaseSapsuccessfactorsPlugin<
 	T extends SapsuccessfactorsPluginOptions,
 > = CorsairPlugin<
@@ -880,8 +866,7 @@ export type BaseSapsuccessfactorsPlugin<
 	typeof SapsuccessfactorsSchema,
 	typeof sapsuccessfactorsEndpointsNested,
 	typeof sapsuccessfactorsWebhooksNested,
-	T,
-	typeof defaultAuthType
+	T
 >;
 
 export type InternalSapsuccessfactorsPlugin =
@@ -896,13 +881,9 @@ export function sapsuccessfactors<
 	incomingOptions: SapsuccessfactorsPluginOptions &
 		T = {} as SapsuccessfactorsPluginOptions & T,
 ): ExternalSapsuccessfactorsPlugin<T> {
-	const options = {
-		...incomingOptions,
-		authType: incomingOptions.authType ?? defaultAuthType,
-	};
+	const options = { ...incomingOptions };
 	return {
 		id: 'sapsuccessfactors',
-		authConfig: sapsuccessfactorsAuthConfig,
 		schema: SapsuccessfactorsSchema,
 		options,
 		hooks: options.hooks,
@@ -912,13 +893,9 @@ export function sapsuccessfactors<
 		endpointMeta: sapsuccessfactorsEndpointMeta,
 		endpointSchemas: sapsuccessfactorsEndpointSchemas,
 		pluginWebhookMatcher: () => false,
-		keyBuilder: async (ctx: SapsuccessfactorsKeyBuilderContext, source) => {
+		keyBuilder: async (_ctx: SapsuccessfactorsKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-			throw new AuthMissingError('sapsuccessfactors', 'api_key');
+			throw new Error('SAP SuccessFactors API key is required');
 		},
 	} satisfies InternalSapsuccessfactorsPlugin;
 }

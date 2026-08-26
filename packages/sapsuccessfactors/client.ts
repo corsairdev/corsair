@@ -45,19 +45,31 @@ export async function makeSapsuccessfactorsRequest<T>(
 		query,
 	} = options;
 
+	let base = apiBaseUrl.replace(/\/+$/, '');
+	const url = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+	if (base.endsWith('/odata/v2') && url.startsWith('/odata/v2')) {
+		base = base.slice(0, -'/odata/v2'.length);
+	}
+
+	const isSandbox = base.includes('sandbox.api.sap.com');
+
 	const config: OpenAPIConfig = {
-		BASE: apiBaseUrl.replace(/\/+$/, ''),
+		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: isSandbox ? undefined : apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			Accept: 'application/json',
-			Authorization:
-				apiKey.startsWith('Basic ') || apiKey.startsWith('Bearer ')
-					? apiKey
-					: `Bearer ${apiKey}`,
+			...(isSandbox
+				? { APIKey: apiKey, apikey: apiKey }
+				: {
+						Authorization:
+							apiKey.startsWith('Basic ') || apiKey.startsWith('Bearer ')
+								? apiKey
+								: `Bearer ${apiKey}`,
+					}),
 		},
 	};
 

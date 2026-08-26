@@ -28,7 +28,6 @@ describe('SapSuccessfactors Plugin', () => {
 	});
 	const mockCtx = {
 		key: 'test-api-token',
-		authType: 'api_key' as const,
 		options: { apiBaseUrl: 'https://api10.successfactors.com' },
 		database: undefined,
 		$getAccountId: async () => 'acc_test_123',
@@ -41,7 +40,7 @@ describe('SapSuccessfactors Plugin', () => {
 
 	it('initializes plugin with correct id and configuration', () => {
 		expect(plugin.id).toBe('sapsuccessfactors');
-		expect(plugin.authConfig).toBeDefined();
+		expect(plugin.authConfig).toBeUndefined();
 		expect(plugin.endpoints).toBeDefined();
 		expect(plugin.schema).toBeDefined();
 	});
