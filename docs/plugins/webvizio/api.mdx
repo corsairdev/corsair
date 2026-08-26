@@ -1,0 +1,83 @@
+---
+title: API
+description: "API reference for Webvizio: every `webvizio.api.*` operation with input and output types."
+---
+
+Every `webvizio.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Projects
+
+### list
+
+`projects.list`
+
+List all available Webvizio projects
+
+**Risk:** `read`
+
+```ts
+await corsair.webvizio.api.projects.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  uuid?: string,
+  id?: string | number,
+  name?: string,
+  description?: string | null,
+  url?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Webhooks
+
+### list
+
+`webhooks.list`
+
+List Webvizio webhook subscriptions
+
+**Risk:** `read`
+
+```ts
+await corsair.webvizio.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string | number,
+  url?: string,
+  event?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

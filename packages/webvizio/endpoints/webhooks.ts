@@ -1,28 +1,21 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeWebvizioRequest } from '../client';
+import { makeWebvizioRequest, WEBVIZIO_WEBHOOK_API_BASE } from '../client';
 import type { WebvizioEndpoints } from '../index';
+import { WebvizioEndpointOutputSchemas } from './types';
 
 export const list: WebvizioEndpoints['webhooksList'] = async (ctx, input) => {
-        const result = await makeWebvizioRequest<unknown[]>(
-                '/webhook',
-                ctx.key,
-                {
-                        baseUrl: 'https://app.webvizio.com/api/v1',
-                },
-        );
+	const result = await makeWebvizioRequest<unknown>('/webhook', ctx.key, {
+		baseUrl: WEBVIZIO_WEBHOOK_API_BASE,
+	});
 
-        await logEventFromContext(
-                ctx,
-                'webvizio.webhooks.list',
-                { ...input },
-                'completed',
-        );
+	const parsed = WebvizioEndpointOutputSchemas.webhooksList.parse(result);
 
-        return result as WebvizioEndpoints['webhooksList'] extends (
-                ctx: infer _,
-                input: infer _,
-        ) => Promise<infer R>
-                ? R
+	await logEventFromContext(
+		ctx,
+		'webvizio.webhooks.list',
+		{ ...input },
+		'completed',
+	);
 
-: never;
+	return parsed;
 };

@@ -2,11 +2,11 @@ import { list as projectsList } from './projects';
 import { list as webhooksList } from './webhooks';
 
 export const Projects = {
-        list: projectsList,
+	list: projectsList,
 };
 
 export const Webhooks = {
-        list: webhooksList,
+	list: webhooksList,
 };
 
 export * from './types';
