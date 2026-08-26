@@ -1,4 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
+import { messageEntityId } from '../entity-ids';
 import type { SlackbotContext, SlackbotWebhooks } from '../index';
 import type { MessageEvent } from './types';
 import {
@@ -47,11 +48,10 @@ function createMessageHandler(eventName: string) {
 
 		let corsairEntityId = '';
 		if (ctx.db.messages && event.ts) {
-			// Slack scopes `ts` to a channel, so it is not unique on its own: the
-			// same timestamp can occur in two channels and would collide on a
-			// store keyed by entity id alone, silently overwriting one message
-			// with the other. The channel qualifies it.
-			const entityId = `${event.channel}:${event.ts}`;
+			// Keyed through the shared helper so the `chat.*` endpoints and these
+			// handlers agree: a bare `ts` is only unique within a channel, and
+			// disagreeing writers would cache one message as two rows.
+			const entityId = messageEntityId(event.channel, event.ts);
 			try {
 				const entity = await ctx.db.messages.upsertByEntityId(entityId, {
 					id: entityId,

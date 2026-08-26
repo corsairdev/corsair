@@ -1,5 +1,6 @@
 import { logEventFromContext } from 'corsair/core';
 import { makeSlackbotRequest } from '../client';
+import { messageEntityId } from '../entity-ids';
 import type { SlackbotEndpoints } from '../index';
 import type { SlackbotEndpointOutputs } from './types';
 
@@ -10,10 +11,12 @@ export const post: SlackbotEndpoints['messagesPost'] = async (ctx, input) => {
 
 	if (result.ok && result.ts && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsertByEntityId(result.ts, {
-				id: result.ts,
+			const channel = result.channel ?? input.channel;
+			const entityId = messageEntityId(channel, result.ts);
+			await ctx.db.messages.upsertByEntityId(entityId, {
+				id: entityId,
 				ts: result.ts,
-				channel: result.channel ?? input.channel,
+				channel,
 				text: result.message?.text ?? input.text,
 				user: result.message?.user,
 				bot_id: result.message?.bot_id,
@@ -142,10 +145,12 @@ export const update: SlackbotEndpoints['messagesUpdate'] = async (
 
 	if (result.ok && result.ts && ctx.db.messages) {
 		try {
-			await ctx.db.messages.upsertByEntityId(result.ts, {
-				id: result.ts,
+			const channel = result.channel ?? input.channel;
+			const entityId = messageEntityId(channel, result.ts);
+			await ctx.db.messages.upsertByEntityId(entityId, {
+				id: entityId,
 				ts: result.ts,
-				channel: result.channel ?? input.channel,
+				channel,
 				text: result.text ?? result.message?.text ?? input.text,
 				user: result.message?.user,
 				bot_id: result.message?.bot_id,
@@ -176,7 +181,9 @@ export const deleteMessage: SlackbotEndpoints['messagesDelete'] = async (
 
 	if (result.ok && ctx.db.messages) {
 		try {
-			await ctx.db.messages.deleteByEntityId(input.ts);
+			await ctx.db.messages.deleteByEntityId(
+				messageEntityId(input.channel, input.ts),
+			);
 		} catch (error) {
 			console.warn('Failed to evict deleted message from cache:', error);
 		}

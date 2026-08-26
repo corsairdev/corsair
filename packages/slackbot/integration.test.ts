@@ -22,7 +22,7 @@ import {
 	SLACKBOT_RATE_LIMIT_CONFIG,
 	SlackbotAPIError,
 } from './client';
-import { Conversations, Files, Users } from './endpoints';
+import { Conversations, Files, Messages, Users } from './endpoints';
 import { errorHandlers } from './error-handlers';
 
 function makeCtx() {
@@ -556,5 +556,98 @@ describe('files.download size bounding', () => {
 		});
 		expect(Buffer.from(result.content, 'base64').toString()).toBe('hello');
 		expect(result.byte_size).toBe(5);
+	});
+});
+
+describe('message cache key', () => {
+	// The webhook handlers key `db.messages` on `${channel}:${ts}` (pinned by
+	// the matching suite in webhooks.test.ts). The `chat.*` endpoints write to
+	// that same table, so they have to use the same scheme. Keying on a bare
+	// `ts` here would store one Slack message as two rows, leave an update
+	// invisible to the row the webhook wrote, and let a delete miss it
+	// entirely. The literal keys below are deliberate: they pin both writers
+	// to one scheme, so changing either side alone fails a test.
+	const TS = '1700000000.000100';
+
+	function makeCachingCtx() {
+		const upserts: { key: string; id: unknown }[] = [];
+		const deletes: string[] = [];
+		const ctx = {
+			key: 'xoxb-test-token',
+			options: {},
+			db: {
+				messages: {
+					upsertByEntityId: async (
+						key: string,
+						row: Record<string, unknown>,
+					) => {
+						upserts.push({ key, id: row.id });
+						return { id: key };
+					},
+					deleteByEntityId: async (key: string) => {
+						deletes.push(key);
+					},
+				},
+			},
+		} as never;
+		return { ctx, upserts, deletes };
+	}
+
+	it('caches a posted message under channel:ts', async () => {
+		requestMock.mockResolvedValueOnce({
+			ok: true,
+			channel: 'C1',
+			ts: TS,
+			message: { text: 'hi' },
+		});
+		const { ctx, upserts } = makeCachingCtx();
+
+		await Messages.post(ctx, { channel: 'C1', text: 'hi' });
+
+		expect(upserts).toEqual([{ key: `C1:${TS}`, id: `C1:${TS}` }]);
+	});
+
+	it('falls back to the requested channel when the response omits it', async () => {
+		requestMock.mockResolvedValueOnce({ ok: true, ts: TS });
+		const { ctx, upserts } = makeCachingCtx();
+
+		await Messages.post(ctx, { channel: 'C1', text: 'hi' });
+
+		expect(upserts.map((u) => u.key)).toEqual([`C1:${TS}`]);
+	});
+
+	it('updates the row the webhook wrote rather than a second one', async () => {
+		requestMock.mockResolvedValueOnce({
+			ok: true,
+			channel: 'C1',
+			ts: TS,
+			text: 'edited',
+		});
+		const { ctx, upserts } = makeCachingCtx();
+
+		await Messages.update(ctx, { channel: 'C1', ts: TS, text: 'edited' });
+
+		expect(upserts).toEqual([{ key: `C1:${TS}`, id: `C1:${TS}` }]);
+	});
+
+	it('evicts the row the webhook wrote when a message is deleted', async () => {
+		requestMock.mockResolvedValueOnce({ ok: true });
+		const { ctx, deletes } = makeCachingCtx();
+
+		await Messages.delete(ctx, { channel: 'C1', ts: TS });
+
+		expect(deletes).toEqual([`C1:${TS}`]);
+	});
+
+	it('keeps identical timestamps in different channels distinct', async () => {
+		requestMock
+			.mockResolvedValueOnce({ ok: true, channel: 'C1', ts: TS })
+			.mockResolvedValueOnce({ ok: true, channel: 'C2', ts: TS });
+		const { ctx, upserts } = makeCachingCtx();
+
+		await Messages.post(ctx, { channel: 'C1', text: 'hi' });
+		await Messages.post(ctx, { channel: 'C2', text: 'hi' });
+
+		expect(new Set(upserts.map((u) => u.key)).size).toBe(2);
 	});
 });
