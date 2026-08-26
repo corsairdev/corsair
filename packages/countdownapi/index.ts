@@ -1,21 +1,19 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+
+import { Autocomplete, Product, Search } from './endpoints';
 import type {
 	CountdownApiEndpointInputs,
 	CountdownApiEndpointOutputs,
@@ -26,21 +24,25 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { CountdownApiSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveCountdownApiOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchCountdownApiTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	CountdownApiWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+
+const countdownApiEndpointsNested = {
+	search: {
+		get: Search.get,
+	},
+	product: {
+		get: Product.get,
+	},
+	autocomplete: {
+		get: Autocomplete.get,
+	},
+} as const;
+
+const countdownApiWebhooksNested = {} as const;
 
 export type CountdownApiPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalCountdownApiPlugin['hooks'];
-	webhookHooks?: InternalCountdownApiPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof countdownApiEndpointsNested>;
 };
@@ -53,10 +55,6 @@ export type CountdownApiContext = CorsairPluginContext<
 export type CountdownApiKeyBuilderContext =
 	KeyBuilderContext<CountdownApiPluginOptions>;
 
-export type CountdownApiBoundEndpoints = BindEndpoints<
-	typeof countdownApiEndpointsNested
->;
-
 type CountdownApiEndpoint<K extends keyof CountdownApiEndpointOutputs> =
 	CorsairEndpoint<
 		CountdownApiContext,
@@ -65,57 +63,46 @@ type CountdownApiEndpoint<K extends keyof CountdownApiEndpointOutputs> =
 	>;
 
 export type CountdownApiEndpoints = {
-	exampleGet: CountdownApiEndpoint<'exampleGet'>;
+	search: CountdownApiEndpoint<'search'>;
+	product: CountdownApiEndpoint<'product'>;
+	autocomplete: CountdownApiEndpoint<'autocomplete'>;
 };
 
-type CountdownApiWebhook<
-	K extends keyof CountdownApiWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<CountdownApiContext, TEvent, CountdownApiWebhookOutputs[K]>;
-
-export type CountdownApiWebhooks = {
-	example: CountdownApiWebhook<'example', ExampleEvent>;
-};
-
-export type CountdownApiBoundWebhooks = BindWebhooks<CountdownApiWebhooks>;
-
-const countdownApiEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
-
-const countdownApiWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+export type CountdownApiBoundEndpoints = BindEndpoints<
+	typeof countdownApiEndpointsNested
+>;
 
 export const countdownApiEndpointSchemas = {
-	'example.get': {
-		input: CountdownApiEndpointInputSchemas.exampleGet,
-		output: CountdownApiEndpointOutputSchemas.exampleGet,
+	'search.get': {
+		input: CountdownApiEndpointInputSchemas.search,
+		output: CountdownApiEndpointOutputSchemas.search,
+	},
+	'product.get': {
+		input: CountdownApiEndpointInputSchemas.product,
+		output: CountdownApiEndpointOutputSchemas.product,
+	},
+	'autocomplete.get': {
+		input: CountdownApiEndpointInputSchemas.autocomplete,
+		output: CountdownApiEndpointOutputSchemas.autocomplete,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof countdownApiEndpointsNested
 >;
 
-const countdownApiWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof countdownApiWebhooksNested
->;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+const defaultAuthType: AuthTypes = 'api_key';
 
 const countdownApiEndpointMeta = {
-	'example.get': {
+	'search.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Search eBay products using Countdown API',
+	},
+	'product.get': {
+		riskLevel: 'read',
+		description: 'Get eBay product data using Countdown API',
+	},
+	'autocomplete.get': {
+		riskLevel: 'read',
+		description: 'Get eBay search autocomplete suggestions',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof countdownApiEndpointsNested
@@ -123,9 +110,6 @@ const countdownApiEndpointMeta = {
 
 export const countdownApiAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -154,51 +138,29 @@ export function countdownapi<const T extends CountdownApiPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'countdownapi',
 		authConfig: countdownApiAuthConfig,
 		schema: CountdownApiSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: countdownApiEndpointsNested,
 		webhooks: countdownApiWebhooksNested,
 		endpointMeta: countdownApiEndpointMeta,
 		endpointSchemas: countdownApiEndpointSchemas,
-		webhookSchemas: countdownApiWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-countdownapi-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchCountdownApiTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveCountdownApiOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: CountdownApiKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				const key = await ctx.keys.get_api_key();
+				return key ?? '';
 			}
 
 			return '';
@@ -207,12 +169,12 @@ export function countdownapi<const T extends CountdownApiPluginOptions>(
 }
 
 export type {
+	AutocompleteInput,
+	AutocompleteResponse,
 	CountdownApiEndpointInputs,
 	CountdownApiEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	ProductInput,
+	ProductResponse,
+	SearchInput,
+	SearchResponse,
 } from './endpoints/types';
-export type {
-	CountdownApiWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';

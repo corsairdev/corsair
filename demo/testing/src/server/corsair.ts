@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
+import { countdownapi } from '@corsair-dev/countdownapi';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';

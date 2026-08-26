@@ -1,29 +1,60 @@
 import { z } from 'zod';
 
-const ExampleGetInputSchema = z.object({
-	id: z.string(),
+const SearchInputSchema = z.object({
+	query: z.string().min(1),
+	ebay_domain: z.string().min(1).default('ebay.com'),
 });
 
-export type ExampleGetInput = z.infer<typeof ExampleGetInputSchema>;
+const ProductInputSchema = z
+	.object({
+		url: z.string().url().optional(),
+		epid: z.string().optional(),
+		gtin: z.string().optional(),
+		ebay_domain: z.string().min(1).default('ebay.com'),
+		include_html: z.boolean().optional(),
+		skip_gtin_cache: z.boolean().optional(),
+		include_parts_compatibility: z.boolean().optional(),
+	})
+	.refine(
+		(value) => Boolean(value.url) || Boolean(value.epid) || Boolean(value.gtin),
+		{
+			message: 'Provide at least one of url, epid, or gtin',
+		},
+	);
 
-const ExampleGetResponseSchema = z.object({
-	id: z.string(),
+const AutocompleteInputSchema = z.object({
+	query: z.string().min(1),
+	ebay_domain: z.string().min(1).default('ebay.com'),
 });
 
-export type ExampleGetResponse = z.infer<typeof ExampleGetResponseSchema>;
+export type SearchInput = z.infer<typeof SearchInputSchema>;
+export type ProductInput = z.infer<typeof ProductInputSchema>;
+export type AutocompleteInput = z.infer<typeof AutocompleteInputSchema>;
+
+export type SearchResponse = unknown;
+export type ProductResponse = unknown;
+export type AutocompleteResponse = unknown;
 
 export type CountdownApiEndpointInputs = {
-	exampleGet: ExampleGetInput;
+	search: SearchInput;
+	product: ProductInput;
+	autocomplete: AutocompleteInput;
 };
 
 export type CountdownApiEndpointOutputs = {
-	exampleGet: ExampleGetResponse;
+	search: SearchResponse;
+	product: ProductResponse;
+	autocomplete: AutocompleteResponse;
 };
 
 export const CountdownApiEndpointInputSchemas = {
-	exampleGet: ExampleGetInputSchema,
+	search: SearchInputSchema,
+	product: ProductInputSchema,
+	autocomplete: AutocompleteInputSchema,
 } as const;
 
 export const CountdownApiEndpointOutputSchemas = {
-	exampleGet: ExampleGetResponseSchema,
+	search: z.unknown(),
+	product: z.unknown(),
+	autocomplete: z.unknown(),
 } as const;
