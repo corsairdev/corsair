@@ -64,6 +64,7 @@ export const BaseProviders = [
 	'bart',
 	'basecamp',
 	'baselinker',
+	'baserow',
 	'basin',
 	'betterstack',
 	'bigmailer',
@@ -259,6 +260,7 @@ export const ProviderDisplayNames = {
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
+	baserow: 'Baserow',
 	basin: 'Basin',
 	betterstack: 'Better Stack',
 	bigmailer: 'BigMailer',
@@ -461,6 +463,7 @@ export type AllProviders =
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
+	| 'baserow'
 	| 'basin'
 	| 'betterstack'
 	| 'bigmailer'
