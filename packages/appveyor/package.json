@@ -1,11 +1,10 @@
 {
-  "name": "@corsair/appveyor",
-  "version": "0.1.0",
-  "type": "module",
-  "main": "./src/index.ts",
-  "types": "./src/index.ts",
+  "name": "@corsair-dev/appveyor",
   "scripts": {
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "test": "jest"
+  },
+  "devDependencies": {
+    "@types/jest": "^30.0.0",
+    "jest": "^30.0.0"
   }
 }
