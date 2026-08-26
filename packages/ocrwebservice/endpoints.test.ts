@@ -1,5 +1,6 @@
 import { makeOcrWebServicePostRequest } from './client';
 import { processDocument } from './endpoints/process-document';
+import { ProcessDocumentInputSchema } from './endpoints/types';
 
 jest.mock('./client', () => ({
 	makeOcrWebServicePostRequest: jest.fn(),
@@ -80,5 +81,89 @@ describe('OCR Web Service processDocument endpoint', () => {
 				gettext: true,
 			}),
 		).rejects.toThrow('OCR Web Service failed: Unable to process document');
+	});
+});
+describe('OCR Web Service outputformat validation', () => {
+	const file = new Blob(['test document'], {
+		type: 'application/pdf',
+	});
+
+	it('accepts all supported single output formats', () => {
+		const formats = [
+			'pdf',
+			'doc',
+			'xls',
+			'rtf',
+			'txt',
+			'pdfimg',
+			'docx',
+			'xlsx',
+		];
+
+		for (const outputformat of formats) {
+			expect(() =>
+				ProcessDocumentInputSchema.parse({
+					file,
+					outputformat,
+				}),
+			).not.toThrow();
+		}
+	});
+
+	it('accepts two comma-separated output formats', () => {
+		expect(() =>
+			ProcessDocumentInputSchema.parse({
+				file,
+				outputformat: 'pdf,txt',
+			}),
+		).not.toThrow();
+
+		expect(() =>
+			ProcessDocumentInputSchema.parse({
+				file,
+				outputformat: 'docx,xlsx',
+			}),
+		).not.toThrow();
+	});
+
+	it('rejects more than two output formats', () => {
+		expect(() =>
+			ProcessDocumentInputSchema.parse({
+				file,
+				outputformat: 'pdf,txt,docx',
+			}),
+		).toThrow();
+	});
+
+	it('rejects unsupported output formats', () => {
+		expect(() =>
+			ProcessDocumentInputSchema.parse({
+				file,
+				outputformat: 'invalid',
+			}),
+		).toThrow();
+	});
+
+	it('rejects empty output format values', () => {
+		expect(() =>
+			ProcessDocumentInputSchema.parse({
+				file,
+				outputformat: '',
+			}),
+		).toThrow();
+
+		expect(() =>
+			ProcessDocumentInputSchema.parse({
+				file,
+				outputformat: 'pdf,',
+			}),
+		).toThrow();
+
+		expect(() =>
+			ProcessDocumentInputSchema.parse({
+				file,
+				outputformat: ',pdf',
+			}),
+		).toThrow();
 	});
 });

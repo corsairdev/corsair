@@ -6,7 +6,28 @@ export const OCRWEBSERVICE_OUTPUT_FORMATS = [
 	'xls',
 	'rtf',
 	'txt',
+	'pdfimg',
+	'docx',
+	'xlsx',
 ] as const;
+
+const outputFormatSchema = z.string().refine(
+	(value) => {
+		const formats = value.split(',');
+
+		if (formats.length < 1 || formats.length > 2) {
+			return false;
+		}
+
+		return formats.every((format) =>
+			(OCRWEBSERVICE_OUTPUT_FORMATS as readonly string[]).includes(format),
+		);
+	},
+	{
+		message:
+			'Output format must contain one or two supported comma-separated formats.',
+	},
+);
 
 const ProcessDocumentInputSchema = z
 	.object({
@@ -20,7 +41,7 @@ const ProcessDocumentInputSchema = z
 
 		zone: z.string().min(1).optional(),
 
-		outputformat: z.enum(OCRWEBSERVICE_OUTPUT_FORMATS).optional(),
+		outputformat: outputFormatSchema.optional(),
 
 		gettext: z.boolean().optional(),
 
