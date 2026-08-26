@@ -149,7 +149,7 @@ const webvizioEndpointMeta = {
 
 export const webvizioAuthConfig = {
 	api_key: {
-		account: ['one'] as const,
+		account: ['project_id', 'project_uuid', 'account_id', 'one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 

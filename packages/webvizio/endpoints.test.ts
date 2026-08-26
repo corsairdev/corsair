@@ -9,7 +9,7 @@ import {
 } from './client';
 import { Projects, Webhooks } from './endpoints';
 import { errorHandlers } from './error-handlers';
-import { webvizio, webvizioEndpointSchemas } from './index';
+import { webvizio, webvizioAuthConfig, webvizioEndpointSchemas } from './index';
 import { WebvizioSchema } from './schema';
 import {
 	CommentWebhooks,
@@ -139,12 +139,12 @@ describe('Webvizio plugin structure', () => {
 		expect(typeof plugin.pluginTenantWebhookMatcher).toBe('function');
 	});
 
-	it('supports api_key auth configuration and defaults correctly even when authType is undefined', () => {
+	it('supports api_key auth configuration and persists matching tenant link types', () => {
 		const plugin = webvizio({ authType: undefined as any });
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.authConfig).toEqual({
-			api_key: { account: ['one'] },
-		});
+		expect(webvizioAuthConfig.api_key.account).toContain('project_id');
+		expect(webvizioAuthConfig.api_key.account).toContain('project_uuid');
+		expect(webvizioAuthConfig.api_key.account).toContain('account_id');
 	});
 });
 
@@ -344,12 +344,63 @@ describe('Webvizio inbound webhook handlers', () => {
 });
 
 describe('Webvizio tenant matcher & webhook matcher', () => {
-	it('matchWebvizioTenantWebhook returns null for single-account API-key connection', () => {
-		const match = matchWebvizioTenantWebhook({
+	it('matches tenant by project_uuid or project_id on project events', () => {
+		const match1 = matchWebvizioTenantWebhook({
 			headers: {},
 			body: { event: 'project.created', payload: { project_uuid: 'uuid-123' } },
 		} as any);
-		expect(match).toBeNull();
+		expect(match1).toEqual({
+			linkType: 'project_uuid',
+			externalId: 'uuid-123',
+		});
+
+		const match2 = matchWebvizioTenantWebhook({
+			headers: {},
+			body: { event: 'project.created', payload: { id: '456' } },
+		} as any);
+		expect(match2).toEqual({ linkType: 'project_id', externalId: '456' });
+	});
+
+	it('matches tenant by account_id when provided', () => {
+		const match = matchWebvizioTenantWebhook({
+			headers: {},
+			body: { event: 'comment.created', payload: { account_id: 'acc-999' } },
+		} as any);
+		expect(match).toEqual({ linkType: 'account_id', externalId: 'acc-999' });
+	});
+
+	it('does NOT mislabel task or comment id as project link when project_id is omitted', () => {
+		const taskMatch = matchWebvizioTenantWebhook({
+			headers: {},
+			body: {
+				event: 'task.created',
+				payload: { id: 'task-789', title: 'Test' },
+			},
+		} as any);
+		expect(taskMatch).toBeNull();
+
+		const commentMatch = matchWebvizioTenantWebhook({
+			headers: {},
+			body: {
+				event: 'comment.created',
+				payload: { id: 'comment-999', text: 'Hello' },
+			},
+		} as any);
+		expect(commentMatch).toBeNull();
+	});
+
+	it('properly extracts project_id on task events when project_id is provided', () => {
+		const taskMatchWithProj = matchWebvizioTenantWebhook({
+			headers: {},
+			body: {
+				event: 'task.created',
+				payload: { id: 'task-789', project_id: 'proj-100', title: 'Test' },
+			},
+		} as any);
+		expect(taskMatchWithProj).toEqual({
+			linkType: 'project_id',
+			externalId: 'proj-100',
+		});
 	});
 
 	it('pluginWebhookMatcher recognizes Webvizio webhook headers and body events', () => {
