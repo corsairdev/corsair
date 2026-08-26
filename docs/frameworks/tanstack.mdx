@@ -7,6 +7,7 @@ icon: "/icons/tanstack.svg"
 
 import ClientReact from '/snippets/frameworks/client-react.mdx';
 import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
 
 TanStack Start is full-stack React with no serialization seam you have to think about. A server function runs on the server, returns typed data, and the type flows straight into the component that called it. Corsair rides that all the way. Call `.db` inside a server function or a route loader and the entity types land in your JSX without a hand-written API boundary.
 
@@ -17,6 +18,12 @@ The adapter ships in core. Each integration is its own package. Add one per serv
 <Install />
 
 Every service is its own `@corsair-dev/*` package. The full catalog with exact ids is in [Plugins](/guides/plugins).
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
 
 ## Mount the handler
 

@@ -7,6 +7,7 @@ icon: "/icons/hono.svg"
 
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
 
 Hono is built on the Web `Request`/`Response` standard, and so is Corsair, so the adapter is a direct fit with nothing to bridge. Corsair serves several paths under its base (delivery, connect, tenants), so one wildcard route with `app.all` catches them all.
 
@@ -15,6 +16,12 @@ Hono is built on the Web `Request`/`Response` standard, and so is Corsair, so th
 The adapter ships in core `corsair`, with no per-runtime package. Add a plugin package per service you integrate (`@corsair-dev/github`, and so on).
 
 <Install />
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
 
 ## Mount the handler
 

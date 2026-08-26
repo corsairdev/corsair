@@ -63,7 +63,8 @@ For a genuinely open-ended sweep, query `corsair_entities` directly with your ow
 ```sql
 SELECT entity_type, entity_id, data, updated_at
 FROM corsair_entities
-WHERE data::text ILIKE '%peterson report%'
+WHERE account_id = ANY($1) -- this tenant's account ids
+  AND data::text ILIKE '%peterson report%'
 ORDER BY updated_at DESC
 LIMIT 50;
 ```

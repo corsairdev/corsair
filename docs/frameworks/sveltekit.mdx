@@ -7,6 +7,7 @@ icon: "/icons/sveltekit.svg"
 
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
 
 SvelteKit keeps server work in `+page.server.ts`. A `load` function fetches, `+page.svelte` renders, and form actions mutate. Corsair drops straight into that flow, with `load` reading from `.db` and form actions writing through `.api`, and the handler itself living in a Web-standard endpoint.
 
@@ -15,6 +16,12 @@ SvelteKit keeps server work in `+page.server.ts`. A `load` function fetches, `+p
 <Install />
 
 The adapters ship inside core `corsair`; add one plugin package per service you connect.
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
 
 ## Project layout
 

@@ -7,8 +7,9 @@ icon: "/icons/fastify.svg"
 
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
 
-Fastify is built for throughput, and the Corsair adapter keeps it that way. It reads the raw request stream itself, so there's no `addContentTypeParser` bridge and no double-parsing of Hub's delivery POSTs. Mount it as a wildcard route, ideally inside its own plugin, so registration and encapsulation stay Fastify-idiomatic.
+Fastify is built for throughput, and the Corsair adapter keeps it that way. It prefers the original request bytes over Fastify's parsed body, so you register a small raw-body parser once (shown below) and Hub's signed deliveries verify cleanly. Mount it as a wildcard route, ideally inside its own plugin, so registration and encapsulation stay Fastify-idiomatic.
 
 ## Install
 
@@ -16,17 +17,25 @@ The adapter ships in core `corsair`. Add a plugin package per service you integr
 
 <Install />
 
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
+
 ## Mount the handler
 
-Register the handler on a catch-all so every path under `/api/corsair` reaches it:
+Register the raw-body parser first, then mount the handler on both the wildcard and the bare base path. The parser is required: Fastify's built-in JSON parser consumes the request bytes, and re-serializing them breaks Hub's signature check, so deliveries fail with `Invalid tunnel signature`. Mounting only `/api/corsair/*` also leaves `/api/corsair` itself a 404.
 
 ```ts corsair-plugin.ts
 import type { FastifyInstance } from 'fastify';
-import { toFastifyHandler } from 'corsair';
+import { registerCorsairRawBodyParser, toFastifyHandler } from 'corsair';
 import { corsair } from './corsair';
 
 export async function corsairRoutes(app: FastifyInstance) {
+    registerCorsairRawBodyParser(app);
     app.all('/api/corsair/*', toFastifyHandler(corsair, { basePath: '/api/corsair' }));
+    app.all('/api/corsair', toFastifyHandler(corsair, { basePath: '/api/corsair' }));
 }
 ```
 

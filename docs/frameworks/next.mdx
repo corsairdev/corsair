@@ -7,6 +7,7 @@ icon: "/icons/next.svg"
 
 import ClientReact from '/snippets/frameworks/client-react.mdx';
 import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
 
 In the App Router, Corsair fits the model you already use. One file under `app/api` is the whole server surface, Server Components read data at render time, and Server Actions handle the writes. Nothing runs on the client that doesn't have to.
 
@@ -15,6 +16,12 @@ In the App Router, Corsair fits the model you already use. One file under `app/a
 <Install />
 
 The adapters ship in core `corsair`; add one `@corsair-dev/*` package per service you connect. The full list is in [Plugins](/guides/plugins).
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
 
 ## Project layout
 

@@ -7,6 +7,7 @@ icon: "/icons/remix.svg"
 
 import ClientReact from '/snippets/frameworks/client-react.mdx';
 import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
 
 Remix splits every route into a `loader` that reads and an `action` that writes. Corsair splits every plugin into `.db` for reads and `.api` for writes. The two models line up one-to-one, so a Corsair-backed route is just Remix with the data source swapped. React Router v7 works identically.
 
@@ -15,6 +16,12 @@ Remix splits every route into a `loader` that reads and an `action` that writes.
 <Install />
 
 The adapters ship in core `corsair`; add one `@corsair-dev/*` package per service you connect. The full list is in [Plugins](/guides/plugins).
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
 
 ## Mount the handler
 

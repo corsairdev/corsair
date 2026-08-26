@@ -7,6 +7,7 @@ icon: "/icons/nuxt.svg"
 
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
 
 In Nuxt, anything that talks to a third-party service lives in `server/` and runs on Nitro. Corsair fits that split exactly. The handler is one Nitro route, your pages stay on the client, and the bridge between them is a `useFetch` against a server route that reads Corsair's synced tables. Nothing integration-shaped ever ships to the browser.
 
@@ -17,6 +18,12 @@ The adapter ships in core. Each integration is its own package. Add one per serv
 <Install />
 
 Every service is its own `@corsair-dev/*` package. The full catalog with exact ids is in [Plugins](/guides/plugins).
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
 
 ## Mount the handler
 

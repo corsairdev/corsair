@@ -7,6 +7,7 @@ icon: "/icons/astro.svg"
 
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
 
 Astro sites are mostly static, but the interesting pages pull live data at request time. Corsair suits that well. The handler is one API route, and any page that should show integration data flips to server rendering and reads Corsair's synced tables right in its frontmatter. No client fetch, no loading spinner, just HTML with the data already in it.
 
@@ -17,6 +18,12 @@ The adapter ships in core. Each integration is its own package. Add one per serv
 <Install />
 
 Every service is its own `@corsair-dev/*` package. The full catalog with exact ids is in [Plugins](/guides/plugins).
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
 
 ## Mount the handler
 

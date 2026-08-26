@@ -7,6 +7,7 @@ icon: "/icons/node.svg"
 
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
 
 No framework, no router, just `node:http` and the request/response objects it hands you. `toNodeHandler` takes the corsair instance and returns a `(req, res)` function you can drop straight into `createServer`, or mount behind a path check on a server you already run. It reads the raw request stream itself, so there's nothing to parse first. This is the right level for scripts, workers, and tiny services where pulling in Express would be the only dependency.
 
@@ -15,6 +16,12 @@ No framework, no router, just `node:http` and the request/response objects it ha
 The adapter ships in core `corsair`, with nothing extra for `node:http`. Add a plugin package per service you integrate (`@corsair-dev/github`, and so on).
 
 <Install />
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
 
 ## Mount the handler
 

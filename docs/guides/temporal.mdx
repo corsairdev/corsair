@@ -251,21 +251,24 @@ export async function postStandupDigest() {
     // Query Corsair's synced Linear database (fields live on .data)
     const all = await corsair.linear.db.issues.list();
 
+    // Rows store flat stateId/assigneeId, not nested objects.
+    // Compare stateId against your configured Linear state ids.
     const inProgress = all
-        .filter((i) => i.data.state?.type === 'started')
+        .filter((i) => i.data.stateId === process.env.LINEAR_IN_PROGRESS_STATE_ID)
         // Sort newest-first in JS
         .sort((a, b) => Date.parse(b.data.updatedAt) - Date.parse(a.data.updatedAt));
 
-    const blocked = all.filter((i) => i.data.state?.name === 'Blocked');
+    const blocked = all.filter((i) => i.data.stateId === process.env.LINEAR_BLOCKED_STATE_ID);
 
+    // Rows carry assigneeId, not names. Resolve the related record if you need names.
     const lines = [
         `*Morning Standup — ${new Date().toDateString()}*`,
         '',
         `*In Progress (${inProgress.length})*`,
-        ...inProgress.map((i) => `• ${i.data.title} — ${i.data.assignee?.name ?? 'Unassigned'}`),
+        ...inProgress.map((i) => `• ${i.data.title} — ${i.data.assigneeId ?? 'Unassigned'}`),
         '',
         `*Blocked (${blocked.length})*`,
-        ...blocked.map((i) => `• ${i.data.title} — ${i.data.assignee?.name ?? 'Unassigned'}`),
+        ...blocked.map((i) => `• ${i.data.title} — ${i.data.assigneeId ?? 'Unassigned'}`),
     ];
 
     await corsair.slack.api.messages.post({

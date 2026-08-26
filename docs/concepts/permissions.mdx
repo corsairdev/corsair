@@ -90,7 +90,7 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     plugin TEXT NOT NULL,
     endpoint TEXT NOT NULL,
     args TEXT NOT NULL,
-    tenant_id TEXT NOT NULL DEFAULT 'default',
+    tenant_id TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',
     expires_at TEXT NOT NULL,
     error TEXT NULL
@@ -134,7 +134,7 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     plugin TEXT NOT NULL,
     endpoint TEXT NOT NULL,
     args TEXT NOT NULL,
-    tenant_id TEXT NOT NULL DEFAULT 'default',
+    tenant_id TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending',
     expires_at TEXT NOT NULL,
     error TEXT NULL

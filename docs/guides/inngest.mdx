@@ -42,7 +42,7 @@ linear({
                             issueId: result.data.id,
                             title: result.data.title,
                             url: result.data.url,
-                            assigneeEmail: result.data.assignee?.email,
+                            assigneeId: result.data.assigneeId,
                             tenantId: ctx.tenantId,
                         },
                     });
@@ -174,9 +174,12 @@ export const weeklySprintDigest = inngest.createFunction(
     async () => {
         // Query Corsair's synced database — no API call needed
         const all = await corsair.linear.db.issues.list();
+        // Rows store flat stateId/teamId/assigneeId, not nested objects.
+        // Compare stateId against configured open-state ids (comma-separated).
+        const openStateIds = process.env.LINEAR_OPEN_STATE_IDS!.split(',');
         // Filter and sort in JS (list returns all rows; fields live on .data)
         const issues = all
-            .filter((i) => ['started', 'unstarted'].includes(i.data.state?.type))
+            .filter((i) => openStateIds.includes(i.data.stateId))
             .sort((a, b) => (a.data.priority ?? 0) - (b.data.priority ?? 0));
 
         if (issues.length === 0) {
@@ -190,8 +193,10 @@ export const weeklySprintDigest = inngest.createFunction(
         const lines = [
             `*Sprint Digest — ${issues.length} open issue${issues.length === 1 ? '' : 's'}*`,
             '',
+            // Rows carry assigneeId/stateId, not names. Resolve the related
+            // records separately if you need human-readable names.
             ...issues.map(
-                (i) => `• *${i.data.title}* — ${i.data.assignee?.name ?? 'Unassigned'} (${i.data.state?.name})`,
+                (i) => `• *${i.data.title}* (${i.data.identifier}) — ${i.data.assigneeId ?? 'Unassigned'}`,
             ),
         ];
 

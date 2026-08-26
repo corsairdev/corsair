@@ -6,8 +6,9 @@ import { github } from '@corsair-dev/github';
 export const corsair = createCorsair({
     database: new Database('corsair.db'),
     kek: process.env.CORSAIR_KEK!,
-    plugins: [github()], // one entry per @corsair-dev/* package you install
+    multiTenancy: true,
+    plugins: [github({ authType: 'managed' })], // one entry per @corsair-dev/* package you install
 });
 ```
 
-The handler and every `.db` / `.api` call on this page import this `corsair`. A `tenant.github.*` call resolves to the `github()` entry here, so you add a service by installing its `@corsair-dev/*` package and dropping it into `plugins`. Database choices and the Hub keys are in [Quick Start](/getting-started/quick-start).
+The handler and every `.db` / `.api` call on this page import this `corsair`. `multiTenancy: true` is what makes `corsair.withTenant(id)` available, and a `tenant.github.*` call resolves to the `github()` entry here. Add a service by installing its `@corsair-dev/*` package and dropping it into `plugins`. Database choices and the Hub keys are in [Quick Start](/getting-started/quick-start).

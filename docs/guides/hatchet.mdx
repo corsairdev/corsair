@@ -156,10 +156,11 @@ deployWorkflow.task('update-linear-project', async (ctx) => {
     const input = ctx.workflowInput<PushInput>();
     const client = input.tenantId ? corsair.withTenant(input.tenantId) : corsair;
 
-    // Move any Linear issues marked "In Review" to "Done" (fields live on .data)
+    // Move any Linear issues marked "In Review" to "Done" (fields live on .data).
+    // Rows store flat stateId/teamId, not nested objects. Compare against ids.
     const all = await client.linear.db.issues.list();
     const inReview = all.filter(
-        (i) => i.data.state?.name === 'In Review' && i.data.team?.id === process.env.LINEAR_TEAM_ID,
+        (i) => i.data.stateId === process.env.LINEAR_IN_REVIEW_STATE_ID && i.data.teamId === process.env.LINEAR_TEAM_ID,
     );
 
     for (const issue of inReview) {
@@ -196,25 +197,30 @@ export const sprintReportWorkflow = hatchet.workflow({
 });
 
 sprintReportWorkflow.task('post-sprint-report', async () => {
-    // List once, then filter/sort in JS (fields live on .data)
+    // List once, then filter/sort in JS (fields live on .data).
+    // Rows store flat stateId/assigneeId, not nested objects. Compare against ids.
     const all = await corsair.linear.db.issues.list();
     const byPriority = (a, b) => (a.data.priority ?? 0) - (b.data.priority ?? 0);
+    const unstartedStateIds = process.env.LINEAR_UNSTARTED_STATE_IDS!.split(',');
 
-    const inProgress = all.filter((i) => i.data.state?.type === 'started').sort(byPriority);
-    const blocked = all.filter((i) => i.data.state?.name === 'Blocked');
+    const inProgress = all
+        .filter((i) => i.data.stateId === process.env.LINEAR_IN_PROGRESS_STATE_ID)
+        .sort(byPriority);
+    const blocked = all.filter((i) => i.data.stateId === process.env.LINEAR_BLOCKED_STATE_ID);
     const unstarted = all
-        .filter((i) => i.data.state?.type === 'unstarted')
+        .filter((i) => unstartedStateIds.includes(i.data.stateId))
         .sort(byPriority)
         .slice(0, 5);
 
+    // Rows carry assigneeId, not names. Resolve the related record if you need names.
     const lines = [
         `*Sprint Report — ${new Date().toDateString()}*`,
         '',
         `*🔄 In Progress (${inProgress.length})*`,
-        ...inProgress.map((i) => `• *${i.data.title}* — ${i.data.assignee?.name ?? 'Unassigned'}`),
+        ...inProgress.map((i) => `• *${i.data.title}* — ${i.data.assigneeId ?? 'Unassigned'}`),
         '',
         `*🚧 Blocked (${blocked.length})*`,
-        ...blocked.map((i) => `• *${i.data.title}* — ${i.data.assignee?.name ?? 'Unassigned'}`),
+        ...blocked.map((i) => `• *${i.data.title}* — ${i.data.assigneeId ?? 'Unassigned'}`),
         '',
         `*📋 Up Next (${unstarted.length})*`,
         ...unstarted.map((i) => `• ${i.data.title}`),
