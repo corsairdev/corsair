@@ -1,0 +1,29 @@
+import { z } from 'zod';
+
+const ExampleGetInputSchema = z.object({
+	id: z.string(),
+});
+
+export type ExampleGetInput = z.infer<typeof ExampleGetInputSchema>;
+
+const ExampleGetResponseSchema = z.object({
+	id: z.string(),
+});
+
+export type ExampleGetResponse = z.infer<typeof ExampleGetResponseSchema>;
+
+export type BestBuyEndpointInputs = {
+	exampleGet: ExampleGetInput;
+};
+
+export type BestBuyEndpointOutputs = {
+	exampleGet: ExampleGetResponse;
+};
+
+export const BestBuyEndpointInputSchemas = {
+	exampleGet: ExampleGetInputSchema,
+} as const;
+
+export const BestBuyEndpointOutputSchemas = {
+	exampleGet: ExampleGetResponseSchema,
+} as const;
