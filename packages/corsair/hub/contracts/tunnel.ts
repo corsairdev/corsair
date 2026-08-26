@@ -198,6 +198,10 @@ export type BrowserDeliveryPayload = {
 	expiresIn?: number;
 	/** OAuth scopes granted. */
 	scope?: string;
+	/** Auth type the delivered tokens belong to — `managed` (default) or `oauth_2` (BYO). */
+	authType?: 'managed' | 'oauth_2';
+	/** Provider token-body identity (team, workspace_id, …) for the SDK resolver. */
+	providerData?: Record<string, unknown>;
 	/** SDK permission token to approve or deny (`deliveryMode: permission.*`). */
 	permissionToken?: string;
 	/** Hub page origin for iframe postMessage replies (legacy client bridge). */
