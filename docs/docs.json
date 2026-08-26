@@ -357,15 +357,6 @@
                 ]
               },
               {
-                "group": "Dictionary",
-                "pages": [
-                  "plugins/dictionary/overview",
-                  "plugins/dictionary/get-credentials",
-                  "plugins/dictionary/api",
-                  "plugins/dictionary/database"
-                ]
-              },
-              {
                 "group": "DigitalOcean",
                 "pages": [
                   "plugins/digitalocean/overview",
