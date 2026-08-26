@@ -1,31 +1,56 @@
 import dotenv from 'dotenv';
+import fs from 'fs';
+import path from 'path';
 
 dotenv.config({ path: '../.env' });
 
-import { corsair } from '@/server/corsair';
+import { setupCorsair } from 'corsair/setup';
+import { sqlite } from '../db';
+import { corsair } from '../server/corsair';
 
-async function setInstagramCredentials() {
-	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
+async function testBookingmoodIntegration() {
+	console.log('[Test Script] Running SQLite migrations...');
+	const migrationSql = fs.readFileSync(path.resolve('migration.sql'), 'utf-8');
+	sqlite.exec(migrationSql);
 
-	if (FACEBOOK_APP_ID) {
-		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
+	console.log(
+		'[Test Script] Initializing Corsair setup & provisioning integration rows...',
+	);
+	await setupCorsair(corsair);
+
+	console.log(
+		'[Test Script] Verifying Bookingmood plugin on Corsair client...',
+	);
+	const bookingmoodPlugin = (corsair as any).bookingmood;
+
+	if (!bookingmoodPlugin) {
+		throw new Error('Bookingmood plugin not registered on Corsair client!');
 	}
-	if (FACEBOOK_APP_SECRET) {
-		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
-	}
-	if (IG_ACCESS_TOKEN) {
-		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
-	}
+
+	console.log(
+		'[Test Script] Plugin ID:',
+		bookingmoodPlugin.id || 'bookingmood',
+	);
+	console.log(
+		'[Test Script] Registered Endpoints:',
+		Object.keys(bookingmoodPlugin.api || {}),
+	);
+
+	console.log('[Test Script] Setting test API Key via key manager...');
+	await bookingmoodPlugin.keys.set_api_key('bm_test_key_abc123');
+	console.log('[Test Script] API key set successfully!');
+
+	console.log('[Test Script] All demo integration tests passed cleanly!');
 }
 
 const main = async () => {
-	const res = await corsair.slack.api.messages.post({
-		channel: 'general',
-		text: 'hello',
-	});
+	console.log(
+		'[Test Script] Starting Corsair demo testing for Bookingmood integration...',
+	);
+	await testBookingmoodIntegration();
 };
 
 main().catch((err) => {
-	console.error(err);
+	console.error('[Test Script Failure]', err);
 	process.exit(1);
 });
