@@ -9,7 +9,7 @@ export const errorHandlers = {
 			if (error instanceof WebvizioAPIError && error.status === 429)
 				return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return msg.includes('rate_limited') || msg.includes('too many requests');
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
@@ -31,8 +31,7 @@ export const errorHandlers = {
 			return (
 				msg.includes('unauthorized') ||
 				msg.includes('wrong token') ||
-				msg.includes('invalid_auth') ||
-				msg.includes('401')
+				msg.includes('invalid_auth')
 			);
 		},
 		handler: async () => ({ maxRetries: 0 }),

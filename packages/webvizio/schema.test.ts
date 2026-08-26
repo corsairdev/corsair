@@ -17,19 +17,16 @@ describe('Webvizio input schemas', () => {
 });
 
 describe('Webvizio output schemas', () => {
-	it('parses valid projectsList array response', () => {
+	it('parses MCP project list rows', () => {
 		const sampleProjects = [
 			{
 				uuid: 'ce7e2096-05ad-4b5f-95d6-6088ca551dd0',
 				name: 'jiitsphere.com',
-				description: null,
-				url: null,
 			},
 			{
-				id: '123',
 				uuid: 'abcd-1234',
 				name: 'Test Project',
-				description: 'Sample description',
+				id: 123,
 				url: 'https://test.com',
 			},
 		];
@@ -39,11 +36,10 @@ describe('Webvizio output schemas', () => {
 		expect(parsed).toHaveLength(2);
 		expect(parsed[0]?.uuid).toBe('ce7e2096-05ad-4b5f-95d6-6088ca551dd0');
 		expect(parsed[0]?.name).toBe('jiitsphere.com');
-		expect(parsed[0]?.description).toBeNull();
-		expect(parsed[1]?.id).toBe('123');
+		expect(parsed[1]?.id).toBe(123);
 	});
 
-	it('parses valid webhooksList array response', () => {
+	it('parses REST Hook subscription rows', () => {
 		const sampleWebhooks = [
 			{
 				id: 101,
@@ -51,7 +47,7 @@ describe('Webvizio output schemas', () => {
 				event: 'project.created',
 			},
 			{
-				id: 'hook-2',
+				id: 2,
 				url: 'https://example.com/callback',
 				event: 'task.created',
 			},
@@ -62,10 +58,10 @@ describe('Webvizio output schemas', () => {
 		expect(parsed).toHaveLength(2);
 		expect(parsed[0]?.id).toBe(101);
 		expect(parsed[0]?.event).toBe('project.created');
-		expect(parsed[1]?.id).toBe('hook-2');
+		expect(parsed[1]?.id).toBe(2);
 	});
 
-	it('validates single WebvizioProjectSchema and WebvizioWebhookSubscriptionSchema', () => {
+	it('validates single item schemas', () => {
 		expect(
 			WebvizioProjectSchema.parse({
 				uuid: 'u-1',
@@ -84,24 +80,23 @@ describe('Webvizio output schemas', () => {
 });
 
 describe('Webvizio database entity schemas', () => {
-	it('validates WebvizioProject database entity', () => {
+	it('validates WebvizioProject from official MCP fields', () => {
 		const project = WebvizioProject.parse({
 			uuid: 'proj-123',
 			name: 'Client Redesign',
-			description: 'Redesigning company website',
-			created_at: new Date().toISOString(),
+			createdAt: '2026-08-20T10:00:00Z',
 		});
 
 		expect(project.uuid).toBe('proj-123');
 		expect(project.name).toBe('Client Redesign');
+		expect(project.createdAt).toBeInstanceOf(Date);
 	});
 
-	it('validates WebvizioWebhook database entity', () => {
+	it('validates WebvizioWebhook from official REST Hooks fields', () => {
 		const hook = WebvizioWebhook.parse({
 			id: 42,
 			url: 'https://app.example.com/events',
 			event: 'comment.created',
-			created_at: '2026-08-20T10:00:00Z',
 		});
 
 		expect(hook.id).toBe(42);

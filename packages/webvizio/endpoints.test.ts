@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
 	makeWebvizioRequest,
+	unwrapWebvizioList,
 	WEBVIZIO_MCP_API_BASE,
 	WEBVIZIO_WEBHOOK_API_BASE,
 	WebvizioAPIError,
@@ -58,14 +59,11 @@ const sampleProjectsFixture = [
 	{
 		uuid: 'ce7e2096-05ad-4b5f-95d6-6088ca551dd0',
 		name: 'jiitsphere.com',
-		description: null,
-		url: null,
 	},
 	{
-		id: '123',
 		uuid: 'abcd-1234',
 		name: 'Test Project',
-		description: 'Sample description',
+		id: 123,
 		url: 'https://test.com',
 	},
 ];
@@ -77,7 +75,7 @@ const sampleWebhooksFixture = [
 		event: 'project.created',
 	},
 	{
-		id: 'hook-2',
+		id: 2,
 		url: 'https://example.com/callback',
 		event: 'task.created',
 	},
@@ -118,14 +116,14 @@ describe('Webvizio request client', () => {
 		mockRequest.mockResolvedValue(sampleProjectsFixture);
 	});
 
-	it('sends Authorization Bearer header and calls default MCP base URL', async () => {
+	it('sends Authorization Bearer via TOKEN and calls the MCP base URL', async () => {
 		await makeWebvizioRequest('/projects', 'test-api-key');
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
 				BASE: WEBVIZIO_MCP_API_BASE,
+				TOKEN: 'test-api-key',
 				HEADERS: expect.objectContaining({
-					Authorization: 'Bearer test-api-key',
 					Accept: 'application/json',
 				}),
 			}),
@@ -153,6 +151,18 @@ describe('Webvizio request client', () => {
 			expect.any(Object),
 		);
 	});
+
+	it('unwraps bare arrays and data envelopes', () => {
+		expect(unwrapWebvizioList([{ uuid: 'a', name: 'n' }])).toEqual([
+			{ uuid: 'a', name: 'n' },
+		]);
+		expect(
+			unwrapWebvizioList({ data: [{ id: 1, url: 'u', event: 'e' }] }),
+		).toEqual([{ id: 1, url: 'u', event: 'e' }]);
+		expect(() => unwrapWebvizioList('<!DOCTYPE html>')).toThrow(
+			'Webvizio list response was not a JSON array',
+		);
+	});
 });
 
 describe('Webvizio endpoint handlers', () => {
@@ -161,15 +171,18 @@ describe('Webvizio endpoint handlers', () => {
 		mockLog.mockReset();
 	});
 
-	it('projects.list returns parsed project items with null tolerance and logs event', async () => {
+	it('projects.list returns parsed project items, caches them, and logs', async () => {
 		const ctx = createMockContext('mock-api-key');
 		mockRequest.mockResolvedValue(sampleProjectsFixture);
 
 		const res = await Projects.list(ctx, {});
 		expect(res).toHaveLength(2);
 		expect(res[0]?.name).toBe('jiitsphere.com');
-		expect(res[0]?.description).toBeNull();
 		expect(res[1]?.uuid).toBe('abcd-1234');
+		expect(ctx.db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			'ce7e2096-05ad-4b5f-95d6-6088ca551dd0',
+			expect.objectContaining({ name: 'jiitsphere.com' }),
+		);
 		expect(mockLog).toHaveBeenCalledWith(
 			ctx,
 			'webvizio.projects.list',
@@ -178,7 +191,7 @@ describe('Webvizio endpoint handlers', () => {
 		);
 	});
 
-	it('webhooks.list returns parsed webhook items and logs event', async () => {
+	it('webhooks.list returns parsed webhook items, caches them, and logs', async () => {
 		const ctx = createMockContext('mock-api-key');
 		mockRequest.mockResolvedValue(sampleWebhooksFixture);
 
@@ -186,6 +199,10 @@ describe('Webvizio endpoint handlers', () => {
 		expect(res).toHaveLength(2);
 		expect(res[0]?.id).toBe(101);
 		expect(res[0]?.event).toBe('project.created');
+		expect(ctx.db.webhooks.upsertByEntityId).toHaveBeenCalledWith(
+			'101',
+			expect.objectContaining({ event: 'project.created' }),
+		);
 		expect(mockLog).toHaveBeenCalledWith(
 			ctx,
 			'webvizio.webhooks.list',

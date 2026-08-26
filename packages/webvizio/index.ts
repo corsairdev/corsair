@@ -104,16 +104,10 @@ export type WebvizioPlugin = CorsairPlugin<
 	WebvizioPluginOptions
 >;
 
-export type InternalWebvizioPlugin = CorsairPlugin<
-	'webvizio',
-	typeof WebvizioSchema,
-	typeof webvizioEndpointsNested,
-	{},
-	WebvizioPluginOptions
->;
+export type InternalWebvizioPlugin = WebvizioPlugin;
 
 export function webvizio(options: WebvizioPluginOptions = {}): WebvizioPlugin {
-	const authType = options.authType || 'api_key';
+	const authType = options.authType ?? 'api_key';
 
 	return {
 		id: 'webvizio',
@@ -153,6 +147,7 @@ export function webvizio(options: WebvizioPluginOptions = {}): WebvizioPlugin {
 
 export {
 	makeWebvizioRequest,
+	unwrapWebvizioList,
 	WEBVIZIO_MCP_API_BASE,
 	WEBVIZIO_WEBHOOK_API_BASE,
 	WebvizioAPIError,

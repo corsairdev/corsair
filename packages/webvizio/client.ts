@@ -31,6 +31,8 @@ export class WebvizioAPIError extends Error {
 export const WEBVIZIO_MCP_API_BASE = 'https://app.webvizio.com/api/mcp/v1';
 export const WEBVIZIO_WEBHOOK_API_BASE = 'https://app.webvizio.com/api/v1';
 
+export type WebvizioApiPath = '/projects' | '/webhook';
+
 const WEBVIZIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 3,
@@ -41,22 +43,28 @@ const WEBVIZIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+export function unwrapWebvizioList(payload: unknown): unknown[] {
+	if (Array.isArray(payload)) return payload;
+	if (
+		payload !== null &&
+		typeof payload === 'object' &&
+		Array.isArray((payload as { data?: unknown }).data)
+	) {
+		return (payload as { data: unknown[] }).data;
+	}
+	throw new WebvizioAPIError('Webvizio list response was not a JSON array');
+}
+
 export async function makeWebvizioRequest<T>(
-	endpoint: string,
+	endpoint: WebvizioApiPath,
 	apiKey: string,
 	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		method?: 'GET' | 'POST' | 'DELETE';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
 		baseUrl?: string;
 	} = {},
 ): Promise<T> {
-	const {
-		method = 'GET',
-		body,
-		query,
-		baseUrl = WEBVIZIO_MCP_API_BASE,
-	} = options;
+	const { method = 'GET', body, baseUrl = WEBVIZIO_MCP_API_BASE } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,
@@ -65,21 +73,15 @@ export async function makeWebvizioRequest<T>(
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
 			Accept: 'application/json',
-			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		body: method === 'POST' ? body : undefined,
 		mediaType: 'application/json',
-		query,
 	};
 
 	try {
