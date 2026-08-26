@@ -1,28 +1,59 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ApiError } from 'corsair/http';
+import type { JigsawstackAPIError } from './client';
+
+function getStatus(error: Error): number | undefined {
+	return (error as Partial<JigsawstackAPIError>).status;
+}
+
+function getRetryAfter(error: Error): number | undefined {
+	return (error as Partial<JigsawstackAPIError>).retryAfter;
+}
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (getStatus(error) === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return msg.includes('429') || msg.includes('rate limit');
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async (error: Error) => ({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff' as const,
+			headersRetryAfterMs: getRetryAfter(error),
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (getStatus(error) === 401 || getStatus(error) === 403) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid api key') ||
+				msg.includes('forbidden') ||
+				msg.includes('401')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	NOT_FOUND_ERROR: {
+		match: (error: Error) => {
+			if (getStatus(error) === 404) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('404') || msg.includes('not found');
+		},
+		handler: async () => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			const status = getStatus(error);
+			if (status !== undefined && status >= 500) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('503') || msg.includes('server error');
+		},
+		handler: async () => ({
+			maxRetries: 2,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,

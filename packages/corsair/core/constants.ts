@@ -333,7 +333,7 @@ export const ProviderDisplayNames = {
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
-	jigsawstack: 'Jigsawstack',
+	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
 	linear: 'Linear',

@@ -29,6 +29,7 @@ module.exports = {
 					verbatimModuleSyntax: false,
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
+					rootDir: '../..',
 				},
 			},
 		],
@@ -50,6 +51,6 @@ module.exports = {
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
-	testTimeout: 30000,
+	testTimeout: 60000,
 	verbose: true,
 };

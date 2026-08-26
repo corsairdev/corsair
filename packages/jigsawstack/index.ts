@@ -1,23 +1,28 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
-// ─── ADDED: import summarize endpoint ─────────────────────────
-import { summarize } from './endpoints/summarize'; // ← ADDED
+import { AuthMissingError } from 'corsair/core';
+import {
+	AiEndpoints,
+	AudioEndpoints,
+	ClassificationEndpoints,
+	EmbeddingEndpoints,
+	PromptEngineEndpoints,
+	ValidateEndpoints,
+	VisionEndpoints,
+	WebEndpoints,
+} from './endpoints';
 import type {
 	JigsawstackEndpointInputs,
 	JigsawstackEndpointOutputs,
@@ -28,18 +33,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { JigsawstackSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveJigsawstackOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchJigsawstackTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, JigsawstackWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type JigsawstackPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalJigsawstackPlugin['hooks'];
-	webhookHooks?: InternalJigsawstackPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof jigsawstackEndpointsNested>;
 };
@@ -63,89 +61,272 @@ type JigsawstackEndpoint<K extends keyof JigsawstackEndpointOutputs> =
 		JigsawstackEndpointOutputs[K]
 	>;
 
-// ─── UPDATED: added summarizePost to export type ──────────────
 export type JigsawstackEndpoints = {
-	exampleGet: JigsawstackEndpoint<'exampleGet'>;
-	summarizePost: JigsawstackEndpoint<'summarizeText'>; // ← ADDED
+	nsfw: JigsawstackEndpoint<'nsfw'>;
+	profanity: JigsawstackEndpoint<'profanity'>;
+	spamCheck: JigsawstackEndpoint<'spamCheck'>;
+	spellCheck: JigsawstackEndpoint<'spellCheck'>;
+	sentiment: JigsawstackEndpoint<'sentiment'>;
+	summary: JigsawstackEndpoint<'summary'>;
+	translate: JigsawstackEndpoint<'translate'>;
+	prediction: JigsawstackEndpoint<'prediction'>;
+	imageGeneration: JigsawstackEndpoint<'imageGeneration'>;
+	scrape: JigsawstackEndpoint<'scrape'>;
+	htmlToAny: JigsawstackEndpoint<'htmlToAny'>;
+	search: JigsawstackEndpoint<'search'>;
+	searchSuggestions: JigsawstackEndpoint<'searchSuggestions'>;
+	vocr: JigsawstackEndpoint<'vocr'>;
+	detectObjects: JigsawstackEndpoint<'detectObjects'>;
+	speechToText: JigsawstackEndpoint<'speechToText'>;
+	textToSpeech: JigsawstackEndpoint<'textToSpeech'>;
+	createVoiceClone: JigsawstackEndpoint<'createVoiceClone'>;
+	createEmbeddingV2: JigsawstackEndpoint<'createEmbeddingV2'>;
+	classify: JigsawstackEndpoint<'classify'>;
+	createPrompt: JigsawstackEndpoint<'createPrompt'>;
+	listPrompts: JigsawstackEndpoint<'listPrompts'>;
+	runPrompt: JigsawstackEndpoint<'runPrompt'>;
 };
 
-type JigsawstackWebhook<
-	K extends keyof JigsawstackWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<JigsawstackContext, TEvent, JigsawstackWebhookOutputs[K]>;
-
-export type JigsawstackWebhooks = {
-	example: JigsawstackWebhook<'example', ExampleEvent>;
-};
-
-export type JigsawstackBoundWebhooks = BindWebhooks<JigsawstackWebhooks>;
-
-// ─── UPDATED: added summarize.post ─────────────────────────────
 const jigsawstackEndpointsNested = {
-	example: {
-		get: Example.get,
+	validate: {
+		nsfw: ValidateEndpoints.nsfw,
+		profanity: ValidateEndpoints.profanity,
+		spamCheck: ValidateEndpoints.spamCheck,
+		spellCheck: ValidateEndpoints.spellCheck,
 	},
-	summarize: {
-		// ← ADDED
-		post: summarize,
+	ai: {
+		sentiment: AiEndpoints.sentiment,
+		summary: AiEndpoints.summary,
+		translate: AiEndpoints.translate,
+		prediction: AiEndpoints.prediction,
+		imageGeneration: AiEndpoints.imageGeneration,
+	},
+	web: {
+		scrape: WebEndpoints.scrape,
+		htmlToAny: WebEndpoints.htmlToAny,
+		search: WebEndpoints.search,
+		searchSuggestions: WebEndpoints.searchSuggestions,
+	},
+	vision: {
+		vocr: VisionEndpoints.vocr,
+		detectObjects: VisionEndpoints.detectObjects,
+	},
+	audio: {
+		speechToText: AudioEndpoints.speechToText,
+		textToSpeech: AudioEndpoints.textToSpeech,
+		createVoiceClone: AudioEndpoints.createVoiceClone,
+	},
+	embedding: {
+		createV2: EmbeddingEndpoints.createV2,
+	},
+	classification: {
+		classify: ClassificationEndpoints.classify,
+	},
+	promptEngine: {
+		create: PromptEngineEndpoints.create,
+		list: PromptEngineEndpoints.list,
+		run: PromptEngineEndpoints.run,
 	},
 } as const;
 
-const jigsawstackWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const jigsawstackWebhooksNested = {} as const;
 
-// ─── UPDATED: added 'summarize.post' schema ────────────────────
 export const jigsawstackEndpointSchemas = {
-	'example.get': {
-		input: JigsawstackEndpointInputSchemas.exampleGet,
-		output: JigsawstackEndpointOutputSchemas.exampleGet,
+	'validate.nsfw': {
+		input: JigsawstackEndpointInputSchemas.nsfw,
+		output: JigsawstackEndpointOutputSchemas.nsfw,
 	},
-	'summarize.post': {
-		// ← ADDED
-		input: JigsawstackEndpointInputSchemas.summarizeText,
-		output: JigsawstackEndpointOutputSchemas.summarizeText,
+	'validate.profanity': {
+		input: JigsawstackEndpointInputSchemas.profanity,
+		output: JigsawstackEndpointOutputSchemas.profanity,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<
-	typeof jigsawstackEndpointsNested
->;
-
-const jigsawstackWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'validate.spamCheck': {
+		input: JigsawstackEndpointInputSchemas.spamCheck,
+		output: JigsawstackEndpointOutputSchemas.spamCheck,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof jigsawstackWebhooksNested
->;
+	'validate.spellCheck': {
+		input: JigsawstackEndpointInputSchemas.spellCheck,
+		output: JigsawstackEndpointOutputSchemas.spellCheck,
+	},
+	'ai.sentiment': {
+		input: JigsawstackEndpointInputSchemas.sentiment,
+		output: JigsawstackEndpointOutputSchemas.sentiment,
+	},
+	'ai.summary': {
+		input: JigsawstackEndpointInputSchemas.summary,
+		output: JigsawstackEndpointOutputSchemas.summary,
+	},
+	'ai.translate': {
+		input: JigsawstackEndpointInputSchemas.translate,
+		output: JigsawstackEndpointOutputSchemas.translate,
+	},
+	'ai.prediction': {
+		input: JigsawstackEndpointInputSchemas.prediction,
+		output: JigsawstackEndpointOutputSchemas.prediction,
+	},
+	'ai.imageGeneration': {
+		input: JigsawstackEndpointInputSchemas.imageGeneration,
+		output: JigsawstackEndpointOutputSchemas.imageGeneration,
+	},
+	'web.scrape': {
+		input: JigsawstackEndpointInputSchemas.scrape,
+		output: JigsawstackEndpointOutputSchemas.scrape,
+	},
+	'web.htmlToAny': {
+		input: JigsawstackEndpointInputSchemas.htmlToAny,
+		output: JigsawstackEndpointOutputSchemas.htmlToAny,
+	},
+	'web.search': {
+		input: JigsawstackEndpointInputSchemas.search,
+		output: JigsawstackEndpointOutputSchemas.search,
+	},
+	'web.searchSuggestions': {
+		input: JigsawstackEndpointInputSchemas.searchSuggestions,
+		output: JigsawstackEndpointOutputSchemas.searchSuggestions,
+	},
+	'vision.vocr': {
+		input: JigsawstackEndpointInputSchemas.vocr,
+		output: JigsawstackEndpointOutputSchemas.vocr,
+	},
+	'vision.detectObjects': {
+		input: JigsawstackEndpointInputSchemas.detectObjects,
+		output: JigsawstackEndpointOutputSchemas.detectObjects,
+	},
+	'audio.speechToText': {
+		input: JigsawstackEndpointInputSchemas.speechToText,
+		output: JigsawstackEndpointOutputSchemas.speechToText,
+	},
+	'audio.textToSpeech': {
+		input: JigsawstackEndpointInputSchemas.textToSpeech,
+		output: JigsawstackEndpointOutputSchemas.textToSpeech,
+	},
+	'audio.createVoiceClone': {
+		input: JigsawstackEndpointInputSchemas.createVoiceClone,
+		output: JigsawstackEndpointOutputSchemas.createVoiceClone,
+	},
+	'embedding.createV2': {
+		input: JigsawstackEndpointInputSchemas.createEmbeddingV2,
+		output: JigsawstackEndpointOutputSchemas.createEmbeddingV2,
+	},
+	'classification.classify': {
+		input: JigsawstackEndpointInputSchemas.classify,
+		output: JigsawstackEndpointOutputSchemas.classify,
+	},
+	'promptEngine.create': {
+		input: JigsawstackEndpointInputSchemas.createPrompt,
+		output: JigsawstackEndpointOutputSchemas.createPrompt,
+	},
+	'promptEngine.list': {
+		input: JigsawstackEndpointInputSchemas.listPrompts,
+		output: JigsawstackEndpointOutputSchemas.listPrompts,
+	},
+	'promptEngine.run': {
+		input: JigsawstackEndpointInputSchemas.runPrompt,
+		output: JigsawstackEndpointOutputSchemas.runPrompt,
+	},
+} satisfies RequiredPluginEndpointSchemas<typeof jigsawstackEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-// ─── UPDATED: added 'summarize.post' meta ──────────────────────
 const jigsawstackEndpointMeta = {
-	'example.get': {
+	'validate.nsfw': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Detect NSFW content in an image',
 	},
-	'summarize.post': {
-		// ← ADDED
+	'validate.profanity': {
 		riskLevel: 'read',
-		description: 'Summarize text using JigsawStack AI',
+		description: 'Check text for profanity and return a cleaned copy',
+	},
+	'validate.spamCheck': {
+		riskLevel: 'read',
+		description: 'Score text for spam likelihood',
+	},
+	'validate.spellCheck': {
+		riskLevel: 'read',
+		description: 'Detect and auto-correct spelling mistakes',
+	},
+	'ai.sentiment': {
+		riskLevel: 'read',
+		description: 'Analyze sentiment and emotion in text',
+	},
+	'ai.summary': {
+		riskLevel: 'read',
+		description: 'Summarize text or a PDF as a paragraph or bullet points',
+	},
+	'ai.translate': {
+		riskLevel: 'read',
+		description: 'Translate text into a target language',
+	},
+	'ai.prediction': {
+		riskLevel: 'read',
+		description: 'Forecast a time series from dated values',
+	},
+	'ai.imageGeneration': {
+		riskLevel: 'write',
+		description: 'Generate an image from a text prompt',
+	},
+	'web.scrape': {
+		riskLevel: 'read',
+		description: 'Scrape a page into structured data with AI prompts',
+	},
+	'web.htmlToAny': {
+		riskLevel: 'write',
+		description: 'Convert HTML or a URL to PNG, JPEG, WEBP, or PDF',
+	},
+	'web.search': {
+		riskLevel: 'read',
+		description: 'Search the web with optional AI overview',
+	},
+	'web.searchSuggestions': {
+		riskLevel: 'read',
+		description: 'Get search autocomplete suggestions for a query',
+	},
+	'vision.vocr': {
+		riskLevel: 'read',
+		description: 'Extract text and fields from an image or PDF',
+	},
+	'vision.detectObjects': {
+		riskLevel: 'read',
+		description: 'Detect objects and GUI elements in an image',
+	},
+	'audio.speechToText': {
+		riskLevel: 'read',
+		description: 'Transcribe audio or video to text',
+	},
+	'audio.textToSpeech': {
+		riskLevel: 'write',
+		description: 'Convert text to speech audio',
+	},
+	'audio.createVoiceClone': {
+		riskLevel: 'write',
+		description: 'Clone a voice from an audio sample for later TTS',
+	},
+	'embedding.createV2': {
+		riskLevel: 'read',
+		description: 'Create v2 embeddings from text, image, audio, or PDF',
+	},
+	'classification.classify': {
+		riskLevel: 'read',
+		description: 'Classify text or images with custom labels',
+	},
+	'promptEngine.create': {
+		riskLevel: 'write',
+		description: 'Create a reusable Prompt Engine template',
+	},
+	'promptEngine.list': {
+		riskLevel: 'read',
+		description: 'List Prompt Engine templates',
+	},
+	'promptEngine.run': {
+		riskLevel: 'write',
+		description: 'Run a stored Prompt Engine by id',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof jigsawstackEndpointsNested
 >;
 
 export const jigsawstackAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseJigsawstackPlugin<T extends JigsawstackPluginOptions> =
@@ -176,61 +357,42 @@ export function jigsawstack<const T extends JigsawstackPluginOptions>(
 		id: 'jigsawstack',
 		authConfig: jigsawstackAuthConfig,
 		schema: JigsawstackSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: jigsawstackEndpointsNested,
 		webhooks: jigsawstackWebhooksNested,
 		endpointMeta: jigsawstackEndpointMeta,
 		endpointSchemas: jigsawstackEndpointSchemas,
-		webhookSchemas: jigsawstackWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-jigsawstack-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchJigsawstackTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveJigsawstackOAuthWebhookTenantLink,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: JigsawstackKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('jigsawstack', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('jigsawstack', 'api_key');
 		},
 	} satisfies InternalJigsawstackPlugin;
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
 	JigsawstackEndpointInputs,
 	JigsawstackEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	JigsawstackWebhookOutputs,
-} from './webhooks/types';
+
+export {
+	JigsawstackEndpointInputSchemas,
+	JigsawstackEndpointOutputSchemas,
+} from './endpoints/types';

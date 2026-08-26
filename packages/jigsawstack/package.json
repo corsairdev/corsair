@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/jigsawstack",
   "version": "0.1.0",
-  "description": "Jigsawstack plugin for Corsair",
+  "description": "JigsawStack plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -23,6 +23,7 @@
     "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@jest/globals": "^29.7.0",
     "@types/jest": "^29.5.14",
     "corsair": "workspace:*",
     "jest": "^29.7.0",
