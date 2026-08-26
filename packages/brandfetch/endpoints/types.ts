@@ -261,6 +261,8 @@ export const GetTransactionInfoInputSchema = z.object({
 		.describe('Raw transaction text from a credit-card statement'),
 	countryCode: z
 		.string()
+		.trim()
+		.toUpperCase()
 		.regex(/^[A-Z]{2}$/, 'Must be an ISO 3166-1 alpha-2 country code')
 		.describe(
 			'ISO 3166-1 alpha-2 country code where the transaction took place',

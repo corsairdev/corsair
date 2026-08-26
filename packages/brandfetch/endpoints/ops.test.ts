@@ -238,6 +238,15 @@ describe('getTransactionInfo', () => {
 			}),
 		).toThrow();
 	});
+
+	it('uppercases a lowercase ISO countryCode', () => {
+		expect(
+			BrandfetchEndpointInputSchemas.getTransactionInfo.parse({
+				transactionLabel: 'STARBUCKS',
+				countryCode: 'us',
+			}).countryCode,
+		).toBe('US');
+	});
 });
 
 describe('GraphQL operations', () => {

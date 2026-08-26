@@ -218,8 +218,8 @@ export function brandfetch<const T extends BrandfetchPluginOptions>(
 		webhooks: brandfetchWebhooksNested,
 		endpointMeta: brandfetchEndpointMeta,
 		endpointSchemas: brandfetchEndpointSchemas,
-		// No inbound webhooks — Brandfetch deliveries are out of this plugin's scope
-		pluginWebhookMatcher: undefined,
+		// Intentionally rejects inbound Brandfetch deliveries (0 trig).
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
