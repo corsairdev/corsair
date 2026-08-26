@@ -171,6 +171,7 @@ export const BaseProviders = [
 	'serpapi',
 	'sharepoint',
 	'slack',
+	'slackbot',
 	'spotify',
 	'strava',
 	'stripe',
@@ -366,6 +367,7 @@ export const ProviderDisplayNames = {
 	serpapi: 'Serpapi',
 	sharepoint: 'SharePoint',
 	slack: 'Slack',
+	slackbot: 'Slackbot',
 	spotify: 'Spotify',
 	strava: 'Strava',
 	stripe: 'Stripe',
@@ -568,6 +570,7 @@ export type AllProviders =
 	| 'serpapi'
 	| 'sharepoint'
 	| 'slack'
+	| 'slackbot'
 	| 'spotify'
 	| 'strava'
 	| 'stripe'
