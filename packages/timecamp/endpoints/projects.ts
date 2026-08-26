@@ -105,14 +105,21 @@ export const getList: TimecampEndpoints['getProjectsList'] = async (
 ) => {
 	const raw = await makeTimecampRequest<unknown>('tasks', ctx.key);
 
-	const projects = toTaskList(raw)
+	// Every root-level project TimeCamp reports, archived or not.
+	const allProjects = toTaskList(raw)
 		.filter((task) => isRootLevel(task.parent_id))
 		.map(toProject)
-		.filter((project): project is TimecampProject => project !== null)
-		.filter((project) => input.include_archived || !project.archived);
+		.filter((project): project is TimecampProject => project !== null);
+
+	// The archived filter applies to what the caller receives, not to what is
+	// cached: a project that has since been archived must still reconcile its
+	// stored record, or the cache keeps reporting it as active forever.
+	const projects = allProjects.filter(
+		(project) => input.include_archived || !project.archived,
+	);
 
 	if (ctx.db.projects) {
-		for (const project of projects) {
+		for (const project of allProjects) {
 			try {
 				await ctx.db.projects.upsertByEntityId(project.task_id, {
 					id: project.task_id,

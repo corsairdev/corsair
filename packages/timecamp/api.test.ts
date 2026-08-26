@@ -147,3 +147,54 @@ describe('projects.getList', () => {
 		expect(result.projects[0]?.name).toBe('');
 	});
 });
+
+describe('cache reconciliation', () => {
+	/** Captures upserts so the cached set can be compared to the returned set. */
+	function makeCachingCtx() {
+		const upserts: { id: string; archived?: boolean }[] = [];
+		const ctx = {
+			key: 'tc-test-token',
+			options: {},
+			db: {
+				projects: {
+					upsertByEntityId: async (
+						id: string,
+						value: { archived?: boolean },
+					) => {
+						upserts.push({ id, archived: value.archived });
+						return { id };
+					},
+				},
+			},
+		} as never;
+		return { ctx, upserts };
+	}
+
+	it('caches archived projects even though they are filtered from the response', async () => {
+		// Regression: filtering before the cache write left a project that had
+		// since been archived stored as active forever.
+		const { ctx, upserts } = makeCachingCtx();
+
+		const result = await Projects.getList(ctx, {});
+
+		expect(result.projects.map((p) => p.task_id)).toEqual(['101']);
+		expect(upserts.map((u) => u.id).sort()).toEqual(['101', '102']);
+	});
+
+	it('writes the archived flag through so a stale active record is corrected', async () => {
+		const { ctx, upserts } = makeCachingCtx();
+
+		await Projects.getList(ctx, {});
+
+		expect(upserts.find((u) => u.id === '102')?.archived).toBe(true);
+		expect(upserts.find((u) => u.id === '101')?.archived).toBe(false);
+	});
+
+	it('never caches non-root tasks', async () => {
+		const { ctx, upserts } = makeCachingCtx();
+
+		await Projects.getList(ctx, {});
+
+		expect(upserts.map((u) => u.id)).not.toContain('103');
+	});
+});
