@@ -123,13 +123,6 @@ describe('Beeminder endpoints', () => {
 		expect(out.id).toBe('ch1');
 	});
 
-	it('oauth_2 uses access_token', async () => {
-		mockFetch({ username: 'alice' });
-		await User.get(makeCtx({ authType: 'oauth_2' }), {});
-		expect(pathAndQuery().query.get('access_token')).toBe('test-token');
-		expect(pathAndQuery().query.get('auth_token')).toBeNull();
-	});
-
 	it('covers every registered operation', () => {
 		expect(Object.keys(beeminderEndpointMeta).sort()).toEqual([
 			'charges.create',

@@ -1,9 +1,9 @@
-﻿import type { BeeminderAuthParam, BeeminderRequestOptions } from '../client';
+﻿import type { BeeminderRequestOptions } from '../client';
 import { makeBeeminderRequest } from '../client';
 
 type BeeminderCallContext = {
 	key: string;
-	options: { username?: string | undefined; authType?: string | undefined };
+	options: { username?: string | undefined };
 	keys?: { get_username?: () => Promise<string | null | undefined> };
 };
 
@@ -19,10 +19,6 @@ export async function resolveUsername(
 	return 'me';
 }
 
-function authParamFor(ctx: BeeminderCallContext): BeeminderAuthParam {
-	return ctx.options.authType === 'oauth_2' ? 'access_token' : 'auth_token';
-}
-
 export async function beeminderCall<T>(
 	ctx: BeeminderCallContext,
 	endpoint: string,
@@ -31,10 +27,7 @@ export async function beeminderCall<T>(
 	const username = await resolveUsername(ctx);
 	const resolvedEndpoint = endpoint.replace('{username}', username);
 
-	return await makeBeeminderRequest<T>(resolvedEndpoint, ctx.key, {
-		...options,
-		authParam: options.authParam ?? authParamFor(ctx),
-	});
+	return await makeBeeminderRequest<T>(resolvedEndpoint, ctx.key, options);
 }
 
 export function compactBody(

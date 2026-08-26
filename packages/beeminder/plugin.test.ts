@@ -35,11 +35,8 @@ describe('beeminder plugin registration', () => {
 		]);
 	});
 
-	it('registers api_key and oauth_2', () => {
-		expect(Object.keys(beeminderAuthConfig).sort()).toEqual([
-			'api_key',
-			'oauth_2',
-		]);
+	it('registers api_key only', () => {
+		expect(Object.keys(beeminderAuthConfig).sort()).toEqual(['api_key']);
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.oauthConfig).toBeUndefined();
 	});

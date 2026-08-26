@@ -26,7 +26,7 @@ import { errorHandlers } from './error-handlers';
 import { BeeminderSchema } from './schema';
 
 export type BeeminderPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	/**
 	 * The Beeminder username for API calls.
@@ -41,18 +41,12 @@ export type BeeminderPluginOptions = {
 };
 
 /**
- * Beeminder authenticates with either a personal auth token (API key) or
- * an OAuth 2.0 access token.
- *
- * Both token types are sent as an `Authorization: Bearer` header. The
- * username is needed to construct API URLs but can be resolved from "me"
- * if not provided.
+ * Beeminder personal auth tokens. Client OAuth is implicit-grant only
+ * (`response_type=token`, no token URL), which Corsair's connect flow cannot
+ * complete, so this plugin is API-key only.
  */
 export const beeminderAuthConfig = {
 	api_key: {
-		account: ['username'] as const,
-	},
-	oauth_2: {
 		account: ['username'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -174,9 +168,8 @@ export type ExternalBeeminderPlugin<T extends BeeminderPluginOptions> =
 /**
  * The Beeminder plugin.
  *
- * API key is a personal `auth_token`. `oauth_2` is a stored Beeminder
- * `access_token` (implicit grant happens outside Corsair). No `oauthConfig`:
- * Corsair's helper always sends `response_type=code`, which Beeminder rejects.
+ * Personal `auth_token` (API key). Beeminder has no authorization-code
+ * token endpoint, so Studio OAuth is not registered.
  *
  * **No webhooks.** Beeminder sends outbound webhooks to user-configured URLs,
  * but does not deliver events to third-party integrations via webhook.
@@ -215,14 +208,6 @@ export function beeminder<const T extends BeeminderPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
 					throw new AuthMissingError('beeminder', 'api_key');
-				}
-				return res;
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				if (!res) {
-					throw new AuthMissingError('beeminder', 'oauth_2');
 				}
 				return res;
 			}

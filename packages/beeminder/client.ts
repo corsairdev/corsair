@@ -23,17 +23,10 @@ const BEEMINDER_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-export type BeeminderAuthParam = 'auth_token' | 'access_token';
-
 export type BeeminderRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
 	body?: Record<string, string | number | boolean>;
 	query?: Record<string, string | number | boolean | undefined>;
-	/**
-	 * Personal tokens use `auth_token`; OAuth tokens use `access_token`.
-	 * Both are also sent as `Authorization: Bearer`.
-	 */
-	authParam?: BeeminderAuthParam;
 };
 
 function buildConfig(authToken: string): OpenAPIConfig {
@@ -61,15 +54,16 @@ function toFormBody(body: Record<string, string | number | boolean>): string {
 /**
  * Authenticated Beeminder request.
  *
- * Docs: personal tokens as `auth_token` query/body; OAuth as `access_token`
- * or `Authorization: Bearer`. POST examples use form fields, not JSON.
+ * Personal `auth_token` as a query param, plus `Authorization: Bearer`
+ * (Beeminder also accepts Bearer for OAuth access tokens pasted as the key).
+ * POST examples use form fields, not JSON.
  */
 export async function makeBeeminderRequest<T>(
 	endpoint: string,
 	authToken: string,
 	options: BeeminderRequestOptions = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, authParam = 'auth_token' } = options;
+	const { method = 'GET', body, query } = options;
 	const isWrite = method === 'POST' || method === 'PUT';
 
 	const requestOptions: ApiRequestOptions = {
@@ -77,7 +71,7 @@ export async function makeBeeminderRequest<T>(
 		url: endpoint,
 		body: isWrite && body ? toFormBody(body) : undefined,
 		mediaType: isWrite ? 'application/x-www-form-urlencoded' : undefined,
-		query: { ...query, [authParam]: authToken },
+		query: { ...query, auth_token: authToken },
 	};
 
 	return await request<T>(buildConfig(authToken), requestOptions, {

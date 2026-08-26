@@ -62,15 +62,6 @@ describe('makeBeeminderRequest', () => {
 		expect(captured?.headers.authorization).toBe('Bearer personal-token');
 	});
 
-	it('sends OAuth tokens as access_token', async () => {
-		mockFetch({});
-		await makeBeeminderRequest('users/me.json', 'oauth-token', {
-			authParam: 'access_token',
-		});
-		expect(captured?.url).toContain('access_token=oauth-token');
-		expect(captured?.url).not.toContain('auth_token=');
-	});
-
 	it('POSTs charges as form fields, not JSON', async () => {
 		mockFetch({ id: 'c1', amount: 1 });
 		await makeBeeminderRequest('charges.json', 'tok', {
