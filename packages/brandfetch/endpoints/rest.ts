@@ -14,7 +14,6 @@ export async function requireApiKey(ctx: BrandfetchContext): Promise<string> {
 	if (apiKey) return apiKey;
 	throw new AuthMissingError('brandfetch', 'api_key');
 }
-}
 
 export async function requireClientId(
 	ctx: BrandfetchContext,
