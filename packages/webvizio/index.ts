@@ -1,11 +1,9 @@
 import type {
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -24,31 +22,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { WebvizioSchema } from './schema';
-import {
-	CommentWebhooks,
-	matchWebvizioTenantWebhook,
-	ProjectWebhooks,
-	TaskWebhooks,
-} from './webhooks';
-import type {
-	CommentCreatedEvent,
-	CommentDeletedEvent,
-	ProjectCreatedEvent,
-	ProjectDeletedEvent,
-	ProjectUpdatedEvent,
-	TaskCreatedEvent,
-	TaskDeletedEvent,
-	TaskUpdatedEvent,
-	WebvizioWebhookOutputs,
-} from './webhooks/types';
-import { WebvizioWebhookSchemas } from './webhooks/types';
 
 export type WebvizioPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalWebvizioPlugin['hooks'];
-	webhookHooks?: InternalWebvizioPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof webvizioEndpointsNested>;
 };
@@ -81,47 +59,12 @@ export type WebvizioEndpoints = {
 	>;
 };
 
-type WebvizioWebhook<
-	K extends keyof WebvizioWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<WebvizioContext, TEvent, WebvizioWebhookOutputs[K]>;
-
-export type WebvizioWebhooks = {
-	projectCreated: WebvizioWebhook<'projectCreated', ProjectCreatedEvent>;
-	projectUpdated: WebvizioWebhook<'projectUpdated', ProjectUpdatedEvent>;
-	projectDeleted: WebvizioWebhook<'projectDeleted', ProjectDeletedEvent>;
-	taskCreated: WebvizioWebhook<'taskCreated', TaskCreatedEvent>;
-	taskUpdated: WebvizioWebhook<'taskUpdated', TaskUpdatedEvent>;
-	taskDeleted: WebvizioWebhook<'taskDeleted', TaskDeletedEvent>;
-	commentCreated: WebvizioWebhook<'commentCreated', CommentCreatedEvent>;
-	commentDeleted: WebvizioWebhook<'commentDeleted', CommentDeletedEvent>;
-};
-
-export type WebvizioBoundWebhooks = BindWebhooks<WebvizioWebhooks>;
-
 const webvizioEndpointsNested = {
 	projects: {
 		list: Projects.list,
 	},
 	webhooks: {
 		list: Webhooks.list,
-	},
-} as const;
-
-const webvizioWebhooksNested = {
-	projects: {
-		projectCreated: ProjectWebhooks.projectCreated,
-		projectUpdated: ProjectWebhooks.projectUpdated,
-		projectDeleted: ProjectWebhooks.projectDeleted,
-	},
-	tasks: {
-		taskCreated: TaskWebhooks.taskCreated,
-		taskUpdated: TaskWebhooks.taskUpdated,
-		taskDeleted: TaskWebhooks.taskDeleted,
-	},
-	comments: {
-		commentCreated: CommentWebhooks.commentCreated,
-		commentDeleted: CommentWebhooks.commentDeleted,
 	},
 } as const;
 
@@ -149,7 +92,7 @@ const webvizioEndpointMeta = {
 
 export const webvizioAuthConfig = {
 	api_key: {
-		account: ['project_id', 'project_uuid', 'account_id', 'one'] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -157,7 +100,7 @@ export type WebvizioPlugin = CorsairPlugin<
 	'webvizio',
 	typeof WebvizioSchema,
 	typeof webvizioEndpointsNested,
-	typeof webvizioWebhooksNested,
+	{},
 	WebvizioPluginOptions
 >;
 
@@ -165,7 +108,7 @@ export type InternalWebvizioPlugin = CorsairPlugin<
 	'webvizio',
 	typeof WebvizioSchema,
 	typeof webvizioEndpointsNested,
-	typeof webvizioWebhooksNested,
+	{},
 	WebvizioPluginOptions
 >;
 
@@ -181,45 +124,16 @@ export function webvizio(options: WebvizioPluginOptions = {}): WebvizioPlugin {
 			authType,
 		},
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: webvizioEndpointsNested,
-		webhooks: webvizioWebhooksNested,
+		webhooks: {},
 		endpointMeta: webvizioEndpointMeta,
 		endpointSchemas: webvizioEndpointSchemas,
-		webhookSchemas: WebvizioWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			if ('x-webvizio-signature' in headers || 'x-webvizio-event' in headers) {
-				return true;
-			}
-			const body =
-				typeof request.body === 'object' && request.body !== null
-					? (request.body as Record<string, unknown>)
-					: undefined;
-			if (body && typeof body.event === 'string') {
-				return (
-					body.event.startsWith('project.') ||
-					body.event.startsWith('task.') ||
-					body.event.startsWith('comment.')
-				);
-			}
-			return false;
-		},
-		pluginTenantWebhookMatcher: matchWebvizioTenantWebhook,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: WebvizioKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature?.();
-				if (res) return res;
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -260,25 +174,3 @@ export {
 	WebvizioWebhookSubscriptionSchema,
 } from './endpoints/types';
 export { WebvizioProject, WebvizioSchema, WebvizioWebhook } from './schema';
-export type {
-	CommentCreatedEvent,
-	CommentDeletedEvent,
-	ProjectCreatedEvent,
-	ProjectDeletedEvent,
-	ProjectUpdatedEvent,
-	TaskCreatedEvent,
-	TaskDeletedEvent,
-	TaskUpdatedEvent,
-	WebvizioWebhookOutputs,
-} from './webhooks/types';
-export {
-	CommentCreatedEventSchema,
-	CommentDeletedEventSchema,
-	ProjectCreatedEventSchema,
-	ProjectDeletedEventSchema,
-	ProjectUpdatedEventSchema,
-	TaskCreatedEventSchema,
-	TaskDeletedEventSchema,
-	TaskUpdatedEventSchema,
-	WebvizioWebhookSchemas,
-} from './webhooks/types';
