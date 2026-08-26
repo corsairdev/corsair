@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -14,20 +15,30 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { BoxheroEndpointInputs, BoxheroEndpointOutputs } from './endpoints/types';
-import { BoxheroEndpointInputSchemas, BoxheroEndpointOutputSchemas } from './endpoints/types';
+import {
+	ItemAttributes,
+	Items,
+	Locations,
+	Members,
+	Partners,
+	Teams,
+	Transactions,
+} from './endpoints';
 import type {
-	BoxheroWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
+	BoxheroEndpointInputs,
+	BoxheroEndpointOutputs,
+} from './endpoints/types';
+import {
+	BoxheroEndpointInputSchemas,
+	BoxheroEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { BoxheroSchema } from './schema';
 import { ExampleWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
-import { matchBoxheroTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveBoxheroOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchBoxheroTenantWebhook } from './webhooks/tenant-matcher';
+import type { BoxheroWebhookOutputs, ExampleEvent } from './webhooks/types';
+import { ExampleEventSchema } from './webhooks/types';
 
 export type BoxheroPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -46,18 +57,31 @@ export type BoxheroContext = CorsairPluginContext<
 
 export type BoxheroKeyBuilderContext = KeyBuilderContext<BoxheroPluginOptions>;
 
-export type BoxheroBoundEndpoints = BindEndpoints<typeof boxheroEndpointsNested>;
+export type BoxheroBoundEndpoints = BindEndpoints<
+	typeof boxheroEndpointsNested
+>;
 
-type BoxheroEndpoint<
-	K extends keyof BoxheroEndpointOutputs,
-> = CorsairEndpoint<
+type BoxheroEndpoint<K extends keyof BoxheroEndpointOutputs> = CorsairEndpoint<
 	BoxheroContext,
 	BoxheroEndpointInputs[K],
 	BoxheroEndpointOutputs[K]
 >;
 
 export type BoxheroEndpoints = {
-	exampleGet: BoxheroEndpoint<'exampleGet'>;
+	locationsDelete: BoxheroEndpoint<'locationsDelete'>;
+	locationsList: BoxheroEndpoint<'locationsList'>;
+	locationsGet: BoxheroEndpoint<'locationsGet'>;
+	transactionsListBasic: BoxheroEndpoint<'transactionsListBasic'>;
+	transactionsListLocation: BoxheroEndpoint<'transactionsListLocation'>;
+	partnersList: BoxheroEndpoint<'partnersList'>;
+	itemsDelete: BoxheroEndpoint<'itemsDelete'>;
+	itemsGet: BoxheroEndpoint<'itemsGet'>;
+	itemsList: BoxheroEndpoint<'itemsList'>;
+	itemAttributesList: BoxheroEndpoint<'itemAttributesList'>;
+	itemAttributesGet: BoxheroEndpoint<'itemAttributesGet'>;
+	teamsGetInfo: BoxheroEndpoint<'teamsGetInfo'>;
+	membersList: BoxheroEndpoint<'membersList'>;
+	membersGet: BoxheroEndpoint<'membersGet'>;
 };
 
 type BoxheroWebhook<
@@ -72,8 +96,33 @@ export type BoxheroWebhooks = {
 export type BoxheroBoundWebhooks = BindWebhooks<BoxheroWebhooks>;
 
 const boxheroEndpointsNested = {
-	example: {
-		get: Example.get,
+	locations: {
+		list: Locations.list,
+		get: Locations.get,
+		delete: Locations.delete,
+	},
+	transactions: {
+		listBasic: Transactions.listBasic,
+		listLocation: Transactions.listLocation,
+	},
+	partners: {
+		list: Partners.list,
+	},
+	items: {
+		list: Items.list,
+		get: Items.get,
+		delete: Items.delete,
+	},
+	itemAttributes: {
+		list: ItemAttributes.list,
+		get: ItemAttributes.get,
+	},
+	teams: {
+		getInfo: Teams.getInfo,
+	},
+	members: {
+		list: Members.list,
+		get: Members.get,
 	},
 } as const;
 
@@ -84,11 +133,65 @@ const boxheroWebhooksNested = {
 } as const;
 
 export const boxheroEndpointSchemas = {
-	'example.get': {
-		input: BoxheroEndpointInputSchemas.exampleGet,
-		output: BoxheroEndpointOutputSchemas.exampleGet,
+	'locations.delete': {
+		input: BoxheroEndpointInputSchemas.locationsDelete,
+		output: BoxheroEndpointOutputSchemas.locationsDelete,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof boxheroEndpointsNested>;
+	'locations.list': {
+		input: BoxheroEndpointInputSchemas.locationsList,
+		output: BoxheroEndpointOutputSchemas.locationsList,
+	},
+	'locations.get': {
+		input: BoxheroEndpointInputSchemas.locationsGet,
+		output: BoxheroEndpointOutputSchemas.locationsGet,
+	},
+	'transactions.listBasic': {
+		input: BoxheroEndpointInputSchemas.transactionsListBasic,
+		output: BoxheroEndpointOutputSchemas.transactionsListBasic,
+	},
+	'transactions.listLocation': {
+		input: BoxheroEndpointInputSchemas.transactionsListLocation,
+		output: BoxheroEndpointOutputSchemas.transactionsListLocation,
+	},
+	'partners.list': {
+		input: BoxheroEndpointInputSchemas.partnersList,
+		output: BoxheroEndpointOutputSchemas.partnersList,
+	},
+	'items.delete': {
+		input: BoxheroEndpointInputSchemas.itemsDelete,
+		output: BoxheroEndpointOutputSchemas.itemsDelete,
+	},
+	'items.get': {
+		input: BoxheroEndpointInputSchemas.itemsGet,
+		output: BoxheroEndpointOutputSchemas.itemsGet,
+	},
+	'items.list': {
+		input: BoxheroEndpointInputSchemas.itemsList,
+		output: BoxheroEndpointOutputSchemas.itemsList,
+	},
+	'itemAttributes.list': {
+		input: BoxheroEndpointInputSchemas.itemAttributesList,
+		output: BoxheroEndpointOutputSchemas.itemAttributesList,
+	},
+	'itemAttributes.get': {
+		input: BoxheroEndpointInputSchemas.itemAttributesGet,
+		output: BoxheroEndpointOutputSchemas.itemAttributesGet,
+	},
+	'teams.getInfo': {
+		input: BoxheroEndpointInputSchemas.teamsGetInfo,
+		output: BoxheroEndpointOutputSchemas.teamsGetInfo,
+	},
+	'members.list': {
+		input: BoxheroEndpointInputSchemas.membersList,
+		output: BoxheroEndpointOutputSchemas.membersList,
+	},
+	'members.get': {
+		input: BoxheroEndpointInputSchemas.membersGet,
+		output: BoxheroEndpointOutputSchemas.membersGet,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof boxheroEndpointsNested
+>;
 
 const boxheroWebhookSchemas = {
 	'example.example': {
@@ -101,9 +204,63 @@ const boxheroWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const boxheroEndpointMeta = {
-	'example.get': {
+	'locations.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a warehouse location [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'locations.list': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'List active warehouse locations',
+	},
+	'locations.get': {
+		riskLevel: 'read',
+		description: 'Get a warehouse location',
+	},
+	'transactions.listBasic': {
+		riskLevel: 'read',
+		description: 'List basic inventory transactions',
+	},
+	'transactions.listLocation': {
+		riskLevel: 'read',
+		description: 'List location-based inventory transactions',
+	},
+	'partners.list': {
+		riskLevel: 'read',
+		description: 'List inventory partners',
+	},
+	'items.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete an inventory item [DESTRUCTIVE · IRREVERSIBLE]',
+	},
+	'items.get': {
+		riskLevel: 'read',
+		description: 'Get an inventory item',
+	},
+	'items.list': {
+		riskLevel: 'read',
+		description: 'List inventory items',
+	},
+	'itemAttributes.list': {
+		riskLevel: 'read',
+		description: 'List item attribute definitions',
+	},
+	'itemAttributes.get': {
+		riskLevel: 'read',
+		description: 'Get an item attribute definition',
+	},
+	'teams.getInfo': {
+		riskLevel: 'read',
+		description: 'Get the team linked to the API token',
+	},
+	'members.list': {
+		riskLevel: 'read',
+		description: 'List team members',
+	},
+	'members.get': {
+		riskLevel: 'read',
+		description: 'Get a team member',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof boxheroEndpointsNested>;
 
@@ -151,7 +308,6 @@ export function boxhero<const T extends BoxheroPluginOptions>(
 		webhookSchemas: boxheroWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
 			return 'x-boxhero-signature' in headers;
 		},
 		pluginTenantWebhookMatcher: matchBoxheroTenantWebhook,
@@ -190,13 +346,44 @@ export function boxhero<const T extends BoxheroPluginOptions>(
 }
 
 export type {
-	ExampleEvent,
-	BoxheroWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	BoxheroEndpointInputs,
 	BoxheroEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	Item,
+	ItemAttribute,
+	ItemAttributeDefinition,
+	ItemAttributeGetInput,
+	ItemAttributeGetResponse,
+	ItemAttributesListInput,
+	ItemAttributesListResponse,
+	ItemsDeleteInput,
+	ItemsDeleteResponse,
+	ItemsGetInput,
+	ItemsGetResponse,
+	ItemsListInput,
+	ItemsListResponse,
+	LocationsDeleteInput,
+	LocationsDeleteResponse,
+	LocationsGetInput,
+	LocationsGetResponse,
+	LocationsListInput,
+	LocationsListResponse,
+	Member,
+	MembersGetInput,
+	MembersGetResponse,
+	MembersListInput,
+	MembersListResponse,
+	Partner,
+	PartnersListInput,
+	PartnersListResponse,
+	Team,
+	TeamsGetInput,
+	TeamsGetResponse,
+	TransactionsListBasicInput,
+	TransactionsListBasicResponse,
+	TransactionsListLocationInput,
+	TransactionsListLocationResponse,
 } from './endpoints/types';
+export type {
+	BoxheroWebhookOutputs,
+	ExampleEvent,
+} from './webhooks/types';

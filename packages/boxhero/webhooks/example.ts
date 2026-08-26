@@ -20,7 +20,12 @@ export const example: BoxheroWebhooks['example'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'boxhero.webhook.example', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'boxhero.webhook.example',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},

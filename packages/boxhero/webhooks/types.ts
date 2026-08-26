@@ -1,4 +1,8 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { z } from 'zod';
 
 export const BoxheroWebhookPayloadSchema = z.object({
@@ -7,9 +11,7 @@ export const BoxheroWebhookPayloadSchema = z.object({
 	data: z.record(z.string(), z.unknown()),
 });
 
-export type BoxheroWebhookPayload = z.infer<
-	typeof BoxheroWebhookPayloadSchema
->;
+export type BoxheroWebhookPayload = z.infer<typeof BoxheroWebhookPayloadSchema>;
 
 export const ExampleEventSchema = BoxheroWebhookPayloadSchema.extend({
 	type: z.literal('example'),
@@ -30,7 +32,9 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
-			return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+			return parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
 				? (parsed as Record<string, unknown>)
 				: null;
 		} catch {

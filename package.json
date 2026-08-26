@@ -4,7 +4,7 @@
   "type": "module",
   "packageManager": "pnpm@10.20.0",
   "scripts": {
-    "build": "turbo --filter \"./packages/*\" build",
+    "build": "node scripts/build.mjs",
     "dev": "turbo --filter \"./packages/*\" dev",
     "clean": "turbo --filter \"./packages/*\" clean && rm -rf node_modules",
     "format": "biome format . --write",

@@ -1,4 +1,4 @@
-lockfileVersion: '9.0'
+﻿lockfileVersion: '9.0'
 
 settings:
   autoInstallPeers: true
@@ -168,6 +168,9 @@ importers:
       '@corsair-dev/bitwarden':
         specifier: workspace:*
         version: link:../../packages/bitwarden
+      '@corsair-dev/boxhero':
+        specifier: workspace:*
+        version: link:../../packages/boxhero
       '@corsair-dev/cursor':
         specifier: workspace:*
         version: link:../../packages/cursor
