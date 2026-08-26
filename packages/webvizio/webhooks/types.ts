@@ -164,7 +164,7 @@ export function verifyWebvizioWebhookSignature(
 		signature,
 		'sha256',
 	);
-	if (!isValid && signature !== webhookSecret) {
+	if (!isValid) {
 		return { valid: false, error: 'Invalid Webvizio webhook signature' };
 	}
 
