@@ -10,8 +10,29 @@ const S = z.string().nullable().optional();
 const N = z.number().nullable().optional();
 const B = z.boolean().nullable().optional();
 
-/** Graph-matrix row: 2 of 3 of [time, value, rate] are set; the rest are null. */
-const RoadRow = z.array(z.number().nullable());
+const N3 = z.number();
+
+/**
+ * `road` row: [time, value, rate] with exactly one null (2 of 3 specified).
+ * https://api.beeminder.com — Goal Resource
+ */
+export const BeeminderRoadRow = z.union([
+	z.tuple([z.null(), N3, N3]),
+	z.tuple([N3, z.null(), N3]),
+	z.tuple([N3, N3, z.null()]),
+]);
+
+/**
+ * `roadall` adds [initday, initval, null] and a final [goaldate, goalval, rate].
+ * Middle rows match `road`; the final row may be fully numeric.
+ */
+export const BeeminderRoadAllRow = z.union([
+	BeeminderRoadRow,
+	z.tuple([N3, N3, N3]),
+]);
+
+/** `fullroad` is `roadall` with every null filled in. */
+export const BeeminderFullRoadRow = z.tuple([N3, N3, N3]);
 
 /**
  * Datapoint nested on a Goal when `datapoints` / `last_datapoint` is present.
@@ -92,9 +113,9 @@ export const BeeminderGoalEntity = z
 			.loose()
 			.nullable()
 			.optional(),
-		road: z.array(RoadRow).nullable().optional(),
-		roadall: z.array(RoadRow).nullable().optional(),
-		fullroad: z.array(RoadRow).nullable().optional(),
+		road: z.array(BeeminderRoadRow).nullable().optional(),
+		roadall: z.array(BeeminderRoadAllRow).nullable().optional(),
+		fullroad: z.array(BeeminderFullRoadRow).nullable().optional(),
 		rah: N,
 		delta: N,
 		delta_text: S,

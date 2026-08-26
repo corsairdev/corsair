@@ -206,4 +206,56 @@ describe('Beeminder schema', () => {
 		});
 		expect(parsed.success).toBe(true);
 	});
+
+	describe('road matrix tuples', () => {
+		const parse = (fields: Record<string, unknown>) =>
+			BeeminderGoalEntity.safeParse({ slug: 'weight', ...fields }).success;
+
+		it('accepts documented road, roadall, and fullroad rows', () => {
+			expect(
+				parse({
+					road: [
+						[null, 1, 2],
+						[10, null, 0.5],
+						[20, 3, null],
+					],
+				}),
+			).toBe(true);
+			expect(
+				parse({
+					roadall: [
+						[1, 2, null],
+						[10, null, 0.5],
+						[30, 4, 0.5],
+					],
+				}),
+			).toBe(true);
+			expect(
+				parse({
+					fullroad: [
+						[1, 2, 0.5],
+						[10, 3, 0.5],
+					],
+				}),
+			).toBe(true);
+		});
+
+		it('rejects invalid lengths', () => {
+			expect(parse({ road: [[1, 2]] })).toBe(false);
+			expect(parse({ road: [[1, 2, 3, 4]] })).toBe(false);
+			expect(parse({ roadall: [[1, 2]] })).toBe(false);
+			expect(parse({ fullroad: [[1, 2, 3, 4]] })).toBe(false);
+		});
+
+		it('rejects incorrect null counts on road', () => {
+			expect(parse({ road: [[1, 2, 3]] })).toBe(false);
+			expect(parse({ road: [[null, null, 1]] })).toBe(false);
+			expect(parse({ road: [[null, null, null]] })).toBe(false);
+		});
+
+		it('rejects nulls in fullroad', () => {
+			expect(parse({ fullroad: [[1, 2, null]] })).toBe(false);
+			expect(parse({ fullroad: [[null, 2, 3]] })).toBe(false);
+		});
+	});
 });
