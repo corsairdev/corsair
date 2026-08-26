@@ -17,13 +17,9 @@ import type {
 } from 'corsair/core';
 import {
 	BrandsEndpoints,
-	CompaniesEndpoints,
-	EventsEndpoints,
-	GraphqlEndpoints,
 	LogosEndpoints,
-	TaxonomiesEndpoints,
 	TransactionsEndpoints,
-	WebhooksEndpoints,
+	ViewerEndpoints,
 } from './endpoints';
 import type {
 	BrandfetchEndpointInputs,
@@ -44,6 +40,8 @@ import { ExampleEventSchema } from './webhooks/types';
 export type BrandfetchPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
+	/** Brandfetch clientId used by the Logo CDN and Brand Search APIs. */
+	clientId?: string;
 	webhookSecret?: string;
 	hooks?: InternalBrandfetchPlugin['hooks'];
 	webhookHooks?: InternalBrandfetchPlugin['webhookHooks'];
@@ -74,12 +72,8 @@ export type BrandfetchEndpoints = {
 	getBrandInfo: BrandfetchEndpoint<'getBrandInfo'>;
 	searchBrands: BrandfetchEndpoint<'searchBrands'>;
 	getCdnLogo: BrandfetchEndpoint<'getCdnLogo'>;
-	getCompanyInfo: BrandfetchEndpoint<'getCompanyInfo'>;
 	getTransactionInfo: BrandfetchEndpoint<'getTransactionInfo'>;
-	getTaxonomy: BrandfetchEndpoint<'getTaxonomy'>;
-	getGraphqlVersion: BrandfetchEndpoint<'getGraphqlVersion'>;
-	listSubscribableEvents: BrandfetchEndpoint<'listSubscribableEvents'>;
-	listWebhooks: BrandfetchEndpoint<'listWebhooks'>;
+	getViewer: BrandfetchEndpoint<'getViewer'>;
 };
 
 type BrandfetchWebhook<
@@ -96,12 +90,8 @@ export type BrandfetchBoundWebhooks = BindWebhooks<BrandfetchWebhooks>;
 const brandfetchEndpointsNested = {
 	brands: BrandsEndpoints,
 	logos: LogosEndpoints,
-	companies: CompaniesEndpoints,
 	transactions: TransactionsEndpoints,
-	taxonomies: TaxonomiesEndpoints,
-	graphql: GraphqlEndpoints,
-	events: EventsEndpoints,
-	webhooks: WebhooksEndpoints,
+	viewer: ViewerEndpoints,
 } as const;
 
 const brandfetchWebhooksNested = {
@@ -123,29 +113,13 @@ export const brandfetchEndpointSchemas = {
 		input: BrandfetchEndpointInputSchemas.getCdnLogo,
 		output: BrandfetchEndpointOutputSchemas.getCdnLogo,
 	},
-	'companies.get': {
-		input: BrandfetchEndpointInputSchemas.getCompanyInfo,
-		output: BrandfetchEndpointOutputSchemas.getCompanyInfo,
-	},
 	'transactions.get': {
 		input: BrandfetchEndpointInputSchemas.getTransactionInfo,
 		output: BrandfetchEndpointOutputSchemas.getTransactionInfo,
 	},
-	'taxonomies.get': {
-		input: BrandfetchEndpointInputSchemas.getTaxonomy,
-		output: BrandfetchEndpointOutputSchemas.getTaxonomy,
-	},
-	'graphql.getVersion': {
-		input: BrandfetchEndpointInputSchemas.getGraphqlVersion,
-		output: BrandfetchEndpointOutputSchemas.getGraphqlVersion,
-	},
-	'events.listSubscribable': {
-		input: BrandfetchEndpointInputSchemas.listSubscribableEvents,
-		output: BrandfetchEndpointOutputSchemas.listSubscribableEvents,
-	},
-	'webhooks.list': {
-		input: BrandfetchEndpointInputSchemas.listWebhooks,
-		output: BrandfetchEndpointOutputSchemas.listWebhooks,
+	'viewer.get': {
+		input: BrandfetchEndpointInputSchemas.getViewer,
+		output: BrandfetchEndpointOutputSchemas.getViewer,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof brandfetchEndpointsNested
@@ -176,29 +150,13 @@ const brandfetchEndpointMeta = {
 		riskLevel: 'read',
 		description: 'Get CDN logo URL for a domain',
 	},
-	'companies.get': {
-		riskLevel: 'read',
-		description: 'Get company information by domain',
-	},
 	'transactions.get': {
 		riskLevel: 'read',
 		description: 'Get transaction information by label',
 	},
-	'taxonomies.get': {
+	'viewer.get': {
 		riskLevel: 'read',
-		description: 'Get Brandfetch taxonomy',
-	},
-	'graphql.getVersion': {
-		riskLevel: 'read',
-		description: 'Get GraphQL API version',
-	},
-	'events.listSubscribable': {
-		riskLevel: 'read',
-		description: 'List subscribable webhook events',
-	},
-	'webhooks.list': {
-		riskLevel: 'read',
-		description: 'List configured webhooks',
+		description: 'Verify credential and get viewer identity',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof brandfetchEndpointsNested
@@ -262,9 +220,15 @@ export function brandfetch<const T extends BrandfetchPluginOptions>(
 		webhookSchemas: brandfetchWebhookSchemas,
 
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-
-			return 'x-brandfetch-signature' in headers;
+			const headers = Object.keys(request.headers).map((key) =>
+				key.toLowerCase(),
+			);
+			return (
+				headers.includes('webhook-id') &&
+				headers.includes('webhook-timestamp') &&
+				headers.includes('webhook-signature') &&
+				headers.includes('webhook-signature-algorithm')
+			);
 		},
 
 		pluginTenantWebhookMatcher: matchBrandfetchTenantWebhook,

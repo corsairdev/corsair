@@ -1,12 +1,8 @@
 import {
 	getBrandInfo,
 	getCdnLogo,
-	getCompanyInfo,
-	getGraphqlVersion,
-	getTaxonomy,
 	getTransactionInfo,
-	listSubscribableEvents,
-	listWebhooks,
+	getViewer,
 	searchBrands,
 } from './brand-info';
 
@@ -20,28 +16,12 @@ export const LogosEndpoints = {
 	get: getCdnLogo,
 } as const;
 
-export const CompaniesEndpoints = {
-	get: getCompanyInfo,
-} as const;
-
 export const TransactionsEndpoints = {
 	get: getTransactionInfo,
 } as const;
 
-export const TaxonomiesEndpoints = {
-	get: getTaxonomy,
-} as const;
-
-export const GraphqlEndpoints = {
-	getVersion: getGraphqlVersion,
-} as const;
-
-export const EventsEndpoints = {
-	listSubscribable: listSubscribableEvents,
-} as const;
-
-export const WebhooksEndpoints = {
-	list: listWebhooks,
+export const ViewerEndpoints = {
+	get: getViewer,
 } as const;
 
 export * from './types';

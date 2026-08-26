@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import type { BrandfetchWebhooks } from '..';
+import type { BrandfetchWebhooks } from '../index';
 import {
 	createBrandfetchMatch,
 	verifyBrandfetchWebhookSignature,

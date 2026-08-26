@@ -28,16 +28,26 @@ export type GetBrandInfoResponse = z.infer<typeof GetBrandInfoResponseSchema>;
 
 const SearchBrandsInputSchema = z.object({
 	query: z.string().min(1),
+	clientId: z.string().min(1).optional(),
 });
 
 export type SearchBrandsInput = z.infer<typeof SearchBrandsInputSchema>;
 
-const SearchBrandsResponseSchema = z.array(GetBrandInfoResponseSchema);
+const SearchBrandsResponseSchema = z.array(
+	z.object({
+		icon: z.string().nullable(),
+		name: z.string().nullable(),
+		domain: z.string(),
+		claimed: z.boolean(),
+		brandId: z.string(),
+	}),
+);
 
 export type SearchBrandsResponse = z.infer<typeof SearchBrandsResponseSchema>;
 
 const GetCdnLogoInputSchema = z.object({
 	domain: z.string().min(1),
+	clientId: z.string().min(1).optional(),
 });
 
 export type GetCdnLogoInput = z.infer<typeof GetCdnLogoInputSchema>;
@@ -48,122 +58,88 @@ const GetCdnLogoResponseSchema = z.object({
 
 export type GetCdnLogoResponse = z.infer<typeof GetCdnLogoResponseSchema>;
 
-const GetCompanyInfoInputSchema = z.object({
-	domain: z.string().min(1),
-});
-
-export type GetCompanyInfoInput = z.infer<typeof GetCompanyInfoInputSchema>;
-
-const GetCompanyInfoResponseSchema = z.record(z.string(), z.unknown());
-
-export type GetCompanyInfoResponse = z.infer<
-	typeof GetCompanyInfoResponseSchema
->;
-
 const GetTransactionInfoInputSchema = z.object({
-	label: z.string().min(1),
+	transactionLabel: z.string().min(1),
+	countryCode: z.string().regex(/^[A-Z]{2}$/, {
+		message: 'countryCode must be an ISO 3166-1 alpha-2 code',
+	}),
 });
 
 export type GetTransactionInfoInput = z.infer<
 	typeof GetTransactionInfoInputSchema
 >;
 
-const GetTransactionInfoResponseSchema = z.record(z.string(), z.unknown());
+const GetTransactionInfoResponseSchema = GetBrandInfoResponseSchema;
 
 export type GetTransactionInfoResponse = z.infer<
 	typeof GetTransactionInfoResponseSchema
 >;
 
-const GetTaxonomyInputSchema = z.object({});
+const GetViewerInputSchema = z.object({});
 
-export type GetTaxonomyInput = z.infer<typeof GetTaxonomyInputSchema>;
+export type GetViewerInput = z.infer<typeof GetViewerInputSchema>;
 
-const GetTaxonomyResponseSchema = z.record(z.string(), z.unknown());
-
-export type GetTaxonomyResponse = z.infer<typeof GetTaxonomyResponseSchema>;
-
-const GetGraphqlVersionInputSchema = z.object({});
-
-export type GetGraphqlVersionInput = z.infer<
-	typeof GetGraphqlVersionInputSchema
->;
-
-const GetGraphqlVersionResponseSchema = z.object({
-	version: z.string(),
+const ViewerApiKeyResponseSchema = z.object({
+	type: z.literal('api-key'),
+	id: z.string(),
+	urn: z.string(),
+	name: z.string().nullable(),
+	createdAt: z.string().nullable(),
+	usage: z.object({
+		used: z.number(),
+		quota: z.number(),
+	}),
+	organization: z.object({
+		id: z.string(),
+		urn: z.string(),
+		name: z.string().nullable(),
+	}),
 });
 
-export type GetGraphqlVersionResponse = z.infer<
-	typeof GetGraphqlVersionResponseSchema
->;
-
-const ListSubscribableEventsInputSchema = z.object({});
-
-export type ListSubscribableEventsInput = z.infer<
-	typeof ListSubscribableEventsInputSchema
->;
-
-const ListSubscribableEventsResponseSchema = z.object({
-	events: z.array(z.string()),
+const ViewerUserResponseSchema = z.object({
+	type: z.literal('user'),
+	id: z.string(),
+	urn: z.string(),
+	name: z.string().nullable(),
+	email: z.string().nullable(),
+	createdAt: z.string().nullable(),
 });
 
-export type ListSubscribableEventsResponse = z.infer<
-	typeof ListSubscribableEventsResponseSchema
->;
+const GetViewerResponseSchema = z.discriminatedUnion('type', [
+	ViewerApiKeyResponseSchema,
+	ViewerUserResponseSchema,
+]);
 
-const ListWebhooksInputSchema = z.object({});
-
-export type ListWebhooksInput = z.infer<typeof ListWebhooksInputSchema>;
-
-const ListWebhooksResponseSchema = z.object({
-	webhooks: z.array(z.unknown()),
-});
-
-export type ListWebhooksResponse = z.infer<typeof ListWebhooksResponseSchema>;
+export type GetViewerResponse = z.infer<typeof GetViewerResponseSchema>;
 
 export type BrandfetchEndpointInputs = {
 	getBrandInfo: GetBrandInfoInput;
 	searchBrands: SearchBrandsInput;
 	getCdnLogo: GetCdnLogoInput;
-	getCompanyInfo: GetCompanyInfoInput;
 	getTransactionInfo: GetTransactionInfoInput;
-	getTaxonomy: GetTaxonomyInput;
-	getGraphqlVersion: GetGraphqlVersionInput;
-	listSubscribableEvents: ListSubscribableEventsInput;
-	listWebhooks: ListWebhooksInput;
+	getViewer: GetViewerInput;
 };
 
 export type BrandfetchEndpointOutputs = {
 	getBrandInfo: GetBrandInfoResponse;
 	searchBrands: SearchBrandsResponse;
 	getCdnLogo: GetCdnLogoResponse;
-	getCompanyInfo: GetCompanyInfoResponse;
 	getTransactionInfo: GetTransactionInfoResponse;
-	getTaxonomy: GetTaxonomyResponse;
-	getGraphqlVersion: GetGraphqlVersionResponse;
-	listSubscribableEvents: ListSubscribableEventsResponse;
-	listWebhooks: ListWebhooksResponse;
+	getViewer: GetViewerResponse;
 };
 
 export const BrandfetchEndpointInputSchemas = {
 	getBrandInfo: GetBrandInfoInputSchema,
 	searchBrands: SearchBrandsInputSchema,
 	getCdnLogo: GetCdnLogoInputSchema,
-	getCompanyInfo: GetCompanyInfoInputSchema,
 	getTransactionInfo: GetTransactionInfoInputSchema,
-	getTaxonomy: GetTaxonomyInputSchema,
-	getGraphqlVersion: GetGraphqlVersionInputSchema,
-	listSubscribableEvents: ListSubscribableEventsInputSchema,
-	listWebhooks: ListWebhooksInputSchema,
+	getViewer: GetViewerInputSchema,
 } as const;
 
 export const BrandfetchEndpointOutputSchemas = {
 	getBrandInfo: GetBrandInfoResponseSchema,
 	searchBrands: SearchBrandsResponseSchema,
 	getCdnLogo: GetCdnLogoResponseSchema,
-	getCompanyInfo: GetCompanyInfoResponseSchema,
 	getTransactionInfo: GetTransactionInfoResponseSchema,
-	getTaxonomy: GetTaxonomyResponseSchema,
-	getGraphqlVersion: GetGraphqlVersionResponseSchema,
-	listSubscribableEvents: ListSubscribableEventsResponseSchema,
-	listWebhooks: ListWebhooksResponseSchema,
+	getViewer: GetViewerResponseSchema,
 } as const;

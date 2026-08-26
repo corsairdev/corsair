@@ -168,6 +168,9 @@ importers:
       '@corsair-dev/bitwarden':
         specifier: workspace:*
         version: link:../../packages/bitwarden
+      '@corsair-dev/brandfetch':
+        specifier: workspace:*
+        version: link:../../packages/brandfetch
       '@corsair-dev/cursor':
         specifier: workspace:*
         version: link:../../packages/cursor
