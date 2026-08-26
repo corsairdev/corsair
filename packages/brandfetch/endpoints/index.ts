@@ -1,15 +1,21 @@
 import {
+	getGraphqlVersion,
+	getTaxonomy,
+	listSubscribableEvents,
+	listWebhooks,
+} from './graphql';
+import {
 	getBrandInfo,
 	getCdnLogo,
+	getCompanyInfo,
 	getTransactionInfo,
-	getViewer,
 	searchBrands,
-} from './brand-info';
+} from './rest';
 
-// Group endpoints by resource type
 export const BrandsEndpoints = {
 	get: getBrandInfo,
 	search: searchBrands,
+	getCompany: getCompanyInfo,
 } as const;
 
 export const LogosEndpoints = {
@@ -20,8 +26,17 @@ export const TransactionsEndpoints = {
 	get: getTransactionInfo,
 } as const;
 
-export const ViewerEndpoints = {
-	get: getViewer,
+export const TaxonomyEndpoints = {
+	get: getTaxonomy,
+} as const;
+
+export const GraphqlEndpoints = {
+	getVersion: getGraphqlVersion,
+} as const;
+
+export const WebhooksEndpoints = {
+	list: listWebhooks,
+	listEvents: listSubscribableEvents,
 } as const;
 
 export * from './types';

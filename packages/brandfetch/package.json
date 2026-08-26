@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "tsc --build --force && tsup",
+    "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
