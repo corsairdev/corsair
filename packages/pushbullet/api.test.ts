@@ -134,3 +134,90 @@ describe('path parameters', () => {
 		expect(call.body).toBeUndefined();
 	});
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Regressions from review round 1.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('response validation', () => {
+	it('rejects a response missing a required field', async () => {
+		// Nothing downstream re-checks the shape, so a drifted response would
+		// otherwise escape under the declared return type and reach the cache.
+		requestMock.mockResolvedValue({ active: true });
+		await expect(
+			Pushes.create(makeCtx(), { type: 'note', body: 'hi' }),
+		).rejects.toThrow();
+	});
+
+	it('rejects a list response whose items are malformed', async () => {
+		requestMock.mockResolvedValue({ pushes: [{ active: true }] });
+		await expect(Pushes.list(makeCtx(), {})).rejects.toThrow();
+	});
+
+	it('accepts a well-formed response', async () => {
+		requestMock.mockResolvedValue({ iden: 'ujx1', type: 'note' });
+		await expect(
+			Pushes.create(makeCtx(), { type: 'note', body: 'hi' }),
+		).resolves.toMatchObject({ iden: 'ujx1' });
+	});
+
+	it('keeps unknown fields rather than stripping them', async () => {
+		// Pushbullet adds fields without versioning; dropping them would
+		// silently discard data the caller may rely on.
+		requestMock.mockResolvedValue({ iden: 'ujx1', brand_new_field: 42 });
+		const result = await Pushes.create(makeCtx(), { type: 'note', body: 'x' });
+		expect((result as Record<string, unknown>).brand_new_field).toBe(42);
+	});
+});
+
+describe('deleteAll cache reconciliation', () => {
+	it('evicts every cached push after a bulk delete', async () => {
+		const deleted: string[] = [];
+		const ctx = {
+			key: 'o.testtoken',
+			options: {},
+			db: {
+				pushes: {
+					search: async () => [{ entity_id: 'ujx1' }, { entity_id: 'ujx2' }],
+					deleteByEntityId: async (id: string) => {
+						deleted.push(id);
+						return true;
+					},
+				},
+			},
+		} as never;
+
+		requestMock.mockResolvedValue({});
+		await Pushes.deleteAll(ctx, {});
+
+		expect(deleted.sort()).toEqual(['ujx1', 'ujx2']);
+	});
+
+	it('does not fail the delete when cache eviction throws', async () => {
+		const ctx = {
+			key: 'o.testtoken',
+			options: {},
+			db: {
+				pushes: {
+					search: async () => {
+						throw new Error('db down');
+					},
+					deleteByEntityId: async () => true,
+				},
+			},
+		} as never;
+
+		requestMock.mockResolvedValue({});
+		// The endpoint warns on a cache failure; that is production behaviour,
+		// so it is silenced here rather than printed into every test run.
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		try {
+			await expect(Pushes.deleteAll(ctx, {})).resolves.toBeDefined();
+			expect(warn).toHaveBeenCalled();
+		} finally {
+			warn.mockRestore();
+		}
+	});
+});

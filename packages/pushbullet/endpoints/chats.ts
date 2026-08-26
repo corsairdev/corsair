@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makePushbulletRequest } from '../client';
 import type { PushbulletEndpoints } from '../index';
 import type { PushbulletEndpointOutputs } from './types';
+import { PushbulletEndpointOutputSchemas } from './types';
 
 export const create: PushbulletEndpoints['chatsCreate'] = async (
 	ctx,
@@ -9,7 +10,11 @@ export const create: PushbulletEndpoints['chatsCreate'] = async (
 ) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['chatsCreate']
-	>('chats', ctx.key, { method: 'POST', body: input });
+	>('chats', ctx.key, {
+		method: 'POST',
+		body: input,
+		schema: PushbulletEndpointOutputSchemas.chatsCreate,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -23,7 +28,11 @@ export const create: PushbulletEndpoints['chatsCreate'] = async (
 export const list: PushbulletEndpoints['chatsList'] = async (ctx, input) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['chatsList']
-	>('chats', ctx.key, { method: 'GET', query: input });
+	>('chats', ctx.key, {
+		method: 'GET',
+		query: input,
+		schema: PushbulletEndpointOutputSchemas.chatsList,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -42,7 +51,11 @@ export const setMuted: PushbulletEndpoints['chatsSetMuted'] = async (
 	const { iden, ...body } = input;
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['chatsSetMuted']
-	>(`chats/${encodeURIComponent(iden)}`, ctx.key, { method: 'POST', body });
+	>(`chats/${encodeURIComponent(iden)}`, ctx.key, {
+		method: 'POST',
+		body,
+		schema: PushbulletEndpointOutputSchemas.chatsSetMuted,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -59,7 +72,10 @@ export const remove: PushbulletEndpoints['chatsDelete'] = async (
 ) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['chatsDelete']
-	>(`chats/${encodeURIComponent(input.iden)}`, ctx.key, { method: 'DELETE' });
+	>(`chats/${encodeURIComponent(input.iden)}`, ctx.key, {
+		method: 'DELETE',
+		schema: PushbulletEndpointOutputSchemas.chatsDelete,
+	});
 
 	await logEventFromContext(
 		ctx,

@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
+import type { ZodType } from 'zod';
 
 /**
  * Error thrown for any non-2xx Pushbullet response. Pushbullet returns a JSON
@@ -11,6 +12,12 @@ export class PushbulletAPIError extends Error {
 	public readonly status?: number;
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
+	/**
+	 * HTTP method of the failed request. The error policy needs it to decide
+	 * whether a retry is safe: replaying a POST that Pushbullet may already
+	 * have applied would create a duplicate push, device or chat.
+	 */
+	public readonly method?: string;
 
 	constructor(
 		message: string,
@@ -24,6 +31,7 @@ export class PushbulletAPIError extends Error {
 			this.status = options.cause.status;
 			this.body = options.cause.body;
 			this.retryAfter = options.cause.retryAfter;
+			this.method = options.cause.request?.method;
 		}
 	}
 }
@@ -69,9 +77,16 @@ export async function makePushbulletRequest<T>(
 		method?: 'GET' | 'POST' | 'DELETE';
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
+		/**
+		 * Output schema for the response. Pushbullet can drift or return a
+		 * partial object, and nothing downstream re-checks the shape, so
+		 * validating here stops malformed data escaping under the declared
+		 * return type and being written into the local cache.
+		 */
+		schema?: ZodType<T>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, schema } = options;
 
 	const config: OpenAPIConfig = {
 		BASE: PUSHBULLET_API_BASE,
@@ -95,7 +110,8 @@ export async function makePushbulletRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		const response = await request<T>(config, requestOptions);
+		return schema ? schema.parse(response) : response;
 	} catch (error) {
 		if (error instanceof ApiError) {
 			// Surface Pushbullet's structured error message when present.

@@ -2,12 +2,16 @@ import { logEventFromContext } from 'corsair/core';
 import { makePushbulletRequest } from '../client';
 import type { PushbulletEndpoints } from '../index';
 import type { PushbulletEndpointOutputs } from './types';
+import { PushbulletEndpointOutputSchemas } from './types';
 
 /** The account the access token belongs to. */
 export const me: PushbulletEndpoints['usersMe'] = async (ctx, input) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['usersMe']
-	>('users/me', ctx.key, { method: 'GET' });
+	>('users/me', ctx.key, {
+		method: 'GET',
+		schema: PushbulletEndpointOutputSchemas.usersMe,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -30,7 +34,11 @@ export const uploadRequest: PushbulletEndpoints['filesUploadRequest'] = async (
 ) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['filesUploadRequest']
-	>('upload-request', ctx.key, { method: 'POST', body: input });
+	>('upload-request', ctx.key, {
+		method: 'POST',
+		body: input,
+		schema: PushbulletEndpointOutputSchemas.filesUploadRequest,
+	});
 
 	await logEventFromContext(
 		ctx,

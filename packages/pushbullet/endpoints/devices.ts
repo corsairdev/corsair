@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makePushbulletRequest } from '../client';
 import type { PushbulletEndpoints } from '../index';
 import type { PushbulletEndpointOutputs } from './types';
+import { PushbulletEndpointOutputSchemas } from './types';
 
 async function cacheDevice(
 	ctx: Parameters<PushbulletEndpoints['devicesRegister']>[0],
@@ -30,7 +31,11 @@ export const register: PushbulletEndpoints['devicesRegister'] = async (
 ) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['devicesRegister']
-	>('devices', ctx.key, { method: 'POST', body: input });
+	>('devices', ctx.key, {
+		method: 'POST',
+		body: input,
+		schema: PushbulletEndpointOutputSchemas.devicesRegister,
+	});
 
 	await cacheDevice(ctx, result);
 	await logEventFromContext(
@@ -45,7 +50,11 @@ export const register: PushbulletEndpoints['devicesRegister'] = async (
 export const list: PushbulletEndpoints['devicesList'] = async (ctx, input) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['devicesList']
-	>('devices', ctx.key, { method: 'GET', query: input });
+	>('devices', ctx.key, {
+		method: 'GET',
+		query: input,
+		schema: PushbulletEndpointOutputSchemas.devicesList,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -63,7 +72,11 @@ export const update: PushbulletEndpoints['devicesUpdate'] = async (
 	const { iden, ...body } = input;
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['devicesUpdate']
-	>(`devices/${encodeURIComponent(iden)}`, ctx.key, { method: 'POST', body });
+	>(`devices/${encodeURIComponent(iden)}`, ctx.key, {
+		method: 'POST',
+		body,
+		schema: PushbulletEndpointOutputSchemas.devicesUpdate,
+	});
 
 	await cacheDevice(ctx, result);
 	await logEventFromContext(
@@ -81,7 +94,10 @@ export const remove: PushbulletEndpoints['devicesDelete'] = async (
 ) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['devicesDelete']
-	>(`devices/${encodeURIComponent(input.iden)}`, ctx.key, { method: 'DELETE' });
+	>(`devices/${encodeURIComponent(input.iden)}`, ctx.key, {
+		method: 'DELETE',
+		schema: PushbulletEndpointOutputSchemas.devicesDelete,
+	});
 
 	if (ctx.db.devices) {
 		try {

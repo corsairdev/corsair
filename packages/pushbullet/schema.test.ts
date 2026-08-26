@@ -186,3 +186,42 @@ describe('input validation', () => {
 		expect(r.success).toBe(false);
 	});
 });
+
+describe('retry safety for non-idempotent writes', () => {
+	/** Builds the error shape the client throws, carrying the HTTP method. */
+	function wrappedWithMethod(status: number, method: string) {
+		const error = new PushbulletAPIError('server error', status);
+		Object.assign(error, { status, method });
+		return error as Error;
+	}
+
+	it('never replays a failed POST, which may already have been applied', async () => {
+		// A 5xx does not mean Pushbullet rejected the request - it may have
+		// created the push and then failed to respond. Replaying would duplicate.
+		const result = await errorHandlers.SERVER_ERROR.handler(
+			wrappedWithMethod(503, 'POST'),
+		);
+		expect(result.maxRetries).toBe(0);
+	});
+
+	it('retries a failed GET, which is idempotent', async () => {
+		const result = await errorHandlers.SERVER_ERROR.handler(
+			wrappedWithMethod(503, 'GET'),
+		);
+		expect(result.maxRetries).toBeGreaterThan(0);
+	});
+
+	it('retries a failed DELETE, which is idempotent', async () => {
+		const result = await errorHandlers.SERVER_ERROR.handler(
+			wrappedWithMethod(500, 'DELETE'),
+		);
+		expect(result.maxRetries).toBeGreaterThan(0);
+	});
+
+	it('treats an unknown method as unsafe to replay', async () => {
+		const result = await errorHandlers.SERVER_ERROR.handler(
+			wrapped(503, 'no method recorded'),
+		);
+		expect(result.maxRetries).toBe(0);
+	});
+});

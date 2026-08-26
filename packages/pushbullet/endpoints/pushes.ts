@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makePushbulletRequest } from '../client';
 import type { PushbulletEndpoints } from '../index';
 import type { PushbulletEndpointOutputs } from './types';
+import { PushbulletEndpointOutputSchemas } from './types';
 
 export const create: PushbulletEndpoints['pushesCreate'] = async (
 	ctx,
@@ -9,7 +10,11 @@ export const create: PushbulletEndpoints['pushesCreate'] = async (
 ) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesCreate']
-	>('pushes', ctx.key, { method: 'POST', body: input });
+	>('pushes', ctx.key, {
+		method: 'POST',
+		body: input,
+		schema: PushbulletEndpointOutputSchemas.pushesCreate,
+	});
 
 	if (result.iden && ctx.db.pushes) {
 		try {
@@ -42,7 +47,11 @@ export const create: PushbulletEndpoints['pushesCreate'] = async (
 export const list: PushbulletEndpoints['pushesList'] = async (ctx, input) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesList']
-	>('pushes', ctx.key, { method: 'GET', query: input });
+	>('pushes', ctx.key, {
+		method: 'GET',
+		query: input,
+		schema: PushbulletEndpointOutputSchemas.pushesList,
+	});
 
 	await logEventFromContext(
 		ctx,
@@ -61,7 +70,11 @@ export const update: PushbulletEndpoints['pushesUpdate'] = async (
 	const { iden, ...body } = input;
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesUpdate']
-	>(`pushes/${encodeURIComponent(iden)}`, ctx.key, { method: 'POST', body });
+	>(`pushes/${encodeURIComponent(iden)}`, ctx.key, {
+		method: 'POST',
+		body,
+		schema: PushbulletEndpointOutputSchemas.pushesUpdate,
+	});
 
 	if (result.iden && ctx.db.pushes) {
 		try {
@@ -90,7 +103,10 @@ export const remove: PushbulletEndpoints['pushesDelete'] = async (
 ) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesDelete']
-	>(`pushes/${encodeURIComponent(input.iden)}`, ctx.key, { method: 'DELETE' });
+	>(`pushes/${encodeURIComponent(input.iden)}`, ctx.key, {
+		method: 'DELETE',
+		schema: PushbulletEndpointOutputSchemas.pushesDelete,
+	});
 
 	if (ctx.db.pushes) {
 		try {
@@ -119,7 +135,23 @@ export const removeAll: PushbulletEndpoints['pushesDeleteAll'] = async (
 ) => {
 	const result = await makePushbulletRequest<
 		PushbulletEndpointOutputs['pushesDeleteAll']
-	>('pushes', ctx.key, { method: 'DELETE' });
+	>('pushes', ctx.key, {
+		method: 'DELETE',
+		schema: PushbulletEndpointOutputSchemas.pushesDeleteAll,
+	});
+
+	// The remote pushes are gone, so every cached row is now stale. Leaving them
+	// would let local lookups keep returning pushes that no longer exist.
+	if (ctx.db.pushes) {
+		try {
+			const cached = await ctx.db.pushes.search({});
+			for (const entity of cached) {
+				await ctx.db.pushes.deleteByEntityId(entity.entity_id);
+			}
+		} catch (error) {
+			console.warn('Failed to evict cached pushes after deleteAll:', error);
+		}
+	}
 
 	await logEventFromContext(
 		ctx,

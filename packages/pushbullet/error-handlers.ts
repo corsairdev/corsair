@@ -16,6 +16,19 @@ function getRetryAfter(error: Error): number | undefined {
 }
 
 /**
+ * Whether replaying the failed request is safe.
+ *
+ * A 5xx does not mean the request was rejected - Pushbullet may have created
+ * the push, device or chat and then failed to respond. Replaying a POST would
+ * duplicate it, so only GET and DELETE (both idempotent) are retried. When the
+ * method is unknown, the request is treated as unsafe.
+ */
+function isIdempotent(error: Error): boolean {
+	const method = (error as Partial<PushbulletAPIError>).method;
+	return method === 'GET' || method === 'DELETE';
+}
+
+/**
  * Pushbullet returns conventional HTTP statuses with a JSON `error` body.
  * Requests are metered in units — a plain request costs 1, a database
  * operation 4 — so a 429 means the account's unit budget is exhausted and the
@@ -60,7 +73,8 @@ export const errorHandlers = {
 			return status !== undefined && status >= 500;
 		},
 		handler: async (error: Error) => ({
-			maxRetries: 2,
+			// Non-idempotent writes are never replayed - see isIdempotent.
+			maxRetries: isIdempotent(error) ? 2 : 0,
 			headersRetryAfterMs: getRetryAfter(error),
 		}),
 	},
