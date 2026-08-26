@@ -22,10 +22,23 @@ function exactlyOneUrlOrFile<
 	});
 }
 
+const binaryFileOutput = z.object({
+	success: z.boolean(),
+	content_type: z.string(),
+	base64: z.string(),
+});
+const urlOrBase64FileOutput = z
+	.object({
+		...base,
+		url: z.string().optional(),
+		base64: z.string().optional(),
+	})
+	.loose();
+
 // ── validate ─────────────────────────────────────────────────────────────────
 
 /** POST /v1/validate/nsfw @see https://jigsawstack.com/docs/api-reference/validate/nsfw */
-export const NsfwInputSchema = z.object(urlOrFile);
+export const NsfwInputSchema = exactlyOneUrlOrFile(z.object(urlOrFile));
 export const NsfwOutputSchema = z
 	.object({
 		...base,
@@ -218,18 +231,8 @@ export const ImageGenerationInputSchema = z.object({
 		.optional(),
 });
 export const ImageGenerationOutputSchema = z.union([
-	z.object({
-		success: z.boolean(),
-		content_type: z.string(),
-		base64: z.string(),
-	}),
-	z
-		.object({
-			...base,
-			url: z.string().optional(),
-			base64: z.string().optional(),
-		})
-		.loose(),
+	binaryFileOutput,
+	urlOrBase64FileOutput,
 ]);
 
 // ── web ──────────────────────────────────────────────────────────────────────
@@ -261,25 +264,27 @@ export const ScrapeOutputSchema = z
 	.loose();
 
 /** POST /v1/web/html_to_any @see https://jigsawstack.com/docs/api-reference/web/html-to-any */
-export const HtmlToAnyInputSchema = z.object({
-	html: z.string().optional(),
-	url: z.string().optional(),
-	type: z.enum(['pdf', 'png', 'jpeg', 'webp']).optional(),
-	full_page: z.boolean().optional(),
-	width: z.number().optional(),
-	height: z.number().optional(),
-	return_type: z.enum(['url', 'binary', 'base64']).optional(),
-	quality: z.number().optional(),
-	is_mobile: z.boolean().optional(),
-	dark_mode: z.boolean().optional(),
-	size_preset: z.string().optional(),
-});
-export const HtmlToAnyOutputSchema = z
+export const HtmlToAnyInputSchema = z
 	.object({
-		...base,
+		html: z.string().optional(),
 		url: z.string().optional(),
+		type: z.enum(['pdf', 'png', 'jpeg', 'webp']).optional(),
+		full_page: z.boolean().optional(),
+		width: z.number().optional(),
+		height: z.number().optional(),
+		return_type: z.enum(['url', 'binary', 'base64']).optional(),
+		quality: z.number().optional(),
+		is_mobile: z.boolean().optional(),
+		dark_mode: z.boolean().optional(),
+		size_preset: z.string().optional(),
 	})
-	.loose();
+	.refine((v) => Boolean(v.html) !== Boolean(v.url), {
+		message: 'Provide exactly one of html or url',
+	});
+export const HtmlToAnyOutputSchema = z.union([
+	binaryFileOutput,
+	urlOrBase64FileOutput,
+]);
 
 /** POST /v1/web/search @see https://jigsawstack.com/docs/api-reference/web/ai-search */
 export const SearchInputSchema = z.object({
@@ -347,16 +352,18 @@ export const VocrOutputSchema = z
 	.loose();
 
 /** POST /v1/object_detection @see https://jigsawstack.com/docs/api-reference/ai/object-detection */
-export const DetectObjectsInputSchema = z.object({
-	...urlOrFile,
-	prompts: z.array(z.string()).optional(),
-	enhance_prompts: z.boolean().optional(),
-	features: z.array(z.enum(['object', 'gui'])).optional(),
-	annotated_image: z.boolean().optional(),
-	return_type: z.enum(['url', 'base64']).optional(),
-	return_masks: z.boolean().optional(),
-	return_tags: z.boolean().optional(),
-});
+export const DetectObjectsInputSchema = exactlyOneUrlOrFile(
+	z.object({
+		...urlOrFile,
+		prompts: z.array(z.string()).optional(),
+		enhance_prompts: z.boolean().optional(),
+		features: z.array(z.enum(['object', 'gui'])).optional(),
+		annotated_image: z.boolean().optional(),
+		return_type: z.enum(['url', 'base64']).optional(),
+		return_masks: z.boolean().optional(),
+		return_tags: z.boolean().optional(),
+	}),
+);
 export const DetectObjectsOutputSchema = z
 	.object({
 		...base,
@@ -401,17 +408,15 @@ export const TextToSpeechInputSchema = z.object({
 	speaker_clone_url: z.string().optional(),
 	speaker_clone_file_store_key: z.string().optional(),
 });
-export const TextToSpeechOutputSchema = z.object({
-	success: z.boolean(),
-	content_type: z.string(),
-	base64: z.string(),
-});
+export const TextToSpeechOutputSchema = binaryFileOutput;
 
 /** POST /v1/ai/tts/clone — returns voice_id (verified live). */
-export const CreateVoiceCloneInputSchema = z.object({
-	name: z.string(),
-	...urlOrFile,
-});
+export const CreateVoiceCloneInputSchema = exactlyOneUrlOrFile(
+	z.object({
+		name: z.string(),
+		...urlOrFile,
+	}),
+);
 export const CreateVoiceCloneOutputSchema = z
 	.object({
 		...base,

@@ -1,5 +1,5 @@
 import type { JigsawstackEndpoints } from '../index';
-import { jigsawCall } from './call';
+import { jigsawCall, returnTypeOptions } from './call';
 
 export const sentiment: JigsawstackEndpoints['sentiment'] = async (
 	ctx,
@@ -52,17 +52,12 @@ export const prediction: JigsawstackEndpoints['prediction'] = async (
 export const imageGeneration: JigsawstackEndpoints['imageGeneration'] = async (
 	ctx,
 	input,
-) => {
-	const return_type = input.return_type ?? 'url';
-	return jigsawCall(
+) =>
+	jigsawCall(
 		ctx,
 		'jigsawstack.ai.imageGeneration',
 		'/v1/ai/image_generation',
 		'POST',
 		input,
-		{
-			body: { ...input, return_type },
-			binary: return_type === 'binary',
-		},
+		returnTypeOptions(input),
 	);
-};

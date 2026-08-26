@@ -179,6 +179,15 @@ describe('jigsawstack plugin registration', () => {
 		);
 		expect(stt.safeParse({ file_store_key: 'k' }).success).toBe(true);
 		expect(stt.safeParse({}).success).toBe(false);
+
+		const htmlToAny = jigsawstackEndpointSchemas['web.htmlToAny'].input;
+		expect(htmlToAny.safeParse({ html: '<h1>hi</h1>' }).success).toBe(true);
+		expect(
+			htmlToAny.safeParse({
+				html: '<h1>hi</h1>',
+				url: 'https://example.com',
+			}).success,
+		).toBe(false);
 	});
 
 	it('enforces classification dataset and label limits from official docs', () => {

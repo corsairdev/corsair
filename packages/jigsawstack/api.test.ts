@@ -234,6 +234,25 @@ describe('jigsawstack endpoint requests', () => {
 		JigsawstackEndpointOutputSchemas.htmlToAny.parse(result);
 	});
 
+	it('web.htmlToAny fetches binary when return_type is binary', async () => {
+		const fetchMock = jest.fn(async () => ({
+			ok: true,
+			headers: { get: () => 'image/png' },
+			arrayBuffer: async () => new Uint8Array([1, 2, 3]).buffer,
+		}));
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+		const result = await call(WebEndpoints.htmlToAny, ctx, {
+			html: '<h1>hi</h1>',
+			return_type: 'binary',
+		});
+		JigsawstackEndpointOutputSchemas.htmlToAny.parse(result);
+		expect(requestMock).not.toHaveBeenCalled();
+		expect(JSON.stringify(fetchMock.mock.calls[0])).toContain(
+			'https://api.jigsawstack.com/v1/web/html_to_any',
+		);
+	});
+
 	it('web.search posts query', async () => {
 		requestMock.mockResolvedValue({
 			success: true,

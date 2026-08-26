@@ -116,7 +116,8 @@ export async function makeJigsawstackBinaryRequest(
 	const bytes = Buffer.from(await response.arrayBuffer());
 	return {
 		success: true,
-		content_type: response.headers.get('content-type') ?? 'audio/wav',
+		content_type:
+			response.headers.get('content-type') ?? 'application/octet-stream',
 		base64: bytes.toString('base64'),
 	};
 }

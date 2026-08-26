@@ -5,6 +5,16 @@ import {
 } from '../client';
 import type { JigsawstackContext } from '../index';
 
+export function returnTypeOptions<
+	T extends { return_type?: 'url' | 'binary' | 'base64' },
+>(input: T) {
+	const return_type = input.return_type ?? 'url';
+	return {
+		body: { ...input, return_type },
+		binary: return_type === 'binary',
+	};
+}
+
 export async function jigsawCall<T>(
 	ctx: JigsawstackContext,
 	event: string,

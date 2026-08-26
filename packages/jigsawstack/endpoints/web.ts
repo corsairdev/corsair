@@ -1,5 +1,5 @@
 import type { JigsawstackEndpoints } from '../index';
-import { jigsawCall } from './call';
+import { jigsawCall, returnTypeOptions } from './call';
 
 export const scrape: JigsawstackEndpoints['scrape'] = async (ctx, input) =>
 	jigsawCall(ctx, 'jigsawstack.web.scrape', '/v1/ai/scrape', 'POST', input, {
@@ -16,7 +16,7 @@ export const htmlToAny: JigsawstackEndpoints['htmlToAny'] = async (
 		'/v1/web/html_to_any',
 		'POST',
 		input,
-		{ body: { ...input, return_type: input.return_type ?? 'url' } },
+		returnTypeOptions(input),
 	);
 
 export const search: JigsawstackEndpoints['search'] = async (ctx, input) =>
