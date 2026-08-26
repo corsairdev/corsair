@@ -12,12 +12,22 @@ export class DocusignClient {
 	constructor(options: DocusignAuthOptions) {
 		this.accountId = options.accountId;
 		this.token = options.accessToken;
-		const root = options.baseUri || 'https://demo.docusign.net/restapi';
-		this.baseUri = `${root.replace(/\/+$/, '')}/v2.1/accounts/${this.accountId}`;
+
+		let root = options.baseUri?.trim() || 'https://demo.docusign.net/restapi';
+		while (root.endsWith('/')) {
+			root = root.slice(0, -1);
+		}
+
+		this.baseUri = `${root}/v2.1/accounts/${this.accountId}`;
 	}
 
-	async request<T = any>(endpoint: string, options: RequestInit = {}): Promise<T> {
-		const url = `${this.baseUri}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+	async request<T = any>(
+		endpoint: string,
+		options: RequestInit = {},
+	): Promise<T> {
+		const cleanPath = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
+		const url = `${this.baseUri}${cleanPath}`;
+
 		const response = await fetch(url, {
 			...options,
 			headers: {
