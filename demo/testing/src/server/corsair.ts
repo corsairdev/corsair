@@ -13,7 +13,6 @@ import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
 import { twilio } from '@corsair-dev/twilio';
 import { vapi } from '@corsair-dev/vapi';
-import { wakatime } from '@corsair-dev/wakatime';
 import { createCorsair } from 'corsair';
 
 import { sqlite } from '../db';
@@ -65,8 +64,5 @@ export const corsair = createCorsair({
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
 		instagram(),
-		wakatime({
-			key: process.env.WAKATIME_API_KEY,
-		}),
 	],
 });
