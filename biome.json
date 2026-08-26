@@ -3,8 +3,7 @@
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
   "formatter": {
     "enabled": true,
-    "indentStyle": "tab",
-    "lineEnding": "crlf"
+    "indentStyle": "tab"
   },
   "javascript": {
     "formatter": {
