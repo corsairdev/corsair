@@ -14,6 +14,8 @@ export const errorHandlers = {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
+			} else if (error instanceof TisaneAPIError && error.retryAfter !== undefined) {
+				retryAfterMs = error.retryAfter;
 			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},

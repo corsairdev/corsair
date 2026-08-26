@@ -1,3 +1,4 @@
+import { createHmac, timingSafeEqual } from 'crypto';
 import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
 import { z } from 'zod';
 
@@ -52,10 +53,28 @@ export function verifyTisaneWebhookSignature(
 	request: WebhookRequest<TisaneWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	if (!secret) return { valid: true };
-	const signature = request.headers['x-tisane-signature'] || request.headers['x-signature'];
-	if (!signature) {
-		return { valid: true };
+	if (!secret) {
+		return { valid: false, error: 'Webhook secret not configured' };
 	}
+
+	const rawHeader = request.headers['x-tisane-signature'] || request.headers['x-signature'];
+	const signature = Array.isArray(rawHeader) ? rawHeader[0] : rawHeader;
+
+	if (!signature) {
+		return { valid: false, error: 'Missing x-tisane-signature header' };
+	}
+
+	const bodyString = typeof request.rawBody === 'string' && request.rawBody
+		? request.rawBody
+		: JSON.stringify(request.payload);
+	const expectedSignature = createHmac('sha256', secret).update(bodyString).digest('hex');
+
+	const sigBuffer = Buffer.from(signature);
+	const expectedBuffer = Buffer.from(expectedSignature);
+
+	if (sigBuffer.length !== expectedBuffer.length || !timingSafeEqual(sigBuffer, expectedBuffer)) {
+		return { valid: false, error: 'Invalid webhook signature' };
+	}
+
 	return { valid: true };
 }
