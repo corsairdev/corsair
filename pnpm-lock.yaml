@@ -171,9 +171,6 @@ importers:
       '@corsair-dev/cursor':
         specifier: workspace:*
         version: link:../../packages/cursor
-      '@corsair-dev/docusign':
-        specifier: workspace:*
-        version: link:../../packages/docusign
       '@corsair-dev/firecrawl':
         specifier: workspace:*
         version: link:../../packages/firecrawl
