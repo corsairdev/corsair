@@ -1,9 +1,6 @@
 import { z } from 'zod';
 
-/**
- * BigDataCloud Country information entity.
- * Represents metadata for a sovereign nation or dependent territory.
- */
+/** @see https://www.bigdatacloud.com/ip-geolocation/country-info-api */
 export const BigDataCloudCountry = z.object({
 	/** ISO 3166-1 alpha-2 code (e.g. 'US', 'AU', 'GB') */
 	id: z.string(),
@@ -54,9 +51,7 @@ export const BigDataCloudCountry = z.object({
 });
 export type BigDataCloudCountry = z.infer<typeof BigDataCloudCountry>;
 
-/**
- * BigDataCloud Autonomous System (ASN) entity.
- */
+/** @see https://www.bigdatacloud.com/network-engineering/asn-rank-list */
 export const BigDataCloudAsn = z.object({
 	/** ASN string (e.g. 'AS13335') */
 	id: z.string(),
@@ -79,9 +74,7 @@ export const BigDataCloudAsn = z.object({
 });
 export type BigDataCloudAsn = z.infer<typeof BigDataCloudAsn>;
 
-/**
- * BigDataCloud Network information entity.
- */
+/** @see https://www.bigdatacloud.com/ip-geolocation/network-by-ip-address-api */
 export const BigDataCloudNetwork = z.object({
 	/** IP address or CIDR string */
 	id: z.string(),
@@ -101,9 +94,7 @@ export const BigDataCloudNetwork = z.object({
 });
 export type BigDataCloudNetwork = z.infer<typeof BigDataCloudNetwork>;
 
-/**
- * BigDataCloud BGP Prefix entity.
- */
+/** @see https://www.bigdatacloud.com/network-engineering/bgp-active-prefixes-api */
 export const BigDataCloudPrefix = z.object({
 	/** BGP prefix CIDR string (e.g. '1.0.0.0/24') */
 	id: z.string(),
@@ -117,9 +108,7 @@ export const BigDataCloudPrefix = z.object({
 });
 export type BigDataCloudPrefix = z.infer<typeof BigDataCloudPrefix>;
 
-/**
- * BigDataCloud Cybersecurity Hazard Report entity.
- */
+/** @see https://www.bigdatacloud.com/ip-geolocation/hazard-report-api */
 export const BigDataCloudHazardReport = z.object({
 	/** Target IP address */
 	id: z.string(),
@@ -143,9 +132,7 @@ export const BigDataCloudHazardReport = z.object({
 });
 export type BigDataCloudHazardReport = z.infer<typeof BigDataCloudHazardReport>;
 
-/**
- * BigDataCloud User Risk Assessment entity.
- */
+/** @see https://www.bigdatacloud.com/ip-geolocation/user-risk-api */
 export const BigDataCloudUserRisk = z.object({
 	/** Target IP address */
 	id: z.string(),
@@ -155,9 +142,7 @@ export const BigDataCloudUserRisk = z.object({
 });
 export type BigDataCloudUserRisk = z.infer<typeof BigDataCloudUserRisk>;
 
-/**
- * BigDataCloud Tor Exit Node entity.
- */
+/** @see https://www.bigdatacloud.com/network-engineering/tor-exit-nodes-list */
 export const BigDataCloudTorExitNode = z.object({
 	/** Tor exit node IP address */
 	id: z.string(),
@@ -169,9 +154,7 @@ export const BigDataCloudTorExitNode = z.object({
 });
 export type BigDataCloudTorExitNode = z.infer<typeof BigDataCloudTorExitNode>;
 
-/**
- * BigDataCloud Timezone entity.
- */
+/** @see https://www.bigdatacloud.com/ip-geolocation/time-zone-by-ip-address-api */
 export const BigDataCloudTimeZone = z.object({
 	/** IANA Timezone ID (e.g. 'Australia/Sydney', 'America/New_York') */
 	id: z.string(),
@@ -186,9 +169,7 @@ export const BigDataCloudTimeZone = z.object({
 });
 export type BigDataCloudTimeZone = z.infer<typeof BigDataCloudTimeZone>;
 
-/**
- * BigDataCloud Reverse Geocoding entity.
- */
+/** @see https://www.bigdatacloud.com/reverse-geocoding/reverse-geocoding-with-timezone-api */
 export const BigDataCloudReverseGeocode = z.object({
 	/** Coordinates composite key or plus code */
 	id: z.string(),
@@ -209,9 +190,7 @@ export type BigDataCloudReverseGeocode = z.infer<
 	typeof BigDataCloudReverseGeocode
 >;
 
-/**
- * BigDataCloud Phone Number Validation entity.
- */
+/** @see https://www.bigdatacloud.com/phone-email-verification/phone-number-validation-by-ip */
 export const BigDataCloudPhoneValidation = z.object({
 	/** Normalized E.164 phone number */
 	id: z.string(),
@@ -228,9 +207,7 @@ export type BigDataCloudPhoneValidation = z.infer<
 	typeof BigDataCloudPhoneValidation
 >;
 
-/**
- * BigDataCloud Email Address Verification entity.
- */
+/** @see https://www.bigdatacloud.com/phone-email-verification/email-address-verification-api */
 export const BigDataCloudEmailValidation = z.object({
 	/** Verified email address */
 	id: z.string(),
@@ -245,9 +222,7 @@ export type BigDataCloudEmailValidation = z.infer<
 	typeof BigDataCloudEmailValidation
 >;
 
-/**
- * BigDataCloud Parsed User Agent entity.
- */
+/** @see https://www.bigdatacloud.com/ip-geolocation/user-agent-parser-api */
 export const BigDataCloudUserAgent = z.object({
 	/** Raw user-agent string */
 	id: z.string(),
@@ -256,15 +231,16 @@ export const BigDataCloudUserAgent = z.object({
 	os: z.string().optional(),
 	userAgent: z.string().optional(),
 	family: z.string().optional(),
+	versionMajor: z.string().optional(),
+	versionMinor: z.string().optional(),
+	versionPatch: z.string().optional(),
 	isSpider: z.boolean().optional(),
 	isMobile: z.boolean().optional(),
 	userAgentDisplay: z.string().optional(),
 });
 export type BigDataCloudUserAgent = z.infer<typeof BigDataCloudUserAgent>;
 
-/**
- * BigDataCloud Roaming Status entity.
- */
+/** @see https://www.bigdatacloud.com/ip-geolocation/am-i-roaming-api */
 export const BigDataCloudRoaming = z.object({
 	/** Composite key `${ip}:${latitude},${longitude}` */
 	id: z.string(),

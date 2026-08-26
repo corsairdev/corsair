@@ -139,12 +139,13 @@ describe('BigDataCloud Endpoints Unit Tests', () => {
 
 			const result = await Asn.bgpActivePrefixes(ctx, {
 				asn: 'AS13335',
-				isIPv4: true,
+				isv4: true,
 			});
 
 			const req = harness.requestAt(0);
 			expect(req.url).toContain('/prefixes-list');
 			expect(req.url).toContain('asn=AS13335');
+			expect(req.url).toContain('isv4=true');
 			expect(result.prefixes).toHaveLength(1);
 			expect(upserts.bgpPrefixes?.[0]?.entityId).toBe('1.0.0.0/24');
 		});

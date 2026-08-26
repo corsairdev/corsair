@@ -91,30 +91,59 @@ export const TimeZoneDetailSchema = z
 // Endpoint Input Schemas
 // ============================================================================
 
+const localityLanguage = z.string().optional();
+const offset = z.number().int().nonnegative().optional();
+/** Official hard limit for receivingFrom / transitTo pages. */
+const batch50 = z.number().int().positive().max(50).optional();
+/** Official max for asn-rank-list, prefixes-list, tor-exit-nodes-list. */
+const batch1000 = z.number().int().positive().max(1000).optional();
+const sortOrder = z.enum(['asc', 'desc']).optional();
+
 export const BigDataCloudEndpointInputSchemas = {
-	// ASN Operations
+	// GET https://api-bdc.net/data/asn-info-receiving-from
 	asnExtendedReceivingFromInfo: z.object({
 		asn: z.string().min(1, 'ASN is required (e.g. "AS13335" or "13335")'),
-		batchSize: z.number().int().positive().max(100).optional(),
-		offset: z.number().int().nonnegative().optional(),
-		localityLanguage: z.string().optional(),
+		batchSize: batch50,
+		offset,
+		localityLanguage,
 	}),
+	// GET https://api-bdc.net/data/asn-info-transit-to
 	asnExtendedTransitToInfo: z.object({
 		asn: z.string().min(1, 'ASN is required (e.g. "AS13335" or "13335")'),
-		batchSize: z.number().int().positive().max(100).optional(),
-		offset: z.number().int().nonnegative().optional(),
-		localityLanguage: z.string().optional(),
+		batchSize: batch50,
+		offset,
+		localityLanguage,
 	}),
+	// GET https://api-bdc.net/data/asn-rank-list
 	asnRankList: z.object({
-		batchSize: z.number().int().positive().max(100).optional(),
-		offset: z.number().int().nonnegative().optional(),
+		batchSize: batch1000,
+		offset,
+		sort: z
+			.enum(['rank', 'asn', 'asnNumeric', 'organisation', 'countryCode'])
+			.optional(),
+		order: sortOrder,
+		localityLanguage,
 	}),
+	// GET https://api-bdc.net/data/prefixes-list
 	bgpActivePrefixes: z.object({
 		asn: z.string().min(1, 'ASN is required (e.g. "AS13335" or "13335")'),
-		isIPv4: z.boolean().optional(),
 		isv4: z.boolean().optional(),
-		batchSize: z.number().int().positive().max(100).optional(),
-		offset: z.number().int().nonnegative().optional(),
+		bogonsOnly: z.boolean().optional(),
+		batchSize: batch1000,
+		offset,
+		sort: z
+			.enum([
+				'bgpPrefix',
+				'bgpPrefixNetworkAddress',
+				'bgpPrefixLastAddress',
+				'registryStatus',
+				'isBogon',
+				'isAnnounced',
+				'carriers',
+			])
+			.optional(),
+		order: sortOrder,
+		localityLanguage,
 	}),
 
 	// Network Operations
@@ -157,9 +186,9 @@ export const BigDataCloudEndpointInputSchemas = {
 		ip: z.string().min(1, 'IP address is required'),
 	}),
 	torExitNodesGeolocated: z.object({
-		batchSize: z.number().int().positive().max(100).optional(),
-		offset: z.number().int().nonnegative().optional(),
-		localityLanguage: z.string().optional(),
+		batchSize: batch1000,
+		offset,
+		localityLanguage,
 	}),
 	userRisk: z.object({
 		ip: z.string().min(1, 'IP address is required'),
@@ -450,6 +479,9 @@ export const BigDataCloudEndpointOutputSchemas = {
 			os: z.string().optional(),
 			userAgent: z.string().optional(),
 			family: z.string().optional(),
+			versionMajor: z.string().optional(),
+			versionMinor: z.string().optional(),
+			versionPatch: z.string().optional(),
 			isSpider: z.boolean().optional(),
 			isMobile: z.boolean().optional(),
 			userAgentDisplay: z.string().optional(),

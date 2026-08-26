@@ -66,21 +66,23 @@ export const phoneNumberValidationByIp: BigDataCloudEndpoints['phoneNumberValida
 			schema: BigDataCloudEndpointOutputSchemas.phoneNumberValidationByIp,
 		});
 
-		const entityId = response.e164Format ?? phoneNumber;
-		if (response && entityId && ctx.db?.phoneValidations) {
-			await safely(`phoneValidation ${entityId}`, () =>
-				ctx.db.phoneValidations.upsertByEntityId(entityId, {
-					id: entityId,
-					number: phoneNumber,
-					isValid: response.isValid,
-					e164Format: response.e164Format,
-					internationalFormat: response.internationalFormat,
-					nationalFormat: response.nationalFormat,
-					location: response.location,
-					lineType: response.lineType,
-					countryCode: response.country?.isoAlpha2,
-				}),
-			);
+		if (response && ctx.db?.phoneValidations) {
+			const entityId = response.e164Format ?? phoneNumber;
+			if (entityId) {
+				await safely(`phoneValidation ${entityId}`, () =>
+					ctx.db.phoneValidations.upsertByEntityId(entityId, {
+						id: entityId,
+						number: phoneNumber,
+						isValid: response.isValid,
+						e164Format: response.e164Format,
+						internationalFormat: response.internationalFormat,
+						nationalFormat: response.nationalFormat,
+						location: response.location,
+						lineType: response.lineType,
+						countryCode: response.country?.isoAlpha2,
+					}),
+				);
+			}
 		}
 
 		await logEventFromContext(
@@ -120,6 +122,9 @@ export const userAgentParser: BigDataCloudEndpoints['userAgentParser'] = async (
 				os: response.os,
 				userAgent: response.userAgent,
 				family: response.family,
+				versionMajor: response.versionMajor,
+				versionMinor: response.versionMinor,
+				versionPatch: response.versionPatch,
 				isSpider: response.isSpider,
 				isMobile: response.isMobile,
 				userAgentDisplay: response.userAgentDisplay,

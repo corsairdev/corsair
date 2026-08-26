@@ -102,6 +102,9 @@ export const asnRankList: BigDataCloudEndpoints['asnRankList'] = async (
 		query: {
 			batchSize: parsed.batchSize,
 			offset: parsed.offset,
+			sort: parsed.sort,
+			order: parsed.order,
+			localityLanguage: parsed.localityLanguage,
 		},
 		schema: BigDataCloudEndpointOutputSchemas.asnRankList,
 	});
@@ -143,22 +146,19 @@ export const bgpActivePrefixes: BigDataCloudEndpoints['bgpActivePrefixes'] =
 		const parsed =
 			BigDataCloudEndpointInputSchemas.bgpActivePrefixes.parse(input);
 
-		const isv4 =
-			parsed.isv4 !== undefined
-				? parsed.isv4
-				: parsed.isIPv4 !== undefined
-					? parsed.isIPv4
-					: undefined;
-
 		const response = await makeBigDataCloudRequest<
 			Awaited<ReturnType<BigDataCloudEndpoints['bgpActivePrefixes']>>
 		>('prefixes-list', ctx.key, {
 			method: 'GET',
 			query: {
 				asn: parsed.asn,
-				isv4: isv4 !== undefined ? String(isv4) : undefined,
+				isv4: parsed.isv4,
+				bogonsOnly: parsed.bogonsOnly,
 				batchSize: parsed.batchSize,
 				offset: parsed.offset,
+				sort: parsed.sort,
+				order: parsed.order,
+				localityLanguage: parsed.localityLanguage,
 			},
 			schema: BigDataCloudEndpointOutputSchemas.bgpActivePrefixes,
 		});
