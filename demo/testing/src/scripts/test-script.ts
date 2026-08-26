@@ -4,38 +4,28 @@ dotenv.config({ path: '../.env' });
 
 import { corsair } from '@/server/corsair';
 
+async function setInstagramCredentials() {
+	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
+
+	if (FACEBOOK_APP_ID) {
+		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
+	}
+	if (FACEBOOK_APP_SECRET) {
+		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
+	}
+	if (IG_ACCESS_TOKEN) {
+		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
+	}
+}
+
 const main = async () => {
-	if (!process.env.COUNTDOWN_API_KEY) {
-		throw new Error(
-			'COUNTDOWN_API_KEY is missing. Add it to demo/.env before testing.',
-		);
-	}
-
-	console.log('🔌 CountdownApi plugin loaded — testing search endpoint...');
-
-	try {
-		const res = await corsair.countdownapi.api.search.get({
-			query: 'iphone',
-			ebay_domain: 'ebay.com',
-		});
-
-		console.log('✅ CountdownApi search succeeded:');
-		console.log(JSON.stringify(res, null, 2));
-	} catch (err: unknown) {
-		const message = err instanceof Error ? err.message : String(err);
-
-		if (message.includes('Unauthorized') || message.includes('401')) {
-			console.log(
-				'✅ CountdownApi integration works! Got expected Unauthorized error (provide a valid COUNTDOWN_API_KEY for live results).',
-			);
-			return;
-		}
-
-		throw err;
-	}
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
+	});
 };
 
 main().catch((err) => {
-	console.error('❌ CountdownApi test failed:', err);
+	console.error(err);
 	process.exit(1);
 });
