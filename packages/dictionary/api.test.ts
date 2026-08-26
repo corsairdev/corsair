@@ -81,10 +81,9 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 			const result = await Words.get(ctx, { word: 'recieve' });
 			const parsed = DictionaryEndpointOutputSchemas.wordsGet.parse(result);
 
-			if (!parsed.found) {
-				expect(parsed.entries).toHaveLength(0);
-				expect(Array.isArray(parsed.suggestions)).toBe(true);
-			}
+			expect(parsed.found).toBe(false);
+			expect(parsed.entries).toHaveLength(0);
+			expect(parsed.suggestions.length).toBeGreaterThan(0);
 		},
 	);
 

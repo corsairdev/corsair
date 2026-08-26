@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class DictionaryAPIError extends Error {
 	constructor(
@@ -51,6 +51,9 @@ export async function lookupWord(
 	try {
 		body = await request<unknown>(buildConfig(), requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new DictionaryAPIError(error.message);
 		}
