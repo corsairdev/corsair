@@ -1,4 +1,3 @@
-import brandfetch from '@corsair-dev/brandfetch';
 import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
@@ -65,6 +64,5 @@ export const corsair = createCorsair({
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
 		instagram(),
-		brandfetch(),
 	],
 });
