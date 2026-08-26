@@ -22,6 +22,11 @@ describe('Sapsuccessfactors schema and validation', () => {
 				valid,
 			),
 		).toEqual(valid);
+		expect(
+			SapsuccessfactorsEndpointInputSchemas.approveCalibrationSession.safeParse(
+				{},
+			).success,
+		).toBe(false);
 	});
 
 	it('validates getPersonById input schema', () => {
@@ -29,6 +34,10 @@ describe('Sapsuccessfactors schema and validation', () => {
 		expect(
 			SapsuccessfactorsEndpointInputSchemas.getPerPersonById.parse(valid),
 		).toEqual(valid);
+		expect(
+			SapsuccessfactorsEndpointInputSchemas.getPerPersonById.safeParse({})
+				.success,
+		).toBe(false);
 	});
 
 	it('validates listUsers input schema with pagination', () => {
@@ -36,6 +45,11 @@ describe('Sapsuccessfactors schema and validation', () => {
 		expect(
 			SapsuccessfactorsEndpointInputSchemas.listUsers.parse(valid),
 		).toEqual(valid);
+		expect(
+			SapsuccessfactorsEndpointInputSchemas.listUsers.safeParse({
+				top: 'invalid_number',
+			}).success,
+		).toBe(false);
 	});
 
 	it('validates standard response output schema', () => {
