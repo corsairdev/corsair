@@ -315,6 +315,8 @@ const sapsuccessfactorsEndpointsNested = {
 	},
 } as const;
 
+// SAP SuccessFactors webhook/event subscriptions are not implemented in this
+// provider yet; this integration currently exposes REST/OData endpoints only.
 const sapsuccessfactorsWebhooksNested = {} as const;
 
 export const sapsuccessfactorsEndpointSchemas = {
