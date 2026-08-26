@@ -1,10 +1,20 @@
 import { logEventFromContext } from 'corsair/core';
 import type { WebvizioWebhooks } from '../index';
-import { createWebvizioMatch } from './types';
+import { createWebvizioMatch, verifyWebvizioWebhookSignature } from './types';
 
 export const projectCreated: WebvizioWebhooks['projectCreated'] = {
 	match: createWebvizioMatch('project.created'),
 	handler: async (ctx, request) => {
+		if (ctx.key) {
+			const verification = verifyWebvizioWebhookSignature(request, ctx.key);
+			if (!verification.valid) {
+				return {
+					success: false,
+					error: verification.error || 'Invalid webhook signature',
+				};
+			}
+		}
+
 		const event = request.payload;
 		let corsairEntityId = '';
 
@@ -50,6 +60,16 @@ export const projectCreated: WebvizioWebhooks['projectCreated'] = {
 export const projectUpdated: WebvizioWebhooks['projectUpdated'] = {
 	match: createWebvizioMatch('project.updated'),
 	handler: async (ctx, request) => {
+		if (ctx.key) {
+			const verification = verifyWebvizioWebhookSignature(request, ctx.key);
+			if (!verification.valid) {
+				return {
+					success: false,
+					error: verification.error || 'Invalid webhook signature',
+				};
+			}
+		}
+
 		const event = request.payload;
 		let corsairEntityId = '';
 
@@ -95,6 +115,16 @@ export const projectUpdated: WebvizioWebhooks['projectUpdated'] = {
 export const projectDeleted: WebvizioWebhooks['projectDeleted'] = {
 	match: createWebvizioMatch('project.deleted'),
 	handler: async (ctx, request) => {
+		if (ctx.key) {
+			const verification = verifyWebvizioWebhookSignature(request, ctx.key);
+			if (!verification.valid) {
+				return {
+					success: false,
+					error: verification.error || 'Invalid webhook signature',
+				};
+			}
+		}
+
 		const event = request.payload;
 
 		await logEventFromContext(

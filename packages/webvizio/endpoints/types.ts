@@ -2,22 +2,22 @@ import { z } from 'zod';
 
 export const WebvizioProjectSchema = z
 	.object({
-		uuid: z.string().optional(),
-		id: z.union([z.string(), z.number()]).optional(),
-		name: z.string().optional(),
-		description: z.string().optional(),
-		url: z.string().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
+		uuid: z.string().nullish(),
+		id: z.union([z.string(), z.number()]).nullish(),
+		name: z.string().nullish(),
+		description: z.string().nullish(),
+		url: z.string().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
 	})
 	.passthrough();
 
 export const WebvizioWebhookSubscriptionSchema = z
 	.object({
-		id: z.union([z.string(), z.number()]).optional(),
-		url: z.string().optional(),
-		event: z.string().optional(),
-		created_at: z.string().optional(),
+		id: z.union([z.string(), z.number()]).nullish(),
+		url: z.string().nullish(),
+		event: z.string().nullish(),
+		created_at: z.string().nullish(),
 	})
 	.passthrough();
 

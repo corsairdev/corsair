@@ -8,13 +8,19 @@ export function matchWebvizioTenantWebhook(
 	if (!body) return null;
 
 	const payload = asRecord(body.payload) ?? asRecord(body.data) ?? body;
+	const eventName =
+		firstString([body.event, body.type, body.event_type, payload.event]) || '';
 
+	const isProjectEvent = eventName.startsWith('project.') || !eventName;
+
+	// Check explicit project identifiers first
 	const projectUuid = firstString([
 		payload.project_uuid,
 		payload.projectUuid,
-		payload.uuid,
 		body.project_uuid,
 		body.projectUuid,
+		isProjectEvent ? payload.uuid : undefined,
+		isProjectEvent ? body.uuid : undefined,
 	]);
 	if (projectUuid) {
 		return { linkType: 'project_uuid', externalId: projectUuid };
@@ -23,9 +29,10 @@ export function matchWebvizioTenantWebhook(
 	const projectId = firstString([
 		payload.project_id,
 		payload.projectId,
-		payload.id,
 		body.project_id,
 		body.projectId,
+		isProjectEvent ? payload.id : undefined,
+		isProjectEvent ? body.id : undefined,
 	]);
 	if (projectId) {
 		return { linkType: 'project_id', externalId: projectId };

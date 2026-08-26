@@ -177,8 +177,8 @@ export function webvizio(options: WebvizioPluginOptions = {}): WebvizioPlugin {
 		authConfig: webvizioAuthConfig,
 		schema: WebvizioSchema,
 		options: {
-			authType,
 			...options,
+			authType,
 		},
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,

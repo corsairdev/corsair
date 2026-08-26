@@ -1,10 +1,20 @@
 import { logEventFromContext } from 'corsair/core';
 import type { WebvizioWebhooks } from '../index';
-import { createWebvizioMatch } from './types';
+import { createWebvizioMatch, verifyWebvizioWebhookSignature } from './types';
 
 export const taskCreated: WebvizioWebhooks['taskCreated'] = {
 	match: createWebvizioMatch('task.created'),
 	handler: async (ctx, request) => {
+		if (ctx.key) {
+			const verification = verifyWebvizioWebhookSignature(request, ctx.key);
+			if (!verification.valid) {
+				return {
+					success: false,
+					error: verification.error || 'Invalid webhook signature',
+				};
+			}
+		}
+
 		const event = request.payload;
 
 		await logEventFromContext(
@@ -24,6 +34,16 @@ export const taskCreated: WebvizioWebhooks['taskCreated'] = {
 export const taskUpdated: WebvizioWebhooks['taskUpdated'] = {
 	match: createWebvizioMatch('task.updated'),
 	handler: async (ctx, request) => {
+		if (ctx.key) {
+			const verification = verifyWebvizioWebhookSignature(request, ctx.key);
+			if (!verification.valid) {
+				return {
+					success: false,
+					error: verification.error || 'Invalid webhook signature',
+				};
+			}
+		}
+
 		const event = request.payload;
 
 		await logEventFromContext(
@@ -43,6 +63,16 @@ export const taskUpdated: WebvizioWebhooks['taskUpdated'] = {
 export const taskDeleted: WebvizioWebhooks['taskDeleted'] = {
 	match: createWebvizioMatch('task.deleted'),
 	handler: async (ctx, request) => {
+		if (ctx.key) {
+			const verification = verifyWebvizioWebhookSignature(request, ctx.key);
+			if (!verification.valid) {
+				return {
+					success: false,
+					error: verification.error || 'Invalid webhook signature',
+				};
+			}
+		}
+
 		const event = request.payload;
 
 		await logEventFromContext(

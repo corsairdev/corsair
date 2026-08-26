@@ -1,40 +1,41 @@
 import type { RawWebhookRequest } from 'corsair/core';
 import { readBodyRecord } from 'corsair/core';
+import { verifyHmacSignature } from 'corsair/http';
 import { z } from 'zod';
 
 export const WebvizioProjectEventPayloadSchema = z
 	.object({
-		uuid: z.string().optional(),
-		id: z.union([z.string(), z.number()]).optional(),
-		name: z.string().optional(),
-		description: z.string().optional(),
-		url: z.string().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
+		uuid: z.string().nullish(),
+		id: z.union([z.string(), z.number()]).nullish(),
+		name: z.string().nullish(),
+		description: z.string().nullish(),
+		url: z.string().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
 	})
 	.passthrough();
 
 export const WebvizioTaskEventPayloadSchema = z
 	.object({
-		id: z.union([z.string(), z.number()]).optional(),
-		uuid: z.string().optional(),
-		project_id: z.union([z.string(), z.number()]).optional(),
-		project_uuid: z.string().optional(),
-		title: z.string().optional(),
-		status: z.string().optional(),
-		created_at: z.string().optional(),
-		updated_at: z.string().optional(),
+		id: z.union([z.string(), z.number()]).nullish(),
+		uuid: z.string().nullish(),
+		project_id: z.union([z.string(), z.number()]).nullish(),
+		project_uuid: z.string().nullish(),
+		title: z.string().nullish(),
+		status: z.string().nullish(),
+		created_at: z.string().nullish(),
+		updated_at: z.string().nullish(),
 	})
 	.passthrough();
 
 export const WebvizioCommentEventPayloadSchema = z
 	.object({
-		id: z.union([z.string(), z.number()]).optional(),
-		task_id: z.union([z.string(), z.number()]).optional(),
-		project_id: z.union([z.string(), z.number()]).optional(),
-		project_uuid: z.string().optional(),
-		text: z.string().optional(),
-		created_at: z.string().optional(),
+		id: z.union([z.string(), z.number()]).nullish(),
+		task_id: z.union([z.string(), z.number()]).nullish(),
+		project_id: z.union([z.string(), z.number()]).nullish(),
+		project_uuid: z.string().nullish(),
+		text: z.string().nullish(),
+		created_at: z.string().nullish(),
 	})
 	.passthrough();
 
@@ -44,10 +45,10 @@ export const createWebvizioEventSchema = <T extends z.ZodTypeAny>(
 	z
 		.object({
 			event: z.string(),
-			payload: dataSchema.optional(),
-			data: dataSchema.optional(),
-			created_at: z.string().optional(),
-			timestamp: z.union([z.string(), z.number()]).optional(),
+			payload: dataSchema.nullish(),
+			data: dataSchema.nullish(),
+			created_at: z.string().nullish(),
+			timestamp: z.union([z.string(), z.number()]).nullish(),
 		})
 		.passthrough();
 
@@ -124,4 +125,48 @@ export function createWebvizioMatch(eventType: string) {
 		const event = source.event || source.type || source.event_type;
 		return event === eventType;
 	};
+}
+
+export function verifyWebvizioWebhookSignature(
+	request: {
+		headers: Record<string, string | string[] | undefined>;
+		rawBody?: string;
+		body?: unknown;
+		payload?: unknown;
+	},
+	webhookSecret?: string,
+): { valid: boolean; error?: string } {
+	if (!webhookSecret) {
+		return { valid: true };
+	}
+
+	const headers = request.headers;
+	const signature = Array.isArray(headers['x-webvizio-signature'])
+		? headers['x-webvizio-signature'][0]
+		: (headers['x-webvizio-signature'] as string | undefined);
+
+	if (!signature) {
+		return {
+			valid: false,
+			error: 'Missing x-webvizio-signature header',
+		};
+	}
+
+	const rawBody =
+		request.rawBody ||
+		(typeof request.body === 'string'
+			? request.body
+			: JSON.stringify(request.payload ?? request.body ?? {}));
+
+	const isValid = verifyHmacSignature(
+		rawBody,
+		webhookSecret,
+		signature,
+		'sha256',
+	);
+	if (!isValid && signature !== webhookSecret) {
+		return { valid: false, error: 'Invalid Webvizio webhook signature' };
+	}
+
+	return { valid: true };
 }

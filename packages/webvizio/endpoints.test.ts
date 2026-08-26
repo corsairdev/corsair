@@ -78,6 +78,8 @@ const sampleProjectsFixture = [
 	{
 		uuid: 'ce7e2096-05ad-4b5f-95d6-6088ca551dd0',
 		name: 'jiitsphere.com',
+		description: null,
+		url: null,
 	},
 	{
 		id: '123',
@@ -131,8 +133,8 @@ describe('Webvizio plugin structure', () => {
 		expect(typeof plugin.pluginTenantWebhookMatcher).toBe('function');
 	});
 
-	it('supports api_key auth configuration', () => {
-		const plugin = webvizio();
+	it('supports api_key auth configuration and defaults correctly even when authType is undefined', () => {
+		const plugin = webvizio({ authType: undefined as any });
 		expect(plugin.options?.authType).toBe('api_key');
 		expect(plugin.authConfig).toEqual({
 			api_key: { account: ['one'] },
@@ -189,13 +191,14 @@ describe('Webvizio endpoint handlers', () => {
 		mockLog.mockReset();
 	});
 
-	it('projects.list returns parsed project items and logs event', async () => {
+	it('projects.list returns parsed project items with null tolerance and logs event', async () => {
 		const ctx = createMockContext('mock-api-key');
 		mockRequest.mockResolvedValue(sampleProjectsFixture);
 
 		const res = await Projects.list(ctx, {});
 		expect(res).toHaveLength(2);
 		expect(res[0]?.name).toBe('jiitsphere.com');
+		expect(res[0]?.description).toBeNull();
 		expect(res[1]?.uuid).toBe('abcd-1234');
 		expect(mockLog).toHaveBeenCalledWith(
 			ctx,
@@ -230,7 +233,7 @@ describe('Webvizio inbound webhook handlers', () => {
 	it('handles project.created webhook and upserts into db.projects', async () => {
 		const ctx = createMockContext();
 		const req = {
-			headers: { 'x-webvizio-event': 'project.created' },
+			headers: { 'x-webvizio-signature': 'test-token' },
 			payload: {
 				event: 'project.created',
 				payload: { uuid: 'proj-uuid-1', name: 'Web Redesign' },
@@ -249,7 +252,7 @@ describe('Webvizio inbound webhook handlers', () => {
 	it('handles project.updated webhook and upserts into db.projects', async () => {
 		const ctx = createMockContext();
 		const req = {
-			headers: {},
+			headers: { 'x-webvizio-signature': 'test-token' },
 			payload: {
 				event: 'project.updated',
 				payload: { uuid: 'proj-uuid-1', name: 'Updated Name' },
@@ -268,7 +271,7 @@ describe('Webvizio inbound webhook handlers', () => {
 	it('handles project.deleted webhook', async () => {
 		const ctx = createMockContext();
 		const req = {
-			headers: {},
+			headers: { 'x-webvizio-signature': 'test-token' },
 			payload: {
 				event: 'project.deleted',
 				payload: { uuid: 'proj-uuid-1' },
@@ -283,7 +286,7 @@ describe('Webvizio inbound webhook handlers', () => {
 	it('handles task and comment webhooks', async () => {
 		const ctx = createMockContext();
 		const taskReq = {
-			headers: {},
+			headers: { 'x-webvizio-signature': 'test-token' },
 			payload: {
 				event: 'task.created',
 				payload: { id: 10, title: 'Fix CSS' },
@@ -294,7 +297,7 @@ describe('Webvizio inbound webhook handlers', () => {
 		expect(taskRes.success).toBe(true);
 
 		const commentReq = {
-			headers: {},
+			headers: { 'x-webvizio-signature': 'test-token' },
 			payload: {
 				event: 'comment.created',
 				payload: { id: 99, text: 'Done' },
@@ -310,7 +313,7 @@ describe('Webvizio inbound webhook handlers', () => {
 });
 
 describe('Webvizio tenant matcher & webhook matcher', () => {
-	it('matches tenant by project_uuid or project_id', () => {
+	it('matches tenant by project_uuid or project_id on project events', () => {
 		const match1 = matchWebvizioTenantWebhook({
 			headers: {},
 			body: { event: 'project.created', payload: { project_uuid: 'uuid-123' } },
@@ -322,9 +325,43 @@ describe('Webvizio tenant matcher & webhook matcher', () => {
 
 		const match2 = matchWebvizioTenantWebhook({
 			headers: {},
-			body: { event: 'task.created', payload: { project_id: '456' } },
+			body: { event: 'project.created', payload: { id: '456' } },
 		} as any);
 		expect(match2).toEqual({ linkType: 'project_id', externalId: '456' });
+	});
+
+	it('does NOT mislabel task or comment id as project link when project_id is omitted', () => {
+		const taskMatch = matchWebvizioTenantWebhook({
+			headers: {},
+			body: {
+				event: 'task.created',
+				payload: { id: 'task-789', title: 'Test' },
+			},
+		} as any);
+		expect(taskMatch).toBeNull();
+
+		const commentMatch = matchWebvizioTenantWebhook({
+			headers: {},
+			body: {
+				event: 'comment.created',
+				payload: { id: 'comment-999', text: 'Hello' },
+			},
+		} as any);
+		expect(commentMatch).toBeNull();
+	});
+
+	it('properly extracts project_id on task events when project_id is provided', () => {
+		const taskMatchWithProj = matchWebvizioTenantWebhook({
+			headers: {},
+			body: {
+				event: 'task.created',
+				payload: { id: 'task-789', project_id: 'proj-100', title: 'Test' },
+			},
+		} as any);
+		expect(taskMatchWithProj).toEqual({
+			linkType: 'project_id',
+			externalId: 'proj-100',
+		});
 	});
 
 	it('pluginWebhookMatcher recognizes Webvizio webhook headers and body events', () => {
