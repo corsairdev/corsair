@@ -5,7 +5,7 @@
  * handlers read status and Retry-After off the *wrapper*. Matching on
  * `instanceof ApiError` here would silently never fire.
  */
-import { TimecampAPIError } from './client';
+import { TIMECAMP_RATE_LIMIT_CONFIG, TimecampAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 /** Builds the error shape the client actually throws. */
@@ -51,7 +51,18 @@ describe('auth and plan failures', () => {
 	});
 
 	it('never retries an auth failure', async () => {
-		expect((await errorHandlers.AUTH_ERROR.handler()).maxRetries).toBe(0);
+		// The handler warns operators that the token is bad; that warning is
+		// production behaviour, so it is silenced here rather than printed
+		// into every test run.
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		try {
+			expect((await errorHandlers.AUTH_ERROR.handler()).maxRetries).toBe(0);
+			expect(warn).toHaveBeenCalled();
+		} finally {
+			warn.mockRestore();
+		}
 	});
 
 	it('matches the 403 a free-plan account receives', () => {
@@ -61,9 +72,17 @@ describe('auth and plan failures', () => {
 	});
 
 	it('never retries a plan failure, since it cannot resolve itself', async () => {
-		expect(
-			(await errorHandlers.PLAN_OR_PERMISSION_ERROR.handler()).maxRetries,
-		).toBe(0);
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		try {
+			expect(
+				(await errorHandlers.PLAN_OR_PERMISSION_ERROR.handler()).maxRetries,
+			).toBe(0);
+			expect(warn).toHaveBeenCalled();
+		} finally {
+			warn.mockRestore();
+		}
 	});
 });
 
@@ -81,5 +100,20 @@ describe('fallback', () => {
 	it('catches anything unclassified without retrying', async () => {
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
 		expect((await errorHandlers.DEFAULT.handler()).maxRetries).toBe(0);
+	});
+});
+
+describe('retry ownership', () => {
+	it('leaves retrying entirely to the error policy', () => {
+		// With the transport also retrying, the two layers compound: one
+		// operation issues several times the intended requests and stacks two
+		// independent backoffs.
+		expect(TIMECAMP_RATE_LIMIT_CONFIG.maxRetries).toBe(0);
+	});
+
+	it('still parses Retry-After so the policy can honour it', () => {
+		expect(TIMECAMP_RATE_LIMIT_CONFIG.headerNames?.retryAfter).toBe(
+			'Retry-After',
+		);
 	});
 });

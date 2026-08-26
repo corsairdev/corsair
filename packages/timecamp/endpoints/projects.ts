@@ -86,8 +86,11 @@ function toProject(task: Record<string, unknown>): TimecampProject | null {
 		budgeted: toNumberOrNull(task.budgeted),
 		budget_unit: toStringOrNull(task.budget_unit),
 		note: toStringOrNull(task.note),
-		add_date: toStringOrNull(task.add_date),
-		edit_date: toStringOrNull(task.edit_date),
+		add_date: toStringOrNull(task.add_date ?? task.create_time),
+		// TimeCamp v1 reports the modification timestamp as `modify_time`;
+		// other responses use `edit_date`. Reading only one leaves the field
+		// null for records that carry the other, so both spellings are accepted.
+		edit_date: toStringOrNull(task.edit_date ?? task.modify_time),
 		root_group_id: toStringOrNull(task.root_group_id),
 		assigned_users: toUserIds(task.users),
 	};

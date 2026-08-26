@@ -198,3 +198,62 @@ describe('cache reconciliation', () => {
 		expect(upserts.map((u) => u.id)).not.toContain('103');
 	});
 });
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Regressions from review round 2.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('timestamp field mapping', () => {
+	it('reads the modification timestamp from modify_time', async () => {
+		// TimeCamp v1 reports it as `modify_time`; reading only `edit_date`
+		// left the field null for every record that carries the other spelling.
+		requestMock.mockResolvedValue({
+			'1': {
+				task_id: '1',
+				parent_id: null,
+				name: 'P',
+				archived: '0',
+				modify_time: '2026-01-02 03:04:05',
+			},
+		});
+		const result = await Projects.getList(makeCtx(), {});
+		expect(result.projects[0]?.edit_date).toBe('2026-01-02 03:04:05');
+	});
+
+	it('still reads edit_date when that spelling is used', async () => {
+		requestMock.mockResolvedValue({
+			'1': {
+				task_id: '1',
+				parent_id: null,
+				name: 'P',
+				archived: '0',
+				edit_date: '2026-02-03 04:05:06',
+			},
+		});
+		const result = await Projects.getList(makeCtx(), {});
+		expect(result.projects[0]?.edit_date).toBe('2026-02-03 04:05:06');
+	});
+
+	it('prefers edit_date when a record carries both', async () => {
+		requestMock.mockResolvedValue({
+			'1': {
+				task_id: '1',
+				parent_id: null,
+				name: 'P',
+				archived: '0',
+				edit_date: '2026-02-03 04:05:06',
+				modify_time: '2026-01-02 03:04:05',
+			},
+		});
+		const result = await Projects.getList(makeCtx(), {});
+		expect(result.projects[0]?.edit_date).toBe('2026-02-03 04:05:06');
+	});
+
+	it('leaves the field null when neither spelling is present', async () => {
+		requestMock.mockResolvedValue({
+			'1': { task_id: '1', parent_id: null, name: 'P', archived: '0' },
+		});
+		const result = await Projects.getList(makeCtx(), {});
+		expect(result.projects[0]?.edit_date).toBeNull();
+	});
+});

@@ -1,4 +1,8 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 /**
@@ -54,6 +58,26 @@ export async function tryGetStoredKey(
 export const TIMECAMP_API_BASE = 'https://app.timecamp.com/third_party/api';
 
 /**
+ * Retrying is owned by the plugin's error policy (`error-handlers.ts`), not by
+ * the transport.
+ *
+ * Left unset, `request` applies its own default retries before the policy
+ * starts a second sequence, so the two compound: one operation issues several
+ * times the intended number of requests and stacks two independent backoffs.
+ * The transport therefore parses `Retry-After` and surfaces it on the error,
+ * but never retries.
+ */
+export const TIMECAMP_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
+
+/**
  * Performs a request against the TimeCamp API.
  *
  * Auth: the account API token is sent as `Authorization: Bearer <token>`.
@@ -92,7 +116,9 @@ export async function makeTimecampRequest<T>(
 	};
 
 	try {
-		return await request<T>(config, requestOptions);
+		return await request<T>(config, requestOptions, {
+			rateLimitConfig: TIMECAMP_RATE_LIMIT_CONFIG,
+		});
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw new TimecampAPIError(error.message, error.status, { cause: error });
