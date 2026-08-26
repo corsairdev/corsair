@@ -1,0 +1,12 @@
+---
+title: Database
+description: "Dictionary local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Dictionary plugin syncs data locally. Use `corsair.dictionary.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+Dictionary lookups are stateless — there are no entities to sync locally. Every call goes straight to the Merriam-Webster API.

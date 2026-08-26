@@ -1,0 +1,62 @@
+---
+title: API
+description: "API reference for Dictionary: every `dictionary.api.*` operation with input and output types."
+---
+
+Every `dictionary.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Words
+
+### get
+
+`words.get`
+
+Look up a word in the Merriam-Webster Collegiate Dictionary, returning definitions, part of speech, pronunciation, and audio — or spelling suggestions when no entry matches
+
+**Risk:** `read`
+
+```ts
+await corsair.dictionary.api.words.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `word` | `string` | Yes | The word to look up |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `found` | `boolean` | Yes | — |
+| `entries` | `object[]` | Yes | — |
+| `suggestions` | `string[]` | Yes | Spelling suggestions returned when no entry matched the word |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id: string,
+  headword: string,
+  partOfSpeech?: string,
+  pronunciation?: string,
+  audioUrl?: string,
+  shortDefinitions: string[],
+  stems: string[],
+  offensive: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
