@@ -3,7 +3,7 @@ title: Set up with your agent
 description: Hand Corsair Hub to your coding agent. One prompt takes it from an empty app to a working, connected integration.
 ---
 
-The fastest way to add Corsair is to let your coding agent do it. Paste the prompt below into Claude Code, Cursor, Codex, or any MCP-capable agent — it talks you through the two choices that matter, wires the route, and doesn't stop until a real integration works.
+The fastest way to add Corsair is to let your coding agent do it. Paste the prompt below into Claude Code, Cursor, Codex, or any MCP-capable agent — it talks you through the choices that matter, wires the route, and doesn't stop until a real integration works.
 
 <CodeGroup>
 ```text Prompt
@@ -16,24 +16,50 @@ credential encrypted in my own database. Corsair Hub is the hosted piece that ow
 surfaces needing a public URL: the OAuth connect page, callbacks, and approvals. Hub
 relays those; it stores none of my credentials.
 
-Start by figuring out two things with me — chat about them, don't fire yes/no questions
-at me. First: am I connecting just my own app's tools, or my end users' accounts? The
-second is multi-tenant, and it's the common case, so lean that way if I'm unsure.
-Second: what framework am I on? That's what decides how the route gets mounted.
+Start by figuring out four things with me — chat about them, don't fire yes/no questions
+at me. First: which service do we connect first — GitHub, Slack, Gmail, another plugin?
+Pick one to prove the loop; the rest can come later. Second: am I connecting just my own
+app's tools, or my end users' accounts? The second is multi-tenant, and it's the common
+case, so lean that way if I'm unsure. Third: what framework am I on? That's what decides
+how the route gets mounted. Fourth: what database am I on? Corsair needs one before it
+can store a single credential.
 
 Once that's clear, walk me through it. Read the intro and Hub pages listed at
-https://docs.corsair.dev/llms.txt so you understand the model first. Help me get a dev
-API key, a signing secret, and a KEK into my .env — I'll copy the keys from the Keys tab
-at https://hub.corsair.dev/dashboard, or you help me create a project if I don't have
-one. Install `corsair` plus a plugin for each service I named, then wire the /api/corsair
-route using the page for my exact framework at https://docs.corsair.dev/adapters/handlers.
+https://docs.corsair.dev/llms.txt so you understand the model first. Help me put three
+values in my .env — CORSAIR_DEV_API_KEY and CORSAIR_DEV_SIGNING_SECRET copied from the
+Keys tab at https://hub.corsair.dev/dashboard, plus CORSAIR_KEK generated with
+`openssl rand -base64 32`. Help me create a project first if I don't have one. Create
+the four Corsair tables and wire the database following
+https://docs.corsair.dev/concepts/database — pass createCorsair a pg Pool, a
+better-sqlite3 instance, a postgres.js Sql, or a Kysely instance; a PrismaClient won't
+typecheck. Install `corsair` and the plugin for the service we picked.
+`@corsair-dev/cli` is a separate package — add it only if we'll run `corsair setup`
+from the terminal to seed API keys or provision tenants; an OAuth connect provisions
+its account row on the first connect, so the plain Hub path doesn't need the CLI.
+Then wire the /api/corsair route using the page for my exact framework at
+https://docs.corsair.dev/adapters/handlers.
+
+Carry the tenancy answer into the code. My own tools → leave multiTenancy off and call
+plugins directly. My users' accounts → set multiTenancy: true, run every operation
+through `corsair.withTenant(id)`, and pass that same id as tenantId when minting the
+connect link — Corsair enforces this at the type level. Resolve tenantId from my auth
+session, never straight from the request body.
 
 Terms you'll come across: a tenant is one of my users; a plugin is one service; the
 delivery URL is where Hub sends results — it self-registers on the first request, and my
-dashboard's header dot turning green is how we know it worked. Don't stop at "the server
-runs" — mint a connect link, send me through it, and confirm a real API call returns data.
-
-Prefer Hub. Only set up manual, self-hosted mode if I ask for it.
+dashboard's header dot turning green is how we know it worked. If I'm gating agent tool
+calls behind approvals, also create the `corsair_permissions` table from
+https://docs.corsair.dev/concepts/permissions — it's not one of the four core tables.
+Don't stop at "the server runs" — mint a connect link, send me through it, and confirm a
+real API call returns data. If the provider's page 404s on Connect, don't assume why —
+check the plugin and my plan in Hub first. If the managed OAuth app truly isn't
+available to me, flip that plugin to `authType: 'oauth_2'` and store my client id
+and secret the documented way — `corsair.keys.<plugin>.set_client_id` and
+`set_client_secret`, the CLI (`corsair setup --plugin=<id> client_id=...
+client_secret=...`), or the dashboard's BYO modal, per the plugin's Get
+Credentials guide. On Hub, register the redirect URL from the Keys tab
+(https://auth.corsair.dev/oauth/callback) with the provider — not a URL of my own —
+then set the scopes the guide lists and retry instead of giving up.
 ```
 </CodeGroup>
 
