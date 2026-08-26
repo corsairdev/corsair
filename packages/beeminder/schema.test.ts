@@ -142,10 +142,29 @@ describe('Beeminder schema', () => {
 		expect(declared).not.toContain('aKeyNobodyDeclared');
 		expect(
 			BeeminderGoalEntity.safeParse({
-				id: 'g-1',
+				slug: 'weight',
 				aKeyNobodyDeclared: 1,
 			}).success,
 		).toBe(true);
+	});
+
+	it('rejects empty objects and records missing identifying fields', () => {
+		expect(BeeminderUserEntity.safeParse({}).success).toBe(false);
+		expect(BeeminderGoalEntity.safeParse({}).success).toBe(false);
+		expect(BeeminderChargeEntity.safeParse({}).success).toBe(false);
+		expect(BeeminderUserEntity.safeParse({ timezone: 'UTC' }).success).toBe(
+			false,
+		);
+		expect(BeeminderGoalEntity.safeParse({ id: 'g-1' }).success).toBe(false);
+		expect(
+			BeeminderChargeEntity.safeParse({ id: 'ch-1', amount: 1 }).success,
+		).toBe(false);
+		expect(
+			BeeminderChargeEntity.safeParse({
+				id: 'ch-1',
+				username: 'alice',
+			}).success,
+		).toBe(false);
 	});
 
 	it('accepts a goal listed without id', () => {
@@ -169,13 +188,19 @@ describe('Beeminder schema', () => {
 		).toBe(true);
 	});
 
-	it('accepts a charge with only id', () => {
-		expect(BeeminderChargeEntity.safeParse({ id: 'ch-1' }).success).toBe(true);
+	it('accepts a charge with id, amount, and username', () => {
+		expect(
+			BeeminderChargeEntity.safeParse({
+				id: 'ch-1',
+				amount: 1,
+				username: 'alice',
+			}).success,
+		).toBe(true);
 	});
 
 	it('accepts null for nullable fields', () => {
 		const parsed = BeeminderGoalEntity.safeParse({
-			id: 'g-1',
+			slug: 'weight',
 			title: null,
 			pledge: null,
 		});

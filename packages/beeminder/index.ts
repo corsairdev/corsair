@@ -174,9 +174,9 @@ export type ExternalBeeminderPlugin<T extends BeeminderPluginOptions> =
 /**
  * The Beeminder plugin.
  *
- * Supports both API Key (personal auth token) and OAuth 2.0 authentication.
- * Beeminder uses implicit grant (`response_type=token`); the OAuth flow
- * returns an access token directly in the redirect URL fragment.
+ * API key is a personal `auth_token`. `oauth_2` is a stored Beeminder
+ * `access_token` (implicit grant happens outside Corsair). No `oauthConfig`:
+ * Corsair's helper always sends `response_type=code`, which Beeminder rejects.
  *
  * **No webhooks.** Beeminder sends outbound webhooks to user-configured URLs,
  * but does not deliver events to third-party integrations via webhook.
@@ -205,16 +205,6 @@ export function beeminder<const T extends BeeminderPluginOptions>(
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
-		},
-		oauthConfig: {
-			providerName: 'Beeminder',
-			authUrl: 'https://www.beeminder.com/apps/authorize',
-			// Beeminder OAuth is implicit (`response_type=token`); there is no
-			// token-exchange endpoint. Store the redirect `access_token`.
-			tokenUrl: 'https://www.beeminder.com/apps/authorize',
-			scopes: [],
-			requiresRegisteredRedirect: true,
-			authParams: { response_type: 'token' },
 		},
 		keyBuilder: async (ctx: BeeminderKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {

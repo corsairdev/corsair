@@ -38,9 +38,9 @@ export async function beeminderCall<T>(
 }
 
 export function compactBody(
-	body: Record<string, unknown>,
-): Record<string, unknown> {
-	const compacted: Record<string, unknown> = {};
+	body: Record<string, string | number | boolean | undefined>,
+): Record<string, string | number | boolean> {
+	const compacted: Record<string, string | number | boolean> = {};
 	for (const [key, value] of Object.entries(body)) {
 		if (value !== undefined) compacted[key] = value;
 	}

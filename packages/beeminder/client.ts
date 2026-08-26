@@ -27,7 +27,7 @@ export type BeeminderAuthParam = 'auth_token' | 'access_token';
 
 export type BeeminderRequestOptions = {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE';
-	body?: Record<string, unknown>;
+	body?: Record<string, string | number | boolean>;
 	query?: Record<string, string | number | boolean | undefined>;
 	/**
 	 * Personal tokens use `auth_token`; OAuth tokens use `access_token`.
@@ -49,7 +49,7 @@ function buildConfig(authToken: string): OpenAPIConfig {
 	};
 }
 
-function toFormBody(body: Record<string, unknown>): string {
+function toFormBody(body: Record<string, string | number | boolean>): string {
 	const params = new URLSearchParams();
 	for (const [key, value] of Object.entries(body)) {
 		if (value === undefined) continue;

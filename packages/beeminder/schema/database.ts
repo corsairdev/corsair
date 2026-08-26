@@ -5,9 +5,13 @@
  * https://api.beeminder.com
  */
 
+/** Optional documented fields. Identifying keys are required below, not these. */
 const S = z.string().nullable().optional();
 const N = z.number().nullable().optional();
 const B = z.boolean().nullable().optional();
+
+/** Graph-matrix row: 2 of 3 of [time, value, rate] are set; the rest are null. */
+const RoadRow = z.array(z.number().nullable());
 
 /**
  * Datapoint nested on a Goal when `datapoints` / `last_datapoint` is present.
@@ -33,7 +37,7 @@ export type BeeminderDatapointEntity = z.infer<typeof BeeminderDatapointEntity>;
 export const BeeminderGoalEntity = z
 	.object({
 		id: S,
-		slug: S,
+		slug: z.string(),
 		title: S,
 		fineprint: S,
 		yaxis: S,
@@ -63,7 +67,10 @@ export const BeeminderGoalEntity = z
 		yaw: N,
 		dir: N,
 		lane: N,
-		mathishard: z.array(z.number()).nullable().optional(),
+		mathishard: z
+			.tuple([z.number(), z.number(), z.number()])
+			.nullable()
+			.optional(),
 		headsum: S,
 		limsum: S,
 		kyoom: B,
@@ -85,9 +92,9 @@ export const BeeminderGoalEntity = z
 			.loose()
 			.nullable()
 			.optional(),
-		road: z.array(z.unknown()).nullable().optional(),
-		roadall: z.array(z.unknown()).nullable().optional(),
-		fullroad: z.array(z.unknown()).nullable().optional(),
+		road: z.array(RoadRow).nullable().optional(),
+		roadall: z.array(RoadRow).nullable().optional(),
+		fullroad: z.array(RoadRow).nullable().optional(),
 		rah: N,
 		delta: N,
 		delta_text: S,
@@ -127,7 +134,7 @@ export type BeeminderGoalEntity = z.infer<typeof BeeminderGoalEntity>;
  */
 export const BeeminderUserEntity = z
 	.object({
-		username: S,
+		username: z.string(),
 		timezone: S,
 		updated_at: N,
 		goals: z
@@ -138,7 +145,7 @@ export const BeeminderUserEntity = z
 			.array(
 				z
 					.object({
-						id: S,
+						id: z.string(),
 					})
 					.loose(),
 			)
@@ -152,10 +159,10 @@ export type BeeminderUserEntity = z.infer<typeof BeeminderUserEntity>;
 
 export const BeeminderChargeEntity = z
 	.object({
-		id: S,
-		amount: N,
+		id: z.string(),
+		amount: z.number(),
 		note: S,
-		username: S,
+		username: z.string(),
 	})
 	.loose();
 export type BeeminderChargeEntity = z.infer<typeof BeeminderChargeEntity>;

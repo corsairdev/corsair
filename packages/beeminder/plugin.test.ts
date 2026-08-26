@@ -41,9 +41,7 @@ describe('beeminder plugin registration', () => {
 			'oauth_2',
 		]);
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.oauthConfig?.authUrl).toBe(
-			'https://www.beeminder.com/apps/authorize',
-		);
+		expect(plugin.oauthConfig).toBeUndefined();
 	});
 
 	it('has input and output schemas for every endpoint', () => {
