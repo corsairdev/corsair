@@ -32,6 +32,13 @@ export function buildFrpcConfig(opts: {
 			'deliveryPath must be an absolute URL path (e.g. /api/corsair)',
 		);
 	}
+	// Backslashes in caCertPath are normalized below; a quote or control char
+	// would still break out of the trustedCaFile basic string.
+	if (opts.caCertPath && /["\x00-\x1F\x7F]/.test(opts.caCertPath)) {
+		throw new Error(
+			'caCertPath contains invalid characters (quotes or control chars)',
+		);
+	}
 	const lines = [
 		`serverAddr = "${opts.serverAddr}"`,
 		`serverPort = ${opts.serverPort}`,
@@ -42,10 +49,18 @@ export function buildFrpcConfig(opts: {
 		lines.push(`metadatas.path = "${opts.deliveryPath}"`);
 	}
 	if (opts.caCertPath) {
+		// Windows paths carry backslashes, and `\U` in a TOML basic string is a
+		// unicode-escape prefix — frpc dies with "non-hex character" on
+		// C:\Users\... (found live on Windows; POSIX paths never hit it).
+		// Forward slashes are valid for Windows filesystem consumers.
+		const isWindowsPath = /^[A-Za-z]:[\\/]|^\\\\/.test(opts.caCertPath);
+		const caFile = isWindowsPath
+			? opts.caCertPath.replace(/\\/g, '/')
+			: opts.caCertPath.replace(/\\/g, '\\\\');
 		lines.push(
 			'transport.tls.enable = true',
 			`transport.tls.serverName = "${opts.serverName ?? opts.serverAddr}"`,
-			`transport.tls.trustedCaFile = "${opts.caCertPath}"`,
+			`transport.tls.trustedCaFile = "${caFile}"`,
 		);
 	}
 	lines.push(
