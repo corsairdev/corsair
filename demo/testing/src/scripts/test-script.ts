@@ -4,90 +4,25 @@ dotenv.config({ path: '../.env' });
 
 import { corsair } from '@/server/corsair';
 
-async function setBoxheroCredentials() {
-	const { BOXHERO_API_KEY } = process.env;
+async function setInstagramCredentials() {
+	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
 
-	if (BOXHERO_API_KEY) {
-		await corsair.keys.boxhero.set_api_key(BOXHERO_API_KEY);
+	if (FACEBOOK_APP_ID) {
+		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
 	}
-}
-
-async function read(label: string, operation: () => Promise<unknown>) {
-	try {
-		const result = await operation();
-		console.log(`${label}:`, JSON.stringify(result, null, 2));
-		return result;
-	} catch (error) {
-		console.error(`${label} error:`, error);
-		return undefined;
+	if (FACEBOOK_APP_SECRET) {
+		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
+	}
+	if (IG_ACCESS_TOKEN) {
+		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
 	}
 }
 
 const main = async () => {
-	await setBoxheroCredentials();
-
-	if (!process.env.BOXHERO_API_KEY) {
-		console.log('Skipping BoxHero API tests: BOXHERO_API_KEY is not set');
-		return;
-	}
-
-	await read('Team', () => corsair.boxhero.api.teams.getInfo({}));
-	const locations = await read('Locations', () =>
-		corsair.boxhero.api.locations.list({}),
-	);
-	const locationId = (
-		locations as { items?: Array<{ id: number }> } | undefined
-	)?.items?.[0]?.id;
-	if (locationId !== undefined) {
-		await read('Location', () =>
-			corsair.boxhero.api.locations.get({ location_id: locationId }),
-		);
-	}
-
-	await read('Partners', () =>
-		corsair.boxhero.api.partners.list({ limit: 10 }),
-	);
-
-	const items = await read('Items', () =>
-		corsair.boxhero.api.items.list({ limit: 10 }),
-	);
-	const itemId = (items as { items?: Array<{ id: number }> } | undefined)
-		?.items?.[0]?.id;
-	if (itemId !== undefined) {
-		await read('Item', () =>
-			corsair.boxhero.api.items.get({ item_id: itemId }),
-		);
-	}
-
-	const attributes = await read('Item attributes', () =>
-		corsair.boxhero.api.itemAttributes.list({}),
-	);
-	const attributeId = (
-		attributes as { items?: Array<{ id: number }> } | undefined
-	)?.items?.[0]?.id;
-	if (attributeId !== undefined) {
-		await read('Item attribute', () =>
-			corsair.boxhero.api.itemAttributes.get({ attr_id: attributeId }),
-		);
-	}
-
-	const members = await read('Members', () =>
-		corsair.boxhero.api.members.list({}),
-	);
-	const memberId = (members as { items?: Array<{ id: number }> } | undefined)
-		?.items?.[0]?.id;
-	if (memberId !== undefined) {
-		await read('Member', () =>
-			corsair.boxhero.api.members.get({ member_id: memberId }),
-		);
-	}
-
-	await read('Basic transactions', () =>
-		corsair.boxhero.api.transactions.listBasic({ limit: 10 }),
-	);
-	await read('Location transactions', () =>
-		corsair.boxhero.api.transactions.listLocation({ limit: 10 }),
-	);
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
+	});
 };
 
 main().catch((err) => {
