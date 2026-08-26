@@ -15,13 +15,15 @@ export const getWorkOrder: SapsuccessfactorsEndpoints['getWorkOrder'] = async (
 ) => {
 	const validatedInput =
 		SapsuccessfactorsEndpointInputSchemas.getWorkOrder.parse(input ?? {});
+	const apiBaseUrl =
+		(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 	const query = validatedInput as Record<
 		string,
 		string | number | boolean | undefined
 	>;
 	const response = await makeSapsuccessfactorsRequest<
 		SapsuccessfactorsEndpointOutputs['getWorkOrder']
-	>('odata/v2/WorkOrder', ctx.key, { method: 'GET', query });
+	>('odata/v2/WorkOrder', ctx.key, { method: 'GET', query, apiBaseUrl });
 	const validatedResponse =
 		SapsuccessfactorsEndpointOutputSchemas.getWorkOrder.parse(response);
 	await logEventFromContext(

@@ -15,11 +15,14 @@ export const updateInternalUsernameNewHiresAfter: SapsuccessfactorsEndpoints['up
 			SapsuccessfactorsEndpointInputSchemas.updateInternalUsernameNewHiresAfter.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['updateInternalUsernameNewHiresAfter']
 		>('odata/v2/updateUserNamePostHiring', ctx.key, {
 			method: 'POST',
 			body: (validatedInput ?? {}) as Record<string, unknown>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.updateInternalUsernameNewHiresAfter.parse(

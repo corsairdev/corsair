@@ -15,13 +15,15 @@ export const listEmpEmployment: SapsuccessfactorsEndpoints['listEmpEmployment'] 
 			SapsuccessfactorsEndpointInputSchemas.listEmpEmployment.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['listEmpEmployment']
-		>('odata/v2/EmpEmployment', ctx.key, { method: 'GET', query });
+		>('odata/v2/EmpEmployment', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.listEmpEmployment.parse(response);
 		await logEventFromContext(
@@ -41,13 +43,19 @@ export const getEmpEmploymentTermination: SapsuccessfactorsEndpoints['getEmpEmpl
 			SapsuccessfactorsEndpointInputSchemas.getEmpEmploymentTermination.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getEmpEmploymentTermination']
-		>('odata/v2/EmpEmploymentTermination', ctx.key, { method: 'GET', query });
+		>('odata/v2/EmpEmploymentTermination', ctx.key, {
+			method: 'GET',
+			query,
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getEmpEmploymentTermination.parse(
 				response,
@@ -69,13 +77,19 @@ export const getEmpPayCompRecurring: SapsuccessfactorsEndpoints['getEmpPayCompRe
 			SapsuccessfactorsEndpointInputSchemas.getEmpPayCompRecurring.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getEmpPayCompRecurring']
-		>('odata/v2/EmpPayCompRecurring', ctx.key, { method: 'GET', query });
+		>('odata/v2/EmpPayCompRecurring', ctx.key, {
+			method: 'GET',
+			query,
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getEmpPayCompRecurring.parse(
 				response,
@@ -97,13 +111,19 @@ export const getEmpPayCompNonRecurring: SapsuccessfactorsEndpoints['getEmpPayCom
 			SapsuccessfactorsEndpointInputSchemas.getEmpPayCompNonRecurring.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getEmpPayCompNonRecurring']
-		>('odata/v2/EmpPayCompNonRecurring', ctx.key, { method: 'GET', query });
+		>('odata/v2/EmpPayCompNonRecurring', ctx.key, {
+			method: 'GET',
+			query,
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getEmpPayCompNonRecurring.parse(
 				response,

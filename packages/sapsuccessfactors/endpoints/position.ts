@@ -15,13 +15,15 @@ export const getPosition: SapsuccessfactorsEndpoints['getPosition'] = async (
 ) => {
 	const validatedInput =
 		SapsuccessfactorsEndpointInputSchemas.getPosition.parse(input ?? {});
+	const apiBaseUrl =
+		(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 	const query = validatedInput as Record<
 		string,
 		string | number | boolean | undefined
 	>;
 	const response = await makeSapsuccessfactorsRequest<
 		SapsuccessfactorsEndpointOutputs['getPosition']
-	>('odata/v2/Position', ctx.key, { method: 'GET', query });
+	>('odata/v2/Position', ctx.key, { method: 'GET', query, apiBaseUrl });
 	const validatedResponse =
 		SapsuccessfactorsEndpointOutputSchemas.getPosition.parse(response);
 	await logEventFromContext(

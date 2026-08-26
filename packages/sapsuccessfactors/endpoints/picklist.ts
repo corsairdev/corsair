@@ -15,13 +15,15 @@ export const getPicklist: SapsuccessfactorsEndpoints['getPicklist'] = async (
 ) => {
 	const validatedInput =
 		SapsuccessfactorsEndpointInputSchemas.getPicklist.parse(input ?? {});
+	const apiBaseUrl =
+		(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 	const query = validatedInput as Record<
 		string,
 		string | number | boolean | undefined
 	>;
 	const response = await makeSapsuccessfactorsRequest<
 		SapsuccessfactorsEndpointOutputs['getPicklist']
-	>('odata/v2/Picklist', ctx.key, { method: 'GET', query });
+	>('odata/v2/Picklist', ctx.key, { method: 'GET', query, apiBaseUrl });
 	const validatedResponse =
 		SapsuccessfactorsEndpointOutputSchemas.getPicklist.parse(response);
 	await logEventFromContext(
@@ -41,13 +43,15 @@ export const getPicklistOption: SapsuccessfactorsEndpoints['getPicklistOption'] 
 			SapsuccessfactorsEndpointInputSchemas.getPicklistOption.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getPicklistOption']
-		>('odata/v2/PicklistOption', ctx.key, { method: 'GET', query });
+		>('odata/v2/PicklistOption', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getPicklistOption.parse(response);
 		await logEventFromContext(

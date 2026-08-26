@@ -13,6 +13,8 @@ export const getPerPersonById: SapsuccessfactorsEndpoints['getPerPersonById'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getPerPersonById.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { person_id_external, ...query } = (validatedInput ?? {}) as {
 			person_id_external?: string;
 		};
@@ -24,6 +26,7 @@ export const getPerPersonById: SapsuccessfactorsEndpoints['getPerPersonById'] =
 		>(resourcePath, ctx.key, {
 			method: 'GET',
 			query: query as Record<string, string | number | boolean | undefined>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getPerPersonById.parse(response);
@@ -42,13 +45,15 @@ export const listPerPerson: SapsuccessfactorsEndpoints['listPerPerson'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.listPerPerson.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['listPerPerson']
-		>('odata/v2/PerPerson', ctx.key, { method: 'GET', query });
+		>('odata/v2/PerPerson', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.listPerPerson.parse(response);
 		await logEventFromContext(
@@ -66,13 +71,15 @@ export const getPerPersonal: SapsuccessfactorsEndpoints['getPerPersonal'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getPerPersonal.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getPerPersonal']
-		>('odata/v2/PerPersonal', ctx.key, { method: 'GET', query });
+		>('odata/v2/PerPersonal', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getPerPersonal.parse(response);
 		await logEventFromContext(

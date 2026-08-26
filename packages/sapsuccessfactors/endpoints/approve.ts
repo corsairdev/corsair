@@ -15,11 +15,14 @@ export const approveCalibrationSession: SapsuccessfactorsEndpoints['approveCalib
 			SapsuccessfactorsEndpointInputSchemas.approveCalibrationSession.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['approveCalibrationSession']
 		>('odata/v4/CalSession.svc/Approve', ctx.key, {
 			method: 'POST',
 			body: (validatedInput ?? {}) as Record<string, unknown>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.approveCalibrationSession.parse(

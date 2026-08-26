@@ -15,13 +15,19 @@ export const queryAllAvailableClockClockOut: SapsuccessfactorsEndpoints['queryAl
 			SapsuccessfactorsEndpointInputSchemas.queryAllAvailableClockClockOut.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['queryAllAvailableClockClockOut']
-		>('odata/v2/ClockInClockOutGroup', ctx.key, { method: 'GET', query });
+		>('odata/v2/ClockInClockOutGroup', ctx.key, {
+			method: 'GET',
+			query,
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.queryAllAvailableClockClockOut.parse(
 				response,
@@ -43,6 +49,8 @@ export const queryClockClockOutGroupCodeTime: SapsuccessfactorsEndpoints['queryC
 			SapsuccessfactorsEndpointInputSchemas.queryClockClockOutGroupCodeTime.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { code, ...query } = (validatedInput ?? {}) as { code?: string };
 		const resourcePath = code
 			? `odata/v2/ClockInClockOutGroup('${code}')`
@@ -52,6 +60,7 @@ export const queryClockClockOutGroupCodeTime: SapsuccessfactorsEndpoints['queryC
 		>(resourcePath, ctx.key, {
 			method: 'GET',
 			query: query as Record<string, string | number | boolean | undefined>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.queryClockClockOutGroupCodeTime.parse(

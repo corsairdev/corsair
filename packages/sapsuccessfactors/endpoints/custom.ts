@@ -15,6 +15,8 @@ export const getCustomMdfObject: SapsuccessfactorsEndpoints['getCustomMdfObject'
 			SapsuccessfactorsEndpointInputSchemas.getCustomMdfObject.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { custom_object, ...rest } = (validatedInput ?? {}) as {
 			custom_object?: string;
 		};
@@ -31,6 +33,7 @@ export const getCustomMdfObject: SapsuccessfactorsEndpoints['getCustomMdfObject'
 		>(resourcePath, ctx.key, {
 			method: 'GET',
 			query: rest as Record<string, string | number | boolean | undefined>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getCustomMdfObject.parse(response);

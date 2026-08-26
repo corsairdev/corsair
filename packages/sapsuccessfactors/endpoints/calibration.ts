@@ -15,6 +15,8 @@ export const getCalibrationSessionById: SapsuccessfactorsEndpoints['getCalibrati
 			SapsuccessfactorsEndpointInputSchemas.getCalibrationSessionById.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { session_id, ...query } = (validatedInput ?? {}) as {
 			session_id?: string;
 		};
@@ -26,6 +28,7 @@ export const getCalibrationSessionById: SapsuccessfactorsEndpoints['getCalibrati
 		>(resourcePath, ctx.key, {
 			method: 'GET',
 			query: query as Record<string, string | number | boolean | undefined>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getCalibrationSessionById.parse(
@@ -48,6 +51,8 @@ export const getCalibrationSessions: SapsuccessfactorsEndpoints['getCalibrationS
 			SapsuccessfactorsEndpointInputSchemas.getCalibrationSessions.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
@@ -57,6 +62,7 @@ export const getCalibrationSessions: SapsuccessfactorsEndpoints['getCalibrationS
 		>('odata/v4/CalSession.svc/CalibrationSession', ctx.key, {
 			method: 'GET',
 			query,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getCalibrationSessions.parse(
@@ -79,6 +85,8 @@ export const getCalibrationSubjectById: SapsuccessfactorsEndpoints['getCalibrati
 			SapsuccessfactorsEndpointInputSchemas.getCalibrationSubjectById.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { subject_id, ...query } = (validatedInput ?? {}) as {
 			subject_id?: string;
 		};
@@ -90,6 +98,7 @@ export const getCalibrationSubjectById: SapsuccessfactorsEndpoints['getCalibrati
 		>(resourcePath, ctx.key, {
 			method: 'GET',
 			query: query as Record<string, string | number | boolean | undefined>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getCalibrationSubjectById.parse(
@@ -112,6 +121,8 @@ export const getCalibrationSubjectRatings: SapsuccessfactorsEndpoints['getCalibr
 			SapsuccessfactorsEndpointInputSchemas.getCalibrationSubjectRatings.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
@@ -121,6 +132,7 @@ export const getCalibrationSubjectRatings: SapsuccessfactorsEndpoints['getCalibr
 		>('odata/v4/CalSession.svc/CalibrationSubject', ctx.key, {
 			method: 'GET',
 			query,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getCalibrationSubjectRatings.parse(
@@ -143,6 +155,8 @@ export const updateCalibrationSubjectRatings: SapsuccessfactorsEndpoints['update
 			SapsuccessfactorsEndpointInputSchemas.updateCalibrationSubjectRatings.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { subject_id, body, ...rest } = (validatedInput ?? {}) as {
 			subject_id?: string;
 			body?: Record<string, unknown>;
@@ -155,6 +169,7 @@ export const updateCalibrationSubjectRatings: SapsuccessfactorsEndpoints['update
 		>(resourcePath, ctx.key, {
 			method: 'PATCH',
 			body: (body ?? rest) as Record<string, unknown>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.updateCalibrationSubjectRatings.parse(

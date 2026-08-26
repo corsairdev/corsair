@@ -13,13 +13,15 @@ export const getOnb2Process: SapsuccessfactorsEndpoints['getOnb2Process'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getOnb2Process.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getOnb2Process']
-		>('odata/v2/ONB2Process', ctx.key, { method: 'GET', query });
+		>('odata/v2/ONB2Process', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getOnb2Process.parse(response);
 		await logEventFromContext(

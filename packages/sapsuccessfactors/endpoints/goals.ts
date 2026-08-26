@@ -13,6 +13,8 @@ export const getGoalsByPlan: SapsuccessfactorsEndpoints['getGoalsByPlan'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getGoalsByPlan.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { goal_plan_id, ...rest } = (validatedInput ?? {}) as {
 			goal_plan_id?: string;
 		};
@@ -25,6 +27,7 @@ export const getGoalsByPlan: SapsuccessfactorsEndpoints['getGoalsByPlan'] =
 		>(resourcePath, ctx.key, {
 			method: 'GET',
 			query: rest as Record<string, string | number | boolean | undefined>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getGoalsByPlan.parse(response);

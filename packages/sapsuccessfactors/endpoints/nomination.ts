@@ -15,6 +15,8 @@ export const deleteNominationPositionTalentPool: SapsuccessfactorsEndpoints['del
 			SapsuccessfactorsEndpointInputSchemas.deleteNominationPositionTalentPool.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { nomination_id } = (validatedInput ?? {}) as {
 			nomination_id?: string;
 		};
@@ -23,7 +25,7 @@ export const deleteNominationPositionTalentPool: SapsuccessfactorsEndpoints['del
 			: 'odata/v4/NominationService.svc/Nomination';
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['deleteNominationPositionTalentPool']
-		>(resourcePath, ctx.key, { method: 'DELETE' });
+		>(resourcePath, ctx.key, { method: 'DELETE', apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.deleteNominationPositionTalentPool.parse(
 				response,

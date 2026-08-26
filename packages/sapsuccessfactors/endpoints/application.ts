@@ -15,13 +15,19 @@ export const getApplicationInterview: SapsuccessfactorsEndpoints['getApplication
 			SapsuccessfactorsEndpointInputSchemas.getApplicationInterview.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getApplicationInterview']
-		>('odata/v2/ApplicationInterview', ctx.key, { method: 'GET', query });
+		>('odata/v2/ApplicationInterview', ctx.key, {
+			method: 'GET',
+			query,
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getApplicationInterview.parse(
 				response,

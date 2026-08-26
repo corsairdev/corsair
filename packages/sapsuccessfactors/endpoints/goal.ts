@@ -15,13 +15,19 @@ export const getGoalPlanTemplate: SapsuccessfactorsEndpoints['getGoalPlanTemplat
 			SapsuccessfactorsEndpointInputSchemas.getGoalPlanTemplate.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getGoalPlanTemplate']
-		>('odata/v2/GoalPlanTemplate', ctx.key, { method: 'GET', query });
+		>('odata/v2/GoalPlanTemplate', ctx.key, {
+			method: 'GET',
+			query,
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getGoalPlanTemplate.parse(
 				response,

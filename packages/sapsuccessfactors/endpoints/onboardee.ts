@@ -13,6 +13,8 @@ export const createOnboardee: SapsuccessfactorsEndpoints['createOnboardee'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.createOnboardee.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { body, ...rest } = (validatedInput ?? {}) as {
 			body?: Record<string, unknown>;
 		};
@@ -21,6 +23,7 @@ export const createOnboardee: SapsuccessfactorsEndpoints['createOnboardee'] =
 		>('odata/v2/Onboardee', ctx.key, {
 			method: 'POST',
 			body: (body ?? rest) as Record<string, unknown>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.createOnboardee.parse(response);

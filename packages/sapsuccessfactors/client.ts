@@ -15,7 +15,8 @@ export class SapsuccessfactorsAPIError extends Error {
 	}
 }
 
-const SAP_SUCCESSFACTORS_API_BASE = 'https://api10.successfactors.com';
+export const SAP_SUCCESSFACTORS_DEFAULT_API_BASE =
+	'https://api10.successfactors.com';
 
 const SAP_SUCCESSFACTORS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
@@ -32,26 +33,55 @@ export async function makeSapsuccessfactorsRequest<T>(
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
+		apiBaseUrl?: string;
 		body?: Record<string, unknown>;
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const {
+		method = 'GET',
+		apiBaseUrl = SAP_SUCCESSFACTORS_DEFAULT_API_BASE,
+		body,
+		query,
+	} = options;
 
 	const config: OpenAPIConfig = {
-		BASE: SAP_SUCCESSFACTORS_API_BASE,
+		BASE: apiBaseUrl.replace(/\/+$/, ''),
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
+			Accept: 'application/json',
 			Authorization:
 				apiKey.startsWith('Basic ') || apiKey.startsWith('Bearer ')
 					? apiKey
 					: `Bearer ${apiKey}`,
 		},
 	};
+
+	// Map query keys to standard OData v2 parameters
+	const formattedQuery: Record<string, string | number | boolean | undefined> =
+		{
+			$format: 'json',
+		};
+	if (query) {
+		const odataKeys = new Set([
+			'filter',
+			'select',
+			'expand',
+			'top',
+			'skip',
+			'orderby',
+		]);
+		for (const [k, v] of Object.entries(query)) {
+			if (v !== undefined) {
+				const targetKey = odataKeys.has(k) ? `$${k}` : k;
+				formattedQuery[targetKey] = v;
+			}
+		}
+	}
 
 	const requestOptions: ApiRequestOptions = {
 		method,
@@ -61,7 +91,7 @@ export async function makeSapsuccessfactorsRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query: method === 'GET' ? formattedQuery : undefined,
 	};
 
 	try {
@@ -72,6 +102,6 @@ export async function makeSapsuccessfactorsRequest<T>(
 		if (error instanceof ApiError) throw error;
 		if (error instanceof Error)
 			throw new SapsuccessfactorsAPIError(error.message);
-		throw new SapsuccessfactorsAPIError('Unknown error');
+		throw new SapsuccessfactorsAPIError('Unknown error occurred');
 	}
 }

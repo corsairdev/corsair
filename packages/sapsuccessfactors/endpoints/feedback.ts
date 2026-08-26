@@ -15,6 +15,8 @@ export const getFeedbackRecordsServiceAvailable: SapsuccessfactorsEndpoints['get
 			SapsuccessfactorsEndpointInputSchemas.getFeedbackRecordsServiceAvailable.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
@@ -24,6 +26,7 @@ export const getFeedbackRecordsServiceAvailable: SapsuccessfactorsEndpoints['get
 		>('odata/v4/ContinuousPerformanceManagement.svc/Feedback', ctx.key, {
 			method: 'GET',
 			query,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getFeedbackRecordsServiceAvailable.parse(

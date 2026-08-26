@@ -15,13 +15,19 @@ export const getTemporaryTimeInformation: SapsuccessfactorsEndpoints['getTempora
 			SapsuccessfactorsEndpointInputSchemas.getTemporaryTimeInformation.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getTemporaryTimeInformation']
-		>('odata/v2/TemporaryTimeInfo', ctx.key, { method: 'GET', query });
+		>('odata/v2/TemporaryTimeInfo', ctx.key, {
+			method: 'GET',
+			query,
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getTemporaryTimeInformation.parse(
 				response,

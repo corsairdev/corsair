@@ -15,11 +15,14 @@ export const refreshMetadataContFeedbackService: SapsuccessfactorsEndpoints['ref
 			SapsuccessfactorsEndpointInputSchemas.refreshMetadataContFeedbackService.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['refreshMetadataContFeedbackService']
 		>('odata/v4/ContinuousPerformanceManagement.svc/RefreshMetadata', ctx.key, {
 			method: 'POST',
 			body: (validatedInput ?? {}) as Record<string, unknown>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.refreshMetadataContFeedbackService.parse(

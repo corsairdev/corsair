@@ -13,13 +13,15 @@ export const getEmployeeTime: SapsuccessfactorsEndpoints['getEmployeeTime'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getEmployeeTime.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getEmployeeTime']
-		>('odata/v2/EmployeeTime', ctx.key, { method: 'GET', query });
+		>('odata/v2/EmployeeTime', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getEmployeeTime.parse(response);
 		await logEventFromContext(
@@ -39,13 +41,19 @@ export const getEmployeeTimesheet: SapsuccessfactorsEndpoints['getEmployeeTimesh
 			SapsuccessfactorsEndpointInputSchemas.getEmployeeTimesheet.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getEmployeeTimesheet']
-		>('odata/v2/EmployeeTimeSheet', ctx.key, { method: 'GET', query });
+		>('odata/v2/EmployeeTimeSheet', ctx.key, {
+			method: 'GET',
+			query,
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getEmployeeTimesheet.parse(
 				response,

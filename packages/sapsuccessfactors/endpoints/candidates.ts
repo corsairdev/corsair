@@ -13,13 +13,15 @@ export const listCandidates: SapsuccessfactorsEndpoints['listCandidates'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.listCandidates.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['listCandidates']
-		>('odata/v2/Candidate', ctx.key, { method: 'GET', query });
+		>('odata/v2/Candidate', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.listCandidates.parse(response);
 		await logEventFromContext(

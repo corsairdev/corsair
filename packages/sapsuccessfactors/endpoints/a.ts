@@ -15,6 +15,8 @@ export const createAFeedbackRequest: SapsuccessfactorsEndpoints['createAFeedback
 			SapsuccessfactorsEndpointInputSchemas.createAFeedbackRequest.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { body, ...rest } = (validatedInput ?? {}) as {
 			body?: Record<string, unknown>;
 		};
@@ -23,6 +25,7 @@ export const createAFeedbackRequest: SapsuccessfactorsEndpoints['createAFeedback
 		>('odata/v4/ContinuousPerformanceManagement.svc/FeedbackRequest', ctx.key, {
 			method: 'POST',
 			body: (body ?? rest) as Record<string, unknown>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.createAFeedbackRequest.parse(

@@ -10,12 +10,20 @@ describe('Sapsuccessfactors schema and validation', () => {
 		expect(SapsuccessfactorsSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
+	it('declares comprehensive entity schemas', () => {
 		expect(typeof SapsuccessfactorsSchema.entities).toBe('object');
-		expect(SapsuccessfactorsSchema.entities).not.toBeNull();
+		expect(SapsuccessfactorsSchema.entities.user).toBeDefined();
+		expect(SapsuccessfactorsSchema.entities.person).toBeDefined();
+		expect(SapsuccessfactorsSchema.entities.personal).toBeDefined();
+		expect(SapsuccessfactorsSchema.entities.employment).toBeDefined();
+		expect(SapsuccessfactorsSchema.entities.calibrationSession).toBeDefined();
+		expect(SapsuccessfactorsSchema.entities.goalPlan).toBeDefined();
+		expect(SapsuccessfactorsSchema.entities.jobRequisition).toBeDefined();
+		expect(SapsuccessfactorsSchema.entities.candidate).toBeDefined();
+		expect(SapsuccessfactorsSchema.entities.position).toBeDefined();
 	});
 
-	it('validates approveCalibrationSession input schema', () => {
+	it('validates approveCalibrationSession input schema positive and negative cases', () => {
 		const valid = { session_id: 'session-123' };
 		expect(
 			SapsuccessfactorsEndpointInputSchemas.approveCalibrationSession.parse(
@@ -29,7 +37,7 @@ describe('Sapsuccessfactors schema and validation', () => {
 		).toBe(false);
 	});
 
-	it('validates getPersonById input schema', () => {
+	it('validates getPersonById input schema positive and negative cases', () => {
 		const valid = { person_id_external: 'emp-456' };
 		expect(
 			SapsuccessfactorsEndpointInputSchemas.getPerPersonById.parse(valid),

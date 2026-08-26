@@ -13,13 +13,15 @@ export const getFormContent: SapsuccessfactorsEndpoints['getFormContent'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getFormContent.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getFormContent']
-		>('odata/v2/FormContent', ctx.key, { method: 'GET', query });
+		>('odata/v2/FormContent', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getFormContent.parse(response);
 		await logEventFromContext(

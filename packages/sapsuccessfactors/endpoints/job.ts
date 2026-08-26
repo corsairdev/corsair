@@ -15,13 +15,15 @@ export const getJobApplication: SapsuccessfactorsEndpoints['getJobApplication'] 
 			SapsuccessfactorsEndpointInputSchemas.getJobApplication.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getJobApplication']
-		>('odata/v2/JobApplication', ctx.key, { method: 'GET', query });
+		>('odata/v2/JobApplication', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getJobApplication.parse(response);
 		await logEventFromContext(
@@ -41,13 +43,15 @@ export const getJobRequisition: SapsuccessfactorsEndpoints['getJobRequisition'] 
 			SapsuccessfactorsEndpointInputSchemas.getJobRequisition.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getJobRequisition']
-		>('odata/v2/JobRequisition', ctx.key, { method: 'GET', query });
+		>('odata/v2/JobRequisition', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getJobRequisition.parse(response);
 		await logEventFromContext(
@@ -67,13 +71,19 @@ export const getJobReqScreeningQuestion: SapsuccessfactorsEndpoints['getJobReqSc
 			SapsuccessfactorsEndpointInputSchemas.getJobReqScreeningQuestion.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getJobReqScreeningQuestion']
-		>('odata/v2/JobReqScreeningQuestion', ctx.key, { method: 'GET', query });
+		>('odata/v2/JobReqScreeningQuestion', ctx.key, {
+			method: 'GET',
+			query,
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getJobReqScreeningQuestion.parse(
 				response,

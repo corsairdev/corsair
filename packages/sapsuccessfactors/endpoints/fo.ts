@@ -15,13 +15,15 @@ export const getFoBusinessUnit: SapsuccessfactorsEndpoints['getFoBusinessUnit'] 
 			SapsuccessfactorsEndpointInputSchemas.getFoBusinessUnit.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getFoBusinessUnit']
-		>('odata/v2/FOBusinessUnit', ctx.key, { method: 'GET', query });
+		>('odata/v2/FOBusinessUnit', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getFoBusinessUnit.parse(response);
 		await logEventFromContext(
@@ -41,13 +43,15 @@ export const getFoCompany: SapsuccessfactorsEndpoints['getFoCompany'] = async (
 ) => {
 	const validatedInput =
 		SapsuccessfactorsEndpointInputSchemas.getFoCompany.parse(input ?? {});
+	const apiBaseUrl =
+		(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 	const query = validatedInput as Record<
 		string,
 		string | number | boolean | undefined
 	>;
 	const response = await makeSapsuccessfactorsRequest<
 		SapsuccessfactorsEndpointOutputs['getFoCompany']
-	>('odata/v2/FOCompany', ctx.key, { method: 'GET', query });
+	>('odata/v2/FOCompany', ctx.key, { method: 'GET', query, apiBaseUrl });
 	const validatedResponse =
 		SapsuccessfactorsEndpointOutputSchemas.getFoCompany.parse(response);
 	await logEventFromContext(
@@ -65,13 +69,15 @@ export const getFoCostCenter: SapsuccessfactorsEndpoints['getFoCostCenter'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getFoCostCenter.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getFoCostCenter']
-		>('odata/v2/FOCostCenter', ctx.key, { method: 'GET', query });
+		>('odata/v2/FOCostCenter', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getFoCostCenter.parse(response);
 		await logEventFromContext(
@@ -89,13 +95,15 @@ export const getFoDepartment: SapsuccessfactorsEndpoints['getFoDepartment'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getFoDepartment.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getFoDepartment']
-		>('odata/v2/FODepartment', ctx.key, { method: 'GET', query });
+		>('odata/v2/FODepartment', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getFoDepartment.parse(response);
 		await logEventFromContext(
@@ -115,13 +123,15 @@ export const getFoJobCode: SapsuccessfactorsEndpoints['getFoJobCode'] = async (
 ) => {
 	const validatedInput =
 		SapsuccessfactorsEndpointInputSchemas.getFoJobCode.parse(input ?? {});
+	const apiBaseUrl =
+		(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 	const query = validatedInput as Record<
 		string,
 		string | number | boolean | undefined
 	>;
 	const response = await makeSapsuccessfactorsRequest<
 		SapsuccessfactorsEndpointOutputs['getFoJobCode']
-	>('odata/v2/FOJobCode', ctx.key, { method: 'GET', query });
+	>('odata/v2/FOJobCode', ctx.key, { method: 'GET', query, apiBaseUrl });
 	const validatedResponse =
 		SapsuccessfactorsEndpointOutputSchemas.getFoJobCode.parse(response);
 	await logEventFromContext(
@@ -139,13 +149,15 @@ export const getFoJobFunction: SapsuccessfactorsEndpoints['getFoJobFunction'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getFoJobFunction.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getFoJobFunction']
-		>('odata/v2/FOJobFunction', ctx.key, { method: 'GET', query });
+		>('odata/v2/FOJobFunction', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getFoJobFunction.parse(response);
 		await logEventFromContext(
@@ -163,13 +175,15 @@ export const getFoLocation: SapsuccessfactorsEndpoints['getFoLocation'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getFoLocation.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getFoLocation']
-		>('odata/v2/FOLocation', ctx.key, { method: 'GET', query });
+		>('odata/v2/FOLocation', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getFoLocation.parse(response);
 		await logEventFromContext(
@@ -187,13 +201,15 @@ export const getFoPayGroup: SapsuccessfactorsEndpoints['getFoPayGroup'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getFoPayGroup.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getFoPayGroup']
-		>('odata/v2/FOPayGroup', ctx.key, { method: 'GET', query });
+		>('odata/v2/FOPayGroup', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getFoPayGroup.parse(response);
 		await logEventFromContext(

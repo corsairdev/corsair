@@ -16,13 +16,15 @@ export const listUsers: SapsuccessfactorsEndpoints['listUsers'] = async (
 	const validatedInput = SapsuccessfactorsEndpointInputSchemas.listUsers.parse(
 		input ?? {},
 	);
+	const apiBaseUrl =
+		(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 	const query = validatedInput as Record<
 		string,
 		string | number | boolean | undefined
 	>;
 	const response = await makeSapsuccessfactorsRequest<
 		SapsuccessfactorsEndpointOutputs['listUsers']
-	>('odata/v2/User', ctx.key, { method: 'GET', query });
+	>('odata/v2/User', ctx.key, { method: 'GET', query, apiBaseUrl });
 	const validatedResponse =
 		SapsuccessfactorsEndpointOutputSchemas.listUsers.parse(response);
 	await logEventFromContext(

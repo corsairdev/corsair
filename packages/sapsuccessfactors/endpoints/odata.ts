@@ -15,9 +15,14 @@ export const getOdataMetadataCalibSessionService: SapsuccessfactorsEndpoints['ge
 			SapsuccessfactorsEndpointInputSchemas.getOdataMetadataCalibSessionService.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getOdataMetadataCalibSessionService']
-		>('odata/v4/CalSession.svc/$metadata', ctx.key, { method: 'GET' });
+		>('odata/v4/CalSession.svc/$metadata', ctx.key, {
+			method: 'GET',
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getOdataMetadataCalibSessionService.parse(
 				response,
@@ -39,9 +44,11 @@ export const getOdataMetadataOnboardingAddl: SapsuccessfactorsEndpoints['getOdat
 			SapsuccessfactorsEndpointInputSchemas.getOdataMetadataOnboardingAddl.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getOdataMetadataOnboardingAddl']
-		>('odata/v2/$metadata', ctx.key, { method: 'GET' });
+		>('odata/v2/$metadata', ctx.key, { method: 'GET', apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getOdataMetadataOnboardingAddl.parse(
 				response,
@@ -63,9 +70,14 @@ export const getOdataMetadataForNominationService: SapsuccessfactorsEndpoints['g
 			SapsuccessfactorsEndpointInputSchemas.getOdataMetadataForNominationService.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getOdataMetadataForNominationService']
-		>('odata/v4/NominationService.svc/$metadata', ctx.key, { method: 'GET' });
+		>('odata/v4/NominationService.svc/$metadata', ctx.key, {
+			method: 'GET',
+			apiBaseUrl,
+		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getOdataMetadataForNominationService.parse(
 				response,
@@ -87,9 +99,11 @@ export const getOdataUserMetadata: SapsuccessfactorsEndpoints['getOdataUserMetad
 			SapsuccessfactorsEndpointInputSchemas.getOdataUserMetadata.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getOdataUserMetadata']
-		>('odata/v2/$metadata', ctx.key, { method: 'GET' });
+		>('odata/v2/$metadata', ctx.key, { method: 'GET', apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getOdataUserMetadata.parse(
 				response,
@@ -111,9 +125,11 @@ export const getOdataMetadataClockInclockOut: SapsuccessfactorsEndpoints['getOda
 			SapsuccessfactorsEndpointInputSchemas.getOdataMetadataClockInclockOut.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getOdataMetadataClockInclockOut']
-		>('odata/v2/$metadata', ctx.key, { method: 'GET' });
+		>('odata/v2/$metadata', ctx.key, { method: 'GET', apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getOdataMetadataClockInclockOut.parse(
 				response,

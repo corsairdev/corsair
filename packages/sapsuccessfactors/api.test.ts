@@ -1,4 +1,6 @@
 import { request } from 'corsair/http';
+import { makeSapsuccessfactorsRequest } from './client';
+import { errorHandlers } from './error-handlers';
 import { sapsuccessfactors } from './index';
 
 jest.mock('corsair/http', () => ({
@@ -9,8 +11,10 @@ jest.mock('corsair/http', () => ({
 		constructor(
 			public status: number,
 			message: string,
+			public retryAfter?: number,
 		) {
 			super(message);
+			this.name = 'ApiError';
 		}
 	},
 }));
@@ -18,10 +22,14 @@ jest.mock('corsair/http', () => ({
 const mockedRequest = request as any;
 
 describe('SapSuccessfactors Plugin', () => {
-	const plugin = sapsuccessfactors({ key: 'test-api-token' });
+	const plugin = sapsuccessfactors({
+		key: 'test-api-token',
+		apiBaseUrl: 'https://api10.successfactors.com',
+	});
 	const mockCtx = {
 		key: 'test-api-token',
 		authType: 'api_key' as const,
+		options: { apiBaseUrl: 'https://api10.successfactors.com' },
 		db: {},
 		log: jest.fn(),
 	} as any;
@@ -34,6 +42,32 @@ describe('SapSuccessfactors Plugin', () => {
 		expect(plugin.id).toBe('sapsuccessfactors');
 		expect(plugin.authConfig).toBeDefined();
 		expect(plugin.endpoints).toBeDefined();
+		expect(plugin.schema).toBeDefined();
+	});
+
+	it('handles rate limit error matching in errorHandlers', async () => {
+		const handler = errorHandlers.RATE_LIMIT_ERROR;
+		expect(handler.match(new Error('Rate limit 429'))).toBe(true);
+		const res = await handler.handler(new Error('429'));
+		expect(res.maxRetries).toBe(3);
+	});
+
+	it('translates query parameters into OData v2 format ($top, $filter)', async () => {
+		await makeSapsuccessfactorsRequest('odata/v2/User', 'test-key', {
+			method: 'GET',
+			query: { top: 10, filter: "status eq 'ACTIVE'" },
+		});
+		expect(mockedRequest).toHaveBeenCalledWith(
+			expect.anything(),
+			expect.objectContaining({
+				query: expect.objectContaining({
+					$format: 'json',
+					$top: 10,
+					$filter: "status eq 'ACTIVE'",
+				}),
+			}),
+			expect.anything(),
+		);
 	});
 
 	it('calls approve.approveCalibrationSession endpoint correctly', async () => {

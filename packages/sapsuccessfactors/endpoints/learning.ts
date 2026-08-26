@@ -15,6 +15,8 @@ export const createLearningActivitiesBulk: SapsuccessfactorsEndpoints['createLea
 			SapsuccessfactorsEndpointInputSchemas.createLearningActivitiesBulk.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const { body, ...rest } = (validatedInput ?? {}) as {
 			body?: Record<string, unknown>;
 		};
@@ -23,6 +25,7 @@ export const createLearningActivitiesBulk: SapsuccessfactorsEndpoints['createLea
 		>('odata/v2/LearningActivity', ctx.key, {
 			method: 'POST',
 			body: (body ?? rest) as Record<string, unknown>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.createLearningActivitiesBulk.parse(

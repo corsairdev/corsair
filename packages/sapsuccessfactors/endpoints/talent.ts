@@ -13,13 +13,15 @@ export const getTalentPool: SapsuccessfactorsEndpoints['getTalentPool'] =
 	async (ctx, input) => {
 		const validatedInput =
 			SapsuccessfactorsEndpointInputSchemas.getTalentPool.parse(input ?? {});
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getTalentPool']
-		>('odata/v2/TalentPool', ctx.key, { method: 'GET', query });
+		>('odata/v2/TalentPool', ctx.key, { method: 'GET', query, apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getTalentPool.parse(response);
 		await logEventFromContext(

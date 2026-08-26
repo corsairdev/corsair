@@ -15,9 +15,11 @@ export const getCdpLearningMetadata: SapsuccessfactorsEndpoints['getCdpLearningM
 			SapsuccessfactorsEndpointInputSchemas.getCdpLearningMetadata.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getCdpLearningMetadata']
-		>('odata/v2/$metadata', ctx.key, { method: 'GET' });
+		>('odata/v2/$metadata', ctx.key, { method: 'GET', apiBaseUrl });
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.getCdpLearningMetadata.parse(
 				response,
@@ -39,11 +41,14 @@ export const refreshCdpLearningMetadata: SapsuccessfactorsEndpoints['refreshCdpL
 			SapsuccessfactorsEndpointInputSchemas.refreshCdpLearningMetadata.parse(
 				input ?? {},
 			);
+		const apiBaseUrl =
+			(ctx as any)?.options?.apiBaseUrl ?? (ctx as any)?.options?.baseUrl;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['refreshCdpLearningMetadata']
 		>('odata/v2/RefreshCDPLearningMetadata', ctx.key, {
 			method: 'POST',
 			body: (validatedInput ?? {}) as Record<string, unknown>,
+			apiBaseUrl,
 		});
 		const validatedResponse =
 			SapsuccessfactorsEndpointOutputSchemas.refreshCdpLearningMetadata.parse(
