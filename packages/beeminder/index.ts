@@ -26,7 +26,7 @@ import { errorHandlers } from './error-handlers';
 import { BeeminderSchema } from './schema';
 
 export type BeeminderPluginOptions = {
-	authType?: PickAuth<'api_key'>;
+	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
 	/**
 	 * The Beeminder username for API calls.
@@ -41,12 +41,14 @@ export type BeeminderPluginOptions = {
 };
 
 /**
- * Beeminder personal auth tokens. Client OAuth is implicit-grant only
- * (`response_type=token`, no token URL), which Corsair's connect flow cannot
- * complete, so this plugin is API-key only.
+ * Personal auth_token (api_key) or OAuth access_token.
+ * Authorize/token URLs match Beeminder's OmniAuth strategy.
  */
 export const beeminderAuthConfig = {
 	api_key: {
+		account: ['username'] as const,
+	},
+	oauth_2: {
 		account: ['username'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -168,8 +170,7 @@ export type ExternalBeeminderPlugin<T extends BeeminderPluginOptions> =
 /**
  * The Beeminder plugin.
  *
- * Personal `auth_token` (API key). Beeminder has no authorization-code
- * token endpoint, so Studio OAuth is not registered.
+ * Personal `auth_token` or a stored OAuth `access_token`.
  *
  * **No webhooks.** Beeminder sends outbound webhooks to user-configured URLs,
  * but does not deliver events to third-party integrations via webhook.
@@ -199,6 +200,13 @@ export function beeminder<const T extends BeeminderPluginOptions>(
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+		oauthConfig: {
+			providerName: 'Beeminder',
+			authUrl: 'https://www.beeminder.com/apps/authorize',
+			tokenUrl: 'https://www.beeminder.com/apps/authorize',
+			scopes: [],
+			requiresRegisteredRedirect: true,
+		},
 		keyBuilder: async (ctx: BeeminderKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
 				return options.key;
@@ -208,6 +216,14 @@ export function beeminder<const T extends BeeminderPluginOptions>(
 				const res = await ctx.keys.get_api_key();
 				if (!res) {
 					throw new AuthMissingError('beeminder', 'api_key');
+				}
+				return res;
+			}
+
+			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
+				const res = await ctx.keys.get_access_token();
+				if (!res) {
+					throw new AuthMissingError('beeminder', 'oauth_2');
 				}
 				return res;
 			}

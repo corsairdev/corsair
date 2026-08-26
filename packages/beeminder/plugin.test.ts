@@ -35,10 +35,19 @@ describe('beeminder plugin registration', () => {
 		]);
 	});
 
-	it('registers api_key only', () => {
-		expect(Object.keys(beeminderAuthConfig).sort()).toEqual(['api_key']);
+	it('registers api_key and oauth_2', () => {
+		expect(Object.keys(beeminderAuthConfig).sort()).toEqual([
+			'api_key',
+			'oauth_2',
+		]);
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.oauthConfig).toBeUndefined();
+		expect(plugin.oauthConfig).toEqual({
+			providerName: 'Beeminder',
+			authUrl: 'https://www.beeminder.com/apps/authorize',
+			tokenUrl: 'https://www.beeminder.com/apps/authorize',
+			scopes: [],
+			requiresRegisteredRedirect: true,
+		});
 	});
 
 	it('has input and output schemas for every endpoint', () => {
@@ -65,6 +74,26 @@ describe('beeminder plugin registration', () => {
 				'endpoint',
 			),
 		).rejects.toBeInstanceOf(AuthMissingError);
+		await expect(
+			keyBuilder(
+				{
+					authType: 'oauth_2',
+					keys: { get_access_token: async () => null },
+				},
+				'endpoint',
+			),
+		).rejects.toBeInstanceOf(AuthMissingError);
+	});
+
+	it('returns a stored OAuth access token', async () => {
+		const token = await keyBuilderOf(plugin)(
+			{
+				authType: 'oauth_2',
+				keys: { get_access_token: async () => 'oauth-stored' },
+			},
+			'endpoint',
+		);
+		expect(token).toBe('oauth-stored');
 	});
 
 	it('returns a direct key when provided', async () => {
