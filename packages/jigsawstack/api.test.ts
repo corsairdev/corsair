@@ -191,6 +191,25 @@ describe('jigsawstack endpoint requests', () => {
 		expect(body.return_type).toBe('url');
 	});
 
+	it('ai.imageGeneration fetches binary when return_type is binary', async () => {
+		const fetchMock = jest.fn(async () => ({
+			ok: true,
+			headers: { get: () => 'image/png' },
+			arrayBuffer: async () => new Uint8Array([1, 2, 3]).buffer,
+		}));
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+
+		const result = await call(AiEndpoints.imageGeneration, ctx, {
+			prompt: 'a cat',
+			return_type: 'binary',
+		});
+		JigsawstackEndpointOutputSchemas.imageGeneration.parse(result);
+		expect(requestMock).not.toHaveBeenCalled();
+		expect(JSON.stringify(fetchMock.mock.calls[0])).toContain(
+			'https://api.jigsawstack.com/v1/ai/image_generation',
+		);
+	});
+
 	it('web.scrape posts url and prompts', async () => {
 		requestMock.mockResolvedValue({ success: true, data: [] });
 		const result = await call(WebEndpoints.scrape, ctx, {
@@ -309,7 +328,10 @@ describe('jigsawstack endpoint requests', () => {
 		requestMock.mockResolvedValue({ success: true, predictions: ['ok'] });
 		const result = await call(ClassificationEndpoints.classify, ctx, {
 			dataset: [{ type: 'text', value: 'hi' }],
-			labels: [{ type: 'text', value: 'ok' }],
+			labels: [
+				{ type: 'text', value: 'ok' },
+				{ type: 'text', value: 'not-ok' },
+			],
 		});
 		JigsawstackEndpointOutputSchemas.classify.parse(result);
 	});

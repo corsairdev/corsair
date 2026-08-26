@@ -151,4 +151,72 @@ describe('jigsawstack plugin registration', () => {
 			gore_score: 0.1,
 		});
 	});
+
+	it('requires a single summary source and xor url/file for vocr and stt', () => {
+		const summary = jigsawstackEndpointSchemas['ai.summary'].input;
+		expect(summary.safeParse({ text: 'hello' }).success).toBe(true);
+		expect(summary.safeParse({}).success).toBe(false);
+		expect(
+			summary.safeParse({ text: 'hello', url: 'https://example.com/a.pdf' })
+				.success,
+		).toBe(false);
+
+		const vocr = jigsawstackEndpointSchemas['vision.vocr'].input;
+		expect(vocr.safeParse({ url: 'https://example.com/a.png' }).success).toBe(
+			true,
+		);
+		expect(vocr.safeParse({}).success).toBe(false);
+		expect(
+			vocr.safeParse({
+				url: 'https://example.com/a.png',
+				file_store_key: 'k',
+			}).success,
+		).toBe(false);
+
+		const stt = jigsawstackEndpointSchemas['audio.speechToText'].input;
+		expect(stt.safeParse({ url: 'https://example.com/a.wav' }).success).toBe(
+			true,
+		);
+		expect(stt.safeParse({ file_store_key: 'k' }).success).toBe(true);
+		expect(stt.safeParse({}).success).toBe(false);
+	});
+
+	it('enforces classification dataset and label limits from official docs', () => {
+		const classify =
+			jigsawstackEndpointSchemas['classification.classify'].input;
+		const labels = [
+			{ type: 'text' as const, value: 'hotdog' },
+			{ type: 'text' as const, value: 'not a hotdog' },
+		];
+		expect(
+			classify.safeParse({
+				dataset: [{ type: 'text', value: 'hi' }],
+				labels,
+			}).success,
+		).toBe(true);
+		expect(
+			classify.safeParse({
+				dataset: [
+					{ type: 'text', value: 'hi' },
+					{ type: 'image', value: 'https://example.com/a.png' },
+				],
+				labels,
+			}).success,
+		).toBe(false);
+		expect(
+			classify.safeParse({
+				dataset: [{ type: 'text', value: 'hi' }],
+				labels: [{ type: 'text', value: 'only-one' }],
+			}).success,
+		).toBe(false);
+		expect(
+			classify.safeParse({
+				dataset: [{ type: 'text', value: 'hi' }],
+				labels: [
+					{ key: 'a', type: 'text', value: 'one' },
+					{ key: 'a', type: 'text', value: 'two' },
+				],
+			}).success,
+		).toBe(false);
+	});
 });

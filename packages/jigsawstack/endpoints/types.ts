@@ -14,6 +14,14 @@ const urlOrFile = {
 	file_store_key: z.string().optional(),
 };
 
+function exactlyOneUrlOrFile<
+	T extends z.ZodType<{ url?: string; file_store_key?: string }>,
+>(schema: T) {
+	return schema.refine((v) => Boolean(v.url) !== Boolean(v.file_store_key), {
+		message: 'Provide exactly one of url or file_store_key',
+	});
+}
+
 // ── validate ─────────────────────────────────────────────────────────────────
 
 /** POST /v1/validate/nsfw @see https://jigsawstack.com/docs/api-reference/validate/nsfw */
@@ -129,14 +137,19 @@ export const SentimentOutputSchema = z
 	.loose();
 
 /** POST /v1/ai/summary @see https://jigsawstack.com/docs/api-reference/ai/summary */
-export const SummaryInputSchema = z.object({
-	text: z.string().optional(),
-	url: z.string().optional(),
-	file_store_key: z.string().optional(),
-	type: z.enum(['text', 'points']).optional(),
-	max_points: z.number().optional(),
-	max_characters: z.number().optional(),
-});
+export const SummaryInputSchema = z
+	.object({
+		text: z.string().optional(),
+		url: z.string().optional(),
+		file_store_key: z.string().optional(),
+		type: z.enum(['text', 'points']).optional(),
+		max_points: z.number().optional(),
+		max_characters: z.number().optional(),
+	})
+	.refine(
+		(v) => [v.text, v.url, v.file_store_key].filter(Boolean).length === 1,
+		{ message: 'Provide exactly one of text, url, or file_store_key' },
+	);
 export const SummaryOutputSchema = z
 	.object({
 		...base,
@@ -204,12 +217,20 @@ export const ImageGenerationInputSchema = z.object({
 		})
 		.optional(),
 });
-export const ImageGenerationOutputSchema = z
-	.object({
-		...base,
-		url: z.string().optional(),
-	})
-	.loose();
+export const ImageGenerationOutputSchema = z.union([
+	z.object({
+		success: z.boolean(),
+		content_type: z.string(),
+		base64: z.string(),
+	}),
+	z
+		.object({
+			...base,
+			url: z.string().optional(),
+			base64: z.string().optional(),
+		})
+		.loose(),
+]);
 
 // ── web ──────────────────────────────────────────────────────────────────────
 
@@ -297,15 +318,21 @@ export const SearchSuggestionsOutputSchema = z
 // ── vision ───────────────────────────────────────────────────────────────────
 
 /** POST /v1/vocr @see https://jigsawstack.com/docs/api-reference/ai/vocr */
-export const VocrInputSchema = z.object({
-	...urlOrFile,
-	prompt: z
-		.union([z.string(), z.array(z.string()), z.record(z.string(), z.string())])
-		.optional(),
-	page_range: z.array(z.number()).optional(),
-	fine_grained: z.boolean().optional(),
-	return_bounds: z.boolean().optional(),
-});
+export const VocrInputSchema = exactlyOneUrlOrFile(
+	z.object({
+		...urlOrFile,
+		prompt: z
+			.union([
+				z.string(),
+				z.array(z.string()),
+				z.record(z.string(), z.string()),
+			])
+			.optional(),
+		page_range: z.array(z.number()).optional(),
+		fine_grained: z.boolean().optional(),
+		return_bounds: z.boolean().optional(),
+	}),
+);
 export const VocrOutputSchema = z
 	.object({
 		...base,
@@ -343,16 +370,18 @@ export const DetectObjectsOutputSchema = z
 // ── audio ────────────────────────────────────────────────────────────────────
 
 /** POST /v1/ai/transcribe @see https://jigsawstack.com/docs/api-reference/ai/speech-to-text */
-export const SpeechToTextInputSchema = z.object({
-	...urlOrFile,
-	language: z.string().optional(),
-	translate: z.boolean().optional(),
-	by_speaker: z.boolean().optional(),
-	webhook_url: z.string().optional(),
-	batch_size: z.number().optional(),
-	chunk_duration: z.number().optional(),
-	word_timestamps: z.boolean().optional(),
-});
+export const SpeechToTextInputSchema = exactlyOneUrlOrFile(
+	z.object({
+		...urlOrFile,
+		language: z.string().optional(),
+		translate: z.boolean().optional(),
+		by_speaker: z.boolean().optional(),
+		webhook_url: z.string().optional(),
+		batch_size: z.number().optional(),
+		chunk_duration: z.number().optional(),
+		word_timestamps: z.boolean().optional(),
+	}),
+);
 export const SpeechToTextOutputSchema = z
 	.object({
 		...base,
@@ -413,22 +442,35 @@ export const CreateEmbeddingV2OutputSchema = z
 	.loose();
 
 /** POST /v1/classification @see https://jigsawstack.com/docs/api-reference/classification/classification */
-export const ClassifyInputSchema = z.object({
-	dataset: z.array(
-		z.object({
-			type: z.enum(['text', 'image']),
-			value: z.string(),
-		}),
-	),
-	labels: z.array(
-		z.object({
-			key: z.string().optional(),
-			type: z.enum(['text', 'image']),
-			value: z.string(),
-		}),
-	),
-	multiple_labels: z.boolean().optional(),
-});
+export const ClassifyInputSchema = z
+	.object({
+		dataset: z
+			.array(
+				z.object({
+					type: z.enum(['text', 'image']),
+					value: z.string(),
+				}),
+			)
+			.min(1)
+			.max(32),
+		labels: z
+			.array(
+				z.object({
+					key: z.string().optional(),
+					type: z.enum(['text', 'image']),
+					value: z.string(),
+				}),
+			)
+			.min(2)
+			.max(24),
+		multiple_labels: z.boolean().optional(),
+	})
+	.refine((v) => v.dataset.every((item) => item.type === v.dataset[0]?.type), {
+		message: 'dataset items must share the same type',
+	})
+	.refine((v) => new Set(v.labels.map((l) => l.key ?? l.value)).size >= 2, {
+		message: 'labels must include at least 2 distinct keys',
+	});
 export const ClassifyOutputSchema = z
 	.object({
 		...base,
