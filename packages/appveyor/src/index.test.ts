@@ -1,9 +1,15 @@
-import { describe, expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AppVeyorClient } from "./index";
 
 describe("AppVeyorClient", () => {
+  beforeEach(() => {
+    vi.restoreAllMocks();
+  });
+
   it("throws an error when initialized without an API key", () => {
-    expect(() => new AppVeyorClient({ apiKey: "" })).toThrow("AppVeyor API key is required.");
+    expect(() => new AppVeyorClient({ apiKey: "" })).toThrow(
+      "AppVeyor API key is required."
+    );
   });
 
   it("instantiates correctly with valid configuration", () => {
@@ -11,7 +17,7 @@ describe("AppVeyorClient", () => {
     expect(client).toBeInstanceOf(AppVeyorClient);
   });
 
-  it("fetches projects list successfully", async () => {
+  it("fetches projects list successfully with authentication header", async () => {
     const mockProjects = [
       {
         projectId: 1,
@@ -30,7 +36,16 @@ describe("AppVeyorClient", () => {
 
     const client = new AppVeyorClient({ apiKey: "test-token" });
     const result = await client.getProjects();
+
     expect(result).toEqual(mockProjects);
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://ci.appveyor.com/api/projects",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer test-token",
+        }),
+      })
+    );
   });
 
   it("fetches the last build status for a project", async () => {
@@ -60,8 +75,17 @@ describe("AppVeyorClient", () => {
 
     const client = new AppVeyorClient({ apiKey: "test-token" });
     const result = await client.getLastBuild("test", "repo");
+
     expect(result.build.status).toBe("success");
     expect(result.build.buildNumber).toBe(5);
+    expect(global.fetch).toHaveBeenCalledWith(
+      "https://ci.appveyor.com/api/projects/test/repo",
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: "Bearer test-token",
+        }),
+      })
+    );
   });
 
   it("throws formatted error when API request fails", async () => {
@@ -73,6 +97,8 @@ describe("AppVeyorClient", () => {
     } as Response);
 
     const client = new AppVeyorClient({ apiKey: "test-token" });
-    await expect(client.getLastBuild("test", "nonexistent")).rejects.toThrow("AppVeyor API Error");
+    await expect(client.getLastBuild("test", "nonexistent")).rejects.toThrow(
+      "AppVeyor API Error"
+    );
   });
 });
