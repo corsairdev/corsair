@@ -1,3 +1,4 @@
+import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import type { DocusignAuthOptions } from './client';
 import { DocusignClient } from './client';
 import * as endpoints from './endpoints';
@@ -23,23 +24,30 @@ export const docusignWebhooksNested = {
 
 export const docusignEndpointMeta = {
 	createEnvelope: {
+		riskLevel: 'write',
 		description:
 			'Creates a signing envelope from a pre-existing DocuSign template.',
 	},
 	getEnvelope: {
+		riskLevel: 'read',
 		description:
 			'Gets the status and basic information about an envelope from DocuSign.',
 	},
 	sendEnvelope: {
+		riskLevel: 'write',
 		description: 'Sends a draft envelope by updating its status to sent.',
 	},
 	listTemplates: {
+		riskLevel: 'read',
 		description: 'Gets the definition of templates in the specified account.',
 	},
 	getTemplate: {
+		riskLevel: 'read',
 		description: 'Gets a template definition from the specified account.',
 	},
-};
+} satisfies RequiredPluginEndpointMeta<typeof docusignEndpointsNested>;
+
+export const endpointMeta = docusignEndpointMeta;
 
 export const docusignPlugin = {
 	id: 'docusign',
