@@ -1,4 +1,5 @@
-import { DocusignClient, type DocusignAuthOptions } from './client';
+import type { DocusignAuthOptions } from './client';
+import { DocusignClient } from './client';
 import * as endpoints from './endpoints';
 import * as schema from './schema';
 import * as webhooks from './webhooks';
@@ -22,10 +23,12 @@ export const docusignWebhooksNested = {
 
 export const docusignEndpointMeta = {
 	createEnvelope: {
-		description: 'Creates a signing envelope from a pre-existing DocuSign template.',
+		description:
+			'Creates a signing envelope from a pre-existing DocuSign template.',
 	},
 	getEnvelope: {
-		description: 'Gets the status and basic information about an envelope from DocuSign.',
+		description:
+			'Gets the status and basic information about an envelope from DocuSign.',
 	},
 	sendEnvelope: {
 		description: 'Sends a draft envelope by updating its status to sent.',
@@ -41,7 +44,8 @@ export const docusignEndpointMeta = {
 export const docusignPlugin = {
 	id: 'docusign',
 	name: 'DocuSign',
-	description: 'DocuSign eSignature REST API integration for agreements, envelopes, and templates.',
+	description:
+		'DocuSign eSignature REST API integration for agreements, envelopes, and templates.',
 	auth: {
 		type: 'oauth2' as const,
 		fields: ['accessToken', 'accountId', 'baseUri'],
@@ -53,4 +57,10 @@ export const docusignPlugin = {
 	schema,
 };
 
-export default docusignPlugin;
+// Plugin factory function for corsair.ts plugins list
+export const docusign = (config?: any) => ({
+	...docusignPlugin,
+	...(config && { config }),
+});
+
+export default docusign;

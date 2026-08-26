@@ -28,6 +28,7 @@
     "@corsair-dev/agentql": "workspace:*",
     "@corsair-dev/bitwarden": "workspace:*",
     "@corsair-dev/cursor": "workspace:*",
+    "@corsair-dev/docusign": "workspace:*",
     "@corsair-dev/firecrawl": "workspace:*",
     "@corsair-dev/github": "workspace:*",
     "@corsair-dev/gmail": "workspace:*",
