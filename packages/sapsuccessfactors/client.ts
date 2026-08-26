@@ -45,7 +45,12 @@ export async function makeSapsuccessfactorsRequest<T>(
 		query,
 	} = options;
 
-	let base = apiBaseUrl.replace(/\/+$/, '');
+	let base = (apiBaseUrl || SAP_SUCCESSFACTORS_DEFAULT_API_BASE)
+		.trim()
+		.replace(/\/+$/, '');
+	if (!base.startsWith('http://') && !base.startsWith('https://')) {
+		base = `https://${base}`;
+	}
 	const url = endpoint.startsWith('/') ? endpoint : `/${endpoint}`;
 	if (base.endsWith('/odata/v2') && url.startsWith('/odata/v2')) {
 		base = base.slice(0, -'/odata/v2'.length);

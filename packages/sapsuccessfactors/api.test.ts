@@ -70,6 +70,54 @@ describe('SapSuccessfactors Plugin', () => {
 		);
 	});
 
+	it('normalizes sandbox and production base URLs properly', async () => {
+		await makeSapsuccessfactorsRequest('odata/v2/User', 'test-key', {
+			apiBaseUrl: 'https://sandbox.api.sap.com/odata/v2',
+		});
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				BASE: 'https://sandbox.api.sap.com',
+				TOKEN: undefined,
+				HEADERS: expect.objectContaining({
+					APIKey: 'test-key',
+				}),
+			}),
+			expect.objectContaining({
+				url: '/odata/v2/User',
+			}),
+			expect.anything(),
+		);
+
+		await makeSapsuccessfactorsRequest('odata/v2/User', 'test-key', {
+			apiBaseUrl:
+				'https://sandbox.api.sap.com/successfactorsfoundation/odata/v2',
+		});
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				BASE: 'https://sandbox.api.sap.com/successfactorsfoundation',
+				TOKEN: undefined,
+			}),
+			expect.objectContaining({
+				url: '/odata/v2/User',
+			}),
+			expect.anything(),
+		);
+
+		await makeSapsuccessfactorsRequest('odata/v2/User', 'test-key', {
+			apiBaseUrl: 'api10.successfactors.com/odata/v2',
+		});
+		expect(mockedRequest).toHaveBeenLastCalledWith(
+			expect.objectContaining({
+				BASE: 'https://api10.successfactors.com',
+				TOKEN: 'test-key',
+			}),
+			expect.objectContaining({
+				url: '/odata/v2/User',
+			}),
+			expect.anything(),
+		);
+	});
+
 	it('calls approve.approveCalibrationSession endpoint correctly', async () => {
 		const endpoint = (plugin.endpoints as any)?.approve
 			?.approveCalibrationSession;
