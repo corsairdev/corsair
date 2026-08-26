@@ -6,6 +6,14 @@
  * of them. If two ever matched the same payload an automation would act on one
  * message twice, which is the kind of bug that only shows up in production.
  */
+// The handlers call logEventFromContext, which needs a full plugin context.
+// These tests build a minimal one, so the logger is stubbed out - matching the
+// other suites and keeping the run output clean.
+jest.mock('corsair/core', () => ({
+	...jest.requireActual('corsair/core'),
+	logEventFromContext: async () => undefined,
+}));
+
 import { createHmac } from 'node:crypto';
 import { message } from './webhooks/messages';
 import {
