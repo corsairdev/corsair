@@ -2,7 +2,11 @@ import { logEventFromContext } from 'corsair/core';
 import { buildAudioUrl, lookupWord } from '../client';
 import type { DictionaryEndpoints } from '../index';
 import type { DictionaryEntry, MWRawEntry } from './types';
-import { MWLookupResponseSchema } from './types';
+import {
+	DictionaryEndpointInputSchemas,
+	DictionaryEndpointOutputSchemas,
+	MWLookupResponseSchema,
+} from './types';
 
 function toDictionaryEntry(entry: MWRawEntry): DictionaryEntry {
 	const pronunciation = entry.hwi?.prs?.[0];
@@ -20,7 +24,9 @@ function toDictionaryEntry(entry: MWRawEntry): DictionaryEntry {
 	};
 }
 
-export const get: DictionaryEndpoints['wordsGet'] = async (ctx, input) => {
+export const get: DictionaryEndpoints['wordsGet'] = async (ctx, rawInput) => {
+	const input = DictionaryEndpointInputSchemas.wordsGet.parse(rawInput);
+
 	const raw = await lookupWord(input.word, ctx.key);
 	const parsed = MWLookupResponseSchema.parse(raw);
 
@@ -38,9 +44,9 @@ export const get: DictionaryEndpoints['wordsGet'] = async (ctx, input) => {
 		'completed',
 	);
 
-	return {
+	return DictionaryEndpointOutputSchemas.wordsGet.parse({
 		found: entries.length > 0,
 		entries,
 		suggestions,
-	};
+	});
 };
