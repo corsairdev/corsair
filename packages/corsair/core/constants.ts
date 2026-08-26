@@ -62,6 +62,7 @@ export const BaseProviders = [
 	'baselinker',
 	'basin',
 	'betterstack',
+	'bigdatacloud',
 	'bigmailer',
 	'bigml',
 	'bitbucket',
@@ -250,6 +251,7 @@ export const ProviderDisplayNames = {
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
 	betterstack: 'Better Stack',
+	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
 	bitbucket: 'Bitbucket',
@@ -445,6 +447,7 @@ export type AllProviders =
 	| 'baselinker'
 	| 'basin'
 	| 'betterstack'
+	| 'bigdatacloud'
 	| 'bigmailer'
 	| 'bigml'
 	| 'bitbucket'
