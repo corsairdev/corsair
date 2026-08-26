@@ -77,10 +77,10 @@ for (const p of toPublish) {
 const ordered = orderForPublish(toPublish);
 
 console.log(`\nBuilding ${ordered.length} package(s)...`);
-for (const { name } of ordered) {
-	console.log(`  Building ${name}...`);
-	execSync(`pnpm --filter ${name} build`, { stdio: 'inherit' });
-}
+execSync(
+	`pnpm exec turbo build${ordered.map((p) => ` --filter=${p.name}`).join('')}`,
+	{ stdio: 'inherit' },
+);
 
 console.log(`\nPublishing ${ordered.length} package(s)...`);
 
