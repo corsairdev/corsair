@@ -152,6 +152,13 @@ describe('Webvizio request client', () => {
 		);
 	});
 
+	it('rejects paths that are not the two documented list routes', async () => {
+		await expect(
+			makeWebvizioRequest('{a.{a.{a.' as '/projects', 'test-api-key'),
+		).rejects.toThrow('Unsupported Webvizio path');
+		expect(mockRequest).not.toHaveBeenCalled();
+	});
+
 	it('unwraps bare arrays and data envelopes', () => {
 		expect(unwrapWebvizioList([{ uuid: 'a', name: 'n' }])).toEqual([
 			{ uuid: 'a', name: 'n' },

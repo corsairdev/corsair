@@ -33,6 +33,12 @@ export const WEBVIZIO_WEBHOOK_API_BASE = 'https://app.webvizio.com/api/v1';
 
 export type WebvizioApiPath = '/projects' | '/webhook';
 
+function resolveWebvizioPath(endpoint: string): WebvizioApiPath {
+	if (endpoint === '/projects') return '/projects';
+	if (endpoint === '/webhook') return '/webhook';
+	throw new WebvizioAPIError('Unsupported Webvizio path');
+}
+
 const WEBVIZIO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 3,
@@ -79,7 +85,7 @@ export async function makeWebvizioRequest<T>(
 
 	const requestOptions: ApiRequestOptions = {
 		method,
-		url: endpoint,
+		url: resolveWebvizioPath(endpoint),
 		body: method === 'POST' ? body : undefined,
 		mediaType: 'application/json',
 	};
