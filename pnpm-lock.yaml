@@ -165,6 +165,9 @@ importers:
       '@corsair-dev/agentql':
         specifier: workspace:*
         version: link:../../packages/agentql
+      '@corsair-dev/beaconchain':
+        specifier: workspace:*
+        version: link:../../packages/beaconchain
       '@corsair-dev/bitwarden':
         specifier: workspace:*
         version: link:../../packages/bitwarden
