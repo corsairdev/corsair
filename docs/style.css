@@ -2,9 +2,9 @@
    brightness(0) flattens each icon's fill to black; invert flips it white in dark mode.
    If this file ever fails to load, icons keep their neutral fill and stay visible. */
 img[src*="/icons/"] {
-  filter: brightness(0);
+	filter: brightness(0);
 }
 
 .dark img[src*="/icons/"] {
-  filter: brightness(0) invert(1);
+	filter: brightness(0) invert(1);
 }

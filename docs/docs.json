@@ -5,7 +5,8 @@
   "favicon": "/favicon.ico",
   "logo": {
     "light": "/images/logo-light.svg",
-    "dark": "/images/logo-dark.svg"
+    "dark": "/images/logo-dark.svg",
+    "href": "https://corsair.dev"
   },
   "colors": {
     "primary": "#2d7387",
@@ -15,12 +16,6 @@
     "default": "light"
   },
   "navbar": {
-    "links": [
-      {
-        "label": "corsair.dev",
-        "href": "https://corsair.dev"
-      }
-    ],
     "primary": {
       "type": "github",
       "href": "https://github.com/corsairdev/corsair"
