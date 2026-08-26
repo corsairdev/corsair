@@ -1,48 +1,44 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+
 import { AuthMissingError } from 'corsair/core';
-import { Example } from './endpoints';
+
+import { Ocr } from './endpoints';
+
 import type {
 	OcrWebServiceEndpointInputs,
 	OcrWebServiceEndpointOutputs,
 } from './endpoints/types';
+
 import {
 	OcrWebServiceEndpointInputSchemas,
 	OcrWebServiceEndpointOutputSchemas,
 } from './endpoints/types';
+
 import { errorHandlers } from './error-handlers';
+
 import { OcrWebServiceSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveOcrWebServiceOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchOcrWebServiceTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	ExampleEvent,
-	OcrWebServiceWebhookOutputs,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type OcrWebServicePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
+
 	hooks?: InternalOcrWebServicePlugin['hooks'];
-	webhookHooks?: InternalOcrWebServicePlugin['webhookHooks'];
+
 	errorHandlers?: CorsairErrorHandler;
+
 	permissions?: PluginPermissionsConfig<typeof ocrWebServiceEndpointsNested>;
 };
 
@@ -66,65 +62,34 @@ type OcrWebServiceEndpoint<K extends keyof OcrWebServiceEndpointOutputs> =
 	>;
 
 export type OcrWebServiceEndpoints = {
-	exampleGet: OcrWebServiceEndpoint<'exampleGet'>;
+	processDocument: OcrWebServiceEndpoint<'processDocument'>;
 };
-
-type OcrWebServiceWebhook<
-	K extends keyof OcrWebServiceWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<
-	OcrWebServiceContext,
-	TEvent,
-	OcrWebServiceWebhookOutputs[K]
->;
-
-export type OcrWebServiceWebhooks = {
-	example: OcrWebServiceWebhook<'example', ExampleEvent>;
-};
-
-export type OcrWebServiceBoundWebhooks = BindWebhooks<OcrWebServiceWebhooks>;
 
 const ocrWebServiceEndpointsNested = {
-	example: {
-		get: Example.get,
-	},
-} as const;
-
-const ocrWebServiceWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	ocr: {
+		processDocument: Ocr.processDocument,
 	},
 } as const;
 
 export const ocrWebServiceEndpointSchemas = {
-	'example.get': {
-		input: OcrWebServiceEndpointInputSchemas.exampleGet,
-		output: OcrWebServiceEndpointOutputSchemas.exampleGet,
+	'ocr.processDocument': {
+		input: OcrWebServiceEndpointInputSchemas.processDocument,
+		output: OcrWebServiceEndpointOutputSchemas.processDocument,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof ocrWebServiceEndpointsNested
 >;
 
-const ocrWebServiceWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof ocrWebServiceWebhooksNested
->;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
 const ocrWebServiceEndpointMeta = {
-	'example.get': {
-		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+	'ocr.processDocument': {
+		riskLevel: 'write',
+		description: 'Process an image or document using OCR Web Service',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof ocrWebServiceEndpointsNested
 >;
+
+const defaultAuthType = 'api_key' as const;
 
 export const ocrWebServiceAuthConfig = {
 	api_key: {
@@ -137,7 +102,7 @@ export type BaseOcrWebServicePlugin<T extends OcrWebServicePluginOptions> =
 		'ocrwebservice',
 		typeof OcrWebServiceSchema,
 		typeof ocrWebServiceEndpointsNested,
-		typeof ocrWebServiceWebhooksNested,
+		Record<string, never>,
 		T,
 		typeof defaultAuthType
 	>;
@@ -152,43 +117,34 @@ export function ocrwebservice<const T extends OcrWebServicePluginOptions>(
 	incomingOptions: OcrWebServicePluginOptions &
 		T = {} as OcrWebServicePluginOptions & T,
 ): ExternalOcrWebServicePlugin<T> {
-	const options = {
+	const options: OcrWebServicePluginOptions & T = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'ocrwebservice',
+
 		authConfig: ocrWebServiceAuthConfig,
+
 		schema: OcrWebServiceSchema,
-		options: options,
+
+		options,
+
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+
 		endpoints: ocrWebServiceEndpointsNested,
-		webhooks: ocrWebServiceWebhooksNested,
+
 		endpointMeta: ocrWebServiceEndpointMeta,
+
 		endpointSchemas: ocrWebServiceEndpointSchemas,
-		webhookSchemas: ocrWebServiceWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-ocrwebservice-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchOcrWebServiceTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveOcrWebServiceOAuthWebhookTenantLink,
+
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+
 		keyBuilder: async (ctx: OcrWebServiceKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -209,12 +165,8 @@ export function ocrwebservice<const T extends OcrWebServicePluginOptions>(
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
 	OcrWebServiceEndpointInputs,
 	OcrWebServiceEndpointOutputs,
+	ProcessDocumentInput,
+	ProcessDocumentResponse,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	OcrWebServiceWebhookOutputs,
-} from './webhooks/types';

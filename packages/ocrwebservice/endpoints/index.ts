@@ -1,7 +1,7 @@
-import { get as exampleGet } from './example';
+import { processDocument } from './process-document';
 
-export const Example = {
-	get: exampleGet,
+export const Ocr = {
+	processDocument,
 };
 
 export * from './types';
