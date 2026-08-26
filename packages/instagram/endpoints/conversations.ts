@@ -144,6 +144,8 @@ export const pageConversations: InstagramEndpoints['GetPageConversations'] =
 			method: 'GET',
 			query: {
 				platform: input.platform ?? 'instagram',
+				after: input.after,
+				before: input.before,
 			},
 		});
 
@@ -167,6 +169,8 @@ export const listAll: InstagramEndpoints['ListAllConversations'] = async (
 		method: 'GET',
 		query: {
 			platform: 'instagram',
+			after: input.after,
+			before: input.before,
 		},
 	});
 

@@ -960,7 +960,26 @@ const CreateMediaContainerInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe('Whether this is a carousel item.'),
-	user_tags: z.array(z.any()).optional().describe('Optional user tags.'),
+	user_tags: z
+		.array(
+			z.object({
+				username: z.string().describe('Instagram username to tag.'),
+				x: z
+					.number()
+					.min(0)
+					.max(1)
+					.optional()
+					.describe('Horizontal tag position (0.0–1.0).'),
+				y: z
+					.number()
+					.min(0)
+					.max(1)
+					.optional()
+					.describe('Vertical tag position (0.0–1.0).'),
+			}),
+		)
+		.optional()
+		.describe('Optional user tags.'),
 });
 
 // Create Post (Deprecated)
@@ -992,6 +1011,11 @@ const GetConversationInputSchema = z.object({
 const GetIgCommentRepliesInputSchema = z.object({
 	comment_id: z.string().describe('The Instagram Comment ID.'),
 	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Get IG Media Children
@@ -1001,6 +1025,11 @@ const GetIgMediaChildrenInputSchema = z.object({
 		.string()
 		.describe('The Instagram Media ID (parent carousel/album).'),
 	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Get IG Media Comments
@@ -1008,6 +1037,11 @@ const GetIgMediaChildrenInputSchema = z.object({
 const GetIgMediaCommentsInputSchema = z.object({
 	media_id: z.string().describe('The Instagram Media ID.'),
 	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Get IG Media Insights
@@ -1036,6 +1070,11 @@ const GetIgUserLiveMediaInputSchema = z.object({
 const GetIgUserMediaInputSchema = z.object({
 	ig_id: z.string().describe('The Instagram User ID.'),
 	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Get IG User Stories
@@ -1043,6 +1082,11 @@ const GetIgUserMediaInputSchema = z.object({
 const GetIgUserStoriesInputSchema = z.object({
 	ig_id: z.string().describe('The Instagram User ID.'),
 	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Get IG User Tags
@@ -1050,6 +1094,11 @@ const GetIgUserStoriesInputSchema = z.object({
 const GetIgUserTagsInputSchema = z.object({
 	ig_id: z.string().describe('The Instagram User ID.'),
 	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Get Messenger Profile
@@ -1068,6 +1117,11 @@ const GetPageConversationsInputSchema = z.object({
 			'The Facebook Page ID connected to the Instagram Business account.',
 		),
 	platform: z.string().optional().describe('The platform (use "instagram").'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Get Post Comments (Deprecated)
@@ -1075,6 +1129,11 @@ const GetPageConversationsInputSchema = z.object({
 const GetPostCommentsInputSchema = z.object({
 	post_id: z.string().describe('The post (media) ID.'),
 	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Get Post Insights (Deprecated)
@@ -1118,12 +1177,22 @@ const GetUserInsightsInputSchema = z.object({
 const GetUserMediaInputSchema = z.object({
 	ig_id: z.string().describe('The Instagram User ID.'),
 	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // List All Conversations
 // INSTAGRAM_LIST_ALL_CONVERSATIONS
 const ListAllConversationsInputSchema = z.object({
 	ig_id: z.string().describe('The Instagram User ID.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // List All Messages
@@ -1131,6 +1200,11 @@ const ListAllConversationsInputSchema = z.object({
 const ListAllMessagesInputSchema = z.object({
 	conversation_id: z.string().describe('The DM conversation ID.'),
 	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Mark Seen
@@ -1179,7 +1253,26 @@ const PostIgUserMediaInputSchema = z.object({
 		.boolean()
 		.optional()
 		.describe('Whether this is a carousel item.'),
-	user_tags: z.array(z.any()).optional().describe('Optional user tags.'),
+	user_tags: z
+		.array(
+			z.object({
+				username: z.string().describe('Instagram username to tag.'),
+				x: z
+					.number()
+					.min(0)
+					.max(1)
+					.optional()
+					.describe('Horizontal tag position (0.0–1.0).'),
+				y: z
+					.number()
+					.min(0)
+					.max(1)
+					.optional()
+					.describe('Vertical tag position (0.0–1.0).'),
+			}),
+		)
+		.optional()
+		.describe('Optional user tags.'),
 });
 
 // Publish IG User Media
@@ -1222,13 +1315,62 @@ const SendTextMessageInputSchema = z.object({
 const UpdateMessengerProfileInputSchema = z.object({
 	ig_id: z.string().describe('The Instagram User ID.'),
 	persistent_menu: z
-		.array(z.any())
+		.array(
+			z.object({
+				locale: z
+					.string()
+					.describe('The locale for this menu (e.g. "default").'),
+				composer_input_disabled: z
+					.boolean()
+					.optional()
+					.describe('Whether to disable composer input.'),
+				call_to_actions: z
+					.array(
+						z.object({
+							type: z
+								.string()
+								.describe('The menu item type (e.g. "postback", "web_url").'),
+							title: z.string().describe('The menu item label.'),
+							url: z
+								.string()
+								.optional()
+								.describe('URL for web_url type items.'),
+							payload: z
+								.string()
+								.optional()
+								.describe('Payload for postback type items.'),
+						}),
+					)
+					.optional()
+					.describe('The menu items.'),
+			}),
+		)
 		.optional()
 		.describe('Persistent menu configuration.'),
 	ice_breakers: z
-		.array(z.any())
+		.array(
+			z.object({
+				question: z.string().describe('The ice breaker question text.'),
+				payload: z
+					.string()
+					.describe('The payload sent when the user taps the ice breaker.'),
+			}),
+		)
 		.optional()
 		.describe('Ice breaker configuration.'),
+	greeting: z
+		.array(
+			z.object({
+				locale: z
+					.string()
+					.describe('The locale for this greeting (e.g. "default", "en_US").'),
+				text: z.string().describe('The greeting text shown to users.'),
+			}),
+		)
+		.optional()
+		.describe(
+			'Messenger greeting configuration shown to users before they send a message.',
+		),
 });
 
 export const InstagramEndpointInputSchemas = {

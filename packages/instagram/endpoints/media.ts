@@ -166,6 +166,8 @@ export const children: InstagramEndpoints['GetIgMediaChildren'] = async (
 		method: 'GET',
 		query: {
 			fields: input.fields,
+			after: input.after,
+			before: input.before,
 		},
 	});
 
@@ -189,6 +191,8 @@ export const comments: InstagramEndpoints['GetIgMediaComments'] = async (
 		method: 'GET',
 		query: {
 			fields: input.fields,
+			after: input.after,
+			before: input.before,
 		},
 	});
 

@@ -116,6 +116,8 @@ export const media: InstagramEndpoints['GetIgUserMedia'] = async (
 		method: 'GET',
 		query: {
 			fields: input.fields,
+			after: input.after,
+			before: input.before,
 		},
 	});
 
@@ -139,6 +141,8 @@ export const stories: InstagramEndpoints['GetIgUserStories'] = async (
 		method: 'GET',
 		query: {
 			fields: input.fields,
+			after: input.after,
+			before: input.before,
 		},
 	});
 
@@ -159,6 +163,8 @@ export const tags: InstagramEndpoints['GetIgUserTags'] = async (ctx, input) => {
 		method: 'GET',
 		query: {
 			fields: input.fields,
+			after: input.after,
+			before: input.before,
 		},
 	});
 
@@ -231,6 +237,8 @@ export const userMedia: InstagramEndpoints['GetUserMedia'] = async (
 		method: 'GET',
 		query: {
 			fields: input.fields,
+			after: input.after,
+			before: input.before,
 		},
 	});
 

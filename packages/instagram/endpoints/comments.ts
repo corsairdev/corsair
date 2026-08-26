@@ -171,6 +171,8 @@ export const getReplies: InstagramEndpoints['GetIgCommentReplies'] = async (
 		method: 'GET',
 		query: {
 			fields: input.fields,
+			after: input.after,
+			before: input.before,
 		},
 	});
 

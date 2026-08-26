@@ -113,6 +113,8 @@ export const listAll: InstagramEndpoints['ListAllMessages'] = async (
 		method: 'GET',
 		query: {
 			fields: input.fields,
+			after: input.after,
+			before: input.before,
 		},
 	});
 
