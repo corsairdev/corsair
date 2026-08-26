@@ -2,33 +2,30 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
-import { DocusignClient, docusignPlugin } from '@corsair-dev/docusign';
-import { corsair } from '../server/corsair';
+import { corsair } from '@/server/corsair';
 
-async function main() {
-	console.log('🚀 Running DocuSign Integration Test...\n');
+async function setInstagramCredentials() {
+	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
 
-	// 1. Verify Plugin Metadata & Exported Operations
-	console.log('Plugin ID:', docusignPlugin.id);
-	console.log('Plugin Name:', docusignPlugin.name);
-	console.log('Available Endpoints:', Object.keys(docusignPlugin.endpoints));
-
-	// 2. Test Client Instantiation
-	const client = new DocusignClient({
-		accessToken: process.env.DOCUSIGN_ACCESS_TOKEN ?? 'test_access_token',
-		accountId: process.env.DOCUSIGN_ACCOUNT_ID ?? 'test_account_id',
-		baseUri: 'https://demo.docusign.net/restapi',
-	});
-
-	console.log('Client Base URI configured:', client.baseUri);
-
-	// 3. Verify Corsair Server Instance is loaded
-	console.log('Corsair Server instance active:', !!corsair);
-
-	console.log('\n✅ DocuSign Integration test completed successfully!');
+	if (FACEBOOK_APP_ID) {
+		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
+	}
+	if (FACEBOOK_APP_SECRET) {
+		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
+	}
+	if (IG_ACCESS_TOKEN) {
+		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
+	}
 }
 
+const main = async () => {
+	const res = await corsair.slack.api.messages.post({
+		channel: 'general',
+		text: 'hello',
+	});
+};
+
 main().catch((err) => {
-	console.error('Test execution failed:', err);
+	console.error(err);
 	process.exit(1);
 });

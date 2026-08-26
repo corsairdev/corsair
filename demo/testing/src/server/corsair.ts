@@ -2,47 +2,67 @@ import dotenv from 'dotenv';
 
 dotenv.config({ path: '../.env' });
 
-import { docusign } from '@corsair-dev/docusign';
+import { agentql } from '@corsair-dev/agentql';
+import { gmail } from '@corsair-dev/gmail';
+import { googlecalendar } from '@corsair-dev/googlecalendar';
+import { googlesheets } from '@corsair-dev/googlesheets';
+import { hubspot } from '@corsair-dev/hubspot';
+import { linear } from '@corsair-dev/linear';
+import { onedrive } from '@corsair-dev/onedrive';
+import { sharepoint } from '@corsair-dev/sharepoint';
+import { slack } from '@corsair-dev/slack';
+import { twilio } from '@corsair-dev/twilio';
+import { vapi } from '@corsair-dev/vapi';
 import { createCorsair } from 'corsair';
 
-const hubProjectApiKey =
-	process.env.CORSAIR_DEV_API_KEY ??
-	process.env.CORSAIR_API_KEY ??
-	'test_api_key';
-const hubSigningSecret =
-	process.env.CORSAIR_DEV_SIGNING_SECRET ??
-	process.env.CORSAIR_SIGNING_SECRET ??
-	'test_signing_secret';
+import { sqlite } from '../db';
 
-// Mock Kysely instance interface to satisfy Corsair initialization
-const mockDb = {
-	selectFrom: () => ({
-		select: () => ({
-			where: () => ({
-				execute: () => Promise.resolve([]),
-			}),
-			execute: () => Promise.resolve([]),
-		}),
-	}),
-	insertInto: () => ({
-		values: () => ({
-			execute: () => Promise.resolve([]),
-		}),
-	}),
-	getExecutor: () => ({}),
-};
+const hubProjectApiKey =
+	process.env.CORSAIR_DEV_API_KEY ?? process.env.CORSAIR_API_KEY!;
+const hubSigningSecret =
+	process.env.CORSAIR_DEV_SIGNING_SECRET ?? process.env.CORSAIR_SIGNING_SECRET!;
+// const hubApiUrl = process.env.HUB_API_URL;
+// const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
 
 export const corsair = createCorsair({
 	multiTenancy: false,
-	database: mockDb as any,
-	kek: process.env.CORSAIR_KEK ?? '01234567890123456789012345678901',
+	database: sqlite,
+	kek: process.env.CORSAIR_KEK!,
 	permissions: {
 		timeout: '10m',
 		onTimeout: 'deny',
 	},
 	hub: {
+		// apiUrl: hubApiUrl,
+		// oauthCallbackUrl: hubOAuthCallbackUrl,
 		projectApiKey: hubProjectApiKey,
 		signingSecret: hubSigningSecret,
 	},
-	plugins: [docusign()],
+	plugins: [
+		// github({ authType: 'managed' }),
+		slack({
+			permissions: {
+				mode: 'cautious',
+				overrides: {
+					'messages.post': 'require_approval',
+				},
+			},
+		}),
+		googlesheets(),
+		googlecalendar(),
+		gmail(),
+		linear(),
+		sharepoint(),
+		onedrive(),
+		hubspot(),
+		agentql({
+			key: process.env.AGENTQL_API_KEY,
+		}),
+		twilio(),
+		vapi({
+			key: process.env.VAPI_API_KEY,
+			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
+		}),
+		instagram(),
+	],
 });
