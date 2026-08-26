@@ -5,14 +5,13 @@ import { createWebvizioMatch, verifyWebvizioWebhookSignature } from './types';
 export const projectCreated: WebvizioWebhooks['projectCreated'] = {
 	match: createWebvizioMatch('project.created'),
 	handler: async (ctx, request) => {
-		if (ctx.key) {
-			const verification = verifyWebvizioWebhookSignature(request, ctx.key);
-			if (!verification.valid) {
-				return {
-					success: false,
-					error: verification.error || 'Invalid webhook signature',
-				};
-			}
+		const verification = verifyWebvizioWebhookSignature(request, ctx.key);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Invalid webhook signature',
+			};
 		}
 
 		const event = request.payload;
@@ -60,14 +59,13 @@ export const projectCreated: WebvizioWebhooks['projectCreated'] = {
 export const projectUpdated: WebvizioWebhooks['projectUpdated'] = {
 	match: createWebvizioMatch('project.updated'),
 	handler: async (ctx, request) => {
-		if (ctx.key) {
-			const verification = verifyWebvizioWebhookSignature(request, ctx.key);
-			if (!verification.valid) {
-				return {
-					success: false,
-					error: verification.error || 'Invalid webhook signature',
-				};
-			}
+		const verification = verifyWebvizioWebhookSignature(request, ctx.key);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Invalid webhook signature',
+			};
 		}
 
 		const event = request.payload;
@@ -115,14 +113,13 @@ export const projectUpdated: WebvizioWebhooks['projectUpdated'] = {
 export const projectDeleted: WebvizioWebhooks['projectDeleted'] = {
 	match: createWebvizioMatch('project.deleted'),
 	handler: async (ctx, request) => {
-		if (ctx.key) {
-			const verification = verifyWebvizioWebhookSignature(request, ctx.key);
-			if (!verification.valid) {
-				return {
-					success: false,
-					error: verification.error || 'Invalid webhook signature',
-				};
-			}
+		const verification = verifyWebvizioWebhookSignature(request, ctx.key);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Invalid webhook signature',
+			};
 		}
 
 		const event = request.payload;

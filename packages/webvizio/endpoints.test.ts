@@ -1,3 +1,4 @@
+import crypto from 'node:crypto';
 import { logEventFromContext } from 'corsair/core';
 import { ApiError, request } from 'corsair/http';
 import {
@@ -54,6 +55,11 @@ jest.mock('corsair/http', () => {
 
 const mockRequest = request as jest.Mock;
 const mockLog = jest.mocked(logEventFromContext);
+
+function signPayload(payload: unknown, secret: string): string {
+	const body = typeof payload === 'string' ? payload : JSON.stringify(payload);
+	return crypto.createHmac('sha256', secret).update(body).digest('hex');
+}
 
 function createMockContext(apiKey = 'test-token') {
 	const upsertByEntityId = jest.fn().mockResolvedValue({ id: 'db-entity-1' });
@@ -231,13 +237,15 @@ describe('Webvizio inbound webhook handlers', () => {
 	});
 
 	it('handles project.created webhook and upserts into db.projects', async () => {
-		const ctx = createMockContext();
+		const ctx = createMockContext('test-secret');
+		const payload = {
+			event: 'project.created',
+			payload: { uuid: 'proj-uuid-1', name: 'Web Redesign' },
+		};
+		const signature = signPayload(payload, 'test-secret');
 		const req = {
-			headers: { 'x-webvizio-signature': 'test-token' },
-			payload: {
-				event: 'project.created',
-				payload: { uuid: 'proj-uuid-1', name: 'Web Redesign' },
-			},
+			headers: { 'x-webvizio-signature': signature },
+			payload,
 		};
 
 		expect(ProjectWebhooks.projectCreated.match(req as any)).toBe(true);
@@ -249,14 +257,30 @@ describe('Webvizio inbound webhook handlers', () => {
 		);
 	});
 
-	it('handles project.updated webhook and upserts into db.projects', async () => {
-		const ctx = createMockContext();
+	it('rejects invalid signature with 401', async () => {
+		const ctx = createMockContext('test-secret');
 		const req = {
-			headers: { 'x-webvizio-signature': 'test-token' },
+			headers: { 'x-webvizio-signature': 'invalid-sig' },
 			payload: {
-				event: 'project.updated',
-				payload: { uuid: 'proj-uuid-1', name: 'Updated Name' },
+				event: 'project.created',
+				payload: { uuid: 'proj-uuid-1', name: 'Web Redesign' },
 			},
+		};
+
+		const res = await ProjectWebhooks.projectCreated.handler(ctx, req as any);
+		expect(res.success).toBe(false);
+		expect(res.statusCode).toBe(401);
+	});
+
+	it('handles project.updated webhook and upserts into db.projects', async () => {
+		const ctx = createMockContext('test-secret');
+		const payload = {
+			event: 'project.updated',
+			payload: { uuid: 'proj-uuid-1', name: 'Updated Name' },
+		};
+		const req = {
+			headers: { 'x-webvizio-signature': signPayload(payload, 'test-secret') },
+			payload,
 		};
 
 		expect(ProjectWebhooks.projectUpdated.match(req as any)).toBe(true);
@@ -269,13 +293,14 @@ describe('Webvizio inbound webhook handlers', () => {
 	});
 
 	it('handles project.deleted webhook', async () => {
-		const ctx = createMockContext();
+		const ctx = createMockContext('test-secret');
+		const payload = {
+			event: 'project.deleted',
+			payload: { uuid: 'proj-uuid-1' },
+		};
 		const req = {
-			headers: { 'x-webvizio-signature': 'test-token' },
-			payload: {
-				event: 'project.deleted',
-				payload: { uuid: 'proj-uuid-1' },
-			},
+			headers: { 'x-webvizio-signature': signPayload(payload, 'test-secret') },
+			payload,
 		};
 
 		expect(ProjectWebhooks.projectDeleted.match(req as any)).toBe(true);
@@ -284,24 +309,30 @@ describe('Webvizio inbound webhook handlers', () => {
 	});
 
 	it('handles task and comment webhooks', async () => {
-		const ctx = createMockContext();
+		const ctx = createMockContext('test-secret');
+		const taskPayload = {
+			event: 'task.created',
+			payload: { id: 10, title: 'Fix CSS' },
+		};
 		const taskReq = {
-			headers: { 'x-webvizio-signature': 'test-token' },
-			payload: {
-				event: 'task.created',
-				payload: { id: 10, title: 'Fix CSS' },
+			headers: {
+				'x-webvizio-signature': signPayload(taskPayload, 'test-secret'),
 			},
+			payload: taskPayload,
 		};
 		expect(TaskWebhooks.taskCreated.match(taskReq as any)).toBe(true);
 		const taskRes = await TaskWebhooks.taskCreated.handler(ctx, taskReq as any);
 		expect(taskRes.success).toBe(true);
 
+		const commentPayload = {
+			event: 'comment.created',
+			payload: { id: 99, text: 'Done' },
+		};
 		const commentReq = {
-			headers: { 'x-webvizio-signature': 'test-token' },
-			payload: {
-				event: 'comment.created',
-				payload: { id: 99, text: 'Done' },
+			headers: {
+				'x-webvizio-signature': signPayload(commentPayload, 'test-secret'),
 			},
+			payload: commentPayload,
 		};
 		expect(CommentWebhooks.commentCreated.match(commentReq as any)).toBe(true);
 		const commentRes = await CommentWebhooks.commentCreated.handler(
