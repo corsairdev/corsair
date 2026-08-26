@@ -5,7 +5,7 @@ description: Gate destructive agent actions behind human approval before they ex
 
 import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
 
-When an AI agent calls Corsair, you need guardrails. Permissions let you set a policy per integration — reads go through, writes may need sign-off, destructive actions can be blocked entirely.
+When an AI agent calls Corsair, you need guardrails. Permissions let you set a policy per integration. Reads go through, writes may need sign-off, destructive actions can be blocked entirely.
 
 ```ts corsair.ts
 import { createCorsair } from "corsair";
@@ -38,16 +38,14 @@ export const corsair = createCorsair({
 });
 ```
 
----
-
 ## How it works
 
 Every plugin endpoint has a **risk level** (`read`, `write`, or `destructive`). Your **permission mode** maps each risk level to a **policy**. When an agent calls a gated endpoint:
 
 1. Corsair evaluates the policy for that endpoint
-2. If `allow` → the call proceeds immediately
-3. If `deny` → the call is blocked with no database record
-4. If `require_approval` → Corsair writes a row to `corsair_permissions` and blocks the call until a human approves
+2. If `allow`, the call proceeds immediately
+3. If `deny`, the call is blocked with no database record
+4. If `require_approval`, Corsair writes a row to `corsair_permissions` and blocks the call until a human approves
 
 Approved actions are **single-use**. Once the endpoint runs successfully, the record moves to `completed` and cannot be replayed.
 
@@ -72,8 +70,6 @@ sequenceDiagram
 <Warning>
 Permissions require a database. Without `corsair_permissions`, any endpoint that needs approval falls back to **deny**.
 </Warning>
-
----
 
 ## Add the permissions table
 
@@ -174,16 +170,14 @@ psql $env:DATABASE_URL -f permissions.sql
 
 | Column | Purpose |
 | --- | --- |
-| `token` | 64-character hex token embedded in review URLs — the public handle for approve/deny |
+| `token` | 64-character hex token embedded in review URLs; the public handle for approve/deny |
 | `plugin` | Plugin id, e.g. `github` |
 | `endpoint` | Dot-notation path, e.g. `repositories.delete` |
-| `args` | JSON-encoded arguments frozen at request time — replayed exactly on approval |
+| `args` | JSON-encoded arguments frozen at request time, replayed exactly on approval |
 | `tenant_id` | Tenant scope for multi-tenant instances. Defaults to `default` |
 | `status` | Lifecycle state (see below) |
-| `expires_at` | ISO8601 timestamp — when the request becomes invalid |
+| `expires_at` | ISO8601 timestamp for when the request becomes invalid |
 | `error` | Error message when status is `failed` |
-
----
 
 ## Permission modes
 
@@ -196,7 +190,7 @@ Set a default mode per plugin with `permissions.mode`. Each mode maps risk level
 | `strict` | allow | require_approval | deny |
 | `readonly` | allow | deny | deny |
 
-`cautious` is a good default for agent workloads — agents can read and write freely, but destructive actions need a human in the loop.
+`cautious` is a good default for agent workloads. Agents can read and write freely, but destructive actions need a human in the loop.
 
 ```ts corsair.ts
 github({
@@ -204,25 +198,21 @@ github({
 })
 ```
 
----
-
 ## Approval policies
 
 Three resolved policies control what happens at call time:
 
 | Policy | Behavior |
 | --- | --- |
-| `allow` | Executes immediately — no approval record |
+| `allow` | Executes immediately, no approval record |
 | `deny` | Blocked by policy. Logs a message pointing you to the corsair config |
 | `require_approval` | Creates a `pending` record in `corsair_permissions` and blocks until approved |
 
 Policies come from the mode matrix above, unless you override a specific endpoint.
 
----
-
 ## Overrides
 
-Use `permissions.overrides` to tighten or loosen individual endpoints beyond the mode default. Keys are dot-notation paths through the plugin's endpoint tree — invalid paths are compile-time errors.
+Use `permissions.overrides` to tighten or loosen individual endpoints beyond the mode default. Keys are dot-notation paths through the plugin's endpoint tree, and invalid paths are compile-time errors.
 
 ```ts corsair.ts
 github({
@@ -237,9 +227,7 @@ github({
 })
 ```
 
-Overrides take precedence over the mode matrix. An override of `deny` always wins — no approval record is created.
-
----
+Overrides take precedence over the mode matrix. An override of `deny` always wins, and no approval record is created.
 
 ## Status lifecycle
 
@@ -248,23 +236,21 @@ Each approval request moves through these states:
 | Status | Meaning |
 | --- | --- |
 | `pending` | Waiting for human approval |
-| `approved` | Human signed off — ready to execute (single-use) |
+| `approved` | Human signed off, ready to execute (single-use) |
 | `executing` | `executePermission` is running the frozen args |
-| `completed` | Action ran successfully — approval consumed |
+| `completed` | Action ran successfully, approval consumed |
 | `denied` | Human declined the request |
 | `expired` | `expires_at` passed before a decision |
-| `failed` | Endpoint threw during execution — see `error` column |
+| `failed` | Endpoint threw during execution, see `error` column |
 
 Corsair deduplicates pending requests. If the same plugin, endpoint, args, and tenant already have a non-expired `pending` record, a second call returns the existing token instead of creating a duplicate.
-
----
 
 ## Timeout
 
 Configure timeouts and blocking behavior at the root with `createCorsair({ permissions: ... })`:
 
 <Note>
-The old `approval: { ... }` key still works but is **deprecated** — rename it to `permissions`. TypeScript will strike through `approval` in your editor. A runtime warning is logged on startup if you still use it.
+The old `approval: { ... }` key still works but is **deprecated**. Rename it to `permissions`. TypeScript will strike through `approval` in your editor. A runtime warning is logged on startup if you still use it.
 </Note>
 
 ```ts corsair.ts
@@ -277,12 +263,10 @@ export const corsair = createCorsair({
 });
 ```
 
-- **`timeout`** — how long a `pending` record stays valid. Defaults to `10m` if not set. Written to `expires_at` when the record is created.
-- **`onTimeout`** — intended behavior when the window closes without a response. With `deny`, expired records are treated as blocked. Use `approve` only in low-risk, fully trusted environments.
+- **`timeout`**: how long a `pending` record stays valid. Defaults to `10m` if not set. Written to `expires_at` when the record is created.
+- **`onTimeout`**: intended behavior when the window closes without a response. With `deny`, expired records are treated as blocked. Use `approve` only in low-risk, fully trusted environments.
 
 After `expires_at`, the record is no longer actionable. Synchronous mode returns a timeout error; asynchronous retries see the request as expired.
-
----
 
 ## Synchronous vs asynchronous
 
@@ -308,15 +292,15 @@ manual: {
 
 ### Synchronous
 
-The tool call **blocks** and polls `corsair_permissions` every 500 ms until the user approves, denies, or the timeout elapses. From the agent's perspective, it is just a slow tool call — the model does not need to handle a separate approval step.
+The tool call **blocks** and polls `corsair_permissions` every 500 ms until the user approves, denies, or the timeout elapses. From the agent's perspective, it is just a slow tool call. The model does not need to handle a separate approval step.
 
 <Warning>
-Many agents enforce automatic timeouts on tool calls to prevent hangs. If your agent cuts off long-running tools before you can approve, use **asynchronous** mode instead — the call returns immediately and the agent retries after approval.
+Many agents enforce automatic timeouts on tool calls to prevent hangs. If your agent cuts off long-running tools before you can approve, use **asynchronous** mode instead. The call returns immediately and the agent retries after approval.
 </Warning>
 
 Best when:
 - You have a review UI open alongside the agent session
-- You want approval to feel seamless — approve in the UI, the agent continues automatically
+- You want approval to feel immediate. Approve in the UI, and the agent continues automatically
 
 ```ts corsair.ts
 permissions: {
@@ -328,7 +312,7 @@ permissions: {
 
 ### Dynamic mode
 
-Pass a function to switch modes per request — useful when approval behavior depends on runtime context:
+Pass a function to switch modes per request, useful when approval behavior depends on runtime context:
 
 ```ts corsair.ts
 permissions: {
@@ -338,11 +322,9 @@ permissions: {
 },
 ```
 
----
-
 ## Handling permission approvals
 
-When an action requires approval, Corsair inserts a row into `corsair_permissions` with a unique **token**. That token is what you put in review URLs, Slack messages, or anywhere else you surface the request. Look up the row by token to see exactly what the agent wants to do — the `args` column holds the JSON-encoded arguments frozen at request time.
+When an action requires approval, Corsair inserts a row into `corsair_permissions` with a unique **token**. That token is what you put in review URLs, Slack messages, or anywhere else you surface the request. Look up the row by token to see exactly what the agent wants to do. The `args` column holds the JSON-encoded arguments frozen at request time.
 
 ```sql
 SELECT plugin, endpoint, args, status, tenant_id, expires_at
@@ -369,15 +351,15 @@ SET status = 'denied', updated_at = NOW()
 WHERE token = $1 AND status = 'pending';
 ```
 
-That's the entire approval contract. Corsair handles the rest — polling in synchronous mode, retry matching in asynchronous mode, and execution once the status is `approved`.
+That's the entire approval contract. Corsair handles the rest: polling in synchronous mode, retry matching in asynchronous mode, and execution once the status is `approved`.
 
 ### Build your own review flow
 
 How you approve is entirely up to you. A few common patterns:
 
-**Manual review UI** — Add a page in your app that lists pending requests, shows `plugin`, `endpoint`, and parsed `args`, and renders Approve / Deny buttons that run the `UPDATE` above.
+**Manual review UI**: add a page in your app that lists pending requests, shows `plugin`, `endpoint`, and parsed `args`, and renders Approve / Deny buttons that run the `UPDATE` above.
 
-**Automated reviewer agent** — Send the pending request to a second agent that evaluates whether the action is safe, then programmatically sets `status` to `approved` or `denied`. Useful when you want policy checks without a human in the loop for every write.
+**Automated reviewer agent**: send the pending request to a second agent that evaluates whether the action is safe, then programmatically sets `status` to `approved` or `denied`. Useful when you want policy checks without a human in the loop for every write.
 
 ```ts review-page.ts
 import { corsair } from "./corsair";
@@ -399,8 +381,6 @@ export async function getReviewDetails(token: string) {
 ```
 
 Once `status` is `approved`, either the original agent retries the call or you invoke `executePermission` yourself to run the action without waiting for a retry.
-
----
 
 ## Integrating with an agent
 
@@ -429,7 +409,7 @@ After approval, the agent retries the same call. Corsair finds the `approved` re
 
 ### `executePermission` (optional)
 
-If you don't want to wait for the agent to retry after approval, call `executePermission` once `status` is `approved`. It replays the frozen args directly — no LLM involved:
+If you don't want to wait for the agent to retry after approval, call `executePermission` once `status` is `approved`. It replays the frozen args directly, no LLM involved:
 
 ```ts approve-handler.ts
 import { executePermission } from "corsair";
@@ -446,10 +426,8 @@ export async function handleApprove(token: string) {
 `executePermission` scopes to the correct tenant via `withTenant`, navigates `corsair[plugin].api[endpoint]`, and marks the record `completed` on success.
 
 <Note>
-The `corsair.permissions` namespace exposes `find_by_token` and `find_by_permission_id` for reads, but intentionally does not include approve/deny transitions — those happen in your review flow.
+The `corsair.permissions` namespace exposes `find_by_token` and `find_by_permission_id` for reads, but intentionally does not include approve/deny transitions. Those happen in your review flow.
 </Note>
-
----
 
 ## Multi-tenancy
 
@@ -463,8 +441,6 @@ await tenant.github.api.repositories.delete({ owner, repo });
 
 See [Multi-Tenancy](/concepts/multi-tenancy) for tenant scoping details.
 
----
-
 ## What's next
 
 <CardGroup cols={2}>
@@ -475,9 +451,9 @@ See [Multi-Tenancy](/concepts/multi-tenancy) for tenant scoping details.
     Scope approvals and credentials per user with withTenant().
   </Card>
   <Card title="Database" href="/concepts/database">
-    The four core tables Corsair uses for synced integration data.
+    The five core tables Corsair uses for synced integration data.
   </Card>
   <Card title="Hooks" href="/concepts/hooks">
-    Add custom logic before and after API calls — logging, validation, side effects.
+    Add custom logic before and after API calls: logging, validation, side effects.
   </Card>
 </CardGroup>

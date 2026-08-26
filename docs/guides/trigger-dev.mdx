@@ -8,7 +8,7 @@ import WorkflowsBetaCallout from '/snippets/workflows-beta-callout.mdx';
 
 <WorkflowsBetaCallout />
 
-Use Corsair's `webhookHooks` to dispatch Trigger.dev tasks the moment an event fires. Trigger.dev handles retries, logging, and scheduling — Corsair handles webhook verification and integration auth.
+Use Corsair's `webhookHooks` to dispatch Trigger.dev tasks the moment an event fires. Trigger.dev handles retries, logging, and scheduling. Corsair handles webhook verification and integration auth.
 
 ## Install
 
@@ -16,7 +16,6 @@ Use Corsair's `webhookHooks` to dispatch Trigger.dev tasks the moment an event f
 npm install @trigger.dev/sdk
 ```
 
----
 
 ## Event trigger
 
@@ -85,7 +84,6 @@ export const notifyOnCall = task({
 });
 ```
 
----
 
 ## Workflow
 
@@ -165,7 +163,6 @@ export const onboardNewContact = task({
 });
 ```
 
----
 
 ## Cron job
 
@@ -179,12 +176,14 @@ export const weeklyErrorReport = schedules.task({
     id: 'weekly-error-report',
     cron: '0 17 * * 5', // Every Friday at 5pm UTC
     run: async () => {
-        // Query Corsair's synced Sentry database
-        const issues = await corsair.sentry.db.issues.list({
-            where: { status: 'unresolved' },
-            orderBy: { lastSeen: 'desc' },
-            limit: 10,
+        // Query Corsair's synced Sentry database (fields live on .data)
+        const unresolved = await corsair.sentry.db.issues.search({
+            data: { status: 'unresolved' },
         });
+        // Sort newest-first and take the top 10 in JS
+        const issues = unresolved
+            .sort((a, b) => Date.parse(b.data.lastSeen) - Date.parse(a.data.lastSeen))
+            .slice(0, 10);
 
         if (issues.length === 0) {
             await corsair.slack.api.messages.post({
@@ -199,7 +198,7 @@ export const weeklyErrorReport = schedules.task({
             '',
             ...issues.map(
                 (i, idx) =>
-                    `${idx + 1}. *${i.title}* — ${i.count} events, last seen ${new Date(i.lastSeen).toLocaleDateString()}`,
+                    `${idx + 1}. *${i.data.title}* — ${i.data.count} events, last seen ${new Date(i.data.lastSeen).toLocaleDateString()}`,
             ),
             '',
             `_Triage before Monday_ 👆`,
@@ -214,10 +213,9 @@ export const weeklyErrorReport = schedules.task({
 ```
 
 <Info>
-Register scheduled tasks in your Trigger.dev worker entry point. They're automatically deployed and managed — no separate cron infrastructure needed.
+Register scheduled tasks in your Trigger.dev worker entry point. They're automatically deployed and managed, so you need no separate cron infrastructure.
 </Info>
 
----
 
 ## What's next
 

@@ -35,7 +35,7 @@ export function Connections({ tenantId }: { tenantId: string }) {
 }
 ```
 
-`useConnectionStatus` returns a map of plugin id → `connected | missing_credentials | not_connected`, so your UI knows what's live and what still needs a connect flow.
+`useConnectionStatus` returns a map of plugin id to `connected | missing_credentials | not_connected`, so your UI knows what's live and what still needs a connect flow.
 
 </Step>
 
@@ -65,7 +65,7 @@ export function ConnectGitHub({ tenantId }: { tenantId: string }) {
 }
 ```
 
-Hub hosts the consent screen and runs the OAuth handshake. When the user returns, the tokens are already encrypted in your own database — you never saw them, and neither did Hub. Swap `"github"` for any [plugin](/guides/plugins) you configured.
+Hub hosts the consent screen and runs the OAuth handshake. When the user returns, the tokens are already encrypted in your own database. You never saw them, and neither did Hub. Swap `"github"` for any [plugin](/guides/plugins) you configured.
 
 </Step>
 

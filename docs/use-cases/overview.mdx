@@ -1,10 +1,10 @@
 ---
 title: Use cases
 sidebarTitle: Overview
-description: The four shapes an app built on Corsair takes — and how to pick between them.
+description: The four shapes an app built on Corsair takes, and how to pick between them.
 ---
 
-Almost everything built on Corsair is one of four shapes, or a combination of them. Each shape uses the same setup and the same two namespaces; what changes is where the data flows.
+Almost everything built on Corsair is one of four shapes, or a combination of them. Each shape uses the same setup and the same two namespaces. What changes is where the data flows.
 
 <CardGroup cols={2}>
   <Card title="Dashboard" href="/use-cases/dashboards" icon="table-columns">
@@ -20,8 +20,6 @@ Almost everything built on Corsair is one of four shapes, or a combination of th
     An event in one service triggers actions in another.
   </Card>
 </CardGroup>
-
----
 
 ## The one contract
 
@@ -40,7 +38,7 @@ Both follow the same path: `corsair.<plugin>.[db|api].<group>.<method>(args)`.
 | Creating, updating, deleting | `.api` |
 | User-triggered refresh or sync | `.api`, then re-read from `.db` |
 
-Every `.api` response is upserted into your database automatically, and webhooks update the same rows in place. That's why `.db` is the default for reads — it isn't a cache you maintain, it's a table Corsair keeps current. See [Database](/concepts/database).
+Every `.api` response is upserted into your database automatically, and webhooks update the same rows in place. That's why `.db` is the default for reads. It isn't a cache you maintain, it's a table Corsair keeps current. See [Database](/concepts/database).
 
 ```ts
 const tenant = corsair.withTenant('acme');
@@ -54,8 +52,6 @@ const issues = await tenant.github.db.issues.search({ data: { state: 'open' } })
 
 Everything else on this page is a variation on which side of that line your feature sits.
 
----
-
 ## Picking a shape
 
 | If the user's ask sounds like… | Build a |
@@ -65,9 +61,7 @@ Everything else on this page is a variation on which side of that line your feat
 | "what's happening with", "search across", "ask questions about" | [Knowledge base](/use-cases/knowledge-base) |
 | "when X happens, do Y", "automatically" | [Workflow](/use-cases/workflows) |
 
-The deciding question is **who chooses the operation**. If you know at build time which endpoint to call, it's a dashboard, knowledge base, or workflow — plain TypeScript. If the operation is only known at runtime from a human sentence, it's an agent, and you expose tools over MCP instead of hardcoding calls.
-
----
+The deciding question is **who chooses the operation**. If you know at build time which endpoint to call, it's a dashboard, knowledge base, or workflow, all plain TypeScript. If the operation is only known at runtime from a human sentence, it's an agent, and you expose tools over MCP instead of hardcoding calls.
 
 ## Combining shapes
 
@@ -92,8 +86,6 @@ Do not create a second Corsair instance for the chat feature, and don't connect 
 <Note>
 The shapes differ in reads, not in setup. If you've finished [Quick Start](/getting-started/quick-start), you already have everything all four need.
 </Note>
-
----
 
 ## Shared setup
 
@@ -122,8 +114,6 @@ Mint a link with `corsair.manage.connect.createLink({ plugin, tenantId })` and s
 </Steps>
 
 Then scope your calls with `withTenant()` and start reading. Multi-tenant details are in [Multi-tenancy](/concepts/multi-tenancy).
-
----
 
 ## What's next
 

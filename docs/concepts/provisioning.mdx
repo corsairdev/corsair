@@ -4,7 +4,7 @@ sidebarTitle: CLI
 description: Initialize integrations, accounts, and tenants with setupCorsair at runtime or the corsair CLI in ops.
 ---
 
-Provisioning creates the database rows, DEKs, and credential slots Corsair needs before a tenant can connect. The same logic runs two ways: `setupCorsair` from your backend (on signup, in production) and `pnpm corsair setup` from the CLI (local and ops). Both are idempotent — they skip rows that already exist.
+Provisioning creates the database rows, DEKs, and credential slots Corsair needs before a tenant can connect. The same logic runs two ways: `setupCorsair` from your backend (on signup, in production) and `pnpm corsair setup` from the CLI (local and ops). Both are idempotent, so they skip rows that already exist.
 
 ## Data model
 
@@ -19,11 +19,13 @@ corsair_accounts       ← one row per (tenant, plugin with an authType)
 | Account | `corsair_accounts` | Per tenant | API keys, OAuth tokens, refresh tokens |
 | Tenant | *(no table)* | Your ID string | Materializes once account rows exist |
 
-Account rows are created only for plugins with an `authType` (`api_key`, `oauth_2`, `bot_token`). A tenant is any stable ID you choose — user id, org id, workspace slug.
+Account rows are created only for plugins with an `authType` (`api_key`, `oauth_2`, `bot_token`, `managed`). A tenant is any stable ID you choose: user id, org id, workspace slug.
+
+Provisioning touches only these two credential tables. The other three (entities, events, permissions) are covered under [Database](/concepts/database) and [Permissions](/concepts/permissions).
 
 ## setupCorsair
 
-Call it from your backend, most often on signup — no deploy per tenant.
+Call it from your backend, most often on signup, with no deploy per tenant.
 
 ```ts onboarding.ts
 import { setupCorsair } from 'corsair';
@@ -60,7 +62,7 @@ It returns a log string and skips existing rows.
 
 ## CLI
 
-Same provisioning from the terminal — for local setup and ops:
+Same provisioning from the terminal, for local setup and ops:
 
 ```bash
 # Single-tenant
@@ -82,14 +84,14 @@ pnpm corsair setup --gmail client_id=... client_secret=...
 
 ## Credentials
 
-**Integration-level** — shared OAuth app creds, one per plugin:
+**Integration-level**: shared OAuth app creds, one per plugin:
 
 ```ts
 await corsair.keys.gmail.set_client_id('...');
 await corsair.keys.gmail.set_client_secret('...');
 ```
 
-**Account-level** — per tenant, for `api_key` / `bot_token` fields and OAuth tokens:
+**Account-level**: per tenant, for `api_key` / `bot_token` fields and OAuth tokens:
 
 ```ts
 // multi-tenant
@@ -99,7 +101,7 @@ await corsair.withTenant('user_abc').linear.keys.set_api_key('lin_api_...');
 await corsair.linear.keys.set_api_key('lin_api_...');
 ```
 
-`keys.set_*()` needs an account row first — run `setupCorsair({ tenantId })` before setting API keys.
+`keys.set_*()` needs an account row first. Run `setupCorsair({ tenantId })` before setting API keys.
 
 <Warning>
 Multi-tenant: passing integration fields together with a `tenantId` in `setupCorsair({ credentials })` throws. Set integration creds without a `tenantId`.
@@ -125,13 +127,13 @@ Every runtime call goes through `corsair.withTenant(id)`. See [Multi-tenancy](/c
 
 ## OAuth
 
-Provisioning does not run OAuth — it prepares the rows. Tokens arrive when a user connects. After integration creds are set:
+Provisioning does not run OAuth; it prepares the rows. Tokens arrive when a user connects. After integration creds are set:
 
 ```bash
 pnpm corsair auth --plugin=gmail --tenant=workspace_123
 ```
 
-Or in app code, [`processOAuthCallback`](/concepts/oauth-process) stores the tokens and creates the account row lazily if missing. This is the OAuth-only path — you can skip `setupCorsair({ tenantId })` on signup and let the first connect provision the row. API keys still need `setupCorsair` first.
+Or in app code, [`corsair.manage.connect.oauthCallback`](/concepts/oauth-process) stores the tokens and creates the account row lazily if missing. This is the OAuth-only path. You can skip `setupCorsair({ tenantId })` on signup and let the first connect provision the row. API keys still need `setupCorsair` first.
 
 ## Adding a plugin later
 
@@ -142,7 +144,7 @@ pnpm corsair setup                                    # integration row (+ defau
 pnpm corsair setup --gmail client_id=... client_secret=...
 ```
 
-Multi-tenant — provision the new plugin for existing tenants (each still authorizes it separately; rows are not copied):
+Multi-tenant provisioning of the new plugin for existing tenants (each still authorizes it separately; rows are not copied):
 
 ```ts
 for (const tenantId of await listActiveTenantIds()) {
@@ -155,5 +157,5 @@ Removing a plugin from code does not delete its database rows.
 </Warning>
 
 <Note>
-`corsair.manage.tenants.create()` records a tenant but does **not** create account rows — use `setupCorsair` or the CLI to provision.
+`corsair.manage.tenants.create()` records a tenant but does **not** create account rows. Use `setupCorsair` or the CLI to provision.
 </Note>

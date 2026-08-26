@@ -1,11 +1,11 @@
 ---
 title: Connect / OAuth
-description: Connect users to Slack, GitHub, and other plugins — one createLink API, config-driven hub or manual mode.
+description: Connect users to Slack, GitHub, and other plugins with one createLink API, config-driven hub or manual mode.
 ---
 
 When a user clicks "Connect GitHub" in your dashboard, your backend calls `client.connect.createLink()`, redirects them to the returned `connectUrl`, and Corsair handles the rest.
 
-The same API works in both modes — **`hub`** or **`manual`** config on `createCorsair` picks the backend:
+The same API works in both modes. The **`hub`** or **`manual`** config on `createCorsair` picks the backend:
 
 | Config | Where `connectUrl` points | What you build |
 | ------ | --------------------------- | -------------- |
@@ -74,9 +74,9 @@ Hub-specific optional overrides (ignored in manual mode):
 
 | Field | Purpose |
 | ----- | ------- |
-| `plugin` | Optional — omit to show all configured plugins |
-| `oauthMode` | Optional — inferred from plugin `authType` when omitted |
-| `providerName` | Optional — override provider display name in Hub UI |
+| `plugin` | Optional. Omit to show all configured plugins |
+| `oauthMode` | Optional. Inferred from plugin `authType` when omitted |
+| `providerName` | Optional. Override provider display name in Hub UI |
 
 Hub delivers results to your handler. In development the SDK auto-detects the delivery URL; in production it uses the URL registered in the [Hub dashboard](/hub/dashboard). You do **not** call `resolve` or `oauthCallback`.
 
@@ -98,10 +98,10 @@ export const corsair = createCorsair({
 
 Mount the management handler and build two pages:
 
-1. **Connect page** at `manual.baseUrl` — receives `?state=…`, resolves to the provider OAuth URL
-2. **OAuth callback** at `manual.redirectUri` — receives `?code=…&state=…`, exchanges for tokens
+1. **Connect page** at `manual.baseUrl`. Receives `?state=…`, resolves to the provider OAuth URL
+2. **OAuth callback** at `manual.redirectUri`. Receives `?code=…&state=…`, exchanges for tokens
 
-### Step 1 — Create the connect link
+### Step 1: create the connect link
 
 ```ts backend.ts
 const { connectUrl } = await client.connect.createLink({
@@ -131,9 +131,9 @@ function ConnectGithub({ tenantId }: { tenantId: string }) {
 }
 ```
 
-The signed `state` is embedded in `connectUrl` as a query parameter — you do not need to handle it separately.
+The signed `state` is embedded in `connectUrl` as a query parameter, so you do not need to handle it separately.
 
-### Step 2 — Resolve
+### Step 2: resolve
 
 The browser hits your connect page with `?state=…`. Call resolve to get the provider OAuth URL:
 
@@ -144,7 +144,7 @@ const resolved = await client.connect.resolve(state);
 
 Or use `corsair.manage.connect.resolve(state)` in-process.
 
-### Step 3 — OAuth callback
+### Step 3: OAuth callback
 
 The provider redirects back with `?code=…&state=…`:
 

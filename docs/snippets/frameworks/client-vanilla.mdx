@@ -8,7 +8,7 @@ import { createCorsairClient } from "corsair";
 export const client = createCorsairClient({ baseURL: "/api/corsair" });
 ```
 
-`createCorsairClient` is a typed fetch wrapper over the management API — no React required. Use it from your frontend, a worker, or a script. Every route is typed against its response. Full surface on the [Vanilla Client](/adapters/client) reference.
+`createCorsairClient` is a typed fetch wrapper over the management API, no React required. Use it from your frontend, a worker, or a script. Every route is typed against its response. Full surface on the [Vanilla Client](/adapters/client) reference.
 
 </Step>
 
@@ -19,7 +19,7 @@ const status = await client.connectionStatus.get({ tenantId: "acme" });
 // { github: 'connected', slack: 'not_connected', notion: 'missing_credentials' }
 ```
 
-`connectionStatus.get` returns a map of plugin id → `connected | missing_credentials | not_connected`, so you can show what's live and what still needs connecting.
+`connectionStatus.get` returns a map of plugin id to `connected | missing_credentials | not_connected`, so you can show what's live and what still needs connecting.
 
 </Step>
 
@@ -33,7 +33,7 @@ const { connectUrl } = await client.connect.createLink({
 window.location.href = connectUrl; // send the user to Hub's hosted connect page
 ```
 
-Hub hosts the consent screen and runs the OAuth handshake. When the user returns, the tokens are already encrypted in your own database — you never saw them, and neither did Hub. Swap `"github"` for any [plugin](/guides/plugins) you configured.
+Hub hosts the consent screen and runs the OAuth handshake. When the user returns, the tokens are already encrypted in your own database. You never saw them, and neither did Hub. Swap `"github"` for any [plugin](/guides/plugins) you configured.
 
 </Step>
 

@@ -8,7 +8,7 @@ import WorkflowsBetaCallout from '/snippets/workflows-beta-callout.mdx';
 
 <WorkflowsBetaCallout />
 
-Use Corsair's `webhookHooks` to push events into Hatchet whenever something happens in a connected service. Hatchet handles durable execution and retries — Corsair handles webhook routing and integration auth.
+Use Corsair's `webhookHooks` to push events into Hatchet whenever something happens in a connected service. Hatchet handles durable execution and retries. Corsair handles webhook routing and integration auth.
 
 ## Install
 
@@ -16,7 +16,6 @@ Use Corsair's `webhookHooks` to push events into Hatchet whenever something happ
 npm install @hatchet-dev/typescript-sdk
 ```
 
----
 
 ## Event trigger
 
@@ -98,7 +97,6 @@ supportWorkflow.task('create-linear-issue', async (ctx) => {
 });
 ```
 
----
 
 ## Workflow
 
@@ -158,14 +156,15 @@ deployWorkflow.task('update-linear-project', async (ctx) => {
     const input = ctx.workflowInput<PushInput>();
     const client = input.tenantId ? corsair.withTenant(input.tenantId) : corsair;
 
-    // Move any Linear issues marked "In Review" to "Done"
-    const inReview = await client.linear.db.issues.list({
-        where: { state: { name: 'In Review' }, team: { id: process.env.LINEAR_TEAM_ID } },
-    });
+    // Move any Linear issues marked "In Review" to "Done" (fields live on .data)
+    const all = await client.linear.db.issues.list();
+    const inReview = all.filter(
+        (i) => i.data.state?.name === 'In Review' && i.data.team?.id === process.env.LINEAR_TEAM_ID,
+    );
 
     for (const issue of inReview) {
         await client.linear.api.issues.update({
-            issueId: issue.id,
+            issueId: issue.data.id,
             stateId: process.env.LINEAR_DONE_STATE_ID!,
         });
     }
@@ -182,7 +181,6 @@ deployWorkflow.task('log-release', async (ctx) => {
 });
 ```
 
----
 
 ## Cron job
 
@@ -198,32 +196,28 @@ export const sprintReportWorkflow = hatchet.workflow({
 });
 
 sprintReportWorkflow.task('post-sprint-report', async () => {
-    const [inProgress, blocked, unstarted] = await Promise.all([
-        corsair.linear.db.issues.list({
-            where: { state: { type: 'started' } },
-            orderBy: { priority: 'asc' },
-        }),
-        corsair.linear.db.issues.list({
-            where: { state: { name: 'Blocked' } },
-        }),
-        corsair.linear.db.issues.list({
-            where: { state: { type: 'unstarted' } },
-            orderBy: { priority: 'asc' },
-            limit: 5,
-        }),
-    ]);
+    // List once, then filter/sort in JS (fields live on .data)
+    const all = await corsair.linear.db.issues.list();
+    const byPriority = (a, b) => (a.data.priority ?? 0) - (b.data.priority ?? 0);
+
+    const inProgress = all.filter((i) => i.data.state?.type === 'started').sort(byPriority);
+    const blocked = all.filter((i) => i.data.state?.name === 'Blocked');
+    const unstarted = all
+        .filter((i) => i.data.state?.type === 'unstarted')
+        .sort(byPriority)
+        .slice(0, 5);
 
     const lines = [
         `*Sprint Report — ${new Date().toDateString()}*`,
         '',
         `*🔄 In Progress (${inProgress.length})*`,
-        ...inProgress.map((i) => `• *${i.title}* — ${i.assignee?.name ?? 'Unassigned'}`),
+        ...inProgress.map((i) => `• *${i.data.title}* — ${i.data.assignee?.name ?? 'Unassigned'}`),
         '',
         `*🚧 Blocked (${blocked.length})*`,
-        ...blocked.map((i) => `• *${i.title}* — ${i.assignee?.name ?? 'Unassigned'}`),
+        ...blocked.map((i) => `• *${i.data.title}* — ${i.data.assignee?.name ?? 'Unassigned'}`),
         '',
         `*📋 Up Next (${unstarted.length})*`,
-        ...unstarted.map((i) => `• ${i.title}`),
+        ...unstarted.map((i) => `• ${i.data.title}`),
     ];
 
     await corsair.slack.api.messages.post({
@@ -247,10 +241,9 @@ await worker.start();
 ```
 
 <Info>
-Register all workflows in a single worker. The cron schedule is part of the workflow definition — Hatchet picks it up automatically when the worker connects.
+Register all workflows in a single worker. The cron schedule is part of the workflow definition. Hatchet picks it up automatically when the worker connects.
 </Info>
 
----
 
 ## What's next
 

@@ -8,7 +8,7 @@ import WorkflowsBetaCallout from '/snippets/workflows-beta-callout.mdx';
 
 <WorkflowsBetaCallout />
 
-Use Corsair's `webhookHooks` to start Temporal workflows the moment an event fires. Temporal handles durability, retries, and long-running execution — Corsair handles the webhook plumbing and integration auth.
+Use Corsair's `webhookHooks` to start Temporal workflows the moment an event fires. Temporal handles durability, retries, and long-running execution. Corsair handles the webhook plumbing and integration auth.
 
 ## Install
 
@@ -16,11 +16,10 @@ Use Corsair's `webhookHooks` to start Temporal workflows the moment an event fir
 npm install @temporalio/client @temporalio/workflow @temporalio/activity @temporalio/worker
 ```
 
----
 
 ## Event trigger
 
-When a Stripe payment fails, start a Temporal workflow that notifies the customer via Resend. One activity, one action — the minimal trigger pattern.
+When a Stripe payment fails, start a Temporal workflow that notifies the customer via Resend. One activity, one action.
 
 ```ts corsair.ts
 import { temporalClient } from '@/temporal/client';
@@ -90,11 +89,10 @@ export async function sendFailureEmail({ customerId, amount, currency, tenantId 
 }
 ```
 
----
 
 ## Workflow
 
-When a new trial contact is created in HubSpot, send a welcome email immediately, wait 3 days, then check if they upgraded — if not, send a follow-up. This is the kind of time-delayed sequence that makes Temporal worth reaching for: the `sleep` is durable across restarts, no cron or external scheduler needed.
+When a new trial contact is created in HubSpot, send a welcome email immediately, wait 3 days, then check if they upgraded. If not, send a follow-up. The `sleep` is durable across restarts, no cron or external scheduler needed.
 
 ```ts corsair.ts
 hubspot({
@@ -208,11 +206,10 @@ export async function sendTrialEndingEmail({ email, firstName, tenantId }: Trial
 }
 ```
 
----
 
 ## Cron job
 
-Create a Temporal schedule that runs every morning and posts a standup digest to Slack — all open Linear issues, pulled from Corsair's local database.
+Create a Temporal schedule that runs every morning and posts a standup digest to Slack. The digest lists all open Linear issues, pulled from Corsair's local database.
 
 ```ts temporal/schedules.ts
 import { Client } from '@temporalio/client';
@@ -251,24 +248,24 @@ export async function morningStandupWorkflow(): Promise<void> {
 import { corsair } from '@/server/corsair';
 
 export async function postStandupDigest() {
-    // Query Corsair's synced Linear database
-    const inProgress = await corsair.linear.db.issues.list({
-        where: { state: { type: 'started' } },
-        orderBy: { updatedAt: 'desc' },
-    });
+    // Query Corsair's synced Linear database (fields live on .data)
+    const all = await corsair.linear.db.issues.list();
 
-    const blocked = await corsair.linear.db.issues.list({
-        where: { state: { name: 'Blocked' } },
-    });
+    const inProgress = all
+        .filter((i) => i.data.state?.type === 'started')
+        // Sort newest-first in JS
+        .sort((a, b) => Date.parse(b.data.updatedAt) - Date.parse(a.data.updatedAt));
+
+    const blocked = all.filter((i) => i.data.state?.name === 'Blocked');
 
     const lines = [
         `*Morning Standup — ${new Date().toDateString()}*`,
         '',
         `*In Progress (${inProgress.length})*`,
-        ...inProgress.map((i) => `• ${i.title} — ${i.assignee?.name ?? 'Unassigned'}`),
+        ...inProgress.map((i) => `• ${i.data.title} — ${i.data.assignee?.name ?? 'Unassigned'}`),
         '',
         `*Blocked (${blocked.length})*`,
-        ...blocked.map((i) => `• ${i.title} — ${i.assignee?.name ?? 'Unassigned'}`),
+        ...blocked.map((i) => `• ${i.data.title} — ${i.data.assignee?.name ?? 'Unassigned'}`),
     ];
 
     await corsair.slack.api.messages.post({
@@ -279,10 +276,9 @@ export async function postStandupDigest() {
 ```
 
 <Info>
-Use `client.schedule.create()` once at server startup or in a migration script. Subsequent restarts won't duplicate the schedule — Temporal deduplicates by `scheduleId`.
+Use `client.schedule.create()` once at server startup or in a migration script. Subsequent restarts won't duplicate the schedule. Temporal deduplicates by `scheduleId`.
 </Info>
 
----
 
 ## What's next
 

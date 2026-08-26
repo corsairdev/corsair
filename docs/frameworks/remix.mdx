@@ -1,7 +1,7 @@
 ---
 title: Remix
 sidebarTitle: Remix
-description: Loaders read from .db, actions write through .api — Corsair's read/write split lands directly on Remix's data model.
+description: Loaders read from .db, actions write through .api. Corsair's read/write split lands directly on Remix's data model.
 icon: "/icons/remix.svg"
 ---
 
@@ -14,7 +14,7 @@ Remix splits every route into a `loader` that reads and an `action` that writes.
 
 <Install />
 
-The adapters ship in core `corsair`; add one `@corsair-dev/*` package per service you connect — the full list is in [Plugins](/guides/plugins).
+The adapters ship in core `corsair`; add one `@corsair-dev/*` package per service you connect. The full list is in [Plugins](/guides/plugins).
 
 ## Mount the handler
 
@@ -33,13 +33,13 @@ export const { loader, action } = toRemixHandler(corsair, {
 
 ## Resolve the tenant
 
-Both `loader` and `action` receive the `request`, so read the user off your session the way you already do and pass that id to `withTenant`. Corsair brings no auth of its own — it only needs the resolved id.
+Both `loader` and `action` receive the `request`, so read the user off your session the way you already do and pass that id to `withTenant`. Corsair brings no auth of its own; it only needs the resolved id.
 
 ```ts
 import { getTenantId } from '~/server/tenant';   // your auth, not Corsair's
 
 const tenantId = await getTenantId(request);
-const tenant = corsair.withTenant(userId);
+const tenant = corsair.withTenant(tenantId);
 ```
 
 ## Read and write
@@ -93,7 +93,7 @@ Remix re-runs the page's `loader` automatically after an `action` returns. The `
 
 ## Connect a tenant
 
-A tenant has to connect GitHub before the loader has anything to read. That flow is client-side: create the React hook client once and call the hooks from any route or component.
+A tenant has to connect GitHub before the loader has anything to read. That flow is client-side, so create the React hook client once and call the hooks from any route or component.
 
 <ClientReact />
 
@@ -107,7 +107,7 @@ The first request to `/api/corsair` registers your delivery URL with Hub and fli
 
 ## Deploy
 
-Deploy however you already ship this app. In production the mounted `/api/corsair` route is the delivery URL Hub calls — the same splat route serves it whether you're on a Node server or a Web-standard host.
+Deploy however you already ship this app. In production the mounted `/api/corsair` route is the delivery URL Hub calls. The same splat route serves it whether you're on a Node server or a Web-standard host.
 
 ## Next
 
@@ -115,7 +115,7 @@ Deploy however you already ship this app. In production the mounted `/api/corsai
   <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">
     The `.db` read / `.api` write pattern in full, with refresh and webhooks.
   </Card>
-  <Card title="React Hooks" icon="react" href="/adapters/react">
+  <Card title="React hooks" icon="react" href="/adapters/react">
     Every hook the client factory returns, with types and examples.
   </Card>
   <Card title="Connect / OAuth" icon="link" href="/management/connect">

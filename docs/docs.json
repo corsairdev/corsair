@@ -45,17 +45,27 @@
           {
             "group": "Frameworks",
             "pages": [
-              "frameworks/next",
-              "frameworks/node",
-              "frameworks/express",
-              "frameworks/hono",
-              "frameworks/sveltekit",
-              "frameworks/remix",
-              "frameworks/astro",
-              "frameworks/nuxt",
-              "frameworks/tanstack",
-              "frameworks/fastify",
-              "frameworks/nestjs"
+              {
+                "group": "Full-stack",
+                "pages": [
+                  "frameworks/next",
+                  "frameworks/nuxt",
+                  "frameworks/sveltekit",
+                  "frameworks/remix",
+                  "frameworks/astro",
+                  "frameworks/tanstack"
+                ]
+              },
+              {
+                "group": "Backend",
+                "pages": [
+                  "frameworks/node",
+                  "frameworks/express",
+                  "frameworks/fastify",
+                  "frameworks/hono",
+                  "frameworks/nestjs"
+                ]
+              }
             ]
           },
           {

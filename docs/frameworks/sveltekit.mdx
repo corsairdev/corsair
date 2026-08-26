@@ -8,7 +8,7 @@ icon: "/icons/sveltekit.svg"
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
 
-SvelteKit keeps server work in `+page.server.ts`: a `load` function fetches, `+page.svelte` renders, and form actions mutate. Corsair drops straight into that flow — `load` reads from `.db`, form actions write through `.api` — with the handler itself living in a Web-standard endpoint.
+SvelteKit keeps server work in `+page.server.ts`. A `load` function fetches, `+page.svelte` renders, and form actions mutate. Corsair drops straight into that flow, with `load` reading from `.db` and form actions writing through `.api`, and the handler itself living in a Web-standard endpoint.
 
 ## Install
 
@@ -35,7 +35,7 @@ An endpoint receives a `Request` and returns a `Response`, which is exactly the 
 import { toSvelteKitHandler } from 'corsair';
 import { corsair } from '$lib/server/corsair';
 
-export const { GET, POST } = toSvelteKitHandler(corsair, {
+export const { GET, POST, OPTIONS } = toSvelteKitHandler(corsair, {
     basePath: '/api/corsair',
 });
 ```
@@ -44,7 +44,7 @@ export const { GET, POST } = toSvelteKitHandler(corsair, {
 
 ## Resolve the tenant
 
-Set the signed-in user on `event.locals` in `hooks.server.ts` — your auth's job, not Corsair's. Then `load` and form actions read it off `locals` and hand the id to `withTenant`.
+Set the signed-in user on `event.locals` in `hooks.server.ts`, which is your auth's job, not Corsair's. Then `load` and form actions read it off `locals` and hand the id to `withTenant`.
 
 ```ts
 // in load / actions — event.locals.user comes from hooks.server.ts
@@ -53,7 +53,7 @@ const tenant = corsair.withTenant(await getTenantId(locals));
 
 ## Read and write
 
-`load` reads `.db` and hands the data to the page — no network on navigation. A form action writes through `.api`; because Corsair upserts the response into your database as part of the call, the next `load` sees the row already current.
+`load` reads `.db` and hands the data to the page, with no network on navigation. A form action writes through `.api`; because Corsair upserts the response into your database as part of the call, the next `load` sees the row already current.
 
 ```ts src/routes/issues/+page.server.ts
 import { corsair } from '$lib/server/corsair';
@@ -100,7 +100,7 @@ The page renders `data.issues` and posts to the action. Entity fields live on `.
 
 ## Refresh after a write
 
-A form action that returns nothing makes SvelteKit re-run the page's `load`, so the closed issue drops off on its own. When a write happens outside a form — a button handler, a websocket message — call `invalidate` to re-run `load` yourself; the `.api` upsert means the re-read is already current.
+A form action that returns nothing makes SvelteKit re-run the page's `load`, so the closed issue drops off on its own. When a write happens outside a form, such as a button handler or a websocket message, call `invalidate` to re-run `load` yourself; the `.api` upsert means the re-read is already current.
 
 ```ts
 import { invalidateAll } from '$app/navigation';
@@ -109,7 +109,7 @@ await invalidateAll();   // re-runs load; .db already reflects the write
 
 ## Connect a tenant
 
-A tenant connects GitHub before `load` has anything to read. Svelte isn't React, so use the vanilla client — from a component, a `load` function, or a script.
+A tenant connects GitHub before `load` has anything to read. Svelte isn't React, so use the vanilla client from a component, a `load` function, or a script.
 
 <ClientVanilla />
 
@@ -131,7 +131,7 @@ Pick the SvelteKit adapter for your target (`adapter-node`, `adapter-vercel`, an
   <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">
     The `.db` read / `.api` write pattern in full, with refresh and webhooks.
   </Card>
-  <Card title="Vanilla Client" icon="code" href="/adapters/client">
+  <Card title="Vanilla client" icon="code" href="/adapters/client">
     Every management-API method the client exposes, fully typed.
   </Card>
   <Card title="Connect / OAuth" icon="link" href="/management/connect">

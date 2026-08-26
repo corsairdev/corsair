@@ -11,7 +11,7 @@ export const {
 } = createCorsairReactClient({ baseURL: "/api/corsair" });
 ```
 
-Full hook list — `useTenants`, `usePlugin`, `useOAuthCallback`, and friends — on the [React Hooks](/adapters/react) reference.
+Full hook list, including `useTenants`, `usePlugin`, and `useOAuthCallback`, on the [React Hooks](/adapters/react) reference.
 
   </Tab>
   <Tab title="Vanilla JS">
@@ -25,7 +25,7 @@ export const client = createCorsairClient({ baseURL: "/api/corsair" });
 await client.connectionStatus.get({ tenantId: "acme" });
 ```
 
-Works from any JS runtime — Svelte, Vue, a worker, a CLI. See the [Vanilla Client](/adapters/client) reference.
+Works from any JS runtime, such as Svelte, Vue, a worker, or a CLI. See the [Vanilla Client](/adapters/client) reference.
 
   </Tab>
 </Tabs>

@@ -8,15 +8,15 @@ icon: "/icons/nuxt.svg"
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
 
-In Nuxt, anything that talks to a third-party service lives in `server/` and runs on Nitro. Corsair fits that split exactly: the handler is one Nitro route, your pages stay on the client, and the bridge between them is a `useFetch` against a server route that reads Corsair's synced tables. Nothing integration-shaped ever ships to the browser.
+In Nuxt, anything that talks to a third-party service lives in `server/` and runs on Nitro. Corsair fits that split exactly. The handler is one Nitro route, your pages stay on the client, and the bridge between them is a `useFetch` against a server route that reads Corsair's synced tables. Nothing integration-shaped ever ships to the browser.
 
 ## Install
 
-The adapter ships in core. Each integration is its own package — add one per service you connect.
+The adapter ships in core. Each integration is its own package. Add one per service you connect.
 
 <Install />
 
-Every service is its own `@corsair-dev/*` package — the full catalog with exact ids is in [Plugins](/guides/plugins).
+Every service is its own `@corsair-dev/*` package. The full catalog with exact ids is in [Plugins](/guides/plugins).
 
 ## Mount the handler
 
@@ -29,13 +29,13 @@ import { corsair } from '~/server/corsair';
 export default toNuxtHandler(corsair, { basePath: '/api/corsair' });
 ```
 
-`~/server/corsair` is your `createCorsair({ ... })` instance — see [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+`~/server/corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet.
 
 <Note>The `[...]` catch-all matters: Corsair serves delivery, connect, and tenant paths all under `/api/corsair`, so the route has to swallow the whole subtree.</Note>
 
 ## Resolve the tenant
 
-Every read and write is scoped to a tenant id — whatever stable id identifies the current user or org. In a Nitro route you already have the h3 `event`, so resolve the id from your session or a header (however your auth works) and pass it to `withTenant`.
+Every read and write is scoped to a tenant id, whatever stable id identifies the current user or org. In a Nitro route you already have the h3 `event`, so resolve the id from your session or a header (however your auth works) and pass it to `withTenant`.
 
 ```ts
 export default defineEventHandler(async (event) => {
@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
 
 ## Read and write
 
-Reads go through `.db` — your own database, no rate limits — so keep them in a Nitro server route and pull them into a page with `useFetch`. Writes go through `.api`, and Corsair upserts the response, so the next read already reflects it.
+Reads go through `.db`, your own database with no rate limits, so keep them in a Nitro server route and pull them into a page with `useFetch`. Writes go through `.api`, and Corsair upserts the response, so the next read already reflects it.
 
 ```ts server/api/issues.get.ts
 import { corsair } from '~/server/corsair';
@@ -73,11 +73,11 @@ const { data: issues } = await useFetch('/api/issues');
 </template>
 ```
 
-A mutation is a `.post` handler that calls `.api` — e.g. `await tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title: '…' })`. Entity fields live on `.data` in camelCase.
+A mutation is a `.post` handler that calls `.api`, e.g. `await tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title: '…' })`. Entity fields live on `.data` in camelCase.
 
 ## Refresh after a write
 
-The `.api` write already made `.db` current, so the page just needs to re-read. `useFetch` gives you a `refresh` for that — call it after the mutation resolves, or `refreshNuxtData('issues')` from anywhere by key.
+The `.api` write already made `.db` current, so the page just needs to re-read. `useFetch` gives you a `refresh` for that. Call it after the mutation resolves, or `refreshNuxtData('issues')` from anywhere by key.
 
 ```vue
 <script setup lang="ts">
@@ -92,7 +92,7 @@ async function close(number: number) {
 
 ## Connect a tenant
 
-Nuxt renders Vue, and Corsair's typed hooks client is React-only — so use the framework-agnostic [vanilla client](/adapters/client) for the connect flow. Create it once and call it from a Nitro route or a plain client script; it mints a connect link and reports status without any UI framework.
+Nuxt renders Vue, and Corsair's typed hooks client is React-only, so use the framework-agnostic [vanilla client](/adapters/client) for the connect flow. Create it once and call it from a Nitro route or a plain client script; it mints a connect link and reports status without any UI framework.
 
 <ClientVanilla />
 
@@ -106,7 +106,7 @@ The first request to `/api/corsair` registers your delivery URL with Hub and tur
 
 ## Deploy
 
-Deploy the Nuxt app as usual — the Nitro server route ships with it. In production, `/api/corsair` at your deployed origin is the delivery URL Hub calls, so nothing extra to wire up.
+Deploy the Nuxt app as usual, and the Nitro server route ships with it. In production, `/api/corsair` at your deployed origin is the delivery URL Hub calls, so nothing extra to wire up.
 
 ## Next
 

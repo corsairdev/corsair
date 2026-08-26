@@ -1,7 +1,7 @@
 ---
 title: OpenAI
 icon: "/icons/openai.svg"
-description: Connect Corsair to OpenAI — the Agents SDK or the Responses API over HTTP.
+description: Connect Corsair to OpenAI via the Agents SDK or the Responses API over HTTP.
 ---
 
 There are two ways to give an OpenAI model Corsair's tools. Use the **Agents SDK** if you're building with `@openai/agents`; use the **Responses API** if you're calling the model directly over HTTP.
@@ -40,7 +40,7 @@ const result = await run(agent, 'Setup corsair, then list all Slack channels.');
 console.log(result.finalOutput);
 ```
 
-`OpenAIAgentsProvider.build()` is async — it dynamically imports `@openai/agents` as an optional peer dependency. Pass the `tool` function from `@openai/agents` so the provider can wrap each Corsair tool in the correct format.
+`OpenAIAgentsProvider.build()` is async. It dynamically imports `@openai/agents` as an optional peer dependency. Pass the `tool` function from `@openai/agents` so the provider can wrap each Corsair tool in the correct format.
 
 </Tab>
 

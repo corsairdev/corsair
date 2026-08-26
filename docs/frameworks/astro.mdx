@@ -8,15 +8,15 @@ icon: "/icons/astro.svg"
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
 
-Astro sites are mostly static, but the interesting pages pull live data at request time. Corsair suits that well: the handler is one API route, and any page that should show integration data flips to server rendering and reads Corsair's synced tables right in its frontmatter — no client fetch, no loading spinner, just HTML with the data already in it.
+Astro sites are mostly static, but the interesting pages pull live data at request time. Corsair suits that well. The handler is one API route, and any page that should show integration data flips to server rendering and reads Corsair's synced tables right in its frontmatter. No client fetch, no loading spinner, just HTML with the data already in it.
 
 ## Install
 
-The adapter ships in core. Each integration is its own package — add one per service you connect.
+The adapter ships in core. Each integration is its own package. Add one per service you connect.
 
 <Install />
 
-Every service is its own `@corsair-dev/*` package — the full catalog with exact ids is in [Plugins](/guides/plugins).
+Every service is its own `@corsair-dev/*` package. The full catalog with exact ids is in [Plugins](/guides/plugins).
 
 ## Mount the handler
 
@@ -24,17 +24,17 @@ Every service is its own `@corsair-dev/*` package — the full catalog with exac
 import { toAstroHandler } from 'corsair';
 import { corsair } from '../../../server/corsair';
 
-export const { GET, POST } = toAstroHandler(corsair, { basePath: '/api/corsair' });
+export const { GET, POST, OPTIONS } = toAstroHandler(corsair, { basePath: '/api/corsair' });
 export const prerender = false;
 ```
 
-`../../../server/corsair` is your `createCorsair({ ... })` instance — see [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+`../../../server/corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet.
 
-<Warning>`export const prerender = false` is required — the route must run on the server per request, not be frozen at build time. Any page that reads live Corsair data needs the same line.</Warning>
+<Warning>`export const prerender = false` is required. The route must run on the server per request, not be frozen at build time. Any page that reads live Corsair data needs the same line.</Warning>
 
 ## Resolve the tenant
 
-Every read and write is scoped to a tenant id — whatever stable id identifies the current user or org. A server-rendered page has `Astro.request` and, if you use one, your session, so resolve the id there (however your auth works) and pass it to `withTenant`.
+Every read and write is scoped to a tenant id, whatever stable id identifies the current user or org. A server-rendered page has `Astro.request` and, if you use one, your session, so resolve the id there (however your auth works) and pass it to `withTenant`.
 
 ```astro
 ---
@@ -66,11 +66,11 @@ const issues = await tenant.github.db.issues.search({
 </ul>
 ```
 
-Writes go through `.api` — from a form POST or an API route, call e.g. `await tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title: '…' })`. Corsair upserts the response, so the next server render already shows it. Entity fields live on `.data` in camelCase.
+Writes go through `.api`. From a form POST or an API route, call e.g. `await tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title: '…' })`. Corsair upserts the response, so the next server render already shows it. Entity fields live on `.data` in camelCase.
 
 ## Connect a tenant
 
-Connecting is interactive, but it doesn't need a UI framework. Use the framework-agnostic [vanilla client](/adapters/client) from a small `<script>` in an `.astro` page — it mints the connect link and reports status, no island required.
+Connecting is interactive, but it doesn't need a UI framework. Use the framework-agnostic [vanilla client](/adapters/client) from a small `<script>` in an `.astro` page. It mints the connect link and reports status, no island required.
 
 <ClientVanilla />
 
@@ -84,7 +84,7 @@ The first request to `/api/corsair` registers your delivery URL with Hub and tur
 
 ## Deploy
 
-Deploy with your usual Astro adapter (`@astrojs/node`, `@astrojs/vercel`, and so on) — the route and any `prerender = false` page run on the server. In production, `/api/corsair` at your deployed origin is the delivery URL Hub calls.
+Deploy with your usual Astro adapter (`@astrojs/node`, `@astrojs/vercel`, and so on). The route and any `prerender = false` page run on the server. In production, `/api/corsair` at your deployed origin is the delivery URL Hub calls.
 
 ## Next
 

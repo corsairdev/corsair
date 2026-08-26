@@ -4,9 +4,9 @@ description: The open-source integration layer for agents and apps. Connect anyt
 mode: "wide"
 ---
 
-Every integration begins the same way, and you already know the steps. Read the provider's OAuth docs. Build a connect page. Register a redirect URI — one for localhost, a different one for production. Store the tokens. Refresh them before they expire. Stand up a webhook receiver. Back off when you hit the rate limit. Then you do the whole thing again for the next service, and the one after that. It is the work nobody demos and everybody rebuilds.
+Every integration begins the same way, and you already know the steps. Read the provider's OAuth docs. Build a connect page. Register a redirect URI, one for localhost and a different one for production. Store the tokens. Refresh them before they expire. Stand up a webhook receiver. Back off when you hit the rate limit. Then you do the whole thing again for the next service, and the one after that. It is the work nobody demos and everybody rebuilds.
 
-Corsair is where that work goes to disappear. Every service is a **plugin**. Install the ones you need, and each becomes two things at once: a fully typed client in the code you write, and a tool your agent can call on its own. The OAuth dance, the token refresh, the webhooks, the rate limits — handled, the same way for the fiftieth integration as for the first. You write the part that's actually yours; Corsair carries the wiring you've already built a hundred times.
+Corsair is where that work goes to disappear. Every service is a **plugin**. Install the ones you need, and each becomes a fully typed client in the code you write and a tool your agent can call on its own. The OAuth dance, the token refresh, the webhooks, and the rate limits are handled, the same way for the fiftieth integration as for the first. You write the part that's actually yours; Corsair carries the wiring you've already built a hundred times.
 
 One pattern covers a single integration or fifty. There are no per-service SDKs to learn and no glue code to keep alive as providers change their APIs underneath you.
 
@@ -16,18 +16,18 @@ Typed clients are for the code you write. The other half is for the code your ag
 
 > Invite Jim to next Thursday's sales call. Message him on Slack too so he can accept, and let me know the moment he does.
 
-Calendar, Slack, and a trigger waiting on his reply — three services, one sentence. The agent discovers what's connected and calls it. You never wrote a line that mentioned any of them by name.
+Calendar, Slack, and a trigger waiting on his reply. Three services, one sentence. The agent discovers what's connected and calls it. You never wrote a line that mentioned any of them by name.
 
 ## Corsair Hub
 
 A few of these surfaces can't live entirely inside your app. An OAuth callback needs a stable public URL for the provider to redirect to. A connect page has to be reachable before your user is signed in. An approval link has to open somewhere.
 
-Corsair Hub hosts exactly those surfaces, and nothing more. It isn't a second SDK or a separate product — it's the same Corsair instance with one block of config. Turn it on and the connect page, the OAuth callbacks, and the approval screens are handled for you, so there is nothing public to build or deploy.
+Corsair Hub hosts exactly those surfaces, and nothing more. It's the same Corsair instance with one block of config, not a second SDK or a separate product. Turn it on and the connect page, the OAuth callbacks, and the approval screens are handled for you, so there is nothing public to build or deploy.
 
-The part worth internalizing: **Hub stores none of your credentials.** Tokens pass through the relay and are persisted only in your own database, encrypted with your own key. Compromise the relay and there is nothing there to take — the secrets were never sitting on it. You skip the connect-page boilerplate without handing anyone your users' access tokens.
+**Hub stores none of your credentials.** Tokens pass through the relay and are persisted only in your own database, encrypted with your own key. Compromise the relay and there is nothing there to take. The secrets were never sitting on it. You skip the connect-page boilerplate without handing anyone your users' access tokens.
 
 <Tip>
-In a hurry? Hand it to your coding agent. [Set up with your agent](/getting-started/set-up-with-your-agent) is one prompt that wires Corsair end to end — install, route, keys, and a real connected integration — without you touching the config.
+In a hurry? Hand it to your coding agent. [Set up with your agent](/getting-started/set-up-with-your-agent) is one prompt that wires Corsair end to end, install, route, keys, and a real connected integration, without you touching the config.
 </Tip>
 
 ## Get started
@@ -40,7 +40,7 @@ In a hurry? Hand it to your coding agent. [Set up with your agent](/getting-star
     Paste one prompt and let your coding agent wire everything end to end.
   </Card>
   <Card title="Pick your framework" icon="layer-group" href="/frameworks/next">
-    Next, Node, Express, Hono, SvelteKit, Remix, Astro — mount the route in yours.
+    Next, Node, Express, Hono, SvelteKit, Remix, Astro. Mount the route in yours.
   </Card>
   <Card title="Browse plugins" icon="grip" href="/guides/plugins">
     Slack, Linear, Gmail, GitHub, HubSpot, Stripe, and hundreds more.

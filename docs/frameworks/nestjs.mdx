@@ -8,7 +8,7 @@ icon: "/icons/nestjs.svg"
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
 
-Nest runs on Express by default, so Corsair reuses the Express adapter — no dedicated Nest adapter. Mount it as middleware in `main.ts`, before Nest's router, and Corsair claims one base path. Everything else follows Nest's grain: register the corsair instance as a provider and inject it wherever you read integration data.
+Nest runs on Express by default, so Corsair reuses the Express adapter, with no dedicated Nest adapter. Mount it as middleware in `main.ts`, before Nest's router, and Corsair claims one base path. Everything else follows Nest's grain. Register the corsair instance as a provider and inject it wherever you read integration data.
 
 ## Install
 
@@ -18,7 +18,7 @@ The Express adapter ships in core `corsair`. Add a plugin package per service yo
 
 ## Mount the handler
 
-The adapter reads the raw stream itself, so no `express.json()` and no body-parser wiring — mount one line during bootstrap:
+The adapter reads the raw stream itself, so no `express.json()` and no body-parser wiring. Mount one line during bootstrap.
 
 ```ts main.ts
 import { NestFactory } from '@nestjs/core';
@@ -35,22 +35,22 @@ async function bootstrap() {
 bootstrap();
 ```
 
-`./corsair` is your `createCorsair({ ... })` instance — see [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet.
 
 ## Resolve the tenant
 
-Corsair only needs the tenant id — your own auth produces it. A Guard populates `request.user` the way it already does in your app; read it off the request and pass the id to `withTenant()`:
+Corsair only needs the tenant id, and your own auth produces it. A Guard populates `request.user` the way it already does in your app; read it off the request and pass the id to `withTenant()`.
 
 ```ts
 // a guard sets request.user; read it in the controller
 const tenant = this.corsair.withTenant(await getTenantId(req));
 ```
 
-`getTenantId(req)` is your own code — read the signed-in user from your auth; it can return any stable id.
+`getTenantId(req)` is your own code that reads the signed-in user from your auth; it can return any stable id.
 
 ## Read and write
 
-The handler serves Hub delivery; your business logic reads and writes through the same instance. Provide it once, then inject it — the corsair instance becomes a first-class Nest dependency:
+The handler serves Hub delivery; your business logic reads and writes through the same instance. Provide it once, then inject it, and the corsair instance becomes a first-class Nest dependency.
 
 ```ts corsair.module.ts
 import { Global, Module } from '@nestjs/common';
@@ -97,7 +97,7 @@ Entity fields live on `.data` in camelCase. Reads come from `.db`; creates and u
 
 ## Connect a tenant
 
-Nest is a backend, so use the vanilla client — from your frontend, a worker, or a script — to check connection status and mint connect links against the route above.
+Nest is a backend, so use the vanilla client from your frontend, a worker, or a script to check connection status and mint connect links against the route above.
 
 <ClientVanilla />
 
@@ -113,12 +113,12 @@ The first request to `/api/corsair` registers your delivery URL with Hub and tur
 
 ## Deploy
 
-Deploy the Nest app however you already run it. In production the same `/api/corsair` route becomes the delivery URL Hub calls, so ensure it's publicly reachable — the first request re-registers the production URL.
+Deploy the Nest app however you already run it. In production the same `/api/corsair` route becomes the delivery URL Hub calls, so ensure it's publicly reachable. The first request re-registers the production URL.
 
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Vanilla Client" icon="code" href="/adapters/client">
+  <Card title="Vanilla client" icon="code" href="/adapters/client">
     Every management-API method the client exposes, fully typed.
   </Card>
   <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">

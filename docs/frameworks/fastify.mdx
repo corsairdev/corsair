@@ -8,7 +8,7 @@ icon: "/icons/fastify.svg"
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
 
-Fastify is built for throughput, and the Corsair adapter keeps it that way. It reads the raw request stream itself, so there's no `addContentTypeParser` bridge and no double-parsing of Hub's delivery POSTs. Mount it as a wildcard route — ideally inside its own plugin, so registration and encapsulation stay Fastify-idiomatic.
+Fastify is built for throughput, and the Corsair adapter keeps it that way. It reads the raw request stream itself, so there's no `addContentTypeParser` bridge and no double-parsing of Hub's delivery POSTs. Mount it as a wildcard route, ideally inside its own plugin, so registration and encapsulation stay Fastify-idiomatic.
 
 ## Install
 
@@ -39,24 +39,24 @@ await app.register(corsairRoutes);
 await app.listen({ port: 3000 });
 ```
 
-`./corsair` is your `createCorsair({ ... })` instance — see [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet.
 
 <Note>The `*` wildcard is required: the base path alone (`/api/corsair`) won't match `/api/corsair/tenants` or the Hub delivery sub-paths.</Note>
 
 ## Resolve the tenant
 
-Corsair only needs the tenant id — your own auth produces it. Decorate the request with the authenticated user (in a hook or auth plugin), then read it off `request.user`:
+Corsair only needs the tenant id, and your own auth produces it. Decorate the request with the authenticated user (in a hook or auth plugin), then read it off `request.user`.
 
 ```ts
 // set request.user in your auth hook, then per request:
 const tenant = corsair.withTenant(await getTenantId(request));
 ```
 
-`getTenantId(request)` is your own code — read the signed-in user from your auth; it can return any stable id.
+`getTenantId(request)` is your own code that reads the signed-in user from your auth; it can return any stable id.
 
 ## Read and write
 
-Once a tenant is connected, reads never leave your database — perfect for a hot handler that can't afford a third-party round trip. Scope with `withTenant()`, then query the plugin's entities:
+Once a tenant is connected, reads never leave your database, which suits a hot handler that can't afford a third-party round trip. Scope with `withTenant()`, then query the plugin's entities.
 
 ```ts routes/issues.ts
 import { corsair } from '../corsair';
@@ -86,7 +86,7 @@ Entity fields live on `.data` in camelCase. Reads come from `.db`; creates, upda
 
 ## Connect a tenant
 
-Fastify is a backend, so use the vanilla client — from your frontend, a worker, or a script — to check connection status and mint connect links against the route above.
+Fastify is a backend, so use the vanilla client from your frontend, a worker, or a script to check connection status and mint connect links against the route above.
 
 <ClientVanilla />
 
@@ -102,12 +102,12 @@ The first request to `/api/corsair` registers your delivery URL with Hub and tur
 
 ## Deploy
 
-Deploy the Fastify server however you already run it. In production the same `/api/corsair` route becomes the delivery URL Hub calls, so ensure it's publicly reachable — the first request re-registers the production URL.
+Deploy the Fastify server however you already run it. In production the same `/api/corsair` route becomes the delivery URL Hub calls, so ensure it's publicly reachable. The first request re-registers the production URL.
 
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Vanilla Client" icon="code" href="/adapters/client">
+  <Card title="Vanilla client" icon="code" href="/adapters/client">
     Every management-API method the client exposes, fully typed.
   </Card>
   <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">

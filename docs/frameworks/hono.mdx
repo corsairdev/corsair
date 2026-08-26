@@ -1,18 +1,18 @@
 ---
 title: Hono
 sidebarTitle: Hono
-description: One wildcard route mounts Corsair in Hono — and it runs unchanged on Workers, Bun, Deno, and Node.
+description: One wildcard route mounts Corsair in Hono, and it runs unchanged on Workers, Bun, Deno, and Node.
 icon: "/icons/hono.svg"
 ---
 
 import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
 
-Hono is built on the Web `Request`/`Response` standard, and so is Corsair — so the adapter is a direct fit with nothing to bridge. Corsair serves several paths under its base (delivery, connect, tenants), so one wildcard route with `app.all` catches them all.
+Hono is built on the Web `Request`/`Response` standard, and so is Corsair, so the adapter is a direct fit with nothing to bridge. Corsair serves several paths under its base (delivery, connect, tenants), so one wildcard route with `app.all` catches them all.
 
 ## Install
 
-The adapter ships in core `corsair` — no per-runtime package. Add a plugin package per service you integrate (`@corsair-dev/github`, and so on).
+The adapter ships in core `corsair`, with no per-runtime package. Add a plugin package per service you integrate (`@corsair-dev/github`, and so on).
 
 <Install />
 
@@ -30,7 +30,7 @@ app.all('/api/corsair/*', toHonoHandler(corsair, { basePath: '/api/corsair' }));
 export default app;
 ```
 
-`./corsair` is your `createCorsair({ ... })` instance — see [Getting Started](/getting-started/quick-start) if you haven't built it yet. Keep the `/*` wildcard and `basePath` matching the mount path.
+`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet. Keep the `/*` wildcard and `basePath` matching the mount path.
 
 <Note>Because it's Web-standard the whole way down, this same file deploys to Cloudflare Workers, Bun, Deno, and Node with no per-runtime change.</Note>
 
@@ -44,7 +44,7 @@ const tenant = corsair.withTenant(await getTenantId(c));
 
 ## Read and write
 
-Corsair calls are the same on every runtime. In a route handler, read from `.db` — your own database, so no network hop and no rate limit — and write through `.api`, which upserts the response so the next read reflects it:
+Corsair calls are the same on every runtime. In a route handler, read from `.db`, your own database, so no network hop and no rate limit, and write through `.api`, which upserts the response so the next read reflects it.
 
 ```ts routes.ts
 import { corsair } from './corsair';
@@ -69,13 +69,13 @@ app.post('/issues', async (c) => {
 
 ## Connect a tenant
 
-Hono is a backend, so use the vanilla client — from your frontend, a worker, or a script.
+Hono is a backend, so use the vanilla client from your frontend, a worker, or a script.
 
 <ClientVanilla />
 
 ## Go green
 
-Start the app on your runtime of choice — `npm run dev` with `@hono/node-server`, `bun run index.ts`, or `wrangler dev` on Workers. The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
+Start the app on your runtime of choice: `npm run dev` with `@hono/node-server`, `bun run index.ts`, or `wrangler dev` on Workers. The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
 
 ## Deploy
 
@@ -84,7 +84,7 @@ The same file deploys to Cloudflare Workers, Bun, Deno, or Node with no per-runt
 ## Next
 
 <CardGroup cols={2}>
-  <Card title="Vanilla Client" icon="code" href="/adapters/client">
+  <Card title="Vanilla client" icon="code" href="/adapters/client">
     Every management-API method, fully typed.
   </Card>
   <Card title="Connect / OAuth" icon="link" href="/management/connect">

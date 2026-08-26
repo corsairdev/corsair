@@ -8,10 +8,10 @@ Once you've defined a workflow, your app reaches it through the `corsair.workflo
 
 ## Run a workflow
 
-Get a handle by id, then call `run()`:
+Call `run()` with the workflow id:
 
 ```ts
-const { status, runId } = await corsair.workflows('wf_123').run({
+const { status, runId } = await corsair.workflows.run('wf_123', {
     payload: { channel: 'C0123', message: 'Ship it' },
 });
 ```
@@ -23,7 +23,7 @@ const { status, runId } = await corsair.workflows('wf_123').run({
 | `payload` | `unknown` | Data handed to the workflow as its `payload` argument. Optional. |
 | `idempotencyKey` | `string` | Collapses retried triggers into a single run. Optional. |
 
-It resolves to `{ status, runId? }` — `status` is `'ok'` when the run was accepted, and `runId` identifies it.
+It resolves to `{ status, runId? }`, where `status` is `'ok'` when the run was accepted, and `runId` identifies it.
 
 <Tip>
 Pass an `idempotencyKey` whenever a trigger might fire more than once (a retried request, an at-least-once queue). Two `run()` calls with the same key produce one run, not two.
@@ -31,13 +31,13 @@ Pass an `idempotencyKey` whenever a trigger might fire more than once (a retried
 
 ## Scope to a tenant
 
-In a multi-tenant app, resolve the tenant first — the run executes against that tenant's connected accounts:
+In a multi-tenant app, resolve the tenant first. The run executes against that tenant's connected accounts:
 
 ```ts
-await corsair.withTenant('acme').workflows('wf_123').run({ payload });
+await corsair.withTenant('acme').workflows.run('wf_123', { payload });
 ```
 
-In a single-tenant app, `corsair.workflows(...)` runs against the default tenant.
+In a single-tenant app, `corsair.workflows.run(...)` runs against the default tenant.
 
 ## List workflows
 
@@ -46,7 +46,7 @@ const workflows = await corsair.workflows.list();
 // [{ id, name, status, triggerType, createdAt, updatedAt }, ...]
 ```
 
-Each entry is a `WorkflowSummary` — enough to render a list, show a status, and pick an id to `run()`.
+Each entry is a `WorkflowSummary`, enough to render a list, show a status, and pick an id to `run()`.
 
 ## Trigger types
 
@@ -54,7 +54,7 @@ Manual `run()` is one of three ways a workflow starts. The other two are configu
 
 <CardGroup cols={2}>
   <Card title="Manual">
-    Your app calls `corsair.workflows(id).run({ payload })`. The payload is yours to shape.
+    Your app calls `corsair.workflows.run(id, { payload })`. The payload is yours to shape.
   </Card>
   <Card title="Webhook">
     An incoming [trigger](/concepts/webhooks) fires the workflow; the webhook body arrives as its `payload`.
@@ -64,4 +64,4 @@ Manual `run()` is one of three ways a workflow starts. The other two are configu
   </Card>
 </CardGroup>
 
-However a run starts, it executes the same way — see [Execution & steps](/workflows/execution).
+However a run starts, it executes the same way. See [Execution & steps](/workflows/execution).

@@ -8,7 +8,7 @@ import WorkflowsBetaCallout from '/snippets/workflows-beta-callout.mdx';
 
 <WorkflowsBetaCallout />
 
-Use Corsair's `webhookHooks` to fire Inngest events the moment something happens in a connected service. Inngest handles retries, step execution, and scheduling — Corsair handles the webhook plumbing.
+Use Corsair's `webhookHooks` to fire Inngest events the moment something happens in a connected service. Inngest handles retries, step execution, and scheduling. Corsair handles the webhook plumbing.
 
 ## Install
 
@@ -16,7 +16,6 @@ Use Corsair's `webhookHooks` to fire Inngest events the moment something happens
 npm install inngest
 ```
 
----
 
 ## Event trigger
 
@@ -80,7 +79,6 @@ export const notifyAssignee = inngest.createFunction(
 );
 ```
 
----
 
 ## Workflow
 
@@ -145,7 +143,7 @@ export const reviewPR = inngest.createFunction(
             await client.github.api.issues.createComment({
                 owner,
                 repo,
-                issue_number: number,
+                issueNumber: number,
                 body: review,
             });
         });
@@ -161,11 +159,10 @@ export const reviewPR = inngest.createFunction(
 );
 ```
 
----
 
 ## Cron job
 
-Every Monday at 9 AM, pull open Linear issues from Corsair's local database and post a sprint digest to Slack. No webhook needed — this runs on a schedule.
+Every Monday at 9 AM, pull open Linear issues from Corsair's local database and post a sprint digest to Slack. No webhook needed. This runs on a schedule.
 
 ```ts inngest/functions.ts
 import { inngest } from './client';
@@ -176,10 +173,11 @@ export const weeklySprintDigest = inngest.createFunction(
     { cron: '0 9 * * 1' }, // Every Monday at 9am UTC
     async () => {
         // Query Corsair's synced database — no API call needed
-        const issues = await corsair.linear.db.issues.list({
-            where: { state: { type: { in: ['started', 'unstarted'] } } },
-            orderBy: { priority: 'asc' },
-        });
+        const all = await corsair.linear.db.issues.list();
+        // Filter and sort in JS (list returns all rows; fields live on .data)
+        const issues = all
+            .filter((i) => ['started', 'unstarted'].includes(i.data.state?.type))
+            .sort((a, b) => (a.data.priority ?? 0) - (b.data.priority ?? 0));
 
         if (issues.length === 0) {
             await corsair.slack.api.messages.post({
@@ -193,7 +191,7 @@ export const weeklySprintDigest = inngest.createFunction(
             `*Sprint Digest — ${issues.length} open issue${issues.length === 1 ? '' : 's'}*`,
             '',
             ...issues.map(
-                (i) => `• *${i.title}* — ${i.assignee?.name ?? 'Unassigned'} (${i.state?.name})`,
+                (i) => `• *${i.data.title}* — ${i.data.assignee?.name ?? 'Unassigned'} (${i.data.state?.name})`,
             ),
         ];
 
@@ -206,10 +204,9 @@ export const weeklySprintDigest = inngest.createFunction(
 ```
 
 <Info>
-`corsair.linear.db.issues.list()` queries your local synced database — it's fast and doesn't count against Linear's API rate limits.
+`corsair.linear.db.issues.list()` queries your local synced database. It's fast and doesn't count against Linear's API rate limits.
 </Info>
 
----
 
 ## What's next
 

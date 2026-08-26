@@ -8,13 +8,13 @@ icon: "/icons/next.svg"
 import ClientReact from '/snippets/frameworks/client-react.mdx';
 import Install from '/snippets/install-tabs.mdx';
 
-In the App Router, Corsair fits the model you already use: one file under `app/api` is the whole server surface, Server Components read data at render time, and Server Actions handle the writes. Nothing runs on the client that doesn't have to.
+In the App Router, Corsair fits the model you already use. One file under `app/api` is the whole server surface, Server Components read data at render time, and Server Actions handle the writes. Nothing runs on the client that doesn't have to.
 
 ## Install
 
 <Install />
 
-The adapters ship in core `corsair`; add one `@corsair-dev/*` package per service you connect — the full list is in [Plugins](/guides/plugins).
+The adapters ship in core `corsair`; add one `@corsair-dev/*` package per service you connect. The full list is in [Plugins](/guides/plugins).
 
 ## Project layout
 
@@ -29,7 +29,7 @@ server/corsair.ts                    # createCorsair instance
 
 ## Mount the handler
 
-The management API, OAuth callbacks, and Hub's connect delivery all arrive on the same path, so a single catch-all route handler serves them. Mount it once — you never edit it again.
+The management API, OAuth callbacks, and Hub's connect delivery all arrive on the same path, so a single catch-all route handler serves them. Mount it once and you never edit it again.
 
 ```ts app/api/corsair/[[...path]]/route.ts
 import { toNextJsHandler } from 'corsair';
@@ -44,7 +44,7 @@ export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
 
 ## Resolve the tenant
 
-`withTenant` takes any stable string that identifies the current user or org — you produce it from the auth you already run; Corsair never supplies one. Read it at the top of the component and scope from there.
+`withTenant` takes any stable string that identifies the current user or org. You produce it from the auth you already run; Corsair never supplies one. Read it at the top of the component and scope from there.
 
 ```tsx
 import { corsair } from '@/server/corsair';
@@ -55,7 +55,7 @@ const tenant = corsair.withTenant(await getTenantId());
 
 ## Read and write
 
-A Server Component reads from `.db` — no network, so the page renders as fast as any database query. Because it's already on the server, you call the tenant directly instead of round-tripping through the route.
+A Server Component reads from `.db` with no network, so the page renders as fast as any database query. Because it's already on the server, you call the tenant directly instead of round-tripping through the route.
 
 ```tsx app/issues/page.tsx
 import { corsair } from '@/server/corsair';
@@ -106,7 +106,7 @@ export async function closeIssue(issueNumber: number) {
 
 ## Refresh after a write
 
-The `.api` call above upserts the response into your database, so `.db` is already current. `revalidatePath('/issues')` just re-runs the Server Component, and the closed issue is gone from the list — no cache to invalidate by hand.
+The `.api` call above upserts the response into your database, so `.db` is already current. `revalidatePath('/issues')` just re-runs the Server Component, and the closed issue is gone from the list, with no cache to invalidate by hand.
 
 ## Connect a tenant
 
@@ -124,7 +124,7 @@ The first request to `/api/corsair` registers your delivery URL with Hub and tur
 
 ## Deploy
 
-Deploy to Vercel as you would any App Router app. The mounted `/api/corsair` route becomes the delivery URL Hub calls in production — no separate service to stand up.
+Deploy to Vercel as you would any App Router app. The mounted `/api/corsair` route becomes the delivery URL Hub calls in production, with no separate service to stand up.
 
 ## Next
 
@@ -132,7 +132,7 @@ Deploy to Vercel as you would any App Router app. The mounted `/api/corsair` rou
   <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">
     The full `.db` read / `.api` write pattern, with refresh and webhooks.
   </Card>
-  <Card title="React Hooks" icon="react" href="/adapters/react">
+  <Card title="React hooks" icon="react" href="/adapters/react">
     Every hook the client factory returns, with types and examples.
   </Card>
   <Card title="Connect / OAuth" icon="link" href="/management/connect">

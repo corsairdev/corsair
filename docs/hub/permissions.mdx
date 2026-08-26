@@ -6,8 +6,8 @@ description: Let Hub host the approve/deny UI for gated permissions, so you do n
 
 [Permissions](/concepts/permissions) gate risky agent actions behind human approval. The policy engine, the modes, and the `corsair_permissions` table work the same regardless of mode. The only thing Hub changes is **who hosts the approve/deny UI**.
 
-- **Manual** — you build a review page and wire `manual.onApprovalRequired` so the agent receives a link to it.
-- **Hub** — Corsair hosts the approval page. When a call is gated, the SDK returns a Hub approval link automatically. Nothing to build.
+- **Manual.** You build a review page and wire `manual.onApprovalRequired` so the agent receives a link to it.
+- **Hub.** Corsair hosts the approval page. When a call is gated, the SDK returns a Hub approval link automatically. Nothing to build.
 
 ## How it works on Hub
 
@@ -31,7 +31,7 @@ sequenceDiagram
     Corsair->>DB: status → completed
 ```
 
-The approval record still lives in **your** `corsair_permissions` table. Hub renders the UI and delivers the signed decision to your handler, which writes it to your database. Hub never touches your database and stores no approval data of its own. Delivery uses the same [environment-specific transport](/hub/delivery-urls) as connect flows — browser redirect in development, signed POST in production.
+The authoritative approval record lives in **your** `corsair_permissions` table. Hub renders the UI and delivers the signed decision to your handler, which writes the outcome to your database. Hub never touches your database. To render the review screen and route the decision, Hub does keep a short-lived session of its own holding the plugin, endpoint, the call arguments shown for review, and the tenant id, until the request is decided or expires. Delivery uses the same [environment-specific transport](/hub/delivery-urls) as connect flows: a signed POST over the Corsair tunnel in development, a signed POST to your public URL in production.
 
 ## Configuration
 
@@ -72,7 +72,7 @@ manual: {
 ```
 
 <Info>
-Approvals require the `corsair_permissions` table in both modes. Hub hosts the UI, not the data. See [Permissions](/concepts/permissions#add-the-permissions-table) for the migration.
+Approvals require the `corsair_permissions` table in both modes. That table is your system of record; Hub only holds the pending session while the review is open. See [Permissions](/concepts/permissions#add-the-permissions-table) for the migration.
 </Info>
 
 ## Mixing modes
@@ -118,7 +118,7 @@ export const corsair = createCorsair({
   <Card title="Hub overview" href="/hub/overview">
     The relay model and the surfaces Hub hosts.
   </Card>
-  <Card title="MCP Adapters" href="/mcp-adapters/mcp-adapters">
+  <Card title="MCP adapters" href="/mcp-adapters/mcp-adapters">
     How approvals gate agent tool calls.
   </Card>
 </CardGroup>

@@ -5,11 +5,9 @@ description: Treat everything you've synced as one searchable corpus and answer 
 
 Once a few plugins are connected, `corsair_entities` holds your Slack messages, GitHub issues, Notion pages, and Gmail threads in one table with one shape. That's a corpus you can search.
 
-Ask "what's happening with the Peterson report?" and you can look across every synced service at once, then hand the matches to a model as grounding — instead of calling six search APIs and reconciling six response formats.
+Ask "what's happening with the Peterson report?" and you can look across every synced service at once, then hand the matches to a model as grounding, instead of calling six search APIs and reconciling six response formats.
 
-**Pattern:** search `.db` across entity types → rank in your code → feed matches to the model as context.
-
----
+**Pattern:** search `.db` across entity types, rank in your code, then feed matches to the model as context.
 
 ## Searching one entity type
 
@@ -36,8 +34,6 @@ const messages = await tenant.slack.db.messages.search({
 });
 ```
 
----
-
 ## Searching across services
 
 The typed clients are scoped to one entity type at a time. To sweep the whole corpus, fan out and merge:
@@ -62,7 +58,7 @@ export async function searchEverything(query: string) {
 }
 ```
 
-For a genuinely open-ended sweep, query `corsair_entities` directly with your own ORM. It's one table, so a single statement covers every service and entity type at once — useful when you don't want to enumerate the plugins up front:
+For a genuinely open-ended sweep, query `corsair_entities` directly with your own ORM. It's one table, so a single statement covers every service and entity type at once, which is useful when you don't want to enumerate the plugins up front:
 
 ```sql
 SELECT entity_type, entity_id, data, updated_at
@@ -74,11 +70,9 @@ LIMIT 50;
 
 Scope that query to the tenant's `account_id` values. The typed clients do this for you; raw SQL does not.
 
----
-
 ## Grounding a model
 
-Retrieval is the whole trick — pass matches in as context and require citations back to the source URL:
+Retrieval is the whole trick. Pass matches in as context and require citations back to the source URL:
 
 ```ts
 const matches = await searchEverything('peterson report');
@@ -97,14 +91,12 @@ const { text } = await generateText({
 
 Because rows are kept current by API calls and webhooks, answers reflect the present state rather than whenever you last built an index.
 
----
-
 ## Filling the corpus
 
 Search only finds what's been synced. Two ways rows get there:
 
-1. **Backfill** — call `.api` list endpoints once per source. Every response is upserted, so a paginated crawl populates the table.
-2. **Stay fresh** — register webhooks so upstream changes update the same rows in place. See [Webhooks](/concepts/webhooks).
+1. **Backfill.** Call `.api` list endpoints once per source. Every response is upserted, so a paginated crawl populates the table.
+2. **Stay fresh.** Register webhooks so upstream changes update the same rows in place. See [Webhooks](/concepts/webhooks).
 
 ```ts
 // backfill, then let webhooks maintain it
@@ -114,8 +106,6 @@ for (let page = 1; ; page++) {
 }
 ```
 
----
-
 ## Know the limits
 
 <Warning>
@@ -124,9 +114,7 @@ for (let page = 1; ; page++) {
 
 That's fine for names, IDs, and known phrases. For conceptual questions, keep embeddings in your own table keyed to `corsair_entities.id`, and use Corsair search to fetch the current text for whatever your vector query returns. The row your embedding points at keeps updating itself, so you re-embed on change rather than rebuilding from scratch.
 
-Also worth knowing: `search` filters top-level `data` fields only, and has no sort option — order results in your code, or use SQL.
-
----
+One more constraint. `search` filters top-level `data` fields only, and has no sort option. Order results in your code, or use SQL.
 
 ## Checklist
 
@@ -135,8 +123,6 @@ Also worth knowing: `search` filters top-level `data` fields only, and has no so
 - Answers cite source URLs from the entity data.
 - The corpus is backfilled once and maintained by webhooks.
 - Semantic needs are handled with embeddings alongside, not by `contains`.
-
----
 
 ## What's next
 

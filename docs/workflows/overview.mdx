@@ -1,47 +1,47 @@
 ---
 title: Workflows
 sidebarTitle: Overview
-description: Durable, multi-step workflows that run inside your app against your integrations — no external engine. Beta.
+description: Durable, multi-step workflows that run inside your app against your integrations, no external engine. Beta.
 ---
 
 <Note>
 **Corsair Workflows is in beta.** The authoring surface is still growing; the trigger and execution APIs below are stable.
 </Note>
 
-Corsair Workflows are durable, multi-step automations that run against the integrations you've already connected — a workflow can read from Slack, open a GitHub issue, wait an hour, then post back, and survive restarts and retries along the way. There's no Inngest or Temporal to stand up: workflows run inside your own app, against your own tenant-scoped Corsair client, with credentials that never leave your database.
+Corsair Workflows are durable, multi-step automations that run against the integrations you've already connected. A workflow can read from Slack, open a GitHub issue, wait an hour, then post back, and survive restarts and retries along the way. There's no Inngest or Temporal to stand up. Workflows run inside your own app, against your own tenant-scoped Corsair client, with credentials that never leave your database.
 
 ## The model
 
 A workflow moves through three places:
 
 <Steps>
-<Step title="Define in your code">
-You define workflows in your own code and register them through `createCorsair` — they live in your repo and are versioned like the rest of your app. Corsair syncs them to Hub, which handles the scheduling and durable orchestration.
+<Step title="Author in Hub">
+Workflows are authored and managed in Hub, which handles the scheduling and durable orchestration. From your app you run and inspect them through `corsair.workflows`. Call `corsair.workflows.run(id, { payload })`, `.list()`, or `.get(id)`. These need `hub` configured on `createCorsair`.
 </Step>
 <Step title="Trigger">
-A run starts one of three ways: **manually** from your app (`corsair.workflows(id).run()`), from an incoming **webhook**, or on a **schedule** (cron/cadence) configured in Hub.
+A run starts one of three ways: **manually** from your app (`corsair.workflows.run(id)`), from an incoming **webhook**, or on a **schedule** (cron/cadence) configured in Hub.
 </Step>
 <Step title="Execute in your app">
-Your app runs the delivered workflow in a locked-down sandbox, against a tenant-scoped `corsair` client. Because it executes where your integrations and credentials already live, a workflow can call any plugin you've connected — and Hub never sees a token.
+Your app runs the delivered workflow in a locked-down sandbox, against a tenant-scoped `corsair` client. Because it executes where your integrations and credentials already live, a workflow can call any plugin you've connected, and Hub never sees a token.
 </Step>
 </Steps>
 
 ## Why built-in
 
-- **No engine to wire.** No external durable-execution service to run, secure, and pay for — workflows run in the app you already deploy.
+- **No engine to wire.** No external durable-execution service to run, secure, and pay for. Workflows run in the app you already deploy.
 - **Runs where your data is.** A workflow uses the same tenant-scoped client as the rest of your code, so it calls `corsair.slack.api.*`, `corsair.github.api.*`, and friends directly.
-- **Durable by default.** Steps are memoized and sleeps are durable, so a run resumes exactly where it left off after a retry or a scheduled pause — you don't build the bookkeeping.
+- **Durable by default.** Steps are memoized and sleeps are durable, so a run resumes exactly where it left off after a retry or a scheduled pause, and you don't build the bookkeeping.
 
 ## What's next
 
 <CardGroup cols={2}>
   <Card title="Triggering" icon="play" href="/workflows/triggering">
-    Start and list runs from the `corsair.workflows` client — manual, webhook, and schedule triggers.
+    Start and list runs from the `corsair.workflows` client, with manual, webhook, and schedule triggers.
   </Card>
   <Card title="Execution & steps" icon="layer-group" href="/workflows/execution">
     Turn on execution, and how `step()` and `step.sleep()` make a run durable.
   </Card>
-  <Card title="Workflow Engines" icon="diagram-project" href="/guides/inngest">
+  <Card title="Workflow engines" icon="diagram-project" href="/guides/inngest">
     Prefer an external engine? Corsair also drives Inngest, Temporal, Trigger.dev, and Hatchet.
   </Card>
   <Card title="Triggers" icon="bolt" href="/concepts/webhooks">

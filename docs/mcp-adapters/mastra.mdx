@@ -37,4 +37,4 @@ const response = await agent.generate(
 console.log(response.text);
 ```
 
-`MastraProvider.build()` is async — it dynamically imports `@mastra/core` as an optional peer dependency. The returned tools are standard Mastra `createTool` instances ready to pass to any Mastra agent.
+`MastraProvider.build()` is async. It dynamically imports `@mastra/core` as an optional peer dependency. The returned tools are standard Mastra `createTool` instances ready to pass to any Mastra agent.

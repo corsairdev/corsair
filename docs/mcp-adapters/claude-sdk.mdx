@@ -1,7 +1,7 @@
 ---
 title: Claude Agent SDK
 icon: "/icons/claude.svg"
-description: Use Corsair with the Claude Agent SDK via an in-process MCP server — no HTTP transport needed.
+description: Use Corsair with the Claude Agent SDK via an in-process MCP server, no HTTP transport needed.
 ---
 
 Use `ClaudeProvider` to connect Corsair to the [Claude Agent SDK](https://github.com/anthropics/claude-agent-sdk) with an in-process MCP server. No HTTP transport needed.
@@ -36,6 +36,6 @@ for await (const event of stream) {
 }
 ```
 
-`ClaudeProvider.build()` is async — it dynamically imports the Claude Agent SDK as an optional peer dependency.
+`ClaudeProvider.build()` is async. It dynamically imports the Claude Agent SDK as an optional peer dependency.
 
 The Claude Agent SDK handles the tool-call loop automatically via `query()`.

@@ -3,13 +3,11 @@ title: Dashboard
 description: Render synced integration data from your own database, and act on it with live API calls.
 ---
 
-A dashboard reads from `.db` and writes through `.api`. Page loads never touch the third-party service, so they're fast and can't be rate limited — but a button that creates an issue or sends a message goes straight to the live API.
+A dashboard reads from `.db` and writes through `.api`. Page loads never touch the third-party service, so they're fast and can't be rate limited. A button that creates an issue or sends a message goes straight to the live API.
 
 This is the most common shape, and the one to reach for whenever the ask sounds like "show me my…".
 
-**Pattern:** read `.db` to render → `.api` to mutate or refresh → read `.db` again.
-
----
+**Pattern:** read `.db` to render, `.api` to mutate or refresh, then read `.db` again.
 
 ## The read path
 
@@ -49,8 +47,6 @@ issues[0]?.data.user?.login;
 `search` has no sort option. Order results in your own code after reading, or query `corsair_entities` directly with your ORM if you need SQL-level sorting and pagination.
 </Note>
 
----
-
 ## The write path
 
 Mutations and refreshes use `.api`. Corsair upserts the response into your database as part of the call, so the next `.db` read already reflects it:
@@ -69,11 +65,9 @@ export async function closeIssue(issueNumber: number) {
 }
 ```
 
----
-
 ## Refresh buttons
 
-A refresh is just a list call against `.api`. Because every response is upserted, you don't wire up any sync logic — you call the endpoint and re-read:
+A refresh is just a list call against `.api`. Because every response is upserted, you don't wire up any sync logic. You call the endpoint and re-read:
 
 ```ts src/server/refresh.ts
 export async function refresh() {
@@ -111,10 +105,8 @@ await db
 ```
 
 <Tip>
-Prefer webhooks over a refresh button where the plugin supports them — rows update the moment something changes upstream and the page is current with no user action. See [Webhooks](/concepts/webhooks).
+Prefer webhooks over a refresh button where the plugin supports them. Rows update the moment something changes upstream and the page is current with no user action. See [Webhooks](/concepts/webhooks).
 </Tip>
-
----
 
 ## Adding your own columns
 
@@ -130,19 +122,15 @@ CREATE TABLE issue_notes (
 
 Your notes stay yours; the integration side of the join keeps updating itself. Full example in [Database](/concepts/database#join-to-your-own-tables).
 
----
-
 ## Checklist
 
 A dashboard is wired correctly when:
 
-- Page loads and lists read from `.db` only — no `.api` call on render.
+- Page loads and lists read from `.db` only, with no `.api` call on render.
 - Creates, updates, and deletes go through `.api`.
 - Refresh calls `.api`, then re-reads `.db`, rather than merging responses into UI state by hand.
 - App-specific fields live in your tables, keyed to `corsair_entities.id`.
 - Every read and write is scoped with `withTenant()`.
-
----
 
 ## What's next
 

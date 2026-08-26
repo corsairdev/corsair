@@ -1,6 +1,6 @@
 ---
 title: Integrations
-description: Add as many as you want — same syntax, same patterns.
+description: Add as many as you want, same syntax, same patterns.
 ---
 
 Corsair supports hundreds of integrations through its SDK. Add as many as you need and interact with them all using the same consistent syntax.
@@ -24,7 +24,7 @@ export const corsair = createCorsair({
 });
 ```
 
-## Consistent Syntax
+## Consistent syntax
 
 Every integration uses the exact same patterns. No need to learn each SDK's unique quirks.
 
@@ -44,7 +44,7 @@ await corsair.linear.api.issues.create({
 // Same structure: corsair.[integration].api.[resource].[action]()
 ```
 
-## Strong Typing Everywhere
+## Strong typing everywhere
 
 Every integration is fully typed. Your editor shows available methods, required parameters, and response shapes.
 
@@ -59,7 +59,7 @@ const channel = await corsair.slack.api.channels.get({ channel: "C01" });
 console.log(channel.name, channel.is_member, channel.num_members);
 ```
 
-## No Database Bloat
+## No database bloat
 
 Adding more integrations doesn't add more tables. Corsair always uses the same five tables, no matter how many integrations you have.
 
@@ -73,7 +73,7 @@ plugins: [
 ]
 ```
 
-## Adding Integrations
+## Adding integrations
 
 Just add plugins to the array. Each integration is configured independently.
 
@@ -92,24 +92,24 @@ export const corsair = createCorsair({
 });
 ```
 
-## Custom Integrations
+## Custom integrations
 
 Need an integration that doesn't exist? Creating a custom one takes less than 10 minutes.
 
 See the [Creating Custom Integrations](/guides/create-your-own-plugin) guide for a step-by-step walkthrough.
 
-## Missing an Endpoint?
+## Missing an endpoint?
 
 If an existing integration is missing an endpoint you need, [create an issue](https://github.com/corsairdev/corsair/issues) and we'll add it ASAP.
 
-## Available Integrations
+## Available integrations
 
 Corsair supports integrations including:
 
-- **Slack** — channels, messages, users, reactions, files
-- **Linear** — issues, projects, comments, teams
-- **GitHub** — repositories, issues, pull requests, actions
-- **Gmail** — messages, threads, labels, drafts
+- **Slack**: channels, messages, users, reactions, files
+- **Linear**: issues, projects, comments, teams
+- **GitHub**: repositories, issues, pull requests, actions
+- **Gmail**: messages, threads, labels, drafts
 
 And many more. Check the [Plugins](https://github.com/corsairdev/corsair/tree/main/packages) section for the full list.
 

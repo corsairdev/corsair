@@ -1,15 +1,13 @@
 ---
 title: Workflow
-description: An event in one service triggers actions in another — chained in TypeScript, not a visual builder.
+description: An event in one service triggers actions in another, chained in TypeScript, not a visual builder.
 ---
 
-A workflow is what you'd reach for n8n, Zapier, or Gumloop to do: PR merged → post to Slack → open a Linear ticket. In Corsair it's a webhook hook, so the steps are ordinary TypeScript with types and your own helpers available.
+A workflow is what you'd reach for n8n, Zapier, or Gumloop to do: a PR is merged, you post to Slack, then open a Linear ticket. In Corsair it's a webhook hook, so the steps are ordinary TypeScript with types and your own helpers available.
 
 There's no DAG to define and no separate engine to run.
 
-**Pattern:** webhook fires → hook runs → call any plugin's `.api`.
-
----
+**Pattern:** the webhook fires, the hook runs, then it calls any plugin's `.api`.
 
 ## The shape
 
@@ -33,7 +31,7 @@ github({
 })
 ```
 
-That's the whole workflow. Chaining more steps means writing more lines — each one a normal `await`:
+That's the whole workflow. Chaining more steps means writing more lines, each one a normal `await`:
 
 ```ts
 after: async (ctx, result) => {
@@ -54,8 +52,6 @@ after: async (ctx, result) => {
 ```
 
 Because these are function calls rather than a graph, branching and early returns are just `if` statements.
-
----
 
 ## Filtering with `before`
 
@@ -83,8 +79,6 @@ github({
 ```
 
 Filtering in `before` is cheaper than filtering in `after`, since it avoids the write.
-
----
 
 ## Slow work belongs in a queue
 
@@ -123,9 +117,7 @@ export const reviewPR = inngest.createFunction(
 );
 ```
 
-Pass `ctx.tenantId` through to the job — the queue worker runs outside the request and has to re-scope itself. Adapters for [Inngest](/guides/inngest), [Temporal](/guides/temporal), [Trigger.dev](/guides/trigger-dev), and [Hatchet](/guides/hatchet) all follow this shape.
-
----
+Pass `ctx.tenantId` through to the job, since the queue worker runs outside the request and has to re-scope itself. Adapters for [Inngest](/guides/inngest), [Temporal](/guides/temporal), [Trigger.dev](/guides/trigger-dev), and [Hatchet](/guides/hatchet) all follow this shape.
 
 ## Multi-tenant workflows
 
@@ -144,9 +136,7 @@ after: async (ctx, result) => {
 }
 ```
 
-Don't hardcode channel IDs or team IDs when the app is multi-tenant — read them from your own settings table.
-
----
+Don't hardcode channel IDs or team IDs when the app is multi-tenant. Read them from your own settings table.
 
 ## Checklist
 
@@ -155,8 +145,6 @@ Don't hardcode channel IDs or team IDs when the app is multi-tenant — read the
 - `ctx.tenantId` is threaded through to background jobs.
 - Per-tenant destinations come from your settings, not constants.
 - Hooks are idempotent where the provider may redeliver an event.
-
----
 
 ## What's next
 
