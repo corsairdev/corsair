@@ -2,6 +2,7 @@
 
 import { GithubLogo } from '@phosphor-icons/react';
 import { useRouter } from 'next/navigation';
+import posthog from 'posthog-js';
 import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
@@ -21,6 +22,7 @@ export function GithubUsernameCallout() {
 
 		try {
 			await setGithubUsername(username);
+			posthog.capture('github_username_saved');
 			router.refresh();
 		} catch (err) {
 			setError(

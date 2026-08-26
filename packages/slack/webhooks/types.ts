@@ -909,6 +909,9 @@ export function verifySlackWebhookSignature(
 	request: WebhookRequest,
 	signingSecret?: string,
 ): { valid: boolean; error?: string } {
+	if (request.hubVerified === true) {
+		return { valid: true };
+	}
 	if (!signingSecret) {
 		return { valid: false, error: 'Missing webhook secret' };
 	}

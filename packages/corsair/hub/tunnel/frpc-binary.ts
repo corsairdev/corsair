@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { chmodSync, existsSync, statSync } from 'node:fs';
 import { createRequire } from 'node:module';
 import { homedir } from 'node:os';
 import { dirname, join } from 'node:path';
@@ -45,7 +45,7 @@ function binName(): string {
 /**
  * Where the postinstall step drops the downloaded frpc. Kept in lockstep with
  * `scripts/postinstall-frpc.mjs` — both derive it from homedir + FRPC_VERSION.
- * ponytail: duplicated in that standalone install script (it can't import TS);
+ * duplicated in that standalone install script (it can't import TS);
  * a shared frpc-version.json is the upgrade path if this drifts.
  */
 export function frpcCacheBinary(): string {
@@ -69,15 +69,37 @@ export function frpcCacheBinary(): string {
  * then the postinstall download cache as a fallback. Throws with an install hint
  * if none resolves.
  */
+/**
+ * Ensure the resolved frpc binary carries the executable bit. Published npm
+ * tarballs and some package stores drop it, which makes spawn() fail with
+ * EACCES. Only touches the mode when a bit is missing; a no-op on Windows
+ * (frpc.exe needs none) and best-effort elsewhere — a read-only store that
+ * already has the bit still runs.
+ */
+function ensureExecutable(bin: string): string {
+	if (process.platform === 'win32') return bin;
+	try {
+		// Mask to the permission bits — fs.Stats.mode also carries file-type bits
+		// that must not be handed to chmod.
+		const perms = statSync(bin).mode & 0o777;
+		const executable = perms | 0o111;
+		if (executable !== perms) chmodSync(bin, executable);
+	} catch {
+		// A chmod failure on an already-executable binary is harmless; a
+		// genuinely missing bit surfaces as the existing spawn EACCES.
+	}
+	return bin;
+}
+
 export function resolveFrpcBinary(): string {
 	const override = process.env.CORSAIR_FRP_BIN;
-	if (override && existsSync(override)) return override;
+	if (override && existsSync(override)) return ensureExecutable(override);
 
 	const fromPackage = platformPackageBinary();
-	if (fromPackage) return fromPackage;
+	if (fromPackage) return ensureExecutable(fromPackage);
 
 	const cached = frpcCacheBinary();
-	if (existsSync(cached)) return cached;
+	if (existsSync(cached)) return ensureExecutable(cached);
 
 	// pnpm 10 skips a dependency's postinstall until the consumer approves its
 	// build, which leaves this cache empty — name that remedy explicitly.

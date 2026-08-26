@@ -100,6 +100,8 @@ export type WebhookTunnelPayload = {
 	linkType?: string;
 	externalId?: string;
 	tenantId?: string;
+	/** Hub already verified the provider signature before signing this delivery. */
+	hubVerified?: boolean;
 };
 
 export type OAuthCallbackTunnelPayload = {
@@ -124,6 +126,10 @@ export type OAuthTokensTunnelPayload = {
 	refreshToken?: string;
 	expiresIn?: number;
 	scope?: string;
+	authType?: 'managed' | 'oauth_2';
+	// Provider token-body identity (team, workspace_id, …) forwarded so the SDK
+	// resolver can read it — secrets stripped Hub-side.
+	providerData?: Record<string, unknown>;
 };
 
 export type PermissionDecisionTunnelPayload = {
@@ -249,6 +255,7 @@ async function handleWebhookTunnel(
 	corsair: unknown,
 	internal: CorsairInternalConfig,
 	payload: WebhookTunnelPayload,
+	envelopeVerified: boolean,
 ): Promise<TunnelAck> {
 	const tenantId = await resolveWebhookTenantId(corsair, internal, payload);
 	const query = {
@@ -262,8 +269,14 @@ async function handleWebhookTunnel(
 		payload.body,
 		query,
 		// Hub routed this by the plugin's own endpoint — dispatch exactly there,
-		// never by body shape (MS Graph siblings are indistinguishable).
-		payload.plugin ? { plugin: payload.plugin } : undefined,
+		// never by body shape (MS Graph siblings are indistinguishable). Only
+		// honor hubVerified when the envelope itself was authenticated — an
+		// unsigned tunnel delivery must never let a caller-supplied flag skip
+		// provider signature verification.
+		{
+			plugin: payload.plugin,
+			hubVerified: envelopeVerified && payload.hubVerified === true,
+		},
 	);
 
 	if (!result.plugin) {
@@ -336,6 +349,8 @@ async function handleOAuthTokensTunnel(
 		refreshToken: payload.refreshToken,
 		expiresIn: payload.expiresIn,
 		scope: payload.scope,
+		authType: payload.authType,
+		providerData: payload.providerData,
 	});
 	return { status: 'ok' };
 }
@@ -571,6 +586,11 @@ export async function processCorsair(
 	);
 	const nonceHeader = normalizeHeader(request.headers, 'x-corsair-nonce');
 
+	// hubVerified may only be trusted once we have authenticated the envelope.
+	// Unsigned tunnel deliveries leave this false, so a caller-supplied
+	// hubVerified can never skip provider verification downstream.
+	let envelopeVerified = false;
+
 	if (!options.signingSecret?.trim()) {
 		if (!options.allowUnsignedTunnel) {
 			return {
@@ -613,6 +633,8 @@ export async function processCorsair(
 				error: replayCheck.error,
 			};
 		}
+
+		envelopeVerified = true;
 	}
 
 	let envelope: TunnelEnvelope;
@@ -641,6 +663,7 @@ export async function processCorsair(
 				corsair,
 				internal,
 				envelope.payload as WebhookTunnelPayload,
+				envelopeVerified,
 			);
 		case 'oauth.callback':
 			return handleOAuthCallbackTunnel(

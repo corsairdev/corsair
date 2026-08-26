@@ -1,6 +1,6 @@
 {
   "name": "@corsair-dev/googlebigquery",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Google BigQuery plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
@@ -20,7 +20,7 @@
     "demo": "node ./scripts/demo.mjs"
   },
   "peerDependencies": {
-    "corsair": ">=0.1.0",
+    "corsair": ">=0.1.120",
     "zod": "^4.1.13"
   },
   "devDependencies": {
