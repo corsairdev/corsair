@@ -1,20 +1,17 @@
+/// <reference types="jest" />
 import { DocusignSchema } from './schema';
 
-describe('Docusign schema', () => {
-	it('declares a semver version', () => {
-		expect(DocusignSchema.version).toBeDefined();
-		expect(DocusignSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
-	});
+describe('DocusignSchema', () => {
+	it('should define envelope and template schemas', () => {
+		expect(DocusignSchema).toBeDefined();
+		expect(DocusignSchema.envelope).toBeDefined();
+		expect(DocusignSchema.template).toBeDefined();
 
-	it('declares an entities map', () => {
-		expect(typeof DocusignSchema.entities).toBe('object');
-		expect(DocusignSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(DocusignSchema.entities))).toBe(true);
-		for (const entity of Object.values(DocusignSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+		const sampleEnvelope = {
+			envelopeId: 'env_123',
+			status: 'sent',
+		};
+		const result = DocusignSchema.envelope.safeParse(sampleEnvelope);
+		expect(result.success).toBe(true);
 	});
 });
-
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
