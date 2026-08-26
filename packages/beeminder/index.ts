@@ -12,6 +12,7 @@
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Charges, Goals, User } from './endpoints';
 import type {
 	BeeminderEndpointInputs,
@@ -147,7 +148,8 @@ export const beeminderEndpointMeta = {
 
 	'charges.create': {
 		riskLevel: 'write',
-		description: 'Create a charge against a Beeminder user',
+		description:
+			'Create a charge against a Beeminder user. Use dryrun to preview.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof beeminderEndpointsNested
@@ -207,9 +209,12 @@ export function beeminder<const T extends BeeminderPluginOptions>(
 		oauthConfig: {
 			providerName: 'Beeminder',
 			authUrl: 'https://www.beeminder.com/apps/authorize',
-			tokenUrl: 'https://www.beeminder.com/api/v1/auth_token.json',
+			// Beeminder OAuth is implicit (`response_type=token`); there is no
+			// token-exchange endpoint. Store the redirect `access_token`.
+			tokenUrl: 'https://www.beeminder.com/apps/authorize',
 			scopes: [],
 			requiresRegisteredRedirect: true,
+			authParams: { response_type: 'token' },
 		},
 		keyBuilder: async (ctx: BeeminderKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {
@@ -218,15 +223,21 @@ export function beeminder<const T extends BeeminderPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('beeminder', 'api_key');
+				}
+				return res;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('beeminder', 'oauth_2');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('beeminder', ctx.authType);
 		},
 	} satisfies InternalBeeminderPlugin;
 }

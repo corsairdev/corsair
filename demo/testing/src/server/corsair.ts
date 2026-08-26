@@ -3,7 +3,6 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
-import { beeminder } from '@corsair-dev/beeminder';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
@@ -59,7 +58,6 @@ export const corsair = createCorsair({
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
 		}),
-		beeminder(),
 		twilio(),
 		vapi({
 			key: process.env.VAPI_API_KEY,

@@ -1,22 +1,12 @@
-﻿import type { BeeminderRequestOptions } from '../client';
+﻿import type { BeeminderAuthParam, BeeminderRequestOptions } from '../client';
 import { makeBeeminderRequest } from '../client';
 
-/**
- * Minimal structural view of the plugin context these helpers need.
- */
 type BeeminderCallContext = {
 	key: string;
-	options: { username?: string | undefined };
+	options: { username?: string | undefined; authType?: string | undefined };
 	keys?: { get_username?: () => Promise<string | null | undefined> };
 };
 
-/**
- * Resolves the account's username for a call.
- *
- * Beeminder uses "me" as a username alias when the access_token identifies
- * the user, but for personal auth tokens, the username is needed in the URL.
- * Configuration wins, then a stored key.
- */
 export async function resolveUsername(
 	ctx: BeeminderCallContext,
 ): Promise<string> {
@@ -29,30 +19,24 @@ export async function resolveUsername(
 	return 'me';
 }
 
-/**
- * Issues an authenticated Beeminder request.
- *
- * Every authenticated operation goes through here so the credential assembly
- * cannot be done correctly in one place and forgotten in another.
- */
+function authParamFor(ctx: BeeminderCallContext): BeeminderAuthParam {
+	return ctx.options.authType === 'oauth_2' ? 'access_token' : 'auth_token';
+}
+
 export async function beeminderCall<T>(
 	ctx: BeeminderCallContext,
 	endpoint: string,
 	options: BeeminderRequestOptions = {},
 ): Promise<T> {
 	const username = await resolveUsername(ctx);
-	// Replace {username} placeholder in the endpoint path
 	const resolvedEndpoint = endpoint.replace('{username}', username);
 
-	return await makeBeeminderRequest<T>(resolvedEndpoint, ctx.key, options);
+	return await makeBeeminderRequest<T>(resolvedEndpoint, ctx.key, {
+		...options,
+		authParam: options.authParam ?? authParamFor(ctx),
+	});
 }
 
-/**
- * Drops keys whose value is `undefined`.
- *
- * Beeminder distinguishes an absent field from an explicit `null` on some
- * routes. Unset fields are removed before the body is built.
- */
 export function compactBody(
 	body: Record<string, unknown>,
 ): Record<string, unknown> {
@@ -63,7 +47,6 @@ export function compactBody(
 	return compacted;
 }
 
-/** Same as {@link compactBody}, for query strings. */
 export function compactQuery(
 	query: Record<string, string | number | boolean | undefined>,
 ): Record<string, string | number | boolean | undefined> {

@@ -23,8 +23,6 @@ const main = async () => {
 		channel: 'general',
 		text: 'hello',
 	});
-
-	await corsair.beeminder.api.user.get({});
 };
 
 main().catch((err) => {

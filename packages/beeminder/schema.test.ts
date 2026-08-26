@@ -100,6 +100,9 @@ const GOAL_KEYS = [
 	'tmax',
 	'tags',
 	'archivedate',
+	'burner',
+	'datapoints',
+	'last_datapoint',
 	'updated_at',
 ];
 
@@ -145,16 +148,29 @@ describe('Beeminder schema', () => {
 		).toBe(true);
 	});
 
-	it('requires only the primary key for goal', () => {
-		expect(BeeminderGoalEntity.safeParse({ id: 'goal-1' }).success).toBe(true);
+	it('accepts a goal listed without id', () => {
+		expect(BeeminderGoalEntity.safeParse({ slug: 'weight' }).success).toBe(
+			true,
+		);
 	});
 
-	it('requires only the primary key for charge', () => {
+	it('accepts user.goals as slugs or goal objects', () => {
+		expect(
+			BeeminderUserEntity.safeParse({
+				username: 'alice',
+				goals: ['weight'],
+			}).success,
+		).toBe(true);
+		expect(
+			BeeminderUserEntity.safeParse({
+				username: 'alice',
+				goals: [{ slug: 'weight', title: 'Weight' }],
+			}).success,
+		).toBe(true);
+	});
+
+	it('accepts a charge with only id', () => {
 		expect(BeeminderChargeEntity.safeParse({ id: 'ch-1' }).success).toBe(true);
-	});
-
-	it('rejects a goal record with no id', () => {
-		expect(BeeminderGoalEntity.safeParse({ slug: 'test' }).success).toBe(false);
 	});
 
 	it('accepts null for nullable fields', () => {
