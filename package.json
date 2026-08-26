@@ -30,7 +30,7 @@
     "overrides": {
       "@types/react": "^19",
       "@types/react-dom": "^19",
-      "zod": "catalog:"
+      "zod": "4.4.3"
     },
     "onlyBuiltDependencies": [
       "better-sqlite3"
@@ -48,7 +48,6 @@
     "tsx": "^4.20.6",
     "turbo": "^2.6.1",
     "typescript": "catalog:",
-    "zod": "catalog:",
     "yaml": "^2.8.1"
   },
   "simple-git-hooks": {
