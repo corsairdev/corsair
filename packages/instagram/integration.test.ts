@@ -533,22 +533,15 @@ describe('Instagram Schema Validation (credential-free)', () => {
 
 	// ── Messenger greeting field ───────────────────────────────────────────
 	describe('UpdateMessengerProfile schema', () => {
-		it('accepts greeting configuration', () => {
+		it('greeting field is removed from the schema', () => {
 			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
-			const result = schema.safeParse({
-				ig_id: '12345',
-				greeting: [
-					{ locale: 'default', text: 'Hello! How can we help?' },
-					{ locale: 'en_US', text: 'Welcome!' },
-				],
-			});
-			expect(result.success).toBe(true);
+			expect(schema.shape.greeting).toBeUndefined();
 		});
 
 		it('accepts persistent_menu with typed structure', () => {
 			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
 			const result = schema.safeParse({
-				ig_id: '12345',
+				page_id: '12345',
 				persistent_menu: [
 					{
 						locale: 'default',
@@ -566,7 +559,7 @@ describe('Instagram Schema Validation (credential-free)', () => {
 		it('accepts ice_breakers with typed structure', () => {
 			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
 			const result = schema.safeParse({
-				ig_id: '12345',
+				page_id: '12345',
 				ice_breakers: [
 					{ question: 'What can you do?', payload: 'GET_STARTED' },
 				],
@@ -578,7 +571,7 @@ describe('Instagram Schema Validation (credential-free)', () => {
 			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
 			// Missing required 'locale' field
 			const result = schema.safeParse({
-				ig_id: '12345',
+				page_id: '12345',
 				persistent_menu: [{ random_field: true }],
 			});
 			expect(result.success).toBe(false);
@@ -587,19 +580,37 @@ describe('Instagram Schema Validation (credential-free)', () => {
 		it('rejects ice_breakers with missing required fields', () => {
 			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
 			const result = schema.safeParse({
-				ig_id: '12345',
+				page_id: '12345',
 				ice_breakers: [{ question: 'Hello?' }], // missing payload
 			});
 			expect(result.success).toBe(false);
 		});
 	});
 
-	// ── Typed user tags ───────────────────────────────────────────────────
-	describe('typed user_tags', () => {
+	// ── Typed user tags & Media Refinements ────────────────────────────────
+	describe('media container validation and refinements', () => {
+		it('CreateMediaContainer rejects when both image_url and video_url are missing', () => {
+			const schema = InstagramEndpointInputSchemas.CreateMediaContainer;
+			const result = schema.safeParse({
+				ig_id: '12345',
+			});
+			expect(result.success).toBe(false);
+		});
+
+		it('CreateMediaContainer accepts with image_url', () => {
+			const schema = InstagramEndpointInputSchemas.CreateMediaContainer;
+			const result = schema.safeParse({
+				ig_id: '12345',
+				image_url: 'https://example.com/image.jpg',
+			});
+			expect(result.success).toBe(true);
+		});
+
 		it('CreateMediaContainer rejects untyped user_tags', () => {
 			const schema = InstagramEndpointInputSchemas.CreateMediaContainer;
 			const result = schema.safeParse({
 				ig_id: '12345',
+				image_url: 'https://example.com/image.jpg',
 				user_tags: [{ not_a_username: 'test' }],
 			});
 			expect(result.success).toBe(false);
@@ -609,7 +620,25 @@ describe('Instagram Schema Validation (credential-free)', () => {
 			const schema = InstagramEndpointInputSchemas.CreateMediaContainer;
 			const result = schema.safeParse({
 				ig_id: '12345',
+				image_url: 'https://example.com/image.jpg',
 				user_tags: [{ username: 'testuser', x: 0.5, y: 0.5 }],
+			});
+			expect(result.success).toBe(true);
+		});
+
+		it('PostIgUserMedia rejects when both image_url and video_url are missing', () => {
+			const schema = InstagramEndpointInputSchemas.PostIgUserMedia;
+			const result = schema.safeParse({
+				ig_id: '12345',
+			});
+			expect(result.success).toBe(false);
+		});
+
+		it('PostIgUserMedia accepts with video_url', () => {
+			const schema = InstagramEndpointInputSchemas.PostIgUserMedia;
+			const result = schema.safeParse({
+				ig_id: '12345',
+				video_url: 'https://example.com/video.mp4',
 			});
 			expect(result.success).toBe(true);
 		});
@@ -618,6 +647,7 @@ describe('Instagram Schema Validation (credential-free)', () => {
 			const schema = InstagramEndpointInputSchemas.PostIgUserMedia;
 			const result = schema.safeParse({
 				ig_id: '12345',
+				video_url: 'https://example.com/video.mp4',
 				user_tags: [{ not_a_username: 'test' }],
 			});
 			expect(result.success).toBe(false);
@@ -627,6 +657,7 @@ describe('Instagram Schema Validation (credential-free)', () => {
 			const schema = InstagramEndpointInputSchemas.PostIgUserMedia;
 			const result = schema.safeParse({
 				ig_id: '12345',
+				video_url: 'https://example.com/video.mp4',
 				user_tags: [{ username: 'testuser', x: 0.5, y: 0.5 }],
 			});
 			expect(result.success).toBe(true);

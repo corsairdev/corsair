@@ -119,12 +119,28 @@ export const getConversation: InstagramEndpoints['GetConversation'] = async (
 ) => {
 	const result = await makeAuthenticatedInstagramRequest<
 		InstagramEndpointOutputs['GetConversation']
-	>(`/${input.conversation_id}`, ctx, {
-		method: 'GET',
-		query: {
-			fields: input.fields,
+	>(
+		`/${input.conversation_id}`,
+		ctx,
+		{
+			method: 'GET',
+			query: {
+				fields: input.fields,
+			},
 		},
-	});
+		async (userToken) => {
+			const key = userToken ?? ctx.key;
+			const res: FacebookPageSchema = await GetFacebookPages(
+				key,
+				'access_token',
+				input.page_id,
+			);
+			if (!res.access_token) {
+				throw new Error(`No page access token found for page`);
+			}
+			return res.access_token;
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
@@ -140,14 +156,30 @@ export const pageConversations: InstagramEndpoints['GetPageConversations'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedInstagramRequest<
 			InstagramEndpointOutputs['GetPageConversations']
-		>(`/${input.page_id}/conversations`, ctx, {
-			method: 'GET',
-			query: {
-				platform: input.platform ?? 'instagram',
-				after: input.after,
-				before: input.before,
+		>(
+			`/${input.page_id}/conversations`,
+			ctx,
+			{
+				method: 'GET',
+				query: {
+					platform: input.platform ?? 'instagram',
+					after: input.after,
+					before: input.before,
+				},
 			},
-		});
+			async (userToken) => {
+				const key = userToken ?? ctx.key;
+				const res: FacebookPageSchema = await GetFacebookPages(
+					key,
+					'access_token',
+					input.page_id,
+				);
+				if (!res.access_token) {
+					throw new Error(`No page access token found for page`);
+				}
+				return res.access_token;
+			},
+		);
 
 		await logEventFromContext(
 			ctx,
@@ -165,14 +197,30 @@ export const listAll: InstagramEndpoints['ListAllConversations'] = async (
 ) => {
 	const result = await makeAuthenticatedInstagramRequest<
 		InstagramEndpointOutputs['ListAllConversations']
-	>(`/${input.ig_id}/conversations`, ctx, {
-		method: 'GET',
-		query: {
-			platform: 'instagram',
-			after: input.after,
-			before: input.before,
+	>(
+		`/${input.page_id}/conversations`,
+		ctx,
+		{
+			method: 'GET',
+			query: {
+				platform: 'instagram',
+				after: input.after,
+				before: input.before,
+			},
 		},
-	});
+		async (userToken) => {
+			const key = userToken ?? ctx.key;
+			const res: FacebookPageSchema = await GetFacebookPages(
+				key,
+				'access_token',
+				input.page_id,
+			);
+			if (!res.access_token) {
+				throw new Error(`No page access token found for page`);
+			}
+			return res.access_token;
+		},
+	);
 
 	await logEventFromContext(
 		ctx,
