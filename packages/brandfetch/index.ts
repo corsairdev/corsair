@@ -92,6 +92,8 @@ const brandfetchEndpointsNested = {
 	webhooks: WebhooksEndpoints,
 } as const;
 
+// No inbound webhooks — this toolkit is 9 ops / 0 trig.
+// webhooks.list and webhooks.listEvents are GraphQL read ops, not deliveries.
 const brandfetchWebhooksNested = {} as const;
 
 export const brandfetchEndpointSchemas = {
@@ -216,7 +218,8 @@ export function brandfetch<const T extends BrandfetchPluginOptions>(
 		webhooks: brandfetchWebhooksNested,
 		endpointMeta: brandfetchEndpointMeta,
 		endpointSchemas: brandfetchEndpointSchemas,
-		pluginWebhookMatcher: () => false,
+		// No inbound webhooks — Brandfetch deliveries are out of this plugin's scope
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
