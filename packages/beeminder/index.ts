@@ -41,8 +41,11 @@ export type BeeminderPluginOptions = {
 };
 
 /**
- * Personal auth_token (api_key) or OAuth access_token.
- * Authorize/token URLs match Beeminder's OmniAuth strategy.
+ * Personal `auth_token` (api_key) or a stored OAuth `access_token`.
+ *
+ * No `oauthConfig`: Beeminder is implicit-grant only (`response_type=token`,
+ * token in the redirect query). Corsair always sends `response_type=code` and
+ * POSTs the code to `tokenUrl`. There is no Beeminder token-exchange URL.
  */
 export const beeminderAuthConfig = {
 	api_key: {
@@ -170,7 +173,8 @@ export type ExternalBeeminderPlugin<T extends BeeminderPluginOptions> =
 /**
  * The Beeminder plugin.
  *
- * Personal `auth_token` or a stored OAuth `access_token`.
+ * Personal `auth_token`, or a stored OAuth `access_token` (`authType: oauth_2`).
+ * Studio/connect OAuth is not registered — Beeminder has no code-exchange URL.
  *
  * **No webhooks.** Beeminder sends outbound webhooks to user-configured URLs,
  * but does not deliver events to third-party integrations via webhook.
@@ -199,13 +203,6 @@ export function beeminder<const T extends BeeminderPluginOptions>(
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
-		},
-		oauthConfig: {
-			providerName: 'Beeminder',
-			authUrl: 'https://www.beeminder.com/apps/authorize',
-			tokenUrl: 'https://www.beeminder.com/apps/authorize',
-			scopes: [],
-			requiresRegisteredRedirect: true,
 		},
 		keyBuilder: async (ctx: BeeminderKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) {

@@ -35,19 +35,13 @@ describe('beeminder plugin registration', () => {
 		]);
 	});
 
-	it('registers api_key and oauth_2', () => {
+	it('registers api_key and oauth_2 without a connect oauthConfig', () => {
 		expect(Object.keys(beeminderAuthConfig).sort()).toEqual([
 			'api_key',
 			'oauth_2',
 		]);
 		expect(plugin.options?.authType).toBe('api_key');
-		expect(plugin.oauthConfig).toEqual({
-			providerName: 'Beeminder',
-			authUrl: 'https://www.beeminder.com/apps/authorize',
-			tokenUrl: 'https://www.beeminder.com/apps/authorize',
-			scopes: [],
-			requiresRegisteredRedirect: true,
-		});
+		expect(plugin.oauthConfig).toBeUndefined();
 	});
 
 	it('has input and output schemas for every endpoint', () => {
