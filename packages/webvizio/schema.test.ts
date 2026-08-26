@@ -5,6 +5,16 @@ import {
 	WebvizioWebhookSubscriptionSchema,
 } from './endpoints/types';
 import { WebvizioProject, WebvizioWebhook } from './schema';
+import {
+	CommentCreatedEventSchema,
+	CommentDeletedEventSchema,
+	ProjectCreatedEventSchema,
+	ProjectDeletedEventSchema,
+	ProjectUpdatedEventSchema,
+	TaskCreatedEventSchema,
+	TaskDeletedEventSchema,
+	TaskUpdatedEventSchema,
+} from './webhooks/types';
 
 describe('Webvizio input schemas', () => {
 	it('accepts empty object for projects.list', () => {
@@ -103,5 +113,46 @@ describe('Webvizio database entity schemas', () => {
 
 		expect(hook.id).toBe(42);
 		expect(hook.event).toBe('comment.created');
+	});
+});
+
+describe('Webvizio webhook event schemas', () => {
+	it('validates project webhook event schemas', () => {
+		const event = {
+			event: 'project.created',
+			payload: { uuid: 'p-1', name: 'New Site' },
+		};
+		expect(ProjectCreatedEventSchema.parse(event).event).toBe(
+			'project.created',
+		);
+		expect(ProjectUpdatedEventSchema.parse(event).event).toBe(
+			'project.created',
+		);
+		expect(ProjectDeletedEventSchema.parse(event).event).toBe(
+			'project.created',
+		);
+	});
+
+	it('validates task webhook event schemas', () => {
+		const event = {
+			event: 'task.created',
+			payload: { id: 10, title: 'Fix bug', status: 'open' },
+		};
+		expect(TaskCreatedEventSchema.parse(event).event).toBe('task.created');
+		expect(TaskUpdatedEventSchema.parse(event).event).toBe('task.created');
+		expect(TaskDeletedEventSchema.parse(event).event).toBe('task.created');
+	});
+
+	it('validates comment webhook event schemas', () => {
+		const event = {
+			event: 'comment.created',
+			payload: { id: 99, text: 'Great work!' },
+		};
+		expect(CommentCreatedEventSchema.parse(event).event).toBe(
+			'comment.created',
+		);
+		expect(CommentDeletedEventSchema.parse(event).event).toBe(
+			'comment.created',
+		);
 	});
 });

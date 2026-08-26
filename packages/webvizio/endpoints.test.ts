@@ -10,6 +10,12 @@ import { Projects, Webhooks } from './endpoints';
 import { errorHandlers } from './error-handlers';
 import { webvizio, webvizioEndpointSchemas } from './index';
 import { WebvizioSchema } from './schema';
+import {
+	CommentWebhooks,
+	matchWebvizioTenantWebhook,
+	ProjectWebhooks,
+	TaskWebhooks,
+} from './webhooks';
 
 jest.mock('corsair/core', () => {
 	class AuthMissingError extends Error {
@@ -21,6 +27,20 @@ jest.mock('corsair/core', () => {
 	return {
 		AuthMissingError,
 		logEventFromContext: jest.fn(),
+		asRecord: (v: unknown) =>
+			typeof v === 'object' && v !== null && !Array.isArray(v)
+				? (v as Record<string, unknown>)
+				: undefined,
+		firstString: (arr: unknown[]) =>
+			arr.find((x) => typeof x === 'string' && x.length > 0) as
+				| string
+				| undefined,
+		readBodyRecord: (req: any) =>
+			typeof req?.body === 'object' && req?.body !== null
+				? (req.body as Record<string, unknown>)
+				: typeof req?.payload === 'object' && req?.payload !== null
+					? (req.payload as Record<string, unknown>)
+					: undefined,
 	};
 });
 
@@ -36,12 +56,21 @@ const mockRequest = request as jest.Mock;
 const mockLog = jest.mocked(logEventFromContext);
 
 function createMockContext(apiKey = 'test-token') {
+	const upsertByEntityId = jest.fn().mockResolvedValue({ id: 'db-entity-1' });
 	return {
 		key: apiKey,
 		pluginId: 'webvizio',
 		authType: 'api_key' as const,
 		options: {},
 		schema: WebvizioSchema,
+		db: {
+			projects: {
+				upsertByEntityId,
+			},
+			webhooks: {
+				upsertByEntityId,
+			},
+		},
 	} as any;
 }
 
@@ -73,12 +102,22 @@ const sampleWebhooksFixture = [
 ];
 
 describe('Webvizio plugin structure', () => {
-	it('exposes exactly 2 operations with schemas and no webhooks', () => {
+	it('exposes exactly 2 operations and 8 webhooks with schemas', () => {
 		const plugin = webvizio();
 		const endpoints = plugin.endpoints as any;
+		const webhooksObj = plugin.webhooks as any;
 
 		expect(typeof endpoints.projects.list).toBe('function');
 		expect(typeof endpoints.webhooks.list).toBe('function');
+
+		expect(typeof webhooksObj.projects.projectCreated.handler).toBe('function');
+		expect(typeof webhooksObj.projects.projectUpdated.handler).toBe('function');
+		expect(typeof webhooksObj.projects.projectDeleted.handler).toBe('function');
+		expect(typeof webhooksObj.tasks.taskCreated.handler).toBe('function');
+		expect(typeof webhooksObj.tasks.taskUpdated.handler).toBe('function');
+		expect(typeof webhooksObj.tasks.taskDeleted.handler).toBe('function');
+		expect(typeof webhooksObj.comments.commentCreated.handler).toBe('function');
+		expect(typeof webhooksObj.comments.commentDeleted.handler).toBe('function');
 
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual([
 			'projects.list',
@@ -88,9 +127,8 @@ describe('Webvizio plugin structure', () => {
 			'projects.list',
 			'webhooks.list',
 		]);
-		expect(plugin.webhooks).toEqual({});
 		expect(typeof plugin.pluginWebhookMatcher).toBe('function');
-		expect(plugin.pluginWebhookMatcher?.({} as any)).toBe(false);
+		expect(typeof plugin.pluginTenantWebhookMatcher).toBe('function');
 	});
 
 	it('supports api_key auth configuration', () => {
@@ -181,6 +219,135 @@ describe('Webvizio endpoint handlers', () => {
 			{},
 			'completed',
 		);
+	});
+});
+
+describe('Webvizio inbound webhook handlers', () => {
+	beforeEach(() => {
+		mockLog.mockReset();
+	});
+
+	it('handles project.created webhook and upserts into db.projects', async () => {
+		const ctx = createMockContext();
+		const req = {
+			headers: { 'x-webvizio-event': 'project.created' },
+			payload: {
+				event: 'project.created',
+				payload: { uuid: 'proj-uuid-1', name: 'Web Redesign' },
+			},
+		};
+
+		expect(ProjectWebhooks.projectCreated.match(req as any)).toBe(true);
+		const res = await ProjectWebhooks.projectCreated.handler(ctx, req as any);
+		expect(res.success).toBe(true);
+		expect(ctx.db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			'proj-uuid-1',
+			expect.objectContaining({ name: 'Web Redesign' }),
+		);
+	});
+
+	it('handles project.updated webhook and upserts into db.projects', async () => {
+		const ctx = createMockContext();
+		const req = {
+			headers: {},
+			payload: {
+				event: 'project.updated',
+				payload: { uuid: 'proj-uuid-1', name: 'Updated Name' },
+			},
+		};
+
+		expect(ProjectWebhooks.projectUpdated.match(req as any)).toBe(true);
+		const res = await ProjectWebhooks.projectUpdated.handler(ctx, req as any);
+		expect(res.success).toBe(true);
+		expect(ctx.db.projects.upsertByEntityId).toHaveBeenCalledWith(
+			'proj-uuid-1',
+			expect.objectContaining({ name: 'Updated Name' }),
+		);
+	});
+
+	it('handles project.deleted webhook', async () => {
+		const ctx = createMockContext();
+		const req = {
+			headers: {},
+			payload: {
+				event: 'project.deleted',
+				payload: { uuid: 'proj-uuid-1' },
+			},
+		};
+
+		expect(ProjectWebhooks.projectDeleted.match(req as any)).toBe(true);
+		const res = await ProjectWebhooks.projectDeleted.handler(ctx, req as any);
+		expect(res.success).toBe(true);
+	});
+
+	it('handles task and comment webhooks', async () => {
+		const ctx = createMockContext();
+		const taskReq = {
+			headers: {},
+			payload: {
+				event: 'task.created',
+				payload: { id: 10, title: 'Fix CSS' },
+			},
+		};
+		expect(TaskWebhooks.taskCreated.match(taskReq as any)).toBe(true);
+		const taskRes = await TaskWebhooks.taskCreated.handler(ctx, taskReq as any);
+		expect(taskRes.success).toBe(true);
+
+		const commentReq = {
+			headers: {},
+			payload: {
+				event: 'comment.created',
+				payload: { id: 99, text: 'Done' },
+			},
+		};
+		expect(CommentWebhooks.commentCreated.match(commentReq as any)).toBe(true);
+		const commentRes = await CommentWebhooks.commentCreated.handler(
+			ctx,
+			commentReq as any,
+		);
+		expect(commentRes.success).toBe(true);
+	});
+});
+
+describe('Webvizio tenant matcher & webhook matcher', () => {
+	it('matches tenant by project_uuid or project_id', () => {
+		const match1 = matchWebvizioTenantWebhook({
+			headers: {},
+			body: { event: 'project.created', payload: { project_uuid: 'uuid-123' } },
+		} as any);
+		expect(match1).toEqual({
+			linkType: 'project_uuid',
+			externalId: 'uuid-123',
+		});
+
+		const match2 = matchWebvizioTenantWebhook({
+			headers: {},
+			body: { event: 'task.created', payload: { project_id: '456' } },
+		} as any);
+		expect(match2).toEqual({ linkType: 'project_id', externalId: '456' });
+	});
+
+	it('pluginWebhookMatcher recognizes Webvizio webhook headers and body events', () => {
+		const plugin = webvizio();
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: { 'x-webvizio-signature': 'sig' },
+			} as any),
+		).toBe(true);
+
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: {},
+				body: { event: 'project.created' },
+			} as any),
+		).toBe(true);
+
+		expect(
+			plugin.pluginWebhookMatcher?.({
+				headers: {},
+				body: { event: 'unknown.event' },
+			} as any),
+		).toBe(false);
 	});
 });
 
