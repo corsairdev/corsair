@@ -20,7 +20,12 @@ export const example: VoWebhooks['example'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'vo.webhook.example', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'vo.webhook.example',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},

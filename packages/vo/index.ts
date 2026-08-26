@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -14,20 +15,19 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { VoEndpointInputs, VoEndpointOutputs } from './endpoints/types';
-import { VoEndpointInputSchemas, VoEndpointOutputSchemas } from './endpoints/types';
-import type {
-	VoWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 import { Example } from './endpoints';
+import type { VoEndpointInputs, VoEndpointOutputs } from './endpoints/types';
+import {
+	VoEndpointInputSchemas,
+	VoEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { VoSchema } from './schema';
 import { ExampleWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
-import { matchVoTenantWebhook } from './webhooks/tenant-matcher';
 import { resolveVoOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { matchVoTenantWebhook } from './webhooks/tenant-matcher';
+import type { ExampleEvent, VoWebhookOutputs } from './webhooks/types';
+import { ExampleEventSchema } from './webhooks/types';
 
 export type VoPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -39,18 +39,13 @@ export type VoPluginOptions = {
 	permissions?: PluginPermissionsConfig<typeof voEndpointsNested>;
 };
 
-export type VoContext = CorsairPluginContext<
-	typeof VoSchema,
-	VoPluginOptions
->;
+export type VoContext = CorsairPluginContext<typeof VoSchema, VoPluginOptions>;
 
 export type VoKeyBuilderContext = KeyBuilderContext<VoPluginOptions>;
 
 export type VoBoundEndpoints = BindEndpoints<typeof voEndpointsNested>;
 
-type VoEndpoint<
-	K extends keyof VoEndpointOutputs,
-> = CorsairEndpoint<
+type VoEndpoint<K extends keyof VoEndpointOutputs> = CorsairEndpoint<
 	VoContext,
 	VoEndpointInputs[K],
 	VoEndpointOutputs[K]
@@ -60,10 +55,11 @@ export type VoEndpoints = {
 	exampleGet: VoEndpoint<'exampleGet'>;
 };
 
-type VoWebhook<
-	K extends keyof VoWebhookOutputs,
+type VoWebhook<K extends keyof VoWebhookOutputs, TEvent> = CorsairWebhook<
+	VoContext,
 	TEvent,
-> = CorsairWebhook<VoContext, TEvent, VoWebhookOutputs[K]>;
+	VoWebhookOutputs[K]
+>;
 
 export type VoWebhooks = {
 	example: VoWebhook<'example', ExampleEvent>;
@@ -127,8 +123,7 @@ export type BaseVoPlugin<T extends VoPluginOptions> = CorsairPlugin<
 
 export type InternalVoPlugin = BaseVoPlugin<VoPluginOptions>;
 
-export type ExternalVoPlugin<T extends VoPluginOptions> =
-	BaseVoPlugin<T>;
+export type ExternalVoPlugin<T extends VoPluginOptions> = BaseVoPlugin<T>;
 
 export function vo<const T extends VoPluginOptions>(
 	incomingOptions: VoPluginOptions & T = {} as VoPluginOptions & T,
@@ -190,13 +185,12 @@ export function vo<const T extends VoPluginOptions>(
 }
 
 export type {
+	ExampleGetInput,
+	ExampleGetResponse,
+	VoEndpointInputs,
+	VoEndpointOutputs,
+} from './endpoints/types';
+export type {
 	ExampleEvent,
 	VoWebhookOutputs,
 } from './webhooks/types';
-
-export type {
-	VoEndpointInputs,
-	VoEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
-} from './endpoints/types';

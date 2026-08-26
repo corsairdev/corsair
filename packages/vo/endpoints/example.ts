@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { VoEndpoints } from '..';
-import type { VoEndpointOutputs } from './types';
 import { makeVoRequest } from '../client';
+import type { VoEndpointOutputs } from './types';
 
 export const get: VoEndpoints['exampleGet'] = async (ctx, input) => {
 	const response = await makeVoRequest<VoEndpointOutputs['exampleGet']>(
