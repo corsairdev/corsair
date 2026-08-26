@@ -1,5 +1,5 @@
 import type { TokenResponse, WebhookTenantMatch } from 'corsair/core';
-import { asRecord, toExternalId } from 'corsair/core';
+import { toExternalId } from 'corsair/core';
 
 // TODO: Rename linkType 'tenant_external_id' to match pluginTenantWebhookMatcher.
 // Called after OAuth to store the routing id on corsair_accounts.config.

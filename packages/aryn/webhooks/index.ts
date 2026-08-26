@@ -1,7 +1,7 @@
-import { example } from './example';
+import { taskDone } from './task-done';
 
-export const ExampleWebhooks = {
-	example: example,
+export const ArynWebhooks = {
+	taskDone: taskDone,
 };
 
 export * from './oauth-tenant-link';

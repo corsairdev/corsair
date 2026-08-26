@@ -4,25 +4,40 @@ dotenv.config({ path: '../.env' });
 
 import { corsair } from '@/server/corsair';
 
-async function setInstagramCredentials() {
-	const { FACEBOOK_APP_ID, FACEBOOK_APP_SECRET, IG_ACCESS_TOKEN } = process.env;
-
-	if (FACEBOOK_APP_ID) {
-		await corsair.keys.instagram.set_client_id(FACEBOOK_APP_ID);
-	}
-	if (FACEBOOK_APP_SECRET) {
-		await corsair.keys.instagram.set_client_secret(FACEBOOK_APP_SECRET);
-	}
-	if (IG_ACCESS_TOKEN) {
-		await corsair.instagram.keys.set_access_token(IG_ACCESS_TOKEN);
-	}
-}
-
 const main = async () => {
-	const res = await corsair.slack.api.messages.post({
-		channel: 'general',
-		text: 'hello',
-	});
+	console.log('Exercising Aryn plugin endpoints...');
+
+	const apiKey = process.env.ARYN_API_KEY;
+	if (!apiKey) {
+		console.warn(
+			'ARYN_API_KEY environment variable is not set. Skip actual API calls or expect unauthorized errors.',
+		);
+	}
+
+	try {
+		// 1. Create DocSet
+		console.log('1. Creating docset...');
+		const docset = await corsair.aryn.api.docset.create({
+			name: 'test-docset-from-corsair',
+		});
+		console.log('Docset created successfully:', docset);
+
+		// 2. Get DocSet Metadata
+		console.log('2. Getting docset metadata...');
+		const metadata = await corsair.aryn.api.docset.get({
+			docset_id: docset.docset_id,
+		});
+		console.log('Docset metadata:', metadata);
+
+		// 3. Delete DocSet
+		console.log('3. Deleting docset...');
+		const deletedDocset = await corsair.aryn.api.docset.delete({
+			docset_id: docset.docset_id,
+		});
+		console.log('Docset deleted successfully:', deletedDocset);
+	} catch (error) {
+		console.error('Error during Aryn plugin execution:', error);
+	}
 };
 
 main().catch((err) => {

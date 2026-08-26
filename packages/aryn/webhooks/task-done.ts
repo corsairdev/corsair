@@ -2,8 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import type { ArynWebhooks } from '..';
 import { createArynMatch, verifyArynWebhookSignature } from './types';
 
-export const example: ArynWebhooks['example'] = {
-	match: createArynMatch('example'),
+export const taskDone: ArynWebhooks['taskDone'] = {
+	match: createArynMatch(),
 
 	handler: async (ctx, request) => {
 		const verification = verifyArynWebhookSignature(request, ctx.key);
@@ -16,13 +16,10 @@ export const example: ArynWebhooks['example'] = {
 		}
 
 		const event = request.payload;
-		if (event.type !== 'example') {
-			return { success: true, data: undefined };
-		}
 
 		await logEventFromContext(
 			ctx,
-			'aryn.webhook.example',
+			'aryn.webhook.taskDone',
 			{ ...event },
 			'completed',
 		);

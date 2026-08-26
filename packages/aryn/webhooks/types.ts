@@ -5,27 +5,20 @@ import type {
 } from 'corsair/core';
 import { z } from 'zod';
 
-export const ArynWebhookPayloadSchema = z.object({
-	type: z.string(),
-	created_at: z.string(),
-	data: z.record(z.string(), z.unknown()),
-});
+export const ArynTaskDonePayloadSchema = z
+	.object({
+		done: z.array(
+			z.object({
+				task_id: z.string(),
+			}),
+		),
+	})
+	.loose();
 
-export type ArynWebhookPayload = z.infer<typeof ArynWebhookPayloadSchema>;
-
-export const ExampleEventSchema = ArynWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
-		})
-		.loose(),
-});
-
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
+export type ArynTaskDonePayload = z.infer<typeof ArynTaskDonePayloadSchema>;
 
 export type ArynWebhookOutputs = {
-	example: ExampleEvent;
+	taskDone: ArynTaskDonePayload;
 };
 
 function parseBody(body: unknown): Record<string, unknown> | null {
@@ -46,17 +39,17 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 		: null;
 }
 
-export function createArynMatch(eventType: string): CorsairWebhookMatcher {
+export function createArynMatch(): CorsairWebhookMatcher {
 	return (request: RawWebhookRequest) => {
 		const parsedBody = parseBody(request.body);
-		return parsedBody !== null && parsedBody.type === eventType;
+		return parsedBody !== null && Array.isArray(parsedBody.done);
 	};
 }
 
 export function verifyArynWebhookSignature(
-	request: WebhookRequest<ArynWebhookPayload>,
+	request: WebhookRequest<ArynTaskDonePayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
+	// Aryn webhooks do not support signature validation, so always valid.
 	return { valid: true };
 }

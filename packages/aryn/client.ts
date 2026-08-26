@@ -11,30 +11,53 @@ export class ArynAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
-const ARYN_API_BASE = 'https://api.example.com';
+const ARYN_API_BASE = 'https://api.aryn.ai';
 
 export async function makeArynRequest<T>(
 	endpoint: string,
 	apiKey: string,
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
+		body?: Record<string, unknown> | unknown[];
 		query?: Record<string, string | number | boolean | undefined>;
+		formData?: Record<string, unknown>;
+		baseUrl?: string;
+		responseType?: 'json' | 'binary';
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		formData,
+		baseUrl = ARYN_API_BASE,
+		responseType = 'json',
+	} = options;
+
+	if (responseType === 'binary') {
+		const url = `${baseUrl}${endpoint}`;
+		const res = await fetch(url, {
+			method,
+			headers: {
+				Authorization: `Bearer ${apiKey}`,
+			},
+		});
+		if (!res.ok) {
+			throw new ArynAPIError(
+				`Request failed with status ${res.status}: ${res.statusText}`,
+			);
+		}
+		return Buffer.from(await res.arrayBuffer()) as T;
+	}
 
 	const config: OpenAPIConfig = {
-		BASE: ARYN_API_BASE,
+		BASE: baseUrl,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
-			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/json',
 		},
 	};
 
@@ -42,11 +65,12 @@ export async function makeArynRequest<T>(
 		method,
 		url: endpoint,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			!formData && (method === 'POST' || method === 'PUT' || method === 'PATCH')
 				? body
 				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		formData,
+		mediaType: formData ? undefined : 'application/json; charset=utf-8',
+		query,
 	};
 
 	try {

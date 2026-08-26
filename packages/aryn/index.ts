@@ -15,7 +15,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { z } from 'zod';
+import { Aryn } from './endpoints';
 import type {
 	ArynEndpointInputs,
 	ArynEndpointOutputs,
@@ -26,11 +27,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ArynSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+import { ArynWebhooks } from './webhooks';
 import { resolveArynOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
 import { matchArynTenantWebhook } from './webhooks/tenant-matcher';
-import type { ArynWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+import type { ArynTaskDonePayload, ArynWebhookOutputs } from './webhooks/types';
+import { ArynTaskDonePayloadSchema } from './webhooks/types';
 
 export type ArynPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
@@ -58,7 +59,15 @@ type ArynEndpoint<K extends keyof ArynEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type ArynEndpoints = {
-	exampleGet: ArynEndpoint<'exampleGet'>;
+	docsetCreate: ArynEndpoint<'docsetCreate'>;
+	docsetDelete: ArynEndpoint<'docsetDelete'>;
+	docsetGet: ArynEndpoint<'docsetGet'>;
+	documentGet: ArynEndpoint<'documentGet'>;
+	documentGetBinary: ArynEndpoint<'documentGetBinary'>;
+	queryGeneratePlan: ArynEndpoint<'queryGeneratePlan'>;
+	asyncTasksList: ArynEndpoint<'asyncTasksList'>;
+	documentPartition: ArynEndpoint<'documentPartition'>;
+	documentSubmitAsyncAdd: ArynEndpoint<'documentSubmitAsyncAdd'>;
 };
 
 type ArynWebhook<K extends keyof ArynWebhookOutputs, TEvent> = CorsairWebhook<
@@ -68,44 +77,122 @@ type ArynWebhook<K extends keyof ArynWebhookOutputs, TEvent> = CorsairWebhook<
 >;
 
 export type ArynWebhooks = {
-	example: ArynWebhook<'example', ExampleEvent>;
+	taskDone: ArynWebhook<'taskDone', ArynTaskDonePayload>;
 };
 
 export type ArynBoundWebhooks = BindWebhooks<ArynWebhooks>;
 
 const arynEndpointsNested = {
-	example: {
-		get: Example.get,
+	docset: {
+		create: Aryn.docsetCreate,
+		get: Aryn.docsetGet,
+		delete: Aryn.docsetDelete,
+	},
+	document: {
+		get: Aryn.documentGet,
+		getBinary: Aryn.documentGetBinary,
+		partition: Aryn.documentPartition,
+		submitAsyncAdd: Aryn.documentSubmitAsyncAdd,
+	},
+	query: {
+		generatePlan: Aryn.queryGeneratePlan,
+	},
+	asyncTasks: {
+		list: Aryn.asyncTasksList,
 	},
 } as const;
 
 const arynWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	task: {
+		taskDone: ArynWebhooks.taskDone,
 	},
 } as const;
 
 export const arynEndpointSchemas = {
-	'example.get': {
-		input: ArynEndpointInputSchemas.exampleGet,
-		output: ArynEndpointOutputSchemas.exampleGet,
+	'docset.create': {
+		input: ArynEndpointInputSchemas.docsetCreate,
+		output: ArynEndpointOutputSchemas.docsetCreate,
+	},
+	'docset.get': {
+		input: ArynEndpointInputSchemas.docsetGet,
+		output: ArynEndpointOutputSchemas.docsetGet,
+	},
+	'docset.delete': {
+		input: ArynEndpointInputSchemas.docsetDelete,
+		output: ArynEndpointOutputSchemas.docsetDelete,
+	},
+	'document.get': {
+		input: ArynEndpointInputSchemas.documentGet,
+		output: ArynEndpointOutputSchemas.documentGet,
+	},
+	'document.getBinary': {
+		input: ArynEndpointInputSchemas.documentGetBinary,
+		output: ArynEndpointOutputSchemas.documentGetBinary,
+	},
+	'document.partition': {
+		input: ArynEndpointInputSchemas.documentPartition,
+		output: ArynEndpointOutputSchemas.documentPartition,
+	},
+	'document.submitAsyncAdd': {
+		input: ArynEndpointInputSchemas.documentSubmitAsyncAdd,
+		output: ArynEndpointOutputSchemas.documentSubmitAsyncAdd,
+	},
+	'query.generatePlan': {
+		input: ArynEndpointInputSchemas.queryGeneratePlan,
+		output: ArynEndpointOutputSchemas.queryGeneratePlan,
+	},
+	'asyncTasks.list': {
+		input: ArynEndpointInputSchemas.asyncTasksList,
+		output: ArynEndpointOutputSchemas.asyncTasksList,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof arynEndpointsNested>;
 
 const arynWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'task.taskDone': {
+		description: 'Aryn async document partitioning task has completed.',
+		payload: ArynTaskDonePayloadSchema,
+		response: z.any(),
 	},
 } as const satisfies RequiredPluginWebhookSchemas<typeof arynWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const arynEndpointMeta = {
-	'example.get': {
+	'docset.create': {
+		riskLevel: 'write',
+		description: 'Create a new DocSet',
+	},
+	'docset.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Get DocSet metadata',
+	},
+	'docset.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a DocSet',
+	},
+	'document.get': {
+		riskLevel: 'read',
+		description: 'Get a document by ID',
+	},
+	'document.getBinary': {
+		riskLevel: 'read',
+		description: 'Download document binary content',
+	},
+	'document.partition': {
+		riskLevel: 'write',
+		description: 'Partition document using Aryn DocParse',
+	},
+	'document.submitAsyncAdd': {
+		riskLevel: 'write',
+		description: 'Submit document asynchronously to a DocSet',
+	},
+	'query.generatePlan': {
+		riskLevel: 'read',
+		description: 'Generate query plan',
+	},
+	'asyncTasks.list': {
+		riskLevel: 'read',
+		description: 'List async partitioning tasks',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof arynEndpointsNested>;
 
@@ -151,9 +238,7 @@ export function aryn<const T extends ArynPluginOptions>(
 		endpointSchemas: arynEndpointSchemas,
 		webhookSchemas: arynWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-aryn-signature' in headers;
+			return request.body !== undefined && request.body !== null;
 		},
 		pluginTenantWebhookMatcher: matchArynTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveArynOAuthWebhookTenantLink,
@@ -193,10 +278,5 @@ export function aryn<const T extends ArynPluginOptions>(
 export type {
 	ArynEndpointInputs,
 	ArynEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
 } from './endpoints/types';
-export type {
-	ArynWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
+export type { ArynWebhookOutputs } from './webhooks/types';
