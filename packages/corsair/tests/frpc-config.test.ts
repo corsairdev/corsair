@@ -92,7 +92,7 @@ describe('buildFrpcConfig', () => {
 			expect(t).toContain('transport.tls.serverName = "127.0.0.1"');
 		});
 
-		it('rewrites Windows backslash paths — \U is a TOML unicode escape, so C:\Users breaks frpc parsing', () => {
+		it('rewrites Windows backslash paths — \\U is a TOML unicode escape, so C:\\Users breaks frpc parsing', () => {
 			const t = buildFrpcConfig({
 				serverAddr: 'tunnel.corsair.cloud',
 				serverPort: 7000,
@@ -106,6 +106,21 @@ describe('buildFrpcConfig', () => {
 				'transport.tls.trustedCaFile = "C:/Users/dev/AppData/Local/Temp/corsair-frpc-x/ca.crt"',
 			);
 			expect(t).not.toContain('\\U');
+		});
+
+		it('throws on a caCertPath that would break out of the toml string', () => {
+			for (const bad of ['/tmp/a"b/ca.crt', '/tmp/a\nb/ca.crt']) {
+				expect(() =>
+					buildFrpcConfig({
+						serverAddr: 'tunnel.corsair.cloud',
+						serverPort: 7000,
+						apiKey: 'ck_dev_abc',
+						slug: 'slug-1',
+						localPort: 41234,
+						caCertPath: bad,
+					}),
+				).toThrow(/caCertPath/);
+			}
 		});
 	});
 });

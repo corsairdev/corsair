@@ -32,6 +32,13 @@ export function buildFrpcConfig(opts: {
 			'deliveryPath must be an absolute URL path (e.g. /api/corsair)',
 		);
 	}
+	// Backslashes in caCertPath are normalized below; a quote or control char
+	// would still break out of the trustedCaFile basic string.
+	if (opts.caCertPath && /["\x00-\x1F\x7F]/.test(opts.caCertPath)) {
+		throw new Error(
+			'caCertPath contains invalid characters (quotes or control chars)',
+		);
+	}
 	const lines = [
 		`serverAddr = "${opts.serverAddr}"`,
 		`serverPort = ${opts.serverPort}`,
