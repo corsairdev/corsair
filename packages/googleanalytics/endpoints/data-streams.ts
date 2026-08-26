@@ -7,7 +7,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// parent is "properties/{id}".
 export const list: GoogleAnalyticsEndpoints['dataStreamsList'] = async (
 	ctx,
 	input,
@@ -28,7 +27,6 @@ export const list: GoogleAnalyticsEndpoints['dataStreamsList'] = async (
 	return result;
 };
 
-// parent is "properties/{id}/dataStreams/{stream}".
 export const listMeasurementProtocolSecrets: GoogleAnalyticsEndpoints['dataStreamsListMeasurementProtocolSecrets'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
@@ -51,7 +49,6 @@ export const listMeasurementProtocolSecrets: GoogleAnalyticsEndpoints['dataStrea
 		return result;
 	};
 
-// parent is "properties/{id}/dataStreams/{stream}". Event create rules are v1alpha.
 export const listEventCreateRules: GoogleAnalyticsEndpoints['dataStreamsListEventCreateRules'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
@@ -70,7 +67,6 @@ export const listEventCreateRules: GoogleAnalyticsEndpoints['dataStreamsListEven
 		return result;
 	};
 
-// parent is "properties/{id}/dataStreams/{stream}". v1alpha only.
 export const listSKAdNetworkConversionValueSchemas: GoogleAnalyticsEndpoints['dataStreamsListSKAdNetworkConversionValueSchemas'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<

@@ -8,9 +8,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// All report methods live on the Data API. `property` is normalized to the
-// "properties/{id}" path segment; the rest of the input is sent as the body.
-
 export const run: GoogleAnalyticsEndpoints['reportsRun'] = async (
 	ctx,
 	input,
@@ -75,7 +72,6 @@ export const runPivot: GoogleAnalyticsEndpoints['reportsRunPivot'] = async (
 	return result;
 };
 
-// Funnel reports are v1alpha only.
 export const runFunnel: GoogleAnalyticsEndpoints['reportsRunFunnel'] = async (
 	ctx,
 	input,
@@ -160,7 +156,6 @@ export const checkCompatibility: GoogleAnalyticsEndpoints['reportsCheckCompatibi
 		return result;
 	};
 
-// name is "properties/{id}/metadata".
 export const getMetadata: GoogleAnalyticsEndpoints['reportsGetMetadata'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<

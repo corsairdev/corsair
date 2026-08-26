@@ -8,8 +8,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// accounts.get lives on the v1beta Admin API. The name is the full resource,
-// e.g. "accounts/123".
 export const get: GoogleAnalyticsEndpoints['accountsGet'] = async (
 	ctx,
 	input,
@@ -39,7 +37,6 @@ export const get: GoogleAnalyticsEndpoints['accountsGet'] = async (
 	return result;
 };
 
-// Deprecated in favour of the v1beta variant; routed at v1alpha.
 export const list: GoogleAnalyticsEndpoints['accountsList'] = async (
 	ctx,
 	input,
@@ -97,7 +94,6 @@ export const listSummaries: GoogleAnalyticsEndpoints['accountsListSummaries'] =
 		return result;
 	};
 
-// name is "accounts/{id}/dataSharingSettings".
 export const getDataSharingSettings: GoogleAnalyticsEndpoints['accountsGetDataSharingSettings'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<

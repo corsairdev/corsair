@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
 	encodeResourcePath,
+	jsonObjectBody,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
 } from '../client';
@@ -15,7 +16,7 @@ export const create: GoogleAnalyticsEndpoints['customMetricsCreate'] = async (
 		GoogleAnalyticsEndpointOutputs['customMetricsCreate']
 	>(`/v1beta/${encodeResourcePath(input.parent)}/customMetrics`, ctx, {
 		method: 'POST',
-		body: { customMetric: input.customMetric },
+		body: jsonObjectBody(input.customMetric),
 	});
 
 	await logEventFromContext(

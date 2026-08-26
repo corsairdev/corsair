@@ -3,13 +3,11 @@ import type { GoogleAnalyticsEndpoints } from '..';
 import {
 	encodeResourcePath,
 	GOOGLE_ANALYTICS_DATA_BASE,
+	jsonObjectBody,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
-
-// Audience lists retrieve users in an audience. They live on the Data API
-// v1alpha. parent/name are "properties/{id}" / "properties/{id}/audienceLists/{list}".
 
 export const create: GoogleAnalyticsEndpoints['audienceListsCreate'] = async (
 	ctx,
@@ -20,7 +18,7 @@ export const create: GoogleAnalyticsEndpoints['audienceListsCreate'] = async (
 	>(`/v1alpha/${encodeResourcePath(input.parent)}/audienceLists`, ctx, {
 		method: 'POST',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
-		body: { audienceList: input.audienceList },
+		body: jsonObjectBody(input.audienceList),
 	});
 
 	await logEventFromContext(

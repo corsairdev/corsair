@@ -7,8 +7,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// All v1alpha. parent is "properties/{id}".
-
 export const listAnnotations: GoogleAnalyticsEndpoints['reportingDataListAnnotations'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<

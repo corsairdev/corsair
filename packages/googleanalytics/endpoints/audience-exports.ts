@@ -3,13 +3,11 @@ import type { GoogleAnalyticsEndpoints } from '..';
 import {
 	encodeResourcePath,
 	GOOGLE_ANALYTICS_DATA_BASE,
+	jsonObjectBody,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
-
-// Audience exports are the older retrieval path on the Data API v1beta.
-// parent/name are "properties/{id}" / "properties/{id}/audienceExports/{export}".
 
 export const create: GoogleAnalyticsEndpoints['audienceExportsCreate'] = async (
 	ctx,
@@ -20,7 +18,7 @@ export const create: GoogleAnalyticsEndpoints['audienceExportsCreate'] = async (
 	>(`/v1beta/${encodeResourcePath(input.parent)}/audienceExports`, ctx, {
 		method: 'POST',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
-		body: { audienceExport: input.audienceExport },
+		body: jsonObjectBody(input.audienceExport),
 	});
 
 	await logEventFromContext(

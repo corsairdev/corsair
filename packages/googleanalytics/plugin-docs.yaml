@@ -1,6 +1,5 @@
 displayName: Google Analytics
 description: Google Analytics 4 plugin for Corsair
 overviewNote: |
-  Covers the GA4 Admin API, Data API, and Measurement Protocol. Use Corsair
-  permissions for write operations, including listing measurement protocol
-  secrets, which return stream api_secret values.
+  GA4 Admin API, Data API, and Measurement Protocol. Listing measurement
+  protocol secrets returns stream api_secret values and counts as a write.

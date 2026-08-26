@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import { request } from 'corsair/http';
 import { encodeResourcePath, GoogleAnalyticsAPIError } from './client';
 import {
@@ -16,6 +17,14 @@ jest.mock('corsair/http', () => {
 	};
 });
 
+jest.mock('corsair/core', () => {
+	const original = jest.requireActual('corsair/core');
+	return {
+		...original,
+		logEventFromContext: jest.fn(async () => null),
+	};
+});
+
 const mockRequest = request as jest.Mock;
 
 const ADMIN_BASE = 'https://analyticsadmin.googleapis.com';
@@ -31,12 +40,7 @@ const mockCtx = {
 	db: {},
 } as unknown as GoogleAnalyticsContext;
 
-// These tests pin down the schema contract without hitting the network:
-// representative GA responses parse against the output schemas, and inputs
-// accept the documented shapes (plus extra fields, since they are loose).
-
 type RouteCase = {
-	/** dot path in the nested endpoint tree, e.g. "reports.run" */
 	endpoint: string;
 	input: Record<string, unknown>;
 	base: string;
@@ -44,12 +48,8 @@ type RouteCase = {
 	url: string;
 };
 
-// One case per endpoint (67 HTTP endpoints; the 2 Measurement Protocol
-// endpoints use fetch and are covered separately below). Expected URLs come
-// from the GA4 Admin API (v1alpha/v1beta) and Data API REST references.
 const PROP = 'properties/100';
 const routeCases: RouteCase[] = [
-	// accounts (Admin API)
 	{
 		endpoint: 'accounts.get',
 		input: { name: 'accounts/123' },
@@ -92,7 +92,6 @@ const routeCases: RouteCase[] = [
 		method: 'POST',
 		url: '/v1beta/accounts:provisionAccountTicket',
 	},
-	// properties (Admin API)
 	{
 		endpoint: 'properties.get',
 		input: { name: PROP },
@@ -152,7 +151,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1alpha/${PROP}/googleSignalsSettings`,
 	},
-	// property quota snapshot lives on the Data API, v1alpha only
 	{
 		endpoint: 'properties.getPropertyQuotasSnapshot',
 		input: { name: `${PROP}/propertyQuotasSnapshot` },
@@ -160,7 +158,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1alpha/${PROP}/propertyQuotasSnapshot`,
 	},
-	// custom dimensions / metrics (Admin API v1beta)
 	{
 		endpoint: 'customDimensions.create',
 		input: { parent: PROP, customDimension: { parameterName: 'x' } },
@@ -203,7 +200,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1beta/${PROP}/customMetrics`,
 	},
-	// calculated metrics, key events, conversion events
 	{
 		endpoint: 'calculatedMetrics.list',
 		input: { parent: PROP },
@@ -232,7 +228,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1beta/${PROP}/conversionEvents`,
 	},
-	// audiences (Admin API v1alpha)
 	{
 		endpoint: 'audiences.get',
 		input: { name: `${PROP}/audiences/1` },
@@ -247,7 +242,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1alpha/${PROP}/audiences`,
 	},
-	// audience lists (Data API v1alpha)
 	{
 		endpoint: 'audienceLists.create',
 		input: { parent: PROP, audienceList: {} },
@@ -276,7 +270,6 @@ const routeCases: RouteCase[] = [
 		method: 'POST',
 		url: `/v1alpha/${PROP}/audienceLists/1:query`,
 	},
-	// audience exports (Data API v1beta)
 	{
 		endpoint: 'audienceExports.create',
 		input: { parent: PROP, audienceExport: {} },
@@ -305,7 +298,6 @@ const routeCases: RouteCase[] = [
 		method: 'POST',
 		url: `/v1beta/${PROP}/audienceExports/1:query`,
 	},
-	// recurring audience lists (Data API v1alpha)
 	{
 		endpoint: 'recurringAudienceLists.create',
 		input: { parent: PROP, recurringAudienceList: {} },
@@ -327,7 +319,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1alpha/${PROP}/recurringAudienceLists`,
 	},
-	// data streams (Admin API)
 	{
 		endpoint: 'dataStreams.list',
 		input: { parent: PROP },
@@ -356,7 +347,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1alpha/${PROP}/dataStreams/1/sKAdNetworkConversionValueSchema`,
 	},
-	// product links (Admin API)
 	{
 		endpoint: 'links.listAdSense',
 		input: { parent: PROP },
@@ -406,7 +396,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1alpha/${PROP}/searchAds360Links`,
 	},
-	// expanded data sets / channel groups (Admin API v1alpha)
 	{
 		endpoint: 'expandedDataSets.create',
 		input: { parent: PROP, expandedDataSet: {} },
@@ -428,7 +417,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1alpha/${PROP}/channelGroups`,
 	},
-	// reporting data admin surfaces (Admin API v1alpha)
 	{
 		endpoint: 'reportingData.listAnnotations',
 		input: { parent: PROP },
@@ -450,7 +438,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1alpha/${PROP}/subpropertySyncConfigs`,
 	},
-	// reports (Data API; funnel is v1alpha-only)
 	{
 		endpoint: 'reports.run',
 		input: { property: PROP },
@@ -507,7 +494,6 @@ const routeCases: RouteCase[] = [
 		method: 'GET',
 		url: `/v1beta/${PROP}/metadata`,
 	},
-	// report tasks (Data API v1alpha)
 	{
 		endpoint: 'reportTasks.create',
 		input: { parent: PROP, reportTask: {} },
@@ -588,6 +574,58 @@ describe('endpoint routing hits the documented GA4 REST surface', () => {
 			const [config, options] = mockRequest.mock.calls[0] ?? [];
 			expect(config.BASE).toBe(base);
 			expect(options).toMatchObject({ method, url });
+		},
+	);
+
+	it.each([
+		[
+			'customDimensions.create',
+			{ parent: PROP, customDimension: { parameterName: 'x' } },
+			{ parameterName: 'x' },
+		],
+		[
+			'customMetrics.create',
+			{ parent: PROP, customMetric: { parameterName: 'y' } },
+			{ parameterName: 'y' },
+		],
+		[
+			'expandedDataSets.create',
+			{ parent: PROP, expandedDataSet: { displayName: 'set' } },
+			{ displayName: 'set' },
+		],
+		[
+			'audienceLists.create',
+			{ parent: PROP, audienceList: { audience: `${PROP}/audiences/1` } },
+			{ audience: `${PROP}/audiences/1` },
+		],
+		[
+			'audienceExports.create',
+			{ parent: PROP, audienceExport: { audience: `${PROP}/audiences/1` } },
+			{ audience: `${PROP}/audiences/1` },
+		],
+		[
+			'recurringAudienceLists.create',
+			{
+				parent: PROP,
+				recurringAudienceList: { audience: `${PROP}/audiences/1` },
+			},
+			{ audience: `${PROP}/audiences/1` },
+		],
+		[
+			'reportTasks.create',
+			{ parent: PROP, reportTask: { reportDefinition: { limit: 10 } } },
+			{ reportDefinition: { limit: 10 } },
+		],
+	] as const)(
+		'%s posts the resource as the HTTP body',
+		async (endpoint, input, expectedBody) => {
+			const [group, name] = endpoint.split('.');
+			const handler = endpoints[group ?? '']?.[name ?? ''];
+			if (!handler) throw new Error(`[test] missing endpoint ${endpoint}`);
+
+			await handler(mockCtx, { ...input });
+
+			expect(mockRequest.mock.calls[0]?.[1].body).toEqual(expectedBody);
 		},
 	);
 
@@ -677,6 +715,12 @@ describe('measurement protocol routing (fetch-based)', () => {
 		expect(body.client_id).toBe('555');
 		expect(body).not.toHaveProperty('apiSecret');
 		expect(body).not.toHaveProperty('api_secret');
+		expect(logEventFromContext).toHaveBeenCalledWith(
+			mockCtx,
+			'googleanalytics.measurementProtocol.sendEvents',
+			{ eventCount: 1, eventNames: ['login'] },
+			'completed',
+		);
 	});
 
 	it('validateEvents POSTs the debug collect path', async () => {
@@ -696,6 +740,12 @@ describe('measurement protocol routing (fetch-based)', () => {
 		const url = new URL(String(fetchMock.mock.calls[0]?.[0]));
 		expect(url.pathname).toBe('/debug/mp/collect');
 		expect(url.searchParams.get('firebase_app_id')).toBe('1:123:web:abc');
+		expect(logEventFromContext).toHaveBeenCalledWith(
+			mockCtx,
+			'googleanalytics.measurementProtocol.validateEvents',
+			{ eventCount: 1, eventNames: ['login'] },
+			'completed',
+		);
 	});
 });
 
@@ -799,6 +849,11 @@ describe('input schemas accept documented shapes', () => {
 				pageSize: 50,
 			}),
 		).toThrow();
+		expect(() =>
+			GoogleAnalyticsEndpointInputSchemas.propertiesListFiltered.parse({
+				filter: '',
+			}),
+		).toThrow();
 		const parsed =
 			GoogleAnalyticsEndpointInputSchemas.propertiesListFiltered.parse({
 				filter: 'accounts/123',
@@ -817,14 +872,12 @@ describe('input schemas accept documented shapes', () => {
 	});
 
 	it('measurementProtocol events require an api secret, a stream id, and events', () => {
-		// missing apiSecret
 		expect(() =>
 			GoogleAnalyticsEndpointInputSchemas.measurementProtocolSendEvents.parse({
 				measurementId: 'G-XXXX',
 				events: [{ name: 'login' }],
 			}),
 		).toThrow();
-		// missing both stream identifiers (measurementId and firebaseAppId)
 		expect(() =>
 			GoogleAnalyticsEndpointInputSchemas.measurementProtocolSendEvents.parse({
 				apiSecret: 'secret',
@@ -952,5 +1005,47 @@ describe('measurement protocol rate limits', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(gaError)).toBe(true);
 		const handled = await errorHandlers.RATE_LIMIT_ERROR.handler(gaError);
 		expect(handled).toEqual({ maxRetries: 5, headersRetryAfterMs: 2000 });
+	});
+});
+
+describe('keyBuilder', () => {
+	afterEach(() => {
+		jest.restoreAllMocks();
+	});
+
+	it('rethrows GoogleAnalyticsAPIError so 429 metadata is kept', async () => {
+		jest.spyOn(globalThis, 'fetch').mockImplementation(() =>
+			Promise.resolve(
+				new Response('slow down', {
+					status: 429,
+					headers: { 'Retry-After': '0' },
+				}),
+			),
+		);
+
+		const plugin = googleanalytics();
+		const ctx = {
+			authType: 'oauth_2' as const,
+			keys: {
+				get_access_token: async () => null,
+				get_expires_at: async () => null,
+				get_refresh_token: async () => 'refresh',
+				get_integration_credentials: async () => ({
+					client_id: 'id',
+					client_secret: 'secret',
+				}),
+				set_access_token: async () => undefined,
+				set_expires_at: async () => undefined,
+				set_refresh_token: async () => undefined,
+			},
+		};
+
+		await expect(
+			plugin.keyBuilder?.(ctx as never, 'endpoint'),
+		).rejects.toMatchObject({
+			name: 'GoogleAnalyticsAPIError',
+			code: 429,
+			retryAfter: 0,
+		});
 	});
 });

@@ -1,37 +1,28 @@
 # @corsair-dev/googleanalytics
 
-Google Analytics 4 (GA4) plugin for Corsair. Covers the GA4 Admin API,
-the Data API (reporting), and the Measurement Protocol.
+GA4 Admin API, Data API, and Measurement Protocol.
 
 ## Authentication
 
-The plugin uses **OAuth 2.0** (`oauth_2`) against Google.
+OAuth 2 (`oauth_2`).
 
-1. Create a project in the [Google Cloud Console](https://console.cloud.google.com/)
-   and enable the **Google Analytics Admin API** and the
-   **Google Analytics Data API**.
-2. Configure an OAuth consent screen and create an **OAuth client ID**
-   (type: Web application). Add your Corsair callback URL as an
-   authorized redirect URI.
-3. Supply the client ID and secret to Corsair; the OAuth flow requests
-   these scopes:
-   - `https://www.googleapis.com/auth/analytics` — Data API reporting
-   - `https://www.googleapis.com/auth/analytics.edit` — Admin API
-     (read and write; the bare `analytics` scope does not cover Admin
-     API calls)
+1. In the [Google Cloud Console](https://console.cloud.google.com/), enable
+   Google Analytics Admin API and Google Analytics Data API.
+2. Create a Web application OAuth client. Add the Corsair callback as a
+   redirect URI.
+3. Give Corsair the client ID and secret. The flow requests:
+   - `https://www.googleapis.com/auth/analytics` for Data API reports
+   - `https://www.googleapis.com/auth/analytics.edit` for Admin API reads
+     and writes. The bare `analytics` scope is not enough for Admin calls.
 
-Tokens are refreshed automatically: the key builder proactively refreshes
-the access token before expiry and retries once on a 401.
+The key builder refreshes the access token about five minutes before
+expiry and retries once on 401.
 
-The **Measurement Protocol** endpoints (`measurementProtocol.sendEvents` /
-`validateEvents`) additionally need an `api_secret` created under
-**Admin → Data Streams → Measurement Protocol API secrets**, passed as
-endpoint input together with either a `measurementId` (web streams) or a
-`firebaseAppId` (app streams).
+`measurementProtocol.sendEvents` and `validateEvents` take an `api_secret`
+from Admin, Data Streams, Measurement Protocol API secrets, plus either
+`measurementId` (web) or `firebaseAppId` (app).
 
 ## Endpoints
-
-Around 69 operations across these domains:
 
 | Domain                   | Operations                                                                                                                                                             |
 | ------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -50,33 +41,23 @@ Around 69 operations across these domains:
 | `channelGroups`          | `list`                                                                                                                                                                 |
 | `expandedDataSets`       | `create`, `list`                                                                                                                                                       |
 | `links`                  | `listGoogleAds`, `listBigQuery`, `listFirebase`, `listAdSense`, `listDV360Advertiser`, `listDV360Proposals`, `listSearchAds360`                                        |
-| `reports` (Data API)     | `run`, `runRealtime`, `runPivot`, `runFunnel`, `batchRun`, `batchRunPivot`, `checkCompatibility`, `getMetadata`                                                        |
+| `reports`                | `run`, `runRealtime`, `runPivot`, `runFunnel`, `batchRun`, `batchRunPivot`, `checkCompatibility`, `getMetadata`                                                        |
 | `reportTasks`            | `create`, `get`, `query`, `list`                                                                                                                                       |
 | `reportingData`          | `listAnnotations`, `listSubpropertyEventFilters`, `listSubpropertySyncConfigs`                                                                                         |
 | `measurementProtocol`    | `sendEvents`, `validateEvents`                                                                                                                                         |
 
-## Webhooks
-
-GA4 does not offer push webhooks; this plugin does not register any
-webhook handlers.
-
 ## Provider quirks
 
-- `dataStreams.listMeasurementProtocolSecrets` returns `secretValue` and is
-  classified as a write operation so readonly agent mode cannot dump stream
-  secrets.
-- Deprecated `properties.list` (v1alpha) requires a `filter` such as
+- `dataStreams.listMeasurementProtocolSecrets` returns `secretValue`. It is
+  a write so readonly agent mode cannot dump stream secrets.
+- `properties.list` (v1alpha, deprecated) needs a `filter` like
   `accounts/{account}` or `firebaseProjects/{project}`.
-- Admin API resource names are hierarchical
-  (`properties/{propertyId}/customDimensions/{id}` etc.). Pass the full
-  resource name to `name`/`parent` inputs — for example
-  `parent: "properties/123"` or
-  `name: "properties/123/customDimensions/456"`; a bare numeric ID will 404. The exceptions are the Data API `property` parameter (reports) and
-  `properties.update`, which accept either `properties/123` or a bare
-  `123`.
-- Measurement Protocol requires exactly one stream identifier —
-  `measurementId` or `firebaseAppId`; the input schema enforces this.
-- `validateEvents` hits the validation endpoint and does not record data;
-  use it before `sendEvents` in new pipelines.
-- Data API quotas are per property; heavy `batchRun*` usage can exhaust
-  them quickly (see `properties.getPropertyQuotasSnapshot`).
+- Admin API `name` / `parent` values are full resource names, e.g.
+  `properties/123` or `properties/123/customDimensions/456`. A bare
+  numeric ID 404s. Reports (`property`) and `properties.update` also
+  accept `123`.
+- Measurement Protocol needs exactly one of `measurementId` or
+  `firebaseAppId`.
+- `validateEvents` hits the debug collect path and does not record hits.
+- Data API quotas are per property. `batchRun*` burns them fast; check
+  `properties.getPropertyQuotasSnapshot`.

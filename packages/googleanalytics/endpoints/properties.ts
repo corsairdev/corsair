@@ -10,7 +10,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// name is "properties/{id}".
 export const get: GoogleAnalyticsEndpoints['propertiesGet'] = async (
 	ctx,
 	input,
@@ -40,8 +39,6 @@ export const get: GoogleAnalyticsEndpoints['propertiesGet'] = async (
 	return result;
 };
 
-// Deprecated v1alpha properties.list. Requires a filter of the form
-// "accounts/{account}" or "firebaseProjects/{project}".
 export const list: GoogleAnalyticsEndpoints['propertiesList'] = async (
 	ctx,
 	input,
@@ -80,13 +77,10 @@ export const listFiltered: GoogleAnalyticsEndpoints['propertiesListFiltered'] =
 		return result;
 	};
 
-// property.name is the resource being updated.
 export const update: GoogleAnalyticsEndpoints['propertiesUpdate'] = async (
 	ctx,
 	input,
 ) => {
-	// Guard at runtime too: the shared property shape marks name optional, and
-	// interpolating a missing name would silently PATCH /v1beta/undefined.
 	const name = input.property?.name;
 	if (!name) {
 		throw new GoogleAnalyticsAPIError(
@@ -116,7 +110,6 @@ export const update: GoogleAnalyticsEndpoints['propertiesUpdate'] = async (
 	return result;
 };
 
-// Roll-up property creation is v1alpha only.
 export const createRollup: GoogleAnalyticsEndpoints['propertiesCreateRollup'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
@@ -135,7 +128,6 @@ export const createRollup: GoogleAnalyticsEndpoints['propertiesCreateRollup'] =
 		return result;
 	};
 
-// name is "properties/{id}/attributionSettings".
 export const getAttributionSettings: GoogleAnalyticsEndpoints['propertiesGetAttributionSettings'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
@@ -153,7 +145,6 @@ export const getAttributionSettings: GoogleAnalyticsEndpoints['propertiesGetAttr
 		return result;
 	};
 
-// name is "properties/{id}/dataRetentionSettings".
 export const getDataRetentionSettings: GoogleAnalyticsEndpoints['propertiesGetDataRetentionSettings'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
@@ -171,7 +162,6 @@ export const getDataRetentionSettings: GoogleAnalyticsEndpoints['propertiesGetDa
 		return result;
 	};
 
-// name is "properties/{id}/googleSignalsSettings".
 export const getGoogleSignalsSettings: GoogleAnalyticsEndpoints['propertiesGetGoogleSignalsSettings'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
@@ -189,7 +179,6 @@ export const getGoogleSignalsSettings: GoogleAnalyticsEndpoints['propertiesGetGo
 		return result;
 	};
 
-// Lives on the Data API (v1alpha). name is "properties/{id}/propertyQuotasSnapshot".
 export const getPropertyQuotasSnapshot: GoogleAnalyticsEndpoints['propertiesGetPropertyQuotasSnapshot'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<

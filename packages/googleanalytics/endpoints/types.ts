@@ -4,27 +4,13 @@ import {
 	GoogleAnalyticsProperty,
 } from '../schema/database';
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Common building blocks
-// ─────────────────────────────────────────────────────────────────────────────
-
-// GA responses are large and version-dependent. We model inputs precisely and
-// treat outputs as opaque envelopes (plus a typed nextPageToken where relevant).
 const LooseObject = z.record(z.string(), z.unknown());
 export type GoogleAnalyticsLoose = z.infer<typeof LooseObject>;
 
-// GA create/update endpoints accept full resource bodies (custom dimensions,
-// audiences, roll-up properties, etc.) whose shapes are large and drift across
-// API versions. We forward them to Google verbatim instead of mirroring every
-// type, so they are modeled opaquely.
 const ResourceBody = z.unknown();
 
-// GA FilterExpression and dimension expressions are recursive AND/OR/NOT unions
-// that vary per field; forwarded opaquely.
 const FilterExpression = z.unknown();
 
-// GA report sub-structures (orderings, pivots, minute ranges, funnel, batch
-// pivot requests) are complex typed objects we forward without modeling.
 const ReportSubStructure = z.unknown();
 
 const ListParams = z.object({
@@ -56,18 +42,11 @@ const Metric = z
 	})
 	.loose();
 
-// Resource name lookups (GET/archive/query) accept the full resource name.
 const NameInput = z.object({ name: z.string() });
 
-// Parent-scoped collections (list/create). parent is a full resource name,
-// e.g. "properties/123" or "properties/123/dataStreams/456".
 const ParentListInput = ListParams.extend({
 	parent: z.string(),
 }).loose();
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Accounts
-// ─────────────────────────────────────────────────────────────────────────────
 
 const AccountsGetInputSchema = NameInput;
 const AccountsListInputSchema = ListParams.loose();
@@ -91,16 +70,12 @@ const AccountSummariesListResponseSchema = z.object({
 	nextPageToken: z.string().optional(),
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Properties
-// ─────────────────────────────────────────────────────────────────────────────
-
 const PropertiesGetInputSchema = NameInput;
 const PropertiesListInputSchema = ListParams.extend({
 	filter: z.string().min(1),
 }).loose();
 const PropertiesListFilteredInputSchema = ListParams.extend({
-	filter: z.string(),
+	filter: z.string().min(1),
 }).loose();
 const PropertiesUpdateInputSchema = z
 	.object({
@@ -123,10 +98,6 @@ const PropertiesListResponseSchema = z.object({
 	properties: z.array(LooseObject).optional(),
 	nextPageToken: z.string().optional(),
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Custom dimensions / metrics / calculated metrics / key events / conversions
-// ─────────────────────────────────────────────────────────────────────────────
 
 const CustomDimensionsCreateInputSchema = z
 	.object({
@@ -167,10 +138,6 @@ const ConversionEventsListResponseSchema = z.object({
 	conversionEvents: z.array(LooseObject).optional(),
 	nextPageToken: z.string().optional(),
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Audiences (Admin) and audience lists / exports / recurring (Data API)
-// ─────────────────────────────────────────────────────────────────────────────
 
 const AudiencesListResponseSchema = z.object({
 	audiences: z.array(LooseObject).optional(),
@@ -228,10 +195,6 @@ const RecurringAudienceListsListResponseSchema = z.object({
 	nextPageToken: z.string().optional(),
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Data streams
-// ─────────────────────────────────────────────────────────────────────────────
-
 const DataStreamsListResponseSchema = z.object({
 	dataStreams: z.array(LooseObject).optional(),
 	nextPageToken: z.string().optional(),
@@ -251,10 +214,6 @@ const SKAdNetworkConversionValueSchemasListResponseSchema = z.object({
 	sKAdNetworkConversionValueSchemas: z.array(LooseObject).optional(),
 	nextPageToken: z.string().optional(),
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Product links
-// ─────────────────────────────────────────────────────────────────────────────
 
 const AdSenseLinksListResponseSchema = z.object({
 	adSenseLinks: z.array(LooseObject).optional(),
@@ -284,10 +243,6 @@ const SearchAds360LinksListResponseSchema = z.object({
 	searchAds360Links: z.array(LooseObject).optional(),
 	nextPageToken: z.string().optional(),
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Expanded data sets / channel groups / subproperty reporting
-// ─────────────────────────────────────────────────────────────────────────────
 
 const ExpandedDataSetCreateInputSchema = z
 	.object({
@@ -320,10 +275,6 @@ const SubpropertySyncConfigsListResponseSchema = z.object({
 	subpropertySyncConfigs: z.array(LooseObject).optional(),
 	nextPageToken: z.string().optional(),
 });
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Data API reports (v1beta) + funnel (v1alpha)
-// ─────────────────────────────────────────────────────────────────────────────
 
 const ReportRequestBase = z.object({
 	dateRanges: z.array(DateRange).optional(),
@@ -413,10 +364,6 @@ const ReportsCheckCompatibilityInputSchema = z
 
 const ReportsGetMetadataInputSchema = NameInput;
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Report tasks (Data API v1alpha)
-// ─────────────────────────────────────────────────────────────────────────────
-
 const ReportTaskCreateInputSchema = z
 	.object({
 		parent: z.string(),
@@ -436,13 +383,6 @@ const ReportTasksListResponseSchema = z.object({
 	nextPageToken: z.string().optional(),
 });
 
-// ─────────────────────────────────────────────────────────────────────────────
-// Measurement Protocol
-// ─────────────────────────────────────────────────────────────────────────────
-
-// The Measurement Protocol authenticates with a per-stream api_secret (not the
-// OAuth token). Web streams identify the stream with measurementId + a body
-// client_id; Firebase app streams use firebaseAppId + a body app_instance_id.
 const MeasurementProtocolEventsInputSchema = z
 	.object({
 		apiSecret: z.string(),
@@ -452,8 +392,6 @@ const MeasurementProtocolEventsInputSchema = z
 		appInstanceId: z.string().optional(),
 		userId: z.string().optional(),
 		timestampMicros: z.number().optional(),
-		// userProperties (arbitrary property map), consent, and per-event params
-		// are free-form objects per the Measurement Protocol spec; forwarded verbatim.
 		userProperties: z.record(z.string(), z.unknown()).optional(),
 		consent: ResourceBody.optional(),
 		events: z.array(
@@ -461,9 +399,6 @@ const MeasurementProtocolEventsInputSchema = z
 		),
 	})
 	.loose()
-	// GA4 requires exactly one stream identifier — measurementId (web) or
-	// firebaseAppId (Firebase app). Validate up front rather than let GA4
-	// return a 400 at runtime.
 	.refine(
 		(data) => Boolean(data.measurementId) !== Boolean(data.firebaseAppId),
 		{
@@ -471,10 +406,6 @@ const MeasurementProtocolEventsInputSchema = z
 				'Exactly one of measurementId (web) or firebaseAppId (Firebase app) is required',
 		},
 	)
-	// Each stream identifier also needs its corresponding client identifier:
-	// web streams (measurementId) require clientId, Firebase app streams
-	// (firebaseAppId) require appInstanceId. Surface a clear error instead of
-	// letting GA4 reject the call at runtime.
 	.superRefine((data, ctx) => {
 		if (data.measurementId && !data.clientId) {
 			ctx.addIssue({
@@ -492,10 +423,6 @@ const MeasurementProtocolEventsInputSchema = z
 			});
 		}
 	});
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Input / output schema maps
-// ─────────────────────────────────────────────────────────────────────────────
 
 export const GoogleAnalyticsEndpointInputSchemas = {
 	accountsGet: AccountsGetInputSchema,
@@ -683,10 +610,6 @@ export const GoogleAnalyticsEndpointOutputSchemas = {
 	measurementProtocolSendEvents: LooseObject,
 	measurementProtocolValidateEvents: LooseObject,
 } as const;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// Types
-// ─────────────────────────────────────────────────────────────────────────────
 
 export type GoogleAnalyticsEndpointInputs = {
 	[K in keyof typeof GoogleAnalyticsEndpointInputSchemas]: z.infer<

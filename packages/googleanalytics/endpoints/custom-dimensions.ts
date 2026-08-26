@@ -2,19 +2,19 @@ import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
 	encodeResourcePath,
+	jsonObjectBody,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// parent is "properties/{id}".
 export const create: GoogleAnalyticsEndpoints['customDimensionsCreate'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['customDimensionsCreate']
 		>(`/v1beta/${encodeResourcePath(input.parent)}/customDimensions`, ctx, {
 			method: 'POST',
-			body: { customDimension: input.customDimension },
+			body: jsonObjectBody(input.customDimension),
 		});
 
 		await logEventFromContext(
@@ -26,7 +26,6 @@ export const create: GoogleAnalyticsEndpoints['customDimensionsCreate'] =
 		return result;
 	};
 
-// name is "properties/{id}/customDimensions/{dimension}".
 export const get: GoogleAnalyticsEndpoints['customDimensionsGet'] = async (
 	ctx,
 	input,

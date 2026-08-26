@@ -7,7 +7,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// name is "properties/{id}/keyEvents/{keyEvent}".
 export const get: GoogleAnalyticsEndpoints['keyEventsGet'] = async (
 	ctx,
 	input,

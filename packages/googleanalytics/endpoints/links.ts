@@ -7,8 +7,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// parent is "properties/{id}" for every product-link collection.
-
 export const listAdSense: GoogleAnalyticsEndpoints['linksListAdSense'] = async (
 	ctx,
 	input,

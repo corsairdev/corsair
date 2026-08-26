@@ -7,7 +7,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// Deprecated; prefer keyEvents.list. Still served by the v1beta endpoint.
 export const list: GoogleAnalyticsEndpoints['conversionEventsList'] = async (
 	ctx,
 	input,

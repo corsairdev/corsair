@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { GoogleAnalyticsAPIError, getValidAccessToken } from './client';
 import {
 	AccountsEndpoints,
 	AudienceExportsEndpoints,
@@ -812,11 +812,6 @@ export type GoogleAnalyticsPluginOptions = {
 	key?: string;
 	hooks?: InternalGoogleAnalyticsPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
-	/**
-	 * Permission configuration for the Google Analytics plugin.
-	 * Controls what the AI agent is allowed to do.
-	 * Overrides use dot-notation paths from the endpoint tree; invalid paths are type errors.
-	 */
 	permissions?: PluginPermissionsConfig<typeof googleAnalyticsEndpointsNested>;
 };
 
@@ -858,11 +853,7 @@ export function googleanalytics<const T extends GoogleAnalyticsPluginOptions>(
 			authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
 			tokenUrl: 'https://oauth2.googleapis.com/token',
 			scopes: [
-				// Data API (runReport, runRealtimeReport, ...)
 				'https://www.googleapis.com/auth/analytics',
-				// Admin API (accounts, properties, dimensions, metrics, ...)
-				// requires analytics.edit — the bare analytics scope only
-				// covers the Data API and Admin calls would 403 without it.
 				'https://www.googleapis.com/auth/analytics.edit',
 			],
 			authParams: { access_type: 'offline', prompt: 'consent' },
@@ -941,6 +932,9 @@ export function googleanalytics<const T extends GoogleAnalyticsPluginOptions>(
 
 					return result.accessToken;
 				} catch (error) {
+					if (error instanceof GoogleAnalyticsAPIError) {
+						throw error;
+					}
 					throw new Error(
 						`[corsair:googleanalytics] Failed to get valid access token: ${error instanceof Error ? error.message : String(error)}`,
 					);

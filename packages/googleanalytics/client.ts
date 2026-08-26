@@ -1,5 +1,6 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
+import { z } from 'zod';
 
 export class GoogleAnalyticsAPIError extends Error {
 	constructor(
@@ -18,39 +19,112 @@ export const GOOGLE_ANALYTICS_DATA_BASE =
 	'https://analyticsdata.googleapis.com';
 export const GOOGLE_ANALYTICS_MP_BASE = 'https://www.google-analytics.com';
 
+const REFRESH_RATE_LIMIT_ATTEMPTS = 6;
+const REFRESH_RATE_LIMIT_DEFAULT_MS = 1000;
+const TOKEN_FETCH_TIMEOUT_MS = 10_000;
+const MP_FETCH_TIMEOUT_MS = 15_000;
+
+const GoogleTokenResponse = z.object({
+	access_token: z.string().min(1),
+	expires_in: z.coerce.number().finite().positive(),
+	refresh_token: z.string().min(1).optional(),
+});
+
+function isAbortError(error: unknown): boolean {
+	return (
+		error instanceof Error &&
+		(error.name === 'AbortError' || error.name === 'TimeoutError')
+	);
+}
+
+function retryAfterMsFromResponse(response: Response): number | undefined {
+	const retryAfterHeader = response.headers.get('retry-after');
+	if (!retryAfterHeader) return undefined;
+	const seconds = Number(retryAfterHeader);
+	if (Number.isFinite(seconds) && seconds >= 0) {
+		return seconds * 1000;
+	}
+	const when = Date.parse(retryAfterHeader);
+	if (!Number.isNaN(when)) {
+		return Math.max(0, when - Date.now());
+	}
+	return undefined;
+}
+
+function expiresAtSeconds(
+	expiresAt: string | null | undefined,
+): number | undefined {
+	if (!expiresAt) return undefined;
+	const numeric = Number(expiresAt);
+	if (Number.isFinite(numeric)) return numeric;
+	const parsed = Date.parse(expiresAt);
+	if (Number.isNaN(parsed)) return undefined;
+	return Math.floor(parsed / 1000);
+}
+
 async function refreshAccessToken(
 	clientId: string,
 	clientSecret: string,
 	refreshToken: string,
 ) {
-	const response = await fetch('https://oauth2.googleapis.com/token', {
-		method: 'POST',
-		headers: {
-			'Content-Type': 'application/x-www-form-urlencoded',
-		},
-		body: new URLSearchParams({
-			client_id: clientId,
-			client_secret: clientSecret,
-			refresh_token: refreshToken,
-			grant_type: 'refresh_token',
-		}),
-	});
+	let lastError: GoogleAnalyticsAPIError | undefined;
+	for (let attempt = 0; attempt < REFRESH_RATE_LIMIT_ATTEMPTS; attempt++) {
+		let response: Response;
+		try {
+			response = await fetch('https://oauth2.googleapis.com/token', {
+				method: 'POST',
+				headers: {
+					'Content-Type': 'application/x-www-form-urlencoded',
+				},
+				body: new URLSearchParams({
+					client_id: clientId,
+					client_secret: clientSecret,
+					refresh_token: refreshToken,
+					grant_type: 'refresh_token',
+				}),
+				signal: AbortSignal.timeout(TOKEN_FETCH_TIMEOUT_MS),
+			});
+		} catch (error) {
+			if (isAbortError(error)) {
+				throw new GoogleAnalyticsAPIError(
+					'Failed to refresh access token: request timed out',
+				);
+			}
+			throw error;
+		}
 
-	if (!response.ok) {
+		if (response.ok) {
+			let json: unknown;
+			try {
+				json = await response.json();
+			} catch {
+				throw new GoogleAnalyticsAPIError('Invalid token response');
+			}
+			const parsed = GoogleTokenResponse.safeParse(json);
+			if (!parsed.success) {
+				throw new GoogleAnalyticsAPIError('Invalid token response');
+			}
+			return parsed.data;
+		}
+
+		const retryAfter = retryAfterMsFromResponse(response);
 		const error = await response.text();
-		throw new GoogleAnalyticsAPIError(
+		lastError = new GoogleAnalyticsAPIError(
 			`Failed to refresh access token: ${error}`,
 			response.status,
+			retryAfter,
 		);
+		if (response.status === 429 && attempt < REFRESH_RATE_LIMIT_ATTEMPTS - 1) {
+			await new Promise((resolve) =>
+				setTimeout(resolve, retryAfter ?? REFRESH_RATE_LIMIT_DEFAULT_MS),
+			);
+			continue;
+		}
+		throw lastError;
 	}
-
-	// response.json() is typed as unknown; Google's token endpoint has a fixed
-	// shape, so we narrow it directly rather than parse defensively.
-	return (await response.json()) as {
-		access_token: string;
-		expires_in: number;
-		refresh_token?: string;
-	};
+	throw (
+		lastError ?? new GoogleAnalyticsAPIError('Failed to refresh access token')
+	);
 }
 
 export async function getValidAccessToken({
@@ -75,14 +149,15 @@ export async function getValidAccessToken({
 }> {
 	const now = Math.floor(Date.now() / 1000);
 	const bufferSeconds = 5 * 60;
+	const expiry = expiresAtSeconds(expiresAt);
 
 	if (
 		!forceRefresh &&
 		accessToken &&
-		expiresAt &&
-		Number(expiresAt) > now + bufferSeconds
+		expiry !== undefined &&
+		expiry > now + bufferSeconds
 	) {
-		return { accessToken, expiresAt: Number(expiresAt), refreshed: false };
+		return { accessToken, expiresAt: expiry, refreshed: false };
 	}
 
 	const tokenData = await refreshAccessToken(
@@ -105,8 +180,6 @@ type GoogleAnalyticsRequestOptions = {
 	query?: Record<string, string | number | boolean | undefined>;
 };
 
-// Well above any real Analytics API path; bounds the string handed to the
-// shared URL-template parser so pathological inputs cannot degrade it.
 const MAX_ENDPOINT_LENGTH = 2048;
 
 export async function makeGoogleAnalyticsRequest<T>(
@@ -153,13 +226,18 @@ export async function makeGoogleAnalyticsRequest<T>(
 }
 
 function isUnauthorizedError(error: unknown): boolean {
-	// corsair/http's ApiError carries a numeric status but is typed as Error here,
-	// so narrow to read it rather than importing the concrete class.
-	return (
-		error instanceof Error &&
-		'status' in error &&
-		(error as { status: number }).status === 401
-	);
+	return error instanceof ApiError && error.status === 401;
+}
+
+export function jsonObjectBody(value: unknown): Record<string, unknown> {
+	if (value === undefined || value === null) {
+		return {};
+	}
+	if (typeof value === 'object' && !Array.isArray(value)) {
+		// arrays/null already excluded; Record is the leftover JSON object shape
+		return value as Record<string, unknown>;
+	}
+	throw new GoogleAnalyticsAPIError('request body must be an object');
 }
 
 export async function makeAuthenticatedGoogleAnalyticsRequest<T>(
@@ -197,8 +275,6 @@ export function encodeResourcePath(name: string): string {
 	return parts.map(encodeURIComponent).join('/');
 }
 
-// GA property identifiers can arrive as "properties/123" or a bare "123".
-// The REST paths expect the "properties/{id}" form.
 export function propertyPath(property: string): string {
 	const trimmed = property.trim();
 	const name = trimmed.startsWith('properties/')
@@ -207,8 +283,6 @@ export function propertyPath(property: string): string {
 	return encodeResourcePath(name);
 }
 
-// Build a query string from the common list parameters, dropping any that are
-// unset so they are not sent to the API.
 export function listQuery(input: {
 	pageSize?: number;
 	pageToken?: string;
@@ -223,9 +297,6 @@ export function listQuery(input: {
 	return query;
 }
 
-// The Measurement Protocol lives on a different host and authenticates with a
-// per-stream api_secret query param (NOT the OAuth token). It does not return a
-// resource body, so it gets its own fetch-based path instead of corsair/http.
 export async function callMeasurementProtocol<T>(
 	payload: Record<string, unknown>,
 	options: {
@@ -245,31 +316,29 @@ export async function callMeasurementProtocol<T>(
 	}
 	const url = `${GOOGLE_ANALYTICS_MP_BASE}${path}?${query.toString()}`;
 
-	const response = await fetch(url, {
-		method: 'POST',
-		headers: { 'Content-Type': 'application/json' },
-		body: JSON.stringify(payload),
-	});
+	let response: Response;
+	try {
+		response = await fetch(url, {
+			method: 'POST',
+			headers: { 'Content-Type': 'application/json' },
+			body: JSON.stringify(payload),
+			signal: AbortSignal.timeout(MP_FETCH_TIMEOUT_MS),
+		});
+	} catch (error) {
+		if (isAbortError(error)) {
+			throw new GoogleAnalyticsAPIError(
+				'Measurement Protocol request timed out',
+			);
+		}
+		throw error;
+	}
 
 	const text = await response.text();
 	if (!response.ok) {
-		const retryAfterHeader = response.headers.get('retry-after');
-		let retryAfter: number | undefined;
-		if (retryAfterHeader) {
-			const seconds = Number(retryAfterHeader);
-			if (Number.isFinite(seconds) && seconds >= 0) {
-				retryAfter = seconds * 1000;
-			} else {
-				const when = Date.parse(retryAfterHeader);
-				if (!Number.isNaN(when)) {
-					retryAfter = Math.max(0, when - Date.now());
-				}
-			}
-		}
 		throw new GoogleAnalyticsAPIError(
 			`Measurement Protocol request failed: ${response.status} ${text}`,
 			response.status,
-			retryAfter,
+			retryAfterMsFromResponse(response),
 		);
 	}
 

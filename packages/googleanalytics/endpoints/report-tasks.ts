@@ -3,13 +3,11 @@ import type { GoogleAnalyticsEndpoints } from '..';
 import {
 	encodeResourcePath,
 	GOOGLE_ANALYTICS_DATA_BASE,
+	jsonObjectBody,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
-
-// Asynchronous report tasks live on the Data API v1alpha.
-// parent/name are "properties/{id}" / "properties/{id}/reportTasks/{task}".
 
 export const create: GoogleAnalyticsEndpoints['reportTasksCreate'] = async (
 	ctx,
@@ -20,7 +18,7 @@ export const create: GoogleAnalyticsEndpoints['reportTasksCreate'] = async (
 	>(`/v1alpha/${encodeResourcePath(input.parent)}/reportTasks`, ctx, {
 		method: 'POST',
 		base: GOOGLE_ANALYTICS_DATA_BASE,
-		body: { reportTask: input.reportTask },
+		body: jsonObjectBody(input.reportTask),
 	});
 
 	await logEventFromContext(
@@ -52,7 +50,6 @@ export const get: GoogleAnalyticsEndpoints['reportTasksGet'] = async (
 	return result;
 };
 
-// Returns the report content; errors if the task is not yet ACTIVE.
 export const query: GoogleAnalyticsEndpoints['reportTasksQuery'] = async (
 	ctx,
 	input,

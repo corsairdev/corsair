@@ -3,13 +3,11 @@ import type { GoogleAnalyticsEndpoints } from '..';
 import {
 	encodeResourcePath,
 	GOOGLE_ANALYTICS_DATA_BASE,
+	jsonObjectBody,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
-
-// Recurring audience lists live on the Data API v1alpha.
-// parent/name are "properties/{id}" / "properties/{id}/recurringAudienceLists/{list}".
 
 export const create: GoogleAnalyticsEndpoints['recurringAudienceListsCreate'] =
 	async (ctx, input) => {
@@ -21,7 +19,7 @@ export const create: GoogleAnalyticsEndpoints['recurringAudienceListsCreate'] =
 			{
 				method: 'POST',
 				base: GOOGLE_ANALYTICS_DATA_BASE,
-				body: { recurringAudienceList: input.recurringAudienceList },
+				body: jsonObjectBody(input.recurringAudienceList),
 			},
 		);
 

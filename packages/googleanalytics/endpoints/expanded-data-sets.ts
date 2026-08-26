@@ -2,19 +2,19 @@ import { logEventFromContext } from 'corsair/core';
 import type { GoogleAnalyticsEndpoints } from '..';
 import {
 	encodeResourcePath,
+	jsonObjectBody,
 	listQuery,
 	makeAuthenticatedGoogleAnalyticsRequest,
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// Expanded data sets are v1alpha (GA4 360).
 export const create: GoogleAnalyticsEndpoints['expandedDataSetsCreate'] =
 	async (ctx, input) => {
 		const result = await makeAuthenticatedGoogleAnalyticsRequest<
 			GoogleAnalyticsEndpointOutputs['expandedDataSetsCreate']
 		>(`/v1alpha/${encodeResourcePath(input.parent)}/expandedDataSets`, ctx, {
 			method: 'POST',
-			body: { expandedDataSet: input.expandedDataSet },
+			body: jsonObjectBody(input.expandedDataSet),
 		});
 
 		await logEventFromContext(

@@ -7,8 +7,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// Audiences are configured via the Admin API v1alpha.
-// name is "properties/{id}/audiences/{audience}".
 export const get: GoogleAnalyticsEndpoints['audiencesGet'] = async (
 	ctx,
 	input,

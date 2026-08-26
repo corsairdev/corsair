@@ -7,7 +7,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// Channel groups are v1alpha.
 export const list: GoogleAnalyticsEndpoints['channelGroupsList'] = async (
 	ctx,
 	input,

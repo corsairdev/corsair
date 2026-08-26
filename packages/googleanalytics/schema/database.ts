@@ -1,8 +1,5 @@
 import { z } from 'zod';
 
-// Accounts and properties are the two resources callers enumerate and resolve
-// most often, so they are worth caching locally. Everything else (reports,
-// audience lists, settings singletons) is fetched live.
 export const GoogleAnalyticsAccount = z.object({
 	name: z.string(),
 	displayName: z.string().optional(),

@@ -7,7 +7,6 @@ import {
 } from '../client';
 import type { GoogleAnalyticsEndpointOutputs } from './types';
 
-// Calculated metrics are v1alpha only.
 export const list: GoogleAnalyticsEndpoints['calculatedMetricsList'] = async (
 	ctx,
 	input,
