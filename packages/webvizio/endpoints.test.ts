@@ -79,6 +79,7 @@ describe('Webvizio plugin structure', () => {
 
 		expect(typeof endpoints.projects.list).toBe('function');
 		expect(typeof endpoints.webhooks.list).toBe('function');
+
 		expect(Object.keys(plugin.endpointMeta ?? {}).sort()).toEqual([
 			'projects.list',
 			'webhooks.list',
@@ -89,6 +90,7 @@ describe('Webvizio plugin structure', () => {
 		]);
 		expect(plugin.webhooks).toEqual({});
 		expect(typeof plugin.pluginWebhookMatcher).toBe('function');
+		expect(plugin.pluginWebhookMatcher?.({} as any)).toBe(false);
 	});
 
 	it('supports api_key auth configuration', () => {

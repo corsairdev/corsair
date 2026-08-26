@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -10,7 +9,6 @@ import type {
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
-	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import { Projects, Webhooks } from './endpoints';
@@ -45,16 +43,20 @@ export type WebvizioBoundEndpoints = BindEndpoints<
 	typeof webvizioEndpointsNested
 >;
 
-type WebvizioEndpoint<K extends keyof WebvizioEndpointOutputs> =
-	CorsairEndpoint<
-		WebvizioContext,
-		WebvizioEndpointInputs[K],
-		WebvizioEndpointOutputs[K]
-	>;
+type WebvizioEndpoint<
+	K extends keyof WebvizioEndpointOutputs,
+	Input,
+> = CorsairEndpoint<WebvizioContext, Input, WebvizioEndpointOutputs[K]>;
 
 export type WebvizioEndpoints = {
-	projectsList: WebvizioEndpoint<'projectsList'>;
-	webhooksList: WebvizioEndpoint<'webhooksList'>;
+	projectsList: WebvizioEndpoint<
+		'projectsList',
+		WebvizioEndpointInputs['projectsList']
+	>;
+	webhooksList: WebvizioEndpoint<
+		'webhooksList',
+		WebvizioEndpointInputs['webhooksList']
+	>;
 };
 
 const webvizioEndpointsNested = {
@@ -75,9 +77,7 @@ export const webvizioEndpointSchemas = {
 		input: WebvizioEndpointInputSchemas.webhooksList,
 		output: WebvizioEndpointOutputSchemas.webhooksList,
 	},
-} satisfies RequiredPluginEndpointSchemas<typeof webvizioEndpointsNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
+} as const;
 
 const webvizioEndpointMeta = {
 	'projects.list': {
@@ -86,9 +86,9 @@ const webvizioEndpointMeta = {
 	},
 	'webhooks.list': {
 		riskLevel: 'read',
-		description: 'List Webvizio webhook subscriptions',
+		description: 'List all configured Webvizio webhook subscriptions',
 	},
-} satisfies RequiredPluginEndpointMeta<typeof webvizioEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<typeof webvizioEndpointsNested>;
 
 export const webvizioAuthConfig = {
 	api_key: {
@@ -96,39 +96,38 @@ export const webvizioAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseWebvizioPlugin<T extends WebvizioPluginOptions> = CorsairPlugin<
+export type WebvizioPlugin = CorsairPlugin<
 	'webvizio',
 	typeof WebvizioSchema,
 	typeof webvizioEndpointsNested,
 	{},
-	T,
-	typeof defaultAuthType,
-	typeof webvizioAuthConfig
+	WebvizioPluginOptions
 >;
 
-export type InternalWebvizioPlugin = BaseWebvizioPlugin<WebvizioPluginOptions>;
+export type InternalWebvizioPlugin = CorsairPlugin<
+	'webvizio',
+	typeof WebvizioSchema,
+	typeof webvizioEndpointsNested,
+	{},
+	WebvizioPluginOptions
+>;
 
-export type ExternalWebvizioPlugin<T extends WebvizioPluginOptions> =
-	BaseWebvizioPlugin<T>;
-
-export function webvizio<const T extends WebvizioPluginOptions>(
-	incomingOptions: WebvizioPluginOptions & T = {} as WebvizioPluginOptions & T,
-): ExternalWebvizioPlugin<T> {
-	const options = {
-		...incomingOptions,
-		authType: incomingOptions.authType ?? defaultAuthType,
-	};
+export function webvizio(options: WebvizioPluginOptions = {}): WebvizioPlugin {
+	const authType = options.authType || 'api_key';
 
 	return {
 		id: 'webvizio',
+		authConfig: webvizioAuthConfig,
 		schema: WebvizioSchema,
-		options,
+		options: {
+			authType,
+			...options,
+		},
 		hooks: options.hooks,
 		endpoints: webvizioEndpointsNested,
 		webhooks: {},
 		endpointMeta: webvizioEndpointMeta,
 		endpointSchemas: webvizioEndpointSchemas,
-		authConfig: webvizioAuthConfig,
 		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
@@ -140,13 +139,11 @@ export function webvizio<const T extends WebvizioPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const key = await ctx.keys.get_api_key();
-
-				if (!key) {
+				const res = await ctx.keys.get_api_key();
+				if (!res) {
 					throw new AuthMissingError('webvizio', 'api_key');
 				}
-
-				return key;
+				return res;
 			}
 
 			throw new AuthMissingError('webvizio', 'api_key');
@@ -154,11 +151,20 @@ export function webvizio<const T extends WebvizioPluginOptions>(
 	} satisfies InternalWebvizioPlugin;
 }
 
-export { WebvizioAPIError } from './client';
+export {
+	makeWebvizioRequest,
+	WEBVIZIO_MCP_API_BASE,
+	WEBVIZIO_WEBHOOK_API_BASE,
+	WebvizioAPIError,
+} from './client';
 export type {
+	ProjectsListInput,
+	ProjectsListResponse,
+	WebhooksListInput,
+	WebhooksListResponse,
 	WebvizioEndpointInputs,
 	WebvizioEndpointOutputs,
-	WebvizioProject,
+	WebvizioProjectItem,
 	WebvizioWebhookSubscription,
 } from './endpoints/types';
 export {
@@ -167,7 +173,4 @@ export {
 	WebvizioProjectSchema,
 	WebvizioWebhookSubscriptionSchema,
 } from './endpoints/types';
-export {
-	WebvizioProject as WebvizioProjectEntity,
-	WebvizioWebhook as WebvizioWebhookEntity,
-} from './schema';
+export { WebvizioProject, WebvizioSchema, WebvizioWebhook } from './schema';
