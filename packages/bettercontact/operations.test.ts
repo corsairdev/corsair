@@ -100,7 +100,7 @@ describe('leadFinder.create', () => {
 		);
 	});
 
-	it('logs bettercontact.leadFinder.create on success', async () => {
+	it('logs bettercontact.leadFinder.create on success with redacted metadata', async () => {
 		const input = { filters: { lead_seniority: { include: ['cxo'] } } };
 		mockRequest.mockResolvedValueOnce({
 			success: true,
@@ -111,9 +111,14 @@ describe('leadFinder.create', () => {
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'bettercontact.leadFinder.create',
-			expect.objectContaining({ filters: input.filters }),
+			expect.objectContaining({ has_filters: true }),
 			'completed',
 		);
+
+		const call = mockLog.mock.calls.find(
+			(c) => c[1] === 'bettercontact.leadFinder.create',
+		);
+		expect(call?.[2]).not.toHaveProperty('filters');
 	});
 });
 
@@ -162,16 +167,21 @@ describe('enrichment.enrich', () => {
 		});
 	});
 
-	it('logs bettercontact.enrichment.enrich on success', async () => {
+	it('logs bettercontact.enrichment.enrich on success with redacted metadata', async () => {
 		const input = { data: [{ first_name: 'Bob' }] };
 		mockRequest.mockResolvedValueOnce({ success: true, id: 'b2', message: '' });
 		await Enrichment.enrich(createCtx(), input);
 		expect(mockLog).toHaveBeenCalledWith(
 			expect.anything(),
 			'bettercontact.enrichment.enrich',
-			expect.objectContaining({ data: input.data }),
+			expect.objectContaining({ record_count: 1 }),
 			'completed',
 		);
+
+		const call = mockLog.mock.calls.find(
+			(c) => c[1] === 'bettercontact.enrichment.enrich',
+		);
+		expect(call?.[2]).not.toHaveProperty('data');
 	});
 });
 

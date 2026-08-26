@@ -41,39 +41,44 @@ describeOrSkip('Live: credits.get — GET /account', () => {
 });
 
 // ─── 2. leadFinder.create ───────────────────────────────────────────────────
-describeOrSkip('Live: leadFinder.create — POST /lead_finder/async', () => {
-	it('accepts a search request and returns a request_id string', async () => {
-		let response: Awaited<ReturnType<typeof LeadFinder.create>> | undefined;
-		try {
-			response = await LeadFinder.create(createLiveCtx(), {
-				filters: { lead_seniority: { include: ['cxo'] } },
-				limit: 1,
-				enrich_email_address: false,
-				enrich_phone_number: false,
-			});
-		} catch (err: unknown) {
-			const e = err as { message?: string; body?: unknown; status?: number };
-			console.error('leadFinder.create failed — HTTP status:', e.status);
-			console.error('leadFinder.create failed — body:', e.body);
-			throw err;
-		}
+// Requires BETTERCONTACT_WRITE_ENABLED=true — creates remote search & consumes credits.
+describeWriteOrSkip(
+	'Live: leadFinder.create — POST /lead_finder/async (consumes credits)',
+	() => {
+		it('accepts a search request and returns a request_id string', async () => {
+			let response: Awaited<ReturnType<typeof LeadFinder.create>> | undefined;
+			try {
+				response = await LeadFinder.create(createLiveCtx(), {
+					filters: { lead_seniority: { include: ['cxo'] } },
+					limit: 1,
+					enrich_email_address: false,
+					enrich_phone_number: false,
+				});
+			} catch (err: unknown) {
+				const e = err as { message?: string; body?: unknown; status?: number };
+				console.error('leadFinder.create failed — HTTP status:', e.status);
+				console.error('leadFinder.create failed — body:', e.body);
+				throw err;
+			}
 
-		expect(response).toBeDefined();
-		expect(typeof response!.request_id).toBe('string');
-		expect(response!.request_id.length).toBeGreaterThan(0);
+			expect(response).toBeDefined();
+			expect(typeof response!.request_id).toBe('string');
+			expect(response!.request_id.length).toBeGreaterThan(0);
 
-		const parsed =
-			BetterContactEndpointOutputSchemas.leadFinderCreate.safeParse(response);
-		if (!parsed.success) {
-			console.error('Schema mismatch — actual response:', response);
-			console.error('Zod errors:', parsed.error.issues);
-		}
-		expect(parsed.success).toBe(true);
-	});
-});
+			const parsed =
+				BetterContactEndpointOutputSchemas.leadFinderCreate.safeParse(response);
+			if (!parsed.success) {
+				console.error('Schema mismatch — actual response:', response);
+				console.error('Zod errors:', parsed.error.issues);
+			}
+			expect(parsed.success).toBe(true);
+		});
+	},
+);
 
 // ─── 3. leadFinder.getResults ───────────────────────────────────────────────
-describeOrSkip(
+// Also behind write guard — submits a lead search first, then polls results.
+describeWriteOrSkip(
 	'Live: leadFinder.getResults — GET /lead_finder/async/:request_id',
 	() => {
 		let storedRequestId: string;

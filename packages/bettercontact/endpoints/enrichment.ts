@@ -14,7 +14,13 @@ export const enrich: BetterContactEndpoints['enrichmentEnrich'] = async (
 	await logEventFromContext(
 		ctx,
 		'bettercontact.enrichment.enrich',
-		{ ...input },
+		{
+			record_count: input.data.length,
+			enrich_email_address: input.enrich_email_address,
+			enrich_phone_number: input.enrich_phone_number,
+			enrich_profile: input.enrich_profile,
+			verify_catch_all: input.verify_catch_all,
+		},
 		'completed',
 	);
 	return response;

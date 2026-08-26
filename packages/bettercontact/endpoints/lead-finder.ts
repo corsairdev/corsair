@@ -14,7 +14,16 @@ export const create: BetterContactEndpoints['leadFinderCreate'] = async (
 	await logEventFromContext(
 		ctx,
 		'bettercontact.leadFinder.create',
-		{ ...input },
+		{
+			limit: input.limit,
+			offset: input.offset,
+			max_leads: input.max_leads,
+			enrich_email_address: input.enrich_email_address,
+			enrich_phone_number: input.enrich_phone_number,
+			has_filters: Boolean(
+				input.filters && Object.keys(input.filters).length > 0,
+			),
+		},
 		'completed',
 	);
 	return response;
