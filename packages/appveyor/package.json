@@ -1,9 +1,14 @@
 {
   "name": "@corsair/appveyor",
   "version": "0.1.0",
-  "description": "AppVeyor CI/CD integration for Corsair",
-  "main": "./dist/index.js",
-  "module": "./dist/index.mjs",
-  "types": "./dist/index.d.ts",
-  "license": "MIT"
+  "private": true,
+  "type": "module",
+  "main": "./src/index.ts",
+  "types": "./src/index.ts",
+  "scripts": {
+    "build": "tsc",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "check": "biome check src/"
+  }
 }
