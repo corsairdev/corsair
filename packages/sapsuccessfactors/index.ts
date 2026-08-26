@@ -10,9 +10,9 @@ import type {
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
-	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
 	A,
 	Application,
@@ -60,10 +60,7 @@ import {
 	SapsuccessfactorsEndpointInputSchemas,
 	SapsuccessfactorsEndpointOutputSchemas,
 } from './endpoints/types';
-import { errorHandlers } from './error-handlers';
 import { SapsuccessfactorsSchema } from './schema';
-import { resolveSapsuccessfactorsOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchSapsuccessfactorsTenantWebhook } from './webhooks/tenant-matcher';
 
 export type SapsuccessfactorsPluginOptions = {
 	/** Cloud-based human capital management software covering Employee Central, Recruiting, Performance & Goals, Learning, Compensation, and more. */
@@ -317,9 +314,7 @@ const sapsuccessfactorsEndpointsNested = {
 	},
 } as const;
 
-const sapsuccessfactorsWebhooksNested = {
-	// TODO: Add webhook handlers here once implemented
-} as const;
+const sapsuccessfactorsWebhooksNested = {} as const;
 
 export const sapsuccessfactorsEndpointSchemas = {
 	'approve.approveCalibrationSession': {
@@ -913,33 +908,14 @@ export function sapsuccessfactors<
 		webhooks: sapsuccessfactorsWebhooksNested,
 		endpointMeta: sapsuccessfactorsEndpointMeta,
 		endpointSchemas: sapsuccessfactorsEndpointSchemas,
-		pluginWebhookMatcher: (request: RawWebhookRequest) => {
-			// TODO: Update to match Sapsuccessfactors webhook signature headers
-			return 'x-sapsuccessfactors-signature' in request.headers;
-		},
-		pluginTenantWebhookMatcher: matchSapsuccessfactorsTenantWebhook,
-		oauthWebhookTenantLinkResolver:
-			resolveSapsuccessfactorsOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
-		keyBuilder: async (
-			ctx: SapsuccessfactorsKeyBuilderContext,
-			source: 'endpoint' | 'webhook',
-		) => {
-			if (source === 'webhook' && options.webhookSecret)
-				return options.webhookSecret;
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
+		pluginWebhookMatcher: () => false,
+		keyBuilder: async (ctx: SapsuccessfactorsKeyBuilderContext, source) => {
 			if (source === 'endpoint' && options.key) return options.key;
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
 				return res ?? '';
 			}
-			return '';
+			throw new AuthMissingError('sapsuccessfactors', 'api_key');
 		},
 	} satisfies InternalSapsuccessfactorsPlugin;
 }
@@ -948,4 +924,3 @@ export type {
 	SapsuccessfactorsEndpointInputs,
 	SapsuccessfactorsEndpointOutputs,
 } from './endpoints/types';
-export type { SapsuccessfactorsWebhookOutputs } from './webhooks/types';

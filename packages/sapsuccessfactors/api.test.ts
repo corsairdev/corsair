@@ -1,16 +1,10 @@
-declare const describe: (name: string, fn: () => void) => void;
-declare const it: (name: string, fn: () => Promise<void> | void) => void;
-declare const expect: (val: any) => any;
-declare const beforeEach: (fn: () => void) => void;
-declare const jest: any;
-
 import { request } from 'corsair/http';
 import { sapsuccessfactors } from './index';
 
 jest.mock('corsair/http', () => ({
-	request: jest
-		.fn()
-		.mockResolvedValue({ d: { results: [{ id: 'test-123' }] } }),
+	request: jest.fn().mockResolvedValue({
+		d: { results: [{ id: 'test-123' }], id: 'test-123', status: 'OK' },
+	}),
 	ApiError: class ApiError extends Error {
 		constructor(
 			public status: number,
@@ -46,7 +40,7 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.approve
 			?.approveCalibrationSession;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { session_id: 'test_value' } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -55,7 +49,7 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.calibration
 			?.getCalibrationSessionById;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { session_id: 'test_value' } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -73,7 +67,7 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.calibration
 			?.getCalibrationSubjectById;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { subject_id: 'test_value' } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -82,7 +76,7 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.calibration
 			?.getCalibrationSubjectRatings;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { session_id: 'test_value' } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -91,7 +85,10 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.calibration
 			?.updateCalibrationSubjectRatings;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, {
+			subject_id: 'test_value',
+			body: { test: 'data' },
+		} as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -143,7 +140,7 @@ describe('SapSuccessfactors Plugin', () => {
 	it('calls onboardee.createOnboardee endpoint correctly', async () => {
 		const endpoint = (plugin.endpoints as any)?.onboardee?.createOnboardee;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { body: { test: 'data' } } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -160,7 +157,10 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.internal
 			?.updateInternalUsernameNewHiresAfter;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, {
+			user_id: 'test_value',
+			new_username: 'test_value',
+		} as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -168,7 +168,7 @@ describe('SapSuccessfactors Plugin', () => {
 	it('calls a.createAFeedbackRequest endpoint correctly', async () => {
 		const endpoint = (plugin.endpoints as any)?.a?.createAFeedbackRequest;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { body: { test: 'data' } } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -195,7 +195,7 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.give
 			?.giveFeedbackOrRespondToAFeedbackRequest;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { body: { test: 'data' } } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -213,7 +213,7 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.successor
 			?.createUpdateSuccessorNomination;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { body: { test: 'data' } } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -222,7 +222,7 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.nomination
 			?.deleteNominationPositionTalentPool;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { nomination_id: 'test_value' } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -360,7 +360,7 @@ describe('SapSuccessfactors Plugin', () => {
 	it('calls custom.getCustomMdfObject endpoint correctly', async () => {
 		const endpoint = (plugin.endpoints as any)?.custom?.getCustomMdfObject;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { custom_object: 'test_value' } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -400,7 +400,9 @@ describe('SapSuccessfactors Plugin', () => {
 	it('calls per.getPerPersonById endpoint correctly', async () => {
 		const endpoint = (plugin.endpoints as any)?.per?.getPerPersonById;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, {
+			person_id_external: 'test_value',
+		} as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -491,7 +493,7 @@ describe('SapSuccessfactors Plugin', () => {
 	it('calls goals.getGoalsByPlan endpoint correctly', async () => {
 		const endpoint = (plugin.endpoints as any)?.goals?.getGoalsByPlan;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { goal_plan_id: 'test_value' } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -508,7 +510,7 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.learning
 			?.createLearningActivitiesBulk;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { body: { test: 'data' } } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});
@@ -575,7 +577,7 @@ describe('SapSuccessfactors Plugin', () => {
 		const endpoint = (plugin.endpoints as any)?.query
 			?.queryClockClockOutGroupCodeTime;
 		expect(endpoint).toBeDefined();
-		const res = await endpoint(mockCtx, {} as any);
+		const res = await endpoint(mockCtx, { code: 'test_value' } as any);
 		expect(res).toBeDefined();
 		expect(mockedRequest).toHaveBeenCalled();
 	});

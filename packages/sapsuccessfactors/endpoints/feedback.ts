@@ -2,12 +2,20 @@ import { logEventFromContext } from 'corsair/core';
 import type { SapsuccessfactorsEndpoints } from '..';
 import { makeSapsuccessfactorsRequest } from '../client';
 import type { SapsuccessfactorsEndpointOutputs } from './types';
+import {
+	SapsuccessfactorsEndpointInputSchemas,
+	SapsuccessfactorsEndpointOutputSchemas,
+} from './types';
 
 // Get Feedback Records
 // Query continuous feedback records (OData v4).
 export const getFeedbackRecordsServiceAvailable: SapsuccessfactorsEndpoints['getFeedbackRecordsServiceAvailable'] =
 	async (ctx, input) => {
-		const query = input as Record<
+		const validatedInput =
+			SapsuccessfactorsEndpointInputSchemas.getFeedbackRecordsServiceAvailable.parse(
+				input ?? {},
+			);
+		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
@@ -17,11 +25,15 @@ export const getFeedbackRecordsServiceAvailable: SapsuccessfactorsEndpoints['get
 			method: 'GET',
 			query,
 		});
+		const validatedResponse =
+			SapsuccessfactorsEndpointOutputSchemas.getFeedbackRecordsServiceAvailable.parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'sapsuccessfactors.feedback.getFeedbackRecordsServiceAvailable',
 			input ?? {},
 			'completed',
 		);
-		return response;
+		return validatedResponse;
 	};

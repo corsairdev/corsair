@@ -2,12 +2,22 @@ import { logEventFromContext } from 'corsair/core';
 import type { SapsuccessfactorsEndpoints } from '..';
 import { makeSapsuccessfactorsRequest } from '../client';
 import type { SapsuccessfactorsEndpointOutputs } from './types';
+import {
+	SapsuccessfactorsEndpointInputSchemas,
+	SapsuccessfactorsEndpointOutputSchemas,
+} from './types';
 
 // Get Calibration Session By ID
 // Get a specific calibration session by session ID.
 export const getCalibrationSessionById: SapsuccessfactorsEndpoints['getCalibrationSessionById'] =
 	async (ctx, input) => {
-		const { session_id, ...query } = (input ?? {}) as { session_id?: string };
+		const validatedInput =
+			SapsuccessfactorsEndpointInputSchemas.getCalibrationSessionById.parse(
+				input ?? {},
+			);
+		const { session_id, ...query } = (validatedInput ?? {}) as {
+			session_id?: string;
+		};
 		const resourcePath = session_id
 			? `odata/v4/CalSession.svc/CalibrationSession('${session_id}')`
 			: 'odata/v4/CalSession.svc/CalibrationSession';
@@ -17,20 +27,28 @@ export const getCalibrationSessionById: SapsuccessfactorsEndpoints['getCalibrati
 			method: 'GET',
 			query: query as Record<string, string | number | boolean | undefined>,
 		});
+		const validatedResponse =
+			SapsuccessfactorsEndpointOutputSchemas.getCalibrationSessionById.parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'sapsuccessfactors.calibration.getCalibrationSessionById',
 			input ?? {},
 			'completed',
 		);
-		return response;
+		return validatedResponse;
 	};
 
 // Get Calibration Sessions
 // Query all calibration sessions the current user can access.
 export const getCalibrationSessions: SapsuccessfactorsEndpoints['getCalibrationSessions'] =
 	async (ctx, input) => {
-		const query = input as Record<
+		const validatedInput =
+			SapsuccessfactorsEndpointInputSchemas.getCalibrationSessions.parse(
+				input ?? {},
+			);
+		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
@@ -40,20 +58,30 @@ export const getCalibrationSessions: SapsuccessfactorsEndpoints['getCalibrationS
 			method: 'GET',
 			query,
 		});
+		const validatedResponse =
+			SapsuccessfactorsEndpointOutputSchemas.getCalibrationSessions.parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'sapsuccessfactors.calibration.getCalibrationSessions',
 			input ?? {},
 			'completed',
 		);
-		return response;
+		return validatedResponse;
 	};
 
 // Get Calibration Subject By ID
 // Query a subject's competency ratings within a calibration session.
 export const getCalibrationSubjectById: SapsuccessfactorsEndpoints['getCalibrationSubjectById'] =
 	async (ctx, input) => {
-		const { subject_id, ...query } = (input ?? {}) as { subject_id?: string };
+		const validatedInput =
+			SapsuccessfactorsEndpointInputSchemas.getCalibrationSubjectById.parse(
+				input ?? {},
+			);
+		const { subject_id, ...query } = (validatedInput ?? {}) as {
+			subject_id?: string;
+		};
 		const resourcePath = subject_id
 			? `odata/v4/CalSession.svc/CalibrationSubject('${subject_id}')`
 			: 'odata/v4/CalSession.svc/CalibrationSubject';
@@ -63,20 +91,28 @@ export const getCalibrationSubjectById: SapsuccessfactorsEndpoints['getCalibrati
 			method: 'GET',
 			query: query as Record<string, string | number | boolean | undefined>,
 		});
+		const validatedResponse =
+			SapsuccessfactorsEndpointOutputSchemas.getCalibrationSubjectById.parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'sapsuccessfactors.calibration.getCalibrationSubjectById',
 			input ?? {},
 			'completed',
 		);
-		return response;
+		return validatedResponse;
 	};
 
 // Get Calibration Subject Ratings
 // Query a subject's ratings/competency ratings/comments by session ID.
 export const getCalibrationSubjectRatings: SapsuccessfactorsEndpoints['getCalibrationSubjectRatings'] =
 	async (ctx, input) => {
-		const query = input as Record<
+		const validatedInput =
+			SapsuccessfactorsEndpointInputSchemas.getCalibrationSubjectRatings.parse(
+				input ?? {},
+			);
+		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
@@ -86,20 +122,28 @@ export const getCalibrationSubjectRatings: SapsuccessfactorsEndpoints['getCalibr
 			method: 'GET',
 			query,
 		});
+		const validatedResponse =
+			SapsuccessfactorsEndpointOutputSchemas.getCalibrationSubjectRatings.parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'sapsuccessfactors.calibration.getCalibrationSubjectRatings',
 			input ?? {},
 			'completed',
 		);
-		return response;
+		return validatedResponse;
 	};
 
 // Update Calibration Subject Ratings
 // Update a subject's competency ratings in a calibration session.
 export const updateCalibrationSubjectRatings: SapsuccessfactorsEndpoints['updateCalibrationSubjectRatings'] =
 	async (ctx, input) => {
-		const { subject_id, body, ...rest } = (input ?? {}) as {
+		const validatedInput =
+			SapsuccessfactorsEndpointInputSchemas.updateCalibrationSubjectRatings.parse(
+				input ?? {},
+			);
+		const { subject_id, body, ...rest } = (validatedInput ?? {}) as {
 			subject_id?: string;
 			body?: Record<string, unknown>;
 		};
@@ -112,11 +156,15 @@ export const updateCalibrationSubjectRatings: SapsuccessfactorsEndpoints['update
 			method: 'PATCH',
 			body: (body ?? rest) as Record<string, unknown>,
 		});
+		const validatedResponse =
+			SapsuccessfactorsEndpointOutputSchemas.updateCalibrationSubjectRatings.parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'sapsuccessfactors.calibration.updateCalibrationSubjectRatings',
 			input ?? {},
 			'completed',
 		);
-		return response;
+		return validatedResponse;
 	};

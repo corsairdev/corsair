@@ -2,23 +2,35 @@ import { logEventFromContext } from 'corsair/core';
 import type { SapsuccessfactorsEndpoints } from '..';
 import { makeSapsuccessfactorsRequest } from '../client';
 import type { SapsuccessfactorsEndpointOutputs } from './types';
+import {
+	SapsuccessfactorsEndpointInputSchemas,
+	SapsuccessfactorsEndpointOutputSchemas,
+} from './types';
 
 // Get Temporary Time Information
 // Retrieve temporary work schedules assigned to employees.
 export const getTemporaryTimeInformation: SapsuccessfactorsEndpoints['getTemporaryTimeInformation'] =
 	async (ctx, input) => {
-		const query = input as Record<
+		const validatedInput =
+			SapsuccessfactorsEndpointInputSchemas.getTemporaryTimeInformation.parse(
+				input ?? {},
+			);
+		const query = validatedInput as Record<
 			string,
 			string | number | boolean | undefined
 		>;
 		const response = await makeSapsuccessfactorsRequest<
 			SapsuccessfactorsEndpointOutputs['getTemporaryTimeInformation']
 		>('odata/v2/TemporaryTimeInfo', ctx.key, { method: 'GET', query });
+		const validatedResponse =
+			SapsuccessfactorsEndpointOutputSchemas.getTemporaryTimeInformation.parse(
+				response,
+			);
 		await logEventFromContext(
 			ctx,
 			'sapsuccessfactors.temporary.getTemporaryTimeInformation',
 			input ?? {},
 			'completed',
 		);
-		return response;
+		return validatedResponse;
 	};
