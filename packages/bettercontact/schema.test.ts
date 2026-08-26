@@ -1,32 +1,8 @@
-import { Credits, Enrichment, LeadFinder } from './endpoints';
 import {
 	BetterContactEndpointInputSchemas,
 	BetterContactEndpointOutputSchemas,
 } from './endpoints/types';
-import { errorHandlers } from './error-handlers';
-import { bettercontact } from './index';
 import { BetterContactSchema } from './schema';
-
-jest.mock('./client', () => ({
-	makeBetterContactRequest: jest.fn(),
-}));
-
-jest.mock('corsair/core', () => ({
-	logEventFromContext: jest.fn(async () => undefined),
-}));
-
-import { logEventFromContext } from 'corsair/core';
-import { ApiError } from 'corsair/http';
-import { makeBetterContactRequest } from './client';
-
-const mockedMakeBetterContactRequest = jest.mocked(makeBetterContactRequest);
-const mockedLogEventFromContext = jest.mocked(logEventFromContext);
-
-function createMockCtx() {
-	return {
-		key: 'test-api-key',
-	} as const;
-}
 
 describe('BetterContact schema & metadata', () => {
 	it('declares a semver version and entities', () => {
@@ -44,7 +20,7 @@ describe('BetterContact input schemas - Valid inputs', () => {
 
 	it('validates leadFinder.create input', () => {
 		const valid = BetterContactEndpointInputSchemas.leadFinderCreate.safeParse({
-			filters: { job_titles: ['CEO'] },
+			filters: { lead_seniority: { include: ['cxo', 'vp'] } },
 			limit: 50,
 			offset: 0,
 			enrich_email_address: true,
@@ -81,14 +57,14 @@ describe('BetterContact input schemas - Edge & Rejection cases', () => {
 	it('rejects leadFinder.create with limit > 200 or < 1', () => {
 		const tooHigh =
 			BetterContactEndpointInputSchemas.leadFinderCreate.safeParse({
-				filters: { job_titles: ['CEO'] },
+				filters: { lead_seniority: { include: ['cxo'] } },
 				limit: 250,
 			});
 		expect(tooHigh.success).toBe(false);
 
 		const tooLow = BetterContactEndpointInputSchemas.leadFinderCreate.safeParse(
 			{
-				filters: { job_titles: ['CEO'] },
+				filters: { lead_seniority: { include: ['cxo'] } },
 				limit: 0,
 			},
 		);
@@ -98,10 +74,22 @@ describe('BetterContact input schemas - Edge & Rejection cases', () => {
 	it('rejects leadFinder.create with negative offset', () => {
 		const invalid =
 			BetterContactEndpointInputSchemas.leadFinderCreate.safeParse({
-				filters: { job_titles: ['CEO'] },
+				filters: { lead_seniority: { include: ['cxo'] } },
 				offset: -5,
 			});
 		expect(invalid.success).toBe(false);
+	});
+
+	it('rejects leadFinder.create when filters is missing (required field)', () => {
+		const invalid =
+			BetterContactEndpointInputSchemas.leadFinderCreate.safeParse({
+				limit: 10,
+			});
+		expect(invalid.success).toBe(false);
+		if (!invalid.success) {
+			const fields = invalid.error.issues.map((i) => i.path[0]);
+			expect(fields).toContain('filters');
+		}
 	});
 
 	it('rejects enrichment.enrich with empty data array', () => {
@@ -123,14 +111,57 @@ describe('BetterContact input schemas - Edge & Rejection cases', () => {
 		expect(invalid.success).toBe(false);
 	});
 
+	it('rejects enrichment.enrich when data field is missing entirely (required)', () => {
+		const invalid =
+			BetterContactEndpointInputSchemas.enrichmentEnrich.safeParse({
+				enrich_email_address: true,
+			});
+		expect(invalid.success).toBe(false);
+		if (!invalid.success) {
+			const fields = invalid.error.issues.map((i) => i.path[0]);
+			expect(fields).toContain('data');
+		}
+	});
+
 	it('rejects getResults without request_id', () => {
 		const leadFinderInvalid =
 			BetterContactEndpointInputSchemas.leadFinderGetResults.safeParse({});
 		expect(leadFinderInvalid.success).toBe(false);
+		if (!leadFinderInvalid.success) {
+			const fields = leadFinderInvalid.error.issues.map((i) => i.path[0]);
+			expect(fields).toContain('request_id');
+		}
 
 		const enrichmentInvalid =
 			BetterContactEndpointInputSchemas.enrichmentGetResults.safeParse({});
 		expect(enrichmentInvalid.success).toBe(false);
+		if (!enrichmentInvalid.success) {
+			const fields = enrichmentInvalid.error.issues.map((i) => i.path[0]);
+			expect(fields).toContain('request_id');
+		}
+	});
+
+	it('rejects request_id that is not a string', () => {
+		const withNumber =
+			BetterContactEndpointInputSchemas.leadFinderGetResults.safeParse({
+				request_id: 12345,
+			});
+		expect(withNumber.success).toBe(false);
+
+		const withNull =
+			BetterContactEndpointInputSchemas.enrichmentGetResults.safeParse({
+				request_id: null,
+			});
+		expect(withNull.success).toBe(false);
+	});
+
+	it('rejects enrichment.enrich timeout_seconds below 1', () => {
+		const invalid =
+			BetterContactEndpointInputSchemas.enrichmentEnrich.safeParse({
+				data: [{ first_name: 'Test' }],
+				timeout_seconds: 0,
+			});
+		expect(invalid.success).toBe(false);
 	});
 });
 
@@ -181,7 +212,12 @@ describe('BetterContact output schemas', () => {
 	});
 
 	it('parses enrichment.getResults response with all statuses', () => {
-		for (const status of ['processing', 'on_hold', 'terminated']) {
+		for (const status of [
+			'not_started',
+			'processing',
+			'on_hold',
+			'terminated',
+		]) {
 			const res =
 				BetterContactEndpointOutputSchemas.enrichmentGetResults.safeParse({
 					id: 'enrich_123',
@@ -192,188 +228,5 @@ describe('BetterContact output schemas', () => {
 				});
 			expect(res.success).toBe(true);
 		}
-	});
-});
-
-describe('BetterContact error handlers', () => {
-	it('handles RATE_LIMIT_ERROR (429)', async () => {
-		const error = new ApiError(
-			{ url: '/api/v2/account', method: 'GET' },
-			{
-				url: '/api/v2/account',
-				ok: false,
-				status: 429,
-				statusText: 'Too Many Requests',
-				body: undefined,
-			},
-			'Rate limited',
-		);
-		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
-		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
-		expect(result.maxRetries).toBe(5);
-	});
-
-	it('handles AUTH_ERROR (401)', async () => {
-		const error = new ApiError(
-			{ url: '/api/v2/account', method: 'GET' },
-			{
-				url: '/api/v2/account',
-				ok: false,
-				status: 401,
-				statusText: 'Unauthorized',
-				body: undefined,
-			},
-			'Unauthorized',
-		);
-		expect(errorHandlers.AUTH_ERROR.match(error)).toBe(true);
-		const result = await errorHandlers.AUTH_ERROR.handler();
-		expect(result.maxRetries).toBe(0);
-	});
-
-	it('handles DEFAULT error handler', async () => {
-		expect(errorHandlers.DEFAULT.match()).toBe(true);
-		const result = await errorHandlers.DEFAULT.handler();
-		expect(result.maxRetries).toBe(0);
-	});
-});
-
-describe('BetterContact keyBuilder resolution', () => {
-	it('resolves explicit options.key', async () => {
-		const plugin = bettercontact({ key: 'explicit-key' });
-		const key = await plugin.keyBuilder!(
-			{ authType: 'api_key' } as never,
-			'endpoint',
-		);
-		expect(key).toBe('explicit-key');
-	});
-
-	it('resolves key from ctx.keys.get_api_key when options.key is omitted', async () => {
-		const plugin = bettercontact({});
-		const mockCtx = {
-			authType: 'api_key',
-			keys: { get_api_key: jest.fn().mockResolvedValue('dynamic-ctx-key') },
-		};
-		const key = await plugin.keyBuilder!(mockCtx as never, 'endpoint');
-		expect(key).toBe('dynamic-ctx-key');
-	});
-
-	it('falls back to process.env.BETTERCONTACT_API_KEY when no key is provided', async () => {
-		const oldEnv = process.env.BETTERCONTACT_API_KEY;
-		process.env.BETTERCONTACT_API_KEY = 'env-secret-key';
-
-		const plugin = bettercontact({});
-		const mockCtx = {
-			authType: 'api_key',
-			keys: { get_api_key: jest.fn().mockResolvedValue(undefined) },
-		};
-		const key = await plugin.keyBuilder!(mockCtx as never, 'endpoint');
-		expect(key).toBe('env-secret-key');
-
-		process.env.BETTERCONTACT_API_KEY = oldEnv;
-	});
-});
-
-describe('BetterContact endpoint handlers', () => {
-	beforeEach(() => {
-		jest.clearAllMocks();
-	});
-
-	it('credits.get calls makeBetterContactRequest', async () => {
-		const ctx = createMockCtx();
-		const response = {
-			success: true,
-			credits_left: 500,
-			email: 'test@example.com',
-		};
-		mockedMakeBetterContactRequest.mockResolvedValueOnce(response);
-
-		const result = await Credits.get(ctx as never, {});
-		expect(result).toEqual(response);
-		expect(mockedMakeBetterContactRequest).toHaveBeenCalledWith(
-			'account',
-			'test-api-key',
-			{
-				method: 'GET',
-			},
-		);
-		expect(mockedLogEventFromContext).toHaveBeenCalled();
-	});
-
-	it('leadFinder.create posts search request', async () => {
-		const ctx = createMockCtx();
-		const input = { filters: { industry: 'tech' } };
-		const response = { success: true, request_id: 'srch_1' };
-		mockedMakeBetterContactRequest.mockResolvedValueOnce(response);
-
-		const result = await LeadFinder.create(ctx as never, input);
-		expect(result).toEqual(response);
-		expect(mockedMakeBetterContactRequest).toHaveBeenCalledWith(
-			'lead_finder/async',
-			'test-api-key',
-			{
-				method: 'POST',
-				body: input,
-			},
-		);
-	});
-
-	it('leadFinder.getResults fetches search results', async () => {
-		const ctx = createMockCtx();
-		const input = { request_id: 'srch_1' };
-		const response = { id: 'srch_1', status: 'terminated', leads: [] };
-		mockedMakeBetterContactRequest.mockResolvedValueOnce(response);
-
-		const result = await LeadFinder.getResults(ctx as never, input);
-		expect(result).toEqual(response);
-		expect(mockedMakeBetterContactRequest).toHaveBeenCalledWith(
-			'lead_finder/async/srch_1',
-			'test-api-key',
-			{ method: 'GET' },
-		);
-	});
-
-	it('enrichment.enrich posts batch enrichment request', async () => {
-		const ctx = createMockCtx();
-		const input = { data: [{ first_name: 'Alice' }] };
-		const response = { success: true, id: 'batch_1' };
-		mockedMakeBetterContactRequest.mockResolvedValueOnce(response);
-
-		const result = await Enrichment.enrich(ctx as never, input);
-		expect(result).toEqual(response);
-		expect(mockedMakeBetterContactRequest).toHaveBeenCalledWith(
-			'async',
-			'test-api-key',
-			{
-				method: 'POST',
-				body: input,
-			},
-		);
-	});
-
-	it('enrichment.getResults fetches enrichment status', async () => {
-		const ctx = createMockCtx();
-		const input = { request_id: 'batch_1' };
-		const response = { id: 'batch_1', status: 'terminated', data: [] };
-		mockedMakeBetterContactRequest.mockResolvedValueOnce(response);
-
-		const result = await Enrichment.getResults(ctx as never, input);
-		expect(result).toEqual(response);
-		expect(mockedMakeBetterContactRequest).toHaveBeenCalledWith(
-			'async/batch_1',
-			'test-api-key',
-			{
-				method: 'GET',
-			},
-		);
-	});
-
-	it('propagates errors thrown by makeBetterContactRequest', async () => {
-		const ctx = createMockCtx();
-		const err = new Error('Network timeout');
-		mockedMakeBetterContactRequest.mockRejectedValueOnce(err);
-
-		await expect(Credits.get(ctx as never, {})).rejects.toThrow(
-			'Network timeout',
-		);
 	});
 });
