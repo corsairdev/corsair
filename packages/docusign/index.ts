@@ -26,19 +26,24 @@ export const docusignEndpointMeta = {
 	createEnvelope: {
 		description:
 			'Creates a signing envelope from a pre-existing DocuSign template.',
+		riskLevel: 'write',
 	},
 	getEnvelope: {
 		description:
 			'Gets the status and basic information about an envelope from DocuSign.',
+		riskLevel: 'read',
 	},
 	sendEnvelope: {
 		description: 'Sends a draft envelope by updating its status to sent.',
+		riskLevel: 'write',
 	},
 	listTemplates: {
 		description: 'Gets the definition of templates in the specified account.',
+		riskLevel: 'read',
 	},
 	getTemplate: {
 		description: 'Gets a template definition from the specified account.',
+		riskLevel: 'read',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof docusignEndpointsNested>;
 
@@ -60,7 +65,6 @@ export const docusignPlugin = {
 	schema,
 };
 
-// Plugin factory function for corsair.ts plugins list
 export const docusign = (config?: any) => ({
 	...docusignPlugin,
 	...(config && { config }),
