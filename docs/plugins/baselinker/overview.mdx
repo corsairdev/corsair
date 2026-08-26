@@ -1,0 +1,141 @@
+---
+title: Overview
+description: "BaseLinker plugin for Corsair"
+---
+
+Use **BaseLinker** through Corsair: one client, typed API calls, optional local DB sync.
+
+**What you get:**
+
+- 106 typed API operations
+- 16 database entities synced for fast `.search()` / `.list()` queries
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/baselinker
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { baselinker } from '@corsair-dev/baselinker';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [baselinker()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { baselinker } from '@corsair-dev/baselinker';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [baselinker()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/baselinker/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=baselinker
+```
+
+Use the key names documented in [Get Credentials](/plugins/baselinker/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=baselinker --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+baselinker()
+```
+
+Store credentials with `pnpm corsair setup --plugin=baselinker` (see [Get Credentials](/plugins/baselinker/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+
+## Query synced data
+
+Synced entities support `corsair.baselinker.db.<entity>.search()` and `.list()`. See [Database](/plugins/baselinker/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `connect.getConnectIntegrationContractors`
+
+```ts
+await corsair.baselinker.api.connect.getConnectIntegrationContractors({});
+```
+
+
+**Write-style (write):** `couriers.createPackageManual`
+
+```ts
+await corsair.baselinker.api.couriers.createPackageManual({});
+```
+
+
+See the full list on the [API](/plugins/baselinker/api) page. Use `pnpm corsair list --plugin=baselinker` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/baselinker/api) |
+| Database | [Database](/plugins/baselinker/database) |
+| Credentials | [Get credentials](/plugins/baselinker/get-credentials) |
+

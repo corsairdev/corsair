@@ -1,0 +1,167 @@
+---
+title: API
+description: "API reference for Abyssale: every `abyssale.api.*` operation with input and output types."
+---
+
+Every `abyssale.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Auth
+
+### test
+
+`auth.test`
+
+Test Abyssale API key authentication validity
+
+**Risk:** `read`
+
+```ts
+await corsair.abyssale.api.auth.test({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `company` | `string` | Yes | — |
+| `version` | `string` | No | — |
+
+
+
+---
+
+## Designs
+
+### list
+
+`designs.list`
+
+Get a list of designs in Abyssale
+
+**Risk:** `read`
+
+```ts
+await corsair.abyssale.api.designs.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | No | — |
+| `type` | `static \| animated \| printer \| printer_multipage` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  template_id?: string,
+  name: string,
+  type: string,
+  project_id?: string,
+  project_name?: string,
+  category_id?: string,
+  category_name?: string,
+  version?: string,
+  created_at?: number,
+  updated_at?: number,
+  preview_url?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Fonts
+
+### list
+
+`fonts.list`
+
+Get a list of available fonts in Abyssale
+
+**Risk:** `read`
+
+```ts
+await corsair.abyssale.api.fonts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `type` | `google \| custom` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  name: string,
+  type: google | custom,
+  available_weights: (
+    number | string
+  )[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project in Abyssale
+
+**Risk:** `write`
+
+```ts
+await corsair.abyssale.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `created_at_ts` | `number` | Yes | — |
+| `version` | `string` | No | — |
+
+
+
+---
+

@@ -1,0 +1,141 @@
+---
+title: Overview
+description: "API2PDF plugin for Corsair"
+---
+
+Use **API2PDF** through Corsair: one client, typed API calls, optional local DB sync.
+
+**What you get:**
+
+- 10 typed API operations
+- 1 database entity synced for fast `.search()` / `.list()` queries
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/api2pdf
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { api2pdf } from '@corsair-dev/api2pdf';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [api2pdf()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { api2pdf } from '@corsair-dev/api2pdf';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [api2pdf()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/api2pdf/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=api2pdf
+```
+
+Use the key names documented in [Get Credentials](/plugins/api2pdf/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=api2pdf --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+api2pdf()
+```
+
+Store credentials with `pnpm corsair setup --plugin=api2pdf` (see [Get Credentials](/plugins/api2pdf/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+
+## Query synced data
+
+Synced entities support `corsair.api2pdf.db.<entity>.search()` and `.list()`. See [Database](/plugins/api2pdf/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `utility.checkStatus`
+
+```ts
+await corsair.api2pdf.api.utility.checkStatus({});
+```
+
+
+**Write-style (write):** `chrome.addHeaderFooter`
+
+```ts
+await corsair.api2pdf.api.chrome.addHeaderFooter({});
+```
+
+
+See the full list on the [API](/plugins/api2pdf/api) page. Use `pnpm corsair list --plugin=api2pdf` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/api2pdf/api) |
+| Database | [Database](/plugins/api2pdf/database) |
+| Credentials | [Get credentials](/plugins/api2pdf/get-credentials) |
+

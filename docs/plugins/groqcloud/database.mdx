@@ -1,0 +1,44 @@
+---
+title: Database
+description: "GroqCloud local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The GroqCloud plugin syncs data locally. Use `corsair.groqcloud.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Models
+
+Path: `groqcloud.db.models.search`
+
+```ts
+const rows = await corsair.groqcloud.db.models.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `id` | `string` | equals, contains, startsWith, endsWith, in |
+| `object` | `string` | equals, contains, startsWith, endsWith, in |
+| `created` | `number` | equals, gt, gte, lt, lte, in |
+| `owned_by` | `string` | equals, contains, startsWith, endsWith, in |
+| `active` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `context_window` | `number` | equals, gt, gte, lt, lte, in |
+| `context_length` | `number` | equals, gt, gte, lt, lte, in |
+| `max_completion_tokens` | `number` | equals, gt, gte, lt, lte, in |
+| `max_output_length` | `number` | equals, gt, gte, lt, lte, in |
+| `hugging_face_id` | `string` | equals, contains, startsWith, endsWith, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

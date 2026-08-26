@@ -1,0 +1,154 @@
+---
+title: Overview
+description: "Anthropic Admin API plugin for Corsair — organization members, invites, workspaces and API keys"
+---
+
+Use **Anthropic Admin API** through Corsair: one client, typed API calls, optional local DB sync.
+
+**What you get:**
+
+- 22 typed API operations
+- 5 database entities synced for fast `.search()` / `.list()` queries
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/anthropicadministrator
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { anthropicadministrator } from '@corsair-dev/anthropicadministrator';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [anthropicadministrator()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { anthropicadministrator } from '@corsair-dev/anthropicadministrator';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [anthropicadministrator()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/anthropicadministrator/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=anthropicadministrator
+```
+
+Use the key names documented in [Get Credentials](/plugins/anthropicadministrator/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=anthropicadministrator --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+anthropicadministrator()
+```
+
+Store credentials with `pnpm corsair setup --plugin=anthropicadministrator` (see [Get Credentials](/plugins/anthropicadministrator/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+```ts corsair.ts
+anthropicadministrator({
+    authType: 'oauth_2',
+})
+```
+
+Store credentials with `pnpm corsair setup --plugin=anthropicadministrator` (see [Get Credentials](/plugins/anthropicadministrator/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+
+## Query synced data
+
+Synced entities support `corsair.anthropicadministrator.db.<entity>.search()` and `.list()`. See [Database](/plugins/anthropicadministrator/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `apiKeys.getApiKey`
+
+```ts
+await corsair.anthropicadministrator.api.apiKeys.getApiKey({});
+```
+
+
+**Write-style (write):** `apiKeys.updateApiKey`
+
+```ts
+await corsair.anthropicadministrator.api.apiKeys.updateApiKey({});
+```
+
+
+See the full list on the [API](/plugins/anthropicadministrator/api) page. Use `pnpm corsair list --plugin=anthropicadministrator` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/anthropicadministrator/api) |
+| Database | [Database](/plugins/anthropicadministrator/database) |
+| Credentials | [Get credentials](/plugins/anthropicadministrator/get-credentials) |
+

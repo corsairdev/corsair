@@ -1,0 +1,141 @@
+---
+title: Overview
+description: "AgencyZoom plugin for Corsair"
+---
+
+Use **AgencyZoom** through Corsair: one client, typed API calls, optional local DB sync.
+
+**What you get:**
+
+- 99 typed API operations
+- 3 database entities synced for fast `.search()` / `.list()` queries
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/agencyzoom
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { agencyzoom } from '@corsair-dev/agencyzoom';
+
+export const corsair = createCorsair({
+	// ... other config options,
+	multiTenancy: false,
+    plugins: [agencyzoom()],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { agencyzoom } from '@corsair-dev/agencyzoom';
+
+export const corsair = createCorsair({
+	// ... other config options,
+    multiTenancy: true,
+    plugins: [agencyzoom()],
+});
+```
+
+See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Get credentials">
+Follow [Get Credentials](/plugins/agencyzoom/get-credentials) if you need help getting keys.
+
+</Step>
+
+<Step title="Store credentials">
+<Tabs>
+<Tab title="Solo">
+```bash
+pnpm corsair setup --plugin=agencyzoom
+```
+
+Use the key names documented in [Get Credentials](/plugins/agencyzoom/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
+</Tab>
+<Tab title="Multi-Tenant">
+```bash
+pnpm corsair setup --plugin=agencyzoom --tenant=<tenantId>
+```
+
+Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
+</Tab>
+</Tabs>
+
+</Step>
+
+</Steps>
+
+## Authentication
+
+Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
+
+<Tabs>
+<Tab title="API Key (Default)">
+
+```ts corsair.ts
+agencyzoom()
+```
+
+Store credentials with `pnpm corsair setup --plugin=agencyzoom` (see [Get Credentials](/plugins/agencyzoom/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+
+## Query synced data
+
+Synced entities support `corsair.agencyzoom.db.<entity>.search()` and `.list()`. See [Database](/plugins/agencyzoom/database) for filters and operators.
+
+
+## Example API calls
+
+**Read-style (read):** `customers.getAmsPoliciesForACustomer`
+
+```ts
+await corsair.agencyzoom.api.customers.getAmsPoliciesForACustomer({});
+```
+
+
+**Write-style (write):** `auth.logTheUserIn`
+
+```ts
+await corsair.agencyzoom.api.auth.logTheUserIn({});
+```
+
+
+See the full list on the [API](/plugins/agencyzoom/api) page. Use `pnpm corsair list --plugin=agencyzoom` and `pnpm corsair schema <path>` locally to inspect schemas.
+
+---
+
+## Hooks
+
+Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+
+---
+
+## Reference
+
+| Topic | Link |
+|-------|------|
+| API | [API](/plugins/agencyzoom/api) |
+| Database | [Database](/plugins/agencyzoom/database) |
+| Credentials | [Get credentials](/plugins/agencyzoom/get-credentials) |
+
