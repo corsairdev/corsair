@@ -1,0 +1,21 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["esnext"],
+    "types": ["node", "jest"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "outDir": "./dist",
+    "composite": true,
+    "incremental": true,
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationMap": true,
+    "skipLibCheck": true,
+    "verbatimModuleSyntax": false,
+    "rootDir": "../../"
+  },
+  "include": ["./**/*", "../corsair/**/*"],
+  "exclude": ["dist", "node_modules"],
+  "references": []
+}
