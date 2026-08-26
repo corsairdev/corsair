@@ -282,10 +282,12 @@ export async function postStandupDigest() {
 Register the schedule once, ideally in a migration or a one-off setup script. A `scheduleId` must be unique, so calling `client.schedule.create()` again with the same id throws `ScheduleAlreadyRunning`. If you register on every server startup, wrap the call and swallow only that error:
 
 ```ts
+import { ScheduleAlreadyRunning } from '@temporalio/client';
+
 try {
     await client.schedule.create({ scheduleId: 'standup-digest', /* ... */ });
 } catch (err) {
-    if (err.name !== 'ScheduleAlreadyRunning') throw err;
+    if (!(err instanceof ScheduleAlreadyRunning)) throw err;
 }
 ```
 </Info>
