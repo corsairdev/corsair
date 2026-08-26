@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { CountdownApiEndpoints } from '..';
 import { makeCountdownApiRequest } from '../client';
 import type { AutocompleteResponse } from './types';
+import { CountdownApiEndpointOutputSchemas } from './types';
 
 export const get: CountdownApiEndpoints['autocomplete'] = async (
 	ctx,
@@ -17,6 +18,9 @@ export const get: CountdownApiEndpoints['autocomplete'] = async (
 		},
 	);
 
+	const validatedResponse =
+		CountdownApiEndpointOutputSchemas.autocomplete.parse(response);
+
 	await logEventFromContext(
 		ctx,
 		'countdownapi.autocomplete.get',
@@ -24,5 +28,5 @@ export const get: CountdownApiEndpoints['autocomplete'] = async (
 		'completed',
 	);
 
-	return response;
+	return validatedResponse;
 };

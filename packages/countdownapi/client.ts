@@ -11,16 +11,27 @@ export class CountdownApiAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: number,
-		options?: { cause?: Error },
+		options?: {
+			cause?: Error;
+			status?: number;
+			statusText?: string;
+			body?: unknown;
+			retryAfter?: number;
+		},
 	) {
 		super(message, options);
 		this.name = 'CountdownApiAPIError';
+		this.status =
+			options?.status ?? (typeof code === 'number' ? code : undefined);
+		this.statusText = options?.statusText;
+		this.body = options?.body;
+		this.retryAfter = options?.retryAfter;
 
 		if (options?.cause instanceof ApiError) {
-			this.status = options.cause.status;
-			this.statusText = options.cause.statusText;
-			this.body = options.cause.body;
-			this.retryAfter = options.cause.retryAfter;
+			this.status = this.status ?? options.cause.status;
+			this.statusText = this.statusText ?? options.cause.statusText;
+			this.body = this.body ?? options.cause.body;
+			this.retryAfter = this.retryAfter ?? options.cause.retryAfter;
 		}
 	}
 }

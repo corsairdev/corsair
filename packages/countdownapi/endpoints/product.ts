@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import type { CountdownApiEndpoints } from '..';
 import { makeCountdownApiRequest } from '../client';
 import type { ProductResponse } from './types';
+import { CountdownApiEndpointOutputSchemas } from './types';
 
 export const get: CountdownApiEndpoints['product'] = async (ctx, input) => {
 	const response = await makeCountdownApiRequest<ProductResponse>(
@@ -19,6 +20,9 @@ export const get: CountdownApiEndpoints['product'] = async (ctx, input) => {
 		},
 	);
 
+	const validatedResponse =
+		CountdownApiEndpointOutputSchemas.product.parse(response);
+
 	await logEventFromContext(
 		ctx,
 		'countdownapi.product.get',
@@ -26,5 +30,5 @@ export const get: CountdownApiEndpoints['product'] = async (ctx, input) => {
 		'completed',
 	);
 
-	return response;
+	return validatedResponse;
 };
