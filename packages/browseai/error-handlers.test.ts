@@ -48,11 +48,11 @@ describe('Browse AI error handlers', () => {
 		expect(result.maxRetries).toBe(0);
 	});
 
-	it('retries rate limits', async () => {
+	it('does not replay operations after a 429', async () => {
 		const err = apiError(429);
 		(err as { retryAfter?: number }).retryAfter = 2000;
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
-		expect(result.maxRetries).toBe(5);
+		expect(result.maxRetries).toBe(0);
 		expect(result.headersRetryAfterMs).toBe(2000);
 	});
 });

@@ -190,6 +190,11 @@ describe('Browse AI endpoints', () => {
 		expect(pathAndQuery().path).toBe('/v2/robots/r1/webhooks');
 	});
 
+	it('rejects a response that misses the output schema', async () => {
+		mockFetch({ tasksQueueStatus: 1 });
+		await expect(getStatus(makeCtx(), {})).rejects.toThrow();
+	});
+
 	it('covers every registered operation', () => {
 		expect(Object.keys(browseaiEndpointMeta).sort()).toEqual(
 			Object.keys(browseaiEndpointSchemas).sort(),

@@ -7,15 +7,20 @@ import {
 	compactQuery,
 	robotPath,
 } from './shared';
-import type { BrowseaiEndpointOutputs } from './types';
+import {
+	BrowseaiEndpointInputSchemas,
+	BrowseaiEndpointOutputSchemas,
+} from './types';
 
 export const getStatus: BrowseaiEndpoints['systemGetStatus'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['systemGetStatus']>(
+	BrowseaiEndpointInputSchemas.systemGetStatus.parse(input);
+	const result = await browseaiCall(
 		ctx,
 		'status',
+		BrowseaiEndpointOutputSchemas.systemGetStatus,
 	);
 	await logEventFromContext(
 		ctx,
@@ -30,9 +35,11 @@ export const listRobots: BrowseaiEndpoints['robotsList'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['robotsList']>(
+	BrowseaiEndpointInputSchemas.robotsList.parse(input);
+	const result = await browseaiCall(
 		ctx,
 		'robots',
+		BrowseaiEndpointOutputSchemas.robotsList,
 	);
 	await logEventFromContext(
 		ctx,
@@ -47,21 +54,23 @@ export const listRobots: BrowseaiEndpoints['robotsList'] = async (
 };
 
 export const runRobot: BrowseaiEndpoints['robotsRun'] = async (ctx, input) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['robotsRun']>(
+	const parsed = BrowseaiEndpointInputSchemas.robotsRun.parse(input);
+	const result = await browseaiCall(
 		ctx,
-		robotPath(input.robotId, '/tasks'),
+		robotPath(parsed.robotId, '/tasks'),
+		BrowseaiEndpointOutputSchemas.robotsRun,
 		{
 			method: 'POST',
 			body: compactBody({
-				recordVideo: input.recordVideo,
-				inputParameters: input.inputParameters,
+				recordVideo: parsed.recordVideo,
+				inputParameters: parsed.inputParameters,
 			}),
 		},
 	);
 	await logEventFromContext(
 		ctx,
 		'browseai.robots.run',
-		auditPayload(input, ['robotId']),
+		auditPayload(parsed, ['robotId']),
 		'completed',
 	);
 	return result;
@@ -71,61 +80,67 @@ export const bulkRun: BrowseaiEndpoints['robotsBulkRun'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['robotsBulkRun']>(
+	const parsed = BrowseaiEndpointInputSchemas.robotsBulkRun.parse(input);
+	const result = await browseaiCall(
 		ctx,
-		robotPath(input.robotId, '/bulk-runs'),
+		robotPath(parsed.robotId, '/bulk-runs'),
+		BrowseaiEndpointOutputSchemas.robotsBulkRun,
 		{
 			method: 'POST',
 			body: compactBody({
-				title: input.title,
-				inputParameters: input.inputParameters,
+				title: parsed.title,
+				inputParameters: parsed.inputParameters,
 			}),
 		},
 	);
 	await logEventFromContext(
 		ctx,
 		'browseai.robots.bulkRun',
-		auditPayload(input, ['robotId']),
+		auditPayload(parsed, ['robotId']),
 		'completed',
 	);
 	return result;
 };
 
 export const listTasks: BrowseaiEndpoints['tasksList'] = async (ctx, input) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['tasksList']>(
+	const parsed = BrowseaiEndpointInputSchemas.tasksList.parse(input);
+	const result = await browseaiCall(
 		ctx,
-		robotPath(input.robotId, '/tasks'),
+		robotPath(parsed.robotId, '/tasks'),
+		BrowseaiEndpointOutputSchemas.tasksList,
 		{
 			query: compactQuery({
-				page: input.page,
-				pageSize: input.pageSize,
-				status: input.status,
-				robotBulkRunId: input.robotBulkRunId,
-				sort: input.sort,
-				includeRetried: input.includeRetried,
-				fromDate: input.fromDate,
-				toDate: input.toDate,
+				page: parsed.page,
+				pageSize: parsed.pageSize,
+				status: parsed.status,
+				robotBulkRunId: parsed.robotBulkRunId,
+				sort: parsed.sort,
+				includeRetried: parsed.includeRetried,
+				fromDate: parsed.fromDate,
+				toDate: parsed.toDate,
 			}),
 		},
 	);
 	await logEventFromContext(
 		ctx,
 		'browseai.tasks.list',
-		auditPayload(input, ['robotId']),
+		auditPayload(parsed, ['robotId']),
 		'completed',
 	);
 	return result;
 };
 
 export const getTask: BrowseaiEndpoints['tasksGet'] = async (ctx, input) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['tasksGet']>(
+	const parsed = BrowseaiEndpointInputSchemas.tasksGet.parse(input);
+	const result = await browseaiCall(
 		ctx,
-		`${robotPath(input.robotId, '/tasks')}/${encodeURIComponent(input.taskId)}`,
+		`${robotPath(parsed.robotId, '/tasks')}/${encodeURIComponent(parsed.taskId)}`,
+		BrowseaiEndpointOutputSchemas.tasksGet,
 	);
 	await logEventFromContext(
 		ctx,
 		'browseai.tasks.get',
-		auditPayload(input, ['robotId', 'taskId']),
+		auditPayload(parsed, ['robotId', 'taskId']),
 		'completed',
 	);
 	return result;
@@ -135,28 +150,30 @@ export const createMonitor: BrowseaiEndpoints['monitorsCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['monitorsCreate']>(
+	const parsed = BrowseaiEndpointInputSchemas.monitorsCreate.parse(input);
+	const result = await browseaiCall(
 		ctx,
-		robotPath(input.robotId, '/monitors'),
+		robotPath(parsed.robotId, '/monitors'),
+		BrowseaiEndpointOutputSchemas.monitorsCreate,
 		{
 			method: 'POST',
 			body: compactBody({
-				name: input.name,
-				inputParameters: input.inputParameters,
+				name: parsed.name,
+				inputParameters: parsed.inputParameters,
 				notifyOnCapturedScreenshotChange:
-					input.notifyOnCapturedScreenshotChange,
-				notifyOnCapturedTextChange: input.notifyOnCapturedTextChange,
+					parsed.notifyOnCapturedScreenshotChange,
+				notifyOnCapturedTextChange: parsed.notifyOnCapturedTextChange,
 				capturedScreenshotNotificationThreshold:
-					input.capturedScreenshotNotificationThreshold,
-				schedule: input.schedule,
-				schedules: input.schedules,
+					parsed.capturedScreenshotNotificationThreshold,
+				schedule: parsed.schedule,
+				schedules: parsed.schedules,
 			}),
 		},
 	);
 	await logEventFromContext(
 		ctx,
 		'browseai.monitors.create',
-		auditPayload(input, ['robotId']),
+		auditPayload(parsed, ['robotId']),
 		'completed',
 	);
 	return result;
@@ -166,15 +183,17 @@ export const deleteMonitor: BrowseaiEndpoints['monitorsDelete'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['monitorsDelete']>(
+	const parsed = BrowseaiEndpointInputSchemas.monitorsDelete.parse(input);
+	const result = await browseaiCall(
 		ctx,
-		`${robotPath(input.robotId, '/monitors')}/${encodeURIComponent(input.monitorId)}`,
+		`${robotPath(parsed.robotId, '/monitors')}/${encodeURIComponent(parsed.monitorId)}`,
+		BrowseaiEndpointOutputSchemas.monitorsDelete,
 		{ method: 'DELETE' },
 	);
 	await logEventFromContext(
 		ctx,
 		'browseai.monitors.delete',
-		auditPayload(input, ['robotId', 'monitorId']),
+		auditPayload(parsed, ['robotId', 'monitorId']),
 		'completed',
 	);
 	return result;
@@ -184,21 +203,23 @@ export const createWebhook: BrowseaiEndpoints['webhooksCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['webhooksCreate']>(
+	const parsed = BrowseaiEndpointInputSchemas.webhooksCreate.parse(input);
+	const result = await browseaiCall(
 		ctx,
-		robotPath(input.robotId, '/webhooks'),
+		robotPath(parsed.robotId, '/webhooks'),
+		BrowseaiEndpointOutputSchemas.webhooksCreate,
 		{
 			method: 'POST',
 			body: {
-				hookUrl: input.hookUrl,
-				eventType: input.eventType,
+				hookUrl: parsed.hookUrl,
+				eventType: parsed.eventType,
 			},
 		},
 	);
 	await logEventFromContext(
 		ctx,
 		'browseai.webhooks.create',
-		auditPayload(input, ['robotId']),
+		auditPayload(parsed, ['robotId']),
 		'completed',
 	);
 	return result;
@@ -208,14 +229,16 @@ export const listWebhooks: BrowseaiEndpoints['webhooksList'] = async (
 	ctx,
 	input,
 ) => {
-	const result = await browseaiCall<BrowseaiEndpointOutputs['webhooksList']>(
+	const parsed = BrowseaiEndpointInputSchemas.webhooksList.parse(input);
+	const result = await browseaiCall(
 		ctx,
-		robotPath(input.robotId, '/webhooks'),
+		robotPath(parsed.robotId, '/webhooks'),
+		BrowseaiEndpointOutputSchemas.webhooksList,
 	);
 	await logEventFromContext(
 		ctx,
 		'browseai.webhooks.list',
-		auditPayload(input, ['robotId']),
+		auditPayload(parsed, ['robotId']),
 		'completed',
 	);
 	return result;

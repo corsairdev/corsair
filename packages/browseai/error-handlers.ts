@@ -4,6 +4,10 @@ import { ApiError } from 'corsair/http';
 /**
  * Browse AI uses HTTP status on JSON envelopes (`statusCode` / `messageCode`).
  *
+ * Every handler returns `maxRetries: 0`. `corsair/http` already retries
+ * idempotent 429s; replaying POST would duplicate tasks, monitors, bulk
+ * runs, and webhooks.
+ *
  * | status | meaning          |
  * | ------ | ---------------- |
  * | 400    | validation       |
@@ -22,11 +26,10 @@ export const errorHandlers = {
 			return msg.includes('429') || msg.includes('rate limit');
 		},
 		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			// Transport already retries idempotent 429s. Do not replay writes.
+			const retryAfterMs =
+				error instanceof ApiError ? error.retryAfter : undefined;
+			return { maxRetries: 0, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 
