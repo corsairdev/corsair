@@ -70,6 +70,10 @@ const { connectUrl } = await client.connect.createLink({
 window.location.href = connectUrl;
 ```
 
+<Note>
+`tenantId` is optional in single-tenant mode and defaults to `"default"`. Pass it only for [multi-tenant](/concepts/multi-tenancy) apps.
+</Note>
+
 Hub-specific optional overrides (ignored in manual mode):
 
 | Field | Purpose |
@@ -79,6 +83,31 @@ Hub-specific optional overrides (ignored in manual mode):
 | `providerName` | Optional — override provider display name in Hub UI |
 
 Hub delivers results to your handler. In development the SDK auto-detects the delivery URL; in production it uses the URL registered in the [Hub dashboard](/hub/dashboard). You do **not** call `resolve` or `oauthCallback`.
+
+### Managed vs bring-your-own (BYO)
+
+In `hub` mode, the OAuth app shown on the provider's page depends on the plugin's `authType`:
+
+| Plugin `authType` | OAuth app | What you provide |
+| ----------------- | --------- | ---------------- |
+| `'managed'` | Corsair hosts it | Nothing. Only works for [eligible](/hub/dashboard#corsair-managed-integrations) providers on your plan |
+| `'oauth_2'` | You host it (BYO) | Your OAuth app's `client_id` and `client_secret` |
+
+`oauthMode` overrides this per connect link (`'managed'` or `'byo'`); when omitted it is inferred from the plugin's `authType`. The `oauthMode` and `providerName` overrides apply only when `plugin` is set — when `plugin` is omitted the link covers all configured plugins and each uses its inferred mode.
+
+To switch a managed plugin to BYO:
+
+1. Register an OAuth app with the provider and set its redirect URL to your Hub OAuth callback URL — by default `https://auth.corsair.dev/oauth/callback`. If you set `hub.oauthCallbackUrl`, register that exact value (without a trailing slash). Otherwise, if you self-host the Hub API with `hub.apiUrl`, remove any trailing slash and register `${hub.apiUrl}/oauth/callback`: the SDK sends this normalized URL to the provider as `redirect_uri`.
+2. Set the plugin's `authType` to `'oauth_2'`.
+3. Store the credentials at the integration level:
+
+```bash
+pnpm corsair setup --plugin=github client_id=your-client-id client_secret=your-client-secret
+```
+
+<Warning>
+`corsair setup` reads credentials from the command line, so inline `field=value` secrets can leak through shell history, process listings, or CI logs. For production, store them from a secret manager or environment variables with [`setupCorsair`](/concepts/provisioning#credentials) (or `corsair.keys.<plugin>.set_client_id` / `set_client_secret`) instead.
+</Warning>
 
 ## Manual mode (self-hosted)
 
