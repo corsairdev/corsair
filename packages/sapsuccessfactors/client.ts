@@ -46,7 +46,7 @@ export async function makeSapsuccessfactorsRequest<T>(
 	} = options;
 
 	let base = (apiBaseUrl || SAP_SUCCESSFACTORS_DEFAULT_API_BASE)
-		.trim()
+		.replace(/\s+/g, '')
 		.replace(/\/+$/, '');
 	if (!base.startsWith('http://') && !base.startsWith('https://')) {
 		base = `https://${base}`;
