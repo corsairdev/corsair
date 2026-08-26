@@ -42,10 +42,15 @@ export function buildFrpcConfig(opts: {
 		lines.push(`metadatas.path = "${opts.deliveryPath}"`);
 	}
 	if (opts.caCertPath) {
+		// Windows paths carry backslashes, and `\U` in a TOML basic string is a
+		// unicode-escape prefix — frpc dies with "non-hex character" on
+		// C:\Users\... (found live on Windows; POSIX paths never hit it).
+		// Forward slashes are valid for Windows filesystem consumers.
+		const caFile = opts.caCertPath.replace(/\\/g, '/');
 		lines.push(
 			'transport.tls.enable = true',
 			`transport.tls.serverName = "${opts.serverName ?? opts.serverAddr}"`,
-			`transport.tls.trustedCaFile = "${opts.caCertPath}"`,
+			`transport.tls.trustedCaFile = "${caFile}"`,
 		);
 	}
 	lines.push(
