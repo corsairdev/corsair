@@ -285,7 +285,7 @@ Register the schedule once, ideally in a migration or a one-off setup script. A 
 import { ScheduleAlreadyRunning } from '@temporalio/client';
 
 try {
-    await client.schedule.create({ scheduleId: 'standup-digest', /* ... */ });
+    await client.schedule.create({ scheduleId: 'morning-standup-digest', /* ... */ });
 } catch (err) {
     if (!(err instanceof ScheduleAlreadyRunning)) throw err;
 }
