@@ -1,4 +1,4 @@
-# Corsair: The Unified Integration Layer for Agents
+# Corsair: Connect your users to their apps
 
 <div align="center">
 
