@@ -30,7 +30,8 @@ describe('SapSuccessfactors Plugin', () => {
 		key: 'test-api-token',
 		authType: 'api_key' as const,
 		options: { apiBaseUrl: 'https://api10.successfactors.com' },
-		db: {},
+		database: undefined,
+		$getAccountId: async () => 'acc_test_123',
 		log: jest.fn(),
 	} as any;
 

@@ -66,6 +66,7 @@ export type SapsuccessfactorsPluginOptions = {
 	/** Cloud-based human capital management software covering Employee Central, Recruiting, Performance & Goals, Learning, Compensation, and more. */
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	apiBaseUrl?: string;
 	webhookSecret?: string;
 	hooks?: InternalSapsuccessfactorsPlugin['hooks'];
 	webhookHooks?: InternalSapsuccessfactorsPlugin['webhookHooks'];
