@@ -46,7 +46,10 @@ export function buildFrpcConfig(opts: {
 		// unicode-escape prefix — frpc dies with "non-hex character" on
 		// C:\Users\... (found live on Windows; POSIX paths never hit it).
 		// Forward slashes are valid for Windows filesystem consumers.
-		const caFile = opts.caCertPath.replace(/\\/g, '/');
+		const isWindowsPath = /^[A-Za-z]:[\\/]|^\\\\/.test(opts.caCertPath);
+		const caFile = isWindowsPath
+			? opts.caCertPath.replace(/\\/g, '/')
+			: opts.caCertPath.replace(/\\/g, '\\\\');
 		lines.push(
 			'transport.tls.enable = true',
 			`transport.tls.serverName = "${opts.serverName ?? opts.serverAddr}"`,
