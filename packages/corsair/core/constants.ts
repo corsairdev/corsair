@@ -97,6 +97,7 @@ export const BaseProviders = [
 	'datadog',
 	'deepseek',
 	'devinmcp',
+	'dictionary',
 	'diffbot',
 	'digitalocean',
 	'discord',
@@ -292,6 +293,7 @@ export const ProviderDisplayNames = {
 	datadog: 'Datadog',
 	deepseek: 'DeepSeek',
 	devinmcp: 'Devin MCP',
+	dictionary: 'Dictionary',
 	diffbot: 'Diffbot',
 	digitalocean: 'DigitalOcean',
 	discord: 'Discord',
@@ -494,6 +496,7 @@ export type AllProviders =
 	| 'datadog'
 	| 'deepseek'
 	| 'devinmcp'
+	| 'dictionary'
 	| 'diffbot'
 	| 'digitalocean'
 	| 'discord'
