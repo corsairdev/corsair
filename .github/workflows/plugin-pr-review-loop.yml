@@ -29,6 +29,7 @@ jobs:
        github.event.comment.user.login == 'greptile-apps[bot]' &&
        github.event.issue.pull_request != null)
     runs-on: ubuntu-24.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
 
