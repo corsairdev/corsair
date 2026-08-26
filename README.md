@@ -2,7 +2,9 @@
 
 <div align="center">
 
-⭐ the repo · [Website](https://corsair.dev) · [Discord](https://discord.gg/uNgCP3mSzU) · [X](https://x.com/corsairdotdev) 
+[Website](https://corsair.dev) · [Discord](https://discord.gg/uNgCP3mSzU) · [X](https://x.com/corsairdotdev) 
+
+[![npm](https://img.shields.io/npm/dm/corsair?style=flat&colorA=000000&colorB=000000)](https://npm.chart.dev/corsair?primary=neutral&gray=neutral&theme=dark)
 
 <a href="https://trendshift.io/repositories/50327?utm_source=repository-badge&amp;utm_medium=badge&amp;utm_campaign=badge-repository-50327" target="_blank" rel="noopener noreferrer"><img src="https://trendshift.io/api/badge/repositories/50327" alt="corsairdev%2Fcorsair | Trendshift" width="250" height="55"/></a>
 
