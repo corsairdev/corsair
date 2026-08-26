@@ -12,9 +12,7 @@ export const FRPC_VERSION = '0.71.0';
 // CJS (jest runs without --experimental-vm-modules), where import.meta is a parse
 // error. esbuild shims __filename in the ESM build. nodeRequire, not require, so
 // the CJS output doesn't redeclare the module wrapper's own require.
-const nodeRequire = createRequire(
-	typeof __filename !== 'undefined' ? __filename : import.meta.url,
-);
+const nodeRequire = createRequire(__filename);
 
 /**
  * The frpc binary carried by this platform's optional-dependency package

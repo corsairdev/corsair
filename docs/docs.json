@@ -983,14 +983,6 @@
                 ]
               },
               {
-                "group": "Webvizio",
-                "pages": [
-                  "plugins/webvizio/overview",
-                  "plugins/webvizio/api",
-                  "plugins/webvizio/database"
-                ]
-              },
-              {
                 "group": "WhatsApp",
                 "pages": [
                   "plugins/whatsapp/overview",

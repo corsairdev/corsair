@@ -13,7 +13,6 @@ import { sharepoint } from '@corsair-dev/sharepoint';
 import { slack } from '@corsair-dev/slack';
 import { twilio } from '@corsair-dev/twilio';
 import { vapi } from '@corsair-dev/vapi';
-import { webvizio } from '@corsair-dev/webvizio';
 import { createCorsair } from 'corsair';
 
 import { sqlite } from '../db';
@@ -64,9 +63,6 @@ export const corsair = createCorsair({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
-webvizio({
-key: process.env.WEBVIZIO_API_KEY,
-}),
 		instagram(),
 	],
 });
