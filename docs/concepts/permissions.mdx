@@ -174,7 +174,7 @@ psql $env:DATABASE_URL -f permissions.sql
 | `plugin` | Plugin id, e.g. `github` |
 | `endpoint` | Dot-notation path, e.g. `repositories.delete` |
 | `args` | JSON-encoded arguments frozen at request time, replayed exactly on approval |
-| `tenant_id` | Tenant scope for multi-tenant instances. Defaults to `default` |
+| `tenant_id` | Tenant scope. The SDK writes the active `withTenant()` id, or `default` for single-tenant instances. The column is `NOT NULL` with no SQL default. |
 | `status` | Lifecycle state (see below) |
 | `expires_at` | ISO8601 timestamp for when the request becomes invalid |
 | `error` | Error message when status is `failed` |

@@ -21,7 +21,9 @@ github({
                 const pr = result.data.pull_request;
                 if (!pr.merged) return;
 
-                await corsair.slack.api.messages.post({
+                // ctx.tenantId is the tenant this webhook belongs to
+                const tenant = corsair.withTenant(ctx.tenantId);
+                await tenant.slack.api.messages.post({
                     channel: 'C_RELEASES',
                     text: `Merged: *${pr.title}*\n${pr.html_url}`,
                 });
@@ -38,12 +40,14 @@ after: async (ctx, result) => {
     const pr = result.data.pull_request;
     if (!pr.merged) return;
 
-    await corsair.slack.api.messages.post({
+    const tenant = corsair.withTenant(ctx.tenantId);
+
+    await tenant.slack.api.messages.post({
         channel: 'C_ENG',
         text: `Merged: *${pr.title}*`,
     });
 
-    await corsair.linear.api.issues.create({
+    await tenant.linear.api.issues.create({
         title: `Post-merge: ${pr.title}`,
         description: `Follow up after ${pr.html_url}`,
         teamId: process.env.LINEAR_TEAM_ID!,

@@ -61,14 +61,15 @@ export const notifyAssignee = inngest.createFunction(
     { id: 'notify-linear-assignee' },
     { event: 'linear/issue.created' },
     async ({ event }) => {
-        const { title, url, assigneeEmail, tenantId } = event.data;
+        const { title, url, assigneeId, tenantId } = event.data;
 
         // Use withTenant if you have multi-tenancy enabled
         const client = tenantId ? corsair.withTenant(tenantId) : corsair;
 
-        // Look up the Slack user by email
+        // assigneeId is a Linear user id; resolve their email for the Slack lookup
+        const assignee = await client.linear.api.users.get({ id: assigneeId });
         const user = await client.slack.api.users.lookupByEmail({
-            email: assigneeEmail,
+            email: assignee.data.email,
         });
 
         await client.slack.api.messages.post({

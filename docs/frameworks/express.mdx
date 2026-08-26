@@ -9,7 +9,7 @@ import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
 import Install from '/snippets/install-tabs.mdx';
 import CreateInstance from '/snippets/create-instance.mdx';
 
-Corsair is one `app.use` beside the routes you already have. It's middleware like any other, so it sits in the same file as your existing API and shares the same server. The adapter reads the raw request stream itself, so you don't need `express.json()` in front of it, and mounting one doesn't break it either.
+Corsair is one `app.use` beside the routes you already have. It's middleware like any other, so it sits in the same file as your existing API and shares the same server. With no body parser ahead of it, the adapter drains the raw request stream directly, which is what keeps Hub's signature check valid. Mount it before any global `express.json()`: a parser that runs first consumes the bytes, and re-serializing them changes the signed payload so deliveries fail verification.
 
 ## Install
 
@@ -43,6 +43,8 @@ app.listen(3000);
 `./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet.
 
 <Note>Keep `basePath` in sync with the mount path so Corsair's sub-routes (delivery, connect, tenants) resolve correctly.</Note>
+
+<Warning>If you run a global `app.use(express.json())`, register it *after* the Corsair route. A JSON parser in front of the handler consumes the raw bytes, and the re-serialized body no longer matches Hub's signature.</Warning>
 
 ## Resolve the tenant
 
