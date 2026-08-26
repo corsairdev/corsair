@@ -10,8 +10,10 @@ import type { GetBrandInfoInput, GetCdnLogoInput } from './types';
 import { BrandfetchEndpointOutputSchemas, identifierPath } from './types';
 
 export async function requireApiKey(ctx: BrandfetchContext): Promise<string> {
-	if (ctx.key?.trim()) return ctx.key;
+	const apiKey = ctx.key?.trim();
+	if (apiKey) return apiKey;
 	throw new AuthMissingError('brandfetch', 'api_key');
+}
 }
 
 export async function requireClientId(
