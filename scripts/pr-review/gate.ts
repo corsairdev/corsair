@@ -1,5 +1,15 @@
-const IGNORED_PACKAGES = ['corsair', 'cli', 'mcp', 'studio', 'ui', 'app'];
-const ALLOWED_EXTRA = ['packages/corsair/core/constants.ts', 'pnpm-lock.yaml'];
+export const IGNORED_PACKAGES = [
+	'corsair',
+	'cli',
+	'mcp',
+	'studio',
+	'ui',
+	'app',
+];
+export const ALLOWED_EXTRA = [
+	'packages/corsair/core/constants.ts',
+	'pnpm-lock.yaml',
+];
 export const ASSERTION_WARN_FLOOR = 5;
 
 export interface GateInput {
@@ -31,7 +41,7 @@ export interface GateResult {
 	failures: GateFailure[];
 }
 
-function pluginOf(file: string): string | null {
+export function pluginOf(file: string): string | null {
 	const name = file.match(/^packages\/([^/]+)\//)?.[1];
 	if (!name) return null;
 	// frpc-<platform>-<arch> are prebuilt binary shims for the dev tunnel,

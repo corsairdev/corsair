@@ -3,10 +3,12 @@ name: PR Checks
 on:
   pull_request:
     branches: [main]
+  push:
+    branches: [main]
 
 concurrency:
-  group: pr-${{ github.event.pull_request.number }}
-  cancel-in-progress: true
+  group: ${{ github.workflow }}-${{ github.event_name == 'pull_request' && github.event.pull_request.number || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -14,58 +16,11 @@ permissions:
   issues: write
 
 jobs:
-  ci:
-    name: CI Checks
-    runs-on: ubuntu-24.04
-    steps:
-      - uses: actions/checkout@v4
-
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10.20.0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24.x'
-          cache: 'pnpm'
-
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
-
-      - name: Turbo cache
-        uses: actions/cache@v4
-        with:
-          path: .turbo
-          key: turbo-${{ runner.os }}-${{ github.sha }}
-          restore-keys: turbo-${{ runner.os }}-
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Validate Plugins
-        run: pnpm run validate:plugins
-
-      - name: Validate Docs
-        run: pnpm run validate:docs
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Typecheck review scripts
-        run: pnpm exec tsc -p scripts/pr-review
-
-      - name: Build
-        run: pnpm build
-
-      - name: Run tests
-        run: npx turbo test -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts|integration\.test\.ts"
-        env:
-          CI: true
-          SKIP_PG_TESTS: 1
-
   plugin-gate:
     name: Plugin PR Gate
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
         with:
@@ -79,3 +34,90 @@ jobs:
         run: node --experimental-strip-types scripts/pr-review/gate-main.ts
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  ci:
+    name: CI Checks
+    needs: plugin-gate
+    if: always() && (github.event_name == 'push' || needs.plugin-gate.result == 'success')
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10.20.0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24.x'
+          cache: 'pnpm'
+
+      - name: Classify PR scope
+        id: scope
+        run: node --experimental-strip-types scripts/pr-review/pr-scope-main.ts
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install plugin dependencies
+        if: steps.scope.outputs.lane == 'plugin'
+        run: pnpm install --frozen-lockfile --filter . --filter corsair... --filter="${{ steps.scope.outputs.turbo_filter }}"
+
+      - name: Install package dependencies
+        if: steps.scope.outputs.lane == 'full'
+        run: pnpm install --frozen-lockfile --filter . --filter "./packages/**" ${{ steps.scope.outputs.www_install_filter }}
+
+      - name: Install www dependencies
+        if: steps.scope.outputs.lane == 'www'
+        run: pnpm install --frozen-lockfile --filter . --filter "@corsair/www..."
+
+      - name: Turbo cache for main
+        if: github.event_name == 'push' && steps.scope.outputs.skip_heavy != 'true'
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: turbo-${{ runner.os }}-
+
+      - name: Turbo cache for pull request
+        if: github.event_name == 'pull_request' && steps.scope.outputs.skip_heavy != 'true'
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: turbo-${{ runner.os }}-pr-${{ github.event.pull_request.number }}-${{ github.sha }}
+          restore-keys: turbo-${{ runner.os }}-
+
+      - name: Lint
+        if: steps.scope.outputs.skip_heavy != 'true'
+        run: pnpm lint
+
+      - name: Validate Plugins
+        if: steps.scope.outputs.skip_heavy != 'true'
+        run: pnpm run validate:plugins
+
+      - name: Validate Docs
+        if: steps.scope.outputs.skip_heavy != 'true'
+        run: pnpm run validate:docs
+
+      - name: Typecheck
+        if: steps.scope.outputs.skip_heavy != 'true'
+        run: pnpm typecheck
+
+      - name: Typecheck review scripts
+        if: steps.scope.outputs.skip_heavy != 'true'
+        run: pnpm exec tsc -p scripts/pr-review
+
+      - name: Build
+        if: steps.scope.outputs.skip_heavy != 'true' && steps.scope.outputs.lane != 'www'
+        run: pnpm exec turbo build --filter="${{ steps.scope.outputs.turbo_filter }}"
+
+      - name: Run tests
+        if: steps.scope.outputs.skip_heavy != 'true'
+        run: pnpm exec turbo test --filter="${{ steps.scope.outputs.turbo_filter }}" ${{ steps.scope.outputs.www_test_filter }} -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts$|(^|/)integration\.test\.ts$"
+        env:
+          CI: true
+          SKIP_PG_TESTS: 1
+
+      - name: Skip package checks
+        if: steps.scope.outputs.skip_heavy == 'true'
+        run: echo "Package checks skipped for documentation or explorer-only changes."
