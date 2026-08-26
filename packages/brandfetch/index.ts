@@ -217,7 +217,6 @@ export function brandfetch<const T extends BrandfetchPluginOptions>(
 		endpointMeta: brandfetchEndpointMeta,
 		endpointSchemas: brandfetchEndpointSchemas,
 		pluginWebhookMatcher: () => false,
-		pluginTenantWebhookMatcher: () => null,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,

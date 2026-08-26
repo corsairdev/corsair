@@ -24,6 +24,8 @@ export class BrandfetchAPIError extends Error {
 			this.statusText = options.cause.statusText;
 			this.body = options.cause.body;
 			this.retryAfter = options.cause.retryAfter;
+		} else if (typeof code === 'number') {
+			this.status = code;
 		}
 	}
 }
@@ -109,6 +111,12 @@ export async function makeBrandfetchRequest<T>(
 		mediaType: 'application/json; charset=utf-8',
 		query: compactQuery(query ?? {}),
 	};
+
+	// Paths are interpolated before this call. A raw `{` would hit
+	// corsair/http's `{(.*?)}` placeholder regex (CodeQL js/polynomial-redos).
+	if (endpoint.includes('{') || endpoint.includes('}')) {
+		throw new BrandfetchAPIError('Invalid request path');
+	}
 
 	try {
 		return await request<T>(config, requestOptions);

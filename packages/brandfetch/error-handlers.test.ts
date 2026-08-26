@@ -2,9 +2,7 @@ import { BrandfetchAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 function apiError(status: number, message: string): BrandfetchAPIError {
-	const error = new BrandfetchAPIError(message, status);
-	Object.assign(error, { status });
-	return error;
+	return new BrandfetchAPIError(message, status);
 }
 
 function matchedHandlerName(error: Error): string {
