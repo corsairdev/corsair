@@ -15,6 +15,7 @@ export type AllErrors =
 export const BaseProviders = [
 	'ably',
 	'abstract',
+	'abuseipdb',
 	'abyssale',
 	'accrediblecertificates',
 	'activecampaign',
@@ -43,6 +44,7 @@ export const BaseProviders = [
 	'amcards',
 	'amplitude',
 	'anchorbrowser',
+	'anonyflow',
 	'anthropicadministrator',
 	'apaleo',
 	'api2pdf',
@@ -57,7 +59,9 @@ export const BaseProviders = [
 	'asticaai',
 	'asyncinterview',
 	'attio',
+	'autom',
 	'ayrshare',
+	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
@@ -81,6 +85,7 @@ export const BaseProviders = [
 	'chatbotkit',
 	'circleci',
 	'clientary',
+	'clockify',
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
@@ -154,6 +159,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'pdfmonkey',
 	'perplexityai',
 	'posthog',
 	'razorpay',
@@ -185,6 +191,7 @@ export const BaseProviders = [
 	'twochat',
 	'typeform',
 	'unione',
+	'uniswapapi',
 	'vapi',
 	'vercel',
 	'webflow',
@@ -204,6 +211,7 @@ export const BaseProviders = [
 export const ProviderDisplayNames = {
 	ably: 'Ably',
 	abstract: 'Abstract',
+	abuseipdb: 'AbuseIPDB',
 	abyssale: 'Abyssale',
 	accrediblecertificates: 'Accredible Certificates',
 	activecampaign: 'ActiveCampaign',
@@ -232,6 +240,7 @@ export const ProviderDisplayNames = {
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	anchorbrowser: 'Anchor Browser',
+	anonyflow: 'Anonyflow',
 	anthropicadministrator: 'Anthropic Administrator',
 	apaleo: 'Apaleo',
 	api2pdf: 'API2PDF',
@@ -246,7 +255,9 @@ export const ProviderDisplayNames = {
 	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
 	attio: 'Attio',
+	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
@@ -270,6 +281,7 @@ export const ProviderDisplayNames = {
 	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
+	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
@@ -343,6 +355,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	pdfmonkey: 'PDFMonkey',
 	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
@@ -374,6 +387,7 @@ export const ProviderDisplayNames = {
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	unione: 'Unione',
+	uniswapapi: 'Uniswap',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	webflow: 'Webflow',
@@ -400,6 +414,7 @@ export function formatProviderDisplayName(plugin: string): string {
 export type AllProviders =
 	| 'ably'
 	| 'abstract'
+	| 'abuseipdb'
 	| 'abyssale'
 	| 'accrediblecertificates'
 	| 'activecampaign'
@@ -428,6 +443,7 @@ export type AllProviders =
 	| 'amcards'
 	| 'amplitude'
 	| 'anchorbrowser'
+	| 'anonyflow'
 	| 'anthropicadministrator'
 	| 'apaleo'
 	| 'api2pdf'
@@ -442,7 +458,9 @@ export type AllProviders =
 	| 'asticaai'
 	| 'asyncinterview'
 	| 'attio'
+	| 'autom'
 	| 'ayrshare'
+	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
@@ -466,6 +484,7 @@ export type AllProviders =
 	| 'chatbotkit'
 	| 'circleci'
 	| 'clientary'
+	| 'clockify'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
@@ -539,6 +558,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'pdfmonkey'
 	| 'perplexityai'
 	| 'posthog'
 	| 'razorpay'
@@ -570,6 +590,7 @@ export type AllProviders =
 	| 'twochat'
 	| 'typeform'
 	| 'unione'
+	| 'uniswapapi'
 	| 'vapi'
 	| 'vercel'
 	| 'webflow'
