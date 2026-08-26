@@ -58,7 +58,7 @@ export function toSvelteKitHandler(
 // ── Remix / React Router ──────────────────────────────────────────────────────
 // export const { loader, action } = toRemixHandler(corsair, { basePath });
 //
-// ⚠️ Resource routes expose only loader/action, so the OPTIONS CORS preflight
+// Resource routes expose only loader/action, so the OPTIONS CORS preflight
 // has no routable slot here — Remix answers it with 405. Browser-delivery
 // mounts that need preflight should use Next/Hono/SvelteKit instead; plain
 // server-to-server deliveries are unaffected.
@@ -88,8 +88,11 @@ export function toAstroHandler(
 }
 
 // ── TanStack Start ────────────────────────────────────────────────────────────
-// createServerFileRoute().methods(toTanStackHandler(corsair, { basePath }))
-// TanStack server routes call { request } => Response, one fn per method.
+// Mount as a Server Route (the API since v1.132; the old createServerFileRoute
+// name is gone): the method record plugs straight into server.handlers —
+//   export const Route = createFileRoute('/api/corsair')({
+//     server: { handlers: toTanStackHandler(corsair, { basePath }) },
+//   })
 
 export function toTanStackHandler(
 	corsair: unknown,
@@ -108,7 +111,7 @@ export function toTanStackHandler(
 // h3 hands the handler an H3Event; its Node request/response live under
 // event.node, so we bridge through the shared node adapter to keep the body raw.
 //
-// ⚠️ Mount corsair EARLY. If earlier middleware consumed the body via h3's
+//  Mount corsair EARLY. If earlier middleware consumed the body via h3's
 // readBody(event)/readRawBody(event), the underlying stream is already drained
 // — this adapter recovers the cached bytes from the event automatically, but a
 // mount placed after exotic custom parsers has nothing left to read.
