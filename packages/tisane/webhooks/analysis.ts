@@ -20,7 +20,12 @@ export const analysisCompleted: TisaneWebhooks['analysisCompleted'] = {
 			return { success: true, data: undefined };
 		}
 
-		await logEventFromContext(ctx, 'tisane.webhook.analysis_completed', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'tisane.webhook.analysis_completed',
+			{ ...event },
+			'completed',
+		);
 
 		return { success: true, data: event };
 	},

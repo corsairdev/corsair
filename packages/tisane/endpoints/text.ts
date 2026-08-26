@@ -1,7 +1,12 @@
 import { logEventFromContext } from 'corsair/core';
 import type { TisaneEndpoints } from '..';
-import type { TextExtractEntitiesResponse, TextModerateResponse, TextParseResponse, TextSentimentResponse } from './types';
 import { makeTisaneRequest } from '../client';
+import type {
+	TextExtractEntitiesResponse,
+	TextModerateResponse,
+	TextParseResponse,
+	TextSentimentResponse,
+} from './types';
 
 export const parse: TisaneEndpoints['textParse'] = async (ctx, input) => {
 	const response = await makeTisaneRequest<TextParseResponse>(
@@ -17,11 +22,19 @@ export const parse: TisaneEndpoints['textParse'] = async (ctx, input) => {
 		},
 	);
 
-	await logEventFromContext(ctx, 'tisane.text.parse', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'tisane.text.parse',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const sentiment: TisaneEndpoints['textSentiment'] = async (ctx, input) => {
+export const sentiment: TisaneEndpoints['textSentiment'] = async (
+	ctx,
+	input,
+) => {
 	const rawResponse = await makeTisaneRequest<TextParseResponse>(
 		'parse',
 		ctx.key,
@@ -40,7 +53,12 @@ export const sentiment: TisaneEndpoints['textSentiment'] = async (ctx, input) =>
 		text: rawResponse.text || input.content,
 	};
 
-	await logEventFromContext(ctx, 'tisane.text.sentiment', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'tisane.text.sentiment',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
@@ -64,11 +82,19 @@ export const moderate: TisaneEndpoints['textModerate'] = async (ctx, input) => {
 		flagged: abuseList.length > 0,
 	};
 
-	await logEventFromContext(ctx, 'tisane.text.moderate', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'tisane.text.moderate',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
-export const extractEntities: TisaneEndpoints['textExtractEntities'] = async (ctx, input) => {
+export const extractEntities: TisaneEndpoints['textExtractEntities'] = async (
+	ctx,
+	input,
+) => {
 	const rawResponse = await makeTisaneRequest<TextParseResponse>(
 		'parse',
 		ctx.key,
@@ -87,6 +113,11 @@ export const extractEntities: TisaneEndpoints['textExtractEntities'] = async (ct
 		topics: rawResponse.topics || [],
 	};
 
-	await logEventFromContext(ctx, 'tisane.text.extract_entities', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'tisane.text.extract_entities',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };

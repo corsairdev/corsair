@@ -1,21 +1,32 @@
 import { z } from 'zod';
-import { TisaneAbuseDetection, TisaneEntity, TisaneParseResult, TisaneSentimentAspect, TisaneTopic } from '../schema/database';
+import {
+	TisaneAbuseDetection,
+	TisaneEntity,
+	TisaneParseResult,
+	TisaneSentimentAspect,
+	TisaneTopic,
+} from '../schema/database';
 
-export const TisaneSettingsSchema = z.object({
-	snippet: z.boolean().optional(),
-	fetch_sentiment: z.boolean().optional(),
-	fetch_topics: z.boolean().optional(),
-	fetch_entities: z.boolean().optional(),
-	fetch_abuse: z.boolean().optional(),
-	format: z.string().optional(),
-}).passthrough();
+export const TisaneSettingsSchema = z
+	.object({
+		snippet: z.boolean().optional(),
+		fetch_sentiment: z.boolean().optional(),
+		fetch_topics: z.boolean().optional(),
+		fetch_entities: z.boolean().optional(),
+		fetch_abuse: z.boolean().optional(),
+		format: z.string().optional(),
+	})
+	.passthrough();
 
 export type TisaneSettings = z.infer<typeof TisaneSettingsSchema>;
 
 // 1. Parse
 export const TextParseInputSchema = z.object({
 	content: z.string().describe('The text content to analyze'),
-	language: z.string().optional().describe('Language code (e.g. "en", "es", "fr")'),
+	language: z
+		.string()
+		.optional()
+		.describe('Language code (e.g. "en", "es", "fr")'),
 	settings: TisaneSettingsSchema.optional(),
 });
 export type TextParseInput = z.infer<typeof TextParseInputSchema>;
@@ -38,7 +49,9 @@ export type TextSentimentResponse = z.infer<typeof TextSentimentResponseSchema>;
 
 // 3. Moderate / Abuse
 export const TextModerateInputSchema = z.object({
-	content: z.string().describe('Text to check for abusive language, hate speech, or harassment'),
+	content: z
+		.string()
+		.describe('Text to check for abusive language, hate speech, or harassment'),
 	language: z.string().optional(),
 });
 export type TextModerateInput = z.infer<typeof TextModerateInputSchema>;
@@ -51,16 +64,22 @@ export type TextModerateResponse = z.infer<typeof TextModerateResponseSchema>;
 
 // 4. Extract Entities & Topics
 export const TextExtractEntitiesInputSchema = z.object({
-	content: z.string().describe('Text to extract named entities and topics from'),
+	content: z
+		.string()
+		.describe('Text to extract named entities and topics from'),
 	language: z.string().optional(),
 });
-export type TextExtractEntitiesInput = z.infer<typeof TextExtractEntitiesInputSchema>;
+export type TextExtractEntitiesInput = z.infer<
+	typeof TextExtractEntitiesInputSchema
+>;
 
 export const TextExtractEntitiesResponseSchema = z.object({
 	entities: z.array(TisaneEntity),
 	topics: z.array(TisaneTopic),
 });
-export type TextExtractEntitiesResponse = z.infer<typeof TextExtractEntitiesResponseSchema>;
+export type TextExtractEntitiesResponse = z.infer<
+	typeof TextExtractEntitiesResponseSchema
+>;
 
 export type TisaneEndpointInputs = {
 	textParse: TextParseInput;

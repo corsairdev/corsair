@@ -1,4 +1,10 @@
-import { TisaneParseResult, TisaneSentimentAspect, TisaneAbuseDetection, TisaneEntity, TisaneTopic } from './database';
+import {
+	TisaneAbuseDetection,
+	TisaneEntity,
+	TisaneParseResult,
+	TisaneSentimentAspect,
+	TisaneTopic,
+} from './database';
 
 export const TisaneSchema = {
 	version: '1.0.0',

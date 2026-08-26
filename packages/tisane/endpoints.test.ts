@@ -1,5 +1,5 @@
-import { tisane } from './index';
 import * as clientModule from './client';
+import { tisane } from './index';
 
 jest.mock('./client', () => {
 	const actual = jest.requireActual('./client');
@@ -10,9 +10,10 @@ jest.mock('./client', () => {
 });
 
 describe('Tisane Plugin Endpoints', () => {
-	const mockMakeTisaneRequest = clientModule.makeTisaneRequest as jest.MockedFunction<
-		typeof clientModule.makeTisaneRequest
-	>;
+	const mockMakeTisaneRequest =
+		clientModule.makeTisaneRequest as jest.MockedFunction<
+			typeof clientModule.makeTisaneRequest
+		>;
 	const plugin = tisane({ key: 'test-api-key' });
 	const endpoints = plugin.endpoints!;
 
@@ -32,7 +33,9 @@ describe('Tisane Plugin Endpoints', () => {
 		const mockResponse = {
 			text: 'I love this product',
 			language: 'en',
-			sentiment: [{ aspect: 'product', polarity: 'positive' as const, score: 0.95 }],
+			sentiment: [
+				{ aspect: 'product', polarity: 'positive' as const, score: 0.95 },
+			],
 		};
 		mockMakeTisaneRequest.mockResolvedValueOnce(mockResponse);
 

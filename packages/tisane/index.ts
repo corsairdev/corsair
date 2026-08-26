@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -14,18 +15,23 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { TisaneEndpointInputs, TisaneEndpointOutputs } from './endpoints/types';
-import { TisaneEndpointInputSchemas, TisaneEndpointOutputSchemas } from './endpoints/types';
+import { Text } from './endpoints';
+import type {
+	TisaneEndpointInputs,
+	TisaneEndpointOutputs,
+} from './endpoints/types';
+import {
+	TisaneEndpointInputSchemas,
+	TisaneEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { TisaneSchema } from './schema';
+import { TisaneWebhooks } from './webhooks';
 import type {
 	AnalysisCompletedEvent,
 	TisaneWebhookOutputs,
 } from './webhooks/types';
 import { AnalysisCompletedEventSchema } from './webhooks/types';
-import { Text } from './endpoints';
-import { TisaneSchema } from './schema';
-import { TisaneWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
 
 export type TisanePluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -46,9 +52,7 @@ export type TisaneKeyBuilderContext = KeyBuilderContext<TisanePluginOptions>;
 
 export type TisaneBoundEndpoints = BindEndpoints<typeof tisaneEndpointsNested>;
 
-type TisaneEndpoint<
-	K extends keyof TisaneEndpointOutputs,
-> = CorsairEndpoint<
+type TisaneEndpoint<K extends keyof TisaneEndpointOutputs> = CorsairEndpoint<
 	TisaneContext,
 	TisaneEndpointInputs[K],
 	TisaneEndpointOutputs[K]
@@ -104,7 +108,9 @@ export const tisaneEndpointSchemas = {
 		input: TisaneEndpointInputSchemas.textExtractEntities,
 		output: TisaneEndpointOutputSchemas.textExtractEntities,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof tisaneEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof tisaneEndpointsNested
+>;
 
 const tisaneWebhookSchemas = {
 	'analysis.analysisCompleted': {
@@ -206,13 +212,6 @@ export function tisane<const T extends TisanePluginOptions>(
 }
 
 export type {
-	AnalysisCompletedEvent,
-	TisaneWebhookOutputs,
-} from './webhooks/types';
-
-export type {
-	TisaneEndpointInputs,
-	TisaneEndpointOutputs,
 	TextExtractEntitiesInput,
 	TextExtractEntitiesResponse,
 	TextModerateInput,
@@ -221,4 +220,10 @@ export type {
 	TextParseResponse,
 	TextSentimentInput,
 	TextSentimentResponse,
+	TisaneEndpointInputs,
+	TisaneEndpointOutputs,
 } from './endpoints/types';
+export type {
+	AnalysisCompletedEvent,
+	TisaneWebhookOutputs,
+} from './webhooks/types';

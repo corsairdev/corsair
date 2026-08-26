@@ -1,5 +1,5 @@
-import { makeTisaneRequest, TisaneAPIError, TISANE_API_BASE } from './client';
 import * as httpModule from 'corsair/http';
+import { makeTisaneRequest, TISANE_API_BASE, TisaneAPIError } from './client';
 
 jest.mock('corsair/http', () => {
 	const actual = jest.requireActual('corsair/http');
@@ -10,7 +10,9 @@ jest.mock('corsair/http', () => {
 });
 
 describe('makeTisaneRequest', () => {
-	const mockRequest = httpModule.request as jest.MockedFunction<typeof httpModule.request>;
+	const mockRequest = httpModule.request as jest.MockedFunction<
+		typeof httpModule.request
+	>;
 
 	beforeEach(() => {
 		jest.clearAllMocks();
@@ -19,10 +21,14 @@ describe('makeTisaneRequest', () => {
 	it('sends POST request to Tisane API with Ocp-Apim-Subscription-Key header', async () => {
 		mockRequest.mockResolvedValueOnce({ text: 'parsed result' });
 
-		const result = await makeTisaneRequest<{ text: string }>('parse', 'test-key-123', {
-			method: 'POST',
-			body: { content: 'hello world', language: 'en' },
-		});
+		const result = await makeTisaneRequest<{ text: string }>(
+			'parse',
+			'test-key-123',
+			{
+				method: 'POST',
+				body: { content: 'hello world', language: 'en' },
+			},
+		);
 
 		expect(result).toEqual({ text: 'parsed result' });
 		expect(mockRequest).toHaveBeenCalledTimes(1);
@@ -35,7 +41,10 @@ describe('makeTisaneRequest', () => {
 		expect(headers?.['Ocp-Apim-Subscription-Key']).toBe('test-key-123');
 		expect(requestOptions.url).toBe('parse');
 		expect(requestOptions.method).toBe('POST');
-		expect(requestOptions.body).toEqual({ content: 'hello world', language: 'en' });
+		expect(requestOptions.body).toEqual({
+			content: 'hello world',
+			language: 'en',
+		});
 	});
 
 	it('wraps errors in TisaneAPIError', async () => {

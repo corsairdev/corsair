@@ -1,5 +1,5 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { ApiError } from 'corsair/http';
 import { TisaneAPIError } from './client';
 
 export const errorHandlers = {
@@ -8,13 +8,20 @@ export const errorHandlers = {
 			if (error instanceof ApiError && error.status === 429) return true;
 			if (error instanceof TisaneAPIError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429') || msg.includes('quota exceeded');
+			return (
+				msg.includes('rate_limited') ||
+				msg.includes('429') ||
+				msg.includes('quota exceeded')
+			);
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
-			} else if (error instanceof TisaneAPIError && error.retryAfter !== undefined) {
+			} else if (
+				error instanceof TisaneAPIError &&
+				error.retryAfter !== undefined
+			) {
 				retryAfterMs = error.retryAfter;
 			}
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
@@ -22,10 +29,23 @@ export const errorHandlers = {
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && (error.status === 401 || error.status === 403)) return true;
-			if (error instanceof TisaneAPIError && (error.status === 401 || error.status === 403)) return true;
+			if (
+				error instanceof ApiError &&
+				(error.status === 401 || error.status === 403)
+			)
+				return true;
+			if (
+				error instanceof TisaneAPIError &&
+				(error.status === 401 || error.status === 403)
+			)
+				return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth') || msg.includes('access denied') || msg.includes('ocp-apim-subscription-key');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid_auth') ||
+				msg.includes('access denied') ||
+				msg.includes('ocp-apim-subscription-key')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

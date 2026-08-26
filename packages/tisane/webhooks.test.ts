@@ -26,7 +26,9 @@ describe('Tisane Webhook Handler & Verifier', () => {
 	it('verifies valid HMAC SHA256 signature', () => {
 		const payload = { event: 'analysis.completed', analysis_id: '123' };
 		const bodyString = JSON.stringify(payload);
-		const signature = createHmac('sha256', secret).update(bodyString).digest('hex');
+		const signature = createHmac('sha256', secret)
+			.update(bodyString)
+			.digest('hex');
 
 		const result = verifyTisaneWebhookSignature(
 			{
@@ -40,9 +42,15 @@ describe('Tisane Webhook Handler & Verifier', () => {
 	});
 
 	it('matches analysis.completed event and invokes handler', async () => {
-		const payload = { event: 'analysis.completed', analysis_id: '456', data: {} };
+		const payload = {
+			event: 'analysis.completed',
+			analysis_id: '456',
+			data: {},
+		};
 		const bodyString = JSON.stringify(payload);
-		const signature = createHmac('sha256', secret).update(bodyString).digest('hex');
+		const signature = createHmac('sha256', secret)
+			.update(bodyString)
+			.digest('hex');
 
 		const mockCtx = {
 			key: secret,

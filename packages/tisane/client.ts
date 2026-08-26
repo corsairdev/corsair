@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class TisaneAPIError extends Error {
@@ -54,11 +53,20 @@ export async function makeTisaneRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error: unknown) {
 		if (error instanceof ApiError) {
-			throw new TisaneAPIError(error.message, undefined, error.status, error.retryAfter);
+			throw new TisaneAPIError(
+				error.message,
+				undefined,
+				error.status,
+				error.retryAfter,
+			);
 		}
 		if (error instanceof Error) {
-			const status = 'status' in error ? (error as { status?: number }).status : undefined;
-			const retryAfter = 'retryAfter' in error ? (error as { retryAfter?: number }).retryAfter : undefined;
+			const status =
+				'status' in error ? (error as { status?: number }).status : undefined;
+			const retryAfter =
+				'retryAfter' in error
+					? (error as { retryAfter?: number }).retryAfter
+					: undefined;
 			throw new TisaneAPIError(error.message, undefined, status, retryAfter);
 		}
 		throw new TisaneAPIError('Unknown Tisane API error');

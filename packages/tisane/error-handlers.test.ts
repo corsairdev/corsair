@@ -22,7 +22,11 @@ describe('Tisane error handlers', () => {
 	});
 
 	it('matches and handles auth errors (401/403)', async () => {
-		const authErr = new TisaneAPIError('Unauthorized access key', undefined, 401);
+		const authErr = new TisaneAPIError(
+			'Unauthorized access key',
+			undefined,
+			401,
+		);
 		expect(errorHandlers.AUTH_ERROR.match(authErr)).toBe(true);
 		const result = await errorHandlers.AUTH_ERROR.handler();
 		expect(result.maxRetries).toBe(0);
