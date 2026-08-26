@@ -193,6 +193,7 @@ export const BaseProviders = [
 	'uniswapapi',
 	'vapi',
 	'vercel',
+	'vo',
 	'webflow',
 	'whatsapp',
 	'witai',
@@ -388,6 +389,7 @@ export const ProviderDisplayNames = {
 	uniswapapi: 'Uniswap',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
+	vo: 'Vo',
 	webflow: 'Webflow',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
@@ -590,6 +592,7 @@ export type AllProviders =
 	| 'uniswapapi'
 	| 'vapi'
 	| 'vercel'
+	| 'vo'
 	| 'webflow'
 	| 'whatsapp'
 	| 'witai'
