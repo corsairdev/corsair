@@ -1040,7 +1040,7 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/anonyflow:
+  packages/anchorbrowser:
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -1064,7 +1064,7 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-  packages/anchorbrowser:
+  packages/anonyflow:
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -3917,8 +3917,9 @@ importers:
         specifier: 'catalog:'
         version: 5.9.3
       zod:
-        specifier: ^4.1.13
+        specifier: 4.4.3
         version: 4.4.3
+
   packages/ollama:
     devDependencies:
       '@types/jest':
