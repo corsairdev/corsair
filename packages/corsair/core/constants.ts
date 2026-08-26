@@ -161,6 +161,7 @@ export const BaseProviders = [
 	'pdfmonkey',
 	'perplexityai',
 	'posthog',
+	'pushbullet',
 	'razorpay',
 	'reddit',
 	'resend',
@@ -356,6 +357,7 @@ export const ProviderDisplayNames = {
 	pdfmonkey: 'PDFMonkey',
 	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
+	pushbullet: 'Pushbullet',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
 	resend: 'Resend',
@@ -558,6 +560,7 @@ export type AllProviders =
 	| 'pdfmonkey'
 	| 'perplexityai'
 	| 'posthog'
+	| 'pushbullet'
 	| 'razorpay'
 	| 'reddit'
 	| 'resend'
