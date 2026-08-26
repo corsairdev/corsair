@@ -209,6 +209,32 @@ describe('toExpressHandler', () => {
 		expect(JSON.parse(out.body!).id).toBe('team-b');
 	});
 
+	it('drains the raw request stream when no body parser is mounted', async () => {
+		env = createTestDatabase();
+		const corsair = makeCorsair(env);
+		const handler = toExpressHandler(corsair);
+
+		// No `body` field — Express with no parser. The stream is the only source.
+		const req: any = {
+			method: 'POST',
+			originalUrl: '/api/corsair/tenants',
+			url: '/api/corsair/tenants',
+			headers: { host: 'example.com', 'content-type': 'application/json' },
+			protocol: 'http',
+			get: (name: string) =>
+				name.toLowerCase() === 'host' ? 'example.com' : undefined,
+			[Symbol.asyncIterator]: async function* () {
+				yield Buffer.from('{"id":"team-stream"}');
+			},
+		};
+		const { res, read } = makeRes();
+		await handler(req, res, jest.fn());
+
+		const out = read();
+		expect(out.status).toBe(201);
+		expect(JSON.parse(out.body!).id).toBe('team-stream');
+	});
+
 	it('forwards adapter-level errors to next()', async () => {
 		env = createTestDatabase();
 		const corsair = makeCorsair(env);

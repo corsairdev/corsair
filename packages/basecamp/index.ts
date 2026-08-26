@@ -10,8 +10,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidBasecampAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { BasecampEndpoints } from './endpoints';
 import {
 	BasecampEndpointInputSchemas,
@@ -1565,57 +1564,10 @@ export function basecamp<const T extends BasecampPluginOptions>(
 			if (source !== 'endpoint' || ctx.authType !== 'oauth_2') {
 				throw new AuthMissingError('basecamp', 'oauth_2');
 			}
-			const [accessToken, expiresAt, refreshToken, credentials] =
-				await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-					ctx.keys.get_integration_credentials(),
-				]);
-			const result = await getValidBasecampAccessToken({
-				accessToken,
-				expiresAt,
-				refreshToken,
-				clientId: credentials.client_id,
-				clientSecret: credentials.client_secret,
+			return getOAuthAccessToken(ctx, {
+				plugin: 'basecamp',
+				tokenUrl: 'https://launchpad.37signals.com/authorization/token',
 			});
-			// Mutable so repeated _refreshAuth calls use the latest token: Launchpad
-			// may rotate refresh_token, and the stale one is rejected once it does.
-			let currentRefreshToken = result.refreshToken ?? refreshToken;
-			if (result.refreshed) {
-				await Promise.all([
-					ctx.keys.set_access_token(result.accessToken),
-					ctx.keys.set_expires_at(String(result.expiresAt)),
-					result.refreshToken
-						? ctx.keys.set_refresh_token(result.refreshToken)
-						: Promise.resolve(),
-				]);
-			}
-			(
-				ctx as unknown as { _refreshAuth?: () => Promise<string> }
-			)._refreshAuth = async () => {
-				// A call that finished after this closure was built may have already
-				// rotated the token, leaving currentRefreshToken spent. The store holds
-				// what that call persisted, so prefer it and keep the captured value
-				// only as the fallback for when the store cannot be read.
-				const stored = await ctx.keys.get_refresh_token().catch(() => null);
-				const fresh = await getValidBasecampAccessToken({
-					refreshToken: stored ?? currentRefreshToken,
-					clientId: credentials.client_id,
-					clientSecret: credentials.client_secret,
-					forceRefresh: true,
-				});
-				if (fresh.refreshToken) currentRefreshToken = fresh.refreshToken;
-				await Promise.all([
-					ctx.keys.set_access_token(fresh.accessToken),
-					ctx.keys.set_expires_at(String(fresh.expiresAt)),
-					fresh.refreshToken
-						? ctx.keys.set_refresh_token(fresh.refreshToken)
-						: Promise.resolve(),
-				]);
-				return fresh.accessToken;
-			};
-			return result.accessToken;
 		},
 	} satisfies InternalBasecampPlugin;
 }

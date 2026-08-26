@@ -10,12 +10,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 
-import {
-	attachLinkedInRefreshAuth,
-	getValidLinkedInAccessToken,
-} from './client';
 import {
 	AdsEndpoints,
 	CommentsEndpoints,
@@ -407,80 +403,11 @@ export function linkedin<const T extends LinkedInPluginOptions>(
 				throw new AuthMissingError('linkedin', 'oauth_2');
 			}
 
-			const [
-				storedAccessToken,
-				expiresAt,
-				refreshToken,
-				integrationCredentials,
-			] = await Promise.all([
-				ctx.keys.get_access_token(),
-				ctx.keys.get_expires_at(),
-				ctx.keys.get_refresh_token(),
-				ctx.keys.get_integration_credentials(),
-			]);
-
-			const clientId = integrationCredentials.client_id;
-			const clientSecret = integrationCredentials.client_secret;
-
-			if (!clientId || !clientSecret) {
-				throw new Error('[corsair:linkedin] No client id or client secret');
-			}
-
-			if (!refreshToken) {
-				throw new AuthMissingError('linkedin', 'oauth_2');
-			}
-
-			let result: Awaited<ReturnType<typeof getValidLinkedInAccessToken>>;
-			try {
-				result = await getValidLinkedInAccessToken({
-					accessToken: storedAccessToken ?? null,
-					refreshToken,
-					expiresAt: expiresAt ? Number(expiresAt) : null,
-					clientId,
-					clientSecret,
-				});
-			} catch (error) {
-				throw new Error(
-					`[corsair:linkedin] Failed to obtain access token: ${error instanceof Error ? error.message : String(error)}`,
-				);
-			}
-
-			if (result.refreshed) {
-				try {
-					await ctx.keys.set_access_token(result.accessToken);
-					await ctx.keys.set_expires_at(String(result.expiresAt));
-					// LinkedIn may rotate the refresh token; persist the latest one.
-					await ctx.keys.set_refresh_token(result.refreshToken);
-				} catch (error) {
-					throw new Error(
-						`[corsair:linkedin] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-			}
-
-			attachLinkedInRefreshAuth(ctx, async () => {
-				const currentRefreshToken =
-					(await ctx.keys.get_refresh_token()) ?? refreshToken;
-
-				const fresh = await getValidLinkedInAccessToken({
-					accessToken: null,
-					refreshToken: currentRefreshToken,
-					expiresAt: null,
-					clientId,
-					clientSecret,
-					forceRefresh: true,
-				});
-
-				await ctx.keys.set_access_token(fresh.accessToken);
-				await ctx.keys.set_expires_at(String(fresh.expiresAt));
-				if (fresh.refreshToken !== currentRefreshToken) {
-					await ctx.keys.set_refresh_token(fresh.refreshToken);
-				}
-
-				return fresh.accessToken;
+			return getOAuthAccessToken(ctx, {
+				plugin: 'linkedin',
+				tokenUrl: 'https://www.linkedin.com/oauth/v2/accessToken',
+				tokenAuthMethod: 'body',
 			});
-
-			return result.accessToken;
 		},
 	} satisfies InternalLinkedInPlugin;
 }

@@ -11,8 +11,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import {
 	ConferenceRecordsEndpoints,
 	ParticipantSessionsEndpoints,
@@ -312,66 +311,10 @@ export function googlemeet<const T extends GoogleMeetPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('googlemeet', 'oauth_2');
-				}
-
-				const res = await ctx.keys.get_integration_credentials();
-
-				if (!res.client_id || !res.client_secret) {
-					throw new Error('[corsair:googlemeet] No client id or client secret');
-				}
-
-				let currentRefreshToken = refreshToken;
-
-				try {
-					const result = await getValidAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken: currentRefreshToken,
-						clientId: res.client_id,
-						clientSecret: res.client_secret,
-					});
-
-					if (result.refreshed) {
-						await ctx.keys.set_access_token(result.accessToken);
-						await ctx.keys.set_expires_at(String(result.expiresAt));
-						if (result.newRefreshToken) {
-							currentRefreshToken = result.newRefreshToken;
-							await ctx.keys.set_refresh_token(currentRefreshToken);
-						}
-					}
-
-					(ctx as Record<string, unknown>)._refreshAuth = async () => {
-						const freshResult = await getValidAccessToken({
-							accessToken: null,
-							expiresAt: null,
-							refreshToken: currentRefreshToken,
-							clientId: res.client_id!,
-							clientSecret: res.client_secret!,
-							forceRefresh: true,
-						});
-						await ctx.keys.set_access_token(freshResult.accessToken);
-						await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-						if (freshResult.newRefreshToken) {
-							currentRefreshToken = freshResult.newRefreshToken;
-							await ctx.keys.set_refresh_token(currentRefreshToken);
-						}
-						return freshResult.accessToken;
-					};
-
-					return result.accessToken;
-				} catch (error) {
-					throw new Error(
-						`[corsair:googlemeet] Failed to get valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
+				return getOAuthAccessToken(ctx, {
+					plugin: 'googlemeet',
+					tokenUrl: 'https://oauth2.googleapis.com/token',
+				});
 			}
 
 			throw new AuthMissingError('googlemeet', 'oauth_2');

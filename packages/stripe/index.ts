@@ -13,8 +13,7 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
-import { getValidStripeAccessToken } from './client';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import {
 	Balance,
 	Charges,
@@ -517,68 +516,13 @@ export function stripe<const T extends StripePluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('stripe', 'oauth_2');
-				}
-
-				const creds = await ctx.keys.get_integration_credentials();
-
-				if (!creds.client_secret) {
-					throw new Error(
-						'[auth-missing:stripe:client_secret]: Stripe client secret is missing',
-					);
-				}
-
-				let result: Awaited<ReturnType<typeof getValidStripeAccessToken>>;
-				try {
-					result = await getValidStripeAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientSecret: creds.client_secret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:stripe] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						// Stripe reissues the refresh token on every exchange — persist both
-						await ctx.keys.set_access_token(result.accessToken);
-						await ctx.keys.set_refresh_token(result.refreshToken);
-						await ctx.keys.set_expires_at(String(result.expiresAt));
-					} catch (error) {
-						throw new Error(
-							`[corsair:stripe] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				// Expose force-refresh so endpoints can retry on 401 (e.g. revoked token)
-				// without waiting for the 1-hour expiry window to lapse.
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidStripeAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientSecret: creds.client_secret!,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_refresh_token(freshResult.refreshToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
+				// Stripe sends the secret key as HTTP Basic username with an empty
+				// password (no client_id in the exchange).
+				return getOAuthAccessToken(ctx, {
+					plugin: 'stripe',
+					tokenUrl: 'https://api.stripe.com/v1/oauth/token',
+					tokenAuthMethod: 'basic_secret_only',
+				});
 			}
 
 			throw new AuthMissingError('stripe', 'oauth_2');

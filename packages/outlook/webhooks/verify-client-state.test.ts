@@ -64,6 +64,17 @@ describe('verifyOutlookWebhookSignature', () => {
 		expect(result).toEqual({ valid: false, error: 'Client state mismatch' });
 	});
 
+	it('rejects an empty value array', () => {
+		const result = verifyOutlookWebhookSignature(
+			{ payload: { value: [] }, headers: {} },
+			'secret-state',
+		);
+		expect(result).toEqual({
+			valid: false,
+			error: 'Invalid payload: missing value array',
+		});
+	});
+
 	it('errors when the expected clientState is empty', () => {
 		const result = verifyOutlookWebhookSignature(requestWith('anything'), '');
 		expect(result).toEqual({ valid: false, error: 'Missing client state' });

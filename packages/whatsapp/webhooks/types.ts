@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'node:crypto';
 import type {
 	CorsairWebhookMatcher,
 	RawWebhookRequest,
@@ -229,10 +230,17 @@ export function verifyWhatsappWebhookChallenge(
 	const challenge = value('hub.challenge');
 	if (
 		mode !== 'subscribe' ||
-		!verifyToken ||
-		token !== verifyToken ||
+		!verifyToken.trim() ||
+		!token?.trim() ||
 		!challenge
 	) {
+		return { valid: false, statusCode: 403 };
+	}
+	// Constant-time compare so a mismatch can't be narrowed byte-by-byte from
+	// response timing. timingSafeEqual throws on unequal lengths, so check first.
+	const a = Buffer.from(token);
+	const b = Buffer.from(verifyToken);
+	if (a.length !== b.length || !timingSafeEqual(a, b)) {
 		return { valid: false, statusCode: 403 };
 	}
 	return { valid: true, challenge };

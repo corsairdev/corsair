@@ -13,13 +13,10 @@ import type {
 	RawWebhookRequest,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
+import { getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
 import type { ZohoRegion } from './client';
-import {
-	getValidAccessToken,
-	zohoOAuthAuthUrl,
-	zohoOAuthTokenUrl,
-} from './client';
+import { zohoOAuthAuthUrl, zohoOAuthTokenUrl } from './client';
 import { FoldersEndpoints, MessagesEndpoints } from './endpoints';
 import type {
 	ZohoMailEndpointInputs,
@@ -357,83 +354,11 @@ export function zohomail<const T extends ZohoMailPluginOptions>(
 			}
 
 			if (ctx.authType === 'oauth_2') {
-				const creds = options.credentials;
-
-				const [storedAccessToken, expiresAt, storedRefreshToken] =
-					await Promise.all([
-						ctx.keys.get_access_token(),
-						ctx.keys.get_expires_at(),
-						ctx.keys.get_refresh_token(),
-					]);
-
-				const accessToken = storedAccessToken ?? creds?.accessToken ?? null;
-				const refreshToken = storedRefreshToken ?? creds?.refreshToken ?? null;
-
-				if (!refreshToken) {
-					throw new Error(
-						'[auth-missing:zohomail:refresh_token]: Zoho Mail refresh token is missing',
-					);
-				}
-
-				const integrationCreds = await ctx.keys.get_integration_credentials();
-				const clientId =
-					integrationCreds.client_id ?? creds?.clientId ?? undefined;
-				const clientSecret =
-					integrationCreds.client_secret ?? creds?.clientSecret ?? undefined;
-
-				if (!clientId || !clientSecret) {
-					throw new Error(
-						'[auth-missing:zohomail:client_credentials]: Zoho Mail client credentials are missing',
-					);
-				}
-
-				const tokenUrl = zohoOAuthTokenUrl(region);
-
-				let result: Awaited<ReturnType<typeof getValidAccessToken>>;
-				try {
-					result = await getValidAccessToken({
-						tokenUrl,
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId,
-						clientSecret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:zohomail] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await ctx.keys.set_access_token(result.accessToken);
-						await ctx.keys.set_expires_at(String(result.expiresAt));
-					} catch (error) {
-						throw new Error(
-							`[corsair:zohomail] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				// Expose a force-refresh function so endpoints can retry on 401
-				// without waiting for `expires_at` to lapse.
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidAccessToken({
-						tokenUrl,
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId,
-						clientSecret,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					return freshResult.accessToken;
-				};
-
-				return result.accessToken;
+				return getOAuthAccessToken(ctx, {
+					plugin: 'zohomail',
+					tokenUrl: zohoOAuthTokenUrl(ctx.options.region),
+					tokenAuthMethod: 'body',
+				});
 			}
 
 			if (ctx.authType === 'managed') {

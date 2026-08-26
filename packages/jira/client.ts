@@ -25,6 +25,10 @@ const JIRA_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+function sanitizeCloudUrl(url: string): string {
+	return url.trim().replace(/\/+$/, '');
+}
+
 /**
  * Makes a request to the Jira REST API v3.
  * The apiKey should be in "email:apiToken" format for Basic auth (Jira Cloud).
@@ -40,9 +44,10 @@ export async function makeJiraRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
+	const cleanUrl = sanitizeCloudUrl(cloudUrl);
 
 	const config: OpenAPIConfig = {
-		BASE: `${cloudUrl}/rest/api/3`,
+		BASE: `${cleanUrl}/rest/api/3`,
 		VERSION: '3',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
@@ -115,8 +120,9 @@ export async function uploadJiraAttachment<T>(
 	const blob = new Blob([new Uint8Array(buffer)], { type: mimeType });
 	formData.append('file', blob, file.name);
 
+	const cleanUrl = sanitizeCloudUrl(cloudUrl);
 	const response = await fetch(
-		`${cloudUrl}/rest/api/3/issue/${issueIdOrKey}/attachments`,
+		`${cleanUrl}/rest/api/3/issue/${issueIdOrKey}/attachments`,
 		{
 			method: 'POST',
 			headers: {
@@ -156,9 +162,10 @@ export async function makeJiraAgileRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
+	const cleanUrl = sanitizeCloudUrl(cloudUrl);
 
 	const config: OpenAPIConfig = {
-		BASE: `${cloudUrl}/rest/agile/1.0`,
+		BASE: `${cleanUrl}/rest/agile/1.0`,
 		VERSION: '1.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

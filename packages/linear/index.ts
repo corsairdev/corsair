@@ -12,9 +12,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
-import { AuthMissingError } from 'corsair/core';
+import { AuthMissingError, getOAuthAccessToken } from 'corsair/core';
 import { attachManagedRefreshAuth, getManagedAccessToken } from 'corsair/hub';
-import { getValidLinearAccessToken } from './client';
 import type { LinearEndpointInputs, LinearEndpointOutputs } from './endpoints';
 import { Comments, Issues, Projects, Teams, Users } from './endpoints';
 import {
@@ -457,69 +456,11 @@ export function linear<const T extends LinearPluginOptions>(
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const [accessToken, expiresAt, refreshToken] = await Promise.all([
-					ctx.keys.get_access_token(),
-					ctx.keys.get_expires_at(),
-					ctx.keys.get_refresh_token(),
-				]);
-
-				if (!refreshToken) {
-					throw new AuthMissingError('linear', 'oauth_2');
-				}
-
-				const credentials = await ctx.keys.get_integration_credentials();
-
-				if (!credentials.client_id || !credentials.client_secret) {
-					throw new Error(
-						'[auth-missing:linear:client_credentials]: Linear client credentials are missing',
-					);
-				}
-
-				let result: Awaited<ReturnType<typeof getValidLinearAccessToken>>;
-				try {
-					result = await getValidLinearAccessToken({
-						accessToken,
-						expiresAt,
-						refreshToken,
-						clientId: credentials.client_id,
-						clientSecret: credentials.client_secret,
-					});
-				} catch (error) {
-					throw new Error(
-						`[corsair:linear] Failed to obtain valid access token: ${error instanceof Error ? error.message : String(error)}`,
-					);
-				}
-
-				if (result.refreshed) {
-					try {
-						await ctx.keys.set_access_token(result.accessToken);
-						await ctx.keys.set_expires_at(String(result.expiresAt));
-						await ctx.keys.set_refresh_token(result.refreshToken);
-					} catch (error) {
-						throw new Error(
-							`[corsair:linear] Token was refreshed but failed to persist new credentials: ${error instanceof Error ? error.message : String(error)}`,
-						);
-					}
-				}
-
-				// Expose a force-refresh function on the context so endpoints can
-				// retry on 401 without waiting for `expires_at` to lapse.
-				(ctx as Record<string, unknown>)._refreshAuth = async () => {
-					const freshResult = await getValidLinearAccessToken({
-						accessToken: null,
-						expiresAt: null,
-						refreshToken,
-						clientId: credentials.client_id!,
-						clientSecret: credentials.client_secret!,
-						forceRefresh: true,
-					});
-					await ctx.keys.set_access_token(freshResult.accessToken);
-					await ctx.keys.set_expires_at(String(freshResult.expiresAt));
-					await ctx.keys.set_refresh_token(freshResult.refreshToken);
-					return freshResult.accessToken;
-				};
-
-				return `Bearer ${result.accessToken}`;
+				const accessToken = await getOAuthAccessToken(ctx, {
+					plugin: 'linear',
+					tokenUrl: 'https://api.linear.app/oauth/token',
+				});
+				return `Bearer ${accessToken}`;
 			}
 
 			if (ctx.authType === 'managed') {

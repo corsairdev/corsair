@@ -242,12 +242,7 @@ export function bindEndpointsRecursively({
 								}
 
 								await new Promise((resolve) => setTimeout(resolve, delayMs));
-								await call(newAttempt, callCtx, callArgs);
-
-								console.log(
-									`[corsair:${pluginId}:${operationPath}] Retry strategy:`,
-									retryStrategy,
-								);
+								return await call(newAttempt, callCtx, callArgs);
 							}
 						}
 						throw error;

@@ -65,4 +65,25 @@ describe('verifyTeamsClientState', () => {
 		const result = verifyTeamsClientState(payloadWith('anything'), '');
 		expect(result).toEqual({ valid: false, error: 'clientState is required' });
 	});
+
+	it('rejects an empty value array', () => {
+		const result = verifyTeamsClientState({ value: [] }, 'secret-state');
+		expect(result).toEqual({
+			valid: false,
+			error: 'Invalid payload: missing value array',
+		});
+	});
+
+	it('rejects a null notification without throwing', () => {
+		const malformed = {
+			value: [null],
+		} as unknown as TeamsWebhookPayload<TeamsNotification>;
+		expect(() =>
+			verifyTeamsClientState(malformed, 'secret-state'),
+		).not.toThrow();
+		expect(verifyTeamsClientState(malformed, 'secret-state')).toEqual({
+			valid: false,
+			error: 'clientState mismatch',
+		});
+	});
 });

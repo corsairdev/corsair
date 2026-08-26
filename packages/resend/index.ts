@@ -12,7 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Domains, Emails } from './endpoints';
+import { Contacts, Domains, Emails } from './endpoints';
 import type {
 	ResendEndpointInputs,
 	ResendEndpointOutputs,
@@ -23,7 +23,11 @@ import {
 } from './endpoints/types';
 import { ResendSchema } from './schema';
 import type {
+	ContactCreatedEvent,
+	ContactDeletedEvent,
+	ContactUpdatedEvent,
 	DomainCreatedEvent,
+	DomainDeletedEvent,
 	DomainUpdatedEvent,
 	EmailBouncedEvent,
 	EmailClickedEvent,
@@ -32,13 +36,19 @@ import type {
 	EmailFailedEvent,
 	EmailOpenedEvent,
 	EmailReceivedEvent,
+	EmailScheduledEvent,
 	EmailSentEvent,
+	EmailSuppressedEvent,
 	ResendWebhookOutputs,
 } from './webhooks';
-import { DomainWebhooks, EmailWebhooks } from './webhooks';
+import { ContactWebhooks, DomainWebhooks, EmailWebhooks } from './webhooks';
 import { matchResendTenantWebhook } from './webhooks/tenant-matcher';
 import {
+	ContactCreatedEventSchema,
+	ContactDeletedEventSchema,
+	ContactUpdatedEventSchema,
 	DomainCreatedEventSchema,
+	DomainDeletedEventSchema,
 	DomainUpdatedEventSchema,
 	EmailBouncedEventSchema,
 	EmailClickedEventSchema,
@@ -47,7 +57,9 @@ import {
 	EmailFailedEventSchema,
 	EmailOpenedEventSchema,
 	EmailReceivedEventSchema,
+	EmailScheduledEventSchema,
 	EmailSentEventSchema,
+	EmailSuppressedEventSchema,
 } from './webhooks/types';
 
 export type ResendPluginOptions = {
@@ -83,11 +95,18 @@ export type ResendEndpoints = {
 	emailsSend: ResendEndpoint<'emailsSend'>;
 	emailsGet: ResendEndpoint<'emailsGet'>;
 	emailsList: ResendEndpoint<'emailsList'>;
+	emailsBatch: ResendEndpoint<'emailsBatch'>;
+	emailsCancel: ResendEndpoint<'emailsCancel'>;
 	domainsCreate: ResendEndpoint<'domainsCreate'>;
 	domainsGet: ResendEndpoint<'domainsGet'>;
 	domainsList: ResendEndpoint<'domainsList'>;
 	domainsDelete: ResendEndpoint<'domainsDelete'>;
 	domainsVerify: ResendEndpoint<'domainsVerify'>;
+	contactsCreate: ResendEndpoint<'contactsCreate'>;
+	contactsGet: ResendEndpoint<'contactsGet'>;
+	contactsList: ResendEndpoint<'contactsList'>;
+	contactsUpdate: ResendEndpoint<'contactsUpdate'>;
+	contactsDelete: ResendEndpoint<'contactsDelete'>;
 };
 
 type ResendWebhook<
@@ -104,8 +123,14 @@ export type ResendWebhooks = {
 	emailComplained: ResendWebhook<'emailComplained', EmailComplainedEvent>;
 	emailFailed: ResendWebhook<'emailFailed', EmailFailedEvent>;
 	emailReceived: ResendWebhook<'emailReceived', EmailReceivedEvent>;
+	emailScheduled: ResendWebhook<'emailScheduled', EmailScheduledEvent>;
+	emailSuppressed: ResendWebhook<'emailSuppressed', EmailSuppressedEvent>;
 	domainCreated: ResendWebhook<'domainCreated', DomainCreatedEvent>;
 	domainUpdated: ResendWebhook<'domainUpdated', DomainUpdatedEvent>;
+	domainDeleted: ResendWebhook<'domainDeleted', DomainDeletedEvent>;
+	contactCreated: ResendWebhook<'contactCreated', ContactCreatedEvent>;
+	contactUpdated: ResendWebhook<'contactUpdated', ContactUpdatedEvent>;
+	contactDeleted: ResendWebhook<'contactDeleted', ContactDeletedEvent>;
 };
 
 export type ResendBoundWebhooks = BindWebhooks<ResendWebhooks>;
@@ -115,6 +140,8 @@ const resendEndpointsNested = {
 		send: Emails.send,
 		get: Emails.get,
 		list: Emails.list,
+		batch: Emails.batch,
+		cancel: Emails.cancel,
 	},
 	domains: {
 		create: Domains.create,
@@ -122,6 +149,13 @@ const resendEndpointsNested = {
 		list: Domains.list,
 		delete: Domains.delete,
 		verify: Domains.verify,
+	},
+	contacts: {
+		create: Contacts.create,
+		get: Contacts.get,
+		list: Contacts.list,
+		update: Contacts.update,
+		delete: Contacts.delete,
 	},
 } as const;
 
@@ -137,6 +171,14 @@ export const resendEndpointSchemas = {
 	'emails.list': {
 		input: ResendEndpointInputSchemas.emailsList,
 		output: ResendEndpointOutputSchemas.emailsList,
+	},
+	'emails.batch': {
+		input: ResendEndpointInputSchemas.emailsBatch,
+		output: ResendEndpointOutputSchemas.emailsBatch,
+	},
+	'emails.cancel': {
+		input: ResendEndpointInputSchemas.emailsCancel,
+		output: ResendEndpointOutputSchemas.emailsCancel,
 	},
 	'domains.create': {
 		input: ResendEndpointInputSchemas.domainsCreate,
@@ -158,6 +200,26 @@ export const resendEndpointSchemas = {
 		input: ResendEndpointInputSchemas.domainsVerify,
 		output: ResendEndpointOutputSchemas.domainsVerify,
 	},
+	'contacts.create': {
+		input: ResendEndpointInputSchemas.contactsCreate,
+		output: ResendEndpointOutputSchemas.contactsCreate,
+	},
+	'contacts.get': {
+		input: ResendEndpointInputSchemas.contactsGet,
+		output: ResendEndpointOutputSchemas.contactsGet,
+	},
+	'contacts.list': {
+		input: ResendEndpointInputSchemas.contactsList,
+		output: ResendEndpointOutputSchemas.contactsList,
+	},
+	'contacts.update': {
+		input: ResendEndpointInputSchemas.contactsUpdate,
+		output: ResendEndpointOutputSchemas.contactsUpdate,
+	},
+	'contacts.delete': {
+		input: ResendEndpointInputSchemas.contactsDelete,
+		output: ResendEndpointOutputSchemas.contactsDelete,
+	},
 } as const;
 
 const resendWebhooksNested = {
@@ -170,10 +232,18 @@ const resendWebhooksNested = {
 		complained: EmailWebhooks.complained,
 		failed: EmailWebhooks.failed,
 		received: EmailWebhooks.received,
+		scheduled: EmailWebhooks.scheduled,
+		suppressed: EmailWebhooks.suppressed,
 	},
 	domains: {
 		created: DomainWebhooks.created,
 		updated: DomainWebhooks.updated,
+		deleted: DomainWebhooks.deleted,
+	},
+	contacts: {
+		created: ContactWebhooks.created,
+		updated: ContactWebhooks.updated,
+		deleted: ContactWebhooks.deleted,
 	},
 } as const;
 
@@ -218,6 +288,16 @@ const resendWebhookSchemas = {
 		payload: EmailReceivedEventSchema,
 		response: EmailReceivedEventSchema,
 	},
+	'emails.scheduled': {
+		description: 'An email was scheduled to be sent',
+		payload: EmailScheduledEventSchema,
+		response: EmailScheduledEventSchema,
+	},
+	'emails.suppressed': {
+		description: 'An email was suppressed',
+		payload: EmailSuppressedEventSchema,
+		response: EmailSuppressedEventSchema,
+	},
 	'domains.created': {
 		description: 'A new sending domain was created',
 		payload: DomainCreatedEventSchema,
@@ -227,6 +307,26 @@ const resendWebhookSchemas = {
 		description: 'A sending domain was updated',
 		payload: DomainUpdatedEventSchema,
 		response: DomainUpdatedEventSchema,
+	},
+	'domains.deleted': {
+		description: 'A sending domain was deleted',
+		payload: DomainDeletedEventSchema,
+		response: DomainDeletedEventSchema,
+	},
+	'contacts.created': {
+		description: 'A new contact was created',
+		payload: ContactCreatedEventSchema,
+		response: ContactCreatedEventSchema,
+	},
+	'contacts.updated': {
+		description: 'A contact was updated',
+		payload: ContactUpdatedEventSchema,
+		response: ContactUpdatedEventSchema,
+	},
+	'contacts.deleted': {
+		description: 'A contact was deleted',
+		payload: ContactDeletedEventSchema,
+		response: ContactDeletedEventSchema,
 	},
 } as const;
 
@@ -246,6 +346,14 @@ const resendEndpointMeta = {
 		description: 'Get info about a sent email',
 	},
 	'emails.list': { riskLevel: 'read', description: 'List sent emails' },
+	'emails.batch': {
+		riskLevel: 'write',
+		description: 'Send up to 100 emails in a single API call',
+	},
+	'emails.cancel': {
+		riskLevel: 'write',
+		description: 'Cancel a scheduled email',
+	},
 	'domains.create': {
 		riskLevel: 'write',
 		description: 'Add a new sending domain',
@@ -266,6 +374,27 @@ const resendEndpointMeta = {
 	'domains.verify': {
 		riskLevel: 'write',
 		description: 'Trigger DNS verification for a domain',
+	},
+	'contacts.create': {
+		riskLevel: 'write',
+		description: 'Create a new contact',
+	},
+	'contacts.get': {
+		riskLevel: 'read',
+		description: 'Get info about a contact',
+	},
+	'contacts.list': {
+		riskLevel: 'read',
+		description: 'List all contacts',
+	},
+	'contacts.update': {
+		riskLevel: 'write',
+		description: 'Update an existing contact',
+	},
+	'contacts.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Delete a contact [DESTRUCTIVE · IRREVERSIBLE]',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof resendEndpointsNested>;
 
@@ -384,10 +513,18 @@ export type {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type {
+	Contact,
+	ContactsCreateResponse,
+	ContactsDeleteResponse,
+	ContactsGetResponse,
+	ContactsListResponse,
+	ContactsUpdateResponse,
 	CreateDomainResponse,
 	DeleteDomainResponse,
 	Domain,
 	Email,
+	EmailsBatchResponse,
+	EmailsCancelResponse,
 	GetDomainResponse,
 	GetEmailResponse,
 	ListDomainsResponse,
