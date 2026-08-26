@@ -118,8 +118,19 @@ describe('error policy', () => {
 	});
 
 	it('never retries an auth failure', async () => {
-		expect(errorHandlers.AUTH_ERROR.match(wrapped(401))).toBe(true);
-		expect((await errorHandlers.AUTH_ERROR.handler()).maxRetries).toBe(0);
+		// The handler deliberately warns operators that the token is bad; that
+		// warning is production behaviour, so it is silenced here rather than
+		// printed into every test run.
+		const warn = jest
+			.spyOn(console, 'warn')
+			.mockImplementation(() => undefined);
+		try {
+			expect(errorHandlers.AUTH_ERROR.match(wrapped(401))).toBe(true);
+			expect((await errorHandlers.AUTH_ERROR.handler()).maxRetries).toBe(0);
+			expect(warn).toHaveBeenCalled();
+		} finally {
+			warn.mockRestore();
+		}
 	});
 
 	it('retries a 5xx but not a 404', () => {
