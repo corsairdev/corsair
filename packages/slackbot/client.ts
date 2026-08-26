@@ -24,14 +24,19 @@ const SLACKBOT_API_BASE = 'https://slack.com/api';
 
 /**
  * Slack enforces tiered per-method limits and answers 429 with `Retry-After`
- * in seconds. Retries are bounded so a sustained limit surfaces to the caller
- * rather than stalling a webhook handler past Slack's 3s ack window.
+ * in seconds.
+ *
+ * Retrying is owned by the plugin's error policy (`error-handlers.ts`), not by
+ * the transport. Enabling both would compound: the transport's attempts would
+ * multiply by the policy's re-runs, turning one operation into dozens of
+ * requests and stacking two independent backoffs. The transport therefore
+ * parses `Retry-After` and surfaces it on the error, but never retries.
  */
-const SLACKBOT_RATE_LIMIT_CONFIG: RateLimitConfig = {
+export const SLACKBOT_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
-	maxRetries: 3,
-	initialRetryDelay: 1000,
-	backoffMultiplier: 2,
+	maxRetries: 0,
+	initialRetryDelay: 0,
+	backoffMultiplier: 1,
 	headerNames: {
 		retryAfter: 'Retry-After',
 	},

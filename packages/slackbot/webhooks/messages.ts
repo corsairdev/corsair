@@ -47,9 +47,14 @@ function createMessageHandler(eventName: string) {
 
 		let corsairEntityId = '';
 		if (ctx.db.messages && event.ts) {
+			// Slack scopes `ts` to a channel, so it is not unique on its own: the
+			// same timestamp can occur in two channels and would collide on a
+			// store keyed by entity id alone, silently overwriting one message
+			// with the other. The channel qualifies it.
+			const entityId = `${event.channel}:${event.ts}`;
 			try {
-				const entity = await ctx.db.messages.upsertByEntityId(event.ts, {
-					id: event.ts,
+				const entity = await ctx.db.messages.upsertByEntityId(entityId, {
+					id: entityId,
 					ts: event.ts,
 					channel: event.channel,
 					channel_type: event.channel_type,

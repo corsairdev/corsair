@@ -17,8 +17,13 @@ jest.mock('corsair/core', () => ({
 	logEventFromContext: async () => undefined,
 }));
 
-import { makeSlackbotRequest, SlackbotAPIError } from './client';
+import {
+	makeSlackbotRequest,
+	SLACKBOT_RATE_LIMIT_CONFIG,
+	SlackbotAPIError,
+} from './client';
 import { Conversations, Files, Users } from './endpoints';
+import { errorHandlers } from './error-handlers';
 
 function makeCtx() {
 	return { key: 'xoxb-test-token', db: {}, options: {} } as never;
@@ -289,13 +294,13 @@ describe('files.download', () => {
 
 		requestMock.mockResolvedValueOnce({
 			ok: true,
-			file: { id: 'F1', url_private_download: 'https://files.slack.test/f/F1' },
+			file: { id: 'F1', url_private_download: 'https://files.slack.com/f/F1' },
 		});
 
 		const result = await Files.download(makeCtx(), { file: 'F1' });
 
 		expect(fetchMock).toHaveBeenCalledWith(
-			'https://files.slack.test/f/F1',
+			'https://files.slack.com/f/F1',
 			expect.objectContaining({
 				headers: { Authorization: 'Bearer xoxb-test-token' },
 			}),
@@ -323,7 +328,7 @@ describe('files.download', () => {
 			file: {
 				id: 'F1',
 				size: 50_000,
-				url_private: 'https://files.slack.test/f/F1',
+				url_private: 'https://files.slack.com/f/F1',
 			},
 		});
 
@@ -332,5 +337,224 @@ describe('files.download', () => {
 		).rejects.toMatchObject({ code: 'file_too_large' });
 		// The guard must fire before any bytes move.
 		expect(fetchMock).not.toHaveBeenCalled();
+	});
+});
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Regressions from review round 1.
+// ─────────────────────────────────────────────────────────────────────────────
+
+describe('retry ownership', () => {
+	it('leaves retrying entirely to the error policy', () => {
+		// Both layers retrying would compound: the transport's attempts multiply
+		// by the policy's re-runs, turning one operation into dozens of requests
+		// with two stacked backoffs.
+		expect(SLACKBOT_RATE_LIMIT_CONFIG.maxRetries).toBe(0);
+	});
+
+	it('still parses Retry-After so the policy can honour it', () => {
+		expect(SLACKBOT_RATE_LIMIT_CONFIG.headerNames?.retryAfter).toBe(
+			'Retry-After',
+		);
+	});
+
+	it('has a policy that does retry rate limits', async () => {
+		const err = Object.assign(new Error('ratelimited'), { status: 429 });
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(err)).toBe(true);
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
+		expect(result.maxRetries).toBeGreaterThan(0);
+	});
+});
+
+describe('files.upload reservation contract', () => {
+	const originalFetch = globalThis.fetch;
+	afterEach(() => {
+		globalThis.fetch = originalFetch;
+	});
+
+	function mockUploadFlow() {
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue({ ok: true, status: 200 }) as unknown as typeof fetch;
+		requestMock
+			.mockResolvedValueOnce({
+				ok: true,
+				upload_url: 'https://files.slack.test/upload/abc',
+				file_id: 'F123',
+			})
+			.mockResolvedValueOnce({ ok: true, files: [{ id: 'F123' }] });
+	}
+
+	it('sends alt_txt and snippet_type on the reservation', async () => {
+		mockUploadFlow();
+		await Files.upload(makeCtx(), {
+			filename: 'a.py',
+			content: 'eA==',
+			alt_txt: 'a script',
+			snippet_type: 'python',
+		});
+		expect(callAt(0).url).toBe('files.getUploadURLExternal');
+		expect(callAt(0).query).toMatchObject({
+			alt_txt: 'a script',
+			snippet_type: 'python',
+		});
+	});
+
+	it('sends only id and title to completeUploadExternal', async () => {
+		// Slack ignores alt_txt/snippet_type here, so including them would
+		// silently drop both rather than erroring.
+		mockUploadFlow();
+		await Files.upload(makeCtx(), {
+			filename: 'a.py',
+			content: 'eA==',
+			alt_txt: 'a script',
+			snippet_type: 'python',
+		});
+		const files = callAt(1).body?.files as Record<string, unknown>[];
+		expect(Object.keys(files[0] ?? {}).sort()).toEqual(['id', 'title']);
+	});
+});
+
+describe('files.download credential safety', () => {
+	const originalFetch = globalThis.fetch;
+	afterEach(() => {
+		globalThis.fetch = originalFetch;
+	});
+
+	function withFileUrl(url: string) {
+		requestMock.mockResolvedValueOnce({
+			ok: true,
+			file: { id: 'F1', url_private: url },
+		});
+	}
+
+	it('refuses to send the bot token to a non-Slack host', async () => {
+		// A remote file (is_external) carries a third-party url_private; sending
+		// the workspace token there would leak it to that host.
+		const fetchMock = jest.fn();
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		withFileUrl('https://evil.example.com/steal/F1');
+
+		await expect(
+			Files.download(makeCtx(), { file: 'F1' }),
+		).rejects.toMatchObject({ code: 'external_file_url' });
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a lookalike domain', async () => {
+		const fetchMock = jest.fn();
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		withFileUrl('https://evil-slack.com/files/F1');
+
+		await expect(
+			Files.download(makeCtx(), { file: 'F1' }),
+		).rejects.toMatchObject({ code: 'external_file_url' });
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('rejects a plaintext http URL', async () => {
+		const fetchMock = jest.fn();
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		withFileUrl('http://files.slack.com/files/F1');
+
+		await expect(
+			Files.download(makeCtx(), { file: 'F1' }),
+		).rejects.toMatchObject({ code: 'external_file_url' });
+		expect(fetchMock).not.toHaveBeenCalled();
+	});
+
+	it('allows a Slack subdomain and attaches the token there', async () => {
+		const body = Buffer.from('ok');
+		const fetchMock = jest.fn().mockResolvedValue({
+			ok: true,
+			status: 200,
+			headers: new Map([['content-type', 'text/plain']]),
+			body: null,
+			arrayBuffer: async () => body,
+		});
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		withFileUrl('https://files.slack.com/files-pri/T1-F1/x.txt');
+
+		const result = await Files.download(makeCtx(), { file: 'F1' });
+
+		expect(fetchMock).toHaveBeenCalledWith(
+			'https://files.slack.com/files-pri/T1-F1/x.txt',
+			expect.objectContaining({
+				headers: { Authorization: 'Bearer xoxb-test-token' },
+			}),
+		);
+		expect(Buffer.from(result.content, 'base64').toString()).toBe('ok');
+	});
+});
+
+describe('files.download size bounding', () => {
+	const originalFetch = globalThis.fetch;
+	afterEach(() => {
+		globalThis.fetch = originalFetch;
+	});
+
+	/** A response whose size Slack did not declare, streamed in chunks. */
+	function streamingResponse(chunks: Buffer[]) {
+		let i = 0;
+		const cancel = jest.fn().mockResolvedValue(undefined);
+		const reader = {
+			read: async () =>
+				i < chunks.length
+					? { done: false, value: new Uint8Array(chunks[i++] as Buffer) }
+					: { done: true, value: undefined },
+			cancel,
+			releaseLock: () => undefined,
+		};
+		return {
+			response: {
+				ok: true,
+				status: 200,
+				headers: new Map([['content-type', 'application/octet-stream']]),
+				body: { getReader: () => reader },
+			},
+			cancel,
+		};
+	}
+
+	it('aborts mid-stream once max_bytes is exceeded', async () => {
+		// Slack omitted `size`, so the declared-size guard cannot fire and the
+		// stream itself has to be bounded.
+		const { response, cancel } = streamingResponse([
+			Buffer.alloc(600),
+			Buffer.alloc(600),
+		]);
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(response) as unknown as typeof fetch;
+		requestMock.mockResolvedValueOnce({
+			ok: true,
+			file: { id: 'F1', url_private: 'https://files.slack.com/f/F1' },
+		});
+
+		await expect(
+			Files.download(makeCtx(), { file: 'F1', max_bytes: 1000 }),
+		).rejects.toMatchObject({ code: 'file_too_large' });
+		expect(cancel).toHaveBeenCalled();
+	});
+
+	it('returns a stream that stays within the limit', async () => {
+		const { response } = streamingResponse([
+			Buffer.from('he'),
+			Buffer.from('llo'),
+		]);
+		globalThis.fetch = jest
+			.fn()
+			.mockResolvedValue(response) as unknown as typeof fetch;
+		requestMock.mockResolvedValueOnce({
+			ok: true,
+			file: { id: 'F1', url_private: 'https://files.slack.com/f/F1' },
+		});
+
+		const result = await Files.download(makeCtx(), {
+			file: 'F1',
+			max_bytes: 1000,
+		});
+		expect(Buffer.from(result.content, 'base64').toString()).toBe('hello');
+		expect(result.byte_size).toBe(5);
 	});
 });

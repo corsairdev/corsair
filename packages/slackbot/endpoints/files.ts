@@ -215,12 +215,20 @@ interface UploadUrlResponse {
 export const upload: SlackbotEndpoints['filesUpload'] = async (ctx, input) => {
 	const bytes = Buffer.from(input.content, 'base64');
 
+	// `alt_txt` and `snippet_type` belong to the reservation, not the
+	// completion - Slack ignores them on completeUploadExternal, so sending
+	// them there would drop the alt text and snippet syntax entirely.
 	const reservation = await makeSlackbotRequest<UploadUrlResponse>(
 		'files.getUploadURLExternal',
 		ctx.key,
 		{
 			method: 'GET',
-			query: { filename: input.filename, length: bytes.byteLength },
+			query: {
+				filename: input.filename,
+				length: bytes.byteLength,
+				alt_txt: input.alt_txt,
+				snippet_type: input.snippet_type,
+			},
 		},
 	);
 
@@ -249,12 +257,11 @@ export const upload: SlackbotEndpoints['filesUpload'] = async (ctx, input) => {
 	>('files.completeUploadExternal', ctx.key, {
 		method: 'POST',
 		body: {
+			// completeUploadExternal accepts only id and title per file.
 			files: [
 				{
 					id: reservation.file_id,
 					title: input.title ?? input.filename,
-					alt_txt: input.alt_txt,
-					snippet_type: input.snippet_type,
 				},
 			],
 			channel_id: input.channel_id,
@@ -292,10 +299,94 @@ export const upload: SlackbotEndpoints['filesUpload'] = async (ctx, input) => {
 };
 
 /**
+ * Slack-owned hosts that may receive the bot token.
+ *
+ * A file record's `url_private` is not guaranteed to point at Slack: remote
+ * files (`is_external: true`, `mode: external`) carry a third-party URL in the
+ * same field. Attaching `Authorization: Bearer <bot token>` unconditionally
+ * would hand the workspace token to whatever host that is, so the header is
+ * only ever sent to a verified Slack host.
+ */
+const SLACK_FILE_HOSTS = new Set([
+	'slack.com',
+	'slack-edge.com',
+	'slack-files.com',
+]);
+
+function isSlackOwnedUrl(rawUrl: string): boolean {
+	let parsed: URL;
+	try {
+		parsed = new URL(rawUrl);
+	} catch {
+		return false;
+	}
+	if (parsed.protocol !== 'https:') return false;
+	const host = parsed.hostname.toLowerCase();
+	// Exact match, or a subdomain of a Slack-owned domain. The leading dot
+	// prevents `evil-slack.com` from matching `slack.com`.
+	for (const domain of SLACK_FILE_HOSTS) {
+		if (host === domain || host.endsWith(`.${domain}`)) return true;
+	}
+	return false;
+}
+
+/**
+ * Reads a response body, aborting once `maxBytes` is exceeded.
+ *
+ * `arrayBuffer()` would buffer the entire response before any size check, so a
+ * file whose size Slack does not declare could exhaust memory before it could
+ * be rejected. Streaming lets the transfer be cancelled mid-flight.
+ */
+async function readBounded(
+	response: Response,
+	maxBytes: number,
+	fileId: string,
+): Promise<Buffer> {
+	const body = response.body;
+	if (!body) {
+		// No stream available (e.g. a mocked response); fall back to buffering,
+		// which is safe because the declared-size guard already ran.
+		const buffered = Buffer.from(await response.arrayBuffer());
+		if (buffered.byteLength > maxBytes) {
+			throw new SlackbotAPIError(
+				`Downloaded ${buffered.byteLength} bytes, above the ${maxBytes} byte limit`,
+				'file_too_large',
+			);
+		}
+		return buffered;
+	}
+
+	const reader = body.getReader();
+	const chunks: Buffer[] = [];
+	let total = 0;
+
+	try {
+		while (true) {
+			const { done, value } = await reader.read();
+			if (done) break;
+			if (!value) continue;
+			total += value.byteLength;
+			if (total > maxBytes) {
+				await reader.cancel();
+				throw new SlackbotAPIError(
+					`File ${fileId} exceeds the ${maxBytes} byte limit`,
+					'file_too_large',
+				);
+			}
+			chunks.push(Buffer.from(value));
+		}
+	} finally {
+		reader.releaseLock();
+	}
+
+	return Buffer.concat(chunks);
+}
+
+/**
  * Resolves a file's private URL and fetches its bytes. Slack serves
  * `url_private` only to an authenticated caller, so the bot token is attached
- * explicitly. Content is returned base64-encoded; `max_bytes` (default 25 MB)
- * caps the transfer so a large upload cannot exhaust the process heap.
+ * explicitly - but only after confirming the URL is Slack-owned. Content is
+ * returned base64-encoded; `max_bytes` (default 25 MB) bounds the transfer.
  */
 export const download: SlackbotEndpoints['filesDownload'] = async (
 	ctx,
@@ -315,8 +406,15 @@ export const download: SlackbotEndpoints['filesDownload'] = async (
 		);
 	}
 
-	// Slack advertises the size up front, so an oversized file is rejected
-	// before any bytes are transferred.
+	if (!isSlackOwnedUrl(url)) {
+		throw new SlackbotAPIError(
+			`File ${input.file} points at a non-Slack host; refusing to send credentials to it`,
+			'external_file_url',
+		);
+	}
+
+	// Slack usually advertises the size up front, so an oversized file is
+	// rejected before any bytes move.
 	const declaredSize = metadata.file?.size;
 	if (typeof declaredSize === 'number' && declaredSize > maxBytes) {
 		throw new SlackbotAPIError(
@@ -336,15 +434,8 @@ export const download: SlackbotEndpoints['filesDownload'] = async (
 		);
 	}
 
-	const buffer = Buffer.from(await response.arrayBuffer());
-	// Re-check: Slack omits `size` on some file types, so the declared-size
-	// guard above cannot be the only one.
-	if (buffer.byteLength > maxBytes) {
-		throw new SlackbotAPIError(
-			`Downloaded ${buffer.byteLength} bytes, above the ${maxBytes} byte limit`,
-			'file_too_large',
-		);
-	}
+	// Slack omits `size` on some file types, so the stream is bounded too.
+	const buffer = await readBounded(response, maxBytes, input.file);
 
 	await logEventFromContext(
 		ctx,

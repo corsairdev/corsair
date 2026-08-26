@@ -7,6 +7,7 @@
  * message twice, which is the kind of bug that only shows up in production.
  */
 import { createHmac } from 'node:crypto';
+import { message } from './webhooks/messages';
 import {
 	createSlackbotEventMatch,
 	matchBotMessage,
@@ -238,5 +239,57 @@ describe('signature verification', () => {
 		);
 		expect(result.valid).toBe(false);
 		expect(result.error).toMatch(/Missing x-slack-signature/);
+	});
+});
+
+describe('message cache key', () => {
+	/** Captures the entity id the handler upserts under. */
+	function makeCapturingCtx() {
+		const ids: string[] = [];
+		const ctx = {
+			key: SIGNING_SECRET,
+			options: { signingSecret: SIGNING_SECRET },
+			db: {
+				messages: {
+					upsertByEntityId: async (id: string) => {
+						ids.push(id);
+						return { id };
+					},
+				},
+			},
+		} as never;
+		return { ctx, ids };
+	}
+
+	/** A signed request carrying one message event. */
+	function signedEvent(event: Record<string, unknown>) {
+		const payload = { type: 'event_callback', team_id: 'T1', event };
+		const rawBody = JSON.stringify(payload);
+		const timestamp = String(Math.floor(Date.now() / 1000));
+		const hmac = createHmac('sha256', SIGNING_SECRET);
+		hmac.update(`v0:${timestamp}:${rawBody}`);
+		return {
+			payload,
+			rawBody,
+			headers: {
+				'x-slack-request-timestamp': timestamp,
+				'x-slack-signature': `v0=${hmac.digest('hex')}`,
+			},
+		} as never;
+	}
+
+	it('qualifies the timestamp with the channel', async () => {
+		// Slack scopes `ts` to a channel, so two channels can produce the same
+		// timestamp; keying on `ts` alone would overwrite one with the other.
+		const { ctx, ids } = makeCapturingCtx();
+		await message.handler(ctx, signedEvent(messageEvent()));
+		expect(ids).toEqual(['C1:1700000000.000100']);
+	});
+
+	it('keeps identical timestamps in different channels distinct', async () => {
+		const { ctx, ids } = makeCapturingCtx();
+		await message.handler(ctx, signedEvent(messageEvent({ channel: 'C1' })));
+		await message.handler(ctx, signedEvent(messageEvent({ channel: 'C2' })));
+		expect(new Set(ids).size).toBe(2);
 	});
 });
