@@ -113,7 +113,7 @@ jobs:
 
       - name: Run tests
         if: steps.scope.outputs.skip_heavy != 'true'
-        run: pnpm exec turbo test --filter="${{ steps.scope.outputs.turbo_filter }}" ${{ steps.scope.outputs.www_test_filter }} -- --passWithNoTests --ci --testPathIgnorePatterns="(^|/)api\.test\.ts$|(^|/)integration\.test\.ts$"
+        run: pnpm exec turbo test --filter="${{ steps.scope.outputs.turbo_filter }}" ${{ steps.scope.outputs.www_test_filter }} -- --passWithNoTests --ci --testPathIgnorePatterns="api\.test\.ts$|(^|/)integration\.test\.ts$"
         env:
           CI: true
           SKIP_PG_TESTS: 1
