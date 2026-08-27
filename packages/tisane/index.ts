@@ -1,20 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Text } from './endpoints';
 import type {
 	TisaneEndpointInputs,
@@ -26,19 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { TisaneSchema } from './schema';
-import { TisaneWebhooks } from './webhooks';
-import type {
-	AnalysisCompletedEvent,
-	TisaneWebhookOutputs,
-} from './webhooks/types';
-import { AnalysisCompletedEventSchema } from './webhooks/types';
 
 export type TisanePluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalTisanePlugin['hooks'];
-	webhookHooks?: InternalTisanePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof tisaneEndpointsNested>;
 };
@@ -65,29 +55,12 @@ export type TisaneEndpoints = {
 	textExtractEntities: TisaneEndpoint<'textExtractEntities'>;
 };
 
-type TisaneWebhook<
-	K extends keyof TisaneWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<TisaneContext, TEvent, TisaneWebhookOutputs[K]>;
-
-export type TisaneWebhooks = {
-	analysisCompleted: TisaneWebhook<'analysisCompleted', AnalysisCompletedEvent>;
-};
-
-export type TisaneBoundWebhooks = BindWebhooks<TisaneWebhooks>;
-
 const tisaneEndpointsNested = {
 	text: {
 		parse: Text.parse,
 		sentiment: Text.sentiment,
 		moderate: Text.moderate,
 		extractEntities: Text.extractEntities,
-	},
-} as const;
-
-const tisaneWebhooksNested = {
-	analysis: {
-		analysisCompleted: TisaneWebhooks.analysisCompleted,
 	},
 } as const;
 
@@ -111,14 +84,6 @@ export const tisaneEndpointSchemas = {
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof tisaneEndpointsNested
 >;
-
-const tisaneWebhookSchemas = {
-	'analysis.analysisCompleted': {
-		description: 'Analysis completed notification webhook event',
-		payload: AnalysisCompletedEventSchema,
-		response: AnalysisCompletedEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof tisaneWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -149,7 +114,7 @@ export type BaseTisanePlugin<T extends TisanePluginOptions> = CorsairPlugin<
 	'tisane',
 	typeof TisaneSchema,
 	typeof tisaneEndpointsNested,
-	typeof tisaneWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -172,41 +137,30 @@ export function tisane<const T extends TisanePluginOptions>(
 		schema: TisaneSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: tisaneEndpointsNested,
-		webhooks: tisaneWebhooksNested,
+		webhooks: {},
 		endpointMeta: tisaneEndpointMeta,
 		endpointSchemas: tisaneEndpointSchemas,
-		webhookSchemas: tisaneWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-tisane-signature' in headers || 'x-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: () => null,
+		webhookSchemas: {},
+		pluginWebhookMatcher: () => false,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: TisaneKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (res) return res;
 			}
 
-			return '';
+			const envKey = process.env.TISANE_API_KEY;
+			if (envKey) return envKey;
+
+			throw new AuthMissingError('tisane', 'api_key');
 		},
 	} satisfies InternalTisanePlugin;
 }
@@ -223,7 +177,3 @@ export type {
 	TisaneEndpointInputs,
 	TisaneEndpointOutputs,
 } from './endpoints/types';
-export type {
-	AnalysisCompletedEvent,
-	TisaneWebhookOutputs,
-} from './webhooks/types';
