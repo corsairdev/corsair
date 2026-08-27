@@ -31,7 +31,7 @@ export async function makeTisaneRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
+		TOKEN: undefined,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			'Ocp-Apim-Subscription-Key': apiKey,
