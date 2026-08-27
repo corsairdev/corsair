@@ -5,7 +5,10 @@ import { createCloudcartMatch, verifyCloudcartWebhookSignature } from './types';
 export const orderCreated: PluginWebhooks['orderCreated'] = {
 	match: createCloudcartMatch('order.created'),
 	handler: async (ctx, request) => {
-		const verification = verifyCloudcartWebhookSignature(request as any, ctx.key);
+		const verification = verifyCloudcartWebhookSignature(
+			request as any,
+			ctx.key,
+		);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -14,7 +17,12 @@ export const orderCreated: PluginWebhooks['orderCreated'] = {
 			};
 		}
 		const event = request.payload;
-		await logEventFromContext(ctx, 'cloudcart.webhook.orderCreated', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'cloudcart.webhook.orderCreated',
+			{ ...event },
+			'completed',
+		);
 		return { success: true, data: event };
 	},
 };
@@ -22,7 +30,10 @@ export const orderCreated: PluginWebhooks['orderCreated'] = {
 export const productCreated: PluginWebhooks['productCreated'] = {
 	match: createCloudcartMatch('product.created'),
 	handler: async (ctx, request) => {
-		const verification = verifyCloudcartWebhookSignature(request as any, ctx.key);
+		const verification = verifyCloudcartWebhookSignature(
+			request as any,
+			ctx.key,
+		);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -31,7 +42,12 @@ export const productCreated: PluginWebhooks['productCreated'] = {
 			};
 		}
 		const event = request.payload;
-		await logEventFromContext(ctx, 'cloudcart.webhook.productCreated', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'cloudcart.webhook.productCreated',
+			{ ...event },
+			'completed',
+		);
 		return { success: true, data: event };
 	},
 };
@@ -39,7 +55,10 @@ export const productCreated: PluginWebhooks['productCreated'] = {
 export const customerCreated: PluginWebhooks['customerCreated'] = {
 	match: createCloudcartMatch('customer.created'),
 	handler: async (ctx, request) => {
-		const verification = verifyCloudcartWebhookSignature(request as any, ctx.key);
+		const verification = verifyCloudcartWebhookSignature(
+			request as any,
+			ctx.key,
+		);
 		if (!verification.valid) {
 			return {
 				success: false,
@@ -48,7 +67,12 @@ export const customerCreated: PluginWebhooks['customerCreated'] = {
 			};
 		}
 		const event = request.payload;
-		await logEventFromContext(ctx, 'cloudcart.webhook.customerCreated', { ...event }, 'completed');
+		await logEventFromContext(
+			ctx,
+			'cloudcart.webhook.customerCreated',
+			{ ...event },
+			'completed',
+		);
 		return { success: true, data: event };
 	},
 };
@@ -59,9 +83,6 @@ export const CloudcartWebhooks = {
 	customerCreated,
 };
 
-
-export * from './types';
-export * from './tenant-matcher';
 export * from './oauth-tenant-link';
-
-
+export * from './tenant-matcher';
+export * from './types';
