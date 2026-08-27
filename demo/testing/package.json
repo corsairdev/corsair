@@ -33,6 +33,7 @@
     "@corsair-dev/gmail": "workspace:*",
     "@corsair-dev/googlecalendar": "workspace:*",
     "@corsair-dev/googlesheets": "workspace:*",
+    "@corsair-dev/htmltoimage": "workspace:*",
     "@corsair-dev/hubspot": "workspace:^",
     "@corsair-dev/linear": "workspace:*",
     "@corsair-dev/mcp": "workspace:*",
