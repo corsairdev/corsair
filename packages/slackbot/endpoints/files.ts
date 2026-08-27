@@ -239,7 +239,7 @@ export const upload: SlackbotEndpoints['filesUpload'] = async (ctx, input) => {
 		);
 	}
 
-	const uploadResponse = await fetch(reservation.upload_url, {
+	const uploadResponse = await fetchSlackOwned(reservation.upload_url, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/octet-stream' },
 		body: new Uint8Array(bytes),
@@ -330,6 +330,44 @@ function isSlackOwnedUrl(rawUrl: string): boolean {
 	return false;
 }
 
+const MAX_SLACK_REDIRECTS = 3;
+
+async function fetchSlackOwned(
+	rawUrl: string,
+	init: RequestInit,
+	hops = 0,
+): Promise<Response> {
+	if (!isSlackOwnedUrl(rawUrl)) {
+		throw new SlackbotAPIError(
+			'Refusing to send credentials or file bytes to a non-Slack host',
+			'external_file_url',
+		);
+	}
+	if (hops > MAX_SLACK_REDIRECTS) {
+		throw new SlackbotAPIError(
+			'Too many redirects while contacting a Slack file host',
+			'external_file_url',
+		);
+	}
+
+	const response = await fetch(rawUrl, { ...init, redirect: 'manual' });
+	if (response.status >= 300 && response.status < 400) {
+		const location = response.headers.get('location');
+		if (!location) {
+			throw new SlackbotAPIError(
+				`Redirect from Slack file host carried no Location`,
+				'external_file_url',
+			);
+		}
+		return fetchSlackOwned(
+			new URL(location, rawUrl).toString(),
+			init,
+			hops + 1,
+		);
+	}
+	return response;
+}
+
 /**
  * Reads a response body, aborting once `maxBytes` is exceeded.
  *
@@ -406,15 +444,6 @@ export const download: SlackbotEndpoints['filesDownload'] = async (
 		);
 	}
 
-	if (!isSlackOwnedUrl(url)) {
-		throw new SlackbotAPIError(
-			`File ${input.file} points at a non-Slack host; refusing to send credentials to it`,
-			'external_file_url',
-		);
-	}
-
-	// Slack usually advertises the size up front, so an oversized file is
-	// rejected before any bytes move.
 	const declaredSize = metadata.file?.size;
 	if (typeof declaredSize === 'number' && declaredSize > maxBytes) {
 		throw new SlackbotAPIError(
@@ -423,7 +452,7 @@ export const download: SlackbotEndpoints['filesDownload'] = async (
 		);
 	}
 
-	const response = await fetch(url, {
+	const response = await fetchSlackOwned(url, {
 		headers: { Authorization: `Bearer ${ctx.key}` },
 	});
 

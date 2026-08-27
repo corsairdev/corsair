@@ -218,14 +218,14 @@ describe('files.upload', () => {
 		globalThis.fetch = originalFetch;
 	});
 
-	it('reserves a URL, PUTs the bytes, then completes the upload', async () => {
+	it('reserves a URL, POSTs the bytes, then completes the upload', async () => {
 		const fetchMock = jest.fn().mockResolvedValue({ ok: true, status: 200 });
 		globalThis.fetch = fetchMock as unknown as typeof fetch;
 
 		requestMock
 			.mockResolvedValueOnce({
 				ok: true,
-				upload_url: 'https://files.slack.test/upload/abc',
+				upload_url: 'https://files.slack.com/upload/abc',
 				file_id: 'F123',
 			})
 			.mockResolvedValueOnce({ ok: true, files: [{ id: 'F123' }] });
@@ -235,17 +235,14 @@ describe('files.upload', () => {
 			content: Buffer.from('hello slack').toString('base64'),
 		});
 
-		// Step 1 reserves an upload slot sized to the decoded payload.
 		expect(callAt(0).url).toBe('files.getUploadURLExternal');
 		expect(callAt(0).query?.length).toBe('hello slack'.length);
 
-		// Step 2 sends the bytes to the returned storage URL, not the Slack API.
 		expect(fetchMock).toHaveBeenCalledWith(
-			'https://files.slack.test/upload/abc',
+			'https://files.slack.com/upload/abc',
 			expect.objectContaining({ method: 'POST' }),
 		);
 
-		// Step 3 finalises against the reserved file id.
 		expect(callAt(1).url).toBe('files.completeUploadExternal');
 		expect(result.files?.[0]?.id).toBe('F123');
 	});
@@ -258,20 +255,35 @@ describe('files.upload', () => {
 		).rejects.toThrow(SlackbotAPIError);
 	});
 
-	it('raises when the storage PUT fails', async () => {
+	it('raises when the storage POST fails', async () => {
 		globalThis.fetch = jest
 			.fn()
 			.mockResolvedValue({ ok: false, status: 500 }) as unknown as typeof fetch;
 
 		requestMock.mockResolvedValueOnce({
 			ok: true,
-			upload_url: 'https://files.slack.test/upload/abc',
+			upload_url: 'https://files.slack.com/upload/abc',
 			file_id: 'F123',
 		});
 
 		await expect(
 			Files.upload(makeCtx(), { filename: 'a.txt', content: 'eA==' }),
 		).rejects.toMatchObject({ code: 'upload_failed' });
+	});
+
+	it('refuses to POST bytes to a non-Slack upload host', async () => {
+		const fetchMock = jest.fn();
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		requestMock.mockResolvedValueOnce({
+			ok: true,
+			upload_url: 'https://evil.example.com/upload',
+			file_id: 'F123',
+		});
+
+		await expect(
+			Files.upload(makeCtx(), { filename: 'a.txt', content: 'eA==' }),
+		).rejects.toMatchObject({ code: 'external_file_url' });
+		expect(fetchMock).not.toHaveBeenCalled();
 	});
 });
 
@@ -364,6 +376,12 @@ describe('retry ownership', () => {
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(err);
 		expect(result.maxRetries).toBeGreaterThan(0);
 	});
+
+	it('does not treat an arbitrary 429 substring as a rate limit', () => {
+		expect(
+			errorHandlers.RATE_LIMIT_ERROR.match(new Error('missing file F429')),
+		).toBe(false);
+	});
 });
 
 describe('files.upload reservation contract', () => {
@@ -379,7 +397,7 @@ describe('files.upload reservation contract', () => {
 		requestMock
 			.mockResolvedValueOnce({
 				ok: true,
-				upload_url: 'https://files.slack.test/upload/abc',
+				upload_url: 'https://files.slack.com/upload/abc',
 				file_id: 'F123',
 			})
 			.mockResolvedValueOnce({ ok: true, files: [{ id: 'F123' }] });
@@ -481,7 +499,58 @@ describe('files.download credential safety', () => {
 			'https://files.slack.com/files-pri/T1-F1/x.txt',
 			expect.objectContaining({
 				headers: { Authorization: 'Bearer xoxb-test-token' },
+				redirect: 'manual',
 			}),
+		);
+		expect(Buffer.from(result.content, 'base64').toString()).toBe('ok');
+	});
+
+	it('does not follow a redirect off Slack with the bot token', async () => {
+		const fetchMock = jest.fn().mockResolvedValue({
+			ok: false,
+			status: 302,
+			headers: new Map([['location', 'https://evil.example.com/steal']]),
+			body: null,
+		});
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		withFileUrl('https://files.slack.com/files-pri/T1-F1/x.txt');
+
+		await expect(
+			Files.download(makeCtx(), { file: 'F1' }),
+		).rejects.toMatchObject({ code: 'external_file_url' });
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+		expect(fetchMock.mock.calls[0]?.[0]).toBe(
+			'https://files.slack.com/files-pri/T1-F1/x.txt',
+		);
+	});
+
+	it('follows a redirect that stays on a Slack host', async () => {
+		const body = Buffer.from('ok');
+		const fetchMock = jest
+			.fn()
+			.mockResolvedValueOnce({
+				ok: false,
+				status: 302,
+				headers: new Map([
+					['location', 'https://files.slack.com/files-pri/T1-F1/real.txt'],
+				]),
+				body: null,
+			})
+			.mockResolvedValueOnce({
+				ok: true,
+				status: 200,
+				headers: new Map([['content-type', 'text/plain']]),
+				body: null,
+				arrayBuffer: async () => body,
+			});
+		globalThis.fetch = fetchMock as unknown as typeof fetch;
+		withFileUrl('https://files.slack.com/files-pri/T1-F1/x.txt');
+
+		const result = await Files.download(makeCtx(), { file: 'F1' });
+
+		expect(fetchMock).toHaveBeenCalledTimes(2);
+		expect(fetchMock.mock.calls[1]?.[0]).toBe(
+			'https://files.slack.com/files-pri/T1-F1/real.txt',
 		);
 		expect(Buffer.from(result.content, 'base64').toString()).toBe('ok');
 	});
