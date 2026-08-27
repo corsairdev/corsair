@@ -1,4 +1,4 @@
-﻿import { logEventFromContext } from 'corsair/core';
+import { logEventFromContext } from 'corsair/core';
 import { executeBorneoTool } from '../client';
 import type { BorneoEndpoints } from '../index';
 import type { BorneoOperationId, BorneoOperationName } from '../operations';
@@ -48,14 +48,14 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 			credentialPrefix: ctx.options?.credentialPrefix,
 		});
 
-		const parsed = BorneoEndpointOutputSchemas[name].parse(response);
-
 		await logEventFromContext(
 			ctx,
 			eventPath,
 			{ provider: 'composio', tool: toolSlug },
 			'completed',
 		);
+
+		const parsed = BorneoEndpointOutputSchemas[name].parse(response);
 
 		return parsed;
 	}) as BorneoEndpoints[K];
