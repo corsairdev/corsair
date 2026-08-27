@@ -244,7 +244,7 @@ export const GetAccountOutputSchema = z
 
 export const DictionarySchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		matchType: MatchTypeSchema.optional(),
 		caseInsensitive: z.boolean().optional(),
 		language: z.string().optional(),
@@ -253,7 +253,7 @@ export const DictionarySchema = z
 
 export const DictionaryEntrySchema = z
 	.object({
-		id: z.string().optional(),
+		id: z.string().min(1),
 		text: z.string().optional(),
 		data: z.record(z.string(), z.array(z.string())).optional(),
 	})
@@ -395,7 +395,7 @@ export const ListClassifierCategoriesInputSchema = z.object({
 });
 export const ClassifierCategorySchema = z
 	.object({
-		categoryId: z.string().optional(),
+		categoryId: z.string().min(1),
 		label: z.string().optional(),
 		query: z.string().optional(),
 	})

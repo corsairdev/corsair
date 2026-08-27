@@ -229,6 +229,24 @@ describe('TextRazor schemas', () => {
 				response: true,
 			}).success,
 		).toBe(false);
+		expect(
+			TextrazorEndpointOutputSchemas.listDictionaries.safeParse({
+				ok: true,
+				response: [{}],
+			}).success,
+		).toBe(false);
+		expect(
+			TextrazorEndpointOutputSchemas.listDictionaryEntries.safeParse({
+				ok: true,
+				response: [{ text: 'no-id' }],
+			}).success,
+		).toBe(false);
+		expect(
+			TextrazorEndpointOutputSchemas.listClassifierCategories.safeParse({
+				ok: true,
+				response: [{ label: 'Golf' }],
+			}).success,
+		).toBe(false);
 	});
 });
 
