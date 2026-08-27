@@ -42,6 +42,11 @@ function optionsOf(ctx: BackendlessContext): BackendlessPluginOptions {
 	return (ctx.options ?? {}) as BackendlessPluginOptions;
 }
 
+function identityPropertyOf(ctx: BackendlessContext): string {
+	const value = optionsOf(ctx).identityProperty?.trim();
+	return value || 'email';
+}
+
 async function valueFromKeyManager(
 	ctx: BackendlessContext,
 	field: string,
@@ -273,13 +278,11 @@ export const Users = {
 	register: async (ctx: BackendlessContext, input: unknown) => {
 		const value = BackendlessEndpointInputSchemas.userRegistration.parse(input);
 		const properties = value.properties ?? {};
+		const identityProperty = identityPropertyOf(ctx);
 		return (await clientFor(ctx)).call('POST', 'users.register', {
 			body: {
 				...properties,
-				email:
-					typeof properties.email === 'string'
-						? properties.email
-						: value.identity,
+				[identityProperty]: value.identity,
 				password: value.password,
 			},
 		});

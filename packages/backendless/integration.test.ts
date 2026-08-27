@@ -312,6 +312,16 @@ describe('Backendless endpoint handlers', () => {
 			email: 'alice@wonderland.com',
 			password: 'wonderland',
 		});
+		await Users.register(ctx({ identityProperty: 'login' }), {
+			identity: 'alice',
+			password: 'wonderland',
+			properties: { email: 'other@wonderland.com' },
+		});
+		expect(lastCall().body).toEqual({
+			email: 'other@wonderland.com',
+			login: 'alice',
+			password: 'wonderland',
+		});
 	});
 
 	it('logs in, validates tokens, and maps user-token', async () => {
@@ -395,12 +405,16 @@ describe('Backendless endpoint handlers', () => {
 		await Messaging.publish(ctx(), {
 			channel: 'default',
 			message: 'hello world!',
+			publishAt: '2026-08-27T09:00:00.000Z',
 		});
 		expect(lastCall()).toEqual(
 			expect.objectContaining({
 				method: 'POST',
 				url: '/api/messaging/{channel}',
-				body: expect.objectContaining({ message: 'hello world!' }),
+				body: expect.objectContaining({
+					message: 'hello world!',
+					publishAt: Date.parse('2026-08-27T09:00:00.000Z'),
+				}),
 			}),
 		);
 	});

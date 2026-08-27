@@ -25,6 +25,8 @@ export type BackendlessPluginOptions = {
 	applicationId?: string;
 	baseUrl?: string;
 	userToken?: string;
+	/** Users-table identity column. Official default is `email`. */
+	identityProperty?: string;
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: unknown;
 };
@@ -170,6 +172,10 @@ export const BackendlessEndpointInputSchemas = {
 		subtopic: z.string().trim().max(512).optional(),
 		publishAt: z
 			.union([z.iso.datetime(), z.number().int().positive()])
+			.transform((value) =>
+				typeof value === 'number' ? value : Date.parse(value),
+			)
+			.pipe(z.number().int().positive())
 			.optional(),
 	}),
 } as const;
