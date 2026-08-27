@@ -1,3 +1,4 @@
+import { WakaTimeEndpointOutputSchemas } from './endpoints/types';
 import { WakaTimeSchema } from './schema';
 
 describe('WakaTime schema', () => {
@@ -13,6 +14,20 @@ describe('WakaTime schema', () => {
 		for (const entity of Object.values(WakaTimeSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
+	});
+
+	it('validates the current user response shape', () => {
+		expect(
+			WakaTimeEndpointOutputSchemas.getCurrentUser.parse({
+				data: { id: 'user-1', email: 'user@example.com' },
+			}),
+		).toEqual({ data: { id: 'user-1', email: 'user@example.com' } });
+
+		expect(() =>
+			WakaTimeEndpointOutputSchemas.getCurrentUser.parse({
+				data: { id: 42 },
+			}),
+		).toThrow();
 	});
 });
 
