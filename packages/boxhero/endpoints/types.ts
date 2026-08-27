@@ -39,15 +39,20 @@ const LocationsGetResponseSchema = z.object({ item: BoxheroLocationEntity });
 export type LocationsGetResponse = z.infer<typeof LocationsGetResponseSchema>;
 
 const TransactionTypeSchema = z.enum(['in', 'out', 'move', 'adjust']);
-const TransactionsListInputSchema = PageInputSchema.extend({
+const TransactionsListBasicInputSchema = PageInputSchema.extend({
+	type: TransactionTypeSchema.optional(),
+});
+const TransactionsListLocationInputSchema = PageInputSchema.extend({
 	type: TransactionTypeSchema.optional(),
 });
 export type TransactionsListBasicInput = z.infer<
-	typeof TransactionsListInputSchema
+	typeof TransactionsListBasicInputSchema
 >;
-export type TransactionsListLocationInput = TransactionsListBasicInput;
+export type TransactionsListLocationInput = z.infer<
+	typeof TransactionsListLocationInputSchema
+>;
 
-const TransactionsListResponseSchema = z.object({
+export const TransactionsListResponseSchema = z.object({
 	items: z.array(BoxheroSimpleLocationTransactionEntity),
 	count: PageSizeSchema,
 	limit: PageSizeSchema,
@@ -175,8 +180,8 @@ export const BoxheroEndpointInputSchemas = {
 	locationsDelete: LocationsDeleteInputSchema,
 	locationsList: LocationsListInputSchema,
 	locationsGet: LocationsGetInputSchema,
-	transactionsListBasic: TransactionsListInputSchema,
-	transactionsListLocation: TransactionsListInputSchema,
+	transactionsListBasic: TransactionsListBasicInputSchema,
+	transactionsListLocation: TransactionsListLocationInputSchema,
 	partnersList: PartnersListInputSchema,
 	itemsDelete: ItemsDeleteInputSchema,
 	itemsGet: ItemsGetInputSchema,

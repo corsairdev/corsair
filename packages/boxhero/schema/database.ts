@@ -110,12 +110,12 @@ export type BoxheroItemEntity = z.infer<typeof BoxheroItemEntity>;
 
 const SimpleTxBase = z.object({
 	id: Id,
-	transaction_time: S,
-	created_at: S,
+	transaction_time: z.iso.datetime(),
+	created_at: z.iso.datetime(),
 	created_by: BoxheroEntity,
 	count_of_items: z.number().int(),
 	total_quantity: N,
-	url: S,
+	url: z.url(),
 	memo: S,
 	revision: z.number().int(),
 });

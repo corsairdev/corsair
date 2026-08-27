@@ -54,19 +54,21 @@ export const deleteLocation: BoxheroEndpoints['locationsDelete'] = async (
 async function listTransactions(
 	ctx: Parameters<BoxheroEndpoints['transactionsListBasic']>[0],
 	input: Parameters<BoxheroEndpoints['transactionsListBasic']>[1],
-	event: 'boxhero.transactions.listBasic' | 'boxhero.transactions.listLocation',
+	kind: 'transactionsListBasic' | 'transactionsListLocation',
 ) {
-	const parsed = BoxheroEndpointInputSchemas.transactionsListBasic.parse(
-		input ?? {},
-	);
+	const parsed = BoxheroEndpointInputSchemas[kind].parse(input ?? {});
 	const result = await makeBoxheroRequest('/v1/transactions', ctx.key, {
-		schema: BoxheroEndpointOutputSchemas.transactionsListBasic,
+		schema: BoxheroEndpointOutputSchemas[kind],
 		query: compactQuery({
 			type: parsed.type,
 			cursor: parsed.cursor,
 			limit: parsed.limit,
 		}),
 	});
+	const event =
+		kind === 'transactionsListBasic'
+			? 'boxhero.transactions.listBasic'
+			: 'boxhero.transactions.listLocation';
 	await logEventFromContext(ctx, event, parsed, 'completed');
 	return result;
 }
@@ -74,15 +76,15 @@ async function listTransactions(
 export const listBasic: BoxheroEndpoints['transactionsListBasic'] = async (
 	ctx,
 	input,
-) => listTransactions(ctx, input, 'boxhero.transactions.listBasic');
+) => listTransactions(ctx, input, 'transactionsListBasic');
 
 /**
- * BoxHero has no `/v1/location-txs` route. Location-mode history is
- * `GET /v1/transactions` (Open API requires LOCATION mode).
+ * Location-mode history is `GET /v1/transactions`. Open API has no mode
+ * query; LOCATION is the linked team's `mode = 2`.
  */
 export const listLocation: BoxheroEndpoints['transactionsListLocation'] =
 	async (ctx, input) =>
-		listTransactions(ctx, input, 'boxhero.transactions.listLocation');
+		listTransactions(ctx, input, 'transactionsListLocation');
 
 export const listPartners: BoxheroEndpoints['partnersList'] = async (
 	ctx,

@@ -3,6 +3,7 @@
  * https://rest.boxhero-app.com/docs/spec
  */
 
+import { TransactionsListResponseSchema } from './endpoints/types';
 import { BoxheroSchema } from './schema';
 import {
 	BoxheroAttrEntity,
@@ -115,5 +116,47 @@ describe('BoxHero schema', () => {
 				quantities: [],
 			}).success,
 		).toBe(true);
+	});
+
+	it('rejects transaction list pages with bad dates or URLs', () => {
+		const valid = {
+			id: 5,
+			type: 'in' as const,
+			to_location: { id: 10, name: 'Warehouse', deleted: false },
+			transaction_time: '2026-01-16T11:00:00.000Z',
+			created_at: '2026-01-16T11:00:00.000Z',
+			created_by: { id: 1001, name: 'Pat', deleted: false },
+			count_of_items: 1,
+			total_quantity: 1,
+			url: 'https://app.boxhero-app.com/transactions/5',
+			memo: '',
+			revision: 1,
+		};
+		const page = {
+			items: [valid],
+			count: 1,
+			limit: 100,
+			cursor: null,
+			has_more: false,
+		};
+		expect(TransactionsListResponseSchema.safeParse(page).success).toBe(true);
+		expect(
+			TransactionsListResponseSchema.safeParse({
+				...page,
+				items: [{ ...valid, transaction_time: '16 Jan 2026' }],
+			}).success,
+		).toBe(false);
+		expect(
+			TransactionsListResponseSchema.safeParse({
+				...page,
+				items: [{ ...valid, created_at: 'not-a-date' }],
+			}).success,
+		).toBe(false);
+		expect(
+			TransactionsListResponseSchema.safeParse({
+				...page,
+				items: [{ ...valid, url: 'not-a-uri' }],
+			}).success,
+		).toBe(false);
 	});
 });
