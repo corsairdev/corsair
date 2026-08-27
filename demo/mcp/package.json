@@ -19,6 +19,7 @@
     "@corsair-dev/mcp": "workspace:*",
     "@corsair-dev/slack": "workspace:^",
     "@openai/agents": "^0.6.0",
+    "@types/express": "^5.0.6",
     "better-sqlite3": "^11.0.0",
     "corsair": "workspace:*",
     "dotenv": "^16.4.0",
@@ -28,7 +29,6 @@
   },
   "devDependencies": {
     "@types/better-sqlite3": "^7.6.0",
-    "@types/express": "^5.0.6",
     "@types/node": "^22.0.0",
     "typescript": "^5.8.0"
   }
