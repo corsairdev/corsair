@@ -65,7 +65,9 @@ export const BaseProviders = [
 	'basecamp',
 	'baselinker',
 	'basin',
+	'beeminder',
 	'betterstack',
+	'bigdatacloud',
 	'bigmailer',
 	'bigml',
 	'bitbucket',
@@ -76,6 +78,7 @@ export const BaseProviders = [
 	'botpress',
 	'bouncer',
 	'box',
+	'browseai',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -137,6 +140,7 @@ export const BaseProviders = [
 	'insightoai',
 	'instagram',
 	'intercom',
+	'jigsawstack',
 	'jira',
 	'kaggle',
 	'linear',
@@ -180,6 +184,7 @@ export const BaseProviders = [
 	'tavilymcp',
 	'teams',
 	'telegram',
+	'ticktick',
 	'tisane',
 	'todoist',
 	'toggl',
@@ -195,6 +200,7 @@ export const BaseProviders = [
 	'vapi',
 	'vercel',
 	'webflow',
+	'webvizio',
 	'whatsapp',
 	'witai',
 	'wiza',
@@ -261,7 +267,9 @@ export const ProviderDisplayNames = {
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
+	beeminder: 'Beeminder',
 	betterstack: 'Better Stack',
+	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
 	bitbucket: 'Bitbucket',
@@ -272,6 +280,7 @@ export const ProviderDisplayNames = {
 	botpress: 'Botpress',
 	bouncer: 'Bouncer',
 	box: 'Box',
+	browseai: 'Browse AI',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -333,6 +342,7 @@ export const ProviderDisplayNames = {
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
+	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
 	linear: 'Linear',
@@ -376,6 +386,7 @@ export const ProviderDisplayNames = {
 	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
+	ticktick: 'TickTick',
 	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
@@ -391,6 +402,7 @@ export const ProviderDisplayNames = {
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	webflow: 'Webflow',
+	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
 	wiza: 'Wiza',
@@ -464,7 +476,9 @@ export type AllProviders =
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
+	| 'beeminder'
 	| 'betterstack'
+	| 'bigdatacloud'
 	| 'bigmailer'
 	| 'bigml'
 	| 'bitbucket'
@@ -475,6 +489,7 @@ export type AllProviders =
 	| 'botpress'
 	| 'bouncer'
 	| 'box'
+	| 'browseai'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
@@ -536,6 +551,7 @@ export type AllProviders =
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
+	| 'jigsawstack'
 	| 'jira'
 	| 'kaggle'
 	| 'linear'
@@ -579,6 +595,7 @@ export type AllProviders =
 	| 'tavilymcp'
 	| 'teams'
 	| 'telegram'
+	| 'ticktick'
 	| 'tisane'
 	| 'todoist'
 	| 'toggl'
@@ -594,6 +611,7 @@ export type AllProviders =
 	| 'vapi'
 	| 'vercel'
 	| 'webflow'
+	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
 	| 'wiza'
