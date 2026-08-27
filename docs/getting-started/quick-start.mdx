@@ -7,11 +7,7 @@ import { GenerateKEK } from '/snippets/generate-kek.mdx';
 import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
 import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
 
-The quickest path to a working integration is **Hub**. It hosts the OAuth connect, approval, and webhook surfaces, so there are no connect pages, callback routes, or per-environment redirect URIs to build. Credentials are still encrypted and stored in your own database. Hub stores none.
-
-<Note>
-Want to host those surfaces yourself instead? Every step below is the same; swap the `hub` block for `manual`. See [Manual or Hub](/hub/manual-vs-hub).
-</Note>
+Hub hosts the OAuth connect, approval, and webhook surfaces, so there are no connect pages, callback routes, or per-environment redirect URIs to build. Credentials are encrypted and stored in your own database. Hub stores none.
 
 <Steps>
 

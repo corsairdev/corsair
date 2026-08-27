@@ -4,30 +4,28 @@ description: The open-source integration layer for agents and apps. Connect anyt
 mode: "wide"
 ---
 
-Every integration begins the same way, and you already know the steps. Read the provider's OAuth docs. Build a connect page. Register a redirect URI, one for localhost and a different one for production. Store the tokens. Refresh them before they expire. Stand up a webhook receiver. Back off when you hit the rate limit. Then you do the whole thing again for the next service, and the one after that. It is the work nobody demos and everybody rebuilds.
+Corsair is an open-source integration layer. Every service is a plugin: install it, get a typed client in your code and a tool your agent can call. One pattern whether you have one integration or fifty.
 
-Corsair is where that work goes to disappear. Every service is a **plugin**. Install the ones you need, and each becomes a fully typed client in the code you write and a tool your agent can call on its own. The OAuth dance, the token refresh, the webhooks, and the rate limits are handled, the same way for the fiftieth integration as for the first. You write the part that's actually yours; Corsair carries the wiring you've already built a hundred times.
+It's built on a REST API, so the same layer works for agents, backend services, and dashboards your customers use.
 
-One pattern covers a single integration or fifty. There are no per-service SDKs to learn and no glue code to keep alive as providers change their APIs underneath you.
+## Hub
 
-## One prompt, every integration
+OAuth callbacks, connect pages, and approval screens need a public URL. [Hub](/hub/overview) hosts them. Same SDK, one config block. Tokens pass through and land encrypted in your database. Hub stores none.
 
-Typed clients are for the code you write. The other half is for the code your agent writes on the fly. Hand an agent the Corsair tools and a single instruction can reach across every plugin you installed:
+## Developer experience
 
-> Invite Jim to next Thursday's sales call. Message him on Slack too so he can accept, and let me know the moment he does.
+**Local dev.** A built-in dev tunnel gives your local handler a scoped public URL. OAuth and webhooks behave like production, without ngrok.
 
-Calendar, Slack, and a trigger waiting on his reply. Three services, one sentence. The agent discovers what's connected and calls it. You never wrote a line that mentioned any of them by name.
+**Go live.** Swap dev Hub keys for production keys and register your delivery URL. Same code, same credentials. See [Development and Production](/hub/environments).
 
-## Corsair Hub
+## Your users' experience
 
-A few of these surfaces can't live entirely inside your app. An OAuth callback needs a stable public URL for the provider to redirect to. A connect page has to be reachable before your user is signed in. An approval link has to open somewhere.
+When an action needs a connection they haven't made yet, Corsair mints an auth link on the fly. They sign into Gmail when they first need Gmail, not upfront on a settings page with a dozen OAuth buttons.
 
-Corsair Hub hosts exactly those surfaces, and nothing more. It's the same Corsair instance with one block of config, not a second SDK or a separate product. Turn it on and the connect page, the OAuth callbacks, and the approval screens are handled for you, so there is nothing public to build or deploy.
-
-**Hub stores none of your credentials.** Tokens pass through the relay and are persisted only in your own database, encrypted with your own key. Compromise the relay and there is nothing there to take. The secrets were never sitting on it. You skip the connect-page boilerplate without handing anyone your users' access tokens.
+See [Connect / OAuth](/management/connect) for `createLink()`.
 
 <Tip>
-In a hurry? Hand it to your coding agent. [Set up with your agent](/getting-started/set-up-with-your-agent) is one prompt that wires Corsair end to end, install, route, keys, and a real connected integration, without you touching the config.
+In a hurry? [Set up with your agent](/getting-started/set-up-with-your-agent) is one prompt that wires Corsair end to end.
 </Tip>
 
 ## Get started
