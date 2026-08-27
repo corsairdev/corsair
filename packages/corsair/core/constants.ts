@@ -184,6 +184,7 @@ export const BaseProviders = [
 	'tavilymcp',
 	'teams',
 	'telegram',
+	'ticktick',
 	'todoist',
 	'toggl',
 	'trello',
@@ -384,6 +385,7 @@ export const ProviderDisplayNames = {
 	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
+	ticktick: 'TickTick',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -591,6 +593,7 @@ export type AllProviders =
 	| 'tavilymcp'
 	| 'teams'
 	| 'telegram'
+	| 'ticktick'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
