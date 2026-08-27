@@ -1,14 +1,26 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class BonsaiAPIError extends Error {
+	public readonly status?: number;
+	public readonly statusText?: string;
+	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+
 	constructor(
 		message: string,
 		public readonly code?: string,
+		options?: { cause?: Error },
 	) {
-		super(message);
+		super(message, options);
 		this.name = 'BonsaiAPIError';
+
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+		}
 	}
 }
 
@@ -24,7 +36,37 @@ export async function makeBonsaiRequest<T>(
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
-	const credentials = JSON.parse(credentialsString) as { apiKey: string; apiSecret: string };
+	let credentials: { apiKey: string; apiSecret: string };
+
+	// Parse JSON credentials string
+	try {
+		const parsed = JSON.parse(credentialsString);
+		if (
+			parsed &&
+			typeof parsed === 'object' &&
+			typeof parsed.apiKey === 'string' &&
+			typeof parsed.apiSecret === 'string'
+		) {
+			// Validate that both credentials are non-empty
+			if (!parsed.apiKey || !parsed.apiSecret) {
+				throw new Error('API key and secret must not be empty');
+			}
+			credentials = { apiKey: parsed.apiKey, apiSecret: parsed.apiSecret };
+		} else {
+			throw new Error('Invalid credentials format');
+		}
+	} catch (error) {
+		// If parsing fails or validation fails, reject incomplete credentials
+		if (
+			error instanceof Error &&
+			error.message === 'API key and secret must not be empty'
+		) {
+			throw error;
+		}
+		throw new Error(
+			'Invalid Bonsai credentials: both api_key and api_secret are required',
+		);
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: BONSAI_API_BASE,
@@ -52,8 +94,13 @@ export async function makeBonsaiRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error instanceof ApiError) {
+			throw new BonsaiAPIError(error.message, String(error.status), {
+				cause: error,
+			});
+		}
 		if (error instanceof Error) {
-			throw new BonsaiAPIError(error.message);
+			throw new BonsaiAPIError(error.message, undefined, { cause: error });
 		}
 		throw new BonsaiAPIError('Unknown error');
 	}

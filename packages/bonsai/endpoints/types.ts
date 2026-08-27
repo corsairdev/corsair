@@ -8,12 +8,38 @@ const ClustersGetInputSchema = z.object({
 export type ClustersGetInput = z.infer<typeof ClustersGetInputSchema>;
 
 const ClustersGetResponseSchema = z.object({
-	slug: z.string(),
-	name: z.string(),
-	plan: z.string(),
-	region: z.string(),
-	status: z.string(),
-	created_at: z.string(),
+	cluster: z.object({
+		slug: z.string(),
+		name: z.string(),
+		uri: z.string(),
+		plan: z.object({
+			slug: z.string(),
+			uri: z.string(),
+		}),
+		release: z.object({
+			version: z.string(),
+			slug: z.string(),
+			package_name: z.string(),
+			service_type: z.string(),
+			uri: z.string(),
+		}),
+		space: z.object({
+			path: z.string(),
+			region: z.string(),
+			uri: z.string(),
+		}),
+		stats: z.object({
+			docs: z.number(),
+			shards_used: z.number(),
+			data_bytes_used: z.number(),
+		}),
+		access: z.object({
+			host: z.string(),
+			port: z.number(),
+			scheme: z.string(),
+		}),
+		state: z.string(),
+	}),
 });
 
 export type ClustersGetResponse = z.infer<typeof ClustersGetResponseSchema>;
@@ -27,9 +53,11 @@ const SpacesListResponseSchema = z.object({
 	spaces: z.array(
 		z.object({
 			path: z.string(),
-			name: z.string(),
-			description: z.string().optional(),
-			created_at: z.string(),
+			private_network: z.boolean(),
+			cloud: z.object({
+				provider: z.string(),
+				region: z.string(),
+			}),
 		}),
 	),
 });
@@ -45,9 +73,11 @@ export type SpacesGetInput = z.infer<typeof SpacesGetInputSchema>;
 
 const SpacesGetResponseSchema = z.object({
 	path: z.string(),
-	name: z.string(),
-	description: z.string().optional(),
-	created_at: z.string(),
+	private_network: z.boolean(),
+	cloud: z.object({
+		provider: z.string(),
+		region: z.string(),
+	}),
 });
 
 export type SpacesGetResponse = z.infer<typeof SpacesGetResponseSchema>;

@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --build --force && tsup",
+    "build": "node -e \"const fs=require('fs');if(fs.existsSync('dist'))fs.rmSync('dist',{recursive:true})\" && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },

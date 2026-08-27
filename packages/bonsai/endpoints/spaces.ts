@@ -1,27 +1,37 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BonsaiEndpoints } from '..';
-import type { BonsaiEndpointOutputs } from './types';
 import { makeBonsaiRequest } from '../client';
+import type { BonsaiEndpointOutputs } from './types';
 
 export const list: BonsaiEndpoints['spacesList'] = async (ctx, input) => {
 	const response = await makeBonsaiRequest<BonsaiEndpointOutputs['spacesList']>(
-		'spaces',
+		'/spaces',
 		ctx.key,
 		{ method: 'GET' },
 	);
 
-	await logEventFromContext(ctx, 'bonsai.spaces.list', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'bonsai.spaces.list',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
 export const get: BonsaiEndpoints['spacesGet'] = async (ctx, input) => {
 	const response = await makeBonsaiRequest<BonsaiEndpointOutputs['spacesGet']>(
-		`spaces/${input.path}`,
+		`/spaces/${input.path}`,
 		ctx.key,
 		{ method: 'GET' },
 	);
 
-	await logEventFromContext(ctx, 'bonsai.spaces.get', { ...input }, 'completed');
+	await logEventFromContext(
+		ctx,
+		'bonsai.spaces.get',
+		{ ...input },
+		'completed',
+	);
 	return response;
 };
 
