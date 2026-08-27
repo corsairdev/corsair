@@ -61,11 +61,13 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'bannerbear',
 	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
 	'beeminder',
+	'bettercontact',
 	'betterstack',
 	'bigdatacloud',
 	'bigmailer',
@@ -79,6 +81,7 @@ export const BaseProviders = [
 	'bouncer',
 	'box',
 	'boxhero',
+	'brandfetch',
 	'browseai',
 	'bugsnag',
 	'cal',
@@ -179,13 +182,16 @@ export const BaseProviders = [
 	'spotify',
 	'strava',
 	'stripe',
+	'studiobyai21labs',
 	'supabase',
 	'tally',
 	'tavily',
 	'tavilymcp',
 	'teams',
 	'telegram',
+	'textrazor',
 	'ticktick',
+	'tisane',
 	'todoist',
 	'toggl',
 	'trello',
@@ -263,11 +269,13 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	bannerbear: 'Bannerbear',
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
 	beeminder: 'Beeminder',
+	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
 	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
@@ -281,6 +289,7 @@ export const ProviderDisplayNames = {
 	bouncer: 'Bouncer',
 	box: 'Box',
 	boxhero: 'BoxHero',
+	brandfetch: 'Brandfetch',
 	browseai: 'Browse AI',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
@@ -381,13 +390,16 @@ export const ProviderDisplayNames = {
 	spotify: 'Spotify',
 	strava: 'Strava',
 	stripe: 'Stripe',
+	studiobyai21labs: 'StudioByAI21Labs',
 	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
+	textrazor: 'TextRazor',
 	ticktick: 'TickTick',
+	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -472,11 +484,13 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'bannerbear'
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
 	| 'beeminder'
+	| 'bettercontact'
 	| 'betterstack'
 	| 'bigdatacloud'
 	| 'bigmailer'
@@ -490,6 +504,7 @@ export type AllProviders =
 	| 'bouncer'
 	| 'box'
 	| 'boxhero'
+	| 'brandfetch'
 	| 'browseai'
 	| 'bugsnag'
 	| 'cal'
@@ -590,13 +605,16 @@ export type AllProviders =
 	| 'spotify'
 	| 'strava'
 	| 'stripe'
+	| 'studiobyai21labs'
 	| 'supabase'
 	| 'tally'
 	| 'tavily'
 	| 'tavilymcp'
 	| 'teams'
 	| 'telegram'
+	| 'textrazor'
 	| 'ticktick'
+	| 'tisane'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
