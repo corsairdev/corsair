@@ -3,17 +3,17 @@ import {
 	buildAudioUrl,
 	etymologyTexts,
 	lookupWord,
-	resolveDictionaryReference,
+	resolveMerriamWebsterDictReference,
 } from '../client';
-import type { DictionaryEndpoints } from '../index';
-import type { DictionaryEntry, MWRawEntry } from './types';
+import type { MerriamWebsterDictEndpoints } from '../index';
+import type { MerriamWebsterDictEntry, MWRawEntry } from './types';
 import {
-	DictionaryEndpointInputSchemas,
-	DictionaryEndpointOutputSchemas,
+	MerriamWebsterDictEndpointInputSchemas,
+	MerriamWebsterDictEndpointOutputSchemas,
 	MWLookupResponseSchema,
 } from './types';
 
-function toDictionaryEntry(entry: MWRawEntry): DictionaryEntry {
+function toMerriamWebsterDictEntry(entry: MWRawEntry): MerriamWebsterDictEntry {
 	const pronunciation = entry.hwi?.prs?.[0];
 	const etymology = etymologyTexts(entry.et);
 	return {
@@ -32,10 +32,10 @@ function toDictionaryEntry(entry: MWRawEntry): DictionaryEntry {
 }
 
 async function cacheEntries(
-	ctx: Parameters<DictionaryEndpoints['wordsGet']>[0],
+	ctx: Parameters<MerriamWebsterDictEndpoints['wordsGet']>[0],
 	reference: string,
 	rawEntries: MWRawEntry[],
-	mapped: DictionaryEntry[],
+	mapped: MerriamWebsterDictEntry[],
 ): Promise<void> {
 	if (!ctx.db?.entries) {
 		return;
@@ -62,14 +62,20 @@ async function cacheEntries(
 				captured_at: new Date(),
 			});
 		} catch (error) {
-			console.warn(`[dictionary] Failed to cache entry ${entityId}:`, error);
+			console.warn(
+				`[merriamwebsterdict] Failed to cache entry ${entityId}:`,
+				error,
+			);
 		}
 	}
 }
 
-export const get: DictionaryEndpoints['wordsGet'] = async (ctx, rawInput) => {
-	const input = DictionaryEndpointInputSchemas.wordsGet.parse(rawInput);
-	const reference = resolveDictionaryReference(ctx.options.reference);
+export const get: MerriamWebsterDictEndpoints['wordsGet'] = async (
+	ctx,
+	rawInput,
+) => {
+	const input = MerriamWebsterDictEndpointInputSchemas.wordsGet.parse(rawInput);
+	const reference = resolveMerriamWebsterDictReference(ctx.options.reference);
 
 	const raw = await lookupWord(input.word, ctx.key, reference);
 	const parsed = MWLookupResponseSchema.parse(raw);
@@ -80,18 +86,18 @@ export const get: DictionaryEndpoints['wordsGet'] = async (ctx, rawInput) => {
 	const rawEntries = parsed.filter(
 		(item): item is MWRawEntry => typeof item !== 'string',
 	);
-	const entries = rawEntries.map(toDictionaryEntry);
+	const entries = rawEntries.map(toMerriamWebsterDictEntry);
 
 	await cacheEntries(ctx, reference, rawEntries, entries);
 
 	await logEventFromContext(
 		ctx,
-		'dictionary.words.get',
+		'merriamwebsterdict.words.get',
 		{ word: input.word },
 		'completed',
 	);
 
-	return DictionaryEndpointOutputSchemas.wordsGet.parse({
+	return MerriamWebsterDictEndpointOutputSchemas.wordsGet.parse({
 		found: entries.length > 0,
 		entries,
 		suggestions,

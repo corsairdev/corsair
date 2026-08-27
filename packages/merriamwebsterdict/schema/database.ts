@@ -12,7 +12,7 @@ import { z } from 'zod';
  * Intermediate (sd3): https://dictionaryapi.com/products/api-intermediate-dictionary
  * School (sd4): https://dictionaryapi.com/products/api-school-dictionary
  */
-export const DictionaryEntryEntity = z.object({
+export const MerriamWebsterDictEntryEntity = z.object({
 	/** Official `meta.id`. Unique within one data set; homographs append `:N`. */
 	id: z.string(),
 	/** Official `meta.uuid`. Universally unique identifier. */
@@ -55,4 +55,6 @@ export const DictionaryEntryEntity = z.object({
 	audioUrl: z.string().optional(),
 	captured_at: z.coerce.date(),
 });
-export type DictionaryEntryEntity = z.infer<typeof DictionaryEntryEntity>;
+export type MerriamWebsterDictEntryEntity = z.infer<
+	typeof MerriamWebsterDictEntryEntity
+>;

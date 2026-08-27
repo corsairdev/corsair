@@ -1,13 +1,13 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
-export class DictionaryAPIError extends Error {
+export class MerriamWebsterDictAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
 	) {
 		super(message);
-		this.name = 'DictionaryAPIError';
+		this.name = 'MerriamWebsterDictAPIError';
 	}
 }
 
@@ -15,21 +15,25 @@ export class DictionaryAPIError extends Error {
  * Official URL path codes for dictionary products.
  * https://www.dictionaryapi.com/api/v3/references/{reference}/json/{word}
  */
-export const DICTIONARY_REFERENCES = [
+export const MERRIAMWEBSTERDICT_REFERENCES = [
 	'collegiate',
 	'sd2',
 	'sd3',
 	'sd4',
 ] as const;
-export type DictionaryReference = (typeof DICTIONARY_REFERENCES)[number];
+export type MerriamWebsterDictReference =
+	(typeof MERRIAMWEBSTERDICT_REFERENCES)[number];
 
-export const DEFAULT_DICTIONARY_REFERENCE: DictionaryReference = 'collegiate';
+export const DEFAULT_MERRIAMWEBSTERDICT_REFERENCE: MerriamWebsterDictReference =
+	'collegiate';
 
-function isDictionaryReference(value: string): value is DictionaryReference {
-	return (DICTIONARY_REFERENCES as readonly string[]).includes(value);
+function isMerriamWebsterDictReference(
+	value: string,
+): value is MerriamWebsterDictReference {
+	return (MERRIAMWEBSTERDICT_REFERENCES as readonly string[]).includes(value);
 }
 
-function buildConfig(reference: DictionaryReference): OpenAPIConfig {
+function buildConfig(reference: MerriamWebsterDictReference): OpenAPIConfig {
 	return {
 		BASE: `https://www.dictionaryapi.com/api/v3/references/${reference}/json`,
 		VERSION: '3',
@@ -40,14 +44,14 @@ function buildConfig(reference: DictionaryReference): OpenAPIConfig {
 	};
 }
 
-export function resolveDictionaryReference(
+export function resolveMerriamWebsterDictReference(
 	value: string | undefined,
-): DictionaryReference {
+): MerriamWebsterDictReference {
 	if (value === undefined) {
-		return DEFAULT_DICTIONARY_REFERENCE;
+		return DEFAULT_MERRIAMWEBSTERDICT_REFERENCE;
 	}
-	if (!isDictionaryReference(value)) {
-		throw new DictionaryAPIError(
+	if (!isMerriamWebsterDictReference(value)) {
+		throw new MerriamWebsterDictAPIError(
 			`Unknown Merriam-Webster reference "${value}". Use collegiate, sd2, sd3, or sd4.`,
 		);
 	}
@@ -64,9 +68,9 @@ export function resolveDictionaryReference(
 export async function lookupWord(
 	word: string,
 	apiKey: string,
-	reference: string = DEFAULT_DICTIONARY_REFERENCE,
+	reference: string = DEFAULT_MERRIAMWEBSTERDICT_REFERENCE,
 ): Promise<unknown> {
-	const resolved = resolveDictionaryReference(reference);
+	const resolved = resolveMerriamWebsterDictReference(reference);
 	const requestOptions: ApiRequestOptions = {
 		method: 'GET',
 		url: `/${encodeURIComponent(word)}`,
@@ -82,13 +86,13 @@ export async function lookupWord(
 			throw error;
 		}
 		if (error instanceof Error) {
-			throw new DictionaryAPIError(error.message);
+			throw new MerriamWebsterDictAPIError(error.message);
 		}
-		throw new DictionaryAPIError('Unknown error');
+		throw new MerriamWebsterDictAPIError('Unknown error');
 	}
 
 	if (typeof body === 'string') {
-		throw new DictionaryAPIError(body);
+		throw new MerriamWebsterDictAPIError(body);
 	}
 
 	return body;

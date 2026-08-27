@@ -1,15 +1,17 @@
-import { DictionarySchema } from './schema';
-import { DictionaryEntryEntity } from './schema/database';
+import { MerriamWebsterDictSchema } from './schema';
+import { MerriamWebsterDictEntryEntity } from './schema/database';
 
-describe('Dictionary schema', () => {
+describe('MerriamWebsterDict schema', () => {
 	it('declares a semver version', () => {
-		expect(DictionarySchema.version).toMatch(/^\d+\.\d+\.\d+$/);
+		expect(MerriamWebsterDictSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
 	it('declares docs-labeled entries from official Merriam-Webster JSON', () => {
-		expect(Object.keys(DictionarySchema.entities)).toEqual(['entries']);
-		expect(typeof DictionarySchema.entities.entries.parse).toBe('function');
-		const parsed = DictionaryEntryEntity.parse({
+		expect(Object.keys(MerriamWebsterDictSchema.entities)).toEqual(['entries']);
+		expect(typeof MerriamWebsterDictSchema.entities.entries.parse).toBe(
+			'function',
+		);
+		const parsed = MerriamWebsterDictEntryEntity.parse({
 			id: 'pencil:1',
 			uuid: 'f4eb8724-7273-4f25-8dbe-297b1012e949',
 			src: 'sd2',

@@ -1,5 +1,5 @@
 {
-  "name": "@corsair-dev/dictionary",
+  "name": "@corsair-dev/merriamwebsterdict",
   "version": "0.1.0",
   "description": "Merriam-Webster Dictionary plugin for Corsair",
   "type": "module",
@@ -34,7 +34,7 @@
   },
   "keywords": [
     "corsair",
-    "dictionary",
+    "merriamwebsterdict",
     "plugin"
   ],
   "author": "",

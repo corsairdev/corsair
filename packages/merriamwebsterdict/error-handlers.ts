@@ -33,7 +33,9 @@ export const errorHandlers = {
 			return error.message.toLowerCase().includes('invalid api key');
 		},
 		handler: async (error, context) => {
-			console.warn(`[DICTIONARY:${context.operation}] Authentication failed`);
+			console.warn(
+				`[MERRIAMWEBSTERDICT:${context.operation}] Authentication failed`,
+			);
 			return { maxRetries: 0 };
 		},
 	},
@@ -41,7 +43,7 @@ export const errorHandlers = {
 		match: (_error, _context) => true,
 		handler: async (error, context) => {
 			console.error(
-				`[DICTIONARY:${context.operation}] Unhandled error: ${error.message}`,
+				`[MERRIAMWEBSTERDICT:${context.operation}] Unhandled error: ${error.message}`,
 			);
 			return { maxRetries: 0 };
 		},

@@ -54,7 +54,7 @@ const GetWordInputSchema = z.object({
 
 export type GetWordInput = z.infer<typeof GetWordInputSchema>;
 
-const DictionaryEntrySchema = z.object({
+const MerriamWebsterDictEntrySchema = z.object({
 	id: z
 		.string()
 		.describe('Official meta.id, e.g. "pencil" or "pencil:2" for homographs'),
@@ -74,11 +74,13 @@ const DictionaryEntrySchema = z.object({
 	offensive: z.boolean().describe('Official meta.offensive'),
 });
 
-export type DictionaryEntry = z.infer<typeof DictionaryEntrySchema>;
+export type MerriamWebsterDictEntry = z.infer<
+	typeof MerriamWebsterDictEntrySchema
+>;
 
 const GetWordResponseSchema = z.object({
 	found: z.boolean(),
-	entries: z.array(DictionaryEntrySchema),
+	entries: z.array(MerriamWebsterDictEntrySchema),
 	suggestions: z
 		.array(z.string())
 		.describe('Spelling suggestions when no entry matched'),
@@ -86,18 +88,18 @@ const GetWordResponseSchema = z.object({
 
 export type GetWordResponse = z.infer<typeof GetWordResponseSchema>;
 
-export type DictionaryEndpointInputs = {
+export type MerriamWebsterDictEndpointInputs = {
 	wordsGet: GetWordInput;
 };
 
-export type DictionaryEndpointOutputs = {
+export type MerriamWebsterDictEndpointOutputs = {
 	wordsGet: GetWordResponse;
 };
 
-export const DictionaryEndpointInputSchemas = {
+export const MerriamWebsterDictEndpointInputSchemas = {
 	wordsGet: GetWordInputSchema,
 } as const;
 
-export const DictionaryEndpointOutputSchemas = {
+export const MerriamWebsterDictEndpointOutputSchemas = {
 	wordsGet: GetWordResponseSchema,
 } as const;

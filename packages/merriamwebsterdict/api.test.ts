@@ -1,25 +1,25 @@
 import 'dotenv/config';
 import {
 	buildAudioUrl,
-	DictionaryAPIError,
 	lookupWord,
-	resolveDictionaryReference,
+	MerriamWebsterDictAPIError,
+	resolveMerriamWebsterDictReference,
 } from './client';
 import { Words } from './endpoints';
 import {
-	DictionaryEndpointOutputSchemas,
+	MerriamWebsterDictEndpointOutputSchemas,
 	MWLookupResponseSchema,
 } from './endpoints/types';
 
-const TEST_API_KEY = process.env.DICTIONARY_API_KEY;
-const TEST_REFERENCE = process.env.DICTIONARY_REFERENCE ?? 'collegiate';
+const TEST_API_KEY = process.env.MERRIAMWEBSTERDICT_API_KEY;
+const TEST_REFERENCE = process.env.MERRIAMWEBSTERDICT_REFERENCE ?? 'collegiate';
 
 function createTestContext(key: string) {
 	return {
 		key,
 		options: {
 			authType: 'api_key' as const,
-			reference: resolveDictionaryReference(TEST_REFERENCE),
+			reference: resolveMerriamWebsterDictReference(TEST_REFERENCE),
 		},
 		$getAccountId: async () => null,
 		db: {
@@ -28,20 +28,20 @@ function createTestContext(key: string) {
 	};
 }
 
-describe('resolveDictionaryReference', () => {
+describe('resolveMerriamWebsterDictReference', () => {
 	it('defaults to collegiate', () => {
-		expect(resolveDictionaryReference(undefined)).toBe('collegiate');
+		expect(resolveMerriamWebsterDictReference(undefined)).toBe('collegiate');
 	});
 
 	it('accepts official product path codes', () => {
-		expect(resolveDictionaryReference('sd2')).toBe('sd2');
-		expect(resolveDictionaryReference('sd3')).toBe('sd3');
-		expect(resolveDictionaryReference('sd4')).toBe('sd4');
+		expect(resolveMerriamWebsterDictReference('sd2')).toBe('sd2');
+		expect(resolveMerriamWebsterDictReference('sd3')).toBe('sd3');
+		expect(resolveMerriamWebsterDictReference('sd4')).toBe('sd4');
 	});
 
 	it('rejects unknown products', () => {
-		expect(() => resolveDictionaryReference('thesaurus')).toThrow(
-			DictionaryAPIError,
+		expect(() => resolveMerriamWebsterDictReference('thesaurus')).toThrow(
+			MerriamWebsterDictAPIError,
 		);
 	});
 });
@@ -72,7 +72,7 @@ describe('buildAudioUrl', () => {
 	});
 });
 
-describe('Dictionary Live API & Endpoint Integration Tests', () => {
+describe('MerriamWebsterDict Live API & Endpoint Integration Tests', () => {
 	const maybeTest = TEST_API_KEY ? it : it.skip;
 
 	maybeTest(
@@ -89,7 +89,8 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 		async () => {
 			const ctx = createTestContext(TEST_API_KEY!);
 			const result = await Words.get(ctx as never, { word: 'pencil' });
-			const parsed = DictionaryEndpointOutputSchemas.wordsGet.parse(result);
+			const parsed =
+				MerriamWebsterDictEndpointOutputSchemas.wordsGet.parse(result);
 
 			expect(parsed.found).toBe(true);
 			expect(parsed.entries.length).toBeGreaterThan(0);
@@ -111,7 +112,8 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 		async () => {
 			const ctx = createTestContext(TEST_API_KEY!);
 			const result = await Words.get(ctx as never, { word: 'recieve' });
-			const parsed = DictionaryEndpointOutputSchemas.wordsGet.parse(result);
+			const parsed =
+				MerriamWebsterDictEndpointOutputSchemas.wordsGet.parse(result);
 
 			expect(parsed.found).toBe(false);
 			expect(parsed.entries).toHaveLength(0);
@@ -120,11 +122,11 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 	);
 
 	maybeTest(
-		'lookupWord throws DictionaryAPIError for an invalid key',
+		'lookupWord throws MerriamWebsterDictAPIError for an invalid key',
 		async () => {
 			await expect(
 				lookupWord('hello', 'definitely-invalid-key', TEST_REFERENCE),
-			).rejects.toThrow(DictionaryAPIError);
+			).rejects.toThrow(MerriamWebsterDictAPIError);
 		},
 	);
 
@@ -136,7 +138,7 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 			}
 			await expect(
 				lookupWord('hello', TEST_API_KEY!, 'collegiate'),
-			).rejects.toThrow(DictionaryAPIError);
+			).rejects.toThrow(MerriamWebsterDictAPIError);
 		},
 	);
 });

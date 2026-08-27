@@ -1,5 +1,5 @@
 import { request } from 'corsair/http';
-import { buildAudioUrl, DictionaryAPIError } from '../client';
+import { buildAudioUrl, MerriamWebsterDictAPIError } from '../client';
 import { get } from './words';
 
 jest.mock('corsair/http', () => {
@@ -108,18 +108,18 @@ describe('Words.get (mocked Merriam-Webster responses)', () => {
 		expect(ctx.db.entries.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
-	it('surfaces an invalid API key as a DictionaryAPIError instead of a parsed result', async () => {
+	it('surfaces an invalid API key as a MerriamWebsterDictAPIError instead of a parsed result', async () => {
 		mockRequest.mockResolvedValue('Invalid API Key');
 
 		await expect(
 			get(createTestContext() as never, { word: 'pencil' }),
-		).rejects.toThrow(DictionaryAPIError);
+		).rejects.toThrow(MerriamWebsterDictAPIError);
 	});
 
 	it('rejects an unknown dictionary reference before calling the API', async () => {
 		await expect(
 			get(createTestContext('not-a-product') as never, { word: 'pencil' }),
-		).rejects.toThrow(DictionaryAPIError);
+		).rejects.toThrow(MerriamWebsterDictAPIError);
 		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });
