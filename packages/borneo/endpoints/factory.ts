@@ -1,12 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import { executeBorneoTool } from '../client';
 import type { BorneoEndpoints } from '../index';
+import { BORNEO_TOOL_RISK } from '../operation-risk';
 import type { BorneoOperationId, BorneoOperationName } from '../operations';
 import {
 	BorneoEndpointInputSchemas,
 	BorneoEndpointOutputSchemas,
 } from './types';
 
+/**
+ * Resolves the Composio project API key independently from the provider
+ * credential.
+ */
 function resolveComposioApiKey(options: { composioApiKey?: string }): string {
 	const key = options.composioApiKey?.trim();
 
@@ -19,6 +24,10 @@ function resolveComposioApiKey(options: { composioApiKey?: string }): string {
 	return key;
 }
 
+/**
+ * Creates a schema-validating Corsair endpoint for one canonical Borneo
+ * operation and forwards its safety classification to the transport.
+ */
 export function createBorneoEndpoint<K extends BorneoOperationName>(
 	name: K,
 	toolSlug: BorneoOperationId,
@@ -29,13 +38,17 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 			rawInput ?? {},
 		) as Record<string, unknown>;
 
-		// Composio's project key and the provider credential are two
-		// completely different credentials. Never fall back between them.
 		const composioApiKey = resolveComposioApiKey(ctx.options ?? {});
 
 		const providerCredential =
 			ctx.options?.borneoCredential?.trim() ||
 			(ctx as unknown as { key?: string }).key?.trim();
+
+		const callerSignal = (
+			ctx as unknown as {
+				signal?: AbortSignal;
+			}
+		).signal;
 
 		const response = await executeBorneoTool<unknown>(toolSlug, input, {
 			composioApiKey,
@@ -46,6 +59,8 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 			borneoBaseUrl: ctx.options?.baseUrl,
 			credentialHeaderName: ctx.options?.credentialHeaderName,
 			credentialPrefix: ctx.options?.credentialPrefix,
+			riskLevel: BORNEO_TOOL_RISK[toolSlug],
+			signal: callerSignal,
 		});
 
 		await logEventFromContext(

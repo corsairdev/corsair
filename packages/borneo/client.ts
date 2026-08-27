@@ -1,10 +1,12 @@
 import type { ApiRequestOptions } from 'corsair/http';
 import { ApiError } from 'corsair/http';
+import type { BorneoRiskLevel } from './operation-risk';
 import { BORNEO_TOOLKIT_VERSION } from './operations';
 
 const DEFAULT_COMPOSIO_API_BASE_URL = 'https://backend.composio.dev/api/v3';
+const DEFAULT_REQUEST_TIMEOUT_MS = 20_000;
 
-const MAX_RETRIES = 5;
+const MAX_READ_RETRIES = 5;
 const INITIAL_RETRY_DELAY_MS = 1000;
 const BACKOFF_MULTIPLIER = 2;
 
@@ -17,27 +19,44 @@ export type BorneoExecutionOptions = {
 	borneoBaseUrl?: string;
 	credentialHeaderName?: string;
 	credentialPrefix?: string;
+	riskLevel?: BorneoRiskLevel;
+	timeoutMs?: number;
+	signal?: AbortSignal;
 };
 
-export function normalizeComposioBaseUrl(
-	value = DEFAULT_COMPOSIO_API_BASE_URL,
-): string {
+/**
+ * Validates and normalizes an absolute HTTPS base URL.
+ */
+function normalizeHttpsBaseUrl(value: string, optionName: string): string {
 	const trimmed = value.trim().replace(/\/+$/, '');
 	let parsed: URL;
 
 	try {
 		parsed = new URL(trimmed);
 	} catch {
-		throw new Error('[borneo] composioBaseUrl must be an absolute HTTPS URL');
+		throw new Error(`[borneo] ${optionName} must be an absolute HTTPS URL`);
 	}
 
 	if (parsed.protocol !== 'https:') {
-		throw new Error('[borneo] composioBaseUrl must use https');
+		throw new Error(`[borneo] ${optionName} must use https`);
 	}
 
 	return trimmed;
 }
 
+/**
+ * Normalizes the Composio API base URL and rejects non-HTTPS endpoints.
+ */
+export function normalizeComposioBaseUrl(
+	value = DEFAULT_COMPOSIO_API_BASE_URL,
+): string {
+	return normalizeHttpsBaseUrl(value, 'composioBaseUrl');
+}
+
+/**
+ * Builds Composio custom-auth parameters without confusing the provider
+ * credential with the Composio project API key.
+ */
 function buildCustomAuthParams(options: BorneoExecutionOptions) {
 	if (options.connectedAccountId) return undefined;
 
@@ -65,16 +84,25 @@ function buildCustomAuthParams(options: BorneoExecutionOptions) {
 		],
 		...(options.borneoBaseUrl
 			? {
-					base_url: options.borneoBaseUrl.trim().replace(/\/+$/, ''),
+					base_url: normalizeHttpsBaseUrl(
+						options.borneoBaseUrl,
+						'borneoBaseUrl',
+					),
 				}
 			: {}),
 	};
 }
 
+/**
+ * Suspends execution for the requested backoff interval.
+ */
 function sleep(ms: number): Promise<void> {
 	return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+/**
+ * Converts Retry-After response headers to milliseconds.
+ */
 function parseRetryAfterMs(response: Response): number | undefined {
 	const value = response.headers.get('Retry-After');
 
@@ -93,6 +121,10 @@ function parseRetryAfterMs(response: Response): number | undefined {
 	return Math.max(0, date - Date.now());
 }
 
+/**
+ * Reads JSON/problem+json responses as structured data and other responses
+ * as text.
+ */
 async function readResponseBody(response: Response): Promise<unknown> {
 	if (response.status === 204) return undefined;
 
@@ -108,6 +140,27 @@ async function readResponseBody(response: Response): Promise<unknown> {
 	return await response.text();
 }
 
+/**
+ * Removes provider custom-auth secrets before request metadata is attached
+ * to ApiError instances.
+ */
+function redactRequestBody(
+	body: Record<string, unknown>,
+): Record<string, unknown> {
+	if (!('custom_auth_params' in body)) {
+		return { ...body };
+	}
+
+	return {
+		...body,
+		custom_auth_params: '[REDACTED]',
+	};
+}
+
+/**
+ * Creates an ApiError compatible with Corsair's existing Borneo error handlers
+ * without persisting provider credentials in its request metadata.
+ */
 function createApiError(
 	requestOptions: ApiRequestOptions,
 	url: string,
@@ -141,6 +194,43 @@ function createApiError(
 	);
 }
 
+/**
+ * Validates the configured request timeout.
+ */
+function resolveTimeoutMs(timeoutMs?: number): number {
+	const value = timeoutMs ?? DEFAULT_REQUEST_TIMEOUT_MS;
+
+	if (!Number.isFinite(value) || value <= 0) {
+		throw new Error('[borneo] timeoutMs must be a positive finite number');
+	}
+
+	return value;
+}
+
+/**
+ * Combines the optional caller cancellation signal with a finite deadline.
+ */
+function createRequestSignal(
+	timeoutMs: number,
+	callerSignal?: AbortSignal,
+): AbortSignal {
+	const timeoutSignal = AbortSignal.timeout(timeoutMs);
+
+	return callerSignal
+		? AbortSignal.any([callerSignal, timeoutSignal])
+		: timeoutSignal;
+}
+
+/**
+ * Executes one canonical Borneo toolkit operation through Composio.
+ *
+ * Read-only operations may retry HTTP 429 responses. Write and destructive
+ * operations are never automatically retried because a rate-limit response
+ * does not prove that the upstream side effect was not already committed.
+ *
+ * Credential-bearing redirects are rejected, every request has a bounded
+ * deadline, and caller cancellation is propagated when supplied.
+ */
 export async function executeBorneoTool<T>(
 	toolSlug: string,
 	arguments_: Record<string, unknown>,
@@ -152,6 +242,7 @@ export async function executeBorneoTool<T>(
 
 	const base = normalizeComposioBaseUrl(options.composioBaseUrl);
 	const url = `${base}/tools/execute/${encodeURIComponent(toolSlug)}`;
+	const timeoutMs = resolveTimeoutMs(options.timeoutMs);
 
 	const body: Record<string, unknown> = {
 		arguments: arguments_,
@@ -175,11 +266,14 @@ export async function executeBorneoTool<T>(
 	const requestOptions: ApiRequestOptions = {
 		method: 'POST',
 		url: `/tools/execute/${encodeURIComponent(toolSlug)}`,
-		body,
+		body: redactRequestBody(body),
 		mediaType: 'application/json; charset=utf-8',
 	};
 
-	for (let attempt = 0; attempt <= MAX_RETRIES; attempt += 1) {
+	const riskLevel = options.riskLevel ?? 'write';
+	const maxRetries = riskLevel === 'read' ? MAX_READ_RETRIES : 0;
+
+	for (let attempt = 0; attempt <= maxRetries; attempt += 1) {
 		const response = await fetch(url, {
 			method: 'POST',
 			headers: {
@@ -188,11 +282,8 @@ export async function executeBorneoTool<T>(
 				'x-api-key': options.composioApiKey,
 			},
 			body: JSON.stringify(body),
-
-			// Credential-bearing requests must never follow a redirect.
-			// This prevents x-api-key or custom auth data from being
-			// forwarded to another origin.
 			redirect: 'error',
+			signal: createRequestSignal(timeoutMs, options.signal),
 		});
 
 		const responseBody = await readResponseBody(response);
@@ -203,7 +294,11 @@ export async function executeBorneoTool<T>(
 
 		const retryAfterMs = parseRetryAfterMs(response);
 
-		if (response.status === 429 && attempt < MAX_RETRIES) {
+		if (
+			response.status === 429 &&
+			riskLevel === 'read' &&
+			attempt < maxRetries
+		) {
 			const delay =
 				retryAfterMs ?? INITIAL_RETRY_DELAY_MS * BACKOFF_MULTIPLIER ** attempt;
 

@@ -1371,6 +1371,12 @@ export type InternalBorneoPlugin = BaseBorneoPlugin<BorneoPluginOptions>;
 export type ExternalBorneoPlugin<T extends BorneoPluginOptions> =
 	BaseBorneoPlugin<T>;
 
+/**
+ * Creates a configured Borneo Corsair plugin.
+ *
+ * Provider credentials remain separate from the Composio project API key,
+ * while endpoint metadata supplies the operation safety classification.
+ */
 export function borneo<const T extends BorneoPluginOptions>(
 	incomingOptions: BorneoPluginOptions & T = {} as BorneoPluginOptions & T,
 ): ExternalBorneoPlugin<T> {
