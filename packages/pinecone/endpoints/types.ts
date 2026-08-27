@@ -250,6 +250,12 @@ const DescribeIndexStatsInputSchema = IndexHostSchema.extend({
 const NamespaceNameInputSchema = IndexHostSchema.extend({
 	namespace: z.string(),
 });
+const NamespaceMetadataSchema = z.object({
+	fields: z.record(z.string(), z.object({ filterable: z.boolean() }).loose()),
+});
+const CreateNamespaceInputSchema = NamespaceNameInputSchema.extend({
+	schema: NamespaceMetadataSchema.optional(),
+});
 const ListNamespacesInputSchema = IndexHostSchema.extend({
 	limit: PositiveLimit.optional(),
 	paginationToken: z.string().optional(),
@@ -453,7 +459,7 @@ export const PineconeEndpointInputSchemas = {
 	listVectors: ListVectorsInputSchema,
 	describeIndexStats: DescribeIndexStatsInputSchema,
 	listNamespaces: ListNamespacesInputSchema,
-	createNamespace: NamespaceNameInputSchema,
+	createNamespace: CreateNamespaceInputSchema,
 	describeNamespace: NamespaceNameInputSchema,
 	deleteNamespace: NamespaceNameInputSchema,
 	listBulkImports: ListImportsInputSchema,
@@ -620,7 +626,13 @@ export const PineconeEndpointOutputSchemas = {
 } as const;
 
 export type PineconeEndpointInputs = {
-	[K in keyof typeof PineconeEndpointInputSchemas]: z.infer<
+	[K in keyof typeof PineconeEndpointInputSchemas]: z.input<
+		(typeof PineconeEndpointInputSchemas)[K]
+	>;
+};
+
+export type PineconeEndpointParsedInputs = {
+	[K in keyof typeof PineconeEndpointInputSchemas]: z.output<
 		(typeof PineconeEndpointInputSchemas)[K]
 	>;
 };

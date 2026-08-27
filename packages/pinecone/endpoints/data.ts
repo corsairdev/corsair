@@ -75,7 +75,7 @@ export const createNamespace = definePineconeEndpoint('createNamespace', {
 	...indexSurface,
 	method: 'POST',
 	path: () => '/namespaces',
-	body: ({ namespace }) => ({ name: namespace }),
+	body: ({ namespace, schema }) => ({ name: namespace, schema }),
 });
 
 export const describeNamespace = definePineconeEndpoint('describeNamespace', {

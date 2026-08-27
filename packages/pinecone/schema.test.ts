@@ -6,13 +6,8 @@ describe('Pinecone schema', () => {
 		expect(PineconeSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof PineconeSchema.entities).toBe('object');
-		expect(PineconeSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(PineconeSchema.entities))).toBe(true);
-		for (const entity of Object.values(PineconeSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares no local entities for the remote service integration', () => {
+		expect(PineconeSchema.entities).toEqual({});
 	});
 });
 

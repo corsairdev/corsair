@@ -23,9 +23,11 @@ const documents = [
 const queryText =
 	'How does this integration protect credentials when it calls a Pinecone index?';
 
+/** Pauses polling without blocking the process event loop. */
 const sleep = (milliseconds: number) =>
 	new Promise((resolve) => setTimeout(resolve, milliseconds));
 
+/** Extracts and validates dense vectors returned by the inference endpoint. */
 function denseVectors(data: Array<Record<string, unknown>>): number[][] {
 	return data.map((entry, index) => {
 		const values = entry.values;
@@ -40,6 +42,7 @@ function denseVectors(data: Array<Record<string, unknown>>): number[][] {
 	});
 }
 
+/** Runs a disposable end-to-end Pinecone integration demonstration. */
 async function main() {
 	const apiKey = process.env.PINECONE_API_KEY?.trim();
 	if (!apiKey) {

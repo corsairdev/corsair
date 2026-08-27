@@ -11,6 +11,7 @@ type QueuedResponse = {
 	headers?: Record<string, string>;
 };
 
+/** Installs a deterministic fetch double and captures outgoing requests. */
 export function installFetchHarness() {
 	const originalFetch = global.fetch;
 	const requests: CapturedRequest[] = [];
@@ -25,11 +26,17 @@ export function installFetchHarness() {
 
 		let body: unknown;
 		if (typeof init?.body === 'string') {
-			try {
-				body = JSON.parse(init.body);
-			} catch {
+			if (headers['content-type'] === 'application/x-ndjson') {
 				body = init.body;
+			} else {
+				try {
+					body = JSON.parse(init.body);
+				} catch {
+					body = init.body;
+				}
 			}
+		} else {
+			body = init?.body;
 		}
 
 		requests.push({

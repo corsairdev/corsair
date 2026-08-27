@@ -16,6 +16,7 @@ export type PineconeSurface =
 
 type QueryValue = string | number | boolean | readonly string[] | undefined;
 
+/** Represents client-side validation and transport failures for Pinecone. */
 export class PineconeAPIError extends Error {
 	constructor(
 		message: string,
@@ -67,6 +68,7 @@ export function normalizePineconeHost(host: string): string {
 	return parsed.origin;
 }
 
+/** Resolves a Pinecone API surface to its fixed or validated dynamic base URL. */
 function resolveBase(surface: PineconeSurface, host?: string): string {
 	switch (surface) {
 		case 'control':
@@ -85,6 +87,7 @@ function resolveBase(surface: PineconeSurface, host?: string): string {
 	}
 }
 
+/** Sends a version-pinned request and validates the provider response. */
 export async function makePineconeRequest<T>(
 	endpoint: string,
 	apiKey: string,

@@ -30,6 +30,12 @@ const cases = [
 			metric: 'cosine',
 			spec: { serverless: { cloud: 'aws', region: 'us-east-1' } },
 		},
+		expectedBody: {
+			name: 'docs-index',
+			dimension: 8,
+			metric: 'cosine',
+			spec: { serverless: { cloud: 'aws', region: 'us-east-1' } },
+		},
 		response: { name: 'docs-index', host: 'docs-index.svc.pinecone.io' },
 	},
 	{
@@ -37,6 +43,15 @@ const cases = [
 		method: 'POST',
 		path: '/indexes/create-for-model',
 		input: {
+			name: 'integrated-index',
+			cloud: 'aws',
+			region: 'us-east-1',
+			embed: {
+				model: 'llama-text-embed-v2',
+				field_map: { text: 'chunk_text' },
+			},
+		},
+		expectedBody: {
 			name: 'integrated-index',
 			cloud: 'aws',
 			region: 'us-east-1',
@@ -66,6 +81,7 @@ const cases = [
 		method: 'PATCH',
 		path: '/indexes/docs-index',
 		input: { indexName: 'docs-index', deletion_protection: 'enabled' },
+		expectedBody: { deletion_protection: 'enabled' },
 		response: { name: 'docs-index', deletion_protection: 'enabled' },
 	},
 	{
@@ -80,6 +96,7 @@ const cases = [
 		method: 'POST',
 		path: '/indexes/docs-index/backups',
 		input: { indexName: 'docs-index', name: 'nightly' },
+		expectedBody: { name: 'nightly' },
 		response: { backup_id: 'backup-1', name: 'nightly' },
 	},
 	{
@@ -115,6 +132,7 @@ const cases = [
 		method: 'POST',
 		path: '/backups/backup-1/create-index',
 		input: { backupId: 'backup-1', name: 'restored-index' },
+		expectedBody: { name: 'restored-index' },
 		response: { restore_job_id: 'restore-1' },
 	},
 	{
@@ -143,6 +161,10 @@ const cases = [
 		method: 'POST',
 		path: '/embed',
 		input: { model: 'llama-text-embed-v2', inputs: [{ text: 'Corsair' }] },
+		expectedBody: {
+			model: 'llama-text-embed-v2',
+			inputs: [{ text: 'Corsair' }],
+		},
 		response: { model: 'llama-text-embed-v2', data: [] },
 	},
 	{
@@ -150,6 +172,11 @@ const cases = [
 		method: 'POST',
 		path: '/rerank',
 		input: {
+			model: 'bge-reranker-v2-m3',
+			query: 'vector databases',
+			documents: ['Pinecone stores vectors'],
+		},
+		expectedBody: {
 			model: 'bge-reranker-v2-m3',
 			query: 'vector databases',
 			documents: ['Pinecone stores vectors'],
@@ -179,6 +206,7 @@ const cases = [
 			host: 'docs-index.svc.pinecone.io',
 			vectors: [{ id: 'v1', values: [0.1, 0.2] }],
 		},
+		expectedBody: { vectors: [{ id: 'v1', values: [0.1, 0.2] }] },
 		response: { upsertedCount: 1 },
 	},
 	{
@@ -188,6 +216,11 @@ const cases = [
 		path: '/query',
 		input: {
 			host: 'docs-index.svc.pinecone.io',
+			vector: [0.1, 0.2],
+			topK: 3,
+			includeMetadata: true,
+		},
+		expectedBody: {
 			vector: [0.1, 0.2],
 			topK: 3,
 			includeMetadata: true,
@@ -216,6 +249,7 @@ const cases = [
 			id: 'v1',
 			setMetadata: { topic: 'oss' },
 		},
+		expectedBody: { id: 'v1', setMetadata: { topic: 'oss' } },
 		response: {},
 	},
 	{
@@ -224,6 +258,7 @@ const cases = [
 		base: 'https://docs-index.svc.pinecone.io',
 		path: '/vectors/delete',
 		input: { host: 'docs-index.svc.pinecone.io', ids: ['v1'] },
+		expectedBody: { ids: ['v1'] },
 		response: {},
 	},
 	{
@@ -245,6 +280,7 @@ const cases = [
 		base: 'https://docs-index.svc.pinecone.io',
 		path: '/describe_index_stats',
 		input: { host: 'docs-index.svc.pinecone.io' },
+		expectedBody: {},
 		response: { totalRecordCount: 10 },
 	},
 	{
@@ -260,7 +296,15 @@ const cases = [
 		method: 'POST',
 		base: 'https://docs-index.svc.pinecone.io',
 		path: '/namespaces',
-		input: { host: 'docs-index.svc.pinecone.io', namespace: 'docs' },
+		input: {
+			host: 'docs-index.svc.pinecone.io',
+			namespace: 'docs',
+			schema: { fields: { genre: { filterable: true } } },
+		},
+		expectedBody: {
+			name: 'docs',
+			schema: { fields: { genre: { filterable: true } } },
+		},
 		response: { name: 'docs', record_count: 0 },
 	},
 	{
@@ -293,6 +337,7 @@ const cases = [
 		base: 'https://docs-index.svc.pinecone.io',
 		path: '/bulk/imports',
 		input: { host: 'docs-index.svc.pinecone.io', uri: 's3://bucket/vectors/' },
+		expectedBody: { uri: 's3://bucket/vectors/' },
 		response: { id: 'import-1' },
 	},
 	{
@@ -321,6 +366,7 @@ const cases = [
 			namespace: 'docs',
 			records: [{ _id: 'doc-1', chunk_text: 'Corsair OSS' }],
 		},
+		expectedBody: '{"_id":"doc-1","chunk_text":"Corsair OSS"}\n',
 		response: {},
 	},
 	{
@@ -331,6 +377,9 @@ const cases = [
 		input: {
 			host: 'docs-index.svc.pinecone.io',
 			namespace: 'docs',
+			query: { top_k: 3, inputs: { text: 'open source' } },
+		},
+		expectedBody: {
 			query: { top_k: 3, inputs: { text: 'open source' } },
 		},
 		response: { result: { hits: [] } },
@@ -349,6 +398,7 @@ const cases = [
 		base: 'https://api.pinecone.io/assistant',
 		path: '/assistants',
 		input: { name: 'docs-assistant', region: 'us' },
+		expectedBody: { name: 'docs-assistant', region: 'us' },
 		response: { name: 'docs-assistant', status: 'Initializing' },
 	},
 	{
@@ -369,6 +419,7 @@ const cases = [
 		base: 'https://api.pinecone.io/assistant',
 		path: '/assistants/docs-assistant',
 		input: { assistantName: 'docs-assistant', instructions: 'Cite sources.' },
+		expectedBody: { instructions: 'Cite sources.' },
 		response: { name: 'docs-assistant', status: 'Ready' },
 	},
 	{
@@ -404,6 +455,7 @@ const cases = [
 			contentType: 'text/plain',
 			multimodal: false,
 		},
+		expectedFile: { name: 'notes.txt', type: 'text/plain', text: 'Hello' },
 		response: {
 			id: 'op-1',
 			operation_type: 'upload_file',
@@ -451,6 +503,10 @@ const cases = [
 			assistantName: 'docs-assistant',
 			messages: [{ role: 'user', content: 'Summarize.' }],
 		},
+		expectedBody: {
+			messages: [{ role: 'user', content: 'Summarize.' }],
+			stream: false,
+		},
 		response: {
 			id: 'chat-1',
 			message: { role: 'assistant', content: 'Summary' },
@@ -466,6 +522,10 @@ const cases = [
 			assistantName: 'docs-assistant',
 			messages: [{ role: 'user', content: 'Summarize.' }],
 		},
+		expectedBody: {
+			messages: [{ role: 'user', content: 'Summarize.' }],
+			stream: false,
+		},
 		response: { id: 'chat-2', choices: [] },
 	},
 	{
@@ -479,6 +539,7 @@ const cases = [
 			query: 'open source',
 			top_k: 3,
 		},
+		expectedBody: { query: 'open source', top_k: 3 },
 		response: { snippets: [], usage: {} },
 	},
 ] as const;
@@ -506,7 +567,71 @@ describe.each(cases)('$name', (testCase) => {
 			expect(request.url).toBe(`${base}${path}`);
 			expect(request.headers['api-key']).toBe('pcsk_test');
 			expect(request.headers['x-pinecone-api-version']).toBe('2026-04');
+			if ('expectedBody' in testCase) {
+				expect(request.body).toEqual(testCase.expectedBody);
+			}
+			if ('expectedFile' in testCase) {
+				expect(request.body).toBeInstanceOf(FormData);
+				const file = (request.body as FormData).get('file');
+				expect(file).toBeInstanceOf(File);
+				expect((file as File).name).toBe(testCase.expectedFile.name);
+				expect((file as File).type).toBe(testCase.expectedFile.type);
+				expect(await (file as File).text()).toBe(testCase.expectedFile.text);
+			}
 			expect(result).toEqual(response);
+		} finally {
+			harness.restore();
+		}
+	});
+});
+
+describe('shared endpoint execution', () => {
+	it('rejects invalid input before making a network request', async () => {
+		const harness = installFetchHarness();
+
+		try {
+			await expect(
+				endpoint('indexes', 'describe')(
+					{
+						key: 'pcsk_test',
+						$getAccountId: async () => 'account_test',
+						database: undefined,
+					} as PineconeContext,
+					{ indexName: '   ' },
+				),
+			).rejects.toThrow();
+			expect(harness.requests).toHaveLength(0);
+		} finally {
+			harness.restore();
+		}
+	});
+
+	it('stores only a non-sensitive completion event payload', async () => {
+		const harness = installFetchHarness();
+		harness.queue({ body: { indexes: [] } });
+		let storedValues: Record<string, unknown> | undefined;
+		const database = {
+			db: {
+				insertInto: () => ({
+					values: (values: Record<string, unknown>) => {
+						storedValues = values;
+						return { execute: async () => undefined };
+					},
+				}),
+			},
+		};
+
+		try {
+			await endpoint('indexes', 'list')(
+				{
+					key: 'pcsk_test',
+					$getAccountId: async () => 'account_test',
+					database,
+				} as unknown as PineconeContext,
+				{},
+			);
+			expect(storedValues?.payload).toEqual({});
+			expect(storedValues?.event_type).toBe('pinecone.listIndexes');
 		} finally {
 			harness.restore();
 		}

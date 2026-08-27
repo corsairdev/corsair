@@ -547,7 +547,7 @@ const pineconeEndpointMeta = {
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof pineconeEndpointsNested>;
 
-const defaultAuthType: AuthTypes = 'api_key';
+const defaultAuthType = 'api_key' as const satisfies AuthTypes;
 
 export const pineconeAuthConfig = {
 	api_key: {
@@ -568,6 +568,7 @@ export type InternalPineconePlugin = BasePineconePlugin<PineconePluginOptions>;
 export type ExternalPineconePlugin<T extends PineconePluginOptions> =
 	BasePineconePlugin<T>;
 
+/** Creates a Pinecone plugin configured for API-key authentication. */
 export function pinecone<const T extends PineconePluginOptions>(
 	incomingOptions: PineconePluginOptions & T = {} as PineconePluginOptions & T,
 ): ExternalPineconePlugin<T> {

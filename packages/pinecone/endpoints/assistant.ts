@@ -6,6 +6,7 @@ const assistantData = {
 	host: (input: { host: string }) => input.host,
 };
 
+/** Decodes file content without placing plaintext binary data in JSON payloads. */
 function decodeBase64(value: string): Uint8Array {
 	try {
 		const binary = atob(value);
