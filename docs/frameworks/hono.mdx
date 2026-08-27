@@ -37,7 +37,7 @@ app.all('/api/corsair/*', toHonoHandler(corsair, { basePath: '/api/corsair' }));
 export default app;
 ```
 
-`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet. Keep the `/*` wildcard and `basePath` matching the mount path.
+`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/quick-start) if you haven't built it yet. Keep the `/*` wildcard and `basePath` matching the mount path.
 
 <Note>Because it's Web-standard the whole way down, this same file deploys to Cloudflare Workers, Bun, Deno, and Node with no per-runtime change.</Note>
 

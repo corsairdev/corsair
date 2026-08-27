@@ -13,7 +13,7 @@ There's no DAG to define and no separate engine to run.
 
 Every webhook event accepts an `after` hook, which runs once the event is saved to your database. Inside it you have the full `corsair` instance:
 
-<Note>These examples assume `multiTenancy: true` (the [quick-start](/getting-started/quick-start) setup), so they scope each call with `corsair.withTenant(ctx.tenantId)`. On a single-tenant instance, drop `withTenant` and call the plugin `.api` directly.</Note>
+<Note>These examples assume `multiTenancy: true` (the [quick-start](/quick-start) setup), so they scope each call with `corsair.withTenant(ctx.tenantId)`. On a single-tenant instance, drop `withTenant` and call the plugin `.api` directly.</Note>
 
 ```ts corsair.ts
 github({

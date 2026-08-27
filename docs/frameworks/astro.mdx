@@ -35,7 +35,7 @@ export const { GET, POST, OPTIONS } = toAstroHandler(corsair, { basePath: '/api/
 export const prerender = false;
 ```
 
-`../../../server/corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+`../../../server/corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/quick-start) if you haven't built it yet.
 
 <Warning>`export const prerender = false` is required. The route must run on the server per request, not be frozen at build time. Any page that reads live Corsair data needs the same line.</Warning>
 

@@ -84,7 +84,7 @@ A plugin connected for a tenant is available to every shape in the app.
 Do not create a second Corsair instance for the chat feature, and don't connect the same plugin twice. The agent reads and writes the same `corsair_entities` rows the dashboard renders, which is what lets a chat command show up on the page immediately.
 
 <Note>
-The shapes differ in reads, not in setup. If you've finished [Quick Start](/getting-started/quick-start), you already have everything all four need.
+The shapes differ in reads, not in setup. If you've finished [Quick Start](/quick-start), you already have everything all four need.
 </Note>
 
 ## Shared setup
@@ -96,7 +96,7 @@ Every use case assumes this much is done:
 <Step>
 ## Install and configure
 
-`createCorsair({ plugins, database, kek, hub })` in `src/server/corsair.ts`, with the five tables migrated. Full walkthrough in [Quick Start](/getting-started/quick-start).
+`createCorsair({ plugins, database, kek, hub })` in `src/server/corsair.ts`, with the five tables migrated. Full walkthrough in [Quick Start](/quick-start).
 </Step>
 
 <Step>
@@ -118,7 +118,7 @@ Then scope your calls with `withTenant()` and start reading. Multi-tenant detail
 ## What's next
 
 <CardGroup cols={2}>
-  <Card title="Quick Start" href="/getting-started/quick-start">
+  <Card title="Quick Start" href="/quick-start">
     The shared foundation, in five steps.
   </Card>
   <Card title="Build with your agent" href="/getting-started/set-up-with-your-agent">

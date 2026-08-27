@@ -35,7 +35,7 @@ const handler = toNodeHandler(corsair, { basePath: '/api/corsair' });
 createServer(handler).listen(3000);
 ```
 
-`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet. Already have a server? Mount it behind a path check instead: `if (req.url?.startsWith('/api/corsair')) return handler(req, res)`.
+`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/quick-start) if you haven't built it yet. Already have a server? Mount it behind a path check instead: `if (req.url?.startsWith('/api/corsair')) return handler(req, res)`.
 
 ## Read and write
 
