@@ -103,6 +103,37 @@ describe('DataRobot client errors', () => {
 		expect(fetchSpy).not.toHaveBeenCalled();
 		fetchSpy.mockRestore();
 	});
+
+	it('rejects a malformed custom origin', async () => {
+		const fetchSpy = jest.spyOn(global, 'fetch');
+		await expect(
+			makeDatarobotRequest('/api/v2/version/', {
+				key: 'token',
+				options: { baseUrl: 'http://[' },
+			}),
+		).rejects.toMatchObject({ message: 'Invalid DataRobot origin' });
+		expect(fetchSpy).not.toHaveBeenCalled();
+		fetchSpy.mockRestore();
+	});
+
+	it('rejects HTTP, protocol-relative, and cross-origin endpoints', async () => {
+		const fetchSpy = jest.spyOn(global, 'fetch');
+		const ctx = {
+			key: 'token',
+			options: { baseUrl: 'https://app.datarobot.com' },
+		};
+		await expect(
+			makeDatarobotRequest('http://app.datarobot.com/api/v2/version/', ctx),
+		).rejects.toBeInstanceOf(DatarobotAPIError);
+		await expect(
+			makeDatarobotRequest('//evil.example/api/v2/version/', ctx),
+		).rejects.toBeInstanceOf(DatarobotAPIError);
+		await expect(
+			makeDatarobotRequest('https://evil.example/api/v2/version/', ctx),
+		).rejects.toBeInstanceOf(DatarobotAPIError);
+		expect(fetchSpy).not.toHaveBeenCalled();
+		fetchSpy.mockRestore();
+	});
 });
 
 describe('DataRobot permission handler', () => {

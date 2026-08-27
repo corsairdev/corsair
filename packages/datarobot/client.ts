@@ -26,17 +26,21 @@ export class DatarobotAPIError extends Error {
 }
 
 export const DEFAULT_DATAROBOT_ORIGIN = 'https://app.datarobot.com';
+const REQUEST_TIMEOUT_MS = 20_000;
 
 function resolveOrigin(raw?: string): string {
-	const value = (raw ?? DEFAULT_DATAROBOT_ORIGIN).trim();
-	if (!value) {
+	if (raw === undefined) {
 		return DEFAULT_DATAROBOT_ORIGIN;
+	}
+	const value = raw.trim();
+	if (!value) {
+		throw new DatarobotAPIError('Invalid DataRobot origin');
 	}
 	const withScheme = value.includes('://') ? value : `https://${value}`;
 	try {
 		return new URL(withScheme).origin;
 	} catch {
-		return DEFAULT_DATAROBOT_ORIGIN;
+		throw new DatarobotAPIError('Invalid DataRobot origin');
 	}
 }
 
@@ -45,8 +49,6 @@ function buildRequestUrl(
 	endpoint: string,
 	query?: Record<string, DatarobotQueryValue>,
 ): string {
-	// Paths are interpolated in the plugin (`buildDatarobotPath`) so this
-	// never feeds `{...}` templates into corsair/http's path regex.
 	if (endpoint.includes('{')) {
 		throw new DatarobotAPIError('Unresolved DataRobot path parameter');
 	}
@@ -59,7 +61,35 @@ function buildRequestUrl(
 			url.searchParams.append(key, String(value));
 		}
 	}
+	if (url.protocol !== 'https:' || url.origin !== origin) {
+		throw new DatarobotAPIError(
+			'DataRobot request URL must be HTTPS on the configured origin',
+		);
+	}
 	return url.toString();
+}
+
+function abortSignal(
+	timeoutMs: number,
+	caller?: AbortSignal,
+): { signal: AbortSignal; cancel: () => void } {
+	const controller = new AbortController();
+	const timer = setTimeout(() => controller.abort(), timeoutMs);
+	const onAbort = () => controller.abort();
+	if (caller) {
+		if (caller.aborted) {
+			controller.abort();
+		} else {
+			caller.addEventListener('abort', onAbort, { once: true });
+		}
+	}
+	return {
+		signal: controller.signal,
+		cancel: () => {
+			clearTimeout(timer);
+			caller?.removeEventListener('abort', onAbort);
+		},
+	};
 }
 
 export async function makeDatarobotRequest<T>(
@@ -74,6 +104,7 @@ export async function makeDatarobotRequest<T>(
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
 		query?: Record<string, DatarobotQueryValue>;
+		signal?: AbortSignal;
 	} = {},
 ): Promise<T> {
 	const apiKey = typeof keyOrCtx === 'string' ? keyOrCtx : keyOrCtx.key;
@@ -86,7 +117,7 @@ export async function makeDatarobotRequest<T>(
 			? keyOrCtx.options?.baseUrl || keyOrCtx.options?.host
 			: undefined;
 
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, signal: callerSignal } = options;
 	const origin = resolveOrigin(ctxBase);
 	if (!origin.startsWith('https:')) {
 		throw new DatarobotAPIError('DataRobot origin must be HTTPS');
@@ -107,21 +138,27 @@ export async function makeDatarobotRequest<T>(
 		headers['Content-Type'] = 'application/json';
 	}
 
-	let response: Response;
+	const abort = abortSignal(REQUEST_TIMEOUT_MS, callerSignal);
+	let response: Response | undefined;
+	let text = '';
 	try {
 		response = await fetch(url, {
 			method,
 			headers,
 			body: payload === undefined ? undefined : JSON.stringify(payload),
+			signal: abort.signal,
+			redirect: payload === undefined ? 'follow' : 'error',
 		});
+		text = await response.text();
 	} catch (error) {
 		if (error instanceof Error) {
 			throw new DatarobotAPIError(error.message, { cause: error });
 		}
 		throw new DatarobotAPIError('Unknown DataRobot error');
+	} finally {
+		abort.cancel();
 	}
 
-	const text = await response.text();
 	let parsed: unknown;
 	if (text.length > 0) {
 		try {

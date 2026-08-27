@@ -95,8 +95,9 @@ export const filesAllFilesDeleteMany: DatarobotEndpoints['filesAllFilesDeleteMan
 			query: undefined,
 			body,
 		});
-		const parsed =
-			DatarobotEndpointOutputSchemas.filesAllFilesDeleteMany.parse(response);
+		const parsed = DatarobotEndpointOutputSchemas.filesAllFilesDeleteMany.parse(
+			response ?? {},
+		);
 		await logEventFromContext(
 			ctx,
 			'datarobot.files.filesAllFilesDeleteMany',
