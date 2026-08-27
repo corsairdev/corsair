@@ -5,7 +5,8 @@
   "favicon": "/favicon.ico",
   "logo": {
     "light": "/images/logo-light.svg",
-    "dark": "/images/logo-dark.svg"
+    "dark": "/images/logo-dark.svg",
+    "href": "https://corsair.dev"
   },
   "colors": {
     "primary": "#2d7387",
@@ -30,39 +31,71 @@
             "pages": [
               "getting-started/introduction",
               "getting-started/quick-start",
-              "getting-started/set-up-with-your-agent"
+              {
+                "group": "Use cases",
+                "pages": [
+                  "use-cases/overview",
+                  "use-cases/dashboards",
+                  "use-cases/agents",
+                  "use-cases/knowledge-base",
+                  "use-cases/workflows"
+                ]
+              }
+            ]
+          },
+          {
+            "group": "Frameworks",
+            "pages": [
+              {
+                "group": "Full-stack",
+                "pages": [
+                  "frameworks/next",
+                  "frameworks/nuxt",
+                  "frameworks/sveltekit",
+                  "frameworks/remix",
+                  "frameworks/astro",
+                  "frameworks/tanstack"
+                ]
+              },
+              {
+                "group": "Backend",
+                "pages": [
+                  "frameworks/node",
+                  "frameworks/express",
+                  "frameworks/fastify",
+                  "frameworks/hono",
+                  "frameworks/nestjs"
+                ]
+              }
             ]
           },
           {
             "group": "Adapters",
             "pages": [
-              "adapters/handlers",
-              "adapters/client",
-              "adapters/react",
               {
-                "group": "AI agents",
+                "group": "AI SDKs",
                 "expanded": false,
                 "pages": [
-                  "mcp-adapters/mcp-adapters",
                   "mcp-adapters/anthropic-sdk",
                   "mcp-adapters/claude-sdk",
-                  "mcp-adapters/openai-agents",
                   "mcp-adapters/vercel-ai",
                   "mcp-adapters/mastra",
                   "mcp-adapters/openai"
                 ]
               },
               {
-                "group": "Coding agents",
+                "group": "Harnesses",
                 "expanded": false,
                 "pages": [
-                  "mcp-adapters/coding-agents",
                   "mcp-adapters/claude-code",
-                  "mcp-adapters/cursor"
+                  "mcp-adapters/cursor",
+                  "mcp-adapters/codex",
+                  "mcp-adapters/opencode",
+                  "mcp-adapters/hermes"
                 ]
               },
               {
-                "group": "Workflow engines",
+                "group": "Workflow Engines",
                 "expanded": false,
                 "pages": [
                   "guides/inngest",
@@ -74,73 +107,26 @@
             ]
           },
           {
-            "group": "Hub",
+            "group": "Workflows (beta)",
             "pages": [
+              "workflows/overview",
+              "workflows/triggering",
+              "workflows/execution"
+            ]
+          },
+          {
+            "group": "Reference",
+            "pages": [
+              "concepts/api",
+              "concepts/auth",
+              "concepts/provisioning",
+              "concepts/database",
+              "concepts/hooks",
               "hub/overview",
-              "hub/setup",
-              {
-                "group": "Configure",
-                "expanded": false,
-                "pages": [
-                  "hub/environments",
-                  "hub/delivery-urls",
-                  "hub/dashboard"
-                ]
-              },
-              {
-                "group": "Reference",
-                "expanded": false,
-                "pages": [
-                  "hub/manual-vs-hub",
-                  "hub/permissions",
-                  "hub/rest-api"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Concepts",
-            "pages": [
-              {
-                "group": "Core",
-                "expanded": false,
-                "pages": [
-                  "concepts/integrations",
-                  "concepts/database",
-                  "concepts/api",
-                  "concepts/typescript",
-                  "concepts/error-handling"
-                ]
-              },
-              {
-                "group": "Authentication",
-                "expanded": false,
-                "pages": [
-                  "concepts/auth",
-                  "concepts/api-key",
-                  "concepts/oauth",
-                  "concepts/oauth-process"
-                ]
-              },
-              {
-                "group": "Building",
-                "expanded": false,
-                "pages": [
-                  "concepts/permissions",
-                  "concepts/multi-tenancy",
-                  "concepts/provisioning",
-                  "concepts/webhooks",
-                  "concepts/hooks"
-                ]
-              }
-            ]
-          },
-          {
-            "group": "Management API",
-            "pages": [
-              "management/overview",
-              "management/handler",
-              "management/connect"
+              "concepts/integrations",
+              "concepts/multi-tenancy",
+              "concepts/permissions",
+              "concepts/webhooks"
             ]
           }
         ]
@@ -1274,6 +1260,10 @@
     {
       "source": "/production/oauth-process",
       "destination": "/concepts/oauth-process"
+    },
+    {
+      "source": "/mcp-adapters/openai-agents",
+      "destination": "/mcp-adapters/openai"
     }
   ]
 }

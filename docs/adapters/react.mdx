@@ -1,9 +1,9 @@
 ---
-title: React Hooks
-description: createCorsairReactClient returns typed React hooks over the management API — useTenants, useConnectionStatus, useOAuthCallback, and friends.
+title: React hooks
+description: createCorsairReactClient returns typed React hooks over the management API, including useTenants, useConnectionStatus, and useOAuthCallback.
 ---
 
-`createCorsairReactClient({ baseURL })` returns a bag of typed React hooks built on top of [`createCorsairClient`](/adapters/client). One factory call per app — use the returned hooks anywhere in your component tree.
+`createCorsairReactClient({ baseURL })` returns a set of typed React hooks built on top of [`createCorsairClient`](/adapters/client). One factory call per app, then use the returned hooks anywhere in your component tree.
 
 ```tsx corsair-client.ts
 "use client";
@@ -109,6 +109,6 @@ const handleClick = async () => {
 
 It is exactly the [vanilla client](/adapters/client), sharing the same `baseURL`.
 
-## What this is not
+## Scope
 
-These hooks are intentionally minimal: no cache, no deduplication, no request reuse. If you want React Query, SWR, or RTK semantics, build them on top of `client` — the hooks here exist to give you typed loading/error/data state without forcing a data-layer choice.
+These hooks are intentionally minimal: no cache, no deduplication, no request reuse. They give you typed loading/error/data state without forcing a data-layer choice. If you want React Query, SWR, or RTK semantics, build them on top of `client`.

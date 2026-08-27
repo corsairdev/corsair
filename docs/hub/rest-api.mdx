@@ -1,9 +1,9 @@
 ---
 title: Hub REST API
-description: Integrate Corsair Hub from any language over plain HTTP — no SDK required.
+description: Integrate Corsair Hub from any language over plain HTTP, no SDK required.
 ---
 
-The Corsair SDK is TypeScript-only, but Hub itself is a plain HTTP service. A Go, Python, or Ruby backend integrates by calling these endpoints directly. Credentials are still delivered to **your** endpoint and stored in **your** database — Hub stores none.
+The Corsair SDK is TypeScript-only, but Hub itself is a plain HTTP service. A Go, Python, or Ruby backend integrates by calling these endpoints directly. Credentials are still delivered to **your** endpoint and stored in **your** database. Hub stores none.
 
 Every request authenticates with your environment API key (`ck_dev_…` locally, `ck_prod_…` in production):
 
@@ -21,7 +21,7 @@ curl -X POST https://auth.corsair.dev/connect/sessions \
   -d '{
     "tenantId": "user_123",
     "deliveryUrl": "https://yourapp.com/api/corsair",
-    "plugins": [{ "plugin": "github", "oauthMode": "managed" }]
+    "plugins": [{ "plugin": "github", "providerName": "GitHub", "authKind": "oauth", "oauthMode": "managed" }]
   }'
 ```
 
@@ -35,7 +35,7 @@ const res = await fetch("https://auth.corsair.dev/connect/sessions", {
     body: JSON.stringify({
         tenantId: "user_123",
         deliveryUrl: "https://yourapp.com/api/corsair",
-        plugins: [{ plugin: "github", oauthMode: "managed" }],
+        plugins: [{ plugin: "github", providerName: "GitHub", authKind: "oauth", oauthMode: "managed" }],
     }),
 });
 const { connectUrl } = await res.json();
@@ -50,7 +50,7 @@ res = requests.post(
     json={
         "tenantId": "user_123",
         "deliveryUrl": "https://yourapp.com/api/corsair",
-        "plugins": [{"plugin": "github", "oauthMode": "managed"}],
+        "plugins": [{"plugin": "github", "providerName": "GitHub", "authKind": "oauth", "oauthMode": "managed"}],
     },
 )
 connect_url = res.json()["connectUrl"]
@@ -60,7 +60,7 @@ connect_url = res.json()["connectUrl"]
 payload, _ := json.Marshal(map[string]any{
     "tenantId":    "user_123",
     "deliveryUrl": "https://yourapp.com/api/corsair",
-    "plugins":     []map[string]string{{"plugin": "github", "oauthMode": "managed"}},
+    "plugins":     []map[string]string{{"plugin": "github", "providerName": "GitHub", "authKind": "oauth", "oauthMode": "managed"}},
 })
 req, _ := http.NewRequest("POST", "https://auth.corsair.dev/connect/sessions", bytes.NewReader(payload))
 req.Header.Set("Authorization", "Bearer "+os.Getenv("CORSAIR_API_KEY"))
@@ -69,7 +69,7 @@ res, _ := http.DefaultClient.Do(req)
 ```
 </CodeGroup>
 
-Returns `{ "connectUrl", "token", "projectId", "expiresAt" }`. Redirect the user's browser to `connectUrl`. Hub hosts the connect page and the OAuth callback.
+Returns HTTP `201` with `{ "token", "connectUrl", "projectId", "environmentId", "expiresAt" }`. Redirect the user's browser to `connectUrl`. Hub hosts the connect page and the OAuth callback.
 
 ## Receive the delivery
 
@@ -77,12 +77,12 @@ When the user finishes connecting, Hub POSTs a signed JSON envelope to your `del
 
 | Header | Value |
 |--------|-------|
-| `x-corsair-signature` | `sha256=<hex>` — HMAC-SHA256 of the **raw request body**, keyed with your signing secret |
+| `x-corsair-signature` | `sha256=<hex>`, the HMAC-SHA256 of the **raw request body**, keyed with your signing secret |
 | `x-corsair-timestamp` | Unix seconds when Hub sent it; reject if older than a few minutes (replay guard) |
 | `x-corsair-project` | Your project id |
 | `x-corsair-nonce` | Unique per delivery |
 
-Verify before trusting the body — recompute the HMAC over the raw bytes and compare in constant time:
+Verify before trusting the body. Recompute the HMAC over the raw bytes and compare in constant time:
 
 <CodeGroup>
 ```python Python
@@ -134,8 +134,8 @@ curl https://auth.corsair.dev/projects/connections \
   -H "Authorization: Bearer $CORSAIR_API_KEY"
 ```
 
-Returns an array of `{ tenantId, plugin, status, authType, connected, verified, missingFields, reportedAt }`, deduplicated by `tenantId:plugin`.
+Returns an array of `{ tenantId, plugin, status, authType, connected, verified, missingFields, reportedAt }`, one entry per `tenantId:plugin`. `connected` and `verified` are booleans; `reportedAt` is an ISO timestamp.
 
 ## Rate limits
 
-Connect and permission session creation share a limit of **100 sessions per hour per project**. Over the limit returns HTTP 429. Malformed requests do not consume quota.
+Connect and permission session creation share a limit of **100 sessions per hour per environment**. Over the limit returns HTTP 429. Malformed requests do not consume quota.

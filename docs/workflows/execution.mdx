@@ -1,0 +1,92 @@
+---
+title: Execution & steps
+sidebarTitle: Execution & steps
+description: Turn on workflow execution, and how step() and step.sleep() make a run durable.
+---
+
+Workflows execute inside your app. Hub delivers each run to the route you already mounted, and your app runs it in a sandbox against a tenant-scoped `corsair` client. Because this means running Hub-delivered code, execution is **off by default**. You opt in explicitly.
+
+## Turn on execution
+
+Add `allowWorkflowExecution: true` to the `hub` block of `createCorsair`:
+
+```ts src/server/corsair.ts
+export const corsair = createCorsair({
+    plugins: [slack(), github()],
+    database: db,
+    kek: process.env.CORSAIR_KEK!,
+    hub: {
+        projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+        signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+        allowWorkflowExecution: true,
+    },
+});
+```
+
+That's the whole setup. You've already [mounted the handler](/frameworks/next) for your framework, and Hub delivers runs through it. With the flag off, delivered runs are rejected with *"Workflow execution is not enabled."*
+
+<Warning>
+Leaving `allowWorkflowExecution` off is the safe default: it means your app never executes Hub-delivered code. Turn it on only once you're running workflows you trust.
+</Warning>
+
+## How a run is shaped
+
+A workflow is a single function you define in your code. It receives your tenant-scoped client, the trigger `payload`, and a `step` helper:
+
+```ts
+export const main = async (corsair, payload, step) => {
+    // corsair — tenant-scoped client; call any connected plugin
+    // payload — the trigger data (webhook body, or your run() payload)
+    // step    — makes each unit of work durable
+};
+```
+
+Inside, you wrap each unit of work in `step()`. That's what turns an ordinary async function into a workflow that survives retries and pauses.
+
+This body is authored in Hub; once the workflow exists there, you run it from your app with `corsair.workflows.run(id, { payload })`.
+
+## `step(name, fn)`, run once, durably
+
+```ts
+const user = await step('fetch-user', async () =>
+    corsair.slack.api.users.get({ user: payload.userId }),
+);
+
+await step('post-welcome', async () =>
+    corsair.slack.api.messages.post({ channel: payload.channel, text: `Hi ${user.name}` }),
+);
+```
+
+Each `step` runs its function once and **memoizes the result**. If the run retries, a step that already completed replays its saved output instead of running again, so a half-finished run never double-posts a message or re-charges a card. The step's identity is its name plus its position in the run, which keeps that memoization stable across attempts.
+
+## `step.sleep(name, ms)`, durable pause
+
+```ts
+await step('open-issue', async () => corsair.github.api.issues.create({ /* ... */ }));
+await step.sleep('cooldown', 60 * 60 * 1000); // one hour
+await step('follow-up', async () => corsair.slack.api.messages.post({ /* ... */ }));
+```
+
+`step.sleep` pauses the run durably. The run unwinds, Hub reschedules it, and a later attempt resumes past the sleep with every earlier step already memoized. A pause costs nothing while it waits, since there's no process sitting idle.
+
+## Limits & rules
+
+<Note>
+These are the current beta constraints. Expect the authoring surface (more step types) to grow.
+</Note>
+
+- **30-second cap per attempt.** Each attempt has a 30s wall-clock budget; long waits belong in `step.sleep`, not in a running step.
+- **Don't rename or reorder steps mid-run.** Step identity is positional, so renaming or reordering steps changes their keys and breaks memoization for in-flight runs. Safe to change between new runs.
+- **Sandboxed.** Workflow code runs in a hardened realm with no host globals (`process`, `require`, `fetch`, timers) and no `eval`. It talks to the outside world only through the `corsair` client it's handed.
+- **Retries are Hub-managed.** You don't configure backoff in code; Hub owns the retry schedule and re-delivers with prior steps memoized.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Triggering" icon="play" href="/workflows/triggering">
+    Start and list runs from the `corsair.workflows` client.
+  </Card>
+  <Card title="Overview" icon="book" href="/workflows/overview">
+    The author, trigger, and execute model, and why it's built in.
+  </Card>
+</CardGroup>

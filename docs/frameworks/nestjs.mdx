@@ -1,0 +1,140 @@
+---
+title: Nest.js
+sidebarTitle: Nest.js
+description: Mount Corsair on Nest's Express instance, then provide it and inject it into your controllers.
+icon: "/icons/nestjs.svg"
+---
+
+import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
+import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
+
+Nest runs on Express by default, so Corsair reuses the Express adapter, with no dedicated Nest adapter. Mount it as middleware in `main.ts`, before Nest's router, and Corsair claims one base path. Everything else follows Nest's grain. Register the corsair instance as a provider and inject it wherever you read integration data.
+
+## Install
+
+The Express adapter ships in core `corsair`. Add a plugin package per service you integrate:
+
+<Install />
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
+
+## Mount the handler
+
+The adapter reads the raw stream itself, so no `express.json()` and no body-parser wiring. Mount one line during bootstrap.
+
+```ts main.ts
+import { NestFactory } from '@nestjs/core';
+import type { NestExpressApplication } from '@nestjs/platform-express';
+import { toExpressHandler } from 'corsair';
+import { AppModule } from './app.module';
+import { corsair } from './corsair';
+
+async function bootstrap() {
+    const app = await NestFactory.create<NestExpressApplication>(AppModule);
+    app.use('/api/corsair', toExpressHandler(corsair, { basePath: '/api/corsair' }));
+    await app.listen(3000);
+}
+bootstrap();
+```
+
+`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+
+## Resolve the tenant
+
+Corsair only needs the tenant id, and your own auth produces it. A Guard populates `request.user` the way it already does in your app; read it off the request and pass the id to `withTenant()`.
+
+```ts
+// a guard sets request.user; read it in the controller
+const tenant = this.corsair.withTenant(await getTenantId(req));
+```
+
+`getTenantId(req)` is your own code that reads the signed-in user from your auth; it can return any stable id.
+
+## Read and write
+
+The handler serves Hub delivery; your business logic reads and writes through the same instance. Provide it once, then inject it, and the corsair instance becomes a first-class Nest dependency.
+
+```ts corsair.module.ts
+import { Global, Module } from '@nestjs/common';
+import { corsair } from './corsair';
+
+export const CORSAIR = Symbol('CORSAIR');
+
+@Global()
+@Module({
+    providers: [{ provide: CORSAIR, useValue: corsair }],
+    exports: [CORSAIR],
+})
+export class CorsairModule {}
+```
+
+```ts issues.controller.ts
+import { Body, Controller, Get, Inject, Post, Req } from '@nestjs/common';
+import type { Request } from 'express';
+import { CORSAIR } from './corsair.module';
+import type { corsair } from './corsair';
+
+@Controller('issues')
+export class IssuesController {
+    constructor(@Inject(CORSAIR) private readonly corsair: typeof corsair) {}
+
+    @Get()
+    async list(@Req() req: Request) {
+        const tenant = this.corsair.withTenant(await getTenantId(req));
+        // .db reads your own rows — no network, no rate limit
+        const issues = await tenant.github.db.issues.search({ data: { state: 'open' }, limit: 50 });
+        return issues.map((i) => i.data.title);
+    }
+
+    @Post()
+    create(@Req() req: Request, @Body('title') title: string) {
+        const tenant = this.corsair.withTenant(await getTenantId(req));
+        // .api hits GitHub live; the response is upserted into your db
+        return tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title });
+    }
+}
+```
+
+Entity fields live on `.data` in camelCase. Reads come from `.db`; creates and updates go through `.api` and land back in the same rows. See [Dashboards](/use-cases/dashboards) for the full pattern.
+
+## Connect a tenant
+
+Nest is a backend, so use the vanilla client from your frontend, a worker, or a script to check connection status and mint connect links against the route above.
+
+<ClientVanilla />
+
+## Go green
+
+Start the app:
+
+```bash
+npm run start:dev
+```
+
+The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
+
+## Deploy
+
+Deploy the Nest app however you already run it. In production the same `/api/corsair` route becomes the delivery URL Hub calls, so ensure it's publicly reachable. The first request re-registers the production URL.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Vanilla client" icon="code" href="/adapters/client">
+    Every management-API method the client exposes, fully typed.
+  </Card>
+  <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">
+    The `.db` read / `.api` write pattern in full.
+  </Card>
+  <Card title="Connect / OAuth" icon="link" href="/management/connect">
+    The full connect flow, error codes, and retry.
+  </Card>
+  <Card title="Multi-tenancy" icon="users" href="/concepts/multi-tenancy">
+    One flag and every user gets their own data and credentials.
+  </Card>
+</CardGroup>

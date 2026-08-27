@@ -1,0 +1,97 @@
+---
+title: Node.js
+sidebarTitle: Node.js
+description: Mount Corsair on a bare node:http server with toNodeHandler. You own the plumbing, the adapter handles the body.
+icon: "/icons/node.svg"
+---
+
+import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
+import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
+
+No framework, no router, just `node:http` and the request/response objects it hands you. `toNodeHandler` takes the corsair instance and returns a `(req, res)` function you can drop straight into `createServer`, or mount behind a path check on a server you already run. It reads the raw request stream itself, so there's nothing to parse first. This is the right level for scripts, workers, and tiny services where pulling in Express would be the only dependency.
+
+## Install
+
+The adapter ships in core `corsair`, with nothing extra for `node:http`. Add a plugin package per service you integrate (`@corsair-dev/github`, and so on).
+
+<Install />
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
+
+## Mount the handler
+
+```ts server.ts
+import { createServer } from 'node:http';
+import { toNodeHandler } from 'corsair';
+import { corsair } from './corsair';
+
+const handler = toNodeHandler(corsair, { basePath: '/api/corsair' });
+
+createServer(handler).listen(3000);
+```
+
+`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet. Already have a server? Mount it behind a path check instead: `if (req.url?.startsWith('/api/corsair')) return handler(req, res)`.
+
+## Read and write
+
+You call Corsair the same way everywhere; the only Node-specific part is serializing the result yourself. Here's a bare JSON endpoint that reads open issues from `.db` (no network, no rate limit) and opens a new one through `.api`:
+
+```ts issues.ts
+import { corsair } from './corsair';
+
+const tenant = corsair.withTenant('acme');
+
+export async function listOpenIssues(res: ServerResponse) {
+    const issues = await tenant.github.db.issues.search({
+        data: { state: 'open' },
+        limit: 50,
+    });
+
+    res.writeHead(200, { 'content-type': 'application/json' });
+    // entity fields live on .data, camelCase and typed
+    res.end(JSON.stringify(issues.map((i) => i.data.title)));
+}
+
+export async function openIssue(title: string) {
+    // the API response is upserted, so the next .db read already has it
+    await tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title });
+}
+```
+
+## Connect a tenant
+
+There's no React here, so use the vanilla client from a script, a worker, or a non-React frontend that talks to your server.
+
+<ClientVanilla />
+
+## Go green
+
+Start the server:
+
+```bash
+npx tsx server.ts
+```
+
+The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Vanilla client" icon="code" href="/adapters/client">
+    Every management-API method, fully typed.
+  </Card>
+  <Card title="Prefer a router?" icon="server" href="/frameworks/express">
+    Express and Hono both run on Node with a one-line adapter.
+  </Card>
+  <Card title="Connect / OAuth" icon="link" href="/management/connect">
+    The full connect flow, error codes, and retry.
+  </Card>
+  <Card title="Multi-tenancy" icon="users" href="/concepts/multi-tenancy">
+    One flag and every user gets their own data and credentials.
+  </Card>
+</CardGroup>
