@@ -282,7 +282,16 @@ export const ListDictionariesOutputSchema = z
 		time: z.union([z.number(), z.string()]).optional(),
 		error: z.string().optional(),
 		message: z.string().optional(),
-		response: z.union([z.array(DictionarySchema), z.unknown()]).optional(),
+		response: z
+			.union([
+				z.array(DictionarySchema),
+				z
+					.object({
+						dictionaries: z.array(DictionarySchema),
+					})
+					.loose(),
+			])
+			.optional(),
 		dictionaries: z.array(DictionarySchema).optional(),
 	})
 	.loose();
@@ -315,7 +324,16 @@ export const ListDictionaryEntriesOutputSchema = z
 		time: z.union([z.number(), z.string()]).optional(),
 		error: z.string().optional(),
 		message: z.string().optional(),
-		response: z.unknown().optional(),
+		response: z
+			.union([
+				z.array(DictionaryEntrySchema),
+				z
+					.object({
+						entries: z.array(DictionaryEntrySchema),
+					})
+					.loose(),
+			])
+			.optional(),
 		limit: z.number().optional(),
 		offset: z.number().optional(),
 		total: z.number().optional(),
@@ -375,8 +393,35 @@ export const ListClassifierCategoriesInputSchema = z.object({
 	limit: z.number().int().positive().optional(),
 	offset: z.number().int().min(0).optional(),
 });
-export const ListClassifierCategoriesOutputSchema =
-	ListDictionaryEntriesOutputSchema;
+export const ClassifierCategorySchema = z
+	.object({
+		categoryId: z.string().optional(),
+		label: z.string().optional(),
+		query: z.string().optional(),
+	})
+	.loose();
+
+export const ListClassifierCategoriesOutputSchema = z
+	.object({
+		ok: z.boolean().optional(),
+		time: z.union([z.number(), z.string()]).optional(),
+		error: z.string().optional(),
+		message: z.string().optional(),
+		response: z
+			.union([
+				z.array(ClassifierCategorySchema),
+				z
+					.object({
+						categories: z.array(ClassifierCategorySchema),
+					})
+					.loose(),
+			])
+			.optional(),
+		limit: z.number().optional(),
+		offset: z.number().optional(),
+		total: z.number().optional(),
+	})
+	.loose();
 
 export const GetClassifierCategoryInputSchema = z.object({
 	id: z.string().min(1),
@@ -388,14 +433,7 @@ export const GetClassifierCategoryOutputSchema = z
 		time: z.union([z.number(), z.string()]).optional(),
 		error: z.string().optional(),
 		message: z.string().optional(),
-		response: z
-			.object({
-				categoryId: z.string().optional(),
-				label: z.string().optional(),
-				query: z.string().optional(),
-			})
-			.loose()
-			.optional(),
+		response: ClassifierCategorySchema.optional(),
 	})
 	.loose();
 

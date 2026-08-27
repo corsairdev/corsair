@@ -104,7 +104,7 @@ describeLive('TextRazor live API', () => {
 			expect(entry.ok).toBe(true);
 			await call(DictionaryEndpoints.deleteEntry, { id, entryId: 'DEV1' });
 		} finally {
-			await call(DictionaryEndpoints.delete, { id }).catch(() => undefined);
+			await call(DictionaryEndpoints.delete, { id });
 		}
 	});
 
@@ -127,7 +127,7 @@ describeLive('TextRazor live API', () => {
 			);
 			expect(listed.ok).toBe(true);
 		} finally {
-			await call(ClassifierEndpoints.delete, { id }).catch(() => undefined);
+			await call(ClassifierEndpoints.delete, { id });
 		}
 	});
 });

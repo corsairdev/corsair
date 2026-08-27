@@ -175,12 +175,67 @@ describe('TextRazor schemas', () => {
 			time: 0.09491,
 		});
 	});
+
+	it('validates dictionary and classifier list payloads', () => {
+		expect(
+			TextrazorEndpointOutputSchemas.listDictionaries.safeParse({
+				ok: true,
+				response: [{ id: 'test_ents', matchType: 'token' }],
+			}).success,
+		).toBe(true);
+		expect(
+			TextrazorEndpointOutputSchemas.listDictionaries.safeParse({
+				ok: true,
+				response: { dictionaries: [{ id: 'test_ents' }] },
+			}).success,
+		).toBe(true);
+		expect(
+			TextrazorEndpointOutputSchemas.listDictionaries.safeParse({
+				ok: true,
+				response: 'not-a-list',
+			}).success,
+		).toBe(false);
+
+		expect(
+			TextrazorEndpointOutputSchemas.listDictionaryEntries.safeParse({
+				ok: true,
+				response: [{ id: 'DEV1', text: 'Bjarne Stroustrup' }],
+				limit: 20,
+				offset: 0,
+			}).success,
+		).toBe(true);
+		expect(
+			TextrazorEndpointOutputSchemas.listDictionaryEntries.safeParse({
+				ok: true,
+				response: 12,
+			}).success,
+		).toBe(false);
+
+		expect(
+			TextrazorEndpointOutputSchemas.listClassifierCategories.safeParse({
+				ok: true,
+				response: [{ categoryId: '100', label: 'Golf' }],
+			}).success,
+		).toBe(true);
+		expect(
+			TextrazorEndpointOutputSchemas.listClassifierCategories.safeParse({
+				ok: true,
+				response: { categories: [{ categoryId: '100' }] },
+			}).success,
+		).toBe(true);
+		expect(
+			TextrazorEndpointOutputSchemas.listClassifierCategories.safeParse({
+				ok: true,
+				response: true,
+			}).success,
+		).toBe(false);
+	});
 });
 
 describe('TextRazor endpoint routing', () => {
 	beforeEach(() => {
 		requestMock.mockReset();
-		requestMock.mockResolvedValue({ ok: true, response: {} });
+		requestMock.mockResolvedValue({ ok: true });
 		(logEventFromContext as unknown as jest.Mock).mockReset();
 	});
 
