@@ -1,6 +1,7 @@
 ---
-title: Webhooks
-description: One endpoint for all webhooks, automatically routed and verified.
+title: Triggers
+sidebarTitle: Triggers
+description: One endpoint for every incoming webhook, automatically routed and verified.
 ---
 
 Corsair consolidates all incoming webhooks to a single URL. It identifies which integration and service each webhook belongs to, then processes and updates your data automatically.
@@ -33,7 +34,7 @@ export async function handleWebhook(req: Request) {
 Note that webhooks are not guaranteed by most senders. If your project requires completely fresh data, add polling for that integration using an [api call](/concepts/api).
 </Info>
 
-## Automatic Routing
+## Automatic routing
 
 Point all your webhooks to a single endpoint. Corsair inspects the headers and payload to determine:
 
@@ -41,11 +42,11 @@ Point all your webhooks to a single endpoint. Corsair inspects the headers and p
 2. Which **event type** it represents (message, issue created, etc.)
 3. Which **tenant** it belongs to (in multi-tenant setups)
 
-## Handling Out-of-Order Webhooks
+## Handling out-of-order webhooks
 
 Webhooks don't guarantee delivery order. You might receive an "updated" event before you've processed the "created" event.
 
-Most applications fail here — they don't know about a record, so they can't process its update.
+Most applications fail here. They don't know about a record, so they can't process its update.
 
 Corsair solves this automatically:
 
@@ -56,7 +57,7 @@ Corsair solves this automatically:
 
 Your data stays fresh, and no webhooks are lost.
 
-## Multi-Tenancy with Webhooks
+## Multi-tenancy with webhooks
 
 If you have multi-tenancy enabled, we recommend adding a hashed tenant ID as a query parameter to your webhook URL.
 
@@ -70,13 +71,13 @@ https://api.yourapp.com/webhooks?tenant=hashed_tenant_id
 
 This lets Corsair identify which tenant incoming webhook data belongs to, ensuring proper isolation.
 
-## Signature Verification
+## Signature verification
 
-Corsair automatically verifies webhook signatures using your stored webhook credentials. If a signature doesn't match, the webhook is rejected — protecting you from spoofed requests.
+Corsair automatically verifies webhook signatures using your stored webhook credentials. If a signature doesn't match, the webhook is rejected, protecting you from spoofed requests.
 
-## Webhook Hooks
+## Webhook hooks
 
-Hooks let you add custom logic that runs every time a webhook is processed. This guarantees your code executes — even when Corsair handles the database update automatically.
+Hooks let you add custom logic that runs every time a webhook is processed. This guarantees your code executes, even when Corsair handles the database update automatically.
 
 ```ts corsair.ts
 slack({
@@ -101,7 +102,7 @@ slack({
 })
 ```
 
-### Before Hooks
+### Before hooks
 
 Before hooks run before the webhook is processed. Use them to:
 
@@ -131,7 +132,7 @@ Optional **`continue`** (defaults to `true`)
 
 Set **`continue: false`** to stop without running the handler. That is a silent skip, which will not `throw`.
 
-### After Hooks
+### After hooks
 
 After hooks run after the webhook is processed and the database is updated. Use them to:
 
@@ -167,11 +168,11 @@ webhookHooks: {
 }
 ```
 
-### The `passToAfter` Argument
+### The `passToAfter` argument
 
 You can set **`passToAfter`** on the object returned from **before**. Corsair passes that value through as the third argument to **after**, unchanged.
 
-This is useful when you need to carry a value you only know at before-time — such as an ID you generate or a record you create — into the after hook, where you finalize or clean it up once processing is complete.
+This is useful when you need to carry a value you only know at before-time, such as an ID you generate or a record you create, into the after hook, where you finalize or clean it up once processing is complete.
 
 <Info>
 The **after** hook only runs when the webhook handler succeeds. If processing fails, **after** is skipped and `passToAfter` is never used.
@@ -199,7 +200,7 @@ googleCalendar({
 })
 ```
 
-### Guaranteed Execution
+### Guaranteed execution
 
 The key benefit of webhook hooks is they **always run** when that webhook type is processed. Unlike manually handling webhooks where you might forget to add logging or notifications, hooks ensure your logic is centralized and guaranteed to execute.
 
