@@ -1,4 +1,4 @@
-{
+﻿{
   "name": "@corsair-dev/borneo",
   "version": "0.1.0",
   "description": "Borneo plugin for Corsair",
@@ -14,12 +14,12 @@
     }
   },
   "scripts": {
-    "build": "rm -rf dist && tsc --build --force && tsup",
+    "build": "rm -rf dist \u0026\u0026 tsc --build --force \u0026\u0026 tsup",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
   "peerDependencies": {
-    "corsair": ">=0.1.0",
+    "corsair": "\u003e=0.1.0",
     "zod": "^4.1.13"
   },
   "devDependencies": {
@@ -39,6 +39,7 @@
   "author": "",
   "license": "Apache-2.0",
   "files": [
-    "dist"
+    "dist",
+    "index.ts"
   ]
 }
