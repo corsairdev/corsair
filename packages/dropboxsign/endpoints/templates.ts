@@ -6,7 +6,7 @@ import type { DropboxSignEndpointOutputs } from './types';
 export const getTemplate: DropboxSignEndpoints['getTemplate'] = async (ctx, input) => {
 	const { template_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getTemplate']>(
-			emplate/,
+		`template/${encodeURIComponent(template_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
@@ -47,7 +47,7 @@ export const createEmbeddedTemplateDraft: DropboxSignEndpoints['createEmbeddedTe
 export const deleteTemplate: DropboxSignEndpoints['deleteTemplate'] = async (ctx, input) => {
 	const { template_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['deleteTemplate']>(
-			emplate/delete/,
+		`template/delete/${encodeURIComponent(template_id)}`,
 		ctx.key,
 		{ method: 'POST', authType: ctx.authType },
 	);
@@ -58,7 +58,7 @@ export const deleteTemplate: DropboxSignEndpoints['deleteTemplate'] = async (ctx
 export const addUserToTemplate: DropboxSignEndpoints['addUserToTemplate'] = async (ctx, input) => {
 	const { template_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['addUserToTemplate']>(
-			emplate/add_user/,
+		`template/add_user/${encodeURIComponent(template_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
@@ -69,7 +69,7 @@ export const addUserToTemplate: DropboxSignEndpoints['addUserToTemplate'] = asyn
 export const removeUserFromTemplate: DropboxSignEndpoints['removeUserFromTemplate'] = async (ctx, input) => {
 	const { template_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['removeUserFromTemplate']>(
-			emplate/remove_user/,
+		`template/remove_user/${encodeURIComponent(template_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
@@ -80,7 +80,7 @@ export const removeUserFromTemplate: DropboxSignEndpoints['removeUserFromTemplat
 export const getTemplateFiles: DropboxSignEndpoints['getTemplateFiles'] = async (ctx, input) => {
 	const { template_id, ...query } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getTemplateFiles']>(
-			emplate/files/,
+		`template/files/${encodeURIComponent(template_id)}`,
 		ctx.key,
 		{ method: 'GET', query, authType: ctx.authType },
 	);
@@ -91,7 +91,7 @@ export const getTemplateFiles: DropboxSignEndpoints['getTemplateFiles'] = async 
 export const getTemplateFilesAsFileUrl: DropboxSignEndpoints['getTemplateFilesAsFileUrl'] = async (ctx, input) => {
 	const { template_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getTemplateFilesAsFileUrl']>(
-			emplate/files_as_file_url/,
+		`template/files_as_file_url/${encodeURIComponent(template_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
@@ -102,7 +102,7 @@ export const getTemplateFilesAsFileUrl: DropboxSignEndpoints['getTemplateFilesAs
 export const getTemplateFilesAsDataUri: DropboxSignEndpoints['getTemplateFilesAsDataUri'] = async (ctx, input) => {
 	const { template_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getTemplateFilesAsDataUri']>(
-			emplate/files_as_data_uri/,
+		`template/files_as_data_uri/${encodeURIComponent(template_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
@@ -113,7 +113,7 @@ export const getTemplateFilesAsDataUri: DropboxSignEndpoints['getTemplateFilesAs
 export const updateTemplateFiles: DropboxSignEndpoints['updateTemplateFiles'] = async (ctx, input) => {
 	const { template_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['updateTemplateFiles']>(
-			emplate/update_files/,
+		`template/update_files/${encodeURIComponent(template_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);

@@ -36,7 +36,7 @@ export const listTeams: DropboxSignEndpoints['listTeams'] = async (ctx, input) =
 export const listSubTeams: DropboxSignEndpoints['listSubTeams'] = async (ctx, input) => {
 	const { team_id, ...query } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['listSubTeams']>(
-			eam/sub_teams/,
+		`team/sub_teams/${encodeURIComponent(team_id)}`,
 		ctx.key,
 		{ method: 'GET', query, authType: ctx.authType },
 	);
@@ -47,7 +47,7 @@ export const listSubTeams: DropboxSignEndpoints['listSubTeams'] = async (ctx, in
 export const listTeamMembers: DropboxSignEndpoints['listTeamMembers'] = async (ctx, input) => {
 	const { team_id, ...query } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['listTeamMembers']>(
-			eam/members/,
+		`team/members/${encodeURIComponent(team_id)}`,
 		ctx.key,
 		{ method: 'GET', query, authType: ctx.authType },
 	);

@@ -26,7 +26,7 @@ export const bulkCreateEmbeddedSigReqWithTemplate: DropboxSignEndpoints['bulkCre
 export const getBulkSendJob: DropboxSignEndpoints['getBulkSendJob'] = async (ctx, input) => {
 	const { bulk_send_job_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getBulkSendJob']>(
-		ulk_send_job/,
+		`bulk_send_job/${encodeURIComponent(bulk_send_job_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);

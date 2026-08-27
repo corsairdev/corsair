@@ -6,7 +6,7 @@ import type { DropboxSignEndpointOutputs } from './types';
 export const getSignatureRequest: DropboxSignEndpoints['getSignatureRequest'] = async (ctx, input) => {
 	const { signature_request_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getSignatureRequest']>(
-		signature_request/,
+		`signature_request/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
@@ -57,7 +57,7 @@ export const createEmbeddedSignatureRequestWithTemplate: DropboxSignEndpoints['c
 export const cancelSignatureRequest: DropboxSignEndpoints['cancelSignatureRequest'] = async (ctx, input) => {
 	const { signature_request_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['cancelSignatureRequest']>(
-		signature_request/cancel/,
+		`signature_request/cancel/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'POST', authType: ctx.authType },
 	);
@@ -68,7 +68,7 @@ export const cancelSignatureRequest: DropboxSignEndpoints['cancelSignatureReques
 export const sendRequestReminder: DropboxSignEndpoints['sendRequestReminder'] = async (ctx, input) => {
 	const { signature_request_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['sendRequestReminder']>(
-		signature_request/remind/,
+		`signature_request/remind/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
@@ -79,7 +79,7 @@ export const sendRequestReminder: DropboxSignEndpoints['sendRequestReminder'] = 
 export const updateSignatureRequest: DropboxSignEndpoints['updateSignatureRequest'] = async (ctx, input) => {
 	const { signature_request_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['updateSignatureRequest']>(
-		signature_request/update/,
+		`signature_request/update/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
@@ -90,7 +90,7 @@ export const updateSignatureRequest: DropboxSignEndpoints['updateSignatureReques
 export const downloadSignatureRequestFiles: DropboxSignEndpoints['downloadSignatureRequestFiles'] = async (ctx, input) => {
 	const { signature_request_id, ...query } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['downloadSignatureRequestFiles']>(
-		signature_request/files/,
+		`signature_request/files/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'GET', query, authType: ctx.authType },
 	);
@@ -101,7 +101,7 @@ export const downloadSignatureRequestFiles: DropboxSignEndpoints['downloadSignat
 export const getSignatureRequestFilesAsFileUrl: DropboxSignEndpoints['getSignatureRequestFilesAsFileUrl'] = async (ctx, input) => {
 	const { signature_request_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getSignatureRequestFilesAsFileUrl']>(
-		signature_request/files_as_file_url/,
+		`signature_request/files_as_file_url/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
@@ -112,7 +112,7 @@ export const getSignatureRequestFilesAsFileUrl: DropboxSignEndpoints['getSignatu
 export const getSignatureRequestFilesAsDataUri: DropboxSignEndpoints['getSignatureRequestFilesAsDataUri'] = async (ctx, input) => {
 	const { signature_request_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getSignatureRequestFilesAsDataUri']>(
-		signature_request/files_as_data_uri/,
+		`signature_request/files_as_data_uri/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
@@ -123,7 +123,7 @@ export const getSignatureRequestFilesAsDataUri: DropboxSignEndpoints['getSignatu
 export const releaseSignatureRequestHold: DropboxSignEndpoints['releaseSignatureRequestHold'] = async (ctx, input) => {
 	const { signature_request_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['releaseSignatureRequestHold']>(
-		signature_request/release_hold/,
+		`signature_request/release_hold/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'POST', authType: ctx.authType },
 	);
@@ -134,7 +134,7 @@ export const releaseSignatureRequestHold: DropboxSignEndpoints['releaseSignature
 export const editAndResendSignatureRequest: DropboxSignEndpoints['editAndResendSignatureRequest'] = async (ctx, input) => {
 	const { signature_request_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['editAndResendSignatureRequest']>(
-		signature_request/edit_and_resend/,
+		`signature_request/edit_and_resend/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
@@ -145,7 +145,7 @@ export const editAndResendSignatureRequest: DropboxSignEndpoints['editAndResendS
 export const editAndResendEmbeddedSignatureRequest: DropboxSignEndpoints['editAndResendEmbeddedSignatureRequest'] = async (ctx, input) => {
 	const { signature_request_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['editAndResendEmbeddedSignatureRequest']>(
-		signature_request/edit_and_resend_embedded/,
+		`signature_request/edit_and_resend_embedded/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
@@ -156,7 +156,7 @@ export const editAndResendEmbeddedSignatureRequest: DropboxSignEndpoints['editAn
 export const editAndResendEmbeddedSignatureRequestTemplate: DropboxSignEndpoints['editAndResendEmbeddedSignatureRequestTemplate'] = async (ctx, input) => {
 	const { signature_request_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['editAndResendEmbeddedSignatureRequestTemplate']>(
-		signature_request/edit_and_resend_embedded_with_template/,
+		`signature_request/edit_and_resend_embedded_with_template/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);

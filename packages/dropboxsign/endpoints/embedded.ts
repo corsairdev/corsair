@@ -6,7 +6,7 @@ import type { DropboxSignEndpointOutputs } from './types';
 export const getEmbeddedSignUrl: DropboxSignEndpoints['getEmbeddedSignUrl'] = async (ctx, input) => {
 	const { signature_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getEmbeddedSignUrl']>(
-		embedded/sign_url/,
+		`embedded/sign_url/${encodeURIComponent(signature_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
@@ -21,7 +21,7 @@ export const getEmbeddedTemplateEditUrl: DropboxSignEndpoints['getEmbeddedTempla
 	if (skip_subject_message !== undefined) body.force_subject_message = !skip_subject_message;
 
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getEmbeddedTemplateEditUrl']>(
-		embedded/edit_url/,
+		`embedded/edit_url/${encodeURIComponent(template_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);

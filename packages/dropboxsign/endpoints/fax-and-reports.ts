@@ -16,7 +16,7 @@ export const listFaxes: DropboxSignEndpoints['listFaxes'] = async (ctx, input) =
 export const deleteFax: DropboxSignEndpoints['deleteFax'] = async (ctx, input) => {
 	const { fax_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['deleteFax']>(
-		ax/,
+		`fax/${encodeURIComponent(fax_id)}`,
 		ctx.key,
 		{ method: 'DELETE', authType: ctx.authType },
 	);

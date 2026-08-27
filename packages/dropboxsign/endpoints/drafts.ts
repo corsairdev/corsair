@@ -26,7 +26,7 @@ export const createEmbeddedUnclaimedDraftWithTemplate: DropboxSignEndpoints['cre
 export const editAndResendUnclaimedDraft: DropboxSignEndpoints['editAndResendUnclaimedDraft'] = async (ctx, input) => {
 	const { signature_request_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['editAndResendUnclaimedDraft']>(
-		unclaimed_draft/edit_and_resend/,
+		`unclaimed_draft/edit_and_resend/${encodeURIComponent(signature_request_id)}`,
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);

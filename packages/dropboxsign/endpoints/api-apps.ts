@@ -6,7 +6,7 @@ import type { DropboxSignEndpointOutputs } from './types';
 export const getApiApp: DropboxSignEndpoints['getApiApp'] = async (ctx, input) => {
 	const { client_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getApiApp']>(
-		pi_app/,
+		`api_app/${encodeURIComponent(client_id)}`,
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
@@ -37,7 +37,7 @@ export const createApiApp: DropboxSignEndpoints['createApiApp'] = async (ctx, in
 export const updateApiApp: DropboxSignEndpoints['updateApiApp'] = async (ctx, input) => {
 	const { client_id, ...body } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['updateApiApp']>(
-		pi_app/,
+		`api_app/${encodeURIComponent(client_id)}`,
 		ctx.key,
 		{ method: 'PUT', body, authType: ctx.authType },
 	);
@@ -48,7 +48,7 @@ export const updateApiApp: DropboxSignEndpoints['updateApiApp'] = async (ctx, in
 export const deleteApiApp: DropboxSignEndpoints['deleteApiApp'] = async (ctx, input) => {
 	const { client_id } = input;
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['deleteApiApp']>(
-		pi_app/,
+		`api_app/${encodeURIComponent(client_id)}`,
 		ctx.key,
 		{ method: 'DELETE', authType: ctx.authType },
 	);
@@ -60,7 +60,7 @@ export const oAuthAuthorize: DropboxSignEndpoints['oAuthAuthorize'] = async (ctx
 	const { client_id, response_type = 'code', state } = input;
 	const query = new URLSearchParams({ client_id, response_type });
 	if (state) query.set('state', state);
-	const url = https://app.hellosign.com/oauth/authorize?;
+	const url = `https://app.hellosign.com/oauth/authorize?${query.toString()}`;
 	await logEventFromContext(ctx, 'dropboxsign.oauth.authorize', { client_id }, 'completed');
 	return { url };
 };
