@@ -13,6 +13,7 @@ export class BeamerAPIError extends Error {
 
 const BEAMER_API_BASE = 'https://api.getbeamer.com/v0';
 
+/** Sends an authenticated request to the Beamer v0 API. */
 export async function makeBeamerRequest<T>(
 	endpoint: string,
 	apiKey: string,
