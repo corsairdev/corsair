@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import type { PineconeContext, PineconeEndpointOutputs } from './index';
 import { pinecone } from './index';
 
@@ -60,7 +61,7 @@ async function main() {
 		database: undefined,
 	} as PineconeContext;
 	const indexName = `corsair-demo-${Date.now().toString(36)}`;
-	let createdIndex = false;
+	let indexCreationAttempted = false;
 
 	try {
 		console.log('1/6 Generating passage embeddings through Corsair...');
@@ -76,6 +77,9 @@ async function main() {
 		}
 
 		console.log(`2/6 Creating disposable ${dimension}-dimension index...`);
+		// The provider may create the index even if the response is lost, so any
+		// attempted create must be paired with a best-effort delete.
+		indexCreationAttempted = true;
 		await endpoints.indexes.create(ctx, {
 			name: indexName,
 			dimension,
@@ -85,8 +89,6 @@ async function main() {
 			deletion_protection: 'disabled',
 			tags: { purpose: 'corsair-hackblox-live-demo' },
 		});
-		createdIndex = true;
-
 		let host: string | undefined;
 		for (let attempt = 1; attempt <= 24; attempt += 1) {
 			const index = await endpoints.indexes.describe(ctx, { indexName });
@@ -175,16 +177,20 @@ async function main() {
 			),
 		);
 	} finally {
-		if (createdIndex) {
+		if (indexCreationAttempted) {
 			console.log(`Cleaning up disposable index ${indexName}...`);
 			try {
 				await endpoints.indexes.delete(ctx, { indexName });
 				console.log('Cleanup requested successfully.');
 			} catch (error) {
-				console.error(
-					'Cleanup failed; delete the disposable index manually.',
-					error instanceof Error ? error.message : 'Unknown cleanup error',
-				);
+				if (error instanceof ApiError && error.status === 404) {
+					console.log('Cleanup confirmed: disposable index does not exist.');
+				} else {
+					console.error(
+						'Cleanup failed; delete the disposable index manually.',
+						error instanceof Error ? error.message : 'Unknown cleanup error',
+					);
+				}
 			}
 		}
 	}
