@@ -32,7 +32,7 @@ function platformPackageBinary(): string | null {
 	try {
 		// require.resolve honors the installed location (incl. pnpm's layout).
 		const bin = join(
-			dirname(nodeRequire.resolve(`${pkg}/package.json`)),
+			dirname(nodeRequire().resolve(`${pkg}/package.json`)),
 			binName(),
 		);
 		return existsSync(bin) ? bin : null;
