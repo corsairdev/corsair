@@ -17,9 +17,7 @@ import type { ConnectState } from './connect-controller';
 import {
 	connectReducer,
 	initialConnectState,
-	isConnectedMessage,
-	isPluginConnected,
-	originOf,
+	shouldSettleConnected,
 } from './connect-controller';
 import type { ConnectAppearance } from './connect-overlay';
 import { ConnectOverlay } from './connect-overlay';
@@ -60,16 +58,14 @@ export function CorsairProvider({
 	const resolveRef = useRef<((ok: boolean) => void) | null>(null);
 	const popupRef = useRef<Window | null>(null);
 	const watchRef = useRef<ReturnType<typeof setInterval> | null>(null);
-	const messageHandlerRef = useRef<((e: MessageEvent) => void) | null>(null);
+	// Bumped on every open and close so an in-flight poll from a superseded or
+	// closed attempt can't settle the current one.
+	const attemptRef = useRef(0);
 
 	const stopWatch = useCallback(() => {
 		if (watchRef.current) {
 			clearInterval(watchRef.current);
 			watchRef.current = null;
-		}
-		if (messageHandlerRef.current) {
-			window.removeEventListener('message', messageHandlerRef.current);
-			messageHandlerRef.current = null;
 		}
 	}, []);
 
@@ -82,18 +78,25 @@ export function CorsairProvider({
 		[stopWatch],
 	);
 
-	// Learn when the connection lands. Status polling against the app's own
-	// backend is the universal signal — it works self-hosted and for custom
-	// connect pages. The popup closing triggers an immediate check; a postMessage
-	// from the managed connect page is an instant fast-path. All converge here.
+	// Learn when the connection lands. Polling the app's own backend is the
+	// universal signal — it works self-hosted and for custom connect pages. The
+	// popup closing stops the watch once the user is done either way.
 	const beginWatch = useCallback(
-		(plugin: string, tenantId: string | null, trustedOrigin: string) => {
+		(plugin: string, tenantId: string | null) => {
 			stopWatch();
+			const attempt = attemptRef.current;
 			const check = () => {
 				client.connectionStatus
 					.get(tenantId ? { tenantId } : undefined)
 					.then((status) => {
-						if (isPluginConnected(status, plugin)) {
+						if (
+							shouldSettleConnected({
+								capturedAttempt: attempt,
+								currentAttempt: attemptRef.current,
+								status,
+								plugin,
+							})
+						) {
 							popupRef.current?.close();
 							popupRef.current = null;
 							dispatch({ type: 'SUCCESS' });
@@ -102,11 +105,6 @@ export function CorsairProvider({
 					})
 					.catch(() => {});
 			};
-			const onMessage = (e: MessageEvent) => {
-				if (isConnectedMessage(e.data, e.origin, trustedOrigin)) check();
-			};
-			window.addEventListener('message', onMessage);
-			messageHandlerRef.current = onMessage;
 			watchRef.current = setInterval(() => {
 				check();
 				// Popup gone without connecting → stop; the modal stays for a retry.
@@ -118,6 +116,7 @@ export function CorsairProvider({
 
 	const openOverlay = useCallback(
 		(plugin: string, tenantId: string | null, connectUrl: string) => {
+			attemptRef.current += 1;
 			resolveRef.current?.(false);
 			dispatch({ type: 'OPEN', plugin, tenantId, connectUrl });
 			return new Promise<boolean>((resolve) => {
@@ -162,10 +161,11 @@ export function CorsairProvider({
 			'corsair-connect',
 			'width=520,height=720',
 		);
-		beginWatch(plugin, tenantId, originOf(connectUrl) ?? '');
+		beginWatch(plugin, tenantId);
 	}, [beginWatch, connectState]);
 
 	const handleClose = useCallback(() => {
+		attemptRef.current += 1;
 		popupRef.current?.close();
 		popupRef.current = null;
 		settle(false);
