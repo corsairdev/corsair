@@ -73,6 +73,7 @@ export const BaseProviders = [
 	'bitbucket',
 	'bitwarden',
 	'blazemeter',
+	'blocknative',
 	'bluesky',
 	'boloforms',
 	'botpress',
@@ -274,6 +275,7 @@ export const ProviderDisplayNames = {
 	bitbucket: 'Bitbucket',
 	bitwarden: 'Bitwarden',
 	blazemeter: 'BlazeMeter',
+	blocknative: 'Blocknative',
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	botpress: 'Botpress',
@@ -482,6 +484,7 @@ export type AllProviders =
 	| 'bitbucket'
 	| 'bitwarden'
 	| 'blazemeter'
+	| 'blocknative'
 	| 'bluesky'
 	| 'boloforms'
 	| 'botpress'
