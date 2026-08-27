@@ -134,6 +134,7 @@ export const BaseProviders = [
 	'harvest',
 	'hashnode',
 	'heygen',
+	'htmltoimage',
 	'hubspot',
 	'huggingface',
 	'imgbb',
@@ -335,6 +336,7 @@ export const ProviderDisplayNames = {
 	harvest: 'Harvest',
 	hashnode: 'Hashnode',
 	heygen: 'HeyGen',
+	htmltoimage: 'HtmlToImage',
 	hubspot: 'HubSpot',
 	huggingface: 'Hugging Face',
 	imgbb: 'ImgBB',
@@ -543,6 +545,7 @@ export type AllProviders =
 	| 'harvest'
 	| 'hashnode'
 	| 'heygen'
+	| 'htmltoimage'
 	| 'hubspot'
 	| 'huggingface'
 	| 'imgbb'
