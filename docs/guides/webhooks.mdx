@@ -3,13 +3,12 @@ title: Webhooks
 description: Receive real-time events from any plugin in three steps.
 ---
 
-Webhooks let external services push events to you the moment something happens — a GitHub star, a Slack message, a PR merged. You expose one endpoint. Corsair verifies the signature, identifies the plugin, and calls your handler.
+Webhooks let external services push events to you the moment something happens, like a GitHub star, a Slack message, or a PR merged. You expose one endpoint. Corsair verifies the signature, identifies the plugin, and calls your handler.
 
-**Three steps: ngrok → register → react.**
+**Three steps: ngrok, register, react.**
 
----
 
-## Step 1 — Expose a public URL
+## Step 1: expose a public URL
 
 GitHub and Slack can't reach `localhost`. Use ngrok to tunnel your local server:
 
@@ -22,12 +21,11 @@ You'll get a URL like `https://abc123.ngrok-free.app`. Copy it.
 
 <Info>
 **Get a stable URL (recommended)**
-Free ngrok accounts get a random URL on every restart — meaning you'd have to re-register your webhook every time. Claim a **free static domain** at [dashboard.ngrok.com/domains](https://dashboard.ngrok.com/domains) and it'll never change.
+Free ngrok accounts get a random URL on every restart, so you'd have to re-register your webhook every time. Claim a **free static domain** at [dashboard.ngrok.com/domains](https://dashboard.ngrok.com/domains) and it'll never change.
 </Info>
 
----
 
-## Step 2 — Create the webhook endpoint
+## Step 2: create the webhook endpoint
 
 Add one route to your server. All plugins share this single URL:
 
@@ -60,9 +58,8 @@ export async function POST(request: NextRequest) {
 
 `processWebhook` handles everything: it identifies which plugin sent the event, verifies the signature, updates your local database, and runs your hooks.
 
----
 
-## Step 3 — Register and react
+## Step 3: register and react
 
 <Tabs>
 
@@ -70,17 +67,21 @@ export async function POST(request: NextRequest) {
 
 **Register in GitHub:**
 
-1. Go to your repo → **Settings → Webhooks → Add webhook**
+1. Go to your repo, then **Settings**, **Webhooks**, **Add webhook**
 2. Set **Payload URL**: `https://your-ngrok-url.ngrok-free.app/api/webhook`
 3. Set **Content type**: `application/json`
-4. Add a **Secret** — save it
+4. Add a **Secret**, then save it
 5. Choose events (or "Send me everything")
 6. Click **Add webhook**
 
 **Store the secret:**
 
-```ts
-await corsair.github.keys.set_webhook_signature(process.env.GITHUB_WEBHOOK_SECRET!);
+Pass the secret to the plugin in `createCorsair`. Corsair uses it to verify incoming webhook signatures.
+
+```ts corsair.ts
+github({
+    webhookSecret: process.env.GITHUB_WEBHOOK_SECRET,
+})
 ```
 
 **React to events:**
@@ -115,16 +116,20 @@ github({
 
 **Register in Slack:**
 
-1. Go to [api.slack.com/apps](https://api.slack.com/apps) → your app
+1. Go to [api.slack.com/apps](https://api.slack.com/apps), then your app
 2. Navigate to **Event Subscriptions**
 3. Enable events and set the **Request URL**: `https://your-ngrok-url.ngrok-free.app/api/webhook`
-4. Slack will send a challenge — Corsair handles verification automatically
+4. Slack will send a challenge. Corsair handles verification automatically
 5. Subscribe to bot events: `message.channels`, `team_join`, `reaction_added`
 
 **Store the signing secret:**
 
-```ts
-await corsair.slack.keys.setWebhookSignature(process.env.SLACK_SIGNING_SECRET!);
+Pass the signing secret to the plugin in `createCorsair`. Corsair uses it to verify incoming webhook signatures.
+
+```ts corsair.ts
+slack({
+    signingSecret: process.env.SLACK_SIGNING_SECRET,
+})
 ```
 
 **React to events:**
@@ -155,7 +160,6 @@ slack({
 
 </Tabs>
 
----
 
 ## How it works
 
@@ -169,7 +173,6 @@ Incoming webhook
 
 Every plugin shares the same endpoint. You never write routing logic.
 
----
 
 ## What's next
 
@@ -177,13 +180,13 @@ Every plugin shares the same endpoint. You never write routing logic.
   <Card title="Workflows" href="/guides/workflows">
     Chain webhook events into multi-step automations.
   </Card>
-  <Card title="Multi-Tenancy" href="/concepts/multi-tenancy">
+  <Card title="Multi-tenancy" href="/concepts/multi-tenancy">
     Scope incoming webhooks per user with ?tenantId= param.
   </Card>
-  <Card title="GitHub Webhooks" href="/plugins/github/webhooks">
+  <Card title="GitHub webhooks" href="/plugins/github/webhooks">
     All available GitHub events and payload shapes.
   </Card>
-  <Card title="Slack Webhooks" href="/plugins/slack/webhooks">
+  <Card title="Slack webhooks" href="/plugins/slack/webhooks">
     All available Slack events and payload shapes.
   </Card>
 </CardGroup>
