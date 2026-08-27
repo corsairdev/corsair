@@ -4,8 +4,6 @@ import { makeDatarobotRequest } from '../client';
 import { buildDatarobotPath, splitDatarobotInput } from '../utils';
 import { DatarobotEndpointOutputSchemas } from './types';
 
-/** Retrieve version information. */
-/** Official: GET /api/v2/version/ (`version_list`) */
 export const versionList: DatarobotEndpoints['versionList'] = async (
 	ctx,
 	input,

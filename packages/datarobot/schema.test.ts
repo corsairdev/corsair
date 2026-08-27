@@ -116,6 +116,30 @@ describe('DataRobot client errors', () => {
 		fetchSpy.mockRestore();
 	});
 
+	it('sends JSON on DELETE when a body is provided', async () => {
+		const fetchSpy = jest
+			.spyOn(global, 'fetch')
+			.mockResolvedValue(
+				new Response('{}', {
+					status: 200,
+					headers: { 'content-type': 'application/json' },
+				}),
+			);
+		await makeDatarobotRequest(
+			'/api/v2/version/',
+			{ key: 'token', options: { baseUrl: 'https://app.datarobot.com' } },
+			{ method: 'DELETE', body: { ids: ['1'] } },
+		);
+		expect(fetchSpy).toHaveBeenCalledTimes(1);
+		expect(fetchSpy.mock.calls[0]?.[1]).toEqual(
+			expect.objectContaining({
+				method: 'DELETE',
+				body: JSON.stringify({ ids: ['1'] }),
+			}),
+		);
+		fetchSpy.mockRestore();
+	});
+
 	it('rejects HTTP, protocol-relative, and cross-origin endpoints', async () => {
 		const fetchSpy = jest.spyOn(global, 'fetch');
 		const ctx = {

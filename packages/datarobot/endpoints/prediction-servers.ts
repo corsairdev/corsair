@@ -4,8 +4,6 @@ import { makeDatarobotRequest } from '../client';
 import { buildDatarobotPath, splitDatarobotInput } from '../utils';
 import { DatarobotEndpointOutputSchemas } from './types';
 
-/** List prediction servers. */
-/** Official: GET /api/v2/predictionServers/ (`predictionServers_list`) */
 export const predictionServersList: DatarobotEndpoints['predictionServersList'] =
 	async (ctx, input) => {
 		const path = buildDatarobotPath('/api/v2/predictionServers/', input);
