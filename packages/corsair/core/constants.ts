@@ -15,6 +15,7 @@ export type AllErrors =
 export const BaseProviders = [
 	'ably',
 	'abstract',
+	'abuseipdb',
 	'abyssale',
 	'accrediblecertificates',
 	'activecampaign',
@@ -43,6 +44,7 @@ export const BaseProviders = [
 	'amcards',
 	'amplitude',
 	'anchorbrowser',
+	'anonyflow',
 	'anthropicadministrator',
 	'apaleo',
 	'api2pdf',
@@ -57,11 +59,15 @@ export const BaseProviders = [
 	'asticaai',
 	'asyncinterview',
 	'attio',
+	'autom',
 	'ayrshare',
+	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
+	'beeminder',
 	'betterstack',
+	'bigdatacloud',
 	'bigmailer',
 	'bigml',
 	'bitbucket',
@@ -72,6 +78,7 @@ export const BaseProviders = [
 	'botpress',
 	'bouncer',
 	'box',
+	'browseai',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -80,6 +87,7 @@ export const BaseProviders = [
 	'chatbotkit',
 	'circleci',
 	'clientary',
+	'clockify',
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
@@ -132,6 +140,7 @@ export const BaseProviders = [
 	'insightoai',
 	'instagram',
 	'intercom',
+	'jigsawstack',
 	'jira',
 	'kaggle',
 	'linear',
@@ -153,6 +162,7 @@ export const BaseProviders = [
 	'oura',
 	'outlook',
 	'pagerduty',
+	'pdfmonkey',
 	'perplexityai',
 	'posthog',
 	'razorpay',
@@ -174,6 +184,7 @@ export const BaseProviders = [
 	'tavilymcp',
 	'teams',
 	'telegram',
+	'ticktick',
 	'todoist',
 	'toggl',
 	'trello',
@@ -184,9 +195,11 @@ export const BaseProviders = [
 	'twochat',
 	'typeform',
 	'unione',
+	'uniswapapi',
 	'vapi',
 	'vercel',
 	'webflow',
+	'webvizio',
 	'whatsapp',
 	'witai',
 	'wiza',
@@ -203,6 +216,7 @@ export const BaseProviders = [
 export const ProviderDisplayNames = {
 	ably: 'Ably',
 	abstract: 'Abstract',
+	abuseipdb: 'AbuseIPDB',
 	abyssale: 'Abyssale',
 	accrediblecertificates: 'Accredible Certificates',
 	activecampaign: 'ActiveCampaign',
@@ -231,6 +245,7 @@ export const ProviderDisplayNames = {
 	amcards: 'AMcards',
 	amplitude: 'Amplitude',
 	anchorbrowser: 'Anchor Browser',
+	anonyflow: 'Anonyflow',
 	anthropicadministrator: 'Anthropic Administrator',
 	apaleo: 'Apaleo',
 	api2pdf: 'API2PDF',
@@ -245,11 +260,15 @@ export const ProviderDisplayNames = {
 	asticaai: 'Astica AI',
 	asyncinterview: 'Async Interview',
 	attio: 'Attio',
+	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
+	beeminder: 'Beeminder',
 	betterstack: 'Better Stack',
+	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
 	bitbucket: 'Bitbucket',
@@ -260,6 +279,7 @@ export const ProviderDisplayNames = {
 	botpress: 'Botpress',
 	bouncer: 'Bouncer',
 	box: 'Box',
+	browseai: 'Browse AI',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -268,6 +288,7 @@ export const ProviderDisplayNames = {
 	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
+	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
@@ -320,6 +341,7 @@ export const ProviderDisplayNames = {
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
+	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
 	linear: 'Linear',
@@ -341,6 +363,7 @@ export const ProviderDisplayNames = {
 	oura: 'Oura',
 	outlook: 'Outlook',
 	pagerduty: 'PagerDuty',
+	pdfmonkey: 'PDFMonkey',
 	perplexityai: 'Perplexity AI',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
@@ -362,6 +385,7 @@ export const ProviderDisplayNames = {
 	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
+	ticktick: 'TickTick',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -372,9 +396,11 @@ export const ProviderDisplayNames = {
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
 	unione: 'Unione',
+	uniswapapi: 'Uniswap',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	webflow: 'Webflow',
+	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
 	wiza: 'Wiza',
@@ -398,6 +424,7 @@ export function formatProviderDisplayName(plugin: string): string {
 export type AllProviders =
 	| 'ably'
 	| 'abstract'
+	| 'abuseipdb'
 	| 'abyssale'
 	| 'accrediblecertificates'
 	| 'activecampaign'
@@ -426,6 +453,7 @@ export type AllProviders =
 	| 'amcards'
 	| 'amplitude'
 	| 'anchorbrowser'
+	| 'anonyflow'
 	| 'anthropicadministrator'
 	| 'apaleo'
 	| 'api2pdf'
@@ -440,11 +468,15 @@ export type AllProviders =
 	| 'asticaai'
 	| 'asyncinterview'
 	| 'attio'
+	| 'autom'
 	| 'ayrshare'
+	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
+	| 'beeminder'
 	| 'betterstack'
+	| 'bigdatacloud'
 	| 'bigmailer'
 	| 'bigml'
 	| 'bitbucket'
@@ -455,6 +487,7 @@ export type AllProviders =
 	| 'botpress'
 	| 'bouncer'
 	| 'box'
+	| 'browseai'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
@@ -463,6 +496,7 @@ export type AllProviders =
 	| 'chatbotkit'
 	| 'circleci'
 	| 'clientary'
+	| 'clockify'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
@@ -515,6 +549,7 @@ export type AllProviders =
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
+	| 'jigsawstack'
 	| 'jira'
 	| 'kaggle'
 	| 'linear'
@@ -536,6 +571,7 @@ export type AllProviders =
 	| 'oura'
 	| 'outlook'
 	| 'pagerduty'
+	| 'pdfmonkey'
 	| 'perplexityai'
 	| 'posthog'
 	| 'razorpay'
@@ -557,6 +593,7 @@ export type AllProviders =
 	| 'tavilymcp'
 	| 'teams'
 	| 'telegram'
+	| 'ticktick'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
@@ -567,9 +604,11 @@ export type AllProviders =
 	| 'twochat'
 	| 'typeform'
 	| 'unione'
+	| 'uniswapapi'
 	| 'vapi'
 	| 'vercel'
 	| 'webflow'
+	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
 	| 'wiza'

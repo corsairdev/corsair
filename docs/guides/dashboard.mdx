@@ -1,12 +1,12 @@
 ---
-title: Vibe Code Your Dashboard
+title: Vibe code your dashboard
 description: Scaffold a T3 app, wire in Google Calendar with Corsair, then let an AI agent build the whole dashboard from a single prompt.
 ---
 
 import { GenerateKEK } from '/snippets/generate-kek.mdx';
 import { WindowsMigrationNote } from '/snippets/windows-shell.mdx';
 
-By the end of this guide you'll have a working Next.js app with a live Google Calendar dashboard — and you'll have written almost none of the UI yourself.
+A working Next.js app with a live Google Calendar dashboard, built almost entirely by an AI agent from one prompt.
 
 ## Corsair context prompt for your agent
 
@@ -29,7 +29,7 @@ When to use which:
 Entity data is on .data in camelCase. Use .search({}) or .list() on .db to query.
 
 To see what's available, run:
-  pnpm corsair list --<plugin>
+  pnpm corsair list --plugin <id>
 ```
 
 <Steps>
@@ -236,7 +236,7 @@ export const corsair = createCorsair({
 Google Calendar uses OAuth2. You'll need a GCP OAuth app first:
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/), create a project, and enable the **Google Calendar API**.
-2. Under **APIs & Services → Credentials**, create an **OAuth 2.0 Client ID** (Application type: Web application). No redirect URI needed — Corsair handles it locally.
+2. Under **APIs & Services**, then **Credentials**, create an **OAuth 2.0 Client ID** (Application type: Web application). No redirect URI needed. Corsair handles it locally.
 3. Copy your Client ID and Client Secret, then store them:
 
 <CodeGroup>
@@ -342,21 +342,20 @@ Run `pnpm dev` when it's done.
 
 </Steps>
 
----
 
 ## What's next
 
 <CardGroup cols={2}>
-  <Card title="Google Calendar Plugin" href="/plugins/googlecalendar/api">
-    Full API reference — create events, check availability, and handle webhook notifications.
+  <Card title="Google Calendar plugin" href="/plugins/googlecalendar/api">
+    Full API reference. Create events, check availability, and handle webhook notifications.
   </Card>
   <Card title="Webhooks" href="/plugins/googlecalendar/webhooks">
-    React to calendar changes in real time — new events, updates, and deletions pushed to your server.
+    React to calendar changes in real time. New events, updates, and deletions pushed to your server.
   </Card>
   <Card title="Workflows" href="/guides/workflows">
-    Chain calendar events to other plugins — meeting created → Slack notification → Linear task.
+    Chain calendar events to other plugins. A meeting is created, a Slack notification fires, then a Linear task is added.
   </Card>
-  <Card title="Multi-Tenancy" href="/concepts/multi-tenancy">
+  <Card title="Multi-tenancy" href="/concepts/multi-tenancy">
     Building a product? Each user gets their own calendar credentials and isolated data.
   </Card>
 </CardGroup>
