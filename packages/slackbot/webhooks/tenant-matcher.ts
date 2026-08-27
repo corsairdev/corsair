@@ -1,16 +1,6 @@
 import type { RawWebhookRequest, WebhookTenantMatch } from 'corsair/core';
 import { asRecord, firstString, readBodyRecord } from 'corsair/core';
 
-/**
- * Routes an incoming webhook to the workspace that produced it.
- *
- * Slack puts `team_id` on the outer `event_callback` envelope. For
- * Enterprise Grid the per-event `team` and the `authorizations` array are
- * checked as fallbacks, since org-level installs can omit the envelope id.
- *
- * `url_verification` deliberately returns null: the handshake predates any
- * workspace link, so there is nothing to route to yet.
- */
 export function matchSlackbotTenantWebhook(
 	request: RawWebhookRequest,
 ): WebhookTenantMatch | null {
@@ -19,12 +9,27 @@ export function matchSlackbotTenantWebhook(
 
 	if (body.type === 'url_verification') return null;
 
+	const authorization = Array.isArray(body.authorizations)
+		? asRecord(body.authorizations[0])
+		: undefined;
+
+	if (
+		body.is_enterprise_install === true ||
+		authorization?.is_enterprise_install === true
+	) {
+		const enterpriseId = firstString([
+			body.enterprise_id,
+			authorization?.enterprise_id,
+		]);
+		if (enterpriseId) {
+			return { linkType: 'enterprise_id', externalId: enterpriseId };
+		}
+	}
+
 	const teamId = firstString([
 		body.team_id,
 		asRecord(body.event)?.team,
-		Array.isArray(body.authorizations)
-			? asRecord(body.authorizations[0])?.team_id
-			: undefined,
+		authorization?.team_id,
 	]);
 
 	if (!teamId) return null;

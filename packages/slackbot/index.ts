@@ -925,9 +925,57 @@ const slackbotWebhookSchemas = {
  */
 export const slackbotAuthConfig = {
 	oauth_2: {
-		account: ['team_id'] as const,
+		account: ['team_id', 'enterprise_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
+
+const slackbotOAuthConfig = {
+	providerName: 'Slack',
+	authUrl: 'https://slack.com/oauth/v2/authorize',
+	tokenUrl: 'https://slack.com/api/oauth.v2.access',
+	scopes: [
+		'calls:read',
+		'calls:write',
+		'canvases:read',
+		'canvases:write',
+		'channels:history',
+		'channels:join',
+		'channels:manage',
+		'channels:read',
+		'chat:write',
+		'chat:write.public',
+		'dnd:read',
+		'emoji:read',
+		'files:read',
+		'files:write',
+		'groups:history',
+		'groups:read',
+		'groups:write',
+		'im:history',
+		'im:read',
+		'im:write',
+		'links:write',
+		'mpim:history',
+		'mpim:read',
+		'mpim:write',
+		'pins:read',
+		'pins:write',
+		'reactions:read',
+		'reactions:write',
+		'reminders:read',
+		'reminders:write',
+		'remote_files:read',
+		'remote_files:share',
+		'remote_files:write',
+		'team:read',
+		'usergroups:read',
+		'usergroups:write',
+		'users.profile:read',
+		'users:read',
+		'users:read.email',
+		'users:write',
+	],
+};
 
 const defaultAuthType: AuthTypes = 'oauth_2' as const;
 
@@ -956,6 +1004,7 @@ export function slackbot<const T extends SlackbotPluginOptions>(
 	return {
 		id: 'slackbot',
 		authConfig: slackbotAuthConfig,
+		oauthConfig: slackbotOAuthConfig,
 		schema: SlackbotSchema,
 		options: options,
 		hooks: options.hooks,
@@ -969,7 +1018,9 @@ export function slackbot<const T extends SlackbotPluginOptions>(
 			const headers = request.headers;
 			// Every Events API delivery is signed. The URL verification handshake
 			// is signed too, so this claims the setup request as well.
-			return 'x-slack-signature' in headers;
+			return (
+				'x-slack-signature' in headers && 'x-slack-request-timestamp' in headers
+			);
 		},
 		pluginTenantWebhookMatcher: matchSlackbotTenantWebhook,
 		oauthWebhookTenantLinkResolver: resolveSlackbotOAuthWebhookTenantLink,

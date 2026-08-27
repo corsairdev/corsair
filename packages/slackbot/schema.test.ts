@@ -86,6 +86,39 @@ describe('endpoint registry', () => {
 		expect(plugin.options?.authType).toBe('oauth_2');
 		expect(Object.keys(plugin.authConfig ?? {})).toEqual(['oauth_2']);
 	});
+
+	it('declares oauthConfig so connect can exchange a Slack bot install', () => {
+		const plugin = slackbot();
+		expect(plugin.oauthConfig).toEqual(
+			expect.objectContaining({
+				providerName: 'Slack',
+				authUrl: 'https://slack.com/oauth/v2/authorize',
+				tokenUrl: 'https://slack.com/api/oauth.v2.access',
+			}),
+		);
+		expect(plugin.oauthConfig?.scopes.length).toBeGreaterThan(0);
+	});
+
+	it('claims Events API deliveries only when both Slack signature headers are present', () => {
+		const match = slackbot().pluginWebhookMatcher;
+		expect(match).toBeDefined();
+		expect(
+			match?.({ headers: { 'x-slack-signature': 'v0=abc' } } as never),
+		).toBe(false);
+		expect(
+			match?.({
+				headers: { 'x-slack-request-timestamp': '1' },
+			} as never),
+		).toBe(false);
+		expect(
+			match?.({
+				headers: {
+					'x-slack-signature': 'v0=abc',
+					'x-slack-request-timestamp': '1',
+				},
+			} as never),
+		).toBe(true);
+	});
 });
 
 describe('input validation', () => {
@@ -178,5 +211,32 @@ describe('tenant routing', () => {
 		expect(
 			resolveSlackbotOAuthWebhookTenantLink({ access_token: 'x' } as never),
 		).toBeNull();
+	});
+
+	it('links an org-wide Grid install to enterprise_id', () => {
+		const match = resolveSlackbotOAuthWebhookTenantLink({
+			access_token: 'xoxb-1',
+			is_enterprise_install: true,
+			enterprise: { id: 'E123', name: 'Acme' },
+		} as never);
+		expect(match).toEqual({ linkType: 'enterprise_id', externalId: 'E123' });
+	});
+
+	it('routes an enterprise-install event by enterprise_id', () => {
+		const match = matchSlackbotTenantWebhook({
+			body: {
+				type: 'event_callback',
+				team_id: 'T123',
+				enterprise_id: 'E123',
+				authorizations: [
+					{
+						team_id: 'T123',
+						enterprise_id: 'E123',
+						is_enterprise_install: true,
+					},
+				],
+			},
+		} as never);
+		expect(match).toEqual({ linkType: 'enterprise_id', externalId: 'E123' });
 	});
 });
