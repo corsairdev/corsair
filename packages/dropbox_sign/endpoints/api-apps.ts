@@ -39,7 +39,7 @@ export const updateApiApp: DropboxSignEndpoints['updateApiApp'] = async (ctx, in
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['updateApiApp']>(
 		pi_app/,
 		ctx.key,
-		{ method: 'POST', body, authType: ctx.authType },
+		{ method: 'PUT', body, authType: ctx.authType },
 	);
 	await logEventFromContext(ctx, 'dropbox_sign.apiApp.update', { client_id }, 'completed');
 	return result;

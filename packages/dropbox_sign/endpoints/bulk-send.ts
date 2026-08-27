@@ -5,7 +5,7 @@ import type { DropboxSignEndpointOutputs } from './types';
 
 export const bulkSendWithTemplate: DropboxSignEndpoints['bulkSendWithTemplate'] = async (ctx, input) => {
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['bulkSendWithTemplate']>(
-		'bulk_send_job/send/with_template',
+		'signature_request/bulk_send_with_template',
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
@@ -15,7 +15,7 @@ export const bulkSendWithTemplate: DropboxSignEndpoints['bulkSendWithTemplate'] 
 
 export const bulkCreateEmbeddedSigReqWithTemplate: DropboxSignEndpoints['bulkCreateEmbeddedSigReqWithTemplate'] = async (ctx, input) => {
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['bulkCreateEmbeddedSigReqWithTemplate']>(
-		'bulk_send_job/create_embedded/with_template',
+		'signature_request/bulk_create_embedded_with_template',
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);

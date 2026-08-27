@@ -26,7 +26,7 @@ export const listTemplates: DropboxSignEndpoints['listTemplates'] = async (ctx, 
 
 export const createTemplate: DropboxSignEndpoints['createTemplate'] = async (ctx, input) => {
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['createTemplate']>(
-		'template/create_embedded_draft',
+		'template/create',
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);

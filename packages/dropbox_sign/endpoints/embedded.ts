@@ -15,11 +15,15 @@ export const getEmbeddedSignUrl: DropboxSignEndpoints['getEmbeddedSignUrl'] = as
 };
 
 export const getEmbeddedTemplateEditUrl: DropboxSignEndpoints['getEmbeddedTemplateEditUrl'] = async (ctx, input) => {
-	const { template_id, ...query } = input;
+	const { template_id, skip_signer_roles, skip_subject_message } = input;
+	const body: Record<string, any> = {};
+	if (skip_signer_roles !== undefined) body.force_signer_roles = !skip_signer_roles;
+	if (skip_subject_message !== undefined) body.force_subject_message = !skip_subject_message;
+
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getEmbeddedTemplateEditUrl']>(
 		embedded/edit_url/,
 		ctx.key,
-		{ method: 'GET', query, authType: ctx.authType },
+		{ method: 'POST', body, authType: ctx.authType },
 	);
 	await logEventFromContext(ctx, 'dropbox_sign.embedded.getTemplateEditUrl', { template_id }, 'completed');
 	return result;

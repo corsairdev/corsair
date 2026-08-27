@@ -105,6 +105,15 @@ describe('Dropbox Sign Endpoints', () => {
 			});
 		});
 
+		it('creates a template', async () => {
+			await Templates.createTemplate(ctx, { title: 'New Template' });
+			expect(mockedRequest).toHaveBeenCalledWith('template/create', ctx.key, {
+				method: 'POST',
+				body: { title: 'New Template' },
+				authType: ctx.authType,
+			});
+		});
+
 		it('deletes a template', async () => {
 			await Templates.deleteTemplate(ctx, { template_id: 'tmpl_123' });
 			expect(mockedRequest).toHaveBeenCalledWith('template/delete/tmpl_123', ctx.key, {
@@ -134,6 +143,15 @@ describe('Dropbox Sign Endpoints', () => {
 	});
 
 	describe('Bulk Send & Teams & Apps', () => {
+		it('bulk sends with template', async () => {
+			await BulkSend.bulkSendWithTemplate(ctx, { template_ids: ['tmpl_1'] });
+			expect(mockedRequest).toHaveBeenCalledWith('signature_request/bulk_send_with_template', ctx.key, {
+				method: 'POST',
+				body: { template_ids: ['tmpl_1'] },
+				authType: ctx.authType,
+			});
+		});
+
 		it('gets bulk send job', async () => {
 			await BulkSend.getBulkSendJob(ctx, { bulk_send_job_id: 'job_123' });
 			expect(mockedRequest).toHaveBeenCalledWith('bulk_send_job/job_123', ctx.key, {
@@ -144,9 +162,17 @@ describe('Dropbox Sign Endpoints', () => {
 
 		it('gets team info', async () => {
 			await Teams.getTeamInfo(ctx, {});
-			expect(mockedRequest).toHaveBeenCalledWith('team', ctx.key, {
+			expect(mockedRequest).toHaveBeenCalledWith('team/info', ctx.key, {
 				method: 'GET',
 				query: {},
+				authType: ctx.authType,
+			});
+		});
+
+		it('gets current team', async () => {
+			await Teams.getCurrentTeam(ctx);
+			expect(mockedRequest).toHaveBeenCalledWith('team', ctx.key, {
+				method: 'GET',
 				authType: ctx.authType,
 			});
 		});
@@ -158,8 +184,8 @@ describe('Dropbox Sign Endpoints', () => {
 
 		it('deletes fax', async () => {
 			await FaxAndReports.deleteFax(ctx, { fax_id: 'fax_123' });
-			expect(mockedRequest).toHaveBeenCalledWith('fax/delete/fax_123', ctx.key, {
-				method: 'POST',
+			expect(mockedRequest).toHaveBeenCalledWith('fax/fax_123', ctx.key, {
+				method: 'DELETE',
 				authType: ctx.authType,
 			});
 		});

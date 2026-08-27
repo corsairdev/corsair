@@ -5,7 +5,7 @@ import type { DropboxSignEndpointOutputs } from './types';
 
 export const getTeamInfo: DropboxSignEndpoints['getTeamInfo'] = async (ctx, input) => {
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getTeamInfo']>(
-		'team',
+		'team/info',
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
@@ -15,7 +15,7 @@ export const getTeamInfo: DropboxSignEndpoints['getTeamInfo'] = async (ctx, inpu
 
 export const getCurrentTeam: DropboxSignEndpoints['getCurrentTeam'] = async (ctx) => {
 	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getCurrentTeam']>(
-		'team/current',
+		'team',
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
