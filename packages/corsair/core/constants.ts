@@ -70,9 +70,7 @@ export const BaseProviders = [
 	'bart',
 	'basecamp',
 	'baselinker',
-	'basin',
 	'beaconstac',
-	'beeminder',
 	'benchmarkemail',
 	'bestbuy',
 	'bettercontact',
@@ -126,6 +124,7 @@ export const BaseProviders = [
 	'clickhouse',
 	'clientary',
 	'clockify',
+	'cloudcart',
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
@@ -359,9 +358,7 @@ export const ProviderDisplayNames = {
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
-	basin: 'Basin',
 	beaconstac: 'Beaconstac',
-	beeminder: 'Beeminder',
 	benchmarkemail: 'BenchmarkEmail',
 	bestbuy: 'Best Buy',
 	bettercontact: 'BetterContact',
@@ -415,6 +412,7 @@ export const ProviderDisplayNames = {
 	clickhouse: 'Clickhouse',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
+	cloudcart: 'Cloudcart',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
@@ -655,9 +653,7 @@ export type AllProviders =
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
-	| 'basin'
 	| 'beaconstac'
-	| 'beeminder'
 	| 'benchmarkemail'
 	| 'bestbuy'
 	| 'bettercontact'
@@ -711,6 +707,7 @@ export type AllProviders =
 	| 'clickhouse'
 	| 'clientary'
 	| 'clockify'
+	| 'cloudcart'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
