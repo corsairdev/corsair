@@ -9,6 +9,7 @@ export {
 	createCorsair,
 	PermissionRequiredError,
 	ReadonlyForbiddenError,
+	ReconnectRequiredError,
 	resolveConnectLink,
 	runReadonly,
 } from './core';

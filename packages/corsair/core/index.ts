@@ -260,6 +260,7 @@ export {
 	getOAuthAccessToken,
 	initializeAccountDEK,
 	initializeIntegrationDEK,
+	ReconnectRequiredError,
 	reEncryptConfig,
 } from './auth';
 // Agent chats namespace
