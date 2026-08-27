@@ -1,7 +1,7 @@
-﻿import { makeCloudcartRequest, CloudcartAPIError } from './client';
+﻿import { createHmac } from 'node:crypto';
+import { CloudcartAPIError, makeCloudcartRequest } from './client';
 import { CloudcartEndpointInputSchemas } from './endpoints/types';
 import { verifyCloudcartWebhookSignature } from './webhooks/types';
-import { createHmac } from 'node:crypto';
 
 describe('Cloudcart API Client & Endpoint Schemas', () => {
 	it('validates product input schema', () => {
@@ -29,14 +29,18 @@ describe('Cloudcart API Client & Endpoint Schemas', () => {
 	});
 
 	it('throws CloudcartAPIError when API key is missing', async () => {
-		await expect(makeCloudcartRequest('products', '')).rejects.toThrow(CloudcartAPIError);
+		await expect(makeCloudcartRequest('products', '')).rejects.toThrow(
+			CloudcartAPIError,
+		);
 	});
 
 	it('validates webhook signature verification', () => {
 		const secret = 'super_secret_webhook_key';
 		const payload = { type: 'order.created', data: { id: 12345 } };
 		const payloadString = JSON.stringify(payload);
-		const signature = createHmac('sha256', secret).update(payloadString).digest('hex');
+		const signature = createHmac('sha256', secret)
+			.update(payloadString)
+			.digest('hex');
 
 		const validResult = verifyCloudcartWebhookSignature(
 			{

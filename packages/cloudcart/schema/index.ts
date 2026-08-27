@@ -14,4 +14,3 @@ export const CloudcartSchema = {
 		categories: CloudcartCategory,
 	},
 } as const;
-

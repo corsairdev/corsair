@@ -1,5 +1,9 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { z } from 'zod';
 
 export const CloudcartWebhookPayloadSchema = z.object({
@@ -53,7 +57,9 @@ function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
-			return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+			return parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
 				? (parsed as Record<string, unknown>)
 				: null;
 		} catch {
@@ -108,11 +114,11 @@ export function verifyCloudcartWebhookSignature(
 		}
 
 		return { valid: true };
-
 	} catch (err) {
 		return {
 			valid: false,
-			error: err instanceof Error ? err.message : 'Signature verification failed',
+			error:
+				err instanceof Error ? err.message : 'Signature verification failed',
 		};
 	}
 }

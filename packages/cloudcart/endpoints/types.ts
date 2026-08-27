@@ -2,18 +2,20 @@ import { z } from 'zod';
 
 const IdParamSchema = z.union([z.string(), z.number()]);
 
-const BaseEntityInputSchema = z.object({
-	id: IdParamSchema.optional(),
-	product_id: IdParamSchema.optional(),
-	customer_id: IdParamSchema.optional(),
-	property_id: IdParamSchema.optional(),
-	discount_id: IdParamSchema.optional(),
-	'page[number]': z.coerce.number().int().positive().optional(),
-	'page[size]': z.coerce.number().int().positive().max(250).optional(),
-	sort: z.string().optional(),
-	include: z.string().optional(),
-	data: z.record(z.string(), z.unknown()).optional(),
-}).passthrough();
+const BaseEntityInputSchema = z
+	.object({
+		id: IdParamSchema.optional(),
+		product_id: IdParamSchema.optional(),
+		customer_id: IdParamSchema.optional(),
+		property_id: IdParamSchema.optional(),
+		discount_id: IdParamSchema.optional(),
+		'page[number]': z.coerce.number().int().positive().optional(),
+		'page[size]': z.coerce.number().int().positive().max(250).optional(),
+		sort: z.string().optional(),
+		include: z.string().optional(),
+		data: z.record(z.string(), z.unknown()).optional(),
+	})
+	.passthrough();
 
 const GenericResponseSchema = z.union([
 	z.record(z.string(), z.unknown()),
@@ -71,7 +73,8 @@ export const ListVariantOptionsInputSchema = BaseEntityInputSchema;
 export const UpdateVariantOptionInputSchema = BaseEntityInputSchema;
 export const DeleteVariantOptionInputSchema = BaseEntityInputSchema;
 export const CreateVariantParameterInputSchema = BaseEntityInputSchema;
-export const CreateVariantParameterForVariantInputSchema = BaseEntityInputSchema;
+export const CreateVariantParameterForVariantInputSchema =
+	BaseEntityInputSchema;
 export const GetVariantParameterInputSchema = BaseEntityInputSchema;
 export const ListVariantParametersInputSchema = BaseEntityInputSchema;
 export const UpdateVariantParameterInputSchema = BaseEntityInputSchema;
@@ -194,7 +197,9 @@ export type CloudcartEndpointInputs = {
 	deleteProduct: z.infer<typeof DeleteProductInputSchema>;
 	createLinkedProducts: z.infer<typeof CreateLinkedProductsInputSchema>;
 	getProductsLinkedProduct: z.infer<typeof GetProductsLinkedProductInputSchema>;
-	getProductsLinkedProducts: z.infer<typeof GetProductsLinkedProductsInputSchema>;
+	getProductsLinkedProducts: z.infer<
+		typeof GetProductsLinkedProductsInputSchema
+	>;
 	updateLinkedProduct: z.infer<typeof UpdateLinkedProductInputSchema>;
 	deleteLinkedProducts: z.infer<typeof DeleteLinkedProductsInputSchema>;
 	createImage: z.infer<typeof CreateImageInputSchema>;
@@ -220,8 +225,12 @@ export type CloudcartEndpointInputs = {
 	listPropertyOptions: z.infer<typeof ListPropertyOptionsInputSchema>;
 	updatePropertyOption: z.infer<typeof UpdatePropertyOptionInputSchema>;
 	deletePropertyOption: z.infer<typeof DeletePropertyOptionInputSchema>;
-	createProductsPropertyOptions: z.infer<typeof CreateProductsPropertyOptionsInputSchema>;
-	getPropertyOptionsRelationship: z.infer<typeof GetPropertyOptionsRelationshipInputSchema>;
+	createProductsPropertyOptions: z.infer<
+		typeof CreateProductsPropertyOptionsInputSchema
+	>;
+	getPropertyOptionsRelationship: z.infer<
+		typeof GetPropertyOptionsRelationshipInputSchema
+	>;
 
 	createVariant: z.infer<typeof CreateVariantInputSchema>;
 	getVariant: z.infer<typeof GetVariantInputSchema>;
@@ -235,7 +244,9 @@ export type CloudcartEndpointInputs = {
 	updateVariantOption: z.infer<typeof UpdateVariantOptionInputSchema>;
 	deleteVariantOption: z.infer<typeof DeleteVariantOptionInputSchema>;
 	createVariantParameter: z.infer<typeof CreateVariantParameterInputSchema>;
-	createVariantParameterForVariant: z.infer<typeof CreateVariantParameterForVariantInputSchema>;
+	createVariantParameterForVariant: z.infer<
+		typeof CreateVariantParameterForVariantInputSchema
+	>;
 	getVariantParameter: z.infer<typeof GetVariantParameterInputSchema>;
 	listVariantParameters: z.infer<typeof ListVariantParametersInputSchema>;
 	updateVariantParameter: z.infer<typeof UpdateVariantParameterInputSchema>;
@@ -249,19 +260,41 @@ export type CloudcartEndpointInputs = {
 	createCustomerGroup: z.infer<typeof CreateCustomerGroupInputSchema>;
 	getCustomerGroup: z.infer<typeof GetCustomerGroupInputSchema>;
 	listCustomerGroups: z.infer<typeof ListCustomerGroupsInputSchema>;
-	getCustomerGroupsCustomers: z.infer<typeof GetCustomerGroupsCustomersInputSchema>;
+	getCustomerGroupsCustomers: z.infer<
+		typeof GetCustomerGroupsCustomersInputSchema
+	>;
 	updateCustomerGroup: z.infer<typeof UpdateCustomerGroupInputSchema>;
 	deleteCustomerGroup: z.infer<typeof DeleteCustomerGroupInputSchema>;
-	createCustomerBillingAddress: z.infer<typeof CreateCustomerBillingAddressInputSchema>;
-	getCustomerBillingAddress: z.infer<typeof GetCustomerBillingAddressInputSchema>;
-	listCustomerBillingAddresses: z.infer<typeof ListCustomerBillingAddressesInputSchema>;
-	updateCustomerBillingAddress: z.infer<typeof UpdateCustomerBillingAddressInputSchema>;
-	deleteCustomerBillingAddress: z.infer<typeof DeleteCustomerBillingAddressInputSchema>;
-	createCustomerShippingAddress: z.infer<typeof CreateCustomerShippingAddressInputSchema>;
-	getCustomerShippingAddress: z.infer<typeof GetCustomerShippingAddressInputSchema>;
-	listCustomerShippingAddresses: z.infer<typeof ListCustomerShippingAddressesInputSchema>;
-	updateCustomerShippingAddress: z.infer<typeof UpdateCustomerShippingAddressInputSchema>;
-	deleteCustomerShippingAddress: z.infer<typeof DeleteCustomerShippingAddressInputSchema>;
+	createCustomerBillingAddress: z.infer<
+		typeof CreateCustomerBillingAddressInputSchema
+	>;
+	getCustomerBillingAddress: z.infer<
+		typeof GetCustomerBillingAddressInputSchema
+	>;
+	listCustomerBillingAddresses: z.infer<
+		typeof ListCustomerBillingAddressesInputSchema
+	>;
+	updateCustomerBillingAddress: z.infer<
+		typeof UpdateCustomerBillingAddressInputSchema
+	>;
+	deleteCustomerBillingAddress: z.infer<
+		typeof DeleteCustomerBillingAddressInputSchema
+	>;
+	createCustomerShippingAddress: z.infer<
+		typeof CreateCustomerShippingAddressInputSchema
+	>;
+	getCustomerShippingAddress: z.infer<
+		typeof GetCustomerShippingAddressInputSchema
+	>;
+	listCustomerShippingAddresses: z.infer<
+		typeof ListCustomerShippingAddressesInputSchema
+	>;
+	updateCustomerShippingAddress: z.infer<
+		typeof UpdateCustomerShippingAddressInputSchema
+	>;
+	deleteCustomerShippingAddress: z.infer<
+		typeof DeleteCustomerShippingAddressInputSchema
+	>;
 	createCustomerTag: z.infer<typeof CreateCustomerTagInputSchema>;
 	getCustomerTag: z.infer<typeof GetCustomerTagInputSchema>;
 	listCustomerTags: z.infer<typeof ListCustomerTagsInputSchema>;
@@ -272,8 +305,12 @@ export type CloudcartEndpointInputs = {
 	listOrders: z.infer<typeof ListOrdersInputSchema>;
 	updateOrder: z.infer<typeof UpdateOrderInputSchema>;
 	deleteOrder: z.infer<typeof DeleteOrderInputSchema>;
-	listOrderBillingAddresses: z.infer<typeof ListOrderBillingAddressesInputSchema>;
-	listOrderShippingAddresses: z.infer<typeof ListOrderShippingAddressesInputSchema>;
+	listOrderBillingAddresses: z.infer<
+		typeof ListOrderBillingAddressesInputSchema
+	>;
+	listOrderShippingAddresses: z.infer<
+		typeof ListOrderShippingAddressesInputSchema
+	>;
 	listOrderProducts: z.infer<typeof ListOrderProductsInputSchema>;
 	listOrderProductsOptions: z.infer<typeof ListOrderProductsOptionsInputSchema>;
 	listOrderPayments: z.infer<typeof ListOrderPaymentsInputSchema>;
@@ -683,4 +720,3 @@ export const CloudcartEndpointOutputSchemas = {
 	updateWebhook: GenericResponseSchema,
 	deleteWebhook: GenericResponseSchema,
 } as const;
-
