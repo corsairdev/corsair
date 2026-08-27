@@ -11,8 +11,8 @@ export class WakaTimeAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
 const WAKATIME_API_BASE = 'https://api.wakatime.com/api/v1';
+
 export async function makeWakaTimeRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -29,10 +29,9 @@ export async function makeWakaTimeRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
+			Authorization: `Basic ${Buffer.from(`${apiKey}:`).toString('base64')}`,
 		},
 	};
 
