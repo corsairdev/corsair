@@ -1,19 +1,32 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class CloudcartAPIError extends Error {
 	constructor(
 		message: string,
 		public readonly code?: string,
+		public readonly status?: number,
 	) {
 		super(message);
 		this.name = 'CloudcartAPIError';
 	}
 }
 
-// TODO: Update with your API base URL
-const CLOUDCART_API_BASE = 'https://api.example.com';
+const CLOUDCART_API_BASE = 'https://api.cloudcart.com/v1';
+
+const CLOUDCART_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 5,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
 
 export async function makeCloudcartRequest<T>(
 	endpoint: string,
@@ -24,6 +37,13 @@ export async function makeCloudcartRequest<T>(
 		query?: Record<string, string | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
+	if (!apiKey) {
+		throw new CloudcartAPIError(
+			'API key is required for CloudCart integration',
+			'MISSING_API_KEY',
+		);
+	}
+
 	const { method = 'GET', body, query } = options;
 
 	const config: OpenAPIConfig = {
@@ -34,8 +54,8 @@ export async function makeCloudcartRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Accept: 'application/json',
+			'X-CloudCart-ApiKey': apiKey,
 		},
 	};
 
@@ -50,12 +70,7 @@ export async function makeCloudcartRequest<T>(
 		query: method === 'GET' ? query : undefined,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new CloudcartAPIError(error.message);
-		}
-		throw new CloudcartAPIError('Unknown error');
-	}
+	return await request<T>(config, requestOptions, {
+		rateLimitConfig: CLOUDCART_RATE_LIMIT_CONFIG,
+	});
 }
