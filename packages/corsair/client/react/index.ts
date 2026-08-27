@@ -303,6 +303,22 @@ export function createCorsairReactClient(opts: CorsairReactClientOptions) {
 	};
 }
 
+export type {
+	ConnectPhase,
+	ConnectState,
+} from './connect-controller';
+export type { ConnectAppearance } from './connect-overlay';
+// ─────────────────────────────────────────────────────────────────────────────
+// Corsair Connect — <CorsairProvider> + useConnect: on a reconnect/auth-missing
+// failure, pop an overlay with the scoped connect link and resume once connected.
+// ─────────────────────────────────────────────────────────────────────────────
+export {
+	type CorsairContextValue,
+	CorsairProvider,
+	useConnect,
+	useCorsair,
+} from './provider';
+
 // Re-export types that hook consumers need
 export type {
 	AsyncState,
