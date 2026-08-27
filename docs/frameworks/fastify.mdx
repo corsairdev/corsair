@@ -1,0 +1,131 @@
+---
+title: Fastify
+sidebarTitle: Fastify
+description: Mount Corsair as a wildcard route in a Fastify plugin, then read synced data straight from your database.
+icon: "/icons/fastify.svg"
+---
+
+import ClientVanilla from '/snippets/frameworks/client-vanilla.mdx';
+import Install from '/snippets/install-tabs.mdx';
+import CreateInstance from '/snippets/create-instance.mdx';
+
+Fastify is built for throughput, and the Corsair adapter keeps it that way. It prefers the original request bytes over Fastify's parsed body, so you register a small raw-body parser once (shown below) and Hub's signed deliveries verify cleanly. Mount it as a wildcard route, ideally inside its own plugin, so registration and encapsulation stay Fastify-idiomatic.
+
+## Install
+
+The adapter ships in core `corsair`. Add a plugin package per service you integrate:
+
+<Install />
+
+## Create the instance
+
+Build the instance once. The handler and your read/write code both import it.
+
+<CreateInstance />
+
+## Mount the handler
+
+Register the raw-body parser first, then mount the handler on both the wildcard and the bare base path. The parser is required: Fastify's built-in JSON parser consumes the request bytes, and re-serializing them breaks Hub's signature check, so deliveries fail with `Invalid tunnel signature`. Mounting only `/api/corsair/*` also leaves `/api/corsair` itself a 404.
+
+```ts corsair-plugin.ts
+import type { FastifyInstance } from 'fastify';
+import { registerCorsairRawBodyParser, toFastifyHandler } from 'corsair';
+import { corsair } from './corsair';
+
+export async function corsairRoutes(app: FastifyInstance) {
+    registerCorsairRawBodyParser(app);
+    app.all('/api/corsair/*', toFastifyHandler(corsair, { basePath: '/api/corsair' }));
+    app.all('/api/corsair', toFastifyHandler(corsair, { basePath: '/api/corsair' }));
+}
+```
+
+```ts server.ts
+import Fastify from 'fastify';
+import { corsairRoutes } from './corsair-plugin';
+
+const app = Fastify();
+await app.register(corsairRoutes);
+await app.listen({ port: 3000 });
+```
+
+`./corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+
+<Note>The `*` wildcard is required: the base path alone (`/api/corsair`) won't match `/api/corsair/tenants` or the Hub delivery sub-paths.</Note>
+
+## Resolve the tenant
+
+Corsair only needs the tenant id, and your own auth produces it. Decorate the request with the authenticated user (in a hook or auth plugin), then read it off `request.user`.
+
+```ts
+// set request.user in your auth hook, then per request:
+const tenant = corsair.withTenant(await getTenantId(request));
+```
+
+`getTenantId(request)` is your own code that reads the signed-in user from your auth; it can return any stable id.
+
+## Read and write
+
+Once a tenant is connected, reads never leave your database, which suits a hot handler that can't afford a third-party round trip. Scope with `withTenant()`, then query the plugin's entities.
+
+```ts routes/issues.ts
+import { corsair } from '../corsair';
+
+export async function issueRoutes(app: FastifyInstance) {
+    app.get('/issues', async (request) => {
+        const tenant = corsair.withTenant(await getTenantId(request));
+
+        // .db reads your own rows — no network, no rate limit
+        const issues = await tenant.github.db.issues.search({
+            data: { state: 'open' },
+            limit: 50,
+        });
+        return issues.map((i) => i.data.title);
+    });
+
+    app.post('/issues', async (request) => {
+        const tenant = corsair.withTenant(await getTenantId(request));
+        const { title } = request.body as { title: string };
+        // .api hits GitHub live; the response is upserted into your db
+        return tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title });
+    });
+}
+```
+
+Entity fields live on `.data` in camelCase. Reads come from `.db`; creates, updates, and refreshes go through `.api` and land back in the same rows. See [Dashboards](/use-cases/dashboards) for the full read/write pattern.
+
+## Connect a tenant
+
+Fastify is a backend, so use the vanilla client from your frontend, a worker, or a script to check connection status and mint connect links against the route above.
+
+<ClientVanilla />
+
+## Go green
+
+Start the server:
+
+```bash
+npx tsx server.ts
+```
+
+The first request to `/api/corsair` registers your delivery URL with Hub and turns the **App sync** dot in the dashboard header green.
+
+## Deploy
+
+Deploy the Fastify server however you already run it. In production the same `/api/corsair` route becomes the delivery URL Hub calls, so ensure it's publicly reachable. The first request re-registers the production URL.
+
+## Next
+
+<CardGroup cols={2}>
+  <Card title="Vanilla client" icon="code" href="/adapters/client">
+    Every management-API method the client exposes, fully typed.
+  </Card>
+  <Card title="Build a dashboard" icon="table-columns" href="/use-cases/dashboards">
+    The `.db` read / `.api` write pattern in full.
+  </Card>
+  <Card title="Connect / OAuth" icon="link" href="/management/connect">
+    The full connect flow, error codes, and retry.
+  </Card>
+  <Card title="Multi-tenancy" icon="users" href="/concepts/multi-tenancy">
+    One flag and every user gets their own data and credentials.
+  </Card>
+</CardGroup>

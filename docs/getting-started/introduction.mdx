@@ -1,74 +1,48 @@
 ---
 title: Introduction
-description: The go-to integration layer for AI agents and apps. Connect anything, anywhere, in seconds.
+description: The open-source integration layer for agents and apps. Connect anything, in about the time it takes to install a package.
 mode: "wide"
 ---
 
-Corsair is the fastest way to add any integration to your app or agent. It handles the authentication and data-sync plumbing every service needs, so you write only the part that's unique to your use case — not the wiring you've already built a hundred times.
+Every integration begins the same way, and you already know the steps. Read the provider's OAuth docs. Build a connect page. Register a redirect URI, one for localhost and a different one for production. Store the tokens. Refresh them before they expire. Stand up a webhook receiver. Back off when you hit the rate limit. Then you do the whole thing again for the next service, and the one after that. It is the work nobody demos and everybody rebuilds.
 
-Every integration is a plugin. Install the ones you need, hand Corsair a database and an encryption key, and each service becomes a typed client in your code — plus one set of tools your agent can call across all of them. One pattern, whether you have a single integration or fifty. [Corsair Hub](/hub/overview) handles the hosted OAuth and approval surfaces so you never build them.
+Corsair is where that work goes to disappear. Every service is a **plugin**. Install the ones you need, and each becomes a fully typed client in the code you write and a tool your agent can call on its own. The OAuth dance, the token refresh, the webhooks, and the rate limits are handled, the same way for the fiftieth integration as for the first. You write the part that's actually yours; Corsair carries the wiring you've already built a hundred times.
 
-Install Corsair and the plugins you need:
+One pattern covers a single integration or fifty. There are no per-service SDKs to learn and no glue code to keep alive as providers change their APIs underneath you.
 
-<CodeGroup>
-```bash npm
-npm install corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
-```
-```bash yarn
-yarn add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
-```
-```bash pnpm
-pnpm install corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
-```
-```bash bun
-bun add corsair @corsair-dev/slack @corsair-dev/github @corsair-dev/gmail @corsair-dev/linear
-```
-</CodeGroup>
+## One prompt, every integration
 
-Each service ships as its own `@corsair-dev/*` package. Find the one you need — and its exact install id — in the [**Plugins**](/guides/plugins) catalog.
+Typed clients are for the code you write. The other half is for the code your agent writes on the fly. Hand an agent the Corsair tools and a single instruction can reach across every plugin you installed:
 
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { github } from '@corsair-dev/github';
-import { gmail } from '@corsair-dev/gmail';
-import { linear } from '@corsair-dev/linear';
-import { slack } from '@corsair-dev/slack';
+> Invite Jim to next Thursday's sales call. Message him on Slack too so he can accept, and let me know the moment he does.
 
-export const corsair = createCorsair({
-    plugins: [slack(), github(), gmail(), linear()],
-    database: db,
-    kek: process.env.CORSAIR_KEK!,
-});
-```
+Calendar, Slack, and a trigger waiting on his reply. Three services, one sentence. The agent discovers what's connected and calls it. You never wrote a line that mentioned any of them by name.
 
-Connect it to your agent and start prompting:
+## Corsair Hub
 
-```
-Invite Jim to next Thursday's sales call. Tell him over Slack too so he
-can accept it. Let me know when he does.
-```
+A few of these surfaces can't live entirely inside your app. An OAuth callback needs a stable public URL for the provider to redirect to. A connect page has to be reachable before your user is signed in. An approval link has to open somewhere.
 
-One prompt, four integrations, and Corsair handles the rest.
+Corsair Hub hosts exactly those surfaces, and nothing more. It's the same Corsair instance with one block of config, not a second SDK or a separate product. Turn it on and the connect page, the OAuth callbacks, and the approval screens are handled for you, so there is nothing public to build or deploy.
 
-Corsair runs in your own app and stores credentials in your own database. **[Corsair Hub](/hub/overview) is the recommended way to run it** — connect your app, or your users' apps, without hosting the OAuth connect, approval, and webhook surfaces yourself. Hub relays those surfaces and still stores none of your credentials; tokens stay encrypted in your database. Prefer to host those surfaces yourself? That path stays [fully supported](/hub/manual-vs-hub).
+**Hub stores none of your credentials.** Tokens pass through the relay and are persisted only in your own database, encrypted with your own key. Compromise the relay and there is nothing there to take. The secrets were never sitting on it. You skip the connect-page boilerplate without handing anyone your users' access tokens.
 
 <Tip>
-In a hurry? Hand it to your coding agent. [Set up with your agent](/getting-started/set-up-with-your-agent) is one prompt that wires Corsair Hub end to end — install, route, keys, and a real connected integration.
+In a hurry? Hand it to your coding agent. [Set up with your agent](/getting-started/set-up-with-your-agent) is one prompt that wires Corsair end to end, install, route, keys, and a real connected integration, without you touching the config.
 </Tip>
 
 ## Get started
 
 <CardGroup cols={2}>
   <Card title="Quick start" icon="rocket" href="/getting-started/quick-start">
-    Install and run your first integration with Hub in minutes.
+    Go from empty project to a live, connected integration in five steps.
   </Card>
   <Card title="Set up with your agent" icon="sparkles" href="/getting-started/set-up-with-your-agent">
-    Paste one prompt and let your coding agent wire Corsair Hub end to end.
+    Paste one prompt and let your coding agent wire everything end to end.
   </Card>
-  <Card title="Hub overview" icon="cloud" href="/hub/overview">
-    The hosted relay for connect and approvals — and why it stores no credentials.
+  <Card title="Pick your framework" icon="layer-group" href="/frameworks/next">
+    Next, Node, Express, Hono, SvelteKit, Remix, Astro. Mount the route in yours.
   </Card>
-  <Card title="Browse plugins" icon="grid" href="/guides/plugins">
+  <Card title="Browse plugins" icon="grip" href="/guides/plugins">
     Slack, Linear, Gmail, GitHub, HubSpot, Stripe, and hundreds more.
   </Card>
 </CardGroup>

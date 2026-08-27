@@ -1,30 +1,32 @@
 ---
 title: Hub
-sidebarTitle: Overview
-description: The hosted relay for the parts of Corsair that need a public URL — connect flows and approvals. It stores none of your credentials.
+sidebarTitle: Hub
+description: The hosted relay for the parts of Corsair that need a public URL, connect flows and approvals. Your users' API tokens land in your database, not Hub.
 ---
 
 import CreateCorsairHub from '/snippets/create-corsair-hub.mdx';
 import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
 
-Corsair runs in your own app. A few things, though, need a stable public URL a third party can reach: OAuth callbacks and approval pages. **Hub is the recommended way to handle them** — a hosted relay that provides those surfaces so you skip the boilerplate.
+Corsair runs in your own app. A few things, though, need a stable public URL a third party can reach: OAuth callbacks and approval pages. Hub is the recommended way to handle them. It is a hosted relay that provides those surfaces so you skip the boilerplate.
 
-Hub is not a separate product or a separate SDK. It is the same `createCorsair` instance with one extra config block: add it and Corsair routes the public-URL surfaces through Hub.
+Hub is the same `createCorsair` instance with one extra config block: add it and Corsair routes the public-URL surfaces through Hub. There is no separate product or SDK to adopt.
 
 <CreateCorsairHub />
 
 <Info>
-Want to own those surfaces instead? Self-hosted (`manual`) mode is fully featured — you host the connect, callback, and approval pages yourself. See [Manual or Hub](/hub/manual-vs-hub).
+Want to own those surfaces instead? Self-hosted (`manual`) mode is fully featured. You host the connect, callback, and approval pages yourself. See [Manual or Hub](/hub/manual-vs-hub).
 </Info>
 
-## Hub stores none of your credentials
+## Where your credentials live
 
-This is the part to internalize first: **Hub is a relay, not a credential store.** It does not keep your users' access or refresh tokens. Tokens pass through the relay and are persisted only in **your** database, under your [KEK](/concepts/auth#envelope-encryption). Compromising the relay exposes no credentials, because there are none there to expose.
+Hub stores **zero** of your tenants' tokens. Their access and refresh tokens live only in **your** database, encrypted under your [KEK](/concepts/auth#envelope-encryption). What Hub keeps is the OAuth **client** credentials that run the flow, the app-level client id and secret, whether Corsair manages them for you or you bring your own. Those are your app's credentials, not your users'.
+
+That split is the point of Hub. Once a tenant connects, the token sits in your database and you call the provider as many times as you want, with no per-call round-trip to Corsair and no usage cap from us. Other integration products keep your users' tokens on their side and meter every call through their gateway. Corsair hands you the tokens and stays out of the path.
 
 ```mermaid
 flowchart LR
     Prov[OAuth Provider]
-    Hub["Corsair Hub<br/>relay only · stores nothing"]
+    Hub["Corsair Hub<br/>relays tokens to your app"]
     App[Your App]
     DB[(Your Database)]
 
@@ -33,7 +35,7 @@ flowchart LR
     App -->|encrypted tokens| DB
 ```
 
-The same envelope encryption described in [Authentication](/concepts/auth#envelope-encryption) still applies. Each connection gets its own DEK, encrypted with your KEK, and the plaintext credential never lives anywhere but your database at runtime.
+The same envelope encryption described in [Authentication](/concepts/auth#envelope-encryption) still applies. Each connection gets its own DEK, encrypted with your KEK, and the plaintext credential lives in your database.
 
 ## What Hub provides
 
@@ -55,10 +57,10 @@ Three surfaces normally need a public URL. Hub hosts all three:
 
 When an action needs a connection the user hasn't made yet, recover in four steps:
 
-1. Corsair throws an auth-missing error — no connection for this tenant.
+1. Corsair throws an auth-missing error. No connection exists for this tenant.
 2. Call `createLink()` to mint a Hub sign-in link and send the user to it.
 3. The user connects on Hub's hosted page. Tokens land encrypted in your database.
-4. Retry the original action — it succeeds.
+4. Retry the original action. It succeeds.
 
 You can also copy sign-in links from the [Hub dashboard](/hub/dashboard) without writing code.
 
@@ -66,7 +68,7 @@ You can also copy sign-in links from the [Hub dashboard](/hub/dashboard) without
 
 In a self-hosted setup, the OAuth redirect URI you register with each provider has to match the environment that is running, so you end up juggling separate provider apps (or rewriting redirect URIs) for local and production.
 
-With Hub you register **one** callback URL with the provider. Hub receives the callback and delivers the result to your app. Development and production use separate API keys and different delivery paths — see [Environments](/hub/environments) for why (browser redirect locally, signed POST in production).
+With Hub you register **one** callback URL with the provider. Hub receives the callback and delivers the result to your app. Development and production use separate API keys and different delivery paths. See [Environments](/hub/environments) for why (signed POST over a Corsair tunnel locally, signed POST to your public URL in production).
 
 ## Turning Hub on
 
@@ -85,11 +87,11 @@ Set up a project in the [Hub dashboard](https://hub.corsair.dev/dashboard), then
     CORSAIR_KEK=...
     ```
   </Step>
-  <Step title="Register the OAuth redirect URL">
-    Register `https://auth.corsair.dev/oauth/callback` in each OAuth provider console (GitHub, Google, etc.). This is the single callback Hub holds for every environment.
+  <Step title="Register the OAuth redirect URL (BYO plugins)">
+    For plugins where you bring your own OAuth app, register `https://auth.corsair.dev/oauth/callback` in each provider console (GitHub, Google, etc.). This is the single callback Hub holds for every environment. Managed plugins skip this step; Corsair hosts the OAuth app.
   </Step>
   <Step title="Mount the handler and run locally">
-    Mount `toNextJsHandler` at `/api/corsair`. In development, Hub auto-detects your localhost delivery URL — no dashboard registration needed.
+    Mount `toNextJsHandler` at `/api/corsair`. In development, Hub auto-detects your localhost delivery URL, so no dashboard registration is needed.
   </Step>
   <Step title="Activate production when you deploy">
     Switch to the **production** environment in the dashboard, register your public HTTPS delivery URL, and set `ck_prod_…` credentials in your deployed env. See [Environments](/hub/environments).
@@ -132,6 +134,6 @@ Hub does not change how your agents call APIs. `corsair.slack.api.*`, `withTenan
     A side-by-side of what each mode requires you to build.
   </Card>
   <Card title="Delivery URLs" href="/hub/delivery-urls">
-    Browser redirect vs signed POST delivery.
+    Tunnel vs public-URL signed POST delivery.
   </Card>
 </CardGroup>

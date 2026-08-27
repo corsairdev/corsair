@@ -1,0 +1,133 @@
+---
+title: Use cases
+sidebarTitle: Overview
+description: The four shapes an app built on Corsair takes, and how to pick between them.
+---
+
+Almost everything built on Corsair is one of four shapes, or a combination of them. Each shape uses the same setup and the same two namespaces. What changes is where the data flows.
+
+<CardGroup cols={2}>
+  <Card title="Dashboard" href="/use-cases/dashboards" icon="table-columns">
+    Render synced data from your database, act on it with live API calls.
+  </Card>
+  <Card title="Agent" href="/use-cases/agents" icon="robot">
+    Hand an LLM the whole integration surface as tools and let it decide.
+  </Card>
+  <Card title="Knowledge base" href="/use-cases/knowledge-base" icon="magnifying-glass">
+    Search everything you've synced and answer questions from it.
+  </Card>
+  <Card title="Workflow" href="/use-cases/workflows" icon="arrows-turn-right">
+    An event in one service triggers actions in another.
+  </Card>
+</CardGroup>
+
+## The one contract
+
+Every shape rests on the same rule. Each plugin exposes two namespaces:
+
+```
+corsair.<plugin>.db    — reads from your database (no network, instant)
+corsair.<plugin>.api   — calls the live third-party API
+```
+
+Both follow the same path: `corsair.<plugin>.[db|api].<group>.<method>(args)`.
+
+| Doing this | Use |
+| --- | --- |
+| Rendering UI, lists, search, detail pages | `.db` |
+| Creating, updating, deleting | `.api` |
+| User-triggered refresh or sync | `.api`, then re-read from `.db` |
+
+Every `.api` response is upserted into your database automatically, and webhooks update the same rows in place. That's why `.db` is the default for reads. It isn't a cache you maintain, it's a table Corsair keeps current. See [Database](/concepts/database).
+
+```ts
+const tenant = corsair.withTenant('acme');
+
+// write through the API — the row is updated for you
+await tenant.github.api.issues.create({ owner: 'acme', repo: 'app', title: 'Bug' });
+
+// read from your own database — no rate limits
+const issues = await tenant.github.db.issues.search({ data: { state: 'open' } });
+```
+
+Everything else on this page is a variation on which side of that line your feature sits.
+
+## Picking a shape
+
+| If the user's ask sounds like… | Build a |
+| --- | --- |
+| "show me", "list", "a page for", "a dashboard" | [Dashboard](/use-cases/dashboards) |
+| "tell it to", "just ask it", "a chatbot that can" | [Agent](/use-cases/agents) |
+| "what's happening with", "search across", "ask questions about" | [Knowledge base](/use-cases/knowledge-base) |
+| "when X happens, do Y", "automatically" | [Workflow](/use-cases/workflows) |
+
+The deciding question is **who chooses the operation**. If you know at build time which endpoint to call, it's a dashboard, knowledge base, or workflow, all plain TypeScript. If the operation is only known at runtime from a human sentence, it's an agent, and you expose tools over MCP instead of hardcoding calls.
+
+## Combining shapes
+
+Most real apps are two or three of these. A GitHub review tool might list open PRs (dashboard), let you say "close #458 as a duplicate" (agent), and post to Slack when a PR is merged (workflow).
+
+When you combine them, they share one foundation. Build it once:
+
+### One `corsair.ts`
+
+A single `createCorsair` call listing every plugin you need.
+
+### One handler route
+
+The management and Hub delivery endpoint, mounted once.
+
+### One connection per tenant
+
+A plugin connected for a tenant is available to every shape in the app.
+
+Do not create a second Corsair instance for the chat feature, and don't connect the same plugin twice. The agent reads and writes the same `corsair_entities` rows the dashboard renders, which is what lets a chat command show up on the page immediately.
+
+<Note>
+The shapes differ in reads, not in setup. If you've finished [Quick Start](/getting-started/quick-start), you already have everything all four need.
+</Note>
+
+## Shared setup
+
+Every use case assumes this much is done:
+
+<Steps>
+
+<Step>
+## Install and configure
+
+`createCorsair({ plugins, database, kek, hub })` in `src/server/corsair.ts`, with the five tables migrated. Full walkthrough in [Quick Start](/getting-started/quick-start).
+</Step>
+
+<Step>
+## Mount the handler
+
+One route serves the management API and Hub delivery. Every framework is covered in [Handlers](/adapters/handlers).
+</Step>
+
+<Step>
+## Connect a tenant
+
+Mint a link with `corsair.manage.connect.createLink({ plugin, tenantId })` and send the user to it. See [Connect](/management/connect).
+</Step>
+
+</Steps>
+
+Then scope your calls with `withTenant()` and start reading. Multi-tenant details are in [Multi-tenancy](/concepts/multi-tenancy).
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Quick Start" href="/getting-started/quick-start">
+    The shared foundation, in five steps.
+  </Card>
+  <Card title="Build with your agent" href="/getting-started/set-up-with-your-agent">
+    Point a coding agent at these docs and have it scaffold the app.
+  </Card>
+  <Card title="Plugins" href="/guides/plugins">
+    Every integration, with its install id and endpoint reference.
+  </Card>
+  <Card title="Database" href="/concepts/database">
+    The five tables and how they stay fresh.
+  </Card>
+</CardGroup>

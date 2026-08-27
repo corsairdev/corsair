@@ -1,0 +1,170 @@
+---
+title: Workflow
+description: An event in one service triggers actions in another, chained in TypeScript, not a visual builder.
+---
+
+A workflow is what you'd reach for n8n, Zapier, or Gumloop to do: a PR is merged, you post to Slack, then open a Linear ticket. In Corsair it's a webhook hook, so the steps are ordinary TypeScript with types and your own helpers available.
+
+There's no DAG to define and no separate engine to run.
+
+**Pattern:** the webhook fires, the hook runs, then it calls any plugin's `.api`.
+
+## The shape
+
+Every webhook event accepts an `after` hook, which runs once the event is saved to your database. Inside it you have the full `corsair` instance:
+
+<Note>These examples assume `multiTenancy: true` (the [quick-start](/getting-started/quick-start) setup), so they scope each call with `corsair.withTenant(ctx.tenantId)`. On a single-tenant instance, drop `withTenant` and call the plugin `.api` directly.</Note>
+
+```ts corsair.ts
+github({
+    webhookHooks: {
+        pullRequestClosed: {
+            after: async (ctx, result) => {
+                const pr = result.data.pull_request;
+                if (!pr.merged) return;
+
+                // ctx.tenantId is the tenant this webhook belongs to
+                const tenant = corsair.withTenant(ctx.tenantId);
+                await tenant.slack.api.messages.post({
+                    channel: 'C_RELEASES',
+                    text: `Merged: *${pr.title}*\n${pr.html_url}`,
+                });
+            },
+        },
+    },
+})
+```
+
+That's the whole workflow. Chaining more steps means writing more lines, each one a normal `await`:
+
+```ts
+after: async (ctx, result) => {
+    const pr = result.data.pull_request;
+    if (!pr.merged) return;
+
+    const tenant = corsair.withTenant(ctx.tenantId);
+
+    await tenant.slack.api.messages.post({
+        channel: 'C_ENG',
+        text: `Merged: *${pr.title}*`,
+    });
+
+    await tenant.linear.api.issues.create({
+        title: `Post-merge: ${pr.title}`,
+        description: `Follow up after ${pr.html_url}`,
+        teamId: process.env.LINEAR_TEAM_ID!,
+    });
+}
+```
+
+Because these are function calls rather than a graph, branching and early returns are just `if` statements.
+
+## Filtering with `before`
+
+Use `before` to drop events you don't care about. Throwing stops processing, and the event isn't written to your database:
+
+```ts corsair.ts
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            before: async (ctx, payload) => {
+                if (payload.pull_request.draft) {
+                    throw new Error('Skipping draft PR');
+                }
+                return { ctx, payload };
+            },
+            after: async (ctx, result) => {
+                await corsair.slack.api.messages.post({
+                    channel: 'C_ENG',
+                    text: `Ready for review: ${result.data.pull_request.title}`,
+                });
+            },
+        },
+    },
+})
+```
+
+Filtering in `before` is cheaper than filtering in `after`, since it avoids the write.
+
+## Slow work belongs in a queue
+
+Webhook senders expect a fast response. If a step calls an LLM, sends email, or generates a report, hand it to a job queue and return:
+
+```ts corsair.ts
+github({
+    webhookHooks: {
+        pullRequestOpened: {
+            after: async (ctx, result) => {
+                await inngest.send({
+                    name: 'github/pr-opened',
+                    data: { tenantId: ctx.tenantId, pr: result.data.pull_request },
+                });
+            },
+        },
+    },
+})
+```
+
+```ts inngest/functions.ts
+export const reviewPR = inngest.createFunction(
+    { id: 'review-pr' },
+    { event: 'github/pr-opened' },
+    async ({ event }) => {
+        const { pr, tenantId } = event.data;
+        const review = await generateCodeReview(pr);
+
+        await corsair.withTenant(tenantId).github.api.issues.createComment({
+            owner: pr.base.repo.owner.login,
+            repo: pr.base.repo.name,
+            issueNumber: pr.number,
+            body: review,
+        });
+    },
+);
+```
+
+Pass `ctx.tenantId` through to the job, since the queue worker runs outside the request and has to re-scope itself. Adapters for [Inngest](/guides/inngest), [Temporal](/guides/temporal), [Trigger.dev](/guides/trigger-dev), and [Hatchet](/guides/hatchet) all follow this shape.
+
+## Multi-tenant workflows
+
+Hooks receive the tenant on `ctx`, so one definition serves every customer:
+
+```ts
+after: async (ctx, result) => {
+    const tenant = corsair.withTenant(ctx.tenantId);
+    const settings = await getSettings(ctx.tenantId);
+    if (!settings.notifyOnMerge) return;
+
+    await tenant.slack.api.messages.post({
+        channel: settings.channelId,
+        text: `Merged: ${result.data.pull_request.title}`,
+    });
+}
+```
+
+Don't hardcode channel IDs or team IDs when the app is multi-tenant. Read them from your own settings table.
+
+## Checklist
+
+- Events you don't want are rejected in `before`, not ignored in `after`.
+- Anything slow is queued; hooks return quickly.
+- `ctx.tenantId` is threaded through to background jobs.
+- Per-tenant destinations come from your settings, not constants.
+- Hooks are idempotent where the provider may redeliver an event.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="Workflows guide" href="/guides/workflows">
+    More patterns, including Slack to GitHub and multi-step chains.
+  </Card>
+  <Card title="Webhooks setup" href="/guides/webhooks">
+    Get a tunnel running and register your first endpoint.
+  </Card>
+  <Card title="Hooks reference" href="/concepts/hooks">
+    The full before/after API surface.
+  </Card>
+  <Card title="Dashboard" href="/use-cases/dashboards">
+    Surface what your workflows produced.
+  </Card>
+</CardGroup>
