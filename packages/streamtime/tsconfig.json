@@ -3,8 +3,8 @@
   "compilerOptions": {
     "lib": ["esnext"],
     "types": ["node", "jest"],
-    "module": "ESNext",
-    "moduleResolution": "Bundler",
+    "module": "esnext",
+    "moduleResolution": "bundler",
     "outDir": "./dist",
     "rootDir": "./",
     "composite": true,
