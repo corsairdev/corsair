@@ -1,4 +1,4 @@
-import type {
+﻿import type {
 	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
@@ -1398,8 +1398,6 @@ export function borneo<const T extends BorneoPluginOptions>(
 			if (source !== 'endpoint') {
 				throw new AuthMissingError('borneo', 'api_key');
 			}
-
-			if (options.composioApiKey) return options.composioApiKey;
 			if (options.key) return options.key;
 
 			if (ctx.authType === 'api_key') {

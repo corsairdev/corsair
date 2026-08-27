@@ -1,24 +1,22 @@
-import { logEventFromContext } from 'corsair/core';
+﻿import { logEventFromContext } from 'corsair/core';
 import { executeBorneoTool } from '../client';
-import type { BorneoEndpoints, BorneoKeyBuilderContext } from '../index';
+import type { BorneoEndpoints } from '../index';
 import type { BorneoOperationId, BorneoOperationName } from '../operations';
 import {
 	BorneoEndpointInputSchemas,
 	BorneoEndpointOutputSchemas,
 } from './types';
 
-async function resolveComposioApiKey(
-	ctx: BorneoKeyBuilderContext & { key?: string },
-): Promise<string> {
-	const fromOptions = ctx.options?.composioApiKey?.trim();
-	if (fromOptions) return fromOptions;
+function resolveComposioApiKey(options: { composioApiKey?: string }): string {
+	const key = options.composioApiKey?.trim();
 
-	const fromKey = ctx.key?.trim();
-	if (fromKey) return fromKey;
+	if (!key) {
+		throw new Error(
+			'[borneo] composioApiKey is required separately from the Borneo provider credential',
+		);
+	}
 
-	throw new Error(
-		'[borneo] composioApiKey is required to execute the complete Borneo tool surface',
-	);
+	return key;
 }
 
 export function createBorneoEndpoint<K extends BorneoOperationName>(
@@ -31,16 +29,20 @@ export function createBorneoEndpoint<K extends BorneoOperationName>(
 			rawInput ?? {},
 		) as Record<string, unknown>;
 
-		const composioApiKey = await resolveComposioApiKey(
-			ctx as unknown as BorneoKeyBuilderContext & { key?: string },
-		);
+		// Composio's project key and the provider credential are two
+		// completely different credentials. Never fall back between them.
+		const composioApiKey = resolveComposioApiKey(ctx.options ?? {});
+
+		const providerCredential =
+			ctx.options?.borneoCredential?.trim() ||
+			(ctx as unknown as { key?: string }).key?.trim();
 
 		const response = await executeBorneoTool<unknown>(toolSlug, input, {
 			composioApiKey,
 			connectedAccountId: ctx.options?.connectedAccountId,
 			userId: ctx.options?.userId,
 			composioBaseUrl: ctx.options?.composioBaseUrl,
-			borneoCredential: ctx.options?.borneoCredential,
+			borneoCredential: providerCredential,
 			borneoBaseUrl: ctx.options?.baseUrl,
 			credentialHeaderName: ctx.options?.credentialHeaderName,
 			credentialPrefix: ctx.options?.credentialPrefix,

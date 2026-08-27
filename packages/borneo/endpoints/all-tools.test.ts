@@ -1,5 +1,6 @@
-import * as client from '../client';
+﻿import * as client from '../client';
 import { BORNEO_OPERATIONS } from '../operations';
+import { BORNEO_OPERATION_SAMPLE_INPUTS } from './generated-operation-samples';
 import * as EndpointGroups from './index';
 
 jest.mock('corsair/core', () => {
@@ -21,10 +22,12 @@ const executeMock = client.executeBorneoTool as jest.MockedFunction<
 >;
 
 const ctx = {
-	key: 'composio-project-key',
+	// This is the BORNEO/provider credential.
+	key: 'provider-key',
 	options: {
+		// This is a DIFFERENT credential: the Composio project key.
 		composioApiKey: 'composio-project-key',
-		connectedAccountId: 'ca_borneo',
+		credentialHeaderName: 'X-Provider-Key',
 	},
 	db: {},
 } as any;
@@ -36,7 +39,10 @@ function exportName(group: string): string {
 describe('Borneo complete tool surface', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
-		executeMock.mockResolvedValue({ successful: true, data: {} });
+		executeMock.mockResolvedValue({
+			successful: true,
+			data: {},
+		});
 	});
 
 	it('exposes all 153 canonical operations as executable endpoints', () => {
@@ -59,7 +65,7 @@ describe('Borneo complete tool surface', () => {
 	});
 
 	for (const operation of BORNEO_OPERATIONS) {
-		it(`executes ${operation.id}`, async () => {
+		it(`validates and executes ${operation.id}`, async () => {
 			const group = (
 				EndpointGroups as Record<
 					string,
@@ -77,14 +83,19 @@ describe('Borneo complete tool surface', () => {
 				throw new Error(`Missing endpoint: ${operation.name}`);
 			}
 
-			await endpoint(ctx, { marker: operation.id });
+			const input =
+				BORNEO_OPERATION_SAMPLE_INPUTS[
+					operation.name as keyof typeof BORNEO_OPERATION_SAMPLE_INPUTS
+				];
+
+			await endpoint(ctx, input);
 
 			expect(executeMock).toHaveBeenCalledWith(
 				operation.id,
-				{ marker: operation.id },
+				input,
 				expect.objectContaining({
 					composioApiKey: 'composio-project-key',
-					connectedAccountId: 'ca_borneo',
+					borneoCredential: 'provider-key',
 				}),
 			);
 		});
