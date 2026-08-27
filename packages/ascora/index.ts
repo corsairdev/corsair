@@ -47,7 +47,6 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { AscoraSchema } from './schema';
-import { matchAscoraTenantWebhook } from './webhooks/tenant-matcher';
 
 export type AscoraPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -375,7 +374,6 @@ export function ascora<const T extends AscoraPluginOptions>(
 		endpointMeta: ascoraEndpointMeta,
 		endpointSchemas: ascoraEndpointSchemas,
 		pluginWebhookMatcher: () => false,
-		pluginTenantWebhookMatcher: matchAscoraTenantWebhook,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -405,4 +403,3 @@ export {
 	AscoraEndpointOutputSchemas,
 } from './endpoints/types';
 export { AscoraSchema } from './schema';
-export type { AscoraWebhookOutputs } from './webhooks/types';
