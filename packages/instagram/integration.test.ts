@@ -485,6 +485,11 @@ describe('Instagram Schema Validation (credential-free)', () => {
 		const schemasWithPagination = [
 			'ListAllConversations',
 			'ListAllMessages',
+			'GetInstagramMediaList',
+			'GetInstagramConversations',
+			'GetConversationMessages',
+			'GetComments',
+			'GetIgUserLiveMedia',
 			'GetIgUserMedia',
 			'GetIgUserStories',
 			'GetIgUserTags',
@@ -533,9 +538,19 @@ describe('Instagram Schema Validation (credential-free)', () => {
 
 	// ── Messenger greeting field ───────────────────────────────────────────
 	describe('UpdateMessengerProfile schema', () => {
-		it('greeting field is removed from the schema', () => {
+		it('accepts greeting with typed structure', () => {
 			const schema = InstagramEndpointInputSchemas.UpdateMessengerProfile;
-			expect(schema.shape.greeting).toBeUndefined();
+			expect(schema.shape.greeting).toBeDefined();
+			const result = schema.safeParse({
+				page_id: '12345',
+				greeting: [
+					{
+						locale: 'default',
+						text: 'Hello, welcome to our store!',
+					},
+				],
+			});
+			expect(result.success).toBe(true);
 		});
 
 		it('accepts persistent_menu with typed structure', () => {

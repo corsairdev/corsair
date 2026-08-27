@@ -31,6 +31,14 @@ const GetInstagramMediaListInputSchema = z
 			.describe(
 				'Optional search keyword or filter to narrow the media results.',
 			),
+		after: z
+			.string()
+			.optional()
+			.describe('Cursor for the next page of results.'),
+		before: z
+			.string()
+			.optional()
+			.describe('Cursor for the previous page of results.'),
 	})
 	.describe(
 		'Retrieve a list of media (posts, reels, stories, or videos) published by the specified Instagram account.',
@@ -693,6 +701,14 @@ const GetInstagramConversationsInputSchema = z
 			.describe(
 				'Optional search query used to filter conversations by participant, message content, or other supported criteria.',
 			),
+		after: z
+			.string()
+			.optional()
+			.describe('Cursor for the next page of results.'),
+		before: z
+			.string()
+			.optional()
+			.describe('Cursor for the previous page of results.'),
 	})
 	.describe(
 		'Retrieve Instagram Direct Message conversations associated with a Facebook Page and its connected Instagram professional account.',
@@ -718,6 +734,14 @@ const GetConversationMessagesInputSchema = z
 			.describe(
 				'Optional search query used to filter messages within the conversation.',
 			),
+		after: z
+			.string()
+			.optional()
+			.describe('Cursor for the next page of results.'),
+		before: z
+			.string()
+			.optional()
+			.describe('Cursor for the previous page of results.'),
 	})
 	.describe(
 		'Retrieve messages from a specific Instagram Direct Message conversation.',
@@ -855,6 +879,14 @@ const GetCommentsInputSchema = z
 			.describe(
 				'Optional search query used to filter comments by text, username, or other supported criteria.',
 			),
+		after: z
+			.string()
+			.optional()
+			.describe('Cursor for the next page of results.'),
+		before: z
+			.string()
+			.optional()
+			.describe('Cursor for the previous page of results.'),
 	})
 	.describe(
 		'Retrieve comments associated with a specific Instagram media object.',
@@ -1069,6 +1101,12 @@ const GetIgUserContentPublishingLimitInputSchema = z.object({
 // INSTAGRAM_GET_IG_USER_LIVE_MEDIA
 const GetIgUserLiveMediaInputSchema = z.object({
 	ig_id: z.string().describe('The Instagram User ID.'),
+	fields: z.string().optional().describe('Optional fields to query.'),
+	after: z.string().optional().describe('Cursor for the next page of results.'),
+	before: z
+		.string()
+		.optional()
+		.describe('Cursor for the previous page of results.'),
 });
 
 // Get IG User Media
@@ -1328,6 +1366,17 @@ const SendTextMessageInputSchema = z.object({
 // INSTAGRAM_UPDATE_MESSENGER_PROFILE
 const UpdateMessengerProfileInputSchema = z.object({
 	page_id: z.string().describe('The Facebook Page ID.'),
+	greeting: z
+		.array(
+			z.object({
+				locale: z
+					.string()
+					.describe('The locale for this greeting (e.g. "default").'),
+				text: z.string().describe('The greeting text.'),
+			}),
+		)
+		.optional()
+		.describe('Greeting text configuration for new conversations.'),
 	persistent_menu: z
 		.array(
 			z.object({
@@ -1781,6 +1830,15 @@ const GetMessengerProfileResponseSchema = z
 		data: z
 			.array(
 				z.object({
+					greeting: z
+						.array(
+							z.object({
+								locale: z.string().describe('The locale for this greeting.'),
+								text: z.string().describe('The greeting text.'),
+							}),
+						)
+						.optional()
+						.describe('Greeting configuration.'),
 					persistent_menu: z
 						.array(z.any())
 						.optional()

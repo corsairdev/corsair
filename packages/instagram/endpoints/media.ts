@@ -14,6 +14,8 @@ export const list: InstagramEndpoints['GetInstagramMediaList'] = async (
 		method: 'GET',
 		query: {
 			fields: input.q,
+			after: input.after,
+			before: input.before,
 		},
 	});
 

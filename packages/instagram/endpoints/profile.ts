@@ -94,6 +94,11 @@ export const liveMedia: InstagramEndpoints['GetIgUserLiveMedia'] = async (
 		InstagramEndpointOutputs['GetIgUserLiveMedia']
 	>(`/${input.ig_id}/live_media`, ctx, {
 		method: 'GET',
+		query: {
+			fields: input.fields,
+			after: input.after,
+			before: input.before,
+		},
 	});
 
 	await logEventFromContext(

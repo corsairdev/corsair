@@ -19,6 +19,8 @@ export const list: InstagramEndpoints['GetInstagramConversations'] = async (
 			query: {
 				platform: 'instagram',
 				fields: input.q,
+				after: input.after,
+				before: input.before,
 			},
 		},
 		async (userToken) => {
@@ -71,6 +73,8 @@ export const get: InstagramEndpoints['GetConversationMessages'] = async (
 			method: 'GET',
 			query: {
 				fields: input.q,
+				after: input.after,
+				before: input.before,
 			},
 		},
 		async (userToken) => {

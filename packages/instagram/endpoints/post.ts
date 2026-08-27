@@ -13,6 +13,8 @@ export const getComments: InstagramEndpoints['GetPostComments'] = async (
 		method: 'GET',
 		query: {
 			fields: input.fields,
+			after: input.after,
+			before: input.before,
 		},
 	});
 
