@@ -8,7 +8,7 @@ const PaginationQuery = z.object({
 });
 
 const EmptyResponseSchema = z
-	.union([z.object({}).loose(), z.literal(''), z.undefined()])
+	.union([z.strictObject({}), z.literal(''), z.undefined()])
 	.transform((response) => (response === '' ? undefined : response));
 
 const ServerlessSpecSchema = z

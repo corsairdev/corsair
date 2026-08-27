@@ -190,6 +190,7 @@ async function main() {
 						'Cleanup failed; delete the disposable index manually.',
 						error instanceof Error ? error.message : 'Unknown cleanup error',
 					);
+					process.exitCode = 1;
 				}
 			}
 		}

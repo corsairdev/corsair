@@ -639,4 +639,24 @@ describe('shared endpoint execution', () => {
 			harness.restore();
 		}
 	});
+
+	it('rejects unexpected data in an empty provider response', async () => {
+		const harness = installFetchHarness();
+		harness.queue({ body: { unexpected: true } });
+
+		try {
+			await expect(
+				endpoint('indexes', 'delete')(
+					{
+						key: 'pcsk_test',
+						$getAccountId: async () => 'account_test',
+						database: undefined,
+					} as PineconeContext,
+					{ indexName: 'docs-index' },
+				),
+			).rejects.toThrow('did not match the documented schema');
+		} finally {
+			harness.restore();
+		}
+	});
 });
