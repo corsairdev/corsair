@@ -12,27 +12,53 @@ export interface DocusignWebhookEvent {
 		envelopeSummary?: Record<string, unknown>;
 		[key: string]: unknown;
 	};
+	envelopeId?: string;
+	[key: string]: unknown;
+}
+
+export interface WebhookRequest {
+	body?: DocusignWebhookEvent | Record<string, unknown>;
+	headers?: Record<string, string>;
 	[key: string]: unknown;
 }
 
 export const handleWebhook = {
-	match: (event: unknown): boolean => {
-		if (!event || typeof event !== 'object') {
+	match: (context: unknown, request?: unknown): boolean => {
+		const req = (request ?? context) as
+			| WebhookRequest
+			| DocusignWebhookEvent
+			| undefined;
+		const payload = ((req as WebhookRequest)?.body ??
+			req ??
+			{}) as DocusignWebhookEvent;
+
+		if (!payload || typeof payload !== 'object') {
 			return false;
 		}
-		const payload = event as DocusignWebhookEvent;
+
 		return (
 			typeof payload.event === 'string' ||
 			Boolean(payload.data?.envelopeId) ||
 			Boolean(payload.envelopeId)
 		);
 	},
-	handler: async (event: DocusignWebhookEvent, context?: unknown) => {
+	handler: async (context: unknown, request: unknown) => {
+		const req = request as WebhookRequest | DocusignWebhookEvent | undefined;
+		const payload = ((req as WebhookRequest)?.body ??
+			req ??
+			{}) as DocusignWebhookEvent;
+
 		return {
 			received: true,
-			event: event.event ?? 'docusign.event',
-			envelopeId: event.data?.envelopeId ?? (event as any).envelopeId,
-			data: event.data ?? event,
+			event: payload.event ?? 'docusign.event',
+			envelopeId: payload.data?.envelopeId ?? payload.envelopeId,
+			data: payload.data ?? payload,
 		};
 	},
 };
+
+export const webhooks = {
+	handleWebhook,
+};
+
+export default webhooks;
