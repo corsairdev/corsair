@@ -151,6 +151,7 @@ export const BaseProviders = [
 	'loyverse',
 	'mailchimp',
 	'mailtrap',
+	'merriamwebsterdict',
 	'monday',
 	'neon',
 	'nextdns',
@@ -358,6 +359,7 @@ export const ProviderDisplayNames = {
 	loyverse: 'Loyverse',
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
+	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	monday: 'Monday',
 	neon: 'Neon',
 	nextdns: 'NextDNS',
@@ -572,6 +574,7 @@ export type AllProviders =
 	| 'loyverse'
 	| 'mailchimp'
 	| 'mailtrap'
+	| 'merriamwebsterdict'
 	| 'monday'
 	| 'neon'
 	| 'nextdns'
