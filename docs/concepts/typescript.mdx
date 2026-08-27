@@ -20,7 +20,7 @@ const channel = await corsair.slack.api.channels.get({
 console.log(channel.id, channel.name, channel.is_member);
 ```
 
-## Why This Matters
+## Why this matters
 
 Without Corsair, you'd write code like this:
 
@@ -54,7 +54,7 @@ channel.is_member; // ✓ TypeScript knows this exists
 channel.foo;       // ✗ TypeScript error — property doesn't exist
 ```
 
-## Typed Database Queries
+## Typed database queries
 
 Database operations are also fully typed based on your plugin schemas.
 
@@ -68,7 +68,7 @@ if (message) {
 }
 ```
 
-## Consistent Across Integrations
+## Consistent across integrations
 
 Every integration uses the same patterns. Learn once, use everywhere.
 
@@ -82,7 +82,7 @@ await corsair.linear.api.issues.create({ title: "Bug", teamId: "TEAM_1" });
 // Same structure, same types, same patterns
 ```
 
-## TypeScript Config
+## TypeScript config
 
 We recommend enabling strict mode in your TypeScript configuration for the best experience.
 
