@@ -17,12 +17,14 @@ import type { ConnectState } from './connect-controller';
 import {
 	connectReducer,
 	initialConnectState,
+	isConnectedMessage,
 	isPluginConnected,
+	originOf,
 } from './connect-controller';
 import type { ConnectAppearance } from './connect-overlay';
 import { ConnectOverlay } from './connect-overlay';
 
-const POLL_MS = 2000;
+const WATCH_INTERVAL_MS = 2000;
 
 export type CorsairContextValue = {
 	client: CorsairManagementClient;
@@ -56,42 +58,62 @@ export function CorsairProvider({
 	);
 
 	const resolveRef = useRef<((ok: boolean) => void) | null>(null);
-	const pollRef = useRef<ReturnType<typeof setInterval> | null>(null);
+	const popupRef = useRef<Window | null>(null);
+	const watchRef = useRef<ReturnType<typeof setInterval> | null>(null);
+	const messageHandlerRef = useRef<((e: MessageEvent) => void) | null>(null);
 
-	const stopPoll = useCallback(() => {
-		if (pollRef.current) {
-			clearInterval(pollRef.current);
-			pollRef.current = null;
+	const stopWatch = useCallback(() => {
+		if (watchRef.current) {
+			clearInterval(watchRef.current);
+			watchRef.current = null;
+		}
+		if (messageHandlerRef.current) {
+			window.removeEventListener('message', messageHandlerRef.current);
+			messageHandlerRef.current = null;
 		}
 	}, []);
 
 	const settle = useCallback(
 		(ok: boolean) => {
-			stopPoll();
+			stopWatch();
 			resolveRef.current?.(ok);
 			resolveRef.current = null;
 		},
-		[stopPoll],
+		[stopWatch],
 	);
 
-	// Poll the app's own connection-status route until the plugin flips to
-	// connected — the browser-safe way to learn the popup finished.
-	const beginPoll = useCallback(
-		(plugin: string, tenantId: string | null) => {
-			stopPoll();
-			pollRef.current = setInterval(() => {
+	// Learn when the connection lands. Status polling against the app's own
+	// backend is the universal signal — it works self-hosted and for custom
+	// connect pages. The popup closing triggers an immediate check; a postMessage
+	// from the managed connect page is an instant fast-path. All converge here.
+	const beginWatch = useCallback(
+		(plugin: string, tenantId: string | null, trustedOrigin: string) => {
+			stopWatch();
+			const check = () => {
 				client.connectionStatus
 					.get(tenantId ? { tenantId } : undefined)
 					.then((status) => {
 						if (isPluginConnected(status, plugin)) {
+							popupRef.current?.close();
+							popupRef.current = null;
 							dispatch({ type: 'SUCCESS' });
 							settle(true);
 						}
 					})
 					.catch(() => {});
-			}, POLL_MS);
+			};
+			const onMessage = (e: MessageEvent) => {
+				if (isConnectedMessage(e.data, e.origin, trustedOrigin)) check();
+			};
+			window.addEventListener('message', onMessage);
+			messageHandlerRef.current = onMessage;
+			watchRef.current = setInterval(() => {
+				check();
+				// Popup gone without connecting → stop; the modal stays for a retry.
+				if (popupRef.current?.closed) stopWatch();
+			}, WATCH_INTERVAL_MS);
 		},
-		[client, settle, stopPoll],
+		[client, settle, stopWatch],
 	);
 
 	const openOverlay = useCallback(
@@ -133,21 +155,24 @@ export function CorsairProvider({
 
 	// User clicked "Connect" — open Hub's page in a popup and start watching.
 	const handleOpen = useCallback(() => {
-		if (!connectState.connectUrl || !connectState.plugin) return;
-		window.open(
-			connectState.connectUrl,
+		const { connectUrl, plugin, tenantId } = connectState;
+		if (!connectUrl || !plugin) return;
+		popupRef.current = window.open(
+			connectUrl,
 			'corsair-connect',
 			'width=520,height=720',
 		);
-		beginPoll(connectState.plugin, connectState.tenantId);
-	}, [beginPoll, connectState]);
+		beginWatch(plugin, tenantId, originOf(connectUrl) ?? '');
+	}, [beginWatch, connectState]);
 
 	const handleClose = useCallback(() => {
+		popupRef.current?.close();
+		popupRef.current = null;
 		settle(false);
 		dispatch({ type: 'CLOSE' });
 	}, [settle]);
 
-	useEffect(() => stopPoll, [stopPoll]);
+	useEffect(() => stopWatch, [stopWatch]);
 
 	const value = useMemo<CorsairContextValue>(
 		() => ({ client, connect, connectFromError, connectState }),
