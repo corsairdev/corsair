@@ -1,5 +1,5 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { request } from 'corsair/http';
+import { ApiError, request } from 'corsair/http';
 
 export class BeamerAPIError extends Error {
 	constructor(
@@ -49,6 +49,12 @@ export async function makeBeamerRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		// Preserve Corsair's ApiError so status/retry metadata
+		// remains available to the Beamer error handlers.
+		if (error instanceof ApiError) {
+			throw error;
+		}
+
 		if (error instanceof Error) {
 			throw new BeamerAPIError(error.message);
 		}
