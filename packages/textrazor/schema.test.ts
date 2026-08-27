@@ -13,6 +13,13 @@ describe('Textrazor schema', () => {
 		for (const entity of Object.values(TextrazorSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
+		expect(Object.keys(TextrazorSchema.entities).sort()).toEqual([
+			'accounts',
+			'categories',
+			'dictionaries',
+			'dictionaryEntries',
+			'entities',
+		]);
 	});
 });
 

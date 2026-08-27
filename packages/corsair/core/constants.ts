@@ -363,7 +363,7 @@ export const ProviderDisplayNames = {
 	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
-	textrazor: 'Textrazor',
+	textrazor: 'TextRazor',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',

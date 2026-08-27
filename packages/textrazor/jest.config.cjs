@@ -29,6 +29,7 @@ module.exports = {
 					verbatimModuleSyntax: false,
 					module: 'ESNext',
 					moduleResolution: 'Bundler',
+					types: ['node', 'jest'],
 				},
 			},
 		],
@@ -46,6 +47,7 @@ module.exports = {
 	moduleNameMapper: {
 		'^corsair/core$': '<rootDir>/../corsair/core.ts',
 		'^corsair/http$': '<rootDir>/../corsair/http.ts',
+		'^corsair$': '<rootDir>/../corsair/index.ts',
 		'^(\\.\\.?/.*)\\.js$': '$1',
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
