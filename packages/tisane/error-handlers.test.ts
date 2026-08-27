@@ -17,8 +17,19 @@ describe('Tisane error handlers', () => {
 		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(apiErr);
 		expect(result.maxRetries).toBe(5);
 
-		const tisaneErr = new TisaneAPIError('Quota exceeded', undefined, 429);
+		const tisaneErr = new TisaneAPIError(
+			'Quota exceeded',
+			undefined,
+			429,
+			60_000,
+		);
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(tisaneErr)).toBe(true);
+		const tisaneResult =
+			await errorHandlers.RATE_LIMIT_ERROR.handler(tisaneErr);
+		expect(tisaneResult).toMatchObject({
+			maxRetries: 5,
+			headersRetryAfterMs: 60_000,
+		});
 	});
 
 	it('matches and handles auth errors (401/403)', async () => {

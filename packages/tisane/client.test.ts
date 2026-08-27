@@ -39,6 +39,7 @@ describe('makeTisaneRequest', () => {
 		expect(config.BASE).toBe(TISANE_API_BASE);
 		const headers = config.HEADERS as Record<string, string>;
 		expect(headers?.['Ocp-Apim-Subscription-Key']).toBe('test-key-123');
+		expect(config.TOKEN).toBeUndefined();
 		expect(requestOptions.url).toBe('parse');
 		expect(requestOptions.method).toBe('POST');
 		expect(requestOptions.body).toEqual({
