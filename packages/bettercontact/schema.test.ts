@@ -80,6 +80,26 @@ describe('BetterContact input schemas - Edge & Rejection cases', () => {
 		expect(invalid.success).toBe(false);
 	});
 
+	it('rejects leadFinder.create when filters is empty', () => {
+		const invalid =
+			BetterContactEndpointInputSchemas.leadFinderCreate.safeParse({
+				filters: {},
+			});
+		expect(invalid.success).toBe(false);
+		if (!invalid.success) {
+			const fields = invalid.error.issues.map((i) => i.path[0]);
+			expect(fields).toContain('filters');
+		}
+	});
+
+	it('rejects leadFinder.create when include arrays are blank', () => {
+		const invalid =
+			BetterContactEndpointInputSchemas.leadFinderCreate.safeParse({
+				filters: { lead_seniority: { include: [] } },
+			});
+		expect(invalid.success).toBe(false);
+	});
+
 	it('rejects leadFinder.create when filters is missing (required field)', () => {
 		const invalid =
 			BetterContactEndpointInputSchemas.leadFinderCreate.safeParse({
@@ -173,6 +193,41 @@ describe('BetterContact output schemas', () => {
 			email: 'user@example.com',
 		});
 		expect(res.success).toBe(true);
+	});
+
+	it('coerces numeric strings on credit fields', () => {
+		const credits = BetterContactEndpointOutputSchemas.creditsGet.safeParse({
+			success: true,
+			credits_left: '50.0',
+		});
+		expect(credits.success).toBe(true);
+		if (credits.success) {
+			expect(credits.data.credits_left).toBe(50);
+		}
+
+		const leadFinder =
+			BetterContactEndpointOutputSchemas.leadFinderGetResults.safeParse({
+				status: 'terminated',
+				credits_consumed: '10.0',
+				credits_left: '990',
+			});
+		expect(leadFinder.success).toBe(true);
+		if (leadFinder.success) {
+			expect(leadFinder.data.credits_consumed).toBe(10);
+			expect(leadFinder.data.credits_left).toBe(990);
+		}
+
+		const enrichment =
+			BetterContactEndpointOutputSchemas.enrichmentGetResults.safeParse({
+				status: 'terminated',
+				credits_consumed: '5.0',
+				credits_left: '995',
+			});
+		expect(enrichment.success).toBe(true);
+		if (enrichment.success) {
+			expect(enrichment.data.credits_consumed).toBe(5);
+			expect(enrichment.data.credits_left).toBe(995);
+		}
 	});
 
 	it('parses leadFinder.create response', () => {

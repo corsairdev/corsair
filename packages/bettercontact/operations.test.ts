@@ -1,4 +1,4 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { makeBetterContactRequest } from './client';
 import { Credits, Enrichment, LeadFinder } from './endpoints';
 import { bettercontact } from './index';
@@ -30,8 +30,6 @@ beforeEach(() => {
 	jest.clearAllMocks();
 });
 
-// ─── credits ────────────────────────────────────────────────────────────────
-
 describe('credits.get', () => {
 	it('calls makeBetterContactRequest with GET /account', async () => {
 		const response = {
@@ -47,6 +45,27 @@ describe('credits.get', () => {
 		expect(mockRequest).toHaveBeenCalledWith('account', 'test-api-key', {
 			method: 'GET',
 		});
+	});
+
+	it('coerces credits_left from a numeric string', async () => {
+		mockRequest.mockResolvedValueOnce({
+			success: true,
+			credits_left: '500',
+			email: 'test@example.com',
+		});
+
+		const result = await Credits.get(createCtx(), {});
+
+		expect(result.credits_left).toBe(500);
+	});
+
+	it('rejects a credits response missing credits_left', async () => {
+		mockRequest.mockResolvedValueOnce({
+			success: true,
+			email: 'test@example.com',
+		});
+
+		await expect(Credits.get(createCtx(), {})).rejects.toThrow();
 	});
 
 	it('logs bettercontact.credits.get on success', async () => {
@@ -71,8 +90,6 @@ describe('credits.get', () => {
 		);
 	});
 });
-
-// ─── leadFinder ─────────────────────────────────────────────────────────────
 
 describe('leadFinder.create', () => {
 	it('POSTs to lead_finder/async with the full input as body', async () => {
@@ -120,6 +137,19 @@ describe('leadFinder.create', () => {
 		);
 		expect(call?.[2]).not.toHaveProperty('filters');
 	});
+
+	it('rejects a create response missing request_id', async () => {
+		mockRequest.mockResolvedValueOnce({
+			success: true,
+			message: 'Accepted',
+		});
+
+		await expect(
+			LeadFinder.create(createCtx(), {
+				filters: { lead_seniority: { include: ['cxo'] } },
+			}),
+		).rejects.toThrow();
+	});
 });
 
 describe('leadFinder.getResults', () => {
@@ -146,9 +176,15 @@ describe('leadFinder.getResults', () => {
 		})) as { status: string };
 		expect(result.status).toBe('processing');
 	});
-});
 
-// ─── enrichment ─────────────────────────────────────────────────────────────
+	it('rejects a results payload missing status', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 'srch_1' });
+
+		await expect(
+			LeadFinder.getResults(createCtx(), { request_id: 'srch_1' }),
+		).rejects.toThrow();
+	});
+});
 
 describe('enrichment.enrich', () => {
 	it('POSTs to /async with the full input as body', async () => {
@@ -183,6 +219,19 @@ describe('enrichment.enrich', () => {
 		);
 		expect(call?.[2]).not.toHaveProperty('data');
 	});
+
+	it('rejects an enrich response missing id', async () => {
+		mockRequest.mockResolvedValueOnce({
+			success: true,
+			message: 'Accepted',
+		});
+
+		await expect(
+			Enrichment.enrich(createCtx(), {
+				data: [{ first_name: 'Alice' }],
+			}),
+		).rejects.toThrow();
+	});
 });
 
 describe('enrichment.getResults', () => {
@@ -207,9 +256,15 @@ describe('enrichment.getResults', () => {
 		})) as { status: string };
 		expect(result.status).toBe('on_hold');
 	});
-});
 
-// ─── keyBuilder ─────────────────────────────────────────────────────────────
+	it('rejects a results payload missing status', async () => {
+		mockRequest.mockResolvedValueOnce({ id: 'batch_1' });
+
+		await expect(
+			Enrichment.getResults(createCtx(), { request_id: 'batch_1' }),
+		).rejects.toThrow();
+	});
+});
 
 describe('keyBuilder resolution', () => {
 	it('resolves explicit options.key', async () => {
@@ -242,6 +297,23 @@ describe('keyBuilder resolution', () => {
 		};
 		const key = await plugin.keyBuilder!(mockCtx as never, 'endpoint');
 		expect(key).toBe('env-secret-key');
+
+		process.env.BETTERCONTACT_API_KEY = oldEnv;
+	});
+
+	it('throws AuthMissingError when no key is available', async () => {
+		const oldEnv = process.env.BETTERCONTACT_API_KEY;
+		process.env.BETTERCONTACT_API_KEY = '';
+
+		const plugin = bettercontact({});
+		const mockCtx = {
+			authType: 'api_key',
+			keys: { get_api_key: jest.fn().mockResolvedValue(undefined) },
+		};
+
+		await expect(
+			plugin.keyBuilder!(mockCtx as never, 'endpoint'),
+		).rejects.toBeInstanceOf(AuthMissingError);
 
 		process.env.BETTERCONTACT_API_KEY = oldEnv;
 	});
