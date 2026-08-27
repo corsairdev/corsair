@@ -1,4 +1,5 @@
 import { ApiError } from 'corsair/http';
+import { OcrWebServiceAPIError } from './client';
 import { errorHandlers } from './error-handlers';
 
 const request = {
@@ -14,7 +15,7 @@ const response = {
 } as any;
 
 describe('OCR Web Service error handlers', () => {
-	it('retries rate-limit errors', async () => {
+	it('retries rate-limit errors and keeps Retry-After', async () => {
 		const error = new ApiError(request, response, 'Rate limited', {
 			retryAfter: 1000,
 		});
@@ -25,6 +26,21 @@ describe('OCR Web Service error handlers', () => {
 
 		expect(result.maxRetries).toBe(5);
 		expect(result.headersRetryAfterMs).toBe(1000);
+	});
+
+	it('retries wrapped 429 errors using the wrapper status and delay', async () => {
+		const cause = new ApiError(request, response, 'Too Many Requests', {
+			retryAfter: 2500,
+		});
+		const error = new OcrWebServiceAPIError(cause.message, { cause });
+
+		expect(error.retryAfter).toBe(2500);
+		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
+
+		const result = await errorHandlers.RATE_LIMIT_ERROR.handler(error);
+
+		expect(result.maxRetries).toBe(5);
+		expect(result.headersRetryAfterMs).toBe(2500);
 	});
 
 	it('does not retry authentication errors', async () => {
@@ -45,8 +61,6 @@ describe('OCR Web Service error handlers', () => {
 	});
 
 	it('uses the default handler for unknown errors', async () => {
-		const error = new Error('Something went wrong');
-
 		expect(errorHandlers.DEFAULT.match()).toBe(true);
 
 		const result = await errorHandlers.DEFAULT.handler();

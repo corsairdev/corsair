@@ -6,13 +6,13 @@ describe('OcrWebService schema', () => {
 		expect(OcrWebServiceSchema.version).toMatch(/^\d+\.\d+\.\d+$/);
 	});
 
-	it('declares an entities map', () => {
-		expect(typeof OcrWebServiceSchema.entities).toBe('object');
-		expect(OcrWebServiceSchema.entities).not.toBeNull();
-		expect(Array.isArray(Object.keys(OcrWebServiceSchema.entities))).toBe(true);
-		for (const entity of Object.values(OcrWebServiceSchema.entities)) {
-			expect(entity).toBeDefined();
-		}
+	it('declares account and document entities from the REST docs', () => {
+		expect(Object.keys(OcrWebServiceSchema.entities)).toEqual([
+			'accounts',
+			'documents',
+		]);
+		expect(OcrWebServiceSchema.entities.accounts).toBeDefined();
+		expect(OcrWebServiceSchema.entities.documents).toBeDefined();
 	});
 });
 

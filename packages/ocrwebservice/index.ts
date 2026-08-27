@@ -1,5 +1,4 @@
 import type {
-	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -15,7 +14,7 @@ import type {
 
 import { AuthMissingError } from 'corsair/core';
 
-import { Ocr } from './endpoints';
+import { Account, Ocr } from './endpoints';
 
 import type {
 	OcrWebServiceEndpointInputs,
@@ -62,28 +61,62 @@ type OcrWebServiceEndpoint<K extends keyof OcrWebServiceEndpointOutputs> =
 	>;
 
 export type OcrWebServiceEndpoints = {
-	processDocument: OcrWebServiceEndpoint<'processDocument'>;
+	getAccountCredentials: OcrWebServiceEndpoint<'getAccountCredentials'>;
+	getAccountInformation: OcrWebServiceEndpoint<'getAccountInformation'>;
+	log: OcrWebServiceEndpoint<'log'>;
+	recognize: OcrWebServiceEndpoint<'recognize'>;
 };
 
 const ocrWebServiceEndpointsNested = {
+	account: {
+		getCredentials: Account.getCredentials,
+		getInformation: Account.getInformation,
+		log: Account.log,
+	},
 	ocr: {
-		processDocument: Ocr.processDocument,
+		recognize: Ocr.recognize,
 	},
 } as const;
 
 export const ocrWebServiceEndpointSchemas = {
-	'ocr.processDocument': {
-		input: OcrWebServiceEndpointInputSchemas.processDocument,
-		output: OcrWebServiceEndpointOutputSchemas.processDocument,
+	'account.getCredentials': {
+		input: OcrWebServiceEndpointInputSchemas.getAccountCredentials,
+		output: OcrWebServiceEndpointOutputSchemas.getAccountCredentials,
+	},
+	'account.getInformation': {
+		input: OcrWebServiceEndpointInputSchemas.getAccountInformation,
+		output: OcrWebServiceEndpointOutputSchemas.getAccountInformation,
+	},
+	'account.log': {
+		input: OcrWebServiceEndpointInputSchemas.log,
+		output: OcrWebServiceEndpointOutputSchemas.log,
+	},
+	'ocr.recognize': {
+		input: OcrWebServiceEndpointInputSchemas.recognize,
+		output: OcrWebServiceEndpointOutputSchemas.recognize,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof ocrWebServiceEndpointsNested
 >;
 
 const ocrWebServiceEndpointMeta = {
-	'ocr.processDocument': {
+	'account.getCredentials': {
+		riskLevel: 'read',
+		description:
+			'Extract OCR Web Service username and license code from stored credentials',
+	},
+	'account.getInformation': {
+		riskLevel: 'read',
+		description:
+			'Retrieve remaining pages, subscription plan, and expiration date',
+	},
+	'account.log': {
+		riskLevel: 'read',
+		description: 'Retrieve OCR processing logs for a date range',
+	},
+	'ocr.recognize': {
 		riskLevel: 'write',
-		description: 'Process an image or document using OCR Web Service',
+		description: 'OCR an image or document via REST processDocument',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof ocrWebServiceEndpointsNested
@@ -165,8 +198,16 @@ export function ocrwebservice<const T extends OcrWebServicePluginOptions>(
 }
 
 export type {
+	GetAccountCredentialsInput,
+	GetAccountCredentialsResponse,
+	GetAccountInformationInput,
+	GetAccountInformationResponse,
+	LogInput,
+	LogResponse,
 	OcrWebServiceEndpointInputs,
 	OcrWebServiceEndpointOutputs,
 	ProcessDocumentInput,
 	ProcessDocumentResponse,
+	RecognizeInput,
+	RecognizeResponse,
 } from './endpoints/types';

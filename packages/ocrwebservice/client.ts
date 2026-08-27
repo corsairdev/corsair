@@ -33,16 +33,10 @@ export const OCRWEBSERVICE_API_BASE = 'https://www.ocrwebservice.com';
 const OCRWEBSERVICE_TIMEOUT_MS = 60_000;
 
 /**
- * Corsair stores the OCR Web Service credentials as one API-key value.
- *
- * Expected format:
- *
- *     username:licenseCode
- *
- * OCR Web Service itself uses HTTP Basic Authentication with the
- * username and license code.
+ * Corsair stores OCR Web Service credentials as one API-key value:
+ * `username:licenseCode`.
  */
-function parseCredentials(apiKey: string): {
+export function parseCredentials(apiKey: string): {
 	username: string;
 	licenseCode: string;
 } {
@@ -60,43 +54,85 @@ function parseCredentials(apiKey: string): {
 	};
 }
 
-/**
- * Creates a Basic authentication value.
- *
- * OCR Web Service expects:
- *
- *     Authorization: Basic base64(username:licenseCode)
- */
-function createBasicAuthHeader(apiKey: string): string {
+function buildConfig(
+	apiKey: string,
+	useBasicAuth: boolean,
+	accept: string,
+): OpenAPIConfig {
 	const { username, licenseCode } = parseCredentials(apiKey);
 
-	const credentials = `${username}:${licenseCode}`;
-
-	const encoded =
-		typeof globalThis.btoa === 'function'
-			? globalThis.btoa(credentials)
-			: Buffer.from(credentials, 'utf8').toString('base64');
-
-	return `Basic ${encoded}`;
-}
-
-function buildConfig(apiKey: string): OpenAPIConfig {
 	return {
 		BASE: OCRWEBSERVICE_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TIMEOUT: OCRWEBSERVICE_TIMEOUT_MS,
-
-		// Do NOT use TOKEN here.
-		// OCR Web Service does not use Bearer authentication.
 		TOKEN: undefined,
-
+		USERNAME: useBasicAuth ? username : undefined,
+		PASSWORD: useBasicAuth ? licenseCode : undefined,
 		HEADERS: {
-			Accept: 'application/json',
-			Authorization: createBasicAuthHeader(apiKey),
+			Accept: accept,
 		},
 	};
+}
+
+async function normalizeBody(
+	body: unknown,
+	mediaType?: string,
+): Promise<{ body?: unknown; mediaType?: string }> {
+	if (!(body instanceof Blob)) {
+		return { body, mediaType };
+	}
+
+	return {
+		body: Buffer.from(await body.arrayBuffer()).toString('binary'),
+		mediaType: mediaType ?? body.type ?? 'application/octet-stream',
+	};
+}
+
+export async function makeOcrWebServiceRequest<T>(
+	endpoint: string,
+	apiKey: string,
+	options: {
+		method?: 'GET' | 'POST';
+		query?: Record<string, string | number | boolean | undefined>;
+		body?: unknown;
+		mediaType?: string;
+		basicAuth?: boolean;
+		accept?: string;
+	} = {},
+): Promise<T> {
+	const {
+		method = 'GET',
+		query,
+		basicAuth = true,
+		accept = 'application/json',
+	} = options;
+	const { body, mediaType } = await normalizeBody(
+		options.body,
+		options.mediaType,
+	);
+
+	const requestOptions: ApiRequestOptions = {
+		method,
+		url: endpoint,
+		query,
+		body,
+		mediaType,
+	};
+
+	try {
+		return await request<T>(
+			buildConfig(apiKey, basicAuth, accept),
+			requestOptions,
+		);
+	} catch (error) {
+		if (error instanceof Error) {
+			throw new OcrWebServiceAPIError(error.message, { cause: error });
+		}
+
+		throw new OcrWebServiceAPIError('Unknown OCR Web Service API error');
+	}
 }
 
 export async function makeOcrWebServicePostRequest<T>(
@@ -104,29 +140,14 @@ export async function makeOcrWebServicePostRequest<T>(
 	apiKey: string,
 	options: {
 		query?: Record<string, string | number | boolean | undefined>;
-		formData?: Record<string, unknown>;
+		body?: unknown;
+		mediaType?: string;
 	} = {},
 ): Promise<T> {
-	const config = buildConfig(apiKey);
-
-	const requestOptions: ApiRequestOptions = {
+	return makeOcrWebServiceRequest<T>(endpoint, apiKey, {
 		method: 'POST',
-		url: endpoint,
-		query: options.query,
-		formData: options.formData,
-	};
-
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new OcrWebServiceAPIError(error.message, {
-				cause: error,
-			});
-		}
-
-		throw new OcrWebServiceAPIError('Unknown OCR Web Service API error');
-	}
+		...options,
+	});
 }
 
 export async function makeOcrWebServiceGetRequest<T>(
@@ -134,25 +155,11 @@ export async function makeOcrWebServiceGetRequest<T>(
 	apiKey: string,
 	options: {
 		query?: Record<string, string | number | boolean | undefined>;
+		basicAuth?: boolean;
 	} = {},
 ): Promise<T> {
-	const config = buildConfig(apiKey);
-
-	const requestOptions: ApiRequestOptions = {
+	return makeOcrWebServiceRequest<T>(endpoint, apiKey, {
 		method: 'GET',
-		url: endpoint,
-		query: options.query,
-	};
-
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new OcrWebServiceAPIError(error.message, {
-				cause: error,
-			});
-		}
-
-		throw new OcrWebServiceAPIError('Unknown OCR Web Service API error');
-	}
+		...options,
+	});
 }

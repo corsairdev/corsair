@@ -1,7 +1,14 @@
-import { processDocument } from './process-document';
+import { getCredentials, getInformation, log } from './account';
+import { recognize } from './process-document';
+
+export const Account = {
+	getCredentials,
+	getInformation,
+	log,
+};
 
 export const Ocr = {
-	processDocument,
+	recognize,
 };
 
 export * from './types';

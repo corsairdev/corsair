@@ -29,26 +29,57 @@ const outputFormatSchema = z.string().refine(
 	},
 );
 
-const ProcessDocumentInputSchema = z
+const GetAccountCredentialsInputSchema = z.object({}).strict();
+
+const GetAccountCredentialsResponseSchema = z
+	.object({
+		user_name: z.string(),
+		license_code: z.string(),
+	})
+	.strict();
+
+const GetAccountInformationInputSchema = z.object({}).strict();
+
+const GetAccountInformationResponseSchema = z
+	.object({
+		ErrorMessage: z.string().nullable().optional(),
+		AvailablePages: z.number().nullable().optional(),
+		MaxPages: z.number().nullable().optional(),
+		LastProcessingTime: z.string().nullable().optional(),
+		SubcriptionPlan: z.string().nullable().optional(),
+		ExpirationDate: z.string().nullable().optional(),
+	})
+	.loose();
+
+const dateSchema = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, {
+	message: 'Date must be YYYY-MM-DD',
+});
+
+const LogInputSchema = z
+	.object({
+		from_date: dateSchema,
+		to_date: dateSchema,
+		reserved: z.array(z.string()).optional(),
+	})
+	.strict();
+
+const LogResponseSchema = z
+	.object({
+		data: z.string(),
+	})
+	.strict();
+
+const RecognizeInputSchema = z
 	.object({
 		file: z.instanceof(Blob),
-
 		language: z.string().min(1).default('english'),
-
 		pagerange: z.string().min(1).optional(),
-
 		tobw: z.boolean().optional(),
-
 		zone: z.string().min(1).optional(),
-
 		outputformat: outputFormatSchema.optional(),
-
 		gettext: z.boolean().optional(),
-
 		getwords: z.boolean().optional(),
-
 		newline: z.boolean().optional(),
-
 		description: z.string().optional(),
 	})
 	.strict()
@@ -59,44 +90,77 @@ const ProcessDocumentInputSchema = z
 		},
 	);
 
-export type ProcessDocumentInput = z.infer<typeof ProcessDocumentInputSchema>;
-
-const ProcessDocumentResponseSchema = z
+const RecognizeResponseSchema = z
 	.object({
 		ErrorMessage: z.string().nullable().optional(),
-
 		AvailablePages: z.number().nullable().optional(),
-
 		ProcessedPages: z.number().nullable().optional(),
-
 		OCRText: z.array(z.array(z.string())).nullable().optional(),
-
 		OutputFileUrl: z.string().nullable().optional(),
-
 		TaskDescription: z.string().nullable().optional(),
-
 		Reserved: z.array(z.unknown()).nullable().optional(),
 	})
 	.loose();
 
-export type ProcessDocumentResponse = z.infer<
-	typeof ProcessDocumentResponseSchema
+export type GetAccountCredentialsInput = z.infer<
+	typeof GetAccountCredentialsInputSchema
 >;
+export type GetAccountCredentialsResponse = z.infer<
+	typeof GetAccountCredentialsResponseSchema
+>;
+export type GetAccountInformationInput = z.infer<
+	typeof GetAccountInformationInputSchema
+>;
+export type GetAccountInformationResponse = z.infer<
+	typeof GetAccountInformationResponseSchema
+>;
+export type LogInput = z.infer<typeof LogInputSchema>;
+export type LogResponse = z.infer<typeof LogResponseSchema>;
+export type RecognizeInput = z.infer<typeof RecognizeInputSchema>;
+export type RecognizeResponse = z.infer<typeof RecognizeResponseSchema>;
+
+/** @deprecated Use RecognizeInput */
+export type ProcessDocumentInput = RecognizeInput;
+/** @deprecated Use RecognizeResponse */
+export type ProcessDocumentResponse = RecognizeResponse;
 
 export type OcrWebServiceEndpointInputs = {
-	processDocument: ProcessDocumentInput;
+	getAccountCredentials: GetAccountCredentialsInput;
+	getAccountInformation: GetAccountInformationInput;
+	log: LogInput;
+	recognize: RecognizeInput;
 };
 
 export type OcrWebServiceEndpointOutputs = {
-	processDocument: ProcessDocumentResponse;
+	getAccountCredentials: GetAccountCredentialsResponse;
+	getAccountInformation: GetAccountInformationResponse;
+	log: LogResponse;
+	recognize: RecognizeResponse;
 };
 
 export const OcrWebServiceEndpointInputSchemas = {
-	processDocument: ProcessDocumentInputSchema,
+	getAccountCredentials: GetAccountCredentialsInputSchema,
+	getAccountInformation: GetAccountInformationInputSchema,
+	log: LogInputSchema,
+	recognize: RecognizeInputSchema,
 } as const;
 
 export const OcrWebServiceEndpointOutputSchemas = {
-	processDocument: ProcessDocumentResponseSchema,
+	getAccountCredentials: GetAccountCredentialsResponseSchema,
+	getAccountInformation: GetAccountInformationResponseSchema,
+	log: LogResponseSchema,
+	recognize: RecognizeResponseSchema,
 } as const;
 
-export { ProcessDocumentInputSchema, ProcessDocumentResponseSchema };
+export {
+	GetAccountCredentialsInputSchema,
+	GetAccountCredentialsResponseSchema,
+	GetAccountInformationInputSchema,
+	GetAccountInformationResponseSchema,
+	LogInputSchema,
+	LogResponseSchema,
+	RecognizeInputSchema,
+	RecognizeResponseSchema,
+	RecognizeInputSchema as ProcessDocumentInputSchema,
+	RecognizeResponseSchema as ProcessDocumentResponseSchema,
+};

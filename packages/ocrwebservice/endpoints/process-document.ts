@@ -1,82 +1,69 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeOcrWebServicePostRequest } from '../client';
+import { makeOcrWebServicePostRequest, OcrWebServiceAPIError } from '../client';
 import type { OcrWebServiceEndpoints } from '../index';
+import { RecognizeInputSchema, RecognizeResponseSchema } from './types';
 
-import {
-	ProcessDocumentInputSchema,
-	ProcessDocumentResponseSchema,
-} from './types';
+export const recognize: OcrWebServiceEndpoints['recognize'] = async (
+	ctx,
+	input,
+) => {
+	const validatedInput = RecognizeInputSchema.parse(input);
+	const {
+		file,
+		language,
+		pagerange,
+		tobw,
+		zone,
+		outputformat,
+		gettext,
+		getwords,
+		newline,
+		description,
+	} = validatedInput;
 
-export const processDocument: OcrWebServiceEndpoints['processDocument'] =
-	async (ctx, input) => {
-		const validatedInput = ProcessDocumentInputSchema.parse(input);
-
-		const {
-			file,
-			language,
-			pagerange,
-			tobw,
-			zone,
-			outputformat,
-			gettext,
-			getwords,
-			newline,
-			description,
-		} = validatedInput;
-
-		const formData: Record<string, unknown> = {
-			file,
-			language,
-			pagerange,
-			tobw,
-			zone,
-			outputformat,
-			gettext,
-			getwords,
-			newline: newline === true ? 1 : undefined,
-			description,
-		};
-
-		const rawResponse = await makeOcrWebServicePostRequest(
-			'/restservices/processDocument',
-			ctx.key,
-			{
-				query: {
-					language,
-					pagerange,
-					tobw,
-					zone,
-					outputformat,
-					gettext,
-					getwords,
-					newline: newline === true ? 1 : undefined,
-					description,
-				},
-				formData: {
-					file,
-				},
-			},
-		);
-
-		const response = ProcessDocumentResponseSchema.parse(rawResponse);
-
-		if (response.ErrorMessage && response.ErrorMessage.trim().length > 0) {
-			throw new Error(`OCR Web Service failed: ${response.ErrorMessage}`);
-		}
-
-		await logEventFromContext(
-			ctx,
-			'ocrwebservice.processDocument',
-			{
+	const rawResponse = await makeOcrWebServicePostRequest(
+		'/restservices/processDocument',
+		ctx.key,
+		{
+			query: {
 				language,
-				pagerange: pagerange ?? 'allpages',
-				outputformat: outputformat ?? null,
-				gettext: gettext ?? false,
-				getwords: getwords ?? false,
-				processedPages: response.ProcessedPages ?? 0,
+				pagerange,
+				tobw,
+				zone,
+				outputformat,
+				gettext,
+				getwords,
+				newline: newline === true ? 1 : undefined,
+				description,
 			},
-			'completed',
-		);
+			body: file,
+		},
+	);
 
-		return response;
-	};
+	const response = RecognizeResponseSchema.parse(rawResponse);
+
+	if (response.ErrorMessage && response.ErrorMessage.trim().length > 0) {
+		throw new OcrWebServiceAPIError(
+			`OCR Web Service failed: ${response.ErrorMessage}`,
+		);
+	}
+
+	await logEventFromContext(
+		ctx,
+		'ocrwebservice.ocr.recognize',
+		{
+			language,
+			pagerange: pagerange ?? 'allpages',
+			outputformat: outputformat ?? null,
+			gettext: gettext ?? false,
+			getwords: getwords ?? false,
+			processedPages: response.ProcessedPages ?? 0,
+		},
+		'completed',
+	);
+
+	return response;
+};
+
+/** @deprecated Use recognize */
+export const processDocument = recognize;

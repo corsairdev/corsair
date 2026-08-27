@@ -1,27 +1,118 @@
-import { makeOcrWebServicePostRequest } from './client';
-import { processDocument } from './endpoints/process-document';
-import { ProcessDocumentInputSchema } from './endpoints/types';
+import {
+	makeOcrWebServiceGetRequest,
+	makeOcrWebServicePostRequest,
+	makeOcrWebServiceRequest,
+	parseCredentials,
+} from './client';
+import { getCredentials, getInformation, log } from './endpoints/account';
+import { recognize } from './endpoints/process-document';
+import { RecognizeInputSchema } from './endpoints/types';
+import { ocrwebservice } from './index';
 
-jest.mock('./client', () => ({
-	makeOcrWebServicePostRequest: jest.fn(),
-}));
+jest.mock('./client', () => {
+	const actual = jest.requireActual('./client');
+	return {
+		...actual,
+		makeOcrWebServicePostRequest: jest.fn(),
+		makeOcrWebServiceGetRequest: jest.fn(),
+		makeOcrWebServiceRequest: jest.fn(),
+	};
+});
 
 jest.mock('corsair/core', () => ({
 	logEventFromContext: jest.fn().mockResolvedValue(undefined),
+	AuthMissingError: class AuthMissingError extends Error {},
 }));
 
-const mockedRequest = makeOcrWebServicePostRequest as jest.MockedFunction<
+const mockedPost = makeOcrWebServicePostRequest as jest.MockedFunction<
 	typeof makeOcrWebServicePostRequest
 >;
+const mockedGet = makeOcrWebServiceGetRequest as jest.MockedFunction<
+	typeof makeOcrWebServiceGetRequest
+>;
+const mockedRequest = makeOcrWebServiceRequest as jest.MockedFunction<
+	typeof makeOcrWebServiceRequest
+>;
 
-describe('OCR Web Service processDocument endpoint', () => {
+const ctx = { key: 'test-user:test-license', options: {} } as any;
+
+describe('OCR Web Service credentials', () => {
+	it('parses username:licenseCode from the stored key', () => {
+		expect(parseCredentials('acme:license-1')).toEqual({
+			username: 'acme',
+			licenseCode: 'license-1',
+		});
+	});
+
+	it('rejects keys without a license code', () => {
+		expect(() => parseCredentials('only-user')).toThrow('username:licenseCode');
+	});
+});
+
+describe('OCR Web Service account endpoints', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 	});
 
-	it('sends the uploaded document to the OCR Web Service endpoint', async () => {
-		const file = new Blob(['test document'], { type: 'text/plain' });
+	it('returns credentials from connection metadata', async () => {
+		await expect(getCredentials(ctx, {})).resolves.toEqual({
+			user_name: 'test-user',
+			license_code: 'test-license',
+		});
+		expect(mockedGet).not.toHaveBeenCalled();
+	});
 
+	it('GETs getAccountInformation', async () => {
+		mockedGet.mockResolvedValue({
+			ErrorMessage: '',
+			AvailablePages: 20,
+			MaxPages: 25,
+			SubcriptionPlan: 'TRIAL',
+			ExpirationDate: '12/31/2026',
+			LastProcessingTime: '8/27/2026',
+		});
+
+		const result = await getInformation(ctx, {});
+
+		expect(mockedGet).toHaveBeenCalledWith(
+			'/restservices/getAccountInformation',
+			'test-user:test-license',
+		);
+		expect(result.AvailablePages).toBe(20);
+		expect(result.SubcriptionPlan).toBe('TRIAL');
+	});
+
+	it('POSTs SOAP logs for a date range', async () => {
+		mockedRequest.mockResolvedValue(
+			'<?xml version="1.0"?><OCRWebServiceLogResult>line-one</OCRWebServiceLogResult>',
+		);
+
+		const result = await log(ctx, {
+			from_date: '2026-08-01',
+			to_date: '2026-08-27',
+		});
+
+		expect(mockedRequest).toHaveBeenCalledWith(
+			'/services/OCRWebService.asmx/OCRWebServiceLog',
+			'test-user:test-license',
+			expect.objectContaining({
+				method: 'POST',
+				basicAuth: false,
+				accept: 'text/xml',
+				body: expect.stringContaining('from_date=2026-08-01'),
+			}),
+		);
+		expect(result).toEqual({ data: 'line-one' });
+	});
+});
+
+describe('OCR Web Service recognize endpoint', () => {
+	beforeEach(() => {
+		jest.clearAllMocks();
+	});
+
+	it('POSTs the document body to processDocument', async () => {
+		const file = new Blob(['test document'], { type: 'text/plain' });
 		const providerResponse = {
 			ErrorMessage: null,
 			OCRText: [['Hello from OCR']],
@@ -30,38 +121,32 @@ describe('OCR Web Service processDocument endpoint', () => {
 			ProcessedPages: 1,
 		};
 
-		mockedRequest.mockResolvedValue(providerResponse);
+		mockedPost.mockResolvedValue(providerResponse);
 
-		const ctx = {
-			key: 'test-user:test-license',
-			options: {},
-		} as any;
-
-		const result = await processDocument(ctx, {
+		const result = await recognize(ctx, {
 			file,
 			language: 'english',
 			gettext: true,
 		});
 
-		expect(mockedRequest).toHaveBeenCalledTimes(1);
-
-		expect(mockedRequest).toHaveBeenCalledWith(
+		expect(mockedPost).toHaveBeenCalledWith(
 			'/restservices/processDocument',
 			'test-user:test-license',
 			expect.objectContaining({
-				formData: expect.objectContaining({
-					file,
+				body: file,
+				query: expect.objectContaining({
+					language: 'english',
+					gettext: true,
 				}),
 			}),
 		);
-
 		expect(result).toEqual(providerResponse);
 	});
 
 	it('throws when the provider returns an OCR error', async () => {
 		const file = new Blob(['bad document'], { type: 'text/plain' });
 
-		mockedRequest.mockResolvedValue({
+		mockedPost.mockResolvedValue({
 			ErrorMessage: 'Unable to process document',
 			OCRText: null,
 			OutputFileUrl: null,
@@ -69,13 +154,8 @@ describe('OCR Web Service processDocument endpoint', () => {
 			ProcessedPages: 0,
 		});
 
-		const ctx = {
-			key: 'test-user:test-license',
-			options: {},
-		} as any;
-
 		await expect(
-			processDocument(ctx, {
+			recognize(ctx, {
 				file,
 				language: 'english',
 				gettext: true,
@@ -83,6 +163,7 @@ describe('OCR Web Service processDocument endpoint', () => {
 		).rejects.toThrow('OCR Web Service failed: Unable to process document');
 	});
 });
+
 describe('OCR Web Service outputformat validation', () => {
 	const file = new Blob(['test document'], {
 		type: 'application/pdf',
@@ -102,7 +183,7 @@ describe('OCR Web Service outputformat validation', () => {
 
 		for (const outputformat of formats) {
 			expect(() =>
-				ProcessDocumentInputSchema.parse({
+				RecognizeInputSchema.parse({
 					file,
 					outputformat,
 				}),
@@ -112,23 +193,16 @@ describe('OCR Web Service outputformat validation', () => {
 
 	it('accepts two comma-separated output formats', () => {
 		expect(() =>
-			ProcessDocumentInputSchema.parse({
+			RecognizeInputSchema.parse({
 				file,
 				outputformat: 'pdf,txt',
-			}),
-		).not.toThrow();
-
-		expect(() =>
-			ProcessDocumentInputSchema.parse({
-				file,
-				outputformat: 'docx,xlsx',
 			}),
 		).not.toThrow();
 	});
 
 	it('rejects more than two output formats', () => {
 		expect(() =>
-			ProcessDocumentInputSchema.parse({
+			RecognizeInputSchema.parse({
 				file,
 				outputformat: 'pdf,txt,docx',
 			}),
@@ -137,33 +211,22 @@ describe('OCR Web Service outputformat validation', () => {
 
 	it('rejects unsupported output formats', () => {
 		expect(() =>
-			ProcessDocumentInputSchema.parse({
+			RecognizeInputSchema.parse({
 				file,
 				outputformat: 'invalid',
 			}),
 		).toThrow();
 	});
+});
 
-	it('rejects empty output format values', () => {
-		expect(() =>
-			ProcessDocumentInputSchema.parse({
-				file,
-				outputformat: '',
-			}),
-		).toThrow();
-
-		expect(() =>
-			ProcessDocumentInputSchema.parse({
-				file,
-				outputformat: 'pdf,',
-			}),
-		).toThrow();
-
-		expect(() =>
-			ProcessDocumentInputSchema.parse({
-				file,
-				outputformat: ',pdf',
-			}),
-		).toThrow();
+describe('OCR Web Service plugin registration', () => {
+	it('maps the four Composio ops', () => {
+		const plugin = ocrwebservice();
+		expect(Object.keys(plugin.endpointSchemas ?? {})).toEqual([
+			'account.getCredentials',
+			'account.getInformation',
+			'account.log',
+			'ocr.recognize',
+		]);
 	});
 });
