@@ -17,7 +17,7 @@ Corsair acts as a secure intermediary between your AI agents and external APIs. 
 ## Documentation Index
 
 ### Getting Started
-- [Introduction](/docs/getting-started/introduction): Introduction to Corsair.
+- [Introduction](/docs/introduction): Introduction to Corsair.
 - [Quickstart](/docs/getting-started/quickstart): Set up Corsair in minutes.
 
 ### Core Concepts

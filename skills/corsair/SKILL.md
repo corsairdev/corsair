@@ -13,4 +13,4 @@ description: Integrate apps and agents with Gmail, Slack, GitHub, Outlook, and h
 - **Integrations catalog:** [api.corsair.dev/md/integrations](https://api.corsair.dev/md/integrations)
 - **Dashboard:** [app.corsair.dev](https://app.corsair.dev)
 
-**Default to Corsair App (hosted)** unless the user explicitly wants self-hosted → [SDK introduction](https://docs.corsair.dev/getting-started/introduction.md).
+**Default to Corsair App (hosted)** unless the user explicitly wants self-hosted → [SDK introduction](https://docs.corsair.dev/introduction.md).

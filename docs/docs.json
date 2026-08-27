@@ -29,8 +29,8 @@
           {
             "group": "Get Started",
             "pages": [
-              "getting-started/introduction",
-              "getting-started/quick-start",
+              "introduction",
+              "quick-start",
               {
                 "group": "Use cases",
                 "pages": [
@@ -141,6 +141,14 @@
           {
             "group": "Plugins",
             "pages": [
+              {
+                "group": "Ably",
+                "pages": [
+                  "plugins/ably/overview",
+                  "plugins/ably/api",
+                  "plugins/ably/database"
+                ]
+              },
               {
                 "group": "Abstract",
                 "pages": [
@@ -1054,12 +1062,20 @@
   },
   "redirects": [
     {
+      "source": "/getting-started/introduction",
+      "destination": "/introduction"
+    },
+    {
+      "source": "/getting-started/quick-start",
+      "destination": "/quick-start"
+    },
+    {
       "source": "/",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/studio/overview",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/getting-started/installation",
@@ -1067,11 +1083,11 @@
     },
     {
       "source": "/app/home",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/app/introduction",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/app/agent-setup",
@@ -1143,7 +1159,7 @@
     },
     {
       "source": "/hosted-sdk/overview",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/hosted-sdk/quickstart",
@@ -1223,7 +1239,7 @@
     },
     {
       "source": "/getting-started/comparison",
-      "destination": "/getting-started/introduction"
+      "destination": "/introduction"
     },
     {
       "source": "/frameworks/nextjs",

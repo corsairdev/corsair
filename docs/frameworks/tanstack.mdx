@@ -36,7 +36,7 @@ import { corsair } from '~/server/corsair';
 export const { GET, POST, OPTIONS } = toTanStackHandler(corsair, { basePath: '/api/corsair' });
 ```
 
-`~/server/corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/getting-started/quick-start) if you haven't built it yet.
+`~/server/corsair` is your `createCorsair({ ... })` instance. See [Getting Started](/quick-start) if you haven't built it yet.
 
 <Note>Server-route helpers have shifted across TanStack Start releases. If your version wraps routes differently, keep the shape: a splat route under `/api/corsair` whose `GET`/`POST`/`OPTIONS` come from `toTanStackHandler`.</Note>
 

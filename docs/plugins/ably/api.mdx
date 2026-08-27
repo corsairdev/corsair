@@ -1,0 +1,1243 @@
+---
+title: API
+description: "API reference for Ably: every `ably.api.*` operation with input and output types."
+---
+
+Every `ably.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Application
+
+### getServiceTime
+
+`application.getServiceTime`
+
+Get the current Ably service time.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.application.getServiceTime({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `number[]`
+
+
+---
+
+### getStats
+
+`application.getStats`
+
+Retrieve application usage statistics.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.application.getStats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `start` | `number` | No | — |
+| `end` | `number` | No | — |
+| `direction` | `forwards \| backwards` | No | — |
+| `unit` | `minute \| hour \| day \| month` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### requestAccessToken
+
+`application.requestAccessToken`
+
+Request an Ably access token.
+
+**Risk:** `write`
+
+```ts
+await corsair.ably.api.application.requestAccessToken({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `keyName` | `string` | Yes | — |
+| `clientId` | `string` | No | — |
+| `ttl` | `number` | No | — |
+| `capability` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `token` | `string` | Yes | — |
+| `expires` | `number` | No | — |
+| `issued` | `number` | No | — |
+| `capability` | `string` | No | — |
+| `clientId` | `string` | No | — |
+
+
+
+---
+
+## Channels
+
+### batchPresence
+
+`channels.batchPresence`
+
+Retrieve presence information for multiple channels.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.channels.batchPresence({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `string[]` | Yes | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### batchPresenceHistory
+
+`channels.batchPresenceHistory`
+
+Retrieve presence history for multiple channels.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.channels.batchPresenceHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channels` | `string[]` | Yes | — |
+| `limit` | `number` | No | — |
+| `start` | `number` | No | — |
+| `end` | `number` | No | — |
+| `direction` | `forwards \| backwards` | No | — |
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### getChannelDetails
+
+`channels.getChannelDetails`
+
+Retrieve details for an active channel.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.channels.getChannelDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | No | — |
+| `status` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="status full type">
+
+```ts
+{
+  isActive?: boolean,
+  occupancy?: {
+    metrics?: {
+    }
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getChannelHistory
+
+`channels.getChannelHistory`
+
+Retrieve message history for a channel.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.channels.getChannelHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `start` | `number` | No | — |
+| `end` | `number` | No | — |
+| `direction` | `forwards \| backwards` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  data?: any,
+  clientId?: string,
+  connectionId?: string,
+  timestamp?: number,
+  encoding?: string,
+  extras?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getChannelPresence
+
+`channels.getChannelPresence`
+
+Retrieve current channel presence members.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.channels.getChannelPresence({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | — |
+| `clientId` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  action?: string | number,
+  clientId?: string,
+  connectionId?: string,
+  data?: any,
+  timestamp?: number,
+  encoding?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMessageVersions
+
+`channels.getMessageVersions`
+
+Retrieve historical versions of a message.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.channels.getMessageVersions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | — |
+| `serial` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  name?: string,
+  data?: any,
+  clientId?: string,
+  connectionId?: string,
+  timestamp?: number,
+  encoding?: string,
+  extras?: {
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPresenceHistory
+
+`channels.getPresenceHistory`
+
+Retrieve presence history for a channel.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.channels.getPresenceHistory({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `start` | `number` | No | — |
+| `end` | `number` | No | — |
+| `direction` | `forwards \| backwards` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  action?: string | number,
+  clientId?: string,
+  connectionId?: string,
+  data?: any,
+  timestamp?: number,
+  encoding?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listChannels
+
+`channels.listChannels`
+
+List active Ably channels.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.channels.listChannels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `prefix` | `string` | No | — |
+| `by` | `id \| value` | No | — |
+| `next` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="next full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+(
+  string | {
+    channelId?: string,
+    status?: {
+      isActive?: boolean,
+      occupancy?: {
+        metrics?: {
+        }
+      }
+    }
+  }
+)[]
+```
+</Accordion>
+
+<Accordion title="next full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publishBatchMessages
+
+`channels.publishBatchMessages`
+
+Publish messages to multiple Ably channels.
+
+**Risk:** `write`
+
+```ts
+await corsair.ably.api.channels.publishBatchMessages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `messages` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="messages full type">
+
+```ts
+{
+  channels: string[],
+  messages: {
+    id?: string,
+    name?: string,
+    data?: any,
+    clientId?: string,
+    connectionId?: string,
+    timestamp?: number,
+    encoding?: string,
+    extras?: {
+    }
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### publishMessageToChannel
+
+`channels.publishMessageToChannel`
+
+Publish a message to an Ably channel.
+
+**Risk:** `write`
+
+```ts
+await corsair.ably.api.channels.publishMessageToChannel({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channelId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `data` | `any` | Yes | — |
+| `clientId` | `string` | No | — |
+| `extras` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="extras full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+## Push
+
+### createPushChannelSubscription
+
+`push.createPushChannelSubscription`
+
+Subscribe a device or client to a push channel.
+
+**Risk:** `write`
+
+```ts
+await corsair.ably.api.push.createPushChannelSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `deviceId` | `string` | No | — |
+| `clientId` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### deleteChannelSubscription
+
+`push.deleteChannelSubscription`
+
+Delete matching push channel subscriptions.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ably.api.push.deleteChannelSubscription({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `channel` | `string` | Yes | — |
+| `deviceId` | `string` | No | — |
+| `clientId` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### getPushDevice
+
+`push.getPushDevice`
+
+Retrieve a push device registration.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.push.getPushDevice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `clientId` | `string` | No | — |
+| `platform` | `string` | No | — |
+| `formFactor` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `updateToken` | `string` | No | — |
+| `push` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="push full type">
+
+```ts
+{
+  state?: string,
+  recipient?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPushChannels
+
+`push.listPushChannels`
+
+List channels with push subscribers.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.push.listPushChannels({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `prefix` | `string` | No | — |
+| `next` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="next full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `string[]` | Yes | — |
+| `next` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="next full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listPushChannelSubscriptions
+
+`push.listPushChannelSubscriptions`
+
+List push channel subscriptions.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.push.listPushChannelSubscriptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `channel` | `string` | No | — |
+| `deviceId` | `string` | No | — |
+| `clientId` | `string` | No | — |
+| `next` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="next full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  channel: string,
+  deviceId?: string,
+  clientId?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="next full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listRegisteredPushDevices
+
+`push.listRegisteredPushDevices`
+
+List registered push notification devices.
+
+**Risk:** `read`
+
+```ts
+await corsair.ably.api.push.listRegisteredPushDevices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `deviceId` | `string` | No | — |
+| `clientId` | `string` | No | — |
+| `next` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="next full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+| `next` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  id: string,
+  clientId?: string,
+  platform?: string,
+  formFactor?: string,
+  metadata?: {
+  },
+  updateToken?: string,
+  push?: {
+    state?: string,
+    recipient?: {
+    }
+  }
+}[]
+```
+</Accordion>
+
+<Accordion title="next full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patchPushDeviceRegistration
+
+`push.patchPushDeviceRegistration`
+
+Partially update a push device registration.
+
+**Risk:** `write`
+
+```ts
+await corsair.ably.api.push.patchPushDeviceRegistration({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | — |
+| `clientId` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `push` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="push full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `clientId` | `string` | No | — |
+| `platform` | `string` | No | — |
+| `formFactor` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `updateToken` | `string` | No | — |
+| `push` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="push full type">
+
+```ts
+{
+  state?: string,
+  recipient?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### publishPushNotification
+
+`push.publishPushNotification`
+
+Publish a push notification.
+
+**Risk:** `write`
+
+```ts
+await corsair.ably.api.push.publishPushNotification({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipient` | `object` | Yes | — |
+| `data` | `object` | No | — |
+| `notification` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipient full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="notification full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any`
+
+
+---
+
+### publishPushNotificationsBatch
+
+`push.publishPushNotificationsBatch`
+
+Publish a batch of push notifications.
+
+**Risk:** `write`
+
+```ts
+await corsair.ably.api.push.publishPushNotificationsBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `notifications` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="notifications full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `any[]`
+
+
+---
+
+### registerPushDevice
+
+`push.registerPushDevice`
+
+Register a device for push notifications.
+
+**Risk:** `write`
+
+```ts
+await corsair.ably.api.push.registerPushDevice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `clientId` | `string` | No | — |
+| `platform` | `ios \| android \| browser` | Yes | — |
+| `formFactor` | `phone \| tablet \| desktop \| tv \| watch \| car \| embedded` | Yes | — |
+| `metadata` | `object` | No | — |
+| `updateToken` | `string` | No | — |
+| `push` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="push full type">
+
+```ts
+{
+  recipient: {
+    transportType: fcm | apns | web
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `clientId` | `string` | No | — |
+| `platform` | `string` | No | — |
+| `formFactor` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `updateToken` | `string` | No | — |
+| `push` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="push full type">
+
+```ts
+{
+  state?: string,
+  recipient?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### unregisterAllPushDevices
+
+`push.unregisterAllPushDevices`
+
+Delete matching push device registrations.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ably.api.push.unregisterAllPushDevices({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | No | — |
+| `clientId` | `string` | No | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### unregisterPushDevice
+
+`push.unregisterPushDevice`
+
+Delete a push device registration.
+
+**Risk:** `destructive`
+
+```ts
+await corsair.ably.api.push.unregisterPushDevice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `deviceId` | `string` | Yes | — |
+
+
+
+**Output:** `any`
+
+
+---
+
+### updatePushDevice
+
+`push.updatePushDevice`
+
+Create or replace a push device registration.
+
+**Risk:** `write`
+
+```ts
+await corsair.ably.api.push.updatePushDevice({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `clientId` | `string` | No | — |
+| `platform` | `ios \| android \| browser` | Yes | — |
+| `formFactor` | `phone \| tablet \| desktop \| tv \| watch \| car \| embedded` | Yes | — |
+| `metadata` | `object` | No | — |
+| `updateToken` | `string` | No | — |
+| `push` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="push full type">
+
+```ts
+{
+  recipient: {
+    transportType: fcm | apns | web
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `clientId` | `string` | No | — |
+| `platform` | `string` | No | — |
+| `formFactor` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `updateToken` | `string` | No | — |
+| `push` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="push full type">
+
+```ts
+{
+  state?: string,
+  recipient?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
