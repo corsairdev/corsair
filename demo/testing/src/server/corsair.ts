@@ -6,7 +6,6 @@ import { agentql } from '@corsair-dev/agentql';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
-import { htmltoimage } from '@corsair-dev/htmltoimage';
 import { hubspot } from '@corsair-dev/hubspot';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
@@ -49,7 +48,6 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
-		htmltoimage(),
 		googlesheets(),
 		googlecalendar(),
 		gmail(),
