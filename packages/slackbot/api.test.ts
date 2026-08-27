@@ -29,6 +29,7 @@ import {
 	UserGroups,
 	Users,
 } from './endpoints';
+import { slackbot } from './index';
 
 /** Minimal context: an empty `db` disables the caching branches. */
 function makeCtx() {
@@ -381,6 +382,25 @@ const ALL_CASES: Case[] = [
 	...TEAM_CASES,
 ];
 
+const ENDPOINT_GROUPS = {
+	files: Files,
+	messages: Messages,
+	conversations: Conversations,
+	users: Users,
+	reminders: Reminders,
+	userGroups: UserGroups,
+	canvases: Canvases,
+	calls: Calls,
+	team: Team,
+} as const;
+
+const BEHAVIOURAL_OPERATIONS = new Set([
+	'files.upload',
+	'files.download',
+	'conversations.find',
+	'users.find',
+]);
+
 const NAMED_CASES = ALL_CASES.map(([group, op, slackMethod, verb, input]) => ({
 	group,
 	op,
@@ -403,8 +423,23 @@ describe('endpoints target the correct Slack Web API method', () => {
 		},
 	);
 
-	it('covers every operation the plugin exposes', () => {
-		// Guards against an operation being added without a matching case here.
-		expect(ALL_CASES).toHaveLength(83);
+	it('covers every non-behavioural operation the plugin exposes', () => {
+		const covered = new Set(
+			ALL_CASES.map(([group, op]) => {
+				const name = (Object.entries(ENDPOINT_GROUPS).find(
+					([, g]) => g === group,
+				) ?? [])[0];
+				return `${name}.${op}`;
+			}),
+		);
+		const plugin = slackbot({ key: 'xoxb-test' });
+		const registry = Object.entries(plugin.endpoints ?? {}).flatMap(
+			([group, ops]) =>
+				Object.keys(ops as object).map((op) => `${group}.${op}`),
+		);
+		const expected = registry
+			.filter((key) => !BEHAVIOURAL_OPERATIONS.has(key))
+			.sort();
+		expect([...covered].sort()).toEqual(expected);
 	});
 });
