@@ -61,11 +61,16 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'bannerbear',
 	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
+	'backendless',
+	'beeminder',
+	'bettercontact',
 	'betterstack',
+	'bigdatacloud',
 	'bigmailer',
 	'bigml',
 	'bitbucket',
@@ -76,6 +81,9 @@ export const BaseProviders = [
 	'botpress',
 	'bouncer',
 	'box',
+	'boxhero',
+	'brandfetch',
+	'browseai',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -137,6 +145,7 @@ export const BaseProviders = [
 	'insightoai',
 	'instagram',
 	'intercom',
+	'jigsawstack',
 	'jira',
 	'kaggle',
 	'linear',
@@ -144,6 +153,7 @@ export const BaseProviders = [
 	'loyverse',
 	'mailchimp',
 	'mailtrap',
+	'merriamwebsterdict',
 	'monday',
 	'neon',
 	'nextdns',
@@ -174,12 +184,16 @@ export const BaseProviders = [
 	'spotify',
 	'strava',
 	'stripe',
+	'studiobyai21labs',
 	'supabase',
 	'tally',
 	'tavily',
 	'tavilymcp',
 	'teams',
 	'telegram',
+	'textrazor',
+	'ticktick',
+	'tisane',
 	'todoist',
 	'toggl',
 	'trello',
@@ -194,6 +208,7 @@ export const BaseProviders = [
 	'vapi',
 	'vercel',
 	'webflow',
+	'webvizio',
 	'whatsapp',
 	'witai',
 	'wiza',
@@ -256,11 +271,16 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	bannerbear: 'Bannerbear',
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
+	backendless: 'Backendless',
+	beeminder: 'Beeminder',
+	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
+	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
 	bitbucket: 'Bitbucket',
@@ -271,6 +291,9 @@ export const ProviderDisplayNames = {
 	botpress: 'Botpress',
 	bouncer: 'Bouncer',
 	box: 'Box',
+	boxhero: 'BoxHero',
+	brandfetch: 'Brandfetch',
+	browseai: 'Browse AI',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -332,6 +355,7 @@ export const ProviderDisplayNames = {
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
+	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
 	linear: 'Linear',
@@ -339,6 +363,7 @@ export const ProviderDisplayNames = {
 	loyverse: 'Loyverse',
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
+	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	monday: 'Monday',
 	neon: 'Neon',
 	nextdns: 'NextDNS',
@@ -369,12 +394,16 @@ export const ProviderDisplayNames = {
 	spotify: 'Spotify',
 	strava: 'Strava',
 	stripe: 'Stripe',
+	studiobyai21labs: 'StudioByAI21Labs',
 	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
+	textrazor: 'TextRazor',
+	ticktick: 'TickTick',
+	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -389,6 +418,7 @@ export const ProviderDisplayNames = {
 	vapi: 'Vapi',
 	vercel: 'Vercel',
 	webflow: 'Webflow',
+	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
 	wiza: 'Wiza',
@@ -458,11 +488,16 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'bannerbear'
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
+	| 'backendless'
+	| 'beeminder'
+	| 'bettercontact'
 	| 'betterstack'
+	| 'bigdatacloud'
 	| 'bigmailer'
 	| 'bigml'
 	| 'bitbucket'
@@ -473,6 +508,9 @@ export type AllProviders =
 	| 'botpress'
 	| 'bouncer'
 	| 'box'
+	| 'boxhero'
+	| 'brandfetch'
+	| 'browseai'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
@@ -534,6 +572,7 @@ export type AllProviders =
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
+	| 'jigsawstack'
 	| 'jira'
 	| 'kaggle'
 	| 'linear'
@@ -541,6 +580,7 @@ export type AllProviders =
 	| 'loyverse'
 	| 'mailchimp'
 	| 'mailtrap'
+	| 'merriamwebsterdict'
 	| 'monday'
 	| 'neon'
 	| 'nextdns'
@@ -571,12 +611,16 @@ export type AllProviders =
 	| 'spotify'
 	| 'strava'
 	| 'stripe'
+	| 'studiobyai21labs'
 	| 'supabase'
 	| 'tally'
 	| 'tavily'
 	| 'tavilymcp'
 	| 'teams'
 	| 'telegram'
+	| 'textrazor'
+	| 'ticktick'
+	| 'tisane'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
@@ -591,6 +635,7 @@ export type AllProviders =
 	| 'vapi'
 	| 'vercel'
 	| 'webflow'
+	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
 	| 'wiza'
