@@ -1,9 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { AppVeyorClient } from './index';
 
 describe('AppVeyorClient', () => {
 	beforeEach(() => {
-		vi.restoreAllMocks();
+		jest.restoreAllMocks();
 	});
 
 	it('throws an error when initialized without an API key', () => {
@@ -14,6 +13,7 @@ describe('AppVeyorClient', () => {
 
 	it('instantiates correctly with valid configuration', () => {
 		const client = new AppVeyorClient({ apiKey: 'test-token' });
+
 		expect(client).toBeInstanceOf(AppVeyorClient);
 	});
 
@@ -29,8 +29,11 @@ describe('AppVeyorClient', () => {
 			},
 		];
 
-		global.fetch = vi.fn().mockResolvedValue({
+		global.fetch = jest.fn().mockResolvedValue({
 			ok: true,
+			status: 200,
+			statusText: 'OK',
+			headers: new Headers(),
 			json: async () => mockProjects,
 		} as Response);
 
@@ -38,6 +41,7 @@ describe('AppVeyorClient', () => {
 		const result = await client.getProjects();
 
 		expect(result).toEqual(mockProjects);
+
 		expect(global.fetch).toHaveBeenCalledWith(
 			'https://ci.appveyor.com/api/projects',
 			expect.objectContaining({
@@ -68,16 +72,21 @@ describe('AppVeyorClient', () => {
 			},
 		};
 
-		global.fetch = vi.fn().mockResolvedValue({
+		global.fetch = jest.fn().mockResolvedValue({
 			ok: true,
+			status: 200,
+			statusText: 'OK',
+			headers: new Headers(),
 			json: async () => mockBuildData,
 		} as Response);
 
 		const client = new AppVeyorClient({ apiKey: 'test-token' });
+
 		const result = await client.getLastBuild('test-user', 'test-repo');
 
 		expect(result.build.status).toBe('success');
 		expect(result.build.buildNumber).toBe(5);
+
 		expect(global.fetch).toHaveBeenCalledWith(
 			'https://ci.appveyor.com/api/projects/test-user/test-repo',
 			expect.objectContaining({
@@ -88,17 +97,45 @@ describe('AppVeyorClient', () => {
 		);
 	});
 
-	it('throws formatted error when API request fails', async () => {
-		global.fetch = vi.fn().mockResolvedValue({
+	it('throws an ApiError when the API request fails', async () => {
+		global.fetch = jest.fn().mockResolvedValue({
 			ok: false,
 			status: 404,
 			statusText: 'Not Found',
+			headers: new Headers(),
 			text: async () => 'Project not found',
 		} as Response);
 
 		const client = new AppVeyorClient({ apiKey: 'test-token' });
+
 		await expect(
 			client.getLastBuild('test-user', 'nonexistent'),
-		).rejects.toThrow('AppVeyor API Error [404 Not Found]: Project not found');
+		).rejects.toMatchObject({
+			status: 404,
+			message: 'AppVeyor API Error [404 Not Found]: Project not found',
+		});
+	});
+
+	it('preserves Retry-After metadata for HTTP 429 responses', async () => {
+		global.fetch = jest.fn().mockResolvedValue({
+			ok: false,
+			status: 429,
+			statusText: 'Too Many Requests',
+			headers: new Headers({
+				'Retry-After': '3',
+			}),
+			text: async () => 'Rate limit exceeded',
+		} as Response);
+
+		const client = new AppVeyorClient({ apiKey: 'test-token' });
+
+		await expect(
+			client.getLastBuild('test-user', 'test-repo'),
+		).rejects.toMatchObject({
+			status: 429,
+			retryAfter: 3000,
+			message:
+				'AppVeyor API Error [429 Too Many Requests]: Rate limit exceeded',
+		});
 	});
 });

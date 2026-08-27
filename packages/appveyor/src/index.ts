@@ -1,3 +1,4 @@
+import { ApiError } from 'corsair/http';
 import type {
 	AppVeyorBuildResponse,
 	AppVeyorConfig,
@@ -19,38 +20,93 @@ export class AppVeyorClient {
 	}
 
 	async getProjects(): Promise<AppVeyorProject[]> {
-		const res = await fetch(`${this.baseUrl}/projects`, {
+		const url = `${this.baseUrl}/projects`;
+
+		const res = await fetch(url, {
 			headers: {
 				Authorization: `Bearer ${this.apiKey}`,
 			},
 		});
+
+		const text = await res.text();
+
 		if (!res.ok) {
-			const text = await res.text();
-			throw new Error(
+			const retryAfter = parseRetryAfter(res.headers.get('Retry-After'));
+
+			throw new ApiError(
+				{
+					method: 'GET',
+					url,
+				},
+				{
+					url,
+					ok: false,
+					status: res.status,
+					statusText: res.statusText,
+					body: text,
+				},
 				`AppVeyor API Error [${res.status} ${res.statusText}]: ${text}`,
+				{
+					retryAfter,
+				},
 			);
 		}
-		return (await res.json()) as AppVeyorProject[];
+
+		return JSON.parse(text) as AppVeyorProject[];
 	}
 
 	async getLastBuild(
 		accountName: string,
 		projectSlug: string,
 	): Promise<AppVeyorBuildResponse> {
-		const res = await fetch(
-			`${this.baseUrl}/projects/${accountName}/${projectSlug}`,
-			{
-				headers: {
-					Authorization: `Bearer ${this.apiKey}`,
-				},
+		const url = `${this.baseUrl}/projects/${accountName}/${projectSlug}`;
+
+		const res = await fetch(url, {
+			headers: {
+				Authorization: `Bearer ${this.apiKey}`,
 			},
-		);
+		});
+
+		const text = await res.text();
+
 		if (!res.ok) {
-			const text = await res.text();
-			throw new Error(
+			const retryAfter = parseRetryAfter(res.headers.get('Retry-After'));
+
+			throw new ApiError(
+				{
+					method: 'GET',
+					url,
+				},
+				{
+					url,
+					ok: false,
+					status: res.status,
+					statusText: res.statusText,
+					body: text,
+				},
 				`AppVeyor API Error [${res.status} ${res.statusText}]: ${text}`,
+				{
+					retryAfter,
+				},
 			);
 		}
-		return (await res.json()) as AppVeyorBuildResponse;
+
+		return JSON.parse(text) as AppVeyorBuildResponse;
 	}
+}
+
+export function parseRetryAfter(header: string | null): number | undefined {
+	if (!header) {
+		return undefined;
+	}
+
+	const seconds = Number(header);
+
+	if (Number.isFinite(seconds)) {
+		return Math.max(0, seconds) * 1000;
+	}
+
+	const when = Date.parse(header);
+
+	return Number.isNaN(when) ? undefined : Math.max(0, when - Date.now());
 }
