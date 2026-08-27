@@ -26,6 +26,29 @@ function omitUndefined(
 	return out;
 }
 
+const EVENT_META_KEYS = [
+	'customerId',
+	'contactId',
+	'supplierId',
+	'jobNumber',
+	'entityId',
+	'entityType',
+	'page',
+	'pageSize',
+] as const;
+
+function eventMeta(input: unknown): Record<string, unknown> {
+	if (input === null || typeof input !== 'object' || Array.isArray(input)) {
+		return {};
+	}
+	const src = input as Record<string, unknown>;
+	const out: Record<string, unknown> = {};
+	for (const key of EVENT_META_KEYS) {
+		if (src[key] !== undefined) out[key] = src[key];
+	}
+	return out;
+}
+
 async function parseAndLog<K extends keyof typeof AscoraEndpointOutputSchemas>(
 	ctx: AscoraContext,
 	event: string,
@@ -35,12 +58,7 @@ async function parseAndLog<K extends keyof typeof AscoraEndpointOutputSchemas>(
 ): Promise<(typeof AscoraEndpointOutputSchemas)[K]['_output']> {
 	assertAscoraSuccess(payload);
 	const result = AscoraEndpointOutputSchemas[schemaKey].parse(payload);
-	await logEventFromContext(
-		ctx,
-		event,
-		(input ?? {}) as Record<string, unknown>,
-		'completed',
-	);
+	await logEventFromContext(ctx, event, eventMeta(input), 'completed');
 	return result;
 }
 
@@ -466,11 +484,7 @@ export const uploadAttachment: AscoraEndpoints['uploadAttachment'] = async (
 	return parseAndLog(
 		ctx,
 		'ascora.attachments.upload',
-		{
-			entityType: input.entityType,
-			entityId: input.entityId,
-			fileName: input.fileName,
-		},
+		{ entityType: input.entityType, entityId: input.entityId },
 		'uploadAttachment',
 		payload,
 	);

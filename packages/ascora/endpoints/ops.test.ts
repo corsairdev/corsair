@@ -1,3 +1,4 @@
+import { logEventFromContext } from 'corsair/core';
 import { makeAscoraRequest } from '../client';
 import type { AscoraContext } from '../index';
 import {
@@ -30,6 +31,16 @@ jest.mock('../client', () => {
 	return {
 		...actual,
 		makeAscoraRequest: jest.fn(),
+	};
+});
+
+jest.mock('corsair/core', () => {
+	const actual = jest.requireActual(
+		'corsair/core',
+	) as typeof import('corsair/core');
+	return {
+		...actual,
+		logEventFromContext: jest.fn().mockResolvedValue(undefined),
 	};
 });
 
@@ -367,6 +378,12 @@ describe('ascora endpoints', () => {
 			expect.objectContaining({ method: 'POST' }),
 		);
 		expect(result.entityId).toBe('note1');
+		expect(logEventFromContext).toHaveBeenCalledWith(
+			ctx,
+			'ascora.notes.create',
+			{ entityId: 'j1', entityType: 'Job' },
+			'completed',
+		);
 	});
 
 	it('attachments.upload POSTs multipart /Attachments/{type}/{id}', async () => {
