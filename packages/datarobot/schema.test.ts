@@ -72,6 +72,15 @@ describe('DataRobot client errors', () => {
 			makeDatarobotRequest('/api/v2/version/', ''),
 		).rejects.toBeInstanceOf(DatarobotAPIError);
 	});
+
+	it('rejects unresolved path templates', async () => {
+		await expect(
+			makeDatarobotRequest('/api/v2/projects/{projectId}/', 'token'),
+		).rejects.toMatchObject({
+			name: 'DatarobotAPIError',
+			message: 'Unresolved DataRobot path parameter',
+		});
+	});
 });
 
 describe('DataRobot permission handler', () => {

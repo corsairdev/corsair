@@ -1,5 +1,3 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
 import type { DatarobotQueryValue } from './utils';
 
 export class DatarobotAPIError extends Error {
@@ -7,22 +5,23 @@ export class DatarobotAPIError extends Error {
 	public readonly statusText?: string;
 	public readonly body?: unknown;
 	public readonly retryAfter?: number;
-	public readonly rateLimitReset?: number;
-	public readonly rateLimitRemaining?: number;
-	public readonly rateLimitLimit?: number;
 
-	constructor(message: string, options?: { cause?: Error }) {
+	constructor(
+		message: string,
+		options?: {
+			cause?: Error;
+			status?: number;
+			statusText?: string;
+			body?: unknown;
+			retryAfter?: number;
+		},
+	) {
 		super(message, options?.cause ? { cause: options.cause } : undefined);
 		this.name = 'DatarobotAPIError';
-		if (options?.cause instanceof ApiError) {
-			this.status = options.cause.status;
-			this.statusText = options.cause.statusText;
-			this.body = options.cause.body;
-			this.retryAfter = options.cause.retryAfter;
-			this.rateLimitReset = options.cause.rateLimitReset;
-			this.rateLimitRemaining = options.cause.rateLimitRemaining;
-			this.rateLimitLimit = options.cause.rateLimitLimit;
-		}
+		this.status = options?.status;
+		this.statusText = options?.statusText;
+		this.body = options?.body;
+		this.retryAfter = options?.retryAfter;
 	}
 }
 
@@ -39,6 +38,28 @@ function resolveOrigin(raw?: string): string {
 	} catch {
 		return DEFAULT_DATAROBOT_ORIGIN;
 	}
+}
+
+function buildRequestUrl(
+	origin: string,
+	endpoint: string,
+	query?: Record<string, DatarobotQueryValue>,
+): string {
+	// Paths are interpolated in the plugin (`buildDatarobotPath`) so this
+	// never feeds `{...}` templates into corsair/http's path regex.
+	if (endpoint.includes('{')) {
+		throw new DatarobotAPIError('Unresolved DataRobot path parameter');
+	}
+	const url = new URL(endpoint, `${origin}/`);
+	if (query) {
+		for (const [key, value] of Object.entries(query)) {
+			if (value === undefined) {
+				continue;
+			}
+			url.searchParams.append(key, String(value));
+		}
+	}
+	return url.toString();
 }
 
 export async function makeDatarobotRequest<T>(
@@ -67,38 +88,56 @@ export async function makeDatarobotRequest<T>(
 
 	const { method = 'GET', body, query } = options;
 	const origin = resolveOrigin(ctxBase);
-
-	const config: OpenAPIConfig = {
-		BASE: origin,
-		VERSION: '2.47.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		HEADERS: {
-			Accept: 'application/json',
-			Authorization: apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`,
-			...(method === 'GET' || method === 'DELETE'
-				? {}
-				: { 'Content-Type': 'application/json' }),
-		},
+	const url = buildRequestUrl(origin, endpoint, query);
+	const headers: Record<string, string> = {
+		Accept: 'application/json',
+		Authorization: apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`,
 	};
+	const payload =
+		method === 'POST' || method === 'PUT' || method === 'PATCH'
+			? body
+			: undefined;
+	if (payload !== undefined) {
+		headers['Content-Type'] = 'application/json';
+	}
 
-	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query,
-	};
-
+	let response: Response;
 	try {
-		return await request<T>(config, requestOptions);
+		response = await fetch(url, {
+			method,
+			headers,
+			body: payload === undefined ? undefined : JSON.stringify(payload),
+		});
 	} catch (error) {
 		if (error instanceof Error) {
 			throw new DatarobotAPIError(error.message, { cause: error });
 		}
 		throw new DatarobotAPIError('Unknown DataRobot error');
 	}
+
+	const text = await response.text();
+	let parsed: unknown;
+	if (text.length > 0) {
+		try {
+			parsed = JSON.parse(text) as unknown;
+		} catch {
+			parsed = text;
+		}
+	}
+
+	if (!response.ok) {
+		const retryAfterRaw = response.headers.get('retry-after');
+		const retryAfter = retryAfterRaw ? Number(retryAfterRaw) : undefined;
+		throw new DatarobotAPIError(
+			response.statusText || `HTTP ${response.status}`,
+			{
+				status: response.status,
+				statusText: response.statusText,
+				body: parsed,
+				retryAfter: Number.isFinite(retryAfter) ? retryAfter : undefined,
+			},
+		);
+	}
+
+	return parsed as T;
 }
