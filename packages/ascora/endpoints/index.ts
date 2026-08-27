@@ -1,7 +1,26 @@
-import { get as exampleGet } from './example';
-
-export const Example = {
-	get: exampleGet,
-};
+export {
+	createEnquiry,
+	createNote,
+	getContact,
+	getCustomer,
+	getJob,
+	getLabourRoles,
+	getStandardSections,
+	getStandardStages,
+	getSupplier,
+	listCategories,
+	listCustomers,
+	listJobs,
+	listKits,
+	listQuotes,
+	listSupplierInvoices,
+	listSuppliers,
+	listSupplies,
+	searchJobs,
+	uploadAttachment,
+	upsertContact,
+	upsertCustomer,
+	upsertSupplier,
+} from './ops';
 
 export * from './types';
