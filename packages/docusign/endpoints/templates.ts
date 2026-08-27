@@ -1,9 +1,26 @@
-import type { DocusignClient } from '../client';
+import { DocusignClient } from '../client';
+import type { GetTemplateParams, ListTemplatesParams } from './types';
+
+function resolveClient(contextOrClient: any): DocusignClient {
+	if (contextOrClient instanceof DocusignClient) {
+		return contextOrClient;
+	}
+	if (contextOrClient?.client) {
+		return contextOrClient.client as DocusignClient;
+	}
+	if (typeof contextOrClient?.request === 'function') {
+		return contextOrClient as DocusignClient;
+	}
+	throw new Error(
+		'Invalid execution context: DocuSign client is not initialized or accessible.',
+	);
+}
 
 export const listTemplates = async (
-	client: DocusignClient,
-	params?: { count?: number; startPosition?: number },
+	clientOrContext: any,
+	params?: ListTemplatesParams,
 ) => {
+	const client = resolveClient(clientOrContext);
 	const query = new URLSearchParams();
 	if (params?.count) query.append('count', String(params.count));
 	if (params?.startPosition)
@@ -13,8 +30,9 @@ export const listTemplates = async (
 };
 
 export const getTemplate = async (
-	client: DocusignClient,
-	{ templateId }: { templateId: string },
+	clientOrContext: any,
+	params: GetTemplateParams,
 ) => {
-	return client.request(`/templates/${templateId}`);
+	const client = resolveClient(clientOrContext);
+	return client.request(`/templates/${params.templateId}`);
 };

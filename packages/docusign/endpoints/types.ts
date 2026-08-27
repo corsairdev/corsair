@@ -52,8 +52,8 @@ export const CreateRecipientViewUrlInputSchema = z.object({
 	userName: z.string(),
 	email: z.string(),
 	returnUrl: z.string(),
-	authenticationMethod: z.string().optional().default('none'),
-	recipientId: z.string().optional().default('1'),
+	authenticationMethod: z.string().optional(),
+	recipientId: z.string().optional(),
 	clientUserId: z.string().optional(),
 });
 
@@ -128,6 +128,34 @@ export const EndpointOutputSchemas = {
 	getTemplate: GetTemplateOutputSchema,
 };
 
+export const docusignEndpointSchemas = {
+	createEnvelope: {
+		input: CreateEnvelopeInputSchema,
+		output: CreateEnvelopeOutputSchema,
+	},
+	getEnvelope: {
+		input: GetEnvelopeInputSchema,
+		output: GetEnvelopeOutputSchema,
+	},
+	sendEnvelope: {
+		input: SendEnvelopeInputSchema,
+		output: SendEnvelopeOutputSchema,
+	},
+	createRecipientViewUrl: {
+		input: CreateRecipientViewUrlInputSchema,
+		output: CreateRecipientViewUrlOutputSchema,
+	},
+	listTemplates: {
+		input: ListTemplatesInputSchema,
+		output: ListTemplatesOutputSchema,
+	},
+	getTemplate: {
+		input: GetTemplateInputSchema,
+		output: GetTemplateOutputSchema,
+	},
+};
+
+export const endpointSchemas = docusignEndpointSchemas;
 export const docusignEndpointInputSchemas = EndpointInputSchemas;
 export const docusignEndpointOutputSchemas = EndpointOutputSchemas;
 export const DocusignEndpointInputSchemas = EndpointInputSchemas;

@@ -56,6 +56,7 @@ export const docusignEndpointMeta = {
 } satisfies RequiredPluginEndpointMeta<typeof docusignEndpointsNested>;
 
 export const endpointMeta = docusignEndpointMeta;
+export const endpointSchemas = endpoints.docusignEndpointSchemas;
 
 export const docusignPlugin = {
 	id: 'docusign',
@@ -68,13 +69,14 @@ export const docusignPlugin = {
 	},
 	createClient: (options: DocusignAuthOptions) => new DocusignClient(options),
 	endpoints: docusignEndpointsNested,
-	webhooks: docusignWebhooksNested,
 	endpointMeta: docusignEndpointMeta,
+	endpointSchemas: endpoints.docusignEndpointSchemas,
+	webhooks: docusignWebhooksNested,
 	errorHandlers: errorHandlers.docusignErrorHandlers,
 	schema,
 };
 
-export const docusign = (config?: any) => ({
+export const docusign = (config?: Record<string, unknown>) => ({
 	...docusignPlugin,
 	...(config && { config }),
 });

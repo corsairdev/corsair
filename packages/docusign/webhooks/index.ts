@@ -17,6 +17,7 @@ export interface DocusignWebhookEvent {
 }
 
 export interface WebhookRequest {
+	payload?: DocusignWebhookEvent | Record<string, unknown>;
 	body?: DocusignWebhookEvent | Record<string, unknown>;
 	headers?: Record<string, string>;
 	[key: string]: unknown;
@@ -28,7 +29,8 @@ export const handleWebhook = {
 			| WebhookRequest
 			| DocusignWebhookEvent
 			| undefined;
-		const payload = ((req as WebhookRequest)?.body ??
+		const payload = ((req as WebhookRequest)?.payload ??
+			(req as WebhookRequest)?.body ??
 			req ??
 			{}) as DocusignWebhookEvent;
 
@@ -43,8 +45,12 @@ export const handleWebhook = {
 		);
 	},
 	handler: async (context: unknown, request: unknown) => {
-		const req = request as WebhookRequest | DocusignWebhookEvent | undefined;
-		const payload = ((req as WebhookRequest)?.body ??
+		const req = (request ?? context) as
+			| WebhookRequest
+			| DocusignWebhookEvent
+			| undefined;
+		const payload = ((req as WebhookRequest)?.payload ??
+			(req as WebhookRequest)?.body ??
 			req ??
 			{}) as DocusignWebhookEvent;
 
