@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Account, Campaigns, Contacts } from './endpoints';
 import type {
@@ -26,21 +23,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { EmeliaSchema } from './schema';
-import { CampaignWebhooks } from './webhooks';
-import { resolveEmeliaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchEmeliaTenantWebhook } from './webhooks/tenant-matcher';
-import type {
-	CampaignStatusUpdatedEvent,
-	EmeliaWebhookOutputs,
-} from './webhooks/types';
-import { CampaignStatusUpdatedEventSchema } from './webhooks/types';
 
 export type EmeliaPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalEmeliaPlugin['hooks'];
-	webhookHooks?: InternalEmeliaPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof emeliaEndpointsNested>;
 };
@@ -69,20 +56,6 @@ export type EmeliaEndpoints = {
 	contactsAddToList: EmeliaEndpoint<'contactsAddToList'>;
 };
 
-type EmeliaWebhook<
-	K extends keyof EmeliaWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<EmeliaContext, TEvent, EmeliaWebhookOutputs[K]>;
-
-export type EmeliaWebhooks = {
-	campaignStatusUpdated: EmeliaWebhook<
-		'campaignStatusUpdated',
-		CampaignStatusUpdatedEvent
-	>;
-};
-
-export type EmeliaBoundWebhooks = BindWebhooks<EmeliaWebhooks>;
-
 const emeliaEndpointsNested = {
 	account: {
 		me: Account.me,
@@ -95,12 +68,6 @@ const emeliaEndpointsNested = {
 	contacts: {
 		listLists: Contacts.listLists,
 		addToList: Contacts.addToList,
-	},
-} as const;
-
-const emeliaWebhooksNested = {
-	campaign: {
-		statusUpdated: CampaignWebhooks.statusUpdated,
 	},
 } as const;
 
@@ -132,14 +99,6 @@ export const emeliaEndpointSchemas = {
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof emeliaEndpointsNested
 >;
-
-const emeliaWebhookSchemas = {
-	'campaign.statusUpdated': {
-		description: 'Emelia campaign status updated event',
-		payload: CampaignStatusUpdatedEventSchema,
-		response: CampaignStatusUpdatedEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof emeliaWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -174,16 +133,13 @@ export const emeliaAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseEmeliaPlugin<T extends EmeliaPluginOptions> = CorsairPlugin<
 	'emelia',
 	typeof EmeliaSchema,
 	typeof emeliaEndpointsNested,
-	typeof emeliaWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -206,45 +162,22 @@ export function emelia<const T extends EmeliaPluginOptions>(
 		schema: EmeliaSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: emeliaEndpointsNested,
-		webhooks: emeliaWebhooksNested,
+		webhooks: {},
 		endpointMeta: emeliaEndpointMeta,
 		endpointSchemas: emeliaEndpointSchemas,
-		webhookSchemas: emeliaWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return (
-				'x-emelia-signature' in headers || 'x-webhook-signature' in headers
-			);
-		},
-		pluginTenantWebhookMatcher: matchEmeliaTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveEmeliaOAuthWebhookTenantLink,
+		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: EmeliaKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
 				return res ?? '';
 			}
 
@@ -257,7 +190,3 @@ export type {
 	EmeliaEndpointInputs,
 	EmeliaEndpointOutputs,
 } from './endpoints/types';
-export type {
-	CampaignStatusUpdatedEvent,
-	EmeliaWebhookOutputs,
-} from './webhooks/types';
