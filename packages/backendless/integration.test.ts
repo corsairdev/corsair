@@ -157,7 +157,7 @@ describe('Backendless plugin', () => {
 describe('Backendless endpoint handlers', () => {
 	beforeEach(() => {
 		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ ok: true });
+		mockRequest.mockResolvedValue(undefined);
 	});
 
 	it('lists and counts the file-storage root', async () => {
@@ -358,6 +358,7 @@ describe('Backendless endpoint handlers', () => {
 		expect(lastCall()).toEqual(
 			expect.objectContaining({ method: 'DELETE', url: '/api/users/{userId}' }),
 		);
+		mockRequest.mockResolvedValue(undefined);
 		await Users.logout(ctx(), {});
 		expect(lastCall().url).toBe('/api/users/logout');
 		await Users.passwordRecovery(ctx(), { identity: 'a@b.c' });
@@ -394,6 +395,11 @@ describe('Backendless endpoint handlers', () => {
 				role: 'TrialUser',
 			}),
 		).rejects.toThrow(/mutually exclusive/);
+	});
+
+	it('rejects malformed provider responses', async () => {
+		mockRequest.mockResolvedValue({ ok: true });
+		await expect(Files.list(ctx(), {})).rejects.toThrow();
 	});
 
 	it('publishes a messaging payload', async () => {
