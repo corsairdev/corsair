@@ -1,18 +1,47 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
 import { request } from 'corsair/http';
 
-export class BorneoAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'BorneoAPIError';
+export function normalizeBorneoBaseUrl(baseUrl: string): string {
+	let trimmed = baseUrl.trim();
+	while (trimmed.endsWith('/')) {
+		trimmed = trimmed.slice(0, -1);
 	}
+
+	if (!trimmed) {
+		throw new Error('[borneo] baseUrl is required');
+	}
+
+	let parsed: URL;
+	try {
+		parsed = new URL(trimmed);
+	} catch {
+		throw new Error('[borneo] baseUrl must be a valid absolute HTTPS URL');
+	}
+
+	if (parsed.protocol !== 'https:') {
+		throw new Error('[borneo] baseUrl must use https');
+	}
+
+	if (!parsed.host) {
+		throw new Error('[borneo] baseUrl must include a valid host');
+	}
+
+	return trimmed;
 }
 
-// TODO: Update with your API base URL
-const BORNEO_API_BASE = 'https://api.example.com';
+const BORNEO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 5,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'Retry-After',
+	},
+};
 
 export async function makeBorneoRequest<T>(
 	endpoint: string,
@@ -20,21 +49,22 @@ export async function makeBorneoRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
-	} = {},
+		query?: Record<string, string | number | boolean | string[] | undefined>;
+		baseUrl: string;
+	},
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, baseUrl } = options;
+	const base = normalizeBorneoBaseUrl(baseUrl);
 
 	const config: OpenAPIConfig = {
-		BASE: BORNEO_API_BASE,
+		BASE: base,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			// TODO: Add authentication headers
-			// 'Authorization': \`Bearer \${apiKey}\`
+			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
@@ -46,15 +76,10 @@ export async function makeBorneoRequest<T>(
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof Error) {
-			throw new BorneoAPIError(error.message);
-		}
-		throw new BorneoAPIError('Unknown error');
-	}
+	return await request<T>(config, requestOptions, {
+		rateLimitConfig: BORNEO_RATE_LIMIT_CONFIG,
+	});
 }

@@ -1,21 +1,19 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+import { AuthMissingError } from 'corsair/core';
+import { Assets, Support } from './endpoints';
 import type {
 	BorneoEndpointInputs,
 	BorneoEndpointOutputs,
@@ -26,30 +24,36 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BorneoSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveBorneoOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchBorneoTenantWebhook } from './webhooks/tenant-matcher';
-import type { BorneoWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
+
+export const borneoAuthConfig = {
+	api_key: {
+		account: ['base_url'] as const,
+	},
+	oauth_2: {
+		account: ['base_url'] as const,
+	},
+} as const satisfies PluginAuthConfig;
 
 export type BorneoPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
+	baseUrl?: string;
 	hooks?: InternalBorneoPlugin['hooks'];
-	webhookHooks?: InternalBorneoPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof borneoEndpointsNested>;
 };
 
 export type BorneoContext = CorsairPluginContext<
 	typeof BorneoSchema,
-	BorneoPluginOptions
+	BorneoPluginOptions,
+	undefined,
+	typeof borneoAuthConfig
 >;
 
-export type BorneoKeyBuilderContext = KeyBuilderContext<BorneoPluginOptions>;
-
-export type BorneoBoundEndpoints = BindEndpoints<typeof borneoEndpointsNested>;
+export type BorneoKeyBuilderContext = KeyBuilderContext<
+	BorneoPluginOptions,
+	typeof borneoAuthConfig
+>;
 
 type BorneoEndpoint<K extends keyof BorneoEndpointOutputs> = CorsairEndpoint<
 	BorneoContext,
@@ -58,78 +62,88 @@ type BorneoEndpoint<K extends keyof BorneoEndpointOutputs> = CorsairEndpoint<
 >;
 
 export type BorneoEndpoints = {
-	exampleGet: BorneoEndpoint<'exampleGet'>;
+	createAsset: BorneoEndpoint<'createAsset'>;
+	retrieveAsset: BorneoEndpoint<'retrieveAsset'>;
+	updateAsset: BorneoEndpoint<'updateAsset'>;
+	deleteAsset: BorneoEndpoint<'deleteAsset'>;
+	postSupportChatQuery: BorneoEndpoint<'postSupportChatQuery'>;
 };
-
-type BorneoWebhook<
-	K extends keyof BorneoWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<BorneoContext, TEvent, BorneoWebhookOutputs[K]>;
-
-export type BorneoWebhooks = {
-	example: BorneoWebhook<'example', ExampleEvent>;
-};
-
-export type BorneoBoundWebhooks = BindWebhooks<BorneoWebhooks>;
 
 const borneoEndpointsNested = {
-	example: {
-		get: Example.get,
+	assets: {
+		createAsset: Assets.createAsset,
+		retrieveAsset: Assets.retrieveAsset,
+		updateAsset: Assets.updateAsset,
+		deleteAsset: Assets.deleteAsset,
+	},
+	support: {
+		postSupportChatQuery: Support.postSupportChatQuery,
 	},
 } as const;
 
-const borneoWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+export type BorneoBoundEndpoints = BindEndpoints<typeof borneoEndpointsNested>;
 
 export const borneoEndpointSchemas = {
-	'example.get': {
-		input: BorneoEndpointInputSchemas.exampleGet,
-		output: BorneoEndpointOutputSchemas.exampleGet,
+	'assets.createAsset': {
+		input: BorneoEndpointInputSchemas.createAsset,
+		output: BorneoEndpointOutputSchemas.createAsset,
+	},
+	'assets.retrieveAsset': {
+		input: BorneoEndpointInputSchemas.retrieveAsset,
+		output: BorneoEndpointOutputSchemas.retrieveAsset,
+	},
+	'assets.updateAsset': {
+		input: BorneoEndpointInputSchemas.updateAsset,
+		output: BorneoEndpointOutputSchemas.updateAsset,
+	},
+	'assets.deleteAsset': {
+		input: BorneoEndpointInputSchemas.deleteAsset,
+		output: BorneoEndpointOutputSchemas.deleteAsset,
+	},
+	'support.postSupportChatQuery': {
+		input: BorneoEndpointInputSchemas.postSupportChatQuery,
+		output: BorneoEndpointOutputSchemas.postSupportChatQuery,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof borneoEndpointsNested
 >;
 
-const borneoWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof borneoWebhooksNested>;
-
-const defaultAuthType: AuthTypes = 'api_key' as const;
-
 const borneoEndpointMeta = {
-	'example.get': {
+	'assets.createAsset': {
+		riskLevel: 'write',
+		description: 'Create a Borneo asset',
+	},
+	'assets.retrieveAsset': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Retrieve a Borneo asset by ID',
+	},
+	'assets.updateAsset': {
+		riskLevel: 'write',
+		description: 'Update a Borneo asset by ID',
+	},
+	'assets.deleteAsset': {
+		riskLevel: 'destructive',
+		description: 'Delete a Borneo asset by ID',
+	},
+	'support.postSupportChatQuery': {
+		riskLevel: 'write',
+		description: 'Send a support chat query to Borneo',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof borneoEndpointsNested>;
 
-export const borneoAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
+const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export type BaseBorneoPlugin<T extends BorneoPluginOptions> = CorsairPlugin<
 	'borneo',
 	typeof BorneoSchema,
 	typeof borneoEndpointsNested,
-	typeof borneoWebhooksNested,
+	Record<never, never>,
 	T,
-	typeof defaultAuthType
+	typeof defaultAuthType,
+	typeof borneoAuthConfig
 >;
 
 export type InternalBorneoPlugin = BaseBorneoPlugin<BorneoPluginOptions>;
-
 export type ExternalBorneoPlugin<T extends BorneoPluginOptions> =
 	BaseBorneoPlugin<T>;
 
@@ -140,54 +154,46 @@ export function borneo<const T extends BorneoPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'borneo',
 		authConfig: borneoAuthConfig,
 		schema: BorneoSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: borneoEndpointsNested,
-		webhooks: borneoWebhooksNested,
+		webhooks: {},
 		endpointMeta: borneoEndpointMeta,
 		endpointSchemas: borneoEndpointSchemas,
-		webhookSchemas: borneoWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-borneo-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchBorneoTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveBorneoOAuthWebhookTenantLink,
+		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: BorneoKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
+			if (source !== 'endpoint') {
+				throw new AuthMissingError('borneo', 'api_key');
 			}
 
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+			if (options.key) return options.key;
+
+			if (ctx.authType === 'api_key') {
+				const key = await ctx.keys.get_api_key();
+				if (!key) {
+					throw new AuthMissingError('borneo', 'api_key');
+				}
+				return key;
 			}
 
-			if (source === 'endpoint' && options.key) {
-				return options.key;
+			if (ctx.authType === 'oauth_2') {
+				const token = await ctx.keys.get_access_token();
+				if (!token) {
+					throw new AuthMissingError('borneo', 'oauth_2');
+				}
+				return token;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
-			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('borneo', 'api_key');
 		},
 	} satisfies InternalBorneoPlugin;
 }
@@ -195,10 +201,14 @@ export function borneo<const T extends BorneoPluginOptions>(
 export type {
 	BorneoEndpointInputs,
 	BorneoEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	CreateAssetInput,
+	CreateAssetResponse,
+	DeleteAssetInput,
+	DeleteAssetResponse,
+	PostSupportChatQueryInput,
+	PostSupportChatQueryResponse,
+	RetrieveAssetInput,
+	RetrieveAssetResponse,
+	UpdateAssetInput,
+	UpdateAssetResponse,
 } from './endpoints/types';
-export type {
-	BorneoWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
