@@ -2,8 +2,11 @@
  * Writes plugin reference MDX under `docs/plugins/<pluginId>/` using
  * `introspectPluginForDocs` from `packages/corsair`. Uses `tsx` to resolve TS imports.
  *
- * Optional `packages/<plugin>/plugin-docs.yaml` can set `displayName`, `description`
- * (frontmatter), and `overviewNote` (markdown after the intro paragraph).
+ * Optional `packages/<plugin>/plugin-docs.yaml` supplies display copy and overview
+ * examples. The generator owns Hub-shaped wiring (install, createCorsair, connect,
+ * withTenant, cards); yaml owns auth preference plus API / DB / webhook examples.
+ * Yaml overrides are validated against introspected plugin metadata (paths, arg
+ * keys/types, DB filters, webhook paths); mismatches fail the run.
  *
  * CLI: `pnpm generate:docs -- --plugin=<id>` · `pnpm generate:docs -- --all` · `pnpm generate:docs:all`
  * (`--all` scans `packages/*` for `@corsair-dev/*` plugins with `index.ts`, excludes corsair/cli/mcp/ui.)
@@ -31,12 +34,65 @@ import type { CorsairPlugin } from '../packages/corsair/core/plugins/index.ts';
 /** Optional per-plugin overrides for the doc generator (next to package.json). */
 const PLUGIN_DOCS_FILE = 'plugin-docs.yaml';
 
+/**
+ * Overview example API call override.
+ * - string: `channels.list` (shortPath under `plugin.api`)
+ * - object: `{ path, args?, title? }` for a realistic snippet body
+ */
+type PluginDocsExampleCall =
+	| string
+	| {
+			path: string;
+			/** Plain object rendered as the call argument (defaults to `{}`). */
+			args?: Record<string, unknown>;
+			/** Optional heading for the example (e.g. "List channels"). */
+			title?: string;
+	  };
+
 type PluginDocsFile = {
 	displayName?: string;
 	/** Overrides Mintlify frontmatter `description` when set. */
 	description?: string;
 	/** Markdown inserted after the intro paragraph on the overview page. */
 	overviewNote?: string;
+	/**
+	 * Auth type to label Recommended and use in the setup `createCorsair` snippet.
+	 * Falls back to `managed` when offered, else the plugin's `defaultAuthType`.
+	 */
+	recommendedAuth?: string;
+	/**
+	 * Preferred read/write API examples on the overview page.
+	 * Paths are shortPaths after `plugin.api.` (e.g. `channels.list`).
+	 * Falls back to risk-level / name heuristics when omitted or unmatched.
+	 */
+	examples?: {
+		read?: PluginDocsExampleCall;
+		write?: PluginDocsExampleCall;
+	};
+	/**
+	 * Headline webhook for the overview. `path` is the short path under
+	 * `plugin.webhooks.` (e.g. `messages.message`).
+	 */
+	exampleWebhook?: {
+		path: string;
+		/** Short prose above the hook snippet. */
+		note?: string;
+		/**
+		 * Body of `after: async (ctx, result) => { … }`.
+		 * When omitted, a one-line comment placeholder is used.
+		 */
+		after?: string;
+	};
+	/**
+	 * Headline DB search for the overview. `entity` must match a synced entity name.
+	 */
+	dbExample?: {
+		entity: string;
+		note?: string;
+		/** Passed as `search({ data })`. */
+		data?: Record<string, unknown>;
+		limit?: number;
+	};
 };
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -47,6 +103,17 @@ function docsRoot(repoRoot: string): string {
 
 /** Workspace folders that are not Corsair integration plugins. */
 const PLUGIN_DISCOVERY_SKIP_DIRS = new Set(['corsair', 'cli', 'mcp', 'ui']);
+
+/**
+ * Construct-time options for factories that cannot be called with `()`.
+ * Used only for docs introspection — not shown in generated snippets.
+ */
+const DOCS_FACTORY_OPTIONS: Record<string, Record<string, unknown>> = {
+	workday: {
+		tenant: 'corsair-docs',
+		host: 'wd2-impl-services1.workday.com',
+	},
+};
 
 function parseArgs(argv: string[]): {
 	pluginHint?: string;
@@ -208,7 +275,12 @@ function humanizePluginId(pluginId: string): string {
 		.join(' ');
 }
 
-const KNOWN_AUTH_TYPES = ['oauth_2', 'api_key', 'bot_token'] as const;
+const KNOWN_AUTH_TYPES = [
+	'managed',
+	'oauth_2',
+	'api_key',
+	'bot_token',
+] as const;
 
 function readPackageMeta(packageDir: string): {
 	npmName: string;
@@ -258,13 +330,15 @@ function inferDefaultAuthTypeFromSource(source: string): string | undefined {
 	// Matches `const defaultAuthType = 'oauth_2'`, `const defaultAuthType: AuthTypes = 'oauth_2'`,
 	// and `const defaultAuthType: AuthTypes = 'api_key' as const` (optional `as const`).
 	const match = source.match(
-		/const\s+defaultAuthType\b\s*[^=]*=\s*['"](oauth_2|api_key|bot_token)['"]\s*(?:as\s+const)?/,
+		/const\s+defaultAuthType\b\s*[^=]*=\s*['"](managed|oauth_2|api_key|bot_token)['"]\s*(?:as\s+const)?/,
 	);
 	return match?.[1];
 }
 
 function authTypeHumanLabel(authType: string): string {
 	switch (authType) {
+		case 'managed':
+			return 'Managed OAuth';
 		case 'oauth_2':
 			return 'OAuth 2.0';
 		case 'api_key':
@@ -277,8 +351,33 @@ function authTypeHumanLabel(authType: string): string {
 }
 
 function authConceptPath(authType: string): string {
-	if (authType === 'oauth_2') return '/concepts/oauth';
-	return '/concepts/api-key';
+	switch (authType) {
+		case 'managed':
+			return '/concepts/auth#managed';
+		case 'oauth_2':
+			return '/concepts/oauth';
+		default:
+			return '/concepts/api-key';
+	}
+}
+
+function authTypeCredentialInstructions(
+	authType: string,
+	title: string,
+	base: string,
+): string {
+	switch (authType) {
+		case 'managed':
+			return `No setup required. Corsair hosts the OAuth app for **${title}** — your tenants connect through Hub when they sign in.`;
+		case 'oauth_2':
+			return `Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your ${title} OAuth app.`;
+		case 'api_key':
+			return `No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.`;
+		case 'bot_token':
+			return `No setup required yet. When you make your first request as a tenant, Corsair prompts for the bot token.`;
+		default:
+			return `See [Get Credentials](${base}/get-credentials) for provider-specific setup steps.`;
+	}
 }
 
 /** Mintlify/YAML frontmatter: plain `description: foo: bar` breaks on the second `:`. Use a double-quoted scalar. */
@@ -293,13 +392,20 @@ function yamlDoubleQuotedScalar(s: string): string {
 
 function sortAuthTypesForTabs(
 	types: string[],
-	defaultType: string | undefined,
+	preferred: string | undefined,
 ): string[] {
-	const rest = [...types].sort((a, b) => a.localeCompare(b));
-	if (!defaultType || !rest.includes(defaultType)) {
-		return rest;
+	const rest = [...types];
+	const ordered: string[] = [];
+	if (preferred && rest.includes(preferred)) {
+		ordered.push(preferred);
 	}
-	return [defaultType, ...rest.filter((t) => t !== defaultType)];
+	if (rest.includes('managed') && !ordered.includes('managed')) {
+		ordered.push('managed');
+	}
+	const remaining = rest
+		.filter((t) => !ordered.includes(t))
+		.sort((a, b) => a.localeCompare(b));
+	return [...ordered, ...remaining];
 }
 
 /**
@@ -328,17 +434,438 @@ function pluginDocData(
 	return { ...data, webhooks: [] };
 }
 
-function pickExampleEndpoints(api: DocsApiEndpoint[]): {
+function normalizeExampleCall(
+	raw: PluginDocsExampleCall | undefined,
+):
+	| { path: string; args?: Record<string, unknown>; title?: string }
+	| undefined {
+	if (raw === undefined) return undefined;
+	if (typeof raw === 'string') {
+		const path = raw.trim();
+		return path ? { path } : undefined;
+	}
+	if (!raw || typeof raw !== 'object' || Array.isArray(raw)) return undefined;
+	const path = typeof raw.path === 'string' ? raw.path.trim() : '';
+	if (!path) return undefined;
+	const args =
+		raw.args && typeof raw.args === 'object' && !Array.isArray(raw.args)
+			? raw.args
+			: undefined;
+	const title =
+		typeof raw.title === 'string' && raw.title.trim()
+			? raw.title.trim()
+			: undefined;
+	return { path, args, title };
+}
+
+function findEndpointByShortPath(
+	api: DocsApiEndpoint[],
+	shortPath: string,
+): DocsApiEndpoint | undefined {
+	const needle = shortPath.toLowerCase();
+	return (
+		api.find((e) => e.shortPath === shortPath) ??
+		api.find((e) => e.shortPath.toLowerCase() === needle)
+	);
+}
+
+function findWebhookByShortPath(
+	webhooks: readonly DocsWebhook[],
+	pluginId: string,
+	shortPath: string,
+): DocsWebhook | undefined {
+	const full = `${pluginId}.webhooks.${shortPath}`;
+	const needle = shortPath.toLowerCase();
+	return (
+		webhooks.find((w) => w.path === full) ??
+		webhooks.find((w) => w.path.toLowerCase() === full.toLowerCase()) ??
+		webhooks.find((w) => {
+			const short = w.path.startsWith(`${pluginId}.webhooks.`)
+				? w.path.slice(`${pluginId}.webhooks.`.length)
+				: w.path;
+			return short.toLowerCase() === needle;
+		})
+	);
+}
+
+/** Loose check that a yaml example value matches a docs type string (e.g. `string`, `boolean`). */
+function valueMatchesDocType(value: unknown, typeStr: string): boolean {
+	const t = typeStr.trim();
+	if (value === null) {
+		return /\bnull\b/.test(t) || t.includes('| null') || t.endsWith('null');
+	}
+	if (typeof value === 'boolean') return /\bboolean\b/.test(t);
+	if (typeof value === 'number') return /\bnumber\b/.test(t);
+	if (typeof value === 'string') {
+		return (
+			/\bstring\b/.test(t) ||
+			t.includes("'") ||
+			t.includes('"') ||
+			t.startsWith('`')
+		);
+	}
+	if (Array.isArray(value)) {
+		return t.includes('[]') || /\bArray</.test(t);
+	}
+	if (typeof value === 'object') {
+		return (
+			t.includes('{') ||
+			t === 'object' ||
+			/\bRecord</.test(t) ||
+			t === 'unknown'
+		);
+	}
+	return false;
+}
+
+function valueMatchesDbFilterType(
+	value: unknown,
+	type: 'string' | 'number' | 'boolean' | 'date',
+): boolean {
+	switch (type) {
+		case 'boolean':
+			return typeof value === 'boolean';
+		case 'string':
+			return typeof value === 'string';
+		case 'number':
+			return typeof value === 'number';
+		case 'date':
+			return (
+				typeof value === 'string' ||
+				typeof value === 'number' ||
+				value instanceof Date
+			);
+		default:
+			return false;
+	}
+}
+
+function validateExampleArgsAgainstInput(
+	args: Record<string, unknown>,
+	input: DocSchemaShape,
+	label: string,
+): string[] {
+	const errors: string[] = [];
+	if (input.kind === 'inline') {
+		if (Object.keys(args).length > 0 && input.type === 'unknown') {
+			errors.push(
+				`${label}: input schema is unknown; cannot validate args ${JSON.stringify(args)}`,
+			);
+		}
+		// Non-object / opaque inputs: only allow empty args.
+		if (Object.keys(args).length > 0 && !input.type.includes('{')) {
+			errors.push(
+				`${label}: input is \`${input.type}\` (not an object); omit args or use {}`,
+			);
+		}
+		return errors;
+	}
+
+	const fieldMap = new Map(input.fields.map((f) => [f.key, f]));
+	for (const [key, value] of Object.entries(args)) {
+		const field = fieldMap.get(key);
+		if (!field) {
+			const known =
+				input.fields
+					.map((f) => f.key)
+					.sort()
+					.join(', ') || '(none)';
+			errors.push(`${label}: unknown arg "${key}" — valid keys: ${known}`);
+			continue;
+		}
+		if (!valueMatchesDocType(value, field.type)) {
+			errors.push(
+				`${label}: arg "${key}" has value ${JSON.stringify(value)} (${typeof value}), expected type \`${field.type}\``,
+			);
+		}
+	}
+	return errors;
+}
+
+/**
+ * Hard-fail checks for `plugin-docs.yaml` overrides against introspected plugin metadata.
+ * Heuristic examples (when yaml omits a field) are not validated.
+ */
+function validatePluginDocsConfig(
+	docsConfig: PluginDocsFile,
+	data: PluginDocsIntrospection,
+	pluginId: string,
+	authTypes: string[],
+): string[] {
+	const errors: string[] = [];
+	const prefix = `plugin-docs.yaml`;
+
+	const recommended = docsConfig.recommendedAuth?.trim();
+	if (recommended && authTypes.length > 0 && !authTypes.includes(recommended)) {
+		errors.push(
+			`${prefix}: recommendedAuth "${recommended}" is not in this plugin's auth types (${authTypes.join(', ') || 'none'})`,
+		);
+	}
+
+	const validateApiExample = (
+		raw: PluginDocsExampleCall | undefined,
+		kind: 'examples.read' | 'examples.write',
+	) => {
+		const call = normalizeExampleCall(raw);
+		if (!call) return;
+		const ep = findEndpointByShortPath(data.api, call.path);
+		if (!ep) {
+			errors.push(
+				`${prefix}: ${kind} path "${call.path}" not found on ${pluginId}.api`,
+			);
+			return;
+		}
+		if (call.args && Object.keys(call.args).length > 0) {
+			errors.push(
+				...validateExampleArgsAgainstInput(
+					call.args,
+					ep.input,
+					`${prefix}: ${kind} (${call.path})`,
+				),
+			);
+		}
+	};
+
+	validateApiExample(docsConfig.examples?.read, 'examples.read');
+	validateApiExample(docsConfig.examples?.write, 'examples.write');
+
+	const dbEx = docsConfig.dbExample;
+	if (dbEx) {
+		const entityName = dbEx.entity?.trim();
+		if (!entityName) {
+			errors.push(
+				`${prefix}: dbExample.entity is required when dbExample is set`,
+			);
+		} else {
+			const entity = data.db.find((e) => e.entityName === entityName);
+			if (!entity) {
+				const known =
+					data.db
+						.map((e) => e.entityName)
+						.sort()
+						.join(', ') || '(none)';
+				errors.push(
+					`${prefix}: dbExample.entity "${entityName}" not found — synced entities: ${known}`,
+				);
+			} else if (dbEx.data && Object.keys(dbEx.data).length > 0) {
+				const filterMap = new Map(entity.filters.map((f) => [f.field, f]));
+				for (const [key, value] of Object.entries(dbEx.data)) {
+					const filter = filterMap.get(key);
+					if (!filter) {
+						const known =
+							entity.filters
+								.map((f) => f.field)
+								.sort()
+								.join(', ') || '(none)';
+						errors.push(
+							`${prefix}: dbExample.data."${key}" is not a searchable filter on ${entityName} — valid fields: ${known}`,
+						);
+						continue;
+					}
+					if (!valueMatchesDbFilterType(value, filter.type)) {
+						errors.push(
+							`${prefix}: dbExample.data."${key}" has value ${JSON.stringify(value)} (${typeof value}), expected ${filter.type}`,
+						);
+					}
+				}
+			}
+		}
+	}
+
+	const whEx = docsConfig.exampleWebhook;
+	if (whEx) {
+		const path = whEx.path?.trim();
+		if (!path) {
+			errors.push(
+				`${prefix}: exampleWebhook.path is required when exampleWebhook is set`,
+			);
+		} else if (data.webhooks.length === 0) {
+			errors.push(
+				`${prefix}: exampleWebhook.path "${path}" set but this plugin has no webhooks`,
+			);
+		} else if (!findWebhookByShortPath(data.webhooks, pluginId, path)) {
+			const known = data.webhooks
+				.map((w) =>
+					w.path.startsWith(`${pluginId}.webhooks.`)
+						? w.path.slice(`${pluginId}.webhooks.`.length)
+						: w.path,
+				)
+				.sort()
+				.join(', ');
+			errors.push(
+				`${prefix}: exampleWebhook.path "${path}" not found — webhook paths: ${known}`,
+			);
+		}
+	}
+
+	return errors;
+}
+
+function pickExampleEndpoints(
+	api: DocsApiEndpoint[],
+	examples: PluginDocsFile['examples'] | undefined,
+): {
 	read?: DocsApiEndpoint;
 	write?: DocsApiEndpoint;
+	readArgs?: Record<string, unknown>;
+	writeArgs?: Record<string, unknown>;
+	readTitle?: string;
+	writeTitle?: string;
 } {
-	const read =
+	const readOverride = normalizeExampleCall(examples?.read);
+	const writeOverride = normalizeExampleCall(examples?.write);
+
+	let read: DocsApiEndpoint | undefined;
+	let write: DocsApiEndpoint | undefined;
+
+	if (readOverride) {
+		read = findEndpointByShortPath(api, readOverride.path);
+	}
+	if (writeOverride) {
+		write = findEndpointByShortPath(api, writeOverride.path);
+	}
+
+	read ??=
 		api.find((e) => e.riskLevel === 'read') ??
 		api.find((e) => /^(list|get|search)/i.test(e.shortPath));
-	const write =
+	write ??=
 		api.find((e) => e.riskLevel === 'write' || e.riskLevel === 'destructive') ??
 		api.find((e) => /^(create|post|update|delete|send)/i.test(e.shortPath));
-	return { read, write };
+
+	return {
+		read,
+		write,
+		readArgs: read && readOverride?.args ? readOverride.args : undefined,
+		writeArgs: write && writeOverride?.args ? writeOverride.args : undefined,
+		readTitle: readOverride?.title,
+		writeTitle: writeOverride?.title,
+	};
+}
+
+function resolveRecommendedAuth(
+	authTypes: string[],
+	defaultAuthType: string | undefined,
+	recommendedFromYaml: string | undefined,
+): string | undefined {
+	if (recommendedFromYaml && authTypes.includes(recommendedFromYaml)) {
+		return recommendedFromYaml;
+	}
+	if (authTypes.includes('managed')) return 'managed';
+	if (defaultAuthType && authTypes.includes(defaultAuthType)) {
+		return defaultAuthType;
+	}
+	return authTypes[0];
+}
+
+/** Render a YAML-sourced args object as a compact TypeScript object literal. */
+function formatExampleArgs(args: Record<string, unknown> | undefined): string {
+	if (!args || Object.keys(args).length === 0) return '{}';
+
+	const formatValue = (v: unknown, depth: number): string => {
+		if (typeof v === 'string') {
+			return `'${v.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}'`;
+		}
+		if (typeof v === 'number' || typeof v === 'boolean') return String(v);
+		if (v === null) return 'null';
+		if (Array.isArray(v)) {
+			if (v.length === 0) return '[]';
+			return `[${v.map((item) => formatValue(item, depth)).join(', ')}]`;
+		}
+		if (typeof v === 'object') {
+			return formatObject(v as Record<string, unknown>, depth);
+		}
+		return JSON.stringify(v);
+	};
+
+	const formatObject = (
+		obj: Record<string, unknown>,
+		depth: number,
+	): string => {
+		const entries = Object.entries(obj);
+		if (entries.length === 0) return '{}';
+		const inline = entries.every(
+			([, v]) =>
+				v === null ||
+				typeof v === 'string' ||
+				typeof v === 'number' ||
+				typeof v === 'boolean',
+		);
+		if (inline && entries.length <= 3 && depth === 0) {
+			return `{ ${entries.map(([k, v]) => `${k}: ${formatValue(v, depth + 1)}`).join(', ')} }`;
+		}
+		if (inline && entries.length <= 3) {
+			return `{ ${entries.map(([k, v]) => `${k}: ${formatValue(v, depth + 1)}`).join(', ')} }`;
+		}
+		const pad = '\t'.repeat(depth + 1);
+		const close = '\t'.repeat(depth);
+		const lines = entries.map(
+			([k, v]) => `${pad}${k}: ${formatValue(v, depth + 1)},`,
+		);
+		return `{\n${lines.join('\n')}\n${close}}`;
+	};
+
+	return formatObject(args, 0);
+}
+
+function formatTenantApiCall(
+	pluginId: string,
+	shortPath: string,
+	args: Record<string, unknown> | undefined,
+): string {
+	return `const tenant = corsair.withTenant('acme');\nawait tenant.${pluginId}.api.${shortPath}(${formatExampleArgs(args)});`;
+}
+
+function pluginFactorySnippet(
+	exportKey: string,
+	authType: string | undefined,
+	defaultAuthType: string | undefined,
+	indent = '',
+): string {
+	if (!authType || authType === defaultAuthType) {
+		return `${indent}${exportKey}()`;
+	}
+	return `${indent}${exportKey}({\n${indent}\tauthType: '${authType}',\n${indent}})`;
+}
+
+function authTabLabel(
+	authType: string,
+	recommendedAuth: string | undefined,
+): string {
+	const base = authTypeHumanLabel(authType);
+	if (recommendedAuth && authType === recommendedAuth) {
+		return `${base} (Recommended)`;
+	}
+	return base;
+}
+
+/** Nest `messages.message` into a webhookHooks object tree with an after handler. */
+function formatWebhookHookSnippet(
+	exportKey: string,
+	shortPath: string,
+	afterBody: string,
+): string {
+	const segments = shortPath.split('.').filter(Boolean);
+	if (segments.length === 0) {
+		return `${exportKey}({\n    webhookHooks: {},\n})`;
+	}
+	const lines: string[] = [`${exportKey}({`, `    webhookHooks: {`];
+	for (let i = 0; i < segments.length; i++) {
+		lines.push(`${'    '.repeat(i + 2)}${segments[i]}: {`);
+	}
+	lines.push(
+		`${'    '.repeat(segments.length + 2)}after: async (ctx, result) => {`,
+	);
+	for (const line of afterBody.trim().split('\n')) {
+		lines.push(
+			line.length === 0 ? '' : `${'    '.repeat(segments.length + 3)}${line}`,
+		);
+	}
+	lines.push(`${'    '.repeat(segments.length + 2)}}`);
+	for (let i = segments.length - 1; i >= 0; i--) {
+		lines.push(`${'    '.repeat(i + 2)}},`);
+	}
+	lines.push(`    },`, `})`);
+	return lines.join('\n');
 }
 
 function buildMainMdx(opts: {
@@ -350,7 +877,8 @@ function buildMainMdx(opts: {
 	data: PluginDocsIntrospection;
 	authTypes: string[];
 	defaultAuthType: string | undefined;
-	overviewNote?: string;
+	docsConfig: PluginDocsFile;
+	hasGetCredentials: boolean;
 }): string {
 	const {
 		pluginId,
@@ -361,19 +889,44 @@ function buildMainMdx(opts: {
 		data,
 		authTypes,
 		defaultAuthType,
-		overviewNote,
+		docsConfig,
+		hasGetCredentials,
 	} = opts;
 
 	const base = `/plugins/${pluginId}`;
-	const { read: exRead, write: exWrite } = pickExampleEndpoints(data.api);
+	const recommendedAuth = resolveRecommendedAuth(
+		authTypes,
+		defaultAuthType,
+		docsConfig.recommendedAuth?.trim(),
+	);
+	const authOrdered = sortAuthTypesForTabs(authTypes, recommendedAuth);
+	const {
+		read: exRead,
+		write: exWrite,
+		readArgs,
+		writeArgs,
+		readTitle,
+		writeTitle,
+	} = pickExampleEndpoints(data.api, docsConfig.examples);
+
+	const intro = `Use **${title}** through Corsair: one client, typed API calls${
+		data.db.length > 0 ? ', local DB sync' : ''
+	}${data.webhooks.length > 0 ? ', and incoming webhooks' : ''}.`;
+
+	const overviewNote = docsConfig.overviewNote?.trim();
 
 	const bullets: string[] = [];
 	if (data.api.length > 0) {
 		bullets.push(`${data.api.length} typed API operations`);
 	}
 	if (data.db.length > 0) {
+		const names = data.db.map((e) => `\`${e.entityName}\``).slice(0, 6);
+		const more =
+			data.db.length > names.length
+				? `, and ${data.db.length - names.length} more`
+				: '';
 		bullets.push(
-			`${data.db.length} database entit${data.db.length === 1 ? 'y' : 'ies'} synced for fast \`.search()\` / \`.list()\` queries`,
+			`${data.db.length} synced entit${data.db.length === 1 ? 'y' : 'ies'} (${names.join(', ')}${more}) for fast \`.search()\` / \`.list()\``,
 		);
 	}
 	if (data.webhooks.length > 0) {
@@ -383,90 +936,183 @@ function buildMainMdx(opts: {
 		bullets.push('Typed integration through the Corsair client');
 	}
 
-	const authOrdered = sortAuthTypesForTabs(authTypes, defaultAuthType);
+	const setupPluginCall = pluginFactorySnippet(
+		exportKey,
+		recommendedAuth,
+		defaultAuthType,
+		'\t\t',
+	);
 
-	const authSection =
+	const credentialsLink = hasGetCredentials
+		? `\n\nProvider walkthrough: [Get Credentials](${base}/get-credentials).`
+		: '';
+
+	const authTabs =
 		authOrdered.length === 0
-			? `## Authentication
-
-See [Get Credentials](${base}/get-credentials) for how to obtain and store secrets. Auth methods depend on how you configure \`${exportKey}({ ... })\` — check the plugin source \`*PluginOptions\` type for supported \`authType\` values.
-
-- [API key authentication](/concepts/api-key)
-- [OAuth 2.0](/concepts/oauth)
-`
-			: `## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default \`authType\` from the plugin does not need to appear in the factory call.
-
-<Tabs>
+			? hasGetCredentials
+				? `Follow [Get Credentials](${base}/get-credentials) if you need help obtaining keys from the provider.`
+				: `Auth methods depend on how you configure \`${exportKey}({ ... })\` — check the plugin source \`*PluginOptions\` type.`
+			: `<Tabs>
 ${authOrdered
 	.map((t) => {
-		const isDefaultTab =
-			defaultAuthType !== undefined
-				? t === defaultAuthType
-				: authOrdered.length === 1;
-		const label = `${authTypeHumanLabel(t)}${isDefaultTab ? ' (Default)' : ''}`;
-		const callSnippet = isDefaultTab
-			? `${exportKey}()`
-			: `${exportKey}({\n    authType: '${t}',\n})`;
+		const label = authTabLabel(t, recommendedAuth);
+		const note = authTypeCredentialInstructions(t, title, base);
+		const callSnippet = pluginFactorySnippet(exportKey, t, defaultAuthType);
 		return `<Tab title="${escapeAttr(label)}">
 
-\`\`\`ts corsair.ts
+${note}${credentialsLink}
+
+\`\`\`ts
 ${callSnippet}
 \`\`\`
-
-Store credentials with \`pnpm corsair setup --plugin=${pluginId}\` (see [Get Credentials](${base}/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [${authTypeHumanLabel(t)}](${authConceptPath(t)})
 
 </Tab>`;
 	})
 	.join('\n')}
-</Tabs>
-`;
+</Tabs>`;
 
-	const webhooksSection =
-		data.webhooks.length === 0
-			? ''
-			: `## Webhooks
-
-This plugin registers **${data.webhooks.length}** webhook handler(s). Configure your provider to POST events to your Corsair HTTP endpoint, then use \`webhookHooks\` in the plugin factory for custom logic.
-
-See [Webhooks](${base}/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for how to set up routing.
-
-`;
-
-	const dbSection =
-		data.db.length === 0
-			? ''
-			: `## Query synced data
-
-Synced entities support \`corsair.${pluginId}.db.<entity>.search()\` and \`.list()\`. See [Database](${base}/database) for filters and operators.
-
-`;
+	const connectNote = `Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).`;
 
 	const exampleRead = exRead
 		? `\`\`\`ts
-await corsair.${pluginId}.api.${exRead.shortPath}({});
+${formatTenantApiCall(pluginId, exRead.shortPath, readArgs)}
 \`\`\`
 `
-		: '_No read-style endpoint inferred; pick any operation from the reference below._\n';
+		: '_No read-style endpoint inferred; pick any operation from the [API](' +
+			base +
+			'/api) reference._\n';
 
 	const exampleWrite = exWrite
 		? `\`\`\`ts
-await corsair.${pluginId}.api.${exWrite.shortPath}({});
+${formatTenantApiCall(pluginId, exWrite.shortPath, writeArgs)}
 \`\`\`
 `
-		: '_No write-style endpoint inferred; pick any operation from the reference below._\n';
+		: '_No write-style endpoint inferred; pick any operation from the [API](' +
+			base +
+			'/api) reference._\n';
+
+	const readHeading =
+		readTitle ?? (exRead ? `\`${exRead.shortPath}\`` : 'Read');
+	const writeHeading =
+		writeTitle ?? (exWrite ? `\`${exWrite.shortPath}\`` : 'Write');
+
+	// DB section
+	let dbSection = '';
+	if (data.db.length > 0) {
+		const dbEx = docsConfig.dbExample;
+		const entity =
+			dbEx?.entity &&
+			data.db.find((e) => e.entityName === dbEx.entity)?.entityName;
+		if (entity) {
+			const searchArgs: Record<string, unknown> = {};
+			if (dbEx?.data && Object.keys(dbEx.data).length > 0) {
+				searchArgs.data = dbEx.data;
+			} else {
+				searchArgs.data = {};
+			}
+			if (dbEx?.limit !== undefined) {
+				searchArgs.limit = dbEx.limit;
+			} else {
+				searchArgs.limit = 50;
+			}
+			const note =
+				dbEx?.note?.trim() ||
+				`Query synced \`${entity}\` rows without hitting the live API.`;
+			dbSection = `## Query synced data
+
+${note}
+
+\`\`\`ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.${pluginId}.db.${entity}.search(${formatExampleArgs(searchArgs)});
+\`\`\`
+
+Synced entities: ${data.db.map((e) => `\`${e.entityName}\``).join(', ')}. See [Database](${base}/database) for filters and operators.
+
+`;
+		} else {
+			dbSection = `## Query synced data
+
+Synced entities support \`tenant.${pluginId}.db.<entity>.search()\` and \`.list()\`: ${data.db.map((e) => `\`${e.entityName}\``).join(', ')}.
+
+See [Database](${base}/database) for filters and operators.
+
+`;
+		}
+	}
+
+	// Webhooks section
+	let webhooksSection = '';
+	if (data.webhooks.length > 0) {
+		const whEx = docsConfig.exampleWebhook;
+		const matched = whEx?.path
+			? findWebhookByShortPath(data.webhooks, pluginId, whEx.path.trim())
+			: undefined;
+		if (matched && whEx) {
+			const shortPath = matched.path.startsWith(`${pluginId}.webhooks.`)
+				? matched.path.slice(`${pluginId}.webhooks.`.length)
+				: whEx.path.trim();
+			const afterBody = whEx.after?.trim() || `// handle ${shortPath}`;
+			const note =
+				whEx.note?.trim() ||
+				`This plugin registers **${data.webhooks.length}** webhook event type${data.webhooks.length === 1 ? '' : 's'}. Example: \`${shortPath}\`.`;
+			webhooksSection = `## Webhooks
+
+${note}
+
+\`\`\`ts
+${formatWebhookHookSnippet(exportKey, shortPath, afterBody)}
+\`\`\`
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](${base}/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
+
+`;
+		} else {
+			webhooksSection = `## Webhooks
+
+This plugin registers **${data.webhooks.length}** webhook event type${data.webhooks.length === 1 ? '' : 's'}. Configure the provider to POST to your Corsair HTTP handler, then use \`webhookHooks\` on the plugin factory.
+
+See [Webhooks](${base}/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+`;
+		}
+	}
+
+	const cards: string[] = [
+		`  <Card title="API reference" href="${base}/api">
+    Every \`${pluginId}.api.*\` operation with input and output types.
+  </Card>`,
+	];
+	if (data.db.length > 0) {
+		cards.push(`  <Card title="Database" href="${base}/database">
+    Synced entities, search filters, and operators.
+  </Card>`);
+	}
+	if (data.webhooks.length > 0) {
+		cards.push(`  <Card title="Webhooks" href="${base}/webhooks">
+    Event paths, payloads, and \`webhookHooks\` examples.
+  </Card>`);
+	}
+	cards.push(`  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>`);
+	cards.push(`  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>`);
+	if (hasGetCredentials) {
+		cards.push(`  <Card title="Get credentials" href="${base}/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>`);
+	}
 
 	return `---
 title: Overview
 description: ${yamlDoubleQuotedScalar(frontmatterDescription)}
 ---
 
-Use **${title}** through Corsair: one client, typed API calls, optional local DB sync${
-		data.webhooks.length > 0 ? ', and incoming webhooks documented below.' : '.'
-	}
+${intro}
 ${overviewNote ? `\n${overviewNote}\n` : ''}
 **What you get:**
 
@@ -477,106 +1123,83 @@ ${bullets.map((b) => `- ${b}`).join('\n')}
 <Steps>
 
 <Step title="Install">
-\`\`\`bash
-pnpm install ${npmPackageName}
+<CodeGroup>
+\`\`\`bash npm
+npm install corsair ${npmPackageName}
 \`\`\`
+\`\`\`bash yarn
+yarn add corsair ${npmPackageName}
+\`\`\`
+\`\`\`bash pnpm
+pnpm install corsair ${npmPackageName}
+\`\`\`
+\`\`\`bash bun
+bun add corsair ${npmPackageName}
+\`\`\`
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 \`\`\`ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { ${exportKey} } from '${npmPackageName}';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [${exportKey}()],
-});
-\`\`\`
-</Tab>
-<Tab title="Multi-Tenant">
-\`\`\`ts corsair.ts
-import { createCorsair } from 'corsair';
-import { ${exportKey} } from '${npmPackageName}';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [${exportKey}()],
+	plugins: [
+${setupPluginCall},
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
 });
 \`\`\`
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with \`corsair.withTenant(id)\`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](${base}/get-credentials) if you need help getting keys.
+<Step title="Choose authentication">
+${authTabs}
 
 </Step>
 
-<Step title="Store credentials">
-<Tabs>
-<Tab title="Solo">
-\`\`\`bash
-pnpm corsair setup --plugin=${pluginId}
-\`\`\`
+<Step title="Connect a tenant">
+${connectNote}
 
-Use the key names documented in [Get Credentials](${base}/get-credentials) (for example \`api_key=\`, \`bot_token=\`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-\`\`\`bash
-pnpm corsair setup --plugin=${pluginId} --tenant=<tenantId>
+\`\`\`ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: '${pluginId}',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
 \`\`\`
-
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
 
 </Step>
 
 </Steps>
 
-${authSection}
-${webhooksSection}
-${dbSection}
 ## Example API calls
 
-**Read-style (${exRead?.riskLevel ?? 'read'}):** \`${exRead?.shortPath ?? '—'}\`
+**${readHeading}**
 
 ${exampleRead}
 
-**Write-style (${exWrite?.riskLevel ?? 'write'}):** \`${exWrite?.shortPath ?? '—'}\`
+**${writeHeading}**
 
 ${exampleWrite}
 
-See the full list on the [API](${base}/api) page. Use \`pnpm corsair list --plugin=${pluginId}\` and \`pnpm corsair schema <path>\` locally to inspect schemas.
+See the full list on the [API](${base}/api) page.
 
----
+${dbSection}${webhooksSection}## What's next
 
-## Hooks
-
-Use \`hooks\` on API calls and \`webhookHooks\` on incoming events to add logging, approvals, or side effects. ${
-		data.webhooks.length > 0
-			? `See [Hooks](/concepts/hooks) and the [Webhooks](${base}/webhooks) page for payload types.`
-			: 'See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.'
-	}
-
----
-
-## Reference
-
-| Topic | Link |
-|-------|------|
-| API | [API](${base}/api) |
-${data.db.length > 0 ? `| Database | [Database](${base}/database) |\n` : ''}${data.webhooks.length > 0 ? `| Webhooks | [Webhooks](${base}/webhooks) |\n` : ''}| Credentials | [Get credentials](${base}/get-credentials) |
-
+<CardGroup cols={2}>
+${cards.join('\n')}
+</CardGroup>
 `;
 }
 
@@ -1195,9 +1818,29 @@ async function generatePluginDocsForEntry(
 		};
 	}
 
-	const plugin = (factory as () => CorsairPlugin)();
-	const pluginId = plugin.id;
 	const packageDir = dirname(entryPath);
+	const packageDirName = basename(packageDir);
+	const docsFactoryOptions =
+		DOCS_FACTORY_OPTIONS[exportKey] ?? DOCS_FACTORY_OPTIONS[packageDirName];
+
+	let plugin: CorsairPlugin;
+	try {
+		plugin = (
+			docsFactoryOptions
+				? (factory as (opts: Record<string, unknown>) => CorsairPlugin)(
+						docsFactoryOptions,
+					)
+				: (factory as () => CorsairPlugin)()
+		) as CorsairPlugin;
+	} catch (e) {
+		const msg = e instanceof Error ? e.message : String(e);
+		return {
+			ok: false,
+			error: `Failed to construct plugin via ${exportKey}(): ${msg}`,
+		};
+	}
+
+	const pluginId = plugin.id;
 	const docsConfig = readPluginDocsConfig(packageDir);
 	const title =
 		titleArg ??
@@ -1219,6 +1862,19 @@ async function generatePluginDocsForEntry(
 	}
 	const { data } = result;
 	const docData = pluginDocData(data, pluginId);
+
+	const configErrors = validatePluginDocsConfig(
+		docsConfig,
+		docData,
+		pluginId,
+		authTypes,
+	);
+	if (configErrors.length > 0) {
+		return {
+			ok: false,
+			error: `Invalid plugin-docs.yaml:\n${configErrors.map((e) => `  - ${e}`).join('\n')}`,
+		};
+	}
 
 	const outDir = join(docsRoot(root), pluginId);
 	mkdirSync(outDir, { recursive: true });
@@ -1244,7 +1900,8 @@ async function generatePluginDocsForEntry(
 				data: docData,
 				authTypes,
 				defaultAuthType,
-				overviewNote: docsConfig.overviewNote?.trim(),
+				docsConfig,
+				hasGetCredentials: pluginMdxExists(outDir, 'get-credentials'),
 			}),
 			'utf8',
 		);
