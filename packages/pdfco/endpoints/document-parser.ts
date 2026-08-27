@@ -6,7 +6,7 @@ export async function documentParser(
 	ctx: PdfcoContext,
 	input: DocumentParserInput,
 ): Promise<DocumentParserResponse> {
-	const key = await ctx.getKey('endpoint');
+	const key = ctx.key;
 	
 	return await makePdfcoRequest<DocumentParserResponse>(
 		'/pdf/documentparser',

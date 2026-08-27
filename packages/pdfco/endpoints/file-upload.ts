@@ -6,7 +6,7 @@ export async function fileUpload(
 	ctx: PdfcoContext,
 	input: FileUploadInput,
 ): Promise<FileUploadResponse> {
-	const key = await ctx.getKey('endpoint');
+	const key = ctx.key;
 	
 	return await makePdfcoRequest<FileUploadResponse>(
 		'/file/upload/url',

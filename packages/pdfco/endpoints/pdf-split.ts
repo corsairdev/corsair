@@ -6,7 +6,7 @@ export async function pdfSplit(
 	ctx: PdfcoContext,
 	input: PdfSplitInput,
 ): Promise<PdfSplitResponse> {
-	const key = await ctx.getKey('endpoint');
+	const key = ctx.key;
 	
 	return await makePdfcoRequest<PdfSplitResponse>(
 		'/pdf/split',

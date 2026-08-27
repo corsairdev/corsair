@@ -6,7 +6,7 @@ export async function pdfToJson(
 	ctx: PdfcoContext,
 	input: PdfToJsonInput,
 ): Promise<PdfToJsonResponse> {
-	const key = await ctx.getKey('endpoint');
+	const key = ctx.key;
 	
 	return await makePdfcoRequest<PdfToJsonResponse>(
 		'/pdf/convert/to/json',

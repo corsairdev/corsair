@@ -6,7 +6,7 @@ export async function pdfMerge(
 	ctx: PdfcoContext,
 	input: PdfMergeInput,
 ): Promise<PdfMergeResponse> {
-	const key = await ctx.getKey('endpoint');
+	const key = ctx.key;
 	
 	return await makePdfcoRequest<PdfMergeResponse>(
 		'/pdf/merge',
