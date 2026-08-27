@@ -9,6 +9,325 @@ Every `openweathermap.api.*` operation is listed below with parameter shapes and
 **New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
 </Info>
 
+## Air Pollution
+
+### current
+
+`airPollution.current`
+
+Get current air pollution data for a latitude/longitude pair
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.airPollution.current({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude |
+| `lon` | `number` | Yes | Longitude |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coord` | `object` | No | — |
+| `list` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="coord full type">
+
+```ts
+tuple | {
+}
+```
+</Accordion>
+
+<Accordion title="list full type">
+
+```ts
+{
+  dt: number,
+  main?: {
+    aqi: number
+  },
+  components?: {
+    co?: number,
+    no?: number,
+    no2?: number,
+    o3?: number,
+    so2?: number,
+    pm2_5?: number,
+    pm10?: number,
+    nh3?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forecast
+
+`airPollution.forecast`
+
+Get forecasted air pollution data for a latitude/longitude pair
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.airPollution.forecast({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude |
+| `lon` | `number` | Yes | Longitude |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coord` | `object` | No | — |
+| `list` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="coord full type">
+
+```ts
+tuple | {
+}
+```
+</Accordion>
+
+<Accordion title="list full type">
+
+```ts
+{
+  dt: number,
+  main?: {
+    aqi: number
+  },
+  components?: {
+    co?: number,
+    no?: number,
+    no2?: number,
+    o3?: number,
+    so2?: number,
+    pm2_5?: number,
+    pm10?: number,
+    nh3?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### history
+
+`airPollution.history`
+
+Get historical air pollution data for a latitude/longitude pair and time range
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.airPollution.history({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude |
+| `lon` | `number` | Yes | Longitude |
+| `start` | `number` | Yes | Start UNIX timestamp (UTC) |
+| `end` | `number` | Yes | End UNIX timestamp (UTC) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coord` | `object` | No | — |
+| `list` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="coord full type">
+
+```ts
+tuple | {
+}
+```
+</Accordion>
+
+<Accordion title="list full type">
+
+```ts
+{
+  dt: number,
+  main?: {
+    aqi: number
+  },
+  components?: {
+    co?: number,
+    no?: number,
+    no2?: number,
+    o3?: number,
+    so2?: number,
+    pm2_5?: number,
+    pm10?: number,
+    nh3?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Geocoding
+
+### byZip
+
+`geocoding.byZip`
+
+Convert a zip/post code into geographic coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.geocoding.byZip({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zip` | `string` | Yes | Zip/post code and country code (e.g. E14,GB) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `zip` | `string` | No | — |
+| `name` | `string` | No | — |
+| `lat` | `number` | Yes | — |
+| `lon` | `number` | Yes | — |
+| `country` | `string` | No | — |
+
+
+
+---
+
+### direct
+
+`geocoding.direct`
+
+Convert a location name into geographic coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.geocoding.direct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | City name, state code, and country code (e.g. London,UK) |
+| `limit` | `number` | No | Max number of results (1-5) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string,
+  local_names?: {
+  },
+  lat: number,
+  lon: number,
+  country?: string,
+  state?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### reverse
+
+`geocoding.reverse`
+
+Convert geographic coordinates into location names
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.geocoding.reverse({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude |
+| `lon` | `number` | Yes | Longitude |
+| `limit` | `number` | No | Max number of results (1-5) |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  name?: string,
+  local_names?: {
+  },
+  lat: number,
+  lon: number,
+  country?: string,
+  state?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
 ## History
 
 ### timeMachine
@@ -80,6 +399,370 @@ await corsair.openweathermap.api.history.timeMachine({});
 ```
 </Accordion>
 </AccordionGroup>
+
+
+
+---
+
+## Maps
+
+### weatherMapTile
+
+`maps.weatherMapTile`
+
+Fetch a Weather Maps 2.0 tile image for a layer and coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.maps.weatherMapTile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `layer` | `PAC0 \| PR0 \| PA0 \| PAR0 \| PAS0 \| SD0 \| WS10 \| WND \| APM \| TA2 \| TD2 \| TS0 \| TS10 \| HRD0 \| CL` | Yes | Weather map layer code (Maps 2.0 op parameter) |
+| `z` | `number` | Yes | Zoom level |
+| `x` | `number` | Yes | Tile X coordinate |
+| `y` | `number` | Yes | Tile Y coordinate |
+| `date` | `number` | No | Unix timestamp for forecast/historical tile |
+| `opacity` | `number` | No | — |
+| `palette` | `string` | No | — |
+| `fill_bound` | `boolean` | No | — |
+| `arrow_step` | `number` | No | — |
+| `use_norm` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `contentType` | `image/png` | Yes | — |
+| `dataBase64` | `string` | Yes | — |
+
+
+
+---
+
+## Stations
+
+### create
+
+`stations.create`
+
+Register a new personal weather station with OpenWeather
+
+**Risk:** `write`
+
+```ts
+await corsair.openweathermap.api.stations.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `external_id` | `string` | Yes | Your external station identifier |
+| `name` | `string` | Yes | Station name |
+| `latitude` | `number` | Yes | Station latitude |
+| `longitude` | `number` | Yes | Station longitude |
+| `altitude` | `number` | Yes | Station altitude in meters |
+
+
+
+**Output:** `unknown`
+
+
+---
+
+### get
+
+`stations.get`
+
+Get details for a registered weather station by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.stations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `station_id` | `string` | Yes | Internal OpenWeather station ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `latitude` | `number` | No | — |
+| `longitude` | `number` | No | — |
+| `altitude` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `rank` | `number` | No | — |
+
+
+
+---
+
+### getMeasurements
+
+`stations.getMeasurements`
+
+Get aggregated measurements from a registered station (minute/hour/day intervals)
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.stations.getMeasurements({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `station_id` | `string` | Yes | Internal OpenWeather station ID |
+| `type` | `m \| h \| d` | Yes | Aggregation interval: m, h, or d |
+| `from` | `number` | Yes | Start of interval (Unix timestamp) |
+| `to` | `number` | Yes | End of interval (Unix timestamp) |
+| `limit` | `number` | Yes | Maximum number of records to return |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  station_id?: string,
+  dt?: number,
+  date?: number,
+  temperature?: number | {
+    min?: number,
+    max?: number,
+    average?: number,
+    weight?: number
+  },
+  temp?: number | {
+    min?: number,
+    max?: number,
+    average?: number,
+    weight?: number
+  },
+  wind_speed?: number | {
+    min?: number,
+    max?: number,
+    average?: number,
+    weight?: number
+  },
+  wind_gust?: number | {
+    min?: number,
+    max?: number,
+    average?: number,
+    weight?: number
+  },
+  wind_deg?: number | {
+    min?: number,
+    max?: number,
+    average?: number,
+    weight?: number
+  },
+  pressure?: number | {
+    min?: number,
+    max?: number,
+    average?: number,
+    weight?: number
+  },
+  humidity?: number | {
+    min?: number,
+    max?: number,
+    average?: number,
+    weight?: number
+  },
+  precipitation?: number | {
+    min?: number,
+    max?: number,
+    average?: number,
+    weight?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`stations.list`
+
+List all weather stations registered to your OpenWeather account
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.stations.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id?: string,
+  external_id?: string,
+  name?: string,
+  latitude?: number,
+  longitude?: number,
+  altitude?: number,
+  created_at?: string,
+  updated_at?: string,
+  rank?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### remove
+
+`stations.remove`
+
+Delete a registered weather station from your account [DESTRUCTIVE]
+
+**Risk:** `destructive`
+
+```ts
+await corsair.openweathermap.api.stations.remove({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `station_id` | `string` | Yes | Internal OpenWeather station ID |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### submitMeasurements
+
+`stations.submitMeasurements`
+
+Submit weather measurements from a registered station
+
+**Risk:** `write`
+
+```ts
+await corsair.openweathermap.api.stations.submitMeasurements({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `measurements` | `object[]` | Yes | Measurement records to submit |
+
+<AccordionGroup>
+<Accordion title="measurements full type">
+
+```ts
+{
+  station_id: string,
+  dt: number,
+  temperature?: number,
+  wind_speed?: number,
+  wind_gust?: number,
+  wind_deg?: number,
+  pressure?: number,
+  humidity?: number,
+  precipitation?: number,
+  rain_1h?: number,
+  snow_1h?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `true` | Yes | — |
+
+
+
+---
+
+### update
+
+`stations.update`
+
+Update a registered weather station name, location, or external ID
+
+**Risk:** `write`
+
+```ts
+await corsair.openweathermap.api.stations.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `station_id` | `string` | Yes | Internal OpenWeather station ID |
+| `name` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `latitude` | `number` | No | — |
+| `longitude` | `number` | No | — |
+| `altitude` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+| `external_id` | `string` | No | — |
+| `name` | `string` | No | — |
+| `latitude` | `number` | No | — |
+| `longitude` | `number` | No | — |
+| `altitude` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+| `rank` | `number` | No | — |
 
 
 
@@ -235,6 +918,292 @@ await corsair.openweathermap.api.summary.overview({});
 ---
 
 ## Weather
+
+### circleCity
+
+`weather.circleCity`
+
+Get current weather for cities within a circle around a geographic point
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.weather.circleCity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `lat` | `number` | Yes | Latitude of circle center |
+| `lon` | `number` | Yes | Longitude of circle center |
+| `cnt` | `number` | No | Number of cities to return (1-50, default 10) |
+| `units` | `standard \| metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cod` | `string` | No | — |
+| `count` | `number` | No | — |
+| `list` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  coord?: {
+    lon: number,
+    lat: number
+  },
+  weather?: {
+    id: number,
+    main: string,
+    description: string,
+    icon: string
+  }[],
+  main?: {
+    temp: number,
+    feels_like?: number,
+    temp_min?: number,
+    temp_max?: number,
+    pressure?: number,
+    humidity?: number
+  },
+  wind?: {
+    speed: number,
+    deg?: number,
+    gust?: number
+  },
+  clouds?: {
+    all: number
+  },
+  dt?: number,
+  sys?: {
+    country?: string,
+    sunrise?: number,
+    sunset?: number
+  },
+  timezone?: number,
+  id?: number,
+  name?: string,
+  cod?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### current
+
+`weather.current`
+
+Get current weather for a location by city name, city ID, zip code, or coordinates
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.weather.current({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | City name, state code, country code |
+| `id` | `number` | No | OpenWeatherMap city ID |
+| `zip` | `string` | No | Zip/post code with country code |
+| `lat` | `number` | No | Latitude |
+| `lon` | `number` | No | Longitude |
+| `units` | `standard \| metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `coord` | `object` | No | — |
+| `weather` | `object[]` | No | — |
+| `main` | `object` | No | — |
+| `wind` | `object` | No | — |
+| `clouds` | `object` | No | — |
+| `dt` | `number` | No | — |
+| `sys` | `object` | No | — |
+| `timezone` | `number` | No | — |
+| `id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `cod` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="coord full type">
+
+```ts
+{
+  lon: number,
+  lat: number
+}
+```
+</Accordion>
+
+<Accordion title="weather full type">
+
+```ts
+{
+  id: number,
+  main: string,
+  description: string,
+  icon: string
+}[]
+```
+</Accordion>
+
+<Accordion title="main full type">
+
+```ts
+{
+  temp: number,
+  feels_like?: number,
+  temp_min?: number,
+  temp_max?: number,
+  pressure?: number,
+  humidity?: number
+}
+```
+</Accordion>
+
+<Accordion title="wind full type">
+
+```ts
+{
+  speed: number,
+  deg?: number,
+  gust?: number
+}
+```
+</Accordion>
+
+<Accordion title="clouds full type">
+
+```ts
+{
+  all: number
+}
+```
+</Accordion>
+
+<Accordion title="sys full type">
+
+```ts
+{
+  country?: string,
+  sunrise?: number,
+  sunset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forecast5Day
+
+`weather.forecast5Day`
+
+Get 5-day forecast in 3-hour steps (up to 40 timestamps) for a location
+
+**Risk:** `read`
+
+```ts
+await corsair.openweathermap.api.weather.forecast5Day({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | City name, state code, country code |
+| `id` | `number` | No | OpenWeatherMap city ID |
+| `zip` | `string` | No | Zip/post code with country code |
+| `lat` | `number` | No | Latitude |
+| `lon` | `number` | No | Longitude |
+| `units` | `standard \| metric \| imperial` | No | — |
+| `lang` | `string` | No | — |
+| `cnt` | `number` | No | Number of timestamps to return (1-40) |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `cod` | `string` | No | — |
+| `message` | `number` | No | — |
+| `cnt` | `number` | No | — |
+| `list` | `object[]` | No | — |
+| `city` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="list full type">
+
+```ts
+{
+  dt: number,
+  main?: {
+  },
+  weather?: {
+    id: number,
+    main: string,
+    description: string,
+    icon: string
+  }[],
+  clouds?: {
+  },
+  wind?: {
+  },
+  pop?: number,
+  rain?: {
+  },
+  snow?: {
+  },
+  sys?: {
+  },
+  dt_txt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="city full type">
+
+```ts
+{
+  id?: number,
+  name?: string,
+  coord?: {
+  },
+  country?: string,
+  population?: number,
+  timezone?: number,
+  sunrise?: number,
+  sunset?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
 
 ### oneCall
 

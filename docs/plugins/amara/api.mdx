@@ -1,0 +1,1883 @@
+---
+title: API
+description: "API reference for Amara (subtitling platform): every `amara.api.*` operation with input and output types."
+---
+
+Every `amara.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Activity
+
+### get
+
+`activity.get`
+
+Get a single activity item by id
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.activity.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `activity_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | No | — |
+| `type` | `number \| string` | No | — |
+| `type_name` | `string` | No | — |
+| `created` | `string` | No | — |
+| `video` | `string` | No | — |
+| `video_uri` | `string` | No | — |
+| `language` | `string` | No | — |
+| `language_url` | `string` | No | — |
+| `user` | `object` | No | — |
+| `comment` | `string` | No | — |
+| `new_video_title` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string,
+  username?: string,
+  uri?: string
+} | string
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`activity.list`
+
+List platform activity with optional filters
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.activity.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `team` | `string` | No | — |
+| `type` | `string \| number` | No | — |
+| `after` | `string` | No | — |
+| `limit` | `number` | No | Page size |
+| `video` | `string` | No | — |
+| `before` | `string` | No | — |
+| `offset` | `number` | No | Result offset |
+| `language` | `string` | No | — |
+| `team_activity` | `string \| boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  id?: number | string,
+  type?: number | string,
+  type_name?: string,
+  created?: string | null,
+  video?: string | null,
+  video_uri?: string | null,
+  language?: string | null,
+  language_url?: string | null,
+  user?: {
+    id?: string,
+    username?: string,
+    uri?: string
+  } | string | null,
+  comment?: string | null,
+  new_video_title?: string | null,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Languages
+
+### listAvailable
+
+`languages.listAvailable`
+
+List all supported Amara language codes
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.languages.listAvailable({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `languages` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="languages full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Messages
+
+### send
+
+`messages.send`
+
+Send a message to a user or team
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.messages.send({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subject` | `string` | Yes | — |
+| `content` | `string` | Yes | — |
+| `user` | `string` | No | — |
+| `team` | `string` | No | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+## Teams
+
+### getDetails
+
+`teams.getDetails`
+
+Get team details by slug
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.getDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `slug` | `string` | No | — |
+| `type` | `string` | No | — |
+| `description` | `string` | No | — |
+| `team_visibility` | `string` | No | — |
+| `video_visibility` | `string` | No | — |
+| `is_visible` | `boolean` | No | — |
+| `membership_policy` | `string` | No | — |
+| `video_policy` | `string` | No | — |
+| `activity_uri` | `string` | No | — |
+| `members_uri` | `string` | No | — |
+| `projects_uri` | `string` | No | — |
+| `applications_uri` | `string` | No | — |
+| `languages_uri` | `string` | No | — |
+| `tasks_uri` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+
+
+
+---
+
+### getLanguages
+
+`teams.getLanguages`
+
+Get preferred/blacklisted language URIs for a team
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.getLanguages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `slug` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `preferred` | `string` | No | — |
+| `blacklisted` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`teams.list`
+
+List teams
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.teams.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  name?: string,
+  slug?: string,
+  type?: string | null,
+  description?: string | null,
+  team_visibility?: string | null,
+  video_visibility?: string | null,
+  is_visible?: boolean,
+  membership_policy?: string | null,
+  video_policy?: string | null,
+  activity_uri?: string,
+  members_uri?: string,
+  projects_uri?: string,
+  applications_uri?: string | null,
+  languages_uri?: string | null,
+  tasks_uri?: string | null,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### getActivity
+
+`users.getActivity`
+
+List activity for a user
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.users.getActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | — |
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  id?: number | string,
+  type?: number | string,
+  type_name?: string,
+  created?: string | null,
+  video?: string | null,
+  video_uri?: string | null,
+  language?: string | null,
+  language_url?: string | null,
+  user?: {
+    id?: string,
+    username?: string,
+    uri?: string
+  } | string | null,
+  comment?: string | null,
+  new_video_title?: string | null,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getData
+
+`users.getData`
+
+Get a user profile by identifier (or "me")
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.users.getData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Username, id$…, or "me" |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `username` | `string` | No | — |
+| `id` | `string` | No | — |
+| `full_name` | `string` | No | — |
+| `first_name` | `string` | No | — |
+| `last_name` | `string` | No | — |
+| `biography` | `string` | No | — |
+| `homepage` | `string` | No | — |
+| `avatar` | `string` | No | — |
+| `languages` | `string[]` | No | — |
+| `num_videos` | `number` | No | — |
+| `resource_uri` | `string` | No | — |
+| `created_by` | `string` | No | — |
+| `is_partner` | `boolean` | No | — |
+| `activity_uri` | `string` | No | — |
+
+
+
+---
+
+## Videos
+
+### addSubtitleNote
+
+`videos.addSubtitleNote`
+
+Add an editor note to a subtitle set
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.addSubtitleNote({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `language_code` | `string` | Yes | — |
+| `body` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `body` | `string` | No | — |
+| `created` | `string` | No | — |
+| `user` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="user full type">
+
+```ts
+{
+  id?: string,
+  username?: string,
+  uri?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### addUrl
+
+`videos.addUrl`
+
+Add a URL to a video
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.addUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `url` | `string` | Yes | — |
+| `primary` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | No | — |
+| `url` | `string` | No | — |
+| `primary` | `boolean` | No | — |
+| `original` | `boolean` | No | — |
+| `id` | `number` | No | — |
+| `resource_uri` | `string` | No | — |
+| `videoid` | `string` | No | — |
+| `type` | `string` | No | — |
+
+
+
+---
+
+### create
+
+`videos.create`
+
+Create a video from a public URL
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_url` | `string` | Yes | — |
+| `title` | `string` | Yes | — |
+| `team` | `string` | No | — |
+| `project` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `metadata` | `object` | No | — |
+| `thumbnail` | `string` | No | — |
+| `description` | `string` | No | — |
+| `primary_audio_language_code` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `video_type` | `string` | No | — |
+| `primary_audio_language_code` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `thumbnail` | `string` | No | — |
+| `created` | `string` | No | — |
+| `team` | `string` | No | — |
+| `project` | `string` | No | — |
+| `all_urls` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `languages` | `object[]` | No | — |
+| `activity_uri` | `string` | No | — |
+| `urls_uri` | `string` | No | — |
+| `subtitle_languages_uri` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="languages full type">
+
+```ts
+{
+  code?: string,
+  name?: string,
+  published?: boolean,
+  dir?: string | null,
+  subtitles_uri?: string,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createSubtitleLanguage
+
+`videos.createSubtitleLanguage`
+
+Create a subtitle language on a video
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.createSubtitleLanguage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `language_code` | `string` | Yes | — |
+| `is_primary_audio_language` | `boolean` | No | — |
+| `soft_limit_cpl` | `number` | No | — |
+| `soft_limit_cps` | `number` | No | — |
+| `soft_limit_lines` | `number` | No | — |
+| `soft_limit_max_duration` | `number` | No | — |
+| `soft_limit_min_duration` | `number` | No | — |
+| `subtitles_complete` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | No | — |
+| `language_code` | `string` | No | — |
+| `is_primary_audio_language` | `boolean` | No | — |
+| `is_rtl` | `boolean` | No | — |
+| `soft_limit_cpl` | `number` | No | — |
+| `soft_limit_cps` | `number` | No | — |
+| `soft_limit_lines` | `number` | No | — |
+| `soft_limit_max_duration` | `number` | No | — |
+| `soft_limit_min_duration` | `number` | No | — |
+| `published` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `subtitle_count` | `number` | No | — |
+| `subtitles_complete` | `boolean` | No | — |
+| `versions` | `object[]` | No | — |
+| `subtitles_uri` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="versions full type">
+
+```ts
+{
+  author?: {
+    id?: string,
+    username?: string,
+    uri?: string
+  } | null,
+  published?: boolean,
+  version_number?: number,
+  created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createSubtitles
+
+`videos.createSubtitles`
+
+Create or update subtitles for a language
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.createSubtitles({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `language_code` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `action` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `subtitles` | `string \| any[]` | No | — |
+| `sub_format` | `string` | No | — |
+| `description` | `string` | No | — |
+| `subtitles_url` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version_number` | `number` | No | — |
+| `sub_format` | `string` | No | — |
+| `subtitles` | `object` | No | — |
+| `author` | `object` | No | — |
+| `created` | `string` | No | — |
+| `description` | `string` | No | — |
+| `language` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `notes_uri` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+| `site_uri` | `string` | No | — |
+| `title` | `string` | No | — |
+| `video_description` | `string` | No | — |
+| `video_title` | `string` | No | — |
+| `actions_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subtitles full type">
+
+```ts
+{
+  start?: number,
+  end?: number,
+  text?: string,
+  meta?: {
+  },
+  position?: number
+}[] | string
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id?: string,
+  username?: string,
+  uri?: string
+}
+```
+</Accordion>
+
+<Accordion title="language full type">
+
+```ts
+{
+  code?: string,
+  dir?: string | null,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### deleteUrl
+
+`videos.deleteUrl`
+
+Delete a video URL
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.deleteUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `url_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | No | — |
+
+
+
+---
+
+### fetchSubtitlesData
+
+`videos.fetchSubtitlesData`
+
+Fetch subtitles for a video language
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.fetchSubtitlesData({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `language_code` | `string` | Yes | — |
+| `format` | `string` | No | Subtitle format (default json) |
+| `sub_format` | `string` | No | Alias for format |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version_number` | `number` | No | — |
+| `sub_format` | `string` | No | — |
+| `subtitles` | `object` | No | — |
+| `author` | `object` | No | — |
+| `created` | `string` | No | — |
+| `description` | `string` | No | — |
+| `language` | `object` | No | — |
+| `metadata` | `object` | No | — |
+| `notes_uri` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+| `site_uri` | `string` | No | — |
+| `title` | `string` | No | — |
+| `video_description` | `string` | No | — |
+| `video_title` | `string` | No | — |
+| `actions_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="subtitles full type">
+
+```ts
+{
+  start?: number,
+  end?: number,
+  text?: string,
+  meta?: {
+  },
+  position?: number
+}[] | string
+```
+</Accordion>
+
+<Accordion title="author full type">
+
+```ts
+{
+  id?: string,
+  username?: string,
+  uri?: string
+}
+```
+</Accordion>
+
+<Accordion title="language full type">
+
+```ts
+{
+  code?: string,
+  dir?: string | null,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getSubtitleLanguageDetails
+
+`videos.getSubtitleLanguageDetails`
+
+Get details for a subtitle language
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.getSubtitleLanguageDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `language_code` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | No | — |
+| `language_code` | `string` | No | — |
+| `is_primary_audio_language` | `boolean` | No | — |
+| `is_rtl` | `boolean` | No | — |
+| `soft_limit_cpl` | `number` | No | — |
+| `soft_limit_cps` | `number` | No | — |
+| `soft_limit_lines` | `number` | No | — |
+| `soft_limit_max_duration` | `number` | No | — |
+| `soft_limit_min_duration` | `number` | No | — |
+| `published` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `subtitle_count` | `number` | No | — |
+| `subtitles_complete` | `boolean` | No | — |
+| `versions` | `object[]` | No | — |
+| `subtitles_uri` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="versions full type">
+
+```ts
+{
+  author?: {
+    id?: string,
+    username?: string,
+    uri?: string
+  } | null,
+  published?: boolean,
+  version_number?: number,
+  created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUrl
+
+`videos.getUrl`
+
+Get a single video URL by id
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.getUrl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `url_id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | No | — |
+| `url` | `string` | No | — |
+| `primary` | `boolean` | No | — |
+| `original` | `boolean` | No | — |
+| `id` | `number` | No | — |
+| `resource_uri` | `string` | No | — |
+| `videoid` | `string` | No | — |
+| `type` | `string` | No | — |
+
+
+
+---
+
+### getUrlDetails
+
+`videos.getUrlDetails`
+
+Look up a video by its public URL
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.getUrlDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | Public video URL to look up |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  id: string,
+  video_type?: string | null,
+  primary_audio_language_code?: string | null,
+  title?: string | null,
+  description?: string | null,
+  duration?: number | null,
+  thumbnail?: string | null,
+  created?: string | null,
+  team?: string | null,
+  project?: string | null,
+  all_urls?: string[],
+  metadata?: {
+  },
+  languages?: {
+    code?: string,
+    name?: string,
+    published?: boolean,
+    dir?: string | null,
+    subtitles_uri?: string,
+    resource_uri?: string
+  }[],
+  activity_uri?: string,
+  urls_uri?: string,
+  subtitle_languages_uri?: string,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`videos.list`
+
+List videos with optional filters and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort` | `string` | No | List ordering (mapped to order_by) |
+| `team` | `string` | No | — |
+| `limit` | `number` | No | Page size |
+| `owner` | `string` | No | — |
+| `offset` | `number` | No | Result offset |
+| `archive` | `string \| boolean` | No | — |
+| `project` | `string` | No | — |
+| `language` | `string` | No | — |
+| `video_id` | `string` | No | — |
+| `video_url` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  id: string,
+  video_type?: string | null,
+  primary_audio_language_code?: string | null,
+  title?: string | null,
+  description?: string | null,
+  duration?: number | null,
+  thumbnail?: string | null,
+  created?: string | null,
+  team?: string | null,
+  project?: string | null,
+  all_urls?: string[],
+  metadata?: {
+  },
+  languages?: {
+    code?: string,
+    name?: string,
+    published?: boolean,
+    dir?: string | null,
+    subtitles_uri?: string,
+    resource_uri?: string
+  }[],
+  activity_uri?: string,
+  urls_uri?: string,
+  subtitle_languages_uri?: string,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listActivity
+
+`videos.listActivity`
+
+List activity for a video
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.listActivity({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  id?: number | string,
+  type?: number | string,
+  type_name?: string,
+  created?: string | null,
+  video?: string | null,
+  video_uri?: string | null,
+  language?: string | null,
+  language_url?: string | null,
+  user?: {
+    id?: string,
+    username?: string,
+    uri?: string
+  } | string | null,
+  comment?: string | null,
+  new_video_title?: string | null,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSubtitleActions
+
+`videos.listSubtitleActions`
+
+List available subtitle actions
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.listSubtitleActions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `language_code` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  action: string,
+  label?: string,
+  complete?: boolean | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listSubtitleLanguages
+
+`videos.listSubtitleLanguages`
+
+List subtitle languages for a video
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.listSubtitleLanguages({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  created?: string | null,
+  language_code?: string,
+  is_primary_audio_language?: boolean,
+  is_rtl?: boolean,
+  soft_limit_cpl?: number | null,
+  soft_limit_cps?: number | null,
+  soft_limit_lines?: number | null,
+  soft_limit_max_duration?: number | null,
+  soft_limit_min_duration?: number | null,
+  published?: boolean,
+  name?: string | null,
+  title?: string | null,
+  description?: string | null,
+  metadata?: {
+  },
+  subtitle_count?: number,
+  subtitles_complete?: boolean,
+  versions?: {
+    author?: {
+      id?: string,
+      username?: string,
+      uri?: string
+    } | null,
+    published?: boolean,
+    version_number?: number,
+    created?: string | null
+  }[],
+  subtitles_uri?: string,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listSubtitleNotes
+
+`videos.listSubtitleNotes`
+
+List editor notes on a subtitle set
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.listSubtitleNotes({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `language_code` | `string` | Yes | — |
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  body?: string,
+  created?: string | null,
+  user?: {
+    id?: string,
+    username?: string,
+    uri?: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listUrls
+
+`videos.listUrls`
+
+List URLs associated with a video
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.listUrls({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `limit` | `number` | No | Page size |
+| `offset` | `number` | No | Result offset |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `meta` | `object` | No | — |
+| `objects` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  previous?: string | null,
+  next?: string | null,
+  offset?: number,
+  limit?: number,
+  total_count?: number
+}
+```
+</Accordion>
+
+<Accordion title="objects full type">
+
+```ts
+{
+  created?: string | null,
+  url?: string,
+  primary?: boolean,
+  original?: boolean,
+  id?: number,
+  resource_uri?: string,
+  videoid?: string | null,
+  type?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### makeUrlPrimary
+
+`videos.makeUrlPrimary`
+
+Set a video URL as primary
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.makeUrlPrimary({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `url_id` | `string \| number` | Yes | — |
+| `primary` | `boolean` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | No | — |
+| `url` | `string` | No | — |
+| `primary` | `boolean` | No | — |
+| `original` | `boolean` | No | — |
+| `id` | `number` | No | — |
+| `resource_uri` | `string` | No | — |
+| `videoid` | `string` | No | — |
+| `type` | `string` | No | — |
+
+
+
+---
+
+### performSubtitleAction
+
+`videos.performSubtitleAction`
+
+Perform a subtitle action (publish, save-draft, …)
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.performSubtitleAction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `language_code` | `string` | Yes | — |
+| `action` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `ok` | `true` | No | — |
+
+
+
+---
+
+### update
+
+`videos.update`
+
+Update video metadata
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `team` | `string` | No | — |
+| `project` | `string` | No | — |
+| `thumbnail` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `primary_audio_language_code` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `video_type` | `string` | No | — |
+| `primary_audio_language_code` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `thumbnail` | `string` | No | — |
+| `created` | `string` | No | — |
+| `team` | `string` | No | — |
+| `project` | `string` | No | — |
+| `all_urls` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `languages` | `object[]` | No | — |
+| `activity_uri` | `string` | No | — |
+| `urls_uri` | `string` | No | — |
+| `subtitle_languages_uri` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="languages full type">
+
+```ts
+{
+  code?: string,
+  name?: string,
+  published?: boolean,
+  dir?: string | null,
+  subtitles_uri?: string,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### updateSubtitleLanguage
+
+`videos.updateSubtitleLanguage`
+
+Update subtitle language settings
+
+**Risk:** `write`
+
+```ts
+await corsair.amara.api.videos.updateSubtitleLanguage({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+| `language_code` | `string` | Yes | — |
+| `is_primary_audio_language` | `boolean` | No | — |
+| `soft_limit_cpl` | `number` | No | — |
+| `soft_limit_cps` | `number` | No | — |
+| `soft_limit_lines` | `number` | No | — |
+| `soft_limit_max_duration` | `number` | No | — |
+| `soft_limit_min_duration` | `number` | No | — |
+| `subtitles_complete` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `created` | `string` | No | — |
+| `language_code` | `string` | No | — |
+| `is_primary_audio_language` | `boolean` | No | — |
+| `is_rtl` | `boolean` | No | — |
+| `soft_limit_cpl` | `number` | No | — |
+| `soft_limit_cps` | `number` | No | — |
+| `soft_limit_lines` | `number` | No | — |
+| `soft_limit_max_duration` | `number` | No | — |
+| `soft_limit_min_duration` | `number` | No | — |
+| `published` | `boolean` | No | — |
+| `name` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `metadata` | `object` | No | — |
+| `subtitle_count` | `number` | No | — |
+| `subtitles_complete` | `boolean` | No | — |
+| `versions` | `object[]` | No | — |
+| `subtitles_uri` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="versions full type">
+
+```ts
+{
+  author?: {
+    id?: string,
+    username?: string,
+    uri?: string
+  } | null,
+  published?: boolean,
+  version_number?: number,
+  created?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### viewDetails
+
+`videos.viewDetails`
+
+Get details for a single video by id
+
+**Risk:** `read`
+
+```ts
+await corsair.amara.api.videos.viewDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `video_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `video_type` | `string` | No | — |
+| `primary_audio_language_code` | `string` | No | — |
+| `title` | `string` | No | — |
+| `description` | `string` | No | — |
+| `duration` | `number` | No | — |
+| `thumbnail` | `string` | No | — |
+| `created` | `string` | No | — |
+| `team` | `string` | No | — |
+| `project` | `string` | No | — |
+| `all_urls` | `string[]` | No | — |
+| `metadata` | `object` | No | — |
+| `languages` | `object[]` | No | — |
+| `activity_uri` | `string` | No | — |
+| `urls_uri` | `string` | No | — |
+| `subtitle_languages_uri` | `string` | No | — |
+| `resource_uri` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="metadata full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="languages full type">
+
+```ts
+{
+  code?: string,
+  name?: string,
+  published?: boolean,
+  dir?: string | null,
+  subtitles_uri?: string,
+  resource_uri?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

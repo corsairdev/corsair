@@ -1,0 +1,154 @@
+---
+title: Overview
+description: "Canvas plugin for Corsair"
+---
+
+Use **Canvas** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 209 typed API operations
+- 5 synced entities (`accounts`, `assignments`, `courses`, `enrollments`, `users`) for fast `.search()` / `.list()`
+- 6 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/canvas
+```
+```bash yarn
+yarn add corsair @corsair-dev/canvas
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/canvas
+```
+```bash bun
+bun add corsair @corsair-dev/canvas
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { canvas } from '@corsair-dev/canvas';
+
+export const corsair = createCorsair({
+	plugins: [
+		canvas(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+canvas()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+<Tab title="OAuth 2.0">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Canvas OAuth app.
+
+```ts
+canvas({
+	authType: 'oauth_2',
+})
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'canvas',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`accounts.getAccountHelpLinks`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.accounts.getAccountHelpLinks({});
+```
+
+
+**`accounts.closeNotificationForUser`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.canvas.api.accounts.closeNotificationForUser({});
+```
+
+
+See the full list on the [API](/plugins/canvas/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.canvas.db.<entity>.search()` and `.list()`: `accounts`, `assignments`, `courses`, `enrollments`, `users`.
+
+See [Database](/plugins/canvas/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **6** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/canvas/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/canvas/api">
+    Every `canvas.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/canvas/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/canvas/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

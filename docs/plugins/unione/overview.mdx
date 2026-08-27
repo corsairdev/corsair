@@ -1,0 +1,141 @@
+---
+title: Overview
+description: "Unione plugin for Corsair"
+---
+
+Use **UniOne** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
+
+**What you get:**
+
+- 30 typed API operations
+- 7 synced entities (`account`, `domains`, `eventDumps`, `suppressions`, `tags`, `templates`, and 1 more) for fast `.search()` / `.list()`
+- 2 incoming webhook event types
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/unione
+```
+```bash yarn
+yarn add corsair @corsair-dev/unione
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/unione
+```
+```bash bun
+bun add corsair @corsair-dev/unione
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { unione } from '@corsair-dev/unione';
+
+export const corsair = createCorsair({
+	plugins: [
+		unione(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+unione()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'unione',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`emailValidation.batch`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.emailValidation.batch({});
+```
+
+
+**`domain.delete`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.unione.api.domain.delete({});
+```
+
+
+See the full list on the [API](/plugins/unione/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.unione.db.<entity>.search()` and `.list()`: `account`, `domains`, `eventDumps`, `suppressions`, `tags`, `templates`, `webhooks`.
+
+See [Database](/plugins/unione/database) for filters and operators.
+
+## Webhooks
+
+This plugin registers **2** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+
+See [Webhooks](/plugins/unione/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/unione/api">
+    Every `unione.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/unione/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Webhooks" href="/plugins/unione/webhooks">
+    Event paths, payloads, and `webhookHooks` examples.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

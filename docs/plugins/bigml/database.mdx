@@ -1,0 +1,1466 @@
+---
+title: Database
+description: "Bigml local sync: searchable entities, `.search()` filters, and operators."
+---
+
+The Bigml plugin syncs data locally. Use `corsair.bigml.db.<entity>.search({ data, limit?, offset? })` with the filters listed per entity.
+
+<Info>
+**New to Corsair?** See [database operations](/concepts/database), [data synchronization](/concepts/integrations), and [multi-tenancy](/concepts/multi-tenancy).
+</Info>
+
+## Anomalies
+
+Path: `bigml.db.anomalies.search`
+
+```ts
+const rows = await corsair.bigml.db.anomalies.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Anomaly Scores
+
+Path: `bigml.db.anomalyScores.search`
+
+```ts
+const rows = await corsair.bigml.db.anomalyScores.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Associations
+
+Path: `bigml.db.associations.search`
+
+```ts
+const rows = await corsair.bigml.db.associations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Association Sets
+
+Path: `bigml.db.associationSets.search`
+
+```ts
+const rows = await corsair.bigml.db.associationSets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Batch Anomaly Scores
+
+Path: `bigml.db.batchAnomalyScores.search`
+
+```ts
+const rows = await corsair.bigml.db.batchAnomalyScores.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Batch Centroids
+
+Path: `bigml.db.batchCentroids.search`
+
+```ts
+const rows = await corsair.bigml.db.batchCentroids.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Batch Predictions
+
+Path: `bigml.db.batchPredictions.search`
+
+```ts
+const rows = await corsair.bigml.db.batchPredictions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Batch Projections
+
+Path: `bigml.db.batchProjections.search`
+
+```ts
+const rows = await corsair.bigml.db.batchProjections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Batch Topic Distributions
+
+Path: `bigml.db.batchTopicDistributions.search`
+
+```ts
+const rows = await corsair.bigml.db.batchTopicDistributions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Centroids
+
+Path: `bigml.db.centroids.search`
+
+```ts
+const rows = await corsair.bigml.db.centroids.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Clusters
+
+Path: `bigml.db.clusters.search`
+
+```ts
+const rows = await corsair.bigml.db.clusters.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Composites
+
+Path: `bigml.db.composites.search`
+
+```ts
+const rows = await corsair.bigml.db.composites.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Configurations
+
+Path: `bigml.db.configurations.search`
+
+```ts
+const rows = await corsair.bigml.db.configurations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Correlations
+
+Path: `bigml.db.correlations.search`
+
+```ts
+const rows = await corsair.bigml.db.correlations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Datasets
+
+Path: `bigml.db.datasets.search`
+
+```ts
+const rows = await corsair.bigml.db.datasets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Deepnets
+
+Path: `bigml.db.deepnets.search`
+
+```ts
+const rows = await corsair.bigml.db.deepnets.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Ensembles
+
+Path: `bigml.db.ensembles.search`
+
+```ts
+const rows = await corsair.bigml.db.ensembles.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Evaluations
+
+Path: `bigml.db.evaluations.search`
+
+```ts
+const rows = await corsair.bigml.db.evaluations.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Executions
+
+Path: `bigml.db.executions.search`
+
+```ts
+const rows = await corsair.bigml.db.executions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Forecasts
+
+Path: `bigml.db.forecasts.search`
+
+```ts
+const rows = await corsair.bigml.db.forecasts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Fusions
+
+Path: `bigml.db.fusions.search`
+
+```ts
+const rows = await corsair.bigml.db.fusions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Libraries
+
+Path: `bigml.db.libraries.search`
+
+```ts
+const rows = await corsair.bigml.db.libraries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Linear Regressions
+
+Path: `bigml.db.linearRegressions.search`
+
+```ts
+const rows = await corsair.bigml.db.linearRegressions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Logistic Regressions
+
+Path: `bigml.db.logisticRegressions.search`
+
+```ts
+const rows = await corsair.bigml.db.logisticRegressions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Models
+
+Path: `bigml.db.models.search`
+
+```ts
+const rows = await corsair.bigml.db.models.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Optimls
+
+Path: `bigml.db.optimls.search`
+
+```ts
+const rows = await corsair.bigml.db.optimls.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Pcas
+
+Path: `bigml.db.pcas.search`
+
+```ts
+const rows = await corsair.bigml.db.pcas.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Predictions
+
+Path: `bigml.db.predictions.search`
+
+```ts
+const rows = await corsair.bigml.db.predictions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projections
+
+Path: `bigml.db.projections.search`
+
+```ts
+const rows = await corsair.bigml.db.projections.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Projects
+
+Path: `bigml.db.projects.search`
+
+```ts
+const rows = await corsair.bigml.db.projects.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `configuration` | `string` | equals, contains, startsWith, endsWith, in |
+| `configuration_status` | `boolean` | equals |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Samples
+
+Path: `bigml.db.samples.search`
+
+```ts
+const rows = await corsair.bigml.db.samples.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Scripts
+
+Path: `bigml.db.scripts.search`
+
+```ts
+const rows = await corsair.bigml.db.scripts.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Sources
+
+Path: `bigml.db.sources.search`
+
+```ts
+const rows = await corsair.bigml.db.sources.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `charset` | `string` | equals, contains, startsWith, endsWith, in |
+| `closed` | `boolean` | equals |
+| `configuration` | `string` | equals, contains, startsWith, endsWith, in |
+| `configuration_status` | `boolean` | equals |
+| `content_type` | `string` | equals, contains, startsWith, endsWith, in |
+| `disable_autolabel` | `boolean` | equals |
+| `disable_datetime` | `boolean` | equals |
+| `file_name` | `string` | equals, contains, startsWith, endsWith, in |
+| `format` | `string` | equals, contains, startsWith, endsWith, in |
+| `height` | `number` | equals, gt, gte, lt, lte, in |
+| `image_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `md5` | `string` | equals, contains, startsWith, endsWith, in |
+| `number_of_anomalies` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_anomalyscores` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_associations` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_associationsets` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_centroids` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_clusters` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_correlations` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_datasets` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_deepnets` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_ensembles` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_forecasts` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_linearregressions` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_logisticregressions` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_models` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_optimls` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_pca` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_predictions` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_projections` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_statisticaltests` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_timeseries` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_topicdistributions` | `number` | equals, gt, gte, lt, lte, in |
+| `number_of_topicmodels` | `number` | equals, gt, gte, lt, lte, in |
+| `origin` | `string` | equals, contains, startsWith, endsWith, in |
+| `original_height` | `number` | equals, gt, gte, lt, lte, in |
+| `original_format` | `string` | equals, contains, startsWith, endsWith, in |
+| `original_size` | `number` | equals, gt, gte, lt, lte, in |
+| `original_width` | `number` | equals, gt, gte, lt, lte, in |
+| `remote` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared_clonable` | `boolean` | equals |
+| `shared_hash` | `string` | equals, contains, startsWith, endsWith, in |
+| `sharing_key` | `string` | equals, contains, startsWith, endsWith, in |
+| `size` | `number` | equals, gt, gte, lt, lte, in |
+| `source_csv` | `string` | equals, contains, startsWith, endsWith, in |
+| `sources_count` | `number` | equals, gt, gte, lt, lte, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+| `width` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Statistical Tests
+
+Path: `bigml.db.statisticalTests.search`
+
+```ts
+const rows = await corsair.bigml.db.statisticalTests.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Time Series
+
+Path: `bigml.db.timeSeries.search`
+
+```ts
+const rows = await corsair.bigml.db.timeSeries.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Topic Distributions
+
+Path: `bigml.db.topicDistributions.search`
+
+```ts
+const rows = await corsair.bigml.db.topicDistributions.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+
+## Topic Models
+
+Path: `bigml.db.topicModels.search`
+
+```ts
+const rows = await corsair.bigml.db.topicModels.search({
+    data: { /* filters below */ },
+    limit: 100,
+    offset: 0,
+});
+```
+
+### Searchable filters
+
+| Field | Type | Operators |
+|-------|------|-----------|
+| `entity_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `category` | `number` | equals, gt, gte, lt, lte, in |
+| `code` | `number` | equals, gt, gte, lt, lte, in |
+| `created` | `string` | equals, contains, startsWith, endsWith, in |
+| `creator` | `string` | equals, contains, startsWith, endsWith, in |
+| `description` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_id` | `string` | equals, contains, startsWith, endsWith, in |
+| `execution_status` | `boolean` | equals |
+| `name` | `string` | equals, contains, startsWith, endsWith, in |
+| `name_options` | `string` | equals, contains, startsWith, endsWith, in |
+| `private` | `boolean` | equals |
+| `project` | `string` | equals, contains, startsWith, endsWith, in |
+| `resource` | `string` | equals, contains, startsWith, endsWith, in |
+| `shared` | `boolean` | equals |
+| `subscription` | `boolean` | equals |
+| `updated` | `string` | equals, contains, startsWith, endsWith, in |
+| `type` | `number` | equals, gt, gte, lt, lte, in |
+
+_Every `.search()` also accepts `limit` and `offset` for pagination. `.list()` is available on the same path without the `.search` suffix in code — see [database operations](/concepts/database)._
+
+---
+

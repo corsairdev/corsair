@@ -1,0 +1,717 @@
+---
+title: API
+description: "API reference for Securitytrails: every `securitytrails.api.*` operation with input and output types."
+---
+
+Every `securitytrails.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### ping
+
+`account.ping`
+
+Verify the configured SecurityTrails API key is accepted and the API is reachable.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.account.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### usage
+
+`account.usage`
+
+Return the current and allowed monthly API usage for the account.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.account.usage({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `current_monthly_usage` | `number` | No | — |
+| `allowed_monthly_usage` | `number` | No | — |
+
+
+
+---
+
+## Company
+
+### associatedIps
+
+`company.associatedIps`
+
+List the CIDR blocks associated with a company domain. Paginated.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.company.associatedIps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `records` | `object[]` | No | — |
+| `query` | `string` | No | — |
+| `record_count` | `number` | No | — |
+| `domain` | `string` | No | — |
+| `page` | `number` | No | — |
+| `page_size` | `number` | No | — |
+| `redir` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  cidr?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Domain
+
+### get
+
+`domain.get`
+
+Get current DNS records (A, AAAA, MX, NS, SOA, TXT) and co-occurrence statistics for a hostname.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.domain.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | No | — |
+| `alexa_rank` | `number` | No | — |
+| `current_dns` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="current_dns full type">
+
+```ts
+{
+  a?: {
+    first_seen?: string | null,
+    values?: {
+      ip?: string,
+      ip_count?: number
+    }[]
+  },
+  aaaa?: {
+    first_seen?: string | null,
+    values?: {
+      ip?: string,
+      ip_count?: number
+    }[]
+  },
+  mx?: {
+    first_seen?: string | null,
+    values?: {
+      priority?: number,
+      host?: string,
+      host_count?: number
+    }[]
+  },
+  ns?: {
+    first_seen?: string | null,
+    values?: {
+      nameserver?: string,
+      nameserver_count?: number
+    }[]
+  },
+  soa?: {
+    first_seen?: string | null,
+    values?: {
+      ttl?: number,
+      email?: string,
+      email_count?: number
+    }[]
+  },
+  txt?: {
+    first_seen?: string | null,
+    values?: {
+      value?: string
+    }[]
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ssl
+
+`domain.ssl`
+
+List current and historical SSL/TLS certificates for a hostname, optionally including subdomains. Paginated.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.domain.ssl({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `hostname` | `string` | Yes | — |
+| `include_subdomains` | `boolean` | No | — |
+| `status` | `valid \| all \| expired` | No | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | No | — |
+| `meta` | `object` | No | — |
+| `record_count` | `number` | No | — |
+| `records` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="meta full type">
+
+```ts
+{
+  max_page?: number,
+  page?: number,
+  total_pages?: number,
+  query?: {
+  }
+}
+```
+</Accordion>
+
+<Accordion title="records full type">
+
+```ts
+{
+  dns_names?: string[],
+  fingerprints?: {
+    sha1?: string,
+    sha256?: string
+  },
+  issuer?: {
+    common_name?: string,
+    country?: string[],
+    organization?: string[]
+  },
+  subject?: {
+  },
+  not_after?: number | null,
+  not_before?: number | null,
+  serial_number?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Ips
+
+### search
+
+`ips.search`
+
+Search the IP dataset with a DSL query, returning matching addresses, PTR records and open ports. Paginated.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.ips.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | No | — |
+| `records` | `object[]` | No | — |
+| `record_count` | `number` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="records full type">
+
+```ts
+{
+  ip?: string,
+  ptr?: string | null,
+  ports?: number[]
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  total_pages?: number,
+  query?: string,
+  page?: number,
+  max_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### stats
+
+`ips.stats`
+
+Return aggregate open-port and PTR-pattern statistics for a DSL query over the IP dataset.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.ips.stats({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `endpoint` | `string` | No | — |
+| `top_ptr_patterns` | `object[]` | No | — |
+| `ports` | `object[]` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="top_ptr_patterns full type">
+
+```ts
+{
+  key?: string,
+  count?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="ports full type">
+
+```ts
+{
+  key?: number,
+  count?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### bulkStaticAssetRules
+
+`projects.bulkStaticAssetRules`
+
+Add or remove static asset rules for an ASI project, changing which assets are in the project's monitoring scope. Up to 1000 rules per request.
+
+**Risk:** `write`
+
+```ts
+await corsair.securitytrails.api.projects.bulkStaticAssetRules({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `project_id` | `string` | Yes | — |
+| `add_rules` | `object[]` | No | — |
+| `remove_rules` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="add_rules full type">
+
+```ts
+{
+  asset: string,
+  membership_type: include | exclude,
+  static_type: ipv4 | hostname | wildcard
+}[]
+```
+</Accordion>
+
+<Accordion title="remove_rules full type">
+
+```ts
+{
+  asset: string,
+  membership_type: include | exclude,
+  static_type: ipv4 | hostname | wildcard
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object` | No | — |
+| `meta` | `object` | No | — |
+| `complete` | `boolean` | No | — |
+| `task_ids` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  added?: {
+    asset: string,
+    membership_type: include | exclude,
+    static_type: ipv4 | hostname | wildcard
+  }[],
+  removed?: {
+    asset: string,
+    membership_type: include | exclude,
+    static_type: ipv4 | hostname | wildcard
+  }[],
+  errors?: {
+    rule?: {
+      asset: string,
+      membership_type: include | exclude,
+      static_type: ipv4 | hostname | wildcard
+    } | null,
+    failed?: boolean | null,
+    messages?: string[] | null
+  }[]
+}
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  params?: {
+  } | null,
+  counts?: {
+    total?: number | null,
+    returned?: number
+  } | null,
+  pagination?: {
+    next_cursor?: string | null,
+    limit?: number,
+    total?: number | null,
+    sort?: string[][] | null
+  } | null,
+  request_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List the Attack Surface Intelligence projects the API key can access.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `sort_direction` | `asc \| desc` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | No | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  title: string,
+  scanning_enabled?: boolean | null,
+  last_scanned_at?: string | null,
+  inserted_at?: string | null,
+  max_exposure_score?: number | null
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  params?: {
+  } | null,
+  counts?: {
+    total?: number | null,
+    returned?: number
+  } | null,
+  pagination?: {
+    next_cursor?: string | null,
+    limit?: number,
+    total?: number | null,
+    sort?: string[][] | null
+  } | null,
+  request_id?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Scroll
+
+### get
+
+`scroll.get`
+
+Fetch the next page of a DSL search using a scroll cursor from a previous response.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.scroll.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `scroll_id` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Sql
+
+### query
+
+`sql.query`
+
+Run a SQL-like query against the hosts or ips tables. Returns up to 100 records plus a scroll cursor.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.sql.query({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `page` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `id` | `string` | No | — |
+| `total` | `object` | No | — |
+| `records` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  value?: string | number,
+  relation?: string
+}
+```
+</Accordion>
+
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scroll
+
+`sql.scroll`
+
+Fetch the next 100 records for an open SQL API scroll cursor.
+
+**Risk:** `read`
+
+```ts
+await corsair.securitytrails.api.sql.scroll({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `id` | `string` | No | — |
+| `total` | `object` | No | — |
+| `records` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="total full type">
+
+```ts
+{
+  value?: string | number,
+  relation?: string
+}
+```
+</Accordion>
+
+<Accordion title="records full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

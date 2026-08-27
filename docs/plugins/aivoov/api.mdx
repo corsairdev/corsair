@@ -1,0 +1,100 @@
+---
+title: API
+description: "API reference for AiVOOV text-to-speech: every `aivoov.api.*` operation with input and output types."
+---
+
+Every `aivoov.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Audio
+
+### create
+
+`audio.create`
+
+Synthesise speech from one or more voice and text pairs, returning Base64-encoded audio. Consumes character credits
+
+**Risk:** `write`
+
+```ts
+await corsair.aivoov.api.audio.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `voice_id` | `string[]` | Yes | — |
+| `transcribe_text` | `string[]` | Yes | — |
+| `transcribe_ssml_pitch_rate` | `(number \| default)[]` | No | — |
+| `transcribe_ssml_spk_rate` | `(number \| default)[]` | No | — |
+| `transcribe_ssml_volume` | `(number \| default)[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `audio` | `string` | Yes | — |
+
+
+
+---
+
+## Voices
+
+### list
+
+`voices.list`
+
+List available text-to-speech voices, optionally filtered by BCP-47 language code. Limited to 20 calls per day, so results are mirrored to the voices entity
+
+**Risk:** `read`
+
+```ts
+await corsair.aivoov.api.voices.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `language_code` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `boolean` | Yes | — |
+| `message` | `string` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  voice_id: string,
+  name: string,
+  value?: string,
+  gender?: string,
+  language_code?: string,
+  language_name?: string,
+  label?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

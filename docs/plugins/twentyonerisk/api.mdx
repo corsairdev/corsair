@@ -1,0 +1,64 @@
+---
+title: API
+description: "API reference for TwentyOneRisk: every `twentyonerisk.api.*` operation with input and output types."
+---
+
+Every `twentyonerisk.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Organizations
+
+### get
+
+`organizations.get`
+
+Retrieve organizations from the 21RISK OData API with optional filtering and pagination
+
+**Risk:** `read`
+
+```ts
+await corsair.twentyonerisk.api.organizations.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `$filter` | `string` | No | — |
+| `$top` | `number` | No | — |
+| `$skip` | `number` | No | — |
+| `$select` | `string` | No | — |
+| `$orderby` | `string` | No | — |
+| `$count` | `boolean \| true \| false` | No | — |
+| `$expand` | `string` | No | — |
+| `$skiptoken` | `string` | No | — |
+| `maxPageSizeInMb` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `value` | `object[]` | Yes | — |
+| `@odata.count` | `number` | No | — |
+| `@odata.nextLink` | `string` | No | — |
+| `@odata.context` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="value full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

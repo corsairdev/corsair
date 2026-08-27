@@ -3,137 +3,131 @@ title: Overview
 description: "Twitter plugin for Corsair"
 ---
 
-Use **Twitter** through Corsair: one client, typed API calls, optional local DB sync.
+Use **Twitter** through Corsair: one client, typed API calls, local DB sync.
 
 **What you get:**
 
 - 2 typed API operations
-- 1 database entity synced for fast `.search()` / `.list()` queries
+- 1 synced entity (`tweets`) for fast `.search()` / `.list()`
 
 ## Setup
 
 <Steps>
 
 <Step title="Install">
-```bash
-pnpm install @corsair-dev/twitter
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/twitter
 ```
+```bash yarn
+yarn add corsair @corsair-dev/twitter
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/twitter
+```
+```bash bun
+bun add corsair @corsair-dev/twitter
+```
+</CodeGroup>
 
 </Step>
 
 <Step title="Add the plugin">
-<Tabs>
-<Tab title="Solo">
 ```ts corsair.ts
+import Database from 'better-sqlite3';
 import { createCorsair } from 'corsair';
 import { twitter } from '@corsair-dev/twitter';
 
 export const corsair = createCorsair({
-	// ... other config options,
-	multiTenancy: false,
-    plugins: [twitter()],
-});
-```
-</Tab>
-<Tab title="Multi-Tenant">
-```ts corsair.ts
-import { createCorsair } from 'corsair';
-import { twitter } from '@corsair-dev/twitter';
-
-export const corsair = createCorsair({
-	// ... other config options,
-    multiTenancy: true,
-    plugins: [twitter()],
+	plugins: [
+		twitter(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
 });
 ```
 
-See [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
-
-</Tab>
-</Tabs>
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
 
 </Step>
 
-<Step title="Get credentials">
-Follow [Get Credentials](/plugins/twitter/get-credentials) if you need help getting keys.
-
-</Step>
-
-<Step title="Store credentials">
+<Step title="Choose authentication">
 <Tabs>
-<Tab title="Solo">
-```bash
-pnpm corsair setup --plugin=twitter
-```
+<Tab title="OAuth 2.0 (Recommended)">
 
-Use the key names documented in [Get Credentials](/plugins/twitter/get-credentials) (for example `api_key=`, `bot_token=`, or OAuth client fields).
-</Tab>
-<Tab title="Multi-Tenant">
-```bash
-pnpm corsair setup --plugin=twitter --tenant=<tenantId>
-```
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Twitter OAuth app.
 
-Store per-tenant secrets after you create the tenant record. See [Multi-tenancy](/concepts/multi-tenancy).
-</Tab>
-</Tabs>
+Provider walkthrough: [Get Credentials](/plugins/twitter/get-credentials).
 
-</Step>
-
-</Steps>
-
-## Authentication
-
-Each tab shows how to register the plugin for that authentication method. The default `authType` from the plugin does not need to appear in the factory call.
-
-<Tabs>
-<Tab title="OAuth 2.0 (Default)">
-
-```ts corsair.ts
+```ts
 twitter()
 ```
-
-Store credentials with `pnpm corsair setup --plugin=twitter` (see [Get Credentials](/plugins/twitter/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
 </Tab>
 </Tabs>
 
+</Step>
 
-## Query synced data
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
 
-Synced entities support `corsair.twitter.db.<entity>.search()` and `.list()`. See [Database](/plugins/twitter/database) for filters and operators.
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'twitter',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
 
+</Step>
+
+</Steps>
 
 ## Example API calls
 
-**Read-style (read):** `—`
+**Read**
 
-_No read-style endpoint inferred; pick any operation from the reference below._
+_No read-style endpoint inferred; pick any operation from the [API](/plugins/twitter/api) reference._
 
 
-**Write-style (write):** `tweets.create`
+**`tweets.create`**
 
 ```ts
-await corsair.twitter.api.tweets.create({});
+const tenant = corsair.withTenant('acme');
+await tenant.twitter.api.tweets.create({});
 ```
 
 
-See the full list on the [API](/plugins/twitter/api) page. Use `pnpm corsair list --plugin=twitter` and `pnpm corsair schema <path>` locally to inspect schemas.
+See the full list on the [API](/plugins/twitter/api) page.
 
----
+## Query synced data
 
-## Hooks
+Synced entities support `tenant.twitter.db.<entity>.search()` and `.list()`: `tweets`.
 
-Use `hooks` on API calls and `webhookHooks` on incoming events to add logging, approvals, or side effects. See [Hooks](/concepts/hooks) and [Webhooks](/concepts/webhooks) for routing and payload patterns.
+See [Database](/plugins/twitter/database) for filters and operators.
 
----
+## What's next
 
-## Reference
-
-| Topic | Link |
-|-------|------|
-| API | [API](/plugins/twitter/api) |
-| Database | [Database](/plugins/twitter/database) |
-| Credentials | [Get credentials](/plugins/twitter/get-credentials) |
-
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/twitter/api">
+    Every `twitter.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/twitter/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+  <Card title="Get credentials" href="/plugins/twitter/get-credentials">
+    Provider-console walkthrough for keys and OAuth apps.
+  </Card>
+</CardGroup>

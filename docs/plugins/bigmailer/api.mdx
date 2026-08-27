@@ -1,0 +1,3159 @@
+---
+title: API
+description: "API reference for Bigmailer: every `bigmailer.api.*` operation with input and output types."
+---
+
+Every `bigmailer.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Auth
+
+### me
+
+`auth.me`
+
+Check the authenticated API key and account configuration
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.auth.me({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Brand Properties
+
+### create
+
+`brandProperties.create`
+
+Create a brand property
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.brandProperties.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `mergeTagName` | `string` | No | — |
+| `isHtml` | `boolean` | No | — |
+| `stringValue` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `merge_tag_name` | `string` | No | — |
+| `is_html` | `boolean` | No | — |
+| `string_value` | `string` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`brandProperties.delete`
+
+Permanently delete a brand property
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bigmailer.api.brandProperties.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `brandPropertyId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`brandProperties.get`
+
+Retrieve a brand property
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.brandProperties.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `brandPropertyId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `merge_tag_name` | `string` | No | — |
+| `is_html` | `boolean` | No | — |
+| `string_value` | `string` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`brandProperties.list`
+
+List a brand's custom merge-tag properties
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.brandProperties.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  merge_tag_name?: string | null,
+  is_html?: boolean | null,
+  string_value?: string | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`brandProperties.update`
+
+Update a brand property
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.brandProperties.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `brandPropertyId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `mergeTagName` | `string` | No | — |
+| `isHtml` | `boolean` | No | — |
+| `stringValue` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `merge_tag_name` | `string` | No | — |
+| `is_html` | `boolean` | No | — |
+| `string_value` | `string` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+## Brands
+
+### create
+
+`brands.create`
+
+Create a brand
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.brands.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | — |
+| `fromName` | `string` | No | — |
+| `fromEmail` | `string` | No | — |
+| `bounceDangerPercent` | `number` | No | — |
+| `maxSoftBounces` | `number` | No | — |
+| `url` | `string` | No | — |
+| `unsubscribeText` | `string` | No | — |
+| `contactLimit` | `number` | No | — |
+| `logo` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `from_name` | `string` | No | — |
+| `from_email` | `string` | No | — |
+| `filter_soft_bounces` | `boolean` | No | — |
+| `max_soft_bounces` | `number` | No | — |
+| `bounce_danger_percent` | `number` | No | — |
+| `unsubscribe_text` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `contact_limit` | `number` | No | — |
+| `num_contacts` | `number` | No | — |
+| `engagement` | `object` | No | — |
+| `url` | `string` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="engagement full type">
+
+```ts
+{
+  num_opened?: number | null,
+  percent_opened?: number | null,
+  num_clicked?: number | null,
+  percent_clicked?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`brands.get`
+
+Retrieve a brand
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.brands.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `from_name` | `string` | No | — |
+| `from_email` | `string` | No | — |
+| `filter_soft_bounces` | `boolean` | No | — |
+| `max_soft_bounces` | `number` | No | — |
+| `bounce_danger_percent` | `number` | No | — |
+| `unsubscribe_text` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `contact_limit` | `number` | No | — |
+| `num_contacts` | `number` | No | — |
+| `engagement` | `object` | No | — |
+| `url` | `string` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="engagement full type">
+
+```ts
+{
+  num_opened?: number | null,
+  percent_opened?: number | null,
+  num_clicked?: number | null,
+  percent_clicked?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`brands.list`
+
+List brands in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.brands.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  from_name?: string | null,
+  from_email?: string | null,
+  filter_soft_bounces?: boolean | null,
+  max_soft_bounces?: number | null,
+  bounce_danger_percent?: number | null,
+  unsubscribe_text?: string | null,
+  connection_id?: string | null,
+  contact_limit?: number | null,
+  num_contacts?: number | null,
+  engagement?: {
+    num_opened?: number | null,
+    percent_opened?: number | null,
+    num_clicked?: number | null,
+    percent_clicked?: number | null
+  } | null,
+  url?: string | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`brands.update`
+
+Update a brand's settings
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.brands.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `fromName` | `string` | No | — |
+| `fromEmail` | `string` | No | — |
+| `bounceDangerPercent` | `number` | No | — |
+| `maxSoftBounces` | `number` | No | — |
+| `url` | `string` | No | — |
+| `unsubscribeText` | `string` | No | — |
+| `contactLimit` | `number` | No | — |
+| `logo` | `string` | No | — |
+| `connectionId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `from_name` | `string` | No | — |
+| `from_email` | `string` | No | — |
+| `filter_soft_bounces` | `boolean` | No | — |
+| `max_soft_bounces` | `number` | No | — |
+| `bounce_danger_percent` | `number` | No | — |
+| `unsubscribe_text` | `string` | No | — |
+| `connection_id` | `string` | No | — |
+| `contact_limit` | `number` | No | — |
+| `num_contacts` | `number` | No | — |
+| `engagement` | `object` | No | — |
+| `url` | `string` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="engagement full type">
+
+```ts
+{
+  num_opened?: number | null,
+  percent_opened?: number | null,
+  num_clicked?: number | null,
+  percent_clicked?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Bulk Campaigns
+
+### create
+
+`bulkCampaigns.create`
+
+Create a bulk campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.bulkCampaigns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipientName` | `string` | No | — |
+| `replyTo` | `object` | No | — |
+| `linkParams` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `autoText` | `boolean` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `templateId` | `string` | No | — |
+| `trackOpens` | `boolean` | No | — |
+| `trackClicks` | `boolean` | No | — |
+| `trackTextClicks` | `boolean` | No | — |
+| `segmentId` | `string` | No | — |
+| `messageTypeId` | `string` | No | — |
+| `listIds` | `string[]` | No | — |
+| `excludedListIds` | `string[]` | No | — |
+| `scheduledFor` | `number` | No | — |
+| `throttlingType` | `none \| burst` | No | — |
+| `throttlingAmount` | `number` | No | — |
+| `throttlingPeriod` | `900 \| 1800 \| 3600 \| 7200` | No | — |
+| `suppressionListId` | `string` | No | — |
+| `ready` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="replyTo full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipient_name` | `string` | No | — |
+| `reply_to` | `object` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `auto_text` | `boolean` | No | — |
+| `link_params` | `string` | No | — |
+| `track_opens` | `boolean` | No | — |
+| `track_clicks` | `boolean` | No | — |
+| `track_text_clicks` | `boolean` | No | — |
+| `segment_id` | `string` | No | — |
+| `message_type_id` | `string` | No | — |
+| `suppression_list_id` | `string` | No | — |
+| `list_ids` | `string[]` | No | — |
+| `excluded_list_ids` | `string[]` | No | — |
+| `scheduled_for` | `number` | No | — |
+| `throttling_type` | `string` | No | — |
+| `throttling_amount` | `number` | No | — |
+| `throttling_period` | `number` | No | — |
+| `num_sent` | `number` | No | — |
+| `num_rejected` | `number` | No | — |
+| `num_clicks` | `number` | No | — |
+| `num_total_clicks` | `number` | No | — |
+| `num_opens` | `number` | No | — |
+| `num_total_opens` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `num_unsubscribes` | `number` | No | — |
+| `started` | `number` | No | — |
+| `sent` | `number` | No | — |
+| `delayed_until` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="reply_to full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`bulkCampaigns.get`
+
+Retrieve a bulk campaign, including its send metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.bulkCampaigns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipient_name` | `string` | No | — |
+| `reply_to` | `object` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `auto_text` | `boolean` | No | — |
+| `link_params` | `string` | No | — |
+| `track_opens` | `boolean` | No | — |
+| `track_clicks` | `boolean` | No | — |
+| `track_text_clicks` | `boolean` | No | — |
+| `segment_id` | `string` | No | — |
+| `message_type_id` | `string` | No | — |
+| `suppression_list_id` | `string` | No | — |
+| `list_ids` | `string[]` | No | — |
+| `excluded_list_ids` | `string[]` | No | — |
+| `scheduled_for` | `number` | No | — |
+| `throttling_type` | `string` | No | — |
+| `throttling_amount` | `number` | No | — |
+| `throttling_period` | `number` | No | — |
+| `num_sent` | `number` | No | — |
+| `num_rejected` | `number` | No | — |
+| `num_clicks` | `number` | No | — |
+| `num_total_clicks` | `number` | No | — |
+| `num_opens` | `number` | No | — |
+| `num_total_opens` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `num_unsubscribes` | `number` | No | — |
+| `started` | `number` | No | — |
+| `sent` | `number` | No | — |
+| `delayed_until` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="reply_to full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`bulkCampaigns.list`
+
+List a brand's bulk (marketing) campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.bulkCampaigns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  status?: string | null,
+  subject?: string | null,
+  from?: {
+    email?: string | null,
+    name?: string | null
+  } | null,
+  recipient_name?: string | null,
+  reply_to?: {
+    email?: string | null,
+    name?: string | null
+  } | null,
+  html?: string | null,
+  text?: string | null,
+  preview?: string | null,
+  auto_text?: boolean | null,
+  link_params?: string | null,
+  track_opens?: boolean | null,
+  track_clicks?: boolean | null,
+  track_text_clicks?: boolean | null,
+  segment_id?: string | null,
+  message_type_id?: string | null,
+  suppression_list_id?: string | null,
+  list_ids?: string[] | null,
+  excluded_list_ids?: string[] | null,
+  scheduled_for?: number | null,
+  throttling_type?: string | null,
+  throttling_amount?: number | null,
+  throttling_period?: number | null,
+  num_sent?: number | null,
+  num_rejected?: number | null,
+  num_clicks?: number | null,
+  num_total_clicks?: number | null,
+  num_opens?: number | null,
+  num_total_opens?: number | null,
+  num_hard_bounces?: number | null,
+  num_soft_bounces?: number | null,
+  num_complaints?: number | null,
+  num_unsubscribes?: number | null,
+  started?: number | null,
+  sent?: number | null,
+  delayed_until?: number | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`bulkCampaigns.update`
+
+Update a bulk campaign - set ready:true to activate sending or scheduling
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.bulkCampaigns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `campaignId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipientName` | `string` | No | — |
+| `replyTo` | `object` | No | — |
+| `linkParams` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `autoText` | `boolean` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `templateId` | `string` | No | — |
+| `trackOpens` | `boolean` | No | — |
+| `trackClicks` | `boolean` | No | — |
+| `trackTextClicks` | `boolean` | No | — |
+| `segmentId` | `string` | No | — |
+| `messageTypeId` | `string` | No | — |
+| `listIds` | `string[]` | No | — |
+| `excludedListIds` | `string[]` | No | — |
+| `scheduledFor` | `number` | No | — |
+| `throttlingType` | `none \| burst` | No | — |
+| `throttlingAmount` | `number` | No | — |
+| `throttlingPeriod` | `900 \| 1800 \| 3600 \| 7200` | No | — |
+| `suppressionListId` | `string` | No | — |
+| `ready` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="replyTo full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipient_name` | `string` | No | — |
+| `reply_to` | `object` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `auto_text` | `boolean` | No | — |
+| `link_params` | `string` | No | — |
+| `track_opens` | `boolean` | No | — |
+| `track_clicks` | `boolean` | No | — |
+| `track_text_clicks` | `boolean` | No | — |
+| `segment_id` | `string` | No | — |
+| `message_type_id` | `string` | No | — |
+| `suppression_list_id` | `string` | No | — |
+| `list_ids` | `string[]` | No | — |
+| `excluded_list_ids` | `string[]` | No | — |
+| `scheduled_for` | `number` | No | — |
+| `throttling_type` | `string` | No | — |
+| `throttling_amount` | `number` | No | — |
+| `throttling_period` | `number` | No | — |
+| `num_sent` | `number` | No | — |
+| `num_rejected` | `number` | No | — |
+| `num_clicks` | `number` | No | — |
+| `num_total_clicks` | `number` | No | — |
+| `num_opens` | `number` | No | — |
+| `num_total_opens` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `num_unsubscribes` | `number` | No | — |
+| `started` | `number` | No | — |
+| `sent` | `number` | No | — |
+| `delayed_until` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="reply_to full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Connections
+
+### list
+
+`connections.list`
+
+List a brand's email-delivery connections
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.connections.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  name?: string | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Contacts
+
+### create
+
+`contacts.create`
+
+Create a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.contacts.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `fieldValues` | `object[]` | No | — |
+| `listIds` | `string[]` | No | — |
+| `unsubscribeAll` | `boolean` | No | — |
+| `unsubscribeIds` | `string[]` | No | — |
+| `validate` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="fieldValues full type">
+
+```ts
+{
+  name: string,
+  string?: string,
+  date?: string,
+  integer?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `brand_id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `field_values` | `object[]` | No | — |
+| `list_ids` | `string[]` | No | — |
+| `unsubscribe_all` | `boolean` | No | — |
+| `unsubscribe_ids` | `string[]` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_values full type">
+
+```ts
+{
+  name?: string | null,
+  string?: string | null,
+  date?: string | null,
+  integer?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### createBatch
+
+`contacts.createBatch`
+
+Upload up to 1,000 contacts for asynchronous processing
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.contacts.createBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `contacts` | `object[]` | Yes | — |
+| `validate` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="contacts full type">
+
+```ts
+{
+  email: string,
+  fieldValues?: {
+    name: string,
+    string?: string,
+    date?: string,
+    integer?: number
+  }[],
+  listIds?: string[],
+  unsubscribeAll?: boolean,
+  unsubscribeIds?: string[],
+  customId?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `num_created` | `number` | No | — |
+| `num_new_not_created` | `number` | No | — |
+| `num_updated` | `number` | No | — |
+| `num_validation_credits_used` | `number` | No | — |
+| `created` | `number` | No | — |
+| `completed` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  email?: string | null,
+  id?: string | null,
+  custom_id?: string | null,
+  success?: boolean | null,
+  code?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`contacts.delete`
+
+Permanently delete a contact
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bigmailer.api.contacts.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`contacts.get`
+
+Retrieve a contact by id or email address
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.contacts.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `contactId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `brand_id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `field_values` | `object[]` | No | — |
+| `list_ids` | `string[]` | No | — |
+| `unsubscribe_all` | `boolean` | No | — |
+| `unsubscribe_ids` | `string[]` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_values full type">
+
+```ts
+{
+  name?: string | null,
+  string?: string | null,
+  date?: string | null,
+  integer?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBatch
+
+`contacts.getBatch`
+
+Check a contact batch's processing status
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.contacts.getBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `batchId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `status` | `string` | No | — |
+| `num_created` | `number` | No | — |
+| `num_new_not_created` | `number` | No | — |
+| `num_updated` | `number` | No | — |
+| `num_validation_credits_used` | `number` | No | — |
+| `created` | `number` | No | — |
+| `completed` | `number` | No | — |
+| `results` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="results full type">
+
+```ts
+{
+  email?: string | null,
+  id?: string | null,
+  custom_id?: string | null,
+  success?: boolean | null,
+  code?: string | null,
+  message?: string | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`contacts.list`
+
+List a brand's contacts
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.contacts.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `listId` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  brand_id?: string | null,
+  email?: string | null,
+  field_values?: {
+    name?: string | null,
+    string?: string | null,
+    date?: string | null,
+    integer?: number | null
+  }[] | null,
+  list_ids?: string[] | null,
+  unsubscribe_all?: boolean | null,
+  unsubscribe_ids?: string[] | null,
+  num_soft_bounces?: number | null,
+  num_hard_bounces?: number | null,
+  num_complaints?: number | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`contacts.update`
+
+Update a contact
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.contacts.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `contactId` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `fieldValues` | `object[]` | No | — |
+| `listIds` | `string[]` | No | — |
+| `unsubscribeAll` | `boolean` | No | — |
+| `unsubscribeIds` | `string[]` | No | — |
+| `fieldValuesOp` | `add \| remove \| replace` | No | — |
+| `listIdsOp` | `add \| remove \| replace` | No | — |
+| `unsubscribeIdsOp` | `add \| remove \| replace` | No | — |
+
+<AccordionGroup>
+<Accordion title="fieldValues full type">
+
+```ts
+{
+  name: string,
+  string?: string,
+  date?: string,
+  integer?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `brand_id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `field_values` | `object[]` | No | — |
+| `list_ids` | `string[]` | No | — |
+| `unsubscribe_all` | `boolean` | No | — |
+| `unsubscribe_ids` | `string[]` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_values full type">
+
+```ts
+{
+  name?: string | null,
+  string?: string | null,
+  date?: string | null,
+  integer?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### upsert
+
+`contacts.upsert`
+
+Create or update a contact by id or email address
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.contacts.upsert({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `email` | `string` | Yes | — |
+| `fieldValues` | `object[]` | No | — |
+| `listIds` | `string[]` | No | — |
+| `unsubscribeAll` | `boolean` | No | — |
+| `unsubscribeIds` | `string[]` | No | — |
+| `validate` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="fieldValues full type">
+
+```ts
+{
+  name: string,
+  string?: string,
+  date?: string,
+  integer?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `brand_id` | `string` | No | — |
+| `email` | `string` | No | — |
+| `field_values` | `object[]` | No | — |
+| `list_ids` | `string[]` | No | — |
+| `unsubscribe_all` | `boolean` | No | — |
+| `unsubscribe_ids` | `string[]` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="field_values full type">
+
+```ts
+{
+  name?: string | null,
+  string?: string | null,
+  date?: string | null,
+  integer?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Fields
+
+### create
+
+`fields.create`
+
+Create a custom contact field
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.fields.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `text \| date \| integer` | Yes | — |
+| `mergeTagName` | `string` | No | — |
+| `sampleValue` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `merge_tag_name` | `string` | No | — |
+| `sample_value` | `string` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`fields.delete`
+
+Permanently delete a custom contact field
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bigmailer.api.fields.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `fieldId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`fields.get`
+
+Retrieve a custom contact field
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.fields.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `fieldId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `merge_tag_name` | `string` | No | — |
+| `sample_value` | `string` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`fields.list`
+
+List a brand's custom contact fields
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.fields.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  merge_tag_name?: string | null,
+  sample_value?: string | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`fields.update`
+
+Update a custom contact field's name or sample value
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.fields.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `fieldId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `mergeTagName` | `string` | No | — |
+| `sampleValue` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `merge_tag_name` | `string` | No | — |
+| `sample_value` | `string` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+## Lists
+
+### create
+
+`lists.create`
+
+Create a contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.lists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `all` | `boolean` | No | — |
+| `num_contacts` | `number` | No | — |
+| `engagement` | `object` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="engagement full type">
+
+```ts
+{
+  num_opened?: number | null,
+  percent_opened?: number | null,
+  num_clicked?: number | null,
+  percent_clicked?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### delete
+
+`lists.delete`
+
+Delete a contact list (its contacts are not deleted)
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bigmailer.api.lists.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `listId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`lists.get`
+
+Retrieve a contact list
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.lists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `listId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `all` | `boolean` | No | — |
+| `num_contacts` | `number` | No | — |
+| `engagement` | `object` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="engagement full type">
+
+```ts
+{
+  num_opened?: number | null,
+  percent_opened?: number | null,
+  num_clicked?: number | null,
+  percent_clicked?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`lists.list`
+
+List a brand's contact lists
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.lists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  all?: boolean | null,
+  num_contacts?: number | null,
+  engagement?: {
+    num_opened?: number | null,
+    percent_opened?: number | null,
+    num_clicked?: number | null,
+    percent_clicked?: number | null
+  } | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`lists.update`
+
+Rename a contact list
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.lists.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `listId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `all` | `boolean` | No | — |
+| `num_contacts` | `number` | No | — |
+| `engagement` | `object` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="engagement full type">
+
+```ts
+{
+  num_opened?: number | null,
+  percent_opened?: number | null,
+  num_clicked?: number | null,
+  percent_clicked?: number | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Message Types
+
+### list
+
+`messageTypes.list`
+
+List a brand's message-type categories
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.messageTypes.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+| `type` | `all \| account \| user` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  type?: string | null,
+  name?: string | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Segments
+
+### create
+
+`segments.create`
+
+Create a segment
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.segments.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `operator` | `all \| any` | Yes | — |
+| `conditions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="conditions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `operator` | `string` | No | — |
+| `conditions` | `any[]` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`segments.delete`
+
+Permanently delete a segment
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bigmailer.api.segments.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `segmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`segments.get`
+
+Retrieve a segment
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.segments.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `segmentId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `operator` | `string` | No | — |
+| `conditions` | `any[]` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`segments.list`
+
+List a brand's segments
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.segments.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  operator?: string | null,
+  conditions?: any[] | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`segments.update`
+
+Update a segment
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.segments.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `segmentId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `operator` | `all \| any` | No | — |
+| `conditions` | `object[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="conditions full type">
+
+```ts
+{
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `operator` | `string` | No | — |
+| `conditions` | `any[]` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+## Senders
+
+### list
+
+`senders.list`
+
+List a brand's verified sender identities
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.senders.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  identity_type?: string | null,
+  Identity?: string | null,
+  BounceDomain?: string | null,
+  DnsRecords?: any | null,
+  BounceDnsRecords?: any | null,
+  share_type?: string | null,
+  verified?: boolean | null,
+  bounce_verified?: boolean | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Suppression Lists
+
+### create
+
+`suppressionLists.create`
+
+Upload a campaign suppression list
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.suppressionLists.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `file` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `file_name` | `string` | No | — |
+| `file_size` | `number` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### get
+
+`suppressionLists.get`
+
+Retrieve a campaign suppression list
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.suppressionLists.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `suppressionListId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `file_name` | `string` | No | — |
+| `file_size` | `number` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`suppressionLists.list`
+
+List a brand's campaign suppression lists
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.suppressionLists.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  file_name?: string | null,
+  file_size?: number | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Templates
+
+### create
+
+`templates.create`
+
+Create a template
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.templates.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `type` | `email \| page` | Yes | — |
+| `sharedWithAccount` | `boolean` | No | — |
+| `html` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `shared_with_account` | `boolean` | No | — |
+| `html` | `string` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`templates.delete`
+
+Permanently delete a template
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bigmailer.api.templates.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | No | — |
+
+
+
+---
+
+### get
+
+`templates.get`
+
+Retrieve a template
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.templates.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `shared_with_account` | `boolean` | No | — |
+| `html` | `string` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`templates.list`
+
+List a brand's templates
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.templates.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  type?: string | null,
+  shared_with_account?: boolean | null,
+  html?: string | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`templates.update`
+
+Update a template
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.templates.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `templateId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `email \| page` | No | — |
+| `sharedWithAccount` | `boolean` | No | — |
+| `html` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `type` | `string` | No | — |
+| `shared_with_account` | `boolean` | No | — |
+| `html` | `string` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+## Transactional Campaigns
+
+### create
+
+`transactionalCampaigns.create`
+
+Create a transactional campaign
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.transactionalCampaigns.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `name` | `string` | Yes | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipientName` | `string` | No | — |
+| `replyTo` | `object` | No | — |
+| `linkParams` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `autoText` | `boolean` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `templateId` | `string` | No | — |
+| `trackOpens` | `boolean` | No | — |
+| `trackClicks` | `boolean` | No | — |
+| `trackTextClicks` | `boolean` | No | — |
+| `messageTypeId` | `string` | No | — |
+| `listId` | `string` | No | — |
+| `ready` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="replyTo full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipient_name` | `string` | No | — |
+| `reply_to` | `object` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `auto_text` | `boolean` | No | — |
+| `link_params` | `string` | No | — |
+| `track_opens` | `boolean` | No | — |
+| `track_clicks` | `boolean` | No | — |
+| `track_text_clicks` | `boolean` | No | — |
+| `message_type_id` | `string` | No | — |
+| `list_id` | `string` | No | — |
+| `num_sent` | `number` | No | — |
+| `num_rejected` | `number` | No | — |
+| `num_clicks` | `number` | No | — |
+| `num_opens` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `num_unsubscribes` | `number` | No | — |
+| `started` | `number` | No | — |
+| `sent` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="reply_to full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`transactionalCampaigns.get`
+
+Retrieve a transactional campaign, including its send metrics
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.transactionalCampaigns.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `campaignId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipient_name` | `string` | No | — |
+| `reply_to` | `object` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `auto_text` | `boolean` | No | — |
+| `link_params` | `string` | No | — |
+| `track_opens` | `boolean` | No | — |
+| `track_clicks` | `boolean` | No | — |
+| `track_text_clicks` | `boolean` | No | — |
+| `message_type_id` | `string` | No | — |
+| `list_id` | `string` | No | — |
+| `num_sent` | `number` | No | — |
+| `num_rejected` | `number` | No | — |
+| `num_clicks` | `number` | No | — |
+| `num_opens` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `num_unsubscribes` | `number` | No | — |
+| `started` | `number` | No | — |
+| `sent` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="reply_to full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`transactionalCampaigns.list`
+
+List a brand's transactional campaigns
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.transactionalCampaigns.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  name?: string | null,
+  status?: string | null,
+  subject?: string | null,
+  from?: {
+    email?: string | null,
+    name?: string | null
+  } | null,
+  recipient_name?: string | null,
+  reply_to?: {
+    email?: string | null,
+    name?: string | null
+  } | null,
+  html?: string | null,
+  text?: string | null,
+  preview?: string | null,
+  auto_text?: boolean | null,
+  link_params?: string | null,
+  track_opens?: boolean | null,
+  track_clicks?: boolean | null,
+  track_text_clicks?: boolean | null,
+  message_type_id?: string | null,
+  list_id?: string | null,
+  num_sent?: number | null,
+  num_rejected?: number | null,
+  num_clicks?: number | null,
+  num_opens?: number | null,
+  num_hard_bounces?: number | null,
+  num_soft_bounces?: number | null,
+  num_complaints?: number | null,
+  num_unsubscribes?: number | null,
+  started?: number | null,
+  sent?: number | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`transactionalCampaigns.update`
+
+Update a transactional campaign - set ready:true to activate it
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.transactionalCampaigns.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `brandId` | `string` | Yes | — |
+| `campaignId` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipientName` | `string` | No | — |
+| `replyTo` | `object` | No | — |
+| `linkParams` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `autoText` | `boolean` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `templateId` | `string` | No | — |
+| `trackOpens` | `boolean` | No | — |
+| `trackClicks` | `boolean` | No | — |
+| `trackTextClicks` | `boolean` | No | — |
+| `messageTypeId` | `string` | No | — |
+| `listId` | `string` | No | — |
+| `ready` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+
+<Accordion title="replyTo full type">
+
+```ts
+{
+  email: string,
+  name?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `subject` | `string` | No | — |
+| `from` | `object` | No | — |
+| `recipient_name` | `string` | No | — |
+| `reply_to` | `object` | No | — |
+| `html` | `string` | No | — |
+| `text` | `string` | No | — |
+| `preview` | `string` | No | — |
+| `auto_text` | `boolean` | No | — |
+| `link_params` | `string` | No | — |
+| `track_opens` | `boolean` | No | — |
+| `track_clicks` | `boolean` | No | — |
+| `track_text_clicks` | `boolean` | No | — |
+| `message_type_id` | `string` | No | — |
+| `list_id` | `string` | No | — |
+| `num_sent` | `number` | No | — |
+| `num_rejected` | `number` | No | — |
+| `num_clicks` | `number` | No | — |
+| `num_opens` | `number` | No | — |
+| `num_hard_bounces` | `number` | No | — |
+| `num_soft_bounces` | `number` | No | — |
+| `num_complaints` | `number` | No | — |
+| `num_unsubscribes` | `number` | No | — |
+| `started` | `number` | No | — |
+| `sent` | `number` | No | — |
+| `created` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="from full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="reply_to full type">
+
+```ts
+{
+  email?: string | null,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Users
+
+### create
+
+`users.create`
+
+Invite a new user to the account
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.users.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `role` | `admin \| account_manager \| brand_manager \| campaign_manager \| campaign_viewer \| template_manager` | Yes | — |
+| `allowedBrands` | `string[]` | No | — |
+| `invitationMessage` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `role` | `string` | No | — |
+| `allowed_brands` | `string[]` | No | — |
+| `is_activated` | `boolean` | No | — |
+| `is_owner` | `boolean` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### delete
+
+`users.delete`
+
+Remove a user from the account
+
+**Risk:** `destructive`
+
+```ts
+await corsair.bigmailer.api.users.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output:** `void`
+
+
+---
+
+### get
+
+`users.get`
+
+Retrieve an account user
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.users.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `role` | `string` | No | — |
+| `allowed_brands` | `string[]` | No | — |
+| `is_activated` | `boolean` | No | — |
+| `is_owner` | `boolean` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+
+### list
+
+`users.list`
+
+List account users
+
+**Risk:** `read`
+
+```ts
+await corsair.bigmailer.api.users.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `limit` | `number` | No | — |
+| `cursor` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data` | `object[]` | Yes | — |
+| `has_more` | `boolean` | No | — |
+| `cursor` | `string` | No | — |
+| `total` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  email?: string | null,
+  role?: string | null,
+  allowed_brands?: string[] | null,
+  is_activated?: boolean | null,
+  is_owner?: boolean | null,
+  created?: number | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`users.update`
+
+Update a user's email, role, or allowed brands
+
+**Risk:** `write`
+
+```ts
+await corsair.bigmailer.api.users.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `userId` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `role` | `admin \| account_manager \| brand_manager \| campaign_manager \| campaign_viewer \| template_manager` | No | — |
+| `allowedBrands` | `string[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `email` | `string` | No | — |
+| `role` | `string` | No | — |
+| `allowed_brands` | `string[]` | No | — |
+| `is_activated` | `boolean` | No | — |
+| `is_owner` | `boolean` | No | — |
+| `created` | `number` | No | — |
+
+
+
+---
+

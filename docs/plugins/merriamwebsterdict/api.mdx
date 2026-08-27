@@ -1,0 +1,64 @@
+---
+title: API
+description: "API reference for Merriam-Webster Dictionary: every `merriamwebsterdict.api.*` operation with input and output types."
+---
+
+Every `merriamwebsterdict.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Words
+
+### get
+
+`words.get`
+
+Look up a word in Merriam-Webster (collegiate / sd2 / sd3 / sd4), returning definitions, part of speech, pronunciation, etymology, and audio — or spelling suggestions when no entry matches
+
+**Risk:** `read`
+
+```ts
+await corsair.merriamwebsterdict.api.words.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `word` | `string` | Yes | The word to look up |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `found` | `boolean` | Yes | — |
+| `entries` | `object[]` | Yes | — |
+| `suggestions` | `string[]` | Yes | Spelling suggestions when no entry matched |
+
+<AccordionGroup>
+<Accordion title="entries full type">
+
+```ts
+{
+  id: string,
+  headword: string,
+  partOfSpeech?: string,
+  pronunciation?: string,
+  audioUrl?: string,
+  shortDefinitions: string[],
+  etymology?: string[],
+  stems: string[],
+  offensive: boolean
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

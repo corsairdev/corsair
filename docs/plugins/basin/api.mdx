@@ -1,0 +1,2137 @@
+---
+title: API
+description: "API reference for Basin: every `basin.api.*` operation with input and output types."
+---
+
+Every `basin.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Domains
+
+### list
+
+`domains.list`
+
+List custom domains configured in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.domains.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `string \| number` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domains` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="domains full type">
+
+```ts
+{
+  id?: number | string,
+  name?: string,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number,
+  page?: number,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Forms
+
+### create
+
+`forms.create`
+
+Create a new form
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.forms.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `redirect_url` | `string` | No | — |
+| `use_ajax` | `boolean` | No | — |
+| `notification_emails` | `string` | No | — |
+| `autoreply` | `boolean` | No | — |
+| `autoreply_body` | `string` | No | — |
+| `whitelist_source_domains` | `string` | No | — |
+| `force_recaptcha` | `boolean` | No | — |
+| `force_hcaptcha` | `boolean` | No | — |
+| `force_turnstile` | `boolean` | No | — |
+| `turnstile_site_key` | `string` | No | — |
+| `turnstile_secret` | `string` | No | — |
+| `notification_cc_emails` | `string` | No | — |
+| `notification_bcc_emails` | `string` | No | — |
+| `notification_subject` | `string` | No | — |
+| `notification_from_name` | `string` | No | — |
+| `autoreply_subject` | `string` | No | — |
+| `autoreply_from_name` | `string` | No | — |
+| `autoreply_greeting` | `string` | No | — |
+| `autoreply_name` | `string` | No | — |
+| `autoreply_title` | `string` | No | — |
+| `autoreply_email` | `string` | No | — |
+| `logo` | `string` | No | — |
+| `button_background_color` | `string` | No | — |
+| `button_text_color` | `string` | No | — |
+| `data_receipt_email` | `boolean` | No | — |
+| `retention_days` | `number` | No | — |
+| `hide_dashboard_button` | `boolean` | No | — |
+| `exclude_submitter_from_reply` | `boolean` | No | — |
+| `custom_template` | `string` | No | — |
+| `use_custom_template` | `boolean` | No | — |
+| `autoreply_custom_template` | `string` | No | — |
+| `autoreply_use_custom_template` | `boolean` | No | — |
+| `notification_mail_template_id` | `number` | No | — |
+| `auto_response_mail_template_id` | `number` | No | — |
+| `confirmation_mail_template_id` | `number` | No | — |
+| `honeypot_field` | `string` | No | — |
+| `recaptcha_failed_url` | `string` | No | — |
+| `domain_id` | `number` | No | — |
+| `domain_email` | `string` | No | — |
+| `duplicate_filter` | `boolean` | No | — |
+| `redirect_heading` | `string` | No | — |
+| `redirect_message` | `string` | No | — |
+| `redirect_button_background_color` | `string` | No | — |
+| `redirect_button_text` | `string` | No | — |
+| `redirect_button_text_color` | `string` | No | — |
+| `content_blacklist` | `string[]` | No | — |
+| `allowed_domains` | `string[]` | No | — |
+| `blocked_domains` | `string[]` | No | — |
+| `smtp_email_validation` | `boolean` | No | — |
+| `contribute_to_spam_training` | `boolean` | No | — |
+| `form` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="form full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `uuid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `redirect_url` | `string` | No | — |
+| `use_ajax` | `boolean` | No | — |
+| `notification_emails` | `string` | No | — |
+| `autoreply` | `boolean` | No | — |
+| `autoreply_body` | `string` | No | — |
+| `whitelist_source_domains` | `string` | No | — |
+| `force_recaptcha` | `boolean` | No | — |
+| `force_hcaptcha` | `boolean` | No | — |
+| `force_turnstile` | `boolean` | No | — |
+| `turnstile_site_key` | `string` | No | — |
+| `turnstile_secret` | `string` | No | — |
+| `notification_cc_emails` | `string` | No | — |
+| `notification_bcc_emails` | `string` | No | — |
+| `notification_subject` | `string` | No | — |
+| `notification_from_name` | `string` | No | — |
+| `autoreply_subject` | `string` | No | — |
+| `autoreply_from_name` | `string` | No | — |
+| `autoreply_greeting` | `string` | No | — |
+| `autoreply_name` | `string` | No | — |
+| `autoreply_title` | `string` | No | — |
+| `autoreply_email` | `string` | No | — |
+| `logo` | `string` | No | — |
+| `button_background_color` | `string` | No | — |
+| `button_text_color` | `string` | No | — |
+| `data_receipt_email` | `boolean` | No | — |
+| `retention_days` | `number` | No | — |
+| `hide_dashboard_button` | `boolean` | No | — |
+| `exclude_submitter_from_reply` | `boolean` | No | — |
+| `custom_template` | `string` | No | — |
+| `use_custom_template` | `boolean` | No | — |
+| `autoreply_custom_template` | `string` | No | — |
+| `autoreply_use_custom_template` | `boolean` | No | — |
+| `notification_mail_template_id` | `number` | No | — |
+| `auto_response_mail_template_id` | `number` | No | — |
+| `confirmation_mail_template_id` | `number` | No | — |
+| `honeypot_field` | `string` | No | — |
+| `recaptcha_failed_url` | `string` | No | — |
+| `domain_id` | `number` | No | — |
+| `domain_email` | `string` | No | — |
+| `duplicate_filter` | `boolean` | No | — |
+| `project_id` | `number` | No | — |
+| `project_name` | `string` | No | — |
+| `redirect_heading` | `string` | No | — |
+| `redirect_message` | `string` | No | — |
+| `redirect_button_background_color` | `string` | No | — |
+| `redirect_button_text` | `string` | No | — |
+| `redirect_button_text_color` | `string` | No | — |
+| `content_blacklist` | `string[]` | No | — |
+| `allowed_domains` | `string[]` | No | — |
+| `blocked_domains` | `string[]` | No | — |
+| `smtp_email_validation` | `boolean` | No | — |
+| `contribute_to_spam_training` | `boolean` | No | — |
+| `form_webhooks` | `any[]` | No | — |
+| `inbox_count` | `number` | No | — |
+| `spam_count` | `number` | No | — |
+| `trash_count` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`forms.delete`
+
+Permanently delete a form and its configuration [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.basin.api.forms.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success?: boolean,
+  message?: string
+} | {
+  id: number | string,
+  uuid?: string | null,
+  name?: string,
+  timezone?: string,
+  redirect_url?: string | null,
+  use_ajax?: boolean,
+  notification_emails?: string,
+  autoreply?: boolean,
+  autoreply_body?: string | null,
+  whitelist_source_domains?: string | null,
+  force_recaptcha?: boolean,
+  force_hcaptcha?: boolean,
+  force_turnstile?: boolean,
+  turnstile_site_key?: string | null,
+  turnstile_secret?: string | null,
+  notification_cc_emails?: string | null,
+  notification_bcc_emails?: string | null,
+  notification_subject?: string | null,
+  notification_from_name?: string | null,
+  autoreply_subject?: string | null,
+  autoreply_from_name?: string | null,
+  autoreply_greeting?: string | null,
+  autoreply_name?: string | null,
+  autoreply_title?: string | null,
+  autoreply_email?: string | null,
+  logo?: string | null,
+  button_background_color?: string | null,
+  button_text_color?: string | null,
+  data_receipt_email?: boolean,
+  retention_days?: number,
+  hide_dashboard_button?: boolean,
+  exclude_submitter_from_reply?: boolean,
+  custom_template?: string | null,
+  use_custom_template?: boolean,
+  autoreply_custom_template?: string | null,
+  autoreply_use_custom_template?: boolean,
+  notification_mail_template_id?: number | null,
+  auto_response_mail_template_id?: number | null,
+  confirmation_mail_template_id?: number | null,
+  honeypot_field?: string | null,
+  recaptcha_failed_url?: string | null,
+  domain_id?: number | null,
+  domain_email?: string | null,
+  duplicate_filter?: boolean,
+  project_id?: number,
+  project_name?: string,
+  redirect_heading?: string | null,
+  redirect_message?: string | null,
+  redirect_button_background_color?: string | null,
+  redirect_button_text?: string | null,
+  redirect_button_text_color?: string | null,
+  content_blacklist?: string[] | null,
+  allowed_domains?: string[] | null,
+  blocked_domains?: string[] | null,
+  smtp_email_validation?: boolean,
+  contribute_to_spam_training?: boolean,
+  form_webhooks?: any[],
+  inbox_count?: number,
+  spam_count?: number,
+  trash_count?: number,
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  email?: string | null,
+  form_id?: number,
+  spam?: boolean,
+  read?: boolean,
+  trash?: boolean,
+  spam_reason?: string | null,
+  webhook_sent_at?: string | null,
+  ip?: string | null,
+  referrer?: string | null,
+  user_agent?: string | null,
+  payload_params?: {
+  },
+  attachments?: any[] | null,
+  form?: {
+    name?: string,
+    uuid?: string
+  },
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  name?: string,
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  form_id?: number,
+  name?: string,
+  url?: string,
+  format?: string,
+  trigger_when_spam?: boolean,
+  enabled?: boolean,
+  failure_count?: number,
+  last_failure_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`forms.get`
+
+Retrieve a form by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.forms.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `uuid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `redirect_url` | `string` | No | — |
+| `use_ajax` | `boolean` | No | — |
+| `notification_emails` | `string` | No | — |
+| `autoreply` | `boolean` | No | — |
+| `autoreply_body` | `string` | No | — |
+| `whitelist_source_domains` | `string` | No | — |
+| `force_recaptcha` | `boolean` | No | — |
+| `force_hcaptcha` | `boolean` | No | — |
+| `force_turnstile` | `boolean` | No | — |
+| `turnstile_site_key` | `string` | No | — |
+| `turnstile_secret` | `string` | No | — |
+| `notification_cc_emails` | `string` | No | — |
+| `notification_bcc_emails` | `string` | No | — |
+| `notification_subject` | `string` | No | — |
+| `notification_from_name` | `string` | No | — |
+| `autoreply_subject` | `string` | No | — |
+| `autoreply_from_name` | `string` | No | — |
+| `autoreply_greeting` | `string` | No | — |
+| `autoreply_name` | `string` | No | — |
+| `autoreply_title` | `string` | No | — |
+| `autoreply_email` | `string` | No | — |
+| `logo` | `string` | No | — |
+| `button_background_color` | `string` | No | — |
+| `button_text_color` | `string` | No | — |
+| `data_receipt_email` | `boolean` | No | — |
+| `retention_days` | `number` | No | — |
+| `hide_dashboard_button` | `boolean` | No | — |
+| `exclude_submitter_from_reply` | `boolean` | No | — |
+| `custom_template` | `string` | No | — |
+| `use_custom_template` | `boolean` | No | — |
+| `autoreply_custom_template` | `string` | No | — |
+| `autoreply_use_custom_template` | `boolean` | No | — |
+| `notification_mail_template_id` | `number` | No | — |
+| `auto_response_mail_template_id` | `number` | No | — |
+| `confirmation_mail_template_id` | `number` | No | — |
+| `honeypot_field` | `string` | No | — |
+| `recaptcha_failed_url` | `string` | No | — |
+| `domain_id` | `number` | No | — |
+| `domain_email` | `string` | No | — |
+| `duplicate_filter` | `boolean` | No | — |
+| `project_id` | `number` | No | — |
+| `project_name` | `string` | No | — |
+| `redirect_heading` | `string` | No | — |
+| `redirect_message` | `string` | No | — |
+| `redirect_button_background_color` | `string` | No | — |
+| `redirect_button_text` | `string` | No | — |
+| `redirect_button_text_color` | `string` | No | — |
+| `content_blacklist` | `string[]` | No | — |
+| `allowed_domains` | `string[]` | No | — |
+| `blocked_domains` | `string[]` | No | — |
+| `smtp_email_validation` | `boolean` | No | — |
+| `contribute_to_spam_training` | `boolean` | No | — |
+| `form_webhooks` | `any[]` | No | — |
+| `inbox_count` | `number` | No | — |
+| `spam_count` | `number` | No | — |
+| `trash_count` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`forms.list`
+
+List all forms in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.forms.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `string \| number` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `forms` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="forms full type">
+
+```ts
+{
+  id: number | string,
+  uuid?: string | null,
+  name?: string,
+  timezone?: string,
+  redirect_url?: string | null,
+  use_ajax?: boolean,
+  notification_emails?: string,
+  autoreply?: boolean,
+  autoreply_body?: string | null,
+  whitelist_source_domains?: string | null,
+  force_recaptcha?: boolean,
+  force_hcaptcha?: boolean,
+  force_turnstile?: boolean,
+  turnstile_site_key?: string | null,
+  turnstile_secret?: string | null,
+  notification_cc_emails?: string | null,
+  notification_bcc_emails?: string | null,
+  notification_subject?: string | null,
+  notification_from_name?: string | null,
+  autoreply_subject?: string | null,
+  autoreply_from_name?: string | null,
+  autoreply_greeting?: string | null,
+  autoreply_name?: string | null,
+  autoreply_title?: string | null,
+  autoreply_email?: string | null,
+  logo?: string | null,
+  button_background_color?: string | null,
+  button_text_color?: string | null,
+  data_receipt_email?: boolean,
+  retention_days?: number,
+  hide_dashboard_button?: boolean,
+  exclude_submitter_from_reply?: boolean,
+  custom_template?: string | null,
+  use_custom_template?: boolean,
+  autoreply_custom_template?: string | null,
+  autoreply_use_custom_template?: boolean,
+  notification_mail_template_id?: number | null,
+  auto_response_mail_template_id?: number | null,
+  confirmation_mail_template_id?: number | null,
+  honeypot_field?: string | null,
+  recaptcha_failed_url?: string | null,
+  domain_id?: number | null,
+  domain_email?: string | null,
+  duplicate_filter?: boolean,
+  project_id?: number,
+  project_name?: string,
+  redirect_heading?: string | null,
+  redirect_message?: string | null,
+  redirect_button_background_color?: string | null,
+  redirect_button_text?: string | null,
+  redirect_button_text_color?: string | null,
+  content_blacklist?: string[] | null,
+  allowed_domains?: string[] | null,
+  blocked_domains?: string[] | null,
+  smtp_email_validation?: boolean,
+  contribute_to_spam_training?: boolean,
+  form_webhooks?: any[],
+  inbox_count?: number,
+  spam_count?: number,
+  trash_count?: number,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number,
+  page?: number,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`forms.update`
+
+Update an existing form configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.forms.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `project_id` | `number` | No | — |
+| `timezone` | `string` | No | — |
+| `redirect_url` | `string` | No | — |
+| `use_ajax` | `boolean` | No | — |
+| `notification_emails` | `string` | No | — |
+| `autoreply` | `boolean` | No | — |
+| `autoreply_body` | `string` | No | — |
+| `whitelist_source_domains` | `string` | No | — |
+| `force_recaptcha` | `boolean` | No | — |
+| `force_hcaptcha` | `boolean` | No | — |
+| `force_turnstile` | `boolean` | No | — |
+| `turnstile_site_key` | `string` | No | — |
+| `turnstile_secret` | `string` | No | — |
+| `notification_cc_emails` | `string` | No | — |
+| `notification_bcc_emails` | `string` | No | — |
+| `notification_subject` | `string` | No | — |
+| `notification_from_name` | `string` | No | — |
+| `autoreply_subject` | `string` | No | — |
+| `autoreply_from_name` | `string` | No | — |
+| `autoreply_greeting` | `string` | No | — |
+| `autoreply_name` | `string` | No | — |
+| `autoreply_title` | `string` | No | — |
+| `autoreply_email` | `string` | No | — |
+| `logo` | `string` | No | — |
+| `button_background_color` | `string` | No | — |
+| `button_text_color` | `string` | No | — |
+| `data_receipt_email` | `boolean` | No | — |
+| `retention_days` | `number` | No | — |
+| `hide_dashboard_button` | `boolean` | No | — |
+| `exclude_submitter_from_reply` | `boolean` | No | — |
+| `custom_template` | `string` | No | — |
+| `use_custom_template` | `boolean` | No | — |
+| `autoreply_custom_template` | `string` | No | — |
+| `autoreply_use_custom_template` | `boolean` | No | — |
+| `notification_mail_template_id` | `number` | No | — |
+| `auto_response_mail_template_id` | `number` | No | — |
+| `confirmation_mail_template_id` | `number` | No | — |
+| `honeypot_field` | `string` | No | — |
+| `recaptcha_failed_url` | `string` | No | — |
+| `domain_id` | `number` | No | — |
+| `domain_email` | `string` | No | — |
+| `duplicate_filter` | `boolean` | No | — |
+| `redirect_heading` | `string` | No | — |
+| `redirect_message` | `string` | No | — |
+| `redirect_button_background_color` | `string` | No | — |
+| `redirect_button_text` | `string` | No | — |
+| `redirect_button_text_color` | `string` | No | — |
+| `content_blacklist` | `string[]` | No | — |
+| `allowed_domains` | `string[]` | No | — |
+| `blocked_domains` | `string[]` | No | — |
+| `smtp_email_validation` | `boolean` | No | — |
+| `contribute_to_spam_training` | `boolean` | No | — |
+| `form` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="form full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `uuid` | `string` | No | — |
+| `name` | `string` | No | — |
+| `timezone` | `string` | No | — |
+| `redirect_url` | `string` | No | — |
+| `use_ajax` | `boolean` | No | — |
+| `notification_emails` | `string` | No | — |
+| `autoreply` | `boolean` | No | — |
+| `autoreply_body` | `string` | No | — |
+| `whitelist_source_domains` | `string` | No | — |
+| `force_recaptcha` | `boolean` | No | — |
+| `force_hcaptcha` | `boolean` | No | — |
+| `force_turnstile` | `boolean` | No | — |
+| `turnstile_site_key` | `string` | No | — |
+| `turnstile_secret` | `string` | No | — |
+| `notification_cc_emails` | `string` | No | — |
+| `notification_bcc_emails` | `string` | No | — |
+| `notification_subject` | `string` | No | — |
+| `notification_from_name` | `string` | No | — |
+| `autoreply_subject` | `string` | No | — |
+| `autoreply_from_name` | `string` | No | — |
+| `autoreply_greeting` | `string` | No | — |
+| `autoreply_name` | `string` | No | — |
+| `autoreply_title` | `string` | No | — |
+| `autoreply_email` | `string` | No | — |
+| `logo` | `string` | No | — |
+| `button_background_color` | `string` | No | — |
+| `button_text_color` | `string` | No | — |
+| `data_receipt_email` | `boolean` | No | — |
+| `retention_days` | `number` | No | — |
+| `hide_dashboard_button` | `boolean` | No | — |
+| `exclude_submitter_from_reply` | `boolean` | No | — |
+| `custom_template` | `string` | No | — |
+| `use_custom_template` | `boolean` | No | — |
+| `autoreply_custom_template` | `string` | No | — |
+| `autoreply_use_custom_template` | `boolean` | No | — |
+| `notification_mail_template_id` | `number` | No | — |
+| `auto_response_mail_template_id` | `number` | No | — |
+| `confirmation_mail_template_id` | `number` | No | — |
+| `honeypot_field` | `string` | No | — |
+| `recaptcha_failed_url` | `string` | No | — |
+| `domain_id` | `number` | No | — |
+| `domain_email` | `string` | No | — |
+| `duplicate_filter` | `boolean` | No | — |
+| `project_id` | `number` | No | — |
+| `project_name` | `string` | No | — |
+| `redirect_heading` | `string` | No | — |
+| `redirect_message` | `string` | No | — |
+| `redirect_button_background_color` | `string` | No | — |
+| `redirect_button_text` | `string` | No | — |
+| `redirect_button_text_color` | `string` | No | — |
+| `content_blacklist` | `string[]` | No | — |
+| `allowed_domains` | `string[]` | No | — |
+| `blocked_domains` | `string[]` | No | — |
+| `smtp_email_validation` | `boolean` | No | — |
+| `contribute_to_spam_training` | `boolean` | No | — |
+| `form_webhooks` | `any[]` | No | — |
+| `inbox_count` | `number` | No | — |
+| `spam_count` | `number` | No | — |
+| `trash_count` | `number` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Form Views
+
+### get
+
+`formViews.get`
+
+Retrieve a specific form view by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.formViews.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `form_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `status` | `string` | No | — |
+| `form_schema` | `string` | No | — |
+| `custom_css` | `string` | No | — |
+| `custom_head` | `string` | No | — |
+| `background_color` | `string` | No | — |
+| `text_color` | `string` | No | — |
+| `inherit_styles` | `boolean` | No | — |
+| `auto_resize` | `boolean` | No | — |
+| `transparent_background` | `boolean` | No | — |
+| `opens_at` | `string` | No | — |
+| `closes_at` | `string` | No | — |
+| `bootstrap_cdn_url` | `string` | No | — |
+| `uuid` | `string` | No | — |
+| `iframe_height` | `number` | No | — |
+| `iframe_width` | `number` | No | — |
+| `redirect_iframe_parent` | `boolean` | No | — |
+| `center_iframe` | `boolean` | No | — |
+| `embed_code` | `string` | No | — |
+| `form` | `object` | No | — |
+| `project` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="form full type">
+
+```ts
+{
+  id?: number,
+  name?: string | null
+}
+```
+</Accordion>
+
+<Accordion title="project full type">
+
+```ts
+{
+  id?: number,
+  name?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`formViews.list`
+
+List form views in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.formViews.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `string \| number` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_views` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="form_views full type">
+
+```ts
+{
+  id: number | string,
+  form_id?: number,
+  name?: string | null,
+  status?: string,
+  form_schema?: string | null,
+  custom_css?: string | null,
+  custom_head?: string | null,
+  background_color?: string | null,
+  text_color?: string | null,
+  inherit_styles?: boolean,
+  auto_resize?: boolean,
+  transparent_background?: boolean,
+  opens_at?: string | null,
+  closes_at?: string | null,
+  bootstrap_cdn_url?: string | null,
+  uuid?: string | null,
+  iframe_height?: number | null,
+  iframe_width?: number | null,
+  redirect_iframe_parent?: boolean,
+  center_iframe?: boolean,
+  embed_code?: string,
+  form?: {
+    id?: number,
+    name?: string | null
+  },
+  project?: {
+    id?: number,
+    name?: string | null
+  },
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number,
+  page?: number,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Projects
+
+### create
+
+`projects.create`
+
+Create a new project
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.projects.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | No | — |
+| `project` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`projects.delete`
+
+Permanently delete a project [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.basin.api.projects.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success?: boolean,
+  message?: string
+} | {
+  id: number | string,
+  uuid?: string | null,
+  name?: string,
+  timezone?: string,
+  redirect_url?: string | null,
+  use_ajax?: boolean,
+  notification_emails?: string,
+  autoreply?: boolean,
+  autoreply_body?: string | null,
+  whitelist_source_domains?: string | null,
+  force_recaptcha?: boolean,
+  force_hcaptcha?: boolean,
+  force_turnstile?: boolean,
+  turnstile_site_key?: string | null,
+  turnstile_secret?: string | null,
+  notification_cc_emails?: string | null,
+  notification_bcc_emails?: string | null,
+  notification_subject?: string | null,
+  notification_from_name?: string | null,
+  autoreply_subject?: string | null,
+  autoreply_from_name?: string | null,
+  autoreply_greeting?: string | null,
+  autoreply_name?: string | null,
+  autoreply_title?: string | null,
+  autoreply_email?: string | null,
+  logo?: string | null,
+  button_background_color?: string | null,
+  button_text_color?: string | null,
+  data_receipt_email?: boolean,
+  retention_days?: number,
+  hide_dashboard_button?: boolean,
+  exclude_submitter_from_reply?: boolean,
+  custom_template?: string | null,
+  use_custom_template?: boolean,
+  autoreply_custom_template?: string | null,
+  autoreply_use_custom_template?: boolean,
+  notification_mail_template_id?: number | null,
+  auto_response_mail_template_id?: number | null,
+  confirmation_mail_template_id?: number | null,
+  honeypot_field?: string | null,
+  recaptcha_failed_url?: string | null,
+  domain_id?: number | null,
+  domain_email?: string | null,
+  duplicate_filter?: boolean,
+  project_id?: number,
+  project_name?: string,
+  redirect_heading?: string | null,
+  redirect_message?: string | null,
+  redirect_button_background_color?: string | null,
+  redirect_button_text?: string | null,
+  redirect_button_text_color?: string | null,
+  content_blacklist?: string[] | null,
+  allowed_domains?: string[] | null,
+  blocked_domains?: string[] | null,
+  smtp_email_validation?: boolean,
+  contribute_to_spam_training?: boolean,
+  form_webhooks?: any[],
+  inbox_count?: number,
+  spam_count?: number,
+  trash_count?: number,
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  email?: string | null,
+  form_id?: number,
+  spam?: boolean,
+  read?: boolean,
+  trash?: boolean,
+  spam_reason?: string | null,
+  webhook_sent_at?: string | null,
+  ip?: string | null,
+  referrer?: string | null,
+  user_agent?: string | null,
+  payload_params?: {
+  },
+  attachments?: any[] | null,
+  form?: {
+    name?: string,
+    uuid?: string
+  },
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  name?: string,
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  form_id?: number,
+  name?: string,
+  url?: string,
+  format?: string,
+  trigger_when_spam?: boolean,
+  enabled?: boolean,
+  failure_count?: number,
+  last_failure_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`projects.get`
+
+Retrieve a project by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.projects.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`projects.list`
+
+List all projects in the account
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.projects.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `string \| number` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `projects` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="projects full type">
+
+```ts
+{
+  id: number | string,
+  name?: string,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number,
+  page?: number,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`projects.update`
+
+Update an existing project name
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.projects.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `name` | `string` | No | — |
+| `project` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="project full type">
+
+```ts
+{
+  name: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `name` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+## Submissions
+
+### delete
+
+`submissions.delete`
+
+Permanently delete a form submission [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.basin.api.submissions.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success?: boolean,
+  message?: string
+} | {
+  id: number | string,
+  uuid?: string | null,
+  name?: string,
+  timezone?: string,
+  redirect_url?: string | null,
+  use_ajax?: boolean,
+  notification_emails?: string,
+  autoreply?: boolean,
+  autoreply_body?: string | null,
+  whitelist_source_domains?: string | null,
+  force_recaptcha?: boolean,
+  force_hcaptcha?: boolean,
+  force_turnstile?: boolean,
+  turnstile_site_key?: string | null,
+  turnstile_secret?: string | null,
+  notification_cc_emails?: string | null,
+  notification_bcc_emails?: string | null,
+  notification_subject?: string | null,
+  notification_from_name?: string | null,
+  autoreply_subject?: string | null,
+  autoreply_from_name?: string | null,
+  autoreply_greeting?: string | null,
+  autoreply_name?: string | null,
+  autoreply_title?: string | null,
+  autoreply_email?: string | null,
+  logo?: string | null,
+  button_background_color?: string | null,
+  button_text_color?: string | null,
+  data_receipt_email?: boolean,
+  retention_days?: number,
+  hide_dashboard_button?: boolean,
+  exclude_submitter_from_reply?: boolean,
+  custom_template?: string | null,
+  use_custom_template?: boolean,
+  autoreply_custom_template?: string | null,
+  autoreply_use_custom_template?: boolean,
+  notification_mail_template_id?: number | null,
+  auto_response_mail_template_id?: number | null,
+  confirmation_mail_template_id?: number | null,
+  honeypot_field?: string | null,
+  recaptcha_failed_url?: string | null,
+  domain_id?: number | null,
+  domain_email?: string | null,
+  duplicate_filter?: boolean,
+  project_id?: number,
+  project_name?: string,
+  redirect_heading?: string | null,
+  redirect_message?: string | null,
+  redirect_button_background_color?: string | null,
+  redirect_button_text?: string | null,
+  redirect_button_text_color?: string | null,
+  content_blacklist?: string[] | null,
+  allowed_domains?: string[] | null,
+  blocked_domains?: string[] | null,
+  smtp_email_validation?: boolean,
+  contribute_to_spam_training?: boolean,
+  form_webhooks?: any[],
+  inbox_count?: number,
+  spam_count?: number,
+  trash_count?: number,
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  email?: string | null,
+  form_id?: number,
+  spam?: boolean,
+  read?: boolean,
+  trash?: boolean,
+  spam_reason?: string | null,
+  webhook_sent_at?: string | null,
+  ip?: string | null,
+  referrer?: string | null,
+  user_agent?: string | null,
+  payload_params?: {
+  },
+  attachments?: any[] | null,
+  form?: {
+    name?: string,
+    uuid?: string
+  },
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  name?: string,
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  form_id?: number,
+  name?: string,
+  url?: string,
+  format?: string,
+  trigger_when_spam?: boolean,
+  enabled?: boolean,
+  failure_count?: number,
+  last_failure_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`submissions.get`
+
+Retrieve a specific form submission by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.submissions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `email` | `string` | No | — |
+| `form_id` | `number` | No | — |
+| `spam` | `boolean` | No | — |
+| `read` | `boolean` | No | — |
+| `trash` | `boolean` | No | — |
+| `spam_reason` | `string` | No | — |
+| `webhook_sent_at` | `string` | No | — |
+| `ip` | `string` | No | — |
+| `referrer` | `string` | No | — |
+| `user_agent` | `string` | No | — |
+| `payload_params` | `object` | No | — |
+| `attachments` | `any[]` | No | — |
+| `form` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="form full type">
+
+```ts
+{
+  name?: string,
+  uuid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### list
+
+`submissions.list`
+
+List submissions with filtering and pagination options
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.submissions.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `string \| number` | No | — |
+| `filter_by` | `string` | No | — |
+| `query` | `string` | No | — |
+| `order_by` | `string` | No | — |
+| `date_range` | `string` | No | — |
+| `page` | `string \| number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submissions` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="submissions full type">
+
+```ts
+{
+  id: number | string,
+  email?: string | null,
+  form_id?: number,
+  spam?: boolean,
+  read?: boolean,
+  trash?: boolean,
+  spam_reason?: string | null,
+  webhook_sent_at?: string | null,
+  ip?: string | null,
+  referrer?: string | null,
+  user_agent?: string | null,
+  payload_params?: {
+  },
+  attachments?: any[] | null,
+  form?: {
+    name?: string,
+    uuid?: string
+  },
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number,
+  page?: number,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markHam
+
+`submissions.markHam`
+
+Mark a submission as legitimate (not spam)
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.submissions.markHam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `email` | `string` | No | — |
+| `form_id` | `number` | No | — |
+| `spam` | `boolean` | No | — |
+| `read` | `boolean` | No | — |
+| `trash` | `boolean` | No | — |
+| `spam_reason` | `string` | No | — |
+| `webhook_sent_at` | `string` | No | — |
+| `ip` | `string` | No | — |
+| `referrer` | `string` | No | — |
+| `user_agent` | `string` | No | — |
+| `payload_params` | `object` | No | — |
+| `attachments` | `any[]` | No | — |
+| `form` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="form full type">
+
+```ts
+{
+  name?: string,
+  uuid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### markSpam
+
+`submissions.markSpam`
+
+Mark a submission as spam
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.submissions.markSpam({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `email` | `string` | No | — |
+| `form_id` | `number` | No | — |
+| `spam` | `boolean` | No | — |
+| `read` | `boolean` | No | — |
+| `trash` | `boolean` | No | — |
+| `spam_reason` | `string` | No | — |
+| `webhook_sent_at` | `string` | No | — |
+| `ip` | `string` | No | — |
+| `referrer` | `string` | No | — |
+| `user_agent` | `string` | No | — |
+| `payload_params` | `object` | No | — |
+| `attachments` | `any[]` | No | — |
+| `form` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="form full type">
+
+```ts
+{
+  name?: string,
+  uuid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### refireWebhooks
+
+`submissions.refireWebhooks`
+
+Re-trigger webhooks for a specific submission
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.submissions.refireWebhooks({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### refireWebhooksBulk
+
+`submissions.refireWebhooksBulk`
+
+Re-trigger webhooks in bulk for multiple submissions
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.submissions.refireWebhooksBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `submission_ids` | `number[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+
+
+
+---
+
+### update
+
+`submissions.update`
+
+Update a submission state (read, spam, trash)
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.submissions.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `spam` | `boolean` | No | — |
+| `read` | `boolean` | No | — |
+| `trash` | `boolean` | No | — |
+| `submission` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="submission full type">
+
+```ts
+{
+  spam?: boolean,
+  read?: boolean,
+  trash?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `email` | `string` | No | — |
+| `form_id` | `number` | No | — |
+| `spam` | `boolean` | No | — |
+| `read` | `boolean` | No | — |
+| `trash` | `boolean` | No | — |
+| `spam_reason` | `string` | No | — |
+| `webhook_sent_at` | `string` | No | — |
+| `ip` | `string` | No | — |
+| `referrer` | `string` | No | — |
+| `user_agent` | `string` | No | — |
+| `payload_params` | `object` | No | — |
+| `attachments` | `any[]` | No | — |
+| `form` | `object` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="payload_params full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="form full type">
+
+```ts
+{
+  name?: string,
+  uuid?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Create a new form webhook integration
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `format` | `string` | No | — |
+| `trigger_when_spam` | `boolean` | No | — |
+| `enabled` | `boolean` | No | — |
+| `form_webhook` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="form_webhook full type">
+
+```ts
+{
+  form_id: number,
+  name: string,
+  url: string,
+  format?: string,
+  trigger_when_spam?: boolean,
+  enabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `form_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `format` | `string` | No | — |
+| `trigger_when_spam` | `boolean` | No | — |
+| `enabled` | `boolean` | No | — |
+| `failure_count` | `number` | No | — |
+| `last_failure_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Permanently delete a form webhook integration [DESTRUCTIVE]
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.basin.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  success?: boolean,
+  message?: string
+} | {
+  id: number | string,
+  uuid?: string | null,
+  name?: string,
+  timezone?: string,
+  redirect_url?: string | null,
+  use_ajax?: boolean,
+  notification_emails?: string,
+  autoreply?: boolean,
+  autoreply_body?: string | null,
+  whitelist_source_domains?: string | null,
+  force_recaptcha?: boolean,
+  force_hcaptcha?: boolean,
+  force_turnstile?: boolean,
+  turnstile_site_key?: string | null,
+  turnstile_secret?: string | null,
+  notification_cc_emails?: string | null,
+  notification_bcc_emails?: string | null,
+  notification_subject?: string | null,
+  notification_from_name?: string | null,
+  autoreply_subject?: string | null,
+  autoreply_from_name?: string | null,
+  autoreply_greeting?: string | null,
+  autoreply_name?: string | null,
+  autoreply_title?: string | null,
+  autoreply_email?: string | null,
+  logo?: string | null,
+  button_background_color?: string | null,
+  button_text_color?: string | null,
+  data_receipt_email?: boolean,
+  retention_days?: number,
+  hide_dashboard_button?: boolean,
+  exclude_submitter_from_reply?: boolean,
+  custom_template?: string | null,
+  use_custom_template?: boolean,
+  autoreply_custom_template?: string | null,
+  autoreply_use_custom_template?: boolean,
+  notification_mail_template_id?: number | null,
+  auto_response_mail_template_id?: number | null,
+  confirmation_mail_template_id?: number | null,
+  honeypot_field?: string | null,
+  recaptcha_failed_url?: string | null,
+  domain_id?: number | null,
+  domain_email?: string | null,
+  duplicate_filter?: boolean,
+  project_id?: number,
+  project_name?: string,
+  redirect_heading?: string | null,
+  redirect_message?: string | null,
+  redirect_button_background_color?: string | null,
+  redirect_button_text?: string | null,
+  redirect_button_text_color?: string | null,
+  content_blacklist?: string[] | null,
+  allowed_domains?: string[] | null,
+  blocked_domains?: string[] | null,
+  smtp_email_validation?: boolean,
+  contribute_to_spam_training?: boolean,
+  form_webhooks?: any[],
+  inbox_count?: number,
+  spam_count?: number,
+  trash_count?: number,
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  email?: string | null,
+  form_id?: number,
+  spam?: boolean,
+  read?: boolean,
+  trash?: boolean,
+  spam_reason?: string | null,
+  webhook_sent_at?: string | null,
+  ip?: string | null,
+  referrer?: string | null,
+  user_agent?: string | null,
+  payload_params?: {
+  },
+  attachments?: any[] | null,
+  form?: {
+    name?: string,
+    uuid?: string
+  },
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  name?: string,
+  created_at?: string,
+  updated_at?: string
+} | {
+  id: number | string,
+  form_id?: number,
+  name?: string,
+  url?: string,
+  format?: string,
+  trigger_when_spam?: boolean,
+  enabled?: boolean,
+  failure_count?: number,
+  last_failure_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+} | {
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### get
+
+`webhooks.get`
+
+Retrieve a form webhook configuration by ID
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.webhooks.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `form_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `format` | `string` | No | — |
+| `trigger_when_spam` | `boolean` | No | — |
+| `enabled` | `boolean` | No | — |
+| `failure_count` | `number` | No | — |
+| `last_failure_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List all form webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.basin.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `page` | `string \| number` | No | — |
+| `query` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `form_webhooks` | `object[]` | Yes | — |
+| `meta` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="form_webhooks full type">
+
+```ts
+{
+  id: number | string,
+  form_id?: number,
+  name?: string,
+  url?: string,
+  format?: string,
+  trigger_when_spam?: boolean,
+  enabled?: boolean,
+  failure_count?: number,
+  last_failure_at?: string | null,
+  created_at?: string,
+  updated_at?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="meta full type">
+
+```ts
+{
+  count?: number,
+  page?: number,
+  per_page?: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a form webhook configuration
+
+**Risk:** `write`
+
+```ts
+await corsair.basin.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string \| number` | Yes | — |
+| `form_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `format` | `string` | No | — |
+| `trigger_when_spam` | `boolean` | No | — |
+| `enabled` | `boolean` | No | — |
+| `form_webhook` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="form_webhook full type">
+
+```ts
+{
+  form_id?: number,
+  name?: string,
+  url?: string,
+  format?: string,
+  trigger_when_spam?: boolean,
+  enabled?: boolean
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `number \| string` | Yes | — |
+| `form_id` | `number` | No | — |
+| `name` | `string` | No | — |
+| `url` | `string` | No | — |
+| `format` | `string` | No | — |
+| `trigger_when_spam` | `boolean` | No | — |
+| `enabled` | `boolean` | No | — |
+| `failure_count` | `number` | No | — |
+| `last_failure_at` | `string` | No | — |
+| `created_at` | `string` | No | — |
+| `updated_at` | `string` | No | — |
+
+
+
+---
+
