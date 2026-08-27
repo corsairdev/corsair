@@ -61,12 +61,12 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'backendless',
 	'bannerbear',
 	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
-	'backendless',
 	'beeminder',
 	'bettercontact',
 	'betterstack',
@@ -170,6 +170,7 @@ export const BaseProviders = [
 	'pagerduty',
 	'pdfmonkey',
 	'perplexityai',
+	'plain',
 	'posthog',
 	'razorpay',
 	'reddit',
@@ -271,12 +272,12 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	backendless: 'Backendless',
 	bannerbear: 'Bannerbear',
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
-	backendless: 'Backendless',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
@@ -380,6 +381,7 @@ export const ProviderDisplayNames = {
 	pagerduty: 'PagerDuty',
 	pdfmonkey: 'PDFMonkey',
 	perplexityai: 'Perplexity AI',
+	plain: 'Plain',
 	posthog: 'PostHog',
 	razorpay: 'Razorpay',
 	reddit: 'Reddit',
@@ -488,12 +490,12 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'backendless'
 	| 'bannerbear'
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
-	| 'backendless'
 	| 'beeminder'
 	| 'bettercontact'
 	| 'betterstack'
@@ -597,6 +599,7 @@ export type AllProviders =
 	| 'pagerduty'
 	| 'pdfmonkey'
 	| 'perplexityai'
+	| 'plain'
 	| 'posthog'
 	| 'razorpay'
 	| 'reddit'
