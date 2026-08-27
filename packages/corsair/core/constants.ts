@@ -61,6 +61,7 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'bannerbear',
 	'bart',
 	'basecamp',
 	'baselinker',
@@ -265,6 +266,7 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	bannerbear: 'Bannerbear',
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
@@ -476,6 +478,7 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'bannerbear'
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
