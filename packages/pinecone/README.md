@@ -82,7 +82,20 @@ pnpm --filter @corsair-dev/pinecone test
 pnpm --filter @corsair-dev/pinecone build
 ```
 
-Offline tests require no Pinecone key. A live demo and recording will be attached to the pull request before it is marked ready for review.
+Offline tests require no Pinecone key.
+
+## Live demo
+
+The live demo uses the real plugin endpoints to generate embeddings, create a disposable serverless index, upsert and query three vectors, rerank the matches, and delete the index in a `finally` block:
+
+```bash
+read -s PINECONE_API_KEY
+export PINECONE_API_KEY
+pnpm exec tsx packages/pinecone/demo.ts
+unset PINECONE_API_KEY
+```
+
+Paste the key at the hidden prompt and press Enter. The API key is read only from the process environment and is never printed. The demo uses AWS `us-east-1`, which is available on Pinecone Starter plans. A recording will be attached to the pull request before it is marked ready for review.
 
 ## Links
 
@@ -90,4 +103,3 @@ Offline tests require no Pinecone key. A live demo and recording will be attache
 - [Official OpenAPI specifications](https://github.com/pinecone-io/pinecone-api)
 - [Integration request](https://github.com/corsairdev/corsair/issues/1199)
 - [Draft pull request](https://github.com/corsairdev/corsair/pull/1200)
-
