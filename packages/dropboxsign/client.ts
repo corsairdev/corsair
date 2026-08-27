@@ -15,6 +15,9 @@ export class DropboxSignAPIError extends Error {
 
 const DROPBOX_SIGN_API_BASE = 'https://api.hellosign.com/v3';
 
+/**
+ * Dispatches authenticated HTTP requests to the Dropbox Sign API.
+ */
 export async function makeDropboxSignRequest<T>(
 	endpoint: string,
 	apiKey: string,

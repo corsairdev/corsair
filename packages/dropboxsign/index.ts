@@ -545,6 +545,10 @@ export type BaseDropboxSignPlugin<T extends DropboxSignPluginOptions> = CorsairP
 export type InternalDropboxSignPlugin = BaseDropboxSignPlugin<DropboxSignPluginOptions>;
 export type ExternalDropboxSignPlugin<T extends DropboxSignPluginOptions> = BaseDropboxSignPlugin<T>;
 
+/**
+ * Dropbox Sign plugin factory for Corsair.
+ * Provides electronic signature, template, team, and API app workflows.
+ */
 export function dropboxsign<const T extends DropboxSignPluginOptions>(
 	incomingOptions: DropboxSignPluginOptions & T = {} as DropboxSignPluginOptions & T,
 ): ExternalDropboxSignPlugin<T> {
