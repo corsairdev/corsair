@@ -1,0 +1,122 @@
+import { logEventFromContext } from 'corsair/core';
+import { makeDropboxSignRequest } from '../client';
+import type { DropboxSignEndpoints } from '../index';
+import type { DropboxSignEndpointOutputs } from './types';
+
+export const getTemplate: DropboxSignEndpoints['getTemplate'] = async (ctx, input) => {
+	const { template_id } = input;
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getTemplate']>(
+			emplate/,
+		ctx.key,
+		{ method: 'GET', authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.get', { template_id }, 'completed');
+	return result;
+};
+
+export const listTemplates: DropboxSignEndpoints['listTemplates'] = async (ctx, input) => {
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['listTemplates']>(
+		'template/list',
+		ctx.key,
+		{ method: 'GET', query: input, authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.list', input ?? {}, 'completed');
+	return result;
+};
+
+export const createTemplate: DropboxSignEndpoints['createTemplate'] = async (ctx, input) => {
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['createTemplate']>(
+		'template/create_embedded_draft',
+		ctx.key,
+		{ method: 'POST', body: input, authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.create', { title: input.title }, 'completed');
+	return result;
+};
+
+export const createEmbeddedTemplateDraft: DropboxSignEndpoints['createEmbeddedTemplateDraft'] = async (ctx, input) => {
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['createEmbeddedTemplateDraft']>(
+		'template/create_embedded_draft',
+		ctx.key,
+		{ method: 'POST', body: input, authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.createEmbeddedDraft', { client_id: input.client_id }, 'completed');
+	return result;
+};
+
+export const deleteTemplate: DropboxSignEndpoints['deleteTemplate'] = async (ctx, input) => {
+	const { template_id } = input;
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['deleteTemplate']>(
+			emplate/delete/,
+		ctx.key,
+		{ method: 'POST', authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.delete', { template_id }, 'completed');
+	return result;
+};
+
+export const addUserToTemplate: DropboxSignEndpoints['addUserToTemplate'] = async (ctx, input) => {
+	const { template_id, ...body } = input;
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['addUserToTemplate']>(
+			emplate/add_user/,
+		ctx.key,
+		{ method: 'POST', body, authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.addUser', { template_id }, 'completed');
+	return result;
+};
+
+export const removeUserFromTemplate: DropboxSignEndpoints['removeUserFromTemplate'] = async (ctx, input) => {
+	const { template_id, ...body } = input;
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['removeUserFromTemplate']>(
+			emplate/remove_user/,
+		ctx.key,
+		{ method: 'POST', body, authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.removeUser', { template_id }, 'completed');
+	return result;
+};
+
+export const getTemplateFiles: DropboxSignEndpoints['getTemplateFiles'] = async (ctx, input) => {
+	const { template_id, ...query } = input;
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getTemplateFiles']>(
+			emplate/files/,
+		ctx.key,
+		{ method: 'GET', query, authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.getFiles', { template_id }, 'completed');
+	return result;
+};
+
+export const getTemplateFilesAsFileUrl: DropboxSignEndpoints['getTemplateFilesAsFileUrl'] = async (ctx, input) => {
+	const { template_id } = input;
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getTemplateFilesAsFileUrl']>(
+			emplate/files_as_file_url/,
+		ctx.key,
+		{ method: 'GET', authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.getFilesAsFileUrl', { template_id }, 'completed');
+	return result;
+};
+
+export const getTemplateFilesAsDataUri: DropboxSignEndpoints['getTemplateFilesAsDataUri'] = async (ctx, input) => {
+	const { template_id } = input;
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['getTemplateFilesAsDataUri']>(
+			emplate/files_as_data_uri/,
+		ctx.key,
+		{ method: 'GET', authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.getFilesAsDataUri', { template_id }, 'completed');
+	return result;
+};
+
+export const updateTemplateFiles: DropboxSignEndpoints['updateTemplateFiles'] = async (ctx, input) => {
+	const { template_id, ...body } = input;
+	const result = await makeDropboxSignRequest<DropboxSignEndpointOutputs['updateTemplateFiles']>(
+			emplate/update_files/,
+		ctx.key,
+		{ method: 'POST', body, authType: ctx.authType },
+	);
+	await logEventFromContext(ctx, 'dropbox_sign.template.updateFiles', { template_id }, 'completed');
+	return result;
+};
