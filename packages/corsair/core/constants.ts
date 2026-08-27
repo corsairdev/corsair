@@ -61,12 +61,12 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'backendless',
 	'bannerbear',
 	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
-	'backendless',
 	'beeminder',
 	'bettercontact',
 	'betterstack',
@@ -93,6 +93,7 @@ export const BaseProviders = [
 	'circleci',
 	'clientary',
 	'clockify',
+	'cloudcart',
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
@@ -271,12 +272,12 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	backendless: 'Backendless',
 	bannerbear: 'Bannerbear',
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
-	backendless: 'Backendless',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
@@ -303,6 +304,7 @@ export const ProviderDisplayNames = {
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
+	cloudcart: 'Cloudcart',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
@@ -488,12 +490,12 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'backendless'
 	| 'bannerbear'
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
-	| 'backendless'
 	| 'beeminder'
 	| 'bettercontact'
 	| 'betterstack'
@@ -520,6 +522,7 @@ export type AllProviders =
 	| 'circleci'
 	| 'clientary'
 	| 'clockify'
+	| 'cloudcart'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
