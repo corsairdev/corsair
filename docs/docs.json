@@ -14,6 +14,25 @@
   "appearance": {
     "default": "light"
   },
+  "description": "Docs for Corsair, an open-source SDK that adds OAuth, webhooks, and MCP tools to AI agents. Credentials stay encrypted in your database.",
+  "seo": {
+    "metatags": {
+      "og:site_name": "Corsair Docs",
+      "og:locale": "en_US",
+      "twitter:site": "@corsairdotdev"
+    },
+    "organization": {
+      "id": "https://corsair.dev/#organization",
+      "name": "Corsair",
+      "url": "https://corsair.dev",
+      "logo": "https://corsair.dev/corsair-logo.png",
+      "sameAs": [
+        "https://github.com/corsairdev/corsair",
+        "https://x.com/corsairdotdev",
+        "https://discord.gg/uNgCP3mSzU"
+      ]
+    }
+  },
   "navbar": {
     "primary": {
       "type": "github",

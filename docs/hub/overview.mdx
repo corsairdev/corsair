@@ -1,20 +1,21 @@
 ---
-title: Hub
+title: Corsair Hub
 sidebarTitle: Overview
-description: The hosted relay for the parts of Corsair that need a public URL — connect flows and approvals. It stores none of your credentials.
+description: "Corsair Hub hosts OAuth callbacks, connect pages, and approval UIs. Tokens pass through the relay and stay encrypted in your database."
+keywords: ["corsair hub", "oauth callback", "connect page", "hosted oauth"]
 ---
 
 import CreateCorsairHub from '/snippets/create-corsair-hub.mdx';
 import MountHandlerNextjs from '/snippets/mount-handler-nextjs.mdx';
 
-Corsair runs in your own app. A few things, though, need a stable public URL a third party can reach: OAuth callbacks and approval pages. **Hub is the recommended way to handle them** — a hosted relay that provides those surfaces so you skip the boilerplate.
+Corsair runs in your own app. A few things, though, need a stable public URL a third party can reach: OAuth callbacks and approval pages. **Hub is the recommended way to handle them**: a hosted relay that provides those surfaces so you skip the boilerplate.
 
 Hub is not a separate product or a separate SDK. It is the same `createCorsair` instance with one extra config block: add it and Corsair routes the public-URL surfaces through Hub.
 
 <CreateCorsairHub />
 
 <Info>
-Want to own those surfaces instead? Self-hosted (`manual`) mode is fully featured — you host the connect, callback, and approval pages yourself. See [Manual or Hub](/hub/manual-vs-hub).
+Want to own those surfaces instead? Self-hosted (`manual`) mode is fully featured. You host the connect, callback, and approval pages yourself. See [Manual or Hub](/hub/manual-vs-hub).
 </Info>
 
 ## Hub stores none of your credentials
@@ -55,10 +56,10 @@ Three surfaces normally need a public URL. Hub hosts all three:
 
 When an action needs a connection the user hasn't made yet, recover in four steps:
 
-1. Corsair throws an auth-missing error — no connection for this tenant.
+1. Corsair throws an auth-missing error: no connection for this tenant.
 2. Call `createLink()` to mint a Hub sign-in link and send the user to it.
 3. The user connects on Hub's hosted page. Tokens land encrypted in your database.
-4. Retry the original action — it succeeds.
+4. Retry the original action. It succeeds.
 
 You can also copy sign-in links from the [Hub dashboard](/hub/dashboard) without writing code.
 
@@ -66,7 +67,7 @@ You can also copy sign-in links from the [Hub dashboard](/hub/dashboard) without
 
 In a self-hosted setup, the OAuth redirect URI you register with each provider has to match the environment that is running, so you end up juggling separate provider apps (or rewriting redirect URIs) for local and production.
 
-With Hub you register **one** callback URL with the provider. Hub receives the callback and delivers the result to your app. Development and production use separate API keys and different delivery paths — see [Environments](/hub/environments) for why (browser redirect locally, signed POST in production).
+With Hub you register **one** callback URL with the provider. Hub receives the callback and delivers the result to your app. Development and production use separate API keys and different delivery paths. See [Environments](/hub/environments) for why (browser redirect locally, signed POST in production).
 
 ## Turning Hub on
 
@@ -89,7 +90,7 @@ Set up a project in the [Hub dashboard](https://hub.corsair.dev/dashboard), then
     Register `https://auth.corsair.dev/oauth/callback` in each OAuth provider console (GitHub, Google, etc.). This is the single callback Hub holds for every environment.
   </Step>
   <Step title="Mount the handler and run locally">
-    Mount `toNextJsHandler` at `/api/corsair`. In development, Hub auto-detects your localhost delivery URL — no dashboard registration needed.
+    Mount `toNextJsHandler` at `/api/corsair`. In development, Hub auto-detects your localhost delivery URL. No dashboard registration needed.
   </Step>
   <Step title="Activate production when you deploy">
     Switch to the **production** environment in the dashboard, register your public HTTPS delivery URL, and set `ck_prod_…` credentials in your deployed env. See [Environments](/hub/environments).
