@@ -15,6 +15,7 @@ jest.mock('corsair/core', () => ({
 }));
 
 import { createHmac } from 'node:crypto';
+import { challenge } from './webhooks/challenge';
 import { message } from './webhooks/messages';
 import {
 	createSlackbotEventMatch,
@@ -123,6 +124,25 @@ describe('message triggers partition the event space', () => {
 
 	it('claims nothing for a non-message event', () => {
 		expect(claimedBy({ type: 'reaction_added', user: 'U1' })).toEqual([]);
+	});
+
+	it.each([
+		'channel_join',
+		'channel_leave',
+		'channel_topic',
+		'channel_purpose',
+		'channel_name',
+		'message_changed',
+		'message_deleted',
+		'message_replied',
+	])('does not route a %s event to a message trigger', (subtype) => {
+		expect(claimedBy(messageEvent({ subtype }))).toEqual([]);
+	});
+
+	it('still routes a file_share as a human message', () => {
+		expect(claimedBy(messageEvent({ subtype: 'file_share' }))).toEqual([
+			'message',
+		]);
 	});
 });
 
@@ -247,6 +267,46 @@ describe('signature verification', () => {
 		);
 		expect(result.valid).toBe(false);
 		expect(result.error).toMatch(/Missing x-slack-signature/);
+	});
+});
+
+describe('url verification handshake', () => {
+	function sign(rawBody: string, timestamp: string, secret = SIGNING_SECRET) {
+		const hmac = createHmac('sha256', secret);
+		hmac.update(`v0:${timestamp}:${rawBody}`);
+		return `v0=${hmac.digest('hex')}`;
+	}
+
+	const ctx = {
+		key: SIGNING_SECRET,
+		options: { signingSecret: SIGNING_SECRET },
+	} as never;
+
+	it('rejects an unsigned challenge', async () => {
+		const payload = { type: 'url_verification', challenge: 'abc' };
+		const result = await challenge.handler(ctx, {
+			payload,
+			rawBody: JSON.stringify(payload),
+			headers: {},
+		} as never);
+		expect(result.success).toBe(false);
+		expect(result.statusCode).toBe(401);
+	});
+
+	it('echoes the challenge when the request is signed', async () => {
+		const payload = { type: 'url_verification', challenge: 'abc' };
+		const rawBody = JSON.stringify(payload);
+		const timestamp = String(Math.floor(Date.now() / 1000));
+		const result = await challenge.handler(ctx, {
+			payload,
+			rawBody,
+			headers: {
+				'x-slack-request-timestamp': timestamp,
+				'x-slack-signature': sign(rawBody, timestamp),
+			},
+		} as never);
+		expect(result.success).toBe(true);
+		expect(result.returnToSender).toEqual({ challenge: 'abc' });
 	});
 });
 

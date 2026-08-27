@@ -168,6 +168,37 @@ function isThreadReply(event: Record<string, unknown>): boolean {
 	return typeof threadTs === 'string' && threadTs !== event.ts;
 }
 
+const SYSTEM_MESSAGE_SUBTYPES = new Set([
+	'bot_add',
+	'bot_remove',
+	'channel_archive',
+	'channel_join',
+	'channel_leave',
+	'channel_name',
+	'channel_posting_permissions',
+	'channel_purpose',
+	'channel_topic',
+	'channel_unarchive',
+	'ekm_access_denied',
+	'group_archive',
+	'group_join',
+	'group_leave',
+	'group_name',
+	'group_purpose',
+	'group_topic',
+	'group_unarchive',
+	'message_changed',
+	'message_deleted',
+	'message_replied',
+	'pinned_item',
+	'unpinned_item',
+]);
+
+function isSystemMessage(event: Record<string, unknown>): boolean {
+	const subtype = event.subtype;
+	return typeof subtype === 'string' && SYSTEM_MESSAGE_SUBTYPES.has(subtype);
+}
+
 /**
  * Builds a matcher for a `message` event narrowed to one surface.
  *
@@ -183,7 +214,9 @@ function createMessageMatch(
 	return (request: RawWebhookRequest) => {
 		const event = readEvent(request);
 		if (!event || event.type !== 'message') return false;
-		if (isBotMessage(event) || isThreadReply(event)) return false;
+		if (isBotMessage(event) || isThreadReply(event) || isSystemMessage(event)) {
+			return false;
+		}
 		return event.channel_type === channelType;
 	};
 }
@@ -192,6 +225,7 @@ function createMessageMatch(
 export const matchBotMessage: CorsairWebhookMatcher = (request) => {
 	const event = readEvent(request);
 	if (!event || event.type !== 'message') return false;
+	if (isSystemMessage(event)) return false;
 	return isBotMessage(event);
 };
 
@@ -199,7 +233,7 @@ export const matchBotMessage: CorsairWebhookMatcher = (request) => {
 export const matchThreadReply: CorsairWebhookMatcher = (request) => {
 	const event = readEvent(request);
 	if (!event || event.type !== 'message') return false;
-	if (isBotMessage(event)) return false;
+	if (isBotMessage(event) || isSystemMessage(event)) return false;
 	return isThreadReply(event);
 };
 

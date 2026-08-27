@@ -1,19 +1,22 @@
 import type { SlackbotWebhooks } from '../index';
-import { matchUrlVerification } from './types';
+import { matchUrlVerification, verifySlackbotWebhookSignature } from './types';
 
-/**
- * Answers Slack's one-time URL verification handshake.
- *
- * This is not a subscribable event: Slack POSTs it when the Events API request
- * URL is first saved and refuses to enable the endpoint unless the `challenge`
- * value is echoed back. It is deliberately exempt from signature verification —
- * the handshake is what establishes the endpoint, and the payload carries no
- * workspace data.
- */
 export const challenge: SlackbotWebhooks['challenge'] = {
 	match: matchUrlVerification,
 
-	handler: async (_ctx, request) => {
+	handler: async (ctx, request) => {
+		const verification = verifySlackbotWebhookSignature(
+			request,
+			ctx.options?.signingSecret ?? ctx.key,
+		);
+		if (!verification.valid) {
+			return {
+				success: false,
+				statusCode: 401,
+				error: verification.error || 'Signature verification failed',
+			};
+		}
+
 		const payload = request.payload as { challenge?: string };
 
 		if (!payload?.challenge) {
