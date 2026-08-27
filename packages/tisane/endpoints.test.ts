@@ -226,19 +226,25 @@ describe('Tisane input schemas', () => {
 describe('keyBuilder resolution', () => {
 	it('throws AuthMissingError when no key is available', async () => {
 		const oldEnv = process.env.TISANE_API_KEY;
-		process.env.TISANE_API_KEY = '';
+		Reflect.deleteProperty(process.env, 'TISANE_API_KEY');
 
-		const plugin = tisane({});
-		const mockCtx = {
-			authType: 'api_key',
-			keys: { get_api_key: jest.fn().mockResolvedValue(undefined) },
-		};
+		try {
+			const plugin = tisane({});
+			const mockCtx = {
+				authType: 'api_key',
+				keys: { get_api_key: jest.fn().mockResolvedValue(undefined) },
+			};
 
-		await expect(
-			plugin.keyBuilder!(mockCtx as never, 'endpoint'),
-		).rejects.toBeInstanceOf(AuthMissingError);
-
-		process.env.TISANE_API_KEY = oldEnv;
+			await expect(
+				plugin.keyBuilder!(mockCtx as never, 'endpoint'),
+			).rejects.toBeInstanceOf(AuthMissingError);
+		} finally {
+			if (oldEnv === undefined) {
+				Reflect.deleteProperty(process.env, 'TISANE_API_KEY');
+			} else {
+				process.env.TISANE_API_KEY = oldEnv;
+			}
+		}
 	});
 
 	it('resolves explicit options.key', async () => {
