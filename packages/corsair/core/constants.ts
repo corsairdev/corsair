@@ -91,6 +91,7 @@ export const BaseProviders = [
 	'canvas',
 	'chatbotkit',
 	'circleci',
+	'claidai',
 	'clientary',
 	'clockify',
 	'cloudflare',
@@ -301,6 +302,7 @@ export const ProviderDisplayNames = {
 	canvas: 'Canvas LMS',
 	chatbotkit: 'ChatBotKit',
 	circleci: 'CircleCI',
+	claidai: 'ClaidAi',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
 	cloudflare: 'Cloudflare',
@@ -518,6 +520,7 @@ export type AllProviders =
 	| 'canvas'
 	| 'chatbotkit'
 	| 'circleci'
+	| 'claidai'
 	| 'clientary'
 	| 'clockify'
 	| 'cloudflare'
