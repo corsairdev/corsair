@@ -18,6 +18,12 @@ describe('Vestaboard Endpoints Unit Tests', () => {
 			subscriptions: { upsertByEntityId: jest.fn() },
 			viewer: { upsertByEntityId: jest.fn() },
 		},
+		$getAccountId: jest.fn().mockResolvedValue('acc-1'),
+		database: {
+			events: {
+				create: jest.fn().mockResolvedValue({ id: 'evt-1' }),
+			},
+		},
 	} as any;
 
 	beforeEach(() => {

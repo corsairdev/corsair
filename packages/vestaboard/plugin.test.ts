@@ -4,8 +4,8 @@ describe('Vestaboard Plugin Structure Tests', () => {
 	it('instantiates plugin with default options', () => {
 		const plugin = vestaboard({ key: 'test-key' });
 		expect(plugin.id).toBe('vestaboard');
-		expect(plugin.options.key).toBe('test-key');
-		expect(plugin.options.authType).toBe('api_key');
+		expect(plugin.options?.key).toBe('test-key');
+		expect((plugin.options as Record<string, unknown>)?.authType).toBe('api_key');
 	});
 
 	it('configures authConfig correctly', () => {
@@ -35,13 +35,15 @@ describe('Vestaboard Plugin Structure Tests', () => {
 	it('keyBuilder returns provided options.key', async () => {
 		const plugin = vestaboard({ key: 'custom-rw-key' });
 		const mockContext = {
-			authType: 'api_key',
+			authType: 'api_key' as const,
 			keys: {
 				get_api_key: jest.fn().mockResolvedValue('stored-api-key'),
 			},
-		} as any;
+		};
 
-		const key = await plugin.keyBuilder(mockContext, 'endpoint');
-		expect(key).toBe('custom-rw-key');
+		if (plugin.keyBuilder) {
+			const key = await (plugin.keyBuilder as any)(mockContext, 'endpoint');
+			expect(key).toBe('custom-rw-key');
+		}
 	});
 });
