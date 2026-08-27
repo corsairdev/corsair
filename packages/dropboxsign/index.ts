@@ -1,7 +1,6 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -17,14 +16,14 @@ import type {
 
 import {
 	Account,
-	SignatureRequests,
-	Templates,
+	ApiApps,
+	BulkSend,
 	Drafts,
 	Embedded,
-	BulkSend,
-	Teams,
-	ApiApps,
 	FaxAndReports,
+	SignatureRequests,
+	Teams,
+	Templates,
 } from './endpoints';
 
 import type {
@@ -54,15 +53,18 @@ export type DropboxSignContext = CorsairPluginContext<
 	DropboxSignPluginOptions
 >;
 
-export type DropboxSignKeyBuilderContext = KeyBuilderContext<DropboxSignPluginOptions>;
+export type DropboxSignKeyBuilderContext =
+	KeyBuilderContext<DropboxSignPluginOptions>;
 
-export type DropboxSignBoundEndpoints = BindEndpoints<typeof dropboxSignEndpointsNested>;
+export type DropboxSignBoundEndpoints =
+	BindEndpoints<typeof dropboxSignEndpointsNested>;
 
-type DropboxSignEndpoint<K extends keyof DropboxSignEndpointOutputs> = CorsairEndpoint<
-	DropboxSignContext,
-	DropboxSignEndpointInputs[K],
-	DropboxSignEndpointOutputs[K]
->;
+type DropboxSignEndpoint<K extends keyof DropboxSignEndpointOutputs> =
+	CorsairEndpoint<
+		DropboxSignContext,
+		DropboxSignEndpointInputs[K],
+		DropboxSignEndpointOutputs[K]
+	>;
 
 export type DropboxSignEndpoints = {
 	getAccount: DropboxSignEndpoint<'getAccount'>;
@@ -146,7 +148,8 @@ const dropboxSignEndpointsNested = {
 		list: SignatureRequests.listSignatureRequests,
 		send: SignatureRequests.sendSignatureRequest,
 		createEmbedded: SignatureRequests.createEmbeddedSignatureRequest,
-		createEmbeddedWithTemplate: SignatureRequests.createEmbeddedSignatureRequestWithTemplate,
+		createEmbeddedWithTemplate:
+			SignatureRequests.createEmbeddedSignatureRequestWithTemplate,
 		cancel: SignatureRequests.cancelSignatureRequest,
 		remind: SignatureRequests.sendRequestReminder,
 		update: SignatureRequests.updateSignatureRequest,
@@ -155,8 +158,10 @@ const dropboxSignEndpointsNested = {
 		getFilesAsDataUri: SignatureRequests.getSignatureRequestFilesAsDataUri,
 		releaseHold: SignatureRequests.releaseSignatureRequestHold,
 		editAndResend: SignatureRequests.editAndResendSignatureRequest,
-		editAndResendEmbedded: SignatureRequests.editAndResendEmbeddedSignatureRequest,
-		editAndResendEmbeddedTemplate: SignatureRequests.editAndResendEmbeddedSignatureRequestTemplate,
+		editAndResendEmbedded:
+			SignatureRequests.editAndResendEmbeddedSignatureRequest,
+		editAndResendEmbeddedTemplate:
+			SignatureRequests.editAndResendEmbeddedSignatureRequestTemplate,
 	},
 	templates: {
 		get: Templates.getTemplate,
@@ -173,7 +178,8 @@ const dropboxSignEndpointsNested = {
 	},
 	drafts: {
 		createUnclaimed: Drafts.createUnclaimedDraft,
-		createEmbeddedUnclaimedWithTemplate: Drafts.createEmbeddedUnclaimedDraftWithTemplate,
+		createEmbeddedUnclaimedWithTemplate:
+			Drafts.createEmbeddedUnclaimedDraftWithTemplate,
 		editAndResendUnclaimed: Drafts.editAndResendUnclaimedDraft,
 	},
 	embedded: {
@@ -182,7 +188,8 @@ const dropboxSignEndpointsNested = {
 	},
 	bulkSend: {
 		sendWithTemplate: BulkSend.bulkSendWithTemplate,
-		createEmbeddedWithTemplate: BulkSend.bulkCreateEmbeddedSigReqWithTemplate,
+		createEmbeddedWithTemplate:
+			BulkSend.bulkCreateEmbeddedSigReqWithTemplate,
 		getJob: BulkSend.getBulkSendJob,
 		listJobs: BulkSend.listBulkSendJobs,
 	},
@@ -446,80 +453,255 @@ export const dropboxSignEndpointSchemas = {
 		input: DropboxSignEndpointInputSchemas.createReport,
 		output: DropboxSignEndpointOutputSchemas.createReport,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof dropboxSignEndpointsNested>;
-
-const dropboxSignWebhookSchemas = {} as const satisfies RequiredPluginWebhookSchemas<
-	typeof dropboxSignWebhooksNested
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof dropboxSignEndpointsNested
 >;
+
+const dropboxSignWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof dropboxSignWebhooksNested
+	>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const dropboxSignEndpointMeta = {
-	'account.get': { riskLevel: 'read', description: 'Retrieves detailed information about a Dropbox Sign account' },
-	'account.create': { riskLevel: 'write', description: 'Creates a new Dropbox Sign account' },
-	'account.update': { riskLevel: 'write', description: 'Updates Dropbox Sign account settings' },
-	'account.verify': { riskLevel: 'read', description: 'Verifies whether a Dropbox Sign account exists' },
+	'account.get': {
+		riskLevel: 'read',
+		description: 'Retrieves detailed information about a Dropbox Sign account',
+	},
+	'account.create': {
+		riskLevel: 'write',
+		description: 'Creates a new Dropbox Sign account',
+	},
+	'account.update': {
+		riskLevel: 'write',
+		description: 'Updates Dropbox Sign account settings',
+	},
+	'account.verify': {
+		riskLevel: 'read',
+		description: 'Verifies whether a Dropbox Sign account exists',
+	},
 
-	'signatureRequests.get': { riskLevel: 'read', description: 'Retrieves details of a signature request' },
-	'signatureRequests.list': { riskLevel: 'read', description: 'Lists signature requests' },
-	'signatureRequests.send': { riskLevel: 'write', description: 'Sends a signature request' },
-	'signatureRequests.createEmbedded': { riskLevel: 'write', description: 'Creates an embedded signature request' },
-	'signatureRequests.createEmbeddedWithTemplate': { riskLevel: 'write', description: 'Creates an embedded signature request with template' },
-	'signatureRequests.cancel': { riskLevel: 'write', description: 'Cancels an incomplete signature request' },
-	'signatureRequests.remind': { riskLevel: 'write', description: 'Sends a reminder to a signer' },
-	'signatureRequests.update': { riskLevel: 'write', description: 'Updates signer contact information on signature request' },
-	'signatureRequests.downloadFiles': { riskLevel: 'read', description: 'Downloads signature request files' },
-	'signatureRequests.getFilesAsFileUrl': { riskLevel: 'read', description: 'Gets temporary file URL for signature request' },
-	'signatureRequests.getFilesAsDataUri': { riskLevel: 'read', description: 'Gets signature request files as Data URI' },
-	'signatureRequests.releaseHold': { riskLevel: 'write', description: 'Releases a held signature request' },
-	'signatureRequests.editAndResend': { riskLevel: 'write', description: 'Edits and resends a signature request' },
-	'signatureRequests.editAndResendEmbedded': { riskLevel: 'write', description: 'Edits and resends an embedded signature request' },
-	'signatureRequests.editAndResendEmbeddedTemplate': { riskLevel: 'write', description: 'Edits and resends an embedded signature request with template' },
+	'signatureRequests.get': {
+		riskLevel: 'read',
+		description: 'Retrieves details of a signature request',
+	},
+	'signatureRequests.list': {
+		riskLevel: 'read',
+		description: 'Lists signature requests',
+	},
+	'signatureRequests.send': {
+		riskLevel: 'write',
+		description: 'Sends a signature request',
+	},
+	'signatureRequests.createEmbedded': {
+		riskLevel: 'write',
+		description: 'Creates an embedded signature request',
+	},
+	'signatureRequests.createEmbeddedWithTemplate': {
+		riskLevel: 'write',
+		description: 'Creates an embedded signature request with template',
+	},
+	'signatureRequests.cancel': {
+		riskLevel: 'write',
+		description: 'Cancels an incomplete signature request',
+	},
+	'signatureRequests.remind': {
+		riskLevel: 'write',
+		description: 'Sends a reminder to a signer',
+	},
+	'signatureRequests.update': {
+		riskLevel: 'write',
+		description:
+			'Updates signer contact information on signature request',
+	},
+	'signatureRequests.downloadFiles': {
+		riskLevel: 'read',
+		description: 'Downloads signature request files',
+	},
+	'signatureRequests.getFilesAsFileUrl': {
+		riskLevel: 'read',
+		description: 'Gets temporary file URL for signature request',
+	},
+	'signatureRequests.getFilesAsDataUri': {
+		riskLevel: 'read',
+		description: 'Gets signature request files as Data URI',
+	},
+	'signatureRequests.releaseHold': {
+		riskLevel: 'write',
+		description: 'Releases a held signature request',
+	},
+	'signatureRequests.editAndResend': {
+		riskLevel: 'write',
+		description: 'Edits and resends a signature request',
+	},
+	'signatureRequests.editAndResendEmbedded': {
+		riskLevel: 'write',
+		description: 'Edits and resends an embedded signature request',
+	},
+	'signatureRequests.editAndResendEmbeddedTemplate': {
+		riskLevel: 'write',
+		description:
+			'Edits and resends an embedded signature request with template',
+	},
 
-	'templates.get': { riskLevel: 'read', description: 'Retrieves a template by ID' },
-	'templates.list': { riskLevel: 'read', description: 'Lists templates' },
-	'templates.create': { riskLevel: 'write', description: 'Creates a reusable template' },
-	'templates.createEmbeddedDraft': { riskLevel: 'write', description: 'Creates an embedded template draft' },
-	'templates.delete': { riskLevel: 'write', description: 'Deletes a template' },
-	'templates.addUser': { riskLevel: 'write', description: 'Adds user access to template' },
-	'templates.removeUser': { riskLevel: 'write', description: 'Removes user access from template' },
-	'templates.getFiles': { riskLevel: 'read', description: 'Downloads template documents' },
-	'templates.getFilesAsFileUrl': { riskLevel: 'read', description: 'Gets template files as URL' },
-	'templates.getFilesAsDataUri': { riskLevel: 'read', description: 'Gets template files as Data URI' },
-	'templates.updateFiles': { riskLevel: 'write', description: 'Updates files for a template' },
+	'templates.get': {
+		riskLevel: 'read',
+		description: 'Retrieves a template by ID',
+	},
+	'templates.list': {
+		riskLevel: 'read',
+		description: 'Lists templates',
+	},
+	'templates.create': {
+		riskLevel: 'write',
+		description: 'Creates a reusable template',
+	},
+	'templates.createEmbeddedDraft': {
+		riskLevel: 'write',
+		description: 'Creates an embedded template draft',
+	},
+	'templates.delete': {
+		riskLevel: 'write',
+		description: 'Deletes a template',
+	},
+	'templates.addUser': {
+		riskLevel: 'write',
+		description: 'Adds user access to template',
+	},
+	'templates.removeUser': {
+		riskLevel: 'write',
+		description: 'Removes user access from template',
+	},
+	'templates.getFiles': {
+		riskLevel: 'read',
+		description: 'Downloads template documents',
+	},
+	'templates.getFilesAsFileUrl': {
+		riskLevel: 'read',
+		description: 'Gets template files as URL',
+	},
+	'templates.getFilesAsDataUri': {
+		riskLevel: 'read',
+		description: 'Gets template files as Data URI',
+	},
+	'templates.updateFiles': {
+		riskLevel: 'write',
+		description: 'Updates files for a template',
+	},
 
-	'drafts.createUnclaimed': { riskLevel: 'write', description: 'Creates an unclaimed draft' },
-	'drafts.createEmbeddedUnclaimedWithTemplate': { riskLevel: 'write', description: 'Creates embedded unclaimed draft with template' },
-	'drafts.editAndResendUnclaimed': { riskLevel: 'write', description: 'Edits and resends an unclaimed draft' },
+	'drafts.createUnclaimed': {
+		riskLevel: 'write',
+		description: 'Creates an unclaimed draft',
+	},
+	'drafts.createEmbeddedUnclaimedWithTemplate': {
+		riskLevel: 'write',
+		description: 'Creates embedded unclaimed draft with template',
+	},
+	'drafts.editAndResendUnclaimed': {
+		riskLevel: 'write',
+		description: 'Edits and resends an unclaimed draft',
+	},
 
-	'embedded.getSignUrl': { riskLevel: 'read', description: 'Gets embedded signing URL' },
-	'embedded.getTemplateEditUrl': { riskLevel: 'read', description: 'Gets embedded template edit URL' },
+	'embedded.getSignUrl': {
+		riskLevel: 'read',
+		description: 'Gets embedded signing URL',
+	},
+	'embedded.getTemplateEditUrl': {
+		riskLevel: 'read',
+		description: 'Gets embedded template edit URL',
+	},
 
-	'bulkSend.sendWithTemplate': { riskLevel: 'write', description: 'Bulk sends signature requests with template' },
-	'bulkSend.createEmbeddedWithTemplate': { riskLevel: 'write', description: 'Bulk creates embedded signature requests with template' },
-	'bulkSend.getJob': { riskLevel: 'read', description: 'Gets bulk send job status' },
-	'bulkSend.listJobs': { riskLevel: 'read', description: 'Lists bulk send jobs' },
+	'bulkSend.sendWithTemplate': {
+		riskLevel: 'write',
+		description: 'Bulk sends signature requests with template',
+	},
+	'bulkSend.createEmbeddedWithTemplate': {
+		riskLevel: 'write',
+		description: 'Bulk creates embedded signature requests with template',
+	},
+	'bulkSend.getJob': {
+		riskLevel: 'read',
+		description: 'Gets bulk send job status',
+	},
+	'bulkSend.listJobs': {
+		riskLevel: 'read',
+		description: 'Lists bulk send jobs',
+	},
 
-	'teams.getInfo': { riskLevel: 'read', description: 'Retrieves team details' },
-	'teams.getCurrent': { riskLevel: 'read', description: 'Gets current team membership' },
-	'teams.list': { riskLevel: 'read', description: 'Lists all accessible teams' },
-	'teams.listSubTeams': { riskLevel: 'read', description: 'Lists sub-teams for a team' },
-	'teams.listMembers': { riskLevel: 'read', description: 'Lists team members' },
-	'teams.addMember': { riskLevel: 'write', description: 'Invites or adds a user to team' },
+	'teams.getInfo': {
+		riskLevel: 'read',
+		description: 'Retrieves team details',
+	},
+	'teams.getCurrent': {
+		riskLevel: 'read',
+		description: 'Gets current team membership',
+	},
+	'teams.list': {
+		riskLevel: 'read',
+		description: 'Lists all accessible teams',
+	},
+	'teams.listSubTeams': {
+		riskLevel: 'read',
+		description: 'Lists sub-teams for a team',
+	},
+	'teams.listMembers': {
+		riskLevel: 'read',
+		description: 'Lists team members',
+	},
+	'teams.addMember': {
+		riskLevel: 'write',
+		description: 'Invites or adds a user to team',
+	},
 
-	'apiApps.get': { riskLevel: 'read', description: 'Retrieves API App details' },
-	'apiApps.list': { riskLevel: 'read', description: 'Lists API Apps' },
-	'apiApps.create': { riskLevel: 'write', description: 'Creates a new API App' },
-	'apiApps.update': { riskLevel: 'write', description: 'Updates an existing API App' },
-	'apiApps.delete': { riskLevel: 'write', description: 'Deletes an API App' },
-	'apiApps.authorize': { riskLevel: 'read', description: 'Generates OAuth authorization URL' },
+	'apiApps.get': {
+		riskLevel: 'read',
+		description: 'Retrieves API App details',
+	},
+	'apiApps.list': {
+		riskLevel: 'read',
+		description: 'Lists API Apps',
+	},
+	'apiApps.create': {
+		riskLevel: 'write',
+		description: 'Creates a new API App',
+	},
+	'apiApps.update': {
+		riskLevel: 'write',
+		description: 'Updates an existing API App',
+	},
+	'apiApps.delete': {
+		riskLevel: 'write',
+		description: 'Deletes an API App',
+	},
+	'apiApps.authorize': {
+		riskLevel: 'read',
+		description: 'Generates OAuth authorization URL',
+	},
 
-	'faxAndReports.listFaxes': { riskLevel: 'read', description: 'Lists faxes' },
-	'faxAndReports.deleteFax': { riskLevel: 'write', description: 'Deletes a fax' },
-	'faxAndReports.listFaxLines': { riskLevel: 'read', description: 'Lists fax lines' },
-	'faxAndReports.getAreaCodes': { riskLevel: 'read', description: 'Gets available fax line area codes' },
-	'faxAndReports.createReport': { riskLevel: 'write', description: 'Requests CSV report generation' },
-} as const satisfies RequiredPluginEndpointMeta<typeof dropboxSignEndpointsNested>;
+	'faxAndReports.listFaxes': {
+		riskLevel: 'read',
+		description: 'Lists faxes',
+	},
+	'faxAndReports.deleteFax': {
+		riskLevel: 'write',
+		description: 'Deletes a fax',
+	},
+	'faxAndReports.listFaxLines': {
+		riskLevel: 'read',
+		description: 'Lists fax lines',
+	},
+	'faxAndReports.getAreaCodes': {
+		riskLevel: 'read',
+		description: 'Gets available fax line area codes',
+	},
+	'faxAndReports.createReport': {
+		riskLevel: 'write',
+		description: 'Requests CSV report generation',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof dropboxSignEndpointsNested
+>;
 
 const dropboxSignAuthConfig = {
 	api_key: {
@@ -533,24 +715,28 @@ const dropboxSignAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseDropboxSignPlugin<T extends DropboxSignPluginOptions> = CorsairPlugin<
-	'dropboxsign',
-	typeof DropboxSignSchema,
-	typeof dropboxSignEndpointsNested,
-	typeof dropboxSignWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseDropboxSignPlugin<T extends DropboxSignPluginOptions> =
+	CorsairPlugin<
+		'dropboxsign',
+		typeof DropboxSignSchema,
+		typeof dropboxSignEndpointsNested,
+		typeof dropboxSignWebhooksNested,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalDropboxSignPlugin = BaseDropboxSignPlugin<DropboxSignPluginOptions>;
-export type ExternalDropboxSignPlugin<T extends DropboxSignPluginOptions> = BaseDropboxSignPlugin<T>;
+export type InternalDropboxSignPlugin =
+	BaseDropboxSignPlugin<DropboxSignPluginOptions>;
+export type ExternalDropboxSignPlugin<T extends DropboxSignPluginOptions> =
+	BaseDropboxSignPlugin<T>;
 
 /**
  * Dropbox Sign plugin factory for Corsair.
  * Provides electronic signature, template, team, and API app workflows.
  */
 export function dropboxsign<const T extends DropboxSignPluginOptions>(
-	incomingOptions: DropboxSignPluginOptions & T = {} as DropboxSignPluginOptions & T,
+	incomingOptions: DropboxSignPluginOptions & T = {} as DropboxSignPluginOptions &
+		T,
 ): ExternalDropboxSignPlugin<T> {
 	const options = {
 		...incomingOptions,
