@@ -14,6 +14,14 @@ export class StreamtimeAPIError extends Error {
 // TODO: Update with your API base URL
 const STREAMTIME_API_BASE = 'https://api.streamtime.net/v2';
 
+/**
+ * Makes an HTTP request to the Streamtime API.
+ *
+ * @param endpoint The API endpoint path.
+ * @param apiKey The API bearer token.
+ * @param options HTTP request options (method, body, query).
+ * @returns A promise resolving to the API response.
+ */
 export async function makeStreamtimeRequest<T>(
 	endpoint: string,
 	apiKey: string,

@@ -135,6 +135,12 @@ export type InternalStreamtimePlugin =
 export type ExternalStreamtimePlugin<T extends StreamtimePluginOptions> =
 	BaseStreamtimePlugin<T>;
 
+/**
+ * Factory function to create a Streamtime integration plugin instance.
+ *
+ * @param incomingOptions Configuration options for the Streamtime plugin (authType, API key, custom error handlers).
+ * @returns The configured Streamtime plugin instance.
+ */
 export function streamtime<const T extends StreamtimePluginOptions>(
 	incomingOptions: StreamtimePluginOptions & T = {} as StreamtimePluginOptions &
 		T,
