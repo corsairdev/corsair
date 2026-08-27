@@ -3,6 +3,7 @@ import type { HubConfig } from '../../hub';
 import { reportPluginConnectionStatusFromBinding } from '../../hub/report-connection-status';
 import { throwAuthMissingEndpointError } from '../auth/auth-missing-message';
 import { AuthMissingError } from '../auth/errors/auth-missing';
+import { ReconnectRequiredError } from '../auth/errors/reconnect-required';
 import type { EndpointManualConfig } from '../config/manual-connect';
 import type { CorsairErrorHandler } from '../errors';
 import { handleCorsairError } from '../errors/handler';
@@ -253,6 +254,22 @@ export function bindEndpointsRecursively({
 				try {
 					key = keyBuilder ? await keyBuilder(ctx, 'endpoint') : undefined;
 				} catch (err) {
+					// Hub already minted a scoped connect link and put it on the typed
+					// error — report the connection unverified and rethrow it intact.
+					if (err instanceof ReconnectRequiredError) {
+						if (plugin && hubConfig) {
+							reportPluginConnectionStatusFromBinding({
+								hub: hubConfig,
+								database,
+								kek,
+								plugins: allPlugins ?? [],
+								plugin,
+								tenantId,
+								verified: false,
+							});
+						}
+						throw err;
+					}
 					if (err instanceof AuthMissingError) {
 						if (plugin && hubConfig) {
 							reportPluginConnectionStatusFromBinding({
