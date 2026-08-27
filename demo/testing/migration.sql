@@ -41,6 +41,14 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
 
+CREATE TABLE IF NOT EXISTS corsair_usage_counters (
+    key TEXT PRIMARY KEY,
+    count INTEGER NOT NULL DEFAULT 1,
+    expires_at TEXT NOT NULL
+);
+CREATE INDEX IF NOT EXISTS corsair_usage_counters_expires_at
+    ON corsair_usage_counters (expires_at);
+
 CREATE TABLE IF NOT EXISTS corsair_permissions (
     id TEXT PRIMARY KEY,
     created_at INTEGER NOT NULL,
