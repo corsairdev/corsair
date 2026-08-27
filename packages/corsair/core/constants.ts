@@ -179,6 +179,7 @@ export const BaseProviders = [
 	'strava',
 	'stripe',
 	'supabase',
+	'synthflowai',
 	'tally',
 	'tavily',
 	'tavilymcp',
@@ -380,6 +381,7 @@ export const ProviderDisplayNames = {
 	strava: 'Strava',
 	stripe: 'Stripe',
 	supabase: 'Supabase',
+	synthflowai: 'SynthflowAi',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
@@ -588,6 +590,7 @@ export type AllProviders =
 	| 'strava'
 	| 'stripe'
 	| 'supabase'
+	| 'synthflowai'
 	| 'tally'
 	| 'tavily'
 	| 'tavilymcp'
