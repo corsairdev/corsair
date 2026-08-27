@@ -78,6 +78,7 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'botpress',
+	'botsonic',
 	'bouncer',
 	'box',
 	'brandfetch',
@@ -285,6 +286,7 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	botpress: 'Botpress',
+	botsonic: 'Botsonic',
 	bouncer: 'Bouncer',
 	box: 'Box',
 	brandfetch: 'Brandfetch',
@@ -499,6 +501,7 @@ export type AllProviders =
 	| 'bluesky'
 	| 'boloforms'
 	| 'botpress'
+	| 'botsonic'
 	| 'bouncer'
 	| 'box'
 	| 'brandfetch'
