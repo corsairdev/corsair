@@ -1,31 +1,76 @@
-import type { CorsairErrorHandler } from 'corsair/core';
-import { ApiError } from 'corsair/http';
+export interface DocusignErrorResponse {
+	status?: number;
+	statusCode?: number;
+	message?: string;
+	errorCode?: string;
+	response?: {
+		status?: number;
+		data?: unknown;
+		headers?: Record<string, string>;
+	};
+	headers?: Record<string, string>;
+}
 
-export const errorHandlers = {
-	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
-		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
+export const docusignErrorHandlers = {
+	rateLimit: {
+		match: (error: unknown): boolean => {
+			if (!error || typeof error !== 'object') {
+				return false;
 			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+			const err = error as DocusignErrorResponse;
+			return (
+				err.status === 429 ||
+				err.statusCode === 429 ||
+				err.response?.status === 429 ||
+				Boolean(
+					err.message &&
+						(err.message.includes('429') ||
+							err.message.toLowerCase().includes('rate limit') ||
+							err.message.includes('RATE_LIMIT_EXCEEDED')),
+				)
+			);
+		},
+		handler: (error: unknown) => {
+			const err = error as DocusignErrorResponse;
+			const retryAfter =
+				err.headers?.['retry-after'] ||
+				err.response?.headers?.['retry-after'] ||
+				'60';
+			return {
+				action: 'retry' as const,
+				type: 'rate_limit' as const,
+				retryAfter: Number.parseInt(String(retryAfter), 10) || 60,
+				message: 'DocuSign API rate limit exceeded. Retry after delay.',
+			};
 		},
 	},
-	AUTH_ERROR: {
-		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+	auth: {
+		match: (error: unknown): boolean => {
+			if (!error || typeof error !== 'object') {
+				return false;
+			}
+			const err = error as DocusignErrorResponse;
+			return (
+				err.status === 401 ||
+				err.statusCode === 401 ||
+				err.response?.status === 401 ||
+				Boolean(
+					err.message &&
+						(err.message.includes('401') ||
+							err.message.toLowerCase().includes('unauthorized') ||
+							err.message.includes('INVALID_AUTHENTICATION')),
+				)
+			);
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: (error: unknown) => {
+			return {
+				action: 'reauthenticate' as const,
+				type: 'authentication_error' as const,
+				message: 'DocuSign authentication failed or access token is expired.',
+			};
+		},
 	},
-	DEFAULT: {
-		match: () => true,
-		handler: async () => ({ maxRetries: 0 }),
-	},
-} satisfies CorsairErrorHandler;
+};
+
+export const errorHandlers = docusignErrorHandlers;
+export default docusignErrorHandlers;

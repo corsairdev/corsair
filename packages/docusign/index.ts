@@ -2,11 +2,13 @@ import type { RequiredPluginEndpointMeta } from 'corsair/core';
 import type { DocusignAuthOptions } from './client';
 import { DocusignClient } from './client';
 import * as endpoints from './endpoints';
+import * as errorHandlers from './error-handlers';
 import * as schema from './schema';
 import * as webhooks from './webhooks';
 
 export * from './client';
 export * from './endpoints';
+export * from './error-handlers';
 export * from './schema';
 export * from './webhooks';
 
@@ -68,6 +70,7 @@ export const docusignPlugin = {
 	endpoints: docusignEndpointsNested,
 	webhooks: docusignWebhooksNested,
 	endpointMeta: docusignEndpointMeta,
+	errorHandlers: errorHandlers.docusignErrorHandlers,
 	schema,
 };
 
