@@ -1,15 +1,20 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BetterContactEndpoints } from '..';
 import { makeBetterContactRequest } from '../client';
-import type { BetterContactEndpointOutputs } from './types';
+import { BetterContactEndpointOutputSchemas } from './types';
 
 export const create: BetterContactEndpoints['leadFinderCreate'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeBetterContactRequest<
-		BetterContactEndpointOutputs['leadFinderCreate']
-	>('lead_finder/async', ctx.key, { method: 'POST', body: input });
+	const raw = await makeBetterContactRequest<unknown>(
+		'lead_finder/async',
+		ctx.key,
+		{ method: 'POST', body: input },
+	);
+
+	const response =
+		BetterContactEndpointOutputSchemas.leadFinderCreate.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -31,9 +36,14 @@ export const create: BetterContactEndpoints['leadFinderCreate'] = async (
 
 export const getResults: BetterContactEndpoints['leadFinderGetResults'] =
 	async (ctx, input) => {
-		const response = await makeBetterContactRequest<
-			BetterContactEndpointOutputs['leadFinderGetResults']
-		>(`lead_finder/async/${input.request_id}`, ctx.key, { method: 'GET' });
+		const raw = await makeBetterContactRequest<unknown>(
+			`lead_finder/async/${input.request_id}`,
+			ctx.key,
+			{ method: 'GET' },
+		);
+
+		const response =
+			BetterContactEndpointOutputSchemas.leadFinderGetResults.parse(raw);
 
 		await logEventFromContext(
 			ctx,

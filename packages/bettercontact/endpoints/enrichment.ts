@@ -1,15 +1,19 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BetterContactEndpoints } from '..';
 import { makeBetterContactRequest } from '../client';
-import type { BetterContactEndpointOutputs } from './types';
+import { BetterContactEndpointOutputSchemas } from './types';
 
 export const enrich: BetterContactEndpoints['enrichmentEnrich'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await makeBetterContactRequest<
-		BetterContactEndpointOutputs['enrichmentEnrich']
-	>('async', ctx.key, { method: 'POST', body: input });
+	const raw = await makeBetterContactRequest<unknown>('async', ctx.key, {
+		method: 'POST',
+		body: input,
+	});
+
+	const response =
+		BetterContactEndpointOutputSchemas.enrichmentEnrich.parse(raw);
 
 	await logEventFromContext(
 		ctx,
@@ -28,9 +32,14 @@ export const enrich: BetterContactEndpoints['enrichmentEnrich'] = async (
 
 export const getResults: BetterContactEndpoints['enrichmentGetResults'] =
 	async (ctx, input) => {
-		const response = await makeBetterContactRequest<
-			BetterContactEndpointOutputs['enrichmentGetResults']
-		>(`async/${input.request_id}`, ctx.key, { method: 'GET' });
+		const raw = await makeBetterContactRequest<unknown>(
+			`async/${input.request_id}`,
+			ctx.key,
+			{ method: 'GET' },
+		);
+
+		const response =
+			BetterContactEndpointOutputSchemas.enrichmentGetResults.parse(raw);
 
 		await logEventFromContext(
 			ctx,
