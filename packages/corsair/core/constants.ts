@@ -194,6 +194,7 @@ export const BaseProviders = [
 	'twitterapiio',
 	'twochat',
 	'typeform',
+	'typefully',
 	'unione',
 	'uniswapapi',
 	'vapi',
@@ -395,6 +396,7 @@ export const ProviderDisplayNames = {
 	twitterapiio: 'Twitter API IO',
 	twochat: 'TwoChat',
 	typeform: 'Typeform',
+	typefully: 'Typefully',
 	unione: 'Unione',
 	uniswapapi: 'Uniswap',
 	vapi: 'Vapi',
@@ -620,6 +622,7 @@ export type AllProviders =
 	| 'zohomail'
 	| 'zoom'
 	| 'zoominfo'
+	| 'typefully'
 	| (string & {});
 
 export type AuthTypes = 'oauth_2' | 'api_key' | 'bot_token' | 'managed';
