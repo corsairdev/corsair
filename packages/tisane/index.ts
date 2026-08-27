@@ -141,8 +141,7 @@ export function tisane<const T extends TisanePluginOptions>(
 		webhooks: {},
 		endpointMeta: tisaneEndpointMeta,
 		endpointSchemas: tisaneEndpointSchemas,
-		webhookSchemas: {},
-		pluginWebhookMatcher: () => false,
+		pluginWebhookMatcher: undefined,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
