@@ -1,87 +1,338 @@
 import { z } from 'zod';
+import type { BorneoOperationName } from '../operations';
 
-const AssetIdSchema = z.object({
-	assetId: z.string().min(1),
-});
+export const BorneoToolInputSchema = z.record(z.string(), z.unknown());
+export type BorneoToolInput = z.infer<typeof BorneoToolInputSchema>;
 
-const AssetWriteSchema = z
+export const BorneoToolResponseSchema = z
 	.object({
-		name: z.string().min(1),
-		type: z.string().min(1),
+		data: z.unknown().optional(),
+		error: z.unknown().optional(),
+		successful: z.boolean().optional(),
+		log_id: z.string().optional(),
 	})
 	.passthrough();
-
-const AssetSchema = z.object({}).passthrough();
-
-export const CreateAssetInputSchema = AssetWriteSchema;
-export type CreateAssetInput = z.infer<typeof CreateAssetInputSchema>;
-
-export const CreateAssetResponseSchema = AssetSchema;
-export type CreateAssetResponse = z.infer<typeof CreateAssetResponseSchema>;
-
-export const RetrieveAssetInputSchema = AssetIdSchema;
-export type RetrieveAssetInput = z.infer<typeof RetrieveAssetInputSchema>;
-
-export const RetrieveAssetResponseSchema = AssetSchema;
-export type RetrieveAssetResponse = z.infer<typeof RetrieveAssetResponseSchema>;
-
-export const UpdateAssetInputSchema = AssetIdSchema.extend({
-	name: z.string().min(1),
-	type: z.string().min(1),
-}).passthrough();
-export type UpdateAssetInput = z.infer<typeof UpdateAssetInputSchema>;
-
-export const UpdateAssetResponseSchema = AssetSchema;
-export type UpdateAssetResponse = z.infer<typeof UpdateAssetResponseSchema>;
-
-export const DeleteAssetInputSchema = AssetIdSchema;
-export type DeleteAssetInput = z.infer<typeof DeleteAssetInputSchema>;
-
-export const DeleteAssetResponseSchema = z.unknown();
-export type DeleteAssetResponse = z.infer<typeof DeleteAssetResponseSchema>;
-
-export const PostSupportChatQueryInputSchema = z
-	.object({
-		query: z.string().min(1),
-	})
-	.passthrough();
-export type PostSupportChatQueryInput = z.infer<
-	typeof PostSupportChatQueryInputSchema
->;
-
-export const PostSupportChatQueryResponseSchema = z.object({}).passthrough();
-export type PostSupportChatQueryResponse = z.infer<
-	typeof PostSupportChatQueryResponseSchema
->;
+export type BorneoToolResponse = z.infer<typeof BorneoToolResponseSchema>;
 
 export type BorneoEndpointInputs = {
-	createAsset: CreateAssetInput;
-	retrieveAsset: RetrieveAssetInput;
-	updateAsset: UpdateAssetInput;
-	deleteAsset: DeleteAssetInput;
-	postSupportChatQuery: PostSupportChatQueryInput;
+	[K in BorneoOperationName]: BorneoToolInput;
 };
 
 export type BorneoEndpointOutputs = {
-	createAsset: CreateAssetResponse;
-	retrieveAsset: RetrieveAssetResponse;
-	updateAsset: UpdateAssetResponse;
-	deleteAsset: DeleteAssetResponse;
-	postSupportChatQuery: PostSupportChatQueryResponse;
+	[K in BorneoOperationName]: BorneoToolResponse;
 };
 
 export const BorneoEndpointInputSchemas = {
-	createAsset: CreateAssetInputSchema,
-	retrieveAsset: RetrieveAssetInputSchema,
-	updateAsset: UpdateAssetInputSchema,
-	deleteAsset: DeleteAssetInputSchema,
-	postSupportChatQuery: PostSupportChatQueryInputSchema,
-} as const;
+	getCloudAccountById: BorneoToolInputSchema,
+	postAccountsWithFilterAndSortOptions: BorneoToolInputSchema,
+	retrieveAccountDetailsById: BorneoToolInputSchema,
+	createNewAsset: BorneoToolInputSchema,
+	deleteAssetById: BorneoToolInputSchema,
+	filterAndSortAssetsList: BorneoToolInputSchema,
+	retrieveAssetById: BorneoToolInputSchema,
+	updateAssetInformationById: BorneoToolInputSchema,
+	listEventsWithFilters: BorneoToolInputSchema,
+	postFilteredAccessLogs: BorneoToolInputSchema,
+	postLogAuditRecordsWithFilterCriteria: BorneoToolInputSchema,
+	deleteDataBreachById: BorneoToolInputSchema,
+	evaluateDataBreachImpact: BorneoToolInputSchema,
+	fetchDataBreachEvaluation: BorneoToolInputSchema,
+	listDataBreachFilters: BorneoToolInputSchema,
+	listDataBreachesWithFilters: BorneoToolInputSchema,
+	postDataBreachInformation: BorneoToolInputSchema,
+	retrieveDataBreachById: BorneoToolInputSchema,
+	updateDataBreachEntry: BorneoToolInputSchema,
+	createNewInfotypeCategory: BorneoToolInputSchema,
+	deleteCategoryByLabel: BorneoToolInputSchema,
+	getCategoryByLabel: BorneoToolInputSchema,
+	updateCategoryInfotypes: BorneoToolInputSchema,
+	postConnectorWithFilteringOptions: BorneoToolInputSchema,
+	retrieveConnectorById: BorneoToolInputSchema,
+	createDashboardUser: BorneoToolInputSchema,
+	deleteDashboardReportById: BorneoToolInputSchema,
+	disableDashboardUserByUsername: BorneoToolInputSchema,
+	downloadDashboardReport: BorneoToolInputSchema,
+	downloadDashboardReportEdition: BorneoToolInputSchema,
+	enableDashboardUser: BorneoToolInputSchema,
+	fetchDashboardReportById: BorneoToolInputSchema,
+	getDashboardReportEditionById: BorneoToolInputSchema,
+	listDashboardReportEditions: BorneoToolInputSchema,
+	listDashboardReportsWithFilters: BorneoToolInputSchema,
+	listDashboardUsersWithFilters: BorneoToolInputSchema,
+	postCurrentDashboardUser: BorneoToolInputSchema,
+	postDashboardReport: BorneoToolInputSchema,
+	removeDashboardUserByUsername: BorneoToolInputSchema,
+	resetDashboardUserPassword: BorneoToolInputSchema,
+	triggerDashboardReportByReportId: BorneoToolInputSchema,
+	updateDashboardUserDetails: BorneoToolInputSchema,
+	updateDashboardUserRoles: BorneoToolInputSchema,
+	createDepartmentWithTranslations: BorneoToolInputSchema,
+	deleteDepartmentById: BorneoToolInputSchema,
+	getDepartmentFilterList: BorneoToolInputSchema,
+	listDepartmentsWithSortAndPagination: BorneoToolInputSchema,
+	retrieveDepartmentInformation: BorneoToolInputSchema,
+	updateDepartmentName: BorneoToolInputSchema,
+	createLegalDocumentEntry: BorneoToolInputSchema,
+	deleteLegalDocumentById: BorneoToolInputSchema,
+	listDiscoveredDocument: BorneoToolInputSchema,
+	listLegalDocumentsWithPagination: BorneoToolInputSchema,
+	retrieveDiscoveredDocumentById: BorneoToolInputSchema,
+	retrieveLegalDocumentById: BorneoToolInputSchema,
+	updateDiscoveredDocumentStatus: BorneoToolInputSchema,
+	createDomainWithPollingFrequency: BorneoToolInputSchema,
+	deleteDomainById: BorneoToolInputSchema,
+	getDomainById: BorneoToolInputSchema,
+	listDomainsWithPaginationAndSorting: BorneoToolInputSchema,
+	pollDomainById: BorneoToolInputSchema,
+	updateDomainDetails: BorneoToolInputSchema,
+	createEmployeeWithJsonPayload: BorneoToolInputSchema,
+	deleteEmployeeById: BorneoToolInputSchema,
+	filterEmployeeList: BorneoToolInputSchema,
+	listEmployeesWithFilters: BorneoToolInputSchema,
+	retrieveEmployeeDetailsById: BorneoToolInputSchema,
+	updateEmployeeById: BorneoToolInputSchema,
+	createHeadquarterEntry: BorneoToolInputSchema,
+	deleteHeadquartersById: BorneoToolInputSchema,
+	getHeadquartersById: BorneoToolInputSchema,
+	listHeadquartersWithSorting: BorneoToolInputSchema,
+	updateHeadquarterDetailsById: BorneoToolInputSchema,
+	listDiscoveredInfotypes: BorneoToolInputSchema,
+	retrieveDiscoveredInfotypeById: BorneoToolInputSchema,
+	updateDiscoveredInfotypeStatus: BorneoToolInputSchema,
+	listFilteredSortedCategories: BorneoToolInputSchema,
+	listIssuesWithFilters: BorneoToolInputSchema,
+	retrieveErrorDetailsById: BorneoToolInputSchema,
+	retrieveIssueById: BorneoToolInputSchema,
+	submitChatFeedback: BorneoToolInputSchema,
+	createDpiaForProcessingActivity: BorneoToolInputSchema,
+	createProcessingActivity: BorneoToolInputSchema,
+	createProcessingActivityThreshold: BorneoToolInputSchema,
+	createThresholdForProcessingActivity: BorneoToolInputSchema,
+	deleteDpiaById: BorneoToolInputSchema,
+	deleteLopdpThresholdById: BorneoToolInputSchema,
+	deleteProcessingActivityById: BorneoToolInputSchema,
+	deleteThresholdById: BorneoToolInputSchema,
+	exportProcessingActivitiesList: BorneoToolInputSchema,
+	getThresholdById: BorneoToolInputSchema,
+	listProcessingActivities: BorneoToolInputSchema,
+	listProcessingActivitiesFilters: BorneoToolInputSchema,
+	listTomsWithFilterAndPaginationOptions: BorneoToolInputSchema,
+	putTomStatusAndNote: BorneoToolInputSchema,
+	retrieveDpiaById: BorneoToolInputSchema,
+	retrieveLopdpThresholdById: BorneoToolInputSchema,
+	retrieveProcessingActivityById: BorneoToolInputSchema,
+	retrieveTomById: BorneoToolInputSchema,
+	updateDpiaById: BorneoToolInputSchema,
+	updateLopdpThresholdById: BorneoToolInputSchema,
+	updateProcessingActivityDetails: BorneoToolInputSchema,
+	updateThresholdById: BorneoToolInputSchema,
+	addDiscoveredRecipients: BorneoToolInputSchema,
+	archiveDiscoveredRecipient: BorneoToolInputSchema,
+	createRecipientWithDetails: BorneoToolInputSchema,
+	deleteRecipientById: BorneoToolInputSchema,
+	exportRecipientsListWithFilter: BorneoToolInputSchema,
+	filterRecipientsList: BorneoToolInputSchema,
+	listDiscoveredRecipients: BorneoToolInputSchema,
+	listFilterOptionsForRecipients: BorneoToolInputSchema,
+	listOrFilterRecipients: BorneoToolInputSchema,
+	postDiscoveredRecipientById: BorneoToolInputSchema,
+	retrieveDiscoveredRecipientById: BorneoToolInputSchema,
+	retrieveRecipientDetails: BorneoToolInputSchema,
+	retrieveRecipientProcessingActivities: BorneoToolInputSchema,
+	updateDashboardReportFrequencyAndRecipients: BorneoToolInputSchema,
+	updateRecipientDetailsById: BorneoToolInputSchema,
+	updateRecipientStatusViaId: BorneoToolInputSchema,
+	deleteTagFromResource: BorneoToolInputSchema,
+	exportFilteredLeafResources: BorneoToolInputSchema,
+	exportInventoryResourceList: BorneoToolInputSchema,
+	getResourceInventoryById: BorneoToolInputSchema,
+	listInventoryResourcesWithFilters: BorneoToolInputSchema,
+	listLeafResourcesWithFilters: BorneoToolInputSchema,
+	postClassificationStats: BorneoToolInputSchema,
+	postResourceLineageFilter: BorneoToolInputSchema,
+	postResourceStatsWithDeletedResources: BorneoToolInputSchema,
+	retrieveDataResourceStatistics: BorneoToolInputSchema,
+	retrieveResourceCatalogById: BorneoToolInputSchema,
+	retrieveResourceColumns: BorneoToolInputSchema,
+	accessScanIterationById: BorneoToolInputSchema,
+	createAndScheduleCloudResourceScan: BorneoToolInputSchema,
+	exportInsightPageUsingScanId: BorneoToolInputSchema,
+	filterAndListInspectionResults: BorneoToolInputSchema,
+	getInsightByTypeAndId: BorneoToolInputSchema,
+	getScanByScanId: BorneoToolInputSchema,
+	listErrorDetailsFromFilteredScanIterations: BorneoToolInputSchema,
+	listInsightFilters: BorneoToolInputSchema,
+	listScanExecutionResults: BorneoToolInputSchema,
+	listScanIterationsWithFilter: BorneoToolInputSchema,
+	listScansWithFilters: BorneoToolInputSchema,
+	markScanFalsePositivesById: BorneoToolInputSchema,
+	pauseScanById: BorneoToolInputSchema,
+	postScanResourceStatus: BorneoToolInputSchema,
+	resumeScanById: BorneoToolInputSchema,
+	scanLegalDocumentById: BorneoToolInputSchema,
+	stopScanViaScanId: BorneoToolInputSchema,
+	submitDetailedScanResults: BorneoToolInputSchema,
+	postSupportChatQuery: BorneoToolInputSchema,
+	getUserProfileById: BorneoToolInputSchema,
+	listUserProfileWithFiltersAndSorting: BorneoToolInputSchema,
+	verifyEmailWithIdAndToken: BorneoToolInputSchema,
+} as const satisfies Record<BorneoOperationName, typeof BorneoToolInputSchema>;
 
 export const BorneoEndpointOutputSchemas = {
-	createAsset: CreateAssetResponseSchema,
-	retrieveAsset: RetrieveAssetResponseSchema,
-	updateAsset: UpdateAssetResponseSchema,
-	deleteAsset: DeleteAssetResponseSchema,
-	postSupportChatQuery: PostSupportChatQueryResponseSchema,
-} as const;
+	getCloudAccountById: BorneoToolResponseSchema,
+	postAccountsWithFilterAndSortOptions: BorneoToolResponseSchema,
+	retrieveAccountDetailsById: BorneoToolResponseSchema,
+	createNewAsset: BorneoToolResponseSchema,
+	deleteAssetById: BorneoToolResponseSchema,
+	filterAndSortAssetsList: BorneoToolResponseSchema,
+	retrieveAssetById: BorneoToolResponseSchema,
+	updateAssetInformationById: BorneoToolResponseSchema,
+	listEventsWithFilters: BorneoToolResponseSchema,
+	postFilteredAccessLogs: BorneoToolResponseSchema,
+	postLogAuditRecordsWithFilterCriteria: BorneoToolResponseSchema,
+	deleteDataBreachById: BorneoToolResponseSchema,
+	evaluateDataBreachImpact: BorneoToolResponseSchema,
+	fetchDataBreachEvaluation: BorneoToolResponseSchema,
+	listDataBreachFilters: BorneoToolResponseSchema,
+	listDataBreachesWithFilters: BorneoToolResponseSchema,
+	postDataBreachInformation: BorneoToolResponseSchema,
+	retrieveDataBreachById: BorneoToolResponseSchema,
+	updateDataBreachEntry: BorneoToolResponseSchema,
+	createNewInfotypeCategory: BorneoToolResponseSchema,
+	deleteCategoryByLabel: BorneoToolResponseSchema,
+	getCategoryByLabel: BorneoToolResponseSchema,
+	updateCategoryInfotypes: BorneoToolResponseSchema,
+	postConnectorWithFilteringOptions: BorneoToolResponseSchema,
+	retrieveConnectorById: BorneoToolResponseSchema,
+	createDashboardUser: BorneoToolResponseSchema,
+	deleteDashboardReportById: BorneoToolResponseSchema,
+	disableDashboardUserByUsername: BorneoToolResponseSchema,
+	downloadDashboardReport: BorneoToolResponseSchema,
+	downloadDashboardReportEdition: BorneoToolResponseSchema,
+	enableDashboardUser: BorneoToolResponseSchema,
+	fetchDashboardReportById: BorneoToolResponseSchema,
+	getDashboardReportEditionById: BorneoToolResponseSchema,
+	listDashboardReportEditions: BorneoToolResponseSchema,
+	listDashboardReportsWithFilters: BorneoToolResponseSchema,
+	listDashboardUsersWithFilters: BorneoToolResponseSchema,
+	postCurrentDashboardUser: BorneoToolResponseSchema,
+	postDashboardReport: BorneoToolResponseSchema,
+	removeDashboardUserByUsername: BorneoToolResponseSchema,
+	resetDashboardUserPassword: BorneoToolResponseSchema,
+	triggerDashboardReportByReportId: BorneoToolResponseSchema,
+	updateDashboardUserDetails: BorneoToolResponseSchema,
+	updateDashboardUserRoles: BorneoToolResponseSchema,
+	createDepartmentWithTranslations: BorneoToolResponseSchema,
+	deleteDepartmentById: BorneoToolResponseSchema,
+	getDepartmentFilterList: BorneoToolResponseSchema,
+	listDepartmentsWithSortAndPagination: BorneoToolResponseSchema,
+	retrieveDepartmentInformation: BorneoToolResponseSchema,
+	updateDepartmentName: BorneoToolResponseSchema,
+	createLegalDocumentEntry: BorneoToolResponseSchema,
+	deleteLegalDocumentById: BorneoToolResponseSchema,
+	listDiscoveredDocument: BorneoToolResponseSchema,
+	listLegalDocumentsWithPagination: BorneoToolResponseSchema,
+	retrieveDiscoveredDocumentById: BorneoToolResponseSchema,
+	retrieveLegalDocumentById: BorneoToolResponseSchema,
+	updateDiscoveredDocumentStatus: BorneoToolResponseSchema,
+	createDomainWithPollingFrequency: BorneoToolResponseSchema,
+	deleteDomainById: BorneoToolResponseSchema,
+	getDomainById: BorneoToolResponseSchema,
+	listDomainsWithPaginationAndSorting: BorneoToolResponseSchema,
+	pollDomainById: BorneoToolResponseSchema,
+	updateDomainDetails: BorneoToolResponseSchema,
+	createEmployeeWithJsonPayload: BorneoToolResponseSchema,
+	deleteEmployeeById: BorneoToolResponseSchema,
+	filterEmployeeList: BorneoToolResponseSchema,
+	listEmployeesWithFilters: BorneoToolResponseSchema,
+	retrieveEmployeeDetailsById: BorneoToolResponseSchema,
+	updateEmployeeById: BorneoToolResponseSchema,
+	createHeadquarterEntry: BorneoToolResponseSchema,
+	deleteHeadquartersById: BorneoToolResponseSchema,
+	getHeadquartersById: BorneoToolResponseSchema,
+	listHeadquartersWithSorting: BorneoToolResponseSchema,
+	updateHeadquarterDetailsById: BorneoToolResponseSchema,
+	listDiscoveredInfotypes: BorneoToolResponseSchema,
+	retrieveDiscoveredInfotypeById: BorneoToolResponseSchema,
+	updateDiscoveredInfotypeStatus: BorneoToolResponseSchema,
+	listFilteredSortedCategories: BorneoToolResponseSchema,
+	listIssuesWithFilters: BorneoToolResponseSchema,
+	retrieveErrorDetailsById: BorneoToolResponseSchema,
+	retrieveIssueById: BorneoToolResponseSchema,
+	submitChatFeedback: BorneoToolResponseSchema,
+	createDpiaForProcessingActivity: BorneoToolResponseSchema,
+	createProcessingActivity: BorneoToolResponseSchema,
+	createProcessingActivityThreshold: BorneoToolResponseSchema,
+	createThresholdForProcessingActivity: BorneoToolResponseSchema,
+	deleteDpiaById: BorneoToolResponseSchema,
+	deleteLopdpThresholdById: BorneoToolResponseSchema,
+	deleteProcessingActivityById: BorneoToolResponseSchema,
+	deleteThresholdById: BorneoToolResponseSchema,
+	exportProcessingActivitiesList: BorneoToolResponseSchema,
+	getThresholdById: BorneoToolResponseSchema,
+	listProcessingActivities: BorneoToolResponseSchema,
+	listProcessingActivitiesFilters: BorneoToolResponseSchema,
+	listTomsWithFilterAndPaginationOptions: BorneoToolResponseSchema,
+	putTomStatusAndNote: BorneoToolResponseSchema,
+	retrieveDpiaById: BorneoToolResponseSchema,
+	retrieveLopdpThresholdById: BorneoToolResponseSchema,
+	retrieveProcessingActivityById: BorneoToolResponseSchema,
+	retrieveTomById: BorneoToolResponseSchema,
+	updateDpiaById: BorneoToolResponseSchema,
+	updateLopdpThresholdById: BorneoToolResponseSchema,
+	updateProcessingActivityDetails: BorneoToolResponseSchema,
+	updateThresholdById: BorneoToolResponseSchema,
+	addDiscoveredRecipients: BorneoToolResponseSchema,
+	archiveDiscoveredRecipient: BorneoToolResponseSchema,
+	createRecipientWithDetails: BorneoToolResponseSchema,
+	deleteRecipientById: BorneoToolResponseSchema,
+	exportRecipientsListWithFilter: BorneoToolResponseSchema,
+	filterRecipientsList: BorneoToolResponseSchema,
+	listDiscoveredRecipients: BorneoToolResponseSchema,
+	listFilterOptionsForRecipients: BorneoToolResponseSchema,
+	listOrFilterRecipients: BorneoToolResponseSchema,
+	postDiscoveredRecipientById: BorneoToolResponseSchema,
+	retrieveDiscoveredRecipientById: BorneoToolResponseSchema,
+	retrieveRecipientDetails: BorneoToolResponseSchema,
+	retrieveRecipientProcessingActivities: BorneoToolResponseSchema,
+	updateDashboardReportFrequencyAndRecipients: BorneoToolResponseSchema,
+	updateRecipientDetailsById: BorneoToolResponseSchema,
+	updateRecipientStatusViaId: BorneoToolResponseSchema,
+	deleteTagFromResource: BorneoToolResponseSchema,
+	exportFilteredLeafResources: BorneoToolResponseSchema,
+	exportInventoryResourceList: BorneoToolResponseSchema,
+	getResourceInventoryById: BorneoToolResponseSchema,
+	listInventoryResourcesWithFilters: BorneoToolResponseSchema,
+	listLeafResourcesWithFilters: BorneoToolResponseSchema,
+	postClassificationStats: BorneoToolResponseSchema,
+	postResourceLineageFilter: BorneoToolResponseSchema,
+	postResourceStatsWithDeletedResources: BorneoToolResponseSchema,
+	retrieveDataResourceStatistics: BorneoToolResponseSchema,
+	retrieveResourceCatalogById: BorneoToolResponseSchema,
+	retrieveResourceColumns: BorneoToolResponseSchema,
+	accessScanIterationById: BorneoToolResponseSchema,
+	createAndScheduleCloudResourceScan: BorneoToolResponseSchema,
+	exportInsightPageUsingScanId: BorneoToolResponseSchema,
+	filterAndListInspectionResults: BorneoToolResponseSchema,
+	getInsightByTypeAndId: BorneoToolResponseSchema,
+	getScanByScanId: BorneoToolResponseSchema,
+	listErrorDetailsFromFilteredScanIterations: BorneoToolResponseSchema,
+	listInsightFilters: BorneoToolResponseSchema,
+	listScanExecutionResults: BorneoToolResponseSchema,
+	listScanIterationsWithFilter: BorneoToolResponseSchema,
+	listScansWithFilters: BorneoToolResponseSchema,
+	markScanFalsePositivesById: BorneoToolResponseSchema,
+	pauseScanById: BorneoToolResponseSchema,
+	postScanResourceStatus: BorneoToolResponseSchema,
+	resumeScanById: BorneoToolResponseSchema,
+	scanLegalDocumentById: BorneoToolResponseSchema,
+	stopScanViaScanId: BorneoToolResponseSchema,
+	submitDetailedScanResults: BorneoToolResponseSchema,
+	postSupportChatQuery: BorneoToolResponseSchema,
+	getUserProfileById: BorneoToolResponseSchema,
+	listUserProfileWithFiltersAndSorting: BorneoToolResponseSchema,
+	verifyEmailWithIdAndToken: BorneoToolResponseSchema,
+} as const satisfies Record<
+	BorneoOperationName,
+	typeof BorneoToolResponseSchema
+>;

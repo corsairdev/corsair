@@ -4,36 +4,11 @@ import type {
 	RateLimitConfig,
 } from 'corsair/http';
 import { request } from 'corsair/http';
+import { BORNEO_TOOLKIT_VERSION } from './operations';
 
-export function normalizeBorneoBaseUrl(baseUrl: string): string {
-	let trimmed = baseUrl.trim();
-	while (trimmed.endsWith('/')) {
-		trimmed = trimmed.slice(0, -1);
-	}
+const DEFAULT_COMPOSIO_API_BASE_URL = 'https://backend.composio.dev/api/v3';
 
-	if (!trimmed) {
-		throw new Error('[borneo] baseUrl is required');
-	}
-
-	let parsed: URL;
-	try {
-		parsed = new URL(trimmed);
-	} catch {
-		throw new Error('[borneo] baseUrl must be a valid absolute HTTPS URL');
-	}
-
-	if (parsed.protocol !== 'https:') {
-		throw new Error('[borneo] baseUrl must use https');
-	}
-
-	if (!parsed.host) {
-		throw new Error('[borneo] baseUrl must include a valid host');
-	}
-
-	return trimmed;
-}
-
-const BORNEO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+const RATE_LIMIT_CONFIG: RateLimitConfig = {
 	enabled: true,
 	maxRetries: 5,
 	initialRetryDelay: 1000,
@@ -43,43 +18,107 @@ const BORNEO_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
-export async function makeBorneoRequest<T>(
-	endpoint: string,
-	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | string[] | undefined>;
-		baseUrl: string;
-	},
+export type BorneoExecutionOptions = {
+	composioApiKey: string;
+	connectedAccountId?: string;
+	userId?: string;
+	composioBaseUrl?: string;
+	borneoCredential?: string;
+	borneoBaseUrl?: string;
+	credentialHeaderName?: string;
+	credentialPrefix?: string;
+};
+
+export function normalizeComposioBaseUrl(
+	value = DEFAULT_COMPOSIO_API_BASE_URL,
+): string {
+	const trimmed = value.trim().replace(/\/+$/, '');
+	let parsed: URL;
+	try {
+		parsed = new URL(trimmed);
+	} catch {
+		throw new Error('[borneo] composioBaseUrl must be an absolute HTTPS URL');
+	}
+	if (parsed.protocol !== 'https:') {
+		throw new Error('[borneo] composioBaseUrl must use https');
+	}
+	return trimmed;
+}
+
+function buildCustomAuthParams(options: BorneoExecutionOptions) {
+	if (options.connectedAccountId) return undefined;
+	if (!options.borneoCredential) {
+		throw new Error(
+			'[borneo] configure connectedAccountId or provide a Borneo credential',
+		);
+	}
+	if (!options.credentialHeaderName) {
+		throw new Error(
+			'[borneo] credentialHeaderName is required when using direct custom auth',
+		);
+	}
+
+	const prefix = options.credentialPrefix ?? '';
+	return {
+		parameters: [
+			{
+				in: 'header' as const,
+				name: options.credentialHeaderName,
+				value: `${prefix}${options.borneoCredential}`,
+			},
+		],
+		...(options.borneoBaseUrl
+			? { base_url: options.borneoBaseUrl.trim().replace(/\/+$/, '') }
+			: {}),
+	};
+}
+
+export async function executeBorneoTool<T>(
+	toolSlug: string,
+	arguments_: Record<string, unknown>,
+	options: BorneoExecutionOptions,
 ): Promise<T> {
-	const { method = 'GET', body, query, baseUrl } = options;
-	const base = normalizeBorneoBaseUrl(baseUrl);
+	if (!options.composioApiKey.trim()) {
+		throw new Error('[borneo] composioApiKey is required');
+	}
+
+	const base = normalizeComposioBaseUrl(options.composioBaseUrl);
+	const body: Record<string, unknown> = {
+		arguments: arguments_,
+		version: BORNEO_TOOLKIT_VERSION,
+	};
+
+	if (options.connectedAccountId) {
+		body.connected_account_id = options.connectedAccountId;
+	}
+	if (options.userId) {
+		body.user_id = options.userId;
+	}
+
+	const customAuthParams = buildCustomAuthParams(options);
+	if (customAuthParams) {
+		body.custom_auth_params = customAuthParams;
+	}
 
 	const config: OpenAPIConfig = {
 		BASE: base,
-		VERSION: '1.0.0',
+		VERSION: '3',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
+			'x-api-key': options.composioApiKey,
 		},
 	};
 
 	const requestOptions: ApiRequestOptions = {
-		method,
-		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
+		method: 'POST',
+		url: `/tools/execute/${encodeURIComponent(toolSlug)}`,
+		body,
 		mediaType: 'application/json; charset=utf-8',
-		query,
 	};
 
 	return await request<T>(config, requestOptions, {
-		rateLimitConfig: BORNEO_RATE_LIMIT_CONFIG,
+		rateLimitConfig: RATE_LIMIT_CONFIG,
 	});
 }
