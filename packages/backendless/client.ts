@@ -1,6 +1,12 @@
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
+const NATIVE_HOSTS = new Set([
+	'api.backendless.com',
+	'eu-api.backendless.com',
+	'api.sa.backendless.com',
+]);
+
 export type BackendlessClientConfig = {
 	baseUrl: string;
 	applicationId: string;
@@ -13,6 +19,7 @@ export class BackendlessAPIError extends Error {
 	readonly statusText?: string;
 	readonly body?: unknown;
 	readonly code?: number;
+	readonly retryAfter?: number;
 
 	constructor(message: string, options?: { cause?: unknown; code?: number }) {
 		super(message, options);
@@ -23,29 +30,43 @@ export class BackendlessAPIError extends Error {
 			this.status = cause.status;
 			this.statusText = cause.statusText;
 			this.body = cause.body;
+			this.retryAfter = cause.retryAfter;
 		}
 	}
 }
 
-function safeBaseUrl(value: string): string {
-	const url = new URL(value);
+export function safeBaseUrl(value: string): string {
+	let url: URL;
+	try {
+		url = new URL(value);
+	} catch {
+		throw new BackendlessAPIError('Backendless base URL is not a valid URL');
+	}
 	if (url.protocol !== 'https:') {
 		throw new BackendlessAPIError('Backendless base URL must use HTTPS');
 	}
-	return url.toString().replace(/\/$/, '');
+	return `${url.origin}${url.pathname}`.replace(/\/$/, '');
 }
 
 function pathSegments(...segments: string[]): string {
 	return segments.map((segment) => encodeURIComponent(segment)).join('/');
 }
 
+function isNativeCluster(baseUrl: string): boolean {
+	return NATIVE_HOSTS.has(new URL(baseUrl).hostname);
+}
+
 export class BackendlessClient {
 	private readonly config: OpenAPIConfig;
 	private readonly userToken?: string;
+	private readonly nativePrefix?: string;
 
 	constructor(config: BackendlessClientConfig) {
 		const baseUrl = safeBaseUrl(config.baseUrl);
 		this.userToken = config.userToken;
+		this.nativePrefix = isNativeCluster(baseUrl)
+			? `/${encodeURIComponent(config.applicationId)}/${encodeURIComponent(config.restApiKey)}`
+			: undefined;
 		this.config = {
 			BASE: baseUrl,
 			VERSION: '',
@@ -74,9 +95,13 @@ export class BackendlessClient {
 			userScoped?: boolean;
 		} = {},
 	): Promise<T> {
+		const trimmed = path.replace(/^\//, '');
+		const url = this.nativePrefix
+			? `${this.nativePrefix}/${trimmed}`
+			: `/api/${trimmed}`;
 		const requestOptions: ApiRequestOptions = {
 			method,
-			url: `/api/${path.replace(/^\//, '')}`,
+			url,
 			query: options.query,
 			body: options.body,
 			headers:

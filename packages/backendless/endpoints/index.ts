@@ -2,8 +2,9 @@ import { BackendlessClient } from '../client';
 import type { BackendlessContext, BackendlessPluginOptions } from './types';
 import { BackendlessEndpointInputSchemas } from './types';
 
-function validatedStoragePath(value: string): string {
+function validatedStoragePath(value: string, allowEmpty = false): string {
 	const trimmed = value.trim();
+	if (allowEmpty && !trimmed) return '';
 	if (
 		!trimmed ||
 		trimmed.split('/').some((part) => part === '..' || part === '.')
@@ -20,13 +21,21 @@ function validatedStoragePath(value: string): string {
 	return trimmed;
 }
 
-function storagePath(value: string): string {
-	const trimmed = validatedStoragePath(value).replace(/^\/+|\/+$/g, '');
+function storagePath(value: string, allowEmpty = false): string {
+	const trimmed = validatedStoragePath(value, allowEmpty).replace(
+		/^\/+|\/+$/g,
+		'',
+	);
 	return trimmed
 		.split('/')
 		.filter(Boolean)
 		.map((part) => encodeURIComponent(part))
 		.join('/');
+}
+
+function storageLocation(value: string): string {
+	const trimmed = validatedStoragePath(value).replace(/^\/+|\/+$/g, '');
+	return `/${trimmed}`;
 }
 
 function optionsOf(ctx: BackendlessContext): BackendlessPluginOptions {
@@ -89,8 +98,8 @@ export const Files = {
 		const value = BackendlessEndpointInputSchemas.filesCopy.parse(input);
 		return (await clientFor(ctx)).call('PUT', 'files/copy', {
 			body: {
-				sourcePath: validatedStoragePath(value.sourcePath),
-				targetPath: validatedStoragePath(value.targetPath),
+				sourcePath: storageLocation(value.sourcePath),
+				targetPath: storageLocation(value.targetPath),
 			},
 		});
 	},
@@ -98,8 +107,8 @@ export const Files = {
 		const value = BackendlessEndpointInputSchemas.filesMove.parse(input);
 		return (await clientFor(ctx)).call('PUT', 'files/move', {
 			body: {
-				sourcePath: validatedStoragePath(value.sourcePath),
-				targetPath: validatedStoragePath(value.targetPath),
+				sourcePath: storageLocation(value.sourcePath),
+				targetPath: storageLocation(value.targetPath),
 			},
 		});
 	},
@@ -131,30 +140,34 @@ export const Files = {
 	},
 	list: async (ctx: BackendlessContext, input: unknown) => {
 		const value = BackendlessEndpointInputSchemas.filesList.parse(input);
-		const params = query({
-			pattern: value.pattern,
-			sub: value.sub,
-			pagesize: value.pageSize,
-			offset: value.offset,
-		});
+		const encoded = storagePath(value.path, true);
 		return (await clientFor(ctx)).call(
 			'GET',
-			`files/${storagePath(value.path)}`,
-			{ query: params },
+			encoded ? `files/${encoded}` : 'files',
+			{
+				query: query({
+					pattern: value.pattern,
+					sub: value.sub,
+					pagesize: value.pageSize,
+					offset: value.offset,
+				}),
+			},
 		);
 	},
 	count: async (ctx: BackendlessContext, input: unknown) => {
 		const value = BackendlessEndpointInputSchemas.filesCount.parse(input);
-		const params = query({
-			action: 'count',
-			pattern: value.pattern,
-			recursive: value.recursive,
-			'directory-count': value.directoryCount,
-		});
+		const encoded = storagePath(value.path, true);
 		return (await clientFor(ctx)).call(
 			'GET',
-			`files/${storagePath(value.path)}`,
-			{ query: params },
+			encoded ? `files/${encoded}` : 'files',
+			{
+				query: query({
+					action: 'count',
+					pattern: value.pattern,
+					sub: value.recursive,
+					countDirectories: value.directoryCount,
+				}),
+			},
 		);
 	},
 };
@@ -163,17 +176,16 @@ export const Data = {
 	retrieve: async (ctx: BackendlessContext, input: unknown) => {
 		const value = BackendlessEndpointInputSchemas.dataRetrieve.parse(input);
 		const path = `data/${encodeURIComponent(value.tableName)}${value.objectId ? `/${encodeURIComponent(value.objectId)}` : ''}`;
-		const params = query({
-			where: value.where,
-			sortBy: value.sortBy,
-			pageSize: value.pageSize,
-			offset: value.offset,
-			properties: value.properties?.join(','),
-			excludeProperties: value.excludeProperties?.join(','),
-			loadRelations: value.loadRelations?.join(','),
-		});
 		return (await clientFor(ctx, true)).call('GET', path, {
-			query: params,
+			query: query({
+				where: value.where,
+				sortBy: value.sortBy,
+				pageSize: value.pageSize,
+				offset: value.offset,
+				properties: value.properties?.join(','),
+				excludeProperties: value.excludeProperties?.join(','),
+				loadRelations: value.loadRelations?.join(','),
+			}),
 			userScoped: true,
 		});
 	},
@@ -246,11 +258,15 @@ export const Counters = {
 export const Users = {
 	register: async (ctx: BackendlessContext, input: unknown) => {
 		const value = BackendlessEndpointInputSchemas.userRegistration.parse(input);
+		const properties = value.properties ?? {};
 		return (await clientFor(ctx)).call('POST', 'users/register', {
 			body: {
-				identity: value.identity,
+				...properties,
+				email:
+					typeof properties.email === 'string'
+						? properties.email
+						: value.identity,
 				password: value.password,
-				...(value.properties ?? {}),
 			},
 		});
 	},
@@ -263,7 +279,6 @@ export const Users = {
 				body: {
 					login: value.login,
 					password: value.password,
-					stayLoggedIn: value.stayLoggedIn,
 				},
 			},
 		);
@@ -273,7 +288,7 @@ export const Users = {
 				: typeof result.userToken === 'string'
 					? result.userToken
 					: undefined;
-		const user = result['user'] ?? result;
+		const user = result.user ?? result;
 		return { user, userToken };
 	},
 	logout: async (ctx: BackendlessContext, input: unknown) => {
@@ -302,7 +317,7 @@ export const Users = {
 		const value = BackendlessEndpointInputSchemas.userDelete.parse(input);
 		return (await clientFor(ctx, true)).call(
 			'DELETE',
-			`data/Users/${encodeURIComponent(value.userId)}`,
+			`users/${encodeURIComponent(value.userId)}`,
 			{ userScoped: true },
 		);
 	},

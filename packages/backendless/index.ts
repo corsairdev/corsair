@@ -19,6 +19,7 @@ import {
 	BackendlessEndpointInputSchemas,
 	BackendlessEndpointOutputSchemas,
 } from './endpoints/types';
+import { errorHandlers } from './error-handlers';
 import { BackendlessSchema } from './schema';
 
 export {
@@ -317,6 +318,11 @@ export function backendless<const T extends BackendlessPluginOptions>(
 		endpointMeta: backendlessEndpointMeta,
 		endpointSchemas: backendlessEndpointSchemas,
 		authConfig: backendlessAuthConfig,
+		webhooks: backendlessWebhooksNested,
+		errorHandlers: {
+			...errorHandlers,
+			...incomingOptions.errorHandlers,
+		},
 		keyBuilder: async (ctx: BackendlessKeyBuilderContext, source) => {
 			if (source !== 'endpoint') return '';
 			if (options.key || options.restApiKey)

@@ -1,6 +1,16 @@
-import type { CorsairPluginContext, PickAuth } from 'corsair/core';
+import type {
+	CorsairErrorHandler,
+	CorsairPluginContext,
+	PickAuth,
+} from 'corsair/core';
 import { z } from 'zod';
 import type { BackendlessSchema } from '../schema';
+import {
+	BackendlessDataObject,
+	BackendlessFile,
+	BackendlessMessageStatus,
+	BackendlessUser,
+} from '../schema';
 
 export const BackendlessAuthConfig = {
 	api_key: {
@@ -15,6 +25,7 @@ export type BackendlessPluginOptions = {
 	applicationId?: string;
 	baseUrl?: string;
 	userToken?: string;
+	errorHandlers?: CorsairErrorHandler;
 	permissions?: unknown;
 };
 
@@ -29,6 +40,16 @@ const name = z.string().trim().min(1).max(512);
 const path = z.string().trim().min(1).max(2048);
 const nonNegativeInt = z.number().int().min(0).max(1_000_000);
 const jsonValue = z.unknown();
+
+/** Official empty bodies: hive create, logout, reset, permissions. */
+export const BackendlessVoidSchema = z.union([
+	z.null(),
+	z.undefined(),
+	z.literal(''),
+	z.boolean(),
+	z.number(),
+	z.string(),
+]);
 
 export const BackendlessEndpointInputSchemas = {
 	filesCopy: z.object({ sourcePath: path, targetPath: path }),
@@ -138,6 +159,9 @@ export const BackendlessEndpointInputSchemas = {
 		})
 		.refine((value) => Boolean(value.userId || value.role), {
 			message: 'userId or role is required',
+		})
+		.refine((value) => !(value.userId && value.role), {
+			message: 'userId and role are mutually exclusive',
 		}),
 	messagePublish: z.object({
 		channel: name,
@@ -145,39 +169,56 @@ export const BackendlessEndpointInputSchemas = {
 		headers: z.record(z.string(), z.string()).optional(),
 		subtopic: z.string().trim().max(512).optional(),
 		publishAt: z
-			.union([z.string().datetime(), z.number().int().positive()])
+			.union([z.iso.datetime(), z.number().int().positive()])
 			.optional(),
 	}),
 } as const;
 
 export const BackendlessEndpointOutputSchemas = {
-	filesCopy: z.unknown(),
-	filesMove: z.unknown(),
-	filesDelete: z.unknown(),
-	filesCreateDirectory: z.unknown(),
-	filesDeleteDirectory: z.unknown(),
-	filesList: z.unknown(),
-	filesCount: z.unknown(),
-	dataRetrieve: z.unknown(),
-	hiveCreate: z.unknown(),
-	hiveValues: z.unknown(),
-	hiveKeyItems: z.unknown(),
-	hiveMapPut: z.unknown(),
+	filesCopy: z.string(),
+	filesMove: z.string(),
+	filesDelete: BackendlessVoidSchema,
+	filesCreateDirectory: BackendlessVoidSchema,
+	filesDeleteDirectory: BackendlessVoidSchema,
+	filesList: z.array(BackendlessFile),
+	filesCount: z.number(),
+	dataRetrieve: z.union([
+		BackendlessDataObject,
+		z.array(BackendlessDataObject),
+	]),
+	hiveCreate: BackendlessVoidSchema,
+	hiveValues: z.record(z.string(), z.unknown()),
+	hiveKeyItems: z.union([
+		z.array(z.unknown()),
+		z.string(),
+		z.number(),
+		z.boolean(),
+		z.null(),
+		z.record(z.string(), z.unknown()),
+	]),
+	hiveMapPut: z.boolean(),
 	counterGet: z.number(),
 	counterSet: z.boolean(),
-	counterReset: z.unknown(),
-	userRegistration: z.unknown(),
-	userLogin: z
-		.object({ user: z.unknown().optional(), userToken: z.string().optional() })
-		.passthrough(),
-	userLogout: z.unknown(),
-	userPasswordRecovery: z.unknown(),
-	userUpdate: z.unknown(),
-	userDelete: z.unknown(),
-	userFind: z.unknown(),
+	counterReset: BackendlessVoidSchema,
+	userRegistration: BackendlessUser,
+	userLogin: z.looseObject({
+		user: BackendlessUser.optional(),
+		userToken: z.string().optional(),
+	}),
+	userLogout: BackendlessVoidSchema,
+	userPasswordRecovery: BackendlessVoidSchema,
+	userUpdate: BackendlessUser,
+	userDelete: z.union([
+		z.number(),
+		z.object({ deletionTime: z.number().optional() }).loose(),
+		z.null(),
+		z.undefined(),
+		z.literal(''),
+	]),
+	userFind: BackendlessUser,
 	userValidateToken: z.boolean(),
-	permission: z.unknown(),
-	messagePublish: z.unknown(),
+	permission: BackendlessVoidSchema,
+	messagePublish: BackendlessMessageStatus,
 } as const;
 
 export type BackendlessEndpointInputs = {

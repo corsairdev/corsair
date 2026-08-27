@@ -33,7 +33,7 @@ This provider intentionally declares no webhook tree. Backendless webhook matche
 
 ## Timers
 
-Backendless documents JavaScript Cloud Code timers through `Backendless.ServerCode.addTimer`, not as ordinary public application REST operations. This package therefore does not expose guessed timer endpoints. Timer creation, retrieval, update, and deletion should be added only after an official Backendless management API contract and authentication scheme are confirmed.
+Official REST docs do not publish timer CRUD. Timers are Cloud Code, created in Console, so this plugin does not invent those endpoints. See [Cloud Code timers](https://backendless.com/docs/bl-js/bl_timers.html).
 
 ## Development
 
