@@ -110,6 +110,7 @@ export const BaseProviders = [
 	'epicgames',
 	'exa',
 	'facebook',
+	'faraday',
 	'figma',
 	'firecrawl',
 	'fireflies',
@@ -311,6 +312,7 @@ export const ProviderDisplayNames = {
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
+	faraday: 'Faraday',
 	figma: 'Figma',
 	firecrawl: 'Firecrawl',
 	fireflies: 'Fireflies',
@@ -519,6 +521,7 @@ export type AllProviders =
 	| 'epicgames'
 	| 'exa'
 	| 'facebook'
+	| 'faraday'
 	| 'figma'
 	| 'firecrawl'
 	| 'fireflies'
