@@ -9,7 +9,7 @@ Every API call and webhook that flows through Corsair is stored in your database
 
 ## Get started
 
-Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/quick-start) for a full setup example.
+Run the migration once, then pass your connection to `createCorsair({ database, ... })`. See [Quick Start](/quick-start) for a full setup example. If the tables already exist, run only the two `CREATE INDEX` statements.
 
 <Tabs>
   <Tab title="SQLite">
@@ -146,7 +146,6 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     error TEXT
 );
 
--- Indexes covering the sync-layer hot paths (account lookup + entity upsert/read).
 CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
     ON corsair_accounts (tenant_id, integration_id);
 CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
@@ -239,7 +238,6 @@ CREATE TABLE IF NOT EXISTS corsair_permissions (
     error TEXT
 );
 
--- Indexes covering the sync-layer hot paths (account lookup + entity upsert/read).
 CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
     ON corsair_accounts (tenant_id, integration_id);
 CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
@@ -275,7 +273,7 @@ psql $env:DATABASE_URL -f migration.sql
 <Accordion title="View Drizzle schema">
 
 ```ts src/server/db/schema.ts
-import { pgTable, text, jsonb, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, text, jsonb, timestamp, index } from 'drizzle-orm/pg-core';
 
 export const corsairIntegrations = pgTable('corsair_integrations', {
     id: text('id').primaryKey(),
@@ -294,7 +292,9 @@ export const corsairAccounts = pgTable('corsair_accounts', {
     integrationId: text('integration_id').notNull().references(() => corsairIntegrations.id),
     config: jsonb('config').notNull().default({}),
     dek: text('dek'),
-});
+}, (table) => [
+    index('corsair_accounts_tenant_integration_idx').on(table.tenantId, table.integrationId),
+]);
 
 export const corsairEntities = pgTable('corsair_entities', {
     id: text('id').primaryKey(),
@@ -305,7 +305,9 @@ export const corsairEntities = pgTable('corsair_entities', {
     entityType: text('entity_type').notNull(),
     version: text('version').notNull(),
     data: jsonb('data').notNull().default({}),
-});
+}, (table) => [
+    index('corsair_entities_account_type_entity_idx').on(table.accountId, table.entityType, table.entityId),
+]);
 
 export const corsairEvents = pgTable('corsair_events', {
     id: text('id').primaryKey(),
@@ -372,6 +374,7 @@ model CorsairAccount {
   entities      CorsairEntity[]
   events        CorsairEvent[]
 
+  @@index([tenantId, integrationId], map: "corsair_accounts_tenant_integration_idx")
   @@map("corsair_accounts")
 }
 
@@ -386,6 +389,7 @@ model CorsairEntity {
   data       Json           @default("{}")
   account    CorsairAccount @relation(fields: [accountId], references: [id])
 
+  @@index([accountId, entityType, entityId], map: "corsair_entities_account_type_entity_idx")
   @@map("corsair_entities")
 }
 
