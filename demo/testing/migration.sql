@@ -41,7 +41,6 @@ CREATE TABLE IF NOT EXISTS corsair_events (
     FOREIGN KEY (account_id) REFERENCES corsair_accounts(id)
 );
 
--- Indexes covering the sync-layer hot paths (account lookup + entity upsert/read).
 CREATE INDEX IF NOT EXISTS corsair_accounts_tenant_integration_idx
     ON corsair_accounts (tenant_id, integration_id);
 CREATE INDEX IF NOT EXISTS corsair_entities_account_type_entity_idx
