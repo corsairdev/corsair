@@ -1,11 +1,5 @@
 import { z } from 'zod';
 
-// ── Raw Merriam-Webster response shapes ──────────────────────────────────────
-// The Collegiate Dictionary API's full entry format includes deeply nested,
-// tagged-tuple definition trees (`def[].sseq`) that aren't practical to model
-// with zod. `.loose()` keeps parsing tolerant of that structure while we only
-// pull out the fields callers actually need (shortdef, headword, etc.).
-
 const MWSoundSchema = z
 	.object({
 		audio: z.string(),
@@ -30,6 +24,8 @@ const MWMetaSchema = z
 	.object({
 		id: z.string(),
 		uuid: z.string().optional(),
+		src: z.string().optional(),
+		section: z.string().optional(),
 		stems: z.array(z.string()).default([]),
 		offensive: z.boolean().default(false),
 	})
@@ -41,18 +37,16 @@ const MWRawEntrySchema = z
 		hwi: MWHeadwordInfoSchema.optional(),
 		fl: z.string().optional(),
 		shortdef: z.array(z.string()).default([]),
+		et: z.array(z.unknown()).optional(),
+		date: z.string().optional(),
 	})
 	.loose();
 
 export type MWRawEntry = z.infer<typeof MWRawEntrySchema>;
 
-// Merriam-Webster returns an array of raw entries when the word matches, or
-// an array of plain suggestion strings when it doesn't — always HTTP 200.
 export const MWLookupResponseSchema = z.array(
 	z.union([MWRawEntrySchema, z.string()]),
 );
-
-// ── words.get ─────────────────────────────────────────────────────────────────
 
 const GetWordInputSchema = z.object({
 	word: z.string().min(1).describe('The word to look up'),
@@ -63,23 +57,21 @@ export type GetWordInput = z.infer<typeof GetWordInputSchema>;
 const DictionaryEntrySchema = z.object({
 	id: z
 		.string()
-		.describe(
-			'Merriam-Webster entry id, e.g. "pencil" or "pencil:2" for homographs',
-		),
-	headword: z
-		.string()
-		.describe('The headword with syllable breaks, e.g. "pen*cil"'),
-	partOfSpeech: z.string().optional(),
-	pronunciation: z
+		.describe('Official meta.id, e.g. "pencil" or "pencil:2" for homographs'),
+	headword: z.string().describe('Official hwi.hw, e.g. "pen*cil"'),
+	partOfSpeech: z.string().optional().describe('Official fl'),
+	pronunciation: z.string().optional().describe('Official hwi.prs[0].mw'),
+	audioUrl: z
 		.string()
 		.optional()
-		.describe('Phonetic pronunciation spelling'),
-	audioUrl: z.string().optional().describe('MP3 pronunciation audio URL'),
-	shortDefinitions: z.array(z.string()),
-	stems: z
+		.describe('MP3 URL derived from official sound.audio'),
+	shortDefinitions: z.array(z.string()).describe('Official shortdef'),
+	etymology: z
 		.array(z.string())
-		.describe('Related word forms (plurals, inflections, etc.)'),
-	offensive: z.boolean(),
+		.optional()
+		.describe('Official et text members'),
+	stems: z.array(z.string()).describe('Official meta.stems'),
+	offensive: z.boolean().describe('Official meta.offensive'),
 });
 
 export type DictionaryEntry = z.infer<typeof DictionaryEntrySchema>;
@@ -89,12 +81,10 @@ const GetWordResponseSchema = z.object({
 	entries: z.array(DictionaryEntrySchema),
 	suggestions: z
 		.array(z.string())
-		.describe('Spelling suggestions returned when no entry matched the word'),
+		.describe('Spelling suggestions when no entry matched'),
 });
 
 export type GetWordResponse = z.infer<typeof GetWordResponseSchema>;
-
-// ── Endpoint I/O Maps ─────────────────────────────────────────────────────────
 
 export type DictionaryEndpointInputs = {
 	wordsGet: GetWordInput;

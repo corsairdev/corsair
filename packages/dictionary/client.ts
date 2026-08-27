@@ -11,35 +11,62 @@ export class DictionaryAPIError extends Error {
 	}
 }
 
-const DICTIONARY_API_BASE =
-	'https://www.dictionaryapi.com/api/v3/references/collegiate/json';
+/**
+ * Official URL path codes for dictionary products.
+ * https://www.dictionaryapi.com/api/v3/references/{reference}/json/{word}
+ */
+export const DICTIONARY_REFERENCES = [
+	'collegiate',
+	'sd2',
+	'sd3',
+	'sd4',
+] as const;
+export type DictionaryReference = (typeof DICTIONARY_REFERENCES)[number];
 
-function buildConfig(): OpenAPIConfig {
+export const DEFAULT_DICTIONARY_REFERENCE: DictionaryReference = 'collegiate';
+
+function isDictionaryReference(value: string): value is DictionaryReference {
+	return (DICTIONARY_REFERENCES as readonly string[]).includes(value);
+}
+
+function buildConfig(reference: DictionaryReference): OpenAPIConfig {
 	return {
-		BASE: DICTIONARY_API_BASE,
+		BASE: `https://www.dictionaryapi.com/api/v3/references/${reference}/json`,
 		VERSION: '3',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		// Merriam-Webster authenticates via a `key` query parameter, not a header.
 		TOKEN: undefined,
 		HEADERS: {},
 	};
 }
 
+export function resolveDictionaryReference(
+	value: string | undefined,
+): DictionaryReference {
+	if (value === undefined) {
+		return DEFAULT_DICTIONARY_REFERENCE;
+	}
+	if (!isDictionaryReference(value)) {
+		throw new DictionaryAPIError(
+			`Unknown Merriam-Webster reference "${value}". Use collegiate, sd2, sd3, or sd4.`,
+		);
+	}
+	return value;
+}
+
 /**
- * Looks up a word in the Merriam-Webster Collegiate Dictionary.
+ * GET /api/v3/references/{reference}/json/{word}?key=
  *
- * Merriam-Webster always responds with HTTP 200, even for an invalid API key
- * or an unrecognized word — errors only show up in the response body shape:
- * - Invalid key: a plain-text string body (not JSON, not an array).
- * - Unknown word: a JSON array of suggested word strings instead of entries.
- * Neither case can be caught via HTTP status, so the invalid-key case is
- * detected here (word-not-found is left to the caller, since it's not an error).
+ * Merriam-Webster always responds with HTTP 200. Errors are body-shaped:
+ * - Invalid / unsubscribed key: a plain-text string (not JSON).
+ * - Unknown word: a JSON array of suggestion strings.
  */
 export async function lookupWord(
 	word: string,
 	apiKey: string,
+	reference: string = DEFAULT_DICTIONARY_REFERENCE,
 ): Promise<unknown> {
+	const resolved = resolveDictionaryReference(reference);
 	const requestOptions: ApiRequestOptions = {
 		method: 'GET',
 		url: `/${encodeURIComponent(word)}`,
@@ -49,7 +76,7 @@ export async function lookupWord(
 
 	let body: unknown;
 	try {
-		body = await request<unknown>(buildConfig(), requestOptions);
+		body = await request<unknown>(buildConfig(resolved), requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
 			throw error;
@@ -68,8 +95,7 @@ export async function lookupWord(
 }
 
 /**
- * Builds the pronunciation audio URL for a Merriam-Webster sound filename.
- * Subdirectory rule per the official API docs:
+ * Pronunciation audio URL from official `sound.audio`.
  * https://dictionaryapi.com/products/json#sec-2.prs
  */
 export function buildAudioUrl(filename: string): string {
@@ -84,4 +110,22 @@ export function buildAudioUrl(filename: string): string {
 		subdirectory = filename[0] as string;
 	}
 	return `https://media.merriam-webster.com/audio/prons/en/us/mp3/${subdirectory}/${filename}.mp3`;
+}
+
+/** Official `et` is `[["text", "..."], ...]`. */
+export function etymologyTexts(et: unknown): string[] {
+	if (!Array.isArray(et)) {
+		return [];
+	}
+	const texts: string[] = [];
+	for (const item of et) {
+		if (
+			Array.isArray(item) &&
+			item[0] === 'text' &&
+			typeof item[1] === 'string'
+		) {
+			texts.push(item[1]);
+		}
+	}
+	return texts;
 }

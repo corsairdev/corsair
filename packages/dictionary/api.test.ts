@@ -1,5 +1,10 @@
 import 'dotenv/config';
-import { buildAudioUrl, DictionaryAPIError, lookupWord } from './client';
+import {
+	buildAudioUrl,
+	DictionaryAPIError,
+	lookupWord,
+	resolveDictionaryReference,
+} from './client';
 import { Words } from './endpoints';
 import {
 	DictionaryEndpointOutputSchemas,
@@ -7,13 +12,39 @@ import {
 } from './endpoints/types';
 
 const TEST_API_KEY = process.env.DICTIONARY_API_KEY;
+const TEST_REFERENCE = process.env.DICTIONARY_REFERENCE ?? 'collegiate';
 
 function createTestContext(key: string) {
 	return {
 		key,
-		options: { authType: 'api_key' as const },
-	} as any;
+		options: {
+			authType: 'api_key' as const,
+			reference: resolveDictionaryReference(TEST_REFERENCE),
+		},
+		$getAccountId: async () => null,
+		db: {
+			entries: { upsertByEntityId: jest.fn().mockResolvedValue(undefined) },
+		},
+	};
 }
+
+describe('resolveDictionaryReference', () => {
+	it('defaults to collegiate', () => {
+		expect(resolveDictionaryReference(undefined)).toBe('collegiate');
+	});
+
+	it('accepts official product path codes', () => {
+		expect(resolveDictionaryReference('sd2')).toBe('sd2');
+		expect(resolveDictionaryReference('sd3')).toBe('sd3');
+		expect(resolveDictionaryReference('sd4')).toBe('sd4');
+	});
+
+	it('rejects unknown products', () => {
+		expect(() => resolveDictionaryReference('thesaurus')).toThrow(
+			DictionaryAPIError,
+		);
+	});
+});
 
 describe('buildAudioUrl', () => {
 	it('routes "bix"-prefixed filenames to the bix subdirectory', () => {
@@ -47,7 +78,7 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 	maybeTest(
 		'lookupWord returns a parseable response for a real word',
 		async () => {
-			const raw = await lookupWord('hello', TEST_API_KEY!);
+			const raw = await lookupWord('hello', TEST_API_KEY!, TEST_REFERENCE);
 			const parsed = MWLookupResponseSchema.parse(raw);
 			expect(parsed.length).toBeGreaterThan(0);
 		},
@@ -57,7 +88,7 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 		'Words.get returns definitions, pronunciation, and audio for a known word',
 		async () => {
 			const ctx = createTestContext(TEST_API_KEY!);
-			const result = await Words.get(ctx, { word: 'pencil' });
+			const result = await Words.get(ctx as never, { word: 'pencil' });
 			const parsed = DictionaryEndpointOutputSchemas.wordsGet.parse(result);
 
 			expect(parsed.found).toBe(true);
@@ -71,6 +102,7 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 					/^https:\/\/media\.merriam-webster\.com/,
 				);
 			}
+			expect(ctx.db.entries.upsertByEntityId).toHaveBeenCalled();
 		},
 	);
 
@@ -78,7 +110,7 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 		'Words.get returns suggestions instead of entries for a misspelled word',
 		async () => {
 			const ctx = createTestContext(TEST_API_KEY!);
-			const result = await Words.get(ctx, { word: 'recieve' });
+			const result = await Words.get(ctx as never, { word: 'recieve' });
 			const parsed = DictionaryEndpointOutputSchemas.wordsGet.parse(result);
 
 			expect(parsed.found).toBe(false);
@@ -91,7 +123,19 @@ describe('Dictionary Live API & Endpoint Integration Tests', () => {
 		'lookupWord throws DictionaryAPIError for an invalid key',
 		async () => {
 			await expect(
-				lookupWord('hello', 'definitely-invalid-key'),
+				lookupWord('hello', 'definitely-invalid-key', TEST_REFERENCE),
+			).rejects.toThrow(DictionaryAPIError);
+		},
+	);
+
+	maybeTest(
+		'collegiate rejects a key that is not subscribed for that reference',
+		async () => {
+			if (TEST_REFERENCE === 'collegiate') {
+				return;
+			}
+			await expect(
+				lookupWord('hello', TEST_API_KEY!, 'collegiate'),
 			).rejects.toThrow(DictionaryAPIError);
 		},
 	);

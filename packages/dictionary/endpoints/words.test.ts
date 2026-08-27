@@ -2,11 +2,6 @@ import { request } from 'corsair/http';
 import { buildAudioUrl, DictionaryAPIError } from '../client';
 import { get } from './words';
 
-// Mocked at the HTTP layer (not `../client`) so `lookupWord`'s real body-shape
-// handling (string body → invalid key, array → entries/suggestions) runs for
-// real. Scoped to this file only — api.test.ts's live-API tests still hit
-// the real Merriam-Webster API and would break if `corsair/http` were mocked
-// there too, since Jest's module registry resets per file, not per describe.
 jest.mock('corsair/http', () => {
 	const original = jest.requireActual('corsair/http');
 	return {
@@ -17,11 +12,15 @@ jest.mock('corsair/http', () => {
 
 const mockRequest = request as jest.Mock;
 
-function createTestContext() {
+function createTestContext(reference?: string) {
 	return {
 		key: 'test-api-key',
-		options: { authType: 'api_key' as const },
-	} as any;
+		options: { authType: 'api_key' as const, reference },
+		$getAccountId: async () => null,
+		db: {
+			entries: { upsertByEntityId: jest.fn().mockResolvedValue(undefined) },
+		},
+	};
 }
 
 describe('Words.get (mocked Merriam-Webster responses)', () => {
@@ -29,20 +28,29 @@ describe('Words.get (mocked Merriam-Webster responses)', () => {
 		mockRequest.mockReset();
 	});
 
-	it('maps a full raw entry to a DictionaryEntry with pronunciation, audio, and stems', async () => {
+	it('maps a full raw entry including etymology, pronunciation, audio, and stems', async () => {
 		mockRequest.mockResolvedValue([
 			{
-				meta: { id: 'pencil', stems: ['pencil', 'pencils'], offensive: false },
+				meta: {
+					id: 'pencil',
+					uuid: 'u1',
+					src: 'collegiate',
+					section: 'alpha',
+					stems: ['pencil', 'pencils'],
+					offensive: false,
+				},
 				hwi: {
 					hw: 'pen*cil',
 					prs: [{ mw: 'ˈpen-səl', sound: { audio: 'pencil001' } }],
 				},
 				fl: 'noun',
 				shortdef: ['a thin cylindrical instrument for writing or drawing'],
+				et: [['text', 'Middle English pencel']],
 			},
 		]);
 
-		const result = await get(createTestContext(), { word: 'pencil' });
+		const ctx = createTestContext();
+		const result = await get(ctx as never, { word: 'pencil' });
 
 		expect(result.found).toBe(true);
 		expect(result.suggestions).toEqual([]);
@@ -56,10 +64,20 @@ describe('Words.get (mocked Merriam-Webster responses)', () => {
 				shortDefinitions: [
 					'a thin cylindrical instrument for writing or drawing',
 				],
+				etymology: ['Middle English pencel'],
 				stems: ['pencil', 'pencils'],
 				offensive: false,
 			},
 		]);
+		expect(ctx.db.entries.upsertByEntityId).toHaveBeenCalledWith(
+			'collegiate:u1',
+			expect.objectContaining({
+				id: 'pencil',
+				hw: 'pen*cil',
+				shortdef: ['a thin cylindrical instrument for writing or drawing'],
+				et: ['Middle English pencel'],
+			}),
+		);
 	});
 
 	it('falls back to the entry id as headword and omits pronunciation/audio when hwi is missing', async () => {
@@ -71,7 +89,7 @@ describe('Words.get (mocked Merriam-Webster responses)', () => {
 			},
 		]);
 
-		const result = await get(createTestContext(), { word: 'xyz' });
+		const result = await get(createTestContext() as never, { word: 'xyz' });
 
 		expect(result.entries[0]?.headword).toBe('xyz:2');
 		expect(result.entries[0]?.pronunciation).toBeUndefined();
@@ -81,18 +99,27 @@ describe('Words.get (mocked Merriam-Webster responses)', () => {
 	it('returns suggestions and found:false when Merriam-Webster returns only strings', async () => {
 		mockRequest.mockResolvedValue(['pencle', 'pinole', 'penciled']);
 
-		const result = await get(createTestContext(), { word: 'pencle' });
+		const ctx = createTestContext();
+		const result = await get(ctx as never, { word: 'pencle' });
 
 		expect(result.found).toBe(false);
 		expect(result.entries).toEqual([]);
 		expect(result.suggestions).toEqual(['pencle', 'pinole', 'penciled']);
+		expect(ctx.db.entries.upsertByEntityId).not.toHaveBeenCalled();
 	});
 
 	it('surfaces an invalid API key as a DictionaryAPIError instead of a parsed result', async () => {
 		mockRequest.mockResolvedValue('Invalid API Key');
 
-		await expect(get(createTestContext(), { word: 'pencil' })).rejects.toThrow(
-			DictionaryAPIError,
-		);
+		await expect(
+			get(createTestContext() as never, { word: 'pencil' }),
+		).rejects.toThrow(DictionaryAPIError);
+	});
+
+	it('rejects an unknown dictionary reference before calling the API', async () => {
+		await expect(
+			get(createTestContext('not-a-product') as never, { word: 'pencil' }),
+		).rejects.toThrow(DictionaryAPIError);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 });

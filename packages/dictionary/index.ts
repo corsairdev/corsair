@@ -13,6 +13,8 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
+import type { DictionaryReference } from './client';
+import { DEFAULT_DICTIONARY_REFERENCE } from './client';
 import { Words } from './endpoints';
 import type {
 	DictionaryEndpointInputs,
@@ -29,6 +31,12 @@ import { matchDictionaryTenantWebhook } from './webhooks/tenant-matcher';
 export type DictionaryPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
+	/**
+	 * Official product path: collegiate, sd2 (elementary), sd3 (intermediate),
+	 * sd4 (school). Keys are product-scoped.
+	 * https://www.dictionaryapi.com/api/v3/references/{reference}/json/{word}
+	 */
+	reference?: DictionaryReference;
 	hooks?: InternalDictionaryPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	/**
@@ -84,7 +92,7 @@ const dictionaryEndpointMeta = {
 	'words.get': {
 		riskLevel: 'read',
 		description:
-			'Look up a word in the Merriam-Webster Collegiate Dictionary, returning definitions, part of speech, pronunciation, and audio — or spelling suggestions when no entry matches',
+			'Look up a word in Merriam-Webster (collegiate / sd2 / sd3 / sd4), returning definitions, part of speech, pronunciation, etymology, and audio — or spelling suggestions when no entry matches',
 	},
 } satisfies RequiredPluginEndpointMeta<typeof dictionaryEndpointsNested>;
 
@@ -115,6 +123,7 @@ export function dictionary<const T extends DictionaryPluginOptions>(
 	const options = {
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
+		reference: incomingOptions.reference ?? DEFAULT_DICTIONARY_REFERENCE,
 	};
 	return {
 		id: 'dictionary',
@@ -152,6 +161,11 @@ export function dictionary<const T extends DictionaryPluginOptions>(
 	} satisfies InternalDictionaryPlugin;
 }
 
+export type { DictionaryReference } from './client';
+export {
+	DEFAULT_DICTIONARY_REFERENCE,
+	DICTIONARY_REFERENCES,
+} from './client';
 export type {
 	DictionaryEndpointInputs,
 	DictionaryEndpointOutputs,
@@ -159,12 +173,10 @@ export type {
 	GetWordInput,
 	GetWordResponse,
 } from './endpoints/types';
-
 export {
 	DictionaryEndpointInputSchemas,
 	DictionaryEndpointOutputSchemas,
 } from './endpoints/types';
-
 export { DictionarySchema } from './schema';
 
 export type { DictionaryWebhookOutputs } from './webhooks/types';
