@@ -89,7 +89,8 @@ const cases = [
 		method: 'DELETE',
 		path: '/indexes/docs-index',
 		input: { indexName: 'docs-index' },
-		response: {},
+		response: '',
+		expectedResult: undefined,
 	},
 	{
 		name: 'backups.create',
@@ -578,7 +579,9 @@ describe.each(cases)('$name', (testCase) => {
 				expect((file as File).type).toBe(testCase.expectedFile.type);
 				expect(await (file as File).text()).toBe(testCase.expectedFile.text);
 			}
-			expect(result).toEqual(response);
+			expect(result).toEqual(
+				'expectedResult' in testCase ? testCase.expectedResult : response,
+			);
 		} finally {
 			harness.restore();
 		}

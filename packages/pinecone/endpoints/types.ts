@@ -7,7 +7,9 @@ const PaginationQuery = z.object({
 	paginationToken: NonEmptyString.optional(),
 });
 
-const EmptyResponseSchema = z.union([z.object({}).loose(), z.undefined()]);
+const EmptyResponseSchema = z
+	.union([z.object({}).loose(), z.literal(''), z.undefined()])
+	.transform((response) => (response === '' ? undefined : response));
 
 const ServerlessSpecSchema = z
 	.object({
