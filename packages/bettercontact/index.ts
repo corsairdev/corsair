@@ -12,6 +12,7 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { Credits, Enrichment, LeadFinder } from './endpoints';
 import type {
 	BetterContactEndpointInputs,
@@ -183,7 +184,10 @@ export function bettercontact<const T extends BetterContactPluginOptions>(
 				if (res) return res;
 			}
 
-			return process.env.BETTERCONTACT_API_KEY ?? '';
+			const envKey = process.env.BETTERCONTACT_API_KEY;
+			if (envKey) return envKey;
+
+			throw new AuthMissingError('bettercontact', 'api_key');
 		},
 	} satisfies InternalBetterContactPlugin;
 }
