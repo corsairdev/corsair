@@ -52,13 +52,19 @@ export function normalizePineconeHost(host: string): string {
 		);
 	}
 
-	if (parsed.username || parsed.password || parsed.search || parsed.hash) {
+	if (
+		parsed.username ||
+		parsed.password ||
+		parsed.search ||
+		parsed.hash ||
+		(parsed.pathname !== '' && parsed.pathname !== '/')
+	) {
 		throw new PineconeAPIError(
-			'Pinecone host must not include credentials, query parameters, or fragments',
+			'Pinecone host must not include credentials, paths, query parameters, or fragments',
 		);
 	}
 
-	return parsed.origin + parsed.pathname.replace(/\/$/, '');
+	return parsed.origin;
 }
 
 function resolveBase(surface: PineconeSurface, host?: string): string {
@@ -98,9 +104,14 @@ export async function makePineconeRequest<T>(
 		query,
 		surface = 'control',
 		host,
-		mediaType = 'application/json; charset=utf-8',
+		mediaType: requestedMediaType,
 		schema,
 	} = options;
+	const mediaType =
+		requestedMediaType ??
+		(typeof FormData !== 'undefined' && body instanceof FormData
+			? undefined
+			: 'application/json; charset=utf-8');
 
 	if (!apiKey) {
 		throw new PineconeAPIError('Pinecone API key is required');
@@ -122,7 +133,7 @@ export async function makePineconeRequest<T>(
 		HEADERS: {
 			'Api-Key': apiKey,
 			'X-Pinecone-API-Version': PINECONE_API_VERSION,
-			...(mediaType.startsWith('application/json')
+			...(mediaType?.startsWith('application/json')
 				? { 'Content-Type': 'application/json' }
 				: {}),
 		},

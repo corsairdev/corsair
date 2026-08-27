@@ -317,6 +317,111 @@ const QueryResponseSchema = z
 	})
 	.loose();
 
+const AssistantNameSchema = z
+	.string()
+	.min(1)
+	.max(63)
+	.regex(/^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$/);
+const AssistantHostAndNameSchema = z.object({
+	host: NonEmptyString,
+	assistantName: AssistantNameSchema,
+});
+const AssistantSchema = z
+	.object({
+		name: AssistantNameSchema,
+		status: z.enum([
+			'Initializing',
+			'Failed',
+			'Ready',
+			'Terminating',
+			'InitializationFailed',
+		]),
+		host: z.string().optional(),
+		instructions: z.string().nullable().optional(),
+		metadata: MetadataSchema.nullable().optional(),
+		region: z.enum(['us', 'eu']).optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+	})
+	.loose();
+const CreateAssistantInputSchema = z.object({
+	name: AssistantNameSchema,
+	instructions: z.string().max(16_384).nullable().optional(),
+	metadata: MetadataSchema.optional(),
+	region: z.enum(['us', 'eu']).optional(),
+});
+const UpdateAssistantInputSchema = z.object({
+	assistantName: AssistantNameSchema,
+	instructions: z.string().max(16_384).nullable().optional(),
+	metadata: MetadataSchema.nullable().optional(),
+});
+const MessageSchema = z
+	.object({
+		role: z.enum(['user', 'assistant']),
+		content: z.string(),
+	})
+	.loose();
+const ChatInputSchema = AssistantHostAndNameSchema.extend({
+	messages: z.array(MessageSchema).min(1),
+	stream: z.literal(false).optional().default(false),
+	model: z.string().optional(),
+	temperature: z.number().min(0).max(2).optional(),
+	filter: MetadataSchema.optional(),
+	json_response: z.boolean().optional(),
+	include_highlights: z.boolean().optional(),
+	context_options: z.object({}).loose().optional(),
+});
+const ContextInputSchema = AssistantHostAndNameSchema.extend({
+	query: z.string().optional(),
+	messages: z.array(MessageSchema).optional(),
+	filter: MetadataSchema.optional(),
+	top_k: z.number().int().min(1).max(64).optional(),
+	snippet_size: z.number().int().min(512).max(8192).optional(),
+	multimodal: z.boolean().optional(),
+	include_binary_content: z.boolean().optional(),
+});
+const AssistantFileSchema = z
+	.object({
+		id: NonEmptyString,
+		name: NonEmptyString,
+		size: z.number().int().nonnegative().optional(),
+		metadata: MetadataSchema.nullable().optional(),
+		status: z
+			.enum(['Processing', 'Available', 'Deleting', 'ProcessingFailed'])
+			.optional(),
+		created_on: z.string().optional(),
+		updated_on: z.string().optional(),
+		signed_url: z.string().nullable().optional(),
+		multimodal: z.boolean().optional(),
+	})
+	.loose();
+const OperationModelSchema = z
+	.object({
+		id: NonEmptyString,
+		operation_type: z.enum([
+			'upload_file',
+			'upsert_file',
+			'update_file_metadata',
+			'delete_file',
+		]),
+		status: z.enum(['Processing', 'Completed', 'Failed']),
+		created_on: z.string(),
+		file_id: z.string().nullable().optional(),
+		percent_complete: z.number().int().min(0).max(100).optional(),
+		error_message: z.string().nullable().optional(),
+	})
+	.loose();
+const FileIdInputSchema = AssistantHostAndNameSchema.extend({
+	fileId: NonEmptyString,
+});
+const UploadFileInputSchema = AssistantHostAndNameSchema.extend({
+	fileName: NonEmptyString,
+	fileBase64: NonEmptyString,
+	contentType: NonEmptyString.optional(),
+	metadata: MetadataSchema.optional(),
+	multimodal: z.boolean().optional(),
+});
+
 export const PineconeEndpointInputSchemas = {
 	createIndex: CreateIndexInputSchema,
 	createIndexForModel: CreateIndexForModelInputSchema,
@@ -357,6 +462,28 @@ export const PineconeEndpointInputSchemas = {
 	cancelBulkImport: ImportIdInputSchema,
 	upsertRecords: UpsertRecordsInputSchema,
 	searchRecords: SearchRecordsInputSchema,
+	listAssistants: PaginationQuery,
+	createAssistant: CreateAssistantInputSchema,
+	getAssistant: z.object({ assistantName: AssistantNameSchema }),
+	updateAssistant: UpdateAssistantInputSchema,
+	deleteAssistant: z.object({ assistantName: AssistantNameSchema }),
+	listFiles: AssistantHostAndNameSchema.extend({
+		filter: z.string().optional(),
+		limit: PositiveLimit.optional(),
+		paginationToken: z.string().optional(),
+	}),
+	uploadFile: UploadFileInputSchema,
+	describeFile: FileIdInputSchema.extend({
+		includeUrl: z.boolean().optional(),
+	}),
+	deleteFile: FileIdInputSchema,
+	chatAssistant: ChatInputSchema,
+	chatCompletionAssistant: ChatInputSchema.omit({
+		json_response: true,
+		include_highlights: true,
+		context_options: true,
+	}),
+	retrieveContext: ContextInputSchema,
 } as const;
 
 export const PineconeEndpointOutputSchemas = {
@@ -447,6 +574,47 @@ export const PineconeEndpointOutputSchemas = {
 		.object({
 			result: z.object({ hits: z.array(z.object({}).loose()) }).loose(),
 			usage: z.object({}).loose().optional(),
+		})
+		.loose(),
+	listAssistants: z
+		.object({
+			assistants: z.array(AssistantSchema),
+			pagination: z.object({}).loose().optional(),
+		})
+		.loose(),
+	createAssistant: AssistantSchema,
+	getAssistant: AssistantSchema,
+	updateAssistant: AssistantSchema,
+	deleteAssistant: EmptyResponseSchema,
+	listFiles: z
+		.object({
+			files: z.array(AssistantFileSchema),
+			pagination: z.object({}).loose().optional(),
+		})
+		.loose(),
+	uploadFile: OperationModelSchema,
+	describeFile: AssistantFileSchema,
+	deleteFile: OperationModelSchema,
+	chatAssistant: z
+		.object({
+			id: z.string().optional(),
+			message: MessageSchema.optional(),
+			citations: z.array(z.object({}).loose()).optional(),
+			usage: z.object({}).loose().optional(),
+		})
+		.loose(),
+	chatCompletionAssistant: z
+		.object({
+			id: z.string().optional(),
+			choices: z.array(z.object({}).loose()).optional(),
+			model: z.string().optional(),
+			usage: z.object({}).loose().optional(),
+		})
+		.loose(),
+	retrieveContext: z
+		.object({
+			snippets: z.array(z.object({}).loose()),
+			usage: z.object({}).loose(),
 		})
 		.loose(),
 } as const;

@@ -1,4 +1,18 @@
 import {
+	chatAssistant,
+	chatCompletionAssistant,
+	createAssistant,
+	deleteAssistant,
+	deleteFile,
+	describeFile,
+	getAssistant,
+	listAssistants,
+	listFiles,
+	retrieveContext,
+	updateAssistant,
+	uploadFile,
+} from './assistant';
+import {
 	configureIndex,
 	createBackup,
 	createIndex,
@@ -95,6 +109,27 @@ export const BulkImports = {
 export const Records = {
 	upsert: upsertRecords,
 	search: searchRecords,
+};
+
+export const Assistants = {
+	list: listAssistants,
+	create: createAssistant,
+	get: getAssistant,
+	update: updateAssistant,
+	delete: deleteAssistant,
+};
+
+export const AssistantFiles = {
+	list: listFiles,
+	upload: uploadFile,
+	describe: describeFile,
+	delete: deleteFile,
+};
+
+export const AssistantChat = {
+	chat: chatAssistant,
+	completion: chatCompletionAssistant,
+	context: retrieveContext,
 };
 
 export * from './types';

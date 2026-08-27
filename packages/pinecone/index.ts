@@ -14,6 +14,9 @@ import type {
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
 import {
+	AssistantChat,
+	AssistantFiles,
+	Assistants,
 	Backups,
 	BulkImports,
 	Collections,
@@ -98,6 +101,18 @@ export type PineconeEndpoints = {
 	cancelBulkImport: PineconeEndpoint<'cancelBulkImport'>;
 	upsertRecords: PineconeEndpoint<'upsertRecords'>;
 	searchRecords: PineconeEndpoint<'searchRecords'>;
+	listAssistants: PineconeEndpoint<'listAssistants'>;
+	createAssistant: PineconeEndpoint<'createAssistant'>;
+	getAssistant: PineconeEndpoint<'getAssistant'>;
+	updateAssistant: PineconeEndpoint<'updateAssistant'>;
+	deleteAssistant: PineconeEndpoint<'deleteAssistant'>;
+	listFiles: PineconeEndpoint<'listFiles'>;
+	uploadFile: PineconeEndpoint<'uploadFile'>;
+	describeFile: PineconeEndpoint<'describeFile'>;
+	deleteFile: PineconeEndpoint<'deleteFile'>;
+	chatAssistant: PineconeEndpoint<'chatAssistant'>;
+	chatCompletionAssistant: PineconeEndpoint<'chatCompletionAssistant'>;
+	retrieveContext: PineconeEndpoint<'retrieveContext'>;
 };
 
 const pineconeEndpointsNested = {
@@ -110,6 +125,9 @@ const pineconeEndpointsNested = {
 	namespaces: Namespaces,
 	bulkImports: BulkImports,
 	records: Records,
+	assistants: Assistants,
+	assistantFiles: AssistantFiles,
+	assistantChat: AssistantChat,
 } as const;
 
 const pineconeWebhooksNested = {} as const;
@@ -258,6 +276,54 @@ export const pineconeEndpointSchemas = {
 	'records.search': {
 		input: PineconeEndpointInputSchemas.searchRecords,
 		output: PineconeEndpointOutputSchemas.searchRecords,
+	},
+	'assistants.list': {
+		input: PineconeEndpointInputSchemas.listAssistants,
+		output: PineconeEndpointOutputSchemas.listAssistants,
+	},
+	'assistants.create': {
+		input: PineconeEndpointInputSchemas.createAssistant,
+		output: PineconeEndpointOutputSchemas.createAssistant,
+	},
+	'assistants.get': {
+		input: PineconeEndpointInputSchemas.getAssistant,
+		output: PineconeEndpointOutputSchemas.getAssistant,
+	},
+	'assistants.update': {
+		input: PineconeEndpointInputSchemas.updateAssistant,
+		output: PineconeEndpointOutputSchemas.updateAssistant,
+	},
+	'assistants.delete': {
+		input: PineconeEndpointInputSchemas.deleteAssistant,
+		output: PineconeEndpointOutputSchemas.deleteAssistant,
+	},
+	'assistantFiles.list': {
+		input: PineconeEndpointInputSchemas.listFiles,
+		output: PineconeEndpointOutputSchemas.listFiles,
+	},
+	'assistantFiles.upload': {
+		input: PineconeEndpointInputSchemas.uploadFile,
+		output: PineconeEndpointOutputSchemas.uploadFile,
+	},
+	'assistantFiles.describe': {
+		input: PineconeEndpointInputSchemas.describeFile,
+		output: PineconeEndpointOutputSchemas.describeFile,
+	},
+	'assistantFiles.delete': {
+		input: PineconeEndpointInputSchemas.deleteFile,
+		output: PineconeEndpointOutputSchemas.deleteFile,
+	},
+	'assistantChat.chat': {
+		input: PineconeEndpointInputSchemas.chatAssistant,
+		output: PineconeEndpointOutputSchemas.chatAssistant,
+	},
+	'assistantChat.completion': {
+		input: PineconeEndpointInputSchemas.chatCompletionAssistant,
+		output: PineconeEndpointOutputSchemas.chatCompletionAssistant,
+	},
+	'assistantChat.context': {
+		input: PineconeEndpointInputSchemas.retrieveContext,
+		output: PineconeEndpointOutputSchemas.retrieveContext,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof pineconeEndpointsNested
@@ -421,6 +487,63 @@ const pineconeEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Search integrated records by text, vector, ID, or metadata filter.',
+	},
+	'assistants.list': {
+		riskLevel: 'read',
+		description: 'List paginated Pinecone Assistants for the current project.',
+	},
+	'assistants.create': {
+		riskLevel: 'write',
+		description: 'Create a Pinecone Assistant with instructions and metadata.',
+	},
+	'assistants.get': {
+		riskLevel: 'read',
+		description:
+			'Describe Assistant configuration, status, and data-plane host.',
+	},
+	'assistants.update': {
+		riskLevel: 'write',
+		description: 'Update an Assistant’s shared instructions or metadata.',
+	},
+	'assistants.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description:
+			'Permanently delete a Pinecone Assistant and its indexed files.',
+	},
+	'assistantFiles.list': {
+		riskLevel: 'read',
+		description: 'List paginated files uploaded to an Assistant.',
+	},
+	'assistantFiles.upload': {
+		riskLevel: 'write',
+		description:
+			'Upload a base64-encoded file for asynchronous Assistant ingestion.',
+	},
+	'assistantFiles.describe': {
+		riskLevel: 'read',
+		description:
+			'Describe an Assistant file and optionally request a signed URL.',
+	},
+	'assistantFiles.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Start permanent deletion of a file from an Assistant.',
+	},
+	'assistantChat.chat': {
+		riskLevel: 'read',
+		description:
+			'Chat with an Assistant using retrieved file context and citations.',
+	},
+	'assistantChat.completion': {
+		riskLevel: 'read',
+		description:
+			'Chat through Pinecone’s OpenAI-compatible completion response.',
+	},
+	'assistantChat.context': {
+		riskLevel: 'read',
+		description:
+			'Retrieve relevant Assistant snippets without generating an answer.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof pineconeEndpointsNested>;
 

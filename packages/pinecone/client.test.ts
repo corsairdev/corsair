@@ -71,6 +71,9 @@ describe('Pinecone client', () => {
 		expect(() => normalizePineconeHost('pinecone.io.attacker.example')).toThrow(
 			'end in pinecone.io',
 		);
+		expect(() => normalizePineconeHost('example.pinecone.io/proxy')).toThrow(
+			'must not include',
+		);
 	});
 
 	it('omits undefined query values', async () => {
