@@ -95,11 +95,13 @@ pnpm exec tsx packages/pinecone/demo.ts
 unset PINECONE_API_KEY
 ```
 
-Paste the key at the hidden prompt and press Enter. The API key is read only from the process environment and is never printed. The demo uses AWS `us-east-1`, which is available on Pinecone Starter plans. A recording will be attached to the pull request before it is marked ready for review.
+Paste the key at the hidden prompt and press Enter. The API key is read only from the process environment and is never printed. The demo uses AWS `us-east-1`, which is available on Pinecone Starter plans.
+
+[Watch the verified 32-second live demo](https://github.com/sgoel2be24-cyber/corsair/releases/download/pinecone-demo-v1/Screen.Recording.2026-08-27.at.10.55.29.PM.mov). It shows embedding generation, disposable index creation, a three-vector upsert, semantic query, reranking, and successful cleanup.
 
 ## Links
 
 - [Pinecone API documentation](https://docs.pinecone.io/reference/api/introduction)
 - [Official OpenAPI specifications](https://github.com/pinecone-io/pinecone-api)
 - [Integration request](https://github.com/corsairdev/corsair/issues/1199)
-- [Draft pull request](https://github.com/corsairdev/corsair/pull/1200)
+- [Pull request](https://github.com/corsairdev/corsair/pull/1200)
