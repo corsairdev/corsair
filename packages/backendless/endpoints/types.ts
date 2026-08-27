@@ -48,9 +48,6 @@ export const BackendlessVoidSchema = z.union([
 	z.null(),
 	z.undefined(),
 	z.literal(''),
-	z.boolean(),
-	z.number(),
-	z.string(),
 ]);
 
 export const BackendlessEndpointInputSchemas = {

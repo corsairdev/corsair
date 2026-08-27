@@ -46,8 +46,11 @@ function optionsOf(ctx: BackendlessContext): BackendlessPluginOptions {
 }
 
 function identityPropertyOf(ctx: BackendlessContext): string {
-	const value = optionsOf(ctx).identityProperty?.trim();
-	return value || 'email';
+	const value = optionsOf(ctx).identityProperty?.trim() || 'email';
+	if (value.toLowerCase() === 'password') {
+		throw new Error('identityProperty cannot be password');
+	}
+	return value;
 }
 
 function parseOutput<K extends keyof typeof BackendlessEndpointOutputSchemas>(

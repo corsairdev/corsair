@@ -193,6 +193,7 @@ describe('Backendless endpoint handlers', () => {
 		);
 		await Files.move(ctx(), { sourcePath: 'a', targetPath: 'b' });
 		expect(lastCall().url).toBe('/api/files/move');
+		mockRequest.mockResolvedValue(undefined);
 		await Files.delete(ctx(), { path: 'docs', fileName: 'a.txt' });
 		expect(lastCall()).toEqual(
 			expect.objectContaining({
@@ -292,6 +293,7 @@ describe('Backendless endpoint handlers', () => {
 				query: { expected: 20, updatedvalue: 21 },
 			}),
 		);
+		mockRequest.mockResolvedValue(undefined);
 		await Counters.reset(ctx(), { counterName: 'mycounter' });
 		expect(lastCall().url).toBe('/api/counters/{counterName}/reset');
 	});
@@ -322,6 +324,12 @@ describe('Backendless endpoint handlers', () => {
 			login: 'alice',
 			password: 'wonderland',
 		});
+		await expect(
+			Users.register(ctx({ identityProperty: 'password' }), {
+				identity: 'alice',
+				password: 'wonderland',
+			}),
+		).rejects.toThrow(/cannot be password/);
 	});
 
 	it('logs in, validates tokens, and maps user-token', async () => {
@@ -400,6 +408,10 @@ describe('Backendless endpoint handlers', () => {
 	it('rejects malformed provider responses', async () => {
 		mockRequest.mockResolvedValue({ ok: true });
 		await expect(Files.list(ctx(), {})).rejects.toThrow();
+		mockRequest.mockResolvedValue('oops');
+		await expect(
+			Files.createDirectory(ctx(), { path: 'notes' }),
+		).rejects.toThrow();
 	});
 
 	it('publishes a messaging payload', async () => {
