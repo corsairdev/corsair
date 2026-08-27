@@ -13,7 +13,9 @@ type OperationConfig<K extends OperationKey> = {
 	method: 'GET' | 'POST' | 'PATCH' | 'DELETE';
 	path: (input: PineconeEndpointInputs[K]) => string;
 	surface?: PineconeSurface;
+	host?: (input: PineconeEndpointInputs[K]) => string;
 	body?: (input: PineconeEndpointInputs[K]) => unknown;
+	mediaType?: string;
 	query?: (
 		input: PineconeEndpointInputs[K],
 	) => Record<
@@ -33,7 +35,9 @@ export function definePineconeEndpoint<K extends OperationKey>(
 			{
 				method: config.method,
 				surface: config.surface,
+				host: config.host?.(input),
 				body: config.body?.(input),
+				mediaType: config.mediaType,
 				query: config.query?.(input),
 				schema: PineconeEndpointOutputSchemas[key] as unknown as ZodType<
 					PineconeEndpointOutputs[K]

@@ -15,6 +15,25 @@ import {
 	listProjectBackups,
 	listRestoreJobs,
 } from './control';
+import {
+	cancelBulkImport,
+	createNamespace,
+	deleteNamespace,
+	deleteVectors,
+	describeBulkImport,
+	describeIndexStats,
+	describeNamespace,
+	fetchVectors,
+	listBulkImports,
+	listNamespaces,
+	listVectors,
+	queryVectors,
+	searchRecords,
+	startBulkImport,
+	updateVector,
+	upsertRecords,
+	upsertVectors,
+} from './data';
 import { embed, getModel, listModels, rerank } from './inference';
 
 export const Indexes = {
@@ -47,6 +66,35 @@ export const Inference = {
 	rerank,
 	listModels,
 	getModel,
+};
+
+export const Vectors = {
+	upsert: upsertVectors,
+	query: queryVectors,
+	fetch: fetchVectors,
+	update: updateVector,
+	delete: deleteVectors,
+	list: listVectors,
+	describeIndexStats,
+};
+
+export const Namespaces = {
+	list: listNamespaces,
+	create: createNamespace,
+	describe: describeNamespace,
+	delete: deleteNamespace,
+};
+
+export const BulkImports = {
+	list: listBulkImports,
+	start: startBulkImport,
+	describe: describeBulkImport,
+	cancel: cancelBulkImport,
+};
+
+export const Records = {
+	upsert: upsertRecords,
+	search: searchRecords,
 };
 
 export * from './types';

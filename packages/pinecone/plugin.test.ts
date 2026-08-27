@@ -17,7 +17,7 @@ describe('Pinecone plugin', () => {
 
 	it('registers a schema and description for every endpoint', () => {
 		const operations = flatten(plugin.endpoints as Record<string, unknown>);
-		expect(operations).toHaveLength(19);
+		expect(operations).toHaveLength(36);
 		expect(Object.keys(pineconeEndpointSchemas).sort()).toEqual(operations);
 
 		for (const operation of operations) {

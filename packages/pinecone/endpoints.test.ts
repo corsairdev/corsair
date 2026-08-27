@@ -170,10 +170,177 @@ const cases = [
 		input: { modelName: 'llama-text-embed-v2' },
 		response: { model: 'llama-text-embed-v2', type: 'embed' },
 	},
+	{
+		name: 'vectors.upsert',
+		method: 'POST',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/vectors/upsert',
+		input: {
+			host: 'docs-index.svc.pinecone.io',
+			vectors: [{ id: 'v1', values: [0.1, 0.2] }],
+		},
+		response: { upsertedCount: 1 },
+	},
+	{
+		name: 'vectors.query',
+		method: 'POST',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/query',
+		input: {
+			host: 'docs-index.svc.pinecone.io',
+			vector: [0.1, 0.2],
+			topK: 3,
+			includeMetadata: true,
+		},
+		response: { matches: [] },
+	},
+	{
+		name: 'vectors.fetch',
+		method: 'GET',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/vectors/fetch?ids=v1&ids=v2&namespace=docs',
+		input: {
+			host: 'docs-index.svc.pinecone.io',
+			ids: ['v1', 'v2'],
+			namespace: 'docs',
+		},
+		response: { vectors: {}, namespace: 'docs' },
+	},
+	{
+		name: 'vectors.update',
+		method: 'POST',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/vectors/update',
+		input: {
+			host: 'docs-index.svc.pinecone.io',
+			id: 'v1',
+			setMetadata: { topic: 'oss' },
+		},
+		response: {},
+	},
+	{
+		name: 'vectors.delete',
+		method: 'POST',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/vectors/delete',
+		input: { host: 'docs-index.svc.pinecone.io', ids: ['v1'] },
+		response: {},
+	},
+	{
+		name: 'vectors.list',
+		method: 'GET',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/vectors/list?prefix=doc&limit=10&namespace=docs',
+		input: {
+			host: 'docs-index.svc.pinecone.io',
+			prefix: 'doc',
+			limit: 10,
+			namespace: 'docs',
+		},
+		response: { vectors: [] },
+	},
+	{
+		name: 'vectors.describeIndexStats',
+		method: 'POST',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/describe_index_stats',
+		input: { host: 'docs-index.svc.pinecone.io' },
+		response: { totalRecordCount: 10 },
+	},
+	{
+		name: 'namespaces.list',
+		method: 'GET',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/namespaces?limit=10&prefix=doc',
+		input: { host: 'docs-index.svc.pinecone.io', limit: 10, prefix: 'doc' },
+		response: { namespaces: [] },
+	},
+	{
+		name: 'namespaces.create',
+		method: 'POST',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/namespaces',
+		input: { host: 'docs-index.svc.pinecone.io', namespace: 'docs' },
+		response: { name: 'docs', record_count: 0 },
+	},
+	{
+		name: 'namespaces.describe',
+		method: 'GET',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/namespaces/docs%20space',
+		input: { host: 'docs-index.svc.pinecone.io', namespace: 'docs space' },
+		response: { name: 'docs space', record_count: 3 },
+	},
+	{
+		name: 'namespaces.delete',
+		method: 'DELETE',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/namespaces/docs',
+		input: { host: 'docs-index.svc.pinecone.io', namespace: 'docs' },
+		response: {},
+	},
+	{
+		name: 'bulkImports.list',
+		method: 'GET',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/bulk/imports?limit=10',
+		input: { host: 'docs-index.svc.pinecone.io', limit: 10 },
+		response: { data: [] },
+	},
+	{
+		name: 'bulkImports.start',
+		method: 'POST',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/bulk/imports',
+		input: { host: 'docs-index.svc.pinecone.io', uri: 's3://bucket/vectors/' },
+		response: { id: 'import-1' },
+	},
+	{
+		name: 'bulkImports.describe',
+		method: 'GET',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/bulk/imports/import-1',
+		input: { host: 'docs-index.svc.pinecone.io', importId: 'import-1' },
+		response: { id: 'import-1', status: 'InProgress' },
+	},
+	{
+		name: 'bulkImports.cancel',
+		method: 'DELETE',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/bulk/imports/import-1',
+		input: { host: 'docs-index.svc.pinecone.io', importId: 'import-1' },
+		response: {},
+	},
+	{
+		name: 'records.upsert',
+		method: 'POST',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/records/namespaces/docs/upsert',
+		input: {
+			host: 'docs-index.svc.pinecone.io',
+			namespace: 'docs',
+			records: [{ _id: 'doc-1', chunk_text: 'Corsair OSS' }],
+		},
+		response: {},
+	},
+	{
+		name: 'records.search',
+		method: 'POST',
+		base: 'https://docs-index.svc.pinecone.io',
+		path: '/records/namespaces/docs/search',
+		input: {
+			host: 'docs-index.svc.pinecone.io',
+			namespace: 'docs',
+			query: { top_k: 3, inputs: { text: 'open source' } },
+		},
+		response: { result: { hits: [] } },
+	},
 ] as const;
 
-describe.each(cases)('$name', ({ name, method, path, input, response }) => {
+describe.each(cases)('$name', (testCase) => {
 	it('matches the official 2026-04 request contract', async () => {
+		const { name, method, path, input, response } = testCase;
+		const base = 'base' in testCase ? testCase.base : 'https://api.pinecone.io';
 		const harness = installFetchHarness();
 		harness.queue({ body: response });
 		const [group, operationName] = name.split('.');
@@ -190,7 +357,7 @@ describe.each(cases)('$name', ({ name, method, path, input, response }) => {
 			const request = harness.requestAt(0);
 
 			expect(request.method).toBe(method);
-			expect(request.url).toBe(`https://api.pinecone.io${path}`);
+			expect(request.url).toBe(`${base}${path}`);
 			expect(request.headers['api-key']).toBe('pcsk_test');
 			expect(request.headers['x-pinecone-api-version']).toBe('2026-04');
 			expect(result).toEqual(response);

@@ -192,6 +192,131 @@ const RerankResponseSchema = z
 	})
 	.loose();
 
+const IndexHostSchema = z.object({ host: NonEmptyString });
+const MetadataSchema = z.record(z.string(), z.unknown());
+const SparseValuesSchema = z.object({
+	indices: z.array(z.number().int().nonnegative()),
+	values: z.array(z.number()),
+});
+const VectorSchema = z
+	.object({
+		id: NonEmptyString,
+		values: z.array(z.number()).optional(),
+		sparse_values: SparseValuesSchema.optional(),
+		metadata: MetadataSchema.optional(),
+	})
+	.loose();
+
+const UpsertVectorsInputSchema = IndexHostSchema.extend({
+	vectors: z.array(VectorSchema).min(1).max(1000),
+	namespace: z.string().optional(),
+});
+const QueryVectorsInputSchema = IndexHostSchema.extend({
+	namespace: z.string().optional(),
+	topK: z.number().int().positive(),
+	vector: z.array(z.number()).optional(),
+	id: NonEmptyString.optional(),
+	sparseVector: SparseValuesSchema.optional(),
+	filter: MetadataSchema.optional(),
+	includeValues: z.boolean().optional(),
+	includeMetadata: z.boolean().optional(),
+});
+const FetchVectorsInputSchema = IndexHostSchema.extend({
+	ids: z.array(NonEmptyString).min(1),
+	namespace: z.string().optional(),
+});
+const UpdateVectorInputSchema = IndexHostSchema.extend({
+	id: NonEmptyString,
+	values: z.array(z.number()).optional(),
+	sparseValues: SparseValuesSchema.optional(),
+	setMetadata: MetadataSchema.optional(),
+	namespace: z.string().optional(),
+});
+const DeleteVectorsInputSchema = IndexHostSchema.extend({
+	ids: z.array(NonEmptyString).optional(),
+	deleteAll: z.boolean().optional(),
+	namespace: z.string().optional(),
+	filter: MetadataSchema.optional(),
+});
+const ListVectorsInputSchema = IndexHostSchema.extend({
+	prefix: z.string().optional(),
+	limit: z.number().int().positive().optional(),
+	paginationToken: z.string().optional(),
+	namespace: z.string().optional(),
+});
+const DescribeIndexStatsInputSchema = IndexHostSchema.extend({
+	filter: MetadataSchema.optional(),
+});
+const NamespaceNameInputSchema = IndexHostSchema.extend({
+	namespace: z.string(),
+});
+const ListNamespacesInputSchema = IndexHostSchema.extend({
+	limit: PositiveLimit.optional(),
+	paginationToken: z.string().optional(),
+	prefix: z.string().optional(),
+});
+const ListImportsInputSchema = IndexHostSchema.extend({
+	limit: PositiveLimit.optional(),
+	paginationToken: z.string().optional(),
+});
+const ImportIdInputSchema = IndexHostSchema.extend({
+	importId: NonEmptyString,
+});
+const StartImportInputSchema = IndexHostSchema.extend({
+	uri: NonEmptyString,
+	integrationId: z.string().optional(),
+	errorMode: z.enum(['CONTINUE', 'ABORT']).optional(),
+});
+const RecordSchema = z.object({ _id: NonEmptyString }).loose();
+const UpsertRecordsInputSchema = NamespaceNameInputSchema.extend({
+	records: z.array(RecordSchema).min(1).max(96),
+});
+const SearchRecordsInputSchema = NamespaceNameInputSchema.extend({
+	query: z
+		.object({
+			top_k: z.number().int().positive(),
+			inputs: z.object({ text: z.string() }).loose().optional(),
+			vector: z.array(z.number()).optional(),
+			id: z.string().optional(),
+			filter: MetadataSchema.optional(),
+		})
+		.loose(),
+	fields: z.array(z.string()).optional(),
+});
+
+const NamespaceDescriptionSchema = z
+	.object({
+		name: z.string(),
+		record_count: z.number().int().nonnegative().optional(),
+	})
+	.loose();
+const ImportModelSchema = z
+	.object({
+		id: NonEmptyString,
+		uri: z.string().optional(),
+		status: z.string().optional(),
+		percent_complete: z.number().min(0).max(100).optional(),
+		created_at: z.string().optional(),
+		finished_at: z.string().nullable().optional(),
+	})
+	.loose();
+const QueryResponseSchema = z
+	.object({
+		matches: z.array(
+			z
+				.object({
+					id: z.string(),
+					score: z.number().optional(),
+					values: z.array(z.number()).optional(),
+					metadata: MetadataSchema.optional(),
+				})
+				.loose(),
+		),
+		namespace: z.string().optional(),
+		usage: z.object({}).loose().optional(),
+	})
+	.loose();
+
 export const PineconeEndpointInputSchemas = {
 	createIndex: CreateIndexInputSchema,
 	createIndexForModel: CreateIndexForModelInputSchema,
@@ -215,6 +340,23 @@ export const PineconeEndpointInputSchemas = {
 		vectorType: z.enum(['dense', 'sparse']).optional(),
 	}),
 	getModel: z.object({ modelName: NonEmptyString }),
+	upsertVectors: UpsertVectorsInputSchema,
+	queryVectors: QueryVectorsInputSchema,
+	fetchVectors: FetchVectorsInputSchema,
+	updateVector: UpdateVectorInputSchema,
+	deleteVectors: DeleteVectorsInputSchema,
+	listVectors: ListVectorsInputSchema,
+	describeIndexStats: DescribeIndexStatsInputSchema,
+	listNamespaces: ListNamespacesInputSchema,
+	createNamespace: NamespaceNameInputSchema,
+	describeNamespace: NamespaceNameInputSchema,
+	deleteNamespace: NamespaceNameInputSchema,
+	listBulkImports: ListImportsInputSchema,
+	startBulkImport: StartImportInputSchema,
+	describeBulkImport: ImportIdInputSchema,
+	cancelBulkImport: ImportIdInputSchema,
+	upsertRecords: UpsertRecordsInputSchema,
+	searchRecords: SearchRecordsInputSchema,
 } as const;
 
 export const PineconeEndpointOutputSchemas = {
@@ -256,6 +398,57 @@ export const PineconeEndpointOutputSchemas = {
 	rerank: RerankResponseSchema,
 	listModels: z.object({ models: z.array(ModelInfoSchema) }).loose(),
 	getModel: ModelInfoSchema,
+	upsertVectors: z
+		.object({ upsertedCount: z.number().int().nonnegative() })
+		.loose(),
+	queryVectors: QueryResponseSchema,
+	fetchVectors: z
+		.object({
+			vectors: z.record(z.string(), VectorSchema),
+			namespace: z.string().optional(),
+		})
+		.loose(),
+	updateVector: EmptyResponseSchema,
+	deleteVectors: EmptyResponseSchema,
+	listVectors: z
+		.object({
+			vectors: z.array(z.object({ id: z.string() }).loose()),
+			pagination: z.object({}).loose().optional(),
+		})
+		.loose(),
+	describeIndexStats: z
+		.object({
+			dimension: z.number().int().positive().optional(),
+			indexFullness: z.number().optional(),
+			totalRecordCount: z.number().int().nonnegative().optional(),
+			namespaces: z.record(z.string(), z.object({}).loose()).optional(),
+		})
+		.loose(),
+	listNamespaces: z
+		.object({
+			namespaces: z.array(NamespaceDescriptionSchema),
+			pagination: z.object({}).loose().optional(),
+		})
+		.loose(),
+	createNamespace: NamespaceDescriptionSchema,
+	describeNamespace: NamespaceDescriptionSchema,
+	deleteNamespace: EmptyResponseSchema,
+	listBulkImports: z
+		.object({
+			data: z.array(ImportModelSchema),
+			pagination: z.object({}).loose().optional(),
+		})
+		.loose(),
+	startBulkImport: z.object({ id: NonEmptyString }).loose(),
+	describeBulkImport: ImportModelSchema,
+	cancelBulkImport: EmptyResponseSchema,
+	upsertRecords: EmptyResponseSchema,
+	searchRecords: z
+		.object({
+			result: z.object({ hits: z.array(z.object({}).loose()) }).loose(),
+			usage: z.object({}).loose().optional(),
+		})
+		.loose(),
 } as const;
 
 export type PineconeEndpointInputs = {

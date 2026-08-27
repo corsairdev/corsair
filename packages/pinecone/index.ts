@@ -15,10 +15,14 @@ import type {
 import { AuthMissingError } from 'corsair/core';
 import {
 	Backups,
+	BulkImports,
 	Collections,
 	Indexes,
 	Inference,
+	Namespaces,
+	Records,
 	RestoreJobs,
+	Vectors,
 } from './endpoints';
 import type {
 	PineconeEndpointInputs,
@@ -77,6 +81,23 @@ export type PineconeEndpoints = {
 	rerank: PineconeEndpoint<'rerank'>;
 	listModels: PineconeEndpoint<'listModels'>;
 	getModel: PineconeEndpoint<'getModel'>;
+	upsertVectors: PineconeEndpoint<'upsertVectors'>;
+	queryVectors: PineconeEndpoint<'queryVectors'>;
+	fetchVectors: PineconeEndpoint<'fetchVectors'>;
+	updateVector: PineconeEndpoint<'updateVector'>;
+	deleteVectors: PineconeEndpoint<'deleteVectors'>;
+	listVectors: PineconeEndpoint<'listVectors'>;
+	describeIndexStats: PineconeEndpoint<'describeIndexStats'>;
+	listNamespaces: PineconeEndpoint<'listNamespaces'>;
+	createNamespace: PineconeEndpoint<'createNamespace'>;
+	describeNamespace: PineconeEndpoint<'describeNamespace'>;
+	deleteNamespace: PineconeEndpoint<'deleteNamespace'>;
+	listBulkImports: PineconeEndpoint<'listBulkImports'>;
+	startBulkImport: PineconeEndpoint<'startBulkImport'>;
+	describeBulkImport: PineconeEndpoint<'describeBulkImport'>;
+	cancelBulkImport: PineconeEndpoint<'cancelBulkImport'>;
+	upsertRecords: PineconeEndpoint<'upsertRecords'>;
+	searchRecords: PineconeEndpoint<'searchRecords'>;
 };
 
 const pineconeEndpointsNested = {
@@ -85,6 +106,10 @@ const pineconeEndpointsNested = {
 	restoreJobs: RestoreJobs,
 	collections: Collections,
 	inference: Inference,
+	vectors: Vectors,
+	namespaces: Namespaces,
+	bulkImports: BulkImports,
+	records: Records,
 } as const;
 
 const pineconeWebhooksNested = {} as const;
@@ -165,6 +190,74 @@ export const pineconeEndpointSchemas = {
 	'inference.getModel': {
 		input: PineconeEndpointInputSchemas.getModel,
 		output: PineconeEndpointOutputSchemas.getModel,
+	},
+	'vectors.upsert': {
+		input: PineconeEndpointInputSchemas.upsertVectors,
+		output: PineconeEndpointOutputSchemas.upsertVectors,
+	},
+	'vectors.query': {
+		input: PineconeEndpointInputSchemas.queryVectors,
+		output: PineconeEndpointOutputSchemas.queryVectors,
+	},
+	'vectors.fetch': {
+		input: PineconeEndpointInputSchemas.fetchVectors,
+		output: PineconeEndpointOutputSchemas.fetchVectors,
+	},
+	'vectors.update': {
+		input: PineconeEndpointInputSchemas.updateVector,
+		output: PineconeEndpointOutputSchemas.updateVector,
+	},
+	'vectors.delete': {
+		input: PineconeEndpointInputSchemas.deleteVectors,
+		output: PineconeEndpointOutputSchemas.deleteVectors,
+	},
+	'vectors.list': {
+		input: PineconeEndpointInputSchemas.listVectors,
+		output: PineconeEndpointOutputSchemas.listVectors,
+	},
+	'vectors.describeIndexStats': {
+		input: PineconeEndpointInputSchemas.describeIndexStats,
+		output: PineconeEndpointOutputSchemas.describeIndexStats,
+	},
+	'namespaces.list': {
+		input: PineconeEndpointInputSchemas.listNamespaces,
+		output: PineconeEndpointOutputSchemas.listNamespaces,
+	},
+	'namespaces.create': {
+		input: PineconeEndpointInputSchemas.createNamespace,
+		output: PineconeEndpointOutputSchemas.createNamespace,
+	},
+	'namespaces.describe': {
+		input: PineconeEndpointInputSchemas.describeNamespace,
+		output: PineconeEndpointOutputSchemas.describeNamespace,
+	},
+	'namespaces.delete': {
+		input: PineconeEndpointInputSchemas.deleteNamespace,
+		output: PineconeEndpointOutputSchemas.deleteNamespace,
+	},
+	'bulkImports.list': {
+		input: PineconeEndpointInputSchemas.listBulkImports,
+		output: PineconeEndpointOutputSchemas.listBulkImports,
+	},
+	'bulkImports.start': {
+		input: PineconeEndpointInputSchemas.startBulkImport,
+		output: PineconeEndpointOutputSchemas.startBulkImport,
+	},
+	'bulkImports.describe': {
+		input: PineconeEndpointInputSchemas.describeBulkImport,
+		output: PineconeEndpointOutputSchemas.describeBulkImport,
+	},
+	'bulkImports.cancel': {
+		input: PineconeEndpointInputSchemas.cancelBulkImport,
+		output: PineconeEndpointOutputSchemas.cancelBulkImport,
+	},
+	'records.upsert': {
+		input: PineconeEndpointInputSchemas.upsertRecords,
+		output: PineconeEndpointOutputSchemas.upsertRecords,
+	},
+	'records.search': {
+		input: PineconeEndpointInputSchemas.searchRecords,
+		output: PineconeEndpointOutputSchemas.searchRecords,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof pineconeEndpointsNested
@@ -253,6 +346,81 @@ const pineconeEndpointMeta = {
 		riskLevel: 'read',
 		description:
 			'Describe capabilities and limits for one hosted inference model.',
+	},
+	'vectors.upsert': {
+		riskLevel: 'write',
+		description: 'Insert or replace a batch of vectors in an index namespace.',
+	},
+	'vectors.query': {
+		riskLevel: 'read',
+		description: 'Find the vectors most similar to an ID or query vector.',
+	},
+	'vectors.fetch': {
+		riskLevel: 'read',
+		description: 'Fetch vectors and metadata by their record identifiers.',
+	},
+	'vectors.update': {
+		riskLevel: 'write',
+		description: 'Update vector values or metadata for one existing record.',
+	},
+	'vectors.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete selected vectors or an entire namespace.',
+	},
+	'vectors.list': {
+		riskLevel: 'read',
+		description:
+			'List paginated vector identifiers with optional prefix filtering.',
+	},
+	'vectors.describeIndexStats': {
+		riskLevel: 'read',
+		description:
+			'Return index dimension, fullness, and per-namespace record counts.',
+	},
+	'namespaces.list': {
+		riskLevel: 'read',
+		description: 'List paginated namespaces in lexical order.',
+	},
+	'namespaces.create': {
+		riskLevel: 'write',
+		description: 'Create an empty namespace in a Pinecone index.',
+	},
+	'namespaces.describe': {
+		riskLevel: 'read',
+		description: 'Describe one namespace and its current record count.',
+	},
+	'namespaces.delete': {
+		riskLevel: 'destructive',
+		irreversible: true,
+		description: 'Permanently delete a namespace and every record it contains.',
+	},
+	'bulkImports.list': {
+		riskLevel: 'read',
+		description: 'List paginated bulk-import jobs for an index.',
+	},
+	'bulkImports.start': {
+		riskLevel: 'write',
+		description:
+			'Start importing vector data from object storage into an index.',
+	},
+	'bulkImports.describe': {
+		riskLevel: 'read',
+		description: 'Describe progress and errors for one bulk-import job.',
+	},
+	'bulkImports.cancel': {
+		riskLevel: 'write',
+		description: 'Cancel a running Pinecone bulk-import job.',
+	},
+	'records.upsert': {
+		riskLevel: 'write',
+		description:
+			'Upsert text records as newline-delimited JSON for integrated embedding.',
+	},
+	'records.search': {
+		riskLevel: 'read',
+		description:
+			'Search integrated records by text, vector, ID, or metadata filter.',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof pineconeEndpointsNested>;
 
