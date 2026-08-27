@@ -1,9 +1,9 @@
-import { dropbox_sign, DropboxSignSchema, dropboxSignEndpointSchemas } from './index';
+import { dropboxsign, DropboxSignSchema, dropboxSignEndpointSchemas } from './index';
 
 describe('Dropbox Sign Plugin', () => {
 	it('initializes with default options and correct id', () => {
-		const plugin = dropbox_sign();
-		expect(plugin.id).toBe('dropbox_sign');
+		const plugin = dropboxsign();
+		expect(plugin.id).toBe('dropboxsign');
 		expect(plugin.schema).toBe(DropboxSignSchema);
 		expect(plugin.endpoints).toBeDefined();
 		expect(plugin.endpointMeta).toBeDefined();
@@ -11,13 +11,13 @@ describe('Dropbox Sign Plugin', () => {
 	});
 
 	it('configures authentication types for api_key and oauth_2', () => {
-		const plugin = dropbox_sign();
+		const plugin = dropboxsign();
 		expect(plugin.authConfig.api_key).toBeDefined();
 		expect(plugin.authConfig.oauth_2).toBeDefined();
 	});
 
 	it('exposes all major endpoint groups', () => {
-		const plugin = dropbox_sign();
+		const plugin = dropboxsign();
 		expect(plugin.endpoints.account).toBeDefined();
 		expect(plugin.endpoints.signatureRequests).toBeDefined();
 		expect(plugin.endpoints.templates).toBeDefined();

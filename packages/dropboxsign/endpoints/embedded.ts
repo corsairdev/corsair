@@ -10,7 +10,7 @@ export const getEmbeddedSignUrl: DropboxSignEndpoints['getEmbeddedSignUrl'] = as
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.embedded.getSignUrl', { signature_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.embedded.getSignUrl', { signature_id }, 'completed');
 	return result;
 };
 
@@ -25,6 +25,6 @@ export const getEmbeddedTemplateEditUrl: DropboxSignEndpoints['getEmbeddedTempla
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.embedded.getTemplateEditUrl', { template_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.embedded.getTemplateEditUrl', { template_id }, 'completed');
 	return result;
 };

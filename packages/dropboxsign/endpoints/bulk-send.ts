@@ -9,7 +9,7 @@ export const bulkSendWithTemplate: DropboxSignEndpoints['bulkSendWithTemplate'] 
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.bulkSend.sendWithTemplate', { title: input.title }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.bulkSend.sendWithTemplate', { title: input.title }, 'completed');
 	return result;
 };
 
@@ -19,7 +19,7 @@ export const bulkCreateEmbeddedSigReqWithTemplate: DropboxSignEndpoints['bulkCre
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.bulkSend.createEmbeddedWithTemplate', { client_id: input.client_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.bulkSend.createEmbeddedWithTemplate', { client_id: input.client_id }, 'completed');
 	return result;
 };
 
@@ -30,7 +30,7 @@ export const getBulkSendJob: DropboxSignEndpoints['getBulkSendJob'] = async (ctx
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.bulkSend.getJob', { bulk_send_job_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.bulkSend.getJob', { bulk_send_job_id }, 'completed');
 	return result;
 };
 
@@ -40,6 +40,6 @@ export const listBulkSendJobs: DropboxSignEndpoints['listBulkSendJobs'] = async 
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.bulkSend.listJobs', input ?? {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.bulkSend.listJobs', input ?? {}, 'completed');
 	return result;
 };

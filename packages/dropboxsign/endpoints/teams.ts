@@ -9,7 +9,7 @@ export const getTeamInfo: DropboxSignEndpoints['getTeamInfo'] = async (ctx, inpu
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.team.getInfo', input ?? {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.team.getInfo', input ?? {}, 'completed');
 	return result;
 };
 
@@ -19,7 +19,7 @@ export const getCurrentTeam: DropboxSignEndpoints['getCurrentTeam'] = async (ctx
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.team.getCurrent', {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.team.getCurrent', {}, 'completed');
 	return result;
 };
 
@@ -29,7 +29,7 @@ export const listTeams: DropboxSignEndpoints['listTeams'] = async (ctx, input) =
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.team.list', input ?? {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.team.list', input ?? {}, 'completed');
 	return result;
 };
 
@@ -40,7 +40,7 @@ export const listSubTeams: DropboxSignEndpoints['listSubTeams'] = async (ctx, in
 		ctx.key,
 		{ method: 'GET', query, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.team.listSubTeams', { team_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.team.listSubTeams', { team_id }, 'completed');
 	return result;
 };
 
@@ -51,7 +51,7 @@ export const listTeamMembers: DropboxSignEndpoints['listTeamMembers'] = async (c
 		ctx.key,
 		{ method: 'GET', query, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.team.listMembers', { team_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.team.listMembers', { team_id }, 'completed');
 	return result;
 };
 
@@ -61,6 +61,6 @@ export const addUserToTeam: DropboxSignEndpoints['addUserToTeam'] = async (ctx, 
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.team.addMember', input, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.team.addMember', input, 'completed');
 	return result;
 };

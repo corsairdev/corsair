@@ -10,7 +10,7 @@ export const getApiApp: DropboxSignEndpoints['getApiApp'] = async (ctx, input) =
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.apiApp.get', { client_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.apiApp.get', { client_id }, 'completed');
 	return result;
 };
 
@@ -20,7 +20,7 @@ export const listApiApps: DropboxSignEndpoints['listApiApps'] = async (ctx, inpu
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.apiApp.list', input ?? {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.apiApp.list', input ?? {}, 'completed');
 	return result;
 };
 
@@ -30,7 +30,7 @@ export const createApiApp: DropboxSignEndpoints['createApiApp'] = async (ctx, in
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.apiApp.create', { name: input.name }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.apiApp.create', { name: input.name }, 'completed');
 	return result;
 };
 
@@ -41,7 +41,7 @@ export const updateApiApp: DropboxSignEndpoints['updateApiApp'] = async (ctx, in
 		ctx.key,
 		{ method: 'PUT', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.apiApp.update', { client_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.apiApp.update', { client_id }, 'completed');
 	return result;
 };
 
@@ -52,7 +52,7 @@ export const deleteApiApp: DropboxSignEndpoints['deleteApiApp'] = async (ctx, in
 		ctx.key,
 		{ method: 'DELETE', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.apiApp.delete', { client_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.apiApp.delete', { client_id }, 'completed');
 	return result;
 };
 
@@ -61,6 +61,6 @@ export const oAuthAuthorize: DropboxSignEndpoints['oAuthAuthorize'] = async (ctx
 	const query = new URLSearchParams({ client_id, response_type });
 	if (state) query.set('state', state);
 	const url = https://app.hellosign.com/oauth/authorize?;
-	await logEventFromContext(ctx, 'dropbox_sign.oauth.authorize', { client_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.oauth.authorize', { client_id }, 'completed');
 	return { url };
 };

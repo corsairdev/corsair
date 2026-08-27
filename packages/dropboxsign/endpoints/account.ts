@@ -13,7 +13,7 @@ export const getAccount: DropboxSignEndpoints['getAccount'] = async (ctx, input)
 			authType: ctx.authType,
 		},
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.account.get', input ?? {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.account.get', input ?? {}, 'completed');
 	return result;
 };
 
@@ -27,7 +27,7 @@ export const createAccount: DropboxSignEndpoints['createAccount'] = async (ctx, 
 			authType: ctx.authType,
 		},
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.account.create', { email_address: input.email_address }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.account.create', { email_address: input.email_address }, 'completed');
 	return result;
 };
 
@@ -41,7 +41,7 @@ export const updateAccount: DropboxSignEndpoints['updateAccount'] = async (ctx, 
 			authType: ctx.authType,
 		},
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.account.update', input, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.account.update', input, 'completed');
 	return result;
 };
 
@@ -55,6 +55,6 @@ export const verifyAccount: DropboxSignEndpoints['verifyAccount'] = async (ctx, 
 			authType: ctx.authType,
 		},
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.account.verify', { email_address: input.email_address }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.account.verify', { email_address: input.email_address }, 'completed');
 	return result;
 };

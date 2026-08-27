@@ -10,7 +10,7 @@ export const getTemplate: DropboxSignEndpoints['getTemplate'] = async (ctx, inpu
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.get', { template_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.get', { template_id }, 'completed');
 	return result;
 };
 
@@ -20,7 +20,7 @@ export const listTemplates: DropboxSignEndpoints['listTemplates'] = async (ctx, 
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.list', input ?? {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.list', input ?? {}, 'completed');
 	return result;
 };
 
@@ -30,7 +30,7 @@ export const createTemplate: DropboxSignEndpoints['createTemplate'] = async (ctx
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.create', { title: input.title }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.create', { title: input.title }, 'completed');
 	return result;
 };
 
@@ -40,7 +40,7 @@ export const createEmbeddedTemplateDraft: DropboxSignEndpoints['createEmbeddedTe
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.createEmbeddedDraft', { client_id: input.client_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.createEmbeddedDraft', { client_id: input.client_id }, 'completed');
 	return result;
 };
 
@@ -51,7 +51,7 @@ export const deleteTemplate: DropboxSignEndpoints['deleteTemplate'] = async (ctx
 		ctx.key,
 		{ method: 'POST', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.delete', { template_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.delete', { template_id }, 'completed');
 	return result;
 };
 
@@ -62,7 +62,7 @@ export const addUserToTemplate: DropboxSignEndpoints['addUserToTemplate'] = asyn
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.addUser', { template_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.addUser', { template_id }, 'completed');
 	return result;
 };
 
@@ -73,7 +73,7 @@ export const removeUserFromTemplate: DropboxSignEndpoints['removeUserFromTemplat
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.removeUser', { template_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.removeUser', { template_id }, 'completed');
 	return result;
 };
 
@@ -84,7 +84,7 @@ export const getTemplateFiles: DropboxSignEndpoints['getTemplateFiles'] = async 
 		ctx.key,
 		{ method: 'GET', query, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.getFiles', { template_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.getFiles', { template_id }, 'completed');
 	return result;
 };
 
@@ -95,7 +95,7 @@ export const getTemplateFilesAsFileUrl: DropboxSignEndpoints['getTemplateFilesAs
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.getFilesAsFileUrl', { template_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.getFilesAsFileUrl', { template_id }, 'completed');
 	return result;
 };
 
@@ -106,7 +106,7 @@ export const getTemplateFilesAsDataUri: DropboxSignEndpoints['getTemplateFilesAs
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.getFilesAsDataUri', { template_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.getFilesAsDataUri', { template_id }, 'completed');
 	return result;
 };
 
@@ -117,6 +117,6 @@ export const updateTemplateFiles: DropboxSignEndpoints['updateTemplateFiles'] = 
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.template.updateFiles', { template_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.template.updateFiles', { template_id }, 'completed');
 	return result;
 };

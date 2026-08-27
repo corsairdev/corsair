@@ -1,5 +1,5 @@
 {
-  "name": "@corsair-dev/dropbox_sign",
+  "name": "@corsair-dev/dropboxsign",
   "version": "0.1.0",
   "description": "Dropbox Sign plugin for Corsair",
   "type": "module",
@@ -33,7 +33,7 @@
   },
   "keywords": [
     "corsair",
-    "dropbox_sign",
+    "dropboxsign",
     "plugin"
   ],
   "author": "",

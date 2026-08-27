@@ -534,7 +534,7 @@ const dropboxSignAuthConfig = {
 } as const satisfies PluginAuthConfig;
 
 export type BaseDropboxSignPlugin<T extends DropboxSignPluginOptions> = CorsairPlugin<
-	'dropbox_sign',
+	'dropboxsign',
 	typeof DropboxSignSchema,
 	typeof dropboxSignEndpointsNested,
 	typeof dropboxSignWebhooksNested,
@@ -545,7 +545,7 @@ export type BaseDropboxSignPlugin<T extends DropboxSignPluginOptions> = CorsairP
 export type InternalDropboxSignPlugin = BaseDropboxSignPlugin<DropboxSignPluginOptions>;
 export type ExternalDropboxSignPlugin<T extends DropboxSignPluginOptions> = BaseDropboxSignPlugin<T>;
 
-export function dropbox_sign<const T extends DropboxSignPluginOptions>(
+export function dropboxsign<const T extends DropboxSignPluginOptions>(
 	incomingOptions: DropboxSignPluginOptions & T = {} as DropboxSignPluginOptions & T,
 ): ExternalDropboxSignPlugin<T> {
 	const options = {
@@ -553,7 +553,7 @@ export function dropbox_sign<const T extends DropboxSignPluginOptions>(
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
 	return {
-		id: 'dropbox_sign',
+		id: 'dropboxsign',
 		authConfig: dropboxSignAuthConfig,
 		schema: DropboxSignSchema,
 		options: options,

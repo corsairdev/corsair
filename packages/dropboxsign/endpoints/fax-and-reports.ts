@@ -9,7 +9,7 @@ export const listFaxes: DropboxSignEndpoints['listFaxes'] = async (ctx, input) =
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.fax.list', input ?? {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.fax.list', input ?? {}, 'completed');
 	return result;
 };
 
@@ -20,7 +20,7 @@ export const deleteFax: DropboxSignEndpoints['deleteFax'] = async (ctx, input) =
 		ctx.key,
 		{ method: 'DELETE', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.fax.delete', { fax_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.fax.delete', { fax_id }, 'completed');
 	return result;
 };
 
@@ -30,7 +30,7 @@ export const listFaxLines: DropboxSignEndpoints['listFaxLines'] = async (ctx, in
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.faxLine.list', input ?? {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.faxLine.list', input ?? {}, 'completed');
 	return result;
 };
 
@@ -40,7 +40,7 @@ export const getFaxLineAreaCodes: DropboxSignEndpoints['getFaxLineAreaCodes'] = 
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.faxLine.getAreaCodes', input, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.faxLine.getAreaCodes', input, 'completed');
 	return result;
 };
 
@@ -50,6 +50,6 @@ export const createReport: DropboxSignEndpoints['createReport'] = async (ctx, in
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.report.create', input, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.report.create', input, 'completed');
 	return result;
 };

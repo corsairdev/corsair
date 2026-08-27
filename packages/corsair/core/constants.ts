@@ -13,6 +13,7 @@ export type AllErrors =
 	| (string & {});
 
 export const BaseProviders = [
+	'dropboxsign',
 	'ably',
 	'abstract',
 	'abuseipdb',

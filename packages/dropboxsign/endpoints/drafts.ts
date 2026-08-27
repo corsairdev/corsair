@@ -9,7 +9,7 @@ export const createUnclaimedDraft: DropboxSignEndpoints['createUnclaimedDraft'] 
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.draft.createUnclaimed', {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.draft.createUnclaimed', {}, 'completed');
 	return result;
 };
 
@@ -19,7 +19,7 @@ export const createEmbeddedUnclaimedDraftWithTemplate: DropboxSignEndpoints['cre
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.draft.createEmbeddedUnclaimedWithTemplate', { client_id: input.client_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.draft.createEmbeddedUnclaimedWithTemplate', { client_id: input.client_id }, 'completed');
 	return result;
 };
 
@@ -30,6 +30,6 @@ export const editAndResendUnclaimedDraft: DropboxSignEndpoints['editAndResendUnc
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.draft.editAndResendUnclaimed', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.draft.editAndResendUnclaimed', { signature_request_id }, 'completed');
 	return result;
 };

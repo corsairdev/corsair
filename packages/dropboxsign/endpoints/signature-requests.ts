@@ -10,7 +10,7 @@ export const getSignatureRequest: DropboxSignEndpoints['getSignatureRequest'] = 
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.get', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.get', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -20,7 +20,7 @@ export const listSignatureRequests: DropboxSignEndpoints['listSignatureRequests'
 		ctx.key,
 		{ method: 'GET', query: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.list', input ?? {}, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.list', input ?? {}, 'completed');
 	return result;
 };
 
@@ -30,7 +30,7 @@ export const sendSignatureRequest: DropboxSignEndpoints['sendSignatureRequest'] 
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.send', { title: input.title }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.send', { title: input.title }, 'completed');
 	return result;
 };
 
@@ -40,7 +40,7 @@ export const createEmbeddedSignatureRequest: DropboxSignEndpoints['createEmbedde
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.createEmbedded', { client_id: input.client_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.createEmbedded', { client_id: input.client_id }, 'completed');
 	return result;
 };
 
@@ -50,7 +50,7 @@ export const createEmbeddedSignatureRequestWithTemplate: DropboxSignEndpoints['c
 		ctx.key,
 		{ method: 'POST', body: input, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.createEmbeddedWithTemplate', { client_id: input.client_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.createEmbeddedWithTemplate', { client_id: input.client_id }, 'completed');
 	return result;
 };
 
@@ -61,7 +61,7 @@ export const cancelSignatureRequest: DropboxSignEndpoints['cancelSignatureReques
 		ctx.key,
 		{ method: 'POST', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.cancel', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.cancel', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -72,7 +72,7 @@ export const sendRequestReminder: DropboxSignEndpoints['sendRequestReminder'] = 
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.remind', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.remind', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -83,7 +83,7 @@ export const updateSignatureRequest: DropboxSignEndpoints['updateSignatureReques
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.update', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.update', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -94,7 +94,7 @@ export const downloadSignatureRequestFiles: DropboxSignEndpoints['downloadSignat
 		ctx.key,
 		{ method: 'GET', query, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.downloadFiles', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.downloadFiles', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -105,7 +105,7 @@ export const getSignatureRequestFilesAsFileUrl: DropboxSignEndpoints['getSignatu
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.getFilesAsFileUrl', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.getFilesAsFileUrl', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -116,7 +116,7 @@ export const getSignatureRequestFilesAsDataUri: DropboxSignEndpoints['getSignatu
 		ctx.key,
 		{ method: 'GET', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.getFilesAsDataUri', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.getFilesAsDataUri', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -127,7 +127,7 @@ export const releaseSignatureRequestHold: DropboxSignEndpoints['releaseSignature
 		ctx.key,
 		{ method: 'POST', authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.releaseHold', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.releaseHold', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -138,7 +138,7 @@ export const editAndResendSignatureRequest: DropboxSignEndpoints['editAndResendS
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.editAndResend', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.editAndResend', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -149,7 +149,7 @@ export const editAndResendEmbeddedSignatureRequest: DropboxSignEndpoints['editAn
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.editAndResendEmbedded', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.editAndResendEmbedded', { signature_request_id }, 'completed');
 	return result;
 };
 
@@ -160,6 +160,6 @@ export const editAndResendEmbeddedSignatureRequestTemplate: DropboxSignEndpoints
 		ctx.key,
 		{ method: 'POST', body, authType: ctx.authType },
 	);
-	await logEventFromContext(ctx, 'dropbox_sign.signatureRequest.editAndResendEmbeddedTemplate', { signature_request_id }, 'completed');
+	await logEventFromContext(ctx, 'dropboxsign.signatureRequest.editAndResendEmbeddedTemplate', { signature_request_id }, 'completed');
 	return result;
 };
