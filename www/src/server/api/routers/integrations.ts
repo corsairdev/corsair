@@ -24,6 +24,7 @@ import {
 	getUserActiveDeadlineClaim,
 	getUserClaimEligibility,
 	insertIntegrationStatus,
+	integrationListStatus,
 	isIntegrationActivelyClaimed,
 	legacyStatusFromPhase,
 	PR_DEADLINE_MS,
@@ -50,6 +51,7 @@ import {
 	tags,
 	triggers,
 } from '@/db/schema';
+import { FEATURED_SLUGS, featuredRank } from '@/lib/featured-integrations';
 import { visibleAuthModes } from '@/lib/visible-auth-modes';
 import { getGithubUserAvatars } from '@/server/github-users';
 import {
@@ -418,37 +420,61 @@ export const integrationsRouter = createTRPCRouter({
 				.default({ page: 1 }),
 		)
 		.query(async ({ ctx, input }) => {
-			const offset = (input.page - 1) * PAGE_SIZE;
 			const where = visibleIntegrationsFilter(input.q, input.tags);
 			const currentUserId = ctx.session?.user?.id;
 
-			const [rows, countResult] = await Promise.all([
-				ctx.db
-					.select({
-						id: integrations.id,
-						name: integrations.name,
-						slug: integrations.slug,
-						description: integrations.description,
-						points: integrations.points,
-					})
-					.from(integrations)
-					.where(where)
-					.orderBy(asc(integrations.name))
-					.limit(PAGE_SIZE)
-					.offset(offset),
-				ctx.db.select({ total: count() }).from(integrations).where(where),
-			]);
+			// Latest phase lives in a separate table, so classify, order, and page in
+			// memory — the same full scan stats/leaderboard already do. Revisit with a
+			// denormalized status column if the catalog outgrows a single query.
+			const allRows = await ctx.db
+				.select({
+					id: integrations.id,
+					name: integrations.name,
+					slug: integrations.slug,
+					description: integrations.description,
+					points: integrations.points,
+				})
+				.from(integrations)
+				.where(where);
 
-			const total = countResult[0]?.total ?? 0;
-			const integrationIds = rows.map((row) => row.id);
 			const latestStatuses = await getLatestStatusesForIntegrations(
 				ctx.db,
-				integrationIds,
+				allRows.map((row) => row.id),
 			);
+
+			// Available (famous-first) on top; claimed then shipped sink to the bottom.
+			const STATUS_RANK = { available: 0, in_progress: 1, shipped: 2 };
+			const ranked = allRows.map((row) => ({
+				row,
+				status: integrationListStatus(latestStatuses.get(row.id)?.phase),
+			}));
+			ranked.sort((a, b) => {
+				const statusDelta = STATUS_RANK[a.status] - STATUS_RANK[b.status];
+				if (statusDelta !== 0) return statusDelta;
+				if (a.status === 'available') {
+					const aRank = featuredRank(a.row.slug);
+					const bRank = featuredRank(b.row.slug);
+					// Two non-featured rows share Infinity rank, so aRank === bRank and we
+					// fall through to points/name — subtracting would yield NaN and skip them.
+					if (aRank !== bRank) return aRank - bRank;
+					if (b.row.points !== a.row.points) return b.row.points - a.row.points;
+				}
+				return a.row.name.localeCompare(b.row.name);
+			});
+
+			const total = ranked.length;
+			const offset = (input.page - 1) * PAGE_SIZE;
+			const rows = ranked.slice(offset, offset + PAGE_SIZE).map((r) => r.row);
+			const integrationIds = rows.map((row) => row.id);
+			const pageStatuses = integrationIds
+				.map((id) => latestStatuses.get(id))
+				.filter(
+					(status): status is NonNullable<typeof status> => status != null,
+				);
 
 			const claimerUserIds = [
 				...new Set(
-					[...latestStatuses.values()]
+					pageStatuses
 						.filter((status) => isIntegrationActivelyClaimed(status.phase))
 						.map((status) => status.userId),
 				),
@@ -524,7 +550,7 @@ export const integrationsRouter = createTRPCRouter({
 
 			const claimerUsernames = [
 				...new Set(
-					[...latestStatuses.values()]
+					pageStatuses
 						.map((status) => claimerUsernamesById.get(status.userId))
 						.filter((username): username is string => username != null),
 				),
@@ -578,6 +604,35 @@ export const integrationsRouter = createTRPCRouter({
 				claimBlockReason: claimEligibility?.blockReason ?? null,
 			};
 		}),
+
+	// Famous, currently-grabbable slugs in featured order — for "Pick one for me".
+	featuredAvailable: publicProcedure.query(async ({ ctx }) => {
+		const rows = await ctx.db
+			.select({ id: integrations.id, slug: integrations.slug })
+			.from(integrations)
+			.where(
+				and(
+					eq(integrations.show, true),
+					inArray(integrations.slug, [...FEATURED_SLUGS]),
+				),
+			);
+
+		const latestStatuses = await getLatestStatusesForIntegrations(
+			ctx.db,
+			rows.map((row) => row.id),
+		);
+
+		const slugs = rows
+			.filter(
+				(row) =>
+					integrationListStatus(latestStatuses.get(row.id)?.phase) ===
+					'available',
+			)
+			.map((row) => row.slug)
+			.sort((a, b) => featuredRank(a) - featuredRank(b));
+
+		return { slugs };
+	}),
 
 	listTags: publicProcedure.query(async ({ ctx }) => {
 		const items = await ctx.db

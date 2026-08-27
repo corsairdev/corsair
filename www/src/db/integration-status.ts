@@ -11,7 +11,9 @@ import { isIntegrationActivelyClaimed } from '@/lib/integration-phases';
 export type { ClaimBlockReason } from '@/lib/integration-claim-limits';
 
 export { MAX_USER_BUILT_INTEGRATIONS } from '@/lib/integration-claim-limits';
+export type { IntegrationListStatus } from '@/lib/integration-phases';
 export {
+	integrationListStatus,
 	isIntegrationActivelyClaimed,
 	isIntegrationAvailable,
 	isWipPhase,

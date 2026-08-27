@@ -39,6 +39,23 @@ export function isWipPhase(phase: IntegrationPhase) {
 	return (WIP_PHASES as readonly IntegrationPhase[]).includes(phase);
 }
 
+export const INTEGRATION_LIST_STATUSES = [
+	'available',
+	'in_progress',
+	'shipped',
+] as const;
+
+export type IntegrationListStatus = (typeof INTEGRATION_LIST_STATUSES)[number];
+
+/** available = grabbable, in_progress = actively claimed, shipped = finished. */
+export function integrationListStatus(
+	phase: IntegrationPhase | null | undefined,
+): IntegrationListStatus {
+	if (isIntegrationAvailable(phase)) return 'available';
+	if (phase === 'finished') return 'shipped';
+	return 'in_progress';
+}
+
 export function legacyStatusFromPhase(
 	phase: IntegrationPhase | null,
 ): 'in_progress' | 'finished' | null {
