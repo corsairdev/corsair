@@ -3,6 +3,7 @@ import type { BeamerEndpoints } from '..';
 import { makeBeamerRequest } from '../client';
 import type { BeamerEndpointOutputs } from './types';
 
+/** Retrieves paginated posts from the authenticated Beamer account. */
 export const get: BeamerEndpoints['postsGet'] = async (ctx, input) => {
 	const response = await makeBeamerRequest<BeamerEndpointOutputs['postsGet']>(
 		'/posts',
