@@ -272,7 +272,7 @@ export const ProviderDisplayNames = {
 	botpress: 'Botpress',
 	bouncer: 'Bouncer',
 	box: 'Box',
-	boxhero: 'Boxhero',
+	boxhero: 'BoxHero',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',

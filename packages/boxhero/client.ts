@@ -1,71 +1,83 @@
-import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
-import { ApiError, request } from 'corsair/http';
+import type {
+	ApiRequestOptions,
+	OpenAPIConfig,
+	RateLimitConfig,
+} from 'corsair/http';
+import { request } from 'corsair/http';
+import type { z } from 'zod';
 
-export class BoxheroAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
-		this.name = 'BoxheroAPIError';
-	}
-}
+/**
+ * Official Open API host. Paths include the `/v1` prefix.
+ *
+ * @see https://rest.boxhero-app.com/docs/api
+ */
+export const BOXHERO_API_BASE = 'https://rest.boxhero-app.com';
 
-const BOXHERO_API_BASE = 'https://rest.boxhero-app.com';
-type QueryValue =
+export const BOXHERO_RATE_LIMIT_CONFIG: RateLimitConfig = {
+	enabled: true,
+	maxRetries: 3,
+	initialRetryDelay: 1000,
+	backoffMultiplier: 2,
+	headerNames: {
+		retryAfter: 'retry-after',
+	},
+};
+
+export type BoxheroQueryValue =
 	| string
 	| number
 	| boolean
 	| Array<string | number | boolean>
 	| undefined;
 
+export type BoxheroRequestOptions<T> = {
+	schema: z.ZodType<T>;
+	method?: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+	body?: Record<string, unknown>;
+	query?: Record<string, BoxheroQueryValue>;
+};
+
+function buildConfig(apiKey: string): OpenAPIConfig {
+	return {
+		BASE: BOXHERO_API_BASE,
+		VERSION: '1',
+		WITH_CREDENTIALS: false,
+		CREDENTIALS: 'omit',
+		TOKEN: apiKey,
+		HEADERS: {
+			Accept: 'application/json',
+		},
+	};
+}
+
+export function compactQuery(
+	query: Record<string, BoxheroQueryValue>,
+): Record<string, BoxheroQueryValue> | undefined {
+	const compacted: Record<string, BoxheroQueryValue> = {};
+	for (const [key, value] of Object.entries(query)) {
+		if (value !== undefined) compacted[key] = value;
+	}
+	return Object.keys(compacted).length > 0 ? compacted : undefined;
+}
+
 export async function makeBoxheroRequest<T>(
 	endpoint: string,
 	apiKey: string,
-	options: {
-		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
-		body?: Record<string, unknown>;
-		query?: Record<string, QueryValue>;
-	} = {},
+	options: BoxheroRequestOptions<T>,
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
-
-	if (!apiKey.trim()) {
-		throw new BoxheroAPIError('BoxHero API key is required');
-	}
-
-	const config: OpenAPIConfig = {
-		BASE: BOXHERO_API_BASE,
-		VERSION: '1.0.0',
-		WITH_CREDENTIALS: false,
-		CREDENTIALS: 'omit',
-		// The shared request layer converts TOKEN into the required auth header.
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-		},
-	};
+	const { schema, method = 'GET', body, query } = options;
+	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
 	const requestOptions: ApiRequestOptions = {
 		method,
 		url: endpoint,
-		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
-				? body
-				: undefined,
-		mediaType: 'application/json; charset=utf-8',
-		query: method === 'GET' ? query : undefined,
+		body: isWrite ? body : undefined,
+		mediaType: isWrite ? 'application/json; charset=utf-8' : undefined,
+		query,
 	};
 
-	try {
-		return await request<T>(config, requestOptions);
-	} catch (error) {
-		if (error instanceof ApiError) {
-			throw error;
-		}
-		if (error instanceof Error) {
-			throw new BoxheroAPIError(error.message);
-		}
-		throw new BoxheroAPIError('Unknown error');
-	}
+	const raw = await request(buildConfig(apiKey), requestOptions, {
+		rateLimitConfig: BOXHERO_RATE_LIMIT_CONFIG,
+	});
+	return schema.parse(raw ?? {});
 }

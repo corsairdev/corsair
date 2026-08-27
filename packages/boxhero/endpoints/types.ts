@@ -1,41 +1,41 @@
 import { z } from 'zod';
+import type { BoxheroItemAttrEntity } from '../schema/database';
+import {
+	BoxheroAttrEntity,
+	BoxheroItemEntity,
+	BoxheroLocationEntity,
+	BoxheroMemberEntity,
+	BoxheroPartnerEntity,
+	BoxheroSimpleLocationTransactionEntity,
+	BoxheroTeamEntity,
+} from '../schema/database';
 
 const IdSchema = z.number().int().min(0).max(2_147_483_647);
-const CursorSchema = IdSchema.nullable();
 const PageSizeSchema = z.number().int().min(0);
+const CursorSchema = IdSchema.nullable();
 const PageInputSchema = z.object({
 	cursor: IdSchema.optional(),
 	limit: z.number().int().min(1).max(100).optional(),
 });
 const IdFilterSchema = z.union([IdSchema, z.array(IdSchema).max(100)]);
+const EmptyResponseSchema = z.object({});
 
 const LocationsDeleteInputSchema = z.object({ location_id: IdSchema });
 export type LocationsDeleteInput = z.infer<typeof LocationsDeleteInputSchema>;
-
-const EmptyResponseSchema = z.object({});
 export type LocationsDeleteResponse = z.infer<typeof EmptyResponseSchema>;
 
 const LocationsListInputSchema = z.object({});
 export type LocationsListInput = z.infer<typeof LocationsListInputSchema>;
 
-const LocationSchema = z.object({
-	id: IdSchema,
-	name: z.string(),
-	quantity: z.number(),
-	memo: z.string(),
-});
-export type Location = z.infer<typeof LocationSchema>;
-
 const LocationsListResponseSchema = z.object({
-	items: z.array(LocationSchema),
+	items: z.array(BoxheroLocationEntity),
 	count: z.number().int().min(0),
 });
 export type LocationsListResponse = z.infer<typeof LocationsListResponseSchema>;
 
 const LocationsGetInputSchema = z.object({ location_id: IdSchema });
 export type LocationsGetInput = z.infer<typeof LocationsGetInputSchema>;
-
-const LocationsGetResponseSchema = z.object({ item: LocationSchema });
+const LocationsGetResponseSchema = z.object({ item: BoxheroLocationEntity });
 export type LocationsGetResponse = z.infer<typeof LocationsGetResponseSchema>;
 
 const TransactionTypeSchema = z.enum(['in', 'out', 'move', 'adjust']);
@@ -47,62 +47,8 @@ export type TransactionsListBasicInput = z.infer<
 >;
 export type TransactionsListLocationInput = TransactionsListBasicInput;
 
-const EntitySchema = z.object({
-	id: IdSchema,
-	name: z.string(),
-	deleted: z.boolean(),
-});
-
-const TransactionLineItemSchema = z.object({
-	id: IdSchema,
-	name: z.string(),
-	sku: z.string(),
-	barcode: z.string(),
-	deleted: z.boolean(),
-	item: EntitySchema,
-	quantity: z.number(),
-	from_location_new_stock_level: z.number().nullable(),
-	to_location_new_stock_level: z.number().nullable(),
-	new_stock_level: z.number().nullable(),
-});
-
-const SimpleTransactionBaseSchema = z.object({
-	id: IdSchema,
-	transaction_time: z.string(),
-	created_at: z.string(),
-	created_by: EntitySchema,
-	count_of_items: z.number().int(),
-	total_quantity: z.number(),
-	url: z.string(),
-	memo: z.string(),
-	revision: z.number().int(),
-	items: z.array(TransactionLineItemSchema).optional(),
-});
-
-const SimpleTransactionSchema = z.discriminatedUnion('type', [
-	SimpleTransactionBaseSchema.extend({
-		type: z.literal('in'),
-		to_location: EntitySchema,
-		partner: EntitySchema.nullable().optional(),
-	}),
-	SimpleTransactionBaseSchema.extend({
-		type: z.literal('out'),
-		to_location: EntitySchema,
-		partner: EntitySchema.nullable().optional(),
-	}),
-	SimpleTransactionBaseSchema.extend({
-		type: z.literal('move'),
-		from_location: EntitySchema,
-		to_location: EntitySchema,
-	}),
-	SimpleTransactionBaseSchema.extend({
-		type: z.literal('adjust'),
-		to_location: EntitySchema,
-	}),
-]);
-
 const TransactionsListResponseSchema = z.object({
-	items: z.array(SimpleTransactionSchema),
+	items: z.array(BoxheroSimpleLocationTransactionEntity),
 	count: PageSizeSchema,
 	limit: PageSizeSchema,
 	cursor: CursorSchema,
@@ -120,19 +66,8 @@ const PartnersListInputSchema = z.object({
 });
 export type PartnersListInput = z.infer<typeof PartnersListInputSchema>;
 
-const PartnerSchema = z.object({
-	id: IdSchema,
-	type: z.union([z.literal(0), z.literal(1)]),
-	name: z.string(),
-	phone: z.string(),
-	email: z.string(),
-	address: z.string(),
-	memo: z.string(),
-});
-export type Partner = z.infer<typeof PartnerSchema>;
-
 const PartnersListResponseSchema = z.object({
-	items: z.array(PartnerSchema),
+	items: z.array(BoxheroPartnerEntity),
 	count: PageSizeSchema,
 	limit: PageSizeSchema,
 	cursor: CursorSchema,
@@ -156,58 +91,23 @@ const ItemsGetInputSchema = z.object({
 });
 export type ItemsGetInput = z.infer<typeof ItemsGetInputSchema>;
 
-const ItemAttributeValueSchema = z.union([z.string().max(2000), z.number()]);
-const ItemAttributeSchema = z.object({
-	id: IdSchema,
-	type: z.enum(['text', 'date', 'number', 'barcode']),
-	name: z.string(),
-	value: ItemAttributeValueSchema,
-});
-export type ItemAttribute = z.infer<typeof ItemAttributeSchema>;
-
-const ItemSchema = z.object({
-	id: IdSchema,
-	name: z.string(),
-	sku: z.string(),
-	barcode: z.string(),
-	photo_url: z.string().nullable(),
-	attrs: z.array(ItemAttributeSchema),
-	cost: z.string(),
-	price: z.string(),
-	quantity: z.number(),
-	quantities: z.array(
-		z.object({
-			location_id: IdSchema,
-			quantity: z.number(),
-		}),
-	),
-});
-export type Item = z.infer<typeof ItemSchema>;
-
 const ItemsListResponseSchema = z.object({
-	items: z.array(ItemSchema),
+	items: z.array(BoxheroItemEntity),
 	count: PageSizeSchema,
 	limit: PageSizeSchema,
 	cursor: CursorSchema,
 	has_more: z.boolean(),
 });
 export type ItemsListResponse = z.infer<typeof ItemsListResponseSchema>;
-const ItemsGetResponseSchema = z.object({ item: ItemSchema });
+const ItemsGetResponseSchema = z.object({ item: BoxheroItemEntity });
 export type ItemsGetResponse = z.infer<typeof ItemsGetResponseSchema>;
 
 const ItemAttributesListInputSchema = z.object({});
 export type ItemAttributesListInput = z.infer<
 	typeof ItemAttributesListInputSchema
 >;
-const AttrSchema = z.object({
-	id: IdSchema,
-	attr_type: z.enum(['text', 'date', 'number', 'barcode']),
-	attr_name: z.string(),
-	rank: z.number(),
-});
-export type ItemAttributeDefinition = z.infer<typeof AttrSchema>;
 const ItemAttributesListResponseSchema = z.object({
-	items: z.array(AttrSchema),
+	items: z.array(BoxheroAttrEntity),
 	count: PageSizeSchema,
 });
 export type ItemAttributesListResponse = z.infer<
@@ -215,42 +115,26 @@ export type ItemAttributesListResponse = z.infer<
 >;
 const ItemAttributeGetInputSchema = z.object({ attr_id: IdSchema });
 export type ItemAttributeGetInput = z.infer<typeof ItemAttributeGetInputSchema>;
-const ItemAttributeGetResponseSchema = z.object({ item: AttrSchema });
+const ItemAttributeGetResponseSchema = z.object({ item: BoxheroAttrEntity });
 export type ItemAttributeGetResponse = z.infer<
 	typeof ItemAttributeGetResponseSchema
 >;
 
 const TeamsGetInputSchema = z.object({});
 export type TeamsGetInput = z.infer<typeof TeamsGetInputSchema>;
-const TeamSchema = z.object({
-	id: IdSchema,
-	name: z.string(),
-	mode: z.union([z.literal(0), z.literal(1), z.literal(2)]),
-	currency_symbol: z.string().nullable(),
-	currency_code: z.string().nullable(),
-	price_decimal_places: z.number().int().min(0).max(10),
-	memo: z.string().nullable(),
-});
-export type Team = z.infer<typeof TeamSchema>;
-export const TeamsGetResponseSchema = TeamSchema;
+export const TeamsGetResponseSchema = BoxheroTeamEntity;
 export type TeamsGetResponse = z.infer<typeof TeamsGetResponseSchema>;
 
 const MembersListInputSchema = z.object({});
 export type MembersListInput = z.infer<typeof MembersListInputSchema>;
-const MemberSchema = z.object({
-	id: IdSchema,
-	name: z.string(),
-	role: z.enum(['admin', 'member', 'viewer']),
-});
-export type Member = z.infer<typeof MemberSchema>;
 const MembersListResponseSchema = z.object({
-	items: z.array(MemberSchema),
+	items: z.array(BoxheroMemberEntity),
 	count: PageSizeSchema,
 });
 export type MembersListResponse = z.infer<typeof MembersListResponseSchema>;
 const MembersGetInputSchema = z.object({ member_id: IdSchema });
 export type MembersGetInput = z.infer<typeof MembersGetInputSchema>;
-const MembersGetResponseSchema = z.object({ item: MemberSchema });
+const MembersGetResponseSchema = z.object({ item: BoxheroMemberEntity });
 export type MembersGetResponse = z.infer<typeof MembersGetResponseSchema>;
 
 export type BoxheroEndpointInputs = {
@@ -320,3 +204,13 @@ export const BoxheroEndpointOutputSchemas = {
 	membersList: MembersListResponseSchema,
 	membersGet: MembersGetResponseSchema,
 } as const;
+
+export type {
+	BoxheroAttrEntity as ItemAttributeDefinition,
+	BoxheroItemAttrEntity as ItemAttribute,
+	BoxheroItemEntity as Item,
+	BoxheroLocationEntity as Location,
+	BoxheroMemberEntity as Member,
+	BoxheroPartnerEntity as Partner,
+	BoxheroTeamEntity as Team,
+};

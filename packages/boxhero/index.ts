@@ -1,28 +1,33 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import {
-	ItemAttributes,
-	Items,
-	Locations,
-	Members,
-	Partners,
-	Teams,
-	Transactions,
+	deleteItem,
+	deleteLocation,
+	getItem,
+	getItemAttribute,
+	getLocation,
+	getMember,
+	getTeamInfo,
+	listBasic,
+	listItemAttributes,
+	listItems,
+	listLocation,
+	listLocations,
+	listMembers,
+	listPartners,
 } from './endpoints';
 import type {
 	BoxheroEndpointInputs,
@@ -34,25 +39,29 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BoxheroSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveBoxheroOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchBoxheroTenantWebhook } from './webhooks/tenant-matcher';
-import type { BoxheroWebhookOutputs, ExampleEvent } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type BoxheroPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalBoxheroPlugin['hooks'];
-	webhookHooks?: InternalBoxheroPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof boxheroEndpointsNested>;
 };
 
+/**
+ * BoxHero authenticates with a team-bound API token as `Authorization: Bearer`.
+ *
+ * @see https://rest.boxhero-app.com/docs/api
+ */
+export const boxheroAuthConfig = {
+	api_key: {},
+} as const satisfies PluginAuthConfig;
+
 export type BoxheroContext = CorsairPluginContext<
 	typeof BoxheroSchema,
-	BoxheroPluginOptions
+	BoxheroPluginOptions,
+	undefined,
+	typeof boxheroAuthConfig
 >;
 
 export type BoxheroKeyBuilderContext = KeyBuilderContext<BoxheroPluginOptions>;
@@ -84,51 +93,34 @@ export type BoxheroEndpoints = {
 	membersGet: BoxheroEndpoint<'membersGet'>;
 };
 
-type BoxheroWebhook<
-	K extends keyof BoxheroWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<BoxheroContext, TEvent, BoxheroWebhookOutputs[K]>;
-
-export type BoxheroWebhooks = {
-	example: BoxheroWebhook<'example', ExampleEvent>;
-};
-
-export type BoxheroBoundWebhooks = BindWebhooks<BoxheroWebhooks>;
-
 const boxheroEndpointsNested = {
 	locations: {
-		list: Locations.list,
-		get: Locations.get,
-		delete: Locations.delete,
+		list: listLocations,
+		get: getLocation,
+		delete: deleteLocation,
 	},
 	transactions: {
-		listBasic: Transactions.listBasic,
-		listLocation: Transactions.listLocation,
+		listBasic,
+		listLocation,
 	},
 	partners: {
-		list: Partners.list,
+		list: listPartners,
 	},
 	items: {
-		list: Items.list,
-		get: Items.get,
-		delete: Items.delete,
+		list: listItems,
+		get: getItem,
+		delete: deleteItem,
 	},
 	itemAttributes: {
-		list: ItemAttributes.list,
-		get: ItemAttributes.get,
+		list: listItemAttributes,
+		get: getItemAttribute,
 	},
 	teams: {
-		getInfo: Teams.getInfo,
+		getInfo: getTeamInfo,
 	},
 	members: {
-		list: Members.list,
-		get: Members.get,
-	},
-} as const;
-
-const boxheroWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+		list: listMembers,
+		get: getMember,
 	},
 } as const;
 
@@ -193,21 +185,13 @@ export const boxheroEndpointSchemas = {
 	typeof boxheroEndpointsNested
 >;
 
-const boxheroWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof boxheroWebhooksNested>;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const boxheroEndpointMeta = {
+export const boxheroEndpointMeta = {
 	'locations.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete a warehouse location [DESTRUCTIVE · IRREVERSIBLE]',
+		description: 'Delete a warehouse location',
 	},
 	'locations.list': {
 		riskLevel: 'read',
@@ -219,20 +203,20 @@ const boxheroEndpointMeta = {
 	},
 	'transactions.listBasic': {
 		riskLevel: 'read',
-		description: 'List basic inventory transactions',
+		description: 'List inventory transactions without line items',
 	},
 	'transactions.listLocation': {
 		riskLevel: 'read',
-		description: 'List location-based inventory transactions',
+		description: 'List location-mode inventory transactions',
 	},
 	'partners.list': {
 		riskLevel: 'read',
-		description: 'List inventory partners',
+		description: 'List partners (suppliers and customers)',
 	},
 	'items.delete': {
 		riskLevel: 'destructive',
 		irreversible: true,
-		description: 'Delete an inventory item [DESTRUCTIVE · IRREVERSIBLE]',
+		description: 'Delete an inventory item',
 	},
 	'items.get': {
 		riskLevel: 'read',
@@ -244,11 +228,11 @@ const boxheroEndpointMeta = {
 	},
 	'itemAttributes.list': {
 		riskLevel: 'read',
-		description: 'List item attribute definitions',
+		description: 'List item attribute specs',
 	},
 	'itemAttributes.get': {
 		riskLevel: 'read',
-		description: 'Get an item attribute definition',
+		description: 'Get an item attribute spec',
 	},
 	'teams.getInfo': {
 		riskLevel: 'read',
@@ -264,20 +248,11 @@ const boxheroEndpointMeta = {
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof boxheroEndpointsNested>;
 
-export const boxheroAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
-} as const satisfies PluginAuthConfig;
-
 export type BaseBoxheroPlugin<T extends BoxheroPluginOptions> = CorsairPlugin<
 	'boxhero',
 	typeof BoxheroSchema,
 	typeof boxheroEndpointsNested,
-	typeof boxheroWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -287,6 +262,11 @@ export type InternalBoxheroPlugin = BaseBoxheroPlugin<BoxheroPluginOptions>;
 export type ExternalBoxheroPlugin<T extends BoxheroPluginOptions> =
 	BaseBoxheroPlugin<T>;
 
+/**
+ * BoxHero plugin.
+ *
+ * **No inbound webhooks.** BoxHero Open API is request/response only.
+ */
 export function boxhero<const T extends BoxheroPluginOptions>(
 	incomingOptions: BoxheroPluginOptions & T = {} as BoxheroPluginOptions & T,
 ): ExternalBoxheroPlugin<T> {
@@ -298,49 +278,31 @@ export function boxhero<const T extends BoxheroPluginOptions>(
 		id: 'boxhero',
 		authConfig: boxheroAuthConfig,
 		schema: BoxheroSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: boxheroEndpointsNested,
-		webhooks: boxheroWebhooksNested,
+		webhooks: {},
 		endpointMeta: boxheroEndpointMeta,
 		endpointSchemas: boxheroEndpointSchemas,
-		webhookSchemas: boxheroWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			return 'x-boxhero-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchBoxheroTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveBoxheroOAuthWebhookTenantLink,
+		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: BoxheroKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('boxhero', 'api_key');
+				}
+				return res;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('boxhero', ctx.authType);
 		},
 	} satisfies InternalBoxheroPlugin;
 }
@@ -383,7 +345,3 @@ export type {
 	TransactionsListLocationInput,
 	TransactionsListLocationResponse,
 } from './endpoints/types';
-export type {
-	BoxheroWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';

@@ -1,7 +1,7 @@
 {
   "name": "@corsair-dev/boxhero",
   "version": "0.1.0",
-  "description": "Boxhero plugin for Corsair",
+  "description": "BoxHero plugin for Corsair",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -14,7 +14,7 @@
     }
   },
   "scripts": {
-    "build": "node -e \"require('node:fs').rmSync('dist',{recursive:true,force:true})\" && tsc --build --force && tsup",
+    "build": "rm -rf dist && tsc --build --force && tsup",
     "typecheck": "tsc --noEmit",
     "test": "jest"
   },
