@@ -1,10 +1,8 @@
 import {
-	CONNECTED_MESSAGE_TYPE,
 	connectReducer,
 	initialConnectState,
-	isConnectedMessage,
 	isPluginConnected,
-	originOf,
+	shouldSettleConnected,
 } from '../client/react/connect-controller';
 
 describe('connectReducer', () => {
@@ -61,36 +59,39 @@ describe('isPluginConnected', () => {
 	});
 });
 
-describe('isConnectedMessage', () => {
-	const hub = 'https://hub.corsair.dev';
-	it('accepts the connected message from the trusted origin', () => {
-		expect(isConnectedMessage({ type: CONNECTED_MESSAGE_TYPE }, hub, hub)).toBe(
-			true,
-		);
-	});
-	it('rejects a message from any other origin', () => {
+describe('shouldSettleConnected', () => {
+	const connected = { gmail: 'connected' } as const;
+
+	it('settles when the poll is current and the plugin is connected', () => {
 		expect(
-			isConnectedMessage(
-				{ type: CONNECTED_MESSAGE_TYPE },
-				'https://evil.com',
-				hub,
-			),
+			shouldSettleConnected({
+				capturedAttempt: 3,
+				currentAttempt: 3,
+				status: connected,
+				plugin: 'gmail',
+			}),
+		).toBe(true);
+	});
+
+	it('ignores a poll from a superseded or closed attempt', () => {
+		expect(
+			shouldSettleConnected({
+				capturedAttempt: 2,
+				currentAttempt: 3,
+				status: connected,
+				plugin: 'gmail',
+			}),
 		).toBe(false);
 	});
-	it('rejects the wrong message type, non-objects, and an empty trusted origin', () => {
-		expect(isConnectedMessage({ type: 'other' }, hub, hub)).toBe(false);
-		expect(isConnectedMessage('corsair:connected', hub, hub)).toBe(false);
-		expect(isConnectedMessage({ type: CONNECTED_MESSAGE_TYPE }, '', '')).toBe(
-			false,
-		);
-	});
-});
 
-describe('originOf', () => {
-	it('returns the origin of a valid url, null otherwise', () => {
-		expect(originOf('https://hub.corsair.dev/connect/tok')).toBe(
-			'https://hub.corsair.dev',
-		);
-		expect(originOf('not a url')).toBeNull();
+	it('does not settle when the plugin is not yet connected', () => {
+		expect(
+			shouldSettleConnected({
+				capturedAttempt: 3,
+				currentAttempt: 3,
+				status: { gmail: 'not_connected' },
+				plugin: 'gmail',
+			}),
+		).toBe(false);
 	});
 });
