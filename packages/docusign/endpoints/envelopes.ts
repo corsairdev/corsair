@@ -1,29 +1,10 @@
 import type { DocusignClient } from '../client';
-
-export interface CreateEnvelopeParams {
-	templateId?: string;
-	emailSubject: string;
-	status: 'sent' | 'created';
-	templateRoles?: Array<{
-		email: string;
-		name: string;
-		roleName: string;
-	}>;
-	documents?: Array<{
-		documentId: string;
-		name: string;
-		fileExtension?: string;
-		documentBase64?: string;
-	}>;
-	recipients?: {
-		signers?: Array<{
-			email: string;
-			name: string;
-			recipientId: string;
-			routingOrder?: string;
-		}>;
-	};
-}
+import type {
+	CreateEnvelopeParams,
+	CreateRecipientViewUrlParams,
+	GetEnvelopeParams,
+	SendEnvelopeParams,
+} from './types';
 
 export const createEnvelope = async (
 	client: DocusignClient,
@@ -37,16 +18,16 @@ export const createEnvelope = async (
 
 export const getEnvelope = async (
 	client: DocusignClient,
-	{ envelopeId }: { envelopeId: string },
+	params: GetEnvelopeParams,
 ) => {
-	return client.request(`/envelopes/${envelopeId}`);
+	return client.request(`/envelopes/${params.envelopeId}`);
 };
 
 export const sendEnvelope = async (
 	client: DocusignClient,
-	{ envelopeId }: { envelopeId: string },
+	params: SendEnvelopeParams,
 ) => {
-	return client.request(`/envelopes/${envelopeId}`, {
+	return client.request(`/envelopes/${params.envelopeId}`, {
 		method: 'PUT',
 		body: JSON.stringify({ status: 'sent' }),
 	});
@@ -54,24 +35,21 @@ export const sendEnvelope = async (
 
 export const createRecipientViewUrl = async (
 	client: DocusignClient,
-	{
-		envelopeId,
-		...params
-	}: {
-		envelopeId: string;
-		userName: string;
-		email: string;
-		returnUrl: string;
-		authenticationMethod?: string;
-		recipientId?: string;
-	},
+	params: CreateRecipientViewUrlParams,
 ) => {
+	const {
+		envelopeId,
+		authenticationMethod = 'none',
+		recipientId = '1',
+		...rest
+	} = params;
+
 	return client.request(`/envelopes/${envelopeId}/views/recipient`, {
 		method: 'POST',
 		body: JSON.stringify({
-			authenticationMethod: 'none',
-			recipientId: '1',
-			...params,
+			authenticationMethod,
+			recipientId,
+			...rest,
 		}),
 	});
 };

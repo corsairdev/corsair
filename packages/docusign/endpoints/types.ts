@@ -47,6 +47,16 @@ export const SendEnvelopeInputSchema = z.object({
 	envelopeId: z.string(),
 });
 
+export const CreateRecipientViewUrlInputSchema = z.object({
+	envelopeId: z.string(),
+	userName: z.string(),
+	email: z.string(),
+	returnUrl: z.string(),
+	authenticationMethod: z.string().optional().default('none'),
+	recipientId: z.string().optional().default('1'),
+	clientUserId: z.string().optional(),
+});
+
 export const ListTemplatesInputSchema = z
 	.object({
 		count: z.number().optional(),
@@ -81,6 +91,12 @@ export const SendEnvelopeOutputSchema = z
 	})
 	.passthrough();
 
+export const CreateRecipientViewUrlOutputSchema = z
+	.object({
+		url: z.string().optional(),
+	})
+	.passthrough();
+
 export const ListTemplatesOutputSchema = z
 	.object({
 		envelopeTemplates: z.array(z.record(z.string(), z.unknown())).optional(),
@@ -98,6 +114,7 @@ export const EndpointInputSchemas = {
 	createEnvelope: CreateEnvelopeInputSchema,
 	getEnvelope: GetEnvelopeInputSchema,
 	sendEnvelope: SendEnvelopeInputSchema,
+	createRecipientViewUrl: CreateRecipientViewUrlInputSchema,
 	listTemplates: ListTemplatesInputSchema,
 	getTemplate: GetTemplateInputSchema,
 };
@@ -106,6 +123,7 @@ export const EndpointOutputSchemas = {
 	createEnvelope: CreateEnvelopeOutputSchema,
 	getEnvelope: GetEnvelopeOutputSchema,
 	sendEnvelope: SendEnvelopeOutputSchema,
+	createRecipientViewUrl: CreateRecipientViewUrlOutputSchema,
 	listTemplates: ListTemplatesOutputSchema,
 	getTemplate: GetTemplateOutputSchema,
 };
@@ -117,14 +135,20 @@ export const DocusignEndpointOutputSchemas = EndpointOutputSchemas;
 
 export type CreateEnvelopeParams = z.infer<typeof CreateEnvelopeInputSchema>;
 export type GetEnvelopeParams = z.infer<typeof GetEnvelopeInputSchema>;
+export type SendEnvelopeParams = z.infer<typeof SendEnvelopeInputSchema>;
+export type CreateRecipientViewUrlParams = z.infer<
+	typeof CreateRecipientViewUrlInputSchema
+>;
 export type ListTemplatesParams = NonNullable<
 	z.infer<typeof ListTemplatesInputSchema>
 >;
+export type GetTemplateParams = z.infer<typeof GetTemplateInputSchema>;
 
 export type DocusignEndpointInputs = {
 	createEnvelope: z.infer<typeof CreateEnvelopeInputSchema>;
 	getEnvelope: z.infer<typeof GetEnvelopeInputSchema>;
 	sendEnvelope: z.infer<typeof SendEnvelopeInputSchema>;
+	createRecipientViewUrl: z.infer<typeof CreateRecipientViewUrlInputSchema>;
 	listTemplates: z.infer<typeof ListTemplatesInputSchema>;
 	getTemplate: z.infer<typeof GetTemplateInputSchema>;
 };
@@ -133,6 +157,7 @@ export type DocusignEndpointOutputs = {
 	createEnvelope: z.infer<typeof CreateEnvelopeOutputSchema>;
 	getEnvelope: z.infer<typeof GetEnvelopeOutputSchema>;
 	sendEnvelope: z.infer<typeof SendEnvelopeOutputSchema>;
+	createRecipientViewUrl: z.infer<typeof CreateRecipientViewUrlOutputSchema>;
 	listTemplates: z.infer<typeof ListTemplatesOutputSchema>;
 	getTemplate: z.infer<typeof GetTemplateOutputSchema>;
 };

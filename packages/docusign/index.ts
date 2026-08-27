@@ -14,6 +14,7 @@ export const docusignEndpointsNested = {
 	createEnvelope: endpoints.createEnvelope,
 	getEnvelope: endpoints.getEnvelope,
 	sendEnvelope: endpoints.sendEnvelope,
+	createRecipientViewUrl: endpoints.createRecipientViewUrl,
 	listTemplates: endpoints.listTemplates,
 	getTemplate: endpoints.getTemplate,
 };
@@ -35,6 +36,11 @@ export const docusignEndpointMeta = {
 	},
 	sendEnvelope: {
 		description: 'Sends a draft envelope by updating its status to sent.',
+		riskLevel: 'write',
+	},
+	createRecipientViewUrl: {
+		description:
+			'Generates a recipient view URL for embedded signing or viewing.',
 		riskLevel: 'write',
 	},
 	listTemplates: {
