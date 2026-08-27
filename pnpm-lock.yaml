@@ -323,7 +323,7 @@ importers:
         specifier: 4.4.3
         version: 4.4.3
 
-packages/dropboxsign:
+  packages/dropboxsign:
     devDependencies:
       '@types/jest':
         specifier: ^29.5.14
@@ -346,7 +346,6 @@ packages/dropboxsign:
       zod:
         specifier: 4.4.3
         version: 4.4.3
-
 
   packages/abstract:
     devDependencies:
