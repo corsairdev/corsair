@@ -21,7 +21,7 @@ export async function makeFaradayRequest<T>(
 	options: {
 		method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 		body?: Record<string, unknown>;
-		query?: Record<string, string | number | boolean | undefined>;
+		query?: Record<string, string | string[] | number | boolean | undefined>;
 	} = {},
 ): Promise<T> {
 	const { method = 'GET', body, query } = options;
@@ -52,6 +52,9 @@ export async function makeFaradayRequest<T>(
 	try {
 		return await request<T>(config, requestOptions);
 	} catch (error) {
+		if (error && typeof error === 'object' && error.constructor && error.constructor.name === 'ApiError') {
+			throw error;
+		}
 		if (error instanceof Error) {
 			throw new FaradayAPIError(error.message);
 		}

@@ -49,10 +49,52 @@ export function createFaradayMatch(eventType: string): CorsairWebhookMatcher {
 	};
 }
 
+import * as crypto from 'crypto';
+
 export function verifyFaradayWebhookSignature(
 	request: WebhookRequest<FaradayWebhookPayload>,
 	secret: string,
 ): { valid: boolean; error?: string } {
-	// TODO: Implement webhook signature verification
-	return { valid: true };
+	if (request.hubVerified) {
+		return { valid: true };
+	}
+
+	if (!secret) {
+		return { valid: false, error: 'Missing webhook secret' };
+	}
+
+	const signatureHeader = request.headers['x-faraday-signature'];
+	const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
+
+	if (!signature || typeof signature !== 'string') {
+		return { valid: false, error: 'Missing x-faraday-signature header' };
+	}
+
+	if (!request.rawBody) {
+		return { valid: false, error: 'Missing raw request body' };
+	}
+
+	try {
+		const hmac = crypto.createHmac('sha256', secret);
+		hmac.update(request.rawBody, 'utf8');
+		const expectedSignature = hmac.digest('hex');
+
+		let actualSignature = signature;
+		if (actualSignature.startsWith('sha256=')) {
+			actualSignature = actualSignature.slice(7);
+		} else if (actualSignature.startsWith('v1=')) {
+			actualSignature = actualSignature.slice(3);
+		}
+
+		const actualBuffer = Buffer.from(actualSignature, 'hex');
+		const expectedBuffer = Buffer.from(expectedSignature, 'hex');
+
+		if (actualBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(actualBuffer, expectedBuffer)) {
+			return { valid: false, error: 'Invalid webhook signature' };
+		}
+
+		return { valid: true };
+	} catch (err) {
+		return { valid: false, error: 'Signature verification error' };
+	}
 }
