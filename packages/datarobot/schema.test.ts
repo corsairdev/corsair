@@ -117,14 +117,12 @@ describe('DataRobot client errors', () => {
 	});
 
 	it('sends JSON on DELETE when a body is provided', async () => {
-		const fetchSpy = jest
-			.spyOn(global, 'fetch')
-			.mockResolvedValue(
-				new Response('{}', {
-					status: 200,
-					headers: { 'content-type': 'application/json' },
-				}),
-			);
+		const fetchSpy = jest.spyOn(global, 'fetch').mockResolvedValue(
+			new Response('{}', {
+				status: 200,
+				headers: { 'content-type': 'application/json' },
+			}),
+		);
 		await makeDatarobotRequest(
 			'/api/v2/version/',
 			{ key: 'token', options: { baseUrl: 'https://app.datarobot.com' } },
