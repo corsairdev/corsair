@@ -54,3 +54,30 @@ export function isPluginConnected(
 ): boolean {
 	return status?.[plugin] === 'connected';
 }
+
+export const CONNECTED_MESSAGE_TYPE = 'corsair:connected';
+
+// Instant "done" signal the managed connect page posts to its opener. Trusted
+// only from the connect link's own origin — a self-hosted or custom page that
+// never posts it simply falls back to status polling, so nothing breaks.
+export function isConnectedMessage(
+	data: unknown,
+	origin: string,
+	trustedOrigin: string,
+): boolean {
+	return (
+		trustedOrigin.length > 0 &&
+		origin === trustedOrigin &&
+		typeof data === 'object' &&
+		data !== null &&
+		(data as { type?: unknown }).type === CONNECTED_MESSAGE_TYPE
+	);
+}
+
+export function originOf(url: string): string | null {
+	try {
+		return new URL(url).origin;
+	} catch {
+		return null;
+	}
+}
