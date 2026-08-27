@@ -1,20 +1,31 @@
 import { executeBorneoTool, normalizeComposioBaseUrl } from './client';
 
-const requestMock = jest.fn();
-
-jest.mock('corsair/http', () => {
-	const actual =
-		jest.requireActual<typeof import('corsair/http')>('corsair/http');
-	return {
-		...actual,
-		request: (...args: unknown[]) => requestMock(...args),
-	};
-});
+const fetchMock = jest.fn();
 
 describe('Borneo Composio transport', () => {
+	beforeAll(() => {
+		Object.defineProperty(globalThis, 'fetch', {
+			value: fetchMock,
+			writable: true,
+		});
+	});
+
 	beforeEach(() => {
-		requestMock.mockReset();
-		requestMock.mockResolvedValue({ successful: true, data: {} });
+		fetchMock.mockReset();
+		fetchMock.mockResolvedValue(
+			new Response(
+				JSON.stringify({
+					successful: true,
+					data: {},
+				}),
+				{
+					status: 200,
+					headers: {
+						'Content-Type': 'application/json',
+					},
+				},
+			),
+		);
 	});
 
 	it('normalizes the official Composio API base URL', () => {
@@ -33,16 +44,29 @@ describe('Borneo Composio transport', () => {
 			},
 		);
 
-		expect(requestMock).toHaveBeenCalledTimes(1);
-		const [, requestOptions] = requestMock.mock.calls[0];
-		expect(requestOptions).toMatchObject({
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+
+		const [url, init] = fetchMock.mock.calls[0];
+
+		expect(url).toBe(
+			'https://backend.composio.dev/api/v3/tools/execute/BORNEO_CREATE_NEW_ASSET',
+		);
+
+		expect(init).toMatchObject({
 			method: 'POST',
-			url: '/tools/execute/BORNEO_CREATE_NEW_ASSET',
-			body: expect.objectContaining({
-				connected_account_id: 'ca_123',
-				version: '20260429_00',
-				arguments: { name: 'CRM', type: 'application' },
+			redirect: 'error',
+			headers: expect.objectContaining({
+				'x-api-key': 'project-key',
 			}),
+		});
+
+		expect(JSON.parse(init.body)).toMatchObject({
+			connected_account_id: 'ca_123',
+			version: '20260429_00',
+			arguments: {
+				name: 'CRM',
+				type: 'application',
+			},
 		});
 	});
 
@@ -59,8 +83,10 @@ describe('Borneo Composio transport', () => {
 			},
 		);
 
-		const [, requestOptions] = requestMock.mock.calls[0];
-		expect(requestOptions.body.custom_auth_params).toEqual({
+		const [, init] = fetchMock.mock.calls[0];
+		const requestBody = JSON.parse(init.body);
+
+		expect(requestBody.custom_auth_params).toEqual({
 			parameters: [
 				{
 					in: 'header',
@@ -70,6 +96,65 @@ describe('Borneo Composio transport', () => {
 			],
 			base_url: 'https://tenant.example.test',
 		});
+	});
+
+	it('rejects redirects for credential-bearing requests', async () => {
+		fetchMock.mockRejectedValueOnce(new TypeError('fetch failed'));
+
+		await expect(
+			executeBorneoTool(
+				'BORNEO_LIST_SCANS_WITH_FILTERS',
+				{},
+				{
+					composioApiKey: 'project-key',
+					connectedAccountId: 'ca_123',
+				},
+			),
+		).rejects.toThrow();
+
+		expect(fetchMock).toHaveBeenCalledTimes(1);
+
+		const [, init] = fetchMock.mock.calls[0];
+
+		expect(init.redirect).toBe('error');
+	});
+
+	it('retries HTTP 429 responses', async () => {
+		fetchMock
+			.mockResolvedValueOnce(
+				new Response(JSON.stringify({ error: 'rate limited' }), {
+					status: 429,
+					headers: {
+						'Content-Type': 'application/json',
+						'Retry-After': '0',
+					},
+				}),
+			)
+			.mockResolvedValueOnce(
+				new Response(
+					JSON.stringify({
+						successful: true,
+						data: {},
+					}),
+					{
+						status: 200,
+						headers: {
+							'Content-Type': 'application/json',
+						},
+					},
+				),
+			);
+
+		await executeBorneoTool(
+			'BORNEO_LIST_SCANS_WITH_FILTERS',
+			{},
+			{
+				composioApiKey: 'project-key',
+				connectedAccountId: 'ca_123',
+			},
+		);
+
+		expect(fetchMock).toHaveBeenCalledTimes(2);
 	});
 
 	it('requires a header name for direct custom auth', async () => {
