@@ -93,6 +93,7 @@ export const filesAllFilesDeleteMany: DatarobotEndpoints['filesAllFilesDeleteMan
 		const response = await makeDatarobotRequest(path, ctx, {
 			method: 'DELETE',
 			query: undefined,
+			body,
 		});
 		const parsed =
 			DatarobotEndpointOutputSchemas.filesAllFilesDeleteMany.parse(response);

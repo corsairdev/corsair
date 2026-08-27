@@ -88,13 +88,19 @@ export async function makeDatarobotRequest<T>(
 
 	const { method = 'GET', body, query } = options;
 	const origin = resolveOrigin(ctxBase);
+	if (!origin.startsWith('https:')) {
+		throw new DatarobotAPIError('DataRobot origin must be HTTPS');
+	}
 	const url = buildRequestUrl(origin, endpoint, query);
 	const headers: Record<string, string> = {
 		Accept: 'application/json',
 		Authorization: apiKey.startsWith('Bearer ') ? apiKey : `Bearer ${apiKey}`,
 	};
 	const payload =
-		method === 'POST' || method === 'PUT' || method === 'PATCH'
+		method === 'POST' ||
+		method === 'PUT' ||
+		method === 'PATCH' ||
+		method === 'DELETE'
 			? body
 			: undefined;
 	if (payload !== undefined) {

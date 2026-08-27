@@ -66,6 +66,18 @@ describe('DataRobot endpoint contracts', () => {
 			expect(options?.body).toBeUndefined();
 		}
 	});
+
+	it('forwards a DELETE body for bulk group delete', async () => {
+		const ctx = createContext();
+		const fn = groups.Groups?.groupsDeleteMany;
+		expect(fn).toBeDefined();
+		await fn!(ctx, {
+			groups: [{ id: '1' }],
+		});
+		expect(mockRequest.mock.calls[0]?.[2]?.body).toEqual({
+			groups: [{ id: '1' }],
+		});
+	});
 });
 
 describe('DataRobot error handlers', () => {

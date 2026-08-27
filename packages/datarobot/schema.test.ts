@@ -81,6 +81,28 @@ describe('DataRobot client errors', () => {
 			message: 'Unresolved DataRobot path parameter',
 		});
 	});
+
+	it('rejects a non-HTTPS origin before sending', async () => {
+		const fetchSpy = jest.spyOn(global, 'fetch');
+		await expect(
+			makeDatarobotRequest('/api/v2/version/', {
+				key: 'token',
+				options: { baseUrl: 'http://example.com' },
+			}),
+		).rejects.toMatchObject({
+			message: 'DataRobot origin must be HTTPS',
+		});
+		await expect(
+			makeDatarobotRequest('/api/v2/version/', {
+				key: 'token',
+				options: { host: 'http://example.com' },
+			}),
+		).rejects.toMatchObject({
+			message: 'DataRobot origin must be HTTPS',
+		});
+		expect(fetchSpy).not.toHaveBeenCalled();
+		fetchSpy.mockRestore();
+	});
 });
 
 describe('DataRobot permission handler', () => {

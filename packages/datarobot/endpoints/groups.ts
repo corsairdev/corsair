@@ -60,6 +60,7 @@ export const groupsDeleteMany: DatarobotEndpoints['groupsDeleteMany'] = async (
 	const response = await makeDatarobotRequest(path, ctx, {
 		method: 'DELETE',
 		query: undefined,
+		body,
 	});
 	const parsed =
 		DatarobotEndpointOutputSchemas.groupsDeleteMany.parse(response);
@@ -183,6 +184,7 @@ export const groupsUsersDeleteMany: DatarobotEndpoints['groupsUsersDeleteMany'] 
 		const response = await makeDatarobotRequest(path, ctx, {
 			method: 'DELETE',
 			query: undefined,
+			body,
 		});
 		const parsed =
 			DatarobotEndpointOutputSchemas.groupsUsersDeleteMany.parse(response);
