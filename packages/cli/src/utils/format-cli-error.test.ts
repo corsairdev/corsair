@@ -20,4 +20,14 @@ describe('formatCliError', () => {
 			'[#corsair]: line one line two',
 		);
 	});
+
+	it('does not double-prefix an already prefixed message', () => {
+		expect(formatCliError(new Error('[#corsair]: token exchange failed'))).toBe(
+			'[#corsair]: token exchange failed',
+		);
+	});
+
+	it('trims a trailing newline so the diagnostic has no trailing space', () => {
+		expect(formatCliError(new Error('hello\n'))).toBe('[#corsair]: hello');
+	});
 });
