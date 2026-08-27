@@ -130,7 +130,7 @@ importers:
         version: link:../../packages/slack
       corsair:
         specifier: ^0.1.4
-        version: 0.1.119(postgres@3.4.7)(react@19.2.7)
+        version: link:../../packages/corsair
       dotenv:
         specifier: ^17.4.2
         version: 17.4.2
@@ -6002,36 +6002,6 @@ packages:
   '@codemirror/view@6.43.3':
     resolution: {integrity: sha512-MwEwCAr/o0agJefhC2+reBv5kfOQpMcDRUNQrRYZgWlhH8IwQcerMZrpqWyUFSyO0ebgN2cnh/w87F7G4BGSng==}
 
-  '@corsair-dev/frpc-darwin-arm64@0.1.117':
-    resolution: {integrity: sha512-PrxfqHlRKzm5xW5J2wnZ1knVF4xV6svgmeo11YvHMAAUqsNBY6mczMQFlu1HJcMvZ9yysqMiTZBKdjAC+DnhlQ==}
-    cpu: [arm64]
-    os: [darwin]
-
-  '@corsair-dev/frpc-darwin-x64@0.1.117':
-    resolution: {integrity: sha512-8GZP5G5kPhu/TPGLnSgecvyyxXB6+ZdwDmXAhz3PvqiE8mmQ2PRa7FaoVYdOa4nY8XWa5YmnXC/DcjsTLIfPmQ==}
-    cpu: [x64]
-    os: [darwin]
-
-  '@corsair-dev/frpc-linux-arm64@0.1.117':
-    resolution: {integrity: sha512-TwVeRBYd17hy6YJByCUouMVBo2itK4fPuvm3TPwdq5ZVxN64PEKE2KHQIo+uW7opxcMXre6DVSzLQyFmrqI/Xg==}
-    cpu: [arm64]
-    os: [linux]
-
-  '@corsair-dev/frpc-linux-x64@0.1.117':
-    resolution: {integrity: sha512-Ch98qSFQXYSA6sg2ysTKrRCZ08tNWfXjSEHKT3nMM7vYhuDXkQcBmXM4tbPEO8SI6BzLa9/g1lsXT5T0hx48dQ==}
-    cpu: [x64]
-    os: [linux]
-
-  '@corsair-dev/frpc-win32-arm64@0.1.117':
-    resolution: {integrity: sha512-QyLWoaVNrq1C5V81d7DIOLm63n4+0YSKcKJK1MUTdaQAEroaejybeAuskiYhq11LCJ2wb+WTkv3qaWF0yLgg6g==}
-    cpu: [arm64]
-    os: [win32]
-
-  '@corsair-dev/frpc-win32-x64@0.1.117':
-    resolution: {integrity: sha512-V4sI1JUwlNBi9nAJHedXPXzmivfi5DHaU2yJMwnf++5PQvVcxRMJQcec1p9+Q8bPyAZ7gtq+4XdRuBJVZXdFkg==}
-    cpu: [x64]
-    os: [win32]
-
   '@cspotcode/source-map-support@0.8.1':
     resolution: {integrity: sha512-IchNf6dN4tHoMFIn/7OE8LWZ19Y6q/67Bmf6vnGREv8RSbBVb9LPJxEcnwrcwX6ixSvaiGoomAUvu4YSxXrVgw==}
     engines: {node: '>=12'}
@@ -6158,11 +6128,11 @@ packages:
 
   '@esbuild-kit/core-utils@3.3.2':
     resolution: {integrity: sha512-sPRAnw9CdSsRmEtnsl2WXWdyquogVpB3yZ3dgwJfe8zrOzTsV7cJvmwrKVa+0ma5BoiGJ+BoqkMvawbayKUsqQ==}
-    deprecated: 'Merged into tsx: https://tsx.hirok.io'
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild-kit/esm-loader@2.6.5':
     resolution: {integrity: sha512-FxEMIkJKnodyA1OaCUoEvbYRkoZlLZ4d/eXFu9Fh8CbBBgP5EmZxrfTRyN0qpXZ4vOvqnE5YdRdcrmUUXuU+dA==}
-    deprecated: 'Merged into tsx: https://tsx.hirok.io'
+    deprecated: 'Merged into tsx: https://tsx.is'
 
   '@esbuild/aix-ppc64@0.25.12':
     resolution: {integrity: sha512-Hhmwd6CInZ3dwpuGTF8fJG6yoWmsToE+vYgD4nytZVxcu1ulHpUQRAB1UJ8+N1Am3Mz4+xOByoQoSZf4D+CpkA==}
@@ -11085,14 +11055,6 @@ packages:
   cors@2.8.6:
     resolution: {integrity: sha512-tJtZBBHA6vjIAaF6EnIaq6laBBP9aq/Y3ouVJjEfoHbRBcHBAHYcMh/w8LDrk2PvIMMq8gmopa5D4V8RmbrxGw==}
     engines: {node: '>= 0.10'}
-
-  corsair@0.1.119:
-    resolution: {integrity: sha512-Cl86/VhMNOdzTbUzmeb9RwlhuucojM1gEmgTQJsQYdcxP2qFiPPly2VGK9M2h5GkHLZ3kZ4HRALTQP3wIhepBQ==}
-    peerDependencies:
-      react: '>=18.0.0'
-    peerDependenciesMeta:
-      react:
-        optional: true
 
   cosmiconfig@9.0.1:
     resolution: {integrity: sha512-hr4ihw+DBqcvrsEDioRO31Z17x71pUYoNe/4h6Z0wB72p7MU7/9gH8Q3s12NFhHPfYBBOV3qyfUxmr/Yn3shnQ==}
@@ -17481,24 +17443,6 @@ snapshots:
       style-mod: 4.1.3
       w3c-keyname: 2.2.8
 
-  '@corsair-dev/frpc-darwin-arm64@0.1.117':
-    optional: true
-
-  '@corsair-dev/frpc-darwin-x64@0.1.117':
-    optional: true
-
-  '@corsair-dev/frpc-linux-arm64@0.1.117':
-    optional: true
-
-  '@corsair-dev/frpc-linux-x64@0.1.117':
-    optional: true
-
-  '@corsair-dev/frpc-win32-arm64@0.1.117':
-    optional: true
-
-  '@corsair-dev/frpc-win32-x64@0.1.117':
-    optional: true
-
   '@cspotcode/source-map-support@0.8.1':
     dependencies:
       '@jridgewell/trace-mapping': 0.3.9
@@ -22997,23 +22941,6 @@ snapshots:
       object-assign: 4.1.1
       vary: 1.1.2
 
-  corsair@0.1.119(postgres@3.4.7)(react@19.2.7):
-    dependencies:
-      kysely: 0.28.17
-      kysely-postgres-js: 3.0.0(kysely@0.28.17)(postgres@3.4.7)
-      uuid: 13.0.0
-      zod: 4.4.3
-    optionalDependencies:
-      '@corsair-dev/frpc-darwin-arm64': 0.1.117
-      '@corsair-dev/frpc-darwin-x64': 0.1.117
-      '@corsair-dev/frpc-linux-arm64': 0.1.117
-      '@corsair-dev/frpc-linux-x64': 0.1.117
-      '@corsair-dev/frpc-win32-arm64': 0.1.117
-      '@corsair-dev/frpc-win32-x64': 0.1.117
-      react: 19.2.7
-    transitivePeerDependencies:
-      - postgres
-
   cosmiconfig@9.0.1(typescript@5.9.3):
     dependencies:
       env-paths: 2.2.1
@@ -25132,12 +25059,6 @@ snapshots:
   kleur@3.0.3: {}
 
   kleur@4.1.5: {}
-
-  kysely-postgres-js@3.0.0(kysely@0.28.17)(postgres@3.4.7):
-    dependencies:
-      kysely: 0.28.17
-    optionalDependencies:
-      postgres: 3.4.7
 
   kysely-postgres-js@3.0.0(kysely@0.28.9)(postgres@3.4.7):
     dependencies:
