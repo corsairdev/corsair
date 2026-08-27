@@ -95,6 +95,17 @@ describe('verifyHmacSignature', () => {
 			),
 		).toBe(true);
 	});
+
+	it('rejects a sha256 signature when the algorithm is sha1', () => {
+		expect(
+			verifyHmacSignature(
+				payload,
+				secret,
+				hmacHex('sha256', secret, payload),
+				'sha1',
+			),
+		).toBe(false);
+	});
 });
 
 describe('verifyHmacSignatureWithPrefix', () => {
@@ -119,6 +130,13 @@ describe('verifyHmacSignatureWithPrefix', () => {
 		const unprefixed = hmacHex('sha256', secret, payload);
 		expect(
 			verifyHmacSignatureWithPrefix(payload, secret, unprefixed, prefix),
+		).toBe(false);
+	});
+
+	it('rejects a signature with the wrong prefix', () => {
+		const wrongPrefix = `sha1=${hmacHex('sha256', secret, payload)}`;
+		expect(
+			verifyHmacSignatureWithPrefix(payload, secret, wrongPrefix, prefix),
 		).toBe(false);
 	});
 
