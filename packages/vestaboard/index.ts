@@ -1,40 +1,40 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { VestaboardEndpointInputs, VestaboardEndpointOutputs } from './endpoints/types';
-import { VestaboardEndpointInputSchemas, VestaboardEndpointOutputSchemas } from './endpoints/types';
+import { Message, Subscriptions, Viewer } from './endpoints';
 import type {
-	VestaboardWebhookOutputs,
-	ExampleEvent,
-} from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Example } from './endpoints';
-import { VestaboardSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
+	VestaboardEndpointInputs,
+	VestaboardEndpointOutputs,
+} from './endpoints/types';
+import {
+	VestaboardEndpointInputSchemas,
+	VestaboardEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
-import { matchVestaboardTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveVestaboardOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { VestaboardSchema } from './schema';
 
 export type VestaboardPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
+	/**
+	 * Vestaboard Read/Write API Key or Platform API Key.
+	 */
 	key?: string;
-	webhookSecret?: string;
+	/**
+	 * Vestaboard Platform API Secret (used alongside Platform API Key).
+	 */
+	apiSecret?: string;
 	hooks?: InternalVestaboardPlugin['hooks'];
-	webhookHooks?: InternalVestaboardPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof vestaboardEndpointsNested>;
 };
@@ -44,94 +44,139 @@ export type VestaboardContext = CorsairPluginContext<
 	VestaboardPluginOptions
 >;
 
-export type VestaboardKeyBuilderContext = KeyBuilderContext<VestaboardPluginOptions>;
+export type VestaboardKeyBuilderContext =
+	KeyBuilderContext<VestaboardPluginOptions>;
 
-export type VestaboardBoundEndpoints = BindEndpoints<typeof vestaboardEndpointsNested>;
-
-type VestaboardEndpoint<
-	K extends keyof VestaboardEndpointOutputs,
-> = CorsairEndpoint<
-	VestaboardContext,
-	VestaboardEndpointInputs[K],
-	VestaboardEndpointOutputs[K]
+export type VestaboardBoundEndpoints = BindEndpoints<
+	typeof vestaboardEndpointsNested
 >;
 
+type VestaboardEndpoint<K extends keyof VestaboardEndpointOutputs> =
+	CorsairEndpoint<
+		VestaboardContext,
+		VestaboardEndpointInputs[K],
+		VestaboardEndpointOutputs[K]
+	>;
+
 export type VestaboardEndpoints = {
-	exampleGet: VestaboardEndpoint<'exampleGet'>;
+	messageGet: VestaboardEndpoint<'messageGet'>;
+	messagePost: VestaboardEndpoint<'messagePost'>;
+	messageClear: VestaboardEndpoint<'messageClear'>;
+	subscriptionsList: VestaboardEndpoint<'subscriptionsList'>;
+	subscriptionsGet: VestaboardEndpoint<'subscriptionsGet'>;
+	subscriptionsPostMessage: VestaboardEndpoint<'subscriptionsPostMessage'>;
+	viewerGet: VestaboardEndpoint<'viewerGet'>;
 };
-
-type VestaboardWebhook<
-	K extends keyof VestaboardWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<VestaboardContext, TEvent, VestaboardWebhookOutputs[K]>;
-
-export type VestaboardWebhooks = {
-	example: VestaboardWebhook<'example', ExampleEvent>;
-};
-
-export type VestaboardBoundWebhooks = BindWebhooks<VestaboardWebhooks>;
 
 const vestaboardEndpointsNested = {
-	example: {
-		get: Example.get,
+	message: {
+		get: Message.get,
+		post: Message.post,
+		clear: Message.clear,
 	},
-} as const;
-
-const vestaboardWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	subscriptions: {
+		list: Subscriptions.list,
+		get: Subscriptions.get,
+		postMessage: Subscriptions.postMessage,
+	},
+	viewer: {
+		get: Viewer.get,
 	},
 } as const;
 
 export const vestaboardEndpointSchemas = {
-	'example.get': {
-		input: VestaboardEndpointInputSchemas.exampleGet,
-		output: VestaboardEndpointOutputSchemas.exampleGet,
+	'message.get': {
+		input: VestaboardEndpointInputSchemas.messageGet,
+		output: VestaboardEndpointOutputSchemas.messageGet,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof vestaboardEndpointsNested>;
-
-const vestaboardWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'message.post': {
+		input: VestaboardEndpointInputSchemas.messagePost,
+		output: VestaboardEndpointOutputSchemas.messagePost,
 	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof vestaboardWebhooksNested>;
+	'message.clear': {
+		input: VestaboardEndpointInputSchemas.messageClear,
+		output: VestaboardEndpointOutputSchemas.messageClear,
+	},
+	'subscriptions.list': {
+		input: VestaboardEndpointInputSchemas.subscriptionsList,
+		output: VestaboardEndpointOutputSchemas.subscriptionsList,
+	},
+	'subscriptions.get': {
+		input: VestaboardEndpointInputSchemas.subscriptionsGet,
+		output: VestaboardEndpointOutputSchemas.subscriptionsGet,
+	},
+	'subscriptions.postMessage': {
+		input: VestaboardEndpointInputSchemas.subscriptionsPostMessage,
+		output: VestaboardEndpointOutputSchemas.subscriptionsPostMessage,
+	},
+	'viewer.get': {
+		input: VestaboardEndpointInputSchemas.viewerGet,
+		output: VestaboardEndpointOutputSchemas.viewerGet,
+	},
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof vestaboardEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const vestaboardEndpointMeta = {
-	'example.get': {
+export const vestaboardEndpointMeta = {
+	'message.get': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Get the currently displayed message on the Vestaboard',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof vestaboardEndpointsNested>;
+	'message.post': {
+		riskLevel: 'write',
+		description: 'Post a new text message or character matrix to the Vestaboard',
+	},
+	'message.clear': {
+		riskLevel: 'write',
+		description: 'Clear the Vestaboard display',
+	},
+	'subscriptions.list': {
+		riskLevel: 'read',
+		description: 'List all available Vestaboard subscriptions and boards',
+	},
+	'subscriptions.get': {
+		riskLevel: 'read',
+		description: 'Get the current message for a specific Vestaboard subscription',
+	},
+	'subscriptions.postMessage': {
+		riskLevel: 'write',
+		description: 'Post a message to a specific Vestaboard subscription',
+	},
+	'viewer.get': {
+		riskLevel: 'read',
+		description: 'Get information about the authenticated Vestaboard viewer',
+	},
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof vestaboardEndpointsNested
+>;
 
 export const vestaboardAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['api_key'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseVestaboardPlugin<T extends VestaboardPluginOptions> = CorsairPlugin<
-	'vestaboard',
-	typeof VestaboardSchema,
-	typeof vestaboardEndpointsNested,
-	typeof vestaboardWebhooksNested,
-	T,
-	typeof defaultAuthType
->;
+export type BaseVestaboardPlugin<T extends VestaboardPluginOptions> =
+	CorsairPlugin<
+		'vestaboard',
+		typeof VestaboardSchema,
+		typeof vestaboardEndpointsNested,
+		Record<string, never>,
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalVestaboardPlugin = BaseVestaboardPlugin<VestaboardPluginOptions>;
+export type InternalVestaboardPlugin =
+	BaseVestaboardPlugin<VestaboardPluginOptions>;
 
 export type ExternalVestaboardPlugin<T extends VestaboardPluginOptions> =
 	BaseVestaboardPlugin<T>;
 
 export function vestaboard<const T extends VestaboardPluginOptions>(
-	incomingOptions: VestaboardPluginOptions & T = {} as VestaboardPluginOptions & T,
+	incomingOptions: VestaboardPluginOptions & T = {} as VestaboardPluginOptions &
+		T,
 ): ExternalVestaboardPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -143,33 +188,16 @@ export function vestaboard<const T extends VestaboardPluginOptions>(
 		schema: VestaboardSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: vestaboardEndpointsNested,
-		webhooks: vestaboardWebhooksNested,
+		webhooks: {} as const,
 		endpointMeta: vestaboardEndpointMeta,
 		endpointSchemas: vestaboardEndpointSchemas,
-		webhookSchemas: vestaboardWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-vestaboard-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchVestaboardTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveVestaboardOAuthWebhookTenantLink,
+		webhookSchemas: {},
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: VestaboardKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -179,24 +207,26 @@ export function vestaboard<const T extends VestaboardPluginOptions>(
 				return res ?? '';
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
 			return '';
 		},
 	} satisfies InternalVestaboardPlugin;
 }
 
 export type {
-	ExampleEvent,
-	VestaboardWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	VestaboardEndpointInputs,
 	VestaboardEndpointOutputs,
-	ExampleGetInput,
-	ExampleGetResponse,
+	MessageGetInput,
+	MessageGetResponse,
+	MessagePostInput,
+	MessagePostResponse,
+	MessageClearInput,
+	MessageClearResponse,
+	SubscriptionsListInput,
+	SubscriptionsListResponse,
+	SubscriptionsGetInput,
+	SubscriptionsGetResponse,
+	SubscriptionsPostMessageInput,
+	SubscriptionsPostMessageResponse,
+	ViewerGetInput,
+	ViewerGetResponse,
 } from './endpoints/types';

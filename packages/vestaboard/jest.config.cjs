@@ -13,7 +13,8 @@ module.exports = {
 		'!**/*.d.ts',
 		'!**/node_modules/**',
 		'!**/dist/**',
-		'!jest.config.ts',
+		'!jest.config.cjs',
+		'!**/*.test.ts',
 		'!tests/**',
 	],
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
@@ -50,6 +51,7 @@ module.exports = {
 	},
 	transformIgnorePatterns: ['node_modules/(?!.*uuid.*)'],
 	extensionsToTreatAsEsm: ['.ts'],
+	testPathIgnorePatterns: ['/node_modules/', 'integration\\.test\\.ts'],
 	testTimeout: 30000,
 	verbose: true,
 };
