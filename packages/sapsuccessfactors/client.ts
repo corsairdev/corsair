@@ -28,6 +28,15 @@ const SAP_SUCCESSFACTORS_RATE_LIMIT_CONFIG: RateLimitConfig = {
 	},
 };
 
+function isSapSandboxHost(urlStr: string): boolean {
+	try {
+		const parsed = new URL(urlStr);
+		return parsed.hostname === 'sandbox.api.sap.com';
+	} catch {
+		return false;
+	}
+}
+
 export async function makeSapsuccessfactorsRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -56,7 +65,7 @@ export async function makeSapsuccessfactorsRequest<T>(
 		base = base.slice(0, -'/odata/v2'.length);
 	}
 
-	const isSandbox = base.includes('sandbox.api.sap.com');
+	const isSandbox = isSapSandboxHost(base);
 
 	const config: OpenAPIConfig = {
 		BASE: base,
