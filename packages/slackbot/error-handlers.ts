@@ -11,8 +11,7 @@ export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 429) return true;
-			const msg = error.message.toLowerCase();
-			return msg.includes('ratelimited') || msg.includes('429');
+			return error.message.toLowerCase().includes('ratelimited');
 		},
 		handler: async (error: Error) => {
 			let retryAfterMs: number | undefined;
