@@ -76,8 +76,44 @@ const LeadFinderFiltersSchema = z.object({
 	lead_location: FilterStringArraySchema.optional(),
 });
 
+function isFilterObject(value: unknown): value is Record<string, unknown> {
+	return value !== null && typeof value === 'object' && !Array.isArray(value);
+}
+
+function hasBound(value: unknown): boolean {
+	return (
+		typeof value === 'number' || (typeof value === 'string' && value.length > 0)
+	);
+}
+
+function hasNonEmptyStrings(value: unknown): boolean {
+	return (
+		Array.isArray(value) &&
+		value.some((item) => typeof item === 'string' && item.length > 0)
+	);
+}
+
+function leadFinderFiltersHaveCriteria(filters: object): boolean {
+	return Object.values(filters).some((value) => {
+		if (typeof value === 'boolean' || typeof value === 'number') {
+			return true;
+		}
+		if (!isFilterObject(value)) {
+			return false;
+		}
+		return (
+			hasBound(value.gte) ||
+			hasBound(value.lte) ||
+			hasNonEmptyStrings(value.include) ||
+			hasNonEmptyStrings(value.exclude)
+		);
+	});
+}
+
 const LeadFinderCreateInputSchema = z.object({
-	filters: LeadFinderFiltersSchema,
+	filters: LeadFinderFiltersSchema.refine(leadFinderFiltersHaveCriteria, {
+		message: 'At least one filter criterion is required',
+	}),
 	limit: z.number().min(1).max(200).optional(),
 	offset: z.number().min(0).optional(),
 	max_leads: z.number().min(1).max(200).optional(),
