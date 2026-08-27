@@ -8,6 +8,13 @@
       "when": 1773529091251,
       "tag": "0000_nasty_moondragon",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1787808505608,
+      "tag": "0001_entities_account_index",
+      "breakpoints": true
     }
   ]
 }
