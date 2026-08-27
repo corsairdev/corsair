@@ -110,7 +110,9 @@ Synced entities support `corsair.addresszen.db.<entity>.search()` and `.list()`.
 **Read-style (read):** `autocomplete.addresses`
 
 ```ts
-await corsair.addresszen.api.autocomplete.addresses({});
+await corsair.addresszen.api.autocomplete.addresses({
+    query: 'example',
+});
 ```
 
 

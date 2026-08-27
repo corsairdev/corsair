@@ -118,14 +118,20 @@ More: [OAuth 2.0](/concepts/oauth)
 **Read-style (read):** `agency.getAgencyBillingPlan`
 
 ```ts
-await corsair.insightoai.api.agency.getAgencyBillingPlan({});
+await corsair.insightoai.api.agency.getAgencyBillingPlan({
+    billing_plan_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `agency.createAgency`
 
+
+
 ```ts
-await corsair.insightoai.api.agency.createAgency({});
+await corsair.insightoai.api.agency.createAgency({
+    org_id: 'example',
+});
 ```
 
 

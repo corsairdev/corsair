@@ -121,8 +121,13 @@ _No read-style endpoint inferred; pick any operation from the reference below._
 
 **Write-style (write):** `events.aliasCreate`
 
+
+
 ```ts
-await corsair.posthog.api.events.aliasCreate({});
+await corsair.posthog.api.events.aliasCreate({
+    distinct_id: 'example',
+    alias: 'example',
+});
 ```
 
 

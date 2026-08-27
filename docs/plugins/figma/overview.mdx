@@ -123,8 +123,13 @@ await corsair.figma.api.activityLogs.list({});
 
 **Write-style (write):** `comments.add`
 
+
+
 ```ts
-await corsair.figma.api.comments.add({});
+await corsair.figma.api.comments.add({
+    message: 'example',
+    file_key: 'example',
+});
 ```
 
 

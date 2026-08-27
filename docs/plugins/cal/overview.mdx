@@ -117,14 +117,24 @@ Synced entities support `corsair.cal.db.<entity>.search()` and `.list()`. See [D
 **Read-style (read):** `bookings.get`
 
 ```ts
-await corsair.cal.api.bookings.get({});
+await corsair.cal.api.bookings.get({
+    uid: 'example',
+});
 ```
 
 
 **Write-style (destructive):** `bookings.cancel`
 
+
+		<Warning>
+This is a destructive operation. Review [Permissions](/concepts/permissions) and [Hooks](/concepts/hooks) before invoking it.
+</Warning>
+
+
 ```ts
-await corsair.cal.api.bookings.cancel({});
+await corsair.cal.api.bookings.cancel({
+    uid: 'example',
+});
 ```
 
 

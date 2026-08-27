@@ -110,7 +110,10 @@ Synced entities support `corsair.bitwarden.db.<entity>.search()` and `.list()`. 
 **Read-style (read):** `collections.get`
 
 ```ts
-await corsair.bitwarden.api.collections.get({});
+await corsair.bitwarden.api.collections.get({
+    organizationId: 'example',
+    id: 'example',
+});
 ```
 
 

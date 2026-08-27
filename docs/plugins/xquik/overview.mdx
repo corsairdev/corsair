@@ -123,8 +123,13 @@ await corsair.xquik.api.media.download({});
 
 **Write-style (write):** `media.uploadFromUrl`
 
+
+
 ```ts
-await corsair.xquik.api.media.uploadFromUrl({});
+await corsair.xquik.api.media.uploadFromUrl({
+    account: 'example',
+    url: 'example',
+});
 ```
 
 

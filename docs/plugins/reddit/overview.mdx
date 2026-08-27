@@ -116,8 +116,12 @@ await corsair.reddit.api.feeds.getAll({});
 
 **Write-style (read):** `posts.getById`
 
+
+
 ```ts
-await corsair.reddit.api.posts.getById({});
+await corsair.reddit.api.posts.getById({
+    names: 'example',
+});
 ```
 
 

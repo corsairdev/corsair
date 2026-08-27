@@ -110,14 +110,21 @@ Synced entities support `corsair.youtube.db.<entity>.search()` and `.list()`. Se
 **Read-style (read):** `captions.list`
 
 ```ts
-await corsair.youtube.api.captions.list({});
+await corsair.youtube.api.captions.list({
+    video_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `captions.update`
 
+
+
 ```ts
-await corsair.youtube.api.captions.update({});
+await corsair.youtube.api.captions.update({
+    id: 'example',
+    snippet: {},
+});
 ```
 
 

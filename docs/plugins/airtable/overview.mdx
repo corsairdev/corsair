@@ -123,8 +123,14 @@ await corsair.airtable.api.bases.getMany({});
 
 **Write-style (write):** `records.create`
 
+
+
 ```ts
-await corsair.airtable.api.records.create({});
+await corsair.airtable.api.records.create({
+    baseId: 'example',
+    tableIdOrName: 'example',
+    fields: {},
+});
 ```
 
 

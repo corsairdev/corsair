@@ -105,14 +105,20 @@ More: [API Key](/concepts/api-key)
 **Read-style (read):** `aiClipping.get`
 
 ```ts
-await corsair.heygen.api.aiClipping.get({});
+await corsair.heygen.api.aiClipping.get({
+    job_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `aiClipping.create`
 
+
+
 ```ts
-await corsair.heygen.api.aiClipping.create({});
+await corsair.heygen.api.aiClipping.create({
+    video: {},
+});
 ```
 
 

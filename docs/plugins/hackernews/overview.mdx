@@ -110,11 +110,15 @@ Synced entities support `corsair.hackernews.db.<entity>.search()` and `.list()`.
 **Read-style (read):** `items.get`
 
 ```ts
-await corsair.hackernews.api.items.get({});
+await corsair.hackernews.api.items.get({
+    id: 0,
+});
 ```
 
 
 **Write-style (read):** `updates.get`
+
+
 
 ```ts
 await corsair.hackernews.api.updates.get({});

@@ -116,8 +116,14 @@ await corsair.datadog.api.apiKeys.list({});
 
 **Write-style (write):** `dashboards.create`
 
+
+
 ```ts
-await corsair.datadog.api.dashboards.create({});
+await corsair.datadog.api.dashboards.create({
+    title: 'example',
+    widgets: [],
+    layoutType: 'ordered',
+});
 ```
 
 

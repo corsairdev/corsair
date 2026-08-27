@@ -110,14 +110,22 @@ Synced entities support `corsair.linkedin.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `ads.getAudienceCounts`
 
 ```ts
-await corsair.linkedin.api.ads.getAudienceCounts({});
+await corsair.linkedin.api.ads.getAudienceCounts({
+    target: {},
+});
 ```
 
 
 **Write-style (write):** `comments.create`
 
+
+
 ```ts
-await corsair.linkedin.api.comments.create({});
+await corsair.linkedin.api.comments.create({
+    commented_on_urn: 'example',
+    actor: 'example',
+    message: 'example',
+});
 ```
 
 

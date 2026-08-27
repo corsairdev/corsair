@@ -123,8 +123,13 @@ await corsair.whatsapp.api.businessProfiles.get({});
 
 **Write-style (write):** `media.upload`
 
+
+
 ```ts
-await corsair.whatsapp.api.media.upload({});
+await corsair.whatsapp.api.media.upload({
+    file: 'example',
+    type: 'example',
+});
 ```
 
 

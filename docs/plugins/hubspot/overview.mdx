@@ -130,11 +130,15 @@ Synced entities support `corsair.hubspot.db.<entity>.search()` and `.list()`. Se
 **Read-style (read):** `companies.get`
 
 ```ts
-await corsair.hubspot.api.companies.get({});
+await corsair.hubspot.api.companies.get({
+    companyId: 'example',
+});
 ```
 
 
 **Write-style (write):** `companies.create`
+
+
 
 ```ts
 await corsair.hubspot.api.companies.create({});

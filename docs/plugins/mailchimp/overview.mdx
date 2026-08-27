@@ -136,8 +136,12 @@ await corsair.mailchimp.api.account.ping({});
 
 **Write-style (write):** `campaigns.create`
 
+
+
 ```ts
-await corsair.mailchimp.api.campaigns.create({});
+await corsair.mailchimp.api.campaigns.create({
+    type: 'regular',
+});
 ```
 
 

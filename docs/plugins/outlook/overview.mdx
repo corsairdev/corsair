@@ -117,14 +117,20 @@ Synced entities support `corsair.outlook.db.<entity>.search()` and `.list()`. Se
 **Read-style (read):** `calendars.get`
 
 ```ts
-await corsair.outlook.api.calendars.get({});
+await corsair.outlook.api.calendars.get({
+    calendar_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `calendars.create`
 
+
+
 ```ts
-await corsair.outlook.api.calendars.create({});
+await corsair.outlook.api.calendars.create({
+    name: 'example',
+});
 ```
 
 

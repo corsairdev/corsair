@@ -110,14 +110,22 @@ Synced entities support `corsair.algolia.db.<entity>.search()` and `.list()`. Se
 **Read-style (read):** `abTests.getAbTest`
 
 ```ts
-await corsair.algolia.api.abTests.getAbTest({});
+await corsair.algolia.api.abTests.getAbTest({
+    id: 0,
+});
 ```
 
 
 **Write-style (write):** `abTests.addAbTest`
 
+
+
 ```ts
-await corsair.algolia.api.abTests.addAbTest({});
+await corsair.algolia.api.abTests.addAbTest({
+    name: 'example',
+    endAt: 'example',
+    variants: [],
+});
 ```
 
 

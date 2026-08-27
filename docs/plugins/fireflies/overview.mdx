@@ -123,8 +123,13 @@ await corsair.fireflies.api.aiApp.getOutputs({});
 
 **Write-style (write):** `askFred.continueThread`
 
+
+
 ```ts
-await corsair.fireflies.api.askFred.continueThread({});
+await corsair.fireflies.api.askFred.continueThread({
+    threadId: 'example',
+    query: 'example',
+});
 ```
 
 

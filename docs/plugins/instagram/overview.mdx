@@ -117,14 +117,22 @@ Synced entities support `corsair.instagram.db.<entity>.search()` and `.list()`. 
 **Read-style (read):** `comments.get`
 
 ```ts
-await corsair.instagram.api.comments.get({});
+await corsair.instagram.api.comments.get({
+    comment_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `carousel.post`
 
+
+
 ```ts
-await corsair.instagram.api.carousel.post({});
+await corsair.instagram.api.carousel.post({
+    ig_id: 'example',
+    children: [],
+    media_type: 'example',
+});
 ```
 
 

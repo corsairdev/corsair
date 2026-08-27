@@ -117,14 +117,20 @@ Synced entities support `corsair.typeform.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `forms.get`
 
 ```ts
-await corsair.typeform.api.forms.get({});
+await corsair.typeform.api.forms.get({
+    form_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `forms.create`
 
+
+
 ```ts
-await corsair.typeform.api.forms.create({});
+await corsair.typeform.api.forms.create({
+    title: 'example',
+});
 ```
 
 

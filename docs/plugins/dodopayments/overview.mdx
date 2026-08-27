@@ -117,14 +117,21 @@ Synced entities support `corsair.dodopayments.db.<entity>.search()` and `.list()
 **Read-style (read):** `customers.get`
 
 ```ts
-await corsair.dodopayments.api.customers.get({});
+await corsair.dodopayments.api.customers.get({
+    id: 'example',
+});
 ```
 
 
 **Write-style (write):** `customers.create`
 
+
+
 ```ts
-await corsair.dodopayments.api.customers.create({});
+await corsair.dodopayments.api.customers.create({
+    name: 'example',
+    email: 'example',
+});
 ```
 
 

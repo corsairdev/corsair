@@ -130,14 +130,21 @@ Synced entities support `corsair.linear.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `comments.list`
 
 ```ts
-await corsair.linear.api.comments.list({});
+await corsair.linear.api.comments.list({
+    issueId: 'example',
+});
 ```
 
 
 **Write-style (write):** `comments.create`
 
+
+
 ```ts
-await corsair.linear.api.comments.create({});
+await corsair.linear.api.comments.create({
+    issueId: 'example',
+    body: 'example',
+});
 ```
 
 

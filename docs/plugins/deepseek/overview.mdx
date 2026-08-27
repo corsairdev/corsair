@@ -111,8 +111,14 @@ await corsair.deepseek.api.models.list({});
 
 **Write-style (write):** `anthropic.createMessage`
 
+
+
 ```ts
-await corsair.deepseek.api.anthropic.createMessage({});
+await corsair.deepseek.api.anthropic.createMessage({
+    model: 'deepseek-chat',
+    maxTokens: 0,
+    messages: [],
+});
 ```
 
 

@@ -110,14 +110,23 @@ Synced entities support `corsair.strava.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `activities.get`
 
 ```ts
-await corsair.strava.api.activities.get({});
+await corsair.strava.api.activities.get({
+    id: 0,
+});
 ```
 
 
 **Write-style (write):** `activities.create`
 
+
+
 ```ts
-await corsair.strava.api.activities.create({});
+await corsair.strava.api.activities.create({
+    name: 'example',
+    sport_type: 'example',
+    start_date_local: 'example',
+    elapsed_time: 0,
+});
 ```
 
 

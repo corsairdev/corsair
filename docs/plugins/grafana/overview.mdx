@@ -110,14 +110,23 @@ Synced entities support `corsair.grafana.db.<entity>.search()` and `.list()`. Se
 **Read-style (read):** `dashboards.queryPublic`
 
 ```ts
-await corsair.grafana.api.dashboards.queryPublic({});
+await corsair.grafana.api.dashboards.queryPublic({
+    access_token: 'example',
+    panel_id: 0,
+    from: 'example',
+    to: 'example',
+});
 ```
 
 
 **Write-style (write):** `logs.createOtlp`
 
+
+
 ```ts
-await corsair.grafana.api.logs.createOtlp({});
+await corsair.grafana.api.logs.createOtlp({
+    resourceLogs: [],
+});
 ```
 
 

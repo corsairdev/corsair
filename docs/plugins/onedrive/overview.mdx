@@ -117,14 +117,20 @@ Synced entities support `corsair.onedrive.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `drive.get`
 
 ```ts
-await corsair.onedrive.api.drive.get({});
+await corsair.onedrive.api.drive.get({
+    drive_id: 'example',
+});
 ```
 
 
 **Write-style (write):** `files.createFolder`
 
+
+
 ```ts
-await corsair.onedrive.api.files.createFolder({});
+await corsair.onedrive.api.files.createFolder({
+    name: 'example',
+});
 ```
 
 

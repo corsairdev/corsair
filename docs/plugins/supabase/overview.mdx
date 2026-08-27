@@ -125,14 +125,20 @@ Synced entities support `corsair.supabase.db.<entity>.search()` and `.list()`. S
 **Read-style (read):** `advisors.getPerformanceAdvisors`
 
 ```ts
-await corsair.supabase.api.advisors.getPerformanceAdvisors({});
+await corsair.supabase.api.advisors.getPerformanceAdvisors({
+    ref: 'example',
+});
 ```
 
 
 **Write-style (write):** `auth.createProjectSigningKey`
 
+
+
 ```ts
-await corsair.supabase.api.auth.createProjectSigningKey({});
+await corsair.supabase.api.auth.createProjectSigningKey({
+    ref: 'example',
+});
 ```
 
 

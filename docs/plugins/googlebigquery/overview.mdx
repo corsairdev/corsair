@@ -110,14 +110,24 @@ Synced entities support `corsair.googlebigquery.db.<entity>.search()` and `.list
 **Read-style (read):** `analyticsHub.listDataexchangesListings`
 
 ```ts
-await corsair.googlebigquery.api.analyticsHub.listDataexchangesListings({});
+await corsair.googlebigquery.api.analyticsHub.listDataexchangesListings({
+    projectId: 'example',
+    location: 'example',
+});
 ```
 
 
 **Write-style (write):** `analyticsHub.createDataExchange`
 
+
+
 ```ts
-await corsair.googlebigquery.api.analyticsHub.createDataExchange({});
+await corsair.googlebigquery.api.analyticsHub.createDataExchange({
+    projectId: 'example',
+    location: 'example',
+    dataExchangeId: 'example',
+    displayName: 'example',
+});
 ```
 
 

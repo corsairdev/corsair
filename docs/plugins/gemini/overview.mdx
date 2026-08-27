@@ -105,14 +105,22 @@ More: [API Key](/concepts/api-key)
 **Read-style (read):** `content.countTokens`
 
 ```ts
-await corsair.gemini.api.content.countTokens({});
+await corsair.gemini.api.content.countTokens({
+    model: 'example',
+    contents: [],
+});
 ```
 
 
 **Write-style (write):** `images.generateImage`
 
+
+
 ```ts
-await corsair.gemini.api.images.generateImage({});
+await corsair.gemini.api.images.generateImage({
+    model: 'example',
+    prompt: 'example',
+});
 ```
 
 

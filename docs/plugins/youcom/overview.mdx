@@ -110,7 +110,9 @@ Synced entities support `corsair.youcom.db.<entity>.search()` and `.list()`. See
 **Read-style (read):** `yousearch.youSearch`
 
 ```ts
-await corsair.youcom.api.yousearch.youSearch({});
+await corsair.youcom.api.yousearch.youSearch({
+    query: 'example',
+});
 ```
 
 
