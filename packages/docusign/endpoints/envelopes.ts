@@ -2,18 +2,35 @@ import { DocusignClient } from '../client';
 import type {
 	CreateEnvelopeParams,
 	CreateRecipientViewUrlParams,
+	DocusignExecutionContext,
 	GetEnvelopeParams,
 	SendEnvelopeParams,
 } from './types';
 
-function resolveClient(contextOrClient: any): DocusignClient {
+function resolveClient(
+	contextOrClient: DocusignExecutionContext | unknown,
+): DocusignClient {
 	if (contextOrClient instanceof DocusignClient) {
 		return contextOrClient;
 	}
-	if (contextOrClient?.client) {
-		return contextOrClient.client as DocusignClient;
+	if (
+		contextOrClient &&
+		typeof contextOrClient === 'object' &&
+		'client' in contextOrClient &&
+		(contextOrClient as { client: unknown }).client
+	) {
+		const candidate = (contextOrClient as { client: unknown }).client;
+		if (
+			candidate instanceof DocusignClient ||
+			typeof (candidate as { request?: unknown }).request === 'function'
+		) {
+			return candidate as DocusignClient;
+		}
 	}
-	if (typeof contextOrClient?.request === 'function') {
+	if (
+		contextOrClient &&
+		typeof (contextOrClient as { request?: unknown }).request === 'function'
+	) {
 		return contextOrClient as DocusignClient;
 	}
 	throw new Error(
@@ -22,10 +39,10 @@ function resolveClient(contextOrClient: any): DocusignClient {
 }
 
 export const createEnvelope = async (
-	clientOrContext: any,
+	ctxOrClient: DocusignExecutionContext,
 	params: CreateEnvelopeParams,
 ) => {
-	const client = resolveClient(clientOrContext);
+	const client = resolveClient(ctxOrClient);
 	return client.request('/envelopes', {
 		method: 'POST',
 		body: JSON.stringify(params),
@@ -33,18 +50,18 @@ export const createEnvelope = async (
 };
 
 export const getEnvelope = async (
-	clientOrContext: any,
+	ctxOrClient: DocusignExecutionContext,
 	params: GetEnvelopeParams,
 ) => {
-	const client = resolveClient(clientOrContext);
+	const client = resolveClient(ctxOrClient);
 	return client.request(`/envelopes/${params.envelopeId}`);
 };
 
 export const sendEnvelope = async (
-	clientOrContext: any,
+	ctxOrClient: DocusignExecutionContext,
 	params: SendEnvelopeParams,
 ) => {
-	const client = resolveClient(clientOrContext);
+	const client = resolveClient(ctxOrClient);
 	return client.request(`/envelopes/${params.envelopeId}`, {
 		method: 'PUT',
 		body: JSON.stringify({ status: 'sent' }),
@@ -52,10 +69,10 @@ export const sendEnvelope = async (
 };
 
 export const createRecipientViewUrl = async (
-	clientOrContext: any,
+	ctxOrClient: DocusignExecutionContext,
 	params: CreateRecipientViewUrlParams,
 ) => {
-	const client = resolveClient(clientOrContext);
+	const client = resolveClient(ctxOrClient);
 	const {
 		envelopeId,
 		authenticationMethod = 'none',

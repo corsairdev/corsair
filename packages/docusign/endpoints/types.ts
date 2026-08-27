@@ -1,4 +1,11 @@
 import { z } from 'zod';
+import type { DocusignClient } from '../client';
+
+export type DocusignExecutionContext =
+	| DocusignClient
+	| { client: DocusignClient }
+	| { client: unknown }
+	| Record<string, unknown>;
 
 export const CreateEnvelopeInputSchema = z.object({
 	templateId: z.string().optional(),

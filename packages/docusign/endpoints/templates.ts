@@ -1,14 +1,34 @@
 import { DocusignClient } from '../client';
-import type { GetTemplateParams, ListTemplatesParams } from './types';
+import type {
+	DocusignExecutionContext,
+	GetTemplateParams,
+	ListTemplatesParams,
+} from './types';
 
-function resolveClient(contextOrClient: any): DocusignClient {
+function resolveClient(
+	contextOrClient: DocusignExecutionContext | unknown,
+): DocusignClient {
 	if (contextOrClient instanceof DocusignClient) {
 		return contextOrClient;
 	}
-	if (contextOrClient?.client) {
-		return contextOrClient.client as DocusignClient;
+	if (
+		contextOrClient &&
+		typeof contextOrClient === 'object' &&
+		'client' in contextOrClient &&
+		(contextOrClient as { client: unknown }).client
+	) {
+		const candidate = (contextOrClient as { client: unknown }).client;
+		if (
+			candidate instanceof DocusignClient ||
+			typeof (candidate as { request?: unknown }).request === 'function'
+		) {
+			return candidate as DocusignClient;
+		}
 	}
-	if (typeof contextOrClient?.request === 'function') {
+	if (
+		contextOrClient &&
+		typeof (contextOrClient as { request?: unknown }).request === 'function'
+	) {
 		return contextOrClient as DocusignClient;
 	}
 	throw new Error(
@@ -17,10 +37,10 @@ function resolveClient(contextOrClient: any): DocusignClient {
 }
 
 export const listTemplates = async (
-	clientOrContext: any,
+	ctxOrClient: DocusignExecutionContext,
 	params?: ListTemplatesParams,
 ) => {
-	const client = resolveClient(clientOrContext);
+	const client = resolveClient(ctxOrClient);
 	const query = new URLSearchParams();
 	if (params?.count) query.append('count', String(params.count));
 	if (params?.startPosition)
@@ -30,9 +50,9 @@ export const listTemplates = async (
 };
 
 export const getTemplate = async (
-	clientOrContext: any,
+	ctxOrClient: DocusignExecutionContext,
 	params: GetTemplateParams,
 ) => {
-	const client = resolveClient(clientOrContext);
+	const client = resolveClient(ctxOrClient);
 	return client.request(`/templates/${params.templateId}`);
 };
