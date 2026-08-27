@@ -48,6 +48,7 @@ function lastCall() {
 	return mockRequest.mock.calls.at(-1)?.[1] as {
 		method: string;
 		url: string;
+		path?: Record<string, string | number>;
 		body?: unknown;
 		query?: Record<string, unknown>;
 		headers?: Record<string, string>;
@@ -83,14 +84,16 @@ describe('Backendless plugin', () => {
 			restApiKey: 'rest-api-key',
 			userToken: 'user-token',
 		});
-		await client.call('GET', `data/${client.segment('Users & Roles')}`, {
+		await client.call('GET', 'data.table', {
+			path: { tableName: client.segment('Users & Roles') },
 			userScoped: true,
 		});
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({ BASE: 'https://demo.backendless.app' }),
 			expect.objectContaining({
 				method: 'GET',
-				url: '/api/data/Users%20%26%20Roles',
+				url: '/api/data/{tableName}',
+				path: { tableName: 'Users%20%26%20Roles' },
 				headers: { 'user-token': 'user-token' },
 			}),
 		);
@@ -102,8 +105,15 @@ describe('Backendless plugin', () => {
 			applicationId: 'app-id',
 			restApiKey: 'rest-key',
 		});
-		await client.call('GET', 'counters/n');
-		expect(lastCall().url).toBe('/app-id/rest-key/counters/n');
+		await client.call('GET', 'counters.get', { path: { counterName: 'n' } });
+		expect(lastCall().url).toBe(
+			'/{applicationId}/{restApiKey}/counters/{counterName}',
+		);
+		expect(lastCall().path).toEqual({
+			applicationId: 'app-id',
+			restApiKey: 'rest-key',
+			counterName: 'n',
+		});
 	});
 
 	it('rejects invalid and non-HTTPS base URLs', () => {
@@ -187,7 +197,8 @@ describe('Backendless endpoint handlers', () => {
 		expect(lastCall()).toEqual(
 			expect.objectContaining({
 				method: 'DELETE',
-				url: '/api/files/docs/a.txt',
+				url: '/api/files/{filePath}',
+				path: { filePath: 'docs/a.txt' },
 			}),
 		);
 	});
@@ -195,7 +206,11 @@ describe('Backendless endpoint handlers', () => {
 	it('creates and deletes directories', async () => {
 		await Files.createDirectory(ctx(), { path: 'notes' });
 		expect(lastCall()).toEqual(
-			expect.objectContaining({ method: 'POST', url: '/api/files/notes' }),
+			expect.objectContaining({
+				method: 'POST',
+				url: '/api/files/{dirPath}',
+				path: { dirPath: 'notes' },
+			}),
 		);
 		await Files.deleteDirectory(ctx(), { path: 'notes' });
 		expect(lastCall().method).toBe('DELETE');
@@ -213,7 +228,8 @@ describe('Backendless endpoint handlers', () => {
 		expect(lastCall()).toEqual(
 			expect.objectContaining({
 				method: 'GET',
-				url: '/api/data/Person',
+				url: '/api/data/{tableName}',
+				path: { tableName: 'Person' },
 				query: expect.objectContaining({
 					where: 'age > 30',
 					sortBy: 'created desc',
@@ -229,19 +245,20 @@ describe('Backendless endpoint handlers', () => {
 		expect(lastCall()).toEqual(
 			expect.objectContaining({
 				method: 'POST',
-				url: '/api/hive/groceryStore',
+				url: '/api/hive/{hiveName}',
+				path: { hiveName: 'groceryStore' },
 			}),
 		);
 		mockRequest.mockResolvedValue({ Apples: 0.99 });
 		await Hive.values(ctx(), { hiveName: 'groceryStore', key: 'fruits' });
-		expect(lastCall().url).toBe('/api/hive/groceryStore/map/fruits');
+		expect(lastCall().url).toBe('/api/hive/{hiveName}/map/{key}');
 		mockRequest.mockResolvedValue(['a']);
 		await Hive.keyItems(ctx(), {
 			hiveName: 'groceryStore',
 			key: 'fruits',
 			index: 1,
 		});
-		expect(lastCall().url).toBe('/api/hive/groceryStore/list/fruits/1');
+		expect(lastCall().url).toBe('/api/hive/{hiveName}/list/{key}/{index}');
 		mockRequest.mockResolvedValue(true);
 		await Hive.mapPut(ctx(), {
 			hiveName: 'groceryStore',
@@ -252,7 +269,7 @@ describe('Backendless endpoint handlers', () => {
 		expect(lastCall()).toEqual(
 			expect.objectContaining({
 				method: 'PUT',
-				url: '/api/hive/groceryStore/map/fruits/set/Oranges',
+				url: '/api/hive/{hiveName}/map/{mapKey}/set/{keyName}',
 				body: { value: 1.29 },
 			}),
 		);
@@ -261,7 +278,7 @@ describe('Backendless endpoint handlers', () => {
 	it('reads, compare-and-sets, and resets counters', async () => {
 		mockRequest.mockResolvedValue(20);
 		await Counters.get(ctx(), { counterName: 'mycounter' });
-		expect(lastCall().url).toBe('/api/counters/mycounter');
+		expect(lastCall().url).toBe('/api/counters/{counterName}');
 		mockRequest.mockResolvedValue(true);
 		await Counters.set(ctx(), {
 			counterName: 'mycounter',
@@ -271,12 +288,12 @@ describe('Backendless endpoint handlers', () => {
 		expect(lastCall()).toEqual(
 			expect.objectContaining({
 				method: 'PUT',
-				url: '/api/counters/mycounter/get/compareandset',
+				url: '/api/counters/{counterName}/get/compareandset',
 				query: { expected: 20, updatedvalue: 21 },
 			}),
 		);
 		await Counters.reset(ctx(), { counterName: 'mycounter' });
-		expect(lastCall().url).toBe('/api/counters/mycounter/reset');
+		expect(lastCall().url).toBe('/api/counters/{counterName}/reset');
 	});
 
 	it('registers with email last so properties cannot overwrite credentials', async () => {
@@ -317,24 +334,24 @@ describe('Backendless endpoint handlers', () => {
 		});
 		mockRequest.mockResolvedValue(true);
 		await Users.validateToken(ctx(), { userToken: 'tok' });
-		expect(lastCall().url).toBe('/api/users/isvalidusertoken/tok');
+		expect(lastCall().url).toBe('/api/users/isvalidusertoken/{token}');
 	});
 
 	it('updates, finds, deletes, logs out, and recovers passwords', async () => {
 		mockRequest.mockResolvedValue({ objectId: 'u1', email: 'a@b.c' });
 		await Users.update(ctx(), { userId: 'u1', properties: { name: 'A' } });
-		expect(lastCall().url).toBe('/api/users/u1');
+		expect(lastCall().url).toBe('/api/users/{userId}');
 		await Users.find(ctx(), { userId: 'u1' });
-		expect(lastCall().url).toBe('/api/data/Users/u1');
+		expect(lastCall().url).toBe('/api/data/Users/{userId}');
 		mockRequest.mockResolvedValue({ deletionTime: 1 });
 		await Users.delete(ctx(), { userId: 'u1' });
 		expect(lastCall()).toEqual(
-			expect.objectContaining({ method: 'DELETE', url: '/api/users/u1' }),
+			expect.objectContaining({ method: 'DELETE', url: '/api/users/{userId}' }),
 		);
 		await Users.logout(ctx(), {});
 		expect(lastCall().url).toBe('/api/users/logout');
 		await Users.passwordRecovery(ctx(), { identity: 'a@b.c' });
-		expect(lastCall().url).toBe('/api/users/restorepassword/a%40b.c');
+		expect(lastCall().url).toBe('/api/users/restorepassword/{identity}');
 	});
 
 	it('grants and revokes table permissions for a user or role', async () => {
@@ -346,7 +363,7 @@ describe('Backendless endpoint handlers', () => {
 		expect(lastCall()).toEqual(
 			expect.objectContaining({
 				method: 'PUT',
-				url: '/api/data/Person/permissions/GRANT',
+				url: '/api/data/{tableName}/permissions/{action}',
 				body: { permission: 'FIND', user: 'u1' },
 			}),
 		);
@@ -356,7 +373,9 @@ describe('Backendless endpoint handlers', () => {
 			role: 'TrialUser',
 			objectId: 'o1',
 		});
-		expect(lastCall().url).toBe('/api/data/Person/permissions/DENY/o1');
+		expect(lastCall().url).toBe(
+			'/api/data/{tableName}/permissions/{action}/{objectId}',
+		);
 		await expect(
 			Permissions.grant(ctx(), {
 				tableName: 'Person',
@@ -380,7 +399,7 @@ describe('Backendless endpoint handlers', () => {
 		expect(lastCall()).toEqual(
 			expect.objectContaining({
 				method: 'POST',
-				url: '/api/messaging/default',
+				url: '/api/messaging/{channel}',
 				body: expect.objectContaining({ message: 'hello world!' }),
 			}),
 		);

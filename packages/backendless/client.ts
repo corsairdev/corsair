@@ -7,6 +7,36 @@ const NATIVE_HOSTS = new Set([
 	'api.sa.backendless.com',
 ]);
 
+export const BACKENDLESS_ROUTES = {
+	'files.copy': '/api/files/copy',
+	'files.move': '/api/files/move',
+	'files.delete': '/api/files/{filePath}',
+	'files.directory': '/api/files/{dirPath}',
+	'files.root': '/api/files',
+	'data.table': '/api/data/{tableName}',
+	'data.object': '/api/data/{tableName}/{objectId}',
+	'hive.create': '/api/hive/{hiveName}',
+	'hive.map': '/api/hive/{hiveName}/map/{key}',
+	'hive.list': '/api/hive/{hiveName}/list/{key}',
+	'hive.listIndex': '/api/hive/{hiveName}/list/{key}/{index}',
+	'hive.mapSet': '/api/hive/{hiveName}/map/{mapKey}/set/{keyName}',
+	'counters.get': '/api/counters/{counterName}',
+	'counters.compare': '/api/counters/{counterName}/get/compareandset',
+	'counters.reset': '/api/counters/{counterName}/reset',
+	'users.register': '/api/users/register',
+	'users.login': '/api/users/login',
+	'users.logout': '/api/users/logout',
+	'users.restore': '/api/users/restorepassword/{identity}',
+	'users.byId': '/api/users/{userId}',
+	'users.find': '/api/data/Users/{userId}',
+	'users.validate': '/api/users/isvalidusertoken/{token}',
+	'permissions.table': '/api/data/{tableName}/permissions/{action}',
+	'permissions.object': '/api/data/{tableName}/permissions/{action}/{objectId}',
+	'messaging.publish': '/api/messaging/{channel}',
+} as const;
+
+export type BackendlessRoute = keyof typeof BACKENDLESS_ROUTES;
+
 export type BackendlessClientConfig = {
 	baseUrl: string;
 	applicationId: string;
@@ -56,23 +86,83 @@ function isNativeCluster(baseUrl: string): boolean {
 	return NATIVE_HOSTS.has(new URL(baseUrl).hostname);
 }
 
+function resolveRouteUrl(route: BackendlessRoute, native: boolean): string {
+	const template = BACKENDLESS_ROUTES[route];
+	if (!native) return template;
+	switch (route) {
+		case 'files.copy':
+			return '/{applicationId}/{restApiKey}/files/copy';
+		case 'files.move':
+			return '/{applicationId}/{restApiKey}/files/move';
+		case 'files.delete':
+			return '/{applicationId}/{restApiKey}/files/{filePath}';
+		case 'files.directory':
+			return '/{applicationId}/{restApiKey}/files/{dirPath}';
+		case 'files.root':
+			return '/{applicationId}/{restApiKey}/files';
+		case 'data.table':
+			return '/{applicationId}/{restApiKey}/data/{tableName}';
+		case 'data.object':
+			return '/{applicationId}/{restApiKey}/data/{tableName}/{objectId}';
+		case 'hive.create':
+			return '/{applicationId}/{restApiKey}/hive/{hiveName}';
+		case 'hive.map':
+			return '/{applicationId}/{restApiKey}/hive/{hiveName}/map/{key}';
+		case 'hive.list':
+			return '/{applicationId}/{restApiKey}/hive/{hiveName}/list/{key}';
+		case 'hive.listIndex':
+			return '/{applicationId}/{restApiKey}/hive/{hiveName}/list/{key}/{index}';
+		case 'hive.mapSet':
+			return '/{applicationId}/{restApiKey}/hive/{hiveName}/map/{mapKey}/set/{keyName}';
+		case 'counters.get':
+			return '/{applicationId}/{restApiKey}/counters/{counterName}';
+		case 'counters.compare':
+			return '/{applicationId}/{restApiKey}/counters/{counterName}/get/compareandset';
+		case 'counters.reset':
+			return '/{applicationId}/{restApiKey}/counters/{counterName}/reset';
+		case 'users.register':
+			return '/{applicationId}/{restApiKey}/users/register';
+		case 'users.login':
+			return '/{applicationId}/{restApiKey}/users/login';
+		case 'users.logout':
+			return '/{applicationId}/{restApiKey}/users/logout';
+		case 'users.restore':
+			return '/{applicationId}/{restApiKey}/users/restorepassword/{identity}';
+		case 'users.byId':
+			return '/{applicationId}/{restApiKey}/users/{userId}';
+		case 'users.find':
+			return '/{applicationId}/{restApiKey}/data/Users/{userId}';
+		case 'users.validate':
+			return '/{applicationId}/{restApiKey}/users/isvalidusertoken/{token}';
+		case 'permissions.table':
+			return '/{applicationId}/{restApiKey}/data/{tableName}/permissions/{action}';
+		case 'permissions.object':
+			return '/{applicationId}/{restApiKey}/data/{tableName}/permissions/{action}/{objectId}';
+		case 'messaging.publish':
+			return '/{applicationId}/{restApiKey}/messaging/{channel}';
+	}
+}
+
 export class BackendlessClient {
 	private readonly config: OpenAPIConfig;
 	private readonly userToken?: string;
-	private readonly nativePrefix?: string;
+	private readonly native: boolean;
+	private readonly applicationId: string;
+	private readonly restApiKey: string;
 
 	constructor(config: BackendlessClientConfig) {
 		const baseUrl = safeBaseUrl(config.baseUrl);
 		this.userToken = config.userToken;
-		this.nativePrefix = isNativeCluster(baseUrl)
-			? `/${encodeURIComponent(config.applicationId)}/${encodeURIComponent(config.restApiKey)}`
-			: undefined;
+		this.native = isNativeCluster(baseUrl);
+		this.applicationId = config.applicationId;
+		this.restApiKey = config.restApiKey;
 		this.config = {
 			BASE: baseUrl,
 			VERSION: '',
 			WITH_CREDENTIALS: false,
 			CREDENTIALS: 'omit',
 			TOKEN: undefined,
+			ENCODE_PATH: (value) => value,
 			HEADERS: {
 				Accept: 'application/json',
 				'Content-Type': 'application/json',
@@ -88,20 +178,24 @@ export class BackendlessClient {
 
 	async call<T>(
 		method: ApiRequestOptions['method'],
-		path: string,
+		route: BackendlessRoute,
 		options: {
+			path?: Record<string, string | number>;
 			query?: Record<string, string | number | boolean | undefined>;
 			body?: unknown;
 			userScoped?: boolean;
 		} = {},
 	): Promise<T> {
-		const trimmed = path.replace(/^\//, '');
-		const url = this.nativePrefix
-			? `${this.nativePrefix}/${trimmed}`
-			: `/api/${trimmed}`;
 		const requestOptions: ApiRequestOptions = {
 			method,
-			url,
+			url: resolveRouteUrl(route, this.native),
+			path: this.native
+				? {
+						applicationId: encodeURIComponent(this.applicationId),
+						restApiKey: encodeURIComponent(this.restApiKey),
+						...options.path,
+					}
+				: options.path,
 			query: options.query,
 			body: options.body,
 			headers:
