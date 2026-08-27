@@ -187,6 +187,7 @@ export const BaseProviders = [
 	'teams',
 	'telegram',
 	'ticktick',
+	'tisane',
 	'todoist',
 	'toggl',
 	'trello',
@@ -390,6 +391,7 @@ export const ProviderDisplayNames = {
 	teams: 'Teams',
 	telegram: 'Telegram',
 	ticktick: 'TickTick',
+	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -600,6 +602,7 @@ export type AllProviders =
 	| 'teams'
 	| 'telegram'
 	| 'ticktick'
+	| 'tisane'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
