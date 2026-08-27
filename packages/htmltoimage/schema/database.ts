@@ -1,5 +1,3 @@
-import { z } from 'zod';
-
 // TODO: Define your database entities here
 // export const HtmlToImageExample = z.object({
 // 	id: z.string(),
