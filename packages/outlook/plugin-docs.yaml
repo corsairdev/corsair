@@ -1,0 +1,15 @@
+displayName: Outlook
+description: "Outlook plugin for Corsair"
+recommendedAuth: managed
+
+examples:
+  read:
+    path: messages.list
+    title: List messages
+  write:
+    path: messages.send
+    title: Send a message
+    args:
+      subject: "Hello from Corsair"
+      body: "This is a test email."
+      to: "hello@example.com"

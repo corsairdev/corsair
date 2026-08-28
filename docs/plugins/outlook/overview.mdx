@@ -109,19 +109,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`calendars.get`**
+**List messages**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.outlook.api.calendars.get({});
+await tenant.outlook.api.messages.list({});
 ```
 
 
-**`calendars.create`**
+**Send a message**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.outlook.api.calendars.create({});
+await tenant.outlook.api.messages.send({ subject: 'Hello from Corsair', body: 'This is a test email.', to: 'hello@example.com' });
 ```
 
 
