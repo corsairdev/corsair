@@ -24,7 +24,9 @@ jest.mock('../client', () => ({
 	makeDropboxSignRequest: jest.fn(),
 }));
 
-const mockedRequest = client.makeDropboxSignRequest as jest.MockedFunction<typeof client.makeDropboxSignRequest>;
+const mockedRequest = client.makeDropboxSignRequest as jest.MockedFunction<
+	typeof client.makeDropboxSignRequest
+>;
 
 const ctx = {
 	key: 'test_api_key',
