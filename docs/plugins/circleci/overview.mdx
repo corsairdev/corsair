@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "CircleCI plugin for Corsair"
+---
+
+Use **CircleCI** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 65 typed API operations
+- 7 synced entities (`contexts`, `groups`, `orbAllowlistEntries`, `pipelineDefinitions`, `projectEnvVars`, `projects`, and 1 more) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/circleci
+```
+```bash yarn
+yarn add corsair @corsair-dev/circleci
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/circleci
+```
+```bash bun
+bun add corsair @corsair-dev/circleci
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { circleci } from '@corsair-dev/circleci';
+
+export const corsair = createCorsair({
+	plugins: [
+		circleci(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="API Key (Recommended)">
+
+No setup required yet. When you make your first request as a tenant, Corsair prompts for the API key.
+
+```ts
+circleci()
+```
+
+More: [API Key](/concepts/api-key)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'circleci',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`contexts.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contexts.get({});
+```
+
+
+**`contexts.create`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.circleci.api.contexts.create({});
+```
+
+
+See the full list on the [API](/plugins/circleci/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.circleci.db.<entity>.search()` and `.list()`: `contexts`, `groups`, `orbAllowlistEntries`, `pipelineDefinitions`, `projectEnvVars`, `projects`, `schedules`.
+
+See [Database](/plugins/circleci/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/circleci/api">
+    Every `circleci.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/circleci/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

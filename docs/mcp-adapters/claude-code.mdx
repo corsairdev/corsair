@@ -1,5 +1,6 @@
 ---
 title: Claude Code
+icon: "/icons/claude.svg"
 description: Connect Corsair to Claude Code via MCP or use the CLI directly.
 ---
 
@@ -59,7 +60,7 @@ If your credentials aren't loaded from a `.env` file, pass them via `env`:
 }
 ```
 
-Restart Claude Code after adding the config. You can verify the server is connected by running `/mcp` in the Claude Code prompt — `corsair` should appear in the list.
+Restart Claude Code after adding the config. You can verify the server is connected by running `/mcp` in the Claude Code prompt. `corsair` should appear in the list.
 
 ## Usage
 
@@ -69,7 +70,7 @@ Once connected, Claude Code can call Corsair tools directly. Start a conversatio
 Setup corsair, then list all Slack channels.
 ```
 
-Claude calls `corsair_setup` first to check credentials, then `list_operations` to discover available endpoints, then `run_script` to execute.
+Claude calls `list_operations` to discover available endpoints, `get_schema` to inspect parameters, then `run_script` to execute.
 
 </Tab>
 

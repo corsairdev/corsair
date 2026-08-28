@@ -1,0 +1,1270 @@
+---
+title: API
+description: "API reference for ZoomInfo: every `zoominfo.api.*` operation with input and output types."
+---
+
+Every `zoominfo.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Zoominfo
+
+### enrichCompany
+
+`zoominfo.enrichCompany`
+
+Enrich up to 25 companies from partial identifiers
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.enrichCompany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matchCompanyInput` | `object[]` | Yes | — |
+| `outputFields` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="matchCompanyInput full type">
+
+```ts
+{
+  companyId?: number | string,
+  companyName?: string,
+  companyWebsite?: string,
+  companyTicker?: string,
+  companyPhone?: string,
+  companyFax?: string,
+  companyStreet?: string,
+  companyCity?: string,
+  companyState?: string,
+  companyZipCode?: string,
+  companyCountry?: string,
+  ipAddress?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  outputFields?: string[][],
+  result: {
+    input?: {
+    },
+    data: {
+      id?: number,
+      name?: string,
+      website?: string,
+      ticker?: string,
+      domainList?: string[],
+      logo?: string,
+      revenue?: number,
+      employeeCount?: number,
+      phone?: string,
+      street?: string,
+      city?: string,
+      state?: string,
+      zipCode?: string,
+      country?: string,
+      companyStatus?: string
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrichContact
+
+`zoominfo.enrichContact`
+
+Enrich up to 25 contacts from partial identifiers
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.enrichContact({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `matchPersonInput` | `object[]` | Yes | — |
+| `outputFields` | `string[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="matchPersonInput full type">
+
+```ts
+{
+  personId?: number | string,
+  firstName?: string,
+  lastName?: string,
+  fullName?: string,
+  emailAddress?: string,
+  hashedEmail?: string,
+  phone?: string,
+  jobTitle?: string,
+  companyId?: number | string,
+  companyName?: string,
+  companyWebsite?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  outputFields?: string[][],
+  result: {
+    input?: {
+    },
+    data: {
+      id?: number,
+      firstName?: string,
+      middleName?: string,
+      lastName?: string,
+      email?: string,
+      phone?: string,
+      mobilePhone?: string,
+      jobTitle?: string,
+      contactAccuracyScore?: number,
+      lastUpdatedDate?: string,
+      validDate?: string,
+      companyId?: number,
+      companyName?: string,
+      companyWebsite?: string
+    }[]
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrichIntent
+
+`zoominfo.enrichIntent`
+
+Fetch intent signals for one company
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.enrichIntent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rpp` | `number` | No | — |
+| `page` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortOrder` | `asc \| ascending \| desc \| descending` | No | Defaults to desc. |
+| `companyId` | `number \| string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyWebsite` | `string` | No | — |
+| `topics` | `string[]` | No | — |
+| `signalStartDate` | `string` | No | — |
+| `signalEndDate` | `string` | No | — |
+| `signalScoreMin` | `number` | No | — |
+| `signalScoreMax` | `number` | No | — |
+| `audienceStrengthMin` | `A \| B \| C \| D \| E` | No | — |
+| `audienceStrengthMax` | `A \| B \| C \| D \| E` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  category?: string,
+  topic?: string,
+  signalScore?: number,
+  audienceStrength?: string,
+  newSignal?: boolean,
+  signalDate?: string,
+  trend?: number,
+  recommendedContacts?: {
+    id?: number,
+    firstName?: string,
+    lastName?: string,
+    jobTitle?: string,
+    jobFunction?: {
+      name?: string,
+      department?: string
+    }[]
+  }[],
+  company?: {
+    id?: number,
+    name?: string,
+    website?: string,
+    hasOtherTopicConsumption?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrichLocation
+
+`zoominfo.enrichLocation`
+
+Fetch every known office location for one company
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.enrichLocation({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rpp` | `number` | No | — |
+| `page` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortOrder` | `asc \| ascending \| desc \| descending` | No | Defaults to desc. |
+| `companyId` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyWebsite` | `string` | No | — |
+| `street` | `string` | No | — |
+| `city` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zipCode` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  phone?: string,
+  fax?: string,
+  street?: string,
+  city?: string,
+  state?: string,
+  zipCode?: string,
+  country?: string,
+  company?: {
+    id?: number,
+    name?: string,
+    addressStatus?: string,
+    subUnitType?: string,
+    locationName?: string,
+    locationEmployeeCount?: number
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrichNews
+
+`zoominfo.enrichNews`
+
+Fetch news articles for one company
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.enrichNews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `companyId` | `number \| string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyWebsite` | `string` | No | — |
+| `categories` | `string[]` | No | — |
+| `url` | `string[]` | No | — |
+| `pageDateMin` | `string` | No | — |
+| `pageDateMax` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string,
+  title?: string,
+  url?: string,
+  imageUrl?: string,
+  pageDate?: string,
+  description?: string,
+  categories?: string[],
+  company?: {
+    id?: number,
+    name?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrichScoop
+
+`zoominfo.enrichScoop`
+
+Fetch Scoops for one company
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.enrichScoop({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rpp` | `number` | No | — |
+| `page` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortOrder` | `asc \| ascending \| desc \| descending` | No | Defaults to desc. |
+| `companyId` | `number \| string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyWebsite` | `string` | No | — |
+| `scoopType` | `string` | No | — |
+| `scoopTopic` | `string` | No | — |
+| `department` | `string` | No | — |
+| `publishedStartDate` | `string` | No | — |
+| `publishedEndDate` | `string` | No | — |
+| `updatedSinceCreation` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  publishedDate?: string,
+  originalPublishedDate?: string,
+  linkText?: string,
+  link?: string,
+  description?: string,
+  updateText?: string,
+  topics?: any[],
+  types?: {
+    id?: number,
+    type?: string
+  }[],
+  contacts?: any[],
+  company?: {
+    id?: number,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### enrichTechnology
+
+`zoominfo.enrichTechnology`
+
+Fetch the technologies detected in one company's stack
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.enrichTechnology({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rpp` | `number` | No | — |
+| `page` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortOrder` | `asc \| ascending \| desc \| descending` | No | Defaults to desc. |
+| `companyId` | `number \| string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyWebsite` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  tag?: string,
+  categoryParent?: string,
+  category?: string,
+  vendor?: string,
+  product?: string,
+  attribute?: string,
+  website?: string,
+  logo?: string,
+  domain?: string,
+  createdTime?: string,
+  modifiedTime?: string,
+  description?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompanySearchInputFields
+
+`zoominfo.getCompanySearchInputFields`
+
+List the company search filters this account may use
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.getCompanySearchInputFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  fieldName: string,
+  fieldType?: string,
+  description?: string,
+  accessGranted?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getContactSearchInputFields
+
+`zoominfo.getContactSearchInputFields`
+
+List the contact search filters this account may use
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.getContactSearchInputFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  fieldName: string,
+  fieldType?: string,
+  description?: string,
+  accessGranted?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getIntentSearchInputFields
+
+`zoominfo.getIntentSearchInputFields`
+
+List the intent search filters this account may use
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.getIntentSearchInputFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  fieldName: string,
+  fieldType?: string,
+  description?: string,
+  accessGranted?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getNewsSearchInputFields
+
+`zoominfo.getNewsSearchInputFields`
+
+List the news search filters this account may use
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.getNewsSearchInputFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  fieldName: string,
+  fieldType?: string,
+  description?: string,
+  accessGranted?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getScoopSearchInputFields
+
+`zoominfo.getScoopSearchInputFields`
+
+List the scoop search filters this account may use
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.getScoopSearchInputFields({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  fieldName: string,
+  fieldType?: string,
+  description?: string,
+  accessGranted?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchCompanies
+
+`zoominfo.searchCompanies`
+
+Search companies by firmographics, location and technology
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.searchCompanies({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rpp` | `number` | No | — |
+| `page` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortOrder` | `asc \| ascending \| desc \| descending` | No | Defaults to desc. |
+| `companyDescription` | `string` | No | — |
+| `companyType` | `string` | No | — |
+| `companyRanking` | `string` | No | — |
+| `companyStructureIncludedSubUnitTypes` | `string` | No | — |
+| `subUnitTypes` | `string` | No | — |
+| `address` | `string` | No | — |
+| `street` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zipCode` | `string` | No | — |
+| `country` | `string` | No | — |
+| `continent` | `string` | No | — |
+| `metroRegion` | `string` | No | — |
+| `excludedRegions` | `string` | No | — |
+| `zipCodeRadiusMiles` | `string` | No | — |
+| `locationSearchType` | `PersonOrHQ \| PersonAndHQ \| Person \| HQ \| PersonThenHQ` | No | — |
+| `hashTagString` | `string` | No | — |
+| `techAttributeTagList` | `string` | No | — |
+| `primaryIndustriesOnly` | `boolean` | No | — |
+| `industryCodes` | `string` | No | — |
+| `industryKeywords` | `string` | No | — |
+| `sicCodes` | `string` | No | — |
+| `naicsCodes` | `string` | No | — |
+| `revenue` | `string` | No | — |
+| `revenueMin` | `number` | No | — |
+| `revenueMax` | `number` | No | — |
+| `employeeCount` | `string` | No | — |
+| `employeeRangeMin` | `string` | No | — |
+| `employeeRangeMax` | `string` | No | — |
+| `fundingAmountMin` | `number` | No | — |
+| `fundingAmountMax` | `number` | No | — |
+| `fundingStartDate` | `string` | No | — |
+| `fundingEndDate` | `string` | No | — |
+| `oneYearEmployeeGrowthRateMin` | `string` | No | — |
+| `oneYearEmployeeGrowthRateMax` | `string` | No | — |
+| `twoYearEmployeeGrowthRateMin` | `string` | No | — |
+| `twoYearEmployeeGrowthRateMax` | `string` | No | — |
+| `zoominfoContactsMin` | `string` | No | — |
+| `zoominfoContactsMax` | `string` | No | — |
+| `companyId` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyWebsite` | `string` | No | — |
+| `parentId` | `string` | No | — |
+| `ultimateParentId` | `string` | No | — |
+| `companyTicker` | `string[]` | No | — |
+| `certified` | `0 \| 1` | No | — |
+| `excludeDefunctCompanies` | `boolean` | No | — |
+| `businessModel` | `B2C \| B2B \| B2G[]` | No | — |
+| `engagementStartDate` | `string` | No | — |
+| `engagementEndDate` | `string` | No | — |
+| `engagementType` | `email \| phone \| online meeting[]` | No | — |
+| `marketingDepartmentBudgetMin` | `number` | No | — |
+| `marketingDepartmentBudgetMax` | `number` | No | — |
+| `financeDepartmentBudgetMin` | `number` | No | — |
+| `financeDepartmentBudgetMax` | `number` | No | — |
+| `itDepartmentBudgetMin` | `number` | No | — |
+| `itDepartmentBudgetMax` | `number` | No | — |
+| `hrDepartmentBudgetMin` | `number` | No | — |
+| `hrDepartmentBudgetMax` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchContacts
+
+`zoominfo.searchContacts`
+
+Search contacts by name, title, seniority and company
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.searchContacts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rpp` | `number` | No | — |
+| `page` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortOrder` | `asc \| ascending \| desc \| descending` | No | Defaults to desc. |
+| `companyDescription` | `string` | No | — |
+| `companyType` | `string` | No | — |
+| `companyRanking` | `string` | No | — |
+| `companyStructureIncludedSubUnitTypes` | `string` | No | — |
+| `subUnitTypes` | `string` | No | — |
+| `address` | `string` | No | — |
+| `street` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zipCode` | `string` | No | — |
+| `country` | `string` | No | — |
+| `continent` | `string` | No | — |
+| `metroRegion` | `string` | No | — |
+| `excludedRegions` | `string` | No | — |
+| `zipCodeRadiusMiles` | `string` | No | — |
+| `locationSearchType` | `PersonOrHQ \| PersonAndHQ \| Person \| HQ \| PersonThenHQ` | No | — |
+| `hashTagString` | `string` | No | — |
+| `techAttributeTagList` | `string` | No | — |
+| `primaryIndustriesOnly` | `boolean` | No | — |
+| `industryCodes` | `string` | No | — |
+| `industryKeywords` | `string` | No | — |
+| `sicCodes` | `string` | No | — |
+| `naicsCodes` | `string` | No | — |
+| `revenue` | `string` | No | — |
+| `revenueMin` | `number` | No | — |
+| `revenueMax` | `number` | No | — |
+| `employeeCount` | `string` | No | — |
+| `employeeRangeMin` | `string` | No | — |
+| `employeeRangeMax` | `string` | No | — |
+| `fundingAmountMin` | `number` | No | — |
+| `fundingAmountMax` | `number` | No | — |
+| `fundingStartDate` | `string` | No | — |
+| `fundingEndDate` | `string` | No | — |
+| `oneYearEmployeeGrowthRateMin` | `string` | No | — |
+| `oneYearEmployeeGrowthRateMax` | `string` | No | — |
+| `twoYearEmployeeGrowthRateMin` | `string` | No | — |
+| `twoYearEmployeeGrowthRateMax` | `string` | No | — |
+| `zoominfoContactsMin` | `string` | No | — |
+| `zoominfoContactsMax` | `string` | No | — |
+| `companyId` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyWebsite` | `string` | No | — |
+| `parentId` | `string` | No | — |
+| `ultimateParentId` | `string` | No | — |
+| `personId` | `string` | No | — |
+| `emailAddress` | `string` | No | — |
+| `hashedEmail` | `string` | No | — |
+| `fullName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `middleInitial` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `excludeJobTitle` | `string` | No | — |
+| `managementLevel` | `string` | No | — |
+| `excludeManagementLevel` | `string` | No | — |
+| `department` | `string` | No | — |
+| `jobFunction` | `string` | No | — |
+| `boardMember` | `include \| exclude \| only` | No | — |
+| `hasBeenNotified` | `include \| exclude \| only` | No | — |
+| `companyPastOrPresent` | `present \| past \| pastAndPresent` | No | — |
+| `excludePartialProfiles` | `boolean` | No | — |
+| `executivesOnly` | `boolean` | No | — |
+| `requiredFields` | `string` | No | — |
+| `contactAccuracyScoreMin` | `string` | No | — |
+| `contactAccuracyScoreMax` | `string` | No | — |
+| `lastUpdatedInMonths` | `number` | No | — |
+| `school` | `string` | No | — |
+| `degree` | `string` | No | — |
+| `locationCompanyId` | `string[]` | No | — |
+| `companyTicker` | `string[]` | No | — |
+| `exactJobTitle` | `string` | No | — |
+| `yearsOfExperience` | `string` | No | — |
+| `phone` | `string[]` | No | — |
+| `supplementalEmail` | `string[]` | No | — |
+| `webReferences` | `string[]` | No | — |
+| `techSkills` | `string[]` | No | — |
+| `buyingGroup` | `string[]` | No | — |
+| `lastUpdatedDateAfter` | `string` | No | — |
+| `validDateAfter` | `string` | No | — |
+| `positionStartDateMin` | `string` | No | — |
+| `positionStartDateMax` | `string` | No | — |
+| `engagementStartDate` | `string` | No | — |
+| `engagementEndDate` | `string` | No | — |
+| `engagementType` | `email \| phone \| online meeting[]` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  firstName?: string,
+  middleName?: string,
+  lastName?: string,
+  validDate?: string,
+  lastUpdatedDate?: string,
+  jobTitle?: string,
+  contactAccuracyScore?: number,
+  hasEmail?: boolean,
+  hasSupplementalEmail?: boolean,
+  hasDirectPhone?: boolean,
+  hasMobilePhone?: boolean,
+  hasCompanyIndustry?: boolean,
+  hasCompanyPhone?: boolean,
+  hasCompanyStreet?: boolean,
+  hasCompanyState?: boolean,
+  hasCompanyZipCode?: boolean,
+  hasCompanyCountry?: boolean,
+  hasCompanyRevenue?: boolean,
+  hasCompanyEmployeeCount?: boolean,
+  company?: {
+    id?: number,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchIntent
+
+`zoominfo.searchIntent`
+
+Search companies showing buying intent on given topics
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.searchIntent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rpp` | `number` | No | — |
+| `page` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortOrder` | `asc \| ascending \| desc \| descending` | No | Defaults to desc. |
+| `companyDescription` | `string` | No | — |
+| `companyType` | `string` | No | — |
+| `companyRanking` | `string` | No | — |
+| `companyStructureIncludedSubUnitTypes` | `string` | No | — |
+| `subUnitTypes` | `string` | No | — |
+| `address` | `string` | No | — |
+| `street` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zipCode` | `string` | No | — |
+| `country` | `string` | No | — |
+| `continent` | `string` | No | — |
+| `metroRegion` | `string` | No | — |
+| `excludedRegions` | `string` | No | — |
+| `zipCodeRadiusMiles` | `string` | No | — |
+| `locationSearchType` | `PersonOrHQ \| PersonAndHQ \| Person \| HQ \| PersonThenHQ` | No | — |
+| `hashTagString` | `string` | No | — |
+| `techAttributeTagList` | `string` | No | — |
+| `primaryIndustriesOnly` | `boolean` | No | — |
+| `industryCodes` | `string` | No | — |
+| `industryKeywords` | `string` | No | — |
+| `sicCodes` | `string` | No | — |
+| `naicsCodes` | `string` | No | — |
+| `revenue` | `string` | No | — |
+| `revenueMin` | `number` | No | — |
+| `revenueMax` | `number` | No | — |
+| `employeeCount` | `string` | No | — |
+| `employeeRangeMin` | `string` | No | — |
+| `employeeRangeMax` | `string` | No | — |
+| `fundingAmountMin` | `number` | No | — |
+| `fundingAmountMax` | `number` | No | — |
+| `fundingStartDate` | `string` | No | — |
+| `fundingEndDate` | `string` | No | — |
+| `oneYearEmployeeGrowthRateMin` | `string` | No | — |
+| `oneYearEmployeeGrowthRateMax` | `string` | No | — |
+| `twoYearEmployeeGrowthRateMin` | `string` | No | — |
+| `twoYearEmployeeGrowthRateMax` | `string` | No | — |
+| `zoominfoContactsMin` | `string` | No | — |
+| `zoominfoContactsMax` | `string` | No | — |
+| `topics` | `string[]` | No | — |
+| `signalStartDate` | `string` | No | — |
+| `signalEndDate` | `string` | No | — |
+| `signalScoreMin` | `number` | No | — |
+| `signalScoreMax` | `number` | No | — |
+| `audienceStrengthMin` | `A \| B \| C \| D \| E` | No | — |
+| `audienceStrengthMax` | `A \| B \| C \| D \| E` | No | — |
+| `certified` | `0 \| 1` | No | — |
+| `excludeDefunctCompanies` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: string,
+  category?: string,
+  topic?: string,
+  signalScore?: number,
+  audienceStrength?: string,
+  newSignal?: boolean,
+  signalDate?: string,
+  trend?: number,
+  recommendedContacts?: {
+    id?: number,
+    firstName?: string,
+    lastName?: string,
+    jobTitle?: string,
+    jobFunction?: {
+      name?: string,
+      department?: string
+    }[]
+  }[],
+  company?: {
+    id?: number,
+    name?: string,
+    website?: string,
+    hasOtherTopicConsumption?: boolean
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchNews
+
+`zoominfo.searchNews`
+
+Search news articles by category and publish date
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.searchNews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rpp` | `number` | No | — |
+| `page` | `number` | No | — |
+| `categories` | `string[]` | No | — |
+| `pageDateMin` | `string` | No | — |
+| `pageDateMax` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  domain?: string,
+  title?: string,
+  url?: string,
+  imageUrl?: string,
+  pageDate?: string,
+  description?: string,
+  categories?: string[],
+  company?: {
+    id?: number,
+    name?: string
+  }[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### searchScoops
+
+`zoominfo.searchScoops`
+
+Search Scoops, ZoomInfo research notes about companies
+
+**Risk:** `read`
+
+```ts
+await corsair.zoominfo.api.zoominfo.searchScoops({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rpp` | `number` | No | — |
+| `page` | `number` | No | — |
+| `sortBy` | `string` | No | — |
+| `sortOrder` | `asc \| ascending \| desc \| descending` | No | Defaults to desc. |
+| `companyDescription` | `string` | No | — |
+| `companyType` | `string` | No | — |
+| `companyRanking` | `string` | No | — |
+| `companyStructureIncludedSubUnitTypes` | `string` | No | — |
+| `subUnitTypes` | `string` | No | — |
+| `address` | `string` | No | — |
+| `street` | `string` | No | — |
+| `state` | `string` | No | — |
+| `zipCode` | `string` | No | — |
+| `country` | `string` | No | — |
+| `continent` | `string` | No | — |
+| `metroRegion` | `string` | No | — |
+| `excludedRegions` | `string` | No | — |
+| `zipCodeRadiusMiles` | `string` | No | — |
+| `locationSearchType` | `PersonOrHQ \| PersonAndHQ \| Person \| HQ \| PersonThenHQ` | No | — |
+| `hashTagString` | `string` | No | — |
+| `techAttributeTagList` | `string` | No | — |
+| `primaryIndustriesOnly` | `boolean` | No | — |
+| `industryCodes` | `string` | No | — |
+| `industryKeywords` | `string` | No | — |
+| `sicCodes` | `string` | No | — |
+| `naicsCodes` | `string` | No | — |
+| `revenue` | `string` | No | — |
+| `revenueMin` | `number` | No | — |
+| `revenueMax` | `number` | No | — |
+| `employeeCount` | `string` | No | — |
+| `employeeRangeMin` | `string` | No | — |
+| `employeeRangeMax` | `string` | No | — |
+| `fundingAmountMin` | `number` | No | — |
+| `fundingAmountMax` | `number` | No | — |
+| `fundingStartDate` | `string` | No | — |
+| `fundingEndDate` | `string` | No | — |
+| `oneYearEmployeeGrowthRateMin` | `string` | No | — |
+| `oneYearEmployeeGrowthRateMax` | `string` | No | — |
+| `twoYearEmployeeGrowthRateMin` | `string` | No | — |
+| `twoYearEmployeeGrowthRateMax` | `string` | No | — |
+| `zoominfoContactsMin` | `string` | No | — |
+| `zoominfoContactsMax` | `string` | No | — |
+| `companyId` | `string` | No | — |
+| `companyName` | `string` | No | — |
+| `companyWebsite` | `string` | No | — |
+| `parentId` | `string` | No | — |
+| `ultimateParentId` | `string` | No | — |
+| `personId` | `string` | No | — |
+| `emailAddress` | `string` | No | — |
+| `hashedEmail` | `string` | No | — |
+| `fullName` | `string` | No | — |
+| `firstName` | `string` | No | — |
+| `middleInitial` | `string` | No | — |
+| `lastName` | `string` | No | — |
+| `jobTitle` | `string` | No | — |
+| `excludeJobTitle` | `string` | No | — |
+| `managementLevel` | `string` | No | — |
+| `excludeManagementLevel` | `string` | No | — |
+| `department` | `string` | No | — |
+| `jobFunction` | `string` | No | — |
+| `boardMember` | `include \| exclude \| only` | No | — |
+| `hasBeenNotified` | `include \| exclude \| only` | No | — |
+| `companyPastOrPresent` | `present \| past \| pastAndPresent` | No | — |
+| `excludePartialProfiles` | `boolean` | No | — |
+| `executivesOnly` | `boolean` | No | — |
+| `requiredFields` | `string` | No | — |
+| `contactAccuracyScoreMin` | `string` | No | — |
+| `contactAccuracyScoreMax` | `string` | No | — |
+| `lastUpdatedInMonths` | `number` | No | — |
+| `school` | `string` | No | — |
+| `degree` | `string` | No | — |
+| `locationCompanyId` | `string[]` | No | — |
+| `scoopId` | `string` | No | — |
+| `scoopType` | `string` | No | — |
+| `scoopTopic` | `string` | No | — |
+| `description` | `string` | No | — |
+| `publishedStartDate` | `string` | No | — |
+| `publishedEndDate` | `string` | No | — |
+| `updatedSinceCreation` | `boolean` | No | — |
+| `certified` | `0 \| 1` | No | — |
+| `excludeDefunctCompanies` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `maxResults` | `number` | No | — |
+| `totalResults` | `number` | No | — |
+| `currentPage` | `number` | No | — |
+| `data` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+  id: number,
+  publishedDate?: string,
+  originalPublishedDate?: string,
+  linkText?: string,
+  link?: string,
+  description?: string,
+  updateText?: string,
+  topics?: any[],
+  types?: {
+    id?: number,
+    type?: string
+  }[],
+  contacts?: any[],
+  company?: {
+    id?: number,
+    name?: string
+  }
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
