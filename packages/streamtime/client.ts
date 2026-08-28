@@ -11,17 +11,8 @@ export class StreamtimeAPIError extends Error {
 	}
 }
 
-// TODO: Update with your API base URL
 const STREAMTIME_API_BASE = 'https://api.streamtime.net/v2';
 
-/**
- * Makes an HTTP request to the Streamtime API.
- *
- * @param endpoint The API endpoint path.
- * @param apiKey The API bearer token.
- * @param options HTTP request options (method, body, query).
- * @returns A promise resolving to the API response.
- */
 export async function makeStreamtimeRequest<T>(
 	endpoint: string,
 	apiKey: string,
@@ -44,11 +35,9 @@ export async function makeStreamtimeRequest<T>(
 		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
-			Authorization: `Bearer ${apiKey}`,
 		},
 	};
 
-	// Filter out undefined query parameters
 	const cleanQuery = query
 		? Object.fromEntries(
 				Object.entries(query).filter(([, value]) => value !== undefined),
@@ -70,7 +59,7 @@ export async function makeStreamtimeRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof Error) {
-			throw new StreamtimeAPIError(error.message);
+			throw error;
 		}
 		throw new StreamtimeAPIError('Unknown error');
 	}
