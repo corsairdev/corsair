@@ -31,14 +31,11 @@ export class MailboxLayerAPIError extends Error {
 	}
 }
 
+// HTTPS only — mailboxlayer's access_key and the checked email address are
+// both sent as query parameters, so this must never be requested over plain
+// HTTP. Free-tier mailboxlayer plans reject HTTPS entirely (api error 105,
+// https_access_restricted); this plugin does not support that tier.
 export const MAILBOXLAYER_API_BASE = 'https://apilayer.net/api';
-export const MAILBOXLAYER_API_BASE_HTTP = 'http://apilayer.net/api';
-
-export function mailboxLayerApiBase(useHttps = true): string {
-	return useHttps === false
-		? MAILBOXLAYER_API_BASE_HTTP
-		: MAILBOXLAYER_API_BASE;
-}
 
 const NO_DEK_ERROR_PATTERN = /no dek found/i;
 
@@ -87,13 +84,12 @@ export async function makeMailboxLayerRequest<T>(
 	accessKey: string,
 	options: {
 		query?: Record<string, string | number | boolean | undefined>;
-		useHttps?: boolean;
 	} = {},
 ): Promise<T> {
-	const { query = {}, useHttps } = options;
+	const { query = {} } = options;
 
 	const config: OpenAPIConfig = {
-		BASE: mailboxLayerApiBase(useHttps !== false),
+		BASE: MAILBOXLAYER_API_BASE,
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',

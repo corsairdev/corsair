@@ -24,7 +24,7 @@ export const CheckResponseSchema = z.object({
 	role: z.boolean(),
 	disposable: z.boolean(),
 	free: z.boolean(),
-	score: z.number(),
+	score: z.number().min(0).max(1),
 });
 
 export type CheckResponse = z.infer<typeof CheckResponseSchema>;

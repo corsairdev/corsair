@@ -12,7 +12,7 @@ export const MailboxLayerEmailCheck = z.object({
 	role: z.boolean().optional(),
 	disposable: z.boolean().optional(),
 	free: z.boolean().optional(),
-	score: z.number().optional(),
+	score: z.number().min(0).max(1).optional(),
 	checkedAt: z.coerce.date().nullable().optional(),
 });
 

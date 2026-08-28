@@ -29,7 +29,6 @@ import { MailboxLayerSchema } from './schema';
 export type MailboxLayerPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	useHttps?: boolean;
 	hooks?: InternalMailboxLayerPlugin['hooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof mailboxLayerEndpointsNested>;

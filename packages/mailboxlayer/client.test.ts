@@ -102,17 +102,19 @@ describe('makeMailboxLayerRequest', () => {
 		);
 	});
 
-	it('uses HTTP when useHttps is false so free-tier keys are not blocked', async () => {
+	it('always uses HTTPS, even when a caller tries to pass an http-like option', async () => {
 		mockRequest.mockResolvedValue(CHECK_BODY);
 
 		await makeMailboxLayerRequest('check', 'test-access-key', {
 			query: { email: 'support@apilayer.net' },
+			// @ts-expect-error — useHttps is no longer a supported option; this
+			// guards against it being silently reintroduced.
 			useHttps: false,
 		});
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			expect.objectContaining({
-				BASE: 'http://apilayer.net/api',
+				BASE: MAILBOXLAYER_API_BASE,
 			}),
 			expect.anything(),
 		);

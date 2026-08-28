@@ -89,7 +89,6 @@ describe('email.check', () => {
 				smtp: 1,
 				format: 1,
 			},
-			useHttps: undefined,
 		});
 		expect(result.email).toBe('support@apilayer.net');
 		expect(upsertByEntityId).toHaveBeenCalledWith('support@apilayer.net', {
@@ -129,17 +128,20 @@ describe('email.check', () => {
 		);
 	});
 
-	it('forwards useHttps: false so free-tier keys can use HTTP', async () => {
+	it('never forwards a useHttps option, even if a caller sets one', async () => {
 		mockRequest.mockResolvedValue(CHECK_RESPONSE);
 
-		await check(makeCtx({ options: { useHttps: false } }), {
-			email: 'support@apilayer.net',
-		});
+		await check(
+			// @ts-expect-error — useHttps is no longer a supported plugin option;
+			// this guards against it being silently reintroduced.
+			makeCtx({ options: { useHttps: false } }),
+			{ email: 'support@apilayer.net' },
+		);
 
 		expect(mockRequest).toHaveBeenCalledWith(
 			'check',
 			'test-key',
-			expect.objectContaining({ useHttps: false }),
+			expect.not.objectContaining({ useHttps: expect.anything() }),
 		);
 	});
 

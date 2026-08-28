@@ -19,7 +19,6 @@ export const check: MailboxLayerEndpoints['check'] = async (ctx, input) => {
 			smtp: smtp === false ? 0 : 1,
 			format: 1,
 		},
-		useHttps: ctx.options.useHttps,
 	});
 
 	const response = CheckResponseSchema.parse(rawResponse);
