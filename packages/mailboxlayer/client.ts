@@ -64,18 +64,31 @@ interface MailboxLayerErrorBody {
 	error: {
 		code: number;
 		type: string;
-		info: string;
+		// Not always present on live responses (e.g. code 211 without a
+		// `format_not_valid` message body) despite being documented.
+		info?: string;
 	};
 }
 
 function isMailboxLayerErrorBody(
 	value: unknown,
 ): value is MailboxLayerErrorBody {
+	if (typeof value !== 'object' || value === null) return false;
+	const { success, error } = value as {
+		success?: unknown;
+		error?: unknown;
+	};
+	if (success !== false || typeof error !== 'object' || error === null)
+		return false;
+	const { code, type, info } = error as {
+		code?: unknown;
+		type?: unknown;
+		info?: unknown;
+	};
 	return (
-		typeof value === 'object' &&
-		value !== null &&
-		'success' in value &&
-		(value as { success: unknown }).success === false
+		typeof code === 'number' &&
+		typeof type === 'string' &&
+		(info === undefined || typeof info === 'string')
 	);
 }
 
@@ -124,7 +137,7 @@ export async function makeMailboxLayerRequest<T>(
 	}
 
 	if (isMailboxLayerErrorBody(raw)) {
-		throw new MailboxLayerAPIError(raw.error.info, {
+		throw new MailboxLayerAPIError(raw.error.info ?? raw.error.type, {
 			apiCode: raw.error.code,
 			apiType: raw.error.type,
 		});

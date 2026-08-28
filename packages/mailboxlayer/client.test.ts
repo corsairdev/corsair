@@ -112,12 +112,8 @@ describe('makeMailboxLayerRequest', () => {
 			useHttps: false,
 		});
 
-		expect(mockRequest).toHaveBeenCalledWith(
-			expect.objectContaining({
-				BASE: MAILBOXLAYER_API_BASE,
-			}),
-			expect.anything(),
-		);
+		const lastCall = mockRequest.mock.calls.at(-1);
+		expect(new URL(lastCall?.[0].BASE ?? '').protocol).toBe('https:');
 	});
 
 	it('throws MailboxLayerAPIError with apiCode when the body is success:false', async () => {
@@ -139,6 +135,33 @@ describe('makeMailboxLayerRequest', () => {
 			apiCode: 105,
 			apiType: 'https_access_restricted',
 		});
+	});
+
+	it('throws with the error type as the message when info is missing', async () => {
+		mockRequest.mockResolvedValue({
+			success: false,
+			error: { code: 211, type: 'format_not_valid' },
+		});
+
+		await expect(
+			makeMailboxLayerRequest('check', 'test-access-key', {
+				query: { email: 'not-a-valid-email' },
+			}),
+		).rejects.toMatchObject({
+			constructor: MailboxLayerAPIError,
+			message: 'format_not_valid',
+			apiCode: 211,
+		});
+	});
+
+	it('does not throw on a success:false body with a malformed error field', async () => {
+		mockRequest.mockResolvedValue({ success: false, error: null });
+
+		await expect(
+			makeMailboxLayerRequest('check', 'test-access-key', {
+				query: { email: 'support@apilayer.net' },
+			}),
+		).resolves.toEqual({ success: false, error: null });
 	});
 
 	it('copies status and retryAfter off a transport ApiError', async () => {
