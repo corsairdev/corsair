@@ -1,34 +1,13 @@
-import { z } from 'zod';
+import type { CorsairEndpoint } from 'corsair/core';
+import type { SourcegraphContext } from '../index';
+import type { SearchInput, SearchResponse } from './types';
 
-const SearchInputSchema = z.object({
-	q: z.string(),
-});
+export const search: CorsairEndpoint<
+	SourcegraphContext,
+	SearchInput,
+	SearchResponse
+> = async (ctx, input) => {
+	const response = await ctx.http.post('/.api/search/stream', input);
 
-export type SearchInput = z.infer<typeof SearchInputSchema>;
-
-const SearchResponseSchema = z.object({
-	results: z.array(
-		z.object({
-			type: z.string(),
-			data: z.unknown(),
-		}),
-	),
-});
-
-export type SearchResponse = z.infer<typeof SearchResponseSchema>;
-
-export type SourcegraphEndpointInputs = {
-	search: SearchInput;
+	return response.data as SearchResponse;
 };
-
-export type SourcegraphEndpointOutputs = {
-	search: SearchResponse;
-};
-
-export const SourcegraphEndpointInputSchemas = {
-	search: SearchInputSchema,
-} as const;
-
-export const SourcegraphEndpointOutputSchemas = {
-	search: SearchResponseSchema,
-} as const;
