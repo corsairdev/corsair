@@ -189,6 +189,10 @@ description: "…"                 # Mintlify frontmatter
 overviewNote: |                  # Optional markdown after the intro
   …
 recommendedAuth: managed         # Tab labeled Recommended; used in setup snippet
+factory:                         # Optional construct-time options + note
+  note: "…"                      # Shown above the factory snippet in auth tabs
+  options:                       # Merged into plugin({ ... }) in setup + auth
+    host: example.example.com
 examples:
   read:
     path: channels.list          # shortPath under plugin.api
@@ -211,7 +215,7 @@ exampleWebhook:
     console.log(result.data);
 ```
 
-Credential walkthroughs stay on optional `get-credentials.mdx` (linked from auth tabs when present). Connect copy is shared across all plugins.
+Credential walkthroughs stay on optional `get-credentials.mdx` (linked from auth tabs when present). Connect copy is shared across all plugins. `factory.options` is also passed when constructing the plugin for introspection (for plugins that cannot be called with `()`).
 
 Generation **validates** yaml overrides against the plugin: `examples.*.path` must exist, `args` keys/types must match the endpoint input schema, `dbExample.entity` / `data` fields must match synced filters (including types), and `exampleWebhook.path` must exist. Invalid overrides fail the generate run.
 
