@@ -1,0 +1,23 @@
+displayName: Figma
+description: "Figma plugin for Corsair — files, comments, and file-change events."
+examples:
+  read:
+    path: files.getMetadata
+    title: Get file metadata
+    args:
+      file_key: abcDEF123
+  write:
+    path: comments.add
+    title: Add a comment
+    args:
+      file_key: abcDEF123
+      message: Hello from Corsair
+dbExample:
+  entity: fileMetadata
+  note: "Search synced file metadata without hitting Figma."
+  limit: 50
+exampleWebhook:
+  path: files.fileUpdate
+  note: "Fires when a Figma file is updated. Do not use ping.ping."
+  after: |
+    console.log('Figma file updated:', result.data);
