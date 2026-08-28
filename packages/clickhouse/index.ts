@@ -13,7 +13,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
 import { AuthMissingError } from 'corsair/core';
-import { Query } from './endpoints';
+import { Play, Query, Schema } from './endpoints';
 import type {
 	ClickhouseEndpointInputs,
 	ClickhouseEndpointOutputs,
@@ -61,6 +61,11 @@ type ClickhouseEndpoint<K extends keyof ClickhouseEndpointOutputs> =
 
 export type ClickhouseEndpoints = {
 	executeQuery: ClickhouseEndpoint<'executeQuery'>;
+	listDatabases: ClickhouseEndpoint<'listDatabases'>;
+	listTables: ClickhouseEndpoint<'listTables'>;
+	getDatabaseSchema: ClickhouseEndpoint<'getDatabaseSchema'>;
+	getTableSchema: ClickhouseEndpoint<'getTableSchema'>;
+	getPlayInterface: ClickhouseEndpoint<'getPlayInterface'>;
 };
 
 // ClickHouse has no inbound webhook surface — queries are pull-only.
@@ -69,6 +74,15 @@ const clickhouseWebhooksNested = {} as const;
 const clickhouseEndpointsNested = {
 	query: {
 		execute: Query.execute,
+		listDatabases: Query.listDatabases,
+		listTables: Query.listTables,
+	},
+	schema: {
+		getDatabase: Schema.getDatabase,
+		getTable: Schema.getTable,
+	},
+	play: {
+		get: Play.get,
 	},
 } as const;
 
@@ -76,6 +90,26 @@ export const clickhouseEndpointSchemas = {
 	'query.execute': {
 		input: ClickhouseEndpointInputSchemas.executeQuery,
 		output: ClickhouseEndpointOutputSchemas.executeQuery,
+	},
+	'query.listDatabases': {
+		input: ClickhouseEndpointInputSchemas.listDatabases,
+		output: ClickhouseEndpointOutputSchemas.listDatabases,
+	},
+	'query.listTables': {
+		input: ClickhouseEndpointInputSchemas.listTables,
+		output: ClickhouseEndpointOutputSchemas.listTables,
+	},
+	'schema.getDatabase': {
+		input: ClickhouseEndpointInputSchemas.getDatabaseSchema,
+		output: ClickhouseEndpointOutputSchemas.getDatabaseSchema,
+	},
+	'schema.getTable': {
+		input: ClickhouseEndpointInputSchemas.getTableSchema,
+		output: ClickhouseEndpointOutputSchemas.getTableSchema,
+	},
+	'play.get': {
+		input: ClickhouseEndpointInputSchemas.getPlayInterface,
+		output: ClickhouseEndpointOutputSchemas.getPlayInterface,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof clickhouseEndpointsNested
@@ -88,6 +122,30 @@ const clickhouseEndpointMeta = {
 		riskLevel: 'read' as const,
 		description:
 			'Execute a SQL query against the tenant ClickHouse instance and return the result rows.',
+	},
+	'query.listDatabases': {
+		riskLevel: 'read' as const,
+		description: 'List all databases on the tenant ClickHouse instance.',
+	},
+	'query.listTables': {
+		riskLevel: 'read' as const,
+		description:
+			'List tables in a ClickHouse database with their engine and approximate size.',
+	},
+	'schema.getDatabase': {
+		riskLevel: 'read' as const,
+		description:
+			'Get schema overview for a ClickHouse database; optionally include column definitions for each table.',
+	},
+	'schema.getTable': {
+		riskLevel: 'read' as const,
+		description:
+			'Get column-level schema for a ClickHouse table, optionally with sample rows.',
+	},
+	'play.get': {
+		riskLevel: 'read' as const,
+		description:
+			'Fetch the ClickHouse Play web UI HTML (Monaco editor + query UI).',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof clickhouseEndpointsNested
@@ -159,6 +217,16 @@ export type {
 	ClickhouseEndpointOutputs,
 	ExecuteQueryInput,
 	ExecuteQueryResponse,
+	GetDatabaseSchemaInput,
+	GetDatabaseSchemaResponse,
+	GetPlayInterfaceInput,
+	GetPlayInterfaceResponse,
+	GetTableSchemaInput,
+	GetTableSchemaResponse,
+	ListDatabasesInput,
+	ListDatabasesResponse,
+	ListTablesInput,
+	ListTablesResponse,
 } from './endpoints/types';
 export {
 	ClickhouseEndpointInputSchemas,

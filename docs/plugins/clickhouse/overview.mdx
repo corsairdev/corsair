@@ -1,0 +1,111 @@
+---
+title: Overview
+description: "ClickHouse plugin for Corsair"
+---
+
+Use **ClickHouse** through Corsair: one client, typed API calls against the
+ClickHouse HTTP SQL interface.
+
+**What you get:**
+
+- 6 typed API operations for querying and introspecting a ClickHouse instance
+- Reads-only surface; write/DDL is not exposed (use the ClickHouse client
+  directly for mutations)
+- 0 database entities — ClickHouse result rows are dynamic and not
+  synchronized locally
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+```bash
+pnpm install @corsair-dev/clickhouse
+```
+
+</Step>
+
+<Step title="Add the plugin">
+<Tabs>
+<Tab title="Solo">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { clickhouse } from '@corsair-dev/clickhouse';
+
+export const corsair = createCorsair({
+	multiTenancy: false,
+	plugins: [
+		clickhouse({
+			baseUrl: 'https://ch.example.com:8443',
+			key: process.env.CLICKHOUSE_API_KEY,
+		}),
+	],
+});
+```
+</Tab>
+<Tab title="Multi-Tenant">
+```ts corsair.ts
+import { createCorsair } from 'corsair';
+import { clickhouse } from '@corsair-dev/clickhouse';
+
+export const corsair = createCorsair({
+	multiTenancy: true,
+	plugins: [
+		clickhouse({
+			// No baseUrl here — each tenant supplies its own via `tenant_external_id`.
+		}),
+	],
+});
+```
+
+In multi-tenant mode, the per-tenant ClickHouse HTTP endpoint is read from
+the account's stored `tenant_external_id` (set during account connect). The
+Basic-auth credential is stored as the account's `api_key`.
+
+</Tab>
+</Tabs>
+</Step>
+
+<Step title="Store credentials">
+```bash
+pnpm corsair setup --plugin=clickhouse api_key=Basic <base64(user:password)>
+```
+
+See [Get Credentials](/plugins/clickhouse/get-credentials) for the
+end-to-end walk-through.
+
+</Step>
+
+</Steps>
+
+## How it works
+
+ClickHouse is **not** a REST API. Its HTTP interface accepts a raw SQL
+query in the request body and returns rows in a chosen output format. The
+plugin POSTs SQL with `FORMAT JSONEachRow` so each line of the response is
+a JSON object, then parses them into the operation's return type.
+
+| Endpoint                                  | SQL                                              |
+| ----------------------------------------- | ------------------------------------------------ |
+| `query.execute`                           | pass-through, appends `LIMIT` if requested       |
+| `query.listDatabases`                     | `system.databases`                               |
+| `query.listTables`                        | `system.tables` (filtered by database)           |
+| `schema.getDatabase`                      | `system.tables` + optional `system.columns`      |
+| `schema.getTable`                         | `system.columns` + optional `SELECT * LIMIT n`   |
+| `play.get`                                | `GET /play` (returns the HTML page)              |
+
+## Security
+
+- The plugin does **not** validate that submitted SQL is read-only. Treat
+  `query.execute` as a privileged operation; restrict its use via Corsair
+  `permissions` if you expose it to an LLM agent.
+- Database and table identifiers supplied to schema queries are validated
+  against `^[A-Za-z_][A-Za-z0-9_]*$` before any server interaction, and
+  ClickHouse's own `{name:Type}` parameter substitution is used to keep
+  user input from being concatenated into SQL.
+- The Play UI response is capped at 5 MB.
+
+## See also
+
+- [Get Credentials](/plugins/clickhouse/get-credentials)
+- [API Reference](/plugins/clickhouse/api)

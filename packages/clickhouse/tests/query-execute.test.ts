@@ -1,5 +1,5 @@
-import { Query } from './index';
-import { ClickhouseEndpointOutputSchemas } from './types';
+import { Query } from '../endpoints';
+import { ClickhouseEndpointOutputSchemas } from '../endpoints/types';
 
 const originalFetch = globalThis.fetch;
 
@@ -62,7 +62,7 @@ describe('Query.execute (ClickHouse plugin)', () => {
 
 		expect(fetchSpy).toHaveBeenCalledTimes(1);
 		const [url, init] = fetchSpy.mock.calls[0] as FetchCall;
-		expect(url).toBe('https://ch.example.com:8443');
+		expect(String(url)).toBe('https://ch.example.com:8443/');
 		expect(init?.method).toBe('POST');
 		expect((init?.headers as Record<string, string>).Authorization).toBe(
 			'Basic dXNlcjpwYXNz',

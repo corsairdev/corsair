@@ -1,5 +1,5 @@
-import { ClickhouseSchema } from './schema';
-import { ClickhouseQueryResult } from './schema/database';
+import { ClickhouseSchema } from '../schema';
+import { ClickhouseQueryResult } from '../schema/database';
 
 describe('Clickhouse schema', () => {
 	it('declares a semver version', () => {
