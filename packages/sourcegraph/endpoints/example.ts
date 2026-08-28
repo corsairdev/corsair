@@ -6,7 +6,7 @@ import type { SourcegraphEndpointOutputs } from './types';
 export const search: SourcegraphEndpoints['search'] = async (ctx, input) => {
 	const response = await makeSourcegraphRequest<
 		SourcegraphEndpointOutputs['search']
-	>('/.api/search/stream', ctx.key, {
+	>('search', ctx.key, {
 		method: 'GET',
 		query: {
 			q: input.q,
@@ -15,9 +15,10 @@ export const search: SourcegraphEndpoints['search'] = async (ctx, input) => {
 
 	await logEventFromContext(
 		ctx,
-		'sourcegraph.search',
+		'sourcegraph.search.search',
 		{ ...input },
 		'completed',
 	);
+
 	return response;
 };

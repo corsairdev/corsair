@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const SearchInputSchema = z.object({
-	q: z.string().min(1),
+	q: z.string(),
 });
 
 export type SearchInput = z.infer<typeof SearchInputSchema>;

@@ -156,7 +156,7 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 		id: 'sourcegraph',
 		authConfig: sourcegraphAuthConfig,
 		schema: SourcegraphSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: sourcegraphEndpointsNested,
@@ -173,6 +173,7 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 		},
 
 		pluginTenantWebhookMatcher: matchSourcegraphTenantWebhook,
+
 		oauthWebhookTenantLinkResolver: resolveSourcegraphOAuthWebhookTenantLink,
 
 		errorHandlers: {
@@ -187,6 +188,7 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
+
 				return res ?? '';
 			}
 
@@ -196,11 +198,13 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
+
 				return res ?? '';
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
+
 				return res ?? '';
 			}
 
