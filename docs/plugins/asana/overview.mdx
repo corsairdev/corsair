@@ -106,7 +106,7 @@ asana({
 })
 ```
 
-Store credentials with `pnpm corsair setup --plugin=asana` (see [Get Credentials](/plugins/asana/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
+Store credentials with `pnpm corsair Setup --plugin=asana` (see [Get Credentials](/plugins/asana/get-credentials) for field names). For OAuth, you typically store integration keys at the provider level and tokens per account or tenant.
 
 More: [OAuth 2.0](/concepts/oauth)
 
@@ -127,17 +127,21 @@ Synced entities support `corsair.asana.db.<entity>.search()` and `.list()`. See 
 
 ## Example API calls
 
-**Read-style (read):** `projects.get`
+**Read-style (read):** `tasks.list`
 
 ```ts
-await corsair.asana.api.projects.get({});
+await corsair.asana.api.tasks.list({});
 ```
 
 
-**Write-style (write):** `projects.addFollowers`
+**Write-style (write):** `tasks.create`
 
 ```ts
-await corsair.asana.api.projects.addFollowers({});
+await corsair.asana.api.tasks.create({
+  data: {
+    name: "Follow up from Corsair",
+  },
+});
 ```
 
 
