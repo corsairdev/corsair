@@ -53,8 +53,33 @@ describe('errorHandlers', () => {
 		expect(matchedHandlerName(error)).toBe('RATE_LIMIT_ERROR');
 	});
 
+	it('classifies Too Many Requests as RATE_LIMIT_ERROR', () => {
+		expect(matchedHandlerName(new Error('Too Many Requests'))).toBe(
+			'RATE_LIMIT_ERROR',
+		);
+	});
+
 	it('falls back to DEFAULT for an unrecognized error', () => {
 		const error = new Error('something unexpected');
 		expect(matchedHandlerName(error)).toBe('DEFAULT');
+	});
+
+	it('does not log from handlers', async () => {
+		const log = jest.spyOn(console, 'log').mockImplementation(() => {});
+		const warn = jest.spyOn(console, 'warn').mockImplementation(() => {});
+		const error = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+		await errorHandlers.AUTH_ERROR.handler();
+		await errorHandlers.QUOTA_ERROR.handler();
+		await errorHandlers.HTTPS_RESTRICTED_ERROR.handler();
+		await errorHandlers.VALIDATION_ERROR.handler();
+		await errorHandlers.DEFAULT.handler();
+
+		expect(log).not.toHaveBeenCalled();
+		expect(warn).not.toHaveBeenCalled();
+		expect(error).not.toHaveBeenCalled();
+		log.mockRestore();
+		warn.mockRestore();
+		error.mockRestore();
 	});
 });
