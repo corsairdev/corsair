@@ -742,14 +742,6 @@
                 ]
               },
               {
-                "group": "ClickHouse",
-                "pages": [
-                  "plugins/clickhouse/overview",
-                  "plugins/clickhouse/get-credentials",
-                  "plugins/clickhouse/api"
-                ]
-              },
-              {
                 "group": "Calendly",
                 "pages": [
                   "plugins/calendly/overview",
