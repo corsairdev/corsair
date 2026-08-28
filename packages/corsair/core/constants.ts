@@ -78,6 +78,7 @@ export const BaseProviders = [
 	'blazemeter',
 	'bluesky',
 	'boloforms',
+	'bookingmood',
 	'botpress',
 	'botsonic',
 	'bouncer',
@@ -292,6 +293,7 @@ export const ProviderDisplayNames = {
 	blazemeter: 'BlazeMeter',
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
+	bookingmood: 'Bookingmood',
 	botpress: 'Botpress',
 	botsonic: 'Botsonic',
 	bouncer: 'Bouncer',
@@ -513,6 +515,7 @@ export type AllProviders =
 	| 'blazemeter'
 	| 'bluesky'
 	| 'boloforms'
+	| 'bookingmood'
 	| 'botpress'
 	| 'botsonic'
 	| 'bouncer'
