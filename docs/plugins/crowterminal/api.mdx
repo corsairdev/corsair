@@ -1,0 +1,1199 @@
+---
+title: API
+description: "API reference for CrowTerminal: every `crowterminal.api.*` operation with input and output types."
+---
+
+Every `crowterminal.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Agent
+
+### register
+
+`agent.register`
+
+Self-register an agent and receive a new API key
+
+**Risk:** `write`
+
+```ts
+await corsair.crowterminal.api.agent.register({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentName` | `string` | Yes | — |
+| `agentDescription` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `message` | `string` | No | — |
+| `apiKey` | `string` | No | — |
+| `agentId` | `string` | No | — |
+
+
+
+---
+
+## Data
+
+### getTypes
+
+`data.getTypes`
+
+List the analytics data types each platform accepts
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.data.getTypes({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `dataTypes` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="dataTypes full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ingest
+
+`data.ingest`
+
+Ingest one platform analytics data point
+
+**Risk:** `write`
+
+```ts
+await corsair.crowterminal.api.data.ingest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+| `platform` | `TIKTOK \| INSTAGRAM \| YOUTUBE` | Yes | — |
+| `dataType` | `retention \| demographics \| traffic_sources \| watch_time \| audience_activity \| follower_growth \| video_performance \| sound_performance \| hashtag_performance \| reach_sources \| content_interactions \| story_metrics \| reel_metrics \| subscriber_growth \| click_through_rate \| impression_sources \| end_screen_performance` | Yes | — |
+| `videoId` | `string` | No | — |
+| `data` | `object` | Yes | — |
+| `confidence` | `number` | No | — |
+
+<AccordionGroup>
+<Accordion title="data full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### ingestBulk
+
+`data.ingestBulk`
+
+Ingest up to 50 analytics data points at once
+
+**Risk:** `write`
+
+```ts
+await corsair.crowterminal.api.data.ingestBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `items` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="items full type">
+
+```ts
+{
+  clientId: string,
+  platform: TIKTOK | INSTAGRAM | YOUTUBE,
+  dataType: retention | demographics | traffic_sources | watch_time | audience_activity | follower_growth | video_performance | sound_performance | hashtag_performance | reach_sources | content_interactions | story_metrics | reel_metrics | subscriber_growth | click_through_rate | impression_sources | end_screen_performance,
+  videoId?: string,
+  data: {
+  },
+  confidence?: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `total` | `number` | No | — |
+| `results` | `any[]` | No | — |
+
+
+
+---
+
+## Intelligence
+
+### getByokPlatform
+
+`intelligence.getByokPlatform`
+
+Get raw algorithm context without LLM inference charges
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.intelligence.getByokPlatform({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `platforms` | `string[]` | No | — |
+| `intelligence` | `any` | No | — |
+
+
+
+---
+
+### getPlatform
+
+`intelligence.getPlatform`
+
+Get TikTok, Instagram and YouTube algorithm insights
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.intelligence.getPlatform({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `data` | `any` | No | — |
+
+
+
+---
+
+## Memory
+
+### compareMd
+
+`memory.compareMd`
+
+Diff an agent markdown against all stored versions
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.memory.compareMd({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+| `agentMd` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="agentMd full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `clientId` | `string` | No | — |
+| `comparison` | `string` | No | — |
+| `message` | `string` | No | — |
+| `recommendation` | `string` | No | — |
+| `differences` | `any[]` | No | — |
+| `missingFields` | `string[]` | No | — |
+
+
+
+---
+
+### engagementAnalysis
+
+`memory.engagementAnalysis`
+
+Correlate every agent field with historical engagement
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.memory.engagementAnalysis({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+| `agentMd` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="agentMd full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `clientId` | `string` | No | — |
+| `analysis` | `string` | No | — |
+| `message` | `string` | No | — |
+| `versionsAnalyzed` | `number` | No | — |
+| `overallStats` | `object` | No | — |
+| `fieldAnalysis` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="overallStats full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### get
+
+`memory.get`
+
+Get the stored skill for one client
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.memory.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `clientId` | `string` | No | — |
+| `clientName` | `string` | No | — |
+| `version` | `number` | No | — |
+| `updatedAt` | `string` | No | — |
+| `skill` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="skill full type">
+
+```ts
+{
+  primaryNiche?: string,
+  subNiches?: string[],
+  contentStyle?: string,
+  signatureStyle?: string,
+  hookPatterns?: string[],
+  avgEngagement?: number,
+  bestPostingTimes?: {
+    day?: number,
+    hour?: number,
+    score?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getBulk
+
+`memory.getBulk`
+
+Read stored skills for up to 50 clients
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.memory.getBulk({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientIds` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `total` | `number` | No | — |
+| `clients` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="clients full type">
+
+```ts
+{
+  clientId: string,
+  success?: boolean,
+  skill?: {
+    primaryNiche?: string,
+    subNiches?: string[],
+    contentStyle?: string,
+    signatureStyle?: string,
+    hookPatterns?: string[],
+    avgEngagement?: number,
+    bestPostingTimes?: {
+      day?: number,
+      hour?: number,
+      score?: number
+    }[]
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getChangelog
+
+`memory.getChangelog`
+
+Read the change history of a client skill
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.memory.getChangelog({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `clientId` | `string` | No | — |
+| `message` | `string` | No | — |
+| `changelog` | `any[]` | Yes | — |
+
+
+
+---
+
+### getPattern
+
+`memory.getPattern`
+
+Trend one skill field across stored versions
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.memory.getPattern({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+| `field` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `clientId` | `string` | No | — |
+| `field` | `string` | No | — |
+| `trend` | `string` | No | — |
+| `versionsAnalyzed` | `number` | No | — |
+| `dataPoints` | `any[]` | Yes | — |
+
+
+
+---
+
+### validateChanges
+
+`memory.validateChanges`
+
+Check proposed edits against historical outcomes
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.memory.validateChanges({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `clientId` | `string` | Yes | — |
+| `proposedChanges` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="proposedChanges full type">
+
+```ts
+{
+  field: string,
+  oldValue?: any,
+  newValue?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `clientId` | `string` | No | — |
+| `validation` | `string` | No | — |
+| `message` | `string` | No | — |
+| `warnings` | `any[]` | Yes | — |
+| `recommendations` | `any[]` | Yes | — |
+
+
+
+---
+
+## Sandbox
+
+### engagementAnalysis
+
+`sandbox.engagementAnalysis`
+
+Run a mock engagement analysis
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.sandbox.engagementAnalysis({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `agentMd` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="agentMd full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `versionsAnalyzed` | `number` | No | — |
+| `overallStats` | `object` | No | — |
+| `fieldAnalysis` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="overallStats full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getClient
+
+`sandbox.getClient`
+
+Get mock client data for testing
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.sandbox.getClient({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `clientId` | `string` | No | — |
+| `clientName` | `string` | No | — |
+| `version` | `number` | No | — |
+| `skill` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="skill full type">
+
+```ts
+{
+  primaryNiche?: string,
+  subNiches?: string[],
+  contentStyle?: string,
+  signatureStyle?: string,
+  hookPatterns?: string[],
+  avgEngagement?: number,
+  bestPostingTimes?: {
+    day?: number,
+    hour?: number,
+    score?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getMemory
+
+`sandbox.getMemory`
+
+Get mock skill data for testing
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.sandbox.getMemory({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `clientId` | `string` | No | — |
+| `clientName` | `string` | No | — |
+| `version` | `number` | No | — |
+| `skill` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="skill full type">
+
+```ts
+{
+  primaryNiche?: string,
+  subNiches?: string[],
+  contentStyle?: string,
+  signatureStyle?: string,
+  hookPatterns?: string[],
+  avgEngagement?: number,
+  bestPostingTimes?: {
+    day?: number,
+    hour?: number,
+    score?: number
+  }[]
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### validate
+
+`sandbox.validate`
+
+Run a mock validation
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.sandbox.validate({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `proposedChanges` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="proposedChanges full type">
+
+```ts
+{
+  field: string,
+  oldValue?: any,
+  newValue?: any
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `validation` | `string` | No | — |
+| `warnings` | `any[]` | Yes | — |
+| `recommendations` | `any[]` | Yes | — |
+
+
+
+---
+
+## Status
+
+### get
+
+`status.get`
+
+Get CrowTerminal service health
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.status.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `status` | `string` | Yes | — |
+| `timestamp` | `string` | No | — |
+| `version` | `string` | No | — |
+| `services` | `object` | No | — |
+| `metrics` | `object` | No | — |
+| `endpoints` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="services full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="metrics full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="endpoints full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getComponents
+
+`status.getComponents`
+
+Get per-component health and latency
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.status.getComponents({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `components` | `object[]` | Yes | — |
+| `summary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="components full type">
+
+```ts
+{
+  name: string,
+  status: string,
+  latency?: string,
+  details?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getHistory
+
+`status.getHistory`
+
+Get seven days of uptime points for charting
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.status.getHistory({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `period` | `string` | No | — |
+| `dataPoints` | `object[]` | Yes | — |
+| `summary` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="dataPoints full type">
+
+```ts
+{
+  date: string,
+  uptime?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="summary full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getIncidents
+
+`status.getIncidents`
+
+List recent incidents and affected components
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.status.getIncidents({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `incidents` | `object[]` | Yes | — |
+| `subscribe` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="incidents full type">
+
+```ts
+{
+  timestamp?: string,
+  status?: string,
+  duration?: string,
+  components?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getUptime
+
+`status.getUptime`
+
+Get 24h and 7d uptime percentages
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.status.getUptime({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `timestamp` | `string` | No | — |
+| `currentStatus` | `string` | No | — |
+| `uptime` | `object` | Yes | — |
+| `recentIncidents` | `any[]` | No | — |
+
+<AccordionGroup>
+<Accordion title="uptime full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ping
+
+`status.ping`
+
+Check that CrowTerminal is responding
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.status.ping({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `pong` | `boolean` | Yes | — |
+| `timestamp` | `string` | No | — |
+
+
+
+---
+
+## Webhooks
+
+### create
+
+`webhooks.create`
+
+Register a CrowTerminal webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.crowterminal.api.webhooks.create({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `events` | `skill.updated \| skill.version_created \| data.ingested \| validation.blocked \| posting.completed \| posting.failed[]` | Yes | — |
+| `secret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `id` | `string` | No | — |
+| `secret` | `string` | No | — |
+
+
+
+---
+
+### delete
+
+`webhooks.delete`
+
+Delete a CrowTerminal webhook
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.crowterminal.api.webhooks.delete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### list
+
+`webhooks.list`
+
+List registered CrowTerminal webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.crowterminal.api.webhooks.list({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+| `webhooks` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="webhooks full type">
+
+```ts
+{
+  id?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### test
+
+`webhooks.test`
+
+Send a test delivery to a webhook URL
+
+**Risk:** `write`
+
+```ts
+await corsair.crowterminal.api.webhooks.test({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `secret` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+
+### update
+
+`webhooks.update`
+
+Update a CrowTerminal webhook
+
+**Risk:** `write`
+
+```ts
+await corsair.crowterminal.api.webhooks.update({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `webhookId` | `string` | Yes | — |
+| `url` | `string` | No | — |
+| `events` | `skill.updated \| skill.version_created \| data.ingested \| validation.blocked \| posting.completed \| posting.failed[]` | No | — |
+| `isActive` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `success` | `boolean` | No | — |
+
+
+
+---
+

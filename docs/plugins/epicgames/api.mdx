@@ -1,0 +1,1088 @@
+---
+title: API
+description: "API reference for Epic Games: every `epicgames.api.*` operation with input and output types."
+---
+
+Every `epicgames.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Islands
+
+### get
+
+`islands.get`
+
+Get metadata for a Fortnite island by code
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getAvgMinutesPerPlayer
+
+`islands.getAvgMinutesPerPlayer`
+
+Get average minutes per unique player for an island
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.getAvgMinutesPerPlayer({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `interval` | `day \| hour \| minute` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getFavorites
+
+`islands.getFavorites`
+
+Get island favorites metrics for an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.getFavorites({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `interval` | `day \| hour \| minute` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMetricsByInterval
+
+`islands.getMetricsByInterval`
+
+Get island usage metrics aggregated by time interval
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.getMetricsByInterval({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `interval` | `day \| hour \| minute` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+| `metrics` | `averageMinutesPerPlayer \| peakCCU \| favorites \| minutesPlayed \| recommendations \| plays \| uniquePlayers \| retention \| averageMinutesPerPlayer \| peakCCU \| favorites \| minutesPlayed \| recommendations \| plays \| uniquePlayers \| retention[]` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getMinutesPlayed
+
+`islands.getMinutesPlayed`
+
+Get total minutes played on an island for an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.getMinutesPlayed({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `interval` | `day \| hour \| minute` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPeakCcu
+
+`islands.getPeakCcu`
+
+Get peak concurrent users for an island over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.getPeakCcu({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `interval` | `day \| hour \| minute` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPlays
+
+`islands.getPlays`
+
+Get island play/session-start counts for an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.getPlays({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `interval` | `day \| hour \| minute` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRecommendations
+
+`islands.getRecommendations`
+
+Get island recommendation counts for an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.getRecommendations({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `interval` | `day \| hour \| minute` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getRetention
+
+`islands.getRetention`
+
+Get day-over-day retention metrics for an island
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.getRetention({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `interval` | `day` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getUniquePlayers
+
+`islands.getUniquePlayers`
+
+Get unique player counts for an island over an interval
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.getUniquePlayers({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `code` | `string` | Yes | — |
+| `interval` | `day \| hour \| minute` | No | — |
+| `from` | `string` | No | — |
+| `to` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### list
+
+`islands.list`
+
+List public discoverable Fortnite Creative islands
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.islands.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `size` | `number` | No | — |
+| `after` | `string` | No | — |
+| `before` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}[] | {
+  data?: {
+  }[],
+  items?: {
+  }[],
+  results?: {
+  }[],
+  islands?: {
+  }[],
+  links?: {
+  },
+  meta?: {
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Remote
+
+### batch
+
+`remote.batch`
+
+Batch multiple Remote Control API calls into one request
+
+**Risk:** `write`
+
+```ts
+await corsair.epicgames.api.remote.batch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `requests` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="requests full type">
+
+```ts
+{
+  RequestId: number,
+  URL: string,
+  Verb: PUT | POST | GET | DELETE
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### callObjectFunction
+
+`remote.callObjectFunction`
+
+Call a Blueprint-callable function on a UObject
+
+**Risk:** `write`
+
+```ts
+await corsair.epicgames.api.remote.callObjectFunction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectPath` | `string` | Yes | — |
+| `functionName` | `string` | Yes | — |
+| `parameters` | `object` | No | — |
+| `generateTransaction` | `boolean` | No | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### corsPreflight
+
+`remote.corsPreflight`
+
+CORS preflight OPTIONS against the Remote Control API
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.remote.corsPreflight({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### deletePresetMetadataKey
+
+`remote.deletePresetMetadataKey`
+
+Delete a metadata key from a Remote Control preset
+
+**Risk:** `write`
+
+```ts
+await corsair.epicgames.api.remote.deletePresetMetadataKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presetName` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### describeObject
+
+`remote.describeObject`
+
+Describe a UObject by path via Remote Control
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.remote.describeObject({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectPath` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getObjectThumbnail
+
+`remote.getObjectThumbnail`
+
+Fetch Content Browser thumbnail for an asset path
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.remote.getObjectThumbnail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectPath` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPreset
+
+`remote.getPreset`
+
+Get a Remote Control preset by name
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.remote.getPreset({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presetName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPresetMetadata
+
+`remote.getPresetMetadata`
+
+Get all metadata entries for a Remote Control preset
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.remote.getPresetMetadata({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presetName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPresetMetadataKey
+
+`remote.getPresetMetadataKey`
+
+Get a single metadata key for a Remote Control preset
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.remote.getPresetMetadataKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presetName` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getPresetProperty
+
+`remote.getPresetProperty`
+
+Read a property exposed on a Remote Control preset
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.remote.getPresetProperty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presetName` | `string` | Yes | — |
+| `propertyName` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### initiateSession
+
+`remote.initiateSession`
+
+Initiate an Unreal Web Remote Control session
+
+**Risk:** `write`
+
+```ts
+await corsair.epicgames.api.remote.initiateSession({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### invokePresetFunction
+
+`remote.invokePresetFunction`
+
+Invoke a function exposed on a Remote Control preset
+
+**Risk:** `write`
+
+```ts
+await corsair.epicgames.api.remote.invokePresetFunction({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presetName` | `string` | Yes | — |
+| `functionName` | `string` | Yes | — |
+| `parameters` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### listBlueprintCallableFunctions
+
+`remote.listBlueprintCallableFunctions`
+
+List Blueprint-callable functions exposed by a UObject
+
+**Risk:** `read`
+
+```ts
+await corsair.epicgames.api.remote.listBlueprintCallableFunctions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectPath` | `string` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### putObjectProperty
+
+`remote.putObjectProperty`
+
+Read or set UObject property values via Remote Control
+
+**Risk:** `write`
+
+```ts
+await corsair.epicgames.api.remote.putObjectProperty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectPath` | `string` | Yes | — |
+| `propertyName` | `string` | No | — |
+| `access` | `READ_ACCESS \| WRITE_ACCESS \| WRITE_TRANSACTION_ACCESS` | No | — |
+| `propertyValue` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="propertyValue full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### putPresetMetadataKey
+
+`remote.putPresetMetadataKey`
+
+Create or update a metadata key on a Remote Control preset
+
+**Risk:** `write`
+
+```ts
+await corsair.epicgames.api.remote.putPresetMetadataKey({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presetName` | `string` | Yes | — |
+| `key` | `string` | Yes | — |
+| `value` | `any` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### updatePresetProperty
+
+`remote.updatePresetProperty`
+
+Update a property exposed on a Remote Control preset
+
+**Risk:** `write`
+
+```ts
+await corsair.epicgames.api.remote.updatePresetProperty({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `presetName` | `string` | Yes | — |
+| `propertyName` | `string` | Yes | — |
+| `value` | `any` | Yes | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### waitForObjectEvent
+
+`remote.waitForObjectEvent`
+
+Wait for a UObject event (experimental; requires EnableExperimentalRoutes)
+
+**Risk:** `write`
+
+```ts
+await corsair.epicgames.api.remote.waitForObjectEvent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `objectPath` | `string` | Yes | — |
+| `eventType` | `ObjectPropertyChanged \| PreObjectPropertyChanged` | No | — |
+| `propertyName` | `string` | No | — |
+
+
+
+**Output:** `object`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+

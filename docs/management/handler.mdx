@@ -18,7 +18,7 @@ The handler dispatches 9 read/write routes. Connect/OAuth is covered separately 
 
 | Method | Path                                | Purpose                                       |
 | ------ | ----------------------------------- | --------------------------------------------- |
-| GET    | `/ok`                               | Health check → `{ ok: true }`                 |
+| GET    | `/ok`                               | Health check, returns `{ ok: true }`          |
 | GET    | `/tenants`                          | List tenants                                  |
 | POST   | `/tenants`                          | Create a tenant                               |
 | GET    | `/tenants/:id`                      | Get one tenant                                |
@@ -28,7 +28,7 @@ The handler dispatches 9 read/write routes. Connect/OAuth is covered separately 
 | GET    | `/permissions/:id`                  | Get a permission record                       |
 | POST   | `/permissions/lookup-by-token`      | Resolve a permission by email-link token      |
 
-All routes return JSON. Errors return `{ error, message, …extra }` with a non-2xx status — see [Errors](#errors).
+All routes return JSON. Errors return `{ error, message, …extra }` with a non-2xx status. See [Errors](#errors).
 
 ## Options
 
@@ -39,7 +39,7 @@ managementHandler(corsair, {
 });
 ```
 
-`basePath` defaults to `"/api/corsair"`. Set it to whatever prefix your framework mounts the handler under. The handler strips it before matching routes, so `/api/corsair/tenants` → `/tenants`.
+`basePath` defaults to `"/api/corsair"`. Set it to whatever prefix your framework mounts the handler under. The handler strips it before matching routes, so `/api/corsair/tenants` becomes `/tenants`.
 
 `onError` lets you log or rewrite errors. Return a `Response` to take over, or `undefined` to fall through to the default JSON error.
 
@@ -58,7 +58,7 @@ export const { GET, POST, OPTIONS } = toNextJsHandler(corsair, {
 });
 ```
 
-Works in App Router. `GET`, `POST`, and `OPTIONS` share one handler — hub delivery at the base path plus management subpaths.
+Works in App Router. `GET`, `POST`, and `OPTIONS` share one handler: hub delivery at the base path plus management subpaths.
 
 ### Express
 
@@ -88,7 +88,7 @@ The Hono context is mapped to the underlying `Request`/`Response`.
 
 ## In-process API
 
-Sometimes you don't want HTTP — you want to call the same operations directly from server code (e.g. inside a server action, a job, or a CLI). The handler is built on top of `corsair.manage.*`, available without going through the handler:
+Sometimes you don't want HTTP. You want to call the same operations directly from server code (e.g. inside a server action, a job, or a CLI). The handler is built on top of `corsair.manage.*`, available without going through the handler:
 
 ```ts in-process.ts
 await corsair.manage.tenants.list();
@@ -110,7 +110,7 @@ Errors come back as JSON in this flat shape:
 }
 ```
 
-In-process `corsair.manage.*` calls throw errors with `status`, `code`, `message`, and `extra` fields — the same shape HTTP clients surface as [`CorsairClientError`](/adapters/client#error-handling). Common codes you'll see from the management routes:
+In-process `corsair.manage.*` calls throw errors with `status`, `code`, `message`, and `extra` fields, the same shape HTTP clients surface as [`CorsairClientError`](/adapters/client#error-handling). Common codes you'll see from the management routes:
 
 | Status | `error`                 | When                                              |
 | ------ | ----------------------- | ------------------------------------------------- |

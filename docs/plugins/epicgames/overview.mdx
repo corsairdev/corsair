@@ -1,0 +1,131 @@
+---
+title: Overview
+description: "Epic Games plugin for Corsair (Fortnite islands + UE Remote Control)"
+---
+
+Use **Epic Games** through Corsair: one client, typed API calls, local DB sync.
+
+**What you get:**
+
+- 28 typed API operations
+- 1 synced entity (`islands`) for fast `.search()` / `.list()`
+
+## Setup
+
+<Steps>
+
+<Step title="Install">
+<CodeGroup>
+```bash npm
+npm install corsair @corsair-dev/epicgames
+```
+```bash yarn
+yarn add corsair @corsair-dev/epicgames
+```
+```bash pnpm
+pnpm install corsair @corsair-dev/epicgames
+```
+```bash bun
+bun add corsair @corsair-dev/epicgames
+```
+</CodeGroup>
+
+</Step>
+
+<Step title="Add the plugin">
+```ts corsair.ts
+import Database from 'better-sqlite3';
+import { createCorsair } from 'corsair';
+import { epicgames } from '@corsair-dev/epicgames';
+
+export const corsair = createCorsair({
+	plugins: [
+		epicgames(),
+	],
+	database: new Database('corsair.db'),
+	kek: process.env.CORSAIR_KEK!,
+	hub: {
+		projectApiKey: process.env.CORSAIR_DEV_API_KEY!,
+		signingSecret: process.env.CORSAIR_DEV_SIGNING_SECRET!,
+	},
+});
+```
+
+Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See [Quick start](/quick-start) for KEK + Hub keys, and [Multi-tenancy](/concepts/multi-tenancy) for account isolation.
+
+</Step>
+
+<Step title="Choose authentication">
+<Tabs>
+<Tab title="OAuth 2.0 (Recommended)">
+
+Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Epic Games OAuth app.
+
+```ts
+epicgames()
+```
+
+More: [OAuth 2.0](/concepts/oauth)
+
+</Tab>
+</Tabs>
+
+</Step>
+
+<Step title="Connect a tenant">
+Mint a connect link and send the tenant to it. Hub hosts the page and delivers the result to your app — see [Connect / OAuth](/management/connect).
+
+```ts
+const { connectUrl } = await corsair.manage.connect.createLink({
+	plugin: 'epicgames',
+	tenantId: 'acme',
+});
+// redirect the user's browser to connectUrl
+```
+
+</Step>
+
+</Steps>
+
+## Example API calls
+
+**`islands.get`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.islands.get({});
+```
+
+
+**`remote.batch`**
+
+```ts
+const tenant = corsair.withTenant('acme');
+await tenant.epicgames.api.remote.batch({});
+```
+
+
+See the full list on the [API](/plugins/epicgames/api) page.
+
+## Query synced data
+
+Synced entities support `tenant.epicgames.db.<entity>.search()` and `.list()`: `islands`.
+
+See [Database](/plugins/epicgames/database) for filters and operators.
+
+## What's next
+
+<CardGroup cols={2}>
+  <Card title="API reference" href="/plugins/epicgames/api">
+    Every `epicgames.api.*` operation with input and output types.
+  </Card>
+  <Card title="Database" href="/plugins/epicgames/database">
+    Synced entities, search filters, and operators.
+  </Card>
+  <Card title="Connect / OAuth" href="/management/connect">
+    createLink, Hub delivery, and tenant connect flows.
+  </Card>
+  <Card title="Use with agents" href="/mcp-adapters/mcp-adapters">
+    Expose this plugin's operations as MCP tools.
+  </Card>
+</CardGroup>

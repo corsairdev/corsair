@@ -61,11 +61,16 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'backendless',
+	'bannerbear',
 	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
+	'beeminder',
+	'bettercontact',
 	'betterstack',
+	'bigdatacloud',
 	'bigmailer',
 	'bigml',
 	'bitbucket',
@@ -74,9 +79,14 @@ export const BaseProviders = [
 	'bluesky',
 	'boloforms',
 	'boltiot',
+	'bookingmood',
 	'botpress',
+	'botsonic',
 	'bouncer',
 	'box',
+	'boxhero',
+	'brandfetch',
+	'browseai',
 	'bugsnag',
 	'cal',
 	'calendly',
@@ -138,13 +148,16 @@ export const BaseProviders = [
 	'insightoai',
 	'instagram',
 	'intercom',
+	'jigsawstack',
 	'jira',
 	'kaggle',
 	'linear',
 	'linkedin',
 	'loyverse',
+	'mailboxlayer',
 	'mailchimp',
 	'mailtrap',
+	'merriamwebsterdict',
 	'monday',
 	'neon',
 	'nextdns',
@@ -174,13 +187,18 @@ export const BaseProviders = [
 	'slack',
 	'spotify',
 	'strava',
+	'streamtime',
 	'stripe',
+	'studiobyai21labs',
 	'supabase',
 	'tally',
 	'tavily',
 	'tavilymcp',
 	'teams',
 	'telegram',
+	'textrazor',
+	'ticktick',
+	'tisane',
 	'todoist',
 	'toggl',
 	'trello',
@@ -194,7 +212,9 @@ export const BaseProviders = [
 	'uniswapapi',
 	'vapi',
 	'vercel',
+	'wakatime',
 	'webflow',
+	'webvizio',
 	'whatsapp',
 	'witai',
 	'wiza',
@@ -257,11 +277,16 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	backendless: 'Backendless',
+	bannerbear: 'Bannerbear',
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
+	beeminder: 'Beeminder',
+	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
+	bigdatacloud: 'BigDataCloud',
 	bigmailer: 'BigMailer',
 	bigml: 'BigML',
 	bitbucket: 'Bitbucket',
@@ -270,9 +295,14 @@ export const ProviderDisplayNames = {
 	bluesky: 'Bluesky',
 	boloforms: 'Boloforms',
 	boltiot: 'Bolt IoT',
+	bookingmood: 'Bookingmood',
 	botpress: 'Botpress',
+	botsonic: 'Botsonic',
 	bouncer: 'Bouncer',
 	box: 'Box',
+	boxhero: 'BoxHero',
+	brandfetch: 'Brandfetch',
+	browseai: 'Browse AI',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
 	calendly: 'Calendly',
@@ -334,13 +364,16 @@ export const ProviderDisplayNames = {
 	insightoai: 'Insighto.ai',
 	instagram: 'Instagram',
 	intercom: 'Intercom',
+	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
+	mailboxlayer: 'MailboxLayer',
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
+	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	monday: 'Monday',
 	neon: 'Neon',
 	nextdns: 'NextDNS',
@@ -370,13 +403,18 @@ export const ProviderDisplayNames = {
 	slack: 'Slack',
 	spotify: 'Spotify',
 	strava: 'Strava',
+	streamtime: 'Streamtime',
 	stripe: 'Stripe',
+	studiobyai21labs: 'StudioByAI21Labs',
 	supabase: 'Supabase',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
 	teams: 'Teams',
 	telegram: 'Telegram',
+	textrazor: 'TextRazor',
+	ticktick: 'TickTick',
+	tisane: 'Tisane',
 	todoist: 'Todoist',
 	toggl: 'Toggl',
 	trello: 'Trello',
@@ -390,7 +428,9 @@ export const ProviderDisplayNames = {
 	uniswapapi: 'Uniswap',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
+	wakatime: 'WakaTime',
 	webflow: 'Webflow',
+	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
 	wiza: 'Wiza',
@@ -460,11 +500,16 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'backendless'
+	| 'bannerbear'
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
+	| 'beeminder'
+	| 'bettercontact'
 	| 'betterstack'
+	| 'bigdatacloud'
 	| 'bigmailer'
 	| 'bigml'
 	| 'bitbucket'
@@ -473,9 +518,14 @@ export type AllProviders =
 	| 'bluesky'
 	| 'boloforms'
 	| 'boltiot'
+	| 'bookingmood'
 	| 'botpress'
+	| 'botsonic'
 	| 'bouncer'
 	| 'box'
+	| 'boxhero'
+	| 'brandfetch'
+	| 'browseai'
 	| 'bugsnag'
 	| 'cal'
 	| 'calendly'
@@ -537,13 +587,16 @@ export type AllProviders =
 	| 'insightoai'
 	| 'instagram'
 	| 'intercom'
+	| 'jigsawstack'
 	| 'jira'
 	| 'kaggle'
 	| 'linear'
 	| 'linkedin'
 	| 'loyverse'
+	| 'mailboxlayer'
 	| 'mailchimp'
 	| 'mailtrap'
+	| 'merriamwebsterdict'
 	| 'monday'
 	| 'neon'
 	| 'nextdns'
@@ -573,13 +626,18 @@ export type AllProviders =
 	| 'slack'
 	| 'spotify'
 	| 'strava'
+	| 'streamtime'
 	| 'stripe'
+	| 'studiobyai21labs'
 	| 'supabase'
 	| 'tally'
 	| 'tavily'
 	| 'tavilymcp'
 	| 'teams'
 	| 'telegram'
+	| 'textrazor'
+	| 'ticktick'
+	| 'tisane'
 	| 'todoist'
 	| 'toggl'
 	| 'trello'
@@ -593,7 +651,9 @@ export type AllProviders =
 	| 'uniswapapi'
 	| 'vapi'
 	| 'vercel'
+	| 'wakatime'
 	| 'webflow'
+	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
 	| 'wiza'
