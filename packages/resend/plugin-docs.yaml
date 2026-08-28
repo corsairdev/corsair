@@ -1,0 +1,29 @@
+# Overrides for scripts/generate-plugin-docs.ts
+# Plugin-specific examples; the generator owns Hub-shaped wiring and shared copy.
+
+displayName: Resend
+description: "Resend plugin for Corsair — transactional email send, list, and delivery events."
+
+examples:
+  read:
+    path: emails.list
+    title: List emails
+  write:
+    path: emails.send
+    title: Send an email
+    args:
+      from: corsair@example.com
+      to: you@example.com
+      subject: Hello from Corsair
+      text: Hello from Corsair
+
+dbExample:
+  entity: emails
+  note: "Search synced emails without hitting Resend."
+  limit: 50
+
+exampleWebhook:
+  path: emails.sent
+  note: "Fires when Resend accepts an outbound email."
+  after: |
+    console.log('Email sent:', result.data);

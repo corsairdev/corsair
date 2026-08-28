@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Resend plugin for Corsair"
+description: "Resend plugin for Corsair — transactional email send, list, and delivery events."
 ---
 
 Use **Resend** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -92,19 +92,24 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`contacts.get`**
+**List emails**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.resend.api.contacts.get({});
+await tenant.resend.api.emails.list({});
 ```
 
 
-**`contacts.create`**
+**Send an email**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.resend.api.contacts.create({});
+await tenant.resend.api.emails.send({
+	from: 'corsair@example.com',
+	to: 'you@example.com',
+	subject: 'Hello from Corsair',
+	text: 'Hello from Corsair',
+});
 ```
 
 
@@ -112,15 +117,37 @@ See the full list on the [API](/plugins/resend/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.resend.db.<entity>.search()` and `.list()`: `contacts`, `domains`, `emails`.
+Search synced emails without hitting Resend.
 
-See [Database](/plugins/resend/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.resend.db.emails.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `contacts`, `domains`, `emails`. See [Database](/plugins/resend/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **16** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when Resend accepts an outbound email.
 
-See [Webhooks](/plugins/resend/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+resend({
+    webhookHooks: {
+        emails: {
+            sent: {
+                after: async (ctx, result) => {
+                    console.log('Email sent:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/resend/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
