@@ -181,10 +181,11 @@ export function assertSafeIdentifier(value: string, field: string): void {
  * so character offsets and column positions are preserved.
  *
  * Handles:
- *   - block comments   /* ... *\/
- *   - line comments    -- ...
- *   - string literals  '...' (with '' escape)
- *   - quoted idents    "..." (with "" escape)
+ *   - block comments    /* ... *\/
+ *   - line comments     -- ...
+ *   - string literals   '...' (with '' escape)
+ *   - quoted idents     "..." (with "" escape)
+ *   - backtick idents   `...` (with `` escape; ClickHouse MySQL-style)
  *
  * Not a full SQL parser. Edge cases (nested comments, multi-line raw strings)
  * are out of scope; they are uncommon in OLAP queries.
@@ -194,7 +195,8 @@ export function stripNonCodeTokens(sql: string): string {
 		.replace(/\/\*[\s\S]*?\*\//g, (m) => ' '.repeat(m.length))
 		.replace(/--[^\n]*/g, (m) => ' '.repeat(m.length))
 		.replace(/'(?:''|[^'])*'/g, (m) => ' '.repeat(m.length))
-		.replace(/"(?:""|[^"])*"/g, (m) => ' '.repeat(m.length));
+		.replace(/"(?:""|[^"])*"/g, (m) => ' '.repeat(m.length))
+		.replace(/`(?:``|[^`])*`/g, (m) => ' '.repeat(m.length));
 }
 
 /**
