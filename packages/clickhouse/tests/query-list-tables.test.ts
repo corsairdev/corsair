@@ -65,9 +65,12 @@ describe('Query.listTables', () => {
 
 		const [url, init] = fetchSpy.mock.calls[0] as FetchCall;
 		const parsedUrl = new URL(url as string);
-		expect(parsedUrl.searchParams.get('database')).toBe('analytics');
-		expect(parsedUrl.searchParams.get('limit')).toBe('1000');
-		expect(parsedUrl.searchParams.get('offset')).toBe('0');
+		// listTables uses `{database:String}` as a placeholder, so the
+		// value travels with the required `param_` prefix.
+		expect(parsedUrl.searchParams.get('param_database')).toBe('analytics');
+		expect(parsedUrl.searchParams.get('param_limit')).toBe('1000');
+		expect(parsedUrl.searchParams.get('param_offset')).toBe('0');
+		expect(parsedUrl.searchParams.get('database')).toBeNull();
 		expect(init?.method).toBe('POST');
 
 		const bodyText = String(init?.body ?? '');
@@ -100,8 +103,8 @@ describe('Query.listTables', () => {
 
 		const call = (globalThis.fetch as jest.Mock).mock.calls[0] as FetchCall;
 		const parsedUrl = new URL(call[0] as string);
-		expect(parsedUrl.searchParams.get('limit')).toBe('25');
-		expect(parsedUrl.searchParams.get('offset')).toBe('100');
+		expect(parsedUrl.searchParams.get('param_limit')).toBe('25');
+		expect(parsedUrl.searchParams.get('param_offset')).toBe('100');
 	});
 
 	it('rejects identifiers that are not safe (no injection)', async () => {

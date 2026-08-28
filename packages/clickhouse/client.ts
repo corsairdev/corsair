@@ -54,10 +54,20 @@ export async function query(
 	const { params, database } = options;
 	const url = new URL(baseUrl.replace(/\/+$/, '') + '/');
 	if (database) {
+		// `database` here is the built-in ClickHouse system parameter that
+		// sets the default database for the query; it is NOT a placeholder.
+		// Placeholder values for `{name:Type}` substitutions are sent below
+		// with the required `param_` prefix.
 		url.searchParams.set('database', database);
 	}
 	for (const [key, value] of Object.entries(params ?? {})) {
-		url.searchParams.set(key, String(value));
+		// ClickHouse's HTTP interface substitutes `{name:Type}` placeholders
+		// from URL query parameters named `param_<name>`. Sending the bare
+		// name is silently ignored by the server and the placeholder
+		// remains unbound (ClickHouse throws on unbound placeholders for
+		// non-String types, and for String types it raises a
+		// `Type mismatch` exception).
+		url.searchParams.set(`param_${key}`, String(value));
 	}
 
 	const body = `${sql.trimEnd()}\nFORMAT JSONEachRow`;
