@@ -1,43 +1,103 @@
+import { AuthMissingError } from 'corsair/core';
 import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { ApiError, request } from 'corsair/http';
 
 export class BeaconchainAPIError extends Error {
-	constructor(
-		message: string,
-		public readonly code?: string,
-	) {
-		super(message);
+	public readonly status?: number;
+	public readonly statusText?: string;
+	public readonly body?: unknown;
+	public readonly retryAfter?: number;
+
+	constructor(message: string, options?: { cause?: Error }) {
+		super(message, options);
 		this.name = 'BeaconchainAPIError';
+		if (options?.cause instanceof ApiError) {
+			this.status = options.cause.status;
+			this.statusText = options.cause.statusText;
+			this.body = options.cause.body;
+			this.retryAfter = options.cause.retryAfter;
+		}
 	}
 }
 
-const BEACONCHAIN_API_V1_BASE = 'https://beaconcha.in/api/v1';
-const BEACONCHAIN_API_V2_BASE = 'https://beaconcha.in/api/v2';
+export type BeaconchainChain = 'mainnet' | 'hoodi';
+
+const V1_BASE = {
+	mainnet: 'https://beaconcha.in/api/v1',
+	hoodi: 'https://hoodi.beaconcha.in/api/v1',
+} as const;
+
+const ORIGIN = {
+	mainnet: 'https://beaconcha.in',
+	hoodi: 'https://hoodi.beaconcha.in',
+} as const;
+
+const V2_BASE = 'https://beaconcha.in/api/v2';
+
+export function requireBeaconchainKey(key: string | undefined): string {
+	if (!key) {
+		throw new AuthMissingError('beaconchain', 'api_key');
+	}
+	return key;
+}
+
+export function v2Body(
+	input: { chain?: BeaconchainChain; cursor?: string; page_size?: number },
+	extra: Record<string, unknown> = {},
+): Record<string, unknown> {
+	return {
+		chain: input.chain ?? 'mainnet',
+		...extra,
+		...(input.cursor !== undefined ? { cursor: input.cursor } : {}),
+		...(input.page_size !== undefined ? { page_size: input.page_size } : {}),
+	};
+}
+
+export function v1GetOptions(
+	chain?: BeaconchainChain,
+	extra: { query?: Record<string, string | number | boolean | undefined> } = {},
+) {
+	return {
+		method: 'GET' as const,
+		...(extra.query ? { query: extra.query } : {}),
+		...(chain ? { chain } : {}),
+	};
+}
 
 interface MakeRequestOptions {
 	method?: 'GET' | 'POST' | 'PUT' | 'DELETE' | 'PATCH';
 	body?: Record<string, unknown>;
 	query?: Record<string, string | number | boolean | undefined>;
+	chain?: BeaconchainChain;
+	auth: 'v1' | 'v2';
+	base?: string;
 }
 
 async function makeRequest<T>(
-	baseUrl: string,
 	endpoint: string,
 	apiKey: string,
-	options: MakeRequestOptions = {},
+	options: MakeRequestOptions,
 ): Promise<T> {
-	const { method = 'GET', body, query } = options;
+	const { method = 'GET', body, query, auth } = options;
+	const baseUrl =
+		options.base ??
+		(auth === 'v1' ? V1_BASE[options.chain ?? 'mainnet'] : V2_BASE);
 
 	const config: OpenAPIConfig = {
 		BASE: baseUrl,
-		VERSION: '2.0.0',
+		VERSION: auth === 'v1' ? '1.0.0' : '2.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
-		HEADERS: {
-			'Content-Type': 'application/json',
-			...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}),
-		},
+		TOKEN: auth === 'v2' ? apiKey : undefined,
+		HEADERS:
+			auth === 'v1'
+				? {
+						apikey: apiKey,
+						'Content-Type': 'application/json',
+					}
+				: {
+						'Content-Type': 'application/json',
+					},
 	};
 
 	const requestOptions: ApiRequestOptions = {
@@ -55,10 +115,10 @@ async function makeRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof ApiError) {
-			throw error;
+			throw new BeaconchainAPIError(error.message, { cause: error });
 		}
 		if (error instanceof Error) {
-			throw new BeaconchainAPIError(error.message);
+			throw new BeaconchainAPIError(error.message, { cause: error });
 		}
 		throw new BeaconchainAPIError('Unknown error');
 	}
@@ -67,25 +127,36 @@ async function makeRequest<T>(
 export async function makeBeaconchainV1Request<T>(
 	endpoint: string,
 	apiKey: string,
-	options: MakeRequestOptions = {},
+	options: Omit<MakeRequestOptions, 'auth' | 'base'> = {},
 ): Promise<T> {
-	return makeRequest<T>(BEACONCHAIN_API_V1_BASE, endpoint, apiKey, options);
+	return makeRequest<T>(endpoint, apiKey, {
+		...options,
+		method: options.method ?? 'GET',
+		auth: 'v1',
+	});
 }
 
 export async function makeBeaconchainV2Request<T>(
 	endpoint: string,
 	apiKey: string,
-	options: MakeRequestOptions = {},
+	options: Omit<MakeRequestOptions, 'auth' | 'base'> = {},
 ): Promise<T> {
-	return makeRequest<T>(BEACONCHAIN_API_V2_BASE, endpoint, apiKey, options);
+	return makeRequest<T>(endpoint, apiKey, {
+		...options,
+		method: options.method ?? 'POST',
+		auth: 'v2',
+	});
 }
 
-// Legacy function for backward compatibility
-export async function makeBeaconchainRequest<T>(
-	endpoint: string,
+export async function makeBeaconchainHealthRequest(
 	apiKey: string,
-	options: MakeRequestOptions = {},
-): Promise<T> {
-	// Default to V2 for backward compatibility
-	return makeBeaconchainV2Request<T>(endpoint, apiKey, options);
+	chain: BeaconchainChain = 'mainnet',
+): Promise<string> {
+	const raw = await makeRequest<unknown>('api/healthz', apiKey, {
+		method: 'GET',
+		auth: 'v1',
+		base: ORIGIN[chain],
+		chain,
+	});
+	return typeof raw === 'string' ? raw : JSON.stringify(raw);
 }
