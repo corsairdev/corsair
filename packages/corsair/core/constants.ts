@@ -183,6 +183,7 @@ export const BaseProviders = [
 	'slack',
 	'spotify',
 	'strava',
+	'streamtime',
 	'stripe',
 	'studiobyai21labs',
 	'supabase',
@@ -394,6 +395,7 @@ export const ProviderDisplayNames = {
 	slack: 'Slack',
 	spotify: 'Spotify',
 	strava: 'Strava',
+	streamtime: 'Streamtime',
 	stripe: 'Stripe',
 	studiobyai21labs: 'StudioByAI21Labs',
 	supabase: 'Supabase',
@@ -612,6 +614,7 @@ export type AllProviders =
 	| 'slack'
 	| 'spotify'
 	| 'strava'
+	| 'streamtime'
 	| 'stripe'
 	| 'studiobyai21labs'
 	| 'supabase'
