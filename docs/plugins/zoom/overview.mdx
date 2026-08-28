@@ -1,6 +1,6 @@
 ---
 title: Overview
-description: "Zoom plugin for Corsair"
+description: "Zoom plugin for Corsair — meetings, recordings, and meeting events."
 ---
 
 Use **Zoom** through Corsair: one client, typed API calls, local DB sync, and incoming webhooks.
@@ -92,19 +92,19 @@ const { connectUrl } = await corsair.manage.connect.createLink({
 
 ## Example API calls
 
-**`archiveFiles.list`**
+**List meetings**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.zoom.api.archiveFiles.list({});
+await tenant.zoom.api.meetings.list({});
 ```
 
 
-**`meetings.addRegistrant`**
+**Create a meeting**
 
 ```ts
 const tenant = corsair.withTenant('acme');
-await tenant.zoom.api.meetings.addRegistrant({});
+await tenant.zoom.api.meetings.create({ topic: 'Corsair standup', duration: 30 });
 ```
 
 
@@ -112,15 +112,37 @@ See the full list on the [API](/plugins/zoom/api) page.
 
 ## Query synced data
 
-Synced entities support `tenant.zoom.db.<entity>.search()` and `.list()`: `archiveFiles`, `devices`, `meetings`, `participants`, `recordings`, `webinars`.
+Search synced meetings without hitting Zoom.
 
-See [Database](/plugins/zoom/database) for filters and operators.
+```ts
+const tenant = corsair.withTenant('acme');
+const rows = await tenant.zoom.db.meetings.search({
+	data: {},
+	limit: 50,
+});
+```
+
+Synced entities: `archiveFiles`, `devices`, `meetings`, `participants`, `recordings`, `webinars`. See [Database](/plugins/zoom/database) for filters and operators.
 
 ## Webhooks
 
-This plugin registers **8** webhook event types. Configure the provider to POST to your Corsair HTTP handler, then use `webhookHooks` on the plugin factory.
+Fires when a Zoom meeting is created.
 
-See [Webhooks](/plugins/zoom/webhooks) for every event path and payload shape, and [Webhooks concept](/concepts/webhooks) for routing.
+```ts
+zoom({
+    webhookHooks: {
+        meetings: {
+            created: {
+                after: async (ctx, result) => {
+                    console.log('Zoom meeting created:', result.data);
+                }
+            },
+        },
+    },
+})
+```
+
+Mount your framework handler once (see [Frameworks](/frameworks/next)), then point the provider at that URL. Full event list: [Webhooks](/plugins/zoom/webhooks). Concepts: [Webhooks](/concepts/webhooks), [Hooks](/concepts/hooks).
 
 ## What's next
 
