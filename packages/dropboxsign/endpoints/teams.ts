@@ -12,7 +12,6 @@ export const getTeamInfo: DropboxSignEndpoints['getTeamInfo'] = async (
 	>('team/info', ctx.key, {
 		method: 'GET',
 		query: input,
-		
 	});
 	await logEventFromContext(
 		ctx,
@@ -30,7 +29,6 @@ export const getCurrentTeam: DropboxSignEndpoints['getCurrentTeam'] = async (
 		DropboxSignEndpointOutputs['getCurrentTeam']
 	>('team', ctx.key, {
 		method: 'GET',
-		
 	});
 	await logEventFromContext(
 		ctx,
@@ -50,7 +48,6 @@ export const listTeams: DropboxSignEndpoints['listTeams'] = async (
 	>('team/list', ctx.key, {
 		method: 'GET',
 		query: input,
-		
 	});
 	await logEventFromContext(
 		ctx,
@@ -71,7 +68,6 @@ export const listSubTeams: DropboxSignEndpoints['listSubTeams'] = async (
 	>(`team/sub_teams/${encodeURIComponent(team_id)}`, ctx.key, {
 		method: 'GET',
 		query,
-		
 	});
 	await logEventFromContext(
 		ctx,
@@ -92,7 +88,6 @@ export const listTeamMembers: DropboxSignEndpoints['listTeamMembers'] = async (
 	>(`team/members/${encodeURIComponent(team_id)}`, ctx.key, {
 		method: 'GET',
 		query,
-		
 	});
 	await logEventFromContext(
 		ctx,
@@ -112,7 +107,6 @@ export const addUserToTeam: DropboxSignEndpoints['addUserToTeam'] = async (
 	>('team/add_member', ctx.key, {
 		method: 'POST',
 		body: input,
-		
 	});
 	await logEventFromContext(
 		ctx,

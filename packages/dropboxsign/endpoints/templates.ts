@@ -12,7 +12,6 @@ export const getTemplate: DropboxSignEndpoints['getTemplate'] = async (
 		DropboxSignEndpointOutputs['getTemplate']
 	>(`template/${encodeURIComponent(template_id)}`, ctx.key, {
 		method: 'GET',
-		
 	});
 	await logEventFromContext(
 		ctx,
@@ -32,7 +31,6 @@ export const listTemplates: DropboxSignEndpoints['listTemplates'] = async (
 	>('template/list', ctx.key, {
 		method: 'GET',
 		query: input,
-		
 	});
 	await logEventFromContext(
 		ctx,
@@ -52,7 +50,6 @@ export const createTemplate: DropboxSignEndpoints['createTemplate'] = async (
 	>('template/create', ctx.key, {
 		method: 'POST',
 		body: input,
-		
 	});
 	await logEventFromContext(
 		ctx,
@@ -70,7 +67,6 @@ export const createEmbeddedTemplateDraft: DropboxSignEndpoints['createEmbeddedTe
 		>('template/create_embedded_draft', ctx.key, {
 			method: 'POST',
 			body: input,
-			
 		});
 		await logEventFromContext(
 			ctx,
@@ -90,7 +86,6 @@ export const deleteTemplate: DropboxSignEndpoints['deleteTemplate'] = async (
 		DropboxSignEndpointOutputs['deleteTemplate']
 	>(`template/delete/${encodeURIComponent(template_id)}`, ctx.key, {
 		method: 'POST',
-		
 	});
 	await logEventFromContext(
 		ctx,
@@ -109,7 +104,6 @@ export const addUserToTemplate: DropboxSignEndpoints['addUserToTemplate'] =
 		>(`template/add_user/${encodeURIComponent(template_id)}`, ctx.key, {
 			method: 'POST',
 			body,
-			
 		});
 		await logEventFromContext(
 			ctx,
@@ -128,7 +122,6 @@ export const removeUserFromTemplate: DropboxSignEndpoints['removeUserFromTemplat
 		>(`template/remove_user/${encodeURIComponent(template_id)}`, ctx.key, {
 			method: 'POST',
 			body,
-			
 		});
 		await logEventFromContext(
 			ctx,
@@ -147,7 +140,6 @@ export const getTemplateFiles: DropboxSignEndpoints['getTemplateFiles'] =
 		>(`template/files/${encodeURIComponent(template_id)}`, ctx.key, {
 			method: 'GET',
 			query,
-			
 		});
 		await logEventFromContext(
 			ctx,
@@ -168,7 +160,6 @@ export const getTemplateFilesAsFileUrl: DropboxSignEndpoints['getTemplateFilesAs
 			ctx.key,
 			{
 				method: 'GET',
-				
 			},
 		);
 		await logEventFromContext(
@@ -190,7 +181,6 @@ export const getTemplateFilesAsDataUri: DropboxSignEndpoints['getTemplateFilesAs
 			ctx.key,
 			{
 				method: 'GET',
-				
 			},
 		);
 		await logEventFromContext(
@@ -210,7 +200,6 @@ export const updateTemplateFiles: DropboxSignEndpoints['updateTemplateFiles'] =
 		>(`template/update_files/${encodeURIComponent(template_id)}`, ctx.key, {
 			method: 'POST',
 			body,
-			
 		});
 		await logEventFromContext(
 			ctx,

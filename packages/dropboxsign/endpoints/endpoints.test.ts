@@ -46,7 +46,6 @@ describe('Dropbox Sign Endpoints', () => {
 			expect(mockedRequest).toHaveBeenCalledWith('account', ctx.key, {
 				method: 'GET',
 				query: { email_address: 'test@example.com' },
-				
 			});
 		});
 
@@ -55,7 +54,6 @@ describe('Dropbox Sign Endpoints', () => {
 			expect(mockedRequest).toHaveBeenCalledWith('account/create', ctx.key, {
 				method: 'POST',
 				body: { email_address: 'new@example.com' },
-				
 			});
 		});
 
@@ -64,7 +62,6 @@ describe('Dropbox Sign Endpoints', () => {
 			expect(mockedRequest).toHaveBeenCalledWith('account/verify', ctx.key, {
 				method: 'POST',
 				body: { email_address: 'verify@example.com' },
-				
 			});
 		});
 	});
@@ -79,7 +76,6 @@ describe('Dropbox Sign Endpoints', () => {
 				ctx.key,
 				{
 					method: 'GET',
-					
 				},
 			);
 		});
@@ -93,7 +89,6 @@ describe('Dropbox Sign Endpoints', () => {
 				{
 					method: 'POST',
 					body,
-					
 				},
 			);
 		});
@@ -107,7 +102,6 @@ describe('Dropbox Sign Endpoints', () => {
 				ctx.key,
 				{
 					method: 'POST',
-					
 				},
 			);
 		});
@@ -118,7 +112,6 @@ describe('Dropbox Sign Endpoints', () => {
 			await Templates.getTemplate(ctx, { template_id: 'tmpl_123' });
 			expect(mockedRequest).toHaveBeenCalledWith('template/tmpl_123', ctx.key, {
 				method: 'GET',
-				
 			});
 		});
 
@@ -127,7 +120,6 @@ describe('Dropbox Sign Endpoints', () => {
 			expect(mockedRequest).toHaveBeenCalledWith('template/create', ctx.key, {
 				method: 'POST',
 				body: { title: 'New Template' },
-				
 			});
 		});
 
@@ -138,7 +130,6 @@ describe('Dropbox Sign Endpoints', () => {
 				ctx.key,
 				{
 					method: 'POST',
-					
 				},
 			);
 		});
@@ -152,7 +143,6 @@ describe('Dropbox Sign Endpoints', () => {
 				ctx.key,
 				{
 					method: 'GET',
-					
 				},
 			);
 		});
@@ -165,7 +155,6 @@ describe('Dropbox Sign Endpoints', () => {
 				{
 					method: 'POST',
 					body: { type: 'request_signature' },
-					
 				},
 			);
 		});
@@ -180,7 +169,6 @@ describe('Dropbox Sign Endpoints', () => {
 				{
 					method: 'POST',
 					body: { template_ids: ['tmpl_1'] },
-					
 				},
 			);
 		});
@@ -192,7 +180,6 @@ describe('Dropbox Sign Endpoints', () => {
 				ctx.key,
 				{
 					method: 'GET',
-					
 				},
 			);
 		});
@@ -202,7 +189,6 @@ describe('Dropbox Sign Endpoints', () => {
 			expect(mockedRequest).toHaveBeenCalledWith('team/info', ctx.key, {
 				method: 'GET',
 				query: {},
-				
 			});
 		});
 
@@ -210,12 +196,14 @@ describe('Dropbox Sign Endpoints', () => {
 			await Teams.getCurrentTeam(ctx, {});
 			expect(mockedRequest).toHaveBeenCalledWith('team', ctx.key, {
 				method: 'GET',
-				
 			});
 		});
 
 		it('authorizes OAuth app', async () => {
-			const res = await ApiApps.oAuthAuthorize(ctx, { client_id: 'app_123', response_type: 'code' });
+			const res = await ApiApps.oAuthAuthorize(ctx, {
+				client_id: 'app_123',
+				response_type: 'code',
+			});
 			expect(res.url).toContain(
 				'app.hellosign.com/oauth/authorize?client_id=app_123',
 			);
@@ -225,7 +213,6 @@ describe('Dropbox Sign Endpoints', () => {
 			await FaxAndReports.deleteFax(ctx, { fax_id: 'fax_123' });
 			expect(mockedRequest).toHaveBeenCalledWith('fax/fax_123', ctx.key, {
 				method: 'DELETE',
-				
 			});
 		});
 	});

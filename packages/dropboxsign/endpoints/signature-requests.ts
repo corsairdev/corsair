@@ -29,7 +29,6 @@ export const listSignatureRequests: DropboxSignEndpoints['listSignatureRequests'
 		>('signature_request/list', ctx.key, {
 			method: 'GET',
 			query: input,
-			
 		});
 		await logEventFromContext(
 			ctx,
@@ -47,7 +46,6 @@ export const sendSignatureRequest: DropboxSignEndpoints['sendSignatureRequest'] 
 		>('signature_request/send', ctx.key, {
 			method: 'POST',
 			body: input,
-			
 		});
 		await logEventFromContext(
 			ctx,
@@ -65,7 +63,6 @@ export const createEmbeddedSignatureRequest: DropboxSignEndpoints['createEmbedde
 		>('signature_request/create_embedded', ctx.key, {
 			method: 'POST',
 			body: input,
-			
 		});
 		await logEventFromContext(
 			ctx,
@@ -83,7 +80,6 @@ export const createEmbeddedSignatureRequestWithTemplate: DropboxSignEndpoints['c
 		>('signature_request/create_embedded_with_template', ctx.key, {
 			method: 'POST',
 			body: input,
-			
 		});
 		await logEventFromContext(
 			ctx,
