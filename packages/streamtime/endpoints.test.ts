@@ -24,7 +24,7 @@ const mockContext = {
 
 describe('Streamtime endpoints', () => {
 	beforeEach(() => {
-		jest.clearAllMocks();
+		jest.resetAllMocks();
 	});
 
 	it('retrieves organisation details', async () => {
@@ -123,17 +123,40 @@ describe('Streamtime endpoints', () => {
 	});
 
 	it('rejects invalid inputs on endpoints', async () => {
-		// role_id must be a number/integer
 		await expect(
 			Roles.get(mockContext, { role_id: 'not-a-number' as any }),
 		).rejects.toThrow();
 
-		// user_id must be a number/integer
 		await expect(
 			Users.listSavedSegments(mockContext, { user_id: 'not-a-number' as any }),
 		).rejects.toThrow();
 
 		expect(makeStreamtimeRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects non-positive role and user ids', async () => {
+		await expect(Roles.get(mockContext, { role_id: 0 })).rejects.toThrow();
+		await expect(Roles.get(mockContext, { role_id: -1 })).rejects.toThrow();
+		await expect(
+			Users.listSavedSegments(mockContext, { user_id: 0 }),
+		).rejects.toThrow();
+
+		expect(makeStreamtimeRequest).not.toHaveBeenCalled();
+	});
+
+	it('rejects organisation payloads that miss required fields', async () => {
+		(makeStreamtimeRequest as jest.Mock).mockResolvedValue({ name: 'Acme' });
+
+		await expect(Organisation.get(mockContext, {})).rejects.toThrow();
+		expect(logEventFromContext).not.toHaveBeenCalled();
+	});
+
+	it('rejects a wrapped roles list payload', async () => {
+		(makeStreamtimeRequest as jest.Mock).mockResolvedValue({
+			data: [{ id: 1, name: 'Designer', active: true }],
+		});
+
+		await expect(Roles.list(mockContext, {})).rejects.toThrow();
 	});
 });
 

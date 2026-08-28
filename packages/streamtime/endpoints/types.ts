@@ -1,7 +1,5 @@
 import { z } from 'zod';
 
-// --- Shared Schemas ---
-
 export const CurrencySchema = z.object({
 	id: z.string().describe('Currency code (ISO 4217)'),
 	name: z.string().describe('Currency display name'),
@@ -42,9 +40,6 @@ export const SavedSegmentSchema = z.object({
 	value: z.string().describe('Segment value or query (serialized)'),
 });
 
-// --- Endpoint Inputs & Outputs ---
-
-// 1. Get Organisation Details
 export const GetOrganisationInputSchema = z.object({});
 export type GetOrganisationInput = z.infer<typeof GetOrganisationInputSchema>;
 export const GetOrganisationResponseSchema = OrganisationSchema;
@@ -52,23 +47,20 @@ export type GetOrganisationResponse = z.infer<
 	typeof GetOrganisationResponseSchema
 >;
 
-// 2. Get Role by ID
 export const GetRoleInputSchema = z.object({
-	role_id: z.number().int().describe('Role ID'),
+	role_id: z.number().int().positive().describe('Role ID'),
 });
 export type GetRoleInput = z.infer<typeof GetRoleInputSchema>;
 export const GetRoleResponseSchema = RoleSchema;
 export type GetRoleResponse = z.infer<typeof GetRoleResponseSchema>;
 
-// 3. List Roles
 export const ListRolesInputSchema = z.object({});
 export type ListRolesInput = z.infer<typeof ListRolesInputSchema>;
 export const ListRolesResponseSchema = z.array(RoleSchema);
 export type ListRolesResponse = z.infer<typeof ListRolesResponseSchema>;
 
-// 4. List Saved Segments for User
 export const ListSavedSegmentsInputSchema = z.object({
-	user_id: z.number().int().describe('User ID'),
+	user_id: z.number().int().positive().describe('User ID'),
 });
 export type ListSavedSegmentsInput = z.infer<
 	typeof ListSavedSegmentsInputSchema
@@ -77,8 +69,6 @@ export const ListSavedSegmentsResponseSchema = z.array(SavedSegmentSchema);
 export type ListSavedSegmentsResponse = z.infer<
 	typeof ListSavedSegmentsResponseSchema
 >;
-
-// --- Mappings ---
 
 export type StreamtimeEndpointInputs = {
 	getOrganisation: GetOrganisationInput;
