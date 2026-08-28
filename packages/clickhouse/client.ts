@@ -98,8 +98,9 @@ export async function query(
 
 /**
  * Fetch the ClickHouse Play web UI HTML. The Play UI is served at `/play`
- * on the same HTTP endpoint. The body is capped at {@link MAX_PLAY_BYTES}
- * to prevent abuse.
+ * on the same HTTP endpoint. The body is streamed and capped at
+ * {@link MAX_PLAY_BYTES} — the reader is cancelled the moment total bytes
+ * exceed the cap so a malicious response cannot exhaust memory.
  */
 export async function fetchPlayHtml(
 	baseUrl: string,
@@ -117,21 +118,35 @@ export async function fetchPlayHtml(
 		throw new ClickhouseAPIError(response.statusText, response.status);
 	}
 
-	const contentLength = Number(response.headers.get('content-length') ?? '0');
-	if (contentLength > MAX_PLAY_BYTES) {
+	const reader = response.body?.getReader();
+	if (!reader) {
 		throw new ClickhouseAPIError(
-			`Play UI response too large: ${contentLength} bytes`,
+			'Play UI response has no readable body',
 			response.status,
 		);
 	}
 
-	const text = await response.text();
-	if (text.length > MAX_PLAY_BYTES) {
-		throw new ClickhouseAPIError(
-			`Play UI response too large: ${text.length} bytes`,
-			response.status,
-		);
+	const decoder = new TextDecoder('utf-8');
+	let text = '';
+	let totalBytes = 0;
+
+	while (true) {
+		const { done, value } = await reader.read();
+		if (done) break;
+		totalBytes += value.byteLength;
+		if (totalBytes > MAX_PLAY_BYTES) {
+			await reader.cancel();
+			throw new ClickhouseAPIError(
+				`Play UI response exceeds ${MAX_PLAY_BYTES} bytes`,
+				response.status,
+			);
+		}
+		text += decoder.decode(value, { stream: true });
 	}
+	// Flush any bytes the decoder held for an incomplete trailing multi-byte
+	// sequence.
+	text += decoder.decode();
+
 	return text;
 }
 

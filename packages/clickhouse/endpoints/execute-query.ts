@@ -21,12 +21,16 @@ export const execute: ClickhouseEndpoints['executeQuery'] = async (
 	const input = ClickhouseEndpointInputSchemas.executeQuery.parse(rawInput);
 	const baseUrl = await resolveBaseUrl(ctx);
 
+	// Strip at most one trailing semicolon so callers like `SELECT 1;` still
+	// produce valid SQL when we append ` LIMIT n`. Without this,
+	// `SELECT 1; LIMIT 10` is a syntax error.
+	const normalizedSql = input.sql.replace(/;\s*$/, '');
 	const limitClause =
-		input.limit !== undefined && !/\blimit\s+\d+/i.test(input.sql)
+		input.limit !== undefined && !/\blimit\s+\d+/i.test(normalizedSql)
 			? ` LIMIT ${input.limit}`
 			: '';
 
-	const sql = `${input.sql}${limitClause}`;
+	const sql = `${normalizedSql}${limitClause}`;
 	const rows = await query(baseUrl, ctx.key, sql);
 
 	await logEventFromContext(

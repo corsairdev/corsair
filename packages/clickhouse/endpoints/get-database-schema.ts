@@ -13,7 +13,8 @@ const TABLES_SQL =
 	'SELECT name, engine, total_rows AS totalRows, total_bytes AS totalBytes ' +
 	'FROM system.tables ' +
 	'WHERE database = {database:String} ' +
-	'ORDER BY name';
+	'ORDER BY name ' +
+	'LIMIT {limit:UInt32} OFFSET {offset:UInt32}';
 
 const COLUMNS_SQL =
 	'SELECT name, type, position, comment, default_expression AS defaultExpression ' +
