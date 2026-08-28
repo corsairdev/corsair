@@ -92,7 +92,9 @@ const bookingmoodEndpointMeta = Object.fromEntries(
 			},
 		]),
 	),
-) as RequiredPluginEndpointMeta<typeof bookingmoodEndpointsNested>;
+) as RequiredPluginEndpointMeta<
+	typeof bookingmoodEndpointsNested
+> satisfies RequiredPluginEndpointMeta<typeof bookingmoodEndpointsNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
