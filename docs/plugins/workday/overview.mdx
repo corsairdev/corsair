@@ -40,7 +40,10 @@ import { workday } from '@corsair-dev/workday';
 
 export const corsair = createCorsair({
 	plugins: [
-		workday(),
+		workday({
+			host: 'wd2-impl-services1.workday.com',
+			tenant: 'acme',
+		}),
 	],
 	database: new Database('corsair.db'),
 	kek: process.env.CORSAIR_KEK!,
@@ -61,8 +64,13 @@ Multi-tenancy is the default — scope calls with `corsair.withTenant(id)`. See 
 
 Open [hub.corsair.dev](https://hub.corsair.dev/dashboard), navigate to your project, and enter the **client ID** and **client secret** from your Workday OAuth app.
 
+Pass Workday’s **API hostname** and **tenant name** too — they go in Workday URLs (`https://{host}/ccx/oauth2/{tenant}/…`). That’s not the same as `corsair.withTenant()` ([Multi-tenancy](/concepts/multi-tenancy)). See Workday’s docs: [token endpoint shape](https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/understanding-the-adaptive-planning-rest-api/bit1623710301264.html).
+
 ```ts
-workday()
+workday({
+	host: 'wd2-impl-services1.workday.com',
+	tenant: 'acme',
+})
 ```
 
 More: [OAuth 2.0](/concepts/oauth)

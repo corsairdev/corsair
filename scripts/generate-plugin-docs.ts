@@ -61,6 +61,17 @@ type PluginDocsFile = {
 	 */
 	recommendedAuth?: string;
 	/**
+	 * Construct-time factory options (+ optional note) shown in setup / auth tabs.
+	 * Also passed when invoking the factory for introspection (plugins that cannot
+	 * be constructed with `()`).
+	 */
+	factory?: {
+		/** Markdown shown above the factory snippet in auth tabs. */
+		note?: string;
+		/** Options object passed to `plugin({ ... })` in docs snippets. */
+		options?: Record<string, unknown>;
+	};
+	/**
 	 * Preferred read/write API examples on the overview page.
 	 * Paths are shortPaths after `plugin.api.` (e.g. `channels.list`).
 	 * Falls back to risk-level / name heuristics when omitted or unmatched.
@@ -105,12 +116,12 @@ function docsRoot(repoRoot: string): string {
 const PLUGIN_DISCOVERY_SKIP_DIRS = new Set(['corsair', 'cli', 'mcp', 'ui']);
 
 /**
- * Construct-time options for factories that cannot be called with `()`.
- * Used only for docs introspection — not shown in generated snippets.
+ * Fallback construct-time options when a plugin cannot be called with `()` and
+ * has no `factory.options` in plugin-docs.yaml yet.
  */
 const DOCS_FACTORY_OPTIONS: Record<string, Record<string, unknown>> = {
 	workday: {
-		tenant: 'corsair-docs',
+		tenant: 'acme',
 		host: 'wd2-impl-services1.workday.com',
 	},
 };
@@ -820,11 +831,28 @@ function pluginFactorySnippet(
 	authType: string | undefined,
 	defaultAuthType: string | undefined,
 	indent = '',
+	factoryOptions?: Record<string, unknown>,
 ): string {
-	if (!authType || authType === defaultAuthType) {
+	const opts: Record<string, unknown> = { ...(factoryOptions ?? {}) };
+	if (authType && authType !== defaultAuthType) {
+		opts.authType = authType;
+	}
+	if (Object.keys(opts).length === 0) {
 		return `${indent}${exportKey}()`;
 	}
-	return `${indent}${exportKey}({\n${indent}\tauthType: '${authType}',\n${indent}})`;
+	const entries = Object.entries(opts);
+	const pad = `${indent}\t`;
+	const lines = entries.map(([k, v]) => {
+		if (typeof v === 'string') {
+			return `${pad}${k}: '${v.replace(/\\/g, '\\\\').replace(/'/g, "\\'")}',`;
+		}
+		if (typeof v === 'number' || typeof v === 'boolean') {
+			return `${pad}${k}: ${String(v)},`;
+		}
+		if (v === null) return `${pad}${k}: null,`;
+		return `${pad}${k}: ${JSON.stringify(v)},`;
+	});
+	return `${indent}${exportKey}({\n${lines.join('\n')}\n${indent}})`;
 }
 
 function authTabLabel(
@@ -936,11 +964,15 @@ function buildMainMdx(opts: {
 		bullets.push('Typed integration through the Corsair client');
 	}
 
+	const factoryOptions = docsConfig.factory?.options;
+	const factoryNote = docsConfig.factory?.note?.trim();
+
 	const setupPluginCall = pluginFactorySnippet(
 		exportKey,
 		recommendedAuth,
 		defaultAuthType,
 		'\t\t',
+		factoryOptions,
 	);
 
 	const credentialsLink = hasGetCredentials
@@ -957,10 +989,17 @@ ${authOrdered
 	.map((t) => {
 		const label = authTabLabel(t, recommendedAuth);
 		const note = authTypeCredentialInstructions(t, title, base);
-		const callSnippet = pluginFactorySnippet(exportKey, t, defaultAuthType);
+		const callSnippet = pluginFactorySnippet(
+			exportKey,
+			t,
+			defaultAuthType,
+			'',
+			factoryOptions,
+		);
+		const extraNote = factoryNote ? `\n\n${factoryNote}` : '';
 		return `<Tab title="${escapeAttr(label)}">
 
-${note}${credentialsLink}
+${note}${credentialsLink}${extraNote}
 
 \`\`\`ts
 ${callSnippet}
@@ -1820,8 +1859,11 @@ async function generatePluginDocsForEntry(
 
 	const packageDir = dirname(entryPath);
 	const packageDirName = basename(packageDir);
+	const docsConfig = readPluginDocsConfig(packageDir);
 	const docsFactoryOptions =
-		DOCS_FACTORY_OPTIONS[exportKey] ?? DOCS_FACTORY_OPTIONS[packageDirName];
+		docsConfig.factory?.options ??
+		DOCS_FACTORY_OPTIONS[exportKey] ??
+		DOCS_FACTORY_OPTIONS[packageDirName];
 
 	let plugin: CorsairPlugin;
 	try {
@@ -1841,7 +1883,6 @@ async function generatePluginDocsForEntry(
 	}
 
 	const pluginId = plugin.id;
-	const docsConfig = readPluginDocsConfig(packageDir);
 	const title =
 		titleArg ??
 		docsConfig.displayName?.trim() ??
