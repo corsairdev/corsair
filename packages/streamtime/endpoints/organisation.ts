@@ -6,13 +6,6 @@ import {
 	StreamtimeEndpointOutputSchemas,
 } from './types';
 
-/**
- * Retrieves the authenticated organisation's details.
- *
- * @param ctx The plugin context.
- * @param input The empty input parameters.
- * @returns The organisation details response.
- */
 export const getOrganisation: StreamtimeEndpoints['getOrganisation'] = async (
 	ctx,
 	input,

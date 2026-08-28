@@ -6,13 +6,6 @@ import {
 	StreamtimeEndpointOutputSchemas,
 } from './types';
 
-/**
- * Retrieves details of a specific role by ID.
- *
- * @param ctx The plugin context.
- * @param input The role ID parameter.
- * @returns The role details response.
- */
 export const getRole: StreamtimeEndpoints['getRole'] = async (ctx, input) => {
 	const parsedInput = StreamtimeEndpointInputSchemas.getRole.parse(input);
 	const response = await makeStreamtimeRequest<unknown>(
@@ -31,13 +24,6 @@ export const getRole: StreamtimeEndpoints['getRole'] = async (ctx, input) => {
 	return parsed;
 };
 
-/**
- * Retrieves all roles in the organization.
- *
- * @param ctx The plugin context.
- * @param input The empty input parameters.
- * @returns The list of roles response.
- */
 export const listRoles: StreamtimeEndpoints['listRoles'] = async (
 	ctx,
 	input,

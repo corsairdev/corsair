@@ -6,13 +6,6 @@ import {
 	StreamtimeEndpointOutputSchemas,
 } from './types';
 
-/**
- * Retrieves all saved segments for a specific user.
- *
- * @param ctx The plugin context.
- * @param input The user ID parameter.
- * @returns The list of saved segments response.
- */
 export const listSavedSegments: StreamtimeEndpoints['listSavedSegments'] =
 	async (ctx, input) => {
 		const parsedInput =
