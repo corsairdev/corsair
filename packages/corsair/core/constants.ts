@@ -61,12 +61,12 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'backendless',
 	'bannerbear',
 	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
-	'backendless',
 	'beeminder',
 	'bettercontact',
 	'betterstack',
@@ -211,6 +211,7 @@ export const BaseProviders = [
 	'webvizio',
 	'whatsapp',
 	'witai',
+	'wix',
 	'wiza',
 	'workday',
 	'xquik',
@@ -271,12 +272,12 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	backendless: 'Backendless',
 	bannerbear: 'Bannerbear',
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
-	backendless: 'Backendless',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
@@ -421,6 +422,7 @@ export const ProviderDisplayNames = {
 	webvizio: 'Webvizio',
 	whatsapp: 'WhatsApp',
 	witai: 'WitAi',
+	wix: 'Wix',
 	wiza: 'Wiza',
 	workday: 'Workday',
 	xquik: 'XQuik',
@@ -488,12 +490,12 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'backendless'
 	| 'bannerbear'
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
-	| 'backendless'
 	| 'beeminder'
 	| 'bettercontact'
 	| 'betterstack'
@@ -638,6 +640,7 @@ export type AllProviders =
 	| 'webvizio'
 	| 'whatsapp'
 	| 'witai'
+	| 'wix'
 	| 'wiza'
 	| 'workday'
 	| 'xquik'

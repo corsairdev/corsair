@@ -20,6 +20,14 @@ Corsair is a fully-featured product integration platform with a seamless DX. Bui
 
 Most agent integration tools are MCP-only. Corsair is built on a REST API, so the same integration layer works for agents, backend services, and the dashboards your customers use.
 
+### Wix Plugin Integration
+
+The Wix plugin extends Corsair’s REST-based integration layer to support Wix services.  
+- **Purpose:** Enables agents and backend services to interact with Wix sites.  
+- **Usage:** Generated via `pnpm run generate:plugin Wix`.  
+- **Benefit:** Provides seamless integration for dashboards and customer-facing tools built on Wix.
+
+
 ### One syntax for every integration
 
 The more third-party APIs your agent touches, the more glue code you write. Corsair gives every integration the same syntax, and we maintain the adapters behind it. Connect once instead of rewriting plumbing for each new tool.
