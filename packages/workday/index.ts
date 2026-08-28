@@ -36,6 +36,8 @@ import { workdayWebhooksNested } from './webhooks/triggers';
 // not corsair.withTenant() / corsair_accounts.tenant_id.
 // host is the API hostname (e.g. wd2-impl-services1.workday.com), not a datacenter code.
 // tenant_external_id is just for routing webhooks to the right connected account.
+// Workday puts host+tenant in the token URL — see:
+// https://doc.workday.com/adaptive-planning/en-us/workday-adaptive-planning-documentation/integration/managing-data-integration/api-documentation/understanding-the-adaptive-planning-rest-api/bit1623710301264.html
 export const workdayAuthConfig = {
 	oauth_2: {
 		account: ['tenant', 'host', 'tenant_external_id'] as const,
