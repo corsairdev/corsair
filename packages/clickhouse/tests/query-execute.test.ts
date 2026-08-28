@@ -139,15 +139,36 @@ describe('Query.execute (ClickHouse plugin)', () => {
 		).rejects.toThrow(/DB::Exception/);
 	});
 
-	it('throws when ctx.options.baseUrl is missing', async () => {
+	it('throws when neither ctx.options.baseUrl nor tenant_external_id is set', async () => {
 		const ctx = {
 			key: 'Basic AAA=',
 			options: { authType: 'api_key' as const },
 			$getAccountId: async () => null,
+			keys: { get_tenant_external_id: async () => null },
 		};
 
 		await expect(
 			Query.execute(ctx as never, { sql: 'SELECT 1' }),
-		).rejects.toThrow();
+		).rejects.toThrow(/baseUrl/);
+	});
+
+	it('falls back to ctx.keys.get_tenant_external_id when ctx.options.baseUrl is missing', async () => {
+		mockFetchOnce('{"x":1}');
+
+		const ctx = {
+			key: 'Basic AAA=',
+			options: { authType: 'api_key' as const },
+			$getAccountId: async () => null,
+			keys: {
+				get_tenant_external_id: async () =>
+					'https://tenant-ch.example.com:8443',
+			},
+		};
+
+		const result = await Query.execute(ctx as never, { sql: 'SELECT 1 AS x' });
+
+		const call = (globalThis.fetch as jest.Mock).mock.calls[0] as FetchCall;
+		expect(String(call[0])).toBe('https://tenant-ch.example.com:8443/');
+		expect(result.rows).toEqual([{ x: 1 }]);
 	});
 });

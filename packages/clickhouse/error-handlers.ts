@@ -1,14 +1,22 @@
-import type { CorsairErrorHandler } from 'corsair/core';
+import type { CorsairErrorHandler, ErrorContext } from 'corsair/core';
 import { ApiError } from 'corsair/http';
+import { ClickhouseAPIError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
-		match: (error: Error) => {
+		match: (error: Error, _ctx: ErrorContext) => {
+			// Both ApiError (corsair/http REST clients) and ClickhouseAPIError
+			// (the raw-fetch client we use for the HTTP SQL interface) report
+			// their status code on the instance, so 429s from either path
+			// route into this handler.
 			if (error instanceof ApiError && error.status === 429) return true;
+			if (error instanceof ClickhouseAPIError && error.status === 429) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
 			return msg.includes('rate_limited') || msg.includes('429');
 		},
-		handler: async (error: Error) => {
+		handler: async (error: Error, _ctx: ErrorContext) => {
 			let retryAfterMs: number | undefined;
 			if (error instanceof ApiError && error.retryAfter !== undefined) {
 				retryAfterMs = error.retryAfter;
@@ -17,15 +25,20 @@ export const errorHandlers = {
 		},
 	},
 	AUTH_ERROR: {
-		match: (error: Error) => {
+		match: (error: Error, _ctx: ErrorContext) => {
 			if (error instanceof ApiError && error.status === 401) return true;
+			if (error instanceof ClickhouseAPIError && error.status === 401) {
+				return true;
+			}
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
-		handler: async () => ({ maxRetries: 0 }),
+		handler: async (_error: Error, _ctx: ErrorContext) => ({
+			maxRetries: 0,
+		}),
 	},
 	DEFAULT: {
-		match: () => true,
-		handler: async () => ({ maxRetries: 0 }),
+		match: (_error: Error, _ctx: ErrorContext) => true,
+		handler: async (_error: Error, _ctx: ErrorContext) => ({ maxRetries: 0 }),
 	},
 } satisfies CorsairErrorHandler;

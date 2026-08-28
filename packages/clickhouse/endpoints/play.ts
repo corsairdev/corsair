@@ -1,5 +1,5 @@
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { fetchPlayHtml } from '../client';
+import { logEventFromContext } from 'corsair/core';
+import { fetchPlayHtml, resolveBaseUrl } from '../client';
 import type { ClickhouseEndpoints } from '../index';
 import {
 	ClickhouseEndpointInputSchemas,
@@ -11,8 +11,7 @@ export const getPlayInterface: ClickhouseEndpoints['getPlayInterface'] = async (
 	rawInput,
 ) => {
 	ClickhouseEndpointInputSchemas.getPlayInterface.parse(rawInput);
-	const baseUrl = ctx.options.baseUrl;
-	if (!baseUrl) throw new AuthMissingError('clickhouse', 'baseUrl');
+	const baseUrl = await resolveBaseUrl(ctx);
 
 	const html = await fetchPlayHtml(baseUrl, ctx.key);
 

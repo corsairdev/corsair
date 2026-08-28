@@ -1,5 +1,5 @@
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { assertSafeIdentifier, query } from '../client';
+import { logEventFromContext } from 'corsair/core';
+import { assertSafeIdentifier, query, resolveBaseUrl } from '../client';
 import type { ClickhouseEndpoints } from '../index';
 import {
 	ClickhouseEndpointInputSchemas,
@@ -22,8 +22,7 @@ export const getTableSchema: ClickhouseEndpoints['getTableSchema'] = async (
 	rawInput,
 ) => {
 	const input = ClickhouseEndpointInputSchemas.getTableSchema.parse(rawInput);
-	const baseUrl = ctx.options.baseUrl;
-	if (!baseUrl) throw new AuthMissingError('clickhouse', 'baseUrl');
+	const baseUrl = await resolveBaseUrl(ctx);
 
 	assertSafeIdentifier(input.database, 'database');
 	assertSafeIdentifier(input.table, 'table');

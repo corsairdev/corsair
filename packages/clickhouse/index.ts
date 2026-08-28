@@ -42,7 +42,9 @@ export type ClickhousePluginOptions = {
 
 export type ClickhouseContext = CorsairPluginContext<
 	typeof ClickhouseSchema,
-	ClickhousePluginOptions
+	ClickhousePluginOptions,
+	undefined,
+	typeof clickhouseAuthConfig
 >;
 
 export type ClickhouseKeyBuilderContext =
@@ -119,9 +121,15 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const clickhouseEndpointMeta = {
 	'query.execute': {
-		riskLevel: 'read' as const,
+		// query.execute accepts arbitrary SQL, including statements that
+		// mutate or destroy data (INSERT, UPDATE, DELETE, DROP, ALTER,
+		// TRUNCATE, KILL QUERY, ...). Mark it as destructive and irreversible
+		// so Corsair's permission guard prompts the user before an agent can
+		// call it without explicit approval.
+		riskLevel: 'destructive' as const,
+		irreversible: true,
 		description:
-			'Execute a SQL query against the tenant ClickHouse instance and return the result rows.',
+			'Execute a SQL query against the tenant ClickHouse instance and return the result rows. Arbitrary SQL is accepted — destructive statements require explicit permission.',
 	},
 	'query.listDatabases': {
 		riskLevel: 'read' as const,
@@ -152,7 +160,13 @@ const clickhouseEndpointMeta = {
 >;
 
 export const clickhouseAuthConfig = {
-	api_key: {},
+	api_key: {
+		// Each account stores its per-tenant ClickHouse HTTP endpoint here so
+		// different tenants can target different clusters. Endpoints resolve
+		// it via ctx.keys.get_tenant_external_id() when ctx.options.baseUrl
+		// is not provided (multi-tenant mode).
+		account: ['tenant_external_id'] as const,
+	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseClickhousePlugin<T extends ClickhousePluginOptions> =

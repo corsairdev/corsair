@@ -1,5 +1,5 @@
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { query } from '../client';
+import { logEventFromContext } from 'corsair/core';
+import { query, resolveBaseUrl } from '../client';
 import type { ClickhouseEndpoints } from '../index';
 import {
 	ClickhouseEndpointInputSchemas,
@@ -14,8 +14,7 @@ export const listDatabases: ClickhouseEndpoints['listDatabases'] = async (
 	rawInput,
 ) => {
 	ClickhouseEndpointInputSchemas.listDatabases.parse(rawInput);
-	const baseUrl = ctx.options.baseUrl;
-	if (!baseUrl) throw new AuthMissingError('clickhouse', 'baseUrl');
+	const baseUrl = await resolveBaseUrl(ctx);
 
 	const rows = await query(baseUrl, ctx.key, LIST_DATABASES_SQL);
 	const databases = rows.map((row) => ({

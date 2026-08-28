@@ -1,5 +1,5 @@
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
-import { query } from '../client';
+import { logEventFromContext } from 'corsair/core';
+import { query, resolveBaseUrl } from '../client';
 import type { ClickhouseEndpoints } from '../index';
 import {
 	ClickhouseEndpointInputSchemas,
@@ -10,18 +10,16 @@ import {
  * Run a SQL query against the user's ClickHouse instance.
  *
  * `ctx.key` is the Basic auth header (`Basic <base64>`) supplied by keyBuilder.
- * `ctx.options.baseUrl` is the per-tenant ClickHouse HTTP endpoint, set at
- * plugin construction time (or per-call via the corsair CLI when wiring).
+ * `resolveBaseUrl(ctx)` returns the per-tenant ClickHouse HTTP endpoint from
+ * either `ctx.options.baseUrl` (solo mode) or the account's
+ * `tenant_external_id` (multi-tenant mode).
  */
 export const execute: ClickhouseEndpoints['executeQuery'] = async (
 	ctx,
 	rawInput,
 ) => {
 	const input = ClickhouseEndpointInputSchemas.executeQuery.parse(rawInput);
-	const baseUrl = ctx.options.baseUrl;
-	if (!baseUrl) {
-		throw new AuthMissingError('clickhouse', 'baseUrl');
-	}
+	const baseUrl = await resolveBaseUrl(ctx);
 
 	const limitClause =
 		input.limit !== undefined && !/\blimit\s+\d+/i.test(input.sql)

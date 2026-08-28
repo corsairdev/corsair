@@ -13,6 +13,7 @@
  * passes `params` to populate those query params — never string-concatenate
  * user input into SQL.
  */
+import { AuthMissingError } from 'corsair/core';
 
 export class ClickhouseAPIError extends Error {
 	constructor(
@@ -146,4 +147,31 @@ export function assertSafeIdentifier(value: string, field: string): void {
 			`Invalid ${field}: "${value}". Must match ${IDENTIFIER_RE.source}.`,
 		);
 	}
+}
+
+/**
+ * Resolve the per-call ClickHouse HTTP endpoint.
+ *
+ * Resolution order:
+ *   1. Plugin option `baseUrl` (solo mode, single shared endpoint)
+ *   2. Account-stored `tenant_external_id` (multi-tenant mode, one per account)
+ *
+ * Throws {@link AuthMissingError} when neither source is available so the
+ * caller surfaces a clear "where do you point at?" error rather than a
+ * generic connection failure.
+ */
+export async function resolveBaseUrl(ctx: {
+	options?: { baseUrl?: string };
+	keys?: {
+		get_tenant_external_id?: () => Promise<string | null | undefined>;
+	};
+}): Promise<string> {
+	const fromOptions = ctx.options?.baseUrl;
+	if (fromOptions) return fromOptions;
+	const getter = ctx.keys?.get_tenant_external_id;
+	if (getter) {
+		const fromTenant = await getter();
+		if (fromTenant) return fromTenant;
+	}
+	throw new AuthMissingError('clickhouse', 'baseUrl');
 }
