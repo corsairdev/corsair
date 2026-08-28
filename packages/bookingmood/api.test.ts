@@ -90,6 +90,24 @@ describe('Bookingmood plugin', () => {
 		expect(String(url)).toContain('limit=10');
 	});
 
+	it('merges PATCH rows onto stored entity data', async () => {
+		mockFetch([{ id: 'p1', timezone: 'Europe/Amsterdam' }]);
+		const ctx = createMockContext();
+		ctx.db.products.findByEntityId.mockResolvedValue({
+			id: 'internal',
+			data: { id: 'p1', timezone: 'UTC', rent_period: 'nightly' },
+		});
+		await resourceEndpoints.products.update(ctx, {
+			id: 'p1',
+			timezone: 'Europe/Amsterdam',
+		});
+		expect(ctx.db.products.upsertByEntityId).toHaveBeenCalledWith('p1', {
+			id: 'p1',
+			timezone: 'Europe/Amsterdam',
+			rent_period: 'nightly',
+		});
+	});
+
 	it('keeps PostgREST filters on PATCH and DELETE', async () => {
 		mockFetch([{ id: 'p1', timezone: 'Europe/Amsterdam' }]);
 		await resourceEndpoints.products.update(createMockContext(), {

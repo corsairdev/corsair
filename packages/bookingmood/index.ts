@@ -21,6 +21,7 @@ import {
 	ListResponseSchema,
 	MembersInviteInputSchema,
 	ProductsCreateInputSchema,
+	RowSchema,
 	SearchAvailabilityInputSchema,
 	SearchAvailabilityResponseSchema,
 	WriteInputSchema,
@@ -60,6 +61,7 @@ function outputSchemaFor(group: string, op: string) {
 		return AvailabilityQueryResponseSchema;
 	if (group === 'search' && op === 'availability')
 		return SearchAvailabilityResponseSchema;
+	if (group === 'members' && op === 'invite') return RowSchema;
 	if (op === 'list') return ListResponseSchema;
 	return WriteResponseSchema;
 }

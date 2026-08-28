@@ -24,6 +24,16 @@ type Ctx = {
 	>;
 };
 
+function storedData(
+	existing: Record<string, unknown> | null,
+): Record<string, unknown> {
+	const data = existing?.data;
+	if (data && typeof data === 'object' && !Array.isArray(data)) {
+		return data as Record<string, unknown>;
+	}
+	return {};
+}
+
 async function syncRows(ctx: Ctx, entity: EntityName | undefined, rows: Row[]) {
 	if (!entity || !ctx.db?.[entity]?.upsertByEntityId) return;
 	for (const row of rows) {
@@ -32,7 +42,7 @@ async function syncRows(ctx: Ctx, entity: EntityName | undefined, rows: Row[]) {
 			? await ctx.db[entity].findByEntityId(row.id)
 			: null;
 		await ctx.db[entity].upsertByEntityId(row.id, {
-			...(existing ?? {}),
+			...storedData(existing),
 			...row,
 			id: row.id,
 		});
