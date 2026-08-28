@@ -33,7 +33,8 @@ import { matchWorkdayTenantWebhook } from './webhooks/tenant-matcher';
 import { workdayWebhooksNested } from './webhooks/triggers';
 
 // naming collision: `tenant` here is Workday's tenant name (goes in their URL path),
-// not corsair.withTenant() / corsair_accounts.tenant_id. host is the WD datacenter.
+// not corsair.withTenant() / corsair_accounts.tenant_id.
+// host is the API hostname (e.g. wd2-impl-services1.workday.com), not a datacenter code.
 // tenant_external_id is just for routing webhooks to the right connected account.
 export const workdayAuthConfig = {
 	oauth_2: {
