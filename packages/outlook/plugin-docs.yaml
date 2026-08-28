@@ -13,3 +13,17 @@ examples:
       subject: "Hello from Corsair"
       body: "This is a test email."
       to: "hello@example.com"
+
+dbExample:
+  entity: messages
+  note: "Search synced messages without hitting the Outlook API."
+  data:
+    isRead: false
+  limit: 50
+
+exampleWebhook:
+  path: messages.newMessage
+  note: "React when a new email is received."
+  after: |
+    const subject = result.data?.subject;
+    console.log('New Outlook message:', subject);
