@@ -3,19 +3,13 @@ import type { FlexisignEndpoints } from '..';
 import { makeFlexisignRequest } from '../client';
 import type { FlexisignEndpointOutputs } from './types';
 
-export const templates: FlexisignEndpoints['listTemplates'] = async (
+export const listTemplates: FlexisignEndpoints['ListTemplates'] = async (
 	ctx,
 	input,
 ) => {
 	const response = await makeFlexisignRequest<
-		FlexisignEndpointOutputs['listTemplates']
-	>('templates', ctx.key, {
-		method: 'GET',
-		query: {
-			page: input.page,
-			limit: input.limit,
-		},
-	});
+		FlexisignEndpointOutputs['ListTemplates']
+	>(`example/${input.id}`, ctx.key, { method: 'GET' });
 
 	await logEventFromContext(
 		ctx,

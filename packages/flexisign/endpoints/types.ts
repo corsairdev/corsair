@@ -1,38 +1,29 @@
 import { z } from 'zod';
 
 const ListTemplatesInputSchema = z.object({
-	page: z.number().optional(),
-	limit: z.number().optional(),
+	id: z.string(),
 });
 
 export type ListTemplatesInput = z.infer<typeof ListTemplatesInputSchema>;
 
-const TemplateSchema = z.object({
-	id: z.string(),
-	name: z.string(),
-	description: z.string().optional(),
-	createdAt: z.string().optional(),
-});
-
 const ListTemplatesResponseSchema = z.object({
-	templates: z.array(TemplateSchema),
-	total: z.number().optional(),
+	id: z.string(),
 });
 
 export type ListTemplatesResponse = z.infer<typeof ListTemplatesResponseSchema>;
 
 export type FlexisignEndpointInputs = {
-	listTemplates: ListTemplatesInput;
+	ListTemplates: ListTemplatesInput;
 };
 
 export type FlexisignEndpointOutputs = {
-	listTemplates: ListTemplatesResponse;
+	ListTemplates: ListTemplatesResponse;
 };
 
 export const FlexisignEndpointInputSchemas = {
-	listTemplates: ListTemplatesInputSchema,
+	ListTemplates: ListTemplatesInputSchema,
 } as const;
 
 export const FlexisignEndpointOutputSchemas = {
-	listTemplates: ListTemplatesResponseSchema,
+	ListTemplates: ListTemplatesResponseSchema,
 } as const;

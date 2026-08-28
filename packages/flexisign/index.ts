@@ -15,7 +15,7 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { List } from './endpoints';
+import { Example } from './endpoints';
 import type {
 	FlexisignEndpointInputs,
 	FlexisignEndpointOutputs,
@@ -62,7 +62,7 @@ type FlexisignEndpoint<K extends keyof FlexisignEndpointOutputs> =
 	>;
 
 export type FlexisignEndpoints = {
-	listTemplates: FlexisignEndpoint<'listTemplates'>;
+	ListTemplates: FlexisignEndpoint<'ListTemplates'>;
 };
 
 type FlexisignWebhook<
@@ -71,27 +71,23 @@ type FlexisignWebhook<
 > = CorsairWebhook<FlexisignContext, TEvent, FlexisignWebhookOutputs[K]>;
 
 export type FlexisignWebhooks = {
-	example: FlexisignWebhook<'example', ExampleEvent>;
+	list: { templates: FlexisignWebhook<'example', ExampleEvent> };
 };
 
 export type FlexisignBoundWebhooks = BindWebhooks<FlexisignWebhooks>;
 
 const flexisignEndpointsNested = {
-	list: {
-		templates: List.templates,
-	},
+	list: { templates: Example.listTemplates },
 } as const;
 
 const flexisignWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
+	list: { templates: ExampleWebhooks.example },
 } as const;
 
 export const flexisignEndpointSchemas = {
 	'list.templates': {
-		input: FlexisignEndpointInputSchemas.listTemplates,
-		output: FlexisignEndpointOutputSchemas.listTemplates,
+		input: FlexisignEndpointInputSchemas.ListTemplates,
+		output: FlexisignEndpointOutputSchemas.ListTemplates,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof flexisignEndpointsNested
@@ -112,7 +108,7 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 const flexisignEndpointMeta = {
 	'list.templates': {
 		riskLevel: 'read',
-		description: 'List available document templates',
+		description: 'Get an example resource by ID',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof flexisignEndpointsNested
