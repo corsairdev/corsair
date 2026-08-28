@@ -2,6 +2,7 @@ import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { makeMailboxLayerRequest, redactEmail } from '../client';
 import type { MailboxLayerEndpoints } from '../index';
 import type { MailboxLayerEndpointOutputs } from './types';
+import { CheckInputSchema, CheckResponseSchema } from './types';
 
 /**
  * Validate and verify whether an email address is correctly formatted,
@@ -16,15 +17,21 @@ export const check: MailboxLayerEndpoints['check'] = async (ctx, input) => {
 		throw new AuthMissingError('mailboxlayer', 'api_key');
 	}
 
-	const response = await makeMailboxLayerRequest<
+	const { email, smtp } = CheckInputSchema.parse(input);
+
+	const rawResponse = await makeMailboxLayerRequest<
 		MailboxLayerEndpointOutputs['check']
 	>('check', ctx.key, {
 		query: {
-			email: input.email,
-			smtp: input.smtp === false ? 0 : 1,
+			email,
+			smtp: smtp === false ? 0 : 1,
 			format: 1,
 		},
 	});
+
+	// mailboxlayer's response shape isn't guaranteed to match our types at
+	// compile time — validate it at runtime before trusting or persisting it.
+	const response = CheckResponseSchema.parse(rawResponse);
 
 	if (ctx.db.emailChecks) {
 		try {
@@ -51,7 +58,7 @@ export const check: MailboxLayerEndpoints['check'] = async (ctx, input) => {
 	await logEventFromContext(
 		ctx,
 		'mailboxlayer.email.check',
-		{ email: redactEmail(input.email) },
+		{ email: redactEmail(email) },
 		'completed',
 	);
 
