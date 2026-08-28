@@ -25,6 +25,9 @@ export const errorHandlers = {
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof ApiError && error.status === 401) return true;
+			if (error instanceof BoltIotAPIError) {
+				return error.message.toLowerCase().includes('invalid api key');
+			}
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('unauthorized') ||

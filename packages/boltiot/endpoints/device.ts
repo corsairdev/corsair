@@ -1,6 +1,17 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BoltIotEndpoints } from '..';
-import { makeBoltIotRequest } from '../client';
+import { BoltIotAPIError, makeBoltIotRequest } from '../client';
+
+function parseAnalogReading(raw: string): number {
+	if (!/^\d+$/.test(raw)) {
+		throw new BoltIotAPIError(`Invalid analog reading: ${raw}`);
+	}
+	const value = Number(raw);
+	if (value < 0 || value > 1023) {
+		throw new BoltIotAPIError(`Analog reading out of range: ${raw}`);
+	}
+	return value;
+}
 
 export const checkStatus: BoltIotEndpoints['checkDeviceStatus'] = async (
 	ctx,
@@ -13,6 +24,7 @@ export const checkStatus: BoltIotEndpoints['checkDeviceStatus'] = async (
 	const response = {
 		success: res.success === '1' || res.success === 1,
 		value: res.value,
+		...(res.time ? { time: res.time } : {}),
 		deviceName: input.deviceName,
 	};
 
@@ -29,17 +41,17 @@ export const analogRead: BoltIotEndpoints['analogRead'] = async (
 	ctx,
 	input,
 ) => {
+	const pin = input.pin ?? 'A0';
 	const res = await makeBoltIotRequest('analogRead', ctx.key, {
 		deviceName: input.deviceName,
-		pin: input.pin,
+		pin,
 	});
 
-	const numValue = Number.parseInt(res.value, 10);
 	const response = {
 		success: res.success === '1' || res.success === 1,
-		value: Number.isNaN(numValue) ? 0 : numValue,
+		value: parseAnalogReading(res.value),
 		rawValue: res.value,
-		pin: input.pin,
+		pin,
 		deviceName: input.deviceName,
 	};
 

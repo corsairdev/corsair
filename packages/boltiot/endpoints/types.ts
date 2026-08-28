@@ -12,7 +12,13 @@ export type CheckDeviceStatusInput = z.infer<
 
 export const CheckDeviceStatusOutputSchema = z.object({
 	success: z.boolean(),
-	value: z.string().describe('Device status, e.g. "online" or "offline"'),
+	value: z
+		.string()
+		.describe('Device status from isOnline: "online" or "offline"'),
+	time: z
+		.string()
+		.optional()
+		.describe('Official isOnline timestamp when that status last changed'),
 	deviceName: z.string(),
 });
 export type CheckDeviceStatusOutput = z.infer<
@@ -118,9 +124,7 @@ export const SerialWriteReadOutputSchema = z.object({
 	value: z.string().describe('Reply received from serial write & read command'),
 	deviceName: z.string(),
 });
-export type SerialWriteReadOutput = z.infer<
-	typeof SerialWriteReadOutputSchema
->;
+export type SerialWriteReadOutput = z.infer<typeof SerialWriteReadOutputSchema>;
 
 export type BoltIotEndpointInputs = {
 	checkDeviceStatus: CheckDeviceStatusInput;

@@ -1,9 +1,4 @@
-import {
-	analogRead,
-	checkStatus,
-	digitalRead,
-	digitalWrite,
-} from './device';
+import { analogRead, checkStatus, digitalRead, digitalWrite } from './device';
 import {
 	read as serialRead,
 	write as serialWrite,

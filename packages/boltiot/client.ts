@@ -24,6 +24,7 @@ const BOLT_IOT_API_BASE = 'https://cloud.boltiot.com/remote';
 export interface BoltIotApiResponse {
 	success: string | number;
 	value: string;
+	time?: string;
 }
 
 export async function makeBoltIotRequest<
@@ -33,12 +34,13 @@ export async function makeBoltIotRequest<
 	apiKey: string,
 	query: Record<string, string | number | boolean | undefined> = {},
 ): Promise<T> {
+	// Auth is the API key in the URL path. A Bearer TOKEN header is rejected
+	// by Cloud as an expired/malformed access token.
 	const config: OpenAPIConfig = {
 		BASE: BOLT_IOT_API_BASE,
 		VERSION: 'v1',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 	};
 
 	const requestOptions: ApiRequestOptions = {

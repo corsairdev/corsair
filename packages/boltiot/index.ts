@@ -137,14 +137,13 @@ const boltIotEndpointMeta = {
 	},
 	'serial.writeRead': {
 		riskLevel: 'write',
-		description:
-			'Send serial data and read reply immediately on a Bolt device',
+		description: 'Send serial data and read reply immediately on a Bolt device',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof boltIotEndpointsNested>;
 
 export const boltIotAuthConfig = {
 	api_key: {
-		account: [] as const,
+		account: ['one'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -191,7 +190,10 @@ export function boltiot<const T extends BoltIotPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('boltiot', 'api_key');
+				}
+				return res;
 			}
 
 			throw new AuthMissingError('boltiot', 'api_key');
@@ -199,7 +201,11 @@ export function boltiot<const T extends BoltIotPluginOptions>(
 	} satisfies InternalBoltIotPlugin;
 }
 
-export { BoltIotAPIError, BoltIotRateLimitError, makeBoltIotRequest } from './client';
+export {
+	BoltIotAPIError,
+	BoltIotRateLimitError,
+	makeBoltIotRequest,
+} from './client';
 export type {
 	AnalogReadInput,
 	AnalogReadOutput,
