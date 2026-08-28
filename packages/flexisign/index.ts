@@ -6,14 +6,12 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { Example } from './endpoints';
 import type {
@@ -26,18 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { FlexisignSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveFlexisignOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchFlexisignTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, FlexisignWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type FlexisignPluginOptions = {
 	authType?: PickAuth<'api_key' | 'oauth_2'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalFlexisignPlugin['hooks'];
-	webhookHooks?: InternalFlexisignPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof flexisignEndpointsNested>;
 };
@@ -65,24 +56,14 @@ export type FlexisignEndpoints = {
 	ListTemplates: FlexisignEndpoint<'ListTemplates'>;
 };
 
-type FlexisignWebhook<
-	K extends keyof FlexisignWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<FlexisignContext, TEvent, FlexisignWebhookOutputs[K]>;
-
-export type FlexisignWebhooks = {
-	list: { templates: FlexisignWebhook<'example', ExampleEvent> };
-};
-
+export type FlexisignWebhooks = Record<string, never>;
 export type FlexisignBoundWebhooks = BindWebhooks<FlexisignWebhooks>;
 
 const flexisignEndpointsNested = {
 	list: { templates: Example.listTemplates },
 } as const;
 
-const flexisignWebhooksNested = {
-	list: { templates: ExampleWebhooks.example },
-} as const;
+const flexisignWebhooksNested = {} as const;
 
 export const flexisignEndpointSchemas = {
 	'list.templates': {
@@ -93,15 +74,7 @@ export const flexisignEndpointSchemas = {
 	typeof flexisignEndpointsNested
 >;
 
-const flexisignWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof flexisignWebhooksNested
->;
+const flexisignWebhookSchemas = {} as const;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -153,33 +126,16 @@ export function flexisign<const T extends FlexisignPluginOptions>(
 		schema: FlexisignSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: flexisignEndpointsNested,
 		webhooks: flexisignWebhooksNested,
 		endpointMeta: flexisignEndpointMeta,
 		endpointSchemas: flexisignEndpointSchemas,
 		webhookSchemas: flexisignWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-flexisign-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchFlexisignTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveFlexisignOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: FlexisignKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -205,7 +161,3 @@ export type {
 	ListTemplatesInput,
 	ListTemplatesResponse,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	FlexisignWebhookOutputs,
-} from './webhooks/types';
