@@ -1,4 +1,5 @@
 import type { CorsairErrorHandler } from 'corsair/core';
+import type { BonsaiAPIError } from './client';
 import { makeBonsaiRequest } from './client';
 import { errorHandlers } from './error-handlers';
 
@@ -114,6 +115,38 @@ describe('Bonsai Error Handlers', () => {
 			const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(caught);
 			expect(strategy.maxRetries).toBe(5);
 			expect(strategy.headersRetryAfterMs).toBe(30);
+		});
+
+		it('matches a wrapped 429 even when the message has no rate-limit keywords', async () => {
+			// Exact review scenario: an exhausted 429 whose message carries neither
+			// '429' nor 'rate_limited' (nor any other keyword). Classification must
+			// come from the preserved status metadata, never the message text, and
+			// the provider's retryAfter must reach the retry strategy.
+			const transportError = new ApiError(
+				requestOptions(),
+				apiResponse(429, 'Slow Down'),
+				'Slow Down',
+				{ retryAfter: 45 },
+			);
+			mockRequest.mockRejectedValue(transportError);
+
+			const caught = await catchWrappedError();
+			expect(caught.name).toBe('BonsaiAPIError');
+			expect((caught as BonsaiAPIError).status).toBe(429);
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(caught)).toBe(true);
+
+			const strategy = await errorHandlers.RATE_LIMIT_ERROR.handler(caught);
+			expect(strategy.maxRetries).toBe(5);
+			expect(strategy.headersRetryAfterMs).toBe(45);
+		});
+
+		it('matches a raw 429 ApiError even when the message has no rate-limit keywords', () => {
+			const transportError = new ApiError(
+				requestOptions(),
+				apiResponse(429, 'Slow Down'),
+				'Slow Down',
+			);
+			expect(errorHandlers.RATE_LIMIT_ERROR.match(transportError)).toBe(true);
 		});
 
 		it('matches a raw 429 ApiError before any wrapping', () => {
