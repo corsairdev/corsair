@@ -59,22 +59,20 @@ export const getBulkSendJob: DropboxSignEndpoints['getBulkSendJob'] = async (
 	return result;
 };
 
-export const listBulkSendJobs: DropboxSignEndpoints['listBulkSendJobs'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeDropboxSignRequest<
-		DropboxSignEndpointOutputs['listBulkSendJobs']
-	>('bulk_send_job/list', ctx.key, {
-		method: 'GET',
-		query: input,
-		authType: ctx.authType,
-	});
-	await logEventFromContext(
-		ctx,
-		'dropboxsign.bulkSend.listJobs',
-		input ?? {},
-		'completed',
-	);
-	return result;
-};
+export const listBulkSendJobs: DropboxSignEndpoints['listBulkSendJobs'] =
+	async (ctx, input) => {
+		const result = await makeDropboxSignRequest<
+			DropboxSignEndpointOutputs['listBulkSendJobs']
+		>('bulk_send_job/list', ctx.key, {
+			method: 'GET',
+			query: input,
+			authType: ctx.authType,
+		});
+		await logEventFromContext(
+			ctx,
+			'dropboxsign.bulkSend.listJobs',
+			input ?? {},
+			'completed',
+		);
+		return result;
+	};

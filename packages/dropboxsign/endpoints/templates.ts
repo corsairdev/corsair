@@ -163,10 +163,14 @@ export const getTemplateFilesAsFileUrl: DropboxSignEndpoints['getTemplateFilesAs
 		const { template_id } = input;
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['getTemplateFilesAsFileUrl']
-		>(`template/files_as_file_url/${encodeURIComponent(template_id)}`, ctx.key, {
-			method: 'GET',
-			authType: ctx.authType,
-		});
+		>(
+			`template/files_as_file_url/${encodeURIComponent(template_id)}`,
+			ctx.key,
+			{
+				method: 'GET',
+				authType: ctx.authType,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'dropboxsign.template.getFilesAsFileUrl',
@@ -181,10 +185,14 @@ export const getTemplateFilesAsDataUri: DropboxSignEndpoints['getTemplateFilesAs
 		const { template_id } = input;
 		const result = await makeDropboxSignRequest<
 			DropboxSignEndpointOutputs['getTemplateFilesAsDataUri']
-		>(`template/files_as_data_uri/${encodeURIComponent(template_id)}`, ctx.key, {
-			method: 'GET',
-			authType: ctx.authType,
-		});
+		>(
+			`template/files_as_data_uri/${encodeURIComponent(template_id)}`,
+			ctx.key,
+			{
+				method: 'GET',
+				authType: ctx.authType,
+			},
+		);
 		await logEventFromContext(
 			ctx,
 			'dropboxsign.template.getFilesAsDataUri',

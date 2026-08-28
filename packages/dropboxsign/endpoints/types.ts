@@ -1,10 +1,12 @@
 import { z } from 'zod';
 
 export const DropboxSignEndpointInputSchemas = {
-	getAccount: z.object({
-		account_id: z.string().optional(),
-		email_address: z.string().email().optional(),
-	}).optional(),
+	getAccount: z
+		.object({
+			account_id: z.string().optional(),
+			email_address: z.string().email().optional(),
+		})
+		.optional(),
 	createAccount: z.object({
 		email_address: z.string().email(),
 		client_id: z.string().optional(),
@@ -22,12 +24,14 @@ export const DropboxSignEndpointInputSchemas = {
 	getSignatureRequest: z.object({
 		signature_request_id: z.string(),
 	}),
-	listSignatureRequests: z.object({
-		account_id: z.string().optional(),
-		page: z.number().int().positive().optional(),
-		page_size: z.number().int().positive().max(100).optional(),
-		query: z.string().optional(),
-	}).optional(),
+	listSignatureRequests: z
+		.object({
+			account_id: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			page_size: z.number().int().positive().max(100).optional(),
+			query: z.string().optional(),
+		})
+		.optional(),
 	sendSignatureRequest: z.object({
 		title: z.string().optional(),
 		subject: z.string().optional(),
@@ -109,12 +113,14 @@ export const DropboxSignEndpointInputSchemas = {
 	getTemplate: z.object({
 		template_id: z.string(),
 	}),
-	listTemplates: z.object({
-		account_id: z.string().optional(),
-		page: z.number().int().positive().optional(),
-		page_size: z.number().int().positive().max(100).optional(),
-		query: z.string().optional(),
-	}).optional(),
+	listTemplates: z
+		.object({
+			account_id: z.string().optional(),
+			page: z.number().int().positive().optional(),
+			page_size: z.number().int().positive().max(100).optional(),
+			query: z.string().optional(),
+		})
+		.optional(),
 	createTemplate: z.object({
 		title: z.string().optional(),
 		subject: z.string().optional(),
@@ -200,19 +206,25 @@ export const DropboxSignEndpointInputSchemas = {
 	getBulkSendJob: z.object({
 		bulk_send_job_id: z.string(),
 	}),
-	listBulkSendJobs: z.object({
-		page: z.number().int().positive().optional(),
-		page_size: z.number().int().positive().max(100).optional(),
-	}).optional(),
+	listBulkSendJobs: z
+		.object({
+			page: z.number().int().positive().optional(),
+			page_size: z.number().int().positive().max(100).optional(),
+		})
+		.optional(),
 
-	getTeamInfo: z.object({
-		team_id: z.string().optional(),
-	}).optional(),
+	getTeamInfo: z
+		.object({
+			team_id: z.string().optional(),
+		})
+		.optional(),
 	getCurrentTeam: z.object({}).optional(),
-	listTeams: z.object({
-		page: z.number().int().positive().optional(),
-		page_size: z.number().int().positive().max(100).optional(),
-	}).optional(),
+	listTeams: z
+		.object({
+			page: z.number().int().positive().optional(),
+			page_size: z.number().int().positive().max(100).optional(),
+		})
+		.optional(),
 	listSubTeams: z.object({
 		team_id: z.string(),
 		page: z.number().int().positive().optional(),
@@ -232,10 +244,12 @@ export const DropboxSignEndpointInputSchemas = {
 	getApiApp: z.object({
 		client_id: z.string(),
 	}),
-	listApiApps: z.object({
-		page: z.number().int().positive().optional(),
-		page_size: z.number().int().positive().max(100).optional(),
-	}).optional(),
+	listApiApps: z
+		.object({
+			page: z.number().int().positive().optional(),
+			page_size: z.number().int().positive().max(100).optional(),
+		})
+		.optional(),
 	createApiApp: z.object({
 		name: z.string(),
 		domains: z.array(z.string()).optional(),
@@ -259,24 +273,30 @@ export const DropboxSignEndpointInputSchemas = {
 		state: z.string().optional(),
 	}),
 
-	listFaxes: z.object({
-		page: z.number().int().positive().optional(),
-		page_size: z.number().int().positive().max(100).optional(),
-	}).optional(),
+	listFaxes: z
+		.object({
+			page: z.number().int().positive().optional(),
+			page_size: z.number().int().positive().max(100).optional(),
+		})
+		.optional(),
 	deleteFax: z.object({
 		fax_id: z.string(),
 	}),
-	listFaxLines: z.object({
-		page: z.number().int().positive().optional(),
-		page_size: z.number().int().positive().max(100).optional(),
-	}).optional(),
+	listFaxLines: z
+		.object({
+			page: z.number().int().positive().optional(),
+			page_size: z.number().int().positive().max(100).optional(),
+		})
+		.optional(),
 	getFaxLineAreaCodes: z.object({
 		country: z.string(),
 		state: z.string().optional(),
 		city: z.string().optional(),
 	}),
 	createReport: z.object({
-		report_type: z.array(z.enum(['user_activity', 'document_status', 'sms_activity'])),
+		report_type: z.array(
+			z.enum(['user_activity', 'document_status', 'sms_activity']),
+		),
 		start_date: z.string(),
 		end_date: z.string(),
 	}),

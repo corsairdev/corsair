@@ -1,4 +1,8 @@
-import { dropboxsign, DropboxSignSchema, dropboxSignEndpointSchemas } from './index';
+import {
+	DropboxSignSchema,
+	dropboxSignEndpointSchemas,
+	dropboxsign,
+} from './index';
 
 describe('Dropbox Sign Plugin', () => {
 	it('initializes with default options and correct id', () => {

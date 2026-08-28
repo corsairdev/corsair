@@ -1,18 +1,19 @@
 import * as client from '../client';
 import {
 	Account,
-	SignatureRequests,
-	Templates,
+	ApiApps,
+	BulkSend,
 	Drafts,
 	Embedded,
-	BulkSend,
-	Teams,
-	ApiApps,
 	FaxAndReports,
+	SignatureRequests,
+	Teams,
+	Templates,
 } from './index';
 
 jest.mock('corsair/core', () => {
-	const actual = jest.requireActual<typeof import('corsair/core')>('corsair/core');
+	const actual =
+		jest.requireActual<typeof import('corsair/core')>('corsair/core');
 	return {
 		...actual,
 		logEventFromContext: jest.fn().mockResolvedValue(null),
@@ -70,29 +71,45 @@ describe('Dropbox Sign Endpoints', () => {
 
 	describe('Signature Requests', () => {
 		it('gets signature request by ID', async () => {
-			await SignatureRequests.getSignatureRequest(ctx, { signature_request_id: 'sig_123' });
-			expect(mockedRequest).toHaveBeenCalledWith('signature_request/sig_123', ctx.key, {
-				method: 'GET',
-				authType: ctx.authType,
+			await SignatureRequests.getSignatureRequest(ctx, {
+				signature_request_id: 'sig_123',
 			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'signature_request/sig_123',
+				ctx.key,
+				{
+					method: 'GET',
+					authType: ctx.authType,
+				},
+			);
 		});
 
 		it('sends a signature request', async () => {
 			const body = { title: 'Agreement', test_mode: true };
 			await SignatureRequests.sendSignatureRequest(ctx, body);
-			expect(mockedRequest).toHaveBeenCalledWith('signature_request/send', ctx.key, {
-				method: 'POST',
-				body,
-				authType: ctx.authType,
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'signature_request/send',
+				ctx.key,
+				{
+					method: 'POST',
+					body,
+					authType: ctx.authType,
+				},
+			);
 		});
 
 		it('cancels a signature request', async () => {
-			await SignatureRequests.cancelSignatureRequest(ctx, { signature_request_id: 'sig_123' });
-			expect(mockedRequest).toHaveBeenCalledWith('signature_request/cancel/sig_123', ctx.key, {
-				method: 'POST',
-				authType: ctx.authType,
+			await SignatureRequests.cancelSignatureRequest(ctx, {
+				signature_request_id: 'sig_123',
 			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'signature_request/cancel/sig_123',
+				ctx.key,
+				{
+					method: 'POST',
+					authType: ctx.authType,
+				},
+			);
 		});
 	});
 
@@ -116,48 +133,68 @@ describe('Dropbox Sign Endpoints', () => {
 
 		it('deletes a template', async () => {
 			await Templates.deleteTemplate(ctx, { template_id: 'tmpl_123' });
-			expect(mockedRequest).toHaveBeenCalledWith('template/delete/tmpl_123', ctx.key, {
-				method: 'POST',
-				authType: ctx.authType,
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'template/delete/tmpl_123',
+				ctx.key,
+				{
+					method: 'POST',
+					authType: ctx.authType,
+				},
+			);
 		});
 	});
 
 	describe('Embedded & Drafts', () => {
 		it('gets embedded sign URL', async () => {
 			await Embedded.getEmbeddedSignUrl(ctx, { signature_id: 'sign_123' });
-			expect(mockedRequest).toHaveBeenCalledWith('embedded/sign_url/sign_123', ctx.key, {
-				method: 'GET',
-				authType: ctx.authType,
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'embedded/sign_url/sign_123',
+				ctx.key,
+				{
+					method: 'GET',
+					authType: ctx.authType,
+				},
+			);
 		});
 
 		it('creates unclaimed draft', async () => {
 			await Drafts.createUnclaimedDraft(ctx, { type: 'request_signature' });
-			expect(mockedRequest).toHaveBeenCalledWith('unclaimed_draft/create', ctx.key, {
-				method: 'POST',
-				body: { type: 'request_signature' },
-				authType: ctx.authType,
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'unclaimed_draft/create',
+				ctx.key,
+				{
+					method: 'POST',
+					body: { type: 'request_signature' },
+					authType: ctx.authType,
+				},
+			);
 		});
 	});
 
 	describe('Bulk Send & Teams & Apps', () => {
 		it('bulk sends with template', async () => {
 			await BulkSend.bulkSendWithTemplate(ctx, { template_ids: ['tmpl_1'] });
-			expect(mockedRequest).toHaveBeenCalledWith('signature_request/bulk_send_with_template', ctx.key, {
-				method: 'POST',
-				body: { template_ids: ['tmpl_1'] },
-				authType: ctx.authType,
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'signature_request/bulk_send_with_template',
+				ctx.key,
+				{
+					method: 'POST',
+					body: { template_ids: ['tmpl_1'] },
+					authType: ctx.authType,
+				},
+			);
 		});
 
 		it('gets bulk send job', async () => {
 			await BulkSend.getBulkSendJob(ctx, { bulk_send_job_id: 'job_123' });
-			expect(mockedRequest).toHaveBeenCalledWith('bulk_send_job/job_123', ctx.key, {
-				method: 'GET',
-				authType: ctx.authType,
-			});
+			expect(mockedRequest).toHaveBeenCalledWith(
+				'bulk_send_job/job_123',
+				ctx.key,
+				{
+					method: 'GET',
+					authType: ctx.authType,
+				},
+			);
 		});
 
 		it('gets team info', async () => {
@@ -179,7 +216,9 @@ describe('Dropbox Sign Endpoints', () => {
 
 		it('authorizes OAuth app', async () => {
 			const res = await ApiApps.oAuthAuthorize(ctx, { client_id: 'app_123' });
-			expect(res.url).toContain('app.hellosign.com/oauth/authorize?client_id=app_123');
+			expect(res.url).toContain(
+				'app.hellosign.com/oauth/authorize?client_id=app_123',
+			);
 		});
 
 		it('deletes fax', async () => {

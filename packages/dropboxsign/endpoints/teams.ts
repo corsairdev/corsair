@@ -32,7 +32,12 @@ export const getCurrentTeam: DropboxSignEndpoints['getCurrentTeam'] = async (
 		method: 'GET',
 		authType: ctx.authType,
 	});
-	await logEventFromContext(ctx, 'dropboxsign.team.getCurrent', {}, 'completed');
+	await logEventFromContext(
+		ctx,
+		'dropboxsign.team.getCurrent',
+		{},
+		'completed',
+	);
 	return result;
 };
 

@@ -56,8 +56,9 @@ export type DropboxSignContext = CorsairPluginContext<
 export type DropboxSignKeyBuilderContext =
 	KeyBuilderContext<DropboxSignPluginOptions>;
 
-export type DropboxSignBoundEndpoints =
-	BindEndpoints<typeof dropboxSignEndpointsNested>;
+export type DropboxSignBoundEndpoints = BindEndpoints<
+	typeof dropboxSignEndpointsNested
+>;
 
 type DropboxSignEndpoint<K extends keyof DropboxSignEndpointOutputs> =
 	CorsairEndpoint<
@@ -188,8 +189,7 @@ const dropboxSignEndpointsNested = {
 	},
 	bulkSend: {
 		sendWithTemplate: BulkSend.bulkSendWithTemplate,
-		createEmbeddedWithTemplate:
-			BulkSend.bulkCreateEmbeddedSigReqWithTemplate,
+		createEmbeddedWithTemplate: BulkSend.bulkCreateEmbeddedSigReqWithTemplate,
 		getJob: BulkSend.getBulkSendJob,
 		listJobs: BulkSend.listBulkSendJobs,
 	},
@@ -255,8 +255,10 @@ export const dropboxSignEndpointSchemas = {
 		output: DropboxSignEndpointOutputSchemas.createEmbeddedSignatureRequest,
 	},
 	'signatureRequests.createEmbeddedWithTemplate': {
-		input: DropboxSignEndpointInputSchemas.createEmbeddedSignatureRequestWithTemplate,
-		output: DropboxSignEndpointOutputSchemas.createEmbeddedSignatureRequestWithTemplate,
+		input:
+			DropboxSignEndpointInputSchemas.createEmbeddedSignatureRequestWithTemplate,
+		output:
+			DropboxSignEndpointOutputSchemas.createEmbeddedSignatureRequestWithTemplate,
 	},
 	'signatureRequests.cancel': {
 		input: DropboxSignEndpointInputSchemas.cancelSignatureRequest,
@@ -291,12 +293,16 @@ export const dropboxSignEndpointSchemas = {
 		output: DropboxSignEndpointOutputSchemas.editAndResendSignatureRequest,
 	},
 	'signatureRequests.editAndResendEmbedded': {
-		input: DropboxSignEndpointInputSchemas.editAndResendEmbeddedSignatureRequest,
-		output: DropboxSignEndpointOutputSchemas.editAndResendEmbeddedSignatureRequest,
+		input:
+			DropboxSignEndpointInputSchemas.editAndResendEmbeddedSignatureRequest,
+		output:
+			DropboxSignEndpointOutputSchemas.editAndResendEmbeddedSignatureRequest,
 	},
 	'signatureRequests.editAndResendEmbeddedTemplate': {
-		input: DropboxSignEndpointInputSchemas.editAndResendEmbeddedSignatureRequestTemplate,
-		output: DropboxSignEndpointOutputSchemas.editAndResendEmbeddedSignatureRequestTemplate,
+		input:
+			DropboxSignEndpointInputSchemas.editAndResendEmbeddedSignatureRequestTemplate,
+		output:
+			DropboxSignEndpointOutputSchemas.editAndResendEmbeddedSignatureRequestTemplate,
 	},
 
 	'templates.get': {
@@ -349,8 +355,10 @@ export const dropboxSignEndpointSchemas = {
 		output: DropboxSignEndpointOutputSchemas.createUnclaimedDraft,
 	},
 	'drafts.createEmbeddedUnclaimedWithTemplate': {
-		input: DropboxSignEndpointInputSchemas.createEmbeddedUnclaimedDraftWithTemplate,
-		output: DropboxSignEndpointOutputSchemas.createEmbeddedUnclaimedDraftWithTemplate,
+		input:
+			DropboxSignEndpointInputSchemas.createEmbeddedUnclaimedDraftWithTemplate,
+		output:
+			DropboxSignEndpointOutputSchemas.createEmbeddedUnclaimedDraftWithTemplate,
 	},
 	'drafts.editAndResendUnclaimed': {
 		input: DropboxSignEndpointInputSchemas.editAndResendUnclaimedDraft,
@@ -372,7 +380,8 @@ export const dropboxSignEndpointSchemas = {
 	},
 	'bulkSend.createEmbeddedWithTemplate': {
 		input: DropboxSignEndpointInputSchemas.bulkCreateEmbeddedSigReqWithTemplate,
-		output: DropboxSignEndpointOutputSchemas.bulkCreateEmbeddedSigReqWithTemplate,
+		output:
+			DropboxSignEndpointOutputSchemas.bulkCreateEmbeddedSigReqWithTemplate,
 	},
 	'bulkSend.getJob': {
 		input: DropboxSignEndpointInputSchemas.getBulkSendJob,
@@ -512,8 +521,7 @@ const dropboxSignEndpointMeta = {
 	},
 	'signatureRequests.update': {
 		riskLevel: 'write',
-		description:
-			'Updates signer contact information on signature request',
+		description: 'Updates signer contact information on signature request',
 	},
 	'signatureRequests.downloadFiles': {
 		riskLevel: 'read',
@@ -735,8 +743,8 @@ export type ExternalDropboxSignPlugin<T extends DropboxSignPluginOptions> =
  * Provides electronic signature, template, team, and API app workflows.
  */
 export function dropboxsign<const T extends DropboxSignPluginOptions>(
-	incomingOptions: DropboxSignPluginOptions & T = {} as DropboxSignPluginOptions &
-		T,
+	incomingOptions: DropboxSignPluginOptions &
+		T = {} as DropboxSignPluginOptions & T,
 ): ExternalDropboxSignPlugin<T> {
 	const options = {
 		...incomingOptions,

@@ -1,5 +1,4 @@
-import type { ApiRequestOptions } from 'corsair/http';
-import type { OpenAPIConfig } from 'corsair/http';
+import type { ApiRequestOptions, OpenAPIConfig } from 'corsair/http';
 import { request } from 'corsair/http';
 
 export class DropboxSignAPIError extends Error {
@@ -29,7 +28,13 @@ export async function makeDropboxSignRequest<T>(
 		authType?: 'api_key' | 'oauth_2';
 	} = {},
 ): Promise<T> {
-	const { method = 'GET', body, query, headers = {}, authType = 'api_key' } = options;
+	const {
+		method = 'GET',
+		body,
+		query,
+		headers = {},
+		authType = 'api_key',
+	} = options;
 
 	const authHeader =
 		authType === 'oauth_2'
