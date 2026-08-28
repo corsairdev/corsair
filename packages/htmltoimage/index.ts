@@ -6,7 +6,6 @@ import type {
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
@@ -15,29 +14,26 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { Example } from './endpoints';
+
+import { HtmlToImage } from './endpoints';
+
 import type {
 	HtmlToImageEndpointInputs,
 	HtmlToImageEndpointOutputs,
 } from './endpoints/types';
+
 import {
 	HtmlToImageEndpointInputSchemas,
 	HtmlToImageEndpointOutputSchemas,
 } from './endpoints/types';
+
 import { errorHandlers } from './error-handlers';
 import { HtmlToImageSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveHtmlToImageOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchHtmlToImageTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, HtmlToImageWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type HtmlToImagePluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalHtmlToImagePlugin['hooks'];
-	webhookHooks?: InternalHtmlToImagePlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof htmlToImageEndpointsNested>;
 };
@@ -62,57 +58,65 @@ type HtmlToImageEndpoint<K extends keyof HtmlToImageEndpointOutputs> =
 	>;
 
 export type HtmlToImageEndpoints = {
-	exampleGet: HtmlToImageEndpoint<'exampleGet'>;
+	checkUsage: HtmlToImageEndpoint<'checkUsage'>;
+	convertToImage: HtmlToImageEndpoint<'convertToImage'>;
+	getImage: HtmlToImageEndpoint<'getImage'>;
 };
 
-type HtmlToImageWebhook<
-	K extends keyof HtmlToImageWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<HtmlToImageContext, TEvent, HtmlToImageWebhookOutputs[K]>;
-
-export type HtmlToImageWebhooks = {
-	example: HtmlToImageWebhook<'example', ExampleEvent>;
-};
+export type HtmlToImageWebhooks = {};
 
 export type HtmlToImageBoundWebhooks = BindWebhooks<HtmlToImageWebhooks>;
 
 const htmlToImageEndpointsNested = {
-	example: {
-		get: Example.get,
+	account: {
+		checkUsage: HtmlToImage.checkUsage,
+	},
+	html: {
+		convertToImage: HtmlToImage.convertToImage,
+	},
+	image: {
+		getImage: HtmlToImage.getImage,
 	},
 } as const;
 
-const htmlToImageWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
-	},
-} as const;
+const htmlToImageWebhooksNested = {};
 
 export const htmlToImageEndpointSchemas = {
-	'example.get': {
-		input: HtmlToImageEndpointInputSchemas.exampleGet,
-		output: HtmlToImageEndpointOutputSchemas.exampleGet,
+	'account.checkUsage': {
+		input: HtmlToImageEndpointInputSchemas.checkUsage,
+		output: HtmlToImageEndpointOutputSchemas.checkUsage,
+	},
+	'html.convertToImage': {
+		input: HtmlToImageEndpointInputSchemas.convertToImage,
+		output: HtmlToImageEndpointOutputSchemas.convertToImage,
+	},
+	'image.getImage': {
+		input: HtmlToImageEndpointInputSchemas.getImage,
+		output: HtmlToImageEndpointOutputSchemas.getImage,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof htmlToImageEndpointsNested
 >;
 
-const htmlToImageWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<
-	typeof htmlToImageWebhooksNested
->;
+const htmlToImageWebhookSchemas =
+	{} as const satisfies RequiredPluginWebhookSchemas<
+		typeof htmlToImageWebhooksNested
+	>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const htmlToImageEndpointMeta = {
-	'example.get': {
+	'account.checkUsage': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Check account usage and remaining credits',
+	},
+	'html.convertToImage': {
+		riskLevel: 'write',
+		description: 'Convert HTML content into an image',
+	},
+	'image.getImage': {
+		riskLevel: 'read',
+		description: 'Retrieve a generated image',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof htmlToImageEndpointsNested
@@ -120,9 +124,6 @@ const htmlToImageEndpointMeta = {
 
 export const htmlToImageAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
 		account: ['tenant_external_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
@@ -151,39 +152,23 @@ export function htmltoimage<const T extends HtmlToImagePluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'htmltoimage',
 		authConfig: htmlToImageAuthConfig,
 		schema: HtmlToImageSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: htmlToImageEndpointsNested,
 		webhooks: htmlToImageWebhooksNested,
 		endpointMeta: htmlToImageEndpointMeta,
 		endpointSchemas: htmlToImageEndpointSchemas,
 		webhookSchemas: htmlToImageWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-htmltoimage-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchHtmlToImageTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveHtmlToImageOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: HtmlToImageKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
@@ -193,23 +178,18 @@ export function htmltoimage<const T extends HtmlToImagePluginOptions>(
 				return res ?? '';
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
 			return '';
 		},
 	} satisfies InternalHtmlToImagePlugin;
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
+	CheckUsageInput,
+	CheckUsageResponse,
+	ConvertToImageInput,
+	ConvertToImageResponse,
+	GetImageInput,
+	GetImageResponse,
 	HtmlToImageEndpointInputs,
 	HtmlToImageEndpointOutputs,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	HtmlToImageWebhookOutputs,
-} from './webhooks/types';

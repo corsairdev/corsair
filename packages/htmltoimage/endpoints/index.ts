@@ -1,7 +1,11 @@
-import { get as exampleGet } from './example';
+import { checkUsage } from './check-usage';
+import { convertToImage } from './convert-to-image';
+import { getImage } from './get-image';
 
-export const Example = {
-	get: exampleGet,
+export const HtmlToImage = {
+	checkUsage,
+	convertToImage,
+	getImage,
 };
 
 export * from './types';
