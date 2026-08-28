@@ -62,7 +62,7 @@ type SourcegraphEndpoint<K extends keyof SourcegraphEndpointOutputs> =
 	>;
 
 export type SourcegraphEndpoints = {
-	exampleGet: SourcegraphEndpoint<'exampleGet'>;
+	search: SourcegraphEndpoint<'search'>;
 };
 
 type SourcegraphWebhook<
@@ -77,8 +77,8 @@ export type SourcegraphWebhooks = {
 export type SourcegraphBoundWebhooks = BindWebhooks<SourcegraphWebhooks>;
 
 const sourcegraphEndpointsNested = {
-	example: {
-		get: Example.get,
+	search: {
+		search: Example.search,
 	},
 } as const;
 
@@ -89,9 +89,9 @@ const sourcegraphWebhooksNested = {
 } as const;
 
 export const sourcegraphEndpointSchemas = {
-	'example.get': {
-		input: SourcegraphEndpointInputSchemas.exampleGet,
-		output: SourcegraphEndpointOutputSchemas.exampleGet,
+	'search.search': {
+		input: SourcegraphEndpointInputSchemas.search,
+		output: SourcegraphEndpointOutputSchemas.search,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof sourcegraphEndpointsNested
@@ -110,9 +110,9 @@ const sourcegraphWebhookSchemas = {
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const sourcegraphEndpointMeta = {
-	'example.get': {
+	'search.search': {
 		riskLevel: 'read',
-		description: 'Get an example resource by ID',
+		description: 'Search code across Sourcegraph repositories',
 	},
 } as const satisfies RequiredPluginEndpointMeta<
 	typeof sourcegraphEndpointsNested
@@ -151,11 +151,12 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 		...incomingOptions,
 		authType: incomingOptions.authType ?? defaultAuthType,
 	};
+
 	return {
 		id: 'sourcegraph',
 		authConfig: sourcegraphAuthConfig,
 		schema: SourcegraphSchema,
-		options: options,
+		options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: sourcegraphEndpointsNested,
@@ -163,17 +164,23 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 		endpointMeta: sourcegraphEndpointMeta,
 		endpointSchemas: sourcegraphEndpointSchemas,
 		webhookSchemas: sourcegraphWebhookSchemas,
+
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
+
 			// TODO: Update to match your webhook signature headers
 			return 'x-sourcegraph-signature' in headers;
 		},
+
 		pluginTenantWebhookMatcher: matchSourcegraphTenantWebhook,
+
 		oauthWebhookTenantLinkResolver: resolveSourcegraphOAuthWebhookTenantLink,
+
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
+
 		keyBuilder: async (ctx: SourcegraphKeyBuilderContext, source) => {
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
@@ -181,6 +188,7 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
+
 				return res ?? '';
 			}
 
@@ -190,11 +198,13 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
+
 				return res ?? '';
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
 				const res = await ctx.keys.get_access_token();
+
 				return res ?? '';
 			}
 
@@ -204,8 +214,8 @@ export function sourcegraph<const T extends SourcegraphPluginOptions>(
 }
 
 export type {
-	ExampleGetInput,
-	ExampleGetResponse,
+	SearchInput,
+	SearchResponse,
 	SourcegraphEndpointInputs,
 	SourcegraphEndpointOutputs,
 } from './endpoints/types';
