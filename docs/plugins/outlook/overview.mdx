@@ -151,7 +151,7 @@ outlook({
         messages: {
             newMessage: {
                 after: async (ctx, result) => {
-                    console.log('Outlook message:', result.data);
+                    console.log('Outlook message:', result.corsairEntityId);
                 }
             },
         },

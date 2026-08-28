@@ -21,4 +21,4 @@ exampleWebhook:
   path: messages.newMessage
   note: "Fires when a new Outlook message arrives."
   after: |
-    console.log('Outlook message:', result.data);
+    console.log('Outlook message:', result.corsairEntityId);
