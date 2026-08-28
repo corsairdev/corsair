@@ -48,6 +48,16 @@ test('uses the full lane for lockfile-only changes', () => {
 	});
 });
 
+test('skips heavy checks for plugin-docs.yaml and generated plugin docs', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'packages/airtable/plugin-docs.yaml',
+			'docs/plugins/airtable/overview.mdx',
+		]),
+		{ lane: 'skip-heavy' },
+	);
+});
+
 test('skips heavy checks for explorer and documentation-only changes', () => {
 	assert.deepEqual(
 		classifyPrScope([
