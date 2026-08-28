@@ -1,0 +1,3233 @@
+---
+title: API
+description: "API reference for Serpapi: every `serpapi.api.*` operation with input and output types."
+---
+
+Every `serpapi.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Engines
+
+### baiduSearch
+
+`engines.baiduSearch`
+
+Baidu (Chinese search engine) results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.baiduSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bingMaps
+
+`engines.bingMaps`
+
+Bing Maps search for places and businesses
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.bingMaps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `id` | `string` | No | — |
+| `location` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### bingSearch
+
+`engines.bingSearch`
+
+Bing search engine results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.bingSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `mkt` | `string` | No | — |
+| `cc` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### duckDuckGoLightSearch
+
+`engines.duckDuckGoLightSearch`
+
+Fast, lightweight DuckDuckGo search
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.duckDuckGoLightSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `kl` | `string` | No | — |
+| `df` | `string` | No | — |
+| `start` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### duckDuckGoMaps
+
+`engines.duckDuckGoMaps`
+
+DuckDuckGo Maps search for places and businesses
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.duckDuckGoMaps({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `kl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### duckDuckGoSearch
+
+`engines.duckDuckGoSearch`
+
+DuckDuckGo search engine results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.duckDuckGoSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `kl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### naverSearch
+
+`engines.naverSearch`
+
+Naver (South Korea's leading search engine) results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.naverSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | Yes | — |
+| `where` | `string` | No | — |
+| `period` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### yahooSearch
+
+`engines.yahooSearch`
+
+Yahoo! search engine results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.yahooSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `p` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### yahooVideos
+
+`engines.yahooVideos`
+
+Yahoo! Videos search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.yahooVideos({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `p` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### yandexImagesSearch
+
+`engines.yandexImagesSearch`
+
+Yandex Images search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.yandexImagesSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `isize` | `string` | No | — |
+| `icolor` | `string` | No | — |
+| `itype` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### yandexSearch
+
+`engines.yandexSearch`
+
+Yandex search engine results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.yandexSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `text` | `string` | Yes | — |
+| `location` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### youtubeSearch
+
+`engines.youtubeSearch`
+
+YouTube video search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.engines.youtubeSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_query` | `string` | Yes | — |
+| `gl` | `string` | No | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Marketplace
+
+### appleAppStoreSearch
+
+`marketplace.appleAppStoreSearch`
+
+Apple App Store search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.marketplace.appleAppStoreSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `term` | `string` | Yes | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### ebaySearch
+
+`marketplace.ebaySearch`
+
+eBay product listing search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.marketplace.ebaySearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `_nkw` | `string` | Yes | — |
+| `_sacat` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### facebookProfile
+
+`marketplace.facebookProfile`
+
+Public information from a Facebook profile or page
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.marketplace.facebookProfile({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `profile_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### openTableReviews
+
+`marketplace.openTableReviews`
+
+Customer reviews for an OpenTable restaurant
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.marketplace.openTableReviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `rid` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### walmartProductReviews
+
+`marketplace.walmartProductReviews`
+
+Customer reviews for a Walmart product
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.marketplace.walmartProductReviews({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | — |
+| `sort` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### walmartSearch
+
+`marketplace.walmartSearch`
+
+Walmart product listing search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.marketplace.walmartSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `query` | `string` | No | — |
+| `cat_id` | `string` | No | — |
+| `store_id` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### yelpSearch
+
+`marketplace.yelpSearch`
+
+Yelp business search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.marketplace.yelpSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `find_loc` | `string` | Yes | — |
+| `find_desc` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Search
+
+### aboutThisResult
+
+`search.aboutThisResult`
+
+Google's "About this result" details for a URL
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.aboutThisResult({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### eventSearch
+
+`search.eventSearch`
+
+Google Events search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.eventSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### financeSearch
+
+`search.financeSearch`
+
+Google Finance data for a company or ticker
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.financeSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### forumsSearch
+
+`search.forumsSearch`
+
+Google Forums discussion search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.forumsSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+| `no_cache` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### hotelsAutocomplete
+
+`search.hotelsAutocomplete`
+
+Autocomplete suggestions for Google Hotels destinations
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.hotelsAutocomplete({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### hotelSearch
+
+`search.hotelSearch`
+
+Google Hotels search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.hotelSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `check_in_date` | `string` | No | — |
+| `check_out_date` | `string` | No | — |
+| `adults` | `number` | No | — |
+| `currency` | `string` | No | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+| `no_cache` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### imageSearch
+
+`search.imageSearch`
+
+Google Images search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.imageSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+| `no_cache` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### imagesLightSearch
+
+`search.imagesLightSearch`
+
+Fast, lightweight Google Images search
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.imagesLightSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+| `no_cache` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### imagesRelatedContent
+
+`search.imagesRelatedContent`
+
+Related content for a Google Images result
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.imagesRelatedContent({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `related_content_id` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### jobsSearch
+
+`search.jobsSearch`
+
+Google Jobs search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.jobsSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `start` | `number` | No | — |
+| `ltype` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lensSearch
+
+`search.lensSearch`
+
+Reverse image search via Google Lens
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.lensSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+| `country` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### lightSearch
+
+`search.lightSearch`
+
+Fast, lightweight Google Search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.lightSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+| `no_cache` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### localServicesSearch
+
+`search.localServicesSearch`
+
+Google's guaranteed local service providers
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.localServicesSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mapsPosts
+
+`search.mapsPosts`
+
+Posts published by a business on its Google Maps listing
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.mapsPosts({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `data_id` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+| `next_page_token` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### mapsSearch
+
+`search.mapsSearch`
+
+Google Maps search for places and businesses
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.mapsSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `ll` | `string` | No | — |
+| `type` | `string` | No | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+| `no_cache` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### newsSearch
+
+`search.newsSearch`
+
+Google News article search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.newsSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+| `no_cache` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### patentDetails
+
+`search.patentDetails`
+
+Detailed information for a specific Google Patent
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.patentDetails({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `patent_id` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### playProduct
+
+`search.playProduct`
+
+Details for a specific Google Play Store item
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.playProduct({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `product_id` | `string` | Yes | — |
+| `store` | `apps \| movies \| tv \| audiobooks \| books` | No | — |
+| `gl` | `string` | No | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### playSearch
+
+`search.playSearch`
+
+Google Play Store search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.playSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scholarAuthor
+
+`search.scholarAuthor`
+
+A researcher's full Google Scholar author profile
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.scholarAuthor({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `author_id` | `string` | Yes | — |
+| `hl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scholarCite
+
+`search.scholarCite`
+
+Formatted citations for a Google Scholar paper
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.scholarCite({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### scholarSearch
+
+`search.scholarSearch`
+
+Google Scholar academic search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.scholarSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `cites` | `string` | No | — |
+| `cluster` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `start` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`search.search`
+
+Real-time Google search results
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+| `no_cache` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### shoppingSearch
+
+`search.shoppingSearch`
+
+Google Shopping product listings
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.shoppingSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### trendsSearch
+
+`search.trendsSearch`
+
+Google Trends relative interest data
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.trendsSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `category` | `string` | No | — |
+| `data_type` | `string` | No | — |
+| `geo` | `string` | No | — |
+| `date` | `string` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### videosLightSearch
+
+`search.videosLightSearch`
+
+Fast, lightweight Google Videos search
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.search.videosLightSearch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | Yes | — |
+| `location` | `string` | No | — |
+| `hl` | `string` | No | — |
+| `gl` | `string` | No | — |
+| `device` | `desktop \| tablet \| mobile` | No | — |
+| `num` | `number` | No | — |
+| `start` | `number` | No | — |
+| `no_cache` | `boolean` | No | — |
+| `async` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Utilities
+
+### domainsList
+
+`utilities.domainsList`
+
+The list of supported Google domains
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.utilities.domainsList({});
+```
+
+**Input:** _empty object_
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  domain: string,
+  language_code?: string,
+  country_code?: string,
+  country_name?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### locationOptions
+
+`utilities.locationOptions`
+
+Valid location values for a Google search's location parameter
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.utilities.locationOptions({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `q` | `string` | No | — |
+| `limit` | `number` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  id: string,
+  google_id?: number,
+  google_parent_id?: number,
+  name: string,
+  canonical_name?: string,
+  country_code?: string,
+  target_type?: string,
+  reach?: number,
+  gps?: number[],
+  keys?: string[]
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### searchArchive
+
+`utilities.searchArchive`
+
+Results from a previously run async search, by search id
+
+**Risk:** `read`
+
+```ts
+await corsair.serpapi.api.utilities.searchArchive({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_id` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `search_metadata` | `object` | Yes | — |
+| `search_parameters` | `object` | No | — |
+| `search_information` | `object` | No | — |
+| `error` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="search_metadata full type">
+
+```ts
+{
+  id: string,
+  status: string,
+  created_at?: string,
+  processed_at?: string,
+  total_time_taken?: number,
+  json_endpoint?: string
+}
+```
+</Accordion>
+
+<Accordion title="search_parameters full type">
+
+```ts
+{
+}
+```
+</Accordion>
+
+<Accordion title="search_information full type">
+
+```ts
+{
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

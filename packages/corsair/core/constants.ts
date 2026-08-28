@@ -66,6 +66,7 @@ export const BaseProviders = [
 	'basecamp',
 	'baselinker',
 	'basin',
+	'backendless',
 	'beeminder',
 	'bettercontact',
 	'betterstack',
@@ -80,6 +81,7 @@ export const BaseProviders = [
 	'botpress',
 	'bouncer',
 	'box',
+	'boxhero',
 	'brandfetch',
 	'browseai',
 	'bugsnag',
@@ -151,6 +153,7 @@ export const BaseProviders = [
 	'loyverse',
 	'mailchimp',
 	'mailtrap',
+	'merriamwebsterdict',
 	'monday',
 	'neon',
 	'nextdns',
@@ -273,6 +276,7 @@ export const ProviderDisplayNames = {
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
+	backendless: 'Backendless',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
@@ -287,6 +291,7 @@ export const ProviderDisplayNames = {
 	botpress: 'Botpress',
 	bouncer: 'Bouncer',
 	box: 'Box',
+	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
 	browseai: 'Browse AI',
 	bugsnag: 'BugSnag',
@@ -358,6 +363,7 @@ export const ProviderDisplayNames = {
 	loyverse: 'Loyverse',
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
+	merriamwebsterdict: 'Merriam-Webster Dictionary',
 	monday: 'Monday',
 	neon: 'Neon',
 	nextdns: 'NextDNS',
@@ -487,6 +493,7 @@ export type AllProviders =
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
+	| 'backendless'
 	| 'beeminder'
 	| 'bettercontact'
 	| 'betterstack'
@@ -501,6 +508,7 @@ export type AllProviders =
 	| 'botpress'
 	| 'bouncer'
 	| 'box'
+	| 'boxhero'
 	| 'brandfetch'
 	| 'browseai'
 	| 'bugsnag'
@@ -572,6 +580,7 @@ export type AllProviders =
 	| 'loyverse'
 	| 'mailchimp'
 	| 'mailtrap'
+	| 'merriamwebsterdict'
 	| 'monday'
 	| 'neon'
 	| 'nextdns'
