@@ -114,6 +114,7 @@ export const BaseProviders = [
 	'dodopayments',
 	'doppler',
 	'dropbox',
+	'emelia',
 	'epicgames',
 	'exa',
 	'facebook',
@@ -329,6 +330,7 @@ export const ProviderDisplayNames = {
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
 	dropbox: 'Dropbox',
+	emelia: 'Emelia',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
@@ -551,6 +553,7 @@ export type AllProviders =
 	| 'dodopayments'
 	| 'doppler'
 	| 'dropbox'
+	| 'emelia'
 	| 'epicgames'
 	| 'exa'
 	| 'facebook'
