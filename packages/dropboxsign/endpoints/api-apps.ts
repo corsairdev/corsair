@@ -12,7 +12,7 @@ export const getApiApp: DropboxSignEndpoints['getApiApp'] = async (
 		DropboxSignEndpointOutputs['getApiApp']
 	>(`api_app/${encodeURIComponent(client_id)}`, ctx.key, {
 		method: 'GET',
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -32,7 +32,7 @@ export const listApiApps: DropboxSignEndpoints['listApiApps'] = async (
 	>('api_app/list', ctx.key, {
 		method: 'GET',
 		query: input,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -52,7 +52,7 @@ export const createApiApp: DropboxSignEndpoints['createApiApp'] = async (
 	>('api_app', ctx.key, {
 		method: 'POST',
 		body: input,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -73,7 +73,7 @@ export const updateApiApp: DropboxSignEndpoints['updateApiApp'] = async (
 	>(`api_app/${encodeURIComponent(client_id)}`, ctx.key, {
 		method: 'PUT',
 		body,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -93,7 +93,7 @@ export const deleteApiApp: DropboxSignEndpoints['deleteApiApp'] = async (
 		DropboxSignEndpointOutputs['deleteApiApp']
 	>(`api_app/${encodeURIComponent(client_id)}`, ctx.key, {
 		method: 'DELETE',
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,

@@ -12,7 +12,7 @@ export const getAccount: DropboxSignEndpoints['getAccount'] = async (
 	>('account', ctx.key, {
 		method: 'GET',
 		query: input,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -32,7 +32,7 @@ export const createAccount: DropboxSignEndpoints['createAccount'] = async (
 	>('account/create', ctx.key, {
 		method: 'POST',
 		body: input,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -52,7 +52,7 @@ export const updateAccount: DropboxSignEndpoints['updateAccount'] = async (
 	>('account', ctx.key, {
 		method: 'POST',
 		body: input,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -72,7 +72,7 @@ export const verifyAccount: DropboxSignEndpoints['verifyAccount'] = async (
 	>('account/verify', ctx.key, {
 		method: 'POST',
 		body: input,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,

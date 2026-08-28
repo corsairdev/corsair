@@ -11,7 +11,7 @@ export const getSignatureRequest: DropboxSignEndpoints['getSignatureRequest'] =
 		>(
 			`signature_request/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'GET', authType: ctx.authType },
+			{ method: 'GET' },
 		);
 		await logEventFromContext(
 			ctx,
@@ -29,7 +29,7 @@ export const listSignatureRequests: DropboxSignEndpoints['listSignatureRequests'
 		>('signature_request/list', ctx.key, {
 			method: 'GET',
 			query: input,
-			authType: ctx.authType,
+			
 		});
 		await logEventFromContext(
 			ctx,
@@ -47,7 +47,7 @@ export const sendSignatureRequest: DropboxSignEndpoints['sendSignatureRequest'] 
 		>('signature_request/send', ctx.key, {
 			method: 'POST',
 			body: input,
-			authType: ctx.authType,
+			
 		});
 		await logEventFromContext(
 			ctx,
@@ -65,7 +65,7 @@ export const createEmbeddedSignatureRequest: DropboxSignEndpoints['createEmbedde
 		>('signature_request/create_embedded', ctx.key, {
 			method: 'POST',
 			body: input,
-			authType: ctx.authType,
+			
 		});
 		await logEventFromContext(
 			ctx,
@@ -83,7 +83,7 @@ export const createEmbeddedSignatureRequestWithTemplate: DropboxSignEndpoints['c
 		>('signature_request/create_embedded_with_template', ctx.key, {
 			method: 'POST',
 			body: input,
-			authType: ctx.authType,
+			
 		});
 		await logEventFromContext(
 			ctx,
@@ -102,7 +102,7 @@ export const cancelSignatureRequest: DropboxSignEndpoints['cancelSignatureReques
 		>(
 			`signature_request/cancel/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'POST', authType: ctx.authType },
+			{ method: 'POST' },
 		);
 		await logEventFromContext(
 			ctx,
@@ -121,7 +121,7 @@ export const sendRequestReminder: DropboxSignEndpoints['sendRequestReminder'] =
 		>(
 			`signature_request/remind/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'POST', body, authType: ctx.authType },
+			{ method: 'POST', body },
 		);
 		await logEventFromContext(
 			ctx,
@@ -140,7 +140,7 @@ export const updateSignatureRequest: DropboxSignEndpoints['updateSignatureReques
 		>(
 			`signature_request/update/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'POST', body, authType: ctx.authType },
+			{ method: 'POST', body },
 		);
 		await logEventFromContext(
 			ctx,
@@ -159,7 +159,7 @@ export const downloadSignatureRequestFiles: DropboxSignEndpoints['downloadSignat
 		>(
 			`signature_request/files/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'GET', query, authType: ctx.authType },
+			{ method: 'GET', query },
 		);
 		await logEventFromContext(
 			ctx,
@@ -178,7 +178,7 @@ export const getSignatureRequestFilesAsFileUrl: DropboxSignEndpoints['getSignatu
 		>(
 			`signature_request/files_as_file_url/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'GET', authType: ctx.authType },
+			{ method: 'GET' },
 		);
 		await logEventFromContext(
 			ctx,
@@ -197,7 +197,7 @@ export const getSignatureRequestFilesAsDataUri: DropboxSignEndpoints['getSignatu
 		>(
 			`signature_request/files_as_data_uri/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'GET', authType: ctx.authType },
+			{ method: 'GET' },
 		);
 		await logEventFromContext(
 			ctx,
@@ -216,7 +216,7 @@ export const releaseSignatureRequestHold: DropboxSignEndpoints['releaseSignature
 		>(
 			`signature_request/release_hold/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'POST', authType: ctx.authType },
+			{ method: 'POST' },
 		);
 		await logEventFromContext(
 			ctx,
@@ -235,7 +235,7 @@ export const editAndResendSignatureRequest: DropboxSignEndpoints['editAndResendS
 		>(
 			`signature_request/edit_and_resend/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'POST', body, authType: ctx.authType },
+			{ method: 'POST', body },
 		);
 		await logEventFromContext(
 			ctx,
@@ -254,7 +254,7 @@ export const editAndResendEmbeddedSignatureRequest: DropboxSignEndpoints['editAn
 		>(
 			`signature_request/edit_and_resend_embedded/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'POST', body, authType: ctx.authType },
+			{ method: 'POST', body },
 		);
 		await logEventFromContext(
 			ctx,
@@ -273,7 +273,7 @@ export const editAndResendEmbeddedSignatureRequestTemplate: DropboxSignEndpoints
 		>(
 			`signature_request/edit_and_resend_embedded_with_template/${encodeURIComponent(signature_request_id)}`,
 			ctx.key,
-			{ method: 'POST', body, authType: ctx.authType },
+			{ method: 'POST', body },
 		);
 		await logEventFromContext(
 			ctx,

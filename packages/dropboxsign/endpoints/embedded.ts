@@ -10,7 +10,7 @@ export const getEmbeddedSignUrl: DropboxSignEndpoints['getEmbeddedSignUrl'] =
 			DropboxSignEndpointOutputs['getEmbeddedSignUrl']
 		>(`embedded/sign_url/${encodeURIComponent(signature_id)}`, ctx.key, {
 			method: 'GET',
-			authType: ctx.authType,
+			
 		});
 		await logEventFromContext(
 			ctx,
@@ -35,7 +35,7 @@ export const getEmbeddedTemplateEditUrl: DropboxSignEndpoints['getEmbeddedTempla
 		>(`embedded/edit_url/${encodeURIComponent(template_id)}`, ctx.key, {
 			method: 'POST',
 			body,
-			authType: ctx.authType,
+			
 		});
 		await logEventFromContext(
 			ctx,

@@ -12,11 +12,9 @@ export const errorHandlers = {
 				msg.includes('too many requests')
 			);
 		},
-		handler: async (error: Error) => {
+		handler: async () => {
 			return {
-				retryable: true,
-				retryAfterMs: 2000,
-				message: error.message,
+				maxRetries: 5,
 			};
 		},
 	},
@@ -35,10 +33,9 @@ export const errorHandlers = {
 				msg.includes('403')
 			);
 		},
-		handler: async (error: Error) => {
+		handler: async () => {
 			return {
-				retryable: false,
-				message: error.message,
+				maxRetries: 0,
 			};
 		},
 	},
@@ -48,11 +45,10 @@ export const errorHandlers = {
 			const msg = error.message.toLowerCase();
 			return msg.includes('not_found') || msg.includes('404');
 		},
-		handler: async (error: Error) => {
+		handler: async () => {
 			return {
-				retryable: false,
-				message: error.message,
+				maxRetries: 0,
 			};
 		},
 	},
-} satisfies Record<string, CorsairErrorHandler>;
+} satisfies CorsairErrorHandler;

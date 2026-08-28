@@ -12,7 +12,7 @@ export const listFaxes: DropboxSignEndpoints['listFaxes'] = async (
 	>('fax/list', ctx.key, {
 		method: 'GET',
 		query: input,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -32,7 +32,7 @@ export const deleteFax: DropboxSignEndpoints['deleteFax'] = async (
 		DropboxSignEndpointOutputs['deleteFax']
 	>(`fax/${encodeURIComponent(fax_id)}`, ctx.key, {
 		method: 'DELETE',
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -52,7 +52,7 @@ export const listFaxLines: DropboxSignEndpoints['listFaxLines'] = async (
 	>('fax_line/list', ctx.key, {
 		method: 'GET',
 		query: input,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,
@@ -70,7 +70,7 @@ export const getFaxLineAreaCodes: DropboxSignEndpoints['getFaxLineAreaCodes'] =
 		>('fax_line/area_codes', ctx.key, {
 			method: 'GET',
 			query: input,
-			authType: ctx.authType,
+			
 		});
 		await logEventFromContext(
 			ctx,
@@ -90,7 +90,7 @@ export const createReport: DropboxSignEndpoints['createReport'] = async (
 	>('report/create', ctx.key, {
 		method: 'POST',
 		body: input,
-		authType: ctx.authType,
+		
 	});
 	await logEventFromContext(
 		ctx,

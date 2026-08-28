@@ -712,15 +712,8 @@ const dropboxSignEndpointMeta = {
 >;
 
 const dropboxSignAuthConfig = {
-	api_key: {
-		type: 'api_key',
-		label: 'API Key',
-		headerName: 'Authorization',
-	},
-	oauth_2: {
-		type: 'oauth_2',
-		label: 'OAuth 2.0',
-	},
+	api_key: {},
+	oauth_2: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseDropboxSignPlugin<T extends DropboxSignPluginOptions> =
@@ -788,3 +781,5 @@ export type {
 	DropboxSignEndpointInputs,
 	DropboxSignEndpointOutputs,
 } from './endpoints/types';
+export { DropboxSignSchema };
+
