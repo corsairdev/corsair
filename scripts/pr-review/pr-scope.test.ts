@@ -17,6 +17,17 @@ test('uses the plugin lane for one plugin plus gate-approved extra files', () =>
 	);
 });
 
+test('keeps plugin-code PRs in the plugin lane when they regenerate that plugin docs', () => {
+	assert.deepEqual(
+		classifyPrScope([
+			'packages/airtable/index.ts',
+			'docs/plugins/airtable/overview.mdx',
+			'docs/docs.json',
+		]),
+		{ lane: 'plugin', plugin: 'airtable' },
+	);
+});
+
 test('uses the full lane when a plugin PR changes other corsair files', () => {
 	assert.deepEqual(
 		classifyPrScope([
