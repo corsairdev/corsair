@@ -61,12 +61,12 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'backendless',
 	'bannerbear',
 	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
-	'backendless',
 	'beeminder',
 	'bettercontact',
 	'betterstack',
@@ -90,6 +90,7 @@ export const BaseProviders = [
 	'canva',
 	'canvas',
 	'chatbotkit',
+	'chatfai',
 	'circleci',
 	'clientary',
 	'clockify',
@@ -271,12 +272,12 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	backendless: 'Backendless',
 	bannerbear: 'Bannerbear',
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
-	backendless: 'Backendless',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
@@ -300,6 +301,7 @@ export const ProviderDisplayNames = {
 	canva: 'Canva',
 	canvas: 'Canvas LMS',
 	chatbotkit: 'ChatBotKit',
+	chatfai: 'Chatfai',
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
@@ -488,12 +490,12 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'backendless'
 	| 'bannerbear'
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
-	| 'backendless'
 	| 'beeminder'
 	| 'bettercontact'
 	| 'betterstack'
@@ -517,6 +519,7 @@ export type AllProviders =
 	| 'canva'
 	| 'canvas'
 	| 'chatbotkit'
+	| 'chatfai'
 	| 'circleci'
 	| 'clientary'
 	| 'clockify'
