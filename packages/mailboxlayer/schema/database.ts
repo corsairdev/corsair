@@ -1,9 +1,5 @@
 import { z } from 'zod';
 
-/**
- * Local storage record for an email check lookup.
- * Captures the deliverability/quality verdict returned by mailboxlayer's check endpoint.
- */
 export const MailboxLayerEmailCheck = z.object({
 	email: z.string(),
 	didYouMean: z.string().optional(),

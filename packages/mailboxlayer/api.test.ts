@@ -23,10 +23,6 @@ describeIfKey('MailboxLayer API Type Tests', () => {
 		});
 
 		it('rejects a malformed address with apiCode 211 (invalid_email_address)', async () => {
-			// mailboxlayer validates the `email` param server-side and returns
-			// its {success:false, error:{code:211,...}} shape for syntactically
-			// invalid input, rather than a normal check response with
-			// format_valid:false — confirmed against the live API.
 			await expect(
 				makeMailboxLayerRequest<CheckResponse>('check', ACCESS_KEY!, {
 					query: { email: 'not-a-valid-email', smtp: 1, format: 1 },
