@@ -106,6 +106,51 @@ describe('Query.execute (ClickHouse plugin)', () => {
 		expect(call[1]?.body).toContain('LIMIT 5');
 	});
 
+	it('appends LIMIT when a LIMIT-like phrase appears only in a line comment', async () => {
+		mockFetchOnce('{"x":1}');
+
+		await Query.execute(
+			makeCtx({
+				baseUrl: 'https://ch.example.com',
+				key: 'Basic AAA=',
+			}) as never,
+			{ sql: 'SELECT 1 AS x -- LIMIT 100', limit: 10 },
+		);
+
+		const call = (globalThis.fetch as jest.Mock).mock.calls[0] as FetchCall;
+		expect(call[1]?.body).toContain('LIMIT 10');
+	});
+
+	it('appends LIMIT when a LIMIT-like phrase appears only in a block comment', async () => {
+		mockFetchOnce('{"x":1}');
+
+		await Query.execute(
+			makeCtx({
+				baseUrl: 'https://ch.example.com',
+				key: 'Basic AAA=',
+			}) as never,
+			{ sql: 'SELECT 1 AS x /* LIMIT 100 */', limit: 10 },
+		);
+
+		const call = (globalThis.fetch as jest.Mock).mock.calls[0] as FetchCall;
+		expect(call[1]?.body).toContain('LIMIT 10');
+	});
+
+	it('appends LIMIT when a LIMIT-like phrase appears only in a string literal', async () => {
+		mockFetchOnce('{"x":1}');
+
+		await Query.execute(
+			makeCtx({
+				baseUrl: 'https://ch.example.com',
+				key: 'Basic AAA=',
+			}) as never,
+			{ sql: "SELECT 'LIMIT 100' AS note", limit: 10 },
+		);
+
+		const call = (globalThis.fetch as jest.Mock).mock.calls[0] as FetchCall;
+		expect(call[1]?.body).toContain('LIMIT 10');
+	});
+
 	it('returns an empty row set when ClickHouse replies with an empty body', async () => {
 		mockFetchOnce('');
 

@@ -175,6 +175,29 @@ export function assertSafeIdentifier(value: string, field: string): void {
 }
 
 /**
+ * Strip SQL tokens that are not executable code — comments and quoted
+ * literals — so a regex scan for clauses like `LIMIT` doesn't false-positive
+ * on text inside a comment or string. Replaces stripped regions with spaces
+ * so character offsets and column positions are preserved.
+ *
+ * Handles:
+ *   - block comments   /* ... *\/
+ *   - line comments    -- ...
+ *   - string literals  '...' (with '' escape)
+ *   - quoted idents    "..." (with "" escape)
+ *
+ * Not a full SQL parser. Edge cases (nested comments, multi-line raw strings)
+ * are out of scope; they are uncommon in OLAP queries.
+ */
+export function stripNonCodeTokens(sql: string): string {
+	return sql
+		.replace(/\/\*[\s\S]*?\*\//g, (m) => ' '.repeat(m.length))
+		.replace(/--[^\n]*/g, (m) => ' '.repeat(m.length))
+		.replace(/'(?:''|[^'])*'/g, (m) => ' '.repeat(m.length))
+		.replace(/"(?:""|[^"])*"/g, (m) => ' '.repeat(m.length));
+}
+
+/**
  * Resolve the per-call ClickHouse HTTP endpoint.
  *
  * Resolution order:

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { query, resolveBaseUrl } from '../client';
+import { query, resolveBaseUrl, stripNonCodeTokens } from '../client';
 import type { ClickhouseEndpoints } from '../index';
 import {
 	ClickhouseEndpointInputSchemas,
@@ -25,8 +25,12 @@ export const execute: ClickhouseEndpoints['executeQuery'] = async (
 	// produce valid SQL when we append ` LIMIT n`. Without this,
 	// `SELECT 1; LIMIT 10` is a syntax error.
 	const normalizedSql = input.sql.replace(/;\s*$/, '');
+	// Scan for a real `LIMIT n` clause in the executable code only —
+	// `LIMIT` text inside a comment or string literal must not suppress the
+	// caller's intended cap.
+	const scanSql = stripNonCodeTokens(normalizedSql);
 	const limitClause =
-		input.limit !== undefined && !/\blimit\s+\d+/i.test(normalizedSql)
+		input.limit !== undefined && !/\blimit\s+\d+/i.test(scanSql)
 			? ` LIMIT ${input.limit}`
 			: '';
 
