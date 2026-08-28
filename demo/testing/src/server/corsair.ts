@@ -3,10 +3,12 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '../.env' });
 
 import { agentql } from '@corsair-dev/agentql';
+import { betterproposals } from '@corsair-dev/betterproposals';
 import { gmail } from '@corsair-dev/gmail';
 import { googlecalendar } from '@corsair-dev/googlecalendar';
 import { googlesheets } from '@corsair-dev/googlesheets';
 import { hubspot } from '@corsair-dev/hubspot';
+import { instagram } from '@corsair-dev/instagram';
 import { linear } from '@corsair-dev/linear';
 import { onedrive } from '@corsair-dev/onedrive';
 import { sharepoint } from '@corsair-dev/sharepoint';
@@ -19,8 +21,10 @@ import { sqlite } from '../db';
 
 const hubProjectApiKey =
 	process.env.CORSAIR_DEV_API_KEY ?? process.env.CORSAIR_API_KEY!;
+
 const hubSigningSecret =
 	process.env.CORSAIR_DEV_SIGNING_SECRET ?? process.env.CORSAIR_SIGNING_SECRET!;
+
 // const hubApiUrl = process.env.HUB_API_URL;
 // const hubOAuthCallbackUrl = process.env.HUB_OAUTH_CALLBACK_URL;
 
@@ -40,6 +44,11 @@ export const corsair = createCorsair({
 	},
 	plugins: [
 		// github({ authType: 'managed' }),
+
+		betterproposals({
+			key: process.env.BETTER_PROPOSALS_API_KEY,
+		}),
+
 		slack({
 			permissions: {
 				mode: 'cautious',
@@ -48,6 +57,7 @@ export const corsair = createCorsair({
 				},
 			},
 		}),
+
 		googlesheets(),
 		googlecalendar(),
 		gmail(),
@@ -55,14 +65,18 @@ export const corsair = createCorsair({
 		sharepoint(),
 		onedrive(),
 		hubspot(),
+
 		agentql({
 			key: process.env.AGENTQL_API_KEY,
 		}),
+
 		twilio(),
+
 		vapi({
 			key: process.env.VAPI_API_KEY,
 			webhookSecret: process.env.VAPI_WEBHOOK_SECRET,
 		}),
+
 		instagram(),
 	],
 });
