@@ -16,21 +16,21 @@ describe('Dropbox Sign Plugin', () => {
 
 	it('configures authentication types for api_key and oauth_2', () => {
 		const plugin = dropboxsign();
-		expect(plugin.authConfig!.api_key).toBeDefined();
-		expect(plugin.authConfig!.oauth_2).toBeDefined();
+		expect(plugin.authConfig?.api_key).toBeDefined();
+		expect(plugin.authConfig?.oauth_2).toBeDefined();
 	});
 
 	it('exposes all major endpoint groups', () => {
 		const plugin = dropboxsign();
-		expect(plugin.endpoints!.account).toBeDefined();
-		expect(plugin.endpoints!.signatureRequests).toBeDefined();
-		expect(plugin.endpoints!.templates).toBeDefined();
-		expect(plugin.endpoints!.drafts).toBeDefined();
-		expect(plugin.endpoints!.embedded).toBeDefined();
-		expect(plugin.endpoints!.bulkSend).toBeDefined();
-		expect(plugin.endpoints!.teams).toBeDefined();
-		expect(plugin.endpoints!.apiApps).toBeDefined();
-		expect(plugin.endpoints!.faxAndReports).toBeDefined();
+		expect(plugin.endpoints?.account).toBeDefined();
+		expect(plugin.endpoints?.signatureRequests).toBeDefined();
+		expect(plugin.endpoints?.templates).toBeDefined();
+		expect(plugin.endpoints?.drafts).toBeDefined();
+		expect(plugin.endpoints?.embedded).toBeDefined();
+		expect(plugin.endpoints?.bulkSend).toBeDefined();
+		expect(plugin.endpoints?.teams).toBeDefined();
+		expect(plugin.endpoints?.apiApps).toBeDefined();
+		expect(plugin.endpoints?.faxAndReports).toBeDefined();
 	});
 
 	it('validates endpoint schema shapes', () => {
