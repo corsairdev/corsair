@@ -1,316 +1,173 @@
 import { z } from 'zod';
 import {
 	BookingmoodBooking,
+	BookingmoodCalendarEvent,
 	BookingmoodContact,
+	BookingmoodInvoice,
 	BookingmoodMember,
 	BookingmoodOrganization,
+	BookingmoodPayment,
 	BookingmoodProduct,
+	BookingmoodWidget,
+	MultiLanguageString,
 } from '../schema/database';
 
-// --- Organizations ---
-export const OrganizationsGetInputSchema = z.object({
-	id: z.string(),
-});
-export type OrganizationsGetInput = z.infer<typeof OrganizationsGetInputSchema>;
-export const OrganizationsGetResponseSchema = BookingmoodOrganization;
-export type OrganizationsGetResponse = z.infer<
-	typeof OrganizationsGetResponseSchema
->;
+export const RowSchema = z.object({ id: z.string() }).passthrough();
+export type Row = z.infer<typeof RowSchema>;
 
-export const OrganizationsListInputSchema = z
+export const ListInputSchema = z
 	.object({
-		limit: z.number().optional(),
-		offset: z.number().optional(),
+		select: z.string().optional(),
+		limit: z.number().int().positive().max(1000).optional(),
+		offset: z.number().int().min(0).optional(),
+		order: z.string().optional(),
+		id: z.string().optional(),
+		organization_id: z.string().optional(),
+		filters: z.record(z.string(), z.string()).optional(),
 	})
-	.optional();
-export type OrganizationsListInput = z.infer<
-	typeof OrganizationsListInputSchema
->;
-export const OrganizationsListResponseSchema = z.array(BookingmoodOrganization);
-export type OrganizationsListResponse = z.infer<
-	typeof OrganizationsListResponseSchema
->;
+	.catchall(z.union([z.string(), z.number(), z.boolean()]));
+export type ListInput = z.infer<typeof ListInputSchema>;
 
-// --- Bookings ---
-export const BookingsGetInputSchema = z.object({
-	id: z.string(),
-});
-export type BookingsGetInput = z.infer<typeof BookingsGetInputSchema>;
-export const BookingsGetResponseSchema = BookingmoodBooking;
-export type BookingsGetResponse = z.infer<typeof BookingsGetResponseSchema>;
+export const ListResponseSchema = z.array(RowSchema);
+export type ListResponse = z.infer<typeof ListResponseSchema>;
 
-export const BookingsListInputSchema = z
+export const WriteInputSchema = z
 	.object({
-		rental_id: z.string().optional(),
-		product_id: z.string().optional(),
-		start_date: z.string().optional(),
-		end_date: z.string().optional(),
-		status: z.string().optional(),
-		limit: z.number().optional(),
-		offset: z.number().optional(),
+		id: z.string().optional(),
+		select: z.string().optional(),
+		filters: z.record(z.string(), z.string()).optional(),
+		body: z.record(z.string(), z.unknown()).optional(),
+		data: z.record(z.string(), z.unknown()).optional(),
 	})
-	.optional();
-export type BookingsListInput = z.infer<typeof BookingsListInputSchema>;
-export const BookingsListResponseSchema = z.array(BookingmoodBooking);
-export type BookingsListResponse = z.infer<typeof BookingsListResponseSchema>;
+	.catchall(z.unknown());
+export type WriteInput = z.infer<typeof WriteInputSchema>;
 
-export const BookingsCreateInputSchema = z.object({
-	rental_id: z.string().optional(),
-	product_id: z.string().optional(),
-	start_date: z.string(),
-	end_date: z.string(),
-	status: z.string().optional(),
-	customer_name: z.string().optional(),
-	customer_email: z.string().optional(),
-	price: z.number().optional(),
-	currency: z.string().optional(),
-	notes: z.string().optional(),
-});
-export type BookingsCreateInput = z.infer<typeof BookingsCreateInputSchema>;
-export const BookingsCreateResponseSchema = BookingmoodBooking;
-export type BookingsCreateResponse = z.infer<
-	typeof BookingsCreateResponseSchema
->;
+export const WriteResponseSchema = z.array(RowSchema);
+export type WriteResponse = z.infer<typeof WriteResponseSchema>;
 
-export const BookingsUpdateInputSchema = z.object({
-	id: z.string(),
-	start_date: z.string().optional(),
-	end_date: z.string().optional(),
-	status: z.string().optional(),
-	customer_name: z.string().optional(),
-	customer_email: z.string().optional(),
-	price: z.number().optional(),
-	notes: z.string().optional(),
-});
-export type BookingsUpdateInput = z.infer<typeof BookingsUpdateInputSchema>;
-export const BookingsUpdateResponseSchema = BookingmoodBooking;
-export type BookingsUpdateResponse = z.infer<
-	typeof BookingsUpdateResponseSchema
->;
-
-export const BookingsDeleteInputSchema = z.object({
-	id: z.string(),
-});
-export type BookingsDeleteInput = z.infer<typeof BookingsDeleteInputSchema>;
-export const BookingsDeleteResponseSchema = z.object({
-	success: z.boolean(),
-	id: z.string(),
-});
-export type BookingsDeleteResponse = z.infer<
-	typeof BookingsDeleteResponseSchema
->;
-
-// --- Products / Rental objects ---
-export const ProductsGetInputSchema = z.object({
-	id: z.string(),
-});
-export type ProductsGetInput = z.infer<typeof ProductsGetInputSchema>;
-export const ProductsGetResponseSchema = BookingmoodProduct;
-export type ProductsGetResponse = z.infer<typeof ProductsGetResponseSchema>;
-
-export const ProductsListInputSchema = z
+export const ProductsCreateInputSchema = z
 	.object({
-		limit: z.number().optional(),
-		offset: z.number().optional(),
+		name: MultiLanguageString,
+		rent_period: z.enum(['daily', 'nightly']),
+		timezone: z.string(),
 	})
-	.optional();
-export type ProductsListInput = z.infer<typeof ProductsListInputSchema>;
-export const ProductsListResponseSchema = z.array(BookingmoodProduct);
-export type ProductsListResponse = z.infer<typeof ProductsListResponseSchema>;
-
-export const ProductsCreateInputSchema = z.object({
-	name: z.string(),
-	description: z.string().optional(),
-	price: z.number().optional(),
-	currency: z.string().optional(),
-});
+	.passthrough();
 export type ProductsCreateInput = z.infer<typeof ProductsCreateInputSchema>;
-export const ProductsCreateResponseSchema = BookingmoodProduct;
-export type ProductsCreateResponse = z.infer<
-	typeof ProductsCreateResponseSchema
->;
 
-export const ProductsUpdateInputSchema = z.object({
-	id: z.string(),
+export const MembersInviteInputSchema = z.object({
+	email: z.string(),
 	name: z.string().optional(),
-	description: z.string().optional(),
-	price: z.number().optional(),
-	currency: z.string().optional(),
+	language: z.string().optional(),
 });
-export type ProductsUpdateInput = z.infer<typeof ProductsUpdateInputSchema>;
-export const ProductsUpdateResponseSchema = BookingmoodProduct;
-export type ProductsUpdateResponse = z.infer<
-	typeof ProductsUpdateResponseSchema
+export type MembersInviteInput = z.infer<typeof MembersInviteInputSchema>;
+
+export const AvailabilityQueryInputSchema = z.object({
+	product_id: z.string().optional(),
+	product_ids: z.array(z.string()).optional(),
+	perform_sync: z.boolean().optional(),
+	show_booked_as: z.enum(['booked', 'unavailable']).optional(),
+	show_closed_as: z.enum(['closed', 'unavailable']).optional(),
+	show_pending_as: z.enum(['CANCELLED', 'TENTATIVE', 'CONFIRMED']).optional(),
+	select: z.string().optional(),
+	limit: z.number().optional(),
+	offset: z.number().optional(),
+});
+export type AvailabilityQueryInput = z.infer<
+	typeof AvailabilityQueryInputSchema
 >;
 
-export const ProductsDeleteInputSchema = z.object({
-	id: z.string(),
-});
-export type ProductsDeleteInput = z.infer<typeof ProductsDeleteInputSchema>;
-export const ProductsDeleteResponseSchema = z.object({
-	success: z.boolean(),
-	id: z.string(),
-});
-export type ProductsDeleteResponse = z.infer<
-	typeof ProductsDeleteResponseSchema
+export const AvailabilityQueryResponseSchema = z.array(
+	z
+		.object({
+			product_id: z.string(),
+			intervals: z.array(
+				z
+					.object({
+						start: z.string(),
+						end: z.string(),
+						status: z.string(),
+					})
+					.passthrough(),
+			),
+		})
+		.passthrough(),
+);
+export type AvailabilityQueryResponse = z.infer<
+	typeof AvailabilityQueryResponseSchema
 >;
 
-// --- Members ---
-export const MembersGetInputSchema = z.object({
-	id: z.string(),
-});
-export type MembersGetInput = z.infer<typeof MembersGetInputSchema>;
-export const MembersGetResponseSchema = BookingmoodMember;
-export type MembersGetResponse = z.infer<typeof MembersGetResponseSchema>;
-
-export const MembersListInputSchema = z
+export const SearchAvailabilityInputSchema = z
 	.object({
-		limit: z.number().optional(),
-		offset: z.number().optional(),
+		interval: z
+			.object({
+				start: z.string(),
+				end: z.string(),
+			})
+			.optional(),
+		occupancy: z.record(z.string(), z.number()).optional(),
+		option_ids: z.array(z.string()).optional(),
+		show_booked_as: z.enum(['booked', 'unavailable']).optional(),
+		show_closed_as: z.enum(['closed', 'unavailable']).optional(),
+		show_pending_as: z.enum(['CONFIRMED', 'TENTATIVE', 'CANCELLED']).optional(),
 	})
-	.optional();
-export type MembersListInput = z.infer<typeof MembersListInputSchema>;
-export const MembersListResponseSchema = z.array(BookingmoodMember);
-export type MembersListResponse = z.infer<typeof MembersListResponseSchema>;
-
-// --- Contacts ---
-export const ContactsGetInputSchema = z.object({
-	id: z.string(),
-});
-export type ContactsGetInput = z.infer<typeof ContactsGetInputSchema>;
-export const ContactsGetResponseSchema = BookingmoodContact;
-export type ContactsGetResponse = z.infer<typeof ContactsGetResponseSchema>;
-
-export const ContactsListInputSchema = z
-	.object({
-		limit: z.number().optional(),
-		offset: z.number().optional(),
-	})
-	.optional();
-export type ContactsListInput = z.infer<typeof ContactsListInputSchema>;
-export const ContactsListResponseSchema = z.array(BookingmoodContact);
-export type ContactsListResponse = z.infer<typeof ContactsListResponseSchema>;
-
-export const ContactsCreateInputSchema = z.object({
-	name: z.string(),
-	email: z.string().optional(),
-	phone: z.string().optional(),
-});
-export type ContactsCreateInput = z.infer<typeof ContactsCreateInputSchema>;
-export const ContactsCreateResponseSchema = BookingmoodContact;
-export type ContactsCreateResponse = z.infer<
-	typeof ContactsCreateResponseSchema
+	.passthrough();
+export type SearchAvailabilityInput = z.infer<
+	typeof SearchAvailabilityInputSchema
 >;
 
-export const ContactsUpdateInputSchema = z.object({
-	id: z.string(),
-	name: z.string().optional(),
-	email: z.string().optional(),
-	phone: z.string().optional(),
-});
-export type ContactsUpdateInput = z.infer<typeof ContactsUpdateInputSchema>;
-export const ContactsUpdateResponseSchema = BookingmoodContact;
-export type ContactsUpdateResponse = z.infer<
-	typeof ContactsUpdateResponseSchema
+export const SearchAvailabilityResponseSchema = z.array(
+	z
+		.object({
+			productId: z.string().optional(),
+			product_id: z.string().optional(),
+			match: z.boolean().optional(),
+			availability: z.string().optional(),
+		})
+		.passthrough(),
+);
+export type SearchAvailabilityResponse = z.infer<
+	typeof SearchAvailabilityResponseSchema
 >;
-
-export const ContactsDeleteInputSchema = z.object({
-	id: z.string(),
-});
-export type ContactsDeleteInput = z.infer<typeof ContactsDeleteInputSchema>;
-export const ContactsDeleteResponseSchema = z.object({
-	success: z.boolean(),
-	id: z.string(),
-});
-export type ContactsDeleteResponse = z.infer<
-	typeof ContactsDeleteResponseSchema
->;
-
-// Map of all endpoints inputs and outputs
-export type BookingmoodEndpointInputs = {
-	organizationsGet: OrganizationsGetInput;
-	organizationsList: OrganizationsListInput;
-	bookingsGet: BookingsGetInput;
-	bookingsList: BookingsListInput;
-	bookingsCreate: BookingsCreateInput;
-	bookingsUpdate: BookingsUpdateInput;
-	bookingsDelete: BookingsDeleteInput;
-	productsGet: ProductsGetInput;
-	productsList: ProductsListInput;
-	productsCreate: ProductsCreateInput;
-	productsUpdate: ProductsUpdateInput;
-	productsDelete: ProductsDeleteInput;
-	membersGet: MembersGetInput;
-	membersList: MembersListInput;
-	contactsGet: ContactsGetInput;
-	contactsList: ContactsListInput;
-	contactsCreate: ContactsCreateInput;
-	contactsUpdate: ContactsUpdateInput;
-	contactsDelete: ContactsDeleteInput;
-};
-
-export type BookingmoodEndpointOutputs = {
-	organizationsGet: OrganizationsGetResponse;
-	organizationsList: OrganizationsListResponse;
-	bookingsGet: BookingsGetResponse;
-	bookingsList: BookingsListResponse;
-	bookingsCreate: BookingsCreateResponse;
-	bookingsUpdate: BookingsUpdateResponse;
-	bookingsDelete: BookingsDeleteResponse;
-	productsGet: ProductsGetResponse;
-	productsList: ProductsListResponse;
-	productsCreate: ProductsCreateResponse;
-	productsUpdate: ProductsUpdateResponse;
-	productsDelete: ProductsDeleteResponse;
-	membersGet: MembersGetResponse;
-	membersList: MembersListResponse;
-	contactsGet: ContactsGetResponse;
-	contactsList: ContactsListResponse;
-	contactsCreate: ContactsCreateResponse;
-	contactsUpdate: ContactsUpdateResponse;
-	contactsDelete: ContactsDeleteResponse;
-};
 
 export const BookingmoodEndpointInputSchemas = {
-	organizationsGet: OrganizationsGetInputSchema,
-	organizationsList: OrganizationsListInputSchema,
-	bookingsGet: BookingsGetInputSchema,
-	bookingsList: BookingsListInputSchema,
-	bookingsCreate: BookingsCreateInputSchema,
-	bookingsUpdate: BookingsUpdateInputSchema,
-	bookingsDelete: BookingsDeleteInputSchema,
-	productsGet: ProductsGetInputSchema,
-	productsList: ProductsListInputSchema,
+	list: ListInputSchema,
+	write: WriteInputSchema,
 	productsCreate: ProductsCreateInputSchema,
-	productsUpdate: ProductsUpdateInputSchema,
-	productsDelete: ProductsDeleteInputSchema,
-	membersGet: MembersGetInputSchema,
-	membersList: MembersListInputSchema,
-	contactsGet: ContactsGetInputSchema,
-	contactsList: ContactsListInputSchema,
-	contactsCreate: ContactsCreateInputSchema,
-	contactsUpdate: ContactsUpdateInputSchema,
-	contactsDelete: ContactsDeleteInputSchema,
+	membersInvite: MembersInviteInputSchema,
+	availabilityQuery: AvailabilityQueryInputSchema,
+	searchAvailability: SearchAvailabilityInputSchema,
 };
 
 export const BookingmoodEndpointOutputSchemas = {
-	organizationsGet: OrganizationsGetResponseSchema,
-	organizationsList: OrganizationsListResponseSchema,
-	bookingsGet: BookingsGetResponseSchema,
-	bookingsList: BookingsListResponseSchema,
-	bookingsCreate: BookingsCreateResponseSchema,
-	bookingsUpdate: BookingsUpdateResponseSchema,
-	bookingsDelete: BookingsDeleteResponseSchema,
-	productsGet: ProductsGetResponseSchema,
-	productsList: ProductsListResponseSchema,
-	productsCreate: ProductsCreateResponseSchema,
-	productsUpdate: ProductsUpdateResponseSchema,
-	productsDelete: ProductsDeleteResponseSchema,
-	membersGet: MembersGetResponseSchema,
-	membersList: MembersListResponseSchema,
-	contactsGet: ContactsGetResponseSchema,
-	contactsList: ContactsListResponseSchema,
-	contactsCreate: ContactsCreateResponseSchema,
-	contactsUpdate: ContactsUpdateResponseSchema,
-	contactsDelete: ContactsDeleteResponseSchema,
+	list: ListResponseSchema,
+	write: WriteResponseSchema,
+	row: RowSchema,
+	organization: BookingmoodOrganization,
+	booking: BookingmoodBooking,
+	product: BookingmoodProduct,
+	member: BookingmoodMember,
+	contact: BookingmoodContact,
+	widget: BookingmoodWidget,
+	calendarEvent: BookingmoodCalendarEvent,
+	invoice: BookingmoodInvoice,
+	payment: BookingmoodPayment,
+	availability: AvailabilityQueryResponseSchema,
+	search: SearchAvailabilityResponseSchema,
+};
+
+export type BookingmoodEndpointInputs = {
+	list: ListInput;
+	write: WriteInput;
+	productsCreate: ProductsCreateInput;
+	membersInvite: MembersInviteInput;
+	availabilityQuery: AvailabilityQueryInput;
+	searchAvailability: SearchAvailabilityInput;
+};
+
+export type BookingmoodEndpointOutputs = {
+	list: ListResponse;
+	write: WriteResponse;
+	row: Row;
+	availability: AvailabilityQueryResponse;
+	search: SearchAvailabilityResponse;
 };

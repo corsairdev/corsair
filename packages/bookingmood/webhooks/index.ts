@@ -1,11 +1,4 @@
-import * as events from './events';
+import { BookingmoodWebhooks } from './events';
 
-export const BookingmoodWebhooks = {
-	bookingCreated: events.bookingCreated,
-	bookingUpdated: events.bookingUpdated,
-	bookingDeleted: events.bookingDeleted,
-	productCreated: events.productCreated,
-	productUpdated: events.productUpdated,
-};
-
+export { BookingmoodWebhooks };
 export * from './types';

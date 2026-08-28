@@ -12,10 +12,9 @@
     "declaration": true,
     "declarationMap": true,
     "skipLibCheck": true,
-    "verbatimModuleSyntax": false,
-    "rootDir": "../../"
+    "rootDir": "./"
   },
-  "include": ["./**/*", "../corsair/**/*"],
-  "exclude": ["dist", "node_modules"],
+  "include": ["./**/*"],
+  "exclude": ["dist", "node_modules", "**/*.test.ts"],
   "references": []
 }

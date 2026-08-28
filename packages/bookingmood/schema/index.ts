@@ -1,9 +1,13 @@
 import {
 	BookingmoodBooking,
+	BookingmoodCalendarEvent,
 	BookingmoodContact,
+	BookingmoodInvoice,
 	BookingmoodMember,
 	BookingmoodOrganization,
+	BookingmoodPayment,
 	BookingmoodProduct,
+	BookingmoodWidget,
 } from './database';
 
 export const BookingmoodSchema = {
@@ -14,13 +18,21 @@ export const BookingmoodSchema = {
 		products: BookingmoodProduct,
 		members: BookingmoodMember,
 		contacts: BookingmoodContact,
+		widgets: BookingmoodWidget,
+		calendar_events: BookingmoodCalendarEvent,
+		invoices: BookingmoodInvoice,
+		payments: BookingmoodPayment,
 	},
 } as const;
 
 export type {
-	BookingmoodOrganization,
 	BookingmoodBooking,
-	BookingmoodProduct,
-	BookingmoodMember,
+	BookingmoodCalendarEvent,
 	BookingmoodContact,
+	BookingmoodInvoice,
+	BookingmoodMember,
+	BookingmoodOrganization,
+	BookingmoodPayment,
+	BookingmoodProduct,
+	BookingmoodWidget,
 };
