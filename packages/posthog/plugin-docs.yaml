@@ -1,0 +1,30 @@
+# Overrides for scripts/generate-plugin-docs.ts
+# Plugin-specific examples; the generator owns Hub-shaped wiring and shared copy.
+
+displayName: PostHog
+description: "PostHog plugin for Corsair — product analytics events, identities, and webhook capture."
+recommendedAuth: managed
+
+examples:
+  write:
+    path: eventCreate
+    title: Capture an event
+    args:
+      event: signup_completed
+      distinct_id: user_123
+      properties:
+        plan: pro
+
+dbExample:
+  entity: events
+  note: "Search captured PostHog events without hitting PostHog's API."
+  data:
+    event: signup_completed
+  limit: 50
+
+exampleWebhook:
+  path: eventCaptured
+  note: "React when PostHog captures an event — `eventCaptured` is the common entry point."
+  after: |
+    const event = result.data?.event;
+    console.log('PostHog event:', event);
