@@ -61,12 +61,12 @@ export const BaseProviders = [
 	'attio',
 	'autom',
 	'ayrshare',
+	'backendless',
 	'bannerbear',
 	'bart',
 	'basecamp',
 	'baselinker',
 	'basin',
-	'backendless',
 	'beeminder',
 	'bettercontact',
 	'betterstack',
@@ -83,6 +83,7 @@ export const BaseProviders = [
 	'box',
 	'boxhero',
 	'brandfetch',
+	'brex',
 	'browseai',
 	'bugsnag',
 	'cal',
@@ -271,12 +272,12 @@ export const ProviderDisplayNames = {
 	attio: 'Attio',
 	autom: 'Autom',
 	ayrshare: 'Ayrshare',
+	backendless: 'Backendless',
 	bannerbear: 'Bannerbear',
 	bart: 'BART',
 	basecamp: 'Basecamp',
 	baselinker: 'BaseLinker',
 	basin: 'Basin',
-	backendless: 'Backendless',
 	beeminder: 'Beeminder',
 	bettercontact: 'BetterContact',
 	betterstack: 'Better Stack',
@@ -293,6 +294,7 @@ export const ProviderDisplayNames = {
 	box: 'Box',
 	boxhero: 'BoxHero',
 	brandfetch: 'Brandfetch',
+	brex: 'Brex',
 	browseai: 'Browse AI',
 	bugsnag: 'BugSnag',
 	cal: 'Cal',
@@ -488,12 +490,12 @@ export type AllProviders =
 	| 'attio'
 	| 'autom'
 	| 'ayrshare'
+	| 'backendless'
 	| 'bannerbear'
 	| 'bart'
 	| 'basecamp'
 	| 'baselinker'
 	| 'basin'
-	| 'backendless'
 	| 'beeminder'
 	| 'bettercontact'
 	| 'betterstack'
@@ -510,6 +512,7 @@ export type AllProviders =
 	| 'box'
 	| 'boxhero'
 	| 'brandfetch'
+	| 'brex'
 	| 'browseai'
 	| 'bugsnag'
 	| 'cal'
