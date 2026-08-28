@@ -1,0 +1,24 @@
+displayName: Outlook
+description: "Outlook plugin for Corsair — mail, calendar, and message events."
+examples:
+  read:
+    path: messages.list
+    title: List messages
+  write:
+    path: messages.send
+    title: Send a message
+    args:
+      to: you@example.com
+      subject: Hello from Corsair
+      body: Hello from Corsair
+dbExample:
+  entity: messages
+  note: "Search synced mail without hitting Outlook."
+  data:
+    isRead: false
+  limit: 50
+exampleWebhook:
+  path: messages.newMessage
+  note: "Fires when a new Outlook message arrives."
+  after: |
+    console.log('Outlook message:', result.data);
