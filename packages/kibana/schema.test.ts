@@ -1,3 +1,7 @@
+import {
+	KibanaEndpointInputSchemas,
+	KibanaEndpointOutputSchemas,
+} from './endpoints/types';
 import { KibanaSchema } from './schema';
 
 describe('Kibana schema', () => {
@@ -16,5 +20,19 @@ describe('Kibana schema', () => {
 	});
 });
 
-// Per .github/PLUGIN_PR_RULES.md (R2), every implemented endpoint
-// needs a corresponding test.
+describe('Kibana endpoints', () => {
+	it('validates savedObjectsFind input schema', () => {
+		const valid = KibanaEndpointInputSchemas.savedObjectsFind.safeParse({
+			type: 'dashboard',
+		});
+		expect(valid.success).toBe(true);
+	});
+
+	it('validates savedObjectsGet input schema', () => {
+		const valid = KibanaEndpointInputSchemas.savedObjectsGet.safeParse({
+			type: 'dashboard',
+			id: '123',
+		});
+		expect(valid.success).toBe(true);
+	});
+});

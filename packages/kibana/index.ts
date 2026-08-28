@@ -1,19 +1,16 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
 import { SavedObjects } from './endpoints';
 import type {
@@ -30,19 +27,12 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { KibanaSchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { resolveKibanaOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchKibanaTenantWebhook } from './webhooks/tenant-matcher';
-import type { ExampleEvent, KibanaWebhookOutputs } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
 
 export type KibanaPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
 	baseUrl?: string;
-	webhookSecret?: string;
 	hooks?: InternalKibanaPlugin['hooks'];
-	webhookHooks?: InternalKibanaPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof kibanaEndpointsNested>;
 };
@@ -78,27 +68,10 @@ export type KibanaEndpoints = {
 	savedObjectsGet: KibanaEndpoint<'savedObjectsGet'>;
 };
 
-type KibanaWebhook<
-	K extends keyof KibanaWebhookOutputs,
-	TEvent,
-> = CorsairWebhook<KibanaContext, TEvent, KibanaWebhookOutputs[K]>;
-
-export type KibanaWebhooks = {
-	example: KibanaWebhook<'example', ExampleEvent>;
-};
-
-export type KibanaBoundWebhooks = BindWebhooks<KibanaWebhooks>;
-
 const kibanaEndpointsNested = {
 	savedObjects: {
 		find: SavedObjects.find,
 		get: SavedObjects.get,
-	},
-} as const;
-
-const kibanaWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
 	},
 } as const;
 
@@ -114,14 +87,6 @@ export const kibanaEndpointSchemas = {
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof kibanaEndpointsNested
 >;
-
-const kibanaWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof kibanaWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -140,7 +105,7 @@ export type BaseKibanaPlugin<T extends KibanaPluginOptions> = CorsairPlugin<
 	'kibana',
 	typeof KibanaSchema,
 	typeof kibanaEndpointsNested,
-	typeof kibanaWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType,
 	typeof kibanaAuthConfig
@@ -164,33 +129,16 @@ export function kibana<const T extends KibanaPluginOptions>(
 		schema: KibanaSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: kibanaEndpointsNested,
-		webhooks: kibanaWebhooksNested,
+		webhooks: {} as Record<string, never>,
 		endpointMeta: kibanaEndpointMeta,
 		endpointSchemas: kibanaEndpointSchemas,
-		webhookSchemas: kibanaWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-kibana-signature' in headers;
-		},
-		pluginTenantWebhookMatcher: matchKibanaTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveKibanaOAuthWebhookTenantLink,
+		webhookSchemas: {} as Record<string, never>,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx: KibanaKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
