@@ -323,6 +323,7 @@ export const ProviderDisplayNames = {
 	dodopayments: 'Dodo Payments',
 	doppler: 'Doppler',
 	dropbox: 'Dropbox',
+	dropboxsign: 'Dropbox Sign',
 	epicgames: 'Epic Games',
 	exa: 'Exa',
 	facebook: 'Facebook',
