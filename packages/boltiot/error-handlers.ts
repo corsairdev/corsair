@@ -1,12 +1,10 @@
 import type { CorsairErrorHandler } from 'corsair/core';
-import { ApiError } from 'corsair/http';
 import { BoltIotAPIError, BoltIotRateLimitError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof BoltIotRateLimitError) return true;
-			if (error instanceof ApiError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('rate_limited') ||
@@ -14,17 +12,10 @@ export const errorHandlers = {
 				msg.includes('rate limit')
 			);
 		},
-		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
-			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
-		},
+		handler: async () => ({ maxRetries: 5 }),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
 			if (error instanceof BoltIotAPIError) {
 				return error.message.toLowerCase().includes('invalid api key');
 			}
