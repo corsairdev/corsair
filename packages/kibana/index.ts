@@ -161,7 +161,3 @@ export type {
 	SavedObjectsGetInput,
 	SavedObjectsGetResponse,
 } from './endpoints/types';
-export type {
-	ExampleEvent,
-	KibanaWebhookOutputs,
-} from './webhooks/types';
