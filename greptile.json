@@ -9,7 +9,7 @@
     "rules": [
       {
         "scope": ["packages/**"],
-        "rule": "A plugin PR must only modify files inside a single packages/<plugin>/ directory, plus packages/corsair/core/constants.ts, pnpm-lock.yaml, and docs/plugins/<plugin>/** for that same plugin. Flag any other modified file as a critical (P0) issue. PRs that only touch packages/<plugin>/plugin-docs.yaml and/or docs/plugins/<plugin>/** are documentation PRs, not plugin-code PRs; do not apply plugin demo/test/scope rules to them."
+        "rule": "A plugin PR must only modify files inside a single packages/<plugin>/ directory, plus packages/corsair/core/constants.ts, pnpm-lock.yaml, docs/plugins/<plugin>/** for that same plugin, and docs/docs.json. Flag any other modified file as a critical (P0) issue. PRs that only touch packages/<plugin>/plugin-docs.yaml, docs/plugins/<plugin>/**, and/or docs/docs.json are documentation PRs, not plugin-code PRs; do not apply plugin demo/test/scope rules to them."
       },
       {
         "scope": ["packages/**"],

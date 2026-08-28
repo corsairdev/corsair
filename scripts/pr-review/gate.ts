@@ -12,6 +12,9 @@ export const ALLOWED_EXTRA = [
 ];
 export const ASSERTION_WARN_FLOOR = 5;
 
+/** Mintlify sidebar; `generate:docs` rewrites this with the plugin pages. */
+export const DOCS_NAV_FILE = 'docs/docs.json';
+
 /** Generated plugin docs for the same plugin (plugin-docs.yaml PRs). */
 export function isSamePluginDocs(file: string, plugin: string): boolean {
 	const prefix = `docs/plugins/${plugin}/`;
@@ -37,6 +40,7 @@ export function isPluginDocsManifestPr(changedFiles: string[]): boolean {
 	if (changedFiles.length === 0) return false;
 	let plugin: string | null = null;
 	for (const file of changedFiles) {
+		if (file === DOCS_NAV_FILE) continue;
 		const id = pluginDocsYamlOf(file) ?? pluginDocsDirOf(file);
 		if (!id) return false;
 		if (plugin === null) plugin = id;
@@ -127,6 +131,7 @@ export function runGate(input: GateInput): GateResult {
 		(f) =>
 			pluginOf(f) === null &&
 			!ALLOWED_EXTRA.includes(f) &&
+			f !== DOCS_NAV_FILE &&
 			!(plugin && isSamePluginDocs(f, plugin)),
 	);
 	if (plugins.size > 1) {

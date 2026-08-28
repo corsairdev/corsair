@@ -53,6 +53,7 @@ test('skips heavy checks for plugin-docs.yaml and generated plugin docs', () => 
 		classifyPrScope([
 			'packages/airtable/plugin-docs.yaml',
 			'docs/plugins/airtable/overview.mdx',
+			'docs/docs.json',
 		]),
 		{ lane: 'skip-heavy' },
 	);

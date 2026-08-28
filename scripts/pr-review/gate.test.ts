@@ -90,6 +90,7 @@ test('plugin-docs.yaml + generated docs skip the plugin gate', () => {
 		changedFiles: [
 			'packages/airtable/plugin-docs.yaml',
 			'docs/plugins/airtable/overview.mdx',
+			'docs/docs.json',
 		],
 	});
 	assert.equal(r.isPluginPr, false);
@@ -111,6 +112,7 @@ test('R1: same-plugin generated docs pass', () => {
 			...goodFiles,
 			'packages/onepassword/plugin-docs.yaml',
 			'docs/plugins/onepassword/overview.mdx',
+			'docs/docs.json',
 		],
 	});
 	assert.ok(!r.failures.some((f) => f.rule === 'R1'));
