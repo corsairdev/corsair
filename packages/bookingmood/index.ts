@@ -1,7 +1,6 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
@@ -11,8 +10,6 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
-	WebhookTree,
 } from 'corsair/core';
 import { resourceEndpoints } from './endpoints';
 import {
@@ -31,22 +28,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { BookingmoodSchema } from './schema';
-import { BookingmoodWebhooks } from './webhooks';
-import { matchBookingmoodTenantWebhook } from './webhooks/tenant-matcher';
-import type { BookingmoodEventType } from './webhooks/types';
-import {
-	BOOKINGMOOD_EVENT_TYPES,
-	EVENT_SCHEMAS,
-	eventHandlerName,
-	parseBody,
-} from './webhooks/types';
 
 export type BookingmoodPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalBookingmoodPlugin['hooks'];
-	webhookHooks?: InternalBookingmoodPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof bookingmoodEndpointsNested>;
 };
@@ -57,10 +43,6 @@ export type BookingmoodContext = CorsairPluginContext<
 >;
 
 const bookingmoodEndpointsNested = resourceEndpoints as unknown as EndpointTree;
-
-const bookingmoodWebhooksNested = {
-	events: BookingmoodWebhooks,
-} as unknown as WebhookTree;
 
 function inputSchemaFor(group: string, op: string) {
 	if (group === 'products' && op === 'create') return ProductsCreateInputSchema;
@@ -112,17 +94,6 @@ const bookingmoodEndpointMeta = Object.fromEntries(
 	),
 ) as RequiredPluginEndpointMeta<typeof bookingmoodEndpointsNested>;
 
-const bookingmoodWebhookSchemas = Object.fromEntries(
-	BOOKINGMOOD_EVENT_TYPES.map((eventType: BookingmoodEventType) => [
-		`events.${eventHandlerName(eventType)}`,
-		{
-			description: `Bookingmood ${eventType}`,
-			payload: EVENT_SCHEMAS[eventType],
-			response: EVENT_SCHEMAS[eventType],
-		},
-	]),
-) as RequiredPluginWebhookSchemas<typeof bookingmoodWebhooksNested>;
-
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 export const bookingmoodAuthConfig = {
@@ -136,7 +107,7 @@ export type BaseBookingmoodPlugin<T extends BookingmoodPluginOptions> =
 		'bookingmood',
 		typeof BookingmoodSchema,
 		typeof bookingmoodEndpointsNested,
-		typeof bookingmoodWebhooksNested,
+		{},
 		T,
 		typeof defaultAuthType
 	>;
@@ -150,11 +121,6 @@ export type ExternalBookingmoodPlugin<T extends BookingmoodPluginOptions> =
 export type BookingmoodBoundEndpoints = BindEndpoints<
 	typeof bookingmoodEndpointsNested
 >;
-export type BookingmoodBoundWebhooks = BindWebhooks<
-	typeof bookingmoodWebhooksNested
->;
-
-const knownEvents = new Set<string>(BOOKINGMOOD_EVENT_TYPES);
 
 export function bookingmood<const T extends BookingmoodPluginOptions>(
 	incomingOptions: BookingmoodPluginOptions &
@@ -170,30 +136,18 @@ export function bookingmood<const T extends BookingmoodPluginOptions>(
 		schema: BookingmoodSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: bookingmoodEndpointsNested,
-		webhooks: bookingmoodWebhooksNested,
+		webhooks: {},
 		endpointMeta: bookingmoodEndpointMeta,
 		endpointSchemas: bookingmoodEndpointSchemas,
-		webhookSchemas: bookingmoodWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			const body = parseBody(request.body);
-			return (
-				typeof body?.event_type === 'string' && knownEvents.has(body.event_type)
-			);
-		},
-		pluginTenantWebhookMatcher: matchBookingmoodTenantWebhook,
+		webhookSchemas: {},
+		pluginWebhookMatcher: () => false,
+		pluginTenantWebhookMatcher: () => null,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
 		},
 		keyBuilder: async (ctx, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-			if (source === 'webhook') {
-				return (await ctx.keys.get_webhook_signature()) ?? '';
-			}
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}

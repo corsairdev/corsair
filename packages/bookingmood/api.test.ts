@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto';
 import { beforeEach, describe, expect, it, jest } from '@jest/globals';
 import { ApiError } from 'corsair/http';
 import { resourceEndpoints } from './endpoints';
@@ -9,12 +8,6 @@ import {
 	bookingmoodEndpointSchemas,
 } from './index';
 import { BookingmoodSchema } from './schema';
-import { BookingmoodWebhooks } from './webhooks';
-import { matchBookingmoodTenantWebhook } from './webhooks/tenant-matcher';
-import {
-	createBookingmoodMatch,
-	verifyBookingmoodWebhookSignature,
-} from './webhooks/types';
 
 function jsonResponse(body: unknown, status = 200) {
 	const payload = JSON.stringify(body);
@@ -184,101 +177,11 @@ describe('Bookingmood plugin', () => {
 		expect(errorHandlers.RATE_LIMIT_ERROR.match(error)).toBe(true);
 	});
 
-	it('verifies MD5 signatures from X-Signature', () => {
-		const payload = {
-			id: 'evt_1',
-			date: 1680064028,
-			event_type: 'bookings.created',
-			payload: { new: { id: 'b1', organization_id: 'org_1' } },
-		};
-		const secret = 'signing-secret';
-		const expected = createHash('md5')
-			.update(
-				`${secret}.${JSON.stringify({
-					id: payload.id,
-					event_type: payload.event_type,
-					date: payload.date,
-					payload: payload.payload,
-				})}`,
-			)
-			.digest('hex');
-
-		expect(
-			verifyBookingmoodWebhookSignature(
-				{
-					payload,
-					headers: { 'x-signature': expected },
-				} as never,
-				secret,
-			).valid,
-		).toBe(true);
-
-		expect(
-			verifyBookingmoodWebhookSignature(
-				{
-					payload,
-					headers: { 'x-signature': 'deadbeef' },
-				} as never,
-				secret,
-			).valid,
-		).toBe(false);
-	});
-
-	it('matches official event_type and organization_id tenant', () => {
-		expect(
-			createBookingmoodMatch('bookings.created')({
-				body: { event_type: 'bookings.created' },
-				headers: {},
-			}),
-		).toBe(true);
-		expect(
-			createBookingmoodMatch('bookings.created')({
-				body: { type: 'booking.created' },
-				headers: {},
-			}),
-		).toBe(false);
-
-		const match = matchBookingmoodTenantWebhook({
-			body: JSON.stringify({
-				event_type: 'products.updated',
-				payload: { new: { id: 'p1', organization_id: 'org_9' } },
-			}),
-			headers: {},
-		});
-		expect(match).toEqual({ linkType: 'organization_id', externalId: 'org_9' });
-	});
-
-	it('does not acknowledge failed webhook persistence', async () => {
-		const payload = {
-			id: 'evt_1',
-			date: 1,
-			event_type: 'products.created',
-			payload: { new: { id: 'p1' } },
-		};
-		const secret = 's';
-		const signature = createHash('md5')
-			.update(
-				`${secret}.${JSON.stringify({
-					id: payload.id,
-					event_type: payload.event_type,
-					date: payload.date,
-					payload: payload.payload,
-				})}`,
-			)
-			.digest('hex');
-
-		const result = await BookingmoodWebhooks.productsCreated.handler(
-			{
-				key: secret,
-				db: {
-					products: {
-						upsertByEntityId: jest.fn().mockRejectedValue(new Error('db down')),
-					},
-				},
-			},
-			{ payload, headers: { 'x-signature': signature } },
+	it('does not register inbound webhooks', () => {
+		const plugin = bookingmood();
+		expect(plugin.webhooks).toEqual({});
+		expect(plugin.pluginWebhookMatcher?.({ body: {}, headers: {} })).toBe(
+			false,
 		);
-		expect(result.success).toBe(false);
-		expect(result.statusCode).toBe(500);
 	});
 });
