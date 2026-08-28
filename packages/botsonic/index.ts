@@ -1,7 +1,6 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
@@ -12,8 +11,8 @@ import type {
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
+import { AuthMissingError } from 'corsair/core';
 import { GenerateResponse, GetAllFaqs } from './endpoints';
 import type {
 	BotsonicEndpointInputs,
@@ -30,7 +29,6 @@ export type BotsonicPluginOptions = {
 	authType?: PickAuth<'api_key'>;
 	key?: string;
 	hooks?: InternalBotsonicPlugin['hooks'];
-	webhookHooks?: InternalBotsonicPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof botsonicEndpointsNested>;
 };
@@ -59,8 +57,6 @@ export type BotsonicEndpoints = {
 	getAllFaqs: BotsonicEndpoint<'getAllFaqs'>;
 };
 
-export type BotsonicBoundWebhooks = BindWebhooks<Record<string, never>>;
-
 const botsonicEndpointsNested = {
 	generateResponse: {
 		post: GenerateResponse.post,
@@ -69,8 +65,6 @@ const botsonicEndpointsNested = {
 		get: GetAllFaqs.get,
 	},
 } as const;
-
-const botsonicWebhooksNested = {} as const;
 
 export const botsonicEndpointSchemas = {
 	'generateResponse.post': {
@@ -84,11 +78,6 @@ export const botsonicEndpointSchemas = {
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof botsonicEndpointsNested
 >;
-
-const botsonicWebhookSchemas =
-	{} as const satisfies RequiredPluginWebhookSchemas<
-		typeof botsonicWebhooksNested
-	>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -104,16 +93,14 @@ const botsonicEndpointMeta = {
 } as const satisfies RequiredPluginEndpointMeta<typeof botsonicEndpointsNested>;
 
 export const botsonicAuthConfig = {
-	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
+	api_key: {},
 } as const satisfies PluginAuthConfig;
 
 export type BaseBotsonicPlugin<T extends BotsonicPluginOptions> = CorsairPlugin<
 	'botsonic',
 	typeof BotsonicSchema,
 	typeof botsonicEndpointsNested,
-	typeof botsonicWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -137,12 +124,9 @@ export function botsonic<const T extends BotsonicPluginOptions>(
 		schema: BotsonicSchema,
 		options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
 		endpoints: botsonicEndpointsNested,
-		webhooks: botsonicWebhooksNested,
 		endpointMeta: botsonicEndpointMeta,
 		endpointSchemas: botsonicEndpointSchemas,
-		webhookSchemas: botsonicWebhookSchemas,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -154,10 +138,13 @@ export function botsonic<const T extends BotsonicPluginOptions>(
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('botsonic', 'api_key');
+				}
+				return res;
 			}
 
-			return '';
+			throw new AuthMissingError('botsonic', 'api_key');
 		},
 	} satisfies InternalBotsonicPlugin;
 }
