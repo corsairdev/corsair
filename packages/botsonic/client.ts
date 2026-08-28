@@ -35,7 +35,6 @@ export async function makeBotsonicRequest<T>(
 		VERSION: '1.0.0',
 		WITH_CREDENTIALS: false,
 		CREDENTIALS: 'omit',
-		TOKEN: apiKey,
 		HEADERS: {
 			'Content-Type': 'application/json',
 			...authHeaders,
@@ -57,7 +56,7 @@ export async function makeBotsonicRequest<T>(
 		return await request<T>(config, requestOptions);
 	} catch (error) {
 		if (error instanceof Error) {
-			throw new BotsonicAPIError(error.message);
+			throw error;
 		}
 
 		throw new BotsonicAPIError('Unknown error');
