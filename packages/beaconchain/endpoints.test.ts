@@ -1,3 +1,4 @@
+import { AuthMissingError } from 'corsair/core';
 import * as client from './client';
 import * as Chart from './endpoints/chart';
 import * as Ens from './endpoints/ens';
@@ -14,730 +15,444 @@ import * as Slot from './endpoints/slot';
 import * as SyncCommittee from './endpoints/sync-committee';
 import * as Validator from './endpoints/validator';
 import * as Validators from './endpoints/validators';
+import type { BeaconchainContext } from './index';
 
 jest.mock('corsair/core', () => {
 	const actual =
 		jest.requireActual<typeof import('corsair/core')>('corsair/core');
-
 	return {
 		...actual,
 		logEventFromContext: jest.fn().mockResolvedValue(null),
 	};
 });
 
-jest.mock('./client', () => ({
-	makeBeaconchainV1Request: jest.fn(),
-	makeBeaconchainV2Request: jest.fn(),
-	makeBeaconchainRequest: jest.fn(),
-}));
+jest.mock('./client', () => {
+	const actual = jest.requireActual('./client');
+	return {
+		...actual,
+		makeBeaconchainV1Request: jest.fn(),
+		makeBeaconchainV2Request: jest.fn(),
+		makeBeaconchainHealthRequest: jest.fn(),
+	};
+});
 
 const mockedV1Request = client.makeBeaconchainV1Request as jest.MockedFunction<
 	typeof client.makeBeaconchainV1Request
 >;
-
 const mockedV2Request = client.makeBeaconchainV2Request as jest.MockedFunction<
 	typeof client.makeBeaconchainV2Request
 >;
+const mockedHealthRequest =
+	client.makeBeaconchainHealthRequest as jest.MockedFunction<
+		typeof client.makeBeaconchainHealthRequest
+	>;
 
-const mockedRequest = client.makeBeaconchainRequest as jest.MockedFunction<
-	typeof client.makeBeaconchainRequest
->;
+function makeCtx(
+	overrides: Partial<BeaconchainContext> = {},
+): BeaconchainContext {
+	return {
+		key: 'test-api-key',
+		options: {},
+		db: {},
+		...overrides,
+	} as never;
+}
 
-const ctx = {
-	key: 'test-api-key',
-	db: {},
-} as any;
+const ctx = makeCtx();
 
-describe('Beaconchain endpoints', () => {
+describe('Beaconchain endpoint contracts', () => {
 	beforeEach(() => {
 		jest.clearAllMocks();
 		mockedV1Request.mockResolvedValue({ status: 'OK', data: {} } as never);
-		mockedV2Request.mockResolvedValue({ status: 'OK', data: {} } as never);
-		mockedRequest.mockResolvedValue({ status: 'OK', data: {} } as never);
+		mockedV2Request.mockResolvedValue({ data: {} } as never);
+		mockedHealthRequest.mockResolvedValue('module monitoring_api: OK' as never);
 	});
 
-	describe('chart', () => {
-		it('gets chart data using V1 API', async () => {
-			const input = { chartName: 'validators' };
+	it('throws AuthMissingError when no key is on the context', async () => {
+		await expect(
+			Chart.getChart(makeCtx({ key: undefined }), { chartName: 'validators' }),
+		).rejects.toBeInstanceOf(AuthMissingError);
+		expect(mockedV1Request).not.toHaveBeenCalled();
+	});
 
-			await Chart.getChart(ctx, input);
-
+	describe('V1', () => {
+		it('gets chart data', async () => {
+			await Chart.getChart(ctx, { chartName: 'validators' });
 			expect(mockedV1Request).toHaveBeenCalledWith(
 				'chart/validators',
 				ctx.key,
 				{ method: 'GET' },
 			);
 		});
-	});
 
-	describe('ens', () => {
-		it('resolves ENS name using V1 API', async () => {
-			const input = { name: 'vitalik.eth' };
-
-			await Ens.resolveEns(ctx, input);
-
+		it('resolves ENS', async () => {
+			await Ens.resolveEns(ctx, { name: 'vitalik.eth' });
 			expect(mockedV1Request).toHaveBeenCalledWith(
 				'ens/lookup/vitalik.eth',
 				ctx.key,
 				{ method: 'GET' },
 			);
 		});
-	});
 
-	describe('epoch', () => {
-		it('gets epoch data using V2 API with POST', async () => {
-			const input = { epochId: 1000 };
-
-			await Epoch.getEpoch(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith('ethereum/epoch', ctx.key, {
-				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					epoch: 1000,
-				},
+		it('gets epoch by path', async () => {
+			await Epoch.getEpoch(ctx, { epochId: 1000 });
+			expect(mockedV1Request).toHaveBeenCalledWith('epoch/1000', ctx.key, {
+				method: 'GET',
 			});
 		});
-	});
 
-	describe('eth1', () => {
-		it('gets eth1 deposits by tx hash using V2 API with POST', async () => {
-			const input = { txHash: '0x123' };
+		it('gets eth1 deposits by tx hash', async () => {
+			await Eth1.getEth1DepositsByTxHash(ctx, { txHash: '0x123' });
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'eth1deposit/0x123',
+				ctx.key,
+				{ method: 'GET' },
+			);
+		});
 
-			await Eth1.getEth1DepositsByTxHash(ctx, input);
+		it('gets execution ERC-20 tokens', async () => {
+			await Execution.getExecutionAddressErc20Tokens(ctx, {
+				address: '0xabc',
+			});
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'execution/address/0xabc/erc20tokens',
+				ctx.key,
+				{ method: 'GET' },
+			);
+		});
 
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/eth1/deposit',
+		it('gets produced execution blocks', async () => {
+			await Execution.getExecutionProducedBlocks(ctx, { address: '0xabc' });
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'execution/0xabc/produced',
+				ctx.key,
+				{ method: 'GET' },
+			);
+		});
+
+		it('gets rocketpool validator', async () => {
+			await Rocketpool.getRocketpoolValidator(ctx, { indexOrPubkey: '1' });
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'rocketpool/validator/1',
+				ctx.key,
+				{ method: 'GET' },
+			);
+		});
+
+		it('gets slot attestations, slashings, and exits', async () => {
+			await Slot.getSlotAttestations(ctx, { slotId: 10 });
+			await Slot.getSlotAttesterSlashings(ctx, { slotId: 10 });
+			await Slot.getSlotProposerSlashings(ctx, { slotId: 10 });
+			await Slot.getSlotVoluntaryExits(ctx, { slotId: 10 });
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'slot/10/attestations',
+				ctx.key,
+				{ method: 'GET' },
+			);
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'slot/10/attesterslashings',
+				ctx.key,
+				{ method: 'GET' },
+			);
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'slot/10/proposerslashings',
+				ctx.key,
+				{ method: 'GET' },
+			);
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'slot/10/voluntaryexits',
+				ctx.key,
+				{ method: 'GET' },
+			);
+		});
+
+		it('gets BLS changes for the requested validator', async () => {
+			await Validator.getValidatorBlsChanges(ctx, { indexOrPubkey: '1' });
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'validator/1/blsChange',
+				ctx.key,
+				{ method: 'GET' },
+			);
+		});
+
+		it('gets daily stats, leaderboard, deposits, and withdrawals', async () => {
+			await Validator.getValidatorDailyStats(ctx, { indexOrPubkey: '1' });
+			await Validator.getValidatorLeaderboard(ctx, {});
+			await Validator.getValidatorDeposits(ctx, { indexOrPubkey: '1' });
+			await Validator.getValidatorWithdrawals(ctx, { indexOrPubkey: '1' });
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'validator/stats/1',
+				ctx.key,
+				{ method: 'GET' },
+			);
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'validator/leaderboard',
+				ctx.key,
+				{ method: 'GET' },
+			);
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'validator/1/deposits',
+				ctx.key,
+				{ method: 'GET' },
+			);
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'validator/1/withdrawals',
+				ctx.key,
+				{ method: 'GET' },
+			);
+		});
+
+		it('gets proposal luck and the V1 queue', async () => {
+			await Validators.getValidatorsProposalLuck(ctx, {
+				validators: ['1', '2'],
+			});
+			await Validators.getValidatorsQueue(ctx, {});
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'validators/proposalLuck',
 				ctx.key,
 				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						tx_hash: '0x123',
-					},
+					method: 'GET',
+					query: { validators: '1,2' },
 				},
+			);
+			expect(mockedV1Request).toHaveBeenCalledWith(
+				'validators/queue',
+				ctx.key,
+				{ method: 'GET' },
 			);
 		});
 	});
 
-	describe('ethStore', () => {
-		it('gets ethstore daily stats using V2 API with POST', async () => {
-			const input = { day: 20240101, limit: 10, page: 1 };
-
-			await EthStore.getEthStoreDaily(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/ethstore/daily',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						day: 20240101,
-						limit: 10,
-						page: 1,
-					},
-				},
-			);
-		});
-	});
-
-	describe('execution', () => {
-		it('gets execution address ERC20 tokens using V2 API with POST', async () => {
-			const input = { address: '0x123' };
-
-			await Execution.getExecutionAddressErc20Tokens(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/execution/address/erc20',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						address: '0x123',
-					},
-				},
-			);
-		});
-
-		it('gets execution block using V2 API with POST', async () => {
-			const input = { blockId: 12345 };
-
-			await Execution.getExecutionBlock(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/execution/block',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						block: 12345,
-					},
-				},
-			);
-		});
-
-		it('gets execution produced blocks using V2 API with POST', async () => {
-			const input = { address: '0x123' };
-
-			await Execution.getExecutionProducedBlocks(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/execution/produced',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						address: '0x123',
-					},
-				},
-			);
-		});
-	});
-
-	describe('latestState', () => {
-		it('gets latest state using V2 API with POST', async () => {
+	describe('V2', () => {
+		it('gets latest state at ethereum/state', async () => {
 			await LatestState.getLatestState(ctx, {});
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/state/latest',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-					},
-				},
-			);
-		});
-	});
-
-	describe('network', () => {
-		it('gets network performance using V2 API with POST', async () => {
-			await Network.getNetworkPerformance(ctx, {});
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/network/performance',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-					},
-				},
-			);
-		});
-	});
-
-	describe('node', () => {
-		it('gets node health using V2 API with POST', async () => {
-			await Node.getNodeHealth(ctx, {});
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/node/health',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-					},
-				},
-			);
-		});
-	});
-
-	describe('queues', () => {
-		it('gets queues using V2 API with POST', async () => {
-			await Queues.getQueues(ctx, {});
-
-			expect(mockedV2Request).toHaveBeenCalledWith('ethereum/queues', ctx.key, {
+			expect(mockedV2Request).toHaveBeenCalledWith('ethereum/state', ctx.key, {
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-				},
+				body: { chain: 'mainnet' },
 			});
 		});
-	});
 
-	describe('rocketpool', () => {
-		it('gets rocketpool validator using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Rocketpool.getRocketpoolValidator(ctx, input);
-
+		it('gets network performance with an evaluation window', async () => {
+			await Network.getNetworkPerformance(ctx, {});
 			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/rocketpool/validator',
+				'ethereum/performance-aggregate',
 				ctx.key,
 				{
 					method: 'POST',
 					body: {
 						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
+						range: { evaluation_window: '24h' },
 					},
 				},
 			);
 		});
-	});
 
-	describe('slot', () => {
-		it('gets slot using V2 API with POST', async () => {
-			const input = { slotId: 123 };
+		it('gets eth-store with an evaluation window', async () => {
+			await EthStore.getEthStoreDaily(ctx, {});
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/eth-store',
+				ctx.key,
+				{
+					method: 'POST',
+					body: {
+						chain: 'mainnet',
+						range: { evaluation_window: '24h' },
+					},
+				},
+			);
+		});
 
-			await Slot.getSlot(ctx, input);
-
+		it('gets a slot', async () => {
+			await Slot.getSlot(ctx, { slotId: 10 });
 			expect(mockedV2Request).toHaveBeenCalledWith('ethereum/slot', ctx.key, {
 				method: 'POST',
-				body: {
-					chain: 'mainnet',
-					slot: 123,
-				},
+				body: { chain: 'mainnet', slot: 10 },
 			});
 		});
 
-		it('gets slot attestations using V2 API with POST', async () => {
-			const input = { slotId: 123 };
-
-			await Slot.getSlotAttestations(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/slot/attestation-duties',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						slot: 123,
-					},
-				},
-			);
-		});
-
-		it('gets slot attester slashings using V2 API with POST', async () => {
-			const input = { slotId: 123 };
-
-			await Slot.getSlotAttesterSlashings(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/slot/attester-slashings',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						slot: 123,
-					},
-				},
-			);
-		});
-
-		it('gets slot proposer slashings using V2 API with POST', async () => {
-			const input = { slotId: 123 };
-
-			await Slot.getSlotProposerSlashings(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/slot/proposer-slashings',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						slot: 123,
-					},
-				},
-			);
-		});
-
-		it('gets slot voluntary exits using V2 API with POST', async () => {
-			const input = { slotId: 123 };
-
-			await Slot.getSlotVoluntaryExits(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/slot/voluntary-exits',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						slot: 123,
-					},
-				},
-			);
-		});
-	});
-
-	describe('syncCommittee', () => {
-		it('gets sync committee using V2 API with POST', async () => {
-			const input = { period: 100 };
-
-			await SyncCommittee.getSyncCommittee(ctx, input);
-
+		it('gets the sync committee', async () => {
+			await SyncCommittee.getSyncCommittee(ctx, { period: 290 });
 			expect(mockedV2Request).toHaveBeenCalledWith(
 				'ethereum/sync-committee',
 				ctx.key,
 				{
 					method: 'POST',
+					body: { chain: 'mainnet', period: 290 },
+				},
+			);
+		});
+
+		it('gets network queues', async () => {
+			await Queues.getQueues(ctx, {});
+			expect(mockedV2Request).toHaveBeenCalledWith('ethereum/queues', ctx.key, {
+				method: 'POST',
+				body: { chain: 'mainnet' },
+			});
+		});
+
+		it('gets an execution block', async () => {
+			await Execution.getExecutionBlock(ctx, { blockId: 1 });
+			expect(mockedV2Request).toHaveBeenCalledWith('ethereum/block', ctx.key, {
+				method: 'POST',
+				body: { chain: 'mainnet', block: 1 },
+			});
+		});
+
+		it('looks up validators with nested identifiers', async () => {
+			await Validator.getValidator(ctx, { indexOrPubkey: '1' });
+			await Validators.postValidators(ctx, { indicesOrPubkeys: ['1', '2'] });
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators',
+				ctx.key,
+				{
+					method: 'POST',
 					body: {
 						chain: 'mainnet',
-						period: 100,
+						validator: { validator_identifiers: ['1'] },
+					},
+				},
+			);
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators',
+				ctx.key,
+				{
+					method: 'POST',
+					body: {
+						chain: 'mainnet',
+						validator: { validator_identifiers: ['1', '2'] },
+					},
+				},
+			);
+		});
+
+		it('nests deposit and withdrawal selectors under validator', async () => {
+			await Validators.getValidatorsByDepositAddress(ctx, {
+				address: '0x123',
+			});
+			await Validators.getValidatorsByWithdrawalCredentials(ctx, {
+				credentials: '0xabc',
+			});
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators',
+				ctx.key,
+				{
+					method: 'POST',
+					body: {
+						chain: 'mainnet',
+						validator: { deposit_address: '0x123' },
+					},
+				},
+			);
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators',
+				ctx.key,
+				{
+					method: 'POST',
+					body: {
+						chain: 'mainnet',
+						validator: { withdrawal: '0xabc' },
+					},
+				},
+			);
+		});
+
+		it('uses documented validator metric routes', async () => {
+			await Validator.getValidatorBalanceHistory(ctx, { indexOrPubkey: '1' });
+			await Validator.getValidatorAttestations(ctx, { indexOrPubkey: '1' });
+			await Validator.getValidatorProposals(ctx, { indexOrPubkey: '1' });
+			await Validator.getValidatorAttestationEfficiency(ctx, {
+				indexOrPubkey: '1',
+			});
+			await Validator.getValidatorIncomeHistory(ctx, { indexOrPubkey: '1' });
+			await Validator.getValidatorConsensusRewards(ctx, {
+				indexOrPubkey: '1',
+			});
+			await Validator.getValidatorExecutionRewards(ctx, {
+				indexOrPubkey: '1',
+			});
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators/balances',
+				ctx.key,
+				expect.objectContaining({
+					body: expect.objectContaining({
+						validator: { validator_identifiers: ['1'] },
+					}),
+				}),
+			);
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators/attestation-slots',
+				ctx.key,
+				expect.objectContaining({
+					body: expect.objectContaining({
+						validator: { validator_identifiers: ['1'] },
+					}),
+				}),
+			);
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators/proposal-slots',
+				ctx.key,
+				expect.objectContaining({
+					body: expect.objectContaining({
+						validator: { validator_identifiers: ['1'] },
+					}),
+				}),
+			);
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators/performance-aggregate',
+				ctx.key,
+				expect.objectContaining({
+					body: expect.objectContaining({
+						validator: { validator_identifiers: ['1'] },
+						range: { evaluation_window: '24h' },
+					}),
+				}),
+			);
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators/rewards-list',
+				ctx.key,
+				expect.objectContaining({
+					body: expect.objectContaining({
+						validator: { validator_identifiers: ['1'] },
+					}),
+				}),
+			);
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators/rewards-aggregate',
+				ctx.key,
+				expect.objectContaining({
+					body: expect.objectContaining({
+						validator: { validator_identifiers: ['1'] },
+					}),
+				}),
+			);
+		});
+
+		it('forwards chain and cursor pagination on list lookups', async () => {
+			await Validators.postValidators(ctx, {
+				indicesOrPubkeys: ['1'],
+				chain: 'hoodi',
+				cursor: 'abc',
+				page_size: 10,
+			});
+			expect(mockedV2Request).toHaveBeenCalledWith(
+				'ethereum/validators',
+				ctx.key,
+				{
+					method: 'POST',
+					body: {
+						chain: 'hoodi',
+						validator: { validator_identifiers: ['1'] },
+						cursor: 'abc',
+						page_size: 10,
 					},
 				},
 			);
 		});
 	});
 
-	describe('validator', () => {
-		it('gets validator using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidator(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validator attestation efficiency using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidatorAttestationEfficiency(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/attestation-efficiency',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validator attestations using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1', page: 2 };
-
-			await Validator.getValidatorAttestations(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/attestations',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-						page: 2,
-					},
-				},
-			);
-		});
-
-		it('gets validator BLS changes using V2 API with POST', async () => {
-			const input = { page: 1 };
-
-			await Validator.getValidatorBlsChanges(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/bls-changes',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						page: 1,
-					},
-				},
-			);
-		});
-
-		it('gets validator balance history using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidatorBalanceHistory(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/balance-history',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validator consensus rewards using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidatorConsensusRewards(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/rewards/consensus',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validator daily stats using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidatorDailyStats(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/stats/daily',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validator deposits using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidatorDeposits(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/deposits',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validator execution rewards using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidatorExecutionRewards(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/rewards/execution',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validator income history using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidatorIncomeHistory(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/income-history',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validator leaderboard using V2 API with POST', async () => {
-			await Validator.getValidatorLeaderboard(ctx, {});
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/leaderboard',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-					},
-				},
-			);
-		});
-
-		it('gets validator proposals using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidatorProposals(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/proposals',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validator withdrawals using V2 API with POST', async () => {
-			const input = { indexOrPubkey: '1' };
-
-			await Validator.getValidatorWithdrawals(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/withdrawals',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1'],
-						},
-					},
-				},
-			);
-		});
-	});
-
-	describe('validators', () => {
-		it('gets validators proposal luck using V2 API with POST', async () => {
-			const input = { validators: ['1', '2'] };
-
-			await Validators.getValidatorsProposalLuck(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/proposal-luck',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1', '2'],
-						},
-					},
-				},
-			);
-		});
-
-		it('gets validators queue using V2 API with POST', async () => {
-			await Validators.getValidatorsQueue(ctx, {});
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators/queues',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-					},
-				},
-			);
-		});
-
-		it('gets validators by deposit address using V2 API with POST', async () => {
-			const input = { address: '0x123' };
-
-			await Validators.getValidatorsByDepositAddress(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						deposit_address: '0x123',
-					},
-				},
-			);
-		});
-
-		it('gets validators by withdrawal credentials using V2 API with POST', async () => {
-			const input = { credentials: '0xabc' };
-
-			await Validators.getValidatorsByWithdrawalCredentials(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						withdrawal_credentials: '0xabc',
-					},
-				},
-			);
-		});
-
-		it('posts validators using V2 API with POST', async () => {
-			const input = { indicesOrPubkeys: ['1', '2'] };
-
-			await Validators.postValidators(ctx, input);
-
-			expect(mockedV2Request).toHaveBeenCalledWith(
-				'ethereum/validators',
-				ctx.key,
-				{
-					method: 'POST',
-					body: {
-						chain: 'mainnet',
-						validator: {
-							validator_identifiers: ['1', '2'],
-						},
-					},
-				},
-			);
-		});
+	it('gets explorer health from /api/healthz', async () => {
+		const result = await Node.getNodeHealth(ctx, {});
+		expect(mockedHealthRequest).toHaveBeenCalledWith(ctx.key, 'mainnet');
+		expect(result).toEqual({ data: 'module monitoring_api: OK' });
 	});
 });
