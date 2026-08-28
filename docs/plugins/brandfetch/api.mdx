@@ -1,0 +1,742 @@
+---
+title: API
+description: "API reference for Brandfetch: every `brandfetch.api.*` operation with input and output types."
+---
+
+Every `brandfetch.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Brands
+
+### get
+
+`brands.get`
+
+Get brand logos, colors, fonts, and company details by domain, ticker, ISIN, crypto symbol, or Brand ID
+
+**Risk:** `read`
+
+```ts
+await corsair.brandfetch.api.brands.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Domain (nike.com), Brand ID (id_0dwKPKT), ISIN, ticker (NKE), or crypto symbol (BTC) |
+| `identifierType` | `domain \| ticker \| isin \| crypto` | No | Explicit identifier type. Omit to use auto-detect (domain → ticker → ISIN → crypto). |
+| `allowNsfw` | `boolean` | No | When true, return NSFW brands. When false, NSFW brands 404. Unset uses Brandfetch default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `domain` | `string` | Yes | — |
+| `claimed` | `boolean` | Yes | — |
+| `description` | `string` | No | — |
+| `longDescription` | `string` | No | — |
+| `links` | `object[]` | Yes | — |
+| `logos` | `object[]` | Yes | — |
+| `colors` | `object[]` | Yes | — |
+| `fonts` | `object[]` | Yes | — |
+| `images` | `object[]` | Yes | — |
+| `qualityScore` | `number` | Yes | — |
+| `company` | `object` | No | — |
+| `isNsfw` | `boolean` | Yes | — |
+| `urn` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  name: string,
+  url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="logos full type">
+
+```ts
+{
+  theme?: dark | light | null,
+  formats: {
+    src?: string,
+    format?: svg | webp | png | jpeg,
+    height?: number | null,
+    width?: number | null,
+    size?: number,
+    background?: transparent | null
+  }[],
+  tags: any[],
+  type: icon | logo | symbol | other
+}[]
+```
+</Accordion>
+
+<Accordion title="colors full type">
+
+```ts
+{
+  hex: string,
+  type: accent | dark | light | brand,
+  brightness: number
+}[]
+```
+</Accordion>
+
+<Accordion title="fonts full type">
+
+```ts
+{
+  name?: string | null,
+  type: title | body,
+  origin?: google | custom | system,
+  originId?: string | null,
+  weights?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  formats: {
+    src?: string,
+    format?: svg | webp | png | jpeg,
+    height?: number | null,
+    width?: number | null,
+    size?: number,
+    background?: transparent | null
+  }[],
+  tags: any[],
+  type: banner | other | picture,
+  pictureMetadata?: {
+    score: number,
+    rank: number,
+    naturalWidth: number,
+    naturalHeight: number,
+    alt: string,
+    sourceUrl: string,
+    imageCategory?: string | null,
+    categoryConfidence?: number | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  employees?: number | null,
+  financialIdentifiers?: {
+    isin?: string[],
+    ticker?: string[]
+  } | null,
+  foundedYear?: number | null,
+  industries?: {
+    id: string,
+    score?: number,
+    slug: string,
+    name: string,
+    emoji?: string,
+    parent?: {
+      id: string,
+      slug: string,
+      name: string,
+      emoji?: string
+    } | {
+      id: string,
+      slug: string,
+      name: string,
+      emoji?: string
+    }[] | null
+  }[],
+  kind?: string | null,
+  location?: {
+    city?: string | null,
+    country?: string | null,
+    countryCode?: string | null,
+    region?: string | null,
+    state?: string | null,
+    subregion?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### getCompany
+
+`brands.getCompany`
+
+Get firmographic company data for a brand identifier
+
+**Risk:** `read`
+
+```ts
+await corsair.brandfetch.api.brands.getCompany({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Domain (nike.com), Brand ID (id_0dwKPKT), ISIN, ticker (NKE), or crypto symbol (BTC) |
+| `identifierType` | `domain \| ticker \| isin \| crypto` | No | Explicit identifier type. Omit to use auto-detect (domain → ticker → ISIN → crypto). |
+| `allowNsfw` | `boolean` | No | When true, return NSFW brands. When false, NSFW brands 404. Unset uses Brandfetch default. |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `employees` | `number` | No | — |
+| `financialIdentifiers` | `object` | No | — |
+| `foundedYear` | `number` | No | — |
+| `industries` | `object[]` | No | — |
+| `kind` | `string` | No | — |
+| `location` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="financialIdentifiers full type">
+
+```ts
+{
+  isin?: string[],
+  ticker?: string[]
+}
+```
+</Accordion>
+
+<Accordion title="industries full type">
+
+```ts
+{
+  id: string,
+  score?: number,
+  slug: string,
+  name: string,
+  emoji?: string,
+  parent?: {
+    id: string,
+    slug: string,
+    name: string,
+    emoji?: string
+  } | {
+    id: string,
+    slug: string,
+    name: string,
+    emoji?: string
+  }[] | null
+}[]
+```
+</Accordion>
+
+<Accordion title="location full type">
+
+```ts
+{
+  city?: string | null,
+  country?: string | null,
+  countryCode?: string | null,
+  region?: string | null,
+  state?: string | null,
+  subregion?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### search
+
+`brands.search`
+
+Search brands by name for autocomplete (requires client ID)
+
+**Risk:** `read`
+
+```ts
+await corsair.brandfetch.api.brands.search({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `name` | `string` | Yes | Brand name to search for |
+| `clientId` | `string` | No | Brandfetch client ID. Falls back to plugin options / stored key. |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  icon?: string | null,
+  name?: string | null,
+  domain: string,
+  claimed: boolean,
+  brandId: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+## Graphql
+
+### getVersion
+
+`graphql.getVersion`
+
+Get the Brandfetch GraphQL API version
+
+**Risk:** `read`
+
+```ts
+await corsair.brandfetch.api.graphql.getVersion({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `version` | `string` | Yes | — |
+
+
+
+---
+
+## Logos
+
+### get
+
+`logos.get`
+
+Build a Brandfetch Logo CDN URL (requires client ID)
+
+**Risk:** `read`
+
+```ts
+await corsair.brandfetch.api.logos.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `identifier` | `string` | Yes | Domain (nike.com), Brand ID (id_0dwKPKT), ISIN, ticker (NKE), or crypto symbol (BTC) |
+| `identifierType` | `domain \| ticker \| isin \| crypto` | No | Explicit identifier type. Omit to use auto-detect (domain → ticker → ISIN → crypto). |
+| `clientId` | `string` | No | — |
+| `logoType` | `icon \| logo \| symbol` | No | CDN asset type. Defaults to icon. |
+| `theme` | `light \| dark` | No | — |
+| `fallback` | `404 \| brandfetch \| transparent \| lettermark` | No | — |
+| `w` | `number` | No | Width in pixels |
+| `h` | `number` | No | Height in pixels |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `url` | `string` | Yes | — |
+
+
+
+---
+
+## Taxonomy
+
+### get
+
+`taxonomy.get`
+
+Get Brandfetch industries, countries, and geographic regions
+
+**Risk:** `read`
+
+```ts
+await corsair.brandfetch.api.taxonomy.get({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `industries` | `object[]` | Yes | — |
+| `countries` | `object[]` | Yes | — |
+| `geographicRegions` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="industries full type">
+
+```ts
+{
+  id: string,
+  urn?: string,
+  name: string,
+  slug: string,
+  emoji?: string,
+  depth?: number,
+  banner?: string | null,
+  parent?: {
+    id: string,
+    urn?: string,
+    name: string,
+    slug: string,
+    emoji?: string,
+    depth?: number,
+    banner?: string | null
+  } | null,
+  children?: {
+    id: string,
+    urn?: string,
+    name: string,
+    slug: string,
+    emoji?: string,
+    depth?: number,
+    banner?: string | null
+  }[]
+}[]
+```
+</Accordion>
+
+<Accordion title="countries full type">
+
+```ts
+{
+  code: string,
+  name: string,
+  slug: string,
+  emoji?: string,
+  latitude?: number,
+  longitude?: number
+}[]
+```
+</Accordion>
+
+<Accordion title="geographicRegions full type">
+
+```ts
+{
+  name: string,
+  slug: string,
+  emoji?: string,
+  depth?: number,
+  parent?: {
+    name: string,
+    slug: string
+  } | null
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Transactions
+
+### get
+
+`transactions.get`
+
+Match a payment descriptor to merchant brand data
+
+**Risk:** `read`
+
+```ts
+await corsair.brandfetch.api.transactions.get({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `transactionLabel` | `string` | Yes | Raw transaction text from a credit-card statement |
+| `countryCode` | `string` | Yes | ISO 3166-1 alpha-2 country code where the transaction took place |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `name` | `string` | No | — |
+| `domain` | `string` | Yes | — |
+| `claimed` | `boolean` | Yes | — |
+| `description` | `string` | No | — |
+| `longDescription` | `string` | No | — |
+| `links` | `object[]` | Yes | — |
+| `logos` | `object[]` | Yes | — |
+| `colors` | `object[]` | Yes | — |
+| `fonts` | `object[]` | Yes | — |
+| `images` | `object[]` | Yes | — |
+| `qualityScore` | `number` | Yes | — |
+| `company` | `object` | No | — |
+| `isNsfw` | `boolean` | Yes | — |
+| `urn` | `string` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="links full type">
+
+```ts
+{
+  name: string,
+  url: string
+}[]
+```
+</Accordion>
+
+<Accordion title="logos full type">
+
+```ts
+{
+  theme?: dark | light | null,
+  formats: {
+    src?: string,
+    format?: svg | webp | png | jpeg,
+    height?: number | null,
+    width?: number | null,
+    size?: number,
+    background?: transparent | null
+  }[],
+  tags: any[],
+  type: icon | logo | symbol | other
+}[]
+```
+</Accordion>
+
+<Accordion title="colors full type">
+
+```ts
+{
+  hex: string,
+  type: accent | dark | light | brand,
+  brightness: number
+}[]
+```
+</Accordion>
+
+<Accordion title="fonts full type">
+
+```ts
+{
+  name?: string | null,
+  type: title | body,
+  origin?: google | custom | system,
+  originId?: string | null,
+  weights?: any[]
+}[]
+```
+</Accordion>
+
+<Accordion title="images full type">
+
+```ts
+{
+  formats: {
+    src?: string,
+    format?: svg | webp | png | jpeg,
+    height?: number | null,
+    width?: number | null,
+    size?: number,
+    background?: transparent | null
+  }[],
+  tags: any[],
+  type: banner | other | picture,
+  pictureMetadata?: {
+    score: number,
+    rank: number,
+    naturalWidth: number,
+    naturalHeight: number,
+    alt: string,
+    sourceUrl: string,
+    imageCategory?: string | null,
+    categoryConfidence?: number | null
+  } | null
+}[]
+```
+</Accordion>
+
+<Accordion title="company full type">
+
+```ts
+{
+  employees?: number | null,
+  financialIdentifiers?: {
+    isin?: string[],
+    ticker?: string[]
+  } | null,
+  foundedYear?: number | null,
+  industries?: {
+    id: string,
+    score?: number,
+    slug: string,
+    name: string,
+    emoji?: string,
+    parent?: {
+      id: string,
+      slug: string,
+      name: string,
+      emoji?: string
+    } | {
+      id: string,
+      slug: string,
+      name: string,
+      emoji?: string
+    }[] | null
+  }[],
+  kind?: string | null,
+  location?: {
+    city?: string | null,
+    country?: string | null,
+    countryCode?: string | null,
+    region?: string | null,
+    state?: string | null,
+    subregion?: string | null
+  }
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Webhooks
+
+### list
+
+`webhooks.list`
+
+List registered Brandfetch webhooks
+
+**Risk:** `read`
+
+```ts
+await corsair.brandfetch.api.webhooks.list({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `first` | `number` | No | Page size. GraphQL default is 10. |
+| `after` | `string` | No | Cursor from the previous pageInfo.endCursor |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `nodes` | `object[]` | Yes | — |
+| `pageInfo` | `object` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="nodes full type">
+
+```ts
+{
+  urn: string,
+  url: string,
+  description?: string | null,
+  enabled: boolean,
+  events: string[],
+  createdAt?: string,
+  updatedAt?: string
+}[]
+```
+</Accordion>
+
+<Accordion title="pageInfo full type">
+
+```ts
+{
+  hasNextPage: boolean,
+  endCursor?: string | null
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### listEvents
+
+`webhooks.listEvents`
+
+List webhook event types that can be subscribed to
+
+**Risk:** `read`
+
+```ts
+await corsair.brandfetch.api.webhooks.listEvents({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `subscribableEvents` | `object[]` | Yes | — |
+
+<AccordionGroup>
+<Accordion title="subscribableEvents full type">
+
+```ts
+{
+  namespace: string,
+  name: string,
+  description: string,
+  subscriptionScope: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+

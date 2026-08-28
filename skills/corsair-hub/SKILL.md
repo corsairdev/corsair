@@ -13,7 +13,7 @@ Wire the Corsair SDK into the user's app so it runs in their process, stores cre
 | --- | --- |
 | Corsair running **in their own app**, credentials in **their** database, Hub for public-URL surfaces | **This skill** — self-hosted SDK + Hub |
 | A **hosted** setup where Corsair runs everything (`@corsair-dev/app`, instances/tenants via API) | the `corsair` skill (Corsair App) |
-| Fully self-hosted with **no** Hub relay (they host OAuth/approval URLs themselves) | [SDK introduction](https://docs.corsair.dev/getting-started/introduction.md) |
+| Fully self-hosted with **no** Hub relay (they host OAuth/approval URLs themselves) | [SDK introduction](https://docs.corsair.dev/introduction.md) |
 
 The `/api/corsair` route holds the signing secret and receives Hub's server-to-server delivery, so this requires a **server** — not a client-only SPA. If the user is on Angular/Vue/Svelte as a pure SPA, wire the route into their backend (their SSR server, Express, Hono, etc.).
 

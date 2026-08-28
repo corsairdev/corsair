@@ -1,0 +1,514 @@
+---
+title: API
+description: "API reference for Bouncer: every `bouncer.api.*` operation with input and output types."
+---
+
+Every `bouncer.api.*` operation is listed below with parameter shapes and return types from the plugin Zod schemas.
+
+<Info>
+**New to Corsair?** See [API access](/concepts/api), [authentication](/concepts/auth), and [error handling](/concepts/error-handling).
+</Info>
+
+## Account
+
+### getCredits
+
+`account.getCredits`
+
+Retrieve current credit balance for the Bouncer account
+
+**Risk:** `read`
+
+```ts
+await corsair.bouncer.api.account.getCredits({});
+```
+
+**Input:** _empty object_
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `credits` | `number` | Yes | — |
+
+
+
+---
+
+## Email
+
+### createBatchRequest
+
+`email.createBatchRequest`
+
+Initiate an asynchronous batch email verification request
+
+**Risk:** `write`
+
+```ts
+await corsair.bouncer.api.email.createBatchRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `recipients` | `object[]` | Yes | — |
+| `callback` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="recipients full type">
+
+```ts
+(
+  {
+    email: string
+  } | string
+)[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchId` | `string` | Yes | — |
+| `created` | `string` | No | — |
+| `status` | `string` | No | — |
+| `quantity` | `number` | No | — |
+| `duplicates` | `number` | No | — |
+
+
+
+---
+
+### deleteBatchRequest
+
+`email.deleteBatchRequest`
+
+Permanently delete a batch email verification request and its data
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.bouncer.api.email.deleteBatchRequest({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### finishBatch
+
+`email.finishBatch`
+
+Mark a batch verification process as finished early
+
+**Risk:** `write`
+
+```ts
+await corsair.bouncer.api.email.finishBatch({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getBatchResults
+
+`email.getBatchResults`
+
+Retrieve the results of a batch email verification process
+
+**Risk:** `read`
+
+```ts
+await corsair.bouncer.api.email.getBatchResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchId` | `string` | Yes | — |
+| `download` | `all \| deliverable \| risky \| undeliverable \| unknown` | No | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  email: string,
+  status: deliverable | risky | undeliverable | unknown,
+  reason: accepted_email | low_deliverability | low_quality | invalid_email | invalid_domain | rejected_email | dns_error | unavailable_smtp | unsupported | timeout | unknown,
+  domain?: {
+    name: string,
+    acceptAll: yes | no | unknown,
+    disposable: yes | no | unknown,
+    free: yes | no | unknown
+  },
+  account?: {
+    role: yes | no | unknown,
+    disabled: yes | no | unknown,
+    fullMailbox: yes | no | unknown
+  },
+  dns?: {
+    type: string,
+    record?: string
+  },
+  provider?: string,
+  score?: number,
+  toxic?: string,
+  toxicity?: number,
+  retryAfter?: string,
+  didYouMean?: string
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
+### getBatchStatus
+
+`email.getBatchStatus`
+
+Check the processing status of a batch, optionally with per-status stats
+
+**Risk:** `read`
+
+```ts
+await corsair.bouncer.api.email.getBatchStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchId` | `string` | Yes | — |
+| `withStats` | `boolean` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `batchId` | `string` | Yes | — |
+| `created` | `string` | No | — |
+| `started` | `string` | No | — |
+| `completed` | `string` | No | — |
+| `status` | `string` | Yes | — |
+| `quantity` | `number` | No | — |
+| `duplicates` | `number` | No | — |
+| `credits` | `number` | No | — |
+| `processed` | `number` | No | — |
+| `stats` | `object` | No | — |
+
+<AccordionGroup>
+<Accordion title="stats full type">
+
+```ts
+{
+  deliverable: number,
+  risky: number,
+  undeliverable: number,
+  unknown: number
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verifyDomain
+
+`email.verifyDomain`
+
+Verify domain MX records and catch-all setup
+
+**Risk:** `read`
+
+```ts
+await corsair.bouncer.api.email.verifyDomain({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `domain` | `object` | No | — |
+| `dns` | `object` | No | — |
+| `provider` | `string` | No | — |
+| `toxic` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  name: string,
+  acceptAll: yes | no | unknown,
+  disposable: yes | no | unknown,
+  free: yes | no | unknown
+}
+```
+</Accordion>
+
+<Accordion title="dns full type">
+
+```ts
+{
+  type: string,
+  record?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+### verifyEmail
+
+`email.verifyEmail`
+
+Verify a single email address in real-time
+
+**Risk:** `read`
+
+```ts
+await corsair.bouncer.api.email.verifyEmail({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `timeout` | `number` | No | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `email` | `string` | Yes | — |
+| `status` | `deliverable \| risky \| undeliverable \| unknown` | Yes | — |
+| `reason` | `accepted_email \| low_deliverability \| low_quality \| invalid_email \| invalid_domain \| rejected_email \| dns_error \| unavailable_smtp \| unsupported \| timeout \| unknown` | Yes | — |
+| `domain` | `object` | No | — |
+| `account` | `object` | No | — |
+| `dns` | `object` | No | — |
+| `provider` | `string` | No | — |
+| `score` | `number` | No | — |
+| `toxic` | `string` | No | — |
+| `toxicity` | `number` | No | — |
+| `retryAfter` | `string` | No | — |
+| `didYouMean` | `string` | No | — |
+
+<AccordionGroup>
+<Accordion title="domain full type">
+
+```ts
+{
+  name: string,
+  acceptAll: yes | no | unknown,
+  disposable: yes | no | unknown,
+  free: yes | no | unknown
+}
+```
+</Accordion>
+
+<Accordion title="account full type">
+
+```ts
+{
+  role: yes | no | unknown,
+  disabled: yes | no | unknown,
+  fullMailbox: yes | no | unknown
+}
+```
+</Accordion>
+
+<Accordion title="dns full type">
+
+```ts
+{
+  type: string,
+  record?: string
+}
+```
+</Accordion>
+</AccordionGroup>
+
+
+
+---
+
+## Toxicity
+
+### checkToxicityListJobStatus
+
+`toxicity.checkToxicityListJobStatus`
+
+Check the status and results of a toxicity list job
+
+**Risk:** `read`
+
+```ts
+await corsair.bouncer.api.toxicity.checkToxicityListJobStatus({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `createdAt` | `string` | No | — |
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### createToxicityListJob
+
+`toxicity.createToxicityListJob`
+
+Create a toxicity analysis job for a list of email addresses
+
+**Risk:** `write`
+
+```ts
+await corsair.bouncer.api.toxicity.createToxicityListJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `emails` | `string[]` | Yes | — |
+
+
+
+**Output**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `id` | `string` | Yes | — |
+| `createdAt` | `string` | No | — |
+| `status` | `string` | Yes | — |
+
+
+
+---
+
+### deleteToxicityListJob
+
+`toxicity.deleteToxicityListJob`
+
+Delete a specific toxicity list job by ID
+
+**Risk:** `destructive` · **Irreversible**
+
+```ts
+await corsair.bouncer.api.toxicity.deleteToxicityListJob({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output:** _empty object_
+
+
+---
+
+### getToxicityListResults
+
+`toxicity.getToxicityListResults`
+
+Download the per-address toxicity scores of a completed job
+
+**Risk:** `read`
+
+```ts
+await corsair.bouncer.api.toxicity.getToxicityListResults({});
+```
+
+**Input**
+
+| Name | Type | Required | Description |
+|------|------|----------|-------------|
+| `jobId` | `string` | Yes | — |
+
+
+
+**Output:** `object[]`
+
+<AccordionGroup>
+<Accordion title="Output full type">
+
+```ts
+{
+  email: string,
+  toxicity: number
+}[]
+```
+</Accordion>
+</AccordionGroup>
+
+
+---
+
