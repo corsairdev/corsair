@@ -292,12 +292,25 @@ describe('BoltIot plugin & client tests', () => {
 		mockFetch.mockResolvedValue(
 			jsonResponse(
 				{ error: 'rate limited' },
-				{ status: 429, statusText: 'Too Many Requests' },
+				{
+					status: 429,
+					statusText: 'Too Many Requests',
+					headers: { 'Retry-After': '2' },
+				},
 			),
 		);
 
+		const err = await makeBoltIotRequest('isOnline', 'test-key', {
+			deviceName: 'DEV1',
+		}).catch((e: unknown) => e);
+		expect(err).toBeInstanceOf(BoltIotRateLimitError);
+		expect((err as BoltIotRateLimitError).retryAfterMs).toBe(2000);
+	});
+
+	it('rejects a null JSON body', async () => {
+		mockFetch.mockResolvedValue(jsonResponse(null));
 		await expect(
 			makeBoltIotRequest('isOnline', 'test-key', { deviceName: 'DEV1' }),
-		).rejects.toThrow(BoltIotRateLimitError);
+		).rejects.toThrow(BoltIotAPIError);
 	});
 });

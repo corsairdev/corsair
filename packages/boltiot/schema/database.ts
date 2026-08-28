@@ -29,7 +29,7 @@ export type BoltIotCommand = z.infer<typeof BoltIotCommand>;
  * Bolt device identifier used as `deviceName` on every remote command.
  *
  * Official request form:
- * `http://cloud.boltiot.com/remote/{api_key}/{command}?deviceName=BOLTXXXXXX`
+ * `https://cloud.boltiot.com/remote/{api_key}/{command}?deviceName=BOLTXXXXXX`
  */
 export const BoltIotDevice = z
 	.object({

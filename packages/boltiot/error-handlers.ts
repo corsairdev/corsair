@@ -5,6 +5,7 @@ export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof BoltIotRateLimitError) return true;
+			if (error instanceof BoltIotAPIError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
 			return (
 				msg.includes('rate_limited') ||
@@ -12,11 +13,16 @@ export const errorHandlers = {
 				msg.includes('rate limit')
 			);
 		},
-		handler: async () => ({ maxRetries: 5 }),
+		handler: async (error: Error) => {
+			const retryAfterMs =
+				error instanceof BoltIotRateLimitError ? error.retryAfterMs : undefined;
+			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
+		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
 			if (error instanceof BoltIotAPIError) {
+				if (error.status === 401) return true;
 				return error.message.toLowerCase().includes('invalid api key');
 			}
 			const msg = error.message.toLowerCase();
