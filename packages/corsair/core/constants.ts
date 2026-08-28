@@ -150,6 +150,7 @@ export const BaseProviders = [
 	'jigsawstack',
 	'jira',
 	'kaggle',
+	'kibana',
 	'linear',
 	'linkedin',
 	'loyverse',
@@ -365,6 +366,7 @@ export const ProviderDisplayNames = {
 	jigsawstack: 'JigsawStack',
 	jira: 'Jira',
 	kaggle: 'Kaggle',
+	kibana: 'Kibana',
 	linear: 'Linear',
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
@@ -587,6 +589,7 @@ export type AllProviders =
 	| 'jigsawstack'
 	| 'jira'
 	| 'kaggle'
+	| 'kibana'
 	| 'linear'
 	| 'linkedin'
 	| 'loyverse'
