@@ -151,7 +151,10 @@ export async function makeCloudcartRequest<T>(
 
 	try {
 		return await request<T>(config, requestOptions, {
-			rateLimitConfig: CLOUDCART_RATE_LIMIT_CONFIG,
+			rateLimitConfig:
+				method === 'GET'
+					? CLOUDCART_RATE_LIMIT_CONFIG
+					: { ...CLOUDCART_RATE_LIMIT_CONFIG, enabled: false, maxRetries: 0 },
 		});
 	} catch (error) {
 		if (error instanceof ApiError || error instanceof CloudcartAPIError) {
