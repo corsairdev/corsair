@@ -258,6 +258,7 @@ export const BaseProviders = [
 	'uniswapapi',
 	'vapi',
 	'vercel',
+	'veriphone',
 	'vestaboard',
 	'wakatime',
 	'webflow',
@@ -524,6 +525,7 @@ export const ProviderDisplayNames = {
 	uniswapapi: 'Uniswap',
 	vapi: 'Vapi',
 	vercel: 'Vercel',
+	veriphone: 'Veriphone',
 	vestaboard: 'Vestaboard',
 	wakatime: 'WakaTime',
 	webflow: 'Webflow',
@@ -797,6 +799,7 @@ export type AllProviders =
 	| 'uniswapapi'
 	| 'vapi'
 	| 'vercel'
+	| 'veriphone'
 	| 'vestaboard'
 	| 'wakatime'
 	| 'webflow'
