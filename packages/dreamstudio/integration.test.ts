@@ -10,9 +10,12 @@ const describeIfKey = LIVE_KEY ? describe : describe.skip;
 
 describe('DreamStudio live REST v1', () => {
 	it('rejects an invalid API key on GET /v1/user/account', async () => {
-		await expect(
-			makeDreamstudioRequest('/user/account', 'sk-invalid-live-check'),
-		).rejects.toBeInstanceOf(DreamstudioAPIError);
+		const err = await makeDreamstudioRequest(
+			'/user/account',
+			'sk-invalid-live-check',
+		).catch((error: unknown) => error);
+		expect(err).toBeInstanceOf(DreamstudioAPIError);
+		expect((err as DreamstudioAPIError).status).toBe(401);
 	});
 });
 

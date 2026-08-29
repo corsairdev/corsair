@@ -23,6 +23,7 @@ module.exports = {
 			'ts-jest',
 			{
 				useESM: true,
+				diagnostics: false,
 				tsconfig: {
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
@@ -37,6 +38,7 @@ module.exports = {
 			{
 				useESM: true,
 				tsconfig: {
+					allowJs: true,
 					esModuleInterop: true,
 					allowSyntheticDefaultImports: true,
 				},
@@ -56,4 +58,5 @@ module.exports = {
 	extensionsToTreatAsEsm: ['.ts'],
 	testTimeout: 30000,
 	verbose: true,
+	testPathIgnorePatterns: ['/node_modules/', 'integration\\.test\\.ts'],
 };

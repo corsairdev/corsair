@@ -1,30 +1,42 @@
-import { AuthMissingError, logEventFromContext } from 'corsair/core';
+import {
+	afterAll,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	jest,
+} from '@jest/globals';
 import {
 	DreamstudioAPIError,
 	DreamstudioRateLimitError,
 	initImageBlob,
 	makeDreamstudioRequest,
 } from './client';
-import { generateImageFromImage } from './endpoints/generation';
 import {
 	DreamstudioEndpointInputSchemas,
 	DreamstudioEndpointOutputSchemas,
 } from './endpoints/types';
-import { listEngines, userAccount, userBalance } from './endpoints/user';
-import { dreamstudio } from './index';
 
-jest.mock('corsair/core', () => {
-	class AuthMissingError extends Error {
-		constructor(plugin: string, authType: string) {
-			super(`Missing ${authType} for ${plugin}`);
-			this.name = 'AuthMissingError';
-		}
+class AuthMissingError extends Error {
+	constructor(plugin: string, authType: string) {
+		super(`Missing ${authType} for ${plugin}`);
+		this.name = 'AuthMissingError';
 	}
-	return {
-		AuthMissingError,
-		logEventFromContext: jest.fn(),
-	};
-});
+}
+
+const logEventFromContext = jest.fn(async () => undefined);
+
+jest.unstable_mockModule('corsair/core', () => ({
+	AuthMissingError,
+	logEventFromContext,
+}));
+
+const { generateImageFromImage } = await import('./endpoints/generation');
+const { listEngines, userAccount, userBalance } = await import(
+	'./endpoints/user'
+);
+const { dreamstudio } = await import('./index');
 
 const mockFetch = jest.fn();
 const PIXEL_PNG =
@@ -41,7 +53,7 @@ afterAll(() => {
 
 beforeEach(() => {
 	mockFetch.mockReset();
-	jest.mocked(logEventFromContext).mockReset();
+	logEventFromContext.mockReset();
 });
 
 function jsonResponse(body: unknown, init?: ResponseInit): Response {
