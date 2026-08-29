@@ -1,38 +1,45 @@
-import { logEventFromContext } from 'corsair/core';
+import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import type { BonsaiEndpoints } from '..';
 import { makeBonsaiRequest } from '../client';
-import type { BonsaiEndpointOutputs } from './types';
+import {
+	BonsaiEndpointInputSchemas,
+	BonsaiEndpointOutputSchemas,
+} from './types';
 
 export const list: BonsaiEndpoints['spacesList'] = async (ctx, input) => {
-	const response = await makeBonsaiRequest<BonsaiEndpointOutputs['spacesList']>(
-		'/spaces',
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const parsed = BonsaiEndpointInputSchemas.spacesList.parse(input);
+	if (!ctx.key) {
+		throw new AuthMissingError('bonsai', 'api_key');
+	}
+	const response = await makeBonsaiRequest('/spaces', ctx.key, {
+		method: 'GET',
+	});
 
 	await logEventFromContext(
 		ctx,
 		'bonsai.spaces.list',
-		{ ...input },
+		{ ...parsed },
 		'completed',
 	);
-	return response;
+	return BonsaiEndpointOutputSchemas.spacesList.parse(response);
 };
 
 export const get: BonsaiEndpoints['spacesGet'] = async (ctx, input) => {
-	const response = await makeBonsaiRequest<BonsaiEndpointOutputs['spacesGet']>(
-		`/spaces/${input.path}`,
-		ctx.key,
-		{ method: 'GET' },
-	);
+	const parsed = BonsaiEndpointInputSchemas.spacesGet.parse(input);
+	if (!ctx.key) {
+		throw new AuthMissingError('bonsai', 'api_key');
+	}
+	const response = await makeBonsaiRequest(`/spaces/${parsed.path}`, ctx.key, {
+		method: 'GET',
+	});
 
 	await logEventFromContext(
 		ctx,
 		'bonsai.spaces.get',
-		{ ...input },
+		{ path: parsed.path },
 		'completed',
 	);
-	return response;
+	return BonsaiEndpointOutputSchemas.spacesGet.parse(response);
 };
 
 export const Spaces = {

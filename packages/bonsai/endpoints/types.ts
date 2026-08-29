@@ -1,8 +1,7 @@
 import { z } from 'zod';
 
-// Get Bonsai Cluster Details — GET /clusters/:slug
 const ClustersGetInputSchema = z.object({
-	slug: z.string(),
+	slug: z.string().min(1),
 });
 
 export type ClustersGetInput = z.infer<typeof ClustersGetInputSchema>;
@@ -44,7 +43,6 @@ const ClustersGetResponseSchema = z.object({
 
 export type ClustersGetResponse = z.infer<typeof ClustersGetResponseSchema>;
 
-// List Spaces — GET /spaces
 const SpacesListInputSchema = z.object({});
 
 export type SpacesListInput = z.infer<typeof SpacesListInputSchema>;
@@ -64,9 +62,8 @@ const SpacesListResponseSchema = z.object({
 
 export type SpacesListResponse = z.infer<typeof SpacesListResponseSchema>;
 
-// Retrieve Space Details — GET /spaces/:path
 const SpacesGetInputSchema = z.object({
-	path: z.string(),
+	path: z.string().min(1),
 });
 
 export type SpacesGetInput = z.infer<typeof SpacesGetInputSchema>;
