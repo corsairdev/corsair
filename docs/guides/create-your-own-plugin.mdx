@@ -1,13 +1,13 @@
 ---
-title: Build a Plugin
+title: Build a plugin
 description: Scaffold a new Corsair plugin with the generator, then let Claude Code fill in the implementation.
 ---
 
 <Tip>
-**Use Claude Code to build your plugin.** Run the steps below in your terminal, then paste the prompt from the guide into Claude Code — it will fill in the real API calls for you.
+**Use Claude Code to build your plugin.** Run the steps below in your terminal, then paste the prompt from the guide into Claude Code. It will fill in the real API calls for you.
 </Tip>
 
-The fastest way to build a custom plugin is to use the built-in generator. It scaffolds the full directory structure, wires up types, and registers your plugin — then you (or Claude Code) fill in the real API calls.
+The fastest way to build a custom plugin is to use the built-in generator. It scaffolds the full directory structure, wires up types, and registers your plugin. Then you (or Claude Code) fill in the real API calls.
 
 <Steps>
 
@@ -23,7 +23,7 @@ pnpm install
 </Step>
 
 <Step title="Run the plugin generator">
-Pass your plugin name in **PascalCase** — e.g. `Stripe`, `GoogleCalendar`, `HubSpot`.
+Pass your plugin name in **PascalCase**, for example `Stripe`, `GoogleCalendar`, or `HubSpot`.
 
 ```bash
 pnpm run generate:plugin <PluginName>
@@ -146,7 +146,7 @@ The repo includes a ready-made testing sandbox at `demo/testing/`. Add your plug
 
 Then run `pnpm install` from the repo root to link it.
 
-**3. Register your plugin in the test corsair instance:**
+**2. Register your plugin in the test corsair instance:**
 
 ```ts demo/testing/src/server/corsair.ts
 import { stripe } from '@corsair-dev/stripe';
@@ -161,7 +161,7 @@ export const corsair = createCorsair({
 });
 ```
 
-**4. Write your test in `demo/testing/src/scripts/test-script.ts`:**
+**3. Write your test in `demo/testing/src/scripts/test-script.ts`:**
 
 ```ts demo/testing/src/scripts/test-script.ts
 import { corsair } from '@/server/corsair';
@@ -175,7 +175,7 @@ const main = async () => {
 main();
 ```
 
-**5. Run the script:**
+**4. Run the script:**
 
 ```bash
 cd demo/testing
@@ -198,11 +198,10 @@ Without this, the test sandbox will be running stale compiled output.
 
 </Steps>
 
----
 
 ## Tips
 
-- **Look at existing plugins** for reference — `packages/github/` and `packages/resend/` are good examples at different complexity levels.
+- **Look at existing plugins** for reference. `packages/github/` and `packages/resend/` are good examples at different complexity levels.
 - **Auth headers** go in `client.ts` inside the `HEADERS` config object. Most APIs use `Authorization: Bearer <key>` or `Authorization: <key>`.
-- **Webhook signature verification** — update the `TODO` in `webhooks/types.ts` with the HMAC logic for your provider.
-- **Database entities** — define Zod schemas in `schema/database.ts` for any data you want to cache locally. Leave `entities: {}` empty if you only need live API calls.
+- **Webhook signature verification**: update the `TODO` in `webhooks/types.ts` with the HMAC logic for your provider.
+- **Database entities**: define Zod schemas in `schema/database.ts` for any data you want to cache locally. Leave `entities: {}` empty if you only need live API calls.
