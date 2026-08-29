@@ -188,6 +188,14 @@ describe('client auth and errors', () => {
 			}),
 		).resolves.toEqual({ deleted: true });
 	});
+
+	it('rejects an empty GET at the retrieve endpoint', async () => {
+		mockRequest.mockResolvedValueOnce(undefined as never);
+		await expect(qrcodesGet(ctx, { id: 11 })).rejects.toThrow(
+			BeaconstacAPIError,
+		);
+		expect(logEventFromContext).not.toHaveBeenCalled();
+	});
 });
 
 describe('official Uniqode request mapping', () => {

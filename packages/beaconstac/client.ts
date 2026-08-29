@@ -58,8 +58,18 @@ export function compactQuery(
 export async function makeBeaconstacRequest<T>(
 	endpoint: string,
 	apiKey: string,
+	options: BeaconstacRequestOptions & { method: 'DELETE' },
+): Promise<T>;
+export async function makeBeaconstacRequest<T>(
+	endpoint: string,
+	apiKey: string,
+	options?: BeaconstacRequestOptions,
+): Promise<T | undefined>;
+export async function makeBeaconstacRequest<T>(
+	endpoint: string,
+	apiKey: string,
 	options: BeaconstacRequestOptions = {},
-): Promise<T> {
+): Promise<T | undefined> {
 	const { method = 'GET', body, query } = options;
 	const isWrite = method === 'POST' || method === 'PUT' || method === 'PATCH';
 
@@ -87,7 +97,7 @@ export async function makeBeaconstacRequest<T>(
 		if (result === undefined && method === 'DELETE') {
 			return { deleted: true } as T;
 		}
-		return result as T;
+		return result;
 	} catch (error: unknown) {
 		if (error instanceof ApiError) {
 			if (error.status === 429) {

@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { makeBeaconstacRequest } from '../client';
+import { BeaconstacAPIError, makeBeaconstacRequest } from '../client';
 import type { BeaconstacEndpoints } from '../index';
 import type { BeaconstacEndpointOutputs } from './types';
 
@@ -13,6 +13,9 @@ async function call<T>(
 	options: Parameters<typeof makeBeaconstacRequest>[2] = {},
 ): Promise<T> {
 	const response = await makeBeaconstacRequest<T>(path, ctx.key, options);
+	if (response === undefined) {
+		throw new BeaconstacAPIError(`Empty response from ${path}`);
+	}
 	await logEventFromContext(ctx, event, meta, 'completed');
 	return response;
 }
