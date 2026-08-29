@@ -1,26 +1,31 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
+import { FaradayAPIError, FaradayRateLimitError } from './client';
 
 export const errorHandlers = {
 	RATE_LIMIT_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 429) return true;
+			if (error instanceof FaradayRateLimitError) return true;
+			if (error instanceof FaradayAPIError && error.status === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429');
+			return msg.includes('too many requests') || msg.includes('rate limit');
 		},
 		handler: async (error: Error) => {
-			let retryAfterMs: number | undefined;
-			if (error instanceof ApiError && error.retryAfter !== undefined) {
-				retryAfterMs = error.retryAfter;
-			}
+			const retryAfterMs =
+				error instanceof FaradayRateLimitError ? error.retryAfterMs : undefined;
 			return { maxRetries: 5, headersRetryAfterMs: retryAfterMs };
 		},
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (error instanceof ApiError && error.status === 401) return true;
+			if (error instanceof FaradayAPIError && error.status === 401) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('unauthorized') || msg.includes('invalid_auth');
+			return (
+				msg.includes('unauthorized') ||
+				msg.includes('invalid_authorization') ||
+				msg.includes('malformed_api_key') ||
+				msg.includes('missing_api_key') ||
+				msg.includes('expired_api_key')
+			);
 		},
 		handler: async () => ({ maxRetries: 0 }),
 	},

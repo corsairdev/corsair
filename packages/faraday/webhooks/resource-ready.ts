@@ -2,8 +2,8 @@ import { logEventFromContext } from 'corsair/core';
 import type { FaradayWebhooks } from '..';
 import { createFaradayMatch, verifyFaradayWebhookSignature } from './types';
 
-export const example: FaradayWebhooks['example'] = {
-	match: createFaradayMatch('example'),
+export const resourceReady: FaradayWebhooks['resourceReady'] = {
+	match: createFaradayMatch('resource.ready_with_update'),
 
 	handler: async (ctx, request) => {
 		const verification = verifyFaradayWebhookSignature(request, ctx.key);
@@ -15,15 +15,10 @@ export const example: FaradayWebhooks['example'] = {
 			};
 		}
 
-		const event = request.payload;
-		if (event.type !== 'example') {
-			return { success: true, data: undefined };
-		}
-
 		const eventId = await logEventFromContext(
 			ctx,
-			'faraday.webhook.example',
-			{ ...event },
+			'faraday.webhook.resourceReady',
+			{ ...request.payload },
 			'completed',
 		);
 		if (!eventId) {
@@ -34,6 +29,6 @@ export const example: FaradayWebhooks['example'] = {
 			};
 		}
 
-		return { success: true, data: event };
+		return { success: true, data: request.payload };
 	},
 };

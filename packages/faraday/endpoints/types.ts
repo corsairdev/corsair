@@ -1,56 +1,221 @@
 import { z } from 'zod';
+import { FaradayAccount, FaradayGraphEdge } from '../schema/database';
+import type { FaradayInputKind, FaradayOp } from './catalog';
+import { FARADAY_OPS, opKey } from './catalog';
 
-const GetAccountsInputSchema = z.object({
+const FaradayResource = z
+	.object({
+		id: z.string().optional(),
+		name: z.string().optional(),
+		resource_type: z.string().optional(),
+		status: z.string().optional(),
+		created_at: z.string().optional(),
+		updated_at: z.string().optional(),
+		archived_at: z.string().nullable().optional(),
+	})
+	.loose();
+
+const FaradayAccountPublic = FaradayAccount;
+
+const EmptyOk = z.object({ ok: z.literal(true) });
+const FaradayObject = z.record(z.string(), z.unknown());
+const FaradayList = z.array(FaradayResource);
+const FaradayText = z.object({ content: z.string() });
+
+const IdsInput = z.object({
 	ids: z.array(z.string()).max(100).optional(),
 });
 
-export type GetAccountsInput = z.infer<typeof GetAccountsInputSchema>;
+const IdInput = z
+	.object({
+		account_id: z.string().optional(),
+		cohort_id: z.string().optional(),
+		dataset_id: z.string().optional(),
+		stream_id: z.string().optional(),
+		outcome_id: z.string().optional(),
+		persona_set_id: z.string().optional(),
+		place_id: z.string().optional(),
+		scope_id: z.string().optional(),
+		target_id: z.string().optional(),
+		trait_id: z.string().optional(),
+		connection_id: z.string().optional(),
+		webhook_endpoint_id: z.string().optional(),
+		id: z.string().optional(),
+	})
+	.passthrough()
+	.refine(
+		(value) =>
+			Boolean(
+				value.account_id ||
+					value.cohort_id ||
+					value.dataset_id ||
+					value.stream_id ||
+					value.outcome_id ||
+					value.persona_set_id ||
+					value.place_id ||
+					value.scope_id ||
+					value.target_id ||
+					value.trait_id ||
+					value.connection_id ||
+					value.webhook_endpoint_id ||
+					value.id,
+			),
+		{ message: 'resource id is required' },
+	);
 
-const AccountSchema = z.object({
-	api_key: z.string(),
-	archived_at: z.string().nullable(),
-	branding: z.object({
-		suppress_from_reports: z.boolean().optional(),
-	}).optional(),
-	commitment: z.object({
-		monthly_cost: z.number().optional(),
-		renewal_date: z.string().optional(),
-	}).optional(),
-	contract_started_at: z.string(),
-	created_at: z.string(),
-	id: z.string(),
-	identity_graph: z.object({
-		feature_store_id: z.string().optional(),
-	}).optional(),
-	last_read_input_at: z.string().optional(),
-	last_updated_config_at: z.string().optional(),
-	last_updated_output_at: z.string().optional(),
-	name: z.string(),
-	parent_account_id: z.string().optional(),
-	resource_type: z.string(),
-	status: z.string(),
-	status_changed_at: z.string(),
-	status_error: z.string().nullable(),
-	stripe_customer_id: z.string().optional(),
-	updated_at: z.string(),
-}).passthrough();
+const CreateInput = z
+	.object({
+		name: z.string(),
+	})
+	.passthrough();
 
-const GetAccountsResponseSchema = z.array(AccountSchema);
+const AccountCreateInput = z
+	.object({
+		name: z.string().min(1).max(64),
+		branding: z
+			.object({
+				suppress_from_reports: z.boolean().optional(),
+			})
+			.optional(),
+	})
+	.passthrough();
 
-export type GetAccountsResponse = z.infer<typeof GetAccountsResponseSchema>;
+const PatchInput = z
+	.object({
+		account_id: z.string().optional(),
+		cohort_id: z.string().optional(),
+		dataset_id: z.string().optional(),
+		stream_id: z.string().optional(),
+		outcome_id: z.string().optional(),
+		persona_set_id: z.string().optional(),
+		place_id: z.string().optional(),
+		scope_id: z.string().optional(),
+		target_id: z.string().optional(),
+		trait_id: z.string().optional(),
+		connection_id: z.string().optional(),
+		webhook_endpoint_id: z.string().optional(),
+		id: z.string().optional(),
+	})
+	.passthrough();
+
+const CascadeInput = IdInput.and(
+	z.object({
+		cascade_to: z.array(z.string()).optional(),
+		cascade_to_all: z.boolean().optional(),
+	}),
+);
+
+const UploadInput = z.object({
+	directory: z.string(),
+	filename: z.string(),
+});
+
+const WebhookCreateInput = z.object({
+	url: z.string(),
+	enabled_events: z.array(
+		z.enum(['resource.errored', 'resource.ready_with_update']),
+	),
+});
+
+const WebhookUpdateInput = z
+	.object({
+		webhook_endpoint_id: z.string(),
+		url: z.string().optional(),
+		status: z.enum(['enabled', 'disabled']).optional(),
+		enabled_events: z
+			.array(z.enum(['resource.errored', 'resource.ready_with_update']))
+			.optional(),
+	})
+	.passthrough();
+
+const PreviewInput = z
+	.object({
+		target_id: z.string(),
+	})
+	.passthrough();
+
+const NoneInput = z.object({}).optional();
+
+function inputSchema(kind: FaradayInputKind) {
+	switch (kind) {
+		case 'none':
+			return NoneInput;
+		case 'ids':
+			return IdsInput;
+		case 'id':
+			return IdInput;
+		case 'create':
+			return CreateInput;
+		case 'accountCreate':
+			return AccountCreateInput;
+		case 'patch':
+			return PatchInput;
+		case 'cascade':
+			return CascadeInput;
+		case 'upload':
+			return UploadInput;
+		case 'webhookCreate':
+			return WebhookCreateInput;
+		case 'webhookUpdate':
+			return WebhookUpdateInput;
+		case 'preview':
+			return PreviewInput;
+	}
+}
+
+function outputSchema(op: FaradayOp) {
+	if (
+		op.method === 'DELETE' ||
+		op.name === 'archive' ||
+		op.name === 'unarchive' ||
+		op.name === 'forceUpdate' ||
+		op.name === 'createPreview'
+	) {
+		return EmptyOk.or(FaradayObject).or(FaradayResource);
+	}
+	if (
+		op.group === 'accounts' &&
+		(op.name === 'list' ||
+			op.name === 'get' ||
+			op.name === 'getCurrent' ||
+			op.name === 'create' ||
+			op.name === 'update')
+	) {
+		return op.name === 'list'
+			? z.array(FaradayAccountPublic)
+			: FaradayAccountPublic;
+	}
+	if (op.group === 'graph') {
+		return z.array(FaradayGraphEdge);
+	}
+	if (op.name === 'getCsv') {
+		return FaradayText;
+	}
+	if (op.group === 'uploads' && op.name === 'get') {
+		return FaradayText.or(FaradayObject);
+	}
+	if (op.input === 'ids' || op.name === 'list') {
+		return FaradayList.or(FaradayObject);
+	}
+	return FaradayResource.or(FaradayObject).or(EmptyOk);
+}
+
+export const FaradayEndpointInputSchemas = Object.fromEntries(
+	FARADAY_OPS.map((op) => [opKey(op), inputSchema(op.input)]),
+) as Record<ReturnType<typeof opKey>, z.ZodType>;
+
+export const FaradayEndpointOutputSchemas = Object.fromEntries(
+	FARADAY_OPS.map((op) => [opKey(op), outputSchema(op)]),
+) as Record<ReturnType<typeof opKey>, z.ZodType>;
 
 export type FaradayEndpointInputs = {
-	getAccounts: GetAccountsInput;
+	[K in keyof typeof FaradayEndpointInputSchemas]: z.infer<
+		(typeof FaradayEndpointInputSchemas)[K]
+	>;
 };
 
 export type FaradayEndpointOutputs = {
-	getAccounts: GetAccountsResponse;
+	[K in keyof typeof FaradayEndpointOutputSchemas]: z.infer<
+		(typeof FaradayEndpointOutputSchemas)[K]
+	>;
 };
-
-export const FaradayEndpointInputSchemas = {
-	getAccounts: GetAccountsInputSchema,
-} as const;
-
-export const FaradayEndpointOutputSchemas = {
-	getAccounts: GetAccountsResponseSchema,
-} as const;

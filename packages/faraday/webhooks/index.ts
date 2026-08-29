@@ -1,9 +1,8 @@
-import { example } from './example';
+import { resourceReady } from './resource-ready';
 
-export const ExampleWebhooks = {
-	example: example,
+export const FaradayWebhooks = {
+	resourceReady,
 };
 
-export * from './types';
 export * from './tenant-matcher';
-export * from './oauth-tenant-link';
+export * from './types';

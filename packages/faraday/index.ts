@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	BindWebhooks,
 	CorsairEndpoint,
@@ -14,23 +15,28 @@ import type {
 	RequiredPluginEndpointSchemas,
 	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { FaradayEndpointInputs, FaradayEndpointOutputs } from './endpoints/types';
-import { FaradayEndpointInputSchemas, FaradayEndpointOutputSchemas } from './endpoints/types';
+import { AuthMissingError } from 'corsair/core';
+import { FARADAY_OPS, nestFaradayEndpoints, opKey } from './endpoints';
+import type {
+	FaradayEndpointInputs,
+	FaradayEndpointOutputs,
+} from './endpoints/types';
+import {
+	FaradayEndpointInputSchemas,
+	FaradayEndpointOutputSchemas,
+} from './endpoints/types';
+import { errorHandlers } from './error-handlers';
+import { FaradaySchema } from './schema';
+import { FaradayWebhooks as FaradayWebhookHandlers } from './webhooks';
+import { matchFaradayTenantWebhook } from './webhooks/tenant-matcher';
 import type {
 	FaradayWebhookOutputs,
-	ExampleEvent,
+	ResourceReadyEvent,
 } from './webhooks/types';
-import { ExampleEventSchema } from './webhooks/types';
-import { Accounts } from './endpoints';
-import { FaradaySchema } from './schema';
-import { ExampleWebhooks } from './webhooks';
-import { errorHandlers } from './error-handlers';
-import { matchFaradayTenantWebhook } from './webhooks/tenant-matcher';
-import { resolveFaradayOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
+import { ResourceReadyEventSchema } from './webhooks/types';
 
 export type FaradayPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
 	webhookSecret?: string;
 	hooks?: InternalFaradayPlugin['hooks'];
@@ -46,18 +52,18 @@ export type FaradayContext = CorsairPluginContext<
 
 export type FaradayKeyBuilderContext = KeyBuilderContext<FaradayPluginOptions>;
 
-export type FaradayBoundEndpoints = BindEndpoints<typeof faradayEndpointsNested>;
+export type FaradayBoundEndpoints = BindEndpoints<
+	typeof faradayEndpointsNested
+>;
 
-type FaradayEndpoint<
-	K extends keyof FaradayEndpointOutputs,
-> = CorsairEndpoint<
+type FaradayEndpoint<K extends keyof FaradayEndpointOutputs> = CorsairEndpoint<
 	FaradayContext,
 	FaradayEndpointInputs[K],
 	FaradayEndpointOutputs[K]
 >;
 
 export type FaradayEndpoints = {
-	getAccounts: FaradayEndpoint<'getAccounts'>;
+	[K in keyof FaradayEndpointOutputs]: FaradayEndpoint<K>;
 };
 
 type FaradayWebhook<
@@ -66,53 +72,52 @@ type FaradayWebhook<
 > = CorsairWebhook<FaradayContext, TEvent, FaradayWebhookOutputs[K]>;
 
 export type FaradayWebhooks = {
-	example: FaradayWebhook<'example', ExampleEvent>;
+	resourceReady: FaradayWebhook<'resourceReady', ResourceReadyEvent>;
 };
 
 export type FaradayBoundWebhooks = BindWebhooks<FaradayWebhooks>;
 
-const faradayEndpointsNested = {
-	accounts: {
-		getAccounts: Accounts.getAccounts,
-	},
-} as const;
+const faradayEndpointsNested = nestFaradayEndpoints() as ReturnType<
+	typeof nestFaradayEndpoints
+> &
+	Record<string, Record<string, FaradayEndpoint<keyof FaradayEndpointOutputs>>>;
 
 const faradayWebhooksNested = {
-	example: {
-		example: ExampleWebhooks.example,
+	events: {
+		resourceReady: FaradayWebhookHandlers.resourceReady,
 	},
 } as const;
 
-export const faradayEndpointSchemas = {
-	'accounts.getAccounts': {
-		input: FaradayEndpointInputSchemas.getAccounts,
-		output: FaradayEndpointOutputSchemas.getAccounts,
-	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof faradayEndpointsNested>;
+export const faradayEndpointSchemas = Object.fromEntries(
+	FARADAY_OPS.map((op) => [
+		opKey(op),
+		{
+			input: FaradayEndpointInputSchemas[opKey(op)],
+			output: FaradayEndpointOutputSchemas[opKey(op)],
+		},
+	]),
+) as unknown as RequiredPluginEndpointSchemas<typeof faradayEndpointsNested>;
 
 const faradayWebhookSchemas = {
-	'example.example': {
-		description: 'An example webhook event',
-		payload: ExampleEventSchema,
-		response: ExampleEventSchema,
+	'events.resourceReady': {
+		description: 'Faraday resource.ready_with_update webhook',
+		payload: ResourceReadyEventSchema,
+		response: ResourceReadyEventSchema,
 	},
 } as const satisfies RequiredPluginWebhookSchemas<typeof faradayWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
-const faradayEndpointMeta = {
-	'accounts.getAccounts': {
-		riskLevel: 'read',
-		description: 'Get accounts from Faraday',
-	},
-} as const satisfies RequiredPluginEndpointMeta<typeof faradayEndpointsNested>;
+const faradayEndpointMeta = Object.fromEntries(
+	FARADAY_OPS.map((op) => [
+		opKey(op),
+		{ riskLevel: op.risk, description: op.description },
+	]),
+) as unknown as RequiredPluginEndpointMeta<typeof faradayEndpointsNested>;
 
 export const faradayAuthConfig = {
 	api_key: {
-		account: ['tenant_external_id'] as const,
-	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
+		account: ['account_id'] as const,
 	},
 } as const satisfies PluginAuthConfig;
 
@@ -141,7 +146,7 @@ export function faraday<const T extends FaradayPluginOptions>(
 		id: 'faraday',
 		authConfig: faradayAuthConfig,
 		schema: FaradaySchema,
-		options: options,
+		options,
 		hooks: options.hooks,
 		webhookHooks: options.webhookHooks,
 		endpoints: faradayEndpointsNested,
@@ -151,11 +156,13 @@ export function faraday<const T extends FaradayPluginOptions>(
 		webhookSchemas: faradayWebhookSchemas,
 		pluginWebhookMatcher: (request) => {
 			const headers = request.headers;
-			// TODO: Update to match your webhook signature headers
-			return 'x-faraday-signature' in headers;
+			return (
+				'svix-signature' in headers ||
+				'webhook-signature' in headers ||
+				'svix-id' in headers
+			);
 		},
 		pluginTenantWebhookMatcher: matchFaradayTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveFaradayOAuthWebhookTenantLink,
 		errorHandlers: {
 			...errorHandlers,
 			...options.errorHandlers,
@@ -164,39 +171,37 @@ export function faraday<const T extends FaradayPluginOptions>(
 			if (source === 'webhook' && options.webhookSecret) {
 				return options.webhookSecret;
 			}
-
 			if (source === 'webhook') {
 				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('faraday', 'webhook');
+				}
+				return res;
 			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
-
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
 				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				if (!res) {
+					throw new AuthMissingError('faraday', 'api_key');
+				}
+				return res;
 			}
-
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('faraday', 'api_key');
 		},
 	} satisfies InternalFaradayPlugin;
 }
 
 export type {
-	ExampleEvent,
-	FaradayWebhookOutputs,
-} from './webhooks/types';
-
-export type {
 	FaradayEndpointInputs,
 	FaradayEndpointOutputs,
-	GetAccountsInput,
-	GetAccountsResponse,
 } from './endpoints/types';
+export {
+	FaradayEndpointInputSchemas,
+	FaradayEndpointOutputSchemas,
+} from './endpoints/types';
+export type {
+	FaradayWebhookOutputs,
+	ResourceReadyEvent,
+} from './webhooks/types';

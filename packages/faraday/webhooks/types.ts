@@ -1,36 +1,46 @@
-import type { CorsairWebhookMatcher, RawWebhookRequest, WebhookRequest } from 'corsair/core';
+import { createHmac, timingSafeEqual } from 'node:crypto';
+import type {
+	CorsairWebhookMatcher,
+	RawWebhookRequest,
+	WebhookRequest,
+} from 'corsair/core';
 import { z } from 'zod';
 
+/**
+ * Official Faraday webhook payload.
+ * https://faraday.ai/docs/reference/createwebhookendpoint
+ */
 export const FaradayWebhookPayloadSchema = z.object({
-	type: z.string(),
-	created_at: z.string(),
-	data: z.record(z.string(), z.unknown()),
+	timestamp: z.string(),
+	type: z
+		.enum(['resource.ready_with_update', 'resource.errored'])
+		.or(z.string()),
+	data: z.object({
+		account_id: z.string(),
+		resource_id: z.string(),
+		resource_type: z.string(),
+	}),
 });
 
-export type FaradayWebhookPayload = z.infer<
-	typeof FaradayWebhookPayloadSchema
->;
+export type FaradayWebhookPayload = z.infer<typeof FaradayWebhookPayloadSchema>;
 
-export const ExampleEventSchema = FaradayWebhookPayloadSchema.extend({
-	type: z.literal('example'),
-	data: z
-		.object({
-			id: z.string(),
-		})
-		.loose(),
+export const ResourceReadyEventSchema = FaradayWebhookPayloadSchema.extend({
+	type: z.literal('resource.ready_with_update'),
 });
 
-export type ExampleEvent = z.infer<typeof ExampleEventSchema>;
+export type ResourceReadyEvent = z.infer<typeof ResourceReadyEventSchema>;
 
 export type FaradayWebhookOutputs = {
-	example: ExampleEvent;
+	resourceReady: ResourceReadyEvent;
 };
 
 function parseBody(body: unknown): Record<string, unknown> | null {
 	if (typeof body === 'string') {
 		try {
 			const parsed = JSON.parse(body);
-			return parsed !== null && typeof parsed === 'object' && !Array.isArray(parsed)
+			return parsed !== null &&
+				typeof parsed === 'object' &&
+				!Array.isArray(parsed)
 				? (parsed as Record<string, unknown>)
 				: null;
 		} catch {
@@ -49,8 +59,28 @@ export function createFaradayMatch(eventType: string): CorsairWebhookMatcher {
 	};
 }
 
-import * as crypto from 'crypto';
+function firstHeader(
+	headers: Record<string, string | string[] | undefined>,
+	names: string[],
+): string | undefined {
+	for (const name of names) {
+		const value = headers[name] ?? headers[name.toLowerCase()];
+		if (Array.isArray(value)) return value[0];
+		if (typeof value === 'string' && value) return value;
+	}
+	return undefined;
+}
 
+function secretBytes(secret: string): Buffer {
+	const raw = secret.startsWith('whsec_') ? secret.slice(6) : secret;
+	const decoded = Buffer.from(raw, 'base64');
+	return decoded.length > 0 ? decoded : Buffer.from(secret);
+}
+
+/**
+ * Faraday webhooks use Standard Webhooks / Svix.
+ * Headers: svix-id, svix-timestamp, svix-signature
+ */
 export function verifyFaradayWebhookSignature(
 	request: WebhookRequest<FaradayWebhookPayload>,
 	secret: string,
@@ -58,43 +88,46 @@ export function verifyFaradayWebhookSignature(
 	if (request.hubVerified) {
 		return { valid: true };
 	}
-
 	if (!secret) {
 		return { valid: false, error: 'Missing webhook secret' };
 	}
 
-	const signatureHeader = request.headers['x-faraday-signature'];
-	const signature = Array.isArray(signatureHeader) ? signatureHeader[0] : signatureHeader;
+	const msgId = firstHeader(request.headers, ['svix-id', 'webhook-id']);
+	const timestamp = firstHeader(request.headers, [
+		'svix-timestamp',
+		'webhook-timestamp',
+	]);
+	const signatureHeader = firstHeader(request.headers, [
+		'svix-signature',
+		'webhook-signature',
+	]);
 
-	if (!signature || typeof signature !== 'string') {
-		return { valid: false, error: 'Missing x-faraday-signature header' };
+	if (!msgId || !timestamp || !signatureHeader) {
+		return {
+			valid: false,
+			error: 'Missing Standard Webhooks signature headers',
+		};
 	}
-
 	if (!request.rawBody) {
 		return { valid: false, error: 'Missing raw request body' };
 	}
 
-	try {
-		const hmac = crypto.createHmac('sha256', secret);
-		hmac.update(request.rawBody, 'utf8');
-		const expectedSignature = hmac.digest('hex');
+	const signedContent = `${msgId}.${timestamp}.${request.rawBody}`;
+	const expected = createHmac('sha256', secretBytes(secret))
+		.update(signedContent)
+		.digest('base64');
 
-		let actualSignature = signature;
-		if (actualSignature.startsWith('sha256=')) {
-			actualSignature = actualSignature.slice(7);
-		} else if (actualSignature.startsWith('v1=')) {
-			actualSignature = actualSignature.slice(3);
-		}
+	const candidates = signatureHeader.split(/[,\s]+/).filter(Boolean);
+	const ok = candidates.some((part) => {
+		const sig = part.includes(',')
+			? part.slice(part.indexOf(',') + 1)
+			: part.replace(/^v1[=,]/, '');
+		const actual = Buffer.from(sig);
+		const wanted = Buffer.from(expected);
+		return actual.length === wanted.length && timingSafeEqual(actual, wanted);
+	});
 
-		const actualBuffer = Buffer.from(actualSignature, 'hex');
-		const expectedBuffer = Buffer.from(expectedSignature, 'hex');
-
-		if (actualBuffer.length !== expectedBuffer.length || !crypto.timingSafeEqual(actualBuffer, expectedBuffer)) {
-			return { valid: false, error: 'Invalid webhook signature' };
-		}
-
-		return { valid: true };
-	} catch (err) {
-		return { valid: false, error: 'Signature verification error' };
-	}
+	return ok
+		? { valid: true }
+		: { valid: false, error: 'Invalid webhook signature' };
 }
