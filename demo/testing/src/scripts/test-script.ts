@@ -19,10 +19,17 @@ async function setInstagramCredentials() {
 }
 
 const main = async () => {
-	const res = await corsair.slack.api.messages.post({
-		channel: 'general',
-		text: 'hello',
-	});
+	// Set a mock access token for the oauth_2 auth method
+	await corsair.blackbaud.keys.set_access_token('mock-access-token');
+
+	try {
+		const gift = await corsair.blackbaud.api.gifts.getGiftById({
+			gift_id: '12345',
+		});
+		console.log('Gift response:', gift);
+	} catch (err) {
+		console.log('Gift fetch finished:', err);
+	}
 };
 
 main().catch((err) => {
