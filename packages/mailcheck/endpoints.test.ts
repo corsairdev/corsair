@@ -42,9 +42,11 @@ describe('Mailcheck endpoints', () => {
 		});
 
 		it('propagates ApiError', async () => {
-			const apiError = new ApiError(429, 'Too Many Requests', 'Too Many Requests', undefined, {
-				'Retry-After': '30',
-			});
+			const apiError = new ApiError(
+				{ method: 'POST', url: '/v1/emails:checkSingle' },
+				{ url: '/v1/emails:checkSingle', ok: false, status: 429, statusText: 'Too Many Requests', body: 'rate limited' },
+				'Too Many Requests',
+			);
 			mockRequest.mockRejectedValueOnce(apiError);
 
 			await expect(
