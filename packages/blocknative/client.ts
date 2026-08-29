@@ -78,6 +78,9 @@ export function ethNetworkName(chainId: number): string {
 }
 
 export function parseHexChainId(chainId: string): number {
+	if (!/^0x[0-9a-fA-F]+$/.test(chainId)) {
+		throw new BlocknativeAPIError(`Unsupported chainId: ${chainId}`);
+	}
 	const parsed = Number.parseInt(chainId, 16);
 	if (!Number.isFinite(parsed) || parsed <= 0) {
 		throw new BlocknativeAPIError(`Unsupported chainId: ${chainId}`);
@@ -153,7 +156,17 @@ export async function makeBlocknativeRequest<T>(
 	}
 
 	let parsed: unknown;
-	const text = await res.text();
+	let text: string;
+	try {
+		text = await res.text();
+	} catch (error) {
+		if (error instanceof Error && error.name === 'TimeoutError') {
+			throw new BlocknativeAPIError('Blocknative request timed out');
+		}
+		throw new BlocknativeAPIError(
+			error instanceof Error ? error.message : 'Blocknative request failed',
+		);
+	}
 	try {
 		parsed = text ? JSON.parse(text) : undefined;
 	} catch {

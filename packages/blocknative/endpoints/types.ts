@@ -2,7 +2,7 @@ import { z } from 'zod';
 import {
 	BLOCKNATIVE_DAPP_ID_FIELD,
 	BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
-	BLOCKNATIVE_ETH_NETWORKS,
+	parseHexChainId,
 } from '../client';
 import {
 	BlocknativeBaseFeeEstimates,
@@ -23,14 +23,22 @@ const TxHash = z
 const HexChainId = z
 	.string()
 	.regex(/^0x[0-9a-fA-F]+$/, "Hex-encoded chain ID, e.g. '0x1'")
-	.refine((id) => Number.parseInt(id, 16) in BLOCKNATIVE_ETH_NETWORKS, {
-		message: 'Unsupported Blocknative chainId',
-	});
+	.refine(
+		(id) => {
+			try {
+				parseHexChainId(id);
+				return true;
+			} catch {
+				return false;
+			}
+		},
+		{ message: 'Unsupported Blocknative chainId' },
+	);
 
 const WsProtocolMessageSchema = z
 	.object({
 		timeStamp: z.string(),
-		dappId: z.literal(BLOCKNATIVE_DAPP_ID_PLACEHOLDER),
+		dappId: z.string().min(1),
 		version: z.string(),
 		blockchain: z.object({
 			system: z.string(),

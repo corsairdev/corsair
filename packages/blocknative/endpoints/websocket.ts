@@ -1,7 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BlocknativeEndpoints } from '..';
 import {
-	BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
+	applyDappId,
 	BLOCKNATIVE_WS_URL,
 	ethNetworkName,
 	initializeMessage,
@@ -19,15 +19,18 @@ import {
 function envelope(
 	system: string,
 	network: string,
+	apiKey: string,
 	body: Record<string, unknown>,
 ): Record<string, unknown> {
-	return {
-		timeStamp: new Date().toISOString(),
-		dappId: BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
-		version: '1.0.0',
-		blockchain: { system, network },
-		...body,
-	};
+	return applyDappId(
+		{
+			timeStamp: new Date().toISOString(),
+			version: '1.0.0',
+			blockchain: { system, network },
+			...body,
+		},
+		apiKey,
+	);
 }
 
 export const configureFilters: BlocknativeEndpoints['configureFilters'] =
@@ -43,8 +46,8 @@ export const configureFilters: BlocknativeEndpoints['configureFilters'] =
 		const response = ConfigureFiltersOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
 			auth: WS_AUTH,
-			initialize: initializeMessage(system, network),
-			config: envelope(system, network, {
+			initialize: applyDappId(initializeMessage(system, network), ctx.key),
+			config: envelope(system, network, ctx.key, {
 				categoryCode: 'configs',
 				eventCode: 'put',
 				config,
@@ -81,8 +84,8 @@ export const subscribeTransactionHash: BlocknativeEndpoints['subscribeTransactio
 		const response = SubscribeTransactionHashOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
 			auth: WS_AUTH,
-			initialize: initializeMessage(system, network),
-			subscribe: envelope(system, network, {
+			initialize: applyDappId(initializeMessage(system, network), ctx.key),
+			subscribe: envelope(system, network, ctx.key, {
 				categoryCode: 'activeTransaction',
 				eventCode: 'txSent',
 				transaction,
@@ -109,8 +112,8 @@ export const unsubscribeTransactionHash: BlocknativeEndpoints['unsubscribeTransa
 		const response = UnsubscribeTransactionHashOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
 			auth: WS_AUTH,
-			initialize: initializeMessage(system, network),
-			unsubscribe: envelope(system, network, {
+			initialize: applyDappId(initializeMessage(system, network), ctx.key),
+			unsubscribe: envelope(system, network, ctx.key, {
 				categoryCode: 'activeTransaction',
 				eventCode: 'unwatch',
 				transaction,
@@ -131,7 +134,7 @@ export const subscribeMultichain: BlocknativeEndpoints['subscribeMultichain'] =
 		const network = ethNetworkName(chainId);
 		const subscribe =
 			input.type === 'account'
-				? envelope('ethereum', network, {
+				? envelope('ethereum', network, ctx.key, {
 						categoryCode: 'configs',
 						eventCode: 'put',
 						config: {
@@ -141,7 +144,7 @@ export const subscribeMultichain: BlocknativeEndpoints['subscribeMultichain'] =
 							watchAddress: true,
 						},
 					})
-				: envelope('ethereum', network, {
+				: envelope('ethereum', network, ctx.key, {
 						categoryCode: 'activeTransaction',
 						eventCode: 'txSent',
 						transaction: {
@@ -155,7 +158,7 @@ export const subscribeMultichain: BlocknativeEndpoints['subscribeMultichain'] =
 		const response = SubscribeMultichainOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
 			auth: WS_AUTH,
-			initialize: initializeMessage('ethereum', network),
+			initialize: applyDappId(initializeMessage('ethereum', network), ctx.key),
 			subscribe,
 		});
 		await logEventFromContext(
