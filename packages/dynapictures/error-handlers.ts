@@ -6,7 +6,8 @@ function getStatus(error: Error): number | undefined {
 		return error.status;
 	}
 
-	const status = (error as { status?: number; cause?: { status?: number } }).status;
+	const status = (error as { status?: number; cause?: { status?: number } })
+		.status;
 	if (typeof status === 'number') {
 		return status;
 	}
@@ -20,15 +21,18 @@ function getRetryAfter(error: Error): number | undefined {
 		return error.retryAfter;
 	}
 
-	const retryAfter = (error as {
-		retryAfter?: number;
-		cause?: { retryAfter?: number };
-	}).retryAfter;
+	const retryAfter = (
+		error as {
+			retryAfter?: number;
+			cause?: { retryAfter?: number };
+		}
+	).retryAfter;
 	if (typeof retryAfter === 'number') {
 		return retryAfter;
 	}
 
-	const causeRetryAfter = (error as { cause?: { retryAfter?: number } }).cause?.retryAfter;
+	const causeRetryAfter = (error as { cause?: { retryAfter?: number } }).cause
+		?.retryAfter;
 	return typeof causeRetryAfter === 'number' ? causeRetryAfter : undefined;
 }
 
