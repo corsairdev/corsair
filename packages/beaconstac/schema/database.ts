@@ -76,7 +76,7 @@ export const BeaconstacQrCode = z
 		view_limit: z.number().nullable().optional(),
 		domain: z.number().optional(),
 		location_enabled: z.boolean().optional(),
-		password: z.unknown().optional(),
+		password: z.boolean().optional(),
 		meta: z.unknown().optional(),
 		additional_params: z.unknown().optional(),
 		created: z.string().optional(),

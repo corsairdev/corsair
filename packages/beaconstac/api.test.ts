@@ -162,6 +162,32 @@ describe('client auth and errors', () => {
 		expect(err).toBeInstanceOf(BeaconstacAPIError);
 		expect((err as BeaconstacAPIError).status).toBe(401);
 	});
+
+	it('does not invent a deleted result for an empty GET', async () => {
+		mockRequest.mockResolvedValueOnce(undefined as never);
+		await expect(
+			makeBeaconstacRequest('/api/2.0/qrcodes/1/', 'tok'),
+		).resolves.toBeUndefined();
+	});
+
+	it('does not invent a deleted result for an empty PUT', async () => {
+		mockRequest.mockResolvedValueOnce(undefined as never);
+		await expect(
+			makeBeaconstacRequest('/api/2.0/places/1/', 'tok', {
+				method: 'PUT',
+				body: { name: 'HQ' },
+			}),
+		).resolves.toBeUndefined();
+	});
+
+	it('synthesizes deleted:true only for an empty DELETE', async () => {
+		mockRequest.mockResolvedValueOnce(undefined as never);
+		await expect(
+			makeBeaconstacRequest('/api/2.0/qrcodes/1/', 'tok', {
+				method: 'DELETE',
+			}),
+		).resolves.toEqual({ deleted: true });
+	});
 });
 
 describe('official Uniqode request mapping', () => {

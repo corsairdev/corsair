@@ -1,4 +1,5 @@
 import { BeaconstacSchema } from './schema';
+import { BeaconstacQrCode } from './schema/database';
 
 describe('Beaconstac schema', () => {
 	it('declares a semver version', () => {
@@ -15,5 +16,10 @@ describe('Beaconstac schema', () => {
 			'tags',
 			'users',
 		]);
+	});
+
+	it('treats QR Code password as a boolean', () => {
+		expect(BeaconstacQrCode.parse({ password: true }).password).toBe(true);
+		expect(() => BeaconstacQrCode.parse({ password: 'secret' })).toThrow();
 	});
 });

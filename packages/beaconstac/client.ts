@@ -84,7 +84,10 @@ export async function makeBeaconstacRequest<T>(
 
 	try {
 		const result = await request<T>(config, requestOptions);
-		return (result ?? ({ deleted: true } as T)) as T;
+		if (result === undefined && method === 'DELETE') {
+			return { deleted: true } as T;
+		}
+		return result as T;
 	} catch (error: unknown) {
 		if (error instanceof ApiError) {
 			if (error.status === 429) {
