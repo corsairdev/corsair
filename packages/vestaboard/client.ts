@@ -103,6 +103,7 @@ export async function makeVestaboardRequest(
 	try {
 		res = await fetch(url, {
 			method: options.method ?? 'GET',
+			redirect: 'error',
 			headers: {
 				'Content-Type': 'application/json',
 				Accept: 'application/json',

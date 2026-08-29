@@ -152,6 +152,7 @@ describe('Vestaboard plugin & client tests', () => {
 		expect(req.url).toBe('https://subscriptions.vestaboard.com/subscriptions');
 		expect(req.key).toBe('test-key');
 		expect(req.secret).toBe('test-secret');
+		expect(req.init.redirect).toBe('error');
 	});
 
 	it('posts text as { text } to POST /subscriptions/{id}/message', async () => {
