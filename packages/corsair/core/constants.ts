@@ -96,6 +96,7 @@ export const BaseProviders = [
 	'circleci',
 	'clientary',
 	'clockify',
+	'cloudcart',
 	'cloudflare',
 	'cloudinary',
 	'collegefootballdata',
@@ -315,6 +316,7 @@ export const ProviderDisplayNames = {
 	circleci: 'CircleCI',
 	clientary: 'Clientary',
 	clockify: 'Clockify',
+	cloudcart: 'CloudCart',
 	cloudflare: 'Cloudflare',
 	cloudinary: 'Cloudinary',
 	collegefootballdata: 'College Football Data',
@@ -541,6 +543,7 @@ export type AllProviders =
 	| 'circleci'
 	| 'clientary'
 	| 'clockify'
+	| 'cloudcart'
 	| 'cloudflare'
 	| 'cloudinary'
 	| 'collegefootballdata'
