@@ -1,65 +1,81 @@
+import { AuthMissingError } from 'corsair/core';
 import { ApiError } from 'corsair/http';
-import { isOperationBusy } from './client';
 
-const makeApiError = (
-	status: number,
-	body: unknown,
-	message = 'Bad Request',
-): ApiError =>
-	new ApiError(
-		{ method: 'POST', url: '/v1/emails:check' },
-		{
-			url: '/v1/emails:check',
-			ok: false,
-			status,
-			statusText: 'Bad Request',
-			body,
-		},
-		message,
-	);
+const mockRequest = jest.fn();
 
-describe('isOperationBusy', () => {
-	it('matches a 400 whose JSON body nests the busy message', () => {
-		const error = makeApiError(400, {
-			error: {
-				code: 9,
-				message: 'Please wait for the running operation to finish.',
-			},
+jest.mock('corsair/http', () => {
+	const actual = jest.requireActual('corsair/http');
+	return {
+		...actual,
+		request: (...args: unknown[]) => mockRequest(...args),
+	};
+});
+
+import { makeMailcheckRequest } from './client';
+
+const sampleResult = {
+	email: 'user@example.com',
+	trustRate: 95,
+	mxExists: true,
+	smtpExists: true,
+	isNotDisposable: true,
+	isNotSmtpCatchAll: true,
+};
+
+describe('makeMailcheckRequest', () => {
+	beforeEach(() => {
+		mockRequest.mockReset();
+		mockRequest.mockResolvedValue(sampleResult);
+	});
+
+	it('POSTs /v1/singleEmail:check with the email and Bearer token config', async () => {
+		await makeMailcheckRequest('/v1/singleEmail:check', 'test-key', {
+			method: 'POST',
+			body: { email: 'user@example.com' },
 		});
-		expect(isOperationBusy(error)).toBe(true);
-	});
 
-	it('matches a 400 whose body is the busy message string', () => {
-		const error = makeApiError(400, 'wait for the running operation to finish');
-		expect(isOperationBusy(error)).toBe(true);
-	});
-
-	it('matches the busy message in error.message alone', () => {
-		const error = makeApiError(
-			400,
-			{ error: { message: 'other detail' } },
-			'wait for the running operation to finish',
+		expect(mockRequest).toHaveBeenCalledWith(
+			expect.objectContaining({
+				BASE: 'https://api.mailcheck.co',
+				TOKEN: 'test-key',
+			}),
+			expect.objectContaining({
+				method: 'POST',
+				url: '/v1/singleEmail:check',
+				body: { email: 'user@example.com' },
+			}),
 		);
-		expect(isOperationBusy(error)).toBe(true);
 	});
 
-	it('does not match a 400 with an unrelated object body', () => {
-		const error = makeApiError(400, {
-			error: { code: 3, message: 'invalid email address' },
-		});
-		expect(isOperationBusy(error)).toBe(false);
+	it('throws AuthMissingError when the api key is missing', async () => {
+		await expect(
+			makeMailcheckRequest('/v1/singleEmail:check', '', {
+				method: 'POST',
+				body: { email: 'user@example.com' },
+			}),
+		).rejects.toThrow(AuthMissingError);
+		expect(mockRequest).not.toHaveBeenCalled();
 	});
 
-	it('does not match other statuses even with the busy message', () => {
-		expect(
-			isOperationBusy(makeApiError(429, 'wait for the running operation')),
-		).toBe(false);
-		expect(
-			isOperationBusy(
-				makeApiError(500, {
-					error: { message: 'wait for the running operation' },
-				}),
-			),
-		).toBe(false);
+	it('rethrows ApiError', async () => {
+		const apiError = new ApiError(
+			{ method: 'POST', url: '/v1/singleEmail:check' },
+			{
+				url: '/v1/singleEmail:check',
+				ok: false,
+				status: 429,
+				statusText: 'Too Many Requests',
+				body: 'rate limited',
+			},
+			'Too Many Requests',
+		);
+		mockRequest.mockRejectedValueOnce(apiError);
+
+		await expect(
+			makeMailcheckRequest('/v1/singleEmail:check', 'test-key', {
+				method: 'POST',
+				body: { email: 'user@example.com' },
+			}),
+		).rejects.toBe(apiError);
 	});
 });
