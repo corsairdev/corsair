@@ -19,7 +19,11 @@ export const errorHandlers = {
 		match: (error: Error) => {
 			if (getStatus(error) === 429) return true;
 			const msg = error.message.toLowerCase();
-			return msg.includes('rate_limited') || msg.includes('429') || msg.includes('too many requests');
+			return (
+				msg.includes('rate_limited') ||
+				msg.includes('429') ||
+				msg.includes('too many requests')
+			);
 		},
 		handler: async (error: Error) => {
 			const retryAfterMs = getRetryAfter(error);

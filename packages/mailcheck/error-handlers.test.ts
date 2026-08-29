@@ -1,12 +1,12 @@
-import { ApiError } from 'corsair/http';
 import type { CorsairErrorHandler } from 'corsair/core';
-import { MailcheckAPIError } from './client';
+import type { ApiRequestOptions } from 'corsair/http';
+import { ApiError } from 'corsair/http';
 import { errorHandlers } from './error-handlers';
 
-import type { ApiRequestOptions } from 'corsair/http';
-import type { ApiResult } from 'corsair/http';
-
-const mockRequestOptions: ApiRequestOptions = { method: 'POST', url: '/v1/emails:checkSingle' };
+const mockRequestOptions: ApiRequestOptions = {
+	method: 'POST',
+	url: '/v1/emails:check',
+};
 
 function makeApiError(
 	status: number,
@@ -16,9 +16,17 @@ function makeApiError(
 ): ApiError {
 	return new ApiError(
 		mockRequestOptions,
-		{ url: '/v1/emails:checkSingle', ok: false, status, statusText, body: message },
+		{
+			url: '/v1/emails:checkSingle',
+			ok: false,
+			status,
+			statusText,
+			body: message,
+		},
 		message,
-		retryAfterSeconds !== undefined ? { retryAfter: retryAfterSeconds } : undefined,
+		retryAfterSeconds !== undefined
+			? { retryAfter: retryAfterSeconds }
+			: undefined,
 	);
 }
 
@@ -52,7 +60,12 @@ describe('Mailcheck error handlers', () => {
 		});
 
 		it('returns configured maxRetries', async () => {
-			const error = makeApiError(429, 'Too Many Requests', 'Too Many Requests', 30);
+			const error = makeApiError(
+				429,
+				'Too Many Requests',
+				'Too Many Requests',
+				30,
+			);
 			const strategy = await matcher.handler(error);
 			expect(strategy.maxRetries).toBe(5);
 			expect(strategy.headersRetryAfterMs).toBeDefined();

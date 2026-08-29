@@ -5,27 +5,38 @@ const VerifyEmailInputSchema = z.object({
 });
 export type VerifyEmailInput = z.infer<typeof VerifyEmailInputSchema>;
 
-const VerifyEmailResponseSchema = z.object({
+const GravatarEntrySchema = z.object({
+	profileUrl: z.string().url().optional(),
+	preferredUsername: z.string().optional(),
+	accounts: z
+		.array(
+			z.object({
+				domain: z.string(),
+			}),
+		)
+		.optional(),
+});
+
+// Mirrors the per-email result object returned by Mailcheck's batch
+// results document (observed live: extra fields like githubUsername,
+// facebook, microsoftAccountExists are passed through).
+const VerificationResultSchema = z.looseObject({
 	email: z.string(),
 	trustRate: z.number().int().min(0).max(100),
 	mxExists: z.boolean(),
 	smtpExists: z.boolean(),
 	isNotDisposable: z.boolean(),
 	isNotSmtpCatchAll: z.boolean(),
-	gravatar: z.object({
-		entries: z.array(
-			z.object({
-				profileUrl: z.string().url().optional(),
-				preferredUsername: z.string().optional(),
-				accounts: z.array(
-					z.object({
-						domain: z.string(),
-					}),
-				).optional(),
-			}),
-		).optional(),
-	}).optional(),
+	// The API returns null when no gravatar profile exists.
+	gravatar: z
+		.object({
+			entries: z.array(GravatarEntrySchema).optional(),
+		})
+		.nullable()
+		.optional(),
 });
+
+const VerifyEmailResponseSchema = VerificationResultSchema;
 export type VerifyEmailResponse = z.infer<typeof VerifyEmailResponseSchema>;
 
 const ValidateDomainInputSchema = z.object({
@@ -33,15 +44,10 @@ const ValidateDomainInputSchema = z.object({
 });
 export type ValidateDomainInput = z.infer<typeof ValidateDomainInputSchema>;
 
-const ValidateDomainResponseSchema = z.object({
-	email: z.string(),
-	trustRate: z.number().int().min(0).max(100),
-	mxExists: z.boolean(),
-	smtpExists: z.boolean(),
-	isNotDisposable: z.boolean(),
-	isNotSmtpCatchAll: z.boolean(),
-});
-export type ValidateDomainResponse = z.infer<typeof ValidateDomainResponseSchema>;
+const ValidateDomainResponseSchema = VerificationResultSchema;
+export type ValidateDomainResponse = z.infer<
+	typeof ValidateDomainResponseSchema
+>;
 
 export type MailcheckEndpointInputs = {
 	verifyEmail: VerifyEmailInput;

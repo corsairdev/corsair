@@ -1,4 +1,5 @@
 import type {
+	AuthTypes,
 	BindEndpoints,
 	CorsairEndpoint,
 	CorsairErrorHandler,
@@ -11,12 +12,17 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import type { AuthTypes } from 'corsair/core';
-import type { MailcheckEndpointInputs, MailcheckEndpointOutputs } from './endpoints/types';
-import { MailcheckEndpointInputSchemas, MailcheckEndpointOutputSchemas } from './endpoints/types';
 import { Mailcheck } from './endpoints';
-import { MailcheckSchema } from './schema';
+import type {
+	MailcheckEndpointInputs,
+	MailcheckEndpointOutputs,
+} from './endpoints/types';
+import {
+	MailcheckEndpointInputSchemas,
+	MailcheckEndpointOutputSchemas,
+} from './endpoints/types';
 import { errorHandlers } from './error-handlers';
+import { MailcheckSchema } from './schema';
 
 export type MailcheckPluginOptions = {
 	authType?: PickAuth<'api_key'>;
@@ -32,17 +38,19 @@ export type MailcheckContext = CorsairPluginContext<
 	MailcheckPluginOptions
 >;
 
-export type MailcheckKeyBuilderContext = KeyBuilderContext<MailcheckPluginOptions>;
+export type MailcheckKeyBuilderContext =
+	KeyBuilderContext<MailcheckPluginOptions>;
 
-export type MailcheckBoundEndpoints = BindEndpoints<typeof mailcheckEndpointsNested>;
-
-type MailcheckEndpoint<
-	K extends keyof MailcheckEndpointOutputs,
-> = CorsairEndpoint<
-	MailcheckContext,
-	MailcheckEndpointInputs[K],
-	MailcheckEndpointOutputs[K]
+export type MailcheckBoundEndpoints = BindEndpoints<
+	typeof mailcheckEndpointsNested
 >;
+
+type MailcheckEndpoint<K extends keyof MailcheckEndpointOutputs> =
+	CorsairEndpoint<
+		MailcheckContext,
+		MailcheckEndpointInputs[K],
+		MailcheckEndpointOutputs[K]
+	>;
 
 export type MailcheckEndpoints = {
 	verifyEmail: MailcheckEndpoint<'verifyEmail'>;
@@ -67,20 +75,26 @@ export const mailcheckEndpointSchemas = {
 		input: MailcheckEndpointInputSchemas.validateDomain,
 		output: MailcheckEndpointOutputSchemas.validateDomain,
 	},
-} as const satisfies RequiredPluginEndpointSchemas<typeof mailcheckEndpointsNested>;
+} as const satisfies RequiredPluginEndpointSchemas<
+	typeof mailcheckEndpointsNested
+>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
 const mailcheckEndpointMeta = {
 	'email.verify': {
 		riskLevel: 'read',
-		description: 'Verify an email address for syntax, MX, SMTP validity, and optional breach check',
+		description:
+			'Verify an email address for syntax, MX, SMTP validity, and optional breach check',
 	},
 	'domain.validate': {
 		riskLevel: 'read',
-		description: 'Validate a domain for disposability, MX records, domain age, and spam indicators',
+		description:
+			'Validate a domain for disposability, MX records, domain age, and spam indicators',
 	},
-} as const satisfies RequiredPluginEndpointMeta<typeof mailcheckEndpointsNested>;
+} as const satisfies RequiredPluginEndpointMeta<
+	typeof mailcheckEndpointsNested
+>;
 
 export const mailcheckAuthConfig = {
 	api_key: {
@@ -88,22 +102,25 @@ export const mailcheckAuthConfig = {
 	},
 } as const satisfies PluginAuthConfig;
 
-export type BaseMailcheckPlugin<T extends MailcheckPluginOptions> = CorsairPlugin<
-	'mailcheck',
-	typeof MailcheckSchema,
-	typeof mailcheckEndpointsNested,
-	{},
-	T,
-	typeof defaultAuthType
->;
+export type BaseMailcheckPlugin<T extends MailcheckPluginOptions> =
+	CorsairPlugin<
+		'mailcheck',
+		typeof MailcheckSchema,
+		typeof mailcheckEndpointsNested,
+		{},
+		T,
+		typeof defaultAuthType
+	>;
 
-export type InternalMailcheckPlugin = BaseMailcheckPlugin<MailcheckPluginOptions>;
+export type InternalMailcheckPlugin =
+	BaseMailcheckPlugin<MailcheckPluginOptions>;
 
 export type ExternalMailcheckPlugin<T extends MailcheckPluginOptions> =
 	BaseMailcheckPlugin<T>;
 
 export function mailcheck<const T extends MailcheckPluginOptions>(
-	incomingOptions: MailcheckPluginOptions & T = {} as MailcheckPluginOptions & T,
+	incomingOptions: MailcheckPluginOptions & T = {} as MailcheckPluginOptions &
+		T,
 ): ExternalMailcheckPlugin<T> {
 	const options = {
 		...incomingOptions,
@@ -142,8 +159,8 @@ export function mailcheck<const T extends MailcheckPluginOptions>(
 export type {
 	MailcheckEndpointInputs,
 	MailcheckEndpointOutputs,
-	VerifyEmailInput,
-	VerifyEmailResponse,
 	ValidateDomainInput,
 	ValidateDomainResponse,
+	VerifyEmailInput,
+	VerifyEmailResponse,
 } from './endpoints/types';

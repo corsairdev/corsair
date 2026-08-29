@@ -1,5 +1,5 @@
-import { verifyEmail } from './verify-email';
 import { validateDomain } from './validate-domain';
+import { verifyEmail } from './verify-email';
 
 export const Mailcheck = {
 	verifyEmail,

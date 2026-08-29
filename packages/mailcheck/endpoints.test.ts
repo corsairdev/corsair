@@ -1,10 +1,10 @@
 import { ApiError } from 'corsair/http';
 import type { MailcheckContext } from './index';
 
-// Mock makeMailcheckRequest
-const mockRequest = jest.fn();
+// Mock the client — endpoints go through checkSingleEmail
+const mockCheckSingleEmail = jest.fn();
 jest.mock('./client', () => ({
-	makeMailcheckRequest: (...args: unknown[]) => mockRequest(...args),
+	checkSingleEmail: (...args: unknown[]) => mockCheckSingleEmail(...args),
 }));
 
 // Import after mocking — dynamic import avoids hoisting before the mock is installed
@@ -16,38 +16,53 @@ const mockCtx = {
 	key: 'test-api-key',
 } as MailcheckContext;
 
+const sampleResult = {
+	email: 'test@example.com',
+	trustRate: 95,
+	mxExists: true,
+	smtpExists: true,
+	isNotDisposable: true,
+	isNotSmtpCatchAll: true,
+};
+
 describe('Mailcheck endpoints', () => {
 	beforeEach(() => {
-		mockRequest.mockReset();
-		mockRequest.mockResolvedValue({ email: 'test@example.com', trustRate: 95, mxExists: true, smtpExists: true, isNotDisposable: true, isNotSmtpCatchAll: true });
+		mockCheckSingleEmail.mockReset();
+		mockCheckSingleEmail.mockResolvedValue(sampleResult);
 	});
 
 	describe('verifyEmail', () => {
-		it('calls makeMailcheckRequest with correct args', async () => {
-			const input = { email: 'test@example.com' };
-			await Mailcheck.verifyEmail(mockCtx, input);
+		it('calls checkSingleEmail with the requested email and context key', async () => {
+			await Mailcheck.verifyEmail(mockCtx, { email: 'test@example.com' });
 
-			expect(mockRequest).toHaveBeenCalledWith('/v1/emails:checkSingle', 'test-api-key', {
-				method: 'POST',
-				body: { email: 'test@example.com' },
-			});
+			expect(mockCheckSingleEmail).toHaveBeenCalledWith(
+				'test@example.com',
+				'test-api-key',
+			);
 		});
 
-		it('returns the response from the API', async () => {
-			const response = { email: 'test@example.com', trustRate: 95, mxExists: true, smtpExists: true, isNotDisposable: true, isNotSmtpCatchAll: true };
-			mockRequest.mockResolvedValueOnce(response);
+		it('returns the verification result', async () => {
+			mockCheckSingleEmail.mockResolvedValueOnce(sampleResult);
 
-			const result = await Mailcheck.verifyEmail(mockCtx, { email: 'test@example.com' });
-			expect(result).toEqual(response);
+			const result = await Mailcheck.verifyEmail(mockCtx, {
+				email: 'test@example.com',
+			});
+			expect(result).toEqual(sampleResult);
 		});
 
 		it('propagates ApiError', async () => {
 			const apiError = new ApiError(
-				{ method: 'POST', url: '/v1/emails:checkSingle' },
-				{ url: '/v1/emails:checkSingle', ok: false, status: 429, statusText: 'Too Many Requests', body: 'rate limited' },
+				{ method: 'POST', url: '/v1/emails:check' },
+				{
+					url: '/v1/emails:check',
+					ok: false,
+					status: 429,
+					statusText: 'Too Many Requests',
+					body: 'rate limited',
+				},
 				'Too Many Requests',
 			);
-			mockRequest.mockRejectedValueOnce(apiError);
+			mockCheckSingleEmail.mockRejectedValueOnce(apiError);
 
 			await expect(
 				Mailcheck.verifyEmail(mockCtx, { email: 'test@example.com' }),
@@ -56,21 +71,29 @@ describe('Mailcheck endpoints', () => {
 	});
 
 	describe('validateDomain', () => {
-		it('calls makeMailcheckRequest with admin@domain email', async () => {
-			const input = { domain: 'example.com' };
-			await Mailcheck.validateDomain(mockCtx, input);
+		it('checks admin@{domain} through checkSingleEmail', async () => {
+			await Mailcheck.validateDomain(mockCtx, { domain: 'example.com' });
 
-			expect(mockRequest).toHaveBeenCalledWith('/v1/emails:checkSingle', 'test-api-key', {
-				method: 'POST',
-				body: { email: 'admin@example.com' },
-			});
+			expect(mockCheckSingleEmail).toHaveBeenCalledWith(
+				'admin@example.com',
+				'test-api-key',
+			);
 		});
 
-		it('returns domain-relevant fields from API', async () => {
-			const response = { email: 'admin@example.com', trustRate: 80, mxExists: true, smtpExists: false, isNotDisposable: true, isNotSmtpCatchAll: false };
-			mockRequest.mockResolvedValueOnce(response);
+		it('returns domain-relevant fields from the API', async () => {
+			const response = {
+				email: 'admin@example.com',
+				trustRate: 80,
+				mxExists: true,
+				smtpExists: false,
+				isNotDisposable: true,
+				isNotSmtpCatchAll: false,
+			};
+			mockCheckSingleEmail.mockResolvedValueOnce(response);
 
-			const result = await Mailcheck.validateDomain(mockCtx, { domain: 'example.com' });
+			const result = await Mailcheck.validateDomain(mockCtx, {
+				domain: 'example.com',
+			});
 			expect(result).toEqual(response);
 		});
 	});
