@@ -158,6 +158,7 @@ export const BaseProviders = [
 	'linkedin',
 	'loyverse',
 	'mailboxlayer',
+	'mailcheck',
 	'mailchimp',
 	'mailtrap',
 	'merriamwebsterdict',
@@ -379,6 +380,7 @@ export const ProviderDisplayNames = {
 	linkedin: 'LinkedIn',
 	loyverse: 'Loyverse',
 	mailboxlayer: 'MailboxLayer',
+	mailcheck: 'Mailcheck',
 	mailchimp: 'Mailchimp',
 	mailtrap: 'Mailtrap',
 	merriamwebsterdict: 'Merriam-Webster Dictionary',
@@ -607,6 +609,7 @@ export type AllProviders =
 	| 'linkedin'
 	| 'loyverse'
 	| 'mailboxlayer'
+	| 'mailcheck'
 	| 'mailchimp'
 	| 'mailtrap'
 	| 'merriamwebsterdict'
