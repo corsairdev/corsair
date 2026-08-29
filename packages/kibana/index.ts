@@ -12,14 +12,22 @@ import type {
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
 } from 'corsair/core';
-import { SavedObjects } from './endpoints';
+import { DataViews, SavedObjects, Status } from './endpoints';
 import type {
+	DataViewsGetInput,
+	DataViewsGetResponse,
 	KibanaEndpointInputs,
 	KibanaEndpointOutputs,
+	SavedObjectsCreateInput,
+	SavedObjectsCreateResponse,
+	SavedObjectsDeleteInput,
+	SavedObjectsDeleteResponse,
 	SavedObjectsFindInput,
 	SavedObjectsFindResponse,
 	SavedObjectsGetInput,
 	SavedObjectsGetResponse,
+	StatusGetInput,
+	StatusGetResponse,
 } from './endpoints/types';
 import {
 	KibanaEndpointInputSchemas,
@@ -66,12 +74,24 @@ type KibanaEndpoint<K extends keyof KibanaEndpointOutputs> = CorsairEndpoint<
 export type KibanaEndpoints = {
 	savedObjectsFind: KibanaEndpoint<'savedObjectsFind'>;
 	savedObjectsGet: KibanaEndpoint<'savedObjectsGet'>;
+	savedObjectsCreate: KibanaEndpoint<'savedObjectsCreate'>;
+	savedObjectsDelete: KibanaEndpoint<'savedObjectsDelete'>;
+	dataViewsGet: KibanaEndpoint<'dataViewsGet'>;
+	statusGet: KibanaEndpoint<'statusGet'>;
 };
 
 const kibanaEndpointsNested = {
 	savedObjects: {
 		find: SavedObjects.find,
 		get: SavedObjects.get,
+		create: SavedObjects.create,
+		delete: SavedObjects.remove,
+	},
+	dataViews: {
+		get: DataViews.get,
+	},
+	status: {
+		get: Status.get,
 	},
 } as const;
 
@@ -84,6 +104,22 @@ export const kibanaEndpointSchemas = {
 		input: KibanaEndpointInputSchemas.savedObjectsGet,
 		output: KibanaEndpointOutputSchemas.savedObjectsGet,
 	},
+	'savedObjects.create': {
+		input: KibanaEndpointInputSchemas.savedObjectsCreate,
+		output: KibanaEndpointOutputSchemas.savedObjectsCreate,
+	},
+	'savedObjects.delete': {
+		input: KibanaEndpointInputSchemas.savedObjectsDelete,
+		output: KibanaEndpointOutputSchemas.savedObjectsDelete,
+	},
+	'dataViews.get': {
+		input: KibanaEndpointInputSchemas.dataViewsGet,
+		output: KibanaEndpointOutputSchemas.dataViewsGet,
+	},
+	'status.get': {
+		input: KibanaEndpointInputSchemas.statusGet,
+		output: KibanaEndpointOutputSchemas.statusGet,
+	},
 } as const satisfies RequiredPluginEndpointSchemas<
 	typeof kibanaEndpointsNested
 >;
@@ -93,11 +129,27 @@ const defaultAuthType: AuthTypes = 'api_key' as const;
 const kibanaEndpointMeta = {
 	'savedObjects.find': {
 		riskLevel: 'read',
-		description: 'Find saved objects matching the criteria',
+		description: 'Find saved objects matching search query or type filters',
 	},
 	'savedObjects.get': {
 		riskLevel: 'read',
-		description: 'Get a saved object by type and ID',
+		description: 'Retrieve a specific saved object by type and ID',
+	},
+	'savedObjects.create': {
+		riskLevel: 'write',
+		description: 'Create a new saved object in Kibana',
+	},
+	'savedObjects.delete': {
+		riskLevel: 'destructive',
+		description: 'Delete a saved object by type and ID',
+	},
+	'dataViews.get': {
+		riskLevel: 'read',
+		description: 'Retrieve data view details by ID',
+	},
+	'status.get': {
+		riskLevel: 'read',
+		description: 'Retrieve health and version status of the Kibana instance',
 	},
 } as const satisfies RequiredPluginEndpointMeta<typeof kibanaEndpointsNested>;
 
@@ -154,10 +206,18 @@ export function kibana<const T extends KibanaPluginOptions>(
 }
 
 export type {
+	DataViewsGetInput,
+	DataViewsGetResponse,
 	KibanaEndpointInputs,
 	KibanaEndpointOutputs,
+	SavedObjectsCreateInput,
+	SavedObjectsCreateResponse,
+	SavedObjectsDeleteInput,
+	SavedObjectsDeleteResponse,
 	SavedObjectsFindInput,
 	SavedObjectsFindResponse,
 	SavedObjectsGetInput,
 	SavedObjectsGetResponse,
+	StatusGetInput,
+	StatusGetResponse,
 } from './endpoints/types';
