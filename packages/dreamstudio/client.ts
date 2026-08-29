@@ -92,7 +92,7 @@ export async function initImageBlob(source: string): Promise<Blob> {
 	return new Blob([new Uint8Array(bytes)], { type });
 }
 
-export async function makeDreamstudioRequest<T>(
+export async function makeDreamstudioRequest(
 	path: string,
 	apiKey: string,
 	options: {
@@ -100,7 +100,7 @@ export async function makeDreamstudioRequest<T>(
 		headers?: Record<string, string>;
 		body?: FormData | string;
 	} = {},
-): Promise<T> {
+): Promise<unknown> {
 	const url = `${DREAMSTUDIO_API_BASE}${path.startsWith('/') ? path : `/${path}`}`;
 	let res: Response;
 	try {
@@ -136,14 +136,14 @@ export async function makeDreamstudioRequest<T>(
 			res.status,
 		);
 	}
-	if (parsed === undefined) {
+	if (parsed === undefined || typeof parsed !== 'object' || parsed === null) {
 		throw new DreamstudioAPIError(
-			'DreamStudio returned an empty response',
+			'DreamStudio returned a non-JSON response',
 			undefined,
 			res.status,
 		);
 	}
-	return parsed as T;
+	return parsed;
 }
 
 export async function generateImageFromImage(
@@ -164,7 +164,7 @@ export async function generateImageFromImage(
 		seed?: number;
 		style_preset?: string;
 	},
-): Promise<{ artifacts: unknown[] }> {
+): Promise<unknown> {
 	const form = new FormData();
 	form.append('init_image', await initImageBlob(input.init_image), 'init.png');
 

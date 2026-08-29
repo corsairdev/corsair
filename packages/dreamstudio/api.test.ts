@@ -248,4 +248,11 @@ describe('Dreamstudio plugin & client tests', () => {
 			makeDreamstudioRequest('/user/balance', 'sk-test'),
 		).rejects.toThrow(DreamstudioAPIError);
 	});
+
+	it('rejects non-JSON success bodies', async () => {
+		mockFetch.mockResolvedValue(new Response('ok', { status: 200 }));
+		await expect(
+			makeDreamstudioRequest('/user/balance', 'sk-test'),
+		).rejects.toThrow(DreamstudioAPIError);
+	});
 });
