@@ -116,4 +116,21 @@ describe('Blocknative schema', () => {
 		});
 		expect(parsed.estimatedBaseFees).toHaveLength(1);
 	});
+
+	it('rejects empty and unknown-only provider objects', () => {
+		expect(() => BlocknativeBlockPrices.parse({})).toThrow();
+		expect(() => BlocknativeBlockPrices.parse({ extra: true })).toThrow();
+		expect(() =>
+			BlocknativeBlockPrices.parse({
+				system: 'ethereum',
+				network: 'main',
+				unit: 'gwei',
+				blockPrices: [{}],
+			}),
+		).toThrow();
+		expect(() => BlocknativeChain.parse({})).toThrow();
+		expect(() => BlocknativeOracle.parse({ arch: 'evm' })).toThrow();
+		expect(() => BlocknativeGasDistribution.parse({})).toThrow();
+		expect(() => BlocknativeBaseFeeEstimates.parse({})).toThrow();
+	});
 });

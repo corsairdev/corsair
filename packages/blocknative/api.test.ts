@@ -118,7 +118,12 @@ describe('Blocknative plugin', () => {
 				system: 'ethereum',
 				network: 'main',
 				unit: 'gwei',
-				blockPrices: [],
+				blockPrices: [
+					{
+						blockNumber: 1,
+						estimatedPrices: [{ confidence: 99, price: 1 }],
+					},
+				],
 			}),
 		);
 		await getGasPrices(
@@ -145,7 +150,7 @@ describe('Blocknative plugin', () => {
 				system: 'ethereum',
 				network: 'main',
 				unit: 'gwei',
-				estimatedBaseFees: [],
+				estimatedBaseFees: [{ 'pending+1': [{ confidence: 99, baseFee: 1 }] }],
 			}),
 		);
 		const result = await getBaseFeeEstimates(ctx, {});
