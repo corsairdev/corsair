@@ -2,12 +2,6 @@ import type { CorsairErrorHandler } from 'corsair/core';
 import { ApiError } from 'corsair/http';
 import { BonsaiAPIError } from './client';
 
-/**
- * The client wraps transport `ApiError`s in `BonsaiAPIError` (keeping the
- * original as `cause`), so status-based matching must recognize both shapes.
- * The `instanceof ApiError` branch covers errors inspected before wrapping;
- * the `BonsaiAPIError` branch covers everything an endpoint actually throws.
- */
 function getStatus(error: Error): number | undefined {
 	if (error instanceof ApiError) return error.status;
 	if (error instanceof BonsaiAPIError) return error.status;
@@ -32,17 +26,32 @@ export const errorHandlers = {
 				msg.includes('429')
 			);
 		},
-		handler: async (error: Error) => {
-			return { maxRetries: 5, headersRetryAfterMs: getRetryAfter(error) };
-		},
+		handler: async (error: Error) => ({
+			maxRetries: 5,
+			retryStrategy: 'exponential_backoff' as const,
+			headersRetryAfterMs: getRetryAfter(error),
+		}),
 	},
 	AUTH_ERROR: {
 		match: (error: Error) => {
-			if (getStatus(error) === 401) return true;
+			const status = getStatus(error);
+			if (status === 401 || status === 403) return true;
 			const msg = error.message.toLowerCase();
 			return msg.includes('unauthorized') || msg.includes('invalid_auth');
 		},
 		handler: async () => ({ maxRetries: 0 }),
+	},
+	SERVER_ERROR: {
+		match: (error: Error) => {
+			const status = getStatus(error);
+			if (status !== undefined && status >= 500) return true;
+			const msg = error.message.toLowerCase();
+			return msg.includes('500') || msg.includes('internal server error');
+		},
+		handler: async () => ({
+			maxRetries: 3,
+			retryStrategy: 'exponential_backoff' as const,
+		}),
 	},
 	DEFAULT: {
 		match: () => true,
