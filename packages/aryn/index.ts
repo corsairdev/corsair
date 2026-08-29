@@ -1,21 +1,18 @@
 import type {
 	AuthTypes,
 	BindEndpoints,
-	BindWebhooks,
 	CorsairEndpoint,
 	CorsairErrorHandler,
 	CorsairPlugin,
 	CorsairPluginContext,
-	CorsairWebhook,
 	KeyBuilderContext,
 	PickAuth,
 	PluginAuthConfig,
 	PluginPermissionsConfig,
 	RequiredPluginEndpointMeta,
 	RequiredPluginEndpointSchemas,
-	RequiredPluginWebhookSchemas,
 } from 'corsair/core';
-import { z } from 'zod';
+import { AuthMissingError } from 'corsair/core';
 import { Aryn } from './endpoints';
 import type {
 	ArynEndpointInputs,
@@ -27,18 +24,11 @@ import {
 } from './endpoints/types';
 import { errorHandlers } from './error-handlers';
 import { ArynSchema } from './schema';
-import { ArynWebhooks } from './webhooks';
-import { resolveArynOAuthWebhookTenantLink } from './webhooks/oauth-tenant-link';
-import { matchArynTenantWebhook } from './webhooks/tenant-matcher';
-import type { ArynTaskDonePayload, ArynWebhookOutputs } from './webhooks/types';
-import { ArynTaskDonePayloadSchema } from './webhooks/types';
 
 export type ArynPluginOptions = {
-	authType?: PickAuth<'api_key' | 'oauth_2'>;
+	authType?: PickAuth<'api_key'>;
 	key?: string;
-	webhookSecret?: string;
 	hooks?: InternalArynPlugin['hooks'];
-	webhookHooks?: InternalArynPlugin['webhookHooks'];
 	errorHandlers?: CorsairErrorHandler;
 	permissions?: PluginPermissionsConfig<typeof arynEndpointsNested>;
 };
@@ -70,18 +60,6 @@ export type ArynEndpoints = {
 	documentSubmitAsyncAdd: ArynEndpoint<'documentSubmitAsyncAdd'>;
 };
 
-type ArynWebhook<K extends keyof ArynWebhookOutputs, TEvent> = CorsairWebhook<
-	ArynContext,
-	TEvent,
-	ArynWebhookOutputs[K]
->;
-
-export type ArynWebhooks = {
-	taskDone: ArynWebhook<'taskDone', ArynTaskDonePayload>;
-};
-
-export type ArynBoundWebhooks = BindWebhooks<ArynWebhooks>;
-
 const arynEndpointsNested = {
 	docset: {
 		create: Aryn.docsetCreate,
@@ -99,12 +77,6 @@ const arynEndpointsNested = {
 	},
 	asyncTasks: {
 		list: Aryn.asyncTasksList,
-	},
-} as const;
-
-const arynWebhooksNested = {
-	task: {
-		taskDone: ArynWebhooks.taskDone,
 	},
 } as const;
 
@@ -146,14 +118,6 @@ export const arynEndpointSchemas = {
 		output: ArynEndpointOutputSchemas.asyncTasksList,
 	},
 } as const satisfies RequiredPluginEndpointSchemas<typeof arynEndpointsNested>;
-
-const arynWebhookSchemas = {
-	'task.taskDone': {
-		description: 'Aryn async document partitioning task has completed.',
-		payload: ArynTaskDonePayloadSchema,
-		response: z.any(),
-	},
-} as const satisfies RequiredPluginWebhookSchemas<typeof arynWebhooksNested>;
 
 const defaultAuthType: AuthTypes = 'api_key' as const;
 
@@ -200,16 +164,13 @@ export const arynAuthConfig = {
 	api_key: {
 		account: ['tenant_external_id'] as const,
 	},
-	oauth_2: {
-		account: ['tenant_external_id'] as const,
-	},
 } as const satisfies PluginAuthConfig;
 
 export type BaseArynPlugin<T extends ArynPluginOptions> = CorsairPlugin<
 	'aryn',
 	typeof ArynSchema,
 	typeof arynEndpointsNested,
-	typeof arynWebhooksNested,
+	Record<string, never>,
 	T,
 	typeof defaultAuthType
 >;
@@ -231,46 +192,35 @@ export function aryn<const T extends ArynPluginOptions>(
 		schema: ArynSchema,
 		options: options,
 		hooks: options.hooks,
-		webhookHooks: options.webhookHooks,
+		webhookHooks: undefined,
 		endpoints: arynEndpointsNested,
-		webhooks: arynWebhooksNested,
+		webhooks: {} as const,
 		endpointMeta: arynEndpointMeta,
 		endpointSchemas: arynEndpointSchemas,
-		webhookSchemas: arynWebhookSchemas,
-		pluginWebhookMatcher: (request) => {
-			return request.body !== undefined && request.body !== null;
-		},
-		pluginTenantWebhookMatcher: matchArynTenantWebhook,
-		oauthWebhookTenantLinkResolver: resolveArynOAuthWebhookTenantLink,
-		errorHandlers: {
-			...errorHandlers,
-			...options.errorHandlers,
-		},
+		webhookSchemas: {} as const,
+		pluginWebhookMatcher: undefined,
+		errorHandlers: (() => {
+			const { DEFAULT: defaultHandler, ...specificDefaults } = errorHandlers;
+			return {
+				...specificDefaults,
+				...(options.errorHandlers || {}),
+				DEFAULT: options.errorHandlers?.DEFAULT || defaultHandler,
+			};
+		})(),
 		keyBuilder: async (ctx: ArynKeyBuilderContext, source) => {
-			if (source === 'webhook' && options.webhookSecret) {
-				return options.webhookSecret;
-			}
-
-			if (source === 'webhook') {
-				const res = await ctx.keys.get_webhook_signature();
-				return res ?? '';
-			}
-
 			if (source === 'endpoint' && options.key) {
 				return options.key;
 			}
 
 			if (source === 'endpoint' && ctx.authType === 'api_key') {
-				const res = await ctx.keys.get_api_key();
-				return res ?? '';
+				const apiKey = await ctx.keys.get_api_key();
+				if (!apiKey) {
+					throw new AuthMissingError('aryn', 'api_key');
+				}
+				return apiKey;
 			}
 
-			if (source === 'endpoint' && ctx.authType === 'oauth_2') {
-				const res = await ctx.keys.get_access_token();
-				return res ?? '';
-			}
-
-			return '';
+			throw new AuthMissingError('aryn', 'api_key');
 		},
 	} satisfies InternalArynPlugin;
 }
@@ -279,4 +229,3 @@ export type {
 	ArynEndpointInputs,
 	ArynEndpointOutputs,
 } from './endpoints/types';
-export type { ArynWebhookOutputs } from './webhooks/types';
