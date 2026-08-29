@@ -67,7 +67,10 @@ describe('Query.execute (ClickHouse plugin)', () => {
 		expect((init?.headers as Record<string, string>).Authorization).toBe(
 			'Basic dXNlcjpwYXNz',
 		);
-		expect(init?.body).toContain('FORMAT JSONEachRow');
+		expect(
+			(init?.headers as Record<string, string>)['X-ClickHouse-Format'],
+		).toBe('JSONEachRow');
+		expect(init?.body).not.toContain('FORMAT JSONEachRow');
 
 		const parsed = ClickhouseEndpointOutputSchemas.executeQuery.parse(result);
 		expect(parsed.rowCount).toBe(2);
@@ -87,7 +90,7 @@ describe('Query.execute (ClickHouse plugin)', () => {
 		);
 
 		const call = (globalThis.fetch as jest.Mock).mock.calls[0] as FetchCall;
-		expect(call[1]?.body).toContain('LIMIT 10');
+		expect(call[1]?.body).toContain('\nLIMIT 10');
 	});
 
 	it('does not double-append LIMIT when SQL already has one', async () => {
@@ -118,7 +121,7 @@ describe('Query.execute (ClickHouse plugin)', () => {
 		);
 
 		const call = (globalThis.fetch as jest.Mock).mock.calls[0] as FetchCall;
-		expect(call[1]?.body).toContain('LIMIT 10');
+		expect(String(call[1]?.body)).toBe('SELECT 1 AS x -- LIMIT 100\nLIMIT 10');
 	});
 
 	it('appends LIMIT when a LIMIT-like phrase appears only in a block comment', async () => {

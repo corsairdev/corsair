@@ -1,5 +1,5 @@
 import { logEventFromContext } from 'corsair/core';
-import { fetchPlayHtml, resolveBaseUrl } from '../client';
+import { fetchPlayHtml, playInterfaceUrl, resolveBaseUrl } from '../client';
 import type { ClickhouseEndpoints } from '../index';
 import {
 	ClickhouseEndpointInputSchemas,
@@ -23,7 +23,7 @@ export const getPlayInterface: ClickhouseEndpoints['getPlayInterface'] = async (
 	);
 
 	return ClickhouseEndpointOutputSchemas.getPlayInterface.parse({
-		url: baseUrl.replace(/\/+$/, '') + '/play',
+		url: playInterfaceUrl(baseUrl),
 		html,
 		sizeBytes: html.length,
 	});

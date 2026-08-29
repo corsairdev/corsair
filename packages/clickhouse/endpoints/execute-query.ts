@@ -29,12 +29,10 @@ export const execute: ClickhouseEndpoints['executeQuery'] = async (
 	// `LIMIT` text inside a comment or string literal must not suppress the
 	// caller's intended cap.
 	const scanSql = stripNonCodeTokens(normalizedSql);
-	const limitClause =
+	const sql =
 		input.limit !== undefined && !/\blimit\s+\d+/i.test(scanSql)
-			? ` LIMIT ${input.limit}`
-			: '';
-
-	const sql = `${normalizedSql}${limitClause}`;
+			? `${normalizedSql}\nLIMIT ${input.limit}`
+			: normalizedSql;
 	const rows = await query(baseUrl, ctx.key, sql);
 
 	await logEventFromContext(

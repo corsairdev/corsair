@@ -3,7 +3,7 @@
  *
  * ClickHouse is not a REST API — its HTTP interface accepts a raw SQL query
  * as the request body and returns rows in a chosen output format. We POST
- * the SQL with `FORMAT JSONEachRow` so each line is a JSON object.
+ * the SQL and request JSONEachRow via `X-ClickHouse-Format`.
  *
  * Auth is HTTP Basic. The caller supplies the full `Authorization` header
  * value (e.g. `Basic dXNlcjpwYXNz`).
@@ -30,6 +30,18 @@ export type QueryParams = Record<string, string | number | boolean>;
 
 const MAX_PLAY_BYTES = 5 * 1024 * 1024;
 
+/** Keep any `?user=` / settings already on the tenant URL. */
+function httpUrl(baseUrl: string): URL {
+	const trimmed = baseUrl.replace(/\/+$/, '');
+	return new URL(trimmed.includes('?') ? trimmed : `${trimmed}/`);
+}
+
+export function playInterfaceUrl(baseUrl: string): string {
+	const url = httpUrl(baseUrl);
+	url.pathname = `${url.pathname.replace(/\/+$/, '')}/play`;
+	return url.toString();
+}
+
 /**
  * Execute a SQL query against a ClickHouse HTTP endpoint and return the
  * rows as plain objects.
@@ -52,7 +64,7 @@ export async function query(
 	} = {},
 ): Promise<QueryRow[]> {
 	const { params, database } = options;
-	const url = new URL(baseUrl.replace(/\/+$/, '') + '/');
+	const url = httpUrl(baseUrl);
 	if (database) {
 		// `database` here is the built-in ClickHouse system parameter that
 		// sets the default database for the query; it is NOT a placeholder.
@@ -70,15 +82,18 @@ export async function query(
 		url.searchParams.set(`param_${key}`, String(value));
 	}
 
-	const body = `${sql.trimEnd()}\nFORMAT JSONEachRow`;
-
+	// Official HTTP: X-ClickHouse-Format aliases output_format and overrides
+	// a FORMAT clause. Do not append FORMAT to the SQL — a second FORMAT is
+	// a syntax error (verified against play.clickhouse.com).
+	// https://clickhouse.com/docs/interfaces/http
 	const response = await fetch(url, {
 		method: 'POST',
 		headers: {
 			Authorization: basicAuthHeader,
 			'Content-Type': 'text/plain; charset=utf-8',
+			'X-ClickHouse-Format': 'JSONEachRow',
 		},
-		body,
+		body: sql.trimEnd(),
 	});
 
 	if (!response.ok) {
@@ -116,9 +131,7 @@ export async function fetchPlayHtml(
 	baseUrl: string,
 	basicAuthHeader: string,
 ): Promise<string> {
-	const url = baseUrl.replace(/\/+$/, '') + '/play';
-
-	const response = await fetch(url, {
+	const response = await fetch(playInterfaceUrl(baseUrl), {
 		method: 'GET',
 		headers: { Authorization: basicAuthHeader },
 		redirect: 'follow',

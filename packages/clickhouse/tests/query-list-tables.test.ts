@@ -90,6 +90,27 @@ describe('Query.listTables', () => {
 		expect(parsed.count).toBe(1);
 	});
 
+	it('accepts JSON null for Nullable(UInt64) total_rows / total_bytes', async () => {
+		mockFetchResponse(
+			'{"name":"dashboards","engine":"SystemDashboards","totalRows":null,"totalBytes":null}',
+		);
+
+		const result = await Query.listTables(
+			makeCtx({
+				baseUrl: 'https://ch.example.com',
+				key: 'Basic AAA=',
+			}) as never,
+			{ database: 'system' },
+		);
+
+		expect(result.tables[0]).toEqual({
+			name: 'dashboards',
+			engine: 'SystemDashboards',
+			totalRows: null,
+			totalBytes: null,
+		});
+	});
+
 	it('honors caller-supplied limit and offset', async () => {
 		mockFetchResponse('{"name":"a","engine":"Log"}');
 

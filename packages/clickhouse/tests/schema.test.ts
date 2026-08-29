@@ -1,5 +1,10 @@
 import { ClickhouseSchema } from '../schema';
-import { ClickhouseQueryResult } from '../schema/database';
+import {
+	ClickhouseColumn,
+	ClickhouseDatabase,
+	ClickhouseQueryResult,
+	ClickhouseTable,
+} from '../schema/database';
 
 describe('Clickhouse schema', () => {
 	it('declares a semver version', () => {
@@ -15,6 +20,34 @@ describe('Clickhouse schema', () => {
 		for (const entity of Object.values(ClickhouseSchema.entities)) {
 			expect(entity).toBeDefined();
 		}
+	});
+
+	it('parses official system.databases / system.tables / system.columns shapes', () => {
+		expect(ClickhouseSchema.entities.database).toBe(ClickhouseDatabase);
+		expect(ClickhouseSchema.entities.table).toBe(ClickhouseTable);
+		expect(ClickhouseSchema.entities.column).toBe(ClickhouseColumn);
+
+		expect(
+			ClickhouseDatabase.parse({ name: 'default', engine: 'Atomic' }),
+		).toEqual({ name: 'default', engine: 'Atomic' });
+
+		// Live JSONEachRow from play.clickhouse.com: Nullable(UInt64) is null.
+		const table = ClickhouseTable.parse({
+			name: 'dashboards',
+			engine: 'SystemDashboards',
+			totalRows: null,
+			totalBytes: null,
+		});
+		expect(table.totalRows).toBeNull();
+
+		const column = ClickhouseColumn.parse({
+			name: 'login',
+			type: 'String',
+			position: 1,
+			comment: '',
+			defaultExpression: '',
+		});
+		expect(column.position).toBe(1);
 	});
 
 	it('exposes a queryResult entity that accepts arbitrary row shapes', () => {

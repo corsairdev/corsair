@@ -1,4 +1,10 @@
 import { z } from 'zod';
+import {
+	ClickhouseColumn,
+	ClickhouseDatabase,
+	ClickhouseQueryResult,
+	ClickhouseTable,
+} from '../schema/database';
 
 // --------------------------------------------------------------------------
 // query.execute
@@ -24,8 +30,8 @@ export type ExecuteQueryInput = z.infer<typeof ExecuteQueryInputSchema>;
 
 const ExecuteQueryResponseSchema = z.object({
 	rows: z
-		.array(z.record(z.string(), z.unknown()))
-		.describe('Result rows; column names map to native JSON values'),
+		.array(ClickhouseQueryResult)
+		.describe('JSONEachRow objects; column names map to native JSON values'),
 	rowCount: z.number().int().nonnegative(),
 });
 export type ExecuteQueryResponse = z.infer<typeof ExecuteQueryResponseSchema>;
@@ -38,12 +44,7 @@ const ListDatabasesInputSchema = z.object({});
 export type ListDatabasesInput = z.infer<typeof ListDatabasesInputSchema>;
 
 const ListDatabasesResponseSchema = z.object({
-	databases: z.array(
-		z.object({
-			name: z.string().describe('Database name'),
-			engine: z.string().describe('Storage engine, e.g. Atomic'),
-		}),
-	),
+	databases: z.array(ClickhouseDatabase.pick({ name: true, engine: true })),
 });
 export type ListDatabasesResponse = z.infer<typeof ListDatabasesResponseSchema>;
 
@@ -72,19 +73,11 @@ export type ListTablesInput = z.infer<typeof ListTablesInputSchema>;
 const ListTablesResponseSchema = z.object({
 	database: z.string(),
 	tables: z.array(
-		z.object({
-			name: z.string().describe('Table name'),
-			engine: z.string().describe('Table engine, e.g. MergeTree'),
-			totalRows: z
-				.union([z.number(), z.string()])
-				.optional()
-				.describe(
-					'Approximate row count (server returns as string for large tables)',
-				),
-			totalBytes: z
-				.union([z.number(), z.string()])
-				.optional()
-				.describe('Approximate size on disk'),
+		ClickhouseTable.pick({
+			name: true,
+			engine: true,
+			totalRows: true,
+			totalBytes: true,
 		}),
 	),
 	count: z.number().int().nonnegative().describe('Number of tables returned'),
@@ -95,22 +88,20 @@ export type ListTablesResponse = z.infer<typeof ListTablesResponseSchema>;
 // schema.getDatabase
 // --------------------------------------------------------------------------
 
-const ColumnInfoSchema = z.object({
-	name: z.string(),
-	type: z.string().describe('ClickHouse type, e.g. UInt64, String'),
-	position: z
-		.union([z.number(), z.string()])
-		.optional()
-		.describe('Ordinal position within the table'),
-	comment: z.string().optional(),
-	defaultExpression: z.string().optional(),
+const ColumnInfoSchema = ClickhouseColumn.pick({
+	name: true,
+	type: true,
+	position: true,
+	comment: true,
+	defaultExpression: true,
 });
 
-const TableInfoSchema = z.object({
-	name: z.string(),
-	engine: z.string().optional(),
-	totalRows: z.union([z.number(), z.string()]).optional(),
-	totalBytes: z.union([z.number(), z.string()]).optional(),
+const TableInfoSchema = ClickhouseTable.pick({
+	name: true,
+	engine: true,
+	totalRows: true,
+	totalBytes: true,
+}).extend({
 	columns: z.array(ColumnInfoSchema).optional(),
 });
 
@@ -161,7 +152,7 @@ const GetTableSchemaResponseSchema = z.object({
 	database: z.string(),
 	table: z.string(),
 	engine: z.string().optional(),
-	totalRows: z.union([z.number(), z.string()]).optional(),
+	totalRows: ClickhouseTable.shape.totalRows,
 	columns: z.array(ColumnInfoSchema),
 	sampleRows: z
 		.array(z.record(z.string(), z.unknown()))
