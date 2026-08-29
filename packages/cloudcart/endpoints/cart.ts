@@ -1,97 +1,60 @@
-import { logEventFromContext } from 'corsair/core';
-import { makeCloudcartRequest } from '../client';
 import type { CloudcartEndpoints } from '../index';
-import type { CloudcartEndpointOutputs } from './types';
+import { pathId, runCloudcart } from './run';
+import {
+	AddToCartInputSchema,
+	ClearCartInputSchema,
+	CloudcartEndpointOutputSchemas,
+	GetCartInputSchema,
+	RemoveFromCartInputSchema,
+	UpdateCartItemInputSchema,
+} from './types';
 
-export const getCart: CloudcartEndpoints['getCart'] = async (ctx, input) => {
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['getCart']
-	>('cart', ctx.key, {
-		method: 'GET',
-		query: input as Record<string, any>,
+export const getCart: CloudcartEndpoints['getCart'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.cart.getCart',
+		inputSchema: GetCartInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.getCart,
+		path: 'cart',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.cart.getCart',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const addToCart: CloudcartEndpoints['addToCart'] = async (
-	ctx,
-	input,
-) => {
-	const { data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['addToCart']
-	>('cart/items', ctx.key, {
+export const addToCart: CloudcartEndpoints['addToCart'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.cart.addToCart',
+		inputSchema: AddToCartInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.addToCart,
 		method: 'POST',
-		body: data || rest,
+		path: 'cart/items',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.cart.addToCart',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const updateCartItem: CloudcartEndpoints['updateCartItem'] = async (
+export const updateCartItem: CloudcartEndpoints['updateCartItem'] = (
 	ctx,
 	input,
-) => {
-	const { id, data, ...rest } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['updateCartItem']
-	>(`cart/items/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.cart.updateCartItem',
+		inputSchema: UpdateCartItemInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.updateCartItem,
 		method: 'PATCH',
-		body: data || rest,
+		path: (parsed) => `cart/items/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.cart.updateCartItem',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const removeFromCart: CloudcartEndpoints['removeFromCart'] = async (
+export const removeFromCart: CloudcartEndpoints['removeFromCart'] = (
 	ctx,
 	input,
-) => {
-	const { id } = (input as Record<string, any>) || {};
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['removeFromCart']
-	>(`cart/items/${encodeURIComponent(String(id))}`, ctx.key, {
+) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.cart.removeFromCart',
+		inputSchema: RemoveFromCartInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.removeFromCart,
 		method: 'DELETE',
+		path: (parsed) => `cart/items/${pathId(parsed.id)}`,
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.cart.removeFromCart',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};
 
-export const clearCart: CloudcartEndpoints['clearCart'] = async (
-	ctx,
-	input,
-) => {
-	const result = await makeCloudcartRequest<
-		CloudcartEndpointOutputs['clearCart']
-	>('cart', ctx.key, {
+export const clearCart: CloudcartEndpoints['clearCart'] = (ctx, input) =>
+	runCloudcart(ctx, input, {
+		event: 'cloudcart.cart.clearCart',
+		inputSchema: ClearCartInputSchema,
+		outputSchema: CloudcartEndpointOutputSchemas.clearCart,
 		method: 'DELETE',
+		path: 'cart',
 	});
-	await logEventFromContext(
-		ctx,
-		'cloudcart.cart.clearCart',
-		{ ...input },
-		'completed',
-	);
-	return result;
-};

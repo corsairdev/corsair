@@ -1,6 +1,7 @@
 import { z } from 'zod';
 
 const IdParamSchema = z.union([z.string(), z.number()]);
+const RequiredIdSchema = z.union([z.string().min(1), z.number()]);
 
 const BaseEntityInputSchema = z
 	.object({
@@ -17,100 +18,117 @@ const BaseEntityInputSchema = z
 	})
 	.passthrough();
 
+const IdRequiredInputSchema = BaseEntityInputSchema.extend({
+	id: RequiredIdSchema,
+});
+const ProductIdRequiredInputSchema = BaseEntityInputSchema.extend({
+	product_id: RequiredIdSchema,
+});
+const PropertyIdRequiredInputSchema = BaseEntityInputSchema.extend({
+	property_id: RequiredIdSchema,
+});
+const CustomerIdRequiredInputSchema = BaseEntityInputSchema.extend({
+	customer_id: RequiredIdSchema,
+});
+const IdAndDiscountIdInputSchema = BaseEntityInputSchema.extend({
+	id: RequiredIdSchema,
+	discount_id: RequiredIdSchema,
+});
+
 const GenericResponseSchema = z.union([
 	z.record(z.string(), z.unknown()),
 	z.array(z.unknown()),
-	z.null(),
-	z.undefined(),
 ]);
 
 export const CreateProductInputSchema = BaseEntityInputSchema;
-export const GetProductInputSchema = BaseEntityInputSchema;
-export const GetProductWithRelationsInputSchema = BaseEntityInputSchema;
+export const GetProductInputSchema = IdRequiredInputSchema;
+export const GetProductWithRelationsInputSchema = IdRequiredInputSchema;
 export const ListProductsInputSchema = BaseEntityInputSchema;
-export const UpdateProductInputSchema = BaseEntityInputSchema;
-export const DeleteProductInputSchema = BaseEntityInputSchema;
-export const CreateLinkedProductsInputSchema = BaseEntityInputSchema;
-export const GetProductsLinkedProductInputSchema = BaseEntityInputSchema;
-export const GetProductsLinkedProductsInputSchema = BaseEntityInputSchema;
-export const UpdateLinkedProductInputSchema = BaseEntityInputSchema;
-export const DeleteLinkedProductsInputSchema = BaseEntityInputSchema;
+export const UpdateProductInputSchema = IdRequiredInputSchema;
+export const DeleteProductInputSchema = IdRequiredInputSchema;
+export const CreateLinkedProductsInputSchema = IdRequiredInputSchema;
+export const GetProductsLinkedProductInputSchema = IdRequiredInputSchema;
+export const GetProductsLinkedProductsInputSchema = IdRequiredInputSchema;
+export const UpdateLinkedProductInputSchema = IdRequiredInputSchema;
+export const DeleteLinkedProductsInputSchema = IdRequiredInputSchema;
 export const CreateImageInputSchema = BaseEntityInputSchema;
-export const GetImageInputSchema = BaseEntityInputSchema;
+export const GetImageInputSchema = IdRequiredInputSchema;
 export const ListImagesInputSchema = BaseEntityInputSchema;
-export const DeleteImageInputSchema = BaseEntityInputSchema;
+export const DeleteImageInputSchema = IdRequiredInputSchema;
 
 export const CreateCategoryInputSchema = BaseEntityInputSchema;
-export const GetCategoryInputSchema = BaseEntityInputSchema;
+export const GetCategoryInputSchema = IdRequiredInputSchema;
 export const ListCategoriesInputSchema = BaseEntityInputSchema;
-export const UpdateCategoryInputSchema = BaseEntityInputSchema;
-export const DeleteCategoryInputSchema = BaseEntityInputSchema;
-export const GetCategoryPropertiesInputSchema = BaseEntityInputSchema;
-export const AddCategoryPropertiesInputSchema = BaseEntityInputSchema;
+export const UpdateCategoryInputSchema = IdRequiredInputSchema;
+export const DeleteCategoryInputSchema = IdRequiredInputSchema;
+export const GetCategoryPropertiesInputSchema = IdRequiredInputSchema;
+export const AddCategoryPropertiesInputSchema = IdRequiredInputSchema;
 
 export const CreatePropertyInputSchema = BaseEntityInputSchema;
-export const GetPropertyInputSchema = BaseEntityInputSchema;
+export const GetPropertyInputSchema = IdRequiredInputSchema;
 export const ListPropertiesInputSchema = BaseEntityInputSchema;
-export const UpdatePropertyInputSchema = BaseEntityInputSchema;
-export const DeletePropertyInputSchema = BaseEntityInputSchema;
-export const CreatePropertyOptionInputSchema = BaseEntityInputSchema;
-export const GetPropertyOptionInputSchema = BaseEntityInputSchema;
+export const UpdatePropertyInputSchema = IdRequiredInputSchema;
+export const DeletePropertyInputSchema = IdRequiredInputSchema;
+export const CreatePropertyOptionInputSchema = PropertyIdRequiredInputSchema;
+export const GetPropertyOptionInputSchema = IdRequiredInputSchema;
 export const ListPropertyOptionsInputSchema = BaseEntityInputSchema;
-export const UpdatePropertyOptionInputSchema = BaseEntityInputSchema;
-export const DeletePropertyOptionInputSchema = BaseEntityInputSchema;
-export const CreateProductsPropertyOptionsInputSchema = BaseEntityInputSchema;
-export const GetPropertyOptionsRelationshipInputSchema = BaseEntityInputSchema;
+export const UpdatePropertyOptionInputSchema = IdRequiredInputSchema;
+export const DeletePropertyOptionInputSchema = IdRequiredInputSchema;
+export const CreateProductsPropertyOptionsInputSchema = IdRequiredInputSchema;
+export const GetPropertyOptionsRelationshipInputSchema = IdRequiredInputSchema;
 
-export const CreateVariantInputSchema = BaseEntityInputSchema;
-export const GetVariantInputSchema = BaseEntityInputSchema;
+export const CreateVariantInputSchema = ProductIdRequiredInputSchema;
+export const GetVariantInputSchema = IdRequiredInputSchema;
 export const ListVariantsInputSchema = BaseEntityInputSchema;
-export const UpdateVariantInputSchema = BaseEntityInputSchema;
-export const DeleteVariantInputSchema = BaseEntityInputSchema;
-export const CreateVariantOptionInputSchema = BaseEntityInputSchema;
-export const CreateVariantOptionsInputSchema = BaseEntityInputSchema;
-export const GetVariantOptionInputSchema = BaseEntityInputSchema;
+export const UpdateVariantInputSchema = IdRequiredInputSchema;
+export const DeleteVariantInputSchema = IdRequiredInputSchema;
+export const CreateVariantOptionInputSchema = IdRequiredInputSchema;
+export const CreateVariantOptionsInputSchema = IdRequiredInputSchema;
+export const GetVariantOptionInputSchema = IdRequiredInputSchema;
 export const ListVariantOptionsInputSchema = BaseEntityInputSchema;
-export const UpdateVariantOptionInputSchema = BaseEntityInputSchema;
-export const DeleteVariantOptionInputSchema = BaseEntityInputSchema;
+export const UpdateVariantOptionInputSchema = IdRequiredInputSchema;
+export const DeleteVariantOptionInputSchema = IdRequiredInputSchema;
 export const CreateVariantParameterInputSchema = BaseEntityInputSchema;
 export const CreateVariantParameterForVariantInputSchema =
-	BaseEntityInputSchema;
-export const GetVariantParameterInputSchema = BaseEntityInputSchema;
+	IdRequiredInputSchema;
+export const GetVariantParameterInputSchema = IdRequiredInputSchema;
 export const ListVariantParametersInputSchema = BaseEntityInputSchema;
-export const UpdateVariantParameterInputSchema = BaseEntityInputSchema;
-export const DeleteVariantParameterInputSchema = BaseEntityInputSchema;
+export const UpdateVariantParameterInputSchema = IdRequiredInputSchema;
+export const DeleteVariantParameterInputSchema = IdRequiredInputSchema;
 
 export const CreateCustomerInputSchema = BaseEntityInputSchema;
-export const GetCustomerInputSchema = BaseEntityInputSchema;
+export const GetCustomerInputSchema = IdRequiredInputSchema;
 export const ListCustomersInputSchema = BaseEntityInputSchema;
-export const UpdateCustomerInputSchema = BaseEntityInputSchema;
-export const DeleteCustomerInputSchema = BaseEntityInputSchema;
+export const UpdateCustomerInputSchema = IdRequiredInputSchema;
+export const DeleteCustomerInputSchema = IdRequiredInputSchema;
 export const CreateCustomerGroupInputSchema = BaseEntityInputSchema;
-export const GetCustomerGroupInputSchema = BaseEntityInputSchema;
+export const GetCustomerGroupInputSchema = IdRequiredInputSchema;
 export const ListCustomerGroupsInputSchema = BaseEntityInputSchema;
-export const GetCustomerGroupsCustomersInputSchema = BaseEntityInputSchema;
-export const UpdateCustomerGroupInputSchema = BaseEntityInputSchema;
-export const DeleteCustomerGroupInputSchema = BaseEntityInputSchema;
-export const CreateCustomerBillingAddressInputSchema = BaseEntityInputSchema;
-export const GetCustomerBillingAddressInputSchema = BaseEntityInputSchema;
+export const GetCustomerGroupsCustomersInputSchema = IdRequiredInputSchema;
+export const UpdateCustomerGroupInputSchema = IdRequiredInputSchema;
+export const DeleteCustomerGroupInputSchema = IdRequiredInputSchema;
+export const CreateCustomerBillingAddressInputSchema =
+	CustomerIdRequiredInputSchema;
+export const GetCustomerBillingAddressInputSchema = IdRequiredInputSchema;
 export const ListCustomerBillingAddressesInputSchema = BaseEntityInputSchema;
-export const UpdateCustomerBillingAddressInputSchema = BaseEntityInputSchema;
-export const DeleteCustomerBillingAddressInputSchema = BaseEntityInputSchema;
-export const CreateCustomerShippingAddressInputSchema = BaseEntityInputSchema;
-export const GetCustomerShippingAddressInputSchema = BaseEntityInputSchema;
+export const UpdateCustomerBillingAddressInputSchema = IdRequiredInputSchema;
+export const DeleteCustomerBillingAddressInputSchema = IdRequiredInputSchema;
+export const CreateCustomerShippingAddressInputSchema =
+	CustomerIdRequiredInputSchema;
+export const GetCustomerShippingAddressInputSchema = IdRequiredInputSchema;
 export const ListCustomerShippingAddressesInputSchema = BaseEntityInputSchema;
-export const UpdateCustomerShippingAddressInputSchema = BaseEntityInputSchema;
-export const DeleteCustomerShippingAddressInputSchema = BaseEntityInputSchema;
+export const UpdateCustomerShippingAddressInputSchema = IdRequiredInputSchema;
+export const DeleteCustomerShippingAddressInputSchema = IdRequiredInputSchema;
 export const CreateCustomerTagInputSchema = BaseEntityInputSchema;
-export const GetCustomerTagInputSchema = BaseEntityInputSchema;
+export const GetCustomerTagInputSchema = IdRequiredInputSchema;
 export const ListCustomerTagsInputSchema = BaseEntityInputSchema;
-export const UpdateCustomerTagInputSchema = BaseEntityInputSchema;
-export const DeleteCustomerTagInputSchema = BaseEntityInputSchema;
+export const UpdateCustomerTagInputSchema = IdRequiredInputSchema;
+export const DeleteCustomerTagInputSchema = IdRequiredInputSchema;
 
 export const CreateOrderInputSchema = BaseEntityInputSchema;
 export const ListOrdersInputSchema = BaseEntityInputSchema;
-export const UpdateOrderInputSchema = BaseEntityInputSchema;
-export const DeleteOrderInputSchema = BaseEntityInputSchema;
+export const UpdateOrderInputSchema = IdRequiredInputSchema;
+export const DeleteOrderInputSchema = IdRequiredInputSchema;
 export const ListOrderBillingAddressesInputSchema = BaseEntityInputSchema;
 export const ListOrderShippingAddressesInputSchema = BaseEntityInputSchema;
 export const ListOrderProductsInputSchema = BaseEntityInputSchema;
@@ -122,71 +140,71 @@ export const ListOrderStatusInputSchema = BaseEntityInputSchema;
 
 export const GetCartInputSchema = BaseEntityInputSchema;
 export const AddToCartInputSchema = BaseEntityInputSchema;
-export const UpdateCartItemInputSchema = BaseEntityInputSchema;
-export const RemoveFromCartInputSchema = BaseEntityInputSchema;
+export const UpdateCartItemInputSchema = IdRequiredInputSchema;
+export const RemoveFromCartInputSchema = IdRequiredInputSchema;
 export const ClearCartInputSchema = BaseEntityInputSchema;
 
 export const CreateDiscountInputSchema = BaseEntityInputSchema;
-export const DeleteDiscountInputSchema = BaseEntityInputSchema;
+export const DeleteDiscountInputSchema = IdRequiredInputSchema;
 export const CreateDiscountCodeInputSchema = BaseEntityInputSchema;
 export const ListDiscountCodesInputSchema = BaseEntityInputSchema;
-export const UpdateDiscountCodeInputSchema = BaseEntityInputSchema;
-export const DeleteDiscountCodeInputSchema = BaseEntityInputSchema;
+export const UpdateDiscountCodeInputSchema = IdRequiredInputSchema;
+export const DeleteDiscountCodeInputSchema = IdRequiredInputSchema;
 export const GenerateDiscountCodesInputSchema = BaseEntityInputSchema;
-export const CreateProductToDiscountInputSchema = BaseEntityInputSchema;
-export const DeleteProductToDiscountInputSchema = BaseEntityInputSchema;
+export const CreateProductToDiscountInputSchema = IdRequiredInputSchema;
+export const DeleteProductToDiscountInputSchema = IdAndDiscountIdInputSchema;
 
 export const CreateSubscriberInputSchema = BaseEntityInputSchema;
-export const GetSubscriberInputSchema = BaseEntityInputSchema;
+export const GetSubscriberInputSchema = IdRequiredInputSchema;
 export const ListSubscribersInputSchema = BaseEntityInputSchema;
-export const UpdateSubscriberInputSchema = BaseEntityInputSchema;
-export const DeleteSubscriberInputSchema = BaseEntityInputSchema;
+export const UpdateSubscriberInputSchema = IdRequiredInputSchema;
+export const DeleteSubscriberInputSchema = IdRequiredInputSchema;
 export const CreateSubscriberChannelInputSchema = BaseEntityInputSchema;
-export const GetSubscribersChannelInputSchema = BaseEntityInputSchema;
+export const GetSubscribersChannelInputSchema = IdRequiredInputSchema;
 export const ListSubscribersChannelsInputSchema = BaseEntityInputSchema;
-export const UpdateSubscribersChannelInputSchema = BaseEntityInputSchema;
-export const DeleteSubscribersChannelInputSchema = BaseEntityInputSchema;
+export const UpdateSubscribersChannelInputSchema = IdRequiredInputSchema;
+export const DeleteSubscribersChannelInputSchema = IdRequiredInputSchema;
 export const CreateSubscriberTagInputSchema = BaseEntityInputSchema;
-export const GetSubscriberTagInputSchema = BaseEntityInputSchema;
+export const GetSubscriberTagInputSchema = IdRequiredInputSchema;
 export const ListSubscribersTagsInputSchema = BaseEntityInputSchema;
-export const UpdateSubscriberTagInputSchema = BaseEntityInputSchema;
-export const DeleteSubscriberTagInputSchema = BaseEntityInputSchema;
+export const UpdateSubscriberTagInputSchema = IdRequiredInputSchema;
+export const DeleteSubscriberTagInputSchema = IdRequiredInputSchema;
 
 export const CreateBlogPostInputSchema = BaseEntityInputSchema;
-export const GetBlogPostInputSchema = BaseEntityInputSchema;
+export const GetBlogPostInputSchema = IdRequiredInputSchema;
 export const ListBlogPostsInputSchema = BaseEntityInputSchema;
-export const UpdateBlogPostInputSchema = BaseEntityInputSchema;
-export const DeleteBlogPostInputSchema = BaseEntityInputSchema;
+export const UpdateBlogPostInputSchema = IdRequiredInputSchema;
+export const DeleteBlogPostInputSchema = IdRequiredInputSchema;
 export const CreateBlogCategoryInputSchema = BaseEntityInputSchema;
-export const GetBlogCategoryInputSchema = BaseEntityInputSchema;
+export const GetBlogCategoryInputSchema = IdRequiredInputSchema;
 export const ListBlogCategoriesInputSchema = BaseEntityInputSchema;
-export const UpdateBlogCategoryInputSchema = BaseEntityInputSchema;
-export const DeleteBlogCategoryInputSchema = BaseEntityInputSchema;
+export const UpdateBlogCategoryInputSchema = IdRequiredInputSchema;
+export const DeleteBlogCategoryInputSchema = IdRequiredInputSchema;
 export const CreateBlogTagInputSchema = BaseEntityInputSchema;
-export const GetBlogTagInputSchema = BaseEntityInputSchema;
+export const GetBlogTagInputSchema = IdRequiredInputSchema;
 export const ListBlogTagsInputSchema = BaseEntityInputSchema;
-export const UpdateBlogTagInputSchema = BaseEntityInputSchema;
-export const DeleteBlogTagInputSchema = BaseEntityInputSchema;
-export const GetBlogAuthorInputSchema = BaseEntityInputSchema;
+export const UpdateBlogTagInputSchema = IdRequiredInputSchema;
+export const DeleteBlogTagInputSchema = IdRequiredInputSchema;
+export const GetBlogAuthorInputSchema = IdRequiredInputSchema;
 
 export const CreateVendorInputSchema = BaseEntityInputSchema;
-export const GetVendorInputSchema = BaseEntityInputSchema;
+export const GetVendorInputSchema = IdRequiredInputSchema;
 export const ListVendorsInputSchema = BaseEntityInputSchema;
-export const UpdateVendorInputSchema = BaseEntityInputSchema;
-export const DeleteVendorInputSchema = BaseEntityInputSchema;
+export const UpdateVendorInputSchema = IdRequiredInputSchema;
+export const DeleteVendorInputSchema = IdRequiredInputSchema;
 export const CreateRedirectInputSchema = BaseEntityInputSchema;
 export const ListRedirectsInputSchema = BaseEntityInputSchema;
-export const DeleteRedirectInputSchema = BaseEntityInputSchema;
+export const DeleteRedirectInputSchema = IdRequiredInputSchema;
 export const GetPaymentMethodsInputSchema = BaseEntityInputSchema;
 export const ListPaymentProvidersInputSchema = BaseEntityInputSchema;
 export const GetShippingMethodsInputSchema = BaseEntityInputSchema;
 export const ListShippingProvidersInputSchema = BaseEntityInputSchema;
 
 export const CreateWebhookInputSchema = BaseEntityInputSchema;
-export const GetWebhookInputSchema = BaseEntityInputSchema;
+export const GetWebhookInputSchema = IdRequiredInputSchema;
 export const ListWebhooksInputSchema = BaseEntityInputSchema;
-export const UpdateWebhookInputSchema = BaseEntityInputSchema;
-export const DeleteWebhookInputSchema = BaseEntityInputSchema;
+export const UpdateWebhookInputSchema = IdRequiredInputSchema;
+export const DeleteWebhookInputSchema = IdRequiredInputSchema;
 
 export type CloudcartEndpointInputs = {
 	createProduct: z.infer<typeof CreateProductInputSchema>;
