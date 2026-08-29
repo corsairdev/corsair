@@ -147,17 +147,20 @@ describe('DynaPictures Plugin Definition', () => {
 		expect(DYNAPICTURES_UNSUBSCRIBE_WEBHOOK.id).toBe(
 			'DYNAPICTURES_UNSUBSCRIBE_WEBHOOK',
 		);
-		expect(DYNAPICTURES_UNSUBSCRIBE_WEBHOOK.method).toBe('POST');
-		expect(DYNAPICTURES_UNSUBSCRIBE_WEBHOOK.path).toBe('/webhooks/unsubscribe');
+		expect(DYNAPICTURES_UNSUBSCRIBE_WEBHOOK.method).toBe('DELETE');
+		expect(DYNAPICTURES_UNSUBSCRIBE_WEBHOOK.path).toBe('/hooks');
 		expect(
 			DYNAPICTURES_UNSUBSCRIBE_WEBHOOK.parameters.safeParse({
 				targetUrl: 'https://example.com/webhook',
-				event: 'image.generated',
+				eventType: 'image.generated',
+				templateId: 'tpl_123',
 			}).success,
 		).toBe(true);
 		expect(
 			DYNAPICTURES_UNSUBSCRIBE_WEBHOOK.parameters.safeParse({
 				targetUrl: 'invalid-url',
+				eventType: 'image.generated',
+				templateId: 'tpl_123',
 			}).success,
 		).toBe(false);
 
@@ -219,8 +222,8 @@ describe('DynaPictures Client', () => {
 			{ method: string; url: string },
 		];
 
-		expect(config.BASE).toBe('https://dynapictures.com/api/v1');
-		expect(DYNAPICTURES_API_BASE).toBe('https://dynapictures.com/api/v1');
+		expect(config.BASE).toBe('https://api.dynapictures.com');
+		expect(DYNAPICTURES_API_BASE).toBe('https://api.dynapictures.com');
 		expect(config.TOKEN).toBe('my-secret-token');
 		expect(config.HEADERS['Authorization']).toBe('Bearer my-secret-token');
 		expect(options.method).toBe('GET');
@@ -335,26 +338,32 @@ describe('DynaPictures Endpoints', () => {
 		);
 	});
 
-	it('webhooks.unsubscribe: sends POST /webhooks/unsubscribe', async () => {
+	it('webhooks.unsubscribe: sends DELETE /hooks', async () => {
 		requestMock.mockResolvedValueOnce({ success: true });
 
 		const result = await Webhooks.unsubscribe(ctx, {
 			targetUrl: 'https://example.com/hook',
-			event: 'image.ready',
+			eventType: 'image.ready',
+			templateId: 'tpl_123',
 		});
 
 		expect(result).toEqual({ success: true });
 		const [, options] = requestMock.mock.calls[0] as any;
-		expect(options.method).toBe('POST');
-		expect(options.url).toBe('/webhooks/unsubscribe');
+		expect(options.method).toBe('DELETE');
+		expect(options.url).toBe('/hooks');
 		expect(options.body).toEqual({
 			targetUrl: 'https://example.com/hook',
-			event: 'image.ready',
+			eventType: 'image.ready',
+			templateId: 'tpl_123',
 		});
 		expect(mockLog).toHaveBeenCalledWith(
 			ctx,
 			'dynapictures.webhooks.unsubscribe',
-			{ targetUrl: 'https://example.com/hook', event: 'image.ready' },
+			{
+				targetUrl: 'https://example.com/hook',
+				eventType: 'image.ready',
+				templateId: 'tpl_123',
+			},
 			'completed',
 		);
 	});

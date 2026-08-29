@@ -24,7 +24,7 @@ export class DynapicturesAPIError extends Error {
 	}
 }
 
-export const DYNAPICTURES_API_BASE = 'https://dynapictures.com/api/v1';
+export const DYNAPICTURES_API_BASE = 'https://api.dynapictures.com';
 
 export async function makeDynapicturesRequest<T>(
 	endpoint: string,
@@ -53,7 +53,7 @@ export async function makeDynapicturesRequest<T>(
 		method,
 		url: endpoint,
 		body:
-			method === 'POST' || method === 'PUT' || method === 'PATCH'
+			method === 'POST' || method === 'PUT' || method === 'PATCH' || method === 'DELETE'
 				? body
 				: undefined,
 		mediaType: 'application/json; charset=utf-8',

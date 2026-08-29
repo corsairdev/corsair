@@ -8,20 +8,25 @@ export const unsubscribe: DynapicturesEndpoints['unsubscribeWebhook'] = async (
 	input,
 ) => {
 	const response = await makeDynapicturesRequest<UnsubscribeWebhookResponse>(
-		'/webhooks/unsubscribe',
+		'/hooks',
 		ctx.key,
 		{
-			method: 'POST',
+			method: 'DELETE',
 			body: {
 				targetUrl: input.targetUrl,
-				...(input.event ? { event: input.event } : {}),
+				eventType: input.eventType,
+				templateId: input.templateId,
 			},
 		},
 	);
 	await logEventFromContext(
 		ctx,
 		'dynapictures.webhooks.unsubscribe',
-		{ targetUrl: input.targetUrl, event: input.event },
+		{
+			targetUrl: input.targetUrl,
+			eventType: input.eventType,
+			templateId: input.templateId,
+		},
 		'completed',
 	);
 	return response;

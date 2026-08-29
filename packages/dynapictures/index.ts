@@ -82,8 +82,8 @@ export const DYNAPICTURES_UNSUBSCRIBE_WEBHOOK = {
 	id: 'DYNAPICTURES_UNSUBSCRIBE_WEBHOOK',
 	name: 'Unsubscribe Webhook',
 	description: 'Unsubscribe a webhook URL from DynaPictures events',
-	method: 'POST',
-	path: '/webhooks/unsubscribe',
+	method: 'DELETE',
+	path: '/hooks',
 	parameters: UnsubscribeWebhookInputSchema,
 	schema: UnsubscribeWebhookInputSchema,
 } as const;

@@ -91,10 +91,8 @@ export type ListTemplatesResponse = z.infer<typeof ListTemplatesResponseSchema>;
 
 export const UnsubscribeWebhookInputSchema = z.object({
 	targetUrl: z.string().url().describe('The webhook target URL to unsubscribe'),
-	event: z
-		.string()
-		.optional()
-		.describe('Optional event type name to unsubscribe from'),
+	eventType: z.string().describe('Event type name to unsubscribe from'),
+	templateId: z.string().describe('Template ID associated with the webhook'),
 });
 export type UnsubscribeWebhookInput = z.infer<
 	typeof UnsubscribeWebhookInputSchema
