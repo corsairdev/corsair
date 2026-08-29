@@ -116,6 +116,12 @@ describe('client', () => {
 		expect(resolveInstanceUrl('https://sg.example.com/.api/graphql')).toBe(
 			'https://sg.example.com',
 		);
+		expect(
+			resolveInstanceUrl('https://sg.example.com/.api/graphql?trace=1'),
+		).toBe('https://sg.example.com');
+		expect(
+			resolveInstanceUrl('https://sg.example.com/.api/graphql#console'),
+		).toBe('https://sg.example.com');
 	});
 
 	it('rejects non-HTTPS instance URLs before any request', async () => {
