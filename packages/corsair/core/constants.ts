@@ -191,6 +191,7 @@ export const BaseProviders = [
 	'stripe',
 	'studiobyai21labs',
 	'supabase',
+	'synthflowai',
 	'tally',
 	'tavily',
 	'tavilymcp',
@@ -407,6 +408,7 @@ export const ProviderDisplayNames = {
 	stripe: 'Stripe',
 	studiobyai21labs: 'StudioByAI21Labs',
 	supabase: 'Supabase',
+	synthflowai: 'Synthflow AI',
 	tally: 'Tally',
 	tavily: 'Tavily',
 	tavilymcp: 'Tavily MCP',
@@ -630,6 +632,7 @@ export type AllProviders =
 	| 'stripe'
 	| 'studiobyai21labs'
 	| 'supabase'
+	| 'synthflowai'
 	| 'tally'
 	| 'tavily'
 	| 'tavilymcp'
