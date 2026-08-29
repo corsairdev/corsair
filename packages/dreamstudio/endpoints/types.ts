@@ -1,49 +1,120 @@
 import { z } from 'zod';
+import {
+	DreamstudioAccount,
+	DreamstudioBalance,
+	DreamstudioEngine,
+	DreamstudioImage,
+} from '../schema';
 
-const UserBalanceInputSchema = z.object({}).loose();
+export const UserBalanceInputSchema = z.object({});
+export type UserBalanceInput = z.infer<typeof UserBalanceInputSchema>;
 
-const GenerateImageFromImageInputSchema = z
-	.object({
-		engine_id: z.string().min(1),
-		init_image: z.instanceof(Blob),
-		text_prompts: z
-			.array(
-				z
-					.object({
-						text: z.string().min(1),
-						weight: z.number().optional(),
-					})
-					.loose(),
-			)
-			.min(1),
-		init_image_mode: z
-			.enum(['IMAGE_STRENGTH', 'STEP_SCHEDULE'])
-			.optional(),
-		image_strength: z.number().min(0).max(1).optional(),
-		step_schedule_start: z.number().min(0).max(1).optional(),
-		step_schedule_end: z.number().min(0).max(1).optional(),
-		cfg_scale: z.number().min(0).max(35).optional(),
-		clip_guidance_preset: z.string().optional(),
-		sampler: z.string().optional(),
-		samples: z.number().int().min(1).max(10).optional(),
-		steps: z.number().int().min(10).max(150).optional(),
-		width: z.number().int().positive().optional(),
-		height: z.number().int().positive().optional(),
-		seed: z.number().int().min(0).optional(),
-		style_preset: z.string().optional(),
-		extras: z.record(z.string(), z.unknown()).optional(),
-	})
-	.loose();
+export const UserBalanceOutputSchema = DreamstudioBalance;
+export type UserBalanceOutput = z.infer<typeof UserBalanceOutputSchema>;
 
-const ListEnginesInputSchema = z.object({}).loose();
+export const UserAccountInputSchema = z.object({});
+export type UserAccountInput = z.infer<typeof UserAccountInputSchema>;
 
-const UserAccountInputSchema = z.object({}).loose();
+export const UserAccountOutputSchema = DreamstudioAccount;
+export type UserAccountOutput = z.infer<typeof UserAccountOutputSchema>;
+
+export const ListEnginesInputSchema = z.object({});
+export type ListEnginesInput = z.infer<typeof ListEnginesInputSchema>;
+
+export const ListEnginesOutputSchema = z.object({
+	engines: z.array(DreamstudioEngine),
+});
+export type ListEnginesOutput = z.infer<typeof ListEnginesOutputSchema>;
+
+export const TextPromptSchema = z.object({
+	text: z.string().min(1).max(2000),
+	weight: z.number().optional(),
+});
+
+export const GenerateImageFromImageInputSchema = z.object({
+	engine_id: z.string().min(1).describe('Engine id from GET /v1/engines/list'),
+	init_image: z.string().min(1).describe('Init image as base64 or a data URL'),
+	text_prompts: z.array(TextPromptSchema).min(1),
+	init_image_mode: z
+		.enum(['IMAGE_STRENGTH', 'STEP_SCHEDULE'])
+		.default('IMAGE_STRENGTH'),
+	image_strength: z.number().min(0).max(1).optional(),
+	step_schedule_start: z.number().min(0).max(1).optional(),
+	step_schedule_end: z.number().min(0).max(1).optional(),
+	cfg_scale: z.number().min(0).max(35).optional(),
+	clip_guidance_preset: z
+		.enum([
+			'FAST_BLUE',
+			'FAST_GREEN',
+			'NONE',
+			'SIMPLE',
+			'SLOW',
+			'SLOWER',
+			'SLOWEST',
+		])
+		.optional(),
+	sampler: z
+		.enum([
+			'DDIM',
+			'DDPM',
+			'K_DPMPP_2M',
+			'K_DPMPP_2S_ANCESTRAL',
+			'K_DPM_2',
+			'K_DPM_2_ANCESTRAL',
+			'K_EULER',
+			'K_EULER_ANCESTRAL',
+			'K_HEUN',
+			'K_LMS',
+		])
+		.optional(),
+	samples: z.number().int().min(1).max(10).optional(),
+	steps: z.number().int().min(10).max(50).optional(),
+	seed: z.number().int().min(0).max(4294967295).optional(),
+	style_preset: z
+		.enum([
+			'3d-model',
+			'analog-film',
+			'anime',
+			'cinematic',
+			'comic-book',
+			'digital-art',
+			'enhance',
+			'fantasy-art',
+			'isometric',
+			'line-art',
+			'low-poly',
+			'modeling-compound',
+			'neon-punk',
+			'origami',
+			'photographic',
+			'pixel-art',
+			'tile-texture',
+		])
+		.optional(),
+});
+export type GenerateImageFromImageInput = z.infer<
+	typeof GenerateImageFromImageInputSchema
+>;
+
+export const GenerateImageFromImageOutputSchema = z.object({
+	artifacts: z.array(DreamstudioImage),
+});
+export type GenerateImageFromImageOutput = z.infer<
+	typeof GenerateImageFromImageOutputSchema
+>;
 
 export const DreamstudioEndpointInputSchemas = {
 	userBalance: UserBalanceInputSchema,
-	generateImageFromImage: GenerateImageFromImageInputSchema,
-	listEngines: ListEnginesInputSchema,
 	userAccount: UserAccountInputSchema,
+	listEngines: ListEnginesInputSchema,
+	generateImageFromImage: GenerateImageFromImageInputSchema,
+} as const;
+
+export const DreamstudioEndpointOutputSchemas = {
+	userBalance: UserBalanceOutputSchema,
+	userAccount: UserAccountOutputSchema,
+	listEngines: ListEnginesOutputSchema,
+	generateImageFromImage: GenerateImageFromImageOutputSchema,
 } as const;
 
 export type DreamstudioEndpointInputs = {
@@ -51,62 +122,6 @@ export type DreamstudioEndpointInputs = {
 		(typeof DreamstudioEndpointInputSchemas)[K]
 	>;
 };
-
-const UserBalanceResponseSchema = z
-	.object({
-		credits: z.number(),
-	})
-	.loose();
-
-const GeneratedArtifactSchema = z
-	.object({
-		base64: z.string().optional(),
-		finishReason: z.string().optional(),
-		seed: z.number().optional(),
-	})
-	.loose();
-
-const GenerateImageFromImageResponseSchema = z
-	.object({
-		artifacts: z.array(GeneratedArtifactSchema).optional(),
-	})
-	.loose();
-
-const EngineSchema = z
-	.object({
-		id: z.string(),
-		name: z.string(),
-		description: z.string().optional(),
-		type: z.string().optional(),
-	})
-	.loose();
-
-const ListEnginesResponseSchema = z.array(EngineSchema);
-
-const OrganizationSchema = z
-	.object({
-		id: z.string(),
-		name: z.string(),
-		role: z.string().optional(),
-		is_default: z.boolean().optional(),
-	})
-	.loose();
-
-const UserAccountResponseSchema = z
-	.object({
-		email: z.string().optional(),
-		id: z.string().optional(),
-		organizations: z.array(OrganizationSchema).optional(),
-		profile_picture: z.string().optional(),
-	})
-	.loose();
-
-export const DreamstudioEndpointOutputSchemas = {
-	userBalance: UserBalanceResponseSchema,
-	generateImageFromImage: GenerateImageFromImageResponseSchema,
-	listEngines: ListEnginesResponseSchema,
-	userAccount: UserAccountResponseSchema,
-} as const;
 
 export type DreamstudioEndpointOutputs = {
 	[K in keyof typeof DreamstudioEndpointOutputSchemas]: z.infer<
