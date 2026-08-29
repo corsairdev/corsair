@@ -1,6 +1,7 @@
 import { logEventFromContext } from 'corsair/core';
 import type { BlocknativeEndpoints } from '..';
 import {
+	BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
 	BLOCKNATIVE_WS_URL,
 	ethNetworkName,
 	initializeMessage,
@@ -12,6 +13,7 @@ import {
 	SubscribeTransactionHashOutputSchema,
 	UnsubscribeMultichainOutputSchema,
 	UnsubscribeTransactionHashOutputSchema,
+	WS_AUTH,
 } from './types';
 
 function envelope(
@@ -21,6 +23,7 @@ function envelope(
 ): Record<string, unknown> {
 	return {
 		timeStamp: new Date().toISOString(),
+		dappId: BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
 		version: '1.0.0',
 		blockchain: { system, network },
 		...body,
@@ -39,6 +42,7 @@ export const configureFilters: BlocknativeEndpoints['configureFilters'] =
 
 		const response = ConfigureFiltersOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
+			auth: WS_AUTH,
 			initialize: initializeMessage(system, network),
 			config: envelope(system, network, {
 				categoryCode: 'configs',
@@ -76,6 +80,7 @@ export const subscribeTransactionHash: BlocknativeEndpoints['subscribeTransactio
 
 		const response = SubscribeTransactionHashOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
+			auth: WS_AUTH,
 			initialize: initializeMessage(system, network),
 			subscribe: envelope(system, network, {
 				categoryCode: 'activeTransaction',
@@ -103,6 +108,7 @@ export const unsubscribeTransactionHash: BlocknativeEndpoints['unsubscribeTransa
 
 		const response = UnsubscribeTransactionHashOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
+			auth: WS_AUTH,
 			initialize: initializeMessage(system, network),
 			unsubscribe: envelope(system, network, {
 				categoryCode: 'activeTransaction',
@@ -148,6 +154,7 @@ export const subscribeMultichain: BlocknativeEndpoints['subscribeMultichain'] =
 
 		const response = SubscribeMultichainOutputSchema.parse({
 			websocketUrl: BLOCKNATIVE_WS_URL,
+			auth: WS_AUTH,
 			initialize: initializeMessage('ethereum', network),
 			subscribe,
 		});

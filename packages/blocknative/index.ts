@@ -251,7 +251,10 @@ export function blocknative<const T extends BlocknativePluginOptions>(
 }
 
 export {
+	applyDappId,
 	BLOCKNATIVE_API_BASE,
+	BLOCKNATIVE_DAPP_ID_FIELD,
+	BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
 	BLOCKNATIVE_WS_URL,
 	BlocknativeAPIError,
 	BlocknativeRateLimitError,

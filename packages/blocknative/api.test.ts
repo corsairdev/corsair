@@ -1,7 +1,9 @@
 import { AuthMissingError, logEventFromContext } from 'corsair/core';
 import { z } from 'zod';
 import {
+	applyDappId,
 	BLOCKNATIVE_API_BASE,
+	BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
 	BLOCKNATIVE_WS_URL,
 	BlocknativeAPIError,
 	BlocknativeRateLimitError,
@@ -199,7 +201,11 @@ describe('Blocknative plugin', () => {
 		);
 		expect(result.websocketUrl).toBe(BLOCKNATIVE_WS_URL);
 		expect(JSON.stringify(result)).not.toContain('test-api-key');
-		expect(result.initialize).not.toHaveProperty('dappId');
+		expect(result.initialize.dappId).toBe(BLOCKNATIVE_DAPP_ID_PLACEHOLDER);
+		expect(result.auth.dappIdField).toBe('dappId');
+		expect(applyDappId(result.initialize, 'injected-key').dappId).toBe(
+			'injected-key',
+		);
 		expect(result.initialize.eventCode).toBe('checkDappId');
 		expect(result.config.categoryCode).toBe('configs');
 		expect(result.config.eventCode).toBe('put');

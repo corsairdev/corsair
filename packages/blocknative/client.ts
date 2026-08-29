@@ -27,6 +27,10 @@ export const BLOCKNATIVE_API_BASE = 'https://api.blocknative.com';
 /** Official Notify websocket: https://github.com/blocknative/sdk */
 export const BLOCKNATIVE_WS_URL = 'wss://api.blocknative.com/v0';
 
+/** Official message field for the API key. Never filled with the resolved secret. */
+export const BLOCKNATIVE_DAPP_ID_FIELD = 'dappId' as const;
+export const BLOCKNATIVE_DAPP_ID_PLACEHOLDER = '<BLOCKNATIVE_API_KEY>' as const;
+
 /**
  * Official network names from bnc-sdk `src/defaults.ts`.
  * https://github.com/blocknative/sdk/blob/master/src/defaults.ts
@@ -84,13 +88,24 @@ export function parseHexChainId(chainId: string): number {
 	return parsed;
 }
 
-/** Official initialize payload minus dappId — caller injects their API key. */
+export function applyDappId<T extends Record<string, unknown>>(
+	message: T,
+	apiKey: string,
+): T {
+	if (!apiKey) {
+		throw new BlocknativeAPIError('Blocknative API key is required for dappId');
+	}
+	return { ...message, [BLOCKNATIVE_DAPP_ID_FIELD]: apiKey };
+}
+
+/** Official initialize payload. `dappId` is a placeholder — use applyDappId before send. */
 export function initializeMessage(
 	system = 'ethereum',
 	network = 'main',
 ): Record<string, unknown> {
 	return {
 		timeStamp: new Date().toISOString(),
+		dappId: BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
 		version: '1.0.0',
 		blockchain: { system, network },
 		categoryCode: 'initialize',

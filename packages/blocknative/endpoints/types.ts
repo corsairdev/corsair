@@ -1,5 +1,9 @@
 import { z } from 'zod';
-import { BLOCKNATIVE_ETH_NETWORKS } from '../client';
+import {
+	BLOCKNATIVE_DAPP_ID_FIELD,
+	BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
+	BLOCKNATIVE_ETH_NETWORKS,
+} from '../client';
 import {
 	BlocknativeBaseFeeEstimates,
 	BlocknativeBlockPrices,
@@ -26,6 +30,7 @@ const HexChainId = z
 const WsProtocolMessageSchema = z
 	.object({
 		timeStamp: z.string(),
+		dappId: z.literal(BLOCKNATIVE_DAPP_ID_PLACEHOLDER),
 		version: z.string(),
 		blockchain: z.object({
 			system: z.string(),
@@ -35,6 +40,23 @@ const WsProtocolMessageSchema = z
 		eventCode: z.string(),
 	})
 	.loose();
+
+const WsAuthSchema = z.object({
+	dappIdField: z.literal(BLOCKNATIVE_DAPP_ID_FIELD),
+	dappIdPlaceholder: z.literal(BLOCKNATIVE_DAPP_ID_PLACEHOLDER),
+	inject: z.literal(
+		'Replace dappId with your Blocknative API key, or call applyDappId(message, apiKey), before sending on the WebSocket',
+	),
+});
+
+const WS_AUTH = {
+	dappIdField: BLOCKNATIVE_DAPP_ID_FIELD,
+	dappIdPlaceholder: BLOCKNATIVE_DAPP_ID_PLACEHOLDER,
+	inject:
+		'Replace dappId with your Blocknative API key, or call applyDappId(message, apiKey), before sending on the WebSocket',
+} as const;
+
+export { WS_AUTH };
 
 export const GetGasPricesInputSchema = z.object({
 	chainid: z.number().int().positive().optional(),
@@ -95,6 +117,7 @@ export const ConfigureFiltersInputSchema = z.object({
 export type ConfigureFiltersInput = z.infer<typeof ConfigureFiltersInputSchema>;
 export const ConfigureFiltersOutputSchema = z.object({
 	websocketUrl: z.string(),
+	auth: WsAuthSchema,
 	initialize: WsProtocolMessageSchema,
 	config: WsProtocolMessageSchema,
 });
@@ -112,6 +135,7 @@ export type SubscribeTransactionHashInput = z.infer<
 >;
 export const SubscribeTransactionHashOutputSchema = z.object({
 	websocketUrl: z.string(),
+	auth: WsAuthSchema,
 	initialize: WsProtocolMessageSchema,
 	subscribe: WsProtocolMessageSchema,
 });
@@ -129,6 +153,7 @@ export type UnsubscribeTransactionHashInput = z.infer<
 >;
 export const UnsubscribeTransactionHashOutputSchema = z.object({
 	websocketUrl: z.string(),
+	auth: WsAuthSchema,
 	initialize: WsProtocolMessageSchema,
 	unsubscribe: WsProtocolMessageSchema,
 });
@@ -148,6 +173,7 @@ export type SubscribeMultichainInput = z.infer<
 >;
 export const SubscribeMultichainOutputSchema = z.object({
 	websocketUrl: z.string(),
+	auth: WsAuthSchema,
 	initialize: WsProtocolMessageSchema,
 	subscribe: WsProtocolMessageSchema,
 });
