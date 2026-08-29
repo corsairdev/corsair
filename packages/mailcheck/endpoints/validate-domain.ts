@@ -1,24 +1,37 @@
 import { logEventFromContext } from 'corsair/core';
 import type { MailcheckEndpoints } from '..';
-import { checkSingleEmail } from '../client';
-import type { MailcheckEndpointOutputs } from './types';
+import { makeMailcheckRequest } from '../client';
+import {
+	MailcheckEndpointInputSchemas,
+	MailcheckEndpointOutputSchemas,
+	VerificationResultSchema,
+} from './types';
 
 export const validateDomain: MailcheckEndpoints['validateDomain'] = async (
 	ctx,
 	input,
 ) => {
-	// Mailcheck has no dedicated domain endpoint; checking admin@{domain}
-	// surfaces the domain-level signals (MX, disposability, catch-all).
-	const checkEmail = `admin@${input.domain}`;
-	const response = await checkSingleEmail<
-		MailcheckEndpointOutputs['validateDomain']
-	>(checkEmail, ctx.key);
-
+	const parsed = MailcheckEndpointInputSchemas.validateDomain.parse(input);
+	const response = await makeMailcheckRequest<unknown>(
+		'/v1/singleEmail:check',
+		ctx.key,
+		{
+			method: 'POST',
+			body: { email: `admin@${parsed.domain}` },
+		},
+	);
+	const checked = VerificationResultSchema.parse(response ?? {});
+	const output = MailcheckEndpointOutputSchemas.validateDomain.parse({
+		domain: parsed.domain,
+		mxExists: checked.mxExists,
+		isNotDisposable: checked.isNotDisposable,
+		isNotSmtpCatchAll: checked.isNotSmtpCatchAll,
+	});
 	await logEventFromContext(
 		ctx,
-		'mailcheck.validate_domain',
-		{ ...input },
+		'mailcheck.domain.validate',
+		{ domain: parsed.domain },
 		'completed',
 	);
-	return response;
+	return output;
 };

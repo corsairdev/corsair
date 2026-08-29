@@ -1,21 +1,27 @@
 import { logEventFromContext } from 'corsair/core';
 import type { MailcheckEndpoints } from '..';
-import { checkSingleEmail } from '../client';
-import type { MailcheckEndpointOutputs } from './types';
+import { makeMailcheckRequest } from '../client';
+import {
+	MailcheckEndpointInputSchemas,
+	MailcheckEndpointOutputSchemas,
+} from './types';
 
 export const verifyEmail: MailcheckEndpoints['verifyEmail'] = async (
 	ctx,
 	input,
 ) => {
-	const response = await checkSingleEmail<
-		MailcheckEndpointOutputs['verifyEmail']
-	>(input.email, ctx.key);
-
-	await logEventFromContext(
-		ctx,
-		'mailcheck.verify_email',
-		{ ...input },
-		'completed',
+	const parsed = MailcheckEndpointInputSchemas.verifyEmail.parse(input);
+	const response = await makeMailcheckRequest<unknown>(
+		'/v1/singleEmail:check',
+		ctx.key,
+		{
+			method: 'POST',
+			body: { email: parsed.email },
+		},
 	);
-	return response;
+	const output = MailcheckEndpointOutputSchemas.verifyEmail.parse(
+		response ?? {},
+	);
+	await logEventFromContext(ctx, 'mailcheck.email.verify', {}, 'completed');
+	return output;
 };
