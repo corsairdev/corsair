@@ -111,6 +111,9 @@ const PointCoordinatesSchema = z.object({
 	lng: z.number().min(-180).max(180).describe('Longitude of the point'),
 });
 
+/** ISO-8601 timestamp with an explicit UTC offset, as Stormglass expects. */
+const StormglassTimestamp = z.iso.datetime({ offset: true });
+
 /** Per-source value map, e.g. `{ sg: 1.23, noaa: 1.19 }`. */
 const StormglassSourceValuesSchema = z.record(z.string(), z.number());
 
@@ -147,14 +150,12 @@ export const WeatherPointInputSchema = PointCoordinatesSchema.extend({
 		.array(z.enum(STORMGLASS_WEATHER_PARAMS))
 		.min(1)
 		.describe('Weather parameters to return, e.g. ["waveHeight", "windSpeed"]'),
-	start: z
-		.string()
-		.optional()
-		.describe('ISO-8601 start of the requested time range'),
-	end: z
-		.string()
-		.optional()
-		.describe('ISO-8601 end of the requested time range'),
+	start: StormglassTimestamp.optional().describe(
+		'ISO-8601 start of the requested time range',
+	),
+	end: StormglassTimestamp.optional().describe(
+		'ISO-8601 end of the requested time range',
+	),
 	source: z
 		.array(z.enum(STORMGLASS_SOURCES))
 		.optional()
@@ -181,14 +182,12 @@ export const SolarPointInputSchema = PointCoordinatesSchema.extend({
 		.array(z.enum(STORMGLASS_SOLAR_PARAMS))
 		.min(1)
 		.describe('Solar parameters to return, e.g. ["uvIndex"]'),
-	start: z
-		.string()
-		.optional()
-		.describe('ISO-8601 start of the requested time range'),
-	end: z
-		.string()
-		.optional()
-		.describe('ISO-8601 end of the requested time range'),
+	start: StormglassTimestamp.optional().describe(
+		'ISO-8601 start of the requested time range',
+	),
+	end: StormglassTimestamp.optional().describe(
+		'ISO-8601 end of the requested time range',
+	),
 	source: z
 		.array(z.enum(STORMGLASS_SOURCES))
 		.optional()
@@ -207,14 +206,12 @@ export type SolarPointResponse = z.infer<typeof SolarPointResponseSchema>;
 // ─────────────────────────────────────────────────────────────────────────────
 
 export const TideExtremesPointInputSchema = PointCoordinatesSchema.extend({
-	start: z
-		.string()
-		.optional()
-		.describe('ISO-8601 start of the requested time range'),
-	end: z
-		.string()
-		.optional()
-		.describe('ISO-8601 end of the requested time range'),
+	start: StormglassTimestamp.optional().describe(
+		'ISO-8601 start of the requested time range',
+	),
+	end: StormglassTimestamp.optional().describe(
+		'ISO-8601 end of the requested time range',
+	),
 });
 export type TideExtremesPointInput = z.infer<
 	typeof TideExtremesPointInputSchema

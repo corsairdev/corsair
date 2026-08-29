@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeStormglassRequest } from '../client';
 import type { StormglassEndpoints } from '../index';
 import type { StormglassEndpointOutputs } from './types';
+import { StormglassEndpointInputSchemas } from './types';
 
 /**
  * Fetch marine and land weather data for a point.
@@ -11,8 +12,9 @@ import type { StormglassEndpointOutputs } from './types';
  */
 export const getPoint: StormglassEndpoints['weather']['getPoint'] = async (
 	ctx,
-	input,
+	rawInput,
 ) => {
+	const input = StormglassEndpointInputSchemas.weatherGetPoint.parse(rawInput);
 	const { params, source, ...rest } = input;
 
 	const response = await makeStormglassRequest<

@@ -5,10 +5,6 @@ function getStatus(error: Error): number | undefined {
 	return (error as Partial<StormglassAPIError>).status;
 }
 
-function getRetryAfter(error: Error): number | undefined {
-	return (error as Partial<StormglassAPIError>).retryAfter;
-}
-
 /**
  * Stormglass error codes:
  * - 401/403: missing or invalid API key
@@ -18,17 +14,19 @@ function getRetryAfter(error: Error): number | undefined {
  * - 5xx: upstream server error
  */
 export const errorHandlers = {
+	/**
+	 * The shared transport already retries 429s with backoff (the default
+	 * rate-limit config: 4 attempts total), so this must not retry again at
+	 * the operation level — the two layers would multiply into up to 16
+	 * requests per call.
+	 */
 	RATE_LIMIT_ERROR: {
 		match: (error) => {
 			if (getStatus(error) === 429) return true;
 			const message = error.message.toLowerCase();
 			return message.includes('rate limit') || message.includes('429');
 		},
-		handler: async (error) => ({
-			maxRetries: 3,
-			retryStrategy: 'exponential_backoff' as const,
-			headersRetryAfterMs: getRetryAfter(error),
-		}),
+		handler: async () => ({ maxRetries: 0 }),
 	},
 	AUTH_ERROR: {
 		match: (error) => {

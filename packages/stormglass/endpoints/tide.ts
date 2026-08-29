@@ -2,6 +2,7 @@ import { logEventFromContext } from 'corsair/core';
 import { makeStormglassRequest } from '../client';
 import type { StormglassEndpoints } from '../index';
 import type { StormglassEndpointOutputs } from './types';
+import { StormglassEndpointInputSchemas } from './types';
 
 /**
  * Fetch high/low tide extremes for a point.
@@ -10,7 +11,9 @@ import type { StormglassEndpointOutputs } from './types';
  * Docs: https://docs.stormglass.io/#/tide
  */
 export const getExtremesPoint: StormglassEndpoints['tide']['getExtremesPoint'] =
-	async (ctx, input) => {
+	async (ctx, rawInput) => {
+		const input =
+			StormglassEndpointInputSchemas.tideGetExtremesPoint.parse(rawInput);
 		const response = await makeStormglassRequest<
 			StormglassEndpointOutputs['tideGetExtremesPoint']
 		>('tide/extremes/point', ctx.key, { query: { ...input } });
